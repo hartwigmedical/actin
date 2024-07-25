@@ -39,6 +39,5 @@ class HasLimitedLabValueULNTest {
         val actual = function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.create(value = 135.0, refLimitUp = 100.0))
         assertEvaluation(EvaluationResult.FAIL, actual)
         assertThat(actual.recoverable).isTrue
-
     }
 }

@@ -24,7 +24,7 @@ class SummaryChapter(private val report: Report) : ReportChapter {
     }
 
     override fun render(document: Document) {
-        if (report.config.showPatientHeader) {
+        if (report.config.includePatientHeader) {
             addPatientDetails(document)
         }
         addChapterTitle(document)

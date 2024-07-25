@@ -19,7 +19,7 @@ Optionally, the following arguments can be passed as follows:
 | Argument    | Example Value        | Details                                                                 | 
 |-------------|----------------------|-------------------------------------------------------------------------|
 | orange_json | /path/to/orange.json | The path to ORANGE json in case an ORANGE record exists for the patient |
-| log_debug   |                      | If this parameter is set, additional logs will be writted to stdout.    |
+| log_debug   |                      | If this parameter is set, additional logs will be written to stdout.    |
 
 The following assumptions are made about the inputs:
 
@@ -403,3 +403,14 @@ The HLA entries are extracted from LILAC as follows:
   , `somaticSplice` or `somaticInframeIndel` is non-zero
 
 The pharmacogenomics entries are extracted from PEACH.
+
+## Test Data
+
+A tiny reference genome and corresponding Ensembl data cache is provided. This reference fasta requires additional metadata files to
+be created, when updating this reference genome perform the following steps in the folder containing the fasta file:
+
+```bash
+$ rm refsequence.dict
+$ samtools faidx refsequence.fasta
+$ gatk CreateSequenceDictionary -R refsequence.fasta
+```

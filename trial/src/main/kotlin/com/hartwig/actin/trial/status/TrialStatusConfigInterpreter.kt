@@ -153,9 +153,7 @@ class TrialStatusConfigInterpreter(
 
     internal fun extractNewTrialStatusDatabaseCohorts(cohortConfigs: List<CohortDefinitionConfig>): Set<TrialStatusEntry> {
         val configuredTrialIds = cohortConfigs.map { it.trialId }.toSet()
-
-        val configuredCohortIds =
-            cohortConfigs.flatMap(CohortDefinitionConfig::externalCohortIds).mapNotNull(String::toIntOrNull)
+        val configuredCohortIds = cohortConfigs.flatMap(CohortDefinitionConfig::externalCohortIds)
 
         val childrenPerParent =
             trialStatusDatabase.entries.filter { it.cohortParentId != null }

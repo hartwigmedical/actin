@@ -30,7 +30,7 @@ class GeneHasVariantWithProteinImpact(private val gene: String, private val allo
                     if (canonicalProteinImpact == allowedProteinImpact) {
                         canonicalProteinImpactMatches.add(allowedProteinImpact)
                         if (variant.isReportable) {
-                            if (variant.extendedVariantOrThrow().clonalLikelihood < CLONAL_CUTOFF) {
+                            if (variant.extendedVariantDetails?.clonalLikelihood?.let { it < CLONAL_CUTOFF } == true) {
                                 canonicalReportableSubclonalVariantMatches.add(variant.event)
                             } else {
                                 canonicalReportableVariantMatches.add(variant.event)
@@ -40,7 +40,7 @@ class GeneHasVariantWithProteinImpact(private val gene: String, private val allo
                         }
                     }
                     if (variant.isReportable) {
-                        for (otherProteinImpact in toProteinImpacts(variant.extendedVariantOrThrow().otherImpacts)) {
+                        for (otherProteinImpact in toProteinImpacts(variant.otherImpacts)) {
                             if (otherProteinImpact == allowedProteinImpact) {
                                 reportableOtherVariantMatches.add(variant.event)
                                 reportableOtherProteinImpactMatches.add(allowedProteinImpact)

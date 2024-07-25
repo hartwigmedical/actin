@@ -6,6 +6,6 @@ object ClonalityInterpreter {
     const val CLONAL_CUTOFF = 0.5
 
     fun isPotentiallySubclonal(variant: Variant): Boolean {
-        return variant.extendedVariantOrThrow().clonalLikelihood < CLONAL_CUTOFF
+        return variant.extendedVariantDetails?.clonalLikelihood?.let { it < CLONAL_CUTOFF } == true
     }
 }

@@ -11,11 +11,6 @@ import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
-import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import org.junit.Test
 
 class GeneHasActivatingMutationTest {
@@ -264,38 +259,5 @@ class GeneHasActivatingMutationTest {
 
         private fun impactWithCodon(affectedCodon: Int) = TestTranscriptImpactFactory.createMinimal().copy(affectedCodon = affectedCodon)
 
-        private fun panelRecord(
-            panelExtraction: PanelExtraction
-        ) =
-            TestPanelRecordFactory.empty()
-                .copy(panelExtraction = panelExtraction)
-
-        private val ARCHER_MOLECULAR_TEST_WITH_ACTIVATING_VARIANT = ArcherPanelExtraction(
-            variants = listOf(
-                PanelVariantExtraction(
-                    gene = GENE,
-                    hgvsCodingImpact = "c.1A>T",
-                ),
-            ),
-            fusions = emptyList(),
-            skippedExons = emptyList(),
-            date = TEST_DATE
-        )
-
-        private val EMPTY_ARCHER_MOLECULAR_TEST = ArcherPanelExtraction(
-            variants = emptyList(),
-            fusions = emptyList(),
-            skippedExons = emptyList(),
-            date = TEST_DATE
-        )
-
-        private val AVL_PANEL_WITH_ACTIVATING_VARIANT = GenericPanelExtraction(
-            panelType = GenericPanelType.AVL,
-            variants = listOf(
-                PanelVariantExtraction(gene = GENE, hgvsCodingImpact = "c.1A>T"),
-            ),
-            fusions = emptyList(),
-            date = TEST_DATE
-        )
     }
 }

@@ -55,6 +55,7 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
             functionInputResolver,
             atcTree,
             treatmentDatabase,
+            config.personalizationDataPath,
             environmentConfiguration.algo
         )
         val recommendationEngine = RecommendationEngineFactory(resources).create()

@@ -134,15 +134,15 @@ class DisruptionExtractorTest {
         assertThat(disruption.undisruptedCopyNumber).isEqualTo(0.2, Offset.offset(EPSILON))
     }
 
+    private fun withBreakend(breakend: LinxBreakend): LinxRecord {
+        return ImmutableLinxRecord.builder()
+            .from(createMinimalTestOrangeRecord().linx())
+            .addAllSomaticStructuralVariants(structuralVariantBuilder().svId(breakend.svId()).build())
+            .addAllSomaticBreakends(breakend)
+            .build()
+    }
+
     companion object {
         private const val EPSILON = 1.0E-10
-
-        private fun withBreakend(breakend: LinxBreakend): LinxRecord {
-            return ImmutableLinxRecord.builder()
-                .from(createMinimalTestOrangeRecord().linx())
-                .addAllSomaticStructuralVariants(structuralVariantBuilder().svId(breakend.svId()).build())
-                .addAllSomaticBreakends(breakend)
-                .build()
-        }
     }
 }

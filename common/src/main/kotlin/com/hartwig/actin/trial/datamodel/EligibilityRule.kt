@@ -255,6 +255,7 @@ enum class EligibilityRule(val input: FunctionInput?) {
     HAS_ALBUMIN_LLN_OF_AT_LEAST_X(FunctionInput.ONE_DOUBLE),
     HAS_ASAT_ULN_OF_AT_MOST_X(FunctionInput.ONE_DOUBLE),
     HAS_ALAT_ULN_OF_AT_MOST_X(FunctionInput.ONE_DOUBLE),
+    HAS_ASAT_AND_ALAT_ULN_OF_AT_MOST_X_OR_AT_MOST_Y_WHEN_LIVER_METASTASES_PRESENT(FunctionInput.TWO_DOUBLES),
     HAS_ALP_ULN_OF_AT_MOST_X(FunctionInput.ONE_DOUBLE),
     HAS_ALP_ULN_OF_AT_LEAST_X(FunctionInput.ONE_DOUBLE),
     HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X(FunctionInput.ONE_DOUBLE),
@@ -291,6 +292,7 @@ enum class EligibilityRule(val input: FunctionInput?) {
     HAS_POTENTIAL_HYPOKALEMIA(FunctionInput.NONE),
     HAS_POTENTIAL_HYPOMAGNESEMIA(FunctionInput.NONE),
     HAS_POTENTIAL_HYPOCALCEMIA(FunctionInput.NONE),
+    HAS_POTENTIAL_SYMPTOMATIC_HYPERCALCEMIA(FunctionInput.NONE),
     HAS_SERUM_TESTOSTERONE_NG_PER_DL_OF_AT_MOST_X(FunctionInput.ONE_DOUBLE),
     HAS_CORTISOL_LLN_OF_AT_LEAST_X(FunctionInput.ONE_DOUBLE),
     HAS_AFP_ULN_OF_AT_LEAST_X(FunctionInput.ONE_DOUBLE),
@@ -353,7 +355,6 @@ enum class EligibilityRule(val input: FunctionInput?) {
     IS_IN_DIALYSIS(FunctionInput.NONE),
     HAS_CHILD_PUGH_CLASS_X_LIVER_SCORE(FunctionInput.ONE_STRING),
     HAS_POTENTIAL_CONTRAINDICATION_FOR_STEREOTACTIC_RADIOSURGERY(FunctionInput.NONE),
-    HAS_POTENTIAL_SYMPTOMATIC_HYPERCALCEMIA(FunctionInput.NONE),
     HAS_ADEQUATE_VENOUS_ACCESS(FunctionInput.NONE),
 
     //Rules related to cardiac function

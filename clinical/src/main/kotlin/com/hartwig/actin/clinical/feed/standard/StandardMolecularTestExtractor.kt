@@ -33,7 +33,8 @@ class StandardMolecularTestExtractor(
                 item = it.measure,
                 measure = it.result,
                 measureDate = it.resultDate,
-                impliesPotentialIndeterminateStatus = false
+                impliesPotentialIndeterminateStatus = false,
+                scoreText = it.resultType
             )
         }
 
@@ -93,9 +94,10 @@ class StandardMolecularTestExtractor(
                 ehrPatientRecord.patientDetails.hashedId,
                 CurationCategory.MOLECULAR_TEST_IHC,
                 it,
-                "molecular test ihc"
+                "molecular test ihc",
+                false
             )
-            ExtractionResult(listOfNotNull(curationResponse.config()?.curated), curationResponse.extractionEvaluation)
+            ExtractionResult(curationResponse.configs.mapNotNull { config -> config.curated }, curationResponse.extractionEvaluation)
         }
     }
 }

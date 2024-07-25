@@ -25,10 +25,17 @@ private val PRIOR_MOLECULAR_TEST =
         item = "EGFR",
         measure = "c.2573T>G",
         measureDate = LocalDate.parse("2024-03-25"),
+        scoreText = "variant",
         impliesPotentialIndeterminateStatus = false
     )
 private val EHR_OTHER_MOLECULAR_TEST =
-    ProvidedMolecularTest(type = "Archer FP Lung Target", measure = "EGFR", result = "c.2573T>G", resultDate = LocalDate.parse("2024-03-25"))
+    ProvidedMolecularTest(
+        type = "Archer FP Lung Target",
+        measure = "EGFR",
+        result = "c.2573T>G",
+        resultDate = LocalDate.parse("2024-03-25"),
+        resultType = "variant"
+    )
 
 private val EHR_PATIENT_RECORD = createEhrPatientRecord()
 private val EHR_PATIENT_RECORD_WITH_PATHOLOGY =

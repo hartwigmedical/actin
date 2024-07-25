@@ -40,7 +40,8 @@ val PROPER_PANEL_VARIANT = Variant(
         effects = setOf(VariantEffect.MISSENSE),
         codingEffect = CodingEffect.MISSENSE,
         affectedExon = null
-    )
+    ),
+    otherImpacts = emptySet()
 )
 
 internal object MolecularHistoryFactory {
@@ -50,7 +51,7 @@ internal object MolecularHistoryFactory {
             molecularTests = listOf(
                 archerPanelRecord(
                     ArcherPanelExtraction(
-                        variants = listOf(PanelVariantExtraction(gene = gene, hgvsCodingImpact = hgvsCodingImpact))
+                        variants = listOf(PanelVariantExtraction(gene = gene, hgvsCodingOrProteinImpact = hgvsCodingImpact))
                     )
                 ).copy(
                     drivers = Drivers(

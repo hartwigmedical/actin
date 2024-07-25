@@ -9,6 +9,7 @@ import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantEffect
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariantDetails
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEvidenceFactory
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.sort.driver.VariantComparator
 import com.hartwig.hmftools.datamodel.purple.HotspotType
@@ -60,12 +61,12 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
                     type = determineVariantType(variant),
                     isHotspot = variant.hotspot() == HotspotType.HOTSPOT,
                     canonicalImpact = extractCanonicalImpact(variant),
+                    otherImpacts = extractOtherImpacts(variant),
                     extendedVariantDetails = ExtendedVariantDetails(
                         variantCopyNumber = ExtractionUtil.keep3Digits(variant.variantCopyNumber()),
                         totalCopyNumber = ExtractionUtil.keep3Digits(variant.adjustedCopyNumber()),
                         isBiallelic = variant.biallelic(),
                         phaseGroups = variant.localPhaseSets()?.toSet(),
-                        otherImpacts = extractOtherImpacts(variant),
                         clonalLikelihood = ExtractionUtil.keep3Digits(1 - variant.subclonalLikelihood()),
                     ),
                 )
@@ -141,7 +142,6 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
                 .filter { purpleTranscriptImpact: PurpleTranscriptImpact -> isEnsemblTranscript(purpleTranscriptImpact) }
                 .map { purpleTranscriptImpact: PurpleTranscriptImpact -> toTranscriptImpact(purpleTranscriptImpact) }
                 .toSet()
-
         }
 
         internal fun isEnsemblTranscript(purpleTranscriptImpact: PurpleTranscriptImpact): Boolean {

@@ -23,10 +23,11 @@ class SOCEligibleApprovedTreatmentGenerator(
             return Tables.createSingleColWithWidth(width)
                 .addCell(Cells.createContentNoBorder("There are no standard of care treatment options for this patient"))
         }
-        val table = Table(3).setWidth(width)
-        table.addHeaderCell(Cells.createHeader("Treatment"))
-        table.addHeaderCell(Cells.createHeader("Literature efficacy evidence"))
-        table.addHeaderCell(Cells.createHeader("Warnings"))
+        val widths = listOf(0.18F, 0.35F, 0.20F, 0.27F).map { it * width }.toFloatArray()
+        val table = Tables.createFixedWidthCols(*widths)
+        sequenceOf("Treatment", "Literature efficacy evidence", "PFS general (days)", "Warnings")
+            .map(Cells::createHeader)
+            .forEach(table::addHeaderCell)
 
         approvedTreatmentCells(treatments).forEach(table::addCell)
         return table

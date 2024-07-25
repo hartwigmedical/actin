@@ -10,9 +10,10 @@ data class Variant(
     val ref: String,
     val alt: String,
     val type: VariantType,
-    val isHotspot: Boolean,
     val canonicalImpact: TranscriptImpact,
+    val otherImpacts: Set<TranscriptImpact>,
     val extendedVariantDetails: ExtendedVariantDetails? = null,
+    val isHotspot: Boolean,
     override val isReportable: Boolean,
     override val event: String,
     override val driverLikelihood: DriverLikelihood?,
@@ -26,8 +27,5 @@ data class Variant(
     override fun compareTo(other: Variant): Int {
         return VariantComparator().compare(this, other)
     }
-
-    fun extendedVariantOrThrow() = extendedVariantDetails
-        ?: throw IllegalStateException("Variant is expected to have extended properties. Is this an orange-based molecular record?")
 }
 

@@ -35,25 +35,23 @@ class KnownEventResolver(private val knownEvents: KnownEvents, private val aggre
             ?: GeneLookup.find(aggregatedKnownGenes, homozygousDisruption.gene)
     }
 
-    fun resolveForBreakend(disruptiopn: Disruption): GeneAlteration? {
-        return GeneLookup.find(aggregatedKnownGenes, disruptiopn.gene)
+    fun resolveForBreakend(disruption: Disruption): GeneAlteration? {
+        return GeneLookup.find(aggregatedKnownGenes, disruption.gene)
     }
 
     fun resolveForFusion(fusion: FusionMatchCriteria): KnownFusion? {
         return FusionLookup.find(knownEvents.fusions(), fusion)
     }
 
-    companion object {
-        private fun findHotspot(knownHotspots: Iterable<KnownHotspot>, variant: VariantMatchCriteria): KnownHotspot? {
-            return knownHotspots.find { HotspotMatching.isMatch(it, variant) }
-        }
+    private fun findHotspot(knownHotspots: Iterable<KnownHotspot>, variant: VariantMatchCriteria): KnownHotspot? {
+        return knownHotspots.find { HotspotMatching.isMatch(it, variant) }
+    }
 
-        private fun findCodon(knownCodons: Iterable<KnownCodon>, variant: VariantMatchCriteria): KnownCodon? {
-            return knownCodons.find { RangeMatching.isMatch(it, variant) }
-        }
+    private fun findCodon(knownCodons: Iterable<KnownCodon>, variant: VariantMatchCriteria): KnownCodon? {
+        return knownCodons.find { RangeMatching.isMatch(it, variant) }
+    }
 
-        private fun findExon(knownExons: Iterable<KnownExon>, variant: VariantMatchCriteria): KnownExon? {
-            return knownExons.find { RangeMatching.isMatch(it, variant) }
-        }
+    private fun findExon(knownExons: Iterable<KnownExon>, variant: VariantMatchCriteria): KnownExon? {
+        return knownExons.find { RangeMatching.isMatch(it, variant) }
     }
 }

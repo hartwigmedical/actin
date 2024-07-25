@@ -1,17 +1,29 @@
-package com.hartwig.actin.algo.interpretation
+package com.hartwig.actin.algo.soc
 
 import com.hartwig.actin.algo.datamodel.AnnotatedTreatmentMatch
 import com.hartwig.actin.algo.datamodel.EvaluatedTreatment
 import com.hartwig.actin.efficacy.EfficacyEntry
+import com.hartwig.actin.personalization.similarity.population.ALL_PATIENTS_POPULATION_NAME
+import com.hartwig.actin.personalized.datamodel.MeasurementType
+import com.hartwig.actin.personalized.datamodel.TreatmentAnalysis
 
 class EvaluatedTreatmentAnnotator(private val evidenceByTreatmentName: Map<String, List<EfficacyEntry>>) {
 
-    fun annotate(evaluatedTreatments: List<EvaluatedTreatment>): List<AnnotatedTreatmentMatch> {
+    fun annotate(
+        evaluatedTreatments: List<EvaluatedTreatment>, treatmentAnalyses: List<TreatmentAnalysis>? = null
+    ): List<AnnotatedTreatmentMatch> {
+        val pfsByTreatmentName = treatmentAnalyses?.flatMap { (treatmentGroup, measurementsByType) ->
+            treatmentGroup.memberTreatmentNames.map { treatmentName ->
+                treatmentName to measurementsByType[MeasurementType.PROGRESSION_FREE_SURVIVAL]!![ALL_PATIENTS_POPULATION_NAME]
+            }
+        }?.toMap()
+        
         return evaluatedTreatments.map { evaluatedTreatment ->
             AnnotatedTreatmentMatch(
                 treatmentCandidate = evaluatedTreatment.treatmentCandidate,
                 evaluations = evaluatedTreatment.evaluations,
-                annotations = lookUp(evaluatedTreatment)
+                annotations = lookUp(evaluatedTreatment),
+                generalPfs = pfsByTreatmentName?.get(evaluatedTreatment.treatmentCandidate.treatment.name.lowercase())
             )
         }
     }
@@ -29,6 +41,7 @@ class EvaluatedTreatmentAnnotator(private val evidenceByTreatmentName: Map<Strin
                         .mapNotNull { it.treatment }.map { it.name.lowercase() to entry }
                 }
                 .groupBy({ it.first }, { it.second })
+
             return EvaluatedTreatmentAnnotator(evidenceByTreatmentName)
         }
     }

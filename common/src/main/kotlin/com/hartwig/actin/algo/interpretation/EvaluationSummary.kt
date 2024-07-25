@@ -7,7 +7,6 @@ data class EvaluationSummary(
     val failedCount: Int = 0,
     val undeterminedCount: Int = 0,
     val notEvaluatedCount: Int = 0,
-    val nonImplementedCount: Int = 0
 ) {
 
     operator fun plus(other: EvaluationSummary) = EvaluationSummary(
@@ -17,6 +16,5 @@ data class EvaluationSummary(
         failedCount = failedCount + other.failedCount,
         undeterminedCount = undeterminedCount + other.undeterminedCount,
         notEvaluatedCount = notEvaluatedCount + other.notEvaluatedCount,
-        nonImplementedCount = nonImplementedCount + other.nonImplementedCount
     )
 }

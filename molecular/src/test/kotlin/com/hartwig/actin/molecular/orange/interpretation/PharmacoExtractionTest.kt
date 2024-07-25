@@ -43,15 +43,13 @@ class PharmacoExtractionTest {
         assertThat(haplotype2.function).isEqualTo("function 2")
     }
 
-    companion object {
-        private fun withPeachEntries(vararg peachEntries: PeachGenotype): OrangeRecord {
-            val base = TestOrangeFactory.createMinimalTestOrangeRecord()
-            return ImmutableOrangeRecord.builder().from(base).addPeach(*peachEntries).build()
-        }
+    private fun withPeachEntries(vararg peachEntries: PeachGenotype): OrangeRecord {
+        val base = TestOrangeFactory.createMinimalTestOrangeRecord()
+        return ImmutableOrangeRecord.builder().from(base).addPeach(*peachEntries).build()
+    }
 
-        private fun findByHaplotype(haplotypes: Set<Haplotype>, nameToFind: String): Haplotype {
-            return haplotypes.find { it.toHaplotypeString() == nameToFind }
-                ?: throw IllegalStateException("Could not find haplotype with name: $nameToFind")
-        }
+    private fun findByHaplotype(haplotypes: Set<Haplotype>, nameToFind: String): Haplotype {
+        return haplotypes.find { it.toHaplotypeString() == nameToFind }
+            ?: throw IllegalStateException("Could not find haplotype with name: $nameToFind")
     }
 }

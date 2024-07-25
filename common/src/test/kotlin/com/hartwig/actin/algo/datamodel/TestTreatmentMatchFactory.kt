@@ -2,7 +2,14 @@ package com.hartwig.actin.algo.datamodel
 
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.efficacy.TestExtendedEvidenceEntryFactory
+import com.hartwig.actin.personalized.datamodel.Measurement
+import com.hartwig.actin.personalized.datamodel.MeasurementType
+import com.hartwig.actin.personalized.datamodel.PersonalizedDataAnalysis
+import com.hartwig.actin.personalized.datamodel.Population
+import com.hartwig.actin.personalized.datamodel.TreatmentAnalysis
+import com.hartwig.actin.personalized.datamodel.TreatmentGroup
 import com.hartwig.actin.trial.datamodel.CohortMetadata
 import com.hartwig.actin.trial.datamodel.CriterionReference
 import com.hartwig.actin.trial.datamodel.Eligibility
@@ -27,7 +34,11 @@ object TestTreatmentMatchFactory {
     }
 
     fun createProperTreatmentMatch(): TreatmentMatch {
-        return createMinimalTreatmentMatch().copy(trialMatches = createTestTrialMatches(), standardOfCareMatches = createSocMatches())
+        return createMinimalTreatmentMatch().copy(
+            trialMatches = createTestTrialMatches(),
+            standardOfCareMatches = createSocMatches(),
+            personalizedDataAnalysis = createPersonalizedDataAnalysis()
+        )
     }
 
     private fun createTestTrialMatches(): List<TrialMatch> {
@@ -76,7 +87,8 @@ object TestTreatmentMatchFactory {
                         passGeneralMessages = setOf("Active CNS metastases")
                     )
                 ),
-                annotations = TestExtendedEvidenceEntryFactory.createProperTestExtendedEvidenceEntries()
+                annotations = TestExtendedEvidenceEntryFactory.createProperTestExtendedEvidenceEntries(),
+                generalPfs = Measurement(136.5, 98, 74, 281, 46.0)
             )
         )
     }
@@ -115,7 +127,9 @@ object TestTreatmentMatchFactory {
                     )
                 )
             ) to unrecoverable(
-                EvaluationResult.UNDETERMINED, "Could not be determined if patient has exhausted SOC", "Undetermined SOC exhaustion"
+                EvaluationResult.FAIL,
+                "Patient has not exhausted SOC (remaining options capecitabine)",
+                "Patient has not exhausted SOC (remaining options capecitabine)"
             )
         )
     }
@@ -255,5 +269,36 @@ object TestTreatmentMatchFactory {
                 base
             }
         }
+    }
+
+    private fun createPersonalizedDataAnalysis(): PersonalizedDataAnalysis {
+        val pembrolizumab = TreatmentTestFactory.drugTreatment("PEMBROLIZUMAB", TreatmentCategory.IMMUNOTHERAPY)
+        val populationPfsAndDecision = listOf(
+            Triple("All", 236.5, 0.3),
+            Triple("Age 45-55", 356.5, 0.4),
+            Triple("WHO 1", 321.0, 0.25)
+        )
+
+        val pfsMap = populationPfsAndDecision.map { (name, pfs, _) ->
+            name to Measurement(pfs, 100, (pfs / 2).toInt(), (pfs * 2).toInt(), pfs * 0.4)
+        }.toMap()
+
+        val decisionMap = populationPfsAndDecision.map { (name, _, decision) -> name to Measurement(decision, 100) }.toMap()
+
+        val treatmentAnalyses = listOf(
+            TreatmentAnalysis(
+                TreatmentGroup.fromTreatmentName(pembrolizumab.name)!!,
+                mapOf(
+                    MeasurementType.PROGRESSION_FREE_SURVIVAL to pfsMap,
+                    MeasurementType.TREATMENT_DECISION to decisionMap
+                )
+            )
+        )
+
+        val populations = populationPfsAndDecision.map { (name, _, _) ->
+            Population(name, MeasurementType.entries.associateWith { 1000 })
+        }
+
+        return PersonalizedDataAnalysis(treatmentAnalyses, populations)
     }
 }

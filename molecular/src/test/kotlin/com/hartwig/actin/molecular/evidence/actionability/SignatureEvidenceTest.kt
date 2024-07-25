@@ -4,14 +4,13 @@ import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.ImmutableActionableEvents
 import com.hartwig.serve.datamodel.characteristic.ActionableCharacteristic
 import com.hartwig.serve.datamodel.characteristic.TumorCharacteristicType
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class SignatureEvidenceTest {
 
     @Test
-    fun canDetermineEvidenceForMicrosatelliteInstability() {
+    fun `Should determine evidence for microsatellite instability`() {
         val characteristic1: ActionableCharacteristic =
             TestServeActionabilityFactory.characteristicBuilder().type(TumorCharacteristicType.MICROSATELLITE_UNSTABLE).build()
         val characteristic2: ActionableCharacteristic =
@@ -20,13 +19,13 @@ class SignatureEvidenceTest {
         val signatureEvidence: SignatureEvidence = SignatureEvidence.create(actionable)
 
         val matches = signatureEvidence.findMicrosatelliteMatches(true)
-        assertEquals(1, matches.size.toLong())
-        assertTrue(matches.contains(characteristic1))
-        assertTrue(signatureEvidence.findMicrosatelliteMatches(false).isEmpty())
+        assertThat(matches.size).isEqualTo(1)
+        assertThat(matches).contains(characteristic1)
+        assertThat(signatureEvidence.findMicrosatelliteMatches(false)).isEmpty()
     }
 
     @Test
-    fun canDetermineEvidenceForHomologousRepairDeficiency() {
+    fun `Should determine evidence for homologous repair deficiency`() {
         val characteristic1: ActionableCharacteristic = TestServeActionabilityFactory.characteristicBuilder()
             .type(TumorCharacteristicType.HOMOLOGOUS_RECOMBINATION_DEFICIENT)
             .build()
@@ -34,13 +33,13 @@ class SignatureEvidenceTest {
         val signatureEvidence: SignatureEvidence = SignatureEvidence.create(actionable)
 
         val matches = signatureEvidence.findHomologousRepairMatches(true)
-        assertEquals(1, matches.size.toLong())
-        assertTrue(matches.contains(characteristic1))
-        assertTrue(signatureEvidence.findHomologousRepairMatches(false).isEmpty())
+        assertThat(matches.size).isEqualTo(1)
+        assertThat(matches).contains(characteristic1)
+        assertThat(signatureEvidence.findHomologousRepairMatches(false)).isEmpty()
     }
 
     @Test
-    fun canDetermineEvidenceForHighTumorMutationalBurden() {
+    fun `Should determine evidence for high tumor mutational burden`() {
         val characteristic1: ActionableCharacteristic = TestServeActionabilityFactory.characteristicBuilder()
             .type(TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN)
             .build()
@@ -51,13 +50,13 @@ class SignatureEvidenceTest {
         val signatureEvidence: SignatureEvidence = SignatureEvidence.create(actionable)
 
         val matches = signatureEvidence.findTumorBurdenMatches(true)
-        assertEquals(1, matches.size.toLong())
-        assertTrue(matches.contains(characteristic1))
-        assertTrue(signatureEvidence.findTumorBurdenMatches(false).isEmpty())
+        assertThat(matches.size).isEqualTo(1)
+        assertThat(matches).contains(characteristic1)
+        assertThat(signatureEvidence.findTumorBurdenMatches(false)).isEmpty()
     }
 
     @Test
-    fun canDetermineEvidenceForHighTumorMutationalLoad() {
+    fun `Should determine evidence for high mutational load`() {
         val characteristic1: ActionableCharacteristic = TestServeActionabilityFactory.characteristicBuilder()
             .type(TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD)
             .build()
@@ -68,8 +67,8 @@ class SignatureEvidenceTest {
         val signatureEvidence: SignatureEvidence = SignatureEvidence.create(actionable)
 
         val matches = signatureEvidence.findTumorLoadMatches(true)
-        assertEquals(1, matches.size.toLong())
-        assertTrue(matches.contains(characteristic1))
-        assertTrue(signatureEvidence.findTumorLoadMatches(false).isEmpty())
+        assertThat(matches.size).isEqualTo(1)
+        assertThat(matches).contains(characteristic1)
+        assertThat(signatureEvidence.findTumorLoadMatches(false)).isEmpty()
     }
 }

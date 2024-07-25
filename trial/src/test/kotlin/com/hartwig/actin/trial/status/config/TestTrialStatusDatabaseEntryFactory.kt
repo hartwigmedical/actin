@@ -13,7 +13,12 @@ object TestTrialStatusDatabaseEntryFactory {
         studyStatus = TrialStatus.OPEN
     )
 
-    fun createEntry(cohortId: Int?, cohortParentId: Int?, cohortStatus: TrialStatus?, cohortSlotsNumberAvailable: Int?): TrialStatusEntry {
+    fun createEntry(
+        cohortId: String?,
+        cohortParentId: String?,
+        cohortStatus: TrialStatus?,
+        cohortSlotsNumberAvailable: Int?
+    ): TrialStatusEntry {
         return MINIMAL.copy(
             cohortId = cohortId,
             cohortParentId = cohortParentId,
