@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.soc
 
 import com.hartwig.actin.algo.datamodel.ResistanceEvidence
-import com.hartwig.actin.personalization.datamodel.Treatment
+import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.ActionableEvents
 
@@ -18,7 +18,14 @@ class ResistanceEvidenceMatcher {
     }
 
     fun findMatches(actionableEvents: List<ActionableEvent>, treatment: Treatment): List<ResistanceEvidence> {
-        return actionableEvents.filter { it.direction().isResistant }.map { it.evidenceUrls() }
+        return actionableEvents.filter { it.direction().isResistant }.map { actionableEvent ->
+            ResistanceEvidence(
+                event = actionableEvent.sourceEvent(),
+                isTested = null,
+                isFound = null,
+                resistanceLevel = actionableEvent.level().name,
+                evidenceUrls = actionableEvent.evidenceUrls()
+            )
+        }
     }
-}
 }

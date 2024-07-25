@@ -6,8 +6,12 @@ import com.hartwig.actin.efficacy.EfficacyEntry
 import com.hartwig.actin.personalization.similarity.population.ALL_PATIENTS_POPULATION_NAME
 import com.hartwig.actin.personalized.datamodel.MeasurementType
 import com.hartwig.actin.personalized.datamodel.TreatmentAnalysis
+import com.hartwig.serve.datamodel.ActionableEvents
 
-class EvaluatedTreatmentAnnotator(private val evidenceByTreatmentName: Map<String, List<EfficacyEntry>>) {
+class EvaluatedTreatmentAnnotator(
+    private val evidenceByTreatmentName: Map<String, List<EfficacyEntry>>,
+    private val actionableEvents: ActionableEvents
+) {
 
     fun annotate(
         evaluatedTreatments: List<EvaluatedTreatment>, treatmentAnalyses: List<TreatmentAnalysis>? = null
@@ -23,7 +27,8 @@ class EvaluatedTreatmentAnnotator(private val evidenceByTreatmentName: Map<Strin
                 treatmentCandidate = evaluatedTreatment.treatmentCandidate,
                 evaluations = evaluatedTreatment.evaluations,
                 annotations = lookUp(evaluatedTreatment),
-                generalPfs = pfsByTreatmentName?.get(evaluatedTreatment.treatmentCandidate.treatment.name.lowercase())
+                generalPfs = pfsByTreatmentName?.get(evaluatedTreatment.treatmentCandidate.treatment.name.lowercase()),
+                resistanceEvidence = ResistanceEvidenceMatcher().match(actionableEvents, evaluatedTreatment.treatmentCandidate.treatment)
             )
         }
     }
@@ -33,7 +38,7 @@ class EvaluatedTreatmentAnnotator(private val evidenceByTreatmentName: Map<Strin
     }
 
     companion object {
-        fun create(efficacyEvidence: List<EfficacyEntry>): EvaluatedTreatmentAnnotator {
+        fun create(efficacyEvidence: List<EfficacyEntry>, actionableEvents: ActionableEvents): EvaluatedTreatmentAnnotator {
             val evidenceByTreatmentName = efficacyEvidence
                 .flatMap { entry ->
                     entry.trialReferences
@@ -42,7 +47,7 @@ class EvaluatedTreatmentAnnotator(private val evidenceByTreatmentName: Map<Strin
                 }
                 .groupBy({ it.first }, { it.second })
 
-            return EvaluatedTreatmentAnnotator(evidenceByTreatmentName)
+            return EvaluatedTreatmentAnnotator(evidenceByTreatmentName, actionableEvents)
         }
     }
 }

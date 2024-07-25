@@ -19,6 +19,8 @@ import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.datamodel.TestTrialFactory
+import com.hartwig.serve.datamodel.ActionableEvents
+import com.hartwig.serve.datamodel.ImmutableActionableEvents
 import io.mockk.every
 import io.mockk.mockk
 import java.time.LocalDate
@@ -35,13 +37,14 @@ class TreatmentMatcherTest {
     private val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
     private val evidenceEntries =
         EfficacyEntryFactory(treatmentDatabase).convertCkbExtendedEvidence(CkbExtendedEvidenceTestFactory.createProperTestExtendedEvidenceDatabase())
+    private val actionableEvents: ActionableEvents = ImmutableActionableEvents.builder().build()
     private val recommendationEngine = mockk<RecommendationEngine>()
     private val treatmentMatcher = TreatmentMatcher(
         trialMatcher,
         recommendationEngine,
         trials,
         CurrentDateProvider(),
-        EvaluatedTreatmentAnnotator.create(evidenceEntries),
+        EvaluatedTreatmentAnnotator.create(evidenceEntries, actionableEvents),
         EMC_TRIAL_SOURCE
     )
     private val expectedTreatmentMatch = TreatmentMatch(
@@ -74,7 +77,7 @@ class TreatmentMatcherTest {
         assertThat(treatmentMatcher.evaluateAndAnnotateMatchesForPatient(patient))
             .isEqualTo(
                 expectedTreatmentMatch.copy(
-                    standardOfCareMatches = EvaluatedTreatmentAnnotator.create(evidenceEntries).annotate(
+                    standardOfCareMatches = EvaluatedTreatmentAnnotator.create(evidenceEntries, actionableEvents).annotate(
                         expectedSocTreatments
                     )
                 )
@@ -92,7 +95,7 @@ class TreatmentMatcherTest {
             recommendationEngine,
             trials,
             CurrentDateProvider(),
-            EvaluatedTreatmentAnnotator.create(evidenceEntries),
+            EvaluatedTreatmentAnnotator.create(evidenceEntries, actionableEvents),
             EMC_TRIAL_SOURCE
         )
         every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(patientWithoutMolecular) } returns false

@@ -10,13 +10,16 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.efficacy.TestExtendedEvidenceEntryFactory
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
+import com.hartwig.serve.datamodel.ActionableEvents
+import com.hartwig.serve.datamodel.ImmutableActionableEvents
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class EvaluatedTreatmentAnnotatorTest {
 
     private val efficacyEntries = TestExtendedEvidenceEntryFactory.createProperTestExtendedEvidenceEntries()
-    private val annotator = EvaluatedTreatmentAnnotator.create(efficacyEntries)
+    private val actionableEvents: ActionableEvents = ImmutableActionableEvents.builder().build()
+    private val annotator = EvaluatedTreatmentAnnotator.create(efficacyEntries, actionableEvents)
     private val evaluations = listOf(Evaluation(result = EvaluationResult.PASS, recoverable = true))
 
     @Test
@@ -28,7 +31,8 @@ class EvaluatedTreatmentAnnotatorTest {
         val socTreatments = listOf(EvaluatedTreatment(treatmentCandidate, evaluations))
 
         val actualAnnotatedTreatmentMatches = annotator.annotate(socTreatments)
-        val expectedAnnotatedTreatmentMatches = listOf(AnnotatedTreatmentMatch(treatmentCandidate, evaluations, efficacyEntries))
+        val expectedAnnotatedTreatmentMatches =
+            listOf(AnnotatedTreatmentMatch(treatmentCandidate, evaluations, efficacyEntries, null, emptyList()))
 
         assertThat(actualAnnotatedTreatmentMatches).isEqualTo(expectedAnnotatedTreatmentMatches)
     }
@@ -44,7 +48,8 @@ class EvaluatedTreatmentAnnotatorTest {
         val socTreatments = listOf(EvaluatedTreatment(treatmentCandidate, evaluations))
 
         val actualAnnotatedTreatmentMatches = annotator.annotate(socTreatments)
-        val expectedAnnotatedTreatmentMatches = listOf(AnnotatedTreatmentMatch(treatmentCandidate, evaluations, emptyList()))
+        val expectedAnnotatedTreatmentMatches =
+            listOf(AnnotatedTreatmentMatch(treatmentCandidate, evaluations, emptyList(), null, emptyList()))
 
         assertThat(actualAnnotatedTreatmentMatches).isEqualTo(expectedAnnotatedTreatmentMatches)
     }

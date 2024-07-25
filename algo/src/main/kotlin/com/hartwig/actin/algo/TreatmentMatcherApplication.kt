@@ -16,6 +16,9 @@ import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.serialization.TrialJson
+import com.hartwig.serve.datamodel.ActionableEvents
+import com.hartwig.serve.datamodel.ActionableEventsLoader
+import com.hartwig.serve.datamodel.RefGenome
 import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
@@ -65,11 +68,22 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
             environmentConfiguration.algo
         )
         val evidenceEntries = EfficacyEntryFactory(treatmentDatabase).extractEfficacyEvidenceFromCkbFile(config.extendedEfficacyJson)
-        val match = TreatmentMatcher.create(resources, trials, evidenceEntries).evaluateAndAnnotateMatchesForPatient(patient)
+
+        LOGGER.info("Loading evidence database for resistance evidence")
+        val tumorDoids = patient.tumor.doids.orEmpty().toSet()
+        val actionableEvents = loadEvidence(RefGenome.V37)
+
+        val match =
+            TreatmentMatcher.create(resources, trials, evidenceEntries, actionableEvents).evaluateAndAnnotateMatchesForPatient(patient)
 
         TreatmentMatchPrinter.printMatch(match)
         TreatmentMatchJson.write(match, config.outputDirectory)
         LOGGER.info("Done!")
+    }
+
+    private fun loadEvidence(serveRefGenomeVersion: RefGenome): ActionableEvents {
+        val serveDirectoryWithGenome = "${config.serveDirectory}/${serveRefGenomeVersion.name.lowercase().replace("v", "")}"
+        return ActionableEventsLoader.readFromDir(serveDirectoryWithGenome, serveRefGenomeVersion)
     }
 
     companion object {
