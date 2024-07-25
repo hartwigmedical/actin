@@ -257,17 +257,33 @@ object HistoricMolecularDeserializer {
 
     private fun extractPredictedTumorOrigin(predictedTumorOrigin: JsonObject?): PredictedTumorOrigin? {
         return predictedTumorOrigin?.let {
-            PredictedTumorOrigin(
-                predictions = listOf(
-                    CupPrediction(
-                        cancerType = Json.string(it, "tumorType"),
-                        likelihood = Json.double(it, "likelihood"),
-                        snvPairwiseClassifier = 0.0,
-                        genomicPositionClassifier = 0.0,
-                        featureClassifier = 0.0
-                    )
-                )
-            )
+            PredictedTumorOrigin(predictions = extractPredictions(it))
+        }
+    }
+
+    private fun extractPredictions(predictedTumorOrigin: JsonObject): List<CupPrediction> {
+        return if (predictedTumorOrigin.has("predictions")) {
+            Json.array(predictedTumorOrigin, "predictions").map { toCupPrediction(it.asJsonObject) }
+        } else {
+            listOf(toCupPrediction(predictedTumorOrigin))
+        }
+    }
+
+    private fun toCupPrediction(cupPrediction: JsonObject): CupPrediction {
+        return CupPrediction(
+            cancerType = extractCancerType(cupPrediction),
+            likelihood = Json.double(cupPrediction, "likelihood"),
+            snvPairwiseClassifier = Json.optionalDouble(cupPrediction, "snvPairwiseClassifier") ?: 0.0,
+            genomicPositionClassifier = Json.optionalDouble(cupPrediction, "genomicPositionClassifier") ?: 0.0,
+            featureClassifier = Json.optionalDouble(cupPrediction, "featureClassifier") ?: 0.0
+        )
+    }
+
+    private fun extractCancerType(prediction: JsonObject): String {
+        return if (prediction.has("tumorType")) {
+            Json.string(prediction, "tumorType")
+        } else {
+            Json.string(prediction, "cancerType")
         }
     }
 
