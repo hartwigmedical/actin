@@ -237,12 +237,20 @@ object HistoricClinicalDeserializer {
         )
     }
 
-    private fun toStopReason(stopReasonString: String): StopReason {
-        return StopReason.createFromString(stopReasonString) ?: StopReason.valueOf(stopReasonString)
+    private fun toStopReason(stopReasonString: String): StopReason? {
+        val stopReason = StopReason.createFromString(stopReasonString)
+        if (stopReason == null) {
+            LOGGER.warn("  Could not convert stop reason string: {}", stopReasonString)
+        }
+        return null
     }
 
-    private fun toTreatmentResponse(treatmentResponseString: String): TreatmentResponse {
-        return TreatmentResponse.createFromString(treatmentResponseString) ?: TreatmentResponse.valueOf(treatmentResponseString)
+    private fun toTreatmentResponse(treatmentResponseString: String): TreatmentResponse? {
+        val treatmentResponse = TreatmentResponse.createFromString(treatmentResponseString)
+        if (treatmentResponse == null) {
+            LOGGER.warn("  Could not convert treatment response string: {}", treatmentResponseString)
+        }
+        return treatmentResponse
     }
 
     private fun extractPriorSecondPrimaries(clinical: JsonObject): List<PriorSecondPrimary> {
