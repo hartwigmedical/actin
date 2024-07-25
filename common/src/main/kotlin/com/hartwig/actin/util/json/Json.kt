@@ -12,7 +12,7 @@ object Json {
     }
 
     fun optionalObject(obj: JsonObject, field: String): JsonObject? {
-        return if (obj.has(field)) `object`(obj, field) else null
+        return if (obj.has(field)) nullableObject(obj, field) else null
     }
 
     fun `object`(obj: JsonObject, field: String): JsonObject {
@@ -68,6 +68,10 @@ object Json {
         return obj.get(field).asInt
     }
 
+    fun optionalDouble(obj: JsonObject, field: String): Double? {
+        return if (obj.has(field)) nullableDouble(obj, field) else null
+    }
+
     fun nullableDouble(obj: JsonObject, field: String): Double? {
         return if (!isNull(obj, field)) double(obj, field) else null
     }
@@ -96,7 +100,6 @@ object Json {
         val jsonDate: JsonObject = `object`(obj, field)
         return LocalDate.of(integer(jsonDate, "year"), integer(jsonDate, "month"), integer(jsonDate, "day"))
     }
-
 
     private fun isNull(obj: JsonObject, field: String): Boolean {
         return obj.get(field).isJsonNull
