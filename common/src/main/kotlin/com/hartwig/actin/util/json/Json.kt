@@ -32,11 +32,11 @@ object Json {
     }
 
     fun optionalStringList(obj: JsonObject, field: String): List<String>? {
-        return if (obj.has(field)) stringList(obj, field) else null
+        return if (obj.has(field)) nullableStringList(obj, field) else null
     }
 
     fun nullableStringList(obj: JsonObject, field: String): List<String>? {
-        return if (!isNull(obj, field)) nullableStringList(obj, field) else null
+        return if (!isNull(obj, field)) stringList(obj, field) else null
     }
 
     fun stringList(obj: JsonObject, field: String): List<String> {
