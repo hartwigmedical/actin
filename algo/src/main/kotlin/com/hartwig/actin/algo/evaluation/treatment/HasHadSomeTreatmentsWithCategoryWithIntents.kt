@@ -26,8 +26,14 @@ class HasHadSomeTreatmentsWithCategoryWithIntents(private val category: Treatmen
                 )
             }
 
+            treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches >= 1 -> {
+                EvaluationFactory.undetermined(
+                    "Can't determine if intent of received ${category.display()} is $intentsList",
+                    "Undetermined if received ${category.display()} is $intentsList"
+                )
+            }
 
-            treatmentSummary.numSpecificMatches() + treatmentSummary.numPossibleTrialMatches >= 1 -> {
+            treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches + treatmentSummary.numPossibleTrialMatches >= 1 -> {
                 EvaluationFactory.undetermined(
                     "Patient may have received $intentsList ${category.display()} due to trial participation",
                     "Undetermined if received $intentsList ${category.display()} due to trial participation"
