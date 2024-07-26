@@ -76,7 +76,7 @@ class IsHomologousRepairDeficientWithoutMutationInGenesX(private val genesToFind
             ) + genesInGenesToFind(hrdGenesWithNonBiallelicHotspot)).toSet()
 
         return when {
-            isHRD == null && hrdGenesWithBiallelicDriver.isNotEmpty() -> {
+            isHRD == null && hrdGenesWithBiallelicDriver.isNotEmpty() && genesToFindWithMutation.isEmpty() -> {
                 EvaluationFactory.undetermined(
                     "Unknown homologous repair deficiency (HRD) status, but biallelic drivers in HR genes: ${
                         concat(
@@ -87,7 +87,7 @@ class IsHomologousRepairDeficientWithoutMutationInGenesX(private val genesToFind
                 )
             }
 
-            isHRD == null && hrdGenesWithNonBiallelicDriver.isNotEmpty() -> {
+            isHRD == null && hrdGenesWithNonBiallelicDriver.isNotEmpty() && genesToFindWithMutation.isEmpty() -> {
                 EvaluationFactory.undetermined(
                     "Unknown homologous repair deficiency (HRD) status, but non-biallelic drivers in HR genes: ${
                         concat(
