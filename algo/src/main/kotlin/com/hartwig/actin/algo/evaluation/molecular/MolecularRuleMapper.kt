@@ -43,6 +43,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HLA_TYPE_X to hasSpecificHLATypeCreator(),
             EligibilityRule.HAS_UGT1A1_HAPLOTYPE_X to hasUGT1A1HaplotypeCreator(),
             EligibilityRule.HAS_HOMOZYGOUS_DPYD_DEFICIENCY to { HasHomozygousDPYDDeficiency() },
+            EligibilityRule.HAS_HETEROZYGOUS_DPYD_DEFICIENCY to { HasHeterozygousDPYDDeficiency() },
             EligibilityRule.HAS_KNOWN_HPV_STATUS to { HasKnownHPVStatus() },
             EligibilityRule.OVEREXPRESSION_OF_GENE_X to { GeneIsOverexpressed() },
             EligibilityRule.NON_EXPRESSION_OF_GENE_X to { GeneIsNotExpressed() },

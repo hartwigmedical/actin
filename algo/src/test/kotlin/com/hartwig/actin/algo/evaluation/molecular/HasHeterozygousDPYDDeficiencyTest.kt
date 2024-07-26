@@ -44,7 +44,7 @@ class HasHeterozygousDPYDDeficiencyTest {
     }
 
     @Test
-    fun `Should pass if patient has heterozygous DPYD haplotypes with reduced function`() {
+    fun `Should pass if patient has heterozygous DPYD haplotypes of which one has reduced function`() {
         EvaluationAssert.assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
@@ -53,6 +53,24 @@ class HasHeterozygousDPYDDeficiencyTest {
                         gene = "DPYD",
                         haplotypes = setOf(
                             Haplotype(allele = "*1", alleleCount = 1, function = "Reduced Function"),
+                            Haplotype(allele = "*2", alleleCount = 1, function = "Normal function")
+                        )
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should pass if patient has heterozygous DPYD haplotypes of which one has no function`() {
+        EvaluationAssert.assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(
+                MolecularTestFactory.withHaplotype(
+                    PharmacoEntry(
+                        gene = "DPYD",
+                        haplotypes = setOf(
+                            Haplotype(allele = "*1", alleleCount = 1, function = "No Function"),
                             Haplotype(allele = "*2", alleleCount = 1, function = "Normal function")
                         )
                     )
@@ -87,6 +105,42 @@ class HasHeterozygousDPYDDeficiencyTest {
                     PharmacoEntry(
                         gene = "DPYD",
                         haplotypes = setOf(Haplotype(allele = "*1", alleleCount = 2, function = "Normal Function"))
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should fail if patient has heterozygous DPYD haplotypes both with reduced function`() {
+        EvaluationAssert.assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(
+                MolecularTestFactory.withHaplotype(
+                    PharmacoEntry(
+                        gene = "DPYD",
+                        haplotypes = setOf(
+                            Haplotype(allele = "*1", alleleCount = 1, function = "Reduced Function"),
+                            Haplotype(allele = "*2", alleleCount = 1, function = "Reduced function")
+                        )
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should fail if patient has heterozygous DPYD haplotypes both with both normal function`() {
+        EvaluationAssert.assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(
+                MolecularTestFactory.withHaplotype(
+                    PharmacoEntry(
+                        gene = "DPYD",
+                        haplotypes = setOf(
+                            Haplotype(allele = "*1", alleleCount = 1, function = "Normal Function"),
+                            Haplotype(allele = "*2", alleleCount = 1, function = "Normal function")
+                        )
                     )
                 )
             )

@@ -2,12 +2,9 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.molecular.DPYDDeficiencyEvaluationFunctions.DPYD_GENE
+import com.hartwig.actin.algo.evaluation.molecular.DPYDDeficiencyEvaluationFunctions.containsUnexpectedHaplotypeFunction
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoEntry
-
-private const val DPYD_GENE = "DPYD"
-
-private val expectedHaplotypeFunctions = setOf("normal function", "reduced function", "no function")
 
 class HasHomozygousDPYDDeficiency internal constructor() : MolecularEvaluationFunction {
 
@@ -26,25 +23,13 @@ class HasHomozygousDPYDDeficiency internal constructor() : MolecularEvaluationFu
                 )
             }
 
-            isHomozygousDeficient(pharmaco) -> {
+            DPYDDeficiencyEvaluationFunctions.isHomozygousDeficient(pharmaco) -> {
                 EvaluationFactory.pass("Patient is homozygous DPYD deficient", inclusionEvents = setOf("DPYD deficient"))
             }
 
             else -> {
                 EvaluationFactory.fail("Patient is not homozygous DPYD deficient")
             }
-        }
-    }
-
-    private fun containsUnexpectedHaplotypeFunction(pharmaco: List<PharmacoEntry>): Boolean {
-        return pharmaco.any { pharmacoEntry ->
-            pharmacoEntry.haplotypes.any { it.function.lowercase() !in expectedHaplotypeFunctions }
-        }
-    }
-
-    private fun isHomozygousDeficient(pharmaco: List<PharmacoEntry>): Boolean {
-        return pharmaco.none { pharmacoEntry ->
-            pharmacoEntry.haplotypes.any { it.function.lowercase() == "normal function" }
         }
     }
 }
