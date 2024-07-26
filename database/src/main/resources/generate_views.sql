@@ -154,8 +154,8 @@ SELECT * FROM (
 CREATE OR REPLACE VIEW trialEvaluation
 AS (
 SELECT * FROM (
-SELECT  referenceDate, referenceDateIsLive, patientId, trialMatch.code AS trialId, trial.acronym AS trialAcronym, trial.open AS trialOpen,
-        IF(trial.id IN (SELECT trialId FROM cohort),1,0) AS trialHasCohorts, trialMatch.isEligible AS isEligibleTrial,
+SELECT  referenceDate, referenceDateIsLive, patientId, trialMatch.code AS trialId, trialMatch.acronym AS trialAcronym, trialMatch.open AS trialOpen,
+        IF(trialMatch.id IN (SELECT trialMatchId FROM cohortMatch),1,0) AS trialHasCohorts, trialMatch.isEligible AS isEligibleTrial,
         cohortMatch.code AS cohortId, cohortMatch.description AS cohortDescription, cohortMatch.open AS cohortOpen,
         cohortMatch.slotsAvailable AS cohortSlotsAvailable, cohortMatch.blacklist AS cohortBlacklist, cohortMatch.isEligible AS isEligibleCohort,
         eligibility AS eligibilityRule, result, recoverable, passSpecificMessages, passGeneralMessages, warnSpecificMessages, warnGeneralMessages,
@@ -164,11 +164,10 @@ SELECT  referenceDate, referenceDateIsLive, patientId, trialMatch.code AS trialI
     FROM evaluation
     INNER JOIN trialMatch ON trialMatch.id = evaluation.trialMatchId
     INNER JOIN treatmentMatch ON treatmentMatch.id = trialMatch.treatmentMatchId
-    LEFT JOIN trial ON trial.code = trialMatch.code
     LEFT JOIN cohortMatch ON trialMatch.id = cohortMatch.trialMatchId AND cohortMatch.Id = evaluation.cohortMatchId
 UNION
-SELECT  DISTINCT referenceDate, referenceDateIsLive, patientId, trialMatch.code AS trialId, trial.acronym AS trialAcronym, trial.open AS trialOpen,
-        IF(trial.id IN (SELECT trialId FROM cohort),1,0) AS trialHasCohorts, trialMatch.isEligible AS isEligibleTrial,
+SELECT  DISTINCT referenceDate, referenceDateIsLive, patientId, trialMatch.code AS trialId, trialMatch.acronym AS trialAcronym, trialMatch.open AS trialOpen,
+        IF(trialMatch.id IN (SELECT trialMatchId FROM cohortMatch),1,0) AS trialHasCohorts, trialMatch.isEligible AS isEligibleTrial,
         cohortMatch.code AS cohortId, cohortMatch.description AS cohortDescription, cohortMatch.open AS cohortOpen,
         cohortMatch.slotsAvailable AS cohortSlotsAvailable, cohortMatch.blacklist AS cohortBlacklist, cohortMatch.isEligible AS isEligibleCohort,
         NULL AS eligibilityRule, NULL AS result, NULL as recoverable, NULL AS passSpecificMessages, NULL AS passGeneralMessages,
@@ -178,7 +177,6 @@ SELECT  DISTINCT referenceDate, referenceDateIsLive, patientId, trialMatch.code 
     FROM cohortMatch
     INNER JOIN trialMatch ON trialMatch.id = cohortMatch.trialMatchId
     INNER JOIN treatmentMatch ON treatmentMatch.id = trialMatch.treatmentMatchId
-    LEFT JOIN trial ON trial.code = trialMatch.code
     WHERE cohortMatch.id NOT IN (SELECT DISTINCT cohortMatchId FROM evaluation WHERE NOT isnull(cohortMatchId))
     ORDER BY patientId, cohortId)
 AS a
