@@ -2,8 +2,7 @@ package com.hartwig.actin.clinical.datamodel
 
 import java.time.LocalDate
 
-data class PriorMolecularTest(
-    val test: String,
+data class PriorIHCTest(
     val item: String? = null,
     val measure: String? = null,
     val measureDate: LocalDate? = null,

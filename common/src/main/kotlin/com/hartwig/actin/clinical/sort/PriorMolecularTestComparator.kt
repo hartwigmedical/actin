@@ -1,12 +1,12 @@
 package com.hartwig.actin.clinical.sort
 
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 
-class PriorMolecularTestComparator : Comparator<PriorMolecularTest> {
+class PriorMolecularTestComparator : Comparator<PriorIHCTest> {
 
-    override fun compare(priorMolecularTest1: PriorMolecularTest, priorMolecularTest2: PriorMolecularTest): Int {
-        val firstPriorMolecularTestItem = priorMolecularTest1.item ?: ""
-        val secondPriorMolecularTestItem = priorMolecularTest2.item ?: ""
+    override fun compare(priorIHCTest1: PriorIHCTest, priorIHCTest2: PriorIHCTest): Int {
+        val firstPriorMolecularTestItem = priorIHCTest1.item ?: ""
+        val secondPriorMolecularTestItem = priorIHCTest2.item ?: ""
         return firstPriorMolecularTestItem.compareTo(secondPriorMolecularTestItem)
     }
 }

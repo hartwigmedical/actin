@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
@@ -20,7 +20,7 @@ import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class PriorMolecularTestInterpretersTest {
+class PriorIHCTestInterpretersTest {
 
     private val evidenceDatabase = mockk<EvidenceDatabase> {
         every { evidenceForVariant(any()) } returns ActionabilityMatch(emptyList(), emptyList())
@@ -50,13 +50,13 @@ class PriorMolecularTestInterpretersTest {
     @Test
     fun `Should interpret list of molecular tests`() {
         val interpreters = PriorMolecularTestInterpreters.create(evidenceDatabase, geneDriverLikelihoodModel, transvarAnnotator, paver, paveLite)
-        val priorMolecularTests = listOf(
+        val priorIHCTests = listOf(
             archerPriorMolecularVariantRecord(),
             avlPanelPriorMolecularVariantRecord(),
             freetextPriorMolecularFusionRecord(),
-            PriorMolecularTest("Unknown", impliesPotentialIndeterminateStatus = false)
+            PriorIHCTest("Unknown", impliesPotentialIndeterminateStatus = false)
         )
-        val molecularTests = interpreters.process(priorMolecularTests)
+        val molecularTests = interpreters.process(emptyList())
         assertThat(molecularTests.filterIsInstance<PanelRecord>()).hasSize(3)
         assertThat(molecularTests.filterIsInstance<OtherPriorMolecularTest>()).hasSize(1)
     }

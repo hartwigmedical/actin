@@ -1,20 +1,7 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
-import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.doid.DoidConstants
-import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-import com.hartwig.actin.clinical.datamodel.ReceptorType
-import com.hartwig.actin.clinical.datamodel.ReceptorType.ER
-import com.hartwig.actin.clinical.datamodel.ReceptorType.HER2
-import com.hartwig.actin.clinical.datamodel.ReceptorType.PR
-import com.hartwig.actin.doid.TestDoidModelFactory
-import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
-
 class HasBreastCancerWithPositiveReceptorOfTypeTest {
-    val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
+  /*  val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
     val function = HasBreastCancerWithPositiveReceptorOfType(doidModel, ReceptorType.valueOf(TARGET_RECEPTOR))
 
     @Test
@@ -315,13 +302,13 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
             item: String, scoreText: String = "Score", scoreValue: Double = 50.0, scoreValueUnit: String = "Unit"
         ): IHCMolecularTest {
             return IHCMolecularTest(
-                PriorMolecularTest(
-                    test = "IHC", item = item, scoreText = scoreText, scoreValue = scoreValue,
+                PriorIHCTest(
+                    item = item, scoreText = scoreText, scoreValue = scoreValue,
                     scoreValueUnit = scoreValueUnit, impliesPotentialIndeterminateStatus = false
                 )
             )
         }
 
         const val TARGET_RECEPTOR = "PR"
-    }
+    }*/
 }

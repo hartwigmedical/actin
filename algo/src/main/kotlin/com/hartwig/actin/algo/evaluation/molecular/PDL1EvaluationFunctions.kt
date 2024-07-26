@@ -15,7 +15,7 @@ object PDL1EvaluationFunctions {
     fun evaluatePDL1byIHC(
         record: PatientRecord, measure: String?, pdl1Reference: Double, doidModel: DoidModel?, evaluateMaxPDL1: Boolean
     ): Evaluation {
-        val priorMolecularTests = record.molecularHistory.allIHCTests()
+        val priorMolecularTests = record.priorIHCTests
         val isLungCancer = doidModel?.let { DoidEvaluationFunctions.isOfDoidType(it, record.tumor.doids, DoidConstants.LUNG_CANCER_DOID) }
         val pdl1TestsWithRequestedMeasurement = PriorMolecularTestFunctions.allPDL1Tests(priorMolecularTests, measure, isLungCancer)
 

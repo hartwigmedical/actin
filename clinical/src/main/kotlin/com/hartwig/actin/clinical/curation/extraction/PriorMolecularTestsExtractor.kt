@@ -7,7 +7,7 @@ import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.MolecularTestConfig
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
 
 class PriorMolecularTestsExtractor(
@@ -15,7 +15,7 @@ class PriorMolecularTestsExtractor(
     private val molecularTestPdl1Curation: CurationDatabase<MolecularTestConfig>,
 ) {
 
-    fun extract(patientId: String, questionnaire: Questionnaire?): ExtractionResult<List<PriorMolecularTest>> {
+    fun extract(patientId: String, questionnaire: Questionnaire?): ExtractionResult<List<PriorIHCTest>> {
         if (questionnaire == null) {
             return ExtractionResult(emptyList(), CurationExtractionEvaluation())
         }

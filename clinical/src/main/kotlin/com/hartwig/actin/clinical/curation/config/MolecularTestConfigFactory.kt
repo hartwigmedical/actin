@@ -2,7 +2,7 @@ package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationUtil
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.util.ResourceFile
 
 class MolecularTestConfigFactory(private val curationCategory: CurationCategory) : CurationConfigFactory<MolecularTestConfig> {
@@ -27,9 +27,8 @@ class MolecularTestConfigFactory(private val curationCategory: CurationCategory)
         impliesPotentialIndeterminateStatus: Boolean,
         fields: Map<String, Int>,
         parts: Array<String>
-    ): PriorMolecularTest {
-        return PriorMolecularTest(
-            test = parts[fields["test"]!!],
+    ): PriorIHCTest {
+        return PriorIHCTest(
             item = parts[fields["item"]!!],
             measure = ResourceFile.optionalString(parts[fields["measure"]!!]),
             scoreText = ResourceFile.optionalString(parts[fields["scoreText"]!!]),

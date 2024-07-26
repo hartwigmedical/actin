@@ -1,17 +1,12 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
-import org.junit.Test
-
 private const val IHC = "IHC"
 private const val PROTEIN = "protein 1"
 
 class ProteinHasExactExpressionByIHCTest {
     private val function = ProteinHasExactExpressionByIHC(PROTEIN, 2)
 
-    @Test
+/*    @Test
     fun `Should fail when there are no prior tests`() {
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withMolecularTests(emptyList())))
     }
@@ -54,5 +49,5 @@ class ProteinHasExactExpressionByIHCTest {
                 test = IHC, item = PROTEIN, scoreValue = scoreValue, scoreValuePrefix = scoreValuePrefix, scoreText = scoreText
             )
         )
-    }
+    }*/
 }

@@ -9,7 +9,7 @@ class ProteinIsWildTypeByIHC(private val protein: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val allIHCTestsForProtein =
-            PriorMolecularTestFunctions.allIHCTestsForProtein(record.molecularHistory.allIHCTests(), protein)
+            PriorMolecularTestFunctions.allIHCTestsForProtein(record.priorIHCTests, protein)
         val hasOnlyWildTypeResults = allIHCTestsForProtein.isNotEmpty() && allIHCTestsForProtein.all { test ->
             WILD_TYPE_QUERY_STRINGS.any { it.equals(test.scoreText, ignoreCase = true) }
         }

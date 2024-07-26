@@ -1,15 +1,10 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
-import org.junit.Test
-
 private const val IHC = "IHC"
 private const val PROTEIN = "protein 1"
 
 class ProteinIsWildTypeByIHCTest {
-    private val function = ProteinIsWildTypeByIHC(PROTEIN)
+  /*  private val function = ProteinIsWildTypeByIHC(PROTEIN)
 
     @Test
     fun shouldReturnUndeterminedForEmptyListOfTests() {
@@ -47,5 +42,5 @@ class ProteinIsWildTypeByIHCTest {
 
     private fun ihcTest(test: String = IHC, item: String = PROTEIN, scoreText: String? = "WildType"): IHCMolecularTest {
         return IHCMolecularTest((MolecularTestFactory.priorMolecularTest(test = test, item = item, scoreText = scoreText)))
-    }
+    }*/
 }

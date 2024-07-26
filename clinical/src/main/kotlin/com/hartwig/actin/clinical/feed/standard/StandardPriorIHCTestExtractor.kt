@@ -6,57 +6,43 @@ import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.config.MolecularTestConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 
 private const val IHC_STRING = "immunohistochemie"
 
-class StandardMolecularTestExtractor(
+class StandardPriorIHCTestExtractor(
     private val molecularTestCuration: CurationDatabase<MolecularTestConfig>
-) : StandardDataExtractor<List<PriorMolecularTest>> {
-    override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<PriorMolecularTest>> {
+) : StandardDataExtractor<List<PriorIHCTest>> {
+    override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<PriorIHCTest>> {
         val extractedIHCTests = extractIHC(molecularTestCuration, ehrPatientRecord)
         val extractedFromPriorOtherConditions = extractFromPriorOtherConditions(ehrPatientRecord)
-        val extractedFromTumorDifferentiation = extractFromTumorDifferentiation(ehrPatientRecord)
 
         val curatedMolecularTestExtraction =
-            (extractedIHCTests + extractedFromPriorOtherConditions + extractedFromTumorDifferentiation).fold(
+            (extractedIHCTests + extractedFromPriorOtherConditions).fold(
                 ExtractionResult(
-                    emptyList<PriorMolecularTest>(), CurationExtractionEvaluation()
+                    emptyList<PriorIHCTest>(), CurationExtractionEvaluation()
                 )
             ) { acc, result ->
                 ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
             }
 
-        val extractedOtherMolecularTests = ehrPatientRecord.molecularTestHistory.map {
-            PriorMolecularTest(
-                test = it.type,
-                item = it.measure,
-                measure = it.result,
-                measureDate = it.resultDate,
-                impliesPotentialIndeterminateStatus = false,
-                scoreText = it.resultType
-            )
-        }
+        val extractedOtherMolecularTests = ehrPatientRecord.molecularTestHistory
+            .flatMap { test -> test.results.map { test.date to it } }
+            .filter { (_, result) -> result.ihcResult != null }
+            .map { (date, result) ->
+                PriorIHCTest(
+                    item = result.gene,
+                    measure = result.ihcResult,
+                    measureDate = date,
+                    impliesPotentialIndeterminateStatus = false,
+                )
+            }
 
         return ExtractionResult(
             curatedMolecularTestExtraction.extracted + extractedOtherMolecularTests,
             curatedMolecularTestExtraction.evaluation + CurationExtractionEvaluation()
         )
     }
-
-    private fun extractFromTumorDifferentiation(ehrPatientRecord: ProvidedPatientRecord): List<ExtractionResult<List<PriorMolecularTest>>> =
-        ehrPatientRecord.tumorDetails.tumorGradeDifferentiation?.split("\n")?.asSequence()
-            ?.map { it.trim() }
-            ?.filterNot { it.contains(IHC_STRING, ignoreCase = true) }
-            ?.map { curateFromSecondarySource(it, ehrPatientRecord) }
-            ?.filter {
-                it.configs.isNotEmpty()
-            }?.map {
-                ExtractionResult(
-                    it.configs.mapNotNull { config -> config.curated },
-                    it.extractionEvaluation
-                )
-            }?.toList() ?: emptyList()
 
     private fun extractFromPriorOtherConditions(ehrPatientRecord: ProvidedPatientRecord) = ehrPatientRecord.priorOtherConditions.map {
         curateFromSecondarySource(it.name, ehrPatientRecord)
@@ -84,7 +70,7 @@ class StandardMolecularTestExtractor(
 
     private fun extractIHC(
         molecularTestCuration: CurationDatabase<MolecularTestConfig>, ehrPatientRecord: ProvidedPatientRecord
-    ): List<ExtractionResult<List<PriorMolecularTest>>> {
+    ): List<ExtractionResult<List<PriorIHCTest>>> {
         val linesWithIHC =
             ehrPatientRecord.tumorDetails.tumorGradeDifferentiation?.split("\n")?.filter { it.contains(IHC_STRING, ignoreCase = true) }
                 ?: emptyList()

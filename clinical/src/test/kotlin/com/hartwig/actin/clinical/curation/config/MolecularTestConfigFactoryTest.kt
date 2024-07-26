@@ -21,7 +21,6 @@ class MolecularTestConfigFactoryTest {
         assertThat(config.config.input).isEqualTo("input")
         assertThat(config.config.ignore).isEqualTo(false)
         val curated = config.config.curated!!
-        assertThat(curated.test).isEqualTo("test")
         assertThat(curated.item).isEqualTo("item")
         assertThat(curated.measure).isEqualTo("measure")
         assertThat(curated.scoreValuePrefix).isEqualTo("scoreValuePrefix")

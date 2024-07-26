@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestPatientFactory
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.molecular.datamodel.Driver
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.Fusion
@@ -32,9 +32,8 @@ internal object MolecularTestFactory {
         impliesIndeterminate: Boolean = false,
         scoreValue: Double? = null,
         scoreValuePrefix: String? = null
-    ): PriorMolecularTest {
-        return PriorMolecularTest(
-            test = test,
+    ): PriorIHCTest {
+        return PriorIHCTest(
             item = item,
             measure = measure,
             scoreText = scoreText,

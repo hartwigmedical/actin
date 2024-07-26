@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.evaluation.molecular.PriorMolecularTestFunctions.a
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class PriorMolecularTestFunctionsTest {
+class PriorIHCTestFunctionsTest {
 
     @Test
     fun `Should filter prior molecular tests for PDL1`() {

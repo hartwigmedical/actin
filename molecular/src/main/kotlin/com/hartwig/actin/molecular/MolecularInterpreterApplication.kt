@@ -2,7 +2,7 @@ package com.hartwig.actin.molecular
 
 import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.PatientRecordJson
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorSequencingTest
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
@@ -28,13 +28,13 @@ import com.hartwig.serve.datamodel.ActionableEventsLoader
 import com.hartwig.serve.datamodel.KnownEvents
 import com.hartwig.serve.datamodel.KnownEventsLoader
 import com.hartwig.serve.datamodel.RefGenome
+import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import kotlin.system.exitProcess
 
 class MolecularInterpreterApplication(private val config: MolecularInterpreterConfig) {
 
@@ -56,7 +56,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
 
         val orangeMolecularTests = interpretOrangeRecord(config, doidEntry, tumorDoids)
-        val clinicalMolecularTests = interpretClinicalMolecularTests(config, clinical.priorMolecularTests, doidEntry, tumorDoids)
+        val clinicalMolecularTests = interpretClinicalMolecularTests(config, clinical.priorSequencingTests, doidEntry, tumorDoids)
 
         val history = MolecularHistory(orangeMolecularTests + clinicalMolecularTests)
         MolecularHistoryPrinter.printRecord(history)
@@ -92,7 +92,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
 
     private fun interpretClinicalMolecularTests(
         config: MolecularInterpreterConfig,
-        priorMolecularTests: List<PriorMolecularTest>,
+        priorSequencingTests: List<PriorSequencingTest>,
         doidEntry: DoidEntry,
         tumorDoids: Set<String>
     ): List<MolecularTest> {
@@ -117,11 +117,13 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
                 config.referenceGenomeFastaPath,
                 ensemblDataCache
             ),
-            Paver(config.ensemblCachePath, config.referenceGenomeFastaPath, PaveRefGenomeVersion.V37,
-                config.driverGenePanelPath, config.tempDir),
+            Paver(
+                config.ensemblCachePath, config.referenceGenomeFastaPath, PaveRefGenomeVersion.V37,
+                config.driverGenePanelPath, config.tempDir
+            ),
             PaveLite(ensemblDataCache, false)
 
-        ).process(priorMolecularTests)
+        ).process(priorSequencingTests)
         LOGGER.info(" Completed interpretation of {} clinical molecular tests", clinicalMolecularTests.size)
 
         return clinicalMolecularTests

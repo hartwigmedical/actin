@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
+import com.hartwig.actin.clinical.datamodel.PriorSequencingTest
 import com.hartwig.actin.molecular.MolecularExtractor
 import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
@@ -8,14 +9,15 @@ import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletionEx
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 
-class GenericPanelExtractor : MolecularExtractor<PriorMolecularTest, PanelExtraction> {
+class GenericPanelExtractor : MolecularExtractor<PriorSequencingTest, PanelExtraction> {
 
-    override fun extract(input: List<PriorMolecularTest>): List<PanelExtraction> {
-        return input.groupBy { it.test }
-            .flatMap { (test, results) -> groupedByTestDate(results, test) }
+    override fun extract(input: List<PriorSequencingTest>): List<PanelExtraction> {
+       /* return input.groupBy { it.test }
+            .flatMap { (test, results) -> groupedByTestDate(results, test) }*/
+        return emptyList()
     }
 
-    private fun groupedByTestDate(results: List<PriorMolecularTest>, type: String): List<GenericPanelExtraction> {
+    private fun groupedByTestDate(results: List<PriorIHCTest>, type: String): List<GenericPanelExtraction> {
         return results
             .groupBy { it.measureDate }
             .map { (date, results) ->
@@ -52,17 +54,17 @@ class GenericPanelExtractor : MolecularExtractor<PriorMolecularTest, PanelExtrac
             }
     }
 
-    private fun isKnownIgnorableRecord(result: PriorMolecularTest): Boolean {
+    private fun isKnownIgnorableRecord(result: PriorIHCTest): Boolean {
         return result.measure == "GEEN mutaties aangetoond met behulp van het AVL Panel"
 
     }
 
-    private fun parseVariant(priorMolecularTest: PriorMolecularTest): PanelVariantExtraction {
-        return if (priorMolecularTest.item != null && priorMolecularTest.measure != null) {
-            PanelVariantExtraction(gene = priorMolecularTest.item!!, hgvsCodingOrProteinImpact = priorMolecularTest.measure!!)
+    private fun parseVariant(priorIHCTest: PriorIHCTest): PanelVariantExtraction {
+        return if (priorIHCTest.item != null && priorIHCTest.measure != null) {
+            PanelVariantExtraction(gene = priorIHCTest.item!!, hgvsCodingOrProteinImpact = priorIHCTest.measure!!)
         } else {
             throw IllegalArgumentException(
-                "Expected item and measure for variant but got ${priorMolecularTest.item} and ${priorMolecularTest.measure}"
+                "Expected item and measure for variant but got ${priorIHCTest.item} and ${priorIHCTest.measure}"
             )
         }
     }

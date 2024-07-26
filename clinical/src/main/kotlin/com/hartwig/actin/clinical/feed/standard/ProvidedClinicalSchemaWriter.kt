@@ -2,6 +2,7 @@ package com.hartwig.actin.clinical.feed.standard
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.kjetland.jackson.jsonSchema.JsonSchemaConfig
 import com.kjetland.jackson.jsonSchema.JsonSchemaGenerator
 import java.io.File
 
@@ -11,7 +12,9 @@ class ProvidedClinicalSchemaWriter {
         val mapper = ObjectMapper().apply {
             registerModule(KotlinModule.Builder().build())
         }
-        val schema = JsonSchemaGenerator(mapper).generateJsonSchema(ProvidedPatientRecord::class.java)
+        val config = JsonSchemaConfig.nullableJsonSchemaDraft4().withFailOnUnknownProperties(false)
+        val schema =
+            JsonSchemaGenerator(mapper, config).generateJsonSchema(ProvidedMolecularTest::class.java)
 
         mapper.writeValue(
             File("${System.getProperty("user.dir")}/clinical/src/main/resources/json_schema/provided_clinical_data.schema.json"),

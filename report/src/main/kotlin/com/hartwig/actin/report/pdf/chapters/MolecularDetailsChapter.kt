@@ -36,7 +36,7 @@ class MolecularDetailsChapter(private val report: Report, override val include: 
         val keyWidth = Formats.STANDARD_KEY_WIDTH
         val priorMolecularResultGenerator =
             PriorMolecularResultGenerator(
-                report.patientRecord.molecularHistory,
+                report.patientRecord,
                 keyWidth,
                 contentWidth() - keyWidth - 10,
                 PriorMolecularTestInterpreter()
