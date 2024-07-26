@@ -15,6 +15,7 @@ class StandardPriorSequencingTestExtractor : StandardDataExtractor<List<PriorSeq
             PriorSequencingTest(
                 test = it.test,
                 date = it.date,
+                testedGenes = it.testedGenes,
                 variants = variants(it),
                 fusions = fusions(it),
                 amplifications = amplifications(it),

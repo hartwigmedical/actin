@@ -43,7 +43,7 @@ class StandardPriorSequencingTestExtractorTest {
         val result = extractor.extract(
             EhrTestData.createEhrPatientRecord().copy(molecularTestHistory = listOf(BASE_MOLECULAR_TEST.copy(testedGenes = setOf(GENE))))
         )
-        assertResultContains(result, BASE_PRIOR_SEQUENCING.copy(genesTested = setOf(GENE)))
+        assertResultContains(result, BASE_PRIOR_SEQUENCING.copy(testedGenes = setOf(GENE)))
     }
 
     @Test

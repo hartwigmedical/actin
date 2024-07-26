@@ -15,7 +15,7 @@ data class PriorSequencingTest(
     val date: LocalDate? = null,
     val tumorMutationalBurden: Double? = null,
     val microSatelliteInstability: Boolean? = null,
-    val genesTested: Set<String> = emptySet(),
+    val testedGenes: Set<String>? = null,
     val variants: Set<SequencedVariant> = emptySet(),
     val amplifications: Set<SequencedAmplification> = emptySet(),
     val exonSkips: Set<SequencedExonSkip> = emptySet(),

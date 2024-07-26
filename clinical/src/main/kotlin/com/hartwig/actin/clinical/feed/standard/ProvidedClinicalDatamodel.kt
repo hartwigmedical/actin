@@ -85,7 +85,7 @@ data class ProvidedMolecularTest(
     @JsonPropertyDescription("Name of the test administered, as specific as possible (eg. Archer, NGS, IHC)") val test: String,
     @JsonPropertyDescription("Date the test was administered") val date: LocalDate? = null,
     @JsonPropertyDescription("Name of the source system from which the data came (eg. PALGA, DNA-DB)") val datasource: String? = null,
-    @JsonPropertyDescription("List of genes that were tested.") val testedGenes: Set<String>? = emptySet(),
+    @JsonPropertyDescription("List of genes that were tested.") val testedGenes: Set<String>? = null,
     val results: Set<ProvidedMolecularTestResult>
 )
 
