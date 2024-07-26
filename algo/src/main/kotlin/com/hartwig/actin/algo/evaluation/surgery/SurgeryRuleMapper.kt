@@ -20,11 +20,11 @@ class SurgeryRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
     private fun hasHadRecentSurgeryCreator(): FunctionCreator {
         val evaluationDate = referenceDateProvider().date()
         val minDate = evaluationDate.minusMonths(2)
-        return FunctionCreator { HasHadAnySurgeryAfterSpecificDate(minDate, evaluationDate) }
+        return { HasHadAnySurgeryAfterSpecificDate(minDate, evaluationDate) }
     }
 
     private fun hasHadSurgeryInPastWeeksCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val evaluationDate = referenceDateProvider().date()
             val maxAgeWeeks = functionInputResolver().createOneIntegerInput(function)
             val minDate = evaluationDate.minusWeeks(maxAgeWeeks.toLong()).plusWeeks(2)
@@ -33,7 +33,7 @@ class SurgeryRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
     }
 
     private fun hasHadSurgeryInPastMonthsCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val evaluationDate = referenceDateProvider().date()
             val maxAgeMonths = functionInputResolver().createOneIntegerInput(function)
             val minDate = evaluationDate.minusMonths(maxAgeMonths.toLong())
@@ -43,10 +43,10 @@ class SurgeryRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
 
     private fun hasPlannedSurgeryCreator(): FunctionCreator {
         val evaluationDate = referenceDateProvider().date()
-        return FunctionCreator { HasHadAnySurgeryAfterSpecificDate(evaluationDate, evaluationDate) }
+        return { HasHadAnySurgeryAfterSpecificDate(evaluationDate, evaluationDate) }
     }
 
     private fun hasHadCytoreductiveSurgeryCreator(): FunctionCreator {
-        return FunctionCreator { HasHadCytoreductiveSurgery() }
+        return { HasHadCytoreductiveSurgery() }
     }
 }
