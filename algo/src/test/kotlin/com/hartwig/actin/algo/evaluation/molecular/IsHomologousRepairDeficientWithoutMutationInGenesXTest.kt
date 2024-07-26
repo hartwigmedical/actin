@@ -64,7 +64,7 @@ class IsHomologousRepairDeficientWithoutMutationInGenesXTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(null, hrdVariant(isReportable = true))
+                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(null, hrdVariant(gene = "RAD51C", isReportable = true))
             )
         )
     }
