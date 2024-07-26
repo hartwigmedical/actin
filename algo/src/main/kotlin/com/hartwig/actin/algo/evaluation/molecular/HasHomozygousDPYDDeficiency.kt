@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.molecular.DPYDDeficiencyEvaluationFunctions.DPYD_GENE
 import com.hartwig.actin.algo.evaluation.molecular.DPYDDeficiencyEvaluationFunctions.containsUnexpectedHaplotypeFunction
+import com.hartwig.actin.algo.evaluation.molecular.DPYDDeficiencyEvaluationFunctions.isHomozygousDeficient
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 
 class HasHomozygousDPYDDeficiency internal constructor() : MolecularEvaluationFunction {
@@ -23,7 +24,7 @@ class HasHomozygousDPYDDeficiency internal constructor() : MolecularEvaluationFu
                 )
             }
 
-            DPYDDeficiencyEvaluationFunctions.isHomozygousDeficient(pharmaco) -> {
+            isHomozygousDeficient(pharmaco) -> {
                 EvaluationFactory.pass("Patient is homozygous DPYD deficient", inclusionEvents = setOf("DPYD deficient"))
             }
 
