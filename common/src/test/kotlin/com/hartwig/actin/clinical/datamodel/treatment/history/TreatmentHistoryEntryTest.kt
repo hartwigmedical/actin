@@ -15,6 +15,7 @@ class TreatmentHistoryEntryTest {
 
     private val treatmentHistoryEntryWithoutType = treatmentHistoryEntryWithDrugTypes(emptySet())
     private val treatmentHistoryEntryWithDrugType = treatmentHistoryEntryWithDrugTypes(setOf(DrugType.PLATINUM_COMPOUND))
+    private val treatmentHistoryEntryWithIntent = treatmentHistoryEntryWithIntents(setOf(Intent.PALLIATIVE))
     private val switchTreatmentStage = treatmentStage(
         drugTreatment("SWITCH TREATMENT", TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.ALK_INHIBITOR))
     )
@@ -198,8 +199,22 @@ class TreatmentHistoryEntryTest {
         ).isFalse()
     }
 
+    @Test
+    fun `Should return true for intent that does match set of intents`() {
+        assertThat(treatmentHistoryEntryWithIntent.matchesIntentFromSet(setOf(Intent.PALLIATIVE))).isTrue()
+    }
+
+    @Test
+    fun `Should return false for intent that does not match set of intents`() {
+        assertThat(treatmentHistoryEntryWithIntent.matchesIntentFromSet(setOf(Intent.ADJUVANT))).isFalse()
+    }
+
     private fun treatmentHistoryEntryWithDrugTypes(types: Set<DrugType>): TreatmentHistoryEntry {
         return treatmentHistoryEntry(treatments = setOf(drugTreatment("test treatment", TreatmentCategory.CHEMOTHERAPY, types)))
+    }
+
+    private fun treatmentHistoryEntryWithIntents(intents: Set<Intent>): TreatmentHistoryEntry {
+        return treatmentHistoryEntry(treatments = setOf(drugTreatment("test treatment", TreatmentCategory.CHEMOTHERAPY)), intents = intents)
     }
 
     private fun chemotherapy(name: String): DrugTreatment {

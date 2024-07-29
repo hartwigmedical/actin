@@ -12,9 +12,13 @@ import org.junit.Test
 
 class HasHadSomeTreatmentsWithCategoryWithIntentsTest {
 
+    private val matchingCategory = TreatmentCategory.TARGETED_THERAPY
+    private val matchingIntents = setOf(Intent.PALLIATIVE)
+    private val function = HasHadSomeTreatmentsWithCategoryWithIntents(matchingCategory, matchingIntents)
+
     @Test
     fun `Should fail for no treatments`() {
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(emptyList())))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())))
     }
 
     @Test
@@ -22,13 +26,13 @@ class HasHadSomeTreatmentsWithCategoryWithIntentsTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)))
         assertEvaluation(
             EvaluationResult.FAIL,
-            FUNCTION.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
+            function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
         )
     }
 
     @Test
     fun `Should fail for correct treatment category with wrong intent`() {
-        val treatment = treatment("matching category", isSystemic = true, categories = setOf(MATCHING_CATEGORY))
+        val treatment = treatment("matching category with wrong intent", isSystemic = true, categories = setOf(matchingCategory))
         val patientRecord = withTreatmentHistory(
             listOf(
                 treatmentHistoryEntry(
@@ -37,26 +41,26 @@ class HasHadSomeTreatmentsWithCategoryWithIntentsTest {
                 )
             )
         )
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(patientRecord))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(patientRecord))
     }
 
     @Test
     fun `Should pass when treatments with correct category and intent`() {
-        val treatment = treatment("matching category", isSystemic = true, categories = setOf(MATCHING_CATEGORY))
+        val treatment = treatment("matching category and intent", isSystemic = true, categories = setOf(matchingCategory))
         val patientRecord = withTreatmentHistory(
             listOf(
                 treatmentHistoryEntry(
                     setOf(treatment),
-                    intents = MATCHING_INTENT_SET
+                    intents = matchingIntents
                 )
             )
         )
-        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(patientRecord))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(patientRecord))
     }
 
     @Test
     fun `Should return undetermined when treatments with correct category and no intent`() {
-        val treatment = treatment("matching category", isSystemic = true, categories = setOf(MATCHING_CATEGORY))
+        val treatment = treatment("matching category", isSystemic = true, categories = setOf(matchingCategory))
         val patientRecord = withTreatmentHistory(
             listOf(
                 treatmentHistoryEntry(
@@ -64,12 +68,12 @@ class HasHadSomeTreatmentsWithCategoryWithIntentsTest {
                 )
             )
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(patientRecord))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
     }
 
     @Test
     fun `Should return undetermined when trial treatments`() {
-        val treatment = treatment("trial", isSystemic = true, categories = setOf(MATCHING_CATEGORY))
+        val treatment = treatment("trial", isSystemic = true, categories = setOf(matchingCategory))
         val patientRecord = withTreatmentHistory(
             listOf(
                 treatmentHistoryEntry(
@@ -77,7 +81,7 @@ class HasHadSomeTreatmentsWithCategoryWithIntentsTest {
                 )
             )
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(patientRecord))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
     }
 
     @Test
@@ -90,12 +94,6 @@ class HasHadSomeTreatmentsWithCategoryWithIntentsTest {
                 )
             )
         )
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(patientRecord))
-    }
-
-    companion object {
-        private val MATCHING_CATEGORY = TreatmentCategory.TARGETED_THERAPY
-        private val MATCHING_INTENT_SET = setOf(Intent.PALLIATIVE)
-        private val FUNCTION = HasHadSomeTreatmentsWithCategoryWithIntents(MATCHING_CATEGORY, MATCHING_INTENT_SET)
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(patientRecord))
     }
 }

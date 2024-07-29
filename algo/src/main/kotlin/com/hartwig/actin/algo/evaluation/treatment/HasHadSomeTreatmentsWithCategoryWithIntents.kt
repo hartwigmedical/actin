@@ -14,8 +14,8 @@ class HasHadSomeTreatmentsWithCategoryWithIntents(private val category: Treatmen
         val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
             record.oncologicalHistory,
             category,
-            { historyEntry -> intents.all { intent -> historyEntry.hasIntent(intent) == true } })
-        val intentsList = Format.concatItemsWithAnd(intents)
+            { historyEntry -> historyEntry.matchesIntentFromSet(intents) })
+        val intentsList = Format.concatItemsWithOr(intents)
 
         return when {
             (treatmentSummary.numSpecificMatches() >= 1) -> {
