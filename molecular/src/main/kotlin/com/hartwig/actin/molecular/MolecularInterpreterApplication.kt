@@ -2,7 +2,7 @@ package com.hartwig.actin.molecular
 
 import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.PatientRecordJson
-import com.hartwig.actin.clinical.datamodel.PriorSequencingTest
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
@@ -56,7 +56,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
 
         val orangeMolecularTests = interpretOrangeRecord(config, doidEntry, tumorDoids)
-        val clinicalMolecularTests = interpretClinicalMolecularTests(config, clinical.priorSequencingTests, doidEntry, tumorDoids)
+        val clinicalMolecularTests = interpretClinicalMolecularTests(config, clinical.priorIHCTests, doidEntry, tumorDoids)
 
         val history = MolecularHistory(orangeMolecularTests + clinicalMolecularTests)
         MolecularHistoryPrinter.printRecord(history)
@@ -92,7 +92,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
 
     private fun interpretClinicalMolecularTests(
         config: MolecularInterpreterConfig,
-        priorSequencingTests: List<PriorSequencingTest>,
+        priorIHCTests: List<PriorIHCTest>,
         doidEntry: DoidEntry,
         tumorDoids: Set<String>
     ): List<MolecularTest> {
@@ -123,7 +123,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             ),
             PaveLite(ensemblDataCache, false)
 
-        ).process(priorSequencingTests)
+        ).process(priorIHCTests)
         LOGGER.info(" Completed interpretation of {} clinical molecular tests", clinicalMolecularTests.size)
 
         return clinicalMolecularTests

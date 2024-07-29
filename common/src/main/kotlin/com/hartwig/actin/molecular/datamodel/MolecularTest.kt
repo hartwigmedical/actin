@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.datamodel
 
-import com.hartwig.actin.clinical.datamodel.PriorSequencingTest
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import java.time.LocalDate
 
 const val ARCHER_FP_LUNG_TARGET = "Archer FP Lung Target"
@@ -21,11 +21,11 @@ interface MolecularTest {
 const val NO_EVIDENCE_SOURCE = "none"
 
 data class OtherPriorMolecularTest(
-    val test: PriorSequencingTest
+    val test: PriorIHCTest
 ) : MolecularTest {
     override val experimentType = ExperimentType.OTHER
     override val testTypeDisplay = null
-    override val date = test.date
+    override val date = test.measureDate
     override val drivers = Drivers()
     override val characteristics = MolecularCharacteristics()
     override val evidenceSource = NO_EVIDENCE_SOURCE

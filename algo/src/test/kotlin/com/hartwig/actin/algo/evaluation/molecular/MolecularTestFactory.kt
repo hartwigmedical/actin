@@ -34,6 +34,7 @@ internal object MolecularTestFactory {
         scoreValuePrefix: String? = null
     ): PriorIHCTest {
         return PriorIHCTest(
+            test = test,
             item = item,
             measure = measure,
             scoreText = scoreText,

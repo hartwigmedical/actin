@@ -8,6 +8,8 @@ import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
 import com.hartwig.actin.clinical.curation.config.CypInteractionConfigFactory
 import com.hartwig.actin.clinical.curation.config.ECGConfig
 import com.hartwig.actin.clinical.curation.config.ECGConfigFactory
+import com.hartwig.actin.clinical.curation.config.IHCTestConfig
+import com.hartwig.actin.clinical.curation.config.IHCTestConfigFactory
 import com.hartwig.actin.clinical.curation.config.InfectionConfig
 import com.hartwig.actin.clinical.curation.config.InfectionConfigFactory
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
@@ -18,8 +20,6 @@ import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfigFactory
 import com.hartwig.actin.clinical.curation.config.MedicationNameConfig
 import com.hartwig.actin.clinical.curation.config.MedicationNameConfigFactory
-import com.hartwig.actin.clinical.curation.config.MolecularTestConfig
-import com.hartwig.actin.clinical.curation.config.MolecularTestConfigFactory
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfigFactory
 import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
@@ -30,6 +30,8 @@ import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
 import com.hartwig.actin.clinical.curation.config.QTProlongatingConfigFactory
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfigFactory
+import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
+import com.hartwig.actin.clinical.curation.config.SequencingTestConfigFactory
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityConfigFactory
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
@@ -55,8 +57,9 @@ data class CurationDatabaseContext(
     val periodBetweenUnitCuration: CurationDatabase<PeriodBetweenUnitConfig>,
     val complicationCuration: CurationDatabase<ComplicationConfig>,
     val toxicityCuration: CurationDatabase<ToxicityConfig>,
-    val molecularTestIhcCuration: CurationDatabase<MolecularTestConfig>,
-    val molecularTestPdl1Curation: CurationDatabase<MolecularTestConfig>,
+    val molecularTestIhcCuration: CurationDatabase<IHCTestConfig>,
+    val molecularTestPdl1Curation: CurationDatabase<IHCTestConfig>,
+    val sequencingTestCuration: CurationDatabase<SequencingTestConfig>,
     val medicationNameCuration: CurationDatabase<MedicationNameConfig>,
     val medicationDosageCuration: CurationDatabase<MedicationDosageConfig>,
     val intoleranceCuration: CurationDatabase<IntoleranceConfig>,
@@ -159,15 +162,21 @@ data class CurationDatabaseContext(
             molecularTestIhcCuration = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.MOLECULAR_TEST_IHC_TSV,
-                MolecularTestConfigFactory(CurationCategory.MOLECULAR_TEST_IHC),
+                IHCTestConfigFactory(CurationCategory.MOLECULAR_TEST_IHC),
                 CurationCategory.MOLECULAR_TEST_IHC
             ) { it.molecularTestEvaluatedInputs },
             molecularTestPdl1Curation = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.MOLECULAR_TEST_PDL1_TSV,
-                MolecularTestConfigFactory(CurationCategory.MOLECULAR_TEST_PDL1),
+                IHCTestConfigFactory(CurationCategory.MOLECULAR_TEST_PDL1),
                 CurationCategory.MOLECULAR_TEST_PDL1
             ) { it.molecularTestEvaluatedInputs },
+            sequencingTestCuration = CurationDatabaseReader.read(
+                curationDir,
+                CurationDatabaseReader.SEQUENCING_TEST_TSV,
+                SequencingTestConfigFactory(),
+                CurationCategory.SEQUENCING_TEST
+            ) { it.sequencingTestEvaluatedInputs },
             toxicityCuration = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.TOXICITY_TSV,

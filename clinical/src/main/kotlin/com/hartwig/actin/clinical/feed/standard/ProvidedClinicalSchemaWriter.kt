@@ -12,9 +12,10 @@ class ProvidedClinicalSchemaWriter {
         val mapper = ObjectMapper().apply {
             registerModule(KotlinModule.Builder().build())
         }
-        val config = JsonSchemaConfig.nullableJsonSchemaDraft4().withFailOnUnknownProperties(false)
         val schema =
-            JsonSchemaGenerator(mapper, config).generateJsonSchema(ProvidedMolecularTest::class.java)
+            JsonSchemaGenerator(mapper, JsonSchemaConfig.nullableJsonSchemaDraft4().withFailOnUnknownProperties(false)).generateJsonSchema(
+                ProvidedPatientRecord::class.java
+            )
 
         mapper.writeValue(
             File("${System.getProperty("user.dir")}/clinical/src/main/resources/json_schema/provided_clinical_data.schema.json"),

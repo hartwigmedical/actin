@@ -1,8 +1,8 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
-import com.hartwig.actin.clinical.datamodel.PriorSequencingTest
 import com.hartwig.actin.molecular.datamodel.AVL_PANEL
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
@@ -109,21 +109,29 @@ class MolecularResultsAreAvailableForGeneTest {
                 MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
                     ExperimentType.HARTWIG_WHOLE_GENOME,
                     false,
-                    OtherPriorMolecularTest(PriorSequencingTest(test = "other"))
+                    OtherPriorMolecularTest(MolecularTestFactory.priorMolecularTest(item = "gene 1", impliesIndeterminate = true))
                 )
             )
         )
     }
 
- /*   @Test
+    @Test
     fun `Should pass if no successful WGS or oncopanel has been performed but gene is in priorMolecularTest`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
+                MolecularTestFactory.withExperimentTypeAndContainingTumorCells(
                     ExperimentType.HARTWIG_WHOLE_GENOME,
-                    false,
-                    IHCMolecularTest(MolecularTestFactory.priorMolecularTest(test = "IHC", item = "gene 1", impliesIndeterminate = false))
+                    false
+
+                ).copy(
+                    priorIHCTests = listOf(
+                        MolecularTestFactory.priorMolecularTest(
+                            test = "IHC",
+                            item = "gene 1",
+                            impliesIndeterminate = false
+                        )
+                    )
                 )
             )
         )
@@ -134,20 +142,19 @@ class MolecularResultsAreAvailableForGeneTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
+                TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
+                    priorIHCTests =
                     listOf(
-                        IHCMolecularTest(
-                            MolecularTestFactory.priorMolecularTest(
-                                test = "IHC",
-                                item = "gene 1",
-                                impliesIndeterminate = false
-                            )
+                        MolecularTestFactory.priorMolecularTest(
+                            test = "IHC",
+                            item = "gene 1",
+                            impliesIndeterminate = false
                         )
                     )
                 )
             )
         )
-    }*/
+    }
 
     @Test
     fun `Should resolve to undetermined if no data is available for any tests for this gene`() {
@@ -157,7 +164,7 @@ class MolecularResultsAreAvailableForGeneTest {
                 MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
                     ExperimentType.HARTWIG_WHOLE_GENOME,
                     false,
-                    OtherPriorMolecularTest(PriorSequencingTest(test = "other 2"))
+                    OtherPriorMolecularTest(MolecularTestFactory.priorMolecularTest(item = "gene 2", impliesIndeterminate = false))
                 )
             )
         )

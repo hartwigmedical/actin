@@ -3,7 +3,7 @@ package com.hartwig.actin.clinical.feed.standard
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationWarning
-import com.hartwig.actin.clinical.curation.config.MolecularTestConfig
+import com.hartwig.actin.clinical.curation.config.IHCTestConfig
 import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.clinical.feed.standard.EhrTestData.createEhrPatientRecord
 import com.hartwig.actin.molecular.datamodel.TEST_DATE
@@ -33,7 +33,7 @@ private val EHR_PATIENT_RECORD_WITH_PATHOLOGY =
     EHR_PATIENT_RECORD.copy(tumorDetails = EHR_PATIENT_RECORD.tumorDetails.copy(tumorGradeDifferentiation = PATHOLOGY_REPORT))
 private val EHR_PATIENT_RECORD_WITH_IHC_TEST =
     EHR_PATIENT_RECORD.copy(
-        molecularTestHistory = listOf(
+        molecularTests = listOf(
             ProvidedMolecularTest(
                 "IHC", TEST_DATE, "PALGA", emptySet(), results = setOf(
                     ProvidedMolecularTestResult(gene = "HER2", ihcResult = "Negative")
@@ -47,7 +47,7 @@ private val UNUSED_DATE = LocalDate.of(2024, 4, 15)
 
 class StandardPriorIHCTestExtractorTest {
 
-    private val molecularTestCuration = mockk<CurationDatabase<MolecularTestConfig>> {
+    private val molecularTestCuration = mockk<CurationDatabase<IHCTestConfig>> {
         every { find(any()) } returns emptySet()
     }
     private val extractor = StandardPriorIHCTestExtractor(molecularTestCuration)
@@ -71,7 +71,7 @@ class StandardPriorIHCTestExtractorTest {
     @Test
     fun `Should extract and curate IHC lines from tumor grade differentiation`() {
         every { molecularTestCuration.find(IHC_LINE) } returns setOf(
-            MolecularTestConfig(
+            IHCTestConfig(
                 input = IHC_LINE,
                 curated = PRIOR_IHC_TEST
             )
@@ -84,7 +84,7 @@ class StandardPriorIHCTestExtractorTest {
     @Test
     fun `Should ignore lines if ignored in curation`() {
         every { molecularTestCuration.find(IHC_LINE) } returns setOf(
-            MolecularTestConfig(
+            IHCTestConfig(
                 input = IHC_LINE,
                 ignore = true
             )
@@ -115,11 +115,11 @@ class StandardPriorIHCTestExtractorTest {
     fun `Should curate molecular tests from prior other conditions, supporting multiple configs per input, but ignore any curation warnings`() {
         val anotherMolecularTest = PRIOR_MOLECULAR_TEST.copy(item = "ERBB2")
         every { molecularTestCuration.find(PRIOR_CONDITION_INPUT) } returns setOf(
-            MolecularTestConfig(
+            IHCTestConfig(
                 input = PRIOR_CONDITION_INPUT,
                 curated = PRIOR_MOLECULAR_TEST
             ),
-            MolecularTestConfig(
+            IHCTestConfig(
                 input = PRIOR_CONDITION_INPUT,
                 curated = anotherMolecularTest
             )

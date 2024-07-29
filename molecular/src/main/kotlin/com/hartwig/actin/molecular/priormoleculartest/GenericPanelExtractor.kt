@@ -1,7 +1,6 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
 import com.hartwig.actin.clinical.datamodel.PriorIHCTest
-import com.hartwig.actin.clinical.datamodel.PriorSequencingTest
 import com.hartwig.actin.molecular.MolecularExtractor
 import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
@@ -9,12 +8,11 @@ import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletionEx
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 
-class GenericPanelExtractor : MolecularExtractor<PriorSequencingTest, PanelExtraction> {
+class GenericPanelExtractor : MolecularExtractor<PriorIHCTest, PanelExtraction> {
 
-    override fun extract(input: List<PriorSequencingTest>): List<PanelExtraction> {
-       /* return input.groupBy { it.test }
-            .flatMap { (test, results) -> groupedByTestDate(results, test) }*/
-        return emptyList()
+    override fun extract(input: List<PriorIHCTest>): List<PanelExtraction> {
+        return input.groupBy { it.test }
+            .flatMap { (test, results) -> groupedByTestDate(results, test) }
     }
 
     private fun groupedByTestDate(results: List<PriorIHCTest>, type: String): List<GenericPanelExtraction> {
@@ -59,12 +57,12 @@ class GenericPanelExtractor : MolecularExtractor<PriorSequencingTest, PanelExtra
 
     }
 
-    private fun parseVariant(priorIHCTest: PriorIHCTest): PanelVariantExtraction {
-        return if (priorIHCTest.item != null && priorIHCTest.measure != null) {
-            PanelVariantExtraction(gene = priorIHCTest.item!!, hgvsCodingOrProteinImpact = priorIHCTest.measure!!)
+    private fun parseVariant(priorMolecularTest: PriorIHCTest): PanelVariantExtraction {
+        return if (priorMolecularTest.item != null && priorMolecularTest.measure != null) {
+            PanelVariantExtraction(gene = priorMolecularTest.item!!, hgvsCodingOrProteinImpact = priorMolecularTest.measure!!)
         } else {
             throw IllegalArgumentException(
-                "Expected item and measure for variant but got ${priorIHCTest.item} and ${priorIHCTest.measure}"
+                "Expected item and measure for variant but got ${priorMolecularTest.item} and ${priorMolecularTest.measure}"
             )
         }
     }

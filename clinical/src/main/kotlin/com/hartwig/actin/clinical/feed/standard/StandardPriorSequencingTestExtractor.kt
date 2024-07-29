@@ -1,6 +1,8 @@
 package com.hartwig.actin.clinical.feed.standard
 
 import com.hartwig.actin.clinical.ExtractionResult
+import com.hartwig.actin.clinical.curation.CurationDatabase
+import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.datamodel.PriorSequencingTest
 import com.hartwig.actin.clinical.datamodel.SequencedAmplification
@@ -8,10 +10,10 @@ import com.hartwig.actin.clinical.datamodel.SequencedExonSkip
 import com.hartwig.actin.clinical.datamodel.SequencedFusion
 import com.hartwig.actin.clinical.datamodel.SequencedVariant
 
-class StandardPriorSequencingTestExtractor : StandardDataExtractor<List<PriorSequencingTest>> {
+class StandardPriorSequencingTestExtractor(curation: CurationDatabase<SequencingTestConfig>) : StandardDataExtractor<List<PriorSequencingTest>> {
 
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<PriorSequencingTest>> {
-        return ExtractionResult(ehrPatientRecord.molecularTestHistory.map {
+        return ExtractionResult(ehrPatientRecord.molecularTests.map {
             PriorSequencingTest(
                 test = it.test,
                 date = it.date,
@@ -19,10 +21,18 @@ class StandardPriorSequencingTestExtractor : StandardDataExtractor<List<PriorSeq
                 variants = variants(it),
                 fusions = fusions(it),
                 amplifications = amplifications(it),
-                exonSkips = exonSkips(it)
+                exonSkips = exonSkips(it),
+                isMicroSatelliteInstability = msi(it),
+                tumorMutationalBurden = tmb(it),
             )
         }, CurationExtractionEvaluation())
     }
+
+    private fun tmb(it: ProvidedMolecularTest) =
+        it.results.filter { result -> result.tmb != null }.firstNotNullOfOrNull { result -> result.tmb }
+
+    private fun msi(it: ProvidedMolecularTest) = it.results.filter { result -> result.msi != null }
+        .firstNotNullOfOrNull { result -> result.msi }
 
     private fun exonSkips(
         it: ProvidedMolecularTest

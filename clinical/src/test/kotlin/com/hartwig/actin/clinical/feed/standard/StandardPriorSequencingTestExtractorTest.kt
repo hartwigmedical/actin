@@ -41,7 +41,7 @@ class StandardPriorSequencingTestExtractorTest {
     @Test
     fun `Should extract sequencing with test, date, tested genes`() {
         val result = extractor.extract(
-            EhrTestData.createEhrPatientRecord().copy(molecularTestHistory = listOf(BASE_MOLECULAR_TEST.copy(testedGenes = setOf(GENE))))
+            EhrTestData.createEhrPatientRecord().copy(molecularTests = listOf(BASE_MOLECULAR_TEST.copy(testedGenes = setOf(GENE))))
         )
         assertResultContains(result, BASE_PRIOR_SEQUENCING.copy(testedGenes = setOf(GENE)))
     }
@@ -68,8 +68,7 @@ class StandardPriorSequencingTestExtractorTest {
             )
         )
         assertResultContains(
-            result,
-            BASE_PRIOR_SEQUENCING.copy(fusions = setOf(SequencedFusion(geneUp = FUSION_GENE_UP, geneDown = FUSION_GENE_DOWN)))
+            result, BASE_PRIOR_SEQUENCING.copy(fusions = setOf(SequencedFusion(geneUp = FUSION_GENE_UP, geneDown = FUSION_GENE_DOWN)))
         )
     }
 
@@ -81,8 +80,7 @@ class StandardPriorSequencingTestExtractorTest {
             )
         )
         assertResultContains(
-            result,
-            BASE_PRIOR_SEQUENCING.copy(
+            result, BASE_PRIOR_SEQUENCING.copy(
                 amplifications = setOf(
                     SequencedAmplification(
                         gene = AMPLIFIED_GENE, chromosome = AMPLIFIED_CHROMOSOME
@@ -94,14 +92,9 @@ class StandardPriorSequencingTestExtractorTest {
 
     @Test
     fun `Should extract sequencing with exon skipping`() {
-        val result = extractionResult(
-            ProvidedMolecularTestResult(
-                gene = GENE, exonsSkipStart = 1, exonsSkipEnd = 2
-            )
-        )
+        val result = extractionResult(ProvidedMolecularTestResult(gene = GENE, exonsSkipStart = 1, exonsSkipEnd = 2))
         assertResultContains(
-            result,
-            BASE_PRIOR_SEQUENCING.copy(
+            result, BASE_PRIOR_SEQUENCING.copy(
                 exonSkips = setOf(
                     SequencedExonSkip(gene = GENE, exonStart = 1, exonEnd = 2)
                 )
@@ -109,8 +102,19 @@ class StandardPriorSequencingTestExtractorTest {
         )
     }
 
+    @Test
+    fun `Should extract sequencing with TMB and MSI`() {
+        val result = extractionResult(ProvidedMolecularTestResult(gene = GENE, tmb = 1.0, msi = true))
+        assertResultContains(
+            result, BASE_PRIOR_SEQUENCING.copy(
+                tumorMutationalBurden = 1.0,
+                isMicroSatelliteInstability = true
+            )
+        )
+    }
+
     private fun extractionResult(result: ProvidedMolecularTestResult) = extractor.extract(
-        EhrTestData.createEhrPatientRecord().copy(molecularTestHistory = listOf(BASE_MOLECULAR_TEST.copy(results = setOf(result))))
+        EhrTestData.createEhrPatientRecord().copy(molecularTests = listOf(BASE_MOLECULAR_TEST.copy(results = setOf(result))))
     )
 
     private fun assertResultContains(result: ExtractionResult<List<PriorSequencingTest>>, priorSequencingTest: PriorSequencingTest) {

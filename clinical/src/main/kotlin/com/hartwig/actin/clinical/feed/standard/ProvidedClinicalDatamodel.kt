@@ -23,7 +23,8 @@ data class ProvidedPatientRecord(
     val complications: List<ProvidedComplication> = emptyList(),
     val labValues: List<ProvidedLabValue> = emptyList(),
     val medications: List<ProvidedMedication>? = emptyList(),
-    val molecularTestHistory: List<ProvidedMolecularTest> = emptyList(),
+    val molecularTestHistory: List<ProvidedMolecularTestLegacy> = emptyList(),
+    val molecularTests: List<ProvidedMolecularTest> = emptyList(),
     val patientDetails: ProvidedPatientDetail,
     val priorOtherConditions: List<ProvidedPriorOtherCondition> = emptyList(),
     val surgeries: List<ProvidedSurgery> = emptyList(),
@@ -81,6 +82,15 @@ data class ProvidedTreatmentModification(
 )
 
 @JacksonSerializable
+data class ProvidedMolecularTestLegacy(
+    @JsonPropertyDescription("Type of test administered (eg. IHC)") val type: String,
+    @JsonPropertyDescription("Measured gene or protein(eg. HER2)") val measure: String?,
+    @JsonPropertyDescription("Result of the test (eg. Negative/3+)") val result: String,
+    val resultType: String?,
+    val resultDate: LocalDate,
+)
+
+@JacksonSerializable
 data class ProvidedMolecularTest(
     @JsonPropertyDescription("Name of the test administered, as specific as possible (eg. Archer, NGS, IHC)") val test: String,
     @JsonPropertyDescription("Date the test was administered") val date: LocalDate? = null,
@@ -108,7 +118,7 @@ data class ProvidedMolecularTestResult(
     @JsonPropertyDescription("Flag should be set to indicate a negative result for a gene (ie. nothing was found)") val noMutationsFound: Boolean? = null,
     @JsonPropertyDescription("Free text for a test result which does not fit into any of the other fields. This value will be curated.") val freeText: String? = null,
     @JsonPropertyDescription("Result of microsatellite instability test.") val msi: Boolean? = null,
-    @JsonPropertyDescription("Tumor mutational burden in m/MB (eg. 8.0)") val tmb: Boolean? = null
+    @JsonPropertyDescription("Tumor mutational burden in m/MB (eg. 8.0)") val tmb: Double? = null
 )
 
 @JacksonSerializable
