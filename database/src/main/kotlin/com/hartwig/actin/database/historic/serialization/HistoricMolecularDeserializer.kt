@@ -1,5 +1,6 @@
 package com.hartwig.actin.database.historic.serialization
 
+import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
@@ -34,6 +35,7 @@ import com.hartwig.actin.molecular.datamodel.orange.driver.RegionType
 import com.hartwig.actin.molecular.datamodel.orange.driver.Virus
 import com.hartwig.actin.molecular.datamodel.orange.driver.VirusType
 import com.hartwig.actin.molecular.datamodel.orange.immunology.MolecularImmunology
+import com.hartwig.actin.molecular.datamodel.orange.pharmaco.Haplotype
 import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoEntry
 import com.hartwig.actin.util.json.Json
 import org.apache.logging.log4j.LogManager
@@ -44,6 +46,7 @@ import java.io.FileReader
 object HistoricMolecularDeserializer {
 
     private val LOGGER: Logger = LogManager.getLogger(HistoricMolecularDeserializer::class.java)
+    private val gson = GsonBuilder().create()
 
     fun deserialize(molecularJson: File): MolecularHistory {
         val reader = JsonReader(FileReader(molecularJson))
@@ -104,7 +107,21 @@ object HistoricMolecularDeserializer {
     }
 
     private fun extractPharmaco(molecular: JsonObject): Set<PharmacoEntry> {
-        return setOf()
+        return Json.array(molecular, "pharmaco").map { element ->
+            val obj = element.asJsonObject
+            PharmacoEntry(
+                gene = Json.string(obj, "gene"),
+                haplotypes = Json.array(obj, "haplotypes").map { haploJson ->
+                    val haplo = haploJson.asJsonObject
+                    val name = Json.string(haplo, "name")
+                    Haplotype(
+                        function = Json.string(haplo, "function"),
+                        allele = name.substringBefore("_"),
+                        alleleCount = if ("HOM" in name) 2 else 1
+                    )
+                }.toSet()
+            )
+        }.toSet()
     }
 
     private fun extractDrivers(drivers: JsonObject): Drivers {
@@ -133,8 +150,9 @@ object HistoricMolecularDeserializer {
             canonicalImpact = extractCanonicalImpact(obj),
             otherImpacts = emptySet(),
             extendedVariantDetails = null,
-            isHotspot = Json.optionalBool(obj, "isHotspot") ?: Json.optionalString(obj, "driverType")?.let { it.uppercase() == "HOTSPOT" }
-            ?: false,
+            isHotspot = Json.optionalBool(obj, "isHotspot")
+                ?: Json.optionalString(obj, "driverType")?.let { it.uppercase() == "HOTSPOT" }
+                ?: false,
             isReportable = determineIsReportable(obj),
             event = Json.string(obj, "event"),
             driverLikelihood = determineDriverLikelihood(obj),
@@ -147,7 +165,16 @@ object HistoricMolecularDeserializer {
     }
 
     private fun extractCanonicalImpact(variant: JsonObject): TranscriptImpact {
-        return TranscriptImpact(
+        return Json.optionalObject(variant, "canonicalImpact")?.let { impactJson ->
+            try {
+                val impact = gson.fromJson(impactJson, TranscriptImpact::class.java)
+                impact.hashCode()
+                impact
+            } catch (_: Exception) {
+                LOGGER.info("Failure deserializing: {}", impactJson)
+                null
+            }
+        } ?: TranscriptImpact(
             transcriptId = "",
             hgvsCodingImpact = "",
             hgvsProteinImpact = "",
