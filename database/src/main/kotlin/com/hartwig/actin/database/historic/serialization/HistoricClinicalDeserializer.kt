@@ -1,7 +1,5 @@
 package com.hartwig.actin.database.historic.serialization
 
-import com.google.common.collect.Sets
-import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
@@ -112,8 +110,8 @@ object HistoricClinicalDeserializer {
             primaryTumorType = Json.nullableString(tumor, "primaryTumorType"),
             primaryTumorSubType = Json.nullableString(tumor, "primaryTumorSubType"),
             primaryTumorExtraDetails = Json.nullableString(tumor, "primaryTumorExtraDetails"),
-            doids = Json.nullableArray(tumor, "doids")?.let { it -> it.map { it.asString }.toCollection(Sets.newHashSet()) },
-            stage = Json.nullableString(tumor, "stage")?.let { TumorStage.valueOf(it) },
+            doids = Json.nullableArray(tumor, "doids")?.map { it.asString }?.toSet(),
+            stage = Json.nullableString(tumor, "stage")?.let(TumorStage::valueOf),
             derivedStages = null, // Could reuse TumorStageDeriver here?
             hasMeasurableDisease = Json.nullableBool(tumor, "hasMeasurableDisease"),
             hasBrainLesions = Json.nullableBool(tumor, "hasBrainLesions"),
@@ -177,13 +175,8 @@ object HistoricClinicalDeserializer {
     }
 
     private fun extractECGMeasureObject(ecgObject: JsonObject?): ECGMeasure? {
-        return if (ecgObject != null) {
-            ECGMeasure(
-                value = Json.nullableInteger(ecgObject, "value"),
-                unit = Json.nullableString(ecgObject, "unit")
-            )
-        } else {
-            null
+        return ecgObject?.let {
+            ECGMeasure(value = Json.nullableInteger(ecgObject, "value"), unit = Json.nullableString(ecgObject, "unit"))
         }
     }
 
@@ -245,7 +238,7 @@ object HistoricClinicalDeserializer {
         if (stopReason == null) {
             LOGGER.warn("  Could not convert stop reason string: {}", stopReasonString)
         }
-        return null
+        return stopReason
     }
 
     private fun toTreatmentResponse(treatmentResponseString: String): TreatmentResponse? {
@@ -257,8 +250,7 @@ object HistoricClinicalDeserializer {
     }
 
     private fun extractPriorSecondPrimaries(clinical: JsonObject): List<PriorSecondPrimary> {
-        val priorSecondPrimaries: JsonArray = Json.array(clinical, "priorSecondPrimaries")
-        return priorSecondPrimaries.mapNotNull { toPriorSecondPrimary(it) }
+        return Json.array(clinical, "priorSecondPrimaries").mapNotNull { toPriorSecondPrimary(it) }
     }
 
     private fun toPriorSecondPrimary(priorSecondPrimaryElement: JsonElement): PriorSecondPrimary {
@@ -280,17 +272,12 @@ object HistoricClinicalDeserializer {
 
     private fun determinePriorSecondPrimaryStatus(priorSecondPrimary: JsonObject): TumorStatus {
         return Json.optionalBool(priorSecondPrimary, "isActive")?.let {
-            if (it) {
-                TumorStatus.ACTIVE
-            } else {
-                TumorStatus.INACTIVE
-            }
+            if (it) TumorStatus.ACTIVE else TumorStatus.INACTIVE
         } ?: TumorStatus.valueOf(Json.string(priorSecondPrimary, "status"))
     }
 
     private fun extractPriorOtherConditions(clinical: JsonObject): List<PriorOtherCondition> {
-        val priorOtherConditions: JsonArray = Json.array(clinical, "priorOtherConditions")
-        return priorOtherConditions.mapNotNull { toPriorOtherCondition(it) }
+        return Json.array(clinical, "priorOtherConditions").mapNotNull(::toPriorOtherCondition)
     }
 
     private fun toPriorOtherCondition(priorOtherConditionElement: JsonElement): PriorOtherCondition {
@@ -306,8 +293,7 @@ object HistoricClinicalDeserializer {
     }
 
     private fun extractPriorMolecularTest(clinical: JsonObject): List<PriorMolecularTest> {
-        val priorMolecularTests = Json.array(clinical, "priorMolecularTests")
-        return priorMolecularTests.mapNotNull { toPriorMolecularTest(it) }
+        return Json.array(clinical, "priorMolecularTests").mapNotNull(::toPriorMolecularTest)
     }
 
     private fun toPriorMolecularTest(priorMolecularTestElement: JsonElement): PriorMolecularTest {
@@ -326,8 +312,7 @@ object HistoricClinicalDeserializer {
     }
 
     private fun extractComplications(clinical: JsonObject): List<Complication>? {
-        val complication = Json.optionalArray(clinical, "complications")
-        return complication?.let { it -> it.mapNotNull { toComplication(it) } }
+        return Json.optionalArray(clinical, "complications")?.mapNotNull(::toComplication)
     }
 
     private fun toComplication(complicationElement: JsonElement): Complication {
@@ -341,8 +326,7 @@ object HistoricClinicalDeserializer {
     }
 
     private fun extractLabValues(clinical: JsonObject): List<LabValue> {
-        val labValues = Json.array(clinical, "labValues")
-        return labValues.mapNotNull { toLabValue(it) }
+        return Json.array(clinical, "labValues").mapNotNull(::toLabValue)
     }
 
     private fun toLabValue(labValueElement: JsonElement): LabValue {
@@ -361,8 +345,7 @@ object HistoricClinicalDeserializer {
     }
 
     private fun extractToxicities(clinical: JsonObject): List<Toxicity> {
-        val toxicities = Json.array(clinical, "toxicities")
-        return toxicities.mapNotNull { toToxicity(it) }
+        return Json.array(clinical, "toxicities").mapNotNull { toToxicity(it) }
     }
 
     private fun toToxicity(toxicityElement: JsonElement): Toxicity {
@@ -377,8 +360,7 @@ object HistoricClinicalDeserializer {
     }
 
     private fun extractIntolerances(clinical: JsonObject): List<Intolerance> {
-        val intolerances = Json.array(clinical, "intolerances")
-        return intolerances.mapNotNull { toIntolerance(it) }
+        return Json.array(clinical, "intolerances").mapNotNull { toIntolerance(it) }
     }
 
     private fun toIntolerance(intoleranceElement: JsonElement): Intolerance {
@@ -387,7 +369,7 @@ object HistoricClinicalDeserializer {
             name = Json.string(intolerance, "name"),
             doids = HashSet(Json.stringList(intolerance, "doids")),
             category = Json.nullableString(intolerance, "category"),
-            subcategories = Json.nullableStringList(intolerance, "subcategories")?.let { HashSet(it) },
+            subcategories = Json.nullableStringList(intolerance, "subcategories")?.toSet(),
             type = Json.nullableString(intolerance, "type"),
             clinicalStatus = Json.nullableString(intolerance, "clinicalStatus"),
             verificationStatus = Json.nullableString(intolerance, "verificationStatus"),
@@ -397,8 +379,7 @@ object HistoricClinicalDeserializer {
     }
 
     private fun extractSurgeries(clinical: JsonObject): List<Surgery> {
-        val surgeries = Json.array(clinical, "surgeries")
-        return surgeries.mapNotNull { toSurgery(it) }
+        return Json.array(clinical, "surgeries").mapNotNull { toSurgery(it) }
     }
 
     private fun toSurgery(surgeryElement: JsonElement): Surgery {
@@ -410,8 +391,7 @@ object HistoricClinicalDeserializer {
     }
 
     private fun extractBodyWeights(clinical: JsonObject): List<BodyWeight> {
-        val bodyWeights = Json.array(clinical, "bodyWeights")
-        return bodyWeights.mapNotNull { toBodyWeight(it) }
+        return Json.array(clinical, "bodyWeights").mapNotNull { toBodyWeight(it) }
     }
 
     private fun toBodyWeight(bodyWeightElement: JsonElement): BodyWeight {
@@ -425,8 +405,7 @@ object HistoricClinicalDeserializer {
     }
 
     private fun extractVitalFunctions(clinical: JsonObject): List<VitalFunction> {
-        val vitalFunctions = Json.array(clinical, "vitalFunctions")
-        return vitalFunctions.mapNotNull { toVitalFunction(it) }
+        return Json.array(clinical, "vitalFunctions").mapNotNull { toVitalFunction(it) }
     }
 
     private fun toVitalFunction(vitalFunctionElement: JsonElement): VitalFunction {
@@ -442,8 +421,7 @@ object HistoricClinicalDeserializer {
     }
 
     private fun extractBloodTransfusions(clinical: JsonObject): List<BloodTransfusion> {
-        val bloodTransfusions = Json.array(clinical, "bloodTransfusions")
-        return bloodTransfusions.mapNotNull { toBloodTransfusion(it) }
+        return Json.array(clinical, "bloodTransfusions").mapNotNull { toBloodTransfusion(it) }
     }
 
     private fun toBloodTransfusion(bloodTransfusionElement: JsonElement): BloodTransfusion {
@@ -455,8 +433,7 @@ object HistoricClinicalDeserializer {
     }
 
     private fun extractMedications(clinical: JsonObject): List<Medication>? {
-        val medications = Json.optionalArray(clinical, "medications")
-        return medications?.let { it -> it.mapNotNull { toMedication(it) } }
+        return Json.optionalArray(clinical, "medications")?.mapNotNull { toMedication(it) }
     }
 
     private fun toMedication(medicationElement: JsonElement): Medication {
