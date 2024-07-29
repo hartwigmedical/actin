@@ -4,6 +4,7 @@ import com.google.common.collect.Sets.union
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.algo.evaluation.util.Format.concatStringsWithAnd
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.GeneAlteration
 import com.hartwig.actin.molecular.datamodel.MolecularTest
@@ -68,15 +69,33 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesX(privat
             hrdGenesWithNonBiallelicNonHotspotHighDriver + hrdGenesWithNonBiallelicHotspot + hrdGenesWithNonHomozygousDisruption + hrdGenesWithNonBiallelicNonHotspotNonHighDriver
         val isHRD = test.characteristics.isHomologousRepairDeficient
 
-        val genesToFindWithNonHomozygousDisruption = genesInGenesToFind(hrdGenesWithNonHomozygousDisruption)
-        val genesToFindWithHomozygousDisruption = genesInGenesToFind(hrdGenesWithHomozygousDisruption)
-        val genesToFindWithNonBiallelicNonHotspotNonHighDriver = genesInGenesToFind(hrdGenesWithNonBiallelicNonHotspotNonHighDriver)
-        val genesToFindWithNonBiallelicNonHotspotHighDriver = genesInGenesToFind(hrdGenesWithNonBiallelicNonHotspotHighDriver)
-        val genesToFindWithBiallelicNonHotspotNonHighDriver = genesInGenesToFind(hrdGenesWithBiallelicNonHotspotNonHighDriver)
-        val genesToFindWithBiallelicNonHotspotHighDriver = genesInGenesToFind(hrdGenesWithBiallelicNonHotspotHighDriver)
         val genesToFindWithDeletionOrPartialLoss = genesInGenesToFind(hrdGenesWithDeletionOrPartialLoss)
         val genesToFindWithBiallelicHotspot = genesInGenesToFind(hrdGenesWithBiallelicHotspot)
         val genesToFindWithNonBiallelicHotspot = genesInGenesToFind(hrdGenesWithNonBiallelicHotspot)
+
+        val warnEvaluations = mutableSetOf<String>()
+        addToWarnEvaluations(
+            warnEvaluations,
+            "non-hotspot biallelic high driver(s)",
+            genesInGenesToFind(hrdGenesWithBiallelicNonHotspotHighDriver)
+        )
+        addToWarnEvaluations(
+            warnEvaluations,
+            "non-hotspot biallelic non-high driver(s)",
+            genesInGenesToFind(hrdGenesWithBiallelicNonHotspotNonHighDriver)
+        )
+        addToWarnEvaluations(
+            warnEvaluations,
+            "non-hotspot non-biallelic high driver(s)",
+            genesInGenesToFind(hrdGenesWithNonBiallelicNonHotspotHighDriver)
+        )
+        addToWarnEvaluations(
+            warnEvaluations,
+            "non-hotspot non-biallelic non-high driver(s)",
+            genesInGenesToFind(hrdGenesWithNonBiallelicNonHotspotNonHighDriver)
+        )
+        addToWarnEvaluations(warnEvaluations, "homozygous disruption", genesInGenesToFind(hrdGenesWithHomozygousDisruption))
+        addToWarnEvaluations(warnEvaluations, "non-homozygous disruption", genesInGenesToFind(hrdGenesWithNonHomozygousDisruption))
 
         return when {
             isHRD == null && hrdGenesWithBiallelicDriver.isNotEmpty() -> {
@@ -134,59 +153,8 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesX(privat
                 )
             }
 
-            genesToFindWithBiallelicNonHotspotHighDriver.isNotEmpty() -> {
-                EvaluationFactory.warn(
-                    "Homologous repair deficiency (HRD) detected, together with non-hotspot biallelic high driver(s) in ${
-                        concat(
-                            genesToFindWithBiallelicNonHotspotHighDriver
-                        )
-                    } which could potentially be pathogenic",
-                    "Tumor is HRD with non-hotspot biallelic high driver(s) in ${concat(genesToFindWithBiallelicNonHotspotHighDriver)} which could be pathogenic",
-                )
-            }
-
-            genesToFindWithBiallelicNonHotspotNonHighDriver.isNotEmpty() -> {
-                EvaluationFactory.warn(
-                    "Homologous repair deficiency (HRD) detected, together with non-hotspot biallelic non-high driver(s) in ${
-                        concat(
-                            genesToFindWithBiallelicNonHotspotNonHighDriver
-                        )
-                    } which could potentially be pathogenic",
-                    "Tumor is HRD with non-hotspot biallelic non-high driver(s) in ${concat(genesToFindWithBiallelicNonHotspotNonHighDriver)} which could be pathogenic",
-                )
-            }
-
-            genesToFindWithNonBiallelicNonHotspotHighDriver.isNotEmpty() -> {
-                EvaluationFactory.warn(
-                    "Homologous repair deficiency (HRD) detected, together with non-hotspot non-biallelic high driver(s) in ${
-                        concat(
-                            genesToFindWithNonBiallelicNonHotspotHighDriver
-                        )
-                    } which could potentially be pathogenic",
-                    "Tumor is HRD with non-hotspot non-biallelic high driver(s) in ${concat(genesToFindWithNonBiallelicNonHotspotHighDriver)} which could be pathogenic",
-                )
-            }
-
-            genesToFindWithNonBiallelicNonHotspotNonHighDriver.isNotEmpty() -> {
-                EvaluationFactory.warn(
-                    "Homologous repair deficiency (HRD) detected, together with non-hotspot non-biallelic non-high driver(s) in ${
-                        concat(
-                            genesToFindWithNonBiallelicNonHotspotNonHighDriver
-                        )
-                    } which could potentially be pathogenic",
-                    "Tumor is HRD with non-hotspot non-biallelic non-high driver(s) in ${
-                        concat(
-                            genesToFindWithNonBiallelicNonHotspotNonHighDriver
-                        )
-                    } which could be pathogenic",
-                )
-            }
-
-            genesToFindWithHomozygousDisruption.isNotEmpty() -> {
-                EvaluationFactory.warn(
-                    "Homologous repair deficiency (HRD) detected, with homozygous disruption in ${concat(genesToFindWithHomozygousDisruption)}",
-                    "Tumor is HRD with homozygous disruption in ${concat(genesToFindWithHomozygousDisruption)}",
-                )
+            warnEvaluations.isNotEmpty() -> {
+                warnEvaluation(warnEvaluations)
             }
 
             hrdGenesWithNonBiallelicDriver.isNotEmpty() && hrdGenesWithBiallelicDriver.isEmpty() -> {
@@ -197,17 +165,6 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesX(privat
                         )
                     })",
                     "Tumor is HRD (but with only non-biallelic drivers in HR genes)",
-                )
-            }
-
-            genesToFindWithNonHomozygousDisruption.isNotEmpty() -> {
-                EvaluationFactory.warn(
-                    "Homologous repair deficiency (HRD) detected, with non-homozygous disruption in ${
-                        concat(
-                            genesToFindWithNonHomozygousDisruption
-                        )
-                    }",
-                    "Tumor is HRD with non-homozygous disruption in ${concat(genesToFindWithNonHomozygousDisruption)}",
                 )
             }
 
@@ -231,4 +188,16 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesX(privat
         return genes.intersect(genesToFind)
     }
 
+    private fun addToWarnEvaluations(warnEvaluations: MutableSet<String>, driverType: String, foundGenes: Set<String>) {
+        if (foundGenes.isNotEmpty()) {
+            warnEvaluations.add(driverType + " in " + concat(foundGenes))
+        }
+    }
+
+    private fun warnEvaluation(driverTypeInFoundGenes: Set<String>): Evaluation {
+        return EvaluationFactory.warn(
+            "Homologous repair deficiency (HRD) detected, together with ${concatStringsWithAnd(driverTypeInFoundGenes)} which could be pathogenic",
+            "Tumor is HRD with ${concatStringsWithAnd(driverTypeInFoundGenes)} which could be pathogenic"
+        )
+    }
 }

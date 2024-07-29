@@ -137,10 +137,7 @@ class IsHomologousRepairDeficientWithoutMutationInGenesXTest {
                 TestVariantFactory.createMinimal().copy(gene = "BRCA1", isReportable = true, isHotspot = true)
             )
         )
-        assertEvaluation(
-            EvaluationResult.WARN,
-            result
-        )
+        assertEvaluation(EvaluationResult.WARN, result)
         assertThat(result.warnSpecificMessages).containsExactly("Homologous repair deficiency (HRD) status detected, without drivers in HR genes")
     }
 

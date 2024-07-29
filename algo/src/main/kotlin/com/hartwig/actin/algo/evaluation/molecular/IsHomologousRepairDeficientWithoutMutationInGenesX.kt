@@ -66,14 +66,9 @@ class IsHomologousRepairDeficientWithoutMutationInGenesX(private val genesToFind
             hrdGenesWithNonBiallelicNonHotspotHighDriver + hrdGenesWithNonBiallelicHotspot + hrdGenesWithNonHomozygousDisruption + hrdGenesWithNonBiallelicNonHotspotNonHighDriver
         val isHRD = test.characteristics.isHomologousRepairDeficient
 
-        val genesToFindWithMutation =
-            (genesInGenesToFind(hrdGenesWithNonHomozygousDisruption) + genesInGenesToFind(hrdGenesWithHomozygousDisruption) + genesInGenesToFind(
-                hrdGenesWithNonBiallelicNonHotspotNonHighDriver
-            ) + genesInGenesToFind(hrdGenesWithNonBiallelicNonHotspotHighDriver) + genesInGenesToFind(
-                hrdGenesWithBiallelicNonHotspotNonHighDriver
-            ) + genesInGenesToFind(hrdGenesWithBiallelicNonHotspotHighDriver) + genesInGenesToFind(hrdGenesWithDeletionOrPartialLoss) + genesInGenesToFind(
-                hrdGenesWithBiallelicHotspot
-            ) + genesInGenesToFind(hrdGenesWithNonBiallelicHotspot)).toSet()
+        val hrdGenesWithMutation =
+            hrdGenesWithNonHomozygousDisruption + hrdGenesWithHomozygousDisruption + hrdGenesWithNonBiallelicNonHotspotNonHighDriver + hrdGenesWithBiallelicNonHotspotHighDriver + hrdGenesWithNonBiallelicNonHotspotHighDriver + hrdGenesWithBiallelicNonHotspotNonHighDriver + hrdGenesWithDeletionOrPartialLoss + hrdGenesWithBiallelicHotspot + hrdGenesWithNonBiallelicHotspot
+        val genesToFindWithMutation = genesInGenesToFind(hrdGenesWithMutation)
 
         return when {
             isHRD == null && hrdGenesWithBiallelicDriver.isNotEmpty() && genesToFindWithMutation.isEmpty() -> {
