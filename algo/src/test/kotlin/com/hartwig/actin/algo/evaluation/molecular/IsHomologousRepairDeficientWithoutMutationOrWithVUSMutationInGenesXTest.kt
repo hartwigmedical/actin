@@ -13,8 +13,9 @@ import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCATest {
-    private val function = IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCA()
+class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesXTest {
+    private val genesToFind = setOf("BRCA1", "BRCA2")
+    private val function = IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesX(genesToFind)
 
     @Test
     fun `Should fail when HRD status unknown and no reportable drivers in HR genes`() {
@@ -136,10 +137,7 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCATest {
                 TestVariantFactory.createMinimal().copy(gene = "BRCA1", isReportable = true, isHotspot = true)
             )
         )
-        assertEvaluation(
-            EvaluationResult.WARN,
-            result
-        )
+        assertEvaluation(EvaluationResult.WARN, result)
         assertThat(result.warnSpecificMessages).containsExactly("Homologous repair deficiency (HRD) status detected, without drivers in HR genes")
     }
 
@@ -230,6 +228,20 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCATest {
                 )
             )
         )
+    }
+
+    @Test
+    fun `Should warn when HRD and biallelic non-hotspot BRCA1 and non-homozygous disruption of BRCA1`() {
+        val result = function.evaluate(
+            MolecularTestFactory.withHomologousRepairDeficiencyAndVariantAndDisruption(
+                true,
+                TestDisruptionFactory.createMinimal()
+                    .copy(gene = "BRCA1", driverLikelihood = DriverLikelihood.HIGH, isReportable = true),
+                hrdVariant("BRCA1", true, true, false)
+            )
+        )
+        assertEvaluation(EvaluationResult.WARN, result)
+        assertThat(result.warnSpecificMessages).containsExactly("Homologous repair deficiency (HRD) detected, together with non-homozygous disruption in BRCA1 and non-hotspot biallelic non-high driver(s) in BRCA1 which could be pathogenic")
     }
 
     private fun hrdVariant(
