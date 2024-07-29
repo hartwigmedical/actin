@@ -5,6 +5,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonToken
+import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.Drivers
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.Fusion
@@ -23,6 +24,7 @@ import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
 import com.hartwig.actin.molecular.datamodel.orange.characteristics.CupPrediction
 import com.hartwig.actin.molecular.datamodel.orange.driver.CodingContext
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.orange.driver.DisruptionType
 import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
@@ -41,7 +43,7 @@ import java.io.FileReader
 
 object HistoricMolecularDeserializer {
 
-    private val LOGGER: Logger = LogManager.getLogger(HistoricClinicalDeserializer::class.java)
+    private val LOGGER: Logger = LogManager.getLogger(HistoricMolecularDeserializer::class.java)
 
     fun deserialize(molecularJson: File): MolecularHistory {
         val reader = JsonReader(FileReader(molecularJson))
@@ -72,6 +74,10 @@ object HistoricMolecularDeserializer {
         }
 
         return MolecularHistory(listOf(molecularTest))
+    }
+
+    private fun Json.optionalInteger(obj: JsonObject, field: String): Int? {
+        return if (obj.has(field)) nullableInteger(obj, field) else null
     }
 
     private fun determineExperimentType(molecular: JsonObject): ExperimentType {
@@ -117,22 +123,23 @@ object HistoricMolecularDeserializer {
     }
 
     private fun extractVariant(variantElement: JsonElement): Variant {
-        val variant = variantElement.asJsonObject
+        val obj = variantElement.asJsonObject
         return Variant(
             chromosome = "",
             position = 0,
             ref = "",
             alt = "",
             type = VariantType.UNDEFINED,
-            canonicalImpact = extractCanonicalImpact(variant),
+            canonicalImpact = extractCanonicalImpact(obj),
             otherImpacts = emptySet(),
             extendedVariantDetails = null,
-            isHotspot = false,
-            isReportable = true,
-            event = Json.string(variant, "event"),
-            driverLikelihood = null,
+            isHotspot = Json.optionalBool(obj, "isHotspot") ?: Json.optionalString(obj, "driverType")?.let { it.uppercase() == "HOTSPOT" }
+            ?: false,
+            isReportable = determineIsReportable(obj),
+            event = Json.string(obj, "event"),
+            driverLikelihood = determineDriverLikelihood(obj),
             evidence = ActionableEvidence(),
-            gene = "",
+            gene = Json.string(obj, "gene"),
             geneRole = GeneRole.UNKNOWN,
             proteinEffect = ProteinEffect.UNKNOWN,
             isAssociatedWithDrugResistance = null
@@ -153,15 +160,46 @@ object HistoricMolecularDeserializer {
     }
 
     private fun extractCopyNumbers(drivers: JsonObject): Set<CopyNumber> {
-        // TODO
-        return emptySet()
+        return sequenceOf("copyNumbers" to null, "amplifications" to CopyNumberType.FULL_GAIN, "losses" to CopyNumberType.LOSS)
+            .flatMap { (field, type) -> Json.optionalArray(drivers, field)?.map { extractCopyNumber(it, type) } ?: emptyList() }
+            .toSet()
     }
 
+    private fun extractCopyNumber(copyNumberElement: JsonElement, typeGroup: CopyNumberType?): CopyNumber {
+        val obj = copyNumberElement.asJsonObject
+        val type = when {
+            typeGroup == CopyNumberType.FULL_GAIN && Json.bool(obj, "isPartial") -> CopyNumberType.PARTIAL_GAIN
+            typeGroup == null -> CopyNumberType.valueOf(Json.string(obj, "type"))
+            else -> typeGroup
+        }
+        return CopyNumber(
+            type = type,
+            isReportable = determineIsReportable(obj),
+            event = Json.string(obj, "event"),
+            driverLikelihood = determineDriverLikelihood(obj),
+            evidence = ActionableEvidence(),
+            gene = Json.string(obj, "gene"),
+            geneRole = GeneRole.UNKNOWN,
+            proteinEffect = ProteinEffect.UNKNOWN,
+            isAssociatedWithDrugResistance = null,
+            minCopies = determineCopies(obj, "minCopies", type),
+            maxCopies = determineCopies(obj, "maxCopies", type)
+        )
+    }
+
+    private fun determineIsReportable(obj: JsonObject): Boolean = Json.optionalBool(obj, "isReportable") ?: false
+
+    private fun determineDriverLikelihood(driver: JsonObject): DriverLikelihood? =
+        Json.nullableString(driver, "driverLikelihood")?.let(DriverLikelihood::valueOf)
+
+    private fun determineCopies(copyNumber: JsonObject, field: String, type: CopyNumberType): Int =
+        Json.optionalInteger(copyNumber, field) ?: Json.optionalInteger(copyNumber, "copies") ?: if (type == CopyNumberType.LOSS) 0 else 2
+
     private fun extractHomozygousDisruption(homozygousDisruptionElement: JsonElement): HomozygousDisruption {
-        val homozygousDisruption = homozygousDisruptionElement.asJsonObject
+        val obj = homozygousDisruptionElement.asJsonObject
         return HomozygousDisruption(
-            isReportable = true,
-            event = "",
+            isReportable = determineIsReportable(obj),
+            event = Json.string(obj, "event"),
             driverLikelihood = null,
             evidence = ActionableEvidence(),
             gene = "",
@@ -172,7 +210,7 @@ object HistoricMolecularDeserializer {
     }
 
     private fun extractDisruption(disruptionElement: JsonElement): Disruption {
-        val disruption = disruptionElement.asJsonObject
+        val obj = disruptionElement.asJsonObject
         return Disruption(
             type = DisruptionType.SGL,
             junctionCopyNumber = 0.0,
@@ -180,8 +218,8 @@ object HistoricMolecularDeserializer {
             regionType = RegionType.UPSTREAM,
             codingContext = CodingContext.NON_CODING,
             clusterGroup = 0,
-            isReportable = false,
-            event = "",
+            isReportable = determineIsReportable(obj),
+            event = Json.string(obj, "event"),
             driverLikelihood = null,
             evidence = ActionableEvidence(),
             gene = "",
@@ -192,7 +230,7 @@ object HistoricMolecularDeserializer {
     }
 
     private fun extractFusion(fusionElement: JsonElement): Fusion {
-        val fusion = fusionElement.asJsonObject
+        val obj = fusionElement.asJsonObject
         return Fusion(
             geneStart = "",
             geneEnd = "",
@@ -200,9 +238,9 @@ object HistoricMolecularDeserializer {
             geneTranscriptEnd = "",
             driverType = FusionDriverType.NONE,
             proteinEffect = ProteinEffect.UNKNOWN,
-            extendedFusionDetails = extractExtendedFusionDetails(fusion),
-            isReportable = true,
-            event = "",
+            extendedFusionDetails = extractExtendedFusionDetails(obj),
+            isReportable = determineIsReportable(obj),
+            event = Json.string(obj, "event"),
             driverLikelihood = null,
             evidence = ActionableEvidence()
         )
@@ -217,14 +255,14 @@ object HistoricMolecularDeserializer {
     }
 
     private fun extractVirus(virusElement: JsonElement): Virus {
-        val virus = virusElement.asJsonObject
+        val obj = virusElement.asJsonObject
         return Virus(
             name = "",
             type = VirusType.OTHER,
             isReliable = true,
             integrations = 0,
-            isReportable = true,
-            event = "",
+            isReportable = determineIsReportable(obj),
+            event = Json.string(obj, "event"),
             driverLikelihood = null,
             evidence = ActionableEvidence()
         )
