@@ -49,6 +49,7 @@ enum class LabMeasurement(val code: String, val display: String, val defaultUnit
     POTASSIUM("K", "potassium", LabUnit.MILLIMOLES_PER_LITER),
     PROTHROMBIN_TIME("PT", "PT", LabUnit.SECONDS),
     PROTHROMBIN_TIME_POCT("POCT_PT", "POCT PT", LabUnit.SECONDS),
+    SODIUM("NA", "sodium", LabUnit.MILLIMOLES_PER_LITER),
     THROMBOCYTES_ABS("THROMBO-ABS", "absolute thrombocyte count", LabUnit.BILLIONS_PER_LITER),
     THROMBOCYTES_ABS_M("THROMBO-ABS-M", "absolute thrombocyte count M", LabUnit.BILLIONS_PER_LITER),
     TOTAL_BILIRUBIN("TBIL", "total bilirubin", LabUnit.MICROMOLES_PER_LITER),

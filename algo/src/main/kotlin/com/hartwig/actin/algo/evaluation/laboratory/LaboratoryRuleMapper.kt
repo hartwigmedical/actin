@@ -76,6 +76,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.HAS_TRIGLYCERIDE_MMOL_PER_L_OF_AT_MOST_X to hasLimitedLabValueCreator(LabMeasurement.TRIGLYCERIDE),
             EligibilityRule.HAS_AMYLASE_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.AMYLASE),
             EligibilityRule.HAS_LIPASE_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.LIPASE),
+            EligibilityRule.HAS_ABNORMAL_ELECTROLYTE_LEVELS to hasAbnormalElectrolyteLevelsCreator(),
             EligibilityRule.HAS_CALCIUM_MG_PER_DL_OF_AT_MOST_X to hasLimitedLabValueCreator(
                 LabMeasurement.CALCIUM,
                 LabUnit.MILLIGRAMS_PER_DECILITER
@@ -234,6 +235,19 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun hasSufficientMeasuredCreatinineClearanceCreator(): FunctionCreator {
         return { HasSufficientMeasuredCreatinineClearance() }
+    }
+
+    private fun hasAbnormalElectrolyteLevelsCreator(): FunctionCreator {
+        return {
+            val measurements = listOf(
+                LabMeasurement.CALCIUM,
+                LabMeasurement.PHOSPHORUS,
+                LabMeasurement.SODIUM,
+                LabMeasurement.MAGNESIUM,
+                LabMeasurement.POTASSIUM
+            )
+            Or(measurements.map { createLabEvaluator(it, HasLabValueWithinInstitutionalNormalLimit()) })
+        }
     }
 
     private fun hasPotentialHypokalemiaCreator(): FunctionCreator {
