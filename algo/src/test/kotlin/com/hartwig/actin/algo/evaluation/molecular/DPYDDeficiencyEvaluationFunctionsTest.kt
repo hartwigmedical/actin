@@ -18,13 +18,6 @@ class DPYDDeficiencyEvaluationFunctionsTest {
     )
     private val proficientEntry =
         PharmacoEntry(gene = "DPYD", haplotypes = setOf(Haplotype(allele = "*1", alleleCount = 2, function = "Normal Function")))
-    private val unexpectedEntry = PharmacoEntry(
-        gene = "DPYD",
-        haplotypes = setOf(
-            Haplotype(allele = "*1", alleleCount = 1, function = "Normal Function"),
-            Haplotype(allele = "*2", alleleCount = 1, function = "Unexpected Function")
-        )
-    )
 
     @Test
     fun `Should return true if patient has homozygous DPYD haplotypes with reduced function`() {
@@ -52,17 +45,5 @@ class DPYDDeficiencyEvaluationFunctionsTest {
     fun `Should return true if patient has proficient DPYD haplotypes with reduced function`() {
         val function = DPYDDeficiencyEvaluationFunctions.isProficient(proficientEntry)
         assertThat(function).isTrue()
-    }
-
-    @Test
-    fun `Should return true if unexpected DPYD haplotype`() {
-        val function = DPYDDeficiencyEvaluationFunctions.containsUnexpectedHaplotypeFunction(unexpectedEntry)
-        assertThat(function).isTrue()
-    }
-
-    @Test
-    fun `Should return false if homozygous DPYD haplotype`() {
-        val function = DPYDDeficiencyEvaluationFunctions.containsUnexpectedHaplotypeFunction(homozygousEntry)
-        assertThat(function).isFalse()
     }
 }
