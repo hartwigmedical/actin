@@ -7,19 +7,15 @@ object DPYDDeficiencyEvaluationFunctions {
     const val DPYD_GENE = "DPYD"
     private val expectedHaplotypeFunctions = setOf("normal function", "reduced function", "no function")
 
-    fun isHomozygousDeficient(pharmaco: List<PharmacoEntry>): Boolean {
-        return pharmaco.none { pharmacoEntry ->
-            pharmacoEntry.haplotypes.any { it.function.lowercase() == "normal function" }
-        }
+    fun isHomozygousDeficient(pharmaco: PharmacoEntry): Boolean {
+        return pharmaco.haplotypes.none { it.function.lowercase() == "normal function" }
     }
 
-    fun isProficient(pharmaco: List<PharmacoEntry>): Boolean {
-        return pharmaco.all { pharmacoEntry -> pharmacoEntry.haplotypes.all { it.function.lowercase() == "normal function" } }
+    fun isProficient(pharmaco: PharmacoEntry): Boolean {
+        return pharmaco.haplotypes.all { it.function.lowercase() == "normal function" }
     }
 
-    fun containsUnexpectedHaplotypeFunction(pharmaco: List<PharmacoEntry>): Boolean {
-        return pharmaco.any { pharmacoEntry ->
-            pharmacoEntry.haplotypes.any { it.function.lowercase() !in expectedHaplotypeFunctions }
-        }
+    fun containsUnexpectedHaplotypeFunction(pharmaco: PharmacoEntry): Boolean {
+        return pharmaco.haplotypes.any { it.function.lowercase() !in expectedHaplotypeFunctions }
     }
 }
