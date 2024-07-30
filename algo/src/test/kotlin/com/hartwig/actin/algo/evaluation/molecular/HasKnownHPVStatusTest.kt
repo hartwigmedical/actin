@@ -74,7 +74,7 @@ class HasKnownHPVStatusTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
+                TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
                     priorIHCTests = listOf(
                         MolecularTestFactory.priorMolecularTest(
                             test = "IHC",

@@ -1,6 +1,11 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
+import com.hartwig.actin.molecular.datamodel.panel.PanelAmplificationExtraction
+import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import java.time.LocalDate
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.Test
 
 
 private val TEST_DATE = LocalDate.of(2024, 7, 17)
@@ -11,7 +16,7 @@ private const val PANEL_TYPE = "test"
 
 class McgiExtractorTest {
 
-  /*  private val extractor = McgiExtractor()
+    private val extractor = McgiExtractor()
 
     @Test
     fun `Should return empty extraction when no tests`() {
@@ -21,28 +26,25 @@ class McgiExtractorTest {
 
     @Test
     fun `Should extract variants from prior molecular tests`() {
-        val result = extractor.extract(
-            listOf(
-                priorMolecularTest(
-                    HGVS_PROTEIN")))
-                            assertThat (result.first().variants).containsExactly(PanelVariantExtraction(GENE, HGVS_PROTEIN))
+        val result = extractor.extract(listOf(priorMolecularTest(HGVS_PROTEIN, "variant")))
+        assertThat(result.first().variants).containsExactly(PanelVariantExtraction(GENE, HGVS_PROTEIN))
     }
 
     @Test
     fun `Should extract amplifications from prior molecular tests`() {
-        val result = extractor.extract(listOf())
+        val result = extractor.extract(listOf(priorMolecularTest(CHROMOSOME, "amplification")))
         assertThat(result.first().amplifications).containsExactly(PanelAmplificationExtraction(GENE, CHROMOSOME))
     }
 
     @Test
     fun `Should extract tmb from prior molecular tests`() {
-        val result = extractor.extract(listOf(tmb(1.0)))
+        val result = extractor.extract(listOf(priorMolecularTest("1.0", "tmb")))
         assertThat(result.first().tumorMutationalBurden).isEqualTo(1.0)
     }
 
     @Test
     fun `Should extract msi from prior molecular tests`() {
-        val result = extractor.extract(listOf(msi(true)))
+        val result = extractor.extract(listOf(priorMolecularTest("true", "msi")))
         assertThat(result.first().isMicrosatelliteUnstable).isTrue()
     }
 
@@ -54,15 +56,16 @@ class McgiExtractorTest {
         val chromosome3 = "chr3"
         val panelType2 = "test 2"
         val testDate2 = TEST_DATE.plusDays(1)
-        val input = listOf(
-            variant(HGVS_PROTEIN),
-            amplification(CHROMOSOME),
-            variant(protein2, date = testDate2),
-            amplification(chromosome2, date = testDate2),
-            variant(protein3),
-            amplification(chromosome3)
+        val result = extractor.extract(
+            listOf(
+                priorMolecularTest(HGVS_PROTEIN, "variant"),
+                priorMolecularTest(CHROMOSOME, "amplification"),
+                priorMolecularTest(protein2, "variant", date = testDate2),
+                priorMolecularTest(chromosome2, "amplification", date = testDate2),
+                priorMolecularTest(protein3, "variant", test = panelType2),
+                priorMolecularTest(chromosome3, "amplification", test = panelType2)
+            )
         )
-        val result = extractor.extract(input)
         assertThat(result.size).isEqualTo(3)
         assertThat(result[0].panelType).isEqualTo(PANEL_TYPE)
         assertThat(result[0].date).isEqualTo(TEST_DATE)
@@ -78,32 +81,14 @@ class McgiExtractorTest {
         assertThat(result[2].amplifications).containsExactly(PanelAmplificationExtraction(GENE, chromosome3))
     }
 
-    private fun variant(hgvsCodingImpact: String, date: LocalDate = TEST_DATE) =
-        PriorSequencingTest(
-            date = date,
-            test = "test",
-            variants = setOf(SequencedVariant(GENE, hgvsCodingImpact))
+    private fun priorMolecularTest(measure: String, type: String, test: String = PANEL_TYPE, date: LocalDate = TEST_DATE) =
+        PriorIHCTest(
+            test = test,
+            item = GENE,
+            measure = measure,
+            measureDate = date,
+            scoreText = type,
+            impliesPotentialIndeterminateStatus = false
         )
-
-    private fun amplification(chromosome: String, date: LocalDate = TEST_DATE) =
-        PriorSequencingTest(
-            date = date,
-            test = "test",
-            amplifications = setOf(SequencedAmplification(GENE, chromosome))
-        )
-
-    private fun tmb(value: Double, date: LocalDate = TEST_DATE) =
-        PriorSequencingTest(
-            date = date,
-            test = "test",
-            tumorMutationalBurden = value
-        )
-
-    private fun msi(value: Boolean, date: LocalDate = TEST_DATE) =
-        PriorSequencingTest(
-            date = date,
-            test = "test",
-            microSatelliteInstability = value
-        )*/
 
 }

@@ -18,17 +18,20 @@ class PriorMolecularTestInterpreter {
     private val interpretationBuilder = PriorMolecularTestInterpretationBuilder()
 
     fun interpret(record: PatientRecord): List<PriorMolecularTestInterpretation> {
-        record.priorIHCTests.forEach { interpret(it) }
+        record.priorIHCTests.forEach(::interpret)
+        record.molecularHistory.allArcherPanels().forEach(::interpret)
+        record.molecularHistory.allGenericPanels().forEach(::interpret)
         return interpretationBuilder.build()
     }
 
     private fun interpret(test: PriorIHCTest) {
         val item = test.item ?: ""
+        val type = test.test
         val scoreText = test.scoreText
         val scoreValue = test.scoreValue
         when {
-            scoreText != null -> interpretationBuilder.addInterpretation("IHC", scoreText, item, 0)
-            scoreValue != null -> interpretationBuilder.addInterpretation("IHC", item, formatValueBasedPriorTest(test), 1)
+            scoreText != null -> interpretationBuilder.addInterpretation(type, scoreText, item, 0)
+            scoreValue != null -> interpretationBuilder.addInterpretation(type, item, formatValueBasedPriorTest(test), 1)
             else -> logger.error("IHC test is neither text-based nor value-based: {}", test)
         }
     }

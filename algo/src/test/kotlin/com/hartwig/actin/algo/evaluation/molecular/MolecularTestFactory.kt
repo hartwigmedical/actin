@@ -44,6 +44,14 @@ internal object MolecularTestFactory {
         )
     }
 
+    fun withIHCTests(ihcTests: List<PriorIHCTest>): PatientRecord {
+        return base.copy(priorIHCTests = ihcTests.toList())
+    }
+
+    fun withIHCTests(vararg ihcTests: PriorIHCTest): PatientRecord {
+        return withIHCTests(ihcTests.toList())
+    }
+
     fun withMolecularTests(molecularTests: List<MolecularTest>): PatientRecord {
         return base.copy(molecularHistory = MolecularHistory(listOf(baseMolecular) + molecularTests))
     }
@@ -51,11 +59,7 @@ internal object MolecularTestFactory {
     fun withMolecularTestsAndNoOrangeMolecular(molecularTests: List<MolecularTest>): PatientRecord {
         return base.copy(molecularHistory = MolecularHistory(molecularTests))
     }
-
-    fun withMolecularTest(molecularTest: MolecularTest): PatientRecord {
-        return withMolecularTests(listOf(molecularTest))
-    }
-
+    
     fun withVariant(variant: Variant): PatientRecord {
         return withDriver(variant)
     }
@@ -211,8 +215,11 @@ internal object MolecularTestFactory {
         variant: Variant
     ): PatientRecord {
         return withMolecularRecord(
-            baseMolecular.copy(characteristics = baseMolecular.characteristics.copy(isHomologousRepairDeficient = isHomologousRepairDeficient), drivers = baseMolecular.drivers.copy(variants = setOf(variant), disruptions = setOf(disruption))
-        ))
+            baseMolecular.copy(
+                characteristics = baseMolecular.characteristics.copy(isHomologousRepairDeficient = isHomologousRepairDeficient),
+                drivers = baseMolecular.drivers.copy(variants = setOf(variant), disruptions = setOf(disruption))
+            )
+        )
     }
 
     fun withTumorMutationalBurden(tumorMutationalBurden: Double?): PatientRecord {

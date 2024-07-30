@@ -1,8 +1,18 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
+import com.hartwig.actin.molecular.datamodel.AVL_PANEL
+import com.hartwig.actin.molecular.datamodel.FREE_TEXT_PANEL
+import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusionExtraction
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.junit.Test
+
 class GenericPanelExtractorTest {
 
-    /*private val extractor = GenericPanelExtractor()
+    private val extractor = GenericPanelExtractor()
 
     @Test
     fun `Should distinguish generic panel types`() {
@@ -87,5 +97,5 @@ class GenericPanelExtractorTest {
         )
         assertThat(molecularTests).containsExactly(expected)
         assertThat(expected.testedGenes()).contains(GENE)
-    }*/
+    }
 }

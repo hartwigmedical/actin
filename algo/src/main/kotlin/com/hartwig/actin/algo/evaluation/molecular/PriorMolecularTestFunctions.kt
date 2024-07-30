@@ -5,21 +5,25 @@ import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 internal object PriorMolecularTestFunctions {
 
     private const val PD_L1 = "PD-L1"
+    private const val IHC = "IHC"
 
     // For lung cancer the measurement type for PD-L1 is assumed to be TPS if not otherwise specified
     fun allPDL1Tests(
-        priorIHCTests: List<PriorIHCTest>, measureToFind: String? = null, isLungCancer: Boolean? = null
+        priorMolecularTests: List<PriorIHCTest>, measureToFind: String? = null, isLungCancer: Boolean? = null
     ): List<PriorIHCTest> {
-        val allPDL1Tests = priorIHCTests.filter { test -> test.item == PD_L1 }
-        return if (measureToFind == null || measureToFind == "TPS" && isLungCancer == true && allPDL1Tests.all { it.measure == null }) {
+        val allPDL1Tests = allIHCTests(priorMolecularTests).filter { test -> test.item == PD_L1 }
+        return if (measureToFind == null || (measureToFind == "TPS" && isLungCancer == true && allPDL1Tests.all { it.measure == null })) {
             allPDL1Tests
         } else {
             allPDL1Tests.filter { measureToFind == it.measure }
         }
     }
 
-    fun allIHCTestsForProtein(priorIHCTests: List<PriorIHCTest>, protein: String): List<PriorIHCTest> {
-        return priorIHCTests.filter { it.item == protein }
+    fun allIHCTestsForProtein(priorMolecularTests: List<PriorIHCTest>, protein: String): List<PriorIHCTest> {
+        return allIHCTests(priorMolecularTests).filter { it.item == protein }
     }
 
+    private fun allIHCTests(priorMolecularTests: List<PriorIHCTest>): List<PriorIHCTest> {
+        return priorMolecularTests.filter { it.test == IHC }
+    }
 }
