@@ -101,8 +101,17 @@ data class MedicationEntry(
     @JsonProperty("dosage_rateQuantity_unit")
     val dosageRateQuantityUnit: String,
 
+    @JsonProperty("dosage_rateQuantity_value")
+    val dosageRateQuantityValue: Double,
+
     @JsonProperty("dosage_dose_unit_display_original")
     val dosageDoseUnitDisplayOriginal: String,
+
+    @JsonProperty("dosage_dose_value_is_unreliable")
+    val dosageDoseValueIsUnreliable: String,
+
+    @JsonProperty("category_medicationRequestCategory_display_original")
+    val categoryMedicationRequestCategoryDisplayOriginal: String,
 
     @JsonProperty("periodOfUse_valuePeriod_start")
     val periodOfUseValuePeriodStart: LocalDate,
