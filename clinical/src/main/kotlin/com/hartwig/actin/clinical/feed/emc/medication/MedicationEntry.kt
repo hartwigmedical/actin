@@ -108,7 +108,7 @@ data class MedicationEntry(
     val dosageDoseUnitDisplayOriginal: String,
 
     @JsonProperty("dosage_dose_value_is_unreliable")
-    val dosageDoseValueIsUnreliable: String,
+    val dosageDoseValueIsUnreliable: Boolean?,
 
     @JsonProperty("category_medicationRequestCategory_display_original")
     val categoryMedicationRequestCategoryDisplayOriginal: String,
