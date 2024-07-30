@@ -208,6 +208,7 @@ enum class EligibilityRule(val input: FunctionInput?) {
     HAS_HLA_TYPE_X(FunctionInput.ONE_HLA_ALLELE),
     HAS_UGT1A1_HAPLOTYPE_X(FunctionInput.ONE_HAPLOTYPE),
     HAS_HOMOZYGOUS_DPYD_DEFICIENCY(FunctionInput.NONE),
+    HAS_HETEROZYGOUS_DPYD_DEFICIENCY(FunctionInput.NONE),
     HAS_KNOWN_HPV_STATUS(FunctionInput.NONE),
     OVEREXPRESSION_OF_GENE_X(FunctionInput.ONE_GENE),
     NON_EXPRESSION_OF_GENE_X(FunctionInput.ONE_GENE),
