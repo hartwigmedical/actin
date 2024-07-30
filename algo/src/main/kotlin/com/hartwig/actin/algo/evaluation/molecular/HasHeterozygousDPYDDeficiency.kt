@@ -14,7 +14,7 @@ class HasHeterozygousDPYDDeficiency internal constructor() : MolecularEvaluation
 
         return when {
             !isHomozygousDeficient(pharmaco) && !isProficient(pharmaco) -> {
-                EvaluationFactory.pass("Patient is heterozygous DPYD deficient", inclusionEvents = setOf("DPYD deficient"))
+                EvaluationFactory.pass("Patient is heterozygous DPYD deficient", inclusionEvents = setOf("DPYD heterozygous deficient"))
             }
 
             else -> {

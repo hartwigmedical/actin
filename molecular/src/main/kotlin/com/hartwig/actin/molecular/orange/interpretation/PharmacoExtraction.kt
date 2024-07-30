@@ -14,8 +14,8 @@ internal object PharmacoExtraction {
         val peach = record.peach() ?: return emptySet()
         return peach.groupBy(PeachGenotype::gene).map { (gene, genotypes) ->
             if (gene !in pharmacoGenes) throw IllegalStateException("Unexpected pharmaco gene: $gene")
-            genotypes.forEach { function ->
-                val functionName = function.function().lowercase()
+            genotypes.forEach { genotype ->
+                val functionName = genotype.function().lowercase()
                 if (functionName !in expectedHaplotypeFunctions) {
                     throw IllegalStateException("Unexpected haplotype function: $functionName")
                 }
