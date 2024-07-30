@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.evaluation.tumor.HasAcquiredResistanceToAnyDrug
+import com.hartwig.actin.algo.evaluation.tumor.HasMetastaticCancer
 import com.hartwig.actin.algo.soc.RecommendationEngineFactory
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
@@ -19,6 +20,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_LINES_X to isEligibleForTreatmentLinesCreator(),
             EligibilityRule.IS_ELIGIBLE_FOR_LOCAL_LIVER_TREATMENT to { IsEligibleForLocalLiverTreatment(doidModel()) },
             EligibilityRule.IS_ELIGIBLE_FOR_INTENSIVE_TREATMENT to { IsEligibleForIntensiveTreatment() },
+            EligibilityRule.IS_ELIGIBLE_FOR_LOCAL_TREATMENT_OF_METASTASES to isEligibleForLocalTreatmentOfMetastasesCreator(),
             EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS to hasExhaustedSOCTreatmentsCreator(),
             EligibilityRule.HAS_HAD_AT_LEAST_X_APPROVED_TREATMENT_LINES to hasHadSomeApprovedTreatmentCreator(),
             EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES to hasHadSomeSystemicTreatmentCreator(),
@@ -99,6 +101,10 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val treatmentName = functionInputResolver().createOneSpecificTreatmentInput(function)
             IsEligibleForOnLabelTreatment(treatmentName, RecommendationEngineFactory(resources))
         }
+    }
+
+    private fun isEligibleForLocalTreatmentOfMetastasesCreator(): FunctionCreator {
+        return { IsEligibleForLocalTreatmentOfMetastases(HasMetastaticCancer(doidModel())) }
     }
 
     private fun isEligibleForTreatmentLinesCreator(): FunctionCreator {
