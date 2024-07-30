@@ -14,7 +14,7 @@ class HasHadSomeTreatmentsWithCategoryWithIntents(private val category: Treatmen
         val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
             record.oncologicalHistory,
             category,
-            { historyEntry -> matchesIntentFromSet(intentsToFind, historyEntry.intents) })
+            { historyEntry -> historyEntry.intents?.intersect(intentsToFind)?.isNotEmpty() })
         val intentsList = Format.concatItemsWithOr(intentsToFind)
 
         return when {
@@ -47,9 +47,5 @@ class HasHadSomeTreatmentsWithCategoryWithIntents(private val category: Treatmen
                 )
             }
         }
-    }
-
-    private fun matchesIntentFromSet(intentsToFind: Set<Intent>, intents: Set<Intent>?): Boolean? {
-        return if (!intents.isNullOrEmpty()) intents.any { intent -> intentsToFind.contains(intent) } else null
     }
 }

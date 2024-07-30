@@ -64,7 +64,7 @@ class HasHadSomeTreatmentsWithCategoryWithIntentsTest {
         val patientRecord = withTreatmentHistory(
             listOf(
                 treatmentHistoryEntry(
-                    setOf(treatment)
+                    setOf(treatment), intents = null
                 )
             )
         )
