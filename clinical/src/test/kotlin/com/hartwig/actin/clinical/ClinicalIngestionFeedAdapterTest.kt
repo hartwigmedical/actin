@@ -116,6 +116,7 @@ class ClinicalIngestionFeedAdapterTest {
             UnusedCurationConfig(categoryName = "Molecular Test IHC", input = "immunohistochemie erbb2 3+"),
             UnusedCurationConfig(categoryName = "Molecular Test PDL1", input = "cps pd l1 > 20"),
             UnusedCurationConfig(categoryName = "Dosage Unit Translation", input = "stuk"),
+            UnusedCurationConfig(categoryName = "Sequencing Test", input = "kras g12f"),
         )
 
         val gson = GsonSerializer.create()

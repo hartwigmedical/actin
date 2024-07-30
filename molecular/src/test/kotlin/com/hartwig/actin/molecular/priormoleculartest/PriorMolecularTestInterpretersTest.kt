@@ -20,7 +20,7 @@ import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class PriorIHCTestInterpretersTest {
+class PriorMolecularTestInterpretersTest {
 
     private val evidenceDatabase = mockk<EvidenceDatabase> {
         every { evidenceForVariant(any()) } returns ActionabilityMatch(emptyList(), emptyList())
@@ -50,13 +50,13 @@ class PriorIHCTestInterpretersTest {
     @Test
     fun `Should interpret list of molecular tests`() {
         val interpreters = PriorMolecularTestInterpreters.create(evidenceDatabase, geneDriverLikelihoodModel, transvarAnnotator, paver, paveLite)
-        val priorIHCTests = listOf(
+        val priorMolecularTests = listOf(
             archerPriorMolecularVariantRecord(),
             avlPanelPriorMolecularVariantRecord(),
             freetextPriorMolecularFusionRecord(),
             PriorIHCTest("Unknown", impliesPotentialIndeterminateStatus = false)
         )
-        val molecularTests = interpreters.process(emptyList())
+        val molecularTests = interpreters.process(priorMolecularTests)
         assertThat(molecularTests.filterIsInstance<PanelRecord>()).hasSize(3)
         assertThat(molecularTests.filterIsInstance<OtherPriorMolecularTest>()).hasSize(1)
     }

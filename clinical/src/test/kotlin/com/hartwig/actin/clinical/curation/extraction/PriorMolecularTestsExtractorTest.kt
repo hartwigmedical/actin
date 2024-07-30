@@ -13,7 +13,11 @@ private const val CANNOT_CURATE = "cannot curate"
 
 private const val MOLECULAR_TEST_INPUT = "Molecular test input"
 
-class PriorIHCTestsExtractorTest {
+private const val MOLECULAR_TEST_INTERPRETATION_IHC = "Molecular test interpretation IHC"
+private const val MOLECULAR_TEST_INTERPRETATION_PDL1 = "Molecular test interpretation PD-L1"
+
+
+class PriorMolecularTestsExtractorTest {
 
     val extractor = PriorMolecularTestsExtractor(
         TestCurationFactory.curationDatabase(
@@ -21,7 +25,7 @@ class PriorIHCTestsExtractorTest {
                 input = MOLECULAR_TEST_INPUT,
                 ignore = false,
                 curated = PriorIHCTest(
-                    impliesPotentialIndeterminateStatus = false, item = "item"
+                    impliesPotentialIndeterminateStatus = false, test = MOLECULAR_TEST_INTERPRETATION_IHC, item = "item"
                 )
             )
         ),
@@ -30,7 +34,7 @@ class PriorIHCTestsExtractorTest {
                 input = MOLECULAR_TEST_INPUT,
                 ignore = false,
                 curated = PriorIHCTest(
-                    impliesPotentialIndeterminateStatus = false, item = "item"
+                    impliesPotentialIndeterminateStatus = false, test = MOLECULAR_TEST_INTERPRETATION_PDL1, item = "item"
                 )
             )
         )
@@ -44,6 +48,8 @@ class PriorIHCTestsExtractorTest {
         val questionnaire = TestCurationFactory.emptyQuestionnaire().copy(ihcTestResults = ihcInputs, pdl1TestResults = pdl1Inputs)
         val (priorMolecularTests, evaluation) = extractor.extract(PATIENT_ID, questionnaire)
         assertThat(priorMolecularTests).hasSize(2)
+        assertThat(priorMolecularTests[0].test).isEqualTo(MOLECULAR_TEST_INTERPRETATION_IHC)
+        assertThat(priorMolecularTests[1].test).isEqualTo(MOLECULAR_TEST_INTERPRETATION_PDL1)
 
         assertThat(evaluation.warnings).containsExactly(
             CurationWarning(

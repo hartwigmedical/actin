@@ -6,7 +6,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import org.junit.Test
 
-
 class HasKnownHPVStatusTest {
 
     private val function = HasKnownHPVStatus()
@@ -25,63 +24,66 @@ class HasKnownHPVStatusTest {
 
     @Test
     fun `Should resolve to undetermined if WGS does not contain enough tumor cells and no correct test in prior molecular tests `() {
-        val record = TestPatientFactory.createMinimalTestWGSPatientRecord()
+        val record = MolecularTestFactory.withExperimentTypeAndContainingTumorCells(
+            ExperimentType.HARTWIG_WHOLE_GENOME, false
+        ).copy(
+            priorIHCTests = listOf(MolecularTestFactory.priorMolecularTest(test = "IHC", item = "Something"))
+        )
         EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
     }
 
     @Test
     fun `Should resolve to undetermined if no WGS has been performed and correct test is in priorMolecularTest with indeterminate status`() {
-    /*    val record = MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
-            ExperimentType.HARTWIG_WHOLE_GENOME, false, IHCMolecularTest(
+        val record = MolecularTestFactory.withExperimentTypeAndContainingTumorCells(
+            ExperimentType.HARTWIG_WHOLE_GENOME, false
+        ).copy(
+            priorIHCTests =
+            listOf(
                 MolecularTestFactory.priorMolecularTest(
                     test = "IHC", item = "HPV", impliesIndeterminate = true
                 )
             )
-        )*/
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        )
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
     }
 
     @Test
     fun `Should pass if WGS does not contain enough tumor cells but correct test is in priorMolecularTest`() {
-      /*  val record = MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
-            ExperimentType.HARTWIG_WHOLE_GENOME, false, IHCMolecularTest(
+        val record = MolecularTestFactory.withExperimentTypeAndContainingTumorCells(
+            ExperimentType.HARTWIG_WHOLE_GENOME, false
+        ).copy(
+            priorIHCTests = listOf(
                 MolecularTestFactory.priorMolecularTest(
                     test = "IHC", item = "HPV", impliesIndeterminate = false
                 )
             )
-        )*/
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        )
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
     }
 
     @Test
     fun `Should pass if no WGS performed but correct test is in priorMolecularTest`() {
-        /*val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-            molecularHistory = MolecularHistory(
-                listOf(IHCMolecularTest(MolecularTestFactory.priorMolecularTest(test = "IHC", item = "HPV", impliesIndeterminate = false)))
-            )
-        )*/
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
+            priorIHCTests = listOf(MolecularTestFactory.priorMolecularTest(test = "IHC", item = "HPV", impliesIndeterminate = false))
+        )
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
     }
 
     @Test
     fun `Should evaluate to undetermined if no WGS performed and correct item not in prior molecular tests`() {
-      /*  EvaluationAssert.assertEvaluation(
+        EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
                 TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-                    molecularHistory = MolecularHistory(
-                        listOf(
-                            IHCMolecularTest(
-                                MolecularTestFactory.priorMolecularTest(
-                                    test = "IHC",
-                                    item = "Something",
-                                    impliesIndeterminate = false
-                                )
-                            )
+                    priorIHCTests = listOf(
+                        MolecularTestFactory.priorMolecularTest(
+                            test = "IHC",
+                            item = "Something",
+                            impliesIndeterminate = false
                         )
                     )
                 )
             )
-        )*/
+        )
     }
 }

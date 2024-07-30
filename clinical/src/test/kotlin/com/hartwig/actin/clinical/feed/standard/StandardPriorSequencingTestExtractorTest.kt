@@ -1,11 +1,17 @@
 package com.hartwig.actin.clinical.feed.standard
 
 import com.hartwig.actin.clinical.ExtractionResult
+import com.hartwig.actin.clinical.curation.CurationCategory
+import com.hartwig.actin.clinical.curation.CurationDatabase
+import com.hartwig.actin.clinical.curation.CurationWarning
+import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
 import com.hartwig.actin.clinical.datamodel.PriorSequencingTest
 import com.hartwig.actin.clinical.datamodel.SequencedAmplification
 import com.hartwig.actin.clinical.datamodel.SequencedExonSkip
 import com.hartwig.actin.clinical.datamodel.SequencedFusion
 import com.hartwig.actin.clinical.datamodel.SequencedVariant
+import io.mockk.every
+import io.mockk.mockk
 import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -26,10 +32,12 @@ private const val FUSION_GENE_UP = "fusionUp"
 private const val FUSION_GENE_DOWN = "fusionDown"
 private const val AMPLIFIED_GENE = "amplifiedGene"
 private const val AMPLIFIED_CHROMOSOME = "amplifiedChromosome"
+private const val FREE_TEXT = "free text"
 
 class StandardPriorSequencingTestExtractorTest {
 
-    val extractor = StandardPriorSequencingTestExtractor()
+    val curation = mockk<CurationDatabase<SequencingTestConfig>>()
+    val extractor = StandardPriorSequencingTestExtractor(curation)
 
     @Test
     fun `Should return empty list when no provided molecular tests`() {
@@ -92,7 +100,7 @@ class StandardPriorSequencingTestExtractorTest {
 
     @Test
     fun `Should extract sequencing with exon skipping`() {
-        val result = extractionResult(ProvidedMolecularTestResult(gene = GENE, exonsSkipStart = 1, exonsSkipEnd = 2))
+        val result = extractionResult(ProvidedMolecularTestResult(gene = GENE, exonSkipStart = 1, exonSkipEnd = 2))
         assertResultContains(
             result, BASE_PRIOR_SEQUENCING.copy(
                 exonSkips = setOf(
@@ -108,9 +116,53 @@ class StandardPriorSequencingTestExtractorTest {
         assertResultContains(
             result, BASE_PRIOR_SEQUENCING.copy(
                 tumorMutationalBurden = 1.0,
-                isMicroSatelliteInstability = true
+                isMicrosatelliteInstability = true
             )
         )
+    }
+
+    @Test
+    fun `Should curate any free text results`() {
+        every { curation.find(FREE_TEXT) } returns setOf(
+            SequencingTestConfig(
+                input = FREE_TEXT,
+                curated = ProvidedMolecularTestResult(gene = GENE, hgvsCodingImpact = CODING)
+            )
+        )
+        val result = extractionResult(ProvidedMolecularTestResult(gene = GENE, freeText = FREE_TEXT))
+        assertResultContains(
+            result, BASE_PRIOR_SEQUENCING.copy(
+                variants = setOf(SequencedVariant(GENE, hgvsCodingImpact = CODING))
+            )
+        )
+    }
+
+    @Test
+    fun `Should return curation warnings for uncurated free text`() {
+        every { curation.find(FREE_TEXT) } returns emptySet()
+        val result = extractionResult(ProvidedMolecularTestResult(gene = GENE, freeText = FREE_TEXT))
+        assertThat(result.evaluation.warnings).hasSize(1)
+        assertThat(result.evaluation.warnings.first()).isEqualTo(
+            CurationWarning(
+                patientId = HASHED_ID_IN_BASE64,
+                category = CurationCategory.SEQUENCING_TEST,
+                feedInput = FREE_TEXT,
+                message = "Could not find sequencing test config for input '$FREE_TEXT'"
+            )
+        )
+    }
+
+    @Test
+    fun `Should respect ignore flag when curating free text`() {
+        every { curation.find(FREE_TEXT) } returns setOf(
+            SequencingTestConfig(
+                input = FREE_TEXT,
+                ignore = true
+            )
+        )
+        val result = extractionResult(ProvidedMolecularTestResult(gene = GENE, freeText = FREE_TEXT))
+        assertThat(result.evaluation.warnings).isEmpty()
+        assertResultContains(result, BASE_PRIOR_SEQUENCING)
     }
 
     private fun extractionResult(result: ProvidedMolecularTestResult) = extractor.extract(

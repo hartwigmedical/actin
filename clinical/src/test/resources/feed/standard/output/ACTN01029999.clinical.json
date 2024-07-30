@@ -110,7 +110,7 @@
       "isContraindicationForTherapy": true
     }
   ],
-  "priorMolecularTests": [
+  "priorIHCTests": [
     {
       "test": "IHC",
       "item": "ERBB2",
@@ -153,6 +153,7 @@
       "impliesPotentialIndeterminateStatus": false
     }
   ],
+  "priorSequencingTests": [],
   "complications": [
     {
       "name": "Other",

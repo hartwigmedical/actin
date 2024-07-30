@@ -85,6 +85,7 @@ data class CurationDatabaseContext(
             toxicityCuration,
             molecularTestIhcCuration,
             molecularTestPdl1Curation,
+            sequencingTestCuration,
             medicationNameCuration,
             medicationDosageCuration,
             intoleranceCuration
@@ -107,6 +108,7 @@ data class CurationDatabaseContext(
             toxicityCuration.validationErrors +
             molecularTestIhcCuration.validationErrors +
             molecularTestPdl1Curation.validationErrors +
+            sequencingTestCuration.validationErrors +
             medicationNameCuration.validationErrors +
             medicationDosageCuration.validationErrors +
             intoleranceCuration.validationErrors +
