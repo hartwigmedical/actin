@@ -185,4 +185,30 @@ class StandardPriorIHCTestExtractorTest {
         assertThat(result.extracted).containsExactly(PRIOR_MOLECULAR_TEST, anotherPriorMolecularTest)
         assertThat(result.evaluation.warnings).isEmpty()
     }
+
+    @Test
+    fun `Should extract and curate IHC lines from molecular test list (new)`() {
+        every { molecularTestCuration.find(IHC_LINE) } returns setOf(
+            IHCTestConfig(
+                input = IHC_LINE,
+                curated = PRIOR_IHC_TEST
+            )
+        )
+        val result = extractor.extract(
+            EHR_PATIENT_RECORD.copy(
+                molecularTests = listOf(
+                    ProvidedMolecularTest(
+                        test = "IHC",
+                        results = setOf(ProvidedMolecularTestResult(ihcResult = IHC_LINE))
+                    ),
+                    ProvidedMolecularTest(
+                        test = "NGS",
+                        results = setOf(ProvidedMolecularTestResult(hgvsCodingImpact = "codingImpact"))
+                    ),
+                )
+            )
+        )
+        assertThat(result.extracted).containsExactly(PRIOR_IHC_TEST)
+        assertThat(result.evaluation.warnings).isEmpty()
+    }
 }

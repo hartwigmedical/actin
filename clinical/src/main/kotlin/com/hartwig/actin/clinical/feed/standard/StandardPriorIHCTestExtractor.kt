@@ -14,12 +14,12 @@ class StandardPriorIHCTestExtractor(
     private val molecularTestCuration: CurationDatabase<IHCTestConfig>
 ) : StandardDataExtractor<List<PriorIHCTest>> {
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<PriorIHCTest>> {
-        val extractedIHCTests = extractIHC(molecularTestCuration, ehrPatientRecord)
+        val extractedIHCTestsFromTumorDifferentiation = extractIHC(molecularTestCuration, ehrPatientRecord)
         val extractedFromPriorOtherConditions = extractFromPriorOtherConditions(ehrPatientRecord)
         val extractedFromTumorDifferentiation = extractFromTumorDifferentiation(ehrPatientRecord)
 
         val curatedMolecularTestExtraction =
-            (extractedIHCTests + extractedFromPriorOtherConditions + extractedFromTumorDifferentiation).fold(
+            (extractedIHCTestsFromTumorDifferentiation + extractedFromPriorOtherConditions + extractedFromTumorDifferentiation).fold(
                 ExtractionResult(
                     emptyList<PriorIHCTest>(), CurationExtractionEvaluation()
                 )
@@ -27,7 +27,7 @@ class StandardPriorIHCTestExtractor(
                 ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
             }
 
-        val extractedOtherMolecularTests = ehrPatientRecord.molecularTestHistory.map {
+        val extractedOtherMolecularTestsLegacy = ehrPatientRecord.molecularTestHistory.map {
             PriorIHCTest(
                 test = it.type,
                 item = it.measure,
@@ -38,9 +38,23 @@ class StandardPriorIHCTestExtractor(
             )
         }
 
+        val extractedIHCTests = ehrPatientRecord.molecularTests.asSequence().flatMap { it.results }.filter { it.ihcResult != null }.map {
+            CurationResponse.createFromConfigs(
+                molecularTestCuration.find(it.ihcResult!!),
+                ehrPatientRecord.patientDetails.hashedId,
+                CurationCategory.MOLECULAR_TEST_IHC,
+                it.ihcResult,
+                "molecular test",
+                false
+            )
+        }.map { ExtractionResult(it.configs.mapNotNull { config -> config.curated }, it.extractionEvaluation) }
+            .fold(ExtractionResult(emptyList<PriorIHCTest>(), CurationExtractionEvaluation())) { acc, result ->
+                ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
+            }
+
         return ExtractionResult(
-            curatedMolecularTestExtraction.extracted + extractedOtherMolecularTests,
-            curatedMolecularTestExtraction.evaluation + CurationExtractionEvaluation()
+            curatedMolecularTestExtraction.extracted + extractedOtherMolecularTestsLegacy + extractedIHCTests.extracted,
+            curatedMolecularTestExtraction.evaluation + extractedIHCTests.evaluation
         )
     }
 
@@ -77,7 +91,7 @@ class StandardPriorIHCTestExtractor(
         ehrPatientRecord.patientDetails.hashedId,
         CurationCategory.MOLECULAR_TEST_IHC,
         input,
-        "molecular test",
+        "molecular test ihc",
         false
     )
 
