@@ -49,51 +49,25 @@ class SharedDataLoaderApplication(private val config: SharedDataLoaderConfig) {
     }
 
     private fun latestSharedPath(directory: String): String? {
-        val basePath = config.sharedDataDirectory + File.separator + directory + File.separator + "actin" + File.separator
-        for (i in 9 downTo 1) {
-            val actinPath = basePath + i + File.separator
-            if (File(actinPath).isDirectory) {
-                return actinPath
-            }
-        }
-
-        return null
+        val basePath = sequenceOf(config.sharedDataDirectory, directory, "actin", "").joinToString(File.separator)
+        return (9 downTo 1).map { i -> basePath + i + File.separator }
+            .firstOrNull { actinPath -> File(actinPath).isDirectory }
     }
 
     private fun extractSinglePatientData(basePath: String, patient: String): Triple<ClinicalRecord?, MolecularHistory?, TreatmentMatch?> {
-        val clinicalJson = findClinicalJson(basePath, patient)
-        val molecularJson = findMolecularJson(basePath, patient)
-        val treatmentMatchJson = findTreatmentMatchJson(basePath, patient)
-
-        val clinical: ClinicalRecord? = clinicalJson?.let { HistoricClinicalDeserializer.deserialize(clinicalJson) }
-        if (clinical == null) {
-            LOGGER.warn("  Clinical record could not be constructed for {}", patient)
-        }
-
-        val molecular: MolecularHistory? = molecularJson?.let { HistoricMolecularDeserializer.deserialize(molecularJson) }
-        if (molecular == null) {
-            LOGGER.warn("  Molecular record could not be constructed for {}", patient)
-        }
-
-        val treatmentMatch: TreatmentMatch? =
-            treatmentMatchJson?.let { HistoricTreatmentMatchDeserializer.deserialize(treatmentMatchJson) }
-        if (treatmentMatch == null) {
-            LOGGER.warn("  Treatment match record could not be constructed for {}", patient)
-        }
-
-        return Triple(clinical, molecular, treatmentMatch)
+        return Triple(
+            extractRecordFromFile(basePath, patient, "clinical", HistoricClinicalDeserializer::deserialize),
+            extractRecordFromFile(basePath, patient, "molecular", HistoricMolecularDeserializer::deserialize),
+            extractRecordFromFile(basePath, patient, "treatment_match", HistoricTreatmentMatchDeserializer::deserialize)
+        )
     }
 
-    private fun findClinicalJson(basePath: String, patient: String): File? {
-        return findJson(basePath, patient, "clinical")
-    }
-
-    private fun findMolecularJson(basePath: String, patient: String): File? {
-        return findJson(basePath, patient, "molecular")
-    }
-
-    private fun findTreatmentMatchJson(basePath: String, patient: String): File? {
-        return findJson(basePath, patient, "treatment_match")
+    private fun <T> extractRecordFromFile(basePath: String, patient: String, pattern: String, deserialize: (File) -> T): T? {
+        return findJson(basePath, patient, pattern)?.let(deserialize).also {
+            if (it == null) {
+                LOGGER.warn("  ${pattern.replace("_", " ").replaceFirstChar(Char::uppercase)} record could not be constructed for $patient")
+            }
+        }
     }
 
     private fun findJson(basePath: String, patient: String, pattern: String): File? {
@@ -105,12 +79,7 @@ class SharedDataLoaderApplication(private val config: SharedDataLoaderConfig) {
             }
         }
 
-        val patientAttempt = File("$basePath$patient.$pattern.json")
-        if (patientAttempt.exists()) {
-            return patientAttempt
-        }
-
-        return null
+        return File("$basePath$patient.$pattern.json").takeIf { it.exists() }
     }
 
     private fun writeToDatabase(
@@ -121,10 +90,10 @@ class SharedDataLoaderApplication(private val config: SharedDataLoaderConfig) {
         access.writeClinicalRecords(historicData.mapNotNull { it.first })
 
         LOGGER.info("Writing molecular data for {} historic patients", historicData.size)
-        historicData.mapNotNull { it -> it.second?.latestOrangeMolecularRecord()?.let { access.writeMolecularRecord(it) } }
+        historicData.mapNotNull { it.second?.latestOrangeMolecularRecord() }.forEach(access::writeMolecularRecord)
 
         LOGGER.info("Writing treatment match data for {} historic patients", historicData.size)
-        historicData.mapNotNull { it -> it.third?.let { access.writeTreatmentMatch(it) } }
+        historicData.mapNotNull { it.third }.forEach(access::writeTreatmentMatch)
     }
 
     companion object {
