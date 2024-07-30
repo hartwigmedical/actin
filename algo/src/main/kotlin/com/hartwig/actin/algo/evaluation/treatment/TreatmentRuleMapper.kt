@@ -229,7 +229,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadTreatmentCategoryOfAllTypesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentCategoryManyTypesOneIntegerInput(function)
+            val input = functionInputResolver().createOneTreatmentCategoryManyTypesInput(function)
             HasHadSomeTreatmentsWithCategoryOfAllTypes(input.category, input.types, 1)
         }
     }
