@@ -28,7 +28,7 @@ import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.orange.driver.DisruptionType
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariantDetails
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
 import com.hartwig.actin.molecular.datamodel.orange.driver.RegionType
@@ -63,7 +63,7 @@ object HistoricMolecularDeserializer {
             isContaminated = !hasSufficientQuality,
             hasSufficientPurity = Json.optionalBool(molecular, "hasReliablePurity") ?: hasSufficientQuality,
             hasSufficientQuality = hasSufficientQuality,
-            immunology = extractImmunology(molecular),
+            immunology = MolecularImmunology(isReliable = false, hlaAlleles = setOf()),
             pharmaco = extractPharmaco(molecular),
             experimentType = determineExperimentType(molecular),
             date = Json.date(molecular, "date"),
@@ -83,6 +83,8 @@ object HistoricMolecularDeserializer {
         return if (obj.has(field)) nullableInteger(obj, field) else null
     }
 
+    private fun Json.stringSet(obj: JsonObject, field: String) = stringList(obj, field).toSet()
+
     private fun determineExperimentType(molecular: JsonObject): ExperimentType {
         return when (val type = Json.optionalString(molecular, "type")) {
             "WGS", "WHOLE_GENOME", null -> ExperimentType.HARTWIG_WHOLE_GENOME
@@ -100,10 +102,6 @@ object HistoricMolecularDeserializer {
 
     private fun determineRefGenomeVersion(molecular: JsonObject): RefGenomeVersion {
         return Json.optionalString(molecular, "refGenomeVersion")?.let(RefGenomeVersion::valueOf) ?: RefGenomeVersion.V37
-    }
-
-    private fun extractImmunology(molecular: JsonObject): MolecularImmunology {
-        return MolecularImmunology(isReliable = false, hlaAlleles = setOf())
     }
 
     private fun extractPharmaco(molecular: JsonObject): Set<PharmacoEntry> {
@@ -149,7 +147,7 @@ object HistoricMolecularDeserializer {
             type = VariantType.UNDEFINED,
             canonicalImpact = extractCanonicalImpact(obj),
             otherImpacts = emptySet(),
-            extendedVariantDetails = null,
+            extendedVariantDetails = Json.optionalBool(obj, "isBiallelic")?.let { extractExtendedVariantDetails(obj, it) },
             isHotspot = Json.optionalBool(obj, "isHotspot")
                 ?: Json.optionalString(obj, "driverType")?.let { it.uppercase() == "HOTSPOT" }
                 ?: false,
@@ -186,6 +184,14 @@ object HistoricMolecularDeserializer {
         )
     }
 
+    private fun extractExtendedVariantDetails(variant: JsonObject, isBiallelic: Boolean) = ExtendedVariantDetails(
+        variantCopyNumber = Json.double(variant, "variantCopyNumber"),
+        totalCopyNumber = Json.double(variant, "totalCopyNumber"),
+        isBiallelic = isBiallelic,
+        phaseGroups = null,
+        clonalLikelihood = Json.double(variant, "clonalLikelihood")
+    )
+
     private fun extractCopyNumbers(drivers: JsonObject): Set<CopyNumber> {
         return sequenceOf("copyNumbers" to null, "amplifications" to CopyNumberType.FULL_GAIN, "losses" to CopyNumberType.LOSS)
             .flatMap { (field, type) -> Json.optionalArray(drivers, field)?.map { extractCopyNumber(it, type) } ?: emptyList() }
@@ -214,7 +220,7 @@ object HistoricMolecularDeserializer {
         )
     }
 
-    private fun determineIsReportable(obj: JsonObject): Boolean = Json.optionalBool(obj, "isReportable") ?: false
+    private fun determineIsReportable(obj: JsonObject): Boolean = Json.optionalBool(obj, "isReportable") ?: true
 
     private fun determineDriverLikelihood(driver: JsonObject): DriverLikelihood? =
         Json.nullableString(driver, "driverLikelihood")?.let(DriverLikelihood::valueOf)
@@ -227,9 +233,9 @@ object HistoricMolecularDeserializer {
         return HomozygousDisruption(
             isReportable = determineIsReportable(obj),
             event = Json.string(obj, "event"),
-            driverLikelihood = null,
+            driverLikelihood = determineDriverLikelihood(obj),
             evidence = ActionableEvidence(),
-            gene = "",
+            gene = Json.string(obj, "gene"),
             geneRole = GeneRole.UNKNOWN,
             proteinEffect = ProteinEffect.UNKNOWN,
             isAssociatedWithDrugResistance = null
@@ -247,9 +253,9 @@ object HistoricMolecularDeserializer {
             clusterGroup = 0,
             isReportable = determineIsReportable(obj),
             event = Json.string(obj, "event"),
-            driverLikelihood = null,
+            driverLikelihood = determineDriverLikelihood(obj),
             evidence = ActionableEvidence(),
-            gene = "",
+            gene = Json.string(obj, "gene"),
             geneRole = GeneRole.UNKNOWN,
             proteinEffect = ProteinEffect.UNKNOWN,
             isAssociatedWithDrugResistance = null
@@ -259,38 +265,41 @@ object HistoricMolecularDeserializer {
     private fun extractFusion(fusionElement: JsonElement): Fusion {
         val obj = fusionElement.asJsonObject
         return Fusion(
-            geneStart = "",
-            geneEnd = "",
+            geneStart = Json.optionalString(obj, "geneStart") ?: Json.string(obj, "fiveGene"),
+            geneEnd = Json.optionalString(obj, "geneEnd") ?: Json.string(obj, "threeGene"),
             geneTranscriptStart = "",
             geneTranscriptEnd = "",
-            driverType = FusionDriverType.NONE,
+            driverType = determineFusionDriverType(Json.string(obj, "driverType")),
             proteinEffect = ProteinEffect.UNKNOWN,
-            extendedFusionDetails = extractExtendedFusionDetails(obj),
+            extendedFusionDetails = null,
             isReportable = determineIsReportable(obj),
             event = Json.string(obj, "event"),
-            driverLikelihood = null,
+            driverLikelihood = determineDriverLikelihood(obj),
             evidence = ActionableEvidence()
         )
     }
 
-    private fun extractExtendedFusionDetails(fusion: JsonObject): ExtendedFusionDetails {
-        return ExtendedFusionDetails(
-            fusedExonUp = 0,
-            fusedExonDown = 0,
-            isAssociatedWithDrugResistance = null
-        )
+    private fun determineFusionDriverType(str: String): FusionDriverType {
+        return when (str) {
+            "KNOWN", "KNOWN_PAIR" -> FusionDriverType.KNOWN_PAIR
+            "PROMISCUOUS" -> FusionDriverType.PROMISCUOUS_BOTH
+            "PROMISCUOUS_3" -> FusionDriverType.PROMISCUOUS_3
+            "PROMISCUOUS_5" -> FusionDriverType.PROMISCUOUS_5
+            "PROMISCUOUS_ENHANCER_TARGET" -> FusionDriverType.PROMISCUOUS_ENHANCER_TARGET
+            else -> FusionDriverType.NONE
+        }
     }
 
     private fun extractVirus(virusElement: JsonElement): Virus {
         val obj = virusElement.asJsonObject
         return Virus(
-            name = "",
+            name = Json.string(obj, "name"),
             type = VirusType.OTHER,
             isReliable = true,
-            integrations = 0,
+            integrations = Json.integer(obj, "integrations"),
             isReportable = determineIsReportable(obj),
             event = Json.string(obj, "event"),
-            driverLikelihood = null,
+            driverLikelihood = determineDriverLikelihood(obj),
             evidence = ActionableEvidence()
         )
     }
@@ -321,11 +330,8 @@ object HistoricMolecularDeserializer {
     }
 
     private fun extractPredictions(predictedTumorOrigin: JsonObject): List<CupPrediction> {
-        return if (predictedTumorOrigin.has("predictions")) {
-            Json.array(predictedTumorOrigin, "predictions").map { toCupPrediction(it.asJsonObject) }
-        } else {
-            listOf(toCupPrediction(predictedTumorOrigin))
-        }
+        return Json.optionalArray(predictedTumorOrigin, "predictions")?.map { toCupPrediction(it.asJsonObject) }
+            ?: listOf(toCupPrediction(predictedTumorOrigin))
     }
 
     private fun toCupPrediction(cupPrediction: JsonObject): CupPrediction {
@@ -339,35 +345,31 @@ object HistoricMolecularDeserializer {
     }
 
     private fun extractCancerType(prediction: JsonObject): String {
-        return if (prediction.has("tumorType")) {
-            Json.string(prediction, "tumorType")
-        } else {
-            Json.string(prediction, "cancerType")
-        }
+        return Json.optionalString(prediction, "tumorType") ?: Json.string(prediction, "cancerType")
     }
 
     private fun extractEvidence(evidence: JsonObject?): ActionableEvidence? {
         return evidence?.let {
             ActionableEvidence(
-                approvedTreatments = HashSet(Json.stringList(it, "approvedTreatments")),
+                approvedTreatments = Json.stringSet(it, "approvedTreatments"),
                 externalEligibleTrials = toExternalTrials(Json.stringList(it, "externalEligibleTrials")),
-                onLabelExperimentalTreatments = HashSet(Json.stringList(it, "onLabelExperimentalTreatments")),
-                offLabelExperimentalTreatments = HashSet(Json.stringList(it, "offLabelExperimentalTreatments")),
-                preClinicalTreatments = HashSet(Json.stringList(it, "preClinicalTreatments")),
-                knownResistantTreatments = HashSet(Json.stringList(it, "knownResistantTreatments")),
-                suspectResistantTreatments = HashSet(Json.stringList(it, "suspectResistantTreatments"))
+                onLabelExperimentalTreatments = Json.stringSet(it, "onLabelExperimentalTreatments"),
+                offLabelExperimentalTreatments = Json.stringSet(it, "offLabelExperimentalTreatments"),
+                preClinicalTreatments = Json.stringSet(it, "preClinicalTreatments"),
+                knownResistantTreatments = Json.stringSet(it, "knownResistantTreatments"),
+                suspectResistantTreatments = Json.stringSet(it, "suspectResistantTreatments")
             )
         }
     }
 
     private fun toExternalTrials(externalTrials: List<String>): Set<ExternalTrial> {
-        return HashSet(externalTrials.map {
+        return externalTrials.map {
             ExternalTrial(
                 title = it,
                 countries = setOf(),
                 url = "",
                 nctId = ""
             )
-        })
+        }.toSet()
     }
 }
