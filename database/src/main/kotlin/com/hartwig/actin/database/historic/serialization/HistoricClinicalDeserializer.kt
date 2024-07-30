@@ -235,10 +235,14 @@ object HistoricClinicalDeserializer {
 
     private fun toStopReason(stopReasonString: String): StopReason? {
         val stopReason = StopReason.createFromString(stopReasonString)
-        if (stopReason == null) {
-            LOGGER.warn("  Could not convert stop reason string: {}", stopReasonString)
+        return when {
+            stopReason != null -> stopReason
+            sequenceOf("Allergic", "disfunction").any(stopReasonString::contains) -> StopReason.TOXICITY
+            else -> {
+                LOGGER.warn("  Could not convert stop reason string: {}", stopReasonString)
+                null
+            }
         }
-        return stopReason
     }
 
     private fun toTreatmentResponse(treatmentResponseString: String): TreatmentResponse? {

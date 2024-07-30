@@ -28,6 +28,7 @@ import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.orange.driver.DisruptionType
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
 import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariantDetails
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
@@ -271,11 +272,19 @@ object HistoricMolecularDeserializer {
             geneTranscriptEnd = "",
             driverType = determineFusionDriverType(Json.string(obj, "driverType")),
             proteinEffect = ProteinEffect.UNKNOWN,
-            extendedFusionDetails = null,
+            extendedFusionDetails = extractExtendedFusionDetails(obj),
             isReportable = determineIsReportable(obj),
             event = Json.string(obj, "event"),
             driverLikelihood = determineDriverLikelihood(obj),
             evidence = ActionableEvidence()
+        )
+    }
+
+    private fun extractExtendedFusionDetails(fusion: JsonObject): ExtendedFusionDetails {
+        return ExtendedFusionDetails(
+            fusedExonUp = Json.optionalInteger(fusion, "fusedExonUp") ?: 0,
+            fusedExonDown = Json.optionalInteger(fusion, "fusedExonDown") ?: 0,
+            isAssociatedWithDrugResistance = null
         )
     }
 
