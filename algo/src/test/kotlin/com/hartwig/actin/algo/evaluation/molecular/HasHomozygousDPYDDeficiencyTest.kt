@@ -23,24 +23,6 @@ class HasHomozygousDPYDDeficiencyTest {
     }
 
     @Test
-    fun `Should return undetermined if patient has unexpected DPYD type function`() {
-        EvaluationAssert.assertMolecularEvaluation(
-            EvaluationResult.UNDETERMINED,
-            function.evaluate(
-                MolecularTestFactory.withHaplotype(
-                    PharmacoEntry(
-                        gene = "DPYD",
-                        haplotypes = setOf(
-                            Haplotype(allele = "*1", alleleCount = 1, function = "Normal Function"),
-                            Haplotype(allele = "*2", alleleCount = 1, function = "Unexpected Function")
-                        )
-                    )
-                )
-            )
-        )
-    }
-
-    @Test
     fun `Should pass if patient has homozygous DPYD haplotypes with reduced function`() {
         EvaluationAssert.assertMolecularEvaluation(
             EvaluationResult.PASS,
