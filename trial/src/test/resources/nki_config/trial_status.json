@@ -1,47 +1,47 @@
 [
   {
-    "study_id": 1,
-    "study_metc": "MEC-001",
-    "study_acronym": "OPN-001",
-    "study_title": "Open trial",
-    "study_status": "OPEN",
-    "study_slots_number_available": 1,
-    "study_slots_date_update": "2024-03-18T00:00:00"
+    "studyId": 1,
+    "studyMetc": "MEC-001",
+    "studyAcronym": "OPN-001",
+    "studyTitle": "Open trial",
+    "studyStatus": "OPEN",
+    "studySlotsNumberAvailable": 1,
+    "studySlotsDateUpdate": "2024-03-18T00:00:00"
   },
   {
-    "study_id": 2,
-    "study_metc": "MEC-002",
-    "study_acronym": "CLS-001",
-    "study_title": "Closed trial",
-    "study_status": "CLOSED",
-    "study_slots_number_available": 0,
-    "study_slots_date_update": "2024-03-12T00:00:00"
+    "studyId": 2,
+    "studyMetc": "MEC-002",
+    "studyAcronym": "CLS-001",
+    "studyTitle": "Closed trial",
+    "studyStatus": "CLOSED",
+    "studySlotsNumberAvailable": 0,
+    "studySlotsDateUpdate": "2024-03-12T00:00:00"
   },
   {
-    "study_id": 3,
-    "study_metc": "MEC-003",
-    "study_acronym": "CLS-001",
-    "study_title": "Pending trial",
-    "study_status": "PENDING",
-    "study_slots_number_available": 0,
-    "study_slots_date_update": "2024-03-12T00:00:00"
+    "studyId": 3,
+    "studyMetc": "MEC-003",
+    "studyAcronym": "CLS-001",
+    "studyTitle": "Pending trial",
+    "studyStatus": "PENDING",
+    "studySlotsNumberAvailable": 0,
+    "studySlotsDateUpdate": "2024-03-12T00:00:00"
   },
   {
-    "study_id": 4,
-    "study_metc": "MEC-004",
-    "study_acronym": "CLS-001",
-    "study_title": "Withdrawn trial",
-    "study_status": "WITHDRAWN",
-    "study_slots_number_available": 0,
-    "study_slots_date_update": "2024-03-12T00:00:00"
+    "studyId": 4,
+    "studyMetc": "MEC-004",
+    "studyAcronym": "CLS-001",
+    "studyTitle": "Withdrawn trial",
+    "studyStatus": "WITHDRAWN",
+    "studySlotsNumberAvailable": 0,
+    "studySlotsDateUpdate": "2024-03-12T00:00:00"
   },
   {
-    "study_id": 5,
-    "study_metc": "MEC-005",
-    "study_acronym": "CLS-001",
-    "study_title": "Suspended trial",
-    "study_status": "SUSPENDED",
-    "study_slots_number_available": 0,
-    "study_slots_date_update": "2024-03-12T00:00:00"
+    "studyId": 5,
+    "studyMetc": "MEC-005",
+    "studyAcronym": "CLS-001",
+    "studyTitle": "Suspended trial",
+    "studyStatus": "SUSPENDED",
+    "studySlotsNumberAvailable": 0,
+    "studySlotsDateUpdate": "2024-03-12T00:00:00"
   }
 ]
