@@ -20,13 +20,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_LINES_X to isEligibleForTreatmentLinesCreator(),
             EligibilityRule.IS_ELIGIBLE_FOR_LOCAL_LIVER_TREATMENT to { IsEligibleForLocalLiverTreatment(doidModel()) },
             EligibilityRule.IS_ELIGIBLE_FOR_INTENSIVE_TREATMENT to { IsEligibleForIntensiveTreatment() },
-            EligibilityRule.IS_ELIGIBLE_FOR_LOCAL_TREATMENT_OF_METASTASES to {
-                IsEligibleForLocalTreatmentOfMetastases(
-                    HasMetastaticCancer(
-                        doidModel()
-                    )
-                )
-            },
+            EligibilityRule.IS_ELIGIBLE_FOR_LOCAL_TREATMENT_OF_METASTASES to isEligibleForLocalTreatmentOfMetastasesCreator(),
             EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS to hasExhaustedSOCTreatmentsCreator(),
             EligibilityRule.HAS_HAD_AT_LEAST_X_APPROVED_TREATMENT_LINES to hasHadSomeApprovedTreatmentCreator(),
             EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES to hasHadSomeSystemicTreatmentCreator(),
@@ -105,6 +99,10 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val treatmentName = functionInputResolver().createOneSpecificTreatmentInput(function)
             IsEligibleForOnLabelTreatment(treatmentName, RecommendationEngineFactory(resources))
         }
+    }
+
+    private fun isEligibleForLocalTreatmentOfMetastasesCreator(): FunctionCreator {
+        return { IsEligibleForLocalTreatmentOfMetastases(HasMetastaticCancer(doidModel())) }
     }
 
     private fun isEligibleForTreatmentLinesCreator(): FunctionCreator {
