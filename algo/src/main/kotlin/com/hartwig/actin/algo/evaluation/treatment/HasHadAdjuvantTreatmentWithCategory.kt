@@ -4,10 +4,9 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.DateComparison
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentSinceDateFunctions.treatmentSinceMinDate
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import java.time.LocalDate
 
 class HasHadAdjuvantTreatmentWithCategory(
@@ -30,11 +29,11 @@ class HasHadAdjuvantTreatmentWithCategory(
                 EvaluationFactory.pass("Received adjuvant treatment(s) of ${category.display()}")
             }
 
-            treatmentSummary.specificMatches.any { treatmentSinceMinDate(it, false) } -> {
+            treatmentSummary.specificMatches.any { treatmentSinceMinDate(it, minDate, false) } -> {
                 EvaluationFactory.pass("Received adjuvant treatment(s) of ${category.display()} within the last $weeksAgo weeks")
             }
 
-            treatmentSummary.specificMatches.any { treatmentSinceMinDate(it, true) } -> {
+            treatmentSummary.specificMatches.any { treatmentSinceMinDate(it, minDate, true) } -> {
                 EvaluationFactory.undetermined("Received adjuvant treatment(s) of ${category.display()} but date unknown")
             }
 
@@ -46,15 +45,5 @@ class HasHadAdjuvantTreatmentWithCategory(
                 EvaluationFactory.fail("All received adjuvant treatment(s) of ${category.display()} are administered more than $weeksAgo weeks ago")
             }
         }
-    }
-
-    private fun treatmentSinceMinDate(treatment: TreatmentHistoryEntry, includeUnknown: Boolean): Boolean {
-        return DateComparison.isAfterDate(
-            minDate!!,
-            treatment.treatmentHistoryDetails?.stopYear,
-            treatment.treatmentHistoryDetails?.stopMonth
-        )
-            ?: DateComparison.isAfterDate(minDate, treatment.startYear, treatment.startMonth)
-            ?: includeUnknown
     }
 }

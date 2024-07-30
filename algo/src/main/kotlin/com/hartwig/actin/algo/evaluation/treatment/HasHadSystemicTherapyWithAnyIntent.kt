@@ -4,11 +4,10 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.DateComparison.isAfterDate
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentSinceDateFunctions.treatmentSinceMinDate
 import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithOr
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import java.time.LocalDate
 
 class HasHadSystemicTherapyWithAnyIntent(
@@ -31,14 +30,14 @@ class HasHadSystemicTherapyWithAnyIntent(
                 EvaluationFactory.pass("Patient has had $intentsLowercase systemic therapy", "Received $intentsLowercase systemic therapy")
             }
 
-            matchingTreatments[true]?.any { treatmentSinceMinDate(it, false) } ?: false -> {
+            matchingTreatments[true]?.any { treatmentSinceMinDate(it, minDate, false) } ?: false -> {
                 EvaluationFactory.pass(
                     "Patient has had $intentsLowercase systemic therapy within the last $weeksAgo weeks",
                     "Received $intentsLowercase systemic therapy within the last $weeksAgo weeks"
                 )
             }
 
-            matchingTreatments[true]?.any { treatmentSinceMinDate(it, true) } ?: false -> {
+            matchingTreatments[true]?.any { treatmentSinceMinDate(it, minDate, true) } ?: false -> {
                 EvaluationFactory.undetermined(
                     "Patient has had $intentsLowercase systemic therapy but date unknown",
                     "Received $intentsLowercase systemic therapy but date unknown"
@@ -47,7 +46,7 @@ class HasHadSystemicTherapyWithAnyIntent(
 
             (weeksAgo == null && matchingTreatments.containsKey(key = null)) || matchingTreatments[null]?.any {
                 treatmentSinceMinDate(
-                    it,
+                    it, minDate,
                     true
                 )
             } ?: false -> {
@@ -68,11 +67,5 @@ class HasHadSystemicTherapyWithAnyIntent(
                 )
         }
 
-    }
-
-    private fun treatmentSinceMinDate(treatment: TreatmentHistoryEntry, includeUnknown: Boolean): Boolean {
-        return isAfterDate(minDate!!, treatment.treatmentHistoryDetails?.stopYear, treatment.treatmentHistoryDetails?.stopMonth)
-            ?: isAfterDate(minDate, treatment.startYear, treatment.startMonth)
-            ?: includeUnknown
     }
 }
