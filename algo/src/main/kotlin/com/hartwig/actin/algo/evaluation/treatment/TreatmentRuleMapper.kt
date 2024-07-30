@@ -37,6 +37,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X_WITHIN_Y_WEEKS to hasHadTreatmentWithAnyDrugSinceDateCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT to hasHadTreatmentWithCategoryCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y to hasHadTreatmentCategoryOfTypesCreator(),
+            EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_WITH_ANY_INTENT_Y to hasHadTreatmentCategoryWithAnyIntentCreator(),
             EligibilityRule.HAS_RECEIVED_PLATINUM_BASED_DOUBLET to { HasReceivedPlatinumBasedDoublet() },
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_ALL_TYPES_Y to hasHadTreatmentCategoryOfAllTypesCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_ALL_TYPES_Y_AND_AT_LEAST_Z_LINES to hasHadSomeTreatmentCategoryOfAllTypesCreator(),
@@ -224,6 +225,13 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneTreatmentCategoryManyTypesInput(function)
             HasHadSomeTreatmentsWithCategoryOfTypes(input.category, input.types, 1)
+        }
+    }
+
+    private fun hasHadTreatmentCategoryWithAnyIntentCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val input = functionInputResolver().createOneTreatmentCategoryManyIntentsInput(function)
+            HasHadSomeTreatmentsWithCategoryWithIntents(input.category, input.intents)
         }
     }
 
