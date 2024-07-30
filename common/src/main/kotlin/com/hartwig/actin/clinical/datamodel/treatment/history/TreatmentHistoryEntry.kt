@@ -33,10 +33,6 @@ data class TreatmentHistoryEntry(
         return matchesTypeFromSet(setOf(typeToFind))
     }
 
-    fun matchesIntentFromSet(intentsToFind: Set<Intent>): Boolean? {
-        return if (!intents.isNullOrEmpty()) intents.any { intent -> intentsToFind.contains(intent) } else null
-    }
-
     fun matchesTypeFromSet(types: Set<TreatmentType>): Boolean? {
         return if (hasTypeConfigured()) isTypeFromCollection(types) else null
     }
