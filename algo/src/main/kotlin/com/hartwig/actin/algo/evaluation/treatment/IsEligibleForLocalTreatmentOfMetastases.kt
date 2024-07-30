@@ -20,8 +20,8 @@ class IsEligibleForLocalTreatmentOfMetastases(private val hasMetastaticCancer: H
 
             EvaluationResult.UNDETERMINED, EvaluationResult.WARN -> {
                 EvaluationFactory.undetermined(
-                    "Undetermined metastatic cancer and therefore undetermined if patient is eligible for local treatment of metastases",
-                    "Undetermined metastatic cancer and therefore undetermined eligibility for local treatment of metastases"
+                    "Undetermined if patient has metastatic cancer and therefore undetermined if patient is eligible for local treatment of metastases",
+                    "Undetermined if metastatic cancer and therefore undetermined eligibility for local treatment of metastases"
                 )
             }
 
