@@ -10,7 +10,7 @@ import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMinV
 class ProteinHasSufficientExpressionByIHC(private val protein: String, private val minExpressionLevel: Int) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val ihcTests = PriorMolecularTestFunctions.allIHCTestsForProtein(record.priorIHCTests, protein)
+        val ihcTests = PriorIHCTestFunctions.allIHCTestsForProtein(record.priorIHCTests, protein)
         val evaluationsVersusReference = ihcTests.mapNotNull { ihcTest ->
             ihcTest.scoreValue?.let { scoreValue ->
                 evaluateVersusMinValue(Math.round(scoreValue).toDouble(), ihcTest.scoreValuePrefix, minExpressionLevel.toDouble())

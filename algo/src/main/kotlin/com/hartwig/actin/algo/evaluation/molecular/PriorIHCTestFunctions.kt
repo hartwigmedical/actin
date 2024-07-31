@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 
-internal object PriorMolecularTestFunctions {
+internal object PriorIHCTestFunctions {
 
     private const val PD_L1 = "PD-L1"
     private const val IHC = "IHC"
