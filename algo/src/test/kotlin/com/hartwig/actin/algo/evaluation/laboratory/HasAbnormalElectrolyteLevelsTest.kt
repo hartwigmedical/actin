@@ -8,8 +8,6 @@ import org.junit.Test
 import java.time.LocalDate
 
 class HasAbnormalElectrolyteLevelsTest {
-
-
     private val refDate = LocalDate.of(2024, 7, 30)
     private val minValidDate = refDate.minusDays(90)
     private val minPassDate = refDate.minusDays(30)
@@ -25,39 +23,37 @@ class HasAbnormalElectrolyteLevelsTest {
 
     @Test
     fun `Should pass if one or multiple electrolyte lab values are above ULN`() {
-        labMeasurements.map { evaluateLabvalues(EvaluationResult.PASS, measurementsAboveRef = listOf(it)) }
-        evaluateLabvalues(EvaluationResult.PASS, measurementsAboveRef = labMeasurements)
+        labMeasurements.forEach { evaluateLabValues(EvaluationResult.PASS, codesOfMeasurementsAboveRef = setOf(it.code)) }
+        evaluateLabValues(EvaluationResult.PASS, codesOfMeasurementsAboveRef = labMeasurements.map { it.code }.toSet())
     }
 
     @Test
     fun `Should pass if one or multiple electrolyte lab values are under LLN`() {
-        labMeasurements.map { evaluateLabvalues(EvaluationResult.PASS, measurementsBelowRef = listOf(it)) }
-        evaluateLabvalues(EvaluationResult.PASS, measurementsBelowRef = labMeasurements)
+        labMeasurements.forEach { evaluateLabValues(EvaluationResult.PASS, codesOfMeasurementsBelowRef = setOf(it.code)) }
+        evaluateLabValues(EvaluationResult.PASS, codesOfMeasurementsBelowRef = labMeasurements.map { it.code }.toSet())
     }
 
     @Test
     fun `Should fail if all electrolyte lab values are within reference range`() {
-        evaluateLabvalues(EvaluationResult.FAIL, emptyList(), emptyList())
+        evaluateLabValues(EvaluationResult.FAIL, emptySet(), emptySet())
     }
 
     private fun createLabValueWithinRef(measurement: LabMeasurement): LabValue {
         return LabTestFactory.create(measurement, value = 80.0, refDate, refLimitUp = 100.0, refLimitLow = 50.0)
     }
 
-    private fun evaluateLabvalues(
+    private fun evaluateLabValues(
         expected: EvaluationResult,
-        measurementsAboveRef: List<LabMeasurement> = emptyList(),
-        measurementsBelowRef: List<LabMeasurement> = emptyList()
+        codesOfMeasurementsAboveRef: Set<String> = emptySet(),
+        codesOfMeasurementsBelowRef: Set<String> = emptySet()
     ) {
-        val measurementsToFilterOut = (measurementsAboveRef + measurementsBelowRef).map { it.code }
-        val valuesInsideRef = labValuesWithinRef.filterNot { it.code in measurementsToFilterOut }
-        val valuesAboveRef = measurementsAboveRef.map {
-            LabTestFactory.create(it, value = 180.0, refDate, refLimitUp = 100.0, refLimitLow = 50.0)
+        val labValues = labValuesWithinRef.map { labValue ->
+            when (labValue.code) {
+                in codesOfMeasurementsAboveRef -> labValue.copy(value = 180.0, isOutsideRef = true)
+                in codesOfMeasurementsBelowRef -> labValue.copy(value = 5.0, isOutsideRef = true)
+                else -> labValue
+            }
         }
-        val valuesBelowRef = measurementsBelowRef.map {
-            LabTestFactory.create(it, value = 5.0, refDate, refLimitUp = 100.0, refLimitLow = 50.0)
-        }
-        val record = LabTestFactory.withLabValues(valuesInsideRef + valuesAboveRef + valuesBelowRef)
-        EvaluationAssert.assertEvaluation(expected, function.evaluate(record))
+        EvaluationAssert.assertEvaluation(expected, function.evaluate(LabTestFactory.withLabValues(labValues)))
     }
 }

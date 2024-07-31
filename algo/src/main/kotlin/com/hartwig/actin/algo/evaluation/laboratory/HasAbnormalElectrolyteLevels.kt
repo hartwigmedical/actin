@@ -21,12 +21,11 @@ class HasAbnormalElectrolyteLevels(private val minValidLabDate: LocalDate, priva
             LabMeasurement.POTASSIUM
         )
 
-        val evaluations = measurements.map { evaluateMeasurement(record, it) }
-        val outsideRefEvaluations = evaluations.filter { it?.second == true }
-        val measurementString = outsideRefEvaluations.map { it?.first }.joinToString(",")
+        val outsideRef = measurements.mapNotNull { returnOutsideRefMeasurements(record, it) }
+        val measurementString = outsideRef.joinToString(",") { it.display }
 
         return when {
-            outsideRefEvaluations.isNotEmpty() -> {
+            outsideRef.isNotEmpty() -> {
                 EvaluationFactory.pass(
                     "Patient has abnormal electrolyte levels ($measurementString outside reference range)",
                     "Electrolyte levels abnormal ($measurementString outside reference range)"
@@ -39,9 +38,9 @@ class HasAbnormalElectrolyteLevels(private val minValidLabDate: LocalDate, priva
         }
     }
 
-    private fun evaluateMeasurement(record: PatientRecord, measurement: LabMeasurement): Pair<LabMeasurement, Boolean?>? {
+    private fun returnOutsideRefMeasurements(record: PatientRecord, measurement: LabMeasurement): LabMeasurement? {
         val mostRecent = LabInterpreter.interpret(record.labValues).mostRecentValue(measurement)
         val valid = isValid(mostRecent, measurement, minValidLabDate) && mostRecent?.date?.isAfter(minPassLabDate) == true
-        return if (valid) Pair(measurement, mostRecent?.isOutsideRef) else null
+        return measurement.takeIf { valid && mostRecent!!.isOutsideRef == true }
     }
 }
