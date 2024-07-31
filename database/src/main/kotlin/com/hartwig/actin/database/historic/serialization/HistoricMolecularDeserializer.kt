@@ -245,6 +245,7 @@ object HistoricMolecularDeserializer {
 
     private fun extractDisruption(disruptionElement: JsonElement): Disruption {
         val obj = disruptionElement.asJsonObject
+        val isReportable = determineIsReportable(obj)
         return Disruption(
             type = DisruptionType.SGL,
             junctionCopyNumber = 0.0,
@@ -252,9 +253,9 @@ object HistoricMolecularDeserializer {
             regionType = RegionType.UPSTREAM,
             codingContext = CodingContext.NON_CODING,
             clusterGroup = 0,
-            isReportable = determineIsReportable(obj),
+            isReportable = isReportable,
             event = Json.string(obj, "event"),
-            driverLikelihood = determineDriverLikelihood(obj),
+            driverLikelihood = if (isReportable) determineDriverLikelihood(obj) else null,
             evidence = ActionableEvidence(),
             gene = Json.string(obj, "gene"),
             geneRole = GeneRole.UNKNOWN,
