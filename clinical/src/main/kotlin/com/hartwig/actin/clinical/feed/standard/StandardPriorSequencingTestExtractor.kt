@@ -17,9 +17,9 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
     StandardDataExtractor<List<PriorSequencingTest>> {
 
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<PriorSequencingTest>> {
-        val extracted = ehrPatientRecord.molecularTests.map {
-            val curatedResults =
-                it.results.mapNotNull { result -> result.freeText }.map { text ->
+        val extracted = ehrPatientRecord.molecularTests.map { test ->
+            val curatedResults = test.results.mapNotNull { result -> result.freeText }
+                .map { text ->
                     CurationResponse.createFromConfigs(
                         curation.find(text),
                         ehrPatientRecord.patientDetails.hashedId,
@@ -29,13 +29,13 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
                         false
                     )
                 }
-            val allResults = it.results + curatedResults.flatMap { config -> config.configs }.mapNotNull { config -> config.curated }
+            val allResults = test.results + curatedResults.flatMap { config -> config.configs }.mapNotNull { config -> config.curated }
             ExtractionResult(
                 listOf(
                     PriorSequencingTest(
-                        test = it.test,
-                        date = it.date,
-                        testedGenes = it.testedGenes,
+                        test = test.test,
+                        date = test.date,
+                        testedGenes = test.testedGenes,
                         variants = variants(allResults),
                         fusions = fusions(allResults),
                         amplifications = amplifications(allResults),
@@ -50,23 +50,20 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
             )
         }
         return extracted.fold(
-            ExtractionResult(
-                emptyList(),
-                CurationExtractionEvaluation()
-            )
+            ExtractionResult(emptyList(), CurationExtractionEvaluation())
         ) { acc, extractionResult ->
             ExtractionResult(acc.extracted + extractionResult.extracted, acc.evaluation + extractionResult.evaluation)
         }
     }
 
     private fun geneDeletions(allResults: Set<ProvidedMolecularTestResult>) =
-        allResults.filter { it.deletedGene != null }.map { SequencedDeletedGene(it.deletedGene!!) }.toSet()
+        allResults.mapNotNull { it.deletedGene?.let { gene -> SequencedDeletedGene(gene) } }.toSet()
 
     private fun tmb(results: Set<ProvidedMolecularTestResult>) =
-        results.filter { result -> result.tmb != null }.firstNotNullOfOrNull { result -> result.tmb }
+        results.firstNotNullOfOrNull { result -> result.tmb }
 
     private fun msi(results: Set<ProvidedMolecularTestResult>) =
-        results.filter { result -> result.msi != null }.firstNotNullOfOrNull { result -> result.msi }
+        results.firstNotNullOfOrNull { result -> result.msi }
 
     private fun skippedExons(
         results: Set<ProvidedMolecularTestResult>
@@ -80,8 +77,7 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
         }.toSet()
 
     private fun amplifications(results: Set<ProvidedMolecularTestResult>) =
-        results.filter { result -> result.amplifiedGene != null }
-            .map { result -> SequencedAmplification(result.amplifiedGene!!) }.toSet()
+        results.mapNotNull { result -> result.amplifiedGene?.let { SequencedAmplification(it) } }.toSet()
 
     private fun fusions(results: Set<ProvidedMolecularTestResult>) =
         results.filter { result -> result.fusionGeneUp != null || result.fusionGeneDown != null }

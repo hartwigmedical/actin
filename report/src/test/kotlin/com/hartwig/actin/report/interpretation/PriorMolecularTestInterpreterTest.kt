@@ -15,20 +15,17 @@ import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtractio
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-private val CASE_PATIENT_RECORD = PatientRecordFactory.fromInputs(
-    TestClinicalFactory.createMinimalTestClinicalRecord(), MolecularHistory(
-        emptyList()
-    )
-)
+private val BASE_PATIENT_RECORD =
+    PatientRecordFactory.fromInputs(TestClinicalFactory.createMinimalTestClinicalRecord(), MolecularHistory(emptyList()))
 
-class PriorIHCTestInterpreterTest {
+class PriorMolecularTestInterpreterTest {
 
     private val interpreter = PriorMolecularTestInterpreter()
 
     @Test
     fun `Should interpret IHC test based on score text`() {
         val result = interpreter.interpret(
-            CASE_PATIENT_RECORD.copy(
+            BASE_PATIENT_RECORD.copy(
                 priorIHCTests = listOf(ihcMolecularTest("HER2", "Positive"))
             )
         )
@@ -42,7 +39,7 @@ class PriorIHCTestInterpreterTest {
     @Test
     fun `Should interpret IHC test based score value`() {
         val result = interpreter.interpret(
-            CASE_PATIENT_RECORD.copy(
+            BASE_PATIENT_RECORD.copy(
                 priorIHCTests = listOf(ihcMolecularTest("HER2", scoreValue = 90.0, scoreValueUnit = "%"))
             )
         )
@@ -56,7 +53,7 @@ class PriorIHCTestInterpreterTest {
     @Test
     fun `Should interpret Archer test based variants and implied negatives`() {
         val result = interpreter.interpret(
-            CASE_PATIENT_RECORD.copy(
+            BASE_PATIENT_RECORD.copy(
                 molecularHistory = MolecularHistory(
                     listOf(
                         TestPanelRecordFactory.empty().copy(
@@ -90,7 +87,7 @@ class PriorIHCTestInterpreterTest {
     @Test
     fun `Should interpret generic panel tests based on variants, fusions, exon deletions and implied negatives`() {
         val result = interpreter.interpret(
-            CASE_PATIENT_RECORD.copy(
+            BASE_PATIENT_RECORD.copy(
                 molecularHistory =
                 MolecularHistory(
                     listOf(
@@ -122,9 +119,9 @@ class PriorIHCTestInterpreterTest {
         )
     }
 
-    private fun ihcMolecularTest(gene: String, scoreText: String? = null, scoreValue: Double? = null, scoreValueUnit: String? = null) =
+    private fun ihcMolecularTest(protein: String, scoreText: String? = null, scoreValue: Double? = null, scoreValueUnit: String? = null) =
         PriorIHCTest(
-            item = gene,
+            item = protein,
             scoreText = scoreText,
             test = "IHC",
             scoreValue = scoreValue,

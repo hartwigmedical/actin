@@ -13,7 +13,7 @@ class PriorIHCTestComparatorTest {
         val test3 = withItem("ZZZ")
         val test4 = withItem("CK20")
         val test5 = withItem(null)
-        val sorted = listOf(test1, test2, test3, test4, test5).sortedWith(PriorMolecularTestComparator())
+        val sorted = listOf(test1, test2, test3, test4, test5).sortedWith(PriorIHCTestComparator())
 
         assertThat(sorted[0]).isEqualTo(test5)
         assertThat(sorted[1]).isEqualTo(test4)

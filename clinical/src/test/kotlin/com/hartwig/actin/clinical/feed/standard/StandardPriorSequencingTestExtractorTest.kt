@@ -87,15 +87,7 @@ class StandardPriorSequencingTestExtractorTest {
                 amplifiedGene = AMPLIFIED_GENE
             )
         )
-        assertResultContains(
-            result, BASE_PRIOR_SEQUENCING.copy(
-                amplifications = setOf(
-                    SequencedAmplification(
-                        gene = AMPLIFIED_GENE
-                    )
-                )
-            )
-        )
+        assertResultContains(result, BASE_PRIOR_SEQUENCING.copy(amplifications = setOf(SequencedAmplification(gene = AMPLIFIED_GENE))))
     }
 
     @Test

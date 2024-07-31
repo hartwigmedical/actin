@@ -38,16 +38,20 @@ class StandardPriorIHCTestExtractor(
             )
         }
 
-        val extractedIHCTests = ehrPatientRecord.molecularTests.asSequence().flatMap { it.results }.filter { it.ihcResult != null }.map {
-            CurationResponse.createFromConfigs(
-                molecularTestCuration.find(it.ihcResult!!),
-                ehrPatientRecord.patientDetails.hashedId,
-                CurationCategory.MOLECULAR_TEST_IHC,
-                it.ihcResult,
-                "molecular test",
-                false
-            )
-        }.map { ExtractionResult(it.configs.mapNotNull { config -> config.curated }, it.extractionEvaluation) }
+        val extractedIHCTests = ehrPatientRecord.molecularTests.asSequence()
+            .flatMap { it.results }
+            .mapNotNull { it.ihcResult }
+            .map {
+                CurationResponse.createFromConfigs(
+                    molecularTestCuration.find(it),
+                    ehrPatientRecord.patientDetails.hashedId,
+                    CurationCategory.MOLECULAR_TEST_IHC,
+                    it,
+                    "molecular test",
+                    false
+                )
+            }
+            .map { ExtractionResult(it.configs.mapNotNull { config -> config.curated }, it.extractionEvaluation) }
             .fold(ExtractionResult(emptyList<PriorIHCTest>(), CurationExtractionEvaluation())) { acc, result ->
                 ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
             }
