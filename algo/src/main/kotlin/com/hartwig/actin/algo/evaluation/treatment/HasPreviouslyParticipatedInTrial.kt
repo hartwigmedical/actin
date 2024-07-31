@@ -5,13 +5,23 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-class HasPreviouslyParticipatedInTrial : EvaluationFunction {
+class HasPreviouslyParticipatedInTrial(private val acronym: String? = null) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return if (record.oncologicalHistory.any { it.isTrial }) {
-            EvaluationFactory.pass("Has previously participated in other trial")
-        } else {
-            EvaluationFactory.fail("Has not participated in other trial")
+        val acronymString = acronym?.let { " $it" } ?: ""
+        val trialEntries = record.oncologicalHistory.filter { it.isTrial }
+        return when {
+            (acronym == null && trialEntries.isNotEmpty()) || trialEntries.any { it.trialAcronym.equals(acronym, true) } -> {
+                EvaluationFactory.pass("Has previously participated in trial$acronymString")
+            }
+
+            trialEntries.any { it.trialAcronym == null } -> {
+                EvaluationFactory.undetermined("Previous trial participation but unknown if trial$acronymString")
+            }
+           
+            else -> {
+                EvaluationFactory.fail("Has not participated in trial$acronymString")
+            }
         }
     }
 }

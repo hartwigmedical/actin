@@ -219,7 +219,7 @@ data class ProvidedSurgery(
 )
 
 @JacksonSerializable
-data class ProvidedLesion(val location: String, val subLocation: String?, val diagnosisDate: LocalDate)
+data class ProvidedLesion(val location: String, val subLocation: String?, val diagnosisDate: LocalDate, val active: Boolean?)
 
 enum class ProvidedGender {
     MALE,

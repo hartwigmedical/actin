@@ -421,21 +421,11 @@
       "type": "object",
       "additionalProperties": true,
       "properties": {
-        "test": {
+        "type": {
           "type": "string",
-          "description": "Name of the test administered, as specific as possible (eg. Archer, NGS, IHC)"
+          "description": "Type of test administered (eg. IHC)"
         },
-        "date": {
-          "oneOf": [
-            {
-              "type": "null",
-              "title": "Not included"
-            },
-            {}
-          ],
-          "description": "Date the test was administered"
-        },
-        "datasource": {
+        "measure": {
           "oneOf": [
             {
               "type": "null",
@@ -445,256 +435,30 @@
               "type": "string"
             }
           ],
-          "description": "Name of the source system from which the data came (eg. PALGA, DNA-DB)"
+          "description": "Measured gene or protein(eg. HER2)"
         },
-        "testedGenes": {
+        "result": {
+          "type": "string",
+          "description": "Result of the test (eg. Negative/3+)"
+        },
+        "resultType": {
           "oneOf": [
             {
               "type": "null",
               "title": "Not included"
             },
             {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
+              "type": "string"
             }
-          ],
-          "description": "List of genes that were tested."
+          ]
         },
-        "results": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ProvidedMolecularTestResult"
-          }
-        }
+        "resultDate": {}
       },
       "required": [
-        "test",
-        "results"
+        "type",
+        "result",
+        "resultDate"
       ]
-    },
-    "ProvidedMolecularTestResult": {
-      "type": "object",
-      "additionalProperties": true,
-      "properties": {
-        "gene": {
-          "oneOf": [
-            {
-              "type": "null",
-              "title": "Not included"
-            },
-            {
-              "type": "string"
-            }
-          ],
-          "description": "Gene involved in this result. (eg. KRAS)"
-        },
-        "ihcResult": {
-          "oneOf": [
-            {
-              "type": "null",
-              "title": "Not included"
-            },
-            {
-              "type": "string"
-            }
-          ],
-          "description": "Full result string of IHC test ie. (eg. PD-L1 weak positive 20%)"
-        },
-        "hgvsProteinImpact": {
-          "oneOf": [
-            {
-              "type": "null",
-              "title": "Not included"
-            },
-            {
-              "type": "string"
-            }
-          ],
-          "description": "HGVS notation describing protein impact ie. (eg. p.G12V)"
-        },
-        "hgvsCodingImpact": {
-          "oneOf": [
-            {
-              "type": "null",
-              "title": "Not included"
-            },
-            {
-              "type": "string"
-            }
-          ],
-          "description": "HGVS notation describing coding impact ie. (eg. c.4375C>T)"
-        },
-        "transcript": {
-          "oneOf": [
-            {
-              "type": "null",
-              "title": "Not included"
-            },
-            {
-              "type": "string"
-            }
-          ],
-          "description": "Transcript referenced in other positional attributes (eg. NM_004304.5)"
-        },
-        "fusionGeneUp": {
-          "oneOf": [
-            {
-              "type": "null",
-              "title": "Not included"
-            },
-            {
-              "type": "string"
-            }
-          ],
-          "description": "Upstream gene of a fusion (eg. EML4)"
-        },
-        "fusionGeneDown": {
-          "oneOf": [
-            {
-              "type": "null",
-              "title": "Not included"
-            },
-            {
-              "type": "string"
-            }
-          ],
-          "description": "Downstream gene of a fusion (eg. ALK)"
-        },
-        "exon": {
-          "oneOf": [
-            {
-              "type": "null",
-              "title": "Not included"
-            },
-            {
-              "type": "integer"
-            }
-          ],
-          "description": "Exon involved in this result (eg. 19)"
-        },
-        "codon": {
-          "oneOf": [
-            {
-              "type": "null",
-              "title": "Not included"
-            },
-            {
-              "type": "integer"
-            }
-          ],
-          "description": "Codon involved in this result (eg. 1)"
-        },
-        "exonsSkipStart": {
-          "oneOf": [
-            {
-              "type": "null",
-              "title": "Not included"
-            },
-            {
-              "type": "integer"
-            }
-          ],
-          "description": "Exons skipped in a structural variant start (eg. 18)"
-        },
-        "exonsSkipEnd": {
-          "oneOf": [
-            {
-              "type": "null",
-              "title": "Not included"
-            },
-            {
-              "type": "integer"
-            }
-          ],
-          "description": "Exons skipped in a structural variant end (eg. 20)"
-        },
-        "position": {
-          "oneOf": [
-            {
-              "type": "null",
-              "title": "Not included"
-            },
-            {
-              "type": "string"
-            }
-          ],
-          "description": "Genomic position where this result was detected (eg. chr1:1234567)"
-        },
-        "amplifiedGene": {
-          "oneOf": [
-            {
-              "type": "null",
-              "title": "Not included"
-            },
-            {
-              "type": "string"
-            }
-          ],
-          "description": "Gene detected as amplified (eg. MET)"
-        },
-        "amplifiedChromosome": {
-          "oneOf": [
-            {
-              "type": "null",
-              "title": "Not included"
-            },
-            {
-              "type": "string"
-            }
-          ],
-          "description": "Chromosome detected as amplified (eg. 1)"
-        },
-        "noMutationsFound": {
-          "oneOf": [
-            {
-              "type": "null",
-              "title": "Not included"
-            },
-            {
-              "type": "boolean"
-            }
-          ],
-          "description": "Flag should be set to indicate a negative result for a gene (ie. nothing was found)"
-        },
-        "freeText": {
-          "oneOf": [
-            {
-              "type": "null",
-              "title": "Not included"
-            },
-            {
-              "type": "string"
-            }
-          ],
-          "description": "Free text for a test result which does not fit into any of the other fields. This value will be curated."
-        },
-        "msi": {
-          "oneOf": [
-            {
-              "type": "null",
-              "title": "Not included"
-            },
-            {
-              "type": "boolean"
-            }
-          ],
-          "description": "Result of microsatellite instability test."
-        },
-        "tmb": {
-          "oneOf": [
-            {
-              "type": "null",
-              "title": "Not included"
-            },
-            {
-              "type": "number"
-            }
-          ],
-          "description": "Tumor mutational burden in m/MB (eg. 8.0)"
-        }
-      }
     },
     "ProvidedPatientDetail": {
       "type": "object",
@@ -1060,7 +824,18 @@
             }
           ]
         },
-        "diagnosisDate": {}
+        "diagnosisDate": {},
+        "active": {
+          "oneOf": [
+            {
+              "type": "null",
+              "title": "Not included"
+            },
+            {
+              "type": "boolean"
+            }
+          ]
+        }
       },
       "required": [
         "location",

@@ -47,6 +47,7 @@
         <itext.version>7.2.4</itext.version>
 
         <kotlin.version>2.0.0</kotlin.version>
+        <kotlin.compiler.apiVersion>2.0</kotlin.compiler.apiVersion>
         <kotlin.jvm.target>11</kotlin.jvm.target>
         <kotlin.code.style>official</kotlin.code.style>
 
@@ -126,6 +127,9 @@
                     <groupId>org.jetbrains.kotlin</groupId>
                     <artifactId>kotlin-maven-plugin</artifactId>
                     <version>${kotlin.version}</version>
+                    <configuration>
+                        <apiVersion>${kotlin.compiler.apiVersion}</apiVersion>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.jooq</groupId>
