@@ -13,9 +13,11 @@ data class SequencedVariant(
 
 data class SequencedAmplification(val gene: String)
 
-data class SequencedExonSkip(val gene: String, val exonStart: Int, val exonEnd: Int)
+data class SequencedSkippedExons(val gene: String, val exonStart: Int, val exonEnd: Int)
 
 data class SequencedFusion(val geneUp: String? = null, val geneDown: String? = null)
+
+data class SequencedDeletedGene(val gene: String)
 
 data class PriorSequencingTest(
     val test: String,
@@ -25,6 +27,7 @@ data class PriorSequencingTest(
     val testedGenes: Set<String>? = null,
     val variants: Set<SequencedVariant> = emptySet(),
     val amplifications: Set<SequencedAmplification> = emptySet(),
-    val exonSkips: Set<SequencedExonSkip> = emptySet(),
-    val fusions: Set<SequencedFusion> = emptySet()
+    val skippedExons: Set<SequencedSkippedExons> = emptySet(),
+    val fusions: Set<SequencedFusion> = emptySet(),
+    val deletedGenes: Set<SequencedDeletedGene> = emptySet()
 )

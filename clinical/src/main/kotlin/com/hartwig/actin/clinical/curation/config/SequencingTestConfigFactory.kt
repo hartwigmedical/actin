@@ -33,6 +33,7 @@ class SequencingTestConfigFactory : CurationConfigFactory<SequencingTestConfig> 
             fusionGeneUp = ResourceFile.optionalString(parts[fields["fusionGeneUp"]!!]),
             fusionGeneDown = ResourceFile.optionalString(parts[fields["fusionGeneDown"]!!]),
             amplifiedGene = ResourceFile.optionalString(parts[fields["amplifiedGene"]!!]),
+            deletedGene = ResourceFile.optionalString(parts[fields["deletedGene"]!!]),
             exonSkipStart = ResourceFile.optionalInteger(parts[fields["exonSkipStart"]!!]),
             exonSkipEnd = ResourceFile.optionalInteger(parts[fields["exonSkipEnd"]!!]),
             msi = ResourceFile.optionalBool(parts[fields["msi"]!!]),

@@ -7,8 +7,9 @@ import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
 import com.hartwig.actin.clinical.datamodel.PriorSequencingTest
 import com.hartwig.actin.clinical.datamodel.SequencedAmplification
-import com.hartwig.actin.clinical.datamodel.SequencedExonSkip
+import com.hartwig.actin.clinical.datamodel.SequencedDeletedGene
 import com.hartwig.actin.clinical.datamodel.SequencedFusion
+import com.hartwig.actin.clinical.datamodel.SequencedSkippedExons
 import com.hartwig.actin.clinical.datamodel.SequencedVariant
 import io.mockk.every
 import io.mockk.mockk
@@ -102,8 +103,8 @@ class StandardPriorSequencingTestExtractorTest {
         val result = extractionResult(ProvidedMolecularTestResult(gene = GENE, exonSkipStart = 1, exonSkipEnd = 2))
         assertResultContains(
             result, BASE_PRIOR_SEQUENCING.copy(
-                exonSkips = setOf(
-                    SequencedExonSkip(gene = GENE, exonStart = 1, exonEnd = 2)
+                skippedExons = setOf(
+                    SequencedSkippedExons(gene = GENE, exonStart = 1, exonEnd = 2)
                 )
             )
         )
@@ -111,11 +112,21 @@ class StandardPriorSequencingTestExtractorTest {
 
     @Test
     fun `Should extract sequencing with TMB and MSI`() {
-        val result = extractionResult(ProvidedMolecularTestResult(gene = GENE, tmb = 1.0, msi = true))
+        val result = extractionResult(ProvidedMolecularTestResult(tmb = 1.0, msi = true))
         assertResultContains(
             result, BASE_PRIOR_SEQUENCING.copy(
                 tumorMutationalBurden = 1.0,
                 isMicrosatelliteUnstable = true
+            )
+        )
+    }
+
+    @Test
+    fun `Should extract sequenced deleted genes`() {
+        val result = extractionResult(ProvidedMolecularTestResult(deletedGene = GENE))
+        assertResultContains(
+            result, BASE_PRIOR_SEQUENCING.copy(
+                deletedGenes = setOf(SequencedDeletedGene(GENE))
             )
         )
     }

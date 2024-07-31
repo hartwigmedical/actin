@@ -8,8 +8,9 @@ import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.datamodel.PriorSequencingTest
 import com.hartwig.actin.clinical.datamodel.SequencedAmplification
-import com.hartwig.actin.clinical.datamodel.SequencedExonSkip
+import com.hartwig.actin.clinical.datamodel.SequencedDeletedGene
 import com.hartwig.actin.clinical.datamodel.SequencedFusion
+import com.hartwig.actin.clinical.datamodel.SequencedSkippedExons
 import com.hartwig.actin.clinical.datamodel.SequencedVariant
 
 class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<SequencingTestConfig>) :
@@ -38,7 +39,8 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
                         variants = variants(allResults),
                         fusions = fusions(allResults),
                         amplifications = amplifications(allResults),
-                        exonSkips = exonSkips(allResults),
+                        skippedExons = skippedExons(allResults),
+                        deletedGenes = geneDeletions(allResults),
                         isMicrosatelliteUnstable = msi(allResults),
                         tumorMutationalBurden = tmb(allResults),
                     )
@@ -57,17 +59,20 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
         }
     }
 
+    private fun geneDeletions(allResults: Set<ProvidedMolecularTestResult>) =
+        allResults.filter { it.deletedGene != null }.map { SequencedDeletedGene(it.deletedGene!!) }.toSet()
+
     private fun tmb(results: Set<ProvidedMolecularTestResult>) =
         results.filter { result -> result.tmb != null }.firstNotNullOfOrNull { result -> result.tmb }
 
     private fun msi(results: Set<ProvidedMolecularTestResult>) =
         results.filter { result -> result.msi != null }.firstNotNullOfOrNull { result -> result.msi }
 
-    private fun exonSkips(
+    private fun skippedExons(
         results: Set<ProvidedMolecularTestResult>
     ) = results.filter { result -> result.exonSkipStart != null }
         .map { result ->
-            SequencedExonSkip(
+            SequencedSkippedExons(
                 result.gene!!,
                 result.exonSkipStart!!,
                 result.exonSkipEnd ?: result.exonSkipStart

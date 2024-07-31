@@ -113,6 +113,7 @@ data class ProvidedMolecularTestResult(
     @JsonPropertyDescription("Exons skipped in a structural variant start (eg. 18)") val exonSkipStart: Int? = null,
     @JsonPropertyDescription("Exons skipped in a structural variant end (eg. 20)") val exonSkipEnd: Int? = null,
     @JsonPropertyDescription("Gene detected as amplified (eg. MET)") val amplifiedGene: String? = null,
+    @JsonPropertyDescription("Gene detected as fully deleted (eg. MET)") val deletedGene: String? = null,
     @JsonPropertyDescription("Flag should be set to indicate a negative result for a gene (ie. nothing was found)") val noMutationsFound: Boolean? = null,
     @JsonPropertyDescription("Free text for a test result which does not fit into any of the other fields. This value will be curated.") val freeText: String? = null,
     @JsonPropertyDescription("Result of microsatellite instability test.") val msi: Boolean? = null,
