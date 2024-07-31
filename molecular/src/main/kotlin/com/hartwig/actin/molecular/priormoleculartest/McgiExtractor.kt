@@ -18,7 +18,7 @@ class McgiExtractor : MolecularExtractor<PriorIHCTest, PanelExtraction> {
                         .map { PanelVariantExtraction(it.first, it.second) }
                 val amplification =
                     results.filter { it.scoreText == "amplification" }.mapNotNull(::nullSafeItemAndMeasure)
-                        .map { PanelAmplificationExtraction(it.first, it.second) }
+                        .map { PanelAmplificationExtraction(it.first) }
                 val msi = results.firstOrNull { it.scoreText == "msi" }?.let { it.measure?.toBoolean() }
                 val tmb = results.firstOrNull { it.scoreText == "tmb" }?.let { it.measure?.toDouble() }
                 McgiExtraction(

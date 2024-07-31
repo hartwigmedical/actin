@@ -39,7 +39,7 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
                         fusions = fusions(allResults),
                         amplifications = amplifications(allResults),
                         exonSkips = exonSkips(allResults),
-                        isMicrosatelliteInstability = msi(allResults),
+                        isMicrosatelliteUnstable = msi(allResults),
                         tumorMutationalBurden = tmb(allResults),
                     )
                 ),
@@ -76,7 +76,7 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
 
     private fun amplifications(results: Set<ProvidedMolecularTestResult>) =
         results.filter { result -> result.amplifiedGene != null }
-            .map { result -> SequencedAmplification(result.amplifiedGene!!, result.amplifiedChromosome) }.toSet()
+            .map { result -> SequencedAmplification(result.amplifiedGene!!) }.toSet()
 
     private fun fusions(results: Set<ProvidedMolecularTestResult>) =
         results.filter { result -> result.fusionGeneUp != null || result.fusionGeneDown != null }
@@ -89,7 +89,10 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
                     result.gene
                         ?: throw IllegalArgumentException("Gene must be defined when hgvs protein/coding impact are indicated"),
                     result.hgvsCodingImpact,
-                    result.hgvsProteinImpact
+                    result.hgvsProteinImpact,
+                    result.transcript,
+                    result.exon,
+                    result.codon
                 )
             }.toSet()
 }

@@ -31,7 +31,6 @@ private val BASE_PRIOR_SEQUENCING = PriorSequencingTest(
 private const val FUSION_GENE_UP = "fusionUp"
 private const val FUSION_GENE_DOWN = "fusionDown"
 private const val AMPLIFIED_GENE = "amplifiedGene"
-private const val AMPLIFIED_CHROMOSOME = "amplifiedChromosome"
 private const val FREE_TEXT = "free text"
 
 class StandardPriorSequencingTestExtractorTest {
@@ -84,14 +83,14 @@ class StandardPriorSequencingTestExtractorTest {
     fun `Should extract sequencing with amplifications`() {
         val result = extractionResult(
             ProvidedMolecularTestResult(
-                amplifiedGene = AMPLIFIED_GENE, amplifiedChromosome = AMPLIFIED_CHROMOSOME
+                amplifiedGene = AMPLIFIED_GENE
             )
         )
         assertResultContains(
             result, BASE_PRIOR_SEQUENCING.copy(
                 amplifications = setOf(
                     SequencedAmplification(
-                        gene = AMPLIFIED_GENE, chromosome = AMPLIFIED_CHROMOSOME
+                        gene = AMPLIFIED_GENE
                     )
                 )
             )
@@ -116,7 +115,7 @@ class StandardPriorSequencingTestExtractorTest {
         assertResultContains(
             result, BASE_PRIOR_SEQUENCING.copy(
                 tumorMutationalBurden = 1.0,
-                isMicrosatelliteInstability = true
+                isMicrosatelliteUnstable = true
             )
         )
     }

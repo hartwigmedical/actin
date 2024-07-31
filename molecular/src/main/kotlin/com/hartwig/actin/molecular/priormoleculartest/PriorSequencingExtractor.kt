@@ -16,7 +16,7 @@ class PriorSequencingExtractor : MolecularExtractor<PriorSequencingTest, PanelEx
 data class PanelExtractionAdapter(val priorSequencingTest: PriorSequencingTest) : PanelExtraction {
     override val panelType = priorSequencingTest.test
     override val tumorMutationalBurden = priorSequencingTest.tumorMutationalBurden
-    override val isMicrosatelliteUnstable = priorSequencingTest.isMicrosatelliteInstability
+    override val isMicrosatelliteUnstable = priorSequencingTest.isMicrosatelliteUnstable
     override val variants = priorSequencingTest.variants.map {
         PanelVariantExtraction(
             it.gene,
@@ -24,7 +24,7 @@ data class PanelExtractionAdapter(val priorSequencingTest: PriorSequencingTest) 
         )
     }
     override val amplifications = priorSequencingTest.amplifications.map {
-        PanelAmplificationExtraction(it.gene, it.chromosome ?: throw IllegalStateException())
+        PanelAmplificationExtraction(it.gene)
     }
     override val date = priorSequencingTest.date
     override val extractionClass: String = PanelExtractionAdapter::class.java.simpleName

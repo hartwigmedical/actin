@@ -10,8 +10,6 @@ import org.junit.Test
 
 private val TEST_DATE = LocalDate.of(2024, 7, 17)
 
-private const val CHROMOSOME = "chr1"
-
 private const val PANEL_TYPE = "test"
 
 class McgiExtractorTest {
@@ -32,8 +30,8 @@ class McgiExtractorTest {
 
     @Test
     fun `Should extract amplifications from prior molecular tests`() {
-        val result = extractor.extract(listOf(priorMolecularTest(CHROMOSOME, "amplification")))
-        assertThat(result.first().amplifications).containsExactly(PanelAmplificationExtraction(GENE, CHROMOSOME))
+        val result = extractor.extract(listOf(priorMolecularTest(GENE, "amplification")))
+        assertThat(result.first().amplifications).containsExactly(PanelAmplificationExtraction(GENE))
     }
 
     @Test
@@ -59,7 +57,7 @@ class McgiExtractorTest {
         val result = extractor.extract(
             listOf(
                 priorMolecularTest(HGVS_PROTEIN, "variant"),
-                priorMolecularTest(CHROMOSOME, "amplification"),
+                priorMolecularTest(GENE, "amplification"),
                 priorMolecularTest(protein2, "variant", date = testDate2),
                 priorMolecularTest(chromosome2, "amplification", date = testDate2),
                 priorMolecularTest(protein3, "variant", test = panelType2),
@@ -70,15 +68,15 @@ class McgiExtractorTest {
         assertThat(result[0].panelType).isEqualTo(PANEL_TYPE)
         assertThat(result[0].date).isEqualTo(TEST_DATE)
         assertThat(result[0].variants).containsExactly(PanelVariantExtraction(GENE, HGVS_PROTEIN))
-        assertThat(result[0].amplifications).containsExactly(PanelAmplificationExtraction(GENE, CHROMOSOME))
+        assertThat(result[0].amplifications).containsExactly(PanelAmplificationExtraction(GENE))
         assertThat(result[1].panelType).isEqualTo(PANEL_TYPE)
         assertThat(result[1].date).isEqualTo(testDate2)
         assertThat(result[1].variants).containsExactly(PanelVariantExtraction(GENE, protein2))
-        assertThat(result[1].amplifications).containsExactly(PanelAmplificationExtraction(GENE, chromosome2))
+        assertThat(result[1].amplifications).containsExactly(PanelAmplificationExtraction(GENE))
         assertThat(result[2].panelType).isEqualTo(panelType2)
         assertThat(result[2].date).isEqualTo(TEST_DATE)
         assertThat(result[2].variants).containsExactly(PanelVariantExtraction(GENE, protein3))
-        assertThat(result[2].amplifications).containsExactly(PanelAmplificationExtraction(GENE, chromosome3))
+        assertThat(result[2].amplifications).containsExactly(PanelAmplificationExtraction(GENE))
     }
 
     private fun priorMolecularTest(measure: String, type: String, test: String = PANEL_TYPE, date: LocalDate = TEST_DATE) =
@@ -90,5 +88,4 @@ class McgiExtractorTest {
             scoreText = type,
             impliesPotentialIndeterminateStatus = false
         )
-
 }

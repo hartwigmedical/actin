@@ -112,9 +112,7 @@ data class ProvidedMolecularTestResult(
     @JsonPropertyDescription("Codon involved in this result (eg. 1)") val codon: Int? = null,
     @JsonPropertyDescription("Exons skipped in a structural variant start (eg. 18)") val exonSkipStart: Int? = null,
     @JsonPropertyDescription("Exons skipped in a structural variant end (eg. 20)") val exonSkipEnd: Int? = null,
-    @JsonPropertyDescription("Genomic position where this result was detected (eg. chr1:1234567)") val position: String? = null,
     @JsonPropertyDescription("Gene detected as amplified (eg. MET)") val amplifiedGene: String? = null,
-    @JsonPropertyDescription("Chromosome detected as amplified (eg. 1)") val amplifiedChromosome: String? = null,
     @JsonPropertyDescription("Flag should be set to indicate a negative result for a gene (ie. nothing was found)") val noMutationsFound: Boolean? = null,
     @JsonPropertyDescription("Free text for a test result which does not fit into any of the other fields. This value will be curated.") val freeText: String? = null,
     @JsonPropertyDescription("Result of microsatellite instability test.") val msi: Boolean? = null,
@@ -224,51 +222,100 @@ data class ProvidedSurgery(
 data class ProvidedLesion(val location: String, val subLocation: String?, val diagnosisDate: LocalDate)
 
 enum class ProvidedGender {
-    MALE, FEMALE, OTHER
+    MALE,
+    FEMALE,
+    OTHER
 }
 
 enum class ProvidedBloodTransfusionProduct {
-    PLASMA_A, PLASMA_B, PLASMA_O, PLASMA_AB, PLATELETS_POOLED, PLATELETS_POOLED_RADIATED, ERYTHROCYTES_RADIATED, APHERESIS_PLASMA, ERTHROCYTES_FILTERED, PLATELETS_APHERESIS
+    PLASMA_A,
+    PLASMA_B,
+    PLASMA_O,
+    PLASMA_AB,
+    PLATELETS_POOLED,
+    PLATELETS_POOLED_RADIATED,
+    ERYTHROCYTES_RADIATED,
+    APHERESIS_PLASMA,
+    ERTHROCYTES_FILTERED,
+    PLATELETS_APHERESIS
 }
 
 enum class ProvidedMeasurementCategory {
-    HEART_RATE, PULSE_OXIMETRY, `NON-INVASIVE_BLOOD_PRESSURE`, ARTERIAL_BLOOD_PRESSURE, BODY_WEIGHT, BODY_HEIGHT, BMI, OTHER
+    HEART_RATE,
+    PULSE_OXIMETRY,
+    `NON-INVASIVE_BLOOD_PRESSURE`,
+    ARTERIAL_BLOOD_PRESSURE,
+    BODY_WEIGHT,
+    BODY_HEIGHT,
+    BMI,
+    OTHER
 }
 
 enum class ProvidedMeasurementSubcategory {
-    NA, SYSTOLIC_BLOOD_PRESSURE, DIASTOLIC_BLOOD_PRESSURE, MEAN_BLOOD_PRESSURE, OTHER
+    NA,
+    SYSTOLIC_BLOOD_PRESSURE,
+    DIASTOLIC_BLOOD_PRESSURE,
+    MEAN_BLOOD_PRESSURE,
+    OTHER
 }
 
 enum class ProvidedMeasurementUnit {
-    BPM, PERCENT, MMHG, KILOGRAMS, CENTIMETERS, KG_M2, OTHER
+    BPM,
+    PERCENT,
+    MMHG,
+    KILOGRAMS,
+    CENTIMETERS,
+    KG_M2,
+    OTHER
 }
 
 enum class ProvidedLabUnit(vararg val externalFormats: String) {
-    NANOGRAMS_PER_LITER("ng/L"), NANOGRAMS_PER_MILLILITER("ng/mL"), MICROGRAMS_PER_LITER("ug/L"), MICROGRAMS_PER_MICROLITER("µg/µL"), MILLIGRAMS_PER_DECILITER(
-        "mg/dL"
-    ),
-    MILLIGRAMS_PER_MILLIMOLE("mg/mmol"), MILLIGRAMS_PER_LITER("mg/L"), GRAMS_PER_DECILITER("g/dL"), GRAMS_PER_LITER("g/L"), GRAMS_PER_MOLE("g/mol"), KILOGRAMS_PER_LITER(
-        "kg/L"
-    ),
-    MICROGRAMS_PER_GRAM("µg/g"), GRAMS("g"), PICOMOLES_PER_LITER("pmol/L"), NANOMOLES_PER_LITER("nmol/L"), MICROMOLES_PER_LITER("umol/L"), MILLIMOLES_PER_LITER(
-        "mmol/L"
-    ),
-    MILLIMOLES_PER_MOLE("mmol/mol"), CELLS_PER_CUBIC_MILLIMETER("cells/mm3"), MILLIONS_PER_LITER("10E6/L"), MILLIONS_PER_MILLILITER("10E6/mL"), BILLIONS_PER_LITER(
-        "10E9/L"
-    ),
-    TRILLIONS_PER_LITER("10E12/L"), MILLIUNITS_PER_LITER("mU/L"), UNITS_PER_LITER("U/L"), UNITS_PER_MILLILITER("U/mL"), KILOUNITS_PER_LITER(
-        "kU/L"
-    ),
-    INTERNATIONAL_UNITS_PER_LITER("IU/L"), UNITS_OF_INR("INR"), NANOMOLES_PER_DAY("nmol/24h"), MILLIMOLES_PER_DAY("mmol/24h"), MILLIMETERS_PER_HOUR(
-        "mm/hr"
-    ),
-    MILLILITERS_PER_MINUTE("mL/min"), FEMTOLITERS("fL"), MILLILITERS("mL"), KILO_PASCAL("kPa"), SECONDS("sec"), PERCENTAGE("%"), PERCENTAGE_OF_LEUKOCYTES(
-        "% of leukocytes"
-    ),
-    PERCENTAGE_OF_T_CELLS("% of T-cells"), MILLI_OSMOLE_PER_KILOGRAM("mOsm/kg"), INTERNATIONAL_UNITS_PER_MILLILITER("IU/ml"), PRNT50("PRNT50"), OTHER, NONE(
-        ""
-    );
-
+    NANOGRAMS_PER_LITER("ng/L"),
+    NANOGRAMS_PER_MILLILITER("ng/mL"),
+    MICROGRAMS_PER_LITER("ug/L"),
+    MICROGRAMS_PER_MICROLITER("µg/µL"),
+    MILLIGRAMS_PER_DECILITER("mg/dL"),
+    MILLIGRAMS_PER_MILLIMOLE("mg/mmol"),
+    MILLIGRAMS_PER_LITER("mg/L"),
+    GRAMS_PER_DECILITER("g/dL"),
+    GRAMS_PER_LITER("g/L"),
+    GRAMS_PER_MOLE("g/mol"),
+    KILOGRAMS_PER_LITER("kg/L"),
+    MICROGRAMS_PER_GRAM("µg/g"),
+    GRAMS("g"),
+    PICOMOLES_PER_LITER("pmol/L"),
+    NANOMOLES_PER_LITER("nmol/L"),
+    MICROMOLES_PER_LITER("umol/L"),
+    MILLIMOLES_PER_LITER("mmol/L"),
+    MILLIMOLES_PER_MOLE("mmol/mol"),
+    CELLS_PER_CUBIC_MILLIMETER("cells/mm3"),
+    MILLIONS_PER_LITER("10E6/L"),
+    MILLIONS_PER_MILLILITER("10E6/mL"),
+    BILLIONS_PER_LITER("10E9/L"),
+    TRILLIONS_PER_LITER("10E12/L"),
+    MILLIUNITS_PER_LITER("mU/L"),
+    UNITS_PER_LITER("U/L"),
+    UNITS_PER_MILLILITER("U/mL"),
+    KILOUNITS_PER_LITER("kU/L"),
+    INTERNATIONAL_UNITS_PER_LITER("IU/L"),
+    UNITS_OF_INR("INR"),
+    NANOMOLES_PER_DAY("nmol/24h"),
+    MILLIMOLES_PER_DAY("mmol/24h"),
+    MILLIMETERS_PER_HOUR("mm/hr"),
+    MILLILITERS_PER_MINUTE("mL/min"),
+    FEMTOLITERS("fL"),
+    MILLILITERS("mL"),
+    KILO_PASCAL("kPa"),
+    SECONDS("sec"),
+    PERCENTAGE("%"),
+    PERCENTAGE_OF_LEUKOCYTES("% of leukocytes"),
+    PERCENTAGE_OF_T_CELLS("% of T-cells"),
+    MILLI_OSMOLE_PER_KILOGRAM("mOsm/kg"),
+    INTERNATIONAL_UNITS_PER_MILLILITER("IU/ml"),
+    PRNT50("PRNT50"),
+    OTHER,
+    NONE("");
+    
     companion object {
         fun fromString(input: String?): ProvidedLabUnit {
             return input?.let { inputString ->
