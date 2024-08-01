@@ -95,7 +95,7 @@ class SharedDataLoaderApplication(private val config: SharedDataLoaderConfig) {
         historicData.mapNotNull { it.first?.latestOrangeMolecularRecord() }.forEach(access::writeMolecularRecord)
 
         LOGGER.info("Writing treatment match data for {} historic patients", historicData.size)
-        historicData.mapNotNull { it.second }.forEach(access::writeTreatmentMatch)
+        access.replaceTreatmentMatches(historicData.mapNotNull { it.second })
     }
 
     private fun loadLatestMolecularToDatabase(access: DatabaseAccess, molecularDirectory: String) {
