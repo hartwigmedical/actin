@@ -1,11 +1,11 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.clinical.datamodel.IHC_TEST_TYPE
 import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 
 internal object PriorIHCTestFunctions {
 
     private const val PD_L1 = "PD-L1"
-    private const val IHC = "IHC"
 
     // For lung cancer the measurement type for PD-L1 is assumed to be TPS if not otherwise specified
     fun allPDL1Tests(
@@ -24,6 +24,6 @@ internal object PriorIHCTestFunctions {
     }
 
     private fun allIHCTests(priorMolecularTests: List<PriorIHCTest>): List<PriorIHCTest> {
-        return priorMolecularTests.filter { it.test == IHC }
+        return priorMolecularTests.filter { it.test == IHC_TEST_TYPE }
     }
 }
