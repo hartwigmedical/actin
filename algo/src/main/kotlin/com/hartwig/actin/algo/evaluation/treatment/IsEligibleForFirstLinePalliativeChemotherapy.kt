@@ -13,8 +13,8 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 class IsEligibleForFirstLinePalliativeChemotherapy(private val hasMetastaticCancer: HasMetastaticCancer) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val palliativeTreatments = record.oncologicalHistory.filter { it.intents?.any { intent -> intent == Intent.PALLIATIVE } == true }
-        val categoriesList = Format.concatItemsWithAnd(palliativeTreatments.flatMap { it.categories() }.toSet())
+        val palliativeTreatments = record.oncologicalHistory.filter { it.intents?.contains(Intent.PALLIATIVE) == true }
+        val categoriesList = Format.concatItemsWithAnd(palliativeTreatments.flatMap { it.categories() })
         val hasMetastaticCancerResult = hasMetastaticCancer.evaluate(record).result
 
         return when {
