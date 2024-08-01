@@ -159,6 +159,18 @@
       "biopsyDate": "2020-11-12"
     }
   ],
+  "molecularTests": [
+    {
+      "test": "Archer FP Lung Target",
+      "date": "2024-07-15",
+      "results": [
+        {
+          "gene": "KRAS",
+          "hgvsCodingImpact": "c.34G>T"
+        }
+      ]
+    }
+  ],
   "priorOtherConditions": [
     {
       "name": "pijn bij maligne neoplasma van longen",

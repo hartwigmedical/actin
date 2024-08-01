@@ -2,7 +2,8 @@ package com.hartwig.actin.molecular
 
 import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.PatientRecordJson
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
+import com.hartwig.actin.clinical.datamodel.PriorSequencingTest
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
@@ -17,7 +18,9 @@ import com.hartwig.actin.molecular.orange.MolecularRecordAnnotator
 import com.hartwig.actin.molecular.orange.interpretation.OrangeExtractor
 import com.hartwig.actin.molecular.paver.PaveRefGenomeVersion
 import com.hartwig.actin.molecular.paver.Paver
+import com.hartwig.actin.molecular.priormoleculartest.PanelAnnotator
 import com.hartwig.actin.molecular.priormoleculartest.PriorMolecularTestInterpreters
+import com.hartwig.actin.molecular.priormoleculartest.PriorSequencingExtractor
 import com.hartwig.actin.molecular.util.MolecularHistoryPrinter
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataLoader
 import com.hartwig.actin.tools.pave.PaveLite
@@ -28,13 +31,13 @@ import com.hartwig.serve.datamodel.ActionableEventsLoader
 import com.hartwig.serve.datamodel.KnownEvents
 import com.hartwig.serve.datamodel.KnownEventsLoader
 import com.hartwig.serve.datamodel.RefGenome
+import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import kotlin.system.exitProcess
 
 class MolecularInterpreterApplication(private val config: MolecularInterpreterConfig) {
 
@@ -56,7 +59,8 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
 
         val orangeMolecularTests = interpretOrangeRecord(config, doidEntry, tumorDoids)
-        val clinicalMolecularTests = interpretClinicalMolecularTests(config, clinical.priorMolecularTests, doidEntry, tumorDoids)
+        val clinicalMolecularTests =
+            interpretClinicalMolecularTests(config, clinical.priorIHCTests, clinical.priorSequencingTests, doidEntry, tumorDoids)
 
         val history = MolecularHistory(orangeMolecularTests + clinicalMolecularTests)
         MolecularHistoryPrinter.printRecord(history)
@@ -92,7 +96,8 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
 
     private fun interpretClinicalMolecularTests(
         config: MolecularInterpreterConfig,
-        priorMolecularTests: List<PriorMolecularTest>,
+        priorIHCTests: List<PriorIHCTest>,
+        priorSequencingTests: List<PriorSequencingTest>,
         doidEntry: DoidEntry,
         tumorDoids: Set<String>
     ): List<MolecularTest> {
@@ -109,22 +114,31 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val dndsDatabase = DndsDatabase.create(config.oncoDndsDatabasePath, config.tsgDndsDatabasePath)
 
         LOGGER.info("Interpreting clinical molecular tests")
+        val geneDriverLikelihoodModel = GeneDriverLikelihoodModel(dndsDatabase)
+        val variantAnnotator = TransvarVariantAnnotatorFactory.withRefGenome(
+            com.hartwig.actin.tools.ensemblcache.RefGenome.V37,
+            config.referenceGenomeFastaPath,
+            ensemblDataCache
+        )
+        val paver = Paver(
+            config.ensemblCachePath, config.referenceGenomeFastaPath, PaveRefGenomeVersion.V37,
+            config.driverGenePanelPath, config.tempDir
+        )
+        val paveLite = PaveLite(ensemblDataCache, false)
         val clinicalMolecularTests = PriorMolecularTestInterpreters.create(
             evidenceDatabase,
-            GeneDriverLikelihoodModel(dndsDatabase),
-            TransvarVariantAnnotatorFactory.withRefGenome(
-                com.hartwig.actin.tools.ensemblcache.RefGenome.V37,
-                config.referenceGenomeFastaPath,
-                ensemblDataCache
-            ),
-            Paver(config.ensemblCachePath, config.referenceGenomeFastaPath, PaveRefGenomeVersion.V37,
-                config.driverGenePanelPath, config.tempDir),
-            PaveLite(ensemblDataCache, false)
-
-        ).process(priorMolecularTests)
+            geneDriverLikelihoodModel,
+            variantAnnotator,
+            paver,
+            paveLite
+        ).process(priorIHCTests)
+        val sequencingMolecularTests = MolecularInterpreter(
+            PriorSequencingExtractor(),
+            PanelAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite),
+        ).run(priorSequencingTests)
         LOGGER.info(" Completed interpretation of {} clinical molecular tests", clinicalMolecularTests.size)
 
-        return clinicalMolecularTests
+        return clinicalMolecularTests + sequencingMolecularTests
     }
 
     private fun loadEvidence(

@@ -1,10 +1,10 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.molecular.datamodel.AVL_PANEL
 import com.hartwig.actin.molecular.datamodel.ExperimentType
-import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freeTextPriorMolecularFusionRecord
@@ -120,10 +120,18 @@ class MolecularResultsAreAvailableForGeneTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
+                MolecularTestFactory.withExperimentTypeAndContainingTumorCells(
                     ExperimentType.HARTWIG_WHOLE_GENOME,
-                    false,
-                    IHCMolecularTest(MolecularTestFactory.priorMolecularTest(test = "IHC", item = "gene 1", impliesIndeterminate = false))
+                    false
+
+                ).copy(
+                    priorIHCTests = listOf(
+                        MolecularTestFactory.priorMolecularTest(
+                            test = "IHC",
+                            item = "gene 1",
+                            impliesIndeterminate = false
+                        )
+                    )
                 )
             )
         )
@@ -134,14 +142,13 @@ class MolecularResultsAreAvailableForGeneTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
+                TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
+                    priorIHCTests =
                     listOf(
-                        IHCMolecularTest(
-                            MolecularTestFactory.priorMolecularTest(
-                                test = "IHC",
-                                item = "gene 1",
-                                impliesIndeterminate = false
-                            )
+                        MolecularTestFactory.priorMolecularTest(
+                            test = "IHC",
+                            item = "gene 1",
+                            impliesIndeterminate = false
                         )
                     )
                 )

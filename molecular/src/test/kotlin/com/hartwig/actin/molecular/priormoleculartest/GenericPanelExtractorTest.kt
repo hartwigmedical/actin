@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.molecular.datamodel.AVL_PANEL
 import com.hartwig.actin.molecular.datamodel.FREE_TEXT_PANEL
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
@@ -72,7 +72,7 @@ class GenericPanelExtractorTest {
 
     @Test
     fun `Should throw exception on unextractable freetext record`() {
-        val record = PriorMolecularTest(
+        val record = PriorIHCTest(
             test = "Freetext",
             item = "KRAS A1Z",
             measure = null,

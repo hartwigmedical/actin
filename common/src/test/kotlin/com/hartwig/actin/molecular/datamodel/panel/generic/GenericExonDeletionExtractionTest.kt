@@ -1,7 +1,6 @@
 package com.hartwig.actin.molecular.datamodel.panel.generic
 
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-import com.hartwig.actin.molecular.datamodel.FREE_TEXT_PANEL
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
@@ -33,9 +32,8 @@ class GenericExonDeletionExtractionTest {
     }
 }
 
-private fun priorMolecularTest(item: String?, measure: String?): PriorMolecularTest {
-    return PriorMolecularTest(
-        test = FREE_TEXT_PANEL,
+private fun priorMolecularTest(item: String?, measure: String?): PriorIHCTest {
+    return PriorIHCTest(
         item = item,
         measure = measure,
         impliesPotentialIndeterminateStatus = false

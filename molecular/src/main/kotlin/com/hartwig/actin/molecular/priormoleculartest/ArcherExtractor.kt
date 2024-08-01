@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.molecular.MolecularExtractor
 import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
@@ -20,8 +20,8 @@ private enum class ArcherMutationCategory {
     UNKNOWN
 }
 
-class ArcherExtractor : MolecularExtractor<PriorMolecularTest, PanelExtraction> {
-    override fun extract(input: List<PriorMolecularTest>): List<PanelExtraction> {
+class ArcherExtractor : MolecularExtractor<PriorIHCTest, PanelExtraction> {
+    override fun extract(input: List<PriorIHCTest>): List<PanelExtraction> {
         return input.groupBy { it.measureDate }
             .map { (date, results) ->
                 val resultsWithMeasure = results.filter { it.measure != null }

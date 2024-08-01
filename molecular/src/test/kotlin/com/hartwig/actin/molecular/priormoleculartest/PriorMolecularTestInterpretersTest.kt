@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
@@ -54,7 +54,7 @@ class PriorMolecularTestInterpretersTest {
             archerPriorMolecularVariantRecord(),
             avlPanelPriorMolecularVariantRecord(),
             freetextPriorMolecularFusionRecord(),
-            PriorMolecularTest("Unknown", impliesPotentialIndeterminateStatus = false)
+            PriorIHCTest("Unknown", impliesPotentialIndeterminateStatus = false)
         )
         val molecularTests = interpreters.process(priorMolecularTests)
         assertThat(molecularTests.filterIsInstance<PanelRecord>()).hasSize(3)

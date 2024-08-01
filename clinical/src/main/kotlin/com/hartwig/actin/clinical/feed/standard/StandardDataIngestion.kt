@@ -37,7 +37,9 @@ class StandardDataIngestion(
     private val patientDetailsExtractor: StandardPatientDetailsExtractor,
     private val bodyWeightExtractor: StandardBodyWeightExtractor,
     private val bodyHeightExtractor: StandardBodyHeightExtractor,
-    private val molecularTestExtractor: StandardMolecularTestExtractor,
+    private val ihcTestExtractor: StandardPriorIHCTestExtractor,
+    private val sequencingTestExtractor: StandardPriorSequencingTestExtractor,
+
     private val dataQualityMask: DataQualityMask
 ) : ClinicalFeedIngestion {
     private val mapper = ObjectMapper().apply {
@@ -65,7 +67,8 @@ class StandardDataIngestion(
             val surgeries = surgeryExtractor.extract(ehrPatientRecord)
             val bodyWeights = bodyWeightExtractor.extract(ehrPatientRecord)
             val bodyHeights = bodyHeightExtractor.extract(ehrPatientRecord)
-            val molecularTests = molecularTestExtractor.extract(ehrPatientRecord)
+            val ihcTests = ihcTestExtractor.extract(ehrPatientRecord)
+            val sequencingTests = sequencingTestExtractor.extract(ehrPatientRecord)
 
             val patientEvaluation = listOf(
                 patientDetails,
@@ -84,7 +87,8 @@ class StandardDataIngestion(
                 bodyWeights,
                 bodyHeights,
                 secondPrimaries,
-                molecularTests
+                ihcTests,
+                sequencingTests
             )
                 .map { e -> e.evaluation }
                 .fold(CurationExtractionEvaluation()) { acc, evaluation -> acc + evaluation }
@@ -109,7 +113,8 @@ class StandardDataIngestion(
                     bodyWeights = bodyWeights.extracted,
                     bodyHeights = bodyHeights.extracted,
                     priorSecondPrimaries = secondPrimaries.extracted,
-                    priorMolecularTests = molecularTests.extracted
+                    priorIHCTests = ihcTests.extracted,
+                    priorSequencingTests = sequencingTests.extracted
                 )
             )
 
@@ -167,7 +172,8 @@ class StandardDataIngestion(
             StandardPatientDetailsExtractor(),
             StandardBodyWeightExtractor(),
             StandardBodyHeightExtractor(),
-            StandardMolecularTestExtractor(curationDatabaseContext.molecularTestIhcCuration),
+            StandardPriorIHCTestExtractor(curationDatabaseContext.molecularTestIhcCuration),
+            StandardPriorSequencingTestExtractor(curationDatabaseContext.sequencingTestCuration),
             DataQualityMask()
         )
     }

@@ -3,8 +3,8 @@ package com.hartwig.actin.clinical.curation.extraction
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
-import com.hartwig.actin.clinical.curation.config.MolecularTestConfig
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.curation.config.IHCTestConfig
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -21,19 +21,19 @@ class PriorMolecularTestsExtractorTest {
 
     val extractor = PriorMolecularTestsExtractor(
         TestCurationFactory.curationDatabase(
-            MolecularTestConfig(
+            IHCTestConfig(
                 input = MOLECULAR_TEST_INPUT,
                 ignore = false,
-                curated = PriorMolecularTest(
+                curated = PriorIHCTest(
                     impliesPotentialIndeterminateStatus = false, test = MOLECULAR_TEST_INTERPRETATION_IHC, item = "item"
                 )
             )
         ),
         TestCurationFactory.curationDatabase(
-            MolecularTestConfig(
+            IHCTestConfig(
                 input = MOLECULAR_TEST_INPUT,
                 ignore = false,
-                curated = PriorMolecularTest(
+                curated = PriorIHCTest(
                     impliesPotentialIndeterminateStatus = false, test = MOLECULAR_TEST_INTERPRETATION_PDL1, item = "item"
                 )
             )

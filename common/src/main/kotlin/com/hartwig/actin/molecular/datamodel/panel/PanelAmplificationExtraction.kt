@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.datamodel.panel
 
-data class PanelAmplificationExtraction(val gene: String, val chromosome: String) : PanelEvent {
+data class PanelAmplificationExtraction(val gene: String) : PanelEvent {
     override fun impactsGene(gene: String): Boolean {
         return gene == this.gene
     }

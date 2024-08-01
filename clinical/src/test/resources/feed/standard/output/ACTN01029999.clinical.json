@@ -110,7 +110,7 @@
       "isContraindicationForTherapy": true
     }
   ],
-  "priorMolecularTests": [
+  "priorIHCTests": [
     {
       "test": "IHC",
       "item": "ERBB2",
@@ -151,6 +151,26 @@
       "scoreValue": null,
       "scoreValueUnit": null,
       "impliesPotentialIndeterminateStatus": false
+    }
+  ],
+  "priorSequencingTests": [
+    {
+      "test": "Archer FP Lung Target",
+      "date": {
+        "year": 2024,
+        "month": 7,
+        "day": 15
+      },
+      "variants": [
+        {
+          "gene": "KRAS",
+          "hgvsCodingImpact": "c.34G>T"
+        }
+      ],
+      "fusions": [],
+      "amplifications": [],
+      "skippedExons": [],
+      "deletedGenes": []
     }
   ],
   "complications": [

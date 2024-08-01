@@ -4,15 +4,15 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 
 class HasKnownHPVStatus : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val (indeterminatePriorTestsForHPV, conclusivePriorTestsForHPV) = record.molecularHistory.allIHCTests()
+        val (indeterminatePriorTestsForHPV, conclusivePriorTestsForHPV) = record.priorIHCTests
             .filter { (it.item?.contains("HPV") ?: false) }
-            .partition(PriorMolecularTest::impliesPotentialIndeterminateStatus)
+            .partition(PriorIHCTest::impliesPotentialIndeterminateStatus)
 
         val molecularRecords = record.molecularHistory.allOrangeMolecularRecords()
 

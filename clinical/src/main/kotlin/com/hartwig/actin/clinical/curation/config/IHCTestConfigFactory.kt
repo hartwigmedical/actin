@@ -2,18 +2,18 @@ package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationUtil
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.util.ResourceFile
 
-class MolecularTestConfigFactory(private val curationCategory: CurationCategory) : CurationConfigFactory<MolecularTestConfig> {
-    override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<MolecularTestConfig> {
+class IHCTestConfigFactory(private val curationCategory: CurationCategory) : CurationConfigFactory<IHCTestConfig> {
+    override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<IHCTestConfig> {
         val ignore = CurationUtil.isIgnoreString(parts[fields["test"]!!])
         val input = parts[fields["input"]!!]
         val (impliesPotentialIndeterminateStatus, impliesPotentialIndeterminateStatusValidationErrors)
                 = validateBoolean(curationCategory, input, "impliesPotentialIndeterminateStatus", fields, parts)
         val priorMolecularTest = impliesPotentialIndeterminateStatus?.let { curateObject(it, fields, parts) }
         return ValidatedCurationConfig(
-            MolecularTestConfig(
+            IHCTestConfig(
                 input = input,
                 ignore = ignore,
                 curated = if (!ignore) {
@@ -27,9 +27,8 @@ class MolecularTestConfigFactory(private val curationCategory: CurationCategory)
         impliesPotentialIndeterminateStatus: Boolean,
         fields: Map<String, Int>,
         parts: Array<String>
-    ): PriorMolecularTest {
-        return PriorMolecularTest(
-            test = parts[fields["test"]!!],
+    ): PriorIHCTest {
+        return PriorIHCTest(
             item = parts[fields["item"]!!],
             measure = ResourceFile.optionalString(parts[fields["measure"]!!]),
             scoreText = ResourceFile.optionalString(parts[fields["scoreText"]!!]),

@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-import com.hartwig.actin.molecular.datamodel.MolecularHistory
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.molecular.datamodel.panel.archer.ARCHER_ALWAYS_TESTED_GENES
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
@@ -17,14 +17,14 @@ class PriorMolecularTestInterpreter {
 
     private val interpretationBuilder = PriorMolecularTestInterpretationBuilder()
 
-    fun interpret(history: MolecularHistory): List<PriorMolecularTestInterpretation> {
-        history.allIHCTests().forEach(::interpret)
-        history.allArcherPanels().forEach(::interpret)
-        history.allGenericPanels().forEach(::interpret)
+    fun interpret(record: PatientRecord): List<PriorMolecularTestInterpretation> {
+        record.priorIHCTests.forEach(::interpret)
+        record.molecularHistory.allArcherPanels().forEach(::interpret)
+        record.molecularHistory.allGenericPanels().forEach(::interpret)
         return interpretationBuilder.build()
     }
 
-    private fun interpret(test: PriorMolecularTest) {
+    private fun interpret(test: PriorIHCTest) {
         val item = test.item ?: ""
         val type = test.test
         val scoreText = test.scoreText
@@ -72,7 +72,7 @@ class PriorMolecularTestInterpreter {
         negatives.forEach { interpretationBuilder.addInterpretation(type, "Negative", it) }
     }
 
-    private fun formatValueBasedPriorTest(valueTest: PriorMolecularTest): String {
+    private fun formatValueBasedPriorTest(valueTest: PriorIHCTest): String {
         return valueTest.scoreValue?.let {
             return listOfNotNull(
                 "Score", valueTest.measure, valueTest.scoreValuePrefix, Formats.twoDigitNumber(it) + valueTest.scoreValueUnit

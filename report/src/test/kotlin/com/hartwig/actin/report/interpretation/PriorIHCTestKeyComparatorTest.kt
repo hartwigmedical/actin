@@ -3,7 +3,7 @@ package com.hartwig.actin.report.interpretation
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class PriorMolecularTestKeyComparatorTest {
+class PriorIHCTestKeyComparatorTest {
     @Test
     fun canSortPriorMolecularTestKeys() {
         val key1 = create("text 1", "test 1")
