@@ -174,7 +174,7 @@
       "impliesPotentialIndeterminateStatus": false
     },
     {
-      "test": "",
+      "test": "IHC",
       "item": "PD-L1",
       "measure": null,
       "measureDate": null,
