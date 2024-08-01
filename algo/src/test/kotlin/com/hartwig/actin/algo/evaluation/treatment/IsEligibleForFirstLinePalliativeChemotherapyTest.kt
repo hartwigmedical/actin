@@ -48,14 +48,14 @@ class IsEligibleForFirstLinePalliativeChemotherapyTest {
     fun `Should be undetermined when patient has metastatic cancer and previous palliative targeted therapy`() {
         val result = functionMetastaticCancer.evaluate(palliativeTargetedTherapy)
         assertEvaluation(EvaluationResult.UNDETERMINED, result)
-        assertThat(result.undeterminedGeneralMessages).containsExactly("Patient had palliative targeted therapy (hence may not be eligible for first line palliative chemotherapy)")
+        assertThat(result.undeterminedGeneralMessages).containsExactly("Patient had palliative targeted therapy (hence may not be considered eligible for first line palliative chemotherapy)")
     }
 
     @Test
     fun `Should be undetermined when patient has metastatic cancer and no previous palliative therapy`() {
         val result = functionMetastaticCancer.evaluate(consolidationChemotherapy)
         assertEvaluation(EvaluationResult.UNDETERMINED, result)
-        assertThat(result.undeterminedGeneralMessages).containsExactly("Undetermined eligibility for first line palliative chemotherapy")
+        assertThat(result.undeterminedGeneralMessages).containsExactly("Undetermined if considered eligible for first line palliative chemotherapy")
     }
 
     @Test
