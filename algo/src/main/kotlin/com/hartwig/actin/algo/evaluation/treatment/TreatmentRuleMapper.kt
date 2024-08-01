@@ -20,6 +20,11 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_LINES_X to isEligibleForTreatmentLinesCreator(),
             EligibilityRule.IS_ELIGIBLE_FOR_LOCAL_LIVER_TREATMENT to { IsEligibleForLocalLiverTreatment(doidModel()) },
             EligibilityRule.IS_ELIGIBLE_FOR_INTENSIVE_TREATMENT to { IsEligibleForIntensiveTreatment() },
+            EligibilityRule.IS_ELIGIBLE_FOR_FIRST_LINE_PALLIATIVE_CHEMOTHERAPY to {
+                IsEligibleForFirstLinePalliativeChemotherapy(
+                    HasMetastaticCancer(doidModel())
+                )
+            },
             EligibilityRule.IS_ELIGIBLE_FOR_LOCAL_TREATMENT_OF_METASTASES to isEligibleForLocalTreatmentOfMetastasesCreator(),
             EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS to hasExhaustedSOCTreatmentsCreator(),
             EligibilityRule.HAS_HAD_AT_LEAST_X_APPROVED_TREATMENT_LINES to hasHadSomeApprovedTreatmentCreator(),
