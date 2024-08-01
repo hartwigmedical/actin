@@ -55,10 +55,10 @@ private val TUMOR_DETAILS = TumorDetails(
     hasMeasurableDisease = true,
     hasBrainLesions = false,
     brainLesionsCount = 0,
-    hasActiveBrainLesions = null,
+    hasActiveBrainLesions = false,
     hasCnsLesions = false,
     cnsLesionsCount = 0,
-    hasActiveCnsLesions = null,
+    hasActiveCnsLesions = false,
     hasBoneLesions = false,
     boneLesionsCount = 0,
     hasLiverLesions = false,
@@ -102,6 +102,8 @@ private val BRAIN_AND_LUNG_LESION_TUMOR_DETAILS = TUMOR_DETAILS.copy(
     hasLungLesions = true,
     lungLesionsCount = 1
 )
+
+private val DIAGNOSIS_DATE = LocalDate.of(2024, 8, 1)
 
 class StandardTumorDetailsExtractorTest {
 
@@ -235,6 +237,59 @@ class StandardTumorDetailsExtractorTest {
         assertThat(result.extracted).isEqualTo(BRAIN_AND_LUNG_LESION_TUMOR_DETAILS)
         assertThat(result.evaluation.warnings).isEmpty()
         assertThat(result.evaluation.lesionLocationEvaluatedInputs).containsExactly(TREATMENT_HISTORY_INPUT)
+    }
+
+    @Test
+    fun `Should extract lesions from provided tumor details lesion list, and not curate if location is a known category`() {
+        every { tumorCuration.find("tumorLocation | tumorType") } returns setOf(CURATION_CONFIG)
+        val result =
+            extractor.extract(
+                EHR_PATIENT_RECORD.copy(
+                    tumorDetails = EHR_PATIENT_RECORD.tumorDetails.copy(
+                        lesions = listOf(
+                            ProvidedLesion(
+                                "brain",
+                                DIAGNOSIS_DATE,
+                                true
+                            )
+                        )
+                    )
+                )
+            )
+        assertThat(result.extracted).isEqualTo(
+            TUMOR_DETAILS.copy(
+                hasBrainLesions = true,
+                hasActiveBrainLesions = true,
+                brainLesionsCount = 1,
+            )
+        )
+        assertThat(result.evaluation.warnings).isEmpty()
+    }
+
+    @Test
+    fun `Should extract lesions from provided tumor details lesion list, and curate if location is not a known category`() {
+        setupLesionCuration("brainnnn", BRAIN_LESION_LOCATION_CONFIG)
+        val result =
+            extractor.extract(
+                EHR_PATIENT_RECORD.copy(
+                    tumorDetails = EHR_PATIENT_RECORD.tumorDetails.copy(
+                        lesions = listOf(
+                            ProvidedLesion(
+                                "brainnnn",
+                                DIAGNOSIS_DATE,
+                                true
+                            )
+                        )
+                    )
+                )
+            )
+        assertThat(result.extracted).isEqualTo(
+            TUMOR_DETAILS.copy(
+                hasBrainLesions = true,
+                brainLesionsCount = 1,
+            )
+        )
+        assertThat(result.evaluation.warnings).isEmpty()
     }
 
     private fun setupLesionCuration(input: String, vararg lesionLocationConfig: LesionLocationConfig) {
