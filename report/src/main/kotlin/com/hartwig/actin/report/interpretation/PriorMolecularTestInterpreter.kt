@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.clinical.datamodel.IHC_TEST_TYPE
 import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.molecular.datamodel.panel.archer.ARCHER_ALWAYS_TESTED_GENES
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
@@ -18,7 +19,7 @@ class PriorMolecularTestInterpreter {
     private val interpretationBuilder = PriorMolecularTestInterpretationBuilder()
 
     fun interpret(record: PatientRecord): List<PriorMolecularTestInterpretation> {
-        record.priorIHCTests.forEach(::interpret)
+        record.priorIHCTests.filter { it.test == IHC_TEST_TYPE }.forEach(::interpret)
         record.molecularHistory.allArcherPanels().forEach(::interpret)
         record.molecularHistory.allGenericPanels().forEach(::interpret)
         return interpretationBuilder.build()
