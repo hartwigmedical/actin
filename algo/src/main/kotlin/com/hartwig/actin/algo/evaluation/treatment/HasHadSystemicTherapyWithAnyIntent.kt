@@ -8,6 +8,7 @@ import com.hartwig.actin.algo.evaluation.treatment.TreatmentSinceDateFunctions.t
 import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithOr
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import java.time.LocalDate
 
 class HasHadSystemicTherapyWithAnyIntent(
@@ -44,15 +45,7 @@ class HasHadSystemicTherapyWithAnyIntent(
                 )
             }
 
-            ((minDate == null) && matchingTreatments.containsKey(key = null)) || (minDate?.let {
-                matchingTreatments[null]?.any {
-                    treatmentSinceMinDate(
-                        it,
-                        minDate,
-                        true
-                    )
-                }
-            } == true) -> {
+            matchingTreatments[null]?.let(::anyTreatmentPotentiallySinceMinDate) == true -> {
                 EvaluationFactory.undetermined("Undetermined if intent of received systemic treatment is $intentsLowercase")
             }
 
@@ -69,6 +62,9 @@ class HasHadSystemicTherapyWithAnyIntent(
                     "No $intentsLowercase systemic therapy within $weeksAgo weeks"
                 )
         }
+    }
 
+    private fun anyTreatmentPotentiallySinceMinDate(treatmentEntries: Iterable<TreatmentHistoryEntry>): Boolean {
+        return minDate == null || treatmentEntries.any { treatmentSinceMinDate(it, minDate, true) }
     }
 }

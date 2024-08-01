@@ -25,7 +25,7 @@ class HasHadAdjuvantTreatmentWithCategory(
         )
 
         return when {
-            weeksAgo == null && treatmentSummary.hasSpecificMatch() -> {
+            minDate == null && treatmentSummary.hasSpecificMatch() -> {
                 EvaluationFactory.pass("Received adjuvant treatment(s) of ${category.display()}")
             }
 
