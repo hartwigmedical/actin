@@ -10,6 +10,8 @@ import org.apache.logging.log4j.core.config.Configurator
 
 data class SharedDataLoaderConfig(
     val sharedDataDirectory: String,
+    val clinicalDirectory: String,
+    val molecularDirectory: String,
     val writeDataToDb: Boolean,
     override val dbUser: String,
     override val dbPass: String,
@@ -20,6 +22,8 @@ data class SharedDataLoaderConfig(
         fun createOptions(): Options {
             val options = Options()
             options.addOption(SHARED_DATA_DIRECTORY, true, "Directory containing the shared data to be loaded")
+            options.addOption(CLINICAL_DIRECTORY, true, "Directory containing the clinical data to be loaded")
+            options.addOption(MOLECULAR_DIRECTORY, true, "Directory containing molecular data for patients with missing historical data")
             options.addOption(WRITE_DATA_TO_DB, false, "If flag is set, data is written to SQL")
             options.addOption(DB_USER, true, "Database username")
             options.addOption(DB_PASS, true, "Database password")
@@ -36,6 +40,8 @@ data class SharedDataLoaderConfig(
 
             return SharedDataLoaderConfig(
                 sharedDataDirectory = ApplicationConfig.nonOptionalDir(cmd, SHARED_DATA_DIRECTORY),
+                clinicalDirectory = ApplicationConfig.nonOptionalDir(cmd, CLINICAL_DIRECTORY),
+                molecularDirectory = ApplicationConfig.nonOptionalDir(cmd, MOLECULAR_DIRECTORY),
                 writeDataToDb = cmd.hasOption(WRITE_DATA_TO_DB),
                 dbUser = ApplicationConfig.nonOptionalValue(cmd, DB_USER),
                 dbPass = ApplicationConfig.nonOptionalValue(cmd, DB_PASS),
@@ -45,6 +51,8 @@ data class SharedDataLoaderConfig(
 
         private val LOGGER = LogManager.getLogger(SharedDataLoaderConfig::class.java)
         private const val SHARED_DATA_DIRECTORY = "shared_data_directory"
+        private const val CLINICAL_DIRECTORY = "clinical_directory"
+        private const val MOLECULAR_DIRECTORY = "molecular_directory"
         private const val WRITE_DATA_TO_DB = "write_data_to_db"
         private const val DB_USER = "db_user"
         private const val DB_PASS = "db_pass"

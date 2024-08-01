@@ -112,11 +112,9 @@ object HistoricMolecularDeserializer {
                 gene = Json.string(obj, "gene"),
                 haplotypes = Json.array(obj, "haplotypes").map { haploJson ->
                     val haplo = haploJson.asJsonObject
-                    val name = Json.string(haplo, "name")
                     Haplotype(
                         function = Json.string(haplo, "function"),
-                        allele = name.substringBefore("_"),
-                        alleleCount = if ("HOM" in name) 2 else 1
+                        name = Json.string(haplo, "name")
                     )
                 }.toSet()
             )

@@ -141,7 +141,7 @@ internal class MolecularDAO(private val context: DSLContext) {
                 record.characteristics.purity,
                 record.characteristics.ploidy,
                 predictedTumorOrigin?.cancerType(),
-                predictedTumorOrigin?.likelihood(),
+                predictedTumorOrigin?.likelihood()?.takeUnless { it.isNaN() },
                 record.characteristics.isMicrosatelliteUnstable,
                 record.characteristics.homologousRepairScore,
                 record.characteristics.isHomologousRepairDeficient,
@@ -571,7 +571,13 @@ internal class MolecularDAO(private val context: DSLContext) {
                     Tables.PHARMACO.ALLELECOUNT,
                     Tables.PHARMACO.FUNCTION
                 )
-                    .values(sampleId, entry.gene, haplotype.allele, haplotype.alleleCount, haplotype.function)
+                    .values(
+                        sampleId,
+                        entry.gene,
+                        haplotype.name.substringBefore("_"),
+                        if ("HOM" in haplotype.name) 2 else 1,
+                        haplotype.function
+                    )
                     .execute()
             }
         }

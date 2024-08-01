@@ -1,9 +1,10 @@
 package com.hartwig.actin.database.historic
 
+import com.google.gson.GsonBuilder
+import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.algo.datamodel.TreatmentMatch
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord
+import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.database.dao.DatabaseAccess
-import com.hartwig.actin.database.historic.serialization.HistoricClinicalDeserializer
 import com.hartwig.actin.database.historic.serialization.HistoricMolecularDeserializer
 import com.hartwig.actin.database.historic.serialization.HistoricTreatmentMatchDeserializer
 import com.hartwig.actin.database.molecular.MolecularLoaderApplication
@@ -14,7 +15,10 @@ import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.io.BufferedWriter
 import java.io.File
+import java.io.FileWriter
+import java.nio.file.Files
 import kotlin.system.exitProcess
 
 class SharedDataLoaderApplication(private val config: SharedDataLoaderConfig) {
@@ -23,7 +27,7 @@ class SharedDataLoaderApplication(private val config: SharedDataLoaderConfig) {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
 
         LOGGER.info("Converting shared data records from {} to patient records", config.sharedDataDirectory)
-        val historicData: List<Triple<ClinicalRecord?, MolecularHistory?, TreatmentMatch?>> =
+        val historicData: List<Pair<MolecularHistory?, TreatmentMatch?>> =
             File(config.sharedDataDirectory).list()!!.map {
                 LOGGER.info(" Processing {}", it)
 
@@ -32,7 +36,7 @@ class SharedDataLoaderApplication(private val config: SharedDataLoaderConfig) {
                     extractSinglePatientData(basePath, it)
                 } else {
                     LOGGER.warn("  Could not find ACTIN shared data path for `{}`", it)
-                    Triple(null, null, null)
+                    Pair(null, null)
                 }
             }
 
@@ -40,7 +44,9 @@ class SharedDataLoaderApplication(private val config: SharedDataLoaderConfig) {
             LOGGER.info("Connecting to {}", config.dbUrl)
             val access: DatabaseAccess = DatabaseAccess.fromCredentials(config.dbUser, config.dbPass, config.dbUrl)
 
-            writeToDatabase(access, historicData)
+            writeHistoricToDatabase(access, historicData)
+            loadLatestClinicalToDatabase(access, config.clinicalDirectory)
+            loadLatestMolecularToDatabase(access, config.molecularDirectory)
         } else {
             LOGGER.info("Skipping database writing")
         }
@@ -54,9 +60,8 @@ class SharedDataLoaderApplication(private val config: SharedDataLoaderConfig) {
             .firstOrNull { actinPath -> File(actinPath).isDirectory }
     }
 
-    private fun extractSinglePatientData(basePath: String, patient: String): Triple<ClinicalRecord?, MolecularHistory?, TreatmentMatch?> {
-        return Triple(
-            extractRecordFromFile(basePath, patient, "clinical", HistoricClinicalDeserializer::deserialize),
+    private fun extractSinglePatientData(basePath: String, patient: String): Pair<MolecularHistory?, TreatmentMatch?> {
+        return Pair(
             extractRecordFromFile(basePath, patient, "molecular", HistoricMolecularDeserializer::deserialize),
             extractRecordFromFile(basePath, patient, "treatment_match", HistoricTreatmentMatchDeserializer::deserialize)
         )
@@ -82,18 +87,60 @@ class SharedDataLoaderApplication(private val config: SharedDataLoaderConfig) {
         return File("$basePath$patient.$pattern.json").takeIf { it.exists() }
     }
 
-    private fun writeToDatabase(
+    private fun writeHistoricToDatabase(
         access: DatabaseAccess,
-        historicData: List<Triple<ClinicalRecord?, MolecularHistory?, TreatmentMatch?>>
+        historicData: List<Pair<MolecularHistory?, TreatmentMatch?>>
     ) {
-        LOGGER.info("Writing clinical data for {} historic patients", historicData.size)
-        access.writeClinicalRecords(historicData.mapNotNull { it.first })
-
         LOGGER.info("Writing molecular data for {} historic patients", historicData.size)
-        historicData.mapNotNull { it.second?.latestOrangeMolecularRecord() }.forEach(access::writeMolecularRecord)
+        historicData.mapNotNull { it.first?.latestOrangeMolecularRecord() }.forEach(access::writeMolecularRecord)
 
         LOGGER.info("Writing treatment match data for {} historic patients", historicData.size)
-        historicData.mapNotNull { it.third }.forEach(access::writeTreatmentMatch)
+        historicData.mapNotNull { it.second }.forEach(access::writeTreatmentMatch)
+    }
+
+    private fun loadLatestMolecularToDatabase(access: DatabaseAccess, molecularDirectory: String) {
+        LOGGER.info("Loading molecular data from {}", molecularDirectory)
+        val files = File(molecularDirectory).listFiles()
+            ?: throw IllegalArgumentException("Could not retrieve patient json files from $molecularDirectory")
+
+        val records = files.map {
+            LOGGER.info("Loading molecular data from {}", it)
+            Files.readString(it.toPath())
+                .replace("\"type\":\"WHOLE_GENOME\"", "\"experimentType\":\"HARTWIG_WHOLE_GENOME\"")
+                .replace("\"type\":\"IHC\"", "\"experimentType\":\"IHC\"")
+                .let(PatientRecordJson::fromJson)
+        }
+            .map {
+                requireNotNull(it.molecularHistory.latestOrangeMolecularRecord()) {
+                    "No WGS record found in molecular history"
+                }
+            }
+
+        LOGGER.info("Writing {} molecular records to database", records.size)
+        val gson = GsonBuilder().serializeNulls()
+            .enableComplexMapKeySerialization()
+            .serializeSpecialFloatingPointValues()
+            .create()
+
+        records.forEach {
+            val json = gson.toJson(it)
+            val path = "$molecularDirectory/../molecular_out/"
+            val jsonFile = path + it.patientId + ".patient_record.json"
+            LOGGER.info("Writing patient record to {}", jsonFile)
+            val writer = BufferedWriter(FileWriter(jsonFile))
+            writer.write(json)
+            writer.close()
+
+            access.writeMolecularRecord(it)
+        }
+    }
+
+    private fun loadLatestClinicalToDatabase(access: DatabaseAccess, clinicalDirectory: String) {
+        LOGGER.info("Loading clinical data from {}", clinicalDirectory)
+        val records = ClinicalRecordJson.readFromDir(clinicalDirectory)
+
+        LOGGER.info("Writing {} clinical records to database", records.size)
+        access.writeClinicalRecords(records)
     }
 
     companion object {
