@@ -34,15 +34,15 @@ class IsEligibleForFirstLinePalliativeChemotherapy(private val hasMetastaticCanc
 
             palliativeTreatments.isNotEmpty() && hasMetastaticCancerResult == EvaluationResult.PASS -> {
                 EvaluationFactory.undetermined(
-                    "Patient has had palliative $categoriesList and hence may not be eligible for first line palliative chemotherapy",
-                    "Patient had palliative $categoriesList (hence may not be eligible for first line palliative chemotherapy)"
+                    "Patient has had palliative $categoriesList and hence may not be considered eligible for first line palliative chemotherapy",
+                    "Patient had palliative $categoriesList (hence may not be considered eligible for first line palliative chemotherapy)"
                 )
             }
 
             hasMetastaticCancerResult == EvaluationResult.PASS -> {
                 EvaluationFactory.undetermined(
-                    "Undetermined if patient with metastatic disease is eligible for first line palliative chemotherapy",
-                    "Undetermined eligibility for first line palliative chemotherapy"
+                    "Undetermined if patient with metastatic disease is considered eligible for first line palliative chemotherapy",
+                    "Undetermined if considered eligible for first line palliative chemotherapy"
                 )
             }
 
