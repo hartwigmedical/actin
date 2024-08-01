@@ -31,12 +31,8 @@ class MolecularSummaryGenerator(
                 if (molecularTest.experimentType != ExperimentType.HARTWIG_WHOLE_GENOME) {
                     LOGGER.warn("Generating WGS results for non-WGS sample")
                 }
-                val wgsGenerator = when (molecularSummaryType) {
-                    MolecularSummaryType.STANDARD -> StandardWGSSummaryGenerator(patientRecord, molecularTest, cohorts, keyWidth, valueWidth)
-                    MolecularSummaryType.SHORT -> ShortWGSSummaryGenerator(patientRecord, molecularTest, cohorts, keyWidth, valueWidth)
-                    MolecularSummaryType.NONE -> null
-                }
-                table.addCell(Cells.createSubTitle(wgsGenerator!!.title()))
+                val wgsGenerator = StandardWGSSummaryGenerator(patientRecord, molecularTest, cohorts, keyWidth, valueWidth)
+                table.addCell(Cells.createSubTitle(wgsGenerator.title()))
                 table.addCell(Cells.create(wgsGenerator.contents()))
             } else {
                 val noRecent = Tables.createFixedWidthCols(keyWidth, valueWidth)
