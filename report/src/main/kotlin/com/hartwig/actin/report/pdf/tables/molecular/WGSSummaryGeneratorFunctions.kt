@@ -90,8 +90,4 @@ class WGSSummaryGeneratorFunctions(
         )
         return String.format("%s / %s", TMLString, TMBString)
     }
-
-    internal fun formatList(list: List<String>): String {
-        return if (list.isEmpty()) Formats.VALUE_NONE else list.joinToString(Formats.COMMA_SEPARATOR)
-    }
 }

@@ -39,15 +39,16 @@ class ShortWGSSummaryGenerator(
             table.addCell(Cells.createKey("Tumor mutational load / burden"))
             table.addCell(wgsSummaryFunctions.tumorMutationalLoadAndTumorMutationalBurdenStatusCell())
             listOf(
-                "Genes with high driver mutation" to wgsSummaryFunctions.formatList(summarizer.keyVariants()),
-                "Amplified genes" to wgsSummaryFunctions.formatList(summarizer.keyAmplifiedGenes()),
-                "Deleted genes" to wgsSummaryFunctions.formatList(summarizer.keyDeletedGenes()),
-                "Homozygously disrupted genes" to wgsSummaryFunctions.formatList(summarizer.keyHomozygouslyDisruptedGenes()),
-                "Gene fusions" to wgsSummaryFunctions.formatList(summarizer.keyFusionEvents()),
+                "Genes with high driver mutation" to formatList(summarizer.keyVariants()),
+                "Amplified genes" to formatList(summarizer.keyAmplifiedGenes()),
+                "Deleted genes" to formatList(summarizer.keyDeletedGenes()),
+                "Homozygously disrupted genes" to formatList(summarizer.keyHomozygouslyDisruptedGenes()),
+                "Gene fusions" to formatList(summarizer.keyFusionEvents()),
                 "Microsatellite (in)stability" to (characteristicsGenerator.createMSStabilityString() ?: Formats.VALUE_UNKNOWN),
                 "" to "",
-                "Potentially actionable events with medium/low driver:" to wgsSummaryFunctions.formatList(summarizer.actionableEventsThatAreNotKeyDrivers())
+                "Potentially actionable events with medium/low driver:" to formatList(summarizer.actionableEventsThatAreNotKeyDrivers())
             )
+                .filter { (_, value) -> value.isNotEmpty() }
                 .flatMap { (key, value) -> listOf(Cells.createKey(key), Cells.createValue(value)) }
                 .forEach(table::addCell)
         } else {
@@ -59,5 +60,9 @@ class ShortWGSSummaryGenerator(
             )
         }
         return table
+    }
+
+    private fun formatList(list: List<String>): String {
+        return list.joinToString(Formats.COMMA_SEPARATOR)
     }
 }

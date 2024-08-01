@@ -46,15 +46,15 @@ class StandardWGSSummaryGenerator(
                 "Microsatellite (in)stability" to (characteristicsGenerator.createMSStabilityString() ?: Formats.VALUE_UNKNOWN),
                 "HR status" to (characteristicsGenerator.createHRStatusString() ?: Formats.VALUE_UNKNOWN),
                 "" to "",
-                "Genes with high driver mutation" to wgsSummaryFunctions.formatList(summarizer.keyGenesWithVariants()),
-                "Amplified genes" to wgsSummaryFunctions.formatList(summarizer.keyAmplifiedGenes()),
-                "Deleted genes" to wgsSummaryFunctions.formatList(summarizer.keyDeletedGenes()),
-                "Homozygously disrupted genes" to wgsSummaryFunctions.formatList(summarizer.keyHomozygouslyDisruptedGenes()),
-                "Gene fusions" to wgsSummaryFunctions.formatList(summarizer.keyFusionEvents()),
-                "Virus detection" to wgsSummaryFunctions.formatList(summarizer.keyVirusEvents()),
+                "Genes with high driver mutation" to formatList(summarizer.keyGenesWithVariants()),
+                "Amplified genes" to formatList(summarizer.keyAmplifiedGenes()),
+                "Deleted genes" to formatList(summarizer.keyDeletedGenes()),
+                "Homozygously disrupted genes" to formatList(summarizer.keyHomozygouslyDisruptedGenes()),
+                "Gene fusions" to formatList(summarizer.keyFusionEvents()),
+                "Virus detection" to formatList(summarizer.keyVirusEvents()),
                 "" to "",
                 "Potentially actionable events with medium/low driver:" to
-                        wgsSummaryFunctions.formatList(summarizer.actionableEventsThatAreNotKeyDrivers())
+                        formatList(summarizer.actionableEventsThatAreNotKeyDrivers())
             )
                 .flatMap { (key, value) -> listOf(Cells.createKey(key), Cells.createValue(value)) }
                 .forEach(table::addCell)
@@ -67,5 +67,9 @@ class StandardWGSSummaryGenerator(
             )
         }
         return table
+    }
+
+    private fun formatList(list: List<String>): String {
+        return if (list.isEmpty()) Formats.VALUE_NONE else list.joinToString(Formats.COMMA_SEPARATOR)
     }
 }

@@ -46,7 +46,6 @@ class MolecularSummaryGenerator(
             }
         }
 
-
         val priorMolecularResultGenerator =
             PriorMolecularResultGenerator(patientRecord.molecularHistory, keyWidth, valueWidth, PriorMolecularTestInterpreter())
         table.addCell(Cells.createEmpty())
