@@ -62,7 +62,7 @@ class ResistanceEvidenceMatcher(
 
         private fun knownResistance(resistanceEvent: ActionableEvent): Boolean {
             return when (resistanceEvent.level()) {
-                EvidenceLevel.A, EvidenceLevel.B -> {
+                EvidenceLevel.A, EvidenceLevel.B -> { //should we also show EvidenceLevel.C?
                     resistanceEvent.direction().isCertain
                 }
 

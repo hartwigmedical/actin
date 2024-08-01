@@ -14,6 +14,7 @@ import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
+import com.hartwig.actin.molecular.datamodel.RefGenomeVersion
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.serialization.TrialJson
@@ -72,7 +73,8 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
 
         LOGGER.info("Loading evidence database for resistance evidence")
         val tumorDoids = patient.tumor.doids.orEmpty().toSet()
-        val actionableEvents = loadEvidence(RefGenome.V37)
+        val actionableEvents =
+            loadEvidence(patient.molecularHistory.latestOrangeMolecularRecord()?.refGenomeVersion ?: RefGenomeVersion.V37)
         val resistanceEvidenceMatcher = ResistanceEvidenceMatcher.create(doidEntry, tumorDoids, actionableEvents)
         val match = TreatmentMatcher.create(resources, trials, evidenceEntries, resistanceEvidenceMatcher)
             .evaluateAndAnnotateMatchesForPatient(patient)
@@ -82,9 +84,22 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         LOGGER.info("Done!")
     }
 
-    private fun loadEvidence(serveRefGenomeVersion: RefGenome): ActionableEvents {
+    private fun loadEvidence(orangeRefGenomeVersion: RefGenomeVersion): ActionableEvents {
+        val serveRefGenomeVersion = toServeRefGenomeVersion(orangeRefGenomeVersion)
         val serveDirectoryWithGenome = "${config.serveDirectory}/${serveRefGenomeVersion.name.lowercase().replace("v", "")}"
         return ActionableEventsLoader.readFromDir(serveDirectoryWithGenome, serveRefGenomeVersion)
+    }
+
+    private fun toServeRefGenomeVersion(refGenomeVersion: RefGenomeVersion): RefGenome {
+        return when (refGenomeVersion) {
+            RefGenomeVersion.V37 -> {
+                RefGenome.V37
+            }
+
+            RefGenomeVersion.V38 -> {
+                RefGenome.V38
+            }
+        }
     }
 
     companion object {
