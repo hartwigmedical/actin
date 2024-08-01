@@ -33,7 +33,7 @@ class IHCTestConfigFactory(private val curationCategory: CurationCategory) : Cur
     ): PriorIHCTest {
         return PriorIHCTest(
             item = parts[fields["item"]!!],
-            test = if (test.isEmpty()) test else IHC_TEST_TYPE,
+            test = test.ifEmpty { IHC_TEST_TYPE },
             measure = ResourceFile.optionalString(parts[fields["measure"]!!]),
             scoreText = ResourceFile.optionalString(parts[fields["scoreText"]!!]),
             scoreValuePrefix = ResourceFile.optionalString(parts[fields["scoreValuePrefix"]!!]),
