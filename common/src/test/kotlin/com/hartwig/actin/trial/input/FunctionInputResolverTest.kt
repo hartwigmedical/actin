@@ -220,6 +220,22 @@ class FunctionInputResolverTest {
     }
 
     @Test
+    fun `Should resolve functions with one treatment category and many intents`() {
+        val rule = firstOfType(FunctionInput.ONE_TREATMENT_CATEGORY_MANY_INTENTS)
+        val category = TreatmentCategory.IMMUNOTHERAPY.display()
+        val valid = create(rule, listOf(category, "${Intent.ADJUVANT};${Intent.PALLIATIVE}"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val inputs = resolver.createOneTreatmentCategoryManyIntentsInput(valid)
+        assertThat(inputs.category).isEqualTo(TreatmentCategory.IMMUNOTHERAPY)
+        assertThat(inputs.intents).isEqualTo(setOf(Intent.ADJUVANT, Intent.PALLIATIVE))
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(TreatmentCategory.TARGETED_THERAPY.display(), "test")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(category, "hello1;hello2")))!!).isFalse
+    }
+
+    @Test
     fun `Should resolve functions with one specific treatment input`() {
         val rule = firstOfType(FunctionInput.ONE_SPECIFIC_TREATMENT)
         val treatmentName = TestTreatmentDatabaseFactory.CAPECITABINE_OXALIPLATIN

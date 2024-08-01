@@ -25,6 +25,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                     HasMetastaticCancer(doidModel())
                 )
             },
+            EligibilityRule.IS_ELIGIBLE_FOR_LOCAL_TREATMENT_OF_METASTASES to isEligibleForLocalTreatmentOfMetastasesCreator(),
             EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS to hasExhaustedSOCTreatmentsCreator(),
             EligibilityRule.HAS_HAD_AT_LEAST_X_APPROVED_TREATMENT_LINES to hasHadSomeApprovedTreatmentCreator(),
             EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES to hasHadSomeSystemicTreatmentCreator(),
@@ -43,7 +44,9 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X_WITHIN_Y_WEEKS to hasHadTreatmentWithAnyDrugSinceDateCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT to hasHadTreatmentWithCategoryCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y to hasHadTreatmentCategoryOfTypesCreator(),
+            EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_WITH_ANY_INTENT_Y to hasHadTreatmentCategoryWithAnyIntentCreator(),
             EligibilityRule.HAS_RECEIVED_PLATINUM_BASED_DOUBLET to { HasReceivedPlatinumBasedDoublet() },
+            EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_ALL_TYPES_Y to hasHadTreatmentCategoryOfAllTypesCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_ALL_TYPES_Y_AND_AT_LEAST_Z_LINES to hasHadSomeTreatmentCategoryOfAllTypesCreator(),
             EligibilityRule.HAS_HAD_FIRST_LINE_CATEGORY_X_TREATMENT_OF_TYPES_Y to { HasHadFirstLineTreatmentCategoryOfTypes() },
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_WITHIN_Z_WEEKS to hasHadTreatmentCategoryOfTypesWithinWeeksCreator(),
@@ -103,6 +106,10 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val treatmentName = functionInputResolver().createOneSpecificTreatmentInput(function)
             IsEligibleForOnLabelTreatment(treatmentName, RecommendationEngineFactory(resources))
         }
+    }
+
+    private fun isEligibleForLocalTreatmentOfMetastasesCreator(): FunctionCreator {
+        return { IsEligibleForLocalTreatmentOfMetastases(HasMetastaticCancer(doidModel())) }
     }
 
     private fun isEligibleForTreatmentLinesCreator(): FunctionCreator {
@@ -229,6 +236,20 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneTreatmentCategoryManyTypesInput(function)
             HasHadSomeTreatmentsWithCategoryOfTypes(input.category, input.types, 1)
+        }
+    }
+
+    private fun hasHadTreatmentCategoryWithAnyIntentCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val input = functionInputResolver().createOneTreatmentCategoryManyIntentsInput(function)
+            HasHadSomeTreatmentsWithCategoryWithIntents(input.category, input.intents)
+        }
+    }
+
+    private fun hasHadTreatmentCategoryOfAllTypesCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val input = functionInputResolver().createOneTreatmentCategoryManyTypesInput(function)
+            HasHadSomeTreatmentsWithCategoryOfAllTypes(input.category, input.types, 1)
         }
     }
 
