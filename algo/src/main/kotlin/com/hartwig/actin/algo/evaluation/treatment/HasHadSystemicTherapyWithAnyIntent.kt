@@ -26,30 +26,33 @@ class HasHadSystemicTherapyWithAnyIntent(
         val intentsLowercase = intents?.let { concatItemsWithOr(it).lowercase() } ?: ""
 
         return when {
-            weeksAgo == null && matchingTreatments.containsKey(true) -> {
+            minDate == null && matchingTreatments.containsKey(true) -> {
                 EvaluationFactory.pass("Patient has had $intentsLowercase systemic therapy", "Received $intentsLowercase systemic therapy")
             }
 
-            matchingTreatments[true]?.any { treatmentSinceMinDate(it, minDate, false) } ?: false -> {
+            minDate?.let { matchingTreatments[true]?.any { treatmentSinceMinDate(it, minDate, false) } } == true -> {
                 EvaluationFactory.pass(
                     "Patient has had $intentsLowercase systemic therapy within the last $weeksAgo weeks",
                     "Received $intentsLowercase systemic therapy within the last $weeksAgo weeks"
                 )
             }
 
-            matchingTreatments[true]?.any { treatmentSinceMinDate(it, minDate, true) } ?: false -> {
+            minDate?.let { matchingTreatments[true]?.any { treatmentSinceMinDate(it, minDate, true) } } == true -> {
                 EvaluationFactory.undetermined(
                     "Patient has had $intentsLowercase systemic therapy but date unknown",
                     "Received $intentsLowercase systemic therapy but date unknown"
                 )
             }
 
-            (weeksAgo == null && matchingTreatments.containsKey(key = null)) || matchingTreatments[null]?.any {
-                treatmentSinceMinDate(
-                    it, minDate,
-                    true
-                )
-            } ?: false -> {
+            ((minDate == null) && matchingTreatments.containsKey(key = null)) || (minDate?.let {
+                matchingTreatments[null]?.any {
+                    treatmentSinceMinDate(
+                        it,
+                        minDate,
+                        true
+                    )
+                }
+            } == true) -> {
                 EvaluationFactory.undetermined("Undetermined if intent of received systemic treatment is $intentsLowercase")
             }
 

@@ -29,11 +29,11 @@ class HasHadAdjuvantTreatmentWithCategory(
                 EvaluationFactory.pass("Received adjuvant treatment(s) of ${category.display()}")
             }
 
-            treatmentSummary.specificMatches.any { treatmentSinceMinDate(it, minDate, false) } -> {
+            minDate?.let { treatmentSummary.specificMatches.any { treatmentSinceMinDate(it, minDate, false) } } == true -> {
                 EvaluationFactory.pass("Received adjuvant treatment(s) of ${category.display()} within the last $weeksAgo weeks")
             }
 
-            treatmentSummary.specificMatches.any { treatmentSinceMinDate(it, minDate, true) } -> {
+            minDate?.let { treatmentSummary.specificMatches.any { treatmentSinceMinDate(it, minDate, true) } } == true -> {
                 EvaluationFactory.undetermined("Received adjuvant treatment(s) of ${category.display()} but date unknown")
             }
 

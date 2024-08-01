@@ -44,9 +44,9 @@ object TreatmentSinceDateFunctions {
         }
     }
 
-    fun treatmentSinceMinDate(treatment: TreatmentHistoryEntry, minDate: LocalDate?, includeUnknown: Boolean): Boolean {
+    fun treatmentSinceMinDate(treatment: TreatmentHistoryEntry, minDate: LocalDate, includeUnknown: Boolean): Boolean {
         return DateComparison.isAfterDate(
-            minDate!!, treatment.treatmentHistoryDetails?.stopYear, treatment.treatmentHistoryDetails?.stopMonth
+            minDate, treatment.treatmentHistoryDetails?.stopYear, treatment.treatmentHistoryDetails?.stopMonth
         )
             ?: DateComparison.isAfterDate(minDate, treatment.startYear, treatment.startMonth)
             ?: includeUnknown
