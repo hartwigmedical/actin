@@ -2,6 +2,7 @@ package com.hartwig.actin.report.pdf
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
+import com.hartwig.actin.configuration.MolecularSummaryType
 import com.hartwig.actin.molecular.datamodel.NO_EVIDENCE_SOURCE
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
 import com.hartwig.actin.report.datamodel.Report
@@ -114,9 +115,10 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 report.patientRecord,
                 cohorts,
                 keyWidth,
-                valueWidth
+                valueWidth,
+                report.config.molecularSummaryType
             ).takeIf {
-                report.config.includeMolecularSummary && hasMolecular
+                report.config.molecularSummaryType != MolecularSummaryType.NONE && hasMolecular
             },
             SOCEligibleApprovedTreatmentGenerator(report, contentWidth).takeIf {
                 report.config.includeEligibleSOCTreatmentSummary

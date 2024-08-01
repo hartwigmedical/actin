@@ -3,76 +3,19 @@ package com.hartwig.actin.report.pdf.tables.molecular
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.MolecularTest
-import com.hartwig.actin.report.interpretation.EvaluatedCohort
-import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter
-import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
-import com.hartwig.actin.report.pdf.util.Formats.date
 import com.hartwig.actin.report.pdf.util.Styles
-import com.hartwig.actin.report.pdf.util.Tables
-import com.hartwig.actin.util.ApplicationConfig
 import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Paragraph
-import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.element.Text
 
-class WGSSummaryGenerator(
-    private val patientRecord: PatientRecord, private val molecular: MolecularTest,
-    cohorts: List<EvaluatedCohort>, private val keyWidth: Float, private val valueWidth: Float
-) : TableGenerator {
-    private val summarizer: MolecularDriversSummarizer =
-        MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(molecular.drivers, cohorts)
-    private val wgsMolecular = molecular as? MolecularRecord
+class WGSSummaryGeneratorFunctions(
+    private val patientRecord: PatientRecord, private val molecular: MolecularTest, private val wgsMolecular: MolecularRecord?
+) {
 
-    override fun title(): String {
-        return String.format(
-            ApplicationConfig.LOCALE,
-            "%s of %s (%s)",
-            molecular.testTypeDisplay,
-            patientRecord.patientId,
-            date(molecular.date)
-        )
-    }
-
-    override fun contents(): Table {
-        val characteristicsGenerator = MolecularCharacteristicsGenerator(molecular, keyWidth + valueWidth)
-        val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
-        table.addCell(Cells.createKey("Biopsy location"))
-        table.addCell(biopsySummary())
-        if (wgsMolecular?.hasSufficientQuality == true) {
-            table.addCell(Cells.createKey("Molecular tissue of origin prediction"))
-            table.addCell(tumorOriginPredictionCell())
-            table.addCell(Cells.createKey("Tumor mutational load / burden"))
-            table.addCell(tumorMutationalLoadAndTumorMutationalBurdenStatusCell())
-            listOf(
-                "Microsatellite (in)stability" to (characteristicsGenerator.createMSStabilityString() ?: Formats.VALUE_UNKNOWN),
-                "HR status" to (characteristicsGenerator.createHRStatusString() ?: Formats.VALUE_UNKNOWN),
-                "" to "",
-                "Genes with high driver mutation" to formatList(summarizer.keyGenesWithVariants()),
-                "Amplified genes" to formatList(summarizer.keyAmplifiedGenes()),
-                "Deleted genes" to formatList(summarizer.keyDeletedGenes()),
-                "Homozygously disrupted genes" to formatList(summarizer.keyHomozygouslyDisruptedGenes()),
-                "Gene fusions" to formatList(summarizer.keyFusionEvents()),
-                "Virus detection" to formatList(summarizer.keyVirusEvents()),
-                "" to "",
-                "Potentially actionable events with medium/low driver:" to formatList(summarizer.actionableEventsThatAreNotKeyDrivers())
-            )
-                .flatMap { (key, value) -> listOf(Cells.createKey(key), Cells.createValue(value)) }
-                .forEach(table::addCell)
-        } else {
-            table.addCell(
-                Cells.createSpanningContent(
-                    "The received biomaterial(s) did not meet the requirements that are needed for "
-                            + "high quality whole genome sequencing", table
-                )
-            )
-        }
-        return table
-    }
-
-    private fun biopsySummary(): Cell {
+    internal fun biopsySummary(): Cell {
         val biopsyLocation = patientRecord.tumor.biopsyLocation ?: Formats.VALUE_UNKNOWN
         val purity = molecular.characteristics.purity
         val wgsMolecular = if (molecular is MolecularRecord) molecular else null
@@ -86,7 +29,7 @@ class WGSSummaryGenerator(
         }
     }
 
-    private fun tumorOriginPredictionCell(): Cell {
+    internal fun tumorOriginPredictionCell(): Cell {
         val paragraph = Paragraph(Text(tumorOriginPrediction()).addStyle(Styles.tableHighlightStyle()))
         val purity = molecular.characteristics.purity
         val wgsMolecular = if (molecular is MolecularRecord) molecular else null
@@ -119,7 +62,7 @@ class WGSSummaryGenerator(
         }
     }
 
-    private fun tumorMutationalLoadAndTumorMutationalBurdenStatusCell(): Cell {
+    internal fun tumorMutationalLoadAndTumorMutationalBurdenStatusCell(): Cell {
         val paragraph = Paragraph(Text(tumorMutationalLoadAndTumorMutationalBurdenStatus()).addStyle(Styles.tableHighlightStyle()))
         val purity = molecular.characteristics.purity
         val wgsMolecular = if (molecular is MolecularRecord) molecular else null
@@ -130,7 +73,7 @@ class WGSSummaryGenerator(
         return Cells.create(paragraph)
     }
 
-    fun tumorMutationalLoadAndTumorMutationalBurdenStatus(): String {
+    private fun tumorMutationalLoadAndTumorMutationalBurdenStatus(): String {
         val hasHighTumorMutationalLoad = molecular.characteristics.hasHighTumorMutationalLoad
         val tumorMutationalLoad = molecular.characteristics.tumorMutationalLoad
         val TMLString = if (tumorMutationalLoad == null || hasHighTumorMutationalLoad == null) Formats.VALUE_UNKNOWN else String.format(
@@ -148,7 +91,7 @@ class WGSSummaryGenerator(
         return String.format("%s / %s", TMLString, TMBString)
     }
 
-    private fun formatList(list: List<String>): String {
+    internal fun formatList(list: List<String>): String {
         return if (list.isEmpty()) Formats.VALUE_NONE else list.joinToString(Formats.COMMA_SEPARATOR)
     }
 }

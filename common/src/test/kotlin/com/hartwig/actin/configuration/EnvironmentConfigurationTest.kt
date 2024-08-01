@@ -48,7 +48,7 @@ class EnvironmentConfigurationTest {
                     includeApprovedTreatmentsInSummary = false,
                     includeSOCLiteratureEfficacyEvidence = true,
                     includeEligibleSOCTreatmentSummary = true,
-                    includeMolecularSummary = false,
+                    molecularSummaryType = MolecularSummaryType.NONE,
                     includePatientHeader = false,
                     filterOnSOCExhaustionAndTumorType = true
                 )

@@ -15,6 +15,10 @@ class MolecularDriversSummarizer private constructor(
         return keyGenesForAlterations(drivers.variants)
     }
 
+    fun keyVariants(): List<String> {
+        return drivers.variants.filter(::isKeyDriver).map { it.event }
+    }
+
     fun keyAmplifiedGenes(): List<String> {
         return drivers.copyNumbers
             .asSequence()
