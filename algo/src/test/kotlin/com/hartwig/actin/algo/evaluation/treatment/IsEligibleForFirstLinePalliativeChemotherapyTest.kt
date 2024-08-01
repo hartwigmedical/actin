@@ -31,7 +31,7 @@ class IsEligibleForFirstLinePalliativeChemotherapyTest {
         patientRecordWithTreatmentWithCategoryAndIntent(TreatmentCategory.CHEMOTHERAPY, Intent.CONSOLIDATION)
 
     @Test
-    fun `Should fail when no metastatic cancer (and previous palliative chemotherapy)`() {
+    fun `Should fail when no metastatic cancer and previous palliative chemotherapy`() {
         val alwaysFailsMetastaticCancerEvaluation = mockk<HasMetastaticCancer> {
             every { evaluate(any()) } returns EvaluationFactory.fail("no metastatic cancer")
         }
