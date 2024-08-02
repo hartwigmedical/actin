@@ -97,7 +97,7 @@ class StandardTumorDetailsExtractor(
                 CurationResponse(
                     configs = setOf(
                         LesionLocationConfig(
-                            input = "",
+                            input = it.location,
                             location = it.location,
                             category = LesionLocationCategory.valueOf(locationAsEnumName),
                             active = it.active
