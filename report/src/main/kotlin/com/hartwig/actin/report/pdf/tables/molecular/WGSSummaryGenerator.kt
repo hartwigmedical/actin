@@ -12,7 +12,6 @@ import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Formats.date
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
-import com.hartwig.actin.util.ApplicationConfig
 import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
@@ -27,13 +26,7 @@ class WGSSummaryGenerator(
     private val wgsMolecular = molecular as? MolecularRecord
 
     override fun title(): String {
-        return String.format(
-            ApplicationConfig.LOCALE,
-            "%s of %s (%s)",
-            molecular.testTypeDisplay,
-            patientRecord.patientId,
-            date(molecular.date)
-        )
+        return "${molecular.testTypeDisplay ?: molecular.experimentType.display()} of ${patientRecord.patientId} (${date(molecular.date)})"
     }
 
     override fun contents(): Table {
