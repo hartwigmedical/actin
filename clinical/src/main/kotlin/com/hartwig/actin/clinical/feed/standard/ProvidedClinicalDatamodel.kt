@@ -196,7 +196,7 @@ data class ProvidedLesion(
     @JsonPropertyDescription("Diagnosis date of the lesion")
     val diagnosisDate: LocalDate,
     @JsonPropertyDescription("Whether this lesion considered active, only applicable to brain or CNS lesions.")
-    val active: Boolean?
+    val active: Boolean? = null
 )
 
 enum class ProvidedGender {

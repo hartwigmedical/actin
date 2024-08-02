@@ -276,8 +276,7 @@ class StandardTumorDetailsExtractorTest {
                         lesions = listOf(
                             ProvidedLesion(
                                 "brainnnn",
-                                DIAGNOSIS_DATE,
-                                true
+                                DIAGNOSIS_DATE
                             )
                         )
                     )
