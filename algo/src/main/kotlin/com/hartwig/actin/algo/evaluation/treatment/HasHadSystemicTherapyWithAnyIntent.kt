@@ -4,7 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.DateComparison.isAfterDate
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentSinceDateFunctions.treatmentSinceMinDate
 import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithOr
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
@@ -27,30 +27,25 @@ class HasHadSystemicTherapyWithAnyIntent(
         val intentsLowercase = intents?.let { concatItemsWithOr(it).lowercase() } ?: ""
 
         return when {
-            weeksAgo == null && matchingTreatments.containsKey(true) -> {
+            minDate == null && matchingTreatments.containsKey(true) -> {
                 EvaluationFactory.pass("Patient has had $intentsLowercase systemic therapy", "Received $intentsLowercase systemic therapy")
             }
 
-            matchingTreatments[true]?.any { treatmentSinceMinDate(it, false) } ?: false -> {
+            minDate?.let { matchingTreatments[true]?.any { treatmentSinceMinDate(it, minDate, false) } } == true -> {
                 EvaluationFactory.pass(
                     "Patient has had $intentsLowercase systemic therapy within the last $weeksAgo weeks",
                     "Received $intentsLowercase systemic therapy within the last $weeksAgo weeks"
                 )
             }
 
-            matchingTreatments[true]?.any { treatmentSinceMinDate(it, true) } ?: false -> {
+            minDate?.let { matchingTreatments[true]?.any { treatmentSinceMinDate(it, minDate, true) } } == true -> {
                 EvaluationFactory.undetermined(
                     "Patient has had $intentsLowercase systemic therapy but date unknown",
                     "Received $intentsLowercase systemic therapy but date unknown"
                 )
             }
 
-            (weeksAgo == null && matchingTreatments.containsKey(key = null)) || matchingTreatments[null]?.any {
-                treatmentSinceMinDate(
-                    it,
-                    true
-                )
-            } ?: false -> {
+            matchingTreatments[null]?.let(::anyTreatmentPotentiallySinceMinDate) == true -> {
                 EvaluationFactory.undetermined("Undetermined if intent of received systemic treatment is $intentsLowercase")
             }
 
@@ -67,12 +62,9 @@ class HasHadSystemicTherapyWithAnyIntent(
                     "No $intentsLowercase systemic therapy within $weeksAgo weeks"
                 )
         }
-
     }
 
-    private fun treatmentSinceMinDate(treatment: TreatmentHistoryEntry, includeUnknown: Boolean): Boolean {
-        return isAfterDate(minDate!!, treatment.treatmentHistoryDetails?.stopYear, treatment.treatmentHistoryDetails?.stopMonth)
-            ?: isAfterDate(minDate, treatment.startYear, treatment.startMonth)
-            ?: includeUnknown
+    private fun anyTreatmentPotentiallySinceMinDate(treatmentEntries: Iterable<TreatmentHistoryEntry>): Boolean {
+        return minDate == null || treatmentEntries.any { treatmentSinceMinDate(it, minDate, true) }
     }
 }

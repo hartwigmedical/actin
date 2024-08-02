@@ -4,8 +4,8 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
-import org.junit.Test
 import java.time.LocalDate
+import org.junit.Test
 
 class HasAbnormalElectrolyteLevelsTest {
     private val refDate = LocalDate.of(2024, 7, 30)

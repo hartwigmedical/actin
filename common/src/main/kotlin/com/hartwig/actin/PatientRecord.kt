@@ -9,6 +9,7 @@ import com.hartwig.actin.clinical.datamodel.Intolerance
 import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.PatientDetails
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.Surgery
@@ -36,5 +37,6 @@ data class PatientRecord(
     val vitalFunctions: List<VitalFunction>,
     val bloodTransfusions: List<BloodTransfusion>,
     val medications: List<Medication>?,
+    val priorIHCTests: List<PriorIHCTest>,
     val molecularHistory: MolecularHistory
 )

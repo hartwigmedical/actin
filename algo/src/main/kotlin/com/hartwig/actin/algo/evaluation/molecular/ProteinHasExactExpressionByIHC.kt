@@ -7,7 +7,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
 class ProteinHasExactExpressionByIHC(private val protein: String, private val expressionLevel: Int) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val ihcTests = PriorMolecularTestFunctions.allIHCTestsForProtein(record.molecularHistory.allIHCTests(), protein)
+        val ihcTests = PriorIHCTestFunctions.allIHCTestsForProtein(record.priorIHCTests, protein)
         for (ihcTest in ihcTests) {
             val scoreValue = ihcTest.scoreValue
             if (scoreValue != null) {

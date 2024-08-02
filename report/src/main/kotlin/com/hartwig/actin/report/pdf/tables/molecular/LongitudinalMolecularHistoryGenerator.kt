@@ -1,6 +1,5 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.GeneAlteration
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularTest
@@ -15,7 +14,7 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
     }
 
     override fun contents(): Table {
-        val sortedAndFilteredTests = molecularHistory.molecularTests.filter { it.experimentType != ExperimentType.IHC }.sortedBy { it.date }
+        val sortedAndFilteredTests = molecularHistory.molecularTests.sortedBy { it.date }
         val testsWithDrivers = DriverTableFunctions.allDrivers(molecularHistory)
 
         val testsByDriverEvent = testsWithDrivers.flatMap { (test, drivers) -> drivers.map { d -> d.event to test } }
