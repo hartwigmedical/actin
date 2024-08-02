@@ -14,7 +14,8 @@ import org.apache.logging.log4j.LogManager
 class MolecularSummaryGenerator(
     private val patientRecord: PatientRecord,
     private val cohorts: List<EvaluatedCohort>,
-    private val keyWidth: Float, private val valueWidth: Float
+    private val keyWidth: Float, private val valueWidth: Float,
+    private val isShort: Boolean
 ) : TableGenerator {
     override fun title(): String {
         return "Recent molecular results"
@@ -28,7 +29,7 @@ class MolecularSummaryGenerator(
                 if (molecularTest.experimentType != ExperimentType.HARTWIG_WHOLE_GENOME) {
                     LOGGER.warn("Generating WGS results for non-WGS sample")
                 }
-                val wgsGenerator = WGSSummaryGenerator(patientRecord, molecularTest, cohorts, keyWidth, valueWidth)
+                val wgsGenerator = WGSSummaryGenerator(isShort, patientRecord, molecularTest, cohorts, keyWidth, valueWidth)
                 table.addCell(Cells.createSubTitle(wgsGenerator.title()))
                 table.addCell(Cells.create(wgsGenerator.contents()))
             } else {
@@ -38,7 +39,6 @@ class MolecularSummaryGenerator(
                 table.addCell(Cells.create(noRecent))
             }
         }
-
 
         val priorMolecularResultGenerator =
             PriorMolecularResultGenerator(patientRecord, keyWidth, valueWidth, PriorMolecularTestInterpreter())
