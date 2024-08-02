@@ -34,9 +34,11 @@ class MolecularSummaryGenerator(
                 val wgsGenerator = when (molecularSummaryType) {
                     MolecularSummaryType.STANDARD -> StandardWGSSummaryGenerator(patientRecord, molecularTest, cohorts, keyWidth, valueWidth)
                     MolecularSummaryType.SHORT -> ShortWGSSummaryGenerator(patientRecord, molecularTest, cohorts, keyWidth, valueWidth)
-                    MolecularSummaryType.NONE -> null
+                    MolecularSummaryType.NONE -> throw IllegalStateException(
+                        "Should not generate WGS summary with config MolecularSummaryType.NONE"
+                    )
                 }
-                table.addCell(Cells.createSubTitle(wgsGenerator!!.title()))
+                table.addCell(Cells.createSubTitle(wgsGenerator.title()))
                 table.addCell(Cells.create(wgsGenerator.contents()))
             } else {
                 val noRecent = Tables.createFixedWidthCols(keyWidth, valueWidth)

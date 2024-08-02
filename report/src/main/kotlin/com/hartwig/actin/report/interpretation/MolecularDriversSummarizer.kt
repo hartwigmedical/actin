@@ -11,9 +11,6 @@ class MolecularDriversSummarizer private constructor(
     private val drivers: Drivers,
     private val evaluatedCohortsInterpreter: EvaluatedCohortsInterpreter
 ) {
-    fun keyGenesWithVariants(): List<String> {
-        return keyGenesForAlterations(drivers.variants)
-    }
 
     fun keyVariants(): List<String> {
         return drivers.variants.filter(::isKeyDriver).map { it.event }
