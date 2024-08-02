@@ -3,7 +3,9 @@ package com.hartwig.actin.report.pdf.tables.soc
 import com.hartwig.actin.algo.datamodel.AnnotatedTreatmentMatch
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
+import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
+import com.itextpdf.kernel.pdf.action.PdfAction
 import com.itextpdf.layout.element.Table
 
 class ResistanceEvidenceGenerator(
@@ -11,7 +13,7 @@ class ResistanceEvidenceGenerator(
     private val width: Float
 ) : TableGenerator {
     override fun title(): String {
-        return "Resistance evidence"
+        return "Tested"
     }
 
     override fun contents(): Table {
@@ -25,7 +27,15 @@ class ResistanceEvidenceGenerator(
             treatments.forEach { treatment: AnnotatedTreatmentMatch ->
                 table.addCell(Cells.createContentBold(treatment.treatmentCandidate.treatment.name))
                 if (treatment.resistanceEvidence.isNotEmpty()) {
-                    table.addCell(Cells.createContent(treatment.resistanceEvidence.joinToString(separator = ",") { it.event }))
+                    val subtable = Tables.createSingleColWithWidth(width / 2)
+                    for (resistanceEvidence in treatment.resistanceEvidence) {
+                        subtable.addCell(
+                            Cells.createContentNoBorder(resistanceEvidence.event)
+                                .setAction(PdfAction.createURI(resistanceEvidence.evidenceUrls.first()))// decide which url to link to. maybe always ncbi if available
+                                .addStyle(Styles.urlStyle())
+                        )
+                    }
+                    table.addCell(Cells.createContent(subtable))
                 } else table.addCell(Cells.createContent("No resistance evidence"))
             }
             table

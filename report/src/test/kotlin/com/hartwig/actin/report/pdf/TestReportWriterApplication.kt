@@ -17,8 +17,9 @@ object TestReportWriterApplication {
     private val OPTIONAL_TREATMENT_MATCH_JSON = WORK_DIRECTORY + File.separator + "patient.treatment_match.json"
 
     fun createTestReport(skipMolecular: Boolean): Report {
-        val report = if (skipMolecular) TestReportFactory.createExhaustiveTestReportWithoutMolecular() else
-            TestReportFactory.createExhaustiveTestReport()
+        val report = TestReportFactory.createExhaustiveCRCTestReport()
+        //val report = if (skipMolecular) TestReportFactory.createExhaustiveTestReportWithoutMolecular() else
+        //    TestReportFactory.createExhaustiveTestReport()
         LOGGER.info("Printing patient record")
         PatientPrinter.printRecord(report.patientRecord)
 
