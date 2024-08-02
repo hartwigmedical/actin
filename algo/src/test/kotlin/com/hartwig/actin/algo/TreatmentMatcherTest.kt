@@ -42,7 +42,7 @@ class TreatmentMatcherTest {
     private val actionableEvents: ActionableEvents = ImmutableActionableEvents.builder().build()
     private val recommendationEngine = mockk<RecommendationEngine>()
     private val doidEntry = TestDoidEntryFactory.createMinimalTestDoidEntry()
-    private val resistanceEvidenceMatcher = ResistanceEvidenceMatcher(doidEntry, emptySet(), actionableEvents)
+    private val resistanceEvidenceMatcher = ResistanceEvidenceMatcher(doidEntry, emptySet(), actionableEvents, treatmentDatabase)
     private val treatmentMatcher = TreatmentMatcher(
         trialMatcher,
         recommendationEngine,

@@ -24,7 +24,7 @@ class ResistanceEvidenceGenerator(
             val table = Tables.createFixedWidthCols(120f, width - 250f).setWidth(width)
             table.addHeaderCell(Cells.createHeader("Treatment"))
             table.addHeaderCell(Cells.createHeader("Known resistance evidence"))
-            treatments.forEach { treatment: AnnotatedTreatmentMatch ->
+            treatments.sortedByDescending { it.resistanceEvidence.count() }.forEach { treatment: AnnotatedTreatmentMatch ->
                 table.addCell(Cells.createContentBold(treatment.treatmentCandidate.treatment.name))
                 if (treatment.resistanceEvidence.isNotEmpty()) {
                     val subtable = Tables.createSingleColWithWidth(width / 2)
