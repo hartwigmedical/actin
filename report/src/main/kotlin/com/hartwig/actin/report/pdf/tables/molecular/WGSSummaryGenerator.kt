@@ -8,7 +8,8 @@ import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.itextpdf.layout.element.Table
 
-class StandardWGSSummaryGenerator(
+class WGSSummaryGenerator(
+    private val isShort: Boolean,
     private val patientRecord: PatientRecord,
     private val molecular: MolecularTest,
     cohorts: List<EvaluatedCohort>,
@@ -25,7 +26,7 @@ class StandardWGSSummaryGenerator(
 
     override fun contents(): Table {
         return WGSSummaryGeneratorFunctions.createMolecularSummaryTable(
-            isShort = false, patientRecord, molecular, wgsMolecular, keyWidth, valueWidth, summarizer
+            isShort = isShort, patientRecord, molecular, wgsMolecular, keyWidth, valueWidth, summarizer
         )
     }
 }

@@ -116,7 +116,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 cohorts,
                 keyWidth,
                 valueWidth,
-                report.config.molecularSummaryType
+                report.config.molecularSummaryType == MolecularSummaryType.SHORT
             ).takeIf {
                 report.config.molecularSummaryType != MolecularSummaryType.NONE && hasMolecular
             },

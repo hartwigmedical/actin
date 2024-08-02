@@ -1,7 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.configuration.MolecularSummaryType
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
@@ -16,7 +15,7 @@ class MolecularSummaryGenerator(
     private val patientRecord: PatientRecord,
     private val cohorts: List<EvaluatedCohort>,
     private val keyWidth: Float, private val valueWidth: Float,
-    private val molecularSummaryType: MolecularSummaryType
+    private val isShort: Boolean
 ) : TableGenerator {
     override fun title(): String {
         return "Recent molecular results"
@@ -30,12 +29,10 @@ class MolecularSummaryGenerator(
                 if (molecularTest.experimentType != ExperimentType.HARTWIG_WHOLE_GENOME) {
                     LOGGER.warn("Generating WGS results for non-WGS sample")
                 }
-                val wgsGenerator = when (molecularSummaryType) {
-                    MolecularSummaryType.STANDARD -> StandardWGSSummaryGenerator(patientRecord, molecularTest, cohorts, keyWidth, valueWidth)
-                    MolecularSummaryType.SHORT -> ShortWGSSummaryGenerator(patientRecord, molecularTest, cohorts, keyWidth, valueWidth)
-                    MolecularSummaryType.NONE -> throw IllegalStateException(
-                        "Should not generate WGS summary with config MolecularSummaryType.NONE"
-                    )
+                val wgsGenerator = if (isShort) {
+                    WGSSummaryGenerator(true, patientRecord, molecularTest, cohorts, keyWidth, valueWidth)
+                } else {
+                    WGSSummaryGenerator(false, patientRecord, molecularTest, cohorts, keyWidth, valueWidth)
                 }
                 table.addCell(Cells.createSubTitle(wgsGenerator.title()))
                 table.addCell(Cells.create(wgsGenerator.contents()))
