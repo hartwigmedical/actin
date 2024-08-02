@@ -18,7 +18,7 @@ import com.itextpdf.layout.element.Text
 object WGSSummaryGeneratorFunctions {
 
     fun createMolecularSummaryTitle(molecular: MolecularTest, patientRecord: PatientRecord): String {
-        return "${molecular.testTypeDisplay} of ${patientRecord.patientId} (${date(molecular.date)})"
+        return "${molecular.testTypeDisplay ?: molecular.experimentType.display()} of ${patientRecord.patientId} (${date(molecular.date)})"
     }
 
     fun createMolecularSummaryTable(
