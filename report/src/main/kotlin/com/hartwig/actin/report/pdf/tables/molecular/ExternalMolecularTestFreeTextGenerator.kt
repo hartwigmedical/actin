@@ -11,6 +11,7 @@ class ExternalMolecularTestFreeTextGenerator(val molecularHistory: MolecularHist
 
     override fun contents(): Table {
         val table = Table(1).setWidth(width)
+        TODO("Add actual external test result text below")
         val text = molecularHistory.molecularTests
         return table
     }
