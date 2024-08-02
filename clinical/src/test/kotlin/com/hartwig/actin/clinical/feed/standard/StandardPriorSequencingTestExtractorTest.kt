@@ -47,11 +47,13 @@ class StandardPriorSequencingTestExtractorTest {
     }
 
     @Test
-    fun `Should extract sequencing with test, date, tested genes`() {
+    fun `Should extract sequencing with test, date, raw test result text, and tested genes`() {
         val result = extractor.extract(
-            EhrTestData.createEhrPatientRecord().copy(molecularTests = listOf(BASE_MOLECULAR_TEST.copy(testedGenes = setOf(GENE))))
+            EhrTestData.createEhrPatientRecord().copy(molecularTests = listOf(
+                BASE_MOLECULAR_TEST.copy(testedGenes = setOf(GENE), rawMolecularTestResultText = "this is a test"))
+            )
         )
-        assertResultContains(result, BASE_PRIOR_SEQUENCING.copy(testedGenes = setOf(GENE)))
+        assertResultContains(result, BASE_PRIOR_SEQUENCING.copy(testedGenes = setOf(GENE), rawMolecularTestResultText = "this is a test"))
     }
 
     @Test
