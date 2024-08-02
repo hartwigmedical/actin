@@ -1,6 +1,5 @@
-package com.hartwig.actin.molecular.evidence.actionability
+package com.hartwig.actin.serve
 
-import com.hartwig.actin.molecular.evidence.TestServeFactory
 import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.CancerType
 import com.hartwig.serve.datamodel.EvidenceDirection

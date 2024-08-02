@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.doid.TestDoidModelFactory
+import com.hartwig.actin.serve.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.curation.TestApplicabilityFilteringUtil
 import com.hartwig.serve.datamodel.ClinicalTrial
 import com.hartwig.serve.datamodel.ImmutableActionableEvents

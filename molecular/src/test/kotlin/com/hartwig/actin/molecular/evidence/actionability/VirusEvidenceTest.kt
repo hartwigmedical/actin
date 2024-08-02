@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
+import com.hartwig.actin.serve.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.TestMolecularFactory.minimalVirus
 import com.hartwig.actin.molecular.datamodel.orange.driver.VirusType
 import com.hartwig.serve.datamodel.ActionableEvents

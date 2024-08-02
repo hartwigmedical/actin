@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.doid.TestDoidModelFactory
+import com.hartwig.actin.serve.TestServeActionabilityFactory
 import com.hartwig.serve.datamodel.ActionableEvent
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

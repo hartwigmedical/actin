@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
+import com.hartwig.actin.serve.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType.PROMISCUOUS_3
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType.PROMISCUOUS_5
 import com.hartwig.actin.molecular.evidence.matching.FUSION_CRITERIA

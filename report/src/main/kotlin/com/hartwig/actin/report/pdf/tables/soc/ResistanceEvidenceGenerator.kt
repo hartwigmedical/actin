@@ -27,13 +27,26 @@ class ResistanceEvidenceGenerator(
             treatments.sortedByDescending { it.resistanceEvidence.count() }.forEach { treatment: AnnotatedTreatmentMatch ->
                 table.addCell(Cells.createContentBold(treatment.treatmentCandidate.treatment.name))
                 if (treatment.resistanceEvidence.isNotEmpty()) {
-                    val subtable = Tables.createSingleColWithWidth(width / 2)
+                    val subtable = Tables.createFixedWidthCols(6f, 1f, 1f, 1f, 1f).setWidth(width / 4)
                     for (resistanceEvidence in treatment.resistanceEvidence) {
                         subtable.addCell(
                             Cells.createContentNoBorder(resistanceEvidence.event)
-                                .setAction(PdfAction.createURI(resistanceEvidence.evidenceUrls.first()))// decide which url to link to. maybe always ncbi if available
-                                .addStyle(Styles.urlStyle())
                         )
+
+                        val iterator = resistanceEvidence.evidenceUrls.iterator()
+                        var int = 1
+                        while (int < 5) {
+                            if (iterator.hasNext())
+                                subtable.addCell(
+                                    Cells.createContentNoBorder("[$int]")
+                                        .setAction(PdfAction.createURI(iterator.next()))
+                                        .addStyle(Styles.urlStyle())
+                                )
+                            else {
+                                subtable.addCell(Cells.createEmpty())
+                            }
+                            int += 1
+                        }
                     }
                     table.addCell(Cells.createContent(subtable))
                 } else table.addCell(Cells.createContent("No resistance evidence"))

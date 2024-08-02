@@ -10,6 +10,7 @@ import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.EvidenceLevel
+import com.hartwig.serve.datamodel.Intervention
 
 class ResistanceEvidenceMatcher(
     private val doidEntry: DoidEntry,
@@ -32,15 +33,10 @@ class ResistanceEvidenceMatcher(
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
         val expandedTumorDoids = expandDoids(doidModel, applicableDoids)
         return actionableEvents.filter {
-            it.direction().isResistant && isOnLabel(
-                it,
-                expandedTumorDoids
-            ) && (findTreatmentInDatabase((it.intervention() as com.hartwig.serve.datamodel.Treatment).name())?.let {
-                treatment.name.contains(
-                    it.name
-                )
-            } ?: false)
-                    && knownResistance(it)
+            it.direction().isResistant &&
+                    isOnLabel(it, expandedTumorDoids) &&
+                    findTreatmentInDatabase(it.intervention(), treatment.name) &&
+                    resistant(it)
         }.map { actionableEvent ->
             ResistanceEvidence(
                 event = actionableEvent.sourceEvent(),
@@ -52,10 +48,12 @@ class ResistanceEvidenceMatcher(
         }.distinctBy { it.event }
     }
 
-    private fun findTreatmentInDatabase(therapyName: String): Treatment? {
-        return EfficacyEntryFactory(treatmentDatabase).generateOptions(listOf(therapyName))
+    private fun findTreatmentInDatabase(intervention: Intervention, treatmentToFind: String): Boolean {
+        val therapyName = (intervention as com.hartwig.serve.datamodel.Treatment).name()
+        val treatment = EfficacyEntryFactory(treatmentDatabase).generateOptions(listOf(therapyName))
             .mapNotNull(treatmentDatabase::findTreatmentByName)
             .distinct().singleOrNull()
+        return treatment?.let { treatmentToFind.contains(treatment.name) } ?: false
     }
 
     companion object {
@@ -79,16 +77,8 @@ class ResistanceEvidenceMatcher(
             return doids.flatMap { doidModel.doidWithParents(it) }.toSet()
         }
 
-        private fun knownResistance(resistanceEvent: ActionableEvent): Boolean {
-            return when (resistanceEvent.level()) {
-                EvidenceLevel.A, EvidenceLevel.B, EvidenceLevel.C -> {
-                    resistanceEvent.direction().isCertain
-                }
-
-                else -> {
-                    false
-                }
-            }
+        private fun resistant(resistanceEvent: ActionableEvent): Boolean {
+            return resistanceEvent.level() in setOf(EvidenceLevel.A, EvidenceLevel.B, EvidenceLevel.C)
         }
     }
 }

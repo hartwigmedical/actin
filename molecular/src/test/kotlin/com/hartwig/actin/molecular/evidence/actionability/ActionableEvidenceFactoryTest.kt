@@ -1,9 +1,10 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
+import com.hartwig.actin.serve.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.Country
 import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
-import com.hartwig.actin.molecular.evidence.TestServeFactory
+import com.hartwig.actin.serve.TestServeFactory
 import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.EvidenceDirection
 import com.hartwig.serve.datamodel.EvidenceLevel

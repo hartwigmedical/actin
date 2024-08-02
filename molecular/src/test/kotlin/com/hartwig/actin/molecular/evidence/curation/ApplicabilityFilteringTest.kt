@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.evidence.curation
 
-import com.hartwig.actin.molecular.evidence.actionability.TestServeActionabilityFactory
+import com.hartwig.actin.serve.TestServeActionabilityFactory
 import com.hartwig.serve.datamodel.gene.GeneEvent
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
