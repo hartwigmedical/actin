@@ -26,7 +26,7 @@ class WGSSummaryGenerator(
 
     override fun contents(): Table {
         return WGSSummaryGeneratorFunctions.createMolecularSummaryTable(
-            isShort = isShort, patientRecord, molecular, wgsMolecular, keyWidth, valueWidth, summarizer
+            isShort, patientRecord, molecular, wgsMolecular, keyWidth, valueWidth, summarizer
         )
     }
 }
