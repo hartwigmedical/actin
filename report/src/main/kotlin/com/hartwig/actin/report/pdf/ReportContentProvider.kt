@@ -65,7 +65,10 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             EfficacyEvidenceChapter(report, include = report.config.includeSOCLiteratureEfficacyEvidence),
             ClinicalDetailsChapter(report, include = report.config.includeClinicalDetailsChapter),
             EfficacyEvidenceDetailsChapter(report, include = includeEfficacyEvidenceDetailsChapter),
-            MolecularEvidenceChapter(report, include = report.config.includeMolecularEvidenceChapter),
+            MolecularEvidenceChapter(
+                report, include = report.config.includeMolecularEvidenceChapter,
+                includeExternalMolecularTestFreeText = report.config.includeExternalMolecularTestFreeText
+            ),
             TrialMatchingChapter(
                 report,
                 enableExtendedMode,

@@ -35,7 +35,7 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
                     PriorSequencingTest(
                         test = test.test,
                         date = test.date,
-                        rawMolecularTestResultText = test.rawMolecularTestResultText,
+                        externalMolecularTestResultFreeText = test.externalMolecularTestResultFreeText,
                         testedGenes = test.testedGenes,
                         variants = variants(allResults),
                         fusions = fusions(allResults),

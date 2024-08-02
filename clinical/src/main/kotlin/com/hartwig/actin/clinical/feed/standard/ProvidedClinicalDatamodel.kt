@@ -129,7 +129,7 @@ data class ProvidedMolecularTest(
     val testedGenes: Set<String>? = null,
     val results: Set<ProvidedMolecularTestResult>,
     @JsonPropertyDescription("Entire free (raw) text of molecular test result.")
-    val rawMolecularTestResultText: String? = null
+    val externalMolecularTestResultFreeText: String? = null
 )
 
 @JacksonSerializable

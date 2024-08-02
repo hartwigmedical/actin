@@ -33,6 +33,7 @@ data class ReportConfiguration(
     val includeOnlyExternalTrialsInTrialMatching: Boolean = false,
     val includeLongitudinalMolecularChapter: Boolean = false,
     val includeMolecularEvidenceChapter: Boolean = false,
+    val includeExternalMolecularTestFreeText: Boolean = false,
     val countryOfReference: Country = Country.NETHERLANDS
 )
 
