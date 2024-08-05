@@ -67,7 +67,9 @@ data class ProvidedTumorDetail(
     val measurableDiseaseDate: LocalDate? = null,
     val lesions: List<ProvidedLesion>? = null,
     @JsonPropertyDescription("Deprecated: currently use to store radiology report. Should move to lesions")
-    val lesionSite: String? = null
+    val lesionSite: String? = null,
+    @JsonPropertyDescription("Raw pathology report of molecular test results.")
+    val rawPathologyReport: String? = null
 )
 
 @JacksonSerializable
@@ -127,9 +129,7 @@ data class ProvidedMolecularTest(
     val datasource: String? = null,
     @JsonPropertyDescription("List of genes that were tested.")
     val testedGenes: Set<String>? = null,
-    val results: Set<ProvidedMolecularTestResult>,
-    @JsonPropertyDescription("Entire free (raw) text of molecular test result.")
-    val externalMolecularTestResultFreeText: String? = null
+    val results: Set<ProvidedMolecularTestResult>
 )
 
 @JacksonSerializable

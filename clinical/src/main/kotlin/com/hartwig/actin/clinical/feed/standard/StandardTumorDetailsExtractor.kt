@@ -68,7 +68,8 @@ class StandardTumorDetailsExtractor(
             .filter { lesion -> lesion.category == null || lesion.category == LesionLocationCategory.LYMPH_NODE }
             .map { lesion -> lesion.location },
         hasMeasurableDisease = ehrPatientRecord.tumorDetails.measurableDisease,
-        doids = emptySet()
+        doids = emptySet(),
+        rawPathologyReport = ehrPatientRecord.tumorDetails.rawPathologyReport
     )
 
     private fun hasLesions(lesions: List<LesionLocationConfig>, location: LesionLocationCategory): Boolean {

@@ -237,6 +237,15 @@ class StandardTumorDetailsExtractorTest {
         assertThat(result.evaluation.lesionLocationEvaluatedInputs).containsExactly(TREATMENT_HISTORY_INPUT)
     }
 
+    @Test
+    fun `Should extract raw pathology report text from patient record if provided`() {
+        every { tumorCuration.find("tumorLocation | tumorType") } returns setOf(CURATION_CONFIG)
+        val base = EHR_PATIENT_RECORD
+        val providedRecord = base.copy(tumorDetails = base.tumorDetails.copy(rawPathologyReport = "Some report"))
+        val result = extractor.extract(providedRecord)
+        assertThat(result.extracted).isEqualTo(TUMOR_DETAILS.copy(rawPathologyReport = "Some report"))
+    }
+
     private fun setupLesionCuration(input: String, vararg lesionLocationConfig: LesionLocationConfig) {
         every { tumorCuration.find("tumorLocation | tumorType") } returns setOf(CURATION_CONFIG)
         every { lesionCuration.find(input) } returns lesionLocationConfig.toSet()

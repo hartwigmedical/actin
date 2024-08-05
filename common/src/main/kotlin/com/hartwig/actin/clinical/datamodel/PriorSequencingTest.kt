@@ -22,7 +22,6 @@ data class SequencedDeletedGene(val gene: String)
 data class PriorSequencingTest(
     val test: String,
     val date: LocalDate? = null,
-    val externalMolecularTestResultFreeText: String? = null,
     val tumorMutationalBurden: Double? = null,
     val isMicrosatelliteUnstable: Boolean? = null,
     val testedGenes: Set<String>? = null,
