@@ -35,6 +35,15 @@ fun freetextPriorMolecularFusionRecord(): PriorIHCTest {
     )
 }
 
+fun ampliseqPriorMolecularFusionRecord(): PriorIHCTest {
+    return PriorIHCTest(
+        test = "NGS/Ampliseq",
+        item = GENE,
+        measure = HGVS_CODING,
+        impliesPotentialIndeterminateStatus = false
+    )
+}
+
 fun freetextPriorMolecularVariantRecord(gene: String, hgvs: String, date: LocalDate? = null): PriorIHCTest {
     return PriorIHCTest(
         test = "Freetext",
