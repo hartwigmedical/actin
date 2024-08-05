@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.soc
 import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.algo.datamodel.ResistanceEvidence
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
+import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.doid.datamodel.TestDoidEntryFactory
 import com.hartwig.actin.serve.TestServeActionabilityFactory
@@ -28,7 +29,8 @@ class ResistanceEvidenceMatcherTest {
 
     @Test
     fun `Should match resistance evidence to SOC treatments`() {
-        val socTreatment = TreatmentTestFactory.drugTreatment("PEMBROLIZUMAB", TreatmentCategory.IMMUNOTHERAPY)
+        val socTreatment =
+            TreatmentTestFactory.drugTreatment("PEMBROLIZUMAB", TreatmentCategory.IMMUNOTHERAPY, setOf(DrugType.TOPO1_INHIBITOR))
 
         val actualResistanceEvidence = resistanceEvidenceMatcher.match(socTreatment)
         val expectedResistanceEvidence = listOf(
@@ -37,7 +39,8 @@ class ResistanceEvidenceMatcherTest {
                 isTested = null,
                 isFound = null,
                 resistanceLevel = "A",
-                evidenceUrls = emptySet()
+                evidenceUrls = emptySet(),
+                treatmentName = "PEMBROLIZUMAB"
             )
         )
 

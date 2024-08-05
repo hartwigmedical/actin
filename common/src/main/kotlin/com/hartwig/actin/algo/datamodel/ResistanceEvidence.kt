@@ -5,5 +5,6 @@ data class ResistanceEvidence(
     val isTested: Boolean?,
     val isFound: Boolean?,
     val resistanceLevel: String,
-    val evidenceUrls: Set<String>
+    val evidenceUrls: Set<String>,
+    val treatmentName: String
 )

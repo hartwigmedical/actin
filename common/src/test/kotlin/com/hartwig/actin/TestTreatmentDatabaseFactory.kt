@@ -16,10 +16,10 @@ object TestTreatmentDatabaseFactory {
     const val ABLATION = "ABLATION"
 
     fun createProper(): TreatmentDatabase {
-        val capecitabine = chemoDrug("CAPECITABINE", DrugType.ANTIMETABOLITE)
-        val cisplatin = chemoDrug(CISPLATIN, DrugType.ANTIMETABOLITE)
-        val oxaliplatin = chemoDrug("OXALIPLATIN", DrugType.PLATINUM_COMPOUND)
-        val pembrolizumab = chemoDrug("PEMBROLIZUMAB", DrugType.TOPO1_INHIBITOR)
+        val capecitabine = chemoDrug("CAPECITABINE", DrugType.ANTIMETABOLITE, TreatmentCategory.CHEMOTHERAPY)
+        val cisplatin = chemoDrug(CISPLATIN, DrugType.ANTIMETABOLITE, TreatmentCategory.CHEMOTHERAPY)
+        val oxaliplatin = chemoDrug("OXALIPLATIN", DrugType.PLATINUM_COMPOUND, TreatmentCategory.CHEMOTHERAPY)
+        val pembrolizumab = chemoDrug("PEMBROLIZUMAB", DrugType.TOPO1_INHIBITOR, TreatmentCategory.IMMUNOTHERAPY)
         val drugMap = listOf(cisplatin, capecitabine, oxaliplatin, pembrolizumab).associateBy { it.name.lowercase() }
 
         val cisplatinTreatment = DrugTreatment(name = CISPLATIN, drugs = setOf(cisplatin))
@@ -38,7 +38,7 @@ object TestTreatmentDatabaseFactory {
         return TreatmentDatabase(drugMap, treatmentMap)
     }
 
-    private fun chemoDrug(name: String, drugType: DrugType): Drug {
-        return Drug(name = name, drugTypes = setOf(drugType), category = TreatmentCategory.CHEMOTHERAPY)
+    private fun chemoDrug(name: String, drugType: DrugType, category: TreatmentCategory): Drug {
+        return Drug(name = name, drugTypes = setOf(drugType), category = category)
     }
 }

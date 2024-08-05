@@ -95,7 +95,8 @@ object TestTreatmentMatchFactory {
                         isTested = null,
                         isFound = null,
                         resistanceLevel = "A",
-                        evidenceUrls = setOf("website")
+                        evidenceUrls = setOf("website"),
+                        treatmentName = "Pembrolizumab"
                     )
                 )
             )

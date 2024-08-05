@@ -24,32 +24,30 @@ class ResistanceEvidenceGenerator(
             val table = Tables.createFixedWidthCols(120f, width - 250f).setWidth(width)
             table.addHeaderCell(Cells.createHeader("Treatment"))
             table.addHeaderCell(Cells.createHeader("Known resistance evidence"))
-            treatments.sortedByDescending { it.resistanceEvidence.count() }.forEach { treatment: AnnotatedTreatmentMatch ->
-                table.addCell(Cells.createContentBold(treatment.treatmentCandidate.treatment.name))
-                if (treatment.resistanceEvidence.isNotEmpty()) {
-                    val subtable = Tables.createFixedWidthCols(6f, 1f, 1f, 1f, 1f).setWidth(width / 4)
-                    for (resistanceEvidence in treatment.resistanceEvidence) {
-                        subtable.addCell(
-                            Cells.createContentNoBorder(resistanceEvidence.event)
-                        )
+            val treatmentToEvidence = treatments.flatMap { it.resistanceEvidence }.groupBy({ it.treatmentName }, { it })
 
-                        val iterator = resistanceEvidence.evidenceUrls.iterator()
-                        var int = 1
-                        while (int < 5) {
-                            if (iterator.hasNext())
-                                subtable.addCell(
-                                    Cells.createContentNoBorder("[$int]")
-                                        .setAction(PdfAction.createURI(iterator.next()))
-                                        .addStyle(Styles.urlStyle())
-                                )
-                            else {
-                                subtable.addCell(Cells.createEmpty())
-                            }
-                            int += 1
+            treatmentToEvidence.forEach { entry ->
+                table.addCell(Cells.createContentBold(entry.key))
+                val subtable = Tables.createFixedWidthCols(6f, 1f, 1f, 1f, 1f).setWidth(width / 4)
+                for (resistanceEvidence in entry.value.distinct().sortedBy { it.event }) {
+                    subtable.addCell(Cells.createContentNoBorder(resistanceEvidence.event))
+
+                    val iterator = resistanceEvidence.evidenceUrls.iterator()
+                    var int = 1
+                    while (int < 5) {
+                        if (iterator.hasNext())
+                            subtable.addCell(
+                                Cells.createContentNoBorder("[$int]")
+                                    .setAction(PdfAction.createURI(iterator.next()))
+                                    .addStyle(Styles.urlStyle())
+                            )
+                        else {
+                            subtable.addCell(Cells.createEmpty())
                         }
+                        int += 1
                     }
-                    table.addCell(Cells.createContent(subtable))
-                } else table.addCell(Cells.createContent("No resistance evidence"))
+                }
+                table.addCell(Cells.createContent(subtable))
             }
             table
         }

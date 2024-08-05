@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.soc
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
 import com.hartwig.actin.algo.datamodel.ResistanceEvidence
+import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.DoidModelFactory
@@ -35,7 +36,7 @@ class ResistanceEvidenceMatcher(
         return actionableEvents.filter {
             it.direction().isResistant &&
                     isOnLabel(it, expandedTumorDoids) &&
-                    findTreatmentInDatabase(it.intervention(), treatment.name) &&
+                    findTreatmentInDatabase(it.intervention(), treatment).isNotEmpty() &&
                     resistant(it)
         }.map { actionableEvent ->
             ResistanceEvidence(
@@ -43,17 +44,19 @@ class ResistanceEvidenceMatcher(
                 isTested = null,
                 isFound = null,
                 resistanceLevel = actionableEvent.level().toString(),
-                evidenceUrls = actionableEvent.evidenceUrls()
+                evidenceUrls = actionableEvent.evidenceUrls(),
+                treatmentName = findTreatmentInDatabase(actionableEvent.intervention(), treatment)
             )
         }.distinctBy { it.event }
     }
 
-    private fun findTreatmentInDatabase(intervention: Intervention, treatmentToFind: String): Boolean {
+    private fun findTreatmentInDatabase(intervention: Intervention, treatmentToFind: Treatment): String {
         val therapyName = (intervention as com.hartwig.serve.datamodel.Treatment).name()
         val treatment = EfficacyEntryFactory(treatmentDatabase).generateOptions(listOf(therapyName))
             .mapNotNull(treatmentDatabase::findTreatmentByName)
             .distinct().singleOrNull()
-        return treatment?.let { treatmentToFind.contains(treatment.name) } ?: false
+        return if (treatment?.let { drugsInOtherTreatment(treatmentToFind, treatment) } == true) treatment.name
+        else ""
     }
 
     companion object {
@@ -79,6 +82,12 @@ class ResistanceEvidenceMatcher(
 
         private fun resistant(resistanceEvent: ActionableEvent): Boolean {
             return resistanceEvent.level() in setOf(EvidenceLevel.A, EvidenceLevel.B, EvidenceLevel.C)
+        }
+
+        private fun drugsInOtherTreatment(treatment1: Treatment, treatment2: Treatment): Boolean {
+            val drugs1 = (treatment1 as DrugTreatment).drugs
+            val drugs2 = (treatment2 as DrugTreatment).drugs
+            return (drugs2.all { it in drugs1 })
         }
     }
 }

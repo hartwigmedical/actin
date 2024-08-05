@@ -2,9 +2,7 @@ package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.algo.datamodel.AnnotatedTreatmentMatch
 import com.hartwig.actin.report.datamodel.Report
-import com.hartwig.actin.report.pdf.tables.soc.EfficacyEvidenceGenerator
 import com.hartwig.actin.report.pdf.tables.soc.ResistanceEvidenceGenerator
-import com.hartwig.actin.report.pdf.tables.soc.SOCGeneratorFunctions
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.geom.PageSize
