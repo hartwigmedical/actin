@@ -14,13 +14,19 @@ enum class ConfigurationProfile {
     MCGI
 }
 
+enum class MolecularSummaryType {
+    NONE,
+    STANDARD,
+    SHORT;
+}
+
 data class ReportConfiguration(
     val includeOverviewWithClinicalHistorySummary: Boolean = false,
     val includeMolecularDetailsChapter: Boolean = true,
     val includeIneligibleTrialsInSummary: Boolean = false,
     val includeSOCLiteratureEfficacyEvidence: Boolean = false,
     val includeEligibleSOCTreatmentSummary: Boolean = false,
-    val includeMolecularSummary: Boolean = true,
+    val molecularSummaryType: MolecularSummaryType = MolecularSummaryType.STANDARD,
     val includeOtherOncologicalHistoryInSummary: Boolean = true,
     val includePatientHeader: Boolean = true,
     val includeRelevantNonOncologicalHistoryInSummary: Boolean = true,
@@ -79,7 +85,7 @@ data class EnvironmentConfiguration(
                         includeApprovedTreatmentsInSummary = false,
                         includeSOCLiteratureEfficacyEvidence = true,
                         includeEligibleSOCTreatmentSummary = true,
-                        includeMolecularSummary = false,
+                        molecularSummaryType = MolecularSummaryType.NONE,
                         includePatientHeader = false,
                         filterOnSOCExhaustionAndTumorType = true
                     )
@@ -88,7 +94,7 @@ data class EnvironmentConfiguration(
                 ConfigurationProfile.MCGI -> rawConfig.copy(
                     report = rawConfig.report.copy(
                         includeMolecularDetailsChapter = false,
-                        includeMolecularSummary = false,
+                        molecularSummaryType = MolecularSummaryType.NONE,
                         includeApprovedTreatmentsInSummary = false,
                         includeTrialMatchingInSummary = false,
                         includeClinicalDetailsChapter = false,

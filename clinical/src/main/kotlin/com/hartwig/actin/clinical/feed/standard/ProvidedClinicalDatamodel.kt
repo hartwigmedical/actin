@@ -325,7 +325,14 @@ data class ProvidedSurgery(
 )
 
 @JacksonSerializable
-data class ProvidedLesion(val location: String, val subLocation: String?, val diagnosisDate: LocalDate, val active: Boolean?)
+data class ProvidedLesion(
+    @JsonPropertyDescription("Location of lesion (eg. brain)")
+    val location: String,
+    @JsonPropertyDescription("Diagnosis date of the lesion")
+    val diagnosisDate: LocalDate,
+    @JsonPropertyDescription("Whether this lesion considered active, only applicable to brain or CNS lesions.")
+    val active: Boolean? = null
+)
 
 enum class ProvidedGender {
     MALE,
