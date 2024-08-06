@@ -14,7 +14,7 @@ data class MolecularRecord(
     val hasSufficientPurity: Boolean,
     val immunology: MolecularImmunology,
     val pharmaco: Set<PharmacoEntry>,
-    val hasSufficientQuality: Boolean,
+    val hasSufficientQuality: Boolean? = null,
     override val testTypeDisplay: String? = null,
     override val experimentType: ExperimentType,
     override val date: LocalDate?,
@@ -26,10 +26,10 @@ data class MolecularRecord(
         if (experimentType == ExperimentType.HARTWIG_TARGETED) drivers.copyNumbers.any { gene == it.gene } else true
 
     fun hasSufficientQualityAndPurity(): Boolean {
-        return hasSufficientQuality && hasSufficientPurity
+        return hasSufficientQuality == true && hasSufficientPurity
     }
 
     fun hasSufficientQualityButLowPurity(): Boolean {
-        return hasSufficientQuality && !hasSufficientPurity
+        return hasSufficientQuality == true && !hasSufficientPurity
     }
 }

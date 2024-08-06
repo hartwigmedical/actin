@@ -37,7 +37,7 @@ object WGSSummaryGeneratorFunctions {
             table.addCell(biopsySummary(patientRecord, molecular))
         }
 
-        if (wgsMolecular?.hasSufficientQuality == true) {
+        if (wgsMolecular?.hasSufficientQuality != false) {
             if (!isShort) {
                 table.addCell(Cells.createKey("Molecular tissue of origin prediction"))
                 table.addCell(tumorOriginPredictionCell(molecular))
