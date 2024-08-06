@@ -46,7 +46,7 @@ private class ArcherInterpreter(
     )
 
 private fun isGeneric(): (PriorIHCTest) -> Boolean =
-    { it.test == AVL_PANEL || it.test == FREE_TEXT_PANEL }
+    { it.test == AVL_PANEL || it.test == FREE_TEXT_PANEL || it.test.startsWith("NGS") }
 
 private fun isMcgi(): (PriorIHCTest) -> Boolean =
     { it.test.lowercase().contains("cdx") }
