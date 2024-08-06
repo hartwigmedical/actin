@@ -9,24 +9,27 @@ import com.hartwig.actin.configuration.ReportConfiguration
 
 object TestReportFactory {
     fun createMinimalTestReport(): Report {
+        val minimal = TestPatientFactory.createMinimalTestWGSPatientRecord()
         return Report(
             patientId = TestPatientFactory.TEST_PATIENT,
-            patientRecord = TestPatientFactory.createMinimalTestWGSPatientRecord(),
+            patientRecord = minimal.copy(tumor = minimal.tumor.copy(rawPathologyReport = "raw")),
             treatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch(),
-            config = ReportConfiguration()
+            config = ReportConfiguration(includeRawPathologyReport = true, includeMolecularEvidenceChapter = true)
         )
     }
 
     fun createProperTestReport(): Report {
+        val proper = TestPatientFactory.createProperTestPatientRecord()
         return createMinimalTestReport().copy(
-            patientRecord = TestPatientFactory.createProperTestPatientRecord(),
+            patientRecord = proper.copy(tumor = proper.tumor.copy(rawPathologyReport = "raw")),
             treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch()
         )
     }
 
     fun createExhaustiveTestReport(): Report {
+        val patientRecord = TestPatientFactory.createExhaustiveTestPatientRecord()
         return createMinimalTestReport().copy(
-            patientRecord = TestPatientFactory.createExhaustiveTestPatientRecord(),
+            patientRecord = patientRecord.copy(tumor = patientRecord.tumor.copy(rawPathologyReport = "raw")),
             treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch()
         )
     }
