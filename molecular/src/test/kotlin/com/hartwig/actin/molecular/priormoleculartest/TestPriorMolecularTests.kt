@@ -35,7 +35,7 @@ fun freetextPriorMolecularFusionRecord(): PriorIHCTest {
     )
 }
 
-fun ampliseqPriorMolecularFusionRecord(): PriorIHCTest {
+fun ampliseqPriorMolecularVariantRecord(): PriorIHCTest {
     return PriorIHCTest(
         test = "NGS/Ampliseq",
         item = GENE,

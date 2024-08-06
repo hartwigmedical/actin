@@ -55,7 +55,7 @@ class PriorMolecularTestInterpretersTest {
             archerPriorMolecularVariantRecord(),
             avlPanelPriorMolecularVariantRecord(),
             freetextPriorMolecularFusionRecord(),
-            ampliseqPriorMolecularFusionRecord(),
+            ampliseqPriorMolecularVariantRecord(),
             PriorIHCTest("Unknown", impliesPotentialIndeterminateStatus = false)
         )
         val molecularTests = interpreters.process(priorMolecularTests)
