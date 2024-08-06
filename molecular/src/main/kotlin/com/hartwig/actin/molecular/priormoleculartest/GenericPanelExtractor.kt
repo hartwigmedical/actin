@@ -7,8 +7,11 @@ import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
+import org.apache.logging.log4j.LogManager
 
 class GenericPanelExtractor : MolecularExtractor<PriorIHCTest, PanelExtraction> {
+
+    private val logger = LogManager.getLogger(GenericPanelExtractor::class.java)
 
     override fun extract(input: List<PriorIHCTest>): List<PanelExtraction> {
         return input.groupBy { it.test }
@@ -36,7 +39,7 @@ class GenericPanelExtractor : MolecularExtractor<PriorIHCTest, PanelExtraction> 
                 val geneWithNegativeResults = geneWithNegativeResultsRecords.mapNotNull { it.item }.toSet()
 
                 if (unknownRecords.isNotEmpty()) {
-                    throw IllegalArgumentException("Unrecognized records in $type panel: ${
+                    logger.error("Unrecognized records in $type panel: ${
                         nonVariantRecordsGene.joinToString(", ") { "item \"${it.item}\" measure \"${it.measure}\"" }
                     }")
                 }
@@ -53,7 +56,7 @@ class GenericPanelExtractor : MolecularExtractor<PriorIHCTest, PanelExtraction> 
     }
 
     private fun isKnownIgnorableRecord(result: PriorIHCTest): Boolean {
-        return result.measure == "GEEN mutaties aangetoond met behulp van het AVL Panel"
+        return result.measure?.trim()?.startsWith("GEEN") ?: false
 
     }
 
