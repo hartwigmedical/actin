@@ -64,7 +64,7 @@ class StandardDataIngestionTest {
                 curationDatabase.intoleranceCuration
             ),
             complicationExtractor = StandardComplicationExtractor(curationDatabase.complicationCuration),
-            treatmentHistoryExtractor = StandardTreatmentHistoryExtractor(
+            treatmentHistoryExtractor = StandardOncologicalHistoryExtractor(
                 curationDatabase.treatmentHistoryEntryCuration,
                 curationDatabase.nonOncologicalHistoryCuration
             ),
@@ -81,7 +81,8 @@ class StandardDataIngestionTest {
             bodyWeightExtractor = StandardBodyWeightExtractor(),
             bodyHeightExtractor = StandardBodyHeightExtractor(),
             bloodTransfusionExtractor = StandardBloodTransfusionExtractor(),
-            molecularTestExtractor = StandardMolecularTestExtractor(curationDatabase.molecularTestIhcCuration),
+            ihcTestExtractor = StandardPriorIHCTestExtractor(curationDatabase.molecularTestIhcCuration),
+            sequencingTestExtractor = StandardPriorSequencingTestExtractor(curationDatabase.sequencingTestCuration),
             dataQualityMask = DataQualityMask()
         )
         val expected = ClinicalRecordJson.read(OUTPUT_RECORD_JSON)
@@ -148,15 +149,6 @@ class StandardDataIngestionTest {
                         feedInput = "MORFINE",
                         message = "Could not find intolerance config for input 'MORFINE'"
                     ), CurationRequirement(feedInput = "Nikkel", message = "Could not find intolerance config for input 'Nikkel'")
-                )
-            ),
-            CurationResult(
-                categoryName = "Oncological History",
-                requirements = listOf(
-                    CurationRequirement(
-                        feedInput = "aandoening van mitralis-, aorta- en tricuspidalisklep",
-                        message = "Could not find treatment history config for input 'aandoening van mitralis-, aorta- en tricuspidalisklep'"
-                    )
                 )
             )
         )

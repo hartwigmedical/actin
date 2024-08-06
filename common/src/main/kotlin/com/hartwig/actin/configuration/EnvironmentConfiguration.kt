@@ -4,24 +4,42 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.hartwig.actin.molecular.datamodel.evidence.Country
 import java.io.File
 import org.apache.logging.log4j.LogManager
 
 enum class ConfigurationProfile {
     STANDARD,
-    CRC
+    CRC,
+    MCGI
+}
+
+enum class MolecularSummaryType {
+    NONE,
+    STANDARD,
+    SHORT;
 }
 
 data class ReportConfiguration(
     val includeOverviewWithClinicalHistorySummary: Boolean = false,
     val includeMolecularDetailsChapter: Boolean = true,
-    val showSOCLiteratureEfficacyEvidence: Boolean = false,
-    val showEligibleSOCTreatmentSummary: Boolean = false,
-    val showMolecularSummary: Boolean = true,
-    val showOtherOncologicalHistoryInSummary: Boolean = true,
-    val showPatientHeader: Boolean = true,
-    val showRelevantNonOncologicalHistoryInSummary: Boolean = true,
-    val showApprovedTreatmentsInSummary: Boolean = true
+    val includeIneligibleTrialsInSummary: Boolean = false,
+    val includeSOCLiteratureEfficacyEvidence: Boolean = false,
+    val includeEligibleSOCTreatmentSummary: Boolean = false,
+    val molecularSummaryType: MolecularSummaryType = MolecularSummaryType.STANDARD,
+    val includeOtherOncologicalHistoryInSummary: Boolean = true,
+    val includePatientHeader: Boolean = true,
+    val includeRelevantNonOncologicalHistoryInSummary: Boolean = true,
+    val includeApprovedTreatmentsInSummary: Boolean = true,
+    val includeTrialMatchingInSummary: Boolean = true,
+    val includeExternalTrialsInSummary: Boolean = true,
+    val filterOnSOCExhaustionAndTumorType: Boolean = false,
+    val includeClinicalDetailsChapter: Boolean = true,
+    val includeTrialMatchingChapter: Boolean = true,
+    val includeOnlyExternalTrialsInTrialMatching: Boolean = false,
+    val includeLongitudinalMolecularChapter: Boolean = false,
+    val includeMolecularEvidenceChapter: Boolean = false,
+    val countryOfReference: Country = Country.NETHERLANDS
 )
 
 const val EMC_TRIAL_SOURCE = "EMC"
@@ -62,11 +80,29 @@ data class EnvironmentConfiguration(
                     report = rawConfig.report.copy(
                         includeOverviewWithClinicalHistorySummary = true,
                         includeMolecularDetailsChapter = false,
-                        showApprovedTreatmentsInSummary = false,
-                        showSOCLiteratureEfficacyEvidence = true,
-                        showEligibleSOCTreatmentSummary = true,
-                        showMolecularSummary = false,
-                        showPatientHeader = false
+                        includeIneligibleTrialsInSummary = true,
+                        includeApprovedTreatmentsInSummary = false,
+                        includeSOCLiteratureEfficacyEvidence = true,
+                        includeEligibleSOCTreatmentSummary = true,
+                        molecularSummaryType = MolecularSummaryType.NONE,
+                        includePatientHeader = false,
+                        filterOnSOCExhaustionAndTumorType = true
+                    )
+                )
+
+                ConfigurationProfile.MCGI -> rawConfig.copy(
+                    report = rawConfig.report.copy(
+                        includeMolecularDetailsChapter = false,
+                        molecularSummaryType = MolecularSummaryType.NONE,
+                        includeApprovedTreatmentsInSummary = false,
+                        includeTrialMatchingInSummary = false,
+                        includeClinicalDetailsChapter = false,
+                        includeTrialMatchingChapter = true,
+                        includeOnlyExternalTrialsInTrialMatching = true,
+                        includeExternalTrialsInSummary = false,
+                        includeLongitudinalMolecularChapter = true,
+                        includeMolecularEvidenceChapter = true,
+                        countryOfReference = Country.US
                     )
                 )
 

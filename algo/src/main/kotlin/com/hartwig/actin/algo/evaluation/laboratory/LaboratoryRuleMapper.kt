@@ -12,6 +12,7 @@ import com.hartwig.actin.algo.evaluation.composite.And
 import com.hartwig.actin.algo.evaluation.composite.Fallback
 import com.hartwig.actin.algo.evaluation.composite.Not
 import com.hartwig.actin.algo.evaluation.composite.Or
+import com.hartwig.actin.algo.evaluation.othercondition.HasPotentialSymptomaticHypercalcemia
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionFunctionFactory
 import com.hartwig.actin.clinical.datamodel.LabUnit
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
@@ -52,6 +53,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.HAS_ALBUMIN_LLN_OF_AT_LEAST_X to hasSufficientLabValueLLNCreator(LabMeasurement.ALBUMIN),
             EligibilityRule.HAS_ASAT_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.ASPARTATE_AMINOTRANSFERASE),
             EligibilityRule.HAS_ALAT_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.ALANINE_AMINOTRANSFERASE),
+            EligibilityRule.HAS_ASAT_AND_ALAT_ULN_OF_AT_MOST_X_OR_AT_MOST_Y_WHEN_LIVER_METASTASES_PRESENT to hasLimitedAsatAndAlatDependingOnLiverMetastasesCreator(),
             EligibilityRule.HAS_ALP_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.ALKALINE_PHOSPHATASE),
             EligibilityRule.HAS_ALP_ULN_OF_AT_LEAST_X to hasSufficientLabValueULNCreator(LabMeasurement.ALKALINE_PHOSPHATASE),
             EligibilityRule.HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.TOTAL_BILIRUBIN),
@@ -74,6 +76,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.HAS_TRIGLYCERIDE_MMOL_PER_L_OF_AT_MOST_X to hasLimitedLabValueCreator(LabMeasurement.TRIGLYCERIDE),
             EligibilityRule.HAS_AMYLASE_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.AMYLASE),
             EligibilityRule.HAS_LIPASE_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.LIPASE),
+            EligibilityRule.HAS_ABNORMAL_ELECTROLYTE_LEVELS to { HasAbnormalElectrolyteLevels(minValidLabDate(), minPassLabDate()) },
             EligibilityRule.HAS_CALCIUM_MG_PER_DL_OF_AT_MOST_X to hasLimitedLabValueCreator(
                 LabMeasurement.CALCIUM,
                 LabUnit.MILLIGRAMS_PER_DECILITER
@@ -104,7 +107,9 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.HAS_POTENTIAL_HYPOKALEMIA to hasPotentialHypokalemiaCreator(),
             EligibilityRule.HAS_POTENTIAL_HYPOMAGNESEMIA to hasPotentialHypomagnesemiaCreator(),
             EligibilityRule.HAS_POTENTIAL_HYPOCALCEMIA to hasPotentialHypocalcemiaCreator(),
+            EligibilityRule.HAS_POTENTIAL_SYMPTOMATIC_HYPERCALCEMIA to hasPotentialSymptomaticHypercalcemiaCreator(),
             EligibilityRule.HAS_SERUM_TESTOSTERONE_NG_PER_DL_OF_AT_MOST_X to undeterminedLabValueCreator("serum testosterone"),
+            EligibilityRule.HAS_CORTISOL_LLN_OF_AT_LEAST_X to hasSufficientLabValueLLNCreator(LabMeasurement.CORTISOL),
             EligibilityRule.HAS_AFP_ULN_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.ALPHA_FETOPROTEIN),
             EligibilityRule.HAS_CA125_ULN_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.CARBOHYDRATE_ANTIGEN_125),
             EligibilityRule.HAS_HCG_ULN_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.HCG_AND_BETA_HCG),
@@ -135,74 +140,76 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         measurement: LabMeasurement,
         targetUnit: LabUnit = measurement.defaultUnit
     ): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val minValue = functionInputResolver().createOneDoubleInput(function)
             createLabEvaluator(measurement, HasSufficientLabValue(minValue, measurement, targetUnit))
         }
     }
 
     private fun hasSufficientLabValueLLNCreator(measurement: LabMeasurement): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val minLLNFactor = functionInputResolver().createOneDoubleInput(function)
             createLabEvaluator(measurement, HasSufficientLabValueLLN(minLLNFactor))
         }
     }
 
     private fun hasLimitedLabValueCreator(measurement: LabMeasurement, targetUnit: LabUnit = measurement.defaultUnit): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val maxValue = functionInputResolver().createOneDoubleInput(function)
             createLabEvaluator(measurement, HasLimitedLabValue(maxValue, measurement, targetUnit))
         }
     }
 
     private fun hasLimitedLabValueULNCreator(measurement: LabMeasurement): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val maxULNFactor = functionInputResolver().createOneDoubleInput(function)
             createLabEvaluator(measurement, HasLimitedLabValueULN(maxULNFactor))
         }
     }
 
     private fun hasSufficientLabValueULNCreator(measurement: LabMeasurement): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val minULNFactor = functionInputResolver().createOneDoubleInput(function)
             createLabEvaluator(measurement, HasSufficientLabValueULN(minULNFactor))
         }
     }
 
     private fun hasLabValueWithinInstitutionalNormalLimitCreator(measurement: LabMeasurement): FunctionCreator {
-        return FunctionCreator { createLabEvaluator(measurement, HasLabValueWithinInstitutionalNormalLimit()) }
+        return { createLabEvaluator(measurement, HasLabValueWithinInstitutionalNormalLimit()) }
     }
 
     private fun hasLimitedPTTCreator(): FunctionCreator {
-        return FunctionCreator { HasLimitedPTT() }
+        return { HasLimitedPTT() }
     }
 
-    private fun hasLimitedBilirubinPercentageCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
-            val maxPercentage = functionInputResolver().createOneDoubleInput(function)
-            createLabEvaluator(
-                LabMeasurement.DIRECT_BILIRUBIN,
-                HasLimitedBilirubinPercentageOfTotal(maxPercentage, minValidLabDate())
+    private fun hasLimitedAsatAndAlatDependingOnLiverMetastasesCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val maxULNWithoutLiverMetastases = functionInputResolver().createTwoDoublesInput(function).double1
+            val maxULNWithLiverMetastases = functionInputResolver().createTwoDoublesInput(function).double2
+            HasLimitedAsatAndAlatDependingOnLiverMetastases(
+                maxULNWithoutLiverMetastases, maxULNWithLiverMetastases, minValidLabDate(), minPassLabDate()
             )
         }
     }
 
+    private fun hasLimitedBilirubinPercentageCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val maxPercentage = functionInputResolver().createOneDoubleInput(function)
+            createLabEvaluator(LabMeasurement.DIRECT_BILIRUBIN, HasLimitedBilirubinPercentageOfTotal(maxPercentage, minValidLabDate()))
+        }
+    }
+
     private fun hasSufficientCreatinineClearanceCreator(method: CreatinineClearanceMethod): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val minCreatinineClearance = functionInputResolver().createOneDoubleInput(function)
             val measurement = retrieveForMethod(method)
             val minimalDateWeightMeasurements = referenceDateProvider().date().minusMonths(BODY_WEIGHT_MAX_AGE_MONTHS.toLong())
-            val main = createLabEvaluator(
-                measurement,
-                HasSufficientLabValue(minCreatinineClearance, measurement, measurement.defaultUnit)
-            )
+            val main = createLabEvaluator(measurement, HasSufficientLabValue(minCreatinineClearance, measurement, measurement.defaultUnit))
+            
             val fallback = createLabEvaluator(
                 LabMeasurement.CREATININE,
                 HasSufficientDerivedCreatinineClearance(
-                    referenceDateProvider().year(),
-                    method,
-                    minCreatinineClearance,
-                    minimalDateWeightMeasurements
+                    referenceDateProvider().year(), method, minCreatinineClearance, minimalDateWeightMeasurements
                 )
             )
             Fallback(main, fallback)
@@ -210,7 +217,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     }
 
     private fun hasCreatinineClearanceBetweenValuesCreator(method: CreatinineClearanceMethod): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val inputs = functionInputResolver().createTwoDoublesInput(function)
             val measurement = retrieveForMethod(method)
             val mininumDateForBodyWeights = referenceDateProvider().date().minusMonths(BODY_WEIGHT_MAX_AGE_MONTHS.toLong())
@@ -227,11 +234,11 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     }
 
     private fun hasSufficientMeasuredCreatinineClearanceCreator(): FunctionCreator {
-        return FunctionCreator { HasSufficientMeasuredCreatinineClearance() }
+        return { HasSufficientMeasuredCreatinineClearance() }
     }
 
     private fun hasPotentialHypokalemiaCreator(): FunctionCreator {
-        return FunctionCreator {
+        return {
             val potassiumBelowLLN: EvaluationFunction = Not(createLabEvaluator(LabMeasurement.POTASSIUM, HasSufficientLabValueLLN(1.0)))
             val hasHadPriorHypokalemia =
                 OtherConditionFunctionFactory.createPriorConditionWithDoidFunction(doidModel(), DoidConstants.HYPOKALEMIA_DOID)
@@ -240,7 +247,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     }
 
     private fun hasPotentialHypomagnesemiaCreator(): FunctionCreator {
-        return FunctionCreator {
+        return {
             val magnesiumBelowLLN: EvaluationFunction = Not(createLabEvaluator(LabMeasurement.MAGNESIUM, HasSufficientLabValueLLN(1.0)))
             val hasHadPriorHypomagnesemia = OtherConditionFunctionFactory.createPriorConditionWithDoidFunction(
                 doidModel(),
@@ -251,7 +258,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     }
 
     private fun hasPotentialHypocalcemiaCreator(): FunctionCreator {
-        return FunctionCreator {
+        return {
             val calciumBelowLLN: EvaluationFunction = Not(createLabEvaluator(LabMeasurement.CALCIUM, HasSufficientLabValueLLN(1.0)))
             val hasHadPriorHypocalcemia = OtherConditionFunctionFactory.createPriorConditionWithDoidFunction(
                 doidModel(),
@@ -259,6 +266,10 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             )
             Or(listOf(calciumBelowLLN, hasHadPriorHypocalcemia))
         }
+    }
+
+    private fun hasPotentialSymptomaticHypercalcemiaCreator(): FunctionCreator {
+        return { HasPotentialSymptomaticHypercalcemia(minValidLabDate()) }
     }
 
     private fun createLabEvaluator(measurement: LabMeasurement, function: LabEvaluationFunction): EvaluationFunction {
@@ -286,7 +297,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         }
 
         private fun undeterminedLabValueCreator(measure: String): FunctionCreator {
-            return FunctionCreator {
+            return {
                 object : EvaluationFunction {
                     override fun evaluate(record: PatientRecord): Evaluation {
                         return EvaluationFactory.recoverableUndeterminedNoGeneral(

@@ -26,8 +26,7 @@ class StandardTumorDetailsExtractor(
             primaryTumorConfigCurationDatabase.find(input),
             ehrPatientRecord.patientDetails.hashedId, CurationCategory.PRIMARY_TUMOR, input, "primary tumor", true
         )
-        val lesionCurationResponse =
-            extractLesions(ehrPatientRecord)
+        val lesionCurationResponse = extractLesions(ehrPatientRecord)
         val curatedLesions = lesionCurationResponse.flatMap { it.configs }
         val tumorDetailsFromEhr = tumorDetails(ehrPatientRecord, curatedLesions)
         return curatedTumorResponse.config()?.let {
@@ -56,6 +55,7 @@ class StandardTumorDetailsExtractor(
         hasBoneLesions = hasLesions(lesions, LesionLocationCategory.BONE),
         boneLesionsCount = countLesions(lesions, LesionLocationCategory.BONE),
         hasBrainLesions = hasLesions(lesions, LesionLocationCategory.BRAIN),
+        hasActiveBrainLesions = hasLesions(lesions, LesionLocationCategory.BRAIN, true),
         brainLesionsCount = countLesions(lesions, LesionLocationCategory.BRAIN),
         hasLiverLesions = hasLesions(lesions, LesionLocationCategory.LIVER),
         liverLesionsCount = countLesions(lesions, LesionLocationCategory.LIVER),
@@ -65,14 +65,16 @@ class StandardTumorDetailsExtractor(
         lymphNodeLesionsCount = countLesions(lesions, LesionLocationCategory.LYMPH_NODE),
         hasCnsLesions = hasLesions(lesions, LesionLocationCategory.CNS),
         cnsLesionsCount = countLesions(lesions, LesionLocationCategory.CNS),
-        otherLesions = lesions.filter { lesion -> lesion.ignore.not() }.filter { lesion -> lesion.category == null }
+        hasActiveCnsLesions = hasLesions(lesions, LesionLocationCategory.CNS, true),
+        otherLesions = lesions.filter { lesion -> lesion.ignore.not() }
+            .filter { lesion -> lesion.category == null || lesion.category == LesionLocationCategory.LYMPH_NODE }
             .map { lesion -> lesion.location },
         hasMeasurableDisease = ehrPatientRecord.tumorDetails.measurableDisease,
         doids = emptySet()
     )
 
-    private fun hasLesions(lesions: List<LesionLocationConfig>, location: LesionLocationCategory): Boolean {
-        return lesions.any { it.category == location }
+    private fun hasLesions(lesions: List<LesionLocationConfig>, location: LesionLocationCategory, active: Boolean? = null): Boolean {
+        return lesions.any { it.category == location && (active == null || it.active == active) }
     }
 
     private fun countLesions(lesions: List<LesionLocationConfig>, location: LesionLocationCategory): Int {
@@ -81,11 +83,31 @@ class StandardTumorDetailsExtractor(
 
     private fun extractLesions(patientRecord: ProvidedPatientRecord): List<CurationResponse<LesionLocationConfig>> {
         val patientId = patientRecord.patientDetails.hashedId
-        val lesionsFromRadiologyReport = fromRadiologyReport(patientRecord.tumorDetails.lesionSite, patientId)
+        val lesionsFromLesionList = extractFromLesionList(patientRecord)
+        val lesionsFromRadiologyReport = extractFromRadiologyReport(patientRecord.tumorDetails.lesionSite, patientId)
         val lesionsFromPriorOtherConditions = extractFromSecondarySource(patientId, patientRecord.priorOtherConditions) { it.name }
         val lesionsFromTreatmentHistory = extractFromSecondarySource(patientId, patientRecord.treatmentHistory) { it.treatmentName }
-        return lesionsFromRadiologyReport + lesionsFromPriorOtherConditions + lesionsFromTreatmentHistory
+        return lesionsFromLesionList + lesionsFromRadiologyReport + lesionsFromPriorOtherConditions + lesionsFromTreatmentHistory
     }
+
+    private fun extractFromLesionList(patientRecord: ProvidedPatientRecord) =
+        patientRecord.tumorDetails.lesions?.map {
+            val locationAsEnumName = it.location.uppercase().replace(" ", "_")
+            if (LesionLocationCategory.entries.map { e -> e.name.uppercase() }.contains(locationAsEnumName)) {
+                CurationResponse(
+                    configs = setOf(
+                        LesionLocationConfig(
+                            input = it.location,
+                            location = it.location,
+                            category = LesionLocationCategory.valueOf(locationAsEnumName),
+                            active = it.active
+                        )
+                    )
+                )
+            } else {
+                lesionCurationResponse(patientRecord.patientDetails.hashedId, it.location)
+            }
+        } ?: emptyList()
 
     private fun <T> extractFromSecondarySource(
         patientId: String,
@@ -97,7 +119,7 @@ class StandardTumorDetailsExtractor(
         }.filter { it.configs.isNotEmpty() }
     }
 
-    private fun fromRadiologyReport(
+    private fun extractFromRadiologyReport(
         radiologyReport: String?,
         patientId: String
     ): List<CurationResponse<LesionLocationConfig>> {

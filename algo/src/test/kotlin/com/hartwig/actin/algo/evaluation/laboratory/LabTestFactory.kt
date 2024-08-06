@@ -31,7 +31,8 @@ internal object LabTestFactory {
             value = value,
             unit = measurement?.defaultUnit ?: LabUnit.NONE,
             refLimitLow = refLimitLow,
-            refLimitUp = refLimitUp
+            refLimitUp = refLimitUp,
+            isOutsideRef = (refLimitUp != null && value > refLimitUp) || (refLimitLow != null && value < refLimitLow)
         )
     }
 }

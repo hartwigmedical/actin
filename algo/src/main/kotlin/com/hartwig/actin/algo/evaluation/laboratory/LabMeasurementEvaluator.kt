@@ -3,10 +3,9 @@ package com.hartwig.actin.algo.evaluation.laboratory
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.evaluateInvalidLabValue
 import com.hartwig.actin.algo.evaluation.util.Format.date
-import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.interpretation.LabInterpreter
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
 import java.time.LocalDate
@@ -19,26 +18,8 @@ class LabMeasurementEvaluator(
     override fun evaluate(record: PatientRecord): Evaluation {
         val interpretation = LabInterpreter.interpret(record.labValues)
         val mostRecent = interpretation.mostRecentValue(measurement)
-        if (!isValid(mostRecent, measurement)) {
-            return when {
-                mostRecent == null -> {
-                    EvaluationFactory.recoverableUndeterminedNoGeneral("No measurement found for ${measurement.display()}")
-                }
-
-                mostRecent.unit != measurement.defaultUnit -> {
-                    EvaluationFactory.recoverableUndeterminedNoGeneral(
-                        "Unexpected unit specified for ${measurement.display()}: ${mostRecent.unit}"
-                    )
-                }
-
-                mostRecent.date.isBefore(minValidDate) -> {
-                    EvaluationFactory.recoverableUndeterminedNoGeneral("Most recent measurement too old for ${measurement.display()}")
-                }
-
-                else -> {
-                    Evaluation(result = EvaluationResult.UNDETERMINED, recoverable = true)
-                }
-            }
+        if (!LabEvaluation.isValid(mostRecent, measurement, minValidDate)) {
+            return evaluateInvalidLabValue(measurement, mostRecent, minValidDate)
         }
         
         val evaluation = function.evaluate(record, measurement, mostRecent!!)
@@ -50,10 +31,6 @@ class LabMeasurementEvaluator(
                 warnSpecificMessages = appendPastMinPassDate(evaluation.passSpecificMessages).toSet()
             )
         } else evaluation
-    }
-
-    private fun isValid(value: LabValue?, measurement: LabMeasurement): Boolean {
-        return value != null && value.unit == measurement.defaultUnit && !value.date.isBefore(minValidDate)
     }
 
     private fun appendPastMinPassDate(inputs: Set<String>): List<String> {

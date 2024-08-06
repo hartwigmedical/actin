@@ -1,20 +1,21 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.MolecularExtractor
 import com.hartwig.actin.molecular.MolecularInterpreter
 import com.hartwig.actin.molecular.datamodel.ARCHER_FP_LUNG_TARGET
 import com.hartwig.actin.molecular.datamodel.AVL_PANEL
 import com.hartwig.actin.molecular.datamodel.FREE_TEXT_PANEL
-import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
 import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
+import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
+import com.hartwig.actin.molecular.paver.Paver
+import com.hartwig.actin.tools.pave.PaveLite
+import com.hartwig.actin.tools.variant.VariantAnnotator
 
 private fun <T : MolecularTest> identityAnnotator() = object : MolecularAnnotator<T, T> {
     override fun annotate(input: T): T {
@@ -22,47 +23,63 @@ private fun <T : MolecularTest> identityAnnotator() = object : MolecularAnnotato
     }
 }
 
-private fun otherExtractor() = object : MolecularExtractor<PriorMolecularTest, OtherPriorMolecularTest> {
-    override fun extract(input: List<PriorMolecularTest>): List<OtherPriorMolecularTest> {
+private fun otherExtractor() = object : MolecularExtractor<PriorIHCTest, OtherPriorMolecularTest> {
+    override fun extract(input: List<PriorIHCTest>): List<OtherPriorMolecularTest> {
         return input.map { OtherPriorMolecularTest(it) }
     }
 }
 
-private fun ihcExtractor() = object : MolecularExtractor<PriorMolecularTest, IHCMolecularTest> {
-    override fun extract(input: List<PriorMolecularTest>): List<IHCMolecularTest> {
-        return input.map { IHCMolecularTest(it) }
-    }
-}
 
-private fun isArcher(): (PriorMolecularTest) -> Boolean = { it.test == ARCHER_FP_LUNG_TARGET }
+private fun isArcher(): (PriorIHCTest) -> Boolean = { it.test == ARCHER_FP_LUNG_TARGET }
 
-private class ArcherInterpreter(evidenceDatabase: EvidenceDatabase, geneDriverLikelihoodModel: GeneDriverLikelihoodModel) :
-    MolecularInterpreter<PriorMolecularTest, ArcherPanelExtraction, PanelRecord>(
+private class ArcherInterpreter(
+    evidenceDatabase: EvidenceDatabase,
+    geneDriverLikelihoodModel: GeneDriverLikelihoodModel,
+    variantAnnotator: VariantAnnotator,
+    paver: Paver,
+    paveLite: PaveLite
+) :
+    MolecularInterpreter<PriorIHCTest, PanelExtraction, PanelRecord>(
         ArcherExtractor(),
-        ArcherAnnotator(evidenceDatabase, geneDriverLikelihoodModel),
+        PanelAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite),
         isArcher()
     )
 
-private fun isGeneric(): (PriorMolecularTest) -> Boolean =
+private fun isGeneric(): (PriorIHCTest) -> Boolean =
     { it.test == AVL_PANEL || it.test == FREE_TEXT_PANEL }
 
-private class GenericPanelInterpreter :
-    MolecularInterpreter<PriorMolecularTest, GenericPanelExtraction, PanelRecord>(
+private fun isMcgi(): (PriorIHCTest) -> Boolean =
+    { it.test.lowercase().contains("cdx") }
+
+private class GenericPanelInterpreter(
+    evidenceDatabase: EvidenceDatabase,
+    geneDriverLikelihoodModel: GeneDriverLikelihoodModel,
+    variantAnnotator: VariantAnnotator,
+    paver: Paver,
+    paveLite: PaveLite
+) :
+    MolecularInterpreter<PriorIHCTest, PanelExtraction, PanelRecord>(
         GenericPanelExtractor(),
-        GenericPanelAnnotator(),
+        PanelAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite),
         isGeneric()
     )
 
-private fun isIHC(): (PriorMolecularTest) -> Boolean {
-    return { it.test == "IHC" || it.item == "PD-L1" }
-}
+private class McgiPanelInterpreter(
+    evidenceDatabase: EvidenceDatabase,
+    geneDriverLikelihoodModel: GeneDriverLikelihoodModel,
+    variantAnnotator: VariantAnnotator,
+    paver: Paver,
+    paveLite: PaveLite
+) :
+    MolecularInterpreter<PriorIHCTest, PanelExtraction, PanelRecord>(
+        McgiExtractor(),
+        PanelAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite),
+        isMcgi()
+    )
 
-private class IHCInterpreter :
-    MolecularInterpreter<PriorMolecularTest, IHCMolecularTest, IHCMolecularTest>(ihcExtractor(), identityAnnotator(), isIHC())
+class PriorMolecularTestInterpreters(private val pipelines: Set<MolecularInterpreter<PriorIHCTest, out Any, out MolecularTest>>) {
 
-class PriorMolecularTestInterpreters(private val pipelines: Set<MolecularInterpreter<PriorMolecularTest, out Any, out MolecularTest>>) {
-
-    fun process(clinicalTests: List<PriorMolecularTest>): List<MolecularTest> {
+    fun process(clinicalTests: List<PriorIHCTest>): List<MolecularTest> {
         val otherInterpreter = MolecularInterpreter(otherExtractor(), identityAnnotator()) { test ->
             pipelines.none { it.inputPredicate.invoke(test) }
         }
@@ -70,12 +87,18 @@ class PriorMolecularTestInterpreters(private val pipelines: Set<MolecularInterpr
     }
 
     companion object {
-        fun create(evidenceDatabase: EvidenceDatabase, geneDriverLikelihoodModel: GeneDriverLikelihoodModel) =
+        fun create(
+            evidenceDatabase: EvidenceDatabase,
+            geneDriverLikelihoodModel: GeneDriverLikelihoodModel,
+            variantAnnotator: VariantAnnotator,
+            paver: Paver,
+            paveLite: PaveLite
+        ) =
             PriorMolecularTestInterpreters(
                 setOf(
-                    ArcherInterpreter(evidenceDatabase, geneDriverLikelihoodModel),
-                    GenericPanelInterpreter(),
-                    IHCInterpreter()
+                    ArcherInterpreter(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite),
+                    GenericPanelInterpreter(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite),
+                    McgiPanelInterpreter(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite)
                 )
             )
     }

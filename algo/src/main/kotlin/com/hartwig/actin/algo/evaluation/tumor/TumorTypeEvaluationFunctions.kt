@@ -12,6 +12,14 @@ internal object TumorTypeEvaluationFunctions {
         return stringNotNullAndMatchesCollection(tumor.primaryTumorExtraDetails, validDetails)
     }
 
+    fun hasPeritonealMetastases(tumor: TumorDetails): Boolean? {
+        val targetTerms = listOf("peritoneum", "peritoneal", "intraperitoneum", "intraperitoneal")
+        return tumor.otherLesions?.any { lesion ->
+            val lowercaseLesion = lesion.lowercase()
+            targetTerms.any(lowercaseLesion::startsWith) || targetTerms.any { lowercaseLesion.contains(" $it") }
+        }
+    }
+
     private fun stringNotNullAndMatchesCollection(nullableString: String?, collection: Collection<String>): Boolean {
         return nullableString != null && stringCaseInsensitivelyMatchesQueryCollection(nullableString, collection)
     }

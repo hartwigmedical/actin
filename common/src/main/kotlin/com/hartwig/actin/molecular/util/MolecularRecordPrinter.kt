@@ -15,7 +15,7 @@ class MolecularRecordPrinter(private val printer: DatamodelPrinter) {
 
     fun print(record: MolecularRecord) {
         printer.print("Sample: " + record.sampleId)
-        printer.print(" Experiment type '" + record.type.display() + "' on " + formatDate(record.date))
+        printer.print(" Experiment type '" + record.experimentType.display() + "' on " + formatDate(record.date))
         printer.print(" Contains tumor cells: " + toYesNoUnknown(record.containsTumorCells))
         printer.print(" Has sufficient quality and purity: " + toYesNoUnknown(record.hasSufficientQualityAndPurity()))
         printer.print(" Purity: " + formatPercentage(record.characteristics.purity))

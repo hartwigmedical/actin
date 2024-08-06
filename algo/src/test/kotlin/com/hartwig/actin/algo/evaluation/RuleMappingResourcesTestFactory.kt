@@ -25,6 +25,7 @@ object RuleMappingResourcesTestFactory {
             functionInputResolver = functionInputResolver,
             atcTree = atcTree,
             treatmentDatabase = treatmentDatabase,
+            personalizationDataPath = null,
             algoConfiguration = AlgoConfiguration()
         )
     }

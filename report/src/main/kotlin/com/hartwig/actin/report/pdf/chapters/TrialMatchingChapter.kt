@@ -2,16 +2,22 @@ package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory
+import com.hartwig.actin.report.pdf.ReportContentProvider
 import com.hartwig.actin.report.pdf.tables.trial.EligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.util.Cells
-import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
-import com.itextpdf.layout.element.Paragraph
 
-class TrialMatchingChapter(private val report: Report, private val enableExtendedMode: Boolean) : ReportChapter {
+class TrialMatchingChapter(
+    private val report: Report,
+    private val enableExtendedMode: Boolean,
+    private val includeIneligibleTrialsInSummary: Boolean,
+    private val externalTrialsOnly: Boolean,
+    private val reportContentProvider: ReportContentProvider,
+    override val include: Boolean
+) : ReportChapter {
     override fun name(): String {
         return "Trial Matching Summary"
     }
@@ -27,15 +33,33 @@ class TrialMatchingChapter(private val report: Report, private val enableExtende
 
     private fun addTrialMatchingOverview(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
-        val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
-        val generators = listOf(
-            EligibleActinTrialsGenerator.forClosedCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), enableExtendedMode),
-            IneligibleActinTrialsGenerator.fromEvaluatedCohorts(
+        val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
+        val (_, evaluated) =
+            EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = true)
+
+        val (localTrialGenerator, nonLocalTrialGenerator) = reportContentProvider.provideExternalTrialsTables(
+            report.patientRecord,
+            evaluated,
+            contentWidth()
+        )
+        val generators = listOfNotNull(
+            EligibleActinTrialsGenerator.forClosedCohorts(
                 cohorts,
                 report.treatmentMatch.trialSource,
                 contentWidth(),
                 enableExtendedMode
-            )
+            ).takeIf { !externalTrialsOnly },
+            if (includeIneligibleTrialsInSummary || externalTrialsOnly) null else {
+                IneligibleActinTrialsGenerator.fromEvaluatedCohorts(
+                    cohorts, report.treatmentMatch.trialSource, contentWidth(), enableExtendedMode
+                )
+            },
+            localTrialGenerator.takeIf {
+                externalTrialsOnly
+            },
+            nonLocalTrialGenerator.takeIf {
+                externalTrialsOnly
+            }
         )
 
         for (i in generators.indices) {

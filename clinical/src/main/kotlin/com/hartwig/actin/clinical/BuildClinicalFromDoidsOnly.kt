@@ -7,11 +7,11 @@ import com.hartwig.actin.clinical.datamodel.Gender
 import com.hartwig.actin.clinical.datamodel.PatientDetails
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
+import java.time.LocalDate
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.Options
 import org.apache.logging.log4j.LogManager
-import java.time.LocalDate
 
 class BuildClinicalFromDoidsOnly(private val command: CommandLine) {
 
@@ -49,7 +49,8 @@ class BuildClinicalFromDoidsOnly(private val command: CommandLine) {
                 oncologicalHistory = emptyList(),
                 priorSecondPrimaries = emptyList(),
                 priorOtherConditions = emptyList(),
-                priorMolecularTests = emptyList(),
+                priorIHCTests = emptyList(),
+                priorSequencingTests = emptyList(),
                 complications = null,
                 labValues = emptyList(),
                 toxicities = emptyList(),

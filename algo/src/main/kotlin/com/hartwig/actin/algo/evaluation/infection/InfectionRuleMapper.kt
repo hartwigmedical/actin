@@ -25,30 +25,30 @@ class InfectionRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     }
 
     private fun hasActiveInfectionCreator(): FunctionCreator {
-        return FunctionCreator { HasActiveInfection(atcTree(), referenceDateProvider().date()) }
+        return { HasActiveInfection(atcTree(), referenceDateProvider().date()) }
     }
 
     private fun hasKnownEBVInfectionCreator(): FunctionCreator {
-        return FunctionCreator { HasKnownEBVInfection() }
+        return { HasKnownEBVInfection() }
     }
 
     private fun hasSpecificInfectionCreator(doidToFind: String): FunctionCreator {
-        return FunctionCreator { HasSpecificInfection(doidModel(), doidToFind) }
+        return { HasSpecificInfection(doidModel(), doidToFind) }
     }
 
     private fun meetsCovid19InfectionRequirementsCreator(): FunctionCreator {
-        return FunctionCreator { MeetsCovid19InfectionRequirements() }
+        return { MeetsCovid19InfectionRequirements() }
     }
 
     private fun hasReceivedLiveVaccineWithinMonthsCreator(): FunctionCreator {
-        return FunctionCreator { HasReceivedLiveVaccineWithinMonths() }
+        return { HasReceivedLiveVaccineWithinMonths() }
     }
 
     private fun hasReceivedNonLiveVaccineWithinWeeksCreator(): FunctionCreator {
-        return FunctionCreator { HasReceivedNonLiveVaccineWithinWeeks() }
+        return { HasReceivedNonLiveVaccineWithinWeeks() }
     }
 
     private fun canAdhereToAttenuatedVaccineUseCreator(): FunctionCreator {
-        return FunctionCreator { CanAdhereToAttenuatedVaccineUse() }
+        return { CanAdhereToAttenuatedVaccineUse() }
     }
 }

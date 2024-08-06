@@ -1,22 +1,22 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
+import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSkippedExonsExtraction
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariantExtraction
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 
-
 class ArcherExtractorTest {
+
     private val interpreter = ArcherExtractor()
 
     @Test
     fun `Should parse archer variants from prior molecular tests`() {
         val result = interpreter.extract(listOf(archerPriorMolecularVariantRecord(GENE, HGVS_CODING)))
-        assertThat(result).containsExactly(ArcherPanelExtraction(variants = listOf(ArcherVariantExtraction(GENE, HGVS_CODING))))
+        assertThat(result).containsExactly(ArcherPanelExtraction(variants = listOf(PanelVariantExtraction(GENE, HGVS_CODING))))
     }
 
     @Test
@@ -46,10 +46,10 @@ class ArcherExtractorTest {
 
     @Test
     fun `Should throw illegal argument exception when unknown result`() {
-        Assertions.assertThatThrownBy {
+        assertThatThrownBy {
             interpreter.extract(
                 listOf(
-                    PriorMolecularTest(
+                    PriorIHCTest(
                         test = "Archer FP Lung Target",
                         item = GENE,
                         measure = "Unknown",

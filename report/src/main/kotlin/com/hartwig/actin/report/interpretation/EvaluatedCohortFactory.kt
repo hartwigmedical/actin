@@ -8,8 +8,10 @@ import com.hartwig.actin.algo.datamodel.TrialMatch
 import com.hartwig.actin.trial.datamodel.Eligibility
 
 object EvaluatedCohortFactory {
-    fun create(treatmentMatch: TreatmentMatch): List<EvaluatedCohort> {
-        return treatmentMatch.trialMatches.flatMap { trialMatch: TrialMatch ->
+    fun create(treatmentMatch: TreatmentMatch, filterOnSOCExhaustionAndTumorType: Boolean): List<EvaluatedCohort> {
+        return filteredMatches(
+            treatmentMatch.trialMatches, filterOnSOCExhaustionAndTumorType, TrialMatch::evaluations
+        ).flatMap { trialMatch: TrialMatch ->
             val trialWarnings = extractWarnings(trialMatch.evaluations)
             val trialFails = extractFails(trialMatch.evaluations)
             val trialInclusionEvents = extractInclusionEvents(trialMatch.evaluations)
@@ -35,21 +37,22 @@ object EvaluatedCohortFactory {
                     )
                 )
             } else {
-                trialMatch.cohorts
-                    .map { cohortMatch: CohortMatch ->
-                        EvaluatedCohort(
-                            trialId = trialId,
-                            acronym = acronym,
-                            cohort = cohortMatch.metadata.description,
-                            molecularEvents = trialInclusionEvents.union(extractInclusionEvents(cohortMatch.evaluations)),
-                            isPotentiallyEligible = cohortMatch.isPotentiallyEligible,
-                            isOpen = trialIsOpen && cohortMatch.metadata.open && !cohortMatch.metadata.blacklist,
-                            hasSlotsAvailable = cohortMatch.metadata.slotsAvailable,
-                            warnings = trialWarnings.union(extractWarnings(cohortMatch.evaluations)),
-                            fails = trialFails.union(extractFails(cohortMatch.evaluations)),
-                            phase = phase
-                        )
-                    }
+                filteredMatches(
+                    trialMatch.cohorts, filterOnSOCExhaustionAndTumorType, CohortMatch::evaluations
+                ).map { cohortMatch: CohortMatch ->
+                    EvaluatedCohort(
+                        trialId = trialId,
+                        acronym = acronym,
+                        cohort = cohortMatch.metadata.description,
+                        molecularEvents = trialInclusionEvents.union(extractInclusionEvents(cohortMatch.evaluations)),
+                        isPotentiallyEligible = cohortMatch.isPotentiallyEligible,
+                        isOpen = trialIsOpen && cohortMatch.metadata.open && !cohortMatch.metadata.blacklist,
+                        hasSlotsAvailable = cohortMatch.metadata.slotsAvailable,
+                        warnings = trialWarnings.union(extractWarnings(cohortMatch.evaluations)),
+                        fails = trialFails.union(extractFails(cohortMatch.evaluations)),
+                        phase = phase
+                    )
+                }
             }
         }.sortedWith(EvaluatedCohortComparator())
     }
@@ -73,6 +76,15 @@ object EvaluatedCohortFactory {
                 else -> emptySet()
             }
         }.toSet()
+    }
+
+    private fun <T> filteredMatches(
+        matches: List<T>, filterOnSOCExhaustionAndTumorType: Boolean, evaluations: (T) -> Map<Eligibility, Evaluation>
+    ) = if (!filterOnSOCExhaustionAndTumorType) matches else {
+        matches.filter {
+            val trialWarningsAndFails = extractWarnings(evaluations(it)) + extractFails(evaluations(it))
+            !trialWarningsAndFails.any { trialWarningOrFail -> trialWarningOrFail.contains("Patient has not exhausted SOC") } && "Tumor type" !in trialWarningsAndFails
+        }
     }
 
     private fun extractFails(evaluations: Map<Eligibility, Evaluation>): Set<String> {

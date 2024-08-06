@@ -29,7 +29,7 @@ data class ReporterConfig(
             options.addOption(OVERRIDE_YAML_ARGUMENT, true, OVERRIDE_YAML_DESCRIPTION)
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where the report will be written to")
             options.addOption(ENABLE_EXTENDED_MODE, false, "If set, includes trial matching details")
-            options.addOption(PROFILE, true, "${ConfigurationProfile.values().joinToString("|") { it.name }} (optional)")
+            options.addOption(PROFILE, true, "${ConfigurationProfile.entries.joinToString("|") { it.name }} (optional)")
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
             return options
         }

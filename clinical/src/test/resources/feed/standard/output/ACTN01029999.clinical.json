@@ -22,11 +22,11 @@
     "stage": "IV",
     "hasMeasurableDisease": true,
     "hasBrainLesions": true,
-    "brainLesionsCount": 1,
-    "hasActiveBrainLesions": null,
+    "brainLesionsCount": 2,
+    "hasActiveBrainLesions": true,
     "hasCnsLesions": false,
     "cnsLesionsCount": 0,
-    "hasActiveCnsLesions": null,
+    "hasActiveCnsLesions": false,
     "hasBoneLesions": false,
     "boneLesionsCount": 0,
     "hasLiverLesions": false,
@@ -110,7 +110,7 @@
       "isContraindicationForTherapy": true
     }
   ],
-  "priorMolecularTests": [
+  "priorIHCTests": [
     {
       "test": "IHC",
       "item": "ERBB2",
@@ -151,6 +151,26 @@
       "scoreValue": null,
       "scoreValueUnit": null,
       "impliesPotentialIndeterminateStatus": false
+    }
+  ],
+  "priorSequencingTests": [
+    {
+      "test": "Archer FP Lung Target",
+      "date": {
+        "year": 2024,
+        "month": 7,
+        "day": 15
+      },
+      "variants": [
+        {
+          "gene": "KRAS",
+          "hgvsCodingImpact": "c.34G>T"
+        }
+      ],
+      "fusions": [],
+      "amplifications": [],
+      "skippedExons": [],
+      "deletedGenes": []
     }
   ],
   "complications": [

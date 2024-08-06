@@ -32,6 +32,7 @@ object PatientRecordFactory {
             vitalFunctions = clinical.vitalFunctions,
             bloodTransfusions = clinical.bloodTransfusions,
             medications = clinical.medications,
+            priorIHCTests = clinical.priorIHCTests,
             molecularHistory = molecularHistory ?: MolecularHistory.empty()
         )
     }

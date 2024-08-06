@@ -4,7 +4,8 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider
 import com.hartwig.actin.algo.datamodel.TreatmentMatch
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
-import com.hartwig.actin.algo.interpretation.EvaluatedTreatmentAnnotator
+import com.hartwig.actin.algo.soc.EvaluatedTreatmentAnnotator
+import com.hartwig.actin.algo.soc.PersonalizedDataInterpreter
 import com.hartwig.actin.algo.soc.RecommendationEngine
 import com.hartwig.actin.algo.soc.RecommendationEngineFactory
 import com.hartwig.actin.efficacy.EfficacyEntry
@@ -16,14 +17,22 @@ class TreatmentMatcher(
     private val trials: List<Trial>,
     private val referenceDateProvider: ReferenceDateProvider,
     private val evaluatedTreatmentAnnotator: EvaluatedTreatmentAnnotator,
-    private val trialSource: String
+    private val trialSource: String,
+    private val personalizationDataPath: String? = null
 ) {
 
     fun evaluateAndAnnotateMatchesForPatient(patient: PatientRecord): TreatmentMatch {
         val trialMatches = trialMatcher.determineEligibility(patient, trials)
 
-        val standardOfCareMatches = if (!recommendationEngine.standardOfCareCanBeEvaluatedForPatient(patient)) null else {
-            evaluatedTreatmentAnnotator.annotate(recommendationEngine.standardOfCareEvaluatedTreatments(patient))
+        val (standardOfCareMatches, personalizedDataAnalysis) = if (recommendationEngine.standardOfCareCanBeEvaluatedForPatient(patient)) {
+            val evaluatedTreatments = recommendationEngine.standardOfCareEvaluatedTreatments(patient)
+            val personalizedDataAnalysis = personalizationDataPath?.let { PersonalizedDataInterpreter.create(it).interpret(patient) }
+            Pair(
+                evaluatedTreatmentAnnotator.annotate(evaluatedTreatments, personalizedDataAnalysis?.treatmentAnalyses),
+                personalizedDataAnalysis
+            )
+        } else {
+            Pair(null, null)
         }
 
         return TreatmentMatch(
@@ -33,7 +42,8 @@ class TreatmentMatcher(
             referenceDateIsLive = referenceDateProvider.isLive,
             trialMatches = trialMatches,
             standardOfCareMatches = standardOfCareMatches,
-            trialSource = trialSource
+            trialSource = trialSource,
+            personalizedDataAnalysis = personalizedDataAnalysis
         )
     }
 
@@ -49,7 +59,8 @@ class TreatmentMatcher(
                 trials,
                 resources.referenceDateProvider,
                 EvaluatedTreatmentAnnotator.create(efficacyEvidence),
-                resources.algoConfiguration.trialSource
+                resources.algoConfiguration.trialSource,
+                resources.personalizationDataPath
             )
         }
     }

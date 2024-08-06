@@ -24,7 +24,7 @@ class SummaryChapter(private val report: Report) : ReportChapter {
     }
 
     override fun render(document: Document) {
-        if (report.config.showPatientHeader) {
+        if (report.config.includePatientHeader) {
             addPatientDetails(document)
         }
         addChapterTitle(document)
@@ -71,6 +71,7 @@ class SummaryChapter(private val report: Report) : ReportChapter {
             table.addCell(Cells.createTitle(generator.title()))
             table.addCell(Cells.create(generator.contents()))
             if (i < generators.size - 1) {
+                table.addCell(Cells.createEmpty())
                 table.addCell(Cells.createEmpty())
             }
         }

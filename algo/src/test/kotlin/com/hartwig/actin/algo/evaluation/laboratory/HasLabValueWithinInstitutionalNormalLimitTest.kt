@@ -4,25 +4,35 @@ import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class HasLabValueWithinInstitutionalNormalLimitTest {
 
+    private val function = HasLabValueWithinInstitutionalNormalLimit()
+    private val record = TestPatientFactory.createMinimalTestWGSPatientRecord()
+    private val labValue = LabTestFactory.create(value = 0.0)
+
     @Test
-    fun canEvaluate() {
-        val function = HasLabValueWithinInstitutionalNormalLimit()
-        val record = TestPatientFactory.createMinimalTestWGSPatientRecord()
+    fun `Should evaluate to undetermined if isOutsideRef is null`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.create(value = 0.0))
+            function.evaluate(record, LabMeasurement.CREATININE, labValue.copy(isOutsideRef = null))
         )
+    }
+
+    @Test
+    fun `Should pass if isOutsideRef is false`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.create(value = 0.0).copy(isOutsideRef = false))
+            function.evaluate(record, LabMeasurement.CREATININE, labValue.copy(isOutsideRef = false))
         )
-        val actual = function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.create(value = 0.0).copy(isOutsideRef = true))
-        assertEvaluation(EvaluationResult.FAIL, actual)
-        assertThat(actual.recoverable).isTrue
+    }
+
+    @Test
+    fun `Should fail if isOutsideRef is true`() {
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(record, LabMeasurement.CREATININE, labValue.copy(isOutsideRef = true))
+        )
     }
 }

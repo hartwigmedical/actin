@@ -9,7 +9,7 @@ object CohortStatusResolver {
         entries: List<TrialStatusEntry>,
         configuredCohortIds: CohortDefinitionConfig
     ): CohortStatusInterpretation {
-        val entriesByCohortId = entries.filter { it.cohortId != null }.associateBy { it.cohortId!!.toInt() }
+        val entriesByCohortId = entries.filter { it.cohortId != null }.associateBy { it.cohortId!! }
 
         val (matches, missingCohortErrors) = findEntriesByCohortIds(entriesByCohortId, configuredCohortIds)
 
@@ -30,23 +30,23 @@ object CohortStatusResolver {
     }
 
     private tailrec fun collectAncestorsFor(
-        entry: TrialStatusEntry, entriesByCohortId: Map<Int, TrialStatusEntry>, knownAncestorIds: List<Int> = emptyList()
-    ): List<Int> {
+        entry: TrialStatusEntry, entriesByCohortId: Map<String, TrialStatusEntry>, knownAncestorIds: List<String> = emptyList()
+    ): List<String> {
         if (entry.cohortParentId == null) {
             return knownAncestorIds
         }
         return collectAncestorsFor(entriesByCohortId[entry.cohortParentId]!!, entriesByCohortId, knownAncestorIds + entry.cohortParentId)
     }
 
-    private fun findCommonAncestor(matches: List<TrialStatusEntry>, entriesByCohortId: Map<Int, TrialStatusEntry>): Int? {
+    private fun findCommonAncestor(matches: List<TrialStatusEntry>, entriesByCohortId: Map<String, TrialStatusEntry>): String? {
         val firstPedigree = collectAncestorsFor(matches.first(), entriesByCohortId)
-        val pedigrees: List<Set<Int>> = matches.drop(1).map { match -> collectAncestorsFor(match, entriesByCohortId).toSet() }
+        val pedigrees: List<Set<String>> = matches.drop(1).map { match -> collectAncestorsFor(match, entriesByCohortId).toSet() }
         return firstPedigree.find { ancestor -> pedigrees.all { pedigree -> pedigree.contains(ancestor) } }
     }
 
     private fun interpretValidMatches(
         matches: List<TrialStatusEntry>,
-        entriesByCohortId: Map<Int, TrialStatusEntry>
+        entriesByCohortId: Map<String, TrialStatusEntry>
     ): Pair<InterpretedCohortStatus, List<TrialStatusDatabaseValidationError>> {
         if (isSingleParent(matches)) {
             return fromEntry(matches[0])
@@ -96,10 +96,10 @@ object CohortStatusResolver {
     }
 
     private fun findEntriesByCohortIds(
-        entriesByCohortId: Map<Int, TrialStatusEntry>,
+        entriesByCohortId: Map<String, TrialStatusEntry>,
         cohortDefinitionConfig: CohortDefinitionConfig
     ): Pair<List<TrialStatusEntry?>, List<CohortDefinitionValidationError>> {
-        val entriesAndValidationErrors = cohortDefinitionConfig.externalCohortIds.map(String::toInt).distinct().map { cohortId ->
+        val entriesAndValidationErrors = cohortDefinitionConfig.externalCohortIds.distinct().map { cohortId ->
             entriesByCohortId[cohortId] to if (entriesByCohortId.contains(cohortId)) null else {
                 CohortDefinitionValidationError(
                     cohortDefinitionConfig,

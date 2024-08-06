@@ -4,20 +4,20 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 
 class HasKnownHPVStatus : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val (indeterminatePriorTestsForHPV, conclusivePriorTestsForHPV) = record.molecularHistory.allIHCTests()
+        val (indeterminatePriorTestsForHPV, conclusivePriorTestsForHPV) = record.priorIHCTests
             .filter { (it.item?.contains("HPV") ?: false) }
-            .partition(PriorMolecularTest::impliesPotentialIndeterminateStatus)
+            .partition(PriorIHCTest::impliesPotentialIndeterminateStatus)
 
         val molecularRecords = record.molecularHistory.allOrangeMolecularRecords()
 
         return when {
-            molecularRecords.any { it.type == ExperimentType.WHOLE_GENOME && it.containsTumorCells } -> {
+            molecularRecords.any { it.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME && it.containsTumorCells } -> {
                 return EvaluationFactory.pass(
                     "WGS has successfully been performed so molecular results are available for HPV",
                     "WGS results available for HPV"
@@ -31,7 +31,7 @@ class HasKnownHPVStatus : EvaluationFunction {
                 )
             }
 
-            molecularRecords.any { it.type == ExperimentType.WHOLE_GENOME } -> {
+            molecularRecords.any { it.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME } -> {
                 EvaluationFactory.undetermined(
                     "Undetermined HPV status due to low purity in WGS",
                     "Undetermined HPV status due to low purity in WGS"

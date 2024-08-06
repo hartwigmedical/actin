@@ -16,7 +16,6 @@ import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.serialization.TrialJson
-import java.io.IOException
 import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
@@ -26,6 +25,7 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
 class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
+
     fun run() {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
 
@@ -61,11 +61,11 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
             functionInputResolver,
             atcTree,
             treatmentDatabase,
+            config.personalizationDataPath,
             environmentConfiguration.algo
         )
         val evidenceEntries = EfficacyEntryFactory(treatmentDatabase).extractEfficacyEvidenceFromCkbFile(config.extendedEfficacyJson)
-        val match = TreatmentMatcher.create(resources, trials, evidenceEntries)
-            .evaluateAndAnnotateMatchesForPatient(patient)
+        val match = TreatmentMatcher.create(resources, trials, evidenceEntries).evaluateAndAnnotateMatchesForPatient(patient)
 
         TreatmentMatchPrinter.printMatch(match)
         TreatmentMatchJson.write(match, config.outputDirectory)
@@ -79,7 +79,6 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
     }
 }
 
-@Throws(IOException::class)
 fun main(args: Array<String>) {
     val options: Options = TreatmentMatcherConfig.createOptions()
     try {

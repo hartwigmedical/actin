@@ -2,12 +2,12 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.doid.DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.createFullExpandedDoidTree
 import com.hartwig.actin.algo.soc.RecommendationEngineFactory
 import com.hartwig.actin.doid.DoidModel
-import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.createFullExpandedDoidTree
-import com.hartwig.actin.algo.doid.DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID
 
 class HasExhaustedSOCTreatments(
     private val recommendationEngineFactory: RecommendationEngineFactory, private val doidModel: DoidModel
@@ -34,7 +34,9 @@ class HasExhaustedSOCTreatments(
 
             isNSCLC -> {
                 if (hasReceivedPlatinumBasedDoubletOrMore) {
-                    EvaluationFactory.undetermined("Undetermined exhaustion of SOC", "Undetermined exhaustion of SOC")
+                    EvaluationFactory.pass(
+                        "SOC considered exhausted since platinum doublet in treatment history", "SOC considered exhausted"
+                    )
                 } else EvaluationFactory.fail(
                     "Patient has not exhausted SOC (at least platinum doublet remaining)",
                     "SOC not exhausted: at least platinum doublet remaining"

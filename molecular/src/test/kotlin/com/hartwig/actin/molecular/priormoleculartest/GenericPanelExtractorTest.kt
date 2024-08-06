@@ -1,12 +1,13 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
+import com.hartwig.actin.molecular.datamodel.AVL_PANEL
+import com.hartwig.actin.molecular.datamodel.FREE_TEXT_PANEL
+import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericVariantExtraction
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 
 class GenericPanelExtractorTest {
@@ -21,7 +22,6 @@ class GenericPanelExtractorTest {
         )
         val molecularTests = extractor.extract(genericPanelTests)
         assertThat(molecularTests).hasSize(2)
-
     }
 
     @Test
@@ -32,7 +32,10 @@ class GenericPanelExtractorTest {
         )
         val molecularTests = extractor.extract(priorMolecularTests)
 
-        val expected = GenericPanelExtraction(GenericPanelType.AVL, variants = listOf(GenericVariantExtraction(GENE, HGVS_CODING)))
+        val expected = GenericPanelExtraction(
+            panelType = AVL_PANEL,
+            variants = listOf(PanelVariantExtraction(GENE, HGVS_CODING))
+        )
         assertThat(molecularTests).containsExactly(expected)
     }
 
@@ -42,7 +45,7 @@ class GenericPanelExtractorTest {
         val molecularTests = extractor.extract(priorMolecularTests)
 
         val expected = GenericPanelExtraction(
-            GenericPanelType.FREE_TEXT,
+            panelType = FREE_TEXT_PANEL,
             variants = emptyList(),
             fusions = listOf(GenericFusionExtraction(GENE_UP, GENE_DOWN))
         )
@@ -58,10 +61,10 @@ class GenericPanelExtractorTest {
         val molecularTests = extractor.extract(priorMolecularTests)
 
         val expected = GenericPanelExtraction(
-            GenericPanelType.FREE_TEXT,
+            panelType = FREE_TEXT_PANEL,
             variants = listOf(
-                GenericVariantExtraction(GENE, HGVS_CODING),
-                GenericVariantExtraction(GENE, HGVS_PROTEIN)
+                PanelVariantExtraction(GENE, HGVS_CODING),
+                PanelVariantExtraction(GENE, HGVS_PROTEIN)
             )
         )
         assertThat(molecularTests).containsExactly(expected)
@@ -69,14 +72,14 @@ class GenericPanelExtractorTest {
 
     @Test
     fun `Should throw exception on unextractable freetext record`() {
-        val record = PriorMolecularTest(
+        val record = PriorIHCTest(
             test = "Freetext",
             item = "KRAS A1Z",
             measure = null,
             impliesPotentialIndeterminateStatus = false
         )
         val priorMolecularTests = listOf(record)
-        Assertions.assertThatThrownBy {
+        assertThatThrownBy {
             extractor.extract(priorMolecularTests)
         }.isInstanceOf(IllegalArgumentException::class.java)
     }
@@ -89,7 +92,7 @@ class GenericPanelExtractorTest {
         val molecularTests = extractor.extract(priorMolecularTests)
 
         val expected = GenericPanelExtraction(
-            GenericPanelType.FREE_TEXT,
+            panelType = FREE_TEXT_PANEL,
             genesWithNegativeResults = setOf(GENE)
         )
         assertThat(molecularTests).containsExactly(expected)

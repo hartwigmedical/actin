@@ -6,8 +6,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.util.ValueComparison
 import com.hartwig.actin.clinical.datamodel.LabUnit
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
-import org.assertj.core.api.Assertions
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class HasLimitedLabValueTest {
@@ -28,7 +27,7 @@ class HasLimitedLabValueTest {
     fun `Should evaluate to recoverable undetermined if lab value is above maximum value but within 10 percent error margin`() {
         val evaluation = function.evaluate(record, measurement, LabTestFactory.create(measurement, 1.05))
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        Assertions.assertThat(evaluation.recoverable).isTrue()
+        assertThat(evaluation.recoverable).isTrue()
     }
 
     @Test
@@ -46,7 +45,7 @@ class HasLimitedLabValueTest {
     fun `Should fail if lab value is above maximum value and outside error margin`() {
         val actual = function.evaluate(record, measurement, LabTestFactory.create(measurement, 2.0))
         assertEvaluation(EvaluationResult.FAIL, actual)
-        Assert.assertTrue(actual.recoverable)
+        assertThat(actual.recoverable).isTrue()
     }
 
     @Test

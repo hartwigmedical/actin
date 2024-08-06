@@ -8,8 +8,8 @@ import com.hartwig.actin.algo.evaluation.molecular.NsclcDriverGeneStatusesAreAva
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularTest
+import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariantExtraction
 import org.assertj.core.api.Assertions
 import org.junit.Test
 
@@ -23,7 +23,7 @@ class NsclcDriverGeneStatusesAreAvailableTest {
     fun `Should pass if WGS is available and contains tumor cells`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(MolecularTestFactory.withExperimentTypeAndContainingTumorCells(ExperimentType.WHOLE_GENOME, true))
+            function.evaluate(MolecularTestFactory.withExperimentTypeAndContainingTumorCells(ExperimentType.HARTWIG_WHOLE_GENOME, true))
         )
     }
 
@@ -31,7 +31,7 @@ class NsclcDriverGeneStatusesAreAvailableTest {
     fun `Should pass if targeted panel analysis is available and contains tumor cells`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(MolecularTestFactory.withExperimentTypeAndContainingTumorCells(ExperimentType.TARGETED, true))
+            function.evaluate(MolecularTestFactory.withExperimentTypeAndContainingTumorCells(ExperimentType.HARTWIG_TARGETED, true))
         )
     }
 
@@ -49,7 +49,7 @@ class NsclcDriverGeneStatusesAreAvailableTest {
     fun `Should fail if WGS is available but contains no tumor cells`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withExperimentTypeAndContainingTumorCells(ExperimentType.WHOLE_GENOME, false))
+            function.evaluate(MolecularTestFactory.withExperimentTypeAndContainingTumorCells(ExperimentType.HARTWIG_WHOLE_GENOME, false))
         )
     }
 
@@ -57,7 +57,7 @@ class NsclcDriverGeneStatusesAreAvailableTest {
     fun `Should fail if targeted panel analysis is available but contains no tumor cells`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withExperimentTypeAndContainingTumorCells(ExperimentType.TARGETED, false))
+            function.evaluate(MolecularTestFactory.withExperimentTypeAndContainingTumorCells(ExperimentType.HARTWIG_TARGETED, false))
         )
     }
 
@@ -87,7 +87,7 @@ class NsclcDriverGeneStatusesAreAvailableTest {
     }
 
     private fun archerPanelWithVarientForGene(it: String) = TestPanelRecordFactory.empty()
-        .copy(archerPanelExtraction = ArcherPanelExtraction(variants = listOf(ArcherVariantExtraction(it, HGVS_VARIANT))))
+        .copy(panelExtraction = ArcherPanelExtraction(variants = listOf(PanelVariantExtraction(it, HGVS_VARIANT))))
 
     private fun createNonWGSRecordWithOptionalPriorTests(priorTest: List<MolecularTest> = emptyList()): PatientRecord {
         val history = MolecularHistory(priorTest)

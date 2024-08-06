@@ -2,26 +2,26 @@
   "allergies": [
     {
       "name": "MORFINE",
-      "start_date": "2020-01-01T10:10:00",
-      "end_date": "2020-01-01T10:10:00",
-      "verification_status": "Confirmed",
-      "clinical_status": "Active",
+      "startDate": "2020-01-01T10:10:00",
+      "endDate": "2020-01-01T10:10:00",
+      "verificationStatus": "Confirmed",
+      "clinicalStatus": "Active",
       "severity": "Unknown",
       "category": "Medication"
     },
     {
       "name": "Nikkel",
-      "start_date": "2020-01-01T10:10:00",
-      "end_date": "2020-01-01T10:10:00",
-      "verification_status": "Confirmed",
-      "clinical_status": "Active",
+      "startDate": "2020-01-01T10:10:00",
+      "endDate": "2020-01-01T10:10:00",
+      "verificationStatus": "Confirmed",
+      "clinicalStatus": "Active",
       "severity": "Unknown",
       "category": "Other"
     }
   ],
-  "blood_transfusions": [
+  "bloodTransfusions": [
     {
-      "evaluation_time": "2020-01-01T10:10:00",
+      "evaluationTime": "2020-01-01T10:10:00",
       "product": "Erytrocytes Filtered"
     }
   ],
@@ -29,157 +29,169 @@
     {
       "name": "Overige",
       "categories": [],
-      "start_date": "2020-01-01T10:10:00",
-      "end_date": "2020-01-01"
+      "startDate": "2020-01-01T10:10:00",
+      "endDate": "2020-01-01"
     },
     {
       "name": "Uncurateable",
       "categories": [],
-      "start_date": "2020-01-01T10:10:00",
-      "end_date": "2020-01-01"
+      "startDate": "2020-01-01T10:10:00",
+      "endDate": "2020-01-01"
     }
   ],
-  "lab_values": [
+  "labValues": [
     {
-      "evaluation_time": "2020-01-01T10:10:00",
+      "evaluationTime": "2020-01-01T10:10:00",
       "measure": "Neutrof. granulocyten",
-      "measure_code": "dc_NeutrGran",
+      "measureCode": "dc_NeutrGran",
       "category": "Hematologie",
       "value": "3.7",
       "unit": "10E9/l",
-      "ref_lower_bound": 3.5,
-      "ref_upper_bound": 3.5,
+      "refLowerBound": 3.5,
+      "refUpperBound": 3.5,
       "comparator": null,
-      "ref_flag": "N"
+      "refFlag": "N"
     },
     {
-      "evaluation_time": "2020-01-01T10:10:00",
+      "evaluationTime": "2020-01-01T10:10:00",
       "measure": "O2-Saturatie gemeten",
-      "measure_code": "bg_O2Sgem",
+      "measureCode": "bg_O2Sgem",
       "category": "Bloedgas analyse",
       "value": "88",
       "unit": "%",
-      "ref_lower_bound": 3.5,
-      "ref_upper_bound": 3.5,
+      "refLowerBound": 3.5,
+      "refUpperBound": 3.5,
       "comparator": null,
-      "ref_flag": "H"
+      "refFlag": "H"
     },
     {
-      "evaluation_time": "2020-01-01T10:10:00",
+      "evaluationTime": "2020-01-01T10:10:00",
       "measure": "Trombocyten",
-      "measure_code": "Plt",
+      "measureCode": "Plt",
       "category": "Hematologie",
       "value": "252",
       "unit": "10E9/l",
-      "ref_lower_bound": 3.5,
-      "ref_upper_bound": 3.5,
+      "refLowerBound": 3.5,
+      "refUpperBound": 3.5,
       "comparator": null,
-      "ref_flag": "N"
+      "refFlag": "N"
     },
     {
-      "evaluation_time": "2020-01-01T10:10:00",
+      "evaluationTime": "2020-01-01T10:10:00",
       "measure": "Lymfocyten",
-      "measure_code": "dc_Lymfo",
+      "measureCode": "dc_Lymfo",
       "category": "Cellen (Automaat)",
       "value": "0.6",
       "unit": "10E9/l",
-      "ref_lower_bound": 3.5,
-      "ref_upper_bound": 3.5,
+      "refLowerBound": 3.5,
+      "refUpperBound": 3.5,
       "comparator": null,
-      "ref_flag": "L"
+      "refFlag": "L"
     },
     {
-      "evaluation_time": "2020-01-01T10:10:00",
+      "evaluationTime": "2020-01-01T10:10:00",
       "measure": "Hemoglobine",
-      "measure_code": "Hb",
+      "measureCode": "Hb",
       "category": "Hematologie",
       "value": "7.7",
       "unit": "mmol/l",
-      "ref_lower_bound": 3.5,
-      "ref_upper_bound": 3.5,
+      "refLowerBound": 3.5,
+      "refUpperBound": 3.5,
       "comparator": null,
-      "ref_flag": "N"
+      "refFlag": "N"
     }
   ],
   "medications": [
     {
       "name": "METOCLOPRAMIDE TABLET 10MG",
-      "atc_code": "N02BE01",
-      "start_date": "2020-01-01T10:10:00",
-      "end_date": "2020-01-01T10:10:00",
-      "administration_route": "oraal",
+      "atcCode": "N02BE01",
+      "startDate": "2020-01-01T10:10:00",
+      "endDate": "2020-01-01T10:10:00",
+      "administrationRoute": "oraal",
       "dosage": 3.5,
-      "dosage_unit": "piece",
+      "dosageUnit": "piece",
       "frequency": 3.5,
-      "frequency_unit": "day",
-      "period_between_dosages_value": 3.5,
-      "period_between_dosages_unit": null,
-      "administration_only_if_needed": true,
-      "is_trial": true,
-      "is_self_care": true
+      "frequencyUnit": "day",
+      "periodBetweenDosagesValue": 3.5,
+      "periodBetweenDosagesUnit": null,
+      "administrationOnlyIfNeeded": true,
+      "isTrial": true,
+      "isSelfCare": true
     },
     {
       "name": "LORAZEPAM TABLET 1MG",
-      "atc_code": "N02BE01",
-      "start_date": "2020-01-01T10:10:00",
-      "end_date": "2020-01-01T10:10:00",
-      "administration_route": "oraal",
+      "atcCode": "N02BE01",
+      "startDate": "2020-01-01T10:10:00",
+      "endDate": "2020-01-01T10:10:00",
+      "administrationRoute": "oraal",
       "dosage": 3.5,
-      "dosage_unit": "mg",
+      "dosageUnit": "mg",
       "frequency": 3.5,
-      "frequency_unit": "day",
-      "period_between_dosages_value": 3.5,
-      "period_between_dosages_unit": null,
-      "administration_only_if_needed": true,
-      "is_trial": false,
-      "is_self_care": false
+      "frequencyUnit": "day",
+      "periodBetweenDosagesValue": 3.5,
+      "periodBetweenDosagesUnit": null,
+      "administrationOnlyIfNeeded": true,
+      "isTrial": false,
+      "isSelfCare": false
     }
   ],
-  "patient_details": {
-    "hashed_id": "9E9uYbFvpFDjJVCs9XjDGF1LmP8Po6Zb80pYnoBrWg0=",
-    "birth_year": 5,
+  "patientDetails": {
+    "hashedId": "9E9uYbFvpFDjJVCs9XjDGF1LmP8Po6Zb80pYnoBrWg0=",
+    "birthYear": 5,
     "gender": "Female",
-    "registration_date": "2020-01-01"
+    "registrationDate": "2020-01-01"
   },
-  "molecular_test_history": [
+  "molecularTestHistory": [
     {
       "type": "Archer FP Lung Target",
       "measure": "EGFR",
       "result": "c.2573T>G",
-      "result_date": "2024-03-25",
-      "biopsy_location": "lymfklier*biopt*metastase adenocarcinoom*long",
-      "biopsy_date": "2024-03-03"
+      "resultDate": "2024-03-25",
+      "biopsyLocation": "lymfklier*biopt*metastase adenocarcinoom*long",
+      "biopsyDate": "2024-03-03"
     },
     {
       "type": "Archer FP Lung Target",
       "measure": null,
       "result": "GEEN fusie(s) aangetoond",
-      "result_date": "2020-12-03",
-      "biopsy_location": "Long",
-      "biopsy_date": "2020-11-12"
+      "resultDate": "2020-12-03",
+      "biopsyLocation": "Long",
+      "biopsyDate": "2020-11-12"
     }
   ],
-  "prior_other_conditions": [
+  "molecularTests": [
+    {
+      "test": "Archer FP Lung Target",
+      "date": "2024-07-15",
+      "results": [
+        {
+          "gene": "KRAS",
+          "hgvsCodingImpact": "c.34G>T"
+        }
+      ]
+    }
+  ],
+  "priorOtherConditions": [
     {
       "name": "pijn bij maligne neoplasma van longen",
-      "start_date": "2020-01-01T10:10:00",
-      "end_date": "2020-01-01T10:10:00"
+      "startDate": "2020-01-01T10:10:00",
+      "endDate": "2020-01-01T10:10:00"
     },
     {
       "name": "aandoening van mitralis-, aorta- en tricuspidalisklep",
-      "start_date": "2020-01-01T10:10:00",
-      "end_date": "2020-01-01T10:10:00"
+      "startDate": "2020-01-01T10:10:00",
+      "endDate": "2020-01-01T10:10:00"
     }
   ],
   "surgeries": [
     {
-      "surgery_name": "<CRYO Skelet door Radioloog",
-      "end_date": "2020-01-01T10:10:00",
+      "surgeryName": "<CRYO Skelet door Radioloog",
+      "endDate": "2020-01-01T10:10:00",
       "status": "FINISHED"
     },
     {
-      "surgery_name": null,
-      "end_date": "2020-01-01T10:10:00",
+      "surgeryName": null,
+      "endDate": "2020-01-01T10:10:00",
       "status": "CANCELLED"
     }
   ],
@@ -189,8 +201,8 @@
       "categories": [
         "GASTROINTESTINAL DISORDERS"
       ],
-      "evaluated_date": "2020-01-01T10:10:00",
-      "end_date": "2020-01-01T10:10:00",
+      "evaluatedDate": "2020-01-01T10:10:00",
+      "endDate": "2020-01-01T10:10:00",
       "grade": 5
     },
     {
@@ -198,23 +210,23 @@
       "categories": [
         "GENERAL DISORDERS AND ADMINISTRATION SITE CONDITIONS"
       ],
-      "evaluated_date": "2020-01-01T10:10:00",
-      "end_date": "2020-01-01T10:10:00",
+      "evaluatedDate": "2020-01-01T10:10:00",
+      "endDate": "2020-01-01T10:10:00",
       "grade": 5
     }
   ],
-  "treatment_history": [
+  "treatmentHistory": [
     {
-      "treatment_name": "capecitabine and oxi",
+      "treatmentName": "capecitabine and oxi",
       "intention": null,
-      "start_date": "2020-01-01T10:10:00",
-      "end_date": "2020-01-01T10:10:00",
-      "stop_reason": null,
-      "stop_reason_date": "2020-01-01T10:10:00",
+      "startDate": "2020-01-01T10:10:00",
+      "endDate": "2020-01-01T10:10:00",
+      "stopReason": null,
+      "stopReasonDate": "2020-01-01T10:10:00",
       "response": null,
-      "response_date": "2020-01-01T10:10:00",
-      "intended_cycles": 5,
-      "administered_cycles": 5,
+      "responseDate": "2020-01-01T10:10:00",
+      "intendedCycles": 5,
+      "administeredCycles": 5,
       "modifications": [
         {
           "date": "2020-01-01T10:10:00",
@@ -222,30 +234,30 @@
           "name": "capecitabine and oxi"
         }
       ],
-      "grade_2_toxicities": null,
-      "grade_2_toxicities_date": "2020-01-01T10:10:00",
-      "administered_in_study": true
+      "grade2Toxicities": null,
+      "grade2ToxicitiesDate": "2020-01-01T10:10:00",
+      "administeredInStudy": true
     }
   ],
-  "tumor_details": {
-    "diagnosis_date": "2020-01-01T10:10:00",
-    "tumor_location": "long",
-    "tumor_type": "metastase adenocarcinoom",
-    "tumor_grade_differentiation": "Microscopie:\ntest\n\nConclusie:\n\nunrelated.\r\n\r\n\r\nimmunohistochemie ERBB2 3+\n\n",
-    "tumor_stage": "IV",
-    "tumor_stage_date": "2020-01-01T10:10:00",
-    "lesion_site": "brain",
+  "tumorDetails": {
+    "diagnosisDate": "2020-01-01T10:10:00",
+    "tumorLocation": "long",
+    "tumorType": "metastase adenocarcinoom",
+    "tumorGradeDifferentiation": "Microscopie:\ntest\n\nConclusie:\n\nunrelated.\r\n\r\n\r\nimmunohistochemie ERBB2 3+\n\n",
+    "tumorStage": "IV",
+    "tumorStageDate": "2020-01-01T10:10:00",
+    "lesionSite": "brain",
     "lesions": [
       {
         "location": "brain",
         "sublocation": null,
-        "diagnosis_date": "2020-01-01"
+        "diagnosisDate": "2020-01-01"
       }
     ],
-    "measurable_disease": true,
-    "measurable_disease_date": "2020-01-01T10:10:00"
+    "measurableDisease": true,
+    "measurableDiseaseDate": "2020-01-01T10:10:00"
   },
-  "prior_primaries": [],
+  "priorPrimaries": [],
   "measurements": [
     {
       "date": "2020-01-01T10:10:00",
@@ -290,13 +302,13 @@
       "unit": "kilograms"
     }
   ],
-  "who_evaluations": [
+  "whoEvaluations": [
     {
-      "evaluation_date": "2020-01-02T10:10:00",
+      "evaluationDate": "2020-01-02T10:10:00",
       "status": "1"
     },
     {
-      "evaluation_date": "2020-01-01T10:10:00",
+      "evaluationDate": "2020-01-01T10:10:00",
       "status": "0"
     }
   ]

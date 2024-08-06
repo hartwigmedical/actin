@@ -1,22 +1,30 @@
 package com.hartwig.actin.molecular.datamodel.panel.generic
 
+import com.hartwig.actin.molecular.datamodel.AVL_PANEL
+import com.hartwig.actin.molecular.datamodel.panel.PanelAmplificationExtraction
+import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
+import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import java.time.LocalDate
 
 val GENERIC_PANEL_ALWAYS_TESTED_GENES = setOf("EGFR", "BRAF", "KRAS")
 
 data class GenericPanelExtraction(
-    val panelType: GenericPanelType,
-    val variants: List<GenericVariantExtraction> = emptyList(),
     val fusions: List<GenericFusionExtraction> = emptyList(),
     val exonDeletions: List<GenericExonDeletionExtraction> = emptyList(),
     val genesWithNegativeResults: Set<String> = emptySet(),
-    val date: LocalDate? = null,
-) {
-    fun testedGenes(): Set<String> {
+    override val panelType: String,
+    override val amplifications: List<PanelAmplificationExtraction> = emptyList(),
+    override val variants: List<PanelVariantExtraction> = emptyList(),
+    override val date: LocalDate? = null,
+    override val tumorMutationalBurden: Double? = null,
+    override val isMicrosatelliteUnstable: Boolean? = null,
+    override val extractionClass: String = GenericPanelExtraction::class.java.simpleName
+) : PanelExtraction {
+    override fun testedGenes(): Set<String> {
         return genesHavingResultsInPanel() + alwaysTestedGenes() + genesWithNegativeResults
     }
 
-    fun events() = (variants + fusions + exonDeletions).toSet()
+    override fun events() = (variants + fusions + exonDeletions).toSet()
 
     private fun genesWithVariants(): Set<String> {
         return variants.map { it.gene }.toSet()
@@ -31,10 +39,7 @@ data class GenericPanelExtraction(
     }
 
     private fun alwaysTestedGenes(): Set<String> {
-        return when (panelType) {
-            GenericPanelType.FREE_TEXT -> emptySet()
-            else -> GENERIC_PANEL_ALWAYS_TESTED_GENES
-        }
+        return if (panelType == AVL_PANEL) GENERIC_PANEL_ALWAYS_TESTED_GENES else emptySet()
     }
 
     fun genesHavingResultsInPanel(): Set<String> {

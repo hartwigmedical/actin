@@ -150,7 +150,7 @@ class TrialStatusConfigInterpreterTest {
         )
 
         val newCohorts = trialStatusConfigInterpreter.extractNewTrialStatusDatabaseCohorts(cohortConfigs)
-        assertThat(newCohorts.map { it.cohortId }).containsExactly(1, 2)
+        assertThat(newCohorts.map { it.cohortId }).containsExactly("1", "2")
 
         trialStatusConfigInterpreter.checkModelForNewCohorts(cohortConfigs)
     }
@@ -175,18 +175,18 @@ class TrialStatusConfigInterpreterTest {
                         entries = listOf(
                             TestTrialStatusDatabaseEntryFactory.MINIMAL.copy(
                                 metcStudyID = TestTrialData.TEST_TRIAL_METC_1,
-                                cohortId = 1,
+                                cohortId = "1",
                                 cohortParentId = null
                             ),
                             TestTrialStatusDatabaseEntryFactory.MINIMAL.copy(
                                 metcStudyID = TestTrialData.TEST_TRIAL_METC_1,
-                                cohortId = 2,
-                                cohortParentId = 1
+                                cohortId = "2",
+                                cohortParentId = "1"
                             ),
                             TestTrialStatusDatabaseEntryFactory.MINIMAL.copy(
                                 metcStudyID = TestTrialData.TEST_TRIAL_METC_1,
-                                cohortId = 3,
-                                cohortParentId = 1
+                                cohortId = "3",
+                                cohortParentId = "1"
                             )
                         )
                     )

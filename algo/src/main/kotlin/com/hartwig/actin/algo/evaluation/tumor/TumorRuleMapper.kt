@@ -74,273 +74,261 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasSolidPrimaryTumorCreator(): FunctionCreator {
-        return FunctionCreator { HasSolidPrimaryTumor(doidModel()) }
+        return { HasSolidPrimaryTumor(doidModel()) }
     }
 
     private fun hasSolidPrimaryTumorCreatorIncludingLymphomaCreator(): FunctionCreator {
-        return FunctionCreator { HasSolidPrimaryTumorIncludingLymphoma(doidModel()) }
+        return { HasSolidPrimaryTumorIncludingLymphoma(doidModel()) }
     }
 
     private fun hasPrimaryTumorBelongsToDoidTermCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val doidTermToMatch = functionInputResolver().createOneDoidTermInput(function)
             PrimaryTumorLocationBelongsToDoid(doidModel(), doidModel().resolveDoidForTerm(doidTermToMatch)!!, null)
         }
     }
 
     private fun hasPrimaryTumorBelongsToDoidTermDistalSubLocationCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val doidTermToMatch = functionInputResolver().createOneDoidTermInput(function)
             PrimaryTumorLocationBelongsToDoid(doidModel(), doidModel().resolveDoidForTerm(doidTermToMatch)!!, "distal")
         }
     }
 
     private fun hasCancerOfUnknownPrimaryCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val categoryOfCUP = functionInputResolver().createOneTumorTypeInput(function)
             HasCancerOfUnknownPrimary(doidModel(), categoryOfCUP)
         }
     }
 
     private fun hasBreastCancerWithPositiveReceptorOfTypeCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val receptorType = functionInputResolver().createOneReceptorTypeInput(function)
             HasBreastCancerWithPositiveReceptorOfType(doidModel(), receptorType)
         }
     }
 
     private fun hasCancerWithNeuroendocrineComponentCreator(): FunctionCreator {
-        return FunctionCreator { HasCancerWithNeuroendocrineComponent(doidModel()) }
+        return { HasCancerWithNeuroendocrineComponent(doidModel()) }
     }
 
     private fun hasCancerWithSmallCellComponentCreator(): FunctionCreator {
-        return FunctionCreator { HasCancerWithSmallCellComponent(doidModel()) }
+        return { HasCancerWithSmallCellComponent(doidModel()) }
     }
 
     private fun hasKnownSCLCTransformationCreator(): FunctionCreator {
-        return FunctionCreator { HasKnownSCLCTransformation() }
+        return { HasKnownSCLCTransformation(doidModel()) }
     }
 
     private fun hasNonSquamousNSCLCCreator(): FunctionCreator {
-        return FunctionCreator { HasNonSquamousNSCLC(doidModel()) }
+        return { HasNonSquamousNSCLC(doidModel()) }
     }
 
     private fun hasOvarianCancerWithMucinousComponentCreator(): FunctionCreator {
-        return FunctionCreator { HasOvarianCancerWithMucinousComponent(doidModel()) }
+        return { HasOvarianCancerWithMucinousComponent(doidModel()) }
     }
 
     private fun hasOvarianBorderlineTumorCreator(): FunctionCreator {
-        return FunctionCreator { HasOvarianBorderlineTumor(doidModel()) }
+        return { HasOvarianBorderlineTumor(doidModel()) }
     }
 
     private fun hasStomachUndifferentiatedTumorCreator(): FunctionCreator {
-        return FunctionCreator { HasStomachUndifferentiatedTumor(doidModel()) }
+        return { HasStomachUndifferentiatedTumor(doidModel()) }
     }
 
     private fun hasSecondaryGlioblastomaCreator(): FunctionCreator {
-        return FunctionCreator { HasSecondaryGlioblastoma(doidModel()) }
+        return { HasSecondaryGlioblastoma(doidModel()) }
     }
 
     private fun hasCytologicalDocumentationOfTumorTypeCreator(): FunctionCreator {
-        return FunctionCreator { HasCytologicalDocumentationOfTumorType() }
+        return { HasCytologicalDocumentationOfTumorType() }
     }
 
     private fun hasHistologicalDocumentationOfTumorTypeCreator(): FunctionCreator {
-        return FunctionCreator { HasHistologicalDocumentationOfTumorType() }
+        return { HasHistologicalDocumentationOfTumorType() }
     }
 
     private fun hasAnyTumorStageCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val stagesToMatch = functionInputResolver().createManyTumorStagesInput(function)
             HasTumorStage(stagesToMatch)
         }
     }
 
     private fun hasLocallyAdvancedCancerCreator(): FunctionCreator {
-        return FunctionCreator {
-            DerivedTumorStageEvaluationFunction(HasLocallyAdvancedCancer())
-        }
+        return { DerivedTumorStageEvaluationFunction(HasLocallyAdvancedCancer()) }
     }
 
     private fun hasMetastaticCancerCreator(): FunctionCreator {
-        return FunctionCreator {
-            DerivedTumorStageEvaluationFunction(
-                HasMetastaticCancer(doidModel())
-            )
+        return {
+            DerivedTumorStageEvaluationFunction(HasMetastaticCancer(doidModel()))
         }
     }
 
     private fun hasUnresectableCancerCreator(): FunctionCreator {
-        return FunctionCreator {
-            DerivedTumorStageEvaluationFunction(HasUnresectableCancer())
-        }
+        return { DerivedTumorStageEvaluationFunction(HasUnresectableCancer()) }
     }
 
     private fun hasUnresectablePeritonealMetastasesCreator(): FunctionCreator {
-        return FunctionCreator { HasUnresectablePeritonealMetastases() }
+        return { HasUnresectablePeritonealMetastases() }
     }
 
     private fun hasUnresectableStageIIICancerCreator(): FunctionCreator {
-        return FunctionCreator {
-            DerivedTumorStageEvaluationFunction(HasUnresectableStageIIICancer())
-        }
+        return { DerivedTumorStageEvaluationFunction(HasUnresectableStageIIICancer()) }
     }
 
     private fun hasRecurrentCancerCreator(): FunctionCreator {
-        return FunctionCreator {
-            DerivedTumorStageEvaluationFunction(HasRecurrentCancer())
-        }
+        return { DerivedTumorStageEvaluationFunction(HasRecurrentCancer()) }
     }
 
     private fun hasIncurableCancerCreator(): FunctionCreator {
-        return FunctionCreator {
-            DerivedTumorStageEvaluationFunction(HasIncurableCancer())
-        }
+        return { DerivedTumorStageEvaluationFunction(HasIncurableCancer()) }
     }
 
     private fun hasAnyLesionCreator(): FunctionCreator {
-        return FunctionCreator { HasAnyLesion() }
+        return { HasAnyLesion() }
     }
 
     private fun hasLiverMetastasesCreator(): FunctionCreator {
-        return FunctionCreator { HasLiverMetastases() }
+        return { HasLiverMetastases() }
     }
 
     private fun hasOnlyLiverMetastasesCreator(): FunctionCreator {
-        return FunctionCreator { HasSpecificMetastasesOnly(TumorDetails::hasLiverLesions, "liver") }
+        return { HasSpecificMetastasesOnly(TumorDetails::hasLiverLesions, "liver") }
     }
 
     private fun hasKnownCnsMetastasesCreator(): FunctionCreator {
-        return FunctionCreator { HasKnownCnsMetastases() }
+        return { HasKnownCnsMetastases() }
     }
 
     private fun hasKnownActiveCnsMetastasesCreator(): FunctionCreator {
-        return FunctionCreator { HasKnownActiveCnsMetastases() }
+        return { HasKnownActiveCnsMetastases() }
     }
 
     private fun hasKnownBrainMetastasesCreator(): FunctionCreator {
-        return FunctionCreator { HasKnownBrainMetastases() }
+        return { HasKnownBrainMetastases() }
     }
 
     private fun hasKnownActiveBrainMetastasesCreator(): FunctionCreator {
-        return FunctionCreator { HasKnownActiveBrainMetastases() }
+        return { HasKnownActiveBrainMetastases() }
     }
 
     private fun meetsSpecificCriteriaRegardingBrainMetastasesCreator(): FunctionCreator {
-        return FunctionCreator { MeetsSpecificCriteriaRegardingBrainMetastases() }
+        return { MeetsSpecificCriteriaRegardingBrainMetastases() }
     }
 
     private fun hasExtracranialMetastasesCreator(): FunctionCreator {
-        return FunctionCreator { HasExtracranialMetastases() }
+        return { HasExtracranialMetastases() }
     }
 
     private fun hasBoneMetastasesCreator(): FunctionCreator {
-        return FunctionCreator { HasBoneMetastases() }
+        return { HasBoneMetastases() }
     }
 
     private fun hasOnlyBoneMetastasesCreator(): FunctionCreator {
-        return FunctionCreator { HasSpecificMetastasesOnly(TumorDetails::hasBoneLesions, "bone") }
+        return { HasSpecificMetastasesOnly(TumorDetails::hasBoneLesions, "bone") }
     }
 
     private fun hasLungMetastasesCreator(): FunctionCreator {
-        return FunctionCreator { HasLungMetastases() }
+        return { HasLungMetastases() }
     }
 
     private fun hasLymphNodeMetastasesCreator(): FunctionCreator {
-        return FunctionCreator { HasLymphNodeMetastases() }
+        return { HasLymphNodeMetastases() }
     }
 
     private fun hasVisceralMetastasesCreator(): FunctionCreator {
-        return FunctionCreator { HasVisceralMetastases() }
+        return { HasVisceralMetastases() }
     }
 
     private fun hasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosisCreator(): FunctionCreator {
-        return FunctionCreator { HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosis(HasMetastaticCancer(doidModel())) }
+        return { HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosis(HasMetastaticCancer(doidModel())) }
     }
 
     private fun hasBiopsyAmenableLesionCreator(): FunctionCreator {
-        return FunctionCreator { HasBiopsyAmenableLesion() }
+        return { HasBiopsyAmenableLesion() }
     }
 
     private fun hasIrradiationAmenableLesionCreator(): FunctionCreator {
-        return FunctionCreator { HasIrradiationAmenableLesion(HasMetastaticCancer(doidModel())) }
+        return { HasIrradiationAmenableLesion(HasMetastaticCancer(doidModel())) }
     }
 
     private fun hasMinimumSitesWithLesionsCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             HasMinimumSitesWithLesions(functionInputResolver().createOneIntegerInput(function))
         }
     }
 
     private fun canProvideFreshSampleForFurtherAnalysisCreator(): FunctionCreator {
-        return FunctionCreator { CanProvideFreshSampleForFurtherAnalysis() }
+        return { CanProvideFreshSampleForFurtherAnalysis() }
     }
 
     private fun canProvideSampleForFurtherAnalysisCreator(): FunctionCreator {
-        return FunctionCreator { CanProvideSampleForFurtherAnalysis() }
+        return { CanProvideSampleForFurtherAnalysis() }
     }
 
     private fun meetsSpecificBiopsyRequirementsCreator(): FunctionCreator {
-        return FunctionCreator { MeetsSpecificBiopsyRequirements() }
+        return { MeetsSpecificBiopsyRequirements() }
     }
 
     private fun hasEvaluableDiseaseCreator(): FunctionCreator {
-        return FunctionCreator { HasEvaluableDisease() }
+        return { HasEvaluableDisease() }
     }
 
     private fun hasMeasurableDiseaseCreator(): FunctionCreator {
-        return FunctionCreator { HasMeasurableDisease() }
+        return { HasMeasurableDisease() }
     }
 
     private fun hasMeasurableDiseaseRecistCreator(): FunctionCreator {
-        return FunctionCreator { HasMeasurableDiseaseRecist(doidModel()) }
+        return { HasMeasurableDiseaseRecist(doidModel()) }
     }
 
     private fun hasMeasurableDiseaseRanoCreator(): FunctionCreator {
-        return FunctionCreator { HasMeasurableDiseaseRano(doidModel()) }
+        return { HasMeasurableDiseaseRano(doidModel()) }
     }
 
     private fun hasSpecificProgressiveDiseaseCriteriaCreator(): FunctionCreator {
-        return FunctionCreator { HasSpecificProgressiveDiseaseCriteria() }
+        return { HasSpecificProgressiveDiseaseCriteria() }
     }
 
     private fun hasInjectionAmenableLesionCreator(): FunctionCreator {
-        return FunctionCreator { HasInjectionAmenableLesion() }
+        return { HasInjectionAmenableLesion() }
     }
 
     private fun hasMRIVolumeAmenableLesionCreator(): FunctionCreator {
-        return FunctionCreator { HasMRIVolumeAmenableLesion() }
+        return { HasMRIVolumeAmenableLesion() }
     }
 
     private fun hasEvidenceOfCNSHemorrhageByMRICreator(): FunctionCreator {
-        return FunctionCreator { HasEvidenceOfCNSHemorrhageByMRI() }
+        return { HasEvidenceOfCNSHemorrhageByMRI() }
     }
 
     private fun hasIntratumoralHemorrhageByMRICreator(): FunctionCreator {
-        return FunctionCreator { HasIntratumoralHemorrhageByMRI() }
+        return { HasIntratumoralHemorrhageByMRI() }
     }
 
     private fun hasLowRiskOfHemorrhageUponTreatmentCreator(): FunctionCreator {
-        return FunctionCreator { HasLowRiskOfHemorrhageUponTreatment() }
+        return { HasLowRiskOfHemorrhageUponTreatment() }
     }
 
     private fun hasSuperScanBoneScanCreator(): FunctionCreator {
-        return FunctionCreator { HasSuperScanBoneScan() }
+        return { HasSuperScanBoneScan() }
     }
 
     private fun hasBCLCStageCreator(): FunctionCreator {
-        return FunctionCreator { HasBCLCStage() }
+        return { HasBCLCStage() }
     }
 
     private fun hasLeftSidedColorectalTumorCreator(): FunctionCreator {
-        return FunctionCreator { HasLeftSidedColorectalTumor(doidModel()) }
+        return { HasLeftSidedColorectalTumor(doidModel()) }
     }
 
     private fun meetsSpecificCriteriaRegardingLiverMetastasesCreator(): FunctionCreator {
-        return FunctionCreator { MeetsSpecificCriteriaRegardingLiverMetastases() }
+        return { MeetsSpecificCriteriaRegardingLiverMetastases() }
     }
 
     private fun hasSymptomsOfPrimaryTumorInSitu(): FunctionCreator {
-        return FunctionCreator { HasSymptomsOfPrimaryTumorInSitu() }
+        return { HasSymptomsOfPrimaryTumorInSitu() }
     }
 }

@@ -2,7 +2,6 @@ package com.hartwig.actin.clinical.feed.standard
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.hartwig.actin.clinical.AtcModel
@@ -31,19 +30,20 @@ class StandardDataIngestion(
     private val toxicityExtractor: StandardToxicityExtractor,
     private val complicationExtractor: StandardComplicationExtractor,
     private val priorOtherConditionsExtractor: StandardPriorOtherConditionsExtractor,
-    private val treatmentHistoryExtractor: StandardTreatmentHistoryExtractor,
+    private val treatmentHistoryExtractor: StandardOncologicalHistoryExtractor,
     private val clinicalStatusExtractor: StandardClinicalStatusExtractor,
     private val tumorDetailsExtractor: StandardTumorDetailsExtractor,
     private val secondPrimaryExtractor: StandardPriorPrimariesExtractor,
     private val patientDetailsExtractor: StandardPatientDetailsExtractor,
     private val bodyWeightExtractor: StandardBodyWeightExtractor,
     private val bodyHeightExtractor: StandardBodyHeightExtractor,
-    private val molecularTestExtractor: StandardMolecularTestExtractor,
+    private val ihcTestExtractor: StandardPriorIHCTestExtractor,
+    private val sequencingTestExtractor: StandardPriorSequencingTestExtractor,
+
     private val dataQualityMask: DataQualityMask
 ) : ClinicalFeedIngestion {
     private val mapper = ObjectMapper().apply {
         disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-        setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
         registerModule(JavaTimeModule())
         registerModule(KotlinModule.Builder().build())
     }
@@ -67,7 +67,8 @@ class StandardDataIngestion(
             val surgeries = surgeryExtractor.extract(ehrPatientRecord)
             val bodyWeights = bodyWeightExtractor.extract(ehrPatientRecord)
             val bodyHeights = bodyHeightExtractor.extract(ehrPatientRecord)
-            val molecularTests = molecularTestExtractor.extract(ehrPatientRecord)
+            val ihcTests = ihcTestExtractor.extract(ehrPatientRecord)
+            val sequencingTests = sequencingTestExtractor.extract(ehrPatientRecord)
 
             val patientEvaluation = listOf(
                 patientDetails,
@@ -86,7 +87,8 @@ class StandardDataIngestion(
                 bodyWeights,
                 bodyHeights,
                 secondPrimaries,
-                molecularTests
+                ihcTests,
+                sequencingTests
             )
                 .map { e -> e.evaluation }
                 .fold(CurationExtractionEvaluation()) { acc, evaluation -> acc + evaluation }
@@ -111,7 +113,8 @@ class StandardDataIngestion(
                     bodyWeights = bodyWeights.extracted,
                     bodyHeights = bodyHeights.extracted,
                     priorSecondPrimaries = secondPrimaries.extracted,
-                    priorMolecularTests = molecularTests.extracted
+                    priorIHCTests = ihcTests.extracted,
+                    priorSequencingTests = sequencingTests.extracted
                 )
             )
 
@@ -156,7 +159,7 @@ class StandardDataIngestion(
                 curationDatabaseContext.nonOncologicalHistoryCuration,
                 curationDatabaseContext.treatmentHistoryEntryCuration
             ),
-            StandardTreatmentHistoryExtractor(
+            StandardOncologicalHistoryExtractor(
                 curationDatabaseContext.treatmentHistoryEntryCuration,
                 curationDatabaseContext.nonOncologicalHistoryCuration
             ),
@@ -169,7 +172,8 @@ class StandardDataIngestion(
             StandardPatientDetailsExtractor(),
             StandardBodyWeightExtractor(),
             StandardBodyHeightExtractor(),
-            StandardMolecularTestExtractor(curationDatabaseContext.molecularTestIhcCuration),
+            StandardPriorIHCTestExtractor(curationDatabaseContext.molecularTestIhcCuration),
+            StandardPriorSequencingTestExtractor(curationDatabaseContext.sequencingTestCuration),
             DataQualityMask()
         )
     }

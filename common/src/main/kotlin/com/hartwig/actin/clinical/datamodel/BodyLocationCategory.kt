@@ -14,8 +14,11 @@ enum class BodyLocationCategory {
     LIVER,
     LUNG,
     LYMPH_NODE,
+    OMENTUM,
     PANCREAS,
+    PERITONEUM,
     REPRODUCTIVE_SYSTEM,
+    SPLEEN,
     STOMACH,
     THYROID_GLAND,
 }

@@ -65,35 +65,34 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             EligibilityRule.IS_IN_DIALYSIS to isInDialysisCreator(),
             EligibilityRule.HAS_CHILD_PUGH_CLASS_X_LIVER_SCORE to hasChildPughClassCreator(),
             EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_FOR_STEREOTACTIC_RADIOSURGERY to hasPotentialContraIndicationForStereotacticRadiosurgeryCreator(),
-            EligibilityRule.HAS_POTENTIAL_SYMPTOMATIC_HYPERCALCEMIA to hasPotentialSymptomaticHypercalcemiaCreator(),
             EligibilityRule.HAS_ADEQUATE_VENOUS_ACCESS to hasAdequateVenousAccesCreator(),
         )
     }
 
     private fun hasPriorConditionWithConfiguredDOIDTermCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val doidTermToFind = functionInputResolver().createOneDoidTermInput(function)
             HasHadPriorConditionWithDoid(doidModel(), doidModel().resolveDoidForTerm(doidTermToFind)!!)
         }
     }
 
     private fun hasPriorConditionWithConfiguredNameCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val nameToFind = functionInputResolver().createOneStringInput(function)
             HasHadPriorConditionWithName(nameToFind)
         }
     }
 
     private fun hasPriorConditionWithDoidCreator(doidToFind: String): FunctionCreator {
-        return FunctionCreator { HasHadPriorConditionWithDoid(doidModel(), doidToFind) }
+        return { HasHadPriorConditionWithDoid(doidModel(), doidToFind) }
     }
 
     private fun hasInheritedPredispositionToBleedingOrThrombosisCreator(): FunctionCreator {
-        return FunctionCreator { HasInheritedPredispositionToBleedingOrThrombosis(doidModel()) }
+        return { HasInheritedPredispositionToBleedingOrThrombosis(doidModel()) }
     }
 
     private fun hasRecentPriorConditionWithDoidCreator(doidToFind: String): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val maxMonthsAgo = functionInputResolver().createOneIntegerInput(function)
             val minDate = referenceDateProvider().date().minusMonths(maxMonthsAgo.toLong())
             HasHadPriorConditionWithDoidsFromSetRecently(
@@ -103,7 +102,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
     }
 
     private fun hasRecentPriorConditionWithConfiguredDoidTermCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneDoidTermOneIntegerInput(function)
             val doidTermToFind = input.doidTerm
             val maxMonthsAgo = input.integer
@@ -115,7 +114,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
     }
 
     private fun hasRecentPriorConditionWithConfiguredNameCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneStringOneIntegerInput(function)
             val nameToFind = input.string
             val maxMonthsAgo = input.integer
@@ -125,13 +124,13 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
     }
 
     private fun hasPriorConditionWithDoidsFromSetCreator(doidsToFind: Set<String>, priorOtherConditionTerm: String): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             HasHadPriorConditionWithDoidsFromSet(doidModel(), doidsToFind, priorOtherConditionTerm)
         }
     }
 
     private fun hasRecentPriorConditionWithDoidsFromSetCreator(doidsToFind: Set<String>, priorOtherConditionTerm: String): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val maxMonthsAgo = functionInputResolver().createOneIntegerInput(function)
             val minDate = referenceDateProvider().date().minusMonths(maxMonthsAgo.toLong())
             HasHadPriorConditionWithDoidsFromSetRecently(doidModel(), doidsToFind, priorOtherConditionTerm, minDate)
@@ -139,11 +138,11 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
     }
 
     private fun hasPriorConditionWithNameCreator(nameToFind: String): FunctionCreator {
-        return FunctionCreator { HasHadPriorConditionWithName(nameToFind) }
+        return { HasHadPriorConditionWithName(nameToFind) }
     }
 
     private fun hasHistoryOfCardiacDiseaseCreator(): FunctionCreator {
-        return FunctionCreator {
+        return {
             HasHadPriorConditionWithDoidComplicationOrToxicity(
                 doidModel(),
                 DoidConstants.HEART_DISEASE_DOID,
@@ -154,11 +153,11 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
     }
 
     private fun hasHistoryOfCongestiveHeartFailureWithNYHACreator(): FunctionCreator {
-        return FunctionCreator { HasHistoryOfCongestiveHeartFailureWithNYHA() }
+        return { HasHistoryOfCongestiveHeartFailureWithNYHA() }
     }
 
     private fun hasHistoryOfEyeDiseaseCreator(): FunctionCreator {
-        return FunctionCreator {
+        return {
             HasHadPriorConditionWithDoidComplicationOrToxicity(
                 doidModel(),
                 DoidConstants.EYE_DISEASE_DOID,
@@ -169,11 +168,11 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
     }
 
     private fun hasHistoryOfPneumonitisCreator(): FunctionCreator {
-        return FunctionCreator { HasHistoryOfPneumonitis(doidModel()) }
+        return { HasHistoryOfPneumonitis(doidModel()) }
     }
 
     private fun hasHistoryOfStrokeCreator(): FunctionCreator {
-        return FunctionCreator {
+        return {
             HasHadPriorConditionWithDoidComplicationOrToxicity(
                 doidModel(),
                 DoidConstants.STROKE_DOID,
@@ -184,15 +183,15 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
     }
 
     private fun hasSevereConcomitantIllnessCreator(): FunctionCreator {
-        return FunctionCreator { HasSevereConcomitantIllness() }
+        return { HasSevereConcomitantIllness() }
     }
 
     private fun hasHadOrganTransplantCreator(): FunctionCreator {
-        return FunctionCreator { HasHadOrganTransplant(null) }
+        return { HasHadOrganTransplant(null) }
     }
 
     private fun hasHadOrganTransplantWithinYearsCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val maxYearsAgo = functionInputResolver().createOneIntegerInput(function)
             val minYear = referenceDateProvider().year() - maxYearsAgo
             HasHadOrganTransplant(minYear)
@@ -200,43 +199,39 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
     }
 
     private fun hasPotentialAbsorptionDifficultiesCreator(): FunctionCreator {
-        return FunctionCreator { HasPotentialAbsorptionDifficulties(doidModel()) }
+        return { HasPotentialAbsorptionDifficulties(doidModel()) }
     }
 
     private fun hasOralMedicationDifficultiesCreator(): FunctionCreator {
-        return FunctionCreator { HasOralMedicationDifficulties() }
+        return { HasOralMedicationDifficulties() }
     }
 
     private fun hasContraindicationToCTCreator(): FunctionCreator {
-        return FunctionCreator { HasContraindicationToCT(doidModel()) }
+        return { HasContraindicationToCT(doidModel()) }
     }
 
     private fun hasContraindicationToMRICreator(): FunctionCreator {
-        return FunctionCreator { HasContraindicationToMRI(doidModel()) }
+        return { HasContraindicationToMRI(doidModel()) }
     }
 
     private fun hasMRIScanDocumentingStableDiseaseCreator(): FunctionCreator {
-        return FunctionCreator { HasMRIScanDocumentingStableDisease() }
+        return { HasMRIScanDocumentingStableDisease() }
     }
 
     private fun isInDialysisCreator(): FunctionCreator {
-        return FunctionCreator { IsInDialysis() }
+        return { IsInDialysis() }
     }
 
     private fun hasChildPughClassCreator(): FunctionCreator {
-        return FunctionCreator { HasChildPughClass(doidModel()) }
+        return { HasChildPughClass(doidModel()) }
     }
 
     private fun hasPotentialContraIndicationForStereotacticRadiosurgeryCreator(): FunctionCreator {
-        return FunctionCreator { HasPotentialContraIndicationForStereotacticRadiosurgery() }
-    }
-
-    private fun hasPotentialSymptomaticHypercalcemiaCreator(): FunctionCreator {
-        return FunctionCreator { HasPotentialSymptomaticHypercalcemia() }
+        return { HasPotentialContraIndicationForStereotacticRadiosurgery() }
     }
 
     private fun hasAdequateVenousAccesCreator(): FunctionCreator {
-        return FunctionCreator { HasAdequateVenousAccess() }
+        return { HasAdequateVenousAccess() }
     }
 
     companion object {

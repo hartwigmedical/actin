@@ -23,8 +23,20 @@
             <artifactId>orange-datamodel</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.hartwig.actin</groupId>
+            <artifactId>actin-transvar</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hartwig.actin</groupId>
+            <artifactId>actin-pave-lite</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hartwig</groupId>
+            <artifactId>pave</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib-jdk8</artifactId>
+            <artifactId>kotlin-stdlib</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

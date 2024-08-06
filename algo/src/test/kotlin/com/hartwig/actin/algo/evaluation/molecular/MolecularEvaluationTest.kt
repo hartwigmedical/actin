@@ -15,7 +15,6 @@ private val UNDETERMINED_ORANGE = EvaluationFactory.undetermined("undetermined o
 private val FAIL_ORANGE = EvaluationFactory.undetermined("fail orange")
 private const val PANEL_EVENT = "panel event"
 private val PASS_PANEL = EvaluationFactory.pass("pass panel", inclusionEvents = setOf(PANEL_EVENT))
-private val DEFAULT_UNDETERMINED = EvaluationFactory.undetermined("")
 
 class MolecularEvaluationTest {
 
@@ -48,9 +47,9 @@ class MolecularEvaluationTest {
         combineAndAssert(
             EvaluationFactory.pass("pass combined", inclusionEvents = setOf(PANEL_EVENT, panelEvent2)),
             MolecularEvaluation(TestMolecularFactory.createMinimalTestMolecularRecord(), FAIL_ORANGE),
-            MolecularEvaluation(TestPanelRecordFactory.empty().copy(type = ExperimentType.ARCHER), PASS_PANEL),
+            MolecularEvaluation(TestPanelRecordFactory.empty().copy(experimentType = ExperimentType.PANEL), PASS_PANEL),
             MolecularEvaluation(
-                TestPanelRecordFactory.empty().copy(type = ExperimentType.GENERIC_PANEL),
+                TestPanelRecordFactory.empty().copy(experimentType = ExperimentType.PANEL),
                 PASS_PANEL.copy(inclusionMolecularEvents = setOf(panelEvent2))
             )
         )
@@ -74,8 +73,7 @@ class MolecularEvaluationTest {
 
     private fun combineAndAssert(expectedEvaluation: Evaluation, vararg evaluations: MolecularEvaluation) {
         val combined = MolecularEvaluation.combine(
-            listOf(*evaluations),
-            DEFAULT_UNDETERMINED
+            listOf(*evaluations)
         )
         assertThat(combined.result).isEqualTo(expectedEvaluation.result)
         assertThat(combined.inclusionMolecularEvents).isEqualTo(expectedEvaluation.inclusionMolecularEvents)

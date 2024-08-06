@@ -10,7 +10,7 @@ import com.hartwig.actin.clinical.datamodel.Intolerance
 import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.PatientDetails
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.Surgery
@@ -22,8 +22,8 @@ import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver
 import com.hartwig.actin.database.Tables
-import org.jooq.DSLContext
 import java.util.Optional
+import org.jooq.DSLContext
 
 internal class ClinicalDAO(private val context: DSLContext) {
 
@@ -56,7 +56,7 @@ internal class ClinicalDAO(private val context: DSLContext) {
         writeTreatmentHistoryEntries(patientId, record.oncologicalHistory)
         writePriorSecondPrimaries(patientId, record.priorSecondPrimaries)
         writePriorOtherConditions(patientId, record.priorOtherConditions)
-        writePriorMolecularTests(patientId, record.priorMolecularTests)
+        writePriorMolecularTests(patientId, record.priorIHCTests)
         writeComplications(patientId, record.complications)
         writeLabValues(patientId, record.labValues)
         writeToxicities(patientId, record.toxicities)
@@ -294,12 +294,11 @@ internal class ClinicalDAO(private val context: DSLContext) {
         }
     }
 
-    private fun writePriorMolecularTests(patientId: String, priorMolecularTests: List<PriorMolecularTest>) {
-        for (priorMolecularTest in priorMolecularTests) {
+    private fun writePriorMolecularTests(patientId: String, priorIHCTests: List<PriorIHCTest>) {
+        for (priorMolecularTest in priorIHCTests) {
             context.insertInto(
                 Tables.PRIORMOLECULARTEST,
                 Tables.PRIORMOLECULARTEST.PATIENTID,
-                Tables.PRIORMOLECULARTEST.TEST,
                 Tables.PRIORMOLECULARTEST.ITEM,
                 Tables.PRIORMOLECULARTEST.MEASURE,
                 Tables.PRIORMOLECULARTEST.SCORETEXT,
@@ -310,7 +309,6 @@ internal class ClinicalDAO(private val context: DSLContext) {
             )
                 .values(
                     patientId,
-                    priorMolecularTest.test,
                     priorMolecularTest.item,
                     priorMolecularTest.measure,
                     priorMolecularTest.scoreText,

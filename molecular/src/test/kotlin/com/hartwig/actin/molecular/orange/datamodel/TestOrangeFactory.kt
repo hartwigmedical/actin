@@ -51,7 +51,6 @@ import com.hartwig.hmftools.datamodel.virus.VirusInterpretation
 import com.hartwig.hmftools.datamodel.virus.VirusInterpreterData
 import com.hartwig.hmftools.datamodel.virus.VirusLikelihoodType
 import java.time.LocalDate
-import org.apache.logging.log4j.util.Strings
 
 object TestOrangeFactory {
 
@@ -80,7 +79,7 @@ object TestOrangeFactory {
     }
 
     private fun createMinimalTestLilacRecord(): LilacRecord {
-        return ImmutableLilacRecord.builder().qc(Strings.EMPTY).build()
+        return ImmutableLilacRecord.builder().qc("").build()
     }
 
     fun createProperTestOrangeRecord(): OrangeRecord {
@@ -225,14 +224,14 @@ object TestOrangeFactory {
     private fun createTestPeachGenotype(): PeachGenotype {
         return ImmutablePeachGenotype.builder()
             .gene("DPYD")
-            .haplotype(Strings.EMPTY)
+            .haplotype("")
             .allele("*1")
             .alleleCount(2)
             .function("Normal function")
-            .linkedDrugs(Strings.EMPTY)
-            .urlPrescriptionInfo(Strings.EMPTY)
-            .panelVersion(Strings.EMPTY)
-            .repoVersion(Strings.EMPTY)
+            .linkedDrugs("")
+            .urlPrescriptionInfo("")
+            .panelVersion("")
+            .repoVersion("")
             .build()
     }
 
@@ -289,20 +288,20 @@ object TestOrangeFactory {
             .brca1Value(0.0)
             .brca2Value(0.0)
             .hrdValue(0.45)
-            .hrdType(Strings.EMPTY)
+            .hrdType("")
             .build()
     }
 
     private fun createOrangePlots(): OrangePlots {
         return ImmutableOrangePlots.builder()
-            .sageTumorBQRPlot(Strings.EMPTY)
-            .purpleInputPlot(Strings.EMPTY)
-            .purpleFinalCircosPlot(Strings.EMPTY)
-            .purpleClonalityPlot(Strings.EMPTY)
-            .purpleCopyNumberPlot(Strings.EMPTY)
-            .purpleVariantCopyNumberPlot(Strings.EMPTY)
-            .purplePurityRangePlot(Strings.EMPTY)
-            .purpleKataegisPlot(Strings.EMPTY)
+            .sageTumorBQRPlot("")
+            .purpleInputPlot("")
+            .purpleFinalCircosPlot("")
+            .purpleClonalityPlot("")
+            .purpleCopyNumberPlot("")
+            .purpleVariantCopyNumberPlot("")
+            .purplePurityRangePlot("")
+            .purpleKataegisPlot("")
             .build()
     }
 

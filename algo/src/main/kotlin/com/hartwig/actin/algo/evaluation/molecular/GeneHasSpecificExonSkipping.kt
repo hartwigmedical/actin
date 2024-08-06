@@ -11,6 +11,8 @@ import com.hartwig.actin.molecular.datamodel.Variant
 
 class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSkip: Int) : MolecularEvaluationFunction {
 
+    override fun genes() = listOf(gene)
+
     override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
 
         val archerExonSkippingEvents = molecularHistory.allArcherPanels().flatMap { it.skippedExons }
@@ -45,7 +47,7 @@ class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSk
 
     private fun findExonSplicingVariants(molecular: MolecularRecord) = molecular.drivers.variants.filter { variant ->
         val isCanonicalExonAffected = variant.canonicalImpact.affectedExon != null && variant.canonicalImpact.affectedExon == exonToSkip
-        variant.isReportable && variant.gene == gene && isCanonicalExonAffected && (variant.canonicalImpact.codingEffect == CodingEffect.SPLICE || variant.canonicalImpact.isSpliceRegion)
+        variant.isReportable && variant.gene == gene && isCanonicalExonAffected && (variant.canonicalImpact.codingEffect == CodingEffect.SPLICE || variant.canonicalImpact.isSpliceRegion == true)
     }
         .map(Variant::event)
         .toSet()

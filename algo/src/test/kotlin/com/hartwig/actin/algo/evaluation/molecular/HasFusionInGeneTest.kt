@@ -117,7 +117,7 @@ class HasFusionInGeneTest {
                 MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                     listOf(
                         TestPanelRecordFactory.empty()
-                            .copy(archerPanelExtraction = ArcherPanelExtraction(fusions = listOf(ArcherFusionExtraction(MATCHING_GENE))))
+                            .copy(panelExtraction = ArcherPanelExtraction(fusions = listOf(ArcherFusionExtraction(MATCHING_GENE))))
                     )
                 )
             )

@@ -114,7 +114,7 @@ class GeneHasSpecificExonSkippingTest {
     }
 
     private fun archerPanelWithExonSkippingForGene(gene: String, start: Int, end: Int) = TestPanelRecordFactory.empty().copy(
-        archerPanelExtraction = ArcherPanelExtraction(
+        panelExtraction = ArcherPanelExtraction(
             skippedExons = listOf(
                 ArcherSkippedExonsExtraction(
                     gene,

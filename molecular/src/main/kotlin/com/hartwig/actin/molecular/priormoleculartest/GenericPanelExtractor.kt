@@ -1,26 +1,25 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.molecular.MolecularExtractor
-import com.hartwig.actin.molecular.datamodel.AVL_PANEL
-import com.hartwig.actin.molecular.datamodel.FREE_TEXT_PANEL
+import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
+import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericVariantExtraction
 
-class GenericPanelExtractor : MolecularExtractor<PriorMolecularTest, GenericPanelExtraction> {
-    override fun extract(input: List<PriorMolecularTest>): List<GenericPanelExtraction> {
+class GenericPanelExtractor : MolecularExtractor<PriorIHCTest, PanelExtraction> {
+
+    override fun extract(input: List<PriorIHCTest>): List<PanelExtraction> {
         return input.groupBy { it.test }
-            .flatMap { (test, results) -> groupedByTestDate(results, classify(test)) }
+            .flatMap { (test, results) -> groupedByTestDate(results, test) }
     }
 
-    private fun groupedByTestDate(results: List<PriorMolecularTest>, type: GenericPanelType): List<GenericPanelExtraction> {
+    private fun groupedByTestDate(results: List<PriorIHCTest>, type: String): List<GenericPanelExtraction> {
         return results
             .groupBy { it.measureDate }
             .map { (date, results) ->
-                val usableResults = results.filterNot { result -> isKnownIgnorableRecord(result, type) }
+                val usableResults = results.filterNot { result -> isKnownIgnorableRecord(result) }
                 val (fusionRecords, nonFusionRecords) = usableResults.partition { it.item?.contains("::") ?: false }
                 val fusions = fusionRecords.mapNotNull { it.item?.let { item -> GenericFusionExtraction.parseFusion(item) } }
 
@@ -30,9 +29,10 @@ class GenericPanelExtractor : MolecularExtractor<PriorMolecularTest, GenericPane
                 val (variantRecords, nonVariantRecordsGene) = nonExonDeletionRecords.partition {
                     it.measure?.let { measure -> measure.startsWith("c.") || measure.startsWith("p.") } ?: false
                 }
-                val variants = variantRecords.map { record -> GenericVariantExtraction.parseVariant(record) }
+                val variants = variantRecords.map { record -> parseVariant(record) }
 
-                val (geneWithNegativeResultsRecords, unknownRecords) = nonVariantRecordsGene.partition { it.scoreText?.lowercase() == "negative" }
+                val (geneWithNegativeResultsRecords, unknownRecords) =
+                    nonVariantRecordsGene.partition { it.scoreText?.lowercase() == "negative" }
                 val geneWithNegativeResults = geneWithNegativeResultsRecords.mapNotNull { it.item }.toSet()
 
                 if (unknownRecords.isNotEmpty()) {
@@ -41,22 +41,29 @@ class GenericPanelExtractor : MolecularExtractor<PriorMolecularTest, GenericPane
                     }")
                 }
 
-                GenericPanelExtraction(type, variants, fusions, exonDeletions, geneWithNegativeResults, date)
+                GenericPanelExtraction(
+                    panelType = type,
+                    fusions = fusions,
+                    exonDeletions = exonDeletions,
+                    genesWithNegativeResults = geneWithNegativeResults,
+                    variants = variants,
+                    date = date
+                )
             }
     }
 
-    private fun isKnownIgnorableRecord(result: PriorMolecularTest, type: GenericPanelType): Boolean {
-        return when (type) {
-            GenericPanelType.AVL -> result.measure == "GEEN mutaties aangetoond met behulp van het AVL Panel"
-            else -> false
-        }
+    private fun isKnownIgnorableRecord(result: PriorIHCTest): Boolean {
+        return result.measure == "GEEN mutaties aangetoond met behulp van het AVL Panel"
+
     }
 
-    private fun classify(type: String?): GenericPanelType {
-        return when (type) {
-            AVL_PANEL -> GenericPanelType.AVL
-            FREE_TEXT_PANEL -> GenericPanelType.FREE_TEXT
-            else -> throw IllegalArgumentException("Unknown generic panel type: $type")
+    private fun parseVariant(priorMolecularTest: PriorIHCTest): PanelVariantExtraction {
+        return if (priorMolecularTest.item != null && priorMolecularTest.measure != null) {
+            PanelVariantExtraction(gene = priorMolecularTest.item!!, hgvsCodingOrProteinImpact = priorMolecularTest.measure!!)
+        } else {
+            throw IllegalArgumentException(
+                "Expected item and measure for variant but got ${priorMolecularTest.item} and ${priorMolecularTest.measure}"
+            )
         }
     }
 }

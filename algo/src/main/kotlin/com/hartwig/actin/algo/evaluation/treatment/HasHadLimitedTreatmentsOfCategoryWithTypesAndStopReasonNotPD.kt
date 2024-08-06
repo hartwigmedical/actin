@@ -11,7 +11,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType
 
 class HasHadLimitedTreatmentsOfCategoryWithTypesAndStopReasonNotPD(
     private val category: TreatmentCategory, private val types: Set<TreatmentType>,
-    private val maxWeeks: Int
+    private val maxWeeks: Int?
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
 
@@ -30,14 +30,14 @@ class HasHadLimitedTreatmentsOfCategoryWithTypesAndStopReasonNotPD(
                     matchingPortionOfEntry.treatmentHistoryDetails?.stopYear,
                     matchingPortionOfEntry.treatmentHistoryDetails?.stopMonth
                 )
-                val meetsMaxWeeks = durationWeeks != null && durationWeeks <= maxWeeks
+                val meetsMaxWeeks = if (maxWeeks != null) durationWeeks != null && durationWeeks <= maxWeeks else true
 
                 PDFollowingTreatmentEvaluation.create(
                     hadTreatment = true,
                     hadTrial = mayMatchAsTrial,
                     hadPD = treatmentResultedInPD,
                     lessThanMaxWeeks = meetsMaxWeeks,
-                    hadUnclearWeeks = durationWeeks == null
+                    hadUnclearWeeks = if (maxWeeks != null) durationWeeks == null else false
                 )
             } ?: PDFollowingTreatmentEvaluation.create(
                 hadTreatment = if (categoryMatches && !treatmentHistoryEntry.hasTypeConfigured()) null else false,
@@ -47,9 +47,10 @@ class HasHadLimitedTreatmentsOfCategoryWithTypesAndStopReasonNotPD(
 
         return when {
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITHOUT_PD_AND_WEEKS in treatmentEvaluations -> {
+                val suffix = if (maxWeeks != null) " for less than $maxWeeks weeks" else ""
                 EvaluationFactory.pass(
-                    hasTreatmentSpecificMessage("for less than $maxWeeks weeks"),
-                    hasTreatmentGeneralMessage("for less than $maxWeeks weeks")
+                    hasTreatmentSpecificMessage(suffix),
+                    hasTreatmentGeneralMessage(suffix)
                 )
             }
 
@@ -58,11 +59,15 @@ class HasHadLimitedTreatmentsOfCategoryWithTypesAndStopReasonNotPD(
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS in treatmentEvaluations -> {
-                undetermined("for less than $maxWeeks weeks but uncertain if there has been PD")
+                val weekMessage = if (maxWeeks != null) "for less than $maxWeeks weeks " else ""
+                val suffix = weekMessage + "but uncertain if there has been PD"
+                undetermined(suffix)
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS_AND_UNCLEAR_WEEKS in treatmentEvaluations -> {
-                undetermined("but uncertain if there has been PD & unclear nr of weeks")
+                val weekMessage = if (maxWeeks != null) " & unclear nr of weeks " else ""
+                val suffix = "but uncertain if there has been PD$weekMessage"
+                undetermined(suffix)
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL in treatmentEvaluations -> {
@@ -86,11 +91,11 @@ class HasHadLimitedTreatmentsOfCategoryWithTypesAndStopReasonNotPD(
     }
 
     private fun hasTreatmentSpecificMessage(suffix: String = ""): String {
-        return "Patient has received ${treatment()} $suffix without stop reason PD"
+        return "Patient has received ${treatment()}$suffix without stop reason PD"
     }
 
     private fun hasTreatmentGeneralMessage(suffix: String = ""): String {
-        return "Patient has had ${treatment()} $suffix without stop reason PD"
+        return "Patient has had ${treatment()}$suffix without stop reason PD"
     }
 
     private fun undetermined(suffix: String): Evaluation {

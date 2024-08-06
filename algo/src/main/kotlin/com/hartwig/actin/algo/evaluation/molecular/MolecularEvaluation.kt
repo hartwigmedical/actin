@@ -10,36 +10,43 @@ data class MolecularEvaluation(
     val evaluation: Evaluation
 ) {
     companion object {
-        fun combine(evaluations: List<MolecularEvaluation?>, fallbackUndetermined: Evaluation): Evaluation {
+
+        private fun defaultEvaluationPrecedence(groupedEvaluationsByResult: Map<EvaluationResult, List<MolecularEvaluation>>) =
+            (groupedEvaluationsByResult[EvaluationResult.PASS]
+                ?: groupedEvaluationsByResult[EvaluationResult.WARN]
+                ?: groupedEvaluationsByResult[EvaluationResult.FAIL]
+                ?: groupedEvaluationsByResult[EvaluationResult.UNDETERMINED])
+
+        fun combine(
+            evaluations: List<MolecularEvaluation?>,
+            precedence: (Map<EvaluationResult, List<MolecularEvaluation>>) -> List<MolecularEvaluation>? = ::defaultEvaluationPrecedence
+        ): Evaluation {
 
             val groupedEvaluationsByResult = evaluations.filterNotNull()
                 .groupBy { evaluation -> evaluation.evaluation.result }
 
             val evaluationComparator = Comparator.comparing<MolecularEvaluation, Int> {
-                when (it.test.type) {
-                    ExperimentType.WHOLE_GENOME -> 1
-                    ExperimentType.TARGETED -> 2
+                when (it.test.experimentType) {
+                    ExperimentType.HARTWIG_WHOLE_GENOME -> 1
+                    ExperimentType.HARTWIG_TARGETED -> 2
                     else -> 3
                 }
             }
                 .thenByDescending { it.test.date }
 
-            val sortedPreferredEvaluations = (groupedEvaluationsByResult[EvaluationResult.PASS]
-                ?: groupedEvaluationsByResult[EvaluationResult.WARN]
-                ?: groupedEvaluationsByResult[EvaluationResult.FAIL]
-                ?: groupedEvaluationsByResult[EvaluationResult.UNDETERMINED])
-                ?.sortedWith(evaluationComparator)
+            val sortedPreferredEvaluations = precedence.invoke(groupedEvaluationsByResult)?.sortedWith(evaluationComparator)
+                ?: throw IllegalStateException("Unable to combine molecular evaluations [$evaluations]")
 
-            return sortedPreferredEvaluations?.let {
+            return sortedPreferredEvaluations.let {
                 if (isOrangeResult(it)) it.first().evaluation else
                     it.map { m -> m.evaluation }.reduce(Evaluation::addMessagesAndEvents)
-            } ?: fallbackUndetermined
+            }
         }
 
         private fun isOrangeResult(it: List<MolecularEvaluation>) =
-            it.first().test.type in setOf(
-                ExperimentType.WHOLE_GENOME,
-                ExperimentType.TARGETED
+            it.first().test.experimentType in setOf(
+                ExperimentType.HARTWIG_WHOLE_GENOME,
+                ExperimentType.HARTWIG_TARGETED
             )
 
     }
