@@ -12,7 +12,7 @@ class HasSufficientHER2ExpressionByIHC(private val minHER2: Double) : Evaluation
     override fun evaluate(record: PatientRecord): Evaluation {
         val receptorType = ReceptorType.HER2
         val targetPriorMolecularTests =
-            record.molecularHistory.allIHCTests().filter { it.item == receptorType.display() }
+            record.priorIHCTests.filter { it.item == receptorType.display() }
 
         for (ihcTest in targetPriorMolecularTests) {
             val scoreValue = ihcTest.scoreValue

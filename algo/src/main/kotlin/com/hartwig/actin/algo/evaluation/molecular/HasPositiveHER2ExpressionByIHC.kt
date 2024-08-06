@@ -14,7 +14,7 @@ class HasPositiveHER2ExpressionByIHC: EvaluationFunction {
         val indeterminateValue = 2
         val upperValue = 4
         val targetPriorMolecularTests =
-            record.molecularHistory.allIHCTests().filter { it.item == receptorType.display() }
+            record.priorIHCTests.filter { it.item == receptorType.display() }
         val geneERBB2IsAmplified = geneIsAmplifiedForPatient("ERBB2", record)
 
         val testResults = targetPriorMolecularTests.map {

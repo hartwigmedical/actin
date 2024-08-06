@@ -246,7 +246,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     }
 
     private fun hasSufficientHER2ExpressionByIHCCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             HasSufficientHER2ExpressionByIHC(
                 functionInputResolver().createOneDoubleInput(
                     function
@@ -256,7 +256,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     }
 
     private fun hasPositiveHER2ExpressionByIHCCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             HasPositiveHER2ExpressionByIHC()
         }
     }
