@@ -3,8 +3,8 @@ package com.hartwig.actin.molecular.priormoleculartest
 import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.molecular.datamodel.AVL_PANEL
 import com.hartwig.actin.molecular.datamodel.FREE_TEXT_PANEL
+import com.hartwig.actin.molecular.datamodel.panel.PanelFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -47,7 +47,7 @@ class GenericPanelExtractorTest {
         val expected = GenericPanelExtraction(
             panelType = FREE_TEXT_PANEL,
             variants = emptyList(),
-            fusions = listOf(GenericFusionExtraction(GENE_UP, GENE_DOWN))
+            fusions = listOf(PanelFusionExtraction(GENE_UP, GENE_DOWN))
         )
         assertThat(molecularTests).containsExactly(expected)
     }

@@ -55,7 +55,7 @@ class PanelAnnotator(
             drivers = Drivers(
                 variants = variantsWithDriverLikelihoodModel.toSet(),
                 copyNumbers = annotatedAmplifications.toSet(),
-                fusions = emptySet()
+                fusions = annotatedFusions.toSet(),
             ),
             characteristics = MolecularCharacteristics(
                 isMicrosatelliteUnstable = input.isMicrosatelliteUnstable,
@@ -273,15 +273,15 @@ class PanelAnnotator(
 
     private fun createFusion(panelFusionExtraction: PanelFusionExtraction): Fusion {
         return Fusion(
-            geneStart = "gene1",
-            geneEnd = "gene2",
+            geneStart = panelFusionExtraction.geneUp ?: "", // TODO no no we don't want empty strings
+            geneEnd = panelFusionExtraction.geneDown ?: "",
             geneTranscriptStart = "",
             geneTranscriptEnd = "",
             driverType = FusionDriverType.NONE, // TODO known fusions tsv
             proteinEffect = ProteinEffect.UNKNOWN, // TODO SERVE
             isReportable = true,
             event = "TODO",
-            driverLikelihood = DriverLikelihood.LOW, // TODO where does this come from
+            driverLikelihood = DriverLikelihood.HIGH, // TODO where does this come from, defaulting to high
             evidence = ActionableEvidenceFactory.createNoEvidence()
         )
     }

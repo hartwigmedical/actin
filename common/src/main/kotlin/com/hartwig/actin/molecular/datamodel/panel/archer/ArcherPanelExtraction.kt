@@ -30,8 +30,7 @@ data class ArcherPanelExtraction(
     }
 
     fun genesWithFusions(): Set<String> {
-        throw UnsupportedOperationException("not implemented")
-//        return fusions.map { it.gene }.toSet()
+        return fusions.flatMap { listOfNotNull(it.geneUp, it.geneDown) }.toSet()
     }
 
     override fun events() = (variants + fusions + skippedExons).toSet()

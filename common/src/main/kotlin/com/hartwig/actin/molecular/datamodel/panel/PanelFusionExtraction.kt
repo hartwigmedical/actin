@@ -9,18 +9,28 @@ data class PanelFusionExtraction(
     }
 
     override fun display(): String {
-        return "${geneUp ?: ""}::${geneDown ?: ""}"
+        return when {
+            geneUp != null && geneDown == null -> "$geneUp fusion"
+            geneUp == null && geneDown != null -> "$geneDown fusion"
+            geneUp != null && geneDown != null -> "$geneUp-$geneDown fusion"
+            else -> throw IllegalStateException("Both genes in fusion are null")
+        }
     }
 
     companion object {
         fun parseFusion(text: String): PanelFusionExtraction {
-            // TODO change this to handle single genes
             val parts = text.trim().split("::")
-            if (parts.size != 2) {
-                throw IllegalArgumentException("Expected two parts in fusion but got ${parts.size} for $text")
-            }
 
-            return PanelFusionExtraction(parts[0], parts[1])
+            return when (parts.size) {
+                1 -> PanelFusionExtraction(parts[0], null)
+                2 -> {
+                    val geneUp = parts[0].ifEmpty { null }
+                    val geneDown = parts[1].ifEmpty { null }
+                    PanelFusionExtraction(geneUp, geneDown)
+                }
+
+                else -> throw IllegalArgumentException("Unable to parse fusion: $text")
+            }
         }
     }
 }

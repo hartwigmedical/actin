@@ -58,13 +58,4 @@ class ClinicalRecordJsonTest {
         assertThat(record.bloodTransfusions).hasSize(1)
         assertThat(record.medications).hasSize(2)
     }
-
-    @Test
-    fun `kz creating minimal`() {
-        val minimal = createMinimalTestClinicalRecord()
-        val convertedMinimal = fromJson(toJson(minimal))
-        assertThat(convertedMinimal).isEqualTo(minimal)
-        ClinicalRecordJson.write(listOf(minimal), "/tmp")
-
-    }
 }

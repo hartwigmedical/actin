@@ -1,19 +1,10 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.molecular.datamodel.CodingEffect
-import com.hartwig.actin.molecular.datamodel.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.Drivers
-import com.hartwig.actin.molecular.datamodel.GeneRole
-import com.hartwig.actin.molecular.datamodel.MolecularHistory
-import com.hartwig.actin.molecular.datamodel.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.*
 import com.hartwig.actin.molecular.datamodel.TestPanelRecordFactory
-import com.hartwig.actin.molecular.datamodel.TranscriptImpact
-import com.hartwig.actin.molecular.datamodel.Variant
-import com.hartwig.actin.molecular.datamodel.VariantEffect
-import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
+import com.hartwig.actin.molecular.datamodel.panel.PanelFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 
 val PROPER_PANEL_VARIANT = Variant(
@@ -70,7 +61,7 @@ internal object MolecularHistoryFactory {
     fun withArcherFusion(geneStart: String): MolecularHistory {
         return MolecularHistory(
             molecularTests = listOf(
-                archerPanelRecord(ArcherPanelExtraction(fusions = listOf(ArcherFusionExtraction(gene = geneStart))))
+                archerPanelRecord(ArcherPanelExtraction(fusions = listOf(PanelFusionExtraction(geneStart, null))))
             )
         )
     }

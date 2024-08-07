@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.datamodel.panel.archer
 
+import com.hartwig.actin.molecular.datamodel.panel.PanelFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -10,10 +11,7 @@ class ArcherPanelExtractionTest {
     fun `Should identify tested genes`() {
         val archerPanel = ArcherPanelExtraction(
             variants = listOf(PanelVariantExtraction("KRAS", "c.1A>T")),
-//            fusions = listOf(
-//                ArcherFusionExtraction("RET"),
-//            ),
-            fusions = emptyList(),
+            fusions = listOf(PanelFusionExtraction("RET", null)),
             skippedExons = listOf(ArcherSkippedExonsExtraction("MET", 1, 4))
         )
 

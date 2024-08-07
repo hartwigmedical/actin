@@ -32,8 +32,7 @@ data class GenericPanelExtraction(
     }
 
     private fun genesWithFusions(): Set<String> {
-        throw UnsupportedOperationException("not implemented")
-//        return fusions.flatMap { listOf(it.geneStart, it.geneEnd) }.toSet()
+        return fusions.flatMap { listOfNotNull(it.geneUp, it.geneDown) }.toSet()
     }
 
     private fun genesWithExonDeletions(): Set<String> {
