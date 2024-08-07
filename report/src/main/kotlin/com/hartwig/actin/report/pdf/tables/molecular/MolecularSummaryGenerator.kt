@@ -24,7 +24,7 @@ class MolecularSummaryGenerator(
         val table = Tables.createSingleColWithWidth(keyWidth + valueWidth)
         val latestOrange = patientRecord.molecularHistory.latestOrangeMolecularRecord()
 
-        if (latestOrange != null && latestOrange.hasSufficientQuality != false) {
+        if (latestOrange != null && latestOrange.hasSufficientQuality) {
             if (latestOrange.experimentType != ExperimentType.HARTWIG_WHOLE_GENOME) {
                 LOGGER.warn("Generating WGS results for non-WGS sample")
             }

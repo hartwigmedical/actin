@@ -66,7 +66,7 @@ class MolecularDetailsChapter(private val report: Report, override val include: 
                     table.addCell(Cells.createEmpty())
                 }
             }
-            if (molecular.hasSufficientQuality != true) {
+            if (!molecular.hasSufficientQuality) {
                 table.addCell(Cells.createContent("No successful OncoAct WGS and/or tumor NGS panel could be performed on the submitted biopsy (insufficient quality for reporting)"))
             }
         } ?: table.addCell(Cells.createContent("No OncoAct WGS and/or tumor NGS panel performed"))
@@ -74,7 +74,7 @@ class MolecularDetailsChapter(private val report: Report, override val include: 
     }
 
     private fun tumorDetailsGenerators(molecular: MolecularRecord, evaluated: List<EvaluatedCohort>): List<TableGenerator> {
-        return if (molecular.hasSufficientQuality == true) {
+        return if (molecular.hasSufficientQuality) {
             listOf(
                 PredictedTumorOriginGenerator(molecular, contentWidth()),
                 MolecularDriversGenerator(
