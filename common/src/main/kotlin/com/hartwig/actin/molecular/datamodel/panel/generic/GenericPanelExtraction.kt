@@ -3,13 +3,14 @@ package com.hartwig.actin.molecular.datamodel.panel.generic
 import com.hartwig.actin.molecular.datamodel.AVL_PANEL
 import com.hartwig.actin.molecular.datamodel.panel.PanelAmplificationExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
+import com.hartwig.actin.molecular.datamodel.panel.PanelFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import java.time.LocalDate
 
 val GENERIC_PANEL_ALWAYS_TESTED_GENES = setOf("EGFR", "BRAF", "KRAS")
 
 data class GenericPanelExtraction(
-    val fusions: List<GenericFusionExtraction> = emptyList(),
+    override val fusions: List<PanelFusionExtraction> = emptyList(),
     val exonDeletions: List<GenericExonDeletionExtraction> = emptyList(),
     val genesWithNegativeResults: Set<String> = emptySet(),
     override val panelType: String,
@@ -31,7 +32,8 @@ data class GenericPanelExtraction(
     }
 
     private fun genesWithFusions(): Set<String> {
-        return fusions.flatMap { listOf(it.geneStart, it.geneEnd) }.toSet()
+        throw UnsupportedOperationException("not implemented")
+//        return fusions.flatMap { listOf(it.geneStart, it.geneEnd) }.toSet()
     }
 
     private fun genesWithExonDeletions(): Set<String> {

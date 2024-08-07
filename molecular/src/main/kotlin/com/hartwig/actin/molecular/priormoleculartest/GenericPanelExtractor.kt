@@ -3,9 +3,9 @@ package com.hartwig.actin.molecular.priormoleculartest
 import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.molecular.MolecularExtractor
 import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
+import com.hartwig.actin.molecular.datamodel.panel.PanelFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletionExtraction
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 
 class GenericPanelExtractor : MolecularExtractor<PriorIHCTest, PanelExtraction> {
@@ -21,7 +21,7 @@ class GenericPanelExtractor : MolecularExtractor<PriorIHCTest, PanelExtraction> 
             .map { (date, results) ->
                 val usableResults = results.filterNot { result -> isKnownIgnorableRecord(result) }
                 val (fusionRecords, nonFusionRecords) = usableResults.partition { it.item?.contains("::") ?: false }
-                val fusions = fusionRecords.mapNotNull { it.item?.let { item -> GenericFusionExtraction.parseFusion(item) } }
+                val fusions = fusionRecords.mapNotNull { it.item?.let { item -> PanelFusionExtraction.parseFusion(item) } }
 
                 val (exonDeletionRecords, nonExonDeletionRecords) = nonFusionRecords.partition { it.measure?.endsWith(" del") ?: false }
                 val exonDeletions = exonDeletionRecords.map { record -> GenericExonDeletionExtraction.parse(record) }

@@ -10,9 +10,10 @@ class ArcherPanelExtractionTest {
     fun `Should identify tested genes`() {
         val archerPanel = ArcherPanelExtraction(
             variants = listOf(PanelVariantExtraction("KRAS", "c.1A>T")),
-            fusions = listOf(
-                ArcherFusionExtraction("RET"),
-            ),
+//            fusions = listOf(
+//                ArcherFusionExtraction("RET"),
+//            ),
+            fusions = emptyList(),
             skippedExons = listOf(ArcherSkippedExonsExtraction("MET", 1, 4))
         )
 

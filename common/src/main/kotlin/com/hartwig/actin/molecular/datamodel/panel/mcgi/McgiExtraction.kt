@@ -1,9 +1,6 @@
 package com.hartwig.actin.molecular.datamodel.panel.mcgi
 
-import com.hartwig.actin.molecular.datamodel.panel.PanelAmplificationExtraction
-import com.hartwig.actin.molecular.datamodel.panel.PanelEvent
-import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
+import com.hartwig.actin.molecular.datamodel.panel.*
 import java.time.LocalDate
 
 
@@ -11,6 +8,7 @@ data class McgiExtraction(
     override val panelType: String,
     override val date: LocalDate?,
     override val variants: List<PanelVariantExtraction>,
+    override val fusions: List<PanelFusionExtraction>,
     override val amplifications: List<PanelAmplificationExtraction>,
     override val isMicrosatelliteUnstable: Boolean?,
     override val tumorMutationalBurden: Double?,

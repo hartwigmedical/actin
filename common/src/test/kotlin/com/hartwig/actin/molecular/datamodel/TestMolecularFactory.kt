@@ -5,23 +5,11 @@ import com.hartwig.actin.molecular.datamodel.evidence.Country
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
 import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import com.hartwig.actin.molecular.datamodel.orange.characteristics.CupPrediction
-import com.hartwig.actin.molecular.datamodel.orange.driver.CodingContext
-import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.orange.driver.DisruptionType
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariantDetails
-import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
-import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.orange.driver.RegionType
-import com.hartwig.actin.molecular.datamodel.orange.driver.Virus
-import com.hartwig.actin.molecular.datamodel.orange.driver.VirusType
+import com.hartwig.actin.molecular.datamodel.orange.driver.*
 import com.hartwig.actin.molecular.datamodel.orange.immunology.HlaAllele
 import com.hartwig.actin.molecular.datamodel.orange.immunology.MolecularImmunology
 import com.hartwig.actin.molecular.datamodel.orange.pharmaco.Haplotype
 import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoEntry
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import java.time.LocalDate
 
@@ -318,7 +306,8 @@ object TestMolecularFactory {
     fun freeTextPriorMolecularFusionRecord(geneStart: String, geneEnd: String) = TestPanelRecordFactory.empty().copy(
         panelExtraction =
         GenericPanelExtraction(
-            fusions = listOf(GenericFusionExtraction(geneStart, geneEnd)),
+//            fusions = listOf(GenericFusionExtraction(geneStart, geneEnd)),
+            fusions = emptyList(),
             panelType = FREE_TEXT_PANEL
         )
     )

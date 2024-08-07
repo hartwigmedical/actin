@@ -25,19 +25,20 @@ import com.hartwig.actin.molecular.util.MolecularHistoryPrinter
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataLoader
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.transvar.TransvarVariantAnnotatorFactory
+import com.hartwig.hmftools.common.fusion.KnownFusionCache
 import com.hartwig.hmftools.datamodel.OrangeJson
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.serve.datamodel.ActionableEventsLoader
 import com.hartwig.serve.datamodel.KnownEvents
 import com.hartwig.serve.datamodel.KnownEventsLoader
 import com.hartwig.serve.datamodel.RefGenome
-import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import kotlin.system.exitProcess
 
 class MolecularInterpreterApplication(private val config: MolecularInterpreterConfig) {
 
@@ -112,6 +113,11 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
                     "${config.oncoDndsDatabasePath} and ${config.tsgDndsDatabasePath}"
         )
         val dndsDatabase = DndsDatabase.create(config.oncoDndsDatabasePath, config.tsgDndsDatabasePath)
+
+        LOGGER.info(
+            "Loading known fusions from " + config.knownFusionsPath
+        )
+        val knownFusion = KnownFusionCache().loadFromFile(config.knownFusionsPath);
 
         LOGGER.info("Interpreting clinical molecular tests")
         val geneDriverLikelihoodModel = GeneDriverLikelihoodModel(dndsDatabase)

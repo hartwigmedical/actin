@@ -3,8 +3,8 @@ package com.hartwig.actin.molecular.priormoleculartest
 import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.molecular.MolecularExtractor
 import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
+import com.hartwig.actin.molecular.datamodel.panel.PanelFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSkippedExonsExtraction
 
@@ -39,7 +39,10 @@ class ArcherExtractor : MolecularExtractor<PriorIHCTest, PanelExtraction> {
                         ?: emptyList()
                 val fusions = groupedByCategory[ArcherMutationCategory.FUSION]?.mapNotNull {
                     FUSION_REGEX.find(it.measure!!)?.let { matchResult ->
-                        ArcherFusionExtraction(matchResult.groupValues[1])
+                        PanelFusionExtraction(
+                            geneUp = matchResult.groupValues[1],
+                            geneDown = null
+                        )  // TODO can we handle a single gene without the up/down split?
                     }
                 } ?: emptyList()
                 val exonSkips = groupedByCategory[ArcherMutationCategory.EXON_SKIP]?.mapNotNull {

@@ -1,36 +1,21 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
 import com.hartwig.actin.molecular.MolecularAnnotator
-import com.hartwig.actin.molecular.datamodel.CodingEffect
-import com.hartwig.actin.molecular.datamodel.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.Drivers
-import com.hartwig.actin.molecular.datamodel.ExperimentType
+import com.hartwig.actin.molecular.datamodel.*
 import com.hartwig.actin.molecular.datamodel.GeneAlteration
-import com.hartwig.actin.molecular.datamodel.GeneRole
-import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
-import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.TranscriptImpact
 import com.hartwig.actin.molecular.datamodel.Variant
-import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.panel.PanelAmplificationExtraction
-import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
-import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
+import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
+import com.hartwig.actin.molecular.datamodel.panel.*
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEvidenceFactory
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.actin.molecular.orange.interpretation.GeneAlterationFactory
-import com.hartwig.actin.molecular.paver.PaveCodingEffect
-import com.hartwig.actin.molecular.paver.PaveImpact
-import com.hartwig.actin.molecular.paver.PaveQuery
-import com.hartwig.actin.molecular.paver.PaveResponse
-import com.hartwig.actin.molecular.paver.PaveTranscriptImpact
-import com.hartwig.actin.molecular.paver.Paver
+import com.hartwig.actin.molecular.paver.*
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.serve.datamodel.hotspot.KnownHotspot
 import com.hartwig.serve.datamodel.range.KnownCodon
@@ -60,12 +45,18 @@ class PanelAnnotator(
 
         val annotatedAmplifications = input.amplifications.map(::inferredCopyNumber).map(::annotatedInferredCopyNumber)
 
+        val annotatedFusions = input.fusions.map { createFusion(it) }
+
         return PanelRecord(
             panelExtraction = input,
             experimentType = ExperimentType.PANEL,
             testTypeDisplay = input.panelType,
             date = input.date,
-            drivers = Drivers(variants = variantsWithDriverLikelihoodModel.toSet(), copyNumbers = annotatedAmplifications.toSet()),
+            drivers = Drivers(
+                variants = variantsWithDriverLikelihoodModel.toSet(),
+                copyNumbers = annotatedAmplifications.toSet(),
+                fusions = emptySet()
+            ),
             characteristics = MolecularCharacteristics(
                 isMicrosatelliteUnstable = input.isMicrosatelliteUnstable,
                 tumorMutationalBurden = input.tumorMutationalBurden,
@@ -144,9 +135,11 @@ class PanelAnnotator(
         return paveResponses
     }
 
-    private fun annotateWithEvidence(transvarVariants: Map<String, TransvarVariant>,
-                                     paveAnnotations: Map<String, PaveResponse>,
-                                     variantExtractions: Map<String, PanelVariantExtraction>): List<Variant> {
+    private fun annotateWithEvidence(
+        transvarVariants: Map<String, TransvarVariant>,
+        paveAnnotations: Map<String, PaveResponse>,
+        variantExtractions: Map<String, PanelVariantExtraction>
+    ): List<Variant> {
         return transvarVariants.map { (id, transvarAnnotation) ->
             val paveResponse = paveAnnotations[id]!!
             val extraction = variantExtractions[id]!!
@@ -275,6 +268,21 @@ class PanelAnnotator(
                     .map(PaveCodingEffect::fromPaveVariantEffect)
                     .let(PaveCodingEffect::worstCodingEffect)
             )
+        )
+    }
+
+    private fun createFusion(panelFusionExtraction: PanelFusionExtraction): Fusion {
+        return Fusion(
+            geneStart = "gene1",
+            geneEnd = "gene2",
+            geneTranscriptStart = "",
+            geneTranscriptEnd = "",
+            driverType = FusionDriverType.NONE, // TODO known fusions tsv
+            proteinEffect = ProteinEffect.UNKNOWN, // TODO SERVE
+            isReportable = true,
+            event = "TODO",
+            driverLikelihood = DriverLikelihood.LOW, // TODO where does this come from
+            evidence = ActionableEvidenceFactory.createNoEvidence()
         )
     }
 
