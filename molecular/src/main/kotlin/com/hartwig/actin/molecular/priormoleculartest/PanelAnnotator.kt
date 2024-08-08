@@ -17,6 +17,7 @@ import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.actin.molecular.orange.interpretation.GeneAlterationFactory
 import com.hartwig.actin.molecular.paver.*
 import com.hartwig.actin.tools.pave.PaveLite
+import com.hartwig.hmftools.common.fusion.KnownFusionCache
 import com.hartwig.serve.datamodel.hotspot.KnownHotspot
 import com.hartwig.serve.datamodel.range.KnownCodon
 import org.apache.logging.log4j.LogManager
@@ -32,7 +33,8 @@ class PanelAnnotator(
     private val geneDriverLikelihoodModel: GeneDriverLikelihoodModel,
     private val variantResolver: VariantResolver,
     private val paver: Paver,
-    private val paveLite: PaveLite
+    private val paveLite: PaveLite,
+    private val knownFusionCache: KnownFusionCache
 ) :
     MolecularAnnotator<PanelExtraction, PanelRecord> {
 
@@ -272,12 +274,13 @@ class PanelAnnotator(
     }
 
     private fun createFusion(panelFusionExtraction: PanelFusionExtraction): Fusion {
+        val test = knownFusionCache.hasKnownFusion(panelFusionExtraction.geneUp, panelFusionExtraction.geneDown)
         return Fusion(
             geneStart = panelFusionExtraction.geneUp ?: "", // TODO no no we don't want empty strings
             geneEnd = panelFusionExtraction.geneDown ?: "",
             geneTranscriptStart = "",
             geneTranscriptEnd = "",
-            driverType = FusionDriverType.NONE, // TODO known fusions tsv
+            driverType = determineFusionDriverType(panelFusionExtraction.geneUp, panelFusionExtraction.geneDown),
             proteinEffect = ProteinEffect.UNKNOWN, // TODO SERVE
             isReportable = true,
             event = "TODO",
@@ -285,6 +288,30 @@ class PanelAnnotator(
             evidence = ActionableEvidenceFactory.createNoEvidence()
         )
     }
+
+    private fun determineFusionDriverType(geneUp: String?, geneDown: String?): FusionDriverType {
+        if (geneUp != null && geneDown != null) {
+            if (knownFusionCache.hasKnownFusion(geneUp, geneDown)) {
+                return FusionDriverType.KNOWN_PAIR
+            }
+
+            if (geneUp == geneDown && knownFusionCache.hasExonDelDup(geneUp)) {
+                return FusionDriverType.KNOWN_PAIR_DEL_DUP
+            }
+        }
+
+        val isPromiscuous5 = geneUp?.let { knownFusionCache.hasPromiscuousFiveGene(it) } ?: false
+        val isPromiscuous3 = geneDown?.let { knownFusionCache.hasPromiscuousThreeGene(it) } ?: false
+
+        when {
+            isPromiscuous5 && isPromiscuous3 -> return FusionDriverType.PROMISCUOUS_BOTH
+            isPromiscuous5 -> return FusionDriverType.PROMISCUOUS_5
+            isPromiscuous3 -> return FusionDriverType.PROMISCUOUS_3
+        }
+
+        return FusionDriverType.NONE
+    }
+
 
     private fun variantType(transvarVariant: TransvarVariant): VariantType {
         val ref = transvarVariant.ref()

@@ -18,15 +18,11 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.actionability.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
-import com.hartwig.actin.molecular.paver.PaveCodingEffect
-import com.hartwig.actin.molecular.paver.PaveImpact
-import com.hartwig.actin.molecular.paver.PaveQuery
-import com.hartwig.actin.molecular.paver.PaveResponse
-import com.hartwig.actin.molecular.paver.PaveTranscriptImpact
-import com.hartwig.actin.molecular.paver.Paver
+import com.hartwig.actin.molecular.paver.*
 import com.hartwig.actin.tools.pave.ImmutableVariantTranscriptImpact
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.VariantAnnotator
+import com.hartwig.hmftools.common.fusion.KnownFusionCache
 import com.hartwig.serve.datamodel.EvidenceDirection
 import com.hartwig.serve.datamodel.EvidenceLevel
 import com.hartwig.serve.datamodel.Knowledgebase
@@ -124,7 +120,10 @@ class PanelAnnotatorTest {
         every { run(listOf(PAVE_QUERY)) } returns listOf(PAVE_ANNOTATION)
     }
 
-    private val annotator = PanelAnnotator(evidenceDatabase, geneDriverLikelihoodModel, transvarAnnotator, paver, paveLite)
+    private val knownFusionCache = mockk<KnownFusionCache>()
+
+    private val annotator =
+        PanelAnnotator(evidenceDatabase, geneDriverLikelihoodModel, transvarAnnotator, paver, paveLite, knownFusionCache)
 
     @Test
     fun `Should return empty annotation when no matches found`() {

@@ -6,15 +6,12 @@ import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
-import com.hartwig.actin.molecular.paver.PaveCodingEffect
-import com.hartwig.actin.molecular.paver.PaveImpact
-import com.hartwig.actin.molecular.paver.PaveQuery
-import com.hartwig.actin.molecular.paver.PaveResponse
-import com.hartwig.actin.molecular.paver.Paver
+import com.hartwig.actin.molecular.paver.*
 import com.hartwig.actin.tools.pave.ImmutableVariantTranscriptImpact
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.ImmutableVariant
 import com.hartwig.actin.tools.variant.VariantAnnotator
+import com.hartwig.hmftools.common.fusion.KnownFusionCache
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -46,11 +43,19 @@ class PriorMolecularTestInterpretersTest {
             }
         }
     }
+    private val knownFusionCache = mockk<KnownFusionCache>()
 
     @Test
     fun `Should interpret list of molecular tests`() {
         val interpreters =
-            PriorMolecularTestInterpreters.create(evidenceDatabase, geneDriverLikelihoodModel, transvarAnnotator, paver, paveLite)
+            PriorMolecularTestInterpreters.create(
+                evidenceDatabase,
+                geneDriverLikelihoodModel,
+                transvarAnnotator,
+                paver,
+                paveLite,
+                knownFusionCache
+            )
         val priorMolecularTests = listOf(
             archerPriorMolecularVariantRecord(),
             avlPanelPriorMolecularVariantRecord(),

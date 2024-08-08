@@ -114,10 +114,11 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         )
         val dndsDatabase = DndsDatabase.create(config.oncoDndsDatabasePath, config.tsgDndsDatabasePath)
 
-        LOGGER.info(
-            "Loading known fusions from " + config.knownFusionsPath
-        )
-        val knownFusion = KnownFusionCache().loadFromFile(config.knownFusionsPath);
+        LOGGER.info("Loading known fusions from " + config.knownFusionsPath)
+        val knownFusionCache = KnownFusionCache()
+        if (!knownFusionCache.loadFromFile(config.knownFusionsPath)) {
+            throw IllegalArgumentException("Failed to load known fusions from ${config.knownFusionsPath}")
+        }
 
         LOGGER.info("Interpreting clinical molecular tests")
         val geneDriverLikelihoodModel = GeneDriverLikelihoodModel(dndsDatabase)
@@ -136,11 +137,12 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             geneDriverLikelihoodModel,
             variantAnnotator,
             paver,
-            paveLite
+            paveLite,
+            knownFusionCache
         ).process(priorIHCTests)
         val sequencingMolecularTests = MolecularInterpreter(
             PriorSequencingExtractor(),
-            PanelAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite),
+            PanelAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite, knownFusionCache),
         ).run(priorSequencingTests)
         LOGGER.info(" Completed interpretation of {} clinical molecular tests", clinicalMolecularTests.size)
 
