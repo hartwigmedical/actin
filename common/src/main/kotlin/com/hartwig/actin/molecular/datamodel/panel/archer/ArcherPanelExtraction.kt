@@ -1,16 +1,13 @@
 package com.hartwig.actin.molecular.datamodel.panel.archer
 
-import com.hartwig.actin.molecular.datamodel.panel.PanelAmplificationExtraction
-import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.PanelFusionExtraction
-import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
+import com.hartwig.actin.molecular.datamodel.panel.*
 import java.time.LocalDate
 
 val ARCHER_ALWAYS_TESTED_GENES = setOf("ALK", "ROS1", "RET", "MET", "NTRK1", "NTRK2", "NTRK3", "NRG1")
 
 data class ArcherPanelExtraction(
     override val fusions: List<PanelFusionExtraction> = emptyList(),
-    val skippedExons: List<ArcherSkippedExonsExtraction> = emptyList(),
+    override val skippedExons: List<PanelSkippedExonsExtraction> = emptyList(),
     override val variants: List<PanelVariantExtraction> = emptyList(),
     override val amplifications: List<PanelAmplificationExtraction> = emptyList(),
     override val date: LocalDate? = null,

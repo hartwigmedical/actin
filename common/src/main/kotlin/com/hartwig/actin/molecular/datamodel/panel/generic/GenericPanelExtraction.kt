@@ -1,16 +1,14 @@
 package com.hartwig.actin.molecular.datamodel.panel.generic
 
 import com.hartwig.actin.molecular.datamodel.AVL_PANEL
-import com.hartwig.actin.molecular.datamodel.panel.PanelAmplificationExtraction
-import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.PanelFusionExtraction
-import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
+import com.hartwig.actin.molecular.datamodel.panel.*
 import java.time.LocalDate
 
 val GENERIC_PANEL_ALWAYS_TESTED_GENES = setOf("EGFR", "BRAF", "KRAS")
 
 data class GenericPanelExtraction(
     override val fusions: List<PanelFusionExtraction> = emptyList(),
+    override val skippedExons: List<PanelSkippedExonsExtraction> = emptyList(),
     val exonDeletions: List<GenericExonDeletionExtraction> = emptyList(),
     val genesWithNegativeResults: Set<String> = emptySet(),
     override val panelType: String,

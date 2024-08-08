@@ -51,10 +51,10 @@ class PanelAnnotator(
 
         val annotatedAmplifications = input.amplifications.map(::inferredCopyNumber).map(::annotatedInferredCopyNumber)
 
-        val annotatedFusions = input.fusions
-            .map { createFusion(it) }
-            .map { annotateFusion(it) }
-            .toSet()
+        val annotatedFusions =
+            (input.fusions.map { createFusion(it) } + input.skippedExons.map { createFusionFromExonSkip(it) })
+                .map { annotateFusion(it) }
+                .toSet()
 
         return PanelRecord(
             panelExtraction = input,
@@ -295,6 +295,27 @@ class PanelAnnotator(
             extendedFusionDetails = ExtendedFusionDetails(
                 fusedExonUp = 0,  // TODO make nullable? using 0 which is not valid exon
                 fusedExonDown = 0,
+                isAssociatedWithDrugResistance = null
+            )
+        )
+    }
+
+    private fun createFusionFromExonSkip(panelSkippedExonsExtraction: PanelSkippedExonsExtraction): Fusion {
+        // TODO note that we have exons here without knowing the transcript! maybe we should plug in canonical?
+        return Fusion(
+            geneStart = panelSkippedExonsExtraction.gene,
+            geneEnd = panelSkippedExonsExtraction.gene,
+            geneTranscriptStart = "",  // TODO nullable here, or move to extended
+            geneTranscriptEnd = "",
+            driverType = determineFusionDriverType(panelSkippedExonsExtraction.gene, panelSkippedExonsExtraction.gene),
+            proteinEffect = ProteinEffect.UNKNOWN,
+            isReportable = true,
+            event = panelSkippedExonsExtraction.display(),
+            driverLikelihood = DriverLikelihood.HIGH, // TODO can we model this? defaulting to high
+            evidence = ActionableEvidenceFactory.createNoEvidence(),
+            extendedFusionDetails = ExtendedFusionDetails(
+                fusedExonUp = panelSkippedExonsExtraction.start - 1, // TODO so we can't represent skips of first/last exons, throw error?
+                fusedExonDown = panelSkippedExonsExtraction.end + 1,
                 isAssociatedWithDrugResistance = null
             )
         )

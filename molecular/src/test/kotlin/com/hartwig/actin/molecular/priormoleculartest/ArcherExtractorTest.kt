@@ -2,9 +2,9 @@ package com.hartwig.actin.molecular.priormoleculartest
 
 import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.molecular.datamodel.panel.PanelFusionExtraction
+import com.hartwig.actin.molecular.datamodel.panel.PanelSkippedExonsExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSkippedExonsExtraction
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
@@ -37,8 +37,8 @@ class ArcherExtractorTest {
         assertThat(result).containsExactly(
             ArcherPanelExtraction(
                 skippedExons = listOf(
-                    ArcherSkippedExonsExtraction(GENE, 1, 2),
-                    ArcherSkippedExonsExtraction(GENE, 3, 3)
+                    PanelSkippedExonsExtraction(GENE, 1, 2),
+                    PanelSkippedExonsExtraction(GENE, 3, 3)
                 )
             )
         )

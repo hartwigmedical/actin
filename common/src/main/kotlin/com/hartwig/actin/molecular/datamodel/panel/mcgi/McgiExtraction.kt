@@ -12,8 +12,11 @@ data class McgiExtraction(
     override val amplifications: List<PanelAmplificationExtraction>,
     override val isMicrosatelliteUnstable: Boolean?,
     override val tumorMutationalBurden: Double?,
+    override val skippedExons: List<PanelSkippedExonsExtraction> = emptyList(),
     override val extractionClass: String = McgiExtraction::class.java.simpleName
 ) : PanelExtraction {
+
+    // TODO update these with skipped exon genes. or maybe refactor up to panel extraction?
     override fun testedGenes(): Set<String> {
         return (variants.map { it.gene } + amplifications.map { it.gene }).toSet()
     }
