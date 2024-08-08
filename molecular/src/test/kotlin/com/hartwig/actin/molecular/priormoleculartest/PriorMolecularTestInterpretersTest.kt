@@ -43,7 +43,11 @@ class PriorMolecularTestInterpretersTest {
             }
         }
     }
-    private val knownFusionCache = mockk<KnownFusionCache>()
+    private val knownFusionCache = mockk<KnownFusionCache> {
+        every { hasKnownFusion(any(), any()) } returns false
+        every { hasPromiscuousFiveGene(any()) } returns false
+        every { hasPromiscuousThreeGene(any()) } returns false
+    }
 
     @Test
     fun `Should interpret list of molecular tests`() {
