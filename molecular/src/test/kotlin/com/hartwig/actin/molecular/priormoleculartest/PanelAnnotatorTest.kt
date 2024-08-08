@@ -292,24 +292,25 @@ class PanelAnnotatorTest {
         setupKnownFusionCache()
         setupEvidenceForFusion()
         val annotated = annotator.annotate(ARCHER_PANEL_WITH_FUSION)
-        assertThat(annotated.drivers.fusions.size).isEqualTo(1)
-        assertThat(annotated.drivers.fusions.first()).isEqualTo(
-            Fusion(
-                geneStart = GENE,
-                geneEnd = OTHER_GENE,
-                geneTranscriptStart = "",
-                geneTranscriptEnd = "",
-                driverType = FusionDriverType.KNOWN_PAIR,
-                proteinEffect = ProteinEffect.UNKNOWN,
-                extendedFusionDetails = ExtendedFusionDetails(
-                    fusedExonUp = 0,
-                    fusedExonDown = 0,
-                    isAssociatedWithDrugResistance = null
-                ),
-                event = "$GENE-$OTHER_GENE fusion",
-                isReportable = true,
-                driverLikelihood = DriverLikelihood.HIGH,
-                evidence = ActionableEvidence(approvedTreatments = setOf("intervention"))
+        assertThat(annotated.drivers.fusions).isEqualTo(
+            setOf(
+                Fusion(
+                    geneStart = GENE,
+                    geneEnd = OTHER_GENE,
+                    geneTranscriptStart = "",
+                    geneTranscriptEnd = "",
+                    driverType = FusionDriverType.KNOWN_PAIR,
+                    proteinEffect = ProteinEffect.UNKNOWN,
+                    extendedFusionDetails = ExtendedFusionDetails(
+                        fusedExonUp = 0,
+                        fusedExonDown = 0,
+                        isAssociatedWithDrugResistance = null
+                    ),
+                    event = "$GENE-$OTHER_GENE fusion",
+                    isReportable = true,
+                    driverLikelihood = DriverLikelihood.HIGH,
+                    evidence = ActionableEvidence(approvedTreatments = setOf("intervention"))
+                )
             )
         )
     }

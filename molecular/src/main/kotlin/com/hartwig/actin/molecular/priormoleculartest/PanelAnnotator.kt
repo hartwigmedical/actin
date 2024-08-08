@@ -281,16 +281,18 @@ class PanelAnnotator(
     }
 
     private fun createFusion(panelFusionExtraction: PanelFusionExtraction): Fusion {
+        val isReportable = true
+        val driverType = determineFusionDriverType(panelFusionExtraction.geneUp, panelFusionExtraction.geneDown)
         return Fusion(
             geneStart = panelFusionExtraction.geneUp ?: "", // TODO no no we don't want empty strings
             geneEnd = panelFusionExtraction.geneDown ?: "",
             geneTranscriptStart = "",  // TODO also nullable here, or move to extended
             geneTranscriptEnd = "",
-            driverType = determineFusionDriverType(panelFusionExtraction.geneUp, panelFusionExtraction.geneDown),
+            driverType = driverType,
             proteinEffect = ProteinEffect.UNKNOWN,
-            isReportable = true,
+            isReportable = isReportable,
             event = panelFusionExtraction.display(),
-            driverLikelihood = DriverLikelihood.HIGH, // TODO can we model this? defaulting to high
+            driverLikelihood = fusionDriverLikelihood(isReportable, driverType),
             evidence = ActionableEvidenceFactory.createNoEvidence(),
             extendedFusionDetails = ExtendedFusionDetails(
                 fusedExonUp = 0,  // TODO make nullable? using 0 which is not valid exon
@@ -298,6 +300,20 @@ class PanelAnnotator(
                 isAssociatedWithDrugResistance = null
             )
         )
+    }
+
+    private fun fusionDriverLikelihood(isReportable: Boolean, driverType: FusionDriverType): DriverLikelihood? {
+        if (isReportable) {
+            return when (driverType) {
+                FusionDriverType.KNOWN_PAIR,
+                FusionDriverType.KNOWN_PAIR_IG,
+                FusionDriverType.KNOWN_PAIR_DEL_DUP -> DriverLikelihood.HIGH
+
+                else -> DriverLikelihood.LOW
+            }
+        }
+
+        return null
     }
 
     private fun createFusionFromExonSkip(panelSkippedExonsExtraction: PanelSkippedExonsExtraction): Fusion {
