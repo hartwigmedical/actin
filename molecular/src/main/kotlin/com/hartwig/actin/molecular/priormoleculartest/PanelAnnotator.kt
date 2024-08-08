@@ -7,12 +7,14 @@ import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.datamodel.panel.*
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEvidenceFactory
+import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.actin.molecular.orange.interpretation.GeneAlterationFactory
 import com.hartwig.actin.molecular.paver.*
@@ -41,13 +43,18 @@ class PanelAnnotator(
     override fun annotate(input: PanelExtraction): PanelRecord {
         val variantExtractions = indexVariantExtractionsToUniqueIds(input.variants)
         val transvarVariants = resolveVariants(variantExtractions)
+        // TODO the pave call still runs runs when no variants. maybe this entire block to do with variants can be
+        //   factored into a separate class, and short-circuit if no variants
         val paveAnnotations = annotateWithPave(transvarVariants)
         val variantsWithEvidence = annotateWithEvidence(transvarVariants, paveAnnotations, variantExtractions)
         val variantsWithDriverLikelihoodModel = annotateWithDriverLikelihood(variantsWithEvidence)
 
         val annotatedAmplifications = input.amplifications.map(::inferredCopyNumber).map(::annotatedInferredCopyNumber)
 
-        val annotatedFusions = input.fusions.map { createFusion(it) }
+        val annotatedFusions = input.fusions
+            .map { createFusion(it) }
+            .map { annotateFusion(it) }
+            .toSet()
 
         return PanelRecord(
             panelExtraction = input,
@@ -57,7 +64,7 @@ class PanelAnnotator(
             drivers = Drivers(
                 variants = variantsWithDriverLikelihoodModel.toSet(),
                 copyNumbers = annotatedAmplifications.toSet(),
-                fusions = annotatedFusions.toSet(),
+                fusions = annotatedFusions,
             ),
             characteristics = MolecularCharacteristics(
                 isMicrosatelliteUnstable = input.isMicrosatelliteUnstable,
@@ -70,7 +77,7 @@ class PanelAnnotator(
     private fun variantMatchCriteria(
         panelVariantExtraction: PanelVariantExtraction,
         transvarVariant: TransvarVariant,
-        paveResonse: PaveResponse
+        paveResponse: PaveResponse
     ) = VariantMatchCriteria(
         isReportable = true,
         gene = panelVariantExtraction.gene,
@@ -79,7 +86,7 @@ class PanelAnnotator(
         alt = transvarVariant.alt(),
         position = transvarVariant.position(),
         type = variantType(transvarVariant),
-        codingEffect = codingEffect(paveResonse.impact.canonicalCodingEffect)
+        codingEffect = codingEffect(paveResponse.impact.canonicalCodingEffect)
     )
 
     private fun annotatedInferredCopyNumber(copyNumber: CopyNumber): CopyNumber {
@@ -274,7 +281,6 @@ class PanelAnnotator(
     }
 
     private fun createFusion(panelFusionExtraction: PanelFusionExtraction): Fusion {
-        val test = knownFusionCache.hasKnownFusion(panelFusionExtraction.geneUp, panelFusionExtraction.geneDown)
         return Fusion(
             geneStart = panelFusionExtraction.geneUp ?: "", // TODO no no we don't want empty strings
             geneEnd = panelFusionExtraction.geneDown ?: "",
@@ -285,7 +291,12 @@ class PanelAnnotator(
             isReportable = true,
             event = "TODO",
             driverLikelihood = DriverLikelihood.HIGH, // TODO where does this come from, defaulting to high
-            evidence = ActionableEvidenceFactory.createNoEvidence()
+            evidence = ActionableEvidenceFactory.createNoEvidence(),
+            extendedFusionDetails = ExtendedFusionDetails(
+                fusedExonUp = 0,  // TODO make nullable?
+                fusedExonDown = 0,
+                isAssociatedWithDrugResistance = null
+            )
         )
     }
 
@@ -312,6 +323,31 @@ class PanelAnnotator(
         return FusionDriverType.NONE
     }
 
+    // TODO duplication with molecularRecordAnnotator
+    private fun annotateFusion(fusion: Fusion): Fusion {
+        val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForFusion(createFusionMatchCriteria(fusion)))
+        val knownFusion = evidenceDatabase.lookupKnownFusion(createFusionMatchCriteria(fusion))
+
+        val proteinEffect = if (knownFusion == null) ProteinEffect.UNKNOWN else {
+            GeneAlterationFactory.convertProteinEffect(knownFusion.proteinEffect())
+        }
+        val isAssociatedWithDrugResistance = knownFusion?.associatedWithDrugResistance()
+
+        return fusion.copy(
+            evidence = evidence,
+            proteinEffect = proteinEffect,
+            extendedFusionDetails = fusion.extendedFusionOrThrow().copy(
+                isAssociatedWithDrugResistance = isAssociatedWithDrugResistance,
+            ),
+        )
+    }
+
+    private fun createFusionMatchCriteria(fusion: Fusion) = FusionMatchCriteria(
+        isReportable = fusion.isReportable,
+        geneStart = fusion.geneStart,
+        geneEnd = fusion.geneEnd,
+        driverType = fusion.driverType
+    )
 
     private fun variantType(transvarVariant: TransvarVariant): VariantType {
         val ref = transvarVariant.ref()

@@ -22,6 +22,8 @@ class PriorMolecularTestInterpretersTest {
     private val evidenceDatabase = mockk<EvidenceDatabase> {
         every { evidenceForVariant(any()) } returns ActionabilityMatch(emptyList(), emptyList())
         every { geneAlterationForVariant(any()) } returns null
+        every { evidenceForFusion(any()) } returns ActionabilityMatch(emptyList(), emptyList())
+        every { lookupKnownFusion(any()) } returns null
     }
     private val geneDriverLikelihoodModel = mockk<GeneDriverLikelihoodModel> {
         every { evaluate(any(), any(), any()) } returns null
