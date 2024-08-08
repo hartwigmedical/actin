@@ -7,7 +7,6 @@ import com.hartwig.actin.molecular.datamodel.panel.PanelFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 
 class GenericPanelExtractorTest {
@@ -71,7 +70,7 @@ class GenericPanelExtractorTest {
     }
 
     @Test
-    fun `Should throw exception on unextractable freetext record`() {
+    fun `Should filter unknown record`() {
         val record = PriorIHCTest(
             test = "Freetext",
             item = "KRAS A1Z",
@@ -79,9 +78,7 @@ class GenericPanelExtractorTest {
             impliesPotentialIndeterminateStatus = false
         )
         val priorMolecularTests = listOf(record)
-        assertThatThrownBy {
-            extractor.extract(priorMolecularTests)
-        }.isInstanceOf(IllegalArgumentException::class.java)
+        assertThat(extractor.extract(priorMolecularTests)).containsOnly(GenericPanelExtraction(panelType = FREE_TEXT_PANEL))
     }
 
     @Test
