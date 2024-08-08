@@ -284,16 +284,16 @@ class PanelAnnotator(
         return Fusion(
             geneStart = panelFusionExtraction.geneUp ?: "", // TODO no no we don't want empty strings
             geneEnd = panelFusionExtraction.geneDown ?: "",
-            geneTranscriptStart = "",
+            geneTranscriptStart = "",  // TODO also nullable here, or move to extended
             geneTranscriptEnd = "",
             driverType = determineFusionDriverType(panelFusionExtraction.geneUp, panelFusionExtraction.geneDown),
-            proteinEffect = ProteinEffect.UNKNOWN, // TODO SERVE
+            proteinEffect = ProteinEffect.UNKNOWN,
             isReportable = true,
-            event = "TODO",
-            driverLikelihood = DriverLikelihood.HIGH, // TODO where does this come from, defaulting to high
+            event = panelFusionExtraction.display(),
+            driverLikelihood = DriverLikelihood.HIGH, // TODO can we model this? defaulting to high
             evidence = ActionableEvidenceFactory.createNoEvidence(),
             extendedFusionDetails = ExtendedFusionDetails(
-                fusedExonUp = 0,  // TODO make nullable?
+                fusedExonUp = 0,  // TODO make nullable? using 0 which is not valid exon
                 fusedExonDown = 0,
                 isAssociatedWithDrugResistance = null
             )
