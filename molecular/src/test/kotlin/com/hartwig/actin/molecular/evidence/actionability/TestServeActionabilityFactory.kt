@@ -1,15 +1,7 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.molecular.evidence.TestServeFactory
-import com.hartwig.serve.datamodel.ActionableEvent
-import com.hartwig.serve.datamodel.CancerType
-import com.hartwig.serve.datamodel.EvidenceDirection
-import com.hartwig.serve.datamodel.EvidenceLevel
-import com.hartwig.serve.datamodel.ImmutableCancerType
-import com.hartwig.serve.datamodel.ImmutableClinicalTrial
-import com.hartwig.serve.datamodel.ImmutableTreatment
-import com.hartwig.serve.datamodel.Intervention
-import com.hartwig.serve.datamodel.Knowledgebase
+import com.hartwig.serve.datamodel.*
 import com.hartwig.serve.datamodel.characteristic.ImmutableActionableCharacteristic
 import com.hartwig.serve.datamodel.characteristic.TumorCharacteristicType
 import com.hartwig.serve.datamodel.fusion.ImmutableActionableFusion
@@ -55,7 +47,7 @@ object TestServeActionabilityFactory {
     }
 
     private fun createEmptyActionableEvent(): ActionableEvent {
-        return createActionableEvent(Knowledgebase.CKB_EVIDENCE, "")
+        return createActionableEvent(Knowledgebase.CKB_EVIDENCE, "intervention")
     }
 
     fun createActionableEvent(source: Knowledgebase, interventionName: String): ActionableEvent {

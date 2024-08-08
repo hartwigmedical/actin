@@ -1,15 +1,13 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
-import com.hartwig.actin.molecular.datamodel.CodingEffect
-import com.hartwig.actin.molecular.datamodel.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.GeneRole
-import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.TranscriptImpact
-import com.hartwig.actin.molecular.datamodel.VariantType
+import com.hartwig.actin.molecular.datamodel.*
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
+import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.datamodel.panel.PanelAmplificationExtraction
+import com.hartwig.actin.molecular.datamodel.panel.PanelFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
@@ -17,6 +15,7 @@ import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.actionability.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
+import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.actin.molecular.paver.*
 import com.hartwig.actin.tools.pave.ImmutableVariantTranscriptImpact
@@ -58,6 +57,14 @@ private val VARIANT_MATCH_CRITERIA =
         codingEffect = CodingEffect.MISSENSE,
         type = VariantType.SNV
     )
+private val ARCHER_FUSION = PanelFusionExtraction(GENE, OTHER_GENE)
+private val ARCHER_PANEL_WITH_FUSION = ArcherPanelExtraction(fusions = listOf(ARCHER_FUSION))
+private val FUSION_MATCH_CRITERIA = FusionMatchCriteria(
+    isReportable = true,
+    geneStart = GENE,
+    geneEnd = OTHER_GENE,
+    driverType = FusionDriverType.KNOWN_PAIR
+)
 private val TRANSCRIPT_ANNOTATION =
     ActinToolsVariant.builder().alt(ALT).ref(REF).chromosome(CHROMOSOME).position(POSITION).build()
 
@@ -135,7 +142,7 @@ class PanelAnnotatorTest {
     fun `Should annotate variants with evidence`() {
         every { evidenceDatabase.evidenceForVariant(VARIANT_MATCH_CRITERIA) } returns ACTIONABILITY_MATCH
         val annotated = annotator.annotate(ARCHER_PANEL_WITH_VARIANT)
-        assertThat(annotated.drivers.variants.first().evidence).isEqualTo(ActionableEvidence(approvedTreatments = setOf("")))
+        assertThat(annotated.drivers.variants.first().evidence).isEqualTo(ActionableEvidence(approvedTreatments = setOf("intervention")))
     }
 
     @Test
@@ -280,6 +287,33 @@ class PanelAnnotatorTest {
         assertThat(annotatedVariant.proteinEffect).isEqualTo(ProteinEffect.GAIN_OF_FUNCTION)
     }
 
+    @Test
+    fun `Should annotate fusion`() {
+        setupKnownFusionCache()
+        setupEvidenceForFusion()
+        val annotated = annotator.annotate(ARCHER_PANEL_WITH_FUSION)
+        assertThat(annotated.drivers.fusions.size).isEqualTo(1)
+        assertThat(annotated.drivers.fusions.first()).isEqualTo(
+            Fusion(
+                geneStart = GENE,
+                geneEnd = OTHER_GENE,
+                geneTranscriptStart = "",
+                geneTranscriptEnd = "",
+                driverType = FusionDriverType.KNOWN_PAIR,
+                proteinEffect = ProteinEffect.UNKNOWN,
+                extendedFusionDetails = ExtendedFusionDetails(
+                    fusedExonUp = 0,
+                    fusedExonDown = 0,
+                    isAssociatedWithDrugResistance = null
+                ),
+                event = "$GENE-$OTHER_GENE fusion",
+                isReportable = true,
+                driverLikelihood = DriverLikelihood.HIGH,
+                evidence = ActionableEvidence(approvedTreatments = setOf("intervention"))
+            )
+        )
+    }
+
     private fun assertCopyNumber(annotatedVariant: CopyNumber) {
         assertThat(annotatedVariant.minCopies).isEqualTo(6)
         assertThat(annotatedVariant.maxCopies).isEqualTo(6)
@@ -290,5 +324,14 @@ class PanelAnnotatorTest {
 
     private fun setupGeneAlteration() {
         every { evidenceDatabase.geneAlterationForVariant(VARIANT_MATCH_CRITERIA) } returns HOTSPOT
+    }
+
+    private fun setupKnownFusionCache() {
+        every { knownFusionCache.hasKnownFusion(GENE, OTHER_GENE) } returns true
+    }
+
+    private fun setupEvidenceForFusion() {
+        every { evidenceDatabase.lookupKnownFusion(FUSION_MATCH_CRITERIA) } returns null
+        every { evidenceDatabase.evidenceForFusion(FUSION_MATCH_CRITERIA) } returns ACTIONABILITY_MATCH
     }
 }
