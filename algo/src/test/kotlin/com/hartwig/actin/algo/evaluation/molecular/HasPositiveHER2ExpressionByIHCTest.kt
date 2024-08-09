@@ -2,18 +2,16 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.molecular.datamodel.*
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-private const val MEASURE = "measure"
-
 class HasPositiveHER2ExpressionByIHCTest {
     val function = HasPositiveHER2ExpressionByIHC()
-    private val her2Test = MolecularTestFactory.priorMolecularTest(test = "IHC", item = "HER2", measure = MEASURE)
-    val erbb2Amp = TestCopyNumberFactory.createMinimal().copy(
+    private val erbb2Amp = TestCopyNumberFactory.createMinimal().copy(
             isReportable = true,
             gene = "ERBB2",
             geneRole = GeneRole.ONCO,
@@ -33,37 +31,30 @@ class HasPositiveHER2ExpressionByIHCTest {
     @Test
     fun `Should evaluate to undetermined when HER2 data is not explicitly positive or negative`() {
         val evaluation = function.evaluate(
-            MolecularTestFactory.withMolecularTests(
+            MolecularTestFactory.withIHCTests(
                 listOf(
-                    IHCMolecularTest(her2Test.copy(scoreText = "nonsense")),
-                    IHCMolecularTest(her2Test.copy(scoreText = "more nonsense"))
+                    ihcTest(scoreText = "nonsense"),
+                    ihcTest(scoreText = "more nonsense")
                 )
             )
         )
+
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
     }
 
     @Test
     fun `Should evaluate to undetermined when HER2 data is conflicting`() {
         val evaluation = function.evaluate(
-            MolecularTestFactory.withMolecularTests(
+            MolecularTestFactory.withIHCTests(
                 listOf(
-                    IHCMolecularTest(
-                        her2Test.copy(
-                            scoreText = "positive"
-                        )
-                    ), IHCMolecularTest(
-                        her2Test.copy(
-                            scoreText = "negative"
-                        )
+                    ihcTest(scoreText = "positive"),
+                    ihcTest(scoreText = "negative")
                     )
                 )
             )
-        )
+
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(
-            evaluation.undeterminedGeneralMessages
-        ).containsExactly(
+        assertThat(evaluation.undeterminedGeneralMessages).containsExactly(
             "Conflicting HER2 expression tests by IHC"
         )
     }
@@ -71,59 +62,52 @@ class HasPositiveHER2ExpressionByIHCTest {
     @Test
     fun `Should evaluate to undetermined if positive HER2 data is not reliable`() {
         val evaluation = function.evaluate(
-            MolecularTestFactory.withMolecularTests(
+            MolecularTestFactory.withIHCTests(
                 listOf(
-                    IHCMolecularTest(
-                        her2Test.copy(
-                            scoreValue = 3.0, scoreValueUnit = "+", impliesPotentialIndeterminateStatus = true
-                        )
-                    )
+                    ihcTest(scoreValue = 3.0, scoreValueUnit = "+", impliesPotentialIndeterminateStatus = true)
                 )
             )
         )
+
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
     }
 
     @Test
     fun `Should evaluate to pass if positive HER2 data`() {
         val evaluationValue = function.evaluate(
-            MolecularTestFactory.withMolecularTests(
+            MolecularTestFactory.withIHCTests(
                 listOf(
-                    IHCMolecularTest(her2Test.copy(scoreValue = 3.0, scoreValueUnit = "+")), IHCMolecularTest(
-                        her2Test.copy(
-                            scoreValue = 2.0, scoreValueUnit = "+", impliesPotentialIndeterminateStatus = true
-                        )
+                    ihcTest(scoreValue = 3.0, scoreValueUnit = "+"),
+                    ihcTest(scoreValue = 2.0, scoreValueUnit = "+", impliesPotentialIndeterminateStatus = true)
                     )
                 )
             )
-        )
+
         assertEvaluation(EvaluationResult.PASS, evaluationValue)
 
         val evaluationText = function.evaluate(
-            MolecularTestFactory.withMolecularTests(
+            MolecularTestFactory.withIHCTests(
                 listOf(
-                    IHCMolecularTest(her2Test.copy(scoreText = "pos", impliesPotentialIndeterminateStatus = true)),
-                    IHCMolecularTest(her2Test.copy(scoreText = "positive"))
+                    ihcTest(scoreText = "pos", impliesPotentialIndeterminateStatus = true),
+                    ihcTest(scoreText = "positive")
                 )
             )
         )
+
         assertEvaluation(EvaluationResult.PASS, evaluationText)
     }
 
     @Test
     fun `Should evaluate to warn if ERBB2 is amp and no valid IHC result available`() {
         val evaluation = function.evaluate(
-            MolecularTestFactory.withCopyNumberAndPriorMolecularTests(
+            MolecularTestFactory.withCopyNumberAndPriorIHCTests(
                 erbb2Amp,
                 listOf(
-                    IHCMolecularTest(
-                        her2Test.copy(
-                            scoreValue = 2.0, scoreValueUnit = "+"
-                        )
+                    ihcTest(scoreValue = 2.0, scoreValueUnit = "+")
                     )
                 )
             )
-        )
+
         assertEvaluation(EvaluationResult.WARN, evaluation)
         assertThat(
             evaluation.warnGeneralMessages
@@ -135,20 +119,15 @@ class HasPositiveHER2ExpressionByIHCTest {
     @Test
     fun `Should resolve to undetermined if no positive but borderline result`() {
         val evaluation = function.evaluate(
-            MolecularTestFactory.withMolecularTests(
+            MolecularTestFactory.withIHCTests(
                 listOf(
-                    IHCMolecularTest(
-                        her2Test.copy(
-                            scoreValue = 2.0, scoreValueUnit = "+"
-                        )
+                    ihcTest(scoreValue = 2.0, scoreValueUnit = "+")
                     )
                 )
             )
-        )
+
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(
-            evaluation.undeterminedGeneralMessages
-        ).containsExactly(
+        assertThat(evaluation.undeterminedGeneralMessages).containsExactly(
             "HER2 expression by IHC was borderline, additional tests should be considered"
         )
     }
@@ -156,18 +135,21 @@ class HasPositiveHER2ExpressionByIHCTest {
     @Test
     fun `Should fail if no positive result`() {
         val evaluation = function.evaluate(
-            MolecularTestFactory.withMolecularTests(
+            MolecularTestFactory.withIHCTests(
                 listOf(
-                    IHCMolecularTest(
-                        her2Test.copy(
-                            scoreValue = 1.0, scoreValueUnit = "+"
-                        )
+                    ihcTest(scoreValue = 1.0, scoreValueUnit = "+")
                     )
                 )
             )
-        )
+
         assertEvaluation(EvaluationResult.FAIL, evaluation)
     }
 
-    //        val evaluation = function.evaluate(MolecularTestFactory.withMolecularTests(listOf(IHCMolecularTest(her2Test.copy(scoreValue = 1.0, scoreText = "positive", scoreValueUnit = "+")))))
+    private fun ihcTest(scoreValue: Double? = null, scoreValueUnit: String? = null, scoreText: String? = null,
+                        impliesPotentialIndeterminateStatus: Boolean = false): PriorIHCTest {
+        return PriorIHCTest(
+            item = "HER2", scoreValue = scoreValue, scoreValueUnit = scoreValueUnit, scoreText = scoreText,
+            impliesPotentialIndeterminateStatus = impliesPotentialIndeterminateStatus
+        )
+    }
 }

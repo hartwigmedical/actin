@@ -56,13 +56,14 @@ internal object MolecularTestFactory {
         return base.copy(molecularHistory = MolecularHistory(listOf(baseMolecular) + molecularTests))
     }
 
-    fun withCopyNumberAndPriorMolecularTests(copyNumber: CopyNumber, priorMolecularTests: List<MolecularTest>): PatientRecord {
+    fun withCopyNumberAndPriorIHCTests(copyNumber: CopyNumber, priorIHCTests: List<PriorIHCTest>): PatientRecord {
         val molecular = baseMolecular.copy(
             characteristics = MolecularCharacteristics(0.80, 3.0),
             drivers = baseMolecular.drivers.copy(copyNumbers = setOf(copyNumber))
         )
         return base.copy(
-            molecularHistory = MolecularHistory(listOf(molecular) + priorMolecularTests))
+            priorIHCTests = priorIHCTests,
+            molecularHistory = MolecularHistory(listOf(molecular)))
     }
 
     fun withMolecularTestsAndNoOrangeMolecular(molecularTests: List<MolecularTest>): PatientRecord {
