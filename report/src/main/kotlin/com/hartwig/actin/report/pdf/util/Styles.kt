@@ -118,12 +118,6 @@ object Styles {
         return fontBold
     }
 
-    fun enforceFirstLetterCapitalization(string: String): String {
-        return if (string.isEmpty()) {
-            string
-        } else string.substring(0, 1).uppercase() + string.substring(1)
-    }
-
     private fun createFont(fontPath: String): PdfFont {
         return PdfFontFactory.createFont(loadFontProgram(fontPath), PdfEncodings.IDENTITY_H)
     }
