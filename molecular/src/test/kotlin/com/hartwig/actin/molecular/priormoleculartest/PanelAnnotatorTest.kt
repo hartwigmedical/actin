@@ -1,6 +1,12 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
-import com.hartwig.actin.molecular.datamodel.*
+import com.hartwig.actin.molecular.datamodel.CodingEffect
+import com.hartwig.actin.molecular.datamodel.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.Fusion
+import com.hartwig.actin.molecular.datamodel.GeneRole
+import com.hartwig.actin.molecular.datamodel.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.TranscriptImpact
+import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
@@ -17,7 +23,12 @@ import com.hartwig.actin.molecular.evidence.actionability.TestServeActionability
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
-import com.hartwig.actin.molecular.paver.*
+import com.hartwig.actin.molecular.paver.PaveCodingEffect
+import com.hartwig.actin.molecular.paver.PaveImpact
+import com.hartwig.actin.molecular.paver.PaveQuery
+import com.hartwig.actin.molecular.paver.PaveResponse
+import com.hartwig.actin.molecular.paver.PaveTranscriptImpact
+import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.tools.pave.ImmutableVariantTranscriptImpact
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.VariantAnnotator

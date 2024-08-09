@@ -4,7 +4,11 @@ import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.MolecularExtractor
 import com.hartwig.actin.molecular.MolecularInterpreter
-import com.hartwig.actin.molecular.datamodel.*
+import com.hartwig.actin.molecular.datamodel.ARCHER_FP_LUNG_TARGET
+import com.hartwig.actin.molecular.datamodel.AVL_PANEL
+import com.hartwig.actin.molecular.datamodel.FREE_TEXT_PANEL
+import com.hartwig.actin.molecular.datamodel.MolecularTest
+import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel

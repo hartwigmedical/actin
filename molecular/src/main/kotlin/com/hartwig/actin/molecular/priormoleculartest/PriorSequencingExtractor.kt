@@ -2,7 +2,12 @@ package com.hartwig.actin.molecular.priormoleculartest
 
 import com.hartwig.actin.clinical.datamodel.PriorSequencingTest
 import com.hartwig.actin.molecular.MolecularExtractor
-import com.hartwig.actin.molecular.datamodel.panel.*
+import com.hartwig.actin.molecular.datamodel.panel.PanelAmplificationExtraction
+import com.hartwig.actin.molecular.datamodel.panel.PanelEvent
+import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
+import com.hartwig.actin.molecular.datamodel.panel.PanelFusionExtraction
+import com.hartwig.actin.molecular.datamodel.panel.PanelSkippedExonsExtraction
+import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 
 class PriorSequencingExtractor : MolecularExtractor<PriorSequencingTest, PanelExtraction> {
     override fun extract(input: List<PriorSequencingTest>): List<PanelExtraction> {
@@ -27,7 +32,7 @@ data class PanelExtractionAdapter(val priorSequencingTest: PriorSequencingTest) 
     override val skippedExons = priorSequencingTest.skippedExons.map {
         PanelSkippedExonsExtraction(it.gene, it.exonStart, it.exonEnd)
     }
-    
+
     override val amplifications = priorSequencingTest.amplifications.map {
         PanelAmplificationExtraction(it.gene)
     }

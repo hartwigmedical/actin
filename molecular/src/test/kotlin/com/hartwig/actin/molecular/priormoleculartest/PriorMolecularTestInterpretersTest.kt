@@ -6,7 +6,11 @@ import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
-import com.hartwig.actin.molecular.paver.*
+import com.hartwig.actin.molecular.paver.PaveCodingEffect
+import com.hartwig.actin.molecular.paver.PaveImpact
+import com.hartwig.actin.molecular.paver.PaveQuery
+import com.hartwig.actin.molecular.paver.PaveResponse
+import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.tools.pave.ImmutableVariantTranscriptImpact
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.ImmutableVariant
