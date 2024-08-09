@@ -15,6 +15,7 @@ import com.hartwig.actin.report.pdf.util.Cells.createKey
 import com.hartwig.actin.report.pdf.util.Cells.createSpanningValue
 import com.hartwig.actin.report.pdf.util.Cells.createValue
 import com.hartwig.actin.report.pdf.util.Formats.DATE_UNKNOWN
+import com.hartwig.actin.report.pdf.util.Styles.enforceFirstLetterCapitalization
 import com.hartwig.actin.report.pdf.util.Tables.createFixedWidthCols
 import com.hartwig.actin.report.pdf.util.Tables.createSingleColWithWidth
 import com.itextpdf.layout.element.BlockElement
@@ -214,7 +215,7 @@ class PatientClinicalHistoryGenerator(
 
         private fun toPriorOtherConditionString(priorOtherCondition: PriorOtherCondition): String {
             val note = if (!priorOtherCondition.isContraindicationForTherapy) " (no contraindication for therapy)" else ""
-            return priorOtherCondition.name + note
+            return enforceFirstLetterCapitalization(priorOtherCondition.name) + note
         }
 
         private fun toDateString(maybeYear: Int?, maybeMonth: Int?): String? {
