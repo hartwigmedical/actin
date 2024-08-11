@@ -10,7 +10,6 @@ import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.datamodel.panel.PanelAmplificationExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelFusionExtraction
@@ -308,15 +307,10 @@ class PanelAnnotatorTest {
                 Fusion(
                     geneStart = GENE,
                     geneEnd = OTHER_GENE,
-                    geneTranscriptStart = "",
-                    geneTranscriptEnd = "",
                     driverType = FusionDriverType.KNOWN_PAIR,
                     proteinEffect = ProteinEffect.UNKNOWN,
-                    extendedFusionDetails = ExtendedFusionDetails(
-                        fusedExonUp = 0,
-                        fusedExonDown = 0,
-                        isAssociatedWithDrugResistance = null
-                    ),
+                    isAssociatedWithDrugResistance = null,
+                    extendedFusionDetails = null,
                     event = "$GENE-$OTHER_GENE fusion",
                     isReportable = true,
                     driverLikelihood = DriverLikelihood.HIGH,

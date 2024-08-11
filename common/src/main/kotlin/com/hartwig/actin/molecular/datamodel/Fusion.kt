@@ -8,10 +8,9 @@ import com.hartwig.actin.molecular.sort.driver.FusionComparator
 data class Fusion(
     val geneStart: String,
     val geneEnd: String,
-    val geneTranscriptStart: String,
-    val geneTranscriptEnd: String,
     val driverType: FusionDriverType,
     val proteinEffect: ProteinEffect,
+    val isAssociatedWithDrugResistance: Boolean?,
     val extendedFusionDetails: ExtendedFusionDetails? = null,
     override val isReportable: Boolean,
     override val event: String,

@@ -16,7 +16,6 @@ import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.datamodel.panel.PanelAmplificationExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
@@ -305,19 +304,14 @@ class PanelAnnotator(
         return Fusion(
             geneStart = panelFusionExtraction.geneUp ?: "", // TODO no no we don't want empty strings
             geneEnd = panelFusionExtraction.geneDown ?: "",
-            geneTranscriptStart = "",  // TODO also nullable here, or move to extended
-            geneTranscriptEnd = "",
             driverType = driverType,
             proteinEffect = ProteinEffect.UNKNOWN,
             isReportable = isReportable,
             event = panelFusionExtraction.display(),
             driverLikelihood = fusionDriverLikelihood(isReportable, driverType),
             evidence = ActionableEvidenceFactory.createNoEvidence(),
-            extendedFusionDetails = ExtendedFusionDetails(
-                fusedExonUp = 0,  // TODO make nullable? using 0 which is not valid exon
-                fusedExonDown = 0,
-                isAssociatedWithDrugResistance = null
-            )
+            isAssociatedWithDrugResistance = null,
+            extendedFusionDetails = null
         )
     }
 
@@ -336,23 +330,19 @@ class PanelAnnotator(
     }
 
     private fun createFusionFromExonSkip(panelSkippedExonsExtraction: PanelSkippedExonsExtraction): Fusion {
-        // TODO note that we have exons here without knowing the transcript! maybe we should plug in canonical?
+        val isReportable = true
+        val driverType = determineFusionDriverType(panelSkippedExonsExtraction.gene, panelSkippedExonsExtraction.gene)
         return Fusion(
             geneStart = panelSkippedExonsExtraction.gene,
             geneEnd = panelSkippedExonsExtraction.gene,
-            geneTranscriptStart = "",  // TODO nullable here, or move to extended
-            geneTranscriptEnd = "",
-            driverType = determineFusionDriverType(panelSkippedExonsExtraction.gene, panelSkippedExonsExtraction.gene),
+            driverType = driverType,
             proteinEffect = ProteinEffect.UNKNOWN,
-            isReportable = true,
+            isReportable = isReportable,
             event = panelSkippedExonsExtraction.display(),
-            driverLikelihood = DriverLikelihood.HIGH, // TODO can we model this? defaulting to high
+            driverLikelihood = fusionDriverLikelihood(isReportable, driverType),
             evidence = ActionableEvidenceFactory.createNoEvidence(),
-            extendedFusionDetails = ExtendedFusionDetails(
-                fusedExonUp = panelSkippedExonsExtraction.start - 1, // TODO so we can't represent skips of first/last exons, throw error?
-                fusedExonDown = panelSkippedExonsExtraction.end + 1,
-                isAssociatedWithDrugResistance = null
-            )
+            isAssociatedWithDrugResistance = null,
+            extendedFusionDetails = null
         )
     }
 
@@ -392,9 +382,7 @@ class PanelAnnotator(
         return fusion.copy(
             evidence = evidence,
             proteinEffect = proteinEffect,
-            extendedFusionDetails = fusion.extendedFusionOrThrow().copy(
-                isAssociatedWithDrugResistance = isAssociatedWithDrugResistance,
-            ),
+            isAssociatedWithDrugResistance = isAssociatedWithDrugResistance,
         )
     }
 

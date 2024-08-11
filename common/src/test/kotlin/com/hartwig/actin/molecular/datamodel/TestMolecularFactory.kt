@@ -5,7 +5,18 @@ import com.hartwig.actin.molecular.datamodel.evidence.Country
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
 import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import com.hartwig.actin.molecular.datamodel.orange.characteristics.CupPrediction
-import com.hartwig.actin.molecular.datamodel.orange.driver.*
+import com.hartwig.actin.molecular.datamodel.orange.driver.CodingContext
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.orange.driver.DisruptionType
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariantDetails
+import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
+import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.datamodel.orange.driver.RegionType
+import com.hartwig.actin.molecular.datamodel.orange.driver.Virus
+import com.hartwig.actin.molecular.datamodel.orange.driver.VirusType
 import com.hartwig.actin.molecular.datamodel.orange.immunology.HlaAllele
 import com.hartwig.actin.molecular.datamodel.orange.immunology.MolecularImmunology
 import com.hartwig.actin.molecular.datamodel.orange.pharmaco.Haplotype
@@ -280,15 +291,15 @@ object TestMolecularFactory {
                 driverLikelihood = DriverLikelihood.HIGH,
                 evidence = TestActionableEvidenceFactory.createExhaustive(),
                 geneStart = "EML4",
-                geneTranscriptStart = "ENST00000318522",
                 geneEnd = "ALK",
-                geneTranscriptEnd = "ENST00000389048",
                 proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
                 driverType = FusionDriverType.KNOWN_PAIR,
+                isAssociatedWithDrugResistance = null,
                 extendedFusionDetails = ExtendedFusionDetails(
+                    geneTranscriptStart = "ENST00000318522",
+                    geneTranscriptEnd = "ENST00000389048",
                     fusedExonUp = 6,
                     fusedExonDown = 20,
-                    isAssociatedWithDrugResistance = null
                 )
             ),
             viruses = proper.viruses + Virus(

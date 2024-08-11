@@ -1,6 +1,11 @@
 package com.hartwig.actin.molecular.datamodel.panel.mcgi
 
-import com.hartwig.actin.molecular.datamodel.panel.*
+import com.hartwig.actin.molecular.datamodel.panel.PanelAmplificationExtraction
+import com.hartwig.actin.molecular.datamodel.panel.PanelEvent
+import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
+import com.hartwig.actin.molecular.datamodel.panel.PanelFusionExtraction
+import com.hartwig.actin.molecular.datamodel.panel.PanelSkippedExonsExtraction
+import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import java.time.LocalDate
 
 
@@ -16,7 +21,6 @@ data class McgiExtraction(
     override val extractionClass: String = McgiExtraction::class.java.simpleName
 ) : PanelExtraction {
 
-    // TODO update these with skipped exon genes. or maybe refactor up to panel extraction?
     override fun testedGenes(): Set<String> {
         return (variants.map { it.gene } + amplifications.map { it.gene }).toSet()
     }
