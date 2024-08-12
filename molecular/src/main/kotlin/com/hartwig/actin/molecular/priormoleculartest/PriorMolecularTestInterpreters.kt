@@ -14,6 +14,7 @@ import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.paver.Paver
+import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.VariantAnnotator
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
@@ -39,11 +40,12 @@ private class ArcherInterpreter(
     variantAnnotator: VariantAnnotator,
     paver: Paver,
     paveLite: PaveLite,
-    knownFusionCache: KnownFusionCache
+    knownFusionCache: KnownFusionCache,
+    ensembleDataCache: EnsemblDataCache
 ) :
     MolecularInterpreter<PriorIHCTest, PanelExtraction, PanelRecord>(
         ArcherExtractor(),
-        PanelAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite, knownFusionCache),
+        PanelAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite, knownFusionCache, ensembleDataCache),
         isArcher()
     )
 
@@ -59,11 +61,12 @@ private class GenericPanelInterpreter(
     variantAnnotator: VariantAnnotator,
     paver: Paver,
     paveLite: PaveLite,
-    knownFusionCache: KnownFusionCache
+    knownFusionCache: KnownFusionCache,
+    ensembleDataCache: EnsemblDataCache
 ) :
     MolecularInterpreter<PriorIHCTest, PanelExtraction, PanelRecord>(
         GenericPanelExtractor(),
-        PanelAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite, knownFusionCache),
+        PanelAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite, knownFusionCache, ensembleDataCache),
         isGeneric()
     )
 
@@ -73,11 +76,12 @@ private class McgiPanelInterpreter(
     variantAnnotator: VariantAnnotator,
     paver: Paver,
     paveLite: PaveLite,
-    knownFusionCache: KnownFusionCache
+    knownFusionCache: KnownFusionCache,
+    ensembleDataCache: EnsemblDataCache
 ) :
     MolecularInterpreter<PriorIHCTest, PanelExtraction, PanelRecord>(
         McgiExtractor(),
-        PanelAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite, knownFusionCache),
+        PanelAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite, knownFusionCache, ensembleDataCache),
         isMcgi()
     )
 
@@ -97,20 +101,38 @@ class PriorMolecularTestInterpreters(private val pipelines: Set<MolecularInterpr
             variantAnnotator: VariantAnnotator,
             paver: Paver,
             paveLite: PaveLite,
-            knownFusionCache: KnownFusionCache
+            knownFusionCache: KnownFusionCache,
+            ensembleDataCache: EnsemblDataCache
         ) =
             PriorMolecularTestInterpreters(
                 setOf(
-                    ArcherInterpreter(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite, knownFusionCache),
+                    ArcherInterpreter(
+                        evidenceDatabase,
+                        geneDriverLikelihoodModel,
+                        variantAnnotator,
+                        paver,
+                        paveLite,
+                        knownFusionCache,
+                        ensembleDataCache
+                    ),
                     GenericPanelInterpreter(
                         evidenceDatabase,
                         geneDriverLikelihoodModel,
                         variantAnnotator,
                         paver,
                         paveLite,
-                        knownFusionCache
+                        knownFusionCache,
+                        ensembleDataCache
                     ),
-                    McgiPanelInterpreter(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite, knownFusionCache)
+                    McgiPanelInterpreter(
+                        evidenceDatabase,
+                        geneDriverLikelihoodModel,
+                        variantAnnotator,
+                        paver,
+                        paveLite,
+                        knownFusionCache,
+                        ensembleDataCache
+                    )
                 )
             )
     }

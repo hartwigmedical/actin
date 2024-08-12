@@ -138,11 +138,20 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             variantAnnotator,
             paver,
             paveLite,
-            knownFusionCache
+            knownFusionCache,
+            ensemblDataCache
         ).process(priorIHCTests)
         val sequencingMolecularTests = MolecularInterpreter(
             PriorSequencingExtractor(),
-            PanelAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite, knownFusionCache),
+            PanelAnnotator(
+                evidenceDatabase,
+                geneDriverLikelihoodModel,
+                variantAnnotator,
+                paver,
+                paveLite,
+                knownFusionCache,
+                ensemblDataCache
+            ),
         ).run(priorSequencingTests)
         LOGGER.info(" Completed interpretation of {} clinical molecular tests", clinicalMolecularTests.size)
 

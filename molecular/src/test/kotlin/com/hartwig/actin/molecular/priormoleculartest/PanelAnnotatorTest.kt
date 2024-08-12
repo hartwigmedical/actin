@@ -26,6 +26,7 @@ import com.hartwig.actin.molecular.paver.PaveImpact
 import com.hartwig.actin.molecular.paver.PaveQuery
 import com.hartwig.actin.molecular.paver.PaveResponse
 import com.hartwig.actin.molecular.paver.Paver
+import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.pave.ImmutableVariantTranscriptImpact
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.VariantAnnotator
@@ -133,8 +134,10 @@ class PanelAnnotatorTest {
 
     private val knownFusionCache = mockk<KnownFusionCache>()
 
+    private val ensembleDataCache = mockk<EnsemblDataCache>()
+
     private val annotator =
-        PanelAnnotator(evidenceDatabase, geneDriverLikelihoodModel, transvarAnnotator, paver, paveLite, knownFusionCache)
+        PanelAnnotator(evidenceDatabase, geneDriverLikelihoodModel, transvarAnnotator, paver, paveLite, knownFusionCache, ensembleDataCache)
 
     @Test
     fun `Should return empty annotation when no matches found`() {

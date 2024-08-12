@@ -10,6 +10,8 @@ import com.hartwig.actin.molecular.datamodel.panel.PanelSkippedExonsExtraction
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
+import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
+import com.hartwig.actin.tools.ensemblcache.TranscriptData
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
 import io.mockk.every
 import io.mockk.mockk
@@ -17,6 +19,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private val EMPTY_MATCH = ActionabilityMatch(emptyList(), emptyList())
+private const val TRANSCRIPT = "transcript"
 
 class PanelFusionAnnotatorTest {
 
@@ -27,7 +30,9 @@ class PanelFusionAnnotatorTest {
 
     private val knownFusionCache = mockk<KnownFusionCache>()
 
-    private val annotator = PanelFusionAnnotator(evidenceDatabase, knownFusionCache)
+    private val ensembleDataCache = mockk<EnsemblDataCache>()
+
+    private val annotator = PanelFusionAnnotator(evidenceDatabase, knownFusionCache, ensembleDataCache)
 
     @Test
     fun `Should determine fusion driver likelihood`() {
@@ -123,7 +128,11 @@ class PanelFusionAnnotatorTest {
             offLabelEvents = emptyList()
         )
 
-        val panelSkippedExonsExtraction = listOf(PanelSkippedExonsExtraction(GENE, 2, 4))
+        every { ensembleDataCache.findCanonicalTranscript(GENE) } returns mockk<TranscriptData> {
+            every { transcriptName() } returns TRANSCRIPT
+        }
+
+        val panelSkippedExonsExtraction = listOf(PanelSkippedExonsExtraction(GENE, 2, 4, TRANSCRIPT))
         val fusions = annotator.annotate(emptyList(), panelSkippedExonsExtraction)
         assertThat(fusions).isEqualTo(
             setOf(
@@ -133,7 +142,7 @@ class PanelFusionAnnotatorTest {
                     driverType = FusionDriverType.KNOWN_PAIR_DEL_DUP,
                     proteinEffect = ProteinEffect.UNKNOWN,
                     isAssociatedWithDrugResistance = null,
-                    extendedFusionDetails = ExtendedFusionDetails("", "", 2, 4),
+                    extendedFusionDetails = ExtendedFusionDetails(TRANSCRIPT, TRANSCRIPT, 2, 4),
                     event = "$GENE skipped exons 2-4",
                     isReportable = true,
                     driverLikelihood = DriverLikelihood.HIGH,

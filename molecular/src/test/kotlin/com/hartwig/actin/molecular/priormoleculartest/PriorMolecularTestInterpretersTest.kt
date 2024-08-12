@@ -11,6 +11,7 @@ import com.hartwig.actin.molecular.paver.PaveImpact
 import com.hartwig.actin.molecular.paver.PaveQuery
 import com.hartwig.actin.molecular.paver.PaveResponse
 import com.hartwig.actin.molecular.paver.Paver
+import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.pave.ImmutableVariantTranscriptImpact
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.ImmutableVariant
@@ -54,6 +55,7 @@ class PriorMolecularTestInterpretersTest {
         every { hasPromiscuousFiveGene(any()) } returns false
         every { hasPromiscuousThreeGene(any()) } returns false
     }
+    private val ensemblDataCache = mockk<EnsemblDataCache>()
 
     @Test
     fun `Should interpret list of molecular tests`() {
@@ -64,7 +66,8 @@ class PriorMolecularTestInterpretersTest {
                 transvarAnnotator,
                 paver,
                 paveLite,
-                knownFusionCache
+                knownFusionCache,
+                ensemblDataCache
             )
         val priorMolecularTests = listOf(
             archerPriorMolecularVariantRecord(),

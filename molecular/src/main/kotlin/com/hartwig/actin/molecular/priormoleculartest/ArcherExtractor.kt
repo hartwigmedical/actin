@@ -48,7 +48,7 @@ class ArcherExtractor : MolecularExtractor<PriorIHCTest, PanelExtraction> {
                 val exonSkips = groupedByCategory[ArcherMutationCategory.EXON_SKIP]?.mapNotNull {
                     EXON_SKIP_REGEX.find(it.measure!!)?.let { matchResult ->
                         val (start, end) = parseRange(matchResult.groupValues[3])
-                        PanelSkippedExonsExtraction(matchResult.groupValues[1], start, end)
+                        PanelSkippedExonsExtraction(matchResult.groupValues[1], start, end, null)
                     }
                 } ?: emptyList()
                 val unknownResults =

@@ -13,7 +13,7 @@ class ArcherPanelExtractionTest {
         val archerPanel = ArcherPanelExtraction(
             variants = listOf(PanelVariantExtraction("KRAS", "c.1A>T")),
             fusions = listOf(PanelFusionExtraction("RET", null)),
-            skippedExons = listOf(PanelSkippedExonsExtraction("MET", 1, 4))
+            skippedExons = listOf(PanelSkippedExonsExtraction("MET", 1, 4, null))
         )
 
         assertThat(archerPanel.testedGenes()).isEqualTo(setOf("KRAS", "RET", "MET") + ARCHER_ALWAYS_TESTED_GENES)

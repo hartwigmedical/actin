@@ -1,7 +1,6 @@
 package com.hartwig.actin.molecular.datamodel.panel
 
-// TODO note that we have exons here without knowing the transcript!
-data class PanelSkippedExonsExtraction(val gene: String, val start: Int, val end: Int) : PanelEvent {
+data class PanelSkippedExonsExtraction(val gene: String, val start: Int, val end: Int, val transcript: String? = null) : PanelEvent {
     override fun impactsGene(gene: String): Boolean {
         return this.gene == gene
     }

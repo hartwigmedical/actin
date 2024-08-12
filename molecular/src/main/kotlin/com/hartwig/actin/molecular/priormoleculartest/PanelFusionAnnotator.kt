@@ -11,11 +11,13 @@ import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEvidenceFactory
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.orange.interpretation.GeneAlterationFactory
+import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
 
 class PanelFusionAnnotator(
     private val evidenceDatabase: EvidenceDatabase,
-    private val knownFusionCache: KnownFusionCache
+    private val knownFusionCache: KnownFusionCache,
+    private val ensembleDataCache: EnsemblDataCache
 ) {
     fun annotate(fusions: List<PanelFusionExtraction>, skippedExons: List<PanelSkippedExonsExtraction>): Set<Fusion> {
         return (fusions.map { createFusion(it) } + skippedExons.map { createFusionFromExonSkip(it) })
@@ -80,6 +82,11 @@ class PanelFusionAnnotator(
     private fun createFusionFromExonSkip(panelSkippedExonsExtraction: PanelSkippedExonsExtraction): Fusion {
         val isReportable = true
         val driverType = determineFusionDriverType(panelSkippedExonsExtraction.gene, panelSkippedExonsExtraction.gene)
+        val transcript =
+            panelSkippedExonsExtraction.transcript ?: ensembleDataCache.findCanonicalTranscript(panelSkippedExonsExtraction.gene)
+                ?.transcriptName()
+            ?: throw IllegalStateException("No canonical transcript found for gene ${panelSkippedExonsExtraction.gene}")
+
         return Fusion(
             geneStart = panelSkippedExonsExtraction.gene,
             geneEnd = panelSkippedExonsExtraction.gene,
@@ -90,7 +97,12 @@ class PanelFusionAnnotator(
             driverLikelihood = fusionDriverLikelihood(isReportable, driverType),
             evidence = ActionableEvidenceFactory.createNoEvidence(),
             isAssociatedWithDrugResistance = null,
-            extendedFusionDetails = ExtendedFusionDetails("", "", panelSkippedExonsExtraction.start, panelSkippedExonsExtraction.end)
+            extendedFusionDetails = ExtendedFusionDetails(
+                transcript,
+                transcript,
+                panelSkippedExonsExtraction.start,
+                panelSkippedExonsExtraction.end
+            )
         )
     }
 

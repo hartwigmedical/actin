@@ -18,6 +18,7 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEvidenceFactory
 import com.hartwig.actin.molecular.orange.interpretation.GeneAlterationFactory
 import com.hartwig.actin.molecular.paver.Paver
+import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
 import org.apache.logging.log4j.LogManager
@@ -32,7 +33,8 @@ class PanelAnnotator(
     private val variantResolver: VariantResolver,
     private val paver: Paver,
     private val paveLite: PaveLite,
-    private val knownFusionCache: KnownFusionCache
+    private val knownFusionCache: KnownFusionCache,
+    private val ensembleDataCache: EnsemblDataCache
 ) :
     MolecularAnnotator<PanelExtraction, PanelRecord> {
 
@@ -40,7 +42,8 @@ class PanelAnnotator(
         val annotatedVariants = PanelVariantAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantResolver, paver, paveLite)
             .annotate(input.variants)
         val annotatedAmplifications = input.amplifications.map(::inferredCopyNumber).map(::annotatedInferredCopyNumber)
-        val annotatedFusions = PanelFusionAnnotator(evidenceDatabase, knownFusionCache).annotate(input.fusions, input.skippedExons)
+        val annotatedFusions =
+            PanelFusionAnnotator(evidenceDatabase, knownFusionCache, ensembleDataCache).annotate(input.fusions, input.skippedExons)
 
         return PanelRecord(
             panelExtraction = input,
