@@ -9,6 +9,7 @@ import com.hartwig.actin.molecular.datamodel.Drivers
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
+import com.hartwig.actin.molecular.datamodel.panel.PanelExtractionAdapter
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
@@ -38,6 +39,7 @@ class PanelRecordAdapter(private val gson: Gson) : TypeAdapter<PanelRecord>() {
             ArcherPanelExtraction::class.java.simpleName -> gson.fromJson(panelExtractionJson, ArcherPanelExtraction::class.java)
             McgiExtraction::class.java.simpleName -> gson.fromJson(panelExtractionJson, ArcherPanelExtraction::class.java)
             GenericPanelExtraction::class.java.simpleName -> gson.fromJson(panelExtractionJson, GenericPanelExtraction::class.java)
+            PanelExtractionAdapter::class.java.simpleName -> gson.fromJson(panelExtractionJson, PanelExtractionAdapter::class.java)
             else -> throw IllegalArgumentException("Unsupported panel extraction $panelExtractionClass")
         }
 
