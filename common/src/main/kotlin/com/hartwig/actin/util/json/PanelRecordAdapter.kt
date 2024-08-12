@@ -13,7 +13,6 @@ import com.hartwig.actin.molecular.datamodel.panel.PanelExtractionAdapter
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.mcgi.McgiExtraction
 import java.time.LocalDate
 
 class PanelRecordAdapter(private val gson: Gson) : TypeAdapter<PanelRecord>() {
@@ -37,7 +36,6 @@ class PanelRecordAdapter(private val gson: Gson) : TypeAdapter<PanelRecord>() {
         val panelExtractionClass = panelExtractionJson.asJsonObject.get("extractionClass").asString
         val panelExtraction: PanelExtraction = when (panelExtractionClass) {
             ArcherPanelExtraction::class.java.simpleName -> gson.fromJson(panelExtractionJson, ArcherPanelExtraction::class.java)
-            McgiExtraction::class.java.simpleName -> gson.fromJson(panelExtractionJson, ArcherPanelExtraction::class.java)
             GenericPanelExtraction::class.java.simpleName -> gson.fromJson(panelExtractionJson, GenericPanelExtraction::class.java)
             PanelExtractionAdapter::class.java.simpleName -> gson.fromJson(panelExtractionJson, PanelExtractionAdapter::class.java)
             else -> throw IllegalArgumentException("Unsupported panel extraction $panelExtractionClass")

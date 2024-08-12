@@ -14,6 +14,7 @@ data class Variant(
     val otherImpacts: Set<TranscriptImpact>,
     val extendedVariantDetails: ExtendedVariantDetails? = null,
     val isHotspot: Boolean,
+    val variantAlleleFrequency: Double? = null,
     override val isReportable: Boolean,
     override val event: String,
     override val driverLikelihood: DriverLikelihood?,

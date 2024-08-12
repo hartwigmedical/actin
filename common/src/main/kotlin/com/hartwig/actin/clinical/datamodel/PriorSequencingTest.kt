@@ -8,7 +8,8 @@ data class SequencedVariant(
     val hgvsProteinImpact: String? = null,
     val transcript: String? = null,
     val exon: Int? = null,
-    val codon: Int? = null
+    val codon: Int? = null,
+    val variantAlleleFrequency: Double? = null
 )
 
 data class SequencedAmplification(val gene: String)

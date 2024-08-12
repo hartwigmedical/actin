@@ -195,7 +195,7 @@ class PanelAnnotator(
     }
 
     private fun createVariantWithEvidence(
-        it: PanelVariantExtraction,
+        variant: PanelVariantExtraction,
         evidence: ActionableEvidence,
         geneAlteration: GeneAlteration,
         serveGeneAlteration: ServeGeneAlteration?,
@@ -203,10 +203,10 @@ class PanelAnnotator(
         paveResponse: PaveResponse
     ) = Variant(
         isReportable = true,
-        event = "${it.gene} ${it.hgvsCodingOrProteinImpact}",
+        event = "${variant.gene} ${variant.hgvsCodingOrProteinImpact}",
         driverLikelihood = DriverLikelihood.LOW,
         evidence = evidence,
-        gene = it.gene,
+        gene = variant.gene,
         geneRole = geneAlteration.geneRole,
         proteinEffect = when (geneAlteration.proteinEffect) {
             ProteinEffect.LOSS_OF_FUNCTION,
@@ -226,7 +226,8 @@ class PanelAnnotator(
         otherImpacts = otherImpacts(paveResponse, transcriptAnnotation),
         chromosome = transcriptAnnotation.chromosome(),
         position = transcriptAnnotation.position(),
-        type = variantType(transcriptAnnotation)
+        type = variantType(transcriptAnnotation),
+        variantAlleleFrequency = variant.variantAlleleFrequency
     )
 
     private fun impact(paveImpact: PaveImpact, transvarVariant: TransvarVariant): TranscriptImpact {

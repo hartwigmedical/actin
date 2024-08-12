@@ -3,6 +3,7 @@ package com.hartwig.actin.report.pdf.tables.molecular
 import com.hartwig.actin.molecular.datamodel.GeneAlteration
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularTest
+import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
@@ -38,7 +39,7 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
             table.addCell(Cells.createContent(driver.driverLikelihood.toString()))
             for (test in sortedAndFilteredTests) {
                 if (testsByDriverEvent[driver.event]?.contains(test) == true) {
-                    table.addCell(Cells.createContent("Detected"))
+                    table.addCell(Cells.createContent("Detected${(driver as? Variant)?.let { " (${it.variantAlleleFrequency}%" } ?: ""}"))
                 } else {
                     table.addCell(Cells.createContent("Not detected"))
                 }
