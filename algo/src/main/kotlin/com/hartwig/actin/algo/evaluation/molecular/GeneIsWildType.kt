@@ -14,7 +14,7 @@ import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 
-class GeneIsWildType internal constructor(private val gene: String) : MolecularEvaluationFunction {
+class GeneIsWildType(private val gene: String) : MolecularEvaluationFunction {
 
     override fun genes() = listOf(gene)
 

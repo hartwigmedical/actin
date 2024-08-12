@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-class HasNormalCardiacFunctionByMUGAOrTTE internal constructor() : EvaluationFunction {
+class HasNormalCardiacFunctionByMUGAOrTTE: EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val lvef = record.clinicalStatus.lvef
@@ -16,7 +16,7 @@ class HasNormalCardiacFunctionByMUGAOrTTE internal constructor() : EvaluationFun
                 "LVEF < 50%, uncertain if cardiac function is considered normal"
             )
         } else {
-            EvaluationFactory.notEvaluated(
+            EvaluationFactory.recoverableUndetermined(
                 "Normal cardiac function by MUGA or TTE cannot be determined",
                 "Undetermined normal cardiac function by MUGA or TTE"
             )

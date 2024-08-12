@@ -12,7 +12,7 @@ import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import com.hartwig.actin.doid.DoidModel
 
-class HasHadPriorConditionWithDoidComplicationOrToxicity internal constructor(
+class HasHadPriorConditionWithDoidComplicationOrToxicity(
     private val doidModel: DoidModel,
     private val doidToFind: String,
     private val complicationCategoryToFind: String,

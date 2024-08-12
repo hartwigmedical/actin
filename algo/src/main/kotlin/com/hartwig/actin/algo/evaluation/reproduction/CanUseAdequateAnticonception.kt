@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-class CanUseAdequateAnticonception internal constructor() : EvaluationFunction {
+class CanUseAdequateAnticonception: EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         return EvaluationFactory.notEvaluated(
             "Assumed that patient will adhere to relevant anticonception prescriptions",

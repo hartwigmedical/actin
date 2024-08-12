@@ -136,6 +136,10 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         )
     }
 
+    private fun hasLimitedPTTCreator(): FunctionCreator {
+        return { HasLimitedPTT() }
+    }
+
     private fun hasSufficientLabValueCreator(
         measurement: LabMeasurement,
         targetUnit: LabUnit = measurement.defaultUnit
@@ -176,10 +180,6 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun hasLabValueWithinInstitutionalNormalLimitCreator(measurement: LabMeasurement): FunctionCreator {
         return { createLabEvaluator(measurement, HasLabValueWithinInstitutionalNormalLimit()) }
-    }
-
-    private fun hasLimitedPTTCreator(): FunctionCreator {
-        return { HasLimitedPTT() }
     }
 
     private fun hasLimitedAsatAndAlatDependingOnLiverMetastasesCreator(): FunctionCreator {

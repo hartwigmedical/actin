@@ -12,7 +12,7 @@ import com.hartwig.actin.clinical.datamodel.Complication
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import com.hartwig.actin.doid.DoidModel
 
-class HasPotentialAbsorptionDifficulties internal constructor(private val doidModel: DoidModel) : EvaluationFunction {
+class HasPotentialAbsorptionDifficulties(private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val conditions = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions).flatMap { it.doids }
