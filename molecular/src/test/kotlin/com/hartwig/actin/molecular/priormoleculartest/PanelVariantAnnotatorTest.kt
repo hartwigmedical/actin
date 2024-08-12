@@ -21,6 +21,7 @@ import com.hartwig.actin.tools.variant.ImmutableVariant
 import com.hartwig.actin.tools.variant.VariantAnnotator
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -158,5 +159,13 @@ class PanelVariantAnnotatorTest {
                 )
             )
         )
+    }
+
+    @Test
+    fun `Should not run PAVE when no variants`() {
+        val variants = emptyList<PanelVariantExtraction>()
+        val annotatedVariants = annotator.annotate(variants)
+        assertThat(annotatedVariants).isEmpty()
+        verify(exactly = 0) { paver.run(any()) }
     }
 }

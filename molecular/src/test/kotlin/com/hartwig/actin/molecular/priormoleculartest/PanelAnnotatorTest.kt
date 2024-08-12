@@ -5,7 +5,6 @@ import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.Fusion
 import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.TranscriptImpact
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
@@ -26,7 +25,6 @@ import com.hartwig.actin.molecular.paver.PaveCodingEffect
 import com.hartwig.actin.molecular.paver.PaveImpact
 import com.hartwig.actin.molecular.paver.PaveQuery
 import com.hartwig.actin.molecular.paver.PaveResponse
-import com.hartwig.actin.molecular.paver.PaveTranscriptImpact
 import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.tools.pave.ImmutableVariantTranscriptImpact
 import com.hartwig.actin.tools.pave.PaveLite
@@ -46,11 +44,7 @@ import com.hartwig.serve.datamodel.common.ProteinEffect as ServeProteinEffect
 private const val ALT = "T"
 private const val REF = "G"
 private const val TRANSCRIPT = "transcript"
-private const val GENE_ID = "gene_id"
-private const val OTHER_TRANSCRIPT = "other_transcript"
 private const val OTHER_GENE = "other_gene"
-private const val OTHER_GENE_ID = "other_gene_id"
-private const val OTHER_GENE_TRANSCRIPT = "other_gene_transcript"
 private const val CHROMOSOME = "1"
 private const val POSITION = 1
 private val EMPTY_MATCH = ActionabilityMatch(emptyList(), emptyList())
@@ -204,7 +198,7 @@ class PanelAnnotatorTest {
         assertThat(annotatedVariant.canonicalImpact.affectedExon).isEqualTo(1)
         assertThat(annotatedVariant.canonicalImpact.affectedCodon).isEqualTo(2)
     }
-    
+
     @Test
     fun `Should infer copy numbers and annotate with evidence from serve`() {
         setupGeneAlteration()

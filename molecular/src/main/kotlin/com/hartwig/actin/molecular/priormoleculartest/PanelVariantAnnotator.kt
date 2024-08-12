@@ -37,8 +37,6 @@ class PanelVariantAnnotator(
     fun annotate(variants: List<PanelVariantExtraction>): Set<Variant> {
         val variantExtractions = indexVariantExtractionsToUniqueIds(variants)
         val transvarVariants = resolveVariants(variantExtractions)
-        // TODO the pave call still runs runs when no variants. maybe this entire block to do with variants can be
-        //   factored into a separate class, and short-circuit if no variants
         val paveAnnotations = annotateWithPave(transvarVariants)
         val variantsWithEvidence = annotateWithEvidence(transvarVariants, paveAnnotations, variantExtractions)
         val variantsWithDriverLikelihoodModel = annotateWithDriverLikelihood(variantsWithEvidence)
@@ -69,6 +67,10 @@ class PanelVariantAnnotator(
     }
 
     private fun annotateWithPave(transvarVariants: Map<String, com.hartwig.actin.tools.variant.Variant>): Map<String, PaveResponse> {
+        if (transvarVariants.isEmpty()) {
+            return emptyMap()
+        }
+
         val paveQueries = transvarVariants.map { (id, annotation) ->
             PaveQuery(
                 id = id,
