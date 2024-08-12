@@ -34,7 +34,7 @@ private val EHR_PRIOR_PRIMARY = ProvidedPriorPrimary(
     tumorType = TYPE,
     status = "ACTIVE",
     diagnosisDate = DIAGNOSIS_DATE,
-    statusDate = DIAGNOSIS_DATE
+    lastTreatmentDate = DIAGNOSIS_DATE
 )
 
 private val EHR_PATIENT_RECORD = EhrTestData.createEhrPatientRecord().copy(
