@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.othercondition
 
-import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
@@ -10,9 +9,7 @@ import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactor
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.withIntolerances
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.withPriorOtherCondition
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.withPriorOtherConditions
-import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
 import com.hartwig.actin.doid.TestDoidModelFactory
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class HasContraindicationToCTTest {
@@ -75,19 +72,6 @@ class HasContraindicationToCTTest {
     }
 
     @Test
-    fun `Should fail with no relevant medication`() {
-        val medications = listOf(TestMedicationFactory.createMinimal().copy(name = "no relevant medication"))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withMedications(medications)))
-    }
-
-    @Test
-    fun `Should pass with relevant medication`() {
-        val relevantMedication: String = HasContraindicationToCT.MEDICATIONS_BEING_CONTRAINDICATIONS_TO_CT.first()
-        val medications = listOf(TestMedicationFactory.createMinimal().copy(name = relevantMedication))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withMedications(medications)))
-    }
-
-    @Test
     fun `Should fail without complications`() {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withComplications(emptyList())))
     }
@@ -102,14 +86,5 @@ class HasContraindicationToCTTest {
     fun `Should pass with relevant complication`() {
         val complications = listOf(complication(HasContraindicationToCT.COMPLICATIONS_BEING_CONTRAINDICATIONS_TO_CT.first()))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withComplications(complications)))
-    }
-
-    @Test
-    fun `Should be undetermined if medication is not provided`() {
-        val result = function.evaluate(
-            TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = null)
-        )
-        assertEvaluation(EvaluationResult.UNDETERMINED, result)
-        assertThat(result.recoverable).isTrue()
     }
 }

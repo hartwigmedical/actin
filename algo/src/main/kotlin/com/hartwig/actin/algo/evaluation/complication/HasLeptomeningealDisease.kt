@@ -9,9 +9,7 @@ import com.hartwig.actin.algo.evaluation.util.Format.concat
 class HasLeptomeningealDisease: EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val leptomeningealComplications = ComplicationFunctions.findComplicationNamesMatchingAnyCategory(
-            record, listOf(
-                LEPTOMENINGEAL_DISEASE_CATEGORY_PATTERN
-            )
+            record, LEPTOMENINGEAL_DISEASE_CATEGORY_PATTERNS
         )
         if (leptomeningealComplications.isNotEmpty()) {
             return EvaluationFactory.pass(
@@ -35,7 +33,7 @@ class HasLeptomeningealDisease: EvaluationFunction {
     }
 
     companion object {
-        private const val LEPTOMENINGEAL_DISEASE_CATEGORY_PATTERN = "leptomeningeal disease, leptomeningeal metastases"
+        private val LEPTOMENINGEAL_DISEASE_CATEGORY_PATTERNS = listOf("leptomeningeal disease", "leptomeningeal metastases")
         private val LESION_WARNING_PATTERNS = setOf(listOf("leptomeningeal"), listOf("carcinomatous", "meningitis"))
 
         private fun isPotentialLeptomeningealLesion(lesion: String): Boolean {
