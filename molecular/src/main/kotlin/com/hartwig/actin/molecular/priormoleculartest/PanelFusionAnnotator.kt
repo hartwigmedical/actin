@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.priormoleculartest
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.Fusion
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.datamodel.panel.PanelFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelSkippedExonsExtraction
@@ -89,7 +90,7 @@ class PanelFusionAnnotator(
             driverLikelihood = fusionDriverLikelihood(isReportable, driverType),
             evidence = ActionableEvidenceFactory.createNoEvidence(),
             isAssociatedWithDrugResistance = null,
-            extendedFusionDetails = null
+            extendedFusionDetails = ExtendedFusionDetails("", "", panelSkippedExonsExtraction.start, panelSkippedExonsExtraction.end)
         )
     }
 

@@ -1,9 +1,15 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.Fusion
+import com.hartwig.actin.molecular.datamodel.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
+import com.hartwig.actin.molecular.datamodel.panel.PanelSkippedExonsExtraction
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
+import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
 import io.mockk.every
 import io.mockk.mockk
@@ -95,5 +101,45 @@ class PanelFusionAnnotatorTest {
         every { knownFusionCache.hasPromiscuousThreeGene("gene2") } returns false
         assertThat(annotator.determineFusionDriverType("gene1", "gene2"))
             .isEqualTo(FusionDriverType.NONE)
+    }
+
+    @Test
+    fun `Should annotate to canonical transcript when no transcript provided for exon skip`() {
+        every { knownFusionCache.hasKnownFusion(GENE, GENE) } returns false
+        every { knownFusionCache.hasExonDelDup(GENE) } returns true
+        every { knownFusionCache.hasPromiscuousFiveGene(GENE) } returns false
+        every { knownFusionCache.hasPromiscuousThreeGene(GENE) } returns false
+
+        val fusionMatchCriteria = FusionMatchCriteria(
+            isReportable = true,
+            geneStart = GENE,
+            geneEnd = GENE,
+            driverType = FusionDriverType.KNOWN_PAIR_DEL_DUP
+        )
+
+        every { evidenceDatabase.lookupKnownFusion(fusionMatchCriteria) } returns null
+        every { evidenceDatabase.evidenceForFusion(fusionMatchCriteria) } returns ActionabilityMatch(
+            onLabelEvents = emptyList(),
+            offLabelEvents = emptyList()
+        )
+
+        val panelSkippedExonsExtraction = listOf(PanelSkippedExonsExtraction(GENE, 2, 4))
+        val fusions = annotator.annotate(emptyList(), panelSkippedExonsExtraction)
+        assertThat(fusions).isEqualTo(
+            setOf(
+                Fusion(
+                    geneStart = GENE,
+                    geneEnd = GENE,
+                    driverType = FusionDriverType.KNOWN_PAIR_DEL_DUP,
+                    proteinEffect = ProteinEffect.UNKNOWN,
+                    isAssociatedWithDrugResistance = null,
+                    extendedFusionDetails = ExtendedFusionDetails("", "", 2, 4),
+                    event = "$GENE skipped exons 2-4",
+                    isReportable = true,
+                    driverLikelihood = DriverLikelihood.HIGH,
+                    evidence = ActionableEvidence(approvedTreatments = emptySet())
+                )
+            )
+        )
     }
 }
