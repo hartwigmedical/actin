@@ -22,7 +22,7 @@ class PanelFusionAnnotator(
             .toSet()
     }
 
-    private fun fusionDriverLikelihood(isReportable: Boolean, driverType: FusionDriverType): DriverLikelihood? {
+    fun fusionDriverLikelihood(isReportable: Boolean, driverType: FusionDriverType): DriverLikelihood? {
         if (isReportable) {
             return when (driverType) {
                 FusionDriverType.KNOWN_PAIR,
@@ -53,7 +53,7 @@ class PanelFusionAnnotator(
         )
     }
 
-    private fun determineFusionDriverType(geneUp: String?, geneDown: String?): FusionDriverType {
+    fun determineFusionDriverType(geneUp: String?, geneDown: String?): FusionDriverType {
         if (geneUp != null && geneDown != null) {
             if (knownFusionCache.hasKnownFusion(geneUp, geneDown)) {
                 return FusionDriverType.KNOWN_PAIR
