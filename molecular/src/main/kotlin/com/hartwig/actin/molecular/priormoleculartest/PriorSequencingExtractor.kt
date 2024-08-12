@@ -10,4 +10,3 @@ class PriorSequencingExtractor : MolecularExtractor<PriorSequencingTest, PanelEx
         return input.map { PanelExtractionAdapter(it) }
     }
 }
-

@@ -16,7 +16,7 @@ class PriorMolecularResultGenerator(
     fun contents(): Table {
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
         if (patientRecord.priorIHCTests.isEmpty()) {
-            table.addCell(Cells.createValue("None"))
+            table.addCell(Cells.createValue("No prior non-Hartwig molecular tests"))
         } else {
             val sortedInterpretation = interpreter.interpret(patientRecord)
             for (priorMolecularTestInterpretation in sortedInterpretation) {

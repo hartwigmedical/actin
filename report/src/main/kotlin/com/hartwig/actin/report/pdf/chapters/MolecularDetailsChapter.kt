@@ -8,6 +8,7 @@ import com.hartwig.actin.report.interpretation.PriorMolecularTestInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularCharacteristicsGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularDriversGenerator
+import com.hartwig.actin.report.pdf.tables.molecular.PathologyReportGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.PredictedTumorOriginGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.PriorMolecularResultGenerator
 import com.hartwig.actin.report.pdf.util.Cells
@@ -17,8 +18,11 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.borders.Border
+import com.itextpdf.layout.element.Div
 
-class MolecularDetailsChapter(private val report: Report, override val include: Boolean) : ReportChapter {
+class MolecularDetailsChapter(
+    private val report: Report, override val include: Boolean, private val includeRawPathologyReport: Boolean
+) : ReportChapter {
     override fun name(): String {
         return "Molecular Details"
     }
@@ -30,6 +34,8 @@ class MolecularDetailsChapter(private val report: Report, override val include: 
     override fun render(document: Document) {
         addChapterTitle(document)
         addMolecularDetails(document)
+        document.add(Div().setHeight(20F))
+        if (includeRawPathologyReport) report.patientRecord.tumor.rawPathologyReport?.let { addPathologyReport(document) }
     }
 
     private fun addMolecularDetails(document: Document) {
@@ -87,5 +93,13 @@ class MolecularDetailsChapter(private val report: Report, override val include: 
                 )
             )
         } else emptyList()
+    }
+
+    private fun addPathologyReport(document: Document) {
+        val table = Tables.createSingleColWithWidth(contentWidth())
+        val generator = PathologyReportGenerator(report.patientRecord.tumor, contentWidth())
+        table.addCell(Cells.createTitle(generator.title()))
+        table.addCell(Cells.create(generator.contents()))
+        document.add(table)
     }
 }

@@ -61,7 +61,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 report,
                 include = report.config.includeSOCLiteratureEfficacyEvidence && report.treatmentMatch.personalizedDataAnalysis != null
             ),
-            MolecularDetailsChapter(report, include = report.config.includeMolecularDetailsChapter),
+            MolecularDetailsChapter(report, report.config.includeMolecularDetailsChapter, report.config.includeRawPathologyReport),
             LongitudinalMolecularHistoryChapter(report, include = report.config.includeLongitudinalMolecularChapter),
             EfficacyEvidenceChapter(report, include = report.config.includeSOCLiteratureEfficacyEvidence),
             ClinicalDetailsChapter(report, include = report.config.includeClinicalDetailsChapter),

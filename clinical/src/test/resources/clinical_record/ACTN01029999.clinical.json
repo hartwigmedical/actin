@@ -41,7 +41,8 @@
     "hasLymphNodeLesions": true,
     "lymphNodeLesionsCount": null,
     "otherLesions": null,
-    "biopsyLocation": "Lymph node"
+    "biopsyLocation": "Lymph node",
+    "rawPathologyReport": null
   },
   "clinicalStatus": {
     "who": 0,
