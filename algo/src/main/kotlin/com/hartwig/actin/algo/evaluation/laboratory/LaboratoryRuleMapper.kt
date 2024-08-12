@@ -45,7 +45,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.HAS_PT_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinInstitutionalNormalLimitCreator(LabMeasurement.PROTHROMBIN_TIME),
             EligibilityRule.HAS_APTT_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.ACTIVATED_PARTIAL_THROMBOPLASTIN_TIME),
             EligibilityRule.HAS_APTT_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinInstitutionalNormalLimitCreator(LabMeasurement.ACTIVATED_PARTIAL_THROMBOPLASTIN_TIME),
-            EligibilityRule.HAS_PTT_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.PARTIAL_THROMBOPLASTIN_TIME),
+            EligibilityRule.HAS_PTT_ULN_OF_AT_MOST_X to hasLimitedPTTCreator(),
             EligibilityRule.HAS_ALBUMIN_G_PER_DL_OF_AT_LEAST_X to hasSufficientLabValueCreator(
                 LabMeasurement.ALBUMIN,
                 LabUnit.GRAMS_PER_DECILITER
@@ -134,6 +134,10 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             ),
             EligibilityRule.HAS_ANTI_HLA_ANTIBODIES_AGAINST_PDC_LINE to undeterminedLabValueCreator("HLA-antibodies against PDC line")
         )
+    }
+
+    private fun hasLimitedPTTCreator(): FunctionCreator {
+        return { HasLimitedPTT() }
     }
 
     private fun hasSufficientLabValueCreator(

@@ -45,7 +45,6 @@ enum class LabMeasurement(val code: String, val display: String, val defaultUnit
     NEUTROPHILS_ABS_EDA("NEUTRO-ABS-eDA", "absolute neutrophil count eDA", LabUnit.BILLIONS_PER_LITER),
     NT_PRO_BNP("BNP", "NT-proBNP", LabUnit.PICOMOLES_PER_LITER),
     PSA("PSA", "PSA", LabUnit.MICROGRAMS_PER_LITER),
-    PARTIAL_THROMBOPLASTIN_TIME("PTT", "PTT", LabUnit.SECONDS),
     PHOSPHORUS("P", "phosphorus", LabUnit.MILLIMOLES_PER_LITER),
     POTASSIUM("K", "potassium", LabUnit.MILLIMOLES_PER_LITER),
     PROTHROMBIN_TIME("PT", "PT", LabUnit.SECONDS),
