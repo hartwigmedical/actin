@@ -11,10 +11,10 @@ import com.hartwig.actin.trial.datamodel.EligibilityRule
 class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
-            EligibilityRule.DRIVER_EVENT_IN_ANY_GENES_X_WITH_APPROVED_THERAPY_AVAILABLE to
-                    { AnyGeneHasDriverEventWithApprovedTherapy() },
+            EligibilityRule.DRIVER_EVENT_IN_ANY_GENES_X_WITH_APPROVED_THERAPY_AVAILABLE_FOR_TUMOR_TYPE_Y to
+                    hasMolecularEventInSomeGenesWithApprovedTherapyAvailableCreator(),
             EligibilityRule.HAS_MOLECULAR_EVENT_WITH_SOC_TARGETED_THERAPY_AVAILABLE_IN_NSCLC to
-                    { HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(emptySet()) },
+                    { HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(null, emptySet()) },
             EligibilityRule.HAS_MOLECULAR_EVENT_WITH_SOC_TARGETED_THERAPY_AVAILABLE_IN_NSCLC_EXCLUDING_ANY_GENE_X to
                     hasMolecularEventExcludingSomeGeneWithSocTargetedTherapyForNSCLCAvailableCreator(),
             EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X to geneIsActivatedOrAmplifiedCreator(),
@@ -75,10 +75,18 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         )
     }
 
+    private fun hasMolecularEventInSomeGenesWithApprovedTherapyAvailableCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val input = functionInputResolver().createManyGenesInput(function)
+            AnyGeneHasDriverEventWithApprovedTherapy(input.geneNames, doidModel())
+
+        }
+    }
+
     private fun hasMolecularEventExcludingSomeGeneWithSocTargetedTherapyForNSCLCAvailableCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genes = functionInputResolver().createManyGenesInput(function)
-            HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(genes.geneNames.toSet())
+            HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(null, genes.geneNames.toSet())
         }
     }
 
