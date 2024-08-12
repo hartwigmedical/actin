@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-class WillParticipateInTrialInCountry internal constructor(private val country: String) : EvaluationFunction {
+class WillParticipateInTrialInCountry(private val country: String) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         return when {
             country.lowercase().contains("netherlands") ->

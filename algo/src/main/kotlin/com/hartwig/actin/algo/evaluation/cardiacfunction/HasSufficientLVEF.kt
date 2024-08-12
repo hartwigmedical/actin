@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-class HasSufficientLVEF internal constructor(private val minLVEF: Double) : EvaluationFunction {
+class HasSufficientLVEF(private val minLVEF: Double) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val lvef = record.clinicalStatus.lvef

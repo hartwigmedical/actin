@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 
-class HasIntoleranceWithSpecificName internal constructor(private val termToFind: String) : EvaluationFunction {
+class HasIntoleranceWithSpecificName(private val termToFind: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val lowercaseTerm = termToFind.lowercase()

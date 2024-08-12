@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.doid.DoidModel
 
-class HasLongQTSyndrome internal constructor(private val doidModel: DoidModel) : EvaluationFunction {
+class HasLongQTSyndrome(private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         for (condition in OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)) {

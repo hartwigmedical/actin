@@ -10,7 +10,7 @@ import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import com.hartwig.actin.doid.DoidModel
 
-class HasHistoryOfPneumonitis internal constructor(private val doidModel: DoidModel) : EvaluationFunction {
+class HasHistoryOfPneumonitis(private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         for (condition in OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)) {
