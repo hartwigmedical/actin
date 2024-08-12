@@ -176,7 +176,7 @@ data class ProvidedPriorPrimary(
     val tumorLocation: String,
     @JsonPropertyDescription("Tumor type details (eg. Carcinoma)")
     val tumorType: String,
-    @JsonPropertyDescription("Observed status of tumor (eg. Active/Inactive/Unknown")
+    @JsonPropertyDescription("Observed status of tumor (eg. Active/Inactive - null if unknown)")
     val status: String? = null,
     @JsonPropertyDescription("Date of last treatment")
     val lastTreatmentDate: LocalDate? = null

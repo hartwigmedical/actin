@@ -57,7 +57,12 @@ class StandardPriorPrimariesExtractor(private val priorPrimaryCuration: Curation
                 if (secondPrimaryConfig.ignore) {
                     null
                 } else {
-                    secondPrimaryConfig.curated?.copy(diagnosedMonth = it.diagnosisDate?.monthValue, diagnosedYear = it.diagnosisDate?.year)
+                    secondPrimaryConfig.curated?.copy(
+                        diagnosedMonth = it.diagnosisDate?.monthValue,
+                        diagnosedYear = it.diagnosisDate?.year,
+                        lastTreatmentYear = it.lastTreatmentDate?.year,
+                        lastTreatmentMonth = it.lastTreatmentDate?.monthValue
+                    )
                 }
             }), curatedPriorPrimary.extractionEvaluation)
         }
