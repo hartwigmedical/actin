@@ -15,9 +15,9 @@ object PDL1EvaluationFunctions {
     fun evaluatePDL1byIHC(
         record: PatientRecord, measure: String?, pdl1Reference: Double, doidModel: DoidModel?, evaluateMaxPDL1: Boolean
     ): Evaluation {
-        val priorMolecularTests = record.molecularHistory.allIHCTests()
+        val priorMolecularTests = record.priorIHCTests
         val isLungCancer = doidModel?.let { DoidEvaluationFunctions.isOfDoidType(it, record.tumor.doids, DoidConstants.LUNG_CANCER_DOID) }
-        val pdl1TestsWithRequestedMeasurement = PriorMolecularTestFunctions.allPDL1Tests(priorMolecularTests, measure, isLungCancer)
+        val pdl1TestsWithRequestedMeasurement = PriorIHCTestFunctions.allPDL1Tests(priorMolecularTests, measure, isLungCancer)
 
         val testEvaluations = pdl1TestsWithRequestedMeasurement.mapNotNull { ihcTest ->
             ihcTest.scoreValue?.let { scoreValue ->
@@ -66,7 +66,7 @@ object PDL1EvaluationFunctions {
                     "No score value available for PD-L1 IHC test"
                 )
             }
-            PriorMolecularTestFunctions.allPDL1Tests(priorMolecularTests).isNotEmpty() -> {
+            PriorIHCTestFunctions.allPDL1Tests(priorMolecularTests).isNotEmpty() -> {
                 EvaluationFactory.recoverableFail(
                     "No PD-L1 IHC test found with measurement type $measure", "PD-L1 tests not in correct unit ($measure)"
                 )

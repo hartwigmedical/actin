@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.datamodel.panel.generic
 
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.molecular.datamodel.panel.PanelEvent
 
 private val EXON_DELETION_REGEX = Regex("ex(\\d+) del")
@@ -10,17 +10,17 @@ data class GenericExonDeletionExtraction(
     val affectedExon: Int,
 ) : PanelEvent {
     companion object {
-        fun parse(priorMolecularTest: PriorMolecularTest): GenericExonDeletionExtraction {
-            return if (priorMolecularTest.item != null && priorMolecularTest.measure != null) {
-                val exonMatch = EXON_DELETION_REGEX.find(priorMolecularTest.measure)
+        fun parse(priorIHCTest: PriorIHCTest): GenericExonDeletionExtraction {
+            return if (priorIHCTest.item != null && priorIHCTest.measure != null) {
+                val exonMatch = EXON_DELETION_REGEX.find(priorIHCTest.measure)
                 if (exonMatch != null) {
                     val exon = exonMatch.groupValues[1].toInt()
-                    GenericExonDeletionExtraction(gene = priorMolecularTest.item, affectedExon = exon)
+                    GenericExonDeletionExtraction(gene = priorIHCTest.item, affectedExon = exon)
                 } else {
-                    throw IllegalArgumentException("Failed to extract exon number for Exon deletion ${priorMolecularTest.item} ${priorMolecularTest.measure}")
+                    throw IllegalArgumentException("Failed to extract exon number for Exon deletion ${priorIHCTest.item} ${priorIHCTest.measure}")
                 }
             } else {
-                throw IllegalArgumentException("Expected gene and variant but got ${priorMolecularTest.item} and ${priorMolecularTest.measure}")
+                throw IllegalArgumentException("Expected gene and variant but got ${priorIHCTest.item} and ${priorIHCTest.measure}")
             }
         }
     }

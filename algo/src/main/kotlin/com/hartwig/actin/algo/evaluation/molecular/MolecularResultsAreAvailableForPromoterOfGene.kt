@@ -4,14 +4,14 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 
 class MolecularResultsAreAvailableForPromoterOfGene(private val gene: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val (indeterminatePriorTests, validPriorTests) = record.molecularHistory.allIHCTests()
+        val (indeterminatePriorTests, validPriorTests) = record.priorIHCTests
             .filter { it.item?.contains(gene) ?: false && it.item?.lowercase()?.contains(PROMOTER) ?: false }
-            .partition(PriorMolecularTest::impliesPotentialIndeterminateStatus)
+            .partition(PriorIHCTest::impliesPotentialIndeterminateStatus)
 
         if (validPriorTests.isNotEmpty()) {
             return EvaluationFactory.pass("$gene promoter has been tested in a prior molecular test", "$gene promoter tested before")

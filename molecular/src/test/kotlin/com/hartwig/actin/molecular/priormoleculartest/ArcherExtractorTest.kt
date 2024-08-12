@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
@@ -49,7 +49,7 @@ class ArcherExtractorTest {
         assertThatThrownBy {
             interpreter.extract(
                 listOf(
-                    PriorMolecularTest(
+                    PriorIHCTest(
                         test = "Archer FP Lung Target",
                         item = GENE,
                         measure = "Unknown",

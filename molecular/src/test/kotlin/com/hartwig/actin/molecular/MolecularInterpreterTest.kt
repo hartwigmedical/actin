@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular
 
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorSequencingTest
 import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
@@ -13,8 +13,8 @@ class MolecularInterpreterTest {
     private val output = mockk<OtherPriorMolecularTest>()
     var annotatorCalled: Boolean = false
 
-    private val extractor = object : MolecularExtractor<PriorMolecularTest, ArcherPanelExtraction> {
-        override fun extract(input: List<PriorMolecularTest>): List<ArcherPanelExtraction> {
+    private val extractor = object : MolecularExtractor<PriorSequencingTest, ArcherPanelExtraction> {
+        override fun extract(input: List<PriorSequencingTest>): List<ArcherPanelExtraction> {
             return input.map { extraction }
         }
     }
@@ -31,7 +31,7 @@ class MolecularInterpreterTest {
             extractor = extractor,
             annotator = annotator,
             inputPredicate = { true }
-        ).run(listOf(PriorMolecularTest(test = "test", impliesPotentialIndeterminateStatus = false)))
+        ).run(listOf(PriorSequencingTest(test = "test")))
         assertThat(annotatorCalled).isTrue()
         assertThat(result).containsExactly(output)
     }
@@ -42,7 +42,7 @@ class MolecularInterpreterTest {
             extractor = extractor,
             annotator = annotator,
             inputPredicate = { false }
-        ).run(listOf(PriorMolecularTest(test = "test", impliesPotentialIndeterminateStatus = false)))
+        ).run(listOf(PriorSequencingTest(test = "test")))
         assertThat(annotatorCalled).isFalse()
         assertThat(result).isEmpty()
     }

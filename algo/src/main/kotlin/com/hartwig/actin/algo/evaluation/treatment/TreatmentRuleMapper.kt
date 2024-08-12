@@ -20,6 +20,11 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_LINES_X to isEligibleForTreatmentLinesCreator(),
             EligibilityRule.IS_ELIGIBLE_FOR_LOCAL_LIVER_TREATMENT to { IsEligibleForLocalLiverTreatment(doidModel()) },
             EligibilityRule.IS_ELIGIBLE_FOR_INTENSIVE_TREATMENT to { IsEligibleForIntensiveTreatment() },
+            EligibilityRule.IS_ELIGIBLE_FOR_FIRST_LINE_PALLIATIVE_CHEMOTHERAPY to {
+                IsEligibleForFirstLinePalliativeChemotherapy(
+                    HasMetastaticCancer(doidModel())
+                )
+            },
             EligibilityRule.IS_ELIGIBLE_FOR_LOCAL_TREATMENT_OF_METASTASES to isEligibleForLocalTreatmentOfMetastasesCreator(),
             EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS to hasExhaustedSOCTreatmentsCreator(),
             EligibilityRule.HAS_HAD_AT_LEAST_X_APPROVED_TREATMENT_LINES to hasHadSomeApprovedTreatmentCreator(),
@@ -58,6 +63,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                     to hasHadLimitedTreatmentsOfCategoryWithTypesAndStopReasonNotPDCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_AS_MOST_RECENT_LINE to hasHadTreatmentCategoryOfTypesAsMostRecentCreator(),
             EligibilityRule.HAS_HAD_ADJUVANT_CATEGORY_X_TREATMENT to hasHadAdjuvantTreatmentWithCategoryCreator(),
+            EligibilityRule.HAS_HAD_ADJUVANT_CATEGORY_X_TREATMENT_WITHIN_Y_WEEKS to hasHadAdjuvantTreatmentWithCategoryWithinWeeksCreator(),
             EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITHIN_X_WEEKS to hasHadSystemicTherapyWithinWeeksCreator(),
             EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X_WITHIN_Y_WEEKS to hasHadSystemicTherapyWithIntentsWithinWeeksCreator(),
             EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X to hasHadSystemicTherapyWithIntentsCreator(),
@@ -345,7 +351,15 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val treatment = functionInputResolver().createOneTreatmentCategoryOrTypeInput(function)
             treatment.mappedType?.let { mappedType ->
                 HasHadAdjuvantTreatmentWithCategoryOfTypes(setOf(mappedType), treatment.mappedCategory)
-            } ?: HasHadAdjuvantTreatmentWithCategory(treatment.mappedCategory)
+            } ?: HasHadAdjuvantTreatmentWithCategory(treatment.mappedCategory, null, null)
+        }
+    }
+
+    private fun hasHadAdjuvantTreatmentWithCategoryWithinWeeksCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val (treatment, weeksAgo) = functionInputResolver().createOneTreatmentCategoryOrTypeOneIntegerInput(function)
+            val minDate = referenceDateProvider().date().minusWeeks(weeksAgo.toLong())
+            HasHadAdjuvantTreatmentWithCategory(treatment.mappedCategory, minDate, weeksAgo)
         }
     }
 

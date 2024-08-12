@@ -81,7 +81,8 @@ class StandardDataIngestionTest {
             bodyWeightExtractor = StandardBodyWeightExtractor(),
             bodyHeightExtractor = StandardBodyHeightExtractor(),
             bloodTransfusionExtractor = StandardBloodTransfusionExtractor(),
-            molecularTestExtractor = StandardMolecularTestExtractor(curationDatabase.molecularTestIhcCuration),
+            ihcTestExtractor = StandardPriorIHCTestExtractor(curationDatabase.molecularTestIhcCuration),
+            sequencingTestExtractor = StandardPriorSequencingTestExtractor(curationDatabase.sequencingTestCuration),
             dataQualityMask = DataQualityMask()
         )
         val expected = ClinicalRecordJson.read(OUTPUT_RECORD_JSON)

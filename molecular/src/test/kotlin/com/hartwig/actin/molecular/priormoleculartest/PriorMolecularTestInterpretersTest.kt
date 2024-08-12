@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
@@ -49,15 +49,17 @@ class PriorMolecularTestInterpretersTest {
 
     @Test
     fun `Should interpret list of molecular tests`() {
-        val interpreters = PriorMolecularTestInterpreters.create(evidenceDatabase, geneDriverLikelihoodModel, transvarAnnotator, paver, paveLite)
+        val interpreters =
+            PriorMolecularTestInterpreters.create(evidenceDatabase, geneDriverLikelihoodModel, transvarAnnotator, paver, paveLite)
         val priorMolecularTests = listOf(
             archerPriorMolecularVariantRecord(),
             avlPanelPriorMolecularVariantRecord(),
             freetextPriorMolecularFusionRecord(),
-            PriorMolecularTest("Unknown", impliesPotentialIndeterminateStatus = false)
+            ampliseqPriorMolecularVariantRecord(),
+            PriorIHCTest("Unknown", impliesPotentialIndeterminateStatus = false)
         )
         val molecularTests = interpreters.process(priorMolecularTests)
-        assertThat(molecularTests.filterIsInstance<PanelRecord>()).hasSize(3)
+        assertThat(molecularTests.filterIsInstance<PanelRecord>()).hasSize(4)
         assertThat(molecularTests.filterIsInstance<OtherPriorMolecularTest>()).hasSize(1)
     }
 

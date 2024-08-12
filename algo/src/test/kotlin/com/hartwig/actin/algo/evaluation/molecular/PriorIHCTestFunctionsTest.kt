@@ -1,12 +1,12 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.priorMolecularTest
-import com.hartwig.actin.algo.evaluation.molecular.PriorMolecularTestFunctions.allIHCTestsForProtein
-import com.hartwig.actin.algo.evaluation.molecular.PriorMolecularTestFunctions.allPDL1Tests
+import com.hartwig.actin.algo.evaluation.molecular.PriorIHCTestFunctions.allIHCTestsForProtein
+import com.hartwig.actin.algo.evaluation.molecular.PriorIHCTestFunctions.allPDL1Tests
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class PriorMolecularTestFunctionsTest {
+class PriorIHCTestFunctionsTest {
 
     @Test
     fun `Should filter prior molecular tests for PDL1`() {

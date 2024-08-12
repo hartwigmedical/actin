@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.curation.config
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
+import com.hartwig.actin.util.ResourceFile
 
 class LesionLocationConfigFactory : CurationConfigFactory<LesionLocationConfig> {
     override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<LesionLocationConfig> {
@@ -20,7 +21,8 @@ class LesionLocationConfigFactory : CurationConfigFactory<LesionLocationConfig> 
                 input = input,
                 ignore = CurationUtil.isIgnoreString(location),
                 location = location,
-                category = category
+                category = category,
+                active = ResourceFile.optionalBool(parts[fields["active"]!!])
             ), validationErrors
         )
     }

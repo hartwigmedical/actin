@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.datamodel
 
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
@@ -9,10 +8,6 @@ import java.time.LocalDate
 data class MolecularHistory(
     val molecularTests: List<MolecularTest>
 ) {
-    fun allIHCTests(): List<PriorMolecularTest> {
-        return molecularTests.filterIsInstance<IHCMolecularTest>().map { it.test }
-    }
-
     fun allOrangeMolecularRecords(): List<MolecularRecord> {
         return molecularTests.filterIsInstance<MolecularRecord>()
     }

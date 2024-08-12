@@ -13,17 +13,18 @@ class LesionLocationConfigFactoryTest {
 
     @Test
     fun `Should return LesionLocationConfig from valid inputs`() {
-        val config = LesionLocationConfigFactory().create(fields, arrayOf("input", "location", "cns"))
-        assertThat(config.errors).isEmpty()
-        assertThat(config.config.input).isEqualTo("input")
-        assertThat(config.config.location).isEqualTo("location")
-        assertThat(config.config.category).isEqualTo(LesionLocationCategory.CNS)
+        val lesionConfig = LesionLocationConfigFactory().create(fields, arrayOf("input", "location", "cns", "1"))
+        assertThat(lesionConfig.errors).isEmpty()
+        assertThat(lesionConfig.config.input).isEqualTo("input")
+        assertThat(lesionConfig.config.location).isEqualTo("location")
+        assertThat(lesionConfig.config.active).isEqualTo(true)
+        assertThat(lesionConfig.config.category).isEqualTo(LesionLocationCategory.CNS)
     }
 
     @Test
     fun `Should return validation error when category is not a value in enum`() {
-        val config = LesionLocationConfigFactory().create(fields, arrayOf("input", "location", "hair"))
-        assertThat(config.errors).containsExactly(
+        val lesionConfig = LesionLocationConfigFactory().create(fields, arrayOf("input", "location", "hair", ""))
+        assertThat(lesionConfig.errors).containsExactly(
             CurationConfigValidationError(
                 CurationCategory.LESION_LOCATION.categoryName,
                 "input",

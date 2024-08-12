@@ -2,6 +2,7 @@ package com.hartwig.actin.report.pdf
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
+import com.hartwig.actin.configuration.MolecularSummaryType
 import com.hartwig.actin.molecular.datamodel.NO_EVIDENCE_SOURCE
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
 import com.hartwig.actin.report.datamodel.Report
@@ -109,16 +110,17 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth, slotsAvailable = false)
 
         val (localTrialGenerator, nonLocalTrialGenerator) = provideExternalTrialsTables(report.patientRecord, evaluated, contentWidth)
-        val hasMolecular = report.patientRecord.molecularHistory.molecularTests.isNotEmpty()
+        val hasOrangeMolecular = report.patientRecord.molecularHistory.allOrangeMolecularRecords().isNotEmpty()
         return listOfNotNull(
             clinicalHistoryGenerator,
             MolecularSummaryGenerator(
                 report.patientRecord,
                 cohorts,
                 keyWidth,
-                valueWidth
+                valueWidth,
+                report.config.molecularSummaryType == MolecularSummaryType.SHORT
             ).takeIf {
-                report.config.includeMolecularSummary && hasMolecular
+                report.config.molecularSummaryType != MolecularSummaryType.NONE && hasOrangeMolecular
             },
             SOCEligibleApprovedTreatmentGenerator(report, contentWidth).takeIf {
                 report.config.includeEligibleSOCTreatmentSummary

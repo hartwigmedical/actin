@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import java.time.LocalDate
 
 const val GENE_UP = "geneUp"
@@ -9,8 +9,8 @@ const val GENE = "gene"
 const val HGVS_CODING = "c.1A>T"
 const val HGVS_PROTEIN = "p.M1L"
 
-fun avlPanelPriorMolecularNoMutationsFoundRecord(): PriorMolecularTest {
-    return PriorMolecularTest(
+fun avlPanelPriorMolecularNoMutationsFoundRecord(): PriorIHCTest {
+    return PriorIHCTest(
         test = "AvL Panel",
         item = null,
         measure = "GEEN mutaties aangetoond met behulp van het AVL Panel",
@@ -18,8 +18,8 @@ fun avlPanelPriorMolecularNoMutationsFoundRecord(): PriorMolecularTest {
     )
 }
 
-fun avlPanelPriorMolecularVariantRecord(): PriorMolecularTest {
-    return PriorMolecularTest(
+fun avlPanelPriorMolecularVariantRecord(): PriorIHCTest {
+    return PriorIHCTest(
         test = "AvL Panel",
         item = GENE,
         measure = HGVS_CODING,
@@ -27,16 +27,25 @@ fun avlPanelPriorMolecularVariantRecord(): PriorMolecularTest {
     )
 }
 
-fun freetextPriorMolecularFusionRecord(): PriorMolecularTest {
-    return PriorMolecularTest(
+fun freetextPriorMolecularFusionRecord(): PriorIHCTest {
+    return PriorIHCTest(
         test = "Freetext",
         item = "$GENE_UP::$GENE_DOWN",
         impliesPotentialIndeterminateStatus = false
     )
 }
 
-fun freetextPriorMolecularVariantRecord(gene: String, hgvs: String, date: LocalDate? = null): PriorMolecularTest {
-    return PriorMolecularTest(
+fun ampliseqPriorMolecularVariantRecord(): PriorIHCTest {
+    return PriorIHCTest(
+        test = "NGS/Ampliseq",
+        item = GENE,
+        measure = HGVS_CODING,
+        impliesPotentialIndeterminateStatus = false
+    )
+}
+
+fun freetextPriorMolecularVariantRecord(gene: String, hgvs: String, date: LocalDate? = null): PriorIHCTest {
+    return PriorIHCTest(
         test = "Freetext",
         item = gene,
         measure = hgvs,
@@ -45,8 +54,8 @@ fun freetextPriorMolecularVariantRecord(gene: String, hgvs: String, date: LocalD
     )
 }
 
-fun freetextPriorMolecularNegativeGeneRecord(gene: String): PriorMolecularTest {
-    return PriorMolecularTest(
+fun freetextPriorMolecularNegativeGeneRecord(gene: String): PriorIHCTest {
+    return PriorIHCTest(
         test = "Freetext",
         item = gene,
         scoreText = "Negative",
@@ -54,8 +63,8 @@ fun freetextPriorMolecularNegativeGeneRecord(gene: String): PriorMolecularTest {
     )
 }
 
-fun archerPriorMolecularVariantRecord(gene: String? = GENE, hgvs: String? = HGVS_CODING, date: LocalDate? = null): PriorMolecularTest {
-    return PriorMolecularTest(
+fun archerPriorMolecularVariantRecord(gene: String? = GENE, hgvs: String? = HGVS_CODING, date: LocalDate? = null): PriorIHCTest {
+    return PriorIHCTest(
         test = "Archer FP Lung Target",
         item = gene,
         measure = hgvs,
@@ -64,8 +73,8 @@ fun archerPriorMolecularVariantRecord(gene: String? = GENE, hgvs: String? = HGVS
     )
 }
 
-fun archerPriorMolecularFusionRecord(gene: String?, date: LocalDate? = null): PriorMolecularTest {
-    return PriorMolecularTest(
+fun archerPriorMolecularFusionRecord(gene: String?, date: LocalDate? = null): PriorIHCTest {
+    return PriorIHCTest(
         test = "Archer FP Lung Target",
         item = null,
         measure = "$gene fusie aangetoond",
@@ -74,8 +83,8 @@ fun archerPriorMolecularFusionRecord(gene: String?, date: LocalDate? = null): Pr
     )
 }
 
-fun archerExonSkippingRecord(gene: String, skippingRange: String): PriorMolecularTest {
-    return PriorMolecularTest(
+fun archerExonSkippingRecord(gene: String, skippingRange: String): PriorIHCTest {
+    return PriorIHCTest(
         test = "Archer FP Lung Target",
         item = gene,
         measure = "$gene exon $skippingRange skipping aangetoond",

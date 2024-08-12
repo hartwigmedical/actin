@@ -19,11 +19,12 @@ enum class CurationCategory(val categoryName: String) {
     MEDICATION_NAME("Medication Name"),
     MOLECULAR_TEST_IHC("Molecular Test IHC"),
     MOLECULAR_TEST_PDL1("Molecular Test PDL1"),
+    SEQUENCING_TEST("Sequencing Test"),
     NON_ONCOLOGICAL_HISTORY("Non Oncological History"),
     ONCOLOGICAL_HISTORY("Oncological History"),
     PERIOD_BETWEEN_UNIT_INTERPRETATION("Period Between Unit Interpretation"),
     QUESTIONNAIRE_MAPPING("Questionnaire mapping"),
     SECOND_PRIMARY("Second Primary"),
     TOXICITY("Toxicity"),
-    TOXICITY_TRANSLATION("Toxicity Translation"),
+    TOXICITY_TRANSLATION("Toxicity Translation")
 }

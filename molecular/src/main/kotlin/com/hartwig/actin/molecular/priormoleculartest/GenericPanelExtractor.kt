@@ -1,21 +1,24 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.molecular.MolecularExtractor
 import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
+import org.apache.logging.log4j.LogManager
 
-class GenericPanelExtractor : MolecularExtractor<PriorMolecularTest, PanelExtraction> {
+class GenericPanelExtractor : MolecularExtractor<PriorIHCTest, PanelExtraction> {
 
-    override fun extract(input: List<PriorMolecularTest>): List<PanelExtraction> {
+    private val logger = LogManager.getLogger(GenericPanelExtractor::class.java)
+
+    override fun extract(input: List<PriorIHCTest>): List<PanelExtraction> {
         return input.groupBy { it.test }
             .flatMap { (test, results) -> groupedByTestDate(results, test) }
     }
 
-    private fun groupedByTestDate(results: List<PriorMolecularTest>, type: String): List<GenericPanelExtraction> {
+    private fun groupedByTestDate(results: List<PriorIHCTest>, type: String): List<GenericPanelExtraction> {
         return results
             .groupBy { it.measureDate }
             .map { (date, results) ->
@@ -36,7 +39,7 @@ class GenericPanelExtractor : MolecularExtractor<PriorMolecularTest, PanelExtrac
                 val geneWithNegativeResults = geneWithNegativeResultsRecords.mapNotNull { it.item }.toSet()
 
                 if (unknownRecords.isNotEmpty()) {
-                    throw IllegalArgumentException("Unrecognized records in $type panel: ${
+                    logger.error("Unrecognized records in $type panel: ${
                         nonVariantRecordsGene.joinToString(", ") { "item \"${it.item}\" measure \"${it.measure}\"" }
                     }")
                 }
@@ -52,12 +55,12 @@ class GenericPanelExtractor : MolecularExtractor<PriorMolecularTest, PanelExtrac
             }
     }
 
-    private fun isKnownIgnorableRecord(result: PriorMolecularTest): Boolean {
-        return result.measure == "GEEN mutaties aangetoond met behulp van het AVL Panel"
+    private fun isKnownIgnorableRecord(result: PriorIHCTest): Boolean {
+        return result.measure?.trim()?.startsWith("GEEN") ?: false
 
     }
 
-    private fun parseVariant(priorMolecularTest: PriorMolecularTest): PanelVariantExtraction {
+    private fun parseVariant(priorMolecularTest: PriorIHCTest): PanelVariantExtraction {
         return if (priorMolecularTest.item != null && priorMolecularTest.measure != null) {
             PanelVariantExtraction(gene = priorMolecularTest.item!!, hgvsCodingOrProteinImpact = priorMolecularTest.measure!!)
         } else {

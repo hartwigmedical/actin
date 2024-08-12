@@ -272,7 +272,7 @@ class PanelAnnotatorTest {
         every { evidenceDatabase.evidenceForCopyNumber(capture(unannotatedCopyNumberSlot)) } returns ACTIONABILITY_MATCH
         every { paveLite.run(GENE, TRANSCRIPT, POSITION) } returns ImmutableVariantTranscriptImpact.builder().affectedExon(1)
             .affectedCodon(2).build()
-        val annotated = annotator.annotate(ARCHER_PANEL_WITH_VARIANT.copy(amplifications = listOf(PanelAmplificationExtraction(GENE, "1"))))
+        val annotated = annotator.annotate(ARCHER_PANEL_WITH_VARIANT.copy(amplifications = listOf(PanelAmplificationExtraction(GENE))))
         val annotatedVariant = annotated.drivers.copyNumbers.first()
         assertCopyNumber(unannotatedCopyNumberSlot[0])
         assertCopyNumber(unannotatedCopyNumberSlot[1])

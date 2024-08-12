@@ -38,7 +38,7 @@ class DriversSummarizerTest {
             variant("medium likelihood", DriverLikelihood.MEDIUM, true)
         )
         val molecularDrivers = minimalDrivers.copy(variants = variants)
-        assertExpectedListResult(summarizer(molecularDrivers).keyGenesWithVariants())
+        assertExpectedListResult(summarizer(molecularDrivers).keyVariants())
     }
 
     @Test

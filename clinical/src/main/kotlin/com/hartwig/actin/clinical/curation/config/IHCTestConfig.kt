@@ -1,8 +1,8 @@
 package com.hartwig.actin.clinical.curation.config
 
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-data class MolecularTestConfig(
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
+data class IHCTestConfig(
     override val input: String,
     override val ignore: Boolean = false,
-    val curated: PriorMolecularTest? = null
+    val curated: PriorIHCTest? = null
 ) : CurationConfig
