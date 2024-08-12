@@ -61,7 +61,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 report,
                 include = report.config.includeSOCLiteratureEfficacyEvidence && report.treatmentMatch.personalizedDataAnalysis != null
             ),
-            ResistanceEvidenceChapter(report, include = report.config.includeEligibleSOCTreatmentSummary),
+            ResistanceEvidenceChapter(report, include = report.config.includeSOCLiteratureEfficacyEvidence),
             MolecularDetailsChapter(report, include = report.config.includeMolecularDetailsChapter),
             LongitudinalMolecularHistoryChapter(report, include = report.config.includeLongitudinalMolecularChapter),
             EfficacyEvidenceChapter(report, include = report.config.includeSOCLiteratureEfficacyEvidence),

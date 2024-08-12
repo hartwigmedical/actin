@@ -1,6 +1,15 @@
-package com.hartwig.actin.molecular.evidence.actionability
+package com.hartwig.actin.molecular.evidence
 
 import com.hartwig.actin.doid.TestDoidModelFactory
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventMatcher
+import com.hartwig.actin.molecular.evidence.actionability.BreakendEvidence
+import com.hartwig.actin.molecular.evidence.actionability.CopyNumberEvidence
+import com.hartwig.actin.molecular.evidence.actionability.FusionEvidence
+import com.hartwig.actin.molecular.evidence.actionability.HomozygousDisruptionEvidence
+import com.hartwig.actin.molecular.evidence.actionability.PersonalizedActionabilityFactory
+import com.hartwig.actin.molecular.evidence.actionability.SignatureEvidence
+import com.hartwig.actin.molecular.evidence.actionability.VariantEvidence
+import com.hartwig.actin.molecular.evidence.actionability.VirusEvidence
 import com.hartwig.actin.serve.TestServeActionabilityFactory
 import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.ImmutableActionableEvents

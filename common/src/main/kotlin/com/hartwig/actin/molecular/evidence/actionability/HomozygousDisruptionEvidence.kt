@@ -1,12 +1,13 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.evidence.matching.EvidenceMatcher
 import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.gene.ActionableGene
 import com.hartwig.serve.datamodel.gene.GeneEvent
 
-internal class HomozygousDisruptionEvidence private constructor(private val actionableGenes: List<ActionableGene>) :
+class HomozygousDisruptionEvidence(private val actionableGenes: List<ActionableGene>) :
     EvidenceMatcher<HomozygousDisruption> {
 
     override fun findMatches(event: HomozygousDisruption): List<ActionableEvent> {

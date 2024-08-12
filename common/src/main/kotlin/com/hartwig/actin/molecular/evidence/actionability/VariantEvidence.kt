@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
+import com.hartwig.actin.molecular.evidence.matching.EvidenceMatcher
 import com.hartwig.actin.molecular.evidence.matching.GeneMatching
 import com.hartwig.actin.molecular.evidence.matching.HotspotMatching
 import com.hartwig.actin.molecular.evidence.matching.RangeMatching
@@ -11,7 +12,7 @@ import com.hartwig.serve.datamodel.gene.GeneEvent
 import com.hartwig.serve.datamodel.hotspot.ActionableHotspot
 import com.hartwig.serve.datamodel.range.ActionableRange
 
-internal class VariantEvidence private constructor(
+class VariantEvidence(
     private val actionableHotspots: List<ActionableHotspot>,
     private val actionableRanges: List<ActionableRange>, private val applicableActionableGenes: List<ActionableGene>
 ) : EvidenceMatcher<VariantMatchCriteria> {

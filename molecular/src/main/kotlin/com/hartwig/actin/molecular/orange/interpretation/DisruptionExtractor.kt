@@ -7,7 +7,7 @@ import com.hartwig.actin.molecular.datamodel.orange.driver.CodingContext
 import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.orange.driver.DisruptionType
 import com.hartwig.actin.molecular.datamodel.orange.driver.RegionType
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEvidenceFactory
+import com.hartwig.actin.molecular.evidence.ActionableEvidenceFactory
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.sort.driver.DisruptionComparator
 import com.hartwig.hmftools.datamodel.gene.TranscriptCodingType

@@ -8,16 +8,31 @@ import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.datamodel.DoidEntry
+import com.hartwig.actin.molecular.evidence.actionability.BreakendEvidence
+import com.hartwig.actin.molecular.evidence.actionability.CopyNumberEvidence
+import com.hartwig.actin.molecular.evidence.actionability.FusionEvidence
+import com.hartwig.actin.molecular.evidence.actionability.HomozygousDisruptionEvidence
+import com.hartwig.actin.molecular.evidence.actionability.VariantEvidence
+import com.hartwig.actin.molecular.datamodel.Drivers
+import com.hartwig.actin.molecular.evidence.orange.MolecularRecordAnnotatorFunctions
 import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.EvidenceLevel
+import com.hartwig.serve.datamodel.ImmutableActionableEvents
 import com.hartwig.serve.datamodel.Intervention
+import com.hartwig.serve.datamodel.characteristic.ActionableCharacteristic
+import com.hartwig.serve.datamodel.fusion.ActionableFusion
+import com.hartwig.serve.datamodel.gene.ActionableGene
+import com.hartwig.serve.datamodel.hotspot.ActionableHotspot
+import com.hartwig.serve.datamodel.immuno.ActionableHLA
+import com.hartwig.serve.datamodel.range.ActionableRange
 
 class ResistanceEvidenceMatcher(
     private val doidEntry: DoidEntry,
     private val applicableDoids: Set<String>,
     private val actionableEvents: ActionableEvents,
-    private val treatmentDatabase: TreatmentDatabase
+    private val treatmentDatabase: TreatmentDatabase,
+    private val drivers: Drivers
 ) {
 
     fun match(treatment: Treatment): List<ResistanceEvidence> {
@@ -37,12 +52,12 @@ class ResistanceEvidenceMatcher(
             it.direction().isResistant &&
                     isOnLabel(it, expandedTumorDoids) &&
                     findTreatmentInDatabase(it.intervention(), treatment).isNotEmpty() &&
-                    resistant(it)
+                    isResistant(it)
         }.map { actionableEvent ->
             ResistanceEvidence(
                 event = actionableEvent.sourceEvent(),
                 isTested = null,
-                isFound = null,
+                isFound = isFound(actionableEvent, drivers),
                 resistanceLevel = actionableEvent.level().toString(),
                 evidenceUrls = actionableEvent.evidenceUrls(),
                 treatmentName = findTreatmentInDatabase(actionableEvent.intervention(), treatment)
@@ -59,14 +74,75 @@ class ResistanceEvidenceMatcher(
         else ""
     }
 
+    private fun isFound(event: ActionableEvent, drivers: Drivers): Boolean? {
+        when (event) {
+            is ActionableHotspot -> {
+                val variantEvidence = VariantEvidence(listOf(event), emptyList(), emptyList())
+                return drivers.variants.any {
+                    variantEvidence.findMatches(MolecularRecordAnnotatorFunctions.createCriteria(it)).isNotEmpty()
+                }
+            }
+
+            is ActionableGene -> {
+                val actionableEvents = ImmutableActionableEvents.builder().hotspots(emptyList()).codons(emptyList()).exons(emptyList())
+                    .genes(listOf(event)).fusions(emptyList()).characteristics(emptyList()).hla(emptyList()).build()
+
+                val variantEvidence = VariantEvidence.create(actionableEvents)
+                val fusionEvidence = FusionEvidence.create(actionableEvents)
+                val copyNumberEvidence = CopyNumberEvidence.create(actionableEvents)
+                val homDisEvidence = HomozygousDisruptionEvidence.create(actionableEvents)
+                val disruptionEvidence = BreakendEvidence.create(actionableEvents)
+
+                val variantMatch =
+                    drivers.variants.any { variantEvidence.findMatches(MolecularRecordAnnotatorFunctions.createCriteria(it)).isNotEmpty() }
+                val fusionMatch = drivers.fusions.any {
+                    fusionEvidence.findMatches(MolecularRecordAnnotatorFunctions.createFusionCriteria(it)).isNotEmpty()
+                }
+                val copyNumberMatch = drivers.copyNumbers.any { copyNumberEvidence.findMatches(it).isNotEmpty() }
+                val homDisMatch = drivers.homozygousDisruptions.any { homDisEvidence.findMatches(it).isNotEmpty() }
+                val disruptionMatch = drivers.disruptions.any { disruptionEvidence.findMatches(it).isNotEmpty() }
+
+                return variantMatch || fusionMatch || copyNumberMatch || homDisMatch || disruptionMatch
+
+            }
+
+            is ActionableFusion -> {
+                val fusionEvidence = FusionEvidence(emptyList(), listOf(event))
+                return drivers.fusions.any {
+                    fusionEvidence.findMatches(MolecularRecordAnnotatorFunctions.createFusionCriteria(it)).isNotEmpty()
+                }
+            }
+
+            is ActionableRange -> {
+                val variantEvidence = VariantEvidence(emptyList(), listOf(event), emptyList())
+                return drivers.variants.any {
+                    variantEvidence.findMatches(MolecularRecordAnnotatorFunctions.createCriteria(it)).isNotEmpty()
+                }
+            }
+
+            is ActionableCharacteristic -> {
+                return null
+            }
+
+            is ActionableHLA -> {
+                return null
+            }
+
+            else -> {
+                return null
+            }
+        }
+    }
+
     companion object {
         fun create(
             doidEntry: DoidEntry,
             tumorDoids: Set<String>,
             actionableEvents: ActionableEvents,
-            treatmentDatabase: TreatmentDatabase
+            treatmentDatabase: TreatmentDatabase,
+            drivers: Drivers
         ): ResistanceEvidenceMatcher {
-            return ResistanceEvidenceMatcher(doidEntry, tumorDoids, actionableEvents, treatmentDatabase)
+            return ResistanceEvidenceMatcher(doidEntry, tumorDoids, actionableEvents, treatmentDatabase, drivers)
         }
 
         private fun isOnLabel(event: ActionableEvent, expandedTumorDoids: Set<String>): Boolean {
@@ -80,8 +156,12 @@ class ResistanceEvidenceMatcher(
             return doids.flatMap { doidModel.doidWithParents(it) }.toSet()
         }
 
-        private fun resistant(resistanceEvent: ActionableEvent): Boolean {
-            return resistanceEvent.level() in setOf(EvidenceLevel.A, EvidenceLevel.B, EvidenceLevel.C)
+        private fun isResistant(resistanceEvent: ActionableEvent): Boolean {
+            return resistanceEvent.level() in setOf(
+                EvidenceLevel.A,
+                EvidenceLevel.B,
+                EvidenceLevel.C
+            ) && resistanceEvent.direction().isResistant
         }
 
         private fun drugsInOtherTreatment(treatment1: Treatment, treatment2: Treatment): Boolean {

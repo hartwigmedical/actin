@@ -13,7 +13,7 @@ class ResistanceEvidenceGenerator(
     private val width: Float
 ) : TableGenerator {
     override fun title(): String {
-        return "Tested"
+        return "Resistance evidence"
     }
 
     override fun contents(): Table {
@@ -21,14 +21,15 @@ class ResistanceEvidenceGenerator(
             Tables.createSingleColWithWidth(width)
                 .addCell(Cells.createContentNoBorder("There are no standard of care treatment options for this patient"))
         } else {
-            val table = Tables.createFixedWidthCols(120f, width - 250f).setWidth(width)
+            val table = Tables.createFixedWidthCols(1f, 3f, 1f).setWidth(width)
             table.addHeaderCell(Cells.createHeader("Treatment"))
-            table.addHeaderCell(Cells.createHeader("Known resistance evidence"))
+            table.addHeaderCell(Cells.createHeader("Resistance evidence"))
+            table.addHeaderCell(Cells.createHeader("Found in molecular analysis"))
             val treatmentToEvidence = treatments.flatMap { it.resistanceEvidence }.groupBy({ it.treatmentName }, { it })
 
             treatmentToEvidence.forEach { entry ->
                 table.addCell(Cells.createContentBold(entry.key))
-                val subtable = Tables.createFixedWidthCols(6f, 1f, 1f, 1f, 1f).setWidth(width / 4)
+                val subtable = Tables.createFixedWidthCols(3f, 1f, 1f, 1f, 30f, 1f).setWidth(width / 2)
                 for (resistanceEvidence in entry.value.distinct().sortedBy { it.event }) {
                     subtable.addCell(Cells.createContentNoBorder(resistanceEvidence.event))
 
@@ -46,10 +47,22 @@ class ResistanceEvidenceGenerator(
                         }
                         int += 1
                     }
+                    subtable.addCell(Cells.createContentNoBorder(booleanToString(resistanceEvidence.isFound)))
                 }
                 table.addCell(Cells.createContent(subtable))
+                table.addCell(Cells.createContent(""))
             }
             table
+        }
+    }
+
+    companion object {
+        private fun booleanToString(isFound: Boolean?): String {
+            return when (isFound) {
+                true -> "Yes"
+                false -> "No"
+                null -> ""
+            }
         }
     }
 

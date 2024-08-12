@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.evidence
+package com.hartwig.actin.molecular.evidence.matching
 
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
@@ -7,8 +7,6 @@ import com.hartwig.actin.molecular.datamodel.orange.driver.Virus
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventMatcher
 import com.hartwig.actin.molecular.evidence.known.KnownEventResolver
-import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
-import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.serve.datamodel.common.GeneAlteration
 import com.hartwig.serve.datamodel.fusion.KnownFusion
 

@@ -10,6 +10,7 @@ import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.doid.datamodel.TestDoidEntryFactory
 import com.hartwig.actin.efficacy.TestExtendedEvidenceEntryFactory
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.serve.datamodel.ActionableEvents
@@ -23,7 +24,13 @@ class EvaluatedTreatmentAnnotatorTest {
     private val actionableEvents: ActionableEvents = ImmutableActionableEvents.builder().build()
     private val doidEntry = TestDoidEntryFactory.createMinimalTestDoidEntry()
     private val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
-    private val resistanceEvidenceMatcher = ResistanceEvidenceMatcher(doidEntry, emptySet(), actionableEvents, treatmentDatabase)
+    private val resistanceEvidenceMatcher = ResistanceEvidenceMatcher(
+        doidEntry,
+        emptySet(),
+        actionableEvents,
+        treatmentDatabase,
+        TestMolecularFactory.createProperTestDrivers()
+    )
     private val annotator = EvaluatedTreatmentAnnotator.create(efficacyEntries, resistanceEvidenceMatcher)
     private val evaluations = listOf(Evaluation(result = EvaluationResult.PASS, recoverable = true))
 

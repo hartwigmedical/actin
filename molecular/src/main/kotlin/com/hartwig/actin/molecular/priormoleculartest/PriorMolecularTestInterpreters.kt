@@ -6,7 +6,6 @@ import com.hartwig.actin.molecular.MolecularExtractor
 import com.hartwig.actin.molecular.MolecularInterpreter
 import com.hartwig.actin.molecular.datamodel.ARCHER_FP_LUNG_TARGET
 import com.hartwig.actin.molecular.datamodel.AVL_PANEL
-import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.FREE_TEXT_PANEL
 import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
 import com.hartwig.actin.molecular.datamodel.MolecularTest
@@ -14,7 +13,7 @@ import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
-import com.hartwig.actin.molecular.evidence.EvidenceDatabase
+import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.VariantAnnotator

@@ -24,8 +24,7 @@ class ResistanceEvidenceChapter(private val report: Report, override val include
         addChapterTitle(document)
 
         val table = Tables.createSingleColWithWidth(contentWidth())
-        val resistanceEvidenceGenerator =
-            ResistanceEvidenceGenerator(eligibleSocTreatments, contentWidth())
+        val resistanceEvidenceGenerator = ResistanceEvidenceGenerator(eligibleSocTreatments, contentWidth())
         table.addCell(Cells.createTitle(resistanceEvidenceGenerator.title()))
         table.addCell(Cells.create(resistanceEvidenceGenerator.contents()))
         document.add(table)

@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.evidence
 
-import com.hartwig.actin.molecular.evidence.actionability.TestActionableEventMatcherFactory
 import com.hartwig.actin.molecular.evidence.known.TestKnownEventResolverFactory
+import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 
 object TestEvidenceDatabaseFactory {
 

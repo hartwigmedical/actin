@@ -18,6 +18,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.configuration.EMC_TRIAL_SOURCE
 import com.hartwig.actin.doid.datamodel.TestDoidEntryFactory
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.datamodel.TestTrialFactory
@@ -42,7 +43,13 @@ class TreatmentMatcherTest {
     private val actionableEvents: ActionableEvents = ImmutableActionableEvents.builder().build()
     private val recommendationEngine = mockk<RecommendationEngine>()
     private val doidEntry = TestDoidEntryFactory.createMinimalTestDoidEntry()
-    private val resistanceEvidenceMatcher = ResistanceEvidenceMatcher(doidEntry, emptySet(), actionableEvents, treatmentDatabase)
+    private val resistanceEvidenceMatcher = ResistanceEvidenceMatcher(
+        doidEntry,
+        emptySet(),
+        actionableEvents,
+        treatmentDatabase,
+        TestMolecularFactory.createProperTestDrivers()
+    )
     private val treatmentMatcher = TreatmentMatcher(
         trialMatcher,
         recommendationEngine,

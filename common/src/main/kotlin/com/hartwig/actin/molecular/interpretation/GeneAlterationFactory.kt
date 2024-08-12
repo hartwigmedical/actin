@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.orange.interpretation
+package com.hartwig.actin.molecular.interpretation
 
 import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.ProteinEffect

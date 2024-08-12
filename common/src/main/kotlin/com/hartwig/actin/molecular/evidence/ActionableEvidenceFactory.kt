@@ -1,8 +1,10 @@
-package com.hartwig.actin.molecular.evidence.actionability
+package com.hartwig.actin.molecular.evidence
 
+import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.Country
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
+import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.ClinicalTrial
 import com.hartwig.serve.datamodel.EvidenceLevel
@@ -54,7 +56,7 @@ object ActionableEvidenceFactory {
                     val trial = onLabelEvent.intervention() as ClinicalTrial
                     ExternalTrial(
                         title = trial.studyAcronym() ?: trial.studyTitle(),
-                        countries = trial.countriesOfStudy().map(::determineCountry).toSet(),
+                        countries = trial.countriesOfStudy().map(ActionableEvidenceFactory::determineCountry).toSet(),
                         url = extractNctUrl(onLabelEvent),
                         nctId = trial.studyNctId(),
                     )

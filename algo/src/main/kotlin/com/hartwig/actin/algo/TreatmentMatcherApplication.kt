@@ -75,7 +75,13 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val tumorDoids = patient.tumor.doids.orEmpty().toSet()
         val actionableEvents =
             loadEvidence(patient.molecularHistory.latestOrangeMolecularRecord()?.refGenomeVersion ?: RefGenomeVersion.V37)
-        val resistanceEvidenceMatcher = ResistanceEvidenceMatcher.create(doidEntry, tumorDoids, actionableEvents, treatmentDatabase)
+        val resistanceEvidenceMatcher = ResistanceEvidenceMatcher.create(
+            doidEntry,
+            tumorDoids,
+            actionableEvents,
+            treatmentDatabase,
+            patient.molecularHistory.latestOrangeMolecularRecord()!!.drivers
+        )
         val match = TreatmentMatcher.create(resources, trials, evidenceEntries, resistanceEvidenceMatcher)
             .evaluateAndAnnotateMatchesForPatient(patient)
 

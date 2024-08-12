@@ -1,7 +1,8 @@
-package com.hartwig.actin.molecular.orange
+package com.hartwig.actin.molecular
 
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.molecular.evidence.TestEvidenceDatabaseFactory
+import com.hartwig.actin.molecular.evidence.orange.MolecularRecordAnnotator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

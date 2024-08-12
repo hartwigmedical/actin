@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.evidence.actionability
+package com.hartwig.actin.molecular.evidence.matching
 
 import com.hartwig.serve.datamodel.ActionableEvent
 

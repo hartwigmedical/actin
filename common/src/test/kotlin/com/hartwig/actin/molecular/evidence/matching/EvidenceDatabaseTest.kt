@@ -1,8 +1,8 @@
-package com.hartwig.actin.molecular.evidence
+package com.hartwig.actin.molecular.evidence.matching
 
-import com.hartwig.actin.molecular.TestMolecularFactory
 import com.hartwig.actin.molecular.TestMolecularFactory.minimalCopyNumber
 import com.hartwig.actin.molecular.TestMolecularFactory.minimalDisruption
+import com.hartwig.actin.molecular.TestMolecularFactory.minimalHomozygousDisruption
 import com.hartwig.actin.molecular.TestMolecularFactory.minimalVirus
 import com.hartwig.actin.molecular.datamodel.CodingEffect
 import com.hartwig.actin.molecular.datamodel.VariantType
@@ -10,8 +10,7 @@ import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.datamodel.orange.driver.VirusType
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
-import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
-import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
+import com.hartwig.actin.molecular.evidence.TestEvidenceDatabaseFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -51,7 +50,7 @@ class EvidenceDatabaseTest {
         assertThat(database.geneAlterationForCopyNumber(gainLoss)).isNotNull
         assertEvidenceCountMatchesExpected(database.evidenceForCopyNumber(gainLoss), 1)
 
-        val homozygousDisruption = TestMolecularFactory.minimalHomozygousDisruption()
+        val homozygousDisruption = minimalHomozygousDisruption()
         assertThat(database.geneAlterationForHomozygousDisruption(homozygousDisruption)).isNotNull
         assertEvidenceCountMatchesExpected(database.evidenceForHomozygousDisruption(homozygousDisruption), 2)
 

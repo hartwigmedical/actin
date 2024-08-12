@@ -2,12 +2,13 @@ package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
+import com.hartwig.actin.molecular.evidence.matching.EvidenceMatcher
 import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.gene.ActionableGene
 import com.hartwig.serve.datamodel.gene.GeneEvent
 
-internal class CopyNumberEvidence private constructor(
+class CopyNumberEvidence(
     private val actionableAmplifications: List<ActionableGene>,
     private val actionableLosses: List<ActionableGene>
 ) : EvidenceMatcher<CopyNumber> {

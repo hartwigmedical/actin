@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
+import com.hartwig.actin.molecular.evidence.matching.EvidenceMatcher
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.FusionMatching
 import com.hartwig.serve.datamodel.ActionableEvent
@@ -9,7 +10,7 @@ import com.hartwig.serve.datamodel.fusion.ActionableFusion
 import com.hartwig.serve.datamodel.gene.ActionableGene
 import com.hartwig.serve.datamodel.gene.GeneEvent
 
-internal class FusionEvidence private constructor(
+class FusionEvidence(
     private val actionablePromiscuous: List<ActionableGene>,
     private val actionableFusions: List<ActionableFusion>
 ) : EvidenceMatcher<FusionMatchCriteria> {
