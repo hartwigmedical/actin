@@ -29,7 +29,7 @@ class ResistanceEvidenceGenerator(
 
             treatmentToEvidence.forEach { entry ->
                 table.addCell(Cells.createContentBold(entry.key))
-                val subtable = Tables.createFixedWidthCols(3f, 1f, 1f, 1f, 30f, 1f).setWidth(width / 2)
+                val subtable = Tables.createFixedWidthCols(3f, 1f, 1f, 1f, 75f, 1f).setWidth(width / 2)
                 for (resistanceEvidence in entry.value.distinct().sortedBy { it.event }) {
                     subtable.addCell(Cells.createContentNoBorder(resistanceEvidence.event))
 
