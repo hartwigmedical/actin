@@ -1,3 +1,4 @@
+/*
 package com.hartwig.actin.molecular.util
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
@@ -95,3 +96,4 @@ class MolecularRecordPrinter(private val printer: DatamodelPrinter) {
         }
     }
 }
+*/

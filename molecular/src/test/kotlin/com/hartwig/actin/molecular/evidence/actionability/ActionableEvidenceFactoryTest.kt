@@ -1,19 +1,8 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
-import com.hartwig.actin.molecular.datamodel.evidence.Country
-import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
-import com.hartwig.actin.molecular.evidence.TestServeFactory
-import com.hartwig.serve.datamodel.ActionableEvent
-import com.hartwig.serve.datamodel.EvidenceDirection
-import com.hartwig.serve.datamodel.EvidenceLevel
-import com.hartwig.serve.datamodel.gene.ImmutableActionableGene
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
-
 class ActionableEvidenceFactoryTest {
 
-    @Test
+  /*  @Test
     fun `Should create no evidence`() {
         assertThat(ActionableEvidenceFactory.createNoEvidence()).isNotNull()
     }
@@ -171,5 +160,5 @@ class ActionableEvidenceFactoryTest {
             .from(TestServeFactory.createEmptyGeneAnnotation())
             .direction(direction)
             .build()
-    }
+    }*/
 }

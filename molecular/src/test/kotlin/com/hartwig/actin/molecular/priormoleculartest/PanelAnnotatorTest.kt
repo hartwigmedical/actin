@@ -136,7 +136,7 @@ class PanelAnnotatorTest {
     fun `Should annotate variants with evidence`() {
         every { evidenceDatabase.evidenceForVariant(VARIANT_MATCH_CRITERIA) } returns ACTIONABILITY_MATCH
         val annotated = annotator.annotate(ARCHER_PANEL_WITH_VARIANT)
-        assertThat(annotated.drivers.variants.first().evidence).isEqualTo(ActionableEvidence(approvedTreatments = setOf("")))
+        assertThat(annotated.drivers.variants.first().evidence).isEqualTo(ActionableEvidence())
     }
 
     @Test

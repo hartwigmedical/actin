@@ -18,13 +18,8 @@ import org.junit.Test
 class AggregatedEvidenceFactoryTest {
 
     private val evidenceFields = listOf(
-        AggregatedEvidence::approvedTreatmentsPerEvent,
         AggregatedEvidence::externalEligibleTrialsPerEvent,
-        AggregatedEvidence::onLabelExperimentalTreatmentsPerEvent,
-        AggregatedEvidence::offLabelExperimentalTreatmentsPerEvent,
-        AggregatedEvidence::preClinicalTreatmentsPerEvent,
-        AggregatedEvidence::knownResistantTreatmentsPerEvent,
-        AggregatedEvidence::suspectResistantTreatmentsPerEvent
+        AggregatedEvidence::actionableTreatments,
     )
     
     @Test

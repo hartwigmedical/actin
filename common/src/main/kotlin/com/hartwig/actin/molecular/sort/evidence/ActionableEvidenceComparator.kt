@@ -6,13 +6,8 @@ class ActionableEvidenceComparator : Comparator<ActionableEvidence> {
 
     override fun compare(evidence1: ActionableEvidence, evidence2: ActionableEvidence): Int {
         listOf(
-            ActionableEvidence::approvedTreatments,
             ActionableEvidence::externalEligibleTrials,
-            ActionableEvidence::onLabelExperimentalTreatments,
-            ActionableEvidence::offLabelExperimentalTreatments,
-            ActionableEvidence::preClinicalTreatments,
-            ActionableEvidence::knownResistantTreatments,
-            ActionableEvidence::suspectResistantTreatments
+            ActionableEvidence::actionableTreatments,
         ).forEach { retrieveCollection ->
             val comparison = retrieveCollection.invoke(evidence2).size.compareTo(retrieveCollection.invoke(evidence1).size)
             if (comparison != 0) {

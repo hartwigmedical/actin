@@ -21,7 +21,6 @@ import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.molecular.priormoleculartest.PanelAnnotator
 import com.hartwig.actin.molecular.priormoleculartest.PriorMolecularTestInterpreters
 import com.hartwig.actin.molecular.priormoleculartest.PriorSequencingExtractor
-import com.hartwig.actin.molecular.util.MolecularHistoryPrinter
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataLoader
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.transvar.TransvarVariantAnnotatorFactory
@@ -63,7 +62,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             interpretClinicalMolecularTests(config, clinical.priorIHCTests, clinical.priorSequencingTests, doidEntry, tumorDoids)
 
         val history = MolecularHistory(orangeMolecularTests + clinicalMolecularTests)
-        MolecularHistoryPrinter.printRecord(history)
+       
 
         val patientRecord = PatientRecordFactory.fromInputs(clinical, history)
         PatientRecordJson.write(patientRecord, config.outputDirectory)
