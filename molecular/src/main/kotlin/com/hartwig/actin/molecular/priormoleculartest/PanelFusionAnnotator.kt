@@ -82,10 +82,7 @@ class PanelFusionAnnotator(
     private fun createFusionFromExonSkip(panelSkippedExonsExtraction: PanelSkippedExonsExtraction): Fusion {
         val isReportable = true
         val driverType = determineFusionDriverType(panelSkippedExonsExtraction.gene, panelSkippedExonsExtraction.gene)
-        val transcript =
-            panelSkippedExonsExtraction.transcript ?: ensembleDataCache.findCanonicalTranscript(panelSkippedExonsExtraction.gene)
-                ?.transcriptName()
-            ?: throw IllegalStateException("No canonical transcript found for gene ${panelSkippedExonsExtraction.gene}")
+        val transcript = canonicalTranscriptForGene(panelSkippedExonsExtraction.gene)
 
         return Fusion(
             geneStart = panelSkippedExonsExtraction.gene,
@@ -104,6 +101,14 @@ class PanelFusionAnnotator(
                 panelSkippedExonsExtraction.end
             )
         )
+    }
+
+    private fun canonicalTranscriptForGene(gene: String): String {
+        val geneData = ensembleDataCache.findGeneDataByName(gene)
+            ?: throw IllegalArgumentException("No gene data found for gene $gene")
+        val transcript = ensembleDataCache.findCanonicalTranscript(geneData.geneId())?.transcriptName()
+            ?: throw IllegalStateException("No canonical transcript found for gene $gene")
+        return transcript
     }
 
     private fun annotateFusion(fusion: Fusion): Fusion {

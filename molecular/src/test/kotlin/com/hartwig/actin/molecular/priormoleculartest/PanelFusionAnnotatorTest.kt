@@ -128,9 +128,14 @@ class PanelFusionAnnotatorTest {
             offLabelEvents = emptyList()
         )
 
-        every { ensembleDataCache.findCanonicalTranscript(GENE) } returns mockk<TranscriptData> {
+        every { ensembleDataCache.findCanonicalTranscript("geneId") } returns mockk<TranscriptData> {
             every { transcriptName() } returns TRANSCRIPT
         }
+        
+        every { ensembleDataCache.findGeneDataByName(GENE) } returns mockk {
+            every { geneId() } returns "geneId"
+        }
+
 
         val panelSkippedExonsExtraction = listOf(PanelSkippedExonsExtraction(GENE, 2, 4, TRANSCRIPT))
         val fusions = annotator.annotate(emptyList(), panelSkippedExonsExtraction)
