@@ -36,7 +36,7 @@ class AnyGeneHasDriverEventWithApprovedTherapy(
     }
 
     private fun hasMolecularEventWithSocForCRC(record: PatientRecord): Evaluation {
-        val functions = MolecularDecisions.allMolecularDecisions.map { evaluationFunctionFactory.create(it) }
+        val functions = MolecularDecisions.nonWildTypeMolecularDecisions.map { evaluationFunctionFactory.create(it) }
         return Or(functions).evaluate(record).copy(inclusionMolecularEvents = emptySet(), exclusionMolecularEvents = emptySet())
     }
 }

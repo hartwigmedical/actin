@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.soc
 import com.hartwig.actin.algo.datamodel.TreatmentCandidate
 import com.hartwig.actin.algo.soc.MolecularDecisions.brafV600EMutation
 import com.hartwig.actin.algo.soc.MolecularDecisions.ntrkFusion
-import com.hartwig.actin.algo.soc.MolecularDecisions.rasMutationAndLeftSided
+import com.hartwig.actin.algo.soc.MolecularDecisions.rasWildTypeAndLeftSided
 import com.hartwig.actin.algo.soc.datamodel.DecisionTree
 import com.hartwig.actin.algo.soc.datamodel.DecisionTreeLeaf
 import com.hartwig.actin.algo.soc.datamodel.DecisionTreeNode
@@ -29,7 +29,7 @@ class CrcDecisionTree(treatmentCandidateDatabase: TreatmentCandidateDatabase) : 
         falseBranch = DecisionTree(
             decision = EligibilityFunction(
                 EligibilityRule.AND,
-                rasMutationAndLeftSided
+                rasWildTypeAndLeftSided
             ),
             trueBranch = DecisionTreeLeaf(treatmentCandidatesForRasWtBrafV600EWtAndLeftSidedTumor),
             falseBranch = DecisionTreeLeaf(emptyList())
