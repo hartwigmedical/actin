@@ -24,6 +24,7 @@ class AnyGeneHasDriverEventWithApprovedTherapy(
         return when {
             isLungCancer -> HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(genes.toSet(), emptySet()).evaluate(record)
             isColorectalCancer -> hasMolecularEventWithSocForCRC(record)
+            !record.molecularHistory.hasMolecularData() -> EvaluationFactory.fail("No molecular data")
 
             else -> {
                 EvaluationFactory.undetermined(

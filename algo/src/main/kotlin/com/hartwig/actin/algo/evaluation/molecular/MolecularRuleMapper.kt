@@ -12,7 +12,7 @@ import com.hartwig.actin.trial.datamodel.EligibilityRule
 class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
-            EligibilityRule.DRIVER_EVENT_IN_ANY_GENES_X_WITH_APPROVED_THERAPY_AVAILABLE_FOR_TUMOR_TYPE_Y to
+            EligibilityRule.DRIVER_EVENT_IN_ANY_GENES_X_WITH_APPROVED_THERAPY_AVAILABLE to
                     hasMolecularEventInSomeGenesWithApprovedTherapyAvailableCreator(),
             EligibilityRule.HAS_MOLECULAR_EVENT_WITH_SOC_TARGETED_THERAPY_AVAILABLE_IN_NSCLC to
                     { HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(null, emptySet()) },
