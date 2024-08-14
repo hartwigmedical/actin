@@ -89,11 +89,13 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
                 SequencedVariant(
                     result.gene
                         ?: throw IllegalArgumentException("Gene must be defined when hgvs protein/coding impact are indicated"),
-                    result.hgvsCodingImpact,
-                    result.hgvsProteinImpact,
+                    stripNotFound(result.hgvsCodingImpact),
+                    stripNotFound(result.hgvsProteinImpact),
                     result.transcript,
                     result.exon,
                     result.codon
                 )
             }.toSet()
+
+    private fun stripNotFound(impact: String?) = if (impact?.trim() == "NOT FOUND") null else impact
 }
