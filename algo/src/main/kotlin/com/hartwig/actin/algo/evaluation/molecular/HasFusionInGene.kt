@@ -14,15 +14,11 @@ class HasFusionInGene(private val gene: String) : MolecularEvaluationFunction {
     override fun genes() = listOf(gene)
 
     override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
-
-        val orangeMolecular = molecularHistory.latestOrangeMolecularRecord()
-        val orangeMolecularEvaluation = if (orangeMolecular != null) findMatchingFusionsInOrangeMolecular(orangeMolecular) else null
-        val panelEvaluation = molecularHistory.allPanels().map { findMatchingFusionsInOrangeMolecular(it) }
-
-        return MolecularEvaluation.combine(listOfNotNull(orangeMolecularEvaluation) + panelEvaluation)
+        val evaluations = molecularHistory.molecularTests.map { findMatchingFusions(it) }
+        return MolecularEvaluation.combine(evaluations)
     }
 
-    private fun findMatchingFusionsInOrangeMolecular(molecular: MolecularTest): MolecularEvaluation {
+    private fun findMatchingFusions(molecular: MolecularTest): MolecularEvaluation {
         val matchingFusions: MutableSet<String> = mutableSetOf()
         val fusionsWithNoEffect: MutableSet<String> = mutableSetOf()
         val fusionsWithNoHighDriverLikelihoodWithGainOfFunction: MutableSet<String> = mutableSetOf()

@@ -15,28 +15,24 @@ class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSk
 
     override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
 
-        val allPanels = molecularHistory.allPanels()
-        val panelFusionSkippingEvents = allPanels.flatMap(::findFusionSkippingEvents).toSet()
-        val panelExonSkippingEvents = allPanels.flatMap(::findExonSplicingVariants).toSet()
 
-        val molecular = molecularHistory.latestOrangeMolecularRecord()
-        val fusionSkippingEvents = molecular?.let(::findFusionSkippingEvents) ?: emptySet()
-        val exonSplicingVariants = molecular?.let(::findExonSplicingVariants) ?: emptySet()
+        val fusionSkippingEvents = molecularHistory.molecularTests.flatMap(::findFusionSkippingEvents).toSet()
+        val exonSplicingVariants = molecularHistory.molecularTests.flatMap(::findExonSplicingVariants).toSet()
 
         return when {
-            fusionSkippingEvents.isNotEmpty() || panelFusionSkippingEvents.isNotEmpty() -> {
+            fusionSkippingEvents.isNotEmpty() -> {
                 EvaluationFactory.pass(
-                    "Exon $exonToSkip skipped in gene $gene due to ${concat(fusionSkippingEvents + panelFusionSkippingEvents)}",
+                    "Exon $exonToSkip skipped in gene $gene due to ${concat(fusionSkippingEvents)}",
                     "Exon $exonToSkip skipping in $gene",
-                    inclusionEvents = fusionSkippingEvents + panelFusionSkippingEvents
+                    inclusionEvents = fusionSkippingEvents
                 )
             }
 
-            exonSplicingVariants.isNotEmpty() || panelExonSkippingEvents.isNotEmpty() -> {
+            exonSplicingVariants.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "Exon $exonToSkip may be skipped in gene $gene due to ${concat(exonSplicingVariants + panelExonSkippingEvents)}",
+                    "Exon $exonToSkip may be skipped in gene $gene due to ${concat(exonSplicingVariants)}",
                     "Potential $gene exon $exonToSkip skipping due to splice variant",
-                    inclusionEvents = exonSplicingVariants + panelExonSkippingEvents
+                    inclusionEvents = exonSplicingVariants
                 )
             }
 
