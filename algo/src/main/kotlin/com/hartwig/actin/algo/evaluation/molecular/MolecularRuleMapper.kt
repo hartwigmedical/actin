@@ -244,7 +244,10 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     }
 
     private fun proteinHasLimitedExpressionByIHCCreator(): FunctionCreator {
-        return { ProteinHasLimitedExpressionByIHCCreator() }
+        return { function: EligibilityFunction ->
+            val (expressionLevel, protein) = functionInputResolver().createOneStringOneIntegerInput(function)
+            ProteinHasLimitedExpressionByIHC(protein, expressionLevel)
+        }
     }
 
     private fun hasSufficientPDL1ByMeasureByIHCCreator(measure: String? = null): FunctionCreator {

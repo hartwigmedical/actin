@@ -4,9 +4,9 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-class ProteinHasSufficientExpressionByIHC(private val protein: String, private val minExpressionLevel: Int) : EvaluationFunction {
+class ProteinHasLimitedExpressionByIHC(private val protein: String, private val maxExpressionLevel: Int) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return ProteinExpressionByIHCFunction(protein, minExpressionLevel, IhcExpressionComparisonType.SUFFICIENT).evaluate(record)
+        return ProteinExpressionByIHCFunction(protein, maxExpressionLevel, IhcExpressionComparisonType.LIMITED).evaluate(record)
     }
 }
