@@ -42,7 +42,7 @@ class ArcherExtractor : MolecularExtractor<PriorIHCTest, PanelExtraction> {
                         PanelFusionExtraction(
                             geneUp = matchResult.groupValues[1],
                             geneDown = null
-                        )  // TODO can we handle a single gene without the up/down split?
+                        )
                     }
                 } ?: emptyList()
                 val exonSkips = groupedByCategory[ArcherMutationCategory.EXON_SKIP]?.mapNotNull {
