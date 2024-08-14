@@ -21,7 +21,12 @@ import org.junit.Test
 private val EMPTY_MATCH = ActionabilityMatch(emptyList(), emptyList())
 private const val TRANSCRIPT = "transcript"
 private const val CANONICAL_TRANSCRIPT = "canonical_transcript"
-
+private val FUSION_MATCHING_CRITERIA = FusionMatchCriteria(
+    isReportable = true,
+    geneStart = GENE,
+    geneEnd = GENE,
+    driverType = FusionDriverType.KNOWN_PAIR_DEL_DUP
+)
 
 class PanelFusionAnnotatorTest {
 
@@ -112,24 +117,9 @@ class PanelFusionAnnotatorTest {
 
     @Test
     fun `Should annotate to canonical transcript when no transcript provided for exon skip`() {
-        every { knownFusionCache.hasKnownFusion(GENE, GENE) } returns false
-        every { knownFusionCache.hasExonDelDup(GENE) } returns true
-        every { knownFusionCache.hasPromiscuousFiveGene(GENE) } returns false
-        every { knownFusionCache.hasPromiscuousThreeGene(GENE) } returns false
-
-        val fusionMatchCriteria = FusionMatchCriteria(
-            isReportable = true,
-            geneStart = GENE,
-            geneEnd = GENE,
-            driverType = FusionDriverType.KNOWN_PAIR_DEL_DUP
-        )
-
-        every { evidenceDatabase.lookupKnownFusion(fusionMatchCriteria) } returns null
-        every { evidenceDatabase.evidenceForFusion(fusionMatchCriteria) } returns ActionabilityMatch(
-            onLabelEvents = emptyList(),
-            offLabelEvents = emptyList()
-        )
-
+        setupKnownFusionCacheForExonDeletion()
+        setupEvidenceDatabaseWithNoEvidence()
+        
         every { ensembleDataCache.findCanonicalTranscript("geneId") } returns mockk<TranscriptData> {
             every { transcriptName() } returns CANONICAL_TRANSCRIPT
         }
@@ -137,7 +127,6 @@ class PanelFusionAnnotatorTest {
         every { ensembleDataCache.findGeneDataByName(GENE) } returns mockk {
             every { geneId() } returns "geneId"
         }
-
 
         val panelSkippedExonsExtraction = listOf(PanelSkippedExonsExtraction(GENE, 2, 4, null))
         val fusions = annotator.annotate(emptyList(), panelSkippedExonsExtraction)
@@ -161,23 +150,8 @@ class PanelFusionAnnotatorTest {
 
     @Test
     fun `Should annotate with provided transcript when available`() {
-        every { knownFusionCache.hasKnownFusion(GENE, GENE) } returns false
-        every { knownFusionCache.hasExonDelDup(GENE) } returns true
-        every { knownFusionCache.hasPromiscuousFiveGene(GENE) } returns false
-        every { knownFusionCache.hasPromiscuousThreeGene(GENE) } returns false
-
-        val fusionMatchCriteria = FusionMatchCriteria(
-            isReportable = true,
-            geneStart = GENE,
-            geneEnd = GENE,
-            driverType = FusionDriverType.KNOWN_PAIR_DEL_DUP
-        )
-
-        every { evidenceDatabase.lookupKnownFusion(fusionMatchCriteria) } returns null
-        every { evidenceDatabase.evidenceForFusion(fusionMatchCriteria) } returns ActionabilityMatch(
-            onLabelEvents = emptyList(),
-            offLabelEvents = emptyList()
-        )
+        setupKnownFusionCacheForExonDeletion()
+        setupEvidenceDatabaseWithNoEvidence()
 
         val panelSkippedExonsExtraction = listOf(PanelSkippedExonsExtraction(GENE, 2, 4, TRANSCRIPT))
         val fusions = annotator.annotate(emptyList(), panelSkippedExonsExtraction)
@@ -197,6 +171,20 @@ class PanelFusionAnnotatorTest {
                 )
             )
         )
+    }
 
+    private fun setupKnownFusionCacheForExonDeletion() {
+        every { knownFusionCache.hasKnownFusion(GENE, GENE) } returns false
+        every { knownFusionCache.hasExonDelDup(GENE) } returns true
+        every { knownFusionCache.hasPromiscuousFiveGene(GENE) } returns false
+        every { knownFusionCache.hasPromiscuousThreeGene(GENE) } returns false
+    }
+
+    private fun setupEvidenceDatabaseWithNoEvidence() {
+        every { evidenceDatabase.lookupKnownFusion(FUSION_MATCHING_CRITERIA) } returns null
+        every { evidenceDatabase.evidenceForFusion(FUSION_MATCHING_CRITERIA) } returns ActionabilityMatch(
+            onLabelEvents = emptyList(),
+            offLabelEvents = emptyList()
+        )
     }
 }

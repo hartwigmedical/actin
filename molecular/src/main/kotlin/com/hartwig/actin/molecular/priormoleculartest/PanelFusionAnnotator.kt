@@ -13,6 +13,8 @@ import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.orange.interpretation.GeneAlterationFactory
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
 class PanelFusionAnnotator(
     private val evidenceDatabase: EvidenceDatabase,
@@ -87,7 +89,10 @@ class PanelFusionAnnotator(
     private fun createFusionFromExonSkip(panelSkippedExonsExtraction: PanelSkippedExonsExtraction): Fusion {
         val isReportable = true
         val driverType = determineFusionDriverType(panelSkippedExonsExtraction.gene, panelSkippedExonsExtraction.gene)
-        val transcript = panelSkippedExonsExtraction.transcript ?: canonicalTranscriptForGene(panelSkippedExonsExtraction.gene)
+        val transcript = panelSkippedExonsExtraction.transcript ?: run {
+            LOGGER.warn("No transcript provided for panel skipped exons in gene ${panelSkippedExonsExtraction.gene}, using canonical transcript")
+            canonicalTranscriptForGene(panelSkippedExonsExtraction.gene)
+        }
 
         return Fusion(
             geneStart = panelSkippedExonsExtraction.gene,
@@ -138,4 +143,8 @@ class PanelFusionAnnotator(
         geneEnd = fusion.geneEnd,
         driverType = fusion.driverType
     )
+
+    companion object {
+        val LOGGER: Logger = LogManager.getLogger(PanelAnnotator::class.java)
+    }
 }
