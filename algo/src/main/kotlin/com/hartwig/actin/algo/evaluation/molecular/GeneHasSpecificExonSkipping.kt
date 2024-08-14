@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.molecular.datamodel.CodingEffect
 import com.hartwig.actin.molecular.datamodel.Fusion
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.Variant
 
 class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSkip: Int) : MolecularEvaluationFunction {
@@ -15,27 +15,28 @@ class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSk
 
     override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
 
-        val archerExonSkippingEvents = molecularHistory.allArcherPanels().flatMap { it.skippedExons }
-            .filter { it.impactsGene(gene) && exonToSkip == it.start && exonToSkip == it.end }.map { it.display() }
+        val allPanels = molecularHistory.allPanels()
+        val panelFusionSkippingEvents = allPanels.flatMap(::findFusionSkippingEvents).toSet()
+        val panelExonSkippingEvents = allPanels.flatMap(::findExonSplicingVariants).toSet()
 
         val molecular = molecularHistory.latestOrangeMolecularRecord()
         val fusionSkippingEvents = molecular?.let(::findFusionSkippingEvents) ?: emptySet()
         val exonSplicingVariants = molecular?.let(::findExonSplicingVariants) ?: emptySet()
 
         return when {
-            fusionSkippingEvents.isNotEmpty() || archerExonSkippingEvents.isNotEmpty() -> {
+            fusionSkippingEvents.isNotEmpty() || panelFusionSkippingEvents.isNotEmpty() -> {
                 EvaluationFactory.pass(
-                    "Exon $exonToSkip skipped in gene $gene due to ${concat(fusionSkippingEvents + archerExonSkippingEvents)}",
+                    "Exon $exonToSkip skipped in gene $gene due to ${concat(fusionSkippingEvents + panelFusionSkippingEvents)}",
                     "Exon $exonToSkip skipping in $gene",
-                    inclusionEvents = fusionSkippingEvents + archerExonSkippingEvents
+                    inclusionEvents = fusionSkippingEvents + panelFusionSkippingEvents
                 )
             }
 
-            exonSplicingVariants.isNotEmpty() -> {
+            exonSplicingVariants.isNotEmpty() || panelExonSkippingEvents.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "Exon $exonToSkip may be skipped in gene $gene due to ${concat(exonSplicingVariants)}",
+                    "Exon $exonToSkip may be skipped in gene $gene due to ${concat(exonSplicingVariants + panelExonSkippingEvents)}",
                     "Potential $gene exon $exonToSkip skipping due to splice variant",
-                    inclusionEvents = exonSplicingVariants
+                    inclusionEvents = exonSplicingVariants + panelExonSkippingEvents
                 )
             }
 
@@ -45,14 +46,14 @@ class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSk
         }
     }
 
-    private fun findExonSplicingVariants(molecular: MolecularRecord) = molecular.drivers.variants.filter { variant ->
+    private fun findExonSplicingVariants(molecular: MolecularTest) = molecular.drivers.variants.filter { variant ->
         val isCanonicalExonAffected = variant.canonicalImpact.affectedExon != null && variant.canonicalImpact.affectedExon == exonToSkip
         variant.isReportable && variant.gene == gene && isCanonicalExonAffected && (variant.canonicalImpact.codingEffect == CodingEffect.SPLICE || variant.canonicalImpact.isSpliceRegion == true)
     }
         .map(Variant::event)
         .toSet()
 
-    private fun findFusionSkippingEvents(molecular: MolecularRecord) = molecular.drivers.fusions.filter { fusion ->
+    private fun findFusionSkippingEvents(molecular: MolecularTest) = molecular.drivers.fusions.filter { fusion ->
         fusion.isReportable && fusion.geneStart == gene && fusion.geneEnd == gene && fusion.extendedFusionOrThrow().fusedExonUp == exonToSkip - 1
                 && fusion.extendedFusionOrThrow().fusedExonDown == exonToSkip + 1
     }

@@ -4,6 +4,7 @@ import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.molecular.datamodel.CodingEffect
+import com.hartwig.actin.molecular.datamodel.Drivers
 import com.hartwig.actin.molecular.datamodel.TestPanelRecordFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
@@ -107,6 +108,7 @@ class GeneHasSpecificExonSkippingTest {
                 MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                     listOf(
                         archerPanelWithExonSkippingForGene(MATCHING_GENE, 2, 2)
+                            .copy(drivers = Drivers(fusions = setOf(EXON_SKIPPING_FUSION)))
                     )
                 )
             )
