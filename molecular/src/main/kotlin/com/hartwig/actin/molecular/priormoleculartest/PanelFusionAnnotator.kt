@@ -87,7 +87,7 @@ class PanelFusionAnnotator(
     private fun createFusionFromExonSkip(panelSkippedExonsExtraction: PanelSkippedExonsExtraction): Fusion {
         val isReportable = true
         val driverType = determineFusionDriverType(panelSkippedExonsExtraction.gene, panelSkippedExonsExtraction.gene)
-        val transcript = canonicalTranscriptForGene(panelSkippedExonsExtraction.gene)
+        val transcript = panelSkippedExonsExtraction.transcript ?: canonicalTranscriptForGene(panelSkippedExonsExtraction.gene)
 
         return Fusion(
             geneStart = panelSkippedExonsExtraction.gene,
