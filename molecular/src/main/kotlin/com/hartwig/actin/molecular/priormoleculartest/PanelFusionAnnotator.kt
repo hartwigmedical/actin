@@ -40,10 +40,15 @@ class PanelFusionAnnotator(
     }
 
     private fun createFusion(panelFusionExtraction: PanelFusionExtraction): Fusion {
+        if (panelFusionExtraction.geneUp == null && panelFusionExtraction.geneDown == null) {
+            throw IllegalArgumentException("Invalid fusion, no genes provided")
+        }
+
         val isReportable = true
         val driverType = determineFusionDriverType(panelFusionExtraction.geneUp, panelFusionExtraction.geneDown)
+
         return Fusion(
-            geneStart = panelFusionExtraction.geneUp ?: "", // TODO no no we don't want empty strings
+            geneStart = panelFusionExtraction.geneUp ?: "",
             geneEnd = panelFusionExtraction.geneDown ?: "",
             driverType = driverType,
             proteinEffect = ProteinEffect.UNKNOWN,
