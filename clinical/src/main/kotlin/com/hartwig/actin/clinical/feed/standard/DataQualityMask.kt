@@ -9,12 +9,18 @@ private fun ProvidedPatientRecord.scrubMedications() =
 private fun ProvidedPatientRecord.scrubMolecularTests() =
     this.copy(molecularTests = this.molecularTests.map {
         it.copy(results = it.results.map { r ->
-            if (r.hgvsCodingImpact == "NOT FOUND") r.copy(
-                hgvsCodingImpact = null
-            ) else if (r.hgvsProteinImpact == "NOT FOUND") r.copy(hgvsProteinImpact = null)
-            else r
+            r.copy(
+                hgvsCodingImpact = checkImpact(r, ProvidedMolecularTestResult::hgvsCodingImpact),
+                hgvsProteinImpact = checkImpact(r, ProvidedMolecularTestResult::hgvsProteinImpact)
+            )
         }.toSet())
     })
+
+private fun checkImpact(r: ProvidedMolecularTestResult, accessor: (ProvidedMolecularTestResult) -> String?): String? {
+    if (accessor.invoke(r) == "NOT FOUND")
+        return null
+    return accessor.invoke(r)
+}
 
 class DataQualityMask {
     fun apply(ehrPatientRecord: ProvidedPatientRecord): ProvidedPatientRecord {
