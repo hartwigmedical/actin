@@ -108,7 +108,6 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth, slotsAvailable = false)
 
         val (localTrialGenerator, nonLocalTrialGenerator) = provideExternalTrialsTables(report.patientRecord, evaluated, contentWidth)
-        val hasOrangeMolecular = report.patientRecord.molecularHistory.allOrangeMolecularRecords().isNotEmpty()
         return listOfNotNull(
             clinicalHistoryGenerator,
             MolecularSummaryGenerator(
@@ -118,7 +117,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 valueWidth,
                 report.config.molecularSummaryType == MolecularSummaryType.SHORT
             ).takeIf {
-                report.config.molecularSummaryType != MolecularSummaryType.NONE && hasOrangeMolecular
+                report.config.molecularSummaryType != MolecularSummaryType.NONE && report.patientRecord.molecularHistory.molecularTests.isNotEmpty()
             },
             SOCEligibleApprovedTreatmentGenerator(report, contentWidth).takeIf {
                 report.config.includeEligibleSOCTreatmentSummary
