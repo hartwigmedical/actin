@@ -7,6 +7,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class ProteinHasSufficientExpressionByIHC(private val protein: String, private val minExpressionLevel: Int) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return ProteinExpressionByIHCFunction(protein, minExpressionLevel, IhcExpressionComparisonType.SUFFICIENT).evaluate(record)
+        return ProteinExpressionByIHCFunctions(protein, minExpressionLevel, IhcExpressionComparisonType.SUFFICIENT).evaluate(record)
     }
 }

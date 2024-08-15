@@ -15,7 +15,7 @@ enum class IhcExpressionComparisonType {
     EXACT
 }
 
-class ProteinExpressionByIHCFunction(
+class ProteinExpressionByIHCFunctions(
     private val protein: String, private val referenceExpressionLevel: Int, private val comparisonType: IhcExpressionComparisonType
 ): EvaluationFunction {
 

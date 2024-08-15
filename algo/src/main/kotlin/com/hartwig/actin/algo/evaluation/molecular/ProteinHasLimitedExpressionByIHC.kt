@@ -7,6 +7,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class ProteinHasLimitedExpressionByIHC(private val protein: String, private val maxExpressionLevel: Int) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return ProteinExpressionByIHCFunction(protein, maxExpressionLevel, IhcExpressionComparisonType.LIMITED).evaluate(record)
+        return ProteinExpressionByIHCFunctions(protein, maxExpressionLevel, IhcExpressionComparisonType.LIMITED).evaluate(record)
     }
 }

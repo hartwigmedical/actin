@@ -6,6 +6,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
 class ProteinHasExactExpressionByIHC(private val protein: String, private val expressionLevel: Int) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        return ProteinExpressionByIHCFunction(protein, expressionLevel, IhcExpressionComparisonType.EXACT).evaluate(record)
+        return ProteinExpressionByIHCFunctions(protein, expressionLevel, IhcExpressionComparisonType.EXACT).evaluate(record)
     }
 }
