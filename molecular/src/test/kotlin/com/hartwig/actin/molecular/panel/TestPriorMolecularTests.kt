@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.priormoleculartest
+package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import java.time.LocalDate

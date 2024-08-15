@@ -41,7 +41,7 @@ class StandardPriorSequencingTestExtractorTest {
 
     @Test
     fun `Should return empty list when no provided molecular tests`() {
-        val result = extractor.extract(EhrTestData.createEhrPatientRecord().copy(molecularTestHistory = emptyList()))
+        val result = extractor.extract(EhrTestData.createEhrPatientRecord().copy(molecularTests = emptyList()))
         assertThat(result.extracted).isEmpty()
         assertThat(result.evaluation.warnings).isEmpty()
     }
@@ -49,8 +49,10 @@ class StandardPriorSequencingTestExtractorTest {
     @Test
     fun `Should extract sequencing with test, date, and tested genes`() {
         val result = extractor.extract(
-            EhrTestData.createEhrPatientRecord().copy(molecularTests = listOf(
-                BASE_MOLECULAR_TEST.copy(testedGenes = setOf(GENE)))
+            EhrTestData.createEhrPatientRecord().copy(
+                molecularTests = listOf(
+                    BASE_MOLECULAR_TEST.copy(testedGenes = setOf(GENE))
+                )
             )
         )
         assertResultContains(result, BASE_PRIOR_SEQUENCING.copy(testedGenes = setOf(GENE)))

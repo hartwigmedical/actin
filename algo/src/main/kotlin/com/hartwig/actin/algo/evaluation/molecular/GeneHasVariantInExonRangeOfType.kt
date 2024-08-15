@@ -2,15 +2,9 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantType
-import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
-import com.hartwig.actin.molecular.datamodel.panel.PanelSkippedExonsExtraction
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletionExtraction
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 
 class GeneHasVariantInExonRangeOfType(
@@ -20,19 +14,7 @@ class GeneHasVariantInExonRangeOfType(
 
     override fun genes() = listOf(gene)
 
-    override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
-
-        val molecularTestEvaluations = molecularHistory.molecularTests.map { MolecularEvaluation(it, evaluateMolecularTest(it)) }
-        val additionalPanelEvaluations =
-            if (requiredVariantType == null || requiredVariantType == VariantTypeInput.DELETE) molecularHistory.allPanels()
-                .map { MolecularEvaluation(it, evaluatePanel(it)) } else emptyList()
-
-        return MolecularEvaluation.combine(
-            molecularTestEvaluations + additionalPanelEvaluations
-        )
-    }
-
-    private fun evaluateMolecularTest(test: MolecularTest): Evaluation {
+    override fun evaluate(test: MolecularTest): Evaluation {
 
         val exonRangeMessage = generateExonRangeMessage(minExon, maxExon)
         val variantTypeMessage = generateRequiredVariantTypeMessage(requiredVariantType)
@@ -106,99 +88,62 @@ class GeneHasVariantInExonRangeOfType(
         )
     }
 
-    private fun evaluatePanel(panelRecord: PanelRecord): Evaluation {
-        val matches = when (panelRecord.panelExtraction) {
-            is GenericPanelExtraction -> genericExonDeletions(panelRecord)
-            is ArcherPanelExtraction -> archerExonSkips(panelRecord)
-            else -> null
-        } ?: emptySet()
+    private fun hasEffectInExonRange(affectedExon: Int?, minExon: Int, maxExon: Int): Boolean {
+        return affectedExon != null && affectedExon >= minExon && affectedExon <= maxExon
+    }
 
-        val exonRangeMessage = generateExonRangeMessage(minExon, maxExon)
-        val variantTypeMessage = generateRequiredVariantTypeMessage(requiredVariantType)
-        val baseMessage = "in exon $exonRangeMessage in gene $gene$variantTypeMessage detected in Panel(s)"
-
-        return if (matches.isNotEmpty()) {
-            EvaluationFactory.pass("Variant(s) $baseMessage", inclusionEvents = matches)
+    private fun generateExonRangeMessage(minExon: Int, maxExon: Int): String {
+        return if (minExon == maxExon) {
+            minExon.toString()
         } else {
-            EvaluationFactory.fail("No variant $baseMessage")
+            "$minExon - $maxExon"
         }
     }
 
-    private fun archerExonSkips(panelRecord: PanelRecord) =
-        archerExtraction(panelRecord)?.skippedExons
-            ?.filter { it.impactsGene(gene) }
-            ?.filter { it.start <= maxExon && it.end >= minExon }
-            ?.map(PanelSkippedExonsExtraction::display)?.toSet()
+    private fun generateRequiredVariantTypeMessage(requiredVariantType: VariantTypeInput?): String {
+        return if (requiredVariantType == null) {
+            ""
+        } else when (requiredVariantType) {
+            VariantTypeInput.SNV, VariantTypeInput.MNV, VariantTypeInput.INDEL -> {
+                " of type $requiredVariantType"
+            }
 
-    private fun genericExonDeletions(panelRecord: PanelRecord) = genericExtraction(panelRecord)?.exonDeletions
-        ?.filter { it.impactsGene(gene) }
-        ?.filter { hasEffectInExonRange(it.affectedExon, minExon, maxExon) }
-        ?.map(GenericExonDeletionExtraction::display)?.toSet()
+            VariantTypeInput.INSERT -> {
+                " of type insertion"
+            }
 
-    private fun genericExtraction(panelRecord: PanelRecord): GenericPanelExtraction? =
-        if (panelRecord.panelExtraction is GenericPanelExtraction) panelRecord.panelExtraction as GenericPanelExtraction else null
-
-    private fun archerExtraction(panelRecord: PanelRecord): ArcherPanelExtraction? =
-        if (panelRecord.panelExtraction is ArcherPanelExtraction) panelRecord.panelExtraction as ArcherPanelExtraction else null
-
-    companion object {
-        private fun hasEffectInExonRange(affectedExon: Int?, minExon: Int, maxExon: Int): Boolean {
-            return affectedExon != null && affectedExon >= minExon && affectedExon <= maxExon
-        }
-
-        private fun generateExonRangeMessage(minExon: Int, maxExon: Int): String {
-            return if (minExon == maxExon) {
-                minExon.toString()
-            } else {
-                "$minExon - $maxExon"
+            VariantTypeInput.DELETE -> {
+                " of type deletion"
             }
         }
+    }
 
-        private fun generateRequiredVariantTypeMessage(requiredVariantType: VariantTypeInput?): String {
-            return if (requiredVariantType == null) {
-                ""
-            } else when (requiredVariantType) {
-                VariantTypeInput.SNV, VariantTypeInput.MNV, VariantTypeInput.INDEL -> {
-                    " of type $requiredVariantType"
-                }
-
-                VariantTypeInput.INSERT -> {
-                    " of type insertion"
-                }
-
-                VariantTypeInput.DELETE -> {
-                    " of type deletion"
-                }
+    private fun determineAllowedVariantTypes(requiredVariantType: VariantTypeInput?): Set<VariantType> {
+        return if (requiredVariantType == null) {
+            VariantType.values().toSet()
+        } else when (requiredVariantType) {
+            VariantTypeInput.SNV -> {
+                setOf(VariantType.SNV)
             }
-        }
 
-        private fun determineAllowedVariantTypes(requiredVariantType: VariantTypeInput?): Set<VariantType> {
-            return if (requiredVariantType == null) {
-                VariantType.values().toSet()
-            } else when (requiredVariantType) {
-                VariantTypeInput.SNV -> {
-                    setOf(VariantType.SNV)
-                }
+            VariantTypeInput.MNV -> {
+                setOf(VariantType.MNV)
+            }
 
-                VariantTypeInput.MNV -> {
-                    setOf(VariantType.MNV)
-                }
+            VariantTypeInput.INSERT -> {
+                setOf(VariantType.INSERT)
+            }
 
-                VariantTypeInput.INSERT -> {
-                    setOf(VariantType.INSERT)
-                }
+            VariantTypeInput.DELETE -> {
+                setOf(VariantType.DELETE)
+            }
 
-                VariantTypeInput.DELETE -> {
-                    setOf(VariantType.DELETE)
-                }
+            VariantTypeInput.INDEL -> {
+                setOf(VariantType.INSERT, VariantType.DELETE)
+            }
 
-                VariantTypeInput.INDEL -> {
-                    setOf(VariantType.INSERT, VariantType.DELETE)
-                }
-
-                else -> {
-                    throw IllegalStateException("Could not map required variant type: $requiredVariantType")
-                }
+            else -> {
+                throw IllegalStateException("Could not map required variant type: $requiredVariantType")
             }
         }
     }

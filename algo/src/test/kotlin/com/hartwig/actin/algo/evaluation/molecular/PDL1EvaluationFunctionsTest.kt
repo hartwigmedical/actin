@@ -19,7 +19,7 @@ private val doidModel =
 
 class PDL1EvaluationFunctionsTest {
 
-    private val pdl1Test = MolecularTestFactory.priorMolecularTest(test = "IHC", item = "PD-L1", measure = MEASURE)
+    private val pdl1Test = MolecularTestFactory.priorIHCTest(test = "IHC", item = "PD-L1", measure = MEASURE)
 
     @Test
     fun `Should evaluate to undetermined if some PD-L1 tests are passing and others failing`() {
@@ -44,8 +44,8 @@ class PDL1EvaluationFunctionsTest {
     @Test
     fun `Should fail with specific message when molecular history only contains tests with other measure types `() {
         val record = MolecularTestFactory.withIHCTests(
-            MolecularTestFactory.priorMolecularTest(test = "IHC", item = "PD-L1", measure = "wrong"),
-            MolecularTestFactory.priorMolecularTest(test = "IHC", item = "PD-L1", measure = "other wrong")
+            MolecularTestFactory.priorIHCTest(test = "IHC", item = "PD-L1", measure = "wrong"),
+            MolecularTestFactory.priorIHCTest(test = "IHC", item = "PD-L1", measure = "other wrong")
         )
         evaluateFunctions(EvaluationResult.FAIL, record)
         assertMessage(record, "PD-L1 tests not in correct unit ($MEASURE)")
@@ -54,7 +54,7 @@ class PDL1EvaluationFunctionsTest {
     @Test
     fun `Should use any measurement type when requested measure in function is an empty string`() {
         val record = MolecularTestFactory.withIHCTests(
-            MolecularTestFactory.priorMolecularTest(test = "IHC", item = "PD-L1", scoreValue = PDL1_REFERENCE, measure = "wrong")
+            MolecularTestFactory.priorIHCTest(test = "IHC", item = "PD-L1", scoreValue = PDL1_REFERENCE, measure = "wrong")
         )
         evaluateFunctions(EvaluationResult.PASS, record, measure = null)
     }

@@ -1,13 +1,13 @@
-package com.hartwig.actin.molecular.priormoleculartest
+package com.hartwig.actin.molecular.panel
 
+import com.hartwig.actin.clinical.datamodel.SequencedFusion
+import com.hartwig.actin.clinical.datamodel.SequencedSkippedExons
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.Fusion
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
-import com.hartwig.actin.molecular.datamodel.panel.PanelFusionExtraction
-import com.hartwig.actin.molecular.datamodel.panel.PanelSkippedExonsExtraction
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.actionability.TestServeActionabilityFactory
@@ -27,7 +27,7 @@ private val EMPTY_MATCH = ActionabilityMatch(emptyList(), emptyList())
 private const val TRANSCRIPT = "transcript"
 private const val CANONICAL_TRANSCRIPT = "canonical_transcript"
 private const val OTHER_GENE = "other_gene"
-private val ARCHER_FUSION = PanelFusionExtraction(GENE, OTHER_GENE)
+private val ARCHER_FUSION = SequencedFusion(GENE, OTHER_GENE)
 
 private val FUSION_MATCHING_CRITERIA = FusionMatchCriteria(
     isReportable = true,
@@ -138,7 +138,7 @@ class PanelFusionAnnotatorTest {
     fun `Should annotate fusion`() {
         setupKnownFusionCache()
         setupEvidenceForFusion()
-        val annotated = annotator.annotate(listOf(ARCHER_FUSION), emptyList())
+        val annotated = annotator.annotate(setOf(ARCHER_FUSION), emptySet())
         assertThat(annotated).isEqualTo(
             setOf(
                 Fusion(
@@ -170,8 +170,8 @@ class PanelFusionAnnotatorTest {
             every { geneId() } returns "geneId"
         }
 
-        val panelSkippedExonsExtraction = listOf(PanelSkippedExonsExtraction(GENE, 2, 4, null))
-        val fusions = annotator.annotate(emptyList(), panelSkippedExonsExtraction)
+        val panelSkippedExonsExtraction = setOf(SequencedSkippedExons(GENE, 2, 4, null))
+        val fusions = annotator.annotate(emptySet(), panelSkippedExonsExtraction)
         assertThat(fusions).isEqualTo(
             setOf(
                 Fusion(
@@ -195,8 +195,8 @@ class PanelFusionAnnotatorTest {
         setupKnownFusionCacheForExonDeletion()
         setupEvidenceDatabaseWithNoEvidence()
 
-        val panelSkippedExonsExtraction = listOf(PanelSkippedExonsExtraction(GENE, 2, 4, TRANSCRIPT))
-        val fusions = annotator.annotate(emptyList(), panelSkippedExonsExtraction)
+        val panelSkippedExonsExtraction = setOf(SequencedSkippedExons(GENE, 2, 4, TRANSCRIPT))
+        val fusions = annotator.annotate(emptySet(), panelSkippedExonsExtraction)
         assertThat(fusions).isEqualTo(
             setOf(
                 Fusion(

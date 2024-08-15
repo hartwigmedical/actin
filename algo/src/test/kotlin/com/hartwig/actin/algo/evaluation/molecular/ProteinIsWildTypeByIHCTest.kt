@@ -45,5 +45,5 @@ class ProteinIsWildTypeByIHCTest {
     }
 
     private fun ihcTest(test: String = IHC, item: String = PROTEIN, scoreText: String? = "WildType") =
-        MolecularTestFactory.priorMolecularTest(test = test, item = item, scoreText = scoreText)
+        MolecularTestFactory.priorIHCTest(test = test, item = item, scoreText = scoreText)
 }
