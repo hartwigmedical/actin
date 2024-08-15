@@ -13,7 +13,7 @@ data class SequencedVariant(
 
 data class SequencedAmplification(val gene: String)
 
-data class SequencedSkippedExons(val gene: String, val exonStart: Int, val exonEnd: Int)
+data class SequencedSkippedExons(val gene: String, val exonStart: Int, val exonEnd: Int, val transcript: String? = null)
 
 data class SequencedFusion(val geneUp: String? = null, val geneDown: String? = null)
 

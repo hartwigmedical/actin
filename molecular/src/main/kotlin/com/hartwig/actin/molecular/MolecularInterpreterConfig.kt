@@ -18,6 +18,7 @@ data class MolecularInterpreterConfig(
     val referenceGenomeFastaPath: String,
     val ensemblCachePath: String,
     val driverGenePanelPath: String,
+    val knownFusionsPath: String,
     val tempDir: String,
     val outputDirectory: String
 ) {
@@ -34,6 +35,7 @@ data class MolecularInterpreterConfig(
             options.addOption(REFERENCE_GENOME_FASTA_PATH, true, "Path to reference genome fasta file")
             options.addOption(ENSEMBL_CACHE_PATH, true, "Path to ensemble data cache directory")
             options.addOption(DRIVER_GENE_PANEL_PATH, true, "Path to driver gene panel file")
+            options.addOption(KNOWN_FUSIONS_PATH, true, "Path to file containing known fusion reference data")
             options.addOption(TEMP_DIR, false, "if set, path to temp dir to use for intermediate files, otherwise system temp dir is used")
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where molecular data output will be written to")
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
@@ -55,6 +57,7 @@ data class MolecularInterpreterConfig(
                 referenceGenomeFastaPath = ApplicationConfig.nonOptionalFile(cmd, REFERENCE_GENOME_FASTA_PATH),
                 ensemblCachePath = ApplicationConfig.nonOptionalDir(cmd, ENSEMBL_CACHE_PATH),
                 driverGenePanelPath = ApplicationConfig.nonOptionalFile(cmd, DRIVER_GENE_PANEL_PATH),
+                knownFusionsPath = ApplicationConfig.nonOptionalFile(cmd, KNOWN_FUSIONS_PATH),
                 tempDir = ApplicationConfig.optionalDir(cmd, TEMP_DIR) ?: System.getProperty("java.io.tmpdir"),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY)
             )
@@ -71,6 +74,7 @@ data class MolecularInterpreterConfig(
         private const val REFERENCE_GENOME_FASTA_PATH = "ref_genome_fasta_file"
         private const val ENSEMBL_CACHE_PATH = "ensembl_data_dir"
         private const val DRIVER_GENE_PANEL_PATH = "driver_gene_panel"
+        private const val KNOWN_FUSIONS_PATH = "known_fusions_file"
         private const val TEMP_DIR: String = "temp"
         private const val OUTPUT_DIRECTORY: String = "output_directory"
         private const val LOG_DEBUG: String = "log_debug"

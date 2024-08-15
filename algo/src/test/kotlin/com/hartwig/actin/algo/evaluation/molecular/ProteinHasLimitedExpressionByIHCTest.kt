@@ -10,9 +10,9 @@ private const val IHC = "IHC"
 private const val PROTEIN = "protein 1"
 private const val REFERENCE = 2
 
-class ProteinHasSufficientExpressionByIHCTest {
+class ProteinHasLimitedExpressionByIHCTest {
 
-    private val function = ProteinHasSufficientExpressionByIHC(PROTEIN, REFERENCE)
+    private val function = ProteinHasLimitedExpressionByIHC(PROTEIN, REFERENCE)
 
     @Test
     fun `Should evaluate to undetermined when no IHC tests present in record`() {
@@ -37,8 +37,8 @@ class ProteinHasSufficientExpressionByIHCTest {
     }
 
     @Test
-    fun `Should pass when ihc test above requested value`() {
-        val record = MolecularTestFactory.withIHCTests(ihcTest(scoreValue = REFERENCE.plus(1.0)))
+    fun `Should pass when ihc test below requested value`() {
+        val record = MolecularTestFactory.withIHCTests(ihcTest(scoreValue = REFERENCE.minus(1.0)))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
     }
 

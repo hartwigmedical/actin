@@ -2,14 +2,16 @@ package com.hartwig.actin.molecular.datamodel.panel.archer
 
 import com.hartwig.actin.molecular.datamodel.panel.PanelAmplificationExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
+import com.hartwig.actin.molecular.datamodel.panel.PanelFusionExtraction
+import com.hartwig.actin.molecular.datamodel.panel.PanelSkippedExonsExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import java.time.LocalDate
 
 val ARCHER_ALWAYS_TESTED_GENES = setOf("ALK", "ROS1", "RET", "MET", "NTRK1", "NTRK2", "NTRK3", "NRG1")
 
 data class ArcherPanelExtraction(
-    val fusions: List<ArcherFusionExtraction> = emptyList(),
-    val skippedExons: List<ArcherSkippedExonsExtraction> = emptyList(),
+    override val fusions: List<PanelFusionExtraction> = emptyList(),
+    override val skippedExons: List<PanelSkippedExonsExtraction> = emptyList(),
     override val variants: List<PanelVariantExtraction> = emptyList(),
     override val amplifications: List<PanelAmplificationExtraction> = emptyList(),
     override val date: LocalDate? = null,
@@ -29,7 +31,7 @@ data class ArcherPanelExtraction(
     }
 
     fun genesWithFusions(): Set<String> {
-        return fusions.map { it.gene }.toSet()
+        return fusions.flatMap { listOfNotNull(it.geneUp, it.geneDown) }.toSet()
     }
 
     override fun events() = (variants + fusions + skippedExons).toSet()

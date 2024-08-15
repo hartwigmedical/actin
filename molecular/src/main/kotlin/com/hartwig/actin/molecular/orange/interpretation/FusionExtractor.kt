@@ -34,14 +34,14 @@ internal class FusionExtractor(private val geneFilter: GeneFilter) {
                     evidence = ActionableEvidenceFactory.createNoEvidence(),
                     geneStart = fusion.geneStart(),
                     geneEnd = fusion.geneEnd(),
-                    geneTranscriptStart = fusion.geneTranscriptStart(),
-                    geneTranscriptEnd = fusion.geneTranscriptEnd(),
                     driverType = determineDriverType(fusion),
                     proteinEffect = ProteinEffect.UNKNOWN,
+                    isAssociatedWithDrugResistance = null,
                     extendedFusionDetails = ExtendedFusionDetails(
+                        geneTranscriptStart = fusion.geneTranscriptStart(),
+                        geneTranscriptEnd = fusion.geneTranscriptEnd(),
                         fusedExonUp = fusion.fusedExonUp(),
-                        fusedExonDown = fusion.fusedExonDown(),
-                        isAssociatedWithDrugResistance = null,
+                        fusedExonDown = fusion.fusedExonDown()
                     )
                 )
             }

@@ -25,6 +25,7 @@ class McgiExtractor : MolecularExtractor<PriorIHCTest, PanelExtraction> {
                     panelType = grouping.first.replace(MCGI_PREFIX, ""),
                     date = grouping.second,
                     variants = variants,
+                    fusions = emptyList(),
                     amplifications = amplification,
                     isMicrosatelliteUnstable = msi,
                     tumorMutationalBurden = tmb

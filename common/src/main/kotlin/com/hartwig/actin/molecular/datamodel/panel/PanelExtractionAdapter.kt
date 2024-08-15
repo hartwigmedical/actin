@@ -12,6 +12,14 @@ data class PanelExtractionAdapter(val priorSequencingTest: PriorSequencingTest) 
             it.hgvsCodingImpact ?: it.hgvsProteinImpact ?: throw IllegalStateException()
         )
     }
+    override val fusions = priorSequencingTest.fusions.map {
+        PanelFusionExtraction(it.geneUp, it.geneDown)
+    }
+
+    override val skippedExons = priorSequencingTest.skippedExons.map {
+        PanelSkippedExonsExtraction(it.gene, it.exonStart, it.exonEnd)
+    }
+
     override val amplifications = priorSequencingTest.amplifications.map {
         PanelAmplificationExtraction(it.gene)
     }

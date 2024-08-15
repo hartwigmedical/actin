@@ -1,10 +1,10 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
 import com.hartwig.actin.clinical.datamodel.PriorIHCTest
+import com.hartwig.actin.molecular.datamodel.panel.PanelFusionExtraction
+import com.hartwig.actin.molecular.datamodel.panel.PanelSkippedExonsExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSkippedExonsExtraction
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
@@ -22,7 +22,7 @@ class ArcherExtractorTest {
     @Test
     fun `Should parse archer fusions from prior molecular tests`() {
         val result = interpreter.extract(listOf(archerPriorMolecularFusionRecord(GENE)))
-        assertThat(result).containsExactly(ArcherPanelExtraction(fusions = listOf(ArcherFusionExtraction(GENE))))
+        assertThat(result).containsExactly(ArcherPanelExtraction(fusions = listOf(PanelFusionExtraction(GENE, null))))
     }
 
     @Test
@@ -37,8 +37,8 @@ class ArcherExtractorTest {
         assertThat(result).containsExactly(
             ArcherPanelExtraction(
                 skippedExons = listOf(
-                    ArcherSkippedExonsExtraction(GENE, 1, 2),
-                    ArcherSkippedExonsExtraction(GENE, 3, 3)
+                    PanelSkippedExonsExtraction(GENE, 1, 2),
+                    PanelSkippedExonsExtraction(GENE, 3, 3)
                 )
             )
         )

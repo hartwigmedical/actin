@@ -12,8 +12,8 @@ import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantEffect
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
+import com.hartwig.actin.molecular.datamodel.panel.PanelFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 
 val PROPER_PANEL_VARIANT = Variant(
@@ -70,7 +70,7 @@ internal object MolecularHistoryFactory {
     fun withArcherFusion(geneStart: String): MolecularHistory {
         return MolecularHistory(
             molecularTests = listOf(
-                archerPanelRecord(ArcherPanelExtraction(fusions = listOf(ArcherFusionExtraction(gene = geneStart))))
+                archerPanelRecord(ArcherPanelExtraction(fusions = listOf(PanelFusionExtraction(geneStart, null))))
             )
         )
     }
