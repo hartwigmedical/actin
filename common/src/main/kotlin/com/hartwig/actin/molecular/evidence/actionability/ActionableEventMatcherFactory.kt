@@ -55,28 +55,11 @@ class ActionableEventMatcherFactory(
     }
 
     internal fun filterForApplicability(actionableEvents: ActionableEvents): ActionableEvents {
-        return ImmutableActionableEvents.builder()
-            .from(actionableEvents)
-            .hotspots(
-                filterHotspotsForApplicability(
-                    actionableEvents.hotspots()
-                )
-            )
-            .codons(
-                filterRangesForApplicability(
-                    actionableEvents.codons()
-                )
-            )
-            .exons(
-                filterRangesForApplicability(
-                    actionableEvents.exons()
-                )
-            )
-            .genes(
-                filterGenesForApplicability(
-                    actionableEvents.genes()
-                )
-            )
+        return ImmutableActionableEvents.builder().from(actionableEvents)
+            .hotspots(filterHotspotsForApplicability(actionableEvents.hotspots()))
+            .codons(filterRangesForApplicability(actionableEvents.codons()))
+            .exons(filterRangesForApplicability(actionableEvents.exons()))
+            .genes(filterGenesForApplicability(actionableEvents.genes()))
             .build()
     }
 
