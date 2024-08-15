@@ -52,7 +52,7 @@ class PanelFusionAnnotator(
             proteinEffect = ProteinEffect.UNKNOWN,
             isReportable = isReportable,
             event = panelFusionExtraction.display(),
-            driverLikelihood = if (!isReportable) fusionDriverLikelihood(driverType) else null,
+            driverLikelihood = if (isReportable) fusionDriverLikelihood(driverType) else null,
             evidence = ActionableEvidenceFactory.createNoEvidence(),
             isAssociatedWithDrugResistance = null,
             extendedFusionDetails = null
@@ -97,7 +97,7 @@ class PanelFusionAnnotator(
             proteinEffect = ProteinEffect.UNKNOWN,
             isReportable = isReportable,
             event = panelSkippedExonsExtraction.display(),
-            driverLikelihood = fusionDriverLikelihood(isReportable, driverType),
+            driverLikelihood = if (isReportable) fusionDriverLikelihood(driverType) else null,
             evidence = ActionableEvidenceFactory.createNoEvidence(),
             isAssociatedWithDrugResistance = null,
             extendedFusionDetails = ExtendedFusionDetails(

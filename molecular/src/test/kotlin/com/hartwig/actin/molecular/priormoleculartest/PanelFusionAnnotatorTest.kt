@@ -65,20 +65,17 @@ class PanelFusionAnnotatorTest {
 
     @Test
     fun `Should determine fusion driver likelihood`() {
-        assertThat(annotator.fusionDriverLikelihood(true, FusionDriverType.KNOWN_PAIR))
+        assertThat(annotator.fusionDriverLikelihood(FusionDriverType.KNOWN_PAIR))
             .isEqualTo(DriverLikelihood.HIGH)
 
-        assertThat(annotator.fusionDriverLikelihood(true, FusionDriverType.KNOWN_PAIR_IG))
+        assertThat(annotator.fusionDriverLikelihood(FusionDriverType.KNOWN_PAIR_IG))
             .isEqualTo(DriverLikelihood.HIGH)
 
-        assertThat(annotator.fusionDriverLikelihood(true, FusionDriverType.KNOWN_PAIR_DEL_DUP))
+        assertThat(annotator.fusionDriverLikelihood(FusionDriverType.KNOWN_PAIR_DEL_DUP))
             .isEqualTo(DriverLikelihood.HIGH)
 
-        assertThat(annotator.fusionDriverLikelihood(true, FusionDriverType.PROMISCUOUS_ENHANCER_TARGET))
+        assertThat(annotator.fusionDriverLikelihood(FusionDriverType.PROMISCUOUS_ENHANCER_TARGET))
             .isEqualTo(DriverLikelihood.LOW)
-
-        assertThat(annotator.fusionDriverLikelihood(false, FusionDriverType.KNOWN_PAIR))
-            .isNull()
     }
 
     @Test
