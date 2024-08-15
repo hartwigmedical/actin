@@ -10,7 +10,6 @@ import com.hartwig.actin.molecular.evidence.actionability.PersonalizedActionabil
 import com.hartwig.actin.molecular.evidence.actionability.SignatureEvidence
 import com.hartwig.actin.molecular.evidence.actionability.VariantEvidence
 import com.hartwig.actin.molecular.evidence.actionability.VirusEvidence
-import com.hartwig.actin.serve.TestServeActionabilityFactory
 import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.ImmutableActionableEvents
 import com.hartwig.serve.datamodel.characteristic.ActionableCharacteristic

@@ -33,20 +33,20 @@ class ResistanceEvidenceGenerator(
                 for (resistanceEvidence in entry.value.distinct().sortedBy { it.event }) {
                     subtable.addCell(Cells.createContentNoBorder(resistanceEvidence.event))
 
-                    val iterator = resistanceEvidence.evidenceUrls.iterator()
-                    var int = 1
-                    while (int < 5) {
-                        if (iterator.hasNext())
+                    resistanceEvidence.evidenceUrls.forEachIndexed { index, url ->
+                        if (index < 4) {
                             subtable.addCell(
-                                Cells.createContentNoBorder("[$int]")
-                                    .setAction(PdfAction.createURI(iterator.next()))
+                                Cells.createContentNoBorder("[${index + 1}]")
+                                    .setAction(PdfAction.createURI(url))
                                     .addStyle(Styles.urlStyle())
                             )
-                        else {
-                            subtable.addCell(Cells.createEmpty())
                         }
-                        int += 1
                     }
+
+                    repeat(4 - resistanceEvidence.evidenceUrls.size) {
+                        subtable.addCell(Cells.createEmpty())
+                    }
+
                     subtable.addCell(Cells.createContentNoBorder(booleanToString(resistanceEvidence.isFound)))
                 }
                 table.addCell(Cells.createContent(subtable))

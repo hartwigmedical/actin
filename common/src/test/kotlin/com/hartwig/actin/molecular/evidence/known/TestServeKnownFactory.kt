@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.evidence.known
 
-import com.hartwig.actin.serve.TestServeFactory
+import com.hartwig.actin.molecular.evidence.TestServeFactory
 import com.hartwig.serve.datamodel.common.GeneAlteration
 import com.hartwig.serve.datamodel.common.GeneRole
 import com.hartwig.serve.datamodel.common.ProteinEffect

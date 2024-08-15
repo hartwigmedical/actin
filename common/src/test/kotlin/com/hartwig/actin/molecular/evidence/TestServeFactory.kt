@@ -1,4 +1,4 @@
-package com.hartwig.actin.serve
+package com.hartwig.actin.molecular.evidence
 
 import com.hartwig.serve.datamodel.MutationType
 import com.hartwig.serve.datamodel.fusion.FusionPair

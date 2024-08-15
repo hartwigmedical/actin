@@ -1,4 +1,4 @@
-package com.hartwig.actin.serve
+package com.hartwig.actin.molecular.evidence
 
 import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.CancerType

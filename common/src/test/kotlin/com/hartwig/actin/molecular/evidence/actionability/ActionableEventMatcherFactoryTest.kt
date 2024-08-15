@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.doid.TestDoidModelFactory
-import com.hartwig.actin.serve.TestServeActionabilityFactory
+import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.curation.TestApplicabilityFilteringUtil
 import com.hartwig.serve.datamodel.ClinicalTrial
 import com.hartwig.serve.datamodel.ImmutableActionableEvents
@@ -11,15 +11,16 @@ import com.hartwig.serve.datamodel.hotspot.ActionableHotspot
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
+val DOID_MODEL = TestDoidModelFactory.createMinimalTestDoidModel()
+val FACTORY = ActionableEventMatcherFactory(DOID_MODEL, emptySet())
+
 class ActionableEventMatcherFactoryTest {
 
     @Test
     fun `Should create actionable event matcher on empty inputs`() {
-        val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
-        val factory = ActionableEventMatcherFactory(doidModel, emptySet())
-        assertThat(factory.create(ImmutableActionableEvents.builder().build())).isNotNull
+        assertThat(FACTORY.create(ImmutableActionableEvents.builder().build())).isNotNull
         assertThat(
-            factory.create(
+            FACTORY.create(
                 ImmutableActionableEvents.builder().addHotspots(TestServeActionabilityFactory.hotspotBuilder().build()).build()
             )
         ).isNotNull
@@ -44,10 +45,10 @@ class ActionableEventMatcherFactoryTest {
             .build()
 
         val filteredOnSource =
-            ActionableEventMatcherFactory.filterForSources(actionable, ActionableEventMatcherFactory.ACTIONABLE_EVENT_SOURCES)
+            FACTORY.filterForSources(actionable, FACTORY.actionableEventSources)
         assertThat(filteredOnSource.hotspots().size).isEqualTo(4)
 
-        val filteredOnApplicability = ActionableEventMatcherFactory.filterForApplicability(filteredOnSource)
+        val filteredOnApplicability = FACTORY.filterForApplicability(filteredOnSource)
         assertThat(filteredOnApplicability.hotspots()).hasSize(3)
 
         assertThat(findByGene(filteredOnApplicability.hotspots(), "gene 2")).isEqualTo("internal")
