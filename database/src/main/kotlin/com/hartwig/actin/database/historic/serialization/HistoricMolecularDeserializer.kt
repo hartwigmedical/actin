@@ -21,7 +21,6 @@ import com.hartwig.actin.molecular.datamodel.TranscriptImpact
 import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
-import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
 import com.hartwig.actin.molecular.datamodel.orange.characteristics.CupPrediction
 import com.hartwig.actin.molecular.datamodel.orange.driver.CodingContext
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
@@ -46,7 +45,7 @@ import java.io.FileReader
 
 object HistoricMolecularDeserializer {
 
-    private val LOGGER: Logger = LogManager.getLogger(HistoricMolecularDeserializer::class.java)
+    private val logger: Logger = LogManager.getLogger(HistoricMolecularDeserializer::class.java)
     private val gson = GsonBuilder().create()
 
     fun deserialize(molecularJson: File): MolecularHistory {
@@ -74,7 +73,7 @@ object HistoricMolecularDeserializer {
         )
 
         if (reader.peek() != JsonToken.END_DOCUMENT) {
-            LOGGER.warn("More data found in {} after reading main molecular JSON object!", molecularJson)
+            logger.warn("More data found in {} after reading main molecular JSON object!", molecularJson)
         }
 
         return MolecularHistory(listOf(molecularTest))
@@ -83,8 +82,6 @@ object HistoricMolecularDeserializer {
     private fun Json.optionalInteger(obj: JsonObject, field: String): Int? {
         return if (obj.has(field)) nullableInteger(obj, field) else null
     }
-
-    private fun Json.stringSet(obj: JsonObject, field: String) = stringList(obj, field).toSet()
 
     private fun determineExperimentType(molecular: JsonObject): ExperimentType {
         return when (val type = Json.optionalString(molecular, "type")) {
@@ -168,7 +165,7 @@ object HistoricMolecularDeserializer {
                 impact.hashCode()
                 impact
             } catch (_: Exception) {
-                LOGGER.info("Failure deserializing: {}", impactJson)
+                logger.info("Failure deserializing: {}", impactJson)
                 null
             }
         } ?: TranscriptImpact(
@@ -357,27 +354,17 @@ object HistoricMolecularDeserializer {
     }
 
     private fun extractEvidence(evidence: JsonObject?): ActionableEvidence? {
+        // (KD): This is explicitly not read since it contains confidential data (from CKB).
         return evidence?.let {
             ActionableEvidence(
-                approvedTreatments = Json.stringSet(it, "approvedTreatments"),
-                externalEligibleTrials = toExternalTrials(Json.stringList(it, "externalEligibleTrials")),
-                onLabelExperimentalTreatments = Json.stringSet(it, "onLabelExperimentalTreatments"),
-                offLabelExperimentalTreatments = Json.stringSet(it, "offLabelExperimentalTreatments"),
-                preClinicalTreatments = Json.stringSet(it, "preClinicalTreatments"),
-                knownResistantTreatments = Json.stringSet(it, "knownResistantTreatments"),
-                suspectResistantTreatments = Json.stringSet(it, "suspectResistantTreatments")
+                approvedTreatments = emptySet(),
+                externalEligibleTrials = emptySet(),
+                onLabelExperimentalTreatments = emptySet(),
+                offLabelExperimentalTreatments = emptySet(),
+                preClinicalTreatments = emptySet(),
+                knownResistantTreatments = emptySet(),
+                suspectResistantTreatments = emptySet()
             )
         }
-    }
-
-    private fun toExternalTrials(externalTrials: List<String>): Set<ExternalTrial> {
-        return externalTrials.map {
-            ExternalTrial(
-                title = it,
-                countries = setOf(),
-                url = "",
-                nctId = ""
-            )
-        }.toSet()
     }
 }
