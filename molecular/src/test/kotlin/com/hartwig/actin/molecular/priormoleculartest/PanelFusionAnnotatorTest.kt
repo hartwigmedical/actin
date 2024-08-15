@@ -8,7 +8,6 @@ import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.datamodel.panel.PanelFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelSkippedExonsExtraction
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.actionability.TestServeActionabilityFactory
@@ -29,7 +28,7 @@ private const val TRANSCRIPT = "transcript"
 private const val CANONICAL_TRANSCRIPT = "canonical_transcript"
 private const val OTHER_GENE = "other_gene"
 private val ARCHER_FUSION = PanelFusionExtraction(GENE, OTHER_GENE)
-private val ARCHER_PANEL_WITH_FUSION = ArcherPanelExtraction(fusions = listOf(ARCHER_FUSION))
+
 private val FUSION_MATCHING_CRITERIA = FusionMatchCriteria(
     isReportable = true,
     geneStart = GENE,
@@ -142,7 +141,7 @@ class PanelFusionAnnotatorTest {
     fun `Should annotate fusion`() {
         setupKnownFusionCache()
         setupEvidenceForFusion()
-        val annotated = annotator.annotate(ARCHER_PANEL_WITH_FUSION.fusions, emptyList())
+        val annotated = annotator.annotate(listOf(ARCHER_FUSION), emptyList())
         assertThat(annotated).isEqualTo(
             setOf(
                 Fusion(
@@ -218,7 +217,7 @@ class PanelFusionAnnotatorTest {
             )
         )
     }
-    
+
     private fun setupKnownFusionCache() {
         every { knownFusionCache.hasKnownFusion(GENE, OTHER_GENE) } returns true
     }
