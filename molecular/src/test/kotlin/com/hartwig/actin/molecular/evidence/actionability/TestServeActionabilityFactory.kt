@@ -55,7 +55,7 @@ object TestServeActionabilityFactory {
     }
 
     private fun createEmptyActionableEvent(): ActionableEvent {
-        return createActionableEvent(Knowledgebase.CKB_EVIDENCE, "")
+        return createActionableEvent(Knowledgebase.CKB_EVIDENCE, "intervention")
     }
 
     fun createActionableEvent(source: Knowledgebase, interventionName: String): ActionableEvent {

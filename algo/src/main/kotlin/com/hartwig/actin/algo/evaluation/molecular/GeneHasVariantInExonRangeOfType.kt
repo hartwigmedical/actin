@@ -7,8 +7,8 @@ import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
+import com.hartwig.actin.molecular.datamodel.panel.PanelSkippedExonsExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSkippedExonsExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
@@ -128,7 +128,7 @@ class GeneHasVariantInExonRangeOfType(
         archerExtraction(panelRecord)?.skippedExons
             ?.filter { it.impactsGene(gene) }
             ?.filter { it.start <= maxExon && it.end >= minExon }
-            ?.map(ArcherSkippedExonsExtraction::display)?.toSet()
+            ?.map(PanelSkippedExonsExtraction::display)?.toSet()
 
     private fun genericExonDeletions(panelRecord: PanelRecord) = genericExtraction(panelRecord)?.exonDeletions
         ?.filter { it.impactsGene(gene) }
