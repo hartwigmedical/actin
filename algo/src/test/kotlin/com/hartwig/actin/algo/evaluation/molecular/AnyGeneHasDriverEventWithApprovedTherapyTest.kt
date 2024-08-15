@@ -8,8 +8,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory
 import com.hartwig.actin.algo.evaluation.RuleMappingResourcesTestFactory
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.doid.TestDoidModelFactory.createMinimalTestDoidModel
-import com.hartwig.actin.molecular.datamodel.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import org.junit.Test
@@ -19,18 +17,12 @@ private const val CORRECT_PROTEIN_IMPACT = "V600E"
 private val CORRECT_VARIANT = TestVariantFactory.createMinimal().copy(
     gene = CORRECT_GENE,
     canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(hgvsProteinImpact = CORRECT_PROTEIN_IMPACT),
-    isReportable = true,
-    driverLikelihood = DriverLikelihood.HIGH,
-    proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-    extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 1.0)
+    isReportable = true
 )
 private val INCORRECT_VARIANT = TestVariantFactory.createMinimal().copy(
     gene = "INCORRECT",
     canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(hgvsProteinImpact = "INCORRECT"),
-    isReportable = true,
-    driverLikelihood = DriverLikelihood.HIGH,
-    proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-    extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 1.0)
+    isReportable = true
 )
 
 class AnyGeneHasDriverEventWithApprovedTherapyTest {
@@ -70,6 +62,13 @@ class AnyGeneHasDriverEventWithApprovedTherapyTest {
     @Test
     fun `Should evaluate to undetermined if tumor type is not lung or CRC`() {
         val record = MolecularTestFactory.withVariant(CORRECT_VARIANT)
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if tumor type is neuroendocrine colorectal cancer `() {
+        val record = MolecularTestFactory.withVariant(CORRECT_VARIANT)
+            .copy(tumor = TumorDetails(doids = setOf(DoidConstants.RECTUM_NEUROENDOCRINE_NEOPLASM_DOID)))
         EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
     }
 
