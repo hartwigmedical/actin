@@ -15,6 +15,13 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(
         return Or(evaluationFunctions).evaluate(record).copy(inclusionMolecularEvents = emptySet(), exclusionMolecularEvents = emptySet())
     }
 
+    private fun createEvaluationFunctions(genesToInclude: Set<String>?, genesToIgnore: Set<String>): List<EvaluationFunction> =
+        listOf(
+            delInsEvaluation, proteinImpactVariantEvaluation, activatingMutationEvaluation, fusionEvaluation, exonSkippingEvaluation
+        ).flatten().filter {
+            (gene, _) -> !genesToIgnore.contains(gene) || genesToInclude?.let { genesToInclude.contains(gene) } ?: false
+        }.map { it.second }
+
     private val delInsEvaluation =
         listOf(Triple("EGFR", "19", VariantTypeInput.DELETE), Triple("EGFR", "20", VariantTypeInput.INSERT))
             .map { (gene, exon, variantType) -> gene to GeneHasVariantInExonRangeOfType(gene, exon.toInt(), exon.toInt(), variantType) }
@@ -24,12 +31,5 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(
     private val activatingMutationEvaluation = listOf("EGFR").map { it to GeneHasActivatingMutation(it, null) }
     private val fusionEvaluation = listOf("ROS1", "ALK", "RET", "NTRK1", "NTRK2", "NTRK3").map { it to HasFusionInGene(it) }
     private val exonSkippingEvaluation = listOf("MET" to GeneHasSpecificExonSkipping("MET", 14))
-
-    private fun createEvaluationFunctions(genesToInclude: Set<String>?, genesToIgnore: Set<String>): List<EvaluationFunction> =
-        listOf(
-            delInsEvaluation, proteinImpactVariantEvaluation, activatingMutationEvaluation, fusionEvaluation, exonSkippingEvaluation
-        ).flatten().filter {
-            (gene, _) -> !genesToIgnore.contains(gene) || genesToInclude?.let { genesToInclude.contains(gene) } ?: false
-        }.map { it.second }
 }
 
