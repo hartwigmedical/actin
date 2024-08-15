@@ -27,18 +27,14 @@ class PanelFusionAnnotator(
             .toSet()
     }
 
-    fun fusionDriverLikelihood(isReportable: Boolean, driverType: FusionDriverType): DriverLikelihood? {
-        if (isReportable) {
-            return when (driverType) {
-                FusionDriverType.KNOWN_PAIR,
-                FusionDriverType.KNOWN_PAIR_IG,
-                FusionDriverType.KNOWN_PAIR_DEL_DUP -> DriverLikelihood.HIGH
+    fun fusionDriverLikelihood(driverType: FusionDriverType): DriverLikelihood? {
+        return when (driverType) {
+            FusionDriverType.KNOWN_PAIR,
+            FusionDriverType.KNOWN_PAIR_IG,
+            FusionDriverType.KNOWN_PAIR_DEL_DUP -> DriverLikelihood.HIGH
 
-                else -> DriverLikelihood.LOW
-            }
+            else -> DriverLikelihood.LOW
         }
-
-        return null
     }
 
     private fun createFusion(panelFusionExtraction: PanelFusionExtraction): Fusion {
@@ -56,7 +52,7 @@ class PanelFusionAnnotator(
             proteinEffect = ProteinEffect.UNKNOWN,
             isReportable = isReportable,
             event = panelFusionExtraction.display(),
-            driverLikelihood = fusionDriverLikelihood(isReportable, driverType),
+            driverLikelihood = if (!isReportable) fusionDriverLikelihood(driverType) else null,
             evidence = ActionableEvidenceFactory.createNoEvidence(),
             isAssociatedWithDrugResistance = null,
             extendedFusionDetails = null
