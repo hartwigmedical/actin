@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
@@ -12,9 +13,9 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
             EligibilityRule.DRIVER_EVENT_IN_ANY_GENES_X_WITH_APPROVED_THERAPY_AVAILABLE to
-                    { AnyGeneHasDriverEventWithApprovedTherapy() },
+                    hasMolecularEventInSomeGenesWithApprovedTherapyAvailableCreator(),
             EligibilityRule.HAS_MOLECULAR_EVENT_WITH_SOC_TARGETED_THERAPY_AVAILABLE_IN_NSCLC to
-                    { HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(emptySet()) },
+                    { HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(null, emptySet()) },
             EligibilityRule.HAS_MOLECULAR_EVENT_WITH_SOC_TARGETED_THERAPY_AVAILABLE_IN_NSCLC_EXCLUDING_ANY_GENE_X to
                     hasMolecularEventExcludingSomeGeneWithSocTargetedTherapyForNSCLCAvailableCreator(),
             EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X to geneIsActivatedOrAmplifiedCreator(),
@@ -75,10 +76,17 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         )
     }
 
+    private fun hasMolecularEventInSomeGenesWithApprovedTherapyAvailableCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val input = functionInputResolver().createManyGenesInput(function)
+            AnyGeneHasDriverEventWithApprovedTherapy(input.geneNames, doidModel(), EvaluationFunctionFactory.create(resources))
+        }
+    }
+
     private fun hasMolecularEventExcludingSomeGeneWithSocTargetedTherapyForNSCLCAvailableCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genes = functionInputResolver().createManyGenesInput(function)
-            HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(genes.geneNames.toSet())
+            HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(null, genes.geneNames.toSet())
         }
     }
 
