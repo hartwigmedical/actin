@@ -121,41 +121,21 @@
       "scoreValue": 3.0,
       "scoreValueUnit": "+",
       "impliesPotentialIndeterminateStatus": false
-    },
-    {
-      "test": "Archer FP Lung Target",
-      "item": "EGFR",
-      "measure": "c.2573T>G",
-      "measureDate": {
-        "year": 2024,
-        "month": 3,
-        "day": 25
-      },
-      "scoreText": null,
-      "scoreValuePrefix": null,
-      "scoreValue": null,
-      "scoreValueUnit": null,
-      "impliesPotentialIndeterminateStatus": false
-    },
-    {
-      "test": "Archer FP Lung Target",
-      "item": null,
-      "measure": "GEEN fusie(s) aangetoond",
-      "measureDate": {
-        "year": 2020,
-        "month": 12,
-        "day": 3
-      },
-      "scoreText": null,
-      "scoreValuePrefix": null,
-      "scoreValue": null,
-      "scoreValueUnit": null,
-      "impliesPotentialIndeterminateStatus": false
     }
   ],
   "priorSequencingTests": [
     {
       "test": "Archer FP Lung Target",
+      "testedGenes": [
+        "ALK",
+        "ROS1",
+        "RET",
+        "MET",
+        "NTRK1",
+        "NTRK2",
+        "NTRK3",
+        "NRG1"
+      ],
       "date": {
         "year": 2024,
         "month": 7,

@@ -12,11 +12,11 @@ data class SequencedVariant(
     val codon: Int? = null
 ) {
     fun hgvsCodingOrProteinImpact(): String {
-        return checkNotation(hgvsCodingImpact, "c.") ?: checkNotation(hgvsProteinImpact, "p.") ?: throw IllegalStateException()
+        return checkNotation(hgvsCodingImpact, "c") ?: checkNotation(hgvsProteinImpact, "p") ?: throw IllegalStateException()
     }
 
     private fun checkNotation(impact: String?, notationPrefix: String) =
-        impact?.let { if (impact.startsWith(notationPrefix)) "$notationPrefix.$it" else it }
+        impact?.let { if (!impact.startsWith(notationPrefix)) "$notationPrefix.$it" else it }
 }
 
 data class SequencedAmplification(val gene: String)

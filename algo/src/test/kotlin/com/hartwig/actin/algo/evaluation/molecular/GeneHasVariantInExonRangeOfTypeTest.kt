@@ -4,6 +4,7 @@ import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.molecular.datamodel.VariantType
+import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
@@ -155,6 +156,44 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         type = VariantType.INSERT,
                         canonicalImpact = impactWithExon(MATCHING_EXON),
                         extendedVariantDetails = TestVariantFactory.createMinimalExtended()
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should pass for reportable exon skipping fusion when variant type is DELETE`() {
+        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, 1, 4, VariantTypeInput.DELETE)
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(
+                MolecularTestFactory.withFusion(
+                    TestFusionFactory.createMinimal().copy(
+                        geneStart = TARGET_GENE,
+                        geneEnd = TARGET_GENE,
+                        isReportable = true,
+                        extendedFusionDetails = TestFusionFactory.createMinimalExtended()
+                            .copy(fusedExonUp = 2, fusedExonDown = 3)
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should warn for unreportable exon skipping fusion when variant type is DELETE`() {
+        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, 1, 4, VariantTypeInput.DELETE)
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(
+                MolecularTestFactory.withFusion(
+                    TestFusionFactory.createMinimal().copy(
+                        geneStart = TARGET_GENE,
+                        geneEnd = TARGET_GENE,
+                        isReportable = false,
+                        extendedFusionDetails = TestFusionFactory.createMinimalExtended()
+                            .copy(fusedExonUp = 2, fusedExonDown = 3)
                     )
                 )
             )

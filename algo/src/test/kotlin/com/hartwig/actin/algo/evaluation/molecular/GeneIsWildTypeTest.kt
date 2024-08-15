@@ -259,7 +259,17 @@ class GeneIsWildTypeTest {
                     molecularTests = listOf(
                         TestPanelRecordFactory.empty().copy(
                             testedGenes = setOf("ALK"),
-                            drivers = Drivers(variants = setOf(TestVariantFactory.createMinimal().copy(gene = "ALK")))
+                            drivers = Drivers(
+                                variants = setOf(
+                                    TestVariantFactory.createMinimal()
+                                        .copy(
+                                            gene = "ALK",
+                                            isReportable = true,
+                                            proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+                                            driverLikelihood = DriverLikelihood.HIGH
+                                        )
+                                )
+                            )
                         )
                     )
                 )
@@ -276,7 +286,17 @@ class GeneIsWildTypeTest {
                     molecularTests = listOf(
                         TestPanelRecordFactory.empty().copy(
                             testedGenes = setOf("ALK"),
-                            drivers = Drivers(fusions = setOf(TestFusionFactory.createMinimal().copy(geneEnd = "ALK", geneStart = "EML4")))
+                            drivers = Drivers(
+                                fusions = setOf(
+                                    TestFusionFactory.createMinimal().copy(
+                                        geneEnd = "ALK",
+                                        geneStart = "EML4",
+                                        isReportable = true,
+                                        proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+                                        driverLikelihood = DriverLikelihood.HIGH
+                                    )
+                                )
+                            )
                         )
                     )
                 )

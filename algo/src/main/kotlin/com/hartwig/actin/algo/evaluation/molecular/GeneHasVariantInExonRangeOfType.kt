@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.molecular.datamodel.Fusion
 import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantType
@@ -53,23 +54,49 @@ class GeneHasVariantInExonRangeOfType(
                     Triple(allReportable + reportable, allUnreportable + unreportable, allOther + other)
                 }
 
+        val (reportableExonSkips, unreportableExonSkips) =
+            if (requiredVariantType == VariantTypeInput.DELETE || requiredVariantType == null)
+                test.drivers.fusions
+                    .filter { it.geneStart == gene && it.geneEnd == gene }
+                    .filter {
+                        exonsWithinRange(it)
+                    }.partition { it.isReportable }
+            else emptyList<Fusion>() to emptyList()
+
         return if (canonicalReportableVariantMatches.isNotEmpty()) {
             EvaluationFactory.pass(
                 "Variant(s) $baseMessage in canonical transcript",
                 "Variant(s) $baseMessage",
                 inclusionEvents = canonicalReportableVariantMatches
             )
+        } else if (reportableExonSkips.isNotEmpty()) {
+            EvaluationFactory.pass(
+                "Exon(s) skipped $baseMessage",
+                "Exons skipped $baseMessage",
+                inclusionEvents = reportableExonSkips.map { it.event }.toSet()
+            )
         } else {
             val potentialWarnEvaluation =
-                evaluatePotentialWarns(canonicalUnreportableVariantMatches, reportableOtherVariantMatches, baseMessage)
+                evaluatePotentialWarns(
+                    canonicalUnreportableVariantMatches,
+                    reportableOtherVariantMatches,
+                    unreportableExonSkips.map { it.event }.toSet(),
+                    baseMessage
+                )
             potentialWarnEvaluation
                 ?: EvaluationFactory.fail("No variant $baseMessage in canonical transcript", "No variant $baseMessage")
         }
     }
 
+    private fun exonsWithinRange(it: Fusion) = it.extendedFusionDetails?.let { e ->
+        val range = IntRange(minExon, maxExon)
+        return range.contains(e.fusedExonUp) && range.contains(e.fusedExonDown)
+    } ?: false
+
     private fun evaluatePotentialWarns(
         canonicalUnreportableVariantMatches: Set<String>,
         reportableOtherVariantMatches: Set<String>,
+        unreportableFusions: Set<String>,
         baseMessage: String
     ): Evaluation? {
         return MolecularEventUtil.evaluatePotentialWarnsForEventGroups(
@@ -83,6 +110,11 @@ class GeneHasVariantInExonRangeOfType(
                     reportableOtherVariantMatches,
                     "Variant(s) $baseMessage but in non-canonical transcript",
                     "Variant(s) $baseMessage but in non-canonical transcript"
+                ),
+                EventsWithMessages(
+                    unreportableFusions,
+                    "Exon skip(s) $baseMessage but not reportable",
+                    "Exon skip(s) $baseMessage but not reportable"
                 )
             )
         )

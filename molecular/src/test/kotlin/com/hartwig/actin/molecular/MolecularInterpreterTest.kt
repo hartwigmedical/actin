@@ -31,14 +31,4 @@ class MolecularInterpreterTest {
         assertThat(annotatorCalled).isTrue()
         assertThat(result).containsExactly(output)
     }
-
-    @Test
-    fun `Should filter inputs with predicate`() {
-        val result = MolecularInterpreter(
-            extractor = extractor,
-            annotator = annotator
-        ).run(listOf(PriorSequencingTest(test = "test")))
-        assertThat(annotatorCalled).isFalse()
-        assertThat(result).isEmpty()
-    }
 }

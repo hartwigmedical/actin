@@ -179,9 +179,9 @@ class MolecularResultsAreAvailableForGeneTest {
 
 
     @Test
-    fun `Should pass for gene that is not marked as tested in panel molecular test`() {
+    fun `Should fail for gene that is not marked as tested in panel molecular test`() {
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS,
+            EvaluationResult.FAIL,
             MolecularResultsAreAvailableForGene("ALK")
                 .evaluate(
                     MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
