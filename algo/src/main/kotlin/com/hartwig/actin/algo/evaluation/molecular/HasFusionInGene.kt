@@ -4,7 +4,6 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
@@ -13,20 +12,15 @@ class HasFusionInGene(private val gene: String) : MolecularEvaluationFunction {
 
     override fun genes() = listOf(gene)
 
-    override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
-        val evaluations = molecularHistory.molecularTests.map { findMatchingFusions(it) }
-        return MolecularEvaluation.combine(evaluations)
-    }
-
-    private fun findMatchingFusions(molecular: MolecularTest): MolecularEvaluation {
+    override fun evaluate(test: MolecularTest): Evaluation {
         val matchingFusions: MutableSet<String> = mutableSetOf()
         val fusionsWithNoEffect: MutableSet<String> = mutableSetOf()
         val fusionsWithNoHighDriverLikelihoodWithGainOfFunction: MutableSet<String> = mutableSetOf()
         val fusionsWithNoHighDriverLikelihoodOther: MutableSet<String> = mutableSetOf()
         val unreportableFusionsWithGainOfFunction: MutableSet<String> = mutableSetOf()
-        val evidenceSource = molecular.evidenceSource
+        val evidenceSource = test.evidenceSource
 
-        for (fusion in molecular.drivers.fusions) {
+        for (fusion in test.drivers.fusions) {
             val isAllowedDriverType =
                 (fusion.geneStart == gene && fusion.geneStart == fusion.geneEnd) ||
                         (fusion.geneStart == gene && ALLOWED_DRIVER_TYPES_FOR_GENE_5.contains(fusion.driverType)) ||
@@ -58,12 +52,10 @@ class HasFusionInGene(private val gene: String) : MolecularEvaluationFunction {
         }
 
         if (matchingFusions.isNotEmpty()) {
-            return MolecularEvaluation(
-                molecular, EvaluationFactory.pass(
-                    "Fusion(s) ${concat(matchingFusions)} detected in gene $gene",
-                    "Fusion(s) detected in gene $gene",
-                    inclusionEvents = matchingFusions
-                )
+            return EvaluationFactory.pass(
+                "Fusion(s) ${concat(matchingFusions)} detected in gene $gene",
+                "Fusion(s) detected in gene $gene",
+                inclusionEvents = matchingFusions
             )
         }
 
@@ -75,11 +67,9 @@ class HasFusionInGene(private val gene: String) : MolecularEvaluationFunction {
             evidenceSource
         )
 
-        return MolecularEvaluation(
-            molecular, (potentialWarnEvaluation ?: EvaluationFactory.fail(
-                "No fusion detected with gene $gene",
-                "No fusion in gene $gene"
-            ))
+        return potentialWarnEvaluation ?: EvaluationFactory.fail(
+            "No fusion detected with gene $gene",
+            "No fusion in gene $gene"
         )
     }
 

@@ -11,13 +11,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
-import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
-import com.hartwig.actin.molecular.paver.Paver
-import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
-import com.hartwig.actin.tools.pave.PaveLite
-import com.hartwig.actin.tools.variant.VariantAnnotator
-import com.hartwig.hmftools.common.fusion.KnownFusionCache
 
 private fun <T : MolecularTest> identityAnnotator() = object : MolecularAnnotator<T, T> {
     override fun annotate(input: T): T {
@@ -36,16 +30,16 @@ private fun isArcher(): (PriorIHCTest) -> Boolean = { it.test == ARCHER_FP_LUNG_
 
 private class ArcherInterpreter(
     evidenceDatabase: EvidenceDatabase,
-    geneDriverLikelihoodModel: GeneDriverLikelihoodModel,
-    variantAnnotator: VariantAnnotator,
-    paver: Paver,
-    paveLite: PaveLite,
-    knownFusionCache: KnownFusionCache,
-    ensembleDataCache: EnsemblDataCache
+    panelVariantAnnotator: PanelVariantAnnotator,
+    panelFusionAnnotator: PanelFusionAnnotator
 ) :
     MolecularInterpreter<PriorIHCTest, PanelExtraction, PanelRecord>(
         ArcherExtractor(),
-        PanelAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite, knownFusionCache, ensembleDataCache),
+        PanelAnnotator(
+            evidenceDatabase,
+            panelVariantAnnotator,
+            panelFusionAnnotator
+        ),
         isArcher()
     )
 
@@ -57,31 +51,31 @@ private fun isMcgi(): (PriorIHCTest) -> Boolean =
 
 private class GenericPanelInterpreter(
     evidenceDatabase: EvidenceDatabase,
-    geneDriverLikelihoodModel: GeneDriverLikelihoodModel,
-    variantAnnotator: VariantAnnotator,
-    paver: Paver,
-    paveLite: PaveLite,
-    knownFusionCache: KnownFusionCache,
-    ensembleDataCache: EnsemblDataCache
+    panelVariantAnnotator: PanelVariantAnnotator,
+    panelFusionAnnotator: PanelFusionAnnotator
 ) :
     MolecularInterpreter<PriorIHCTest, PanelExtraction, PanelRecord>(
         GenericPanelExtractor(),
-        PanelAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite, knownFusionCache, ensembleDataCache),
+        PanelAnnotator(
+            evidenceDatabase,
+            panelVariantAnnotator,
+            panelFusionAnnotator
+        ),
         isGeneric()
     )
 
 private class McgiPanelInterpreter(
     evidenceDatabase: EvidenceDatabase,
-    geneDriverLikelihoodModel: GeneDriverLikelihoodModel,
-    variantAnnotator: VariantAnnotator,
-    paver: Paver,
-    paveLite: PaveLite,
-    knownFusionCache: KnownFusionCache,
-    ensembleDataCache: EnsemblDataCache
+    panelVariantAnnotator: PanelVariantAnnotator,
+    panelFusionAnnotator: PanelFusionAnnotator
 ) :
     MolecularInterpreter<PriorIHCTest, PanelExtraction, PanelRecord>(
         McgiExtractor(),
-        PanelAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite, knownFusionCache, ensembleDataCache),
+        PanelAnnotator(
+            evidenceDatabase,
+            panelVariantAnnotator,
+            panelFusionAnnotator
+        ),
         isMcgi()
     )
 
@@ -97,41 +91,25 @@ class PriorMolecularTestInterpreters(private val pipelines: Set<MolecularInterpr
     companion object {
         fun create(
             evidenceDatabase: EvidenceDatabase,
-            geneDriverLikelihoodModel: GeneDriverLikelihoodModel,
-            variantAnnotator: VariantAnnotator,
-            paver: Paver,
-            paveLite: PaveLite,
-            knownFusionCache: KnownFusionCache,
-            ensembleDataCache: EnsemblDataCache
+            panelVariantAnnotator: PanelVariantAnnotator,
+            panelFusionAnnotator: PanelFusionAnnotator
         ) =
             PriorMolecularTestInterpreters(
                 setOf(
                     ArcherInterpreter(
                         evidenceDatabase,
-                        geneDriverLikelihoodModel,
-                        variantAnnotator,
-                        paver,
-                        paveLite,
-                        knownFusionCache,
-                        ensembleDataCache
+                        panelVariantAnnotator,
+                        panelFusionAnnotator
                     ),
                     GenericPanelInterpreter(
                         evidenceDatabase,
-                        geneDriverLikelihoodModel,
-                        variantAnnotator,
-                        paver,
-                        paveLite,
-                        knownFusionCache,
-                        ensembleDataCache
+                        panelVariantAnnotator,
+                        panelFusionAnnotator
                     ),
                     McgiPanelInterpreter(
                         evidenceDatabase,
-                        geneDriverLikelihoodModel,
-                        variantAnnotator,
-                        paver,
-                        paveLite,
-                        knownFusionCache,
-                        ensembleDataCache
+                        panelVariantAnnotator,
+                        panelFusionAnnotator
                     )
                 )
             )

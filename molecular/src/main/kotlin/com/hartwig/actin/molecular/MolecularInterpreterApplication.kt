@@ -19,6 +19,8 @@ import com.hartwig.actin.molecular.orange.interpretation.OrangeExtractor
 import com.hartwig.actin.molecular.paver.PaveRefGenomeVersion
 import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.molecular.priormoleculartest.PanelAnnotator
+import com.hartwig.actin.molecular.priormoleculartest.PanelFusionAnnotator
+import com.hartwig.actin.molecular.priormoleculartest.PanelVariantAnnotator
 import com.hartwig.actin.molecular.priormoleculartest.PriorMolecularTestInterpreters
 import com.hartwig.actin.molecular.priormoleculartest.PriorSequencingExtractor
 import com.hartwig.actin.molecular.util.MolecularHistoryPrinter
@@ -132,25 +134,21 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             config.driverGenePanelPath, config.tempDir
         )
         val paveLite = PaveLite(ensemblDataCache, false)
+
+        val panelVariantAnnotator = PanelVariantAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite)
+        val panelFusionAnnotator = PanelFusionAnnotator(evidenceDatabase, knownFusionCache, ensemblDataCache)
+
         val clinicalMolecularTests = PriorMolecularTestInterpreters.create(
             evidenceDatabase,
-            geneDriverLikelihoodModel,
-            variantAnnotator,
-            paver,
-            paveLite,
-            knownFusionCache,
-            ensemblDataCache
+            panelVariantAnnotator,
+            panelFusionAnnotator
         ).process(priorIHCTests)
         val sequencingMolecularTests = MolecularInterpreter(
             PriorSequencingExtractor(),
             PanelAnnotator(
                 evidenceDatabase,
-                geneDriverLikelihoodModel,
-                variantAnnotator,
-                paver,
-                paveLite,
-                knownFusionCache,
-                ensemblDataCache
+                panelVariantAnnotator,
+                panelFusionAnnotator
             ),
         ).run(priorSequencingTests)
         LOGGER.info(" Completed interpretation of {} clinical molecular tests", clinicalMolecularTests.size)

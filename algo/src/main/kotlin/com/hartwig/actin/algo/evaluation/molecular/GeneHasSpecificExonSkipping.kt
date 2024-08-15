@@ -14,8 +14,6 @@ class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSk
     override fun genes() = listOf(gene)
 
     override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
-
-
         val fusionSkippingEvents = molecularHistory.molecularTests.flatMap(::findFusionSkippingEvents).toSet()
         val exonSplicingVariants = molecularHistory.molecularTests.flatMap(::findExonSplicingVariants).toSet()
 

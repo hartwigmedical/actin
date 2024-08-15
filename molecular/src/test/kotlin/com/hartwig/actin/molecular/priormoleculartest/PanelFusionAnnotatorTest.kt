@@ -6,13 +6,19 @@ import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
+import com.hartwig.actin.molecular.datamodel.panel.PanelFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelSkippedExonsExtraction
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
+import com.hartwig.actin.molecular.evidence.actionability.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.ensemblcache.TranscriptData
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
+import com.hartwig.serve.datamodel.EvidenceDirection
+import com.hartwig.serve.datamodel.EvidenceLevel
+import com.hartwig.serve.datamodel.Knowledgebase
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -21,11 +27,28 @@ import org.junit.Test
 private val EMPTY_MATCH = ActionabilityMatch(emptyList(), emptyList())
 private const val TRANSCRIPT = "transcript"
 private const val CANONICAL_TRANSCRIPT = "canonical_transcript"
+private const val OTHER_GENE = "other_gene"
+private val ARCHER_FUSION = PanelFusionExtraction(GENE, OTHER_GENE)
+private val ARCHER_PANEL_WITH_FUSION = ArcherPanelExtraction(fusions = listOf(ARCHER_FUSION))
 private val FUSION_MATCHING_CRITERIA = FusionMatchCriteria(
     isReportable = true,
     geneStart = GENE,
     geneEnd = GENE,
     driverType = FusionDriverType.KNOWN_PAIR_DEL_DUP
+)
+
+private val FUSION_MATCH_CRITERIA = FusionMatchCriteria(
+    isReportable = true,
+    geneStart = GENE,
+    geneEnd = OTHER_GENE,
+    driverType = FusionDriverType.KNOWN_PAIR
+)
+
+private val ACTIONABILITY_MATCH = ActionabilityMatch(
+    onLabelEvents = listOf(
+        TestServeActionabilityFactory.geneBuilder().build().withSource(Knowledgebase.CKB_EVIDENCE).withLevel(EvidenceLevel.A)
+            .withDirection(EvidenceDirection.RESPONSIVE)
+    ), offLabelEvents = emptyList()
 )
 
 class PanelFusionAnnotatorTest {
@@ -116,10 +139,33 @@ class PanelFusionAnnotatorTest {
     }
 
     @Test
+    fun `Should annotate fusion`() {
+        setupKnownFusionCache()
+        setupEvidenceForFusion()
+        val annotated = annotator.annotate(ARCHER_PANEL_WITH_FUSION.fusions, emptyList())
+        assertThat(annotated).isEqualTo(
+            setOf(
+                Fusion(
+                    geneStart = GENE,
+                    geneEnd = OTHER_GENE,
+                    driverType = FusionDriverType.KNOWN_PAIR,
+                    proteinEffect = ProteinEffect.UNKNOWN,
+                    isAssociatedWithDrugResistance = null,
+                    extendedFusionDetails = null,
+                    event = "$GENE-$OTHER_GENE fusion",
+                    isReportable = true,
+                    driverLikelihood = DriverLikelihood.HIGH,
+                    evidence = ActionableEvidence(approvedTreatments = setOf("intervention"))
+                )
+            )
+        )
+    }
+
+    @Test
     fun `Should annotate to canonical transcript when no transcript provided for exon skip`() {
         setupKnownFusionCacheForExonDeletion()
         setupEvidenceDatabaseWithNoEvidence()
-        
+
         every { ensembleDataCache.findCanonicalTranscript("geneId") } returns mockk<TranscriptData> {
             every { transcriptName() } returns CANONICAL_TRANSCRIPT
         }
@@ -171,6 +217,15 @@ class PanelFusionAnnotatorTest {
                 )
             )
         )
+    }
+    
+    private fun setupKnownFusionCache() {
+        every { knownFusionCache.hasKnownFusion(GENE, OTHER_GENE) } returns true
+    }
+
+    private fun setupEvidenceForFusion() {
+        every { evidenceDatabase.lookupKnownFusion(FUSION_MATCH_CRITERIA) } returns null
+        every { evidenceDatabase.evidenceForFusion(FUSION_MATCH_CRITERIA) } returns ACTIONABILITY_MATCH
     }
 
     private fun setupKnownFusionCacheForExonDeletion() {
