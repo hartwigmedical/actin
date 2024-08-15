@@ -59,7 +59,7 @@ class ProteinExpressionByIHCFunctions(
 
             else -> {
                 EvaluationFactory.fail(
-                    "Protein $protein does not meet required expression level $referenceExpressionLevel by IHC",
+                    "Protein $protein expression level by IHC not $comparisonText $referenceExpressionLevel",
                     "Inadequate $protein expression level by IHC"
                 )
             }
