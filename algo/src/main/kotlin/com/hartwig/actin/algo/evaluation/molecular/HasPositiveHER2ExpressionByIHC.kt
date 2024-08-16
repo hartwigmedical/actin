@@ -4,6 +4,8 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.molecular.IHCTestClassificationFunctions.classifyHer2Test
+import com.hartwig.actin.algo.evaluation.molecular.IHCTestClassificationFunctions.TestResult
 import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleEvaluator.geneIsAmplifiedForPatient
 import com.hartwig.actin.clinical.datamodel.ReceptorType
 
@@ -17,23 +19,7 @@ class HasPositiveHER2ExpressionByIHC: EvaluationFunction {
             record.priorIHCTests.filter { it.item == receptorType.display() }
         val geneERBB2IsAmplified = geneIsAmplifiedForPatient("ERBB2", record)
 
-        val testResults = targetPriorMolecularTests.map {
-            val scoreValue = it.scoreValue?.toInt()
-            when {
-                it.impliesPotentialIndeterminateStatus -> TestResult.UNKNOWN
-
-                ((scoreValue in 0 until indeterminateValue && it.scoreValueUnit == "+") ||
-                        it.scoreText?.lowercase() == "negative") -> TestResult.NEGATIVE
-
-                ((scoreValue in positiveValue .. upperValue && it.scoreValueUnit == "+")) ||
-                        it.scoreText?.lowercase() == "positive" -> TestResult.POSITIVE
-
-                (scoreValue in indeterminateValue until upperValue && it.scoreValueUnit == "+") ->
-                    TestResult.BORDERLINE
-
-                else -> TestResult.UNKNOWN
-            }
-        }
+        val testResults = targetPriorMolecularTests.map(::classifyHer2Test).toSet()
 
         val positiveArguments = TestResult.POSITIVE in testResults
         val negativeArguments = TestResult.NEGATIVE in testResults
@@ -113,12 +99,5 @@ class HasPositiveHER2ExpressionByIHC: EvaluationFunction {
             )
 
         }
-    }
-
-    private enum class TestResult {
-        POSITIVE,
-        NEGATIVE,
-        BORDERLINE,
-        UNKNOWN
     }
 }
