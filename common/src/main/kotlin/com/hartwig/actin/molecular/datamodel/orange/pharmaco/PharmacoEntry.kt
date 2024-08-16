@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.datamodel.orange.pharmaco
 
 data class PharmacoEntry(
-    val gene: String,
+    val gene: PharmacoGene,
     val haplotypes: Set<Haplotype>
 ) : Comparable<PharmacoEntry> {
 
