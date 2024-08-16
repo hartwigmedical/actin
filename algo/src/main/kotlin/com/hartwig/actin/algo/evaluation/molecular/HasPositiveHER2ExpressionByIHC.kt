@@ -12,9 +12,6 @@ import com.hartwig.actin.clinical.datamodel.ReceptorType
 class HasPositiveHER2ExpressionByIHC: EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val receptorType = ReceptorType.HER2
-        val positiveValue = 3
-        val indeterminateValue = 2
-        val upperValue = 4
         val targetPriorMolecularTests =
             record.priorIHCTests.filter { it.item == receptorType.display() }
         val geneERBB2IsAmplified = geneIsAmplifiedForPatient("ERBB2", record)
