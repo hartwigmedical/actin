@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import kotlin.math.abs
 
-class HasWHOStatus internal constructor(private val requiredWHO: Int) : EvaluationFunction {
+class HasWHOStatus(private val requiredWHO: Int) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val who = record.clinicalStatus.who
         return when {

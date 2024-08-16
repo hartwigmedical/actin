@@ -7,6 +7,7 @@ import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
+import com.hartwig.actin.clinical.datamodel.TumorStatus
 
 class StandardPriorPrimariesExtractor(private val priorPrimaryCuration: CurationDatabase<SecondPrimaryConfig>) :
     StandardDataExtractor<List<PriorSecondPrimary>> {
@@ -57,7 +58,13 @@ class StandardPriorPrimariesExtractor(private val priorPrimaryCuration: Curation
                 if (secondPrimaryConfig.ignore) {
                     null
                 } else {
-                    secondPrimaryConfig.curated?.copy(diagnosedMonth = it.diagnosisDate?.monthValue, diagnosedYear = it.diagnosisDate?.year)
+                    secondPrimaryConfig.curated?.copy(
+                        diagnosedMonth = it.diagnosisDate?.monthValue,
+                        diagnosedYear = it.diagnosisDate?.year,
+                        lastTreatmentYear = it.lastTreatmentDate?.year,
+                        lastTreatmentMonth = it.lastTreatmentDate?.monthValue,
+                        status = it.status?.let { status -> TumorStatus.valueOf(status) } ?: TumorStatus.UNKNOWN
+                    )
                 }
             }), curatedPriorPrimary.extractionEvaluation)
         }

@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.TumorStatus
 
-class HasActiveSecondMalignancy internal constructor() : EvaluationFunction {
+class HasActiveSecondMalignancy: EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         return if (record.priorSecondPrimaries.any { it.status == TumorStatus.ACTIVE }) {
             EvaluationFactory.pass("Patient has second malignancy considered active", "Presence of second malignancy considered active")
