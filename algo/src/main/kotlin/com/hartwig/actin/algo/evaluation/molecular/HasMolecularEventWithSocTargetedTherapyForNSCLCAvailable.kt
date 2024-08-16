@@ -6,6 +6,12 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.composite.Or
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 
+private val delInsList = listOf(Triple("EGFR", 19, VariantTypeInput.DELETE), Triple("EGFR", 20, VariantTypeInput.INSERT))
+private val proteinImpactList = listOf(Pair("EGFR", "L858R"), Pair("BRAF", "V600E"))
+private val activatingMutationList = listOf("EGFR")
+private val fusionList = listOf("ROS1", "ALK", "RET", "NTRK1", "NTRK2", "NTRK3")
+private val exonSkippingList = listOf("MET" to 14)
+
 class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(
     private val genesToInclude: Set<String>? = null, private val genesToIgnore: Set<String>
 ) : EvaluationFunction {
@@ -17,19 +23,13 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(
 
     private fun createEvaluationFunctions(genesToInclude: Set<String>?, genesToIgnore: Set<String>): List<EvaluationFunction> =
         listOf(
-            delInsEvaluation, proteinImpactVariantEvaluation, activatingMutationEvaluation, fusionEvaluation, exonSkippingEvaluation
-        ).flatten().filter {
-            (gene, _) -> !genesToIgnore.contains(gene) || genesToInclude?.let { genesToInclude.contains(gene) } ?: false
+            delInsList.map { (gene, exon, variantType) -> gene to GeneHasVariantInExonRangeOfType(gene, exon, exon, variantType) },
+            proteinImpactList.map { (gene, impact) -> gene to GeneHasVariantWithProteinImpact(gene, listOf(impact)) },
+            activatingMutationList.map { it to GeneHasActivatingMutation(it, null) },
+            fusionList.map { it to HasFusionInGene(it) },
+            exonSkippingList.map { it.first to GeneHasSpecificExonSkipping(it.first, it.second) }
+        ).flatten().filter { (gene, _) ->
+            !genesToIgnore.contains(gene) || genesToInclude?.let { genesToInclude.contains(gene) } ?: false
         }.map { it.second }
-
-    private val delInsEvaluation =
-        listOf(Triple("EGFR", "19", VariantTypeInput.DELETE), Triple("EGFR", "20", VariantTypeInput.INSERT))
-            .map { (gene, exon, variantType) -> gene to GeneHasVariantInExonRangeOfType(gene, exon.toInt(), exon.toInt(), variantType) }
-    private val proteinImpactVariantEvaluation =
-        listOf(Pair("EGFR", "L858R"), Pair("BRAF", "V600E"))
-            .map { (gene, impact) -> gene to GeneHasVariantWithProteinImpact(gene, listOf(impact)) }
-    private val activatingMutationEvaluation = listOf("EGFR").map { it to GeneHasActivatingMutation(it, null) }
-    private val fusionEvaluation = listOf("ROS1", "ALK", "RET", "NTRK1", "NTRK2", "NTRK3").map { it to HasFusionInGene(it) }
-    private val exonSkippingEvaluation = listOf("MET" to GeneHasSpecificExonSkipping("MET", 14))
 }
 
