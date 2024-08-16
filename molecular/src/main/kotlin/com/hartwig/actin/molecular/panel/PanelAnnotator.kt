@@ -12,10 +12,10 @@ import com.hartwig.actin.molecular.datamodel.PanelRecord
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
-import com.hartwig.actin.molecular.evidence.EvidenceDatabase
+import com.hartwig.actin.molecular.evidence.ActionableEvidenceFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEvidenceFactory
-import com.hartwig.actin.molecular.orange.interpretation.GeneAlterationFactory
+import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
+import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 

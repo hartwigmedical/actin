@@ -3,7 +3,7 @@ package com.hartwig.actin.molecular.orange.interpretation
 import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.PredictedTumorOrigin
 import com.hartwig.actin.molecular.datamodel.orange.characteristics.CupPrediction
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEvidenceFactory.createNoEvidence
+import com.hartwig.actin.molecular.evidence.ActionableEvidenceFactory.createNoEvidence
 import com.hartwig.hmftools.datamodel.chord.ChordStatus
 import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord

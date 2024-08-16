@@ -10,10 +10,10 @@ import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
-import com.hartwig.actin.molecular.evidence.EvidenceDatabase
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEvidenceFactory
+import com.hartwig.actin.molecular.evidence.ActionableEvidenceFactory
+import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
-import com.hartwig.actin.molecular.orange.interpretation.GeneAlterationFactory
+import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 import com.hartwig.actin.molecular.panel.PanelAnnotator.Companion.LOGGER
 import com.hartwig.actin.molecular.paver.PaveCodingEffect
 import com.hartwig.actin.molecular.paver.PaveImpact

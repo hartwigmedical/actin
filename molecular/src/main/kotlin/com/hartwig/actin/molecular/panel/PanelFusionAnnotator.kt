@@ -7,10 +7,10 @@ import com.hartwig.actin.molecular.datamodel.Fusion
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
-import com.hartwig.actin.molecular.evidence.EvidenceDatabase
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEvidenceFactory
+import com.hartwig.actin.molecular.evidence.ActionableEvidenceFactory
+import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
-import com.hartwig.actin.molecular.orange.interpretation.GeneAlterationFactory
+import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
 import org.apache.logging.log4j.LogManager

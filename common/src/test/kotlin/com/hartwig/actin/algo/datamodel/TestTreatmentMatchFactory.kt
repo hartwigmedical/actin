@@ -88,7 +88,17 @@ object TestTreatmentMatchFactory {
                     )
                 ),
                 annotations = TestExtendedEvidenceEntryFactory.createProperTestExtendedEvidenceEntries(),
-                generalPfs = Measurement(136.5, 98, 74, 281, 46.0)
+                generalPfs = Measurement(136.5, 98, 74, 281, 46.0),
+                resistanceEvidence = listOf(
+                    ResistanceEvidence(
+                        event = "BRAF amp",
+                        isTested = null,
+                        isFound = false,
+                        resistanceLevel = "A",
+                        evidenceUrls = setOf("website"),
+                        treatmentName = "Pembrolizumab"
+                    )
+                )
             )
         )
     }

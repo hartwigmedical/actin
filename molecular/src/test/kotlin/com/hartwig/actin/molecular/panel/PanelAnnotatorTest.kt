@@ -14,10 +14,10 @@ import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
-import com.hartwig.actin.molecular.evidence.EvidenceDatabase
+import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
-import com.hartwig.actin.molecular.evidence.actionability.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
+import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.serve.datamodel.EvidenceDirection
 import com.hartwig.serve.datamodel.EvidenceLevel

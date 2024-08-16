@@ -16,6 +16,7 @@ import com.hartwig.actin.report.pdf.chapters.MolecularDetailsChapter
 import com.hartwig.actin.report.pdf.chapters.MolecularEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.PersonalizedEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.ReportChapter
+import com.hartwig.actin.report.pdf.chapters.ResistanceEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.SummaryChapter
 import com.hartwig.actin.report.pdf.chapters.TrialMatchingChapter
 import com.hartwig.actin.report.pdf.chapters.TrialMatchingDetailsChapter
@@ -61,6 +62,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 report,
                 include = report.config.includeSOCLiteratureEfficacyEvidence && report.treatmentMatch.personalizedDataAnalysis != null
             ),
+            ResistanceEvidenceChapter(report, include = report.config.includeSOCLiteratureEfficacyEvidence),
             MolecularDetailsChapter(report, report.config.includeMolecularDetailsChapter, report.config.includeRawPathologyReport),
             LongitudinalMolecularHistoryChapter(report, include = report.config.includeLongitudinalMolecularChapter),
             EfficacyEvidenceChapter(report, include = report.config.includeSOCLiteratureEfficacyEvidence),
