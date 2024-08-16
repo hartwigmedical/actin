@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.soc
 
+import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.algo.datamodel.AnnotatedTreatmentMatch
 import com.hartwig.actin.algo.datamodel.EvaluatedTreatment
 import com.hartwig.actin.algo.datamodel.Evaluation
@@ -7,16 +8,30 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.datamodel.TreatmentCandidate
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
+import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.efficacy.TestExtendedEvidenceEntryFactory
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
+import com.hartwig.serve.datamodel.ActionableEvents
+import com.hartwig.serve.datamodel.ImmutableActionableEvents
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class EvaluatedTreatmentAnnotatorTest {
 
     private val efficacyEntries = TestExtendedEvidenceEntryFactory.createProperTestExtendedEvidenceEntries()
-    private val annotator = EvaluatedTreatmentAnnotator.create(efficacyEntries)
+    private val actionableEvents: ActionableEvents = ImmutableActionableEvents.builder().build()
+    private val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
+    private val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
+    private val resistanceEvidenceMatcher = ResistanceEvidenceMatcher(
+        doidModel,
+        emptySet(),
+        actionableEvents,
+        treatmentDatabase,
+        TestMolecularFactory.createMinimalTestMolecularHistory()
+    )
+    private val annotator = EvaluatedTreatmentAnnotator.create(efficacyEntries, resistanceEvidenceMatcher)
     private val evaluations = listOf(Evaluation(result = EvaluationResult.PASS, recoverable = true))
 
     @Test
@@ -28,7 +43,8 @@ class EvaluatedTreatmentAnnotatorTest {
         val socTreatments = listOf(EvaluatedTreatment(treatmentCandidate, evaluations))
 
         val actualAnnotatedTreatmentMatches = annotator.annotate(socTreatments)
-        val expectedAnnotatedTreatmentMatches = listOf(AnnotatedTreatmentMatch(treatmentCandidate, evaluations, efficacyEntries))
+        val expectedAnnotatedTreatmentMatches =
+            listOf(AnnotatedTreatmentMatch(treatmentCandidate, evaluations, efficacyEntries, null, emptyList()))
 
         assertThat(actualAnnotatedTreatmentMatches).isEqualTo(expectedAnnotatedTreatmentMatches)
     }
@@ -44,7 +60,8 @@ class EvaluatedTreatmentAnnotatorTest {
         val socTreatments = listOf(EvaluatedTreatment(treatmentCandidate, evaluations))
 
         val actualAnnotatedTreatmentMatches = annotator.annotate(socTreatments)
-        val expectedAnnotatedTreatmentMatches = listOf(AnnotatedTreatmentMatch(treatmentCandidate, evaluations, emptyList()))
+        val expectedAnnotatedTreatmentMatches =
+            listOf(AnnotatedTreatmentMatch(treatmentCandidate, evaluations, emptyList(), null, emptyList()))
 
         assertThat(actualAnnotatedTreatmentMatches).isEqualTo(expectedAnnotatedTreatmentMatches)
     }
