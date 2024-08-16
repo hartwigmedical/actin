@@ -25,7 +25,7 @@
         <serve.version>4.0.1</serve.version>
         <actin-personalization.version>0.3.0</actin-personalization.version>
         <orange-datamodel.version>2.6.0</orange-datamodel.version>
-        <actin-transvar.version>0.3.0</actin-transvar.version>
+        <actin-transvar.version>0.3.1</actin-transvar.version>
         <actin-pave-lite.version>0.3.0</actin-pave-lite.version>
         <pave.version>1.6</pave.version>
 
