@@ -6,11 +6,10 @@ import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import com.hartwig.actin.molecular.datamodel.AVL_PANEL
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.TestPanelRecordFactory
+import com.hartwig.actin.molecular.datamodel.panel.PanelFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletionExtraction
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -59,7 +58,7 @@ class PriorMolecularTestInterpreterTest {
                         TestPanelRecordFactory.empty().copy(
                             panelExtraction = ArcherPanelExtraction(
                                 variants = listOf(PanelVariantExtraction("ALK", "c.2240_2254del")),
-                                fusions = listOf(ArcherFusionExtraction("ALK")),
+                                fusions = listOf(PanelFusionExtraction("ALK", null)),
                                 skippedExons = emptyList()
                             )
                         )
@@ -96,7 +95,7 @@ class PriorMolecularTestInterpreterTest {
                             GenericPanelExtraction(
                                 panelType = AVL_PANEL,
                                 variants = listOf(PanelVariantExtraction("ALK", "c.2240_2254del")),
-                                fusions = listOf(GenericFusionExtraction("EML4", "ALK")),
+                                fusions = listOf(PanelFusionExtraction("EML4", "ALK")),
                                 exonDeletions = listOf(GenericExonDeletionExtraction("EGFR", 19)),
                                 genesWithNegativeResults = setOf("RET")
                             )

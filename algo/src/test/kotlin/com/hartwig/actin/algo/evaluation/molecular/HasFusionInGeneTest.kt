@@ -5,12 +5,13 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.addingTestFromPriorMolecular
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.Drivers
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freeTextPriorMolecularFusionRecord
 import com.hartwig.actin.molecular.datamodel.TestPanelRecordFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusionExtraction
+import com.hartwig.actin.molecular.datamodel.panel.PanelFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -103,7 +104,11 @@ class HasFusionInGeneTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
-                    listOf(freeTextPriorMolecularFusionRecord(MATCHING_GENE, "gene B"))
+                    listOf(
+                        freeTextPriorMolecularFusionRecord(MATCHING_GENE, "gene B").copy(
+                            drivers = Drivers(fusions = setOf(matchingFusion))
+                        )
+                    )
                 )
             )
         )
@@ -116,8 +121,10 @@ class HasFusionInGeneTest {
             function.evaluate(
                 MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                     listOf(
-                        TestPanelRecordFactory.empty()
-                            .copy(panelExtraction = ArcherPanelExtraction(fusions = listOf(ArcherFusionExtraction(MATCHING_GENE))))
+                        TestPanelRecordFactory.empty().copy(
+                            panelExtraction = ArcherPanelExtraction(fusions = listOf(PanelFusionExtraction(MATCHING_GENE, null))),
+                            drivers = Drivers(fusions = setOf(matchingFusion))
+                        )
                     )
                 )
             )

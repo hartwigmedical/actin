@@ -4,12 +4,13 @@ import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.molecular.datamodel.CodingEffect
+import com.hartwig.actin.molecular.datamodel.Drivers
 import com.hartwig.actin.molecular.datamodel.TestPanelRecordFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
+import com.hartwig.actin.molecular.datamodel.panel.PanelSkippedExonsExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSkippedExonsExtraction
 import org.junit.Test
 
 private const val MATCHING_GENE = "gene A"
@@ -107,6 +108,7 @@ class GeneHasSpecificExonSkippingTest {
                 MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                     listOf(
                         archerPanelWithExonSkippingForGene(MATCHING_GENE, 2, 2)
+                            .copy(drivers = Drivers(fusions = setOf(EXON_SKIPPING_FUSION)))
                     )
                 )
             )
@@ -116,7 +118,7 @@ class GeneHasSpecificExonSkippingTest {
     private fun archerPanelWithExonSkippingForGene(gene: String, start: Int, end: Int) = TestPanelRecordFactory.empty().copy(
         panelExtraction = ArcherPanelExtraction(
             skippedExons = listOf(
-                ArcherSkippedExonsExtraction(
+                PanelSkippedExonsExtraction(
                     gene,
                     start,
                     end
