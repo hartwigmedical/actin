@@ -93,7 +93,7 @@ object TestTreatmentMatchFactory {
                     ResistanceEvidence(
                         event = "BRAF amp",
                         isTested = null,
-                        isFound = null,
+                        isFound = false,
                         resistanceLevel = "A",
                         evidenceUrls = setOf("website"),
                         treatmentName = "Pembrolizumab"

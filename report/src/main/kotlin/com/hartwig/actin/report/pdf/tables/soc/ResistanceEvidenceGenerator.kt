@@ -13,7 +13,7 @@ class ResistanceEvidenceGenerator(
     private val width: Float
 ) : TableGenerator {
     override fun title(): String {
-        return "Resistance evidence"
+        return ""
     }
 
     override fun contents(): Table {
@@ -24,18 +24,19 @@ class ResistanceEvidenceGenerator(
             val treatmentToEvidence = treatments.flatMap { it.resistanceEvidence }.groupBy({ it.treatmentName }, { it })
             if (treatmentToEvidence.isEmpty()) {
                 Tables.createSingleColWithWidth(width)
-                    .addCell(Cells.createContentNoBorder("No resistance evidence found for the treatment options of this patient"))
+                    .addCell(Cells.createContentNoBorder("No resistance evidence found for the standard of care treatment options of this patient"))
             }
 
             else {
-                val table = Tables.createFixedWidthCols(1f, 3f, 1f).setWidth(width)
+                val table = Tables.createFixedWidthCols(3f, 2f, 3f, 2f).setWidth(width)
                 table.addHeaderCell(Cells.createHeader("Treatment"))
-                table.addHeaderCell(Cells.createHeader("Resistance evidence"))
+                table.addHeaderCell(Cells.createHeader("Mutation"))
+                table.addHeaderCell(Cells.createHeader("Evidence level"))
                 table.addHeaderCell(Cells.createHeader("Found in molecular analysis"))
                 treatmentToEvidence.forEach { entry ->
                     table.addCell(Cells.createContentBold(entry.key))
-                    val subtable = Tables.createFixedWidthCols(3f, 1f, 1f, 1f, 75f, 1f).setWidth(width / 2)
-                    for (resistanceEvidence in entry.value.distinct().sortedBy { it.event }) {
+                    val subtable = Tables.createFixedWidthCols(100f, 22f, 22f, 22f, 125f, 70f, 10f).setWidth((width / 3) * 2)
+                    for (resistanceEvidence in entry.value.distinct().sortedBy { it.resistanceLevel }) {
                         subtable.addCell(Cells.createContentNoBorder(resistanceEvidence.event))
 
                         resistanceEvidence.evidenceUrls.forEachIndexed { index, url ->
@@ -52,9 +53,11 @@ class ResistanceEvidenceGenerator(
                             subtable.addCell(Cells.createEmpty())
                         }
 
+                        subtable.addCell(Cells.createContentNoBorder(resistanceEvidence.resistanceLevel))
                         subtable.addCell(Cells.createContentNoBorder(booleanToString(resistanceEvidence.isFound)))
                     }
                     table.addCell(Cells.createContent(subtable))
+                    table.addCell(Cells.createContent(""))
                     table.addCell(Cells.createContent(""))
                 }
                 table
@@ -67,7 +70,7 @@ class ResistanceEvidenceGenerator(
             return when (isFound) {
                 true -> "Yes"
                 false -> "No"
-                null -> ""
+                null -> "NA"
             }
         }
     }
