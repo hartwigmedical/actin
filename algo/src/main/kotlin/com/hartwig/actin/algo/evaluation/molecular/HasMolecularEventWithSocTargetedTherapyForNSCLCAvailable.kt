@@ -6,11 +6,11 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.composite.Or
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 
-private val delInsList = listOf(Triple("EGFR", 19, VariantTypeInput.DELETE), Triple("EGFR", 20, VariantTypeInput.INSERT))
-private val proteinImpactList = listOf(Pair("EGFR", "L858R"), Pair("BRAF", "V600E"))
-private val activatingMutationList = listOf("EGFR")
-private val fusionList = listOf("ROS1", "ALK", "RET", "NTRK1", "NTRK2", "NTRK3")
-private val exonSkippingList = listOf("MET" to 14)
+private val DEL_INS_LIST = listOf(Triple("EGFR", 19, VariantTypeInput.DELETE), Triple("EGFR", 20, VariantTypeInput.INSERT))
+private val PROTEIN_IMPACT_LIST = listOf(Pair("EGFR", "L858R"), Pair("BRAF", "V600E"))
+private val ACTIVATING_MUTATION_LIST = listOf("EGFR")
+private val FUSION_LIST = listOf("ROS1", "ALK", "RET", "NTRK1", "NTRK2", "NTRK3")
+private val EXON_SKIPPING_LIST = listOf("MET" to 14)
 
 class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(
     private val genesToInclude: Set<String>? = null, private val genesToIgnore: Set<String>
@@ -23,11 +23,11 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(
 
     private fun createEvaluationFunctions(genesToInclude: Set<String>?, genesToIgnore: Set<String>): List<EvaluationFunction> =
         listOf(
-            delInsList.map { (gene, exon, variantType) -> gene to GeneHasVariantInExonRangeOfType(gene, exon, exon, variantType) },
-            proteinImpactList.map { (gene, impact) -> gene to GeneHasVariantWithProteinImpact(gene, listOf(impact)) },
-            activatingMutationList.map { it to GeneHasActivatingMutation(it, null) },
-            fusionList.map { it to HasFusionInGene(it) },
-            exonSkippingList.map { it.first to GeneHasSpecificExonSkipping(it.first, it.second) }
+            DEL_INS_LIST.map { (gene, exon, variantType) -> gene to GeneHasVariantInExonRangeOfType(gene, exon, exon, variantType) },
+            PROTEIN_IMPACT_LIST.map { (gene, impact) -> gene to GeneHasVariantWithProteinImpact(gene, listOf(impact)) },
+            ACTIVATING_MUTATION_LIST.map { it to GeneHasActivatingMutation(it, null) },
+            FUSION_LIST.map { it to HasFusionInGene(it) },
+            EXON_SKIPPING_LIST.map { it.first to GeneHasSpecificExonSkipping(it.first, it.second) }
         ).flatten().filter { (gene, _) ->
             !genesToIgnore.contains(gene) || genesToInclude?.let { genesToInclude.contains(gene) } ?: false
         }.map { it.second }
