@@ -20,7 +20,7 @@ class MolecularResultsAreAvailableForPromoterOfGeneTest {
     }
 
     private fun create(gene: String, impliesPotentialDeterminateStatus: Boolean): PriorIHCTest {
-        return MolecularTestFactory.priorMolecularTest(
+        return MolecularTestFactory.priorIHCTest(
             test = "IHC",
             item = gene,
             impliesIndeterminate = impliesPotentialDeterminateStatus

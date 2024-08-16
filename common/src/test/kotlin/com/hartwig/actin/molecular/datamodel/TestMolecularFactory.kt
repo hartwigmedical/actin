@@ -21,8 +21,6 @@ import com.hartwig.actin.molecular.datamodel.orange.immunology.HlaAllele
 import com.hartwig.actin.molecular.datamodel.orange.immunology.MolecularImmunology
 import com.hartwig.actin.molecular.datamodel.orange.pharmaco.Haplotype
 import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoEntry
-import com.hartwig.actin.molecular.datamodel.panel.PanelFusionExtraction
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import java.time.LocalDate
 
 object TestMolecularFactory {
@@ -314,13 +312,5 @@ object TestMolecularFactory {
             )
         )
     }
-
-    fun freeTextPriorMolecularFusionRecord(geneStart: String, geneEnd: String) = TestPanelRecordFactory.empty().copy(
-        panelExtraction =
-        GenericPanelExtraction(
-            fusions = listOf(PanelFusionExtraction(geneStart, geneEnd)),
-            panelType = FREE_TEXT_PANEL
-        )
-    )
 }
 

@@ -1,5 +1,6 @@
-package com.hartwig.actin.molecular.priormoleculartest
+package com.hartwig.actin.molecular.panel
 
+import com.hartwig.actin.clinical.datamodel.SequencedVariant
 import com.hartwig.actin.molecular.datamodel.CodingEffect
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.GeneAlteration
@@ -8,19 +9,18 @@ import com.hartwig.actin.molecular.datamodel.TranscriptImpact
 import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
-import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.ActionableEvidenceFactory
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
+import com.hartwig.actin.molecular.panel.PanelAnnotator.Companion.LOGGER
 import com.hartwig.actin.molecular.paver.PaveCodingEffect
 import com.hartwig.actin.molecular.paver.PaveImpact
 import com.hartwig.actin.molecular.paver.PaveQuery
 import com.hartwig.actin.molecular.paver.PaveResponse
 import com.hartwig.actin.molecular.paver.PaveTranscriptImpact
 import com.hartwig.actin.molecular.paver.Paver
-import com.hartwig.actin.molecular.priormoleculartest.PanelAnnotator.Companion.LOGGER
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.VariantAnnotator
 import com.hartwig.serve.datamodel.hotspot.KnownHotspot
@@ -34,7 +34,7 @@ class PanelVariantAnnotator(
     private val paveLite: PaveLite,
 ) {
 
-    fun annotate(variants: List<PanelVariantExtraction>): Set<Variant> {
+    fun annotate(variants: Set<SequencedVariant>): Set<Variant> {
         val variantExtractions = indexVariantExtractionsToUniqueIds(variants)
         val transvarVariants = resolveVariants(variantExtractions)
         val paveAnnotations = annotateWithPave(transvarVariants)
@@ -44,19 +44,23 @@ class PanelVariantAnnotator(
         return variantsWithDriverLikelihoodModel.toSet()
     }
 
-    private fun indexVariantExtractionsToUniqueIds(variants: List<PanelVariantExtraction>): Map<String, PanelVariantExtraction> {
+    private fun indexVariantExtractionsToUniqueIds(variants: Set<SequencedVariant>): Map<String, SequencedVariant> {
         return variants.withIndex().associate { it.index.toString() to it.value }
     }
 
-    private fun resolveVariants(variantExtractions: Map<String, PanelVariantExtraction>): Map<String, com.hartwig.actin.tools.variant.Variant> {
+    private fun resolveVariants(variantExtractions: Map<String, SequencedVariant>): Map<String, com.hartwig.actin.tools.variant.Variant> {
         return variantExtractions.mapValues { (_, value) -> transvarAnnotation(value) }
             .mapNotNull { if (it.value != null) it.key to it.value!! else null }
             .toMap()
     }
 
-    private fun transvarAnnotation(panelVariantExtraction: PanelVariantExtraction): com.hartwig.actin.tools.variant.Variant? {
+    private fun transvarAnnotation(panelVariantExtraction: SequencedVariant): com.hartwig.actin.tools.variant.Variant? {
         val externalVariantAnnotation =
-            variantResolver.resolve(panelVariantExtraction.gene, null, panelVariantExtraction.hgvsCodingOrProteinImpact)
+            variantResolver.resolve(
+                panelVariantExtraction.gene,
+                null,
+                panelVariantExtraction.hgvsCodingOrProteinImpact()
+            )
 
         if (externalVariantAnnotation == null) {
             LOGGER.error("Unable to resolve variant '$panelVariantExtraction' in variant annotator. See prior warnings.")
@@ -92,7 +96,7 @@ class PanelVariantAnnotator(
     private fun annotateWithEvidence(
         transvarVariants: Map<String, com.hartwig.actin.tools.variant.Variant>,
         paveAnnotations: Map<String, PaveResponse>,
-        variantExtractions: Map<String, PanelVariantExtraction>
+        variantExtractions: Map<String, SequencedVariant>
     ): List<Variant> {
         return transvarVariants.map { (id, transvarAnnotation) ->
             val paveResponse = paveAnnotations[id]!!
@@ -116,7 +120,7 @@ class PanelVariantAnnotator(
 
 
     private fun variantMatchCriteria(
-        panelVariantExtraction: PanelVariantExtraction,
+        panelVariantExtraction: SequencedVariant,
         transvarVariant: com.hartwig.actin.tools.variant.Variant,
         paveResponse: PaveResponse
     ) = VariantMatchCriteria(
@@ -131,7 +135,7 @@ class PanelVariantAnnotator(
     )
 
     private fun createVariantWithEvidence(
-        it: PanelVariantExtraction,
+        variant: SequencedVariant,
         evidence: ActionableEvidence,
         geneAlteration: GeneAlteration,
         serveGeneAlteration: com.hartwig.serve.datamodel.common.GeneAlteration?,
@@ -139,10 +143,10 @@ class PanelVariantAnnotator(
         paveResponse: PaveResponse
     ) = Variant(
         isReportable = true,
-        event = "${it.gene} ${it.hgvsCodingOrProteinImpact}",
+        event = "${variant.gene} ${variant.hgvsCodingOrProteinImpact()}",
         driverLikelihood = DriverLikelihood.LOW,
         evidence = evidence,
-        gene = it.gene,
+        gene = variant.gene,
         geneRole = geneAlteration.geneRole,
         proteinEffect = when (geneAlteration.proteinEffect) {
             ProteinEffect.LOSS_OF_FUNCTION,
