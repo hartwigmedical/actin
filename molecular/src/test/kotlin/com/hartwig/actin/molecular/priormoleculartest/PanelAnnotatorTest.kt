@@ -14,8 +14,6 @@ import com.hartwig.actin.molecular.datamodel.panel.PanelFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelSkippedExonsExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.evidence.EvidenceDatabase
-import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory

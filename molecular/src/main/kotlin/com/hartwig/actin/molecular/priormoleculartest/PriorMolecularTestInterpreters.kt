@@ -11,12 +11,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
-import com.hartwig.actin.molecular.evidence.EvidenceDatabase
-import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
-import com.hartwig.actin.molecular.paver.Paver
-import com.hartwig.actin.tools.pave.PaveLite
-import com.hartwig.actin.tools.variant.VariantAnnotator
 
 private fun <T : MolecularTest> identityAnnotator() = object : MolecularAnnotator<T, T> {
     override fun annotate(input: T): T {
