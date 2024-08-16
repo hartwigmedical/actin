@@ -38,17 +38,18 @@ private val DOID_MODEL = TestDoidModelFactory.createMinimalTestDoidModel()
 private val TUMOR_DOIDS = setOf("1520")
 private val TREATMENT_DATABASE = TestTreatmentDatabaseFactory.createProper()
 private val MOLECULAR_HISTORY = TestMolecularFactory.createMinimalTestMolecularHistory()
-private val RESISTANCE_EVIDENCE_MATCHER =
-    ResistanceEvidenceMatcher.create(DOID_MODEL, TUMOR_DOIDS, ACTIONABLE_EVENTS, TREATMENT_DATABASE, MOLECULAR_HISTORY)
 
 class ResistanceEvidenceMatcherTest {
+
+    private val resistanceEvidenceMatcher =
+        ResistanceEvidenceMatcher.create(DOID_MODEL, TUMOR_DOIDS, ACTIONABLE_EVENTS, TREATMENT_DATABASE, MOLECULAR_HISTORY)
 
     @Test
     fun `Should match resistance evidence to SOC treatments`() {
         val socTreatment =
             TreatmentTestFactory.drugTreatment("PEMBROLIZUMAB", TreatmentCategory.IMMUNOTHERAPY, setOf(DrugType.TOPO1_INHIBITOR))
 
-        val actualResistanceEvidence = RESISTANCE_EVIDENCE_MATCHER.match(socTreatment)
+        val actualResistanceEvidence = resistanceEvidenceMatcher.match(socTreatment)
         val expectedResistanceEvidence = listOf(
             ResistanceEvidence(
                 event = "BRAF amp",
@@ -66,7 +67,7 @@ class ResistanceEvidenceMatcherTest {
     @Test
     fun `Should return empty resistance evidence list for SOC treatment without resistance evidence`() {
         val socTreatment = TreatmentTestFactory.drugTreatment("capecitabine+oxaliplatin", TreatmentCategory.CHEMOTHERAPY)
-        val actualResistanceEvidence = RESISTANCE_EVIDENCE_MATCHER.match(socTreatment)
+        val actualResistanceEvidence = resistanceEvidenceMatcher.match(socTreatment)
         val expectedResistanceEvidence = emptyList<ResistanceEvidence>()
 
         assertThat(actualResistanceEvidence).isEqualTo(expectedResistanceEvidence)
@@ -86,9 +87,9 @@ class ResistanceEvidenceMatcherTest {
                 gene = "BRAF", type = CopyNumberType.LOSS, isReportable = true
             )
         ).molecularHistory
-        val amplificationFound = RESISTANCE_EVIDENCE_MATCHER.isFound(amplificationWithResistanceEvidence, hasAmplification)
+        val amplificationFound = resistanceEvidenceMatcher.isFound(amplificationWithResistanceEvidence, hasAmplification)
         assertThat(amplificationFound).isTrue()
-        val amplificationNotFound = RESISTANCE_EVIDENCE_MATCHER.isFound(amplificationWithResistanceEvidence, hasLoss)
+        val amplificationNotFound = resistanceEvidenceMatcher.isFound(amplificationWithResistanceEvidence, hasLoss)
         assertThat(amplificationNotFound).isFalse()
     }
 
@@ -104,9 +105,9 @@ class ResistanceEvidenceMatcherTest {
             TestVariantFactory.createMinimal()
                 .copy(gene = "gene 2", chromosome = "X", position = 2, ref = "A", alt = "G", isReportable = true)
         ).molecularHistory
-        val hotspotFound = RESISTANCE_EVIDENCE_MATCHER.isFound(hotspotWithResistanceEvidence, hasHotspot)
+        val hotspotFound = resistanceEvidenceMatcher.isFound(hotspotWithResistanceEvidence, hasHotspot)
         assertThat(hotspotFound).isTrue()
-        val anotherHotspotFound = RESISTANCE_EVIDENCE_MATCHER.isFound(hotspotWithResistanceEvidence, hasOtherHotspot)
+        val anotherHotspotFound = resistanceEvidenceMatcher.isFound(hotspotWithResistanceEvidence, hasOtherHotspot)
         assertThat(anotherHotspotFound).isFalse()
     }
 
@@ -121,9 +122,9 @@ class ResistanceEvidenceMatcherTest {
             TestFusionFactory.createMinimal()
                 .copy(geneStart = "gene 2", driverType = FusionDriverType.PROMISCUOUS_5, isReportable = true)
         ).molecularHistory
-        val fusionFound = RESISTANCE_EVIDENCE_MATCHER.isFound(fusionWithResistanceEvidence, hasFusion)
+        val fusionFound = resistanceEvidenceMatcher.isFound(fusionWithResistanceEvidence, hasFusion)
         assertThat(fusionFound).isTrue()
-        val anotherFusionFound = RESISTANCE_EVIDENCE_MATCHER.isFound(fusionWithResistanceEvidence, hasOtherFusion)
+        val anotherFusionFound = resistanceEvidenceMatcher.isFound(fusionWithResistanceEvidence, hasOtherFusion)
         assertThat(anotherFusionFound).isFalse()
     }
 
@@ -149,9 +150,9 @@ class ResistanceEvidenceMatcherTest {
                 canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(codingEffect = CodingEffect.MISSENSE)
             )
         ).molecularHistory
-        val rangeFound = RESISTANCE_EVIDENCE_MATCHER.isFound(rangeWithResistanceEvidence, hasRange)
+        val rangeFound = resistanceEvidenceMatcher.isFound(rangeWithResistanceEvidence, hasRange)
         assertThat(rangeFound).isTrue()
-        val anotherRangeFound = RESISTANCE_EVIDENCE_MATCHER.isFound(rangeWithResistanceEvidence, hasAnotherRange)
+        val anotherRangeFound = resistanceEvidenceMatcher.isFound(rangeWithResistanceEvidence, hasAnotherRange)
         assertThat(anotherRangeFound).isFalse()
     }
 }

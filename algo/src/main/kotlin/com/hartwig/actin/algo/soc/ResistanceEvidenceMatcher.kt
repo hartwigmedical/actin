@@ -43,9 +43,9 @@ class ResistanceEvidenceMatcher(
     private fun findMatches(actionableEvents: List<ActionableEvent>, treatment: Treatment): List<ResistanceEvidence> {
         val expandedTumorDoids = expandDoids(doidModel, applicableDoids)
         return actionableEvents.filter {
+            isResistant(it) &&
             isOnLabel(it, expandedTumorDoids) &&
-                    findTreatmentInDatabase(it.intervention(), treatment) != null &&
-                    isResistant(it)
+                    findTreatmentInDatabase(it.intervention(), treatment) != null
         }.map { actionableEvent ->
             ResistanceEvidence(
                 event = actionableEvent.sourceEvent(),
