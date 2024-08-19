@@ -48,8 +48,9 @@ object Format {
         return PERCENTAGE_FORMAT.format(fraction * 100)
     }
 
-    fun labReference(ulnFactor: Double, refLimitUp: Double?): String {
-        return "$ulnFactor*ULN ($ulnFactor*${String.format("%.1f", refLimitUp)})"
+    fun labReference(ulnFactor: Double, refLimit: Double?): String {
+        val formattedRefLimit = refLimit?.let { String.format("%.1f", it) } ?: "NA"
+        return "$ulnFactor*ULN ($ulnFactor*$formattedRefLimit)"
     }
 
     fun labValue(labMeasurement: LabMeasurement, value: Double): String {
