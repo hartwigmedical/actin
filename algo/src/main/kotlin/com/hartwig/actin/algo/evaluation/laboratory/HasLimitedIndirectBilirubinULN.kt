@@ -3,6 +3,8 @@ package com.hartwig.actin.algo.evaluation.laboratory
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.util.Format.labReference
+import com.hartwig.actin.algo.evaluation.util.Format.labValue
 import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.interpretation.LabInterpreter
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
@@ -22,8 +24,9 @@ class HasLimitedIndirectBilirubinULN(private val maxULNFactor: Double, private v
             )
         }
 
-        val labValueString = "Indirect bilirubin ${String.format("%.1f", mostRecentTotal!!.value - labValue.value)}"
-        val referenceString = "$maxULNFactor*ULN ($maxULNFactor*${String.format("%.1f", labValue.refLimitUp?.let { mostRecentTotal.refLimitUp?.minus(it) })})"
+        val labValueString = labValue(LabMeasurement.INDIRECT_BILIRUBIN, mostRecentTotal!!.value - labValue.value)
+        val refLimit = labValue.refLimitUp?.let { mostRecentTotal.refLimitUp?.minus(it) }
+        val referenceString = labReference(maxULNFactor, refLimit)
 
         return when (LabEvaluation.evaluateDifferenceVersusMaxULN(mostRecentTotal, labValue, maxULNFactor)) {
             LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN -> {
@@ -33,7 +36,8 @@ class HasLimitedIndirectBilirubinULN(private val maxULNFactor: Double, private v
             }
             LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_BUT_WITHIN_MARGIN -> {
                 EvaluationFactory.recoverableUndetermined(
-                    "$labValueString exceeds maximum of $referenceString", "$labValueString exceeds max of $referenceString"
+                    "$labValueString exceeds maximum of $referenceString but within margin of error",
+                    "$labValueString exceeds max of $referenceString but within margin of error"
                 )
             }
             LabEvaluation.LabEvaluationResult.CANNOT_BE_DETERMINED -> {
