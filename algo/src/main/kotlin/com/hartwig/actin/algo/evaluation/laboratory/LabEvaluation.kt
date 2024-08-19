@@ -31,6 +31,13 @@ internal object LabEvaluation {
         return evaluateVersusMaxValueWithMargin(labValue.value, labValue.comparator, maxValue)
     }
 
+    fun evaluateDifferenceVersusMaxULN(labValue1: LabValue, labValue2: LabValue, maxULNFactor: Double): LabEvaluationResult {
+        val refLimitUp1 = retrieveRefLimitUp(labValue1) ?: return LabEvaluationResult.CANNOT_BE_DETERMINED
+        val refLimitUp2 = retrieveRefLimitUp(labValue2) ?: return LabEvaluationResult.CANNOT_BE_DETERMINED
+        val maxValue = (refLimitUp1 - refLimitUp2) * maxULNFactor
+        return evaluateVersusMaxValueWithMargin(labValue1.value - labValue2.value, null, maxValue)
+    }
+
     fun evaluateVersusMinValueWithMargin(
         value: Double, comparator: String?, minValue: Double
     ): LabEvaluationResult {
