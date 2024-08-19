@@ -24,7 +24,9 @@ object ActionableEvidenceFactory {
         val offLabelEvidence = createOffLabelEvidence(actionabilityMatch.offLabelEvents)
         val externalTrialEvidence = createExternalTrialEvidence(actionabilityMatch.onLabelEvents)
         val merged = onLabelEvidence + offLabelEvidence + externalTrialEvidence
-        return filterResistanceEvidence(filterRedundantLowerEvidence(merged))
+        val filtered1 = filterRedundantLowerEvidence(merged)
+        val filtered2 = filterResistanceEvidence(filtered1)
+        return merged
     }
 
     private fun createOnLabelEvidence(onLabelEvents: List<ActionableEvent>): ActionableEvidence {
@@ -237,16 +239,21 @@ object ActionableEvidenceFactory {
         val treatmentsToExcludeForPreClinical =
             treatmentsToExcludeForOffLabel + filter(evidence, ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL)
 
+        val treatments1 = cleanTreatments(
+            filter(evidence, ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL),
+            filter(evidence, ActinEvidenceCategory.APPROVED)
+        )
+        val treatments2 = cleanTreatments(filter(evidence, ActinEvidenceCategory.PRE_CLINICAL), treatmentsToExcludeForPreClinical)
+        val treatments3 =
+            cleanTreatments(filter(evidence, ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL), treatmentsToExcludeForOffLabel)
+        val treatments4 = cleanTreatments(
+            filter(evidence, ActinEvidenceCategory.SUSPECT_RESISTANT),
+            filter(evidence, ActinEvidenceCategory.KNOWN_RESISTANT)
+        )
         return evidence.copy(
-            actionableTreatments = cleanTreatments(
-                filter(evidence, ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL),
-                filter(evidence, ActinEvidenceCategory.APPROVED)
-            ) + cleanTreatments(filter(evidence, ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL), treatmentsToExcludeForOffLabel)
-                    + cleanTreatments(filter(evidence, ActinEvidenceCategory.PRE_CLINICAL), treatmentsToExcludeForPreClinical)
-                    + cleanTreatments(
-                filter(evidence, ActinEvidenceCategory.SUSPECT_RESISTANT),
-                filter(evidence, ActinEvidenceCategory.KNOWN_RESISTANT)
-            )
+            actionableTreatments = treatments1 + treatments3
+                    + treatments2
+                    + treatments4
         )
     }
 
