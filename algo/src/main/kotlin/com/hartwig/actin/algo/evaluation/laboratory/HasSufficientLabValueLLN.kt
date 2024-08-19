@@ -12,7 +12,7 @@ class HasSufficientLabValueLLN(private val minLLNFactor: Double) : LabEvaluation
     override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
 
         val labValueString = labValue(labMeasurement, labValue.value)
-        val referenceString = labReference(minLLNFactor, labValue.refLimitLow)
+        val referenceString = labReference(minLLNFactor, "LLN", labValue.refLimitLow)
 
         return when (LabEvaluation.evaluateVersusMinLLN(labValue, minLLNFactor)) {
             LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN -> {

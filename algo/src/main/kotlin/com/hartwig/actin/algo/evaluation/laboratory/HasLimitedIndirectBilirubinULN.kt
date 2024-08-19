@@ -26,7 +26,7 @@ class HasLimitedIndirectBilirubinULN(private val maxULNFactor: Double, private v
 
         val labValueString = labValue(LabMeasurement.INDIRECT_BILIRUBIN, mostRecentTotal!!.value - labValue.value)
         val refLimit = labValue.refLimitUp?.let { mostRecentTotal.refLimitUp?.minus(it) }
-        val referenceString = labReference(maxULNFactor, refLimit)
+        val referenceString = labReference(maxULNFactor, "ULN", refLimit)
 
         return when (LabEvaluation.evaluateDifferenceVersusMaxULN(mostRecentTotal, labValue, maxULNFactor)) {
             LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN -> {

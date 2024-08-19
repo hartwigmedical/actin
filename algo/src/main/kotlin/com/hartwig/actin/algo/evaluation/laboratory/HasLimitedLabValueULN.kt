@@ -13,7 +13,7 @@ class HasLimitedLabValueULN(private val maxULNFactor: Double) : LabEvaluationFun
     override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
 
         val labValueString = labValue(labMeasurement, labValue.value)
-        val referenceString = labReference(maxULNFactor, labValue.refLimitUp)
+        val referenceString = labReference(maxULNFactor, "ULN", labValue.refLimitUp)
 
         return when (LabEvaluation.evaluateVersusMaxULN(labValue, maxULNFactor)) {
             LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN -> {
