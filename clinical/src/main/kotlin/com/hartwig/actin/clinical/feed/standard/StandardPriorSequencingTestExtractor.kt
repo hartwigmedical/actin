@@ -94,7 +94,8 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
                     result.hgvsProteinImpact,
                     result.transcript,
                     result.exon,
-                    result.codon
+                    result.codon,
+                    result.vaf
                 )
             }.toSet()
 }

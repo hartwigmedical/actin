@@ -39,7 +39,7 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
             table.addCell(Cells.createContent(driver.driverLikelihood.toString()))
             for (test in sortedAndFilteredTests) {
                 if (testsByDriverEvent[driver.event]?.contains(test) == true) {
-                    table.addCell(Cells.createContent("Detected${(driver as? Variant)?.let { " (VAF ${it.variantAlleleFrequency}%)" } ?: ""}"))
+                    table.addCell(Cells.createContent("Detected${(driver as? Variant)?.let { it.variantAlleleFrequency?.let { v -> " (VAF ${v}%)" } ?: "" }}"))
                 } else {
                     table.addCell(Cells.createContent("Not detected"))
                 }
@@ -49,9 +49,7 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
             it.characteristics.tumorMutationalBurden?.toString() ?: ""
         }
         characteristicRow(
-            table,
-            sortedAndFilteredTests,
-            "MSI"
+            table, sortedAndFilteredTests, "MSI"
         ) {
             msiText(it)
         }
@@ -65,10 +63,7 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
     }
 
     private fun characteristicRow(
-        table: Table,
-        sortedAndFilteredTests: List<MolecularTest>,
-        name: String,
-        contentProvider: (MolecularTest) -> String
+        table: Table, sortedAndFilteredTests: List<MolecularTest>, name: String, contentProvider: (MolecularTest) -> String
     ) {
         table.addCell(Cells.createContent(name))
         table.addCell(Cells.createContent(""))

@@ -166,7 +166,8 @@ class PanelVariantAnnotator(
         otherImpacts = otherImpacts(paveResponse, transcriptAnnotation),
         chromosome = transcriptAnnotation.chromosome(),
         position = transcriptAnnotation.position(),
-        type = variantType(transcriptAnnotation)
+        type = variantType(transcriptAnnotation),
+        variantAlleleFrequency = variant.variantAlleleFrequency
     )
 
     private fun impact(paveImpact: PaveImpact, transvarVariant: com.hartwig.actin.tools.variant.Variant): TranscriptImpact {

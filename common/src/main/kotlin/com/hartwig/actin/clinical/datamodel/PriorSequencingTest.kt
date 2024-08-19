@@ -9,7 +9,8 @@ data class SequencedVariant(
     val hgvsProteinImpact: String? = null,
     val transcript: String? = null,
     val exon: Int? = null,
-    val codon: Int? = null
+    val codon: Int? = null,
+    val variantAlleleFrequency: Double? = null
 ) {
     fun hgvsCodingOrProteinImpact(): String {
         return checkNotation(hgvsCodingImpact, "c") ?: checkNotation(hgvsProteinImpact, "p") ?: throw IllegalStateException()
