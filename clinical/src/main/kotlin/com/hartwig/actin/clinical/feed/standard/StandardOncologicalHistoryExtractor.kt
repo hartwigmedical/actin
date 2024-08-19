@@ -46,13 +46,14 @@ class StandardOncologicalHistoryExtractor(
                     treatment.configs.mapNotNull { config ->
                         config.curated?.let { curatedTreatment ->
                             TreatmentHistoryEntry(
-                                startYear = ehrPreviousCondition.startDate?.year,
-                                startMonth = ehrPreviousCondition.startDate?.monthValue,
+                                startYear = curatedTreatment.startYear ?: ehrPreviousCondition.startDate?.year,
+                                startMonth = curatedTreatment.startMonth ?: ehrPreviousCondition.startDate?.monthValue,
                                 treatments = curatedTreatment.treatments,
                                 intents = curatedTreatment.intents,
                                 treatmentHistoryDetails = TreatmentHistoryDetails(
                                     stopYear = curatedTreatment.treatmentHistoryDetails?.stopYear ?: ehrPreviousCondition.endDate?.year,
-                                    stopMonth = curatedTreatment.treatmentHistoryDetails?.stopMonth?: ehrPreviousCondition.endDate?.monthValue,
+                                    stopMonth = curatedTreatment.treatmentHistoryDetails?.stopMonth
+                                        ?: ehrPreviousCondition.endDate?.monthValue,
                                     stopReason = curatedTreatment.treatmentHistoryDetails?.stopReason,
                                     bestResponse = curatedTreatment.treatmentHistoryDetails?.bestResponse,
                                     switchToTreatments = curatedTreatment.treatmentHistoryDetails?.switchToTreatments,
