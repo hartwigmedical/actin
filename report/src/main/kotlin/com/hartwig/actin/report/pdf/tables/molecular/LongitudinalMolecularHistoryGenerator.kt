@@ -39,7 +39,7 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
             table.addCell(Cells.createContent(driver.driverLikelihood.toString()))
             for (test in sortedAndFilteredTests) {
                 if (testsByDriverEvent[driver.event]?.contains(test) == true) {
-                    table.addCell(Cells.createContent("Detected${(driver as? Variant)?.let { it.variantAlleleFrequency?.let { v -> " (VAF ${v}%)" } ?: "" }}"))
+                    table.addCell(Cells.createContent("Detected${(driver as? Variant)?.let { it.variantAlleleFrequency?.let { v -> " (VAF ${v}%)" } ?: "" } ?: ""}"))
                 } else {
                     table.addCell(Cells.createContent("Not detected"))
                 }

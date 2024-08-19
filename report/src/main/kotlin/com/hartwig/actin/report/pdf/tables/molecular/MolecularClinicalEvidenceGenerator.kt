@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
+import com.hartwig.actin.molecular.datamodel.Driver
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.report.pdf.tables.TableGenerator
@@ -34,8 +35,9 @@ class MolecularClinicalEvidenceGenerator(val molecularHistory: MolecularHistory,
         )
             .map(Cells::createHeader)
             .forEach(table::addHeaderCell)
-        for (driver in allDrivers) {
-            val clinicalDetails = extractClinicalDetails(driver.evidence)
+
+        val driverWithClinicalDetails = allDrivers.map { it to extractClinicalDetails(it.evidence) }.sortedWith(comparator())
+        for ((driver, clinicalDetails) in driverWithClinicalDetails) {
             if (clinicalDetails.isNotEmpty()) {
                 table.addCell(Cells.createContent(driver.event))
                 for ((rowCount, clinicalDetail) in clinicalDetails.withIndex()) {
@@ -59,6 +61,12 @@ class MolecularClinicalEvidenceGenerator(val molecularHistory: MolecularHistory,
         }
         return table
     }
+
+    private fun comparator() =
+        Comparator.comparing<Pair<Driver, Set<ClinicalDetails>>?, Boolean?> { it.second.any { c -> c.approved } }
+            .thenComparing(Comparator.comparing { it.second.any { c -> c.onLabel } })
+            .thenComparing(Comparator.comparing { it.second.any { c -> c.offLabel } })
+            .thenComparing(Comparator.comparing { it.second.any { c -> c.preClinical } }).reversed()
 
     private fun formatBoolean(boolean: Boolean) = if (boolean) CHECKED else UNCHECKED
 
