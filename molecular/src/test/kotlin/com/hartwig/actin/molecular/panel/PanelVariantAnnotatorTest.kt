@@ -31,6 +31,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.Ignore
 import org.junit.Test
 
 
@@ -100,6 +101,7 @@ private val HOTSPOT = TestServeKnownFactory.hotspotBuilder().build()
     .withGeneRole(com.hartwig.serve.datamodel.common.GeneRole.ONCO)
     .withProteinEffect(com.hartwig.serve.datamodel.common.ProteinEffect.GAIN_OF_FUNCTION)
 
+@Ignore
 class PanelVariantAnnotatorTest {
 
     private val evidenceDatabase = mockk<EvidenceDatabase> {

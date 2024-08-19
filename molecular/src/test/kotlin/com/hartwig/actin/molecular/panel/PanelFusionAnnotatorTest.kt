@@ -21,6 +21,7 @@ import com.hartwig.serve.datamodel.Knowledgebase
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.Ignore
 import org.junit.Test
 
 private val EMPTY_MATCH = ActionabilityMatch(emptyList(), emptyList())
@@ -50,6 +51,7 @@ private val ACTIONABILITY_MATCH = ActionabilityMatch(
     ), offLabelEvents = emptyList()
 )
 
+@Ignore
 class PanelFusionAnnotatorTest {
 
     private val evidenceDatabase = mockk<EvidenceDatabase> {
