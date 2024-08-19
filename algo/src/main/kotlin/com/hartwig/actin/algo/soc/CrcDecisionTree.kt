@@ -1,6 +1,9 @@
 package com.hartwig.actin.algo.soc
 
 import com.hartwig.actin.algo.datamodel.TreatmentCandidate
+import com.hartwig.actin.algo.soc.MolecularDecisions.brafV600EMutation
+import com.hartwig.actin.algo.soc.MolecularDecisions.ntrkFusion
+import com.hartwig.actin.algo.soc.MolecularDecisions.rasWildTypeAndLeftSided
 import com.hartwig.actin.algo.soc.datamodel.DecisionTree
 import com.hartwig.actin.algo.soc.datamodel.DecisionTreeLeaf
 import com.hartwig.actin.algo.soc.datamodel.DecisionTreeNode
@@ -21,13 +24,12 @@ class CrcDecisionTree(treatmentCandidateDatabase: TreatmentCandidateDatabase) : 
     ).map(treatmentCandidateDatabase::treatmentCandidate)
 
     private val molecularDriverDecisionTree = DecisionTree(
-        decision = EligibilityFunction(EligibilityRule.MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y, listOf("BRAF", "V600E")),
+        decision = brafV600EMutation,
         trueBranch = DecisionTreeLeaf(listOf(treatmentCandidateDatabase.treatmentCandidate(ENCORAFENIB_CETUXIMAB))),
         falseBranch = DecisionTree(
             decision = EligibilityFunction(
                 EligibilityRule.AND,
-                listOf("KRAS", "NRAS").map { EligibilityFunction(EligibilityRule.WILDTYPE_OF_GENE_X, listOf(it)) }
-                        + EligibilityFunction(EligibilityRule.HAS_LEFT_SIDED_COLORECTAL_TUMOR)
+                rasWildTypeAndLeftSided
             ),
             trueBranch = DecisionTreeLeaf(treatmentCandidatesForRasWtBrafV600EWtAndLeftSidedTumor),
             falseBranch = DecisionTreeLeaf(emptyList())
@@ -41,9 +43,7 @@ class CrcDecisionTree(treatmentCandidateDatabase: TreatmentCandidateDatabase) : 
     )
 
     private val socExhaustedTree = DecisionTree(
-        decision = EligibilityFunction(EligibilityRule.OR, listOf("NTRK1", "NTRK2", "NTRK3").map {
-            EligibilityFunction(EligibilityRule.FUSION_IN_GENE_X, listOf(it))
-        }),
+        decision = ntrkFusion,
         trueBranch = DecisionTreeLeaf(listOf(ENTRECTINIB, LAROTRECTINIB).map(treatmentCandidateDatabase::treatmentCandidate)),
         falseBranch = DecisionTreeLeaf(emptyList())
     )

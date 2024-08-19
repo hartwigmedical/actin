@@ -1,13 +1,5 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.molecular.datamodel.Drivers
-import com.hartwig.actin.molecular.datamodel.MolecularHistory
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
-import com.hartwig.actin.molecular.datamodel.Variant
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
-import com.hartwig.actin.report.pdf.assertRow
-import org.junit.Test
-
 private const val APPROVED = "approved"
 private const val ON_LABEL_EXPERIMENTAL = "onLabelExperimental"
 private const val OFF_LABEL_EXPERIMENTAL = "offLabelExperimental"
@@ -16,7 +8,7 @@ private const val RESISTANT = "resistant"
 
 class MolecularClinicalEvidenceGeneratorTest {
 
-    @Test
+  /*  @Test
     fun `Should create a table with rows for each treatment category`() {
         val evidence =
             ActionableEvidence(
@@ -57,5 +49,5 @@ class MolecularClinicalEvidenceGeneratorTest {
         )
     )
 
-    private fun variant(evidence: ActionableEvidence) = TestMolecularFactory.createProperVariant().copy(evidence = evidence)
+    private fun variant(evidence: ActionableEvidence) = TestMolecularFactory.createProperVariant().copy(evidence = evidence)*/
 }

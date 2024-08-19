@@ -23,7 +23,6 @@ data class ProvidedPatientRecord(
     val complications: List<ProvidedComplication> = emptyList(),
     val labValues: List<ProvidedLabValue> = emptyList(),
     val medications: List<ProvidedMedication>? = emptyList(),
-    val molecularTestHistory: List<ProvidedMolecularTestLegacy> = emptyList(),
     val molecularTests: List<ProvidedMolecularTest> = emptyList(),
     val patientDetails: ProvidedPatientDetail,
     val priorOtherConditions: List<ProvidedPriorOtherCondition> = emptyList(),
@@ -67,7 +66,9 @@ data class ProvidedTumorDetail(
     val measurableDiseaseDate: LocalDate? = null,
     val lesions: List<ProvidedLesion>? = null,
     @JsonPropertyDescription("Deprecated: currently use to store radiology report. Should move to lesions")
-    val lesionSite: String? = null
+    val lesionSite: String? = null,
+    @JsonPropertyDescription("Raw pathology report of molecular test results.")
+    val rawPathologyReport: String? = null
 )
 
 @JacksonSerializable
@@ -103,18 +104,6 @@ data class ProvidedTreatmentModification(
     val date: LocalDate,
     @JsonPropertyDescription("Modified number of cycles (eg. 6)")
     val administeredCycles: Int,
-)
-
-@JacksonSerializable
-data class ProvidedMolecularTestLegacy(
-    @JsonPropertyDescription("Type of test administered (eg. IHC)")
-    val type: String,
-    @JsonPropertyDescription("Measured gene or protein(eg. HER2)")
-    val measure: String?,
-    @JsonPropertyDescription("Result of the test (eg. Negative/3+)")
-    val result: String,
-    val resultType: String?,
-    val resultDate: LocalDate,
 )
 
 @JacksonSerializable
@@ -178,9 +167,10 @@ data class ProvidedPriorPrimary(
     val tumorLocation: String,
     @JsonPropertyDescription("Tumor type details (eg. Carcinoma)")
     val tumorType: String,
-    @JsonPropertyDescription("Observed status of tumor (eg. Active/Inactive")
+    @JsonPropertyDescription("Observed status of tumor (eg. Active/Inactive - null if unknown)")
     val status: String? = null,
-    val statusDate: LocalDate? = null
+    @JsonPropertyDescription("Date of last treatment")
+    val lastTreatmentDate: LocalDate? = null
 )
 
 @JacksonSerializable

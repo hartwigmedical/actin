@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
 
-class HasAnyComplication internal constructor() : EvaluationFunction {
+class HasAnyComplication: EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         return record.clinicalStatus.hasComplications?.let { hasComplications: Boolean ->
             if (hasComplications) {

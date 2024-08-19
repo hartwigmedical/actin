@@ -117,11 +117,11 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         private fun bestResistanceEvidence(driver: Driver): String? {
             val evidence = driver.evidence
             return when {
-                evidence.knownResistant().isNotEmpty() -> {
+                evidence.knownResistantTreatments().isNotEmpty() -> {
                     "Known resistance"
                 }
 
-                evidence.suspectResistant().isNotEmpty() -> {
+                evidence.suspectResistantTreatments().isNotEmpty() -> {
                     "Suspect resistance"
                 }
 

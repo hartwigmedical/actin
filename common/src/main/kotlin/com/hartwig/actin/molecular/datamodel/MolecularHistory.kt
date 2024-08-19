@@ -1,8 +1,5 @@
 package com.hartwig.actin.molecular.datamodel
 
-import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import java.time.LocalDate
 
 data class MolecularHistory(
@@ -14,14 +11,6 @@ data class MolecularHistory(
 
     fun allPanels(): List<PanelRecord> {
         return molecularTests.filterIsInstance<PanelRecord>()
-    }
-
-    fun allArcherPanels(): List<ArcherPanelExtraction> {
-        return molecularTests.filterIsInstance<PanelRecord>().map { it.panelExtraction }.filterIsInstance<ArcherPanelExtraction>()
-    }
-
-    fun allGenericPanels(): List<GenericPanelExtraction> {
-        return molecularTests.filterIsInstance<PanelRecord>().map { it.panelExtraction }.filterIsInstance<GenericPanelExtraction>()
     }
 
     fun latestOrangeMolecularRecord(): MolecularRecord? {

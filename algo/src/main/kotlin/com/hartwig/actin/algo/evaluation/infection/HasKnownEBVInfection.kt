@@ -7,7 +7,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 
-class HasKnownEBVInfection internal constructor() : EvaluationFunction {
+class HasKnownEBVInfection: EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val matchingCondition = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
             .find { stringCaseInsensitivelyMatchesQueryCollection(it.name, EBV_TERMS) }

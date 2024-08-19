@@ -28,8 +28,8 @@ data class ActionableEvidence(
     fun onLabelExperimentalTreatments() = filter(ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL)
     fun offLabelExperimentalTreatments() = filter(ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL)
     fun preClinicalTreatments() = filter(ActinEvidenceCategory.PRE_CLINICAL)
-    fun knownResistant() = filter(ActinEvidenceCategory.KNOWN_RESISTANT)
-    fun suspectResistant() = filter(ActinEvidenceCategory.SUSPECT_RESISTANT)
+    fun knownResistantTreatments() = filter(ActinEvidenceCategory.KNOWN_RESISTANT)
+    fun suspectResistantTreatments() = filter(ActinEvidenceCategory.SUSPECT_RESISTANT)
 
     private fun filter(category: ActinEvidenceCategory) =
         actionableTreatments.filter { it.category == category }.map { it.name }.toSet()

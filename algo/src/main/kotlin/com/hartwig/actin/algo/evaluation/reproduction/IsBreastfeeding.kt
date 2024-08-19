@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.Gender
 
-class IsBreastfeeding internal constructor() : EvaluationFunction {
+class IsBreastfeeding: EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         return if (record.patient.gender == Gender.MALE) {
             EvaluationFactory.fail("Patient is male thus won't be breastfeeding", "No breastfeeding")

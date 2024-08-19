@@ -8,6 +8,7 @@ import com.hartwig.actin.report.pdf.chapters.EfficacyEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.EfficacyEvidenceDetailsChapter
 import com.hartwig.actin.report.pdf.chapters.MolecularDetailsChapter
 import com.hartwig.actin.report.pdf.chapters.PersonalizedEvidenceChapter
+import com.hartwig.actin.report.pdf.chapters.ResistanceEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.SummaryChapter
 import com.hartwig.actin.report.pdf.chapters.TrialMatchingChapter
 import com.hartwig.actin.report.pdf.chapters.TrialMatchingDetailsChapter
@@ -60,7 +61,7 @@ class ReportContentProviderTest {
     }
 
     @Test
-    fun `Should omit molecular chapter and include efficacy chapter when CRC profile is provided`() {
+    fun `Should omit molecular chapter and include efficacy chapter and resistance evidence chapter when CRC profile is provided`() {
         val report = proper.copy(
             config = EnvironmentConfiguration.create(null, "CRC").report
         )
@@ -69,6 +70,7 @@ class ReportContentProviderTest {
         assertThat(chapters.map { it::class }).containsExactly(
             SummaryChapter::class,
             PersonalizedEvidenceChapter::class,
+            ResistanceEvidenceChapter::class,
             EfficacyEvidenceChapter::class,
             ClinicalDetailsChapter::class,
             TrialMatchingChapter::class
@@ -76,7 +78,7 @@ class ReportContentProviderTest {
     }
 
     @Test
-    fun `Should omit molecular chapter and include both efficacy chapters when CRC profile is provided in extended mode`() {
+    fun `Should omit molecular chapter and include both efficacy chapters and resistance evidencde chapter when CRC profile is provided in extended mode`() {
         val report = proper.copy(
             config = EnvironmentConfiguration.create(null, "CRC").report
         )
@@ -85,6 +87,7 @@ class ReportContentProviderTest {
         assertThat(chapters.map { it::class }).containsExactly(
             SummaryChapter::class,
             PersonalizedEvidenceChapter::class,
+            ResistanceEvidenceChapter::class,
             EfficacyEvidenceChapter::class,
             ClinicalDetailsChapter::class,
             EfficacyEvidenceDetailsChapter::class,

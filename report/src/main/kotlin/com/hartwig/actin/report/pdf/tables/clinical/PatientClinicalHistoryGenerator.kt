@@ -214,7 +214,7 @@ class PatientClinicalHistoryGenerator(
 
         private fun toPriorOtherConditionString(priorOtherCondition: PriorOtherCondition): String {
             val note = if (!priorOtherCondition.isContraindicationForTherapy) " (no contraindication for therapy)" else ""
-            return priorOtherCondition.name.replaceFirstChar { it.uppercase() } + note
+            return (priorOtherCondition.name.replaceFirstChar { it.uppercase() }) + note
         }
 
         private fun toDateString(maybeYear: Int?, maybeMonth: Int?): String? {

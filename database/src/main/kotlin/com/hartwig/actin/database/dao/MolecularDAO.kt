@@ -467,14 +467,14 @@ internal class MolecularDAO(private val context: DSLContext) {
                     fusion.event,
                     driverLikelihood(fusion),
                     fusion.geneStart,
-                    fusion.geneTranscriptStart,
+                    fusion.extendedFusionOrThrow().geneTranscriptStart,
                     fusion.extendedFusionOrThrow().fusedExonUp,
                     fusion.geneEnd,
-                    fusion.geneTranscriptEnd,
+                    fusion.extendedFusionOrThrow().geneTranscriptEnd,
                     fusion.extendedFusionOrThrow().fusedExonDown,
                     fusion.driverType.toString(),
                     fusion.proteinEffect.toString(),
-                    fusion.extendedFusionOrThrow().isAssociatedWithDrugResistance
+                    fusion.isAssociatedWithDrugResistance
                 )
                 .returning(Tables.FUSION.ID)
                 .fetchOne()!!
@@ -590,13 +590,13 @@ internal class MolecularDAO(private val context: DSLContext) {
     }
 
     private fun <T : Record?> writeEvidence(inserter: EvidenceInserter<T>, topicId: Int, evidence: ActionableEvidence) {
-        writeTreatments(inserter, topicId, evidence.approvedTreatments, "Approved")
+        writeTreatments(inserter, topicId, evidence.approvedTreatments(), "Approved")
         writeTrials(inserter, topicId, evidence.externalEligibleTrials)
-        writeTreatments(inserter, topicId, evidence.onLabelExperimentalTreatments, "On-label experimental")
-        writeTreatments(inserter, topicId, evidence.offLabelExperimentalTreatments, "Off-label experimental")
-        writeTreatments(inserter, topicId, evidence.preClinicalTreatments, "Pre-clinical")
-        writeTreatments(inserter, topicId, evidence.knownResistantTreatments, "Known resistant")
-        writeTreatments(inserter, topicId, evidence.suspectResistantTreatments, "Suspect resistant")
+        writeTreatments(inserter, topicId, evidence.onLabelExperimentalTreatments(), "On-label experimental")
+        writeTreatments(inserter, topicId, evidence.offLabelExperimentalTreatments(), "Off-label experimental")
+        writeTreatments(inserter, topicId, evidence.preClinicalTreatments(), "Pre-clinical")
+        writeTreatments(inserter, topicId, evidence.knownResistantTreatments(), "Known resistant")
+        writeTreatments(inserter, topicId, evidence.suspectResistantTreatments(), "Suspect resistant")
     }
 
     private fun <T : Record?> writeTreatments(inserter: EvidenceInserter<T>, topicId: Int, treatments: Set<String>, type: String) {

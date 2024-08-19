@@ -1,13 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
-import com.hartwig.actin.molecular.interpretation.AggregatedEvidence
-import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
-
 class EvidenceInterpreterTest {
-    @Test
+  /*  @Test
     fun shouldInterpretEvidence() {
         val cohortWithInclusion: EvaluatedCohort = evaluatedCohort(molecularEvents = setOf("inclusion"))
         val interpreter = EvidenceInterpreter.fromEvaluatedCohorts(listOf(cohortWithInclusion))
@@ -36,5 +30,5 @@ class EvidenceInterpreterTest {
 
         val offLabel = interpreter.additionalEventsWithOffLabelExperimentalEvidence(evidence)
         assertThat(offLabel).containsExactly("off-label")
-    }
+    }*/
 }

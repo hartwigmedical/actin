@@ -4,12 +4,9 @@ import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.molecular.datamodel.CodingEffect
-import com.hartwig.actin.molecular.datamodel.TestPanelRecordFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSkippedExonsExtraction
 import org.junit.Test
 
 private const val MATCHING_GENE = "gene A"
@@ -95,53 +92,6 @@ class GeneHasSpecificExonSkippingTest {
                     EXON_SKIPPING_FUSION.copy(
                         extendedFusionDetails = TestFusionFactory.createMinimalExtended().copy(fusedExonDown = 5)
                     )
-                )
-            )
-        )
-    }
-
-    @Test
-    fun `Should pass on exon skipping detected in archer panel for specific exon`() {
-        assertMolecularEvaluation(
-            EvaluationResult.PASS, function.evaluate(
-                MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
-                    listOf(
-                        archerPanelWithExonSkippingForGene(MATCHING_GENE, 2, 2)
-                    )
-                )
-            )
-        )
-    }
-
-    private fun archerPanelWithExonSkippingForGene(gene: String, start: Int, end: Int) = TestPanelRecordFactory.empty().copy(
-        panelExtraction = ArcherPanelExtraction(
-            skippedExons = listOf(
-                ArcherSkippedExonsExtraction(
-                    gene,
-                    start,
-                    end
-                )
-            )
-        )
-    )
-
-    @Test
-    fun `Should fail on exon skipping detected in archer panel for range including exon`() {
-        assertMolecularEvaluation(
-            EvaluationResult.FAIL, function.evaluate(
-                MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
-                    listOf(archerPanelWithExonSkippingForGene(MATCHING_GENE, 1, 3))
-                )
-            )
-        )
-    }
-
-    @Test
-    fun `Should fail on exon skipping detected in archer panel specific exon not matching`() {
-        assertMolecularEvaluation(
-            EvaluationResult.FAIL, function.evaluate(
-                MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
-                    listOf(archerPanelWithExonSkippingForGene(MATCHING_GENE, 3, 3))
                 )
             )
         )

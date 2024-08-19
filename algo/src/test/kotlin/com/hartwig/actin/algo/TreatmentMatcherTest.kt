@@ -12,13 +12,18 @@ import com.hartwig.actin.algo.datamodel.TreatmentMatch
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.soc.EvaluatedTreatmentAnnotator
 import com.hartwig.actin.algo.soc.RecommendationEngine
+import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.configuration.EMC_TRIAL_SOURCE
+import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.datamodel.TestTrialFactory
+import com.hartwig.serve.datamodel.ActionableEvents
+import com.hartwig.serve.datamodel.ImmutableActionableEvents
 import io.mockk.every
 import io.mockk.mockk
 import java.time.LocalDate
@@ -35,13 +40,22 @@ class TreatmentMatcherTest {
     private val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
     private val evidenceEntries =
         EfficacyEntryFactory(treatmentDatabase).convertCkbExtendedEvidence(CkbExtendedEvidenceTestFactory.createProperTestExtendedEvidenceDatabase())
+    private val actionableEvents: ActionableEvents = ImmutableActionableEvents.builder().build()
     private val recommendationEngine = mockk<RecommendationEngine>()
+    private val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
+    private val resistanceEvidenceMatcher = ResistanceEvidenceMatcher(
+        doidModel,
+        emptySet(),
+        actionableEvents,
+        treatmentDatabase,
+        TestMolecularFactory.createMinimalTestMolecularHistory()
+    )
     private val treatmentMatcher = TreatmentMatcher(
         trialMatcher,
         recommendationEngine,
         trials,
         CurrentDateProvider(),
-        EvaluatedTreatmentAnnotator.create(evidenceEntries),
+        EvaluatedTreatmentAnnotator.create(evidenceEntries, resistanceEvidenceMatcher),
         EMC_TRIAL_SOURCE
     )
     private val expectedTreatmentMatch = TreatmentMatch(
@@ -74,7 +88,7 @@ class TreatmentMatcherTest {
         assertThat(treatmentMatcher.evaluateAndAnnotateMatchesForPatient(patient))
             .isEqualTo(
                 expectedTreatmentMatch.copy(
-                    standardOfCareMatches = EvaluatedTreatmentAnnotator.create(evidenceEntries).annotate(
+                    standardOfCareMatches = EvaluatedTreatmentAnnotator.create(evidenceEntries, resistanceEvidenceMatcher).annotate(
                         expectedSocTreatments
                     )
                 )
@@ -92,7 +106,7 @@ class TreatmentMatcherTest {
             recommendationEngine,
             trials,
             CurrentDateProvider(),
-            EvaluatedTreatmentAnnotator.create(evidenceEntries),
+            EvaluatedTreatmentAnnotator.create(evidenceEntries, resistanceEvidenceMatcher),
             EMC_TRIAL_SOURCE
         )
         every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(patientWithoutMolecular) } returns false

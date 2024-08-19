@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-class CanAdhereToAttenuatedVaccineUse internal constructor() : EvaluationFunction {
+class CanAdhereToAttenuatedVaccineUse: EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         return EvaluationFactory.notEvaluated(
             "Adherence to protocol for attenuated vaccine use is currently not evaluated",

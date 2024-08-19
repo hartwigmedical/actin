@@ -8,11 +8,7 @@ import com.google.gson.stream.JsonWriter
 import com.hartwig.actin.molecular.datamodel.Drivers
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
-import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.PanelExtractionAdapter
-import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
+import com.hartwig.actin.molecular.datamodel.PanelRecord
 import java.time.LocalDate
 
 class PanelRecordAdapter(private val gson: Gson) : TypeAdapter<PanelRecord>() {
@@ -32,17 +28,9 @@ class PanelRecordAdapter(private val gson: Gson) : TypeAdapter<PanelRecord>() {
         val experimentType = ExperimentType.valueOf(jsonObject.get("experimentType").asString)
         val testTypeJson = jsonObject.get("testTypeDisplay")
         val testType = if (testTypeJson.isJsonNull) null else testTypeJson.asString
-        val panelExtractionJson = jsonObject.get("panelExtraction")
-        val panelExtractionClass = panelExtractionJson.asJsonObject.get("extractionClass").asString
-        val panelExtraction: PanelExtraction = when (panelExtractionClass) {
-            ArcherPanelExtraction::class.java.simpleName -> gson.fromJson(panelExtractionJson, ArcherPanelExtraction::class.java)
-            GenericPanelExtraction::class.java.simpleName -> gson.fromJson(panelExtractionJson, GenericPanelExtraction::class.java)
-            PanelExtractionAdapter::class.java.simpleName -> gson.fromJson(panelExtractionJson, PanelExtractionAdapter::class.java)
-            else -> throw IllegalArgumentException("Unsupported panel extraction $panelExtractionClass")
-        }
 
         return PanelRecord(
-            panelExtraction = panelExtraction,
+            testedGenes = jsonObject.getAsJsonArray("testedGenes").map { it.asString }.toSet(),
             testTypeDisplay = testType,
             experimentType = experimentType,
             date = gson.fromJson(jsonObject.get("date"), LocalDate::class.java),

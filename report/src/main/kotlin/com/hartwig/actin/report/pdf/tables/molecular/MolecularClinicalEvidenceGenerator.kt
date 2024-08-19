@@ -67,7 +67,7 @@ class MolecularClinicalEvidenceGenerator(val molecularHistory: MolecularHistory,
         val truncatedOnLabel = truncatedTreatments(evidence.onLabelExperimentalTreatments())
         val truncatedOffLabel = truncatedTreatments(evidence.offLabelExperimentalTreatments())
         val truncatedPreClinical = truncatedTreatments(evidence.preClinicalTreatments())
-        val truncatedResistant = truncatedTreatments(evidence.knownResistant())
+        val truncatedResistant = truncatedTreatments(evidence.knownResistantTreatments())
         val allTreatments =
             truncatedApproved + truncatedOnLabel + truncatedOffLabel + truncatedPreClinical + truncatedResistant
         return allTreatments.map {

@@ -7,15 +7,20 @@ import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
+import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter
 import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
+import com.hartwig.actin.molecular.datamodel.RefGenomeVersion
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.serialization.TrialJson
+import com.hartwig.serve.datamodel.ActionableEvents
+import com.hartwig.serve.datamodel.ActionableEventsLoader
+import com.hartwig.serve.datamodel.RefGenome
 import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
@@ -65,11 +70,37 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
             environmentConfiguration.algo
         )
         val evidenceEntries = EfficacyEntryFactory(treatmentDatabase).extractEfficacyEvidenceFromCkbFile(config.extendedEfficacyJson)
-        val match = TreatmentMatcher.create(resources, trials, evidenceEntries).evaluateAndAnnotateMatchesForPatient(patient)
+
+        LOGGER.info("Loading evidence database for resistance evidence")
+        val tumorDoids = patient.tumor.doids.orEmpty().toSet()
+        val actionableEvents =
+            loadEvidence(patient.molecularHistory.latestOrangeMolecularRecord()?.refGenomeVersion ?: RefGenomeVersion.V37)
+        val resistanceEvidenceMatcher =
+            ResistanceEvidenceMatcher.create(doidModel, tumorDoids, actionableEvents, treatmentDatabase, patient.molecularHistory)
+        val match = TreatmentMatcher.create(resources, trials, evidenceEntries, resistanceEvidenceMatcher)
+            .evaluateAndAnnotateMatchesForPatient(patient)
 
         TreatmentMatchPrinter.printMatch(match)
         TreatmentMatchJson.write(match, config.outputDirectory)
         LOGGER.info("Done!")
+    }
+
+    private fun loadEvidence(orangeRefGenomeVersion: RefGenomeVersion): ActionableEvents {
+        val serveRefGenomeVersion = toServeRefGenomeVersion(orangeRefGenomeVersion)
+        val serveDirectoryWithGenome = "${config.serveDirectory}/${serveRefGenomeVersion.name.lowercase().replace("v", "")}"
+        return ActionableEventsLoader.readFromDir(serveDirectoryWithGenome, serveRefGenomeVersion)
+    }
+
+    private fun toServeRefGenomeVersion(refGenomeVersion: RefGenomeVersion): RefGenome {
+        return when (refGenomeVersion) {
+            RefGenomeVersion.V37 -> {
+                RefGenome.V37
+            }
+
+            RefGenomeVersion.V38 -> {
+                RefGenome.V38
+            }
+        }
     }
 
     companion object {
