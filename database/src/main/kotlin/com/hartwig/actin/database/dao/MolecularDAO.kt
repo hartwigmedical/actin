@@ -571,7 +571,7 @@ internal class MolecularDAO(private val context: DSLContext) {
                     Tables.PHARMACO.ALLELECOUNT,
                     Tables.PHARMACO.FUNCTION
                 )
-                    .values(sampleId, entry.gene, haplotype.allele, haplotype.alleleCount, haplotype.function)
+                    .values(sampleId, entry.gene.toString(), haplotype.allele, haplotype.alleleCount, haplotype.function.display())
                     .execute()
             }
         }

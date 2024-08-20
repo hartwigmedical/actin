@@ -2,14 +2,14 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.molecular.DPYDDeficiencyEvaluationFunctions.DPYD_GENE
 import com.hartwig.actin.algo.evaluation.molecular.DPYDDeficiencyEvaluationFunctions.isHomozygousDeficient
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoGene
 
 class HasHomozygousDPYDDeficiency internal constructor() : MolecularEvaluationFunction {
 
     override fun evaluate(molecular: MolecularRecord): Evaluation {
-        val pharmaco = molecular.pharmaco.firstOrNull { it.gene == DPYD_GENE }
+        val pharmaco = molecular.pharmaco.firstOrNull { it.gene == PharmacoGene.DPYD }
             ?: return EvaluationFactory.undetermined("DPYD haplotype is undetermined", "DPYD haplotype undetermined")
 
         return when {
