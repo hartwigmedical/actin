@@ -1,8 +1,22 @@
 package com.hartwig.actin.molecular.evidence
 
+import com.hartwig.actin.molecular.datamodel.evidence.ActinEvidenceCategory
+import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.ActionableTreatment
+import com.hartwig.actin.molecular.datamodel.evidence.Country
+import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
+import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
+import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
+import com.hartwig.serve.datamodel.ActionableEvent
+import com.hartwig.serve.datamodel.EvidenceDirection
+import com.hartwig.serve.datamodel.EvidenceLevel
+import com.hartwig.serve.datamodel.gene.ImmutableActionableGene
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.Test
+
 class ActionableEvidenceFactoryTest {
 
- /*   @Test
+    @Test
     fun `Should create no evidence`() {
         assertThat(ActionableEvidenceFactory.createNoEvidence()).isNotNull()
     }
@@ -30,16 +44,16 @@ class ActionableEvidenceFactoryTest {
 
         val evidence = ActionableEvidenceFactory.create(match)
         assertThat(evidence).isNotNull()
-        assertThat(evidence.approvedTreatments).containsExactly("A on-label responsive")
+        assertThat(evidence.approvedTreatments()).containsExactly("A on-label responsive")
         assertThat(evidence.externalEligibleTrials).isEmpty()
-        assertThat(evidence.onLabelExperimentalTreatments).containsExactlyInAnyOrder(
+        assertThat(evidence.onLabelExperimentalTreatments()).containsExactlyInAnyOrder(
             "A on-label predicted responsive",
             "B on-label responsive",
             "A off-label responsive",
             "A off-label predicted responsive"
         )
-        assertThat(evidence.offLabelExperimentalTreatments).containsExactly("B off-label responsive")
-        assertThat(evidence.preClinicalTreatments).containsExactlyInAnyOrder(
+        assertThat(evidence.offLabelExperimentalTreatments()).containsExactly("B off-label responsive")
+        assertThat(evidence.preClinicalTreatments()).containsExactlyInAnyOrder(
             "B on-label predicted responsive",
             "C on-label responsive",
             "C on-label predicted responsive",
@@ -47,8 +61,8 @@ class ActionableEvidenceFactoryTest {
             "C off-label responsive",
             "C off-label predicted responsive"
         )
-        assertThat(evidence.knownResistantTreatments).isEmpty()
-        assertThat(evidence.suspectResistantTreatments).isEmpty()
+        assertThat(evidence.knownResistantTreatments()).isEmpty()
+        assertThat(evidence.suspectResistantTreatments()).isEmpty()
     }
 
     @Test
@@ -69,8 +83,8 @@ class ActionableEvidenceFactoryTest {
 
         val evidence = ActionableEvidenceFactory.create(match)
         assertThat(evidence).isNotNull()
-        assertThat(evidence.knownResistantTreatments).containsExactly("On-label responsive A")
-        assertThat(evidence.suspectResistantTreatments).containsExactlyInAnyOrder("Off-label responsive", "On-label responsive C")
+        assertThat(evidence.knownResistantTreatments()).containsExactly("On-label responsive A")
+        assertThat(evidence.suspectResistantTreatments()).containsExactlyInAnyOrder("Off-label responsive", "On-label responsive C")
     }
 
     @Test
@@ -88,17 +102,17 @@ class ActionableEvidenceFactoryTest {
 
         val evidence = ActionableEvidenceFactory.create(match)
         assertThat(evidence).isNotNull()
-        assertThat(evidence.approvedTreatments).isEmpty()
+        assertThat(evidence.approvedTreatments()).isEmpty()
         assertThat(evidence.externalEligibleTrials).containsExactly(
             TestExternalTrialFactory.create(
                 "On-label responsive trial", setOf(Country.OTHER), "https://clinicaltrials.gov/study/NCT00000001", "NCT00000001"
             )
         )
-        assertThat(evidence.onLabelExperimentalTreatments).isEmpty()
-        assertThat(evidence.offLabelExperimentalTreatments).isEmpty()
-        assertThat(evidence.preClinicalTreatments).isEmpty()
-        assertThat(evidence.knownResistantTreatments).isEmpty()
-        assertThat(evidence.suspectResistantTreatments).isEmpty()
+        assertThat(evidence.onLabelExperimentalTreatments()).isEmpty()
+        assertThat(evidence.offLabelExperimentalTreatments()).isEmpty()
+        assertThat(evidence.preClinicalTreatments()).isEmpty()
+        assertThat(evidence.knownResistantTreatments()).isEmpty()
+        assertThat(evidence.suspectResistantTreatments()).isEmpty()
     }
 
     @Test
@@ -116,33 +130,67 @@ class ActionableEvidenceFactoryTest {
 
         val evidence = ActionableEvidenceFactory.create(match)
         assertThat(evidence).isNotNull()
-        assertThat(evidence.approvedTreatments).isEmpty()
+        assertThat(evidence.approvedTreatments()).isEmpty()
         assertThat(evidence.externalEligibleTrials).isEmpty()
-        assertThat(evidence.onLabelExperimentalTreatments).isEmpty()
-        assertThat(evidence.offLabelExperimentalTreatments).isEmpty()
-        assertThat(evidence.preClinicalTreatments).isEmpty()
-        assertThat(evidence.knownResistantTreatments).isEmpty()
-        assertThat(evidence.suspectResistantTreatments).isEmpty()
+        assertThat(evidence.onLabelExperimentalTreatments()).isEmpty()
+        assertThat(evidence.offLabelExperimentalTreatments()).isEmpty()
+        assertThat(evidence.preClinicalTreatments()).isEmpty()
+        assertThat(evidence.knownResistantTreatments()).isEmpty()
+        assertThat(evidence.suspectResistantTreatments()).isEmpty()
     }
 
     @Test
     fun `Should filter lower level evidence`() {
+        val approved = ActionableTreatment("approved", evidenceLevel = EvidenceLevel.A, category = ActinEvidenceCategory.APPROVED)
+        val onLabelExperimental = ActionableTreatment(
+            "on-label experimental",
+            evidenceLevel = EvidenceLevel.A,
+            category = ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL
+        )
+        val offLabelExperimental = ActionableTreatment(
+            "off-label experimental",
+            evidenceLevel = EvidenceLevel.A,
+            category = ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL
+        )
+        val preClinical = ActionableTreatment(
+            "off-label experimental",
+            evidenceLevel = EvidenceLevel.A,
+            category = ActinEvidenceCategory.PRE_CLINICAL
+        )
+        val knownResistant = ActionableTreatment(
+            "off-label experimental",
+            evidenceLevel = EvidenceLevel.A,
+            category = ActinEvidenceCategory.KNOWN_RESISTANT
+        )
+        val suspectResistant = ActionableTreatment(
+            "off-label experimental",
+            evidenceLevel = EvidenceLevel.A,
+            category = ActinEvidenceCategory.SUSPECT_RESISTANT
+        )
         val evidence = ActionableEvidence(
-            approvedTreatments = setOf("approved"),
-            onLabelExperimentalTreatments = setOf("approved", "on-label experimental"),
-            offLabelExperimentalTreatments = setOf("approved", "off-label experimental"),
-            preClinicalTreatments = setOf("approved", "on-label experimental", "off-label experimental", "pre-clinical"),
-            knownResistantTreatments = setOf("known resistant"),
-            suspectResistantTreatments = setOf("known resistant", "suspect resistant")
+            actionableTreatments = setOf(
+                approved,
+                approved.copy(category = ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL),
+                onLabelExperimental,
+                approved.copy(category = ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL),
+                offLabelExperimental,
+                approved.copy(category = ActinEvidenceCategory.PRE_CLINICAL),
+                onLabelExperimental.copy(category = ActinEvidenceCategory.PRE_CLINICAL),
+                offLabelExperimental.copy(category = ActinEvidenceCategory.PRE_CLINICAL),
+                preClinical,
+                knownResistant,
+                knownResistant.copy(category = ActinEvidenceCategory.KNOWN_RESISTANT),
+                suspectResistant
+            )
         )
 
         val filtered = ActionableEvidenceFactory.filterRedundantLowerEvidence(evidence)
-        assertThat(filtered.approvedTreatments()).containsExactly("approved")
-        assertThat(filtered.onLabelExperimentalTreatments()).containsExactly("on-label experimental")
-        assertThat(filtered.offLabelExperimentalTreatments()).containsExactly("off-label experimental")
-        assertThat(filtered.preClinicalTreatments()).containsExactly("pre-clinical")
-        assertThat(filtered.knownResistantTreatments()).containsExactly("known resistant")
-        assertThat(filtered.suspectResistantTreatments()).containsExactly("suspect resistant")
+        assertThat(filtered.approvedTreatments()).containsExactly(approved.name)
+        assertThat(filtered.onLabelExperimentalTreatments()).containsExactly(onLabelExperimental.name)
+        assertThat(filtered.offLabelExperimentalTreatments()).containsExactly(offLabelExperimental.name)
+        assertThat(filtered.preClinicalTreatments()).containsExactly(preClinical.name)
+        assertThat(filtered.knownResistantTreatments()).containsExactly(knownResistant.name)
+        assertThat(filtered.suspectResistantTreatments()).containsExactly(suspectResistant.name)
     }
 
     private fun evidence(treatment: String, level: EvidenceLevel, direction: EvidenceDirection): ActionableEvent {
@@ -160,5 +208,5 @@ class ActionableEvidenceFactoryTest {
             .from(TestServeFactory.createEmptyGeneAnnotation())
             .direction(direction)
             .build()
-    }*/
+    }
 }

@@ -5,15 +5,15 @@ import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
+import com.hartwig.serve.datamodel.EvidenceLevel
 import com.itextpdf.layout.element.Table
 
 data class ClinicalDetails(
     val treatment: String,
-    val approved: Boolean,
-    val onLabel: Boolean,
-    val offLabel: Boolean,
-    val preClinical: Boolean,
-    val resistant: Boolean
+    val evidenceLevelA: Boolean,
+    val evidenceLevelB: Boolean,
+    val evidenceLevelC: Boolean,
+    val evidenceLevelD: Boolean,
 )
 
 const val CHECKED = "X"
@@ -28,10 +28,10 @@ class MolecularClinicalEvidenceGenerator(val molecularHistory: MolecularHistory,
     override fun contents(): Table {
         val allDrivers =
             DriverTableFunctions.allDrivers(molecularHistory).flatMap { it.second }.toSortedSet(Comparator.comparing { it.event })
-        val columnCount = 7
+        val columnCount = 6
         val table = Table(columnCount).setWidth(width)
         listOf(
-            "Variant", "Treatment", "Approved", "On-label Experimental", "Off-label Experimental", "Pre-clinical", "Resistant"
+            "Variant", "Treatment", "Level A", "Level B", "Level C", "Level D"
         )
             .map(Cells::createHeader)
             .forEach(table::addHeaderCell)
@@ -39,15 +39,14 @@ class MolecularClinicalEvidenceGenerator(val molecularHistory: MolecularHistory,
         val driverWithClinicalDetails = allDrivers.map { it to extractClinicalDetails(it.evidence) }.sortedWith(comparator())
         for ((driver, clinicalDetails) in driverWithClinicalDetails) {
             if (clinicalDetails.isNotEmpty()) {
-                table.addCell(Cells.createContent(driver.event))
+                table.addCell(Cells.createContent("${driver.event} - Tier ${driver.evidence.evidenceTier()}"))
                 for ((rowCount, clinicalDetail) in clinicalDetails.withIndex()) {
                     val rowContent = with(clinicalDetail) {
                         listOf(treatment) + listOf(
-                            approved,
-                            onLabel,
-                            offLabel,
-                            preClinical,
-                            resistant
+                            evidenceLevelA,
+                            evidenceLevelB,
+                            evidenceLevelC,
+                            evidenceLevelD
                         ).map(::formatBoolean)
                     }
                     val cells = if (rowCount > 0) {
@@ -63,32 +62,33 @@ class MolecularClinicalEvidenceGenerator(val molecularHistory: MolecularHistory,
     }
 
     private fun comparator() =
-        Comparator.comparing<Pair<Driver, Set<ClinicalDetails>>?, Boolean?> { it.second.any { c -> c.approved } }
-            .thenComparing(Comparator.comparing { it.second.any { c -> c.onLabel } })
-            .thenComparing(Comparator.comparing { it.second.any { c -> c.offLabel } })
-            .thenComparing(Comparator.comparing { it.second.any { c -> c.preClinical } }).reversed()
+        Comparator.comparing<Pair<Driver, Set<ClinicalDetails>>?, Boolean?> { it.second.any { c -> c.evidenceLevelA } }
+            .thenComparing(Comparator.comparing { it.second.any { c -> c.evidenceLevelB } })
+            .thenComparing(Comparator.comparing { it.second.any { c -> c.evidenceLevelC } })
+            .thenComparing(Comparator.comparing { it.second.any { c -> c.evidenceLevelD } }).reversed()
 
     private fun formatBoolean(boolean: Boolean) = if (boolean) CHECKED else UNCHECKED
 
     private fun extractClinicalDetails(evidence: ActionableEvidence): Set<ClinicalDetails> {
-        val truncatedApproved = truncatedTreatments(evidence.approvedTreatments())
-        val truncatedOnLabel = truncatedTreatments(evidence.onLabelExperimentalTreatments())
-        val truncatedOffLabel = truncatedTreatments(evidence.offLabelExperimentalTreatments())
-        val truncatedPreClinical = truncatedTreatments(evidence.preClinicalTreatments())
-        val truncatedResistant = truncatedTreatments(evidence.knownResistantTreatments())
+        val evidenceLevelA = truncatedTreatments(treatmentsForEvidenceLevel(evidence, EvidenceLevel.A))
+        val evidenceLevelB = truncatedTreatments(treatmentsForEvidenceLevel(evidence, EvidenceLevel.B))
+        val evidenceLevelC = truncatedTreatments(treatmentsForEvidenceLevel(evidence, EvidenceLevel.C))
+        val evidenceLevelD = truncatedTreatments(treatmentsForEvidenceLevel(evidence, EvidenceLevel.D))
         val allTreatments =
-            truncatedApproved + truncatedOnLabel + truncatedOffLabel + truncatedPreClinical + truncatedResistant
+            evidenceLevelA + evidenceLevelB + evidenceLevelC + evidenceLevelD
         return allTreatments.map {
             ClinicalDetails(
                 it,
-                truncatedApproved.contains(it),
-                truncatedOnLabel.contains(it),
-                truncatedOffLabel.contains(it),
-                truncatedPreClinical.contains(it),
-                truncatedResistant.contains(it)
+                evidenceLevelA.contains(it),
+                evidenceLevelB.contains(it),
+                evidenceLevelC.contains(it),
+                evidenceLevelD.contains(it),
             )
         }.toSet()
     }
 
-    private fun truncatedTreatments(treatments: Set<String>) = if (treatments.size > 2) listOf("<many>") else treatments.toList()
+    private fun treatmentsForEvidenceLevel(evidence: ActionableEvidence, evidenceLevel: EvidenceLevel) =
+        evidence.actionableTreatments.filter { it.evidenceLevel == evidenceLevel }.map { it.name }.toSet()
+
+    private fun truncatedTreatments(treatments: Set<String>) = if (treatments.size > 4) listOf("<many>") else treatments.toList()
 }

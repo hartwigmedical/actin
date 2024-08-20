@@ -12,18 +12,18 @@ object TestActionableEvidenceFactory {
         return ActionableEvidence(
             actionableTreatments = setOf(
                 treatment("approved", ActinEvidenceCategory.APPROVED),
-                ActionableTreatment("on-label", EvidenceLevel.A, EvidenceTier.I, ActinEvidenceCategory.ON_LABEL),
-                ActionableTreatment("off-label", EvidenceLevel.A, EvidenceTier.I, ActinEvidenceCategory.OFF_LABEL),
-                ActionableTreatment("pre-clinical", EvidenceLevel.A, EvidenceTier.I, ActinEvidenceCategory.PRE_CLINICAL),
-                ActionableTreatment("known resistant", EvidenceLevel.A, EvidenceTier.I, ActinEvidenceCategory.KNOWN_RESISTANT),
-                ActionableTreatment("suspect resistant", EvidenceLevel.A, EvidenceTier.I, ActinEvidenceCategory.SUSPECT_RESISTANT),
+                ActionableTreatment("on-label", EvidenceLevel.A, ActinEvidenceCategory.ON_LABEL),
+                ActionableTreatment("off-label", EvidenceLevel.A, ActinEvidenceCategory.OFF_LABEL),
+                ActionableTreatment("pre-clinical", EvidenceLevel.A, ActinEvidenceCategory.PRE_CLINICAL),
+                ActionableTreatment("known resistant", EvidenceLevel.A, ActinEvidenceCategory.KNOWN_RESISTANT),
+                ActionableTreatment("suspect resistant", EvidenceLevel.A, ActinEvidenceCategory.SUSPECT_RESISTANT),
             ),
             externalEligibleTrials = setOf(TestExternalTrialFactory.createTestTrial()),
         )
     }
 
     private fun treatment(name: String, category: ActinEvidenceCategory) =
-        ActionableTreatment(name, EvidenceLevel.A, EvidenceTier.I, category)
+        ActionableTreatment(name, EvidenceLevel.A, category)
 
     fun withApprovedTreatment(treatment: String): ActionableEvidence {
         return ActionableEvidence(actionableTreatments = setOf(treatment(treatment, ActinEvidenceCategory.APPROVED)))

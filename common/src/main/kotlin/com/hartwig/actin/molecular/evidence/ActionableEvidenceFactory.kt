@@ -4,7 +4,6 @@ import com.hartwig.actin.molecular.datamodel.evidence.ActinEvidenceCategory
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableTreatment
 import com.hartwig.actin.molecular.datamodel.evidence.Country
-import com.hartwig.actin.molecular.datamodel.evidence.EvidenceTier
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
@@ -23,10 +22,7 @@ object ActionableEvidenceFactory {
         val onLabelEvidence = createOnLabelEvidence(actionabilityMatch.onLabelEvents)
         val offLabelEvidence = createOffLabelEvidence(actionabilityMatch.offLabelEvents)
         val externalTrialEvidence = createExternalTrialEvidence(actionabilityMatch.onLabelEvents)
-        val merged = onLabelEvidence + offLabelEvidence + externalTrialEvidence
-        val filtered1 = filterRedundantLowerEvidence(merged)
-        val filtered2 = filterResistanceEvidence(filtered1)
-        return merged
+        return onLabelEvidence + offLabelEvidence + externalTrialEvidence
     }
 
     private fun createOnLabelEvidence(onLabelEvents: List<ActionableEvent>): ActionableEvidence {
@@ -94,13 +90,13 @@ object ActionableEvidenceFactory {
                 if (onLabelResponsiveEvent.direction().isCertain) {
                     ActionableEvidence(
                         actionableTreatments = setOf(
-                            ActionableTreatment(treatment, EvidenceLevel.A, EvidenceTier.I, ActinEvidenceCategory.APPROVED)
+                            ActionableTreatment(treatment, onLabelResponsiveEvent.level(), ActinEvidenceCategory.APPROVED)
                         )
                     )
                 } else {
                     ActionableEvidence(
                         actionableTreatments = setOf(
-                            ActionableTreatment(treatment, EvidenceLevel.B, EvidenceTier.I, ActinEvidenceCategory.ON_LABEL)
+                            ActionableTreatment(treatment, onLabelResponsiveEvent.level(), ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL)
                         )
                     )
                 }
@@ -112,8 +108,7 @@ object ActionableEvidenceFactory {
                         actionableTreatments = setOf(
                             ActionableTreatment(
                                 treatment,
-                                EvidenceLevel.B,
-                                EvidenceTier.I,
+                                onLabelResponsiveEvent.level(),
                                 ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL
                             )
                         )
@@ -121,7 +116,7 @@ object ActionableEvidenceFactory {
                 } else {
                     ActionableEvidence(
                         actionableTreatments = setOf(
-                            ActionableTreatment(treatment, EvidenceLevel.B, EvidenceTier.I, ActinEvidenceCategory.PRE_CLINICAL)
+                            ActionableTreatment(treatment, onLabelResponsiveEvent.level(), ActinEvidenceCategory.PRE_CLINICAL)
                         )
                     )
                 }
@@ -130,7 +125,7 @@ object ActionableEvidenceFactory {
             else -> {
                 ActionableEvidence(
                     actionableTreatments = setOf(
-                        ActionableTreatment(treatment, EvidenceLevel.B, EvidenceTier.I, ActinEvidenceCategory.PRE_CLINICAL)
+                        ActionableTreatment(treatment, onLabelResponsiveEvent.level(), ActinEvidenceCategory.PRE_CLINICAL)
                     )
                 )
             }
@@ -143,7 +138,7 @@ object ActionableEvidenceFactory {
             EvidenceLevel.A -> {
                 ActionableEvidence(
                     actionableTreatments = setOf(
-                        ActionableTreatment(treatment, EvidenceLevel.B, EvidenceTier.I, ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL)
+                        ActionableTreatment(treatment, offLabelResponsiveEvent.level(), ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL)
                     )
                 )
             }
@@ -154,8 +149,7 @@ object ActionableEvidenceFactory {
                         actionableTreatments = setOf(
                             ActionableTreatment(
                                 treatment,
-                                EvidenceLevel.B,
-                                EvidenceTier.I,
+                                offLabelResponsiveEvent.level(),
                                 ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL
                             )
                         )
@@ -165,8 +159,7 @@ object ActionableEvidenceFactory {
                         actionableTreatments = setOf(
                             ActionableTreatment(
                                 treatment,
-                                EvidenceLevel.B,
-                                EvidenceTier.I,
+                                offLabelResponsiveEvent.level(),
                                 ActinEvidenceCategory.PRE_CLINICAL
                             )
                         )
@@ -180,7 +173,6 @@ object ActionableEvidenceFactory {
                         ActionableTreatment(
                             treatment,
                             offLabelResponsiveEvent.level(),
-                            EvidenceTier.II,
                             ActinEvidenceCategory.PRE_CLINICAL
                         )
                     )
@@ -199,7 +191,6 @@ object ActionableEvidenceFactory {
                             ActionableTreatment(
                                 treatment,
                                 resistanceEvent.level(),
-                                EvidenceTier.I,
                                 ActinEvidenceCategory.KNOWN_RESISTANT
                             )
                         )
@@ -210,7 +201,6 @@ object ActionableEvidenceFactory {
                             ActionableTreatment(
                                 treatment,
                                 resistanceEvent.level(),
-                                EvidenceTier.I,
                                 ActinEvidenceCategory.SUSPECT_RESISTANT
                             )
                         )
@@ -224,7 +214,6 @@ object ActionableEvidenceFactory {
                         ActionableTreatment(
                             treatment,
                             resistanceEvent.level(),
-                            EvidenceTier.II,
                             ActinEvidenceCategory.SUSPECT_RESISTANT
                         )
                     )
