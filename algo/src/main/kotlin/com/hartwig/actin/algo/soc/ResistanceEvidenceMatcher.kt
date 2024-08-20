@@ -6,12 +6,12 @@ import com.hartwig.actin.algo.datamodel.ResistanceEvidence
 import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.evidence.actionability.BreakendEvidence
 import com.hartwig.actin.molecular.evidence.actionability.CopyNumberEvidence
 import com.hartwig.actin.molecular.evidence.actionability.FusionEvidence
 import com.hartwig.actin.molecular.evidence.actionability.HomozygousDisruptionEvidence
 import com.hartwig.actin.molecular.evidence.actionability.VariantEvidence
-import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.evidence.orange.MolecularRecordAnnotatorFunctions
 import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.ActionableEvents

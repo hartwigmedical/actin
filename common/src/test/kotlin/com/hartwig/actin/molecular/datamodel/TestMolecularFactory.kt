@@ -316,13 +316,5 @@ object TestMolecularFactory {
             )
         )
     }
-
-    fun freeTextPriorMolecularFusionRecord(geneStart: String, geneEnd: String) = TestPanelRecordFactory.empty().copy(
-        panelExtraction =
-        GenericPanelExtraction(
-            fusions = listOf(PanelFusionExtraction(geneStart, geneEnd)),
-            panelType = FREE_TEXT_PANEL
-        )
-    )
 }
 

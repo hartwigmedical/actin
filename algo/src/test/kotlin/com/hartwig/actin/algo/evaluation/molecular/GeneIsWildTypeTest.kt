@@ -4,8 +4,11 @@ import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.Drivers
 import com.hartwig.actin.molecular.datamodel.GeneRole
+import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.TestPanelRecordFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
@@ -223,7 +226,13 @@ class GeneIsWildTypeTest {
     @Test
     fun `Should pass for tested gene having no event in panel `() {
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
-            .copy(molecularHistory = MolecularHistoryFactory.withArcherFusion("EGFR"))
+            .copy(
+                molecularHistory = MolecularHistory(
+                    molecularTests = listOf(
+                        TestPanelRecordFactory.empty().copy(testedGenes = setOf("ALK"))
+                    )
+                )
+            )
         val evaluationResult = GeneIsWildType("ALK").evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.PASS, evaluationResult)
     }
@@ -231,26 +240,68 @@ class GeneIsWildTypeTest {
     @Test
     fun `Should be undetermined for gene not tested in panel`() {
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
-            .copy(molecularHistory = MolecularHistoryFactory.withEmptyArcherPanel())
-        val evaluationResult = function.evaluate(patient)
+            .copy(
+                molecularHistory = MolecularHistory(
+                    molecularTests = listOf(
+                        TestPanelRecordFactory.empty().copy(testedGenes = setOf("ALK"))
+                    )
+                )
+            )
+        val evaluationResult = GeneIsWildType("EGFR").evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluationResult)
     }
 
     @Test
-    fun `Should fail for gene with variant in archer panels`() {
+    fun `Should fail for gene with variant in panels`() {
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
-            .copy(molecularHistory = MolecularHistoryFactory.withArcherVariant(MATCHING_GENE, "c.1234A>T"))
-
-        val evaluationResult = function.evaluate(patient)
+            .copy(
+                molecularHistory = MolecularHistory(
+                    molecularTests = listOf(
+                        TestPanelRecordFactory.empty().copy(
+                            testedGenes = setOf("ALK"),
+                            drivers = Drivers(
+                                variants = setOf(
+                                    TestVariantFactory.createMinimal()
+                                        .copy(
+                                            gene = "ALK",
+                                            isReportable = true,
+                                            proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+                                            driverLikelihood = DriverLikelihood.HIGH
+                                        )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        val evaluationResult = GeneIsWildType("ALK").evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.FAIL, evaluationResult)
     }
 
     @Test
-    fun `Should fail for gene with fusion in archer panels`() {
+    fun `Should fail for gene with fusion in panels`() {
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
-            .copy(molecularHistory = MolecularHistoryFactory.withArcherFusion(MATCHING_GENE))
-
-        val evaluationResult = function.evaluate(patient)
+            .copy(
+                molecularHistory = MolecularHistory(
+                    molecularTests = listOf(
+                        TestPanelRecordFactory.empty().copy(
+                            testedGenes = setOf("ALK"),
+                            drivers = Drivers(
+                                fusions = setOf(
+                                    TestFusionFactory.createMinimal().copy(
+                                        geneEnd = "ALK",
+                                        geneStart = "EML4",
+                                        isReportable = true,
+                                        proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+                                        driverLikelihood = DriverLikelihood.HIGH
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        val evaluationResult = GeneIsWildType("ALK").evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.FAIL, evaluationResult)
     }
 }

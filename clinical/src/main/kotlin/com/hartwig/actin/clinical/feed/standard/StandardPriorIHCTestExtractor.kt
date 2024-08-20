@@ -26,18 +26,7 @@ class StandardPriorIHCTestExtractor(
             ) { acc, result ->
                 ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
             }
-
-        val extractedOtherMolecularTestsLegacy = ehrPatientRecord.molecularTestHistory.map {
-            PriorIHCTest(
-                test = it.type,
-                item = it.measure,
-                measure = it.result,
-                measureDate = it.resultDate,
-                impliesPotentialIndeterminateStatus = false,
-                scoreText = it.resultType
-            )
-        }
-
+        
         val extractedIHCTests = ehrPatientRecord.molecularTests.asSequence()
             .flatMap { it.results }
             .mapNotNull { it.ihcResult }
@@ -57,7 +46,7 @@ class StandardPriorIHCTestExtractor(
             }
 
         return ExtractionResult(
-            curatedMolecularTestExtraction.extracted + extractedOtherMolecularTestsLegacy + extractedIHCTests.extracted,
+            curatedMolecularTestExtraction.extracted + extractedIHCTests.extracted,
             curatedMolecularTestExtraction.evaluation + extractedIHCTests.evaluation
         )
     }

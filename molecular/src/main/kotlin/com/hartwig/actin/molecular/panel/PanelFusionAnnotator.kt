@@ -1,12 +1,12 @@
-package com.hartwig.actin.molecular.priormoleculartest
+package com.hartwig.actin.molecular.panel
 
+import com.hartwig.actin.clinical.datamodel.SequencedFusion
+import com.hartwig.actin.clinical.datamodel.SequencedSkippedExons
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.Fusion
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
-import com.hartwig.actin.molecular.datamodel.panel.PanelFusionExtraction
-import com.hartwig.actin.molecular.datamodel.panel.PanelSkippedExonsExtraction
 import com.hartwig.actin.molecular.evidence.ActionableEvidenceFactory
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
@@ -21,13 +21,13 @@ class PanelFusionAnnotator(
     private val knownFusionCache: KnownFusionCache,
     private val ensembleDataCache: EnsemblDataCache
 ) {
-    fun annotate(fusions: List<PanelFusionExtraction>, skippedExons: List<PanelSkippedExonsExtraction>): Set<Fusion> {
+    fun annotate(fusions: Set<SequencedFusion>, skippedExons: Set<SequencedSkippedExons>): Set<Fusion> {
         return (fusions.map { createFusion(it) } + skippedExons.map { createFusionFromExonSkip(it) })
             .map { annotateFusion(it) }
             .toSet()
     }
 
-    fun fusionDriverLikelihood(driverType: FusionDriverType): DriverLikelihood? {
+    fun fusionDriverLikelihood(driverType: FusionDriverType): DriverLikelihood {
         return when (driverType) {
             FusionDriverType.KNOWN_PAIR,
             FusionDriverType.KNOWN_PAIR_IG,
@@ -37,21 +37,21 @@ class PanelFusionAnnotator(
         }
     }
 
-    private fun createFusion(panelFusionExtraction: PanelFusionExtraction): Fusion {
-        if (panelFusionExtraction.geneUp == null && panelFusionExtraction.geneDown == null) {
+    private fun createFusion(sequencedFusion: SequencedFusion): Fusion {
+        if (sequencedFusion.geneUp == null && sequencedFusion.geneDown == null) {
             throw IllegalArgumentException("Invalid fusion, no genes provided")
         }
 
         val isReportable = true
-        val driverType = determineFusionDriverType(panelFusionExtraction.geneUp, panelFusionExtraction.geneDown)
+        val driverType = determineFusionDriverType(sequencedFusion.geneUp, sequencedFusion.geneDown)
 
         return Fusion(
-            geneStart = panelFusionExtraction.geneUp ?: "",
-            geneEnd = panelFusionExtraction.geneDown ?: "",
+            geneStart = sequencedFusion.geneUp ?: "",
+            geneEnd = sequencedFusion.geneDown ?: "",
             driverType = driverType,
             proteinEffect = ProteinEffect.UNKNOWN,
             isReportable = isReportable,
-            event = panelFusionExtraction.display(),
+            event = sequencedFusion.display(),
             driverLikelihood = if (isReportable) fusionDriverLikelihood(driverType) else null,
             evidence = ActionableEvidenceFactory.createNoEvidence(),
             isAssociatedWithDrugResistance = null,
@@ -82,29 +82,29 @@ class PanelFusionAnnotator(
         return FusionDriverType.NONE
     }
 
-    private fun createFusionFromExonSkip(panelSkippedExonsExtraction: PanelSkippedExonsExtraction): Fusion {
+    private fun createFusionFromExonSkip(sequencedSkippedExons: SequencedSkippedExons): Fusion {
         val isReportable = true
-        val driverType = determineFusionDriverType(panelSkippedExonsExtraction.gene, panelSkippedExonsExtraction.gene)
-        val transcript = panelSkippedExonsExtraction.transcript ?: run {
-            LOGGER.warn("No transcript provided for panel skipped exons in gene ${panelSkippedExonsExtraction.gene}, using canonical transcript")
-            canonicalTranscriptForGene(panelSkippedExonsExtraction.gene)
+        val driverType = determineFusionDriverType(sequencedSkippedExons.gene, sequencedSkippedExons.gene)
+        val transcript = sequencedSkippedExons.transcript ?: run {
+            LOGGER.warn("No transcript provided for panel skipped exons in gene ${sequencedSkippedExons.gene}, using canonical transcript")
+            canonicalTranscriptForGene(sequencedSkippedExons.gene)
         }
 
         return Fusion(
-            geneStart = panelSkippedExonsExtraction.gene,
-            geneEnd = panelSkippedExonsExtraction.gene,
+            geneStart = sequencedSkippedExons.gene,
+            geneEnd = sequencedSkippedExons.gene,
             driverType = driverType,
             proteinEffect = ProteinEffect.UNKNOWN,
             isReportable = isReportable,
-            event = panelSkippedExonsExtraction.display(),
+            event = sequencedSkippedExons.display(),
             driverLikelihood = if (isReportable) fusionDriverLikelihood(driverType) else null,
             evidence = ActionableEvidenceFactory.createNoEvidence(),
             isAssociatedWithDrugResistance = null,
             extendedFusionDetails = ExtendedFusionDetails(
                 transcript,
                 transcript,
-                panelSkippedExonsExtraction.start,
-                panelSkippedExonsExtraction.end
+                sequencedSkippedExons.exonStart,
+                sequencedSkippedExons.exonEnd
             )
         )
     }

@@ -1,5 +1,10 @@
-package com.hartwig.actin.molecular.priormoleculartest
+package com.hartwig.actin.molecular.panel
 
+import com.hartwig.actin.clinical.datamodel.PriorSequencingTest
+import com.hartwig.actin.clinical.datamodel.SequencedAmplification
+import com.hartwig.actin.clinical.datamodel.SequencedFusion
+import com.hartwig.actin.clinical.datamodel.SequencedSkippedExons
+import com.hartwig.actin.clinical.datamodel.SequencedVariant
 import com.hartwig.actin.molecular.datamodel.CodingEffect
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.Fusion
@@ -9,15 +14,10 @@ import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.panel.PanelAmplificationExtraction
-import com.hartwig.actin.molecular.datamodel.panel.PanelFusionExtraction
-import com.hartwig.actin.molecular.datamodel.panel.PanelSkippedExonsExtraction
-import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
-import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
+import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
+import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.serve.datamodel.EvidenceDirection
 import com.hartwig.serve.datamodel.EvidenceLevel
@@ -35,7 +35,7 @@ private const val OTHER_GENE = "other_gene"
 private const val CHROMOSOME = "1"
 private const val POSITION = 1
 private val EMPTY_MATCH = ActionabilityMatch(emptyList(), emptyList())
-private val ARCHER_VARIANT = PanelVariantExtraction(GENE, HGVS_CODING)
+private val ARCHER_VARIANT = SequencedVariant(GENE, HGVS_CODING)
 private val VARIANT_MATCH_CRITERIA =
     VariantMatchCriteria(
         isReportable = true,
@@ -47,7 +47,7 @@ private val VARIANT_MATCH_CRITERIA =
         codingEffect = CodingEffect.MISSENSE,
         type = VariantType.SNV
     )
-private val ARCHER_FUSION = PanelFusionExtraction(GENE, OTHER_GENE)
+private val ARCHER_FUSION = SequencedFusion(GENE, OTHER_GENE)
 
 private val HOTSPOT = TestServeKnownFactory.hotspotBuilder().build()
     .withGeneRole(ServeGeneRole.ONCO)
@@ -60,7 +60,7 @@ private val ACTIONABILITY_MATCH = ActionabilityMatch(
     ), offLabelEvents = emptyList()
 )
 
-private val ARCHER_SKIPPED_EXON = PanelSkippedExonsExtraction(GENE, 2, 3)
+private val ARCHER_SKIPPED_EXON = SequencedSkippedExons(GENE, 2, 3)
 
 class PanelAnnotatorTest {
 
@@ -85,27 +85,27 @@ class PanelAnnotatorTest {
     @Test
     fun `Should annotate variant`() {
         val expected = mockk<Variant>()
-        every { panelVariantAnnotator.annotate(listOf(ARCHER_VARIANT)) } returns setOf(expected)
+        every { panelVariantAnnotator.annotate(setOf(ARCHER_VARIANT)) } returns setOf(expected)
 
-        val annotatedPanel = annotator.annotate(ArcherPanelExtraction(variants = listOf(ARCHER_VARIANT)))
+        val annotatedPanel = annotator.annotate(PriorSequencingTest(test = "test", variants = setOf(ARCHER_VARIANT)))
         assertThat(annotatedPanel.drivers.variants).isEqualTo(setOf(expected))
     }
 
     @Test
     fun `Should annotate fusion`() {
         val expected = mockk<Fusion>()
-        every { panelFusionAnnotator.annotate(listOf(ARCHER_FUSION), emptyList()) } returns setOf(expected)
+        every { panelFusionAnnotator.annotate(setOf(ARCHER_FUSION), emptySet()) } returns setOf(expected)
 
-        val annotatedPanel = annotator.annotate(ArcherPanelExtraction(fusions = listOf(ARCHER_FUSION)))
+        val annotatedPanel = annotator.annotate(PriorSequencingTest(test = "test", fusions = setOf(ARCHER_FUSION)))
         assertThat(annotatedPanel.drivers.fusions).isEqualTo(setOf(expected))
     }
 
     @Test
     fun `Should annotate exon skip`() {
         val expected = mockk<Fusion>()
-        every { panelFusionAnnotator.annotate(emptyList(), listOf(ARCHER_SKIPPED_EXON)) } returns setOf(expected)
+        every { panelFusionAnnotator.annotate(emptySet(), setOf(ARCHER_SKIPPED_EXON)) } returns setOf(expected)
 
-        val annotatedPanel = annotator.annotate(ArcherPanelExtraction(skippedExons = listOf(ARCHER_SKIPPED_EXON)))
+        val annotatedPanel = annotator.annotate(PriorSequencingTest(test = "test", skippedExons = setOf(ARCHER_SKIPPED_EXON)))
         assertThat(annotatedPanel.drivers.fusions).isEqualTo(setOf(expected))
     }
 
@@ -116,7 +116,7 @@ class PanelAnnotatorTest {
         every { evidenceDatabase.geneAlterationForCopyNumber(capture(unannotatedCopyNumberSlot)) } returns HOTSPOT
         every { evidenceDatabase.evidenceForCopyNumber(capture(unannotatedCopyNumberSlot)) } returns ACTIONABILITY_MATCH
 
-        val annotated = annotator.annotate(ArcherPanelExtraction(amplifications = listOf(PanelAmplificationExtraction(GENE))))
+        val annotated = annotator.annotate(PriorSequencingTest(test = "test", amplifications = setOf(SequencedAmplification(GENE))))
         val annotatedVariant = annotated.drivers.copyNumbers.first()
         assertCopyNumber(unannotatedCopyNumberSlot[0])
         assertCopyNumber(unannotatedCopyNumberSlot[1])

@@ -1,17 +1,17 @@
-package com.hartwig.actin.molecular.priormoleculartest
+package com.hartwig.actin.molecular.panel
 
+import com.hartwig.actin.clinical.datamodel.PriorSequencingTest
+import com.hartwig.actin.clinical.datamodel.SequencedAmplification
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.Drivers
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
+import com.hartwig.actin.molecular.datamodel.PanelRecord
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.panel.PanelAmplificationExtraction
-import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 import com.hartwig.actin.molecular.evidence.ActionableEvidenceFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
@@ -26,17 +26,17 @@ class PanelAnnotator(
     private val panelVariantAnnotator: PanelVariantAnnotator,
     private val panelFusionAnnotator: PanelFusionAnnotator
 ) :
-    MolecularAnnotator<PanelExtraction, PanelRecord> {
+    MolecularAnnotator<PriorSequencingTest, PanelRecord> {
 
-    override fun annotate(input: PanelExtraction): PanelRecord {
+    override fun annotate(input: PriorSequencingTest): PanelRecord {
         val annotatedVariants = panelVariantAnnotator.annotate(input.variants)
         val annotatedAmplifications = input.amplifications.map(::inferredCopyNumber).map(::annotatedInferredCopyNumber)
         val annotatedFusions = panelFusionAnnotator.annotate(input.fusions, input.skippedExons)
 
         return PanelRecord(
-            panelExtraction = input,
+            testedGenes = input.testedGenes ?: emptySet(),
             experimentType = ExperimentType.PANEL,
-            testTypeDisplay = input.panelType,
+            testTypeDisplay = input.test,
             date = input.date,
             drivers = Drivers(
                 variants = annotatedVariants,
@@ -63,13 +63,13 @@ class PanelAnnotator(
         )
     }
 
-    private fun inferredCopyNumber(panelAmplificationExtraction: PanelAmplificationExtraction) = CopyNumber(
+    private fun inferredCopyNumber(panelAmplificationExtraction: SequencedAmplification) = CopyNumber(
         gene = panelAmplificationExtraction.gene,
         geneRole = GeneRole.UNKNOWN,
         proteinEffect = ProteinEffect.UNKNOWN,
         isAssociatedWithDrugResistance = null,
         isReportable = true,
-        event = panelAmplificationExtraction.display(),
+        event = panelAmplificationExtraction.gene,
         driverLikelihood = DriverLikelihood.HIGH,
         evidence = ActionableEvidenceFactory.createNoEvidence(),
         type = CopyNumberType.FULL_GAIN,

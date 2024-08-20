@@ -27,7 +27,7 @@ class HasKnownHPVStatusTest {
         val record = MolecularTestFactory.withExperimentTypeAndContainingTumorCells(
             ExperimentType.HARTWIG_WHOLE_GENOME, false
         ).copy(
-            priorIHCTests = listOf(MolecularTestFactory.priorMolecularTest(test = "IHC", item = "Something"))
+            priorIHCTests = listOf(MolecularTestFactory.priorIHCTest(test = "IHC", item = "Something"))
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
     }
@@ -39,7 +39,7 @@ class HasKnownHPVStatusTest {
         ).copy(
             priorIHCTests =
             listOf(
-                MolecularTestFactory.priorMolecularTest(
+                MolecularTestFactory.priorIHCTest(
                     test = "IHC", item = "HPV", impliesIndeterminate = true
                 )
             )
@@ -53,7 +53,7 @@ class HasKnownHPVStatusTest {
             ExperimentType.HARTWIG_WHOLE_GENOME, false
         ).copy(
             priorIHCTests = listOf(
-                MolecularTestFactory.priorMolecularTest(
+                MolecularTestFactory.priorIHCTest(
                     test = "IHC", item = "HPV", impliesIndeterminate = false
                 )
             )
@@ -64,7 +64,7 @@ class HasKnownHPVStatusTest {
     @Test
     fun `Should pass if no WGS performed but correct test is in priorMolecularTest`() {
         val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-            priorIHCTests = listOf(MolecularTestFactory.priorMolecularTest(test = "IHC", item = "HPV", impliesIndeterminate = false))
+            priorIHCTests = listOf(MolecularTestFactory.priorIHCTest(test = "IHC", item = "HPV", impliesIndeterminate = false))
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
     }
@@ -76,7 +76,7 @@ class HasKnownHPVStatusTest {
             function.evaluate(
                 TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
                     priorIHCTests = listOf(
-                        MolecularTestFactory.priorMolecularTest(
+                        MolecularTestFactory.priorIHCTest(
                             test = "IHC",
                             item = "Something",
                             impliesIndeterminate = false

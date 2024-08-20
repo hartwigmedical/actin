@@ -9,8 +9,8 @@ import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.datamodel.orange.driver.VirusType
-import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.TestEvidenceDatabaseFactory
+import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

@@ -60,7 +60,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.HAS_TOTAL_BILIRUBIN_UMOL_PER_L_OF_AT_MOST_X to hasLimitedLabValueCreator(LabMeasurement.TOTAL_BILIRUBIN),
             EligibilityRule.HAS_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.DIRECT_BILIRUBIN),
             EligibilityRule.HAS_DIRECT_BILIRUBIN_PERCENTAGE_OF_TOTAL_OF_AT_MOST_X to hasLimitedBilirubinPercentageCreator(),
-            EligibilityRule.HAS_INDIRECT_BILIRUBIN_ULN_OF_AT_MOST_X to undeterminedLabValueCreator("indirect bilirubin"),
+            EligibilityRule.HAS_INDIRECT_BILIRUBIN_ULN_OF_AT_MOST_X to hasLimitedIndirectBilirubinCreator(),
             EligibilityRule.HAS_CREATININE_MG_PER_DL_OF_AT_MOST_X to hasLimitedLabValueCreator(
                 LabMeasurement.CREATININE,
                 LabUnit.MILLIGRAMS_PER_DECILITER
@@ -196,6 +196,13 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         return { function: EligibilityFunction ->
             val maxPercentage = functionInputResolver().createOneDoubleInput(function)
             createLabEvaluator(LabMeasurement.DIRECT_BILIRUBIN, HasLimitedBilirubinPercentageOfTotal(maxPercentage, minValidLabDate()))
+        }
+    }
+
+    private fun hasLimitedIndirectBilirubinCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val maxValue = functionInputResolver().createOneDoubleInput(function)
+            createLabEvaluator(LabMeasurement.DIRECT_BILIRUBIN, HasLimitedIndirectBilirubinULN(maxValue, minValidLabDate()))
         }
     }
 
