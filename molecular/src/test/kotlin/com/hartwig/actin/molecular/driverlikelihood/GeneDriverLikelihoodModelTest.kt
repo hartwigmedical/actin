@@ -202,16 +202,39 @@ class GeneDriverLikelihoodModelTest {
         )
     }
 
+    @Test
+    fun `Should evaluate variant with unknown coding effect`() {
+        val model = GeneDriverLikelihoodModel(
+            DndsDatabase(
+                emptyMap(),
+                mapOf(
+                    GENE to mapOf(
+                        DndsDriverType.NONSENSE to ENTRY.copy(probabilityVariantNonDriver = 0.5, driversPerSample = 0.7),
+                        DndsDriverType.MISSENSE to ENTRY.copy(probabilityVariantNonDriver = 0.01, driversPerSample = 0.6),
+                        DndsDriverType.INDEL to ENTRY.copy(probabilityVariantNonDriver = 0.1, driversPerSample = 0.5),
+                    )
+                )
+            )
+        )
+        evaluateAndAssertVUS(
+            model, GeneRole.BOTH, null,
+            createVariant(VariantType.SNV, CodingEffect.NONE)
+        )
+    }
+
     private fun evaluateAndAssertVUS(
         model: GeneDriverLikelihoodModel,
         geneRole: GeneRole,
-        expectedLikelihood: Double,
+        expectedLikelihood: Double?,
         vararg variants: Variant
     ) {
-        val result = model.evaluate(
-            GENE, geneRole, variants.toList()
-        )
-        assertThat(result).isEqualTo(expectedLikelihood, Offset.offset(0.001))
+        val result = model.evaluate(GENE, geneRole, variants.toList())
+
+        if (expectedLikelihood == null) {
+            assertThat(result).isNull()
+        } else {
+            assertThat(result).isEqualTo(expectedLikelihood, Offset.offset(0.001))
+        }
     }
 
     private fun createVariant(variantType: VariantType, codingEffect: CodingEffect) = TestVariantFactory.createMinimal().copy(
