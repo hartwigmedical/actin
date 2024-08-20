@@ -88,46 +88,22 @@ object ActionableEvidenceFactory {
         return when (onLabelResponsiveEvent.level()) {
             EvidenceLevel.A -> {
                 if (onLabelResponsiveEvent.direction().isCertain) {
-                    ActionableEvidence(
-                        actionableTreatments = setOf(
-                            ActionableTreatment(treatment, onLabelResponsiveEvent.level(), ActinEvidenceCategory.APPROVED)
-                        )
-                    )
+                    actionableEvidence(treatment, onLabelResponsiveEvent.level(), ActinEvidenceCategory.APPROVED)
                 } else {
-                    ActionableEvidence(
-                        actionableTreatments = setOf(
-                            ActionableTreatment(treatment, onLabelResponsiveEvent.level(), ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL)
-                        )
-                    )
+                    actionableEvidence(treatment, onLabelResponsiveEvent.level(), ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL)
                 }
             }
 
             EvidenceLevel.B -> {
                 if (onLabelResponsiveEvent.direction().isCertain) {
-                    ActionableEvidence(
-                        actionableTreatments = setOf(
-                            ActionableTreatment(
-                                treatment,
-                                onLabelResponsiveEvent.level(),
-                                ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL
-                            )
-                        )
-                    )
+                    actionableEvidence(treatment, onLabelResponsiveEvent.level(), ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL)
                 } else {
-                    ActionableEvidence(
-                        actionableTreatments = setOf(
-                            ActionableTreatment(treatment, onLabelResponsiveEvent.level(), ActinEvidenceCategory.PRE_CLINICAL)
-                        )
-                    )
+                    actionableEvidence(treatment, onLabelResponsiveEvent.level(), ActinEvidenceCategory.PRE_CLINICAL)
                 }
             }
 
             else -> {
-                ActionableEvidence(
-                    actionableTreatments = setOf(
-                        ActionableTreatment(treatment, onLabelResponsiveEvent.level(), ActinEvidenceCategory.PRE_CLINICAL)
-                    )
-                )
+                actionableEvidence(treatment, onLabelResponsiveEvent.level(), ActinEvidenceCategory.PRE_CLINICAL)
             }
         }
     }
@@ -136,47 +112,19 @@ object ActionableEvidenceFactory {
         val treatment = offLabelResponsiveEvent.treatmentName()
         return when (offLabelResponsiveEvent.level()) {
             EvidenceLevel.A -> {
-                ActionableEvidence(
-                    actionableTreatments = setOf(
-                        ActionableTreatment(treatment, offLabelResponsiveEvent.level(), ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL)
-                    )
-                )
+                actionableEvidence(treatment, offLabelResponsiveEvent.level(), ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL)
             }
 
             EvidenceLevel.B -> {
                 if (offLabelResponsiveEvent.direction().isCertain) {
-                    ActionableEvidence(
-                        actionableTreatments = setOf(
-                            ActionableTreatment(
-                                treatment,
-                                offLabelResponsiveEvent.level(),
-                                ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL
-                            )
-                        )
-                    )
+                    actionableEvidence(treatment, offLabelResponsiveEvent.level(), ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL)
                 } else {
-                    ActionableEvidence(
-                        actionableTreatments = setOf(
-                            ActionableTreatment(
-                                treatment,
-                                offLabelResponsiveEvent.level(),
-                                ActinEvidenceCategory.PRE_CLINICAL
-                            )
-                        )
-                    )
+                    actionableEvidence(treatment, offLabelResponsiveEvent.level(), ActinEvidenceCategory.PRE_CLINICAL)
                 }
             }
 
             else -> {
-                ActionableEvidence(
-                    actionableTreatments = setOf(
-                        ActionableTreatment(
-                            treatment,
-                            offLabelResponsiveEvent.level(),
-                            ActinEvidenceCategory.PRE_CLINICAL
-                        )
-                    )
-                )
+                actionableEvidence(treatment, offLabelResponsiveEvent.level(), ActinEvidenceCategory.PRE_CLINICAL)
             }
         }
     }
@@ -186,95 +134,29 @@ object ActionableEvidenceFactory {
         return when (resistanceEvent.level()) {
             EvidenceLevel.A, EvidenceLevel.B -> {
                 if (resistanceEvent.direction().isCertain) {
-                    ActionableEvidence(
-                        actionableTreatments = setOf(
-                            ActionableTreatment(
-                                treatment,
-                                resistanceEvent.level(),
-                                ActinEvidenceCategory.KNOWN_RESISTANT
-                            )
-                        )
-                    )
+                    actionableEvidence(treatment, resistanceEvent.level(), ActinEvidenceCategory.KNOWN_RESISTANT)
                 } else {
-                    ActionableEvidence(
-                        actionableTreatments = setOf(
-                            ActionableTreatment(
-                                treatment,
-                                resistanceEvent.level(),
-                                ActinEvidenceCategory.SUSPECT_RESISTANT
-                            )
-                        )
-                    )
+                    actionableEvidence(treatment, resistanceEvent.level(), ActinEvidenceCategory.SUSPECT_RESISTANT)
                 }
             }
 
             else -> {
-                ActionableEvidence(
-                    actionableTreatments = setOf(
-                        ActionableTreatment(
-                            treatment,
-                            resistanceEvent.level(),
-                            ActinEvidenceCategory.SUSPECT_RESISTANT
-                        )
-                    )
-                )
+                actionableEvidence(treatment, resistanceEvent.level(), ActinEvidenceCategory.SUSPECT_RESISTANT)
             }
         }
     }
 
-    fun filterRedundantLowerEvidence(evidence: ActionableEvidence): ActionableEvidence {
-        val treatmentsToExcludeForOffLabel =
-            filter(evidence, ActinEvidenceCategory.APPROVED) + filter(evidence, ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL)
-        val treatmentsToExcludeForPreClinical =
-            treatmentsToExcludeForOffLabel + filter(evidence, ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL)
-
-        val treatments1 = cleanTreatments(
-            filter(evidence, ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL),
-            filter(evidence, ActinEvidenceCategory.APPROVED)
-        )
-        val treatments2 = cleanTreatments(filter(evidence, ActinEvidenceCategory.PRE_CLINICAL), treatmentsToExcludeForPreClinical)
-        val treatments3 =
-            cleanTreatments(filter(evidence, ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL), treatmentsToExcludeForOffLabel)
-        val treatments4 = cleanTreatments(
-            filter(evidence, ActinEvidenceCategory.SUSPECT_RESISTANT),
-            filter(evidence, ActinEvidenceCategory.KNOWN_RESISTANT)
-        )
-        return evidence.copy(
-            actionableTreatments = treatments1 + treatments3
-                    + treatments2
-                    + treatments4
-        )
-    }
-
-    private fun filter(evidence: ActionableEvidence, category: ActinEvidenceCategory) =
-        evidence.actionableTreatments.filter { it.category == category }.toSet()
-
-    private fun filterResistanceEvidence(evidence: ActionableEvidence): ActionableEvidence {
-        val treatmentsToIncludeForResistance =
-            filter(evidence, ActinEvidenceCategory.APPROVED) + filter(evidence, ActinEvidenceCategory.ON_LABEL) + filter(
-                evidence,
-                ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL
+    private fun actionableEvidence(
+        treatment: String,
+        evidenceLevel: EvidenceLevel,
+        actinEvidenceCategory: ActinEvidenceCategory
+    ) = ActionableEvidence(
+        actionableTreatments = setOf(
+            ActionableTreatment(
+                treatment,
+                evidenceLevel,
+                actinEvidenceCategory
             )
-        val applicableKnownResistantTreatments =
-            filterTreatments(filter(evidence, ActinEvidenceCategory.KNOWN_RESISTANT), treatmentsToIncludeForResistance)
-        val applicableSuspectResistantTreatments =
-            filterTreatments(filter(evidence, ActinEvidenceCategory.SUSPECT_RESISTANT), treatmentsToIncludeForResistance)
-        return evidence.copy(
-            actionableTreatments = applicableKnownResistantTreatments + applicableSuspectResistantTreatments
         )
-    }
-
-    private fun filterTreatments(
-        treatments: Set<ActionableTreatment>,
-        treatmentsToInclude: Set<ActionableTreatment>
-    ): Set<ActionableTreatment> {
-        return treatments.intersect(treatmentsToInclude)
-    }
-
-    private fun cleanTreatments(
-        treatments: Set<ActionableTreatment>,
-        treatmentsToExclude: Set<ActionableTreatment>
-    ): Set<ActionableTreatment> {
-        return treatments - treatmentsToExclude
-    }
+    )
 }

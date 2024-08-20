@@ -24,11 +24,24 @@ data class ActionableEvidence(
     fun approvedTreatments() = filter(ActinEvidenceCategory.APPROVED)
     fun onLabelTreatments() = filter(ActinEvidenceCategory.ON_LABEL)
     fun offLabelTreatments() = filter(ActinEvidenceCategory.OFF_LABEL)
-    fun onLabelExperimentalTreatments() = filter(ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL)
-    fun offLabelExperimentalTreatments() = filter(ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL)
-    fun preClinicalTreatments() = filter(ActinEvidenceCategory.PRE_CLINICAL)
-    fun knownResistantTreatments() = filter(ActinEvidenceCategory.KNOWN_RESISTANT)
-    fun suspectResistantTreatments() = filter(ActinEvidenceCategory.SUSPECT_RESISTANT)
+    fun onLabelExperimentalTreatments() =
+        filter(ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL).filter { it !in approvedTreatments() }
+
+    fun offLabelExperimentalTreatments() =
+        filter(ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL).filter { it !in approvedTreatments() && it !in onLabelExperimentalTreatments() }
+
+    fun preClinicalTreatments() =
+        filter(ActinEvidenceCategory.PRE_CLINICAL).filter { it !in approvedTreatments() && it !in onLabelExperimentalTreatments() && it !in offLabelExperimentalTreatments() }
+
+    fun knownResistantTreatments() = filter(ActinEvidenceCategory.KNOWN_RESISTANT).filter {
+        treatmentsRelevantForResistance(it)
+    }
+
+    fun suspectResistantTreatments() = filter(ActinEvidenceCategory.SUSPECT_RESISTANT).filter { treatmentsRelevantForResistance(it) }
+        .filter { it !in knownResistantTreatments() }
+
+    private fun treatmentsRelevantForResistance(it: String) =
+        it in approvedTreatments() || it in onLabelTreatments() || it in offLabelExperimentalTreatments()
 
     private fun filter(category: ActinEvidenceCategory) =
         actionableTreatments.filter { it.category == category }.map { it.name }.toSet()

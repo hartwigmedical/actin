@@ -153,12 +153,12 @@ class ActionableEvidenceFactoryTest {
             category = ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL
         )
         val preClinical = ActionableTreatment(
-            "off-label experimental",
+            "pre-clinical",
             evidenceLevel = EvidenceLevel.A,
             category = ActinEvidenceCategory.PRE_CLINICAL
         )
         val knownResistant = ActionableTreatment(
-            "off-label experimental",
+            "approved",
             evidenceLevel = EvidenceLevel.A,
             category = ActinEvidenceCategory.KNOWN_RESISTANT
         )
@@ -179,18 +179,17 @@ class ActionableEvidenceFactoryTest {
                 offLabelExperimental.copy(category = ActinEvidenceCategory.PRE_CLINICAL),
                 preClinical,
                 knownResistant,
-                knownResistant.copy(category = ActinEvidenceCategory.KNOWN_RESISTANT),
+                knownResistant.copy(category = ActinEvidenceCategory.SUSPECT_RESISTANT),
                 suspectResistant
             )
         )
 
-        val filtered = ActionableEvidenceFactory.filterRedundantLowerEvidence(evidence)
-        assertThat(filtered.approvedTreatments()).containsExactly(approved.name)
-        assertThat(filtered.onLabelExperimentalTreatments()).containsExactly(onLabelExperimental.name)
-        assertThat(filtered.offLabelExperimentalTreatments()).containsExactly(offLabelExperimental.name)
-        assertThat(filtered.preClinicalTreatments()).containsExactly(preClinical.name)
-        assertThat(filtered.knownResistantTreatments()).containsExactly(knownResistant.name)
-        assertThat(filtered.suspectResistantTreatments()).containsExactly(suspectResistant.name)
+        assertThat(evidence.approvedTreatments()).containsExactly(approved.name)
+        assertThat(evidence.onLabelExperimentalTreatments()).containsExactly(onLabelExperimental.name)
+        assertThat(evidence.offLabelExperimentalTreatments()).containsExactly(offLabelExperimental.name)
+        assertThat(evidence.preClinicalTreatments()).containsExactly(preClinical.name)
+        assertThat(evidence.knownResistantTreatments()).containsExactly(knownResistant.name)
+        assertThat(evidence.suspectResistantTreatments()).containsExactly(suspectResistant.name)
     }
 
     private fun evidence(treatment: String, level: EvidenceLevel, direction: EvidenceDirection): ActionableEvent {
