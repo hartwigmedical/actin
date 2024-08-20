@@ -3,7 +3,8 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.PriorIHCTest
-import com.hartwig.actin.molecular.datamodel.*
+import com.hartwig.actin.molecular.datamodel.GeneRole
+import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
 import org.assertj.core.api.Assertions.assertThat
@@ -11,15 +12,6 @@ import org.junit.Test
 
 class HasPositiveHER2ExpressionByIHCTest {
     val function = HasPositiveHER2ExpressionByIHC()
-    private val erbb2Amp = TestCopyNumberFactory.createMinimal().copy(
-            isReportable = true,
-            gene = "ERBB2",
-            geneRole = GeneRole.ONCO,
-            proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-            type = CopyNumberType.FULL_GAIN,
-            minCopies = 20,
-            maxCopies = 20
-    )
 
     @Test
     fun `Should evaluate to undetermined when no prior molecular tests available`() {
@@ -31,28 +23,16 @@ class HasPositiveHER2ExpressionByIHCTest {
     @Test
     fun `Should evaluate to undetermined when HER2 data is not explicitly positive or negative`() {
         val evaluation = function.evaluate(
-            MolecularTestFactory.withIHCTests(
-                listOf(
-                    ihcTest(scoreText = "nonsense"),
-                    ihcTest(scoreText = "more nonsense")
-                )
-            )
+            MolecularTestFactory.withIHCTests(listOf(ihcTest(scoreText = "nonsense"), ihcTest(scoreText = "more nonsense")))
         )
-
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
     }
 
     @Test
     fun `Should evaluate to undetermined when HER2 data is conflicting`() {
         val evaluation = function.evaluate(
-            MolecularTestFactory.withIHCTests(
-                listOf(
-                    ihcTest(scoreText = "positive"),
-                    ihcTest(scoreText = "negative")
-                    )
-                )
-            )
-
+            MolecularTestFactory.withIHCTests(listOf(ihcTest(scoreText = "positive"), ihcTest(scoreText = "negative")))
+        )
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedGeneralMessages).containsExactly(
             "Conflicting HER2 expression tests by IHC"
@@ -63,12 +43,9 @@ class HasPositiveHER2ExpressionByIHCTest {
     fun `Should evaluate to undetermined if positive HER2 data is not reliable`() {
         val evaluation = function.evaluate(
             MolecularTestFactory.withIHCTests(
-                listOf(
-                    ihcTest(scoreValue = 3.0, scoreValueUnit = "+", impliesPotentialIndeterminateStatus = true)
-                )
+                listOf(ihcTest(scoreValue = 3.0, scoreValueUnit = "+", impliesPotentialIndeterminateStatus = true))
             )
         )
-
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
     }
 
@@ -82,9 +59,7 @@ class HasPositiveHER2ExpressionByIHCTest {
                     )
                 )
             )
-
         assertEvaluation(EvaluationResult.PASS, evaluationValue)
-
         val evaluationText = function.evaluate(
             MolecularTestFactory.withIHCTests(
                 listOf(
@@ -93,27 +68,25 @@ class HasPositiveHER2ExpressionByIHCTest {
                 )
             )
         )
-
         assertEvaluation(EvaluationResult.PASS, evaluationText)
     }
 
     @Test
     fun `Should evaluate to warn if ERBB2 is amp and no valid IHC result available`() {
-        val evaluation = function.evaluate(
-            MolecularTestFactory.withCopyNumberAndPriorIHCTests(
-                erbb2Amp,
-                listOf(
-                    ihcTest(scoreValue = 2.0, scoreValueUnit = "+")
-                    )
-                )
-            )
-
-        assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(
-            evaluation.warnGeneralMessages
-        ).containsExactly(
-            "Non-positive HER2 IHC results inconsistent with ERBB2 amp"
+        val erbb2Amp = TestCopyNumberFactory.createMinimal().copy(
+            isReportable = true,
+            gene = "ERBB2",
+            geneRole = GeneRole.ONCO,
+            proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+            type = CopyNumberType.FULL_GAIN,
+            minCopies = 20,
+            maxCopies = 20
         )
+        val evaluation = function.evaluate(
+            MolecularTestFactory.withCopyNumberAndPriorIHCTests(erbb2Amp, listOf(ihcTest(scoreValue = 2.0, scoreValueUnit = "+")))
+            )
+        assertEvaluation(EvaluationResult.WARN, evaluation)
+        assertThat(evaluation.warnGeneralMessages).containsExactly("Non-positive HER2 IHC results inconsistent with ERBB2 amp")
     }
 
     @Test
@@ -125,7 +98,6 @@ class HasPositiveHER2ExpressionByIHCTest {
                     )
                 )
             )
-
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedGeneralMessages).containsExactly(
             "HER2 expression by IHC was borderline, additional tests should be considered"
@@ -135,13 +107,8 @@ class HasPositiveHER2ExpressionByIHCTest {
     @Test
     fun `Should fail if no positive result`() {
         val evaluation = function.evaluate(
-            MolecularTestFactory.withIHCTests(
-                listOf(
-                    ihcTest(scoreValue = 1.0, scoreValueUnit = "+")
-                    )
-                )
-            )
-
+            MolecularTestFactory.withIHCTests(listOf(ihcTest(scoreValue = 1.0, scoreValueUnit = "+")))
+        )
         assertEvaluation(EvaluationResult.FAIL, evaluation)
     }
 

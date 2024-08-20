@@ -247,18 +247,12 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasSufficientHER2ExpressionByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasSufficientHER2ExpressionByIHC(
-                functionInputResolver().createOneDoubleInput(
-                    function
-                )
-            )
+            HasSufficientHER2ExpressionByIHC(functionInputResolver().createOneDoubleInput(function))
         }
     }
 
     private fun hasPositiveHER2ExpressionByIHCCreator(): FunctionCreator {
-        return { function: EligibilityFunction ->
-            HasPositiveHER2ExpressionByIHC()
-        }
+        return { HasPositiveHER2ExpressionByIHC() }
     }
 
     private fun proteinHasLimitedExpressionByIHCCreator(): FunctionCreator {

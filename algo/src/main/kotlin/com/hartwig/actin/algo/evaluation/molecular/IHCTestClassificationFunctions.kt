@@ -19,7 +19,7 @@ object IHCTestClassificationFunctions {
         return classifyTest(test, "%", 1, 10, 100)
     }
 
-    fun classifyTest(
+    private fun classifyTest(
         test: PriorIHCTest, unit: String, negativeUpperBound: Int, positiveLowerBound: Int, positiveUpperBound: Int
     ): TestResult {
         val scoreValue = test.scoreValue?.toInt()

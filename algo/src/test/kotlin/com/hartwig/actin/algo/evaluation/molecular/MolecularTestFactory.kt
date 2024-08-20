@@ -61,9 +61,7 @@ internal object MolecularTestFactory {
             characteristics = MolecularCharacteristics(0.80, 3.0),
             drivers = baseMolecular.drivers.copy(copyNumbers = setOf(copyNumber))
         )
-        return base.copy(
-            priorIHCTests = priorIHCTests,
-            molecularHistory = MolecularHistory(listOf(molecular)))
+        return base.copy(priorIHCTests = priorIHCTests, molecularHistory = MolecularHistory(listOf(molecular)))
     }
 
     fun withMolecularTestsAndNoOrangeMolecular(molecularTests: List<MolecularTest>): PatientRecord {
