@@ -1,12 +1,27 @@
 package com.hartwig.actin.molecular.interpretation
 
+import com.hartwig.actin.molecular.datamodel.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.Drivers
+import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
+import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
+import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
+import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory
+import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
+import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory
+import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
+import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory
+import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.Test
+
 class AggregatedEvidenceFactoryTest {
 
-   /* private val evidenceFields = listOf(
+    private val evidenceFields = listOf(
         AggregatedEvidence::externalEligibleTrialsPerEvent,
-        AggregatedEvidence::actionableTreatments,
+        AggregatedEvidence::actionableTreatments
     )
-    
+
     @Test
     fun `Should find no evidence on minimal record`() {
         assertEvidenceIsEmpty(AggregatedEvidenceFactory.create(TestMolecularFactory.createMinimalTestMolecularRecord()))
@@ -131,5 +146,5 @@ class AggregatedEvidenceFactoryTest {
             assertThat(evidenceMap.keys).hasSize(expectedEvidenceKeyCount)
             assertThat(evidenceMap.values.flatten()).hasSize(expectedEvidenceValueCount ?: expectedEvidenceKeyCount)
         }
-    }*/
+    }
 }

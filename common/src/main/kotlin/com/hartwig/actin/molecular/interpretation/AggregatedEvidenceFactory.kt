@@ -89,8 +89,7 @@ object AggregatedEvidenceFactory {
             mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::externalEligibleTrialsPerEvent)),
             actionableTreatments =
             mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::actionableTreatments)),
-
-            )
+        )
     }
 
     fun <T> mergeMapsOfSets(mapsOfSets: List<Map<String, Set<T>>>): Map<String, Set<T>> {
