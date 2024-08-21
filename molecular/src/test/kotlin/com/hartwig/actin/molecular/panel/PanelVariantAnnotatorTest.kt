@@ -7,7 +7,9 @@ import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.TranscriptImpact
 import com.hartwig.actin.molecular.datamodel.VariantType
+import com.hartwig.actin.molecular.datamodel.evidence.ActinEvidenceCategory
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.ActionableTreatment
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
@@ -31,7 +33,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Ignore
 import org.junit.Test
 
 
@@ -101,7 +102,6 @@ private val HOTSPOT = TestServeKnownFactory.hotspotBuilder().build()
     .withGeneRole(com.hartwig.serve.datamodel.common.GeneRole.ONCO)
     .withProteinEffect(com.hartwig.serve.datamodel.common.ProteinEffect.GAIN_OF_FUNCTION)
 
-@Ignore
 class PanelVariantAnnotatorTest {
 
     private val evidenceDatabase = mockk<EvidenceDatabase> {
@@ -135,7 +135,17 @@ class PanelVariantAnnotatorTest {
     fun `Should annotate variants with evidence`() {
         every { evidenceDatabase.evidenceForVariant(VARIANT_MATCH_CRITERIA) } returns ACTIONABILITY_MATCH
         val annotated = annotator.annotate(setOf(ARCHER_VARIANT))
-        assertThat(annotated.first().evidence).isEqualTo(ActionableEvidence())
+        assertThat(annotated.first().evidence).isEqualTo(
+            ActionableEvidence(
+                actionableTreatments = setOf(
+                    ActionableTreatment(
+                        name = "intervention",
+                        evidenceLevel = EvidenceLevel.A,
+                        category = ActinEvidenceCategory.APPROVED
+                    )
+                )
+            )
+        )
     }
 
     @Test

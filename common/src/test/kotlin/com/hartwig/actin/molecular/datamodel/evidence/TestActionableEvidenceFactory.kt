@@ -12,8 +12,8 @@ object TestActionableEvidenceFactory {
         return ActionableEvidence(
             actionableTreatments = setOf(
                 treatment("approved", ActinEvidenceCategory.APPROVED),
-                ActionableTreatment("on-label", EvidenceLevel.A, ActinEvidenceCategory.ON_LABEL),
-                ActionableTreatment("off-label", EvidenceLevel.A, ActinEvidenceCategory.OFF_LABEL),
+                ActionableTreatment("on-label", EvidenceLevel.A, ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL),
+                ActionableTreatment("off-label", EvidenceLevel.A, ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL),
                 ActionableTreatment("pre-clinical", EvidenceLevel.A, ActinEvidenceCategory.PRE_CLINICAL),
                 ActionableTreatment("known resistant", EvidenceLevel.A, ActinEvidenceCategory.KNOWN_RESISTANT),
                 ActionableTreatment("suspect resistant", EvidenceLevel.A, ActinEvidenceCategory.SUSPECT_RESISTANT),
@@ -22,7 +22,7 @@ object TestActionableEvidenceFactory {
         )
     }
 
-    private fun treatment(name: String, category: ActinEvidenceCategory) =
+    fun treatment(name: String, category: ActinEvidenceCategory) =
         ActionableTreatment(name, EvidenceLevel.A, category)
 
     fun withApprovedTreatment(treatment: String): ActionableEvidence {

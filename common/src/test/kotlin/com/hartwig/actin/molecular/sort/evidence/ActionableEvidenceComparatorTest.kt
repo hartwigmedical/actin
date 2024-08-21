@@ -1,8 +1,19 @@
 package com.hartwig.actin.molecular.sort.evidence
 
+import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.withApprovedTreatment
+import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.withExternalEligibleTrial
+import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.withKnownResistantTreatment
+import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.withOffLabelExperimentalTreatment
+import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.withOnLabelExperimentalTreatment
+import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.withPreClinicalTreatment
+import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.withSuspectResistantTreatment
+import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.Test
+
 class ActionableEvidenceComparatorTest {
 
- /*   @Test
+    @Test
     fun `Should sort actionable evidences`() {
         val evidence1 = withApprovedTreatment("treatment")
         val evidence2 = withExternalEligibleTrial(TestExternalTrialFactory.createTestTrial())
@@ -21,5 +32,5 @@ class ActionableEvidenceComparatorTest {
         assertThat(evidences[4]).isEqualTo(evidence5)
         assertThat(evidences[5]).isEqualTo(evidence6)
         assertThat(evidences[6]).isEqualTo(evidence7)
-    }*/
+    }
 }

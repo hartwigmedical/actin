@@ -5,7 +5,9 @@ import com.hartwig.actin.clinical.datamodel.SequencedSkippedExons
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.Fusion
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.evidence.ActinEvidenceCategory
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.ActionableTreatment
 import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
@@ -21,7 +23,6 @@ import com.hartwig.serve.datamodel.Knowledgebase
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Ignore
 import org.junit.Test
 
 private val EMPTY_MATCH = ActionabilityMatch(emptyList(), emptyList())
@@ -51,7 +52,6 @@ private val ACTIONABILITY_MATCH = ActionabilityMatch(
     ), offLabelEvents = emptyList()
 )
 
-@Ignore
 class PanelFusionAnnotatorTest {
 
     private val evidenceDatabase = mockk<EvidenceDatabase> {
@@ -153,7 +153,15 @@ class PanelFusionAnnotatorTest {
                     event = "$GENE-$OTHER_GENE fusion",
                     isReportable = true,
                     driverLikelihood = DriverLikelihood.HIGH,
-                    evidence = ActionableEvidence()
+                    evidence = ActionableEvidence(
+                        actionableTreatments = setOf(
+                            ActionableTreatment(
+                                name = "intervention",
+                                evidenceLevel = EvidenceLevel.A,
+                                category = ActinEvidenceCategory.APPROVED
+                            )
+                        )
+                    )
                 )
             )
         )
