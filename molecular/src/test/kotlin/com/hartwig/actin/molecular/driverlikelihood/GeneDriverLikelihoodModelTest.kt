@@ -203,7 +203,7 @@ class GeneDriverLikelihoodModelTest {
     }
 
     @Test
-    fun `Should evaluate variant with unknown coding effect`() {
+    fun `Should evaluate variant without coding effect`() {
         val model = GeneDriverLikelihoodModel(
             DndsDatabase(
                 emptyMap(),
