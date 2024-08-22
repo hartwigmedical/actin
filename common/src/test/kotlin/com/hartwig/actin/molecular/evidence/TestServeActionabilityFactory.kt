@@ -76,10 +76,10 @@ object TestServeActionabilityFactory {
             override fun intervention(): Intervention {
                 return if (isTrial) {
                     ImmutableClinicalTrial.builder()
-                        .studyAcronym(interventionName)
-                        .studyNctId(nctId)
-                        .studyTitle("")
-                        .countriesOfStudy(setOf("country"))
+                        .acronym(interventionName)
+                        .nctId(nctId)
+                        .title("")
+                        .countries(setOf(com.hartwig.serve.datamodel.ImmutableCountry.builder().countryName("country").build()))
                         .build()
                 } else {
                     ImmutableTreatment.builder().name(interventionName).build()

@@ -58,7 +58,7 @@ class ActionableEventMatcherFactoryTest {
     private fun findByGene(hotspots: List<ActionableHotspot>, geneToFind: String): String {
         return when (val intervention = hotspots.firstOrNull { it.gene() == geneToFind }?.intervention()) {
             is Treatment -> intervention.name()
-            is ClinicalTrial -> intervention.studyAcronym() ?: intervention.studyTitle()
+            is ClinicalTrial -> intervention.acronym() ?: intervention.title()
             else -> throw IllegalStateException("Could not find valid hotspot with gene: $geneToFind")
         }
     }

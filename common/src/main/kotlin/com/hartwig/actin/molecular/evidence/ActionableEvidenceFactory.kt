@@ -55,18 +55,18 @@ object ActionableEvidenceFactory {
                 .map { onLabelEvent ->
                     val trial = onLabelEvent.intervention() as ClinicalTrial
                     ExternalTrial(
-                        title = trial.studyAcronym() ?: trial.studyTitle(),
-                        countries = trial.countriesOfStudy().map(ActionableEvidenceFactory::determineCountry).toSet(),
+                        title = trial.acronym() ?: trial.title(),
+                        countries = trial.countries().map(ActionableEvidenceFactory::determineCountry).toSet(),
                         url = extractNctUrl(onLabelEvent),
-                        nctId = trial.studyNctId(),
+                        nctId = trial.nctId(),
                     )
                 }
                 .toSet()
         )
     }
 
-    private fun determineCountry(country: String): Country {
-        return when (country) {
+    private fun determineCountry(country: com.hartwig.serve.datamodel.Country): Country {
+        return when (country.countryName()) {
             "Netherlands" -> Country.NETHERLANDS
             "Belgium" -> Country.BELGIUM
             "Germany" -> Country.GERMANY
