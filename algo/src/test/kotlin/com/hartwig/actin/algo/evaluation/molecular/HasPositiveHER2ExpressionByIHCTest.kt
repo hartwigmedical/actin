@@ -29,12 +29,12 @@ class HasPositiveHER2ExpressionByIHCTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined when HER2 data is conflicting`() {
+    fun `Should evaluate to warn when HER2 data is conflicting`() {
         val evaluation = function.evaluate(
             MolecularTestFactory.withIHCTests(listOf(ihcTest(scoreText = "positive"), ihcTest(scoreText = "negative")))
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedGeneralMessages).containsExactly(
+        assertEvaluation(EvaluationResult.WARN, evaluation)
+        assertThat(evaluation.warnGeneralMessages).containsExactly(
             "Conflicting HER2 expression tests by IHC"
         )
     }
@@ -72,7 +72,7 @@ class HasPositiveHER2ExpressionByIHCTest {
     }
 
     @Test
-    fun `Should evaluate to warn if ERBB2 is amp and no valid IHC result available`() {
+    fun `Should evaluate to undetermined if ERBB2 is amplified and no valid IHC result available`() {
         val erbb2Amp = TestCopyNumberFactory.createMinimal().copy(
             isReportable = true,
             gene = "ERBB2",
@@ -83,10 +83,10 @@ class HasPositiveHER2ExpressionByIHCTest {
             maxCopies = 20
         )
         val evaluation = function.evaluate(
-            MolecularTestFactory.withCopyNumberAndPriorIHCTests(erbb2Amp, listOf(ihcTest(scoreValue = 2.0, scoreValueUnit = "+")))
+            MolecularTestFactory.withCopyNumberAndPriorIHCTests(erbb2Amp, listOf(ihcTest(scoreValue = 2.0, scoreValueUnit = "+", impliesPotentialIndeterminateStatus = true)))
             )
-        assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnGeneralMessages).containsExactly("Non-positive HER2 IHC results inconsistent with ERBB2 amp")
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.undeterminedGeneralMessages).containsExactly("HER2 expression not tested by IHC but probably positive since ERBB2 amp present")
     }
 
     @Test
@@ -100,7 +100,7 @@ class HasPositiveHER2ExpressionByIHCTest {
             )
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedGeneralMessages).containsExactly(
-            "HER2 expression by IHC was borderline, additional tests should be considered"
+            "HER2 expression by IHC was borderline - additional tests should be considered"
         )
     }
 

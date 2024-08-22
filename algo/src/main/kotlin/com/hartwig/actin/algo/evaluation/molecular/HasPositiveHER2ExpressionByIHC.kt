@@ -13,7 +13,7 @@ import com.hartwig.actin.clinical.datamodel.ReceptorType
 class HasPositiveHER2ExpressionByIHC: EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val receptorType = ReceptorType.HER2
-        val (validIhcTests, indeterminateIhcTests) = PriorIHCTestFunctions.allIHCTestsForProtein(record.priorIHCTests, receptorType.name)
+        val (indeterminateIhcTests, validIhcTests) = PriorIHCTestFunctions.allIHCTestsForProtein(record.priorIHCTests, receptorType.name)
             .partition(PriorIHCTest::impliesPotentialIndeterminateStatus)
         val geneERBB2IsAmplified = geneIsAmplifiedForPatient("ERBB2", record)
 
@@ -82,7 +82,7 @@ class HasPositiveHER2ExpressionByIHC: EvaluationFunction {
                         "HER2 expression not deterministic by IHC"
                     )
                 } else {
-                    EvaluationFactory.undetermined(
+                    EvaluationFactory.warn(
                         "Conflicting HER2 expression tests by IHC",
                         "Conflicting HER2 expression tests by IHC"
                     )
