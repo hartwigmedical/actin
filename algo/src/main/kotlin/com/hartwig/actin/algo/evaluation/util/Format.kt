@@ -1,11 +1,13 @@
 package com.hartwig.actin.algo.evaluation.util
 
 import com.hartwig.actin.Displayable
+import com.hartwig.actin.clinical.interpretation.LabMeasurement
 import com.hartwig.actin.util.ApplicationConfig
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 object Format {
     private const val SEPARATOR_SEMICOLON = "; "
@@ -45,6 +47,15 @@ object Format {
     fun percentage(fraction: Double): String {
         require(!(fraction < 0 || fraction > 1)) { "Fraction provided that is not within 0 and 1: $fraction" }
         return PERCENTAGE_FORMAT.format(fraction * 100)
+    }
+
+    fun labReference(factorValue: Double, factorUnit: String, refLimit: Double?): String {
+        val formattedRefLimit = refLimit?.let { String.format(Locale.ENGLISH, "%.1f", it) } ?: "NA"
+        return "$factorValue*${factorUnit} ($factorValue*$formattedRefLimit)"
+    }
+
+    fun labValue(labMeasurement: LabMeasurement, value: Double): String {
+        return "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${String.format(Locale.ENGLISH, "%.1f", value)}"
     }
 
     private fun concatDisplayables(items: Iterable<Displayable>, separator: String) =

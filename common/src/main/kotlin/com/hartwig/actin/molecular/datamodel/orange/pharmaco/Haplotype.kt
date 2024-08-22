@@ -8,7 +8,7 @@ private const val UNKNOWN_ALLELE_STRING: String = "Unresolved Haplotype"
 data class Haplotype(
     val allele: String,
     val alleleCount: Int,
-    val function: String,
+    val function: HaplotypeFunction,
 ) : Comparable<Haplotype> {
 
     override fun compareTo(other: Haplotype): Int {

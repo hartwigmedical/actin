@@ -1,5 +1,7 @@
 package com.hartwig.actin.molecular.datamodel.evidence
 
+import com.hartwig.serve.datamodel.EvidenceLevel
+
 object TestActionableEvidenceFactory {
 
     fun createEmpty(): ActionableEvidence {
@@ -8,18 +10,23 @@ object TestActionableEvidenceFactory {
 
     fun createExhaustive(): ActionableEvidence {
         return ActionableEvidence(
-            approvedTreatments = setOf("approved"),
+            actionableTreatments = setOf(
+                treatment("approved", ActinEvidenceCategory.APPROVED),
+                ActionableTreatment("on-label", EvidenceLevel.B, ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL),
+                ActionableTreatment("off-label", EvidenceLevel.B, ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL),
+                ActionableTreatment("pre-clinical", EvidenceLevel.C, ActinEvidenceCategory.PRE_CLINICAL),
+                ActionableTreatment("known resistant", EvidenceLevel.A, ActinEvidenceCategory.KNOWN_RESISTANT),
+                ActionableTreatment("suspect resistant", EvidenceLevel.C, ActinEvidenceCategory.SUSPECT_RESISTANT),
+            ),
             externalEligibleTrials = setOf(TestExternalTrialFactory.createTestTrial()),
-            onLabelExperimentalTreatments = setOf("on-label experimental"),
-            offLabelExperimentalTreatments = setOf("off-label experimental"),
-            preClinicalTreatments = setOf("pre-clinical"),
-            knownResistantTreatments = setOf("known resistant"),
-            suspectResistantTreatments = setOf("suspect resistant")
         )
     }
 
+    fun treatment(name: String, category: ActinEvidenceCategory) =
+        ActionableTreatment(name, EvidenceLevel.A, category)
+
     fun withApprovedTreatment(treatment: String): ActionableEvidence {
-        return ActionableEvidence(approvedTreatments = setOf(treatment))
+        return ActionableEvidence(actionableTreatments = setOf(treatment(treatment, ActinEvidenceCategory.APPROVED)))
     }
 
     fun withExternalEligibleTrial(treatment: ExternalTrial): ActionableEvidence {
@@ -27,22 +34,22 @@ object TestActionableEvidenceFactory {
     }
 
     fun withOnLabelExperimentalTreatment(treatment: String): ActionableEvidence {
-        return ActionableEvidence(onLabelExperimentalTreatments = setOf(treatment))
+        return ActionableEvidence(actionableTreatments = setOf(treatment(treatment, ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL)))
     }
 
     fun withOffLabelExperimentalTreatment(treatment: String): ActionableEvidence {
-        return ActionableEvidence(offLabelExperimentalTreatments = setOf(treatment))
+        return ActionableEvidence(actionableTreatments = setOf(treatment(treatment, ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL)))
     }
 
     fun withPreClinicalTreatment(treatment: String): ActionableEvidence {
-        return ActionableEvidence(preClinicalTreatments = setOf(treatment))
+        return ActionableEvidence(actionableTreatments = setOf(treatment(treatment, ActinEvidenceCategory.PRE_CLINICAL)))
     }
 
     fun withKnownResistantTreatment(treatment: String): ActionableEvidence {
-        return ActionableEvidence(knownResistantTreatments = setOf(treatment))
+        return ActionableEvidence(actionableTreatments = setOf(treatment(treatment, ActinEvidenceCategory.KNOWN_RESISTANT)))
     }
 
     fun withSuspectResistantTreatment(treatment: String): ActionableEvidence {
-        return ActionableEvidence(suspectResistantTreatments = setOf(treatment))
+        return ActionableEvidence(actionableTreatments = setOf(treatment(treatment, ActinEvidenceCategory.SUSPECT_RESISTANT)))
     }
 }

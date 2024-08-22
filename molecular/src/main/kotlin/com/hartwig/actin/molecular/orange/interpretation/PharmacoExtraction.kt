@@ -1,34 +1,42 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
 import com.hartwig.actin.molecular.datamodel.orange.pharmaco.Haplotype
+import com.hartwig.actin.molecular.datamodel.orange.pharmaco.HaplotypeFunction
 import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoEntry
+import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoGene
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.hmftools.datamodel.peach.PeachGenotype
 
 internal object PharmacoExtraction {
 
-    private val expectedHaplotypeFunctions = setOf("normal function", "reduced function", "no function")
-    private val pharmacoGenes = setOf("DPYD", "UGT1A1")
-
     fun extract(record: OrangeRecord): Set<PharmacoEntry> {
         val peach = record.peach() ?: return emptySet()
         return peach.groupBy(PeachGenotype::gene).map { (gene, genotypes) ->
-            if (gene !in pharmacoGenes) throw IllegalStateException("Unexpected pharmaco gene: $gene")
-            genotypes.forEach { genotype ->
-                val functionName = genotype.function().lowercase()
-                if (functionName !in expectedHaplotypeFunctions) {
-                    throw IllegalStateException("Unexpected haplotype function: $functionName")
-                }
-            }
             createPharmacoEntryForGeneAndPeachGenotypes(gene, genotypes)
         }.toSet()
     }
 
     private fun createPharmacoEntryForGeneAndPeachGenotypes(gene: String, peachGenotypes: List<PeachGenotype>): PharmacoEntry {
         return PharmacoEntry(
-            gene = gene,
-            haplotypes = peachGenotypes.map { Haplotype(allele = it.allele(), alleleCount = it.alleleCount(), function = it.function()) }
+            gene = determineGene(gene),
+            haplotypes = peachGenotypes.map { Haplotype(allele = it.allele(), alleleCount = it.alleleCount(), function = determineFunction(it.function())) }
                 .toSet()
         )
+    }
+
+    private fun determineGene(gene: String): PharmacoGene {
+        try {
+            return PharmacoGene.valueOf(gene.uppercase())
+        } catch (e: Exception) {
+            throw IllegalStateException("Unexpected pharmaco gene: $gene ")
+        }
+    }
+
+    private fun determineFunction(function: String): HaplotypeFunction {
+        try {
+            return HaplotypeFunction.valueOf(function.trim { it <= ' ' }.replace(" ".toRegex(), "_").uppercase())
+        } catch (e: Exception) {
+            throw IllegalStateException("Unexpected haplotype function: $function ")
+        }
     }
 }

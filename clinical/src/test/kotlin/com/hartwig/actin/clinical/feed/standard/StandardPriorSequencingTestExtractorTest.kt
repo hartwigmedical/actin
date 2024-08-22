@@ -67,7 +67,7 @@ class StandardPriorSequencingTestExtractorTest {
         )
         assertResultContains(
             result, BASE_PRIOR_SEQUENCING.copy(
-                variants = setOf(SequencedVariant(GENE, hgvsCodingImpact = CODING, hgvsProteinImpact = PROTEIN))
+                variants = setOf(SequencedVariant(gene = GENE, hgvsCodingImpact = CODING, hgvsProteinImpact = PROTEIN))
             )
         )
     }
@@ -138,7 +138,7 @@ class StandardPriorSequencingTestExtractorTest {
         val result = extractionResult(ProvidedMolecularTestResult(gene = GENE, freeText = FREE_TEXT))
         assertResultContains(
             result, BASE_PRIOR_SEQUENCING.copy(
-                variants = setOf(SequencedVariant(GENE, hgvsCodingImpact = CODING))
+                variants = setOf(SequencedVariant(gene = GENE, hgvsCodingImpact = CODING))
             )
         )
     }

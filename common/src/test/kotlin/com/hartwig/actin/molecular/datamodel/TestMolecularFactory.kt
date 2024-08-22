@@ -20,7 +20,9 @@ import com.hartwig.actin.molecular.datamodel.orange.driver.VirusType
 import com.hartwig.actin.molecular.datamodel.orange.immunology.HlaAllele
 import com.hartwig.actin.molecular.datamodel.orange.immunology.MolecularImmunology
 import com.hartwig.actin.molecular.datamodel.orange.pharmaco.Haplotype
+import com.hartwig.actin.molecular.datamodel.orange.pharmaco.HaplotypeFunction
 import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoEntry
+import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoGene
 import java.time.LocalDate
 
 object TestMolecularFactory {
@@ -181,23 +183,7 @@ object TestMolecularFactory {
         position = 140453136,
         ref = "T",
         alt = "A",
-        isReportable = true,
-        event = "BRAF V600E",
-        driverLikelihood = DriverLikelihood.HIGH,
-        evidence = TestActionableEvidenceFactory.withApprovedTreatment("Vemurafenib"),
-        gene = "BRAF",
-        geneRole = GeneRole.ONCO,
-        proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-        isAssociatedWithDrugResistance = true,
         type = VariantType.SNV,
-        extendedVariantDetails = ExtendedVariantDetails(
-            variantCopyNumber = 4.1,
-            totalCopyNumber = 6.0,
-            isBiallelic = false,
-            phaseGroups = null,
-            clonalLikelihood = 1.0
-        ),
-        isHotspot = true,
         canonicalImpact = TranscriptImpact(
             transcriptId = "ENST00000288602",
             hgvsCodingImpact = "c.1799T>A",
@@ -209,6 +195,22 @@ object TestMolecularFactory {
             affectedExon = null
         ),
         otherImpacts = emptySet(),
+        extendedVariantDetails = ExtendedVariantDetails(
+            variantCopyNumber = 4.1,
+            totalCopyNumber = 6.0,
+            isBiallelic = false,
+            phaseGroups = null,
+            clonalLikelihood = 1.0
+        ),
+        isHotspot = true,
+        isReportable = true,
+        event = "BRAF V600E",
+        driverLikelihood = DriverLikelihood.HIGH,
+        evidence = TestActionableEvidenceFactory.withApprovedTreatment("Vemurafenib"),
+        gene = "BRAF",
+        geneRole = GeneRole.ONCO,
+        proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+        isAssociatedWithDrugResistance = true,
     )
 
     private fun createProperTestImmunology(): MolecularImmunology {
@@ -221,14 +223,14 @@ object TestMolecularFactory {
     private fun createProperTestPharmaco(): Set<PharmacoEntry> {
         return setOf(
             PharmacoEntry(
-                gene = "DPYD",
-                haplotypes = setOf(Haplotype(allele = "*1", alleleCount = 2, function = "Normal function")),
+                gene = PharmacoGene.DPYD,
+                haplotypes = setOf(Haplotype(allele = "*1", alleleCount = 2, function = HaplotypeFunction.NORMAL_FUNCTION)),
             ),
             PharmacoEntry(
-                gene = "UGT1A1",
+                gene = PharmacoGene.UGT1A1,
                 haplotypes = setOf(
-                    Haplotype(allele = "*1", alleleCount = 1, function = "Normal function"),
-                    Haplotype(allele = "*28", alleleCount = 1, function = "Reduced function"),
+                    Haplotype(allele = "*1", alleleCount = 1, function = HaplotypeFunction.NORMAL_FUNCTION),
+                    Haplotype(allele = "*28", alleleCount = 1, function = HaplotypeFunction.REDUCED_FUNCTION),
                 )
             )
         )

@@ -1,16 +1,15 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.molecular.datamodel.orange.pharmaco.HaplotypeFunction
 import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoEntry
 
 object DPYDDeficiencyEvaluationFunctions {
 
-    const val DPYD_GENE = "DPYD"
-
     fun isHomozygousDeficient(pharmaco: PharmacoEntry): Boolean {
-        return pharmaco.haplotypes.none { it.function.lowercase() == "normal function" }
+        return pharmaco.haplotypes.none { it.function == HaplotypeFunction.NORMAL_FUNCTION }
     }
 
     fun isProficient(pharmaco: PharmacoEntry): Boolean {
-        return pharmaco.haplotypes.all { it.function.lowercase() == "normal function" }
+        return pharmaco.haplotypes.all { it.function == HaplotypeFunction.NORMAL_FUNCTION }
     }
 }

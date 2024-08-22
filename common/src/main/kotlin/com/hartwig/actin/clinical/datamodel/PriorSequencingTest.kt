@@ -4,6 +4,7 @@ import com.hartwig.actin.Displayable
 import java.time.LocalDate
 
 data class SequencedVariant(
+    val variantAlleleFrequency: Double? = null,
     val gene: String,
     val hgvsCodingImpact: String? = null,
     val hgvsProteinImpact: String? = null,

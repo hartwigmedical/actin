@@ -19,14 +19,12 @@ class AggregatedEvidenceFactoryTest {
 
     private val evidenceFields = listOf(
         AggregatedEvidence::approvedTreatmentsPerEvent,
-        AggregatedEvidence::externalEligibleTrialsPerEvent,
-        AggregatedEvidence::onLabelExperimentalTreatmentsPerEvent,
+        AggregatedEvidence::onLabelExperimentalTreatmentPerEvent,
         AggregatedEvidence::offLabelExperimentalTreatmentsPerEvent,
-        AggregatedEvidence::preClinicalTreatmentsPerEvent,
         AggregatedEvidence::knownResistantTreatmentsPerEvent,
         AggregatedEvidence::suspectResistantTreatmentsPerEvent
     )
-    
+
     @Test
     fun `Should find no evidence on minimal record`() {
         assertEvidenceIsEmpty(AggregatedEvidenceFactory.create(TestMolecularFactory.createMinimalTestMolecularRecord()))

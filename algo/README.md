@@ -387,7 +387,7 @@ _Liver function_
 | HAS_TOTAL_BILIRUBIN_UMOL_PER_L_OF_AT_MOST_X                                   | Total Bilirubin (TBIL) in umol/L <= X                        |                                                                                     |
 | HAS_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_X                                         | Direct Bilirubin (DBIL) <= X*ULN                             | Direct Bilirubin = Conjugated bilirubin                                             |
 | HAS_DIRECT_BILIRUBIN_PERCENTAGE_OF_TOTAL_OF_AT_MOST_X                         | Direct Bilirubin (DBIL) / Total Bilirubin (TBIL) * 100 <= X  |                                                                                     |
-| HAS_INDIRECT_BILIRUBIN_ULN_OF_AT_MOST_X                                       | Currently resolves to `UNDETERMINED`                         | Indirect Bilirubin = Unconjugated bilirubin                                         |
+| HAS_INDIRECT_BILIRUBIN_ULN_OF_AT_MOST_X                                       | Total bilirubin (TBIL) - Direct Bilirubin (DBIL) <= X*ULN    | Indirect Bilirubin = Unconjugated bilirubin                                         |
 
 _Kidney function_
 
