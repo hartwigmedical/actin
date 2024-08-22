@@ -9,6 +9,7 @@ import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.ClinicalTrial
 import com.hartwig.serve.datamodel.EvidenceLevel
 import com.hartwig.serve.datamodel.Treatment
+import com.hartwig.serve.datamodel.Country as ServeCountry
 
 object ActionableEvidenceFactory {
 
@@ -65,7 +66,7 @@ object ActionableEvidenceFactory {
         )
     }
 
-    private fun determineCountry(country: com.hartwig.serve.datamodel.Country): Country {
+    private fun determineCountry(country: ServeCountry): Country {
         return when (country.countryName()) {
             "Netherlands" -> Country.NETHERLANDS
             "Belgium" -> Country.BELGIUM
