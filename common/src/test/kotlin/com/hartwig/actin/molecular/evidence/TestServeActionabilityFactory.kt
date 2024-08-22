@@ -6,6 +6,7 @@ import com.hartwig.serve.datamodel.EvidenceDirection
 import com.hartwig.serve.datamodel.EvidenceLevel
 import com.hartwig.serve.datamodel.ImmutableCancerType
 import com.hartwig.serve.datamodel.ImmutableClinicalTrial
+import com.hartwig.serve.datamodel.ImmutableCountry
 import com.hartwig.serve.datamodel.ImmutableTreatment
 import com.hartwig.serve.datamodel.Intervention
 import com.hartwig.serve.datamodel.Knowledgebase
@@ -79,7 +80,7 @@ object TestServeActionabilityFactory {
                         .acronym(interventionName)
                         .nctId(nctId)
                         .title("")
-                        .countries(setOf(com.hartwig.serve.datamodel.ImmutableCountry.builder().countryName("country").build()))
+                        .countries(setOf(ImmutableCountry.builder().countryName("country").build()))
                         .build()
                 } else {
                     ImmutableTreatment.builder().name(interventionName).build()
