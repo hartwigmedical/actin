@@ -10,7 +10,7 @@ import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensit
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.doid.DoidModel
 
-class HasPotentialSignificantHeartDisease internal constructor(private val doidModel: DoidModel) : EvaluationFunction {
+class HasPotentialSignificantHeartDisease(private val doidModel: DoidModel) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val ecg = record.clinicalStatus.ecg
         if (ecg != null && ecg.hasSigAberrationLatestECG) {
@@ -40,8 +40,8 @@ class HasPotentialSignificantHeartDisease internal constructor(private val doidM
 
     companion object {
         val HEART_DISEASE_DOIDS =
-            setOf(DoidConstants.HEART_DISEASE_DOID, DoidConstants.HYPERTENSION_DOID, DoidConstants.CORONARY_ARTERY_DISEASE_DOID)
-        val HEART_DISEASE_TERMS = setOf("angina", "pacemaker")
+            setOf(DoidConstants.HEART_DISEASE_DOID, DoidConstants.CORONARY_ARTERY_DISEASE_DOID)
+        val HEART_DISEASE_TERMS = setOf("angina", "pacemaker", "ICD", "Cardioverter-defibrillator", "cardioversion")
 
         private fun isPotentiallyHeartDisease(name: String): Boolean {
             return stringCaseInsensitivelyMatchesQueryCollection(name, HEART_DISEASE_TERMS)

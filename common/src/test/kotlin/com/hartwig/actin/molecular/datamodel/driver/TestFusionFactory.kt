@@ -16,18 +16,18 @@ object TestFusionFactory {
             evidence = ActionableEvidence(),
             geneStart = "",
             geneEnd = "",
-            geneTranscriptStart = "",
-            geneTranscriptEnd = "",
             driverType = FusionDriverType.KNOWN_PAIR,
-            proteinEffect = ProteinEffect.NO_EFFECT
+            proteinEffect = ProteinEffect.NO_EFFECT,
+            isAssociatedWithDrugResistance = null
         )
     }
 
     fun createMinimalExtended(): ExtendedFusionDetails {
         return ExtendedFusionDetails(
+            geneTranscriptStart = "",
+            geneTranscriptEnd = "",
             fusedExonDown = 0,
             fusedExonUp = 0,
-            isAssociatedWithDrugResistance = null
         )
     }
 }

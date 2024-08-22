@@ -8,6 +8,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class MolecularResultsAreGenerallyAvailable : EvaluationFunction {
     
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.notEvaluatedNoGeneral("It is assumed that there are molecular results available if applicable")
+        return when {
+            record.molecularHistory.hasMolecularData() -> EvaluationFactory.pass("There are molecular results available")
+            else -> EvaluationFactory.fail("No molecular results available")
+        }
     }
 }

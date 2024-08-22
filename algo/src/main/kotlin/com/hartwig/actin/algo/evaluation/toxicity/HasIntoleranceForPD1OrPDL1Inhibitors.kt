@@ -12,7 +12,7 @@ import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensit
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.doid.DoidModel
 
-class HasIntoleranceForPD1OrPDL1Inhibitors internal constructor(private val doidModel: DoidModel) : EvaluationFunction {
+class HasIntoleranceForPD1OrPDL1Inhibitors(private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val intolerances = record.intolerances.map { it.name }

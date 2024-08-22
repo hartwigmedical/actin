@@ -6,9 +6,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 
-class HasSpecificComplication internal constructor(private val termToFind: String) : EvaluationFunction {
+class HasSpecificComplication(private val termToFind: String) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val complications = record.complications ?: return EvaluationFactory.undetermined(
+        val complications = record.complications ?: return EvaluationFactory.recoverableUndetermined(
             "Undetermined whether patient has cancer-related complications",
             "Undetermined complication status"
         )

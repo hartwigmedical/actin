@@ -16,6 +16,7 @@ import com.hartwig.actin.report.pdf.chapters.MolecularDetailsChapter
 import com.hartwig.actin.report.pdf.chapters.MolecularEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.PersonalizedEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.ReportChapter
+import com.hartwig.actin.report.pdf.chapters.ResistanceEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.SummaryChapter
 import com.hartwig.actin.report.pdf.chapters.TrialMatchingChapter
 import com.hartwig.actin.report.pdf.chapters.TrialMatchingDetailsChapter
@@ -61,7 +62,8 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 report,
                 include = report.config.includeSOCLiteratureEfficacyEvidence && report.treatmentMatch.personalizedDataAnalysis != null
             ),
-            MolecularDetailsChapter(report, include = report.config.includeMolecularDetailsChapter),
+            ResistanceEvidenceChapter(report, include = report.config.includeSOCLiteratureEfficacyEvidence),
+            MolecularDetailsChapter(report, report.config.includeMolecularDetailsChapter, report.config.includeRawPathologyReport),
             LongitudinalMolecularHistoryChapter(report, include = report.config.includeLongitudinalMolecularChapter),
             EfficacyEvidenceChapter(report, include = report.config.includeSOCLiteratureEfficacyEvidence),
             ClinicalDetailsChapter(report, include = report.config.includeClinicalDetailsChapter),
@@ -108,7 +110,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth, slotsAvailable = false)
 
         val (localTrialGenerator, nonLocalTrialGenerator) = provideExternalTrialsTables(report.patientRecord, evaluated, contentWidth)
-        val hasMolecular = report.patientRecord.molecularHistory.molecularTests.isNotEmpty()
+        val hasOrangeMolecular = report.patientRecord.molecularHistory.allOrangeMolecularRecords().isNotEmpty()
         return listOfNotNull(
             clinicalHistoryGenerator,
             MolecularSummaryGenerator(
@@ -118,7 +120,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 valueWidth,
                 report.config.molecularSummaryType == MolecularSummaryType.SHORT
             ).takeIf {
-                report.config.molecularSummaryType != MolecularSummaryType.NONE && hasMolecular
+                report.config.molecularSummaryType != MolecularSummaryType.NONE && hasOrangeMolecular
             },
             SOCEligibleApprovedTreatmentGenerator(report, contentWidth).takeIf {
                 report.config.includeEligibleSOCTreatmentSummary

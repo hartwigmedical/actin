@@ -72,7 +72,8 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
             SequencedSkippedExons(
                 result.gene!!,
                 result.exonSkipStart!!,
-                result.exonSkipEnd ?: result.exonSkipStart
+                result.exonSkipEnd ?: result.exonSkipStart,
+                result.transcript
             )
         }.toSet()
 

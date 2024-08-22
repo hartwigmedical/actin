@@ -20,9 +20,9 @@ import com.hartwig.actin.molecular.datamodel.orange.driver.VirusType
 import com.hartwig.actin.molecular.datamodel.orange.immunology.HlaAllele
 import com.hartwig.actin.molecular.datamodel.orange.immunology.MolecularImmunology
 import com.hartwig.actin.molecular.datamodel.orange.pharmaco.Haplotype
+import com.hartwig.actin.molecular.datamodel.orange.pharmaco.HaplotypeFunction
 import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoEntry
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusionExtraction
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
+import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoGene
 import java.time.LocalDate
 
 object TestMolecularFactory {
@@ -223,14 +223,14 @@ object TestMolecularFactory {
     private fun createProperTestPharmaco(): Set<PharmacoEntry> {
         return setOf(
             PharmacoEntry(
-                gene = "DPYD",
-                haplotypes = setOf(Haplotype(allele = "*1", alleleCount = 2, function = "Normal function")),
+                gene = PharmacoGene.DPYD,
+                haplotypes = setOf(Haplotype(allele = "*1", alleleCount = 2, function = HaplotypeFunction.NORMAL_FUNCTION)),
             ),
             PharmacoEntry(
-                gene = "UGT1A1",
+                gene = PharmacoGene.UGT1A1,
                 haplotypes = setOf(
-                    Haplotype(allele = "*1", alleleCount = 1, function = "Normal function"),
-                    Haplotype(allele = "*28", alleleCount = 1, function = "Reduced function"),
+                    Haplotype(allele = "*1", alleleCount = 1, function = HaplotypeFunction.NORMAL_FUNCTION),
+                    Haplotype(allele = "*28", alleleCount = 1, function = HaplotypeFunction.REDUCED_FUNCTION),
                 )
             )
         )
@@ -291,15 +291,15 @@ object TestMolecularFactory {
                 driverLikelihood = DriverLikelihood.HIGH,
                 evidence = TestActionableEvidenceFactory.createExhaustive(),
                 geneStart = "EML4",
-                geneTranscriptStart = "ENST00000318522",
                 geneEnd = "ALK",
-                geneTranscriptEnd = "ENST00000389048",
                 proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
                 driverType = FusionDriverType.KNOWN_PAIR,
+                isAssociatedWithDrugResistance = null,
                 extendedFusionDetails = ExtendedFusionDetails(
+                    geneTranscriptStart = "ENST00000318522",
+                    geneTranscriptEnd = "ENST00000389048",
                     fusedExonUp = 6,
                     fusedExonDown = 20,
-                    isAssociatedWithDrugResistance = null
                 )
             ),
             viruses = proper.viruses + Virus(
@@ -314,13 +314,5 @@ object TestMolecularFactory {
             )
         )
     }
-
-    fun freeTextPriorMolecularFusionRecord(geneStart: String, geneEnd: String) = TestPanelRecordFactory.empty().copy(
-        panelExtraction =
-        GenericPanelExtraction(
-            fusions = listOf(GenericFusionExtraction(geneStart, geneEnd)),
-            panelType = FREE_TEXT_PANEL
-        )
-    )
 }
 

@@ -34,7 +34,7 @@ private val EHR_PRIOR_PRIMARY = ProvidedPriorPrimary(
     tumorType = TYPE,
     status = "ACTIVE",
     diagnosisDate = DIAGNOSIS_DATE,
-    statusDate = DIAGNOSIS_DATE
+    lastTreatmentDate = DIAGNOSIS_DATE
 )
 
 private val EHR_PATIENT_RECORD = EhrTestData.createEhrPatientRecord().copy(
@@ -73,7 +73,9 @@ class StandardPriorPrimariesExtractorTest {
         assertThat(result.extracted).containsExactly(
             BRAIN_PRIOR_SECOND_PRIMARY.copy(
                 diagnosedMonth = DIAGNOSIS_DATE.monthValue,
-                diagnosedYear = DIAGNOSIS_DATE.year
+                diagnosedYear = DIAGNOSIS_DATE.year,
+                lastTreatmentYear = DIAGNOSIS_DATE.year,
+                lastTreatmentMonth = DIAGNOSIS_DATE.monthValue
             )
         )
         assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation(secondPrimaryEvaluatedInputs = setOf(PRIOR_PRIMARY_INPUT)))
@@ -167,7 +169,9 @@ class StandardPriorPrimariesExtractorTest {
         assertThat(result.extracted).containsExactly(
             BRAIN_PRIOR_SECOND_PRIMARY.copy(
                 diagnosedMonth = DIAGNOSIS_DATE.monthValue,
-                diagnosedYear = DIAGNOSIS_DATE.year
+                diagnosedYear = DIAGNOSIS_DATE.year,
+                lastTreatmentYear = DIAGNOSIS_DATE.year,
+                lastTreatmentMonth = DIAGNOSIS_DATE.monthValue
             )
         )
         assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation(secondPrimaryEvaluatedInputs = setOf(PRIOR_PRIMARY_INPUT)))

@@ -277,7 +277,7 @@ object TestClinicalFactory {
     private fun createTestPriorOtherConditions(): List<PriorOtherCondition> {
         return listOf(
             PriorOtherCondition(
-                name = "Pancreatitis",
+                name = "pancreatitis",
                 doids = setOf("4989"),
                 category = "Pancreas disease",
                 isContraindicationForTherapy = true,

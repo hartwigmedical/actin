@@ -35,7 +35,7 @@ class ProteinIsExpressedByIHCTest {
     }
 
     private fun ihcTest(scoreValue: Double? = null, scoreValuePrefix: String? = null, scoreText: String? = null) =
-        MolecularTestFactory.priorMolecularTest(
+        MolecularTestFactory.priorIHCTest(
             test = IHC, item = PROTEIN, scoreValue = scoreValue, scoreValuePrefix = scoreValuePrefix, scoreText = scoreText
         )
 }

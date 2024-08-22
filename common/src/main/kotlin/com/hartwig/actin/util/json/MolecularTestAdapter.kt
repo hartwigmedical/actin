@@ -8,7 +8,6 @@ import com.google.gson.stream.JsonWriter
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.MolecularTest
-import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
 
 class MolecularTestAdapter(private val gson: Gson) : TypeAdapter<MolecularTest>() {
 
@@ -28,7 +27,6 @@ class MolecularTestAdapter(private val gson: Gson) : TypeAdapter<MolecularTest>(
             ExperimentType.HARTWIG_WHOLE_GENOME -> gson.fromJson(jsonObject, MolecularRecord::class.java)
             ExperimentType.HARTWIG_TARGETED -> gson.fromJson(jsonObject, MolecularRecord::class.java)
             ExperimentType.PANEL -> PanelRecordAdapter(gson).fromJsonTree(jsonObject)
-            ExperimentType.OTHER -> gson.fromJson(jsonObject, OtherPriorMolecularTest::class.java)
         }
     }
 }

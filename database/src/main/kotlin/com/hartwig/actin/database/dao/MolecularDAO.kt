@@ -467,14 +467,14 @@ internal class MolecularDAO(private val context: DSLContext) {
                     fusion.event,
                     driverLikelihood(fusion),
                     fusion.geneStart,
-                    fusion.geneTranscriptStart,
+                    fusion.extendedFusionOrThrow().geneTranscriptStart,
                     fusion.extendedFusionOrThrow().fusedExonUp,
                     fusion.geneEnd,
-                    fusion.geneTranscriptEnd,
+                    fusion.extendedFusionOrThrow().geneTranscriptEnd,
                     fusion.extendedFusionOrThrow().fusedExonDown,
                     fusion.driverType.toString(),
                     fusion.proteinEffect.toString(),
-                    fusion.extendedFusionOrThrow().isAssociatedWithDrugResistance
+                    fusion.isAssociatedWithDrugResistance
                 )
                 .returning(Tables.FUSION.ID)
                 .fetchOne()!!
@@ -571,7 +571,7 @@ internal class MolecularDAO(private val context: DSLContext) {
                     Tables.PHARMACO.ALLELECOUNT,
                     Tables.PHARMACO.FUNCTION
                 )
-                    .values(sampleId, entry.gene, haplotype.allele, haplotype.alleleCount, haplotype.function)
+                    .values(sampleId, entry.gene.toString(), haplotype.allele, haplotype.alleleCount, haplotype.function.display())
                     .execute()
             }
         }

@@ -2,7 +2,6 @@ package com.hartwig.actin.molecular
 
 import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.PatientRecordJson
-import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.clinical.datamodel.PriorSequencingTest
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.datamodel.DoidEntry
@@ -11,20 +10,21 @@ import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
-import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.EvidenceDatabaseFactory
+import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
+import com.hartwig.actin.molecular.evidence.orange.MolecularRecordAnnotator
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
-import com.hartwig.actin.molecular.orange.MolecularRecordAnnotator
 import com.hartwig.actin.molecular.orange.interpretation.OrangeExtractor
+import com.hartwig.actin.molecular.panel.PanelAnnotator
+import com.hartwig.actin.molecular.panel.PanelFusionAnnotator
+import com.hartwig.actin.molecular.panel.PanelVariantAnnotator
 import com.hartwig.actin.molecular.paver.PaveRefGenomeVersion
 import com.hartwig.actin.molecular.paver.Paver
-import com.hartwig.actin.molecular.priormoleculartest.PanelAnnotator
-import com.hartwig.actin.molecular.priormoleculartest.PriorMolecularTestInterpreters
-import com.hartwig.actin.molecular.priormoleculartest.PriorSequencingExtractor
 import com.hartwig.actin.molecular.util.MolecularHistoryPrinter
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataLoader
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.transvar.TransvarVariantAnnotatorFactory
+import com.hartwig.hmftools.common.fusion.KnownFusionCache
 import com.hartwig.hmftools.datamodel.OrangeJson
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.serve.datamodel.ActionableEventsLoader
@@ -60,7 +60,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
 
         val orangeMolecularTests = interpretOrangeRecord(config, doidEntry, tumorDoids)
         val clinicalMolecularTests =
-            interpretClinicalMolecularTests(config, clinical.priorIHCTests, clinical.priorSequencingTests, doidEntry, tumorDoids)
+            interpretClinicalMolecularTests(config, clinical.priorSequencingTests, doidEntry, tumorDoids)
 
         val history = MolecularHistory(orangeMolecularTests + clinicalMolecularTests)
         MolecularHistoryPrinter.printRecord(history)
@@ -96,7 +96,6 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
 
     private fun interpretClinicalMolecularTests(
         config: MolecularInterpreterConfig,
-        priorIHCTests: List<PriorIHCTest>,
         priorSequencingTests: List<PriorSequencingTest>,
         doidEntry: DoidEntry,
         tumorDoids: Set<String>
@@ -113,7 +112,13 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         )
         val dndsDatabase = DndsDatabase.create(config.oncoDndsDatabasePath, config.tsgDndsDatabasePath)
 
-        LOGGER.info("Interpreting clinical molecular tests")
+        LOGGER.info("Loading known fusions from " + config.knownFusionsPath)
+        val knownFusionCache = KnownFusionCache()
+        if (!knownFusionCache.loadFromFile(config.knownFusionsPath)) {
+            throw IllegalArgumentException("Failed to load known fusions from ${config.knownFusionsPath}")
+        }
+
+        LOGGER.info("Interpreting prior sequencing tests without orange results")
         val geneDriverLikelihoodModel = GeneDriverLikelihoodModel(dndsDatabase)
         val variantAnnotator = TransvarVariantAnnotatorFactory.withRefGenome(
             com.hartwig.actin.tools.ensemblcache.RefGenome.V37,
@@ -125,20 +130,25 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             config.driverGenePanelPath, config.tempDir
         )
         val paveLite = PaveLite(ensemblDataCache, false)
-        val clinicalMolecularTests = PriorMolecularTestInterpreters.create(
-            evidenceDatabase,
-            geneDriverLikelihoodModel,
-            variantAnnotator,
-            paver,
-            paveLite
-        ).process(priorIHCTests)
-        val sequencingMolecularTests = MolecularInterpreter(
-            PriorSequencingExtractor(),
-            PanelAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite),
-        ).run(priorSequencingTests)
-        LOGGER.info(" Completed interpretation of {} clinical molecular tests", clinicalMolecularTests.size)
 
-        return clinicalMolecularTests + sequencingMolecularTests
+        val panelVariantAnnotator = PanelVariantAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite)
+        val panelFusionAnnotator = PanelFusionAnnotator(evidenceDatabase, knownFusionCache, ensemblDataCache)
+
+        val sequencingMolecularTests = MolecularInterpreter(
+            extractor = object : MolecularExtractor<PriorSequencingTest, PriorSequencingTest> {
+                override fun extract(input: List<PriorSequencingTest>): List<PriorSequencingTest> {
+                    return input
+                }
+            },
+            annotator = PanelAnnotator(
+                evidenceDatabase,
+                panelVariantAnnotator,
+                panelFusionAnnotator
+            ),
+        ).run(priorSequencingTests)
+        LOGGER.info(" Completed interpretation of {} clinical molecular tests", sequencingMolecularTests.size)
+
+        return sequencingMolecularTests
     }
 
     private fun loadEvidence(

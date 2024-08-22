@@ -25,5 +25,6 @@ data class TumorDetails(
     val hasLymphNodeLesions: Boolean? = null,
     val lymphNodeLesionsCount: Int? = null,
     val otherLesions: List<String>? = null,
-    val biopsyLocation: String? = null
+    val biopsyLocation: String? = null,
+    val rawPathologyReport: String? = null
 )

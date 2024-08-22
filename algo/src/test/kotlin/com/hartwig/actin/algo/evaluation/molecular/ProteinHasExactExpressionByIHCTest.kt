@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.util.ValueComparison
 import org.junit.Test
 
 private const val IHC = "IHC"
@@ -32,7 +33,7 @@ class ProteinHasExactExpressionByIHCTest {
 
     @Test
     fun `Should fail when prior test contains exact result with prefix`() {
-        val priorTest = ihcTest(scoreValuePrefix = ">", scoreValue = 2.0)
+        val priorTest = ihcTest(scoreValuePrefix = ValueComparison.LARGER_THAN, scoreValue = 2.0)
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withIHCTests(priorTest)))
     }
 
@@ -48,7 +49,7 @@ class ProteinHasExactExpressionByIHCTest {
     }
 
     private fun ihcTest(scoreValue: Double? = null, scoreValuePrefix: String? = null, scoreText: String? = null) =
-        MolecularTestFactory.priorMolecularTest(
+        MolecularTestFactory.priorIHCTest(
             test = IHC, item = PROTEIN, scoreValue = scoreValue, scoreValuePrefix = scoreValuePrefix, scoreText = scoreText
         )
 }

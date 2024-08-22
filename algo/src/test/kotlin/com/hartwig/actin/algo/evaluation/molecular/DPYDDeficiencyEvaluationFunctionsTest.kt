@@ -1,23 +1,25 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.molecular.datamodel.orange.pharmaco.Haplotype
+import com.hartwig.actin.molecular.datamodel.orange.pharmaco.HaplotypeFunction
 import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoEntry
+import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoGene
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class DPYDDeficiencyEvaluationFunctionsTest {
 
     private val homozygousEntry =
-        PharmacoEntry(gene = "DPYD", haplotypes = setOf(Haplotype(allele = "*1", alleleCount = 2, function = "Reduced Function")))
+        PharmacoEntry(gene = PharmacoGene.DPYD, haplotypes = setOf(Haplotype(allele = "*1", alleleCount = 2, function = HaplotypeFunction.REDUCED_FUNCTION)))
     private val heterozygousEntry = PharmacoEntry(
-        gene = "DPYD",
+        gene = PharmacoGene.DPYD,
         haplotypes = setOf(
-            Haplotype(allele = "*1", alleleCount = 1, function = "No Function"),
-            Haplotype(allele = "*2", alleleCount = 1, function = "Normal function")
+            Haplotype(allele = "*1", alleleCount = 1, function = HaplotypeFunction.NO_FUNCTION),
+            Haplotype(allele = "*2", alleleCount = 1, function = HaplotypeFunction.NORMAL_FUNCTION)
         )
     )
     private val proficientEntry =
-        PharmacoEntry(gene = "DPYD", haplotypes = setOf(Haplotype(allele = "*1", alleleCount = 2, function = "Normal Function")))
+        PharmacoEntry(gene = PharmacoGene.DPYD, haplotypes = setOf(Haplotype(allele = "*1", alleleCount = 2, function = HaplotypeFunction.NORMAL_FUNCTION)))
 
     @Test
     fun `Should return true if patient has homozygous DPYD haplotypes with reduced function`() {

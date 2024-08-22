@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-class HasAtLeastCertainAge internal constructor(private val referenceYear: Int, private val minAge: Int) : EvaluationFunction {
+class HasAtLeastCertainAge(private val referenceYear: Int, private val minAge: Int) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val age = referenceYear - record.patient.birthYear

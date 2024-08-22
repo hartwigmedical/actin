@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 
-class HasHadPriorConditionWithName internal constructor(private val nameToFind: String) : EvaluationFunction {
+class HasHadPriorConditionWithName(private val nameToFind: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val hasHadPriorConditionWithName = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)

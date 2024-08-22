@@ -32,6 +32,7 @@ enum class LabMeasurement(val code: String, val display: String, val defaultUnit
     BOUND_T3_ATEL("T3_atel", "bound T3", LabUnit.NANOMOLES_PER_LITER),
     HCG_AND_BETA_HCG("HCG", "HCG", LabUnit.INTERNATIONAL_UNITS_PER_LITER),
     HEMOGLOBIN("Hb", "hemoglobin", LabUnit.MILLIMOLES_PER_LITER),
+    INDIRECT_BILIRUBIN("IBIL", "indirect bilirubin", LabUnit.MICROMOLES_PER_LITER),
     INTERNATIONAL_NORMALIZED_RATIO("INR", "INR", LabUnit.NONE),
     INTERNATIONAL_NORMALIZED_RATIO_POCT("POCT_INR", "POCT INR", LabUnit.UNITS_OF_INR),
     IONIZED_CALCIUM("B_ICA", "ionized calcium", LabUnit.MILLIMOLES_PER_LITER),

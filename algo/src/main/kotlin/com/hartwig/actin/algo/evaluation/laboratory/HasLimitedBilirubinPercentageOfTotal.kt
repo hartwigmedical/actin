@@ -8,7 +8,7 @@ import com.hartwig.actin.clinical.interpretation.LabInterpreter
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
 import java.time.LocalDate
 
-class HasLimitedBilirubinPercentageOfTotal internal constructor(private val maxPercentage: Double, private val minValidDate: LocalDate) :
+class HasLimitedBilirubinPercentageOfTotal(private val maxPercentage: Double, private val minValidDate: LocalDate) :
     LabEvaluationFunction {
 
     override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {

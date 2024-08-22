@@ -11,7 +11,7 @@ data class MolecularEvaluation(
 ) {
     companion object {
 
-        private fun defaultEvaluationPrecedence(groupedEvaluationsByResult: Map<EvaluationResult, List<MolecularEvaluation>>) =
+        fun defaultEvaluationPrecedence(groupedEvaluationsByResult: Map<EvaluationResult, List<MolecularEvaluation>>) =
             (groupedEvaluationsByResult[EvaluationResult.PASS]
                 ?: groupedEvaluationsByResult[EvaluationResult.WARN]
                 ?: groupedEvaluationsByResult[EvaluationResult.FAIL]

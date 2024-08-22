@@ -24,7 +24,7 @@ internal object MolecularTestFactory {
     private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
     private val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
 
-    fun priorMolecularTest(
+    fun priorIHCTest(
         test: String = "",
         item: String = "",
         measure: String? = null,
@@ -67,7 +67,7 @@ internal object MolecularTestFactory {
     fun withMolecularTestsAndNoOrangeMolecular(molecularTests: List<MolecularTest>): PatientRecord {
         return base.copy(molecularHistory = MolecularHistory(molecularTests))
     }
-    
+
     fun withVariant(variant: Variant): PatientRecord {
         return withDriver(variant)
     }
@@ -143,12 +143,13 @@ internal object MolecularTestFactory {
     fun withExperimentTypeAndContainingTumorCellsAndPriorTest(
         type: ExperimentType,
         containsTumorCells: Boolean,
-        priorTest: MolecularTest
+        priorTest: PriorIHCTest
     ): PatientRecord {
         return base.copy(
             molecularHistory = MolecularHistory(
-                listOf(baseMolecular.copy(experimentType = type, containsTumorCells = containsTumorCells), priorTest)
-            )
+                listOf(baseMolecular.copy(experimentType = type, containsTumorCells = containsTumorCells))
+            ),
+            priorIHCTests = listOf(priorTest)
         )
     }
 

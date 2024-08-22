@@ -3,16 +3,10 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
-import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.addingTestFromPriorMolecular
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freeTextPriorMolecularFusionRecord
-import com.hartwig.actin.molecular.datamodel.TestPanelRecordFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusionExtraction
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val MATCHING_GENE = "gene A"
@@ -94,58 +88,6 @@ class HasFusionInGeneTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(MolecularTestFactory.withFusion(matchingFusion.copy(proteinEffect = ProteinEffect.NO_EFFECT)))
-        )
-    }
-
-    @Test
-    fun `Should pass on fusion in generic panel when no Orange molecular`() {
-        assertMolecularEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(
-                MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
-                    listOf(freeTextPriorMolecularFusionRecord(MATCHING_GENE, "gene B"))
-                )
-            )
-        )
-    }
-
-    @Test
-    fun `Should pass on fusion in archer panel when no Orange molecular`() {
-        assertMolecularEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(
-                MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
-                    listOf(
-                        TestPanelRecordFactory.empty()
-                            .copy(panelExtraction = ArcherPanelExtraction(fusions = listOf(ArcherFusionExtraction(MATCHING_GENE))))
-                    )
-                )
-            )
-        )
-    }
-
-    @Test
-    fun `Should prefer pass result from Orange molecular when fusion found in both Orange molecular and panels`() {
-        val evaluation = function.evaluate(
-            addingTestFromPriorMolecular(
-                MolecularTestFactory.withFusion(matchingFusion),
-                listOf(freeTextPriorMolecularFusionRecord(MATCHING_GENE, "gene B"))
-            )
-        )
-
-        assertMolecularEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passSpecificMessages).containsExactly("Fusion(s)  detected in gene gene A")
-    }
-
-    @Test
-    fun `Should be undetermined for gene not tested in panel and no Orange molecular`() {
-        assertMolecularEvaluation(
-            EvaluationResult.UNDETERMINED,
-            function.evaluate(
-                MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
-                    listOf(freeTextPriorMolecularFusionRecord("gene B", "gene C"))
-                )
-            )
         )
     }
 }

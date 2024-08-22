@@ -11,9 +11,7 @@ class NsclcDriverGeneStatusesAreAvailable : EvaluationFunction {
         val molecularHistory = record.molecularHistory
         val (validOncoPanelOrWGSList, invalidOncoPanelOrWGSList) = molecularHistory.allOrangeMolecularRecords()
             .partition { it.containsTumorCells }
-        val panelGenes =
-            (molecularHistory.allPanels().map { it.testedGenes() })
-                .flatten()
+        val panelGenes = (molecularHistory.allPanels().map { it.testedGenes }).flatten()
 
         return when {
             validOncoPanelOrWGSList.isNotEmpty() || panelGenes.containsAll(NSCLC_DRIVER_GENE_SET) -> {

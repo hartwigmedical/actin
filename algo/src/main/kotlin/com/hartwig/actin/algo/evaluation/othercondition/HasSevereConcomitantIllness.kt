@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-class HasSevereConcomitantIllness internal constructor() : EvaluationFunction {
+class HasSevereConcomitantIllness: EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val whoStatus = record.clinicalStatus.who
 
