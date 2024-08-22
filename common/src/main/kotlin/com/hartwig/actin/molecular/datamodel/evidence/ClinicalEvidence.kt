@@ -26,6 +26,10 @@ interface Evidence {
     val applicableCancerType: ApplicableCancerType
 }
 
+enum class EvidenceTier{
+    I, II, III, V
+}
+
 data class TreatmentEvidence(
     val treatment: String,
     val evidenceLevel: EvidenceLevel,
