@@ -155,7 +155,7 @@ data class ProvidedMolecularTestResult(
     val msi: Boolean? = null,
     @JsonPropertyDescription("Tumor mutational burden in m/MB (eg. 8.0)")
     val tmb: Double? = null,
-    @JsonPropertyDescription("Variant allele frequency as a percentage (eg. 1)")
+    @JsonPropertyDescription("Variant allele frequency as a fraction (eg. 0.01 is interpreted as 1%)")
     val vaf: Double? = null
 )
 

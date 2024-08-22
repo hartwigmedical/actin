@@ -19,10 +19,10 @@ class AggregatedEvidenceFactoryTest {
 
     private val evidenceFields = listOf(
         AggregatedEvidence::approvedTreatmentsPerEvent,
-        AggregatedEvidence::offLabelExperimentalTreatmentsPerEvent,
         AggregatedEvidence::onLabelExperimentalTreatmentPerEvent,
-        AggregatedEvidence::suspectResistantTreatmentsPerEvent,
-        AggregatedEvidence::knownResistantTreatmentsPerEvent
+        AggregatedEvidence::offLabelExperimentalTreatmentsPerEvent,
+        AggregatedEvidence::knownResistantTreatmentsPerEvent,
+        AggregatedEvidence::suspectResistantTreatmentsPerEvent
     )
 
     @Test

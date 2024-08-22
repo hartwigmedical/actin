@@ -12,11 +12,11 @@ object TestActionableEvidenceFactory {
         return ActionableEvidence(
             actionableTreatments = setOf(
                 treatment("approved", ActinEvidenceCategory.APPROVED),
-                ActionableTreatment("on-label", EvidenceLevel.A, ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL),
-                ActionableTreatment("off-label", EvidenceLevel.A, ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL),
-                ActionableTreatment("pre-clinical", EvidenceLevel.A, ActinEvidenceCategory.PRE_CLINICAL),
+                ActionableTreatment("on-label", EvidenceLevel.B, ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL),
+                ActionableTreatment("off-label", EvidenceLevel.B, ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL),
+                ActionableTreatment("pre-clinical", EvidenceLevel.C, ActinEvidenceCategory.PRE_CLINICAL),
                 ActionableTreatment("known resistant", EvidenceLevel.A, ActinEvidenceCategory.KNOWN_RESISTANT),
-                ActionableTreatment("suspect resistant", EvidenceLevel.A, ActinEvidenceCategory.SUSPECT_RESISTANT),
+                ActionableTreatment("suspect resistant", EvidenceLevel.C, ActinEvidenceCategory.SUSPECT_RESISTANT),
             ),
             externalEligibleTrials = setOf(TestExternalTrialFactory.createTestTrial()),
         )

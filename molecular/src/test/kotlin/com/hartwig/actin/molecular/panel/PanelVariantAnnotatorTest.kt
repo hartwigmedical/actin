@@ -47,7 +47,7 @@ private const val OTHER_GENE_TRANSCRIPT = "other_gene_transcript"
 private const val CHROMOSOME = "1"
 private const val POSITION = 1
 private val EMPTY_MATCH = ActionabilityMatch(emptyList(), emptyList())
-private val ARCHER_VARIANT = SequencedVariant(GENE, HGVS_CODING)
+private val ARCHER_VARIANT = SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING)
 
 private val VARIANT_MATCH_CRITERIA =
     VariantMatchCriteria(

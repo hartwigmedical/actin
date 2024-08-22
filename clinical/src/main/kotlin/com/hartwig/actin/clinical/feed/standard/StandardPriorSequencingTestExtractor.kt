@@ -88,14 +88,14 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
         results.filter { result -> result.hgvsCodingImpact != null || result.hgvsProteinImpact != null }
             .map { result ->
                 SequencedVariant(
+                    result.vaf,
                     result.gene
                         ?: throw IllegalArgumentException("Gene must be defined when hgvs protein/coding impact are indicated"),
                     result.hgvsCodingImpact,
                     result.hgvsProteinImpact,
                     result.transcript,
-                    result.exon,
                     result.codon,
-                    result.vaf
+                    result.exon
                 )
             }.toSet()
 }

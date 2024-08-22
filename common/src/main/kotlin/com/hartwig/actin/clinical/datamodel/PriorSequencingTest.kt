@@ -4,13 +4,13 @@ import com.hartwig.actin.Displayable
 import java.time.LocalDate
 
 data class SequencedVariant(
+    val variantAlleleFrequency: Double? = null,
     val gene: String,
     val hgvsCodingImpact: String? = null,
     val hgvsProteinImpact: String? = null,
     val transcript: String? = null,
     val exon: Int? = null,
-    val codon: Int? = null,
-    val variantAlleleFrequency: Double? = null
+    val codon: Int? = null
 ) {
     fun hgvsCodingOrProteinImpact(): String {
         return checkNotation(hgvsCodingImpact, "c") ?: checkNotation(hgvsProteinImpact, "p") ?: throw IllegalStateException()

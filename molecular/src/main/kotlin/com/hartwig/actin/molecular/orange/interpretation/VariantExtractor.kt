@@ -46,23 +46,14 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
                 val driverLikelihood = determineDriverLikelihood(driver)
                 val evidence = ActionableEvidenceFactory.createNoEvidence()
                 Variant(
-                    gene = variant.gene(),
-                    geneRole = GeneRole.UNKNOWN,
-                    proteinEffect = ProteinEffect.UNKNOWN,
-                    isAssociatedWithDrugResistance = null,
-                    isReportable = variant.reported(),
-                    event = event,
-                    driverLikelihood = driverLikelihood,
-                    evidence = evidence,
                     chromosome = variant.chromosome(),
                     position = variant.position(),
                     ref = variant.ref(),
                     alt = variant.alt(),
                     type = determineVariantType(variant),
-                    isHotspot = variant.hotspot() == HotspotType.HOTSPOT,
+                    variantAlleleFrequency = variant.adjustedVAF(),
                     canonicalImpact = extractCanonicalImpact(variant),
                     otherImpacts = extractOtherImpacts(variant),
-                    variantAlleleFrequency = variant.adjustedVAF(),
                     extendedVariantDetails = ExtendedVariantDetails(
                         variantCopyNumber = ExtractionUtil.keep3Digits(variant.variantCopyNumber()),
                         totalCopyNumber = ExtractionUtil.keep3Digits(variant.adjustedCopyNumber()),
@@ -70,6 +61,15 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
                         phaseGroups = variant.localPhaseSets()?.toSet(),
                         clonalLikelihood = ExtractionUtil.keep3Digits(1 - variant.subclonalLikelihood()),
                     ),
+                    isHotspot = variant.hotspot() == HotspotType.HOTSPOT,
+                    isReportable = variant.reported(),
+                    event = event,
+                    driverLikelihood = driverLikelihood,
+                    evidence = evidence,
+                    gene = variant.gene(),
+                    geneRole = GeneRole.UNKNOWN,
+                    proteinEffect = ProteinEffect.UNKNOWN,
+                    isAssociatedWithDrugResistance = null,
                 )
             }
             .toSortedSet(VariantComparator())
