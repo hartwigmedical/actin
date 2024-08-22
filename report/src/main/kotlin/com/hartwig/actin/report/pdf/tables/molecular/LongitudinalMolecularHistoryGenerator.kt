@@ -6,6 +6,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
+import com.hartwig.actin.report.pdf.util.Formats.VALUE_NOT_AVAILABLE
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
@@ -36,7 +37,7 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
         for (driver in allDrivers) {
             table.addCell(Cells.createContent(driver.event))
             table.addCell(Cells.createContent(LongitudinalVariantInterpretation.interpret(driver as GeneAlteration)))
-            table.addCell(Cells.createContent(driver.driverLikelihood.toString()))
+            table.addCell(Cells.createContent(driver.driverLikelihood?.toString() ?: VALUE_NOT_AVAILABLE))
             for (test in sortedAndFilteredTests) {
                 if (testsByDriverEvent[driver.event]?.contains(test) == true) {
                     table.addCell(Cells.createContent("Detected${(driver as? Variant)?.let { it.variantAlleleFrequency?.let { v -> " (VAF ${v}%)" } ?: "" } ?: ""}"))

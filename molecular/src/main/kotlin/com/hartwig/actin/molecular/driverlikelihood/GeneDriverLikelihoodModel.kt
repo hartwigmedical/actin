@@ -34,10 +34,15 @@ class GeneDriverLikelihoodModel(private val dndsDatabase: DndsDatabase) {
 
             GeneRole.TSG -> tsgLikelihood(lookupDndsPerVariant(variants, gene, geneRole))
 
-            GeneRole.BOTH -> max(
-                oncoLikelihood(lookupDndsPerVariant(variants, gene, GeneRole.ONCO)),
-                tsgLikelihood(lookupDndsPerVariant(variants, gene, GeneRole.TSG))
-            )
+            GeneRole.BOTH -> {
+                val oncoLikelihood = oncoLikelihood(lookupDndsPerVariant(variants, gene, GeneRole.ONCO))
+                val tsgLikelihood = tsgLikelihood(lookupDndsPerVariant(variants, gene, GeneRole.TSG))
+                if (oncoLikelihood == null || tsgLikelihood == null) {
+                    null
+                } else {
+                    max(oncoLikelihood, tsgLikelihood)
+                }
+            }
 
             GeneRole.UNKNOWN -> null
         }
@@ -70,15 +75,25 @@ class GeneDriverLikelihoodModel(private val dndsDatabase: DndsDatabase) {
         dndsDatabase.find(gene, geneRole, it)
     }
 
-    private fun oncoLikelihood(dndsEntries: List<DndsDatabaseEntry>) =
-        dndsEntries.maxOf { getLikelihood(it.driversPerSample, it.probabilityVariantNonDriver) }
+    private fun oncoLikelihood(dndsEntries: List<DndsDatabaseEntry>): Double? {
+        return if (dndsEntries.isEmpty()) {
+            null
+        } else {
+            dndsEntries.maxOf { getLikelihood(it.driversPerSample, it.probabilityVariantNonDriver) }
+        }
+    }
 
-    private fun tsgLikelihood(dndsEntries: List<DndsDatabaseEntry>) =
-        if (dndsEntries.size == 1) getLikelihood(
-            dndsEntries.first().driversPerSample,
-            dndsEntries.first().probabilityVariantNonDriver
-        ) else jointProbability(dndsEntries.take(2))
+    private fun tsgLikelihood(dndsEntries: List<DndsDatabaseEntry>): Double? {
+        return when (dndsEntries.size) {
+            0 -> null
+            1 -> getLikelihood(
+                dndsEntries.first().driversPerSample,
+                dndsEntries.first().probabilityVariantNonDriver
+            )
 
+            else -> jointProbability(dndsEntries.take(2))
+        }
+    }
 
     private fun jointProbability(topTwo: List<DndsDatabaseEntry>): Double {
         val firstVariant = topTwo[0]
