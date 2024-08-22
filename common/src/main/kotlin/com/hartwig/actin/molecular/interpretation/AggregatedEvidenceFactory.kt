@@ -60,13 +60,8 @@ object AggregatedEvidenceFactory {
     private fun hasEvidence(evidence: ActionableEvidence?): Boolean {
         return if (evidence == null) false else {
             listOf(
-                evidence.approvedTreatments,
                 evidence.externalEligibleTrials,
-                evidence.onLabelExperimentalTreatments,
-                evidence.offLabelExperimentalTreatments,
-                evidence.preClinicalTreatments,
-                evidence.knownResistantTreatments,
-                evidence.suspectResistantTreatments
+                evidence.actionableTreatments
             ).any(Set<Any>::isNotEmpty)
         }
     }
@@ -82,32 +77,18 @@ object AggregatedEvidenceFactory {
             AggregatedEvidence()
         } else {
             AggregatedEvidence(
-                approvedTreatmentsPerEvent = evidenceMap(event, evidence.approvedTreatments),
                 externalEligibleTrialsPerEvent = evidenceMap(event, evidence.externalEligibleTrials),
-                onLabelExperimentalTreatmentsPerEvent = evidenceMap(event, evidence.onLabelExperimentalTreatments),
-                offLabelExperimentalTreatmentsPerEvent = evidenceMap(event, evidence.offLabelExperimentalTreatments),
-                preClinicalTreatmentsPerEvent = evidenceMap(event, evidence.preClinicalTreatments),
-                knownResistantTreatmentsPerEvent = evidenceMap(event, evidence.knownResistantTreatments),
-                suspectResistantTreatmentsPerEvent = evidenceMap(event, evidence.suspectResistantTreatments)
+                actionableTreatments = evidenceMap(event, evidence.actionableTreatments),
             )
         }
     }
 
     private fun mergeAggregatedEvidenceList(aggregatedEvidenceList: List<AggregatedEvidence>): AggregatedEvidence {
         return AggregatedEvidence(
-            approvedTreatmentsPerEvent = mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::approvedTreatmentsPerEvent)),
             externalEligibleTrialsPerEvent =
             mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::externalEligibleTrialsPerEvent)),
-            onLabelExperimentalTreatmentsPerEvent =
-            mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::onLabelExperimentalTreatmentsPerEvent)),
-            offLabelExperimentalTreatmentsPerEvent =
-            mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::offLabelExperimentalTreatmentsPerEvent)),
-            preClinicalTreatmentsPerEvent =
-            mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::preClinicalTreatmentsPerEvent)),
-            knownResistantTreatmentsPerEvent =
-            mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::knownResistantTreatmentsPerEvent)),
-            suspectResistantTreatmentsPerEvent =
-            mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::suspectResistantTreatmentsPerEvent)),
+            actionableTreatments =
+            mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::actionableTreatments)),
         )
     }
 

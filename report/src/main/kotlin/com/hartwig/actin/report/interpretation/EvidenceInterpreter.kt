@@ -5,7 +5,7 @@ import com.hartwig.actin.molecular.interpretation.AggregatedEvidence
 class EvidenceInterpreter private constructor(private val actinInclusionEvents: Set<String>) {
    
     fun eventsWithApprovedEvidence(evidence: AggregatedEvidence): Set<String> {
-        return evidence.approvedTreatmentsPerEvent.keys
+        return evidence.approvedTreatmentsPerEvent().keys
     }
 
     fun additionalEventsWithExternalTrialEvidence(evidence: AggregatedEvidence): Set<String> {
@@ -13,12 +13,12 @@ class EvidenceInterpreter private constructor(private val actinInclusionEvents: 
     }
 
     fun additionalEventsWithOnLabelExperimentalEvidence(evidence: AggregatedEvidence): Set<String> {
-        return filter(evidence.onLabelExperimentalTreatmentsPerEvent, evidence)
+        return filter(evidence.onLabelExperimentalTreatmentPerEvent(), evidence)
     }
 
     fun additionalEventsWithOffLabelExperimentalEvidence(evidence: AggregatedEvidence): Set<String> {
         return filter(
-            evidence.offLabelExperimentalTreatmentsPerEvent,
+            evidence.offLabelExperimentalTreatmentsPerEvent(),
             evidence,
             additionalEventsWithOnLabelExperimentalEvidence(evidence)
         )

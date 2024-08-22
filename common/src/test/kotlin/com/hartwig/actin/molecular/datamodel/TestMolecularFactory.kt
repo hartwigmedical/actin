@@ -183,23 +183,7 @@ object TestMolecularFactory {
         position = 140453136,
         ref = "T",
         alt = "A",
-        isReportable = true,
-        event = "BRAF V600E",
-        driverLikelihood = DriverLikelihood.HIGH,
-        evidence = TestActionableEvidenceFactory.withApprovedTreatment("Vemurafenib"),
-        gene = "BRAF",
-        geneRole = GeneRole.ONCO,
-        proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-        isAssociatedWithDrugResistance = true,
         type = VariantType.SNV,
-        extendedVariantDetails = ExtendedVariantDetails(
-            variantCopyNumber = 4.1,
-            totalCopyNumber = 6.0,
-            isBiallelic = false,
-            phaseGroups = null,
-            clonalLikelihood = 1.0
-        ),
-        isHotspot = true,
         canonicalImpact = TranscriptImpact(
             transcriptId = "ENST00000288602",
             hgvsCodingImpact = "c.1799T>A",
@@ -211,6 +195,22 @@ object TestMolecularFactory {
             affectedExon = null
         ),
         otherImpacts = emptySet(),
+        extendedVariantDetails = ExtendedVariantDetails(
+            variantCopyNumber = 4.1,
+            totalCopyNumber = 6.0,
+            isBiallelic = false,
+            phaseGroups = null,
+            clonalLikelihood = 1.0
+        ),
+        isHotspot = true,
+        isReportable = true,
+        event = "BRAF V600E",
+        driverLikelihood = DriverLikelihood.HIGH,
+        evidence = TestActionableEvidenceFactory.withApprovedTreatment("Vemurafenib"),
+        gene = "BRAF",
+        geneRole = GeneRole.ONCO,
+        proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+        isAssociatedWithDrugResistance = true,
     )
 
     private fun createProperTestImmunology(): MolecularImmunology {

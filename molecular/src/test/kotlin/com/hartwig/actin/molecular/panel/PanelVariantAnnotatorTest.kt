@@ -7,7 +7,9 @@ import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.TranscriptImpact
 import com.hartwig.actin.molecular.datamodel.VariantType
+import com.hartwig.actin.molecular.datamodel.evidence.ActinEvidenceCategory
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.ActionableTreatment
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
@@ -45,7 +47,7 @@ private const val OTHER_GENE_TRANSCRIPT = "other_gene_transcript"
 private const val CHROMOSOME = "1"
 private const val POSITION = 1
 private val EMPTY_MATCH = ActionabilityMatch(emptyList(), emptyList())
-private val ARCHER_VARIANT = SequencedVariant(GENE, HGVS_CODING)
+private val ARCHER_VARIANT = SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING)
 
 private val VARIANT_MATCH_CRITERIA =
     VariantMatchCriteria(
@@ -133,7 +135,17 @@ class PanelVariantAnnotatorTest {
     fun `Should annotate variants with evidence`() {
         every { evidenceDatabase.evidenceForVariant(VARIANT_MATCH_CRITERIA) } returns ACTIONABILITY_MATCH
         val annotated = annotator.annotate(setOf(ARCHER_VARIANT))
-        assertThat(annotated.first().evidence).isEqualTo(ActionableEvidence(approvedTreatments = setOf("intervention")))
+        assertThat(annotated.first().evidence).isEqualTo(
+            ActionableEvidence(
+                actionableTreatments = setOf(
+                    ActionableTreatment(
+                        name = "intervention",
+                        evidenceLevel = EvidenceLevel.A,
+                        category = ActinEvidenceCategory.APPROVED
+                    )
+                )
+            )
+        )
     }
 
     @Test

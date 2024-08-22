@@ -63,11 +63,11 @@ class MolecularClinicalEvidenceGenerator(val molecularHistory: MolecularHistory,
     private fun formatBoolean(boolean: Boolean) = if (boolean) CHECKED else UNCHECKED
 
     private fun extractClinicalDetails(evidence: ActionableEvidence): Set<ClinicalDetails> {
-        val truncatedApproved = truncatedTreatments(evidence.approvedTreatments)
-        val truncatedOnLabel = truncatedTreatments(evidence.onLabelExperimentalTreatments)
-        val truncatedOffLabel = truncatedTreatments(evidence.offLabelExperimentalTreatments)
-        val truncatedPreClinical = truncatedTreatments(evidence.preClinicalTreatments)
-        val truncatedResistant = truncatedTreatments(evidence.knownResistantTreatments)
+        val truncatedApproved = truncatedTreatments(evidence.approvedTreatments())
+        val truncatedOnLabel = truncatedTreatments(evidence.onLabelExperimentalTreatments())
+        val truncatedOffLabel = truncatedTreatments(evidence.offLabelExperimentalTreatments())
+        val truncatedPreClinical = truncatedTreatments(evidence.preClinicalTreatments())
+        val truncatedResistant = truncatedTreatments(evidence.knownResistantTreatments())
         val allTreatments =
             truncatedApproved + truncatedOnLabel + truncatedOffLabel + truncatedPreClinical + truncatedResistant
         return allTreatments.map {
@@ -83,4 +83,6 @@ class MolecularClinicalEvidenceGenerator(val molecularHistory: MolecularHistory,
     }
 
     private fun truncatedTreatments(treatments: Set<String>) = if (treatments.size > 2) listOf("<many>") else treatments.toList()
+
+
 }
