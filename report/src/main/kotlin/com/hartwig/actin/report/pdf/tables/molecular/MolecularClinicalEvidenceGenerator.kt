@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.itextpdf.layout.element.Table
@@ -62,7 +62,7 @@ class MolecularClinicalEvidenceGenerator(val molecularHistory: MolecularHistory,
 
     private fun formatBoolean(boolean: Boolean) = if (boolean) CHECKED else UNCHECKED
 
-    private fun extractClinicalDetails(evidence: ActionableEvidence): Set<ClinicalDetails> {
+    private fun extractClinicalDetails(evidence: ClinicalEvidence): Set<ClinicalDetails> {
         val truncatedApproved = truncatedTreatments(evidence.approvedTreatments())
         val truncatedOnLabel = truncatedTreatments(evidence.onLabelExperimentalTreatments())
         val truncatedOffLabel = truncatedTreatments(evidence.offLabelExperimentalTreatments())

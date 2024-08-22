@@ -1,18 +1,18 @@
 package com.hartwig.actin.molecular.sort.evidence
 
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
 
-class ActionableEvidenceComparator : Comparator<ActionableEvidence> {
+class ActionableEvidenceComparator : Comparator<ClinicalEvidence> {
 
-    override fun compare(evidence1: ActionableEvidence, evidence2: ActionableEvidence): Int {
+    override fun compare(evidence1: ClinicalEvidence, evidence2: ClinicalEvidence): Int {
         listOf(
-            ActionableEvidence::approvedTreatments,
-            ActionableEvidence::externalEligibleTrials,
-            ActionableEvidence::onLabelExperimentalTreatments,
-            ActionableEvidence::offLabelExperimentalTreatments,
-            ActionableEvidence::preClinicalTreatments,
-            ActionableEvidence::knownResistantTreatments,
-            ActionableEvidence::suspectResistantTreatments
+            ClinicalEvidence::approvedTreatments,
+            ClinicalEvidence::externalEligibleTrials,
+            ClinicalEvidence::onLabelExperimentalTreatments,
+            ClinicalEvidence::offLabelExperimentalTreatments,
+            ClinicalEvidence::preClinicalTreatments,
+            ClinicalEvidence::knownResistantTreatments,
+            ClinicalEvidence::suspectResistantTreatments
         ).forEach { retrieveCollection ->
             val comparison = retrieveCollection.invoke(evidence2).size.compareTo(retrieveCollection.invoke(evidence1).size)
             if (comparison != 0) {

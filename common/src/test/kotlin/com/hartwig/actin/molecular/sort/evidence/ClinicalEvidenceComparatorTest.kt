@@ -11,7 +11,7 @@ import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class ActionableEvidenceComparatorTest {
+class ClinicalEvidenceComparatorTest {
 
     @Test
     fun `Should sort actionable evidences`() {

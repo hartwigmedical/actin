@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.algo.datamodel.TrialMatch
+import com.hartwig.actin.molecular.datamodel.evidence.ApplicableCancerType
 import com.hartwig.actin.molecular.datamodel.evidence.Country
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
@@ -10,8 +11,14 @@ import org.junit.Test
 
 private const val TMB_TARGET = "TMB"
 private const val EGFR_TARGET = "EGFR"
-private val TRIAL_1 = ExternalTrial("1", setOf(Country.NETHERLANDS), "url", "NCT001")
-private val TRIAL_2 = ExternalTrial("2", setOf(Country.BELGIUM), "url", "NCT002")
+private val TRIAL_1 = ExternalTrial(
+    "1", setOf(Country.NETHERLANDS), "url", "NCT001", sourceEvent = "",
+    applicableCancerType = ApplicableCancerType("", emptySet())
+)
+private val TRIAL_2 = ExternalTrial(
+    "2", setOf(Country.BELGIUM), "url", "NCT002", sourceEvent = "",
+    applicableCancerType = ApplicableCancerType("", emptySet())
+)
 private val trialMatches = listOf(
     TrialMatch(
         identification = TrialIdentification("TRIAL-1", true, "TR-1", "Different title of same trial 1", "NCT00000001"),
@@ -146,7 +153,14 @@ class ExternalTrialSummarizerTest {
     }
 
     private fun externalTrial(id: Int) =
-        ExternalTrial("Title of trial $id", setOf(Country.NETHERLANDS, Country.BELGIUM), "url", "NCT0000000$id")
+        ExternalTrial(
+            "Title of trial $id",
+            setOf(Country.NETHERLANDS, Country.BELGIUM),
+            "url",
+            "NCT0000000$id",
+            sourceEvent = "",
+            applicableCancerType = ApplicableCancerType("", emptySet())
+        )
 
     private fun evaluatedCohortTMB() =
         EvaluatedCohort(

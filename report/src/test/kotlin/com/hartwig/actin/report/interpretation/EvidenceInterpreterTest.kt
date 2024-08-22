@@ -1,8 +1,9 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.molecular.datamodel.evidence.ActinEvidenceCategory
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableTreatment
+import com.hartwig.actin.molecular.datamodel.evidence.ApplicableCancerType
 import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
+import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidence
 import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
 import com.hartwig.serve.datamodel.EvidenceLevel
@@ -48,5 +49,8 @@ class EvidenceInterpreterTest {
     }
 
     private fun treatment(category: ActinEvidenceCategory) =
-        ActionableTreatment(name = "treatment", category = category, evidenceLevel = EvidenceLevel.A)
+        TreatmentEvidence(
+            treatment = "treatment", category = category, evidenceLevel = EvidenceLevel.A, sourceEvent = "",
+            applicableCancerType = ApplicableCancerType("", emptySet())
+        )
 }

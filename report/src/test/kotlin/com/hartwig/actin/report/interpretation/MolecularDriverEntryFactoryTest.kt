@@ -4,7 +4,7 @@ import com.hartwig.actin.molecular.datamodel.Drivers
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
 import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
@@ -94,15 +94,15 @@ class MolecularDriverEntryFactoryTest {
         assertThat(result[0].driverType).isEqualTo(expectedDriverType)
     }
 
-    private fun createTestMolecularRecordWithNonReportableDriverWithEvidence(evidence: ActionableEvidence): MolecularRecord {
+    private fun createTestMolecularRecordWithNonReportableDriverWithEvidence(evidence: ClinicalEvidence): MolecularRecord {
         return createTestMolecularRecordWithDriverEvidence(evidence, false)
     }
 
-    private fun createTestMolecularRecordWithDriverEvidence(evidence: ActionableEvidence, isReportable: Boolean): MolecularRecord {
+    private fun createTestMolecularRecordWithDriverEvidence(evidence: ClinicalEvidence, isReportable: Boolean): MolecularRecord {
         return TestMolecularFactory.createMinimalTestMolecularRecord().copy(drivers = createDriversWithEvidence(evidence, isReportable))
     }
 
-    private fun createDriversWithEvidence(evidence: ActionableEvidence, isReportable: Boolean): Drivers {
+    private fun createDriversWithEvidence(evidence: ClinicalEvidence, isReportable: Boolean): Drivers {
         return TestMolecularFactory.createMinimalTestMolecularRecord().drivers.copy(
             viruses = setOf(TestVirusFactory.createMinimal().copy(isReportable = isReportable, evidence = evidence))
         )

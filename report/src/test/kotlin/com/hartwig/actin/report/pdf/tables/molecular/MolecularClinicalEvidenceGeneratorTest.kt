@@ -5,9 +5,10 @@ import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.evidence.ActinEvidenceCategory
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.treatment
 import com.hartwig.actin.report.pdf.assertRow
+import com.hartwig.serve.datamodel.EvidenceLevel
 import org.junit.Test
 
 private const val APPROVED = "approved"
@@ -20,13 +21,13 @@ class MolecularClinicalEvidenceGeneratorTest {
     @Test
     fun `Should create a table with rows for each treatment category`() {
         val evidence =
-            ActionableEvidence(
-                actionableTreatments = setOf(
-                    treatment(APPROVED, ActinEvidenceCategory.APPROVED),
-                    treatment(ON_LABEL_EXPERIMENTAL, ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL),
-                    treatment(OFF_LABEL_EXPERIMENTAL, ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL),
-                    treatment(PRE_CLINICAL, ActinEvidenceCategory.PRE_CLINICAL),
-                    treatment(APPROVED, ActinEvidenceCategory.KNOWN_RESISTANT)
+            ClinicalEvidence(
+                treatmentEvidence = setOf(
+                    treatment(APPROVED, EvidenceLevel.A, ActinEvidenceCategory.APPROVED),
+                    treatment(ON_LABEL_EXPERIMENTAL, EvidenceLevel.A, ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL),
+                    treatment(OFF_LABEL_EXPERIMENTAL, EvidenceLevel.A, ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL),
+                    treatment(PRE_CLINICAL, EvidenceLevel.A, ActinEvidenceCategory.PRE_CLINICAL),
+                    treatment(APPROVED, EvidenceLevel.A, ActinEvidenceCategory.KNOWN_RESISTANT)
                 )
             )
         val table = MolecularClinicalEvidenceGenerator(
@@ -41,14 +42,14 @@ class MolecularClinicalEvidenceGeneratorTest {
     @Test
     fun `Should create 'many' row for categories with more than 2 treatments`() {
         val evidence =
-            ActionableEvidence(
-                actionableTreatments = setOf(
-                    treatment("1", ActinEvidenceCategory.APPROVED),
-                    treatment("2", ActinEvidenceCategory.APPROVED),
-                    treatment("3", ActinEvidenceCategory.APPROVED),
-                    treatment("4", ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL),
-                    treatment("5", ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL),
-                    treatment("6", ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL)
+            ClinicalEvidence(
+                treatmentEvidence = setOf(
+                    treatment("1", EvidenceLevel.A, ActinEvidenceCategory.APPROVED),
+                    treatment("2", EvidenceLevel.A, ActinEvidenceCategory.APPROVED),
+                    treatment("3", EvidenceLevel.A, ActinEvidenceCategory.APPROVED),
+                    treatment("4", EvidenceLevel.A, ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL),
+                    treatment("5", EvidenceLevel.A, ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL),
+                    treatment("6", EvidenceLevel.A, ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL)
                 ),
             )
         val table = MolecularClinicalEvidenceGenerator(
@@ -65,5 +66,5 @@ class MolecularClinicalEvidenceGeneratorTest {
         )
     )
 
-    private fun variant(evidence: ActionableEvidence) = TestMolecularFactory.createProperVariant().copy(evidence = evidence)
+    private fun variant(evidence: ClinicalEvidence) = TestMolecularFactory.createProperVariant().copy(evidence = evidence)
 }

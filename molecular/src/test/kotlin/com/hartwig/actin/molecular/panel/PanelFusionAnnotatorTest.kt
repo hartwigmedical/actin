@@ -6,8 +6,9 @@ import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.Fusion
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.evidence.ActinEvidenceCategory
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableTreatment
+import com.hartwig.actin.molecular.datamodel.evidence.ApplicableCancerType
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence
 import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
@@ -153,12 +154,14 @@ class PanelFusionAnnotatorTest {
                     event = "$GENE-$OTHER_GENE fusion",
                     isReportable = true,
                     driverLikelihood = DriverLikelihood.HIGH,
-                    evidence = ActionableEvidence(
-                        actionableTreatments = setOf(
-                            ActionableTreatment(
-                                name = "intervention",
+                    evidence = ClinicalEvidence(
+                        treatmentEvidence = setOf(
+                            TreatmentEvidence(
+                                treatment = "intervention",
                                 evidenceLevel = EvidenceLevel.A,
-                                category = ActinEvidenceCategory.APPROVED
+                                category = ActinEvidenceCategory.APPROVED,
+                                sourceEvent = "",
+                                applicableCancerType = ApplicableCancerType(cancerType = "", excludedCancerTypes = emptySet())
                             )
                         )
                     )
@@ -194,7 +197,7 @@ class PanelFusionAnnotatorTest {
                     event = "$GENE skipped exons 2-4",
                     isReportable = true,
                     driverLikelihood = DriverLikelihood.HIGH,
-                    evidence = ActionableEvidence()
+                    evidence = ClinicalEvidence()
                 )
             )
         )
@@ -219,7 +222,7 @@ class PanelFusionAnnotatorTest {
                     event = "$GENE skipped exons 2-4",
                     isReportable = true,
                     driverLikelihood = DriverLikelihood.HIGH,
-                    evidence = ActionableEvidence()
+                    evidence = ClinicalEvidence()
                 )
             )
         )

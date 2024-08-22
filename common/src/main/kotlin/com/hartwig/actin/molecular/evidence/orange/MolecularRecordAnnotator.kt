@@ -8,7 +8,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.Variant
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
@@ -50,7 +50,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
 
     private fun createEvidenceForNullableMatch(
         nullableCharacteristic: Boolean?, lookUpEvidence: (Boolean) -> ActionabilityMatch
-    ): ActionableEvidence? {
+    ): ClinicalEvidence? {
         return nullableCharacteristic?.let { characteristic -> ActionableEvidenceFactory.create(lookUpEvidence(characteristic)) }
     }
 

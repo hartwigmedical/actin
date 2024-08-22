@@ -3,7 +3,7 @@ package com.hartwig.actin.molecular.interpretation
 import com.hartwig.actin.molecular.datamodel.Drivers
 import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.MolecularTest
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 import org.apache.logging.log4j.LogManager
 
@@ -47,7 +47,7 @@ object AggregatedEvidenceFactory {
     }
 
     private fun aggregatedEvidenceForCharacteristic(
-        characteristic: Boolean?, event: String, evidence: ActionableEvidence?, characteristicName: String
+        characteristic: Boolean?, event: String, evidence: ClinicalEvidence?, characteristicName: String
     ): AggregatedEvidence? {
         if (characteristic == true) {
             return createAggregatedEvidence(event, evidence)
@@ -57,11 +57,11 @@ object AggregatedEvidenceFactory {
         return null
     }
 
-    private fun hasEvidence(evidence: ActionableEvidence?): Boolean {
+    private fun hasEvidence(evidence: ClinicalEvidence?): Boolean {
         return if (evidence == null) false else {
             listOf(
                 evidence.externalEligibleTrials,
-                evidence.actionableTreatments
+                evidence.treatmentEvidence
             ).any(Set<Any>::isNotEmpty)
         }
     }
@@ -72,13 +72,13 @@ object AggregatedEvidenceFactory {
         ).flatMap { driverSet -> driverSet.map { createAggregatedEvidence(it.event, it.evidence) } }
     }
 
-    private fun createAggregatedEvidence(event: String, evidence: ActionableEvidence?): AggregatedEvidence {
+    private fun createAggregatedEvidence(event: String, evidence: ClinicalEvidence?): AggregatedEvidence {
         return if (evidence == null) {
             AggregatedEvidence()
         } else {
             AggregatedEvidence(
                 externalEligibleTrialsPerEvent = evidenceMap(event, evidence.externalEligibleTrials),
-                actionableTreatments = evidenceMap(event, evidence.actionableTreatments),
+                actionableTreatments = evidenceMap(event, evidence.treatmentEvidence),
             )
         }
     }

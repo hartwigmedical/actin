@@ -11,7 +11,7 @@ import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
 import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
@@ -178,7 +178,7 @@ class DriversSummarizerTest {
         name: String,
         driverLikelihood: DriverLikelihood,
         isReportable: Boolean,
-        evidence: ActionableEvidence = TestActionableEvidenceFactory.createEmpty()
+        evidence: ClinicalEvidence = TestActionableEvidenceFactory.createEmpty()
     ): Variant {
         return TestVariantFactory.createMinimal().copy(
             gene = name,
@@ -201,7 +201,7 @@ class DriversSummarizerTest {
 
     private fun homozygousDisruption(
         name: String, driverLikelihood: DriverLikelihood?, isReportable: Boolean,
-        evidence: ActionableEvidence = TestActionableEvidenceFactory.createEmpty()
+        evidence: ClinicalEvidence = TestActionableEvidenceFactory.createEmpty()
     ): HomozygousDisruption {
         return TestHomozygousDisruptionFactory.createMinimal().copy(
             gene = name,
@@ -214,7 +214,7 @@ class DriversSummarizerTest {
 
     private fun disruption(
         name: String, driverLikelihood: DriverLikelihood, isReportable: Boolean,
-        evidence: ActionableEvidence = TestActionableEvidenceFactory.createEmpty()
+        evidence: ClinicalEvidence = TestActionableEvidenceFactory.createEmpty()
     ): Disruption {
         return TestDisruptionFactory.createMinimal().copy(
             gene = name,
@@ -229,7 +229,7 @@ class DriversSummarizerTest {
         event: String,
         driverLikelihood: DriverLikelihood,
         isReportable: Boolean,
-        evidence: ActionableEvidence = TestActionableEvidenceFactory.createEmpty()
+        evidence: ClinicalEvidence = TestActionableEvidenceFactory.createEmpty()
     ): Fusion {
         return TestFusionFactory.createMinimal().copy(
             event = event,

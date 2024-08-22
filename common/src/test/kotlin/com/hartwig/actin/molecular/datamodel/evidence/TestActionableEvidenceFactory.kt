@@ -4,52 +4,66 @@ import com.hartwig.serve.datamodel.EvidenceLevel
 
 object TestActionableEvidenceFactory {
 
-    fun createEmpty(): ActionableEvidence {
-        return ActionableEvidence()
+    fun createEmpty(): ClinicalEvidence {
+        return ClinicalEvidence()
     }
 
-    fun createExhaustive(): ActionableEvidence {
-        return ActionableEvidence(
-            actionableTreatments = setOf(
-                treatment("approved", ActinEvidenceCategory.APPROVED),
-                ActionableTreatment("on-label", EvidenceLevel.B, ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL),
-                ActionableTreatment("off-label", EvidenceLevel.B, ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL),
-                ActionableTreatment("pre-clinical", EvidenceLevel.C, ActinEvidenceCategory.PRE_CLINICAL),
-                ActionableTreatment("known resistant", EvidenceLevel.A, ActinEvidenceCategory.KNOWN_RESISTANT),
-                ActionableTreatment("suspect resistant", EvidenceLevel.C, ActinEvidenceCategory.SUSPECT_RESISTANT),
+    fun createExhaustive(): ClinicalEvidence {
+        return ClinicalEvidence(
+            treatmentEvidence = setOf(
+                treatment("approved", EvidenceLevel.A, ActinEvidenceCategory.APPROVED),
+                treatment("on-label", EvidenceLevel.B, ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL),
+                treatment("off-label", EvidenceLevel.B, ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL),
+                treatment("pre-clinical", EvidenceLevel.C, ActinEvidenceCategory.PRE_CLINICAL),
+                treatment("known resistant", EvidenceLevel.A, ActinEvidenceCategory.KNOWN_RESISTANT),
+                treatment("suspect resistant", EvidenceLevel.C, ActinEvidenceCategory.SUSPECT_RESISTANT),
             ),
             externalEligibleTrials = setOf(TestExternalTrialFactory.createTestTrial()),
         )
     }
 
-    fun treatment(name: String, category: ActinEvidenceCategory) =
-        ActionableTreatment(name, EvidenceLevel.A, category)
+    fun treatment(name: String, evidenceLevel: EvidenceLevel, category: ActinEvidenceCategory) =
+        TreatmentEvidence(name, evidenceLevel, category, "source", applicableCancerType())
 
-    fun withApprovedTreatment(treatment: String): ActionableEvidence {
-        return ActionableEvidence(actionableTreatments = setOf(treatment(treatment, ActinEvidenceCategory.APPROVED)))
+    fun applicableCancerType() = ApplicableCancerType("applicable type", setOf("excluded type"))
+
+    fun withApprovedTreatment(treatment: String): ClinicalEvidence {
+        return ClinicalEvidence(treatmentEvidence = setOf(treatment(treatment, EvidenceLevel.A, ActinEvidenceCategory.APPROVED)))
     }
 
-    fun withExternalEligibleTrial(treatment: ExternalTrial): ActionableEvidence {
-        return ActionableEvidence(externalEligibleTrials = setOf(treatment))
+    fun withExternalEligibleTrial(treatment: ExternalTrial): ClinicalEvidence {
+        return ClinicalEvidence(externalEligibleTrials = setOf(treatment))
     }
 
-    fun withOnLabelExperimentalTreatment(treatment: String): ActionableEvidence {
-        return ActionableEvidence(actionableTreatments = setOf(treatment(treatment, ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL)))
+    fun withOnLabelExperimentalTreatment(treatment: String): ClinicalEvidence {
+        return ClinicalEvidence(
+            treatmentEvidence = setOf(
+                treatment(
+                    treatment, EvidenceLevel.A, ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL
+                )
+            )
+        )
     }
 
-    fun withOffLabelExperimentalTreatment(treatment: String): ActionableEvidence {
-        return ActionableEvidence(actionableTreatments = setOf(treatment(treatment, ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL)))
+    fun withOffLabelExperimentalTreatment(treatment: String): ClinicalEvidence {
+        return ClinicalEvidence(
+            treatmentEvidence = setOf(
+                treatment(
+                    treatment, EvidenceLevel.A, ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL
+                )
+            )
+        )
     }
 
-    fun withPreClinicalTreatment(treatment: String): ActionableEvidence {
-        return ActionableEvidence(actionableTreatments = setOf(treatment(treatment, ActinEvidenceCategory.PRE_CLINICAL)))
+    fun withPreClinicalTreatment(treatment: String): ClinicalEvidence {
+        return ClinicalEvidence(treatmentEvidence = setOf(treatment(treatment, EvidenceLevel.A, ActinEvidenceCategory.PRE_CLINICAL)))
     }
 
-    fun withKnownResistantTreatment(treatment: String): ActionableEvidence {
-        return ActionableEvidence(actionableTreatments = setOf(treatment(treatment, ActinEvidenceCategory.KNOWN_RESISTANT)))
+    fun withKnownResistantTreatment(treatment: String): ClinicalEvidence {
+        return ClinicalEvidence(treatmentEvidence = setOf(treatment(treatment, EvidenceLevel.A, ActinEvidenceCategory.KNOWN_RESISTANT)))
     }
 
-    fun withSuspectResistantTreatment(treatment: String): ActionableEvidence {
-        return ActionableEvidence(actionableTreatments = setOf(treatment(treatment, ActinEvidenceCategory.SUSPECT_RESISTANT)))
+    fun withSuspectResistantTreatment(treatment: String): ClinicalEvidence {
+        return ClinicalEvidence(treatmentEvidence = setOf(treatment(treatment, EvidenceLevel.A, ActinEvidenceCategory.SUSPECT_RESISTANT)))
     }
 }

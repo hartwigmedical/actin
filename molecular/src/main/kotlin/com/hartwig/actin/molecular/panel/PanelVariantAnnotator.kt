@@ -8,7 +8,7 @@ import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.TranscriptImpact
 import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantType
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.ActionableEvidenceFactory
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
@@ -136,7 +136,7 @@ class PanelVariantAnnotator(
 
     private fun createVariantWithEvidence(
         variant: SequencedVariant,
-        evidence: ActionableEvidence,
+        evidence: ClinicalEvidence,
         geneAlteration: GeneAlteration,
         serveGeneAlteration: com.hartwig.serve.datamodel.common.GeneAlteration?,
         transcriptAnnotation: com.hartwig.actin.tools.variant.Variant,

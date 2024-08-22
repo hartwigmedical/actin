@@ -2,7 +2,7 @@ package com.hartwig.actin.molecular.datamodel.driver
 
 import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
 
 object TestHomozygousDisruptionFactory {
@@ -12,7 +12,7 @@ object TestHomozygousDisruptionFactory {
             isReportable = false,
             event = "",
             driverLikelihood = null,
-            evidence = ActionableEvidence(),
+            evidence = ClinicalEvidence(),
             gene = "",
             geneRole = GeneRole.UNKNOWN,
             proteinEffect = ProteinEffect.UNKNOWN,

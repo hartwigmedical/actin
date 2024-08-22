@@ -4,7 +4,7 @@ import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantType
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariantDetails
 
 object TestVariantFactory {
@@ -22,7 +22,7 @@ object TestVariantFactory {
             isReportable = false,
             event = "",
             driverLikelihood = null,
-            evidence = ActionableEvidence(),
+            evidence = ClinicalEvidence(),
             gene = "",
             geneRole = GeneRole.UNKNOWN,
             proteinEffect = ProteinEffect.UNKNOWN,
