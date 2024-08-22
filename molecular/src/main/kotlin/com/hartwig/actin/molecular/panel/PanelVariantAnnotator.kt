@@ -142,8 +142,19 @@ class PanelVariantAnnotator(
         transcriptAnnotation: com.hartwig.actin.tools.variant.Variant,
         paveResponse: PaveResponse
     ) = Variant(
+        chromosome = transcriptAnnotation.chromosome(),
+        position = transcriptAnnotation.position(),
+        ref = transcriptAnnotation.ref(),
+        alt = transcriptAnnotation.alt(),
+        type = variantType(transcriptAnnotation),
+        variantAlleleFrequency = variant.variantAlleleFrequency,
+        canonicalImpact = impact(paveResponse.impact, transcriptAnnotation),
+        otherImpacts = otherImpacts(paveResponse, transcriptAnnotation),
+        isHotspot = serveGeneAlteration is KnownHotspot || serveGeneAlteration is KnownCodon,
         isReportable = true,
         event = "${variant.gene} ${variant.hgvsCodingOrProteinImpact()}",
+
+
         driverLikelihood = DriverLikelihood.LOW,
         evidence = evidence,
         gene = variant.gene,
@@ -156,17 +167,7 @@ class PanelVariantAnnotator(
 
             else -> ProteinEffect.NO_EFFECT
         },
-        isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance,
-        isHotspot = serveGeneAlteration is KnownHotspot || serveGeneAlteration is KnownCodon,
-        ref = transcriptAnnotation.ref(),
-        alt = transcriptAnnotation.alt(),
-
-
-        canonicalImpact = impact(paveResponse.impact, transcriptAnnotation),
-        otherImpacts = otherImpacts(paveResponse, transcriptAnnotation),
-        chromosome = transcriptAnnotation.chromosome(),
-        position = transcriptAnnotation.position(),
-        type = variantType(transcriptAnnotation)
+        isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance
     )
 
     private fun impact(paveImpact: PaveImpact, transvarVariant: com.hartwig.actin.tools.variant.Variant): TranscriptImpact {

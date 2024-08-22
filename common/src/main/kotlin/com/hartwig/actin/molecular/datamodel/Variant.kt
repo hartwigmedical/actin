@@ -10,6 +10,7 @@ data class Variant(
     val ref: String,
     val alt: String,
     val type: VariantType,
+    val variantAlleleFrequency: Double? = null,
     val canonicalImpact: TranscriptImpact,
     val otherImpacts: Set<TranscriptImpact>,
     val extendedVariantDetails: ExtendedVariantDetails? = null,

@@ -94,19 +94,19 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         private fun bestResponsiveEvidence(driver: Driver): String? {
             val evidence = driver.evidence
             return when {
-                evidence.approvedTreatments.isNotEmpty() -> {
+                evidence.approvedTreatments().isNotEmpty() -> {
                     "Approved"
                 }
 
-                evidence.onLabelExperimentalTreatments.isNotEmpty() -> {
+                evidence.onLabelExperimentalTreatments().isNotEmpty() -> {
                     "On-label experimental"
                 }
 
-                evidence.offLabelExperimentalTreatments.isNotEmpty() -> {
+                evidence.offLabelExperimentalTreatments().isNotEmpty() -> {
                     "Off-label experimental"
                 }
 
-                evidence.preClinicalTreatments.isNotEmpty() -> {
+                evidence.preClinicalTreatments().isNotEmpty() -> {
                     "Pre-clinical"
                 }
 
@@ -117,11 +117,11 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         private fun bestResistanceEvidence(driver: Driver): String? {
             val evidence = driver.evidence
             return when {
-                evidence.knownResistantTreatments.isNotEmpty() -> {
+                evidence.knownResistantTreatments().isNotEmpty() -> {
                     "Known resistance"
                 }
 
-                evidence.suspectResistantTreatments.isNotEmpty() -> {
+                evidence.suspectResistantTreatments().isNotEmpty() -> {
                     "Suspect resistance"
                 }
 

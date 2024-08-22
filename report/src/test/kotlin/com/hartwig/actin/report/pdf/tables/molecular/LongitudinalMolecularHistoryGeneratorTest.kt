@@ -12,7 +12,7 @@ import org.junit.Test
 
 val FIRST_TEST = TestMolecularFactory.createMinimalTestMolecularRecord().copy(date = LocalDate.of(2024, 7, 21))
 val SECOND_TEST = FIRST_TEST.copy(date = FIRST_TEST.date?.plusDays(1))
-val VARIANT = TestMolecularFactory.createProperVariant()
+val VARIANT = TestMolecularFactory.createProperVariant().copy(variantAlleleFrequency = 10.0)
 
 class LongitudinalMolecularHistoryGeneratorTest {
 
@@ -40,7 +40,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
                 )
             ), 1f
         )
-        assertRow(getWrappedTable(result), 0, "BRAF V600E", "Missense\nGain of function\nHotspot", "High", "Detected", "Not detected")
+        assertRow(getWrappedTable(result), 0, "BRAF V600E", "Missense\nGain of function\nHotspot", "High", "Detected (VAF 10.0%)", "Not detected")
     }
 
     @Test

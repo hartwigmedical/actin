@@ -5,7 +5,9 @@ import com.hartwig.actin.clinical.datamodel.SequencedSkippedExons
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.Fusion
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.evidence.ActinEvidenceCategory
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.ActionableTreatment
 import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
@@ -151,7 +153,15 @@ class PanelFusionAnnotatorTest {
                     event = "$GENE-$OTHER_GENE fusion",
                     isReportable = true,
                     driverLikelihood = DriverLikelihood.HIGH,
-                    evidence = ActionableEvidence(approvedTreatments = setOf("intervention"))
+                    evidence = ActionableEvidence(
+                        actionableTreatments = setOf(
+                            ActionableTreatment(
+                                name = "intervention",
+                                evidenceLevel = EvidenceLevel.A,
+                                category = ActinEvidenceCategory.APPROVED
+                            )
+                        )
+                    )
                 )
             )
         )
@@ -184,7 +194,7 @@ class PanelFusionAnnotatorTest {
                     event = "$GENE skipped exons 2-4",
                     isReportable = true,
                     driverLikelihood = DriverLikelihood.HIGH,
-                    evidence = ActionableEvidence(approvedTreatments = emptySet())
+                    evidence = ActionableEvidence()
                 )
             )
         )
@@ -209,7 +219,7 @@ class PanelFusionAnnotatorTest {
                     event = "$GENE skipped exons 2-4",
                     isReportable = true,
                     driverLikelihood = DriverLikelihood.HIGH,
-                    evidence = ActionableEvidence(approvedTreatments = emptySet())
+                    evidence = ActionableEvidence()
                 )
             )
         )
