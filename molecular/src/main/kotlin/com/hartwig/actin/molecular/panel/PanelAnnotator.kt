@@ -12,7 +12,7 @@ import com.hartwig.actin.molecular.datamodel.PanelRecord
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
-import com.hartwig.actin.molecular.evidence.ActionableEvidenceFactory
+import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
@@ -52,7 +52,7 @@ class PanelAnnotator(
     }
 
     private fun annotatedInferredCopyNumber(copyNumber: CopyNumber): CopyNumber {
-        val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForCopyNumber(copyNumber))
+        val evidence = ClinicalEvidenceFactory.create(evidenceDatabase.evidenceForCopyNumber(copyNumber))
         val geneAlteration =
             GeneAlterationFactory.convertAlteration(copyNumber.gene, evidenceDatabase.geneAlterationForCopyNumber(copyNumber))
         return copyNumber.copy(
@@ -71,7 +71,7 @@ class PanelAnnotator(
         isReportable = true,
         event = panelAmplificationExtraction.gene,
         driverLikelihood = DriverLikelihood.HIGH,
-        evidence = ActionableEvidenceFactory.createNoEvidence(),
+        evidence = ClinicalEvidenceFactory.createNoEvidence(),
         type = CopyNumberType.FULL_GAIN,
         minCopies = 6,
         maxCopies = 6

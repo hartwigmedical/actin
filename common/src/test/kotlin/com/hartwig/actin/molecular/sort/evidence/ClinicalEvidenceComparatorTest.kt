@@ -23,7 +23,7 @@ class ClinicalEvidenceComparatorTest {
         val evidence6 = withKnownResistantTreatment("treatment")
         val evidence7 = withSuspectResistantTreatment("treatment")
         val evidences =
-            listOf(evidence5, evidence4, evidence1, evidence2, evidence6, evidence7, evidence3).sortedWith(ActionableEvidenceComparator())
+            listOf(evidence5, evidence4, evidence1, evidence2, evidence6, evidence7, evidence3).sortedWith(ClinicalEvidenceComparator())
 
         assertThat(evidences[0]).isEqualTo(evidence1)
         assertThat(evidences[1]).isEqualTo(evidence2)

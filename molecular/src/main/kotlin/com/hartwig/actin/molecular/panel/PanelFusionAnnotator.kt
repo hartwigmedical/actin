@@ -7,7 +7,7 @@ import com.hartwig.actin.molecular.datamodel.Fusion
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
-import com.hartwig.actin.molecular.evidence.ActionableEvidenceFactory
+import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
@@ -53,7 +53,7 @@ class PanelFusionAnnotator(
             isReportable = isReportable,
             event = sequencedFusion.display(),
             driverLikelihood = if (isReportable) fusionDriverLikelihood(driverType) else null,
-            evidence = ActionableEvidenceFactory.createNoEvidence(),
+            evidence = ClinicalEvidenceFactory.createNoEvidence(),
             isAssociatedWithDrugResistance = null,
             extendedFusionDetails = null
         )
@@ -98,7 +98,7 @@ class PanelFusionAnnotator(
             isReportable = isReportable,
             event = sequencedSkippedExons.display(),
             driverLikelihood = if (isReportable) fusionDriverLikelihood(driverType) else null,
-            evidence = ActionableEvidenceFactory.createNoEvidence(),
+            evidence = ClinicalEvidenceFactory.createNoEvidence(),
             isAssociatedWithDrugResistance = null,
             extendedFusionDetails = ExtendedFusionDetails(
                 transcript,
@@ -118,7 +118,7 @@ class PanelFusionAnnotator(
     }
 
     private fun annotateFusion(fusion: Fusion): Fusion {
-        val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForFusion(createFusionMatchCriteria(fusion)))
+        val evidence = ClinicalEvidenceFactory.create(evidenceDatabase.evidenceForFusion(createFusionMatchCriteria(fusion)))
         val knownFusion = evidenceDatabase.lookupKnownFusion(createFusionMatchCriteria(fusion))
 
         val proteinEffect = if (knownFusion == null) ProteinEffect.UNKNOWN else {

@@ -14,7 +14,9 @@ fun evidenceTier(driver: Driver): EvidenceTier {
             )
         } -> EvidenceTier.I
 
-        else -> EvidenceTier.II
+        driver.evidence.treatmentEvidence.isNotEmpty() -> EvidenceTier.II
+
+        else -> EvidenceTier.III
     }
 }
 

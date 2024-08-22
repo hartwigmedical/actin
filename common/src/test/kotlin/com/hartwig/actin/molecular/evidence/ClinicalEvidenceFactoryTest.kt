@@ -18,7 +18,7 @@ class ClinicalEvidenceFactoryTest {
 
     @Test
     fun `Should create no evidence`() {
-        assertThat(ActionableEvidenceFactory.createNoEvidence()).isNotNull()
+        assertThat(ClinicalEvidenceFactory.createNoEvidence()).isNotNull()
     }
 
     @Test
@@ -42,7 +42,7 @@ class ClinicalEvidenceFactoryTest {
             )
         )
 
-        val evidence = ActionableEvidenceFactory.create(match)
+        val evidence = ClinicalEvidenceFactory.create(match)
         assertThat(evidence).isNotNull()
         assertThat(evidence.approvedTreatments()).containsExactly("A on-label responsive")
         assertThat(evidence.externalEligibleTrials).isEmpty()
@@ -81,7 +81,7 @@ class ClinicalEvidenceFactoryTest {
             )
         )
 
-        val evidence = ActionableEvidenceFactory.create(match)
+        val evidence = ClinicalEvidenceFactory.create(match)
         assertThat(evidence).isNotNull()
         assertThat(evidence.knownResistantTreatments()).containsExactly("On-label responsive A")
         assertThat(evidence.suspectResistantTreatments()).containsExactlyInAnyOrder("Off-label responsive", "On-label responsive C")
@@ -100,7 +100,7 @@ class ClinicalEvidenceFactoryTest {
             )
         )
 
-        val evidence = ActionableEvidenceFactory.create(match)
+        val evidence = ClinicalEvidenceFactory.create(match)
         assertThat(evidence).isNotNull()
         assertThat(evidence.approvedTreatments()).isEmpty()
         assertThat(evidence.externalEligibleTrials).containsExactly(
@@ -128,7 +128,7 @@ class ClinicalEvidenceFactoryTest {
             )
         )
 
-        val evidence = ActionableEvidenceFactory.create(match)
+        val evidence = ClinicalEvidenceFactory.create(match)
         assertThat(evidence).isNotNull()
         assertThat(evidence.approvedTreatments()).isEmpty()
         assertThat(evidence.externalEligibleTrials).isEmpty()

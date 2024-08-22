@@ -5,7 +5,7 @@ import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
-import com.hartwig.actin.molecular.evidence.ActionableEvidenceFactory
+import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.sort.driver.CopyNumberComparator
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
@@ -44,7 +44,7 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
                         isReportable = true,
                         event = event,
                         driverLikelihood = DriverLikelihood.HIGH,
-                        evidence = ActionableEvidenceFactory.createNoEvidence(),
+                        evidence = ClinicalEvidenceFactory.createNoEvidence(),
                         type = determineType(gainLoss.interpretation()),
                         minCopies = Math.round(gainLoss.minCopies()).toInt(),
                         maxCopies = Math.round(gainLoss.maxCopies()).toInt()
@@ -60,7 +60,7 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
                         isReportable = false,
                         event = event,
                         driverLikelihood = null,
-                        evidence = ActionableEvidenceFactory.createNoEvidence(),
+                        evidence = ClinicalEvidenceFactory.createNoEvidence(),
                         type = CopyNumberType.NONE,
                         minCopies = Math.round(geneCopyNumber.minCopyNumber()).toInt(),
                         maxCopies = Math.round(geneCopyNumber.maxCopyNumber()).toInt()

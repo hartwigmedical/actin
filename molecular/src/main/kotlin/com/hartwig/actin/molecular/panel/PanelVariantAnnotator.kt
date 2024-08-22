@@ -10,7 +10,7 @@ import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
-import com.hartwig.actin.molecular.evidence.ActionableEvidenceFactory
+import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
@@ -103,7 +103,7 @@ class PanelVariantAnnotator(
             val extraction = variantExtractions[id]!!
 
             val criteria = variantMatchCriteria(extraction, transvarAnnotation, paveResponse)
-            val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVariant(criteria))
+            val evidence = ClinicalEvidenceFactory.create(evidenceDatabase.evidenceForVariant(criteria))
             val serveGeneAlteration = evidenceDatabase.geneAlterationForVariant(criteria)
             val geneAlteration = GeneAlterationFactory.convertAlteration(extraction.gene, serveGeneAlteration)
 

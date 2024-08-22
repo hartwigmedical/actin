@@ -2,7 +2,7 @@ package com.hartwig.actin.molecular.sort.evidence
 
 import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
 
-class ActionableEvidenceComparator : Comparator<ClinicalEvidence> {
+class ClinicalEvidenceComparator : Comparator<ClinicalEvidence> {
 
     override fun compare(evidence1: ClinicalEvidence, evidence2: ClinicalEvidence): Int {
         listOf(

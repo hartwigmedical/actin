@@ -13,7 +13,7 @@ import com.hartwig.serve.datamodel.ClinicalTrial
 import com.hartwig.serve.datamodel.EvidenceLevel
 import com.hartwig.serve.datamodel.Treatment
 
-object ActionableEvidenceFactory {
+object ClinicalEvidenceFactory {
 
     fun createNoEvidence(): ClinicalEvidence {
         return ClinicalEvidence()
@@ -27,11 +27,11 @@ object ActionableEvidenceFactory {
     }
 
     private fun createOnLabelEvidence(onLabelEvents: List<ActionableEvent>): ClinicalEvidence {
-        return sourcedEvidence(onLabelEvents, ActionableEvidenceFactory::responsiveOnLabelEvidence)
+        return sourcedEvidence(onLabelEvents, ClinicalEvidenceFactory::responsiveOnLabelEvidence)
     }
 
     private fun createOffLabelEvidence(offLabelEvents: List<ActionableEvent>): ClinicalEvidence {
-        return sourcedEvidence(offLabelEvents, ActionableEvidenceFactory::responsiveOffLabelEvidence)
+        return sourcedEvidence(offLabelEvents, ClinicalEvidenceFactory::responsiveOffLabelEvidence)
     }
 
     private fun sourcedEvidence(
@@ -58,7 +58,7 @@ object ActionableEvidenceFactory {
                     val trial = onLabelEvent.intervention() as ClinicalTrial
                     ExternalTrial(
                         title = trial.studyAcronym() ?: trial.studyTitle(),
-                        countries = trial.countriesOfStudy().map(ActionableEvidenceFactory::determineCountry).toSet(),
+                        countries = trial.countriesOfStudy().map(ClinicalEvidenceFactory::determineCountry).toSet(),
                         url = extractNctUrl(onLabelEvent),
                         nctId = trial.studyNctId(),
                         applicableCancerType = ApplicableCancerType(
