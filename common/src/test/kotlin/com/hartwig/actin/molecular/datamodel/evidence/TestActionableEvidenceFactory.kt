@@ -11,19 +11,19 @@ object TestActionableEvidenceFactory {
     fun createExhaustive(): ClinicalEvidence {
         return ClinicalEvidence(
             treatmentEvidence = setOf(
-                treatment("approved", EvidenceLevel.A, ActinEvidenceCategory.APPROVED),
-                treatment("on-label", EvidenceLevel.B, ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL),
-                treatment("off-label", EvidenceLevel.B, ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL),
-                treatment("pre-clinical", EvidenceLevel.C, ActinEvidenceCategory.PRE_CLINICAL),
-                treatment("known resistant", EvidenceLevel.A, ActinEvidenceCategory.KNOWN_RESISTANT),
-                treatment("suspect resistant", EvidenceLevel.C, ActinEvidenceCategory.SUSPECT_RESISTANT),
+                treatment("approved A", EvidenceLevel.A, ActinEvidenceCategory.APPROVED),
+                treatment("on-label B", EvidenceLevel.B, ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL),
+                treatment("off-label B", EvidenceLevel.B, ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL),
+                treatment("pre-clinical C", EvidenceLevel.C, ActinEvidenceCategory.PRE_CLINICAL),
+                treatment("known resistant A", EvidenceLevel.A, ActinEvidenceCategory.KNOWN_RESISTANT),
+                treatment("suspect resistant C", EvidenceLevel.C, ActinEvidenceCategory.SUSPECT_RESISTANT),
             ),
             externalEligibleTrials = setOf(TestExternalTrialFactory.createTestTrial()),
         )
     }
 
     fun treatment(treatment: String, evidenceLevel: EvidenceLevel, category: ActinEvidenceCategory) =
-        TreatmentEvidence(treatment, evidenceLevel, category, "", applicableCancerType())
+        TreatmentEvidence(treatment, evidenceLevel, category, "<Source event>", applicableCancerType())
 
     private fun applicableCancerType() = ApplicableCancerType("", setOf(""))
 

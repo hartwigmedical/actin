@@ -27,7 +27,8 @@ object TestReportFactory {
     fun createExhaustiveTestReport(): Report {
         return createMinimalTestReport().copy(
             patientRecord = TestPatientFactory.createExhaustiveTestPatientRecord(),
-            treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch()
+            treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch(),
+            config = ReportConfiguration(includeMolecularEvidenceChapter = true)
         )
     }
 

@@ -1,88 +1,91 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
+import com.hartwig.actin.molecular.datamodel.evidence.ActinEvidenceCategory
 import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
+import com.hartwig.actin.report.pdf.util.Styles.PALETTE_RED
+import com.hartwig.serve.datamodel.EvidenceLevel
 import com.itextpdf.layout.element.Table
 
 data class ClinicalDetails(
-    val treatment: String,
-    val approved: Boolean,
-    val onLabel: Boolean,
-    val offLabel: Boolean,
-    val preClinical: Boolean,
-    val resistant: Boolean
+    val treatmentEvidence: TreatmentEvidence,
+    val levelA: Boolean,
+    val levelB: Boolean,
+    val levelC: Boolean,
+    val levelD: Boolean
 )
 
-const val CHECKED = "X"
-const val UNCHECKED = ""
-
-class MolecularClinicalEvidenceGenerator(val molecularHistory: MolecularHistory, private val width: Float) : TableGenerator {
+class MolecularClinicalEvidenceGenerator(
+    val molecularHistory: MolecularHistory,
+    private val width: Float,
+    private val onLabel: Boolean = true
+) : TableGenerator {
 
     override fun title(): String {
-        return "Clinical evidence"
+        val titleEnd = "label clinical evidence"
+        return if (onLabel) "On $titleEnd" else "Off $titleEnd"
     }
 
     override fun contents(): Table {
         val allDrivers =
             DriverTableFunctions.allDrivers(molecularHistory).flatMap { it.second }.toSortedSet(Comparator.comparing { it.event })
-        val columnCount = 7
+        val columnCount = 6
         val table = Table(columnCount).setWidth(width)
-        listOf(
-            "Variant", "Treatment", "Approved", "On-label Experimental", "Off-label Experimental", "Pre-clinical", "Resistant"
-        )
+        listOf("Driver", "CKB Event", "Level A", "Level B", "Level C", "Level D")
             .map(Cells::createHeader)
             .forEach(table::addHeaderCell)
+
         for (driver in allDrivers) {
             val clinicalDetails = extractClinicalDetails(driver.evidence)
             if (clinicalDetails.isNotEmpty()) {
-                table.addCell(Cells.createContent(driver.event))
-                for ((rowCount, clinicalDetail) in clinicalDetails.withIndex()) {
-                    val rowContent = with(clinicalDetail) {
-                        listOf(treatment) + listOf(
-                            approved,
-                            onLabel,
-                            offLabel,
-                            preClinical,
-                            resistant
-                        ).map(::formatBoolean)
+                val groupedBySourceEvent = clinicalDetails.groupBy { it.treatmentEvidence.sourceEvent }
+
+                for ((sourceEvent, details) in groupedBySourceEvent) {
+                    val treatmentEvidenceByLevel = listOf(
+                        details.filter { it.levelA }.map { it.treatmentEvidence },
+                        details.filter { it.levelB }.map { it.treatmentEvidence },
+                        details.filter { it.levelC }.map { it.treatmentEvidence },
+                        details.filter { it.levelD }.map { it.treatmentEvidence }
+                    )
+
+                    if (treatmentEvidenceByLevel.any { it.isNotEmpty() }) {
+                        table.addCell(Cells.createContent(driver.event))
+                        table.addCell(Cells.createContent(sourceEvent))
+
+                        treatmentEvidenceByLevel.forEach {
+                            val treatments = it.joinToString("\n") { evidence -> evidence.treatment }
+                            table.addCell(Cells.createContent(treatments))
+                        }
                     }
-                    val cells = if (rowCount > 0) {
-                        listOf(Cells.createEmpty()) + rowContent.map(Cells::createContentLightBorder)
-                    } else {
-                        rowContent.map(Cells::createContent)
-                    }
-                    cells.forEach(table::addCell)
                 }
             }
         }
         return table
     }
 
-    private fun formatBoolean(boolean: Boolean) = if (boolean) CHECKED else UNCHECKED
-
     private fun extractClinicalDetails(evidence: ClinicalEvidence): Set<ClinicalDetails> {
-        val truncatedApproved = truncatedTreatments(evidence.approvedTreatments())
-        val truncatedOnLabel = truncatedTreatments(evidence.onLabelExperimentalTreatments())
-        val truncatedOffLabel = truncatedTreatments(evidence.offLabelExperimentalTreatments())
-        val truncatedPreClinical = truncatedTreatments(evidence.preClinicalTreatments())
-        val truncatedResistant = truncatedTreatments(evidence.knownResistantTreatments())
-        val allTreatments =
-            truncatedApproved + truncatedOnLabel + truncatedOffLabel + truncatedPreClinical + truncatedResistant
-        return allTreatments.map {
+        val treatmentEvidenceSet = evidence.treatmentEvidence
+        val (levelA, levelB, levelC, levelD) = listOf(EvidenceLevel.A, EvidenceLevel.B, EvidenceLevel.C, EvidenceLevel.D)
+            .map { treatmentsForEvidenceLevelAndLabel(treatmentEvidenceSet, it) }
+        return treatmentEvidenceSet.map {
             ClinicalDetails(
                 it,
-                truncatedApproved.contains(it),
-                truncatedOnLabel.contains(it),
-                truncatedOffLabel.contains(it),
-                truncatedPreClinical.contains(it),
-                truncatedResistant.contains(it)
+                levelA.contains(it.treatment),
+                levelB.contains(it.treatment),
+                levelC.contains(it.treatment),
+                levelD.contains(it.treatment)
             )
         }.toSet()
     }
 
-    private fun truncatedTreatments(treatments: Set<String>) = if (treatments.size > 2) listOf("<many>") else treatments.toList()
-
-
+    private fun treatmentsForEvidenceLevelAndLabel(evidence: Set<TreatmentEvidence>, evidenceLevel: EvidenceLevel): Set<String> {
+        return evidence
+            .filter { it.evidenceLevel == evidenceLevel }
+            .filter { it.category == ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL || !onLabel }
+            .map { it.treatment }
+            .toSet()
+    }
 }
