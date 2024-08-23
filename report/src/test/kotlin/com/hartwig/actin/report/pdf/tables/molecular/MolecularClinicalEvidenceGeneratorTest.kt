@@ -6,7 +6,7 @@ import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.evidence.ActinEvidenceCategory
 import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
-import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.treatment
+import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.treatment
 import com.hartwig.actin.report.pdf.assertRow
 import com.hartwig.serve.datamodel.EvidenceLevel
 import org.junit.Test

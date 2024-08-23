@@ -9,7 +9,7 @@ import com.hartwig.actin.molecular.datamodel.TranscriptImpact
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.ActinEvidenceCategory
 import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
-import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.treatment
+import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.treatment
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch

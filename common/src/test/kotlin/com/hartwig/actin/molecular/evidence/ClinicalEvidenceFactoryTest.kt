@@ -3,7 +3,7 @@ package com.hartwig.actin.molecular.evidence
 import com.hartwig.actin.molecular.datamodel.evidence.ActinEvidenceCategory
 import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.Country
-import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.treatment
+import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.treatment
 import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch

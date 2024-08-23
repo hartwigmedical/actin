@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.molecular.datamodel.evidence.ActinEvidenceCategory
-import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.treatment
+import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.treatment
 import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidence
 import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort

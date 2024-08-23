@@ -7,7 +7,7 @@ import com.hartwig.actin.molecular.datamodel.Fusion
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.evidence.ActinEvidenceCategory
 import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
-import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.treatment
+import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.treatment
 import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory

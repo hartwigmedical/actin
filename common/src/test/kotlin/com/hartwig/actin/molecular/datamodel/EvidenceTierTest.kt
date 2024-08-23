@@ -2,8 +2,8 @@ package com.hartwig.actin.molecular.datamodel
 
 import com.hartwig.actin.molecular.datamodel.evidence.ActinEvidenceCategory
 import com.hartwig.actin.molecular.datamodel.evidence.EvidenceTier
-import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
-import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.treatment
+import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory
+import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.treatment
 import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence
 import com.hartwig.serve.datamodel.EvidenceLevel
 import io.mockk.every
@@ -58,7 +58,7 @@ class EvidenceTierTest {
         treatments: Set<TreatmentEvidence>
     ): Driver {
         val driver = mockk<Driver>()
-        every { driver.evidence } returns TestActionableEvidenceFactory.createEmpty()
+        every { driver.evidence } returns TestClinicalEvidenceFactory.createEmpty()
             .copy(treatmentEvidence = treatments)
         return driver
     }

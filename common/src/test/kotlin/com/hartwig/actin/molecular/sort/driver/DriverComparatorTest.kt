@@ -3,8 +3,8 @@ package com.hartwig.actin.molecular.sort.driver
 import com.hartwig.actin.molecular.datamodel.Driver
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
-import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.createEmpty
-import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.createExhaustive
+import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.createEmpty
+import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.createExhaustive
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

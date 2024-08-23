@@ -1,12 +1,12 @@
 package com.hartwig.actin.molecular.sort.evidence
 
-import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.withApprovedTreatment
-import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.withExternalEligibleTrial
-import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.withKnownResistantTreatment
-import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.withOffLabelExperimentalTreatment
-import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.withOnLabelExperimentalTreatment
-import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.withPreClinicalTreatment
-import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.withSuspectResistantTreatment
+import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.withApprovedTreatment
+import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.withExternalEligibleTrial
+import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.withKnownResistantTreatment
+import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.withOffLabelExperimentalTreatment
+import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.withOnLabelExperimentalTreatment
+import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.withPreClinicalTreatment
+import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.withSuspectResistantTreatment
 import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

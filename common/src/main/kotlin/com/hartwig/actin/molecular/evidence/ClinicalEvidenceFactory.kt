@@ -12,6 +12,7 @@ import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.ClinicalTrial
 import com.hartwig.serve.datamodel.EvidenceLevel
 import com.hartwig.serve.datamodel.Treatment
+import com.hartwig.serve.datamodel.Country as ServeCountry
 
 object ClinicalEvidenceFactory {
 
@@ -57,10 +58,10 @@ object ClinicalEvidenceFactory {
                 .map { onLabelEvent ->
                     val trial = onLabelEvent.intervention() as ClinicalTrial
                     ExternalTrial(
-                        title = trial.studyAcronym() ?: trial.studyTitle(),
-                        countries = trial.countriesOfStudy().map(ClinicalEvidenceFactory::determineCountry).toSet(),
+                        title = trial.acronym() ?: trial.title(),
+                        countries = trial.countries().map(ClinicalEvidenceFactory::determineCountry).toSet(),
                         url = extractNctUrl(onLabelEvent),
-                        nctId = trial.studyNctId(),
+                        nctId = trial.nctId(),
                         applicableCancerType = ApplicableCancerType(
                             onLabelEvent.applicableCancerType().name(),
                             onLabelEvent.blacklistCancerTypes().map { it.name() }.toSet()
@@ -72,8 +73,8 @@ object ClinicalEvidenceFactory {
         )
     }
 
-    private fun determineCountry(country: String): Country {
-        return when (country) {
+    private fun determineCountry(country: ServeCountry): Country {
+        return when (country.countryName()) {
             "Netherlands" -> Country.NETHERLANDS
             "Belgium" -> Country.BELGIUM
             "Germany" -> Country.GERMANY

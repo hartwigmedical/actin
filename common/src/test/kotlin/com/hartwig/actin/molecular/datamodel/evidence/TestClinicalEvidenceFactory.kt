@@ -2,7 +2,7 @@ package com.hartwig.actin.molecular.datamodel.evidence
 
 import com.hartwig.serve.datamodel.EvidenceLevel
 
-object TestActionableEvidenceFactory {
+object TestClinicalEvidenceFactory {
 
     fun createEmpty(): ClinicalEvidence {
         return ClinicalEvidence()
