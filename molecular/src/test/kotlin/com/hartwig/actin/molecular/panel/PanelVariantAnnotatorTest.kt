@@ -8,9 +8,8 @@ import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.TranscriptImpact
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.ActinEvidenceCategory
-import com.hartwig.actin.molecular.datamodel.evidence.ApplicableCancerType
 import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
-import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.treatment
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
@@ -139,12 +138,10 @@ class PanelVariantAnnotatorTest {
         assertThat(annotated.first().evidence).isEqualTo(
             ClinicalEvidence(
                 treatmentEvidence = setOf(
-                    TreatmentEvidence(
+                    treatment(
                         treatment = "intervention",
                         evidenceLevel = EvidenceLevel.A,
-                        category = ActinEvidenceCategory.APPROVED,
-                        sourceEvent = "",
-                        applicableCancerType = ApplicableCancerType(cancerType = "", excludedCancerTypes = emptySet())
+                        category = ActinEvidenceCategory.APPROVED
                     )
                 )
             )

@@ -22,10 +22,10 @@ object TestActionableEvidenceFactory {
         )
     }
 
-    fun treatment(name: String, evidenceLevel: EvidenceLevel, category: ActinEvidenceCategory) =
-        TreatmentEvidence(name, evidenceLevel, category, "source", applicableCancerType())
+    fun treatment(treatment: String, evidenceLevel: EvidenceLevel, category: ActinEvidenceCategory) =
+        TreatmentEvidence(treatment, evidenceLevel, category, "", applicableCancerType())
 
-    fun applicableCancerType() = ApplicableCancerType("applicable type", setOf("excluded type"))
+    private fun applicableCancerType() = ApplicableCancerType("", setOf(""))
 
     fun withApprovedTreatment(treatment: String): ClinicalEvidence {
         return ClinicalEvidence(treatmentEvidence = setOf(treatment(treatment, EvidenceLevel.A, ActinEvidenceCategory.APPROVED)))

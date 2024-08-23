@@ -6,9 +6,8 @@ import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.Fusion
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.evidence.ActinEvidenceCategory
-import com.hartwig.actin.molecular.datamodel.evidence.ApplicableCancerType
 import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
-import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.treatment
 import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
@@ -142,27 +141,23 @@ class PanelFusionAnnotatorTest {
         setupKnownFusionCache()
         setupEvidenceForFusion()
         val annotated = annotator.annotate(setOf(ARCHER_FUSION), emptySet())
-        assertThat(annotated).isEqualTo(
-            setOf(
-                Fusion(
-                    geneStart = GENE,
-                    geneEnd = OTHER_GENE,
-                    driverType = FusionDriverType.KNOWN_PAIR,
-                    proteinEffect = ProteinEffect.UNKNOWN,
-                    isAssociatedWithDrugResistance = null,
-                    extendedFusionDetails = null,
-                    event = "$GENE-$OTHER_GENE fusion",
-                    isReportable = true,
-                    driverLikelihood = DriverLikelihood.HIGH,
-                    evidence = ClinicalEvidence(
-                        treatmentEvidence = setOf(
-                            TreatmentEvidence(
-                                treatment = "intervention",
-                                evidenceLevel = EvidenceLevel.A,
-                                category = ActinEvidenceCategory.APPROVED,
-                                sourceEvent = "",
-                                applicableCancerType = ApplicableCancerType(cancerType = "", excludedCancerTypes = emptySet())
-                            )
+        assertThat(annotated).containsExactly(
+            Fusion(
+                geneStart = GENE,
+                geneEnd = OTHER_GENE,
+                driverType = FusionDriverType.KNOWN_PAIR,
+                proteinEffect = ProteinEffect.UNKNOWN,
+                isAssociatedWithDrugResistance = null,
+                extendedFusionDetails = null,
+                event = "$GENE-$OTHER_GENE fusion",
+                isReportable = true,
+                driverLikelihood = DriverLikelihood.HIGH,
+                evidence = ClinicalEvidence(
+                    treatmentEvidence = setOf(
+                        treatment(
+                            treatment = "intervention",
+                            evidenceLevel = EvidenceLevel.A,
+                            category = ActinEvidenceCategory.APPROVED,
                         )
                     )
                 )
