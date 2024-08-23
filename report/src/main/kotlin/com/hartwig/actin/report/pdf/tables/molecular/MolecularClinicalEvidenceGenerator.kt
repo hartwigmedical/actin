@@ -6,7 +6,7 @@ import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
-import com.hartwig.actin.report.pdf.util.Styles.PALETTE_RED
+import com.hartwig.actin.report.pdf.util.Styles.PALETTE_YES_OR_NO_NO
 import com.hartwig.serve.datamodel.EvidenceLevel
 import com.itextpdf.layout.element.Table
 
@@ -56,8 +56,17 @@ class MolecularClinicalEvidenceGenerator(
                         table.addCell(Cells.createContent(sourceEvent))
 
                         treatmentEvidenceByLevel.forEach {
-                            val treatments = it.joinToString("\n") { evidence -> evidence.treatment }
-                            table.addCell(Cells.createContent(treatments))
+                            val cellContent = it.joinToString("\n") { evidence ->
+                                val treatmentText = "${evidence.treatment} (${evidence.applicableCancerType.cancerType})"
+                                treatmentText
+                            }
+                            val cell = Cells.createContent(cellContent)
+
+                            if (it.any { evidence -> evidence.category in
+                                        setOf(ActinEvidenceCategory.SUSPECT_RESISTANT, ActinEvidenceCategory.KNOWN_RESISTANT) }) {
+                                cell.setFontColor(PALETTE_YES_OR_NO_NO)
+                            }
+                            table.addCell(cell)
                         }
                     }
                 }
@@ -84,8 +93,23 @@ class MolecularClinicalEvidenceGenerator(
     private fun treatmentsForEvidenceLevelAndLabel(evidence: Set<TreatmentEvidence>, evidenceLevel: EvidenceLevel): Set<String> {
         return evidence
             .filter { it.evidenceLevel == evidenceLevel }
-            .filter { it.category == ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL || !onLabel }
+            .filter { (onLabel && it.category in ON_LABEL_CATEGORIES) || (!onLabel && it.category in OFF_LABEL_CATEGORIES) }
             .map { it.treatment }
             .toSet()
     }
+
+    private val ON_LABEL_CATEGORIES = setOf(
+        ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL,
+        ActinEvidenceCategory.APPROVED,
+        ActinEvidenceCategory.PRE_CLINICAL,
+        ActinEvidenceCategory.KNOWN_RESISTANT,
+        ActinEvidenceCategory.SUSPECT_RESISTANT
+    )
+    private val OFF_LABEL_CATEGORIES = setOf(
+        ActinEvidenceCategory.APPROVED,
+        ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL,
+        ActinEvidenceCategory.PRE_CLINICAL,
+        ActinEvidenceCategory.KNOWN_RESISTANT,
+        ActinEvidenceCategory.SUSPECT_RESISTANT
+    )
 }
