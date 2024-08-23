@@ -157,7 +157,7 @@ class PanelFusionAnnotatorTest {
                         treatment(
                             treatment = "intervention",
                             evidenceLevel = EvidenceLevel.A,
-                            category = ActinEvidenceCategory.APPROVED,
+                            category = ActinEvidenceCategory.APPROVED
                         )
                     )
                 )
