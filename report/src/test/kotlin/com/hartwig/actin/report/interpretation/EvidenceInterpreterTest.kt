@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.molecular.datamodel.evidence.ActinEvidenceCategory
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableTreatment
+import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.treatment
 import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidence
 import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
@@ -15,18 +15,18 @@ class EvidenceInterpreterTest {
         val cohortWithInclusion: EvaluatedCohort = evaluatedCohort(molecularEvents = setOf("inclusion"))
         val interpreter = EvidenceInterpreter.fromEvaluatedCohorts(listOf(cohortWithInclusion))
         val evidence = AggregatedEvidence(
-            actionableTreatments = mapOf("approved" to setOf(treatment(ActinEvidenceCategory.APPROVED)))
+            actionableTreatments = mapOf("approved" to setOf(createTreatment(ActinEvidenceCategory.APPROVED)))
                     + mapOf(
-                "on-label" to setOf(treatment(ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL)),
-                "approved" to setOf(treatment(ActinEvidenceCategory.APPROVED))
+                "on-label" to setOf(createTreatment(ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL)),
+                "approved" to setOf(createTreatment(ActinEvidenceCategory.APPROVED))
             )
                     + mapOf(
-                "off-label" to setOf(treatment(ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL)),
-                "on-label" to setOf(treatment(ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL))
+                "off-label" to setOf(createTreatment(ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL)),
+                "on-label" to setOf(createTreatment(ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL))
             )
-                    + mapOf("pre-clinical" to setOf(treatment(ActinEvidenceCategory.PRE_CLINICAL)))
-                    + mapOf("known" to setOf(treatment(ActinEvidenceCategory.KNOWN_RESISTANT)))
-                    + mapOf("suspect" to setOf(treatment(ActinEvidenceCategory.SUSPECT_RESISTANT))),
+                    + mapOf("pre-clinical" to setOf(createTreatment(ActinEvidenceCategory.PRE_CLINICAL)))
+                    + mapOf("known" to setOf(createTreatment(ActinEvidenceCategory.KNOWN_RESISTANT)))
+                    + mapOf("suspect" to setOf(createTreatment(ActinEvidenceCategory.SUSPECT_RESISTANT))),
             externalEligibleTrialsPerEvent = mapOf(
                 "external" to setOf(TestExternalTrialFactory.createTestTrial()),
                 "approved" to setOf(TestExternalTrialFactory.createTestTrial()),
@@ -47,6 +47,6 @@ class EvidenceInterpreterTest {
         assertThat(offLabel).containsExactly("off-label")
     }
 
-    private fun treatment(category: ActinEvidenceCategory) =
-        ActionableTreatment(name = "treatment", category = category, evidenceLevel = EvidenceLevel.A)
+    private fun createTreatment(category: ActinEvidenceCategory) =
+        treatment(treatment = "treatment", category = category, evidenceLevel = EvidenceLevel.A)
 }

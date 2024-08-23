@@ -1,12 +1,12 @@
 package com.hartwig.actin.molecular.interpretation
 
 import com.hartwig.actin.molecular.datamodel.evidence.ActinEvidenceCategory
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableTreatment
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
+import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence
 
 data class AggregatedEvidence(
     val externalEligibleTrialsPerEvent: Map<String, Set<ExternalTrial>> = emptyMap(),
-    val actionableTreatments: Map<String, Set<ActionableTreatment>> = emptyMap(),
+    val actionableTreatments: Map<String, Set<TreatmentEvidence>> = emptyMap(),
 ) {
     fun approvedTreatmentsPerEvent() = filter(ActinEvidenceCategory.APPROVED)
     fun onLabelExperimentalTreatmentPerEvent() = filter(ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL)

@@ -1,10 +1,11 @@
 package com.hartwig.actin.molecular.evidence
 
 import com.hartwig.actin.molecular.datamodel.evidence.ActinEvidenceCategory
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableTreatment
+import com.hartwig.actin.molecular.datamodel.evidence.ApplicableCancerType
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.Country
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
+import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.serve.datamodel.ActionableEvent
@@ -13,32 +14,32 @@ import com.hartwig.serve.datamodel.EvidenceLevel
 import com.hartwig.serve.datamodel.Treatment
 import com.hartwig.serve.datamodel.Country as ServeCountry
 
-object ActionableEvidenceFactory {
+object ClinicalEvidenceFactory {
 
-    fun createNoEvidence(): ActionableEvidence {
-        return ActionableEvidence()
+    fun createNoEvidence(): ClinicalEvidence {
+        return ClinicalEvidence()
     }
 
-    fun create(actionabilityMatch: ActionabilityMatch): ActionableEvidence {
+    fun create(actionabilityMatch: ActionabilityMatch): ClinicalEvidence {
         val onLabelEvidence = createOnLabelEvidence(actionabilityMatch.onLabelEvents)
         val offLabelEvidence = createOffLabelEvidence(actionabilityMatch.offLabelEvents)
         val externalTrialEvidence = createExternalTrialEvidence(actionabilityMatch.onLabelEvents)
         return onLabelEvidence + offLabelEvidence + externalTrialEvidence
     }
 
-    private fun createOnLabelEvidence(onLabelEvents: List<ActionableEvent>): ActionableEvidence {
-        return sourcedEvidence(onLabelEvents, ActionableEvidenceFactory::responsiveOnLabelEvidence)
+    private fun createOnLabelEvidence(onLabelEvents: List<ActionableEvent>): ClinicalEvidence {
+        return sourcedEvidence(onLabelEvents, ClinicalEvidenceFactory::responsiveOnLabelEvidence)
     }
 
-    private fun createOffLabelEvidence(offLabelEvents: List<ActionableEvent>): ActionableEvidence {
-        return sourcedEvidence(offLabelEvents, ActionableEvidenceFactory::responsiveOffLabelEvidence)
+    private fun createOffLabelEvidence(offLabelEvents: List<ActionableEvent>): ClinicalEvidence {
+        return sourcedEvidence(offLabelEvents, ClinicalEvidenceFactory::responsiveOffLabelEvidence)
     }
 
     private fun sourcedEvidence(
-        events: List<ActionableEvent>, responsiveEvidenceGenerator: (ActionableEvent) -> ActionableEvidence
-    ): ActionableEvidence {
+        events: List<ActionableEvent>, responsiveEvidenceGenerator: (ActionableEvent) -> ClinicalEvidence
+    ): ClinicalEvidence {
         return events.filter { it.source() == ActionabilityConstants.EVIDENCE_SOURCE }
-            .fold(ActionableEvidence()) { acc, event ->
+            .fold(ClinicalEvidence()) { acc, event ->
                 if (event.direction().isResponsive) {
                     acc + responsiveEvidenceGenerator.invoke(event)
                 } else if (event.direction().isResistant) {
@@ -49,8 +50,8 @@ object ActionableEvidenceFactory {
             }
     }
 
-    private fun createExternalTrialEvidence(onLabelEvents: List<ActionableEvent>): ActionableEvidence {
-        return ActionableEvidence(
+    private fun createExternalTrialEvidence(onLabelEvents: List<ActionableEvent>): ClinicalEvidence {
+        return ClinicalEvidence(
             externalEligibleTrials = onLabelEvents.filter { onLabelEvent ->
                 onLabelEvent.source() == ActionabilityConstants.EXTERNAL_TRIAL_SOURCE && onLabelEvent.direction().isResponsive
             }
@@ -58,9 +59,14 @@ object ActionableEvidenceFactory {
                     val trial = onLabelEvent.intervention() as ClinicalTrial
                     ExternalTrial(
                         title = trial.acronym() ?: trial.title(),
-                        countries = trial.countries().map(ActionableEvidenceFactory::determineCountry).toSet(),
+                        countries = trial.countries().map(ClinicalEvidenceFactory::determineCountry).toSet(),
                         url = extractNctUrl(onLabelEvent),
                         nctId = trial.nctId(),
+                        applicableCancerType = ApplicableCancerType(
+                            onLabelEvent.applicableCancerType().name(),
+                            onLabelEvent.blacklistCancerTypes().map { it.name() }.toSet()
+                        ),
+                        sourceEvent = onLabelEvent.sourceEvent()
                     )
                 }
                 .toSet()
@@ -84,79 +90,80 @@ object ActionableEvidenceFactory {
 
     private fun ActionableEvent.treatmentName(): String = (this.intervention() as Treatment).name()
 
-    private fun responsiveOnLabelEvidence(onLabelResponsiveEvent: ActionableEvent): ActionableEvidence {
-        val treatment = onLabelResponsiveEvent.treatmentName()
+    private fun responsiveOnLabelEvidence(onLabelResponsiveEvent: ActionableEvent): ClinicalEvidence {
         return when (onLabelResponsiveEvent.level()) {
             EvidenceLevel.A -> {
                 if (onLabelResponsiveEvent.direction().isCertain) {
-                    actionableEvidence(treatment, onLabelResponsiveEvent.level(), ActinEvidenceCategory.APPROVED)
+                    actionableEvidence(onLabelResponsiveEvent, ActinEvidenceCategory.APPROVED)
                 } else {
-                    actionableEvidence(treatment, onLabelResponsiveEvent.level(), ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL)
+                    actionableEvidence(onLabelResponsiveEvent, ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL)
                 }
             }
 
             EvidenceLevel.B -> {
                 if (onLabelResponsiveEvent.direction().isCertain) {
-                    actionableEvidence(treatment, onLabelResponsiveEvent.level(), ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL)
+                    actionableEvidence(onLabelResponsiveEvent, ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL)
                 } else {
-                    actionableEvidence(treatment, onLabelResponsiveEvent.level(), ActinEvidenceCategory.PRE_CLINICAL)
+                    actionableEvidence(onLabelResponsiveEvent, ActinEvidenceCategory.PRE_CLINICAL)
                 }
             }
 
             else -> {
-                actionableEvidence(treatment, onLabelResponsiveEvent.level(), ActinEvidenceCategory.PRE_CLINICAL)
+                actionableEvidence(onLabelResponsiveEvent, ActinEvidenceCategory.PRE_CLINICAL)
             }
         }
     }
 
-    private fun responsiveOffLabelEvidence(offLabelResponsiveEvent: ActionableEvent): ActionableEvidence {
-        val treatment = offLabelResponsiveEvent.treatmentName()
+    private fun responsiveOffLabelEvidence(offLabelResponsiveEvent: ActionableEvent): ClinicalEvidence {
         return when (offLabelResponsiveEvent.level()) {
             EvidenceLevel.A -> {
-                actionableEvidence(treatment, offLabelResponsiveEvent.level(), ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL)
+                actionableEvidence(offLabelResponsiveEvent, ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL)
             }
 
             EvidenceLevel.B -> {
                 if (offLabelResponsiveEvent.direction().isCertain) {
-                    actionableEvidence(treatment, offLabelResponsiveEvent.level(), ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL)
+                    actionableEvidence(offLabelResponsiveEvent, ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL)
                 } else {
-                    actionableEvidence(treatment, offLabelResponsiveEvent.level(), ActinEvidenceCategory.PRE_CLINICAL)
+                    actionableEvidence(offLabelResponsiveEvent, ActinEvidenceCategory.PRE_CLINICAL)
                 }
             }
 
             else -> {
-                actionableEvidence(treatment, offLabelResponsiveEvent.level(), ActinEvidenceCategory.PRE_CLINICAL)
+                actionableEvidence(offLabelResponsiveEvent, ActinEvidenceCategory.PRE_CLINICAL)
             }
         }
     }
 
-    private fun resistantEvidence(resistanceEvent: ActionableEvent): ActionableEvidence {
-        val treatment = resistanceEvent.treatmentName()
+    private fun resistantEvidence(resistanceEvent: ActionableEvent): ClinicalEvidence {
         return when (resistanceEvent.level()) {
             EvidenceLevel.A, EvidenceLevel.B -> {
                 if (resistanceEvent.direction().isCertain) {
-                    actionableEvidence(treatment, resistanceEvent.level(), ActinEvidenceCategory.KNOWN_RESISTANT)
+                    actionableEvidence(resistanceEvent, ActinEvidenceCategory.KNOWN_RESISTANT)
                 } else {
-                    actionableEvidence(treatment, resistanceEvent.level(), ActinEvidenceCategory.SUSPECT_RESISTANT)
+                    actionableEvidence(resistanceEvent, ActinEvidenceCategory.SUSPECT_RESISTANT)
                 }
             }
 
             else -> {
-                actionableEvidence(treatment, resistanceEvent.level(), ActinEvidenceCategory.SUSPECT_RESISTANT)
+                actionableEvidence(resistanceEvent, ActinEvidenceCategory.SUSPECT_RESISTANT)
             }
         }
     }
 
     private fun actionableEvidence(
-        treatment: String,
-        evidenceLevel: EvidenceLevel,
+        event: ActionableEvent,
         actinEvidenceCategory: ActinEvidenceCategory
-    ) = ActionableEvidence(
-        actionableTreatments = setOf(
-            ActionableTreatment(
-                treatment,
-                evidenceLevel,
-                actinEvidenceCategory
+    ) = ClinicalEvidence(
+        treatmentEvidence = setOf(
+            TreatmentEvidence(
+                treatment = event.treatmentName(),
+                evidenceLevel = event.level(),
+                sourceEvent = event.sourceEvent(),
+                applicableCancerType = ApplicableCancerType(
+                    cancerType = event.applicableCancerType().name(),
+                    excludedCancerTypes = event.blacklistCancerTypes().map { it.name() }.toSet()
+                ),
+                category = actinEvidenceCategory
             )
         )
     )

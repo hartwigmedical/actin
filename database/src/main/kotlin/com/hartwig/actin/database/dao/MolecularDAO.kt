@@ -6,7 +6,7 @@ import com.hartwig.actin.molecular.datamodel.Fusion
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantEffect
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
@@ -159,7 +159,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         writeTumorMutationalLoadEvidence(molecularId, record.characteristics.tumorMutationalLoadEvidence)
     }
 
-    private fun writeMicrosatelliteEvidence(molecularId: Int, evidence: ActionableEvidence?) {
+    private fun writeMicrosatelliteEvidence(molecularId: Int, evidence: ClinicalEvidence?) {
         if (evidence == null) {
             return
         }
@@ -175,7 +175,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         inserter.execute()
     }
 
-    private fun writeHomologousRepairEvidence(molecularId: Int, evidence: ActionableEvidence?) {
+    private fun writeHomologousRepairEvidence(molecularId: Int, evidence: ClinicalEvidence?) {
         if (evidence == null) {
             return
         }
@@ -191,7 +191,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         inserter.execute()
     }
 
-    private fun writeTumorMutationalBurdenEvidence(molecularId: Int, evidence: ActionableEvidence?) {
+    private fun writeTumorMutationalBurdenEvidence(molecularId: Int, evidence: ClinicalEvidence?) {
         if (evidence == null) {
             return
         }
@@ -207,7 +207,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         inserter.execute()
     }
 
-    private fun writeTumorMutationalLoadEvidence(molecularId: Int, evidence: ActionableEvidence?) {
+    private fun writeTumorMutationalLoadEvidence(molecularId: Int, evidence: ClinicalEvidence?) {
         if (evidence == null) {
             return
         }
@@ -283,7 +283,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         }
     }
 
-    private fun writeVariantEvidence(variantId: Int, evidence: ActionableEvidence) {
+    private fun writeVariantEvidence(variantId: Int, evidence: ClinicalEvidence) {
         val inserter = EvidenceInserter(
             context.insertInto(
                 Tables.VARIANTEVIDENCE,
@@ -332,7 +332,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         }
     }
 
-    private fun writeCopyNumberEvidence(copyNumberId: Int, evidence: ActionableEvidence) {
+    private fun writeCopyNumberEvidence(copyNumberId: Int, evidence: ClinicalEvidence) {
         val inserter = EvidenceInserter(
             context.insertInto(
                 Tables.COPYNUMBEREVIDENCE,
@@ -375,7 +375,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         }
     }
 
-    private fun writeHomozygousDisruptionEvidence(homozygousDisruptionId: Int, evidence: ActionableEvidence) {
+    private fun writeHomozygousDisruptionEvidence(homozygousDisruptionId: Int, evidence: ClinicalEvidence) {
         val inserter = EvidenceInserter(
             context.insertInto(
                 Tables.HOMOZYGOUSDISRUPTIONEVIDENCE,
@@ -430,7 +430,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         }
     }
 
-    private fun writeDisruptionEvidence(disruptionId: Int, evidence: ActionableEvidence) {
+    private fun writeDisruptionEvidence(disruptionId: Int, evidence: ClinicalEvidence) {
         val inserter = EvidenceInserter(
             context.insertInto(
                 Tables.DISRUPTIONEVIDENCE,
@@ -483,7 +483,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         }
     }
 
-    private fun writeFusionEvidence(fusionId: Int, evidence: ActionableEvidence) {
+    private fun writeFusionEvidence(fusionId: Int, evidence: ClinicalEvidence) {
         val inserter = EvidenceInserter(
             context.insertInto(
                 Tables.FUSIONEVIDENCE,
@@ -526,7 +526,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         }
     }
 
-    private fun writeVirusEvidence(virusId: Int, evidence: ActionableEvidence) {
+    private fun writeVirusEvidence(virusId: Int, evidence: ClinicalEvidence) {
         val inserter = EvidenceInserter(
             context.insertInto(
                 Tables.VIRUSEVIDENCE,
@@ -589,7 +589,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         return integers?.map(Int::toString)?.toSet()
     }
 
-    private fun <T : Record?> writeEvidence(inserter: EvidenceInserter<T>, topicId: Int, evidence: ActionableEvidence) {
+    private fun <T : Record?> writeEvidence(inserter: EvidenceInserter<T>, topicId: Int, evidence: ClinicalEvidence) {
         writeTreatments(inserter, topicId, evidence.approvedTreatments(), "Approved")
         writeTrials(inserter, topicId, evidence.externalEligibleTrials)
         writeTreatments(inserter, topicId, evidence.onLabelExperimentalTreatments(), "On-label experimental")

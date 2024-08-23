@@ -8,9 +8,9 @@ import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.TranscriptImpact
 import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantType
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
-import com.hartwig.actin.molecular.evidence.ActionableEvidenceFactory
+import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
@@ -103,7 +103,7 @@ class PanelVariantAnnotator(
             val extraction = variantExtractions[id]!!
 
             val criteria = variantMatchCriteria(extraction, transvarAnnotation, paveResponse)
-            val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVariant(criteria))
+            val evidence = ClinicalEvidenceFactory.create(evidenceDatabase.evidenceForVariant(criteria))
             val serveGeneAlteration = evidenceDatabase.geneAlterationForVariant(criteria)
             val geneAlteration = GeneAlterationFactory.convertAlteration(extraction.gene, serveGeneAlteration)
 
@@ -136,7 +136,7 @@ class PanelVariantAnnotator(
 
     private fun createVariantWithEvidence(
         variant: SequencedVariant,
-        evidence: ActionableEvidence,
+        evidence: ClinicalEvidence,
         geneAlteration: GeneAlteration,
         serveGeneAlteration: com.hartwig.serve.datamodel.common.GeneAlteration?,
         transcriptAnnotation: com.hartwig.actin.tools.variant.Variant,

@@ -1,20 +1,60 @@
 package com.hartwig.actin.molecular.datamodel.evidence
 
+import com.hartwig.actin.Displayable
 import com.hartwig.serve.datamodel.EvidenceLevel
+
+enum class Country(private val display: String) : Displayable {
+    NETHERLANDS("Netherlands"),
+    BELGIUM("Belgium"),
+    GERMANY("Germany"),
+    US("United States"),
+    OTHER("Other");
+
+    override fun display(): String {
+        return display
+    }
+}
 
 enum class ActinEvidenceCategory {
     APPROVED, ON_LABEL_EXPERIMENTAL, OFF_LABEL_EXPERIMENTAL, PRE_CLINICAL, KNOWN_RESISTANT, SUSPECT_RESISTANT
 }
 
-data class ActionableTreatment(
-    val name: String,
-    val evidenceLevel: EvidenceLevel,
-    val category: ActinEvidenceCategory
-)
+data class ApplicableCancerType(val cancerType: String, val excludedCancerTypes: Set<String>)
 
-data class ActionableEvidence(
+interface Evidence {
+    val sourceEvent: String
+    val applicableCancerType: ApplicableCancerType
+}
+
+enum class EvidenceTier{
+    I, II, III, V
+}
+
+data class TreatmentEvidence(
+    val treatment: String,
+    val evidenceLevel: EvidenceLevel,
+    val category: ActinEvidenceCategory,
+    override val sourceEvent: String,
+    override val applicableCancerType: ApplicableCancerType
+) : Evidence
+
+data class ExternalTrial(
+    val title: String,
+    val countries: Set<Country>,
+    val url: String,
+    val nctId: String,
+    override val sourceEvent: String,
+    override val applicableCancerType: ApplicableCancerType
+) : Comparable<ExternalTrial>, Evidence {
+
+    override fun compareTo(other: ExternalTrial): Int {
+        return title.compareTo(other.title)
+    }
+}
+
+data class ClinicalEvidence(
     val externalEligibleTrials: Set<ExternalTrial> = emptySet(),
-    val actionableTreatments: Set<ActionableTreatment> = emptySet(),
+    val treatmentEvidence: Set<TreatmentEvidence> = emptySet(),
 ) {
 
     fun approvedTreatments() = filter(ActinEvidenceCategory.APPROVED).toSet()
@@ -41,12 +81,12 @@ data class ActionableEvidence(
         it in approvedTreatments() || it in onLabelExperimentalTreatments() || it in offLabelExperimentalTreatments()
 
     private fun filter(category: ActinEvidenceCategory) =
-        actionableTreatments.filter { it.category == category }.map { it.name }
+        treatmentEvidence.filter { it.category == category }.map { it.treatment }
 
-    operator fun plus(other: ActionableEvidence): ActionableEvidence {
-        return ActionableEvidence(
+    operator fun plus(other: ClinicalEvidence): ClinicalEvidence {
+        return ClinicalEvidence(
             externalEligibleTrials + other.externalEligibleTrials,
-            actionableTreatments + other.actionableTreatments
+            treatmentEvidence + other.treatmentEvidence
         )
     }
 }

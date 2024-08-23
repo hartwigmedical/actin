@@ -1,9 +1,9 @@
 package com.hartwig.actin.molecular.evidence
 
 import com.hartwig.actin.molecular.datamodel.evidence.ActinEvidenceCategory
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableTreatment
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.Country
+import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.treatment
 import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
@@ -14,11 +14,11 @@ import com.hartwig.serve.datamodel.gene.ImmutableActionableGene
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class ActionableEvidenceFactoryTest {
+class ClinicalEvidenceFactoryTest {
 
     @Test
     fun `Should create no evidence`() {
-        assertThat(ActionableEvidenceFactory.createNoEvidence()).isNotNull()
+        assertThat(ClinicalEvidenceFactory.createNoEvidence()).isNotNull()
     }
 
     @Test
@@ -42,7 +42,7 @@ class ActionableEvidenceFactoryTest {
             )
         )
 
-        val evidence = ActionableEvidenceFactory.create(match)
+        val evidence = ClinicalEvidenceFactory.create(match)
         assertThat(evidence).isNotNull()
         assertThat(evidence.approvedTreatments()).containsExactly("A on-label responsive")
         assertThat(evidence.externalEligibleTrials).isEmpty()
@@ -81,7 +81,7 @@ class ActionableEvidenceFactoryTest {
             )
         )
 
-        val evidence = ActionableEvidenceFactory.create(match)
+        val evidence = ClinicalEvidenceFactory.create(match)
         assertThat(evidence).isNotNull()
         assertThat(evidence.knownResistantTreatments()).containsExactly("On-label responsive A")
         assertThat(evidence.suspectResistantTreatments()).containsExactlyInAnyOrder("Off-label responsive", "On-label responsive C")
@@ -100,7 +100,7 @@ class ActionableEvidenceFactoryTest {
             )
         )
 
-        val evidence = ActionableEvidenceFactory.create(match)
+        val evidence = ClinicalEvidenceFactory.create(match)
         assertThat(evidence).isNotNull()
         assertThat(evidence.approvedTreatments()).isEmpty()
         assertThat(evidence.externalEligibleTrials).containsExactly(
@@ -128,7 +128,7 @@ class ActionableEvidenceFactoryTest {
             )
         )
 
-        val evidence = ActionableEvidenceFactory.create(match)
+        val evidence = ClinicalEvidenceFactory.create(match)
         assertThat(evidence).isNotNull()
         assertThat(evidence.approvedTreatments()).isEmpty()
         assertThat(evidence.externalEligibleTrials).isEmpty()
@@ -141,34 +141,34 @@ class ActionableEvidenceFactoryTest {
 
     @Test
     fun `Should filter lower level evidence`() {
-        val approved = ActionableTreatment("approved", evidenceLevel = EvidenceLevel.A, category = ActinEvidenceCategory.APPROVED)
-        val onLabelExperimental = ActionableTreatment(
+        val approved = treatment("approved", evidenceLevel = EvidenceLevel.A, category = ActinEvidenceCategory.APPROVED)
+        val onLabelExperimental = treatment(
             "on-label experimental",
             evidenceLevel = EvidenceLevel.A,
             category = ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL
         )
-        val offLabelExperimental = ActionableTreatment(
+        val offLabelExperimental = treatment(
             "off-label experimental",
             evidenceLevel = EvidenceLevel.A,
             category = ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL
         )
-        val preClinical = ActionableTreatment(
+        val preClinical = treatment(
             "pre-clinical",
             evidenceLevel = EvidenceLevel.A,
             category = ActinEvidenceCategory.PRE_CLINICAL
         )
-        val knownResistant = ActionableTreatment(
+        val knownResistant = treatment(
             "approved",
             evidenceLevel = EvidenceLevel.A,
             category = ActinEvidenceCategory.KNOWN_RESISTANT
         )
-        val suspectResistant = ActionableTreatment(
+        val suspectResistant = treatment(
             "off-label experimental",
             evidenceLevel = EvidenceLevel.A,
             category = ActinEvidenceCategory.SUSPECT_RESISTANT
         )
-        val evidence = ActionableEvidence(
-            actionableTreatments = setOf(
+        val evidence = ClinicalEvidence(
+            treatmentEvidence = setOf(
                 approved,
                 approved.copy(category = ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL),
                 onLabelExperimental,
@@ -184,12 +184,12 @@ class ActionableEvidenceFactoryTest {
             )
         )
 
-        assertThat(evidence.approvedTreatments()).containsExactly(approved.name)
-        assertThat(evidence.onLabelExperimentalTreatments()).containsExactly(onLabelExperimental.name)
-        assertThat(evidence.offLabelExperimentalTreatments()).containsExactly(offLabelExperimental.name)
-        assertThat(evidence.preClinicalTreatments()).containsExactly(preClinical.name)
-        assertThat(evidence.knownResistantTreatments()).containsExactly(knownResistant.name)
-        assertThat(evidence.suspectResistantTreatments()).containsExactly(suspectResistant.name)
+        assertThat(evidence.approvedTreatments()).containsExactly(approved.treatment)
+        assertThat(evidence.onLabelExperimentalTreatments()).containsExactly(onLabelExperimental.treatment)
+        assertThat(evidence.offLabelExperimentalTreatments()).containsExactly(offLabelExperimental.treatment)
+        assertThat(evidence.preClinicalTreatments()).containsExactly(preClinical.treatment)
+        assertThat(evidence.knownResistantTreatments()).containsExactly(knownResistant.treatment)
+        assertThat(evidence.suspectResistantTreatments()).containsExactly(suspectResistant.treatment)
     }
 
     private fun evidence(treatment: String, level: EvidenceLevel, direction: EvidenceDirection): ActionableEvent {

@@ -9,8 +9,8 @@ import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
-import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
 import org.assertj.core.api.Assertions.assertThat
@@ -20,19 +20,19 @@ class DriversInterpreterTest {
 
     @Test
     fun shouldIncludeNonActionableReportableDrivers() {
-        val record = createTestMolecularRecordWithDriverEvidence(TestActionableEvidenceFactory.createEmpty(), true)
+        val record = createTestMolecularRecordWithDriverEvidence(TestClinicalEvidenceFactory.createEmpty(), true)
         assertCountForRecord(1, record)
     }
 
     @Test
     fun shouldSkipNonActionableNotReportableDrivers() {
-        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestActionableEvidenceFactory.createEmpty())
+        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.createEmpty())
         assertCountForRecord(0, record)
     }
 
     @Test
     fun shouldIncludeNonReportableDriversWithActinTrialMatches() {
-        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestActionableEvidenceFactory.createEmpty())
+        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.createEmpty())
         assertCountForRecordAndCohorts(
             1,
             record,
@@ -43,14 +43,14 @@ class DriversInterpreterTest {
     @Test
     fun shouldIncludeNonReportableDriversWithApprovedTreatmentMatches() {
         val record =
-            createTestMolecularRecordWithNonReportableDriverWithEvidence(TestActionableEvidenceFactory.withApprovedTreatment("treatment"))
+            createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.withApprovedTreatment("treatment"))
         assertCountForRecord(1, record)
     }
 
     @Test
     fun shouldIncludeNonReportableDriversWithExternalTrialMatches() {
         val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(
-            TestActionableEvidenceFactory.withExternalEligibleTrial(
+            TestClinicalEvidenceFactory.withExternalEligibleTrial(
                 TestExternalTrialFactory.createTestTrial()
             )
         )
@@ -80,15 +80,15 @@ class DriversInterpreterTest {
             assertThat(interpreter.filteredViruses()).hasSize(expectedCount)
         }
 
-        private fun createTestMolecularRecordWithNonReportableDriverWithEvidence(evidence: ActionableEvidence): MolecularRecord {
+        private fun createTestMolecularRecordWithNonReportableDriverWithEvidence(evidence: ClinicalEvidence): MolecularRecord {
             return createTestMolecularRecordWithDriverEvidence(evidence, false)
         }
 
-        private fun createTestMolecularRecordWithDriverEvidence(evidence: ActionableEvidence, isReportable: Boolean): MolecularRecord {
+        private fun createTestMolecularRecordWithDriverEvidence(evidence: ClinicalEvidence, isReportable: Boolean): MolecularRecord {
             return TestMolecularFactory.createMinimalTestMolecularRecord().copy(drivers = createDriversWithEvidence(evidence, isReportable))
         }
 
-        private fun createDriversWithEvidence(evidence: ActionableEvidence, isReportable: Boolean): Drivers {
+        private fun createDriversWithEvidence(evidence: ClinicalEvidence, isReportable: Boolean): Drivers {
             return Drivers(
                 variants = setOf(
                     TestVariantFactory.createMinimal().copy(isReportable = isReportable, evidence = evidence, event = EVENT_VARIANT)

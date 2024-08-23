@@ -2,7 +2,7 @@ package com.hartwig.actin.molecular.datamodel.orange.driver
 
 import com.hartwig.actin.molecular.datamodel.Driver
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.sort.driver.VirusComparator
 
 data class Virus(
@@ -13,7 +13,7 @@ data class Virus(
     override val isReportable: Boolean,
     override val event: String,
     override val driverLikelihood: DriverLikelihood?,
-    override val evidence: ActionableEvidence
+    override val evidence: ClinicalEvidence
 ) : Driver, Comparable<Virus> {
 
     override fun compareTo(other: Virus): Int {

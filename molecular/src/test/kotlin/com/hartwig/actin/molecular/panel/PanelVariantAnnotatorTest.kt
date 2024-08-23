@@ -8,8 +8,8 @@ import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.TranscriptImpact
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.ActinEvidenceCategory
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableTreatment
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.treatment
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
@@ -128,7 +128,7 @@ class PanelVariantAnnotatorTest {
     @Test
     fun `Should return empty annotation when no matches found`() {
         val annotated = annotator.annotate(setOf(ARCHER_VARIANT))
-        assertThat(annotated.first().evidence).isEqualTo(ActionableEvidence())
+        assertThat(annotated.first().evidence).isEqualTo(ClinicalEvidence())
     }
 
     @Test
@@ -136,10 +136,10 @@ class PanelVariantAnnotatorTest {
         every { evidenceDatabase.evidenceForVariant(VARIANT_MATCH_CRITERIA) } returns ACTIONABILITY_MATCH
         val annotated = annotator.annotate(setOf(ARCHER_VARIANT))
         assertThat(annotated.first().evidence).isEqualTo(
-            ActionableEvidence(
-                actionableTreatments = setOf(
-                    ActionableTreatment(
-                        name = "intervention",
+            ClinicalEvidence(
+                treatmentEvidence = setOf(
+                    treatment(
+                        treatment = "intervention",
                         evidenceLevel = EvidenceLevel.A,
                         category = ActinEvidenceCategory.APPROVED
                     )

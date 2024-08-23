@@ -3,7 +3,7 @@ package com.hartwig.actin.molecular
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.datamodel.orange.driver.CodingContext
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
@@ -27,7 +27,7 @@ object TestMolecularFactory {
             isReportable = false,
             event = "",
             driverLikelihood = DriverLikelihood.LOW,
-            evidence = ActionableEvidence(),
+            evidence = ClinicalEvidence(),
             gene = "",
             geneRole = GeneRole.UNKNOWN,
             proteinEffect = ProteinEffect.UNKNOWN,
@@ -44,7 +44,7 @@ object TestMolecularFactory {
             isAssociatedWithDrugResistance = false,
             event = "",
             driverLikelihood = DriverLikelihood.LOW,
-            evidence = ActionableEvidence(),
+            evidence = ClinicalEvidence(),
             gene = "",
             geneRole = GeneRole.UNKNOWN,
             proteinEffect = ProteinEffect.UNKNOWN
@@ -56,7 +56,7 @@ object TestMolecularFactory {
             isReportable = false,
             event = "",
             driverLikelihood = DriverLikelihood.LOW,
-            evidence = ActionableEvidence(),
+            evidence = ClinicalEvidence(),
             gene = "",
             geneRole = GeneRole.UNKNOWN,
             proteinEffect = ProteinEffect.UNKNOWN,
@@ -73,7 +73,7 @@ object TestMolecularFactory {
             isReportable = false,
             event = "",
             driverLikelihood = DriverLikelihood.LOW,
-            evidence = ActionableEvidence(),
+            evidence = ClinicalEvidence(),
         )
     }
 }

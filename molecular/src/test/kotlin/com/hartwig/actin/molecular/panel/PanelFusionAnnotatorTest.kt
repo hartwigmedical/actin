@@ -6,8 +6,8 @@ import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.Fusion
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.evidence.ActinEvidenceCategory
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableTreatment
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.treatment
 import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
@@ -141,25 +141,23 @@ class PanelFusionAnnotatorTest {
         setupKnownFusionCache()
         setupEvidenceForFusion()
         val annotated = annotator.annotate(setOf(ARCHER_FUSION), emptySet())
-        assertThat(annotated).isEqualTo(
-            setOf(
-                Fusion(
-                    geneStart = GENE,
-                    geneEnd = OTHER_GENE,
-                    driverType = FusionDriverType.KNOWN_PAIR,
-                    proteinEffect = ProteinEffect.UNKNOWN,
-                    isAssociatedWithDrugResistance = null,
-                    extendedFusionDetails = null,
-                    event = "$GENE-$OTHER_GENE fusion",
-                    isReportable = true,
-                    driverLikelihood = DriverLikelihood.HIGH,
-                    evidence = ActionableEvidence(
-                        actionableTreatments = setOf(
-                            ActionableTreatment(
-                                name = "intervention",
-                                evidenceLevel = EvidenceLevel.A,
-                                category = ActinEvidenceCategory.APPROVED
-                            )
+        assertThat(annotated).containsExactly(
+            Fusion(
+                geneStart = GENE,
+                geneEnd = OTHER_GENE,
+                driverType = FusionDriverType.KNOWN_PAIR,
+                proteinEffect = ProteinEffect.UNKNOWN,
+                isAssociatedWithDrugResistance = null,
+                extendedFusionDetails = null,
+                event = "$GENE-$OTHER_GENE fusion",
+                isReportable = true,
+                driverLikelihood = DriverLikelihood.HIGH,
+                evidence = ClinicalEvidence(
+                    treatmentEvidence = setOf(
+                        treatment(
+                            treatment = "intervention",
+                            evidenceLevel = EvidenceLevel.A,
+                            category = ActinEvidenceCategory.APPROVED
                         )
                     )
                 )
@@ -194,7 +192,7 @@ class PanelFusionAnnotatorTest {
                     event = "$GENE skipped exons 2-4",
                     isReportable = true,
                     driverLikelihood = DriverLikelihood.HIGH,
-                    evidence = ActionableEvidence()
+                    evidence = ClinicalEvidence()
                 )
             )
         )
@@ -219,7 +217,7 @@ class PanelFusionAnnotatorTest {
                     event = "$GENE skipped exons 2-4",
                     isReportable = true,
                     driverLikelihood = DriverLikelihood.HIGH,
-                    evidence = ActionableEvidence()
+                    evidence = ClinicalEvidence()
                 )
             )
         )

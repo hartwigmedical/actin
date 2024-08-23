@@ -4,8 +4,8 @@ import com.hartwig.actin.molecular.datamodel.Drivers
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
-import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
 import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
@@ -24,21 +24,21 @@ class MolecularDriverEntryFactoryTest {
 
     @Test
     fun `Should include non-actionable reportable drivers`() {
-        val record = createTestMolecularRecordWithDriverEvidence(TestActionableEvidenceFactory.createEmpty(), true)
+        val record = createTestMolecularRecordWithDriverEvidence(TestClinicalEvidenceFactory.createEmpty(), true)
         val factory = createFactoryForMolecularRecord(record)
         assertThat(factory.create()).hasSize(1)
     }
 
     @Test
     fun `Should skip non actionable not reportable drivers`() {
-        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestActionableEvidenceFactory.createEmpty())
+        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.createEmpty())
         val factory = createFactoryForMolecularRecord(record)
         assertThat(factory.create()).hasSize(0)
     }
 
     @Test
     fun `Should include non-reportable drivers with actin trial matches`() {
-        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestActionableEvidenceFactory.createEmpty())
+        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.createEmpty())
         val driverToFind = record.drivers.viruses.iterator().next().event
         assertThat(createFactoryWithCohortsForEvent(record, driverToFind).create()).hasSize(1)
     }
@@ -46,7 +46,7 @@ class MolecularDriverEntryFactoryTest {
     @Test
     fun `Should include non reportable drivers with approved treatment matches`() {
         val record =
-            createTestMolecularRecordWithNonReportableDriverWithEvidence(TestActionableEvidenceFactory.withApprovedTreatment("treatment"))
+            createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.withApprovedTreatment("treatment"))
         val factory = createFactoryForMolecularRecord(record)
         assertThat(factory.create()).hasSize(1)
     }
@@ -54,7 +54,7 @@ class MolecularDriverEntryFactoryTest {
     @Test
     fun `Should include non-reportable drivers with external trial matches`() {
         val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(
-            TestActionableEvidenceFactory.withExternalEligibleTrial(
+            TestClinicalEvidenceFactory.withExternalEligibleTrial(
                 TestExternalTrialFactory.createTestTrial()
             )
         )
@@ -94,15 +94,15 @@ class MolecularDriverEntryFactoryTest {
         assertThat(result[0].driverType).isEqualTo(expectedDriverType)
     }
 
-    private fun createTestMolecularRecordWithNonReportableDriverWithEvidence(evidence: ActionableEvidence): MolecularRecord {
+    private fun createTestMolecularRecordWithNonReportableDriverWithEvidence(evidence: ClinicalEvidence): MolecularRecord {
         return createTestMolecularRecordWithDriverEvidence(evidence, false)
     }
 
-    private fun createTestMolecularRecordWithDriverEvidence(evidence: ActionableEvidence, isReportable: Boolean): MolecularRecord {
+    private fun createTestMolecularRecordWithDriverEvidence(evidence: ClinicalEvidence, isReportable: Boolean): MolecularRecord {
         return TestMolecularFactory.createMinimalTestMolecularRecord().copy(drivers = createDriversWithEvidence(evidence, isReportable))
     }
 
-    private fun createDriversWithEvidence(evidence: ActionableEvidence, isReportable: Boolean): Drivers {
+    private fun createDriversWithEvidence(evidence: ClinicalEvidence, isReportable: Boolean): Drivers {
         return TestMolecularFactory.createMinimalTestMolecularRecord().drivers.copy(
             viruses = setOf(TestVirusFactory.createMinimal().copy(isReportable = isReportable, evidence = evidence))
         )
