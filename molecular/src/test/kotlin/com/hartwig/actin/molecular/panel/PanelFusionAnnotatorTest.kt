@@ -5,8 +5,9 @@ import com.hartwig.actin.clinical.datamodel.SequencedSkippedExons
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.Fusion
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.evidence.ActinEvidenceCategory
 import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.EvidenceDirection
+import com.hartwig.actin.molecular.datamodel.evidence.EvidenceLevel
 import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.treatment
 import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
@@ -17,13 +18,13 @@ import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.ensemblcache.TranscriptData
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
-import com.hartwig.serve.datamodel.EvidenceDirection
-import com.hartwig.serve.datamodel.EvidenceLevel
 import com.hartwig.serve.datamodel.Knowledgebase
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import com.hartwig.serve.datamodel.EvidenceDirection as ServeEvidenceDirection
+import com.hartwig.serve.datamodel.EvidenceLevel as ServeEvidenceLevel
 
 private val EMPTY_MATCH = ActionabilityMatch(emptyList(), emptyList())
 private const val TRANSCRIPT = "transcript"
@@ -47,8 +48,8 @@ private val FUSION_MATCH_CRITERIA = FusionMatchCriteria(
 
 private val ACTIONABILITY_MATCH = ActionabilityMatch(
     onLabelEvents = listOf(
-        TestServeActionabilityFactory.geneBuilder().build().withSource(Knowledgebase.CKB_EVIDENCE).withLevel(EvidenceLevel.A)
-            .withDirection(EvidenceDirection.RESPONSIVE)
+        TestServeActionabilityFactory.geneBuilder().build().withSource(Knowledgebase.CKB_EVIDENCE).withLevel(ServeEvidenceLevel.A)
+            .withDirection(ServeEvidenceDirection.RESPONSIVE)
     ), offLabelEvents = emptyList()
 )
 
@@ -157,7 +158,8 @@ class PanelFusionAnnotatorTest {
                         treatment(
                             treatment = "intervention",
                             evidenceLevel = EvidenceLevel.A,
-                            category = ActinEvidenceCategory.APPROVED
+                            direction = EvidenceDirection(hasPositiveResponse = true, isCertain = true),
+                            onLabel = true
                         )
                     )
                 )

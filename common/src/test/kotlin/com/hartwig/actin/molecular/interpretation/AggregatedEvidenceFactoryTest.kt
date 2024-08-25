@@ -57,7 +57,7 @@ class AggregatedEvidenceFactoryTest {
         )
         val evidence = AggregatedEvidenceFactory.create(withCharacteristics(characteristics))
 
-        assertEvidenceCountForAllFields(evidence, 4)
+        assertEvidenceCountForAllFields(evidence, 8)
     }
 
     @Test
@@ -110,7 +110,7 @@ class AggregatedEvidenceFactoryTest {
             ),
         )
         val evidence = AggregatedEvidenceFactory.create(withDrivers(drivers))
-        assertEvidenceCountForAllFields(evidence, 6)
+        assertEvidenceCountForAllFields(evidence, 12)
     }
 
     @Test
@@ -124,7 +124,7 @@ class AggregatedEvidenceFactoryTest {
             variants = setOf(variant, variant.copy(driverLikelihood = DriverLikelihood.MEDIUM))
         )
         val evidence = AggregatedEvidenceFactory.create(withDrivers(drivers))
-        assertEvidenceCountForAllFields(evidence, 1, 1)
+        assertEvidenceCountForAllFields(evidence, 2, 2)
     }
 
     private fun withCharacteristics(characteristics: MolecularCharacteristics): MolecularRecord {

@@ -7,7 +7,13 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantEffect
 import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidenceCategories.approved
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidenceCategories.experimental
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidenceCategories.knownResistant
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidenceCategories.preclinical
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidenceCategories.suspectResistant
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
+import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
@@ -590,14 +596,17 @@ internal class MolecularDAO(private val context: DSLContext) {
     }
 
     private fun <T : Record?> writeEvidence(inserter: EvidenceInserter<T>, topicId: Int, evidence: ClinicalEvidence) {
-        writeTreatments(inserter, topicId, evidence.approvedTreatments(), "Approved")
+        writeTreatments(inserter, topicId, treatments(approved(evidence.treatmentEvidence)), "Approved")
         writeTrials(inserter, topicId, evidence.externalEligibleTrials)
-        writeTreatments(inserter, topicId, evidence.onLabelExperimentalTreatments(), "On-label experimental")
-        writeTreatments(inserter, topicId, evidence.offLabelExperimentalTreatments(), "Off-label experimental")
-        writeTreatments(inserter, topicId, evidence.preClinicalTreatments(), "Pre-clinical")
-        writeTreatments(inserter, topicId, evidence.knownResistantTreatments(), "Known resistant")
-        writeTreatments(inserter, topicId, evidence.suspectResistantTreatments(), "Suspect resistant")
+        writeTreatments(inserter, topicId, treatments(experimental(evidence.treatmentEvidence, true)), "On-label experimental")
+        writeTreatments(inserter, topicId, treatments(experimental(evidence.treatmentEvidence, false)), "Off-label experimental")
+        writeTreatments(inserter, topicId, treatments(preclinical(evidence.treatmentEvidence)), "Pre-clinical")
+        writeTreatments(inserter, topicId, treatments(knownResistant(evidence.treatmentEvidence)), "Known resistant")
+        writeTreatments(inserter, topicId, treatments(suspectResistant(evidence.treatmentEvidence)), "Suspect resistant")
     }
+
+    private fun treatments(treatmentEvidence: List<TreatmentEvidence>) =
+        treatmentEvidence.map { it.treatment }.toSet()
 
     private fun <T : Record?> writeTreatments(inserter: EvidenceInserter<T>, topicId: Int, treatments: Set<String>, type: String) {
         for (treatment in treatments) {

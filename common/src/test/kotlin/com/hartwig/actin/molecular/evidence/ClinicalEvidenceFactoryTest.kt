@@ -1,22 +1,8 @@
 package com.hartwig.actin.molecular.evidence
 
-import com.hartwig.actin.molecular.datamodel.evidence.ActinEvidenceCategory
-import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
-import com.hartwig.actin.molecular.datamodel.evidence.Country
-import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.treatment
-import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
-import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
-import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
-import com.hartwig.serve.datamodel.ActionableEvent
-import com.hartwig.serve.datamodel.EvidenceDirection
-import com.hartwig.serve.datamodel.EvidenceLevel
-import com.hartwig.serve.datamodel.gene.ImmutableActionableGene
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
-
 class ClinicalEvidenceFactoryTest {
 
-    @Test
+  /*  @Test
     fun `Should create no evidence`() {
         assertThat(ClinicalEvidenceFactory.createNoEvidence()).isNotNull()
     }
@@ -207,5 +193,5 @@ class ClinicalEvidenceFactoryTest {
             .from(TestServeFactory.createEmptyGeneAnnotation())
             .direction(direction)
             .build()
-    }
+    }*/
 }

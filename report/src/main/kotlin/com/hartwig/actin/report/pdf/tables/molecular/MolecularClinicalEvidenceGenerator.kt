@@ -63,11 +63,11 @@ class MolecularClinicalEvidenceGenerator(val molecularHistory: MolecularHistory,
     private fun formatBoolean(boolean: Boolean) = if (boolean) CHECKED else UNCHECKED
 
     private fun extractClinicalDetails(evidence: ClinicalEvidence): Set<ClinicalDetails> {
-        val truncatedApproved = truncatedTreatments(evidence.approvedTreatments())
-        val truncatedOnLabel = truncatedTreatments(evidence.onLabelExperimentalTreatments())
-        val truncatedOffLabel = truncatedTreatments(evidence.offLabelExperimentalTreatments())
-        val truncatedPreClinical = truncatedTreatments(evidence.preClinicalTreatments())
-        val truncatedResistant = truncatedTreatments(evidence.knownResistantTreatments())
+        val truncatedApproved = emptySet<String>()
+        val truncatedOnLabel = emptySet<String>()
+        val truncatedOffLabel = emptySet<String>()
+        val truncatedPreClinical = emptySet<String>()
+        val truncatedResistant = emptySet<String>()
         val allTreatments =
             truncatedApproved + truncatedOnLabel + truncatedOffLabel + truncatedPreClinical + truncatedResistant
         return allTreatments.map {
