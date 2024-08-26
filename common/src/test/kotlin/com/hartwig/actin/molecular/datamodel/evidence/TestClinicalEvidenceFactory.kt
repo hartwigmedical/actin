@@ -66,8 +66,14 @@ object TestClinicalEvidenceFactory {
     fun approved() =
         treatment("approved", EvidenceLevel.A, EvidenceDirection(hasPositiveResponse = true, isCertain = true), true)
 
-    fun treatment(treatment: String, evidenceLevel: EvidenceLevel, direction: EvidenceDirection, onLabel: Boolean) =
-        TreatmentEvidence(treatment, evidenceLevel, onLabel, direction, "", applicableCancerType())
+    fun treatment(
+        treatment: String,
+        evidenceLevel: EvidenceLevel,
+        direction: EvidenceDirection,
+        onLabel: Boolean,
+        isCategoryEvent: Boolean? = false
+    ) =
+        TreatmentEvidence(treatment, evidenceLevel, onLabel, direction, isCategoryEvent, "", applicableCancerType())
 
     private fun applicableCancerType() = ApplicableCancerType("", emptySet())
 
