@@ -1,13 +1,13 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
-import com.hartwig.actin.molecular.datamodel.evidence.ActinEvidenceCategory
 import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
-import com.hartwig.actin.report.pdf.util.Styles.PALETTE_YES_OR_NO_NO
-import com.hartwig.serve.datamodel.EvidenceLevel
+import com.hartwig.actin.report.pdf.util.Styles.PALETTE_RED
+import com.hartwig.actin.molecular.datamodel.evidence.EvidenceLevel
+import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 
 data class ClinicalDetails(
@@ -44,29 +44,47 @@ class MolecularClinicalEvidenceGenerator(
                 val groupedBySourceEvent = clinicalDetails.groupBy { it.treatmentEvidence.sourceEvent }
 
                 for ((sourceEvent, details) in groupedBySourceEvent) {
-                    val treatmentEvidenceByLevel = listOf(
+                    val treatmentEvidencesByLevel = listOf(
                         details.filter { it.levelA }.map { it.treatmentEvidence },
                         details.filter { it.levelB }.map { it.treatmentEvidence },
                         details.filter { it.levelC }.map { it.treatmentEvidence },
                         details.filter { it.levelD }.map { it.treatmentEvidence }
                     )
 
-                    if (treatmentEvidenceByLevel.any { it.isNotEmpty() }) {
+                    if (treatmentEvidencesByLevel.any { it.isNotEmpty() }) {
                         table.addCell(Cells.createContent(driver.event))
                         table.addCell(Cells.createContent(sourceEvent))
 
-                        treatmentEvidenceByLevel.forEach {
-                            val cellContent = it.joinToString("\n") { evidence ->
-                                val treatmentText = "${evidence.treatment} (${evidence.applicableCancerType.cancerType})"
-                                treatmentText
-                            }
-                            val cell = Cells.createContent(cellContent)
+                        treatmentEvidencesByLevel.forEach { levelEvidences ->
+                            val evidenceLevelTable = Table(1).setWidth(width / columnCount)
 
-                            if (it.any { evidence -> evidence.category in
-                                        setOf(ActinEvidenceCategory.SUSPECT_RESISTANT, ActinEvidenceCategory.KNOWN_RESISTANT) }) {
-                                cell.setFontColor(PALETTE_YES_OR_NO_NO)
+                            val treatmentGroupedEvidences = levelEvidences.groupBy { it.treatment }
+
+                            treatmentGroupedEvidences.forEach { (treatment, evidencesForTreatment) ->
+                                val cancerTypes = evidencesForTreatment.joinToString(", ") { it.applicableCancerType.cancerType }
+
+                                val evidenceSubTable = Table(1).setWidth(width / columnCount)
+                                val cancerTypeContent = Paragraph(cancerTypes).setFirstLineIndent(10f).setItalic().setFontSize(6.5f)
+                                val treatmentContent = Paragraph(treatment)
+
+                                if (evidencesForTreatment.any { it.direction.isResistant }) {
+                                    treatmentContent.setFontColor(PALETTE_RED)
+                                    cancerTypeContent.setFontColor(PALETTE_RED)
+                                }
+
+                                evidenceSubTable.addCell(Cells.createContentNoBorder(treatmentContent))
+                                evidenceSubTable.startNewRow()
+                                evidenceSubTable.addCell(Cells.createContentNoBorder(cancerTypeContent))
+
+                                val evidenceCell = Cells.createContentNoBorder(evidenceSubTable)
+                                evidenceLevelTable.addCell(evidenceCell)
                             }
-                            table.addCell(cell)
+
+                            if (evidenceLevelTable.numberOfRows == 0) {
+                                evidenceLevelTable.addCell(Cells.createEmpty())
+                            }
+
+                            table.addCell(Cells.createContent(evidenceLevelTable))
                         }
                     }
                 }
@@ -93,23 +111,8 @@ class MolecularClinicalEvidenceGenerator(
     private fun treatmentsForEvidenceLevelAndLabel(evidence: Set<TreatmentEvidence>, evidenceLevel: EvidenceLevel): Set<String> {
         return evidence
             .filter { it.evidenceLevel == evidenceLevel }
-            .filter { (onLabel && it.category in ON_LABEL_CATEGORIES) || (!onLabel && it.category in OFF_LABEL_CATEGORIES) }
+            .filter { it.onLabel == onLabel }
             .map { it.treatment }
             .toSet()
     }
-
-    private val ON_LABEL_CATEGORIES = setOf(
-        ActinEvidenceCategory.ON_LABEL_EXPERIMENTAL,
-        ActinEvidenceCategory.APPROVED,
-        ActinEvidenceCategory.PRE_CLINICAL,
-        ActinEvidenceCategory.KNOWN_RESISTANT,
-        ActinEvidenceCategory.SUSPECT_RESISTANT
-    )
-    private val OFF_LABEL_CATEGORIES = setOf(
-        ActinEvidenceCategory.APPROVED,
-        ActinEvidenceCategory.OFF_LABEL_EXPERIMENTAL,
-        ActinEvidenceCategory.PRE_CLINICAL,
-        ActinEvidenceCategory.KNOWN_RESISTANT,
-        ActinEvidenceCategory.SUSPECT_RESISTANT
-    )
 }

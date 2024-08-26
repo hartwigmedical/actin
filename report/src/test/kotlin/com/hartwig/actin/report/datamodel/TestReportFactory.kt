@@ -35,7 +35,8 @@ object TestReportFactory {
     fun createExhaustiveTestReportWithoutMolecular(): Report {
         return createMinimalTestReport().copy(
             patientRecord = PatientRecordFactory.fromInputs(TestClinicalFactory.createExhaustiveTestClinicalRecord(), null),
-            treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch()
+            treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch(),
+            config = ReportConfiguration(includeMolecularEvidenceChapter = true)
         )
     }
 
