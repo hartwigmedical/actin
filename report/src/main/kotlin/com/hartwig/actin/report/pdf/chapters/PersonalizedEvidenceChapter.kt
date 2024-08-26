@@ -42,10 +42,10 @@ class PersonalizedEvidenceChapter(private val report: Report, override val inclu
         table.addCell(Cells.createSubTitle("Explanation:"))
         sequenceOf(
             "This table only shows treatments that are considered standard of care (SOC) in colorectal cancer in the Netherlands.\n",
-            "‘All’ column shows results in NCR patients who were previously untreated, diagnosed with colorectal cancer with distant " +
+            "The ‘All’ column shows results in NCR patients who were previously untreated, diagnosed with colorectal cancer with distant " +
                     "metastases and treated systemically without surgery, for whom the treatment could be categorized in SOC treatments.\n",
-            "‘Age’, ‘WHO’, ‘RAS’ and ‘Lesions’ columns show results based on patients from the ‘All’ population, plus additional " +
-                    "filtering on patients according to equal WHO, similar age, equal RAS status or equal lesion localization.\n",
+            "The ‘Age’, ‘WHO’, ‘RAS’ and ‘Lesions’ columns show results based on patients from the ‘All’ population, filtered " +
+                    "for equal WHO, similar age, equal RAS status or equal lesion localization, respectively.\n",
             "‘PFS’ is calculated as the date on which the first compound of the treatment was administered, until first progression. " +
                     "When patient number is too low (n <= 20) to predict PFS, \"NA\" is shown."
         )
