@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.sort.evidence
 
 import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
-import com.hartwig.actin.molecular.datamodel.evidence.EvidenceLevel
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidenceCategories
 
 class ClinicalEvidenceComparator : Comparator<ClinicalEvidence> {
 
@@ -14,10 +14,17 @@ class ClinicalEvidenceComparator : Comparator<ClinicalEvidence> {
 
     private fun rank(evidence: ClinicalEvidence): Int {
         return when {
-            evidence.treatmentEvidence.any { it.evidenceLevel == EvidenceLevel.A } -> 1
+            ClinicalEvidenceCategories.approved(evidence.treatmentEvidence).isNotEmpty() -> 1
             evidence.externalEligibleTrials.isNotEmpty() -> 2
-            evidence.treatmentEvidence.any { it.evidenceLevel == EvidenceLevel.B } -> 3
-            else -> 4
+            ClinicalEvidenceCategories.experimental(evidence.treatmentEvidence).any { it.onLabel } -> 3
+            ClinicalEvidenceCategories.experimental(evidence.treatmentEvidence).isNotEmpty() -> 4
+            ClinicalEvidenceCategories.preclinical(evidence.treatmentEvidence).any { it.onLabel } -> 5
+            ClinicalEvidenceCategories.preclinical(evidence.treatmentEvidence).isNotEmpty() -> 6
+            ClinicalEvidenceCategories.knownResistant(evidence.treatmentEvidence).any { it.onLabel } -> 7
+            ClinicalEvidenceCategories.knownResistant(evidence.treatmentEvidence).isNotEmpty() -> 8
+            ClinicalEvidenceCategories.suspectResistant(evidence.treatmentEvidence).any { it.onLabel } -> 9
+            ClinicalEvidenceCategories.suspectResistant(evidence.treatmentEvidence).isNotEmpty() -> 10
+            else -> 11
         }
     }
 }
