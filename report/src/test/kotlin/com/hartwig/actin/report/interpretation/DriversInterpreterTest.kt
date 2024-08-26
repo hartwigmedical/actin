@@ -10,7 +10,7 @@ import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFact
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory
 import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
-import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
+import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
 import org.assertj.core.api.Assertions.assertThat
@@ -20,19 +20,19 @@ class DriversInterpreterTest {
 
     @Test
     fun shouldIncludeNonActionableReportableDrivers() {
-        val record = createTestMolecularRecordWithDriverEvidence(TestActionableEvidenceFactory.createEmpty(), true)
+        val record = createTestMolecularRecordWithDriverEvidence(TestClinicalEvidenceFactory.createEmpty(), true)
         assertCountForRecord(1, record)
     }
 
     @Test
     fun shouldSkipNonActionableNotReportableDrivers() {
-        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestActionableEvidenceFactory.createEmpty())
+        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.createEmpty())
         assertCountForRecord(0, record)
     }
 
     @Test
     fun shouldIncludeNonReportableDriversWithActinTrialMatches() {
-        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestActionableEvidenceFactory.createEmpty())
+        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.createEmpty())
         assertCountForRecordAndCohorts(
             1,
             record,
@@ -43,14 +43,14 @@ class DriversInterpreterTest {
     @Test
     fun shouldIncludeNonReportableDriversWithApprovedTreatmentMatches() {
         val record =
-            createTestMolecularRecordWithNonReportableDriverWithEvidence(TestActionableEvidenceFactory.withApprovedTreatment("treatment"))
+            createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.withApprovedTreatment("treatment"))
         assertCountForRecord(1, record)
     }
 
     @Test
     fun shouldIncludeNonReportableDriversWithExternalTrialMatches() {
         val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(
-            TestActionableEvidenceFactory.withExternalEligibleTrial(
+            TestClinicalEvidenceFactory.withExternalEligibleTrial(
                 TestExternalTrialFactory.createTestTrial()
             )
         )

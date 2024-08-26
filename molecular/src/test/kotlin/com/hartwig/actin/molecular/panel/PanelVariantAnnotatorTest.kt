@@ -7,9 +7,10 @@ import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.TranscriptImpact
 import com.hartwig.actin.molecular.datamodel.VariantType
-import com.hartwig.actin.molecular.datamodel.evidence.ActinEvidenceCategory
 import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
-import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.treatment
+import com.hartwig.actin.molecular.datamodel.evidence.EvidenceDirection
+import com.hartwig.actin.molecular.datamodel.evidence.EvidenceLevel
+import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.treatment
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
@@ -26,14 +27,14 @@ import com.hartwig.actin.tools.pave.ImmutableVariantTranscriptImpact
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.ImmutableVariant
 import com.hartwig.actin.tools.variant.VariantAnnotator
-import com.hartwig.serve.datamodel.EvidenceDirection
-import com.hartwig.serve.datamodel.EvidenceLevel
 import com.hartwig.serve.datamodel.Knowledgebase
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import com.hartwig.serve.datamodel.EvidenceDirection as ServeEvidenceDirection
+import com.hartwig.serve.datamodel.EvidenceLevel as ServeEvidenceLevel
 
 
 private const val ALT = "T"
@@ -63,8 +64,8 @@ private val VARIANT_MATCH_CRITERIA =
 
 private val ACTIONABILITY_MATCH = ActionabilityMatch(
     onLabelEvents = listOf(
-        TestServeActionabilityFactory.geneBuilder().build().withSource(Knowledgebase.CKB_EVIDENCE).withLevel(EvidenceLevel.A)
-            .withDirection(EvidenceDirection.RESPONSIVE)
+        TestServeActionabilityFactory.geneBuilder().build().withSource(Knowledgebase.CKB_EVIDENCE).withLevel(ServeEvidenceLevel.A)
+            .withDirection(ServeEvidenceDirection.RESPONSIVE)
     ), offLabelEvents = emptyList()
 )
 
@@ -141,7 +142,8 @@ class PanelVariantAnnotatorTest {
                     treatment(
                         treatment = "intervention",
                         evidenceLevel = EvidenceLevel.A,
-                        category = ActinEvidenceCategory.APPROVED
+                        direction = EvidenceDirection(hasPositiveResponse = true, isCertain = true),
+                        onLabel = true
                     )
                 )
             )
