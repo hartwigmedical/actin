@@ -60,7 +60,7 @@ object TestClinicalEvidenceFactory {
         "on-label experimental",
         EvidenceLevel.A,
         EvidenceDirection(hasPositiveResponse = true, isCertain = false),
-        false
+        true
     )
 
     fun approved() =
@@ -75,8 +75,8 @@ object TestClinicalEvidenceFactory {
         return ClinicalEvidence(treatmentEvidence = setOf(approved().copy(treatment = treatment)))
     }
 
-    fun withExternalEligibleTrial(treatment: ExternalTrial): ClinicalEvidence {
-        return ClinicalEvidence(externalEligibleTrials = setOf(treatment))
+    fun withExternalEligibleTrial(trial: ExternalTrial): ClinicalEvidence {
+        return ClinicalEvidence(externalEligibleTrials = setOf(trial))
     }
 
     fun withOnLabelExperimentalTreatment(treatment: String): ClinicalEvidence {

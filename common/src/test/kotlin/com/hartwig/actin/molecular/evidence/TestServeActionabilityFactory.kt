@@ -58,7 +58,11 @@ object TestServeActionabilityFactory {
         return createActionableEvent(Knowledgebase.CKB_EVIDENCE, "intervention")
     }
 
-    fun createActionableEvent(source: Knowledgebase, interventionName: String): ActionableEvent {
+    fun createActionableEvent(
+        source: Knowledgebase,
+        interventionName: String,
+        direction: EvidenceDirection = EvidenceDirection.NO_BENEFIT
+    ): ActionableEvent {
         val nctId = "NCT00000001"
         val isTrial = source == Knowledgebase.CKB_TRIAL
         return object : ActionableEvent {
@@ -100,7 +104,7 @@ object TestServeActionabilityFactory {
             }
 
             override fun direction(): EvidenceDirection {
-                return EvidenceDirection.NO_BENEFIT
+                return direction
             }
 
             override fun evidenceUrls(): Set<String> {
