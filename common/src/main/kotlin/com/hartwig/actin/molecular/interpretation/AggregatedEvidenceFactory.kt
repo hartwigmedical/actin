@@ -78,7 +78,7 @@ object AggregatedEvidenceFactory {
         } else {
             AggregatedEvidence(
                 externalEligibleTrialsPerEvent = evidenceMap(event, evidence.externalEligibleTrials),
-                actionableTreatments = evidenceMap(event, evidence.treatmentEvidence),
+                treatmentEvidence = evidenceMap(event, evidence.treatmentEvidence),
             )
         }
     }
@@ -87,8 +87,8 @@ object AggregatedEvidenceFactory {
         return AggregatedEvidence(
             externalEligibleTrialsPerEvent =
             mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::externalEligibleTrialsPerEvent)),
-            actionableTreatments =
-            mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::actionableTreatments)),
+            treatmentEvidence =
+            mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::treatmentEvidence)),
         )
     }
 
