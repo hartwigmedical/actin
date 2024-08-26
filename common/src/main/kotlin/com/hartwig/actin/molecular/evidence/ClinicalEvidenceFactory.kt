@@ -42,7 +42,7 @@ object ClinicalEvidenceFactory {
                     isCertain = it.direction().isCertain
                 ),
                 it.sourceEvent(),
-                ApplicableCancerType(it.applicableCancerType().name(), it.blacklistCancerTypes().map { it.name() }.toSet())
+                ApplicableCancerType(it.applicableCancerType().name(), it.blacklistCancerTypes().map { ct -> ct.name() }.toSet())
             )
         }.toSet()
 
