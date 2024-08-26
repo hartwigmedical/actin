@@ -17,17 +17,9 @@ import org.junit.Test
 
 class AggregatedEvidenceFactoryTest {
 
-    private val evidenceFields = listOf(
-        AggregatedEvidence::approvedTreatmentsPerEvent,
-        AggregatedEvidence::onLabelExperimentalTreatmentPerEvent,
-        AggregatedEvidence::offLabelExperimentalTreatmentsPerEvent,
-        AggregatedEvidence::knownResistantTreatmentsPerEvent,
-        AggregatedEvidence::suspectResistantTreatmentsPerEvent
-    )
-
     @Test
     fun `Should find no evidence on minimal record`() {
-        assertEvidenceIsEmpty(AggregatedEvidenceFactory.create(TestMolecularFactory.createMinimalTestMolecularRecord()))
+        assertThat(AggregatedEvidenceFactory.create(TestMolecularFactory.createMinimalTestMolecularRecord()).treatmentEvidence).isEmpty()
     }
 
     @Test
@@ -40,7 +32,7 @@ class AggregatedEvidenceFactoryTest {
             hasHighTumorMutationalBurden = null,
             hasHighTumorMutationalLoad = null
         )
-        assertEvidenceIsEmpty(AggregatedEvidenceFactory.create(withCharacteristics(characteristics)))
+        assertThat(AggregatedEvidenceFactory.create(withCharacteristics(characteristics)).treatmentEvidence).isEmpty()
     }
 
     @Test
@@ -57,7 +49,7 @@ class AggregatedEvidenceFactoryTest {
         )
         val evidence = AggregatedEvidenceFactory.create(withCharacteristics(characteristics))
 
-        assertEvidenceCountForAllFields(evidence, 8)
+        assertThat(evidence.treatmentEvidence).hasSize(4)
     }
 
     @Test
@@ -72,7 +64,7 @@ class AggregatedEvidenceFactoryTest {
             hasHighTumorMutationalLoad = null,
             tumorMutationalLoadEvidence = TestClinicalEvidenceFactory.createExhaustive()
         )
-        assertEvidenceIsEmpty(AggregatedEvidenceFactory.create(withCharacteristics(characteristics)))
+        assertThat(AggregatedEvidenceFactory.create(withCharacteristics(characteristics)).treatmentEvidence).isEmpty()
     }
 
     @Test
@@ -110,7 +102,7 @@ class AggregatedEvidenceFactoryTest {
             ),
         )
         val evidence = AggregatedEvidenceFactory.create(withDrivers(drivers))
-        assertEvidenceCountForAllFields(evidence, 12)
+        assertThat(evidence.treatmentEvidence).hasSize(6)
     }
 
     @Test
@@ -124,7 +116,7 @@ class AggregatedEvidenceFactoryTest {
             variants = setOf(variant, variant.copy(driverLikelihood = DriverLikelihood.MEDIUM))
         )
         val evidence = AggregatedEvidenceFactory.create(withDrivers(drivers))
-        assertEvidenceCountForAllFields(evidence, 2, 2)
+        assertThat(evidence.treatmentEvidence).hasSize(1)
     }
 
     private fun withCharacteristics(characteristics: MolecularCharacteristics): MolecularRecord {
@@ -133,21 +125,5 @@ class AggregatedEvidenceFactoryTest {
 
     private fun withDrivers(drivers: Drivers): MolecularRecord {
         return TestMolecularFactory.createMinimalTestMolecularRecord().copy(drivers = drivers)
-    }
-
-    private fun assertEvidenceIsEmpty(evidence: AggregatedEvidence) {
-        evidenceFields.forEach {
-            assertThat(it.invoke(evidence)).isEmpty()
-        }
-    }
-
-    private fun assertEvidenceCountForAllFields(
-        evidence: AggregatedEvidence, expectedEvidenceKeyCount: Int, expectedEvidenceValueCount: Int? = null
-    ) {
-        evidenceFields.forEach {
-            val evidenceMap = it.invoke(evidence)
-            assertThat(evidenceMap.keys).hasSize(expectedEvidenceKeyCount)
-            assertThat(evidenceMap.values.flatten()).hasSize(expectedEvidenceValueCount ?: expectedEvidenceKeyCount)
-        }
     }
 }

@@ -10,7 +10,7 @@ import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence
 
 data class AggregatedEvidence(
     val externalEligibleTrialsPerEvent: Map<String, Set<ExternalTrial>> = emptyMap(),
-    val actionableTreatments: Map<String, Set<TreatmentEvidence>> = emptyMap(),
+    val treatmentEvidence: Map<String, Set<TreatmentEvidence>> = emptyMap(),
 ) {
     fun approvedTreatmentsPerEvent() = filterMap { approved(it.value) }
     fun onLabelExperimentalTreatmentPerEvent() = filterMap { experimental(it.value, true) }
@@ -20,5 +20,5 @@ data class AggregatedEvidence(
     fun suspectResistantTreatmentsPerEvent() = filterMap { suspectResistant(it.value, true) }
 
     private fun filterMap(mappingFunction: (Map.Entry<String, Set<TreatmentEvidence>>) -> List<TreatmentEvidence>) =
-        actionableTreatments.mapValues(mappingFunction).filterValues { it.isNotEmpty() }
+        treatmentEvidence.mapValues(mappingFunction).filterValues { it.isNotEmpty() }
 }
