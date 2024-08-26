@@ -21,7 +21,7 @@ import io.mockk.every
 import io.mockk.mockk
 import org.junit.Test
 
-class IsEligibleForOnUseageLabelStatusTreatmentTest {
+class IsEligibleForOnLabelStatusTreatmentTest {
 
     private val recommendationEngine = mockk<RecommendationEngine>()
     private val recommendationEngineFactory = mockk<RecommendationEngineFactory> { every { create() } returns recommendationEngine }
