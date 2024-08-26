@@ -41,13 +41,13 @@ class PersonalizedEvidenceChapter(private val report: Report, override val inclu
 
         table.addCell(Cells.createSubTitle("Explanation:"))
         sequenceOf(
-            "‘All’ shows treatment decisions in NCR patients that were diagnosed with colorectal cancer with distant metastases, " +
-                    "treated systemically without surgeries, for whom the treatment could be categorized in above treatments. Patients " +
-                    "were previously untreated. This table only shows treatments that are considered SOC.",
-            "‘Age’, ‘WHO’, ‘RAS’ and ‘Lesions’ show treatment decisions in the ‘All’ population, plus some patient-specific " +
-                    "filtering, as shown in the column name.\n",
+            "This table only shows treatments that are considered standard of care (SOC) in colorectal cancer in the Netherlands.\n",
+            "‘All’ column shows results in NCR patients who were previously untreated, diagnosed with colorectal cancer with distant " +
+                    "metastases and treated systemically without surgery, for whom the treatment could be categorized in SOC treatments.\n",
+            "‘Age’, ‘WHO’, ‘RAS’ and ‘Lesions’ columns show results based on patients from the ‘All’ population, plus additional " +
+                    "filtering on patients according to equal WHO, similar age, equal RAS status or equal lesion localization.\n",
             "‘PFS’ is calculated as the date on which the first compound of the treatment was administered, until first progression. " +
-                    "When patient count (n<=20) is too low to predict PFS, \"NA\" is shown."
+                    "When patient number is too low (n <= 20) to predict PFS, \"NA\" is shown."
         )
             .map(Cells::createContentNoBorder)
             .forEach(table::addCell)
