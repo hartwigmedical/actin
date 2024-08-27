@@ -34,7 +34,7 @@ object TestClinicalEvidenceFactory {
         "on-label suspect resistant",
         EvidenceLevel.C,
         EvidenceDirection(isResistant = true, isCertain = false),
-        false
+        true
     )
 
     fun offLabelKnownResistant() =
@@ -44,7 +44,7 @@ object TestClinicalEvidenceFactory {
         treatment("on-label known resistant", EvidenceLevel.A, EvidenceDirection(isResistant = true, isCertain = true), true)
 
     fun offLabelPreclinical() =
-        treatment("off-label pre-clinical", EvidenceLevel.C, EvidenceDirection(hasPositiveResponse = true), false)
+        treatment("off-label pre-clinical", EvidenceLevel.D, EvidenceDirection(hasPositiveResponse = true), false)
 
     fun onLabelPreclinical() =
         treatment("on-label pre-clinical", EvidenceLevel.C, EvidenceDirection(hasPositiveResponse = true), true)
