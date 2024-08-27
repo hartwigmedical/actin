@@ -10,6 +10,7 @@ object TestClinicalEvidenceFactory {
         return ClinicalEvidence(
             treatmentEvidence = setOf(
                 approved(),
+                approved().copy(applicableCancerType = ApplicableCancerType("<other type>", emptySet())),
                 onLabelExperimental(),
                 offLabelExperimental(),
                 onLabelPreclinical(),
@@ -34,7 +35,7 @@ object TestClinicalEvidenceFactory {
         "on-label suspect resistant",
         EvidenceLevel.C,
         EvidenceDirection(isResistant = true, isCertain = false),
-        false
+        true
     )
 
     fun offLabelKnownResistant() =
@@ -44,7 +45,7 @@ object TestClinicalEvidenceFactory {
         treatment("on-label known resistant", EvidenceLevel.A, EvidenceDirection(isResistant = true, isCertain = true), true)
 
     fun offLabelPreclinical() =
-        treatment("off-label pre-clinical", EvidenceLevel.C, EvidenceDirection(hasPositiveResponse = true), false)
+        treatment("off-label pre-clinical", EvidenceLevel.D, EvidenceDirection(hasPositiveResponse = true), false)
 
     fun onLabelPreclinical() =
         treatment("on-label pre-clinical", EvidenceLevel.C, EvidenceDirection(hasPositiveResponse = true), true)
@@ -67,9 +68,9 @@ object TestClinicalEvidenceFactory {
         treatment("approved", EvidenceLevel.A, EvidenceDirection(hasPositiveResponse = true, isCertain = true), true)
 
     fun treatment(treatment: String, evidenceLevel: EvidenceLevel, direction: EvidenceDirection, onLabel: Boolean) =
-        TreatmentEvidence(treatment, evidenceLevel, onLabel, direction, "", applicableCancerType())
+        TreatmentEvidence(treatment, evidenceLevel, onLabel, direction, "<source event>", applicableCancerType())
 
-    private fun applicableCancerType() = ApplicableCancerType("", emptySet())
+    private fun applicableCancerType() = ApplicableCancerType("<cancer type>", emptySet())
 
     fun withApprovedTreatment(treatment: String): ClinicalEvidence {
         return ClinicalEvidence(treatmentEvidence = setOf(approved().copy(treatment = treatment)))
