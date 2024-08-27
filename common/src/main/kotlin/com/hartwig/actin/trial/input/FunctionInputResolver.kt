@@ -41,7 +41,6 @@ import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
 import com.hartwig.actin.trial.input.single.OneIntegerOneString
 import com.hartwig.actin.trial.input.single.OneMedicationCategory
 import com.hartwig.actin.trial.input.single.OneSpecificDrugOneTreatmentCategoryManyTypes
-import com.hartwig.actin.trial.input.single.OneSpecificTreatmentOneInteger
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyDrugs
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyIntents
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypes
@@ -135,11 +134,6 @@ class FunctionInputResolver(
 
                 FunctionInput.ONE_SPECIFIC_TREATMENT -> {
                     createOneSpecificTreatmentInput(function)
-                    return true
-                }
-
-                FunctionInput.ONE_SPECIFIC_TREATMENT_ONE_INTEGER -> {
-                    createOneSpecificTreatmentOneIntegerInput(function)
                     return true
                 }
 
@@ -403,14 +397,6 @@ class FunctionInputResolver(
     fun createOneSpecificTreatmentInput(function: EligibilityFunction): Treatment {
         assertParamConfig(function, FunctionInput.ONE_SPECIFIC_TREATMENT, 1)
         return toTreatment(parameterAsString(function, 0))
-    }
-
-    fun createOneSpecificTreatmentOneIntegerInput(function: EligibilityFunction): OneSpecificTreatmentOneInteger {
-        assertParamConfig(function, FunctionInput.ONE_SPECIFIC_TREATMENT_ONE_INTEGER, 2)
-        return OneSpecificTreatmentOneInteger(
-            treatment = toTreatment(parameterAsString(function, 0)),
-            integer = parameterAsInt(function, 1)
-        )
     }
 
     fun createManySpecificTreatmentsTwoIntegerInput(function: EligibilityFunction): ManySpecificTreatmentsTwoIntegers {

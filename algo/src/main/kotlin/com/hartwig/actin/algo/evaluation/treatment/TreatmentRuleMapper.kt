@@ -6,10 +6,14 @@ import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.evaluation.tumor.HasAcquiredResistanceToAnyDrug
 import com.hartwig.actin.algo.evaluation.tumor.HasMetastaticCancer
 import com.hartwig.actin.algo.soc.RecommendationEngineFactory
+import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
+import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 
 class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
+    private val categories = MedicationCategories.create(atcTree())
+    private val antiCancerCategories = categories.resolve("Anticancer")
 
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
@@ -144,13 +148,13 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     }
 
     private fun hasHadAnyCancerTreatmentCreator(): FunctionCreator {
-        return { HasHadAnyCancerTreatment(null) }
+        return { HasHadAnyCancerTreatment(null, antiCancerCategories) }
     }
 
     private fun hasHadAnyCancerTreatmentIgnoringSomeCategoryCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val treatment = functionInputResolver().createOneTreatmentCategoryOrTypeInput(function)
-            HasHadAnyCancerTreatment(treatment.mappedCategory)
+            HasHadAnyCancerTreatment(treatment.mappedCategory, antiCancerCategories)
         }
     }
 
@@ -158,7 +162,8 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             val monthsAgo = functionInputResolver().createOneIntegerInput(function)
             val minDate = referenceDateProvider().date().minusMonths(monthsAgo.toLong())
-            HasHadAnyCancerTreatmentSinceDate(minDate, monthsAgo)
+            val interpreter = MedicationStatusInterpreterOnEvaluationDate(minDate)
+            HasHadAnyCancerTreatmentSinceDate(minDate, monthsAgo, antiCancerCategories, interpreter)
         }
     }
 

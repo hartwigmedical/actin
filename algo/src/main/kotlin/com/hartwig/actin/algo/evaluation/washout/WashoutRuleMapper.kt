@@ -149,7 +149,7 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
         return HasRecentlyReceivedCancerTherapyOfCategory(antiCancerCategories, mappedIgnoredCategories, interpreter)
     }
 
-    private fun createInterpreterForWashout(inputWeeks: Int): MedicationStatusInterpreter {
+    fun createInterpreterForWashout(inputWeeks: Int): MedicationStatusInterpreter {
         val minDate = referenceDateProvider().date().minusWeeks(inputWeeks.toLong()).plusWeeks(2)
         return MedicationStatusInterpreterOnEvaluationDate(minDate)
     }

@@ -15,7 +15,7 @@ class HasRecentlyReceivedCancerTherapyOfNameTest {
 
 
     private val interpreter = WashoutTestFactory.activeFromDate(MIN_DATE)
-    private val function = HasRecentlyReceivedCancerTherapyOfName(setOf(Drug(name = "correct", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = emptySet())), interpreter)
+    private val function = HasRecentlyReceivedCancerTherapyOfName(setOf(Drug(name = "correct", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = emptySet())), interpreter, MIN_DATE)
 
     @Test
     fun `Should fail no medications`() {

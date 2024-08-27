@@ -5,11 +5,16 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentSinceDateFunctions.treatmentSinceMinDate
+import com.hartwig.actin.clinical.datamodel.AtcLevel
+import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
+import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 import java.time.LocalDate
 
 class HasHadAnyCancerTreatmentSinceDate(
     private val minDate: LocalDate,
-    private val monthsAgo: Int
+    private val monthsAgo: Int,
+    private val atcLevelsToFind: Set<AtcLevel>,
+    private val interpreter: MedicationStatusInterpreter
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -17,8 +22,12 @@ class HasHadAnyCancerTreatmentSinceDate(
         val concatenatedTreatmentDisplay = priorCancerTreatment.filter { treatmentSinceMinDate(it, minDate, true) }.toSet()
             .joinToString { it.treatmentDisplay() }
 
+        val activePriorCancerMedication = record.medications
+            ?.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
+            ?.filter { (it.allLevels() intersect atcLevelsToFind).isNotEmpty() || it.isTrialMedication } ?: emptyList()
+
         return when {
-            priorCancerTreatment.any { treatmentSinceMinDate(it, minDate, false) } -> {
+            priorCancerTreatment.any { treatmentSinceMinDate(it, minDate, false) } || activePriorCancerMedication.isNotEmpty() -> {
                 EvaluationFactory.pass(
                     "Patient has had anti-cancer therapy ($concatenatedTreatmentDisplay) within the last $monthsAgo months",
                     "Received anti-cancer therapy ($concatenatedTreatmentDisplay) within the last $monthsAgo months"

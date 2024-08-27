@@ -40,6 +40,7 @@ class StandardDataIngestionTest {
                 emptySet()
             )
         )
+        val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
         val curationDatabase = CurationDatabaseContext.create(
             CURATION_DIRECTORY,
             CurationDoidValidator(doidModel),
@@ -50,7 +51,8 @@ class StandardDataIngestionTest {
             medicationExtractor = StandardMedicationExtractor(
                 atcModel = TestAtcFactory.createProperAtcModel(),
                 qtProlongatingRiskCuration = curationDatabase.qtProlongingCuration,
-                cypInteractionCuration = curationDatabase.cypInteractionCuration
+                cypInteractionCuration = curationDatabase.cypInteractionCuration,
+                treatmentDatabase = treatmentDatabase
             ),
             surgeryExtractor = StandardSurgeryExtractor(),
             toxicityExtractor = StandardToxicityExtractor(curationDatabase.toxicityCuration),

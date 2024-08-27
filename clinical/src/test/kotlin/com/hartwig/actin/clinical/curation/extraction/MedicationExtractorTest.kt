@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.curation.extraction
 
+import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.clinical.curation.ANATOMICAL
 import com.hartwig.actin.clinical.curation.CHEMICAL
 import com.hartwig.actin.clinical.curation.CHEMICAL_SUBSTANCE
@@ -64,6 +65,8 @@ private const val NO_MEDICATION_NAME_INPUT = "No medication name input"
 
 private const val DOSAGE_TRANSLATION_INPUT_MILLIGRAM = "milligram"
 
+private val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
+
 class MedicationExtractorTest {
     private val extractor =
         MedicationExtractor(
@@ -123,7 +126,7 @@ class MedicationExtractorTest {
                     )
                 ), CurationCategory.DOSAGE_UNIT_TRANSLATION
             ) { emptySet() },
-            TestAtcFactory.createProperAtcModel()
+            TestAtcFactory.createProperAtcModel(), treatmentDatabase
         )
 
 

@@ -11,6 +11,7 @@ import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.datamodel.Dosage
 import com.hartwig.actin.clinical.datamodel.Medication
+import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
 
 class StandardMedicationExtractor(
     private val atcModel: AtcModel,
@@ -46,7 +47,7 @@ class StandardMedicationExtractor(
                 cypInteractions = CypInteractionCurationUtil.curateMedicationCypInteractions(cypInteractionCuration, atcNameOrInput),
                 isTrialMedication = it.isTrial,
                 isSelfCare = it.isSelfCare,
-                treatment = treatmentDatabase.findTreatmentByName(atcNameOrInput)
+                treatment = treatmentDatabase.findTreatmentByName(atcNameOrInput) as? DrugTreatment
             )
         }, CurationExtractionEvaluation())
     }

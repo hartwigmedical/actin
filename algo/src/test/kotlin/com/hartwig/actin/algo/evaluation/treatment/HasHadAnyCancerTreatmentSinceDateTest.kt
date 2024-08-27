@@ -2,6 +2,8 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.washout.WashoutTestFactory
+import com.hartwig.actin.clinical.datamodel.AtcLevel
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import org.assertj.core.api.Assertions
@@ -14,7 +16,10 @@ class HasHadAnyCancerTreatmentSinceDateTest {
     private val minDate = LocalDate.of(2024, 2, 9).minusMonths(monthsAgo.toLong())
     private val recentDate = minDate.plusMonths(3)
     private val olderDate = minDate.minusMonths(3)
-    val function = HasHadAnyCancerTreatmentSinceDate(minDate, monthsAgo)
+    private val atcLevels = AtcLevel(code = "L01", name = "")
+    private val REFERENCE_DATE = LocalDate.of(2020, 6, 6)
+    private val INTERPRETER = WashoutTestFactory.activeFromDate(REFERENCE_DATE)
+    val function = HasHadAnyCancerTreatmentSinceDate(minDate, monthsAgo, setOf(atcLevels), INTERPRETER)
     val chemotherapyTreatment = TreatmentTestFactory.treatment(
         name = "Chemotherapy", isSystemic = true, categories = setOf(TreatmentCategory.CHEMOTHERAPY)
     )

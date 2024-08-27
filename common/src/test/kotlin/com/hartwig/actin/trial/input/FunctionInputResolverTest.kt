@@ -38,7 +38,6 @@ import com.hartwig.actin.trial.input.single.OneIntegerManyDoidTerms
 import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
 import com.hartwig.actin.trial.input.single.OneIntegerOneString
 import com.hartwig.actin.trial.input.single.OneMedicationCategory
-import com.hartwig.actin.trial.input.single.OneSpecificTreatmentOneInteger
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyDrugs
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypesManyDrugs
 import com.hartwig.actin.trial.input.single.TwoDoubles
@@ -247,22 +246,6 @@ class FunctionInputResolverTest {
 
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("not a treatment")))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf(treatmentName, treatmentName)))!!).isFalse
-    }
-
-    @Test
-    fun `Should resolve functions with one specific treatment one integer input`() {
-        val rule = firstOfType(FunctionInput.ONE_SPECIFIC_TREATMENT_ONE_INTEGER)
-        val treatmentName = TestTreatmentDatabaseFactory.CAPECITABINE_OXALIPLATIN
-        val valid = create(rule, listOf(treatmentName, "1"))
-        assertThat(resolver.hasValidInputs(valid)!!).isTrue
-
-        val expected = TestTreatmentDatabaseFactory.createProper().findTreatmentByName(treatmentName)!!
-        assertThat(resolver.createOneSpecificTreatmentOneIntegerInput(valid))
-            .isEqualTo(OneSpecificTreatmentOneInteger(treatment = expected, integer = 1))
-
-        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("not a treatment", "1")))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf(treatmentName, treatmentName)))!!).isFalse
     }
 
