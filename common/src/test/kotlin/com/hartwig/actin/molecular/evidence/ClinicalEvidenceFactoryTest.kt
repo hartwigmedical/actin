@@ -20,7 +20,7 @@ class ClinicalEvidenceFactoryTest {
             EvidenceLevel.D,
             EvidenceDirection(isCertain = true),
             true,
-            isCategoryEvent = null
+            isCategoryVariant = null
         )
         val result =
             ClinicalEvidenceFactory.create(
@@ -45,7 +45,7 @@ class ClinicalEvidenceFactoryTest {
             EvidenceLevel.D,
             EvidenceDirection(isCertain = true),
             false,
-            isCategoryEvent = null
+            isCategoryVariant = null
         )
         val result =
             ClinicalEvidenceFactory.create(

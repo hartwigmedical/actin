@@ -160,7 +160,7 @@ class PanelFusionAnnotatorTest {
                             evidenceLevel = EvidenceLevel.A,
                             direction = EvidenceDirection(hasPositiveResponse = true, isCertain = true, hasBenefit = true),
                             onLabel = true,
-                            isCategoryEvent = true
+                            isCategoryVariant = true
                         )
                     )
                 )
