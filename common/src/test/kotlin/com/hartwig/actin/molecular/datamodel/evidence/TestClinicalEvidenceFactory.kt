@@ -10,7 +10,6 @@ object TestClinicalEvidenceFactory {
         return ClinicalEvidence(
             treatmentEvidence = setOf(
                 approved(),
-                approved().copy(applicableCancerType = ApplicableCancerType("<other type>", emptySet())),
                 onLabelExperimental(),
                 offLabelExperimental(),
                 onLabelPreclinical(),
@@ -68,9 +67,9 @@ object TestClinicalEvidenceFactory {
         treatment("approved", EvidenceLevel.A, EvidenceDirection(hasPositiveResponse = true, isCertain = true), true)
 
     fun treatment(treatment: String, evidenceLevel: EvidenceLevel, direction: EvidenceDirection, onLabel: Boolean) =
-        TreatmentEvidence(treatment, evidenceLevel, onLabel, direction, "<source event>", applicableCancerType())
+        TreatmentEvidence(treatment, evidenceLevel, onLabel, direction, "", applicableCancerType())
 
-    private fun applicableCancerType() = ApplicableCancerType("<cancer type>", emptySet())
+    private fun applicableCancerType() = ApplicableCancerType("", emptySet())
 
     fun withApprovedTreatment(treatment: String): ClinicalEvidence {
         return ClinicalEvidence(treatmentEvidence = setOf(approved().copy(treatment = treatment)))
