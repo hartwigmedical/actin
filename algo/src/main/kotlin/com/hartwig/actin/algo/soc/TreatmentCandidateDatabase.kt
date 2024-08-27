@@ -147,7 +147,7 @@ class TreatmentCandidateDatabase(val treatmentDatabase: TreatmentDatabase) {
             eligibilityFunction(
                 EligibilityRule.OR,
                 eligibilityFunction(
-                    EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS, treatmentName, RECENT_TREATMENT_THRESHOLD_WEEKS
+                    EligibilityRule.HAS_RECEIVED_DRUGS_X_CANCER_THERAPY_WITHIN_Y_WEEKS, treatmentName, RECENT_TREATMENT_THRESHOLD_WEEKS
                 ),
                 eligibilityFunction(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_NAME_X_TREATMENT, treatmentName)
             )

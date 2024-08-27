@@ -5,14 +5,16 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.medication.MEDICATION_NOT_PROVIDED
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentSinceDateFunctions
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.treatment.Drug
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
+import java.time.LocalDate
 
 class HasRecentlyReceivedCancerTherapyOfName(
-    private val namesToFind: Set<Drug>, private val interpreter: MedicationStatusInterpreter
+    private val namesToFind: Set<Drug>, private val interpreter: MedicationStatusInterpreter, private val minDate: LocalDate
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -23,6 +25,10 @@ class HasRecentlyReceivedCancerTherapyOfName(
                 lowercaseNamesToFind.contains(it.name.lowercase()) && interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE
             }
             .map(Medication::name)
+
+        val test = TreatmentSinceDateFunctions.evaluateTreatmentMatchingPredicateSinceDate(
+            record, minDate, "matching '${treatment.display()}'"
+        ) { it.name == treatment.name }
 
         return if (namesFound.isNotEmpty()) {
             EvaluationFactory.pass(

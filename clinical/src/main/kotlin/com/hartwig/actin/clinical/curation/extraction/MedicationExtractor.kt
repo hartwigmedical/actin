@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.curation.extraction
 
+import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
@@ -20,6 +21,7 @@ import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.datamodel.Dosage
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.MedicationStatus
+import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.feed.emc.medication.MedicationEntry
 import org.apache.logging.log4j.LogManager
 
@@ -31,7 +33,8 @@ class MedicationExtractor(
     private val qtProlongatingCuration: CurationDatabase<QTProlongatingConfig>,
     private val administrationRouteTranslation: TranslationDatabase<String>,
     private val dosageUnitTranslation: TranslationDatabase<String>,
-    private val atcModel: AtcModel
+    private val atcModel: AtcModel,
+    private val treatmentDatabase: TreatmentDatabase
 ) {
 
     fun extract(patientId: String, entries: List<MedicationEntry>): ExtractionResult<List<Medication>> {
@@ -61,7 +64,8 @@ class MedicationExtractor(
                     qtProlongatingRisk = QTProlongatingCurationUtil.annotateWithQTProlongating(qtProlongatingCuration, name),
                     atc = atc,
                     isSelfCare = isSelfCare,
-                    isTrialMedication = isTrialMedication
+                    isTrialMedication = isTrialMedication,
+                    treatment = determineTreatment(entry)
                 )
 
                 val evaluation = listOf(nameCuration, administrationRouteCuration, dosage)
@@ -71,6 +75,11 @@ class MedicationExtractor(
         }.fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, result ->
             ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
         }
+    }
+
+    private fun determineTreatment(entry: MedicationEntry): Treatment? {
+        val atcName = CurationUtil.capitalizeFirstLetterOnly(entry.code5ATCDisplay)
+        return treatmentDatabase.findTreatmentByName(atcName)
     }
 
     private fun curateName(entry: MedicationEntry, patientId: String): ExtractionResult<String?> {
@@ -216,7 +225,8 @@ class MedicationExtractor(
         private val LOGGER = LogManager.getLogger(MedicationExtractor::class.java)
         fun create(
             curationDatabaseContext: CurationDatabaseContext,
-            atcModel: AtcModel
+            atcModel: AtcModel,
+            treatmentDatabase: TreatmentDatabase
         ) =
             MedicationExtractor(
                 medicationNameCuration = curationDatabaseContext.medicationNameCuration,
@@ -226,7 +236,8 @@ class MedicationExtractor(
                 qtProlongatingCuration = curationDatabaseContext.qtProlongingCuration,
                 administrationRouteTranslation = curationDatabaseContext.administrationRouteTranslation,
                 dosageUnitTranslation = curationDatabaseContext.dosageUnitTranslation,
-                atcModel = atcModel
+                atcModel = atcModel,
+                treatmentDatabase = treatmentDatabase
             )
     }
 }

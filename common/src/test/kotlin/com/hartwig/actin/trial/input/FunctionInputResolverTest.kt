@@ -19,6 +19,7 @@ import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 import com.hartwig.actin.trial.input.single.FunctionInput
 import com.hartwig.actin.trial.input.single.ManyDrugsOneInteger
+import com.hartwig.actin.trial.input.single.ManyDrugsTwoIntegers
 import com.hartwig.actin.trial.input.single.ManyGenes
 import com.hartwig.actin.trial.input.single.ManyIntents
 import com.hartwig.actin.trial.input.single.ManyIntentsOneInteger
@@ -42,7 +43,6 @@ import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyDrugs
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypesManyDrugs
 import com.hartwig.actin.trial.input.single.TwoDoubles
 import com.hartwig.actin.trial.input.single.TwoIntegers
-import com.hartwig.actin.trial.input.single.TwoIntegersManyStrings
 import com.hartwig.actin.trial.input.single.TwoStrings
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
@@ -364,16 +364,19 @@ class FunctionInputResolverTest {
     @Test
     fun `Should resolve functions with many drugs two integers input`() {
         val rule = firstOfType(FunctionInput.MANY_DRUGS_TWO_INTEGERS)
-        val valid = create(rule, listOf("BRAF;KRAS", "1", "2"))
+        val drugNames = listOf("CAPECITABINE", "OXALIPLATIN")
+        val valid = create(rule, listOf(drugNames.joinToString(";"), "1", "2"))
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
 
-        val expected = TwoIntegersManyStrings(1, 2, listOf("BRAF", "KRAS"))
+        val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
+        val expected = ManyDrugsTwoIntegers(drugNames.map { treatmentDatabase.findDrugByName(it)!! }.toSet(), 1, 2)
         assertThat(resolver.createManyDrugsTwoIntegersInput(valid)).isEqualTo(expected)
 
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("1", "BRAF;KRAS")))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("BRAF;KRAS", "1")))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("BRAF;KRAS", "1", "not an integer")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("1", "CAPECITABINE;OXALIPLATIN")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("CAPECITABINE;notADrug", "1", "2")))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("CAPECITABINE;OXALIPLATIN", "1")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("CAPECITABINE;OXALIPLATIN", "1", "not an integer")))!!).isFalse
     }
 
     @Test

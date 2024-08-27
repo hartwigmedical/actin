@@ -50,7 +50,6 @@ import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypesOneInte
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryOrTypeOneInteger
 import com.hartwig.actin.trial.input.single.TwoDoubles
 import com.hartwig.actin.trial.input.single.TwoIntegers
-import com.hartwig.actin.trial.input.single.TwoIntegersManyStrings
 import com.hartwig.actin.trial.input.single.TwoStrings
 import java.util.Locale
 import org.apache.logging.log4j.LogManager
@@ -175,7 +174,7 @@ class FunctionInputResolver(
                 }
 
                 FunctionInput.MANY_DRUGS_TWO_INTEGERS -> {
-                    createManyDrugsOneIntegerInput(function)
+                    createManyDrugsTwoIntegersInput(function)
                     return true
                 }
 

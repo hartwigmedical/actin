@@ -34,7 +34,6 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT_IGNORING_CATEGORY_X to hasHadAnyCancerTreatmentIgnoringSomeCategoryCreator(),
             EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT_WITHIN_X_MONTHS to hasHadAnyCancerTreatmentWithinMonthsCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_NAME_X to hasHadSpecificTreatmentCreator(),
-            EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS to hasHadSpecificTreatmentWithinWeeksCreator(),
             EligibilityRule.HAS_HAD_FIRST_LINE_TREATMENT_NAME_X to hasHadFirstLineTreatmentNameCreator(),
             EligibilityRule.HAS_HAD_DRUG_X_COMBINED_WITH_CATEGORY_Y_TREATMENT_OF_TYPES_Z to hasHadSpecificDrugCombinedWithCategoryAndTypesCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X to hasHadTreatmentWithDrugsCreator(),
@@ -167,14 +166,6 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             val treatment = functionInputResolver().createOneSpecificTreatmentInput(function)
             HasHadSomeSpecificTreatments(listOf(treatment), 1)
-        }
-    }
-
-    private fun hasHadSpecificTreatmentWithinWeeksCreator(): FunctionCreator {
-        return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneSpecificTreatmentOneIntegerInput(function)
-            val minDate = referenceDateProvider().date().minusWeeks(input.integer.toLong())
-            HasHadSpecificTreatmentSinceDate(input.treatment, minDate)
         }
     }
 

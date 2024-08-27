@@ -17,6 +17,7 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
+        val treatmentHistory = record.oncologicalHistory
         val atcLevelsToFind: Set<AtcLevel> = categories.values.flatten().toSet() - categoriesToIgnore.values.flatten().toSet()
         val categoryNames: Set<String> = categories.keys
 

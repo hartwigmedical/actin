@@ -3,6 +3,8 @@ package com.hartwig.actin.algo.evaluation.washout
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.clinical.datamodel.treatment.Drug
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import org.assertj.core.api.Assertions
 import org.junit.Test
 import java.time.LocalDate
@@ -13,7 +15,7 @@ class HasRecentlyReceivedCancerTherapyOfNameTest {
 
 
     private val interpreter = WashoutTestFactory.activeFromDate(MIN_DATE)
-    private val function = HasRecentlyReceivedCancerTherapyOfName(setOf("correct"), interpreter)
+    private val function = HasRecentlyReceivedCancerTherapyOfName(setOf(Drug(name = "correct", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = emptySet())), interpreter)
 
     @Test
     fun `Should fail no medications`() {

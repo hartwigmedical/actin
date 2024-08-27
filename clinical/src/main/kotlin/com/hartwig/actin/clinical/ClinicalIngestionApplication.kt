@@ -55,12 +55,14 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
                 config.curationDirectory,
                 curationDatabaseContext,
                 atcModel,
-                doidModel
+                doidModel,
+                treatmentDatabase
             ) else StandardDataIngestion.create(
             config.feedDirectory,
             curationDatabaseContext,
             atcModel,
-            doidModel
+            doidModel,
+                treatmentDatabase
         )
         val clinicalIngestionAdapter =
             ClinicalIngestionFeedAdapter(
