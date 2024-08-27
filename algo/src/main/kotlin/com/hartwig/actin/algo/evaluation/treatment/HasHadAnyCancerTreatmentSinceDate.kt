@@ -7,7 +7,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentSinceDateFunctions.treatmentSinceMinDate
 import java.time.LocalDate
 
-class HasNotReceivedAnyCancerTreatmentSinceDate(
+class HasHadAnyCancerTreatmentSinceDate(
     private val minDate: LocalDate,
     private val monthsAgo: Int
 ) : EvaluationFunction {
@@ -18,15 +18,14 @@ class HasNotReceivedAnyCancerTreatmentSinceDate(
             .joinToString { it.treatmentDisplay() }
 
         return when {
-            priorCancerTreatment.isEmpty() -> {
+            priorCancerTreatment.any { treatmentSinceMinDate(it, minDate, false) } -> {
                 EvaluationFactory.pass(
-                    "Patient has not had any prior cancer treatments",
-                    "Has not had any cancer treatment"
+                    "Patient has had anti-cancer therapy ($concatenatedTreatmentDisplay) within the last $monthsAgo months",
+                    "Received anti-cancer therapy ($concatenatedTreatmentDisplay) within the last $monthsAgo months"
                 )
             }
 
-            priorCancerTreatment.none { treatmentSinceMinDate(it, minDate, false) } && priorCancerTreatment.any {
-                treatmentSinceMinDate(it, minDate, true)
+            priorCancerTreatment.any { treatmentSinceMinDate(it, minDate, true)
             } -> {
                 EvaluationFactory.undetermined(
                     "Patient has had anti-cancer therapy ($concatenatedTreatmentDisplay) but " +
@@ -36,24 +35,17 @@ class HasNotReceivedAnyCancerTreatmentSinceDate(
                 )
             }
 
-            priorCancerTreatment.none { treatmentSinceMinDate(it, minDate, false) } -> {
-                EvaluationFactory.pass(
+            priorCancerTreatment.isEmpty() -> {
+                EvaluationFactory.fail(
                     "Patient has not received anti-cancer therapy within $monthsAgo months",
                     "Has not received anti-cancer therapy within $monthsAgo months"
                 )
             }
 
-            priorCancerTreatment.none { treatmentSinceMinDate(it, minDate.plusMonths(1), false) } -> {
-                EvaluationFactory.warn(
-                    "Patient has received anti-cancer therapy within $monthsAgo months (therapy ${monthsAgo.minus(1)} months ago)",
-                    "Has received anti-cancer therapy within $monthsAgo months (therapy ${monthsAgo.minus(1)} months ago)"
-                )
-            }
-
             else -> {
                 EvaluationFactory.fail(
-                    "Patient has had anti-cancer therapy ($concatenatedTreatmentDisplay) within the last $monthsAgo months",
-                    "Received anti-cancer therapy ($concatenatedTreatmentDisplay) within the last $monthsAgo months"
+                    "Patient has not had any prior cancer treatments",
+                    "Has not had any cancer treatment"
                 )
             }
         }

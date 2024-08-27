@@ -8,13 +8,13 @@ import org.assertj.core.api.Assertions
 import org.junit.Test
 import java.time.LocalDate
 
-class HasNotReceivedAnyCancerTreatmentSinceDateTest {
+class HasHadAnyCancerTreatmentSinceDateTest {
 
     private val monthsAgo = 6
     private val minDate = LocalDate.of(2024, 2, 9).minusMonths(monthsAgo.toLong())
     private val recentDate = minDate.plusMonths(3)
     private val olderDate = minDate.minusMonths(3)
-    val function = HasNotReceivedAnyCancerTreatmentSinceDate(minDate, monthsAgo)
+    val function = HasHadAnyCancerTreatmentSinceDate(minDate, monthsAgo)
     val chemotherapyTreatment = TreatmentTestFactory.treatment(
         name = "Chemotherapy", isSystemic = true, categories = setOf(TreatmentCategory.CHEMOTHERAPY)
     )
@@ -23,13 +23,13 @@ class HasNotReceivedAnyCancerTreatmentSinceDateTest {
     )
 
     @Test
-    fun `Should pass when oncological history is empty `() {
+    fun `Should fail when oncological history is empty`() {
         val priorCancerTreatment = TreatmentTestFactory.withTreatmentHistory(emptyList())
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(priorCancerTreatment))
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(priorCancerTreatment))
     }
 
     @Test
-    fun `Should pass when all prior treatment is stopped before the minimal allowed date`() {
+    fun `Should fail when all prior treatment is stopped before the minimal allowed date`() {
         val priorCancerTreatment = TreatmentTestFactory.withTreatmentHistory(
             listOf(
                 TreatmentTestFactory.treatmentHistoryEntry(
@@ -39,21 +39,7 @@ class HasNotReceivedAnyCancerTreatmentSinceDateTest {
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(priorCancerTreatment))
-    }
-
-    @Test
-    fun `Should warn if any prior anti cancer therapy is stopped less then or equal to 1 month after the minimal allowed date`() {
-        val priorCancerTreatment = TreatmentTestFactory.withTreatmentHistory(
-            listOf(
-                TreatmentTestFactory.treatmentHistoryEntry(
-                    treatments = listOf(chemotherapyTreatment),
-                    stopYear = minDate.year,
-                    stopMonth = minDate.plusMonths(1).monthValue
-                )
-            )
-        )
-        EvaluationAssert.assertEvaluation(EvaluationResult.WARN, function.evaluate(priorCancerTreatment))
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(priorCancerTreatment))
     }
 
     @Test
@@ -79,7 +65,7 @@ class HasNotReceivedAnyCancerTreatmentSinceDateTest {
     }
 
     @Test
-    fun `Should fail when some prior treatment is given after the minimal allowed date`() {
+    fun `Should pass when some prior treatment is given after the minimal allowed date`() {
         val priorCancerTreatment = TreatmentTestFactory.withTreatmentHistory(
             listOf(
                 TreatmentTestFactory.treatmentHistoryEntry(
@@ -99,8 +85,8 @@ class HasNotReceivedAnyCancerTreatmentSinceDateTest {
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(priorCancerTreatment))
-        Assertions.assertThat(function.evaluate(priorCancerTreatment).failGeneralMessages).containsExactly(
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(priorCancerTreatment))
+        Assertions.assertThat(function.evaluate(priorCancerTreatment).passGeneralMessages).containsExactly(
             "Received anti-cancer therapy (Immunotherapy) within the last $monthsAgo months"
         )
     }

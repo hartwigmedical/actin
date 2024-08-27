@@ -118,6 +118,10 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
                 listOf("CAPECITABINE;OXALIPLATIN", "1")
             }
 
+            FunctionInput.MANY_DRUGS_TWO_INTEGERS -> {
+                listOf("CAPECITABINE;OXALIPLATIN", "1", "5")
+            }
+
             FunctionInput.ONE_TUMOR_TYPE -> {
                 listOf(TumorTypeInput.SQUAMOUS_CELL_CARCINOMA.display())
             }
@@ -136,10 +140,6 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
 
             FunctionInput.MANY_STRINGS_ONE_INTEGER -> {
                 listOf("string1;string2", "1")
-            }
-
-            FunctionInput.MANY_STRINGS_TWO_INTEGERS -> {
-                listOf("string1;string2", "1", "2")
             }
 
             FunctionInput.ONE_INTEGER_ONE_STRING -> {

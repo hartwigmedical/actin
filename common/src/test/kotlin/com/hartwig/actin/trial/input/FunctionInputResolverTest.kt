@@ -362,6 +362,21 @@ class FunctionInputResolverTest {
     }
 
     @Test
+    fun `Should resolve functions with many drugs two integers input`() {
+        val rule = firstOfType(FunctionInput.MANY_DRUGS_TWO_INTEGERS)
+        val valid = create(rule, listOf("BRAF;KRAS", "1", "2"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val expected = TwoIntegersManyStrings(1, 2, listOf("BRAF", "KRAS"))
+        assertThat(resolver.createManyDrugsTwoIntegersInput(valid)).isEqualTo(expected)
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("1", "BRAF;KRAS")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("BRAF;KRAS", "1")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("BRAF;KRAS", "1", "not an integer")))!!).isFalse
+    }
+
+    @Test
     fun `Should resolve functions with one tumor type input`() {
         val rule = firstOfType(FunctionInput.ONE_TUMOR_TYPE)
         val category = TumorTypeInput.CARCINOMA.display()
@@ -417,21 +432,6 @@ class FunctionInputResolverTest {
         assertThat(resolver.createManyStringsOneIntegerInput(valid)).isEqualTo(expected)
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("1", "BRAF;KRAS")))!!).isFalse
-    }
-
-    @Test
-    fun `Should resolve functions with many strings two integers input`() {
-        val rule = firstOfType(FunctionInput.MANY_STRINGS_TWO_INTEGERS)
-        val valid = create(rule, listOf("BRAF;KRAS", "1", "2"))
-        assertThat(resolver.hasValidInputs(valid)!!).isTrue
-
-        val expected = TwoIntegersManyStrings(1, 2, listOf("BRAF", "KRAS"))
-        assertThat(resolver.createManyStringsTwoIntegersInput(valid)).isEqualTo(expected)
-
-        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("1", "BRAF;KRAS")))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("BRAF;KRAS", "1")))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("BRAF;KRAS", "1", "not an integer")))!!).isFalse
     }
 
     @Test

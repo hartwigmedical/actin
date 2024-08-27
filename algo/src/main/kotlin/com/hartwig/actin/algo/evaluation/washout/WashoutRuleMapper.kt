@@ -6,6 +6,7 @@ import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
 import com.hartwig.actin.clinical.datamodel.AtcLevel
+import com.hartwig.actin.clinical.datamodel.treatment.Drug
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
 import com.hartwig.actin.medication.MedicationCategories
@@ -36,19 +37,19 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
 
     private fun hasRecentlyReceivedCancerTherapyOfNamesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createManyStringsOneIntegerInput(function)
-            createReceivedCancerTherapyOfNameFunction(input.strings, input.integer)
+            val input = functionInputResolver().createManyDrugsOneIntegerInput(function)
+            createReceivedCancerTherapyOfNameFunction(input.drugs, input.integer)
         }
     }
 
     private fun hasRecentlyReceivedCancerTherapyOfNamesHalfLifeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createManyStringsTwoIntegersInput(function)
-            createReceivedCancerTherapyOfNameFunction(input.strings, input.integer1)
+            val input = functionInputResolver().createManyDrugsTwoIntegersInput(function)
+            createReceivedCancerTherapyOfNameFunction(input.drugs, input.integer)
         }
     }
 
-    private fun createReceivedCancerTherapyOfNameFunction(names: List<String>, minWeeks: Int): EvaluationFunction {
+    private fun createReceivedCancerTherapyOfNameFunction(names: Set<Drug>, minWeeks: Int): EvaluationFunction {
         val interpreter = createInterpreterForWashout(minWeeks)
         return HasRecentlyReceivedCancerTherapyOfName(names.toSet(), interpreter)
     }
