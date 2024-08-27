@@ -40,7 +40,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
                 )
             ), 1f
         )
-        assertRow(getWrappedTable(result), 0, "BRAF V600E", "Missense\nGain of function\nHotspot", "High", "Detected (VAF 10.0%)", "Not detected")
+        assertRow(getWrappedTable(result), 0, "BRAF V600E\n(Tier I)", "Missense\nGain of function\nHotspot", "High", "Detected (VAF 10.0%)", "Not detected")
     }
 
     @Test
