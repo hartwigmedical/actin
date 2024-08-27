@@ -17,8 +17,8 @@ interface MolecularEvaluationFunction : EvaluationFunction {
 
             if (genes().isNotEmpty() && genes().none { record.molecularHistory.molecularTests.any { t -> t.testsGene(it) } })
                 return EvaluationFactory.undetermined(
-                    "Gene(s) ${genes()} not tested in molecular data",
-                    "Gene(s) ${genes()} not tested"
+                    "Gene(s) ${genes().joinToString { it }} not tested in molecular data",
+                    "Gene(s) ${genes().joinToString { it }} not tested"
                 )
             val testEvaluation =
                 record.molecularHistory.molecularTests.mapNotNull { evaluate(it)?.let { eval -> MolecularEvaluation(it, eval) } }
