@@ -9,7 +9,8 @@ object TestExternalTrialFactory {
             url = url,
             nctId = nctId,
             sourceEvent = "",
-            applicableCancerType = ApplicableCancerType(cancerType = "", excludedCancerTypes = emptySet())
+            applicableCancerType = ApplicableCancerType(cancerType = "", excludedCancerTypes = emptySet()),
+            isCategoryVariant = false
         )
     }
 

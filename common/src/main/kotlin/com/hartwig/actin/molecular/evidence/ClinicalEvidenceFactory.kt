@@ -9,6 +9,7 @@ import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
 import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
+import com.hartwig.actin.molecular.evidence.actionability.isCategoryVariant
 import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.ClinicalTrial
 import com.hartwig.serve.datamodel.Treatment
@@ -41,8 +42,9 @@ object ClinicalEvidenceFactory {
                     isResistant = it.direction().isResistant,
                     isCertain = it.direction().isCertain
                 ),
+                it.isCategoryVariant(),
                 it.sourceEvent(),
-                ApplicableCancerType(it.applicableCancerType().name(), it.blacklistCancerTypes().map { ct -> ct.name() }.toSet())
+                ApplicableCancerType(it.applicableCancerType().name(), it.blacklistCancerTypes().map { ct -> ct.name() }.toSet()),
             )
         }.toSet()
 
@@ -61,6 +63,7 @@ object ClinicalEvidenceFactory {
                         onLabelEvent.applicableCancerType().name(),
                         onLabelEvent.blacklistCancerTypes().map { it.name() }.toSet()
                     ),
+                    isCategoryVariant = onLabelEvent.isCategoryVariant(),
                     sourceEvent = onLabelEvent.sourceEvent()
                 )
             }

@@ -20,8 +20,9 @@ class EvidenceTierTest {
     }
 
     @Test
-    fun `Should infer an evidence tier of II when A or B level evidence off-label`() {
+    fun `Should infer an evidence tier of II when A or B level evidence off-label or is category variant`() {
         assertThat(evidenceTier(driverWithEvidence(EvidenceLevel.A, false))).isEqualTo(EvidenceTier.II)
+        assertThat(evidenceTier(driverWithEvidence(EvidenceLevel.A, onLabel = true, isCategoryEvent = true))).isEqualTo(EvidenceTier.II)
         assertThat(evidenceTier(driverWithEvidence(EvidenceLevel.B, false))).isEqualTo(EvidenceTier.II)
     }
 
@@ -36,14 +37,20 @@ class EvidenceTierTest {
         assertThat(evidenceTier(mockDriver(emptySet()))).isEqualTo(EvidenceTier.III)
     }
 
-    private fun driverWithEvidence(evidenceLevel: EvidenceLevel, onLabel: Boolean = true): Driver {
+    @Test
+    fun `Should ignore category variants`() {
+        assertThat(evidenceTier(driverWithEvidence(EvidenceLevel.A))).isEqualTo(EvidenceTier.I)
+    }
+
+    private fun driverWithEvidence(evidenceLevel: EvidenceLevel, onLabel: Boolean = true, isCategoryEvent: Boolean = false): Driver {
         return mockDriver(
             setOf(
                 treatment(
                     "on-label",
                     evidenceLevel,
                     EvidenceDirection(hasPositiveResponse = true, isCertain = true),
-                    onLabel
+                    onLabel,
+                    isCategoryEvent
                 )
             )
         )

@@ -15,7 +15,13 @@ class ClinicalEvidenceFactoryTest {
 
     @Test
     fun `Should convert SERVE actionable on-label events to clinical evidence`() {
-        val onlabel = TestClinicalEvidenceFactory.treatment("on-label", EvidenceLevel.D, EvidenceDirection(isCertain = true), true)
+        val onlabel = TestClinicalEvidenceFactory.treatment(
+            "on-label",
+            EvidenceLevel.D,
+            EvidenceDirection(isCertain = true),
+            true,
+            isCategoryVariant = null
+        )
         val result =
             ClinicalEvidenceFactory.create(
                 ActionabilityMatch(
@@ -34,7 +40,13 @@ class ClinicalEvidenceFactoryTest {
 
     @Test
     fun `Should convert SERVE actionable off-label events to clinical evidence`() {
-        val onlabel = TestClinicalEvidenceFactory.treatment("off-label", EvidenceLevel.D, EvidenceDirection(isCertain = true), false)
+        val onlabel = TestClinicalEvidenceFactory.treatment(
+            "off-label",
+            EvidenceLevel.D,
+            EvidenceDirection(isCertain = true),
+            false,
+            isCategoryVariant = null
+        )
         val result =
             ClinicalEvidenceFactory.create(
                 ActionabilityMatch(
@@ -53,7 +65,7 @@ class ClinicalEvidenceFactoryTest {
 
     @Test
     fun `Should convert SERVE external trials to clinical evidence`() {
-        val trial = TestExternalTrialFactory.createTestTrial().copy(countries = setOf(Country.OTHER))
+        val trial = TestExternalTrialFactory.createTestTrial().copy(countries = setOf(Country.OTHER), isCategoryVariant = null)
         val result =
             ClinicalEvidenceFactory.create(
                 ActionabilityMatch(
