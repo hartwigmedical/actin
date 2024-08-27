@@ -54,7 +54,7 @@ class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
             ?: throw IllegalStateException("Multiple or no matches found in treatment.json for therapy: $therapyName")
     }
 
-    private fun generateOptions(therapies: List<String>): List<String> {
+    fun generateOptions(therapies: List<String>): List<String> {
         return therapies.flatMap { therapy ->
             if (therapy.contains(" + ")) {
                 permutations(therapy.uppercase().split(" + ")).map { it.joinToString("+") }
@@ -64,7 +64,7 @@ class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
         }
     }
 
-    private fun permutations(drugs: List<String>): Set<List<String>> {
+    fun permutations(drugs: List<String>): Set<List<String>> {
         if (drugs.isEmpty()) return setOf(emptyList())
 
         val result: MutableSet<List<String>> = mutableSetOf()

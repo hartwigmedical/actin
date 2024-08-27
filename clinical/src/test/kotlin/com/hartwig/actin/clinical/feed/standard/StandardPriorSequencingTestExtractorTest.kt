@@ -41,7 +41,7 @@ class StandardPriorSequencingTestExtractorTest {
 
     @Test
     fun `Should return empty list when no provided molecular tests`() {
-        val result = extractor.extract(EhrTestData.createEhrPatientRecord().copy(molecularTestHistory = emptyList()))
+        val result = extractor.extract(EhrTestData.createEhrPatientRecord().copy(molecularTests = emptyList()))
         assertThat(result.extracted).isEmpty()
         assertThat(result.evaluation.warnings).isEmpty()
     }
@@ -49,8 +49,10 @@ class StandardPriorSequencingTestExtractorTest {
     @Test
     fun `Should extract sequencing with test, date, and tested genes`() {
         val result = extractor.extract(
-            EhrTestData.createEhrPatientRecord().copy(molecularTests = listOf(
-                BASE_MOLECULAR_TEST.copy(testedGenes = setOf(GENE)))
+            EhrTestData.createEhrPatientRecord().copy(
+                molecularTests = listOf(
+                    BASE_MOLECULAR_TEST.copy(testedGenes = setOf(GENE))
+                )
             )
         )
         assertResultContains(result, BASE_PRIOR_SEQUENCING.copy(testedGenes = setOf(GENE)))
@@ -65,7 +67,7 @@ class StandardPriorSequencingTestExtractorTest {
         )
         assertResultContains(
             result, BASE_PRIOR_SEQUENCING.copy(
-                variants = setOf(SequencedVariant(GENE, hgvsCodingImpact = CODING, hgvsProteinImpact = PROTEIN))
+                variants = setOf(SequencedVariant(gene = GENE, hgvsCodingImpact = CODING, hgvsProteinImpact = PROTEIN))
             )
         )
     }
@@ -136,7 +138,7 @@ class StandardPriorSequencingTestExtractorTest {
         val result = extractionResult(ProvidedMolecularTestResult(gene = GENE, freeText = FREE_TEXT))
         assertResultContains(
             result, BASE_PRIOR_SEQUENCING.copy(
-                variants = setOf(SequencedVariant(GENE, hgvsCodingImpact = CODING))
+                variants = setOf(SequencedVariant(gene = GENE, hgvsCodingImpact = CODING))
             )
         )
     }

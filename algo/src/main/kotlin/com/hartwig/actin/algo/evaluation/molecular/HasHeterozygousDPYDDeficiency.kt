@@ -5,11 +5,12 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.molecular.DPYDDeficiencyEvaluationFunctions.isHomozygousDeficient
 import com.hartwig.actin.algo.evaluation.molecular.DPYDDeficiencyEvaluationFunctions.isProficient
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoGene
 
 class HasHeterozygousDPYDDeficiency internal constructor() : MolecularEvaluationFunction {
 
     override fun evaluate(molecular: MolecularRecord): Evaluation {
-        val pharmaco = molecular.pharmaco.firstOrNull { it.gene == DPYDDeficiencyEvaluationFunctions.DPYD_GENE }
+        val pharmaco = molecular.pharmaco.firstOrNull { it.gene == PharmacoGene.DPYD }
             ?: return EvaluationFactory.undetermined("DPYD haplotype is undetermined", "DPYD haplotype undetermined")
 
         return when {

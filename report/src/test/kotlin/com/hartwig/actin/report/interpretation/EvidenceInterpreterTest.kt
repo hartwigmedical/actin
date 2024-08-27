@@ -1,5 +1,11 @@
 package com.hartwig.actin.report.interpretation
 
+import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.approved
+import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.offLabelExperimental
+import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.onLabelExperimental
+import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.onLabelKnownResistant
+import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.onLabelPreclinical
+import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.onLabelSuspectResistant
 import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidence
 import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
@@ -12,17 +18,23 @@ class EvidenceInterpreterTest {
         val cohortWithInclusion: EvaluatedCohort = evaluatedCohort(molecularEvents = setOf("inclusion"))
         val interpreter = EvidenceInterpreter.fromEvaluatedCohorts(listOf(cohortWithInclusion))
         val evidence = AggregatedEvidence(
-            approvedTreatmentsPerEvent = mapOf("approved" to setOf("treatment")),
+            treatmentEvidence = mapOf("approved" to setOf(approved()))
+                    + mapOf(
+                "on-label" to setOf(onLabelExperimental()),
+                "approved" to setOf(approved())
+            )
+                    + mapOf(
+                "off-label" to setOf(offLabelExperimental()),
+                "on-label" to setOf(onLabelExperimental())
+            )
+                    + mapOf("pre-clinical" to setOf(onLabelPreclinical()))
+                    + mapOf("known" to setOf(onLabelKnownResistant()))
+                    + mapOf("suspect" to setOf(onLabelSuspectResistant())),
             externalEligibleTrialsPerEvent = mapOf(
                 "external" to setOf(TestExternalTrialFactory.createTestTrial()),
                 "approved" to setOf(TestExternalTrialFactory.createTestTrial()),
                 "inclusion" to setOf(TestExternalTrialFactory.createTestTrial())
-            ),
-            onLabelExperimentalTreatmentsPerEvent = mapOf("on-label" to setOf("treatment"), "approved" to setOf("treatment")),
-            offLabelExperimentalTreatmentsPerEvent = mapOf("off-label" to setOf("treatment"), "on-label" to setOf("treatment")),
-            preClinicalTreatmentsPerEvent = mapOf("pre-clinical" to setOf("treatment")),
-            knownResistantTreatmentsPerEvent = mapOf("known" to setOf("treatment")),
-            suspectResistantTreatmentsPerEvent = mapOf("suspect" to setOf("treatment"))
+            )
         )
 
         val approved = interpreter.eventsWithApprovedEvidence(evidence)

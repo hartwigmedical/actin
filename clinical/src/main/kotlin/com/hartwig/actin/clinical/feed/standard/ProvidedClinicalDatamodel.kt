@@ -23,7 +23,6 @@ data class ProvidedPatientRecord(
     val complications: List<ProvidedComplication> = emptyList(),
     val labValues: List<ProvidedLabValue> = emptyList(),
     val medications: List<ProvidedMedication>? = emptyList(),
-    val molecularTestHistory: List<ProvidedMolecularTestLegacy> = emptyList(),
     val molecularTests: List<ProvidedMolecularTest> = emptyList(),
     val patientDetails: ProvidedPatientDetail,
     val priorOtherConditions: List<ProvidedPriorOtherCondition> = emptyList(),
@@ -108,18 +107,6 @@ data class ProvidedTreatmentModification(
 )
 
 @JacksonSerializable
-data class ProvidedMolecularTestLegacy(
-    @JsonPropertyDescription("Type of test administered (eg. IHC)")
-    val type: String,
-    @JsonPropertyDescription("Measured gene or protein(eg. HER2)")
-    val measure: String?,
-    @JsonPropertyDescription("Result of the test (eg. Negative/3+)")
-    val result: String,
-    val resultType: String?,
-    val resultDate: LocalDate,
-)
-
-@JacksonSerializable
 data class ProvidedMolecularTest(
     @JsonPropertyDescription("Name of the test administered, as specific as possible (eg. Archer, NGS, IHC)")
     val test: String,
@@ -167,7 +154,9 @@ data class ProvidedMolecularTestResult(
     @JsonPropertyDescription("Result of microsatellite instability test.")
     val msi: Boolean? = null,
     @JsonPropertyDescription("Tumor mutational burden in m/MB (eg. 8.0)")
-    val tmb: Double? = null
+    val tmb: Double? = null,
+    @JsonPropertyDescription("Variant allele frequency as a fraction (eg. 0.01 is interpreted as 1%)")
+    val vaf: Double? = null
 )
 
 @JacksonSerializable

@@ -3,7 +3,9 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.molecular.datamodel.orange.pharmaco.Haplotype
+import com.hartwig.actin.molecular.datamodel.orange.pharmaco.HaplotypeFunction
 import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoEntry
+import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoGene
 import org.junit.Test
 
 class HasUGT1A1HaplotypeTest {
@@ -17,10 +19,10 @@ class HasUGT1A1HaplotypeTest {
             function.evaluate(
                 MolecularTestFactory.withHaplotype(
                     PharmacoEntry(
-                        gene = "UGT1A1",
+                        gene = PharmacoGene.UGT1A1,
                         haplotypes = setOf(
-                            Haplotype(allele = "*1", alleleCount = 1, function = "Normal function"),
-                            Haplotype(allele = "*18", alleleCount = 1, function = "Normal function")
+                            Haplotype(allele = "*1", alleleCount = 1, function = HaplotypeFunction.NORMAL_FUNCTION),
+                            Haplotype(allele = "*18", alleleCount = 1, function = HaplotypeFunction.NORMAL_FUNCTION)
                         )
                     )
                 )
@@ -35,10 +37,10 @@ class HasUGT1A1HaplotypeTest {
             function.evaluate(
                 MolecularTestFactory.withHaplotype(
                     PharmacoEntry(
-                        gene = "UGT1A1",
+                        gene = PharmacoGene.UGT1A1,
                         haplotypes = setOf(
-                            Haplotype(allele = "*17", alleleCount = 1, function = "Normal function"),
-                            Haplotype(allele = "*18", alleleCount = 1, function = "Normal function")
+                            Haplotype(allele = "*17", alleleCount = 1, function = HaplotypeFunction.NORMAL_FUNCTION),
+                            Haplotype(allele = "*18", alleleCount = 1, function = HaplotypeFunction.NORMAL_FUNCTION)
                         )
                     )
                 )
@@ -53,8 +55,8 @@ class HasUGT1A1HaplotypeTest {
             function.evaluate(
                 MolecularTestFactory.withHaplotype(
                     PharmacoEntry(
-                        gene = "DPYD",
-                        haplotypes = setOf(Haplotype(allele = "*1", alleleCount = 2, function = "Normal function")),
+                        gene = PharmacoGene.DPYD,
+                        haplotypes = setOf(Haplotype(allele = "*1", alleleCount = 2, function = HaplotypeFunction.NORMAL_FUNCTION)),
                     )
                 )
             )

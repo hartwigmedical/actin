@@ -1,6 +1,8 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
 import com.hartwig.actin.molecular.datamodel.orange.pharmaco.Haplotype
+import com.hartwig.actin.molecular.datamodel.orange.pharmaco.HaplotypeFunction
+import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoGene
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory
 import com.hartwig.actin.molecular.orange.datamodel.peach.TestPeachFactory
 import com.hartwig.hmftools.datamodel.orange.ImmutableOrangeRecord
@@ -33,14 +35,14 @@ class PharmacoExtractionTest {
         assertThat(entries).hasSize(1)
 
         val entry = entries.iterator().next()
-        assertThat(entry.gene).isEqualTo("DPYD")
+        assertThat(entry.gene).isEqualTo(PharmacoGene.DPYD)
         assertThat(entry.haplotypes).hasSize(2)
 
         val haplotype1 = findByHaplotype(entry.haplotypes, "*1_HET")
-        assertThat(haplotype1.function).isEqualTo("normal function")
+        assertThat(haplotype1.function).isEqualTo(HaplotypeFunction.NORMAL_FUNCTION)
 
         val haplotype2 = findByHaplotype(entry.haplotypes, "*2_HOM")
-        assertThat(haplotype2.function).isEqualTo("reduced function")
+        assertThat(haplotype2.function).isEqualTo(HaplotypeFunction.REDUCED_FUNCTION)
     }
 
     @Test(expected = IllegalStateException::class)

@@ -3,6 +3,7 @@ package com.hartwig.actin.report.pdf.tables.molecular
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoEntry
+import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoGene
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
@@ -32,8 +33,8 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
             createTMBStatusCell(),
             createMSStabilityCell(),
             createHRStatusCell(),
-            wgsMolecular?.let { Cells.createContent(createPeachSummaryForGene(it.pharmaco, "DPYD")) },
-            wgsMolecular?.let { Cells.createContent(createPeachSummaryForGene(it.pharmaco, "UGT1A1")) }
+            wgsMolecular?.let { Cells.createContent(createPeachSummaryForGene(it.pharmaco, PharmacoGene.DPYD)) },
+            wgsMolecular?.let { Cells.createContent(createPeachSummaryForGene(it.pharmaco, PharmacoGene.UGT1A1)) }
         ).forEach { table.addCell(it) }
 
         return table
@@ -128,20 +129,20 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
         }
     }
 
-    private fun createPeachSummaryForGene(pharmaco: Set<PharmacoEntry>, gene: String): String {
+    private fun createPeachSummaryForGene(pharmaco: Set<PharmacoEntry>, gene: PharmacoGene): String {
         val wgsMolecular = if (molecular is MolecularRecord) molecular else null
         if (wgsMolecular?.isContaminated == true) {
             return Formats.VALUE_NOT_AVAILABLE
         } else {
             val pharmacoEntry = findPharmacoEntry(pharmaco, gene) ?: return Formats.VALUE_UNKNOWN
-            return pharmacoEntry.haplotypes.joinToString(", ") { "${it.toHaplotypeString()} (${it.function})" }
+            return pharmacoEntry.haplotypes.joinToString(", ") { "${it.toHaplotypeString()} (${it.function.display()})" }
         }
     }
 
     private fun insufficientQuality() = wgsMolecular?.hasSufficientQuality == false
 
     companion object {
-        private fun findPharmacoEntry(pharmaco: Set<PharmacoEntry>, geneToFind: String): PharmacoEntry? {
+        private fun findPharmacoEntry(pharmaco: Set<PharmacoEntry>, geneToFind: PharmacoGene): PharmacoEntry? {
             return pharmaco.find { it.gene == geneToFind }
         }
     }

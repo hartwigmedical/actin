@@ -1,9 +1,16 @@
 package com.hartwig.actin.molecular.datamodel.evidence
 
 object TestExternalTrialFactory {
-   
+
     fun create(title: String = "", countries: Set<Country> = emptySet(), url: String = "", nctId: String = ""): ExternalTrial {
-        return ExternalTrial(title = title, countries = countries, url = url, nctId = nctId)
+        return ExternalTrial(
+            title = title,
+            countries = countries,
+            url = url,
+            nctId = nctId,
+            sourceEvent = "",
+            applicableCancerType = ApplicableCancerType(cancerType = "", excludedCancerTypes = emptySet())
+        )
     }
 
     fun createTestTrial(): ExternalTrial {

@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.itextpdf.layout.element.Table
@@ -62,12 +62,12 @@ class MolecularClinicalEvidenceGenerator(val molecularHistory: MolecularHistory,
 
     private fun formatBoolean(boolean: Boolean) = if (boolean) CHECKED else UNCHECKED
 
-    private fun extractClinicalDetails(evidence: ActionableEvidence): Set<ClinicalDetails> {
-        val truncatedApproved = truncatedTreatments(evidence.approvedTreatments)
-        val truncatedOnLabel = truncatedTreatments(evidence.onLabelExperimentalTreatments)
-        val truncatedOffLabel = truncatedTreatments(evidence.offLabelExperimentalTreatments)
-        val truncatedPreClinical = truncatedTreatments(evidence.preClinicalTreatments)
-        val truncatedResistant = truncatedTreatments(evidence.knownResistantTreatments)
+    private fun extractClinicalDetails(evidence: ClinicalEvidence): Set<ClinicalDetails> {
+        val truncatedApproved = emptySet<String>()
+        val truncatedOnLabel = emptySet<String>()
+        val truncatedOffLabel = emptySet<String>()
+        val truncatedPreClinical = emptySet<String>()
+        val truncatedResistant = emptySet<String>()
         val allTreatments =
             truncatedApproved + truncatedOnLabel + truncatedOffLabel + truncatedPreClinical + truncatedResistant
         return allTreatments.map {
@@ -83,4 +83,6 @@ class MolecularClinicalEvidenceGenerator(val molecularHistory: MolecularHistory,
     }
 
     private fun truncatedTreatments(treatments: Set<String>) = if (treatments.size > 2) listOf("<many>") else treatments.toList()
+
+
 }
