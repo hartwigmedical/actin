@@ -35,7 +35,7 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
         }
 
         for (driver in allDrivers) {
-            table.addCell(Cells.createContent(driver.event))
+            table.addCell(Cells.createContent("${driver.event}\n(Tier ${driver.evidenceTier()})"))
             table.addCell(Cells.createContent(LongitudinalVariantInterpretation.interpret(driver as GeneAlteration)))
             table.addCell(Cells.createContent(driver.driverLikelihood?.toString() ?: VALUE_NOT_AVAILABLE))
             for (test in sortedAndFilteredTests) {
