@@ -32,6 +32,18 @@ class MolecularClinicalEvidenceGeneratorTest {
         assertRow(table.contents(), 3, "", PRE_CLINICAL, "", "", "", "X", "")
     }
 
+    @Test
+    fun `Should create 'many' row for categories with more than 2 treatments`() {
+        val evidence =
+            ClinicalEvidence(
+                treatmentEvidence = emptySet(),
+            )
+        val table = MolecularClinicalEvidenceGenerator(
+            molecularHistory(variant(evidence)), 1f
+        )
+        assertRow(table.contents(), 0, "BRAF V600E", "<many>", "X", "X", "", "", "")
+    }
+
     private fun molecularHistory(variant: Variant) = MolecularHistory(
         listOf(
             TestMolecularFactory.createMinimalTestMolecularRecord().copy(

@@ -10,7 +10,6 @@ object TestClinicalEvidenceFactory {
         return ClinicalEvidence(
             treatmentEvidence = setOf(
                 approved(),
-                approved().copy(applicableCancerType = ApplicableCancerType("Other cancer type", emptySet())),
                 onLabelExperimental(),
                 offLabelExperimental(),
                 onLabelPreclinical(),
@@ -25,59 +24,59 @@ object TestClinicalEvidenceFactory {
     }
 
     fun offLabelSuspectResistant() = treatment(
-        "off-label suspect resistant C",
+        "off-label suspect resistant",
         EvidenceLevel.C,
         EvidenceDirection(isResistant = true, isCertain = false),
         false
     )
 
     fun onLabelSuspectResistant() = treatment(
-        "on-label suspect resistant C",
+        "on-label suspect resistant",
         EvidenceLevel.C,
         EvidenceDirection(isResistant = true, isCertain = false),
         false
     )
 
     fun offLabelKnownResistant() =
-        treatment("off-label known resistant A", EvidenceLevel.A, EvidenceDirection(isResistant = true, isCertain = true), false)
+        treatment("off-label known resistant", EvidenceLevel.A, EvidenceDirection(isResistant = true, isCertain = true), false)
 
     fun onLabelKnownResistant() =
-        treatment("on-label known resistant A", EvidenceLevel.A, EvidenceDirection(isResistant = true, isCertain = true), true)
+        treatment("on-label known resistant", EvidenceLevel.A, EvidenceDirection(isResistant = true, isCertain = true), true)
 
     fun offLabelPreclinical() =
-        treatment("off-label pre-clinical C", EvidenceLevel.C, EvidenceDirection(hasPositiveResponse = true), false)
+        treatment("off-label pre-clinical", EvidenceLevel.C, EvidenceDirection(hasPositiveResponse = true), false)
 
     fun onLabelPreclinical() =
-        treatment("on-label pre-clinical C", EvidenceLevel.C, EvidenceDirection(hasPositiveResponse = true), true)
+        treatment("on-label pre-clinical", EvidenceLevel.C, EvidenceDirection(hasPositiveResponse = true), true)
 
     fun offLabelExperimental() = treatment(
-        "off-label experimental B",
+        "off-label experimental",
         EvidenceLevel.B,
         EvidenceDirection(hasPositiveResponse = true, isCertain = true),
         false
     )
 
     fun onLabelExperimental() = treatment(
-        "on-label experimental A",
+        "on-label experimental",
         EvidenceLevel.A,
         EvidenceDirection(hasPositiveResponse = true, isCertain = false),
         true
     )
 
     fun approved() =
-        treatment("approved A", EvidenceLevel.A, EvidenceDirection(hasPositiveResponse = true, isCertain = false), true)
+        treatment("approved", EvidenceLevel.A, EvidenceDirection(hasPositiveResponse = true, isCertain = true), true)
 
     fun treatment(treatment: String, evidenceLevel: EvidenceLevel, direction: EvidenceDirection, onLabel: Boolean) =
-        TreatmentEvidence(treatment, evidenceLevel, onLabel, direction, "<source event>", applicableCancerType())
+        TreatmentEvidence(treatment, evidenceLevel, onLabel, direction, "", applicableCancerType())
 
-    private fun applicableCancerType() = ApplicableCancerType("<Cancer Type>", emptySet())
+    private fun applicableCancerType() = ApplicableCancerType("", emptySet())
 
     fun withApprovedTreatment(treatment: String): ClinicalEvidence {
         return ClinicalEvidence(treatmentEvidence = setOf(approved().copy(treatment = treatment)))
     }
 
-    fun withExternalEligibleTrial(treatment: ExternalTrial): ClinicalEvidence {
-        return ClinicalEvidence(externalEligibleTrials = setOf(treatment))
+    fun withExternalEligibleTrial(trial: ExternalTrial): ClinicalEvidence {
+        return ClinicalEvidence(externalEligibleTrials = setOf(trial))
     }
 
     fun withOnLabelExperimentalTreatment(treatment: String): ClinicalEvidence {

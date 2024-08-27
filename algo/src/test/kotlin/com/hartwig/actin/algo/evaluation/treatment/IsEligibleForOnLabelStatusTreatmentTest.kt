@@ -21,7 +21,11 @@ import io.mockk.every
 import io.mockk.mockk
 import org.junit.Test
 
+<<<<<<<< HEAD:algo/src/test/kotlin/com/hartwig/actin/algo/evaluation/treatment/IsEligibleForOnUseageLabelStatusTreatmentTest.kt
 class IsEligibleForOnUseageLabelStatusTreatmentTest {
+========
+class IsEligibleForOnLabelStatusTreatmentTest {
+>>>>>>>> master:algo/src/test/kotlin/com/hartwig/actin/algo/evaluation/treatment/IsEligibleForOnLabelStatusTreatmentTest.kt
 
     private val recommendationEngine = mockk<RecommendationEngine>()
     private val recommendationEngineFactory = mockk<RecommendationEngineFactory> { every { create() } returns recommendationEngine }
