@@ -37,21 +37,29 @@ object WGSSummaryGeneratorFunctions {
             table.addCell(biopsySummary(patientRecord, molecular))
         }
 
-        if (wgsMolecular?.hasSufficientQuality == true) {
+        if (wgsMolecular?.hasSufficientQuality != false) {
             if (!isShort) {
                 table.addCell(Cells.createKey("Molecular tissue of origin prediction"))
                 table.addCell(tumorOriginPredictionCell(molecular))
             }
 
-            table.addCell(Cells.createKey("Tumor mutational load / burden"))
-            table.addCell(tumorMutationalLoadAndTumorMutationalBurdenStatusCell(molecular))
-            
+            val hasTmbData = createTmbCells(molecular, isShort, table)
+
             val tableContents = generateTableContents(isShort, summarizer, molecular, keyWidth, valueWidth)
 
-            tableContents
-                .filterNot { (_, value) -> value == Formats.VALUE_NONE && isShort }
+            val filteredContents = tableContents
+                .filterNot { (_, value) -> (value.contains(Formats.VALUE_NONE) || value.contains(Formats.VALUE_UNKNOWN)) && isShort }
                 .flatMap { (key, value) -> listOf(Cells.createKey(key), Cells.createValue(value)) }
-                .forEach(table::addCell)
+            if (filteredContents.isNotEmpty() || hasTmbData) {
+                filteredContents.forEach(table::addCell)
+            } else {
+                table.addCell(
+                    Cells.createSpanningContent(
+                        "No relevant molecular results found in this test.",
+                        table
+                    )
+                )
+            }
         } else {
             table.addCell(
                 Cells.createSpanningContent(
@@ -61,6 +69,25 @@ object WGSSummaryGeneratorFunctions {
             )
         }
         return table
+    }
+
+    private fun createTmbCells(
+        molecular: MolecularTest,
+        isShort: Boolean,
+        table: Table
+    ): Boolean {
+        val tmbStatus = tumorMutationalLoadAndTumorMutationalBurdenStatus(molecular)
+        if (!isShort || tmbStatus != "${Formats.VALUE_UNKNOWN} / ${Formats.VALUE_UNKNOWN}") {
+            table.addCell(Cells.createKey("Tumor mutational load / burden"))
+            table.addCell(
+                tumorMutationalLoadAndTumorMutationalBurdenStatusCell(
+                    molecular,
+                    tmbStatus
+                )
+            )
+            return true
+        }
+        return false
     }
 
     private fun biopsySummary(patientRecord: PatientRecord, molecular: MolecularTest): Cell {
@@ -110,8 +137,8 @@ object WGSSummaryGeneratorFunctions {
         }
     }
 
-    private fun tumorMutationalLoadAndTumorMutationalBurdenStatusCell(molecular: MolecularTest): Cell {
-        val paragraph = Paragraph(Text(tumorMutationalLoadAndTumorMutationalBurdenStatus(molecular)).addStyle(Styles.tableHighlightStyle()))
+    private fun tumorMutationalLoadAndTumorMutationalBurdenStatusCell(molecular: MolecularTest, status: String): Cell {
+        val paragraph = Paragraph(Text(status).addStyle(Styles.tableHighlightStyle()))
         val purity = molecular.characteristics.purity
         val wgsMolecular = if (molecular is MolecularRecord) molecular else null
         if (wgsMolecular != null && purity != null && wgsMolecular.hasSufficientQualityButLowPurity()) {
@@ -124,19 +151,19 @@ object WGSSummaryGeneratorFunctions {
     private fun tumorMutationalLoadAndTumorMutationalBurdenStatus(molecular: MolecularTest): String {
         val hasHighTumorMutationalLoad = molecular.characteristics.hasHighTumorMutationalLoad
         val tumorMutationalLoad = molecular.characteristics.tumorMutationalLoad
-        val TMLString = if (tumorMutationalLoad == null || hasHighTumorMutationalLoad == null) Formats.VALUE_UNKNOWN else String.format(
+        val tmlString = if (tumorMutationalLoad == null || hasHighTumorMutationalLoad == null) Formats.VALUE_UNKNOWN else String.format(
             "TML %s (%d)",
             if (hasHighTumorMutationalLoad) "high" else "low",
             tumorMutationalLoad
         )
         val hasHighTumorMutationalBurden = molecular.characteristics.hasHighTumorMutationalBurden
         val tumorMutationalBurden = molecular.characteristics.tumorMutationalBurden
-        val TMBString = if (tumorMutationalBurden == null || hasHighTumorMutationalBurden == null) Formats.VALUE_UNKNOWN else String.format(
+        val tmbString = if (tumorMutationalBurden == null || hasHighTumorMutationalBurden == null) Formats.VALUE_UNKNOWN else String.format(
             "TMB %s (%s)",
             if (hasHighTumorMutationalBurden) "high" else "low",
             Formats.singleDigitNumber(tumorMutationalBurden)
         )
-        return String.format("%s / %s", TMLString, TMBString)
+        return String.format("%s / %s", tmlString, tmbString)
     }
 
     private fun formatList(list: List<String>): String {

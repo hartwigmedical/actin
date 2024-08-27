@@ -27,14 +27,16 @@ object TestReportFactory {
     fun createExhaustiveTestReport(): Report {
         return createMinimalTestReport().copy(
             patientRecord = TestPatientFactory.createExhaustiveTestPatientRecord(),
-            treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch()
+            treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch(),
+            config = ReportConfiguration(includeMolecularEvidenceChapter = true)
         )
     }
 
     fun createExhaustiveTestReportWithoutMolecular(): Report {
         return createMinimalTestReport().copy(
             patientRecord = PatientRecordFactory.fromInputs(TestClinicalFactory.createExhaustiveTestClinicalRecord(), null),
-            treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch()
+            treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch(),
+            config = ReportConfiguration(includeMolecularEvidenceChapter = true)
         )
     }
 

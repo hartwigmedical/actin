@@ -2,11 +2,11 @@ package com.hartwig.actin.algo.evaluation.util
 
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
+import java.time.LocalDate
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertTrue
 import org.junit.Test
-import java.time.LocalDate
 
 class FormatTest {
     @Test

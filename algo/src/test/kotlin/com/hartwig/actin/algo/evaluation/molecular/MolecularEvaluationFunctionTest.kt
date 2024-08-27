@@ -41,6 +41,12 @@ class MolecularEvaluationFunctionTest {
         }
     }
 
+    private val functionWithGenes = object : MolecularEvaluationFunction {
+        override fun genes(): List<String> {
+            return listOf("GENE")
+        }
+    }
+
     @Test
     fun `Should return no molecular data message when no ORANGE nor other molecular data`() {
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
@@ -53,8 +59,7 @@ class MolecularEvaluationFunctionTest {
 
     @Test
     fun `Should return insufficient molecular data when no ORANGE but other molecular data`() {
-        val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
-            .copy(molecularHistory = MolecularHistory(listOf(emptyArcher())))
+        val patient = withPanelTest()
         val evaluation = function.evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedSpecificMessages).containsExactly("Insufficient molecular data")
@@ -80,8 +85,7 @@ class MolecularEvaluationFunctionTest {
 
     @Test
     fun `Should use override message when provided for patient with no ORANGE record but other data`() {
-        val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
-            .copy(molecularHistory = MolecularHistory(listOf(emptyArcher())))
+        val patient = withPanelTest()
         assertOverrideEvaluation(patient)
     }
 
@@ -93,6 +97,18 @@ class MolecularEvaluationFunctionTest {
         assertThat(evaluation.failSpecificMessages).containsExactly(FAIL_SPECIFIC_MESSAGE)
         assertThat(evaluation.failGeneralMessages).containsExactly(FAIL_GENERAL_MESSAGE)
     }
+
+    @Test
+    fun `Should return undetermined when genes have not been tested which are mandatory`() {
+        val patient = withPanelTest()
+        val evaluation = functionWithGenes.evaluate(patient)
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.undeterminedGeneralMessages).containsExactly("Gene(s) GENE not tested")
+        assertThat(evaluation.undeterminedSpecificMessages).containsExactly("Gene(s) GENE not tested in molecular data")
+    }
+
+    private fun withPanelTest() = TestPatientFactory.createEmptyMolecularTestPatientRecord()
+        .copy(molecularHistory = MolecularHistory(listOf(emptyArcher())))
 
     private fun assertOverrideEvaluation(patient: PatientRecord) {
         val evaluation = functionWithOverride.evaluate(patient)

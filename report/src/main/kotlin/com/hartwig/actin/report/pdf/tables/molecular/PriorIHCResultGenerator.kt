@@ -1,22 +1,22 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.report.interpretation.PriorMolecularTestInterpreter
+import com.hartwig.actin.report.interpretation.PriorIHCTestInterpreter
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 
-class PriorMolecularResultGenerator(
+class PriorIHCResultGenerator(
     private val patientRecord: PatientRecord,
     private val keyWidth: Float,
     private val valueWidth: Float,
-    private val interpreter: PriorMolecularTestInterpreter
+    private val interpreter: PriorIHCTestInterpreter
 ) {
     fun contents(): Table {
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
         if (patientRecord.priorIHCTests.isEmpty()) {
-            table.addCell(Cells.createValue("No prior non-Hartwig molecular tests"))
+            table.addCell(Cells.createValue("No prior IHC molecular tests"))
         } else {
             val sortedInterpretation = interpreter.interpret(patientRecord)
             for (priorMolecularTestInterpretation in sortedInterpretation) {
