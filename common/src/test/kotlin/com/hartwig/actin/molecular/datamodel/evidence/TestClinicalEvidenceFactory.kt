@@ -72,7 +72,17 @@ object TestClinicalEvidenceFactory {
         direction: EvidenceDirection,
         onLabel: Boolean,
         isCategoryVariant: Boolean? = false
-    ) = TreatmentEvidence(treatment, evidenceLevel, onLabel, direction, isCategoryVariant, "", applicableCancerType())
+    ) = TreatmentEvidence(
+        treatment,
+        evidenceLevel,
+        onLabel,
+        direction,
+        "2021-02-03",
+        "efficacy evidence",
+        isCategoryVariant,
+        "",
+        applicableCancerType()
+    )
 
     private fun applicableCancerType() = ApplicableCancerType("", emptySet())
 

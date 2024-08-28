@@ -42,6 +42,8 @@ object ClinicalEvidenceFactory {
                     isResistant = it.direction().isResistant,
                     isCertain = it.direction().isCertain
                 ),
+                it.date().toString(),
+                it.description(),
                 it.isCategoryVariant(),
                 it.sourceEvent(),
                 ApplicableCancerType(it.applicableCancerType().name(), it.blacklistCancerTypes().map { ct -> ct.name() }.toSet()),

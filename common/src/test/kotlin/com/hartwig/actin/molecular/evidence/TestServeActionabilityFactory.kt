@@ -17,6 +17,7 @@ import com.hartwig.serve.datamodel.gene.ImmutableActionableGene
 import com.hartwig.serve.datamodel.hotspot.ImmutableActionableHotspot
 import com.hartwig.serve.datamodel.immuno.ImmutableActionableHLA
 import com.hartwig.serve.datamodel.range.ImmutableActionableRange
+import java.time.LocalDate
 
 object TestServeActionabilityFactory {
 
@@ -109,6 +110,14 @@ object TestServeActionabilityFactory {
 
             override fun evidenceUrls(): Set<String> {
                 return if (isTrial) setOf("https://clinicaltrials.gov/study/$nctId") else emptySet()
+            }
+
+            override fun date(): LocalDate {
+                return LocalDate.of(2021, 2, 3)
+            }
+
+            override fun description(): String {
+                return "efficacy evidence"
             }
         }
     }

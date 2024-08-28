@@ -42,6 +42,8 @@ data class TreatmentEvidence(
     val evidenceLevel: EvidenceLevel,
     val onLabel: Boolean,
     val direction: EvidenceDirection,
+    val date: String,
+    val description: String,
     override val isCategoryVariant: Boolean?,
     override val sourceEvent: String,
     override val applicableCancerType: ApplicableCancerType
