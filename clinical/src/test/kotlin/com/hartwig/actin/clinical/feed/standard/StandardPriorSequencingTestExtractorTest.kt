@@ -135,7 +135,7 @@ class StandardPriorSequencingTestExtractorTest {
                 curated = ProvidedMolecularTestResult(gene = GENE, hgvsCodingImpact = CODING)
             )
         )
-        val result = extractionResult(ProvidedMolecularTestResult(gene = GENE, freeText = FREE_TEXT))
+        val result = extractionResult(ProvidedMolecularTestResult(freeText = FREE_TEXT))
         assertResultContains(
             result, BASE_PRIOR_SEQUENCING.copy(
                 variants = setOf(SequencedVariant(gene = GENE, hgvsCodingImpact = CODING))
@@ -144,9 +144,9 @@ class StandardPriorSequencingTestExtractorTest {
     }
 
     @Test
-    fun `Should return curation warnings for uncurated free text`() {
+    fun `Should return curation warnings for uncurated free text when all other fields are null`() {
         every { curation.find(FREE_TEXT) } returns emptySet()
-        val result = extractionResult(ProvidedMolecularTestResult(gene = GENE, freeText = FREE_TEXT))
+        val result = extractionResult(ProvidedMolecularTestResult(freeText = FREE_TEXT))
         assertThat(result.evaluation.warnings).hasSize(1)
         assertThat(result.evaluation.warnings.first()).isEqualTo(
             CurationWarning(
@@ -156,6 +156,13 @@ class StandardPriorSequencingTestExtractorTest {
                 message = "Could not find sequencing test config for input '$FREE_TEXT'"
             )
         )
+    }
+
+    @Test
+    fun `Should not return curation warnings for uncurated free text when all other fields are null`() {
+        every { curation.find(FREE_TEXT) } returns emptySet()
+        val result = extractionResult(ProvidedMolecularTestResult(gene = GENE, freeText = FREE_TEXT))
+        assertThat(result.evaluation.warnings).isEmpty()
     }
 
     @Test
