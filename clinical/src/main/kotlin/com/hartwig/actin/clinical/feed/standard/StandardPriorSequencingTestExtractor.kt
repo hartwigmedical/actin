@@ -12,24 +12,16 @@ import com.hartwig.actin.clinical.datamodel.SequencedDeletedGene
 import com.hartwig.actin.clinical.datamodel.SequencedFusion
 import com.hartwig.actin.clinical.datamodel.SequencedSkippedExons
 import com.hartwig.actin.clinical.datamodel.SequencedVariant
+import kotlin.reflect.full.memberProperties
 
 class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<SequencingTestConfig>) :
     StandardDataExtractor<List<PriorSequencingTest>> {
 
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<PriorSequencingTest>> {
         val extracted = ehrPatientRecord.molecularTests.map { test ->
-            val curatedResults = test.results.mapNotNull { result -> result.freeText }
-                .map { text ->
-                    CurationResponse.createFromConfigs(
-                        curation.find(text),
-                        ehrPatientRecord.patientDetails.hashedId,
-                        CurationCategory.SEQUENCING_TEST,
-                        text,
-                        "sequencing test",
-                        false
-                    )
-                }
-            val allResults = test.results + curatedResults.flatMap { config -> config.configs }.mapNotNull { config -> config.curated }
+            val mandatoryCurationResults = curate(ehrPatientRecord, test.results.filter { checkAllFieldsNull(it) })
+            val optionalCurationResults = curate(ehrPatientRecord, test.results)
+            val allResults = test.results + extract(mandatoryCurationResults) + extract(optionalCurationResults)
             ExtractionResult(
                 listOf(
                     PriorSequencingTest(
@@ -45,7 +37,7 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
                         tumorMutationalBurden = tmb(allResults),
                     )
                 ),
-                curatedResults.map { curated -> curated.extractionEvaluation }
+                mandatoryCurationResults.map { curated -> curated.extractionEvaluation }
                     .fold(CurationExtractionEvaluation()) { acc, extraction -> acc + extraction }
             )
         }
@@ -55,6 +47,27 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
             ExtractionResult(acc.extracted + extractionResult.extracted, acc.evaluation + extractionResult.evaluation)
         }
     }
+
+    private fun extract(mandatoryCurationResults: List<CurationResponse<SequencingTestConfig>>) =
+        mandatoryCurationResults.flatMap { config -> config.configs }.mapNotNull { config -> config.curated }
+
+    private fun curate(
+        ehrPatientRecord: ProvidedPatientRecord,
+        results: Collection<ProvidedMolecularTestResult>
+    ) = results.mapNotNull { result -> result.freeText }
+        .map { text ->
+            CurationResponse.createFromConfigs(
+                curation.find(text),
+                ehrPatientRecord.patientDetails.hashedId,
+                CurationCategory.SEQUENCING_TEST,
+                text,
+                "sequencing test",
+                false
+            )
+        }
+
+    private fun checkAllFieldsNull(result: ProvidedMolecularTestResult) =
+        ProvidedMolecularTestResult::class.memberProperties.filter { it.name != "freeText" }.all { it.get(result) == null }
 
     private fun geneDeletions(allResults: Set<ProvidedMolecularTestResult>) =
         allResults.mapNotNull { it.deletedGene?.let { gene -> SequencedDeletedGene(gene) } }.toSet()
