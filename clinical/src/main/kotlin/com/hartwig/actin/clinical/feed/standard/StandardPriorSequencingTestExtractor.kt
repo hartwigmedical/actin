@@ -48,8 +48,8 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
         }
     }
 
-    private fun extract(mandatoryCurationResults: List<CurationResponse<SequencingTestConfig>>) =
-        mandatoryCurationResults.flatMap { it.configs }.mapNotNull { it.curated }
+    private fun extract(curationResults: List<CurationResponse<SequencingTestConfig>>) =
+        curationResults.flatMap { it.configs }.mapNotNull { it.curated }
 
     private fun curate(
         ehrPatientRecord: ProvidedPatientRecord,
