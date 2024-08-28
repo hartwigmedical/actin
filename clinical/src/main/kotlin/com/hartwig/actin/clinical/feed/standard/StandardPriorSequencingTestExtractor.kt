@@ -19,9 +19,9 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
 
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<PriorSequencingTest>> {
         val extracted = ehrPatientRecord.molecularTests.map { test ->
-            val mandatoryCurationResults = curate(ehrPatientRecord, test.results.filter { checkAllFieldsNull(it) })
-            val optionalCurationResults = curate(ehrPatientRecord, test.results)
-            val allResults = test.results + extract(mandatoryCurationResults) + extract(optionalCurationResults)
+            val (onlyFreeTextResults, populatedResults) = test.results.partition { checkAllFieldsNull(it) }
+            val mandatoryCurationTestResults = curate(ehrPatientRecord, onlyFreeTextResults)
+            val allResults = test.results + extract(mandatoryCurationTestResults) + extract(curate(ehrPatientRecord, populatedResults))
             ExtractionResult(
                 listOf(
                     PriorSequencingTest(
@@ -37,7 +37,7 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
                         tumorMutationalBurden = tmb(allResults),
                     )
                 ),
-                mandatoryCurationResults.map { curated -> curated.extractionEvaluation }
+                mandatoryCurationTestResults.map { curated -> curated.extractionEvaluation }
                     .fold(CurationExtractionEvaluation()) { acc, extraction -> acc + extraction }
             )
         }
@@ -49,7 +49,7 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
     }
 
     private fun extract(mandatoryCurationResults: List<CurationResponse<SequencingTestConfig>>) =
-        mandatoryCurationResults.flatMap { config -> config.configs }.mapNotNull { config -> config.curated }
+        mandatoryCurationResults.flatMap { it.configs }.mapNotNull { it.curated }
 
     private fun curate(
         ehrPatientRecord: ProvidedPatientRecord,
