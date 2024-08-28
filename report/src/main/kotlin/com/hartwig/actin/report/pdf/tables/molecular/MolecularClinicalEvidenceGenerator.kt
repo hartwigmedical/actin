@@ -7,6 +7,7 @@ import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Styles.PALETTE_RED
 import com.hartwig.actin.molecular.datamodel.evidence.EvidenceLevel
+import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 
@@ -33,7 +34,15 @@ class MolecularClinicalEvidenceGenerator(
         val allDrivers =
             DriverTableFunctions.allDrivers(molecularHistory).flatMap { it.second }.toSortedSet(Comparator.comparing { it.event })
         val columnCount = 6
-        val table = Table(columnCount).setWidth(width)
+
+        val eventWidth = (0.7 * width / 6).toFloat()
+        val sourceEventWidth = (0.7 * width / 6).toFloat()
+        val levelAWidth = (1.2 * width / 6).toFloat()
+        val levelBWidth = (1.2 * width / 6).toFloat()
+        val levelCWidth = (1.2 * width / 6).toFloat()
+        val levelDWidth = (1.2 * width / 6).toFloat()
+
+        val table = Tables.createFixedWidthCols(eventWidth, sourceEventWidth, levelAWidth, levelBWidth, levelCWidth, levelDWidth)
         listOf("Driver", "CKB Event", "Level A", "Level B", "Level C", "Level D")
             .map(Cells::createHeader)
             .forEach(table::addHeaderCell)
@@ -61,7 +70,8 @@ class MolecularClinicalEvidenceGenerator(
                             val treatmentGroupedEvidences = levelEvidences.groupBy { it.treatment }
 
                             treatmentGroupedEvidences.forEach { (treatment, evidencesForTreatment) ->
-                                val cancerTypes = evidencesForTreatment.joinToString(", ") { it.applicableCancerType.cancerType }
+                                val cancerTypes =
+                                    evidencesForTreatment.map { it.applicableCancerType.cancerType }.toSet().joinToString(", ")
 
                                 val evidenceSubTable = Table(1).setWidth(width / columnCount)
                                 val cancerTypeContent = Paragraph(cancerTypes).setFirstLineIndent(10f).setItalic().setFontSize(6.5f)
@@ -94,7 +104,7 @@ class MolecularClinicalEvidenceGenerator(
     }
 
     private fun extractClinicalDetails(evidence: ClinicalEvidence): Set<ClinicalDetails> {
-        val treatmentEvidenceSet = evidence.treatmentEvidence
+        val treatmentEvidenceSet = evidence.treatmentEvidence.filter { it.onLabel == onLabel }.toSet()
         val (levelA, levelB, levelC, levelD) = listOf(EvidenceLevel.A, EvidenceLevel.B, EvidenceLevel.C, EvidenceLevel.D)
             .map { treatmentsForEvidenceLevelAndLabel(treatmentEvidenceSet, it) }
         return treatmentEvidenceSet.map {
@@ -111,7 +121,6 @@ class MolecularClinicalEvidenceGenerator(
     private fun treatmentsForEvidenceLevelAndLabel(evidence: Set<TreatmentEvidence>, evidenceLevel: EvidenceLevel): Set<String> {
         return evidence
             .filter { it.evidenceLevel == evidenceLevel }
-            .filter { it.onLabel == onLabel }
             .map { it.treatment }
             .toSet()
     }
