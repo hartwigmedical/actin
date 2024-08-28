@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.datamodel.evidence
 
 import com.hartwig.actin.Displayable
+import java.time.LocalDate
 
 enum class Country(private val display: String) : Displayable {
     NETHERLANDS("Netherlands"),
@@ -42,8 +43,8 @@ data class TreatmentEvidence(
     val evidenceLevel: EvidenceLevel,
     val onLabel: Boolean,
     val direction: EvidenceDirection,
-    val date: String,
-    val description: String,
+    val date: LocalDate?,
+    val description: String?,
     override val isCategoryVariant: Boolean?,
     override val sourceEvent: String,
     override val applicableCancerType: ApplicableCancerType

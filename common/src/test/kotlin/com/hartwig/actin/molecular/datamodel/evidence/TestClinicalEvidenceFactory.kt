@@ -1,5 +1,7 @@
 package com.hartwig.actin.molecular.datamodel.evidence
 
+import java.time.LocalDate
+
 object TestClinicalEvidenceFactory {
 
     fun createEmpty(): ClinicalEvidence {
@@ -77,7 +79,7 @@ object TestClinicalEvidenceFactory {
         evidenceLevel,
         onLabel,
         direction,
-        "2021-02-03",
+        LocalDate.of(2021, 2, 3),
         "efficacy evidence",
         isCategoryVariant,
         "",
