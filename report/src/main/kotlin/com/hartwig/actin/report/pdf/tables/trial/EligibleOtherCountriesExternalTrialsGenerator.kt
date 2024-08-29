@@ -50,7 +50,7 @@ class EligibleOtherCountriesExternalTrialsGenerator(
                 subTable.addCell(Cells.createContentNoBorder(externalTrial.applicableCancerType.cancerType))
                 subTable.addCell(Cells.createContentNoBorder(EligibleExternalTrialGeneratorFunctions.shortenTitle(externalTrial.title)).setAction(PdfAction.createURI(externalTrial.url))
                     .addStyle(Styles.urlStyle()))
-                subTable.addCell(Cells.createContentNoBorder(EligibleExternalTrialGeneratorFunctions.countriesNamesAndCities(externalTrial)))
+                subTable.addCell(Cells.createContentNoBorder(EligibleExternalTrialGeneratorFunctions.countryNamesAndCities(externalTrial)))
             }
             table.addCell(Cells.createContent(event))
             EligibleExternalTrialGeneratorFunctions.insertRow(table, subTable)

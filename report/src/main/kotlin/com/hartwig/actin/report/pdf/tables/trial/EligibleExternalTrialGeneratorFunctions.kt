@@ -36,14 +36,19 @@ object EligibleExternalTrialGeneratorFunctions {
         table.addCell(Cells.createContent(finalSubTable))
     }
 
-    fun hospitalsInHomeCountry(externalTrial: ExternalTrial, homeCountry: CountryName): List<String> {
-        val test = externalTrial.countries.first { it.countryName == homeCountry }
-        return test.hospitalsPerCity.flatMap { it.value }
+    fun hospitalsInHomeCountry(externalTrial: ExternalTrial, homeCountryName: CountryName): List<String> {
+        val homeCountry = externalTrial.countries.filter { it.countryName == homeCountryName }
+        return if (homeCountry.size > 1) { throw IllegalStateException("Home country ${homeCountryName.display()} found multiple times") } else {
+            val hospitals = homeCountry.first().hospitalsPerCity.flatMap { it.value }
+            if (hospitals.size > 10) {
+                (listOf("Many (please check link for full list)"))
+            } else hospitals
+        }
     }
 
-    fun countriesNamesAndCities(externalTrial: ExternalTrial): String {
+    fun countryNamesAndCities(externalTrial: ExternalTrial): String {
         return externalTrial.countries.joinToString { country ->
-            val cities = country.hospitalsPerCity.keys.joinToString (", ")
+            val cities = if (country.hospitalsPerCity.keys.size > 8) { "Many cities"} else {country.hospitalsPerCity.keys.joinToString ( ", " )}
             "${country.countryName.display()} ($cities)"}
     }
 

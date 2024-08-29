@@ -1,7 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.algo.datamodel.TrialMatch
-import com.hartwig.actin.molecular.datamodel.evidence.Country
 import com.hartwig.actin.molecular.datamodel.evidence.CountryName
 import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
@@ -12,10 +11,10 @@ import org.junit.Test
 private const val TMB_TARGET = "TMB"
 private const val EGFR_TARGET = "EGFR"
 private val TRIAL_1 = TestExternalTrialFactory.create(
-    "1", setOf(Country(CountryName.NETHERLANDS, emptyMap())), "url", "NCT001"
+    "1", setOf(TestExternalTrialFactory.createCountry(CountryName.NETHERLANDS)), "url", "NCT001"
 )
 private val TRIAL_2 = TestExternalTrialFactory.create(
-    "2", setOf(Country(CountryName.BELGIUM, emptyMap())), "url", "NCT002"
+    "2", setOf(TestExternalTrialFactory.createCountry(CountryName.BELGIUM)), "url", "NCT002"
 )
 private val trialMatches = listOf(
     TrialMatch(
@@ -153,7 +152,7 @@ class ExternalTrialSummarizerTest {
     private fun externalTrial(id: Int) =
         TestExternalTrialFactory.create(
             "Title of trial $id",
-            setOf(Country(CountryName.NETHERLANDS, emptyMap()), Country(CountryName.BELGIUM, emptyMap())),
+            setOf(TestExternalTrialFactory.createCountry(CountryName.NETHERLANDS), TestExternalTrialFactory.createCountry(CountryName.BELGIUM)),
             "url",
             "NCT0000000$id"
         )

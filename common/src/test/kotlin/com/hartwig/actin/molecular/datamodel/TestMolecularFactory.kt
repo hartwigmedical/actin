@@ -1,7 +1,6 @@
 package com.hartwig.actin.molecular.datamodel
 
 import com.hartwig.actin.TestPatientFactory
-import com.hartwig.actin.molecular.datamodel.evidence.Country
 import com.hartwig.actin.molecular.datamodel.evidence.CountryName
 import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
@@ -165,7 +164,7 @@ object TestMolecularFactory {
                 title = "A Phase 1/2 Randomized Study to Evaluate the Safety and Efficacy of treatment X Plus treatment Y in "
                         + "Combination With Investigational Agents Versus treatment X Plus treatment Y, as First-Line Treatment "
                         + "for Participants With Advanced Solid Tumor (acronym)",
-                countries = setOf(Country(CountryName.BELGIUM, mapOf("" to setOf(""))), Country(CountryName.GERMANY, mapOf("" to setOf("")))),
+                countries = setOf(TestExternalTrialFactory.createCountry(CountryName.BELGIUM, mapOf("Brussels" to emptySet())), TestExternalTrialFactory.createCountry(CountryName.GERMANY, mapOf("Berlin" to emptySet()))),
                 url = "https://clinicaltrials.gov/study/NCT00000002",
                 nctId = "NCT00000020"
             )
@@ -247,7 +246,7 @@ object TestMolecularFactory {
                 evidence = TestClinicalEvidenceFactory.withExternalEligibleTrial(
                     TestExternalTrialFactory.create(
                         title = "A Phase 1 Study of XYXYXY, a T-Cell-Redirecting Agent Targeting Z, for Advanced Prostate Cancer",
-                        countries = setOf(Country(CountryName.NETHERLANDS, mapOf("" to setOf("")))),
+                        countries = setOf(TestExternalTrialFactory.createCountry(CountryName.NETHERLANDS, mapOf("Nijmegen" to setOf("Radboud UMC"), "Amsterdam" to setOf("AMC", "VUmc")))),
                         url = "https://clinicaltrials.gov/study/NCT00000003",
                         nctId = "NCT00000003",
                     )

@@ -16,7 +16,7 @@ object TestExternalTrialFactory {
 
     fun createTestTrial(): ExternalTrial {
         return create(
-            "treatment", setOf(createCountry(CountryName.NETHERLANDS, mapOf("Leiden" to setOf("LUMC"))), createCountry(CountryName.BELGIUM, emptyMap())), url = "https://clinicaltrials.gov/study/NCT00000001", "NCT00000001"
+            "treatment", setOf(createCountry(CountryName.NETHERLANDS, mapOf("Leiden" to setOf("LUMC"))), createCountry(CountryName.BELGIUM, mapOf("Brussels" to emptySet()))), url = "https://clinicaltrials.gov/study/NCT00000001", "NCT00000001"
         )
     }
 
