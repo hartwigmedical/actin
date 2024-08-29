@@ -6,12 +6,10 @@ import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.input.ParameterizedFunctionTestFactory
 import com.hartwig.actin.trial.input.composite.CompositeRules
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Ignore
 import org.junit.Test
 
 class FunctionCreatorFactoryTest {
 
-    @Ignore
     @Test
     fun everyFunctionCanBeCreated() {
         val doidTerm = "term 1"

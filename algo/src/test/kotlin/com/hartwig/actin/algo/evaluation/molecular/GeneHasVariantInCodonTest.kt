@@ -108,9 +108,7 @@ class GeneHasVariantInCodonTest {
                         gene = TARGET_GENE,
                         isReportable = true,
                         canonicalImpact = impactWithCodon(OTHER_CODON),
-                        extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(
-                            otherImpacts = setOf(impactWithCodon(OTHER_CODON), impactWithCodon(MATCHING_CODON))
-                        ),
+                        otherImpacts = setOf(impactWithCodon(OTHER_CODON), impactWithCodon(MATCHING_CODON))
                     )
                 )
             )
