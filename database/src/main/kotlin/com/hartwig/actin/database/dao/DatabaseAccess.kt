@@ -49,6 +49,13 @@ class DatabaseAccess private constructor(
         treatmentMatchDAO.writeTreatmentMatch(treatmentMatch)
     }
 
+    fun replaceTreatmentMatches(treatmentMatches: List<TreatmentMatch>) {
+        LOGGER.info(" Clearing all treatment match data")
+        treatmentMatchDAO.clearAllMatches()
+        LOGGER.info(" Writing treatment match data for {} patients", treatmentMatches.size)
+        treatmentMatchDAO.insertAllMatches(treatmentMatches)
+    }
+
     companion object {
         private val LOGGER = LogManager.getLogger(DatabaseAccess::class.java)
         private const val DEV_CATALOG = "actin_test"

@@ -122,7 +122,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         isReportable = true,
                         type = VariantType.INSERT,
                         canonicalImpact = impactWithExon(OTHER_EXON),
-                        otherImpacts = setOf(impactWithExon(OTHER_EXON), impactWithExon(MATCHING_EXON)),
+                        otherImpacts = setOf(impactWithExon(OTHER_EXON), impactWithExon(MATCHING_EXON))
                     )
                 )
             )

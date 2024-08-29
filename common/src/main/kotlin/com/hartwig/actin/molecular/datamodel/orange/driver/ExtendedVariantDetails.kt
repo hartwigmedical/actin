@@ -5,5 +5,5 @@ data class ExtendedVariantDetails(
     val totalCopyNumber: Double,
     val isBiallelic: Boolean,
     val phaseGroups: Set<Int>?,
-    val clonalLikelihood: Double,
+    val clonalLikelihood: Double
 )

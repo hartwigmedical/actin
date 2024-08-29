@@ -9,6 +9,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class FunctionCreatorFactoryTest {
+
     @Test
     fun everyFunctionCanBeCreated() {
         val doidTerm = "term 1"
