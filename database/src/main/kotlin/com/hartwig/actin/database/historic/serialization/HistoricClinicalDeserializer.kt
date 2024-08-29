@@ -74,7 +74,6 @@ object HistoricClinicalDeserializer {
             vitalFunctions = extractVitalFunctions(clinical),
             bloodTransfusions = extractBloodTransfusions(clinical),
             medications = extractMedications(clinical),
-            // TODO (KD): Check if this is correctly adjusted.
             priorSequencingTests = emptyList(),
             priorIHCTests = extractPriorIHCTests(clinical)
         )

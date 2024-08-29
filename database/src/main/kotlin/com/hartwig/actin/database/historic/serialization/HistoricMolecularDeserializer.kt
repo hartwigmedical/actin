@@ -108,21 +108,26 @@ object HistoricMolecularDeserializer {
         return Json.array(molecular, "pharmaco").map { element ->
             val obj = element.asJsonObject
             PharmacoEntry(
-                // TODO (KD): Map to Pharmacogene.
-                gene = PharmacoGene.DPYD,
-                //Json.string(obj, "gene"),
+                gene = PharmacoGene.valueOf(Json.string(obj, "gene")),
                 haplotypes = Json.array(obj, "haplotypes").map { haploJson ->
                     val haplo = haploJson.asJsonObject
-                    // TODO (KD): Extract from function = Json.string(haplo, "function"),
-                    //                        name = Json.string(haplo, "name")
                     Haplotype(
-                        allele = "",
+                        allele = Json.string(haplo, "name"),
                         alleleCount = 0,
-                        function = HaplotypeFunction.NO_FUNCTION
+                        function = toHaplotypeFunction(Json.string(haplo, "function"))
                     )
                 }.toSet()
             )
         }.toSet()
+    }
+
+    private fun toHaplotypeFunction(functionString: String): HaplotypeFunction {
+        val resolveOnDisplay = HaplotypeFunction.values().firstOrNull { it.display() == functionString }
+        if (resolveOnDisplay != null) {
+            return resolveOnDisplay
+        }
+
+        return HaplotypeFunction.valueOf(functionString)
     }
 
     private fun extractDrivers(drivers: JsonObject): Drivers {
