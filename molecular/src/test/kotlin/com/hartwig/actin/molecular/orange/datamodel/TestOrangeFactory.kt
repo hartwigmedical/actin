@@ -229,11 +229,13 @@ object TestOrangeFactory {
             .function("Normal function")
             .linkedDrugs("")
             .urlPrescriptionInfo("")
+            .haplotype("")
+            .panelVersion("")
+            .repoVersion("")
             .build()
     }
 
     private fun createTestCuppaRecord(): CuppaData {
-
         val cuppaPrediction = TestCuppaFactory.builder()
             .cancerType("Melanoma")
             .likelihood(0.996)
