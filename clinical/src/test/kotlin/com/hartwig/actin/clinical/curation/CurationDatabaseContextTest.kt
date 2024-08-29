@@ -20,7 +20,7 @@ class CurationDatabaseContextTest {
 
     @Test
     fun `Should combine all databases validation errors`() {
-        val expectedUnusedConfig = IntRange(0, 16).map {
+        val expectedUnusedConfig = IntRange(0, 17).map {
             CurationConfigValidationError(
                 NOT_IMPORTANT,
                 NOT_IMPORTANT,
@@ -46,6 +46,7 @@ class CurationDatabaseContextTest {
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[14]),
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[15]),
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[16]),
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[17]),
             mockk(),
             mockk(),
             mockk(),
@@ -57,7 +58,7 @@ class CurationDatabaseContextTest {
 
     @Test
     fun `Should combine all unused configs in curation databases, except cyp, qt and blood transfusions`() {
-        val expectedUnusedConfig = IntRange(0, 18).map { UnusedCurationConfig(CurationCategory.TOXICITY.name, it.toString()) }
+        val expectedUnusedConfig = IntRange(0, 19).map { UnusedCurationConfig(CurationCategory.TOXICITY.name, it.toString()) }
         val cypInteractionCuration = mockk<CurationDatabase<CypInteractionConfig>>()
         val qtProlongingCuration = mockk<CurationDatabase<QTProlongatingConfig>>()
         val bloodTransfusionTranslation = mockk<TranslationDatabase<String>>()
@@ -77,13 +78,14 @@ class CurationDatabaseContextTest {
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[12]),
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[13]),
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[14]),
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[15]),
             cypInteractionCuration,
             qtProlongingCuration,
-            translationDatabaseWithUnusedConfig(expectedUnusedConfig[15]),
             translationDatabaseWithUnusedConfig(expectedUnusedConfig[16]),
             translationDatabaseWithUnusedConfig(expectedUnusedConfig[17]),
+            translationDatabaseWithUnusedConfig(expectedUnusedConfig[18]),
             bloodTransfusionTranslation,
-            translationDatabaseWithUnusedConfig(expectedUnusedConfig[18])
+            translationDatabaseWithUnusedConfig(expectedUnusedConfig[19])
         )
         assertThat(context.allUnusedConfig(listOf(CurationExtractionEvaluation()))).containsExactlyInAnyOrderElementsOf(expectedUnusedConfig)
         verify { cypInteractionCuration wasNot Called }

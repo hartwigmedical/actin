@@ -9,7 +9,7 @@ import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 
-class HasPotentialUncontrolledTumorRelatedPain internal constructor(private val interpreter: MedicationStatusInterpreter) :
+class HasPotentialUncontrolledTumorRelatedPain(private val interpreter: MedicationStatusInterpreter) :
     EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
 

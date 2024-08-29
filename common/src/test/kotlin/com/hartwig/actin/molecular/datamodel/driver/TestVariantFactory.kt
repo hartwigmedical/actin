@@ -4,29 +4,29 @@ import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantType
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariantDetails
 
 object TestVariantFactory {
 
     fun createMinimal(): Variant {
         return Variant(
-            isReportable = false,
-            event = "",
-            driverLikelihood = null,
-            evidence = ActionableEvidence(),
-            gene = "",
-            geneRole = GeneRole.UNKNOWN,
-            proteinEffect = ProteinEffect.UNKNOWN,
-            isAssociatedWithDrugResistance = null,
             chromosome = "",
             position = 0,
             ref = "",
             alt = "",
             type = VariantType.SNV,
-            isHotspot = false,
             canonicalImpact = TestTranscriptImpactFactory.createMinimal(),
             otherImpacts = emptySet(),
+            isHotspot = false,
+            isReportable = false,
+            event = "",
+            driverLikelihood = null,
+            evidence = ClinicalEvidence(),
+            gene = "",
+            geneRole = GeneRole.UNKNOWN,
+            proteinEffect = ProteinEffect.UNKNOWN,
+            isAssociatedWithDrugResistance = null,
         )
     }
 

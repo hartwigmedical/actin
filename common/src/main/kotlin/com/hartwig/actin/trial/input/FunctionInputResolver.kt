@@ -42,6 +42,7 @@ import com.hartwig.actin.trial.input.single.OneMedicationCategory
 import com.hartwig.actin.trial.input.single.OneSpecificDrugOneTreatmentCategoryManyTypes
 import com.hartwig.actin.trial.input.single.OneSpecificTreatmentOneInteger
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyDrugs
+import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyIntents
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypes
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypesManyDrugs
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypesOneInteger
@@ -124,6 +125,11 @@ class FunctionInputResolver(
 
                 FunctionInput.ONE_TREATMENT_CATEGORY_MANY_TYPES_ONE_INTEGER -> {
                     createOneTreatmentCategoryManyTypesOneIntegerInput(function)
+                    return true
+                }
+
+                FunctionInput.ONE_TREATMENT_CATEGORY_MANY_INTENTS -> {
+                    createOneTreatmentCategoryManyIntentsInput(function)
                     return true
                 }
 
@@ -383,6 +389,14 @@ class FunctionInputResolver(
             category = TreatmentCategoryResolver.fromString(parameterAsString(function, 0)),
             types = toTreatmentTypeSet(function.parameters[1]),
             integer = parameterAsInt(function, 2)
+        )
+    }
+
+    fun createOneTreatmentCategoryManyIntentsInput(function: EligibilityFunction): OneTreatmentCategoryManyIntents {
+        assertParamConfig(function, FunctionInput.ONE_TREATMENT_CATEGORY_MANY_INTENTS, 2)
+        return OneTreatmentCategoryManyIntents(
+            category = TreatmentCategoryResolver.fromString(parameterAsString(function, 0)),
+            intents = toIntents(function.parameters[1])
         )
     }
 

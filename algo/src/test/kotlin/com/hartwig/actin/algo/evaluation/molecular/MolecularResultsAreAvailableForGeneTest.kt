@@ -1,19 +1,13 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
-import com.hartwig.actin.molecular.datamodel.AVL_PANEL
 import com.hartwig.actin.molecular.datamodel.ExperimentType
-import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
-import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freeTextPriorMolecularFusionRecord
 import com.hartwig.actin.molecular.datamodel.TestPanelRecordFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import org.junit.Test
 
 class MolecularResultsAreAvailableForGeneTest {
@@ -109,7 +103,7 @@ class MolecularResultsAreAvailableForGeneTest {
                 MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
                     ExperimentType.HARTWIG_WHOLE_GENOME,
                     false,
-                    OtherPriorMolecularTest(MolecularTestFactory.priorMolecularTest(item = "gene 1", impliesIndeterminate = true))
+                    MolecularTestFactory.priorIHCTest(item = "gene 1", impliesIndeterminate = true)
                 )
             )
         )
@@ -120,10 +114,18 @@ class MolecularResultsAreAvailableForGeneTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
+                MolecularTestFactory.withExperimentTypeAndContainingTumorCells(
                     ExperimentType.HARTWIG_WHOLE_GENOME,
-                    false,
-                    IHCMolecularTest(MolecularTestFactory.priorMolecularTest(test = "IHC", item = "gene 1", impliesIndeterminate = false))
+                    false
+
+                ).copy(
+                    priorIHCTests = listOf(
+                        MolecularTestFactory.priorIHCTest(
+                            test = "IHC",
+                            item = "gene 1",
+                            impliesIndeterminate = false
+                        )
+                    )
                 )
             )
         )
@@ -134,14 +136,13 @@ class MolecularResultsAreAvailableForGeneTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
+                TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
+                    priorIHCTests =
                     listOf(
-                        IHCMolecularTest(
-                            MolecularTestFactory.priorMolecularTest(
-                                test = "IHC",
-                                item = "gene 1",
-                                impliesIndeterminate = false
-                            )
+                        MolecularTestFactory.priorIHCTest(
+                            test = "IHC",
+                            item = "gene 1",
+                            impliesIndeterminate = false
                         )
                     )
                 )
@@ -157,68 +158,39 @@ class MolecularResultsAreAvailableForGeneTest {
                 MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
                     ExperimentType.HARTWIG_WHOLE_GENOME,
                     false,
-                    OtherPriorMolecularTest(MolecularTestFactory.priorMolecularTest(item = "gene 2", impliesIndeterminate = false))
+                    MolecularTestFactory.priorIHCTest(item = "gene 2", impliesIndeterminate = false)
                 )
             )
         )
     }
 
     @Test
-    fun `Should pass for gene that is always tested in Archer panel`() {
+    fun `Should pass for gene that is marked as tested in panel molecular test`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             MolecularResultsAreAvailableForGene("ALK")
                 .evaluate(
                     MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
-                        listOf(TestPanelRecordFactory.empty().copy(panelExtraction = ArcherPanelExtraction()))
+                        listOf(TestPanelRecordFactory.empty().copy(testedGenes = setOf("ALK")))
                     )
                 )
         )
     }
 
-    @Test
-    fun `Should pass if gene is explicitly tested in Archer panel`() {
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(
-                MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
-                    listOf(archerPanelWithVariantForGene("gene 1"))
-                )
-            )
-        )
-    }
-
-    private fun archerPanelWithVariantForGene(gene: String) =
-        TestPanelRecordFactory.empty()
-            .copy(panelExtraction = ArcherPanelExtraction(variants = listOf(PanelVariantExtraction(gene, "c.1A>T"))))
 
     @Test
-    fun `Should fail for Archer if gene is not tested in panel`() {
+    fun `Should fail for gene that is not marked as tested in panel molecular test`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(
-                MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
-                    listOf(archerPanelWithVariantForGene("gene 2"))
-                )
-            )
-        )
-    }
-
-    @Test
-    fun `Should pass for gene that is always tested in generic panel`() {
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS,
-            MolecularResultsAreAvailableForGene("EGFR")
+            MolecularResultsAreAvailableForGene("ALK")
                 .evaluate(
                     MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
-                        listOf(
-                            TestPanelRecordFactory.empty()
-                                .copy(panelExtraction = GenericPanelExtraction(panelType = AVL_PANEL))
-                        )
+                        listOf(TestPanelRecordFactory.empty().copy(testedGenes = setOf("EGFR")))
                     )
                 )
         )
     }
+
 
     @Test
     fun `Should fail for generic panel if gene is not tested in panel`() {
@@ -227,34 +199,6 @@ class MolecularResultsAreAvailableForGeneTest {
             function.evaluate(
                 MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                     listOf(TestPanelRecordFactory.empty())
-                )
-            )
-        )
-    }
-
-    @Test
-    fun `Should pass for gene in fusion curated from free text`() {
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(
-                MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
-                    listOf(
-                        freeTextPriorMolecularFusionRecord("gene 1", "gene 2")
-                    )
-                )
-            )
-        )
-    }
-
-    @Test
-    fun `Should fail for gene not in fusion curated from free text`() {
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(
-                MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
-                    listOf(
-                        freeTextPriorMolecularFusionRecord("gene 2", "gene 3")
-                    )
                 )
             )
         )

@@ -103,6 +103,13 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
                 )
             }
 
+            FunctionInput.ONE_TREATMENT_CATEGORY_MANY_INTENTS -> {
+                listOf(
+                    TreatmentCategory.CHEMOTHERAPY.display(),
+                    "${Intent.ADJUVANT};${Intent.PALLIATIVE}"
+                )
+            }
+
             FunctionInput.MANY_DRUGS -> {
                 listOf("CAPECITABINE;OXALIPLATIN")
             }

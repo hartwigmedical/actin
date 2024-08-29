@@ -6,33 +6,26 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.GeneRole
-import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 
-class GeneIsWildType internal constructor(private val gene: String) : MolecularEvaluationFunction {
+class GeneIsWildType(private val gene: String) : MolecularEvaluationFunction {
 
     override fun genes() = listOf(gene)
 
-    override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
-        val evaluations = molecularHistory.molecularTests.map { MolecularEvaluation(it, evaluateMolecularTest(it)) }
-        val additionalPanelEvaluations = molecularHistory.allPanels().map { MolecularEvaluation(it, evaluatePanel(it)) }
+    override fun evaluationPrecedence() = ::evaluationPrecedenceFunction
 
-        return MolecularEvaluation.combine(evaluations + additionalPanelEvaluations, ::evaluationPrecedence)
-    }
-
-    private fun evaluationPrecedence(groupedEvaluationsByResult: Map<EvaluationResult, List<MolecularEvaluation>>) =
+    private fun evaluationPrecedenceFunction(groupedEvaluationsByResult: Map<EvaluationResult, List<MolecularEvaluation>>) =
         (groupedEvaluationsByResult[EvaluationResult.FAIL]
             ?: groupedEvaluationsByResult[EvaluationResult.PASS]
             ?: groupedEvaluationsByResult[EvaluationResult.WARN]
             ?: groupedEvaluationsByResult[EvaluationResult.UNDETERMINED])
 
-    private fun evaluateMolecularTest(test: MolecularTest): Evaluation {
-
+    override fun evaluate(test: MolecularTest): Evaluation {
+        
         val reportableEventsWithEffect: MutableSet<String> = mutableSetOf()
         val reportableEventsWithEffectPotentiallyWildtype: MutableSet<String> = mutableSetOf()
         val reportableEventsWithNoEffect: MutableSet<String> = mutableSetOf()
@@ -81,27 +74,6 @@ class GeneIsWildType internal constructor(private val gene: String) : MolecularE
                 )
         }
         return evaluation
-    }
-
-    private fun evaluatePanel(panelRecord: PanelRecord): Evaluation {
-
-        val isGeneTestedInPanel = panelRecord.testsGene(gene)
-        val eventsInGene = panelRecord.events().filter { it.impactsGene(gene) }
-
-        return if (!isGeneTestedInPanel) {
-            EvaluationFactory.undetermined("Gene $gene is not tested in panel", "$gene not tested")
-        } else if (eventsInGene.isEmpty()) {
-            EvaluationFactory.pass(
-                "Gene $gene is considered wild-type",
-                "$gene is wild-type",
-                inclusionEvents = setOf("$gene wild-type")
-            )
-        } else {
-            EvaluationFactory.fail(
-                "Gene $gene is not considered wild-type due to ${Format.concatItems(eventsInGene)}",
-                "$gene not wild-type"
-            )
-        }
     }
 
     private fun evaluatePotentialWarns(

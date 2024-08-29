@@ -5,7 +5,7 @@ import com.hartwig.actin.molecular.datamodel.Fusion
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEvidenceFactory
+import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.sort.driver.FusionComparator
 import com.hartwig.hmftools.datamodel.linx.FusionLikelihoodType
@@ -31,17 +31,17 @@ internal class FusionExtractor(private val geneFilter: GeneFilter) {
                     isReportable = fusion.reported(),
                     event = DriverEventFactory.fusionEvent(fusion),
                     driverLikelihood = determineDriverLikelihood(fusion),
-                    evidence = ActionableEvidenceFactory.createNoEvidence(),
+                    evidence = ClinicalEvidenceFactory.createNoEvidence(),
                     geneStart = fusion.geneStart(),
                     geneEnd = fusion.geneEnd(),
-                    geneTranscriptStart = fusion.geneTranscriptStart(),
-                    geneTranscriptEnd = fusion.geneTranscriptEnd(),
                     driverType = determineDriverType(fusion),
                     proteinEffect = ProteinEffect.UNKNOWN,
+                    isAssociatedWithDrugResistance = null,
                     extendedFusionDetails = ExtendedFusionDetails(
+                        geneTranscriptStart = fusion.geneTranscriptStart(),
+                        geneTranscriptEnd = fusion.geneTranscriptEnd(),
                         fusedExonUp = fusion.fusedExonUp(),
-                        fusedExonDown = fusion.fusedExonDown(),
-                        isAssociatedWithDrugResistance = null,
+                        fusedExonDown = fusion.fusedExonDown()
                     )
                 )
             }

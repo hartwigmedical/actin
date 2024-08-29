@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.molecular.datamodel.Driver
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidenceCategories.approved
 
 class EvaluatedCohortsInterpreter(
     private val eligibleOpenTrialsByInclusionEvent: Map<String, List<String>>,
@@ -13,7 +14,7 @@ class EvaluatedCohortsInterpreter(
 
     fun driverIsActionable(driver: Driver): Boolean {
         return (driver.evidence.externalEligibleTrials.isNotEmpty() || inclusionEventsOfOpenTrials.contains(driver.event)
-                || driver.evidence.approvedTreatments.isNotEmpty())
+                || approved(driver.evidence.treatmentEvidence).isNotEmpty())
     }
 
     companion object {

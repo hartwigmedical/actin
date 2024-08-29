@@ -4,7 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 
@@ -47,9 +47,9 @@ class MolecularResultsAreAvailableForGene(private val gene: String) : Evaluation
             )
         }
 
-        val (indeterminatePriorIHCTestsForGene, conclusivePriorIHCTestsForGene) = record.molecularHistory.allIHCTests()
+        val (indeterminatePriorIHCTestsForGene, conclusivePriorIHCTestsForGene) = record.priorIHCTests
             .filter { it.item == gene }
-            .partition(PriorMolecularTest::impliesPotentialIndeterminateStatus)
+            .partition(PriorIHCTest::impliesPotentialIndeterminateStatus)
 
         return when {
             conclusivePriorIHCTestsForGene.isNotEmpty() -> {

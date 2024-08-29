@@ -5,8 +5,11 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.molecular.IHCTestClassificationFunctions.TestResult
+import com.hartwig.actin.algo.evaluation.molecular.IHCTestClassificationFunctions.classifyHer2Test
+import com.hartwig.actin.algo.evaluation.molecular.IHCTestClassificationFunctions.classifyPrOrErTest
 import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleEvaluator.geneIsAmplifiedForPatient
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.clinical.datamodel.ReceptorType
 import com.hartwig.actin.doid.DoidModel
 
@@ -17,7 +20,7 @@ class HasBreastCancerWithPositiveReceptorOfType(private val doidModel: DoidModel
         val tumorDoids = record.tumor.doids
         val expandedDoidSet = DoidEvaluationFunctions.createFullExpandedDoidTree(doidModel, tumorDoids)
         val isBreastCancer = DoidConstants.BREAST_CANCER_DOID in expandedDoidSet
-        val targetPriorMolecularTests = record.molecularHistory.allIHCTests().filter { it.item == receptorType.display() }
+        val targetPriorMolecularTests = record.priorIHCTests.filter { it.item == receptorType.display() }
         val targetReceptorPositiveInDoids = expandedDoidSet.contains(POSITIVE_DOID_MOLECULAR_COMBINATION[receptorType])
         val targetReceptorNegativeInDoids = expandedDoidSet.contains(NEGATIVE_DOID_MOLECULAR_COMBINATION[receptorType])
                 || expandedDoidSet.contains(DoidConstants.TRIPLE_NEGATIVE_BREAST_CANCER_DOID)
@@ -105,49 +108,12 @@ class HasBreastCancerWithPositiveReceptorOfType(private val doidModel: DoidModel
         }
     }
 
-    private enum class TestResult {
-        POSITIVE,
-        NEGATIVE,
-        BORDERLINE,
-        UNKNOWN
-    }
-
-    private fun classifyPrOrErTest(test: PriorMolecularTest): TestResult {
-        return classifyTest(test, "%", 1, 10, 100)
-    }
-
-    private fun classifyHer2Test(test: PriorMolecularTest): TestResult {
-        return classifyTest(test, "+", 2, 3, 3)
-    }
-
-    private fun classifyTest(
-        test: PriorMolecularTest, unit: String, negativeUpperBound: Int, positiveLowerBound: Int, positiveUpperBound: Int
-    ): TestResult {
-        val scoreValue = test.scoreValue?.toInt()
-        return when {
-            test.scoreText?.lowercase() == "negative" || (scoreValue in 0 until negativeUpperBound && test.scoreValueUnit == unit) -> {
-                TestResult.NEGATIVE
-            }
-
-            test.scoreText?.lowercase() == "positive" ||
-                    (scoreValue in positiveLowerBound..positiveUpperBound && test.scoreValueUnit == unit) -> {
-                TestResult.POSITIVE
-            }
-
-            scoreValue in negativeUpperBound until positiveLowerBound && test.scoreValueUnit == unit -> {
-                TestResult.BORDERLINE
-            }
-
-            else -> TestResult.UNKNOWN
-        }
-    }
-
-    private fun summarizeTests(targetPriorMolecularTests: List<PriorMolecularTest>): Set<TestResult> {
+    private fun summarizeTests(targetPriorIHCTests: List<PriorIHCTest>): Set<TestResult> {
         val classifier = when (receptorType) {
             ReceptorType.ER, ReceptorType.PR -> ::classifyPrOrErTest
             ReceptorType.HER2 -> ::classifyHer2Test
         }
-        return targetPriorMolecularTests.map(classifier).toSet()
+        return targetPriorIHCTests.map(classifier).toSet()
     }
 
     companion object {

@@ -4,8 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.DateComparison
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentSinceDateFunctions.treatmentSinceMinDate
 import java.time.LocalDate
 
 class HasNotReceivedAnyCancerTreatmentSinceDate(
@@ -58,15 +57,5 @@ class HasNotReceivedAnyCancerTreatmentSinceDate(
                 )
             }
         }
-    }
-
-    private fun treatmentSinceMinDate(treatment: TreatmentHistoryEntry, minDate: LocalDate, includeUnknown: Boolean): Boolean {
-        return DateComparison.isAfterDate(
-            minDate,
-            treatment.treatmentHistoryDetails?.stopYear,
-            treatment.treatmentHistoryDetails?.stopMonth
-        )
-            ?: DateComparison.isAfterDate(minDate, treatment.startYear, treatment.startMonth)
-            ?: includeUnknown
     }
 }

@@ -7,7 +7,10 @@ import com.hartwig.actin.personalization.similarity.population.ALL_PATIENTS_POPU
 import com.hartwig.actin.personalized.datamodel.MeasurementType
 import com.hartwig.actin.personalized.datamodel.TreatmentAnalysis
 
-class EvaluatedTreatmentAnnotator(private val evidenceByTreatmentName: Map<String, List<EfficacyEntry>>) {
+class EvaluatedTreatmentAnnotator(
+    private val evidenceByTreatmentName: Map<String, List<EfficacyEntry>>,
+    private val resistanceEvidenceMatcher: ResistanceEvidenceMatcher
+) {
 
     fun annotate(
         evaluatedTreatments: List<EvaluatedTreatment>, treatmentAnalyses: List<TreatmentAnalysis>? = null
@@ -17,13 +20,14 @@ class EvaluatedTreatmentAnnotator(private val evidenceByTreatmentName: Map<Strin
                 treatmentName to measurementsByType[MeasurementType.PROGRESSION_FREE_SURVIVAL]!![ALL_PATIENTS_POPULATION_NAME]
             }
         }?.toMap()
-        
+
         return evaluatedTreatments.map { evaluatedTreatment ->
             AnnotatedTreatmentMatch(
                 treatmentCandidate = evaluatedTreatment.treatmentCandidate,
                 evaluations = evaluatedTreatment.evaluations,
                 annotations = lookUp(evaluatedTreatment),
-                generalPfs = pfsByTreatmentName?.get(evaluatedTreatment.treatmentCandidate.treatment.name.lowercase())
+                generalPfs = pfsByTreatmentName?.get(evaluatedTreatment.treatmentCandidate.treatment.name.lowercase()),
+                resistanceEvidence = resistanceEvidenceMatcher.match(evaluatedTreatment.treatmentCandidate.treatment)
             )
         }
     }
@@ -33,7 +37,10 @@ class EvaluatedTreatmentAnnotator(private val evidenceByTreatmentName: Map<Strin
     }
 
     companion object {
-        fun create(efficacyEvidence: List<EfficacyEntry>): EvaluatedTreatmentAnnotator {
+        fun create(
+            efficacyEvidence: List<EfficacyEntry>,
+            resistanceEvidenceMatcher: ResistanceEvidenceMatcher
+        ): EvaluatedTreatmentAnnotator {
             val evidenceByTreatmentName = efficacyEvidence
                 .flatMap { entry ->
                     entry.trialReferences
@@ -42,7 +49,7 @@ class EvaluatedTreatmentAnnotator(private val evidenceByTreatmentName: Map<Strin
                 }
                 .groupBy({ it.first }, { it.second })
 
-            return EvaluatedTreatmentAnnotator(evidenceByTreatmentName)
+            return EvaluatedTreatmentAnnotator(evidenceByTreatmentName, resistanceEvidenceMatcher)
         }
     }
 }

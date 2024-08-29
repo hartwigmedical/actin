@@ -1,11 +1,12 @@
 package com.hartwig.actin.algo.evaluation.util
 
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
+import com.hartwig.actin.clinical.interpretation.LabMeasurement
+import java.time.LocalDate
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertTrue
 import org.junit.Test
-import java.time.LocalDate
 
 class FormatTest {
     @Test
@@ -51,6 +52,16 @@ class FormatTest {
     @Test
     fun canFormatPercentages() {
         assertEquals("50%", Format.percentage(0.500002))
+    }
+
+    @Test
+    fun canFormatLabReferences() {
+        assertEquals("2.0*ULN (2.0*4.0)", Format.labReference(2.0, "ULN", 4.0))
+    }
+
+    @Test
+    fun canFormatLabValues() {
+        assertEquals("Indirect bilirubin 4.0", Format.labValue(LabMeasurement.INDIRECT_BILIRUBIN, 4.0))
     }
 
     @Test(expected = IllegalArgumentException::class)

@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
 
-class HasComplicationOfCategory internal constructor(private val categoryToFind: String) : EvaluationFunction {
+class HasComplicationOfCategory(private val categoryToFind: String) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         if (record.complications == null) {
             return undetermined()

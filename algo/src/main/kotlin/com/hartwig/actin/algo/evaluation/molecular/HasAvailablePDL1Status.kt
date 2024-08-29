@@ -6,10 +6,12 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
 class HasAvailablePDL1Status : EvaluationFunction {
-    
+
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined(
-            "Availability of PD-L1 status currently cannot be determined", "PD-L1 status not yet determined"
-        )
+        return if (PriorIHCTestFunctions.allPDL1Tests(record.priorIHCTests).isNotEmpty()) {
+            EvaluationFactory.recoverablePass("PD-L1 status available")
+        } else {
+            EvaluationFactory.recoverableFail("PD-L1 status not available")
+        }
     }
 }

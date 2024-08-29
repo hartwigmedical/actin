@@ -5,9 +5,7 @@ import com.hartwig.actin.Displayable
 enum class ExperimentType(private val display: String) : Displayable {
     HARTWIG_WHOLE_GENOME("Hartwig WGS"),
     HARTWIG_TARGETED("Hartwig Panel"),
-    IHC("IHC"),
-    PANEL("NGS Panel"),
-    OTHER("Other");
+    PANEL("NGS Panel");
 
     override fun display(): String {
         return display

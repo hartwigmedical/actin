@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
@@ -12,9 +13,9 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
             EligibilityRule.DRIVER_EVENT_IN_ANY_GENES_X_WITH_APPROVED_THERAPY_AVAILABLE to
-                    { AnyGeneHasDriverEventWithApprovedTherapy() },
+                    hasMolecularEventInSomeGenesWithApprovedTherapyAvailableCreator(),
             EligibilityRule.HAS_MOLECULAR_EVENT_WITH_SOC_TARGETED_THERAPY_AVAILABLE_IN_NSCLC to
-                    { HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(emptySet()) },
+                    { HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(null, emptySet()) },
             EligibilityRule.HAS_MOLECULAR_EVENT_WITH_SOC_TARGETED_THERAPY_AVAILABLE_IN_NSCLC_EXCLUDING_ANY_GENE_X to
                     hasMolecularEventExcludingSomeGeneWithSocTargetedTherapyForNSCLCAvailableCreator(),
             EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X to geneIsActivatedOrAmplifiedCreator(),
@@ -35,14 +36,15 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.EXON_SKIPPING_GENE_X_EXON_Y to geneHasSpecificExonSkippingCreator(),
             EligibilityRule.MSI_SIGNATURE to { IsMicrosatelliteUnstable() },
             EligibilityRule.HRD_SIGNATURE to { IsHomologousRepairDeficient() },
-            EligibilityRule.HRD_SIGNATURE_WITHOUT_MUTATION_OR_WITH_VUS_MUTATION_IN_BRCA to
-                    { IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCA() },
+            EligibilityRule.HRD_SIGNATURE_WITHOUT_MUTATION_OR_WITH_VUS_MUTATION_IN_GENES_X to isHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesXCreator(),
+            EligibilityRule.HRD_SIGNATURE_WITHOUT_MUTATION_IN_GENES_X to isHomologousRepairDeficientWithoutMutationInGenesXCreator(),
             EligibilityRule.TMB_OF_AT_LEAST_X to hasSufficientTumorMutationalBurdenCreator(),
             EligibilityRule.TML_OF_AT_LEAST_X to hasSufficientTumorMutationalLoadCreator(),
             EligibilityRule.TML_BETWEEN_X_AND_Y to hasCertainTumorMutationalLoadCreator(),
             EligibilityRule.HAS_HLA_TYPE_X to hasSpecificHLATypeCreator(),
             EligibilityRule.HAS_UGT1A1_HAPLOTYPE_X to hasUGT1A1HaplotypeCreator(),
             EligibilityRule.HAS_HOMOZYGOUS_DPYD_DEFICIENCY to { HasHomozygousDPYDDeficiency() },
+            EligibilityRule.HAS_HETEROZYGOUS_DPYD_DEFICIENCY to { HasHeterozygousDPYDDeficiency() },
             EligibilityRule.HAS_KNOWN_HPV_STATUS to { HasKnownHPVStatus() },
             EligibilityRule.OVEREXPRESSION_OF_GENE_X to { GeneIsOverexpressed() },
             EligibilityRule.NON_EXPRESSION_OF_GENE_X to { GeneIsNotExpressed() },
@@ -52,6 +54,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_LEAST_Y to proteinHasSufficientExpressionByIHCCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_MOST_Y to proteinHasLimitedExpressionByIHCCreator(),
             EligibilityRule.PROTEIN_X_IS_WILD_TYPE_BY_IHC to proteinIsWildTypeByIHCCreator(),
+            EligibilityRule.HER2_STATUS_IS_POSITIVE to hasPositiveHER2ExpressionByIHCCreator(),
             EligibilityRule.PD_L1_SCORE_OF_AT_LEAST_X to hasSufficientPDL1ByMeasureByIHCCreator(),
             EligibilityRule.PD_L1_SCORE_OF_AT_MOST_X to hasLimitedPDL1ByMeasureByIHCCreator(),
             EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X to hasSufficientPDL1ByMeasureByIHCCreator("CPS"),
@@ -74,10 +77,17 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         )
     }
 
+    private fun hasMolecularEventInSomeGenesWithApprovedTherapyAvailableCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val input = functionInputResolver().createManyGenesInput(function)
+            AnyGeneHasDriverEventWithApprovedTherapy(input.geneNames, doidModel(), EvaluationFunctionFactory.create(resources))
+        }
+    }
+
     private fun hasMolecularEventExcludingSomeGeneWithSocTargetedTherapyForNSCLCAvailableCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genes = functionInputResolver().createManyGenesInput(function)
-            HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(genes.geneNames.toSet())
+            HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(null, genes.geneNames.toSet())
         }
     }
 
@@ -242,8 +252,15 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
+    private fun hasPositiveHER2ExpressionByIHCCreator(): FunctionCreator {
+        return { HasPositiveHER2ExpressionByIHC() }
+    }
+
     private fun proteinHasLimitedExpressionByIHCCreator(): FunctionCreator {
-        return { ProteinHasLimitedExpressionByIHCCreator() }
+        return { function: EligibilityFunction ->
+            val (expressionLevel, protein) = functionInputResolver().createOneStringOneIntegerInput(function)
+            ProteinHasLimitedExpressionByIHC(protein, expressionLevel)
+        }
     }
 
     private fun hasSufficientPDL1ByMeasureByIHCCreator(measure: String? = null): FunctionCreator {
@@ -294,6 +311,20 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             val (chromosome1, chromosome2) = functionInputResolver().createTwoStringsInput(function)
             HasCodeletionOfChromosomeArms(chromosome1, chromosome2)
+        }
+    }
+
+    private fun isHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesXCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val genesToFind = functionInputResolver().createManyGenesInput(function)
+            IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesX(genesToFind.geneNames.toSet())
+        }
+    }
+
+    private fun isHomologousRepairDeficientWithoutMutationInGenesXCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val genesToFind = functionInputResolver().createManyGenesInput(function)
+            IsHomologousRepairDeficientWithoutMutationInGenesX(genesToFind.geneNames.toSet())
         }
     }
 

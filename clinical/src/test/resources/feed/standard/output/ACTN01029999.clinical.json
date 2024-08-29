@@ -22,11 +22,11 @@
     "stage": "IV",
     "hasMeasurableDisease": true,
     "hasBrainLesions": true,
-    "brainLesionsCount": 1,
-    "hasActiveBrainLesions": null,
+    "brainLesionsCount": 2,
+    "hasActiveBrainLesions": true,
     "hasCnsLesions": false,
     "cnsLesionsCount": 0,
-    "hasActiveCnsLesions": null,
+    "hasActiveCnsLesions": false,
     "hasBoneLesions": false,
     "boneLesionsCount": 0,
     "hasLiverLesions": false,
@@ -110,7 +110,7 @@
       "isContraindicationForTherapy": true
     }
   ],
-  "priorMolecularTests": [
+  "priorIHCTests": [
     {
       "test": "IHC",
       "item": "ERBB2",
@@ -121,36 +121,36 @@
       "scoreValue": 3.0,
       "scoreValueUnit": "+",
       "impliesPotentialIndeterminateStatus": false
-    },
+    }
+  ],
+  "priorSequencingTests": [
     {
       "test": "Archer FP Lung Target",
-      "item": "EGFR",
-      "measure": "c.2573T>G",
-      "measureDate": {
+      "testedGenes": [
+        "ALK",
+        "ROS1",
+        "RET",
+        "MET",
+        "NTRK1",
+        "NTRK2",
+        "NTRK3",
+        "NRG1"
+      ],
+      "date": {
         "year": 2024,
-        "month": 3,
-        "day": 25
+        "month": 7,
+        "day": 15
       },
-      "scoreText": null,
-      "scoreValuePrefix": null,
-      "scoreValue": null,
-      "scoreValueUnit": null,
-      "impliesPotentialIndeterminateStatus": false
-    },
-    {
-      "test": "Archer FP Lung Target",
-      "item": null,
-      "measure": "GEEN fusie(s) aangetoond",
-      "measureDate": {
-        "year": 2020,
-        "month": 12,
-        "day": 3
-      },
-      "scoreText": null,
-      "scoreValuePrefix": null,
-      "scoreValue": null,
-      "scoreValueUnit": null,
-      "impliesPotentialIndeterminateStatus": false
+      "variants": [
+        {
+          "gene": "KRAS",
+          "hgvsCodingImpact": "c.34G>T"
+        }
+      ],
+      "fusions": [],
+      "amplifications": [],
+      "skippedExons": [],
+      "deletedGenes": []
     }
   ],
   "complications": [

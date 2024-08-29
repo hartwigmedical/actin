@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.datamodel
 
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariantDetails
 import com.hartwig.actin.molecular.sort.driver.VariantComparator
 
@@ -10,13 +10,14 @@ data class Variant(
     val ref: String,
     val alt: String,
     val type: VariantType,
+    val variantAlleleFrequency: Double? = null,
     val canonicalImpact: TranscriptImpact,
     val extendedVariantDetails: ExtendedVariantDetails? = null,
     val isHotspot: Boolean,
     override val isReportable: Boolean,
     override val event: String,
     override val driverLikelihood: DriverLikelihood?,
-    override val evidence: ActionableEvidence,
+    override val evidence: ClinicalEvidence,
     override val gene: String,
     override val geneRole: GeneRole,
     override val proteinEffect: ProteinEffect,

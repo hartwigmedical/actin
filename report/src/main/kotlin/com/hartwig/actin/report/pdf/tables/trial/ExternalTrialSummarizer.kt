@@ -33,7 +33,7 @@ class ExternalTrialSummarizer(private val homeCountry: Country) {
             .groupBy { (_, trial) -> trial.nctId }
             .map { (_, eventAndTrialPairs) ->
                 val (events, trials) = eventAndTrialPairs.unzip()
-                events.joinToString(",\n") to trials.first()
+                events.toSet().joinToString(",\n") to trials.first()
             }
             .groupBy({ it.first }, { it.second })
     }

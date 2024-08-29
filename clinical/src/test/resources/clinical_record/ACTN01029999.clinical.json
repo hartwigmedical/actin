@@ -41,7 +41,8 @@
     "hasLymphNodeLesions": true,
     "lymphNodeLesionsCount": null,
     "otherLesions": null,
-    "biopsyLocation": "Lymph node"
+    "biopsyLocation": "Lymph node",
+    "rawPathologyReport": null
   },
   "clinicalStatus": {
     "who": 0,
@@ -161,7 +162,7 @@
       "isContraindicationForTherapy": false
     }
   ],
-  "priorMolecularTests": [
+  "priorIHCTests": [
     {
       "test": "IHC",
       "item": "ERBB2",
@@ -174,7 +175,7 @@
       "impliesPotentialIndeterminateStatus": false
     },
     {
-      "test": "",
+      "test": "IHC",
       "item": "PD-L1",
       "measure": null,
       "measureDate": null,
@@ -185,6 +186,7 @@
       "impliesPotentialIndeterminateStatus": false
     }
   ],
+  "priorSequencingTests": [],
   "complications": null,
   "labValues": [
     {

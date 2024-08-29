@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.datamodel
 
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.sort.driver.FusionComparator
@@ -8,15 +8,14 @@ import com.hartwig.actin.molecular.sort.driver.FusionComparator
 data class Fusion(
     val geneStart: String,
     val geneEnd: String,
-    val geneTranscriptStart: String,
-    val geneTranscriptEnd: String,
     val driverType: FusionDriverType,
     val proteinEffect: ProteinEffect,
+    val isAssociatedWithDrugResistance: Boolean?,
     val extendedFusionDetails: ExtendedFusionDetails? = null,
     override val isReportable: Boolean,
     override val event: String,
     override val driverLikelihood: DriverLikelihood?,
-    override val evidence: ActionableEvidence,
+    override val evidence: ClinicalEvidence,
 ) : Driver, Comparable<Fusion> {
     override fun compareTo(other: Fusion): Int {
         return FusionComparator().compare(this, other)

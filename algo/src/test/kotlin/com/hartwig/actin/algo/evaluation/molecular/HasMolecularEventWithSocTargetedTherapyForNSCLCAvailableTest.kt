@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
@@ -55,27 +56,28 @@ private val BASE_EXON_SKIPPING_FUSION = BASE_FUSION.copy(
 
 class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
 
-    private val function = HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(emptySet())
+    private val functionIncludingAllGenes = HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(null, emptySet())
+    private val functionIncludingSpecificGene = HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(setOf(CORRECT_GENE), emptySet())
 
     @Test
     fun `Should fail when molecular record is empty`() {
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        evaluateFunctions(EvaluationResult.FAIL, TestPatientFactory.createMinimalTestWGSPatientRecord())
     }
 
     @Test
     fun `Should pass for activating mutation in correct gene`() {
-        val evaluation = function.evaluate(
-            MolecularTestFactory.withVariant(BASE_VARIANT)
-        )
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, evaluation)
-        Assertions.assertThat(evaluation.passGeneralMessages).containsExactly("$CORRECT_GENE activating mutation(s)")
+        val record = MolecularTestFactory.withVariant(BASE_VARIANT)
+        val expectedMessages = setOf("$CORRECT_GENE activating mutation(s)")
+        evaluateFunctions(EvaluationResult.PASS, record)
+        evaluateMessages(functionIncludingAllGenes.evaluate(record).passGeneralMessages, expectedMessages)
+        evaluateMessages(functionIncludingSpecificGene.evaluate(record).passGeneralMessages, expectedMessages)
     }
 
     @Test
     fun `Should fail if activating mutation is in correct gene but this gene is in geneToIgnore`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(setOf(CORRECT_GENE)).evaluate(
+            HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(null, setOf(CORRECT_GENE)).evaluate(
                 MolecularTestFactory.withVariant(BASE_VARIANT)
             )
         )
@@ -83,41 +85,25 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
 
     @Test
     fun `Should warn for mutation in correct gene when uncertain if activating`() {
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.WARN,
-            function.evaluate(
-                MolecularTestFactory.withVariant(
-                    BASE_VARIANT.copy(proteinEffect = ProteinEffect.UNKNOWN)
-                )
+        evaluateFunctions(
+            EvaluationResult.WARN, MolecularTestFactory.withVariant(
+                BASE_VARIANT.copy(proteinEffect = ProteinEffect.UNKNOWN)
             )
         )
     }
 
     @Test
     fun `Should fail for activating mutation in wrong gene`() {
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(
-                MolecularTestFactory.withVariant(
-                    BASE_VARIANT.copy(gene = "Wrong")
-                )
-            )
-        )
+        val record = MolecularTestFactory.withVariant(BASE_VARIANT.copy(gene = "Wrong"))
+        evaluateFunctions(EvaluationResult.FAIL, record)
     }
 
     @Test
     fun `Should pass for correct variant with correct protein impact`() {
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(
-                MolecularTestFactory.withVariant(
-                    BASE_VARIANT.copy(
-                        proteinEffect = ProteinEffect.UNKNOWN,
-                        canonicalImpact = proteinImpact(CORRECT_PROTEIN_IMPACT)
-                    )
-                )
-            )
+        val record = MolecularTestFactory.withVariant(
+            BASE_VARIANT.copy(proteinEffect = ProteinEffect.UNKNOWN, canonicalImpact = proteinImpact(CORRECT_PROTEIN_IMPACT))
         )
+        evaluateFunctions(EvaluationResult.PASS, record)
     }
 
     @Test
@@ -134,43 +120,34 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
                 canonicalImpact = proteinImpact(OTHER_CORRECT_PROTEIN_IMPACT)
             )
         )
-        val record = TestMolecularFactory.createMinimalTestMolecularRecord().copy(
-            drivers = Drivers(variants = variants, emptySet(), emptySet(), emptySet(), emptySet(), emptySet())
-        )
-        val evaluation = function.evaluate(
-            TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-                molecularHistory = MolecularHistory(listOf(record))
-            )
-        )
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, evaluation)
-        Assertions.assertThat(evaluation.passGeneralMessages).isEqualTo(
-            setOf(
-                "$CORRECT_PROTEIN_IMPACT detected in $CORRECT_VARIANT_GENE",
-                "$OTHER_CORRECT_PROTEIN_IMPACT detected in $OTHER_CORRECT_VARIANT_GENE"
-            )
-        )
-    }
-
-    @Test
-    fun `Should fail for unreported variant`() {
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(
-                MolecularTestFactory.withVariant(
-                    BASE_VARIANT.copy(
-                        isReportable = false
+        val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
+            molecularHistory = MolecularHistory(
+                listOf(
+                    TestMolecularFactory.createMinimalTestMolecularRecord().copy(
+                        drivers = Drivers(variants = variants, emptySet(), emptySet(), emptySet(), emptySet(), emptySet())
                     )
                 )
             )
         )
+        val expectedMessages = setOf(
+            "$CORRECT_PROTEIN_IMPACT detected in $CORRECT_VARIANT_GENE",
+            "$OTHER_CORRECT_PROTEIN_IMPACT detected in $OTHER_CORRECT_VARIANT_GENE"
+        )
+        evaluateFunctions(EvaluationResult.PASS, record)
+        evaluateMessages(functionIncludingAllGenes.evaluate(record).passGeneralMessages, expectedMessages)
+        evaluateMessages(functionIncludingSpecificGene.evaluate(record).passGeneralMessages, expectedMessages)
+    }
+
+    @Test
+    fun `Should fail for unreported variant`() {
+        val record = MolecularTestFactory.withVariant(BASE_VARIANT.copy(isReportable = false))
+        evaluateFunctions(EvaluationResult.FAIL, record)
     }
 
     @Test
     fun `Should pass for correct exon skipping variant`() {
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(MolecularTestFactory.withFusion(BASE_EXON_SKIPPING_FUSION))
-        )
+        val record = MolecularTestFactory.withFusion(BASE_EXON_SKIPPING_FUSION)
+        evaluateFunctions(EvaluationResult.PASS, record)
     }
 
     @Test
@@ -179,24 +156,20 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
             BASE_EXON_SKIPPING_FUSION.copy(
                 extendedFusionDetails = TestFusionFactory.createMinimalExtended().copy(fusedExonUp = 1, fusedExonDown = 3)
             )
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withFusion(incorrectExonSkippingFusion))
-        )
+        evaluateFunctions(EvaluationResult.FAIL, MolecularTestFactory.withFusion(incorrectExonSkippingFusion))
     }
 
     @Test
     fun `Should pass for correct fusion`() {
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(MolecularTestFactory.withFusion(BASE_FUSION.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION)))
+        evaluateFunctions(
+            EvaluationResult.PASS, MolecularTestFactory.withFusion(BASE_FUSION.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION))
         )
     }
 
     @Test
     fun `Should warn for correct fusion gene but low driver likelihood`() {
         val fusions = BASE_FUSION.copy(driverLikelihood = DriverLikelihood.LOW)
-        EvaluationAssert.assertEvaluation(EvaluationResult.WARN, function.evaluate(MolecularTestFactory.withFusion(fusions)))
+        evaluateFunctions(EvaluationResult.WARN, MolecularTestFactory.withFusion(fusions))
     }
 
     @Test
@@ -206,73 +179,57 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
             geneEnd = "Fusion partner",
             driverLikelihood = DriverLikelihood.HIGH
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withFusion(fusions)))
+        evaluateFunctions(EvaluationResult.FAIL, MolecularTestFactory.withFusion(fusions))
     }
 
     @Test
     fun `Should pass with deletion of correct gene and correct exon`() {
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(
-                MolecularTestFactory.withVariant(
-                    TestVariantFactory.createMinimal().copy(
-                        gene = CORRECT_DELETION_GENE, isReportable = true,
-                        type = VariantType.DELETE,
-                        canonicalImpact = impactWithExon(CORRECT_DELETION_CODON),
-                        extendedVariantDetails = TestVariantFactory.createMinimalExtended()
-                    )
-                )
+        val record = MolecularTestFactory.withVariant(
+            TestVariantFactory.createMinimal().copy(
+                gene = CORRECT_DELETION_GENE, isReportable = true,
+                type = VariantType.DELETE,
+                canonicalImpact = impactWithExon(CORRECT_DELETION_CODON),
+                extendedVariantDetails = TestVariantFactory.createMinimalExtended()
             )
         )
+        evaluateFunctions(EvaluationResult.PASS, record)
     }
 
     @Test
     fun `Should fail with deletion of incorrect gene`() {
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(
-                MolecularTestFactory.withVariant(
-                    TestVariantFactory.createMinimal().copy(
-                        gene = "incorrect", isReportable = true,
-                        type = VariantType.DELETE,
-                        canonicalImpact = impactWithExon(CORRECT_DELETION_CODON)
-                    )
-                )
+        val record = MolecularTestFactory.withVariant(
+            TestVariantFactory.createMinimal().copy(
+                gene = "incorrect", isReportable = true,
+                type = VariantType.DELETE,
+                canonicalImpact = impactWithExon(CORRECT_DELETION_CODON)
             )
         )
+        evaluateFunctions(EvaluationResult.FAIL, record)
     }
 
     @Test
     fun `Should pass with insertion of correct gene and correct exon`() {
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(
-                MolecularTestFactory.withVariant(
-                    TestVariantFactory.createMinimal().copy(
-                        gene = CORRECT_INSERTION_GENE, isReportable = true,
-                        type = VariantType.INSERT,
-                        canonicalImpact = impactWithExon(CORRECT_INSERTION_CODON),
-                        extendedVariantDetails = TestVariantFactory.createMinimalExtended()
-                    )
-                )
+        val record = MolecularTestFactory.withVariant(
+            TestVariantFactory.createMinimal().copy(
+                gene = CORRECT_INSERTION_GENE, isReportable = true,
+                type = VariantType.INSERT,
+                canonicalImpact = impactWithExon(CORRECT_INSERTION_CODON),
+                extendedVariantDetails = TestVariantFactory.createMinimalExtended()
             )
         )
+        evaluateFunctions(EvaluationResult.PASS, record)
     }
 
     @Test
     fun `Should fail with insertion of incorrect gene`() {
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(
-                MolecularTestFactory.withVariant(
-                    TestVariantFactory.createMinimal().copy(
-                        gene = "incorrect", isReportable = true,
-                        type = VariantType.INSERT,
-                        canonicalImpact = impactWithExon(CORRECT_INSERTION_CODON)
-                    )
-                )
+        val record = MolecularTestFactory.withVariant(
+            TestVariantFactory.createMinimal().copy(
+                gene = "incorrect", isReportable = true,
+                type = VariantType.INSERT,
+                canonicalImpact = impactWithExon(CORRECT_INSERTION_CODON)
             )
         )
+        evaluateFunctions(EvaluationResult.FAIL, record)
     }
 
     private fun proteinImpact(hgvsProteinImpact: String): TranscriptImpact {
@@ -281,7 +238,12 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
 
     private fun impactWithExon(affectedExon: Int) = TestTranscriptImpactFactory.createMinimal().copy(affectedExon = affectedExon)
 
-    companion object {
+    private fun evaluateFunctions(expected: EvaluationResult, record: PatientRecord) {
+        EvaluationAssert.assertEvaluation(expected, functionIncludingAllGenes.evaluate(record))
+        EvaluationAssert.assertEvaluation(expected, functionIncludingSpecificGene.evaluate(record))
+    }
 
+    private fun evaluateMessages(expected: Set<String>, fromEvaluation: Set<String>) {
+        Assertions.assertThat(fromEvaluation).isEqualTo(expected)
     }
 }

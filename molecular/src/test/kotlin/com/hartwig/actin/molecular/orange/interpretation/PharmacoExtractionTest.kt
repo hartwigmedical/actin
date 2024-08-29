@@ -1,6 +1,8 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
 import com.hartwig.actin.molecular.datamodel.orange.pharmaco.Haplotype
+import com.hartwig.actin.molecular.datamodel.orange.pharmaco.HaplotypeFunction
+import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoGene
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory
 import com.hartwig.actin.molecular.orange.datamodel.peach.TestPeachFactory
 import com.hartwig.hmftools.datamodel.orange.ImmutableOrangeRecord
@@ -14,18 +16,18 @@ class PharmacoExtractionTest {
     @Test
     fun `Should extract pharmaco`() {
         val peachEntry1 = TestPeachFactory.builder()
-            .gene("gene 1")
+            .gene("DPYD")
             .haplotype("deprecated")
             .allele("*1")
             .alleleCount(1)
-            .function("function 1")
+            .function("normal function")
             .build()
         val peachEntry2 = TestPeachFactory.builder()
-            .gene("gene 1")
+            .gene("DPYD")
             .haplotype("deprecated")
             .allele("*2")
             .alleleCount(2)
-            .function("function 2")
+            .function("reduced function")
             .build()
         val orange = withPeachEntries(peachEntry1, peachEntry2)
 
@@ -33,14 +35,32 @@ class PharmacoExtractionTest {
         assertThat(entries).hasSize(1)
 
         val entry = entries.iterator().next()
-        assertThat(entry.gene).isEqualTo("gene 1")
+        assertThat(entry.gene).isEqualTo(PharmacoGene.DPYD)
         assertThat(entry.haplotypes).hasSize(2)
 
         val haplotype1 = findByHaplotype(entry.haplotypes, "*1_HET")
-        assertThat(haplotype1.function).isEqualTo("function 1")
+        assertThat(haplotype1.function).isEqualTo(HaplotypeFunction.NORMAL_FUNCTION)
 
         val haplotype2 = findByHaplotype(entry.haplotypes, "*2_HOM")
-        assertThat(haplotype2.function).isEqualTo("function 2")
+        assertThat(haplotype2.function).isEqualTo(HaplotypeFunction.REDUCED_FUNCTION)
+    }
+
+    @Test(expected = IllegalStateException::class)
+    fun `Should throw exception when unexpected pharmaco gene`() {
+        val peachEntry = TestPeachFactory.builder()
+            .gene("unknown gene")
+            .build()
+        val orange = withPeachEntries(peachEntry)
+        PharmacoExtraction.extract(orange)
+    }
+
+    @Test(expected = IllegalStateException::class)
+    fun `Should throw exception when unexpected haplotype function`() {
+        val peachEntry = TestPeachFactory.builder()
+            .function("unexpected function")
+            .build()
+        val orange = withPeachEntries(peachEntry)
+        PharmacoExtraction.extract(orange)
     }
 
     private fun withPeachEntries(vararg peachEntries: PeachGenotype): OrangeRecord {

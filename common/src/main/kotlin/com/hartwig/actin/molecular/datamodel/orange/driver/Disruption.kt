@@ -5,7 +5,7 @@ import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.GeneAlteration
 import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.sort.driver.DisruptionComparator
 
 data class Disruption(
@@ -18,7 +18,7 @@ data class Disruption(
     override val isReportable: Boolean,
     override val event: String,
     override val driverLikelihood: DriverLikelihood?,
-    override val evidence: ActionableEvidence,
+    override val evidence: ClinicalEvidence,
     override val gene: String,
     override val geneRole: GeneRole,
     override val proteinEffect: ProteinEffect,

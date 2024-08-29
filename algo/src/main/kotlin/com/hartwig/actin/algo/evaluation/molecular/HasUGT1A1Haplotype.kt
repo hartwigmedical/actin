@@ -4,15 +4,13 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoEntry
+import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoGene
 
 class HasUGT1A1Haplotype(private val haplotypeToFind: String) : MolecularEvaluationFunction {
 
     override fun evaluate(molecular: MolecularRecord): Evaluation {
-        val pharmaco = molecular.pharmaco
-
-        if (pharmaco.none { it.gene == "UGT1A1" }) {
-            return EvaluationFactory.recoverableUndetermined("UGT1A1 haplotype undetermined", "UGT1A1 haplotype undetermined")
-        }
+        val pharmaco = molecular.pharmaco.firstOrNull { it.gene == PharmacoGene.UGT1A1 }
+            ?: return EvaluationFactory.undetermined("UGT1A1 haplotype is undetermined", "UGT1A1 haplotype undetermined")
 
         return if (hasUGT1A1Type(pharmaco, haplotypeToFind)) {
             EvaluationFactory.pass(
@@ -26,15 +24,9 @@ class HasUGT1A1Haplotype(private val haplotypeToFind: String) : MolecularEvaluat
     }
 
 
-    private fun hasUGT1A1Type(pharmaco: Set<PharmacoEntry>, hapolotypeToFind: String): Boolean {
-        for (pharmacoEntry in pharmaco) {
-            if (pharmacoEntry.gene == "UGT1A1" &&
+    private fun hasUGT1A1Type(pharmacoEntry: PharmacoEntry, hapolotypeToFind: String): Boolean {
+        return pharmacoEntry.gene == PharmacoGene.UGT1A1 &&
                 pharmacoEntry.haplotypes.any { it.toHaplotypeString().lowercase() == hapolotypeToFind.lowercase() }
-            ) {
-                return true
-            }
-        }
-        return false
     }
 
 }

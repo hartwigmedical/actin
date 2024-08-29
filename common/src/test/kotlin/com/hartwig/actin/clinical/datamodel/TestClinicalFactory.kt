@@ -14,8 +14,6 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
-import com.hartwig.actin.molecular.datamodel.ARCHER_FP_LUNG_TARGET
-import com.hartwig.actin.molecular.datamodel.AVL_PANEL
 import java.time.LocalDateTime
 
 object TestClinicalFactory {
@@ -46,7 +44,8 @@ object TestClinicalFactory {
             oncologicalHistory = emptyList(),
             priorSecondPrimaries = emptyList(),
             priorOtherConditions = emptyList(),
-            priorMolecularTests = emptyList(),
+            priorIHCTests = emptyList(),
+            priorSequencingTests = emptyList(),
             complications = null,
             labValues = emptyList(),
             toxicities = emptyList(),
@@ -67,7 +66,7 @@ object TestClinicalFactory {
             oncologicalHistory = createTreatmentHistory(),
             priorSecondPrimaries = createTestPriorSecondPrimaries(),
             priorOtherConditions = createTestPriorOtherConditions(),
-            priorMolecularTests = createTestPriorMolecularTests(),
+            priorIHCTests = createTestPriorMolecularTests(),
             complications = createTestComplications(),
             labValues = createTestLabValues(),
             toxicities = createTestToxicities(),
@@ -278,7 +277,7 @@ object TestClinicalFactory {
     private fun createTestPriorOtherConditions(): List<PriorOtherCondition> {
         return listOf(
             PriorOtherCondition(
-                name = "Pancreatitis",
+                name = "pancreatitis",
                 doids = setOf("4989"),
                 category = "Pancreas disease",
                 isContraindicationForTherapy = true,
@@ -296,10 +295,9 @@ object TestClinicalFactory {
         )
     }
 
-    fun createTestPriorMolecularTests(): List<PriorMolecularTest> {
+    fun createTestPriorMolecularTests(): List<PriorIHCTest> {
         return listOf(
-            PriorMolecularTest(
-                test = ARCHER_FP_LUNG_TARGET,
+            PriorIHCTest(
                 item = "EGFR",
                 measure = "c.2240_2254del",
                 scoreText = null,
@@ -308,8 +306,7 @@ object TestClinicalFactory {
                 scoreValueUnit = null,
                 impliesPotentialIndeterminateStatus = false
             ),
-            PriorMolecularTest(
-                test = AVL_PANEL,
+            PriorIHCTest(
                 item = null,
                 measure = "GEEN mutaties aangetoond met behulp van het AVL Panel",
                 scoreText = null,
@@ -318,8 +315,7 @@ object TestClinicalFactory {
                 scoreValueUnit = null,
                 impliesPotentialIndeterminateStatus = false
             ),
-            PriorMolecularTest(
-                test = "IHC",
+            PriorIHCTest(
                 item = "PD-L1",
                 measure = null,
                 scoreText = null,
@@ -328,8 +324,7 @@ object TestClinicalFactory {
                 scoreValueUnit = "%",
                 impliesPotentialIndeterminateStatus = false
             ),
-            PriorMolecularTest(
-                test = "IHC",
+            PriorIHCTest(
                 item = "HER2",
                 measure = null,
                 scoreText = "Positive",
@@ -338,8 +333,7 @@ object TestClinicalFactory {
                 scoreValueUnit = null,
                 impliesPotentialIndeterminateStatus = false
             ),
-            PriorMolecularTest(
-                test = "Freetext",
+            PriorIHCTest(
                 item = "FGFR3::TACC3",
                 measure = null,
                 scoreText = "Positive",

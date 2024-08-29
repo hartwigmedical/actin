@@ -3,7 +3,7 @@ package com.hartwig.actin.molecular.interpretation
 import com.hartwig.actin.molecular.datamodel.Drivers
 import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.MolecularTest
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 import org.apache.logging.log4j.LogManager
 
@@ -47,7 +47,7 @@ object AggregatedEvidenceFactory {
     }
 
     private fun aggregatedEvidenceForCharacteristic(
-        characteristic: Boolean?, event: String, evidence: ActionableEvidence?, characteristicName: String
+        characteristic: Boolean?, event: String, evidence: ClinicalEvidence?, characteristicName: String
     ): AggregatedEvidence? {
         if (characteristic == true) {
             return createAggregatedEvidence(event, evidence)
@@ -57,16 +57,11 @@ object AggregatedEvidenceFactory {
         return null
     }
 
-    private fun hasEvidence(evidence: ActionableEvidence?): Boolean {
+    private fun hasEvidence(evidence: ClinicalEvidence?): Boolean {
         return if (evidence == null) false else {
             listOf(
-                evidence.approvedTreatments,
                 evidence.externalEligibleTrials,
-                evidence.onLabelExperimentalTreatments,
-                evidence.offLabelExperimentalTreatments,
-                evidence.preClinicalTreatments,
-                evidence.knownResistantTreatments,
-                evidence.suspectResistantTreatments
+                evidence.treatmentEvidence
             ).any(Set<Any>::isNotEmpty)
         }
     }
@@ -77,37 +72,23 @@ object AggregatedEvidenceFactory {
         ).flatMap { driverSet -> driverSet.map { createAggregatedEvidence(it.event, it.evidence) } }
     }
 
-    private fun createAggregatedEvidence(event: String, evidence: ActionableEvidence?): AggregatedEvidence {
+    private fun createAggregatedEvidence(event: String, evidence: ClinicalEvidence?): AggregatedEvidence {
         return if (evidence == null) {
             AggregatedEvidence()
         } else {
             AggregatedEvidence(
-                approvedTreatmentsPerEvent = evidenceMap(event, evidence.approvedTreatments),
                 externalEligibleTrialsPerEvent = evidenceMap(event, evidence.externalEligibleTrials),
-                onLabelExperimentalTreatmentsPerEvent = evidenceMap(event, evidence.onLabelExperimentalTreatments),
-                offLabelExperimentalTreatmentsPerEvent = evidenceMap(event, evidence.offLabelExperimentalTreatments),
-                preClinicalTreatmentsPerEvent = evidenceMap(event, evidence.preClinicalTreatments),
-                knownResistantTreatmentsPerEvent = evidenceMap(event, evidence.knownResistantTreatments),
-                suspectResistantTreatmentsPerEvent = evidenceMap(event, evidence.suspectResistantTreatments)
+                treatmentEvidence = evidenceMap(event, evidence.treatmentEvidence),
             )
         }
     }
 
     private fun mergeAggregatedEvidenceList(aggregatedEvidenceList: List<AggregatedEvidence>): AggregatedEvidence {
         return AggregatedEvidence(
-            approvedTreatmentsPerEvent = mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::approvedTreatmentsPerEvent)),
             externalEligibleTrialsPerEvent =
             mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::externalEligibleTrialsPerEvent)),
-            onLabelExperimentalTreatmentsPerEvent =
-            mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::onLabelExperimentalTreatmentsPerEvent)),
-            offLabelExperimentalTreatmentsPerEvent =
-            mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::offLabelExperimentalTreatmentsPerEvent)),
-            preClinicalTreatmentsPerEvent =
-            mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::preClinicalTreatmentsPerEvent)),
-            knownResistantTreatmentsPerEvent =
-            mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::knownResistantTreatmentsPerEvent)),
-            suspectResistantTreatmentsPerEvent =
-            mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::suspectResistantTreatmentsPerEvent)),
+            treatmentEvidence =
+            mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::treatmentEvidence)),
         )
     }
 

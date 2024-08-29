@@ -141,22 +141,16 @@
     "gender": "Female",
     "registrationDate": "2020-01-01"
   },
-  "molecularTestHistory": [
+  "molecularTests": [
     {
-      "type": "Archer FP Lung Target",
-      "measure": "EGFR",
-      "result": "c.2573T>G",
-      "resultDate": "2024-03-25",
-      "biopsyLocation": "lymfklier*biopt*metastase adenocarcinoom*long",
-      "biopsyDate": "2024-03-03"
-    },
-    {
-      "type": "Archer FP Lung Target",
-      "measure": null,
-      "result": "GEEN fusie(s) aangetoond",
-      "resultDate": "2020-12-03",
-      "biopsyLocation": "Long",
-      "biopsyDate": "2020-11-12"
+      "test": "Archer FP Lung Target",
+      "date": "2024-07-15",
+      "results": [
+        {
+          "gene": "KRAS",
+          "hgvsCodingImpact": "c.34G>T"
+        }
+      ]
     }
   ],
   "priorOtherConditions": [

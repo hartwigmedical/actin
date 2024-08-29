@@ -1,25 +1,22 @@
 package com.hartwig.actin.molecular
 
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorSequencingTest
 import com.hartwig.actin.molecular.datamodel.MolecularTest
-import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class MolecularInterpreterTest {
-    private val extraction = ArcherPanelExtraction()
-    private val output = mockk<OtherPriorMolecularTest>()
+    private val output = mockk<MolecularTest>()
     var annotatorCalled: Boolean = false
 
-    private val extractor = object : MolecularExtractor<PriorMolecularTest, ArcherPanelExtraction> {
-        override fun extract(input: List<PriorMolecularTest>): List<ArcherPanelExtraction> {
-            return input.map { extraction }
+    private val extractor = object : MolecularExtractor<PriorSequencingTest, PriorSequencingTest> {
+        override fun extract(input: List<PriorSequencingTest>): List<PriorSequencingTest> {
+            return input
         }
     }
-    private val annotator = object : MolecularAnnotator<ArcherPanelExtraction, MolecularTest> {
-        override fun annotate(input: ArcherPanelExtraction): OtherPriorMolecularTest {
+    private val annotator = object : MolecularAnnotator<PriorSequencingTest, MolecularTest> {
+        override fun annotate(input: PriorSequencingTest): MolecularTest {
             annotatorCalled = true
             return output
         }
@@ -29,21 +26,9 @@ class MolecularInterpreterTest {
     fun `Should extract and annotate inputs`() {
         val result = MolecularInterpreter(
             extractor = extractor,
-            annotator = annotator,
-            inputPredicate = { true }
-        ).run(listOf(PriorMolecularTest(test = "test", impliesPotentialIndeterminateStatus = false)))
+            annotator = annotator
+        ).run(listOf(PriorSequencingTest(test = "test")))
         assertThat(annotatorCalled).isTrue()
         assertThat(result).containsExactly(output)
-    }
-
-    @Test
-    fun `Should filter inputs with predicate`() {
-        val result = MolecularInterpreter(
-            extractor = extractor,
-            annotator = annotator,
-            inputPredicate = { false }
-        ).run(listOf(PriorMolecularTest(test = "test", impliesPotentialIndeterminateStatus = false)))
-        assertThat(annotatorCalled).isFalse()
-        assertThat(result).isEmpty()
     }
 }

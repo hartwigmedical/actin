@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestPatientFactory
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.molecular.datamodel.Driver
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.Fusion
@@ -24,7 +24,7 @@ internal object MolecularTestFactory {
     private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
     private val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
 
-    fun priorMolecularTest(
+    fun priorIHCTest(
         test: String = "",
         item: String = "",
         measure: String? = null,
@@ -32,8 +32,8 @@ internal object MolecularTestFactory {
         impliesIndeterminate: Boolean = false,
         scoreValue: Double? = null,
         scoreValuePrefix: String? = null
-    ): PriorMolecularTest {
-        return PriorMolecularTest(
+    ): PriorIHCTest {
+        return PriorIHCTest(
             test = test,
             item = item,
             measure = measure,
@@ -44,16 +44,28 @@ internal object MolecularTestFactory {
         )
     }
 
+    fun withIHCTests(ihcTests: List<PriorIHCTest>): PatientRecord {
+        return base.copy(priorIHCTests = ihcTests.toList())
+    }
+
+    fun withIHCTests(vararg ihcTests: PriorIHCTest): PatientRecord {
+        return withIHCTests(ihcTests.toList())
+    }
+
     fun withMolecularTests(molecularTests: List<MolecularTest>): PatientRecord {
         return base.copy(molecularHistory = MolecularHistory(listOf(baseMolecular) + molecularTests))
     }
 
-    fun withMolecularTestsAndNoOrangeMolecular(molecularTests: List<MolecularTest>): PatientRecord {
-        return base.copy(molecularHistory = MolecularHistory(molecularTests))
+    fun withCopyNumberAndPriorIHCTests(copyNumber: CopyNumber, priorIHCTests: List<PriorIHCTest>): PatientRecord {
+        val molecular = baseMolecular.copy(
+            characteristics = MolecularCharacteristics(0.80, 3.0),
+            drivers = baseMolecular.drivers.copy(copyNumbers = setOf(copyNumber))
+        )
+        return base.copy(priorIHCTests = priorIHCTests, molecularHistory = MolecularHistory(listOf(molecular)))
     }
 
-    fun withMolecularTest(molecularTest: MolecularTest): PatientRecord {
-        return withMolecularTests(listOf(molecularTest))
+    fun withMolecularTestsAndNoOrangeMolecular(molecularTests: List<MolecularTest>): PatientRecord {
+        return base.copy(molecularHistory = MolecularHistory(molecularTests))
     }
 
     fun withVariant(variant: Variant): PatientRecord {
@@ -131,12 +143,13 @@ internal object MolecularTestFactory {
     fun withExperimentTypeAndContainingTumorCellsAndPriorTest(
         type: ExperimentType,
         containsTumorCells: Boolean,
-        priorTest: MolecularTest
+        priorTest: PriorIHCTest
     ): PatientRecord {
         return base.copy(
             molecularHistory = MolecularHistory(
-                listOf(baseMolecular.copy(experimentType = type, containsTumorCells = containsTumorCells), priorTest)
-            )
+                listOf(baseMolecular.copy(experimentType = type, containsTumorCells = containsTumorCells))
+            ),
+            priorIHCTests = listOf(priorTest)
         )
     }
 
@@ -211,8 +224,11 @@ internal object MolecularTestFactory {
         variant: Variant
     ): PatientRecord {
         return withMolecularRecord(
-            baseMolecular.copy(characteristics = baseMolecular.characteristics.copy(isHomologousRepairDeficient = isHomologousRepairDeficient), drivers = baseMolecular.drivers.copy(variants = setOf(variant), disruptions = setOf(disruption))
-        ))
+            baseMolecular.copy(
+                characteristics = baseMolecular.characteristics.copy(isHomologousRepairDeficient = isHomologousRepairDeficient),
+                drivers = baseMolecular.drivers.copy(variants = setOf(variant), disruptions = setOf(disruption))
+            )
+        )
     }
 
     fun withTumorMutationalBurden(tumorMutationalBurden: Double?): PatientRecord {
