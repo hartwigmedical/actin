@@ -2,7 +2,12 @@ package com.hartwig.actin.molecular.datamodel.evidence
 
 import com.hartwig.actin.Displayable
 
-enum class Country(private val display: String) : Displayable {
+data class Country(
+    val countryName: CountryName,
+    val hospitalsPerCity: Map<String, Set<String>>
+)
+
+enum class CountryName(private val display: String) : Displayable {
     NETHERLANDS("Netherlands"),
     BELGIUM("Belgium"),
     GERMANY("Germany"),

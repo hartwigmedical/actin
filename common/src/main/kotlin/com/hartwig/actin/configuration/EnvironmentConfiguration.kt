@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.hartwig.actin.molecular.datamodel.evidence.Country
+import com.hartwig.actin.molecular.datamodel.evidence.CountryName
 import java.io.File
 import org.apache.logging.log4j.LogManager
 
@@ -40,7 +40,7 @@ data class ReportConfiguration(
     val includeLongitudinalMolecularChapter: Boolean = false,
     val includeMolecularEvidenceChapter: Boolean = false,
     val includeRawPathologyReport: Boolean = false,
-    val countryOfReference: Country = Country.NETHERLANDS
+    val countryOfReference: CountryName = CountryName.NETHERLANDS
 )
 
 const val EMC_TRIAL_SOURCE = "EMC"
@@ -103,7 +103,7 @@ data class EnvironmentConfiguration(
                         includeExternalTrialsInSummary = false,
                         includeLongitudinalMolecularChapter = true,
                         includeMolecularEvidenceChapter = true,
-                        countryOfReference = Country.US
+                        countryOfReference = CountryName.US
                     )
                 )
 

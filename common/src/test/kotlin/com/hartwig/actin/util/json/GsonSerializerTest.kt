@@ -7,7 +7,7 @@ import com.hartwig.actin.molecular.datamodel.TranscriptImpact
 import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
-import com.hartwig.actin.molecular.datamodel.evidence.Country
+import com.hartwig.actin.molecular.datamodel.evidence.CountryName
 import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariantDetails
 import com.hartwig.actin.molecular.sort.driver.VariantComparator
 import org.assertj.core.api.Assertions.assertThat
@@ -32,9 +32,9 @@ class GsonSerializerTest {
 
     @Test
     fun `Should sort non-comparable sets by converting elements to string`() {
-        val set = setOf(3, "2", Country.NETHERLANDS, null)
+        val set = setOf(3, "2", CountryName.NETHERLANDS, null)
         val deserialized = gson.fromJson<List<String>>(gson.toJson(set), object : TypeToken<List<String>>() {}.type)
-        assertThat(deserialized).isEqualTo(listOf("2", "3", Country.NETHERLANDS.toString(), null))
+        assertThat(deserialized).isEqualTo(listOf("2", "3", CountryName.NETHERLANDS.toString(), null))
     }
 
     @Test

@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.evidence
 import com.hartwig.actin.molecular.datamodel.evidence.ApplicableCancerType
 import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.Country
+import com.hartwig.actin.molecular.datamodel.evidence.CountryName
 import com.hartwig.actin.molecular.datamodel.evidence.EvidenceDirection
 import com.hartwig.actin.molecular.datamodel.evidence.EvidenceLevel
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
@@ -56,7 +57,7 @@ object ClinicalEvidenceFactory {
                 val trial = onLabelEvent.intervention() as ClinicalTrial
                 ExternalTrial(
                     title = trial.acronym() ?: trial.title(),
-                    countries = trial.countries().map(ClinicalEvidenceFactory::determineCountry).toSet(),
+                    countries = trial.countries().map { Country(countryName = determineCountry(it), hospitalsPerCity = it.hospitalsPerCity()) }.toSet(),
                     url = extractNctUrl(onLabelEvent),
                     nctId = trial.nctId(),
                     applicableCancerType = ApplicableCancerType(
@@ -72,13 +73,13 @@ object ClinicalEvidenceFactory {
 
     private fun ActionableEvent.treatmentName(): String = (this.intervention() as Treatment).name()
 
-    private fun determineCountry(country: ServeCountry): Country {
+    private fun determineCountry(country: ServeCountry): CountryName {
         return when (country.countryName()) {
-            "Netherlands" -> Country.NETHERLANDS
-            "Belgium" -> Country.BELGIUM
-            "Germany" -> Country.GERMANY
-            "United States" -> Country.US
-            else -> Country.OTHER
+            "Netherlands" -> CountryName.NETHERLANDS
+            "Belgium" -> CountryName.BELGIUM
+            "Germany" -> CountryName.GERMANY
+            "United States" -> CountryName.US
+            else -> CountryName.OTHER
         }
     }
 
