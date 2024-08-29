@@ -1,14 +1,14 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.molecular.datamodel.Drivers
-import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
-import com.hartwig.actin.molecular.datamodel.MolecularHistory
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.Drivers
+import com.hartwig.actin.datamodel.molecular.MolecularCharacteristics
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.report.pdf.assertRow
 import com.hartwig.actin.report.pdf.getWrappedTable
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 val FIRST_TEST = TestMolecularFactory.createMinimalTestMolecularRecord().copy(date = LocalDate.of(2024, 7, 21))
 val SECOND_TEST = FIRST_TEST.copy(date = FIRST_TEST.date?.plusDays(1))

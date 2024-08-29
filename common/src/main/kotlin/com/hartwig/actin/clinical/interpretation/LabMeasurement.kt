@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical.interpretation
 
-import com.hartwig.actin.Displayable
-import com.hartwig.actin.clinical.datamodel.LabUnit
+import com.hartwig.actin.datamodel.Displayable
+import com.hartwig.actin.datamodel.clinical.LabUnit
 
 enum class LabMeasurement(val code: String, val display: String, val defaultUnit: LabUnit) : Displayable {
     ACTIVATED_PARTIAL_THROMBOPLASTIN_TIME("APTT", "APTT", LabUnit.SECONDS),

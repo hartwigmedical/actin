@@ -2,11 +2,11 @@ package com.hartwig.actin.algo.soc
 
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
-import com.hartwig.actin.algo.datamodel.ResistanceEvidence
-import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
-import com.hartwig.actin.clinical.datamodel.treatment.Treatment
+import com.hartwig.actin.datamodel.algo.ResistanceEvidence
+import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
+import com.hartwig.actin.datamodel.clinical.treatment.Treatment
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.doid.DoidModel
-import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.evidence.actionability.BreakendEvidence
 import com.hartwig.actin.molecular.evidence.actionability.CopyNumberEvidence
 import com.hartwig.actin.molecular.evidence.actionability.FusionEvidence

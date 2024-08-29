@@ -1,8 +1,8 @@
 package com.hartwig.actin.clinical.feed.emc.questionnaire
 
-import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireExtraction.isActualQuestionnaire
 import com.hartwig.actin.clinical.feed.emc.questionnaire.TestQuestionnaireFactory.entryWithText
+import com.hartwig.actin.datamodel.clinical.TumorStage
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate

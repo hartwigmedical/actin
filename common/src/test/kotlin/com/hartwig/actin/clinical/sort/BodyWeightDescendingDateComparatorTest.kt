@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.sort
 
-import com.hartwig.actin.clinical.datamodel.BodyWeight
+import com.hartwig.actin.datamodel.clinical.BodyWeight
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDateTime

@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical.interpretation
 
-import com.hartwig.actin.clinical.datamodel.Medication
-import com.hartwig.actin.clinical.datamodel.MedicationStatus
+import com.hartwig.actin.datamodel.clinical.Medication
+import com.hartwig.actin.datamodel.clinical.MedicationStatus
 import java.time.LocalDate
 
 class MedicationStatusInterpreterOnEvaluationDate(private val evaluationDate: LocalDate) : MedicationStatusInterpreter {

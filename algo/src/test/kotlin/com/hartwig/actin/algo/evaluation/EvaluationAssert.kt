@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation
 
-import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.assertj.core.api.Assertions.assertThat
 
 object EvaluationAssert {

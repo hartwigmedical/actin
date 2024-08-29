@@ -6,9 +6,9 @@ import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.TestCurationFactory.emptyQuestionnaire
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
-import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.drugTreatment
-import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
-import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
+import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
+import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

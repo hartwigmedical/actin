@@ -1,10 +1,10 @@
 package com.hartwig.actin.algo.evaluation.vitalfunction
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions.EXPECTED_UNITS
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.util.ApplicationConfig
 import java.time.LocalDate
 import kotlin.math.roundToInt

@@ -7,13 +7,13 @@ import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.clinical.datamodel.treatment.Treatment
-import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
-import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryDetails
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentStage
+import com.hartwig.actin.datamodel.clinical.treatment.Treatment
+import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
+import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentStage
 
 private const val TREATMENT_HISTORY = "treatment history"
 

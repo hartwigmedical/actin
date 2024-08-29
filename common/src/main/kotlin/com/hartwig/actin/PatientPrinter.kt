@@ -1,6 +1,7 @@
 package com.hartwig.actin
 
-import com.hartwig.actin.clinical.datamodel.TumorDetails
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.molecular.util.MolecularHistoryPrinter
 import com.hartwig.actin.util.DatamodelPrinter
 

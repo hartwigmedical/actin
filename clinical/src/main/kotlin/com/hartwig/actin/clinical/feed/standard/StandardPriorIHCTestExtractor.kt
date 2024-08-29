@@ -6,7 +6,7 @@ import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.config.IHCTestConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.clinical.datamodel.PriorIHCTest
+import com.hartwig.actin.datamodel.clinical.PriorIHCTest
 
 private const val IHC_STRING = "immunohistochemie"
 

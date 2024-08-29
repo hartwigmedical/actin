@@ -1,23 +1,23 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestPatientFactory
-import com.hartwig.actin.clinical.datamodel.PriorIHCTest
-import com.hartwig.actin.molecular.datamodel.Driver
-import com.hartwig.actin.molecular.datamodel.ExperimentType
-import com.hartwig.actin.molecular.datamodel.Fusion
-import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
-import com.hartwig.actin.molecular.datamodel.MolecularHistory
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.MolecularTest
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
-import com.hartwig.actin.molecular.datamodel.Variant
-import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.orange.immunology.HlaAllele
-import com.hartwig.actin.molecular.datamodel.orange.immunology.MolecularImmunology
-import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoEntry
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.TestPatientFactory
+import com.hartwig.actin.datamodel.clinical.PriorIHCTest
+import com.hartwig.actin.datamodel.molecular.Driver
+import com.hartwig.actin.datamodel.molecular.ExperimentType
+import com.hartwig.actin.datamodel.molecular.Fusion
+import com.hartwig.actin.datamodel.molecular.MolecularCharacteristics
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.Variant
+import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
+import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
+import com.hartwig.actin.datamodel.molecular.orange.driver.HomozygousDisruption
+import com.hartwig.actin.datamodel.molecular.orange.immunology.HlaAllele
+import com.hartwig.actin.datamodel.molecular.orange.immunology.MolecularImmunology
+import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoEntry
 
 internal object MolecularTestFactory {
 
@@ -277,14 +277,6 @@ internal object MolecularTestFactory {
                 characteristics = baseMolecular.characteristics.copy(tumorMutationalLoad = tumorMutationalLoad),
                 hasSufficientPurity = hasSufficientPurity,
                 hasSufficientQuality = hasSufficientQuality
-            )
-        )
-    }
-
-    fun addingTestFromPriorMolecular(patientRecord: PatientRecord, priorMolecular: List<MolecularTest>): PatientRecord {
-        return patientRecord.copy(
-            molecularHistory = MolecularHistory(
-                patientRecord.molecularHistory.molecularTests + priorMolecular
             )
         )
     }

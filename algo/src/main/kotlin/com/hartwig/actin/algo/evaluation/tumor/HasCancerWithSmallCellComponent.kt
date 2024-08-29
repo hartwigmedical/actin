@@ -1,7 +1,5 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.doid.DoidConstants.SMALL_CELL_DOID_SET
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
@@ -10,6 +8,8 @@ import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.isOfAtLea
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.isOfDoidType
 import com.hartwig.actin.algo.evaluation.tumor.TumorTypeEvaluationFunctions.hasTumorWithDetails
 import com.hartwig.actin.algo.evaluation.tumor.TumorTypeEvaluationFunctions.hasTumorWithType
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.doid.DoidModel
 
 class HasCancerWithSmallCellComponent(private val doidModel: DoidModel) : EvaluationFunction {

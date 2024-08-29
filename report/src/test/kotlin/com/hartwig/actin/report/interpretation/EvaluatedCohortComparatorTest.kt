@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.trial.datamodel.TrialPhase
+import com.hartwig.actin.datamodel.trial.TrialPhase
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

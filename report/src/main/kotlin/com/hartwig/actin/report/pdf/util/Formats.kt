@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.util
 
-import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.itextpdf.kernel.colors.DeviceRgb
 import com.itextpdf.layout.Style
 import java.text.DecimalFormat

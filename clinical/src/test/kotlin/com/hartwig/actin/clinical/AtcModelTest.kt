@@ -6,7 +6,7 @@ import com.hartwig.actin.clinical.curation.CHEMICAL_SUBSTANCE
 import com.hartwig.actin.clinical.curation.FULL_ATC_CODE
 import com.hartwig.actin.clinical.curation.PHARMACOLOGICAL
 import com.hartwig.actin.clinical.curation.THERAPEUTIC
-import com.hartwig.actin.clinical.datamodel.AtcLevel
+import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy

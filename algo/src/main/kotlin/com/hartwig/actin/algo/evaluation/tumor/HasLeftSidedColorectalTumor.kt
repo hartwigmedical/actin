@@ -1,10 +1,10 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.doid.DoidModel
 
 private const val TUMOR_SUB_LOCATION_SIDE_TEMPLATE = "Tumor sub-location %s is on %s side"

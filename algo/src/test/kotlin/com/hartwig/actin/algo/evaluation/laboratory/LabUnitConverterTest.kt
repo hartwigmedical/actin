@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
-import com.hartwig.actin.clinical.datamodel.LabUnit
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
+import com.hartwig.actin.datamodel.clinical.LabUnit
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
 import org.junit.Test

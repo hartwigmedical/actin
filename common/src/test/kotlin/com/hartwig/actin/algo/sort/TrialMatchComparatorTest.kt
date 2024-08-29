@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.sort
 
-import com.hartwig.actin.algo.datamodel.TrialMatch
-import com.hartwig.actin.trial.datamodel.TrialIdentification
+import com.hartwig.actin.datamodel.algo.TrialMatch
+import com.hartwig.actin.datamodel.trial.TrialIdentification
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

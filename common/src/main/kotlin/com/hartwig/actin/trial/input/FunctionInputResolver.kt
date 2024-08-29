@@ -1,24 +1,24 @@
 package com.hartwig.actin.trial.input
 
 import com.hartwig.actin.TreatmentDatabase
-import com.hartwig.actin.clinical.datamodel.AtcLevel
-import com.hartwig.actin.clinical.datamodel.ReceptorType
-import com.hartwig.actin.clinical.datamodel.TumorStage
-import com.hartwig.actin.clinical.datamodel.treatment.Drug
-import com.hartwig.actin.clinical.datamodel.treatment.Treatment
-import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType
-import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver
+import com.hartwig.actin.datamodel.clinical.AtcLevel
+import com.hartwig.actin.datamodel.clinical.ReceptorType
+import com.hartwig.actin.datamodel.clinical.TumorStage
+import com.hartwig.actin.datamodel.clinical.treatment.Drug
+import com.hartwig.actin.datamodel.clinical.treatment.Treatment
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
+import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
+import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.FunctionInput
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
-import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.input.composite.CompositeInput
 import com.hartwig.actin.trial.input.composite.CompositeRules
 import com.hartwig.actin.trial.input.datamodel.TreatmentCategoryInput
 import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
-import com.hartwig.actin.trial.input.single.FunctionInput
 import com.hartwig.actin.trial.input.single.ManyDrugsOneInteger
 import com.hartwig.actin.trial.input.single.ManyGenes
 import com.hartwig.actin.trial.input.single.ManyIntents
@@ -51,9 +51,9 @@ import com.hartwig.actin.trial.input.single.TwoDoubles
 import com.hartwig.actin.trial.input.single.TwoIntegers
 import com.hartwig.actin.trial.input.single.TwoIntegersManyStrings
 import com.hartwig.actin.trial.input.single.TwoStrings
-import java.util.Locale
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.util.Locale
 
 class FunctionInputResolver(
     private val doidModel: DoidModel,

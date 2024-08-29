@@ -1,15 +1,15 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
-import com.hartwig.actin.molecular.datamodel.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.GeneRole
-import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.orange.driver.CodingContext
-import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.orange.driver.DisruptionType
-import com.hartwig.actin.molecular.datamodel.orange.driver.RegionType
+import com.hartwig.actin.datamodel.molecular.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.GeneRole
+import com.hartwig.actin.datamodel.molecular.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.orange.driver.CodingContext
+import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
+import com.hartwig.actin.datamodel.molecular.orange.driver.DisruptionType
+import com.hartwig.actin.datamodel.molecular.orange.driver.RegionType
+import com.hartwig.actin.datamodel.molecular.sort.driver.DisruptionComparator
 import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.filter.GeneFilter
-import com.hartwig.actin.molecular.sort.driver.DisruptionComparator
 import com.hartwig.hmftools.datamodel.gene.TranscriptCodingType
 import com.hartwig.hmftools.datamodel.gene.TranscriptRegionType
 import com.hartwig.hmftools.datamodel.linx.LinxBreakend

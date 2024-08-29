@@ -1,16 +1,16 @@
 package com.hartwig.actin.molecular.panel
 
-import com.hartwig.actin.clinical.datamodel.SequencedVariant
-import com.hartwig.actin.molecular.datamodel.CodingEffect
-import com.hartwig.actin.molecular.datamodel.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.GeneRole
-import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.TranscriptImpact
-import com.hartwig.actin.molecular.datamodel.VariantType
-import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
-import com.hartwig.actin.molecular.datamodel.evidence.EvidenceDirection
-import com.hartwig.actin.molecular.datamodel.evidence.EvidenceLevel
-import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.treatment
+import com.hartwig.actin.datamodel.clinical.SequencedVariant
+import com.hartwig.actin.datamodel.molecular.CodingEffect
+import com.hartwig.actin.datamodel.molecular.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.GeneRole
+import com.hartwig.actin.datamodel.molecular.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.TranscriptImpact
+import com.hartwig.actin.datamodel.molecular.VariantType
+import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.treatment
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch

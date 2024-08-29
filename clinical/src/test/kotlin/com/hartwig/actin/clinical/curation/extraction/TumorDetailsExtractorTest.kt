@@ -7,9 +7,9 @@ import com.hartwig.actin.clinical.curation.TestCurationFactory.emptyQuestionnair
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
-import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
 import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
+import com.hartwig.actin.datamodel.clinical.TumorDetails
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot

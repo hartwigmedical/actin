@@ -1,12 +1,12 @@
 package com.hartwig.actin.molecular.interpretation
 
-import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidenceCategories.approved
-import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidenceCategories.experimental
-import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidenceCategories.knownResistant
-import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidenceCategories.preclinical
-import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidenceCategories.suspectResistant
-import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
-import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence
+import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidenceCategories.approved
+import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidenceCategories.experimental
+import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidenceCategories.knownResistant
+import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidenceCategories.preclinical
+import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidenceCategories.suspectResistant
+import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
+import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 
 data class AggregatedEvidence(
     val externalEligibleTrialsPerEvent: Map<String, Set<ExternalTrial>> = emptyMap(),

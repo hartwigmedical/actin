@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.curation.config
 
-import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 
 data class IntoleranceConfig(
     override val input: String,

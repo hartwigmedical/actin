@@ -1,15 +1,15 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithAnd
-import com.hartwig.actin.clinical.datamodel.treatment.Drug
-import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
-import com.hartwig.actin.clinical.datamodel.treatment.Treatment
-import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
-import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.treatment.Drug
+import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
+import com.hartwig.actin.datamodel.clinical.treatment.Treatment
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 
 class HasHadTreatmentWithCategoryAndTypeButNotWithDrugs(
     private val category: TreatmentCategory,

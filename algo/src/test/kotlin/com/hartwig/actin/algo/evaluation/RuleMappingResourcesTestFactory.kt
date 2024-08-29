@@ -8,7 +8,7 @@ import com.hartwig.actin.configuration.AlgoConfiguration
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.medication.AtcTree
-import com.hartwig.actin.trial.datamodel.TestFunctionInputResolverFactory
+import com.hartwig.actin.trial.input.TestFunctionInputResolverFactory
 
 object RuleMappingResourcesTestFactory {
 

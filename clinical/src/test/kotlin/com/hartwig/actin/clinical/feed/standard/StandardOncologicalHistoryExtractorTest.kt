@@ -5,21 +5,21 @@ import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
-import com.hartwig.actin.clinical.datamodel.BodyLocationCategory
-import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
-import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
-import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryDetails
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentStage
 import com.hartwig.actin.clinical.feed.standard.EhrTestData.createEhrPatientRecord
+import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
+import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
+import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
+import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentStage
 import io.mockk.every
 import io.mockk.mockk
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
+import java.time.LocalDate
 
 private val PROVIDED_TREATMENT_START = LocalDate.of(2021, 4, 1)
 private val PROVIDED_TREATMENT_END = LocalDate.of(2021, 5, 1)

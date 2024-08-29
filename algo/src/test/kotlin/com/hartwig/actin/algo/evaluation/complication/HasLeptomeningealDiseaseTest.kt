@@ -1,8 +1,8 @@
 package com.hartwig.actin.algo.evaluation.complication
 
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.clinical.datamodel.Complication
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.Complication
 import org.junit.Test
 
 class HasLeptomeningealDiseaseTest {

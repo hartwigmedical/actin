@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.orange.datamodel
 
-import com.hartwig.actin.TestPatientFactory
+import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.TestCuppaFactory
 import com.hartwig.actin.molecular.orange.datamodel.lilac.TestLilacFactory
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory
@@ -224,14 +224,11 @@ object TestOrangeFactory {
     private fun createTestPeachGenotype(): PeachGenotype {
         return ImmutablePeachGenotype.builder()
             .gene("DPYD")
-            .haplotype("")
             .allele("*1")
             .alleleCount(2)
             .function("Normal function")
             .linkedDrugs("")
             .urlPrescriptionInfo("")
-            .panelVersion("")
-            .repoVersion("")
             .build()
     }
 

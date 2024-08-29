@@ -1,8 +1,8 @@
 package com.hartwig.actin.trial.sort
 
-import com.hartwig.actin.trial.datamodel.Cohort
-import com.hartwig.actin.trial.datamodel.CohortMetadata
-import com.hartwig.actin.trial.datamodel.Eligibility
+import com.hartwig.actin.datamodel.trial.Cohort
+import com.hartwig.actin.datamodel.trial.CohortMetadata
+import com.hartwig.actin.datamodel.trial.Eligibility
 
 class CohortComparator : Comparator<Cohort> {
 

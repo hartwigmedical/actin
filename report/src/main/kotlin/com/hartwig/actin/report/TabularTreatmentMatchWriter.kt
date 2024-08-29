@@ -1,11 +1,11 @@
 package com.hartwig.actin.report
 
-import com.hartwig.actin.algo.datamodel.CohortMatch
-import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.datamodel.TreatmentMatch
-import com.hartwig.actin.algo.datamodel.TrialMatch
-import com.hartwig.actin.trial.datamodel.Eligibility
+import com.hartwig.actin.datamodel.algo.CohortMatch
+import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.TreatmentMatch
+import com.hartwig.actin.datamodel.algo.TrialMatch
+import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.trial.util.EligibilityFunctionDisplay
 import java.io.BufferedWriter
 import java.io.File

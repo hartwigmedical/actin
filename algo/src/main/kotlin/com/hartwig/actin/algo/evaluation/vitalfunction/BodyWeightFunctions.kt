@@ -1,10 +1,10 @@
 package com.hartwig.actin.algo.evaluation.vitalfunction
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.clinical.datamodel.BodyWeight
 import com.hartwig.actin.clinical.sort.BodyWeightDescendingDateComparator
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.BodyWeight
 import java.time.LocalDate
 import kotlin.math.ceil
 

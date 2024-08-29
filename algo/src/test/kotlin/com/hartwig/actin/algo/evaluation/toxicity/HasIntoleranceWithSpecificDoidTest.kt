@@ -1,8 +1,8 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.clinical.datamodel.Intolerance
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.Test
 

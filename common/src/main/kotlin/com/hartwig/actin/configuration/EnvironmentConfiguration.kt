@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.hartwig.actin.molecular.datamodel.evidence.Country
-import java.io.File
+import com.hartwig.actin.datamodel.molecular.evidence.Country
 import org.apache.logging.log4j.LogManager
+import java.io.File
 
 enum class ConfigurationProfile {
     STANDARD,

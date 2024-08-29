@@ -1,12 +1,12 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
-import com.hartwig.actin.molecular.datamodel.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.MolecularTest
-import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
+import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.molecular.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
 
 class HasFusionInGene(private val gene: String) : MolecularEvaluationFunction {
 

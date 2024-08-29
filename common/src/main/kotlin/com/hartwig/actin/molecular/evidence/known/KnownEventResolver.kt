@@ -1,8 +1,8 @@
 package com.hartwig.actin.molecular.evidence.known
 
-import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
+import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
+import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
+import com.hartwig.actin.datamodel.molecular.orange.driver.HomozygousDisruption
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.HotspotMatching
 import com.hartwig.actin.molecular.evidence.matching.RangeMatching

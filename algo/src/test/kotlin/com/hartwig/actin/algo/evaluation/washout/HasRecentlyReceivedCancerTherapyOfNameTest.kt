@@ -1,8 +1,8 @@
 package com.hartwig.actin.algo.evaluation.washout
 
-import com.hartwig.actin.TestPatientFactory
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.datamodel.TestPatientFactory
+import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.assertj.core.api.Assertions
 import org.junit.Test
 import java.time.LocalDate

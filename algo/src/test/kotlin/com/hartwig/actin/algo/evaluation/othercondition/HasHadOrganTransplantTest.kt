@@ -1,9 +1,9 @@
 package com.hartwig.actin.algo.evaluation.othercondition
 
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.priorOtherCondition
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.withPriorOtherConditions
+import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.Test
 
 class HasHadOrganTransplantTest {

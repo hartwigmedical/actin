@@ -1,17 +1,17 @@
 package com.hartwig.actin.clinical
 
 import com.google.common.collect.Lists
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord
-import com.hartwig.actin.clinical.datamodel.ClinicalStatus
-import com.hartwig.actin.clinical.datamodel.Gender
-import com.hartwig.actin.clinical.datamodel.PatientDetails
-import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
-import java.time.LocalDate
+import com.hartwig.actin.datamodel.clinical.ClinicalRecord
+import com.hartwig.actin.datamodel.clinical.ClinicalStatus
+import com.hartwig.actin.datamodel.clinical.Gender
+import com.hartwig.actin.datamodel.clinical.PatientDetails
+import com.hartwig.actin.datamodel.clinical.TumorDetails
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.Options
 import org.apache.logging.log4j.LogManager
+import java.time.LocalDate
 
 class BuildClinicalFromDoidsOnly(private val command: CommandLine) {
 

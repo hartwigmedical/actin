@@ -1,8 +1,8 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
-import com.hartwig.actin.molecular.datamodel.orange.immunology.HlaAllele
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.molecular.orange.immunology.HlaAllele
 import org.junit.Test
 
 class HasSpecificHLATypeTest {

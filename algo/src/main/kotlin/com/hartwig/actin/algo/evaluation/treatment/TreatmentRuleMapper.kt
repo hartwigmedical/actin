@@ -6,8 +6,8 @@ import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.evaluation.tumor.HasAcquiredResistanceToAnyDrug
 import com.hartwig.actin.algo.evaluation.tumor.HasMetastaticCancer
 import com.hartwig.actin.algo.soc.RecommendationEngineFactory
-import com.hartwig.actin.trial.datamodel.EligibilityFunction
-import com.hartwig.actin.trial.datamodel.EligibilityRule
+import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.EligibilityRule
 
 class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 

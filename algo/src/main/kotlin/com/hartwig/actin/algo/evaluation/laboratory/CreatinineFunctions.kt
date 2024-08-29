@@ -1,8 +1,8 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
-import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.clinical.datamodel.Gender
-import com.hartwig.actin.clinical.datamodel.LabValue
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.Gender
+import com.hartwig.actin.datamodel.clinical.LabValue
 import kotlin.math.pow
 
 internal object CreatinineFunctions {

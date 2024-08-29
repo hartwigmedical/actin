@@ -1,12 +1,12 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.DateComparison
 import com.hartwig.actin.algo.evaluation.util.Format
-import com.hartwig.actin.clinical.datamodel.treatment.Treatment
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.treatment.Treatment
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import java.time.LocalDate
 
 object TreatmentSinceDateFunctions {

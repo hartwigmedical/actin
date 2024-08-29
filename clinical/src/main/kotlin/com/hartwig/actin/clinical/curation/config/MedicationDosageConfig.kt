@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.curation.config
 
-import com.hartwig.actin.clinical.datamodel.Dosage
+import com.hartwig.actin.datamodel.clinical.Dosage
 
 data class MedicationDosageConfig(
     override val input: String,

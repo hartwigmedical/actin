@@ -1,8 +1,8 @@
 package com.hartwig.actin.clinical.sort
 
-import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
-import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatment
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
+import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
+import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatment
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

@@ -1,8 +1,8 @@
 package com.hartwig.actin.trial.config
 
 import com.google.common.collect.Sets
+import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.trial.TestTrialData
-import com.hartwig.actin.trial.datamodel.EligibilityRule
 
 object TestTrialConfigDatabaseFactory {
 

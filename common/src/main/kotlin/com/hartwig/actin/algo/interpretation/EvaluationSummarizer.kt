@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.interpretation
 
-import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.EvaluationResult
 
 object EvaluationSummarizer {
    

@@ -1,8 +1,8 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.util.ValueComparison
+import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

@@ -1,12 +1,12 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.molecular.datamodel.MolecularHistory
-import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
-import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
+import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Styles.PALETTE_RED
-import com.hartwig.actin.molecular.datamodel.evidence.EvidenceLevel
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
