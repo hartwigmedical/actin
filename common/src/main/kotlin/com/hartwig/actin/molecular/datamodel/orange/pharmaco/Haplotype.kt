@@ -12,13 +12,9 @@ data class Haplotype(
 ) : Comparable<Haplotype> {
 
     override fun compareTo(other: Haplotype): Int {
-        return Comparator.comparing(Haplotype::allele).thenComparing(Haplotype::alleleCount).thenComparing(Haplotype::function).compare(this, other)
+        return Comparator.comparing(Haplotype::allele).thenComparing(Haplotype::alleleCount).thenComparing(Haplotype::function)
+            .compare(this, other)
     }
-
-    constructor(allele: String, alleleCount: Int, function: String) : this(
-        name = allele + HAPLOTYPE_SEPARATOR + toZygosityString(alleleCount),
-        function = function
-    )
 
     fun toHaplotypeString(): String {
         return if (allele == UNKNOWN_ALLELE_STRING) {
