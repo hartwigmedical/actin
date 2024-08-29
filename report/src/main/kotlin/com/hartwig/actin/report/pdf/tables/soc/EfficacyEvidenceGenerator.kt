@@ -38,7 +38,7 @@ class EfficacyEvidenceGenerator(
             val table = Tables.createFixedWidthCols(120f, width - 250f, 150f).setWidth(width)
             table.addHeaderCell(Cells.createHeader("Treatment"))
             table.addHeaderCell(Cells.createHeader("Literature efficacy evidence"))
-            table.addHeaderCell(Cells.createHeader("Database efficacy evidence"))
+            table.addHeaderCell(Cells.createHeader("PFS general (days)"))
             treatments.sortedBy { it.annotations.size }.reversed().forEach { treatment: AnnotatedTreatmentMatch ->
                 table.addCell(Cells.createContentBold(treatment.treatmentCandidate.treatment.name))
                 if (treatment.annotations.isNotEmpty()) {
@@ -51,7 +51,7 @@ class EfficacyEvidenceGenerator(
                     table.addCell(Cells.createContent(subtable))
                 } else table.addCell(Cells.createContent("No literature efficacy evidence available yet"))
 
-                table.addCell(Cells.createContent("Not evaluated yet"))
+                table.addCell(Cells.createContent(SOCGeneratorFunctions.pfsCell(treatment)))
             }
             return table
         }
