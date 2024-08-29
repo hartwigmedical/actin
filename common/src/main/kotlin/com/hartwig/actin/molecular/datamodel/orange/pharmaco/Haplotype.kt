@@ -12,7 +12,8 @@ data class Haplotype(
 ) : Comparable<Haplotype> {
 
     override fun compareTo(other: Haplotype): Int {
-        return Comparator.comparing(Haplotype::allele).thenComparing(Haplotype::alleleCount).thenComparing(Haplotype::function).compare(this, other)
+        return Comparator.comparing(Haplotype::allele).thenComparing(Haplotype::alleleCount).thenComparing(Haplotype::function)
+            .compare(this, other)
     }
 
     fun toHaplotypeString(): String {

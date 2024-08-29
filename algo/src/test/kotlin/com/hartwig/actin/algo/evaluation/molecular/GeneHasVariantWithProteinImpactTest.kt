@@ -43,7 +43,9 @@ class GeneHasVariantWithProteinImpactTest {
                         gene = MATCHING_GENE,
                         isReportable = true,
                         canonicalImpact = proteinImpact("V600P"),
-                        otherImpacts = setOf(proteinImpact("V600P")),
+                        extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(
+                            otherImpacts = setOf(proteinImpact("V600P")),
+                        )
                     )
                 )
             )
@@ -127,7 +129,9 @@ class GeneHasVariantWithProteinImpactTest {
                         gene = MATCHING_GENE,
                         isReportable = true,
                         canonicalImpact = proteinImpact("V600P"),
-                        otherImpacts = setOf(proteinImpact("V600P"), proteinImpact(MATCHING_PROTEIN_IMPACT)),
+                        extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(
+                            otherImpacts = setOf(proteinImpact("V600P"), proteinImpact(MATCHING_PROTEIN_IMPACT)),
+                        )
                     )
                 )
             )
