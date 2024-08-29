@@ -87,23 +87,19 @@ object SOCGeneratorFunctions {
                 val warningsCell = Cells.createContent(
                     warningMessages.sorted().distinct().joinToString(Formats.COMMA_SEPARATOR)
                 )
-                val pfsCell = pfsCell(treatment)
+                val pfsCell = Cells.createContent(
+                    treatment.generalPfs?.run {
+                        if (numPatients <= MIN_PATIENT_COUNT) NA else {
+                            val iqrString = if (iqr != null && iqr != Double.NaN) {
+                                ", IQR: $iqr"
+                            } else ""
+                            value.toString() + iqrString
+                        }
+                    } ?: NA
+                )
 
                 sequenceOf(nameCell, annotationsCell, pfsCell, warningsCell)
             }
-    }
-
-    fun pfsCell(treatment: AnnotatedTreatmentMatch): Cell {
-        return Cells.createContent(
-            treatment.generalPfs?.run {
-                if (numPatients <= MIN_PATIENT_COUNT) NA else {
-                    val iqrString = if (iqr != null && iqr != Double.NaN) {
-                        ", IQR: $iqr"
-                    } else ""
-                    value.toString() + iqrString
-                }
-            } ?: NA
-        )
     }
 
     private fun addTreatmentAnnotationToTable(annotation: EfficacyEntry, treatment: AnnotatedTreatmentMatch, subTable: Table) {
