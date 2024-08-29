@@ -20,7 +20,7 @@ import com.hartwig.actin.molecular.datamodel.RefGenomeVersion
 import com.hartwig.actin.molecular.datamodel.TranscriptImpact
 import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantType
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.datamodel.orange.characteristics.CupPrediction
 import com.hartwig.actin.molecular.datamodel.orange.driver.CodingContext
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
@@ -36,7 +36,9 @@ import com.hartwig.actin.molecular.datamodel.orange.driver.Virus
 import com.hartwig.actin.molecular.datamodel.orange.driver.VirusType
 import com.hartwig.actin.molecular.datamodel.orange.immunology.MolecularImmunology
 import com.hartwig.actin.molecular.datamodel.orange.pharmaco.Haplotype
+import com.hartwig.actin.molecular.datamodel.orange.pharmaco.HaplotypeFunction
 import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoEntry
+import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoGene
 import com.hartwig.actin.util.json.Json
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -106,12 +108,17 @@ object HistoricMolecularDeserializer {
         return Json.array(molecular, "pharmaco").map { element ->
             val obj = element.asJsonObject
             PharmacoEntry(
-                gene = Json.string(obj, "gene"),
+                // TODO (KD): Map to Pharmacogene.
+                gene = PharmacoGene.DPYD,
+                //Json.string(obj, "gene"),
                 haplotypes = Json.array(obj, "haplotypes").map { haploJson ->
                     val haplo = haploJson.asJsonObject
+                    // TODO (KD): Extract from function = Json.string(haplo, "function"),
+                    //                        name = Json.string(haplo, "name")
                     Haplotype(
-                        function = Json.string(haplo, "function"),
-                        name = Json.string(haplo, "name")
+                        allele = "",
+                        alleleCount = 0,
+                        function = HaplotypeFunction.NO_FUNCTION
                     )
                 }.toSet()
             )
@@ -150,7 +157,7 @@ object HistoricMolecularDeserializer {
             isReportable = determineIsReportable(obj),
             event = Json.string(obj, "event"),
             driverLikelihood = determineDriverLikelihood(obj),
-            evidence = ActionableEvidence(),
+            evidence = ClinicalEvidence(),
             gene = Json.string(obj, "gene"),
             geneRole = GeneRole.UNKNOWN,
             proteinEffect = ProteinEffect.UNKNOWN,
@@ -206,7 +213,7 @@ object HistoricMolecularDeserializer {
             isReportable = determineIsReportable(obj),
             event = Json.string(obj, "event"),
             driverLikelihood = determineDriverLikelihood(obj),
-            evidence = ActionableEvidence(),
+            evidence = ClinicalEvidence(),
             gene = Json.string(obj, "gene"),
             geneRole = GeneRole.UNKNOWN,
             proteinEffect = ProteinEffect.UNKNOWN,
@@ -230,7 +237,7 @@ object HistoricMolecularDeserializer {
             isReportable = determineIsReportable(obj),
             event = Json.string(obj, "event"),
             driverLikelihood = determineDriverLikelihood(obj),
-            evidence = ActionableEvidence(),
+            evidence = ClinicalEvidence(),
             gene = Json.string(obj, "gene"),
             geneRole = GeneRole.UNKNOWN,
             proteinEffect = ProteinEffect.UNKNOWN,
@@ -251,7 +258,7 @@ object HistoricMolecularDeserializer {
             isReportable = isReportable,
             event = Json.string(obj, "event"),
             driverLikelihood = if (isReportable) determineDriverLikelihood(obj) else null,
-            evidence = ActionableEvidence(),
+            evidence = ClinicalEvidence(),
             gene = Json.string(obj, "gene"),
             geneRole = GeneRole.UNKNOWN,
             proteinEffect = ProteinEffect.UNKNOWN,
@@ -264,15 +271,14 @@ object HistoricMolecularDeserializer {
         return Fusion(
             geneStart = Json.optionalString(obj, "geneStart") ?: Json.string(obj, "fiveGene"),
             geneEnd = Json.optionalString(obj, "geneEnd") ?: Json.string(obj, "threeGene"),
-            geneTranscriptStart = "",
-            geneTranscriptEnd = "",
             driverType = determineFusionDriverType(Json.string(obj, "driverType")),
             proteinEffect = ProteinEffect.UNKNOWN,
             extendedFusionDetails = extractExtendedFusionDetails(obj),
             isReportable = determineIsReportable(obj),
             event = Json.string(obj, "event"),
             driverLikelihood = determineDriverLikelihood(obj),
-            evidence = ActionableEvidence()
+            evidence = ClinicalEvidence(),
+            isAssociatedWithDrugResistance = null
         )
     }
 
@@ -280,7 +286,8 @@ object HistoricMolecularDeserializer {
         return ExtendedFusionDetails(
             fusedExonUp = Json.optionalInteger(fusion, "fusedExonUp") ?: 0,
             fusedExonDown = Json.optionalInteger(fusion, "fusedExonDown") ?: 0,
-            isAssociatedWithDrugResistance = null
+            geneTranscriptStart = "",
+            geneTranscriptEnd = ""
         )
     }
 
@@ -305,7 +312,7 @@ object HistoricMolecularDeserializer {
             isReportable = determineIsReportable(obj),
             event = Json.string(obj, "event"),
             driverLikelihood = determineDriverLikelihood(obj),
-            evidence = ActionableEvidence()
+            evidence = ClinicalEvidence()
         )
     }
 
@@ -353,17 +360,12 @@ object HistoricMolecularDeserializer {
         return Json.optionalString(prediction, "tumorType") ?: Json.string(prediction, "cancerType")
     }
 
-    private fun extractEvidence(evidence: JsonObject?): ActionableEvidence? {
+    private fun extractEvidence(evidence: JsonObject?): ClinicalEvidence? {
         // (KD): This is explicitly not read since it contains confidential data (from CKB).
         return evidence?.let {
-            ActionableEvidence(
-                approvedTreatments = emptySet(),
+            ClinicalEvidence(
                 externalEligibleTrials = emptySet(),
-                onLabelExperimentalTreatments = emptySet(),
-                offLabelExperimentalTreatments = emptySet(),
-                preClinicalTreatments = emptySet(),
-                knownResistantTreatments = emptySet(),
-                suspectResistantTreatments = emptySet()
+                treatmentEvidence = emptySet()
             )
         }
     }

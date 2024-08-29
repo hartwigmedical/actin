@@ -21,7 +21,7 @@ import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.MedicationStatus
 import com.hartwig.actin.clinical.datamodel.PatientDetails
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorIHCTest
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
@@ -64,7 +64,6 @@ object HistoricClinicalDeserializer {
             oncologicalHistory = extractOncologicalHistory(clinical),
             priorSecondPrimaries = extractPriorSecondPrimaries(clinical),
             priorOtherConditions = extractPriorOtherConditions(clinical),
-            priorMolecularTests = extractPriorMolecularTest(clinical),
             complications = extractComplications(clinical),
             labValues = extractLabValues(clinical),
             toxicities = extractToxicities(clinical),
@@ -74,7 +73,10 @@ object HistoricClinicalDeserializer {
             bodyHeights = emptyList(),
             vitalFunctions = extractVitalFunctions(clinical),
             bloodTransfusions = extractBloodTransfusions(clinical),
-            medications = extractMedications(clinical)
+            medications = extractMedications(clinical),
+            // TODO (KD): Check if this is correctly adjusted.
+            priorSequencingTests = emptyList(),
+            priorIHCTests = extractPriorIHCTests(clinical)
         )
 
         if (reader.peek() != JsonToken.END_DOCUMENT) {
@@ -296,13 +298,13 @@ object HistoricClinicalDeserializer {
         )
     }
 
-    private fun extractPriorMolecularTest(clinical: JsonObject): List<PriorMolecularTest> {
-        return Json.array(clinical, "priorMolecularTests").mapNotNull(::toPriorMolecularTest)
+    private fun extractPriorIHCTests(clinical: JsonObject): List<PriorIHCTest> {
+        return Json.array(clinical, "priorMolecularTests").mapNotNull(::toPriorIHCTest)
     }
 
-    private fun toPriorMolecularTest(priorMolecularTestElement: JsonElement): PriorMolecularTest {
+    private fun toPriorIHCTest(priorMolecularTestElement: JsonElement): PriorIHCTest {
         val priorMolecularTest = priorMolecularTestElement.asJsonObject
-        return PriorMolecularTest(
+        return PriorIHCTest(
             test = Json.string(priorMolecularTest, "test"),
             item = Json.nullableString(priorMolecularTest, "item"),
             measure = Json.nullableString(priorMolecularTest, "measure"),
