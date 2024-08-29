@@ -267,6 +267,12 @@ class PanelVariantAnnotatorTest {
         verify(exactly = 0) { paver.run(any()) }
     }
 
+    @Test
+    fun `Should correctly normalize protein variants`() {
+        assertThat(normalizeProteinImpact("p.Met1Leu")).isEqualTo("p.M1L")
+        assertThat(normalizeProteinImpact("p.?")).isEqualTo("p.?")
+        assertThat(normalizeProteinImpact("p.M1L")).isEqualTo("p.M1L")
+    }
 
     private fun setupGeneAlteration() {
         every { evidenceDatabase.geneAlterationForVariant(VARIANT_MATCH_CRITERIA) } returns HOTSPOT
