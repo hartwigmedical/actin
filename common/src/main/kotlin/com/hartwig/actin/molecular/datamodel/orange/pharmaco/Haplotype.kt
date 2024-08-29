@@ -27,7 +27,6 @@ data class Haplotype(
             allele + HAPLOTYPE_SEPARATOR + toZygosityString()
         }
     }
-}
 
     private fun toZygosityString(): String {
         return when (alleleCount) {

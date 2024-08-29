@@ -41,7 +41,7 @@ data class Variant(
         isReportable: Boolean,
         event: String,
         driverLikelihood: DriverLikelihood?,
-        evidence: ActionableEvidence,
+        evidence: ClinicalEvidence,
         gene: String,
         geneRole: GeneRole,
         proteinEffect: ProteinEffect,
