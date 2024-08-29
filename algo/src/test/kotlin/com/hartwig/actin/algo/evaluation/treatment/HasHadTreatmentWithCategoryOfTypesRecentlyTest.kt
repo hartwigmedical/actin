@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.washout.WashoutTestFactory
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.drugTreatment
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.withTreatmentHistory
@@ -68,7 +69,7 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
     @Test
     fun `Should ignore trial matches and fail when looking for unlikely trial categories`() {
         val function =
-            HasHadTreatmentWithCategoryOfTypesRecently(TreatmentCategory.TRANSPLANTATION, setOf(OtherTreatmentType.ALLOGENIC), MIN_DATE)
+            HasHadTreatmentWithCategoryOfTypesRecently(TreatmentCategory.TRANSPLANTATION, setOf(OtherTreatmentType.ALLOGENIC), MIN_DATE, INTERPRETER)
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment("test", TreatmentCategory.TRANSPLANTATION)), isTrial = true, startYear = MIN_DATE.year + 1
         )
@@ -101,6 +102,8 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         private val MATCHING_CATEGORY = TreatmentCategory.TARGETED_THERAPY
         private val MATCHING_TYPE_SET = setOf(DrugType.HER2_ANTIBODY)
         private val MIN_DATE = LocalDate.of(2022, 4, 1)
-        private val FUNCTION = HasHadTreatmentWithCategoryOfTypesRecently(TreatmentCategory.TARGETED_THERAPY, MATCHING_TYPE_SET, MIN_DATE)
+        private val REFERENCE_DATE = LocalDate.of(2020, 6, 6)
+        private val INTERPRETER = WashoutTestFactory.activeFromDate(REFERENCE_DATE)
+        private val FUNCTION = HasHadTreatmentWithCategoryOfTypesRecently(TreatmentCategory.TARGETED_THERAPY, MATCHING_TYPE_SET, MIN_DATE, INTERPRETER)
     }
 }

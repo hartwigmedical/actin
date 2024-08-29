@@ -28,4 +28,19 @@ object TreatmentFunctions {
             .flatMap(DrugTreatment::drugs)
             .filter { it.category == TreatmentCategory.CHEMOTHERAPY }
     }
+
+    data class TreatmentAssessment(
+        val hasHadValidTreatment: Boolean = false,
+        val hasInconclusiveDate: Boolean = false,
+        val hasHadTrialAfterMinDate: Boolean = false
+    ) {
+
+        fun combineWith(other: TreatmentAssessment): TreatmentAssessment {
+            return TreatmentAssessment(
+                hasHadValidTreatment || other.hasHadValidTreatment,
+                hasInconclusiveDate || other.hasInconclusiveDate,
+                hasHadTrialAfterMinDate || other.hasHadTrialAfterMinDate
+            )
+        }
+    }
 }

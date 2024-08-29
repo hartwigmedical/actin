@@ -12,13 +12,15 @@ import java.time.LocalDate
 
 private val REFERENCE_DATE = LocalDate.of(2020, 6, 6)
 private val INTERPRETER = WashoutTestFactory.activeFromDate(REFERENCE_DATE)
+private val MIN_DATE = LocalDate.of(2024, 2, 9).minusMonths(6.toLong())
 
 class HasRecentlyReceivedCancerTherapyOfCategoryTest {
 
     private val function = HasRecentlyReceivedCancerTherapyOfCategory(
         mapOf("category to find" to setOf(AtcLevel(code = "category to find", name = ""))),
         mapOf("categories to ignore" to setOf(AtcLevel(code = "category to ignore", name = ""))),
-        INTERPRETER
+        INTERPRETER,
+        MIN_DATE
     )
 
     @Test

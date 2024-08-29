@@ -57,7 +57,7 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
             return atcCodes.map(atcTree::resolve).toSet()
         }
 
-        private val MEDICATION_CATEGORIES_TO_DRUG_TYPES = mapOf(
+        val MEDICATION_CATEGORIES_TO_DRUG_TYPES = mapOf(
             "Chemotherapy" to setOf(TreatmentCategory.CHEMOTHERAPY),
             "Endocrine therapy" to setOf(TreatmentCategory.HORMONE_THERAPY),
             "Gonadorelin" to setOf(DrugType.GONADOTROPIN_AGONIST, DrugType.GONADOTROPIN_ANTAGONIST),
@@ -67,7 +67,13 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
             "PARP inhibitors" to setOf(DrugType.PARP_INHIBITOR),
             "L01CD" to setOf(DrugType.TAXANE),
             "L02BB" to setOf(DrugType.ANTI_ANDROGEN),
-            "L01A" to setOf(DrugType.ALKYLATING_AGENT)
+            "L01A" to setOf(DrugType.ALKYLATING_AGENT),
+            "Anticancer" to setOf(
+                TreatmentCategory.CHEMOTHERAPY,
+                TreatmentCategory.TARGETED_THERAPY,
+                TreatmentCategory.IMMUNOTHERAPY,
+                TreatmentCategory.HORMONE_THERAPY
+            )
         )
     }
 }

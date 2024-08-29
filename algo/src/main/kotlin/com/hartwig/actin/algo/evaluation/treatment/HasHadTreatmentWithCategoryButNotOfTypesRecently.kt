@@ -20,13 +20,13 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecently(
             val startedPastMinDate = isAfterDate(minDate, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
             val categoryAndTypeMatch = treatmentHistoryEntry.categories().contains(category)
                     && treatmentHistoryEntry.matchesTypeFromSet(ignoreTypes) != true
-            TreatmentAssessment(
+            TreatmentFunctions.TreatmentAssessment(
                 hasHadValidTreatment = categoryAndTypeMatch && startedPastMinDate == true,
                 hasInconclusiveDate = categoryAndTypeMatch && startedPastMinDate == null,
                 hasHadTrialAfterMinDate = TrialFunctions.treatmentMayMatchAsTrial(treatmentHistoryEntry, category)
                         && startedPastMinDate == true
             )
-        }.fold(TreatmentAssessment()) { acc, element -> acc.combineWith(element) }
+        }.fold(TreatmentFunctions.TreatmentAssessment()) { acc, element -> acc.combineWith(element) }
 
         val ignoringTypesList = concatItems(ignoreTypes)
         return when {
@@ -50,21 +50,6 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecently(
                     "Has not had recent ${category.display()} treatment ignoring $ignoringTypesList"
                 )
             }
-        }
-    }
-
-    private data class TreatmentAssessment(
-        val hasHadValidTreatment: Boolean = false,
-        val hasInconclusiveDate: Boolean = false,
-        val hasHadTrialAfterMinDate: Boolean = false
-    ) {
-
-        fun combineWith(other: TreatmentAssessment): TreatmentAssessment {
-            return TreatmentAssessment(
-                hasHadValidTreatment || other.hasHadValidTreatment,
-                hasInconclusiveDate || other.hasInconclusiveDate,
-                hasHadTrialAfterMinDate || other.hasHadTrialAfterMinDate
-            )
         }
     }
 }

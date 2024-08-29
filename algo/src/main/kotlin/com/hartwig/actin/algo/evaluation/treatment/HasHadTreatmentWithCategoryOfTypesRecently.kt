@@ -6,13 +6,17 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.DateComparison.isAfterDate
 import com.hartwig.actin.algo.evaluation.util.Format.concatItems
+import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
+import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
+import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 import java.time.LocalDate
 
 class HasHadTreatmentWithCategoryOfTypesRecently(
     private val category: TreatmentCategory, private val types: Set<TreatmentType>,
-    private val minDate: LocalDate
+    private val minDate: LocalDate, private val interpreter: MedicationStatusInterpreter
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -20,17 +24,22 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
             val startedPastMinDate = isAfterDate(minDate, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
             val categoryAndTypeMatch = treatmentHistoryEntry.categories().contains(category)
                     && treatmentHistoryEntry.matchesTypeFromSet(types) == true
-            TreatmentAssessment(
+            TreatmentFunctions.TreatmentAssessment(
                 hasHadValidTreatment = categoryAndTypeMatch && startedPastMinDate == true,
                 hasInconclusiveDate = categoryAndTypeMatch && startedPastMinDate == null,
                 hasHadTrialAfterMinDate = TrialFunctions.treatmentMayMatchAsTrial(treatmentHistoryEntry, category)
                         && startedPastMinDate == true
             )
-        }.fold(TreatmentAssessment()) { acc, element -> acc.combineWith(element) }
+        }.fold(TreatmentFunctions.TreatmentAssessment()) { acc, element -> acc.combineWith(element) }
 
         val typesList = concatItems(types)
+
+        val priorCancerMedication = record.medications
+            ?.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
+            ?.filter { ( it.treatment?.categories()?.contains(category) == true && TreatmentHistoryEntry(setOf(it.treatment as Treatment)).matchesTypeFromSet(types) == true ) || it.isTrialMedication} ?: emptyList()
+
         return when {
-            treatmentAssessment.hasHadValidTreatment -> {
+            treatmentAssessment.hasHadValidTreatment || (priorCancerMedication.isNotEmpty() && priorCancerMedication.any { !it.isTrialMedication }) -> {
                 EvaluationFactory.pass("Has received $typesList ${category.display()} treatment")
             }
 
@@ -38,7 +47,7 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
                 EvaluationFactory.undetermined("Has received $typesList ${category.display()} treatment but inconclusive date")
             }
 
-            treatmentAssessment.hasHadTrialAfterMinDate -> {
+            treatmentAssessment.hasHadTrialAfterMinDate || priorCancerMedication.isNotEmpty() -> {
                 EvaluationFactory.undetermined(
                     "Patient has participated in a trial recently, inconclusive ${category.display()} treatment",
                     "Inconclusive ${category.display()} treatment due to trial participation"
@@ -50,21 +59,6 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
                     "Has not had recent $typesList ${category.display()} treatment"
                 )
             }
-        }
-    }
-
-    private data class TreatmentAssessment(
-        val hasHadValidTreatment: Boolean = false,
-        val hasInconclusiveDate: Boolean = false,
-        val hasHadTrialAfterMinDate: Boolean = false
-    ) {
-
-        fun combineWith(other: TreatmentAssessment): TreatmentAssessment {
-            return TreatmentAssessment(
-                hasHadValidTreatment || other.hasHadValidTreatment,
-                hasInconclusiveDate || other.hasInconclusiveDate,
-                hasHadTrialAfterMinDate || other.hasHadTrialAfterMinDate
-            )
         }
     }
 }
