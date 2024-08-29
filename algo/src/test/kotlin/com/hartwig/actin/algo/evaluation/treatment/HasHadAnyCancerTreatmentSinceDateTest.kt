@@ -10,22 +10,23 @@ import org.assertj.core.api.Assertions
 import org.junit.Test
 import java.time.LocalDate
 
+private const val MONTHS_AGO = 6
+private val MIN_DATE = LocalDate.of(2024, 2, 9).minusMonths(MONTHS_AGO.toLong())
+private val RECENT_DATE = MIN_DATE.plusMonths(3)
+private val OLDER_DATE = MIN_DATE.minusMonths(3)
+private val ATC_LEVELS = AtcLevel(code = "L01", name = "")
+private val REFERENCE_DATE = LocalDate.of(2020, 6, 6)
+private val INTERPRETER = WashoutTestFactory.activeFromDate(REFERENCE_DATE)
+val CHEMOTHERAPY_TREATMENT = TreatmentTestFactory.treatment(
+    name = "Chemotherapy", isSystemic = true, categories = setOf(TreatmentCategory.CHEMOTHERAPY)
+)
+val IMMUNOTHERAPY_TREATMENT = TreatmentTestFactory.treatment(
+    name = "Immunotherapy", isSystemic = true, categories = setOf(TreatmentCategory.CHEMOTHERAPY)
+)
+
 class HasHadAnyCancerTreatmentSinceDateTest {
 
-    private val monthsAgo = 6
-    private val minDate = LocalDate.of(2024, 2, 9).minusMonths(monthsAgo.toLong())
-    private val recentDate = minDate.plusMonths(3)
-    private val olderDate = minDate.minusMonths(3)
-    private val atcLevels = AtcLevel(code = "L01", name = "")
-    private val REFERENCE_DATE = LocalDate.of(2020, 6, 6)
-    private val INTERPRETER = WashoutTestFactory.activeFromDate(REFERENCE_DATE)
-    val function = HasHadAnyCancerTreatmentSinceDate(minDate, monthsAgo, setOf(atcLevels), INTERPRETER)
-    val chemotherapyTreatment = TreatmentTestFactory.treatment(
-        name = "Chemotherapy", isSystemic = true, categories = setOf(TreatmentCategory.CHEMOTHERAPY)
-    )
-    val immunotherapyTreatment = TreatmentTestFactory.treatment(
-        name = "Immunotherapy", isSystemic = true, categories = setOf(TreatmentCategory.CHEMOTHERAPY)
-    )
+    private val function = HasHadAnyCancerTreatmentSinceDate(MIN_DATE, MONTHS_AGO, setOf(ATC_LEVELS), INTERPRETER)
 
     @Test
     fun `Should fail when oncological history is empty`() {
@@ -38,9 +39,9 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         val priorCancerTreatment = TreatmentTestFactory.withTreatmentHistory(
             listOf(
                 TreatmentTestFactory.treatmentHistoryEntry(
-                    treatments = listOf(chemotherapyTreatment),
-                    stopYear = olderDate.year,
-                    stopMonth = olderDate.monthValue
+                    treatments = listOf(CHEMOTHERAPY_TREATMENT),
+                    stopYear = OLDER_DATE.year,
+                    stopMonth = OLDER_DATE.monthValue
                 )
             )
         )
@@ -52,20 +53,20 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         val priorCancerTreatment = TreatmentTestFactory.withTreatmentHistory(
             listOf(
                 TreatmentTestFactory.treatmentHistoryEntry(
-                    treatments = listOf(chemotherapyTreatment),
+                    treatments = listOf(CHEMOTHERAPY_TREATMENT),
                     stopYear = null,
                     stopMonth = null
                 ),
                 TreatmentTestFactory.treatmentHistoryEntry(
-                    treatments = listOf(immunotherapyTreatment),
-                    stopYear = olderDate.year,
-                    stopMonth = olderDate.monthValue
+                    treatments = listOf(IMMUNOTHERAPY_TREATMENT),
+                    stopYear = OLDER_DATE.year,
+                    stopMonth = OLDER_DATE.monthValue
                 )
             )
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(priorCancerTreatment))
         Assertions.assertThat(function.evaluate(priorCancerTreatment).undeterminedGeneralMessages).containsExactly(
-            "Received anti-cancer therapy (Chemotherapy) but undetermined if in the last $monthsAgo months (date unknown)"
+            "Received anti-cancer therapy (Chemotherapy) but undetermined if in the last $MONTHS_AGO months (date unknown)"
         )
     }
 
@@ -74,25 +75,25 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         val priorCancerTreatment = TreatmentTestFactory.withTreatmentHistory(
             listOf(
                 TreatmentTestFactory.treatmentHistoryEntry(
-                    treatments = listOf(chemotherapyTreatment),
-                    stopYear = olderDate.year,
-                    stopMonth = olderDate.monthValue
+                    treatments = listOf(CHEMOTHERAPY_TREATMENT),
+                    stopYear = OLDER_DATE.year,
+                    stopMonth = OLDER_DATE.monthValue
                 ),
                 TreatmentTestFactory.treatmentHistoryEntry(
-                    treatments = listOf(immunotherapyTreatment),
-                    stopYear = recentDate.year,
-                    stopMonth = recentDate.monthValue
+                    treatments = listOf(IMMUNOTHERAPY_TREATMENT),
+                    stopYear = RECENT_DATE.year,
+                    stopMonth = RECENT_DATE.monthValue
                 ),
                 TreatmentTestFactory.treatmentHistoryEntry(
-                    treatments = listOf(immunotherapyTreatment),
-                    stopYear = recentDate.year,
-                    stopMonth = recentDate.monthValue
+                    treatments = listOf(IMMUNOTHERAPY_TREATMENT),
+                    stopYear = RECENT_DATE.year,
+                    stopMonth = RECENT_DATE.monthValue
                 )
             )
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(priorCancerTreatment))
         Assertions.assertThat(function.evaluate(priorCancerTreatment).passGeneralMessages).containsExactly(
-            "Received anti-cancer therapy (Immunotherapy) within the last $monthsAgo months"
+            "Received anti-cancer therapy (Immunotherapy) within the last $MONTHS_AGO months"
         )
     }
 }

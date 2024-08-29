@@ -63,12 +63,20 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
             "Gonadorelin" to setOf(DrugType.GONADOTROPIN_AGONIST, DrugType.GONADOTROPIN_ANTAGONIST),
             "Hypomethylating agents" to setOf(DrugType.DNMT_INHIBITOR),
             "Immunotherapy" to setOf(TreatmentCategory.IMMUNOTHERAPY),
-            "Monoclonal antibodies and antibody drug conjugates" to setOf(DrugType.MONOCLONAL_ANTIBODY_TARGETED_THERAPY),
+            "Monoclonal antibodies and antibody drug conjugates" to setOf(DrugType.MONOCLONAL_ANTIBODY_TARGETED_THERAPY, DrugType.MONOCLONAL_ANTIBODY_IMMUNOTHERAPY, DrugType.MONOCLONAL_ANTIBODY_MMAE_CONJUGATE, DrugType.MONOCLONAL_ANTIBODY_SUPPORTIVE_TREATMENT, DrugType.ANTIBODY_DRUG_CONJUGATE_IMMUNOTHERAPY, DrugType.ANTIBODY_DRUG_CONJUGATE_TARGETED_THERAPY),
             "PARP inhibitors" to setOf(DrugType.PARP_INHIBITOR),
             "L01CD" to setOf(DrugType.TAXANE),
             "L02BB" to setOf(DrugType.ANTI_ANDROGEN),
             "L01A" to setOf(DrugType.ALKYLATING_AGENT),
+            "LO1XL" to setOf(DrugType.ANTI_CLDN6_CAR_T, DrugType.HER2_CAR_T),
+            "L01E" to setOf(DrugType.TYROSINE_KINASE_INHIBITOR),
             "Anticancer" to setOf(
+                TreatmentCategory.CHEMOTHERAPY,
+                TreatmentCategory.TARGETED_THERAPY,
+                TreatmentCategory.IMMUNOTHERAPY,
+                TreatmentCategory.HORMONE_THERAPY
+            ),
+            "Antineoplastic agents" to setOf(
                 TreatmentCategory.CHEMOTHERAPY,
                 TreatmentCategory.TARGETED_THERAPY,
                 TreatmentCategory.IMMUNOTHERAPY,

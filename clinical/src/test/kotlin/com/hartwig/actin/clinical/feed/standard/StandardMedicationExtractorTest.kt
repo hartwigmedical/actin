@@ -20,7 +20,7 @@ import org.junit.Test
 
 private const val MEDICATION_NAME = "medication_name"
 private const val ATC_NAME = "atc_name"
-val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
+private val TREATMENT_DATABASE = TestTreatmentDatabaseFactory.createProper()
 
 class StandardMedicationExtractorTest {
 
@@ -28,7 +28,7 @@ class StandardMedicationExtractorTest {
     private val qtProlongatingRiskCuration = mockk<CurationDatabase<QTProlongatingConfig>>()
     private val cypInteractionCuration = mockk<CurationDatabase<CypInteractionConfig>>()
     private val atcClassification = atcClassification()
-    private val extractor = StandardMedicationExtractor(atcModel, treatmentDatabase, qtProlongatingRiskCuration, cypInteractionCuration)
+    private val extractor = StandardMedicationExtractor(atcModel, TREATMENT_DATABASE, qtProlongatingRiskCuration, cypInteractionCuration)
     private val providedMedication = ProvidedMedication(
         name = MEDICATION_NAME,
         atcCode = "atc",

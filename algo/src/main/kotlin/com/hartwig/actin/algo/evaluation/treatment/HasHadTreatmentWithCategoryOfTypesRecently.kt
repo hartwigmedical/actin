@@ -6,10 +6,8 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.DateComparison.isAfterDate
 import com.hartwig.actin.algo.evaluation.util.Format.concatItems
-import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 import java.time.LocalDate
@@ -36,7 +34,7 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
 
         val priorCancerMedication = record.medications
             ?.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
-            ?.filter { ( it.treatment?.categories()?.contains(category) == true && TreatmentHistoryEntry(setOf(it.treatment as Treatment)).matchesTypeFromSet(types) == true ) || it.isTrialMedication} ?: emptyList()
+            ?.filter { medication -> ( medication.treatment?.category?.equals(category) == true && medication.treatment?.drugTypes?.any { types.contains(it) } == true) || medication.isTrialMedication} ?: emptyList()
 
         return when {
             treatmentAssessment.hasHadValidTreatment || (priorCancerMedication.isNotEmpty() && priorCancerMedication.any { !it.isTrialMedication }) -> {

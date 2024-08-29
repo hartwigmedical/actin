@@ -7,11 +7,12 @@ import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import org.junit.Test
 
+private val ATC_LEVELS = AtcLevel(code = "L01", name = "")
+
 class HasHadAnyCancerTreatmentTest {
 
-    private val atcLevels = AtcLevel(code = "L01", name = "")
-    private val functionWithoutCategoryToIgnore = HasHadAnyCancerTreatment(null, setOf(atcLevels))
-    private val functionWithCategoryToIgnore = HasHadAnyCancerTreatment(TreatmentCategory.CHEMOTHERAPY, setOf(atcLevels))
+    private val functionWithoutCategoryToIgnore = HasHadAnyCancerTreatment(null, setOf(ATC_LEVELS))
+    private val functionWithCategoryToIgnore = HasHadAnyCancerTreatment(TreatmentCategory.CHEMOTHERAPY, setOf(ATC_LEVELS))
 
     @Test
     fun `Should fail when treatment history is empty`() {

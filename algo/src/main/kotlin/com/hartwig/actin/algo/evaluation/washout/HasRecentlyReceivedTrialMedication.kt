@@ -6,6 +6,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.medication.MEDICATION_NOT_PROVIDED
 import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
+import com.hartwig.actin.algo.evaluation.util.DateComparison.isAfterDate
 import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
 import com.hartwig.actin.clinical.datamodel.Medication
 import java.time.LocalDate
@@ -27,7 +28,13 @@ class HasRecentlyReceivedTrialMedication(
 
         val foundMedicationNames = activeOrRecentlyStopped.map { it.name }.filter { it.isNotEmpty() }
 
-        return if (activeOrRecentlyStopped.isNotEmpty()) {
+        val trialEntries = record.oncologicalHistory.filter { it.isTrial && isAfterDate(
+            minStopDate,
+            it.startYear,
+            it.startMonth
+        ) == true }
+
+        return if (activeOrRecentlyStopped.isNotEmpty() || trialEntries.isNotEmpty()) {
             val foundMedicationString =
                 if (foundMedicationNames.isNotEmpty()) ": ${concatLowercaseWithAnd(foundMedicationNames)}" else ""
             EvaluationFactory.pass(

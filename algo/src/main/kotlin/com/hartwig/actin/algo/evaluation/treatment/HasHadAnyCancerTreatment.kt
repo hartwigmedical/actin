@@ -19,7 +19,7 @@ class HasHadAnyCancerTreatment(private val categoryToIgnore: TreatmentCategory?,
 
         val priorCancerMedication = record.medications
             ?.filter {
-                ((it.allLevels() intersect atcLevelsToFind).isNotEmpty() && !(it.treatment?.categories()?.contains(categoryToIgnore)
+                ((it.allLevels() intersect atcLevelsToFind).isNotEmpty() && !(it.treatment?.category?.equals(categoryToIgnore)
                     ?: false)) || it.isTrialMedication
             } ?: emptyList()
 
