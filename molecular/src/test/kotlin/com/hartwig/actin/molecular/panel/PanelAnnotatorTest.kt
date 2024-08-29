@@ -110,7 +110,7 @@ class PanelAnnotatorTest {
     }
 
     @Test
-    fun `Should infer copy numbers and annotate with evidence from serve`() {
+    fun `Should infer copy numbers and ploidy and annotate with evidence from serve`() {
         setupGeneAlteration()
         val unannotatedCopyNumberSlot = mutableListOf<CopyNumber>()
         every { evidenceDatabase.geneAlterationForCopyNumber(capture(unannotatedCopyNumberSlot)) } returns HOTSPOT
@@ -121,6 +121,7 @@ class PanelAnnotatorTest {
         assertCopyNumber(unannotatedCopyNumberSlot[0])
         assertCopyNumber(unannotatedCopyNumberSlot[1])
         assertCopyNumber(annotatedVariant)
+        assertThat(annotated.characteristics.ploidy).isEqualTo(2.0)
         assertThat(annotatedVariant.geneRole).isEqualTo(GeneRole.ONCO)
         assertThat(annotatedVariant.proteinEffect).isEqualTo(ProteinEffect.GAIN_OF_FUNCTION)
     }
