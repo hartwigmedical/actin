@@ -1,6 +1,6 @@
 package com.hartwig.actin.trial.input.datamodel
 
-import com.hartwig.actin.Displayable
+import com.hartwig.actin.datamodel.Displayable
 
 enum class TumorTypeInput(private val doid: String) : Displayable {
     CARCINOMA("305"),

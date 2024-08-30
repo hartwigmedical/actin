@@ -11,20 +11,20 @@ import com.hartwig.actin.algo.ckb.json.CkbPatientPopulation
 import com.hartwig.actin.algo.ckb.json.CkbTrialReference
 import com.hartwig.actin.algo.ckb.json.CkbVariantRequirementDetail
 import com.hartwig.actin.algo.ckb.serialization.CkbExtendedEvidenceJson
-import com.hartwig.actin.clinical.datamodel.treatment.Treatment
-import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
-import com.hartwig.actin.efficacy.AnalysisGroup
-import com.hartwig.actin.efficacy.ConfidenceInterval
-import com.hartwig.actin.efficacy.DerivedMetric
-import com.hartwig.actin.efficacy.EfficacyEntry
-import com.hartwig.actin.efficacy.EndPoint
-import com.hartwig.actin.efficacy.EndPointType
-import com.hartwig.actin.efficacy.EndPointUnit
-import com.hartwig.actin.efficacy.PatientPopulation
-import com.hartwig.actin.efficacy.TimeOfMetastases
-import com.hartwig.actin.efficacy.TrialReference
-import com.hartwig.actin.efficacy.ValuePercentage
-import com.hartwig.actin.efficacy.VariantRequirement
+import com.hartwig.actin.datamodel.clinical.treatment.Treatment
+import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
+import com.hartwig.actin.datamodel.efficacy.AnalysisGroup
+import com.hartwig.actin.datamodel.efficacy.ConfidenceInterval
+import com.hartwig.actin.datamodel.efficacy.DerivedMetric
+import com.hartwig.actin.datamodel.efficacy.EfficacyEntry
+import com.hartwig.actin.datamodel.efficacy.EndPoint
+import com.hartwig.actin.datamodel.efficacy.EndPointType
+import com.hartwig.actin.datamodel.efficacy.EndPointUnit
+import com.hartwig.actin.datamodel.efficacy.PatientPopulation
+import com.hartwig.actin.datamodel.efficacy.TimeOfMetastases
+import com.hartwig.actin.datamodel.efficacy.TrialReference
+import com.hartwig.actin.datamodel.efficacy.ValuePercentage
+import com.hartwig.actin.datamodel.efficacy.VariantRequirement
 
 class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
 

@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.curation.config
 
-import com.hartwig.actin.clinical.datamodel.CypInteraction
+import com.hartwig.actin.datamodel.clinical.CypInteraction
 
 private const val STRONG = "Strg"
 private const val MODERATE = "Mod"

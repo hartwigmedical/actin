@@ -11,7 +11,7 @@
     <artifactId>report</artifactId>
     <packaging>jar</packaging>
     <version>local-SNAPSHOT</version>
-    <name>HMF ACTIN - Report</name>
+    <name>Hartwig ACTIN - Report</name>
 
     <dependencies>
         <dependency>
@@ -51,6 +51,12 @@
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.hartwig.actin</groupId>
+            <artifactId>datamodel</artifactId>
+            <scope>test</scope>
+            <type>test-jar</type>
         </dependency>
         <dependency>
             <groupId>com.hartwig.actin</groupId>

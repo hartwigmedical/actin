@@ -1,10 +1,10 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
-import com.hartwig.actin.molecular.datamodel.MolecularTest
-import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
+import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 
 class IsHomologousRepairDeficient : MolecularEvaluationFunction {
@@ -16,12 +16,18 @@ class IsHomologousRepairDeficient : MolecularEvaluationFunction {
         for (gene in MolecularConstants.HRD_GENES) {
             for (variant in test.drivers.variants) {
                 if (variant.gene == gene && variant.isReportable) {
-                    if (variant.extendedVariantDetails?.isBiallelic == true) {
-                        hrdGenesWithBiallelicDriver.add(gene)
-                    } else if (variant.extendedVariantDetails?.isBiallelic == false) {
-                        hrdGenesWithNonBiallelicDriver.add(gene)
-                    } else {
-                        hrdGenesWithUnknownAllelicDriver.add(gene)
+                    when (variant.extendedVariantDetails?.isBiallelic) {
+                        true -> {
+                            hrdGenesWithBiallelicDriver.add(gene)
+                        }
+
+                        false -> {
+                            hrdGenesWithNonBiallelicDriver.add(gene)
+                        }
+
+                        else -> {
+                            hrdGenesWithUnknownAllelicDriver.add(gene)
+                        }
                     }
                 }
             }

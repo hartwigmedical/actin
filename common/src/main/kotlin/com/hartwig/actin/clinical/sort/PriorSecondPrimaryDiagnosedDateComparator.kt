@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.sort
 
-import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
+import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary
 
 class PriorSecondPrimaryDiagnosedDateComparator : Comparator<PriorSecondPrimary> {
 

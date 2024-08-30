@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.calendar
 
-import com.hartwig.actin.clinical.datamodel.PatientDetails
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
+import com.hartwig.actin.datamodel.clinical.PatientDetails
+import com.hartwig.actin.datamodel.clinical.TestClinicalFactory
 import org.junit.Assert
 import org.junit.Test
 import java.time.LocalDate

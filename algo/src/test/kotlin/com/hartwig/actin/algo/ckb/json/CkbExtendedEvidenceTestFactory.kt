@@ -88,7 +88,7 @@ object CkbExtendedEvidenceTestFactory {
         return listOf(
             CkbClinicalTrialLocation(
                 nctId = "NCT01",
-                facility = "HMF Sequencing Lab",
+                facility = "Hartwig Sequencing Lab",
                 city = "Amsterdam",
                 country = "Netherlands",
                 status = null,

@@ -3,20 +3,20 @@ package com.hartwig.actin.clinical.curation.config
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationUtil
-import com.hartwig.actin.clinical.datamodel.BodyLocationCategory
-import com.hartwig.actin.clinical.datamodel.ObservedToxicity
-import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
-import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatment
-import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy
-import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
-import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryDetails
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentStage
+import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
+import com.hartwig.actin.datamodel.clinical.ObservedToxicity
+import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
+import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatment
+import com.hartwig.actin.datamodel.clinical.treatment.Radiotherapy
+import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
+import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentStage
 import com.hartwig.actin.util.ResourceFile
 import com.hartwig.actin.util.json.GsonSerializer
-import java.util.*
+import java.util.Objects
 
 class TreatmentHistoryEntryConfigFactory(
     private val treatmentDatabase: TreatmentDatabase

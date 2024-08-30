@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.interpretation
 
-import com.hartwig.actin.molecular.datamodel.GeneRole
-import com.hartwig.actin.molecular.datamodel.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.GeneRole
+import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.serve.datamodel.common.GeneAlteration
 
 object GeneAlterationFactory {
@@ -9,8 +9,8 @@ object GeneAlterationFactory {
     fun convertAlteration(
         gene: String,
         input: GeneAlteration?
-    ): com.hartwig.actin.molecular.datamodel.GeneAlteration {
-        return object : com.hartwig.actin.molecular.datamodel.GeneAlteration {
+    ): com.hartwig.actin.datamodel.molecular.GeneAlteration {
+        return object : com.hartwig.actin.datamodel.molecular.GeneAlteration {
             override val gene: String = gene
 
             override val geneRole: GeneRole = if (input != null) convertGeneRole(input.geneRole()) else GeneRole.UNKNOWN

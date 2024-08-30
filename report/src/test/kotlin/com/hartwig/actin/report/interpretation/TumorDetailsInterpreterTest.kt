@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.clinical.datamodel.TumorDetails
+import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.isCUP
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

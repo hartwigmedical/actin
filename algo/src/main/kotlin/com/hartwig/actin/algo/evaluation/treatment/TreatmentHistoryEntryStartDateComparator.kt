@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 
 class TreatmentHistoryEntryStartDateComparator : Comparator<TreatmentHistoryEntry> {
     override fun compare(treatment1: TreatmentHistoryEntry, treatment2: TreatmentHistoryEntry): Int {

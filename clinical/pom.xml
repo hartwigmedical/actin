@@ -11,7 +11,7 @@
     <artifactId>clinical</artifactId>
     <packaging>jar</packaging>
     <version>local-SNAPSHOT</version>
-    <name>HMF ACTIN - Clinical</name>
+    <name>Hartwig ACTIN - Clinical</name>
 
     <dependencies>
         <dependency>
@@ -54,6 +54,12 @@
             <groupId>io.mockk</groupId>
             <artifactId>mockk-jvm</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.hartwig.actin</groupId>
+            <artifactId>datamodel</artifactId>
+            <scope>test</scope>
+            <type>test-jar</type>
         </dependency>
         <dependency>
             <groupId>com.hartwig.actin</groupId>

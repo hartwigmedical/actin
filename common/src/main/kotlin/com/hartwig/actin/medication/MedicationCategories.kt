@@ -1,6 +1,6 @@
 package com.hartwig.actin.medication
 
-import com.hartwig.actin.clinical.datamodel.AtcLevel
+import com.hartwig.actin.datamodel.clinical.AtcLevel
 
 class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel>>, private val atcTree: AtcTree) {
 

@@ -2,7 +2,7 @@ package com.hartwig.actin.clinical.feed.standard
 
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.clinical.datamodel.BodyHeight
+import com.hartwig.actin.datamodel.clinical.BodyHeight
 
 class StandardBodyHeightExtractor : StandardDataExtractor<List<BodyHeight>> {
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<BodyHeight>> {

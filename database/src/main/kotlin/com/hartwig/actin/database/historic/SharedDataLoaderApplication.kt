@@ -2,13 +2,13 @@ package com.hartwig.actin.database.historic
 
 import com.google.gson.GsonBuilder
 import com.hartwig.actin.PatientRecordJson
-import com.hartwig.actin.algo.datamodel.TreatmentMatch
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.database.dao.DatabaseAccess
 import com.hartwig.actin.database.historic.serialization.HistoricMolecularDeserializer
 import com.hartwig.actin.database.historic.serialization.HistoricTreatmentMatchDeserializer
 import com.hartwig.actin.database.molecular.MolecularLoaderApplication
-import com.hartwig.actin.molecular.datamodel.MolecularHistory
+import com.hartwig.actin.datamodel.algo.TreatmentMatch
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options

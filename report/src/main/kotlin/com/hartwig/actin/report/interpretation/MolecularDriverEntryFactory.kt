@@ -1,18 +1,18 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.molecular.datamodel.Driver
-import com.hartwig.actin.molecular.datamodel.Fusion
-import com.hartwig.actin.molecular.datamodel.Variant
-import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidenceCategories.approved
-import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidenceCategories.experimental
-import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidenceCategories.knownResistant
-import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidenceCategories.preclinical
-import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidenceCategories.suspectResistant
-import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.orange.driver.Virus
+import com.hartwig.actin.datamodel.molecular.Driver
+import com.hartwig.actin.datamodel.molecular.Fusion
+import com.hartwig.actin.datamodel.molecular.Variant
+import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidenceCategories.approved
+import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidenceCategories.experimental
+import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidenceCategories.knownResistant
+import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidenceCategories.preclinical
+import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidenceCategories.suspectResistant
+import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
+import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
+import com.hartwig.actin.datamodel.molecular.orange.driver.HomozygousDisruption
+import com.hartwig.actin.datamodel.molecular.orange.driver.Virus
 import com.hartwig.actin.report.pdf.util.Formats
 import kotlin.math.min
 

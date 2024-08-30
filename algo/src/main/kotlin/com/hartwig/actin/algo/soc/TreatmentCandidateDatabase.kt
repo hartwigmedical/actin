@@ -1,11 +1,11 @@
 package com.hartwig.actin.algo.soc
 
 import com.hartwig.actin.TreatmentDatabase
-import com.hartwig.actin.algo.datamodel.TreatmentCandidate
-import com.hartwig.actin.clinical.datamodel.treatment.Drug
-import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
-import com.hartwig.actin.trial.datamodel.EligibilityFunction
-import com.hartwig.actin.trial.datamodel.EligibilityRule
+import com.hartwig.actin.datamodel.algo.TreatmentCandidate
+import com.hartwig.actin.datamodel.clinical.treatment.Drug
+import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
+import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.EligibilityRule
 
 const val BEVACIZUMAB = "BEVACIZUMAB"
 const val CAPECITABINE = "CAPECITABINE"

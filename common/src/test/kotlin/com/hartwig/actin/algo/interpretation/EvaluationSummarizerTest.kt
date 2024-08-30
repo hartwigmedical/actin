@@ -1,9 +1,9 @@
 package com.hartwig.actin.algo.interpretation
 
-import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.datamodel.EvaluationTestFactory
-import com.hartwig.actin.algo.datamodel.TestTreatmentMatchFactory
 import com.hartwig.actin.algo.interpretation.EvaluationSummarizer.summarize
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.EvaluationTestFactory
+import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

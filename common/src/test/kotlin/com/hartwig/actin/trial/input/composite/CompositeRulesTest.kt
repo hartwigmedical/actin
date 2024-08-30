@@ -1,6 +1,6 @@
 package com.hartwig.actin.trial.input.composite
 
-import com.hartwig.actin.trial.datamodel.EligibilityRule
+import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.trial.input.composite.CompositeRules.inputsForCompositeRule
 import com.hartwig.actin.trial.input.composite.CompositeRules.isComposite
 import org.assertj.core.api.Assertions.assertThat

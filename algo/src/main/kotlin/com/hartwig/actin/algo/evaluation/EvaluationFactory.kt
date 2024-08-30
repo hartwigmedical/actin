@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation
 
-import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.EvaluationResult
 
 object EvaluationFactory {
 
@@ -67,10 +67,6 @@ object EvaluationFactory {
 
     fun notEvaluated(specificMessage: String, generalMessage: String? = null): Evaluation {
         return createNotEvaluated(specificMessage, setOf(generalMessage ?: specificMessage))
-    }
-
-    fun notEvaluatedNoGeneral(specificMessage: String): Evaluation {
-        return createNotEvaluated(specificMessage, emptySet())
     }
 
     private fun createFail(recoverable: Boolean, specificMessage: String, generalMessages: Set<String>) = Evaluation(

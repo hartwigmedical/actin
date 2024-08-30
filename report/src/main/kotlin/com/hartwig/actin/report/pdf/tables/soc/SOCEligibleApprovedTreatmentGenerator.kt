@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.soc
 
-import com.hartwig.actin.algo.datamodel.AnnotatedTreatmentMatch
+import com.hartwig.actin.datamodel.algo.AnnotatedTreatmentMatch
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.soc.SOCGeneratorFunctions.approvedTreatmentCells

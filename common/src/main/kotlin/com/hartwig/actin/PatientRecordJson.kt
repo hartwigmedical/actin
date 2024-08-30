@@ -2,20 +2,21 @@ package com.hartwig.actin
 
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import com.hartwig.actin.clinical.datamodel.treatment.Treatment
-import com.hartwig.actin.molecular.datamodel.MolecularHistory
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.clinical.treatment.Treatment
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.util.Paths
 import com.hartwig.actin.util.json.GsonLocalDateAdapter
 import com.hartwig.actin.util.json.GsonLocalDateTimeAdapter
 import com.hartwig.actin.util.json.MolecularHistoryAdapter
 import com.hartwig.actin.util.json.TreatmentAdapter
+import org.apache.logging.log4j.LogManager
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
 import java.nio.file.Files
 import java.time.LocalDate
 import java.time.LocalDateTime
-import org.apache.logging.log4j.LogManager
 
 object PatientRecordJson {
     private val LOGGER = LogManager.getLogger(PatientRecordJson::class.java)

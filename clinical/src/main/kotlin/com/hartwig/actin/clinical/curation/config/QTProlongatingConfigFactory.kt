@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.clinical.curation.CurationCategory
-import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
+import com.hartwig.actin.datamodel.clinical.QTProlongatingRisk
 
 class QTProlongatingConfigFactory : CurationConfigFactory<QTProlongatingConfig> {
     override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<QTProlongatingConfig> {

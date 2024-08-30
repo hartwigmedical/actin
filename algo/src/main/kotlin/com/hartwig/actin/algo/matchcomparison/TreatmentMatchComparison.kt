@@ -1,11 +1,11 @@
 package com.hartwig.actin.algo.matchcomparison
 
-import com.hartwig.actin.algo.datamodel.CohortMatch
-import com.hartwig.actin.algo.datamodel.TreatmentMatch
-import com.hartwig.actin.algo.datamodel.TrialMatch
 import com.hartwig.actin.algo.matchcomparison.DifferenceExtractionUtil.extractDifferences
 import com.hartwig.actin.algo.matchcomparison.DifferenceExtractionUtil.mapKeyDifferences
-import com.hartwig.actin.trial.datamodel.TrialIdentification
+import com.hartwig.actin.datamodel.algo.CohortMatch
+import com.hartwig.actin.datamodel.algo.TreatmentMatch
+import com.hartwig.actin.datamodel.algo.TrialMatch
+import com.hartwig.actin.datamodel.trial.TrialIdentification
 import org.apache.logging.log4j.LogManager
 
 object TreatmentMatchComparison {

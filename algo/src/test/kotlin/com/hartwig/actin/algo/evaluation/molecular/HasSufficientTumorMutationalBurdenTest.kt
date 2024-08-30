@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.Test
 
 class HasSufficientTumorMutationalBurdenTest {

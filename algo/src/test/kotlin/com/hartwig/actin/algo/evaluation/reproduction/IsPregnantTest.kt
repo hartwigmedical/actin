@@ -1,8 +1,8 @@
 package com.hartwig.actin.algo.evaluation.reproduction
 
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.clinical.datamodel.Gender
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.Gender
 import org.junit.Test
 
 class IsPregnantTest {

@@ -1,11 +1,11 @@
 package com.hartwig.actin.algo.evaluation.othercondition
 
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.algo.evaluation.laboratory.LabTestFactory
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
-import java.time.LocalDate
+import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.Test
+import java.time.LocalDate
 
 class HasPotentialSymptomaticHypercalcemiaTest {
 

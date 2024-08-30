@@ -1,8 +1,8 @@
 package com.hartwig.actin.algo.evaluation.infection
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestPatientFactory
-import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.TestPatientFactory
+import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 
 internal object InfectionTestFactory {
     fun withPriorOtherCondition(conditions: PriorOtherCondition): PatientRecord {

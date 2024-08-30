@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular
 
-import com.hartwig.actin.molecular.datamodel.MolecularTest
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 
 interface MolecularAnnotator<I, O : MolecularTest> {
 
