@@ -90,7 +90,7 @@ object SOCGeneratorFunctions {
                 val pfsCell = Cells.createContent(
                     treatment.generalPfs?.run {
                         if (numPatients <= MIN_PATIENT_COUNT) NA else {
-                            val iqrString = if (iqr != null && iqr != Double.NaN) {
+                            val iqrString = if (iqr != null && !iqr!!.isNaN()) {
                                 ", IQR: ${Formats.daysToMonths(iqr!!)}"
                             } else ""
                             Formats.daysToMonths(value) + iqrString
