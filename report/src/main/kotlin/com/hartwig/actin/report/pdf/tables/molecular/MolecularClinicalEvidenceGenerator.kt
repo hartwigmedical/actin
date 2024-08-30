@@ -105,7 +105,9 @@ class MolecularClinicalEvidenceGenerator(
     }
 
     private fun extractClinicalDetails(evidence: ClinicalEvidence): Set<ClinicalDetails> {
-        val treatmentEvidenceSet = evidence.treatmentEvidence.filter { it.onLabel == onLabel }.toSet()
+        val treatmentEvidenceSet = evidence.treatmentEvidence
+            .filter { it.onLabel == onLabel }
+            .filter { it.evidenceLevel != EvidenceLevel.D || it.approvalStatus == ApprovalStatus.CASE_REPORTS_SERIES }.toSet()
         val (levelA, levelB, levelC, levelD) = listOf(EvidenceLevel.A, EvidenceLevel.B, EvidenceLevel.C, EvidenceLevel.D)
             .map { treatmentsForEvidenceLevelAndLabel(treatmentEvidenceSet, it) }
         return treatmentEvidenceSet.map {
@@ -122,7 +124,6 @@ class MolecularClinicalEvidenceGenerator(
     private fun treatmentsForEvidenceLevelAndLabel(evidence: Set<TreatmentEvidence>, evidenceLevel: EvidenceLevel): Set<String> {
         return evidence
             .filter { it.evidenceLevel == evidenceLevel }
-            .filter { it.approvalStatus != ApprovalStatus.CASE_REPORTS_SERIES || it.evidenceLevel != EvidenceLevel.D }
             .map { it.treatment }
             .toSet()
     }
