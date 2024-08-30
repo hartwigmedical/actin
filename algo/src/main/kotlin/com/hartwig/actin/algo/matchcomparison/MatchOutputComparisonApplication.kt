@@ -1,9 +1,9 @@
 package com.hartwig.actin.algo.matchcomparison
 
-import com.hartwig.actin.algo.datamodel.TreatmentMatch
 import com.hartwig.actin.algo.matchcomparison.DifferenceExtractionUtil.extractDifferences
 import com.hartwig.actin.algo.matchcomparison.MatchOutputComparisonApplication.Companion.LOGGER
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
+import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import kotlin.system.exitProcess

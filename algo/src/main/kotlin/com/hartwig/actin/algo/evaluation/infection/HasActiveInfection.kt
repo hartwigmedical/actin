@@ -1,12 +1,12 @@
 package com.hartwig.actin.algo.evaluation.infection
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
-import com.hartwig.actin.clinical.datamodel.InfectionStatus
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.InfectionStatus
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
 import java.time.LocalDate

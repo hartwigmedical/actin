@@ -1,9 +1,9 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.composite.Or
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 
 private val DEL_INS_LIST = listOf(Triple("EGFR", 19, VariantTypeInput.DELETE), Triple("EGFR", 20, VariantTypeInput.INSERT))

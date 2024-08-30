@@ -5,9 +5,9 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
+import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.trial.config.TrialConfig
 import com.hartwig.actin.trial.config.TrialDatabaseValidation
-import com.hartwig.actin.trial.datamodel.Trial
 import com.hartwig.actin.trial.status.TrialStatusDatabaseValidation
 import java.lang.reflect.Type
 

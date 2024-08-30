@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.interpretation
 
-import com.hartwig.actin.trial.datamodel.CohortMetadata
-import com.hartwig.actin.trial.datamodel.TrialIdentification
+import com.hartwig.actin.datamodel.trial.CohortMetadata
+import com.hartwig.actin.datamodel.trial.TrialIdentification
 
 data class TrialMatchSummary(
     val trialCount: Int = 0,

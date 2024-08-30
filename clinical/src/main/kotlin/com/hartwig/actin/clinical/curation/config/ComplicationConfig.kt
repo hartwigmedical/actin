@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.curation.config
 
-import com.hartwig.actin.clinical.datamodel.Complication
+import com.hartwig.actin.datamodel.clinical.Complication
 
 data class ComplicationConfig(
     override val input: String,

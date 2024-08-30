@@ -1,9 +1,9 @@
 package com.hartwig.actin.database.dao
 
-import com.hartwig.actin.algo.datamodel.TreatmentMatch
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.trial.datamodel.Trial
+import com.hartwig.actin.datamodel.algo.TreatmentMatch
+import com.hartwig.actin.datamodel.clinical.ClinicalRecord
+import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.trial.Trial
 import org.apache.logging.log4j.LogManager
 import org.jooq.SQLDialect
 import org.jooq.conf.MappedSchema

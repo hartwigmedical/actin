@@ -1,11 +1,11 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestPatientFactory
-import com.hartwig.actin.clinical.datamodel.Complication
-import com.hartwig.actin.clinical.datamodel.Intolerance
-import com.hartwig.actin.clinical.datamodel.Toxicity
-import com.hartwig.actin.clinical.datamodel.ToxicitySource
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.TestPatientFactory
+import com.hartwig.actin.datamodel.clinical.Complication
+import com.hartwig.actin.datamodel.clinical.Intolerance
+import com.hartwig.actin.datamodel.clinical.Toxicity
+import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import java.time.LocalDate
 
 internal object ToxicityTestFactory {

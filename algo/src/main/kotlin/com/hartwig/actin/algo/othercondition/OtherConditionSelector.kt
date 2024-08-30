@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.othercondition
 
-import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
+import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 import com.hartwig.actin.doid.DoidModel
 
 object OtherConditionSelector {

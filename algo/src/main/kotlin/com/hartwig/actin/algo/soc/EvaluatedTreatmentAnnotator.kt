@@ -1,11 +1,11 @@
 package com.hartwig.actin.algo.soc
 
-import com.hartwig.actin.algo.datamodel.AnnotatedTreatmentMatch
-import com.hartwig.actin.algo.datamodel.EvaluatedTreatment
-import com.hartwig.actin.efficacy.EfficacyEntry
+import com.hartwig.actin.datamodel.algo.AnnotatedTreatmentMatch
+import com.hartwig.actin.datamodel.algo.EvaluatedTreatment
+import com.hartwig.actin.datamodel.efficacy.EfficacyEntry
+import com.hartwig.actin.datamodel.personalization.MeasurementType
+import com.hartwig.actin.datamodel.personalization.TreatmentAnalysis
 import com.hartwig.actin.personalization.similarity.population.ALL_PATIENTS_POPULATION_NAME
-import com.hartwig.actin.personalized.datamodel.MeasurementType
-import com.hartwig.actin.personalized.datamodel.TreatmentAnalysis
 
 class EvaluatedTreatmentAnnotator(
     private val evidenceByTreatmentName: Map<String, List<EfficacyEntry>>,

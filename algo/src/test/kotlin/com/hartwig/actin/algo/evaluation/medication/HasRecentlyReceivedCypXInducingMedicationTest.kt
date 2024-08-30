@@ -1,10 +1,10 @@
 package com.hartwig.actin.algo.evaluation.medication
 
-import com.hartwig.actin.TestPatientFactory
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.clinical.datamodel.CypInteraction
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
+import com.hartwig.actin.datamodel.TestPatientFactory
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.CypInteraction
+import com.hartwig.actin.datamodel.clinical.TestClinicalFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

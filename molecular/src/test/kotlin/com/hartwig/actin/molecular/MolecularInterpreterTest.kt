@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular
 
-import com.hartwig.actin.clinical.datamodel.PriorSequencingTest
-import com.hartwig.actin.molecular.datamodel.MolecularTest
+import com.hartwig.actin.datamodel.clinical.PriorSequencingTest
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

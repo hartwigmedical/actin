@@ -1,8 +1,8 @@
 package com.hartwig.actin.algo.soc.datamodel
 
-import com.hartwig.actin.algo.datamodel.TreatmentCandidate
-import com.hartwig.actin.trial.datamodel.EligibilityFunction
-import com.hartwig.actin.trial.datamodel.EligibilityRule
+import com.hartwig.actin.datamodel.algo.TreatmentCandidate
+import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.EligibilityRule
 
 data class DecisionTree(
     private val decision: EligibilityFunction,

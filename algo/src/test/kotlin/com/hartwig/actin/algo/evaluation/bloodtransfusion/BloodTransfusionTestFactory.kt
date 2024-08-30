@@ -1,12 +1,12 @@
 package com.hartwig.actin.algo.evaluation.bloodtransfusion
 
-import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.PatientRecordFactory
-import com.hartwig.actin.clinical.datamodel.BloodTransfusion
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord
-import com.hartwig.actin.clinical.datamodel.Medication
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.clinical.BloodTransfusion
+import com.hartwig.actin.datamodel.clinical.ClinicalRecord
+import com.hartwig.actin.datamodel.clinical.Medication
+import com.hartwig.actin.datamodel.clinical.TestClinicalFactory
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 
 internal object BloodTransfusionTestFactory {
     fun withBloodTransfusion(transfusion: BloodTransfusion): PatientRecord {

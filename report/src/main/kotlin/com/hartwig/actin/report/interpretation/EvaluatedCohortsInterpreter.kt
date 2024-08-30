@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.molecular.datamodel.Driver
-import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidenceCategories.approved
+import com.hartwig.actin.datamodel.molecular.Driver
+import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidenceCategories.approved
 
 class EvaluatedCohortsInterpreter(
     private val eligibleOpenTrialsByInclusionEvent: Map<String, List<String>>,

@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.sort
 
-import com.hartwig.actin.clinical.datamodel.PriorIHCTest
+import com.hartwig.actin.datamodel.clinical.PriorIHCTest
 
 class PriorIHCTestComparator : Comparator<PriorIHCTest> {
 

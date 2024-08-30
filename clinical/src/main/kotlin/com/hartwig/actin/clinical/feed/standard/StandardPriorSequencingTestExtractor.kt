@@ -6,12 +6,12 @@ import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.clinical.datamodel.PriorSequencingTest
-import com.hartwig.actin.clinical.datamodel.SequencedAmplification
-import com.hartwig.actin.clinical.datamodel.SequencedDeletedGene
-import com.hartwig.actin.clinical.datamodel.SequencedFusion
-import com.hartwig.actin.clinical.datamodel.SequencedSkippedExons
-import com.hartwig.actin.clinical.datamodel.SequencedVariant
+import com.hartwig.actin.datamodel.clinical.PriorSequencingTest
+import com.hartwig.actin.datamodel.clinical.SequencedAmplification
+import com.hartwig.actin.datamodel.clinical.SequencedDeletedGene
+import com.hartwig.actin.datamodel.clinical.SequencedFusion
+import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
+import com.hartwig.actin.datamodel.clinical.SequencedVariant
 import kotlin.reflect.full.memberProperties
 
 class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<SequencingTestConfig>) :

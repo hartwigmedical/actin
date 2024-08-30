@@ -1,8 +1,12 @@
 package com.hartwig.actin.report.pdf.chapters
 
-import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.datamodel.TrialMatch
+import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.TrialMatch
+import com.hartwig.actin.datamodel.trial.CohortMetadata
+import com.hartwig.actin.datamodel.trial.CriterionReference
+import com.hartwig.actin.datamodel.trial.Eligibility
+import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Cells.createContent
@@ -11,10 +15,6 @@ import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
-import com.hartwig.actin.trial.datamodel.CohortMetadata
-import com.hartwig.actin.trial.datamodel.CriterionReference
-import com.hartwig.actin.trial.datamodel.Eligibility
-import com.hartwig.actin.trial.datamodel.TrialIdentification
 import com.hartwig.actin.trial.sort.CriterionReferenceComparator
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document

@@ -19,16 +19,6 @@ import com.hartwig.actin.clinical.curation.extraction.PriorOtherConditionsExtrac
 import com.hartwig.actin.clinical.curation.extraction.PriorSecondPrimaryExtractor
 import com.hartwig.actin.clinical.curation.extraction.ToxicityExtractor
 import com.hartwig.actin.clinical.curation.extraction.TumorDetailsExtractor
-import com.hartwig.actin.clinical.datamodel.BodyWeight
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord
-import com.hartwig.actin.clinical.datamodel.PatientDetails
-import com.hartwig.actin.clinical.datamodel.Surgery
-import com.hartwig.actin.clinical.datamodel.SurgeryStatus
-import com.hartwig.actin.clinical.datamodel.VitalFunction
-import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory.ARTERIAL_BLOOD_PRESSURE
-import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory.HEART_RATE
-import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE
-import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory.SPO2
 import com.hartwig.actin.clinical.feed.ClinicalFeedIngestion
 import com.hartwig.actin.clinical.feed.emc.bodyweight.BodyWeightEntry
 import com.hartwig.actin.clinical.feed.emc.lab.LabExtraction
@@ -38,6 +28,16 @@ import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireExtraction
 import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionEntry
 import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionExtraction
 import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
+import com.hartwig.actin.datamodel.clinical.BodyWeight
+import com.hartwig.actin.datamodel.clinical.ClinicalRecord
+import com.hartwig.actin.datamodel.clinical.PatientDetails
+import com.hartwig.actin.datamodel.clinical.Surgery
+import com.hartwig.actin.datamodel.clinical.SurgeryStatus
+import com.hartwig.actin.datamodel.clinical.VitalFunction
+import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory.ARTERIAL_BLOOD_PRESSURE
+import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory.HEART_RATE
+import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE
+import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory.SPO2
 import com.hartwig.actin.doid.DoidModel
 import org.apache.logging.log4j.LogManager
 

@@ -1,14 +1,14 @@
 package com.hartwig.actin.algo.util
 
-import com.hartwig.actin.algo.datamodel.AnnotatedTreatmentMatch
-import com.hartwig.actin.algo.datamodel.CohortMatch
-import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.TreatmentMatch
 import com.hartwig.actin.algo.interpretation.EvaluationSummarizer
 import com.hartwig.actin.algo.interpretation.TrialMatchSummarizer
-import com.hartwig.actin.trial.datamodel.CohortMetadata
-import com.hartwig.actin.trial.datamodel.Eligibility
-import com.hartwig.actin.trial.datamodel.TrialIdentification
+import com.hartwig.actin.datamodel.algo.AnnotatedTreatmentMatch
+import com.hartwig.actin.datamodel.algo.CohortMatch
+import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.TreatmentMatch
+import com.hartwig.actin.datamodel.trial.CohortMetadata
+import com.hartwig.actin.datamodel.trial.Eligibility
+import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.util.DatamodelPrinter
 
 class TreatmentMatchPrinter(private val printer: DatamodelPrinter) {
@@ -32,8 +32,8 @@ class TreatmentMatchPrinter(private val printer: DatamodelPrinter) {
 
         printer.print("Standard-of-care treatments evaluated: ${treatmentMatch.standardOfCareMatches?.count() ?: 0}")
         if (treatmentMatch.standardOfCareMatches != null) {
-            printer.print("Eligible SOC treatments: ${treatmentMatch.standardOfCareMatches.count(AnnotatedTreatmentMatch::eligible)}")
-            printEvaluationSummary(treatmentMatch.standardOfCareMatches.flatMap(AnnotatedTreatmentMatch::evaluations), "SOC rules")
+            printer.print("Eligible SOC treatments: ${treatmentMatch.standardOfCareMatches!!.count(AnnotatedTreatmentMatch::eligible)}")
+            printEvaluationSummary(treatmentMatch.standardOfCareMatches!!.flatMap(AnnotatedTreatmentMatch::evaluations), "SOC rules")
         }
     }
 

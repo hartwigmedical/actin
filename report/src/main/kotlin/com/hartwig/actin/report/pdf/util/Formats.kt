@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.util
 
-import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.itextpdf.kernel.colors.DeviceRgb
 import com.itextpdf.layout.Style
 import java.text.DecimalFormat
@@ -44,6 +44,10 @@ object Formats {
 
     fun singleDigitPercentage(number: Double): String {
         return SINGLE_DIGIT_PERCENTAGE_FORMAT.format(number * 100)
+    }
+
+    fun daysToMonths(number: Double): String {
+        return singleDigitNumber(number / 30.44)
     }
 
     @JvmOverloads

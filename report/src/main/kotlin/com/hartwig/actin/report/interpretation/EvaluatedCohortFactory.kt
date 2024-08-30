@@ -1,11 +1,11 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.algo.datamodel.CohortMatch
-import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.datamodel.TreatmentMatch
-import com.hartwig.actin.algo.datamodel.TrialMatch
-import com.hartwig.actin.trial.datamodel.Eligibility
+import com.hartwig.actin.datamodel.algo.CohortMatch
+import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.TreatmentMatch
+import com.hartwig.actin.datamodel.algo.TrialMatch
+import com.hartwig.actin.datamodel.trial.Eligibility
 
 object EvaluatedCohortFactory {
     fun create(treatmentMatch: TreatmentMatch, filterOnSOCExhaustionAndTumorType: Boolean): List<EvaluatedCohort> {

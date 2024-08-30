@@ -2,9 +2,9 @@ package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.clinical.curation.CurationCategory
-import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryDetails
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentStage
+import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentStage
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

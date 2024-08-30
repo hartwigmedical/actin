@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical.interpretation
 
-import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.sort.LabValueDescendingDateComparator
+import com.hartwig.actin.datamodel.clinical.LabValue
 import java.time.LocalDate
 
 class LabInterpretation(private val measurements: Map<LabMeasurement, List<LabValue>>) {

@@ -1,7 +1,7 @@
 package com.hartwig.actin.trial.interpretation
 
-import com.hartwig.actin.trial.datamodel.EligibilityRule
-import com.hartwig.actin.trial.datamodel.TestTrialFactory
+import com.hartwig.actin.datamodel.trial.EligibilityRule
+import com.hartwig.actin.datamodel.trial.TestTrialFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

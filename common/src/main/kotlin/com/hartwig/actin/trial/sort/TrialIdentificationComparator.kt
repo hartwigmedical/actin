@@ -1,6 +1,6 @@
 package com.hartwig.actin.trial.sort
 
-import com.hartwig.actin.trial.datamodel.TrialIdentification
+import com.hartwig.actin.datamodel.trial.TrialIdentification
 
 class TrialIdentificationComparator : Comparator<TrialIdentification> {
 

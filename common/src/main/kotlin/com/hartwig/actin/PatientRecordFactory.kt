@@ -1,7 +1,8 @@
 package com.hartwig.actin
 
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord
-import com.hartwig.actin.molecular.datamodel.MolecularHistory
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.clinical.ClinicalRecord
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 

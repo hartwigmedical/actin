@@ -1,6 +1,11 @@
 package com.hartwig.actin.trial.interpretation
 
 import com.hartwig.actin.TreatmentDatabase
+import com.hartwig.actin.datamodel.trial.Cohort
+import com.hartwig.actin.datamodel.trial.Eligibility
+import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.EligibilityRule
+import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
@@ -9,11 +14,6 @@ import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import com.hartwig.actin.trial.config.TestTrialConfigDatabaseFactory
 import com.hartwig.actin.trial.config.TrialConfigDatabaseValidator
 import com.hartwig.actin.trial.config.TrialConfigModel
-import com.hartwig.actin.trial.datamodel.Cohort
-import com.hartwig.actin.trial.datamodel.Eligibility
-import com.hartwig.actin.trial.datamodel.EligibilityFunction
-import com.hartwig.actin.trial.datamodel.EligibilityRule
-import com.hartwig.actin.trial.datamodel.Trial
 import com.hartwig.actin.trial.status.TestTrialStatusConfigInterpreterFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

@@ -5,12 +5,12 @@ import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
-import com.hartwig.actin.clinical.datamodel.AtcLevel
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
+import com.hartwig.actin.datamodel.clinical.AtcLevel
+import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.medication.MedicationCategories
-import com.hartwig.actin.trial.datamodel.EligibilityFunction
-import com.hartwig.actin.trial.datamodel.EligibilityRule
 
 class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     private val selector = MedicationSelector(MedicationStatusInterpreterOnEvaluationDate(referenceDateProvider().date()))

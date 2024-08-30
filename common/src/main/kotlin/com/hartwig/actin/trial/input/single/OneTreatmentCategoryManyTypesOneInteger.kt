@@ -1,7 +1,7 @@
 package com.hartwig.actin.trial.input.single
 
-import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
-import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 
 data class OneTreatmentCategoryManyTypesOneInteger(
     val category: TreatmentCategory,

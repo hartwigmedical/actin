@@ -1,9 +1,9 @@
 package com.hartwig.actin
 
 import com.google.gson.reflect.TypeToken
-import com.hartwig.actin.clinical.datamodel.treatment.Drug
-import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.serialization.ClinicalGsonDeserializer
+import com.hartwig.actin.datamodel.clinical.treatment.Drug
+import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import org.apache.logging.log4j.LogManager
 import java.nio.file.Files
 import java.nio.file.Path

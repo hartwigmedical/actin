@@ -17,7 +17,7 @@ import com.hartwig.actin.algo.evaluation.treatment.TreatmentRuleMapper
 import com.hartwig.actin.algo.evaluation.tumor.TumorRuleMapper
 import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionRuleMapper
 import com.hartwig.actin.algo.evaluation.washout.WashoutRuleMapper
-import com.hartwig.actin.trial.datamodel.EligibilityRule
+import com.hartwig.actin.datamodel.trial.EligibilityRule
 
 object FunctionCreatorFactory {
 

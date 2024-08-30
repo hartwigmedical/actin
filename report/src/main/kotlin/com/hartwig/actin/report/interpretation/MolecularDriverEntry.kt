@@ -1,8 +1,8 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.Displayable
-import com.hartwig.actin.molecular.datamodel.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
+import com.hartwig.actin.datamodel.Displayable
+import com.hartwig.actin.datamodel.molecular.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 
 data class MolecularDriverEntry(
     val driverType: String,

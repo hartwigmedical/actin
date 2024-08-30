@@ -1,10 +1,10 @@
 package com.hartwig.actin.clinical.feed.emc.lab
 
-import com.hartwig.actin.clinical.datamodel.LabUnit
 import com.hartwig.actin.clinical.feed.emc.TestFeedFactory
 import com.hartwig.actin.clinical.feed.emc.lab.LabExtraction.extract
 import com.hartwig.actin.clinical.feed.emc.lab.LabExtraction.extractLimits
 import com.hartwig.actin.clinical.feed.emc.lab.LabExtraction.findSeparatingHyphenIndex
+import com.hartwig.actin.datamodel.clinical.LabUnit
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
 import org.junit.Test

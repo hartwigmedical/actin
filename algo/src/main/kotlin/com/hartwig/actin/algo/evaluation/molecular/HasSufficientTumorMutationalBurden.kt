@@ -1,8 +1,8 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 
 class HasSufficientTumorMutationalBurden(private val minTumorMutationalBurden: Double) : MolecularEvaluationFunction {

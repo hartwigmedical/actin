@@ -1,10 +1,10 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestPatientFactory
-import com.hartwig.actin.clinical.datamodel.LabUnit
-import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.TestPatientFactory
+import com.hartwig.actin.datamodel.clinical.LabUnit
+import com.hartwig.actin.datamodel.clinical.LabValue
 import java.time.LocalDate
 
 internal object LabTestFactory {

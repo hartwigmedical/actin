@@ -4,10 +4,10 @@ import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionSelector.sel
 import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionSelector.selectMedianPerDay
 import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionTestFactory.vitalFunction
 import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionTestFactory.withVitalFunctions
-import com.hartwig.actin.clinical.datamodel.VitalFunction
-import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory.HEART_RATE
-import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE
-import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory.SPO2
+import com.hartwig.actin.datamodel.clinical.VitalFunction
+import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory.HEART_RATE
+import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE
+import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory.SPO2
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate

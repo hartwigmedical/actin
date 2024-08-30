@@ -1,9 +1,9 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory.withCnsOrBrainLesionsAndOncologicalHistory
-import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import org.junit.Test
 
 class HasReceivedSystemicTherapyForBrainMetastasesTest {

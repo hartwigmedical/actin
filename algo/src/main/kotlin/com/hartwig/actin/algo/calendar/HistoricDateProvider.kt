@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.calendar
 
-import com.hartwig.actin.clinical.datamodel.PatientDetails
+import com.hartwig.actin.datamodel.clinical.PatientDetails
 import java.time.LocalDate
 
 internal class HistoricDateProvider private constructor(private val historicDate: LocalDate) : ReferenceDateProvider {

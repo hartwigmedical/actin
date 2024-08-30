@@ -1,8 +1,8 @@
 package com.hartwig.actin.util.json
 
 import com.google.gson.GsonBuilder
-import com.hartwig.actin.trial.datamodel.EligibilityFunction
-import com.hartwig.actin.trial.datamodel.EligibilityRule
+import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.EligibilityRule
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

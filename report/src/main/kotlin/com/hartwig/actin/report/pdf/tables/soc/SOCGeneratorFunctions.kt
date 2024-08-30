@@ -1,11 +1,11 @@
 package com.hartwig.actin.report.pdf.tables.soc
 
-import com.hartwig.actin.algo.datamodel.AnnotatedTreatmentMatch
-import com.hartwig.actin.efficacy.AnalysisGroup
-import com.hartwig.actin.efficacy.EfficacyEntry
-import com.hartwig.actin.efficacy.PatientPopulation
-import com.hartwig.actin.efficacy.TrialReference
-import com.hartwig.actin.personalized.datamodel.MIN_PATIENT_COUNT
+import com.hartwig.actin.datamodel.algo.AnnotatedTreatmentMatch
+import com.hartwig.actin.datamodel.efficacy.AnalysisGroup
+import com.hartwig.actin.datamodel.efficacy.EfficacyEntry
+import com.hartwig.actin.datamodel.efficacy.PatientPopulation
+import com.hartwig.actin.datamodel.efficacy.TrialReference
+import com.hartwig.actin.datamodel.personalization.MIN_PATIENT_COUNT
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
@@ -90,10 +90,10 @@ object SOCGeneratorFunctions {
                 val pfsCell = Cells.createContent(
                     treatment.generalPfs?.run {
                         if (numPatients <= MIN_PATIENT_COUNT) NA else {
-                            val iqrString = if (iqr != null && iqr != Double.NaN) {
-                                ", IQR: $iqr"
+                            val iqrString = if (iqr != null && !iqr!!.isNaN()) {
+                                ", IQR: ${Formats.daysToMonths(iqr!!)}"
                             } else ""
-                            value.toString() + iqrString
+                            Formats.daysToMonths(value) + iqrString
                         }
                     } ?: NA
                 )
