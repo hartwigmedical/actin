@@ -26,6 +26,7 @@ object TestClinicalEvidenceFactory {
     fun offLabelSuspectResistant() = treatment(
         "off-label suspect resistant",
         EvidenceLevel.C,
+        ApprovalStatus.GUIDELINE,
         EvidenceDirection(isResistant = true, isCertain = false),
         false
     )
@@ -33,25 +34,39 @@ object TestClinicalEvidenceFactory {
     fun onLabelSuspectResistant() = treatment(
         "on-label suspect resistant",
         EvidenceLevel.C,
+        ApprovalStatus.GUIDELINE,
         EvidenceDirection(isResistant = true, isCertain = false),
         true
     )
 
     fun offLabelKnownResistant() =
-        treatment("off-label known resistant", EvidenceLevel.A, EvidenceDirection(isResistant = true, isCertain = true), false)
+        treatment(
+            "off-label known resistant",
+            EvidenceLevel.A,
+            ApprovalStatus.GUIDELINE,
+            EvidenceDirection(isResistant = true, isCertain = true),
+            false
+        )
 
     fun onLabelKnownResistant() =
-        treatment("on-label known resistant", EvidenceLevel.A, EvidenceDirection(isResistant = true, isCertain = true), true)
+        treatment(
+            "on-label known resistant",
+            EvidenceLevel.A,
+            ApprovalStatus.GUIDELINE,
+            EvidenceDirection(isResistant = true, isCertain = true),
+            true
+        )
 
     fun offLabelPreclinical() =
-        treatment("off-label pre-clinical", EvidenceLevel.D, EvidenceDirection(hasPositiveResponse = true), false)
+        treatment("off-label pre-clinical", EvidenceLevel.D, ApprovalStatus.GUIDELINE, EvidenceDirection(hasPositiveResponse = true), false)
 
     fun onLabelPreclinical() =
-        treatment("on-label pre-clinical", EvidenceLevel.C, EvidenceDirection(hasPositiveResponse = true), true)
+        treatment("on-label pre-clinical", EvidenceLevel.C, ApprovalStatus.GUIDELINE, EvidenceDirection(hasPositiveResponse = true), true)
 
     fun offLabelExperimental() = treatment(
         "off-label experimental",
         EvidenceLevel.B,
+        ApprovalStatus.GUIDELINE,
         EvidenceDirection(hasPositiveResponse = true, isCertain = true),
         false
     )
@@ -59,20 +74,28 @@ object TestClinicalEvidenceFactory {
     fun onLabelExperimental() = treatment(
         "on-label experimental",
         EvidenceLevel.A,
+        ApprovalStatus.GUIDELINE,
         EvidenceDirection(hasPositiveResponse = true, isCertain = false),
         true
     )
 
     fun approved() =
-        treatment("approved", EvidenceLevel.A, EvidenceDirection(hasPositiveResponse = true, isCertain = true), true)
+        treatment(
+            "approved",
+            EvidenceLevel.A,
+            ApprovalStatus.GUIDELINE,
+            EvidenceDirection(hasPositiveResponse = true, isCertain = true),
+            true
+        )
 
     fun treatment(
         treatment: String,
         evidenceLevel: EvidenceLevel,
+        approvalStatus: ApprovalStatus,
         direction: EvidenceDirection,
         onLabel: Boolean,
         isCategoryVariant: Boolean? = false
-    ) = TreatmentEvidence(treatment, evidenceLevel, onLabel, direction, isCategoryVariant, "", applicableCancerType())
+    ) = TreatmentEvidence(treatment, evidenceLevel, approvalStatus, onLabel, direction, isCategoryVariant, "", applicableCancerType())
 
     private fun applicableCancerType() = ApplicableCancerType("", emptySet())
 

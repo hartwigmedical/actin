@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.evidence
 
+import com.hartwig.actin.datamodel.molecular.evidence.ApprovalStatus
 import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.CancerType
 import com.hartwig.serve.datamodel.EvidenceDirection
@@ -101,6 +102,10 @@ object TestServeActionabilityFactory {
 
             override fun level(): EvidenceLevel {
                 return EvidenceLevel.D
+            }
+
+            override fun approvalStatus(): ApprovalStatus {
+                return ApprovalStatus.GUIDELINE
             }
 
             override fun direction(): EvidenceDirection {

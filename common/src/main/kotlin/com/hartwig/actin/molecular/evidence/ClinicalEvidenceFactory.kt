@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.evidence
 
 import com.hartwig.actin.datamodel.molecular.evidence.ApplicableCancerType
+import com.hartwig.actin.datamodel.molecular.evidence.ApprovalStatus
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
@@ -35,6 +36,7 @@ object ClinicalEvidenceFactory {
             TreatmentEvidence(
                 it.treatmentName(),
                 EvidenceLevel.valueOf(it.level().name),
+                it.approvalStatus(),
                 onLabel,
                 EvidenceDirection(
                     hasPositiveResponse = it.direction().hasPositiveResponse(),
