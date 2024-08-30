@@ -46,6 +46,10 @@ object Formats {
         return SINGLE_DIGIT_PERCENTAGE_FORMAT.format(number * 100)
     }
 
+    fun daysToMonths(number: Double): String {
+        return singleDigitNumber(number / 30.44)
+    }
+
     @JvmOverloads
     fun date(date: LocalDate?, fallback: String = DATE_UNKNOWN): String {
         return if (date != null) DATE_FORMAT.format(date) else fallback

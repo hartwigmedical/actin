@@ -16,7 +16,7 @@ class RealWorldPFSOutcomesGenerator(
 ) : TableGenerator {
 
     override fun title(): String {
-        return "Median progression-free survival (days) in NCR real-world data set"
+        return "Median progression-free survival (months) in NCR real-world data set"
     }
 
     override fun contents(): Table {
@@ -33,8 +33,8 @@ class RealWorldPFSOutcomesGenerator(
                     it.numPatients <= MIN_PATIENT_COUNT -> TableElement.regular(NA)
 
                     else -> with(it) {
-                        val iqrString = iqr?.takeUnless(Double::isNaN)?.let { ", IQR: " + Formats.singleDigitNumber(it) } ?: ""
-                        TableElement(Formats.singleDigitNumber(value), "$iqrString\n(n=$numPatients)")
+                        val iqrString = iqr?.takeUnless(Double::isNaN)?.let { ", IQR: " + Formats.daysToMonths(it) } ?: ""
+                        TableElement(Formats.daysToMonths(value), "$iqrString\n(n=$numPatients)")
                     }
                 }
             }
