@@ -1,6 +1,6 @@
 package com.hartwig.actin.datamodel.clinical
 
-import com.hartwig.actin.clinical.datamodel.treatment.Drug
+import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import java.time.LocalDate
 
 data class Medication(

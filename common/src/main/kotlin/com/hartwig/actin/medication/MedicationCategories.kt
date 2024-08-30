@@ -1,8 +1,8 @@
 package com.hartwig.actin.medication
 
-import com.hartwig.actin.clinical.datamodel.AtcLevel
-import com.hartwig.actin.clinical.datamodel.treatment.DrugType
-import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
+import com.hartwig.actin.datamodel.clinical.AtcLevel
+import com.hartwig.actin.datamodel.clinical.treatment.DrugType
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 
 class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel>>, private val atcTree: AtcTree) {
 
@@ -63,7 +63,14 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
             "Gonadorelin" to setOf(DrugType.GONADOTROPIN_AGONIST, DrugType.GONADOTROPIN_ANTAGONIST),
             "Hypomethylating agents" to setOf(DrugType.DNMT_INHIBITOR),
             "Immunotherapy" to setOf(TreatmentCategory.IMMUNOTHERAPY),
-            "Monoclonal antibodies and antibody drug conjugates" to setOf(DrugType.MONOCLONAL_ANTIBODY_TARGETED_THERAPY, DrugType.MONOCLONAL_ANTIBODY_IMMUNOTHERAPY, DrugType.MONOCLONAL_ANTIBODY_MMAE_CONJUGATE, DrugType.MONOCLONAL_ANTIBODY_SUPPORTIVE_TREATMENT, DrugType.ANTIBODY_DRUG_CONJUGATE_IMMUNOTHERAPY, DrugType.ANTIBODY_DRUG_CONJUGATE_TARGETED_THERAPY),
+            "Monoclonal antibodies and antibody drug conjugates" to setOf(
+                DrugType.MONOCLONAL_ANTIBODY_TARGETED_THERAPY,
+                DrugType.MONOCLONAL_ANTIBODY_IMMUNOTHERAPY,
+                DrugType.MONOCLONAL_ANTIBODY_MMAE_CONJUGATE,
+                DrugType.MONOCLONAL_ANTIBODY_SUPPORTIVE_TREATMENT,
+                DrugType.ANTIBODY_DRUG_CONJUGATE_IMMUNOTHERAPY,
+                DrugType.ANTIBODY_DRUG_CONJUGATE_TARGETED_THERAPY
+            ),
             "PARP inhibitors" to setOf(DrugType.PARP_INHIBITOR),
             "L01CD" to setOf(DrugType.TAXANE),
             "L02BB" to setOf(DrugType.ANTI_ANDROGEN),
