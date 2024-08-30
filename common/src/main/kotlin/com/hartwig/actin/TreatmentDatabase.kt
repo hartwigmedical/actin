@@ -12,4 +12,13 @@ class TreatmentDatabase(private val drugsByName: Map<String, Drug>, private val 
     fun findDrugByName(drugName: String): Drug? {
         return drugsByName[drugName.replace(" ", "_").lowercase()]
     }
+
+    fun findDrugByAtcCode(drugName: String, atcCode: String): Drug? {
+        return if ((atcCode.startsWith("L01") && !atcCode.startsWith("L01XD")) || atcCode.startsWith("L02") || atcCode.startsWith("H01CC") || atcCode.startsWith(
+                "H01CA"
+            ) || atcCode.startsWith("G03XA")
+        ) {
+            findDrugByName(drugName.split(", ").first())
+        } else null
+    }
 }

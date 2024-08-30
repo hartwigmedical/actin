@@ -19,7 +19,7 @@ class HasHadAnyCancerTreatment(private val categoryToIgnore: TreatmentCategory?,
 
         val priorCancerMedication = record.medications
             ?.filter {
-                ((it.allLevels() intersect atcLevelsToFind).isNotEmpty() && !(it.treatment?.category?.equals(categoryToIgnore)
+                ((it.allLevels() intersect atcLevelsToFind).isNotEmpty() && !(it.drug?.category?.equals(categoryToIgnore)
                     ?: false)) || it.isTrialMedication
             } ?: emptyList()
 
@@ -27,9 +27,8 @@ class HasHadAnyCancerTreatment(private val categoryToIgnore: TreatmentCategory?,
             EvaluationFactory.fail("Patient has not had any prior cancer treatments", "Has not had any cancer treatment")
         } else {
             val categoryDisplay = categoryToIgnore?.let { "other than ${categoryToIgnore.display()} " } ?: ""
-            val treatmentDisplay = "(treatment(s): ${treatmentHistory.joinToString(", ") { it.treatmentDisplay() }})"
             EvaluationFactory.pass(
-                "Patient has had prior cancer treatment $categoryDisplay$treatmentDisplay", "Has received prior cancer treatment(s)"
+                "Patient has had prior cancer treatment $categoryDisplay", "Has received prior cancer treatment(s)"
             )
         }
     }

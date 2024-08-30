@@ -329,7 +329,7 @@
         "month": 6,
         "day": 7
       },
-      "treatment": null,
+      "drug": null,
       "cypInteractions": [],
       "qtProlongatingRisk": "NONE",
       "atc": null,

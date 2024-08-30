@@ -690,13 +690,17 @@ class FunctionInputResolver(
 
     fun createManyMedicationCategoriesOneIntegerInput(function: EligibilityFunction): Pair<Map<String, Set<AtcLevel>>, Int> {
         assertParamConfig(function, FunctionInput.MANY_MEDICATION_CATEGORIES_ONE_INTEGER, 2)
-        return Pair(toStringList(function.parameters[0]).associateWith(medicationCategories::resolve), parameterAsInt(function, 1))
+        return Pair(toStringList(function.parameters[0]).associate { x ->
+            medicationCategories.categoryName(x) to medicationCategories.resolve(
+                x
+            )
+        }, parameterAsInt(function, 1))
     }
 
     fun createManyMedicationCategoriesTwoIntegersInput(function: EligibilityFunction): Triple<Map<String, Set<AtcLevel>>, Int, Int> {
         assertParamConfig(function, FunctionInput.MANY_MEDICATION_CATEGORIES_TWO_INTEGERS, 3)
         return Triple(
-            toStringList(function.parameters[0]).associateWith(medicationCategories::resolve),
+            toStringList(function.parameters[0]).associate { x -> medicationCategories.categoryName(x) to medicationCategories.resolve(x) },
             parameterAsInt(function, 1),
             parameterAsInt(function, 2)
         )

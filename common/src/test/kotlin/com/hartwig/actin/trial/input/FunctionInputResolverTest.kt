@@ -725,8 +725,8 @@ class FunctionInputResolverTest {
         assertThat(resolver.hasValidInputs(create(rule, listOf(ATC_CODE_1, "1")))).isTrue
 
         val expectedCategoryMap = mapOf(
-            ATC_CODE_1 to setOf(AtcLevel(name = CATEGORY_1, code = ATC_CODE_1)),
-            ATC_CODE_2 to setOf(AtcLevel(name = CATEGORY_2, code = ATC_CODE_2))
+            CATEGORY_1 to setOf(AtcLevel(name = CATEGORY_1, code = ATC_CODE_1)),
+            CATEGORY_2 to setOf(AtcLevel(name = CATEGORY_2, code = ATC_CODE_2))
         )
         assertThat(resolver.createManyMedicationCategoriesOneIntegerInput(valid)).isEqualTo(Pair(expectedCategoryMap, 1))
 
@@ -747,8 +747,8 @@ class FunctionInputResolverTest {
         assertThat(resolver.hasValidInputs(create(rule, listOf(ATC_CODE_1, "1", "2")))).isTrue
 
         val expectedCategoryMap = mapOf(
-            ATC_CODE_1 to setOf(AtcLevel(name = CATEGORY_1, code = ATC_CODE_1)),
-            ATC_CODE_2 to setOf(AtcLevel(name = CATEGORY_2, code = ATC_CODE_2))
+            CATEGORY_1 to setOf(AtcLevel(name = CATEGORY_1, code = ATC_CODE_1)),
+            CATEGORY_2 to setOf(AtcLevel(name = CATEGORY_2, code = ATC_CODE_2))
         )
         assertThat(resolver.createManyMedicationCategoriesTwoIntegersInput(valid)).isEqualTo(Triple(expectedCategoryMap, 1, 2))
 

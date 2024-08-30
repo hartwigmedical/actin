@@ -22,7 +22,6 @@ import com.hartwig.actin.clinical.feed.emc.medication.MedicationEntry
 import com.hartwig.actin.datamodel.clinical.Dosage
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.MedicationStatus
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import org.apache.logging.log4j.LogManager
 
 class MedicationExtractor(
@@ -65,7 +64,7 @@ class MedicationExtractor(
                     atc = atc,
                     isSelfCare = isSelfCare,
                     isTrialMedication = isTrialMedication,
-                    treatment = determineTreatment(entry)
+                    drug = treatmentDatabase.findDrugByAtcCode(entry.code5ATCDisplay, entry.code5ATCCode)
                 )
 
                 val evaluation = listOf(nameCuration, administrationRouteCuration, dosage)
@@ -75,11 +74,6 @@ class MedicationExtractor(
         }.fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, result ->
             ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
         }
-    }
-
-    private fun determineTreatment(entry: MedicationEntry): Drug? {
-        val atcName = CurationUtil.capitalizeFirstLetterOnly(entry.code5ATCDisplay)
-        return treatmentDatabase.findDrugByName(atcName)
     }
 
     private fun curateName(entry: MedicationEntry, patientId: String): ExtractionResult<String?> {

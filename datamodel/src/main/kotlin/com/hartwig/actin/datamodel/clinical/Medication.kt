@@ -10,7 +10,7 @@ data class Medication(
     val dosage: Dosage,
     val startDate: LocalDate? = null,
     val stopDate: LocalDate? = null,
-    val treatment: Drug? = null,
+    val drug: Drug? = null,
     val cypInteractions: List<CypInteraction> = emptyList(),
     val qtProlongatingRisk: QTProlongatingRisk,
     val atc: AtcClassification? = null,

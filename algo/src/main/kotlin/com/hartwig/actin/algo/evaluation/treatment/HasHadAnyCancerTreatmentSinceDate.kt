@@ -19,8 +19,6 @@ class HasHadAnyCancerTreatmentSinceDate(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val priorCancerTreatment = record.oncologicalHistory
-        val concatenatedTreatmentDisplay = priorCancerTreatment.filter { treatmentSinceMinDate(it, minDate, true) }.toSet()
-            .joinToString { it.treatmentDisplay() }
 
         val activePriorCancerMedication = record.medications
             ?.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
@@ -29,18 +27,16 @@ class HasHadAnyCancerTreatmentSinceDate(
         return when {
             priorCancerTreatment.any { treatmentSinceMinDate(it, minDate, false) } || activePriorCancerMedication.isNotEmpty() -> {
                 EvaluationFactory.pass(
-                    "Patient has had anti-cancer therapy ($concatenatedTreatmentDisplay) within the last $monthsAgo months",
-                    "Received anti-cancer therapy ($concatenatedTreatmentDisplay) within the last $monthsAgo months"
+                    "Patient has had anti-cancer therapy  within the last $monthsAgo months",
+                    "Received anti-cancer therapy within the last $monthsAgo months"
                 )
             }
 
             priorCancerTreatment.any { treatmentSinceMinDate(it, minDate, true)
             } -> {
                 EvaluationFactory.undetermined(
-                    "Patient has had anti-cancer therapy ($concatenatedTreatmentDisplay) but " +
-                            "undetermined if in the last $monthsAgo months (date unknown)",
-                    "Received anti-cancer therapy ($concatenatedTreatmentDisplay) but " +
-                            "undetermined if in the last $monthsAgo months (date unknown)"
+                    "Patient has had anti-cancer therapy but undetermined if in the last $monthsAgo months (date unknown)",
+                    "Received anti-cancer therapy but undetermined if in the last $monthsAgo months (date unknown)"
                 )
             }
 

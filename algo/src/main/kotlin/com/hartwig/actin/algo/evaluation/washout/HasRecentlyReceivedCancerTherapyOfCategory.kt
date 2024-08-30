@@ -25,47 +25,62 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
-        val atcLevelsToFind: Set<AtcLevel> = categories.values.flatten().toSet() - categoriesToIgnore.values.flatten().toSet()
-        val categoryNames: Set<String> = categories.keys
+        val categoryNames: Set<String> = categories.keys - categoriesToIgnore.keys
+        val categoriesToFind = categories.mapValues { (key, value) -> value - (categoriesToIgnore[key] ?: emptySet()).toSet() }
+            .filterValues { it.isNotEmpty() }
 
-        val activeMedicationsMatchingCategories = medications
-            .filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
-            .filter { (it.allLevels() intersect atcLevelsToFind).isNotEmpty() || it.isTrialMedication }
+        val foundCategories = mutableSetOf<String>()
+        categoriesToFind.filter { categoryToFind ->
+            medications
+                .filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
+                .any {
+                    if ((it.allLevels() intersect categoryToFind.value).isNotEmpty()) {
+                        foundCategories.add(categoryToFind.key)
+                    }
+                    if (it.isTrialMedication) {
+                        foundCategories.add("Trial medication")
+                    }
+                    (it.allLevels() intersect categoryToFind.value).isNotEmpty() || it.isTrialMedication
+                }
+        }.map { it.key }.toSet()
 
-        val categoryWithoutIgnore = categories.keys - categoriesToIgnore.keys
-        val category = categoryWithoutIgnore.flatMap { MedicationCategories.MEDICATION_CATEGORIES_TO_DRUG_TYPES[it] ?: emptySet() }.toSet()
+        val categoryToDrugTypes = MedicationCategories.MEDICATION_CATEGORIES_TO_DRUG_TYPES.filter { categoryNames.contains(it.key) }
+        val drugTypesToFind = categoryNames.flatMap { MedicationCategories.MEDICATION_CATEGORIES_TO_DRUG_TYPES[it] ?: emptySet() }.toSet()
 
         val treatmentAssessment = record.oncologicalHistory.map { treatmentHistoryEntry ->
             val startedPastMinDate = DateComparison.isAfterDate(minDate, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
-            val categoryAndTypeMatch = category.any {
-                if (it == TreatmentCategory) {
-                    treatmentHistoryEntry.categories().contains(it)
-                } else {
-                    treatmentHistoryEntry.categories().contains((it as DrugType).category)
-                            && treatmentHistoryEntry.matchesTypeFromSet(setOf(it)) == true
+            val categoryAndTypeMatch = categoryToDrugTypes.any { categoryToDrugType ->
+                categoryToDrugType.value.any {
+                    if (it == TreatmentCategory) {
+                        val hasCategory = treatmentHistoryEntry.categories().contains(it)
+                        if (hasCategory) foundCategories.add(categoryToDrugType.key)
+                        hasCategory
+                    } else {
+                        val hasCategory = treatmentHistoryEntry.categories().contains((it as DrugType).category)
+                                && treatmentHistoryEntry.matchesTypeFromSet(setOf(it)) == true
+                        if (hasCategory) foundCategories.add(categoryToDrugType.key)
+                        hasCategory
+                    }
                 }
             }
             TreatmentFunctions.TreatmentAssessment(
                 hasHadValidTreatment = categoryAndTypeMatch && startedPastMinDate == true,
                 hasInconclusiveDate = categoryAndTypeMatch && startedPastMinDate == null,
-                hasHadTrialAfterMinDate = category.any { if (it == TreatmentCategory) {TrialFunctions.treatmentMayMatchAsTrial(treatmentHistoryEntry, it as TreatmentCategory) && startedPastMinDate == true} else {TrialFunctions.treatmentMayMatchAsTrial(treatmentHistoryEntry, (it as DrugType).category) && startedPastMinDate == true} }
+                hasHadTrialAfterMinDate = drugTypesToFind.any {
+                    val category = if (it == TreatmentCategory) it as TreatmentCategory else (it as DrugType).category
+                    val hasTrial = TrialFunctions.treatmentMayMatchAsTrial(treatmentHistoryEntry, category) && startedPastMinDate == true
+                    if (hasTrial) foundCategories.add("Trial medication")
+                    hasTrial
+                }
             )
         }.fold(TreatmentFunctions.TreatmentAssessment()) { acc, element -> acc.combineWith(element) }
 
-        val foundCategories = activeMedicationsMatchingCategories.map { medication ->
-            if (medication.isTrialMedication) "Trial medication" else medication.atc!!.pharmacologicalSubGroup.name.lowercase()
-        }
-
-        val foundMedicationNames = activeMedicationsMatchingCategories.map { it.name }.filter { it.isNotEmpty() }
-        val foundMedicationString =
-            if (foundMedicationNames.isNotEmpty()) ": ${concatLowercaseWithAnd(foundMedicationNames)}" else ""
-
         return when {
-            activeMedicationsMatchingCategories.isNotEmpty() || treatmentAssessment.hasHadValidTreatment -> {
+            foundCategories.isNotEmpty() || treatmentAssessment.hasHadValidTreatment -> {
                 EvaluationFactory.pass(
-                    "Patient has recently received medication of category '${concatLowercaseWithAnd(foundCategories)}'$foundMedicationString" +
+                    "Patient has recently received medication of category ${concatLowercaseWithAnd(foundCategories)}" +
                             " - pay attention to washout period",
-                    "Recent '${concatLowercaseWithAnd(foundCategories)}' medication use$foundMedicationString" +
+                    "Recent '${concatLowercaseWithAnd(foundCategories)}' medication use" +
                             " - pay attention to washout period"
                 )
             }

@@ -46,7 +46,14 @@ class StandardMedicationExtractor(
                 cypInteractions = CypInteractionCurationUtil.curateMedicationCypInteractions(cypInteractionCuration, atcNameOrInput),
                 isTrialMedication = it.isTrial,
                 isSelfCare = it.isSelfCare,
-                treatment = treatmentDatabase.findDrugByName(atcNameOrInput)
+                drug = if (!it.isTrial && !it.isSelfCare) {
+                    treatmentDatabase.findDrugByAtcCode(
+                        atcNameOrInput, it.atcCode ?: throw IllegalStateException(
+                            "Patient '${ehrPatientRecord.patientDetails.hashedId}' had medication '${it.name}' with null atc code, " +
+                                    "but is not a trial or self care"
+                        )
+                    )
+                } else null
             )
         }, CurationExtractionEvaluation())
     }

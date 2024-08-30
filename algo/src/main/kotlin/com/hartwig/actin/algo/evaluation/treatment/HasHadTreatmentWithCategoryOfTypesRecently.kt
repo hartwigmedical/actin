@@ -34,7 +34,13 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
 
         val priorCancerMedication = record.medications
             ?.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
-            ?.filter { medication -> ( medication.treatment?.category?.equals(category) == true && medication.treatment?.drugTypes?.any { types.contains(it) } == true) || medication.isTrialMedication} ?: emptyList()
+            ?.filter { medication ->
+                (medication.drug?.category?.equals(category) == true && medication.drug?.drugTypes?.any {
+                    types.contains(
+                        it
+                    )
+                } == true) || medication.isTrialMedication
+            } ?: emptyList()
 
         return when {
             treatmentAssessment.hasHadValidTreatment || (priorCancerMedication.isNotEmpty() && priorCancerMedication.any { !it.isTrialMedication }) -> {

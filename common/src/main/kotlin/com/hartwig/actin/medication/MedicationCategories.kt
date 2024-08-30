@@ -11,11 +11,16 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
             ?: setOf(atcTree.resolve(categoryName))
     }
 
+    fun categoryName(categoryName: String): String {
+        return if (knownCategories[categoryName] != null) categoryName
+        else atcTree.resolve(categoryName).name
+    }
+
     companion object {
         fun create(atcTree: AtcTree): MedicationCategories {
             return MedicationCategories(
                 mapOf(
-                    "Anticancer" to convertToAtcLevel(setOf("L01", "L02", "L04", "H01CC", "H01CA", "G03XA", "L02AE"), atcTree),
+                    "Anticancer" to convertToAtcLevel(setOf("L01", "L02", "L04", "H01CC", "H01CA", "G03XA"), atcTree),
                     "Anticoagulants" to convertToAtcLevel(setOf("B01AA", "B01AB", "B01AC", "B01AD", "B01AE", "B01AF", "B01AX"), atcTree),
                     "Antiepileptics" to convertToAtcLevel(setOf("N03"), atcTree),
                     "Antiinflammatory and antirheumatic products" to convertToAtcLevel(setOf("M01"), atcTree),
