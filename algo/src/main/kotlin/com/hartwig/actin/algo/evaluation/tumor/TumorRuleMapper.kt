@@ -3,9 +3,9 @@ package com.hartwig.actin.algo.evaluation.tumor
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
-import com.hartwig.actin.clinical.datamodel.TumorDetails
-import com.hartwig.actin.trial.datamodel.EligibilityFunction
-import com.hartwig.actin.trial.datamodel.EligibilityRule
+import com.hartwig.actin.datamodel.clinical.TumorDetails
+import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.EligibilityRule
 
 class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {

@@ -1,12 +1,12 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.isValid
 import com.hartwig.actin.clinical.interpretation.LabInterpreter
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.algo.Evaluation
 import java.time.LocalDate
 
 class HasAbnormalElectrolyteLevels(private val minValidLabDate: LocalDate, private val minPassLabDate: LocalDate): EvaluationFunction {

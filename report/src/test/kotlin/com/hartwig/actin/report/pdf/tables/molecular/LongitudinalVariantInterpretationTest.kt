@@ -1,11 +1,11 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.molecular.datamodel.CodingEffect
-import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
-import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
-import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
-import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.CodingEffect
+import com.hartwig.actin.datamodel.molecular.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptImpactFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
+import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

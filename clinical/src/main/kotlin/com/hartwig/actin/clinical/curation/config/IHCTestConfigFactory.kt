@@ -2,8 +2,8 @@ package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationUtil
-import com.hartwig.actin.clinical.datamodel.IHC_TEST_TYPE
-import com.hartwig.actin.clinical.datamodel.PriorIHCTest
+import com.hartwig.actin.datamodel.clinical.IHC_TEST_TYPE
+import com.hartwig.actin.datamodel.clinical.PriorIHCTest
 import com.hartwig.actin.util.ResourceFile
 
 class IHCTestConfigFactory(private val curationCategory: CurationCategory) : CurationConfigFactory<IHCTestConfig> {

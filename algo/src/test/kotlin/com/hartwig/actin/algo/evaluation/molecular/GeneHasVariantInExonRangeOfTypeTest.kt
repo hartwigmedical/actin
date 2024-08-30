@@ -1,12 +1,12 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.TestPatientFactory
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
-import com.hartwig.actin.molecular.datamodel.VariantType
-import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
-import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
-import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
+import com.hartwig.actin.datamodel.TestPatientFactory
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.molecular.VariantType
+import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptImpactFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -122,7 +122,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         isReportable = true,
                         type = VariantType.INSERT,
                         canonicalImpact = impactWithExon(OTHER_EXON),
-                        otherImpacts = setOf(impactWithExon(OTHER_EXON), impactWithExon(MATCHING_EXON)),
+                        otherImpacts = setOf(impactWithExon(OTHER_EXON), impactWithExon(MATCHING_EXON))
                     )
                 )
             )

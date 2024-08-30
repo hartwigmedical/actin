@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
-import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.datamodel.algo.Evaluation
 
 object TumorMetastasisEvaluator {
     fun evaluate(hasMetastases: Boolean?, metastasisType: String): Evaluation {

@@ -11,7 +11,7 @@
     <artifactId>molecular</artifactId>
     <packaging>jar</packaging>
     <version>local-SNAPSHOT</version>
-    <name>HMF ACTIN - Molecular</name>
+    <name>Hartwig ACTIN - Molecular</name>
 
     <dependencies>
         <dependency>
@@ -65,6 +65,12 @@
             <groupId>io.mockk</groupId>
             <artifactId>mockk-jvm</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.hartwig.actin</groupId>
+            <artifactId>datamodel</artifactId>
+            <scope>test</scope>
+            <type>test-jar</type>
         </dependency>
         <dependency>
             <groupId>com.hartwig.actin</groupId>

@@ -1,12 +1,12 @@
 package com.hartwig.actin.molecular.panel
 
-import com.hartwig.actin.clinical.datamodel.SequencedFusion
-import com.hartwig.actin.clinical.datamodel.SequencedSkippedExons
-import com.hartwig.actin.molecular.datamodel.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.Fusion
-import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
-import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
+import com.hartwig.actin.datamodel.clinical.SequencedFusion
+import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
+import com.hartwig.actin.datamodel.molecular.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.Fusion
+import com.hartwig.actin.datamodel.molecular.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.orange.driver.ExtendedFusionDetails
+import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria

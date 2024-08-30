@@ -1,17 +1,17 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
-import com.hartwig.actin.molecular.datamodel.CodingEffect
-import com.hartwig.actin.molecular.datamodel.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.GeneRole
-import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.TranscriptImpact
-import com.hartwig.actin.molecular.datamodel.Variant
-import com.hartwig.actin.molecular.datamodel.VariantEffect
-import com.hartwig.actin.molecular.datamodel.VariantType
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariantDetails
+import com.hartwig.actin.datamodel.molecular.CodingEffect
+import com.hartwig.actin.datamodel.molecular.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.GeneRole
+import com.hartwig.actin.datamodel.molecular.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.TranscriptImpact
+import com.hartwig.actin.datamodel.molecular.Variant
+import com.hartwig.actin.datamodel.molecular.VariantEffect
+import com.hartwig.actin.datamodel.molecular.VariantType
+import com.hartwig.actin.datamodel.molecular.orange.driver.ExtendedVariantDetails
+import com.hartwig.actin.datamodel.molecular.sort.driver.VariantComparator
 import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.filter.GeneFilter
-import com.hartwig.actin.molecular.sort.driver.VariantComparator
 import com.hartwig.hmftools.datamodel.purple.HotspotType
 import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect
 import com.hartwig.hmftools.datamodel.purple.PurpleDriver

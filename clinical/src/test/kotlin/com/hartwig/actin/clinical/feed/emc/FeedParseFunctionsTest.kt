@@ -1,10 +1,10 @@
 package com.hartwig.actin.clinical.feed.emc
 
-import com.hartwig.actin.clinical.datamodel.Gender
 import com.hartwig.actin.clinical.feed.emc.FeedParseFunctions.parseDate
 import com.hartwig.actin.clinical.feed.emc.FeedParseFunctions.parseGender
 import com.hartwig.actin.clinical.feed.emc.FeedParseFunctions.parseOptionalDate
 import com.hartwig.actin.clinical.feed.emc.FeedParseFunctions.parseOptionalDouble
+import com.hartwig.actin.datamodel.clinical.Gender
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
 import org.junit.Test

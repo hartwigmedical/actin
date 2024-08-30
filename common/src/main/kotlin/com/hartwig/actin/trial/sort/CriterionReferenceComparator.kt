@@ -1,6 +1,6 @@
 package com.hartwig.actin.trial.sort
 
-import com.hartwig.actin.trial.datamodel.CriterionReference
+import com.hartwig.actin.datamodel.trial.CriterionReference
 
 class CriterionReferenceComparator : Comparator<CriterionReference> {
 

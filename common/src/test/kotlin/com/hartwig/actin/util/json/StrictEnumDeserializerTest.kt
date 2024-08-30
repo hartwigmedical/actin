@@ -2,8 +2,8 @@ package com.hartwig.actin.util.json
 
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonPrimitive
-import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy
-import com.hartwig.actin.clinical.datamodel.treatment.RadiotherapyType
+import com.hartwig.actin.datamodel.clinical.treatment.Radiotherapy
+import com.hartwig.actin.datamodel.clinical.treatment.RadiotherapyType
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test

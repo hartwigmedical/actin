@@ -1,11 +1,11 @@
 package com.hartwig.actin.trial.input.datamodel
 
-import com.hartwig.actin.Displayable
-import com.hartwig.actin.clinical.datamodel.treatment.DrugType
-import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatmentType
-import com.hartwig.actin.clinical.datamodel.treatment.RadiotherapyType
-import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
-import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType
+import com.hartwig.actin.datamodel.Displayable
+import com.hartwig.actin.datamodel.clinical.treatment.DrugType
+import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
+import com.hartwig.actin.datamodel.clinical.treatment.RadiotherapyType
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 

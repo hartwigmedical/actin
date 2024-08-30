@@ -11,7 +11,7 @@
     <artifactId>database</artifactId>
     <packaging>jar</packaging>
     <version>local-SNAPSHOT</version>
-    <name>HMF ACTIN - Database</name>
+    <name>Hartwig ACTIN - Database</name>
 
     <dependencies>
         <dependency>

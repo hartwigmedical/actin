@@ -288,15 +288,13 @@ measurements from evaluation.
 Filtering is applied for the following variables (excluded values in parentheses):
 
 - Body weight (<20 or >300 kg)
-- Vital functions: heart rate (<10, >300), blood pressure (<10, >300) , pulse oximetry (<10, >100).
+- Vital functions: heart rate (<10, >300), blood pressure (<10, >300), pulse oximetry (<10, >100).
 
 To prevent loss of data, excluded values are mapped like all other values. However, the valid property (Boolean) is set to false, excluding
-them from
-further evaluation.
+them from further evaluation.
 Values with the wrong unit are not flagged as invalid, but handled separately inside each separate evaluating (vital function or body
 weight) class. If only values with the wrong unit are present among recent measurements, a specific warning is shown.
 
-=======
 ## Treatment Database
 
 The treatment database is loaded from 2 JSON files that define its contents.
@@ -331,18 +329,6 @@ drug.json consists of an array of drug entries with the following fields:
 - name: The unique name of this drug used to reference it elsewhere, such as in treatment.json.
 - drugTypes: The list of entries from DrugType that describe this drug.
 - category: The TreatmentCategory of this drug.
-
-### Filtering of Clinical Data
-
-When the clinical data is mapped onto the ACTIN clinical data model, as described above, filtering is applied to exclude non-valid
-measurements.
-Filtering is applied for the following variables (excluded values in parentheses):
-
-- Body weight (<20 or >300 kg)
-- Vital functions: heart rate (<10, >300), blood pressure (<10, >300) , pulse oximetry (<10, >100).
-
-To prevent loss of data, excluded values are mapped like all other values. However, the unit is changed to \<ignore>, excluding them from
-further evaluation.
 
 ### Version History and Download Links
 

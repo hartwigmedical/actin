@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.clinical.datamodel.TumorDetails
+import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Styles
 import com.itextpdf.layout.element.Table

@@ -3,7 +3,7 @@ package com.hartwig.actin.clinical.curation.config
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.CurationUtil
-import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
+import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 
 class NonOncologicalHistoryConfigFactory(private val curationDoidValidator: CurationDoidValidator) :
     CurationConfigFactory<NonOncologicalHistoryConfig> {

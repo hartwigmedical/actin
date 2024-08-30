@@ -1,12 +1,12 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.approved
-import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.offLabelExperimental
-import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.onLabelExperimental
-import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.onLabelKnownResistant
-import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.onLabelPreclinical
-import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory.onLabelSuspectResistant
-import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.approved
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.offLabelExperimental
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.onLabelExperimental
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.onLabelKnownResistant
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.onLabelPreclinical
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.onLabelSuspectResistant
+import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidence
 import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
 import org.assertj.core.api.Assertions.assertThat

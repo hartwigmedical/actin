@@ -1,12 +1,12 @@
 package com.hartwig.actin.trial.serialization
 
+import com.hartwig.actin.datamodel.trial.Cohort
+import com.hartwig.actin.datamodel.trial.Eligibility
+import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.EligibilityRule
+import com.hartwig.actin.datamodel.trial.TestTrialFactory
+import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
-import com.hartwig.actin.trial.datamodel.Cohort
-import com.hartwig.actin.trial.datamodel.Eligibility
-import com.hartwig.actin.trial.datamodel.EligibilityFunction
-import com.hartwig.actin.trial.datamodel.EligibilityRule
-import com.hartwig.actin.trial.datamodel.TestTrialFactory
-import com.hartwig.actin.trial.datamodel.Trial
 import com.hartwig.actin.trial.serialization.TrialJson.fromJson
 import com.hartwig.actin.trial.serialization.TrialJson.readFromDir
 import com.hartwig.actin.trial.serialization.TrialJson.toJson

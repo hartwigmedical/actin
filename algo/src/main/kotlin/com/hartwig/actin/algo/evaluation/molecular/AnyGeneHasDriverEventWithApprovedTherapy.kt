@@ -1,7 +1,5 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
@@ -10,6 +8,8 @@ import com.hartwig.actin.algo.evaluation.composite.Or
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.createFullExpandedDoidTree
 import com.hartwig.actin.algo.soc.MolecularDecisions
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.doid.DoidModel
 
 private val EXCLUDED_CRC_TUMOR_DOIDS = setOf(

@@ -1,9 +1,9 @@
 package com.hartwig.actin.clinical.feed.standard
 
-import com.hartwig.actin.clinical.datamodel.BodyWeight
-import java.time.LocalDateTime
+import com.hartwig.actin.datamodel.clinical.BodyWeight
 import org.assertj.core.api.Assertions
 import org.junit.Test
+import java.time.LocalDateTime
 
 private val CATEGORY = ProvidedMeasurementCategory.BODY_WEIGHT.name
 private val DATE = LocalDateTime.of(2024, 4, 24, 0, 0, 0)

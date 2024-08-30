@@ -5,10 +5,10 @@ import com.google.gson.JsonParser
 import com.google.gson.TypeAdapter
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
-import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
-import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatment
-import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy
-import com.hartwig.actin.clinical.datamodel.treatment.Treatment
+import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
+import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatment
+import com.hartwig.actin.datamodel.clinical.treatment.Radiotherapy
+import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 
 class TreatmentAdapter(private val gson: Gson) : TypeAdapter<Treatment>() {
     override fun write(out: JsonWriter, value: Treatment) {

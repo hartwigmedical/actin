@@ -1,10 +1,10 @@
 package com.hartwig.actin.algo.evaluation.vitalfunction
 
-import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
-import com.hartwig.actin.clinical.datamodel.VitalFunction
-import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 import com.hartwig.actin.clinical.sort.VitalFunctionDescendingDateComparator
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.clinical.VitalFunction
+import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory
 import java.time.LocalDate
 
 internal object VitalFunctionSelector {

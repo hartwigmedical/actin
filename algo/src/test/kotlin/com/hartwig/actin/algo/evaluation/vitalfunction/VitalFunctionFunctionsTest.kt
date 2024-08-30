@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.vitalfunction
 import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionFunctions.determineMedianValue
 import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionFunctions.selectMedianFunction
 import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionTestFactory.vitalFunction
-import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
+import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
 import org.junit.Test

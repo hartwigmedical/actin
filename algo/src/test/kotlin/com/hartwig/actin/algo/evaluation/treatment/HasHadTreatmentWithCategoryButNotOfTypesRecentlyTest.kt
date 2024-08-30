@@ -1,17 +1,17 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.drugTreatment
-import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatment
-import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
-import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.withTreatmentHistory
-import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.withTreatmentHistoryEntry
-import com.hartwig.actin.clinical.datamodel.treatment.DrugType
-import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatmentType
-import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
-import java.time.LocalDate
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
+import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
+import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
+import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
+import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistoryEntry
+import com.hartwig.actin.datamodel.clinical.treatment.DrugType
+import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.junit.Test
+import java.time.LocalDate
 
 class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
     @Test
@@ -65,7 +65,8 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
     @Test
     fun `Should ignore trial matches and fail when looking for unlikely trial categories`() {
         val function =
-            HasHadTreatmentWithCategoryButNotOfTypesRecently(TreatmentCategory.TRANSPLANTATION, setOf(OtherTreatmentType.ALLOGENIC),
+            HasHadTreatmentWithCategoryButNotOfTypesRecently(
+                TreatmentCategory.TRANSPLANTATION, setOf(OtherTreatmentType.ALLOGENIC),
                 MIN_DATE
             )
         val treatmentHistoryEntry = treatmentHistoryEntry(

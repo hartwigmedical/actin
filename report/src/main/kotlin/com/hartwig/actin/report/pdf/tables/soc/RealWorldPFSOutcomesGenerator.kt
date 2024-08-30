@@ -1,8 +1,8 @@
 package com.hartwig.actin.report.pdf.tables.soc
 
-import com.hartwig.actin.personalized.datamodel.MIN_PATIENT_COUNT
-import com.hartwig.actin.personalized.datamodel.MeasurementType
-import com.hartwig.actin.personalized.datamodel.PersonalizedDataAnalysis
+import com.hartwig.actin.datamodel.personalization.MIN_PATIENT_COUNT
+import com.hartwig.actin.datamodel.personalization.MeasurementType
+import com.hartwig.actin.datamodel.personalization.PersonalizedDataAnalysis
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
@@ -16,7 +16,7 @@ class RealWorldPFSOutcomesGenerator(
 ) : TableGenerator {
 
     override fun title(): String {
-        return "Median progression-free survival (days) in NCR real-world data set"
+        return "Median progression-free survival (months) in NCR real-world data set"
     }
 
     override fun contents(): Table {
@@ -33,8 +33,8 @@ class RealWorldPFSOutcomesGenerator(
                     it.numPatients <= MIN_PATIENT_COUNT -> TableElement.regular(NA)
 
                     else -> with(it) {
-                        val iqrString = iqr?.takeUnless(Double::isNaN)?.let { ", IQR: " + Formats.singleDigitNumber(it) } ?: ""
-                        TableElement(Formats.singleDigitNumber(value), "$iqrString\n(n=$numPatients)")
+                        val iqrString = iqr?.takeUnless(Double::isNaN)?.let { ", IQR: " + Formats.daysToMonths(it) } ?: ""
+                        TableElement(Formats.daysToMonths(value), "$iqrString\n(n=$numPatients)")
                     }
                 }
             }

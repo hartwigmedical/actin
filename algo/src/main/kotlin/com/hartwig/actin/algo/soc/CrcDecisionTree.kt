@@ -1,14 +1,14 @@
 package com.hartwig.actin.algo.soc
 
-import com.hartwig.actin.algo.datamodel.TreatmentCandidate
 import com.hartwig.actin.algo.soc.MolecularDecisions.brafV600EMutation
 import com.hartwig.actin.algo.soc.MolecularDecisions.ntrkFusion
 import com.hartwig.actin.algo.soc.MolecularDecisions.rasWildTypeAndLeftSided
 import com.hartwig.actin.algo.soc.datamodel.DecisionTree
 import com.hartwig.actin.algo.soc.datamodel.DecisionTreeLeaf
 import com.hartwig.actin.algo.soc.datamodel.DecisionTreeNode
-import com.hartwig.actin.trial.datamodel.EligibilityFunction
-import com.hartwig.actin.trial.datamodel.EligibilityRule
+import com.hartwig.actin.datamodel.algo.TreatmentCandidate
+import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.EligibilityRule
 
 class CrcDecisionTree(treatmentCandidateDatabase: TreatmentCandidateDatabase) : DecisionTreeNode {
 

@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.interpretation
 
-import com.hartwig.actin.clinical.datamodel.LabValue
+import com.hartwig.actin.datamodel.clinical.LabValue
 
 object LabInterpreter {
 

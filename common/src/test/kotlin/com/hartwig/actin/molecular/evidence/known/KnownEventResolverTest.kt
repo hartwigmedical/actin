@@ -1,10 +1,10 @@
 package com.hartwig.actin.molecular.evidence.known
 
-import com.hartwig.actin.molecular.TestMolecularFactory.minimalCopyNumber
-import com.hartwig.actin.molecular.TestMolecularFactory.minimalDisruption
-import com.hartwig.actin.molecular.TestMolecularFactory.minimalHomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.CodingEffect
-import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.CodingEffect
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalCopyNumber
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalDisruption
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalHomozygousDisruption
+import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.evidence.matching.FUSION_CRITERIA
 import com.hartwig.actin.molecular.evidence.matching.VARIANT_CRITERIA
 import com.hartwig.serve.datamodel.ImmutableKnownEvents

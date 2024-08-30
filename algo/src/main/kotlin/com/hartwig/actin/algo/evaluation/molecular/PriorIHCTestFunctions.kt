@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.clinical.datamodel.IHC_TEST_TYPE
-import com.hartwig.actin.clinical.datamodel.PriorIHCTest
+import com.hartwig.actin.datamodel.clinical.IHC_TEST_TYPE
+import com.hartwig.actin.datamodel.clinical.PriorIHCTest
 
 internal object PriorIHCTestFunctions {
 

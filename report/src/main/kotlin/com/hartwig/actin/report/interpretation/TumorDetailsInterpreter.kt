@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.clinical.datamodel.TumorDetails
+import com.hartwig.actin.datamodel.clinical.TumorDetails
 
 object TumorDetailsInterpreter {
     const val CUP_LOCATION = "Unknown"

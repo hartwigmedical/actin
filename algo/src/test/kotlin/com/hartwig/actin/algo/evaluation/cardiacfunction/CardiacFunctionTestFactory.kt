@@ -1,10 +1,10 @@
 package com.hartwig.actin.algo.evaluation.cardiacfunction
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestPatientFactory
-import com.hartwig.actin.clinical.datamodel.ClinicalStatus
-import com.hartwig.actin.clinical.datamodel.ECG
-import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.TestPatientFactory
+import com.hartwig.actin.datamodel.clinical.ClinicalStatus
+import com.hartwig.actin.datamodel.clinical.ECG
+import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 
 internal object CardiacFunctionTestFactory {
     fun createMinimal(): ECG {

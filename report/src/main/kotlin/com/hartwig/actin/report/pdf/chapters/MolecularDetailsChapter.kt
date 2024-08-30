@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.chapters
 
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
 import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory

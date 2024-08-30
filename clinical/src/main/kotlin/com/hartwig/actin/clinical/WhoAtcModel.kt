@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical
 
-import com.hartwig.actin.clinical.datamodel.AtcClassification
-import com.hartwig.actin.clinical.datamodel.AtcLevel
+import com.hartwig.actin.datamodel.clinical.AtcClassification
+import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.util.TabularFile
 import org.apache.logging.log4j.LogManager
 import java.io.File

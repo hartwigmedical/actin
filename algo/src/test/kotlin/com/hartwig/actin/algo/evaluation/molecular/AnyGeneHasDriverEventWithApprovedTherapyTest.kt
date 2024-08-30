@@ -1,15 +1,15 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.TestPatientFactory
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory
 import com.hartwig.actin.algo.evaluation.RuleMappingResourcesTestFactory
-import com.hartwig.actin.clinical.datamodel.TumorDetails
+import com.hartwig.actin.datamodel.TestPatientFactory
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.TumorDetails
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptImpactFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.doid.TestDoidModelFactory.createMinimalTestDoidModel
-import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
-import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import org.junit.Test
 
 private const val CORRECT_GENE = "BRAF"

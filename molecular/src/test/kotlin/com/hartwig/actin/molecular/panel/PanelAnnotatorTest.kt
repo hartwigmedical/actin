@@ -1,19 +1,21 @@
 package com.hartwig.actin.molecular.panel
 
-import com.hartwig.actin.clinical.datamodel.PriorSequencingTest
-import com.hartwig.actin.clinical.datamodel.SequencedAmplification
-import com.hartwig.actin.clinical.datamodel.SequencedFusion
-import com.hartwig.actin.clinical.datamodel.SequencedSkippedExons
-import com.hartwig.actin.clinical.datamodel.SequencedVariant
-import com.hartwig.actin.molecular.datamodel.CodingEffect
-import com.hartwig.actin.molecular.datamodel.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.Fusion
-import com.hartwig.actin.molecular.datamodel.GeneRole
-import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.Variant
-import com.hartwig.actin.molecular.datamodel.VariantType
-import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
+import com.hartwig.actin.datamodel.clinical.PriorSequencingTest
+import com.hartwig.actin.datamodel.clinical.SequencedAmplification
+import com.hartwig.actin.datamodel.clinical.SequencedFusion
+import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
+import com.hartwig.actin.datamodel.clinical.SequencedVariant
+import com.hartwig.actin.datamodel.molecular.CodingEffect
+import com.hartwig.actin.datamodel.molecular.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.Fusion
+import com.hartwig.actin.datamodel.molecular.GeneRole
+import com.hartwig.actin.datamodel.molecular.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.Variant
+import com.hartwig.actin.datamodel.molecular.VariantType
+import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
+import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
+import com.hartwig.actin.molecular.GENE
+import com.hartwig.actin.molecular.HGVS_CODING
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
@@ -110,7 +112,7 @@ class PanelAnnotatorTest {
     }
 
     @Test
-    fun `Should infer copy numbers and annotate with evidence from serve`() {
+    fun `Should infer copy numbers and ploidy and annotate with evidence from serve`() {
         setupGeneAlteration()
         val unannotatedCopyNumberSlot = mutableListOf<CopyNumber>()
         every { evidenceDatabase.geneAlterationForCopyNumber(capture(unannotatedCopyNumberSlot)) } returns HOTSPOT
@@ -121,6 +123,7 @@ class PanelAnnotatorTest {
         assertCopyNumber(unannotatedCopyNumberSlot[0])
         assertCopyNumber(unannotatedCopyNumberSlot[1])
         assertCopyNumber(annotatedVariant)
+        assertThat(annotated.characteristics.ploidy).isEqualTo(2.0)
         assertThat(annotatedVariant.geneRole).isEqualTo(GeneRole.ONCO)
         assertThat(annotatedVariant.proteinEffect).isEqualTo(ProteinEffect.GAIN_OF_FUNCTION)
     }

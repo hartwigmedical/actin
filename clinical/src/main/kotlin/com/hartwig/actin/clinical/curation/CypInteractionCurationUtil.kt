@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical.curation
 
 import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
-import com.hartwig.actin.clinical.datamodel.CypInteraction
+import com.hartwig.actin.datamodel.clinical.CypInteraction
 
 object CypInteractionCurationUtil {
     fun curateMedicationCypInteractions(

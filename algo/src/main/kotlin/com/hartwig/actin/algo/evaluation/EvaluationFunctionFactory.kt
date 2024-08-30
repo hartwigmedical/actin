@@ -4,8 +4,8 @@ import com.hartwig.actin.algo.evaluation.composite.And
 import com.hartwig.actin.algo.evaluation.composite.Not
 import com.hartwig.actin.algo.evaluation.composite.Or
 import com.hartwig.actin.algo.evaluation.composite.WarnIf
-import com.hartwig.actin.trial.datamodel.EligibilityFunction
-import com.hartwig.actin.trial.datamodel.EligibilityRule
+import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.input.composite.CompositeRules
 

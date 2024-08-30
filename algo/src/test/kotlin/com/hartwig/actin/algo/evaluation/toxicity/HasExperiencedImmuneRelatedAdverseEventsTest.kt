@@ -1,16 +1,16 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestPatientFactory.createMinimalTestWGSPatientRecord
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.clinical.datamodel.Intolerance
-import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
-import com.hartwig.actin.clinical.datamodel.treatment.Treatment
-import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
-import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.TestPatientFactory.createMinimalTestWGSPatientRecord
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.Intolerance
+import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
+import com.hartwig.actin.datamodel.clinical.treatment.Treatment
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

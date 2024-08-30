@@ -1,9 +1,9 @@
 package com.hartwig.actin.report.pdf.tables.clinical
 
-import com.hartwig.actin.clinical.datamodel.TumorDetails
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoEntry
-import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoGene
+import com.hartwig.actin.datamodel.clinical.TumorDetails
+import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoEntry
+import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoGene
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
 import com.hartwig.actin.report.interpretation.EvaluatedCohortsInterpreter

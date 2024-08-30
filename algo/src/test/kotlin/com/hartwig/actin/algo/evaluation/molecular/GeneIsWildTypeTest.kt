@@ -1,19 +1,19 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.TestPatientFactory
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
-import com.hartwig.actin.molecular.datamodel.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.Drivers
-import com.hartwig.actin.molecular.datamodel.GeneRole
-import com.hartwig.actin.molecular.datamodel.MolecularHistory
-import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.TestPanelRecordFactory
-import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
-import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory
-import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
-import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory
-import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
+import com.hartwig.actin.datamodel.TestPatientFactory
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.molecular.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.Drivers
+import com.hartwig.actin.datamodel.molecular.GeneRole
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.TestPanelRecordFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestDisruptionFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestHomozygousDisruptionFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import org.junit.Test
 
 private const val MATCHING_GENE = "gene A"

@@ -1,12 +1,12 @@
 package com.hartwig.actin.algo.evaluation.washout
 
-import com.hartwig.actin.TestPatientFactory
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.medication.MedicationTestFactory
 import com.hartwig.actin.algo.evaluation.washout.WashoutTestFactory.medication
-import com.hartwig.actin.clinical.datamodel.Medication
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
+import com.hartwig.actin.datamodel.TestPatientFactory
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.Medication
+import com.hartwig.actin.datamodel.clinical.TestClinicalFactory
 import org.assertj.core.api.Assertions
 import org.junit.Test
 

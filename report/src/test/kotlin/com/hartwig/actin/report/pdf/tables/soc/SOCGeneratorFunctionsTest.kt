@@ -1,13 +1,13 @@
 package com.hartwig.actin.report.pdf.tables.soc
 
-import com.hartwig.actin.algo.datamodel.AnnotatedTreatmentMatch
-import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.datamodel.TreatmentCandidate
-import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatment
-import com.hartwig.actin.efficacy.AnalysisGroup
-import com.hartwig.actin.efficacy.PatientPopulation
-import com.hartwig.actin.personalized.datamodel.Measurement
+import com.hartwig.actin.datamodel.algo.AnnotatedTreatmentMatch
+import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.TreatmentCandidate
+import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
+import com.hartwig.actin.datamodel.efficacy.AnalysisGroup
+import com.hartwig.actin.datamodel.efficacy.PatientPopulation
+import com.hartwig.actin.datamodel.personalization.Measurement
 import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
@@ -88,11 +88,11 @@ class SOCGeneratorFunctionsTest {
         assertThat(cells.map(::firstTextFromOneParagraphElement)).containsExactly(
             "t2",
             "Not available yet",
-            "116.5",
+            "3.8",
             "no data",
             "t1",
             "Not available yet",
-            "103.0, IQR: 100.0",
+            "3.4, IQR: 3.3",
             "no data, not recommended",
             "t3",
             "Not available yet",

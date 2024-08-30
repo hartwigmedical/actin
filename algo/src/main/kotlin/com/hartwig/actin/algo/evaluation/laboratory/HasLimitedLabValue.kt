@@ -1,13 +1,13 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.evaluateVersusMaxValueWithMargin
 import com.hartwig.actin.algo.evaluation.util.Format.labValue
-import com.hartwig.actin.clinical.datamodel.LabUnit
-import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.LabUnit
+import com.hartwig.actin.datamodel.clinical.LabValue
 
 class HasLimitedLabValue(
     private val maxValue: Double, private val measurement: LabMeasurement, private val targetUnit: LabUnit

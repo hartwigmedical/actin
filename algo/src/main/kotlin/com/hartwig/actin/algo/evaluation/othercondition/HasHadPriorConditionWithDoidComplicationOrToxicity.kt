@@ -1,15 +1,15 @@
 package com.hartwig.actin.algo.evaluation.othercondition
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.fail
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.complication.ComplicationFunctions.findComplicationNamesMatchingAnyCategory
 import com.hartwig.actin.algo.evaluation.othercondition.PriorConditionMessages.Characteristic
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
-import com.hartwig.actin.clinical.datamodel.ToxicitySource
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.doid.DoidModel
 
 class HasHadPriorConditionWithDoidComplicationOrToxicity(

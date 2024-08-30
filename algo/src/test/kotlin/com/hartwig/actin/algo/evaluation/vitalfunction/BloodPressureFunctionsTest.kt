@@ -1,13 +1,13 @@
 package com.hartwig.actin.algo.evaluation.vitalfunction
 
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.vitalfunction.BloodPressureCategory.DIASTOLIC
 import com.hartwig.actin.algo.evaluation.vitalfunction.BloodPressureCategory.SYSTOLIC
 import com.hartwig.actin.algo.evaluation.vitalfunction.BloodPressureFunctions.evaluatePatientMaximumBloodPressure
 import com.hartwig.actin.algo.evaluation.vitalfunction.BloodPressureFunctions.evaluatePatientMinimumBloodPressure
-import com.hartwig.actin.clinical.datamodel.VitalFunction
-import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.VitalFunction
+import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory
 import org.assertj.core.api.Assertions
 import org.junit.Test
 import java.time.LocalDate
