@@ -35,7 +35,7 @@ class EfficacyEvidenceGenerator(
             return Tables.createSingleColWithWidth(width)
                 .addCell(Cells.createContentNoBorder("There are no standard of care treatment options for this patient"))
         } else {
-            val table = Tables.createFixedWidthCols(120f, width - 250f).setWidth(width)
+            val table = Tables.createFixedWidthCols(1f, 3f).setWidth(width)
             table.addHeaderCell(Cells.createHeader("Treatment"))
             table.addHeaderCell(Cells.createHeader("Literature efficacy evidence"))
             treatments.sortedBy { it.annotations.size }.reversed().forEach { treatment: AnnotatedTreatmentMatch ->
@@ -57,7 +57,7 @@ class EfficacyEvidenceGenerator(
     private fun createOneLiteraturePart(
         width: Float, annotation: EfficacyEntry, trialReference: TrialReference, treatment: AnnotatedTreatmentMatch
     ): Table {
-        val subTable = Tables.createSingleColWithWidth(width / 2)
+        val subTable = Tables.createSingleColWithWidth(width / 4 * 3)
         val nestedTables = listOf(
             createTrialHeader(annotation),
             createPatientCharacteristics(trialReference, treatment),
@@ -73,7 +73,7 @@ class EfficacyEvidenceGenerator(
     }
 
     private fun createTrialHeader(annotation: EfficacyEntry): Table {
-        val table = Tables.createFixedWidthCols(100f, 150f).setWidth(250f)
+        val table = Tables.createFixedWidthCols(10f, 15f).setWidth(250f)
         table.addCell(Cells.createSubTitle(annotation.acronym).setAction(PdfAction.createURI(annotation.trialReferences.first().url))
             .addStyle(Styles.urlStyle()))
         table.addCell(Cells.createValue(""))
@@ -83,7 +83,7 @@ class EfficacyEvidenceGenerator(
     }
 
     private fun createPatientCharacteristics(trialReference: TrialReference, treatment: AnnotatedTreatmentMatch): Table {
-        val table = Tables.createFixedWidthCols(100f, 150f).setWidth(400f)
+        val table = Tables.createFixedWidthCols(1f, 3f).setWidth(width / 4 * 3)
         trialReference.patientPopulations.asSequence()
             .filter { it.treatment?.name.equals(treatment.treatmentCandidate.treatment.name, true) }
             .forEach { addPatientCharacteristicsToTable(it, table) }
@@ -98,7 +98,7 @@ class EfficacyEvidenceGenerator(
     }
 
     private fun createEndpoints(trialReference: TrialReference, treatment: AnnotatedTreatmentMatch): Table {
-        val table = Tables.createFixedWidthCols(100f, 250f).setWidth(350f)
+        val table = Tables.createFixedWidthCols(10f, 25f).setWidth(350f)
         trialReference.patientPopulations
             .filter { it.treatment?.name.equals(treatment.treatmentCandidate.treatment.name, true) }
             .forEach { patientPopulation ->
