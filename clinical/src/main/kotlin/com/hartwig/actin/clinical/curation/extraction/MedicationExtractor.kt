@@ -17,10 +17,10 @@ import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
 import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
 import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
-import com.hartwig.actin.clinical.datamodel.Dosage
-import com.hartwig.actin.clinical.datamodel.Medication
-import com.hartwig.actin.clinical.datamodel.MedicationStatus
 import com.hartwig.actin.clinical.feed.emc.medication.MedicationEntry
+import com.hartwig.actin.datamodel.clinical.Dosage
+import com.hartwig.actin.datamodel.clinical.Medication
+import com.hartwig.actin.datamodel.clinical.MedicationStatus
 import org.apache.logging.log4j.LogManager
 
 class MedicationExtractor(

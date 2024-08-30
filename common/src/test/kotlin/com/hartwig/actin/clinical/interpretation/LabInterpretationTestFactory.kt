@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical.interpretation
 
-import com.hartwig.actin.clinical.datamodel.LabUnit
-import com.hartwig.actin.clinical.datamodel.LabValue
+import com.hartwig.actin.datamodel.clinical.LabUnit
+import com.hartwig.actin.datamodel.clinical.LabValue
 import java.time.LocalDate
 
 internal object LabInterpretationTestFactory {

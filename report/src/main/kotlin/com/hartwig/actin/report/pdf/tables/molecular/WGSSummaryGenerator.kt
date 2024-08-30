@@ -1,8 +1,8 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.MolecularTest
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
 import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
 import com.hartwig.actin.report.pdf.tables.TableGenerator

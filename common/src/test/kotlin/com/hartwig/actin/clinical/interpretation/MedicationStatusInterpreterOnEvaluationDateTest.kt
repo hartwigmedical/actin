@@ -1,8 +1,8 @@
 package com.hartwig.actin.clinical.interpretation
 
-import com.hartwig.actin.clinical.datamodel.Medication
-import com.hartwig.actin.clinical.datamodel.MedicationStatus
-import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
+import com.hartwig.actin.datamodel.clinical.Medication
+import com.hartwig.actin.datamodel.clinical.MedicationStatus
+import com.hartwig.actin.datamodel.clinical.TestMedicationFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate

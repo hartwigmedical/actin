@@ -1,8 +1,8 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
+import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.molecular.MolecularExtractor
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.RefGenomeVersion
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction
@@ -75,14 +75,14 @@ class OrangeExtractor(private val geneFilter: GeneFilter) : MolecularExtractor<O
             return sampleId.substring(0, 12)
         }
 
-        fun determineExperimentType(experimentType: ExperimentType?): com.hartwig.actin.molecular.datamodel.ExperimentType {
+        fun determineExperimentType(experimentType: ExperimentType?): com.hartwig.actin.datamodel.molecular.ExperimentType {
             return when (experimentType) {
                 ExperimentType.TARGETED -> {
-                    com.hartwig.actin.molecular.datamodel.ExperimentType.HARTWIG_TARGETED
+                    com.hartwig.actin.datamodel.molecular.ExperimentType.HARTWIG_TARGETED
                 }
 
                 ExperimentType.WHOLE_GENOME -> {
-                    com.hartwig.actin.molecular.datamodel.ExperimentType.HARTWIG_WHOLE_GENOME
+                    com.hartwig.actin.datamodel.molecular.ExperimentType.HARTWIG_WHOLE_GENOME
                 }
 
                 null -> throw IllegalStateException("Experiment type is required but was null")

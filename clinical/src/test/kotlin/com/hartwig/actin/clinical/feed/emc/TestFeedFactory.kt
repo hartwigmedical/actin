@@ -1,7 +1,6 @@
 package com.hartwig.actin.clinical.feed.emc
 
 import com.hartwig.actin.clinical.curation.FULL_ATC_CODE
-import com.hartwig.actin.clinical.datamodel.Gender
 import com.hartwig.actin.clinical.feed.emc.bodyweight.BodyWeightEntry
 import com.hartwig.actin.clinical.feed.emc.digitalfile.DigitalFileEntry
 import com.hartwig.actin.clinical.feed.emc.intolerance.IntoleranceEntry
@@ -12,6 +11,7 @@ import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireEntry
 import com.hartwig.actin.clinical.feed.emc.questionnaire.TestQuestionnaireFactory
 import com.hartwig.actin.clinical.feed.emc.surgery.SurgeryEntry
 import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionEntry
+import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import java.time.LocalDate
 import java.time.LocalDateTime

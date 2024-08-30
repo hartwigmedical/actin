@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.chapters
 
-import com.hartwig.actin.algo.datamodel.AnnotatedTreatmentMatch
+import com.hartwig.actin.datamodel.algo.AnnotatedTreatmentMatch
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.pdf.tables.soc.RealWorldPFSOutcomesGenerator
 import com.hartwig.actin.report.pdf.tables.soc.RealWorldTreatmentDecisionsGenerator

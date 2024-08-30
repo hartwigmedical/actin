@@ -1,12 +1,12 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.clinical.datamodel.PriorIHCTest
-import com.hartwig.actin.molecular.datamodel.ExperimentType
-import com.hartwig.actin.molecular.datamodel.MolecularHistory
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.PriorIHCTest
+import com.hartwig.actin.datamodel.molecular.ExperimentType
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
 
 class MolecularResultsAreAvailableForGene(private val gene: String) : EvaluationFunction {
 
@@ -59,14 +59,14 @@ class MolecularResultsAreAvailableForGene(private val gene: String) : Evaluation
                 )
             }
 
-            orangeMolecular != null && orangeMolecular.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME && !orangeMolecular.containsTumorCells -> {
+            orangeMolecular != null && orangeMolecular.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME -> {
                 EvaluationFactory.undetermined(
                     "Patient has had WGS but biopsy contained no tumor cells",
                     "WGS performed containing $gene, but sample purity was too low"
                 )
             }
 
-            orangeMolecular != null && orangeMolecular.experimentType == ExperimentType.HARTWIG_TARGETED && !orangeMolecular.containsTumorCells -> {
+            orangeMolecular != null && orangeMolecular.experimentType == ExperimentType.HARTWIG_TARGETED -> {
                 EvaluationFactory.undetermined(
                     "Patient has had OncoAct tumor NGS panel but biopsy contained too little tumor cells",
                     "OncoAct tumor NGS panel performed containing $gene, but sample purity was too low"

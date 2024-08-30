@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.sort
 
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 
 class TreatmentHistoryAscendingDateComparator : Comparator<TreatmentHistoryEntry> {
 

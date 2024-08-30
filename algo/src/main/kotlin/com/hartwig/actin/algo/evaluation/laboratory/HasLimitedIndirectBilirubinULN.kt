@@ -1,13 +1,13 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.labReference
 import com.hartwig.actin.algo.evaluation.util.Format.labValue
-import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.interpretation.LabInterpreter
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.LabValue
 import java.time.LocalDate
 
 class HasLimitedIndirectBilirubinULN(private val maxULNFactor: Double, private val minValidDate: LocalDate) :

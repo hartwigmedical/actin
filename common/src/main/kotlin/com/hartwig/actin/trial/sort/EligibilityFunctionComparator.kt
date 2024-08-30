@@ -1,6 +1,6 @@
 package com.hartwig.actin.trial.sort
 
-import com.hartwig.actin.trial.datamodel.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.EligibilityFunction
 
 class EligibilityFunctionComparator : Comparator<EligibilityFunction> {
 

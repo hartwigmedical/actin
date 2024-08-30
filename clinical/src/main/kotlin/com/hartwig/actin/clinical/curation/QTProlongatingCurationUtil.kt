@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical.curation
 
 import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
-import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
+import com.hartwig.actin.datamodel.clinical.QTProlongatingRisk
 
 object QTProlongatingCurationUtil {
 

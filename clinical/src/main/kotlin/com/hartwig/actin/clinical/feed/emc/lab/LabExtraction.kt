@@ -1,8 +1,8 @@
 package com.hartwig.actin.clinical.feed.emc.lab
 
 import com.google.common.annotations.VisibleForTesting
-import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.feed.emc.FeedParseFunctions
+import com.hartwig.actin.datamodel.clinical.LabValue
 import org.apache.logging.log4j.LogManager
 
 object LabExtraction {

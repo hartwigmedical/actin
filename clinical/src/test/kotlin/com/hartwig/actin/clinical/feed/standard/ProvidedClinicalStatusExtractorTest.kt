@@ -1,10 +1,10 @@
 package com.hartwig.actin.clinical.feed.standard
 
-import com.hartwig.actin.clinical.datamodel.ClinicalStatus
 import com.hartwig.actin.clinical.feed.standard.EhrTestData.createEhrPatientRecord
-import java.time.LocalDate
+import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 class ProvidedClinicalStatusExtractorTest {
 

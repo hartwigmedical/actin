@@ -1,9 +1,9 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.algo.datamodel.TestTreatmentMatchFactory
-import com.hartwig.actin.algo.datamodel.TrialMatch
+import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
+import com.hartwig.actin.datamodel.algo.TrialMatch
+import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory.create
-import com.hartwig.actin.trial.datamodel.TrialIdentification
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

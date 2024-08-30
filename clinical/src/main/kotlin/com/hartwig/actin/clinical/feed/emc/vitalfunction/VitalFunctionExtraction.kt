@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.feed.emc.vitalfunction
 
-import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
+import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory
 
 object VitalFunctionExtraction {
     fun determineCategory(string: String): VitalFunctionCategory {

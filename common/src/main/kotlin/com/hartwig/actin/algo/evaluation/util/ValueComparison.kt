@@ -1,9 +1,9 @@
 package com.hartwig.actin.algo.evaluation.util
 
-import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.datamodel.EvaluationResult.FAIL
-import com.hartwig.actin.algo.datamodel.EvaluationResult.PASS
-import com.hartwig.actin.algo.datamodel.EvaluationResult.UNDETERMINED
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.EvaluationResult.FAIL
+import com.hartwig.actin.datamodel.algo.EvaluationResult.PASS
+import com.hartwig.actin.datamodel.algo.EvaluationResult.UNDETERMINED
 
 object ValueComparison {
 

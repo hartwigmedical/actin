@@ -1,17 +1,17 @@
 package com.hartwig.actin.algo.serialization
 
-import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.datamodel.TestTreatmentMatchFactory
-import com.hartwig.actin.algo.datamodel.TreatmentMatch
-import com.hartwig.actin.algo.datamodel.TrialMatch
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson.fromJson
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson.read
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson.toJson
+import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
+import com.hartwig.actin.datamodel.algo.TreatmentMatch
+import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
-import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.io.File
 
 class TreatmentMatchJsonTest {
 

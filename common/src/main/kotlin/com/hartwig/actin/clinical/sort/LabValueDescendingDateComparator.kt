@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.sort
 
-import com.hartwig.actin.clinical.datamodel.LabValue
+import com.hartwig.actin.datamodel.clinical.LabValue
 
 class LabValueDescendingDateComparator : Comparator<LabValue> {
 

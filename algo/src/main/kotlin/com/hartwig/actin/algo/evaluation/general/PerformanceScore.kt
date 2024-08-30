@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.general
 
-import com.hartwig.actin.Displayable
+import com.hartwig.actin.datamodel.Displayable
 
 internal enum class PerformanceScore : Displayable {
     LANSKY, KARNOFSKY;

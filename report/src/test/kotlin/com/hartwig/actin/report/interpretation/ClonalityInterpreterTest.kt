@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.molecular.datamodel.Variant
-import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
+import com.hartwig.actin.datamodel.molecular.Variant
+import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.report.interpretation.ClonalityInterpreter.isPotentiallySubclonal
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

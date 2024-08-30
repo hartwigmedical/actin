@@ -1,10 +1,10 @@
 package com.hartwig.actin.molecular.evidence
 
-import com.hartwig.actin.molecular.datamodel.evidence.Country
-import com.hartwig.actin.molecular.datamodel.evidence.EvidenceDirection
-import com.hartwig.actin.molecular.datamodel.evidence.EvidenceLevel
-import com.hartwig.actin.molecular.datamodel.evidence.TestClinicalEvidenceFactory
-import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
+import com.hartwig.actin.datamodel.molecular.evidence.Country
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
+import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.serve.datamodel.Knowledgebase
 import org.assertj.core.api.Assertions.assertThat

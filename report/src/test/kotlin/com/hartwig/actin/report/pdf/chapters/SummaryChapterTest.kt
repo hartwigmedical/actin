@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.chapters
 
-import com.hartwig.actin.clinical.datamodel.TumorDetails
+import com.hartwig.actin.datamodel.clinical.TumorDetails
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

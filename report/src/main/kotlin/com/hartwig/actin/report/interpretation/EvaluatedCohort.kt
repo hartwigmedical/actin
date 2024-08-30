@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.trial.datamodel.TrialPhase
+import com.hartwig.actin.datamodel.trial.TrialPhase
 
 data class EvaluatedCohort(
     val trialId: String,

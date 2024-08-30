@@ -3,7 +3,7 @@ package com.hartwig.actin.util.json
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
-import com.hartwig.actin.trial.datamodel.CriterionReference
+import com.hartwig.actin.datamodel.trial.CriterionReference
 import com.hartwig.actin.util.json.Json.string
 import java.lang.reflect.Type
 

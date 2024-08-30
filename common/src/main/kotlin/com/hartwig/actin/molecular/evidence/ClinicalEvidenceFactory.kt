@@ -1,12 +1,12 @@
 package com.hartwig.actin.molecular.evidence
 
-import com.hartwig.actin.molecular.datamodel.evidence.ApplicableCancerType
-import com.hartwig.actin.molecular.datamodel.evidence.ClinicalEvidence
-import com.hartwig.actin.molecular.datamodel.evidence.Country
-import com.hartwig.actin.molecular.datamodel.evidence.EvidenceDirection
-import com.hartwig.actin.molecular.datamodel.evidence.EvidenceLevel
-import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
-import com.hartwig.actin.molecular.datamodel.evidence.TreatmentEvidence
+import com.hartwig.actin.datamodel.molecular.evidence.ApplicableCancerType
+import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
+import com.hartwig.actin.datamodel.molecular.evidence.Country
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
+import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
+import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.actionability.isCategoryVariant

@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.util
 
-import com.hartwig.actin.molecular.datamodel.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import org.apache.logging.log4j.LogManager
 
 class MolecularHistoryPrinter() {

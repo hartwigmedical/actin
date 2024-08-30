@@ -2,7 +2,7 @@ package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationUtil
-import com.hartwig.actin.clinical.datamodel.Complication
+import com.hartwig.actin.datamodel.clinical.Complication
 
 class ComplicationConfigFactory : CurationConfigFactory<ComplicationConfig> {
     override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<ComplicationConfig> {

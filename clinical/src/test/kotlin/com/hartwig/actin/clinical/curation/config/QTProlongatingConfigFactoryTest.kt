@@ -3,7 +3,7 @@ package com.hartwig.actin.clinical.curation.config
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabaseReader
 import com.hartwig.actin.clinical.curation.TestCurationFactory
-import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
+import com.hartwig.actin.datamodel.clinical.QTProlongatingRisk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

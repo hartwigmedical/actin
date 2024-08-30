@@ -1,8 +1,8 @@
 package com.hartwig.actin.trial.interpretation
 
+import com.hartwig.actin.datamodel.trial.CohortMetadata
 import com.hartwig.actin.trial.config.CohortDefinitionConfig
 import com.hartwig.actin.trial.config.TrialDefinitionConfig
-import com.hartwig.actin.trial.datamodel.CohortMetadata
 import com.hartwig.actin.trial.status.TrialStatusDatabaseValidation
 
 interface ConfigInterpreter {
