@@ -50,6 +50,8 @@ private const val OTHER_GENE_ID = "other_gene_id"
 private const val OTHER_GENE_TRANSCRIPT = "other_gene_transcript"
 private const val CHROMOSOME = "1"
 private const val POSITION = 1
+private const val HGVS_PROTEIN_3LETTER = "p.Met1Leu"
+private const val HGVS_PROTEIN_1LETTER = "p.M1L"
 private val EMPTY_MATCH = ActionabilityMatch(emptyList(), emptyList())
 private val ARCHER_VARIANT = SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING)
 
@@ -94,7 +96,7 @@ private val PAVE_ANNOTATION = PaveResponse(
         canonicalCodingEffect = PaveCodingEffect.MISSENSE,
         spliceRegion = false,
         hgvsCodingImpact = HGVS_CODING,
-        hgvsProteinImpact = HGVS_PROTEIN,
+        hgvsProteinImpact = HGVS_PROTEIN_3LETTER,
         otherReportableEffects = null,
         worstCodingEffect = PaveCodingEffect.MISSENSE,
         genesAffected = 1
@@ -178,7 +180,7 @@ class PanelVariantAnnotatorTest {
         assertThat(annotatedVariant.canonicalImpact.transcriptId).isEqualTo(TRANSCRIPT)
         assertThat(annotatedVariant.canonicalImpact.hgvsCodingImpact).isEqualTo(HGVS_CODING)
         assertThat(annotatedVariant.canonicalImpact.codingEffect).isEqualTo(CodingEffect.MISSENSE)
-        assertThat(annotatedVariant.canonicalImpact.hgvsProteinImpact).isEqualTo(HGVS_PROTEIN)
+        assertThat(annotatedVariant.canonicalImpact.hgvsProteinImpact).isEqualTo(HGVS_PROTEIN_1LETTER)
         assertThat(annotatedVariant.chromosome).isEqualTo(CHROMOSOME)
         assertThat(annotatedVariant.position).isEqualTo(POSITION)
         assertThat(annotatedVariant.ref).isEqualTo(REF)
@@ -215,7 +217,7 @@ class PanelVariantAnnotatorTest {
                     effects = listOf(),
                     spliceRegion = false,
                     hgvsCodingImpact = HGVS_CODING,
-                    hgvsProteinImpact = HGVS_PROTEIN
+                    hgvsProteinImpact = HGVS_PROTEIN_3LETTER
                 )
             )
         )
@@ -236,7 +238,7 @@ class PanelVariantAnnotatorTest {
                     effects = listOf(),
                     spliceRegion = false,
                     hgvsCodingImpact = HGVS_CODING,
-                    hgvsProteinImpact = HGVS_PROTEIN
+                    hgvsProteinImpact = HGVS_PROTEIN_3LETTER
                 )
             )
         )
@@ -249,7 +251,7 @@ class PanelVariantAnnotatorTest {
                 TranscriptImpact(
                     transcriptId = OTHER_TRANSCRIPT,
                     hgvsCodingImpact = HGVS_CODING,
-                    hgvsProteinImpact = HGVS_PROTEIN,
+                    hgvsProteinImpact = HGVS_PROTEIN_1LETTER,
                     affectedCodon = 1,
                     affectedExon = 1,
                     isSpliceRegion = false,
@@ -266,6 +268,13 @@ class PanelVariantAnnotatorTest {
         val annotatedVariants = annotator.annotate(variants)
         assertThat(annotatedVariants).isEmpty()
         verify(exactly = 0) { paver.run(any()) }
+    }
+
+    @Test
+    fun `Should correctly normalize protein variants`() {
+        assertThat(normalizeProteinImpact("p.Met1Leu")).isEqualTo("p.M1L")
+        assertThat(normalizeProteinImpact("p.?")).isEqualTo("p.?")
+        assertThat(normalizeProteinImpact("p.M1L")).isEqualTo("p.M1L")
     }
 
     private fun setupGeneAlteration() {
