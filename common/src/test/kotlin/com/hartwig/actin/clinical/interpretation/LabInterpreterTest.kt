@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical.interpretation
 
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory.createProperTestClinicalRecord
 import com.hartwig.actin.clinical.interpretation.LabInterpreter.interpret
+import com.hartwig.actin.datamodel.clinical.TestClinicalFactory.createProperTestClinicalRecord
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

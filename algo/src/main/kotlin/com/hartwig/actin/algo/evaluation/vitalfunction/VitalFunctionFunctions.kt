@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.vitalfunction
 
-import com.hartwig.actin.clinical.datamodel.VitalFunction
+import com.hartwig.actin.datamodel.clinical.VitalFunction
 import kotlin.math.ceil
 
 internal object VitalFunctionFunctions {

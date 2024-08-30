@@ -1,13 +1,13 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
-import com.hartwig.actin.molecular.datamodel.MolecularTest
-import com.hartwig.actin.molecular.datamodel.VariantEffect
-import com.hartwig.actin.molecular.datamodel.orange.driver.CodingContext
-import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.orange.driver.RegionType
+import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.VariantEffect
+import com.hartwig.actin.datamodel.molecular.orange.driver.CodingContext
+import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
+import com.hartwig.actin.datamodel.molecular.orange.driver.RegionType
 
 class GeneHasUTR3Loss(private val gene: String) : MolecularEvaluationFunction {
 

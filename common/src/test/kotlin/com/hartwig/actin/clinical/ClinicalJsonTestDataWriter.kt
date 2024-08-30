@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical
 
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory.createProperTestClinicalRecord
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson.write
+import com.hartwig.actin.datamodel.clinical.TestClinicalFactory.createProperTestClinicalRecord
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.io.File

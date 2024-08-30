@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.pdf
 
 import com.hartwig.actin.configuration.EnvironmentConfiguration
-import com.hartwig.actin.molecular.datamodel.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.pdf.chapters.ClinicalDetailsChapter
 import com.hartwig.actin.report.pdf.chapters.EfficacyEvidenceChapter

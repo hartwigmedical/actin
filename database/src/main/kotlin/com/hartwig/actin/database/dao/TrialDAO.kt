@@ -1,13 +1,13 @@
 package com.hartwig.actin.database.dao
 
 import com.hartwig.actin.database.Tables
-import com.hartwig.actin.trial.datamodel.Cohort
-import com.hartwig.actin.trial.datamodel.CohortMetadata
-import com.hartwig.actin.trial.datamodel.CriterionReference
-import com.hartwig.actin.trial.datamodel.Eligibility
-import com.hartwig.actin.trial.datamodel.EligibilityFunction
-import com.hartwig.actin.trial.datamodel.Trial
-import com.hartwig.actin.trial.datamodel.TrialIdentification
+import com.hartwig.actin.datamodel.trial.Cohort
+import com.hartwig.actin.datamodel.trial.CohortMetadata
+import com.hartwig.actin.datamodel.trial.CriterionReference
+import com.hartwig.actin.datamodel.trial.Eligibility
+import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.Trial
+import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.trial.input.composite.CompositeRules
 import com.hartwig.actin.trial.util.EligibilityFunctionDisplay
 import org.jooq.DSLContext

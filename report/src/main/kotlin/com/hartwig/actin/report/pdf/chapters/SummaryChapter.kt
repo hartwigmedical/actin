@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.chapters
 
-import com.hartwig.actin.clinical.datamodel.TumorDetails
+import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.pdf.ReportContentProvider
 import com.hartwig.actin.report.pdf.util.Cells

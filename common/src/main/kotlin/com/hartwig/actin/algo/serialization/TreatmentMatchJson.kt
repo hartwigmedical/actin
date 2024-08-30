@@ -1,11 +1,11 @@
 package com.hartwig.actin.algo.serialization
 
 import com.google.gson.GsonBuilder
-import com.hartwig.actin.algo.datamodel.TreatmentMatch
-import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.serialization.TreatmentAdapter
-import com.hartwig.actin.trial.datamodel.CriterionReference
-import com.hartwig.actin.trial.datamodel.EligibilityFunction
+import com.hartwig.actin.datamodel.algo.TreatmentMatch
+import com.hartwig.actin.datamodel.clinical.treatment.Treatment
+import com.hartwig.actin.datamodel.trial.CriterionReference
+import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.util.Paths
 import com.hartwig.actin.util.json.CriterionReferenceDeserializer
 import com.hartwig.actin.util.json.EligibilityFunctionDeserializer

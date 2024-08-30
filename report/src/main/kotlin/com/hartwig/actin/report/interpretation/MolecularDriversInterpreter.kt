@@ -1,13 +1,13 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.molecular.datamodel.Driver
-import com.hartwig.actin.molecular.datamodel.Drivers
-import com.hartwig.actin.molecular.datamodel.Fusion
-import com.hartwig.actin.molecular.datamodel.Variant
-import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.orange.driver.Virus
+import com.hartwig.actin.datamodel.molecular.Driver
+import com.hartwig.actin.datamodel.molecular.Drivers
+import com.hartwig.actin.datamodel.molecular.Fusion
+import com.hartwig.actin.datamodel.molecular.Variant
+import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
+import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
+import com.hartwig.actin.datamodel.molecular.orange.driver.HomozygousDisruption
+import com.hartwig.actin.datamodel.molecular.orange.driver.Virus
 
 class MolecularDriversInterpreter(
     private val drivers: Drivers,

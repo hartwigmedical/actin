@@ -1,13 +1,13 @@
 package com.hartwig.actin.algo.soc
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.algo.datamodel.EvaluatedTreatment
-import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.datamodel.TreatmentCandidate
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.algo.EvaluatedTreatment
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.TreatmentCandidate
+import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.doid.DoidModel
-import com.hartwig.actin.trial.datamodel.EligibilityFunction
 
 class RecommendationEngine(
     private val doidModel: DoidModel,

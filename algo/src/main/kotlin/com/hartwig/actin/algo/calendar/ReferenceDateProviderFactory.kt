@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.calendar
 
-import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.datamodel.PatientRecord
 
 object ReferenceDateProviderFactory {
 

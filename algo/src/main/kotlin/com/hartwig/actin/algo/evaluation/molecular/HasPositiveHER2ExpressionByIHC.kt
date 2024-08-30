@@ -1,14 +1,14 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.molecular.IHCTestClassificationFunctions.classifyHer2Test
 import com.hartwig.actin.algo.evaluation.molecular.IHCTestClassificationFunctions.TestResult
+import com.hartwig.actin.algo.evaluation.molecular.IHCTestClassificationFunctions.classifyHer2Test
 import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleEvaluator.geneIsAmplifiedForPatient
-import com.hartwig.actin.clinical.datamodel.PriorIHCTest
-import com.hartwig.actin.clinical.datamodel.ReceptorType
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.PriorIHCTest
+import com.hartwig.actin.datamodel.clinical.ReceptorType
 
 class HasPositiveHER2ExpressionByIHC: EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {

@@ -1,9 +1,9 @@
 package com.hartwig.actin.trial.interpretation
 
-import com.hartwig.actin.trial.datamodel.Cohort
-import com.hartwig.actin.trial.datamodel.EligibilityFunction
-import com.hartwig.actin.trial.datamodel.EligibilityRule
-import com.hartwig.actin.trial.datamodel.Trial
+import com.hartwig.actin.datamodel.trial.Cohort
+import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.EligibilityRule
+import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.trial.input.composite.CompositeRules
 import org.apache.logging.log4j.LogManager
 

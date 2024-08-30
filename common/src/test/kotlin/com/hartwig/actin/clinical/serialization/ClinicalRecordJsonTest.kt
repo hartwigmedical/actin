@@ -1,12 +1,12 @@
 package com.hartwig.actin.clinical.serialization
 
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory.createMinimalTestClinicalRecord
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory.createProperTestClinicalRecord
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson.fromJson
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson.read
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson.readFromDir
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson.toJson
+import com.hartwig.actin.datamodel.clinical.ClinicalRecord
+import com.hartwig.actin.datamodel.clinical.TestClinicalFactory.createMinimalTestClinicalRecord
+import com.hartwig.actin.datamodel.clinical.TestClinicalFactory.createProperTestClinicalRecord
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

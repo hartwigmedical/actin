@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.Test
 
 class MeetsSpecificCriteriaRegardingBrainMetastasesTest {

@@ -1,10 +1,10 @@
 package com.hartwig.actin.trial.serialization
 
 import com.google.gson.GsonBuilder
-import com.hartwig.actin.trial.datamodel.CriterionReference
-import com.hartwig.actin.trial.datamodel.Eligibility
-import com.hartwig.actin.trial.datamodel.EligibilityFunction
-import com.hartwig.actin.trial.datamodel.Trial
+import com.hartwig.actin.datamodel.trial.CriterionReference
+import com.hartwig.actin.datamodel.trial.Eligibility
+import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.trial.sort.CriterionReferenceComparator
 import com.hartwig.actin.util.Paths
 import com.hartwig.actin.util.json.CriterionReferenceDeserializer

@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.molecular.datamodel.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.itextpdf.layout.element.Table
 

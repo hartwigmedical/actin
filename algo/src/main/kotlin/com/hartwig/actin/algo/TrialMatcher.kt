@@ -1,18 +1,18 @@
 package com.hartwig.actin.algo
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.algo.datamodel.CohortMatch
-import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.datamodel.TrialMatch
 import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.sort.CohortMatchComparator
 import com.hartwig.actin.algo.sort.TrialMatchComparator
-import com.hartwig.actin.trial.datamodel.Eligibility
-import com.hartwig.actin.trial.datamodel.EligibilityFunction
-import com.hartwig.actin.trial.datamodel.EligibilityRule
-import com.hartwig.actin.trial.datamodel.Trial
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.algo.CohortMatch
+import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.TrialMatch
+import com.hartwig.actin.datamodel.trial.Eligibility
+import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.EligibilityRule
+import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.trial.sort.EligibilityComparator
 
 class TrialMatcher(private val evaluationFunctionFactory: EvaluationFunctionFactory) {

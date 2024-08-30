@@ -4,7 +4,7 @@ import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
-import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
+import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

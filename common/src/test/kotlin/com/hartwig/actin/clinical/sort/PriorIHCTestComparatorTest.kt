@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.sort
 
-import com.hartwig.actin.clinical.datamodel.PriorIHCTest
+import com.hartwig.actin.datamodel.clinical.PriorIHCTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

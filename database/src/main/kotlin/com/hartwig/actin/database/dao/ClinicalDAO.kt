@@ -1,29 +1,29 @@
 package com.hartwig.actin.database.dao
 
-import com.hartwig.actin.clinical.datamodel.BloodTransfusion
-import com.hartwig.actin.clinical.datamodel.BodyWeight
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord
-import com.hartwig.actin.clinical.datamodel.ClinicalStatus
-import com.hartwig.actin.clinical.datamodel.Complication
-import com.hartwig.actin.clinical.datamodel.ECG
-import com.hartwig.actin.clinical.datamodel.Intolerance
-import com.hartwig.actin.clinical.datamodel.LabValue
-import com.hartwig.actin.clinical.datamodel.Medication
-import com.hartwig.actin.clinical.datamodel.PatientDetails
-import com.hartwig.actin.clinical.datamodel.PriorIHCTest
-import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
-import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
-import com.hartwig.actin.clinical.datamodel.Surgery
-import com.hartwig.actin.clinical.datamodel.Toxicity
-import com.hartwig.actin.clinical.datamodel.TumorDetails
-import com.hartwig.actin.clinical.datamodel.VitalFunction
-import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
-import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver
 import com.hartwig.actin.database.Tables
-import java.util.Optional
+import com.hartwig.actin.datamodel.clinical.BloodTransfusion
+import com.hartwig.actin.datamodel.clinical.BodyWeight
+import com.hartwig.actin.datamodel.clinical.ClinicalRecord
+import com.hartwig.actin.datamodel.clinical.ClinicalStatus
+import com.hartwig.actin.datamodel.clinical.Complication
+import com.hartwig.actin.datamodel.clinical.ECG
+import com.hartwig.actin.datamodel.clinical.Intolerance
+import com.hartwig.actin.datamodel.clinical.LabValue
+import com.hartwig.actin.datamodel.clinical.Medication
+import com.hartwig.actin.datamodel.clinical.PatientDetails
+import com.hartwig.actin.datamodel.clinical.PriorIHCTest
+import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
+import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary
+import com.hartwig.actin.datamodel.clinical.Surgery
+import com.hartwig.actin.datamodel.clinical.Toxicity
+import com.hartwig.actin.datamodel.clinical.TumorDetails
+import com.hartwig.actin.datamodel.clinical.VitalFunction
+import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
+import com.hartwig.actin.datamodel.clinical.treatment.Radiotherapy
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import org.jooq.DSLContext
+import java.util.Optional
 
 internal class ClinicalDAO(private val context: DSLContext) {
 

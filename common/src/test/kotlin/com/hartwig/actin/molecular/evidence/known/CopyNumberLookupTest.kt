@@ -1,8 +1,8 @@
 package com.hartwig.actin.molecular.evidence.known
 
-import com.hartwig.actin.molecular.TestMolecularFactory.minimalCopyNumber
-import com.hartwig.actin.molecular.TestMolecularFactory.minimalHomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalCopyNumber
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalHomozygousDisruption
+import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.serve.datamodel.gene.GeneEvent
 import com.hartwig.serve.datamodel.gene.KnownCopyNumber
 import org.assertj.core.api.Assertions.assertThat

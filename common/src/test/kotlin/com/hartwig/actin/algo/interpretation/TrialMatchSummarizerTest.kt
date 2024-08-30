@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.interpretation
 
-import com.hartwig.actin.algo.datamodel.TestTreatmentMatchFactory
-import com.hartwig.actin.trial.datamodel.CohortMetadata
+import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
+import com.hartwig.actin.datamodel.trial.CohortMetadata
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

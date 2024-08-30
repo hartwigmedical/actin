@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
+import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.doid.DoidModel
 import org.apache.logging.log4j.LogManager
 

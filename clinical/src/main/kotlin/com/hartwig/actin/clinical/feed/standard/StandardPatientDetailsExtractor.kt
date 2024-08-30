@@ -2,8 +2,8 @@ package com.hartwig.actin.clinical.feed.standard
 
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.clinical.datamodel.Gender
-import com.hartwig.actin.clinical.datamodel.PatientDetails
+import com.hartwig.actin.datamodel.clinical.Gender
+import com.hartwig.actin.datamodel.clinical.PatientDetails
 
 class StandardPatientDetailsExtractor : StandardDataExtractor<PatientDetails> {
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<PatientDetails> {

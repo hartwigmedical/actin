@@ -5,8 +5,8 @@ import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
-import com.hartwig.actin.clinical.datamodel.BloodTransfusion
 import com.hartwig.actin.clinical.feed.emc.digitalfile.DigitalFileEntry
+import com.hartwig.actin.datamodel.clinical.BloodTransfusion
 
 class BloodTransfusionsExtractor(private val bloodFusionTranslations: TranslationDatabase<String>) {
 

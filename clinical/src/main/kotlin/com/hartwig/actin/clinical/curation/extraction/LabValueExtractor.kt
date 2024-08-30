@@ -6,8 +6,8 @@ import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.translation.LaboratoryIdentifiers
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
-import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.sort.LabValueDescendingDateComparator
+import com.hartwig.actin.datamodel.clinical.LabValue
 
 class LabValueExtractor(private val laboratoryTranslation: TranslationDatabase<LaboratoryIdentifiers>) {
 

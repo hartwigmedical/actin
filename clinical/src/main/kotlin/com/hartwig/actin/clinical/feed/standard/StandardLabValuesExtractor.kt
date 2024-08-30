@@ -6,8 +6,8 @@ import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.curation.translation.LaboratoryIdentifiers
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
-import com.hartwig.actin.clinical.datamodel.LabUnit
-import com.hartwig.actin.clinical.datamodel.LabValue
+import com.hartwig.actin.datamodel.clinical.LabUnit
+import com.hartwig.actin.datamodel.clinical.LabValue
 
 class StandardLabValuesExtractor(private val labTranslation: TranslationDatabase<LaboratoryIdentifiers>) : StandardDataExtractor<List<LabValue>> {
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<LabValue>> {

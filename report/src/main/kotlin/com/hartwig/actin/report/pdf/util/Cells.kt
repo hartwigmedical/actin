@@ -1,12 +1,10 @@
 package com.hartwig.actin.report.pdf.util
 
-import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.report.pdf.util.Formats.styleForTableValue
-import com.itextpdf.kernel.colors.DeviceRgb
 import com.itextpdf.layout.Style
 import com.itextpdf.layout.borders.Border
-import com.itextpdf.layout.borders.DashedBorder
 import com.itextpdf.layout.borders.SolidBorder
 import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.IBlockElement
@@ -78,13 +76,6 @@ object Cells {
 
     fun createContent(text: String): Cell {
         return createContent(Paragraph(text))
-    }
-
-    fun createContentLightBorder(text: String): Cell {
-        val cell = create(Paragraph(text))
-        cell.addStyle(Styles.tableContentStyle())
-        cell.setBorderTop(DashedBorder(DeviceRgb.makeLighter(Styles.PALETTE_MID_GREY), 0.125f))
-        return cell
     }
 
     fun createContentBold(text: String): Cell {

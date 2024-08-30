@@ -1,13 +1,13 @@
 package com.hartwig.actin.algo.evaluation.infection
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestPatientFactory
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.medication.AtcTestFactory
 import com.hartwig.actin.algo.evaluation.medication.MedicationTestFactory
-import com.hartwig.actin.clinical.datamodel.ClinicalStatus
-import com.hartwig.actin.clinical.datamodel.InfectionStatus
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.TestPatientFactory
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.ClinicalStatus
+import com.hartwig.actin.datamodel.clinical.InfectionStatus
 import org.junit.Test
 import java.time.LocalDate
 

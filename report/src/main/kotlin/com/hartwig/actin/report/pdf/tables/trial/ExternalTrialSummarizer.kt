@@ -1,8 +1,8 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
-import com.hartwig.actin.algo.datamodel.TrialMatch
-import com.hartwig.actin.molecular.datamodel.evidence.CountryName
-import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
+import com.hartwig.actin.datamodel.algo.TrialMatch
+import com.hartwig.actin.datamodel.molecular.evidence.Country
+import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
 
 data class ExternalTrialSummary(

@@ -1,16 +1,16 @@
 package com.hartwig.actin.algo.evaluation.surgery
 
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.surgery.SurgeryTestFactory.surgery
 import com.hartwig.actin.algo.evaluation.surgery.SurgeryTestFactory.withSurgeries
 import com.hartwig.actin.algo.evaluation.surgery.SurgeryTestFactory.withSurgery
-import com.hartwig.actin.clinical.datamodel.Surgery
-import com.hartwig.actin.clinical.datamodel.SurgeryStatus
-import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
-import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatment
-import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.Surgery
+import com.hartwig.actin.datamodel.clinical.SurgeryStatus
+import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
+import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatment
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import org.junit.Test
 import java.time.LocalDate
 

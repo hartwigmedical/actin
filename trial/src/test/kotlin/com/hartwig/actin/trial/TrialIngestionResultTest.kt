@@ -1,5 +1,6 @@
 package com.hartwig.actin.trial
 
+import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.trial.config.CohortDefinitionValidationError
 import com.hartwig.actin.trial.config.InclusionCriteriaConfig
 import com.hartwig.actin.trial.config.InclusionCriteriaReferenceConfig
@@ -10,7 +11,6 @@ import com.hartwig.actin.trial.config.TestTrialDefinitionConfigFactory
 import com.hartwig.actin.trial.config.TrialDatabaseValidation
 import com.hartwig.actin.trial.config.TrialDefinitionValidationError
 import com.hartwig.actin.trial.config.UnusedRuleToKeepError
-import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.status.TrialStatusDatabaseValidation
 import com.hartwig.actin.trial.status.TrialStatusDatabaseValidationError
 import com.hartwig.actin.trial.status.config.TestTrialStatusDatabaseEntryFactory

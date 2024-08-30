@@ -9,10 +9,10 @@ import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
-import com.hartwig.actin.clinical.datamodel.Toxicity
-import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import com.hartwig.actin.clinical.feed.emc.digitalfile.DigitalFileEntry
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
+import com.hartwig.actin.datamodel.clinical.Toxicity
+import com.hartwig.actin.datamodel.clinical.ToxicitySource
 
 class ToxicityExtractor(
     private val toxicityCuration: CurationDatabase<ToxicityConfig>,

@@ -1,14 +1,14 @@
 package com.hartwig.actin.algo.evaluation.bloodtransfusion
 
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.bloodtransfusion.RequiresRegularHematopoieticSupport.Companion.hematopoieticMedicationCategories
 import com.hartwig.actin.algo.evaluation.medication.AtcTestFactory
-import com.hartwig.actin.clinical.datamodel.AtcClassification
-import com.hartwig.actin.clinical.datamodel.AtcLevel
-import com.hartwig.actin.clinical.datamodel.BloodTransfusion
-import com.hartwig.actin.clinical.datamodel.Medication
-import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.AtcClassification
+import com.hartwig.actin.datamodel.clinical.AtcLevel
+import com.hartwig.actin.datamodel.clinical.BloodTransfusion
+import com.hartwig.actin.datamodel.clinical.Medication
+import com.hartwig.actin.datamodel.clinical.TestMedicationFactory
 import org.junit.Test
 import java.time.LocalDate
 

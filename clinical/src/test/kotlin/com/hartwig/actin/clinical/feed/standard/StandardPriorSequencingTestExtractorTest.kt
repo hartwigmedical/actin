@@ -5,17 +5,17 @@ import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
-import com.hartwig.actin.clinical.datamodel.PriorSequencingTest
-import com.hartwig.actin.clinical.datamodel.SequencedAmplification
-import com.hartwig.actin.clinical.datamodel.SequencedDeletedGene
-import com.hartwig.actin.clinical.datamodel.SequencedFusion
-import com.hartwig.actin.clinical.datamodel.SequencedSkippedExons
-import com.hartwig.actin.clinical.datamodel.SequencedVariant
+import com.hartwig.actin.datamodel.clinical.PriorSequencingTest
+import com.hartwig.actin.datamodel.clinical.SequencedAmplification
+import com.hartwig.actin.datamodel.clinical.SequencedDeletedGene
+import com.hartwig.actin.datamodel.clinical.SequencedFusion
+import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
+import com.hartwig.actin.datamodel.clinical.SequencedVariant
 import io.mockk.every
 import io.mockk.mockk
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 private const val TEST = "test"
 private const val GENE = "gene"

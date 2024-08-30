@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.interpretation
 
-import com.hartwig.actin.algo.datamodel.CohortMatch
-import com.hartwig.actin.algo.datamodel.TrialMatch
+import com.hartwig.actin.datamodel.algo.CohortMatch
+import com.hartwig.actin.datamodel.algo.TrialMatch
 
 object TrialMatchSummarizer {
 

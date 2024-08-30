@@ -1,10 +1,10 @@
 package com.hartwig.actin.report.pdf.tables.soc
 
-import com.hartwig.actin.efficacy.ConfidenceInterval
-import com.hartwig.actin.efficacy.EfficacyEntry
-import com.hartwig.actin.efficacy.EndPoint
-import com.hartwig.actin.efficacy.EndPointType
-import com.hartwig.actin.efficacy.PatientPopulation
+import com.hartwig.actin.datamodel.efficacy.ConfidenceInterval
+import com.hartwig.actin.datamodel.efficacy.EfficacyEntry
+import com.hartwig.actin.datamodel.efficacy.EndPoint
+import com.hartwig.actin.datamodel.efficacy.EndPointType
+import com.hartwig.actin.datamodel.efficacy.PatientPopulation
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.soc.SOCGeneratorFunctions.analysisGroupForPopulation
 import com.hartwig.actin.report.pdf.util.Cells

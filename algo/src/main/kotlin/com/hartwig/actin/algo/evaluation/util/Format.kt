@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.util
 
-import com.hartwig.actin.Displayable
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
+import com.hartwig.actin.datamodel.Displayable
 import com.hartwig.actin.util.ApplicationConfig
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols

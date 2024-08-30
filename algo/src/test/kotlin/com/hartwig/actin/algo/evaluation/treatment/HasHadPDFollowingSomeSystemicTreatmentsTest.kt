@@ -1,12 +1,12 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
-import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatment
-import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
-import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
+import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
+import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
+import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

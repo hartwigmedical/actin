@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
-import com.hartwig.actin.molecular.datamodel.evidence.CountryName
-import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
+import com.hartwig.actin.datamodel.molecular.evidence.Country
+import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
