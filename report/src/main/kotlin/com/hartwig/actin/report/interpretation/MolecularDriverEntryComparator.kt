@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.molecular.sort.driver.DriverLikelihoodComparator
+import com.hartwig.actin.datamodel.molecular.sort.driver.DriverLikelihoodComparator
 
 class MolecularDriverEntryComparator : Comparator<MolecularDriverEntry> {
     override fun compare(entry1: MolecularDriverEntry, entry2: MolecularDriverEntry): Int {

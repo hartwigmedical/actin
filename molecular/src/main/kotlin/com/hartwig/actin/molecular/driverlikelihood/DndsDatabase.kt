@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.ObjectReader
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.hartwig.actin.molecular.datamodel.GeneRole
-import java.io.File
+import com.hartwig.actin.datamodel.molecular.GeneRole
 import org.apache.commons.math3.distribution.PoissonDistribution
+import java.io.File
 
 enum class DndsDriverType {
     INDEL, NONSENSE, MISSENSE, SPLICE

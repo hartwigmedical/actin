@@ -1,7 +1,7 @@
 package com.hartwig.actin.trial.sort
 
-import com.hartwig.actin.trial.datamodel.EligibilityFunction
-import com.hartwig.actin.trial.datamodel.EligibilityRule
+import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.EligibilityRule
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

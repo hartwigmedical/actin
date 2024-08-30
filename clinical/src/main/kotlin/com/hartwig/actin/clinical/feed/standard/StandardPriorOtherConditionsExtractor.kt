@@ -8,7 +8,7 @@ import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
+import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 
 class StandardPriorOtherConditionsExtractor(
     private val priorOtherConditionsCuration: CurationDatabase<NonOncologicalHistoryConfig>,

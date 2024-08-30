@@ -1,8 +1,8 @@
 package com.hartwig.actin.algo.evaluation
 
 import com.hartwig.actin.algo.evaluation.FunctionCreatorFactory.create
+import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.doid.TestDoidModelFactory
-import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.input.ParameterizedFunctionTestFactory
 import com.hartwig.actin.trial.input.composite.CompositeRules
 import org.assertj.core.api.Assertions.assertThat

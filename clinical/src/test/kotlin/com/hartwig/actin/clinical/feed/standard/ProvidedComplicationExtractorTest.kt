@@ -2,12 +2,12 @@ package com.hartwig.actin.clinical.feed.standard
 
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig
-import com.hartwig.actin.clinical.datamodel.Complication
+import com.hartwig.actin.datamodel.clinical.Complication
 import io.mockk.every
 import io.mockk.mockk
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 private const val COMPLICATION_NAME = "complication"
 private val EHR_START_DATE = LocalDate.of(2023, 6, 15)

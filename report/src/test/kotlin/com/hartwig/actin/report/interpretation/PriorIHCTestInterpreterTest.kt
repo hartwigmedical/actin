@@ -1,9 +1,9 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.PatientRecordFactory
-import com.hartwig.actin.clinical.datamodel.PriorIHCTest
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
-import com.hartwig.actin.molecular.datamodel.MolecularHistory
+import com.hartwig.actin.datamodel.clinical.PriorIHCTest
+import com.hartwig.actin.datamodel.clinical.TestClinicalFactory
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

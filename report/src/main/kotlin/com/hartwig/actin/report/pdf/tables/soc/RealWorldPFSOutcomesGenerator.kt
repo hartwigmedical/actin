@@ -1,8 +1,8 @@
 package com.hartwig.actin.report.pdf.tables.soc
 
-import com.hartwig.actin.personalized.datamodel.MIN_PATIENT_COUNT
-import com.hartwig.actin.personalized.datamodel.MeasurementType
-import com.hartwig.actin.personalized.datamodel.PersonalizedDataAnalysis
+import com.hartwig.actin.datamodel.personalization.MIN_PATIENT_COUNT
+import com.hartwig.actin.datamodel.personalization.MeasurementType
+import com.hartwig.actin.datamodel.personalization.PersonalizedDataAnalysis
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats

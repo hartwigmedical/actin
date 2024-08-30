@@ -1,14 +1,14 @@
 package com.hartwig.actin.algo.evaluation.washout
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.medication.MEDICATION_NOT_PROVIDED
 import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
-import com.hartwig.actin.clinical.datamodel.AtcLevel
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.AtcLevel
 
 class HasRecentlyReceivedCancerTherapyOfCategory(
     private val categories: Map<String, Set<AtcLevel>>,

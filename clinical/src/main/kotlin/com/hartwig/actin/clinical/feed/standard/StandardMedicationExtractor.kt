@@ -8,8 +8,8 @@ import com.hartwig.actin.clinical.curation.QTProlongatingCurationUtil
 import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
 import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.clinical.datamodel.Dosage
-import com.hartwig.actin.clinical.datamodel.Medication
+import com.hartwig.actin.datamodel.clinical.Dosage
+import com.hartwig.actin.datamodel.clinical.Medication
 
 class StandardMedicationExtractor(
     private val atcModel: AtcModel,

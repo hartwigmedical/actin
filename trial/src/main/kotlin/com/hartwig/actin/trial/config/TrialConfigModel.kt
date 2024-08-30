@@ -1,6 +1,6 @@
 package com.hartwig.actin.trial.config
 
-import com.hartwig.actin.trial.datamodel.EligibilityRule
+import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.trial.interpretation.EligibilityFactory
 
 class TrialConfigModel(

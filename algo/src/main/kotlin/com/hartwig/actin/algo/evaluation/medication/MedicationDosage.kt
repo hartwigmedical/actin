@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.medication
 
-import com.hartwig.actin.clinical.datamodel.Dosage
+import com.hartwig.actin.datamodel.clinical.Dosage
 
 internal object MedicationDosage {
 

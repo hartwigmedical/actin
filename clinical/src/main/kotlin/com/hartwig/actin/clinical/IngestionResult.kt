@@ -2,10 +2,10 @@ package com.hartwig.actin.clinical
 
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.config.CurationConfigValidationError
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.feed.emc.FeedValidationWarning
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCurationError
+import com.hartwig.actin.datamodel.clinical.ClinicalRecord
 
 data class IngestionResult(
     val configValidationErrors: Set<CurationConfigValidationError> = emptySet(),

@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.sort
 
-import com.hartwig.actin.clinical.datamodel.VitalFunction
+import com.hartwig.actin.datamodel.clinical.VitalFunction
 
 class VitalFunctionDescendingDateComparator : Comparator<VitalFunction> {
 

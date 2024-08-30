@@ -1,13 +1,13 @@
 package com.hartwig.actin.algo.soc
 
 import com.hartwig.actin.PatientPrinter
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.RuleMappingResourcesTestFactory
-import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.TestPatientFactory
+import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.datamodel.DoidEntry

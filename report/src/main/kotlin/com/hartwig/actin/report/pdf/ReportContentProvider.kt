@@ -1,9 +1,9 @@
 package com.hartwig.actin.report.pdf
 
-import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
 import com.hartwig.actin.configuration.MolecularSummaryType
-import com.hartwig.actin.molecular.datamodel.NO_EVIDENCE_SOURCE
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.molecular.NO_EVIDENCE_SOURCE
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.EvaluatedCohort

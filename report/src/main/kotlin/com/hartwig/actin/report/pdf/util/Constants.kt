@@ -5,7 +5,7 @@ import java.time.LocalDate
 
 object Constants {
     val REPORT_DATE: LocalDate = LocalDate.now()
-    val METADATA_TITLE = "HMF ACTIN Report v${ReporterApplication.VERSION}"
+    val METADATA_TITLE = "Hartwig ACTIN Report v${ReporterApplication.VERSION}"
     const val METADATA_AUTHOR = "Hartwig ACTIN System"
     const val PAGE_MARGIN_TOP = 100f // Top margin also excludes the chapter title, which is rendered in the header
     const val PAGE_MARGIN_LEFT = 30f

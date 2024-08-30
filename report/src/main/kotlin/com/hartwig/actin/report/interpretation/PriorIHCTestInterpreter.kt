@@ -1,8 +1,8 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.clinical.datamodel.IHC_TEST_TYPE
-import com.hartwig.actin.clinical.datamodel.PriorIHCTest
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.clinical.IHC_TEST_TYPE
+import com.hartwig.actin.datamodel.clinical.PriorIHCTest
 import com.hartwig.actin.report.pdf.util.Formats
 import org.apache.logging.log4j.LogManager
 

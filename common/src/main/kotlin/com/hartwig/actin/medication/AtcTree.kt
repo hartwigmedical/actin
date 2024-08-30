@@ -1,6 +1,6 @@
 package com.hartwig.actin.medication
 
-import com.hartwig.actin.clinical.datamodel.AtcLevel
+import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.util.TabularFile
 import java.io.File
 import java.nio.file.Files
