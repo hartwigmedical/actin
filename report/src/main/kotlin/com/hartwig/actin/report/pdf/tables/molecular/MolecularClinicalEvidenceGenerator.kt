@@ -1,7 +1,9 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.evidence.ApplicableCancerType
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 import com.hartwig.actin.report.pdf.tables.TableGenerator
@@ -17,6 +19,15 @@ data class ClinicalDetails(
     val levelB: Boolean,
     val levelC: Boolean,
     val levelD: Boolean
+)
+
+private data class TreatmentEvidenceKey(
+    val treatment: String,
+    val onLabel: Boolean,
+    val direction: EvidenceDirection,
+    val isCategoryVariant: Boolean?,
+    val sourceEvent: String,
+    val applicableCancerType: ApplicableCancerType
 )
 
 class MolecularClinicalEvidenceGenerator(
@@ -53,6 +64,7 @@ class MolecularClinicalEvidenceGenerator(
                 val groupedBySourceEvent = clinicalDetails.groupBy { it.treatmentEvidence.sourceEvent }
 
                 for ((sourceEvent, details) in groupedBySourceEvent) {
+
                     val treatmentEvidencesByLevel = listOf(
                         details.filter { it.levelA }.map { it.treatmentEvidence },
                         details.filter { it.levelB }.map { it.treatmentEvidence },
@@ -64,30 +76,25 @@ class MolecularClinicalEvidenceGenerator(
                         table.addCell(Cells.createContent(driver.event))
                         table.addCell(Cells.createContent(sourceEvent))
 
-                        treatmentEvidencesByLevel.forEach { levelEvidences ->
+                        treatmentEvidencesByLevel.forEach { perLevelEvidences ->
                             val evidenceLevelTable = Table(1).setWidth(width / columnCount)
 
-                            val treatmentGroupedEvidences = levelEvidences.groupBy { it.treatment }
-
-                            treatmentGroupedEvidences.forEach { (treatment, evidencesForTreatment) ->
-                                val cancerTypes =
-                                    evidencesForTreatment.map { it.applicableCancerType.cancerType }.toSet().joinToString(", ")
-
-                                val evidenceSubTable = Table(1).setWidth(width / columnCount)
+                            perLevelEvidences.forEach { evidence ->
+                                val cancerTypes = evidence.applicableCancerType.cancerType
                                 val cancerTypeContent = Paragraph(cancerTypes).setFirstLineIndent(10f).setItalic().setFontSize(6.5f)
-                                val treatmentContent = Paragraph(treatment)
+                                val treatmentContent = Paragraph(evidence.treatment)
 
-                                if (evidencesForTreatment.any { it.direction.isResistant }) {
+                                if (evidence.direction.isResistant) {
                                     treatmentContent.setFontColor(PALETTE_RED)
                                     cancerTypeContent.setFontColor(PALETTE_RED)
                                 }
 
+                                val evidenceSubTable = Table(1).setWidth(width / columnCount)
                                 evidenceSubTable.addCell(Cells.createContentNoBorder(treatmentContent))
                                 evidenceSubTable.startNewRow()
                                 evidenceSubTable.addCell(Cells.createContentNoBorder(cancerTypeContent))
 
-                                val evidenceCell = Cells.createContentNoBorder(evidenceSubTable)
-                                evidenceLevelTable.addCell(evidenceCell)
+                                evidenceLevelTable.addCell(Cells.createContentNoBorder(evidenceSubTable))
                             }
 
                             if (evidenceLevelTable.numberOfRows == 0) {
@@ -105,23 +112,41 @@ class MolecularClinicalEvidenceGenerator(
 
     private fun extractClinicalDetails(evidence: ClinicalEvidence): Set<ClinicalDetails> {
         val treatmentEvidenceSet = evidence.treatmentEvidence.filter { it.onLabel == onLabel }.toSet()
-        val (levelA, levelB, levelC, levelD) = listOf(EvidenceLevel.A, EvidenceLevel.B, EvidenceLevel.C, EvidenceLevel.D)
-            .map { treatmentsForEvidenceLevelAndLabel(treatmentEvidenceSet, it) }
-        return treatmentEvidenceSet.map {
-            ClinicalDetails(
-                it,
-                levelA.contains(it.treatment),
-                levelB.contains(it.treatment),
-                levelC.contains(it.treatment),
-                levelD.contains(it.treatment)
-            )
+
+        val groupedTreatments =
+            treatmentEvidenceSet.groupBy {
+                TreatmentEvidenceKey(it.treatment, it.onLabel, it.direction, it.isCategoryVariant, it.sourceEvent, it.applicableCancerType)
+            }
+
+        return groupedTreatments.flatMap { (_, treatmentEvidenceList) ->
+            val (categoryVariants, nonCategoryVariants) = treatmentEvidenceList.partition { it.isCategoryVariant == true }
+
+            val highestEvidenceLevelNonCategoryVariants = nonCategoryVariants.minOfOrNull { it.evidenceLevel }
+
+            val highestEvidenceLevelCategoryVariants = categoryVariants.minOfOrNull { it.evidenceLevel }
+
+            val nonCategoryVariantDetails = highestEvidenceLevelNonCategoryVariants
+                ?.let { createClinicalDetails(nonCategoryVariants, it) } ?: emptyList()
+
+            val categoryDetails = highestEvidenceLevelCategoryVariants
+                ?.takeIf { level -> highestEvidenceLevelNonCategoryVariants == null || level < highestEvidenceLevelNonCategoryVariants }
+                ?.let { createClinicalDetails(categoryVariants, it) }
+                ?: emptyList()
+
+            nonCategoryVariantDetails + categoryDetails
         }.toSet()
     }
 
-    private fun treatmentsForEvidenceLevelAndLabel(evidence: Set<TreatmentEvidence>, evidenceLevel: EvidenceLevel): Set<String> {
-        return evidence
-            .filter { it.evidenceLevel == evidenceLevel }
-            .map { it.treatment }
-            .toSet()
-    }
+    private fun createClinicalDetails(treatments: List<TreatmentEvidence>, level: EvidenceLevel): List<ClinicalDetails> =
+        treatments
+            .filter { it.evidenceLevel == level }
+            .map { evidence ->
+                ClinicalDetails(
+                    evidence,
+                    evidence.evidenceLevel == EvidenceLevel.A,
+                    evidence.evidenceLevel == EvidenceLevel.B,
+                    evidence.evidenceLevel == EvidenceLevel.C,
+                    evidence.evidenceLevel == EvidenceLevel.D
+                )
+            }
 }
