@@ -1,8 +1,8 @@
 package com.hartwig.actin.clinical.interpretation
 
-import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver.fromStringList
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver.toStringList
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

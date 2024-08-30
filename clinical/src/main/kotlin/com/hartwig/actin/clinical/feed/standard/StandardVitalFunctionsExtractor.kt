@@ -2,8 +2,8 @@ package com.hartwig.actin.clinical.feed.standard
 
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.clinical.datamodel.VitalFunction
-import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
+import com.hartwig.actin.datamodel.clinical.VitalFunction
+import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory
 
 class StandardVitalFunctionsExtractor : StandardDataExtractor<List<VitalFunction>> {
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<VitalFunction>> {

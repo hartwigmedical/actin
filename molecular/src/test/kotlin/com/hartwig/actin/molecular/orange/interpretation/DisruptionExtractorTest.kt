@@ -1,9 +1,9 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
-import com.hartwig.actin.molecular.datamodel.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.orange.driver.CodingContext
-import com.hartwig.actin.molecular.datamodel.orange.driver.DisruptionType
-import com.hartwig.actin.molecular.datamodel.orange.driver.RegionType
+import com.hartwig.actin.datamodel.molecular.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.orange.driver.CodingContext
+import com.hartwig.actin.datamodel.molecular.orange.driver.DisruptionType
+import com.hartwig.actin.datamodel.molecular.orange.driver.RegionType
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory.createMinimalTestOrangeRecord
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory

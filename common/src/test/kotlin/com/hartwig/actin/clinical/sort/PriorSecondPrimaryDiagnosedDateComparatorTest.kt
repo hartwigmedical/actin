@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical.sort
 
-import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
-import com.hartwig.actin.clinical.datamodel.TestPriorSecondPrimaryFactory
+import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary
+import com.hartwig.actin.datamodel.clinical.TestPriorSecondPrimaryFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

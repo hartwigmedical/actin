@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical.feed.emc
 
 import com.google.common.collect.Sets
-import com.hartwig.actin.clinical.datamodel.Gender
+import com.hartwig.actin.datamodel.clinical.Gender
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -33,15 +33,6 @@ object FeedParseFunctions {
         for (format in DATE_FORMATS) {
             if (canBeInterpretedWithFormat(date, format)) {
                 return LocalDate.parse(date, format)
-            }
-        }
-        throw IllegalArgumentException("Cannot transform string to date using any of the configured date formats: $date")
-    }
-
-    fun parseDateTime(date: String): LocalDateTime {
-        for (format in DATE_FORMATS) {
-            if (canBeInterpretedWithFormat(date, format)) {
-                return LocalDateTime.parse(date, format)
             }
         }
         throw IllegalArgumentException("Cannot transform string to date using any of the configured date formats: $date")

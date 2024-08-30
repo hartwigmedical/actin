@@ -4,7 +4,7 @@ import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig
-import com.hartwig.actin.clinical.datamodel.Complication
+import com.hartwig.actin.datamodel.clinical.Complication
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

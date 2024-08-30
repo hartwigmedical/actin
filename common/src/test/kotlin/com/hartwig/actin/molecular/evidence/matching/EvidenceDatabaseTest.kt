@@ -1,14 +1,14 @@
 package com.hartwig.actin.molecular.evidence.matching
 
-import com.hartwig.actin.molecular.TestMolecularFactory.minimalCopyNumber
-import com.hartwig.actin.molecular.TestMolecularFactory.minimalDisruption
-import com.hartwig.actin.molecular.TestMolecularFactory.minimalHomozygousDisruption
-import com.hartwig.actin.molecular.TestMolecularFactory.minimalVirus
-import com.hartwig.actin.molecular.datamodel.CodingEffect
-import com.hartwig.actin.molecular.datamodel.VariantType
-import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
-import com.hartwig.actin.molecular.datamodel.orange.driver.VirusType
+import com.hartwig.actin.datamodel.molecular.CodingEffect
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalCopyNumber
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalDisruption
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalHomozygousDisruption
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalVirus
+import com.hartwig.actin.datamodel.molecular.VariantType
+import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
+import com.hartwig.actin.datamodel.molecular.orange.driver.VirusType
 import com.hartwig.actin.molecular.evidence.TestEvidenceDatabaseFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import org.assertj.core.api.Assertions.assertThat

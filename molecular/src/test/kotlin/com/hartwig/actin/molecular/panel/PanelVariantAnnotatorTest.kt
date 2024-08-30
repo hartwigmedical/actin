@@ -1,13 +1,19 @@
 package com.hartwig.actin.molecular.panel
 
-import com.hartwig.actin.clinical.datamodel.SequencedVariant
-import com.hartwig.actin.molecular.datamodel.CodingEffect
-import com.hartwig.actin.molecular.datamodel.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.GeneRole
-import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.TranscriptImpact
-import com.hartwig.actin.molecular.datamodel.VariantType
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.datamodel.clinical.SequencedVariant
+import com.hartwig.actin.datamodel.molecular.CodingEffect
+import com.hartwig.actin.datamodel.molecular.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.GeneRole
+import com.hartwig.actin.datamodel.molecular.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.TranscriptImpact
+import com.hartwig.actin.datamodel.molecular.VariantType
+import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.treatment
+import com.hartwig.actin.molecular.GENE
+import com.hartwig.actin.molecular.HGVS_CODING
+import com.hartwig.actin.molecular.HGVS_PROTEIN
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
@@ -24,14 +30,14 @@ import com.hartwig.actin.tools.pave.ImmutableVariantTranscriptImpact
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.ImmutableVariant
 import com.hartwig.actin.tools.variant.VariantAnnotator
-import com.hartwig.serve.datamodel.EvidenceDirection
-import com.hartwig.serve.datamodel.EvidenceLevel
 import com.hartwig.serve.datamodel.Knowledgebase
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import com.hartwig.serve.datamodel.EvidenceDirection as ServeEvidenceDirection
+import com.hartwig.serve.datamodel.EvidenceLevel as ServeEvidenceLevel
 
 
 private const val ALT = "T"
@@ -45,7 +51,7 @@ private const val OTHER_GENE_TRANSCRIPT = "other_gene_transcript"
 private const val CHROMOSOME = "1"
 private const val POSITION = 1
 private val EMPTY_MATCH = ActionabilityMatch(emptyList(), emptyList())
-private val ARCHER_VARIANT = SequencedVariant(GENE, HGVS_CODING)
+private val ARCHER_VARIANT = SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING)
 
 private val VARIANT_MATCH_CRITERIA =
     VariantMatchCriteria(
@@ -61,8 +67,8 @@ private val VARIANT_MATCH_CRITERIA =
 
 private val ACTIONABILITY_MATCH = ActionabilityMatch(
     onLabelEvents = listOf(
-        TestServeActionabilityFactory.geneBuilder().build().withSource(Knowledgebase.CKB_EVIDENCE).withLevel(EvidenceLevel.A)
-            .withDirection(EvidenceDirection.RESPONSIVE)
+        TestServeActionabilityFactory.geneBuilder().build().withSource(Knowledgebase.CKB_EVIDENCE).withLevel(ServeEvidenceLevel.A)
+            .withDirection(ServeEvidenceDirection.RESPONSIVE)
     ), offLabelEvents = emptyList()
 )
 
@@ -126,14 +132,26 @@ class PanelVariantAnnotatorTest {
     @Test
     fun `Should return empty annotation when no matches found`() {
         val annotated = annotator.annotate(setOf(ARCHER_VARIANT))
-        assertThat(annotated.first().evidence).isEqualTo(ActionableEvidence())
+        assertThat(annotated.first().evidence).isEqualTo(ClinicalEvidence())
     }
 
     @Test
     fun `Should annotate variants with evidence`() {
         every { evidenceDatabase.evidenceForVariant(VARIANT_MATCH_CRITERIA) } returns ACTIONABILITY_MATCH
         val annotated = annotator.annotate(setOf(ARCHER_VARIANT))
-        assertThat(annotated.first().evidence).isEqualTo(ActionableEvidence(approvedTreatments = setOf("intervention")))
+        assertThat(annotated.first().evidence).isEqualTo(
+            ClinicalEvidence(
+                treatmentEvidence = setOf(
+                    treatment(
+                        treatment = "intervention",
+                        evidenceLevel = EvidenceLevel.A,
+                        direction = EvidenceDirection(hasPositiveResponse = true, isCertain = true, hasBenefit = true),
+                        onLabel = true,
+                        isCategoryVariant = true
+                    )
+                )
+            )
+        )
     }
 
     @Test

@@ -1,18 +1,18 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.molecular.datamodel.Drivers
-import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
-import com.hartwig.actin.molecular.datamodel.MolecularHistory
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.Drivers
+import com.hartwig.actin.datamodel.molecular.MolecularCharacteristics
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.report.pdf.assertRow
 import com.hartwig.actin.report.pdf.getWrappedTable
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 val FIRST_TEST = TestMolecularFactory.createMinimalTestMolecularRecord().copy(date = LocalDate.of(2024, 7, 21))
 val SECOND_TEST = FIRST_TEST.copy(date = FIRST_TEST.date?.plusDays(1))
-val VARIANT = TestMolecularFactory.createProperVariant()
+val VARIANT = TestMolecularFactory.createProperVariant().copy(variantAlleleFrequency = 10.0)
 
 class LongitudinalMolecularHistoryGeneratorTest {
 
@@ -40,7 +40,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
                 )
             ), 1f
         )
-        assertRow(getWrappedTable(result), 0, "BRAF V600E", "Missense\nGain of function\nHotspot", "High", "Detected", "Not detected")
+        assertRow(getWrappedTable(result), 0, "BRAF V600E\n(Tier I)", "Missense\nGain of function\nHotspot", "High", "Detected (VAF 10.0%)", "Not detected")
     }
 
     @Test

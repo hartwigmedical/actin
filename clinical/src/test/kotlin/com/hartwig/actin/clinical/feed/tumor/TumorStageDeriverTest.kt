@@ -1,8 +1,8 @@
 package com.hartwig.actin.clinical.feed.tumor
 
 import com.hartwig.actin.algo.doid.DoidConstants
-import com.hartwig.actin.clinical.datamodel.TumorDetails
-import com.hartwig.actin.clinical.datamodel.TumorStage
+import com.hartwig.actin.datamodel.clinical.TumorDetails
+import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

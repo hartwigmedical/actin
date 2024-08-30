@@ -1,16 +1,16 @@
 package com.hartwig.actin.algo
 
-import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider
-import com.hartwig.actin.algo.datamodel.TreatmentMatch
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.soc.EvaluatedTreatmentAnnotator
 import com.hartwig.actin.algo.soc.PersonalizedDataInterpreter
 import com.hartwig.actin.algo.soc.RecommendationEngine
 import com.hartwig.actin.algo.soc.RecommendationEngineFactory
 import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
-import com.hartwig.actin.efficacy.EfficacyEntry
-import com.hartwig.actin.trial.datamodel.Trial
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.algo.TreatmentMatch
+import com.hartwig.actin.datamodel.efficacy.EfficacyEntry
+import com.hartwig.actin.datamodel.trial.Trial
 
 class TreatmentMatcher(
     private val trialMatcher: TrialMatcher,

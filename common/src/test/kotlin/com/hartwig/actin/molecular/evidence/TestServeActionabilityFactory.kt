@@ -6,6 +6,7 @@ import com.hartwig.serve.datamodel.EvidenceDirection
 import com.hartwig.serve.datamodel.EvidenceLevel
 import com.hartwig.serve.datamodel.ImmutableCancerType
 import com.hartwig.serve.datamodel.ImmutableClinicalTrial
+import com.hartwig.serve.datamodel.ImmutableCountry
 import com.hartwig.serve.datamodel.ImmutableTreatment
 import com.hartwig.serve.datamodel.Intervention
 import com.hartwig.serve.datamodel.Knowledgebase
@@ -57,7 +58,11 @@ object TestServeActionabilityFactory {
         return createActionableEvent(Knowledgebase.CKB_EVIDENCE, "intervention")
     }
 
-    fun createActionableEvent(source: Knowledgebase, interventionName: String): ActionableEvent {
+    fun createActionableEvent(
+        source: Knowledgebase,
+        interventionName: String,
+        direction: EvidenceDirection = EvidenceDirection.NO_BENEFIT
+    ): ActionableEvent {
         val nctId = "NCT00000001"
         val isTrial = source == Knowledgebase.CKB_TRIAL
         return object : ActionableEvent {
@@ -76,10 +81,10 @@ object TestServeActionabilityFactory {
             override fun intervention(): Intervention {
                 return if (isTrial) {
                     ImmutableClinicalTrial.builder()
-                        .studyAcronym(interventionName)
-                        .studyNctId(nctId)
-                        .studyTitle("")
-                        .countriesOfStudy(setOf("country"))
+                        .acronym(interventionName)
+                        .nctId(nctId)
+                        .title("")
+                        .countries(setOf(ImmutableCountry.builder().countryName("country").build()))
                         .build()
                 } else {
                     ImmutableTreatment.builder().name(interventionName).build()
@@ -99,7 +104,7 @@ object TestServeActionabilityFactory {
             }
 
             override fun direction(): EvidenceDirection {
-                return EvidenceDirection.NO_BENEFIT
+                return direction
             }
 
             override fun evidenceUrls(): Set<String> {

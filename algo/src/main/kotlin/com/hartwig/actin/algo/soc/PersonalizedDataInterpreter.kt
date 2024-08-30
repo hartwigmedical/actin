@@ -1,16 +1,16 @@
 package com.hartwig.actin.algo.soc
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.molecular.GeneHasActivatingMutation
 import com.hartwig.actin.algo.evaluation.tumor.TumorTypeEvaluationFunctions
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.personalization.Measurement
+import com.hartwig.actin.datamodel.personalization.MeasurementType
+import com.hartwig.actin.datamodel.personalization.PersonalizedDataAnalysis
+import com.hartwig.actin.datamodel.personalization.Population
+import com.hartwig.actin.datamodel.personalization.TreatmentAnalysis
+import com.hartwig.actin.datamodel.personalization.TreatmentGroup
 import com.hartwig.actin.personalization.datamodel.LocationGroup
-import com.hartwig.actin.personalized.datamodel.Measurement
-import com.hartwig.actin.personalized.datamodel.MeasurementType
-import com.hartwig.actin.personalized.datamodel.PersonalizedDataAnalysis
-import com.hartwig.actin.personalized.datamodel.Population
-import com.hartwig.actin.personalized.datamodel.TreatmentAnalysis
-import com.hartwig.actin.personalized.datamodel.TreatmentGroup
 import com.hartwig.actin.personalization.similarity.PersonalizedDataInterpreter as PersonalizedDataAnalyzer
 import com.hartwig.actin.personalization.similarity.population.Measurement as PopulationMeasurement
 import com.hartwig.actin.personalization.similarity.population.PersonalizedDataAnalysis as PersonalAnalysis

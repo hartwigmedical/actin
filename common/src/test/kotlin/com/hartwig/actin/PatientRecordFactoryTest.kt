@@ -1,7 +1,7 @@
 package com.hartwig.actin
 
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
+import com.hartwig.actin.datamodel.clinical.TestClinicalFactory
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.sort
 
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord
+import com.hartwig.actin.datamodel.clinical.ClinicalRecord
 
 class ClinicalRecordComparator : Comparator<ClinicalRecord> {
 

@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.othercondition
 
 import com.google.common.collect.Lists
-import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
+import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

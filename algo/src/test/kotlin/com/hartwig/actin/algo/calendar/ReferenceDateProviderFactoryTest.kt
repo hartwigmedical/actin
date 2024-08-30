@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.calendar
 
-import com.hartwig.actin.TestPatientFactory
+import com.hartwig.actin.datamodel.TestPatientFactory
 import org.junit.Assert
 import org.junit.Test
 

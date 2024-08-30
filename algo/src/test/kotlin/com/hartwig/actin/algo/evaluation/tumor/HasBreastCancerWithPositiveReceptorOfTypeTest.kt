@@ -1,13 +1,13 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.clinical.datamodel.PriorIHCTest
-import com.hartwig.actin.clinical.datamodel.ReceptorType
-import com.hartwig.actin.clinical.datamodel.ReceptorType.ER
-import com.hartwig.actin.clinical.datamodel.ReceptorType.HER2
-import com.hartwig.actin.clinical.datamodel.ReceptorType.PR
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.PriorIHCTest
+import com.hartwig.actin.datamodel.clinical.ReceptorType
+import com.hartwig.actin.datamodel.clinical.ReceptorType.ER
+import com.hartwig.actin.datamodel.clinical.ReceptorType.HER2
+import com.hartwig.actin.datamodel.clinical.ReceptorType.PR
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

@@ -1,7 +1,6 @@
 package com.hartwig.actin.molecular.util
 
-import com.hartwig.actin.TreatmentDatabaseFactory
-import com.hartwig.actin.molecular.datamodel.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import org.apache.logging.log4j.LogManager
 
 class MolecularHistoryPrinter() {
@@ -13,7 +12,7 @@ class MolecularHistoryPrinter() {
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger(TreatmentDatabaseFactory::class.java)
+        private val LOGGER = LogManager.getLogger(MolecularHistoryPrinter::class.java)
 
         fun printRecord(molecularHistory: MolecularHistory) {
             MolecularHistoryPrinter().print(molecularHistory)

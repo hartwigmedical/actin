@@ -6,9 +6,10 @@
     <artifactId>actin</artifactId>
     <packaging>pom</packaging>
     <version>local-SNAPSHOT</version>
-    <name>HMF ACTIN</name>
+    <name>Hartwig ACTIN</name>
 
     <modules>
+        <module>datamodel</module>
         <module>common</module>
         <module>clinical</module>
         <module>molecular</module>
@@ -22,11 +23,11 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <serve.version>4.0.1</serve.version>
-        <actin-personalization.version>0.3.0</actin-personalization.version>
+        <serve.version>5.0.0</serve.version>
+        <actin-personalization.version>0.4.0</actin-personalization.version>
         <orange-datamodel.version>2.6.0</orange-datamodel.version>
-        <actin-transvar.version>0.3.1</actin-transvar.version>
-        <actin-pave-lite.version>0.3.0</actin-pave-lite.version>
+        <actin-transvar.version>0.3.3</actin-transvar.version>
+        <actin-pave-lite.version>0.3.3</actin-pave-lite.version>
         <pave.version>1.6</pave.version>
 
         <!-- KD: Even though all code is in kotlin, the jooq code generator generates java code that needs to be compiled -->
@@ -154,6 +155,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.hartwig.actin</groupId>
+                <artifactId>datamodel</artifactId>
+                <version>local-SNAPSHOT</version>
+            </dependency>
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>common</artifactId>
@@ -347,6 +353,13 @@
                     </exclusion>
                 </exclusions>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.hartwig.actin</groupId>
+                <artifactId>datamodel</artifactId>
+                <version>local-SNAPSHOT</version>
+                <scope>test</scope>
+                <type>test-jar</type>
             </dependency>
             <dependency>
                 <groupId>com.hartwig.actin</groupId>

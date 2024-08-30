@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.sort
 
-import com.hartwig.actin.algo.datamodel.CohortMatch
-import com.hartwig.actin.trial.datamodel.CohortMetadata
+import com.hartwig.actin.datamodel.algo.CohortMatch
+import com.hartwig.actin.datamodel.trial.CohortMetadata
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

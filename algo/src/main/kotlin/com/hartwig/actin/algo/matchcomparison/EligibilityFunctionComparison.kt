@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.matchcomparison
 
-import com.hartwig.actin.trial.datamodel.EligibilityFunction
-import com.hartwig.actin.trial.datamodel.EligibilityRule
+import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.trial.input.composite.CompositeRules
 
 object EligibilityFunctionComparison {

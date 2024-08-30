@@ -1,25 +1,25 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.molecular.datamodel.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.Drivers
-import com.hartwig.actin.molecular.datamodel.Fusion
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
-import com.hartwig.actin.molecular.datamodel.Variant
-import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
-import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory
-import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
-import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory
-import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
-import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
-import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
-import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
-import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.orange.driver.Virus
-import com.hartwig.actin.molecular.datamodel.orange.driver.VirusType
+import com.hartwig.actin.datamodel.molecular.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.Drivers
+import com.hartwig.actin.datamodel.molecular.Fusion
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.Variant
+import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestDisruptionFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestHomozygousDisruptionFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestVirusFactory
+import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
+import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
+import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
+import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
+import com.hartwig.actin.datamodel.molecular.orange.driver.HomozygousDisruption
+import com.hartwig.actin.datamodel.molecular.orange.driver.Virus
+import com.hartwig.actin.datamodel.molecular.orange.driver.VirusType
 import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -107,8 +107,8 @@ class DriversSummarizerTest {
     @Test
     fun shouldReturnActionableEventsThatAreNotKeyDrivers() {
         val externalEvidence =
-            TestActionableEvidenceFactory.withExternalEligibleTrial(TestExternalTrialFactory.createTestTrial())
-        val approvedTreatment = TestActionableEvidenceFactory.withApprovedTreatment("approved")
+            TestClinicalEvidenceFactory.withExternalEligibleTrial(TestExternalTrialFactory.createTestTrial())
+        val approvedTreatment = TestClinicalEvidenceFactory.withApprovedTreatment("approved")
         val cohorts = listOf(
             evaluatedCohort(
                 isPotentiallyEligible = true,
@@ -178,7 +178,7 @@ class DriversSummarizerTest {
         name: String,
         driverLikelihood: DriverLikelihood,
         isReportable: Boolean,
-        evidence: ActionableEvidence = TestActionableEvidenceFactory.createEmpty()
+        evidence: ClinicalEvidence = TestClinicalEvidenceFactory.createEmpty()
     ): Variant {
         return TestVariantFactory.createMinimal().copy(
             gene = name,
@@ -201,7 +201,7 @@ class DriversSummarizerTest {
 
     private fun homozygousDisruption(
         name: String, driverLikelihood: DriverLikelihood?, isReportable: Boolean,
-        evidence: ActionableEvidence = TestActionableEvidenceFactory.createEmpty()
+        evidence: ClinicalEvidence = TestClinicalEvidenceFactory.createEmpty()
     ): HomozygousDisruption {
         return TestHomozygousDisruptionFactory.createMinimal().copy(
             gene = name,
@@ -214,7 +214,7 @@ class DriversSummarizerTest {
 
     private fun disruption(
         name: String, driverLikelihood: DriverLikelihood, isReportable: Boolean,
-        evidence: ActionableEvidence = TestActionableEvidenceFactory.createEmpty()
+        evidence: ClinicalEvidence = TestClinicalEvidenceFactory.createEmpty()
     ): Disruption {
         return TestDisruptionFactory.createMinimal().copy(
             gene = name,
@@ -229,7 +229,7 @@ class DriversSummarizerTest {
         event: String,
         driverLikelihood: DriverLikelihood,
         isReportable: Boolean,
-        evidence: ActionableEvidence = TestActionableEvidenceFactory.createEmpty()
+        evidence: ClinicalEvidence = TestClinicalEvidenceFactory.createEmpty()
     ): Fusion {
         return TestFusionFactory.createMinimal().copy(
             event = event,

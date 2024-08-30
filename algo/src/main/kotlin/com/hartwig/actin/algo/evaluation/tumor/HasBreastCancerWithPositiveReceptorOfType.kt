@@ -1,13 +1,16 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.molecular.IHCTestClassificationFunctions.TestResult
+import com.hartwig.actin.algo.evaluation.molecular.IHCTestClassificationFunctions.classifyHer2Test
+import com.hartwig.actin.algo.evaluation.molecular.IHCTestClassificationFunctions.classifyPrOrErTest
 import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleEvaluator.geneIsAmplifiedForPatient
-import com.hartwig.actin.clinical.datamodel.PriorIHCTest
-import com.hartwig.actin.clinical.datamodel.ReceptorType
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.PriorIHCTest
+import com.hartwig.actin.datamodel.clinical.ReceptorType
 import com.hartwig.actin.doid.DoidModel
 
 class HasBreastCancerWithPositiveReceptorOfType(private val doidModel: DoidModel, private val receptorType: ReceptorType) :
@@ -102,43 +105,6 @@ class HasBreastCancerWithPositiveReceptorOfType(private val doidModel: DoidModel
                     "No ${receptorType.display()}-positive breast cancer"
                 )
             }
-        }
-    }
-
-    private enum class TestResult {
-        POSITIVE,
-        NEGATIVE,
-        BORDERLINE,
-        UNKNOWN
-    }
-
-    private fun classifyPrOrErTest(test: PriorIHCTest): TestResult {
-        return classifyTest(test, "%", 1, 10, 100)
-    }
-
-    private fun classifyHer2Test(test: PriorIHCTest): TestResult {
-        return classifyTest(test, "+", 2, 3, 3)
-    }
-
-    private fun classifyTest(
-        test: PriorIHCTest, unit: String, negativeUpperBound: Int, positiveLowerBound: Int, positiveUpperBound: Int
-    ): TestResult {
-        val scoreValue = test.scoreValue?.toInt()
-        return when {
-            test.scoreText?.lowercase() == "negative" || (scoreValue in 0 until negativeUpperBound && test.scoreValueUnit == unit) -> {
-                TestResult.NEGATIVE
-            }
-
-            test.scoreText?.lowercase() == "positive" ||
-                    (scoreValue in positiveLowerBound..positiveUpperBound && test.scoreValueUnit == unit) -> {
-                TestResult.POSITIVE
-            }
-
-            scoreValue in negativeUpperBound until positiveLowerBound && test.scoreValueUnit == unit -> {
-                TestResult.BORDERLINE
-            }
-
-            else -> TestResult.UNKNOWN
         }
     }
 

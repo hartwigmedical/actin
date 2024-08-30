@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical.feed.emc.vitalfunction
 
-import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionExtraction.determineCategory
+import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory
 import org.junit.Assert
 import org.junit.Test
 

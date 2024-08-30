@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.curation.config
 
-import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
+import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary
 
 data class SecondPrimaryConfig(
     override val input: String,

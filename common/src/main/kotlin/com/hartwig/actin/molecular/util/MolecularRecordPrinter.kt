@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.util
 
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.PredictedTumorOrigin
+import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.PredictedTumorOrigin
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory.create
 import com.hartwig.actin.util.DatamodelPrinter
 import com.hartwig.actin.util.DatamodelPrinter.Companion.withDefaultIndentation
@@ -25,17 +25,17 @@ class MolecularRecordPrinter(private val printer: DatamodelPrinter) {
         printer.print(" Tumor mutational burden: " + formatDouble(record.characteristics.tumorMutationalBurden))
         printer.print(" Tumor mutational load: " + formatInteger(record.characteristics.tumorMutationalLoad))
         val evidence = create(record)
-        printer.print(" Events with evidence for approved treatment: " + keys(evidence.approvedTreatmentsPerEvent))
+        printer.print(" Events with evidence for approved treatment: " + keys(evidence.approvedTreatmentsPerEvent()))
         printer.print(" Events associated with external trials: " + keys(evidence.externalEligibleTrialsPerEvent))
         printer.print(
-            " Events with evidence for on-label experimental treatment: " + keys(evidence.onLabelExperimentalTreatmentsPerEvent)
+            " Events with evidence for on-label experimental treatment: " + keys(evidence.onLabelExperimentalTreatmentPerEvent())
         )
         printer.print(
-            " Events with evidence for off-label experimental treatment: " + keys(evidence.offLabelExperimentalTreatmentsPerEvent)
+            " Events with evidence for off-label experimental treatment: " + keys(evidence.offLabelExperimentalTreatmentsPerEvent())
         )
-        printer.print(" Events with evidence for pre-clinical treatment: " + keys(evidence.preClinicalTreatmentsPerEvent))
-        printer.print(" Events with known resistance evidence: " + keys(evidence.knownResistantTreatmentsPerEvent))
-        printer.print(" Events with suspect resistance evidence: " + keys(evidence.suspectResistantTreatmentsPerEvent))
+        printer.print(" Events with evidence for pre-clinical treatment: " + keys(evidence.preClinicalTreatmentsPerEvent()))
+        printer.print(" Events with known resistance evidence: " + keys(evidence.knownResistantTreatmentsPerEvent()))
+        printer.print(" Events with suspect resistance evidence: " + keys(evidence.suspectResistantTreatmentsPerEvent()))
     }
 
     companion object {

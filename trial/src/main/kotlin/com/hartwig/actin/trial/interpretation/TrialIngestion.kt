@@ -1,6 +1,12 @@
 package com.hartwig.actin.trial.interpretation
 
 import com.hartwig.actin.TreatmentDatabase
+import com.hartwig.actin.datamodel.trial.Cohort
+import com.hartwig.actin.datamodel.trial.CriterionReference
+import com.hartwig.actin.datamodel.trial.Eligibility
+import com.hartwig.actin.datamodel.trial.Trial
+import com.hartwig.actin.datamodel.trial.TrialIdentification
+import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.filter.GeneFilter
@@ -11,12 +17,6 @@ import com.hartwig.actin.trial.config.InclusionCriteriaConfig
 import com.hartwig.actin.trial.config.InclusionCriteriaReferenceConfig
 import com.hartwig.actin.trial.config.TrialConfigModel
 import com.hartwig.actin.trial.config.TrialDefinitionConfig
-import com.hartwig.actin.trial.datamodel.Cohort
-import com.hartwig.actin.trial.datamodel.CriterionReference
-import com.hartwig.actin.trial.datamodel.Eligibility
-import com.hartwig.actin.trial.datamodel.Trial
-import com.hartwig.actin.trial.datamodel.TrialIdentification
-import com.hartwig.actin.trial.datamodel.TrialPhase
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.sort.CohortComparator
 import com.hartwig.actin.trial.sort.CriterionReferenceComparator

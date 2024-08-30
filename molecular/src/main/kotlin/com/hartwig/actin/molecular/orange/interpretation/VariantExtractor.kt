@@ -1,17 +1,17 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
-import com.hartwig.actin.molecular.datamodel.CodingEffect
-import com.hartwig.actin.molecular.datamodel.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.GeneRole
-import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.TranscriptImpact
-import com.hartwig.actin.molecular.datamodel.Variant
-import com.hartwig.actin.molecular.datamodel.VariantEffect
-import com.hartwig.actin.molecular.datamodel.VariantType
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariantDetails
-import com.hartwig.actin.molecular.evidence.ActionableEvidenceFactory
+import com.hartwig.actin.datamodel.molecular.CodingEffect
+import com.hartwig.actin.datamodel.molecular.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.GeneRole
+import com.hartwig.actin.datamodel.molecular.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.TranscriptImpact
+import com.hartwig.actin.datamodel.molecular.Variant
+import com.hartwig.actin.datamodel.molecular.VariantEffect
+import com.hartwig.actin.datamodel.molecular.VariantType
+import com.hartwig.actin.datamodel.molecular.orange.driver.ExtendedVariantDetails
+import com.hartwig.actin.datamodel.molecular.sort.driver.VariantComparator
+import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.filter.GeneFilter
-import com.hartwig.actin.molecular.sort.driver.VariantComparator
 import com.hartwig.hmftools.datamodel.purple.HotspotType
 import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect
 import com.hartwig.hmftools.datamodel.purple.PurpleDriver
@@ -44,22 +44,14 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
                 val event = DriverEventFactory.variantEvent(variant)
                 val driver = findBestMutationDriver(drivers, variant.gene(), variant.canonicalImpact().transcript())
                 val driverLikelihood = determineDriverLikelihood(driver)
-                val evidence = ActionableEvidenceFactory.createNoEvidence()
+                val evidence = ClinicalEvidenceFactory.createNoEvidence()
                 Variant(
-                    gene = variant.gene(),
-                    geneRole = GeneRole.UNKNOWN,
-                    proteinEffect = ProteinEffect.UNKNOWN,
-                    isAssociatedWithDrugResistance = null,
-                    isReportable = variant.reported(),
-                    event = event,
-                    driverLikelihood = driverLikelihood,
-                    evidence = evidence,
                     chromosome = variant.chromosome(),
                     position = variant.position(),
                     ref = variant.ref(),
                     alt = variant.alt(),
                     type = determineVariantType(variant),
-                    isHotspot = variant.hotspot() == HotspotType.HOTSPOT,
+                    variantAlleleFrequency = variant.adjustedVAF(),
                     canonicalImpact = extractCanonicalImpact(variant),
                     otherImpacts = extractOtherImpacts(variant),
                     extendedVariantDetails = ExtendedVariantDetails(
@@ -69,6 +61,15 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
                         phaseGroups = variant.localPhaseSets()?.toSet(),
                         clonalLikelihood = ExtractionUtil.keep3Digits(1 - variant.subclonalLikelihood()),
                     ),
+                    isHotspot = variant.hotspot() == HotspotType.HOTSPOT,
+                    isReportable = variant.reported(),
+                    event = event,
+                    driverLikelihood = driverLikelihood,
+                    evidence = evidence,
+                    gene = variant.gene(),
+                    geneRole = GeneRole.UNKNOWN,
+                    proteinEffect = ProteinEffect.UNKNOWN,
+                    isAssociatedWithDrugResistance = null,
                 )
             }
             .toSortedSet(VariantComparator())

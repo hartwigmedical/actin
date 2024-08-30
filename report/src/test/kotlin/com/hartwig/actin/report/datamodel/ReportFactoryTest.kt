@@ -1,8 +1,8 @@
 package com.hartwig.actin.report.datamodel
 
-import com.hartwig.actin.TestPatientFactory
-import com.hartwig.actin.algo.datamodel.TestTreatmentMatchFactory
 import com.hartwig.actin.configuration.ReportConfiguration
+import com.hartwig.actin.datamodel.TestPatientFactory
+import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
 import com.hartwig.actin.report.datamodel.ReportFactory.fromInputs
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

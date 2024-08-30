@@ -1,9 +1,9 @@
 package com.hartwig.actin.algo.evaluation.priortumor
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestPatientFactory
-import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
-import com.hartwig.actin.clinical.datamodel.TumorStatus
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.TestPatientFactory
+import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary
+import com.hartwig.actin.datamodel.clinical.TumorStatus
 
 internal object PriorTumorTestFactory {
     val base = TestPatientFactory.createMinimalTestWGSPatientRecord()

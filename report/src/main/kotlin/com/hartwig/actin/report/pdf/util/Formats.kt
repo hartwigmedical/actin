@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.util
 
-import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.itextpdf.kernel.colors.DeviceRgb
 import com.itextpdf.layout.Style
 import java.text.DecimalFormat
@@ -79,8 +79,8 @@ object Formats {
 
     fun fontColorForYesNo(yesNo: String): DeviceRgb {
         return when (yesNo) {
-            "Yes" -> Styles.PALETTE_YES_OR_NO_YES
-            "No" -> Styles.PALETTE_YES_OR_NO_NO
+            "Yes" -> Styles.PALETTE_GREEN
+            "No" -> Styles.PALETTE_RED
             else -> Styles.PALETTE_YES_OR_NO_UNCLEAR
         }
     }

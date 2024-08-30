@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.cardiacfunction
 
 import com.hartwig.actin.algo.evaluation.cardiacfunction.ECGMeasureEvaluationFunction.ThresholdCriteria
-import com.hartwig.actin.clinical.datamodel.ECG
+import com.hartwig.actin.datamodel.clinical.ECG
 
 object ECGMeasureEvaluationFunctions {
     fun hasLimitedQTCF(maxQTCF: Double): ECGMeasureEvaluationFunction {

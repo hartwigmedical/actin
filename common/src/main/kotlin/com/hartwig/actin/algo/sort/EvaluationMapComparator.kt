@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.sort
 
-import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.trial.datamodel.Eligibility
+import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.trial.sort.EligibilityComparator
 
 class EvaluationMapComparator : Comparator<Map<Eligibility, Evaluation>> {

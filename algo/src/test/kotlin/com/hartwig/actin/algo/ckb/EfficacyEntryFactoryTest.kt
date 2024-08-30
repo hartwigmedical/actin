@@ -6,16 +6,16 @@ import com.hartwig.actin.algo.ckb.json.CkbExtendedEvidenceTestFactory
 import com.hartwig.actin.algo.ckb.json.CkbMolecularProfile
 import com.hartwig.actin.algo.ckb.json.CkbTherapy
 import com.hartwig.actin.algo.ckb.json.CkbVariantRequirementDetail
-import com.hartwig.actin.clinical.datamodel.treatment.Drug
-import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
-import com.hartwig.actin.clinical.datamodel.treatment.DrugType
-import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
-import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
-import com.hartwig.actin.efficacy.ConfidenceInterval
-import com.hartwig.actin.efficacy.DerivedMetric
-import com.hartwig.actin.efficacy.TimeOfMetastases
-import com.hartwig.actin.efficacy.ValuePercentage
-import com.hartwig.actin.efficacy.VariantRequirement
+import com.hartwig.actin.datamodel.clinical.treatment.Drug
+import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
+import com.hartwig.actin.datamodel.clinical.treatment.DrugType
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
+import com.hartwig.actin.datamodel.efficacy.ConfidenceInterval
+import com.hartwig.actin.datamodel.efficacy.DerivedMetric
+import com.hartwig.actin.datamodel.efficacy.TimeOfMetastases
+import com.hartwig.actin.datamodel.efficacy.ValuePercentage
+import com.hartwig.actin.datamodel.efficacy.VariantRequirement
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

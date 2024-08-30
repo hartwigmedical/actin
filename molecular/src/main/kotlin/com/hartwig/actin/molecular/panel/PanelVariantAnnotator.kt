@@ -1,16 +1,16 @@
 package com.hartwig.actin.molecular.panel
 
-import com.hartwig.actin.clinical.datamodel.SequencedVariant
-import com.hartwig.actin.molecular.datamodel.CodingEffect
-import com.hartwig.actin.molecular.datamodel.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.GeneAlteration
-import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.TranscriptImpact
-import com.hartwig.actin.molecular.datamodel.Variant
-import com.hartwig.actin.molecular.datamodel.VariantType
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.datamodel.clinical.SequencedVariant
+import com.hartwig.actin.datamodel.molecular.CodingEffect
+import com.hartwig.actin.datamodel.molecular.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.GeneAlteration
+import com.hartwig.actin.datamodel.molecular.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.TranscriptImpact
+import com.hartwig.actin.datamodel.molecular.Variant
+import com.hartwig.actin.datamodel.molecular.VariantType
+import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
-import com.hartwig.actin.molecular.evidence.ActionableEvidenceFactory
+import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
@@ -103,7 +103,7 @@ class PanelVariantAnnotator(
             val extraction = variantExtractions[id]!!
 
             val criteria = variantMatchCriteria(extraction, transvarAnnotation, paveResponse)
-            val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVariant(criteria))
+            val evidence = ClinicalEvidenceFactory.create(evidenceDatabase.evidenceForVariant(criteria))
             val serveGeneAlteration = evidenceDatabase.geneAlterationForVariant(criteria)
             val geneAlteration = GeneAlterationFactory.convertAlteration(extraction.gene, serveGeneAlteration)
 
@@ -136,14 +136,25 @@ class PanelVariantAnnotator(
 
     private fun createVariantWithEvidence(
         variant: SequencedVariant,
-        evidence: ActionableEvidence,
+        evidence: ClinicalEvidence,
         geneAlteration: GeneAlteration,
         serveGeneAlteration: com.hartwig.serve.datamodel.common.GeneAlteration?,
         transcriptAnnotation: com.hartwig.actin.tools.variant.Variant,
         paveResponse: PaveResponse
     ) = Variant(
+        chromosome = transcriptAnnotation.chromosome(),
+        position = transcriptAnnotation.position(),
+        ref = transcriptAnnotation.ref(),
+        alt = transcriptAnnotation.alt(),
+        type = variantType(transcriptAnnotation),
+        variantAlleleFrequency = variant.variantAlleleFrequency,
+        canonicalImpact = impact(paveResponse.impact, transcriptAnnotation),
+        otherImpacts = otherImpacts(paveResponse, transcriptAnnotation),
+        isHotspot = serveGeneAlteration is KnownHotspot || serveGeneAlteration is KnownCodon,
         isReportable = true,
         event = "${variant.gene} ${variant.hgvsCodingOrProteinImpact()}",
+
+
         driverLikelihood = DriverLikelihood.LOW,
         evidence = evidence,
         gene = variant.gene,
@@ -156,17 +167,7 @@ class PanelVariantAnnotator(
 
             else -> ProteinEffect.NO_EFFECT
         },
-        isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance,
-        isHotspot = serveGeneAlteration is KnownHotspot || serveGeneAlteration is KnownCodon,
-        ref = transcriptAnnotation.ref(),
-        alt = transcriptAnnotation.alt(),
-
-
-        canonicalImpact = impact(paveResponse.impact, transcriptAnnotation),
-        otherImpacts = otherImpacts(paveResponse, transcriptAnnotation),
-        chromosome = transcriptAnnotation.chromosome(),
-        position = transcriptAnnotation.position(),
-        type = variantType(transcriptAnnotation)
+        isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance
     )
 
     private fun impact(paveImpact: PaveImpact, transvarVariant: com.hartwig.actin.tools.variant.Variant): TranscriptImpact {

@@ -1,13 +1,17 @@
 package com.hartwig.actin.molecular.panel
 
-import com.hartwig.actin.clinical.datamodel.SequencedFusion
-import com.hartwig.actin.clinical.datamodel.SequencedSkippedExons
-import com.hartwig.actin.molecular.datamodel.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.Fusion
-import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
-import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
+import com.hartwig.actin.datamodel.clinical.SequencedFusion
+import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
+import com.hartwig.actin.datamodel.molecular.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.Fusion
+import com.hartwig.actin.datamodel.molecular.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.treatment
+import com.hartwig.actin.datamodel.molecular.orange.driver.ExtendedFusionDetails
+import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
+import com.hartwig.actin.molecular.GENE
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
@@ -15,13 +19,13 @@ import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.ensemblcache.TranscriptData
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
-import com.hartwig.serve.datamodel.EvidenceDirection
-import com.hartwig.serve.datamodel.EvidenceLevel
 import com.hartwig.serve.datamodel.Knowledgebase
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import com.hartwig.serve.datamodel.EvidenceDirection as ServeEvidenceDirection
+import com.hartwig.serve.datamodel.EvidenceLevel as ServeEvidenceLevel
 
 private val EMPTY_MATCH = ActionabilityMatch(emptyList(), emptyList())
 private const val TRANSCRIPT = "transcript"
@@ -45,8 +49,8 @@ private val FUSION_MATCH_CRITERIA = FusionMatchCriteria(
 
 private val ACTIONABILITY_MATCH = ActionabilityMatch(
     onLabelEvents = listOf(
-        TestServeActionabilityFactory.geneBuilder().build().withSource(Knowledgebase.CKB_EVIDENCE).withLevel(EvidenceLevel.A)
-            .withDirection(EvidenceDirection.RESPONSIVE)
+        TestServeActionabilityFactory.geneBuilder().build().withSource(Knowledgebase.CKB_EVIDENCE).withLevel(ServeEvidenceLevel.A)
+            .withDirection(ServeEvidenceDirection.RESPONSIVE)
     ), offLabelEvents = emptyList()
 )
 
@@ -139,19 +143,27 @@ class PanelFusionAnnotatorTest {
         setupKnownFusionCache()
         setupEvidenceForFusion()
         val annotated = annotator.annotate(setOf(ARCHER_FUSION), emptySet())
-        assertThat(annotated).isEqualTo(
-            setOf(
-                Fusion(
-                    geneStart = GENE,
-                    geneEnd = OTHER_GENE,
-                    driverType = FusionDriverType.KNOWN_PAIR,
-                    proteinEffect = ProteinEffect.UNKNOWN,
-                    isAssociatedWithDrugResistance = null,
-                    extendedFusionDetails = null,
-                    event = "$GENE-$OTHER_GENE fusion",
-                    isReportable = true,
-                    driverLikelihood = DriverLikelihood.HIGH,
-                    evidence = ActionableEvidence(approvedTreatments = setOf("intervention"))
+        assertThat(annotated).containsExactly(
+            Fusion(
+                geneStart = GENE,
+                geneEnd = OTHER_GENE,
+                driverType = FusionDriverType.KNOWN_PAIR,
+                proteinEffect = ProteinEffect.UNKNOWN,
+                isAssociatedWithDrugResistance = null,
+                extendedFusionDetails = null,
+                event = "$GENE-$OTHER_GENE fusion",
+                isReportable = true,
+                driverLikelihood = DriverLikelihood.HIGH,
+                evidence = ClinicalEvidence(
+                    treatmentEvidence = setOf(
+                        treatment(
+                            treatment = "intervention",
+                            evidenceLevel = EvidenceLevel.A,
+                            direction = EvidenceDirection(hasPositiveResponse = true, isCertain = true, hasBenefit = true),
+                            onLabel = true,
+                            isCategoryVariant = true
+                        )
+                    )
                 )
             )
         )
@@ -184,7 +196,7 @@ class PanelFusionAnnotatorTest {
                     event = "$GENE skipped exons 2-4",
                     isReportable = true,
                     driverLikelihood = DriverLikelihood.HIGH,
-                    evidence = ActionableEvidence(approvedTreatments = emptySet())
+                    evidence = ClinicalEvidence()
                 )
             )
         )
@@ -209,7 +221,7 @@ class PanelFusionAnnotatorTest {
                     event = "$GENE skipped exons 2-4",
                     isReportable = true,
                     driverLikelihood = DriverLikelihood.HIGH,
-                    evidence = ActionableEvidence(approvedTreatments = emptySet())
+                    evidence = ClinicalEvidence()
                 )
             )
         )

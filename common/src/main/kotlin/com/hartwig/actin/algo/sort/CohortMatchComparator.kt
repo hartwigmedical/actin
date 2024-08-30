@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.sort
 
-import com.hartwig.actin.algo.datamodel.CohortMatch
+import com.hartwig.actin.datamodel.algo.CohortMatch
 import com.hartwig.actin.trial.sort.CohortMetadataComparator
 
 class CohortMatchComparator : Comparator<CohortMatch> {

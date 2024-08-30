@@ -19,8 +19,8 @@ object Styles {
     val PALETTE_EVALUATION_WARN = DeviceRgb(255, 130, 0)
     val PALETTE_EVALUATION_FAILED = DeviceRgb(231, 85, 85)
     val PALETTE_EVALUATION_UNCLEAR = DeviceRgb(85, 85, 85)
-    val PALETTE_YES_OR_NO_YES = DeviceRgb(0, 150, 0)
-    val PALETTE_YES_OR_NO_NO = DeviceRgb(231, 85, 85)
+    val PALETTE_GREEN = DeviceRgb(0, 150, 0)
+    val PALETTE_RED = DeviceRgb(231, 85, 85)
     val PALETTE_YES_OR_NO_UNCLEAR = DeviceRgb(85, 85, 85)
     val PALETTE_WARN = PALETTE_EVALUATION_WARN
     val BORDER = SolidBorder(PALETTE_MID_GREY, 0.25f)

@@ -1,19 +1,19 @@
 package com.hartwig.actin.molecular.evidence.orange
 
+import com.hartwig.actin.datamodel.molecular.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.Drivers
+import com.hartwig.actin.datamodel.molecular.Fusion
+import com.hartwig.actin.datamodel.molecular.MolecularCharacteristics
+import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.Variant
+import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
+import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
+import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
+import com.hartwig.actin.datamodel.molecular.orange.driver.HomozygousDisruption
+import com.hartwig.actin.datamodel.molecular.orange.driver.Virus
 import com.hartwig.actin.molecular.MolecularAnnotator
-import com.hartwig.actin.molecular.datamodel.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.Drivers
-import com.hartwig.actin.molecular.datamodel.Fusion
-import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.Variant
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
-import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.orange.driver.Virus
-import com.hartwig.actin.molecular.evidence.ActionableEvidenceFactory
+import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.orange.MolecularRecordAnnotatorFunctions.createCriteria
@@ -50,8 +50,8 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
 
     private fun createEvidenceForNullableMatch(
         nullableCharacteristic: Boolean?, lookUpEvidence: (Boolean) -> ActionabilityMatch
-    ): ActionableEvidence? {
-        return nullableCharacteristic?.let { characteristic -> ActionableEvidenceFactory.create(lookUpEvidence(characteristic)) }
+    ): ClinicalEvidence? {
+        return nullableCharacteristic?.let { characteristic -> ClinicalEvidenceFactory.create(lookUpEvidence(characteristic)) }
     }
 
     private fun annotateDrivers(drivers: Drivers): Drivers {
@@ -68,9 +68,9 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
 
     private fun annotateVariant(variant: Variant): Variant {
         val evidence = if (variant.driverLikelihood == DriverLikelihood.HIGH) {
-            ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVariant(createCriteria(variant)))
+            ClinicalEvidenceFactory.create(evidenceDatabase.evidenceForVariant(createCriteria(variant)))
         } else {
-            ActionableEvidenceFactory.createNoEvidence()
+            ClinicalEvidenceFactory.createNoEvidence()
         }
 
         val alteration = GeneAlterationFactory.convertAlteration(
@@ -86,7 +86,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
     }
 
     private fun annotateCopyNumber(copyNumber: CopyNumber): CopyNumber {
-        val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForCopyNumber(copyNumber))
+        val evidence = ClinicalEvidenceFactory.create(evidenceDatabase.evidenceForCopyNumber(copyNumber))
         val alteration = GeneAlterationFactory.convertAlteration(
             copyNumber.gene, evidenceDatabase.geneAlterationForCopyNumber(copyNumber)
         )
@@ -100,7 +100,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
     }
 
     private fun annotateHomozygousDisruption(homozygousDisruption: HomozygousDisruption): HomozygousDisruption {
-        val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForHomozygousDisruption(homozygousDisruption))
+        val evidence = ClinicalEvidenceFactory.create(evidenceDatabase.evidenceForHomozygousDisruption(homozygousDisruption))
         val alteration = GeneAlterationFactory.convertAlteration(
             homozygousDisruption.gene, evidenceDatabase.geneAlterationForHomozygousDisruption(homozygousDisruption)
         )
@@ -114,7 +114,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
     }
 
     private fun annotateDisruption(disruption: Disruption): Disruption {
-        val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForBreakend(disruption))
+        val evidence = ClinicalEvidenceFactory.create(evidenceDatabase.evidenceForBreakend(disruption))
         val alteration = GeneAlterationFactory.convertAlteration(
             disruption.gene, evidenceDatabase.geneAlterationForBreakend(disruption)
         )
@@ -128,7 +128,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
     }
 
     private fun annotateFusion(fusion: Fusion): Fusion {
-        val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForFusion(createFusionCriteria(fusion)))
+        val evidence = ClinicalEvidenceFactory.create(evidenceDatabase.evidenceForFusion(createFusionCriteria(fusion)))
         val knownFusion = evidenceDatabase.lookupKnownFusion(createFusionCriteria(fusion))
 
         val proteinEffect = if (knownFusion == null) ProteinEffect.UNKNOWN else {
@@ -144,7 +144,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
     }
 
     private fun annotateVirus(virus: Virus): Virus {
-        val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVirus(virus))
+        val evidence = ClinicalEvidenceFactory.create(evidenceDatabase.evidenceForVirus(virus))
         return virus.copy(evidence = evidence)
     }
 }

@@ -1,7 +1,7 @@
 package com.hartwig.actin.trial.config
 
+import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
-import com.hartwig.actin.trial.datamodel.EligibilityRule
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

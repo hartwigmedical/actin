@@ -1,16 +1,16 @@
 package com.hartwig.actin.report.pdf.chapters
 
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
 import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory
-import com.hartwig.actin.report.interpretation.PriorMolecularTestInterpreter
+import com.hartwig.actin.report.interpretation.PriorIHCTestInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularCharacteristicsGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularDriversGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.PathologyReportGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.PredictedTumorOriginGenerator
-import com.hartwig.actin.report.pdf.tables.molecular.PriorMolecularResultGenerator
+import com.hartwig.actin.report.pdf.tables.molecular.PriorIHCResultGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Formats.date
@@ -40,15 +40,10 @@ class MolecularDetailsChapter(
 
     private fun addMolecularDetails(document: Document) {
         val keyWidth = Formats.STANDARD_KEY_WIDTH
-        val priorMolecularResultGenerator =
-            PriorMolecularResultGenerator(
-                report.patientRecord,
-                keyWidth,
-                contentWidth() - keyWidth - 10,
-                PriorMolecularTestInterpreter()
-            )
-        val priorMolecularResults = priorMolecularResultGenerator.contents().setBorder(Border.NO_BORDER)
-        document.add(priorMolecularResults)
+        val priorIHCResultGenerator =
+            PriorIHCResultGenerator(report.patientRecord, keyWidth, contentWidth() - keyWidth - 10, PriorIHCTestInterpreter())
+        val priorIHCResults = priorIHCResultGenerator.contents().setBorder(Border.NO_BORDER)
+        document.add(priorIHCResults)
 
         val table = Tables.createSingleColWithWidth(contentWidth())
         table.addCell(Cells.createEmpty())

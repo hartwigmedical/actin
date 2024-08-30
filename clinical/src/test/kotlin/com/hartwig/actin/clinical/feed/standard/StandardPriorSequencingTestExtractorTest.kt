@@ -5,17 +5,17 @@ import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
-import com.hartwig.actin.clinical.datamodel.PriorSequencingTest
-import com.hartwig.actin.clinical.datamodel.SequencedAmplification
-import com.hartwig.actin.clinical.datamodel.SequencedDeletedGene
-import com.hartwig.actin.clinical.datamodel.SequencedFusion
-import com.hartwig.actin.clinical.datamodel.SequencedSkippedExons
-import com.hartwig.actin.clinical.datamodel.SequencedVariant
+import com.hartwig.actin.datamodel.clinical.PriorSequencingTest
+import com.hartwig.actin.datamodel.clinical.SequencedAmplification
+import com.hartwig.actin.datamodel.clinical.SequencedDeletedGene
+import com.hartwig.actin.datamodel.clinical.SequencedFusion
+import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
+import com.hartwig.actin.datamodel.clinical.SequencedVariant
 import io.mockk.every
 import io.mockk.mockk
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 private const val TEST = "test"
 private const val GENE = "gene"
@@ -67,7 +67,7 @@ class StandardPriorSequencingTestExtractorTest {
         )
         assertResultContains(
             result, BASE_PRIOR_SEQUENCING.copy(
-                variants = setOf(SequencedVariant(GENE, hgvsCodingImpact = CODING, hgvsProteinImpact = PROTEIN))
+                variants = setOf(SequencedVariant(gene = GENE, hgvsCodingImpact = CODING, hgvsProteinImpact = PROTEIN))
             )
         )
     }
@@ -135,18 +135,18 @@ class StandardPriorSequencingTestExtractorTest {
                 curated = ProvidedMolecularTestResult(gene = GENE, hgvsCodingImpact = CODING)
             )
         )
-        val result = extractionResult(ProvidedMolecularTestResult(gene = GENE, freeText = FREE_TEXT))
+        val result = extractionResult(ProvidedMolecularTestResult(freeText = FREE_TEXT))
         assertResultContains(
             result, BASE_PRIOR_SEQUENCING.copy(
-                variants = setOf(SequencedVariant(GENE, hgvsCodingImpact = CODING))
+                variants = setOf(SequencedVariant(gene = GENE, hgvsCodingImpact = CODING))
             )
         )
     }
 
     @Test
-    fun `Should return curation warnings for uncurated free text`() {
+    fun `Should return curation warnings for uncurated free text when all other fields are null`() {
         every { curation.find(FREE_TEXT) } returns emptySet()
-        val result = extractionResult(ProvidedMolecularTestResult(gene = GENE, freeText = FREE_TEXT))
+        val result = extractionResult(ProvidedMolecularTestResult(freeText = FREE_TEXT))
         assertThat(result.evaluation.warnings).hasSize(1)
         assertThat(result.evaluation.warnings.first()).isEqualTo(
             CurationWarning(
@@ -156,6 +156,13 @@ class StandardPriorSequencingTestExtractorTest {
                 message = "Could not find sequencing test config for input '$FREE_TEXT'"
             )
         )
+    }
+
+    @Test
+    fun `Should not return curation warnings for uncurated free text when all other fields are null`() {
+        every { curation.find(FREE_TEXT) } returns emptySet()
+        val result = extractionResult(ProvidedMolecularTestResult(gene = GENE, freeText = FREE_TEXT))
+        assertThat(result.evaluation.warnings).isEmpty()
     }
 
     @Test

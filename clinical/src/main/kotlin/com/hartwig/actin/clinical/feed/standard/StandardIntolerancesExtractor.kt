@@ -7,7 +7,7 @@ import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.clinical.datamodel.Intolerance
+import com.hartwig.actin.datamodel.clinical.Intolerance
 
 class StandardIntolerancesExtractor(
     private val atcModel: AtcModel,

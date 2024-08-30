@@ -1,15 +1,15 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestPatientFactory
-import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.molecular.datamodel.ExperimentType
-import com.hartwig.actin.molecular.datamodel.MolecularHistory
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.TestPanelRecordFactory
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.TestPatientFactory
+import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.molecular.ExperimentType
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.TestPanelRecordFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -41,6 +41,12 @@ class MolecularEvaluationFunctionTest {
         }
     }
 
+    private val functionWithGenes = object : MolecularEvaluationFunction {
+        override fun genes(): List<String> {
+            return listOf("GENE")
+        }
+    }
+
     @Test
     fun `Should return no molecular data message when no ORANGE nor other molecular data`() {
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
@@ -53,8 +59,7 @@ class MolecularEvaluationFunctionTest {
 
     @Test
     fun `Should return insufficient molecular data when no ORANGE but other molecular data`() {
-        val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
-            .copy(molecularHistory = MolecularHistory(listOf(emptyArcher())))
+        val patient = withPanelTest()
         val evaluation = function.evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedSpecificMessages).containsExactly("Insufficient molecular data")
@@ -80,8 +85,7 @@ class MolecularEvaluationFunctionTest {
 
     @Test
     fun `Should use override message when provided for patient with no ORANGE record but other data`() {
-        val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
-            .copy(molecularHistory = MolecularHistory(listOf(emptyArcher())))
+        val patient = withPanelTest()
         assertOverrideEvaluation(patient)
     }
 
@@ -93,6 +97,18 @@ class MolecularEvaluationFunctionTest {
         assertThat(evaluation.failSpecificMessages).containsExactly(FAIL_SPECIFIC_MESSAGE)
         assertThat(evaluation.failGeneralMessages).containsExactly(FAIL_GENERAL_MESSAGE)
     }
+
+    @Test
+    fun `Should return undetermined when genes have not been tested which are mandatory`() {
+        val patient = withPanelTest()
+        val evaluation = functionWithGenes.evaluate(patient)
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.undeterminedGeneralMessages).containsExactly("Gene(s) GENE not tested")
+        assertThat(evaluation.undeterminedSpecificMessages).containsExactly("Gene(s) GENE not tested in molecular data")
+    }
+
+    private fun withPanelTest() = TestPatientFactory.createEmptyMolecularTestPatientRecord()
+        .copy(molecularHistory = MolecularHistory(listOf(emptyArcher())))
 
     private fun assertOverrideEvaluation(patient: PatientRecord) {
         val evaluation = functionWithOverride.evaluate(patient)

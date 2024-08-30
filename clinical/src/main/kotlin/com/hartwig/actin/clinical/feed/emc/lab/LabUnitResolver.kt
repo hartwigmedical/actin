@@ -2,7 +2,7 @@ package com.hartwig.actin.clinical.feed.emc.lab
 
 import com.google.common.annotations.VisibleForTesting
 import com.google.common.collect.Maps
-import com.hartwig.actin.clinical.datamodel.LabUnit
+import com.hartwig.actin.datamodel.clinical.LabUnit
 
 internal object LabUnitResolver {
     @VisibleForTesting

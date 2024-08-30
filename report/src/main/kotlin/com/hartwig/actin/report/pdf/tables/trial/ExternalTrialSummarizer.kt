@@ -1,8 +1,8 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
-import com.hartwig.actin.algo.datamodel.TrialMatch
-import com.hartwig.actin.molecular.datamodel.evidence.Country
-import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
+import com.hartwig.actin.datamodel.algo.TrialMatch
+import com.hartwig.actin.datamodel.molecular.evidence.Country
+import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
 
 data class ExternalTrialSummary(
@@ -33,7 +33,7 @@ class ExternalTrialSummarizer(private val homeCountry: Country) {
             .groupBy { (_, trial) -> trial.nctId }
             .map { (_, eventAndTrialPairs) ->
                 val (events, trials) = eventAndTrialPairs.unzip()
-                events.joinToString(",\n") to trials.first()
+                events.toSet().joinToString(",\n") to trials.first()
             }
             .groupBy({ it.first }, { it.second })
     }

@@ -1,11 +1,11 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.TestPatientFactory
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
-import com.hartwig.actin.molecular.datamodel.TranscriptImpact
-import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
-import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
+import com.hartwig.actin.datamodel.TestPatientFactory
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.molecular.TranscriptImpact
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptImpactFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import org.junit.Test
 
 private const val MATCHING_GENE = "gene A"
@@ -43,7 +43,7 @@ class GeneHasVariantWithProteinImpactTest {
                         gene = MATCHING_GENE,
                         isReportable = true,
                         canonicalImpact = proteinImpact("V600P"),
-                        otherImpacts = setOf(proteinImpact("V600P")),
+                        otherImpacts = setOf(proteinImpact("V600P"))
                     )
                 )
             )
@@ -127,7 +127,7 @@ class GeneHasVariantWithProteinImpactTest {
                         gene = MATCHING_GENE,
                         isReportable = true,
                         canonicalImpact = proteinImpact("V600P"),
-                        otherImpacts = setOf(proteinImpact("V600P"), proteinImpact(MATCHING_PROTEIN_IMPACT)),
+                        otherImpacts = setOf(proteinImpact("V600P"), proteinImpact(MATCHING_PROTEIN_IMPACT))
                     )
                 )
             )

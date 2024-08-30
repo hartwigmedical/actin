@@ -1,10 +1,10 @@
 package com.hartwig.actin.algo.evaluation.priortumor
 
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.doid.TestDoidModelFactory
-import java.time.LocalDate
 import org.junit.Test
+import java.time.LocalDate
 
 private const val ignoreDoid = "ignore doid"
 private const val ignoreTerm = "ignore term"
