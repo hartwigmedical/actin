@@ -7,7 +7,7 @@ import com.hartwig.actin.datamodel.molecular.TranscriptImpact
 import com.hartwig.actin.datamodel.molecular.Variant
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
-import com.hartwig.actin.datamodel.molecular.evidence.Country
+import com.hartwig.actin.datamodel.molecular.evidence.CountryName
 import com.hartwig.actin.datamodel.molecular.orange.driver.ExtendedVariantDetails
 import com.hartwig.actin.datamodel.molecular.sort.driver.VariantComparator
 import org.assertj.core.api.Assertions.assertThat

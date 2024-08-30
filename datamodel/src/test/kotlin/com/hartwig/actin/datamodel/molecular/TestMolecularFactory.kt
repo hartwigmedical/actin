@@ -2,7 +2,7 @@ package com.hartwig.actin.datamodel.molecular
 
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
-import com.hartwig.actin.datamodel.molecular.evidence.Country
+import com.hartwig.actin.datamodel.molecular.evidence.CountryName
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.datamodel.molecular.orange.characteristics.CupPrediction
@@ -165,7 +165,10 @@ object TestMolecularFactory {
                 title = "A Phase 1/2 Randomized Study to Evaluate the Safety and Efficacy of treatment X Plus treatment Y in "
                         + "Combination With Investigational Agents Versus treatment X Plus treatment Y, as First-Line Treatment "
                         + "for Participants With Advanced Solid Tumor (acronym)",
-                countries = setOf(TestExternalTrialFactory.createCountry(CountryName.BELGIUM, mapOf("Brussels" to emptySet())), TestExternalTrialFactory.createCountry(CountryName.GERMANY, mapOf("Berlin" to emptySet()))),
+                countries = setOf(
+                    TestExternalTrialFactory.createCountry(CountryName.BELGIUM, mapOf("Brussels" to emptySet())),
+                    TestExternalTrialFactory.createCountry(CountryName.GERMANY, mapOf("Berlin" to emptySet()))
+                ),
                 url = "https://clinicaltrials.gov/study/NCT00000002",
                 nctId = "NCT00000020"
             )
@@ -247,7 +250,12 @@ object TestMolecularFactory {
                 evidence = TestClinicalEvidenceFactory.withExternalEligibleTrial(
                     TestExternalTrialFactory.create(
                         title = "A Phase 1 Study of XYXYXY, a T-Cell-Redirecting Agent Targeting Z, for Advanced Prostate Cancer",
-                        countries = setOf(TestExternalTrialFactory.createCountry(CountryName.NETHERLANDS, mapOf("Nijmegen" to setOf("Radboud UMC"), "Amsterdam" to setOf("AMC", "VUmc")))),
+                        countries = setOf(
+                            TestExternalTrialFactory.createCountry(
+                                CountryName.NETHERLANDS,
+                                mapOf("Nijmegen" to setOf("Radboud UMC"), "Amsterdam" to setOf("AMC", "VUmc"))
+                            )
+                        ),
                         url = "https://clinicaltrials.gov/study/NCT00000003",
                         nctId = "NCT00000003",
                     )

@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.evidence
 
-import com.hartwig.actin.datamodel.molecular.evidence.Country
+import com.hartwig.actin.datamodel.molecular.evidence.CountryName
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
@@ -65,7 +65,8 @@ class ClinicalEvidenceFactoryTest {
 
     @Test
     fun `Should convert SERVE external trials to clinical evidence`() {
-        val trial = TestExternalTrialFactory.createTestTrial().copy(countries = setOf(TestExternalTrialFactory.createCountry(CountryName.OTHER, emptyMap())), isCategoryVariant = null)
+        val trial = TestExternalTrialFactory.createTestTrial()
+            .copy(countries = setOf(TestExternalTrialFactory.createCountry(CountryName.OTHER, emptyMap())), isCategoryVariant = null)
         val result =
             ClinicalEvidenceFactory.create(
                 ActionabilityMatch(
