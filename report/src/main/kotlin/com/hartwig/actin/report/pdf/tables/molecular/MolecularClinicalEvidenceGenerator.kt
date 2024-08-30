@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.evidence.ApprovalStatus
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
@@ -121,6 +122,7 @@ class MolecularClinicalEvidenceGenerator(
     private fun treatmentsForEvidenceLevelAndLabel(evidence: Set<TreatmentEvidence>, evidenceLevel: EvidenceLevel): Set<String> {
         return evidence
             .filter { it.evidenceLevel == evidenceLevel }
+            .filter { it.approvalStatus != ApprovalStatus.CASE_REPORTS_SERIES || it.evidenceLevel != EvidenceLevel.D }
             .map { it.treatment }
             .toSet()
     }
