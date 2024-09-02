@@ -30,17 +30,17 @@ class EligibleLocalExternalTrialsGenerator(
         val eventWidth = (1.1 * width / 5).toFloat()
         val sourceEventWidth = (1.1 * width / 5).toFloat()
         val cancerTypeWidth = (1.1 * width / 5).toFloat()
-        val titleWidth = (2.0 * width / 5).toFloat()
-        val nctWidth = (0.7 * width / 5).toFloat()
+        val titleWidth = (1.7 * width / 5).toFloat()
+        val hospitalsWidth = (1.0 * width / 5).toFloat()
 
-        val table = Tables.createFixedWidthCols(eventWidth, sourceEventWidth + cancerTypeWidth + titleWidth + nctWidth)
+        val table = Tables.createFixedWidthCols(eventWidth, sourceEventWidth + cancerTypeWidth + titleWidth + hospitalsWidth)
         table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader("Event")))
-        val headerSubTable = Tables.createFixedWidthCols(sourceEventWidth, cancerTypeWidth, titleWidth, nctWidth)
+        val headerSubTable = Tables.createFixedWidthCols(sourceEventWidth, cancerTypeWidth, titleWidth, hospitalsWidth)
         listOf("Source Event", "Cancer Type", "Trial title", "Hospitals").forEach { headerSubTable.addHeaderCell(Cells.createHeader(it)) }
         table.addHeaderCell(Cells.createContentNoBorder(headerSubTable))
 
         externalTrialsPerEvent.forEach { (event, externalTrials) ->
-            val subTable = Tables.createFixedWidthCols(sourceEventWidth, cancerTypeWidth, titleWidth, nctWidth)
+            val subTable = Tables.createFixedWidthCols(sourceEventWidth, cancerTypeWidth, titleWidth, hospitalsWidth)
             externalTrials.forEach { externalTrial ->
                 subTable.addCell(Cells.createContentNoBorder(externalTrial.sourceEvent))
                 subTable.addCell(Cells.createContentNoBorder(externalTrial.applicableCancerType.cancerType))

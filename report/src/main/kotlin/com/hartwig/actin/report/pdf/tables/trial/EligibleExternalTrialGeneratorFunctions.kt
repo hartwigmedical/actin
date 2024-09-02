@@ -23,8 +23,8 @@ object EligibleExternalTrialGeneratorFunctions {
     }
 
     fun shortenTitle(title: String): String {
-        return if (title.length > 170) {
-            title.take(85).substringBeforeLast(" ") + " ... " + title.takeLast(85).substringAfter(" ")
+        return if (title.length > 160) {
+            title.take(80).substringBeforeLast(" ") + " ... " + title.takeLast(80).substringAfter(" ")
         } else {
             title
         }
