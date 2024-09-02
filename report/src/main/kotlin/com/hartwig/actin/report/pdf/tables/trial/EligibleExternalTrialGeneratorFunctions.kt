@@ -8,15 +8,18 @@ import com.itextpdf.layout.element.Table
 
 object EligibleExternalTrialGeneratorFunctions {
 
-    fun localTrials(externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>, homeCountry: CountryName): Map<String, List<ExternalTrial>> {
-        return filterMapOfExternalTrials(externalTrialsPerEvent) { it.countries.map { country -> country.countryName }.contains(homeCountry) }
+    fun localTrials(
+        externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>,
+        homeCountry: CountryName
+    ): Map<String, List<ExternalTrial>> {
+        return filterMapOfExternalTrials(externalTrialsPerEvent) { it.countries.map { country -> country.name }.contains(homeCountry) }
     }
 
     fun nonLocalTrials(
         externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>,
         homeCountry: CountryName
     ): Map<String, List<ExternalTrial>> {
-        return filterMapOfExternalTrials(externalTrialsPerEvent) { !it.countries.map { country -> country.countryName }.contains(homeCountry) }
+        return filterMapOfExternalTrials(externalTrialsPerEvent) { !it.countries.map { country -> country.name }.contains(homeCountry) }
     }
 
     fun shortenTitle(title: String): String {
@@ -36,14 +39,14 @@ object EligibleExternalTrialGeneratorFunctions {
         table.addCell(Cells.createContent(finalSubTable))
     }
 
-    fun hospitalsInHomeCountry(externalTrial: ExternalTrial, homeCountryName: CountryName): List<String> {
-        val homeCountry = externalTrial.countries.filter { it.countryName == homeCountryName }
-        return if (homeCountry.size > 1) {
-            throw IllegalStateException("Home country ${homeCountryName.display()} found multiple times")
+    fun hospitalsInHomeCountry(externalTrial: ExternalTrial, homeCountry: CountryName): List<String> {
+        val homeCountries = externalTrial.countries.filter { it.name == homeCountry }
+        return if (homeCountries.size > 1 || homeCountries.isEmpty()) {
+            throw IllegalStateException("Home country ${homeCountry.display()} not found or found multiple times")
         } else {
-            val hospitals = homeCountry.first().hospitalsPerCity.flatMap { it.value }
+            val hospitals = homeCountries.first().hospitalsPerCity.flatMap { it.value }
             if (hospitals.size > 10) {
-                (listOf("Many (please check clinicaltrials.gov link)"))
+                (listOf("Many (please check link)"))
             } else hospitals
         }
     }
@@ -51,11 +54,11 @@ object EligibleExternalTrialGeneratorFunctions {
     fun countryNamesAndCities(externalTrial: ExternalTrial): String {
         return externalTrial.countries.joinToString { country ->
             val cities = if (country.hospitalsPerCity.keys.size > 8) {
-                "Many (please check clinicaltrials.gov link)"
+                "Many (please check link)"
             } else {
                 country.hospitalsPerCity.keys.joinToString(", ")
             }
-            "${country.countryName.display()} ($cities)"
+            "${country.name.display()} ($cities)"
         }
     }
 

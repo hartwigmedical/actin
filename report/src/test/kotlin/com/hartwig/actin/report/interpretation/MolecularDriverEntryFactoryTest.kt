@@ -6,7 +6,6 @@ import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVirusFactory
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
-import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
 import org.assertj.core.api.Assertions.assertThat
@@ -24,21 +23,21 @@ class MolecularDriverEntryFactoryTest {
 
     @Test
     fun `Should include non-actionable reportable drivers`() {
-        val record = createTestMolecularRecordWithDriverEvidence(TestClinicalEvidenceFactory.createEmpty(), true)
+        val record = createTestMolecularRecordWithDriverEvidence(TestClinicalEvidenceFactory.createEmptyClinicalEvidence(), true)
         val factory = createFactoryForMolecularRecord(record)
         assertThat(factory.create()).hasSize(1)
     }
 
     @Test
     fun `Should skip non actionable not reportable drivers`() {
-        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.createEmpty())
+        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.createEmptyClinicalEvidence())
         val factory = createFactoryForMolecularRecord(record)
         assertThat(factory.create()).hasSize(0)
     }
 
     @Test
     fun `Should include non-reportable drivers with actin trial matches`() {
-        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.createEmpty())
+        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.createEmptyClinicalEvidence())
         val driverToFind = record.drivers.viruses.iterator().next().event
         assertThat(createFactoryWithCohortsForEvent(record, driverToFind).create()).hasSize(1)
     }
@@ -55,7 +54,7 @@ class MolecularDriverEntryFactoryTest {
     fun `Should include non-reportable drivers with external trial matches`() {
         val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(
             TestClinicalEvidenceFactory.withExternalEligibleTrial(
-                TestExternalTrialFactory.createTestTrial()
+                TestClinicalEvidenceFactory.createTestExternalTrial()
             )
         )
         val factory = createFactoryForMolecularRecord(record)

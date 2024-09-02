@@ -57,7 +57,8 @@ object ClinicalEvidenceFactory {
                 val trial = onLabelEvent.intervention() as ClinicalTrial
                 ExternalTrial(
                     title = trial.acronym() ?: trial.title(),
-                    countries = trial.countries().map { Country(countryName = determineCountry(it), hospitalsPerCity = it.hospitalsPerCity()) }.toSet(),
+                    countries = trial.countries().map { Country(name = determineCountry(it), hospitalsPerCity = it.hospitalsPerCity()) }
+                        .toSet(),
                     url = extractNctUrl(onLabelEvent),
                     nctId = trial.nctId(),
                     applicableCancerType = ApplicableCancerType(

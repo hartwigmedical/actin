@@ -4,7 +4,6 @@ import com.hartwig.actin.datamodel.molecular.evidence.CountryName
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
-import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.serve.datamodel.Knowledgebase
 import org.assertj.core.api.Assertions.assertThat
@@ -65,8 +64,8 @@ class ClinicalEvidenceFactoryTest {
 
     @Test
     fun `Should convert SERVE external trials to clinical evidence`() {
-        val trial = TestExternalTrialFactory.createTestTrial()
-            .copy(countries = setOf(TestExternalTrialFactory.createCountry(CountryName.OTHER, emptyMap())), isCategoryVariant = null)
+        val trial = TestClinicalEvidenceFactory.createTestExternalTrial()
+            .copy(countries = setOf(TestClinicalEvidenceFactory.createCountry(CountryName.OTHER, emptyMap())), isCategoryVariant = null)
         val result =
             ClinicalEvidenceFactory.create(
                 ActionabilityMatch(

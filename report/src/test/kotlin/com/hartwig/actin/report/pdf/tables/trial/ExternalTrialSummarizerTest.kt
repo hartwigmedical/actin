@@ -2,7 +2,7 @@ package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.molecular.evidence.CountryName
-import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
 import org.assertj.core.api.Assertions.assertThat
@@ -10,11 +10,11 @@ import org.junit.Test
 
 private const val TMB_TARGET = "TMB"
 private const val EGFR_TARGET = "EGFR"
-private val TRIAL_1 = TestExternalTrialFactory.create(
-    "1", setOf(TestExternalTrialFactory.createCountry(CountryName.NETHERLANDS)), "url", "NCT001"
+private val TRIAL_1 = TestClinicalEvidenceFactory.createExternalTrial(
+    "1", setOf(TestClinicalEvidenceFactory.createCountry(CountryName.NETHERLANDS)), "url", "NCT001"
 )
-private val TRIAL_2 = TestExternalTrialFactory.create(
-    "2", setOf(TestExternalTrialFactory.createCountry(CountryName.BELGIUM)), "url", "NCT002"
+private val TRIAL_2 = TestClinicalEvidenceFactory.createExternalTrial(
+    "2", setOf(TestClinicalEvidenceFactory.createCountry(CountryName.BELGIUM)), "url", "NCT002"
 )
 private val trialMatches = listOf(
     TrialMatch(
@@ -150,9 +150,12 @@ class ExternalTrialSummarizerTest {
     }
 
     private fun externalTrial(id: Int) =
-        TestExternalTrialFactory.create(
+        TestClinicalEvidenceFactory.createExternalTrial(
             "Title of trial $id",
-            setOf(TestExternalTrialFactory.createCountry(CountryName.NETHERLANDS), TestExternalTrialFactory.createCountry(CountryName.BELGIUM)),
+            setOf(
+                TestClinicalEvidenceFactory.createCountry(CountryName.NETHERLANDS),
+                TestClinicalEvidenceFactory.createCountry(CountryName.BELGIUM)
+            ),
             "url",
             "NCT0000000$id"
         )
