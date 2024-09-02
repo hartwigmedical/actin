@@ -1,5 +1,6 @@
 package com.hartwig.actin.datamodel.molecular
 
+import com.hartwig.actin.datamodel.molecular.evidence.ApprovalStatus
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceTier
@@ -42,12 +43,18 @@ class EvidenceTierTest {
         assertThat(evidenceTier(driverWithEvidence(EvidenceLevel.A))).isEqualTo(EvidenceTier.I)
     }
 
-    private fun driverWithEvidence(evidenceLevel: EvidenceLevel, onLabel: Boolean = true, isCategoryEvent: Boolean = false): Driver {
+    private fun driverWithEvidence(
+        evidenceLevel: EvidenceLevel,
+        onLabel: Boolean = true,
+        approvalStatus: ApprovalStatus = ApprovalStatus.CLINICAL_STUDY,
+        isCategoryEvent: Boolean = false
+    ): Driver {
         return mockDriver(
             setOf(
                 treatment(
                     "on-label",
                     evidenceLevel,
+                    approvalStatus,
                     EvidenceDirection(hasPositiveResponse = true, isCertain = true),
                     onLabel,
                     isCategoryEvent

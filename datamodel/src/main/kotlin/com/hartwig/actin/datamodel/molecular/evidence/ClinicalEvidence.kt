@@ -18,6 +18,7 @@ data class ApplicableCancerType(val cancerType: String, val excludedCancerTypes:
 
 interface Evidence {
     val sourceEvent: String
+    val approvalStatus: ApprovalStatus
     val applicableCancerType: ApplicableCancerType
     val isCategoryVariant: Boolean?
 }
@@ -65,11 +66,11 @@ data class EvidenceDirection(
 data class TreatmentEvidence(
     val treatment: String,
     val evidenceLevel: EvidenceLevel,
-    val approvalStatus: ApprovalStatus,
     val onLabel: Boolean,
     val direction: EvidenceDirection,
     override val isCategoryVariant: Boolean?,
     override val sourceEvent: String,
+    override val approvalStatus: ApprovalStatus,
     override val applicableCancerType: ApplicableCancerType
 ) : Evidence
 
@@ -80,6 +81,7 @@ data class ExternalTrial(
     val nctId: String,
     override val isCategoryVariant: Boolean?,
     override val sourceEvent: String,
+    override val approvalStatus: ApprovalStatus,
     override val applicableCancerType: ApplicableCancerType
 ) : Comparable<ExternalTrial>, Evidence {
 

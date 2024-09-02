@@ -36,7 +36,6 @@ object ClinicalEvidenceFactory {
             TreatmentEvidence(
                 it.treatmentName(),
                 EvidenceLevel.valueOf(it.level().name),
-                it.approvalStatus(),
                 onLabel,
                 EvidenceDirection(
                     hasPositiveResponse = it.direction().hasPositiveResponse(),
@@ -46,6 +45,7 @@ object ClinicalEvidenceFactory {
                 ),
                 it.isCategoryVariant(),
                 it.sourceEvent(),
+                it.approvalStatus(),
                 ApplicableCancerType(it.applicableCancerType().name(), it.blacklistCancerTypes().map { ct -> ct.name() }.toSet()),
             )
         }.toSet()
@@ -66,7 +66,8 @@ object ClinicalEvidenceFactory {
                         onLabelEvent.blacklistCancerTypes().map { it.name() }.toSet()
                     ),
                     isCategoryVariant = onLabelEvent.isCategoryVariant(),
-                    sourceEvent = onLabelEvent.sourceEvent()
+                    sourceEvent = onLabelEvent.sourceEvent(),
+                    approvalStatus = ApprovalStatus.CLINICAL_STUDY
                 )
             }
             .toSet()
