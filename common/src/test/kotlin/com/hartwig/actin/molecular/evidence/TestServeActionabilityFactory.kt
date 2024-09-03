@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.evidence
 
 import com.hartwig.serve.datamodel.ActionableEvent
+import com.hartwig.serve.datamodel.ApprovalStatus
 import com.hartwig.serve.datamodel.CancerType
 import com.hartwig.serve.datamodel.EvidenceDirection
 import com.hartwig.serve.datamodel.EvidenceLevel
@@ -71,6 +72,10 @@ object TestServeActionabilityFactory {
                 return source
             }
 
+            override fun date(): LocalDate {
+                return LocalDate.of(2021, 2, 3)
+            }
+
             override fun sourceEvent(): String {
                 return ""
             }
@@ -100,8 +105,17 @@ object TestServeActionabilityFactory {
                 return emptySet()
             }
 
+
+            override fun description(): String {
+                return "efficacy evidence"
+            }
+
             override fun level(): EvidenceLevel {
                 return EvidenceLevel.D
+            }
+
+            override fun approvalStatus(): ApprovalStatus {
+                return ApprovalStatus.GUIDELINE
             }
 
             override fun direction(): EvidenceDirection {
@@ -110,14 +124,6 @@ object TestServeActionabilityFactory {
 
             override fun evidenceUrls(): Set<String> {
                 return if (isTrial) setOf("https://clinicaltrials.gov/study/$nctId") else emptySet()
-            }
-
-            override fun date(): LocalDate {
-                return LocalDate.of(2021, 2, 3)
-            }
-
-            override fun description(): String {
-                return "efficacy evidence"
             }
         }
     }
