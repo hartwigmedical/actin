@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical.feed.standard
 
-import com.fasterxml.jackson.annotation.JsonPropertyDescription
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
@@ -15,6 +14,10 @@ class RemoveNewlinesAndCarriageReturns : JsonDeserializer<String>() {
         return p0.text?.replace("\n", "")?.replace("\r", "") ?: ""
     }
 }
+
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.PROPERTY)
+annotation class Description(val value: String)
 
 @JacksonSerializable
 data class ProvidedPatientRecord(
@@ -37,290 +40,290 @@ data class ProvidedPatientRecord(
 
 @JacksonSerializable
 data class ProvidedPatientDetail(
-    @JsonPropertyDescription("Year of birth of this patient (eg. 1940)")
+    @Description("Year of birth of this patient (eg. 1940)")
     val birthYear: Int,
-    @JsonPropertyDescription("Year of birth of this patient (eg. Male, Female, Other)")
+    @Description("Year of birth of this patient (eg. Male, Female, Other)")
     val gender: String,
-    @JsonPropertyDescription("Registration data of this patient with ACTIN")
+    @Description("Registration data of this patient with ACTIN")
     val registrationDate: LocalDate,
-    @JsonPropertyDescription("Base64 encoded SHA-256 hash of source hospital's identifier.")
+    @Description("Base64 encoded SHA-256 hash of source hospital's identifier.")
     val hashedId: String
 )
 
 @JacksonSerializable
 data class ProvidedTumorDetail(
-    @JsonPropertyDescription("Date of diagnosis")
+    @Description("Date of diagnosis")
     val diagnosisDate: LocalDate,
-    @JsonPropertyDescription("Tumor localization details (eg. Lung)")
+    @Description("Tumor localization details (eg. Lung)")
     val tumorLocation: String,
-    @JsonPropertyDescription("Tumor type details (eg. Adenocarcinoma)")
+    @Description("Tumor type details (eg. Adenocarcinoma)")
     val tumorType: String,
-    @JsonPropertyDescription("Tumor grade/differentiation details (eg. Poorly differentiated)")
+    @Description("Tumor grade/differentiation details (eg. Poorly differentiated)")
     val tumorGradeDifferentiation: String?,
-    @JsonPropertyDescription("Tumor stage (roman numeral, eg. IV)")
+    @Description("Tumor stage (roman numeral, eg. IV)")
     val tumorStage: String? = null,
-    @JsonPropertyDescription("Date associated with tumor stage diagnosis")
+    @Description("Date associated with tumor stage diagnosis")
     val tumorStageDate: LocalDate? = null,
-    @JsonPropertyDescription("Has measurable disease")
+    @Description("Has measurable disease")
     val measurableDisease: Boolean? = null,
     val measurableDiseaseDate: LocalDate? = null,
     val lesions: List<ProvidedLesion>? = null,
-    @JsonPropertyDescription("Deprecated: currently use to store radiology report. Should move to lesions")
+    @Description("Deprecated: currently use to store radiology report. Should move to lesions")
     val lesionSite: String? = null,
-    @JsonPropertyDescription("Raw pathology report of molecular test results.")
+    @Description("Raw pathology report of molecular test results.")
     val rawPathologyReport: String? = null
 )
 
 @JacksonSerializable
 data class ProvidedTreatmentHistory(
-    @JsonPropertyDescription("Name of the treatment given (eg. Gemcitabine+Cisplatin)")
+    @Description("Name of the treatment given (eg. Gemcitabine+Cisplatin)")
     val treatmentName: String,
-    @JsonPropertyDescription("Intention of the treatment given (eg. Palliative)")
+    @Description("Intention of the treatment given (eg. Palliative)")
     val intention: String? = null,
-    @JsonPropertyDescription("Date of the start of treatment")
+    @Description("Date of the start of treatment")
     val startDate: LocalDate,
-    @JsonPropertyDescription("Date of the end of treatment")
+    @Description("Date of the end of treatment")
     val endDate: LocalDate? = null,
-    @JsonPropertyDescription("Reason of stopping treatment (eg. Progressive disease)")
+    @Description("Reason of stopping treatment (eg. Progressive disease)")
     val stopReason: String? = null,
     val stopReasonDate: LocalDate? = null,
-    @JsonPropertyDescription("Response to treatment (eg. Partial Response)")
+    @Description("Response to treatment (eg. Partial Response)")
     val response: String? = null,
     val responseDate: LocalDate? = null,
-    @JsonPropertyDescription("Intended number of cycles (eg. 6)")
+    @Description("Intended number of cycles (eg. 6)")
     val intendedCycles: Int,
-    @JsonPropertyDescription("Administered number of cycles (eg. 6)")
+    @Description("Administered number of cycles (eg. 6)")
     val administeredCycles: Int,
     val modifications: List<ProvidedTreatmentModification>? = null,
-    @JsonPropertyDescription("Treatment administered in clinical study")
+    @Description("Treatment administered in clinical study")
     val administeredInStudy: Boolean
 )
 
 @JacksonSerializable
 data class ProvidedTreatmentModification(
-    @JsonPropertyDescription("Name of the modified treatment given (eg. Gemcitabine+Cisplatin)")
+    @Description("Name of the modified treatment given (eg. Gemcitabine+Cisplatin)")
     val name: String,
-    @JsonPropertyDescription("Date of the start of modification of treatment")
+    @Description("Date of the start of modification of treatment")
     val date: LocalDate,
-    @JsonPropertyDescription("Modified number of cycles (eg. 6)")
+    @Description("Modified number of cycles (eg. 6)")
     val administeredCycles: Int,
 )
 
 @JacksonSerializable
 data class ProvidedMolecularTest(
-    @JsonPropertyDescription("Name of the test administered, as specific as possible (eg. Archer, NGS, IHC)")
+    @Description("Name of the test administered, as specific as possible (eg. Archer, NGS, IHC)")
     val test: String,
-    @JsonPropertyDescription("Date the test was administered")
+    @Description("Date the test was administered")
     val date: LocalDate? = null,
-    @JsonPropertyDescription("Name of the source system from which the data came (eg. PALGA, DNA-DB)")
+    @Description("Name of the source system from which the data came (eg. PALGA, DNA-DB)")
     val datasource: String? = null,
-    @JsonPropertyDescription("List of genes that were tested.")
+    @Description("List of genes that were tested.")
     val testedGenes: Set<String>? = null,
     val results: Set<ProvidedMolecularTestResult>
 )
 
 @JacksonSerializable
 data class ProvidedMolecularTestResult(
-    @JsonPropertyDescription("Gene involved in this result. (eg. KRAS)")
+    @Description("Gene involved in this result. (eg. KRAS)")
     val gene: String? = null,
-    @JsonPropertyDescription("Full result string of IHC test ie. (eg. PD-L1 weak positive 20%)")
+    @Description("Full result string of IHC test ie. (eg. PD-L1 weak positive 20%)")
     val ihcResult: String? = null,
-    @JsonPropertyDescription("HGVS notation describing protein impact ie. (eg. p.G12V)")
+    @Description("HGVS notation describing protein impact ie. (eg. p.G12V)")
     val hgvsProteinImpact: String? = null,
-    @JsonPropertyDescription("HGVS notation describing coding impact ie. (eg. c.4375C>T)")
+    @Description("HGVS notation describing coding impact ie. (eg. c.4375C>T)")
     val hgvsCodingImpact: String? = null,
-    @JsonPropertyDescription("Transcript referenced in other positional attributes (eg. NM_004304.5)")
+    @Description("Transcript referenced in other positional attributes (eg. NM_004304.5)")
     val transcript: String? = null,
-    @JsonPropertyDescription("Upstream gene of a fusion (eg. EML4)")
+    @Description("Upstream gene of a fusion (eg. EML4)")
     val fusionGeneUp: String? = null,
-    @JsonPropertyDescription("Downstream gene of a fusion (eg. ALK)")
+    @Description("Downstream gene of a fusion (eg. ALK)")
     val fusionGeneDown: String? = null,
-    @JsonPropertyDescription("Exon involved in this result (eg. 19)")
+    @Description("Exon involved in this result (eg. 19)")
     val exon: Int? = null,
-    @JsonPropertyDescription("Codon involved in this result (eg. 1)")
+    @Description("Codon involved in this result (eg. 1)")
     val codon: Int? = null,
-    @JsonPropertyDescription("Exons skipped in a structural variant start (eg. 18)")
+    @Description("Exons skipped in a structural variant start (eg. 18)")
     val exonSkipStart: Int? = null,
-    @JsonPropertyDescription("Exons skipped in a structural variant end (eg. 20)")
+    @Description("Exons skipped in a structural variant end (eg. 20)")
     val exonSkipEnd: Int? = null,
-    @JsonPropertyDescription("Gene detected as amplified (eg. MET)")
+    @Description("Gene detected as amplified (eg. MET)")
     val amplifiedGene: String? = null,
-    @JsonPropertyDescription("Gene detected as fully deleted (eg. MET)")
+    @Description("Gene detected as fully deleted (eg. MET)")
     val deletedGene: String? = null,
-    @JsonPropertyDescription("Flag should be set to indicate a negative result for a gene (ie. nothing was found)")
+    @Description("Flag should be set to indicate a negative result for a gene (ie. nothing was found)")
     val noMutationsFound: Boolean? = null,
-    @JsonPropertyDescription("Free text for a test result which does not fit into any of the other fields. This value will be curated.")
+    @Description("Free text for a test result which does not fit into any of the other fields. This value will be curated.")
     val freeText: String? = null,
-    @JsonPropertyDescription("Result of microsatellite instability test.")
+    @Description("Result of microsatellite instability test.")
     val msi: Boolean? = null,
-    @JsonPropertyDescription("Tumor mutational burden in m/MB (eg. 8.0)")
+    @Description("Tumor mutational burden in m/MB (eg. 8.0)")
     val tmb: Double? = null,
-    @JsonPropertyDescription("Variant allele frequency as a fraction (eg. 0.01 is interpreted as 1%)")
+    @Description("Variant allele frequency as a fraction (eg. 0.01 is interpreted as 1%)")
     val vaf: Double? = null
 )
 
 @JacksonSerializable
 data class ProvidedPriorPrimary(
-    @JsonPropertyDescription("Diagnosis date")
+    @Description("Diagnosis date")
     val diagnosisDate: LocalDate?,
-    @JsonPropertyDescription("Tumor localization details (eg. Colon)")
+    @Description("Tumor localization details (eg. Colon)")
     val tumorLocation: String,
-    @JsonPropertyDescription("Tumor type details (eg. Carcinoma)")
+    @Description("Tumor type details (eg. Carcinoma)")
     val tumorType: String,
-    @JsonPropertyDescription("Observed status of tumor (eg. Active/Inactive - null if unknown)")
+    @Description("Observed status of tumor (eg. Active/Inactive - null if unknown)")
     val status: String? = null,
-    @JsonPropertyDescription("Date of last treatment")
+    @Description("Date of last treatment")
     val lastTreatmentDate: LocalDate? = null
 )
 
 @JacksonSerializable
 data class ProvidedPriorOtherCondition(
     @field:JsonDeserialize(using = RemoveNewlinesAndCarriageReturns::class)
-    @JsonPropertyDescription("Name of condition (eg. Pancreatis)")
+    @Description("Name of condition (eg. Pancreatis)")
     val name: String,
-    @JsonPropertyDescription("Start date of condition")
+    @Description("Start date of condition")
     val startDate: LocalDate? = null,
-    @JsonPropertyDescription("End date of condition if applicable")
+    @Description("End date of condition if applicable")
     val endDate: LocalDate? = null
 )
 
 @JacksonSerializable
 data class ProvidedComplication(
-    @JsonPropertyDescription("Name of complication (eg. Ascites)")
+    @Description("Name of complication (eg. Ascites)")
     val name: String,
-    @JsonPropertyDescription("Start date of complication")
+    @Description("Start date of complication")
     val startDate: LocalDate,
-    @JsonPropertyDescription("End date of complication")
+    @Description("End date of complication")
     val endDate: LocalDate?
 )
 
 @JacksonSerializable
 data class ProvidedToxicity(
-    @JsonPropertyDescription("Name of toxicity (eg. Neuropathy)")
+    @Description("Name of toxicity (eg. Neuropathy)")
     val name: String,
-    @JsonPropertyDescription("Date of evaluation")
+    @Description("Date of evaluation")
     val evaluatedDate: LocalDate,
-    @JsonPropertyDescription("Grade (eg. 2)")
+    @Description("Grade (eg. 2)")
     val grade: Int
 )
 
 @JacksonSerializable
 data class ProvidedMedication(
-    @JsonPropertyDescription("Drug name (eg. Paracetamol)")
+    @Description("Drug name (eg. Paracetamol)")
     val name: String,
-    @JsonPropertyDescription("ATC code, required if not trial or self care (eg. N02BE01)")
+    @Description("ATC code, required if not trial or self care (eg. N02BE01)")
     val atcCode: String?,
-    @JsonPropertyDescription("Start date of use")
+    @Description("Start date of use")
     val startDate: LocalDate?,
-    @JsonPropertyDescription("End date of use")
+    @Description("End date of use")
     val endDate: LocalDate?,
-    @JsonPropertyDescription("Administration route (eg. Oral)")
+    @Description("Administration route (eg. Oral)")
     val administrationRoute: String?,
-    @JsonPropertyDescription("Dosage (eg. 500)")
+    @Description("Dosage (eg. 500)")
     val dosage: Double?,
-    @JsonPropertyDescription("Dosage unit (eg. mg)")
+    @Description("Dosage unit (eg. mg)")
     val dosageUnit: String?,
-    @JsonPropertyDescription("Frequency (eg. 2)")
+    @Description("Frequency (eg. 2)")
     val frequency: Double?,
-    @JsonPropertyDescription("Frequency unit (eg. day)")
+    @Description("Frequency unit (eg. day)")
     val frequencyUnit: String?,
-    @JsonPropertyDescription("Period between dosages value ")
+    @Description("Period between dosages value ")
     val periodBetweenDosagesValue: Double?,
-    @JsonPropertyDescription("Period between dosages unit")
+    @Description("Period between dosages unit")
     val periodBetweenDosagesUnit: String?,
-    @JsonPropertyDescription("Administration only if needed")
+    @Description("Administration only if needed")
     val administrationOnlyIfNeeded: Boolean?,
-    @JsonPropertyDescription("Drug is still in clinical study")
+    @Description("Drug is still in clinical study")
     val isTrial: Boolean,
-    @JsonPropertyDescription("Drug is administered as self-care")
+    @Description("Drug is administered as self-care")
     val isSelfCare: Boolean
 )
 
 @JacksonSerializable
 data class ProvidedLabValue(
-    @JsonPropertyDescription("Time of evaluation")
+    @Description("Time of evaluation")
     val evaluationTime: LocalDateTime,
-    @JsonPropertyDescription("Measure (eg. Carcinoembryonic antigen)")
+    @Description("Measure (eg. Carcinoembryonic antigen)")
     val measure: String,
-    @JsonPropertyDescription("Measure code (eg. CEA)")
+    @Description("Measure code (eg. CEA)")
     val measureCode: String,
-    @JsonPropertyDescription("Value (eg. 3.5)")
+    @Description("Value (eg. 3.5)")
     val value: Double,
-    @JsonPropertyDescription("Unit (eg. ug/L)")
+    @Description("Unit (eg. ug/L)")
     val unit: String?,
-    @JsonPropertyDescription("Institutional upper reference limit")
-    val refUpperBound: Double,
-    @JsonPropertyDescription("Institutional lower reference limit")
-    val refLowerBound: Double,
-    @JsonPropertyDescription("Comparator if applicable (eg. >)")
+    @Description("Institutional upper reference limit")
+    val refUpperBound: Double?,
+    @Description("Institutional lower reference limit")
+    val refLowerBound: Double?,
+    @Description("Comparator if applicable (eg. >)")
     val comparator: String?
 )
 
 @JacksonSerializable
 data class ProvidedBloodTransfusion(
-    @JsonPropertyDescription("Time of transfusion")
+    @Description("Time of transfusion")
     val evaluationTime: LocalDateTime,
-    @JsonPropertyDescription("Product (eg. Thrombocyte concentrate)")
+    @Description("Product (eg. Thrombocyte concentrate)")
     val product: String
 )
 
 @JacksonSerializable
 data class ProvidedMeasurement(
-    @JsonPropertyDescription("Date of measurement")
+    @Description("Date of measurement")
     val date: LocalDate,
-    @JsonPropertyDescription("Measurement category (eg. Body weight, Arterial blood pressure)")
+    @Description("Measurement category (eg. Body weight, Arterial blood pressure)")
     val category: String,
-    @JsonPropertyDescription("Measurement subcategory (eg. Mean blood pressure)")
+    @Description("Measurement subcategory (eg. Mean blood pressure)")
     val subcategory: String?,
-    @JsonPropertyDescription("Value (eg. 70)")
+    @Description("Value (eg. 70)")
     val value: Double,
-    @JsonPropertyDescription("Unit (eg. kilograms)")
+    @Description("Unit (eg. kilograms)")
     val unit: String
 )
 
 @JacksonSerializable
 data class ProvidedAllergy(
-    @JsonPropertyDescription("Name of allergy (eg. Pembrolizumab)")
+    @Description("Name of allergy (eg. Pembrolizumab)")
     val name: String,
-    @JsonPropertyDescription("Start date of appearance of allergy")
+    @Description("Start date of appearance of allergy")
     val startDate: LocalDate,
-    @JsonPropertyDescription("End date of appearance of allergy, if applicable")
+    @Description("End date of appearance of allergy, if applicable")
     val endDate: LocalDate?,
-    @JsonPropertyDescription("Category of allergy (eg. medication)")
+    @Description("Category of allergy (eg. medication)")
     val category: String,
-    @JsonPropertyDescription("Severity of allergy (eg. low)")
+    @Description("Severity of allergy (eg. low)")
     val severity: String,
-    @JsonPropertyDescription("Clinical status of allergy (eg. active)")
+    @Description("Clinical status of allergy (eg. active)")
     val clinicalStatus: String,
-    @JsonPropertyDescription("Verification status of allergy (eg. confirmed)")
+    @Description("Verification status of allergy (eg. confirmed)")
     val verificationStatus: String
 )
 
 @JacksonSerializable
 data class ProvidedWhoEvaluation(
-    @JsonPropertyDescription("WHO performance status (eg. 1)")
-    val status: String,
-    @JsonPropertyDescription("Date of WHO evaluation.")
+    @Description("WHO performance status (eg. 1)")
+    val status: Int,
+    @Description("Date of WHO evaluation.")
     val evaluationDate: LocalDate
 )
 
 @JacksonSerializable
 data class ProvidedSurgery(
-    @JsonPropertyDescription("Name of surgery (eg. Diagnostics stomach)")
+    @Description("Name of surgery (eg. Diagnostics stomach)")
     val name: String?,
-    @JsonPropertyDescription("Date of completion, if applicable.")
+    @Description("Date of completion, if applicable.")
     val endDate: LocalDate,
-    @JsonPropertyDescription("Status of surgery (eg. complete)")
+    @Description("Status of surgery (eg. complete)")
     val status: String
 )
 
 @JacksonSerializable
 data class ProvidedLesion(
-    @JsonPropertyDescription("Location of lesion (eg. brain)")
+    @Description("Location of lesion (eg. brain)")
     val location: String,
-    @JsonPropertyDescription("Diagnosis date of the lesion")
+    @Description("Diagnosis date of the lesion")
     val diagnosisDate: LocalDate,
-    @JsonPropertyDescription("Whether this lesion considered active, only applicable to brain or CNS lesions.")
+    @Description("Whether this lesion considered active, only applicable to brain or CNS lesions.")
     val active: Boolean? = null
 )
 
