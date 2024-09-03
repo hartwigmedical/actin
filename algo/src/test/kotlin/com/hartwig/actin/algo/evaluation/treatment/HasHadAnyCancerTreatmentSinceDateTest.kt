@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.medication.AtcTestFactory
 import com.hartwig.actin.algo.evaluation.washout.WashoutTestFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.AtcLevel
@@ -14,9 +15,8 @@ private const val MONTHS_AGO = 6
 private val MIN_DATE = LocalDate.of(2024, 2, 9).minusMonths(MONTHS_AGO.toLong())
 private val RECENT_DATE = MIN_DATE.plusMonths(3)
 private val OLDER_DATE = MIN_DATE.minusMonths(3)
-private val ATC_LEVELS = AtcLevel(code = "L01", name = "")
+private val ATC_LEVELS = AtcLevel(code = "category to find", name = "")
 private val REFERENCE_DATE = LocalDate.of(2020, 6, 6)
-private val INTERPRETER = WashoutTestFactory.activeFromDate(REFERENCE_DATE)
 val CHEMOTHERAPY_TREATMENT = TreatmentTestFactory.treatment(
     name = "Chemotherapy", isSystemic = true, categories = setOf(TreatmentCategory.CHEMOTHERAPY)
 )
@@ -26,7 +26,8 @@ val IMMUNOTHERAPY_TREATMENT = TreatmentTestFactory.treatment(
 
 class HasHadAnyCancerTreatmentSinceDateTest {
 
-    private val function = HasHadAnyCancerTreatmentSinceDate(MIN_DATE, MONTHS_AGO, setOf(ATC_LEVELS), INTERPRETER)
+    private val interpreter = WashoutTestFactory.activeFromDate(REFERENCE_DATE)
+    private val function = HasHadAnyCancerTreatmentSinceDate(MIN_DATE, MONTHS_AGO, setOf(ATC_LEVELS), interpreter)
 
     @Test
     fun `Should fail when oncological history is empty`() {
@@ -96,4 +97,20 @@ class HasHadAnyCancerTreatmentSinceDateTest {
             "Received anti-cancer therapy within the last $MONTHS_AGO months"
         )
     }
+
+    @Test
+    fun `Should pass when all prior treatment is stopped before the minimal allowed date but some medication is given after the minimal allowed date`() {
+        val atc = AtcTestFactory.atcClassification("category to find")
+        val priorCancerTreatment = TreatmentTestFactory.withTreatmentsAndMedications(
+            listOf(
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    treatments = listOf(CHEMOTHERAPY_TREATMENT),
+                    stopYear = OLDER_DATE.year,
+                    stopMonth = OLDER_DATE.monthValue
+                )
+            ), listOf(WashoutTestFactory.medication(atc, REFERENCE_DATE.plusDays(1)))
+        )
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(priorCancerTreatment))
+    }
+
 }

@@ -7,6 +7,8 @@ import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.TestClinicalFactory
+import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.assertj.core.api.Assertions
 import org.junit.Test
 
@@ -40,6 +42,24 @@ class HasRecentlyReceivedTrialMedicationTest {
         )
         val medications = listOf(medication(isTrialMedication = true, stopDate = evaluationDate))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)))
+    }
+
+    @Test
+    fun `Should pass when medication is no trial medication but treatment history entry which is trial`() {
+        val medications = listOf(medication(isTrialMedication = false))
+        val treatments = TreatmentTestFactory.treatment("Chemotherapy", true, setOf(TreatmentCategory.CHEMOTHERAPY))
+        val treatmentHistory = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(
+                setOf(treatments),
+                isTrial = true,
+                stopYear = evaluationDate.year,
+                stopMonth = evaluationDate.plusMonths(1).monthValue
+            )
+        )
+        assertEvaluation(
+            EvaluationResult.PASS,
+            functionActive.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, medications))
+        )
     }
 
     @Test

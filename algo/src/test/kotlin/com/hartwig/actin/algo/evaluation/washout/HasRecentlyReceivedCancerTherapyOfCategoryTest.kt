@@ -6,6 +6,8 @@ import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.Medication
+import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.assertj.core.api.Assertions
 import org.junit.Test
 import java.time.LocalDate
@@ -17,7 +19,7 @@ private val MIN_DATE = LocalDate.of(2024, 2, 9).minusMonths(6.toLong())
 class HasRecentlyReceivedCancerTherapyOfCategoryTest {
 
     private val function = HasRecentlyReceivedCancerTherapyOfCategory(
-        mapOf("category to find" to setOf(AtcLevel(code = "category to find", name = ""))),
+        mapOf("Chemotherapy" to setOf(AtcLevel(code = "category to find", name = ""))),
         mapOf("categories to ignore" to setOf(AtcLevel(code = "category to ignore", name = ""))),
         INTERPRETER,
         MIN_DATE
@@ -55,6 +57,19 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
     fun `Should pass when medication is trial medication`() {
         val medications = listOf(WashoutTestFactory.medication(isTrialMedication = true, stopDate = REFERENCE_DATE.plusDays(1)))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(WashoutTestFactory.withMedications(medications)))
+    }
+
+    @Test
+    fun `Should pass when medication has right category and old date but treatment history entry has correct category and date`() {
+        val atc = AtcTestFactory.atcClassification("category to find")
+        val medications = listOf(WashoutTestFactory.medication(atc, REFERENCE_DATE.minusDays(1)))
+        val treatments = TreatmentTestFactory.treatment("Chemotherapy", true, setOf(TreatmentCategory.CHEMOTHERAPY))
+        val treatmentHistory = listOf(TreatmentTestFactory.treatmentHistoryEntry(setOf(treatments)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, medications))
+        )
+
     }
 
     @Test

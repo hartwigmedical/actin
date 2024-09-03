@@ -51,7 +51,7 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
             val startedPastMinDate = DateComparison.isAfterDate(minDate, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
             val categoryAndTypeMatch = categoryToDrugTypes.any { categoryToDrugType ->
                 categoryToDrugType.value.any {
-                    if (it == TreatmentCategory) {
+                    if (it is TreatmentCategory) {
                         val hasCategory = treatmentHistoryEntry.categories().contains(it)
                         if (hasCategory) foundCategories.add(categoryToDrugType.key)
                         hasCategory
@@ -67,7 +67,7 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
                 hasHadValidTreatment = categoryAndTypeMatch && startedPastMinDate == true,
                 hasInconclusiveDate = categoryAndTypeMatch && startedPastMinDate == null,
                 hasHadTrialAfterMinDate = drugTypesToFind.any {
-                    val category = if (it == TreatmentCategory) it as TreatmentCategory else (it as DrugType).category
+                    val category = if (it is TreatmentCategory) it else (it as DrugType).category
                     val hasTrial = TrialFunctions.treatmentMayMatchAsTrial(treatmentHistoryEntry, category) && startedPastMinDate == true
                     if (hasTrial) foundCategories.add("Trial medication")
                     hasTrial

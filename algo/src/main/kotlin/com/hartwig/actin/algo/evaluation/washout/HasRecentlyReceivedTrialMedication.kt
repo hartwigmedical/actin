@@ -4,7 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.medication.MEDICATION_NOT_PROVIDED
 import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
-import com.hartwig.actin.algo.evaluation.util.DateComparison.isAfterDate
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentSinceDateFunctions
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.Medication
@@ -19,17 +19,14 @@ class HasRecentlyReceivedTrialMedication(
         if (minStopDate.isBefore(record.patient.registrationDate)) {
             return EvaluationFactory.undetermined(
                 "Required stop date prior to registration date for recent trial medication usage evaluation",
-                "Recent trial medication"
+                "Undetermined recent trial medication"
             )
         }
 
         val activeOrRecentlyStopped = selector.activeOrRecentlyStopped(medications, minStopDate).filter(Medication::isTrialMedication)
 
-        val trialEntries = record.oncologicalHistory.filter { it.isTrial && isAfterDate(
-            minStopDate,
-            it.startYear,
-            it.startMonth
-        ) == true }
+        val trialEntries =
+            record.oncologicalHistory.filter { it.isTrial && TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minStopDate, true) }
 
         return if (activeOrRecentlyStopped.isNotEmpty() || trialEntries.isNotEmpty()) {
             EvaluationFactory.pass(

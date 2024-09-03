@@ -3,7 +3,9 @@ package com.hartwig.actin.algo.evaluation.washout
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
+import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.assertj.core.api.Assertions
 import org.junit.Test
@@ -13,14 +15,13 @@ private val MIN_DATE = LocalDate.of(2020, 6, 6)
 
 class HasRecentlyReceivedCancerTherapyOfNameTest {
 
-
     private val interpreter = WashoutTestFactory.activeFromDate(MIN_DATE)
     private val function = HasRecentlyReceivedCancerTherapyOfName(
         setOf(
             Drug(
                 name = "correct",
                 category = TreatmentCategory.CHEMOTHERAPY,
-                drugTypes = emptySet()
+                drugTypes = setOf(DrugType.ALKYLATING_AGENT)
             )
         ), interpreter, MIN_DATE
     )
@@ -73,6 +74,36 @@ class HasRecentlyReceivedCancerTherapyOfNameTest {
                     listOf(
                         WashoutTestFactory.medication(
                             name = "correct",
+                            stopDate = MIN_DATE.plusDays(1)
+                        )
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should pass on medication with wrong name`() {
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(
+                TreatmentTestFactory.withTreatmentsAndMedications(
+                    listOf(
+                        TreatmentTestFactory.treatmentHistoryEntry(
+                            treatments = listOf(
+                                TreatmentTestFactory.drugTreatment(
+                                    "correct",
+                                    TreatmentCategory.CHEMOTHERAPY,
+                                    setOf(DrugType.ALKYLATING_AGENT)
+                                )
+                            ),
+                            stopYear = MIN_DATE.year,
+                            stopMonth = MIN_DATE.plusMonths(1).monthValue
+                        )
+                    ),
+                    listOf(
+                        WashoutTestFactory.medication(
+                            name = "other",
                             stopDate = MIN_DATE.plusDays(1)
                         )
                     )
