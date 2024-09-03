@@ -14,7 +14,6 @@ import com.hartwig.actin.molecular.evidence.actionability.isCategoryVariant
 import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.ClinicalTrial
 import com.hartwig.serve.datamodel.Treatment
-import com.hartwig.serve.datamodel.Country as ServeCountry
 
 object ClinicalEvidenceFactory {
 
@@ -57,7 +56,8 @@ object ClinicalEvidenceFactory {
                 val trial = onLabelEvent.intervention() as ClinicalTrial
                 ExternalTrial(
                     title = trial.acronym() ?: trial.title(),
-                    countries = trial.countries().map { Country(name = determineCountry(it), hospitalsPerCity = it.hospitalsPerCity()) }
+                    countries = trial.countries()
+                        .map { Country(name = determineCountryName(it.countryName()), hospitalsPerCity = it.hospitalsPerCity()) }
                         .toSet(),
                     url = extractNctUrl(onLabelEvent),
                     nctId = trial.nctId(),
@@ -74,8 +74,8 @@ object ClinicalEvidenceFactory {
 
     private fun ActionableEvent.treatmentName(): String = (this.intervention() as Treatment).name()
 
-    private fun determineCountry(country: ServeCountry): CountryName {
-        return when (country.countryName()) {
+    private fun determineCountryName(countryName: String): CountryName {
+        return when (countryName) {
             "Netherlands" -> CountryName.NETHERLANDS
             "Belgium" -> CountryName.BELGIUM
             "Germany" -> CountryName.GERMANY

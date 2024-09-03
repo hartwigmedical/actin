@@ -39,10 +39,10 @@ object EligibleExternalTrialGeneratorFunctions {
         table.addCell(Cells.createContent(finalSubTable))
     }
 
-    fun hospitalsInHomeCountry(externalTrial: ExternalTrial, homeCountry: CountryName): List<String> {
-        val homeCountries = externalTrial.countries.filter { it.name == homeCountry }
+    fun hospitalsInCountry(externalTrial: ExternalTrial, country: CountryName): List<String> {
+        val homeCountries = externalTrial.countries.filter { it.name == country }
         return if (homeCountries.size > 1 || homeCountries.isEmpty()) {
-            throw IllegalStateException("Home country ${homeCountry.display()} not found or found multiple times")
+            throw IllegalStateException("Country ${country.display()} not found or found multiple times")
         } else {
             val hospitals = homeCountries.first().hospitalsPerCity.flatMap { it.value }
             if (hospitals.size > 10) {
@@ -51,7 +51,7 @@ object EligibleExternalTrialGeneratorFunctions {
         }
     }
 
-    fun countryNamesAndCities(externalTrial: ExternalTrial): String {
+    fun countryNamesWithCities(externalTrial: ExternalTrial): String {
         return externalTrial.countries.joinToString { country ->
             val cities = if (country.hospitalsPerCity.keys.size > 8) {
                 "Many (please check link)"
@@ -68,6 +68,4 @@ object EligibleExternalTrialGeneratorFunctions {
         return externalTrialsPerEvent.mapValues { (_, externalTrials) -> externalTrials.filter(filter::invoke) }
             .filterValues { it.isNotEmpty() }
     }
-
-
 }
