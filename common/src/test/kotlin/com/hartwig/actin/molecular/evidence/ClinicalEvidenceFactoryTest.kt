@@ -20,7 +20,7 @@ class ClinicalEvidenceFactoryTest {
             EvidenceLevel.D,
             EvidenceDirection(isCertain = true),
             true,
-            isCategoryVariant = null
+            isCategoryEvent = false
         )
         val result =
             ClinicalEvidenceFactory.create(
@@ -45,7 +45,7 @@ class ClinicalEvidenceFactoryTest {
             EvidenceLevel.D,
             EvidenceDirection(isCertain = true),
             false,
-            isCategoryVariant = null
+            isCategoryEvent = false
         )
         val result =
             ClinicalEvidenceFactory.create(
@@ -65,7 +65,7 @@ class ClinicalEvidenceFactoryTest {
 
     @Test
     fun `Should convert SERVE external trials to clinical evidence`() {
-        val trial = TestExternalTrialFactory.createTestTrial().copy(countries = setOf(Country.OTHER), isCategoryVariant = null)
+        val trial = TestExternalTrialFactory.createTestTrial().copy(countries = setOf(Country.OTHER), isCategoryEvent = false)
         val result =
             ClinicalEvidenceFactory.create(
                 ActionabilityMatch(

@@ -6,7 +6,7 @@ import com.hartwig.serve.datamodel.gene.ActionableGene
 import com.hartwig.serve.datamodel.hotspot.ActionableHotspot
 import com.hartwig.serve.datamodel.range.ActionableRange
 
-fun ActionableEvent.isCategoryVariant(): Boolean? {
+fun ActionableEvent.isCategoryEvent(): Boolean {
     return when (this) {
         is ActionableHotspot -> false
 
@@ -14,7 +14,7 @@ fun ActionableEvent.isCategoryVariant(): Boolean? {
         is ActionableGene,
         is ActionableFusion -> true
 
-        else -> null
+        else -> false
     }
 }
 
