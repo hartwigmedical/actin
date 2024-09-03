@@ -24,7 +24,7 @@ class MolecularSummaryGenerator(
     override fun contents(): Table {
         val table = Tables.createSingleColWithWidth(keyWidth + valueWidth)
      
-        for (molecularTest in patientRecord.molecularHistory.molecularTests.sortedBy { it.date }) {
+        for (molecularTest in patientRecord.molecularHistory.molecularTests.sortedByDescending { it.date }) {
             if ((molecularTest as? MolecularRecord)?.hasSufficientQuality != false) {
                 if (molecularTest.experimentType != ExperimentType.HARTWIG_WHOLE_GENOME) {
                     LOGGER.warn("Generating WGS results for non-WGS sample")
