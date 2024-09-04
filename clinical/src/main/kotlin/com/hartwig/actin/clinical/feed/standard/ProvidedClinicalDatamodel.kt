@@ -49,7 +49,7 @@ data class ProvidedPatientDetail(
     @Description("Base64 encoded SHA-256 hash of source hospital's identifier.")
     val hashedId: String,
     @Description("Flag to indicate there is pending Hartwig analysis data for this patient")
-    val hartwigMolecularDataPending: Boolean
+    val hartwigMolecularDataPending: Boolean?
 )
 
 @JacksonSerializable
