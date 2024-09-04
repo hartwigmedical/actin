@@ -142,34 +142,42 @@ class PanelVariantAnnotator(
         serveGeneAlteration: com.hartwig.serve.datamodel.common.GeneAlteration?,
         transcriptAnnotation: com.hartwig.actin.tools.variant.Variant,
         paveResponse: PaveResponse
-    ) = Variant(
-        chromosome = transcriptAnnotation.chromosome(),
-        position = transcriptAnnotation.position(),
-        ref = transcriptAnnotation.ref(),
-        alt = transcriptAnnotation.alt(),
-        type = variantType(transcriptAnnotation),
-        variantAlleleFrequency = variant.variantAlleleFrequency,
-        canonicalImpact = impact(paveResponse.impact, transcriptAnnotation),
-        otherImpacts = otherImpacts(paveResponse, transcriptAnnotation),
-        isHotspot = serveGeneAlteration is KnownHotspot || serveGeneAlteration is KnownCodon,
-        isReportable = true,
-        event = "${variant.gene} ${variant.hgvsCodingOrProteinImpact()}",
+    ): Variant {
 
+        val eventHgvs = if (paveResponse.impact.hgvsProteinImpact.isNotEmpty()) {
+            normalizeProteinImpact(paveResponse.impact.hgvsProteinImpact)
+        } else {
+            paveResponse.impact.hgvsCodingImpact
+        }
 
-        driverLikelihood = DriverLikelihood.LOW,
-        evidence = evidence,
-        gene = variant.gene,
-        geneRole = geneAlteration.geneRole,
-        proteinEffect = when (geneAlteration.proteinEffect) {
-            ProteinEffect.LOSS_OF_FUNCTION,
-            ProteinEffect.LOSS_OF_FUNCTION_PREDICTED,
-            ProteinEffect.GAIN_OF_FUNCTION,
-            ProteinEffect.GAIN_OF_FUNCTION_PREDICTED -> geneAlteration.proteinEffect
+        return Variant(
+            chromosome = transcriptAnnotation.chromosome(),
+            position = transcriptAnnotation.position(),
+            ref = transcriptAnnotation.ref(),
+            alt = transcriptAnnotation.alt(),
+            type = variantType(transcriptAnnotation),
+            variantAlleleFrequency = variant.variantAlleleFrequency,
+            canonicalImpact = impact(paveResponse.impact, transcriptAnnotation),
+            otherImpacts = otherImpacts(paveResponse, transcriptAnnotation),
+            isHotspot = serveGeneAlteration is KnownHotspot || serveGeneAlteration is KnownCodon,
+            isReportable = true,
+            event = "${variant.gene} ${eventHgvs}",
 
-            else -> ProteinEffect.NO_EFFECT
-        },
-        isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance
-    )
+            driverLikelihood = DriverLikelihood.LOW,
+            evidence = evidence,
+            gene = variant.gene,
+            geneRole = geneAlteration.geneRole,
+            proteinEffect = when (geneAlteration.proteinEffect) {
+                ProteinEffect.LOSS_OF_FUNCTION,
+                ProteinEffect.LOSS_OF_FUNCTION_PREDICTED,
+                ProteinEffect.GAIN_OF_FUNCTION,
+                ProteinEffect.GAIN_OF_FUNCTION_PREDICTED -> geneAlteration.proteinEffect
+
+                else -> ProteinEffect.NO_EFFECT
+            },
+            isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance
+        )
+    }
 
     private fun impact(paveImpact: PaveImpact, transvarVariant: com.hartwig.actin.tools.variant.Variant): TranscriptImpact {
 

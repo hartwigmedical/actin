@@ -277,6 +277,13 @@ class PanelVariantAnnotatorTest {
         assertThat(normalizeProteinImpact("p.M1L")).isEqualTo("p.M1L")
     }
 
+    @Test
+    fun `Should describe variant event using protein hgvs`() {
+        val variants = setOf(SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING))
+        val annotated = annotator.annotate(variants)
+        assertThat(annotated.first().event).isEqualTo("$GENE $HGVS_PROTEIN")
+    }
+
     private fun setupGeneAlteration() {
         every { evidenceDatabase.geneAlterationForVariant(VARIANT_MATCH_CRITERIA) } returns HOTSPOT
     }
