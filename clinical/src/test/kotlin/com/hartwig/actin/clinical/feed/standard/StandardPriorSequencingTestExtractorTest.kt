@@ -13,9 +13,9 @@ import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 private const val TEST = "test"
 private const val GENE = "gene"
@@ -36,7 +36,9 @@ private const val FREE_TEXT = "free text"
 
 class StandardPriorSequencingTestExtractorTest {
 
-    val curation = mockk<CurationDatabase<SequencingTestConfig>>()
+    val curation = mockk<CurationDatabase<SequencingTestConfig>> {
+        every { find("$HASHED_ID_IN_BASE64 | $TEST") } returns emptySet()
+    }
     val extractor = StandardPriorSequencingTestExtractor(curation)
 
     @Test
@@ -159,7 +161,7 @@ class StandardPriorSequencingTestExtractorTest {
     }
 
     @Test
-    fun `Should not return curation warnings for uncurated free text when all other fields are null`() {
+    fun `Should not return curation warnings for uncurated free text when some fields are not null`() {
         every { curation.find(FREE_TEXT) } returns emptySet()
         val result = extractionResult(ProvidedMolecularTestResult(gene = GENE, freeText = FREE_TEXT))
         assertThat(result.evaluation.warnings).isEmpty()
@@ -176,6 +178,30 @@ class StandardPriorSequencingTestExtractorTest {
         val result = extractionResult(ProvidedMolecularTestResult(gene = GENE, freeText = FREE_TEXT))
         assertThat(result.evaluation.warnings).isEmpty()
         assertResultContains(result, BASE_PRIOR_SEQUENCING)
+    }
+
+    @Test
+    fun `Should allow for ignoring of full tests`() {
+        every { curation.find("$HASHED_ID_IN_BASE64 | $TEST") } returns setOf(
+            SequencingTestConfig(
+                input = "$HASHED_ID_IN_BASE64 | $TEST",
+                ignore = true
+            )
+        )
+        val result = extractionResult(ProvidedMolecularTestResult(gene = GENE, freeText = FREE_TEXT))
+        assertThat(result.extracted).isEmpty()
+    }
+
+    @Test
+    fun `Should allow for ignoring of individual test results`() {
+        every { curation.find(FREE_TEXT) } returns setOf(
+            SequencingTestConfig(
+                input = FREE_TEXT,
+                ignore = true
+            )
+        )
+        val result = extractionResult(ProvidedMolecularTestResult(gene = GENE, hgvsCodingImpact = "erroneous", freeText = FREE_TEXT))
+        assertThat(result.extracted[0].variants).isEmpty()
     }
 
     private fun extractionResult(result: ProvidedMolecularTestResult) = extractor.extract(
