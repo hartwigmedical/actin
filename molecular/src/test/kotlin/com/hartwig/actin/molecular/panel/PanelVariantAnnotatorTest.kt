@@ -284,6 +284,19 @@ class PanelVariantAnnotatorTest {
         assertThat(annotated.first().event).isEqualTo("$GENE $HGVS_PROTEIN")
     }
 
+    @Test
+    fun `Should describe variant using coding hgvs for event when no protein impact`() {
+        every { paver.run(listOf(PAVE_QUERY)) } returns listOf(
+            PAVE_ANNOTATION.copy(
+                impact = PAVE_ANNOTATION.impact.copy(hgvsProteinImpact = "p.?")
+            )
+        )
+
+        val variants = setOf(SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING))
+        val annotated = annotator.annotate(variants)
+        assertThat(annotated.first().event).isEqualTo("$GENE $HGVS_CODING")
+    }
+
     private fun setupGeneAlteration() {
         every { evidenceDatabase.geneAlterationForVariant(VARIANT_MATCH_CRITERIA) } returns HOTSPOT
     }

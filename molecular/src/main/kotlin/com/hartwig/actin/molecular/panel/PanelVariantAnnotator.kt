@@ -144,7 +144,7 @@ class PanelVariantAnnotator(
         paveResponse: PaveResponse
     ): Variant {
 
-        val eventHgvs = if (paveResponse.impact.hgvsProteinImpact.isNotEmpty()) {
+        val eventHgvs = if (paveResponse.impact.hgvsProteinImpact.isNotEmpty() && paveResponse.impact.hgvsProteinImpact != "p.?") {
             normalizeProteinImpact(paveResponse.impact.hgvsProteinImpact)
         } else {
             paveResponse.impact.hgvsCodingImpact
