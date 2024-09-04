@@ -104,8 +104,7 @@ object TestServeActionabilityFactory {
             override fun blacklistCancerTypes(): Set<CancerType> {
                 return emptySet()
             }
-
-
+            
             override fun description(): String {
                 return "efficacy evidence"
             }
