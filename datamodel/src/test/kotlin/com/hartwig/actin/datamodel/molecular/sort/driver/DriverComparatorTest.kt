@@ -3,8 +3,8 @@ package com.hartwig.actin.datamodel.molecular.sort.driver
 import com.hartwig.actin.datamodel.molecular.Driver
 import com.hartwig.actin.datamodel.molecular.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
-import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.createEmpty
-import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.createExhaustive
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.createEmptyClinicalEvidence
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -12,11 +12,11 @@ class DriverComparatorTest {
 
     @Test
     fun `Should sort drivers`() {
-        val driver1 = create(true, "event 1", DriverLikelihood.HIGH, createEmpty())
-        val driver2 = create(true, "event 1", DriverLikelihood.MEDIUM, createEmpty())
-        val driver3 = create(true, "event 2", DriverLikelihood.MEDIUM, createExhaustive())
-        val driver4 = create(true, "event 2", DriverLikelihood.MEDIUM, createEmpty())
-        val driver5 = create(false, "event 1", DriverLikelihood.HIGH, createEmpty())
+        val driver1 = create(true, "event 1", DriverLikelihood.HIGH, createEmptyClinicalEvidence())
+        val driver2 = create(true, "event 1", DriverLikelihood.MEDIUM, createEmptyClinicalEvidence())
+        val driver3 = create(true, "event 2", DriverLikelihood.MEDIUM, createExhaustiveClinicalEvidence())
+        val driver4 = create(true, "event 2", DriverLikelihood.MEDIUM, createEmptyClinicalEvidence())
+        val driver5 = create(false, "event 1", DriverLikelihood.HIGH, createEmptyClinicalEvidence())
 
         val drivers = listOf(driver4, driver5, driver1, driver2, driver3).sortedWith(DriverComparator())
 

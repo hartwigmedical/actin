@@ -1,12 +1,12 @@
 package com.hartwig.actin.report.interpretation
 
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.approved
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.offLabelExperimental
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.onLabelExperimental
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.onLabelKnownResistant
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.onLabelPreclinical
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.onLabelSuspectResistant
-import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidence
 import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
 import org.assertj.core.api.Assertions.assertThat
@@ -31,9 +31,9 @@ class EvidenceInterpreterTest {
                     + mapOf("known" to setOf(onLabelKnownResistant()))
                     + mapOf("suspect" to setOf(onLabelSuspectResistant())),
             externalEligibleTrialsPerEvent = mapOf(
-                "external" to setOf(TestExternalTrialFactory.createTestTrial()),
-                "approved" to setOf(TestExternalTrialFactory.createTestTrial()),
-                "inclusion" to setOf(TestExternalTrialFactory.createTestTrial())
+                "external" to setOf(TestClinicalEvidenceFactory.createTestExternalTrial()),
+                "approved" to setOf(TestClinicalEvidenceFactory.createTestExternalTrial()),
+                "inclusion" to setOf(TestClinicalEvidenceFactory.createTestExternalTrial())
             )
         )
 

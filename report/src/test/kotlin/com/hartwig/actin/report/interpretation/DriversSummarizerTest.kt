@@ -13,7 +13,6 @@ import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVirusFactory
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
-import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
@@ -107,7 +106,7 @@ class DriversSummarizerTest {
     @Test
     fun shouldReturnActionableEventsThatAreNotKeyDrivers() {
         val externalEvidence =
-            TestClinicalEvidenceFactory.withExternalEligibleTrial(TestExternalTrialFactory.createTestTrial())
+            TestClinicalEvidenceFactory.withExternalEligibleTrial(TestClinicalEvidenceFactory.createTestExternalTrial())
         val approvedTreatment = TestClinicalEvidenceFactory.withApprovedTreatment("approved")
         val cohorts = listOf(
             evaluatedCohort(
@@ -178,7 +177,7 @@ class DriversSummarizerTest {
         name: String,
         driverLikelihood: DriverLikelihood,
         isReportable: Boolean,
-        evidence: ClinicalEvidence = TestClinicalEvidenceFactory.createEmpty()
+        evidence: ClinicalEvidence = TestClinicalEvidenceFactory.createEmptyClinicalEvidence()
     ): Variant {
         return TestVariantFactory.createMinimal().copy(
             gene = name,
@@ -201,7 +200,7 @@ class DriversSummarizerTest {
 
     private fun homozygousDisruption(
         name: String, driverLikelihood: DriverLikelihood?, isReportable: Boolean,
-        evidence: ClinicalEvidence = TestClinicalEvidenceFactory.createEmpty()
+        evidence: ClinicalEvidence = TestClinicalEvidenceFactory.createEmptyClinicalEvidence()
     ): HomozygousDisruption {
         return TestHomozygousDisruptionFactory.createMinimal().copy(
             gene = name,
@@ -214,7 +213,7 @@ class DriversSummarizerTest {
 
     private fun disruption(
         name: String, driverLikelihood: DriverLikelihood, isReportable: Boolean,
-        evidence: ClinicalEvidence = TestClinicalEvidenceFactory.createEmpty()
+        evidence: ClinicalEvidence = TestClinicalEvidenceFactory.createEmptyClinicalEvidence()
     ): Disruption {
         return TestDisruptionFactory.createMinimal().copy(
             gene = name,
@@ -229,7 +228,7 @@ class DriversSummarizerTest {
         event: String,
         driverLikelihood: DriverLikelihood,
         isReportable: Boolean,
-        evidence: ClinicalEvidence = TestClinicalEvidenceFactory.createEmpty()
+        evidence: ClinicalEvidence = TestClinicalEvidenceFactory.createEmptyClinicalEvidence()
     ): Fusion {
         return TestFusionFactory.createMinimal().copy(
             event = event,

@@ -15,7 +15,7 @@ object EhrTestData {
             hashedId = HASHED_ID_IN_BASE64,
             birthYear = 2024,
             gender = "FEMALE",
-            registrationDate = LocalDate.of(2024, 2, 23)
+            registrationDate = LocalDate.of(2024, 2, 23),
         ),
         tumorDetails = createEhrTumorDetail()
     )
