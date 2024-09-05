@@ -29,10 +29,11 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
         val categoriesToFind = categories.mapValues { (key, value) -> value - (categoriesToIgnore[key] ?: emptySet()).toSet() }
             .filterValues { it.isNotEmpty() }
 
+        val activeMedications = medications.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
+
         val foundCategories = mutableSetOf<String>()
         categoriesToFind.filter { categoryToFind ->
-            medications
-                .filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
+            activeMedications
                 .any {
                     if ((it.allLevels() intersect categoryToFind.value).isNotEmpty()) {
                         foundCategories.add(categoryToFind.key)
@@ -53,12 +54,12 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
                 categoryToDrugType.value.any {
                     if (it is TreatmentCategory) {
                         val hasCategory = treatmentHistoryEntry.categories().contains(it)
-                        if (hasCategory) foundCategories.add(categoryToDrugType.key)
+                        if (hasCategory && startedPastMinDate == true) foundCategories.add(categoryToDrugType.key)
                         hasCategory
                     } else {
                         val hasCategory = treatmentHistoryEntry.categories().contains((it as DrugType).category)
                                 && treatmentHistoryEntry.matchesTypeFromSet(setOf(it)) == true
-                        if (hasCategory) foundCategories.add(categoryToDrugType.key)
+                        if (hasCategory && startedPastMinDate == true) foundCategories.add(categoryToDrugType.key)
                         hasCategory
                     }
                 }
@@ -68,9 +69,7 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
                 hasInconclusiveDate = categoryAndTypeMatch && startedPastMinDate == null,
                 hasHadTrialAfterMinDate = drugTypesToFind.any {
                     val category = if (it is TreatmentCategory) it else (it as DrugType).category
-                    val hasTrial = TrialFunctions.treatmentMayMatchAsTrial(treatmentHistoryEntry, category) && startedPastMinDate == true
-                    if (hasTrial) foundCategories.add("Trial medication")
-                    hasTrial
+                    TrialFunctions.treatmentMayMatchAsTrial(treatmentHistoryEntry, category)
                 }
             )
         }.fold(TreatmentFunctions.TreatmentAssessment()) { acc, element -> acc.combineWith(element) }

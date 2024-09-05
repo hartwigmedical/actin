@@ -17,6 +17,9 @@ object TrialFunctions {
         category: TreatmentCategory,
         treatmentCannotBeMatchedSpecifically: (Treatment) -> Boolean = { it.types().isEmpty() }
     ): Boolean {
+        val test3 = treatmentHistoryEntry.allTreatments().any {
+            (it.categories().isEmpty() || category in it.categories()) && treatmentCannotBeMatchedSpecifically(it)
+        }
         return categoryAllowsTrialMatches(category) && treatmentHistoryEntry.isTrial && treatmentHistoryEntry.allTreatments().any {
             (it.categories().isEmpty() || category in it.categories()) && treatmentCannotBeMatchedSpecifically(it)
         }

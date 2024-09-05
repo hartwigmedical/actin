@@ -83,7 +83,7 @@ class HasRecentlyReceivedCancerTherapyOfNameTest {
     }
 
     @Test
-    fun `Should pass on medication with wrong name`() {
+    fun `Should pass on medication with wrong name and treatment history entry with drug with correct name`() {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
@@ -119,5 +119,29 @@ class HasRecentlyReceivedCancerTherapyOfNameTest {
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, result)
         Assertions.assertThat(result.recoverable).isTrue()
+    }
+
+    @Test
+    fun `Should be undetermined with treatment history entry with drug with correct name but without stopdate `() {
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(
+                TreatmentTestFactory.withTreatmentHistory(
+                    listOf(
+                        TreatmentTestFactory.treatmentHistoryEntry(
+                            treatments = listOf(
+                                TreatmentTestFactory.drugTreatment(
+                                    "correct",
+                                    TreatmentCategory.CHEMOTHERAPY,
+                                    setOf(DrugType.ALKYLATING_AGENT)
+                                )
+                            ),
+                            stopYear = null,
+                            stopMonth = null
+                        )
+                    )
+                )
+            )
+        )
     }
 }
