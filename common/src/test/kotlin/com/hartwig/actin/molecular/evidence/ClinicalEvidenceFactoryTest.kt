@@ -26,10 +26,12 @@ class ClinicalEvidenceFactoryTest {
             ClinicalEvidenceFactory.create(
                 ActionabilityMatch(
                     onLabelEvents = listOf(
-                        TestServeActionabilityFactory.createActionableEvent(
-                            Knowledgebase.CKB_EVIDENCE,
-                            onlabel.treatment
-                        )
+                        TestServeActionabilityFactory.hotspotBuilder().from(
+                            TestServeActionabilityFactory.createActionableEvent(
+                                Knowledgebase.CKB_EVIDENCE,
+                                onlabel.treatment
+                            )
+                        ).build()
                     ),
                     offLabelEvents = emptyList()
                 )
@@ -51,10 +53,12 @@ class ClinicalEvidenceFactoryTest {
             ClinicalEvidenceFactory.create(
                 ActionabilityMatch(
                     offLabelEvents = listOf(
-                        TestServeActionabilityFactory.createActionableEvent(
-                            Knowledgebase.CKB_EVIDENCE,
-                            onlabel.treatment
-                        )
+                        TestServeActionabilityFactory.hotspotBuilder().from(
+                            TestServeActionabilityFactory.createActionableEvent(
+                                Knowledgebase.CKB_EVIDENCE,
+                                onlabel.treatment
+                            )
+                        ).build()
                     ),
                     onLabelEvents = emptyList()
                 )
@@ -70,11 +74,13 @@ class ClinicalEvidenceFactoryTest {
             ClinicalEvidenceFactory.create(
                 ActionabilityMatch(
                     onLabelEvents = listOf(
-                        TestServeActionabilityFactory.createActionableEvent(
-                            Knowledgebase.CKB_TRIAL,
-                            trial.title,
-                            ServeDirection.RESPONSIVE
-                        )
+                        TestServeActionabilityFactory.hotspotBuilder().from(
+                            TestServeActionabilityFactory.createActionableEvent(
+                                Knowledgebase.CKB_TRIAL,
+                                trial.title,
+                                ServeDirection.RESPONSIVE
+                            )
+                        ).build()
                     ),
                     offLabelEvents = emptyList()
                 )
