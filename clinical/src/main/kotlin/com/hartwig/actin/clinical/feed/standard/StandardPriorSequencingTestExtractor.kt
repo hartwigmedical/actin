@@ -18,28 +18,36 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
     StandardDataExtractor<List<PriorSequencingTest>> {
 
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<PriorSequencingTest>> {
-        val extracted = ehrPatientRecord.molecularTests.map { test ->
-            val (onlyFreeTextResults, populatedResults) = test.results.partition { checkAllFieldsNull(it) }
-            val mandatoryCurationTestResults = curate(ehrPatientRecord, onlyFreeTextResults)
-            val allResults = test.results + extract(mandatoryCurationTestResults) + extract(curate(ehrPatientRecord, populatedResults))
-            ExtractionResult(
-                listOf(
-                    PriorSequencingTest(
-                        test = test.test,
-                        date = test.date,
-                        testedGenes = test.testedGenes,
-                        variants = variants(allResults),
-                        fusions = fusions(allResults),
-                        amplifications = amplifications(allResults),
-                        skippedExons = skippedExons(allResults),
-                        deletedGenes = geneDeletions(allResults),
-                        isMicrosatelliteUnstable = msi(allResults),
-                        tumorMutationalBurden = tmb(allResults),
-                    )
-                ),
-                mandatoryCurationTestResults.map { curated -> curated.extractionEvaluation }
-                    .fold(CurationExtractionEvaluation()) { acc, extraction -> acc + extraction }
-            )
+        val extracted = ehrPatientRecord.molecularTests.mapNotNull { test ->
+            val ignoreEntireTest = curation.find(patientQualifiedTestName(ehrPatientRecord.patientDetails.hashedId, test)).any { it.ignore }
+            if (!ignoreEntireTest) {
+                val (onlyFreeTextResults, populatedResults) = test.results.partition { checkAllFieldsNull(it) }
+                val mandatoryCurationTestResults = curate(ehrPatientRecord, onlyFreeTextResults)
+                val optionalCurationTestResults = curate(ehrPatientRecord, populatedResults)
+                val allResults =
+                    removeCurated(removeCurated(test.results, mandatoryCurationTestResults), optionalCurationTestResults) +
+                            extract(mandatoryCurationTestResults) + extract(optionalCurationTestResults)
+                ExtractionResult(
+                    listOf(
+                        PriorSequencingTest(
+                            test = test.test,
+                            date = test.date,
+                            testedGenes = test.testedGenes,
+                            variants = variants(allResults),
+                            fusions = fusions(allResults),
+                            amplifications = amplifications(allResults),
+                            skippedExons = skippedExons(allResults),
+                            deletedGenes = geneDeletions(allResults),
+                            isMicrosatelliteUnstable = msi(allResults),
+                            tumorMutationalBurden = tmb(allResults),
+                        )
+                    ),
+                    mandatoryCurationTestResults.map { curated -> curated.extractionEvaluation }
+                        .fold(CurationExtractionEvaluation()) { acc, extraction -> acc + extraction }
+                )
+            } else {
+                null
+            }
         }
         return extracted.fold(
             ExtractionResult(emptyList(), CurationExtractionEvaluation())
@@ -48,8 +56,18 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
         }
     }
 
+    private fun patientQualifiedTestName(patientId: String, test: ProvidedMolecularTest) = "$patientId | ${test.test}"
+
+    private fun removeCurated(
+        original: Set<ProvidedMolecularTestResult>,
+        curated: List<CurationResponse<SequencingTestConfig>>
+    ): Set<ProvidedMolecularTestResult> {
+        val freeTexts = curated.flatMap { it.configs }.map { it.input }.toSet()
+        return original.filter { it.freeText !in freeTexts }.toSet()
+    }
+
     private fun extract(curationResults: List<CurationResponse<SequencingTestConfig>>) =
-        curationResults.flatMap { it.configs }.mapNotNull { it.curated }
+        curationResults.flatMap { it.configs }.filter { !it.ignore }.mapNotNull { it.curated }
 
     private fun curate(
         ehrPatientRecord: ProvidedPatientRecord,
