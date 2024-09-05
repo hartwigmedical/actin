@@ -18,6 +18,7 @@ import com.hartwig.serve.datamodel.gene.ImmutableActionableGene
 import com.hartwig.serve.datamodel.hotspot.ImmutableActionableHotspot
 import com.hartwig.serve.datamodel.immuno.ImmutableActionableHLA
 import com.hartwig.serve.datamodel.range.ImmutableActionableRange
+import java.time.LocalDate
 
 object TestServeActionabilityFactory {
 
@@ -71,6 +72,10 @@ object TestServeActionabilityFactory {
                 return source
             }
 
+            override fun date(): LocalDate {
+                return LocalDate.of(2021, 2, 3)
+            }
+
             override fun sourceEvent(): String {
                 return ""
             }
@@ -98,6 +103,10 @@ object TestServeActionabilityFactory {
 
             override fun blacklistCancerTypes(): Set<CancerType> {
                 return emptySet()
+            }
+            
+            override fun description(): String {
+                return "efficacy evidence"
             }
 
             override fun level(): EvidenceLevel {

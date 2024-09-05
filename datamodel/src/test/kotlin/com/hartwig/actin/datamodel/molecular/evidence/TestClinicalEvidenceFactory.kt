@@ -1,5 +1,7 @@
 package com.hartwig.actin.datamodel.molecular.evidence
 
+import java.time.LocalDate
+
 object TestClinicalEvidenceFactory {
 
     fun createEmptyClinicalEvidence(): ClinicalEvidence {
@@ -95,7 +97,18 @@ object TestClinicalEvidenceFactory {
         direction: EvidenceDirection,
         onLabel: Boolean,
         isCategoryVariant: Boolean? = false
-    ) = TreatmentEvidence(treatment, evidenceLevel, onLabel, direction, isCategoryVariant, "", approvalStatus, applicableCancerType())
+    ) = TreatmentEvidence(
+        treatment,
+        evidenceLevel,
+        onLabel,
+        direction,
+        LocalDate.of(2021, 2, 3),
+        "efficacy evidence",
+        isCategoryVariant,
+        "",
+        approvalStatus,
+        applicableCancerType()
+    )
 
     private fun applicableCancerType() = ApplicableCancerType("", emptySet())
 

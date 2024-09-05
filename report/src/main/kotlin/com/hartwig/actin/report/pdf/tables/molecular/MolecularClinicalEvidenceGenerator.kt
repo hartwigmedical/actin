@@ -4,30 +4,14 @@ import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
+import com.hartwig.actin.report.interpretation.ClinicalDetailsFactory
+import com.hartwig.actin.report.interpretation.ClinicalDetailsFunctions
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Styles.PALETTE_RED
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
-
-data class ClinicalDetails(
-    val treatmentEvidence: TreatmentEvidence,
-    val levelA: Boolean,
-    val levelB: Boolean,
-    val levelC: Boolean,
-    val levelD: Boolean
-)
-
-private val PRE_CLINICAL_APPROVAL_SET = setOf(
-    "PRECLINICAL",
-    "PRECLINICAL_PDX",
-    "PRECLINICAL_BIOCHEMICAL",
-    "PRECLINICAL_CELL_CULTURE",
-    "PRECLINICAL_PDX_CELL_CULTURE",
-    "PRECLINICAL_CELL_LINE_XENOGRAFT",
-    "PRECLINICAL_PATIENT_CELL_CULTURE"
-)
 
 class MolecularClinicalEvidenceGenerator(
     val molecularHistory: MolecularHistory,
@@ -58,46 +42,36 @@ class MolecularClinicalEvidenceGenerator(
             .forEach(table::addHeaderCell)
 
         for (driver in allDrivers) {
-            val clinicalDetails = extractClinicalDetails(driver.evidence)
+            val clinicalDetails = ClinicalDetailsFactory(onLabel).create(driver.evidence)
             if (clinicalDetails.isNotEmpty()) {
-                val groupedBySourceEvent = clinicalDetails.groupBy { it.treatmentEvidence.sourceEvent }
+                val groupedBySourceEvent = ClinicalDetailsFunctions.groupBySourceEvent(clinicalDetails)
 
                 for ((sourceEvent, details) in groupedBySourceEvent) {
-                    val treatmentEvidencesByLevel = listOf(
-                        details.filter { it.levelA }.map { it.treatmentEvidence },
-                        details.filter { it.levelB }.map { it.treatmentEvidence },
-                        details.filter { it.levelC }.map { it.treatmentEvidence },
-                        details.filter { it.levelD }.map { it.treatmentEvidence }
-                    )
+                    val treatmentEvidencesByLevel = ClinicalDetailsFunctions.mapTreatmentEvidencesToLevel(details)
 
                     if (treatmentEvidencesByLevel.any { it.isNotEmpty() }) {
                         table.addCell(Cells.createContent(driver.event))
                         table.addCell(Cells.createContent(sourceEvent))
 
-                        treatmentEvidencesByLevel.forEach { levelEvidences ->
+                        treatmentEvidencesByLevel.forEach { perLevelEvidences ->
                             val evidenceLevelTable = Table(1).setWidth(width / columnCount)
 
-                            val treatmentGroupedEvidences = levelEvidences.groupBy { it.treatment }
-
-                            treatmentGroupedEvidences.forEach { (treatment, evidencesForTreatment) ->
-                                val cancerTypes =
-                                    evidencesForTreatment.map { it.applicableCancerType.cancerType }.toSet().joinToString(", ")
-
-                                val evidenceSubTable = Table(1).setWidth(width / columnCount)
+                            perLevelEvidences.forEach { evidence ->
+                                val cancerTypes = evidence.applicableCancerType.cancerType
                                 val cancerTypeContent = Paragraph(cancerTypes).setFirstLineIndent(10f).setItalic().setFontSize(6.5f)
-                                val treatmentContent = Paragraph(treatment)
+                                val treatmentContent = Paragraph(evidence.treatment)
 
-                                if (evidencesForTreatment.any { it.direction.isResistant }) {
+                                if (evidence.direction.isResistant) {
                                     treatmentContent.setFontColor(PALETTE_RED)
                                     cancerTypeContent.setFontColor(PALETTE_RED)
                                 }
 
+                                val evidenceSubTable = Table(1).setWidth(width / columnCount)
                                 evidenceSubTable.addCell(Cells.createContentNoBorder(treatmentContent))
                                 evidenceSubTable.startNewRow()
                                 evidenceSubTable.addCell(Cells.createContentNoBorder(cancerTypeContent))
 
-                                val evidenceCell = Cells.createContentNoBorder(evidenceSubTable)
-                                evidenceLevelTable.addCell(evidenceCell)
+                                evidenceLevelTable.addCell(Cells.createContentNoBorder(evidenceSubTable))
                             }
 
                             if (evidenceLevelTable.numberOfRows == 0) {
@@ -111,33 +85,5 @@ class MolecularClinicalEvidenceGenerator(
             }
         }
         return table
-    }
-
-    private fun extractClinicalDetails(evidence: ClinicalEvidence): Set<ClinicalDetails> {
-        val treatmentEvidenceSet = evidence.treatmentEvidence
-            .filter { it.onLabel == onLabel }
-            .filter { it.evidenceLevel != EvidenceLevel.D || !isPreclinical(it) }.toSet()
-        val (levelA, levelB, levelC, levelD) = listOf(EvidenceLevel.A, EvidenceLevel.B, EvidenceLevel.C, EvidenceLevel.D)
-            .map { treatmentsForEvidenceLevelAndLabel(treatmentEvidenceSet, it) }
-        return treatmentEvidenceSet.map {
-            ClinicalDetails(
-                it,
-                levelA.contains(it.treatment),
-                levelB.contains(it.treatment),
-                levelC.contains(it.treatment),
-                levelD.contains(it.treatment)
-            )
-        }.toSet()
-    }
-
-    private fun treatmentsForEvidenceLevelAndLabel(evidence: Set<TreatmentEvidence>, evidenceLevel: EvidenceLevel): Set<String> {
-        return evidence
-            .filter { it.evidenceLevel == evidenceLevel }
-            .map { it.treatment }
-            .toSet()
-    }
-
-    private fun isPreclinical(evidence: TreatmentEvidence): Boolean {
-        return evidence.approvalStatus in PRE_CLINICAL_APPROVAL_SET || evidence.approvalStatus.contains("PRECLINICAL", ignoreCase = true)
     }
 }
