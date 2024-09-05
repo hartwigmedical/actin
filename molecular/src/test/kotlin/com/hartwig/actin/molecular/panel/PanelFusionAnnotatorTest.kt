@@ -159,6 +159,7 @@ class PanelFusionAnnotatorTest {
                         treatment(
                             treatment = "intervention",
                             evidenceLevel = EvidenceLevel.A,
+                            approvalStatus = "GUIDELINE",
                             direction = EvidenceDirection(hasPositiveResponse = true, isCertain = true, hasBenefit = true),
                             onLabel = true,
                             isCategoryVariant = true

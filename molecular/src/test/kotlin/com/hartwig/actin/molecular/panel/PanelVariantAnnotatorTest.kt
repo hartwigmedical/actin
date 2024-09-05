@@ -146,7 +146,7 @@ class PanelVariantAnnotatorTest {
                     treatment(
                         treatment = "intervention",
                         evidenceLevel = EvidenceLevel.A,
-                        approvalStatus = "CLINICAL_STUDY",
+                        approvalStatus = "GUIDELINE",
                         direction = EvidenceDirection(hasPositiveResponse = true, isCertain = true, hasBenefit = true),
                         onLabel = true,
                         isCategoryVariant = true
