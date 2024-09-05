@@ -262,22 +262,22 @@ class PanelVariantAnnotator(
             }
         }
     }
+}
 
-    private fun impact(paveResponse: PaveResponse): String {
-        if (paveResponse.impact.hgvsProteinImpact.isNotEmpty() && paveResponse.impact.hgvsProteinImpact != "p.?") {
-            return forceSingleLetterAminoAcids(paveResponse.impact.hgvsProteinImpact.removePrefix("p."))
-        }
+fun impact(paveResponse: PaveResponse): String {
+    if (paveResponse.impact.hgvsProteinImpact.isNotEmpty() && paveResponse.impact.hgvsProteinImpact != "p.?") {
+        return forceSingleLetterAminoAcids(paveResponse.impact.hgvsProteinImpact.removePrefix("p."))
+    }
 
-        if (paveResponse.impact.hgvsCodingImpact.isNotEmpty()) {
-            return if (paveResponse.impact.canonicalCodingEffect == PaveCodingEffect.SPLICE) paveResponse.impact.hgvsCodingImpact + " splice"
-            else paveResponse.impact.hgvsCodingImpact
-        }
+    if (paveResponse.impact.hgvsCodingImpact.isNotEmpty()) {
+        return if (paveResponse.impact.canonicalCodingEffect == PaveCodingEffect.SPLICE) paveResponse.impact.hgvsCodingImpact + " splice"
+        else paveResponse.impact.hgvsCodingImpact
+    }
 
-        return if (paveResponse.impact.canonicalEffect.contains("upstream_gene_variant")) {
-            "upstream"
-        } else {
-            paveResponse.impact.canonicalEffect
-        }
+    return if (paveResponse.impact.canonicalEffect.contains("upstream_gene_variant")) {
+        "upstream"
+    } else {
+        paveResponse.impact.canonicalEffect
     }
 }
 

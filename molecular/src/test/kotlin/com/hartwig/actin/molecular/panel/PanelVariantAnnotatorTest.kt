@@ -290,6 +290,73 @@ class PanelVariantAnnotatorTest {
         assertThat(annotated.first().event).isEqualTo("$GENE $HGVS_CODING")
     }
 
+    @Test
+    fun `Should determine impact from PaveResponse`() {
+        assertThat(
+            impact(
+                PAVE_ANNOTATION.copy(
+                    impact = minimalPaveImpact().copy(
+                        canonicalCodingEffect = PaveCodingEffect.SPLICE,
+                        hgvsCodingImpact = "c.MUTATION",
+                        hgvsProteinImpact = "",
+                    )
+                )
+            )
+        ).isEqualTo("c.MUTATION splice")
+
+        assertThat(
+            impact(
+                PAVE_ANNOTATION.copy(
+                    impact = minimalPaveImpact().copy(
+                        canonicalCodingEffect = PaveCodingEffect.NONE,
+                        hgvsCodingImpact = "c.C_MUTATION",
+                        hgvsProteinImpact = "p.P_MUTATION",
+                    )
+                )
+            )
+        ).isEqualTo("P_MUTATION")
+
+        assertThat(
+            impact(
+                PAVE_ANNOTATION.copy(
+                    impact = minimalPaveImpact().copy(
+                        canonicalEffect = "upstream_gene_variant",
+                        canonicalCodingEffect = PaveCodingEffect.NONE,
+                        hgvsCodingImpact = "",
+                        hgvsProteinImpact = "",
+                    )
+                )
+            )
+        ).isEqualTo("upstream")
+
+        assertThat(
+            impact(
+                PAVE_ANNOTATION.copy(
+                    impact = minimalPaveImpact().copy(
+                        canonicalEffect = "something&another_thing",
+                        canonicalCodingEffect = PaveCodingEffect.NONE,
+                        hgvsCodingImpact = "",
+                        hgvsProteinImpact = "",
+                    )
+                )
+            )
+        ).isEqualTo("something&another_thing")
+    }
+
+    private fun minimalPaveImpact() = PaveImpact(
+        gene = "",
+        transcript = "",
+        canonicalEffect = "",
+        canonicalCodingEffect = PaveCodingEffect.NONE,
+        spliceRegion = false,
+        hgvsCodingImpact = "",
+        hgvsProteinImpact = "",
+        otherReportableEffects = null,
+        worstCodingEffect = PaveCodingEffect.NONE,
+        genesAffected = 1
+    )
+
+
     private fun setupGeneAlteration() {
         every { evidenceDatabase.geneAlterationForVariant(VARIANT_MATCH_CRITERIA) } returns HOTSPOT
     }
