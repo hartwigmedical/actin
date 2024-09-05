@@ -39,15 +39,20 @@ object EligibleExternalTrialGeneratorFunctions {
         table.addCell(Cells.createContent(finalSubTable))
     }
 
-    fun hospitalsInCountry(externalTrial: ExternalTrial, country: CountryName): List<String> {
+    fun hospitalsAndCitiesInCountry(externalTrial: ExternalTrial, country: CountryName): Pair<String, String> {
         val homeCountries = externalTrial.countries.filter { it.name == country }
         return if (homeCountries.size > 1 || homeCountries.isEmpty()) {
             throw IllegalStateException("Country ${country.display()} not found or found multiple times")
         } else {
             val hospitals = homeCountries.first().hospitalsPerCity.flatMap { it.value }
-            if (hospitals.size > 10) {
-                (listOf("Many (please check link)"))
-            } else hospitals
+            val cities = homeCountries.first().hospitalsPerCity.keys
+            val hospitalsString = if (hospitals.size > 10) {
+                "Many (please check link)"
+            } else hospitals.joinToString { it }
+            val citiesString = if (cities.size > 8) {
+                "Many (please check link)"
+            } else cities.joinToString { it }
+            Pair(hospitalsString, citiesString)
         }
     }
 

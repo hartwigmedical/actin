@@ -24,12 +24,11 @@ class EligibleOtherCountriesExternalTrialsGenerator(
     }
 
     override fun contents(): Table {
-
-        val eventWidth = (1.1 * width / 5).toFloat()
-        val sourceEventWidth = (1.1 * width / 5).toFloat()
-        val cancerTypeWidth = (1.1 * width / 5).toFloat()
-        val titleWidth = (2.0 * width / 5).toFloat()
-        val countriesWidth = (1.5 * width / 5).toFloat()
+        val eventWidth = (0.9 * width / 5).toFloat()
+        val sourceEventWidth = (0.9 * width / 5).toFloat()
+        val cancerTypeWidth = (0.9 * width / 5).toFloat()
+        val titleWidth = (1.5 * width / 5).toFloat()
+        val countriesWidth = (0.8 * width / 5).toFloat()
 
         val table = Tables.createFixedWidthCols(eventWidth, sourceEventWidth + cancerTypeWidth + titleWidth + countriesWidth)
 

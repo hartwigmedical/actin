@@ -31,16 +31,22 @@ class EligibleLocalExternalTrialsGenerator(
         val sourceEventWidth = (0.9 * width / 5).toFloat()
         val cancerTypeWidth = (0.9 * width / 5).toFloat()
         val titleWidth = (1.5 * width / 5).toFloat()
-        val hospitalsWidth = (0.8 * width / 5).toFloat()
+        val hospitalsOrCitiesWidth = (0.8 * width / 5).toFloat()
 
-        val table = Tables.createFixedWidthCols(eventWidth, sourceEventWidth + cancerTypeWidth + titleWidth + hospitalsWidth)
+        val table = Tables.createFixedWidthCols(eventWidth, sourceEventWidth + cancerTypeWidth + titleWidth + hospitalsOrCitiesWidth)
         table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader("Event")))
-        val headerSubTable = Tables.createFixedWidthCols(sourceEventWidth, cancerTypeWidth, titleWidth, hospitalsWidth)
-        listOf("Source Event", "Cancer Type", "Trial title", "Hospitals").forEach { headerSubTable.addHeaderCell(Cells.createHeader(it)) }
+        val headerSubTable = Tables.createFixedWidthCols(sourceEventWidth, cancerTypeWidth, titleWidth, hospitalsOrCitiesWidth)
+        val hospitalsOrCities = if (homeCountry == CountryName.NETHERLANDS) "Hospitals" else "Cities"
+        listOf(
+            "Source Event",
+            "Cancer Type",
+            "Trial title",
+            hospitalsOrCities
+        ).forEach { headerSubTable.addHeaderCell(Cells.createHeader(it)) }
         table.addHeaderCell(Cells.createContentNoBorder(headerSubTable))
 
         externalTrialsPerEvent.forEach { (event, externalTrials) ->
-            val subTable = Tables.createFixedWidthCols(sourceEventWidth, cancerTypeWidth, titleWidth, hospitalsWidth)
+            val subTable = Tables.createFixedWidthCols(sourceEventWidth, cancerTypeWidth, titleWidth, hospitalsOrCitiesWidth)
             externalTrials.forEach { externalTrial ->
                 subTable.addCell(Cells.createContentNoBorder(externalTrial.sourceEvent))
                 subTable.addCell(Cells.createContentNoBorder(externalTrial.applicableCancerType.cancerType))
@@ -48,13 +54,12 @@ class EligibleLocalExternalTrialsGenerator(
                     Cells.createContentNoBorder(EligibleExternalTrialGeneratorFunctions.shortenTitle(externalTrial.title))
                         .setAction(PdfAction.createURI(externalTrial.url)).addStyle(Styles.urlStyle())
                 )
-                subTable.addCell(
-                    Cells.createContentNoBorder(
-                        EligibleExternalTrialGeneratorFunctions.hospitalsInCountry(
-                            externalTrial,
-                            homeCountry
-                        ).joinToString { it })
-                )
+                val hospitalsOrCitiesCell = if (homeCountry == CountryName.NETHERLANDS) {
+                    EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(externalTrial, homeCountry).first
+                } else {
+                    EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(externalTrial, homeCountry).second
+                }
+                subTable.addCell(Cells.createContentNoBorder(hospitalsOrCitiesCell))
             }
             table.addCell(Cells.createContent(event))
             EligibleExternalTrialGeneratorFunctions.insertRow(table, subTable)
