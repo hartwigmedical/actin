@@ -10,7 +10,7 @@ fun evidenceTier(driver: Driver): EvidenceTier {
             it.onLabel && it.evidenceLevel in setOf(
                 EvidenceLevel.A,
                 EvidenceLevel.B
-            ) && it.isCategoryVariant == false
+            ) && !it.isCategoryEvent
         } -> EvidenceTier.I
 
         driver.evidence.treatmentEvidence.isNotEmpty() -> EvidenceTier.II

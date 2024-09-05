@@ -4,9 +4,9 @@ import com.hartwig.actin.datamodel.molecular.evidence.ApplicableCancerType
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 class ClinicalDetailsFunctionsTest {
 
@@ -26,7 +26,8 @@ class ClinicalDetailsFunctionsTest {
         assertThat(result).containsExactlyEntriesOf(expected)
     }
 
-    @Test fun `Should correctly separate clinical details into per level of evidence lists`() {
+    @Test
+    fun `Should correctly separate clinical details into per level of evidence lists`() {
         val detailsC = createDetails(createTreatmentEvidence(treatment = "C"), levelC = true)
 
         val details = listOf(detailsA1, detailsA2, detailsB, detailsC)
@@ -45,7 +46,8 @@ class ClinicalDetailsFunctionsTest {
     private fun createTreatmentEvidence(treatment: String = "treatment", sourceEvent: String = ""): TreatmentEvidence {
         return TreatmentEvidence(
             treatment,
-            EvidenceLevel.A, true,
+            EvidenceLevel.A,
+            true,
             EvidenceDirection(),
             LocalDate.EPOCH,
             "",

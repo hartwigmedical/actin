@@ -19,16 +19,18 @@ class ClinicalEvidenceFactoryTest {
             EvidenceLevel.D,
             EvidenceDirection(isCertain = true),
             true,
-            isCategoryVariant = null
+            isCategoryEvent = false
         )
         val result =
             ClinicalEvidenceFactory.create(
                 ActionabilityMatch(
                     onLabelEvents = listOf(
-                        TestServeActionabilityFactory.createActionableEvent(
-                            Knowledgebase.CKB_EVIDENCE,
-                            onlabel.treatment
-                        )
+                        TestServeActionabilityFactory.hotspotBuilder().from(
+                            TestServeActionabilityFactory.createActionableEvent(
+                                Knowledgebase.CKB_EVIDENCE,
+                                onlabel.treatment
+                            )
+                        ).build()
                     ),
                     offLabelEvents = emptyList()
                 )
@@ -44,16 +46,18 @@ class ClinicalEvidenceFactoryTest {
             EvidenceLevel.D,
             EvidenceDirection(isCertain = true),
             false,
-            isCategoryVariant = null
+            isCategoryEvent = false
         )
         val result =
             ClinicalEvidenceFactory.create(
                 ActionabilityMatch(
                     offLabelEvents = listOf(
-                        TestServeActionabilityFactory.createActionableEvent(
-                            Knowledgebase.CKB_EVIDENCE,
-                            onlabel.treatment
-                        )
+                        TestServeActionabilityFactory.hotspotBuilder().from(
+                            TestServeActionabilityFactory.createActionableEvent(
+                                Knowledgebase.CKB_EVIDENCE,
+                                onlabel.treatment
+                            )
+                        ).build()
                     ),
                     onLabelEvents = emptyList()
                 )
@@ -65,16 +69,18 @@ class ClinicalEvidenceFactoryTest {
     @Test
     fun `Should convert SERVE external trials to clinical evidence`() {
         val trial = TestClinicalEvidenceFactory.createTestExternalTrial()
-            .copy(countries = setOf(TestClinicalEvidenceFactory.createCountry(CountryName.OTHER, emptyMap())), isCategoryVariant = null)
+            .copy(countries = setOf(TestClinicalEvidenceFactory.createCountry(CountryName.OTHER, emptyMap())), isCategoryEvent = false)
         val result =
             ClinicalEvidenceFactory.create(
                 ActionabilityMatch(
                     onLabelEvents = listOf(
-                        TestServeActionabilityFactory.createActionableEvent(
-                            Knowledgebase.CKB_TRIAL,
-                            trial.title,
-                            ServeDirection.RESPONSIVE
-                        )
+                        TestServeActionabilityFactory.hotspotBuilder().from(
+                            TestServeActionabilityFactory.createActionableEvent(
+                                Knowledgebase.CKB_TRIAL,
+                                trial.title,
+                                ServeDirection.RESPONSIVE
+                            )
+                        ).build()
                     ),
                     offLabelEvents = emptyList()
                 )

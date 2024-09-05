@@ -4,16 +4,16 @@ import com.hartwig.actin.datamodel.molecular.evidence.ApplicableCancerType
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 class TreatmentEvidenceFunctionsTest {
 
-    private val onLabelCategoryLevelA = createTreatmentEvidence(treatment = "onLabel category level", isCategoryVariant = true)
+    private val onLabelCategoryLevelA = createTreatmentEvidence(treatment = "onLabel category level", isCategoryEvent = true)
     private val offLabelCategoryLevelA = onLabelCategoryLevelA.copy(treatment = "offLabel category level", onLabel = false)
     private val onLabelCategoryLevelB = onLabelCategoryLevelA.copy(evidenceLevel = EvidenceLevel.B)
-    private val onLabelNonCategoryLevelA = onLabelCategoryLevelA.copy(treatment = "onLabel non-category level", isCategoryVariant = false)
+    private val onLabelNonCategoryLevelA = onLabelCategoryLevelA.copy(treatment = "onLabel non-category level", isCategoryEvent = false)
     private val onLabelNonCategoryLevelB = onLabelNonCategoryLevelA.copy(evidenceLevel = EvidenceLevel.B)
 
     @Test
@@ -80,7 +80,7 @@ class TreatmentEvidenceFunctionsTest {
         treatment: String = "treatment",
         onLabel: Boolean = true,
         evidenceLevel: EvidenceLevel = EvidenceLevel.A,
-        isCategoryVariant: Boolean = true
+        isCategoryEvent: Boolean = true
     ): TreatmentEvidence {
         return TreatmentEvidence(
             treatment,
@@ -89,7 +89,7 @@ class TreatmentEvidenceFunctionsTest {
             EvidenceDirection(),
             LocalDate.EPOCH,
             "",
-            isCategoryVariant,
+            isCategoryEvent,
             "sourceEvent",
             ApplicableCancerType("", emptySet())
         )

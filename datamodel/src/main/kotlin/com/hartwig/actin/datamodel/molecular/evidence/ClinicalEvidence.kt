@@ -22,7 +22,7 @@ data class ApplicableCancerType(val cancerType: String, val excludedCancerTypes:
 interface Evidence {
     val sourceEvent: String
     val applicableCancerType: ApplicableCancerType
-    val isCategoryVariant: Boolean?
+    val isCategoryEvent: Boolean
 }
 
 enum class EvidenceTier {
@@ -47,7 +47,7 @@ data class TreatmentEvidence(
     val direction: EvidenceDirection,
     val date: LocalDate,
     val description: String,
-    override val isCategoryVariant: Boolean?,
+    override val isCategoryEvent: Boolean,
     override val sourceEvent: String,
     override val applicableCancerType: ApplicableCancerType
 ) : Evidence
@@ -57,7 +57,7 @@ data class ExternalTrial(
     val countries: Set<Country>,
     val url: String,
     val nctId: String,
-    override val isCategoryVariant: Boolean?,
+    override val isCategoryEvent: Boolean,
     override val sourceEvent: String,
     override val applicableCancerType: ApplicableCancerType
 ) : Comparable<ExternalTrial>, Evidence {
