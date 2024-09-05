@@ -12,7 +12,6 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.actionability.isCategoryVariant
 import com.hartwig.serve.datamodel.ActionableEvent
-import com.hartwig.serve.datamodel.ApprovalStatus
 import com.hartwig.serve.datamodel.ClinicalTrial
 import com.hartwig.serve.datamodel.Treatment
 

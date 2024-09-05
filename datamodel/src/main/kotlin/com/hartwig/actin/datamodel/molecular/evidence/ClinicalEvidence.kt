@@ -1,7 +1,6 @@
 package com.hartwig.actin.datamodel.molecular.evidence
 
 import com.hartwig.actin.datamodel.Displayable
-import com.hartwig.serve.datamodel.ApprovalStatus
 
 data class Country(val name: CountryName, val hospitalsPerCity: Map<String, Set<String>>)
 

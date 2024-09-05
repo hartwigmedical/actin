@@ -1,7 +1,5 @@
 package com.hartwig.actin.datamodel.molecular.evidence
 
-import com.hartwig.serve.datamodel.ApprovalStatus
-
 object TestClinicalEvidenceFactory {
 
     fun createEmptyClinicalEvidence(): ClinicalEvidence {

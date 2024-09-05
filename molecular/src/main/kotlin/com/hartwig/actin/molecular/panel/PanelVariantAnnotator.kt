@@ -267,7 +267,7 @@ class PanelVariantAnnotator(
 
 fun normalizeProteinImpact(hgvsProteinImpact: String): String {
     return if (hgvsProteinImpact != "p.?") {
-        AminoAcids.forceSingleLetterProteinAnnotation(hgvsProteinImpact);
+        AminoAcids.forceSingleLetterProteinAnnotation(hgvsProteinImpact)
     } else {
         hgvsProteinImpact
     }
