@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 class TreatmentEvidenceFunctionsTest {
 
@@ -87,7 +88,7 @@ class TreatmentEvidenceFunctionsTest {
             evidenceLevel,
             onLabel,
             EvidenceDirection(),
-            LocalDate.now(),
+            LocalDate.EPOCH,
             "",
             isCategoryEvent,
             "sourceEvent",
