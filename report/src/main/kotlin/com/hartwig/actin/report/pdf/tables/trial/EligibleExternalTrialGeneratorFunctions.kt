@@ -6,6 +6,8 @@ import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
+private const val MANY_PLEASE_CHECK_LINK = "Many (please check link)"
+
 object EligibleExternalTrialGeneratorFunctions {
 
     fun localTrials(
@@ -47,10 +49,10 @@ object EligibleExternalTrialGeneratorFunctions {
             val hospitals = homeCountries.first().hospitalsPerCity.flatMap { it.value }
             val cities = homeCountries.first().hospitalsPerCity.keys
             val hospitalsString = if (hospitals.size > 10) {
-                "Many (please check link)"
+                MANY_PLEASE_CHECK_LINK
             } else hospitals.joinToString { it }
             val citiesString = if (cities.size > 8) {
-                "Many (please check link)"
+                MANY_PLEASE_CHECK_LINK
             } else cities.joinToString { it }
             Pair(hospitalsString, citiesString)
         }
@@ -59,7 +61,7 @@ object EligibleExternalTrialGeneratorFunctions {
     fun countryNamesWithCities(externalTrial: ExternalTrial): String {
         return externalTrial.countries.joinToString { country ->
             val cities = if (country.hospitalsPerCity.keys.size > 8) {
-                "Many (please check link)"
+                MANY_PLEASE_CHECK_LINK
             } else {
                 country.hospitalsPerCity.keys.joinToString(", ")
             }
