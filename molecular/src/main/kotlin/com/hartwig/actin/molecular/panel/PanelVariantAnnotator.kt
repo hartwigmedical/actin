@@ -273,7 +273,11 @@ class PanelVariantAnnotator(
             else paveResponse.impact.hgvsCodingImpact
         }
 
-        throw IllegalStateException("Unable to determine impact for $paveResponse")
+        return if (paveResponse.impact.canonicalEffect.contains("upstream_gene_variant")) {
+            "upstream"
+        } else {
+            paveResponse.impact.canonicalEffect
+        }
     }
 }
 
