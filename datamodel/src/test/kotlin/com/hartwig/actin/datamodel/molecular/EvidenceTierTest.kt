@@ -1,12 +1,12 @@
 package com.hartwig.actin.datamodel.molecular
 
-import com.hartwig.actin.datamodel.molecular.evidence.ApprovalStatus
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceTier
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.treatment
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
+import com.hartwig.serve.datamodel.ApprovalStatus
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -46,7 +46,7 @@ class EvidenceTierTest {
     private fun driverWithEvidence(
         evidenceLevel: EvidenceLevel,
         onLabel: Boolean = true,
-        approvalStatus: ApprovalStatus = ApprovalStatus.CLINICAL_STUDY,
+        approvalStatus: String = "CLINICAL STUDY",
         isCategoryEvent: Boolean = false
     ): Driver {
         return mockDriver(

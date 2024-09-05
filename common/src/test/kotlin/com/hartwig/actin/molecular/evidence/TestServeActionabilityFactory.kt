@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.evidence
 
-import com.hartwig.actin.datamodel.molecular.evidence.ApprovalStatus
 import com.hartwig.serve.datamodel.ActionableEvent
+import com.hartwig.serve.datamodel.ApprovalStatus
 import com.hartwig.serve.datamodel.CancerType
 import com.hartwig.serve.datamodel.EvidenceDirection
 import com.hartwig.serve.datamodel.EvidenceLevel

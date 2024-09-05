@@ -1,7 +1,6 @@
 package com.hartwig.actin.molecular.evidence
 
 import com.hartwig.actin.datamodel.molecular.evidence.ApplicableCancerType
-import com.hartwig.actin.datamodel.molecular.evidence.ApprovalStatus
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
@@ -12,6 +11,7 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.actionability.isCategoryVariant
 import com.hartwig.serve.datamodel.ActionableEvent
+import com.hartwig.serve.datamodel.ApprovalStatus
 import com.hartwig.serve.datamodel.ClinicalTrial
 import com.hartwig.serve.datamodel.Treatment
 import com.hartwig.serve.datamodel.Country as ServeCountry
@@ -45,7 +45,7 @@ object ClinicalEvidenceFactory {
                 ),
                 it.isCategoryVariant(),
                 it.sourceEvent(),
-                it.approvalStatus(),
+                it.approvalStatus().name,
                 ApplicableCancerType(it.applicableCancerType().name(), it.blacklistCancerTypes().map { ct -> ct.name() }.toSet()),
             )
         }.toSet()
@@ -67,7 +67,7 @@ object ClinicalEvidenceFactory {
                     ),
                     isCategoryVariant = onLabelEvent.isCategoryVariant(),
                     sourceEvent = onLabelEvent.sourceEvent(),
-                    approvalStatus = ApprovalStatus.CLINICAL_STUDY
+                    approvalStatus = "CLINICAL_STUDY"
                 )
             }
             .toSet()

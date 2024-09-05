@@ -1,7 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
-import com.hartwig.actin.datamodel.molecular.evidence.ApprovalStatus
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
@@ -21,13 +20,13 @@ data class ClinicalDetails(
 )
 
 private val PRE_CLINICAL_APPROVAL_SET = setOf(
-    ApprovalStatus.PRECLINICAL,
-    ApprovalStatus.PRECLINICAL_PDX,
-    ApprovalStatus.PRECLINICAL_BIOCHEMICAL,
-    ApprovalStatus.PRECLINICAL_CELL_CULTURE,
-    ApprovalStatus.PRECLINICAL_PDX_CELL_CULTURE,
-    ApprovalStatus.PRECLINICAL_CELL_LINE_XENOGRAFT,
-    ApprovalStatus.PRECLINICAL_PATIENT_CELL_CULTURE
+    "PRECLINICAL",
+    "PRECLINICAL_PDX",
+    "PRECLINICAL_BIOCHEMICAL",
+    "PRECLINICAL_CELL_CULTURE",
+    "PRECLINICAL_PDX_CELL_CULTURE",
+    "PRECLINICAL_CELL_LINE_XENOGRAFT",
+    "PRECLINICAL_PATIENT_CELL_CULTURE"
 )
 
 class MolecularClinicalEvidenceGenerator(
@@ -117,7 +116,7 @@ class MolecularClinicalEvidenceGenerator(
     private fun extractClinicalDetails(evidence: ClinicalEvidence): Set<ClinicalDetails> {
         val treatmentEvidenceSet = evidence.treatmentEvidence
             .filter { it.onLabel == onLabel }
-            .filter { it.evidenceLevel != EvidenceLevel.D || it.approvalStatus !in PRE_CLINICAL_APPROVAL_SET }.toSet()
+            .filter { it.evidenceLevel != EvidenceLevel.D || !isPreclinical(it) }.toSet()
         val (levelA, levelB, levelC, levelD) = listOf(EvidenceLevel.A, EvidenceLevel.B, EvidenceLevel.C, EvidenceLevel.D)
             .map { treatmentsForEvidenceLevelAndLabel(treatmentEvidenceSet, it) }
         return treatmentEvidenceSet.map {
@@ -136,5 +135,9 @@ class MolecularClinicalEvidenceGenerator(
             .filter { it.evidenceLevel == evidenceLevel }
             .map { it.treatment }
             .toSet()
+    }
+
+    private fun isPreclinical(evidence: TreatmentEvidence): Boolean {
+        return evidence.approvalStatus in PRE_CLINICAL_APPROVAL_SET || evidence.approvalStatus.contains("PRECLINICAL", ignoreCase = true)
     }
 }

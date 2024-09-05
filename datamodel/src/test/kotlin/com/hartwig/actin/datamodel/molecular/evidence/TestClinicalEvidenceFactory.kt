@@ -1,5 +1,7 @@
 package com.hartwig.actin.datamodel.molecular.evidence
 
+import com.hartwig.serve.datamodel.ApprovalStatus
+
 object TestClinicalEvidenceFactory {
 
     fun createEmpty(): ClinicalEvidence {
@@ -26,7 +28,7 @@ object TestClinicalEvidenceFactory {
     fun offLabelSuspectResistant() = treatment(
         "off-label suspect resistant",
         EvidenceLevel.C,
-        ApprovalStatus.GUIDELINE,
+        "GUIDELINE",
         EvidenceDirection(isResistant = true, isCertain = false),
         false
     )
@@ -34,7 +36,7 @@ object TestClinicalEvidenceFactory {
     fun onLabelSuspectResistant() = treatment(
         "on-label suspect resistant",
         EvidenceLevel.C,
-        ApprovalStatus.GUIDELINE,
+        "GUIDELINE",
         EvidenceDirection(isResistant = true, isCertain = false),
         true
     )
@@ -43,7 +45,7 @@ object TestClinicalEvidenceFactory {
         treatment(
             "off-label known resistant",
             EvidenceLevel.A,
-            ApprovalStatus.GUIDELINE,
+            "GUIDELINE",
             EvidenceDirection(isResistant = true, isCertain = true),
             false
         )
@@ -52,21 +54,21 @@ object TestClinicalEvidenceFactory {
         treatment(
             "on-label known resistant",
             EvidenceLevel.A,
-            ApprovalStatus.GUIDELINE,
+            "GUIDELINE",
             EvidenceDirection(isResistant = true, isCertain = true),
             true
         )
 
     fun offLabelPreclinical() =
-        treatment("off-label pre-clinical", EvidenceLevel.D, ApprovalStatus.GUIDELINE, EvidenceDirection(hasPositiveResponse = true), false)
+        treatment("off-label pre-clinical", EvidenceLevel.D, "PRECLINICAL", EvidenceDirection(hasPositiveResponse = true), false)
 
     fun onLabelPreclinical() =
-        treatment("on-label pre-clinical", EvidenceLevel.C, ApprovalStatus.GUIDELINE, EvidenceDirection(hasPositiveResponse = true), true)
+        treatment("on-label pre-clinical", EvidenceLevel.C, "PRECLINICAL", EvidenceDirection(hasPositiveResponse = true), true)
 
     fun offLabelExperimental() = treatment(
         "off-label experimental",
         EvidenceLevel.B,
-        ApprovalStatus.GUIDELINE,
+        "PHASE_III",
         EvidenceDirection(hasPositiveResponse = true, isCertain = true),
         false
     )
@@ -74,7 +76,7 @@ object TestClinicalEvidenceFactory {
     fun onLabelExperimental() = treatment(
         "on-label experimental",
         EvidenceLevel.A,
-        ApprovalStatus.GUIDELINE,
+        "PHASE_III",
         EvidenceDirection(hasPositiveResponse = true, isCertain = false),
         true
     )
@@ -83,7 +85,7 @@ object TestClinicalEvidenceFactory {
         treatment(
             "approved",
             EvidenceLevel.A,
-            ApprovalStatus.GUIDELINE,
+            "GUIDELINE",
             EvidenceDirection(hasPositiveResponse = true, isCertain = true),
             true
         )
@@ -91,7 +93,7 @@ object TestClinicalEvidenceFactory {
     fun treatment(
         treatment: String,
         evidenceLevel: EvidenceLevel,
-        approvalStatus: ApprovalStatus,
+        approvalStatus: String,
         direction: EvidenceDirection,
         onLabel: Boolean,
         isCategoryVariant: Boolean? = false

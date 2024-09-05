@@ -1,5 +1,7 @@
 package com.hartwig.actin.datamodel.molecular.evidence
 
+import com.hartwig.serve.datamodel.ApprovalStatus
+
 object TestExternalTrialFactory {
 
     fun create(title: String = "", countries: Set<Country> = emptySet(), url: String = "", nctId: String = ""): ExternalTrial {
@@ -9,7 +11,7 @@ object TestExternalTrialFactory {
             url = url,
             nctId = nctId,
             sourceEvent = "",
-            approvalStatus = ApprovalStatus.CLINICAL_STUDY,
+            approvalStatus = "CLINICAL_STUDY",
             applicableCancerType = ApplicableCancerType(cancerType = "", excludedCancerTypes = emptySet()),
             isCategoryVariant = false
         )

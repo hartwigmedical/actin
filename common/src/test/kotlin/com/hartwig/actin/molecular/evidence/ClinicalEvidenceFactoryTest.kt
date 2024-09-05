@@ -18,6 +18,7 @@ class ClinicalEvidenceFactoryTest {
         val onlabel = TestClinicalEvidenceFactory.treatment(
             "on-label",
             EvidenceLevel.D,
+            "GUIDELINE",
             EvidenceDirection(isCertain = true),
             true,
             isCategoryVariant = null
@@ -43,6 +44,7 @@ class ClinicalEvidenceFactoryTest {
         val onlabel = TestClinicalEvidenceFactory.treatment(
             "off-label",
             EvidenceLevel.D,
+            "GUIDELINE",
             EvidenceDirection(isCertain = true),
             false,
             isCategoryVariant = null
