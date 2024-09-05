@@ -3,7 +3,9 @@ package com.hartwig.actin.datamodel.molecular.evidence
 import com.hartwig.actin.datamodel.Displayable
 import com.hartwig.serve.datamodel.ApprovalStatus
 
-enum class Country(private val display: String) : Displayable {
+data class Country(val name: CountryName, val hospitalsPerCity: Map<String, Set<String>>)
+
+enum class CountryName(private val display: String) : Displayable {
     NETHERLANDS("Netherlands"),
     BELGIUM("Belgium"),
     GERMANY("Germany"),

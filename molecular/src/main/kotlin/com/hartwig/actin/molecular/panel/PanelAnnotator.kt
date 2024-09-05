@@ -20,6 +20,9 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
 private const val TMB_HIGH_CUTOFF = 10.0
+private const val MIN_COPY_NUMBER = 6
+private const val MAX_COPY_NUMBER = 6
+private const val PLOIDY = 2.0
 
 class PanelAnnotator(
     private val evidenceDatabase: EvidenceDatabase,
@@ -46,7 +49,9 @@ class PanelAnnotator(
             characteristics = MolecularCharacteristics(
                 isMicrosatelliteUnstable = input.isMicrosatelliteUnstable,
                 tumorMutationalBurden = input.tumorMutationalBurden,
-                hasHighTumorMutationalBurden = input.tumorMutationalBurden?.let { it > TMB_HIGH_CUTOFF }),
+                hasHighTumorMutationalBurden = input.tumorMutationalBurden?.let { it > TMB_HIGH_CUTOFF },
+                ploidy = PLOIDY
+            ),
             evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display()
         )
     }
@@ -73,8 +78,8 @@ class PanelAnnotator(
         driverLikelihood = DriverLikelihood.HIGH,
         evidence = ClinicalEvidenceFactory.createNoEvidence(),
         type = CopyNumberType.FULL_GAIN,
-        minCopies = 6,
-        maxCopies = 6
+        minCopies = MIN_COPY_NUMBER,
+        maxCopies = MAX_COPY_NUMBER
     )
 
     companion object {

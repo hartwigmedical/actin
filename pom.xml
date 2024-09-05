@@ -26,8 +26,8 @@
         <serve.version>5.2.0-beta.1</serve.version>
         <actin-personalization.version>0.4.0</actin-personalization.version>
         <orange-datamodel.version>2.6.0</orange-datamodel.version>
-        <actin-transvar.version>0.3.3</actin-transvar.version>
-        <actin-pave-lite.version>0.3.3</actin-pave-lite.version>
+        <actin-transvar.version>0.3.4</actin-transvar.version>
+        <actin-pave-lite.version>0.3.4</actin-pave-lite.version>
         <pave.version>1.6</pave.version>
 
         <!-- KD: Even though all code is in kotlin, the jooq code generator generates java code that needs to be compiled -->
@@ -58,6 +58,7 @@
         <jackson.version>2.16.1</jackson.version>
         <kotlinx-serialization-json.version>1.6.2</kotlinx-serialization-json.version>
         <commons-math3.version>3.6.1</commons-math3.version>
+        <jsonschema-generator.version>4.36.0</jsonschema-generator.version>
     </properties>
 
     <distributionManagement>
@@ -310,6 +311,11 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-math3</artifactId>
                 <version>${commons-math3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.victools</groupId>
+                <artifactId>jsonschema-generator</artifactId>
+                <version>${jsonschema-generator.version}</version>
             </dependency>
 
             <dependency>

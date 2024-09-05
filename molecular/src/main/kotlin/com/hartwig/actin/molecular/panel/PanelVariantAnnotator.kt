@@ -21,6 +21,7 @@ import com.hartwig.actin.molecular.paver.PaveQuery
 import com.hartwig.actin.molecular.paver.PaveResponse
 import com.hartwig.actin.molecular.paver.PaveTranscriptImpact
 import com.hartwig.actin.molecular.paver.Paver
+import com.hartwig.actin.tools.genome.AminoAcids
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.VariantAnnotator
 import com.hartwig.serve.datamodel.hotspot.KnownHotspot
@@ -182,7 +183,7 @@ class PanelVariantAnnotator(
         return TranscriptImpact(
             transcriptId = paveImpact.transcript,
             hgvsCodingImpact = paveImpact.hgvsCodingImpact,
-            hgvsProteinImpact = paveImpact.hgvsProteinImpact,
+            hgvsProteinImpact = normalizeProteinImpact(paveImpact.hgvsProteinImpact),
             isSpliceRegion = paveImpact.spliceRegion,
             affectedExon = paveLiteAnnotation.affectedExon(),
             affectedCodon = paveLiteAnnotation.affectedCodon(),
@@ -210,7 +211,7 @@ class PanelVariantAnnotator(
         return TranscriptImpact(
             transcriptId = paveTranscriptImpact.transcript,
             hgvsCodingImpact = paveTranscriptImpact.hgvsCodingImpact,
-            hgvsProteinImpact = paveTranscriptImpact.hgvsProteinImpact,
+            hgvsProteinImpact = normalizeProteinImpact(paveTranscriptImpact.hgvsProteinImpact),
             isSpliceRegion = paveTranscriptImpact.spliceRegion,
             affectedExon = paveLiteAnnotation.affectedExon(),
             affectedCodon = paveLiteAnnotation.affectedCodon(),
@@ -261,5 +262,13 @@ class PanelVariantAnnotator(
                 )
             }
         }
+    }
+}
+
+fun normalizeProteinImpact(hgvsProteinImpact: String): String {
+    return if (hgvsProteinImpact != "p.?") {
+        AminoAcids.forceSingleLetterProteinAnnotation(hgvsProteinImpact);
+    } else {
+        hgvsProteinImpact
     }
 }

@@ -1,7 +1,7 @@
 # ACTIN
 
 ACTIN is a system that determines available treatment options for cancer patients based on the following inputs:
- - Comprehensive clinical record of the patient
+ - Comprehensive clinical record of the patient 
  - Comprehensive molecular analysis of the tumor
  - Set of all treatment options available (standard-of-care (SOC) and experimental).
 
