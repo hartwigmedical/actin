@@ -2,11 +2,11 @@ package com.hartwig.actin.datamodel.molecular.evidence
 
 object TestClinicalEvidenceFactory {
 
-    fun createEmpty(): ClinicalEvidence {
+    fun createEmptyClinicalEvidence(): ClinicalEvidence {
         return ClinicalEvidence()
     }
 
-    fun createExhaustive(): ClinicalEvidence {
+    fun createExhaustiveClinicalEvidence(): ClinicalEvidence {
         return ClinicalEvidence(
             treatmentEvidence = setOf(
                 approved(),
@@ -19,7 +19,7 @@ object TestClinicalEvidenceFactory {
                 onLabelSuspectResistant(),
                 offLabelSuspectResistant(),
             ),
-            externalEligibleTrials = setOf(TestExternalTrialFactory.createTestTrial()),
+            externalEligibleTrials = setOf(createTestExternalTrial()),
         )
     }
 
@@ -102,5 +102,33 @@ object TestClinicalEvidenceFactory {
 
     fun withSuspectResistantTreatment(treatment: String): ClinicalEvidence {
         return ClinicalEvidence(treatmentEvidence = setOf(onLabelSuspectResistant().copy(treatment = treatment)))
+    }
+
+    fun createTestExternalTrial(): ExternalTrial {
+        return createExternalTrial(
+            "treatment",
+            setOf(
+                createCountry(CountryName.NETHERLANDS, mapOf("Leiden" to setOf("LUMC"))),
+                createCountry(CountryName.BELGIUM, mapOf("Brussels" to emptySet()))
+            ),
+            url = "https://clinicaltrials.gov/study/NCT00000001",
+            "NCT00000001"
+        )
+    }
+
+    fun createExternalTrial(title: String = "", countries: Set<Country> = emptySet(), url: String = "", nctId: String = ""): ExternalTrial {
+        return ExternalTrial(
+            title = title,
+            countries = countries,
+            url = url,
+            nctId = nctId,
+            sourceEvent = "",
+            applicableCancerType = ApplicableCancerType(cancerType = "", excludedCancerTypes = emptySet()),
+            isCategoryVariant = false
+        )
+    }
+
+    fun createCountry(countryName: CountryName, hospitalsPerCity: Map<String, Set<String>> = emptyMap()): Country {
+        return Country(countryName, hospitalsPerCity)
     }
 }
