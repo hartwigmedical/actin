@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 class ClinicalDetailsFunctionsTest {
 
@@ -42,7 +43,16 @@ class ClinicalDetailsFunctionsTest {
     }
 
     private fun createTreatmentEvidence(treatment: String = "treatment", sourceEvent: String = ""): TreatmentEvidence {
-        return TreatmentEvidence(treatment, EvidenceLevel.A, true, EvidenceDirection(), true, sourceEvent, ApplicableCancerType("", emptySet()))
+        return TreatmentEvidence(
+            treatment,
+            EvidenceLevel.A, true,
+            EvidenceDirection(),
+            LocalDate.EPOCH,
+            "",
+            true,
+            sourceEvent,
+            ApplicableCancerType("", emptySet())
+        )
     }
 
     private fun createDetails(
