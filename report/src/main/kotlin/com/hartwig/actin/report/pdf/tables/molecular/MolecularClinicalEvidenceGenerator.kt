@@ -3,7 +3,6 @@ package com.hartwig.actin.report.pdf.tables.molecular
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.report.interpretation.ClinicalDetailsFactory
 import com.hartwig.actin.report.interpretation.ClinicalDetailsFunctions
-import com.hartwig.actin.report.interpretation.TreatmentEvidenceFunctions
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Styles.PALETTE_RED
@@ -45,7 +44,7 @@ class MolecularClinicalEvidenceGenerator(
                 val groupedBySourceEvent = ClinicalDetailsFunctions.groupBySourceEvent(clinicalDetails)
 
                 for ((sourceEvent, details) in groupedBySourceEvent) {
-                    val treatmentEvidencesByLevel = TreatmentEvidenceFunctions.mapTreatmentEvidencesToLevel(details)
+                    val treatmentEvidencesByLevel = ClinicalDetailsFunctions.mapTreatmentEvidencesToLevel(details)
 
                     if (treatmentEvidencesByLevel.any { it.isNotEmpty() }) {
                         table.addCell(Cells.createContent(driver.event))
