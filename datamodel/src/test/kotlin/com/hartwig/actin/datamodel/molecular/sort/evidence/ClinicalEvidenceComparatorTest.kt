@@ -1,5 +1,6 @@
 package com.hartwig.actin.datamodel.molecular.sort.evidence
 
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.withApprovedTreatment
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.withExternalEligibleTrial
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.withOffLabelExperimentalTreatment
@@ -7,7 +8,6 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactor
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.withOnLabelKnownResistantTreatment
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.withOnLabelPreClinicalTreatment
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.withSuspectResistantTreatment
-import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -16,7 +16,7 @@ class ClinicalEvidenceComparatorTest {
     @Test
     fun `Should sort actionable evidences`() {
         val evidence1 = withApprovedTreatment("treatment")
-        val evidence2 = withExternalEligibleTrial(TestExternalTrialFactory.createTestTrial())
+        val evidence2 = withExternalEligibleTrial(TestClinicalEvidenceFactory.createTestExternalTrial())
         val evidence3 = withOnLabelExperimentalTreatment("treatment")
         val evidence4 = withOffLabelExperimentalTreatment("treatment")
         val evidence5 = withOnLabelPreClinicalTreatment("treatment")

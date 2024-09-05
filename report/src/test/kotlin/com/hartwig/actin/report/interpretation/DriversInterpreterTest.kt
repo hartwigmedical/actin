@@ -11,7 +11,6 @@ import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVirusFactory
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
-import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -20,19 +19,19 @@ class DriversInterpreterTest {
 
     @Test
     fun shouldIncludeNonActionableReportableDrivers() {
-        val record = createTestMolecularRecordWithDriverEvidence(TestClinicalEvidenceFactory.createEmpty(), true)
+        val record = createTestMolecularRecordWithDriverEvidence(TestClinicalEvidenceFactory.createEmptyClinicalEvidence(), true)
         assertCountForRecord(1, record)
     }
 
     @Test
     fun shouldSkipNonActionableNotReportableDrivers() {
-        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.createEmpty())
+        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.createEmptyClinicalEvidence())
         assertCountForRecord(0, record)
     }
 
     @Test
     fun shouldIncludeNonReportableDriversWithActinTrialMatches() {
-        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.createEmpty())
+        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.createEmptyClinicalEvidence())
         assertCountForRecordAndCohorts(
             1,
             record,
@@ -51,7 +50,7 @@ class DriversInterpreterTest {
     fun shouldIncludeNonReportableDriversWithExternalTrialMatches() {
         val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(
             TestClinicalEvidenceFactory.withExternalEligibleTrial(
-                TestExternalTrialFactory.createTestTrial()
+                TestClinicalEvidenceFactory.createTestExternalTrial()
             )
         )
         assertCountForRecord(1, record)

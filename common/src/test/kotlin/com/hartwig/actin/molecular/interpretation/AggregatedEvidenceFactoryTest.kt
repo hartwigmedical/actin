@@ -26,9 +26,9 @@ class AggregatedEvidenceFactoryTest {
     fun `Should find no evidence on no evidence`() {
         val characteristics = TestMolecularFactory.createMinimalTestMolecularRecord().characteristics.copy(
             isMicrosatelliteUnstable = true,
-            microsatelliteEvidence = TestClinicalEvidenceFactory.createEmpty(),
+            microsatelliteEvidence = TestClinicalEvidenceFactory.createEmptyClinicalEvidence(),
             isHomologousRepairDeficient = true,
-            homologousRepairEvidence = TestClinicalEvidenceFactory.createEmpty(),
+            homologousRepairEvidence = TestClinicalEvidenceFactory.createEmptyClinicalEvidence(),
             hasHighTumorMutationalBurden = null,
             hasHighTumorMutationalLoad = null
         )
@@ -39,13 +39,13 @@ class AggregatedEvidenceFactoryTest {
     fun `Should aggregate characteristics`() {
         val characteristics = TestMolecularFactory.createMinimalTestMolecularRecord().characteristics.copy(
             isMicrosatelliteUnstable = true,
-            microsatelliteEvidence = TestClinicalEvidenceFactory.createExhaustive(),
+            microsatelliteEvidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
             isHomologousRepairDeficient = true,
-            homologousRepairEvidence = TestClinicalEvidenceFactory.createExhaustive(),
+            homologousRepairEvidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
             hasHighTumorMutationalBurden = true,
-            tumorMutationalBurdenEvidence = TestClinicalEvidenceFactory.createExhaustive(),
+            tumorMutationalBurdenEvidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
             hasHighTumorMutationalLoad = true,
-            tumorMutationalLoadEvidence = TestClinicalEvidenceFactory.createExhaustive()
+            tumorMutationalLoadEvidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence()
         )
         val evidence = AggregatedEvidenceFactory.create(withCharacteristics(characteristics))
 
@@ -56,13 +56,13 @@ class AggregatedEvidenceFactoryTest {
     fun `Should skip evidence on missing characteristics`() {
         val characteristics = TestMolecularFactory.createMinimalTestMolecularRecord().characteristics.copy(
             isMicrosatelliteUnstable = null,
-            microsatelliteEvidence = TestClinicalEvidenceFactory.createExhaustive(),
+            microsatelliteEvidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
             isHomologousRepairDeficient = null,
-            homologousRepairEvidence = TestClinicalEvidenceFactory.createExhaustive(),
+            homologousRepairEvidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
             hasHighTumorMutationalBurden = null,
-            tumorMutationalBurdenEvidence = TestClinicalEvidenceFactory.createExhaustive(),
+            tumorMutationalBurdenEvidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
             hasHighTumorMutationalLoad = null,
-            tumorMutationalLoadEvidence = TestClinicalEvidenceFactory.createExhaustive()
+            tumorMutationalLoadEvidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence()
         )
         assertThat(AggregatedEvidenceFactory.create(withCharacteristics(characteristics)).treatmentEvidence).isEmpty()
     }
@@ -72,32 +72,32 @@ class AggregatedEvidenceFactoryTest {
         val drivers = TestMolecularFactory.createMinimalTestMolecularRecord().drivers.copy(
             variants = setOf(
                 TestVariantFactory.createMinimal().copy(
-                    event = "variant", evidence = TestClinicalEvidenceFactory.createExhaustive()
+                    event = "variant", evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence()
                 )
             ),
             copyNumbers = setOf(
                 TestCopyNumberFactory.createMinimal().copy(
-                    event = "amplification", evidence = TestClinicalEvidenceFactory.createExhaustive()
+                    event = "amplification", evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence()
                 )
             ),
             homozygousDisruptions = setOf(
                 TestHomozygousDisruptionFactory.createMinimal().copy(
-                    event = "hom disruption", evidence = TestClinicalEvidenceFactory.createExhaustive()
+                    event = "hom disruption", evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence()
                 )
             ),
             disruptions = setOf(
                 TestDisruptionFactory.createMinimal().copy(
-                    event = "disruption", evidence = TestClinicalEvidenceFactory.createExhaustive()
+                    event = "disruption", evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence()
                 )
             ),
             fusions = setOf(
                 TestFusionFactory.createMinimal().copy(
-                    event = "fusion", evidence = TestClinicalEvidenceFactory.createExhaustive()
+                    event = "fusion", evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence()
                 )
             ),
             viruses = setOf(
                 TestVirusFactory.createMinimal().copy(
-                    event = "virus", evidence = TestClinicalEvidenceFactory.createExhaustive()
+                    event = "virus", evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence()
                 )
             ),
         )
@@ -110,7 +110,7 @@ class AggregatedEvidenceFactoryTest {
         val variant = TestVariantFactory.createMinimal().copy(
             driverLikelihood = DriverLikelihood.HIGH,
             event = "variant",
-            evidence = TestClinicalEvidenceFactory.createExhaustive(),
+            evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
         )
         val drivers = TestMolecularFactory.createMinimalTestMolecularRecord().drivers.copy(
             variants = setOf(variant, variant.copy(driverLikelihood = DriverLikelihood.MEDIUM))
