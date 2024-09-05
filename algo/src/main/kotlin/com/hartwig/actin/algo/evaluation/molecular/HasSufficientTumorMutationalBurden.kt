@@ -4,8 +4,10 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
+import java.time.LocalDate
 
-class HasSufficientTumorMutationalBurden(private val minTumorMutationalBurden: Double) : MolecularEvaluationFunction {
+class HasSufficientTumorMutationalBurden(private val minTumorMutationalBurden: Double, recencyCutoff: LocalDate?) :
+    MolecularEvaluationFunction(recencyCutoff) {
 
     override fun evaluate(molecular: MolecularRecord): Evaluation {
         val tumorMutationalBurden = molecular.characteristics.tumorMutationalBurden

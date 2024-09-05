@@ -3,8 +3,9 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import java.time.LocalDate
 
-class HasSpecificHLAType(private val hlaAlleleToFind: String) : MolecularEvaluationFunction {
+class HasSpecificHLAType(private val hlaAlleleToFind: String, recencyCutoff: LocalDate?) : MolecularEvaluationFunction(recencyCutoff) {
 
     override fun evaluate(molecular: MolecularRecord): Evaluation {
         val immunology = molecular.immunology

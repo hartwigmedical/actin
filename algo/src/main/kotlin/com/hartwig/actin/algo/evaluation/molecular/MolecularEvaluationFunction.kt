@@ -8,20 +8,22 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import java.time.LocalDate
 
-interface MolecularEvaluationFunction : EvaluationFunction {
+abstract class MolecularEvaluationFunction(private val recencyCutoff: LocalDate?) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        return if (!record.molecularHistory.hasMolecularData()) {
+        val recentMolecularTests = record.molecularHistory.molecularTests.filter { it.date?.let { date -> date >= recencyCutoff } ?: true }
+        return if (recentMolecularTests.isEmpty()) {
             noMolecularRecordEvaluation() ?: EvaluationFactory.undetermined("No molecular data", "No molecular data")
         } else {
 
-            if (genes().isNotEmpty() && genes().none { record.molecularHistory.molecularTests.any { t -> t.testsGene(it) } })
+            if (genes().isNotEmpty() && genes().none { recentMolecularTests.any { t -> t.testsGene(it) } })
                 return EvaluationFactory.undetermined(
                     "Gene(s) ${genes().joinToString { it }} not tested in molecular data",
                     "Gene(s) ${genes().joinToString { it }} not tested"
                 )
             val testEvaluation =
-                record.molecularHistory.molecularTests.mapNotNull { evaluate(it)?.let { eval -> MolecularEvaluation(it, eval) } }
+                recentMolecularTests.mapNotNull { evaluate(it)?.let { eval -> MolecularEvaluation(it, eval) } }
             if (testEvaluation.isNotEmpty()) {
                 return MolecularEvaluation.combine(testEvaluation)
             }
@@ -33,14 +35,11 @@ interface MolecularEvaluationFunction : EvaluationFunction {
         }
     }
 
-    fun noMolecularRecordEvaluation(): Evaluation? = null
-    fun evaluate(molecularHistory: MolecularHistory): Evaluation? = null
-    fun evaluate(molecular: MolecularRecord): Evaluation? = null
-
-    fun evaluate(test: MolecularTest): Evaluation? = null
-
-    fun genes(): List<String> = emptyList()
-
-    fun evaluationPrecedence(): (Map<EvaluationResult, List<MolecularEvaluation>>) -> List<MolecularEvaluation>? =
+    open fun noMolecularRecordEvaluation(): Evaluation? = null
+    open fun evaluate(molecularHistory: MolecularHistory): Evaluation? = null
+    open fun evaluate(molecular: MolecularRecord): Evaluation? = null
+    open fun evaluate(test: MolecularTest): Evaluation? = null
+    open fun genes(): List<String> = emptyList()
+    open fun evaluationPrecedence(): (Map<EvaluationResult, List<MolecularEvaluation>>) -> List<MolecularEvaluation>? =
         { MolecularEvaluation.defaultEvaluationPrecedence(it) }
 }

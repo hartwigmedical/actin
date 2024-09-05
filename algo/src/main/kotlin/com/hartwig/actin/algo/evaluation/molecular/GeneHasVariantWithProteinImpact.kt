@@ -8,10 +8,13 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TranscriptImpact
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
+import java.time.LocalDate
 import org.apache.logging.log4j.LogManager
 
-class GeneHasVariantWithProteinImpact(private val gene: String, private val allowedProteinImpacts: List<String>) :
-    MolecularEvaluationFunction {
+class GeneHasVariantWithProteinImpact(
+    private val gene: String, private val allowedProteinImpacts: List<String>,
+    recencyCutoff: LocalDate?
+) : MolecularEvaluationFunction(recencyCutoff) {
 
     override fun genes() = listOf(gene)
 

@@ -8,8 +8,9 @@ import com.hartwig.actin.datamodel.molecular.GeneAlteration
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
+import java.time.LocalDate
 
-class IsMicrosatelliteUnstable : MolecularEvaluationFunction {
+class IsMicrosatelliteUnstable(recencyCutoff: LocalDate?) : MolecularEvaluationFunction(recencyCutoff) {
 
     override fun noMolecularRecordEvaluation() = EvaluationFactory.undetermined("Undetermined if tumor is MSI", "Undetermined MSI status")
 

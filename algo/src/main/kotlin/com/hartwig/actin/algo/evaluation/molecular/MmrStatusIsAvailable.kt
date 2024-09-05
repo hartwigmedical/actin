@@ -4,8 +4,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
+import java.time.LocalDate
 
-class MmrStatusIsAvailable : MolecularEvaluationFunction {
+class MmrStatusIsAvailable(recencyCutoff: LocalDate?) : MolecularEvaluationFunction(recencyCutoff) {
 
     override fun noMolecularRecordEvaluation() =
         EvaluationFactory.fail("No molecular data to determine mismatch repair (MMR) status", "No molecular data to determine MMR status")

@@ -5,8 +5,10 @@ import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.percentage
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import java.time.LocalDate
 
-class GeneHasVariantInCodon(private val gene: String, private val codons: List<String>) : MolecularEvaluationFunction {
+class GeneHasVariantInCodon(private val gene: String, private val codons: List<String>, recencyCutoff: LocalDate?) :
+    MolecularEvaluationFunction(recencyCutoff) {
 
     override fun genes() = listOf(gene)
 

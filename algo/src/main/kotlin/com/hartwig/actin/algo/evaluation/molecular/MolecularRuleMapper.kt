@@ -8,6 +8,8 @@ import com.hartwig.actin.algo.evaluation.composite.Or
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.doid.DoidModel
+import java.time.LocalDate
+import java.time.Period
 
 class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
@@ -33,7 +35,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.FUSION_IN_GENE_X to hasFusionInGeneCreator(),
             EligibilityRule.WILDTYPE_OF_GENE_X to geneIsWildTypeCreator(),
             EligibilityRule.EXON_SKIPPING_GENE_X_EXON_Y to geneHasSpecificExonSkippingCreator(),
-            EligibilityRule.MSI_SIGNATURE to { IsMicrosatelliteUnstable() },
+            EligibilityRule.MSI_SIGNATURE to { IsMicrosatelliteUnstable(recencyCutoff()) },
             EligibilityRule.HRD_SIGNATURE to { IsHomologousRepairDeficient() },
             EligibilityRule.HRD_SIGNATURE_WITHOUT_MUTATION_OR_WITH_VUS_MUTATION_IN_GENES_X to isHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesXCreator(),
             EligibilityRule.HRD_SIGNATURE_WITHOUT_MUTATION_IN_GENES_X to isHomologousRepairDeficientWithoutMutationInGenesXCreator(),
@@ -42,8 +44,8 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.TML_BETWEEN_X_AND_Y to hasCertainTumorMutationalLoadCreator(),
             EligibilityRule.HAS_HLA_TYPE_X to hasSpecificHLATypeCreator(),
             EligibilityRule.HAS_UGT1A1_HAPLOTYPE_X to hasUGT1A1HaplotypeCreator(),
-            EligibilityRule.HAS_HOMOZYGOUS_DPYD_DEFICIENCY to { HasHomozygousDPYDDeficiency() },
-            EligibilityRule.HAS_HETEROZYGOUS_DPYD_DEFICIENCY to { HasHeterozygousDPYDDeficiency() },
+            EligibilityRule.HAS_HOMOZYGOUS_DPYD_DEFICIENCY to { HasHomozygousDPYDDeficiency(recencyCutoff()) },
+            EligibilityRule.HAS_HETEROZYGOUS_DPYD_DEFICIENCY to { HasHeterozygousDPYDDeficiency(recencyCutoff()) },
             EligibilityRule.HAS_KNOWN_HPV_STATUS to { HasKnownHPVStatus() },
             EligibilityRule.OVEREXPRESSION_OF_GENE_X to { GeneIsOverexpressed() },
             EligibilityRule.NON_EXPRESSION_OF_GENE_X to { GeneIsNotExpressed() },
@@ -69,12 +71,15 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE to { MolecularResultsAreGenerallyAvailable() },
             EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_GENE_X to molecularResultsAreAvailableForGeneCreator(),
             EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_PROMOTER_OF_GENE_X to molecularResultsAreAvailableForPromoterOfGeneCreator(),
-            EligibilityRule.MMR_STATUS_IS_AVAILABLE to { MmrStatusIsAvailable() },
+            EligibilityRule.MMR_STATUS_IS_AVAILABLE to { MmrStatusIsAvailable(recencyCutoff()) },
             EligibilityRule.HAS_KNOWN_NSCLC_DRIVER_GENE_STATUSES to { NsclcDriverGeneStatusesAreAvailable() },
             EligibilityRule.HAS_EGFR_PACC_MUTATION to hasEgfrPaccMutationCreator(),
             EligibilityRule.HAS_CODELETION_OF_CHROMOSOME_ARMS_X_AND_Y to hasCoDeletionOfChromosomeArmsCreator()
         )
     }
+
+    private fun recencyCutoff() =
+        resources.algoConfiguration.molecularTestRecencyCutoffInDays?.let { LocalDate.now().minus(Period.ofDays(it)) }
 
     private fun hasMolecularEventInSomeGenesWithApprovedTherapyAvailableCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
@@ -93,128 +98,133 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun geneIsActivatedOrAmplifiedCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val gene = functionInputResolver().createOneGeneInput(function).geneName
-            Or(listOf(GeneHasActivatingMutation(gene, codonsToIgnore = null), GeneIsAmplified(gene, null)))
+            Or(
+                listOf(
+                    GeneHasActivatingMutation(gene, codonsToIgnore = null, recencyCutoff()),
+                    GeneIsAmplified(gene, null, recencyCutoff())
+                )
+            )
         }
     }
 
     private fun geneIsInactivatedCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            GeneIsInactivated(functionInputResolver().createOneGeneInput(function).geneName)
+            GeneIsInactivated(functionInputResolver().createOneGeneInput(function).geneName, recencyCutoff())
         }
     }
 
     private fun anyGeneHasActivatingMutationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genes = functionInputResolver().createManyGenesInput(function)
-            Or(genes.geneNames.map { GeneHasActivatingMutation(it, codonsToIgnore = null) })
+            Or(genes.geneNames.map { GeneHasActivatingMutation(it, codonsToIgnore = null, recencyCutoff()) })
         }
     }
 
     private fun geneHasActivatingMutationIgnoringSomeCodonsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneGeneManyCodonsInput(function)
-            GeneHasActivatingMutation(input.geneName, codonsToIgnore = input.codons)
+            GeneHasActivatingMutation(input.geneName, codonsToIgnore = input.codons, recencyCutoff())
         }
     }
 
     private fun geneHasVariantWithAnyProteinImpactsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneGeneManyProteinImpactsInput(function)
-            GeneHasVariantWithProteinImpact(input.geneName, input.proteinImpacts)
+            GeneHasVariantWithProteinImpact(input.geneName, input.proteinImpacts, recencyCutoff())
         }
     }
 
     private fun geneHasVariantInAnyCodonsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneGeneManyCodonsInput(function)
-            GeneHasVariantInCodon(input.geneName, input.codons)
+            GeneHasVariantInCodon(input.geneName, input.codons, recencyCutoff())
         }
     }
 
     private fun geneHasVariantInExonCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val (gene, exon) = functionInputResolver().createOneGeneOneIntegerInput(function)
-            GeneHasVariantInExonRangeOfType(gene, exon, exon, null)
+            GeneHasVariantInExonRangeOfType(gene, exon, exon, null, recencyCutoff())
         }
     }
 
     private fun geneHasVariantInExonRangeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val (gene, minExon, maxExon) = functionInputResolver().createOneGeneTwoIntegersInput(function)
-            GeneHasVariantInExonRangeOfType(gene, minExon, maxExon, null)
+            GeneHasVariantInExonRangeOfType(gene, minExon, maxExon, null, recencyCutoff())
         }
     }
 
     private fun geneHasVariantInExonOfTypeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val (gene, exon, variantType) = functionInputResolver().createOneGeneOneIntegerOneVariantTypeInput(function)
-            GeneHasVariantInExonRangeOfType(gene, exon, exon, variantType)
+            GeneHasVariantInExonRangeOfType(gene, exon, exon, variantType, recencyCutoff())
         }
     }
 
     private fun geneHasUTR3LossCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            GeneHasUTR3Loss(functionInputResolver().createOneGeneInput(function).geneName)
+            GeneHasUTR3Loss(functionInputResolver().createOneGeneInput(function).geneName, recencyCutoff())
         }
     }
 
     private fun geneIsAmplifiedCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            GeneIsAmplified(functionInputResolver().createOneGeneInput(function).geneName, null)
+            GeneIsAmplified(functionInputResolver().createOneGeneInput(function).geneName, null, recencyCutoff())
         }
     }
 
     private fun geneIsAmplifiedMinCopiesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneGeneOneIntegerInput(function)
-            GeneIsAmplified(input.geneName, input.integer)
+            GeneIsAmplified(input.geneName, input.integer, recencyCutoff())
         }
     }
 
     private fun hasFusionInGeneCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasFusionInGene(functionInputResolver().createOneGeneInput(function).geneName)
+            HasFusionInGene(functionInputResolver().createOneGeneInput(function).geneName, recencyCutoff())
         }
     }
 
     private fun geneIsWildTypeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            GeneIsWildType(functionInputResolver().createOneGeneInput(function).geneName)
+            GeneIsWildType(functionInputResolver().createOneGeneInput(function).geneName, recencyCutoff())
         }
     }
 
     private fun geneHasSpecificExonSkippingCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneGeneOneIntegerInput(function)
-            GeneHasSpecificExonSkipping(input.geneName, input.integer)
+            GeneHasSpecificExonSkipping(input.geneName, input.integer, recencyCutoff())
         }
     }
 
     private fun hasSufficientTumorMutationalBurdenCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val minTumorMutationalBurden = functionInputResolver().createOneDoubleInput(function)
-            HasSufficientTumorMutationalBurden(minTumorMutationalBurden)
+            HasSufficientTumorMutationalBurden(minTumorMutationalBurden, recencyCutoff())
         }
     }
 
     private fun hasSufficientTumorMutationalLoadCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val minTumorMutationalLoad = functionInputResolver().createOneIntegerInput(function)
-            HasTumorMutationalLoadWithinRange(minTumorMutationalLoad, null)
+            HasTumorMutationalLoadWithinRange(minTumorMutationalLoad, null, recencyCutoff())
         }
     }
 
     private fun hasCertainTumorMutationalLoadCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createTwoIntegersInput(function)
-            HasTumorMutationalLoadWithinRange(input.integer1, input.integer2)
+            HasTumorMutationalLoadWithinRange(input.integer1, input.integer2, recencyCutoff())
         }
     }
 
     private fun hasSpecificHLATypeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val hlaAlleleToFind = functionInputResolver().createOneHlaAlleleInput(function)
-            HasSpecificHLAType(hlaAlleleToFind.allele)
+            HasSpecificHLAType(hlaAlleleToFind.allele, recencyCutoff())
         }
     }
 
@@ -303,7 +313,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     }
 
     private fun hasEgfrPaccMutationCreator(): FunctionCreator {
-        return { GeneHasVariantWithProteinImpact("EGFR", EGFR_PACC_VARIANT_LIST) }
+        return { GeneHasVariantWithProteinImpact("EGFR", EGFR_PACC_VARIANT_LIST, recencyCutoff()) }
     }
 
     private fun hasCoDeletionOfChromosomeArmsCreator(): FunctionCreator {
@@ -316,7 +326,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun isHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesXCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genesToFind = functionInputResolver().createManyGenesInput(function)
-            IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesX(genesToFind.geneNames.toSet())
+            IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesX(genesToFind.geneNames.toSet(), recencyCutoff())
         }
     }
 

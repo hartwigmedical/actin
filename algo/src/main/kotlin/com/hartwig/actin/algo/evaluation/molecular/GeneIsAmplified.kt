@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.molecular.GeneRole
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
+import java.time.LocalDate
 
 private const val PLOIDY_FACTOR = 3.0
 
@@ -52,7 +53,8 @@ private enum class CopyNumberEvaluation {
     }
 }
 
-class GeneIsAmplified(private val gene: String, private val requestedMinCopyNumber: Int?) : MolecularEvaluationFunction {
+class GeneIsAmplified(private val gene: String, private val requestedMinCopyNumber: Int?, recencyCutoff: LocalDate?) :
+    MolecularEvaluationFunction(recencyCutoff) {
 
     override fun genes() = listOf(gene)
 
