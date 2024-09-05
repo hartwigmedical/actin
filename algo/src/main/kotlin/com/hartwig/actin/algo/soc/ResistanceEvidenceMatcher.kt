@@ -43,7 +43,7 @@ class ResistanceEvidenceMatcher(
     private fun findMatches(actionableEvents: List<ActionableEvent>, treatment: Treatment): List<ResistanceEvidence> {
         val expandedTumorDoids = expandDoids(doidModel, applicableDoids)
         return actionableEvents.filter {
-            isResistant(it) &&
+            hasNoPositiveResponse(it) &&
             isOnLabel(it, expandedTumorDoids) &&
                     findTreatmentInDatabase(it.intervention(), treatment) != null
         }.map { actionableEvent ->
@@ -163,12 +163,12 @@ class ResistanceEvidenceMatcher(
         return doids.flatMap { doidModel.doidWithParents(it) }.toSet()
     }
 
-    private fun isResistant(resistanceEvent: ActionableEvent): Boolean {
+    private fun hasNoPositiveResponse(resistanceEvent: ActionableEvent): Boolean {
         return resistanceEvent.level() in setOf(
             EvidenceLevel.A,
             EvidenceLevel.B,
             EvidenceLevel.C
-        ) && resistanceEvent.direction().isResistant
+        ) && !resistanceEvent.direction().hasPositiveResponse()
     }
 
     private fun drugsInOtherTreatment(treatment1: Treatment, treatment2: Treatment): Boolean {

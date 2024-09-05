@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
-import com.hartwig.actin.datamodel.molecular.evidence.Country
+import com.hartwig.actin.datamodel.molecular.evidence.CountryName
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
@@ -15,7 +15,7 @@ class EligibleLocalExternalTrialsGenerator(
     private val externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>,
     private val width: Float,
     private val filteredCount: Int,
-    private val homeCountry: Country
+    private val homeCountry: CountryName
 ) : TableGenerator {
     override fun title(): String {
         return String.format(
@@ -27,25 +27,39 @@ class EligibleLocalExternalTrialsGenerator(
     }
 
     override fun contents(): Table {
-        val eventWidth = (1.1 * width / 5).toFloat()
-        val sourceEventWidth = (1.1 * width / 5).toFloat()
-        val cancerTypeWidth = (1.1 * width / 5).toFloat()
-        val titleWidth = (2.0 * width / 5).toFloat()
-        val nctWidth = (0.7 * width / 5).toFloat()
+        val eventWidth = (0.9 * width / 5).toFloat()
+        val sourceEventWidth = (0.9 * width / 5).toFloat()
+        val cancerTypeWidth = (0.9 * width / 5).toFloat()
+        val titleWidth = (1.5 * width / 5).toFloat()
+        val hospitalsOrCitiesWidth = (0.8 * width / 5).toFloat()
 
-        val table = Tables.createFixedWidthCols(eventWidth, sourceEventWidth + cancerTypeWidth + titleWidth + nctWidth)
+        val table = Tables.createFixedWidthCols(eventWidth, sourceEventWidth + cancerTypeWidth + titleWidth + hospitalsOrCitiesWidth)
         table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader("Event")))
-        val headerSubTable = Tables.createFixedWidthCols(sourceEventWidth, cancerTypeWidth, titleWidth, nctWidth)
-        listOf("Source Event", "Cancer Type", "Trial title", "NCT number").forEach { headerSubTable.addHeaderCell(Cells.createHeader(it)) }
+        val headerSubTable = Tables.createFixedWidthCols(sourceEventWidth, cancerTypeWidth, titleWidth, hospitalsOrCitiesWidth)
+        val hospitalsOrCities = if (homeCountry == CountryName.NETHERLANDS) "Hospitals" else "Cities"
+        listOf(
+            "Source Event",
+            "Cancer Type",
+            "Trial title",
+            hospitalsOrCities
+        ).forEach { headerSubTable.addHeaderCell(Cells.createHeader(it)) }
         table.addHeaderCell(Cells.createContentNoBorder(headerSubTable))
 
         externalTrialsPerEvent.forEach { (event, externalTrials) ->
-            val subTable = Tables.createFixedWidthCols(sourceEventWidth, cancerTypeWidth, titleWidth, nctWidth)
-            externalTrials.forEach {
-                subTable.addCell(Cells.createContentNoBorder(it.sourceEvent))
-                subTable.addCell(Cells.createContentNoBorder(it.applicableCancerType.cancerType))
-                subTable.addCell(Cells.createContentNoBorder(EligibleExternalTrialGeneratorFunctions.shortenTitle(it.title)))
-                subTable.addCell(Cells.createContentNoBorder(it.nctId).setAction(PdfAction.createURI(it.url)).addStyle(Styles.urlStyle()))
+            val subTable = Tables.createFixedWidthCols(sourceEventWidth, cancerTypeWidth, titleWidth, hospitalsOrCitiesWidth)
+            externalTrials.forEach { externalTrial ->
+                subTable.addCell(Cells.createContentNoBorder(externalTrial.sourceEvent))
+                subTable.addCell(Cells.createContentNoBorder(externalTrial.applicableCancerType.cancerType))
+                subTable.addCell(
+                    Cells.createContentNoBorder(EligibleExternalTrialGeneratorFunctions.shortenTitle(externalTrial.title))
+                        .setAction(PdfAction.createURI(externalTrial.url)).addStyle(Styles.urlStyle())
+                )
+                val hospitalsOrCitiesCell = if (homeCountry == CountryName.NETHERLANDS) {
+                    EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(externalTrial, homeCountry).first
+                } else {
+                    EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(externalTrial, homeCountry).second
+                }
+                subTable.addCell(Cells.createContentNoBorder(hospitalsOrCitiesCell))
             }
             table.addCell(Cells.createContent(event))
             EligibleExternalTrialGeneratorFunctions.insertRow(table, subTable)
