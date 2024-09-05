@@ -1,9 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
-import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
-import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 import com.hartwig.actin.report.interpretation.ClinicalDetailsFactory
 import com.hartwig.actin.report.interpretation.ClinicalDetailsFunctions
 import com.hartwig.actin.report.pdf.tables.TableGenerator
