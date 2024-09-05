@@ -21,7 +21,7 @@ class WGSSummaryGenerator(
     private val wgsMolecular = molecular as? MolecularRecord
 
     override fun title(): String {
-        return WGSSummaryGeneratorFunctions.createMolecularSummaryTitle(molecular, patientRecord)
+        return WGSSummaryGeneratorFunctions.createMolecularSummaryTitle(molecular)
     }
 
     override fun contents(): Table {
