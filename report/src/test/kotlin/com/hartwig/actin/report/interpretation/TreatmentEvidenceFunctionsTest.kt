@@ -79,8 +79,7 @@ class TreatmentEvidenceFunctionsTest {
         treatment: String = "treatment",
         onLabel: Boolean = true,
         evidenceLevel: EvidenceLevel = EvidenceLevel.A,
-        isCategoryVariant: Boolean = true,
-        sourceEvent: String = "eventOne"
+        isCategoryVariant: Boolean = true
     ): TreatmentEvidence {
         return TreatmentEvidence(
             treatment,
@@ -88,18 +87,18 @@ class TreatmentEvidenceFunctionsTest {
             onLabel,
             EvidenceDirection(),
             isCategoryVariant,
-            sourceEvent,
+            "sourceEvent",
             ApplicableCancerType("", emptySet())
         )
     }
 
-    private fun createGroupingKey(treatment: String, onLabel: Boolean, sourceEvent: String = "eventOne"): TreatmentEvidenceGroupingKey {
+    private fun createGroupingKey(treatment: String, onLabel: Boolean): TreatmentEvidenceGroupingKey {
         return TreatmentEvidenceGroupingKey(
             treatment,
             onLabel,
             EvidenceDirection(),
             true,
-            sourceEvent,
+            "sourceEvent",
             ApplicableCancerType("", emptySet())
         )
     }
