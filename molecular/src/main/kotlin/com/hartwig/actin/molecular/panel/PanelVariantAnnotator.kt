@@ -59,7 +59,7 @@ class PanelVariantAnnotator(
         val externalVariantAnnotation =
             variantResolver.resolve(
                 panelVariantExtraction.gene,
-                null,
+                panelVariantExtraction.transcript,
                 panelVariantExtraction.hgvsCodingOrProteinImpact()
             )
 
