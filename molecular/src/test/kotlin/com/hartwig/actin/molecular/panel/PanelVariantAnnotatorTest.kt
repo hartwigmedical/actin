@@ -271,17 +271,10 @@ class PanelVariantAnnotatorTest {
     }
 
     @Test
-    fun `Should correctly normalize protein variants`() {
-        assertThat(normalizeProteinImpact("p.Met1Leu")).isEqualTo("p.M1L")
-        assertThat(normalizeProteinImpact("p.?")).isEqualTo("p.?")
-        assertThat(normalizeProteinImpact("p.M1L")).isEqualTo("p.M1L")
-    }
-
-    @Test
     fun `Should describe variant event using protein hgvs`() {
         val variants = setOf(SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING))
         val annotated = annotator.annotate(variants)
-        assertThat(annotated.first().event).isEqualTo("$GENE $HGVS_PROTEIN")
+        assertThat(annotated.first().event).isEqualTo("$GENE ${HGVS_PROTEIN.removePrefix("p.")}")
     }
 
     @Test

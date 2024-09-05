@@ -14,6 +14,7 @@ import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
+import com.hartwig.actin.molecular.orange.interpretation.AminoAcid.forceSingleLetterAminoAcids
 import com.hartwig.actin.molecular.panel.PanelAnnotator.Companion.LOGGER
 import com.hartwig.actin.molecular.paver.PaveCodingEffect
 import com.hartwig.actin.molecular.paver.PaveImpact
@@ -21,7 +22,6 @@ import com.hartwig.actin.molecular.paver.PaveQuery
 import com.hartwig.actin.molecular.paver.PaveResponse
 import com.hartwig.actin.molecular.paver.PaveTranscriptImpact
 import com.hartwig.actin.molecular.paver.Paver
-import com.hartwig.actin.tools.genome.AminoAcids
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.VariantAnnotator
 import com.hartwig.serve.datamodel.hotspot.KnownHotspot
@@ -142,42 +142,33 @@ class PanelVariantAnnotator(
         serveGeneAlteration: com.hartwig.serve.datamodel.common.GeneAlteration?,
         transcriptAnnotation: com.hartwig.actin.tools.variant.Variant,
         paveResponse: PaveResponse
-    ): Variant {
+    ) = Variant(
+        chromosome = transcriptAnnotation.chromosome(),
+        position = transcriptAnnotation.position(),
+        ref = transcriptAnnotation.ref(),
+        alt = transcriptAnnotation.alt(),
+        type = variantType(transcriptAnnotation),
+        variantAlleleFrequency = variant.variantAlleleFrequency,
+        canonicalImpact = impact(paveResponse.impact, transcriptAnnotation),
+        otherImpacts = otherImpacts(paveResponse, transcriptAnnotation),
+        isHotspot = serveGeneAlteration is KnownHotspot || serveGeneAlteration is KnownCodon,
+        isReportable = true,
+        event = "${variant.gene} ${impact(paveResponse)}",
 
-        val eventHgvs = if (paveResponse.impact.hgvsProteinImpact.isNotEmpty() && paveResponse.impact.hgvsProteinImpact != "p.?") {
-            normalizeProteinImpact(paveResponse.impact.hgvsProteinImpact)
-        } else {
-            paveResponse.impact.hgvsCodingImpact
-        }
+        driverLikelihood = DriverLikelihood.LOW,
+        evidence = evidence,
+        gene = variant.gene,
+        geneRole = geneAlteration.geneRole,
+        proteinEffect = when (geneAlteration.proteinEffect) {
+            ProteinEffect.LOSS_OF_FUNCTION,
+            ProteinEffect.LOSS_OF_FUNCTION_PREDICTED,
+            ProteinEffect.GAIN_OF_FUNCTION,
+            ProteinEffect.GAIN_OF_FUNCTION_PREDICTED -> geneAlteration.proteinEffect
 
-        return Variant(
-            chromosome = transcriptAnnotation.chromosome(),
-            position = transcriptAnnotation.position(),
-            ref = transcriptAnnotation.ref(),
-            alt = transcriptAnnotation.alt(),
-            type = variantType(transcriptAnnotation),
-            variantAlleleFrequency = variant.variantAlleleFrequency,
-            canonicalImpact = impact(paveResponse.impact, transcriptAnnotation),
-            otherImpacts = otherImpacts(paveResponse, transcriptAnnotation),
-            isHotspot = serveGeneAlteration is KnownHotspot || serveGeneAlteration is KnownCodon,
-            isReportable = true,
-            event = "${variant.gene} ${eventHgvs}",
-
-            driverLikelihood = DriverLikelihood.LOW,
-            evidence = evidence,
-            gene = variant.gene,
-            geneRole = geneAlteration.geneRole,
-            proteinEffect = when (geneAlteration.proteinEffect) {
-                ProteinEffect.LOSS_OF_FUNCTION,
-                ProteinEffect.LOSS_OF_FUNCTION_PREDICTED,
-                ProteinEffect.GAIN_OF_FUNCTION,
-                ProteinEffect.GAIN_OF_FUNCTION_PREDICTED -> geneAlteration.proteinEffect
-
-                else -> ProteinEffect.NO_EFFECT
-            },
-            isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance
-        )
-    }
+            else -> ProteinEffect.NO_EFFECT
+        },
+        isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance
+    )
 
     private fun impact(paveImpact: PaveImpact, transvarVariant: com.hartwig.actin.tools.variant.Variant): TranscriptImpact {
 
@@ -191,7 +182,7 @@ class PanelVariantAnnotator(
         return TranscriptImpact(
             transcriptId = paveImpact.transcript,
             hgvsCodingImpact = paveImpact.hgvsCodingImpact,
-            hgvsProteinImpact = normalizeProteinImpact(paveImpact.hgvsProteinImpact),
+            hgvsProteinImpact = forceSingleLetterAminoAcids(paveImpact.hgvsProteinImpact),
             isSpliceRegion = paveImpact.spliceRegion,
             affectedExon = paveLiteAnnotation.affectedExon(),
             affectedCodon = paveLiteAnnotation.affectedCodon(),
@@ -219,7 +210,7 @@ class PanelVariantAnnotator(
         return TranscriptImpact(
             transcriptId = paveTranscriptImpact.transcript,
             hgvsCodingImpact = paveTranscriptImpact.hgvsCodingImpact,
-            hgvsProteinImpact = normalizeProteinImpact(paveTranscriptImpact.hgvsProteinImpact),
+            hgvsProteinImpact = forceSingleLetterAminoAcids(paveTranscriptImpact.hgvsProteinImpact),
             isSpliceRegion = paveTranscriptImpact.spliceRegion,
             affectedExon = paveLiteAnnotation.affectedExon(),
             affectedCodon = paveLiteAnnotation.affectedCodon(),
@@ -271,12 +262,18 @@ class PanelVariantAnnotator(
             }
         }
     }
-}
 
-fun normalizeProteinImpact(hgvsProteinImpact: String): String {
-    return if (hgvsProteinImpact != "p.?") {
-        AminoAcids.forceSingleLetterProteinAnnotation(hgvsProteinImpact);
-    } else {
-        hgvsProteinImpact
+    private fun impact(paveResponse: PaveResponse): String {
+        if (paveResponse.impact.hgvsProteinImpact.isNotEmpty() && paveResponse.impact.hgvsProteinImpact != "p.?") {
+            return forceSingleLetterAminoAcids(paveResponse.impact.hgvsProteinImpact.removePrefix("p."))
+        }
+
+        if (paveResponse.impact.hgvsCodingImpact.isNotEmpty()) {
+            return if (paveResponse.impact.canonicalCodingEffect == PaveCodingEffect.SPLICE) paveResponse.impact.hgvsCodingImpact + " splice"
+            else paveResponse.impact.hgvsCodingImpact
+        }
+
+        throw IllegalStateException("Unable to determine impact for $paveResponse")
     }
 }
+
