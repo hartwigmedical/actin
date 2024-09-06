@@ -12,6 +12,7 @@ import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.AtcLevel
+import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.medication.MedicationCategories
@@ -32,11 +33,13 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
         val activeMedications = medications.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
 
         val foundCategories = mutableSetOf<String>()
+        val foundMedicationNames = mutableSetOf<String>()
         categoriesToFind.filter { categoryToFind ->
             activeMedications
                 .any {
                     if ((it.allLevels() intersect categoryToFind.value).isNotEmpty()) {
                         foundCategories.add(categoryToFind.key)
+                        foundMedicationNames.add(it.drug?.name ?: it.name)
                     }
                     if (it.isTrialMedication) {
                         foundCategories.add("Trial medication")
@@ -54,12 +57,26 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
                 categoryToDrugType.value.any {
                     if (it is TreatmentCategory) {
                         val hasCategory = treatmentHistoryEntry.categories().contains(it)
-                        if (hasCategory && startedPastMinDate == true) foundCategories.add(categoryToDrugType.key)
+                        if (hasCategory && startedPastMinDate == true) {
+                            foundCategories.add(categoryToDrugType.key)
+                            treatmentHistoryEntry.treatments.forEach { treatment ->
+                                if (treatment is DrugTreatment) {
+                                    treatment.drugs.forEach { drug -> foundMedicationNames.add(drug.name) }
+                                }
+                            }
+                        }
                         hasCategory
                     } else {
                         val hasCategory = treatmentHistoryEntry.categories().contains((it as DrugType).category)
                                 && treatmentHistoryEntry.matchesTypeFromSet(setOf(it)) == true
-                        if (hasCategory && startedPastMinDate == true) foundCategories.add(categoryToDrugType.key)
+                        if (hasCategory && startedPastMinDate == true) {
+                            foundCategories.add(categoryToDrugType.key)
+                            treatmentHistoryEntry.treatments.forEach { treatment ->
+                                if (treatment is DrugTreatment) {
+                                    treatment.drugs.forEach { drug -> foundMedicationNames.add(drug.name) }
+                                }
+                            }
+                        }
                         hasCategory
                     }
                 }
@@ -74,12 +91,14 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
             )
         }.fold(TreatmentFunctions.TreatmentAssessment()) { acc, element -> acc.combineWith(element) }
 
+        val foundMedicationString =
+            if (foundMedicationNames.isNotEmpty()) ": ${concatLowercaseWithAnd(foundMedicationNames)}" else ""
         return when {
             foundCategories.isNotEmpty() || treatmentAssessment.hasHadValidTreatment -> {
                 EvaluationFactory.pass(
-                    "Patient has recently received medication of category ${concatLowercaseWithAnd(foundCategories)}" +
+                    "Patient has recently received drug of category '${concatLowercaseWithAnd(foundCategories)}'$foundMedicationString" +
                             " - pay attention to washout period",
-                    "Recent '${concatLowercaseWithAnd(foundCategories)}' medication use" +
+                    "Recent '${concatLowercaseWithAnd(foundCategories)}' drug use$foundMedicationString" +
                             " - pay attention to washout period"
                 )
             }
