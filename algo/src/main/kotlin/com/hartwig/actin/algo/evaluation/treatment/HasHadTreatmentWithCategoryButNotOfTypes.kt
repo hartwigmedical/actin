@@ -18,11 +18,20 @@ class HasHadTreatmentWithCategoryButNotOfTypes(
             record.oncologicalHistory, category, { historyEntry -> ignoreTypes.none { historyEntry.isOfType(it) == true } }
         )
 
+        val priorCancerMedication = record.medications
+            ?.filter { medication ->
+                (medication.drug?.category?.equals(category) == true && medication.drug?.drugTypes?.any {
+                    !ignoreTypes.contains(it)
+                } == true) || medication.isTrialMedication
+            } ?: emptyList()
+
         val ignoreTypesList = concatItems(ignoreTypes)
         return when {
-            treatmentSummary.hasSpecificMatch() -> EvaluationFactory.pass("Has received ${category.display()} ignoring $ignoreTypesList")
+            treatmentSummary.hasSpecificMatch() || (priorCancerMedication.isNotEmpty() && priorCancerMedication.any { !it.isTrialMedication }) -> EvaluationFactory.pass(
+                "Has received ${category.display()} ignoring $ignoreTypesList"
+            )
 
-            treatmentSummary.hasPossibleTrialMatch() -> EvaluationFactory.undetermined(
+            treatmentSummary.hasPossibleTrialMatch() || priorCancerMedication.isNotEmpty() -> EvaluationFactory.undetermined(
                 "Patient may have received ${category.display()} ignoring $ignoreTypesList due to trial participation",
                 "Undetermined if received ${category.display()} ignoring $ignoreTypesList due to trial participation"
             )

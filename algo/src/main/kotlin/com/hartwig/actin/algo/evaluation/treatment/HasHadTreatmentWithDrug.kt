@@ -19,6 +19,7 @@ class HasHadTreatmentWithDrug(private val drugs: Set<Drug>) : EvaluationFunction
             .flatMap { (it as? DrugTreatment)?.drugs ?: emptyList() }
             .filter { it.name.lowercase() in namesToMatch }
 
+
         val drugList = concatItemsWithOr(drugs)
         return when {
             matchingDrugs.isNotEmpty() -> {

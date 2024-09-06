@@ -267,7 +267,8 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneTreatmentCategoryManyTypesOneIntegerInput(function)
             val minDate = referenceDateProvider().date().minusWeeks(input.integer.toLong())
-            HasHadTreatmentWithCategoryButNotOfTypesRecently(input.category, input.types, minDate)
+            val interpreter = MedicationStatusInterpreterOnEvaluationDate(minDate)
+            HasHadTreatmentWithCategoryButNotOfTypesRecently(input.category, input.types, minDate, interpreter)
         }
     }
 

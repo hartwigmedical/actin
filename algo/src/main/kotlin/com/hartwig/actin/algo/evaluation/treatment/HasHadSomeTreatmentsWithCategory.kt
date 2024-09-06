@@ -12,22 +12,31 @@ class HasHadSomeTreatmentsWithCategory(private val category: TreatmentCategory, 
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(record.oncologicalHistory, category)
 
-        return if (treatmentSummary.numSpecificMatches() >= minTreatmentLines) {
-            val treatmentDisplay = treatmentSummary.specificMatches.map { it.treatmentDisplay() }.toSet().joinToString(", ")
-            EvaluationFactory.pass(
-                "Patient has received at least $minTreatmentLines line(s) of ${category.display()} ($treatmentDisplay)",
-                "Has received at least $minTreatmentLines line(s) of ${category.display()} ($treatmentDisplay)"
-            )
-        } else if (treatmentSummary.numSpecificMatches() + treatmentSummary.numPossibleTrialMatches >= minTreatmentLines) {
-            EvaluationFactory.undetermined(
-                "Patient may have received at least $minTreatmentLines line(s) of  ${category.display()} due to trial participation",
-                "Undetermined if received at least $minTreatmentLines line(s) of ${category.display()} due to trial participation"
-            )
-        } else {
-            EvaluationFactory.fail(
-                "Patient has not received at least $minTreatmentLines line(s) of ${category.display()}",
-                "Has not received at least $minTreatmentLines line(s) of ${category.display()}"
-            )
+        val priorCancerMedication =
+            record.medications?.filter { medication -> (medication.drug?.category?.equals(category) == true) || medication.isTrialMedication }
+                ?: emptyList()
+
+        return when {
+            treatmentSummary.numSpecificMatches() >= minTreatmentLines || (minTreatmentLines == 1 && priorCancerMedication.isNotEmpty() && priorCancerMedication.any { !it.isTrialMedication }) -> {
+                EvaluationFactory.pass(
+                    "Patient has received at least $minTreatmentLines line(s) of ${category.display()}",
+                    "Has received at least $minTreatmentLines line(s) of ${category.display()}"
+                )
+            }
+
+            treatmentSummary.numSpecificMatches() + treatmentSummary.numPossibleTrialMatches >= minTreatmentLines || (minTreatmentLines == 1 && priorCancerMedication.isNotEmpty()) -> {
+                EvaluationFactory.undetermined(
+                    "Patient may have received at least $minTreatmentLines line(s) of  ${category.display()} due to trial participation",
+                    "Undetermined if received at least $minTreatmentLines line(s) of ${category.display()} due to trial participation"
+                )
+            }
+
+            else -> {
+                EvaluationFactory.fail(
+                    "Patient has not received at least $minTreatmentLines line(s) of ${category.display()}",
+                    "Has not received at least $minTreatmentLines line(s) of ${category.display()}"
+                )
+            }
         }
     }
 }
