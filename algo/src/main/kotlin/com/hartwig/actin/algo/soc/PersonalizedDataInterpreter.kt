@@ -18,7 +18,7 @@ import com.hartwig.actin.personalization.similarity.population.PersonalizedDataA
 class PersonalizedDataInterpreter(private val analyzer: PersonalizedDataAnalyzer) {
 
     fun interpret(patient: PatientRecord): PersonalizedDataAnalysis {
-        val hasRasMutation = hasMutationInGene(patient, "KRAS") || hasMutationInGene(patient, "NRAS") || hasMutationInGene(patient, "HRAS")
+        val hasRasMutation = listOf("KRAS", "NRAS", "HRAS").any { hasMutationInGene(patient, it) }
         val metastasisLocationGroups = with(patient.tumor) {
             sequenceOf(
                 hasBrainLesions to LocationGroup.BRAIN,
