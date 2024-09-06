@@ -26,9 +26,9 @@ import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.ImmutableActionableEvents
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 class TreatmentMatcherTest {
     private val patient = TestPatientFactory.createMinimalTestWGSPatientRecord()
@@ -56,7 +56,8 @@ class TreatmentMatcherTest {
         trials,
         CurrentDateProvider(),
         EvaluatedTreatmentAnnotator.create(evidenceEntries, resistanceEvidenceMatcher),
-        EMC_TRIAL_SOURCE
+        EMC_TRIAL_SOURCE,
+        null
     )
     private val expectedTreatmentMatch = TreatmentMatch(
         patientId = patient.patientId,
@@ -107,7 +108,8 @@ class TreatmentMatcherTest {
             trials,
             CurrentDateProvider(),
             EvaluatedTreatmentAnnotator.create(evidenceEntries, resistanceEvidenceMatcher),
-            EMC_TRIAL_SOURCE
+            EMC_TRIAL_SOURCE,
+            null
         )
         every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(patientWithoutMolecular) } returns false
         val expectedTreatmentMatchWithoutMolecular = expectedTreatmentMatch.copy(sampleId = "N/A")

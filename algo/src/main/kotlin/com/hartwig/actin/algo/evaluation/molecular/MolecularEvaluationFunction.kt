@@ -11,17 +11,18 @@ import com.hartwig.actin.datamodel.molecular.MolecularTest
 
 interface MolecularEvaluationFunction : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        return if (!record.molecularHistory.hasMolecularData()) {
+        val relevantMolecularTests = record.molecularHistory.molecularTestsForTrialMatching()
+        return if (relevantMolecularTests.isEmpty()) {
             noMolecularRecordEvaluation() ?: EvaluationFactory.undetermined("No molecular data", "No molecular data")
         } else {
 
-            if (genes().isNotEmpty() && genes().none { record.molecularHistory.molecularTests.any { t -> t.testsGene(it) } })
+            if (genes().isNotEmpty() && genes().none { relevantMolecularTests.any { t -> t.testsGene(it) } })
                 return EvaluationFactory.undetermined(
                     "Gene(s) ${genes().joinToString { it }} not tested in molecular data",
                     "Gene(s) ${genes().joinToString { it }} not tested"
                 )
             val testEvaluation =
-                record.molecularHistory.molecularTests.mapNotNull { evaluate(it)?.let { eval -> MolecularEvaluation(it, eval) } }
+                relevantMolecularTests.mapNotNull { evaluate(it)?.let { eval -> MolecularEvaluation(it, eval) } }
             if (testEvaluation.isNotEmpty()) {
                 return MolecularEvaluation.combine(testEvaluation)
             }

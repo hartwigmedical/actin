@@ -19,12 +19,16 @@ class TreatmentMatcher(
     private val referenceDateProvider: ReferenceDateProvider,
     private val evaluatedTreatmentAnnotator: EvaluatedTreatmentAnnotator,
     private val trialSource: String,
-    private val personalizationDataPath: String? = null
+    private val maxMolecularTestAgeInDays: Long?,
+    private val personalizationDataPath: String? = null,
 ) {
 
     fun evaluateAndAnnotateMatchesForPatient(patient: PatientRecord): TreatmentMatch {
-        val trialMatches = trialMatcher.determineEligibility(patient, trials)
-
+        val molecularTestAgeCutoff = maxMolecularTestAgeInDays?.let { referenceDateProvider.date().minusDays(it) }
+        val trialMatches = trialMatcher.determineEligibility(
+            patient.copy(molecularHistory = patient.molecularHistory.copy(maxTestAge = molecularTestAgeCutoff)),
+            trials
+        )
         val (standardOfCareMatches, personalizedDataAnalysis) = if (recommendationEngine.standardOfCareCanBeEvaluatedForPatient(patient)) {
             val evaluatedTreatments = recommendationEngine.standardOfCareEvaluatedTreatments(patient)
             val personalizedDataAnalysis = personalizationDataPath?.let { PersonalizedDataInterpreter.create(it).interpret(patient) }
@@ -62,7 +66,8 @@ class TreatmentMatcher(
                 resources.referenceDateProvider,
                 EvaluatedTreatmentAnnotator.create(efficacyEvidence, resistanceEvidenceMatcher),
                 resources.algoConfiguration.trialSource,
-                resources.personalizationDataPath
+                resources.algoConfiguration.maxMolecularTestAgeForTrialMatchingInDays,
+                resources.personalizationDataPath,
             )
         }
     }
