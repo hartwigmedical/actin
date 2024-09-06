@@ -13,8 +13,8 @@ import org.apache.logging.log4j.LogManager
 
 class GeneHasVariantWithProteinImpact(
     private val gene: String, private val allowedProteinImpacts: List<String>,
-    recencyCutoff: LocalDate?
-) : MolecularEvaluationFunction(recencyCutoff) {
+    maxTestAge: LocalDate? = null
+) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun genes() = listOf(gene)
 

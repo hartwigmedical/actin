@@ -9,8 +9,8 @@ import java.time.LocalDate
 class HasTumorMutationalLoadWithinRange(
     private val minTumorMutationalLoad: Int,
     private val maxTumorMutationalLoad: Int?,
-    recencyCutoff: LocalDate?
-) : MolecularEvaluationFunction(recencyCutoff) {
+    maxTestAge: LocalDate? = null
+) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun evaluate(molecular: MolecularRecord): Evaluation {
         val tumorMutationalLoad = molecular.characteristics.tumorMutationalLoad

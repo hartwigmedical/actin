@@ -105,12 +105,12 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     private fun hasBreastCancerWithPositiveReceptorOfTypeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val receptorType = functionInputResolver().createOneReceptorTypeInput(function)
-            HasBreastCancerWithPositiveReceptorOfType(doidModel(), receptorType)
+            HasBreastCancerWithPositiveReceptorOfType(doidModel(), receptorType, maxMolecularTestAge())
         }
     }
 
     private fun hasCancerWithNeuroendocrineComponentCreator(): FunctionCreator {
-        return { HasCancerWithNeuroendocrineComponent(doidModel()) }
+        return { HasCancerWithNeuroendocrineComponent(doidModel(), maxMolecularTestAge()) }
     }
 
     private fun hasCancerWithSmallCellComponentCreator(): FunctionCreator {
@@ -118,7 +118,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasKnownSCLCTransformationCreator(): FunctionCreator {
-        return { HasKnownSCLCTransformation(doidModel()) }
+        return { HasKnownSCLCTransformation(doidModel(), maxMolecularTestAge()) }
     }
 
     private fun hasNonSquamousNSCLCCreator(): FunctionCreator {

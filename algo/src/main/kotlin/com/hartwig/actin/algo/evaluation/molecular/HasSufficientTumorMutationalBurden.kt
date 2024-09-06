@@ -6,8 +6,8 @@ import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 import java.time.LocalDate
 
-class HasSufficientTumorMutationalBurden(private val minTumorMutationalBurden: Double, recencyCutoff: LocalDate?) :
-    MolecularEvaluationFunction(recencyCutoff) {
+class HasSufficientTumorMutationalBurden(private val minTumorMutationalBurden: Double, maxTestAge: LocalDate? = null) :
+    MolecularEvaluationFunction(maxTestAge) {
 
     override fun evaluate(molecular: MolecularRecord): Evaluation {
         val tumorMutationalBurden = molecular.characteristics.tumorMutationalBurden

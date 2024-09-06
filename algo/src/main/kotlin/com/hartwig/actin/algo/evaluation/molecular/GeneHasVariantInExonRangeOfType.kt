@@ -12,8 +12,8 @@ import java.time.LocalDate
 class GeneHasVariantInExonRangeOfType(
     private val gene: String, private val minExon: Int, private val maxExon: Int,
     private val requiredVariantType: VariantTypeInput?,
-    recencyCutoff: LocalDate?
-) : MolecularEvaluationFunction(recencyCutoff) {
+    maxTestAge: LocalDate? = null
+) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun genes() = listOf(gene)
 

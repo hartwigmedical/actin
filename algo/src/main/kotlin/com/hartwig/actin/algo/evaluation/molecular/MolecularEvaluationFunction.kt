@@ -10,9 +10,10 @@ import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import java.time.LocalDate
 
-abstract class MolecularEvaluationFunction(private val recencyCutoff: LocalDate?) : EvaluationFunction {
+abstract class MolecularEvaluationFunction(private val maxTestAge: LocalDate? = null) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val recentMolecularTests = record.molecularHistory.molecularTests.filter { it.date?.let { date -> date >= recencyCutoff } ?: true }
+        val recentMolecularTests =
+            record.molecularHistory.molecularTests.filter { it.date?.let { date -> maxTestAge == null || date >= maxTestAge } ?: true }
         return if (recentMolecularTests.isEmpty()) {
             noMolecularRecordEvaluation() ?: EvaluationFactory.undetermined("No molecular data", "No molecular data")
         } else {

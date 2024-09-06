@@ -34,8 +34,8 @@ private const val CLONAL_CUTOFF = 0.5
 class GeneHasActivatingMutation(
     private val gene: String,
     private val codonsToIgnore: List<String>?,
-    recencyCutoff: LocalDate?
-) : MolecularEvaluationFunction(recencyCutoff) {
+    maxTestAge: LocalDate? = null
+) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun genes() = listOf(gene)
 

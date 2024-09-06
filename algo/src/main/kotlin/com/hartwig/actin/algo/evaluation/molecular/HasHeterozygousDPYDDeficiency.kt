@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoGene
 import java.time.LocalDate
 
-class HasHeterozygousDPYDDeficiency(recencyCutoff: LocalDate?) : MolecularEvaluationFunction(recencyCutoff) {
+class HasHeterozygousDPYDDeficiency(maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun evaluate(molecular: MolecularRecord): Evaluation {
         val pharmaco = molecular.pharmaco.firstOrNull { it.gene == PharmacoGene.DPYD }

@@ -7,8 +7,8 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import java.time.LocalDate
 
-class GeneHasVariantInCodon(private val gene: String, private val codons: List<String>, recencyCutoff: LocalDate?) :
-    MolecularEvaluationFunction(recencyCutoff) {
+class GeneHasVariantInCodon(private val gene: String, private val codons: List<String>, maxTestAge: LocalDate? = null) :
+    MolecularEvaluationFunction(maxTestAge) {
 
     override fun genes() = listOf(gene)
 

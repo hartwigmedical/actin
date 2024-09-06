@@ -48,7 +48,7 @@ const val EMC_TRIAL_SOURCE = "EMC"
 data class AlgoConfiguration(
     val trialSource: String = EMC_TRIAL_SOURCE,
     val warnIfToxicitiesNotFromQuestionnaire: Boolean = true,
-    val molecularTestRecencyCutoffInDays: Int? = null
+    val maxMolecularTestAgeInDays: Int? = null
 )
 
 data class TrialConfiguration(

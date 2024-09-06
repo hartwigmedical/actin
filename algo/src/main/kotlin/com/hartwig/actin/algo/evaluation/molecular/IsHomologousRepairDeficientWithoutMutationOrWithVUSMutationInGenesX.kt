@@ -11,8 +11,8 @@ import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import java.time.LocalDate
 
-class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesX(private val genesToFind: Set<String>, recencyCutoff: LocalDate?) :
-    MolecularEvaluationFunction(recencyCutoff) {
+class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesX(private val genesToFind: Set<String>, maxTestAge: LocalDate? = null) :
+    MolecularEvaluationFunction(maxTestAge) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val hrdGenesWithNonBiallelicHotspot: MutableSet<String> = mutableSetOf()

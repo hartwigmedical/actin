@@ -9,22 +9,25 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestPanelRecordFactory
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val OVERRIDE_MESSAGE = "Override message"
 private const val FAIL_SPECIFIC_MESSAGE = "Fail specific message"
 private const val FAIL_GENERAL_MESSAGE = "Fail general message"
+private val MAX_AGE = LocalDate.of(2023, 9, 6)
 
 class MolecularEvaluationFunctionTest {
-    private val function = object : MolecularEvaluationFunction {
+    private val function = object : MolecularEvaluationFunction() {
         override fun evaluate(molecular: MolecularRecord): Evaluation {
             return EvaluationFactory.fail(FAIL_SPECIFIC_MESSAGE, FAIL_GENERAL_MESSAGE)
         }
     }
 
-    private val functionWithOverride = object : MolecularEvaluationFunction {
+    private val functionWithOverride = object : MolecularEvaluationFunction() {
         override fun evaluate(molecular: MolecularRecord): Evaluation {
             return EvaluationFactory.pass("OK")
         }
@@ -32,7 +35,7 @@ class MolecularEvaluationFunctionTest {
         override fun noMolecularRecordEvaluation() = EvaluationFactory.fail(OVERRIDE_MESSAGE)
     }
 
-    private val functionOnMolecularHistory = object : MolecularEvaluationFunction {
+    private val functionOnMolecularHistory = object : MolecularEvaluationFunction() {
         override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
             return EvaluationFactory.fail(
                 FAIL_SPECIFIC_MESSAGE,
@@ -41,7 +44,7 @@ class MolecularEvaluationFunctionTest {
         }
     }
 
-    private val functionWithGenes = object : MolecularEvaluationFunction {
+    private val functionWithGenes = object : MolecularEvaluationFunction() {
         override fun genes(): List<String> {
             return listOf("GENE")
         }
@@ -66,7 +69,8 @@ class MolecularEvaluationFunctionTest {
         assertThat(evaluation.undeterminedGeneralMessages).containsExactly("Insufficient molecular data")
     }
 
-    private fun emptyArcher() = TestPanelRecordFactory.empty().copy(experimentType = ExperimentType.PANEL)
+    private fun emptyArcher(testDate: LocalDate? = null) =
+        TestPanelRecordFactory.empty().copy(experimentType = ExperimentType.PANEL, date = testDate)
 
     @Test
     fun `Should execute rule when ORANGE molecular data`() {
@@ -107,8 +111,36 @@ class MolecularEvaluationFunctionTest {
         assertThat(evaluation.undeterminedSpecificMessages).containsExactly("Gene(s) GENE not tested in molecular data")
     }
 
-    private fun withPanelTest() = TestPatientFactory.createEmptyMolecularTestPatientRecord()
-        .copy(molecularHistory = MolecularHistory(listOf(emptyArcher())))
+    @Test
+    fun `Should not evaluate molecular tests that are older than the max date when no other tests`() {
+        val function = object : MolecularEvaluationFunction(MAX_AGE) {}
+        val patient = withPanelTest(MAX_AGE.minusDays(1))
+        val evaluation = function.evaluate(patient)
+        assertThat(evaluation.result).isEqualTo(EvaluationResult.UNDETERMINED)
+        assertThat(evaluation.undeterminedSpecificMessages).containsExactly("No molecular data")
+        assertThat(evaluation.undeterminedGeneralMessages).containsExactly("No molecular data")
+    }
+
+    @Test
+    fun `Should not evaluate molecular tests that are older than the max date when other tests exist`() {
+        val evaluatedTests = mutableSetOf<MolecularTest>()
+        val function = object : MolecularEvaluationFunction(MAX_AGE) {
+            override fun evaluate(test: MolecularTest): Evaluation {
+                evaluatedTests.add(test)
+                return EvaluationFactory.fail(FAIL_SPECIFIC_MESSAGE, FAIL_GENERAL_MESSAGE)
+            }
+        }
+        val oldTest = emptyArcher().copy(date = MAX_AGE.minusDays(1))
+        val newTest = emptyArcher()
+        function.evaluate(
+            TestPatientFactory.createEmptyMolecularTestPatientRecord()
+                .copy(molecularHistory = MolecularHistory(listOf(oldTest, newTest)))
+        )
+        assertThat(evaluatedTests).containsOnly(newTest)
+    }
+
+    private fun withPanelTest(testDate: LocalDate = MAX_AGE.plusYears(1)) = TestPatientFactory.createEmptyMolecularTestPatientRecord()
+        .copy(molecularHistory = MolecularHistory(listOf(emptyArcher(testDate))))
 
     private fun assertOverrideEvaluation(patient: PatientRecord) {
         val evaluation = functionWithOverride.evaluate(patient)
