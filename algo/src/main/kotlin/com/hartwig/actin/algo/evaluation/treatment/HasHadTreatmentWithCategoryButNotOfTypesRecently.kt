@@ -30,8 +30,6 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecently(
             )
         }.fold(TreatmentFunctions.TreatmentAssessment()) { acc, element -> acc.combineWith(element) }
 
-        val ignoringTypesList = concatItems(ignoreTypes)
-
         val priorCancerMedication = record.medications
             ?.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
             ?.filter { medication ->
@@ -39,6 +37,8 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecently(
                     !ignoreTypes.contains(it)
                 } == true) || medication.isTrialMedication
             } ?: emptyList()
+
+        val ignoringTypesList = concatItems(ignoreTypes)
 
         return when {
             treatmentAssessment.hasHadValidTreatment || (priorCancerMedication.isNotEmpty() && priorCancerMedication.any { !it.isTrialMedication }) -> {

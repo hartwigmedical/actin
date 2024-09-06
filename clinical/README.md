@@ -266,6 +266,9 @@ The details may include multiple treatment stages representing switches from the
 | ifNeeded                         | 0                                                                 | Medication: If needed                    |
 | startDate                        | 2021-07-01                                                        | Medication: Start date                   |
 | stopDate                         | 2021-10-01                                                        | Medication: Stop date                    |
+| drug.name                        | "BEVACIZUMAB"                                                     | Added in curation                        |
+| drug.category                    | "TARGETED THERAPY"                                                | Added in curation                        |
+| drug.drugTypes                   | "VEGF_ANTIBODY"                                                   | Added in curation                        |
 | cypInteractions.type             | 'Inducer', 'Inhibitor' or 'Substrate'                             | Added in curation                        |
 | cypInteractions.strength         | 'Strong', 'Moderate', 'Weak', 'Sensitive' or 'Moderate sensitive' | Added in curation                        |
 | cypInteractions.cyp              | CYP type                                                          | Added in curation                        |

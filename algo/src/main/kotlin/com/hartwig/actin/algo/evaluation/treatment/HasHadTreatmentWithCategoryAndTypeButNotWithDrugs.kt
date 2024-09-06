@@ -31,19 +31,34 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugs(
             { treatment -> (treatment as? DrugTreatment)?.drugs.isNullOrEmpty() || treatment.types().isEmpty() }
         )
 
+        val priorCancerMedication = record.medications
+            ?.filter { medication ->
+                (medication.drug?.category?.equals(category) == true) && (types?.let {
+                    medication.drug?.drugTypes?.intersect(types)?.isNotEmpty()
+                } ?: true) && (!ignoreDrugs.contains(medication.drug))
+            } ?: emptyList()
+
         val ignoreDrugsList = concatItemsWithAnd(ignoreDrugs)
 
         val matchingTreatmentTypes = treatmentSummary.specificMatches
             .map { it.treatments.flatMap(Treatment::types).map { t -> t.display() }.toSet() }
-            .flatten()
-            .joinToString(", ")
-        val typeMessage = if (types != null && matchingTreatmentTypes.isNotEmpty()) " of types $matchingTreatmentTypes" else ""
+            .flatten().toSet()
+
+        val matchingMedicationTypes = priorCancerMedication
+            .mapNotNull { it.drug?.drugTypes?.map { t -> t.display() }?.toSet() }.flatten().toSet()
+
+        val totalMatchingTypes = (matchingTreatmentTypes + matchingMedicationTypes).joinToString { ", " }
+
+        val typeMessage = if (types != null && totalMatchingTypes.isNotEmpty()) " of types $totalMatchingTypes" else ""
         val messageEnding = "received ${category.display()}$typeMessage ignoring $ignoreDrugsList"
 
         return when {
-            treatmentSummary.hasSpecificMatch() -> EvaluationFactory.pass("Patient has $messageEnding", "Has $messageEnding")
+            treatmentSummary.hasSpecificMatch() || priorCancerMedication.isNotEmpty() -> EvaluationFactory.pass(
+                "Patient has $messageEnding",
+                "Has $messageEnding"
+            )
 
-            treatmentSummary.hasPossibleTrialMatch() -> EvaluationFactory.undetermined(
+            treatmentSummary.hasPossibleTrialMatch() || record.medications?.any { it.isTrialMedication } == true -> EvaluationFactory.undetermined(
                 "Patient may have $messageEnding due to trial participation",
                 "Undetermined if $messageEnding due to trial participation"
             )

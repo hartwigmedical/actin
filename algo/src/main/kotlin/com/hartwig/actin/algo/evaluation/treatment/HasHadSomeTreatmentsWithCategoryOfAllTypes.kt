@@ -16,11 +16,21 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypes(
         val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
             record.oncologicalHistory, category, { historyEntry -> types.all { type -> historyEntry.isOfType(type) == true } }
         )
+
+        val priorCancerMedication = record.medications
+            ?.filter { medication ->
+                (medication.drug?.category?.equals(category) == true && types.all {
+                    medication.drug?.drugTypes?.contains(
+                        it
+                    ) == true
+                })
+            } ?: emptyList()
+
         val typesList = Format.concatItemsWithAnd(types)
         val baseMessage = "received at least $minTreatmentLines line(s) of $typesList combination ${category.display()}"
 
         return when {
-            treatmentSummary.numSpecificMatches() >= minTreatmentLines -> {
+            treatmentSummary.numSpecificMatches() >= minTreatmentLines || (minTreatmentLines == 1 && priorCancerMedication.isNotEmpty()) -> {
                 EvaluationFactory.pass("Has $baseMessage")
             }
 
@@ -32,7 +42,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypes(
             }
 
             treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches + treatmentSummary.numPossibleTrialMatches
-                    >= minTreatmentLines -> {
+                    >= minTreatmentLines || (minTreatmentLines == 1 && record.medications?.any { it.isTrialMedication } == true) -> {
                 EvaluationFactory.undetermined(
                     "Patient may have received at least $minTreatmentLines line(s) of ${category.display()} due to trial participation",
                     "Trial medication in history - undetermined if received at least $minTreatmentLines line(s) of ${category.display()}"

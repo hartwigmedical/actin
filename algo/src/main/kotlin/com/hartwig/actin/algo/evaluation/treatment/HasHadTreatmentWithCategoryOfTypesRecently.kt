@@ -30,8 +30,6 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
             )
         }.fold(TreatmentFunctions.TreatmentAssessment()) { acc, element -> acc.combineWith(element) }
 
-        val typesList = concatItems(types)
-
         val priorCancerMedication = record.medications
             ?.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
             ?.filter { medication ->
@@ -39,11 +37,13 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
                     types.contains(
                         it
                     )
-                } == true) || medication.isTrialMedication
+                } == true)
             } ?: emptyList()
 
+        val typesList = concatItems(types)
+
         return when {
-            treatmentAssessment.hasHadValidTreatment || (priorCancerMedication.isNotEmpty() && priorCancerMedication.any { !it.isTrialMedication }) -> {
+            treatmentAssessment.hasHadValidTreatment || priorCancerMedication.isNotEmpty() -> {
                 EvaluationFactory.pass("Has received $typesList ${category.display()} treatment")
             }
 
@@ -51,7 +51,7 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
                 EvaluationFactory.undetermined("Has received $typesList ${category.display()} treatment but inconclusive date")
             }
 
-            treatmentAssessment.hasHadTrialAfterMinDate || priorCancerMedication.isNotEmpty() -> {
+            treatmentAssessment.hasHadTrialAfterMinDate || record.medications?.any { it.isTrialMedication } == true -> {
                 EvaluationFactory.undetermined(
                     "Patient has participated in a trial recently, inconclusive ${category.display()} treatment",
                     "Inconclusive ${category.display()} treatment due to trial participation"

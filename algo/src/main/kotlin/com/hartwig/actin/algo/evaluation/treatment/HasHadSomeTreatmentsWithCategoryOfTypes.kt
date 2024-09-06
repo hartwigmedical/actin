@@ -23,16 +23,16 @@ class HasHadSomeTreatmentsWithCategoryOfTypes(
                     types.contains(
                         it
                     )
-                } == true) || medication.isTrialMedication
+                } == true)
             } ?: emptyList()
 
         val typesList = concatItems(types)
         return when {
-            treatmentSummary.numSpecificMatches() >= minTreatmentLines || (minTreatmentLines == 1 && priorCancerMedication.isNotEmpty() && priorCancerMedication.any { !it.isTrialMedication }) -> {
+            treatmentSummary.numSpecificMatches() >= minTreatmentLines || (minTreatmentLines == 1 && priorCancerMedication.isNotEmpty()) -> {
                 EvaluationFactory.pass("Has received at least $minTreatmentLines line(s) of $typesList ${category.display()}")
             }
 
-            treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches + treatmentSummary.numPossibleTrialMatches >= minTreatmentLines || (minTreatmentLines == 1 && priorCancerMedication.isNotEmpty()) -> {
+            treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches + treatmentSummary.numPossibleTrialMatches >= minTreatmentLines || (minTreatmentLines == 1 && record.medications?.any { it.isTrialMedication } == true) -> {
                 EvaluationFactory.undetermined(
                     "Can't determine whether patient has received at least $minTreatmentLines line(s) of $typesList ${category.display()}",
                     "Undetermined if received at least $minTreatmentLines line(s) of $typesList ${category.display()}"
