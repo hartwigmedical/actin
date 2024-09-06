@@ -18,7 +18,7 @@ import com.hartwig.actin.personalization.similarity.population.PersonalizedDataA
 class PersonalizedDataInterpreter(private val analyzer: PersonalizedDataAnalyzer) {
 
     fun interpret(patient: PatientRecord): PersonalizedDataAnalysis {
-        val hasKrasMutation = GeneHasActivatingMutation("KRAS", null).evaluate(patient).result == EvaluationResult.PASS
+        val hasRasMutation = listOf("KRAS", "NRAS", "HRAS").any { hasActivatingMutationInGene(patient, it) }
         val metastasisLocationGroups = with(patient.tumor) {
             sequenceOf(
                 hasBrainLesions to LocationGroup.BRAIN,
@@ -32,7 +32,7 @@ class PersonalizedDataInterpreter(private val analyzer: PersonalizedDataAnalyzer
         val analysis = analyzer.analyzePatient(
             patient.patient.registrationDate.year - patient.patient.birthYear,
             patient.clinicalStatus.who!!,
-            hasKrasMutation,
+            hasRasMutation,
             metastasisLocationGroups
         )
         return PersonalizedDataAnalysis(extractTreatmentAnalyses(analysis), extractPopulations(analysis))
@@ -62,6 +62,10 @@ class PersonalizedDataInterpreter(private val analyzer: PersonalizedDataAnalyzer
 
     private fun convertMeasurement(measurement: PopulationMeasurement) =
         with(measurement) { Measurement(value, numPatients, min, max, iqr) }
+
+    private fun hasActivatingMutationInGene(patient: PatientRecord, gene: String): Boolean {
+        return GeneHasActivatingMutation(gene, null).evaluate(patient).result == EvaluationResult.PASS
+    }
 
     companion object {
         fun create(personalizationDataPath: String): PersonalizedDataInterpreter {
