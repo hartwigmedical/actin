@@ -41,8 +41,7 @@ class PatientClinicalHistoryGeneratorTest {
         val patientClinicalHistoryGenerator = PatientClinicalHistoryGenerator(reportWithOtherConditions, true, KEY_WIDTH, VALUE_WIDTH)
         val cells = patientClinicalHistoryGenerator.contentsAsList()
 
-        val cell = cells.single { extractTextFromCell(it) == "Relevant non-oncological history" }
-        val otherHistoryCell = cells[cells.indexOf(cell) + 1]
+        val otherHistoryCell = cells.dropWhile { extractTextFromCell(it) != "Relevant non-oncological history" }.drop(1).first()
         val otherHistoryTable = otherHistoryCell.children.first() as? Table ?: throw IllegalStateException("Expected Table as first child")
 
         assertThat(otherHistoryTable.numberOfRows).isEqualTo(6)
