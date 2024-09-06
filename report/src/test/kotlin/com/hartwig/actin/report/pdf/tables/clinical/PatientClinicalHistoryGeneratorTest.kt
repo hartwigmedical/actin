@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.clinical
 
 import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
+import com.hartwig.actin.datamodel.clinical.TestPriorOtherConditionFactory
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Paragraph
@@ -26,25 +27,33 @@ class PatientClinicalHistoryGeneratorTest {
     fun `Should return content as list with sorted other prior conditions`() {
         val reportWithOtherConditions = report.copy(
             patientRecord = report.patientRecord.copy(
-                priorOtherConditions = createTestPriorOtherConditions()
+                priorOtherConditions = listOf(
+                    TestPriorOtherConditionFactory.create("c1", null, null),
+                    TestPriorOtherConditionFactory.create("c2", 2024, null),
+                    TestPriorOtherConditionFactory.create("c3", 2024, 8),
+                    TestPriorOtherConditionFactory.create("c4", 2024, 5),
+                    TestPriorOtherConditionFactory.create("c5", 2023, 9),
+                    TestPriorOtherConditionFactory.create("c6", null, 2)
+                )
             )
         )
 
         val patientClinicalHistoryGenerator = PatientClinicalHistoryGenerator(reportWithOtherConditions, true, KEY_WIDTH, VALUE_WIDTH)
         val cells = patientClinicalHistoryGenerator.contentsAsList()
 
-        for ((i, cell) in cells.withIndex()) {
-            if (extractTextFromCell(cell) == "Relevant non-oncological history") {
-                val otherHistoryTable: Table = cells.getOrNull(i + 1)?.children?.firstOrNull() as? Table ?: continue
-                assertThat(otherHistoryTable.numberOfRows).isEqualTo(6)
-                assertThat(extractTextFromCell(otherHistoryTable.getCell(0, 0))).isEqualTo("8/2024")
-                assertThat(extractTextFromCell(otherHistoryTable.getCell(1, 0))).isEqualTo("5/2024")
-                assertThat(extractTextFromCell(otherHistoryTable.getCell(2, 0))).isEqualTo("9/2023")
-                assertThat(extractTextFromCell(otherHistoryTable.getCell(3, 0))).isEqualTo("2024")
-                assertThat(extractTextFromCell(otherHistoryTable.getCell(4, 0))).isEqualTo("Date unknown")
-                assertThat(extractTextFromCell(otherHistoryTable.getCell(5, 0))).isEqualTo("Date unknown")
-            }
-        }
+        val cell = cells.single { extractTextFromCell(it) == "Relevant non-oncological history" }
+        val otherHistoryCell = cells[cells.indexOf(cell) + 1]
+        val otherHistoryTable = otherHistoryCell.children.first() as? Table ?: throw IllegalStateException("Expected Table as first child")
+
+        assertThat(otherHistoryTable.numberOfRows).isEqualTo(6)
+        assertThat(extractTextFromCell(otherHistoryTable.getCell(0, 0))).isEqualTo("8/2024")
+        assertThat(extractTextFromCell(otherHistoryTable.getCell(1, 0))).isEqualTo("5/2024")
+        assertThat(extractTextFromCell(otherHistoryTable.getCell(2, 0))).isEqualTo("2024")
+        assertThat(extractTextFromCell(otherHistoryTable.getCell(3, 0))).isEqualTo("9/2023")
+        assertThat(extractTextFromCell(otherHistoryTable.getCell(4, 0))).isEqualTo("Date unknown")
+        assertThat(extractTextFromCell(otherHistoryTable.getCell(5, 0))).isEqualTo("Date unknown")
+
+
     }
 
     private fun extractTextFromCell(cell: Cell): String? {
@@ -53,49 +62,4 @@ class PatientClinicalHistoryGeneratorTest {
         return textElement?.text
     }
 
-    private fun createTestPriorOtherConditions(): List<PriorOtherCondition> {
-        return listOf(
-            PriorOtherCondition(
-                name = "pancreatitis",
-                category = "Pancreas disease",
-                isContraindicationForTherapy = true,
-                year = null,
-                month = null
-            ),
-            PriorOtherCondition(
-                name = "other condition",
-                category = "Heart disease",
-                isContraindicationForTherapy = true,
-                year = 2024,
-                month = null
-            ),
-            PriorOtherCondition(
-                name = "other condition",
-                category = "Heart disease",
-                isContraindicationForTherapy = true,
-                year = 2024,
-                month = 8
-            ),
-            PriorOtherCondition(
-                name = "other condition",
-                category = "Heart disease",
-                isContraindicationForTherapy = true,
-                year = 2024,
-                month = 5
-            ),
-            PriorOtherCondition(
-                name = "other condition",
-                category = "Heart disease",
-                isContraindicationForTherapy = true,
-                year = 2023,
-                month = 9
-            ), PriorOtherCondition(
-                name = "other condition",
-                category = "Heart disease",
-                isContraindicationForTherapy = true,
-                year = null,
-                month = 2
-            )
-        )
-    }
 }
