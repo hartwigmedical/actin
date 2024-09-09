@@ -33,13 +33,12 @@ class ExternalTrialSummarizer(private val homeCountry: CountryName) {
     ): Map<String, List<ExternalTrial>> {
         val localTrialNctIds = trialMatches.mapNotNull { it.identification.nctId }.toSet()
         return externalTrialsPerEvent.flatMap { (event, trials) ->
-            trials.filter { it.nctId !in localTrialNctIds }
-                .filter { trial ->
-                    !trial.countries.any {
-                        it.hospitalsPerCity.values.flatten().toSet().all { hospital -> hospital in CHILDREN_HOSPITALS }
-                    }
+            trials.filter { it.nctId !in localTrialNctIds }.filter { trial ->
+                trial.countries.none {
+                    it.hospitalsPerCity.values.flatten().toSet().isNotEmpty() && it.hospitalsPerCity.values.flatten().toSet()
+                        .all { hospital -> hospital in CHILDREN_HOSPITALS }
                 }
-                .map { event to it }
+            }.map { event to it }
         }
             .groupBy { (_, trial) -> trial.nctId }
             .map { (_, eventAndTrialPairs) ->
