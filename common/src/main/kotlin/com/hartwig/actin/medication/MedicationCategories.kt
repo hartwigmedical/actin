@@ -11,16 +11,52 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
             ?: setOf(atcTree.resolve(categoryName))
     }
 
-    fun categoryName(categoryName: String): String {
+    fun resolveCategoryName(categoryName: String): String {
         return if (knownCategories[categoryName] != null) categoryName
         else atcTree.resolve(categoryName).name
     }
 
     companion object {
+        val ANTI_CANCER_ATC_CODES = setOf("L01", "L02", "L04", "H01CC", "H01CA", "G03XA")
+
+        val MEDICATION_CATEGORIES_TO_DRUG_TYPES = mapOf(
+            "Chemotherapy" to setOf(TreatmentCategory.CHEMOTHERAPY),
+            "Endocrine therapy" to setOf(TreatmentCategory.HORMONE_THERAPY),
+            "Gonadorelin" to setOf(DrugType.GONADOTROPIN_AGONIST, DrugType.GONADOTROPIN_ANTAGONIST),
+            "Hypomethylating agents" to setOf(DrugType.DNMT_INHIBITOR),
+            "Immunotherapy" to setOf(TreatmentCategory.IMMUNOTHERAPY),
+            "Monoclonal antibodies and antibody drug conjugates" to setOf(
+                DrugType.MONOCLONAL_ANTIBODY_TARGETED_THERAPY,
+                DrugType.MONOCLONAL_ANTIBODY_IMMUNOTHERAPY,
+                DrugType.MONOCLONAL_ANTIBODY_MMAE_CONJUGATE,
+                DrugType.MONOCLONAL_ANTIBODY_SUPPORTIVE_TREATMENT,
+                DrugType.ANTIBODY_DRUG_CONJUGATE_IMMUNOTHERAPY,
+                DrugType.ANTIBODY_DRUG_CONJUGATE_TARGETED_THERAPY
+            ),
+            "PARP inhibitors" to setOf(DrugType.PARP_INHIBITOR),
+            "L01CD" to setOf(DrugType.TAXANE),
+            "L02BB" to setOf(DrugType.ANTI_ANDROGEN),
+            "L01A" to setOf(DrugType.ALKYLATING_AGENT),
+            "LO1XL" to setOf(DrugType.ANTI_CLDN6_CAR_T, DrugType.HER2_CAR_T),
+            "L01E" to setOf(DrugType.TYROSINE_KINASE_INHIBITOR),
+            "Anticancer" to setOf(
+                TreatmentCategory.CHEMOTHERAPY,
+                TreatmentCategory.TARGETED_THERAPY,
+                TreatmentCategory.IMMUNOTHERAPY,
+                TreatmentCategory.HORMONE_THERAPY
+            ),
+            "Antineoplastic agents" to setOf(
+                TreatmentCategory.CHEMOTHERAPY,
+                TreatmentCategory.TARGETED_THERAPY,
+                TreatmentCategory.IMMUNOTHERAPY,
+                TreatmentCategory.HORMONE_THERAPY
+            )
+        )
+
         fun create(atcTree: AtcTree): MedicationCategories {
             return MedicationCategories(
                 mapOf(
-                    "Anticancer" to convertToAtcLevel(setOf("L01", "L02", "L04", "H01CC", "H01CA", "G03XA"), atcTree),
+                    "Anticancer" to convertToAtcLevel(ANTI_CANCER_ATC_CODES, atcTree),
                     "Anticoagulants" to convertToAtcLevel(setOf("B01AA", "B01AB", "B01AC", "B01AD", "B01AE", "B01AF", "B01AX"), atcTree),
                     "Antiepileptics" to convertToAtcLevel(setOf("N03"), atcTree),
                     "Antiinflammatory and antirheumatic products" to convertToAtcLevel(setOf("M01"), atcTree),
@@ -61,39 +97,5 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
         private fun convertToAtcLevel(atcCodes: Set<String>, atcTree: AtcTree): Set<AtcLevel> {
             return atcCodes.map(atcTree::resolve).toSet()
         }
-
-        val MEDICATION_CATEGORIES_TO_DRUG_TYPES = mapOf(
-            "Chemotherapy" to setOf(TreatmentCategory.CHEMOTHERAPY),
-            "Endocrine therapy" to setOf(TreatmentCategory.HORMONE_THERAPY),
-            "Gonadorelin" to setOf(DrugType.GONADOTROPIN_AGONIST, DrugType.GONADOTROPIN_ANTAGONIST),
-            "Hypomethylating agents" to setOf(DrugType.DNMT_INHIBITOR),
-            "Immunotherapy" to setOf(TreatmentCategory.IMMUNOTHERAPY),
-            "Monoclonal antibodies and antibody drug conjugates" to setOf(
-                DrugType.MONOCLONAL_ANTIBODY_TARGETED_THERAPY,
-                DrugType.MONOCLONAL_ANTIBODY_IMMUNOTHERAPY,
-                DrugType.MONOCLONAL_ANTIBODY_MMAE_CONJUGATE,
-                DrugType.MONOCLONAL_ANTIBODY_SUPPORTIVE_TREATMENT,
-                DrugType.ANTIBODY_DRUG_CONJUGATE_IMMUNOTHERAPY,
-                DrugType.ANTIBODY_DRUG_CONJUGATE_TARGETED_THERAPY
-            ),
-            "PARP inhibitors" to setOf(DrugType.PARP_INHIBITOR),
-            "L01CD" to setOf(DrugType.TAXANE),
-            "L02BB" to setOf(DrugType.ANTI_ANDROGEN),
-            "L01A" to setOf(DrugType.ALKYLATING_AGENT),
-            "LO1XL" to setOf(DrugType.ANTI_CLDN6_CAR_T, DrugType.HER2_CAR_T),
-            "L01E" to setOf(DrugType.TYROSINE_KINASE_INHIBITOR),
-            "Anticancer" to setOf(
-                TreatmentCategory.CHEMOTHERAPY,
-                TreatmentCategory.TARGETED_THERAPY,
-                TreatmentCategory.IMMUNOTHERAPY,
-                TreatmentCategory.HORMONE_THERAPY
-            ),
-            "Antineoplastic agents" to setOf(
-                TreatmentCategory.CHEMOTHERAPY,
-                TreatmentCategory.TARGETED_THERAPY,
-                TreatmentCategory.IMMUNOTHERAPY,
-                TreatmentCategory.HORMONE_THERAPY
-            )
-        )
     }
 }

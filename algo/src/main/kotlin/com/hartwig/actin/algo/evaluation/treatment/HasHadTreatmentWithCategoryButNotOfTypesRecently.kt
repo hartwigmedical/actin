@@ -30,18 +30,21 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecently(
             )
         }.fold(TreatmentFunctions.TreatmentAssessment()) { acc, element -> acc.combineWith(element) }
 
-        val priorCancerMedication = record.medications
+        val hasActiveOrRecentlyStoppedMedication = record.medications
             ?.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
-            ?.filter { medication ->
-                (medication.drug?.category?.equals(category) == true && medication.drug?.drugTypes?.any {
-                    !ignoreTypes.contains(it)
-                } == true) || medication.isTrialMedication
-            } ?: emptyList()
+
+        val hadCancerMedicationWithCategoryButNotOfTypes = hasActiveOrRecentlyStoppedMedication
+            ?.any { medication ->
+                MedicationFunctions.hasCategory(medication, category) && MedicationFunctions.doesNotHaveIgnoreType(
+                    medication,
+                    ignoreTypes
+                )
+            } ?: false
 
         val ignoringTypesList = concatItems(ignoreTypes)
 
         return when {
-            treatmentAssessment.hasHadValidTreatment || (priorCancerMedication.isNotEmpty() && priorCancerMedication.any { !it.isTrialMedication }) -> {
+            treatmentAssessment.hasHadValidTreatment || hadCancerMedicationWithCategoryButNotOfTypes -> {
                 EvaluationFactory.pass("Has received ${category.display()} treatment ignoring $ignoringTypesList")
             }
 
@@ -49,7 +52,7 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecently(
                 EvaluationFactory.undetermined("Has received ${category.display()} treatment ignoring $ignoringTypesList but inconclusive date")
             }
 
-            treatmentAssessment.hasHadTrialAfterMinDate || priorCancerMedication.isNotEmpty() -> {
+            treatmentAssessment.hasHadTrialAfterMinDate || hasActiveOrRecentlyStoppedMedication?.any { it.isTrialMedication } == true -> {
                 EvaluationFactory.undetermined(
                     "Patient has participated in a trial recently, inconclusive ${category.display()} treatment",
                     "Inconclusive ${category.display()} treatment due to trial participation"

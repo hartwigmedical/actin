@@ -47,7 +47,7 @@ class StandardMedicationExtractor(
                 isTrialMedication = it.isTrial,
                 isSelfCare = it.isSelfCare,
                 drug = if (!it.isTrial && !it.isSelfCare) {
-                    treatmentDatabase.findDrugByAtcCode(
+                    treatmentDatabase.findDrugByAtcName(
                         atcNameOrInput, it.atcCode ?: throw IllegalStateException(
                             "Patient '${ehrPatientRecord.patientDetails.hashedId}' had medication '${it.name}' with null atc code, " +
                                     "but is not a trial or self care"

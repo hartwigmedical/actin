@@ -10,20 +10,19 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 class HasHadAnyCancerTreatment(private val categoryToIgnore: TreatmentCategory?, private val atcLevelsToFind: Set<AtcLevel>) :
     EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val treatmentHistory =
+        val hasHadPriorCancerTreatment =
             if (categoryToIgnore == null) {
-                record.oncologicalHistory
+                record.oncologicalHistory.isNotEmpty()
             } else {
-                record.oncologicalHistory.filterNot { it.categories().contains(categoryToIgnore) }
+                record.oncologicalHistory.any { !it.categories().contains(categoryToIgnore) }
             }
 
-        val priorCancerMedication = record.medications
-            ?.filter {
-                ((it.allLevels() intersect atcLevelsToFind).isNotEmpty() && !(it.drug?.category?.equals(categoryToIgnore)
-                    ?: false)) || it.isTrialMedication
-            } ?: emptyList()
+        val hasHadPriorCancerMedication = record.medications?.any {
+            ((it.allLevels() intersect atcLevelsToFind).isNotEmpty() && !(it.drug?.category?.equals(categoryToIgnore)
+                ?: false)) || it.isTrialMedication
+        } ?: false
 
-        return if (treatmentHistory.isEmpty() && priorCancerMedication.isEmpty()) {
+        return if (!hasHadPriorCancerTreatment && !hasHadPriorCancerMedication) {
             EvaluationFactory.fail("Patient has not had any prior cancer treatments", "Has not had any cancer treatment")
         } else {
             val categoryDisplay = categoryToIgnore?.let { "other than ${categoryToIgnore.display()} " } ?: ""

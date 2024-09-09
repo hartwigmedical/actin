@@ -65,9 +65,10 @@ private const val NO_MEDICATION_NAME_INPUT = "No medication name input"
 
 private const val DOSAGE_TRANSLATION_INPUT_MILLIGRAM = "milligram"
 
-private val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
-
 class MedicationExtractorTest {
+
+    private val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
+
     private val extractor =
         MedicationExtractor(
             TestCurationFactory.curationDatabase(

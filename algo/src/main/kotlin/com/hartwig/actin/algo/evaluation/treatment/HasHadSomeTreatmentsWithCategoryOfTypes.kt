@@ -17,18 +17,17 @@ class HasHadSomeTreatmentsWithCategoryOfTypes(
             record.oncologicalHistory, category, { historyEntry -> historyEntry.matchesTypeFromSet(types) }
         )
 
-        val priorCancerMedication = record.medications
-            ?.filter { medication ->
-                (medication.drug?.category?.equals(category) == true && medication.drug?.drugTypes?.any {
-                    types.contains(
-                        it
-                    )
-                } == true)
-            } ?: emptyList()
+        val hadCancerMedicationWithCategoryOfTypes = record.medications
+            ?.any { medication ->
+                MedicationFunctions.hasCategory(medication, category) && MedicationFunctions.hasDrugType(
+                    medication,
+                    types
+                )
+            } ?: false
 
         val typesList = concatItems(types)
         return when {
-            treatmentSummary.numSpecificMatches() >= minTreatmentLines || (minTreatmentLines == 1 && priorCancerMedication.isNotEmpty()) -> {
+            treatmentSummary.numSpecificMatches() >= minTreatmentLines || (minTreatmentLines == 1 && hadCancerMedicationWithCategoryOfTypes) -> {
                 EvaluationFactory.pass("Has received at least $minTreatmentLines line(s) of $typesList ${category.display()}")
             }
 

@@ -18,11 +18,10 @@ import java.time.LocalDate
 private val MATCHING_CATEGORY = TreatmentCategory.TARGETED_THERAPY
 private val MATCHING_TYPE_SET = setOf(DrugType.HER2_ANTIBODY)
 private val MIN_DATE = LocalDate.of(2022, 4, 1)
-private val REFERENCE_DATE = LocalDate.of(2020, 6, 6)
 
 class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
 
-    private val interpreter = WashoutTestFactory.activeFromDate(REFERENCE_DATE)
+    private val interpreter = WashoutTestFactory.activeFromDate(MIN_DATE)
     private val function =
         HasHadTreatmentWithCategoryOfTypesRecently(TreatmentCategory.TARGETED_THERAPY, MATCHING_TYPE_SET, MIN_DATE, interpreter)
 
@@ -119,7 +118,7 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment("test", MATCHING_CATEGORY, setOf(DrugType.ANTI_TISSUE_FACTOR))), startYear = MIN_DATE.year + 1
         )
-        val medication = WashoutTestFactory.medication(null, REFERENCE_DATE.plusDays(1)).copy(
+        val medication = WashoutTestFactory.medication(null, MIN_DATE.plusDays(1)).copy(
             drug = Drug(
                 name = "", category = MATCHING_CATEGORY, drugTypes =
                 MATCHING_TYPE_SET

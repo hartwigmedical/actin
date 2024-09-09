@@ -28,7 +28,6 @@ class HasRecentlyReceivedCancerTherapyOfName(
             }
             .map { it.drug?.name ?: it.name }.toSet()
 
-        val treatmentDrugsFound = mutableSetOf<String>()
         val matchingTreatments = record.oncologicalHistory
             .mapNotNull { entry ->
                 TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(entry) {
@@ -37,13 +36,11 @@ class HasRecentlyReceivedCancerTherapyOfName(
                     ).isNotEmpty()
                 }
             }
-        matchingTreatments.forEach {
-            it.treatments.forEach { treatment ->
-                if (treatment is DrugTreatment && treatment.drugs.intersect(namesToFind).isNotEmpty()) {
-                    treatment.drugs.forEach { treatmentDrugsFound.add(it.name) }
-                }
-            }
-        }
+        val treatmentDrugsFound = matchingTreatments.flatMap { it.treatments }
+            .filterIsInstance<DrugTreatment>()
+            .filter { it.drugs.intersect(namesToFind).isNotEmpty() }
+            .flatMap { it.drugs }
+            .map { it.name }
 
         val namesFound = medicationsFound + treatmentDrugsFound
 

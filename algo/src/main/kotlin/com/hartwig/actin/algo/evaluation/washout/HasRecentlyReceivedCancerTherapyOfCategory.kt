@@ -34,51 +34,39 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
 
         val foundCategories = mutableSetOf<String>()
         val foundMedicationNames = mutableSetOf<String>()
-        categoriesToFind.filter { categoryToFind ->
-            activeMedications
-                .any {
-                    if ((it.allLevels() intersect categoryToFind.value).isNotEmpty()) {
-                        foundCategories.add(categoryToFind.key)
-                        foundMedicationNames.add(it.drug?.name ?: it.name)
-                    }
-                    if (it.isTrialMedication) {
-                        foundCategories.add("Trial medication")
-                    }
-                    (it.allLevels() intersect categoryToFind.value).isNotEmpty() || it.isTrialMedication
+        activeMedications.forEach { medication ->
+            categoriesToFind.forEach { (categoryName, levels) ->
+                if (medication.allLevels().intersect(levels).isNotEmpty()) {
+                    foundCategories.add(categoryName)
+                    foundMedicationNames.add(medication.drug?.name ?: medication.name)
                 }
-        }.map { it.key }.toSet()
+            }
+            if (medication.isTrialMedication) {
+                foundCategories.add("Trial medication")
+            }
+        }
 
         val categoryToDrugTypes = MedicationCategories.MEDICATION_CATEGORIES_TO_DRUG_TYPES.filter { categoryNames.contains(it.key) }
         val drugTypesToFind = categoryNames.flatMap { MedicationCategories.MEDICATION_CATEGORIES_TO_DRUG_TYPES[it] ?: emptySet() }.toSet()
 
         val treatmentAssessment = record.oncologicalHistory.map { treatmentHistoryEntry ->
             val startedPastMinDate = DateComparison.isAfterDate(minDate, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
-            val categoryAndTypeMatch = categoryToDrugTypes.any { categoryToDrugType ->
-                categoryToDrugType.value.any {
-                    if (it is TreatmentCategory) {
-                        val hasCategory = treatmentHistoryEntry.categories().contains(it)
-                        if (hasCategory && startedPastMinDate == true) {
-                            foundCategories.add(categoryToDrugType.key)
-                            treatmentHistoryEntry.treatments.forEach { treatment ->
-                                if (treatment is DrugTreatment) {
-                                    treatment.drugs.forEach { drug -> foundMedicationNames.add(drug.name) }
-                                }
-                            }
-                        }
-                        hasCategory
-                    } else {
-                        val hasCategory = treatmentHistoryEntry.categories().contains((it as DrugType).category)
-                                && treatmentHistoryEntry.matchesTypeFromSet(setOf(it)) == true
-                        if (hasCategory && startedPastMinDate == true) {
-                            foundCategories.add(categoryToDrugType.key)
-                            treatmentHistoryEntry.treatments.forEach { treatment ->
-                                if (treatment is DrugTreatment) {
-                                    treatment.drugs.forEach { drug -> foundMedicationNames.add(drug.name) }
-                                }
-                            }
-                        }
-                        hasCategory
+            val categoryAndTypeMatch = categoryToDrugTypes.any { (categoryName, drugTypes) ->
+                drugTypes.any { drugType ->
+                    val hasCategory = when (drugType) {
+                        is TreatmentCategory -> treatmentHistoryEntry.categories().contains(drugType)
+                        is DrugType -> treatmentHistoryEntry.categories()
+                            .contains(drugType.category) && treatmentHistoryEntry.matchesTypeFromSet(setOf(drugType)) == true
+
+                        else -> false
                     }
+                    if (hasCategory && startedPastMinDate == true) {
+                        foundCategories.add(categoryName)
+                        treatmentHistoryEntry.treatments.filterIsInstance<DrugTreatment>().forEach { treatment ->
+                            treatment.drugs.forEach { drug -> foundMedicationNames.add(drug.name) }
+                        }
+                    }
+                    hasCategory
                 }
             }
             TreatmentFunctions.TreatmentAssessment(

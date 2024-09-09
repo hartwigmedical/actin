@@ -23,12 +23,13 @@ class HasRecentlyReceivedTrialMedication(
             )
         }
 
-        val activeOrRecentlyStopped = selector.activeOrRecentlyStopped(medications, minStopDate).filter(Medication::isTrialMedication)
+        val hasActiveOrRecentlyStoppedMedication =
+            selector.activeOrRecentlyStopped(medications, minStopDate).any(Medication::isTrialMedication)
 
-        val trialEntries =
-            record.oncologicalHistory.filter { it.isTrial && TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minStopDate, true) }
+        val hadRecentTrialTreatment =
+            record.oncologicalHistory.any { it.isTrial && TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minStopDate, true) }
 
-        return if (activeOrRecentlyStopped.isNotEmpty() || trialEntries.isNotEmpty()) {
+        return if (hasActiveOrRecentlyStoppedMedication || hadRecentTrialTreatment) {
             EvaluationFactory.pass(
                 "Patient recently received trial medication - pay attention to washout period",
                 "Recent trial medication - pay attention to washout period"

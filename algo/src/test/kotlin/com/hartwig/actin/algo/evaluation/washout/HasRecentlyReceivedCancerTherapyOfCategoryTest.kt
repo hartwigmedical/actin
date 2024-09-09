@@ -15,7 +15,6 @@ import java.time.LocalDate
 
 private val REFERENCE_DATE = LocalDate.of(2020, 6, 6)
 private val INTERPRETER = WashoutTestFactory.activeFromDate(REFERENCE_DATE)
-private val MIN_DATE = LocalDate.of(2024, 2, 9).minusMonths(6.toLong())
 
 class HasRecentlyReceivedCancerTherapyOfCategoryTest {
 
@@ -26,7 +25,7 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         ),
         mapOf("categories to ignore" to setOf(AtcLevel(code = "category to ignore", name = ""))),
         INTERPRETER,
-        MIN_DATE
+        REFERENCE_DATE
     )
 
     @Test
@@ -71,10 +70,10 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         val treatmentHistory = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
                 setOf(treatments),
-                startYear = MIN_DATE.year,
-                startMonth = MIN_DATE.plusMonths(1).monthValue,
-                stopYear = MIN_DATE.year,
-                stopMonth = MIN_DATE.plusMonths(2).monthValue
+                startYear = REFERENCE_DATE.year,
+                startMonth = REFERENCE_DATE.plusMonths(1).monthValue,
+                stopYear = REFERENCE_DATE.year,
+                stopMonth = REFERENCE_DATE.plusMonths(2).monthValue
             )
         )
         assertEvaluation(
@@ -95,10 +94,10 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         val treatmentHistory = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
                 setOf(treatments),
-                startYear = MIN_DATE.year,
-                startMonth = MIN_DATE.plusMonths(1).monthValue,
-                stopYear = MIN_DATE.year,
-                stopMonth = MIN_DATE.plusMonths(2).monthValue
+                startYear = REFERENCE_DATE.year,
+                startMonth = REFERENCE_DATE.plusMonths(1).monthValue,
+                stopYear = REFERENCE_DATE.year,
+                stopMonth = REFERENCE_DATE.plusMonths(2).monthValue
             )
         )
         assertEvaluation(
@@ -130,10 +129,10 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
             TreatmentTestFactory.treatmentHistoryEntry(
                 setOf(treatments),
                 isTrial = true,
-                startYear = MIN_DATE.year,
-                startMonth = MIN_DATE.plusMonths(1).monthValue,
-                stopYear = MIN_DATE.year,
-                stopMonth = MIN_DATE.plusMonths(2).monthValue
+                startYear = REFERENCE_DATE.year,
+                startMonth = REFERENCE_DATE.plusMonths(1).monthValue,
+                stopYear = REFERENCE_DATE.year,
+                stopMonth = REFERENCE_DATE.plusMonths(2).monthValue
             )
         )
         assertEvaluation(

@@ -2,6 +2,7 @@ package com.hartwig.actin
 
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
+import com.hartwig.actin.medication.MedicationCategories
 
 class TreatmentDatabase(private val drugsByName: Map<String, Drug>, private val treatmentsByName: Map<String, Treatment>) {
 
@@ -13,12 +14,10 @@ class TreatmentDatabase(private val drugsByName: Map<String, Drug>, private val 
         return drugsByName[drugName.replace(" ", "_").lowercase()]
     }
 
-    fun findDrugByAtcCode(drugName: String, atcCode: String): Drug? {
-        return if ((atcCode.startsWith("L01") && !atcCode.startsWith("L01XD")) || atcCode.startsWith("L02") || atcCode.startsWith("H01CC") || atcCode.startsWith(
-                "H01CA"
-            ) || atcCode.startsWith("G03XA")
-        ) {
-            findDrugByName(drugName.split(", ").first())
+    fun findDrugByAtcName(atcName: String, atcCode: String): Drug? {
+        val antiCancerAtcCodes = MedicationCategories.ANTI_CANCER_ATC_CODES
+        return if (antiCancerAtcCodes.any { atcCode.startsWith(it) && !atcCode.startsWith("L01XD") }) {
+            findDrugByName(atcName.split(", ").first())
         } else null
     }
 }

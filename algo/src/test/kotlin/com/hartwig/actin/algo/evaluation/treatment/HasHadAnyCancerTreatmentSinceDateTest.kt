@@ -16,7 +16,6 @@ private val MIN_DATE = LocalDate.of(2024, 2, 9).minusMonths(MONTHS_AGO.toLong())
 private val RECENT_DATE = MIN_DATE.plusMonths(3)
 private val OLDER_DATE = MIN_DATE.minusMonths(3)
 private val ATC_LEVELS = AtcLevel(code = "category to find", name = "")
-private val REFERENCE_DATE = LocalDate.of(2020, 6, 6)
 val CHEMOTHERAPY_TREATMENT = TreatmentTestFactory.treatment(
     name = "Chemotherapy", isSystemic = true, categories = setOf(TreatmentCategory.CHEMOTHERAPY)
 )
@@ -26,7 +25,7 @@ val IMMUNOTHERAPY_TREATMENT = TreatmentTestFactory.treatment(
 
 class HasHadAnyCancerTreatmentSinceDateTest {
 
-    private val interpreter = WashoutTestFactory.activeFromDate(REFERENCE_DATE)
+    private val interpreter = WashoutTestFactory.activeFromDate(MIN_DATE)
     private val function = HasHadAnyCancerTreatmentSinceDate(MIN_DATE, MONTHS_AGO, setOf(ATC_LEVELS), interpreter)
 
     @Test
@@ -108,7 +107,7 @@ class HasHadAnyCancerTreatmentSinceDateTest {
                     stopYear = OLDER_DATE.year,
                     stopMonth = OLDER_DATE.monthValue
                 )
-            ), listOf(WashoutTestFactory.medication(atc, REFERENCE_DATE.plusDays(1)))
+            ), listOf(WashoutTestFactory.medication(atc, MIN_DATE.plusDays(1)))
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(priorCancerTreatment))
     }

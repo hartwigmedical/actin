@@ -25,4 +25,18 @@ class MedicationCategoriesTest {
         val victim = MedicationCategories(emptyMap(), atcTree)
         assertThat(victim.resolve(CALCIUM_HOMEOSTASIS)).containsExactly(firstLevel)
     }
+
+    @Test
+    fun `Should resolve known category name`() {
+        val atcTree = AtcTree(emptyMap())
+        val victim = MedicationCategories(mapOf("Bone resorptive" to emptySet()), atcTree)
+        assertThat(victim.resolveCategoryName("Bone resorptive")).isEqualTo("Bone resorptive")
+    }
+
+    @Test
+    fun `Should fallback to resolving category name from ATC code`() {
+        val atcTree = AtcTree(mapOf(CALCIUM_HOMEOSTASIS to "Calcium homeostasis"))
+        val victim = MedicationCategories(emptyMap(), atcTree)
+        assertThat(victim.resolveCategoryName(CALCIUM_HOMEOSTASIS)).isEqualTo("Calcium homeostasis")
+    }
 }

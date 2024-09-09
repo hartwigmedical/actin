@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.medication.MEDICATION_NOT_PROVIDED
 import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithAnd
 import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithOr
 import com.hartwig.actin.datamodel.PatientRecord
@@ -21,9 +20,8 @@ class HasHadTreatmentWithDrug(private val drugsToFind: Set<Drug>) : EvaluationFu
             .flatMap { (it as? DrugTreatment)?.drugs ?: emptyList() }
             .filter { it.name.lowercase() in namesToMatch }.toSet()
 
-        val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
         val matchingDrugsInMedication =
-            medications.filter { it.drug?.name?.lowercase() in namesToMatch }.mapNotNull(Medication::drug).toSet()
+            record.medications?.filter { it.drug?.name?.lowercase() in namesToMatch }?.mapNotNull(Medication::drug)?.toSet() ?: emptySet()
 
         val matchingDrugs = matchingDrugsInTreatment + matchingDrugsInMedication
 

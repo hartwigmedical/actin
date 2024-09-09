@@ -12,19 +12,18 @@ class HasHadSomeTreatmentsWithCategory(private val category: TreatmentCategory, 
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(record.oncologicalHistory, category)
 
-        val priorCancerMedication =
-            record.medications?.filter { medication -> (medication.drug?.category?.equals(category) == true) || medication.isTrialMedication }
-                ?: emptyList()
+        val hadCancerMedicationWithCategory =
+            record.medications?.any { medication -> MedicationFunctions.hasCategory(medication, category) } ?: false
 
         return when {
-            treatmentSummary.numSpecificMatches() >= minTreatmentLines || (minTreatmentLines == 1 && priorCancerMedication.isNotEmpty() && priorCancerMedication.any { !it.isTrialMedication }) -> {
+            treatmentSummary.numSpecificMatches() >= minTreatmentLines || (minTreatmentLines == 1 && hadCancerMedicationWithCategory) -> {
                 EvaluationFactory.pass(
                     "Patient has received at least $minTreatmentLines line(s) of ${category.display()}",
                     "Has received at least $minTreatmentLines line(s) of ${category.display()}"
                 )
             }
 
-            treatmentSummary.numSpecificMatches() + treatmentSummary.numPossibleTrialMatches >= minTreatmentLines || (minTreatmentLines == 1 && priorCancerMedication.isNotEmpty()) -> {
+            treatmentSummary.numSpecificMatches() + treatmentSummary.numPossibleTrialMatches >= minTreatmentLines || (minTreatmentLines == 1 && record.medications?.any { it.isTrialMedication } == true) -> {
                 EvaluationFactory.undetermined(
                     "Patient may have received at least $minTreatmentLines line(s) of  ${category.display()} due to trial participation",
                     "Undetermined if received at least $minTreatmentLines line(s) of ${category.display()} due to trial participation"

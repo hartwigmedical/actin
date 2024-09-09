@@ -33,12 +33,10 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugs(
 
         val priorCancerMedication = record.medications
             ?.filter { medication ->
-                (medication.drug?.category?.equals(category) == true) && (types?.let {
+                MedicationFunctions.hasCategory(medication, category) && (types?.let {
                     medication.drug?.drugTypes?.intersect(types)?.isNotEmpty()
                 } ?: true) && (!ignoreDrugs.contains(medication.drug))
             } ?: emptyList()
-
-        val ignoreDrugsList = concatItemsWithAnd(ignoreDrugs)
 
         val matchingTreatmentTypes = treatmentSummary.specificMatches
             .map { it.treatments.flatMap(Treatment::types).map { t -> t.display() }.toSet() }
@@ -49,6 +47,7 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugs(
 
         val totalMatchingTypes = (matchingTreatmentTypes + matchingMedicationTypes).joinToString { ", " }
 
+        val ignoreDrugsList = concatItemsWithAnd(ignoreDrugs)
         val typeMessage = if (types != null && totalMatchingTypes.isNotEmpty()) " of types $totalMatchingTypes" else ""
         val messageEnding = "received ${category.display()}$typeMessage ignoring $ignoreDrugsList"
 

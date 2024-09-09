@@ -17,20 +17,20 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypes(
             record.oncologicalHistory, category, { historyEntry -> types.all { type -> historyEntry.isOfType(type) == true } }
         )
 
-        val priorCancerMedication = record.medications
-            ?.filter { medication ->
-                (medication.drug?.category?.equals(category) == true && types.all {
+        val hadCancerMedicationWithCategoryOfAllTypes = record.medications
+            ?.any { medication ->
+                (MedicationFunctions.hasCategory(medication, category) && types.all {
                     medication.drug?.drugTypes?.contains(
                         it
                     ) == true
                 })
-            } ?: emptyList()
+            } ?: false
 
         val typesList = Format.concatItemsWithAnd(types)
         val baseMessage = "received at least $minTreatmentLines line(s) of $typesList combination ${category.display()}"
 
         return when {
-            treatmentSummary.numSpecificMatches() >= minTreatmentLines || (minTreatmentLines == 1 && priorCancerMedication.isNotEmpty()) -> {
+            treatmentSummary.numSpecificMatches() >= minTreatmentLines || (minTreatmentLines == 1 && hadCancerMedicationWithCategoryOfAllTypes) -> {
                 EvaluationFactory.pass("Has $baseMessage")
             }
 
