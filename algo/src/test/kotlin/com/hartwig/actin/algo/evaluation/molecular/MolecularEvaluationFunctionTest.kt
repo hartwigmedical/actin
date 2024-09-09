@@ -112,7 +112,7 @@ class MolecularEvaluationFunctionTest {
     }
 
     @Test
-    fun `Should apply molecular test filter when max age specified`() {
+    fun `Should only evaluate tests under max age when specified`() {
         val evaluatedTests = mutableSetOf<MolecularTest>()
         val function = object : MolecularEvaluationFunction(MAX_AGE) {
             override fun evaluate(test: MolecularTest): Evaluation {
