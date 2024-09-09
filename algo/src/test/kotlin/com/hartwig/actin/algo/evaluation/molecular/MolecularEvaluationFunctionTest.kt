@@ -112,17 +112,7 @@ class MolecularEvaluationFunctionTest {
     }
 
     @Test
-    fun `Should not evaluate molecular tests that are older than the max date when no other tests`() {
-        val function = object : MolecularEvaluationFunction(MAX_AGE) {}
-        val patient = withPanelTest(MAX_AGE.minusDays(1))
-        val evaluation = function.evaluate(patient)
-        assertThat(evaluation.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        assertThat(evaluation.undeterminedSpecificMessages).containsExactly("No molecular data")
-        assertThat(evaluation.undeterminedGeneralMessages).containsExactly("No molecular data")
-    }
-
-    @Test
-    fun `Should not evaluate molecular tests that are older than the max date when other tests exist`() {
+    fun `Should apply molecular test filter when max age specified`() {
         val evaluatedTests = mutableSetOf<MolecularTest>()
         val function = object : MolecularEvaluationFunction(MAX_AGE) {
             override fun evaluate(test: MolecularTest): Evaluation {
@@ -130,17 +120,16 @@ class MolecularEvaluationFunctionTest {
                 return EvaluationFactory.fail(FAIL_SPECIFIC_MESSAGE, FAIL_GENERAL_MESSAGE)
             }
         }
-        val oldTest = emptyArcher().copy(date = MAX_AGE.minusDays(1))
-        val newTest = emptyArcher()
-        function.evaluate(
-            TestPatientFactory.createEmptyMolecularTestPatientRecord()
-                .copy(molecularHistory = MolecularHistory(listOf(oldTest, newTest)))
-        )
-        assertThat(evaluatedTests).containsOnly(newTest)
+        val newTest = MAX_AGE.plusDays(1)
+        val oldTest = MAX_AGE.minusDays(1)
+        val patient = withPanelTest(newTest, oldTest)
+        function.evaluate(patient)
+        assertThat(evaluatedTests.map { it.date }).containsOnly(newTest)
     }
 
-    private fun withPanelTest(testDate: LocalDate = MAX_AGE.plusYears(1)) = TestPatientFactory.createEmptyMolecularTestPatientRecord()
-        .copy(molecularHistory = MolecularHistory(listOf(emptyArcher(testDate))))
+    private fun withPanelTest(vararg testDates: LocalDate = arrayOf(MAX_AGE.plusYears(1))) =
+        TestPatientFactory.createEmptyMolecularTestPatientRecord()
+            .copy(molecularHistory = MolecularHistory(testDates.map { emptyArcher(it) }))
 
     private fun assertOverrideEvaluation(patient: PatientRecord) {
         val evaluation = functionWithOverride.evaluate(patient)
