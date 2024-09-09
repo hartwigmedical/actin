@@ -16,6 +16,9 @@ private val TRIAL_1 = TestClinicalEvidenceFactory.createExternalTrial(
 private val TRIAL_2 = TestClinicalEvidenceFactory.createExternalTrial(
     "2", setOf(TestClinicalEvidenceFactory.createCountry(CountryName.BELGIUM)), "url", "NCT002"
 )
+private val TRIAL_3 = TestClinicalEvidenceFactory.createExternalTrial(
+    "3", setOf(TestClinicalEvidenceFactory.createCountry(CountryName.NETHERLANDS)), "url", "NCT003"
+)
 
 private val trialMatches = listOf(
     TrialMatch(
@@ -165,7 +168,7 @@ class ExternalTrialSummarizerTest {
                     )
                 ),
                 EGFR_TARGET to listOf(
-                    TRIAL_1.copy(
+                    TRIAL_3.copy(
                         countries = setOf(
                             TestClinicalEvidenceFactory.createCountry(
                                 CountryName.NETHERLANDS,
@@ -183,6 +186,14 @@ class ExternalTrialSummarizerTest {
         ).containsOnlyKeys(
             EGFR_TARGET
         )
+
+        val externalTrialSummarizerBelgium = ExternalTrialSummarizer(CountryName.BELGIUM)
+        assertThat(
+            externalTrialSummarizerBelgium.filterAndGroupExternalTrialsByNctIdAndEvents(
+                externalEligibleTrials,
+                emptyList()
+            )
+        ).isEqualTo(externalEligibleTrials)
     }
 
     private fun externalTrial(id: Int) =
