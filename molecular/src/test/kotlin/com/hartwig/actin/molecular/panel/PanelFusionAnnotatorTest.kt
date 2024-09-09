@@ -19,6 +19,7 @@ import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.ensemblcache.TranscriptData
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
+import com.hartwig.serve.datamodel.EvidenceLevelDetails
 import com.hartwig.serve.datamodel.Knowledgebase
 import io.mockk.every
 import io.mockk.mockk
@@ -159,7 +160,7 @@ class PanelFusionAnnotatorTest {
                         treatment(
                             treatment = "intervention",
                             evidenceLevel = EvidenceLevel.A,
-                            approvalStatus = "GUIDELINE",
+                            evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
                             direction = EvidenceDirection(hasPositiveResponse = true, isCertain = true, hasBenefit = true),
                             onLabel = true,
                             isCategoryEvent = true

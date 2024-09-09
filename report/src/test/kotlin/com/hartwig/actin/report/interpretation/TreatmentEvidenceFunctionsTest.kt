@@ -8,7 +8,6 @@ import com.hartwig.serve.datamodel.EvidenceLevelDetails
 import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 class TreatmentEvidenceFunctionsTest {
 
@@ -33,7 +32,8 @@ class TreatmentEvidenceFunctionsTest {
 
     @Test
     fun `Should correctly filter treatment preclinical level D evidence`() {
-        val preclinicalEvidence = createTreatmentEvidence("preclinical", evidenceLevel = EvidenceLevel.D, approvalStatus = "PRECLINICAL")
+        val preclinicalEvidence =
+            createTreatmentEvidence("preclinical", evidenceLevel = EvidenceLevel.D, evidenceLevelDetails = EvidenceLevelDetails.PRECLINICAL)
         val evidence = setOf(onLabelCategoryLevelA, preclinicalEvidence)
         val result = TreatmentEvidenceFunctions.filterOutPreClinicalEvidence(evidence)
         val expected = setOf(onLabelCategoryLevelA)
@@ -93,7 +93,7 @@ class TreatmentEvidenceFunctionsTest {
         onLabel: Boolean = true,
         evidenceLevel: EvidenceLevel = EvidenceLevel.A,
         isCategoryEvent: Boolean = true,
-        evidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY
+        evidenceLevelDetails: EvidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY
     ): TreatmentEvidence {
         return TreatmentEvidence(
             treatment,

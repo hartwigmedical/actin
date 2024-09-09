@@ -13,6 +13,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.treatment
 import com.hartwig.actin.molecular.GENE
 import com.hartwig.actin.molecular.HGVS_CODING
+import com.hartwig.actin.molecular.HGVS_PROTEIN
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
@@ -29,6 +30,7 @@ import com.hartwig.actin.tools.pave.ImmutableVariantTranscriptImpact
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.ImmutableVariant
 import com.hartwig.actin.tools.variant.VariantAnnotator
+import com.hartwig.serve.datamodel.EvidenceLevelDetails
 import com.hartwig.serve.datamodel.Knowledgebase
 import io.mockk.every
 import io.mockk.mockk
@@ -146,7 +148,7 @@ class PanelVariantAnnotatorTest {
                     treatment(
                         treatment = "intervention",
                         evidenceLevel = EvidenceLevel.A,
-                        approvalStatus = "GUIDELINE",
+                        evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
                         direction = EvidenceDirection(hasPositiveResponse = true, isCertain = true, hasBenefit = true),
                         onLabel = true,
                         isCategoryEvent = true

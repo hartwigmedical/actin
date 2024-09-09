@@ -8,7 +8,6 @@ import com.hartwig.serve.datamodel.EvidenceLevelDetails
 import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 class ClinicalDetailsFunctionsTest {
 
