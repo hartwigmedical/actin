@@ -34,10 +34,11 @@ class ExternalTrialSummarizer(private val homeCountry: CountryName) {
         val localTrialNctIds = trialMatches.mapNotNull { it.identification.nctId }.toSet()
         return externalTrialsPerEvent.flatMap { (event, trials) ->
             trials.filter { it.nctId !in localTrialNctIds }.filter { trial ->
-                trial.countries.none {
-                    it.hospitalsPerCity.values.flatten().toSet().isNotEmpty() && it.hospitalsPerCity.values.flatten().toSet()
-                        .all { hospital -> hospital in CHILDREN_HOSPITALS }
-                }
+                val homeCountries = trial.countries.filter { it.name == homeCountry }
+                if (homeCountries.size > 1 || homeCountries.isEmpty()) throw IllegalStateException("Country ${homeCountry.display()} not found or found multiple times")
+                homeCountries.first().hospitalsPerCity.values.flatten().toSet()
+                    .isEmpty() || !homeCountries.first().hospitalsPerCity.values.flatten().toSet()
+                    .all { hospital -> hospital in CHILDREN_HOSPITALS }
             }.map { event to it }
         }
             .groupBy { (_, trial) -> trial.nctId }
