@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.util
 
+import com.hartwig.actin.molecular.util.ImpactDisplay.formatVariantImpact
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
