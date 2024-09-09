@@ -273,7 +273,7 @@ class PanelVariantAnnotatorTest {
     fun `Should describe variant event using protein hgvs`() {
         val variants = setOf(SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING))
         val annotated = annotator.annotate(variants)
-        assertThat(annotated.first().event).isEqualTo("$GENE ${HGVS_PROTEIN.removePrefix("p.")}")
+        assertThat(annotated.first().event).isEqualTo("$GENE ${HGVS_PROTEIN_1LETTER.removePrefix("p.")}")
     }
 
     @Test
