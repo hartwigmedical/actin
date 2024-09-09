@@ -5,7 +5,6 @@ import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.trial.input.FunctionInputResolver
-import java.time.Period
 
 abstract class RuleMapper(val resources: RuleMappingResources) {
 
@@ -24,9 +23,9 @@ abstract class RuleMapper(val resources: RuleMappingResources) {
     protected fun atcTree(): AtcTree {
         return resources.atcTree
     }
-    
+
     protected fun maxMolecularTestAge() =
-        resources.algoConfiguration.maxMolecularTestAgeInDays?.let { referenceDateProvider().date().minus(Period.ofDays(it)) }
+        resources.maxMolecularTestAge
 
     abstract fun createMappings(): Map<EligibilityRule, FunctionCreator>
 }

@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.molecular
+package com.hartwig.actin.molecular.filter
 
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularTest
@@ -6,7 +6,7 @@ import java.time.LocalDate
 
 class MolecularTestFilter(private val maxTestAge: LocalDate? = null) {
 
-    fun filter(tests: List<MolecularTest>): List<MolecularTest> {
+    fun apply(tests: List<MolecularTest>): List<MolecularTest> {
         if (tests.isNotEmpty() && maxTestAge != null) {
             val sortedTests = tests.sortedBy { it.date }.reversed()
             val mostRecentTestDate = sortedTests.first().date
