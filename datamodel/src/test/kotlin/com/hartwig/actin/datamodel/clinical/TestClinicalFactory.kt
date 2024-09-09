@@ -288,8 +288,8 @@ object TestClinicalFactory {
                 doids = setOf("3393"),
                 category = "Heart disease",
                 isContraindicationForTherapy = true,
-                year = null,
-                month = null
+                year = 2023,
+                month = 10
             )
         )
     }

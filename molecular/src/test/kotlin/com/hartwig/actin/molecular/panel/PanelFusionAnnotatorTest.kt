@@ -162,7 +162,7 @@ class PanelFusionAnnotatorTest {
                             approvalStatus = "GUIDELINE",
                             direction = EvidenceDirection(hasPositiveResponse = true, isCertain = true, hasBenefit = true),
                             onLabel = true,
-                            isCategoryVariant = true
+                            isCategoryEvent = true
                         )
                     )
                 )

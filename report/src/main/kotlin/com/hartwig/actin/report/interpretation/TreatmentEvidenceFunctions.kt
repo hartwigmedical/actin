@@ -24,7 +24,7 @@ object TreatmentEvidenceFunctions {
                 it.treatment,
                 it.onLabel,
                 it.direction,
-                it.isCategoryVariant,
+                it.isCategoryEvent,
                 it.sourceEvent,
                 it.applicableCancerType
             )
@@ -49,8 +49,8 @@ object TreatmentEvidenceFunctions {
     private fun findHighestEvidenceLevel(treatmentEvidenceList: List<TreatmentEvidence>): EvidenceLevel? =
         treatmentEvidenceList.minOfOrNull { it.evidenceLevel }
 
-    private fun extractVariants(treatmentEvidenceList: List<TreatmentEvidence>, isCategoryVariant: Boolean): List<TreatmentEvidence> =
-        treatmentEvidenceList.filter { it.isCategoryVariant == isCategoryVariant }
+    private fun extractVariants(treatmentEvidenceList: List<TreatmentEvidence>, isCategoryEvent: Boolean): List<TreatmentEvidence> =
+        treatmentEvidenceList.filter { it.isCategoryEvent == isCategoryEvent }
 
     private fun generateClinicalDetails(treatments: List<TreatmentEvidence>, level: EvidenceLevel?): List<ClinicalDetails> =
         level?.let {

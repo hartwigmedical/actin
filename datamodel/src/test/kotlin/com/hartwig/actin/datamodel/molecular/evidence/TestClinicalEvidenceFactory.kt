@@ -109,7 +109,7 @@ object TestClinicalEvidenceFactory {
         evidenceLevelDetails: EvidenceLevelDetails,
         direction: EvidenceDirection,
         onLabel: Boolean,
-        isCategoryVariant: Boolean? = false
+        isCategoryEvent: Boolean = false
     ) = TreatmentEvidence(
         treatment,
         evidenceLevel,
@@ -117,7 +117,7 @@ object TestClinicalEvidenceFactory {
         direction,
         LocalDate.of(2021, 2, 3),
         "efficacy evidence",
-        isCategoryVariant,
+        isCategoryEvent,
         "",
         evidenceLevelDetails,
         applicableCancerType()
@@ -174,7 +174,7 @@ object TestClinicalEvidenceFactory {
             sourceEvent = "",
             evidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY,
             applicableCancerType = ApplicableCancerType(cancerType = "", excludedCancerTypes = emptySet()),
-            isCategoryVariant = false
+            isCategoryEvent = false
         )
     }
 

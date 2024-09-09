@@ -4,6 +4,8 @@ import com.hartwig.actin.datamodel.molecular.evidence.ApplicableCancerType
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
+import com.hartwig.serve.datamodel.EvidenceLevelDetails
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
@@ -49,11 +51,11 @@ class ClinicalDetailsFunctionsTest {
             EvidenceLevel.A,
             true,
             EvidenceDirection(),
-            LocalDate.of(2024, 9, 5),
+            LocalDate.EPOCH,
             "",
             true,
             sourceEvent,
-            "CLINICAL_STUDY",
+            EvidenceLevelDetails.CLINICAL_STUDY,
             ApplicableCancerType("", emptySet())
         )
     }

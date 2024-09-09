@@ -14,6 +14,7 @@ import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
+import com.hartwig.actin.molecular.orange.interpretation.AminoAcid.forceSingleLetterAminoAcids
 import com.hartwig.actin.molecular.panel.PanelAnnotator.Companion.LOGGER
 import com.hartwig.actin.molecular.paver.PaveCodingEffect
 import com.hartwig.actin.molecular.paver.PaveImpact
@@ -21,7 +22,7 @@ import com.hartwig.actin.molecular.paver.PaveQuery
 import com.hartwig.actin.molecular.paver.PaveResponse
 import com.hartwig.actin.molecular.paver.PaveTranscriptImpact
 import com.hartwig.actin.molecular.paver.Paver
-import com.hartwig.actin.tools.genome.AminoAcids
+import com.hartwig.actin.molecular.util.ImpactDisplay.formatVariantImpact
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.VariantAnnotator
 import com.hartwig.serve.datamodel.hotspot.KnownHotspot
@@ -59,7 +60,7 @@ class PanelVariantAnnotator(
         val externalVariantAnnotation =
             variantResolver.resolve(
                 panelVariantExtraction.gene,
-                null,
+                panelVariantExtraction.transcript,
                 panelVariantExtraction.hgvsCodingOrProteinImpact()
             )
 
@@ -153,8 +154,7 @@ class PanelVariantAnnotator(
         otherImpacts = otherImpacts(paveResponse, transcriptAnnotation),
         isHotspot = serveGeneAlteration is KnownHotspot || serveGeneAlteration is KnownCodon,
         isReportable = true,
-        event = "${variant.gene} ${variant.hgvsCodingOrProteinImpact()}",
-
+        event = "${variant.gene} ${impact(paveResponse)}",
 
         driverLikelihood = DriverLikelihood.LOW,
         evidence = evidence,
@@ -183,7 +183,7 @@ class PanelVariantAnnotator(
         return TranscriptImpact(
             transcriptId = paveImpact.transcript,
             hgvsCodingImpact = paveImpact.hgvsCodingImpact,
-            hgvsProteinImpact = normalizeProteinImpact(paveImpact.hgvsProteinImpact),
+            hgvsProteinImpact = forceSingleLetterAminoAcids(paveImpact.hgvsProteinImpact),
             isSpliceRegion = paveImpact.spliceRegion,
             affectedExon = paveLiteAnnotation.affectedExon(),
             affectedCodon = paveLiteAnnotation.affectedCodon(),
@@ -211,7 +211,7 @@ class PanelVariantAnnotator(
         return TranscriptImpact(
             transcriptId = paveTranscriptImpact.transcript,
             hgvsCodingImpact = paveTranscriptImpact.hgvsCodingImpact,
-            hgvsProteinImpact = normalizeProteinImpact(paveTranscriptImpact.hgvsProteinImpact),
+            hgvsProteinImpact = forceSingleLetterAminoAcids(paveTranscriptImpact.hgvsProteinImpact),
             isSpliceRegion = paveTranscriptImpact.spliceRegion,
             affectedExon = paveLiteAnnotation.affectedExon(),
             affectedCodon = paveLiteAnnotation.affectedCodon(),
@@ -265,10 +265,13 @@ class PanelVariantAnnotator(
     }
 }
 
-fun normalizeProteinImpact(hgvsProteinImpact: String): String {
-    return if (hgvsProteinImpact != "p.?") {
-        AminoAcids.forceSingleLetterProteinAnnotation(hgvsProteinImpact)
-    } else {
-        hgvsProteinImpact
-    }
+fun impact(paveResponse: PaveResponse): String {
+    return formatVariantImpact(
+        paveResponse.impact.hgvsProteinImpact,
+        paveResponse.impact.hgvsCodingImpact,
+        paveResponse.impact.canonicalCodingEffect == PaveCodingEffect.SPLICE,
+        paveResponse.impact.canonicalEffect.contains("upstream_gene_variant"),
+        paveResponse.impact.canonicalEffect
+    )
 }
+

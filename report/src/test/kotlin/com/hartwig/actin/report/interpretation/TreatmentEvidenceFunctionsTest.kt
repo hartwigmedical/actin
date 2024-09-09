@@ -4,16 +4,18 @@ import com.hartwig.actin.datamodel.molecular.evidence.ApplicableCancerType
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
+import com.hartwig.serve.datamodel.EvidenceLevelDetails
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
 class TreatmentEvidenceFunctionsTest {
 
-    private val onLabelCategoryLevelA = createTreatmentEvidence(treatment = "onLabel category level", isCategoryVariant = true)
+    private val onLabelCategoryLevelA = createTreatmentEvidence(treatment = "onLabel category level", isCategoryEvent = true)
     private val offLabelCategoryLevelA = onLabelCategoryLevelA.copy(treatment = "offLabel category level", onLabel = false)
     private val onLabelCategoryLevelB = onLabelCategoryLevelA.copy(evidenceLevel = EvidenceLevel.B)
-    private val onLabelNonCategoryLevelA = onLabelCategoryLevelA.copy(treatment = "onLabel non-category level", isCategoryVariant = false)
+    private val onLabelNonCategoryLevelA = onLabelCategoryLevelA.copy(treatment = "onLabel non-category level", isCategoryEvent = false)
     private val onLabelNonCategoryLevelB = onLabelNonCategoryLevelA.copy(evidenceLevel = EvidenceLevel.B)
 
     @Test
@@ -90,19 +92,19 @@ class TreatmentEvidenceFunctionsTest {
         treatment: String = "treatment",
         onLabel: Boolean = true,
         evidenceLevel: EvidenceLevel = EvidenceLevel.A,
-        isCategoryVariant: Boolean = true,
-        approvalStatus: String = "CLINICAL_STUDY"
+        isCategoryEvent: Boolean = true,
+        evidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY
     ): TreatmentEvidence {
         return TreatmentEvidence(
             treatment,
             evidenceLevel,
             onLabel,
             EvidenceDirection(),
-            LocalDate.of(2024, 9, 5),
+            LocalDate.EPOCH,
             "",
-            isCategoryVariant,
+            isCategoryEvent,
             "sourceEvent",
-            approvalStatus,
+            evidenceLevelDetails,
             ApplicableCancerType("", emptySet())
         )
     }
