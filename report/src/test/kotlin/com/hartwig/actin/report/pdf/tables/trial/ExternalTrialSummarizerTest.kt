@@ -16,6 +16,7 @@ private val TRIAL_1 = TestClinicalEvidenceFactory.createExternalTrial(
 private val TRIAL_2 = TestClinicalEvidenceFactory.createExternalTrial(
     "2", setOf(TestClinicalEvidenceFactory.createCountry(CountryName.BELGIUM)), "url", "NCT002"
 )
+
 private val trialMatches = listOf(
     TrialMatch(
         identification = TrialIdentification("TRIAL-1", true, "TR-1", "Different title of same trial 1", "NCT00000001"),
@@ -147,6 +148,41 @@ class ExternalTrialSummarizerTest {
         assertThat(externalTrialSummary.nonLocalTrials).isEmpty()
         assertThat(externalTrialSummary.localTrialsFiltered).isEqualTo(0)
         assertThat(externalTrialSummary.nonLocalTrialsFiltered).isEqualTo(1)
+    }
+
+    @Test
+    fun `Should filter trials only running in children's hospitals`() {
+        val externalEligibleTrials =
+            mapOf(
+                TMB_TARGET to listOf(
+                    TRIAL_1.copy(
+                        countries = setOf(
+                            TestClinicalEvidenceFactory.createCountry(
+                                CountryName.NETHERLANDS,
+                                mapOf("Utrecht" to setOf("PMC"))
+                            )
+                        )
+                    )
+                ),
+                EGFR_TARGET to listOf(
+                    TRIAL_1.copy(
+                        countries = setOf(
+                            TestClinicalEvidenceFactory.createCountry(
+                                CountryName.NETHERLANDS,
+                                mapOf("Utrecht" to setOf("PMC", "Radboud"))
+                            )
+                        )
+                    )
+                )
+            )
+        assertThat(
+            externalTrialSummarizer.filterAndGroupExternalTrialsByNctIdAndEvents(
+                externalEligibleTrials,
+                emptyList()
+            )
+        ).containsOnlyKeys(
+            EGFR_TARGET
+        )
     }
 
     private fun externalTrial(id: Int) =

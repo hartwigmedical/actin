@@ -12,6 +12,9 @@ data class ExternalTrialSummary(
     val nonLocalTrialsFiltered: Int
 )
 
+private val CHILDREN_HOSPITALS =
+    setOf("PMC", "WKZ", "EKZ", "JKZ", "BKZ", "WAKZ", "Sophia Kinderziekenhuis", "Amalia Kinderziekenhuis", "MosaKids Kinderziekenhuis")
+
 class ExternalTrialSummarizer(private val homeCountry: CountryName) {
 
     fun summarize(
@@ -29,7 +32,15 @@ class ExternalTrialSummarizer(private val homeCountry: CountryName) {
         externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>, trialMatches: List<TrialMatch>
     ): Map<String, List<ExternalTrial>> {
         val localTrialNctIds = trialMatches.mapNotNull { it.identification.nctId }.toSet()
-        return externalTrialsPerEvent.flatMap { (event, trials) -> trials.filter { it.nctId !in localTrialNctIds }.map { event to it } }
+        return externalTrialsPerEvent.flatMap { (event, trials) ->
+            trials.filter { it.nctId !in localTrialNctIds }
+                .filter { trial ->
+                    !trial.countries.any {
+                        it.hospitalsPerCity.values.flatten().toSet().all { hospital -> hospital in CHILDREN_HOSPITALS }
+                    }
+                }
+                .map { event to it }
+        }
             .groupBy { (_, trial) -> trial.nctId }
             .map { (_, eventAndTrialPairs) ->
                 val (events, trials) = eventAndTrialPairs.unzip()
