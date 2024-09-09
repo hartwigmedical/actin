@@ -22,6 +22,7 @@ import com.hartwig.actin.molecular.paver.PaveQuery
 import com.hartwig.actin.molecular.paver.PaveResponse
 import com.hartwig.actin.molecular.paver.PaveTranscriptImpact
 import com.hartwig.actin.molecular.paver.Paver
+import com.hartwig.actin.molecular.util.formatVariantImpact
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.VariantAnnotator
 import com.hartwig.serve.datamodel.hotspot.KnownHotspot
@@ -265,19 +266,12 @@ class PanelVariantAnnotator(
 }
 
 fun impact(paveResponse: PaveResponse): String {
-    if (paveResponse.impact.hgvsProteinImpact.isNotEmpty() && paveResponse.impact.hgvsProteinImpact != "p.?") {
-        return forceSingleLetterAminoAcids(paveResponse.impact.hgvsProteinImpact.removePrefix("p."))
-    }
-
-    if (paveResponse.impact.hgvsCodingImpact.isNotEmpty()) {
-        return if (paveResponse.impact.canonicalCodingEffect == PaveCodingEffect.SPLICE) paveResponse.impact.hgvsCodingImpact + " splice"
-        else paveResponse.impact.hgvsCodingImpact
-    }
-
-    return if (paveResponse.impact.canonicalEffect.contains("upstream_gene_variant")) {
-        "upstream"
-    } else {
+    return formatVariantImpact(
+        paveResponse.impact.hgvsProteinImpact,
+        paveResponse.impact.hgvsCodingImpact,
+        paveResponse.impact.canonicalCodingEffect == PaveCodingEffect.SPLICE,
+        paveResponse.impact.canonicalEffect.contains("upstream_gene_variant"),
         paveResponse.impact.canonicalEffect
-    }
+    )
 }
 

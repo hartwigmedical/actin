@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
+import com.hartwig.actin.molecular.util.formatVariantImpact
 import com.hartwig.hmftools.datamodel.linx.LinxBreakend
 import com.hartwig.hmftools.datamodel.linx.LinxFusion
 import com.hartwig.hmftools.datamodel.linx.LinxHomozygousDisruption
@@ -20,22 +21,14 @@ object DriverEventFactory {
 
     private fun impact(variant: PurpleVariant): String {
         val canonical = variant.canonicalImpact()
-        if (canonical.hgvsProteinImpact().isNotEmpty() && canonical.hgvsProteinImpact() != "p.?") {
-            return reformatProteinImpact(canonical.hgvsProteinImpact())
-        }
-        if (canonical.hgvsCodingImpact().isNotEmpty()) {
-            return if (canonical.codingEffect() == PurpleCodingEffect.SPLICE)
-                canonical.hgvsCodingImpact() + " splice" else canonical.hgvsCodingImpact()
-        }
-        if (canonical.effects().contains(PurpleVariantEffect.UPSTREAM_GENE)) {
-            return "upstream"
-        }
-        return canonical.effects().joinToString("&") { it.toString() }
-    }
 
-    private fun reformatProteinImpact(proteinImpact: String): String {
-        val reformatted = if (proteinImpact.startsWith("p.")) proteinImpact.substring(2) else proteinImpact
-        return AminoAcid.forceSingleLetterAminoAcids(reformatted)
+        return formatVariantImpact(
+            canonical.hgvsProteinImpact(),
+            canonical.hgvsCodingImpact(),
+            canonical.codingEffect() == PurpleCodingEffect.SPLICE,
+            canonical.effects().contains(PurpleVariantEffect.UPSTREAM_GENE),
+            canonical.effects().joinToString("&") { it.toString() }
+        )
     }
 
     fun gainLossEvent(gainLoss: PurpleGainLoss): String {
