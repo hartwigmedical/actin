@@ -2,16 +2,7 @@ package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
-
-private val PRE_CLINICAL_APPROVAL_EVIDENCE_SET = setOf(
-    "PRECLINICAL",
-    "PRECLINICAL_PDX",
-    "PRECLINICAL_BIOCHEMICAL",
-    "PRECLINICAL_CELL_CULTURE",
-    "PRECLINICAL_PDX_CELL_CULTURE",
-    "PRECLINICAL_CELL_LINE_XENOGRAFT",
-    "PRECLINICAL_PATIENT_CELL_CULTURE"
-)
+import com.hartwig.serve.datamodel.EvidenceLevelDetails
 
 object TreatmentEvidenceFunctions {
 
@@ -24,7 +15,7 @@ object TreatmentEvidenceFunctions {
     }
 
     private fun isPreclinical(evidence: TreatmentEvidence): Boolean {
-        return evidence.approvalStatus in PRE_CLINICAL_APPROVAL_EVIDENCE_SET || evidence.approvalStatus.contains("PRECLINICAL", ignoreCase = true)
+        return evidence.evidenceLevelDetails == EvidenceLevelDetails.PRECLINICAL
     }
 
     internal fun groupTreatmentsIgnoringEvidenceLevel(treatmentEvidenceSet: Set<TreatmentEvidence>) =

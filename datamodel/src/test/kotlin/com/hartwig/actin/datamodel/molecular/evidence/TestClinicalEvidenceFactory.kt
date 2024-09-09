@@ -1,5 +1,6 @@
 package com.hartwig.actin.datamodel.molecular.evidence
 
+import com.hartwig.serve.datamodel.EvidenceLevelDetails
 import java.time.LocalDate
 
 object TestClinicalEvidenceFactory {
@@ -28,7 +29,7 @@ object TestClinicalEvidenceFactory {
     fun offLabelSuspectResistant() = treatment(
         "off-label suspect resistant",
         EvidenceLevel.C,
-        "GUIDELINE",
+        EvidenceLevelDetails.GUIDELINE,
         EvidenceDirection(isResistant = true, isCertain = false),
         false
     )
@@ -36,7 +37,7 @@ object TestClinicalEvidenceFactory {
     fun onLabelSuspectResistant() = treatment(
         "on-label suspect resistant",
         EvidenceLevel.C,
-        "GUIDELINE",
+        EvidenceLevelDetails.GUIDELINE,
         EvidenceDirection(isResistant = true, isCertain = false),
         true
     )
@@ -45,7 +46,7 @@ object TestClinicalEvidenceFactory {
         treatment(
             "off-label known resistant",
             EvidenceLevel.A,
-            "GUIDELINE",
+            EvidenceLevelDetails.GUIDELINE,
             EvidenceDirection(isResistant = true, isCertain = true),
             false
         )
@@ -54,21 +55,33 @@ object TestClinicalEvidenceFactory {
         treatment(
             "on-label known resistant",
             EvidenceLevel.A,
-            "GUIDELINE",
+            EvidenceLevelDetails.GUIDELINE,
             EvidenceDirection(isResistant = true, isCertain = true),
             true
         )
 
     fun offLabelPreclinical() =
-        treatment("off-label pre-clinical", EvidenceLevel.D, "PRECLINICAL", EvidenceDirection(hasPositiveResponse = true), false)
+        treatment(
+            "off-label pre-clinical",
+            EvidenceLevel.D,
+            EvidenceLevelDetails.PRECLINICAL,
+            EvidenceDirection(hasPositiveResponse = true),
+            false
+        )
 
     fun onLabelPreclinical() =
-        treatment("on-label pre-clinical", EvidenceLevel.C, "PRECLINICAL", EvidenceDirection(hasPositiveResponse = true), true)
+        treatment(
+            "on-label pre-clinical",
+            EvidenceLevel.C,
+            EvidenceLevelDetails.PRECLINICAL,
+            EvidenceDirection(hasPositiveResponse = true),
+            true
+        )
 
     fun offLabelExperimental() = treatment(
         "off-label experimental",
         EvidenceLevel.B,
-        "PHASE_III",
+        EvidenceLevelDetails.CLINICAL_STUDY,
         EvidenceDirection(hasPositiveResponse = true, isCertain = true),
         false
     )
@@ -76,7 +89,7 @@ object TestClinicalEvidenceFactory {
     fun onLabelExperimental() = treatment(
         "on-label experimental",
         EvidenceLevel.A,
-        "PHASE_III",
+        EvidenceLevelDetails.CLINICAL_STUDY,
         EvidenceDirection(hasPositiveResponse = true, isCertain = false),
         true
     )
@@ -85,7 +98,7 @@ object TestClinicalEvidenceFactory {
         treatment(
             "approved",
             EvidenceLevel.A,
-            "GUIDELINE",
+            EvidenceLevelDetails.GUIDELINE,
             EvidenceDirection(hasPositiveResponse = true, isCertain = true),
             true
         )
@@ -93,7 +106,7 @@ object TestClinicalEvidenceFactory {
     fun treatment(
         treatment: String,
         evidenceLevel: EvidenceLevel,
-        approvalStatus: String,
+        evidenceLevelDetails: EvidenceLevelDetails,
         direction: EvidenceDirection,
         onLabel: Boolean,
         isCategoryVariant: Boolean? = false
@@ -106,7 +119,7 @@ object TestClinicalEvidenceFactory {
         "efficacy evidence",
         isCategoryVariant,
         "",
-        approvalStatus,
+        evidenceLevelDetails,
         applicableCancerType()
     )
 
@@ -159,7 +172,7 @@ object TestClinicalEvidenceFactory {
             url = url,
             nctId = nctId,
             sourceEvent = "",
-            approvalStatus = "CLINICAL_STUDY",
+            evidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY,
             applicableCancerType = ApplicableCancerType(cancerType = "", excludedCancerTypes = emptySet()),
             isCategoryVariant = false
         )
