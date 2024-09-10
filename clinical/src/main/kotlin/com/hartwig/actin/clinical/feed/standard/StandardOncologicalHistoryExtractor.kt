@@ -4,7 +4,6 @@ import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationResponse
-import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
@@ -18,8 +17,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentStage
 private const val TREATMENT_HISTORY = "treatment history"
 
 class StandardOncologicalHistoryExtractor(
-    private val treatmentCuration: CurationDatabase<TreatmentHistoryEntryConfig>,
-    private val nonOncologicalHistoryCuration: CurationDatabase<NonOncologicalHistoryConfig>
+    private val treatmentCuration: CurationDatabase<TreatmentHistoryEntryConfig>
 ) : StandardDataExtractor<List<TreatmentHistoryEntry>> {
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<TreatmentHistoryEntry>> {
         val oncologicalTreatmentHistory = oncologicalTreatmentHistory(ehrPatientRecord)
@@ -33,47 +31,40 @@ class StandardOncologicalHistoryExtractor(
 
     private fun getOncologicalPreviousConditions(ehrPatientRecord: ProvidedPatientRecord) =
         ehrPatientRecord.priorOtherConditions.map { ehrPreviousCondition ->
-            if (nonOncologicalHistoryCuration.find(ehrPreviousCondition.name).isEmpty()) {
-                val treatment = CurationResponse.createFromConfigs(
-                    treatmentCuration.find(ehrPreviousCondition.name),
-                    ehrPatientRecord.patientDetails.hashedId,
-                    CurationCategory.ONCOLOGICAL_HISTORY,
-                    ehrPreviousCondition.name,
-                    TREATMENT_HISTORY,
-                    false
-                )
-                ExtractionResult(
-                    treatment.configs.mapNotNull { config ->
-                        config.curated?.let { curatedTreatment ->
-                            TreatmentHistoryEntry(
-                                startYear = curatedTreatment.startYear ?: ehrPreviousCondition.startDate?.year,
-                                startMonth = curatedTreatment.startMonth ?: ehrPreviousCondition.startDate?.monthValue,
-                                treatments = curatedTreatment.treatments,
-                                intents = curatedTreatment.intents,
-                                treatmentHistoryDetails = TreatmentHistoryDetails(
-                                    stopYear = curatedTreatment.treatmentHistoryDetails?.stopYear ?: ehrPreviousCondition.endDate?.year,
-                                    stopMonth = curatedTreatment.treatmentHistoryDetails?.stopMonth
-                                        ?: ehrPreviousCondition.endDate?.monthValue,
-                                    stopReason = curatedTreatment.treatmentHistoryDetails?.stopReason,
-                                    bestResponse = curatedTreatment.treatmentHistoryDetails?.bestResponse,
-                                    switchToTreatments = curatedTreatment.treatmentHistoryDetails?.switchToTreatments,
-                                    cycles = curatedTreatment.treatmentHistoryDetails?.cycles,
-                                    bodyLocations = curatedTreatment.treatmentHistoryDetails?.bodyLocations,
-                                    bodyLocationCategories = curatedTreatment.treatmentHistoryDetails?.bodyLocationCategories,
-                                    maintenanceTreatment = curatedTreatment.treatmentHistoryDetails?.maintenanceTreatment,
-                                ),
-                                isTrial = curatedTreatment.isTrial,
-                                trialAcronym = curatedTreatment.trialAcronym
-                            )
-                        }
-                    }, treatment.extractionEvaluation
-                )
-            } else {
-                ExtractionResult(
-                    emptyList(),
-                    CurationExtractionEvaluation(treatmentHistoryEntryEvaluatedInputs = setOf(ehrPreviousCondition.name.lowercase()))
-                )
-            }
+            val treatment = CurationResponse.createFromConfigs(
+                treatmentCuration.find(ehrPreviousCondition.name),
+                ehrPatientRecord.patientDetails.hashedId,
+                CurationCategory.ONCOLOGICAL_HISTORY,
+                ehrPreviousCondition.name,
+                TREATMENT_HISTORY,
+                false
+            )
+            ExtractionResult(
+                treatment.configs.mapNotNull { config ->
+                    config.curated?.let { curatedTreatment ->
+                        TreatmentHistoryEntry(
+                            startYear = curatedTreatment.startYear ?: ehrPreviousCondition.startDate?.year,
+                            startMonth = curatedTreatment.startMonth ?: ehrPreviousCondition.startDate?.monthValue,
+                            treatments = curatedTreatment.treatments,
+                            intents = curatedTreatment.intents,
+                            treatmentHistoryDetails = TreatmentHistoryDetails(
+                                stopYear = curatedTreatment.treatmentHistoryDetails?.stopYear ?: ehrPreviousCondition.endDate?.year,
+                                stopMonth = curatedTreatment.treatmentHistoryDetails?.stopMonth
+                                    ?: ehrPreviousCondition.endDate?.monthValue,
+                                stopReason = curatedTreatment.treatmentHistoryDetails?.stopReason,
+                                bestResponse = curatedTreatment.treatmentHistoryDetails?.bestResponse,
+                                switchToTreatments = curatedTreatment.treatmentHistoryDetails?.switchToTreatments,
+                                cycles = curatedTreatment.treatmentHistoryDetails?.cycles,
+                                bodyLocations = curatedTreatment.treatmentHistoryDetails?.bodyLocations,
+                                bodyLocationCategories = curatedTreatment.treatmentHistoryDetails?.bodyLocationCategories,
+                                maintenanceTreatment = curatedTreatment.treatmentHistoryDetails?.maintenanceTreatment,
+                            ),
+                            isTrial = curatedTreatment.isTrial,
+                            trialAcronym = curatedTreatment.trialAcronym
+                        )
+                    }
+                }, treatment.extractionEvaluation
+            )
         }.fold<ExtractionResult<List<TreatmentHistoryEntry>>, ExtractionResult<List<TreatmentHistoryEntry>>>(
             ExtractionResult(emptyList(), CurationExtractionEvaluation())
         ) { acc, result ->
@@ -97,8 +88,8 @@ class StandardOncologicalHistoryExtractor(
                     ExtractionResult(
                         listOf(
                             TreatmentHistoryEntry(
-                                startYear = ehrTreatmentHistory.startDate.year,
-                                startMonth = ehrTreatmentHistory.startDate.monthValue,
+                                startYear = curatedTreatment.curated?.startYear ?: ehrTreatmentHistory.startDate.year,
+                                startMonth = curatedTreatment.curated?.startMonth ?: ehrTreatmentHistory.startDate.monthValue,
                                 intents = ehrTreatmentHistory.intention?.let { intent -> setOf(parseIntent(intent)) },
                                 treatments = curatedTreatment.curated!!.treatments,
                                 treatmentHistoryDetails = TreatmentHistoryDetails(
