@@ -10,13 +10,15 @@ class MolecularTestFilter(private val maxTestAge: LocalDate? = null) {
         if (tests.isNotEmpty() && maxTestAge != null) {
             val sortedTests = tests.sortedBy { it.date }.reversed()
             val mostRecentTestDate = sortedTests.first().date
-            val mostRecentWGS = tests.firstOrNull { it.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME }?.date
+            val mostRecentOncoAct = tests.firstOrNull { it.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME }?.date
+            val mostRecentOncoPanel = tests.firstOrNull { it.experimentType == ExperimentType.HARTWIG_TARGETED }?.date
             return tests.filter {
                 it.date?.let { testDate ->
-                    if (it.experimentType == ExperimentType.PANEL && mostRecentWGS != null) {
-                        testDate > mostRecentWGS
-                    } else {
-                        testDate >= mostRecentTestDate || testDate > maxTestAge
+                    when {
+                        it.experimentType == ExperimentType.PANEL && mostRecentOncoPanel != null && mostRecentOncoAct == null && it.drivers.fusions.isNotEmpty() && testDate >= maxTestAge -> true
+                        it.experimentType == ExperimentType.PANEL && mostRecentOncoPanel != null -> testDate > mostRecentOncoPanel
+                        it.experimentType == ExperimentType.PANEL && mostRecentOncoAct != null -> testDate > mostRecentOncoAct
+                        else -> testDate >= mostRecentTestDate || testDate >= maxTestAge
                     }
                 } ?: true
             }
