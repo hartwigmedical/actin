@@ -15,7 +15,7 @@ class MolecularTestFilter(private val maxTestAge: LocalDate? = null) {
             return tests.filter {
                 it.date?.let { testDate ->
                     when {
-                        it.experimentType == ExperimentType.PANEL && mostRecentOncoPanel != null && mostRecentOncoAct == null && it.drivers.fusions.isNotEmpty() && testDate >= maxTestAge -> true
+                        it.experimentType == ExperimentType.PANEL && mostRecentOncoPanel != null && mostRecentOncoAct == null && it.drivers.fusions.isNotEmpty() -> testDate >= maxTestAge
                         it.experimentType == ExperimentType.PANEL && mostRecentOncoPanel != null -> testDate > mostRecentOncoPanel
                         it.experimentType == ExperimentType.PANEL && mostRecentOncoAct != null -> testDate > mostRecentOncoAct
                         else -> testDate >= mostRecentTestDate || testDate >= maxTestAge
