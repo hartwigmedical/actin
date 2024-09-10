@@ -5,21 +5,19 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.doid.DoidModel
 
 class HasMetastaticCancer (private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val stage = record.tumor.stage
-            ?: return EvaluationFactory.undetermined(
-                "Tumor stage details are missing, if cancer is metastatic cannot be determined",
-                "Undetermined metastatic cancer"
-            )
+        val stageEvaluation = HasTumorStage(setOf(TumorStage.III, TumorStage.IV)).evaluate(record)
 
-        return if (isStageMatch(stage, TumorStage.III) || isStageMatch(stage, TumorStage.IV)) {
+        val stage = record.tumor.stage?.display() ?: "(derived stage: ${record.tumor.derivedStages?.joinToString( " or ")})"
+        return if (stageEvaluation.result == EvaluationResult.PASS) {
             EvaluationFactory.pass("Tumor stage $stage is considered metastatic", METASTATIC_CANCER)
-        } else if (isStageMatch(stage, TumorStage.II)) {
+        } else if (stageEvaluation.result == EvaluationResult.UNDETERMINED) {
             val tumorDoids = record.tumor.doids
             if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
                 EvaluationFactory.undetermined(
@@ -44,11 +42,7 @@ class HasMetastaticCancer (private val doidModel: DoidModel) : EvaluationFunctio
         private const val METASTATIC_CANCER: String = "Metastatic cancer"
         private const val NOT_METASTATIC_CANCER: String = "No metastatic cancer"
 
-        private fun isStageMatch(stage: TumorStage, stageToMatch: TumorStage): Boolean {
-            return stage == stageToMatch || stage.category == stageToMatch
-        }
-
-        private fun failEvaluation(stage: TumorStage): Evaluation {
+        private fun failEvaluation(stage: String): Evaluation {
             return EvaluationFactory.fail("Tumor stage $stage is not considered metastatic", NOT_METASTATIC_CANCER)
         }
     }
