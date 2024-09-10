@@ -56,8 +56,7 @@ class StandardDataIngestionTest {
             toxicityExtractor = StandardToxicityExtractor(curationDatabase.toxicityCuration),
             vitalFunctionsExtractor = StandardVitalFunctionsExtractor(),
             priorOtherConditionsExtractor = StandardPriorOtherConditionsExtractor(
-                curationDatabase.nonOncologicalHistoryCuration,
-                curationDatabase.treatmentHistoryEntryCuration
+                curationDatabase.nonOncologicalHistoryCuration
             ),
             intolerancesExtractor = StandardIntolerancesExtractor(
                 TestAtcFactory.createProperAtcModel(),
@@ -65,8 +64,7 @@ class StandardDataIngestionTest {
             ),
             complicationExtractor = StandardComplicationExtractor(curationDatabase.complicationCuration),
             treatmentHistoryExtractor = StandardOncologicalHistoryExtractor(
-                curationDatabase.treatmentHistoryEntryCuration,
-                curationDatabase.nonOncologicalHistoryCuration
+                curationDatabase.treatmentHistoryEntryCuration
             ),
             secondPrimaryExtractor = StandardPriorPrimariesExtractor(curationDatabase.secondPrimaryCuration),
 

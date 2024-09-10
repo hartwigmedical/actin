@@ -3,7 +3,6 @@ package com.hartwig.actin.clinical.feed.standard
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationWarning
-import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.feed.standard.EhrTestData.createEhrPatientRecord
 import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
@@ -16,10 +15,10 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentStage
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
-import java.time.LocalDate
 
 private val PROVIDED_TREATMENT_START = LocalDate.of(2021, 4, 1)
 private val PROVIDED_TREATMENT_END = LocalDate.of(2021, 5, 1)
@@ -117,10 +116,7 @@ private val EXPECTED_TREATMENT_HISTORY_FALLBACK = EXPECTED_TREATMENT_HISTORY_ENT
 class StandardOncologicalHistoryExtractorTest {
 
     private val treatmentCurationDatabase = mockk<CurationDatabase<TreatmentHistoryEntryConfig>>()
-    private val nonOncologicalHistoryCuration = mockk<CurationDatabase<NonOncologicalHistoryConfig>> {
-        every { find(any()) } returns emptySet()
-    }
-    private val extractor = StandardOncologicalHistoryExtractor(treatmentCurationDatabase, nonOncologicalHistoryCuration)
+    private val extractor = StandardOncologicalHistoryExtractor(treatmentCurationDatabase)
 
     @Test
     fun `Should filter treatment history entry and warn when no curation for treatment name`() {
@@ -286,49 +282,9 @@ class StandardOncologicalHistoryExtractorTest {
             firstEntry.copy(isTrial = true)
         )
     }
-
-    @Test
-    fun `Should skip previous conditions present in the non-oncological curation`() {
-        every { nonOncologicalHistoryCuration.find(PREVIOUS_CONDITION) } returns setOf(
-            NonOncologicalHistoryConfig(
-                input = PREVIOUS_CONDITION,
-                ignore = false
-            )
-        )
-        val result = extractor.extract(
-            PROVIDED_EHR_PATIENT_RECORD.copy(
-                treatmentHistory = emptyList(),
-                priorOtherConditions = listOf(PRIOR_OTHER_PRIOR_CONDITION)
-            )
-        )
-        assertThat(result.extracted).isEmpty()
-    }
-
-    @Test
-    fun `Should include evaluated input when prior condition is ignored in both prior condition and oncological history curation`() {
-        every { nonOncologicalHistoryCuration.find(PREVIOUS_CONDITION) } returns setOf(
-            NonOncologicalHistoryConfig(
-                input = PREVIOUS_CONDITION,
-                ignore = true
-            )
-        )
-        every { treatmentCurationDatabase.find(PREVIOUS_CONDITION) } returns setOf(
-            CURATED_TREATMENT_HISTORY_ENTRY.copy(
-                ignore = true,
-                input = PREVIOUS_CONDITION
-            )
-        )
-        val result = extractor.extract(
-            PROVIDED_EHR_PATIENT_RECORD.copy(
-                treatmentHistory = listOf(PROVIDED_TREATMENT_HISTORY.copy(treatmentName = PREVIOUS_CONDITION, modifications = null)),
-            )
-        )
-        assertThat(result.evaluation.treatmentHistoryEntryEvaluatedInputs).containsExactly(PREVIOUS_CONDITION)
-    }
-
+    
     @Test
     fun `Should ignore entries when configured and curated is null`() {
-        every { nonOncologicalHistoryCuration.find(TREATMENT_NAME) } returns emptySet()
         every { treatmentCurationDatabase.find(TREATMENT_NAME) } returns setOf(
             CURATED_TREATMENT_HISTORY_ENTRY.copy(
                 ignore = true,
