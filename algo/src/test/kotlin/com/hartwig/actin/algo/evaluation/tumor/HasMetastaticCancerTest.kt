@@ -12,7 +12,7 @@ class HasMetastaticCancerTest {
         val matchDoid = "parent"
         val doidModel = TestDoidModelFactory.createWithOneParentChild(matchDoid, "child")
         val function = HasMetastaticCancer(doidModel)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withTumorStage(null)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(TumorStage.III))))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IV)))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IIIC)))
         assertEvaluation(
