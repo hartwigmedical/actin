@@ -4,7 +4,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.ApplicableCancerType
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 
-internal data class TreatmentEvidenceGroupingKey(
+data class TreatmentEvidenceGroupingKey(
     val treatment: String,
     val onLabel: Boolean,
     val direction: EvidenceDirection,
@@ -17,7 +17,7 @@ class ClinicalDetailsFactory(private val onLabel: Boolean?) {
 
     fun create(evidence: ClinicalEvidence): Set<ClinicalDetails> {
         val evidenceSet = evidence.treatmentEvidence
-        val labelFilteredEvidence = onLabel?.let { TreatmentEvidenceFunctions.filterOnLabel(evidenceSet, onLabel) }
+        val labelFilteredEvidence = onLabel?.let { TreatmentEvidenceFunctions.filterOnLabel(evidenceSet, it) }
             ?: evidenceSet
         val groupedTreatments = TreatmentEvidenceFunctions.groupTreatmentsIgnoringEvidenceLevel(labelFilteredEvidence)
 

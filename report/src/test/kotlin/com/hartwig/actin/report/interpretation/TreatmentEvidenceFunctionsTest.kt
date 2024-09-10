@@ -79,7 +79,7 @@ class TreatmentEvidenceFunctionsTest {
     }
 
     @Test
-    fun `Should generate correct triples of treatment name, string of cancer types with dates, and isResistant Boolean`() {
+    fun `Should generate TreatmentEvidenceContent objects with treatment name, cancer types with dates, and isResistant Boolean`() {
         val date = LocalDate.of(2024, 1, 1)
         val cancerType = ApplicableCancerType("Cancer type 1", emptySet())
         val treatmentEvidence = createTreatmentEvidence(date = date, applicableCancerType = cancerType)
@@ -90,10 +90,10 @@ class TreatmentEvidenceFunctionsTest {
         )
         val result = TreatmentEvidenceFunctions.generateEvidenceCellContents(evidence)
         val expected = listOf(
-            Triple(TREATMENT, "Cancer type 1 (2024), Cancer type 2 (2023)", false),
-            Triple("other treatment", "Cancer type 1 (2024)", true)
+            TreatmentEvidenceFunctions.TreatmentEvidenceContent(TREATMENT, "Cancer type 1 (2024), Cancer type 2 (2023)", false),
+            TreatmentEvidenceFunctions.TreatmentEvidenceContent("other treatment", "Cancer type 1 (2024)", true)
         )
-        assertThat(expected).containsExactlyElementsOf(result)
+        assertThat(expected).isEqualTo(result)
     }
 
     private fun createTreatmentEvidence(

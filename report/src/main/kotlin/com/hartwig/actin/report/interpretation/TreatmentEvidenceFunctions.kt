@@ -5,11 +5,13 @@ import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 
 object TreatmentEvidenceFunctions {
 
-    internal fun filterOnLabel(treatmentEvidenceSet: Set<TreatmentEvidence>, onLabel: Boolean): Set<TreatmentEvidence> {
+    data class TreatmentEvidenceContent(val treatment: String, val cancerTypesWithDate: String, val isResistant: Boolean)
+
+    fun filterOnLabel(treatmentEvidenceSet: Set<TreatmentEvidence>, onLabel: Boolean): Set<TreatmentEvidence> {
         return treatmentEvidenceSet.filter { it.onLabel == onLabel }.toSet()
     }
 
-    internal fun groupTreatmentsIgnoringEvidenceLevel(treatmentEvidenceSet: Set<TreatmentEvidence>) =
+    fun groupTreatmentsIgnoringEvidenceLevel(treatmentEvidenceSet: Set<TreatmentEvidence>) =
         treatmentEvidenceSet.groupBy {
             TreatmentEvidenceGroupingKey(
                 it.treatment,
@@ -21,7 +23,7 @@ object TreatmentEvidenceFunctions {
             )
         }
 
-    internal fun treatmentEvidenceToClinicalDetails(treatmentEvidenceList: List<TreatmentEvidence>): List<ClinicalDetails> {
+    fun treatmentEvidenceToClinicalDetails(treatmentEvidenceList: List<TreatmentEvidence>): List<ClinicalDetails> {
         val categoryVariants = extractVariants(treatmentEvidenceList, true)
         val nonCategoryVariants = extractVariants(treatmentEvidenceList, false)
         val highestCategoryEvidenceLevel = findHighestEvidenceLevel(categoryVariants)
@@ -37,16 +39,16 @@ object TreatmentEvidenceFunctions {
         return nonCategoryDetails + categoryDetails
     }
 
-    internal fun groupByTreatment(treatmentEvidence: List<TreatmentEvidence>) =
+    fun groupByTreatment(treatmentEvidence: List<TreatmentEvidence>) =
         treatmentEvidence.groupBy { it.treatment }
 
-    internal fun generateEvidenceCellContents(evidenceList: List<TreatmentEvidence>): List<Triple<String, String, Boolean>> {
+    fun generateEvidenceCellContents(evidenceList: List<TreatmentEvidence>): List<TreatmentEvidenceContent> {
         return groupByTreatment(evidenceList).map { (treatment, evidences) ->
             val cancerTypesWithDate = evidences.joinToString(", ") { evidence ->
                 "${evidence.applicableCancerType.cancerType} (${evidence.date.year})"
             }
             val isResistant = evidences.any { it.direction.isResistant }
-            Triple(treatment, cancerTypesWithDate, isResistant)
+            TreatmentEvidenceContent(treatment, cancerTypesWithDate, isResistant)
         }
     }
 
