@@ -151,10 +151,12 @@ class StandardOncologicalHistoryExtractorTest {
     }
 
     @Test
-    fun `Should extract treatment with modifications using curated treatment, curated modification and curated response, stop reason and stop date if configured`() {
+    fun `Should extract treatment with modifications using curated treatment, curated modification and curated response, start, stop reason and start, stop date if configured`() {
         every { treatmentCurationDatabase.find(TREATMENT_NAME) } returns setOf(
             CURATED_TREATMENT_HISTORY_ENTRY.copy(
                 curated = CURATED_TREATMENT_HISTORY_ENTRY.curated?.copy(
+                    startYear = 2019,
+                    startMonth = 6,
                     treatmentHistoryDetails = CURATED_TREATMENT_HISTORY_ENTRY.curated.treatmentHistoryDetails?.copy(
                         stopYear = 2020,
                         stopMonth = 7,
@@ -177,6 +179,8 @@ class StandardOncologicalHistoryExtractorTest {
             )
         )
         assertThat(result.evaluation.warnings).isEmpty()
+        assertThat(result.extracted[0].startYear).isEqualTo(2019)
+        assertThat(result.extracted[0].startMonth).isEqualTo(6)
         assertThat(result.extracted[0].treatmentHistoryDetails?.stopYear).isEqualTo(2020)
         assertThat(result.extracted[0].treatmentHistoryDetails?.stopMonth).isEqualTo(7)
         assertThat(result.extracted[0].treatmentHistoryDetails?.stopReason).isEqualTo(StopReason.PROGRESSIVE_DISEASE)
@@ -282,7 +286,7 @@ class StandardOncologicalHistoryExtractorTest {
             firstEntry.copy(isTrial = true)
         )
     }
-    
+
     @Test
     fun `Should ignore entries when configured and curated is null`() {
         every { treatmentCurationDatabase.find(TREATMENT_NAME) } returns setOf(
