@@ -4,6 +4,7 @@ import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEv
 import com.hartwig.actin.configuration.MolecularSummaryType
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.molecular.NO_EVIDENCE_SOURCE
+import com.hartwig.actin.molecular.filter.MolecularTestFilter
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
@@ -117,7 +118,8 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 cohorts,
                 keyWidth,
                 valueWidth,
-                report.config.molecularSummaryType == MolecularSummaryType.SHORT
+                report.config.molecularSummaryType == MolecularSummaryType.SHORT,
+                MolecularTestFilter(report.treatmentMatch.maxMolecularTestAge)
             ).takeIf {
                 report.config.molecularSummaryType != MolecularSummaryType.NONE && report.patientRecord.molecularHistory.molecularTests.isNotEmpty()
             },

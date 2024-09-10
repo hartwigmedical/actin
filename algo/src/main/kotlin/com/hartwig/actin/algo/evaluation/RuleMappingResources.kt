@@ -6,6 +6,7 @@ import com.hartwig.actin.configuration.AlgoConfiguration
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.trial.input.FunctionInputResolver
+import java.time.LocalDate
 
 data class RuleMappingResources(
     val referenceDateProvider: ReferenceDateProvider,
@@ -14,5 +15,6 @@ data class RuleMappingResources(
     val atcTree: AtcTree,
     val treatmentDatabase: TreatmentDatabase,
     val personalizationDataPath: String?,
-    val algoConfiguration: AlgoConfiguration
+    val algoConfiguration: AlgoConfiguration,
+    val maxMolecularTestAge: LocalDate? = null
 )

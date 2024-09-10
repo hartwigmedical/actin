@@ -10,8 +10,9 @@ import com.hartwig.actin.datamodel.molecular.GeneRole
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
+import java.time.LocalDate
 
-class GeneIsInactivated(private val gene: String) : MolecularEvaluationFunction {
+class GeneIsInactivated(private val gene: String, maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun genes() = listOf(gene)
 
