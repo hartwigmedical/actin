@@ -26,8 +26,8 @@ class StandardPriorOtherConditionsExtractor(
                 curatedPriorOtherCondition.configs.mapNotNull { config ->
                     it.startDate?.let { sourceStartDate ->
                         config.priorOtherCondition?.copy(
-                            year = sourceStartDate.year,
-                            month = sourceStartDate.monthValue
+                            year = curatedPriorOtherCondition.config()?.priorOtherCondition?.year ?: sourceStartDate.year,
+                            month = curatedPriorOtherCondition.config()?.priorOtherCondition?.month ?: sourceStartDate.monthValue
                         )
                     } ?: config.priorOtherCondition
                 },
