@@ -37,6 +37,19 @@ object TreatmentEvidenceFunctions {
         return nonCategoryDetails + categoryDetails
     }
 
+    internal fun groupByTreatment(treatmentEvidence: List<TreatmentEvidence>) =
+        treatmentEvidence.groupBy { it.treatment }
+
+    internal fun generateEvidenceCellContents(evidenceList: List<TreatmentEvidence>): List<Triple<String, String, Boolean>> {
+        return groupByTreatment(evidenceList).map { (treatment, evidences) ->
+            val cancerTypesWithDate = evidences.joinToString(", ") { evidence ->
+                "${evidence.applicableCancerType.cancerType} (${evidence.date.year})"
+            }
+            val isResistant = evidences.any { it.direction.isResistant }
+            Triple(treatment, cancerTypesWithDate, isResistant)
+        }
+    }
+
     private fun findHighestEvidenceLevel(treatmentEvidenceList: List<TreatmentEvidence>): EvidenceLevel? =
         treatmentEvidenceList.minOfOrNull { it.evidenceLevel }
 

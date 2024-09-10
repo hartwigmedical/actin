@@ -8,6 +8,8 @@ import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
+private const val TREATMENT = "treatment"
+
 class TreatmentEvidenceFunctionsTest {
 
     private val onLabelCategoryLevelA = createTreatmentEvidence(treatment = "onLabel category level", isCategoryEvent = true)
@@ -76,22 +78,42 @@ class TreatmentEvidenceFunctionsTest {
         )
     }
 
+    @Test
+    fun `Should generate correct triples of treatment name, string of cancer types with dates, and isResistant Boolean`() {
+        val date = LocalDate.of(2024, 1, 1)
+        val cancerType = ApplicableCancerType("Cancer type 1", emptySet())
+        val treatmentEvidence = createTreatmentEvidence(date = date, applicableCancerType = cancerType)
+        val evidence = listOf(
+            treatmentEvidence,
+            treatmentEvidence.copy(date = date.minusYears(1), applicableCancerType = cancerType.copy("Cancer type 2")),
+            treatmentEvidence.copy(treatment = "other treatment", direction = EvidenceDirection(isResistant = true))
+        )
+        val result = TreatmentEvidenceFunctions.generateEvidenceCellContents(evidence)
+        val expected = listOf(
+            Triple(TREATMENT, "Cancer type 1 (2024), Cancer type 2 (2023)", false),
+            Triple("other treatment", "Cancer type 1 (2024)", true)
+        )
+        assertThat(expected).containsExactlyElementsOf(result)
+    }
+
     private fun createTreatmentEvidence(
-        treatment: String = "treatment",
+        treatment: String = TREATMENT,
         onLabel: Boolean = true,
         evidenceLevel: EvidenceLevel = EvidenceLevel.A,
-        isCategoryEvent: Boolean = true
+        date: LocalDate = LocalDate.EPOCH,
+        isCategoryEvent: Boolean = true,
+        applicableCancerType: ApplicableCancerType = ApplicableCancerType("", emptySet())
     ): TreatmentEvidence {
         return TreatmentEvidence(
             treatment,
             evidenceLevel,
             onLabel,
             EvidenceDirection(),
-            LocalDate.EPOCH,
+            date,
             "",
             isCategoryEvent,
             "sourceEvent",
-            ApplicableCancerType("", emptySet())
+            applicableCancerType
         )
     }
 

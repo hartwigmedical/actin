@@ -13,11 +13,13 @@ internal data class TreatmentEvidenceGroupingKey(
     val applicableCancerType: ApplicableCancerType
 )
 
-class ClinicalDetailsFactory(private val onLabel: Boolean) {
+class ClinicalDetailsFactory(private val onLabel: Boolean?) {
 
     fun create(evidence: ClinicalEvidence): Set<ClinicalDetails> {
-        val treatmentEvidenceSet = TreatmentEvidenceFunctions.filterOnLabel(evidence.treatmentEvidence, onLabel)
-        val groupedTreatments = TreatmentEvidenceFunctions.groupTreatmentsIgnoringEvidenceLevel(treatmentEvidenceSet)
+        val evidenceSet = evidence.treatmentEvidence
+        val labelFilteredEvidence = onLabel?.let { TreatmentEvidenceFunctions.filterOnLabel(evidenceSet, onLabel) }
+            ?: evidenceSet
+        val groupedTreatments = TreatmentEvidenceFunctions.groupTreatmentsIgnoringEvidenceLevel(labelFilteredEvidence)
 
         return groupedTreatments.flatMap { (_, treatmentEvidenceList) ->
             TreatmentEvidenceFunctions.treatmentEvidenceToClinicalDetails(treatmentEvidenceList)
