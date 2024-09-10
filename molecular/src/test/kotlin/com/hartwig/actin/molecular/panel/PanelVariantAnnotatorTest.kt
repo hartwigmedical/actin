@@ -13,7 +13,6 @@ import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.treatment
 import com.hartwig.actin.molecular.GENE
 import com.hartwig.actin.molecular.HGVS_CODING
-import com.hartwig.actin.molecular.HGVS_PROTEIN
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
@@ -276,7 +275,7 @@ class PanelVariantAnnotatorTest {
     fun `Should describe variant event using protein hgvs`() {
         val variants = setOf(SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING))
         val annotated = annotator.annotate(variants)
-        assertThat(annotated.first().event).isEqualTo("$GENE ${HGVS_PROTEIN.removePrefix("p.")}")
+        assertThat(annotated.first().event).isEqualTo("$GENE ${HGVS_PROTEIN_1LETTER.removePrefix("p.")}")
     }
 
     @Test

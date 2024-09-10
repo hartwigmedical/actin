@@ -16,6 +16,10 @@ private val TRIAL_1 = TestClinicalEvidenceFactory.createExternalTrial(
 private val TRIAL_2 = TestClinicalEvidenceFactory.createExternalTrial(
     "2", setOf(TestClinicalEvidenceFactory.createCountry(CountryName.BELGIUM)), "url", "NCT002"
 )
+private val TRIAL_3 = TestClinicalEvidenceFactory.createExternalTrial(
+    "3", setOf(TestClinicalEvidenceFactory.createCountry(CountryName.NETHERLANDS)), "url", "NCT003"
+)
+
 private val trialMatches = listOf(
     TrialMatch(
         identification = TrialIdentification("TRIAL-1", true, "TR-1", "Different title of same trial 1", "NCT00000001"),
@@ -147,6 +151,79 @@ class ExternalTrialSummarizerTest {
         assertThat(externalTrialSummary.nonLocalTrials).isEmpty()
         assertThat(externalTrialSummary.localTrialsFiltered).isEqualTo(0)
         assertThat(externalTrialSummary.nonLocalTrialsFiltered).isEqualTo(1)
+    }
+
+    @Test
+    fun `Should filter trial only running in children's hospitals`() {
+        val externalEligibleTrials =
+            mapOf(
+                TMB_TARGET to listOf(
+                    TRIAL_1.copy(
+                        countries = setOf(
+                            TestClinicalEvidenceFactory.createCountry(
+                                CountryName.NETHERLANDS,
+                                mapOf("Utrecht" to setOf("PMC"))
+                            )
+                        )
+                    )
+                ),
+                EGFR_TARGET to listOf(
+                    TRIAL_3.copy(
+                        countries = setOf(
+                            TestClinicalEvidenceFactory.createCountry(
+                                CountryName.NETHERLANDS,
+                                mapOf("Utrecht" to setOf("PMC", "Radboud"))
+                            )
+                        )
+                    )
+                )
+            )
+        assertThat(
+            externalTrialSummarizer.filterAndGroupExternalTrialsByNctIdAndEvents(
+                externalEligibleTrials,
+                emptyList()
+            )
+        ).containsOnlyKeys(
+            EGFR_TARGET
+        )
+    }
+
+    @Test
+    fun `Should not filter trial running outside of home country in hospital matching children's hospital names`() {
+        val externalEligibleTrials =
+            mapOf(
+                TMB_TARGET to listOf(
+                    TRIAL_1.copy(
+                        countries = setOf(
+                            TestClinicalEvidenceFactory.createCountry(
+                                CountryName.BELGIUM,
+                                mapOf("Brussels" to setOf("PMC"))
+                            )
+                        )
+                    )
+                )
+            )
+        assertThat(
+            externalTrialSummarizer.filterAndGroupExternalTrialsByNctIdAndEvents(
+                externalEligibleTrials,
+                emptyList()
+            )
+        ).isEqualTo(externalEligibleTrials)
+    }
+
+    @Test(expected = IllegalStateException::class)
+    fun `Should throw exception if home country is found multiple times`() {
+        val externalEligibleTrials = mapOf(
+            TMB_TARGET to listOf(
+                TRIAL_1.copy(
+                    countries = setOf(
+                        TestClinicalEvidenceFactory.createCountry(CountryName.NETHERLANDS, mapOf("Utrecht" to setOf("UMCU"))),
+                        TestClinicalEvidenceFactory.createCountry(CountryName.NETHERLANDS, mapOf("Groningen" to setOf("UMCG")))
+                    )
+                )
+            )
+        )
+        externalTrialSummarizer.filterAndGroupExternalTrialsByNctIdAndEvents(externalEligibleTrials, emptyList())
     }
 
     private fun externalTrial(id: Int) =
