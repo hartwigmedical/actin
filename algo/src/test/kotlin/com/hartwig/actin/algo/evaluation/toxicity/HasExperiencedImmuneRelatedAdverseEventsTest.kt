@@ -37,7 +37,9 @@ class HasExperiencedImmuneRelatedAdverseEventsTest {
         )
         val evaluation = function.evaluate(withTreatmentHistory(treatments))
         assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnGeneralMessages).containsExactly("Patient may have experienced immunotherapy related adverse events")
+        assertThat(evaluation.warnGeneralMessages).containsExactly(
+            "Patient may have experienced immunotherapy related adverse events (prior immunotherapy with stop reason toxicity)"
+        )
     }
 
     @Test
@@ -58,7 +60,7 @@ class HasExperiencedImmuneRelatedAdverseEventsTest {
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.WARN, evaluation)
         assertThat(evaluation.warnGeneralMessages).containsExactly(
-            "Patient may have experienced immunotherapy related adverse events (Nivolumab induced pneumonitis)"
+            "Immunotherapy related adverse events in history (Nivolumab induced pneumonitis)"
         )
     }
 
