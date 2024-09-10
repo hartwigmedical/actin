@@ -81,7 +81,7 @@ class ExternalTrialSummarizer(private val homeCountry: CountryName) {
 
     private fun findHospitalsInHomeCountry(trial: ExternalTrial): Set<String> {
         val homeCountries = trial.countries.filter { it.name == homeCountry }
-        if (homeCountries.size > 1) throw IllegalStateException("Country ${homeCountry.display()} found multiple times")
+        if (homeCountries.size > 1) throw IllegalStateException("Country ${homeCountry.display()} found multiple times for trial ${trial.nctId}")
         return homeCountries.firstOrNull()?.hospitalsPerCity?.values?.flatten()?.toSet() ?: emptySet()
     }
 }

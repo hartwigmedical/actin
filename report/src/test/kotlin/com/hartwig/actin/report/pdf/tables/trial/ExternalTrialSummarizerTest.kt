@@ -154,7 +154,7 @@ class ExternalTrialSummarizerTest {
     }
 
     @Test
-    fun `Should filter trials only running in children's hospitals`() {
+    fun `Should filter trial only running in children's hospitals`() {
         val externalEligibleTrials =
             mapOf(
                 TMB_TARGET to listOf(
@@ -186,14 +186,44 @@ class ExternalTrialSummarizerTest {
         ).containsOnlyKeys(
             EGFR_TARGET
         )
+    }
 
-        val externalTrialSummarizerBelgium = ExternalTrialSummarizer(CountryName.BELGIUM)
+    @Test
+    fun `Should not filter trial running outside of home country in hospital matching children's hospital names`() {
+        val externalEligibleTrials =
+            mapOf(
+                TMB_TARGET to listOf(
+                    TRIAL_1.copy(
+                        countries = setOf(
+                            TestClinicalEvidenceFactory.createCountry(
+                                CountryName.BELGIUM,
+                                mapOf("Brussels" to setOf("PMC"))
+                            )
+                        )
+                    )
+                )
+            )
         assertThat(
-            externalTrialSummarizerBelgium.filterAndGroupExternalTrialsByNctIdAndEvents(
+            externalTrialSummarizer.filterAndGroupExternalTrialsByNctIdAndEvents(
                 externalEligibleTrials,
                 emptyList()
             )
         ).isEqualTo(externalEligibleTrials)
+    }
+
+    @Test(expected = IllegalStateException::class)
+    fun `Should throw exception if home country is found multiple times`() {
+        val externalEligibleTrials = mapOf(
+            TMB_TARGET to listOf(
+                TRIAL_1.copy(
+                    countries = setOf(
+                        TestClinicalEvidenceFactory.createCountry(CountryName.NETHERLANDS, mapOf("Utrecht" to setOf("UMCU"))),
+                        TestClinicalEvidenceFactory.createCountry(CountryName.NETHERLANDS, mapOf("Groningen" to setOf("UMCG")))
+                    )
+                )
+            )
+        )
+        externalTrialSummarizer.filterAndGroupExternalTrialsByNctIdAndEvents(externalEligibleTrials, emptyList())
     }
 
     private fun externalTrial(id: Int) =
