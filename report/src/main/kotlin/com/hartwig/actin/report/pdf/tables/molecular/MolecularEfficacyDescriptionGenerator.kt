@@ -34,7 +34,6 @@ class MolecularEfficacyDescriptionGenerator(val molecularHistory: MolecularHisto
                 val descriptionCell = Paragraph(evidence.description).setFontSize(6.5f)
 
                 if (evidence.direction.isResistant) {
-                    sourceEventCell.setFontColor(PALETTE_RED)
                     descriptionCell.setFontColor(PALETTE_RED)
                 }
 
