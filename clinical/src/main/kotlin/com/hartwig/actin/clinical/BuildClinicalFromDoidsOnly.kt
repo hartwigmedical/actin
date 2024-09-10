@@ -43,7 +43,7 @@ class BuildClinicalFromDoidsOnly(private val command: CommandLine) {
                     birthYear = LocalDate.now().year,
                     registrationDate = LocalDate.now(),
                     questionnaireDate = null,
-                    hasHartwigSequencing = null
+                    hasHartwigSequencing = false
                 ),
                 tumor = TumorDetails(doids = doids),
                 clinicalStatus = ClinicalStatus(),

@@ -7,5 +7,5 @@ data class PatientDetails(
     val birthYear: Int,
     val registrationDate: LocalDate,
     val questionnaireDate: LocalDate? = null,
-    val hasHartwigSequencing: Boolean? = null
+    val hasHartwigSequencing: Boolean
 )

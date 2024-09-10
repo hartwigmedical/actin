@@ -100,7 +100,7 @@ object HistoricClinicalDeserializer {
             birthYear = Json.integer(patient, "birthYear"),
             registrationDate = Json.date(patient, "registrationDate"),
             questionnaireDate = Json.nullableDate(patient, "questionnaireDate"),
-            hasHartwigSequencing = Json.nullableBool(patient, "hasHartwigSequencing")
+            hasHartwigSequencing = Json.bool(patient, "hasHartwigSequencing")
         )
     }
 

@@ -135,7 +135,7 @@ class EmcClinicalFeedIngestor(
             birthYear = patient.birthYear,
             registrationDate = patient.periodStart,
             questionnaireDate = questionnaire?.date,
-            hasHartwigSequencing = true // PR-REVIEW: can we assume this for emc?
+            hasHartwigSequencing = true
         )
     }
 
