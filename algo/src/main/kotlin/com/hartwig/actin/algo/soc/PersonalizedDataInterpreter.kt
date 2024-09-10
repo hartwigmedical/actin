@@ -16,9 +16,10 @@ import com.hartwig.actin.personalization.similarity.population.Measurement as Po
 import com.hartwig.actin.personalization.similarity.population.PersonalizedDataAnalysis as PersonalAnalysis
 
 class PersonalizedDataInterpreter(private val analyzer: PersonalizedDataAnalyzer) {
+    private val measurementTypeLookup = MeasurementType.entries.associateBy { it.name }
 
     fun interpret(patient: PatientRecord): PersonalizedDataAnalysis {
-        val hasKrasMutation = GeneHasActivatingMutation("KRAS", null, null).evaluate(patient).result == EvaluationResult.PASS
+        val hasRasMutation = listOf("KRAS", "NRAS", "HRAS").any { hasActivatingMutationInGene(patient, it) }
         val metastasisLocationGroups = with(patient.tumor) {
             sequenceOf(
                 hasBrainLesions to LocationGroup.BRAIN,
@@ -32,7 +33,7 @@ class PersonalizedDataInterpreter(private val analyzer: PersonalizedDataAnalyzer
         val analysis = analyzer.analyzePatient(
             patient.patient.registrationDate.year - patient.patient.birthYear,
             patient.clinicalStatus.who!!,
-            hasKrasMutation,
+            hasRasMutation,
             metastasisLocationGroups
         )
         return PersonalizedDataAnalysis(extractTreatmentAnalyses(analysis), extractPopulations(analysis))
@@ -40,11 +41,13 @@ class PersonalizedDataInterpreter(private val analyzer: PersonalizedDataAnalyzer
 
     private fun extractTreatmentAnalyses(analysis: PersonalAnalysis): List<TreatmentAnalysis> {
         return analysis.treatmentAnalyses.map { (treatmentGroup, measurements) ->
-            val treatmentMeasurements = measurements.entries.associate { (type, measurementsByPopulation) ->
-                MeasurementType.valueOf(type.name) to measurementsByPopulation.mapValues { (_, measurement) ->
-                    convertMeasurement(measurement)
+            val treatmentMeasurements = measurements.entries.mapNotNull { (type, measurementsByPopulation) ->
+                measurementTypeLookup[type.name]?.let { measurementType ->
+                    measurementType to measurementsByPopulation.mapValues { (_, measurement) ->
+                        convertMeasurement(measurement)
+                    }
                 }
-            }
+            }.toMap()
             TreatmentAnalysis(TreatmentGroup.valueOf(treatmentGroup.name), treatmentMeasurements)
         }
     }
@@ -53,8 +56,8 @@ class PersonalizedDataInterpreter(private val analyzer: PersonalizedDataAnalyzer
         return analysis.populations.map { population ->
             Population(
                 population.name,
-                population.patientsByMeasurementType.entries.map { (measurementType, patients) ->
-                    MeasurementType.valueOf(measurementType.name) to patients.size
+                population.patientsByMeasurementType.entries.mapNotNull { (type, patients) ->
+                    measurementTypeLookup[type.name]?.let { it to patients.size }
                 }.toMap()
             )
         }
@@ -62,6 +65,10 @@ class PersonalizedDataInterpreter(private val analyzer: PersonalizedDataAnalyzer
 
     private fun convertMeasurement(measurement: PopulationMeasurement) =
         with(measurement) { Measurement(value, numPatients, min, max, iqr) }
+
+    private fun hasActivatingMutationInGene(patient: PatientRecord, gene: String): Boolean {
+        return GeneHasActivatingMutation(gene, null).evaluate(patient).result == EvaluationResult.PASS
+    }
 
     companion object {
         fun create(personalizationDataPath: String): PersonalizedDataInterpreter {

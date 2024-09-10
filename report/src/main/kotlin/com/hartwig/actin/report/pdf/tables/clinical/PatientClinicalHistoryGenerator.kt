@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.clinical
 
+import com.hartwig.actin.clinical.sort.PriorOtherConditionDescendingDateComparator
 import com.hartwig.actin.clinical.sort.PriorSecondPrimaryDiagnosedDateComparator
 import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparator
 import com.hartwig.actin.datamodel.PatientRecord
@@ -108,7 +109,9 @@ class PatientClinicalHistoryGenerator(
         val table: Table = createDoubleColumnTable(dateWidth, treatmentWidth)
 
         val anyDateIsKnown = record.priorOtherConditions.any { toDateString(it.year, it.month) != null }
-        record.priorOtherConditions.forEach { priorOtherCondition: PriorOtherCondition ->
+        val sortedPriorOtherConditions = record.priorOtherConditions.sortedWith(PriorOtherConditionDescendingDateComparator())
+
+        sortedPriorOtherConditions.forEach { priorOtherCondition: PriorOtherCondition ->
             val dateString = toDateString(priorOtherCondition.year, priorOtherCondition.month)
             if (anyDateIsKnown) {
                 table.addCell(createSingleTableEntry(dateString ?: DATE_UNKNOWN))

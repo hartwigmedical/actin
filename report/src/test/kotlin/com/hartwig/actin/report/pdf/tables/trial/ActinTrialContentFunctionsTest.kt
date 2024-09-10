@@ -76,4 +76,54 @@ class ActinTrialContentFunctionsTest {
             ).map(ContentDefinition::deEmphasizeContent)
         ).isEqualTo(listOf(true, true, true))
     }
+
+    @Test
+    fun `Should group common molecular events for multiple cohorts in trial`() {
+        val cohort3 = cohort1.copy(cohort = "cohort3")
+        assertThat(ActinTrialContentFunctions.contentForTrialCohortList(listOf(cohort1, cohort3), EvaluatedCohort::warnings)).isEqualTo(
+            listOf(
+                ContentDefinition(listOf("Applies to all cohorts below", "MSI", "warning1"), true),
+                ContentDefinition(listOf("cohort1", "", ""), true),
+                ContentDefinition(listOf("cohort3", "", ""), true)
+            )
+        )
+    }
+
+    @Test
+    fun `Should group molecular events for multiple cohorts in trial if molecular event is None for all cohorts`() {
+        val noMolecularEvent1 = cohort1.copy(molecularEvents = emptySet())
+        val noMolecularEvent2 = cohort1.copy(cohort = "cohort3", molecularEvents = emptySet())
+        assertThat(
+            ActinTrialContentFunctions.contentForTrialCohortList(
+                listOf(noMolecularEvent1, noMolecularEvent2),
+                EvaluatedCohort::warnings
+            )
+        ).isEqualTo(
+            listOf(
+                ContentDefinition(listOf("Applies to all cohorts below", "None", "warning1"), true),
+                ContentDefinition(listOf("cohort1", "", ""), true),
+                ContentDefinition(listOf("cohort3", "", ""), true)
+            )
+        )
+    }
+
+    @Test
+    fun `Should not group molecular events for trials with single cohort`() {
+        assertThat(ActinTrialContentFunctions.contentForTrialCohortList(listOf(cohort1), EvaluatedCohort::warnings)).isEqualTo(
+            listOf(
+                ContentDefinition(listOf("cohort1", "MSI", "warning1"), true),
+            )
+        )
+    }
+
+    @Test
+    fun `Should not create group row for multiple cohorts in trial with no common molecular events`() {
+        assertThat(ActinTrialContentFunctions.contentForTrialCohortList(listOf(cohort1, cohort2), EvaluatedCohort::warnings)).isEqualTo(
+            listOf(
+                ContentDefinition(listOf("Applies to all cohorts below", "", "warning1"), false),
+                ContentDefinition(listOf("cohort1", "MSI", ""), true),
+                ContentDefinition(listOf("cohort2", "None", "warning2"), false)
+            )
+        )
+    }
 }
