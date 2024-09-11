@@ -44,7 +44,10 @@ object EligibleExternalTrialGeneratorFunctions {
     fun hospitalsAndCitiesInCountry(externalTrial: ExternalTrial, country: CountryName): Pair<String, String> {
         val homeCountries = externalTrial.countries.filter { it.name == country }
         return if (homeCountries.size > 1 || homeCountries.isEmpty()) {
-            throw IllegalStateException("Country ${country.display()} not found or found multiple times")
+            throw IllegalStateException(
+                "Country ${country.display()} not configured or configured multiple times for trial ${externalTrial.nctId}. " +
+                        "This should not be possible and indicates an issue in the SERVE data export"
+            )
         } else {
             val hospitals = homeCountries.first().hospitalsPerCity.flatMap { it.value }
             val cities = homeCountries.first().hospitalsPerCity.keys
