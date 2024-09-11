@@ -8,8 +8,9 @@ import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleEvaluator
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.doid.DoidModel
+import java.time.LocalDate
 
-class HasKnownSCLCTransformation(private val doidModel: DoidModel) : EvaluationFunction {
+class HasKnownSCLCTransformation(private val doidModel: DoidModel, private val maxTestAge: LocalDate? = null) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
 
@@ -17,13 +18,14 @@ class HasKnownSCLCTransformation(private val doidModel: DoidModel) : EvaluationF
             doidModel,
             record.tumor.doids
         )
-        val hasSmallCellDetails = TumorTypeEvaluationFunctions.hasTumorWithDetails(record.tumor,setOf("small cell", "mixed"))
-        val hasNonSmallCellDetails = TumorTypeEvaluationFunctions.hasTumorWithDetails(record.tumor,setOf("non-small cell", "non small cell"))
+        val hasSmallCellDetails = TumorTypeEvaluationFunctions.hasTumorWithDetails(record.tumor, setOf("small cell", "mixed"))
+        val hasNonSmallCellDetails =
+            TumorTypeEvaluationFunctions.hasTumorWithDetails(record.tumor, setOf("non-small cell", "non small cell"))
         val hasMixedOrSmallCellDoid = DoidEvaluationFunctions.isOfAtLeastOneDoidType(
             doidModel, record.tumor.doids, SMALL_CELL_LUNG_CANCER_DOIDS
         )
-        val inactivatedGenes = listOf("TP53", "RB1").filter { MolecularRuleEvaluator.geneIsInactivatedForPatient(it, record) }
-        val amplifiedGenes = listOf("MYC").filter { MolecularRuleEvaluator.geneIsAmplifiedForPatient(it, record) }
+        val inactivatedGenes = listOf("TP53", "RB1").filter { MolecularRuleEvaluator.geneIsInactivatedForPatient(it, record, maxTestAge) }
+        val amplifiedGenes = listOf("MYC").filter { MolecularRuleEvaluator.geneIsAmplifiedForPatient(it, record, maxTestAge) }
 
         return when {
             !isNSCLC -> {

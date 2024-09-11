@@ -19,7 +19,7 @@ class HasCancerWithNeuroendocrineComponentTest {
     fun canEvaluate() {
         val matchDoid = "matching doid"
         val doidModel = TestDoidModelFactory.createWithOneDoidAndTerm(
-            matchDoid, HasCancerWithNeuroendocrineComponent.NEUROENDOCRINE_TERMS.iterator().next()
+            matchDoid, NEUROENDOCRINE_TERMS.iterator().next()
         )
         val function = HasCancerWithNeuroendocrineComponent(doidModel)
 
@@ -44,11 +44,11 @@ class HasCancerWithNeuroendocrineComponentTest {
         // Pass when tumor has a doid that is configured as neuroendocrine
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TumorTestFactory.withDoids(HasCancerWithNeuroendocrineComponent.NEUROENDOCRINE_DOIDS.iterator().next()))
+            function.evaluate(TumorTestFactory.withDoids(NEUROENDOCRINE_DOIDS.iterator().next()))
         )
 
         // Pass when tumor has been annotated as neuroendocrine
-        val annotation = HasCancerWithNeuroendocrineComponent.NEUROENDOCRINE_EXTRA_DETAILS.first() + " tumor"
+        val annotation = NEUROENDOCRINE_EXTRA_DETAILS.first() + " tumor"
         assertEvaluation(
             EvaluationResult.PASS, function.evaluate(TumorTestFactory.withTumorDetails(TumorDetails(primaryTumorExtraDetails = annotation)))
         )

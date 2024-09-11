@@ -2,6 +2,7 @@ package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
+import com.hartwig.serve.datamodel.EvidenceLevelDetails
 
 object TreatmentEvidenceFunctions {
 
@@ -9,6 +10,14 @@ object TreatmentEvidenceFunctions {
 
     fun filterOnLabel(treatmentEvidenceSet: Set<TreatmentEvidence>, onLabel: Boolean): Set<TreatmentEvidence> {
         return treatmentEvidenceSet.filter { it.onLabel == onLabel }.toSet()
+    }
+
+    fun filterOutPreClinicalEvidence(treatmentEvidenceSet: Set<TreatmentEvidence>): Set<TreatmentEvidence> {
+        return treatmentEvidenceSet.filter { it.evidenceLevel != EvidenceLevel.D || !isPreclinical(it) }.toSet()
+    }
+
+    private fun isPreclinical(evidence: TreatmentEvidence): Boolean {
+        return evidence.evidenceLevelDetails == EvidenceLevelDetails.PRECLINICAL
     }
 
     fun groupTreatmentsIgnoringEvidenceLevel(treatmentEvidenceSet: Set<TreatmentEvidence>) =

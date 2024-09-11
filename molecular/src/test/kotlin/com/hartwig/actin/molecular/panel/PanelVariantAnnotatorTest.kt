@@ -29,6 +29,7 @@ import com.hartwig.actin.tools.pave.ImmutableVariantTranscriptImpact
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.ImmutableVariant
 import com.hartwig.actin.tools.variant.VariantAnnotator
+import com.hartwig.serve.datamodel.EvidenceLevelDetails
 import com.hartwig.serve.datamodel.Knowledgebase
 import io.mockk.every
 import io.mockk.mockk
@@ -146,6 +147,7 @@ class PanelVariantAnnotatorTest {
                     treatment(
                         treatment = "intervention",
                         evidenceLevel = EvidenceLevel.A,
+                        evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
                         direction = EvidenceDirection(hasPositiveResponse = true, isCertain = true, hasBenefit = true),
                         onLabel = true,
                         isCategoryEvent = true

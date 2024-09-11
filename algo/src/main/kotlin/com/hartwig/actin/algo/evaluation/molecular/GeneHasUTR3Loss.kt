@@ -8,8 +8,9 @@ import com.hartwig.actin.datamodel.molecular.VariantEffect
 import com.hartwig.actin.datamodel.molecular.orange.driver.CodingContext
 import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.orange.driver.RegionType
+import java.time.LocalDate
 
-class GeneHasUTR3Loss(private val gene: String) : MolecularEvaluationFunction {
+class GeneHasUTR3Loss(private val gene: String, maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun genes() = listOf(gene)
 

@@ -156,12 +156,10 @@ class StandardDataIngestion(
             StandardToxicityExtractor(curationDatabaseContext.toxicityCuration),
             StandardComplicationExtractor(curationDatabaseContext.complicationCuration),
             StandardPriorOtherConditionsExtractor(
-                curationDatabaseContext.nonOncologicalHistoryCuration,
-                curationDatabaseContext.treatmentHistoryEntryCuration
+                curationDatabaseContext.nonOncologicalHistoryCuration
             ),
             StandardOncologicalHistoryExtractor(
-                curationDatabaseContext.treatmentHistoryEntryCuration,
-                curationDatabaseContext.nonOncologicalHistoryCuration
+                curationDatabaseContext.treatmentHistoryEntryCuration
             ),
             StandardClinicalStatusExtractor(),
             StandardTumorDetailsExtractor(

@@ -9,6 +9,7 @@ import com.hartwig.actin.datamodel.molecular.GeneRole
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.Variant
+import java.time.LocalDate
 
 enum class ActivationWarningType {
     ASSOCIATED_WITH_RESISTANCE,
@@ -30,7 +31,11 @@ data class ActivationProfile(
 
 private const val CLONAL_CUTOFF = 0.5
 
-class GeneHasActivatingMutation(private val gene: String, private val codonsToIgnore: List<String>?) : MolecularEvaluationFunction {
+class GeneHasActivatingMutation(
+    private val gene: String,
+    private val codonsToIgnore: List<String>?,
+    maxTestAge: LocalDate? = null
+) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun genes() = listOf(gene)
 

@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.ApplicableCancerType
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
+import com.hartwig.serve.datamodel.EvidenceLevelDetails
 import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -29,6 +30,17 @@ class TreatmentEvidenceFunctionsTest {
 
         assertThat(resultOffLabel).containsExactlyElementsOf(expectedOffLabel)
         assertThat(resultOnLabel).containsExactlyElementsOf(expectedOnLabel)
+    }
+
+    @Test
+    fun `Should correctly filter treatment preclinical level D evidence`() {
+        val preclinicalEvidence =
+            createTreatmentEvidence("preclinical", evidenceLevel = EvidenceLevel.D, evidenceLevelDetails = EvidenceLevelDetails.PRECLINICAL)
+        val evidence = setOf(onLabelCategoryLevelA, preclinicalEvidence)
+        val result = TreatmentEvidenceFunctions.filterOutPreClinicalEvidence(evidence)
+        val expected = setOf(onLabelCategoryLevelA)
+
+        assertThat(result).containsExactlyElementsOf(expected)
     }
 
     @Test
@@ -102,6 +114,7 @@ class TreatmentEvidenceFunctionsTest {
         evidenceLevel: EvidenceLevel = EvidenceLevel.A,
         date: LocalDate = LocalDate.EPOCH,
         isCategoryEvent: Boolean = true,
+        evidenceLevelDetails: EvidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY,
         applicableCancerType: ApplicableCancerType = ApplicableCancerType("", emptySet())
     ): TreatmentEvidence {
         return TreatmentEvidence(
@@ -113,6 +126,7 @@ class TreatmentEvidenceFunctionsTest {
             "",
             isCategoryEvent,
             "sourceEvent",
+            evidenceLevelDetails,
             applicableCancerType
         )
     }

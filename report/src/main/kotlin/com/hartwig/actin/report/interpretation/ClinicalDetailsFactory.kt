@@ -19,7 +19,10 @@ class ClinicalDetailsFactory(private val onLabel: Boolean?) {
         val evidenceSet = evidence.treatmentEvidence
         val labelFilteredEvidence = onLabel?.let { TreatmentEvidenceFunctions.filterOnLabel(evidenceSet, it) }
             ?: evidenceSet
-        val groupedTreatments = TreatmentEvidenceFunctions.groupTreatmentsIgnoringEvidenceLevel(labelFilteredEvidence)
+        val preClinicalFilteredEvidence = TreatmentEvidenceFunctions.filterOutPreClinicalEvidence(labelFilteredEvidence)
+        val groupedTreatments = TreatmentEvidenceFunctions.groupTreatmentsIgnoringEvidenceLevel(preClinicalFilteredEvidence)
+
+        val groupedTreatments = TreatmentEvidenceFunctions.groupTreatmentsIgnoringEvidenceLevel(treatmentEvidenceSet)
 
         return groupedTreatments.flatMap { (_, treatmentEvidenceList) ->
             TreatmentEvidenceFunctions.treatmentEvidenceToClinicalDetails(treatmentEvidenceList)

@@ -11,8 +11,9 @@ import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.Variant
 import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.orange.driver.HomozygousDisruption
+import java.time.LocalDate
 
-class GeneIsWildType(private val gene: String) : MolecularEvaluationFunction {
+class GeneIsWildType(private val gene: String, maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun genes() = listOf(gene)
 
@@ -25,7 +26,7 @@ class GeneIsWildType(private val gene: String) : MolecularEvaluationFunction {
             ?: groupedEvaluationsByResult[EvaluationResult.UNDETERMINED])
 
     override fun evaluate(test: MolecularTest): Evaluation {
-        
+
         val reportableEventsWithEffect: MutableSet<String> = mutableSetOf()
         val reportableEventsWithEffectPotentiallyWildtype: MutableSet<String> = mutableSetOf()
         val reportableEventsWithNoEffect: MutableSet<String> = mutableSetOf()

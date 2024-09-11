@@ -21,11 +21,12 @@ class HasExperiencedImmuneRelatedAdverseEvents : EvaluationFunction {
         return when {
             immunotherapyAllergies.isNotEmpty() -> {
                 val allergyString = immunotherapyAllergies.joinToString(", ", prefix = " (", postfix = ")") { it.name }
-                EvaluationFactory.warn("Patient may have experienced immunotherapy related adverse events$allergyString")
+                EvaluationFactory.warn("Immunotherapy related adverse events in history$allergyString")
             }
 
             hasHadImmunotherapyWithStopReasonToxicity -> {
-                EvaluationFactory.warn("Patient may have experienced immunotherapy related adverse events")
+                EvaluationFactory.warn("Patient may have experienced immunotherapy related adverse events " +
+                        "(prior immunotherapy with stop reason toxicity)")
             }
 
             (immunotherapyTreatmentList.isNotEmpty() && stopReasonUnknown) -> {

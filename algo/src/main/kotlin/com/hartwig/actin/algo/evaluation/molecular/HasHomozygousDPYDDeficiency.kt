@@ -5,8 +5,9 @@ import com.hartwig.actin.algo.evaluation.molecular.DPYDDeficiencyEvaluationFunct
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoGene
+import java.time.LocalDate
 
-class HasHomozygousDPYDDeficiency internal constructor() : MolecularEvaluationFunction {
+class HasHomozygousDPYDDeficiency(maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun evaluate(molecular: MolecularRecord): Evaluation {
         val pharmaco = molecular.pharmaco.firstOrNull { it.gene == PharmacoGene.DPYD }

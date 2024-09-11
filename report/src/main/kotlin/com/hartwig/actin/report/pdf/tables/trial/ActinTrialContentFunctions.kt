@@ -10,23 +10,39 @@ object ActinTrialContentFunctions {
     fun contentForTrialCohortList(
         cohorts: List<EvaluatedCohort>, feedbackFunction: (EvaluatedCohort) -> Set<String>
     ): List<ContentDefinition> {
-        val commonFeedback = if (cohorts.size > 1) {
-            cohorts.map(feedbackFunction).reduce { acc, set -> acc.intersect(set) }
-        } else emptySet()
-        val prefix = if (commonFeedback.isEmpty()) emptyList() else {
+        val commonFeedback = findCommonMembersInCohorts(cohorts, feedbackFunction)
+        val commonEvents = findCommonMembersInCohorts(cohorts, EvaluatedCohort::molecularEvents)
+        val allEventsEmpty = cohorts.all { it.molecularEvents.isEmpty() }
+        val prefix = if (commonFeedback.isEmpty() && commonEvents.isEmpty()) emptyList() else {
             val deEmphasizeContent = cohorts.all { !it.isOpen || !it.hasSlotsAvailable }
-            listOf(ContentDefinition(listOf("Applies to all cohorts below", "", concat(commonFeedback)), deEmphasizeContent))
+            listOf(
+                ContentDefinition(
+                    listOf(
+                        "Applies to all cohorts below",
+                        concat(commonEvents, allEventsEmpty),
+                        concat(commonFeedback)
+                    ), deEmphasizeContent
+                )
+            )
         }
         return prefix + cohorts.map { cohort: EvaluatedCohort ->
             ContentDefinition(
                 listOf(
                     cohort.cohort ?: "",
-                    concat(cohort.molecularEvents),
+                    concat(cohort.molecularEvents - commonEvents, commonEvents.isEmpty() && !allEventsEmpty),
                     concat(feedbackFunction.invoke(cohort) - commonFeedback, commonFeedback.isEmpty())
                 ),
                 !cohort.isOpen || !cohort.hasSlotsAvailable
             )
         }
+    }
+
+    private fun findCommonMembersInCohorts(
+        cohorts: List<EvaluatedCohort>, retrieveMemberFunction: (EvaluatedCohort) -> Set<String>
+    ): Set<String> {
+        return if (cohorts.size > 1) {
+            cohorts.map(retrieveMemberFunction).reduce { acc, set -> acc.intersect(set) }
+        } else emptySet()
     }
 
     private fun concat(strings: Set<String>, replaceEmptyWithNone: Boolean = true): String {

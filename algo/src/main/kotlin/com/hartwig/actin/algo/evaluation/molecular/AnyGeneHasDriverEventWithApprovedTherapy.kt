@@ -11,6 +11,7 @@ import com.hartwig.actin.algo.soc.MolecularDecisions
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.doid.DoidModel
+import java.time.LocalDate
 
 private val EXCLUDED_CRC_TUMOR_DOIDS = setOf(
     DoidConstants.RECTUM_NEUROENDOCRINE_NEOPLASM_DOID,
@@ -21,7 +22,8 @@ private val EXCLUDED_CRC_TUMOR_DOIDS = setOf(
 class AnyGeneHasDriverEventWithApprovedTherapy(
     private val genes: List<String>,
     val doidModel: DoidModel,
-    private val evaluationFunctionFactory: EvaluationFunctionFactory
+    private val evaluationFunctionFactory: EvaluationFunctionFactory,
+    private val maxTestAge: LocalDate? = null
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -31,8 +33,8 @@ class AnyGeneHasDriverEventWithApprovedTherapy(
             DoidConstants.COLORECTAL_CANCER_DOID in tumorDoids && (EXCLUDED_CRC_TUMOR_DOIDS intersect tumorDoids).isEmpty()
 
         return when {
-            !record.molecularHistory.hasMolecularData() -> EvaluationFactory.fail("No molecular data")
-            isLungCancer -> HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(genes.toSet(), emptySet()).evaluate(record)
+            record.molecularHistory.molecularTests.isEmpty() -> EvaluationFactory.fail("No molecular data")
+            isLungCancer -> HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(genes.toSet(), emptySet(), maxTestAge).evaluate(record)
             isColorectalCancer -> hasMolecularEventWithSocForCRC(record)
 
             else -> {

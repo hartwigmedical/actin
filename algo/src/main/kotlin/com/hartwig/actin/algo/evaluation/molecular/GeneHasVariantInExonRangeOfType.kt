@@ -7,11 +7,13 @@ import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.Variant
 import com.hartwig.actin.datamodel.molecular.VariantType
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
+import java.time.LocalDate
 
 class GeneHasVariantInExonRangeOfType(
     private val gene: String, private val minExon: Int, private val maxExon: Int,
-    private val requiredVariantType: VariantTypeInput?
-) : MolecularEvaluationFunction {
+    private val requiredVariantType: VariantTypeInput?,
+    maxTestAge: LocalDate? = null
+) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun genes() = listOf(gene)
 
