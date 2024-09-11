@@ -9,31 +9,35 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.doid.DoidModel
 
-class HasMetastaticCancer (private val doidModel: DoidModel) : EvaluationFunction {
+class HasMetastaticCancer(private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val stageEvaluation = HasTumorStage(setOf(TumorStage.III, TumorStage.IV)).evaluate(record)
 
-        val stage = record.tumor.stage?.display() ?: "(derived stage: ${record.tumor.derivedStages?.joinToString( " or ")})"
-        return if (stageEvaluation.result == EvaluationResult.PASS) {
-            EvaluationFactory.pass("Tumor stage $stage is considered metastatic", METASTATIC_CANCER)
-        } else if (stageEvaluation.result == EvaluationResult.UNDETERMINED) {
-            val tumorDoids = record.tumor.doids
-            if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
+        val stage = record.tumor.stage?.display() ?: "(derived stage: ${record.tumor.derivedStages?.joinToString(" or ")})"
+        return when (stageEvaluation.result) {
+            EvaluationResult.PASS -> {
+                EvaluationFactory.pass("Tumor stage $stage is considered metastatic", METASTATIC_CANCER)
+            }
+
+            EvaluationResult.UNDETERMINED -> {
                 EvaluationFactory.undetermined(
                     "Could not be determined if tumor stage $stage is considered metastatic",
                     "Undetermined $METASTATIC_CANCER"
                 )
-            } else if (DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, tumorDoids, STAGE_II_POTENTIALLY_METASTATIC_CANCERS)) {
-                EvaluationFactory.warn(
-                    "Could not be determined if tumor stage $stage is considered metastatic",
-                    "Undetermined $METASTATIC_CANCER"
-                )
-            } else {
-                failEvaluation(stage)
             }
-        } else {
-            failEvaluation(stage)
+
+            else -> {
+                val tumorDoids = record.tumor.doids
+                if (DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, tumorDoids, STAGE_II_POTENTIALLY_METASTATIC_CANCERS)) {
+                    EvaluationFactory.warn(
+                        "Could not be determined if tumor stage $stage is considered metastatic",
+                        "Undetermined $METASTATIC_CANCER"
+                    )
+                } else {
+                    failEvaluation(stage)
+                }
+            }
         }
     }
 
