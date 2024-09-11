@@ -1,6 +1,7 @@
 package com.hartwig.actin.datamodel.molecular.evidence
 
 import com.hartwig.actin.datamodel.Displayable
+import com.hartwig.serve.datamodel.EvidenceLevelDetails
 import java.time.LocalDate
 
 data class Country(val name: CountryName, val hospitalsPerCity: Map<String, Set<String>>)
@@ -21,6 +22,7 @@ data class ApplicableCancerType(val cancerType: String, val excludedCancerTypes:
 
 interface Evidence {
     val sourceEvent: String
+    val evidenceLevelDetails: EvidenceLevelDetails
     val applicableCancerType: ApplicableCancerType
     val isCategoryEvent: Boolean
 }
@@ -49,6 +51,7 @@ data class TreatmentEvidence(
     val description: String,
     override val isCategoryEvent: Boolean,
     override val sourceEvent: String,
+    override val evidenceLevelDetails: EvidenceLevelDetails,
     override val applicableCancerType: ApplicableCancerType
 ) : Evidence
 
@@ -59,6 +62,7 @@ data class ExternalTrial(
     val nctId: String,
     override val isCategoryEvent: Boolean,
     override val sourceEvent: String,
+    override val evidenceLevelDetails: EvidenceLevelDetails,
     override val applicableCancerType: ApplicableCancerType
 ) : Comparable<ExternalTrial>, Evidence {
 

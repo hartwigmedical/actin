@@ -13,6 +13,7 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.actionability.isCategoryEvent
 import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.ClinicalTrial
+import com.hartwig.serve.datamodel.EvidenceLevelDetails
 import com.hartwig.serve.datamodel.Treatment
 
 object ClinicalEvidenceFactory {
@@ -46,6 +47,7 @@ object ClinicalEvidenceFactory {
                 it.description(),
                 it.isCategoryEvent(),
                 it.sourceEvent(),
+                it.evidenceLevelDetails(),
                 ApplicableCancerType(it.applicableCancerType().name(), it.blacklistCancerTypes().map { ct -> ct.name() }.toSet()),
             )
         }.toSet()
@@ -68,7 +70,8 @@ object ClinicalEvidenceFactory {
                         onLabelEvent.blacklistCancerTypes().map { it.name() }.toSet()
                     ),
                     isCategoryEvent = onLabelEvent.isCategoryEvent(),
-                    sourceEvent = onLabelEvent.sourceEvent()
+                    sourceEvent = onLabelEvent.sourceEvent(),
+                    evidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY
                 )
             }
             .toSet()

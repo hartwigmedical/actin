@@ -23,8 +23,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <serve.version>5.1.0</serve.version>
-        <actin-personalization.version>0.10.0</actin-personalization.version>
+        <serve.version>5.1.1</serve.version>
+        <actin-personalization.version>0.4.0</actin-personalization.version>
         <orange-datamodel.version>2.6.0</orange-datamodel.version>
         <actin-transvar.version>0.4.0</actin-transvar.version>
         <actin-pave-lite.version>0.4.0</actin-pave-lite.version>

@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
+import com.hartwig.serve.datamodel.EvidenceLevelDetails
 import com.hartwig.serve.datamodel.Knowledgebase
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -17,6 +18,7 @@ class ClinicalEvidenceFactoryTest {
         val onlabel = TestClinicalEvidenceFactory.treatment(
             "on-label",
             EvidenceLevel.D,
+            EvidenceLevelDetails.GUIDELINE,
             EvidenceDirection(isCertain = true),
             true,
             isCategoryEvent = false
@@ -44,6 +46,7 @@ class ClinicalEvidenceFactoryTest {
         val onlabel = TestClinicalEvidenceFactory.treatment(
             "off-label",
             EvidenceLevel.D,
+            EvidenceLevelDetails.GUIDELINE,
             EvidenceDirection(isCertain = true),
             false,
             isCategoryEvent = false
