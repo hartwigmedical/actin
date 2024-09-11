@@ -13,14 +13,15 @@ import java.lang.reflect.Type
 
 enum class TrialIngestionStatus {
     PASS,
-    FAIL;
+    FAIL,
+    WARN;
 
     companion object {
         fun from(
             trialStatusDatabaseValidation: TrialStatusDatabaseValidation,
             trialValidationResult: TrialDatabaseValidation,
         ): TrialIngestionStatus {
-            return if (trialStatusDatabaseValidation.hasErrors() || trialValidationResult.hasErrors()) FAIL else PASS
+            return if (trialValidationResult.hasErrors()) FAIL else if (trialStatusDatabaseValidation.hasErrors()) WARN else PASS
         }
     }
 }
@@ -45,12 +46,18 @@ interface TrialValidationError<T : TrialConfig> : ValidationError<T>
 
 
 data class TrialIngestionResult(
-    val ingestionStatus: TrialIngestionStatus,
+    var ingestionStatus: TrialIngestionStatus,
     val trialStatusDatabaseValidation: TrialStatusDatabaseValidation,
     val trialValidationResult: TrialDatabaseValidation,
     val unusedRules: Set<String>,
     @Transient val trials: List<Trial>
 ) {
+    init {
+        if (unusedRules.isNotEmpty() && ingestionStatus == TrialIngestionStatus.PASS) {
+            ingestionStatus = TrialIngestionStatus.WARN
+        }
+    }
+
     fun serialize(): String {
         return GsonBuilder().registerTypeHierarchyAdapter(ValidationError::class.java, ValidationErrorSerializer())
             .create()

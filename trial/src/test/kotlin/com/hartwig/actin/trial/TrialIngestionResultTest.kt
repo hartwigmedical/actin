@@ -15,6 +15,7 @@ import com.hartwig.actin.trial.status.TrialStatusDatabaseValidation
 import com.hartwig.actin.trial.status.TrialStatusDatabaseValidationError
 import com.hartwig.actin.trial.status.config.TestTrialStatusDatabaseEntryFactory
 import com.hartwig.actin.util.json.GsonSerializer
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val TRIAL_ID_1 = "trial 1"
@@ -62,6 +63,33 @@ class TrialIngestionResultTest {
             trials = emptyList(),
             unusedRules = setOf("unused rule"),
         )
-        GsonSerializer.create().toJson(result)
+
+        val json = GsonSerializer.create().toJson(result)
+
+        assertThat(json.startsWith("{\"ingestionStatus\":\"FAIL\"")).isTrue()
+        assertThat(json.endsWith("\"unusedRules\":[\"unused rule\"]}")).isTrue()
+
+    }
+
+    @Test
+    fun `Should set status WARN due to existence of unused rules`() {
+        val result = TrialIngestionResult(
+            ingestionStatus = TrialIngestionStatus.PASS,
+            trialStatusDatabaseValidation = TrialStatusDatabaseValidation(
+                trialDefinitionValidationErrors = emptyList(),
+                trialStatusDatabaseValidationErrors = emptyList()
+            ),
+            trialValidationResult = TrialDatabaseValidation(
+                emptySet(),
+                emptySet(),
+                emptySet(),
+                emptySet(),
+                emptySet()
+            ),
+            trials = emptyList(),
+            unusedRules = setOf("unused rule"),
+        )
+        
+        assertThat(result.ingestionStatus).isEqualTo(TrialIngestionStatus.WARN)
     }
 }
