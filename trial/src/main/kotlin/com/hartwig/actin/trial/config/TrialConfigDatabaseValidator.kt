@@ -7,9 +7,9 @@ import com.hartwig.actin.trial.serialization.TrialJson
 
 class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFactory) {
 
-    fun validate(database: TrialConfigDatabase): TrialDatabaseValidation {
+    fun validate(database: TrialConfigDatabase): TrialConfigDatabaseValidation {
         val trialIds = extractTrialIds(database.trialDefinitionConfigs)
-        return TrialDatabaseValidation(
+        return TrialConfigDatabaseValidation(
             inclusionCriteriaValidationErrors = validateInclusionCriteria(
                 trialIds,
                 extractCohortIdsPerTrial(trialIds, database.cohortDefinitionConfigs),
@@ -21,7 +21,7 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
             ),
             cohortDefinitionValidationErrors = validateCohorts(trialIds, database.cohortDefinitionConfigs),
             trialDefinitionValidationErrors = validateTrials(database.trialDefinitionConfigs),
-            unusedRulesToKeepErrors = validateRulesToKeep(database.unusedRulesToKeep)
+            unusedRulesToKeepWarnings = validateRulesToKeep(database.unusedRulesToKeep)
         )
     }
 
@@ -149,14 +149,14 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
         return configs.groupBy(TrialConfig::trialId)
     }
 
-    private fun validateRulesToKeep(ruleNames: List<String>): Set<UnusedRuleToKeepError> {
+    private fun validateRulesToKeep(ruleNames: List<String>): Set<UnusedRuleToKeepWarning> {
         return ruleNames.mapNotNull { rule ->
             val trimmed = rule.trim()
             try {
                 EligibilityRule.valueOf(trimmed)
                 null
             } catch (exc: IllegalArgumentException) {
-                UnusedRuleToKeepError(trimmed)
+                UnusedRuleToKeepWarning(trimmed)
             }
         }.toSet()
     }

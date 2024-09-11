@@ -7,7 +7,7 @@ import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.trial.config.TrialConfig
-import com.hartwig.actin.trial.config.TrialDatabaseValidation
+import com.hartwig.actin.trial.config.TrialConfigDatabaseValidation
 import com.hartwig.actin.trial.status.TrialStatusDatabaseValidation
 import java.lang.reflect.Type
 
@@ -19,7 +19,7 @@ enum class TrialIngestionStatus {
     companion object {
         fun from(
             trialStatusDatabaseValidation: TrialStatusDatabaseValidation,
-            trialValidationResult: TrialDatabaseValidation,
+            trialValidationResult: TrialConfigDatabaseValidation,
         ): TrialIngestionStatus {
             return if (trialValidationResult.hasErrors()) FAIL else if (trialStatusDatabaseValidation.hasErrors()) WARN else PASS
         }
@@ -47,8 +47,8 @@ interface TrialValidationError<T : TrialConfig> : ValidationError<T>
 
 data class TrialIngestionResult(
     var ingestionStatus: TrialIngestionStatus,
+    val trialConfigValidationResult: TrialConfigDatabaseValidation,
     val trialStatusDatabaseValidation: TrialStatusDatabaseValidation,
-    val trialValidationResult: TrialDatabaseValidation,
     val unusedRules: Set<String>,
     @Transient val trials: List<Trial>
 ) {

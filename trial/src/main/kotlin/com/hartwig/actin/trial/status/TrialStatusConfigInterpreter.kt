@@ -15,13 +15,13 @@ class TrialStatusConfigInterpreter(
     ConfigInterpreter {
 
     private val trialDefinitionValidationErrors = mutableListOf<TrialDefinitionValidationError>()
-    private val trialStatusDatabaseValidationErrors = mutableListOf<TrialStatusDatabaseValidationError>()
-    private val trialStatusConfigValidationErrors = mutableListOf<TrialStatusDatabaseConfigValidationError>()
     private val cohortDefinitionValidationErrors = mutableListOf<CohortDefinitionValidationError>()
+    private val trialStatusConfigValidationErrors = mutableListOf<TrialStatusConfigValidationError>()
+    private val trialStatusDatabaseValidationErrors = mutableListOf<TrialStatusDatabaseValidationError>()
 
     override fun validation(): TrialStatusDatabaseValidation {
         return TrialStatusDatabaseValidation(
-            trialDefinitionValidationErrors,
+            trialStatusConfigValidationErrors,
             trialStatusDatabaseValidationErrors
         )
     }
@@ -36,7 +36,7 @@ class TrialStatusConfigInterpreter(
 
         if (trialStatusDatabase.studiesNotInTrialStatusDatabase.contains(trialConfig.trialId) && openInTrialStatusDatabase != null) {
             trialStatusConfigValidationErrors.add(
-                TrialStatusDatabaseConfigValidationError(
+                TrialStatusConfigValidationError(
                     trialConfig.trialId,
                     "Trial is configured as not in trial status database while status could be derived from trial status database"
                 )
@@ -75,10 +75,11 @@ class TrialStatusConfigInterpreter(
     }
 
     override fun resolveCohortMetadata(cohortConfig: CohortDefinitionConfig): CohortMetadata {
-        val (maybeInterpretedCohortStatus, cohortDefinitionValidationErrors, trialStatusDatabaseValidationErrors) = CohortStatusInterpreter.interpret(
-            trialStatusDatabase.entries,
-            cohortConfig
-        )
+        val (maybeInterpretedCohortStatus, cohortDefinitionValidationErrors, trialStatusDatabaseValidationErrors) =
+            CohortStatusInterpreter.interpret(
+                trialStatusDatabase.entries,
+                cohortConfig
+            )
         this.cohortDefinitionValidationErrors.addAll(cohortDefinitionValidationErrors)
         this.trialStatusDatabaseValidationErrors.addAll(trialStatusDatabaseValidationErrors)
         val interpretedCohortStatus = maybeInterpretedCohortStatus ?: fromCohortConfig(cohortConfig)
@@ -115,7 +116,7 @@ class TrialStatusConfigInterpreter(
         if (unusedMecStudiesNotInTrialStatusDatabase.isNotEmpty()) {
             unusedMecStudiesNotInTrialStatusDatabase.map {
                 trialStatusConfigValidationErrors.add(
-                    TrialStatusDatabaseConfigValidationError(
+                    TrialStatusConfigValidationError(
                         unusedMecStudiesNotInTrialStatusDatabase.joinToString { ", " },
                         "Trial ID that is configured to be ignored is not actually present in trial database"
                     )
