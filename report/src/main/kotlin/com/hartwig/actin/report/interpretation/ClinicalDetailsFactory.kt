@@ -22,8 +22,6 @@ class ClinicalDetailsFactory(private val onLabel: Boolean?) {
         val preClinicalFilteredEvidence = TreatmentEvidenceFunctions.filterOutPreClinicalEvidence(labelFilteredEvidence)
         val groupedTreatments = TreatmentEvidenceFunctions.groupTreatmentsIgnoringEvidenceLevel(preClinicalFilteredEvidence)
 
-        val groupedTreatments = TreatmentEvidenceFunctions.groupTreatmentsIgnoringEvidenceLevel(treatmentEvidenceSet)
-
         return groupedTreatments.flatMap { (_, treatmentEvidenceList) ->
             TreatmentEvidenceFunctions.treatmentEvidenceToClinicalDetails(treatmentEvidenceList)
         }.toSet()
