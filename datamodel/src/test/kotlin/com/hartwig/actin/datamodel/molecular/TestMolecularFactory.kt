@@ -239,7 +239,7 @@ object TestMolecularFactory {
         )
     }
 
-    private fun createExhaustiveTestDrivers(): Drivers {
+    fun createExhaustiveTestDrivers(): Drivers {
         val proper = createProperTestDrivers()
         return proper.copy(
             copyNumbers = proper.copyNumbers + CopyNumber(
