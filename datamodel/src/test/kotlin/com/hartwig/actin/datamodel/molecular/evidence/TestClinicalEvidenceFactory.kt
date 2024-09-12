@@ -1,5 +1,6 @@
 package com.hartwig.actin.datamodel.molecular.evidence
 
+import com.hartwig.serve.datamodel.EvidenceLevelDetails
 import java.time.LocalDate
 
 object TestClinicalEvidenceFactory {
@@ -28,6 +29,7 @@ object TestClinicalEvidenceFactory {
     fun offLabelSuspectResistant() = treatment(
         "off-label suspect resistant",
         EvidenceLevel.C,
+        EvidenceLevelDetails.GUIDELINE,
         EvidenceDirection(isResistant = true, isCertain = false),
         false
     )
@@ -35,25 +37,51 @@ object TestClinicalEvidenceFactory {
     fun onLabelSuspectResistant() = treatment(
         "on-label suspect resistant",
         EvidenceLevel.C,
+        EvidenceLevelDetails.GUIDELINE,
         EvidenceDirection(isResistant = true, isCertain = false),
         true
     )
 
     fun offLabelKnownResistant() =
-        treatment("off-label known resistant", EvidenceLevel.A, EvidenceDirection(isResistant = true, isCertain = true), false)
+        treatment(
+            "off-label known resistant",
+            EvidenceLevel.A,
+            EvidenceLevelDetails.GUIDELINE,
+            EvidenceDirection(isResistant = true, isCertain = true),
+            false
+        )
 
     fun onLabelKnownResistant() =
-        treatment("on-label known resistant", EvidenceLevel.A, EvidenceDirection(isResistant = true, isCertain = true), true)
+        treatment(
+            "on-label known resistant",
+            EvidenceLevel.A,
+            EvidenceLevelDetails.GUIDELINE,
+            EvidenceDirection(isResistant = true, isCertain = true),
+            true
+        )
 
     fun offLabelPreclinical() =
-        treatment("off-label pre-clinical", EvidenceLevel.D, EvidenceDirection(hasPositiveResponse = true), false)
+        treatment(
+            "off-label pre-clinical",
+            EvidenceLevel.D,
+            EvidenceLevelDetails.PRECLINICAL,
+            EvidenceDirection(hasPositiveResponse = true),
+            false
+        )
 
     fun onLabelPreclinical() =
-        treatment("on-label pre-clinical", EvidenceLevel.C, EvidenceDirection(hasPositiveResponse = true), true)
+        treatment(
+            "on-label pre-clinical",
+            EvidenceLevel.C,
+            EvidenceLevelDetails.PRECLINICAL,
+            EvidenceDirection(hasPositiveResponse = true),
+            true
+        )
 
     fun offLabelExperimental() = treatment(
         "off-label experimental",
         EvidenceLevel.B,
+        EvidenceLevelDetails.CLINICAL_STUDY,
         EvidenceDirection(hasPositiveResponse = true, isCertain = true),
         false
     )
@@ -61,16 +89,24 @@ object TestClinicalEvidenceFactory {
     fun onLabelExperimental() = treatment(
         "on-label experimental",
         EvidenceLevel.A,
+        EvidenceLevelDetails.CLINICAL_STUDY,
         EvidenceDirection(hasPositiveResponse = true, isCertain = false),
         true
     )
 
     fun approved() =
-        treatment("approved", EvidenceLevel.A, EvidenceDirection(hasPositiveResponse = true, isCertain = true), true)
+        treatment(
+            "approved",
+            EvidenceLevel.A,
+            EvidenceLevelDetails.GUIDELINE,
+            EvidenceDirection(hasPositiveResponse = true, isCertain = true),
+            true
+        )
 
     fun treatment(
         treatment: String,
         evidenceLevel: EvidenceLevel,
+        evidenceLevelDetails: EvidenceLevelDetails,
         direction: EvidenceDirection,
         onLabel: Boolean,
         isCategoryEvent: Boolean = false
@@ -83,6 +119,7 @@ object TestClinicalEvidenceFactory {
         "efficacy evidence",
         isCategoryEvent,
         "",
+        evidenceLevelDetails,
         applicableCancerType()
     )
 
@@ -135,6 +172,7 @@ object TestClinicalEvidenceFactory {
             url = url,
             nctId = nctId,
             sourceEvent = "",
+            evidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY,
             applicableCancerType = ApplicableCancerType(cancerType = "", excludedCancerTypes = emptySet()),
             isCategoryEvent = false
         )

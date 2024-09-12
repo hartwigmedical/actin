@@ -9,9 +9,9 @@ import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
+import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.io.File
 
 class TreatmentMatchJsonTest {
 
@@ -88,7 +88,7 @@ class TreatmentMatchJsonTest {
                 + "\"patientsPerRegion\":null}],\"url\":\"http://www.ncbi.nlm.nih.gov/pubmed/12345678\"}]}],"
                 + "\"generalPfs\":{\"value\":136.5,\"numPatients\":98,\"min\":74,\"max\":281,\"iqr\":46.0},"
                 + "\"resistanceEvidence\":[{\"event\":\"BRAF amp\",\"isTested\":null,\"isFound\":false,\"resistanceLevel\":\"A\",\"evidenceUrls\":[\"website\"],\"treatmentName\":\"Pembrolizumab\"}]}],"
-                + "\"personalizedDataAnalysis\":null}")
+                + "\"personalizedDataAnalysis\":null,\"maxMolecularTestAge\":null}")
         assertThat(toJson(match)).isEqualTo(expectedJson)
     }
 

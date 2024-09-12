@@ -49,6 +49,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_LYMPH_NODE_METASTASES to hasLymphNodeMetastasesCreator(),
             EligibilityRule.HAS_VISCERAL_METASTASES to hasVisceralMetastasesCreator(),
             EligibilityRule.HAS_UNRESECTABLE_PERITONEAL_METASTASES to hasUnresectablePeritonealMetastasesCreator(),
+            EligibilityRule.HAS_LESIONS_CLOSE_TO_OR_INVOLVING_AIRWAY to hasLesionsCloseToOrInvolvingAirwayCreator(),
             EligibilityRule.HAS_EXTENSIVE_SYSTEMIC_METASTASES_PREDOMINANTLY_DETERMINING_PROGNOSIS to hasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosisCreator(),
             EligibilityRule.HAS_BIOPSY_AMENABLE_LESION to hasBiopsyAmenableLesionCreator(),
             EligibilityRule.HAS_IRRADIATION_AMENABLE_LESION to hasIrradiationAmenableLesionCreator(),
@@ -105,12 +106,12 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     private fun hasBreastCancerWithPositiveReceptorOfTypeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val receptorType = functionInputResolver().createOneReceptorTypeInput(function)
-            HasBreastCancerWithPositiveReceptorOfType(doidModel(), receptorType)
+            HasBreastCancerWithPositiveReceptorOfType(doidModel(), receptorType, maxMolecularTestAge())
         }
     }
 
     private fun hasCancerWithNeuroendocrineComponentCreator(): FunctionCreator {
-        return { HasCancerWithNeuroendocrineComponent(doidModel()) }
+        return { HasCancerWithNeuroendocrineComponent(doidModel(), maxMolecularTestAge()) }
     }
 
     private fun hasCancerWithSmallCellComponentCreator(): FunctionCreator {
@@ -118,7 +119,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasKnownSCLCTransformationCreator(): FunctionCreator {
-        return { HasKnownSCLCTransformation(doidModel()) }
+        return { HasKnownSCLCTransformation(doidModel(), maxMolecularTestAge()) }
     }
 
     private fun hasNonSquamousNSCLCCreator(): FunctionCreator {
@@ -172,6 +173,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasUnresectablePeritonealMetastasesCreator(): FunctionCreator {
         return { HasUnresectablePeritonealMetastases() }
+    }
+
+    private fun hasLesionsCloseToOrInvolvingAirwayCreator(): FunctionCreator {
+        return { HasLesionsCloseToOrInvolvingAirway(doidModel()) }
     }
 
     private fun hasUnresectableStageIIICancerCreator(): FunctionCreator {

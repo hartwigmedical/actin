@@ -1,6 +1,5 @@
 package com.hartwig.actin.report.pdf.tables.clinical
 
-import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 import com.hartwig.actin.datamodel.clinical.TestPriorOtherConditionFactory
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.itextpdf.layout.element.Cell
