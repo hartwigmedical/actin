@@ -87,7 +87,8 @@ object TestClinicalFactory {
             gender = Gender.MALE,
             birthYear = 1950,
             registrationDate = TODAY.minusDays(DAYS_SINCE_REGISTRATION.toLong()),
-            questionnaireDate = TODAY.minusDays(DAYS_SINCE_QUESTIONNAIRE.toLong())
+            questionnaireDate = TODAY.minusDays(DAYS_SINCE_QUESTIONNAIRE.toLong()),
+            hasHartwigSequencing = true
         )
     }
 

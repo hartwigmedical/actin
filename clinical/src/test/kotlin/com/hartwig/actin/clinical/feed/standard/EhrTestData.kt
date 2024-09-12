@@ -16,6 +16,7 @@ object EhrTestData {
             birthYear = 2024,
             gender = "FEMALE",
             registrationDate = LocalDate.of(2024, 2, 23),
+            hartwigMolecularDataPending = false
         ),
         tumorDetails = createEhrTumorDetail()
     )
