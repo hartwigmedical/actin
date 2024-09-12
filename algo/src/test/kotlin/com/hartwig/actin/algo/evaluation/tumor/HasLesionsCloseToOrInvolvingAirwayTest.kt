@@ -14,7 +14,7 @@ class HasLesionsCloseToOrInvolvingAirwayTest {
     )
 
     @Test
-    fun `Should fail if patient has no respiratory system cancer and only bone lesions`() {
+    fun `Should fail if patient has no respiratory system cancer and only liver lesions`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
