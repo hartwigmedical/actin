@@ -58,7 +58,7 @@ class MolecularClinicalEvidenceGenerator(
                             val evidenceCellContents = TreatmentEvidenceFunctions.generateEvidenceCellContents(perLevelEvidences)
 
                             evidenceCellContents.forEach { (treatment, cancerTypes, resistance) ->
-                                val cancerTypeContent = Paragraph(cancerTypes).setFirstLineIndent(10f).setItalic().setFontSize(6.5f)
+                                val cancerTypeContent = Paragraph(cancerTypes).setFirstLineIndent(5f).setItalic().setFontSize(5.5f)
                                 val treatmentContent = Paragraph(treatment)
 
                                 if (resistance) {
@@ -68,7 +68,6 @@ class MolecularClinicalEvidenceGenerator(
 
                                 val evidenceSubTable = Table(1).setWidth(width / columnCount)
                                 evidenceSubTable.addCell(Cells.createContentNoBorder(treatmentContent))
-                                evidenceSubTable.startNewRow()
                                 evidenceSubTable.addCell(Cells.createContentNoBorder(cancerTypeContent))
 
                                 evidenceLevelTable.addCell(Cells.createContentNoBorder(evidenceSubTable))

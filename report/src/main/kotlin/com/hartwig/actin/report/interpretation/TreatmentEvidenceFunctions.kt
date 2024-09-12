@@ -53,11 +53,15 @@ object TreatmentEvidenceFunctions {
 
     fun generateEvidenceCellContents(evidenceList: List<TreatmentEvidence>): List<TreatmentEvidenceContent> {
         return groupByTreatment(evidenceList).map { (treatment, evidences) ->
-            val cancerTypesWithDate = evidences.joinToString(", ") { evidence ->
-                "${evidence.applicableCancerType.cancerType} (${evidence.date.year})"
-            }
+            val cancerTypesWithYears = evidences
+                .groupBy { it.applicableCancerType.cancerType }
+                .map { (cancerType, evidenceGroup) ->
+                    val years = evidenceGroup.map { it.date.year }.distinct().sorted()
+                    "$cancerType (${years.joinToString(", ")})"
+                }
+                .joinToString(", ")
             val isResistant = evidences.any { it.direction.isResistant }
-            TreatmentEvidenceContent(treatment, cancerTypesWithDate, isResistant)
+            TreatmentEvidenceContent(treatment, cancerTypesWithYears, isResistant)
         }
     }
 

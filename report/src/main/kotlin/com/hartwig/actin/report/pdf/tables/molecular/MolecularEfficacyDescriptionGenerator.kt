@@ -27,10 +27,11 @@ class MolecularEfficacyDescriptionGenerator(val molecularHistory: MolecularHisto
         TreatmentEvidenceFunctions.groupByTreatment(treatmentEvidence).forEach { (treatment, evidences) ->
             val treatmentHeader = Paragraph(treatment).setBold().setFontSize(8f)
             table.addCell(Cells.createContent(treatmentHeader))
-            val eventDescriptionSubTable = Table(2).setWidth(width)
+            val eventDescriptionSubTable = Table(3).setWidth(width)
 
             evidences.forEach { evidence ->
-                val sourceEventCell = Paragraph("${evidence.sourceEvent}:").setItalic().setFontSize(7f)
+                val sourceEventCell = Paragraph("${evidence.sourceEvent}:").setItalic().setBold().setFontSize(7f)
+                val cancerTypeCell = Paragraph(evidence.applicableCancerType.cancerType).setBold().setFontSize(6f)
                 val descriptionCell = Paragraph(evidence.description).setFontSize(6.5f)
 
                 if (evidence.direction.isResistant) {
@@ -38,6 +39,7 @@ class MolecularEfficacyDescriptionGenerator(val molecularHistory: MolecularHisto
                 }
 
                 eventDescriptionSubTable.addCell(Cells.createContentNoBorder(sourceEventCell))
+                eventDescriptionSubTable.addCell(Cells.createContentNoBorder(cancerTypeCell))
                 eventDescriptionSubTable.addCell(Cells.createContentNoBorder(descriptionCell))
             }
             table.addCell(Cells.createContentNoBorder(eventDescriptionSubTable))
