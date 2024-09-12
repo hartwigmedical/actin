@@ -3,9 +3,8 @@ package com.hartwig.actin.trial
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.trial.config.InclusionCriteriaConfig
 import com.hartwig.actin.trial.config.InclusionCriteriaValidationError
-import com.hartwig.actin.trial.config.TestTrialDefinitionConfigFactory
-import com.hartwig.actin.trial.config.TrialDatabaseValidation
-import com.hartwig.actin.trial.config.TrialDefinitionValidationError
+import com.hartwig.actin.trial.config.TrialConfigDatabaseValidation
+import com.hartwig.actin.trial.status.TrialStatusConfigValidationError
 import com.hartwig.actin.trial.status.TrialStatusDatabaseValidation
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -22,14 +21,14 @@ class TrialIngestionStatusTest {
     @Test
     fun `Should return FAIL`() {
         val trialStatusDatabaseValidation = TrialStatusDatabaseValidation(
-            trialDefinitionValidationErrors = listOf(TrialDefinitionValidationError(TestTrialDefinitionConfigFactory.MINIMAL, "msg")),
+            trialStatusConfigValidationErrors = listOf(TrialStatusConfigValidationError("config", "msg")),
             trialStatusDatabaseValidationErrors = emptyList()
         )
 
-        val trialValidationResult = TrialDatabaseValidation(
+        val trialValidationResult = TrialConfigDatabaseValidation(
+            emptySet(),
+            emptySet(),
             setOf(InclusionCriteriaValidationError(config = inclusionCriterion, message = "Not a valid inclusion criterion for trial")),
-            emptySet(),
-            emptySet(),
             emptySet(),
             emptySet()
         )
@@ -39,10 +38,10 @@ class TrialIngestionStatusTest {
     @Test
     fun `Should return PASS`() {
         val trialStatusDatabaseValidation = TrialStatusDatabaseValidation(
-            trialDefinitionValidationErrors = emptyList(),
+            trialStatusConfigValidationErrors = emptyList(),
             trialStatusDatabaseValidationErrors = emptyList()
         )
-        val trialValidationResult = TrialDatabaseValidation(
+        val trialValidationResult = TrialConfigDatabaseValidation(
             emptySet(),
             emptySet(),
             emptySet(),
@@ -55,10 +54,10 @@ class TrialIngestionStatusTest {
     @Test
     fun `Should return WARM for having status database validation errors`() {
         val trialStatusDatabaseValidation = TrialStatusDatabaseValidation(
-            trialDefinitionValidationErrors = listOf(TrialDefinitionValidationError(TestTrialDefinitionConfigFactory.MINIMAL, "msg")),
+            trialStatusConfigValidationErrors = listOf(TrialStatusConfigValidationError("config", "msg")),
             trialStatusDatabaseValidationErrors = emptyList()
         )
-        val trialValidationResult = TrialDatabaseValidation(
+        val trialValidationResult = TrialConfigDatabaseValidation(
             emptySet(),
             emptySet(),
             emptySet(),
@@ -67,5 +66,4 @@ class TrialIngestionStatusTest {
         )
         assertThat(TrialIngestionStatus.from(trialStatusDatabaseValidation, trialValidationResult)).isEqualTo(TrialIngestionStatus.WARN)
     }
-
 }

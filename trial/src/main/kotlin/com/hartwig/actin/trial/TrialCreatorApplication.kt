@@ -17,14 +17,14 @@ import com.hartwig.actin.trial.status.TrialStatusDatabaseReader
 import com.hartwig.actin.trial.status.ctc.CTCTrialStatusEntryReader
 import com.hartwig.actin.trial.status.nki.NKITrialStatusEntryReader
 import com.hartwig.serve.datamodel.serialization.KnownGeneFile
-import java.nio.file.Files
-import java.nio.file.Paths
-import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.nio.file.Files
+import java.nio.file.Paths
+import kotlin.system.exitProcess
 
 const val CTC_TRIAL_PREFIX = "MEC"
 
@@ -99,16 +99,16 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         if (result.trialStatusDatabaseValidation.hasErrors()) {
             LOGGER.warn("There were validation errors in the trial status database configuration")
             printValidationErrors(result.trialStatusDatabaseValidation.trialStatusDatabaseValidationErrors)
-            printValidationErrors(result.trialStatusDatabaseValidation.trialDefinitionValidationErrors)
+            printValidationErrors(result.trialStatusDatabaseValidation.trialStatusConfigValidationErrors)
         }
 
-        if (result.trialValidationResult.hasErrors()) {
+        if (result.trialConfigValidationResult.hasErrors()) {
             LOGGER.warn("There were validation errors in the trial definition configuration")
-            printValidationErrors(result.trialValidationResult.cohortDefinitionValidationErrors)
-            printValidationErrors(result.trialValidationResult.trialDefinitionValidationErrors)
-            printValidationErrors(result.trialValidationResult.inclusionReferenceValidationErrors)
-            printValidationErrors(result.trialValidationResult.inclusionCriteriaValidationErrors)
-            printValidationErrors(result.trialValidationResult.unusedRulesToKeepErrors)
+            printValidationErrors(result.trialConfigValidationResult.cohortDefinitionValidationErrors)
+            printValidationErrors(result.trialConfigValidationResult.trialDefinitionValidationErrors)
+            printValidationErrors(result.trialConfigValidationResult.inclusionReferenceValidationErrors)
+            printValidationErrors(result.trialConfigValidationResult.inclusionCriteriaValidationErrors)
+            printValidationErrors(result.trialConfigValidationResult.unusedRulesToKeepWarnings)
         }
     }
 

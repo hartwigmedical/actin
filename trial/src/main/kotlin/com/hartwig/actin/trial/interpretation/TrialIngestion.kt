@@ -38,8 +38,8 @@ class TrialIngestion(
 
         return TrialIngestionResult(
             TrialIngestionStatus.from(ctcDatabaseValidation, trialDatabaseValidation),
-            ctcDatabaseValidation,
             trialDatabaseValidation,
+            ctcDatabaseValidation,
             EligibilityRuleUsageEvaluator.evaluate(trials, trialConfigModel.unusedRulesToKeep).map { it.name }.toSet(),
             trials,
         )

@@ -8,9 +8,10 @@ import com.hartwig.actin.trial.config.InclusionCriteriaValidationError
 import com.hartwig.actin.trial.config.InclusionReferenceValidationError
 import com.hartwig.actin.trial.config.TestCohortDefinitionConfigFactory
 import com.hartwig.actin.trial.config.TestTrialDefinitionConfigFactory
-import com.hartwig.actin.trial.config.TrialDatabaseValidation
+import com.hartwig.actin.trial.config.TrialConfigDatabaseValidation
 import com.hartwig.actin.trial.config.TrialDefinitionValidationError
-import com.hartwig.actin.trial.config.UnusedRuleToKeepError
+import com.hartwig.actin.trial.config.UnusedRuleToKeepWarning
+import com.hartwig.actin.trial.status.TrialStatusConfigValidationError
 import com.hartwig.actin.trial.status.TrialStatusDatabaseValidation
 import com.hartwig.actin.trial.status.TrialStatusDatabaseValidationError
 import com.hartwig.actin.trial.status.config.TestTrialStatusDatabaseEntryFactory
@@ -41,7 +42,7 @@ class TrialIngestionResultTest {
         val result = TrialIngestionResult(
             ingestionStatus = TrialIngestionStatus.FAIL,
             trialStatusDatabaseValidation = TrialStatusDatabaseValidation(
-                trialDefinitionValidationErrors = listOf(TrialDefinitionValidationError(TestTrialDefinitionConfigFactory.MINIMAL, "msg")),
+                trialStatusConfigValidationErrors = listOf(TrialStatusConfigValidationError("config", "msg")),
                 trialStatusDatabaseValidationErrors = listOf(
                     TrialStatusDatabaseValidationError(
                         TestTrialStatusDatabaseEntryFactory.MINIMAL,
@@ -49,16 +50,16 @@ class TrialIngestionResultTest {
                     )
                 ),
             ),
-            trialValidationResult = TrialDatabaseValidation(
+            trialConfigValidationResult = TrialConfigDatabaseValidation(
+                setOf(TrialDefinitionValidationError(config = trialDefinition, message = "Duplicated trial id of trial 1")),
+                setOf(CohortDefinitionValidationError(config = cohortDefinition, message = "Cohort 'A' is duplicated.")),
                 setOf(InclusionCriteriaValidationError(config = inclusionCriterion, message = "Not a valid inclusion criterion for trial")),
                 setOf(
                     InclusionReferenceValidationError(
                         config = inclusionReference, message = "Reference 'I-01' defined on non-existing trial: 'does not exist'"
                     )
                 ),
-                setOf(CohortDefinitionValidationError(config = cohortDefinition, message = "Cohort 'A' is duplicated.")),
-                setOf(TrialDefinitionValidationError(config = trialDefinition, message = "Duplicated trial id of trial 1")),
-                setOf(UnusedRuleToKeepError(config = "invalid rule"))
+                setOf(UnusedRuleToKeepWarning(config = "invalid rule"))
             ),
             trials = emptyList(),
             unusedRules = setOf("unused rule"),
@@ -76,10 +77,10 @@ class TrialIngestionResultTest {
         val result = TrialIngestionResult(
             ingestionStatus = TrialIngestionStatus.PASS,
             trialStatusDatabaseValidation = TrialStatusDatabaseValidation(
-                trialDefinitionValidationErrors = emptyList(),
+                trialStatusConfigValidationErrors = emptyList(),
                 trialStatusDatabaseValidationErrors = emptyList()
             ),
-            trialValidationResult = TrialDatabaseValidation(
+            trialConfigValidationResult = TrialConfigDatabaseValidation(
                 emptySet(),
                 emptySet(),
                 emptySet(),

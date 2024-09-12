@@ -10,10 +10,10 @@ class TrialConfigModel(
     private val specificInclusionCriteriaByTrialAndCohort: Map<String, Map<String, List<InclusionCriteriaConfig>>>,
     private val referencesByTrialAndId: Map<String, Map<String, InclusionCriteriaReferenceConfig>>,
     val unusedRulesToKeep: Set<EligibilityRule>,
-    private val trialDatabaseValidation: TrialDatabaseValidation
+    private val trialDatabaseValidation: TrialConfigDatabaseValidation
 ) {
 
-    fun validation(): TrialDatabaseValidation {
+    fun validation(): TrialConfigDatabaseValidation {
         return trialDatabaseValidation
     }
 
