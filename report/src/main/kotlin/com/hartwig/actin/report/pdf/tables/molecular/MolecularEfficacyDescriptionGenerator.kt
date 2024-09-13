@@ -18,9 +18,7 @@ class MolecularEfficacyDescriptionGenerator(val molecularHistory: MolecularHisto
     override fun contents(): Table {
         val table = Table(1).setWidth(width)
 
-        val allDrivers = DriverTableFunctions.allDrivers(molecularHistory)
-            .flatMap { it.second }
-            .toSortedSet(Comparator.comparing { it.event })
+        val allDrivers = DriverTableFunctions.allDrivers(molecularHistory).flatMap { it.second }
         val filteredEvidence = allDrivers.flatMap { filterTreatmentEvidence(it.evidence.treatmentEvidence, null) }.sortedBy { it.treatment }
 
         TreatmentEvidenceFunctions.groupByTreatment(filteredEvidence).forEach { (treatment, evidences) ->
@@ -28,7 +26,7 @@ class MolecularEfficacyDescriptionGenerator(val molecularHistory: MolecularHisto
             table.addCell(Cells.createContent(treatmentHeader))
             val eventDescriptionSubTable = Table(3).setWidth(width)
 
-            evidences.forEach { evidence ->
+            evidences.sortedBy { it.sourceEvent }.forEach { evidence ->
                 val sourceEventCell = Paragraph("${evidence.sourceEvent}:").setItalic().setBold().setFontSize(7f)
                 val cancerTypeCell = Paragraph(evidence.applicableCancerType.cancerType).setBold().setFontSize(6f)
                 val descriptionCell = Paragraph(evidence.description).setFontSize(6.5f)
