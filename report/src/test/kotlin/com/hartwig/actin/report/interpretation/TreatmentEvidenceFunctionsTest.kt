@@ -58,6 +58,18 @@ class TreatmentEvidenceFunctionsTest {
     }
 
     @Test
+    fun `Should correctly filter treatment without direction hasBenefit or isResistant`() {
+        val noBenefitEvidence =
+            createTreatmentEvidence("noBenefit", evidenceLevel = EvidenceLevel.A, direction = EvidenceDirection())
+        val evidence = setOf(onLabelCategoryLevelA, noBenefitEvidence)
+        val result = TreatmentEvidenceFunctions.onlyIncludeBenefitAndResistanceEvidence(evidence)
+        val expected = setOf(onLabelCategoryLevelA)
+
+        assertThat(result).containsExactlyElementsOf(expected)
+    }
+
+
+    @Test
     fun `Should correctly filter treatment with preclinical level D evidence`() {
         val preclinicalEvidence =
             createTreatmentEvidence("preclinical", evidenceLevel = EvidenceLevel.D, evidenceLevelDetails = EvidenceLevelDetails.PRECLINICAL)
@@ -138,6 +150,7 @@ class TreatmentEvidenceFunctionsTest {
     private fun createTreatmentEvidence(
         treatment: String = TREATMENT,
         onLabel: Boolean = true,
+        direction: EvidenceDirection = EvidenceDirection(hasBenefit = true),
         evidenceLevel: EvidenceLevel = EvidenceLevel.A,
         date: LocalDate = LocalDate.EPOCH,
         isCategoryEvent: Boolean = true,
@@ -149,7 +162,7 @@ class TreatmentEvidenceFunctionsTest {
             treatment,
             evidenceLevel,
             onLabel,
-            EvidenceDirection(),
+            direction,
             date,
             "",
             isCategoryEvent,
