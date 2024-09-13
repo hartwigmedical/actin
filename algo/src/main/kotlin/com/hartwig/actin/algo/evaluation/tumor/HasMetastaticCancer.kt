@@ -13,30 +13,25 @@ class HasMetastaticCancer(private val doidModel: DoidModel) : EvaluationFunction
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val stageEvaluation = HasTumorStage(setOf(TumorStage.III, TumorStage.IV)).evaluate(record)
-
+        val tumorDoids = record.tumor.doids
         val stage = record.tumor.stage?.display() ?: "(derived stage: ${record.tumor.derivedStages?.joinToString(" or ")})"
-        return when (stageEvaluation.result) {
-            EvaluationResult.PASS -> {
+        val potentiallyMetastaticAtStageII =
+            DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, tumorDoids, STAGE_II_POTENTIALLY_METASTATIC_CANCERS)
+
+        val undeterminedGeneralMessage = "Undetermined if $METASTATIC_CANCER"
+        val undeterminedSpecificMessage = "Could not be determined if tumor stage $stage is considered metastatic"
+
+        return when {
+            stageEvaluation.result == EvaluationResult.PASS -> {
                 EvaluationFactory.pass("Tumor stage $stage is considered metastatic", METASTATIC_CANCER)
             }
 
-            EvaluationResult.UNDETERMINED -> {
-                EvaluationFactory.undetermined(
-                    "Could not be determined if tumor stage $stage is considered metastatic",
-                    "Undetermined $METASTATIC_CANCER"
-                )
+            potentiallyMetastaticAtStageII || stageEvaluation.result == EvaluationResult.UNDETERMINED -> {
+                EvaluationFactory.undetermined(undeterminedSpecificMessage, undeterminedGeneralMessage)
             }
 
             else -> {
-                val tumorDoids = record.tumor.doids
-                if (DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, tumorDoids, STAGE_II_POTENTIALLY_METASTATIC_CANCERS)) {
-                    EvaluationFactory.warn(
-                        "Could not be determined if tumor stage $stage is considered metastatic",
-                        "Undetermined $METASTATIC_CANCER"
-                    )
-                } else {
-                    failEvaluation(stage)
-                }
+                failEvaluation(stage)
             }
         }
     }

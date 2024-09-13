@@ -23,6 +23,14 @@ class HasMetastaticCancerTest {
     }
 
     @Test
+    fun `Should pass for multiple derived passing tumor stages`() {
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(TumorStage.III, TumorStage.IIIC, TumorStage.IV)))
+        )
+    }
+
+    @Test
     fun `Should evaluate to undetermined if one of options among derived stage fails while others pass`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
@@ -31,9 +39,9 @@ class HasMetastaticCancerTest {
     }
 
     @Test
-    fun `Should warn for (derived) tumor stage II in cancer type with possible metastatic disease in stage II`() {
+    fun `Should evaluate to undetermined for (derived) tumor stage II in cancer type with possible metastatic disease in stage II`() {
         assertEvaluation(
-            EvaluationResult.WARN,
+            EvaluationResult.UNDETERMINED,
             function.evaluate(
                 TumorTestFactory.withTumorStageAndDoid(
                     TumorStage.II,
@@ -43,7 +51,7 @@ class HasMetastaticCancerTest {
         )
 
         assertEvaluation(
-            EvaluationResult.WARN,
+            EvaluationResult.UNDETERMINED,
             function.evaluate(
                 TumorTestFactory.withTumorStageAndDerivedStagesAndDoid(
                     null,
@@ -60,8 +68,14 @@ class HasMetastaticCancerTest {
         evaluateStage(TumorStage.II, EvaluationResult.FAIL)
     }
 
-    private fun evaluateStage(stage: TumorStage, expected: EvaluationResult) {
+    @Test
+    fun `Should fail when no (derived) tumor stage provided`() {
+        evaluateStage(null, EvaluationResult.FAIL)
+    }
+
+    private fun evaluateStage(stage: TumorStage?, expected: EvaluationResult) {
+        val derived = stage?.let { setOf(it) }
         assertEvaluation(expected, function.evaluate(TumorTestFactory.withTumorStage(stage)))
-        assertEvaluation(expected, function.evaluate(TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(stage))))
+        assertEvaluation(expected, function.evaluate(TumorTestFactory.withTumorStageAndDerivedStages(null, derived)))
     }
 }
