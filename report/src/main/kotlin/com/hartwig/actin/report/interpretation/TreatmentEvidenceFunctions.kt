@@ -18,7 +18,8 @@ object TreatmentEvidenceFunctions {
             else -> onLabelEvidence + offLabelEvidence
         }.toSet()
 
-        val preClinicalFilteredEvidence = filterPreClinicalEvidence(evidence)
+        val onlyBenefitAndResistanceEvidence = onlyIncludeBenefitAndResistanceEvidence(evidence)
+        val preClinicalFilteredEvidence = filterPreClinicalEvidence(onlyBenefitAndResistanceEvidence)
         val levelDFilteredEvidence = filterLevelDWhenAorBExists(preClinicalFilteredEvidence)
         return prioritizeNonCategoryEvidence(levelDFilteredEvidence)
     }
@@ -35,6 +36,10 @@ object TreatmentEvidenceFunctions {
             val highestOnLabelLevel = onLabelHighestEvidencePerTreatment[offLabel.treatment]
             highestOnLabelLevel == null || offLabel.evidenceLevel < highestOnLabelLevel
         }.toSet()
+    }
+
+    fun onlyIncludeBenefitAndResistanceEvidence(evidenceSet: Set<TreatmentEvidence>): Set<TreatmentEvidence> {
+        return evidenceSet.filter { it.direction.hasBenefit || it.direction.isResistant }.toSet()
     }
 
     fun filterLevelDWhenAorBExists(evidenceSet: Set<TreatmentEvidence>): Set<TreatmentEvidence> {
