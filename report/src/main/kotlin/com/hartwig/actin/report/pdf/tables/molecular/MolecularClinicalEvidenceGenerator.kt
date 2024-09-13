@@ -1,8 +1,8 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
-import com.hartwig.actin.report.interpretation.ClinicalDetailsFactory
-import com.hartwig.actin.report.interpretation.ClinicalDetailsFunctions
+import com.hartwig.actin.report.interpretation.TreatmentEvidenceFunctions
+import com.hartwig.actin.report.interpretation.TreatmentEvidenceFunctions.filterTreatmentEvidence
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Styles.PALETTE_RED
@@ -13,12 +13,12 @@ import com.itextpdf.layout.element.Table
 class MolecularClinicalEvidenceGenerator(
     val molecularHistory: MolecularHistory,
     private val width: Float,
-    private val onLabel: Boolean = true
+    private val isOnLabel: Boolean
 ) : TableGenerator {
 
     override fun title(): String {
         val titleEnd = "label clinical evidence"
-        return if (onLabel) "On $titleEnd" else "Off $titleEnd"
+        return if (isOnLabel) "On $titleEnd" else "Off $titleEnd"
     }
 
     override fun contents(): Table {
@@ -34,17 +34,18 @@ class MolecularClinicalEvidenceGenerator(
         val levelDWidth = (1.2 * width / 6).toFloat()
 
         val table = Tables.createFixedWidthCols(eventWidth, sourceEventWidth, levelAWidth, levelBWidth, levelCWidth, levelDWidth)
+
         listOf("Driver", "CKB Event", "Level A", "Level B", "Level C", "Level D")
             .map(Cells::createHeader)
             .forEach(table::addHeaderCell)
 
         for (driver in allDrivers) {
-            val clinicalDetails = ClinicalDetailsFactory(onLabel).create(driver.evidence)
-            if (clinicalDetails.isNotEmpty()) {
-                val groupedBySourceEvent = ClinicalDetailsFunctions.groupBySourceEvent(clinicalDetails)
+            val filteredEvidence = filterTreatmentEvidence(driver.evidence.treatmentEvidence, isOnLabel)
+            if (filteredEvidence.isNotEmpty()) {
+                val groupedBySourceEvent = TreatmentEvidenceFunctions.groupBySourceEvent(filteredEvidence)
 
-                for ((sourceEvent, details) in groupedBySourceEvent) {
-                    val treatmentEvidencesByLevel = ClinicalDetailsFunctions.mapTreatmentEvidencesToLevel(details)
+                for ((sourceEvent, evidences) in groupedBySourceEvent) {
+                    val treatmentEvidencesByLevel = TreatmentEvidenceFunctions.createPerLevelEvidenceList(evidences)
 
                     if (treatmentEvidencesByLevel.any { it.isNotEmpty() }) {
                         table.addCell(Cells.createContent(driver.event))
@@ -53,19 +54,19 @@ class MolecularClinicalEvidenceGenerator(
                         treatmentEvidencesByLevel.forEach { perLevelEvidences ->
                             val evidenceLevelTable = Table(1).setWidth(width / columnCount)
 
-                            perLevelEvidences.forEach { evidence ->
-                                val cancerTypes = evidence.applicableCancerType.cancerType
-                                val cancerTypeContent = Paragraph(cancerTypes).setFirstLineIndent(10f).setItalic().setFontSize(6.5f)
-                                val treatmentContent = Paragraph(evidence.treatment)
+                            val evidenceCellContents = TreatmentEvidenceFunctions.generateEvidenceCellContents(perLevelEvidences)
 
-                                if (evidence.direction.isResistant) {
+                            evidenceCellContents.forEach { (treatment, cancerTypes, resistance) ->
+                                val cancerTypeContent = Paragraph(cancerTypes).setFirstLineIndent(5f).setItalic().setFontSize(5.5f)
+                                val treatmentContent = Paragraph(treatment)
+
+                                if (resistance) {
                                     treatmentContent.setFontColor(PALETTE_RED)
                                     cancerTypeContent.setFontColor(PALETTE_RED)
                                 }
 
                                 val evidenceSubTable = Table(1).setWidth(width / columnCount)
                                 evidenceSubTable.addCell(Cells.createContentNoBorder(treatmentContent))
-                                evidenceSubTable.startNewRow()
                                 evidenceSubTable.addCell(Cells.createContentNoBorder(cancerTypeContent))
 
                                 evidenceLevelTable.addCell(Cells.createContentNoBorder(evidenceSubTable))
