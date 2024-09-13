@@ -66,6 +66,16 @@ class HasMetastaticCancerTest {
     fun `Should fail for (derived) tumor stage I or II`() {
         evaluateStage(TumorStage.I, EvaluationResult.FAIL)
         evaluateStage(TumorStage.II, EvaluationResult.FAIL)
+
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(
+                TumorTestFactory.withTumorStageAndDoid(
+                    TumorStage.I,
+                    STAGE_II_POTENTIALLY_METASTATIC_CANCERS.iterator().next()
+                )
+            )
+        )
     }
 
     @Test
