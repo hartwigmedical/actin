@@ -1,8 +1,8 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
-import com.hartwig.actin.report.interpretation.ClinicalDetailsFactory
 import com.hartwig.actin.report.interpretation.TreatmentEvidenceFunctions
+import com.hartwig.actin.report.interpretation.TreatmentEvidenceFunctions.filterTreatmentEvidence
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Styles.PALETTE_RED
@@ -21,10 +21,9 @@ class MolecularEfficacyDescriptionGenerator(val molecularHistory: MolecularHisto
         val allDrivers = DriverTableFunctions.allDrivers(molecularHistory)
             .flatMap { it.second }
             .toSortedSet(Comparator.comparing { it.event })
-        val allDriverDetails = allDrivers.flatMap { ClinicalDetailsFactory(null).create(it.evidence) }
-        val treatmentEvidence = allDriverDetails.map { it.treatmentEvidence }
+        val filteredEvidence = allDrivers.flatMap { filterTreatmentEvidence(it.evidence.treatmentEvidence, null) }.sortedBy { it.treatment }
 
-        TreatmentEvidenceFunctions.groupByTreatment(treatmentEvidence).forEach { (treatment, evidences) ->
+        TreatmentEvidenceFunctions.groupByTreatment(filteredEvidence).forEach { (treatment, evidences) ->
             val treatmentHeader = Paragraph(treatment).setBold().setFontSize(8f)
             table.addCell(Cells.createContent(treatmentHeader))
             val eventDescriptionSubTable = Table(3).setWidth(width)

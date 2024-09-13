@@ -8,11 +8,57 @@ object TreatmentEvidenceFunctions {
 
     data class TreatmentEvidenceContent(val treatment: String, val cancerTypesWithDate: String, val isResistant: Boolean)
 
-    fun filterOnLabel(treatmentEvidenceSet: Set<TreatmentEvidence>, onLabel: Boolean): Set<TreatmentEvidence> {
-        return treatmentEvidenceSet.filter { it.onLabel == onLabel }.toSet()
+    fun filterTreatmentEvidence(treatmentEvidenceSet: Set<TreatmentEvidence>, isOnLabel: Boolean?): Set<TreatmentEvidence> {
+        val (onLabelEvidence, offLabelEvidence) = treatmentEvidenceSet.partition { it.onLabel }
+        val onLabelHighestEvidenceLevels = getHighestEvidenceLevelPerTreatment(onLabelEvidence)
+
+        val evidence =  when (isOnLabel) {
+            true -> onLabelEvidence
+            false -> filterOffLabelEvidence(offLabelEvidence, onLabelHighestEvidenceLevels)
+            else -> onLabelEvidence + offLabelEvidence
+        }.toSet()
+
+        val preClinicalFilteredEvidence = filterPreClinicalEvidence(evidence)
+        val levelDFilteredEvidence = filterLevelDWhenAorBExists(preClinicalFilteredEvidence)
+        return prioritizeNonCategoryEvidence(levelDFilteredEvidence)
     }
 
-    fun filterOutPreClinicalEvidence(treatmentEvidenceSet: Set<TreatmentEvidence>): Set<TreatmentEvidence> {
+    fun getHighestEvidenceLevelPerTreatment(onLabelEvidence: List<TreatmentEvidence>): Map<String, EvidenceLevel?> {
+        return groupByTreatment(onLabelEvidence).mapValues { (_, evidences) -> evidences.minOfOrNull { it.evidenceLevel } }
+    }
+
+    fun filterOffLabelEvidence(
+        offLabelEvidence: List<TreatmentEvidence>,
+        onLabelHighestEvidencePerTreatment: Map<String, EvidenceLevel?>
+    ): Set<TreatmentEvidence> {
+        return offLabelEvidence.filter { offLabel ->
+            val highestOnLabelLevel = onLabelHighestEvidencePerTreatment[offLabel.treatment]
+            highestOnLabelLevel == null || offLabel.evidenceLevel < highestOnLabelLevel
+        }.toSet()
+    }
+
+    fun filterLevelDWhenAorBExists(evidenceSet: Set<TreatmentEvidence>): Set<TreatmentEvidence> {
+        return groupBySourceEvent(evidenceSet).flatMap { (_, evidencesInEvent) ->
+            val evidenceLevels = createPerLevelEvidenceList(evidencesInEvent)
+            val hasHigherEvidence = evidenceLevels[0].isNotEmpty() || evidenceLevels[1].isNotEmpty()
+            if (hasHigherEvidence) {
+                evidencesInEvent.filter { it.evidenceLevel != EvidenceLevel.D }
+            } else {
+                evidencesInEvent
+            }
+        }.toSet()
+    }
+
+    fun createPerLevelEvidenceList(treatmentEvidenceList: List<TreatmentEvidence>): List<List<TreatmentEvidence>> {
+        return EvidenceLevel.entries.map { level ->
+            treatmentEvidenceList.filter { it.evidenceLevel == level }
+        }
+    }
+
+    fun groupBySourceEvent(treatmentEvidenceSet: Set<TreatmentEvidence>) =
+        treatmentEvidenceSet.groupBy { it.sourceEvent }
+
+    fun filterPreClinicalEvidence(treatmentEvidenceSet: Set<TreatmentEvidence>): Set<TreatmentEvidence> {
         return treatmentEvidenceSet.filter { it.evidenceLevel != EvidenceLevel.D || !isPreclinical(it) }.toSet()
     }
 
@@ -20,36 +66,22 @@ object TreatmentEvidenceFunctions {
         return evidence.evidenceLevelDetails == EvidenceLevelDetails.PRECLINICAL
     }
 
-    fun groupTreatmentsIgnoringEvidenceLevel(treatmentEvidenceSet: Set<TreatmentEvidence>) =
-        treatmentEvidenceSet.groupBy {
-            TreatmentEvidenceGroupingKey(
-                it.treatment,
-                it.onLabel,
-                it.direction,
-                it.isCategoryEvent,
-                it.sourceEvent,
-                it.applicableCancerType
-            )
-        }
+    fun prioritizeNonCategoryEvidence(treatmentEvidenceSet: Set<TreatmentEvidence>): Set<TreatmentEvidence> {
+        return groupBySourceEvent(treatmentEvidenceSet).flatMap { (_, evidencesInEvent) ->
+            groupByTreatmentAndCancerType(evidencesInEvent).mapNotNull { (_, evidences) ->
+                val highestCategoryEvidence = evidences.filter { it.isCategoryEvent }.minByOrNull { it.evidenceLevel }
+                val highestNonCategoryEvidence = evidences.filter { !it.isCategoryEvent }.minByOrNull { it.evidenceLevel }
 
-    fun treatmentEvidenceToClinicalDetails(treatmentEvidenceList: List<TreatmentEvidence>): List<ClinicalDetails> {
-        val categoryVariants = extractVariants(treatmentEvidenceList, true)
-        val nonCategoryVariants = extractVariants(treatmentEvidenceList, false)
-        val highestCategoryEvidenceLevel = findHighestEvidenceLevel(categoryVariants)
-        val highestNonCategoryEvidenceLevel = findHighestEvidenceLevel(nonCategoryVariants)
-
-        val nonCategoryDetails = generateClinicalDetails(nonCategoryVariants, highestNonCategoryEvidenceLevel)
-
-        val categoryDetails = highestCategoryEvidenceLevel
-            ?.takeIf { level -> highestNonCategoryEvidenceLevel == null || level < highestNonCategoryEvidenceLevel }
-            ?.let { generateClinicalDetails(categoryVariants, it) }
-            ?: emptyList()
-
-        return nonCategoryDetails + categoryDetails
+                highestNonCategoryEvidence ?: highestCategoryEvidence
+            }
+        }.toSet()
     }
 
     fun groupByTreatment(treatmentEvidence: List<TreatmentEvidence>) =
         treatmentEvidence.groupBy { it.treatment }
+
+    fun groupByTreatmentAndCancerType(treatmentEvidence: List<TreatmentEvidence>) =
+        treatmentEvidence.groupBy { Pair(it.treatment, it.applicableCancerType.cancerType) }
 
     fun generateEvidenceCellContents(evidenceList: List<TreatmentEvidence>): List<TreatmentEvidenceContent> {
         return groupByTreatment(evidenceList).map { (treatment, evidences) ->
@@ -64,25 +96,4 @@ object TreatmentEvidenceFunctions {
             TreatmentEvidenceContent(treatment, cancerTypesWithYears, isResistant)
         }
     }
-
-    private fun findHighestEvidenceLevel(treatmentEvidenceList: List<TreatmentEvidence>): EvidenceLevel? =
-        treatmentEvidenceList.minOfOrNull { it.evidenceLevel }
-
-    private fun extractVariants(treatmentEvidenceList: List<TreatmentEvidence>, isCategoryEvent: Boolean): List<TreatmentEvidence> =
-        treatmentEvidenceList.filter { it.isCategoryEvent == isCategoryEvent }
-
-    private fun generateClinicalDetails(treatments: List<TreatmentEvidence>, level: EvidenceLevel?): List<ClinicalDetails> =
-        level?.let {
-            treatments
-                .filter { it.evidenceLevel == level }
-                .map { evidence ->
-                    ClinicalDetails(
-                        evidence,
-                        level == EvidenceLevel.A,
-                        level == EvidenceLevel.B,
-                        level == EvidenceLevel.C,
-                        level == EvidenceLevel.D
-                    )
-                }
-        } ?: emptyList()
 }

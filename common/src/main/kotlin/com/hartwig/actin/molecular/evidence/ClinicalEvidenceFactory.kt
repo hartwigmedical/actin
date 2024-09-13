@@ -31,12 +31,12 @@ object ClinicalEvidenceFactory {
         )
     }
 
-    private fun createTreatmentEvidence(onLabel: Boolean, events: List<ActionableEvent>) =
+    private fun createTreatmentEvidence(isOnLabel: Boolean, events: List<ActionableEvent>) =
         events.filter { it.source() == ActionabilityConstants.EVIDENCE_SOURCE }.map {
             TreatmentEvidence(
                 it.treatmentName(),
                 EvidenceLevel.valueOf(it.level().name),
-                onLabel,
+                isOnLabel,
                 EvidenceDirection(
                     hasPositiveResponse = it.direction().hasPositiveResponse(),
                     hasBenefit = it.direction().hasBenefit(),
