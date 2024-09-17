@@ -29,17 +29,21 @@ class TrialIngestion(
 ) {
 
     fun ingestTrials(): TrialIngestionResult {
+        configInterpreter.checkModelForUnusedStudyMETCsToIgnore()
+        configInterpreter.checkModelForUnusedUnmappedCohortIds()
         configInterpreter.checkModelForNewTrials(trialConfigModel.trials())
         configInterpreter.checkModelForNewCohorts(trialConfigModel.cohorts())
         configInterpreter.checkModelForUnusedStudiesNotInTrialStatusDatabase(trialConfigModel.trials())
-        val trialDatabaseValidation = trialConfigModel.validation()
-        val ctcDatabaseValidation = configInterpreter.validation()
-        val trials = if (trialDatabaseValidation.inclusionCriteriaValidationErrors.isEmpty()) createTrials() else emptyList()
+
+        val trials = if (trialConfigModel.validation().inclusionCriteriaValidationErrors.isEmpty()) createTrials() else emptyList()
+
+        val trialStatusDatabaseValidation = configInterpreter.validation()
+        val trialConfigDatabaseValidation = configInterpreter.validation(trialConfigModel.validation())
 
         return TrialIngestionResult(
-            TrialIngestionStatus.from(ctcDatabaseValidation, trialDatabaseValidation),
-            trialDatabaseValidation,
-            ctcDatabaseValidation,
+            TrialIngestionStatus.from(trialStatusDatabaseValidation, trialConfigDatabaseValidation),
+            trialConfigDatabaseValidation,
+            trialStatusDatabaseValidation,
             EligibilityRuleUsageEvaluator.evaluate(trials, trialConfigModel.unusedRulesToKeep).map { it.name }.toSet(),
             trials,
         )

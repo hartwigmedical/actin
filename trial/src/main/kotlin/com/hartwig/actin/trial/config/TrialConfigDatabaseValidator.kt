@@ -10,18 +10,18 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
     fun validate(database: TrialConfigDatabase): TrialConfigDatabaseValidation {
         val trialIds = extractTrialIds(database.trialDefinitionConfigs)
         return TrialConfigDatabaseValidation(
+            trialDefinitionValidationErrors = validateTrials(database.trialDefinitionConfigs),
+            cohortDefinitionValidationErrors = validateCohorts(trialIds, database.cohortDefinitionConfigs),
             inclusionCriteriaValidationErrors = validateInclusionCriteria(
                 trialIds,
                 extractCohortIdsPerTrial(trialIds, database.cohortDefinitionConfigs),
                 database.inclusionCriteriaConfigs,
                 database.inclusionCriteriaReferenceConfigs
             ),
-            inclusionReferenceValidationErrors = validateInclusionCriteriaReferences(
+            inclusionCriteriaReferenceValidationErrors = validateInclusionCriteriaReferences(
                 trialIds, database.inclusionCriteriaReferenceConfigs
             ),
-            cohortDefinitionValidationErrors = validateCohorts(trialIds, database.cohortDefinitionConfigs),
-            trialDefinitionValidationErrors = validateTrials(database.trialDefinitionConfigs),
-            unusedRulesToKeepWarnings = validateRulesToKeep(database.unusedRulesToKeep)
+            unusedRuleToKeepValidationErrors = validateRulesToKeep(database.unusedRulesToKeep)
         )
     }
 
@@ -126,21 +126,21 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
         val cohortIdsByTrial = cohortDefinitions.filter { it.trialId in trialIds }
             .groupBy(CohortDefinitionConfig::trialId, CohortDefinitionConfig::cohortId)
             .mapValues { it.value.toSet() }
-        
+
         return trialIds.associateWith { emptySet<String>() } + cohortIdsByTrial
     }
 
     private fun validateInclusionCriteriaReferences(
         trialIds: Set<String>, inclusionCriteriaReferenceConfigs: List<InclusionCriteriaReferenceConfig>
-    ): Set<InclusionReferenceValidationError> {
+    ): Set<InclusionCriteriaReferenceValidationError> {
         val referenceConfigsWithNonExistentTrials = inclusionCriteriaReferenceConfigs.filterNot { trialIds.contains(it.trialId) }
 
         val duplicatedReferenceIdByTrialErrors = inclusionCriteriaReferenceConfigs.groupBy(InclusionCriteriaReferenceConfig::trialId)
             .flatMap { duplicatedConfigsByKey(it.value, InclusionCriteriaReferenceConfig::referenceId) }
-            .map { InclusionReferenceValidationError(it.second, "Reference ID for trial '${it.second}") }
+            .map { InclusionCriteriaReferenceValidationError(it.second, "Reference ID for trial '${it.second}") }
 
         val nonExistingTrialErrors = referenceConfigsWithNonExistentTrials.map {
-            InclusionReferenceValidationError(it, "Reference '${it.referenceId}' defined on non-existing trial: '${it.trialId}'")
+            InclusionCriteriaReferenceValidationError(it, "Reference '${it.referenceId}' defined on non-existing trial: '${it.trialId}'")
         }
         return (duplicatedReferenceIdByTrialErrors + nonExistingTrialErrors).toSet()
     }
@@ -149,14 +149,14 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
         return configs.groupBy(TrialConfig::trialId)
     }
 
-    private fun validateRulesToKeep(ruleNames: List<String>): Set<UnusedRuleToKeepWarning> {
+    private fun validateRulesToKeep(ruleNames: List<String>): Set<UnusedRuleToKeepValidationError> {
         return ruleNames.mapNotNull { rule ->
             val trimmed = rule.trim()
             try {
                 EligibilityRule.valueOf(trimmed)
                 null
             } catch (exc: IllegalArgumentException) {
-                UnusedRuleToKeepWarning(trimmed)
+                UnusedRuleToKeepValidationError(trimmed)
             }
         }.toSet()
     }

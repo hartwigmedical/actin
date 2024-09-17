@@ -7,20 +7,17 @@ data class TrialConfigDatabaseValidation(
     val trialDefinitionValidationErrors: Set<TrialDefinitionValidationError>,
     val cohortDefinitionValidationErrors: Set<CohortDefinitionValidationError>,
     val inclusionCriteriaValidationErrors: Set<InclusionCriteriaValidationError>,
-    val inclusionReferenceValidationErrors: Set<InclusionReferenceValidationError>,
-    val unusedRulesToKeepWarnings: Set<UnusedRuleToKeepWarning>
+    val inclusionCriteriaReferenceValidationErrors: Set<InclusionCriteriaReferenceValidationError>,
+    val unusedRuleToKeepValidationErrors: Set<UnusedRuleToKeepValidationError>
 ) {
     fun hasErrors(): Boolean {
         return listOf(
-            inclusionCriteriaValidationErrors,
-            inclusionReferenceValidationErrors,
+            trialDefinitionValidationErrors,
             cohortDefinitionValidationErrors,
-            trialDefinitionValidationErrors
+            inclusionCriteriaValidationErrors,
+            inclusionCriteriaReferenceValidationErrors,
+            unusedRuleToKeepValidationErrors
         ).any { it.isNotEmpty() }
-    }
-
-    fun hasWarnings(): Boolean {
-        return unusedRulesToKeepWarnings.isNotEmpty()
     }
 }
 
@@ -51,7 +48,7 @@ data class InclusionCriteriaValidationError(
     }
 }
 
-data class InclusionReferenceValidationError(
+data class InclusionCriteriaReferenceValidationError(
     override val config: InclusionCriteriaReferenceConfig,
     override val message: String
 ) : TrialValidationError<InclusionCriteriaReferenceConfig> {
@@ -60,7 +57,7 @@ data class InclusionReferenceValidationError(
     }
 }
 
-data class UnusedRuleToKeepWarning(
+data class UnusedRuleToKeepValidationError(
     override val config: String
 ) : ValidationError<String> {
     override val message = config

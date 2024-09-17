@@ -44,12 +44,12 @@ class TrialConfigDatabaseValidatorTest {
             InclusionCriteriaValidationError(config = INCLUSION_CRITERIA_3, message = "Not a valid inclusion criterion for trial")
         )
 
-        assertThat(validation.inclusionReferenceValidationErrors).containsExactly(
-            InclusionReferenceValidationError(
+        assertThat(validation.inclusionCriteriaReferenceValidationErrors).containsExactly(
+            InclusionCriteriaReferenceValidationError(
                 config = INCLUSION_REFERENCE_CONFIG_1,
                 message = "Reference 'I-01' defined on non-existing trial: 'does not exist'"
             ),
-            InclusionReferenceValidationError(
+            InclusionCriteriaReferenceValidationError(
                 config = INCLUSION_REFERENCE_CONFIG_2,
                 message = "Reference 'I-02' defined on non-existing trial: 'trial 2'"
             )
@@ -59,7 +59,7 @@ class TrialConfigDatabaseValidatorTest {
     @Test
     fun `Should detect invalid unused rules to keep`() {
         val validation = validator.validate(createInvalidTrialConfigDatabase())
-        assertThat(validation.unusedRulesToKeepWarnings).containsExactly(UnusedRuleToKeepWarning(config = "invalid rule"))
+        assertThat(validation.unusedRuleToKeepValidationErrors).containsExactly(UnusedRuleToKeepValidationError(config = "invalid rule"))
     }
 
     companion object {

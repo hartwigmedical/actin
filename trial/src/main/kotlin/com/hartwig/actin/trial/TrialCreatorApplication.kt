@@ -106,9 +106,9 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
             LOGGER.warn("There were validation errors in the trial definition configuration")
             printValidationErrors(result.trialConfigValidationResult.cohortDefinitionValidationErrors)
             printValidationErrors(result.trialConfigValidationResult.trialDefinitionValidationErrors)
-            printValidationErrors(result.trialConfigValidationResult.inclusionReferenceValidationErrors)
+            printValidationErrors(result.trialConfigValidationResult.inclusionCriteriaReferenceValidationErrors)
             printValidationErrors(result.trialConfigValidationResult.inclusionCriteriaValidationErrors)
-            printValidationErrors(result.trialConfigValidationResult.unusedRulesToKeepWarnings)
+            printValidationErrors(result.trialConfigValidationResult.unusedRuleToKeepValidationErrors)
         }
     }
 

@@ -5,6 +5,7 @@ import com.hartwig.actin.trial.TestTrialData
 import com.hartwig.actin.trial.config.CohortDefinitionConfig
 import com.hartwig.actin.trial.config.TestCohortDefinitionConfigFactory
 import com.hartwig.actin.trial.config.TestTrialDefinitionConfigFactory
+import com.hartwig.actin.trial.config.TrialConfigDatabaseValidation
 import com.hartwig.actin.trial.config.TrialDefinitionConfig
 import com.hartwig.actin.trial.status.config.TestTrialStatusDatabaseEntryFactory
 import com.hartwig.actin.trial.status.config.TestTrialStatusDatabaseFactory
@@ -31,6 +32,18 @@ class TrialStatusConfigInterpreterTest {
 
         // TEST_TRIAL_1 is assumed to be open in proper test trial status database
         assertThat(trialStatusConfigInterpreter.isTrialOpen(closedStudy)).isTrue
+
+        val trialConfigDatabaseValidation = trialStatusConfigInterpreter.validation(
+            TrialConfigDatabaseValidation(
+                emptySet(),
+                emptySet(),
+                emptySet(),
+                emptySet(),
+                emptySet()
+            )
+        )
+        assertThat(trialConfigDatabaseValidation.trialDefinitionValidationErrors.size).isEqualTo(1)
+
     }
 
     @Test
@@ -234,4 +247,59 @@ class TrialStatusConfigInterpreterTest {
         trialStatusConfigInterpreterIgnoringNewTrials.checkModelForNewTrials(trialConfigs)
         assertThat(trialStatusConfigInterpreterIgnoringNewTrials.validation().trialStatusDatabaseValidationErrors).isEmpty()
     }
+
+
+    @Test
+    fun `Should not return validation errors when no unused study METCs are defined`() {
+        val trialStatusConfigInterpreter =
+            TestTrialStatusConfigInterpreterFactory.createWithMinimalTestTrialStatusDatabase()
+        trialStatusConfigInterpreter.checkModelForUnusedStudyMETCsToIgnore()
+        assertThat(trialStatusConfigInterpreter.extractUnusedStudyMETCsToIgnore()).isEmpty()
+        assertThat(trialStatusConfigInterpreter.validation().trialStatusConfigValidationErrors).isEmpty()
+    }
+
+    @Test
+    fun `Should return validation errors as trial to be ignored is not on the trial status database`() {
+        val properTrialStatusDatabase = TestTrialStatusDatabaseFactory.createProperTestTrialStatusDatabase()
+        val trialStatusDatabase =
+            properTrialStatusDatabase.copy(entries = properTrialStatusDatabase.entries.filter { it.metcStudyID != "Ignore-Study" })
+        val trialStatusConfigInterpreter = TrialStatusConfigInterpreter(
+            trialStatusDatabase,
+            CTC_TRIAL_PREFIX,
+            true
+        )
+        trialStatusConfigInterpreter.checkModelForUnusedStudyMETCsToIgnore()
+        assertThat(trialStatusConfigInterpreter.extractUnusedStudyMETCsToIgnore()).isNotEmpty()
+        assertThat(trialStatusConfigInterpreter.validation().trialStatusConfigValidationErrors).isNotEmpty()
+        assertThat(trialStatusConfigInterpreter.validation().trialStatusConfigValidationErrors.size).isEqualTo(1)
+    }
+
+    @Test
+    fun `Should not return validation errors when no unmapped cohort ids ids are defined`() {
+        val trialStatusConfigInterpreter =
+            TestTrialStatusConfigInterpreterFactory.createWithMinimalTestTrialStatusDatabase()
+        trialStatusConfigInterpreter.checkModelForUnusedUnmappedCohortIds()
+        assertThat(trialStatusConfigInterpreter.extractUnusedUnmappedCohorts()).isEmpty()
+        assertThat(trialStatusConfigInterpreter.validation().trialStatusConfigValidationErrors).isEmpty()
+    }
+
+    @Test
+    fun `Should return validation errors as there are unmapped cohort ids not on the trial status database`() {
+        val properTrialStatusDatabase = TestTrialStatusDatabaseFactory.createProperTestTrialStatusDatabase()
+        val trialStatusDatabase =
+            properTrialStatusDatabase.copy(
+                unmappedCohortIds = properTrialStatusDatabase.unmappedCohortIds + setOf("nonExistingId")
+            )
+        val trialStatusConfigInterpreter = TrialStatusConfigInterpreter(
+            trialStatusDatabase,
+            CTC_TRIAL_PREFIX,
+            true
+        )
+        trialStatusConfigInterpreter.checkModelForUnusedUnmappedCohortIds()
+        assertThat(trialStatusConfigInterpreter.extractUnusedUnmappedCohorts()).isNotEmpty()
+        assertThat(trialStatusConfigInterpreter.validation().trialStatusConfigValidationErrors).isNotEmpty()
+        assertThat(trialStatusConfigInterpreter.validation().trialStatusConfigValidationErrors.size).isEqualTo(1)
+    }
+
+
 }

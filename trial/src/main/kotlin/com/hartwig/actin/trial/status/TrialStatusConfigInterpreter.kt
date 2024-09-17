@@ -3,6 +3,7 @@ package com.hartwig.actin.trial.status
 import com.hartwig.actin.datamodel.trial.CohortMetadata
 import com.hartwig.actin.trial.config.CohortDefinitionConfig
 import com.hartwig.actin.trial.config.CohortDefinitionValidationError
+import com.hartwig.actin.trial.config.TrialConfigDatabaseValidation
 import com.hartwig.actin.trial.config.TrialDefinitionConfig
 import com.hartwig.actin.trial.config.TrialDefinitionValidationError
 import com.hartwig.actin.trial.interpretation.ConfigInterpreter
@@ -23,6 +24,16 @@ class TrialStatusConfigInterpreter(
         return TrialStatusDatabaseValidation(
             trialStatusConfigValidationErrors,
             trialStatusDatabaseValidationErrors
+        )
+    }
+
+    override fun validation(trialConfigDatabaseValidation: TrialConfigDatabaseValidation): TrialConfigDatabaseValidation {
+        return TrialConfigDatabaseValidation(
+            trialDefinitionValidationErrors = trialConfigDatabaseValidation.trialDefinitionValidationErrors + trialDefinitionValidationErrors,
+            cohortDefinitionValidationErrors = trialConfigDatabaseValidation.cohortDefinitionValidationErrors + cohortDefinitionValidationErrors,
+            inclusionCriteriaValidationErrors = trialConfigDatabaseValidation.inclusionCriteriaValidationErrors,
+            inclusionCriteriaReferenceValidationErrors = trialConfigDatabaseValidation.inclusionCriteriaReferenceValidationErrors,
+            unusedRuleToKeepValidationErrors = trialConfigDatabaseValidation.unusedRuleToKeepValidationErrors
         )
     }
 
@@ -117,25 +128,12 @@ class TrialStatusConfigInterpreter(
             unusedMecStudiesNotInTrialStatusDatabase.map {
                 trialStatusConfigValidationErrors.add(
                     TrialStatusConfigValidationError(
-                        unusedMecStudiesNotInTrialStatusDatabase.joinToString { ", " },
+                        it,
                         "Trial ID that is configured to be ignored is not actually present in trial database"
                     )
                 )
             }
         }
-    }
-
-    internal fun extractUnusedStudiesNotInTrialStatusDatabase(trialConfigs: List<TrialDefinitionConfig>): List<String> {
-        val trialConfigIds = trialConfigs.map { it.trialId }.toSet()
-        return trialStatusDatabase.studiesNotInTrialStatusDatabase.filter { !trialConfigIds.contains(it) }
-    }
-
-    internal fun extractNewTrialStatusDatabaseStudies(trialConfigs: List<TrialDefinitionConfig>): Set<TrialStatusEntry> {
-        val configuredTrialIds = trialConfigs.map { it.trialId }
-
-        return trialStatusDatabase.entries.filter { !trialStatusDatabase.studyMETCsToIgnore.contains(it.metcStudyID) }
-            .filter { !configuredTrialIds.contains(constructTrialId(it)) }
-            .toSet()
     }
 
     override fun checkModelForNewCohorts(cohortConfigs: List<CohortDefinitionConfig>) {
@@ -150,6 +148,64 @@ class TrialStatusConfigInterpreter(
                 )
             })
         }
+    }
+
+    override fun checkModelForUnusedStudyMETCsToIgnore() {
+        val unusedStudyMETCsToIgnore = extractUnusedStudyMETCsToIgnore()
+
+        if (unusedStudyMETCsToIgnore.isEmpty()) {
+            LOGGER.info(" No unused study METCs to ignore found")
+        } else {
+            unusedStudyMETCsToIgnore.map {
+                trialStatusConfigValidationErrors.add(
+                    TrialStatusConfigValidationError(
+                        it,
+                        "Study that is configured to be ignored is not actually referenced in trial status database"
+                    )
+                )
+            }
+        }
+    }
+
+    override fun checkModelForUnusedUnmappedCohortIds() {
+
+        val unusedUnmappedCohortIds = extractUnusedUnmappedCohorts()
+
+        if (unusedUnmappedCohortIds.isEmpty()) {
+            LOGGER.info(" No unused unmapped cohort IDs found")
+        } else {
+            unusedUnmappedCohortIds.map {
+                trialStatusConfigValidationErrors.add(
+                    TrialStatusConfigValidationError(
+                        it,
+                        "Cohort ID that is configured to be unmapped is not actually referenced in trial status database"
+                    )
+                )
+            }
+        }
+    }
+
+    internal fun extractUnusedStudyMETCsToIgnore(): List<String> {
+        val trialStatusStudyMETCs = trialStatusDatabase.entries.map { it.metcStudyID }.toSet()
+        return trialStatusDatabase.studyMETCsToIgnore.filter { !trialStatusStudyMETCs.contains(it) }
+    }
+
+    internal fun extractUnusedUnmappedCohorts(): List<String> {
+        val trialStatusCohortIds = trialStatusDatabase.entries.mapNotNull { it.cohortId }.toSet()
+        return trialStatusDatabase.unmappedCohortIds.filter { !trialStatusCohortIds.contains(it) }
+    }
+
+    internal fun extractUnusedStudiesNotInTrialStatusDatabase(trialConfigs: List<TrialDefinitionConfig>): List<String> {
+        val trialConfigIds = trialConfigs.map { it.trialId }.toSet()
+        return trialStatusDatabase.studiesNotInTrialStatusDatabase.filter { !trialConfigIds.contains(it) }
+    }
+
+    internal fun extractNewTrialStatusDatabaseStudies(trialConfigs: List<TrialDefinitionConfig>): Set<TrialStatusEntry> {
+        val configuredTrialIds = trialConfigs.map { it.trialId }
+
+        return trialStatusDatabase.entries.filter { !trialStatusDatabase.studyMETCsToIgnore.contains(it.metcStudyID) }
+            .filter { !configuredTrialIds.contains(constructTrialId(it)) }
+            .toSet()
     }
 
     internal fun extractNewTrialStatusDatabaseCohorts(cohortConfigs: List<CohortDefinitionConfig>): Set<TrialStatusEntry> {

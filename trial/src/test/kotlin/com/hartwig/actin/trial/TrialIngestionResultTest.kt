@@ -5,12 +5,12 @@ import com.hartwig.actin.trial.config.CohortDefinitionValidationError
 import com.hartwig.actin.trial.config.InclusionCriteriaConfig
 import com.hartwig.actin.trial.config.InclusionCriteriaReferenceConfig
 import com.hartwig.actin.trial.config.InclusionCriteriaValidationError
-import com.hartwig.actin.trial.config.InclusionReferenceValidationError
+import com.hartwig.actin.trial.config.InclusionCriteriaReferenceValidationError
 import com.hartwig.actin.trial.config.TestCohortDefinitionConfigFactory
 import com.hartwig.actin.trial.config.TestTrialDefinitionConfigFactory
 import com.hartwig.actin.trial.config.TrialConfigDatabaseValidation
 import com.hartwig.actin.trial.config.TrialDefinitionValidationError
-import com.hartwig.actin.trial.config.UnusedRuleToKeepWarning
+import com.hartwig.actin.trial.config.UnusedRuleToKeepValidationError
 import com.hartwig.actin.trial.status.TrialStatusConfigValidationError
 import com.hartwig.actin.trial.status.TrialStatusDatabaseValidation
 import com.hartwig.actin.trial.status.TrialStatusDatabaseValidationError
@@ -48,18 +48,18 @@ class TrialIngestionResultTest {
                         TestTrialStatusDatabaseEntryFactory.MINIMAL,
                         "msg"
                     )
-                ),
+                )
             ),
             trialConfigValidationResult = TrialConfigDatabaseValidation(
                 setOf(TrialDefinitionValidationError(config = trialDefinition, message = "Duplicated trial id of trial 1")),
                 setOf(CohortDefinitionValidationError(config = cohortDefinition, message = "Cohort 'A' is duplicated.")),
                 setOf(InclusionCriteriaValidationError(config = inclusionCriterion, message = "Not a valid inclusion criterion for trial")),
                 setOf(
-                    InclusionReferenceValidationError(
+                    InclusionCriteriaReferenceValidationError(
                         config = inclusionReference, message = "Reference 'I-01' defined on non-existing trial: 'does not exist'"
                     )
                 ),
-                setOf(UnusedRuleToKeepWarning(config = "invalid rule"))
+                setOf(UnusedRuleToKeepValidationError(config = "invalid rule"))
             ),
             trials = emptyList(),
             unusedRules = setOf("unused rule"),
@@ -90,7 +90,7 @@ class TrialIngestionResultTest {
             trials = emptyList(),
             unusedRules = setOf("unused rule"),
         )
-        
+
         assertThat(result.ingestionStatus).isEqualTo(TrialIngestionStatus.WARN)
     }
 }
