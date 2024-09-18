@@ -7,10 +7,10 @@ import com.itextpdf.layout.element.Table
 class OffLabelMolecularClinicalEvidenceGenerator(val molecularHistory: MolecularHistory, private val width: Float) : TableGenerator {
 
     override fun title(): String {
-        return MolecularClinicalEvidenceGenerator(molecularHistory, width, onLabel = false).title()
+        return MolecularClinicalEvidenceGenerator(molecularHistory, width, isOnLabel = false).title()
     }
 
     override fun contents(): Table {
-        return MolecularClinicalEvidenceGenerator(molecularHistory, width, onLabel = false).contents()
+        return MolecularClinicalEvidenceGenerator(molecularHistory, width, isOnLabel = false).contents()
     }
 }

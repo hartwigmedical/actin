@@ -112,6 +112,11 @@ internal object TumorTestFactory {
         return withTumorDetails(TumorDetails(stage = stage, doids = doids))
     }
 
+    fun withTumorStageAndDerivedStagesAndDoid(stage: TumorStage?, derivedStages: Set<TumorStage>, doid: String?): PatientRecord {
+        val doids = doid?.let(::setOf)
+        return withTumorDetails(TumorDetails(stage = stage, derivedStages = derivedStages, doids = doids))
+    }
+
     fun withMeasurableDisease(hasMeasurableDisease: Boolean?): PatientRecord {
         return withTumorDetails(TumorDetails(hasMeasurableDisease = hasMeasurableDisease))
     }

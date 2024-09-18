@@ -154,7 +154,7 @@ class GeneHasVariantInExonRangeOfType(
 
     private fun determineAllowedVariantTypes(requiredVariantType: VariantTypeInput?): Set<VariantType> {
         return if (requiredVariantType == null) {
-            VariantType.values().toSet()
+            VariantType.entries.toSet()
         } else when (requiredVariantType) {
             VariantTypeInput.SNV -> {
                 setOf(VariantType.SNV)

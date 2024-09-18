@@ -9,125 +9,166 @@ import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
+private const val TREATMENT = "treatment"
+
 class TreatmentEvidenceFunctionsTest {
 
     private val onLabelCategoryLevelA = createTreatmentEvidence(treatment = "onLabel category level", isCategoryEvent = true)
     private val offLabelCategoryLevelA = onLabelCategoryLevelA.copy(treatment = "offLabel category level", onLabel = false)
+    private val offLabelCategoryLevelB = offLabelCategoryLevelA.copy(evidenceLevel = EvidenceLevel.B)
     private val onLabelCategoryLevelB = onLabelCategoryLevelA.copy(evidenceLevel = EvidenceLevel.B)
     private val onLabelNonCategoryLevelA = onLabelCategoryLevelA.copy(treatment = "onLabel non-category level", isCategoryEvent = false)
     private val onLabelNonCategoryLevelB = onLabelNonCategoryLevelA.copy(evidenceLevel = EvidenceLevel.B)
 
     @Test
-    fun `Should correctly filter treatment evidence by onLabel property`() {
-        val evidence = setOf(offLabelCategoryLevelA, onLabelCategoryLevelA)
-        val resultOnLabel = TreatmentEvidenceFunctions.filterOnLabel(evidence, true)
-        val resultOffLabel = TreatmentEvidenceFunctions.filterOnLabel(evidence, false)
-
-        val expectedOnLabel = setOf(onLabelCategoryLevelA)
-        val expectedOffLabel = setOf(offLabelCategoryLevelA)
-
-        assertThat(resultOffLabel).containsExactlyElementsOf(expectedOffLabel)
-        assertThat(resultOnLabel).containsExactlyElementsOf(expectedOnLabel)
+    fun `Should correctly map each treatment to its highest evidence level`() {
+        val evidence = listOf(onLabelCategoryLevelA, onLabelCategoryLevelB, onLabelNonCategoryLevelB)
+        val expected = mapOf(onLabelCategoryLevelA.treatment to EvidenceLevel.A, onLabelNonCategoryLevelB.treatment to EvidenceLevel.B)
+        val result = TreatmentEvidenceFunctions.getHighestEvidenceLevelPerTreatment(evidence)
+        assertThat(result).containsExactlyEntriesOf(expected)
     }
 
     @Test
-    fun `Should correctly filter treatment preclinical level D evidence`() {
+    fun `Should filter out off label evidence if there is on label evidence of the same treatment with the same or higher evidence`() {
+        val evidence = listOf(
+            onLabelCategoryLevelA.copy("treatment"),
+            offLabelCategoryLevelA.copy("treatment"),
+            offLabelCategoryLevelB.copy("treatment")
+        )
+        val onLabel = evidence.filter { it.onLabel }
+        val onLabelHighestEvidencePerTreatment = TreatmentEvidenceFunctions.getHighestEvidenceLevelPerTreatment(onLabel)
+        val result = TreatmentEvidenceFunctions.filterOffLabelEvidence(evidence, onLabelHighestEvidencePerTreatment)
+        assertThat(result).containsExactlyElementsOf(emptySet())
+    }
+
+    @Test
+    fun `Should correctly filter treatment evidence by onLabel property`() {
+        val evidence = setOf(offLabelCategoryLevelA, onLabelCategoryLevelA)
+        val resultOnLabel = TreatmentEvidenceFunctions.filterTreatmentEvidence(evidence, true)
+        val resultOffLabel = TreatmentEvidenceFunctions.filterTreatmentEvidence(evidence, false)
+        val resultAllLabels = TreatmentEvidenceFunctions.filterTreatmentEvidence(evidence, null)
+
+        val expectedOnLabel = setOf(onLabelCategoryLevelA)
+        val expectedOffLabel = setOf(offLabelCategoryLevelA)
+        val expectedAllLabels = setOf(onLabelCategoryLevelA, offLabelCategoryLevelA)
+
+        assertThat(resultOffLabel).containsExactlyElementsOf(expectedOffLabel)
+        assertThat(resultOnLabel).containsExactlyElementsOf(expectedOnLabel)
+        assertThat(resultAllLabels).containsExactlyElementsOf(expectedAllLabels)
+    }
+
+    @Test
+    fun `Should correctly filter treatment without direction hasBenefit or isResistant`() {
+        val noBenefitEvidence =
+            createTreatmentEvidence("noBenefit", evidenceLevel = EvidenceLevel.A, direction = EvidenceDirection())
+        val evidence = setOf(onLabelCategoryLevelA, noBenefitEvidence)
+        val result = TreatmentEvidenceFunctions.onlyIncludeBenefitAndResistanceEvidence(evidence)
+        val expected = setOf(onLabelCategoryLevelA)
+
+        assertThat(result).containsExactlyElementsOf(expected)
+    }
+
+
+    @Test
+    fun `Should correctly filter treatment with preclinical level D evidence`() {
         val preclinicalEvidence =
             createTreatmentEvidence("preclinical", evidenceLevel = EvidenceLevel.D, evidenceLevelDetails = EvidenceLevelDetails.PRECLINICAL)
         val evidence = setOf(onLabelCategoryLevelA, preclinicalEvidence)
-        val result = TreatmentEvidenceFunctions.filterOutPreClinicalEvidence(evidence)
+        val result = TreatmentEvidenceFunctions.filterPreClinicalEvidence(evidence)
         val expected = setOf(onLabelCategoryLevelA)
 
         assertThat(result).containsExactlyElementsOf(expected)
     }
 
     @Test
-    fun `Should correctly group treatment evidence based on all properties except level of evidence`() {
-        val offLabelB = offLabelCategoryLevelA.copy(evidenceLevel = EvidenceLevel.B)
-        val otherOnLabelA = onLabelCategoryLevelA.copy(treatment = "other")
+    fun `Should correctly filter treatment with level D evidence if level A or B evidence present for same source event`() {
+        val levelDEvidence = createTreatmentEvidence("level D", evidenceLevel = EvidenceLevel.D, sourceEvent = "event 1")
+        val levelAEvidence = createTreatmentEvidence("level A", evidenceLevel = EvidenceLevel.A, sourceEvent = "event 1")
+        val otherLevelDEvidence = createTreatmentEvidence("level D2", evidenceLevel = EvidenceLevel.D, sourceEvent = "event 2")
 
-        val evidenceSet = setOf(onLabelCategoryLevelA, onLabelCategoryLevelB, offLabelCategoryLevelA, offLabelB, otherOnLabelA)
-        val result = TreatmentEvidenceFunctions.groupTreatmentsIgnoringEvidenceLevel(evidenceSet)
+        val evidence = setOf(levelDEvidence, levelAEvidence, otherLevelDEvidence)
+        val result = TreatmentEvidenceFunctions.filterLevelDWhenAorBExists(evidence)
+        val expected = setOf(levelAEvidence, otherLevelDEvidence)
+
+        assertThat(result).containsExactlyElementsOf(expected)
+    }
+
+    @Test
+    fun `Should correctly group treatment evidence by combination of treatment name and applicable cancer type`() {
+        val treatment1 = createTreatmentEvidence(
+            "treatment 1",
+            evidenceLevel = EvidenceLevel.A,
+            applicableCancerType = ApplicableCancerType("cancer type 1", emptySet())
+        )
+        val otherTreatment1 = treatment1.copy(evidenceLevel = EvidenceLevel.B)
+        val treatment2 = treatment1.copy("treatment 2")
+
+        val evidence = listOf(treatment1, otherTreatment1, treatment2)
+        val result = TreatmentEvidenceFunctions.groupByTreatmentAndCancerType(evidence)
         val expected = mapOf(
-            createGroupingKey("onLabel category level", true) to listOf(onLabelCategoryLevelA, onLabelCategoryLevelB),
-            createGroupingKey("offLabel category level", false) to listOf(offLabelCategoryLevelA, offLabelB),
-            createGroupingKey("other", true) to listOf(otherOnLabelA),
+            Pair(treatment1.treatment, treatment1.applicableCancerType.cancerType) to listOf(treatment1, otherTreatment1),
+            Pair(treatment2.treatment, treatment2.applicableCancerType.cancerType) to listOf(treatment2)
         )
-        assertThat(result).containsAllEntriesOf(expected)
+        assertThat(result).containsExactlyEntriesOf(expected)
     }
 
     @Test
-    fun `Should only create clinical details for category evidence with highest level`() {
-        assertClinicalDetails(
-            listOf(onLabelCategoryLevelA, onLabelCategoryLevelB),
-            listOf(createClinicalDetails(onLabelCategoryLevelA, levelA = true))
+    fun `Should keep only highest evidence for specific treatment-cancertype combination and should prioritize non-categorical`() {
+        val levelACategory = onLabelCategoryLevelA.copy(
+            "treatment",
+            sourceEvent = "category event",
+            applicableCancerType = ApplicableCancerType("cancer 1", emptySet())
         )
+        val levelBCategory = levelACategory.copy(evidenceLevel = EvidenceLevel.B)
+        val levelBNonCategory = levelACategory.copy(sourceEvent = "nonCat event", isCategoryEvent = false, evidenceLevel = EvidenceLevel.B)
+        val levelCNonCategory = levelBNonCategory.copy(evidenceLevel = EvidenceLevel.C)
+
+        val evidence = setOf(levelACategory, levelBCategory, levelBNonCategory, levelCNonCategory)
+        val result = TreatmentEvidenceFunctions.prioritizeNonCategoryEvidence(evidence)
+        val expected = setOf(levelACategory, levelBNonCategory)
+        assertThat(result).containsExactlyElementsOf(expected)
     }
 
     @Test
-    fun `Should only create clinical details for non-category evidence with highest level`() {
-        assertClinicalDetails(
-            listOf(onLabelNonCategoryLevelA, onLabelNonCategoryLevelB),
-            listOf(createClinicalDetails(onLabelNonCategoryLevelA, levelA = true))
+    fun `Should generate TreatmentEvidenceContent objects with treatment name, cancer types with dates, and isResistant Boolean`() {
+        val date = LocalDate.of(2024, 1, 1)
+        val cancerType = ApplicableCancerType("Cancer type 1", emptySet())
+        val treatmentEvidence = createTreatmentEvidence(date = date, applicableCancerType = cancerType)
+        val evidence = listOf(
+            treatmentEvidence,
+            treatmentEvidence.copy(date = date.minusYears(1), applicableCancerType = cancerType.copy("Cancer type 2")),
+            treatmentEvidence.copy(treatment = "other treatment", direction = EvidenceDirection(isResistant = true))
         )
-    }
-
-    @Test
-    fun `Should filter out non-category evidence if there is category evidence with higher or equal level for same variant`() {
-        assertClinicalDetails(
-            listOf(onLabelCategoryLevelA, onLabelNonCategoryLevelA),
-            listOf(createClinicalDetails(onLabelNonCategoryLevelA, levelA = true))
+        val result = TreatmentEvidenceFunctions.generateEvidenceCellContents(evidence)
+        val expected = listOf(
+            TreatmentEvidenceFunctions.TreatmentEvidenceContent(TREATMENT, "Cancer type 1 (2024), Cancer type 2 (2023)", false),
+            TreatmentEvidenceFunctions.TreatmentEvidenceContent("other treatment", "Cancer type 1 (2024)", true)
         )
-    }
-
-    @Test
-    fun `Should filter out all details except of highest level of evidence`() {
-        assertClinicalDetails(
-            listOf(onLabelCategoryLevelA, onLabelCategoryLevelB),
-            listOf(createClinicalDetails(onLabelCategoryLevelA, levelA = true))
-        )
+        assertThat(expected).isEqualTo(result)
     }
 
     private fun createTreatmentEvidence(
-        treatment: String = "treatment",
+        treatment: String = TREATMENT,
         onLabel: Boolean = true,
+        direction: EvidenceDirection = EvidenceDirection(hasBenefit = true),
         evidenceLevel: EvidenceLevel = EvidenceLevel.A,
+        date: LocalDate = LocalDate.EPOCH,
         isCategoryEvent: Boolean = true,
-        evidenceLevelDetails: EvidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY
+        sourceEvent: String = "sourceEvent",
+        evidenceLevelDetails: EvidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY,
+        applicableCancerType: ApplicableCancerType = ApplicableCancerType("", emptySet())
     ): TreatmentEvidence {
         return TreatmentEvidence(
             treatment,
             evidenceLevel,
             onLabel,
-            EvidenceDirection(),
-            LocalDate.EPOCH,
+            direction,
+            date,
             "",
             isCategoryEvent,
-            "sourceEvent",
+            sourceEvent,
             evidenceLevelDetails,
-            ApplicableCancerType("", emptySet())
+            applicableCancerType
         )
-    }
-
-    private fun createGroupingKey(treatment: String, onLabel: Boolean): TreatmentEvidenceGroupingKey {
-        return TreatmentEvidenceGroupingKey(
-            treatment,
-            onLabel,
-            EvidenceDirection(),
-            true,
-            "sourceEvent",
-            ApplicableCancerType("", emptySet())
-        )
-    }
-
-    private fun createClinicalDetails(
-        evidence: TreatmentEvidence, levelA: Boolean = false, levelB: Boolean = false, levelC: Boolean = false, levelD: Boolean = false
-    ): ClinicalDetails {
-        return ClinicalDetails(evidence, levelA, levelB, levelC, levelD)
-    }
-
-    private fun assertClinicalDetails(inputList: List<TreatmentEvidence>, expectedResult: List<ClinicalDetails>) {
-        assertThat(TreatmentEvidenceFunctions.treatmentEvidenceToClinicalDetails(inputList))
-            .containsExactlyElementsOf(expectedResult)
     }
 }
