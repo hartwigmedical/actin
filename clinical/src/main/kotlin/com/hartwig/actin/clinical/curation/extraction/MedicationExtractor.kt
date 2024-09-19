@@ -64,7 +64,7 @@ class MedicationExtractor(
                     atc = atc,
                     isSelfCare = isSelfCare,
                     isTrialMedication = isTrialMedication,
-                    drug = treatmentDatabase.findDrugByAtcName(entry.code5ATCDisplay, entry.code5ATCCode)
+                    drug = treatmentDatabase.findDrugByAtcName(entry.code5ATCDisplay)
                 )
 
                 val evaluation = listOf(nameCuration, administrationRouteCuration, dosage)

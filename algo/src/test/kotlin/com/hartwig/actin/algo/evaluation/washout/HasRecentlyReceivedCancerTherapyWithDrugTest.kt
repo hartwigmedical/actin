@@ -12,11 +12,13 @@ import org.junit.Test
 import java.time.LocalDate
 
 private val MIN_DATE = LocalDate.of(2020, 6, 6)
+private val MATCHING_TREATMENT_LIST =
+    listOf(TreatmentTestFactory.drugTreatment("correct", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ALKYLATING_AGENT)))
 
-class HasRecentlyReceivedCancerTherapyOfNameTest {
+class HasRecentlyReceivedCancerTherapyWithDrugTest {
 
     private val interpreter = WashoutTestFactory.activeFromDate(MIN_DATE)
-    private val function = HasRecentlyReceivedCancerTherapyOfName(
+    private val function = HasRecentlyReceivedCancerTherapyWithDrug(
         setOf(
             Drug(
                 name = "correct",
@@ -90,13 +92,7 @@ class HasRecentlyReceivedCancerTherapyOfNameTest {
                 TreatmentTestFactory.withTreatmentsAndMedications(
                     listOf(
                         TreatmentTestFactory.treatmentHistoryEntry(
-                            treatments = listOf(
-                                TreatmentTestFactory.drugTreatment(
-                                    "correct",
-                                    TreatmentCategory.CHEMOTHERAPY,
-                                    setOf(DrugType.ALKYLATING_AGENT)
-                                )
-                            ),
+                            treatments = MATCHING_TREATMENT_LIST,
                             stopYear = MIN_DATE.year,
                             stopMonth = MIN_DATE.plusMonths(1).monthValue
                         )
@@ -129,13 +125,7 @@ class HasRecentlyReceivedCancerTherapyOfNameTest {
                 TreatmentTestFactory.withTreatmentHistory(
                     listOf(
                         TreatmentTestFactory.treatmentHistoryEntry(
-                            treatments = listOf(
-                                TreatmentTestFactory.drugTreatment(
-                                    "correct",
-                                    TreatmentCategory.CHEMOTHERAPY,
-                                    setOf(DrugType.ALKYLATING_AGENT)
-                                )
-                            ),
+                            treatments = MATCHING_TREATMENT_LIST,
                             stopYear = null,
                             stopMonth = null
                         )

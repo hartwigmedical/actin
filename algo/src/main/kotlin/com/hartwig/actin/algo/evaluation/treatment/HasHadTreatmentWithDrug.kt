@@ -20,10 +20,8 @@ class HasHadTreatmentWithDrug(private val drugsToFind: Set<Drug>) : EvaluationFu
             .flatMap { (it as? DrugTreatment)?.drugs ?: emptyList() }
             .filter { it.name.lowercase() in namesToMatch }.toSet()
 
-        val matchingDrugsInMedication =
-            record.medications?.filter { it.drug?.name?.lowercase() in namesToMatch }?.mapNotNull(Medication::drug)?.toSet() ?: emptySet()
-
-        val matchingDrugs = matchingDrugsInTreatment + matchingDrugsInMedication
+        val matchingDrugsInMedication = record.medications?.mapNotNull(Medication::drug)?.toSet() ?: emptySet()
+        val matchingDrugs = (matchingDrugsInTreatment + matchingDrugsInMedication).filter { it.name.lowercase() in namesToMatch }.toSet()
 
         val drugList = concatItemsWithOr(drugsToFind)
         return when {

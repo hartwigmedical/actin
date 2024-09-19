@@ -15,13 +15,13 @@ import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import java.time.LocalDate
 
-class HasRecentlyReceivedCancerTherapyOfName(
-    private val namesToFind: Set<Drug>, private val interpreter: MedicationStatusInterpreter, private val minDate: LocalDate
+class HasRecentlyReceivedCancerTherapyWithDrug(
+    private val drugsToFind: Set<Drug>, private val interpreter: MedicationStatusInterpreter, private val minDate: LocalDate
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
-        val lowercaseNamesToFind = namesToFind.map { it.name.lowercase() }.toSet()
+        val lowercaseNamesToFind = drugsToFind.map { it.name.lowercase() }.toSet()
         val medicationsFound = medications
             .filter {
                 lowercaseNamesToFind.contains(it.name.lowercase()) && interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE
@@ -31,26 +31,18 @@ class HasRecentlyReceivedCancerTherapyOfName(
         val matchingTreatments = record.oncologicalHistory
             .mapNotNull { entry ->
                 TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(entry) {
-                    it is DrugTreatment && it.drugs.intersect(
-                        namesToFind
-                    ).isNotEmpty()
+                    it is DrugTreatment && it.drugs.intersect(drugsToFind).isNotEmpty()
                 }
             }
         val treatmentDrugsFound = matchingTreatments.flatMap { it.treatments }
-            .filterIsInstance<DrugTreatment>()
-            .filter { it.drugs.intersect(namesToFind).isNotEmpty() }
-            .flatMap { it.drugs }
+            .flatMap { (it as? DrugTreatment)?.drugs?.intersect(drugsToFind) ?: emptySet() }
             .map { it.name }
 
         val namesFound = medicationsFound + treatmentDrugsFound
 
         return when {
             medicationsFound.isNotEmpty() || matchingTreatments.any {
-                TreatmentSinceDateFunctions.treatmentSinceMinDate(
-                    it,
-                    minDate,
-                    false
-                )
+                TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minDate, false)
             } -> {
                 EvaluationFactory.pass(
                     "Patient has recently received treatment with medication " + concat(namesFound) + " - pay attention to washout period",
@@ -60,15 +52,15 @@ class HasRecentlyReceivedCancerTherapyOfName(
 
             matchingTreatments.any { TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minDate, true) } -> {
                 EvaluationFactory.undetermined(
-                    "Treatment containing '${Format.concatItemsWithOr(namesToFind)}' administered with unknown date",
+                    "Treatment containing '${Format.concatItemsWithOr(drugsToFind)}' administered with unknown date",
                     "Matching treatment with unknown date"
                 )
             }
 
             else -> {
                 EvaluationFactory.fail(
-                    "Patient has not received recent treatments with name " + Format.concatItemsWithOr(namesToFind),
-                    "Has not received recent treatments with name " + Format.concatItemsWithOr(namesToFind)
+                    "Patient has not received recent treatments with name " + Format.concatItemsWithOr(drugsToFind),
+                    "Has not received recent treatments with name " + Format.concatItemsWithOr(drugsToFind)
                 )
             }
         }

@@ -22,18 +22,18 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecently(
             val startedPastMinDate = isAfterDate(minDate, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
             val categoryAndTypeMatch = treatmentHistoryEntry.categories().contains(category)
                     && treatmentHistoryEntry.matchesTypeFromSet(ignoreTypes) != true
-            TreatmentFunctions.TreatmentAssessment(
+            TreatmentAssessment(
                 hasHadValidTreatment = categoryAndTypeMatch && startedPastMinDate == true,
                 hasInconclusiveDate = categoryAndTypeMatch && startedPastMinDate == null,
                 hasHadTrialAfterMinDate = TrialFunctions.treatmentMayMatchAsTrial(treatmentHistoryEntry, category)
                         && startedPastMinDate == true
             )
-        }.fold(TreatmentFunctions.TreatmentAssessment()) { acc, element -> acc.combineWith(element) }
+        }.fold(TreatmentAssessment()) { acc, element -> acc.combineWith(element) }
 
-        val hasActiveOrRecentlyStoppedMedication = record.medications
+        val activeOrRecentlyStoppedMedications = record.medications
             ?.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
 
-        val hadCancerMedicationWithCategoryButNotOfTypes = hasActiveOrRecentlyStoppedMedication
+        val hadCancerMedicationWithCategoryButNotOfTypes = activeOrRecentlyStoppedMedications
             ?.any { medication ->
                 MedicationFunctions.hasCategory(medication, category) && MedicationFunctions.doesNotHaveIgnoreType(
                     medication,
@@ -52,7 +52,7 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecently(
                 EvaluationFactory.undetermined("Has received ${category.display()} treatment ignoring $ignoringTypesList but inconclusive date")
             }
 
-            treatmentAssessment.hasHadTrialAfterMinDate || hasActiveOrRecentlyStoppedMedication?.any { it.isTrialMedication } == true -> {
+            treatmentAssessment.hasHadTrialAfterMinDate || activeOrRecentlyStoppedMedications?.any { it.isTrialMedication } == true -> {
                 EvaluationFactory.undetermined(
                     "Patient has participated in a trial recently, inconclusive ${category.display()} treatment",
                     "Inconclusive ${category.display()} treatment due to trial participation"

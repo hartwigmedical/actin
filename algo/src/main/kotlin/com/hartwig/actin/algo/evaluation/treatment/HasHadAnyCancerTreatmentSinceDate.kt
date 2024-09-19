@@ -27,13 +27,12 @@ class HasHadAnyCancerTreatmentSinceDate(
         return when {
             priorCancerTreatment.any { treatmentSinceMinDate(it, minDate, false) } || activePriorCancerMedication.isNotEmpty() -> {
                 EvaluationFactory.pass(
-                    "Patient has had anti-cancer therapy  within the last $monthsAgo months",
+                    "Patient has had anti-cancer therapy within the last $monthsAgo months",
                     "Received anti-cancer therapy within the last $monthsAgo months"
                 )
             }
 
-            priorCancerTreatment.any { treatmentSinceMinDate(it, minDate, true)
-            } -> {
+            priorCancerTreatment.any { treatmentSinceMinDate(it, minDate, true) } -> {
                 EvaluationFactory.undetermined(
                     "Patient has had anti-cancer therapy but undetermined if in the last $monthsAgo months (date unknown)",
                     "Received anti-cancer therapy but undetermined if in the last $monthsAgo months (date unknown)"

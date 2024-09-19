@@ -12,8 +12,9 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
     }
 
     fun resolveCategoryName(categoryName: String): String {
-        return if (knownCategories[categoryName] != null) categoryName
-        else atcTree.resolve(categoryName).name
+        return if (knownCategories[categoryName] != null) categoryName else {
+            atcTree.resolve(categoryName).name
+        }
     }
 
     companion object {
@@ -39,18 +40,8 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
             "L01A" to setOf(DrugType.ALKYLATING_AGENT),
             "LO1XL" to setOf(DrugType.ANTI_CLDN6_CAR_T, DrugType.HER2_CAR_T),
             "L01E" to setOf(DrugType.TYROSINE_KINASE_INHIBITOR),
-            "Anticancer" to setOf(
-                TreatmentCategory.CHEMOTHERAPY,
-                TreatmentCategory.TARGETED_THERAPY,
-                TreatmentCategory.IMMUNOTHERAPY,
-                TreatmentCategory.HORMONE_THERAPY
-            ),
-            "Antineoplastic agents" to setOf(
-                TreatmentCategory.CHEMOTHERAPY,
-                TreatmentCategory.TARGETED_THERAPY,
-                TreatmentCategory.IMMUNOTHERAPY,
-                TreatmentCategory.HORMONE_THERAPY
-            )
+            "Anticancer" to setOf(TreatmentCategory.SYSTEMIC_CANCER_TREATMENT_CATEGORIES),
+            "Antineoplastic agents" to setOf(TreatmentCategory.SYSTEMIC_CANCER_TREATMENT_CATEGORIES)
         )
 
         fun create(atcTree: AtcTree): MedicationCategories {

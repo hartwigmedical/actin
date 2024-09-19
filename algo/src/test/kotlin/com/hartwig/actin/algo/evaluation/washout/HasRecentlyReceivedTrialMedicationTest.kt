@@ -45,7 +45,7 @@ class HasRecentlyReceivedTrialMedicationTest {
     }
 
     @Test
-    fun `Should pass when medication is no trial medication but treatment history entry which is trial`() {
+    fun `Should pass when medication is not trial medication but treatment history entry is trial`() {
         val medications = listOf(medication(isTrialMedication = false))
         val treatments = TreatmentTestFactory.treatment("Chemotherapy", true, setOf(TreatmentCategory.CHEMOTHERAPY))
         val treatmentHistory = listOf(

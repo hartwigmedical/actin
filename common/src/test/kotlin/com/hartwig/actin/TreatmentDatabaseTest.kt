@@ -51,17 +51,21 @@ class TreatmentDatabaseTest {
 
     @Test
     fun `Should find drug by ATC code`() {
-        assertThat<Drug>(treatmentDatabase().findDrugByAtcName("paracetamol", "N02BE01")).isNull()
-        assertThat<Drug>(treatmentDatabase().findDrugByAtcName("temoporfin", "L01XD05")).isNull()
-        val capecitabine = treatmentDatabase().findDrugByAtcName("Capecitabine", "L01BC06")
+        val capecitabine = treatmentDatabase().findDrugByAtcName("Capecitabine")
         assertThat<Drug>(capecitabine).isNotNull()
         assertThat(capecitabine!!.name).isEqualTo("CAPECITABINE")
         assertThat(capecitabine.drugTypes).containsExactly(DrugType.ANTIMETABOLITE)
 
-        val trifluridine = treatmentDatabase().findDrugByAtcName("Trifluridine, combinations", "L01BC59")
+        val trifluridine = treatmentDatabase().findDrugByAtcName("Trifluridine, combinations")
         assertThat<Drug>(trifluridine).isNotNull()
         assertThat(trifluridine!!.name).isEqualTo("TRIFLURIDINE")
         assertThat(trifluridine.drugTypes).containsExactly(DrugType.ANTIMETABOLITE)
+    }
+
+    @Test
+    fun `Should return null for unknown ATC codes`() {
+        assertThat<Drug>(treatmentDatabase().findDrugByAtcName("paracetamol")).isNull()
+        assertThat<Drug>(treatmentDatabase().findDrugByAtcName("temoporfin")).isNull()
     }
 
     private fun treatmentDatabase(): TreatmentDatabase {

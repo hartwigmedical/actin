@@ -48,14 +48,12 @@ class HasHadAnyCancerTreatmentTest {
         val treatmentHistory = listOf(TreatmentTestFactory.treatmentHistoryEntry(setOf(treatments)))
         val atc = AtcTestFactory.atcClassification("category to find")
         val medications = listOf(WashoutTestFactory.medication(atc, null))
-        assertEvaluation(
-            EvaluationResult.PASS,
-            functionWithCategoryToIgnore.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, medications))
-        )
-        assertEvaluation(
-            EvaluationResult.PASS,
-            functionWithoutCategoryToIgnore.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, medications))
-        )
+        listOf(functionWithCategoryToIgnore, functionWithoutCategoryToIgnore).forEach { function ->
+            assertEvaluation(
+                EvaluationResult.PASS,
+                function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, medications))
+            )
+        }
     }
 
     @Test

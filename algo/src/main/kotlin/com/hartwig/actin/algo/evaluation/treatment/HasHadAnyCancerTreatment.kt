@@ -14,7 +14,7 @@ class HasHadAnyCancerTreatment(private val categoryToIgnore: TreatmentCategory?,
             if (categoryToIgnore == null) {
                 record.oncologicalHistory.isNotEmpty()
             } else {
-                record.oncologicalHistory.any { !it.categories().contains(categoryToIgnore) }
+                record.oncologicalHistory.any { it.categories().any { category -> category != categoryToIgnore } }
             }
 
         val hasHadPriorCancerMedication = record.medications?.any {

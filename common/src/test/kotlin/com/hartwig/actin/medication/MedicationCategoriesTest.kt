@@ -27,7 +27,7 @@ class MedicationCategoriesTest {
     }
 
     @Test
-    fun `Should resolve known category name`() {
+    fun `Should return known category name without checking ATC tree`() {
         val atcTree = AtcTree(emptyMap())
         val victim = MedicationCategories(mapOf("Bone resorptive" to emptySet()), atcTree)
         assertThat(victim.resolveCategoryName("Bone resorptive")).isEqualTo("Bone resorptive")

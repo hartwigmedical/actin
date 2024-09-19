@@ -52,7 +52,7 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
     private fun createReceivedCancerTherapyOfNameFunction(names: Set<Drug>, minWeeks: Int): EvaluationFunction {
         val interpreter = createInterpreterForWashout(minWeeks)
         val minDate = referenceDateProvider().date().minusWeeks(minWeeks.toLong())
-        return HasRecentlyReceivedCancerTherapyOfName(names.toSet(), interpreter, minDate)
+        return HasRecentlyReceivedCancerTherapyWithDrug(names.toSet(), interpreter, minDate)
     }
 
     private fun hasRecentlyReceivedCancerTherapyOfCategoriesCreator(): FunctionCreator {

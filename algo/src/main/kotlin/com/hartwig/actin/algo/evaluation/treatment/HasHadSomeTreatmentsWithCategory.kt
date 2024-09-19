@@ -23,7 +23,8 @@ class HasHadSomeTreatmentsWithCategory(private val category: TreatmentCategory, 
                 )
             }
 
-            treatmentSummary.numSpecificMatches() + treatmentSummary.numPossibleTrialMatches >= minTreatmentLines || (minTreatmentLines == 1 && record.medications?.any { it.isTrialMedication } == true) -> {
+            treatmentSummary.numSpecificMatches() + treatmentSummary.numPossibleTrialMatches >= minTreatmentLines ||
+                    (minTreatmentLines == 1 && record.medications?.any { it.isTrialMedication } == true) -> {
                 EvaluationFactory.undetermined(
                     "Patient may have received at least $minTreatmentLines line(s) of  ${category.display()} due to trial participation",
                     "Undetermined if received at least $minTreatmentLines line(s) of ${category.display()} due to trial participation"

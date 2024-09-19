@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
+import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
@@ -42,8 +43,7 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugs(
             .map { it.treatments.flatMap(Treatment::types).map { t -> t.display() }.toSet() }
             .flatten().toSet()
 
-        val matchingMedicationTypes = priorCancerMedication
-            .mapNotNull { it.drug?.drugTypes?.map { t -> t.display() }?.toSet() }.flatten().toSet()
+        val matchingMedicationTypes = priorCancerMedication.flatMap { it.drug?.drugTypes?.map(DrugType::display) ?: emptyList() }.toSet()
 
         val totalMatchingTypes = (matchingTreatmentTypes + matchingMedicationTypes).joinToString { ", " }
 
@@ -52,15 +52,16 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugs(
         val messageEnding = "received ${category.display()}$typeMessage ignoring $ignoreDrugsList"
 
         return when {
-            treatmentSummary.hasSpecificMatch() || priorCancerMedication.isNotEmpty() -> EvaluationFactory.pass(
-                "Patient has $messageEnding",
-                "Has $messageEnding"
-            )
+            treatmentSummary.hasSpecificMatch() || priorCancerMedication.isNotEmpty() -> {
+                EvaluationFactory.pass("Patient has $messageEnding", "Has $messageEnding")
+            }
 
-            treatmentSummary.hasPossibleTrialMatch() || record.medications?.any { it.isTrialMedication } == true -> EvaluationFactory.undetermined(
-                "Patient may have $messageEnding due to trial participation",
-                "Undetermined if $messageEnding due to trial participation"
-            )
+            treatmentSummary.hasPossibleTrialMatch() || record.medications?.any { it.isTrialMedication } == true -> {
+                EvaluationFactory.undetermined(
+                    "Patient may have $messageEnding due to trial participation",
+                    "Undetermined if $messageEnding due to trial participation"
+                )
+            }
 
             else -> EvaluationFactory.fail("Patient has not $messageEnding", "Has not $messageEnding")
         }

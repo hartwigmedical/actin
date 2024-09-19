@@ -51,8 +51,6 @@ class ClinicalIngestionFeedAdapterTest {
                 emptySet()
             )
         )
-        val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
-
         curationDatabase = CurationDatabaseContext.create(
             CURATION_DIRECTORY,
             CurationDoidValidator(testDoidModel),
@@ -64,7 +62,8 @@ class ClinicalIngestionFeedAdapterTest {
                 CURATION_DIRECTORY,
                 curationDatabase,
                 TestAtcFactory.createProperAtcModel(),
-                testDoidModel, treatmentDatabase
+                testDoidModel,
+                TestTreatmentDatabaseFactory.createProper()
             ), curationDatabase
         )
     }

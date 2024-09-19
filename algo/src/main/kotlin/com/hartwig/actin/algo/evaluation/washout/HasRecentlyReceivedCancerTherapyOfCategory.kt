@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.washout
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.medication.MEDICATION_NOT_PROVIDED
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentFunctions
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentAssessment
 import com.hartwig.actin.algo.evaluation.treatment.TrialFunctions
 import com.hartwig.actin.algo.evaluation.util.DateComparison
 import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
@@ -27,7 +27,7 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
     override fun evaluate(record: PatientRecord): Evaluation {
         val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
         val categoryNames: Set<String> = categories.keys - categoriesToIgnore.keys
-        val categoriesToFind = categories.mapValues { (key, value) -> value - (categoriesToIgnore[key] ?: emptySet()).toSet() }
+        val categoriesToFind = categories.mapValues { (key, atcLevels) -> atcLevels - (categoriesToIgnore[key] ?: emptySet()) }
             .filterValues { it.isNotEmpty() }
 
         val activeMedications = medications.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
@@ -69,15 +69,15 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
                     hasCategory
                 }
             }
-            TreatmentFunctions.TreatmentAssessment(
+            TreatmentAssessment(
                 hasHadValidTreatment = categoryAndTypeMatch && startedPastMinDate == true,
                 hasInconclusiveDate = categoryAndTypeMatch && startedPastMinDate == null,
                 hasHadTrialAfterMinDate = drugTypesToFind.any {
                     val category = if (it is TreatmentCategory) it else (it as DrugType).category
-                    TrialFunctions.treatmentMayMatchAsTrial(treatmentHistoryEntry, category)
+                    TrialFunctions.treatmentMayMatchAsTrial(treatmentHistoryEntry, category) && startedPastMinDate == true
                 }
             )
-        }.fold(TreatmentFunctions.TreatmentAssessment()) { acc, element -> acc.combineWith(element) }
+        }.fold(TreatmentAssessment()) { acc, element -> acc.combineWith(element) }
 
         val foundMedicationString =
             if (foundMedicationNames.isNotEmpty()) ": ${concatLowercaseWithAnd(foundMedicationNames)}" else ""

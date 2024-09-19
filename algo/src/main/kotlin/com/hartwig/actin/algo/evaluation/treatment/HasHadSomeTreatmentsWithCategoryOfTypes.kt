@@ -31,7 +31,10 @@ class HasHadSomeTreatmentsWithCategoryOfTypes(
                 EvaluationFactory.pass("Has received at least $minTreatmentLines line(s) of $typesList ${category.display()}")
             }
 
-            treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches + treatmentSummary.numPossibleTrialMatches >= minTreatmentLines || (minTreatmentLines == 1 && record.medications?.any { it.isTrialMedication } == true) -> {
+            treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches +
+                    treatmentSummary.numPossibleTrialMatches >= minTreatmentLines ||
+                    (minTreatmentLines == 1 && record.medications?.any { it.isTrialMedication } == true)
+            -> {
                 EvaluationFactory.undetermined(
                     "Can't determine whether patient has received at least $minTreatmentLines line(s) of $typesList ${category.display()}",
                     "Undetermined if received at least $minTreatmentLines line(s) of $typesList ${category.display()}"

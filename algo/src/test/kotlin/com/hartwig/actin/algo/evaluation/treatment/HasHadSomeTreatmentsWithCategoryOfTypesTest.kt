@@ -61,9 +61,7 @@ class HasHadSomeTreatmentsWithCategoryOfTypesTest {
             setOf(drugTreatment("test", MATCHING_CATEGORY, setOf(DrugType.ANTI_TISSUE_FACTOR)))
         )
         val medication = WashoutTestFactory.medication().copy(
-            drug = Drug(
-                name = "", category = MATCHING_CATEGORY, drugTypes = MATCHING_TYPE_SET
-            )
+            drug = Drug(name = "", category = MATCHING_CATEGORY, drugTypes = MATCHING_TYPE_SET)
         )
         assertEvaluation(
             EvaluationResult.PASS,

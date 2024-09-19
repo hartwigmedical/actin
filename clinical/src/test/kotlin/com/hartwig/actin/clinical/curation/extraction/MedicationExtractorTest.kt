@@ -67,8 +67,6 @@ private const val DOSAGE_TRANSLATION_INPUT_MILLIGRAM = "milligram"
 
 class MedicationExtractorTest {
 
-    private val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
-
     private val extractor =
         MedicationExtractor(
             TestCurationFactory.curationDatabase(
@@ -127,7 +125,8 @@ class MedicationExtractorTest {
                     )
                 ), CurationCategory.DOSAGE_UNIT_TRANSLATION
             ) { emptySet() },
-            TestAtcFactory.createProperAtcModel(), treatmentDatabase
+            TestAtcFactory.createProperAtcModel(),
+            TestTreatmentDatabaseFactory.createProper()
         )
 
 
