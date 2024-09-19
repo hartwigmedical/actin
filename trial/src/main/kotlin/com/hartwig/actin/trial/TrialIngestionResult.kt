@@ -32,7 +32,6 @@ interface ValidationError<T> : Comparable<ValidationError<T>> {
 
     fun configFormat(config: T): String
 
-
     fun warningMessage(): String {
         return "${this::class.java.simpleName} ${configFormat(config)}: $message"
     }
