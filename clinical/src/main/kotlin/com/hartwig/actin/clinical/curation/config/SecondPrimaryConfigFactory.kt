@@ -9,7 +9,7 @@ import com.hartwig.actin.util.ResourceFile
 
 class SecondPrimaryConfigFactory(private val curationDoidValidator: CurationDoidValidator) : CurationConfigFactory<SecondPrimaryConfig> {
     override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<SecondPrimaryConfig> {
-        val input = parts[fields["input (second primary | last treatment date)"]!!]
+        val input = parts[fields["input"]!!]
         val ignore = CurationUtil.isIgnoreString(parts[fields["name"]!!])
         if (!ignore) {
             val (validatedTumorStatus, tumorStatusValidationErrors) = validateMandatoryEnum<TumorStatus>(

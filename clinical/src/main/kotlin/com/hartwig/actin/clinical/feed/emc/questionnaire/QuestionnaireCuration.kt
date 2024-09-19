@@ -138,7 +138,7 @@ internal object QuestionnaireCuration {
     }
 
     fun toSecondaryPrimaries(secondaryPrimary: String, lastTreatmentInfo: String): List<String> {
-        return listOf(secondaryPrimary + if (lastTreatmentInfo.isEmpty()) "" else " | $lastTreatmentInfo")
+        return listOf(secondaryPrimary + if (lastTreatmentInfo.isEmpty()) "" else " | last treatment date: $lastTreatmentInfo")
     }
 
     fun toInfectionStatus(subject: String, significantCurrentInfection: String?): ValidatedQuestionnaireCuration<InfectionStatus> {
