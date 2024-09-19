@@ -15,7 +15,7 @@ class SurgeryDescendingDateComparatorTest {
 
         val surgeries = listOf(
             Surgery(name = "Surgery 2", endDate = endDate.minusDays(6), status = SurgeryStatus.FINISHED),
-            Surgery(endDate = endDate.minusDays(4), status = SurgeryStatus.FINISHED),
+            Surgery(name = null, endDate = endDate.minusDays(4), status = SurgeryStatus.FINISHED),
             Surgery(name = "Surgery 1", endDate = endDate.minusDays(2), status = SurgeryStatus.FINISHED),
         )
 

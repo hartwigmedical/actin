@@ -11,7 +11,7 @@ internal object SurgeryTestFactory {
     private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
 
     fun surgery(endDate: LocalDate, status: SurgeryStatus = SurgeryStatus.UNKNOWN): Surgery {
-        return Surgery(name = "surgery", endDate = endDate, status = status)
+        return Surgery(name = "Surgery", endDate = endDate, status = status)
     }
 
     fun withSurgery(surgery: Surgery): PatientRecord {
