@@ -262,6 +262,7 @@
   ],
   "surgeries": [
     {
+      "name": "diagnostics stomach",
       "endDate": {
         "year": 2020,
         "month": 8,
