@@ -52,7 +52,7 @@ class TrialIngestionStatusTest {
     }
 
     @Test
-    fun `Should return WARM for having status database validation errors`() {
+    fun `Should return WARN for having status database validation errors`() {
         val trialStatusDatabaseValidation = TrialStatusDatabaseValidation(
             trialStatusConfigValidationErrors = listOf(TrialStatusConfigValidationError("config", "msg")),
             trialStatusDatabaseValidationErrors = emptyList()
