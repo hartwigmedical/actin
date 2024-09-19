@@ -4,8 +4,8 @@ import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.trial.config.CohortDefinitionValidationError
 import com.hartwig.actin.trial.config.InclusionCriteriaConfig
 import com.hartwig.actin.trial.config.InclusionCriteriaReferenceConfig
-import com.hartwig.actin.trial.config.InclusionCriteriaValidationError
 import com.hartwig.actin.trial.config.InclusionCriteriaReferenceValidationError
+import com.hartwig.actin.trial.config.InclusionCriteriaValidationError
 import com.hartwig.actin.trial.config.TestCohortDefinitionConfigFactory
 import com.hartwig.actin.trial.config.TestTrialDefinitionConfigFactory
 import com.hartwig.actin.trial.config.TrialConfigDatabaseValidation
@@ -69,7 +69,6 @@ class TrialIngestionResultTest {
 
         assertThat(json.startsWith("{\"ingestionStatus\":\"FAIL\"")).isTrue()
         assertThat(json.endsWith("\"unusedRules\":[\"unused rule\"]}")).isTrue()
-
     }
 
     @Test
