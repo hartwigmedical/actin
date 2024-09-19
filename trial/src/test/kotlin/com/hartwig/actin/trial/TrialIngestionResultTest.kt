@@ -50,7 +50,7 @@ class TrialIngestionResultTest {
                     )
                 )
             ),
-            trialConfigValidationResult = TrialConfigDatabaseValidation(
+            trialConfigDatabaseValidation = TrialConfigDatabaseValidation(
                 setOf(TrialDefinitionValidationError(config = trialDefinition, message = "Duplicated trial id of trial 1")),
                 setOf(CohortDefinitionValidationError(config = cohortDefinition, message = "Cohort 'A' is duplicated.")),
                 setOf(InclusionCriteriaValidationError(config = inclusionCriterion, message = "Not a valid inclusion criterion for trial")),

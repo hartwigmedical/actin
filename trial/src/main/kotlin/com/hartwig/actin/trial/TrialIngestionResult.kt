@@ -47,7 +47,7 @@ interface TrialConfigValidationError<T : TrialConfig> : ValidationError<T>
 
 data class TrialIngestionResult(
     var ingestionStatus: TrialIngestionStatus,
-    val trialConfigValidationResult: TrialConfigDatabaseValidation,
+    val trialConfigDatabaseValidation: TrialConfigDatabaseValidation,
     val trialStatusDatabaseValidation: TrialStatusDatabaseValidation,
     val unusedRules: Set<String>,
     @Transient val trials: List<Trial>

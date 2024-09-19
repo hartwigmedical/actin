@@ -97,13 +97,13 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
 
     private fun printAllValidationErrors(result: TrialIngestionResult) {
 
-        if (result.trialConfigValidationResult.hasErrors()) {
+        if (result.trialConfigDatabaseValidation.hasErrors()) {
             LOGGER.warn("There were validation errors in the trial definition configuration")
-            printValidationErrors(result.trialConfigValidationResult.cohortDefinitionValidationErrors)
-            printValidationErrors(result.trialConfigValidationResult.trialDefinitionValidationErrors)
-            printValidationErrors(result.trialConfigValidationResult.inclusionCriteriaReferenceValidationErrors)
-            printValidationErrors(result.trialConfigValidationResult.inclusionCriteriaValidationErrors)
-            printValidationErrors(result.trialConfigValidationResult.unusedRuleToKeepValidationErrors)
+            printValidationErrors(result.trialConfigDatabaseValidation.cohortDefinitionValidationErrors)
+            printValidationErrors(result.trialConfigDatabaseValidation.trialDefinitionValidationErrors)
+            printValidationErrors(result.trialConfigDatabaseValidation.inclusionCriteriaReferenceValidationErrors)
+            printValidationErrors(result.trialConfigDatabaseValidation.inclusionCriteriaValidationErrors)
+            printValidationErrors(result.trialConfigDatabaseValidation.unusedRuleToKeepValidationErrors)
         }
 
         if (result.trialStatusDatabaseValidation.hasErrors()) {
