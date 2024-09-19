@@ -12,7 +12,7 @@ object TreatmentEvidenceFunctions {
         val (onLabelEvidence, offLabelEvidence) = treatmentEvidenceSet.partition { it.onLabel }
         val onLabelHighestEvidenceLevels = getHighestEvidenceLevelPerTreatment(onLabelEvidence)
 
-        val evidence =  when (isOnLabel) {
+        val evidence = when (isOnLabel) {
             true -> onLabelEvidence
             false -> filterOffLabelEvidence(offLabelEvidence, onLabelHighestEvidenceLevels)
             else -> onLabelEvidence + offLabelEvidence
@@ -100,5 +100,11 @@ object TreatmentEvidenceFunctions {
             val isResistant = evidences.any { it.direction.isResistant }
             TreatmentEvidenceContent(treatment, cancerTypesWithYears, isResistant)
         }
+    }
+
+    fun sortTreatmentEvidence(evidence: List<TreatmentEvidence>): Set<TreatmentEvidence> {
+        return evidence
+            .sortedWith(compareBy<TreatmentEvidence> { it.evidenceLevel }.thenBy { it.isCategoryEvent }.thenByDescending { it.onLabel })
+            .toSet()
     }
 }

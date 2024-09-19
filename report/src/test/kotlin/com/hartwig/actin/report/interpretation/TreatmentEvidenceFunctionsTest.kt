@@ -147,6 +147,31 @@ class TreatmentEvidenceFunctionsTest {
         assertThat(expected).isEqualTo(result)
     }
 
+    @Test
+    fun `Should correctly sort with highest level of evidence first, then by non-category first, then by onLabel first`() {
+        val nonCategoryD = onLabelNonCategoryLevelA.copy(evidenceLevel = EvidenceLevel.D)
+        val evidence = listOf(
+            offLabelCategoryLevelA,
+            onLabelCategoryLevelA,
+            onLabelCategoryLevelB,
+            onLabelNonCategoryLevelB,
+            nonCategoryD,
+            onLabelNonCategoryLevelA
+        )
+
+        val result = TreatmentEvidenceFunctions.sortTreatmentEvidence(evidence)
+        val expected = setOf(
+            onLabelNonCategoryLevelA,
+            onLabelCategoryLevelA,
+            offLabelCategoryLevelA,
+            onLabelNonCategoryLevelB,
+            onLabelCategoryLevelB,
+            nonCategoryD
+        )
+
+        assertThat(result).containsExactlyElementsOf(expected)
+    }
+
     private fun createTreatmentEvidence(
         treatment: String = TREATMENT,
         onLabel: Boolean = true,
