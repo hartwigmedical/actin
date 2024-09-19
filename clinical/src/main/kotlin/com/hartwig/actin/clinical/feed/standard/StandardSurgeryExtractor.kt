@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.clinical.SurgeryStatus
 class StandardSurgeryExtractor : StandardDataExtractor<List<Surgery>> {
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<Surgery>> {
         return ExtractionResult(ehrPatientRecord.surgeries.map {
-            Surgery(endDate = it.endDate, status = SurgeryStatus.valueOf(it.status))
+            Surgery(name = it.name, endDate = it.endDate, status = SurgeryStatus.valueOf(it.status))
         }, CurationExtractionEvaluation())
     }
 }

@@ -478,7 +478,10 @@ object TestClinicalFactory {
     }
 
     private fun createTestSurgeries(): List<Surgery> {
-        return listOf(Surgery(endDate = TODAY.minusDays(DAYS_SINCE_SURGERY.toLong()), status = SurgeryStatus.FINISHED))
+        return listOf(
+            Surgery(name = "Surgery 1", endDate = TODAY.minusDays(DAYS_SINCE_SURGERY.toLong()), status = SurgeryStatus.FINISHED),
+            Surgery(name = "Surgery 2", endDate = TODAY.minusDays(DAYS_SINCE_SURGERY.toLong() + 10), status = SurgeryStatus.FINISHED)
+        )
     }
 
     private fun createTestBodyWeights(): List<BodyWeight> {

@@ -141,7 +141,7 @@ class EmcClinicalFeedIngestor(
 
     private fun extractSurgeries(feedRecord: FeedRecord): List<Surgery> {
         return feedRecord.uniqueSurgeryEntries
-            .map { Surgery(endDate = it.periodEnd, status = resolveSurgeryStatus(it.encounterStatus)) }
+            .map { Surgery(name = it.codeCodingDisplayOriginal, endDate = it.periodEnd, status = resolveSurgeryStatus(it.encounterStatus)) }
     }
 
     private fun extractBodyWeights(feedRecord: FeedRecord): List<BodyWeight> {
