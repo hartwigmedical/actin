@@ -33,7 +33,7 @@ class TrialStatusConfigInterpreterTest {
         // TEST_TRIAL_1 is assumed to be open in proper test trial status database
         assertThat(trialStatusConfigInterpreter.isTrialOpen(closedStudy)).isTrue
 
-        val trialConfigDatabaseValidation = trialStatusConfigInterpreter.validation(
+        val trialConfigDatabaseValidation = trialStatusConfigInterpreter.appendTrialConfigValidation(
             TrialConfigDatabaseValidation(
                 emptySet(),
                 emptySet(),

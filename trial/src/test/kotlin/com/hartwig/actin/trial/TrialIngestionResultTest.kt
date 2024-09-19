@@ -70,26 +70,4 @@ class TrialIngestionResultTest {
         assertThat(json.startsWith("{\"ingestionStatus\":\"FAIL\"")).isTrue()
         assertThat(json.endsWith("\"unusedRules\":[\"unused rule\"]}")).isTrue()
     }
-
-    @Test
-    fun `Should set status WARN due to existence of unused rules`() {
-        val result = TrialIngestionResult(
-            ingestionStatus = TrialIngestionStatus.PASS,
-            trialStatusDatabaseValidation = TrialStatusDatabaseValidation(
-                trialStatusConfigValidationErrors = emptyList(),
-                trialStatusDatabaseValidationErrors = emptyList()
-            ),
-            trialConfigValidationResult = TrialConfigDatabaseValidation(
-                emptySet(),
-                emptySet(),
-                emptySet(),
-                emptySet(),
-                emptySet()
-            ),
-            trials = emptyList(),
-            unusedRules = setOf("unused rule"),
-        )
-
-        assertThat(result.ingestionStatus).isEqualTo(TrialIngestionStatus.WARN)
-    }
 }

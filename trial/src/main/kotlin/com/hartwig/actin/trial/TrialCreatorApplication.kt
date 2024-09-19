@@ -96,11 +96,6 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
     }
 
     private fun printAllValidationErrors(result: TrialIngestionResult) {
-        if (result.trialStatusDatabaseValidation.hasErrors()) {
-            LOGGER.warn("There were validation errors in the trial status database configuration")
-            printValidationErrors(result.trialStatusDatabaseValidation.trialStatusDatabaseValidationErrors)
-            printValidationErrors(result.trialStatusDatabaseValidation.trialStatusConfigValidationErrors)
-        }
 
         if (result.trialConfigValidationResult.hasErrors()) {
             LOGGER.warn("There were validation errors in the trial definition configuration")
@@ -109,6 +104,12 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
             printValidationErrors(result.trialConfigValidationResult.inclusionCriteriaReferenceValidationErrors)
             printValidationErrors(result.trialConfigValidationResult.inclusionCriteriaValidationErrors)
             printValidationErrors(result.trialConfigValidationResult.unusedRuleToKeepValidationErrors)
+        }
+
+        if (result.trialStatusDatabaseValidation.hasErrors()) {
+            LOGGER.warn("There were validation errors in the trial status database configuration")
+            printValidationErrors(result.trialStatusDatabaseValidation.trialStatusDatabaseValidationErrors)
+            printValidationErrors(result.trialStatusDatabaseValidation.trialStatusConfigValidationErrors)
         }
     }
 

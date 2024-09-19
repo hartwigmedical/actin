@@ -15,7 +15,7 @@ interface ConfigInterpreter {
     fun checkModelForUnusedUnmappedCohortIds()
     fun resolveCohortMetadata(cohortConfig: CohortDefinitionConfig): CohortMetadata
     fun validation(): TrialStatusDatabaseValidation
-    fun validation(trialConfigDatabaseValidation: TrialConfigDatabaseValidation): TrialConfigDatabaseValidation
+    fun appendTrialConfigValidation(trialConfigDatabaseValidation: TrialConfigDatabaseValidation): TrialConfigDatabaseValidation
 }
 
 class SimpleConfigInterpreter : ConfigInterpreter {
@@ -58,10 +58,9 @@ class SimpleConfigInterpreter : ConfigInterpreter {
         return TrialStatusDatabaseValidation(emptyList(), emptyList())
     }
 
-    override fun validation(trialConfigDatabaseValidation: TrialConfigDatabaseValidation): TrialConfigDatabaseValidation {
+    override fun appendTrialConfigValidation(trialConfigDatabaseValidation: TrialConfigDatabaseValidation): TrialConfigDatabaseValidation {
         return trialConfigDatabaseValidation
     }
-
 
 }
 

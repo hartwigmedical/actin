@@ -18,10 +18,11 @@ enum class TrialIngestionStatus {
 
     companion object {
         fun from(
+            trialConfigDatabaseValidation: TrialConfigDatabaseValidation,
             trialStatusDatabaseValidation: TrialStatusDatabaseValidation,
-            trialValidationResult: TrialConfigDatabaseValidation,
+            unusedRules: Set<String>
         ): TrialIngestionStatus {
-            return if (trialValidationResult.hasErrors()) FAIL else if (trialStatusDatabaseValidation.hasErrors()) WARN else PASS
+            return if (trialConfigDatabaseValidation.hasErrors()) FAIL else if (trialStatusDatabaseValidation.hasErrors() || unusedRules.isNotEmpty()) WARN else PASS
         }
     }
 }
@@ -41,7 +42,7 @@ interface ValidationError<T> : Comparable<ValidationError<T>> {
     }
 }
 
-interface TrialValidationError<T : TrialConfig> : ValidationError<T>
+interface TrialConfigValidationError<T : TrialConfig> : ValidationError<T>
 
 
 data class TrialIngestionResult(
@@ -51,12 +52,6 @@ data class TrialIngestionResult(
     val unusedRules: Set<String>,
     @Transient val trials: List<Trial>
 ) {
-    init {
-        if (unusedRules.isNotEmpty() && ingestionStatus == TrialIngestionStatus.PASS) {
-            ingestionStatus = TrialIngestionStatus.WARN
-        }
-    }
-
     fun serialize(): String {
         return GsonBuilder().registerTypeHierarchyAdapter(ValidationError::class.java, ValidationErrorSerializer())
             .create()

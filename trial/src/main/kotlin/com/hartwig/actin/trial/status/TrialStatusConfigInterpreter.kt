@@ -27,7 +27,7 @@ class TrialStatusConfigInterpreter(
         )
     }
 
-    override fun validation(trialConfigDatabaseValidation: TrialConfigDatabaseValidation): TrialConfigDatabaseValidation {
+    override fun appendTrialConfigValidation(trialConfigDatabaseValidation: TrialConfigDatabaseValidation): TrialConfigDatabaseValidation {
         return TrialConfigDatabaseValidation(
             trialDefinitionValidationErrors = trialConfigDatabaseValidation.trialDefinitionValidationErrors + trialDefinitionValidationErrors,
             cohortDefinitionValidationErrors = trialConfigDatabaseValidation.cohortDefinitionValidationErrors + cohortDefinitionValidationErrors,

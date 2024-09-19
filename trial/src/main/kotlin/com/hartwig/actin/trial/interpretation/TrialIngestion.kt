@@ -35,16 +35,17 @@ class TrialIngestion(
         configInterpreter.checkModelForNewCohorts(trialConfigModel.cohorts())
         configInterpreter.checkModelForUnusedStudiesNotInTrialStatusDatabase(trialConfigModel.trials())
 
-        val trials = if (trialConfigModel.validation().inclusionCriteriaValidationErrors.isEmpty()) createTrials() else emptyList()
+        val trials = if (!trialConfigModel.validation().hasErrors()) createTrials() else emptyList()
 
         val trialStatusDatabaseValidation = configInterpreter.validation()
-        val trialConfigDatabaseValidation = configInterpreter.validation(trialConfigModel.validation())
+        val trialConfigDatabaseValidation = configInterpreter.appendTrialConfigValidation(trialConfigModel.validation())
+        val unusedRules = EligibilityRuleUsageEvaluator.evaluate(trials, trialConfigModel.unusedRulesToKeep).map { it.name }.toSet()
 
         return TrialIngestionResult(
-            TrialIngestionStatus.from(trialStatusDatabaseValidation, trialConfigDatabaseValidation),
+            TrialIngestionStatus.from(trialConfigDatabaseValidation, trialStatusDatabaseValidation, unusedRules),
             trialConfigDatabaseValidation,
             trialStatusDatabaseValidation,
-            EligibilityRuleUsageEvaluator.evaluate(trials, trialConfigModel.unusedRulesToKeep).map { it.name }.toSet(),
+            unusedRules,
             trials,
         )
     }

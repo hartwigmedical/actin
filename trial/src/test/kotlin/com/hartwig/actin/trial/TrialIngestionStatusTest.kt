@@ -19,36 +19,40 @@ class TrialIngestionStatusTest {
     )
 
     @Test
-    fun `Should return FAIL`() {
+    fun `Should return FAIL due to the existence of trial status config validation errors`() {
         val trialStatusDatabaseValidation = TrialStatusDatabaseValidation(
             trialStatusConfigValidationErrors = listOf(TrialStatusConfigValidationError("config", "msg")),
             trialStatusDatabaseValidationErrors = emptyList()
         )
 
-        val trialValidationResult = TrialConfigDatabaseValidation(
+        val trialConfigDatabaseValidation = TrialConfigDatabaseValidation(
             emptySet(),
             emptySet(),
             setOf(InclusionCriteriaValidationError(config = inclusionCriterion, message = "Not a valid inclusion criterion for trial")),
             emptySet(),
             emptySet()
         )
-        assertThat(TrialIngestionStatus.from(trialStatusDatabaseValidation, trialValidationResult)).isEqualTo(TrialIngestionStatus.FAIL)
+        assertThat(TrialIngestionStatus.from(trialConfigDatabaseValidation, trialStatusDatabaseValidation, emptySet())).isEqualTo(
+            TrialIngestionStatus.FAIL
+        )
     }
 
     @Test
-    fun `Should return PASS`() {
+    fun `Should return PASS as there are no trial config or trial status errors`() {
         val trialStatusDatabaseValidation = TrialStatusDatabaseValidation(
             trialStatusConfigValidationErrors = emptyList(),
             trialStatusDatabaseValidationErrors = emptyList()
         )
-        val trialValidationResult = TrialConfigDatabaseValidation(
+        val trialConfigDatabaseValidation = TrialConfigDatabaseValidation(
             emptySet(),
             emptySet(),
             emptySet(),
             emptySet(),
             emptySet()
         )
-        assertThat(TrialIngestionStatus.from(trialStatusDatabaseValidation, trialValidationResult)).isEqualTo(TrialIngestionStatus.PASS)
+        assertThat(TrialIngestionStatus.from(trialConfigDatabaseValidation, trialStatusDatabaseValidation, emptySet())).isEqualTo(
+            TrialIngestionStatus.PASS
+        )
     }
 
     @Test
@@ -57,13 +61,34 @@ class TrialIngestionStatusTest {
             trialStatusConfigValidationErrors = listOf(TrialStatusConfigValidationError("config", "msg")),
             trialStatusDatabaseValidationErrors = emptyList()
         )
-        val trialValidationResult = TrialConfigDatabaseValidation(
+        val trialConfigDatabaseValidation = TrialConfigDatabaseValidation(
             emptySet(),
             emptySet(),
             emptySet(),
             emptySet(),
             emptySet()
         )
-        assertThat(TrialIngestionStatus.from(trialStatusDatabaseValidation, trialValidationResult)).isEqualTo(TrialIngestionStatus.WARN)
+        assertThat(TrialIngestionStatus.from(trialConfigDatabaseValidation, trialStatusDatabaseValidation, emptySet())).isEqualTo(
+            TrialIngestionStatus.WARN
+        )
+    }
+
+    @Test
+    fun `Should return WARN due to the existance of unused rules`() {
+        val trialStatusDatabaseValidation = TrialStatusDatabaseValidation(
+            trialStatusConfigValidationErrors = emptyList(),
+            trialStatusDatabaseValidationErrors = emptyList()
+        )
+        val trialConfigDatabaseValidation = TrialConfigDatabaseValidation(
+            emptySet(),
+            emptySet(),
+            emptySet(),
+            emptySet(),
+            emptySet()
+        )
+        val unusedRules = setOf("Rule1", "Rule2")
+        assertThat(TrialIngestionStatus.from(trialConfigDatabaseValidation, trialStatusDatabaseValidation, unusedRules)).isEqualTo(
+            TrialIngestionStatus.WARN
+        )
     }
 }
