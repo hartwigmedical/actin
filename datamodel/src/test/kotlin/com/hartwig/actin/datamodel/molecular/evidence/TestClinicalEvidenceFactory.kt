@@ -115,7 +115,7 @@ object TestClinicalEvidenceFactory {
         evidenceLevel,
         onLabel,
         direction,
-        LocalDate.of(2021, 1, 1),
+        LocalDate.of(2021, 2, 3),
         "efficacy evidence",
         2021,
         isCategoryEvent,

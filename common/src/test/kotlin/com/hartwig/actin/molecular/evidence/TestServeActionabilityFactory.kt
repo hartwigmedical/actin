@@ -110,7 +110,7 @@ object TestServeActionabilityFactory {
             }
 
             override fun efficacyDescriptionYear(): String {
-                return "2024"
+                return "2021"
             }
 
             override fun level(): EvidenceLevel {

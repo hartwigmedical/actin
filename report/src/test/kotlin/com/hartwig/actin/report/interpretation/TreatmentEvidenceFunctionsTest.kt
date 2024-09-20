@@ -131,12 +131,12 @@ class TreatmentEvidenceFunctionsTest {
 
     @Test
     fun `Should generate TreatmentEvidenceContent objects with treatment name, cancer types with dates, and isResistant Boolean`() {
-        val date = LocalDate.of(2024, 1, 1)
+        val year = 2024
         val cancerType = ApplicableCancerType("Cancer type 1", emptySet())
-        val treatmentEvidence = createTreatmentEvidence(date = date, applicableCancerType = cancerType)
+        val treatmentEvidence = createTreatmentEvidence(efficacyDescriptionYear = year, applicableCancerType = cancerType)
         val evidence = listOf(
             treatmentEvidence,
-            treatmentEvidence.copy(ckbEntryDate = date.minusYears(1), applicableCancerType = cancerType.copy("Cancer type 2")),
+            treatmentEvidence.copy(efficacyDescriptionYear = year.minus(1), applicableCancerType = cancerType.copy("Cancer type 2")),
             treatmentEvidence.copy(treatment = "other treatment", direction = EvidenceDirection(isResistant = true))
         )
         val result = TreatmentEvidenceFunctions.generateEvidenceCellContents(evidence)
@@ -177,7 +177,8 @@ class TreatmentEvidenceFunctionsTest {
         onLabel: Boolean = true,
         direction: EvidenceDirection = EvidenceDirection(hasBenefit = true),
         evidenceLevel: EvidenceLevel = EvidenceLevel.A,
-        date: LocalDate = LocalDate.EPOCH,
+        ckbEntryDate: LocalDate = LocalDate.EPOCH,
+        efficacyDescriptionYear: Int = 2024,
         isCategoryEvent: Boolean = true,
         sourceEvent: String = "sourceEvent",
         evidenceLevelDetails: EvidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY,
@@ -188,9 +189,9 @@ class TreatmentEvidenceFunctionsTest {
             evidenceLevel,
             onLabel,
             direction,
-            date,
+            ckbEntryDate,
             "",
-            2021,
+            efficacyDescriptionYear,
             isCategoryEvent,
             sourceEvent,
             evidenceLevelDetails,
