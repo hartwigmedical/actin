@@ -136,7 +136,7 @@ class TreatmentEvidenceFunctionsTest {
         val treatmentEvidence = createTreatmentEvidence(date = date, applicableCancerType = cancerType)
         val evidence = listOf(
             treatmentEvidence,
-            treatmentEvidence.copy(date = date.minusYears(1), applicableCancerType = cancerType.copy("Cancer type 2")),
+            treatmentEvidence.copy(ckbEntryDate = date.minusYears(1), applicableCancerType = cancerType.copy("Cancer type 2")),
             treatmentEvidence.copy(treatment = "other treatment", direction = EvidenceDirection(isResistant = true))
         )
         val result = TreatmentEvidenceFunctions.generateEvidenceCellContents(evidence)
@@ -190,6 +190,7 @@ class TreatmentEvidenceFunctionsTest {
             direction,
             date,
             "",
+            2021,
             isCategoryEvent,
             sourceEvent,
             evidenceLevelDetails,

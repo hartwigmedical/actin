@@ -43,8 +43,9 @@ object ClinicalEvidenceFactory {
                     isResistant = it.direction().isResistant,
                     isCertain = it.direction().isCertain
                 ),
-                it.date(),
-                it.description(),
+                it.ckbEntryDate(),
+                it.efficacyDescription(),
+                it.efficacyDescriptionYear().toInt(),
                 it.isCategoryEvent(),
                 it.sourceEvent(),
                 it.evidenceLevelDetails(),
