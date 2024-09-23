@@ -15,6 +15,7 @@ class TrialStatusConfigInterpreter(
 ) :
     ConfigInterpreter {
 
+    private val trialStatusDatabaseExtractor = TrialStatusDatabaseExtractor(trialStatusDatabase, trialPrefix)
     private val trialDefinitionValidationErrors = mutableListOf<TrialDefinitionValidationError>()
     private val cohortDefinitionValidationErrors = mutableListOf<CohortDefinitionValidationError>()
     private val trialStatusConfigValidationErrors = mutableListOf<TrialStatusConfigValidationError>()
@@ -41,7 +42,7 @@ class TrialStatusConfigInterpreter(
         val (openInTrialStatusDatabase, interpreterValidationErrors) = TrialStatusInterpreter.isOpen(
             trialStatusDatabase.entries,
             trialConfig,
-            this::constructTrialId
+            trialStatusDatabaseExtractor::constructTrialId
         )
         trialDefinitionValidationErrors.addAll(interpreterValidationErrors)
 
@@ -66,20 +67,20 @@ class TrialStatusConfigInterpreter(
 
         if (openInTrialStatusDatabase != null) {
             if (trialConfig.open != null) {
-                trialDefinitionValidationErrors.add(
-                    TrialDefinitionValidationError(
-                        trialConfig,
-                        "Trial has a manually configured open status while status could be derived from trial status database"
+                trialStatusConfigValidationErrors.add(
+                    TrialStatusConfigValidationError(
+                        trialConfig.trialId,
+                        "Trial has a manually configured status while status could be derived from trial status database"
                     )
                 )
             }
             return openInTrialStatusDatabase
         }
 
-        trialDefinitionValidationErrors.add(
-            TrialDefinitionValidationError(
-                trialConfig,
-                "No study status found in trial status database overview, using manually configured status for study status"
+        trialStatusConfigValidationErrors.add(
+            TrialStatusConfigValidationError(
+                trialConfig.trialId,
+                "No studyI  status found in trial status database overview, using manually configured status for study status"
             )
         )
         return null
@@ -105,13 +106,13 @@ class TrialStatusConfigInterpreter(
     }
 
     override fun checkModelForNewTrials(trialConfigs: List<TrialDefinitionConfig>) {
-        val newTrialsInTrialStatusDatabase = extractNewTrialStatusDatabaseStudies(trialConfigs)
+        val newTrialsInTrialStatusDatabase = trialStatusDatabaseExtractor.extractNewTrialStatusDatabaseStudies(trialConfigs)
 
         if (newTrialsInTrialStatusDatabase.isEmpty()) {
             LOGGER.info(" No new studies found in trial status database that are not explicitly ignored.")
         } else {
             if (!ignoreNewTrials) {
-                trialStatusDatabaseValidationErrors.addAll(newTrialsInTrialStatusDatabase.map {
+                trialStatusDatabaseValidationErrors.addAll(newTrialsInTrialStatusDatabase.distinctBy { it.studyId }.map {
                     TrialStatusDatabaseValidationError(
                         it,
                         " New trial detected in trial status database that is not configured to be ignored"
@@ -122,7 +123,8 @@ class TrialStatusConfigInterpreter(
     }
 
     override fun checkModelForUnusedStudiesNotInTrialStatusDatabase(trialConfigs: List<TrialDefinitionConfig>) {
-        val unusedMecStudiesNotInTrialStatusDatabase = extractUnusedStudiesNotInTrialStatusDatabase(trialConfigs)
+        val unusedMecStudiesNotInTrialStatusDatabase =
+            trialStatusDatabaseExtractor.extractUnusedStudiesNotInTrialStatusDatabase(trialConfigs)
 
         if (unusedMecStudiesNotInTrialStatusDatabase.isNotEmpty()) {
             unusedMecStudiesNotInTrialStatusDatabase.map {
@@ -137,7 +139,7 @@ class TrialStatusConfigInterpreter(
     }
 
     override fun checkModelForNewCohorts(cohortConfigs: List<CohortDefinitionConfig>) {
-        val newCohortEntriesInTrialStatusDatabase = extractNewTrialStatusDatabaseCohorts(cohortConfigs)
+        val newCohortEntriesInTrialStatusDatabase = trialStatusDatabaseExtractor.extractNewTrialStatusDatabaseCohorts(cohortConfigs)
 
         if (newCohortEntriesInTrialStatusDatabase.isEmpty()) {
             LOGGER.info(" No new cohorts found in trial status database that are not explicitly unmapped.")
@@ -151,7 +153,7 @@ class TrialStatusConfigInterpreter(
     }
 
     override fun checkModelForUnusedStudyMETCsToIgnore() {
-        val unusedStudyMETCsToIgnore = extractUnusedStudyMETCsToIgnore()
+        val unusedStudyMETCsToIgnore = trialStatusDatabaseExtractor.extractUnusedStudyMETCsToIgnore()
 
         if (unusedStudyMETCsToIgnore.isEmpty()) {
             LOGGER.info(" No unused study METCs to ignore found")
@@ -169,7 +171,7 @@ class TrialStatusConfigInterpreter(
 
     override fun checkModelForUnusedUnmappedCohortIds() {
 
-        val unusedUnmappedCohortIds = extractUnusedUnmappedCohorts()
+        val unusedUnmappedCohortIds = trialStatusDatabaseExtractor.extractUnusedUnmappedCohorts()
 
         if (unusedUnmappedCohortIds.isEmpty()) {
             LOGGER.info(" No unused unmapped cohort IDs found")
@@ -185,47 +187,6 @@ class TrialStatusConfigInterpreter(
         }
     }
 
-    internal fun extractUnusedStudyMETCsToIgnore(): List<String> {
-        val trialStatusStudyMETCs = trialStatusDatabase.entries.map { it.metcStudyID }.toSet()
-        return trialStatusDatabase.studyMETCsToIgnore.filter { !trialStatusStudyMETCs.contains(it) }
-    }
-
-    internal fun extractUnusedUnmappedCohorts(): List<String> {
-        val trialStatusCohortIds = trialStatusDatabase.entries.mapNotNull { it.cohortId }.toSet()
-        return trialStatusDatabase.unmappedCohortIds.filter { !trialStatusCohortIds.contains(it) }
-    }
-
-    internal fun extractUnusedStudiesNotInTrialStatusDatabase(trialConfigs: List<TrialDefinitionConfig>): List<String> {
-        val trialConfigIds = trialConfigs.map { it.trialId }.toSet()
-        return trialStatusDatabase.studiesNotInTrialStatusDatabase.filter { !trialConfigIds.contains(it) }
-    }
-
-    internal fun extractNewTrialStatusDatabaseStudies(trialConfigs: List<TrialDefinitionConfig>): Set<TrialStatusEntry> {
-        val configuredTrialIds = trialConfigs.map { it.trialId }
-
-        return trialStatusDatabase.entries.filter { !trialStatusDatabase.studyMETCsToIgnore.contains(it.metcStudyID) }
-            .filter { !configuredTrialIds.contains(constructTrialId(it)) }
-            .toSet()
-    }
-
-    internal fun extractNewTrialStatusDatabaseCohorts(cohortConfigs: List<CohortDefinitionConfig>): Set<TrialStatusEntry> {
-        val configuredTrialIds = cohortConfigs.map { it.trialId }.toSet()
-        val configuredCohortIds = cohortConfigs.flatMap(CohortDefinitionConfig::externalCohortIds)
-
-        val childrenPerParent =
-            trialStatusDatabase.entries.filter { it.cohortParentId != null }
-                .groupBy({ it.cohortParentId }, { it.cohortId })
-
-        return trialStatusDatabase.entries.asSequence()
-            .filter { configuredTrialIds.contains(constructTrialId(it)) }
-            .filter { !trialStatusDatabase.studyMETCsToIgnore.contains(it.metcStudyID) }
-            .filter { it.cohortId != null }
-            .filter { !trialStatusDatabase.unmappedCohortIds.contains(it.cohortId) }
-            .filter { !configuredCohortIds.contains(it.cohortId) }
-            .filter { childrenPerParent[it.cohortId] == null || !childrenPerParent[it.cohortId]!!.containsAll(configuredCohortIds) }
-            .toSet()
-    }
-
     private fun fromCohortConfig(cohortConfig: CohortDefinitionConfig): InterpretedCohortStatus {
         return if (cohortConfig.open == null || cohortConfig.slotsAvailable == null) {
             cohortDefinitionValidationErrors.add(
@@ -238,10 +199,6 @@ class TrialStatusConfigInterpreter(
         } else {
             InterpretedCohortStatus(open = cohortConfig.open, slotsAvailable = cohortConfig.slotsAvailable)
         }
-    }
-
-    private fun constructTrialId(entry: TrialStatusEntry): String {
-        return trialPrefix?.let { "$it ${entry.metcStudyID}" } ?: entry.metcStudyID
     }
 
     companion object {

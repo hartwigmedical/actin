@@ -5,9 +5,7 @@ import com.hartwig.actin.trial.TestTrialData
 import com.hartwig.actin.trial.config.CohortDefinitionConfig
 import com.hartwig.actin.trial.config.TestCohortDefinitionConfigFactory
 import com.hartwig.actin.trial.config.TestTrialDefinitionConfigFactory
-import com.hartwig.actin.trial.config.TrialConfigDatabaseValidation
 import com.hartwig.actin.trial.config.TrialDefinitionConfig
-import com.hartwig.actin.trial.status.config.TestTrialStatusDatabaseEntryFactory
 import com.hartwig.actin.trial.status.config.TestTrialStatusDatabaseFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -29,21 +27,9 @@ class TrialStatusConfigInterpreterTest {
             trialId = CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
             open = false
         )
-
         // TEST_TRIAL_1 is assumed to be open in proper test trial status database
         assertThat(trialStatusConfigInterpreter.isTrialOpen(closedStudy)).isTrue
-
-        val trialConfigDatabaseValidation = trialStatusConfigInterpreter.appendTrialConfigValidation(
-            TrialConfigDatabaseValidation(
-                emptySet(),
-                emptySet(),
-                emptySet(),
-                emptySet(),
-                emptySet()
-            )
-        )
-        assertThat(trialConfigDatabaseValidation.trialDefinitionValidationErrors.size).isEqualTo(1)
-
+        assertThat(trialStatusConfigInterpreter.validation().trialStatusConfigValidationErrors).isNotEmpty
     }
 
     @Test
@@ -96,13 +82,8 @@ class TrialStatusConfigInterpreterTest {
     fun `Should classify all studies as new when trial config is empty`() {
         // The proper trial status database has 3 trials: TEST_TRIAL_1, TEST_TRIAL_2 and IGNORE_TRIAL
         val trialConfigs: List<TrialDefinitionConfig> = emptyList()
-
-        val newStudyMETCs = trialStatusConfigInterpreter.extractNewTrialStatusDatabaseStudies(trialConfigs)
-        assertThat(newStudyMETCs.map { it.metcStudyID }.toSet()).containsExactly(
-            TestTrialData.TEST_TRIAL_METC_1,
-            TestTrialData.TEST_TRIAL_METC_2
-        )
         trialStatusConfigInterpreter.checkModelForNewTrials(trialConfigs)
+        assertThat(trialStatusConfigInterpreter.validation().trialStatusDatabaseValidationErrors.size).isEqualTo(2)
     }
 
     @Test
@@ -117,9 +98,8 @@ class TrialStatusConfigInterpreterTest {
             )
         )
 
-        assertThat(trialStatusConfigInterpreter.extractNewTrialStatusDatabaseStudies(trialConfigs)).isEmpty()
-
         trialStatusConfigInterpreter.checkModelForNewTrials(trialConfigs)
+        assertThat(trialStatusConfigInterpreter.validation().trialStatusDatabaseValidationErrors).isEmpty()
     }
 
     @Test
@@ -136,9 +116,8 @@ class TrialStatusConfigInterpreterTest {
             )
         )
 
-        assertThat(trialStatusConfigInterpreter.extractNewTrialStatusDatabaseCohorts(cohortConfigs)).isEmpty()
-
         trialStatusConfigInterpreter.checkModelForNewCohorts(cohortConfigs)
+        assertThat(trialStatusConfigInterpreter.validation().trialStatusDatabaseValidationErrors).isEmpty()
     }
 
     @Test
@@ -146,10 +125,8 @@ class TrialStatusConfigInterpreterTest {
         // The proper trial status database has 3 cohorts: 1, 2 and (unmapped) 3
         val cohortConfigs: List<CohortDefinitionConfig> = emptyList()
 
-        val newCohorts = trialStatusConfigInterpreter.extractNewTrialStatusDatabaseCohorts(cohortConfigs)
-        assertThat(newCohorts).isEmpty()
-
         trialStatusConfigInterpreter.checkModelForNewCohorts(cohortConfigs)
+        assertThat(trialStatusConfigInterpreter.validation().trialStatusDatabaseValidationErrors).isEmpty()
     }
 
     @Test
@@ -162,51 +139,8 @@ class TrialStatusConfigInterpreterTest {
             )
         )
 
-        val newCohorts = trialStatusConfigInterpreter.extractNewTrialStatusDatabaseCohorts(cohortConfigs)
-        assertThat(newCohorts.map { it.cohortId }).containsExactly("1", "2")
-
         trialStatusConfigInterpreter.checkModelForNewCohorts(cohortConfigs)
-    }
-
-    @Test
-    fun `Should assume parent cohort with all children referenced is not new`() {
-        val cohortConfigs: List<CohortDefinitionConfig> = listOf(
-            TestCohortDefinitionConfigFactory.MINIMAL.copy(
-                trialId = CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
-                externalCohortIds = setOf("2")
-            ),
-            TestCohortDefinitionConfigFactory.MINIMAL.copy(
-                trialId = CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
-                externalCohortIds = setOf("3")
-            )
-        )
-
-        val modelWithOneParentTwoChildren =
-            TrialStatusConfigInterpreter(
-                TestTrialStatusDatabaseFactory.createMinimalTestTrialStatusDatabase()
-                    .copy(
-                        entries = listOf(
-                            TestTrialStatusDatabaseEntryFactory.MINIMAL.copy(
-                                metcStudyID = TestTrialData.TEST_TRIAL_METC_1,
-                                cohortId = "1",
-                                cohortParentId = null
-                            ),
-                            TestTrialStatusDatabaseEntryFactory.MINIMAL.copy(
-                                metcStudyID = TestTrialData.TEST_TRIAL_METC_1,
-                                cohortId = "2",
-                                cohortParentId = "1"
-                            ),
-                            TestTrialStatusDatabaseEntryFactory.MINIMAL.copy(
-                                metcStudyID = TestTrialData.TEST_TRIAL_METC_1,
-                                cohortId = "3",
-                                cohortParentId = "1"
-                            )
-                        )
-                    )
-            )
-
-        val newCohorts = modelWithOneParentTwoChildren.extractNewTrialStatusDatabaseCohorts(cohortConfigs)
-        assertThat(newCohorts).isEmpty()
+        assertThat(trialStatusConfigInterpreter.validation().trialStatusDatabaseValidationErrors.size).isEqualTo(2)
     }
 
     @Test
@@ -217,9 +151,8 @@ class TrialStatusConfigInterpreterTest {
             )
         )
 
-        assertThat(trialStatusConfigInterpreter.extractUnusedStudiesNotInTrialStatusDatabase(trialConfigs)).isEmpty()
-
         trialStatusConfigInterpreter.checkModelForUnusedStudiesNotInTrialStatusDatabase(trialConfigs)
+        assertThat(trialStatusConfigInterpreter.validation().trialStatusConfigValidationErrors).isEmpty()
     }
 
     @Test
@@ -229,14 +162,8 @@ class TrialStatusConfigInterpreterTest {
                 trialId = TestTrialData.TEST_TRIAL_METC_1
             )
         )
-
-        assertThat(trialStatusConfigInterpreter.extractUnusedStudiesNotInTrialStatusDatabase(trialConfigs)).isEqualTo(
-            listOf(
-                TestTrialData.TEST_MEC_NOT_IN_TRIAL_STATUS_DATABASE
-            )
-        )
-
         trialStatusConfigInterpreter.checkModelForUnusedStudiesNotInTrialStatusDatabase(trialConfigs)
+        assertThat(trialStatusConfigInterpreter.validation().trialStatusConfigValidationErrors.size).isEqualTo(1)
     }
 
     @Test
@@ -254,7 +181,6 @@ class TrialStatusConfigInterpreterTest {
         val trialStatusConfigInterpreter =
             TestTrialStatusConfigInterpreterFactory.createWithMinimalTestTrialStatusDatabase()
         trialStatusConfigInterpreter.checkModelForUnusedStudyMETCsToIgnore()
-        assertThat(trialStatusConfigInterpreter.extractUnusedStudyMETCsToIgnore()).isEmpty()
         assertThat(trialStatusConfigInterpreter.validation().trialStatusConfigValidationErrors).isEmpty()
     }
 
@@ -269,7 +195,6 @@ class TrialStatusConfigInterpreterTest {
             true
         )
         trialStatusConfigInterpreter.checkModelForUnusedStudyMETCsToIgnore()
-        assertThat(trialStatusConfigInterpreter.extractUnusedStudyMETCsToIgnore()).isNotEmpty()
         assertThat(trialStatusConfigInterpreter.validation().trialStatusConfigValidationErrors).isNotEmpty()
         assertThat(trialStatusConfigInterpreter.validation().trialStatusConfigValidationErrors.size).isEqualTo(1)
     }
@@ -279,7 +204,6 @@ class TrialStatusConfigInterpreterTest {
         val trialStatusConfigInterpreter =
             TestTrialStatusConfigInterpreterFactory.createWithMinimalTestTrialStatusDatabase()
         trialStatusConfigInterpreter.checkModelForUnusedUnmappedCohortIds()
-        assertThat(trialStatusConfigInterpreter.extractUnusedUnmappedCohorts()).isEmpty()
         assertThat(trialStatusConfigInterpreter.validation().trialStatusConfigValidationErrors).isEmpty()
     }
 
@@ -296,10 +220,7 @@ class TrialStatusConfigInterpreterTest {
             true
         )
         trialStatusConfigInterpreter.checkModelForUnusedUnmappedCohortIds()
-        assertThat(trialStatusConfigInterpreter.extractUnusedUnmappedCohorts()).isNotEmpty()
         assertThat(trialStatusConfigInterpreter.validation().trialStatusConfigValidationErrors).isNotEmpty()
         assertThat(trialStatusConfigInterpreter.validation().trialStatusConfigValidationErrors.size).isEqualTo(1)
     }
-
-
 }
