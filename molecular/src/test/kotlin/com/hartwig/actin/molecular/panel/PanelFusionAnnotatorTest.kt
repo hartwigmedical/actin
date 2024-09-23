@@ -33,12 +33,16 @@ private const val TRANSCRIPT = "transcript"
 private const val CANONICAL_TRANSCRIPT = "canonical_transcript"
 private const val OTHER_GENE = "other_gene"
 private val ARCHER_FUSION = SequencedFusion(GENE, OTHER_GENE)
+private const val FUSED_EXON_UP = 2
+private const val FUSED_EXON_DOWN = 4
 
 private val FUSION_MATCHING_CRITERIA = FusionMatchCriteria(
     isReportable = true,
     geneStart = GENE,
     geneEnd = GENE,
-    driverType = FusionDriverType.KNOWN_PAIR_DEL_DUP
+    driverType = FusionDriverType.KNOWN_PAIR_DEL_DUP,
+    fusedExonUp = FUSED_EXON_UP,
+    fusedExonDown = FUSED_EXON_DOWN
 )
 
 private val FUSION_MATCH_CRITERIA = FusionMatchCriteria(
@@ -209,7 +213,7 @@ class PanelFusionAnnotatorTest {
         setupKnownFusionCacheForExonDeletion()
         setupEvidenceDatabaseWithNoEvidence()
 
-        val panelSkippedExonsExtraction = setOf(SequencedSkippedExons(GENE, 2, 4, TRANSCRIPT))
+        val panelSkippedExonsExtraction = setOf(SequencedSkippedExons(GENE, FUSED_EXON_UP, FUSED_EXON_DOWN, TRANSCRIPT))
         val fusions = annotator.annotate(emptySet(), panelSkippedExonsExtraction)
         assertThat(fusions).isEqualTo(
             setOf(
@@ -219,7 +223,7 @@ class PanelFusionAnnotatorTest {
                     driverType = FusionDriverType.KNOWN_PAIR_DEL_DUP,
                     proteinEffect = ProteinEffect.UNKNOWN,
                     isAssociatedWithDrugResistance = null,
-                    extendedFusionDetails = ExtendedFusionDetails(TRANSCRIPT, TRANSCRIPT, 2, 4),
+                    extendedFusionDetails = ExtendedFusionDetails(TRANSCRIPT, TRANSCRIPT, FUSED_EXON_UP, FUSED_EXON_DOWN),
                     event = "$GENE skipped exons 2-4",
                     isReportable = true,
                     driverLikelihood = DriverLikelihood.HIGH,

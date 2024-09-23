@@ -137,7 +137,9 @@ class PanelFusionAnnotator(
         isReportable = fusion.isReportable,
         geneStart = fusion.geneStart,
         geneEnd = fusion.geneEnd,
-        driverType = fusion.driverType
+        driverType = fusion.driverType,
+        fusedExonUp = fusion.extendedFusionDetails?.fusedExonUp,
+        fusedExonDown = fusion.extendedFusionDetails?.fusedExonDown
     )
 
     companion object {
