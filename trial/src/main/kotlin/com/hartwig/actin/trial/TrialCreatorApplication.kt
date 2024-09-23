@@ -8,8 +8,6 @@ import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
-import com.hartwig.actin.trial.interpretation.ConfigInterpreter
-import com.hartwig.actin.trial.interpretation.SimpleConfigInterpreter
 import com.hartwig.actin.trial.interpretation.TrialIngestion
 import com.hartwig.actin.trial.serialization.TrialJson
 import com.hartwig.actin.trial.status.TrialStatusConfigInterpreter
@@ -74,7 +72,7 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         printAllValidationErrors(result)
     }
 
-    private fun configInterpreter(configuration: TrialConfiguration): ConfigInterpreter {
+    private fun configInterpreter(configuration: TrialConfiguration): TrialStatusConfigInterpreter {
         if (config.ctcConfigDirectory != null && config.nkiConfigDirectory != null) {
             throw IllegalArgumentException("Only one of CTC and NKI config directories can be specified")
         }
@@ -91,7 +89,7 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
                 ignoreNewTrials = configuration.ignoreAllNewTrialsInTrialStatusDatabase
             )
         } else {
-            SimpleConfigInterpreter()
+            throw IllegalArgumentException("At least one of CTC and NKI config directories must be specified")
         }
     }
 

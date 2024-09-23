@@ -6,14 +6,12 @@ import com.hartwig.actin.trial.config.CohortDefinitionValidationError
 import com.hartwig.actin.trial.config.TrialConfigDatabaseValidation
 import com.hartwig.actin.trial.config.TrialDefinitionConfig
 import com.hartwig.actin.trial.config.TrialDefinitionValidationError
-import com.hartwig.actin.trial.interpretation.ConfigInterpreter
 
 class TrialStatusConfigInterpreter(
     private val trialStatusDatabase: TrialStatusDatabase,
     private val trialPrefix: String? = null,
     private val ignoreNewTrials: Boolean = false
-) :
-    ConfigInterpreter {
+) {
 
     private val trialStatusDatabaseExtractor = TrialStatusDatabaseExtractor(trialStatusDatabase, trialPrefix)
     private val trialDefinitionValidationErrors = mutableListOf<TrialDefinitionValidationError>()
@@ -21,14 +19,14 @@ class TrialStatusConfigInterpreter(
     private val trialStatusConfigValidationErrors = mutableListOf<TrialStatusConfigValidationError>()
     private val trialStatusDatabaseValidationErrors = mutableListOf<TrialStatusDatabaseValidationError>()
 
-    override fun validation(): TrialStatusDatabaseValidation {
+    fun validation(): TrialStatusDatabaseValidation {
         return TrialStatusDatabaseValidation(
             trialStatusConfigValidationErrors,
             trialStatusDatabaseValidationErrors
         )
     }
 
-    override fun appendTrialConfigValidation(trialConfigDatabaseValidation: TrialConfigDatabaseValidation): TrialConfigDatabaseValidation {
+    fun appendTrialConfigValidation(trialConfigDatabaseValidation: TrialConfigDatabaseValidation): TrialConfigDatabaseValidation {
         return TrialConfigDatabaseValidation(
             trialDefinitionValidationErrors = trialConfigDatabaseValidation.trialDefinitionValidationErrors + trialDefinitionValidationErrors,
             cohortDefinitionValidationErrors = trialConfigDatabaseValidation.cohortDefinitionValidationErrors + cohortDefinitionValidationErrors,
@@ -38,7 +36,7 @@ class TrialStatusConfigInterpreter(
         )
     }
 
-    override fun isTrialOpen(trialConfig: TrialDefinitionConfig): Boolean? {
+    fun isTrialOpen(trialConfig: TrialDefinitionConfig): Boolean? {
         val (openInTrialStatusDatabase, interpreterValidationErrors) = TrialStatusInterpreter.isOpen(
             trialStatusDatabase.entries,
             trialConfig,
@@ -86,7 +84,7 @@ class TrialStatusConfigInterpreter(
         return null
     }
 
-    override fun resolveCohortMetadata(cohortConfig: CohortDefinitionConfig): CohortMetadata {
+    fun resolveCohortMetadata(cohortConfig: CohortDefinitionConfig): CohortMetadata {
         val (maybeInterpretedCohortStatus, cohortDefinitionValidationErrors, trialStatusDatabaseValidationErrors) =
             CohortStatusInterpreter.interpret(
                 trialStatusDatabase.entries,
@@ -105,7 +103,7 @@ class TrialStatusConfigInterpreter(
         )
     }
 
-    override fun checkModelForNewTrials(trialConfigs: List<TrialDefinitionConfig>) {
+    fun checkModelForNewTrials(trialConfigs: List<TrialDefinitionConfig>) {
         val newTrialsInTrialStatusDatabase = trialStatusDatabaseExtractor.extractNewTrialStatusDatabaseStudies(trialConfigs)
 
         if (newTrialsInTrialStatusDatabase.isEmpty()) {
@@ -122,7 +120,7 @@ class TrialStatusConfigInterpreter(
         }
     }
 
-    override fun checkModelForUnusedStudiesNotInTrialStatusDatabase(trialConfigs: List<TrialDefinitionConfig>) {
+    fun checkModelForUnusedStudiesNotInTrialStatusDatabase(trialConfigs: List<TrialDefinitionConfig>) {
         val unusedMecStudiesNotInTrialStatusDatabase =
             trialStatusDatabaseExtractor.extractUnusedStudiesNotInTrialStatusDatabase(trialConfigs)
 
@@ -138,7 +136,7 @@ class TrialStatusConfigInterpreter(
         }
     }
 
-    override fun checkModelForNewCohorts(cohortConfigs: List<CohortDefinitionConfig>) {
+    fun checkModelForNewCohorts(cohortConfigs: List<CohortDefinitionConfig>) {
         val newCohortEntriesInTrialStatusDatabase = trialStatusDatabaseExtractor.extractNewTrialStatusDatabaseCohorts(cohortConfigs)
 
         if (newCohortEntriesInTrialStatusDatabase.isEmpty()) {
@@ -152,7 +150,7 @@ class TrialStatusConfigInterpreter(
         }
     }
 
-    override fun checkModelForUnusedStudyMETCsToIgnore() {
+    fun checkModelForUnusedStudyMETCsToIgnore() {
         val unusedStudyMETCsToIgnore = trialStatusDatabaseExtractor.extractUnusedStudyMETCsToIgnore()
 
         if (unusedStudyMETCsToIgnore.isEmpty()) {
@@ -169,7 +167,7 @@ class TrialStatusConfigInterpreter(
         }
     }
 
-    override fun checkModelForUnusedUnmappedCohortIds() {
+    fun checkModelForUnusedUnmappedCohortIds() {
 
         val unusedUnmappedCohortIds = trialStatusDatabaseExtractor.extractUnusedUnmappedCohorts()
 
