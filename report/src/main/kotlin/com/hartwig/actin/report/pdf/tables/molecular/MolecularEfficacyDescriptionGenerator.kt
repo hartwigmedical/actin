@@ -1,12 +1,14 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 import com.hartwig.actin.report.interpretation.TreatmentEvidenceFunctions
 import com.hartwig.actin.report.interpretation.TreatmentEvidenceFunctions.filterTreatmentEvidence
 import com.hartwig.actin.report.interpretation.TreatmentEvidenceFunctions.sortTreatmentEvidence
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Styles.PALETTE_RED
+import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 
@@ -18,35 +20,46 @@ class MolecularEfficacyDescriptionGenerator(val molecularHistory: MolecularHisto
 
     override fun contents(): Table {
         val table = Table(1).setWidth(width)
-
-        val allDrivers = DriverTableFunctions.allDrivers(molecularHistory).flatMap { it.second }
-        val filteredEvidence = allDrivers
+        val sortedEvidence = DriverTableFunctions.allDrivers(molecularHistory)
+            .flatMap { it.second }
             .flatMap { filterTreatmentEvidence(it.evidence.treatmentEvidence, null) }
-        val sortedEvidence = sortTreatmentEvidence(filteredEvidence)
+            .let { sortTreatmentEvidence(it) }
 
-        TreatmentEvidenceFunctions.groupBySourceEvent(sortedEvidence).forEach { (event, evidences) ->
-            val eventHeader = Paragraph(event).setBold().setFontSize(8f)
-            table.addCell(Cells.createContent(eventHeader))
-            val eventDescriptionSubTable = Table(4).setWidth(width)
+        val cells = TreatmentEvidenceFunctions.groupBySourceEvent(sortedEvidence)
+            .flatMap { (event, evidences) -> createEventCells(event, evidences) }
 
-            evidences.forEach { evidence ->
-                val treatmentCell = Paragraph("${evidence.treatment}:").setItalic().setBold().setFontSize(7f)
-                val evidenceLevelAndDateCell =
-                    Paragraph("Level ${evidence.evidenceLevel.name} (${evidence.efficacyDescriptionYear})").setFontSize(6f)
-                val cancerTypeCell = Paragraph(evidence.applicableCancerType.cancerType).setBold().setFontSize(6f)
-                val descriptionCell = Paragraph(evidence.efficacyDescription).setFontSize(6.5f)
+        cells.forEach(table::addCell)
 
-                if (evidence.direction.isResistant) {
-                    descriptionCell.setFontColor(PALETTE_RED)
-                }
-
-                eventDescriptionSubTable.addCell(Cells.createContentNoBorder(treatmentCell))
-                eventDescriptionSubTable.addCell(Cells.createContentNoBorder(evidenceLevelAndDateCell))
-                eventDescriptionSubTable.addCell(Cells.createContentNoBorder(cancerTypeCell))
-                eventDescriptionSubTable.addCell(Cells.createContentNoBorder(descriptionCell))
-            }
-            table.addCell(Cells.createContentNoBorder(eventDescriptionSubTable))
-        }
         return table
+    }
+
+    private fun createEventCells(event: String, evidences: List<TreatmentEvidence>): List<Cell> {
+        val eventHeaderCell = Cells.createContent(Paragraph(event).setBold().setFontSize(8f))
+        val eventSubTableCell = createEventSubTable(evidences)
+        return listOf(eventHeaderCell, eventSubTableCell)
+    }
+
+    private fun createEventSubTable(evidences: List<TreatmentEvidence>): Cell {
+        val subTable = Table(4).setWidth(width)
+        evidences.flatMap { createEvidenceCells(it) }.forEach(subTable::addCell)
+        return Cells.createContentNoBorder(subTable)
+    }
+
+    private fun createEvidenceCells(evidence: TreatmentEvidence): List<Cell> {
+        val treatmentCell = Cells.createContentNoBorder(Paragraph("${evidence.treatment}:").setItalic().setBold().setFontSize(7f))
+        val evidenceLevelAndDateCell = Cells.createContentNoBorder(
+            Paragraph("Level ${evidence.evidenceLevel.name} (${evidence.efficacyDescriptionYear})").setFontSize(6f)
+        )
+        val cancerTypeCell = Cells.createContentNoBorder(Paragraph(evidence.applicableCancerType.cancerType).setBold().setFontSize(6f))
+
+        val descriptionCell = Paragraph(evidence.efficacyDescription).setFontSize(6.5f)
+
+        if (evidence.direction.isResistant) {
+            descriptionCell.setFontColor(PALETTE_RED)
+        }
+
+        val descriptionContentCell = Cells.createContentNoBorder(descriptionCell)
+
+        return listOf(treatmentCell, evidenceLevelAndDateCell, cancerTypeCell, descriptionContentCell)
     }
 }
