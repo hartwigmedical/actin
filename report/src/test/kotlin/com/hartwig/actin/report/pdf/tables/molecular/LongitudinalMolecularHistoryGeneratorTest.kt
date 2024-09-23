@@ -6,13 +6,14 @@ import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.report.pdf.assertRow
 import com.hartwig.actin.report.pdf.getWrappedTable
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 val FIRST_TEST = TestMolecularFactory.createMinimalTestMolecularRecord().copy(date = LocalDate.of(2024, 7, 21))
 val SECOND_TEST = FIRST_TEST.copy(date = FIRST_TEST.date?.plusDays(1))
 val VARIANT = TestMolecularFactory.createProperVariant().copy(variantAlleleFrequency = 10.0)
+val FUSION = TestMolecularFactory.createProperFusion()
 
 class LongitudinalMolecularHistoryGeneratorTest {
 
@@ -40,7 +41,15 @@ class LongitudinalMolecularHistoryGeneratorTest {
                 )
             ), 1f
         )
-        assertRow(getWrappedTable(result), 0, "BRAF V600E\n(Tier I)", "Missense\nGain of function\nHotspot", "High", "Detected (VAF 10.0%)", "Not detected")
+        assertRow(
+            getWrappedTable(result),
+            0,
+            "BRAF V600E\n(Tier I)",
+            "Missense\nGain of function\nHotspot",
+            "High",
+            "Detected (VAF 10.0%)",
+            "Not detected"
+        )
     }
 
     @Test
@@ -70,6 +79,27 @@ class LongitudinalMolecularHistoryGeneratorTest {
             ), 1f
         )
         assertRow(getWrappedTable(result), 1, "MSI", "", "", "Stable", "Unstable", "")
+    }
+
+    @Test
+    fun `Should create row for fusion and mark as detected in correct tests`() {
+        val result = LongitudinalMolecularHistoryGenerator(
+            MolecularHistory(
+                listOf(
+                    FIRST_TEST.copy(drivers = Drivers(fusions = setOf(FUSION))),
+                    SECOND_TEST
+                )
+            ), 1f
+        )
+        assertRow(
+            getWrappedTable(result),
+            0,
+            "EML4 - ALK fusion\n(Tier I)",
+            "Gain of function",
+            "High",
+            "Detected",
+            "Not detected"
+        )
     }
 }
 

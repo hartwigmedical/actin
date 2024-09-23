@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
+import com.hartwig.actin.datamodel.molecular.Fusion
 import com.hartwig.actin.datamodel.molecular.GeneAlteration
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.Variant
@@ -13,14 +14,18 @@ object LongitudinalVariantInterpretation {
             is CopyNumber -> if (driver.type.isGain) "Amplification" else "Deletion"
             else -> null
         }
-        val proteinEffectText = proteinEffect(driver)
+        val proteinEffectText = proteinEffect(driver.proteinEffect)
         val hotspotText = if ((driver as? Variant)?.isHotspot == true) "Hotspot" else null
         val vusText = if (proteinEffectText == null && hotspotText == null && driver !is CopyNumber) "VUS" else null
         return listOfNotNull(mutationTypeText, proteinEffectText, hotspotText, vusText).joinToString("\n")
     }
 
-    private fun proteinEffect(driver: GeneAlteration): String? {
-        return when (driver.proteinEffect) {
+    fun interpret(fusion: Fusion): String {
+        return proteinEffect(fusion.proteinEffect) ?: "blah"
+    }
+
+    private fun proteinEffect(proteinEffect: ProteinEffect): String? {
+        return when (proteinEffect) {
             ProteinEffect.GAIN_OF_FUNCTION,
             ProteinEffect.GAIN_OF_FUNCTION_PREDICTED -> "Gain of function"
 

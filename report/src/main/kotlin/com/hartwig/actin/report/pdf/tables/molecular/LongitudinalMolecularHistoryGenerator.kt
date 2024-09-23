@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
+import com.hartwig.actin.datamodel.molecular.Fusion
 import com.hartwig.actin.datamodel.molecular.GeneAlteration
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
@@ -36,7 +37,11 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
 
         for (driver in allDrivers) {
             table.addCell(Cells.createContent("${driver.event}\n(Tier ${driver.evidenceTier()})"))
-            table.addCell(Cells.createContent(LongitudinalVariantInterpretation.interpret(driver as GeneAlteration)))
+            when (driver) {
+                is GeneAlteration -> table.addCell(Cells.createContent(LongitudinalVariantInterpretation.interpret(driver)))
+                is Fusion -> table.addCell(LongitudinalVariantInterpretation.interpret(driver))
+                else -> throw IllegalArgumentException("Unexpected driver type: ${driver::class.simpleName}")
+            }
             table.addCell(Cells.createContent(driver.driverLikelihood?.toString() ?: VALUE_NOT_AVAILABLE))
             for (test in sortedAndFilteredTests) {
                 if (testsByDriverEvent[driver.event]?.contains(test) == true) {
