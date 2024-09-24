@@ -54,10 +54,10 @@ class PanelFusionAnnotator(
             driverLikelihood = if (isReportable) fusionDriverLikelihood(driverType) else null,
             evidence = ClinicalEvidenceFactory.createNoEvidence(),
             isAssociatedWithDrugResistance = null,
-            geneTranscriptStart = null,
-            geneTranscriptEnd = null,
-            fusedExonUp = null,
-            fusedExonDown = null
+            geneTranscriptStart = sequencedFusion.transcriptUp,
+            geneTranscriptEnd = sequencedFusion.transcriptDown,
+            fusedExonUp = sequencedFusion.exonUp,
+            fusedExonDown = sequencedFusion.exonDown
         )
     }
 
