@@ -21,7 +21,7 @@ object LongitudinalVariantInterpretation {
     }
 
     fun interpret(fusion: Fusion): String {
-        return proteinEffect(fusion.proteinEffect) ?: "blah"
+        return proteinEffect(fusion.proteinEffect) ?: "N/A"
     }
 
     private fun proteinEffect(proteinEffect: ProteinEffect): String? {
