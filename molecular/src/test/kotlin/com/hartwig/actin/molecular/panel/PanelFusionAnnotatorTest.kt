@@ -229,6 +229,10 @@ class PanelFusionAnnotatorTest {
         )
     }
 
+    fun `Should annotate gene deletion`() {
+        
+    }
+
     private fun setupKnownFusionCache() {
         every { knownFusionCache.hasKnownFusion(GENE, OTHER_GENE) } returns true
     }
