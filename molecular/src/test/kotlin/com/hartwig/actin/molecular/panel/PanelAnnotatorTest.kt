@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.PriorSequencingTest
 import com.hartwig.actin.datamodel.clinical.SequencedAmplification
+import com.hartwig.actin.datamodel.clinical.SequencedDeletedGene
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
@@ -16,6 +17,7 @@ import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.GENE
 import com.hartwig.actin.molecular.HGVS_CODING
+import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
@@ -126,6 +128,31 @@ class PanelAnnotatorTest {
         assertThat(annotated.characteristics.ploidy).isEqualTo(2.0)
         assertThat(annotatedVariant.geneRole).isEqualTo(GeneRole.ONCO)
         assertThat(annotatedVariant.proteinEffect).isEqualTo(ProteinEffect.GAIN_OF_FUNCTION)
+    }
+
+    @Test
+    fun `Should annotate gene deletion with evidence from serve`() {
+        every { evidenceDatabase.geneAlterationForCopyNumber(any()) } returns HOTSPOT
+        every { evidenceDatabase.evidenceForCopyNumber(any()) } returns ACTIONABILITY_MATCH
+
+        val annotatedPanel = annotator.annotate(PriorSequencingTest(test = "test", deletedGenes = setOf(SequencedDeletedGene(GENE))))
+        assertThat(annotatedPanel.drivers.copyNumbers).isEqualTo(
+            setOf(
+                CopyNumber(
+                    type = CopyNumberType.LOSS,
+                    minCopies = 0,
+                    maxCopies = 0,
+                    isReportable = true,
+                    event = GENE,
+                    driverLikelihood = null,
+                    evidence = ClinicalEvidenceFactory.create(ACTIONABILITY_MATCH),
+                    gene = GENE,
+                    geneRole = GeneRole.ONCO,
+                    proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+                    isAssociatedWithDrugResistance = null,
+                )
+            )
+        )
     }
 
     private fun assertCopyNumber(annotatedVariant: CopyNumber) {
