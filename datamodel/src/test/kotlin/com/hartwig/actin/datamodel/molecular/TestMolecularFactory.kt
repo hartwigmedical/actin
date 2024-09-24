@@ -10,7 +10,6 @@ import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.orange.driver.DisruptionType
-import com.hartwig.actin.datamodel.molecular.orange.driver.ExtendedFusionDetails
 import com.hartwig.actin.datamodel.molecular.orange.driver.ExtendedVariantDetails
 import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.orange.driver.HomozygousDisruption
@@ -303,12 +302,10 @@ object TestMolecularFactory {
                 proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
                 driverType = FusionDriverType.KNOWN_PAIR,
                 isAssociatedWithDrugResistance = null,
-                extendedFusionDetails = ExtendedFusionDetails(
-                    geneTranscriptStart = "ENST00000318522",
-                    geneTranscriptEnd = "ENST00000389048",
-                    fusedExonUp = 6,
-                    fusedExonDown = 20,
-                )
+                geneTranscriptStart = "ENST00000318522",
+                geneTranscriptEnd = "ENST00000389048",
+                fusedExonUp = 6,
+                fusedExonDown = 20,
             ),
             viruses = proper.viruses + Virus(
                 isReportable = true,

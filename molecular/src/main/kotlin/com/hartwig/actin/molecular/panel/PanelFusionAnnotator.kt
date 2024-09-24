@@ -5,7 +5,6 @@ import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.molecular.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.Fusion
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
-import com.hartwig.actin.datamodel.molecular.orange.driver.ExtendedFusionDetails
 import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
@@ -55,7 +54,10 @@ class PanelFusionAnnotator(
             driverLikelihood = if (isReportable) fusionDriverLikelihood(driverType) else null,
             evidence = ClinicalEvidenceFactory.createNoEvidence(),
             isAssociatedWithDrugResistance = null,
-            extendedFusionDetails = null
+            geneTranscriptStart = null,
+            geneTranscriptEnd = null,
+            fusedExonUp = null,
+            fusedExonDown = null
         )
     }
 
@@ -100,12 +102,10 @@ class PanelFusionAnnotator(
             driverLikelihood = if (isReportable) fusionDriverLikelihood(driverType) else null,
             evidence = ClinicalEvidenceFactory.createNoEvidence(),
             isAssociatedWithDrugResistance = null,
-            extendedFusionDetails = ExtendedFusionDetails(
-                transcript,
-                transcript,
-                sequencedSkippedExons.exonStart,
-                sequencedSkippedExons.exonEnd
-            )
+            geneTranscriptStart = transcript,
+            geneTranscriptEnd = transcript,
+            fusedExonUp = sequencedSkippedExons.exonStart,
+            fusedExonDown = sequencedSkippedExons.exonEnd
         )
     }
 
@@ -138,8 +138,8 @@ class PanelFusionAnnotator(
         geneStart = fusion.geneStart,
         geneEnd = fusion.geneEnd,
         driverType = fusion.driverType,
-        fusedExonUp = fusion.extendedFusionDetails?.fusedExonUp,
-        fusedExonDown = fusion.extendedFusionDetails?.fusedExonDown
+        fusedExonUp = fusion.fusedExonUp,
+        fusedExonDown = fusion.fusedExonDown
     )
 
     companion object {

@@ -9,7 +9,6 @@ import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.treatment
-import com.hartwig.actin.datamodel.molecular.orange.driver.ExtendedFusionDetails
 import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.GENE
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
@@ -155,7 +154,10 @@ class PanelFusionAnnotatorTest {
                 driverType = FusionDriverType.KNOWN_PAIR,
                 proteinEffect = ProteinEffect.UNKNOWN,
                 isAssociatedWithDrugResistance = null,
-                extendedFusionDetails = null,
+                geneTranscriptStart = null,
+                geneTranscriptEnd = null,
+                fusedExonUp = null,
+                fusedExonDown = null,
                 event = "$GENE-$OTHER_GENE fusion",
                 isReportable = true,
                 driverLikelihood = DriverLikelihood.HIGH,
@@ -198,8 +200,11 @@ class PanelFusionAnnotatorTest {
                     driverType = FusionDriverType.KNOWN_PAIR_DEL_DUP,
                     proteinEffect = ProteinEffect.UNKNOWN,
                     isAssociatedWithDrugResistance = null,
-                    extendedFusionDetails = ExtendedFusionDetails(CANONICAL_TRANSCRIPT, CANONICAL_TRANSCRIPT, 2, 4),
-                    event = "$GENE skipped exons 2-4",
+                    geneTranscriptStart = CANONICAL_TRANSCRIPT,
+                    geneTranscriptEnd = CANONICAL_TRANSCRIPT,
+                    fusedExonUp = FUSED_EXON_UP,
+                    fusedExonDown = FUSED_EXON_DOWN,
+                    event = "$GENE skipped exons $FUSED_EXON_UP-$FUSED_EXON_DOWN",
                     isReportable = true,
                     driverLikelihood = DriverLikelihood.HIGH,
                     evidence = ClinicalEvidence()
@@ -223,8 +228,11 @@ class PanelFusionAnnotatorTest {
                     driverType = FusionDriverType.KNOWN_PAIR_DEL_DUP,
                     proteinEffect = ProteinEffect.UNKNOWN,
                     isAssociatedWithDrugResistance = null,
-                    extendedFusionDetails = ExtendedFusionDetails(TRANSCRIPT, TRANSCRIPT, FUSED_EXON_UP, FUSED_EXON_DOWN),
-                    event = "$GENE skipped exons 2-4",
+                    geneTranscriptStart = TRANSCRIPT,
+                    geneTranscriptEnd = TRANSCRIPT,
+                    fusedExonUp = FUSED_EXON_UP,
+                    fusedExonDown = FUSED_EXON_DOWN,
+                    event = "$GENE skipped exons $FUSED_EXON_UP-$FUSED_EXON_DOWN",
                     isReportable = true,
                     driverLikelihood = DriverLikelihood.HIGH,
                     evidence = ClinicalEvidence()
