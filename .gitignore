@@ -1,6 +1,7 @@
 # Ignore intellij project files
 *.iml
 .idea
+.DS_Store
 
 # Ignore target directories
 target

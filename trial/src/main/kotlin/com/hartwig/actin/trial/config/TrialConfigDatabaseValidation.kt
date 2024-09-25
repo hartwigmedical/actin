@@ -4,11 +4,11 @@ import com.hartwig.actin.trial.TrialConfigValidationError
 import com.hartwig.actin.trial.ValidationError
 
 data class TrialConfigDatabaseValidation(
-    val trialDefinitionValidationErrors: Set<TrialDefinitionValidationError>,
-    val cohortDefinitionValidationErrors: Set<CohortDefinitionValidationError>,
-    val inclusionCriteriaValidationErrors: Set<InclusionCriteriaValidationError>,
-    val inclusionCriteriaReferenceValidationErrors: Set<InclusionCriteriaReferenceValidationError>,
-    val unusedRuleToKeepValidationErrors: Set<UnusedRuleToKeepValidationError>
+    val trialDefinitionValidationErrors: Set<TrialDefinitionValidationError> = emptySet(),
+    val cohortDefinitionValidationErrors: Set<CohortDefinitionValidationError> = emptySet(),
+    val inclusionCriteriaValidationErrors: Set<InclusionCriteriaValidationError> = emptySet(),
+    val inclusionCriteriaReferenceValidationErrors: Set<InclusionCriteriaReferenceValidationError> = emptySet(),
+    val unusedRuleToKeepValidationErrors: Set<UnusedRuleToKeepValidationError> = emptySet()
 ) {
     fun hasErrors(): Boolean {
         return listOf(

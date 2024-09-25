@@ -40,7 +40,10 @@ class TrialIngestion(
 
         val trialStatusDatabaseValidation = trialStatusConfigInterpreter.validation()
         val trialConfigDatabaseValidation = trialStatusConfigInterpreter.appendTrialConfigValidation(trialConfigModel.validation())
-        val unusedRules = EligibilityRuleUsageEvaluator.evaluate(trials, trialConfigModel.unusedRulesToKeep).map { it.name }.toSet()
+        val unusedRules = if (!trialConfigModel.validation().hasErrors()) EligibilityRuleUsageEvaluator.evaluate(
+            trials,
+            trialConfigModel.unusedRulesToKeep
+        ).map { it.name }.toSet() else emptySet()
 
         return TrialIngestionResult(
             TrialIngestionStatus.from(trialConfigDatabaseValidation, trialStatusDatabaseValidation, unusedRules),

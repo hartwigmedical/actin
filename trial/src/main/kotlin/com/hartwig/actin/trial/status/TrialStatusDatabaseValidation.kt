@@ -3,8 +3,8 @@ package com.hartwig.actin.trial.status
 import com.hartwig.actin.trial.ValidationError
 
 data class TrialStatusDatabaseValidation(
-    val trialStatusConfigValidationErrors: List<TrialStatusConfigValidationError>,
-    val trialStatusDatabaseValidationErrors: List<TrialStatusDatabaseValidationError>
+    val trialStatusConfigValidationErrors: List<TrialStatusConfigValidationError> = emptyList(),
+    val trialStatusDatabaseValidationErrors: List<TrialStatusDatabaseValidationError> = emptyList()
 ) {
     fun hasErrors(): Boolean {
         return (trialStatusConfigValidationErrors + trialStatusDatabaseValidationErrors).isNotEmpty()
