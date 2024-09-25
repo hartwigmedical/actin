@@ -143,7 +143,7 @@ class PanelAnnotatorTest {
                     minCopies = 0,
                     maxCopies = 0,
                     isReportable = true,
-                    event = "$GENE copy number",
+                    event = GENE,
                     driverLikelihood = null,
                     evidence = ClinicalEvidenceFactory.create(ACTIONABILITY_MATCH),
                     gene = GENE,
