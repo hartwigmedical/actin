@@ -144,7 +144,7 @@ class PanelAnnotatorTest {
                     maxCopies = 0,
                     isReportable = true,
                     event = GENE,
-                    driverLikelihood = null,
+                    driverLikelihood = DriverLikelihood.HIGH,
                     evidence = ClinicalEvidenceFactory.create(ACTIONABILITY_MATCH),
                     gene = GENE,
                     geneRole = GeneRole.ONCO,

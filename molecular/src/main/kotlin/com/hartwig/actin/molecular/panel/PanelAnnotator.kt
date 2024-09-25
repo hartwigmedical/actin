@@ -91,7 +91,7 @@ class PanelAnnotator(
         isAssociatedWithDrugResistance = null,
         isReportable = true,
         event = sequencedDeletedGene.gene,
-        driverLikelihood = null,
+        driverLikelihood = DriverLikelihood.HIGH,
         evidence = ClinicalEvidenceFactory.createNoEvidence(),
         type = CopyNumberType.LOSS,
         minCopies = 0,
