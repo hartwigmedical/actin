@@ -32,7 +32,7 @@ class TrialStatusConfigInterpreter(
             cohortDefinitionValidationErrors = trialConfigDatabaseValidation.cohortDefinitionValidationErrors + cohortDefinitionValidationErrors,
             inclusionCriteriaValidationErrors = trialConfigDatabaseValidation.inclusionCriteriaValidationErrors,
             inclusionCriteriaReferenceValidationErrors = trialConfigDatabaseValidation.inclusionCriteriaReferenceValidationErrors,
-            unusedRuleToKeepValidationErrors = trialConfigDatabaseValidation.unusedRuleToKeepValidationErrors
+            unusedRulesToKeepValidationErrors = trialConfigDatabaseValidation.unusedRulesToKeepValidationErrors
         )
     }
 

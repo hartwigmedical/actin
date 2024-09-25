@@ -10,7 +10,7 @@ import com.hartwig.actin.trial.config.TestCohortDefinitionConfigFactory
 import com.hartwig.actin.trial.config.TestTrialDefinitionConfigFactory
 import com.hartwig.actin.trial.config.TrialConfigDatabaseValidation
 import com.hartwig.actin.trial.config.TrialDefinitionValidationError
-import com.hartwig.actin.trial.config.UnusedRuleToKeepValidationError
+import com.hartwig.actin.trial.config.UnusedRulesToKeepValidationError
 import com.hartwig.actin.trial.status.TrialStatusConfigValidationError
 import com.hartwig.actin.trial.status.TrialStatusDatabaseValidation
 import com.hartwig.actin.trial.status.TrialStatusDatabaseValidationError
@@ -59,7 +59,7 @@ class TrialIngestionResultTest {
                         config = inclusionReference, message = "Reference 'I-01' defined on non-existing trial: 'does not exist'"
                     )
                 ),
-                setOf(UnusedRuleToKeepValidationError(config = "invalid rule"))
+                setOf(UnusedRulesToKeepValidationError(config = "invalid rule"))
             ),
             trials = emptyList(),
             unusedRules = setOf("unused rule"),

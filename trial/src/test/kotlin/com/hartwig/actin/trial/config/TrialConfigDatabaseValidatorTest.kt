@@ -59,7 +59,7 @@ class TrialConfigDatabaseValidatorTest {
     @Test
     fun `Should detect invalid unused rules to keep`() {
         val validation = validator.validate(createInvalidTrialConfigDatabase())
-        assertThat(validation.unusedRuleToKeepValidationErrors).containsExactly(UnusedRuleToKeepValidationError(config = "invalid rule"))
+        assertThat(validation.unusedRulesToKeepValidationErrors).containsExactly(UnusedRulesToKeepValidationError(config = "invalid rule"))
     }
 
     companion object {

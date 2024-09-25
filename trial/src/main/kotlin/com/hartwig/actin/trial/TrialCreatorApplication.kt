@@ -101,7 +101,7 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
             printValidationErrors(result.trialConfigDatabaseValidation.trialDefinitionValidationErrors)
             printValidationErrors(result.trialConfigDatabaseValidation.inclusionCriteriaReferenceValidationErrors)
             printValidationErrors(result.trialConfigDatabaseValidation.inclusionCriteriaValidationErrors)
-            printValidationErrors(result.trialConfigDatabaseValidation.unusedRuleToKeepValidationErrors)
+            printValidationErrors(result.trialConfigDatabaseValidation.unusedRulesToKeepValidationErrors)
         }
 
         if (result.trialStatusDatabaseValidation.hasErrors()) {

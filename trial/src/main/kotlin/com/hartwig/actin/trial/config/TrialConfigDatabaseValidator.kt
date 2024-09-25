@@ -21,7 +21,7 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
             inclusionCriteriaReferenceValidationErrors = validateInclusionCriteriaReferences(
                 trialIds, database.inclusionCriteriaReferenceConfigs
             ),
-            unusedRuleToKeepValidationErrors = validateRulesToKeep(database.unusedRulesToKeep)
+            unusedRulesToKeepValidationErrors = validateRulesToKeep(database.unusedRulesToKeep)
         )
     }
 
@@ -149,14 +149,14 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
         return configs.groupBy(TrialConfig::trialId)
     }
 
-    private fun validateRulesToKeep(ruleNames: List<String>): Set<UnusedRuleToKeepValidationError> {
+    private fun validateRulesToKeep(ruleNames: List<String>): Set<UnusedRulesToKeepValidationError> {
         return ruleNames.mapNotNull { rule ->
             val trimmed = rule.trim()
             try {
                 EligibilityRule.valueOf(trimmed)
                 null
             } catch (exc: IllegalArgumentException) {
-                UnusedRuleToKeepValidationError(trimmed)
+                UnusedRulesToKeepValidationError(trimmed)
             }
         }.toSet()
     }

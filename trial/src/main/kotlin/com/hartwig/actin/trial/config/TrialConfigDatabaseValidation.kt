@@ -8,7 +8,7 @@ data class TrialConfigDatabaseValidation(
     val cohortDefinitionValidationErrors: Set<CohortDefinitionValidationError> = emptySet(),
     val inclusionCriteriaValidationErrors: Set<InclusionCriteriaValidationError> = emptySet(),
     val inclusionCriteriaReferenceValidationErrors: Set<InclusionCriteriaReferenceValidationError> = emptySet(),
-    val unusedRuleToKeepValidationErrors: Set<UnusedRuleToKeepValidationError> = emptySet()
+    val unusedRulesToKeepValidationErrors: Set<UnusedRulesToKeepValidationError> = emptySet()
 ) {
     fun hasErrors(): Boolean {
         return listOf(
@@ -16,7 +16,7 @@ data class TrialConfigDatabaseValidation(
             cohortDefinitionValidationErrors,
             inclusionCriteriaValidationErrors,
             inclusionCriteriaReferenceValidationErrors,
-            unusedRuleToKeepValidationErrors
+            unusedRulesToKeepValidationErrors
         ).any { it.isNotEmpty() }
     }
 }
@@ -57,7 +57,7 @@ data class InclusionCriteriaReferenceValidationError(
     }
 }
 
-data class UnusedRuleToKeepValidationError(
+data class UnusedRulesToKeepValidationError(
     override val config: String
 ) : ValidationError<String> {
     override val message = config
