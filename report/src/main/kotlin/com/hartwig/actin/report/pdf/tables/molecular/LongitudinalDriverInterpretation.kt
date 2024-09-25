@@ -6,7 +6,7 @@ import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.Variant
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 
-object LongitudinalVariantInterpretation {
+object LongitudinalDriverInterpretation {
 
     fun interpret(driver: GeneAlteration): String {
         val mutationTypeText = when (driver) {

@@ -38,8 +38,8 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
         for (driver in allDrivers) {
             table.addCell(Cells.createContent("${driver.event}\n(Tier ${driver.evidenceTier()})"))
             when (driver) {
-                is GeneAlteration -> table.addCell(Cells.createContent(LongitudinalVariantInterpretation.interpret(driver)))
-                is Fusion -> table.addCell(Cells.createContent(LongitudinalVariantInterpretation.interpret(driver)))
+                is GeneAlteration -> table.addCell(Cells.createContent(LongitudinalDriverInterpretation.interpret(driver)))
+                is Fusion -> table.addCell(Cells.createContent(LongitudinalDriverInterpretation.interpret(driver)))
                 else -> throw IllegalArgumentException("Unexpected driver type: ${driver::class.simpleName}")
             }
             table.addCell(Cells.createContent(driver.driverLikelihood?.toString() ?: VALUE_NOT_AVAILABLE))
