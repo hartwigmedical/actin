@@ -113,7 +113,16 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
 
     private fun fusions(results: Set<ProvidedMolecularTestResult>) =
         results.filter { result -> result.fusionGeneUp != null || result.fusionGeneDown != null }
-            .map { result -> SequencedFusion(result.fusionGeneUp, result.fusionGeneDown) }.toSet()
+            .map { result ->
+                SequencedFusion(
+                    result.fusionGeneUp,
+                    result.fusionGeneDown,
+                    result.fusionTranscriptUp,
+                    result.fusionTranscriptDown,
+                    result.fusionExonUp,
+                    result.fusionExonDown
+                )
+            }.toSet()
 
     private fun variants(results: Set<ProvidedMolecularTestResult>) =
         results.filter { result -> result.hgvsCodingImpact != null || result.hgvsProteinImpact != null }

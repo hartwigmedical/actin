@@ -43,14 +43,15 @@ private val BASE_FUSION = TestFusionFactory.createMinimal().copy(
     geneStart = CORRECT_FUSION_GENE,
     geneEnd = "Fusion partner",
     driverLikelihood = DriverLikelihood.HIGH,
-    extendedFusionDetails = TestFusionFactory.createMinimalExtended().copy(fusedExonUp = 5, fusedExonDown = 3)
+    fusedExonUp = 3,
+    fusedExonDown = 5
 )
 
 private val BASE_EXON_SKIPPING_FUSION = BASE_FUSION.copy(
     geneStart = CORRECT_EXON_SKIPPING_GENE,
     geneEnd = CORRECT_EXON_SKIPPING_GENE,
-    extendedFusionDetails = TestFusionFactory.createMinimalExtended()
-        .copy(fusedExonUp = CORRECT_EXON_SKIPPING_EXON.minus(1), fusedExonDown = CORRECT_EXON_SKIPPING_EXON.plus(1))
+    fusedExonUp = CORRECT_EXON_SKIPPING_EXON.minus(1),
+    fusedExonDown = CORRECT_EXON_SKIPPING_EXON.plus(1)
 )
 
 
@@ -152,10 +153,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
 
     @Test
     fun `Should fail for incorrect exon skipping variant`() {
-        val incorrectExonSkippingFusion =
-            BASE_EXON_SKIPPING_FUSION.copy(
-                extendedFusionDetails = TestFusionFactory.createMinimalExtended().copy(fusedExonUp = 1, fusedExonDown = 3)
-            )
+        val incorrectExonSkippingFusion = BASE_EXON_SKIPPING_FUSION.copy(fusedExonUp = 1, fusedExonDown = 3)
         evaluateFunctions(EvaluationResult.FAIL, MolecularTestFactory.withFusion(incorrectExonSkippingFusion))
     }
 
