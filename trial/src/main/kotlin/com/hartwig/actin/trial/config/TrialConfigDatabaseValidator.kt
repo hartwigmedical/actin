@@ -97,7 +97,7 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
         val duplicatedTrialFileIds = duplicatedConfigsByKey(trialDefinitions) { trialDef -> TrialJson.trialFileId(trialDef.trialId) }
             .map { TrialDefinitionValidationError(it.second, "Duplicated trial file id of ${it.first}") }
 
-        val invalidPhases = trialDefinitions.filter { it.phase != null && TrialPhase.fromString(it.phase) == null }
+        val invalidPhases = trialDefinitions.filter { it.phase != null && TrialPhase.fromString(it.phase!!) == null }
             .map { TrialDefinitionValidationError(it, "Invalid phase: '${it.phase}'") }
 
         return (duplicatedTrialIds + duplicatedTrialFileIds + invalidPhases).toSet()
@@ -126,7 +126,7 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
         val cohortIdsByTrial = cohortDefinitions.filter { it.trialId in trialIds }
             .groupBy(CohortDefinitionConfig::trialId, CohortDefinitionConfig::cohortId)
             .mapValues { it.value.toSet() }
-        
+
         return trialIds.associateWith { emptySet<String>() } + cohortIdsByTrial
     }
 

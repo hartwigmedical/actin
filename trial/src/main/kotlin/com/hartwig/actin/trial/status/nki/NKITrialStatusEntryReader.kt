@@ -25,7 +25,7 @@ class NKITrialStatusEntryReader : TrialStatusEntryReader {
 
 
     override fun read(inputPath: String): List<TrialStatusEntry> {
-        return mapper.readValue(File("$inputPath/$TRIALS_JSON"), object : TypeReference<List<NKITrialStatus>>() {})
+        return mapper.readValue(File("$inputPath/$TRIALS_JSON"), object : TypeReference<List<NkiTrialStatus>>() {})
             .filter { it.studyStatus != null && it.studyMetc != null }
             .filter { it.studyStatus in STATUSES_TO_INCLUDE }
             .map {

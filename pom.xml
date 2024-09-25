@@ -29,6 +29,7 @@
         <actin-transvar.version>0.4.0</actin-transvar.version>
         <actin-pave-lite.version>0.4.0</actin-pave-lite.version>
         <pave.version>1.6</pave.version>
+        <trial-api.version>local-SNAPSHOT</trial-api.version>
 
         <!-- KD: Even though all code is in kotlin, the jooq code generator generates java code that needs to be compiled -->
         <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
@@ -317,6 +318,11 @@
                 <artifactId>jsonschema-generator</artifactId>
                 <version>${jsonschema-generator.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.hartwig.actin</groupId>
+                <artifactId>trial-api-common</artifactId>
+                <version>${trial-api.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -325,12 +331,14 @@
                 <scope>runtime</scope>
             </dependency>
 
+            <!--
             <dependency>
                 <groupId>org.immutables</groupId>
                 <artifactId>value</artifactId>
                 <version>${immutables.version}</version>
                 <scope>provided</scope>
             </dependency>
+            -->
 
             <dependency>
                 <groupId>junit</groupId>

@@ -179,7 +179,7 @@ class TrialStatusConfigInterpreter(
             )
             InterpretedCohortStatus(open = false, slotsAvailable = false)
         } else {
-            InterpretedCohortStatus(open = cohortConfig.open, slotsAvailable = cohortConfig.slotsAvailable)
+            InterpretedCohortStatus(open = cohortConfig.open!!, slotsAvailable = cohortConfig.slotsAvailable!!)
         }
     }
 
