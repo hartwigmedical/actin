@@ -225,12 +225,10 @@ object TestMolecularFactory {
         proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
         driverType = FusionDriverType.KNOWN_PAIR,
         isAssociatedWithDrugResistance = null,
-        extendedFusionDetails = ExtendedFusionDetails(
-            geneTranscriptStart = "ENST00000318522",
-            geneTranscriptEnd = "ENST00000389048",
-            fusedExonUp = 6,
-            fusedExonDown = 20,
-        )
+        geneTranscriptStart = "ENST00000318522",
+        geneTranscriptEnd = "ENST00000389048",
+        fusedExonUp = 6,
+        fusedExonDown = 20,
     )
 
     private fun createProperTestImmunology(): MolecularImmunology {
