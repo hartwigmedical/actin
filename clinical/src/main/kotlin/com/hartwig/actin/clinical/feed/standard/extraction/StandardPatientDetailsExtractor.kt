@@ -15,7 +15,7 @@ class StandardPatientDetailsExtractor : StandardDataExtractor<PatientDetails> {
                 gender = Gender.valueOf(enumeratedInput<ProvidedGender>(ehrPatientRecord.patientDetails.gender).toString()),
                 birthYear = ehrPatientRecord.patientDetails.birthYear,
                 registrationDate = ehrPatientRecord.patientDetails.registrationDate,
-                hasHartwigSequencing = ehrPatientRecord.patientDetails.hartwigMolecularDataPending
+                hasHartwigSequencing = ehrPatientRecord.patientDetails.hartwigMolecularDataExpected
             ), CurationExtractionEvaluation()
         )
     }

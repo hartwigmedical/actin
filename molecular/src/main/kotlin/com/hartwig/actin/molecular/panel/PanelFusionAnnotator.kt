@@ -5,7 +5,6 @@ import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.molecular.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.Fusion
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
-import com.hartwig.actin.datamodel.molecular.orange.driver.ExtendedFusionDetails
 import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
@@ -55,7 +54,10 @@ class PanelFusionAnnotator(
             driverLikelihood = if (isReportable) fusionDriverLikelihood(driverType) else null,
             evidence = ClinicalEvidenceFactory.createNoEvidence(),
             isAssociatedWithDrugResistance = null,
-            extendedFusionDetails = null
+            geneTranscriptStart = sequencedFusion.transcriptUp,
+            geneTranscriptEnd = sequencedFusion.transcriptDown,
+            fusedExonUp = sequencedFusion.exonUp,
+            fusedExonDown = sequencedFusion.exonDown
         )
     }
 
@@ -100,12 +102,10 @@ class PanelFusionAnnotator(
             driverLikelihood = if (isReportable) fusionDriverLikelihood(driverType) else null,
             evidence = ClinicalEvidenceFactory.createNoEvidence(),
             isAssociatedWithDrugResistance = null,
-            extendedFusionDetails = ExtendedFusionDetails(
-                transcript,
-                transcript,
-                sequencedSkippedExons.exonStart,
-                sequencedSkippedExons.exonEnd
-            )
+            geneTranscriptStart = transcript,
+            geneTranscriptEnd = transcript,
+            fusedExonUp = sequencedSkippedExons.exonStart,
+            fusedExonDown = sequencedSkippedExons.exonEnd
         )
     }
 
@@ -118,8 +118,9 @@ class PanelFusionAnnotator(
     }
 
     private fun annotateFusion(fusion: Fusion): Fusion {
-        val evidence = ClinicalEvidenceFactory.create(evidenceDatabase.evidenceForFusion(createFusionMatchCriteria(fusion)))
-        val knownFusion = evidenceDatabase.lookupKnownFusion(createFusionMatchCriteria(fusion))
+        val fusionMatchCriteria = createFusionMatchCriteria(fusion)
+        val evidence = ClinicalEvidenceFactory.create(evidenceDatabase.evidenceForFusion(fusionMatchCriteria))
+        val knownFusion = evidenceDatabase.lookupKnownFusion(fusionMatchCriteria)
 
         val proteinEffect = if (knownFusion == null) ProteinEffect.UNKNOWN else {
             GeneAlterationFactory.convertProteinEffect(knownFusion.proteinEffect())
@@ -137,7 +138,9 @@ class PanelFusionAnnotator(
         isReportable = fusion.isReportable,
         geneStart = fusion.geneStart,
         geneEnd = fusion.geneEnd,
-        driverType = fusion.driverType
+        driverType = fusion.driverType,
+        fusedExonUp = fusion.fusedExonUp,
+        fusedExonDown = fusion.fusedExonDown
     )
 
     companion object {

@@ -90,10 +90,10 @@ class GeneHasVariantInExonRangeOfType(
         }
     }
 
-    private fun exonsWithinRange(it: Fusion) = it.extendedFusionDetails?.let { e ->
+    private fun exonsWithinRange(fusion: Fusion): Boolean {
         val range = IntRange(minExon, maxExon)
-        return range.contains(e.fusedExonUp) && range.contains(e.fusedExonDown)
-    } ?: false
+        return range.contains(fusion.fusedExonUp) && range.contains(fusion.fusedExonDown)
+    }
 
     private fun evaluatePotentialWarns(
         canonicalUnreportableVariantMatches: Set<String>,

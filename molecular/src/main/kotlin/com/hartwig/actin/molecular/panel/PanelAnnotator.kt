@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.PriorSequencingTest
 import com.hartwig.actin.datamodel.clinical.SequencedAmplification
+import com.hartwig.actin.datamodel.clinical.SequencedDeletedGene
 import com.hartwig.actin.datamodel.molecular.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.Drivers
 import com.hartwig.actin.datamodel.molecular.ExperimentType
@@ -34,6 +35,7 @@ class PanelAnnotator(
     override fun annotate(input: PriorSequencingTest): PanelRecord {
         val annotatedVariants = panelVariantAnnotator.annotate(input.variants)
         val annotatedAmplifications = input.amplifications.map(::inferredCopyNumber).map(::annotatedInferredCopyNumber)
+        val annotatedDeletions = input.deletedGenes.map(::inferredCopyNumber).map(::annotatedInferredCopyNumber)
         val annotatedFusions = panelFusionAnnotator.annotate(input.fusions, input.skippedExons)
 
         return PanelRecord(
@@ -43,7 +45,7 @@ class PanelAnnotator(
             date = input.date,
             drivers = Drivers(
                 variants = annotatedVariants,
-                copyNumbers = annotatedAmplifications.toSet(),
+                copyNumbers = annotatedAmplifications.toSet() + annotatedDeletions.toSet(),
                 fusions = annotatedFusions,
             ),
             characteristics = MolecularCharacteristics(
@@ -80,6 +82,20 @@ class PanelAnnotator(
         type = CopyNumberType.FULL_GAIN,
         minCopies = MIN_COPY_NUMBER,
         maxCopies = MAX_COPY_NUMBER
+    )
+
+    private fun inferredCopyNumber(sequencedDeletedGene: SequencedDeletedGene) = CopyNumber(
+        gene = sequencedDeletedGene.gene,
+        geneRole = GeneRole.UNKNOWN,
+        proteinEffect = ProteinEffect.UNKNOWN,
+        isAssociatedWithDrugResistance = null,
+        isReportable = true,
+        event = sequencedDeletedGene.gene,
+        driverLikelihood = DriverLikelihood.HIGH,
+        evidence = ClinicalEvidenceFactory.createNoEvidence(),
+        type = CopyNumberType.LOSS,
+        minCopies = 0,
+        maxCopies = 0
     )
 
     companion object {

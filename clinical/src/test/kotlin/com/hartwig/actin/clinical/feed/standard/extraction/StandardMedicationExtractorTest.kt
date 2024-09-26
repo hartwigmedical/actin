@@ -70,7 +70,7 @@ class StandardMedicationExtractorTest {
             gender = "MALE",
             registrationDate = LocalDate.of(2024, 2, 26),
             hashedId = "hashedId",
-            hartwigMolecularDataPending = false
+            hartwigMolecularDataExpected = false
         ),
         medications = listOf(providedMedication),
         tumorDetails = ProvidedTumorDetail(

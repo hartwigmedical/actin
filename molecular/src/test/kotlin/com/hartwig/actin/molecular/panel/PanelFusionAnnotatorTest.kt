@@ -9,7 +9,6 @@ import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.treatment
-import com.hartwig.actin.datamodel.molecular.orange.driver.ExtendedFusionDetails
 import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.GENE
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
@@ -31,21 +30,40 @@ import com.hartwig.serve.datamodel.EvidenceLevel as ServeEvidenceLevel
 private val EMPTY_MATCH = ActionabilityMatch(emptyList(), emptyList())
 private const val TRANSCRIPT = "transcript"
 private const val CANONICAL_TRANSCRIPT = "canonical_transcript"
-private const val OTHER_GENE = "other_gene"
-private val ARCHER_FUSION = SequencedFusion(GENE, OTHER_GENE)
+private const val GENE_START = "gene_start"
+private const val GENE_END = "gene_end"
+private const val FUSED_EXON_UP = 2
+private const val FUSED_EXON_DOWN = 4
+private const val TRANSCRIPT_START = "transcript_start"
+private const val TRANSCRIPT_END = "transcript_end"
+private val SEQUENCED_FUSION = SequencedFusion(GENE_START, GENE_END)
+private val FULLY_SPECIFIED_SEQUENCED_FUSION =
+    SequencedFusion(GENE_START, GENE_END, TRANSCRIPT_START, TRANSCRIPT_END, FUSED_EXON_UP, FUSED_EXON_DOWN)
 
-private val FUSION_MATCHING_CRITERIA = FusionMatchCriteria(
+
+private val EXON_SKIP_FUSION_MATCHING_CRITERIA = FusionMatchCriteria(
     isReportable = true,
     geneStart = GENE,
     geneEnd = GENE,
-    driverType = FusionDriverType.KNOWN_PAIR_DEL_DUP
+    driverType = FusionDriverType.KNOWN_PAIR_DEL_DUP,
+    fusedExonUp = FUSED_EXON_UP,
+    fusedExonDown = FUSED_EXON_DOWN
 )
 
 private val FUSION_MATCH_CRITERIA = FusionMatchCriteria(
     isReportable = true,
-    geneStart = GENE,
-    geneEnd = OTHER_GENE,
+    geneStart = GENE_START,
+    geneEnd = GENE_END,
     driverType = FusionDriverType.KNOWN_PAIR
+)
+
+private val FULLY_SPECIFIED_FUSION_MATCH_CRITERIA = FusionMatchCriteria(
+    isReportable = true,
+    geneStart = GENE_START,
+    geneEnd = GENE_END,
+    driverType = FusionDriverType.KNOWN_PAIR,
+    fusedExonUp = FUSED_EXON_UP,
+    fusedExonDown = FUSED_EXON_DOWN
 )
 
 private val ACTIONABILITY_MATCH = ActionabilityMatch(
@@ -140,19 +158,57 @@ class PanelFusionAnnotatorTest {
     }
 
     @Test
-    fun `Should annotate fusion`() {
+    fun `Should annotate fusion specified with genes only`() {
         setupKnownFusionCache()
-        setupEvidenceForFusion()
-        val annotated = annotator.annotate(setOf(ARCHER_FUSION), emptySet())
+        setupEvidenceForFusion(FUSION_MATCH_CRITERIA)
+        val annotated = annotator.annotate(setOf(SEQUENCED_FUSION), emptySet())
         assertThat(annotated).containsExactly(
             Fusion(
-                geneStart = GENE,
-                geneEnd = OTHER_GENE,
+                geneStart = GENE_START,
+                geneEnd = GENE_END,
                 driverType = FusionDriverType.KNOWN_PAIR,
                 proteinEffect = ProteinEffect.UNKNOWN,
                 isAssociatedWithDrugResistance = null,
-                extendedFusionDetails = null,
-                event = "$GENE-$OTHER_GENE fusion",
+                geneTranscriptStart = null,
+                geneTranscriptEnd = null,
+                fusedExonUp = null,
+                fusedExonDown = null,
+                event = "$GENE_START-$GENE_END fusion",
+                isReportable = true,
+                driverLikelihood = DriverLikelihood.HIGH,
+                evidence = ClinicalEvidence(
+                    treatmentEvidence = setOf(
+                        treatment(
+                            treatment = "intervention",
+                            evidenceLevel = EvidenceLevel.A,
+                            evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
+                            direction = EvidenceDirection(hasPositiveResponse = true, isCertain = true, hasBenefit = true),
+                            onLabel = true,
+                            isCategoryEvent = true
+                        )
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should annotate fully specified fusion`() {
+        setupKnownFusionCache()
+        setupEvidenceForFusion(FULLY_SPECIFIED_FUSION_MATCH_CRITERIA)
+        val annotated = annotator.annotate(setOf(FULLY_SPECIFIED_SEQUENCED_FUSION), emptySet())
+        assertThat(annotated).containsExactly(
+            Fusion(
+                geneStart = GENE_START,
+                geneEnd = GENE_END,
+                driverType = FusionDriverType.KNOWN_PAIR,
+                proteinEffect = ProteinEffect.UNKNOWN,
+                isAssociatedWithDrugResistance = null,
+                geneTranscriptStart = TRANSCRIPT_START,
+                geneTranscriptEnd = TRANSCRIPT_END,
+                fusedExonUp = FUSED_EXON_UP,
+                fusedExonDown = FUSED_EXON_DOWN,
+                event = "$GENE_START-$GENE_END fusion",
                 isReportable = true,
                 driverLikelihood = DriverLikelihood.HIGH,
                 evidence = ClinicalEvidence(
@@ -194,8 +250,11 @@ class PanelFusionAnnotatorTest {
                     driverType = FusionDriverType.KNOWN_PAIR_DEL_DUP,
                     proteinEffect = ProteinEffect.UNKNOWN,
                     isAssociatedWithDrugResistance = null,
-                    extendedFusionDetails = ExtendedFusionDetails(CANONICAL_TRANSCRIPT, CANONICAL_TRANSCRIPT, 2, 4),
-                    event = "$GENE skipped exons 2-4",
+                    geneTranscriptStart = CANONICAL_TRANSCRIPT,
+                    geneTranscriptEnd = CANONICAL_TRANSCRIPT,
+                    fusedExonUp = FUSED_EXON_UP,
+                    fusedExonDown = FUSED_EXON_DOWN,
+                    event = "$GENE skipped exons $FUSED_EXON_UP-$FUSED_EXON_DOWN",
                     isReportable = true,
                     driverLikelihood = DriverLikelihood.HIGH,
                     evidence = ClinicalEvidence()
@@ -209,7 +268,7 @@ class PanelFusionAnnotatorTest {
         setupKnownFusionCacheForExonDeletion()
         setupEvidenceDatabaseWithNoEvidence()
 
-        val panelSkippedExonsExtraction = setOf(SequencedSkippedExons(GENE, 2, 4, TRANSCRIPT))
+        val panelSkippedExonsExtraction = setOf(SequencedSkippedExons(GENE, FUSED_EXON_UP, FUSED_EXON_DOWN, TRANSCRIPT))
         val fusions = annotator.annotate(emptySet(), panelSkippedExonsExtraction)
         assertThat(fusions).isEqualTo(
             setOf(
@@ -219,8 +278,11 @@ class PanelFusionAnnotatorTest {
                     driverType = FusionDriverType.KNOWN_PAIR_DEL_DUP,
                     proteinEffect = ProteinEffect.UNKNOWN,
                     isAssociatedWithDrugResistance = null,
-                    extendedFusionDetails = ExtendedFusionDetails(TRANSCRIPT, TRANSCRIPT, 2, 4),
-                    event = "$GENE skipped exons 2-4",
+                    geneTranscriptStart = TRANSCRIPT,
+                    geneTranscriptEnd = TRANSCRIPT,
+                    fusedExonUp = FUSED_EXON_UP,
+                    fusedExonDown = FUSED_EXON_DOWN,
+                    event = "$GENE skipped exons $FUSED_EXON_UP-$FUSED_EXON_DOWN",
                     isReportable = true,
                     driverLikelihood = DriverLikelihood.HIGH,
                     evidence = ClinicalEvidence()
@@ -230,12 +292,12 @@ class PanelFusionAnnotatorTest {
     }
 
     private fun setupKnownFusionCache() {
-        every { knownFusionCache.hasKnownFusion(GENE, OTHER_GENE) } returns true
+        every { knownFusionCache.hasKnownFusion(GENE_START, GENE_END) } returns true
     }
 
-    private fun setupEvidenceForFusion() {
-        every { evidenceDatabase.lookupKnownFusion(FUSION_MATCH_CRITERIA) } returns null
-        every { evidenceDatabase.evidenceForFusion(FUSION_MATCH_CRITERIA) } returns ACTIONABILITY_MATCH
+    private fun setupEvidenceForFusion(fusionMatchCriteria: FusionMatchCriteria) {
+        every { evidenceDatabase.lookupKnownFusion(fusionMatchCriteria) } returns null
+        every { evidenceDatabase.evidenceForFusion(fusionMatchCriteria) } returns ACTIONABILITY_MATCH
     }
 
     private fun setupKnownFusionCacheForExonDeletion() {
@@ -246,8 +308,8 @@ class PanelFusionAnnotatorTest {
     }
 
     private fun setupEvidenceDatabaseWithNoEvidence() {
-        every { evidenceDatabase.lookupKnownFusion(FUSION_MATCHING_CRITERIA) } returns null
-        every { evidenceDatabase.evidenceForFusion(FUSION_MATCHING_CRITERIA) } returns ActionabilityMatch(
+        every { evidenceDatabase.lookupKnownFusion(EXON_SKIP_FUSION_MATCHING_CRITERIA) } returns null
+        every { evidenceDatabase.evidenceForFusion(EXON_SKIP_FUSION_MATCHING_CRITERIA) } returns ActionabilityMatch(
             onLabelEvents = emptyList(),
             offLabelEvents = emptyList()
         )
