@@ -117,6 +117,7 @@ object TestClinicalEvidenceFactory {
         direction,
         LocalDate.of(2021, 2, 3),
         "efficacy evidence",
+        2021,
         isCategoryEvent,
         "",
         evidenceLevelDetails,

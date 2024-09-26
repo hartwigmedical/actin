@@ -131,12 +131,12 @@ class TreatmentEvidenceFunctionsTest {
 
     @Test
     fun `Should generate TreatmentEvidenceContent objects with treatment name, cancer types with dates, and isResistant Boolean`() {
-        val date = LocalDate.of(2024, 1, 1)
+        val year = 2024
         val cancerType = ApplicableCancerType("Cancer type 1", emptySet())
-        val treatmentEvidence = createTreatmentEvidence(date = date, applicableCancerType = cancerType)
+        val treatmentEvidence = createTreatmentEvidence(evidenceYear = year, applicableCancerType = cancerType)
         val evidence = listOf(
             treatmentEvidence,
-            treatmentEvidence.copy(date = date.minusYears(1), applicableCancerType = cancerType.copy("Cancer type 2")),
+            treatmentEvidence.copy(evidenceYear = year.minus(1), applicableCancerType = cancerType.copy("Cancer type 2")),
             treatmentEvidence.copy(treatment = "other treatment", direction = EvidenceDirection(isResistant = true))
         )
         val result = TreatmentEvidenceFunctions.generateEvidenceCellContents(evidence)
@@ -147,12 +147,38 @@ class TreatmentEvidenceFunctionsTest {
         assertThat(expected).isEqualTo(result)
     }
 
+    @Test
+    fun `Should correctly sort with highest level of evidence first, then by non-category first, then by onLabel first`() {
+        val nonCategoryD = onLabelNonCategoryLevelA.copy(evidenceLevel = EvidenceLevel.D)
+        val evidence = listOf(
+            offLabelCategoryLevelA,
+            onLabelCategoryLevelA,
+            onLabelCategoryLevelB,
+            onLabelNonCategoryLevelB,
+            nonCategoryD,
+            onLabelNonCategoryLevelA
+        )
+
+        val result = TreatmentEvidenceFunctions.sortTreatmentEvidence(evidence)
+        val expected = setOf(
+            onLabelNonCategoryLevelA,
+            onLabelCategoryLevelA,
+            offLabelCategoryLevelA,
+            onLabelNonCategoryLevelB,
+            onLabelCategoryLevelB,
+            nonCategoryD
+        )
+
+        assertThat(result).containsExactlyElementsOf(expected)
+    }
+
     private fun createTreatmentEvidence(
         treatment: String = TREATMENT,
         onLabel: Boolean = true,
         direction: EvidenceDirection = EvidenceDirection(hasBenefit = true),
         evidenceLevel: EvidenceLevel = EvidenceLevel.A,
-        date: LocalDate = LocalDate.EPOCH,
+        entryDate: LocalDate = LocalDate.EPOCH,
+        evidenceYear: Int = 2024,
         isCategoryEvent: Boolean = true,
         sourceEvent: String = "sourceEvent",
         evidenceLevelDetails: EvidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY,
@@ -163,8 +189,9 @@ class TreatmentEvidenceFunctionsTest {
             evidenceLevel,
             onLabel,
             direction,
-            date,
+            entryDate,
             "",
+            evidenceYear,
             isCategoryEvent,
             sourceEvent,
             evidenceLevelDetails,

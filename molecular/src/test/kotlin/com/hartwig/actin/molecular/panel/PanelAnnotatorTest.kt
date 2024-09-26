@@ -59,7 +59,7 @@ private val HOTSPOT = TestServeKnownFactory.hotspotBuilder().build()
 
 private val ACTIONABILITY_MATCH = ActionabilityMatch(
     onLabelEvents = listOf(
-        TestServeActionabilityFactory.geneBuilder().build().withSource(Knowledgebase.CKB_EVIDENCE).withLevel(EvidenceLevel.A)
+        TestServeActionabilityFactory.geneBuilder().build().withSource(Knowledgebase.CKB_EVIDENCE).withEvidenceLevel(EvidenceLevel.A)
             .withDirection(EvidenceDirection.RESPONSIVE)
     ), offLabelEvents = emptyList()
 )
