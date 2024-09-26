@@ -18,11 +18,11 @@ import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.doid.config.DoidManualConfig
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import com.hartwig.actin.util.json.GsonSerializer
-import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.tuple
 import org.junit.Before
 import org.junit.Test
+import java.io.File
 
 private const val PATIENT = "ACTN01029999"
 private val EXPECTED_CLINICAL_RECORD = "${resourceOnClasspath("clinical_record")}/$PATIENT.clinical.json"
@@ -117,6 +117,7 @@ class ClinicalIngestionFeedAdapterTest {
             UnusedCurationConfig(categoryName = "Molecular Test PDL1", input = "cps pd l1 > 20"),
             UnusedCurationConfig(categoryName = "Dosage Unit Translation", input = "stuk"),
             UnusedCurationConfig(categoryName = "Sequencing Test", input = "kras g12f"),
+            UnusedCurationConfig(categoryName = "Surgery Translation", input = "Surgery1")
         )
 
         val gson = GsonSerializer.create()
@@ -154,7 +155,7 @@ class ClinicalIngestionFeedAdapterTest {
         )
         assertThat(feed.read().size).isEqualTo(1)
         val versionUnderTest = QuestionnaireVersion.version(feed.read()[0].latestQuestionnaireEntry!!)
-        val latestVersion = QuestionnaireVersion.values().last()
+        val latestVersion = QuestionnaireVersion.entries.last()
 
         assertThat(versionUnderTest).isNotNull()
         assertThat(versionUnderTest).isEqualTo(latestVersion)

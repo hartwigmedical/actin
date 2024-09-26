@@ -262,7 +262,7 @@
   ],
   "surgeries": [
     {
-      "name": "diagnostics stomach",
+      "name": "diagnostics stomach translated",
       "endDate": {
         "year": 2020,
         "month": 8,
