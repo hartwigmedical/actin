@@ -48,7 +48,7 @@ class MolecularEfficacyDescriptionGenerator(val molecularHistory: MolecularHisto
     private fun createEvidenceCells(evidence: TreatmentEvidence): List<Cell> {
         val treatmentCell = Cells.createContentNoBorder(Paragraph("${evidence.treatment}:").setItalic().setBold().setFontSize(7f))
         val evidenceLevelAndDateCell = Cells.createContentNoBorder(
-            Paragraph("Level ${evidence.evidenceLevel.name} (${evidence.efficacyDescriptionYear})").setFontSize(6f)
+            Paragraph("Level ${evidence.evidenceLevel.name} (${evidence.evidenceYear})").setFontSize(6f)
         )
         val cancerTypeCell = Cells.createContentNoBorder(Paragraph(evidence.applicableCancerType.cancerType).setBold().setFontSize(6f))
 

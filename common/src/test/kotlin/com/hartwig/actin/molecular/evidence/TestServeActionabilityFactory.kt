@@ -72,7 +72,7 @@ object TestServeActionabilityFactory {
                 return source
             }
 
-            override fun ckbEntryDate(): LocalDate {
+            override fun entryDate(): LocalDate {
                 return LocalDate.of(2021, 2, 3)
             }
 
@@ -109,11 +109,11 @@ object TestServeActionabilityFactory {
                 return "efficacy evidence"
             }
 
-            override fun efficacyDescriptionYear(): String {
-                return "2021"
+            override fun evidenceYear(): Int {
+                return 2021
             }
 
-            override fun level(): EvidenceLevel {
+            override fun evidenceLevel(): EvidenceLevel {
                 return EvidenceLevel.D
             }
 

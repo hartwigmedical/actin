@@ -35,7 +35,7 @@ object ClinicalEvidenceFactory {
         events.filter { it.source() == ActionabilityConstants.EVIDENCE_SOURCE }.map {
             TreatmentEvidence(
                 it.treatmentName(),
-                EvidenceLevel.valueOf(it.level().name),
+                EvidenceLevel.valueOf(it.evidenceLevel().name),
                 isOnLabel,
                 EvidenceDirection(
                     hasPositiveResponse = it.direction().hasPositiveResponse(),
@@ -43,9 +43,9 @@ object ClinicalEvidenceFactory {
                     isResistant = it.direction().isResistant,
                     isCertain = it.direction().isCertain
                 ),
-                it.ckbEntryDate(),
+                it.entryDate(),
                 it.efficacyDescription(),
-                it.efficacyDescriptionYear().toInt(),
+                it.evidenceYear(),
                 it.isCategoryEvent(),
                 it.sourceEvent(),
                 it.evidenceLevelDetails(),

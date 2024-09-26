@@ -93,7 +93,7 @@ object TreatmentEvidenceFunctions {
             val cancerTypesWithYears = evidences
                 .groupBy { it.applicableCancerType.cancerType }
                 .map { (cancerType, evidenceGroup) ->
-                    val years = evidenceGroup.map { it.efficacyDescriptionYear }.distinct().sorted()
+                    val years = evidenceGroup.map { it.evidenceYear }.distinct().sorted()
                     "$cancerType (${years.joinToString(", ")})"
                 }
                 .joinToString(", ")
