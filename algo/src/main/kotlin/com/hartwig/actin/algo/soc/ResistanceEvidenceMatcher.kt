@@ -51,7 +51,7 @@ class ResistanceEvidenceMatcher(
                 event = actionableEvent.sourceEvent(),
                 isTested = null,
                 isFound = isFound(actionableEvent, molecularHistory),
-                resistanceLevel = actionableEvent.level().toString(),
+                resistanceLevel = actionableEvent.evidenceLevel().toString(),
                 evidenceUrls = actionableEvent.evidenceUrls(),
                 treatmentName = findTreatmentInDatabase(actionableEvent.intervention(), treatment)!!
             )
@@ -164,7 +164,7 @@ class ResistanceEvidenceMatcher(
     }
 
     private fun hasNoPositiveResponse(resistanceEvent: ActionableEvent): Boolean {
-        return resistanceEvent.level() in setOf(
+        return resistanceEvent.evidenceLevel() in setOf(
             EvidenceLevel.A,
             EvidenceLevel.B,
             EvidenceLevel.C
