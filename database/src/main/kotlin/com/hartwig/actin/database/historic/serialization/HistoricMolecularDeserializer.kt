@@ -27,7 +27,6 @@ import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.orange.driver.DisruptionType
-import com.hartwig.actin.datamodel.molecular.orange.driver.ExtendedFusionDetails
 import com.hartwig.actin.datamodel.molecular.orange.driver.ExtendedVariantDetails
 import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.orange.driver.HomozygousDisruption
@@ -40,10 +39,10 @@ import com.hartwig.actin.datamodel.molecular.orange.pharmaco.HaplotypeFunction
 import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoEntry
 import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoGene
 import com.hartwig.actin.util.json.Json
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
 import java.io.File
 import java.io.FileReader
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
 object HistoricMolecularDeserializer {
 
@@ -278,21 +277,15 @@ object HistoricMolecularDeserializer {
             geneEnd = Json.optionalString(obj, "geneEnd") ?: Json.string(obj, "threeGene"),
             driverType = determineFusionDriverType(Json.string(obj, "driverType")),
             proteinEffect = ProteinEffect.UNKNOWN,
-            extendedFusionDetails = extractExtendedFusionDetails(obj),
+            geneTranscriptStart = null,
+            geneTranscriptEnd = null,
+            fusedExonUp = Json.optionalInteger(obj, "fusedExonUp") ?: 0,
+            fusedExonDown = Json.optionalInteger(obj, "fusedExonDown") ?: 0,
             isReportable = determineIsReportable(obj),
             event = Json.string(obj, "event"),
             driverLikelihood = determineDriverLikelihood(obj),
             evidence = ClinicalEvidence(),
             isAssociatedWithDrugResistance = null
-        )
-    }
-
-    private fun extractExtendedFusionDetails(fusion: JsonObject): ExtendedFusionDetails {
-        return ExtendedFusionDetails(
-            fusedExonUp = Json.optionalInteger(fusion, "fusedExonUp") ?: 0,
-            fusedExonDown = Json.optionalInteger(fusion, "fusedExonDown") ?: 0,
-            geneTranscriptStart = "",
-            geneTranscriptEnd = ""
         )
     }
 

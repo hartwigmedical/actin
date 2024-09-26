@@ -10,7 +10,6 @@ import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.orange.driver.DisruptionType
-import com.hartwig.actin.datamodel.molecular.orange.driver.ExtendedFusionDetails
 import com.hartwig.actin.datamodel.molecular.orange.driver.ExtendedVariantDetails
 import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.orange.driver.HomozygousDisruption
@@ -216,6 +215,22 @@ object TestMolecularFactory {
         isAssociatedWithDrugResistance = true,
     )
 
+    fun createProperFusion() = Fusion(
+        isReportable = true,
+        event = "EML4 - ALK fusion",
+        driverLikelihood = DriverLikelihood.HIGH,
+        evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
+        geneStart = "EML4",
+        geneEnd = "ALK",
+        proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+        driverType = FusionDriverType.KNOWN_PAIR,
+        isAssociatedWithDrugResistance = null,
+        geneTranscriptStart = "ENST00000318522",
+        geneTranscriptEnd = "ENST00000389048",
+        fusedExonUp = 6,
+        fusedExonDown = 20,
+    )
+
     private fun createProperTestImmunology(): MolecularImmunology {
         return MolecularImmunology(
             isReliable = true,
@@ -303,12 +318,10 @@ object TestMolecularFactory {
                 proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
                 driverType = FusionDriverType.KNOWN_PAIR,
                 isAssociatedWithDrugResistance = null,
-                extendedFusionDetails = ExtendedFusionDetails(
-                    geneTranscriptStart = "ENST00000318522",
-                    geneTranscriptEnd = "ENST00000389048",
-                    fusedExonUp = 6,
-                    fusedExonDown = 20,
-                )
+                geneTranscriptStart = "ENST00000318522",
+                geneTranscriptEnd = "ENST00000389048",
+                fusedExonUp = 6,
+                fusedExonDown = 20,
             ),
             viruses = proper.viruses + Virus(
                 isReportable = true,
