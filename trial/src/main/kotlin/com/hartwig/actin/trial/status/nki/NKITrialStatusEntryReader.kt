@@ -5,8 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.hartwig.actin.trial.status.TrialStatus.CLOSED
-import com.hartwig.actin.trial.status.TrialStatus.OPEN
+import com.hartwig.actin.trial.status.TrialStatus
 import com.hartwig.actin.trial.status.TrialStatusEntry
 import com.hartwig.actin.trial.status.TrialStatusEntryReader
 import java.io.File
@@ -34,7 +33,7 @@ class NKITrialStatusEntryReader : TrialStatusEntryReader {
                     metcStudyID = it.studyMetc!!,
                     studyAcronym = it.studyAcronym,
                     studyTitle = it.studyTitle,
-                    studyStatus = if (it.studyStatus == NKI_OPEN_STATUS) OPEN else CLOSED
+                    studyStatus = if (it.studyStatus == NKI_OPEN_STATUS) TrialStatus.OPEN else TrialStatus.CLOSED
                 )
             }
     }

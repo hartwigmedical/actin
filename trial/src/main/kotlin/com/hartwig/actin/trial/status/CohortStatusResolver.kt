@@ -35,7 +35,7 @@ object CohortStatusResolver {
         if (entry.cohortParentId == null) {
             return knownAncestorIds
         }
-        return collectAncestorsFor(entriesByCohortId[entry.cohortParentId]!!, entriesByCohortId, knownAncestorIds + entry.cohortParentId)
+        return collectAncestorsFor(entriesByCohortId[entry.cohortParentId]!!, entriesByCohortId, knownAncestorIds + entry.cohortParentId!!)
     }
 
     private fun findCommonAncestor(matches: List<TrialStatusEntry>, entriesByCohortId: Map<String, TrialStatusEntry>): String? {
@@ -119,7 +119,7 @@ object CohortStatusResolver {
                 )
             )
 
-        val slotsAvailable: Boolean = entry.cohortSlotsNumberAvailable != null && entry.cohortSlotsNumberAvailable > 0
+        val slotsAvailable: Boolean = entry.cohortSlotsNumberAvailable != null && entry.cohortSlotsNumberAvailable!! > 0
 
         return InterpretedCohortStatus(
             open = cohortStatus == TrialStatus.OPEN,
