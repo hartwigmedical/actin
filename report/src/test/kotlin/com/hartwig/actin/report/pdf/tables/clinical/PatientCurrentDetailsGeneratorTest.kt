@@ -9,9 +9,11 @@ import com.hartwig.actin.report.pdf.tables.clinical.CellTestUtil.extractTextFrom
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 private const val KEY_WIDTH = 100f
 private const val VALUE_WIDTH = 200f
+private val DATE_FORMAT = DateTimeFormatter.ofPattern("dd-MMM-yyyy")
 
 class PatientCurrentDetailsGeneratorTest {
     private val minimalPatientRecord = TestPatientFactory.createMinimalTestWGSPatientRecord()
@@ -32,19 +34,22 @@ class PatientCurrentDetailsGeneratorTest {
         )
 
         val patientCurrentDetailsGenerator = PatientCurrentDetailsGenerator(patientRecord, KEY_WIDTH, VALUE_WIDTH)
-        assertThat(patientCurrentDetailsGenerator.title()).isEqualTo("Patient current details (19-Sep-2024)")
+        assertThat(patientCurrentDetailsGenerator.title()).isEqualTo("Patient current details (%s)", DATE_FORMAT.format(questionnaireDate))
     }
 
     @Test
     fun `Should return content table with surgeries including surgery name`() {
 
         val endDate = LocalDateTime.of(2024, 9, 19, 1, 1).toLocalDate()
+        val endDateMinus6 = endDate.minusDays(6)
+        val endDateMinus4 = endDate.minusDays(4)
+
         val patientRecord = minimalPatientRecord.copy(
 
             surgeries = listOf(
-                Surgery(name = "Surgery 2", endDate = endDate.minusDays(6), status = SurgeryStatus.FINISHED),
-                Surgery(name = "Surgery 1", endDate = endDate.minusDays(2), status = SurgeryStatus.FINISHED),
-                Surgery(name = null, endDate = endDate.minusDays(4), status = SurgeryStatus.FINISHED)
+                Surgery(name = "Surgery 2", endDateMinus6, status = SurgeryStatus.FINISHED),
+                Surgery(name = "Surgery 1", endDate, status = SurgeryStatus.FINISHED),
+                Surgery(name = null, endDateMinus4, status = SurgeryStatus.FINISHED)
             )
         )
 
@@ -60,6 +65,11 @@ class PatientCurrentDetailsGeneratorTest {
                     1
                 )
             )
-        ).isEqualTo("17-Sep-2024 Surgery 1, 15-Sep-2024, 13-Sep-2024 Surgery 2")
+        ).isEqualTo(
+            "%s Surgery 1, %s, %s Surgery 2",
+            DATE_FORMAT.format(endDate),
+            DATE_FORMAT.format(endDateMinus4),
+            DATE_FORMAT.format(endDateMinus6)
+        )
     }
 }
