@@ -1,8 +1,8 @@
 package com.hartwig.actin.clinical.curation
 
 import com.hartwig.actin.clinical.curation.config.CurationConfig
-import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.curation.translation.Translation
+import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 
 data class CurationResponse<T>(
     val configs: Set<T> = emptySet(), val extractionEvaluation: CurationExtractionEvaluation = CurationExtractionEvaluation()
@@ -67,13 +67,11 @@ data class CurationResponse<T>(
             )
 
             val evaluation = when (curationCategory) {
-                CurationCategory.ADMINISTRATION_ROUTE_TRANSLATION -> {
-                    CurationExtractionEvaluation(administrationRouteEvaluatedInputs = foundTranslations)
-                }
-
+                CurationCategory.ADMINISTRATION_ROUTE_TRANSLATION -> CurationExtractionEvaluation(administrationRouteEvaluatedInputs = foundTranslations)
                 CurationCategory.BLOOD_TRANSFUSION_TRANSLATION -> CurationExtractionEvaluation()
                 CurationCategory.TOXICITY_TRANSLATION -> CurationExtractionEvaluation(toxicityTranslationEvaluatedInputs = foundTranslations)
                 CurationCategory.DOSAGE_UNIT_TRANSLATION -> CurationExtractionEvaluation(dosageUnitEvaluatedInputs = foundTranslations)
+                CurationCategory.SURGERY_TRANSLATION -> CurationExtractionEvaluation(surgeryTranslationEvaluatedInputs = foundTranslations)
                 else -> throw IllegalStateException("Unsupported curation category for translation lookup: $curationCategory")
             }
             return CurationResponse(foundTranslations, evaluation.copy(warnings = warnings))

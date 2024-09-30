@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.clinical
 
+import com.hartwig.actin.clinical.sort.SurgeryDescendingDateComparator
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.clinical.ECGMeasure
 import com.hartwig.actin.datamodel.clinical.Intolerance
@@ -116,7 +117,11 @@ class PatientCurrentDetailsGenerator(private val record: PatientRecord, private 
         }
 
         private fun surgeries(surgeries: List<Surgery>): String {
-            return Formats.valueOrDefault(surgeries.joinToString(Formats.COMMA_SEPARATOR) { date(it.endDate) }, "None")
+            return Formats.valueOrDefault(
+                surgeries.sortedWith(SurgeryDescendingDateComparator())
+                    .joinToString(Formats.COMMA_SEPARATOR) { date(it.endDate) + if (it.name?.isNotEmpty() == true) " ${it.name}" else "" },
+                "None"
+            )
         }
     }
 }

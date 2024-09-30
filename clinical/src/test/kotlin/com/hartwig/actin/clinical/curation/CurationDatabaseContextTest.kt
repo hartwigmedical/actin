@@ -51,6 +51,7 @@ class CurationDatabaseContextTest {
             mockk(),
             mockk(),
             mockk(),
+            mockk(),
             mockk()
         )
         assertThat(context.validate()).containsExactlyElementsOf(expectedUnusedConfig)
@@ -58,7 +59,7 @@ class CurationDatabaseContextTest {
 
     @Test
     fun `Should combine all unused configs in curation databases, except cyp, qt and blood transfusions`() {
-        val expectedUnusedConfig = IntRange(0, 19).map { UnusedCurationConfig(CurationCategory.TOXICITY.name, it.toString()) }
+        val expectedUnusedConfig = IntRange(0, 20).map { UnusedCurationConfig(CurationCategory.TOXICITY.name, it.toString()) }
         val cypInteractionCuration = mockk<CurationDatabase<CypInteractionConfig>>()
         val qtProlongingCuration = mockk<CurationDatabase<QTProlongatingConfig>>()
         val bloodTransfusionTranslation = mockk<TranslationDatabase<String>>()
@@ -85,7 +86,9 @@ class CurationDatabaseContextTest {
             translationDatabaseWithUnusedConfig(expectedUnusedConfig[17]),
             translationDatabaseWithUnusedConfig(expectedUnusedConfig[18]),
             bloodTransfusionTranslation,
-            translationDatabaseWithUnusedConfig(expectedUnusedConfig[19])
+            translationDatabaseWithUnusedConfig(expectedUnusedConfig[19]),
+            translationDatabaseWithUnusedConfig(expectedUnusedConfig[20])
+
         )
         assertThat(context.allUnusedConfig(listOf(CurationExtractionEvaluation()))).containsExactlyInAnyOrderElementsOf(expectedUnusedConfig)
         verify { cypInteractionCuration wasNot Called }

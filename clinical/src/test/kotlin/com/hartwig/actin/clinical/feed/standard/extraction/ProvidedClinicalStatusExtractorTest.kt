@@ -1,0 +1,49 @@
+package com.hartwig.actin.clinical.feed.standard.extraction
+
+import com.hartwig.actin.clinical.feed.standard.EhrTestData.createEhrPatientRecord
+import com.hartwig.actin.clinical.feed.standard.ProvidedComplication
+import com.hartwig.actin.clinical.feed.standard.ProvidedWhoEvaluation
+import com.hartwig.actin.datamodel.clinical.ClinicalStatus
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.Test
+import java.time.LocalDate
+
+class ProvidedClinicalStatusExtractorTest {
+
+    @Test
+    fun `Should extract clinical status with WHO status and has complications`() {
+        val ehrPatientRecord = createEhrPatientRecord().copy(
+            whoEvaluations = listOf(
+                ProvidedWhoEvaluation(
+                    evaluationDate = LocalDate.of(2024, 2, 23),
+                    status = 1,
+                )
+            ),
+            complications = listOf(
+                ProvidedComplication(name = "complication", startDate = LocalDate.of(2024, 2, 26), endDate = LocalDate.of(2024, 2, 26))
+            )
+        )
+        val result = StandardClinicalStatusExtractor().extract(ehrPatientRecord)
+        assertThat(result.evaluation.warnings).isEmpty()
+        assertThat(result.extracted).isEqualTo(
+            ClinicalStatus(
+                who = 1,
+                hasComplications = true
+            )
+        )
+    }
+
+    @Test
+    fun `Should extract clinical status when there are no who evaluations`() {
+        val ehrPatientRecord = createEhrPatientRecord()
+        val result = StandardClinicalStatusExtractor().extract(ehrPatientRecord)
+        assertThat(result.evaluation.warnings).isEmpty()
+        assertThat(result.extracted).isEqualTo(
+            ClinicalStatus(
+                who = null,
+                hasComplications = false
+            )
+        )
+    }
+
+}

@@ -42,6 +42,7 @@ import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslati
 import com.hartwig.actin.clinical.curation.translation.DosageUnitTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.LaboratoryIdentifiers
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslationFactory
+import com.hartwig.actin.clinical.curation.translation.SurgeryTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.ToxicityTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabaseReader
@@ -70,6 +71,7 @@ data class CurationDatabaseContext(
     val toxicityTranslation: TranslationDatabase<String>,
     val bloodTransfusionTranslation: TranslationDatabase<String>,
     val dosageUnitTranslation: TranslationDatabase<String>,
+    val surgeryTranslation: TranslationDatabase<String>,
 ) {
     fun allUnusedConfig(extractionEvaluations: List<CurationExtractionEvaluation>): Set<UnusedCurationConfig> =
         setOf(
@@ -93,7 +95,8 @@ data class CurationDatabaseContext(
             laboratoryTranslation,
             administrationRouteTranslation,
             toxicityTranslation,
-            dosageUnitTranslation
+            dosageUnitTranslation,
+            surgeryTranslation
         ).flatMap { it.reportUnusedTranslations(extractionEvaluations) }
 
     fun validate() = (primaryTumorCuration.validationErrors +
@@ -257,6 +260,12 @@ data class CurationDatabaseContext(
                 LaboratoryTranslationFactory(),
                 CurationCategory.LABORATORY_TRANSLATION
             ) { it.laboratoryEvaluatedInputs },
+            surgeryTranslation = TranslationDatabaseReader.read(
+                curationDir,
+                TranslationDatabaseReader.SURGERY_TRANSLATION_TSV,
+                SurgeryTranslationFactory(),
+                CurationCategory.SURGERY_TRANSLATION
+            ) { it.surgeryTranslationEvaluatedInputs }
         )
     }
 

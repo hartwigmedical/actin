@@ -26,5 +26,6 @@ enum class CurationCategory(val categoryName: String) {
     QUESTIONNAIRE_MAPPING("Questionnaire mapping"),
     SECOND_PRIMARY("Second Primary"),
     TOXICITY("Toxicity"),
-    TOXICITY_TRANSLATION("Toxicity Translation")
+    TOXICITY_TRANSLATION("Toxicity Translation"),
+    SURGERY_TRANSLATION("Surgery Translation")
 }

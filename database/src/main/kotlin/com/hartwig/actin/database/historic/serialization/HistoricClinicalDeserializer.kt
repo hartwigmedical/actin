@@ -391,6 +391,7 @@ object HistoricClinicalDeserializer {
     private fun toSurgery(surgeryElement: JsonElement): Surgery {
         val surgery = surgeryElement.asJsonObject
         return Surgery(
+            null,
             endDate = Json.date(surgery, "endDate"),
             status = SurgeryStatus.valueOf(Json.string(surgery, "status"))
         )
