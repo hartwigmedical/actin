@@ -6,7 +6,20 @@
     "studyTitle": "Open trial",
     "studyStatus": "OPEN",
     "studySlotsNumberAvailable": 1,
-    "studySlotsDateUpdate": "2024-03-18T00:00:00"
+    "studySlotsDateUpdate": "2024-03-18T00:00:00",
+    "cohortId": "abcd",
+    "cohortOpen": true
+  },
+  {
+    "studyId": 1,
+    "studyMetc": "MEC-001",
+    "studyAcronym": "OPN-001",
+    "studyTitle": "Open trial",
+    "studyStatus": "OPEN",
+    "studySlotsNumberAvailable": 1,
+    "studySlotsDateUpdate": "2024-03-18T00:00:00",
+    "cohortId": "bcde",
+    "cohortOpen": true
   },
   {
     "studyId": 2,
@@ -15,7 +28,9 @@
     "studyTitle": "Closed trial",
     "studyStatus": "CLOSED",
     "studySlotsNumberAvailable": 0,
-    "studySlotsDateUpdate": "2024-03-12T00:00:00"
+    "studySlotsDateUpdate": "2024-03-12T00:00:00",
+    "cohortId": "cdef",
+    "cohortOpen": true
   },
   {
     "studyId": 3,
@@ -24,7 +39,9 @@
     "studyTitle": "Pending trial",
     "studyStatus": "PENDING",
     "studySlotsNumberAvailable": 0,
-    "studySlotsDateUpdate": "2024-03-12T00:00:00"
+    "studySlotsDateUpdate": "2024-03-12T00:00:00",
+    "cohortId": "efgh",
+    "cohortOpen": true
   },
   {
     "studyId": 4,
@@ -33,7 +50,9 @@
     "studyTitle": "Withdrawn trial",
     "studyStatus": "WITHDRAWN",
     "studySlotsNumberAvailable": 0,
-    "studySlotsDateUpdate": "2024-03-12T00:00:00"
+    "studySlotsDateUpdate": "2024-03-12T00:00:00",
+    "cohortId": "fghi",
+    "cohortOpen": true
   },
   {
     "studyId": 5,
@@ -42,6 +61,8 @@
     "studyTitle": "Suspended trial",
     "studyStatus": "SUSPENDED",
     "studySlotsNumberAvailable": 0,
-    "studySlotsDateUpdate": "2024-03-12T00:00:00"
+    "studySlotsDateUpdate": "2024-03-12T00:00:00",
+    "cohortId": "ghij",
+    "cohortOpen": true
   }
 ]

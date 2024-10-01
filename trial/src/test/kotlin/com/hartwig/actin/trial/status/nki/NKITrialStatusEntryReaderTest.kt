@@ -18,21 +18,36 @@ class NKITrialStatusEntryReaderTest {
                 metcStudyID = "MEC-001",
                 studyAcronym = "OPN-001",
                 studyTitle = "Open trial",
-                studyStatus = TrialStatus.OPEN
+                studyStatus = TrialStatus.OPEN,
+                cohortId = "abcd",
+                cohortStatus = TrialStatus.OPEN
+            ),
+            TrialStatusEntry(
+                studyId = 1,
+                metcStudyID = "MEC-001",
+                studyAcronym = "OPN-001",
+                studyTitle = "Open trial",
+                studyStatus = TrialStatus.OPEN,
+                cohortId = "bcde",
+                cohortStatus = TrialStatus.OPEN
             ),
             TrialStatusEntry(
                 studyId = 2,
                 metcStudyID = "MEC-002",
                 studyAcronym = "CLS-001",
                 studyTitle = "Closed trial",
-                studyStatus = TrialStatus.CLOSED
+                studyStatus = TrialStatus.CLOSED,
+                cohortId = "cdef",
+                cohortStatus = TrialStatus.OPEN
             ),
             TrialStatusEntry(
                 studyId = 5,
                 metcStudyID = "MEC-005",
                 studyAcronym = "CLS-001",
                 studyTitle = "Suspended trial",
-                studyStatus = TrialStatus.CLOSED
+                studyStatus = TrialStatus.CLOSED,
+                cohortId = "ghij",
+                cohortStatus = TrialStatus.OPEN
             )
         )
     }
