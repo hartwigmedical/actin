@@ -2,6 +2,10 @@ package com.hartwig.actin.medication
 
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 
+private val systemicAntibiotics = setOf("A07A", "G01AA", "R02AB", "J01", "J02", "J04")
+private val systemicAntimycotics = setOf("J02")
+private val systemicAntivirals = setOf("J05")
+
 class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel>>, private val atcTree: AtcTree) {
 
     fun resolve(categoryName: String): Set<AtcLevel> {
@@ -17,6 +21,7 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
                     "Anticoagulants" to convertToAtcLevel(setOf("B01AA", "B01AB", "B01AC", "B01AD", "B01AE", "B01AF", "B01AX"), atcTree),
                     "Antiepileptics" to convertToAtcLevel(setOf("N03"), atcTree),
                     "Antiinflammatory and antirheumatic products" to convertToAtcLevel(setOf("M01"), atcTree),
+                    "Antimicrobials" to convertToAtcLevel(systemicAntibiotics + systemicAntimycotics + systemicAntivirals, atcTree),
                     "Antineoplastic agents" to convertToAtcLevel(setOf("L01"), atcTree),
                     "Azole" to convertToAtcLevel(setOf("A07AC", "D01AC", "G01AF", "G01BF", "G01AG", "J02AC", "J02AB"), atcTree),
                     "Bisphosphonates" to convertToAtcLevel(setOf("M05BA", "M05BB"), atcTree),
@@ -35,16 +40,9 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
                     "PARP inhibitors" to convertToAtcLevel(setOf("L01XK"), atcTree),
                     "Platelet aggregation inhibitors" to convertToAtcLevel(setOf("B01AC"), atcTree),
                     "RANKL targeting agents" to convertToAtcLevel(setOf("M05BX04"), atcTree),
-                    "Systemic antibiotics" to convertToAtcLevel(
-                        setOf(
-                            "A07A",
-                            "G01AA",
-                            "R02AB",
-                            "J01",
-                            "J02",
-                            "J04",
-                        ), atcTree
-                    ),
+                    "Systemic antibiotics" to convertToAtcLevel(systemicAntibiotics, atcTree),
+                    "Systemic antimycotics" to convertToAtcLevel(systemicAntimycotics, atcTree),
+                    "Systemic antivirals" to convertToAtcLevel(systemicAntivirals, atcTree),
                     "Systemic corticosteroids" to convertToAtcLevel(setOf("H02", "M01BA"), atcTree),
                 ),
                 atcTree
