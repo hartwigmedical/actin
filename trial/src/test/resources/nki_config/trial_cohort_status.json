@@ -22,6 +22,28 @@
     "cohortOpen": true
   },
   {
+    "studyId": 1,
+    "studyMetc": "MEC-001",
+    "studyAcronym": "OPN-001",
+    "studyTitle": "Open trial",
+    "studyStatus": "OPEN",
+    "studySlotsNumberAvailable": 1,
+    "studySlotsDateUpdate": "2024-03-18T00:00:00",
+    "cohortId": "bcdef",
+    "cohortOpen": false
+  },
+  {
+    "studyId": 1,
+    "studyMetc": "MEC-001",
+    "studyAcronym": "OPN-001",
+    "studyTitle": "Open trial",
+    "studyStatus": "OPEN",
+    "studySlotsNumberAvailable": 1,
+    "studySlotsDateUpdate": "2024-03-18T00:00:00",
+    "cohortId": "bcdeg",
+    "cohortOpen": null
+  },
+  {
     "studyId": 2,
     "studyMetc": "MEC-002",
     "studyAcronym": "CLS-001",
