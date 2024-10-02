@@ -2,8 +2,8 @@ package com.hartwig.actin.medication
 
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 
-private val systemicAntibiotics = setOf("A07A", "G01AA", "R02AB", "J01", "J02", "J04")
-private val systemicAntimycotics = setOf("J02")
+private val systemicAntibiotics = setOf("A07A", "G01AA", "R02AB", "J01", "J04")
+private val systemicAntimycotics = setOf("J02", "J04")
 private val systemicAntivirals = setOf("J05")
 
 class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel>>, private val atcTree: AtcTree) {
