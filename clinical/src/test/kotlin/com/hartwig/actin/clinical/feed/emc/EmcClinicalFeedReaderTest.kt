@@ -71,7 +71,7 @@ class EmcClinicalFeedReaderTest {
         }
 
         private fun assertSurgeries(entries: List<SurgeryEntry>) {
-            assertEquals(1, entries.size.toLong())
+            assertEquals(2, entries.size.toLong())
             val entry = entries[0]
             assertEquals(PATIENT, entry.subject)
             assertEquals("surgery", entry.classDisplay)
@@ -80,6 +80,7 @@ class EmcClinicalFeedReaderTest {
             assertEquals("diagnostics stomach", entry.codeCodingDisplayOriginal)
             assertEquals("planned", entry.encounterStatus)
             assertEquals("planned", entry.procedureStatus)
+            assertEquals("Geen ingreep- operatie uitgesteld", entries[1].codeCodingDisplayOriginal)
         }
 
         private fun assertMedication(entries: List<MedicationEntry>) {
