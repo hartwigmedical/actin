@@ -8,8 +8,6 @@ import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
-import com.hartwig.actin.trial.interpretation.ConfigInterpreter
-import com.hartwig.actin.trial.interpretation.SimpleConfigInterpreter
 import com.hartwig.actin.trial.interpretation.TrialIngestion
 import com.hartwig.actin.trial.serialization.TrialJson
 import com.hartwig.actin.trial.status.TrialStatusConfigInterpreter
@@ -17,14 +15,14 @@ import com.hartwig.actin.trial.status.TrialStatusDatabaseReader
 import com.hartwig.actin.trial.status.ctc.CTCTrialStatusEntryReader
 import com.hartwig.actin.trial.status.nki.NKITrialStatusEntryReader
 import com.hartwig.serve.datamodel.serialization.KnownGeneFile
-import java.nio.file.Files
-import java.nio.file.Paths
-import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.nio.file.Files
+import java.nio.file.Paths
+import kotlin.system.exitProcess
 
 const val CTC_TRIAL_PREFIX = "MEC"
 
@@ -74,7 +72,7 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         printAllValidationErrors(result)
     }
 
-    private fun configInterpreter(configuration: TrialConfiguration): ConfigInterpreter {
+    private fun configInterpreter(configuration: TrialConfiguration): TrialStatusConfigInterpreter {
         if (config.ctcConfigDirectory != null && config.nkiConfigDirectory != null) {
             throw IllegalArgumentException("Only one of CTC and NKI config directories can be specified")
         }
@@ -91,24 +89,25 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
                 ignoreNewTrials = configuration.ignoreAllNewTrialsInTrialStatusDatabase
             )
         } else {
-            SimpleConfigInterpreter()
+            throw IllegalArgumentException("At least one of CTC and NKI config directories must be specified")
         }
     }
 
     private fun printAllValidationErrors(result: TrialIngestionResult) {
+
+        if (result.trialConfigDatabaseValidation.hasErrors()) {
+            LOGGER.warn("There were validation errors in the trial definition configuration")
+            printValidationErrors(result.trialConfigDatabaseValidation.cohortDefinitionValidationErrors)
+            printValidationErrors(result.trialConfigDatabaseValidation.trialDefinitionValidationErrors)
+            printValidationErrors(result.trialConfigDatabaseValidation.inclusionCriteriaReferenceValidationErrors)
+            printValidationErrors(result.trialConfigDatabaseValidation.inclusionCriteriaValidationErrors)
+            printValidationErrors(result.trialConfigDatabaseValidation.unusedRulesToKeepValidationErrors)
+        }
+
         if (result.trialStatusDatabaseValidation.hasErrors()) {
             LOGGER.warn("There were validation errors in the trial status database configuration")
             printValidationErrors(result.trialStatusDatabaseValidation.trialStatusDatabaseValidationErrors)
-            printValidationErrors(result.trialStatusDatabaseValidation.trialDefinitionValidationErrors)
-        }
-
-        if (result.trialValidationResult.hasErrors()) {
-            LOGGER.warn("There were validation errors in the trial definition configuration")
-            printValidationErrors(result.trialValidationResult.cohortDefinitionValidationErrors)
-            printValidationErrors(result.trialValidationResult.trialDefinitionValidationErrors)
-            printValidationErrors(result.trialValidationResult.inclusionReferenceValidationErrors)
-            printValidationErrors(result.trialValidationResult.inclusionCriteriaValidationErrors)
-            printValidationErrors(result.trialValidationResult.unusedRulesToKeepErrors)
+            printValidationErrors(result.trialStatusDatabaseValidation.trialStatusConfigValidationErrors)
         }
     }
 

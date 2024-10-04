@@ -55,8 +55,9 @@ class TrialStatusDatabaseReaderTest {
         }
 
         private fun assertStudyMETCsToIgnore(studyMETCsToIgnore: Set<String>) {
-            assertThat(studyMETCsToIgnore).hasSize(1)
+            assertThat(studyMETCsToIgnore).hasSize(2)
             assertThat(studyMETCsToIgnore.contains("METC 1")).isTrue
+            assertThat(studyMETCsToIgnore.contains("METC 10")).isTrue
         }
 
         private fun assertUnmappedCohortIds(unmappedCohortIds: Set<String>) {

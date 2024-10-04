@@ -21,26 +21,35 @@ import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.sort.CohortComparator
 import com.hartwig.actin.trial.sort.CriterionReferenceComparator
 import com.hartwig.actin.trial.sort.EligibilityComparator
+import com.hartwig.actin.trial.status.TrialStatusConfigInterpreter
 
 class TrialIngestion(
     private val trialConfigModel: TrialConfigModel,
-    private val configInterpreter: ConfigInterpreter,
+    private val trialStatusConfigInterpreter: TrialStatusConfigInterpreter,
     private val eligibilityFactory: EligibilityFactory
 ) {
 
     fun ingestTrials(): TrialIngestionResult {
-        configInterpreter.checkModelForNewTrials(trialConfigModel.trials())
-        configInterpreter.checkModelForNewCohorts(trialConfigModel.cohorts())
-        configInterpreter.checkModelForUnusedStudiesNotInTrialStatusDatabase(trialConfigModel.trials())
-        val trialDatabaseValidation = trialConfigModel.validation()
-        val ctcDatabaseValidation = configInterpreter.validation()
-        val trials = if (trialDatabaseValidation.inclusionCriteriaValidationErrors.isEmpty()) createTrials() else emptyList()
+        trialStatusConfigInterpreter.checkModelForUnusedStudyMETCsToIgnore()
+        trialStatusConfigInterpreter.checkModelForUnusedUnmappedCohortIds()
+        trialStatusConfigInterpreter.checkModelForNewTrials(trialConfigModel.trials())
+        trialStatusConfigInterpreter.checkModelForNewCohorts(trialConfigModel.cohorts())
+        trialStatusConfigInterpreter.checkModelForUnusedStudiesNotInTrialStatusDatabase(trialConfigModel.trials())
+
+        val trials = if (!trialConfigModel.validation().hasErrors()) createTrials() else emptyList()
+
+        val trialStatusDatabaseValidation = trialStatusConfigInterpreter.validation()
+        val trialConfigDatabaseValidation = trialStatusConfigInterpreter.appendTrialConfigValidation(trialConfigModel.validation())
+        val unusedRules = if (!trialConfigModel.validation().hasErrors()) EligibilityRuleUsageEvaluator.evaluate(
+            trials,
+            trialConfigModel.unusedRulesToKeep
+        ).map { it.name }.toSet() else emptySet()
 
         return TrialIngestionResult(
-            TrialIngestionStatus.from(ctcDatabaseValidation, trialDatabaseValidation),
-            ctcDatabaseValidation,
-            trialDatabaseValidation,
-            EligibilityRuleUsageEvaluator.evaluate(trials, trialConfigModel.unusedRulesToKeep).map { it.name }.toSet(),
+            TrialIngestionStatus.from(trialConfigDatabaseValidation, trialStatusDatabaseValidation, unusedRules),
+            trialConfigDatabaseValidation,
+            trialStatusDatabaseValidation,
+            unusedRules,
             trials,
         )
     }
@@ -62,7 +71,7 @@ class TrialIngestion(
         return trialConfigModel.cohortsForTrial(trialId).map { cohortConfig ->
             val cohortId = cohortConfig.cohortId
             Cohort(
-                metadata = configInterpreter.resolveCohortMetadata(cohortConfig),
+                metadata = trialStatusConfigInterpreter.resolveCohortMetadata(cohortConfig),
                 eligibility = toEligibility(trialConfigModel.specificInclusionCriteriaForCohort(trialId, cohortId), referencesById)
             )
         }
@@ -94,7 +103,7 @@ class TrialIngestion(
     }
 
     private fun determineOpenStatus(trialConfig: TrialDefinitionConfig): Boolean {
-        val openInCTC: Boolean? = configInterpreter.isTrialOpen(trialConfig)
+        val openInCTC: Boolean? = trialStatusConfigInterpreter.isTrialOpen(trialConfig)
         if (openInCTC != null) {
             return openInCTC
         }
@@ -108,7 +117,7 @@ class TrialIngestion(
 
         fun create(
             trialConfigDirectory: String,
-            configInterpreter: ConfigInterpreter,
+            configInterpreter: TrialStatusConfigInterpreter,
             doidModel: DoidModel,
             geneFilter: GeneFilter,
             treatmentDatabase: TreatmentDatabase,
