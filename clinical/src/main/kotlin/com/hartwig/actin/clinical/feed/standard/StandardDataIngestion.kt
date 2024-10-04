@@ -8,8 +8,8 @@ import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.PatientIngestionResult
 import com.hartwig.actin.clinical.PatientIngestionStatus
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
-import com.hartwig.actin.clinical.feed.ClinicalFeedIngestion
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
+import com.hartwig.actin.clinical.feed.ClinicalFeedIngestion
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBloodTransfusionExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyHeightExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyWeightExtractor
@@ -179,7 +179,7 @@ class StandardDataIngestion(
             StandardOncologicalHistoryExtractor(
                 curationDatabaseContext.treatmentHistoryEntryCuration
             ),
-            StandardClinicalStatusExtractor(),
+            StandardClinicalStatusExtractor(curationDatabaseContext.ecgCuration),
             StandardTumorDetailsExtractor(
                 curationDatabaseContext.primaryTumorCuration, curationDatabaseContext.lesionLocationCuration,
                 TumorStageDeriver.create(doidModel)
