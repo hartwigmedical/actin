@@ -30,19 +30,21 @@ class StandardSurgeryExtractor(
                         status = SurgeryStatus.valueOf(providedSurgery.status)
                     )
                 }
-                ExtractionResult(surgery, curationResponse.extractionEvaluation)
+                ExtractionResult(listOfNotNull(surgery), curationResponse.extractionEvaluation)
             } else {
                 ExtractionResult(
-                    Surgery(
-                        name = providedSurgery.surgeryName,
-                        endDate = providedSurgery.endDate,
-                        status = SurgeryStatus.valueOf(providedSurgery.status)
+                    listOf(
+                        Surgery(
+                            name = null,
+                            endDate = providedSurgery.endDate,
+                            status = SurgeryStatus.valueOf(providedSurgery.status)
+                        )
                     ), CurationExtractionEvaluation()
                 )
             }
         }.fold(ExtractionResult(emptyList(), CurationExtractionEvaluation()))
         { acc, result ->
-            ExtractionResult((acc.extracted + result.extracted).filterNotNull(), acc.evaluation + result.evaluation)
+            ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
         }
     }
 }

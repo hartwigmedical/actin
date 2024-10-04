@@ -30,9 +30,9 @@ class SurgeryExtractor(private val surgeryNameCuration: CurationDatabase<Surgery
                     status = resolveSurgeryStatus(entry.encounterStatus)
                 )
             }
-            ExtractionResult(curatedSurgery, curationResponse.extractionEvaluation)
+            ExtractionResult(listOfNotNull(curatedSurgery), curationResponse.extractionEvaluation)
         }.fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, extractionResult ->
-            ExtractionResult((acc.extracted + extractionResult.extracted).filterNotNull(), acc.evaluation + extractionResult.evaluation)
+            ExtractionResult(acc.extracted + extractionResult.extracted, acc.evaluation + extractionResult.evaluation)
         }
     }
 

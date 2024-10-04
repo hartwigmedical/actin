@@ -10,20 +10,18 @@ import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireEntry
 import com.hartwig.actin.clinical.feed.emc.surgery.SurgeryEntry
 import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionEntry
 import com.hartwig.actin.datamodel.clinical.Gender
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertNotNull
-import junit.framework.TestCase.assertNull
-import junit.framework.TestCase.assertTrue
-import org.apache.logging.log4j.util.Strings
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.withPrecision
 import org.junit.Test
 import java.io.IOException
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 class EmcClinicalFeedReaderTest {
+
     @Test
     @Throws(IOException::class)
-    fun canReadFromTestDirectory() {
+    fun `Can read feed from test directory`() {
         val feed = read(FEED_DIRECTORY)
         assertPatients(feed.patientEntries)
         assertQuestionnaires(feed.questionnaireEntries)
@@ -40,25 +38,27 @@ class EmcClinicalFeedReaderTest {
         private const val PATIENT = "ACTN01029999"
 
         private fun assertPatients(entries: List<PatientEntry>) {
-            assertEquals(1, entries.size.toLong())
+            assertThat(entries.size).isEqualTo(1)
             val entry = entries[0]
-            assertEquals(PATIENT, entry.subject)
-            assertEquals(1953, entry.birthYear.toLong())
-            assertEquals(Gender.MALE, entry.gender)
-            assertEquals(LocalDate.of(2020, 7, 13), entry.periodStart)
-            assertNull(entry.periodEnd)
+            assertThat(entry.subject).isEqualTo(PATIENT)
+            assertThat(entry.birthYear).isEqualTo(1953)
+            assertThat(entry.gender).isEqualTo(Gender.MALE)
+            assertThat(entry.periodStart).isEqualTo(LocalDate.of(2020, 7, 13))
+            assertThat(entry.periodEnd).isNull()
         }
 
         private fun assertQuestionnaires(entries: List<QuestionnaireEntry>) {
-            assertEquals(1, entries.size.toLong())
+            assertThat(entries.size).isEqualTo(1)
             val entry = findByAuthoredDate(entries, LocalDate.of(2021, 8, 16))
-            assertEquals(PATIENT, entry.subject)
-            assertEquals("INT Consult", entry.description)
-            assertEquals("Beloop", entry.itemText)
-            assertEquals(37, entry.text.split("\\n").dropLastWhile { it.isEmpty() }.toTypedArray().size.toLong())
-            assertTrue(entry.text.startsWith("ACTIN Questionnaire"))
-            assertTrue(entry.text.contains("CNS lesions"))
-            assertTrue(entry.text.contains("Cancer-related complications (e.g. pleural effusion)"))
+
+            assertThat(entry.subject).isEqualTo(PATIENT)
+            assertThat(entry.description).isEqualTo("INT Consult")
+            assertThat(entry.itemText).isEqualTo("Beloop")
+            assertThat(entry.text.split("\\n").dropLastWhile { it.isEmpty() }.toTypedArray().size.toLong()).isEqualTo(37)
+
+            assertThat(entry.text).startsWith("ACTIN Questionnaire")
+            assertThat(entry.text).contains("CNS lesions")
+            assertThat(entry.text).contains("Cancer-related complications (e.g. pleural effusion)")
         }
 
         private fun findByAuthoredDate(entries: List<QuestionnaireEntry>, dateToFind: LocalDate): QuestionnaireEntry {
@@ -71,59 +71,59 @@ class EmcClinicalFeedReaderTest {
         }
 
         private fun assertSurgeries(entries: List<SurgeryEntry>) {
-            assertEquals(2, entries.size.toLong())
+            assertThat(entries.size).isEqualTo(2)
             val entry = entries[0]
-            assertEquals(PATIENT, entry.subject)
-            assertEquals("surgery", entry.classDisplay)
-            assertEquals(LocalDate.of(2020, 8, 28), entry.periodStart)
-            assertEquals(LocalDate.of(2020, 8, 28), entry.periodEnd)
-            assertEquals("diagnostics stomach", entry.codeCodingDisplayOriginal)
-            assertEquals("planned", entry.encounterStatus)
-            assertEquals("planned", entry.procedureStatus)
-            assertEquals("Geen ingreep- operatie uitgesteld", entries[1].codeCodingDisplayOriginal)
+            assertThat(entry.subject).isEqualTo(PATIENT)
+            assertThat(entry.classDisplay).isEqualTo("surgery")
+            assertThat(entry.periodStart).isEqualTo(LocalDate.of(2020, 8, 28))
+            assertThat(entry.periodEnd).isEqualTo(LocalDate.of(2020, 8, 28))
+            assertThat(entry.codeCodingDisplayOriginal).isEqualTo("diagnostics stomach")
+            assertThat(entry.encounterStatus).isEqualTo("planned")
+            assertThat(entry.procedureStatus).isEqualTo("planned")
+            assertThat(entries[1].codeCodingDisplayOriginal).isEqualTo("Geen ingreep- operatie uitgesteld")
         }
 
         private fun assertMedication(entries: List<MedicationEntry>) {
-            assertEquals(1, entries.size.toLong())
+            assertThat(entries.size).isEqualTo(1)
             val entry = entries[0]
-            assertEquals(PATIENT, entry.subject)
-            assertEquals("19-0716 PEMBROLIZUMAB V/P INFOPL 25MG/ML FL 4ML", entry.codeText)
-            assertTrue(entry.code5ATCDisplay.isEmpty())
-            assertEquals("MILLIGRAM", entry.dosageInstructionDoseQuantityUnit)
-            assertEquals(200.0, entry.dosageInstructionDoseQuantityValue, EPSILON)
-            assertTrue(entry.dosageInstructionFrequencyUnit.isEmpty())
+            assertThat(entry.subject).isEqualTo(PATIENT)
+            assertThat(entry.codeText).isEqualTo("19-0716 PEMBROLIZUMAB V/P INFOPL 25MG/ML FL 4ML")
+            assertThat(entry.code5ATCDisplay).isEmpty()
+            assertThat(entry.dosageInstructionDoseQuantityUnit).isEqualTo("MILLIGRAM")
+            assertThat(entry.dosageInstructionDoseQuantityValue).isEqualTo(200.0, withPrecision(EPSILON))
+            assertThat(entry.dosageInstructionFrequencyUnit).isEmpty()
             assertDoubleEquals(0.0, entry.dosageInstructionFrequencyValue)
             assertDoubleEquals(0.0, entry.dosageInstructionMaxDosePerAdministration)
-            assertEquals("Excreta: nvt", entry.dosageInstructionPatientInstruction)
-            assertTrue(entry.dosageInstructionAsNeededDisplay.isEmpty())
-            assertTrue(entry.dosageInstructionPeriodBetweenDosagesUnit.isEmpty())
+            assertThat(entry.dosageInstructionPatientInstruction).isEqualTo("Excreta: nvt")
+            assertThat(entry.dosageInstructionAsNeededDisplay).isEmpty()
+            assertThat(entry.dosageInstructionPeriodBetweenDosagesUnit).isEmpty()
             assertDoubleEquals(0.0, entry.dosageInstructionPeriodBetweenDosagesValue)
-            assertEquals("200 milligram inlooptijd: 30 minuten, via 0,2 um filter", entry.dosageInstructionText)
-            assertTrue(entry.status.isEmpty())
-            assertNull(entry.active)
-            assertTrue(entry.dosageDoseValue.isEmpty())
-            assertTrue(entry.dosageRateQuantityUnit.isEmpty())
-            assertTrue(entry.dosageDoseUnitDisplayOriginal.isEmpty())
-            assertEquals(LocalDate.of(2019, 6, 7), entry.periodOfUseValuePeriodStart)
-            assertEquals(LocalDate.of(2019, 6, 7), entry.periodOfUseValuePeriodEnd)
-            assertEquals("Definitief", entry.stopTypeDisplay)
+            assertThat(entry.dosageInstructionText).isEqualTo("200 milligram inlooptijd: 30 minuten, via 0,2 um filter")
+            assertThat(entry.status).isEmpty()
+            assertThat(entry.active).isNull()
+            assertThat(entry.dosageDoseValue).isEmpty()
+            assertThat(entry.dosageRateQuantityUnit).isEmpty()
+            assertThat(entry.dosageDoseUnitDisplayOriginal).isEmpty()
+            assertThat(entry.periodOfUseValuePeriodStart).isEqualTo(LocalDate.of(2019, 6, 7))
+            assertThat(entry.periodOfUseValuePeriodEnd).isEqualTo(LocalDate.of(2019, 6, 7))
+            assertThat(entry.stopTypeDisplay).isEqualTo("Definitief")
         }
 
         private fun assertDoubleEquals(expected: Double, actual: Double?) {
-            assertNotNull(actual)
-            assertEquals(expected, actual!!, EPSILON)
+            assertThat(actual).isNotNull()
+            assertThat(actual!!).isEqualTo(expected, withPrecision(EPSILON))
         }
 
         private fun assertLab(entries: List<LabEntry>) {
-            assertEquals(1, entries.size.toLong())
-            val entry1 = findByCodeCodeOriginal(entries, "AC")
-            assertEquals(PATIENT, entry1.subject)
-            assertEquals("ACTH", entry1.codeDisplayOriginal)
-            assertEquals(Strings.EMPTY, entry1.valueQuantityComparator)
-            assertEquals(5.5, entry1.valueQuantityValue, EPSILON)
-            assertEquals("10^9/L", entry1.valueQuantityUnit)
-            assertEquals("3.5 - 10", entry1.referenceRangeText)
-            assertEquals(LocalDate.of(2019, 6, 27), entry1.effectiveDateTime)
+            assertThat(entries.size).isEqualTo(1)
+            val entry = findByCodeCodeOriginal(entries, "AC")
+            assertThat(entry.subject).isEqualTo(PATIENT)
+            assertThat(entry.codeDisplayOriginal).isEqualTo("ACTH")
+            assertThat(entry.valueQuantityComparator).isEmpty()
+            assertThat(entry.valueQuantityValue).isEqualTo(5.5, withPrecision(EPSILON))
+            assertThat(entry.valueQuantityUnit).isEqualTo("10^9/L")
+            assertThat(entry.referenceRangeText).isEqualTo("3.5 - 10")
+            assertThat(entry.effectiveDateTime).isEqualTo(LocalDate.of(2019, 6, 27))
         }
 
         private fun findByCodeCodeOriginal(entries: List<LabEntry>, codeCodeOriginal: String): LabEntry {
@@ -132,40 +132,42 @@ class EmcClinicalFeedReaderTest {
         }
 
         private fun assertVitalFunctions(entries: List<VitalFunctionEntry>) {
-            assertEquals(1, entries.size.toLong())
+            assertThat(entries.size).isEqualTo(1)
             val entry = entries[0]
-            assertEquals(PATIENT, entry.subject)
-            assertEquals(LocalDateTime.of(2019, 4, 28, 13, 45), entry.effectiveDateTime)
-            assertEquals("NIBP", entry.codeDisplayOriginal)
-            assertEquals("Systolic blood pressure", entry.componentCodeDisplay)
-            assertEquals("mmHg", entry.quantityUnit)
-            assertEquals(108.0, entry.quantityValue!!, EPSILON)
+            assertThat(entry.subject).isEqualTo(PATIENT)
+            assertThat(entry.effectiveDateTime).isEqualTo(LocalDateTime.of(2019, 4, 28, 13, 45))
+            assertThat(entry.codeDisplayOriginal).isEqualTo("NIBP")
+            assertThat(entry.componentCodeDisplay).isEqualTo("Systolic blood pressure")
+            assertThat(entry.quantityUnit).isEqualTo("mmHg")
+            assertThat(entry.quantityValue!!).isEqualTo(108.0, withPrecision(EPSILON))
         }
 
         private fun assertIntolerances(entries: List<IntoleranceEntry>) {
-            assertEquals(1, entries.size.toLong())
+            assertThat(entries.size).isEqualTo(1)
             val entry = entries[0]
-            assertEquals(PATIENT, entry.subject)
-            assertEquals(LocalDate.of(2014, 4, 21), entry.assertedDate)
-            assertEquals("medication", entry.category)
-            assertEquals("Propensity to adverse reactions to drug", entry.categoryAllergyCategoryDisplay)
-            assertEquals("active", entry.clinicalStatus)
-            assertEquals("confirmed", entry.verificationStatus)
-            assertEquals("SIMVASTATINE", entry.codeText)
-            assertEquals("low", entry.criticality)
-            assertEquals("allergy", entry.isSideEffect)
+            assertThat(entry.subject).isEqualTo(PATIENT)
+            assertThat(entry.assertedDate).isEqualTo(LocalDate.of(2014, 4, 21))
+            assertThat(entry.category).isEqualTo("medication")
+            assertThat(entry.categoryAllergyCategoryDisplay).isEqualTo("Propensity to adverse reactions to drug")
+            assertThat(entry.clinicalStatus).isEqualTo("active")
+            assertThat(entry.verificationStatus).isEqualTo("confirmed")
+            assertThat(entry.codeText).isEqualTo("SIMVASTATINE")
+            assertThat(entry.criticality).isEqualTo("low")
+            assertThat(entry.isSideEffect).isEqualTo("allergy")
         }
 
         private fun assertBodyWeights(entries: List<BodyWeightEntry>) {
-            assertEquals(2, entries.size.toLong())
-            val entry1 = findByDate(entries, LocalDateTime.of(2020, 8, 11, 0, 0, 0, 0))
-            assertEquals(PATIENT, entry1.subject)
-            assertEquals(61.1, entry1.valueQuantityValue, EPSILON)
-            assertEquals("kilogram", entry1.valueQuantityUnit)
+            assertThat(entries.size).isEqualTo(2)
+
+            val entry = findByDate(entries, LocalDateTime.of(2020, 8, 11, 0, 0, 0, 0))
+            assertThat(entry.subject).isEqualTo(PATIENT)
+            assertThat(entry.valueQuantityValue).isEqualTo(61.1, withPrecision(EPSILON))
+            assertThat(entry.valueQuantityUnit).isEqualTo("kilogram")
+
             val entry2 = findByDate(entries, LocalDateTime.of(2020, 8, 20, 8, 43, 0, 0))
-            assertEquals(PATIENT, entry2.subject)
-            assertEquals(58.9, entry2.valueQuantityValue, EPSILON)
-            assertEquals("kilogram", entry2.valueQuantityUnit)
+            assertThat(entry2.subject).isEqualTo(PATIENT)
+            assertThat(entry2.valueQuantityValue).isEqualTo(58.9, withPrecision(EPSILON))
+            assertThat(entry2.valueQuantityUnit).isEqualTo("kilogram")
         }
 
         private fun findByDate(entries: List<BodyWeightEntry>, dateToFind: LocalDateTime): BodyWeightEntry {
