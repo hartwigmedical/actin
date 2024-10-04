@@ -10,8 +10,7 @@ class NKITrialStatusEntryReaderTest {
 
     @Test
     fun `Should read all trial status from JSON and only include open, closed and suspended trials`() {
-        val reader = NKITrialStatusEntryReader()
-        val status = reader.read(resourceOnClasspath("nki_config"))
+        val status = NKITrialStatusEntryReader().read(resourceOnClasspath("nki_config"))
         assertThat(status).containsExactly(
             TrialStatusEntry(
                 studyId = 1,
