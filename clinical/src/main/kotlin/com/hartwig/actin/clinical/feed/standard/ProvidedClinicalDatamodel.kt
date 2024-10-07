@@ -320,7 +320,7 @@ data class ProvidedWhoEvaluation(
 @JacksonSerializable
 data class ProvidedSurgery(
     @Description("Name of surgery (eg. Diagnostics stomach)")
-    val name: String?,
+    val surgeryName: String?,
     @Description("Date of completion, if applicable.")
     val endDate: LocalDate,
     @Description("Status of surgery (eg. complete)")

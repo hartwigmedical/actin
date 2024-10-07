@@ -24,13 +24,15 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
         val extracted = ehrPatientRecord.molecularTests.mapNotNull { test ->
             val ignoreEntireTest = curation.find(patientQualifiedTestName(ehrPatientRecord.patientDetails.hashedId, test)).any { it.ignore }
             if (!ignoreEntireTest) {
-                val (onlyFreeTextResults, populatedResults) = test.results.partition { checkAllFieldsNull(it) }
+                val nonIHCTestResults = test.results.filter { it.ihcResult == null }.toSet()
+                val (onlyFreeTextResults, populatedResults) = nonIHCTestResults
+                    .partition { checkAllFieldsNull(it) }
                 val mandatoryCurationTestResults = curate(ehrPatientRecord, onlyFreeTextResults)
                 val optionalCurationTestResults = curate(ehrPatientRecord, populatedResults)
                 val allResults =
-                    removeCurated(removeCurated(test.results, mandatoryCurationTestResults), optionalCurationTestResults) +
+                    removeCurated(removeCurated(nonIHCTestResults, mandatoryCurationTestResults), optionalCurationTestResults) +
                             extract(mandatoryCurationTestResults) + extract(optionalCurationTestResults)
-                ExtractionResult(
+                if (allResults.isNotEmpty()) ExtractionResult(
                     listOf(
                         PriorSequencingTest(
                             test = test.test,
@@ -47,7 +49,7 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
                     ),
                     mandatoryCurationTestResults.map { curated -> curated.extractionEvaluation }
                         .fold(CurationExtractionEvaluation()) { acc, extraction -> acc + extraction }
-                )
+                ) else null
             } else {
                 null
             }

@@ -17,9 +17,9 @@ import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 private const val TEST = "test"
 private const val GENE = "gene"
@@ -57,11 +57,16 @@ class StandardPriorSequencingTestExtractorTest {
         val result = extractor.extract(
             EhrTestData.createEhrPatientRecord().copy(
                 molecularTests = listOf(
-                    BASE_MOLECULAR_TEST.copy(testedGenes = setOf(GENE))
+                    BASE_MOLECULAR_TEST.copy(
+                        testedGenes = setOf(GENE),
+                        results = setOf(ProvidedMolecularTestResult(gene = GENE, hgvsProteinImpact = PROTEIN))
+                    )
                 )
             )
         )
-        assertResultContains(result, BASE_PRIOR_SEQUENCING.copy(testedGenes = setOf(GENE)))
+        assertThat(result.extracted[0].testedGenes).containsExactly(GENE)
+        assertThat(result.extracted[0].date).isEqualTo(TEST_DATE)
+        assertThat(result.extracted[0].test).isEqualTo(TEST)
     }
 
     @Test
@@ -181,7 +186,7 @@ class StandardPriorSequencingTestExtractorTest {
         )
         val result = extractionResult(ProvidedMolecularTestResult(gene = GENE, freeText = FREE_TEXT))
         assertThat(result.evaluation.warnings).isEmpty()
-        assertResultContains(result, BASE_PRIOR_SEQUENCING)
+        assertThat(result.extracted.isEmpty())
     }
 
     @Test
@@ -204,12 +209,28 @@ class StandardPriorSequencingTestExtractorTest {
                 ignore = true
             )
         )
-        val result = extractionResult(ProvidedMolecularTestResult(gene = GENE, hgvsCodingImpact = "erroneous", freeText = FREE_TEXT))
-        assertThat(result.extracted[0].variants).isEmpty()
+        val result = extractionResult(
+            ProvidedMolecularTestResult(gene = GENE, hgvsCodingImpact = "erroneous", freeText = FREE_TEXT),
+            ProvidedMolecularTestResult(gene = GENE, hgvsProteinImpact = PROTEIN)
+        )
+        assertThat(result.extracted[0].variants).containsExactly(SequencedVariant(gene = GENE, hgvsProteinImpact = PROTEIN))
     }
 
-    private fun extractionResult(result: ProvidedMolecularTestResult) = extractor.extract(
-        EhrTestData.createEhrPatientRecord().copy(molecularTests = listOf(BASE_MOLECULAR_TEST.copy(results = setOf(result))))
+    @Test
+    fun `Should filter IHC tests from the final result`() {
+        val result = extractor.extract(
+            EhrTestData.createEhrPatientRecord().copy(
+                molecularTests = listOf(
+                    BASE_MOLECULAR_TEST.copy(results = setOf(ProvidedMolecularTestResult(ihcResult = "ihc")))
+                )
+            )
+        )
+        assertThat(result.extracted).isEmpty()
+    }
+
+
+    private fun extractionResult(vararg result: ProvidedMolecularTestResult) = extractor.extract(
+        EhrTestData.createEhrPatientRecord().copy(molecularTests = listOf(BASE_MOLECULAR_TEST.copy(results = result.toSet())))
     )
 
     private fun assertResultContains(result: ExtractionResult<List<PriorSequencingTest>>, priorSequencingTest: PriorSequencingTest) {

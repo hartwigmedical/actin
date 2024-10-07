@@ -279,16 +279,9 @@
   ],
   "surgeries": [
     {
+      "name": "diagnostics stomach translated",
       "endDate": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
-      "status": "FINISHED"
-    },
-    {
-      "endDate": {
-        "year": 2020,
+        "year": 2021,
         "month": 1,
         "day": 1
       },
