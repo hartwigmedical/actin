@@ -9,6 +9,5 @@ data class ECGConfig(
     val qtcfUnit: String? = null,
     val isJTC: Boolean,
     val jtcValue: Int? = null,
-    val jtcUnit: String? = null,
-    val hasSigAberrationLatestECG: Boolean? = null
+    val jtcUnit: String? = null
 ) : CurationConfig

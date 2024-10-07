@@ -58,8 +58,7 @@ class StandardClinicalStatusExtractorTest {
             qtcfUnit = "qtcfUnit",
             isJTC = true,
             jtcValue = 2,
-            jtcUnit = "jtcUnit",
-            hasSigAberrationLatestECG = true
+            jtcUnit = "jtcUnit"
         )
         every { ecgCuration.find(conditionName) } returns setOf(
             ecgConfig

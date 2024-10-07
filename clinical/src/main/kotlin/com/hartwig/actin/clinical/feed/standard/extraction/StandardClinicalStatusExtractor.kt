@@ -11,7 +11,7 @@ import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 import com.hartwig.actin.datamodel.clinical.ECG
 import com.hartwig.actin.datamodel.clinical.ECGMeasure
 
-class StandardClinicalStatusExtractor(val ecgCuration: CurationDatabase<ECGConfig>) : StandardDataExtractor<ClinicalStatus> {
+class StandardClinicalStatusExtractor(private val ecgCuration: CurationDatabase<ECGConfig>) : StandardDataExtractor<ClinicalStatus> {
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<ClinicalStatus> {
         val mostRecentWho = ehrPatientRecord.whoEvaluations.maxByOrNull { who -> who.evaluationDate }
         val ecg = ehrPatientRecord.priorOtherConditions.map {
@@ -32,7 +32,7 @@ class StandardClinicalStatusExtractor(val ecgCuration: CurationDatabase<ECGConfi
                     jtcMeasure = maybeECGMeasure(it.jtcValue, it.jtcUnit),
                     qtcfMeasure = maybeECGMeasure(it.qtcfValue, it.qtcfUnit),
                     aberrationDescription = it.interpretation,
-                    hasSigAberrationLatestECG = it.hasSigAberrationLatestECG ?: false
+                    hasSigAberrationLatestECG = true
                 )
             })
         return ExtractionResult(clinicalStatus, CurationExtractionEvaluation())
