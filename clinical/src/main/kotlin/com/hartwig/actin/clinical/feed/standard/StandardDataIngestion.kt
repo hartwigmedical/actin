@@ -179,7 +179,7 @@ class StandardDataIngestion(
             StandardOncologicalHistoryExtractor(
                 curationDatabaseContext.treatmentHistoryEntryCuration
             ),
-            StandardClinicalStatusExtractor(),
+            StandardClinicalStatusExtractor(curationDatabaseContext.ecgCuration),
             StandardTumorDetailsExtractor(
                 curationDatabaseContext.primaryTumorCuration, curationDatabaseContext.lesionLocationCuration,
                 TumorStageDeriver.create(doidModel)
