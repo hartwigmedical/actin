@@ -28,7 +28,14 @@ data class SequencedSkippedExons(val gene: String, val exonStart: Int, val exonE
     }
 }
 
-data class SequencedFusion(val geneUp: String? = null, val geneDown: String? = null) : Displayable {
+data class SequencedFusion(
+    val geneUp: String? = null,
+    val geneDown: String? = null,
+    val transcriptUp: String? = null,
+    val transcriptDown: String? = null,
+    val exonUp: Int? = null,
+    val exonDown: Int? = null
+) : Displayable {
     override fun display(): String {
         return when {
             geneUp != null && geneDown == null -> "$geneUp fusion"

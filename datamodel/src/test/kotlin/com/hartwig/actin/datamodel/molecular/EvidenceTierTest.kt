@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.EvidenceTier
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.treatment
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
+import com.hartwig.serve.datamodel.EvidenceLevelDetails
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -42,12 +43,18 @@ class EvidenceTierTest {
         assertThat(evidenceTier(driverWithEvidence(EvidenceLevel.A))).isEqualTo(EvidenceTier.I)
     }
 
-    private fun driverWithEvidence(evidenceLevel: EvidenceLevel, onLabel: Boolean = true, isCategoryEvent: Boolean = false): Driver {
+    private fun driverWithEvidence(
+        evidenceLevel: EvidenceLevel,
+        onLabel: Boolean = true,
+        evidenceLevelDetails: EvidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY,
+        isCategoryEvent: Boolean = false
+    ): Driver {
         return mockDriver(
             setOf(
                 treatment(
                     "on-label",
                     evidenceLevel,
+                    evidenceLevelDetails,
                     EvidenceDirection(hasPositiveResponse = true, isCertain = true),
                     onLabel,
                     isCategoryEvent
@@ -60,7 +67,7 @@ class EvidenceTierTest {
         treatments: Set<TreatmentEvidence>
     ): Driver {
         val driver = mockk<Driver>()
-        every { driver.evidence } returns TestClinicalEvidenceFactory.createEmpty()
+        every { driver.evidence } returns TestClinicalEvidenceFactory.createEmptyClinicalEvidence()
             .copy(treatmentEvidence = treatments)
         return driver
     }

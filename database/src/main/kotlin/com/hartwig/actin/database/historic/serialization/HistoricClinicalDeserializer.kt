@@ -41,12 +41,12 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDe
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
 import com.hartwig.actin.util.json.Json
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
 import java.io.File
 import java.io.FileReader
 import java.time.LocalDate
 import java.time.LocalDateTime
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
 object HistoricClinicalDeserializer {
 
@@ -99,7 +99,8 @@ object HistoricClinicalDeserializer {
             gender = Gender.valueOf(Json.string(patient, "gender")),
             birthYear = Json.integer(patient, "birthYear"),
             registrationDate = Json.date(patient, "registrationDate"),
-            questionnaireDate = Json.nullableDate(patient, "questionnaireDate")
+            questionnaireDate = Json.nullableDate(patient, "questionnaireDate"),
+            hasHartwigSequencing = Json.bool(patient, "hasHartwigSequencing")
         )
     }
 
@@ -390,6 +391,7 @@ object HistoricClinicalDeserializer {
     private fun toSurgery(surgeryElement: JsonElement): Surgery {
         val surgery = surgeryElement.asJsonObject
         return Surgery(
+            null,
             endDate = Json.date(surgery, "endDate"),
             status = SurgeryStatus.valueOf(Json.string(surgery, "status"))
         )

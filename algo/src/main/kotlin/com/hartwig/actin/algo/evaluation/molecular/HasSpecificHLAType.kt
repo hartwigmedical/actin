@@ -3,8 +3,9 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import java.time.LocalDate
 
-class HasSpecificHLAType(private val hlaAlleleToFind: String) : MolecularEvaluationFunction {
+class HasSpecificHLAType(private val hlaAlleleToFind: String, maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun evaluate(molecular: MolecularRecord): Evaluation {
         val immunology = molecular.immunology
@@ -24,7 +25,7 @@ class HasSpecificHLAType(private val hlaAlleleToFind: String) : MolecularEvaluat
                     "Patient has HLA type $hlaAlleleToFind which is equal to required allele type $hlaAlleleToFind,"
                             + " this allele is present and without somatic variants in tumor",
                     "Patient has required HLA type",
-                    inclusionEvents = setOf(hlaAlleleToFind)
+                    inclusionEvents = setOf("HLA-$hlaAlleleToFind")
                 )
             }
 
@@ -33,7 +34,7 @@ class HasSpecificHLAType(private val hlaAlleleToFind: String) : MolecularEvaluat
                     "Patient has HLA type $hlaAlleleToFind which is equal to required allele type $hlaAlleleToFind,"
                             + " however, somatic mutation found in allele in tumor.",
                     "Patient has required HLA type but somatic mutation present in this allele in tumor",
-                    inclusionEvents = setOf(hlaAlleleToFind)
+                    inclusionEvents = setOf("HLA-$hlaAlleleToFind")
                 )
             }
 

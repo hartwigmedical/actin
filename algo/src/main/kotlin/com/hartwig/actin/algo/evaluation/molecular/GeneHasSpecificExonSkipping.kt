@@ -8,8 +8,10 @@ import com.hartwig.actin.datamodel.molecular.Fusion
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.Variant
+import java.time.LocalDate
 
-class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSkip: Int) : MolecularEvaluationFunction {
+class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSkip: Int, maxTestAge: LocalDate? = null) :
+    MolecularEvaluationFunction(maxTestAge) {
 
     override fun genes() = listOf(gene)
 
@@ -48,8 +50,8 @@ class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSk
         .toSet()
 
     private fun findFusionSkippingEvents(molecular: MolecularTest) = molecular.drivers.fusions.filter { fusion ->
-        fusion.isReportable && fusion.geneStart == gene && fusion.geneEnd == gene && fusion.extendedFusionOrThrow().fusedExonUp == exonToSkip - 1
-                && fusion.extendedFusionOrThrow().fusedExonDown == exonToSkip + 1
+        fusion.isReportable && fusion.geneStart == gene && fusion.geneEnd == gene && fusion.fusedExonUp == exonToSkip - 1
+                && fusion.fusedExonDown == exonToSkip + 1
     }
         .map(Fusion::event)
         .toSet()

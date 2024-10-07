@@ -9,13 +9,14 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.PriorIHCTest
 import com.hartwig.actin.datamodel.clinical.ReceptorType
+import java.time.LocalDate
 
-class HasPositiveHER2ExpressionByIHC: EvaluationFunction {
+class HasPositiveHER2ExpressionByIHC(private val maxTestAge: LocalDate? = null) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val receptorType = ReceptorType.HER2
         val (indeterminateIhcTests, validIhcTests) = PriorIHCTestFunctions.allIHCTestsForProtein(record.priorIHCTests, receptorType.name)
             .partition(PriorIHCTest::impliesPotentialIndeterminateStatus)
-        val geneERBB2IsAmplified = geneIsAmplifiedForPatient("ERBB2", record)
+        val geneERBB2IsAmplified = geneIsAmplifiedForPatient("ERBB2", record, maxTestAge)
 
         val testResults = validIhcTests.map(::classifyHer2Test).toSet()
 
@@ -56,10 +57,10 @@ class HasPositiveHER2ExpressionByIHC: EvaluationFunction {
 
             her2ReceptorIsPositive != true && geneERBB2IsAmplified -> {
                 return if (her2ReceptorIsPositive == null) {
-                EvaluationFactory.warn(
-                    "Patient does not have HER2 positive IHC but status is undetermined since ERBB2 amp present",
-                    "Non-positive HER2 IHC results inconsistent with ERBB2 amp"
-                )
+                    EvaluationFactory.warn(
+                        "Patient does not have HER2 positive IHC but status is undetermined since ERBB2 amp present",
+                        "Non-positive HER2 IHC results inconsistent with ERBB2 amp"
+                    )
                 } else {
                     EvaluationFactory.warn(
                         "Patient has HER2 negative IHC but status is undetermined since ERBB2 amp present",

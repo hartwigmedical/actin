@@ -8,6 +8,24 @@ import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.TestAtcFactory
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardBloodTransfusionExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyHeightExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyWeightExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardClinicalStatusExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardComplicationExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardIntolerancesExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardLabValuesExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardMedicationExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardOncologicalHistoryExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardPatientDetailsExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorIHCTestExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorOtherConditionsExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorPrimariesExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorSequencingTestExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardSurgeryExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardToxicityExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardTumorDetailsExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardVitalFunctionsExtractor
 import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.TestDoidModelFactory
@@ -54,12 +72,11 @@ class StandardDataIngestionTest {
                 cypInteractionCuration = curationDatabase.cypInteractionCuration,
                 treatmentDatabase = treatmentDatabase
             ),
-            surgeryExtractor = StandardSurgeryExtractor(),
+            surgeryExtractor = StandardSurgeryExtractor(curationDatabase.surgeryNameCuration),
             toxicityExtractor = StandardToxicityExtractor(curationDatabase.toxicityCuration),
             vitalFunctionsExtractor = StandardVitalFunctionsExtractor(),
             priorOtherConditionsExtractor = StandardPriorOtherConditionsExtractor(
-                curationDatabase.nonOncologicalHistoryCuration,
-                curationDatabase.treatmentHistoryEntryCuration
+                curationDatabase.nonOncologicalHistoryCuration
             ),
             intolerancesExtractor = StandardIntolerancesExtractor(
                 TestAtcFactory.createProperAtcModel(),
@@ -67,8 +84,7 @@ class StandardDataIngestionTest {
             ),
             complicationExtractor = StandardComplicationExtractor(curationDatabase.complicationCuration),
             treatmentHistoryExtractor = StandardOncologicalHistoryExtractor(
-                curationDatabase.treatmentHistoryEntryCuration,
-                curationDatabase.nonOncologicalHistoryCuration
+                curationDatabase.treatmentHistoryEntryCuration
             ),
             secondPrimaryExtractor = StandardPriorPrimariesExtractor(curationDatabase.secondPrimaryCuration),
 
@@ -151,6 +167,15 @@ class StandardDataIngestionTest {
                         feedInput = "MORFINE",
                         message = "Could not find intolerance config for input 'MORFINE'"
                     ), CurationRequirement(feedInput = "Nikkel", message = "Could not find intolerance config for input 'Nikkel'")
+                )
+            ),
+            CurationResult(
+                categoryName = "Surgery Name",
+                requirements = listOf(
+                    CurationRequirement(
+                        feedInput = "<CRYO Skelet door Radioloog",
+                        message = "Could not find surgery config for input '<CRYO Skelet door Radioloog'"
+                    )
                 )
             )
         )

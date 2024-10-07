@@ -18,10 +18,6 @@ data class MolecularHistory(
             .maxByOrNull { it.date ?: LocalDate.MIN }
     }
 
-    fun hasMolecularData(): Boolean {
-        return molecularTests.isNotEmpty()
-    }
-
     companion object {
         fun empty(): MolecularHistory {
             return MolecularHistory(emptyList())

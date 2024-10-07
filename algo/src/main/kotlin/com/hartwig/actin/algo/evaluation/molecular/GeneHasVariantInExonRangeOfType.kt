@@ -7,11 +7,13 @@ import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.Variant
 import com.hartwig.actin.datamodel.molecular.VariantType
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
+import java.time.LocalDate
 
 class GeneHasVariantInExonRangeOfType(
     private val gene: String, private val minExon: Int, private val maxExon: Int,
-    private val requiredVariantType: VariantTypeInput?
-) : MolecularEvaluationFunction {
+    private val requiredVariantType: VariantTypeInput?,
+    maxTestAge: LocalDate? = null
+) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun genes() = listOf(gene)
 
@@ -88,10 +90,10 @@ class GeneHasVariantInExonRangeOfType(
         }
     }
 
-    private fun exonsWithinRange(it: Fusion) = it.extendedFusionDetails?.let { e ->
+    private fun exonsWithinRange(fusion: Fusion): Boolean {
         val range = IntRange(minExon, maxExon)
-        return range.contains(e.fusedExonUp) && range.contains(e.fusedExonDown)
-    } ?: false
+        return range.contains(fusion.fusedExonUp) && range.contains(fusion.fusedExonDown)
+    }
 
     private fun evaluatePotentialWarns(
         canonicalUnreportableVariantMatches: Set<String>,
@@ -152,7 +154,7 @@ class GeneHasVariantInExonRangeOfType(
 
     private fun determineAllowedVariantTypes(requiredVariantType: VariantTypeInput?): Set<VariantType> {
         return if (requiredVariantType == null) {
-            VariantType.values().toSet()
+            VariantType.entries.toSet()
         } else when (requiredVariantType) {
             VariantTypeInput.SNV -> {
                 setOf(VariantType.SNV)

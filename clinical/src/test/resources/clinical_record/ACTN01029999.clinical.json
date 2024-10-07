@@ -12,7 +12,8 @@
       "year": 2021,
       "month": 8,
       "day": 16
-    }
+    },
+    "hasHartwigSequencing": true
   },
   "tumor": {
     "primaryTumorLocation": "Ovary",
@@ -261,6 +262,7 @@
   ],
   "surgeries": [
     {
+      "name": "diagnostics stomach translated",
       "endDate": {
         "year": 2020,
         "month": 8,

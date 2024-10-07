@@ -67,10 +67,7 @@ data class CurationResponse<T>(
             )
 
             val evaluation = when (curationCategory) {
-                CurationCategory.ADMINISTRATION_ROUTE_TRANSLATION -> {
-                    CurationExtractionEvaluation(administrationRouteEvaluatedInputs = foundTranslations)
-                }
-
+                CurationCategory.ADMINISTRATION_ROUTE_TRANSLATION -> CurationExtractionEvaluation(administrationRouteEvaluatedInputs = foundTranslations)
                 CurationCategory.BLOOD_TRANSFUSION_TRANSLATION -> CurationExtractionEvaluation()
                 CurationCategory.TOXICITY_TRANSLATION -> CurationExtractionEvaluation(toxicityTranslationEvaluatedInputs = foundTranslations)
                 CurationCategory.DOSAGE_UNIT_TRANSLATION -> CurationExtractionEvaluation(dosageUnitEvaluatedInputs = foundTranslations)
@@ -108,6 +105,7 @@ data class CurationResponse<T>(
                 CurationCategory.INTOLERANCE -> CurationExtractionEvaluation(intoleranceEvaluatedInputs = evaluatedInputs)
                 CurationCategory.CYP_INTERACTIONS -> CurationExtractionEvaluation()
                 CurationCategory.QT_PROLONGATING -> CurationExtractionEvaluation()
+                CurationCategory.SURGERY_NAME -> CurationExtractionEvaluation(surgeryTranslationEvaluatedInputs = evaluatedInputs)
                 else -> throw IllegalStateException("Unsupported curation category for config lookup: $curationCategory")
             }
             return CurationResponse(

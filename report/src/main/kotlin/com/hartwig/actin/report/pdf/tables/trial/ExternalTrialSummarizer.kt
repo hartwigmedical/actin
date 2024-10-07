@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.datamodel.algo.TrialMatch
-import com.hartwig.actin.datamodel.molecular.evidence.Country
+import com.hartwig.actin.datamodel.molecular.evidence.CountryName
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
 
@@ -12,7 +12,10 @@ data class ExternalTrialSummary(
     val nonLocalTrialsFiltered: Int
 )
 
-class ExternalTrialSummarizer(private val homeCountry: Country) {
+private val CHILDREN_HOSPITALS =
+    setOf("PMC", "WKZ", "EKZ", "JKZ", "BKZ", "WAKZ", "Sophia Kinderziekenhuis", "Amalia Kinderziekenhuis", "MosaKids Kinderziekenhuis")
+
+class ExternalTrialSummarizer(private val homeCountry: CountryName) {
 
     fun summarize(
         externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>,
@@ -29,7 +32,12 @@ class ExternalTrialSummarizer(private val homeCountry: Country) {
         externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>, trialMatches: List<TrialMatch>
     ): Map<String, List<ExternalTrial>> {
         val localTrialNctIds = trialMatches.mapNotNull { it.identification.nctId }.toSet()
-        return externalTrialsPerEvent.flatMap { (event, trials) -> trials.filter { it.nctId !in localTrialNctIds }.map { event to it } }
+        return externalTrialsPerEvent.flatMap { (event, trials) ->
+            trials.filter { it.nctId !in localTrialNctIds }.filter { trial ->
+                val hospitalsInHomeCountry = findHospitalsInHomeCountry(trial)
+                hospitalsInHomeCountry.isEmpty() || !hospitalsInHomeCountry.all { hospital -> hospital in CHILDREN_HOSPITALS }
+            }.map { event to it }
+        }
             .groupBy { (_, trial) -> trial.nctId }
             .map { (_, eventAndTrialPairs) ->
                 val (events, trials) = eventAndTrialPairs.unzip()
@@ -70,4 +78,13 @@ class ExternalTrialSummarizer(private val homeCountry: Country) {
 
     private fun splitMolecularEvents(molecularEvents: String) =
         molecularEvents.split(",").map { it.trim() }.toSet()
+
+    private fun findHospitalsInHomeCountry(trial: ExternalTrial): Set<String> {
+        val homeCountries = trial.countries.filter { it.name == homeCountry }
+        if (homeCountries.size > 1) throw IllegalStateException(
+            "Country ${homeCountry.display()} is configured multiple times for trial ${trial.nctId}. " +
+                    "This should not be possible and indicates an issue in the SERVE data export"
+        )
+        return homeCountries.firstOrNull()?.hospitalsPerCity?.values?.flatten()?.toSet() ?: emptySet()
+    }
 }

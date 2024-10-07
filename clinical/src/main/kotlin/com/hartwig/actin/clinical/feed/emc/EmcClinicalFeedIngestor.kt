@@ -7,21 +7,22 @@ import com.hartwig.actin.clinical.PatientIngestionResult
 import com.hartwig.actin.clinical.correction.QuestionnaireCorrection
 import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
-import com.hartwig.actin.clinical.curation.extraction.BloodTransfusionsExtractor
-import com.hartwig.actin.clinical.curation.extraction.ClinicalStatusExtractor
-import com.hartwig.actin.clinical.curation.extraction.ComplicationsExtractor
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.clinical.curation.extraction.IntoleranceExtractor
-import com.hartwig.actin.clinical.curation.extraction.LabValueExtractor
-import com.hartwig.actin.clinical.curation.extraction.MedicationExtractor
-import com.hartwig.actin.clinical.curation.extraction.OncologicalHistoryExtractor
-import com.hartwig.actin.clinical.curation.extraction.PriorMolecularTestsExtractor
-import com.hartwig.actin.clinical.curation.extraction.PriorOtherConditionsExtractor
-import com.hartwig.actin.clinical.curation.extraction.PriorSecondPrimaryExtractor
-import com.hartwig.actin.clinical.curation.extraction.ToxicityExtractor
-import com.hartwig.actin.clinical.curation.extraction.TumorDetailsExtractor
 import com.hartwig.actin.clinical.feed.ClinicalFeedIngestion
 import com.hartwig.actin.clinical.feed.emc.bodyweight.BodyWeightEntry
+import com.hartwig.actin.clinical.feed.emc.extraction.BloodTransfusionsExtractor
+import com.hartwig.actin.clinical.feed.emc.extraction.ClinicalStatusExtractor
+import com.hartwig.actin.clinical.feed.emc.extraction.ComplicationsExtractor
+import com.hartwig.actin.clinical.feed.emc.extraction.IntoleranceExtractor
+import com.hartwig.actin.clinical.feed.emc.extraction.LabValueExtractor
+import com.hartwig.actin.clinical.feed.emc.extraction.MedicationExtractor
+import com.hartwig.actin.clinical.feed.emc.extraction.OncologicalHistoryExtractor
+import com.hartwig.actin.clinical.feed.emc.extraction.PriorMolecularTestsExtractor
+import com.hartwig.actin.clinical.feed.emc.extraction.PriorOtherConditionsExtractor
+import com.hartwig.actin.clinical.feed.emc.extraction.PriorSecondPrimaryExtractor
+import com.hartwig.actin.clinical.feed.emc.extraction.SurgeryExtractor
+import com.hartwig.actin.clinical.feed.emc.extraction.ToxicityExtractor
+import com.hartwig.actin.clinical.feed.emc.extraction.TumorDetailsExtractor
 import com.hartwig.actin.clinical.feed.emc.lab.LabExtraction
 import com.hartwig.actin.clinical.feed.emc.patient.PatientEntry
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
@@ -32,8 +33,6 @@ import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 import com.hartwig.actin.datamodel.clinical.BodyWeight
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
 import com.hartwig.actin.datamodel.clinical.PatientDetails
-import com.hartwig.actin.datamodel.clinical.Surgery
-import com.hartwig.actin.datamodel.clinical.SurgeryStatus
 import com.hartwig.actin.datamodel.clinical.VitalFunction
 import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory.ARTERIAL_BLOOD_PRESSURE
 import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory.HEART_RATE
@@ -56,6 +55,8 @@ class EmcClinicalFeedIngestor(
     private val intoleranceExtractor: IntoleranceExtractor,
     private val medicationExtractor: MedicationExtractor,
     private val bloodTransfusionsExtractor: BloodTransfusionsExtractor,
+    private val surgeryExtractor: SurgeryExtractor
+
 ) : ClinicalFeedIngestion {
 
     override fun ingest(): List<Pair<PatientIngestionResult, CurationExtractionEvaluation>> {
@@ -78,6 +79,7 @@ class EmcClinicalFeedIngestor(
             val intoleranceExtraction = intoleranceExtractor.extract(patientId, feedRecord.intoleranceEntries)
             val bloodTransfusionsExtraction = bloodTransfusionsExtractor.extract(patientId, feedRecord.bloodTransfusionEntries)
             val medicationExtraction = medicationExtractor.extract(patientId, feedRecord.medicationEntries)
+            val surgeryExtraction = surgeryExtractor.extract(patientId, feedRecord.uniqueSurgeryEntries)
 
             val record = ClinicalRecord(
                 patientId = patientId,
@@ -93,7 +95,7 @@ class EmcClinicalFeedIngestor(
                 labValues = labValuesExtraction.extracted,
                 toxicities = toxicityExtraction.extracted,
                 intolerances = intoleranceExtraction.extracted,
-                surgeries = extractSurgeries(feedRecord),
+                surgeries = surgeryExtraction.extracted,
                 bodyWeights = extractBodyWeights(feedRecord),
                 bodyHeights = emptyList(),
                 vitalFunctions = extractVitalFunctions(feedRecord),
@@ -113,7 +115,8 @@ class EmcClinicalFeedIngestor(
                 toxicityExtraction,
                 intoleranceExtraction,
                 bloodTransfusionsExtraction,
-                medicationExtraction
+                medicationExtraction,
+                surgeryExtraction
             )
                 .map { it.evaluation }
                 .fold(CurationExtractionEvaluation()) { acc, evaluation -> acc + evaluation }
@@ -135,13 +138,9 @@ class EmcClinicalFeedIngestor(
             gender = patient.gender,
             birthYear = patient.birthYear,
             registrationDate = patient.periodStart,
-            questionnaireDate = questionnaire?.date
+            questionnaireDate = questionnaire?.date,
+            hasHartwigSequencing = true
         )
-    }
-
-    private fun extractSurgeries(feedRecord: FeedRecord): List<Surgery> {
-        return feedRecord.uniqueSurgeryEntries
-            .map { Surgery(endDate = it.periodEnd, status = resolveSurgeryStatus(it.encounterStatus)) }
     }
 
     private fun extractBodyWeights(feedRecord: FeedRecord): List<BodyWeight> {
@@ -196,17 +195,6 @@ class EmcClinicalFeedIngestor(
     private fun safeQuantityValue(entry: VitalFunctionEntry) = (entry.quantityValue
         ?: Double.NaN)
 
-    private fun resolveSurgeryStatus(status: String): SurgeryStatus {
-        val valueToFind = status.trim { it <= ' ' }.replace("-".toRegex(), "_")
-        for (option in SurgeryStatus.values()) {
-            if (option.toString().equals(valueToFind, ignoreCase = true)) {
-                return option
-            }
-        }
-        LOGGER.warn("Could not resolve surgery status '{}'", status)
-        return SurgeryStatus.UNKNOWN
-    }
-
     companion object {
         private val LOGGER = LogManager.getLogger(ClinicalIngestionFeedAdapter::class.java)
 
@@ -238,6 +226,7 @@ class EmcClinicalFeedIngestor(
             intoleranceExtractor = IntoleranceExtractor.create(curationDatabaseContext, atcModel),
             medicationExtractor = MedicationExtractor.create(curationDatabaseContext, atcModel, treatmentDatabase),
             bloodTransfusionsExtractor = BloodTransfusionsExtractor.create(curationDatabaseContext),
+            surgeryExtractor = SurgeryExtractor.create(curationDatabaseContext)
         )
 
         const val BODY_WEIGHT_MIN = 20.0

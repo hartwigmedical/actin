@@ -13,7 +13,6 @@ import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.treatment
 import com.hartwig.actin.molecular.GENE
 import com.hartwig.actin.molecular.HGVS_CODING
-import com.hartwig.actin.molecular.HGVS_PROTEIN
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
@@ -30,6 +29,7 @@ import com.hartwig.actin.tools.pave.ImmutableVariantTranscriptImpact
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.ImmutableVariant
 import com.hartwig.actin.tools.variant.VariantAnnotator
+import com.hartwig.serve.datamodel.EvidenceLevelDetails
 import com.hartwig.serve.datamodel.Knowledgebase
 import io.mockk.every
 import io.mockk.mockk
@@ -50,6 +50,8 @@ private const val OTHER_GENE_ID = "other_gene_id"
 private const val OTHER_GENE_TRANSCRIPT = "other_gene_transcript"
 private const val CHROMOSOME = "1"
 private const val POSITION = 1
+private const val HGVS_PROTEIN_3LETTER = "p.Met1Leu"
+private const val HGVS_PROTEIN_1LETTER = "p.M1L"
 private val EMPTY_MATCH = ActionabilityMatch(emptyList(), emptyList())
 private val ARCHER_VARIANT = SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING)
 
@@ -67,7 +69,7 @@ private val VARIANT_MATCH_CRITERIA =
 
 private val ACTIONABILITY_MATCH = ActionabilityMatch(
     onLabelEvents = listOf(
-        TestServeActionabilityFactory.geneBuilder().build().withSource(Knowledgebase.CKB_EVIDENCE).withLevel(ServeEvidenceLevel.A)
+        TestServeActionabilityFactory.geneBuilder().build().withSource(Knowledgebase.CKB_EVIDENCE).withEvidenceLevel(ServeEvidenceLevel.A)
             .withDirection(ServeEvidenceDirection.RESPONSIVE)
     ), offLabelEvents = emptyList()
 )
@@ -94,7 +96,7 @@ private val PAVE_ANNOTATION = PaveResponse(
         canonicalCodingEffect = PaveCodingEffect.MISSENSE,
         spliceRegion = false,
         hgvsCodingImpact = HGVS_CODING,
-        hgvsProteinImpact = HGVS_PROTEIN,
+        hgvsProteinImpact = HGVS_PROTEIN_3LETTER,
         otherReportableEffects = null,
         worstCodingEffect = PaveCodingEffect.MISSENSE,
         genesAffected = 1
@@ -145,9 +147,10 @@ class PanelVariantAnnotatorTest {
                     treatment(
                         treatment = "intervention",
                         evidenceLevel = EvidenceLevel.A,
+                        evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
                         direction = EvidenceDirection(hasPositiveResponse = true, isCertain = true, hasBenefit = true),
                         onLabel = true,
-                        isCategoryVariant = true
+                        isCategoryEvent = true
                     )
                 )
             )
@@ -178,7 +181,7 @@ class PanelVariantAnnotatorTest {
         assertThat(annotatedVariant.canonicalImpact.transcriptId).isEqualTo(TRANSCRIPT)
         assertThat(annotatedVariant.canonicalImpact.hgvsCodingImpact).isEqualTo(HGVS_CODING)
         assertThat(annotatedVariant.canonicalImpact.codingEffect).isEqualTo(CodingEffect.MISSENSE)
-        assertThat(annotatedVariant.canonicalImpact.hgvsProteinImpact).isEqualTo(HGVS_PROTEIN)
+        assertThat(annotatedVariant.canonicalImpact.hgvsProteinImpact).isEqualTo(HGVS_PROTEIN_1LETTER)
         assertThat(annotatedVariant.chromosome).isEqualTo(CHROMOSOME)
         assertThat(annotatedVariant.position).isEqualTo(POSITION)
         assertThat(annotatedVariant.ref).isEqualTo(REF)
@@ -215,7 +218,7 @@ class PanelVariantAnnotatorTest {
                     effects = listOf(),
                     spliceRegion = false,
                     hgvsCodingImpact = HGVS_CODING,
-                    hgvsProteinImpact = HGVS_PROTEIN
+                    hgvsProteinImpact = HGVS_PROTEIN_3LETTER
                 )
             )
         )
@@ -236,7 +239,7 @@ class PanelVariantAnnotatorTest {
                     effects = listOf(),
                     spliceRegion = false,
                     hgvsCodingImpact = HGVS_CODING,
-                    hgvsProteinImpact = HGVS_PROTEIN
+                    hgvsProteinImpact = HGVS_PROTEIN_3LETTER
                 )
             )
         )
@@ -249,7 +252,7 @@ class PanelVariantAnnotatorTest {
                 TranscriptImpact(
                     transcriptId = OTHER_TRANSCRIPT,
                     hgvsCodingImpact = HGVS_CODING,
-                    hgvsProteinImpact = HGVS_PROTEIN,
+                    hgvsProteinImpact = HGVS_PROTEIN_1LETTER,
                     affectedCodon = 1,
                     affectedExon = 1,
                     isSpliceRegion = false,
@@ -267,6 +270,93 @@ class PanelVariantAnnotatorTest {
         assertThat(annotatedVariants).isEmpty()
         verify(exactly = 0) { paver.run(any()) }
     }
+
+    @Test
+    fun `Should describe variant event using protein hgvs`() {
+        val variants = setOf(SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING))
+        val annotated = annotator.annotate(variants)
+        assertThat(annotated.first().event).isEqualTo("$GENE ${HGVS_PROTEIN_1LETTER.removePrefix("p.")}")
+    }
+
+    @Test
+    fun `Should describe variant using coding hgvs for event when no protein impact`() {
+        every { paver.run(listOf(PAVE_QUERY)) } returns listOf(
+            PAVE_ANNOTATION.copy(
+                impact = PAVE_ANNOTATION.impact.copy(hgvsProteinImpact = "p.?")
+            )
+        )
+
+        val variants = setOf(SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING))
+        val annotated = annotator.annotate(variants)
+        assertThat(annotated.first().event).isEqualTo("$GENE $HGVS_CODING")
+    }
+
+    @Test
+    fun `Should determine impact from PaveResponse`() {
+        assertThat(
+            impact(
+                PAVE_ANNOTATION.copy(
+                    impact = minimalPaveImpact().copy(
+                        canonicalCodingEffect = PaveCodingEffect.SPLICE,
+                        hgvsCodingImpact = "c.MUTATION",
+                        hgvsProteinImpact = "",
+                    )
+                )
+            )
+        ).isEqualTo("c.MUTATION splice")
+
+        assertThat(
+            impact(
+                PAVE_ANNOTATION.copy(
+                    impact = minimalPaveImpact().copy(
+                        canonicalCodingEffect = PaveCodingEffect.NONE,
+                        hgvsCodingImpact = "c.C_MUTATION",
+                        hgvsProteinImpact = "p.P_MUTATION",
+                    )
+                )
+            )
+        ).isEqualTo("P_MUTATION")
+
+        assertThat(
+            impact(
+                PAVE_ANNOTATION.copy(
+                    impact = minimalPaveImpact().copy(
+                        canonicalEffect = "upstream_gene_variant",
+                        canonicalCodingEffect = PaveCodingEffect.NONE,
+                        hgvsCodingImpact = "",
+                        hgvsProteinImpact = "",
+                    )
+                )
+            )
+        ).isEqualTo("upstream")
+
+        assertThat(
+            impact(
+                PAVE_ANNOTATION.copy(
+                    impact = minimalPaveImpact().copy(
+                        canonicalEffect = "something&another_thing",
+                        canonicalCodingEffect = PaveCodingEffect.NONE,
+                        hgvsCodingImpact = "",
+                        hgvsProteinImpact = "",
+                    )
+                )
+            )
+        ).isEqualTo("something&another_thing")
+    }
+
+    private fun minimalPaveImpact() = PaveImpact(
+        gene = "",
+        transcript = "",
+        canonicalEffect = "",
+        canonicalCodingEffect = PaveCodingEffect.NONE,
+        spliceRegion = false,
+        hgvsCodingImpact = "",
+        hgvsProteinImpact = "",
+        otherReportableEffects = null,
+        worstCodingEffect = PaveCodingEffect.NONE,
+        genesAffected = 1
+    )
+
 
     private fun setupGeneAlteration() {
         every { evidenceDatabase.geneAlterationForVariant(VARIANT_MATCH_CRITERIA) } returns HOTSPOT

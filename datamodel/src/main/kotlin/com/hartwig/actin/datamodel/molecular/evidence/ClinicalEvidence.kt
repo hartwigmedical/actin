@@ -1,8 +1,12 @@
 package com.hartwig.actin.datamodel.molecular.evidence
 
 import com.hartwig.actin.datamodel.Displayable
+import com.hartwig.serve.datamodel.EvidenceLevelDetails
+import java.time.LocalDate
 
-enum class Country(private val display: String) : Displayable {
+data class Country(val name: CountryName, val hospitalsPerCity: Map<String, Set<String>>)
+
+enum class CountryName(private val display: String) : Displayable {
     NETHERLANDS("Netherlands"),
     BELGIUM("Belgium"),
     GERMANY("Germany"),
@@ -18,8 +22,9 @@ data class ApplicableCancerType(val cancerType: String, val excludedCancerTypes:
 
 interface Evidence {
     val sourceEvent: String
+    val evidenceLevelDetails: EvidenceLevelDetails
     val applicableCancerType: ApplicableCancerType
-    val isCategoryVariant: Boolean?
+    val isCategoryEvent: Boolean
 }
 
 enum class EvidenceTier {
@@ -42,8 +47,12 @@ data class TreatmentEvidence(
     val evidenceLevel: EvidenceLevel,
     val onLabel: Boolean,
     val direction: EvidenceDirection,
-    override val isCategoryVariant: Boolean?,
+    val entryDate: LocalDate,
+    val efficacyDescription: String,
+    val evidenceYear: Int,
+    override val isCategoryEvent: Boolean,
     override val sourceEvent: String,
+    override val evidenceLevelDetails: EvidenceLevelDetails,
     override val applicableCancerType: ApplicableCancerType
 ) : Evidence
 
@@ -52,8 +61,9 @@ data class ExternalTrial(
     val countries: Set<Country>,
     val url: String,
     val nctId: String,
-    override val isCategoryVariant: Boolean?,
+    override val isCategoryEvent: Boolean,
     override val sourceEvent: String,
+    override val evidenceLevelDetails: EvidenceLevelDetails,
     override val applicableCancerType: ApplicableCancerType
 ) : Comparable<ExternalTrial>, Evidence {
 

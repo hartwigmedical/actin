@@ -26,6 +26,7 @@ object TestClinicalFactory {
     private const val DAYS_SINCE_LAB_MEASUREMENT_3 = 10
     private const val DAYS_SINCE_TOXICITIES = 30
     private const val DAYS_SINCE_SURGERY = 30
+    private const val DAYS_SINCE_SURGERY_2 = 40
     private const val DAYS_SINCE_BODY_WEIGHT_1 = 12
     private const val DAYS_SINCE_BODY_WEIGHT_2 = 18
     private const val DAYS_SINCE_BLOOD_PRESSURE = 15
@@ -87,7 +88,8 @@ object TestClinicalFactory {
             gender = Gender.MALE,
             birthYear = 1950,
             registrationDate = TODAY.minusDays(DAYS_SINCE_REGISTRATION.toLong()),
-            questionnaireDate = TODAY.minusDays(DAYS_SINCE_QUESTIONNAIRE.toLong())
+            questionnaireDate = TODAY.minusDays(DAYS_SINCE_QUESTIONNAIRE.toLong()),
+            hasHartwigSequencing = true
         )
     }
 
@@ -288,8 +290,8 @@ object TestClinicalFactory {
                 doids = setOf("3393"),
                 category = "Heart disease",
                 isContraindicationForTherapy = true,
-                year = null,
-                month = null
+                year = 2023,
+                month = 10
             )
         )
     }
@@ -477,7 +479,10 @@ object TestClinicalFactory {
     }
 
     private fun createTestSurgeries(): List<Surgery> {
-        return listOf(Surgery(endDate = TODAY.minusDays(DAYS_SINCE_SURGERY.toLong()), status = SurgeryStatus.FINISHED))
+        return listOf(
+            Surgery(name = "Surgery 1", endDate = TODAY.minusDays(DAYS_SINCE_SURGERY.toLong()), status = SurgeryStatus.FINISHED),
+            Surgery(name = "Surgery 2", endDate = TODAY.minusDays(DAYS_SINCE_SURGERY_2.toLong()), status = SurgeryStatus.FINISHED)
+        )
     }
 
     private fun createTestBodyWeights(): List<BodyWeight> {

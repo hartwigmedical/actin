@@ -173,8 +173,8 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         geneStart = TARGET_GENE,
                         geneEnd = TARGET_GENE,
                         isReportable = true,
-                        extendedFusionDetails = TestFusionFactory.createMinimalExtended()
-                            .copy(fusedExonUp = 2, fusedExonDown = 3)
+                        fusedExonUp = 2,
+                        fusedExonDown = 3
                     )
                 )
             )
@@ -192,8 +192,8 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         geneStart = TARGET_GENE,
                         geneEnd = TARGET_GENE,
                         isReportable = false,
-                        extendedFusionDetails = TestFusionFactory.createMinimalExtended()
-                            .copy(fusedExonUp = 2, fusedExonDown = 3)
+                        fusedExonUp = 2,
+                        fusedExonDown = 3
                     )
                 )
             )

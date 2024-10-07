@@ -7,8 +7,13 @@ import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleEvaluator.geneIs
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.doid.DoidModel
+import java.time.LocalDate
 
-class HasCancerWithNeuroendocrineComponent(private val doidModel: DoidModel) : EvaluationFunction {
+val NEUROENDOCRINE_DOIDS = setOf(DoidConstants.NEUROENDOCRINE_TUMOR_DOID, DoidConstants.NEUROENDOCRINE_CARCINOMA_DOID)
+val NEUROENDOCRINE_TERMS = setOf("neuroendocrine")
+val NEUROENDOCRINE_EXTRA_DETAILS = setOf("neuroendocrine", "NEC", "NET")
+
+class HasCancerWithNeuroendocrineComponent(private val doidModel: DoidModel, private val maxTestAge: LocalDate? = null) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.tumor.doids
@@ -53,15 +58,9 @@ class HasCancerWithNeuroendocrineComponent(private val doidModel: DoidModel) : E
             )
     }
 
-    companion object {
-        val NEUROENDOCRINE_DOIDS = setOf(DoidConstants.NEUROENDOCRINE_TUMOR_DOID, DoidConstants.NEUROENDOCRINE_CARCINOMA_DOID)
-        val NEUROENDOCRINE_TERMS = setOf("neuroendocrine")
-        val NEUROENDOCRINE_EXTRA_DETAILS = setOf("neuroendocrine", "NEC", "NET")
-
-        private fun hasNeuroendocrineMolecularProfile(record: PatientRecord): Pair<Boolean, List<String>> {
-            val genes = listOf("TP53", "PTEN", "RB1")
-            val inactivatedGenes = genes.filter { geneIsInactivatedForPatient(it, record) }
-            return Pair(inactivatedGenes.size >= 2, inactivatedGenes)
-        }
+    private fun hasNeuroendocrineMolecularProfile(record: PatientRecord): Pair<Boolean, List<String>> {
+        val genes = listOf("TP53", "PTEN", "RB1")
+        val inactivatedGenes = genes.filter { geneIsInactivatedForPatient(it, record, maxTestAge) }
+        return Pair(inactivatedGenes.size >= 2, inactivatedGenes)
     }
 }

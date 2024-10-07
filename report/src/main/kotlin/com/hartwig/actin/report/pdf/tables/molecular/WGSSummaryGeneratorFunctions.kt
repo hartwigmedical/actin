@@ -17,8 +17,8 @@ import com.itextpdf.layout.element.Text
 
 object WGSSummaryGeneratorFunctions {
 
-    fun createMolecularSummaryTitle(molecular: MolecularTest, patientRecord: PatientRecord): String {
-        return "${molecular.testTypeDisplay ?: molecular.experimentType.display()} of ${patientRecord.patientId} (${date(molecular.date)})"
+    fun createMolecularSummaryTitle(molecular: MolecularTest, isIncludedInTrialMatching: Boolean = false): String {
+        return "${molecular.testTypeDisplay ?: molecular.experimentType.display()} (${if (isIncludedInTrialMatching) date(molecular.date) else "${molecular.date} - Test not included in trial matching as test age exceeds cutoff."})"
     }
 
     fun createMolecularSummaryTable(
@@ -55,7 +55,7 @@ object WGSSummaryGeneratorFunctions {
             } else {
                 table.addCell(
                     Cells.createSpanningContent(
-                        "No relevant molecular results found in this test.",
+                        "No mutations found",
                         table
                     )
                 )

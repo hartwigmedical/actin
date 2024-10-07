@@ -11,6 +11,24 @@ import com.hartwig.actin.clinical.PatientIngestionStatus
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.ClinicalFeedIngestion
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardBloodTransfusionExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyHeightExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyWeightExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardClinicalStatusExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardComplicationExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardIntolerancesExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardLabValuesExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardMedicationExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardOncologicalHistoryExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardPatientDetailsExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorIHCTestExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorOtherConditionsExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorPrimariesExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorSequencingTestExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardSurgeryExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardToxicityExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardTumorDetailsExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardVitalFunctionsExtractor
 import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
 import com.hartwig.actin.doid.DoidModel
@@ -148,7 +166,7 @@ class StandardDataIngestion(
                 curationDatabaseContext.qtProlongingCuration,
                 curationDatabaseContext.cypInteractionCuration,
             ),
-            StandardSurgeryExtractor(),
+            StandardSurgeryExtractor(curationDatabaseContext.surgeryNameCuration),
             StandardIntolerancesExtractor(
                 atcModel,
                 curationDatabaseContext.intoleranceCuration
@@ -159,12 +177,10 @@ class StandardDataIngestion(
             StandardToxicityExtractor(curationDatabaseContext.toxicityCuration),
             StandardComplicationExtractor(curationDatabaseContext.complicationCuration),
             StandardPriorOtherConditionsExtractor(
-                curationDatabaseContext.nonOncologicalHistoryCuration,
-                curationDatabaseContext.treatmentHistoryEntryCuration
+                curationDatabaseContext.nonOncologicalHistoryCuration
             ),
             StandardOncologicalHistoryExtractor(
-                curationDatabaseContext.treatmentHistoryEntryCuration,
-                curationDatabaseContext.nonOncologicalHistoryCuration
+                curationDatabaseContext.treatmentHistoryEntryCuration
             ),
             StandardClinicalStatusExtractor(),
             StandardTumorDetailsExtractor(

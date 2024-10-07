@@ -32,7 +32,7 @@ private val ACTIONABLE_EVENTS: ActionableEvents = ImmutableActionableEvents.buil
         .sourceEvent("BRAF amp")
         .event(GeneEvent.AMPLIFICATION)
         .gene("BRAF")
-        .level(EvidenceLevel.A).build()
+        .evidenceLevel(EvidenceLevel.A).build()
 ).build()
 private val DOID_MODEL = TestDoidModelFactory.createMinimalTestDoidModel()
 private val TUMOR_DOIDS = setOf("1520")

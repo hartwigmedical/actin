@@ -3,17 +3,18 @@ package com.hartwig.actin.molecular.evidence
 import com.hartwig.actin.datamodel.molecular.evidence.ApplicableCancerType
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.Country
+import com.hartwig.actin.datamodel.molecular.evidence.CountryName
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
-import com.hartwig.actin.molecular.evidence.actionability.isCategoryVariant
+import com.hartwig.actin.molecular.evidence.actionability.isCategoryEvent
 import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.ClinicalTrial
+import com.hartwig.serve.datamodel.EvidenceLevelDetails
 import com.hartwig.serve.datamodel.Treatment
-import com.hartwig.serve.datamodel.Country as ServeCountry
 
 object ClinicalEvidenceFactory {
 
@@ -30,20 +31,24 @@ object ClinicalEvidenceFactory {
         )
     }
 
-    private fun createTreatmentEvidence(onLabel: Boolean, events: List<ActionableEvent>) =
+    private fun createTreatmentEvidence(isOnLabel: Boolean, events: List<ActionableEvent>) =
         events.filter { it.source() == ActionabilityConstants.EVIDENCE_SOURCE }.map {
             TreatmentEvidence(
                 it.treatmentName(),
-                EvidenceLevel.valueOf(it.level().name),
-                onLabel,
+                EvidenceLevel.valueOf(it.evidenceLevel().name),
+                isOnLabel,
                 EvidenceDirection(
                     hasPositiveResponse = it.direction().hasPositiveResponse(),
                     hasBenefit = it.direction().hasBenefit(),
                     isResistant = it.direction().isResistant,
                     isCertain = it.direction().isCertain
                 ),
-                it.isCategoryVariant(),
+                it.entryDate(),
+                it.efficacyDescription(),
+                it.evidenceYear(),
+                it.isCategoryEvent(),
                 it.sourceEvent(),
+                it.evidenceLevelDetails(),
                 ApplicableCancerType(it.applicableCancerType().name(), it.blacklistCancerTypes().map { ct -> ct.name() }.toSet()),
             )
         }.toSet()
@@ -56,15 +61,18 @@ object ClinicalEvidenceFactory {
                 val trial = onLabelEvent.intervention() as ClinicalTrial
                 ExternalTrial(
                     title = trial.acronym() ?: trial.title(),
-                    countries = trial.countries().map(ClinicalEvidenceFactory::determineCountry).toSet(),
+                    countries = trial.countries()
+                        .map { Country(name = determineCountryName(it.countryName()), hospitalsPerCity = it.hospitalsPerCity()) }
+                        .toSet(),
                     url = extractNctUrl(onLabelEvent),
                     nctId = trial.nctId(),
                     applicableCancerType = ApplicableCancerType(
                         onLabelEvent.applicableCancerType().name(),
                         onLabelEvent.blacklistCancerTypes().map { it.name() }.toSet()
                     ),
-                    isCategoryVariant = onLabelEvent.isCategoryVariant(),
-                    sourceEvent = onLabelEvent.sourceEvent()
+                    isCategoryEvent = onLabelEvent.isCategoryEvent(),
+                    sourceEvent = onLabelEvent.sourceEvent(),
+                    evidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY
                 )
             }
             .toSet()
@@ -72,13 +80,13 @@ object ClinicalEvidenceFactory {
 
     private fun ActionableEvent.treatmentName(): String = (this.intervention() as Treatment).name()
 
-    private fun determineCountry(country: ServeCountry): Country {
-        return when (country.countryName()) {
-            "Netherlands" -> Country.NETHERLANDS
-            "Belgium" -> Country.BELGIUM
-            "Germany" -> Country.GERMANY
-            "United States" -> Country.US
-            else -> Country.OTHER
+    private fun determineCountryName(countryName: String): CountryName {
+        return when (countryName) {
+            "Netherlands" -> CountryName.NETHERLANDS
+            "Belgium" -> CountryName.BELGIUM
+            "Germany" -> CountryName.GERMANY
+            "United States" -> CountryName.US
+            else -> CountryName.OTHER
         }
     }
 

@@ -88,11 +88,11 @@ class SOCGeneratorFunctionsTest {
         assertThat(cells.map(::firstTextFromOneParagraphElement)).containsExactly(
             "t2",
             "Not available yet",
-            "116.5",
+            "3.8",
             "no data",
             "t1",
             "Not available yet",
-            "103.0, IQR: 100.0",
+            "3.4, IQR: 3.3",
             "no data, not recommended",
             "t3",
             "Not available yet",

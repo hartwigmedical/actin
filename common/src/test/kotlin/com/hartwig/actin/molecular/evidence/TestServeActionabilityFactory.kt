@@ -4,6 +4,7 @@ import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.CancerType
 import com.hartwig.serve.datamodel.EvidenceDirection
 import com.hartwig.serve.datamodel.EvidenceLevel
+import com.hartwig.serve.datamodel.EvidenceLevelDetails
 import com.hartwig.serve.datamodel.ImmutableCancerType
 import com.hartwig.serve.datamodel.ImmutableClinicalTrial
 import com.hartwig.serve.datamodel.ImmutableCountry
@@ -17,6 +18,7 @@ import com.hartwig.serve.datamodel.gene.ImmutableActionableGene
 import com.hartwig.serve.datamodel.hotspot.ImmutableActionableHotspot
 import com.hartwig.serve.datamodel.immuno.ImmutableActionableHLA
 import com.hartwig.serve.datamodel.range.ImmutableActionableRange
+import java.time.LocalDate
 
 object TestServeActionabilityFactory {
 
@@ -70,6 +72,10 @@ object TestServeActionabilityFactory {
                 return source
             }
 
+            override fun entryDate(): LocalDate {
+                return LocalDate.of(2021, 2, 3)
+            }
+
             override fun sourceEvent(): String {
                 return ""
             }
@@ -98,9 +104,21 @@ object TestServeActionabilityFactory {
             override fun blacklistCancerTypes(): Set<CancerType> {
                 return emptySet()
             }
+            
+            override fun efficacyDescription(): String {
+                return "efficacy evidence"
+            }
 
-            override fun level(): EvidenceLevel {
+            override fun evidenceYear(): Int {
+                return 2021
+            }
+
+            override fun evidenceLevel(): EvidenceLevel {
                 return EvidenceLevel.D
+            }
+
+            override fun evidenceLevelDetails(): EvidenceLevelDetails {
+                return EvidenceLevelDetails.GUIDELINE
             }
 
             override fun direction(): EvidenceDirection {
