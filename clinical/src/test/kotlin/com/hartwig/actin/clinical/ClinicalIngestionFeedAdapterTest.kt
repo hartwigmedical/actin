@@ -94,6 +94,7 @@ class ClinicalIngestionFeedAdapterTest {
         assertThat(patientResults[0].patientId).isEqualTo(PATIENT)
         assertThat(patientResults[0].curationResults).isEmpty()
         assertThat(patientResults[0].clinicalRecord).isEqualTo(ClinicalRecordJson.read(EXPECTED_CLINICAL_RECORD))
+        assertThat(patientResults[0].clinicalRecord.surgeries.size).isEqualTo(1)
         assertThat(patientResults[0].questionnaireCurationErrors)
             .containsExactly(QuestionnaireCurationError(PATIENT, "Unrecognized questionnaire option: 'Probbly'"))
         assertThat(patientResults[0].feedValidationWarnings).containsExactly(
@@ -117,7 +118,7 @@ class ClinicalIngestionFeedAdapterTest {
             UnusedCurationConfig(categoryName = "Molecular Test PDL1", input = "cps pd l1 > 20"),
             UnusedCurationConfig(categoryName = "Dosage Unit Translation", input = "stuk"),
             UnusedCurationConfig(categoryName = "Sequencing Test", input = "kras g12f"),
-            UnusedCurationConfig(categoryName = "Surgery Translation", input = "Surgery1")
+            UnusedCurationConfig(categoryName = "Surgery Name", input = "surgery1")
         )
 
         val gson = GsonSerializer.create()

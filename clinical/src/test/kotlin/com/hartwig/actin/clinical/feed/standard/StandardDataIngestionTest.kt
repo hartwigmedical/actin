@@ -70,7 +70,7 @@ class StandardDataIngestionTest {
                 qtProlongatingRiskCuration = curationDatabase.qtProlongingCuration,
                 cypInteractionCuration = curationDatabase.cypInteractionCuration
             ),
-            surgeryExtractor = StandardSurgeryExtractor(),
+            surgeryExtractor = StandardSurgeryExtractor(curationDatabase.surgeryNameCuration),
             toxicityExtractor = StandardToxicityExtractor(curationDatabase.toxicityCuration),
             vitalFunctionsExtractor = StandardVitalFunctionsExtractor(),
             priorOtherConditionsExtractor = StandardPriorOtherConditionsExtractor(
@@ -165,6 +165,15 @@ class StandardDataIngestionTest {
                         feedInput = "MORFINE",
                         message = "Could not find intolerance config for input 'MORFINE'"
                     ), CurationRequirement(feedInput = "Nikkel", message = "Could not find intolerance config for input 'Nikkel'")
+                )
+            ),
+            CurationResult(
+                categoryName = "Surgery Name",
+                requirements = listOf(
+                    CurationRequirement(
+                        feedInput = "<CRYO Skelet door Radioloog",
+                        message = "Could not find surgery config for input '<CRYO Skelet door Radioloog'"
+                    )
                 )
             )
         )
