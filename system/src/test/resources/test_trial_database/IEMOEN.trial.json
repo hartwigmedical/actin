@@ -1,0 +1,86 @@
+{
+  "identification": {
+    "trialId": "METC 01",
+    "open": true,
+    "acronym": "IEMOEN",
+    "title": "Phase I trial for development of IEMOEN, a new PD-L1 inhibitor for the treatment of lung cancer",
+    "nctId": "NCT00000001",
+    "phase": "1"
+  },
+  "generalEligibility": [],
+  "cohorts": [
+    {
+      "metadata": {
+        "cohortId": "A",
+        "evaluable": true,
+        "open": true,
+        "slotsAvailable": true,
+        "blacklist": false,
+        "description": "Drug 1"
+      },
+      "eligibility": [
+        {
+          "references": [
+            {
+              "id": "I-1",
+              "text": "Drug 1. Patients is ≥18 years of age."
+            },
+            {
+              "id": "I-2",
+              "text": "Drug 1 as monotherapy is indicated for the treatment of adults with metastatic cancer."
+            }
+          ],
+          "function": {
+            "rule": "AND",
+            "parameters": [
+              {
+                "rule": "IS_AT_LEAST_X_YEARS_OLD",
+                "parameters": [
+                  "18"
+                ]
+              },
+              {
+                "rule": "OR",
+                "parameters": [
+                  {
+                    "rule": "HAS_LOCALLY_ADVANCED_CANCER",
+                    "parameters": []
+                  },
+                  {
+                    "rule": "HAS_METASTATIC_CANCER",
+                    "parameters": []
+                  }
+                ]
+              },
+              {
+                "rule": "HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_TERM_X",
+                "parameters": [
+                  "Lung non-small cell carcinoma"
+                ]
+              },
+              {
+                "rule": "FUSION_IN_GENE_X",
+                "parameters": [
+                  "RET"
+                ]
+              },
+              {
+                "rule": "HAS_HAD_CATEGORY_X_TREATMENT",
+                "parameters": [
+                  "Immunotherapy"
+                ]
+              },
+              {
+                "rule": "HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y",
+                "parameters": [
+                  "Chemotherapy",
+                  "PLATINUM_COMPOUND"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

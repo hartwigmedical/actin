@@ -1,10 +1,10 @@
 {
   "identification": {
-    "trialId": "test trial",
+    "trialId": "METC 03",
     "open": true,
-    "acronym": "TEST",
-    "title": "ACTIN Test Trial",
-    "nctId": "NCT99999999",
+    "acronym": "NO-SEE797ES",
+    "title": "Phase I trial for development of NO-SEE797ES, a specific inhibitor for EGFR without C797S",
+    "nctId": "NCT00000003",
     "phase": "1"
   },
   "generalEligibility": [],
