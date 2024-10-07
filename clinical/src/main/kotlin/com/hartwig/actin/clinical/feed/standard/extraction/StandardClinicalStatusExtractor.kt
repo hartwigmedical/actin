@@ -23,7 +23,7 @@ class StandardClinicalStatusExtractor(private val ecgCuration: CurationDatabase<
                 "ecg",
                 true
             )
-        }.map { it.config() }.firstOrNull()
+        }.firstNotNullOfOrNull { it.config() }
         val clinicalStatus = ClinicalStatus(
             who = mostRecentWho?.status,
             hasComplications = ehrPatientRecord.complications.isNotEmpty(),
