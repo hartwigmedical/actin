@@ -1,0 +1,373 @@
+{
+  "patientId": "test_patient",
+  "patient": {
+    "gender": "FEMALE",
+    "birthYear": 1957,
+    "registrationDate": {
+      "year": 2024,
+      "month": 8,
+      "day": 20
+    },
+    "questionnaireDate": {
+      "year": 2024,
+      "month": 8,
+      "day": 20
+    },
+    "hasHartwigSequencing": true
+  },
+  "tumor": {
+    "primaryTumorLocation": "Unknown",
+    "primaryTumorSubLocation": "CUP",
+    "primaryTumorType": "Carcinoma",
+    "primaryTumorSubType": "Adenocarcinoma",
+    "primaryTumorExtraDetails": "",
+    "doids": [
+      "299"
+    ],
+    "stage": "IV",
+    "derivedStages": null,
+    "hasMeasurableDisease": true,
+    "hasBrainLesions": false,
+    "brainLesionsCount": null,
+    "hasActiveBrainLesions": null,
+    "hasCnsLesions": false,
+    "cnsLesionsCount": null,
+    "hasActiveCnsLesions": null,
+    "hasBoneLesions": false,
+    "boneLesionsCount": null,
+    "hasLiverLesions": null,
+    "liverLesionsCount": null,
+    "hasLungLesions": null,
+    "lungLesionsCount": null,
+    "hasLymphNodeLesions": true,
+    "lymphNodeLesionsCount": null,
+    "otherLesions": [
+      "Adrenal gland",
+      "Lymph nodes",
+      "Peritoneal"
+    ],
+    "biopsyLocation": "Lymph node inguinal",
+    "rawPathologyReport": null
+  },
+  "clinicalStatus": {
+    "who": 0,
+    "infectionStatus": null,
+    "ecg": null,
+    "lvef": null,
+    "hasComplications": true
+  },
+  "oncologicalHistory": [],
+  "priorSecondPrimaries": [],
+  "priorOtherConditions": [],
+  "complications": [
+    {
+      "name": "Portal vein thrombosis",
+      "categories": [
+        "Thromboembolic event",
+        "Vascular obstruction",
+        "Venous thrombosis"
+      ],
+      "year": null,
+      "month": null
+    },
+    {
+      "name": "Spleen infarctions",
+      "categories": [
+        "Spleen disease",
+        "Vascular obstruction"
+      ],
+      "year": null,
+      "month": null
+    }
+  ],
+  "labValues": [
+    {
+      "date": {
+        "year": 2024,
+        "month": 9,
+        "day": 9
+      },
+      "code": "ALAT",
+      "name": "Alanine aminotransferase",
+      "comparator": "",
+      "value": 34.0,
+      "unit": "UNITS_PER_LITER",
+      "refLimitLow": null,
+      "refLimitUp": 34.0,
+      "isOutsideRef": false
+    },
+    {
+      "date": {
+        "year": 2024,
+        "month": 9,
+        "day": 9
+      },
+      "code": "ALB",
+      "name": "Albumin",
+      "comparator": "",
+      "value": 33.0,
+      "unit": "GRAMS_PER_LITER",
+      "refLimitLow": 35.0,
+      "refLimitUp": 50.0,
+      "isOutsideRef": true
+    }
+  ],
+  "toxicities": [],
+  "intolerances": [],
+  "surgeries": [],
+  "bodyWeights": [],
+  "bodyHeights": [],
+  "vitalFunctions": [],
+  "bloodTransfusions": [],
+  "medications": [],
+  "priorIHCTests": [],
+  "molecularHistory": {
+    "molecularTests": [
+      {
+        "patientId": "CORE-test",
+        "sampleId": "CORE-test-T",
+        "refGenomeVersion": "V37",
+        "externalTrialSource": "Hartwig",
+        "containsTumorCells": true,
+        "isContaminated": false,
+        "hasSufficientPurity": false,
+        "immunology": {
+          "isReliable": true,
+          "hlaAlleles": [
+            {
+              "name": "A*01:01",
+              "tumorCopyNumber": 1.01,
+              "hasSomaticMutations": false
+            },
+            {
+              "name": "A*02:01",
+              "tumorCopyNumber": 1.3,
+              "hasSomaticMutations": false
+            },
+            {
+              "name": "B*01:01",
+              "tumorCopyNumber": 1.3,
+              "hasSomaticMutations": false
+            },
+            {
+              "name": "B*02:01",
+              "tumorCopyNumber": 1.3,
+              "hasSomaticMutations": false
+            },
+            {
+              "name": "C*01:01",
+              "tumorCopyNumber": 1.3,
+              "hasSomaticMutations": false
+            },
+            {
+              "name": "C*02:01",
+              "tumorCopyNumber": 1.3,
+              "hasSomaticMutations": false
+            }
+          ]
+        },
+        "pharmaco": [
+          {
+            "gene": "DPYD",
+            "haplotypes": [
+              {
+                "allele": "*1",
+                "alleleCount": 2,
+                "function": "NORMAL_FUNCTION"
+              }
+            ]
+          },
+          {
+            "gene": "UGT1A1",
+            "haplotypes": [
+              {
+                "allele": "*1",
+                "alleleCount": 2,
+                "function": "NORMAL_FUNCTION"
+              }
+            ]
+          }
+        ],
+        "hasSufficientQuality": true,
+        "testTypeDisplay": null,
+        "experimentType": "HARTWIG_WHOLE_GENOME",
+        "date": {
+          "year": 2024,
+          "month": 8,
+          "day": 20
+        },
+        "drivers": {
+          "variants": [
+            {
+              "chromosome": "12",
+              "position": 25398285,
+              "ref": "C",
+              "alt": "A",
+              "type": "SNV",
+              "variantAlleleFrequency": 0.4967,
+              "canonicalImpact": {
+                "transcriptId": "ENST00000256078",
+                "hgvsCodingImpact": "c.34G\u003eT",
+                "hgvsProteinImpact": "p.G12C",
+                "affectedCodon": 12,
+                "affectedExon": 2,
+                "isSpliceRegion": false,
+                "effects": [
+                  "MISSENSE"
+                ],
+                "codingEffect": "MISSENSE"
+              },
+              "otherImpacts": [
+                {
+                  "transcriptId": "ENST00000311936",
+                  "hgvsCodingImpact": "c.34G\u003eT",
+                  "hgvsProteinImpact": "p.G12C",
+                  "affectedCodon": null,
+                  "affectedExon": null,
+                  "isSpliceRegion": false,
+                  "effects": [
+                    "MISSENSE"
+                  ],
+                  "codingEffect": "MISSENSE"
+                },
+                {
+                  "transcriptId": "ENST00000557334",
+                  "hgvsCodingImpact": "c.34G\u003eT",
+                  "hgvsProteinImpact": "p.G12C",
+                  "affectedCodon": null,
+                  "affectedExon": null,
+                  "isSpliceRegion": false,
+                  "effects": [
+                    "MISSENSE"
+                  ],
+                  "codingEffect": "MISSENSE"
+                },
+                {
+                  "transcriptId": "ENST00000556131",
+                  "hgvsCodingImpact": "c.34G\u003eT",
+                  "hgvsProteinImpact": "p.G12C",
+                  "affectedCodon": null,
+                  "affectedExon": null,
+                  "isSpliceRegion": false,
+                  "effects": [
+                    "MISSENSE"
+                  ],
+                  "codingEffect": "MISSENSE"
+                }
+              ],
+              "extendedVariantDetails": {
+                "variantCopyNumber": 1,
+                "totalCopyNumber": 2,
+                "isBiallelic": false,
+                "phaseGroups": null,
+                "clonalLikelihood": 1.0
+              },
+              "isHotspot": true,
+              "isReportable": true,
+              "event": "KRAS G12C",
+              "driverLikelihood": "HIGH",
+              "evidence": {
+                "externalEligibleTrials": [
+                ],
+                "treatmentEvidence": [
+                ]
+              },
+              "gene": "KRAS",
+              "geneRole": "ONCO",
+              "proteinEffect": "GAIN_OF_FUNCTION",
+              "isAssociatedWithDrugResistance": null
+            }
+          ],
+          "copyNumbers": [
+            {
+              "type": "LOSS",
+              "minCopies": 0,
+              "maxCopies": 0,
+              "isReportable": true,
+              "event": "C21orf91 del",
+              "driverLikelihood": "HIGH",
+              "evidence": {
+                "externalEligibleTrials": [],
+                "treatmentEvidence": []
+              },
+              "gene": "C21orf91",
+              "geneRole": "UNKNOWN",
+              "proteinEffect": "UNKNOWN",
+              "isAssociatedWithDrugResistance": null
+            }
+          ],
+          "homozygousDisruptions": [],
+          "disruptions": [
+            {
+              "type": "DEL",
+              "junctionCopyNumber": 1.0,
+              "undisruptedCopyNumber": 1.0,
+              "regionType": "UPSTREAM",
+              "codingContext": "CODING",
+              "clusterGroup": 1,
+              "isReportable": false,
+              "event": "BCL9L disruption",
+              "driverLikelihood": "LOW",
+              "evidence": {
+                "externalEligibleTrials": [],
+                "treatmentEvidence": []
+              },
+              "gene": "BCL9L",
+              "geneRole": "UNKNOWN",
+              "proteinEffect": "UNKNOWN",
+              "isAssociatedWithDrugResistance": null
+            }
+          ],
+          "fusions": [],
+          "viruses": []
+        },
+        "characteristics": {
+          "purity": 0.26,
+          "ploidy": 1.84,
+          "predictedTumorOrigin": {
+            "predictions": [
+              {
+                "cancerType": "HPB: Pancreas",
+                "likelihood": 0.98,
+                "snvPairwiseClassifier": 0.24,
+                "genomicPositionClassifier": 0.69,
+                "featureClassifier": 0.74
+              },
+              {
+                "cancerType": "Colorectum/Small intestine/Appendix",
+                "likelihood": 0.02,
+                "snvPairwiseClassifier": 0.01,
+                "genomicPositionClassifier": 0.02,
+                "featureClassifier": 0.03
+              }
+            ]
+          },
+          "isMicrosatelliteUnstable": false,
+          "microsatelliteEvidence": {
+            "externalEligibleTrials": [],
+            "treatmentEvidence": []
+          },
+          "homologousRepairScore": 0.0,
+          "isHomologousRepairDeficient": false,
+          "homologousRepairEvidence": {
+            "externalEligibleTrials": [],
+            "treatmentEvidence": []
+          },
+          "tumorMutationalBurden": 1.76,
+          "hasHighTumorMutationalBurden": false,
+          "tumorMutationalBurdenEvidence": {
+            "externalEligibleTrials": [],
+            "treatmentEvidence": []
+          },
+          "tumorMutationalLoad": 38,
+          "hasHighTumorMutationalLoad": false,
+          "tumorMutationalLoadEvidence": {
+            "externalEligibleTrials": [],
+            "treatmentEvidence": []
+          }
+        },
+        "evidenceSource": "Hartwig"
+      }
+    ]
+  }
+}
