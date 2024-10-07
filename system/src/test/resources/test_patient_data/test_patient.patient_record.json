@@ -1,32 +1,32 @@
 {
-  "patientId": "test_patient",
+  "patientId": "EXAMPLE-LUNG-01",
   "patient": {
-    "gender": "FEMALE",
-    "birthYear": 1957,
+    "gender": "MALE",
+    "birthYear": 1950,
     "registrationDate": {
       "year": 2024,
-      "month": 8,
-      "day": 20
+      "month": 10,
+      "day": 1
     },
     "questionnaireDate": {
       "year": 2024,
-      "month": 8,
-      "day": 20
+      "month": 10,
+      "day": 1
     },
     "hasHartwigSequencing": true
   },
   "tumor": {
-    "primaryTumorLocation": "Unknown",
-    "primaryTumorSubLocation": "CUP",
+    "primaryTumorLocation": "Lung",
+    "primaryTumorSubLocation": "",
     "primaryTumorType": "Carcinoma",
     "primaryTumorSubType": "Adenocarcinoma",
     "primaryTumorExtraDetails": "",
     "doids": [
-      "299"
+      "3910"
     ],
     "stage": "IV",
     "derivedStages": null,
-    "hasMeasurableDisease": true,
+    "hasMeasurableDisease": null,
     "hasBrainLesions": false,
     "brainLesionsCount": null,
     "hasActiveBrainLesions": null,
@@ -35,18 +35,14 @@
     "hasActiveCnsLesions": null,
     "hasBoneLesions": false,
     "boneLesionsCount": null,
-    "hasLiverLesions": null,
+    "hasLiverLesions": true,
     "liverLesionsCount": null,
     "hasLungLesions": null,
     "lungLesionsCount": null,
     "hasLymphNodeLesions": true,
     "lymphNodeLesionsCount": null,
-    "otherLesions": [
-      "Adrenal gland",
-      "Lymph nodes",
-      "Peritoneal"
-    ],
-    "biopsyLocation": "Lymph node inguinal",
+    "otherLesions": [],
+    "biopsyLocation": "Liver",
     "rawPathologyReport": null
   },
   "clinicalStatus": {
@@ -54,32 +50,65 @@
     "infectionStatus": null,
     "ecg": null,
     "lvef": null,
-    "hasComplications": true
+    "hasComplications": false
   },
-  "oncologicalHistory": [],
-  "priorSecondPrimaries": [],
-  "priorOtherConditions": [],
-  "complications": [
+  "oncologicalHistory": [
     {
-      "name": "Portal vein thrombosis",
-      "categories": [
-        "Thromboembolic event",
-        "Vascular obstruction",
-        "Venous thrombosis"
+      "treatments": [
+        {
+          "name": "OSIMERTINIB",
+          "drugs": [
+            {
+              "name": "OSIMERTINIB",
+              "drugTypes": [
+                "EGFR_INHIBITOR"
+              ],
+              "category": "CHEMOTHERAPY",
+              "displayOverride": null
+            }
+          ],
+          "synonyms": [],
+          "displayOverride": null,
+          "isSystemic": true,
+          "maxCycles": null,
+          "treatmentClass": "DRUG_TREATMENT"
+        }
       ],
-      "year": null,
-      "month": null
-    },
-    {
-      "name": "Spleen infarctions",
-      "categories": [
-        "Spleen disease",
-        "Vascular obstruction"
-      ],
-      "year": null,
-      "month": null
+      "startYear": 2023,
+      "startMonth": 1,
+      "intents": null,
+      "isTrial": false,
+      "trialAcronym": null,
+      "treatmentHistoryDetails": {
+        "stopYear": 2024,
+        "stopMonth": 9,
+        "ongoingAsOf": null,
+        "cycles": null,
+        "bestResponse": "PARTIAL_RESPONSE",
+        "stopReason": "PROGRESSIVE_DISEASE",
+        "stopReasonDetail": "PD",
+        "switchToTreatments": null,
+        "maintenanceTreatment": null,
+        "toxicities": [],
+        "bodyLocationCategories": null,
+        "bodyLocations": null
+      }
     }
   ],
+  "priorSecondPrimaries": [],
+  "priorOtherConditions": [
+    {
+      "name": "Hypertension",
+      "year": 2022,
+      "month": null,
+      "doids": [
+        "10763"
+      ],
+      "category": "Vascular disease",
+      "isContraindicationForTherapy": true
+    }
+  ],
+  "complications": [],
   "labValues": [
     {
       "date": {
@@ -90,10 +119,10 @@
       "code": "ALAT",
       "name": "Alanine aminotransferase",
       "comparator": "",
-      "value": 34.0,
+      "value": 150,
       "unit": "UNITS_PER_LITER",
       "refLimitLow": null,
-      "refLimitUp": 34.0,
+      "refLimitUp": 35.0,
       "isOutsideRef": false
     },
     {
@@ -102,13 +131,13 @@
         "month": 9,
         "day": 9
       },
-      "code": "ALB",
-      "name": "Albumin",
+      "code": "Hb",
+      "name": "Hemoglobin",
       "comparator": "",
-      "value": 33.0,
-      "unit": "GRAMS_PER_LITER",
-      "refLimitLow": 35.0,
-      "refLimitUp": 50.0,
+      "value": 6,
+      "unit": "MILLIMOLES_PER_LITER",
+      "refLimitLow": 8,
+      "refLimitUp": 9,
       "isOutsideRef": true
     }
   ],
@@ -120,23 +149,34 @@
   "vitalFunctions": [],
   "bloodTransfusions": [],
   "medications": [],
-  "priorIHCTests": [],
+  "priorIHCTests": [
+    {
+      "test": "IHC",
+      "item": "PD-L1",
+      "measure": null,
+      "scoreText": null,
+      "scoreValuePrefix": null,
+      "scoreValue": 1,
+      "scoreValueUnit": "%",
+      "impliesPotentialIndeterminateStatus": false
+    }
+  ],
   "molecularHistory": {
     "molecularTests": [
       {
-        "patientId": "CORE-test",
-        "sampleId": "CORE-test-T",
+        "patientId": "EXAMPLE-LUNG-01",
+        "sampleId": "EXAMPLE-LUNG-01-T",
         "refGenomeVersion": "V37",
         "externalTrialSource": "Hartwig",
         "containsTumorCells": true,
         "isContaminated": false,
-        "hasSufficientPurity": false,
+        "hasSufficientPurity": true,
         "immunology": {
           "isReliable": true,
           "hlaAlleles": [
             {
               "name": "A*01:01",
-              "tumorCopyNumber": 1.01,
+              "tumorCopyNumber": 1.0,
               "hasSomaticMutations": false
             },
             {
@@ -146,7 +186,7 @@
             },
             {
               "name": "B*01:01",
-              "tumorCopyNumber": 1.3,
+              "tumorCopyNumber": 1.0,
               "hasSomaticMutations": false
             },
             {
@@ -156,7 +196,7 @@
             },
             {
               "name": "C*01:01",
-              "tumorCopyNumber": 1.3,
+              "tumorCopyNumber": 1.0,
               "hasSomaticMutations": false
             },
             {
@@ -199,16 +239,96 @@
         "drivers": {
           "variants": [
             {
-              "chromosome": "12",
-              "position": 25398285,
-              "ref": "C",
+              "chromosome": "7",
+              "position": 55259515,
+              "ref": "T",
+              "alt": "G",
+              "type": "SNV",
+              "variantAlleleFrequency": 0.5,
+              "canonicalImpact": {
+                "transcriptId": "",
+                "hgvsCodingImpact": "c.2573T>G",
+                "hgvsProteinImpact": "p.L858R",
+                "affectedCodon": 858,
+                "affectedExon": 21,
+                "isSpliceRegion": false,
+                "effects": [
+                  "MISSENSE"
+                ],
+                "codingEffect": "MISSENSE"
+              },
+              "otherImpacts": [],
+              "extendedVariantDetails": {
+                "variantCopyNumber": 2,
+                "totalCopyNumber": 4,
+                "isBiallelic": false,
+                "phaseGroups": null,
+                "clonalLikelihood": 1.0
+              },
+              "isHotspot": true,
+              "isReportable": true,
+              "event": "EGFR L858R",
+              "driverLikelihood": "HIGH",
+              "evidence": {
+                "externalEligibleTrials": [],
+                "treatmentEvidence": []
+              },
+              "gene": "EGFR",
+              "geneRole": "ONCO",
+              "proteinEffect": "GAIN_OF_FUNCTION",
+              "isAssociatedWithDrugResistance": null
+            },
+            {
+              "chromosome": "7",
+              "position": 55249091,
+              "ref": "T",
               "alt": "A",
               "type": "SNV",
-              "variantAlleleFrequency": 0.4967,
+              "variantAlleleFrequency": 0.25,
               "canonicalImpact": {
-                "transcriptId": "ENST00000256078",
-                "hgvsCodingImpact": "c.34G\u003eT",
-                "hgvsProteinImpact": "p.G12C",
+                "transcriptId": "",
+                "hgvsCodingImpact": "c.2389T>A",
+                "hgvsProteinImpact": "p.C797S",
+                "affectedCodon": 797,
+                "affectedExon": 20,
+                "isSpliceRegion": false,
+                "effects": [
+                  "MISSENSE"
+                ],
+                "codingEffect": "MISSENSE"
+              },
+              "otherImpacts": [],
+              "extendedVariantDetails": {
+                "variantCopyNumber": 1,
+                "totalCopyNumber": 4,
+                "isBiallelic": false,
+                "phaseGroups": null,
+                "clonalLikelihood": 1.0
+              },
+              "isHotspot": true,
+              "isReportable": true,
+              "event": "EGFR C797S",
+              "driverLikelihood": "HIGH",
+              "evidence": {
+                "externalEligibleTrials": [],
+                "treatmentEvidence": []
+              },
+              "gene": "EGFR",
+              "geneRole": "ONCO",
+              "proteinEffect": "GAIN_OF_FUNCTION",
+              "isAssociatedWithDrugResistance": null
+            },
+            {
+              "chromosome": "12",
+              "position": 25398284,
+              "ref": "C",
+              "alt": "T",
+              "type": "SNV",
+              "variantAlleleFrequency": 0.15,
+              "canonicalImpact": {
+                "transcriptId": "",
+                "hgvsCodingImpact": "c.35G>A",
+                "hgvsProteinImpact": "p.G12D",
                 "affectedCodon": 12,
                 "affectedExon": 2,
                 "isSpliceRegion": false,
@@ -217,60 +337,21 @@
                 ],
                 "codingEffect": "MISSENSE"
               },
-              "otherImpacts": [
-                {
-                  "transcriptId": "ENST00000311936",
-                  "hgvsCodingImpact": "c.34G\u003eT",
-                  "hgvsProteinImpact": "p.G12C",
-                  "affectedCodon": null,
-                  "affectedExon": null,
-                  "isSpliceRegion": false,
-                  "effects": [
-                    "MISSENSE"
-                  ],
-                  "codingEffect": "MISSENSE"
-                },
-                {
-                  "transcriptId": "ENST00000557334",
-                  "hgvsCodingImpact": "c.34G\u003eT",
-                  "hgvsProteinImpact": "p.G12C",
-                  "affectedCodon": null,
-                  "affectedExon": null,
-                  "isSpliceRegion": false,
-                  "effects": [
-                    "MISSENSE"
-                  ],
-                  "codingEffect": "MISSENSE"
-                },
-                {
-                  "transcriptId": "ENST00000556131",
-                  "hgvsCodingImpact": "c.34G\u003eT",
-                  "hgvsProteinImpact": "p.G12C",
-                  "affectedCodon": null,
-                  "affectedExon": null,
-                  "isSpliceRegion": false,
-                  "effects": [
-                    "MISSENSE"
-                  ],
-                  "codingEffect": "MISSENSE"
-                }
-              ],
+              "otherImpacts": [],
               "extendedVariantDetails": {
-                "variantCopyNumber": 1,
+                "variantCopyNumber": 0.3,
                 "totalCopyNumber": 2,
                 "isBiallelic": false,
                 "phaseGroups": null,
-                "clonalLikelihood": 1.0
+                "clonalLikelihood": 0.4
               },
               "isHotspot": true,
               "isReportable": true,
-              "event": "KRAS G12C",
+              "event": "KRAS G12D",
               "driverLikelihood": "HIGH",
               "evidence": {
-                "externalEligibleTrials": [
-                ],
-                "treatmentEvidence": [
-                ]
+                "externalEligibleTrials": [],
+                "treatmentEvidence": []
               },
               "gene": "KRAS",
               "geneRole": "ONCO",
@@ -284,54 +365,34 @@
               "minCopies": 0,
               "maxCopies": 0,
               "isReportable": true,
-              "event": "C21orf91 del",
+              "event": "TP53 del",
               "driverLikelihood": "HIGH",
               "evidence": {
                 "externalEligibleTrials": [],
                 "treatmentEvidence": []
               },
-              "gene": "C21orf91",
-              "geneRole": "UNKNOWN",
+              "gene": "TP53",
+              "geneRole": "TSG",
               "proteinEffect": "UNKNOWN",
               "isAssociatedWithDrugResistance": null
             }
           ],
           "homozygousDisruptions": [],
-          "disruptions": [
-            {
-              "type": "DEL",
-              "junctionCopyNumber": 1.0,
-              "undisruptedCopyNumber": 1.0,
-              "regionType": "UPSTREAM",
-              "codingContext": "CODING",
-              "clusterGroup": 1,
-              "isReportable": false,
-              "event": "BCL9L disruption",
-              "driverLikelihood": "LOW",
-              "evidence": {
-                "externalEligibleTrials": [],
-                "treatmentEvidence": []
-              },
-              "gene": "BCL9L",
-              "geneRole": "UNKNOWN",
-              "proteinEffect": "UNKNOWN",
-              "isAssociatedWithDrugResistance": null
-            }
-          ],
+          "disruptions": [],
           "fusions": [],
           "viruses": []
         },
         "characteristics": {
-          "purity": 0.26,
-          "ploidy": 1.84,
+          "purity": 0.5,
+          "ploidy": 2.3,
           "predictedTumorOrigin": {
             "predictions": [
               {
-                "cancerType": "HPB: Pancreas",
+                "cancerType": "Lung: Non-small cell",
                 "likelihood": 0.98,
-                "snvPairwiseClassifier": 0.24,
-                "genomicPositionClassifier": 0.69,
-                "featureClassifier": 0.74
+                "snvPairwiseClassifier": 0.6,
+                "genomicPositionClassifier": 0.7,
+                "featureClassifier": 0.8
               },
               {
                 "cancerType": "Colorectum/Small intestine/Appendix",
@@ -353,13 +414,13 @@
             "externalEligibleTrials": [],
             "treatmentEvidence": []
           },
-          "tumorMutationalBurden": 1.76,
+          "tumorMutationalBurden": 2,
           "hasHighTumorMutationalBurden": false,
           "tumorMutationalBurdenEvidence": {
             "externalEligibleTrials": [],
             "treatmentEvidence": []
           },
-          "tumorMutationalLoad": 38,
+          "tumorMutationalLoad": 40,
           "hasHighTumorMutationalLoad": false,
           "tumorMutationalLoadEvidence": {
             "externalEligibleTrials": [],
