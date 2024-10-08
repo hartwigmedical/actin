@@ -2,16 +2,17 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.treatment.MedicationFunctions.hasCategory
-import com.hartwig.actin.algo.evaluation.treatment.MedicationFunctions.hasDrugType
 import com.hartwig.actin.algo.evaluation.util.DateComparison.isAfterDate
 import com.hartwig.actin.algo.evaluation.util.Format.concatItems
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import java.time.LocalDate
 
 class HasHadTreatmentWithCategoryOfTypesRecently(
@@ -20,7 +21,19 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val treatmentAssessment = record.oncologicalHistory.map { treatmentHistoryEntry ->
+        val effectiveTreatmentHistory =
+            record.oncologicalHistory + (record.medications?.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
+                ?.map {
+                    TreatmentHistoryEntry(
+                        setOf(DrugTreatment(it.name, setOfNotNull(it.drug))),
+                        isTrial = it.isTrialMedication,
+                        startYear = it.startDate?.year,
+                        startMonth = it.startDate?.monthValue,
+                        treatmentHistoryDetails = TreatmentHistoryDetails(stopYear = it.stopDate?.year, stopMonth = it.stopDate?.monthValue)
+                    )
+                } ?: emptyList())
+
+        val treatmentAssessment = effectiveTreatmentHistory.map { treatmentHistoryEntry ->
             val startedPastMinDate = isAfterDate(minDate, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
             val categoryAndTypeMatch = treatmentHistoryEntry.categories().contains(category)
                     && treatmentHistoryEntry.matchesTypeFromSet(types) == true
@@ -32,17 +45,10 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
             )
         }.fold(TreatmentAssessment()) { acc, element -> acc.combineWith(element) }
 
-        val activeOrRecentlyStoppedMedications = record.medications
-            ?.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
-
-        val hadCancerMedicationWithCategoryOfTypes =
-            activeOrRecentlyStoppedMedications?.any { medication -> medication.hasCategory(category) && medication.hasDrugType(types) }
-                ?: false
-
         val typesList = concatItems(types)
 
         return when {
-            treatmentAssessment.hasHadValidTreatment || hadCancerMedicationWithCategoryOfTypes -> {
+            treatmentAssessment.hasHadValidTreatment -> {
                 EvaluationFactory.pass("Has received $typesList ${category.display()} treatment")
             }
 
@@ -50,7 +56,7 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
                 EvaluationFactory.undetermined("Has received $typesList ${category.display()} treatment but inconclusive date")
             }
 
-            treatmentAssessment.hasHadTrialAfterMinDate || activeOrRecentlyStoppedMedications?.any { it.isTrialMedication } == true -> {
+            treatmentAssessment.hasHadTrialAfterMinDate -> {
                 EvaluationFactory.undetermined(
                     "Patient has participated in a trial recently, inconclusive ${category.display()} treatment",
                     "Inconclusive ${category.display()} treatment due to trial participation"

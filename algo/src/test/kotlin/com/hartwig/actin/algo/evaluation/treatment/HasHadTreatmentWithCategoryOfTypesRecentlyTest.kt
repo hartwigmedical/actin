@@ -118,11 +118,12 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment("test", MATCHING_CATEGORY, setOf(DrugType.ANTI_TISSUE_FACTOR))), startYear = MIN_DATE.year + 1
         )
-        val medication = WashoutTestFactory.medication(null, MIN_DATE.plusDays(1)).copy(
+        val medication = WashoutTestFactory.medication(null, MIN_DATE.plusMonths(2)).copy(
             drug = Drug(
                 name = "", category = MATCHING_CATEGORY, drugTypes =
                 MATCHING_TYPE_SET
-            )
+            ),
+            startDate = MIN_DATE.plusMonths(1)
         )
         assertEvaluation(
             EvaluationResult.PASS,

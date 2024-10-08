@@ -116,7 +116,7 @@ class HasHadAnyCancerTreatmentSinceDateTest {
                     stopYear = OLDER_DATE.year,
                     stopMonth = OLDER_DATE.monthValue
                 )
-            ), listOf(WashoutTestFactory.medication(atc, MIN_DATE.plusDays(1)))
+            ), listOf(WashoutTestFactory.medication(atc, MIN_DATE.plusMonths(1)))
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(priorCancerTreatment))
     }

@@ -22,6 +22,7 @@ class HasRecentlyReceivedCancerTherapyWithDrug(
     override fun evaluate(record: PatientRecord): Evaluation {
         val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
         val lowercaseNamesToFind = drugsToFind.map { it.name.lowercase() }.toSet()
+
         val medicationsFound = medications
             .filter {
                 (lowercaseNamesToFind.contains(it.name.lowercase()) || lowercaseNamesToFind.contains(it.drug?.name?.lowercase())) && interpreter.interpret(

@@ -61,17 +61,24 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
                 hasHadValidTreatment = isMatch && startedPastMinDate == true,
                 hasInconclusiveDate = isMatch && startedPastMinDate == null,
                 hasHadTrialAfterMinDate = drugTypesToFind.any {
-                    TrialFunctions.treatmentMayMatchAsTrial(treatmentHistoryEntry, it.category) && startedPastMinDate == true
-                } ||
-                        treatmentCategoriesToFind.any {
-                            TrialFunctions.treatmentMayMatchAsTrial(treatmentHistoryEntry, it) && startedPastMinDate == true
-                        },
+                    TrialFunctions.treatmentMayMatchAsTrial(
+                        treatmentHistoryEntry,
+                        it.category
+                    ) && startedPastMinDate == true
+                } || treatmentCategoriesToFind.any {
+                    TrialFunctions.treatmentMayMatchAsTrial(
+                        treatmentHistoryEntry,
+                        it
+                    ) && startedPastMinDate == true
+                },
                 matchingCategories = if (!isMatch && startedPastMinDate != true) emptySet() else {
-                    categoryToDrugTypes.filter { (_, drugTypes) ->
+                    val matchingBasedOnDrugType = categoryToDrugTypes.filter { (_, drugTypes) ->
                         treatmentHistoryEntry.allTreatments().flatMap(Treatment::types).toSet().intersect(drugTypes).isNotEmpty()
-                    }.keys + categoryToTreatmentCategories.filter { (_, treatmentCategories) ->
+                    }.keys
+                    val matchingBasedOnTreatmentCategory = categoryToTreatmentCategories.filter { (_, treatmentCategories) ->
                         treatmentHistoryEntry.categories().intersect(treatmentCategories).isNotEmpty()
                     }.keys
+                    matchingBasedOnDrugType + matchingBasedOnTreatmentCategory
                 },
                 matchingDrugs = if (!isMatch || startedPastMinDate != true) emptySet() else {
                     treatmentHistoryEntry.treatments.filterIsInstance<DrugTreatment>()
