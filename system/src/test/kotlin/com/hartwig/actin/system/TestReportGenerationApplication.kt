@@ -2,7 +2,6 @@ package com.hartwig.actin.system
 
 import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
-import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.report.datamodel.ReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory
 import org.apache.commons.cli.ParseException
@@ -25,7 +24,7 @@ class TestReportGenerationApplication {
         LOGGER.info("Loading treatment match results from {}", testTreatmentMatchJson)
         val treatmentMatch = TreatmentMatchJson.read(testTreatmentMatchJson)
 
-        val environmentConfig = EnvironmentConfiguration.create(null, null)
+        val environmentConfig = TestFunctions.createTestEnvironmentConfiguration()
         val report = ReportFactory.fromInputs(patient, treatmentMatch, environmentConfig.report)
         val writer = ReportWriterFactory.createProductionReportWriter(outputDirectory)
         writer.write(report, false)
