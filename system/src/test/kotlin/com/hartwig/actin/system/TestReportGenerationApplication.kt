@@ -14,7 +14,7 @@ import kotlin.system.exitProcess
 class TestReportGenerationApplication {
 
     private val testPatientRecordJson = resourceOnClasspath("test_patient_data/EXAMPLE-LUNG-01.patient_record.json")
-    private val testTreatmentMatchJson = resourceOnClasspath("test_treatment_match/test_patient.treatment_match.json")
+    private val testTreatmentMatchJson = resourceOnClasspath("test_treatment_match/EXAMPLE-LUNG-01.treatment_match.json")
 
     private val outputDirectory = listOf(System.getProperty("user.home"), "hmf", "tmp").joinToString(File.separator)
 
