@@ -36,7 +36,17 @@ class TestTreatmentMatchGenerationApplication {
     private val atcTreeTsv = listOf(resourceDirectory, "atc_config", "atc_tree.tsv").joinToString(File.separator)
     private val treatmentDatabaseDir = listOf(resourceDirectory, "treatment_db").joinToString(File.separator)
 
-    private val outputDirectory = listOf(System.getProperty("user.home"), "hmf", "tmp").joinToString(File.separator)
+    private val outputDirectory = listOf(
+        System.getProperty("user.home"),
+        "hmf",
+        "repos",
+        "actin",
+        "system",
+        "src",
+        "test",
+        "resources",
+        "test_treatment_match"
+    ).joinToString(File.separator)
 
     fun run() {
         LOGGER.info("Loading patient record from {}", testPatientRecordJson)

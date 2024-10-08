@@ -71,6 +71,10 @@
               {
                 "references": [
                   {
+                    "id": "E-01",
+                    "text": "Has an active autoimmune disease that requires systemic treatment and poses a risk according to the investigator."
+                  },
+                  {
                     "id": "I-01",
                     "text": "Patients must be ≥18 years old."
                   },
@@ -122,6 +126,15 @@
                           ]
                         }
                       ]
+                    },
+                    {
+                      "rule": "WARN_IF",
+                      "parameters": [
+                        {
+                          "rule": "HAS_HISTORY_OF_AUTOIMMUNE_DISEASE",
+                          "parameters": []
+                        }
+                      ]
                     }
                   ]
                 }
@@ -134,9 +147,11 @@
                 "passSpecificMessages": [],
                 "passGeneralMessages": [],
                 "warnSpecificMessages": [
+                  "Patient has history of condition(s) Rheumatoid arthritis, which is indicative of autoimmune disease",
                   "Patient has not exhausted SOC (at least platinum doublet remaining)"
                 ],
                 "warnGeneralMessages": [
+                  "History of Rheumatoid arthritis",
                   "SOC not exhausted: at least platinum doublet remaining"
                 ],
                 "undeterminedSpecificMessages": [],
