@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentFunctions.createTreatmentHistoryEntriesFromMedications
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -13,20 +14,17 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypes(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
-            record.oncologicalHistory, category, { historyEntry -> types.all { type -> historyEntry.isOfType(type) == true } }
-        )
+        val effectiveTreatmentHistory = record.oncologicalHistory + createTreatmentHistoryEntriesFromMedications(record.medications)
 
-        val hadCancerMedicationWithCategoryOfAllTypes = record.medications?.any { medication ->
-            MedicationFunctions.hasCategory(medication, category) &&
-                    medication.drug?.drugTypes?.containsAll(types) == true
-        } == true
+        val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
+            effectiveTreatmentHistory, category, { historyEntry -> types.all { type -> historyEntry.isOfType(type) == true } }
+        )
 
         val typesList = Format.concatItemsWithAnd(types)
         val baseMessage = "received at least $minTreatmentLines line(s) of $typesList combination ${category.display()}"
 
         return when {
-            treatmentSummary.numSpecificMatches() >= minTreatmentLines || (minTreatmentLines == 1 && hadCancerMedicationWithCategoryOfAllTypes) -> {
+            treatmentSummary.numSpecificMatches() >= minTreatmentLines -> {
                 EvaluationFactory.pass("Has $baseMessage")
             }
 

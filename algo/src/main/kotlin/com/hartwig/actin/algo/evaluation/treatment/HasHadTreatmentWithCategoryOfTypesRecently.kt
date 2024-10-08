@@ -2,6 +2,8 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.treatment.MedicationFunctions.hasCategory
+import com.hartwig.actin.algo.evaluation.treatment.MedicationFunctions.hasDrugType
 import com.hartwig.actin.algo.evaluation.util.DateComparison.isAfterDate
 import com.hartwig.actin.algo.evaluation.util.Format.concatItems
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
@@ -33,12 +35,9 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
         val activeOrRecentlyStoppedMedications = record.medications
             ?.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
 
-        val hadCancerMedicationWithCategoryOfTypes = activeOrRecentlyStoppedMedications?.any { medication ->
-            MedicationFunctions.hasCategory(
-                medication,
-                category
-            ) && MedicationFunctions.hasDrugType(medication, types)
-        } ?: false
+        val hadCancerMedicationWithCategoryOfTypes =
+            activeOrRecentlyStoppedMedications?.any { medication -> medication.hasCategory(category) && medication.hasDrugType(types) }
+                ?: false
 
         val typesList = concatItems(types)
 

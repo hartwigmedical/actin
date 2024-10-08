@@ -22,14 +22,19 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
     }
 
     companion object {
-        val ANTI_CANCER_ATC_CODES = setOf("L01", "L02", "L04", "H01CC", "H01CA", "G03XA")
+        private val ANTI_CANCER_ATC_CODES = setOf("L01", "L02", "L04", "H01CC", "H01CA", "G03XA")
 
-        val MEDICATION_CATEGORIES_TO_DRUG_TYPES = mapOf(
+        val MEDICATION_CATEGORIES_TO_TREATMENT_CATEGORY = mapOf(
             "Chemotherapy" to setOf(TreatmentCategory.CHEMOTHERAPY),
             "Endocrine therapy" to setOf(TreatmentCategory.HORMONE_THERAPY),
+            "Immunotherapy" to setOf(TreatmentCategory.IMMUNOTHERAPY),
+            "Anticancer" to TreatmentCategory.SYSTEMIC_CANCER_TREATMENT_CATEGORIES,
+            "Antineoplastic agents" to TreatmentCategory.SYSTEMIC_CANCER_TREATMENT_CATEGORIES
+        )
+
+        val MEDICATION_CATEGORIES_TO_DRUG_TYPES = mapOf(
             "Gonadorelin" to setOf(DrugType.GONADOTROPIN_AGONIST, DrugType.GONADOTROPIN_ANTAGONIST),
             "Hypomethylating agents" to setOf(DrugType.DNMT_INHIBITOR),
-            "Immunotherapy" to setOf(TreatmentCategory.IMMUNOTHERAPY),
             "Monoclonal antibodies and antibody drug conjugates" to setOf(
                 DrugType.MONOCLONAL_ANTIBODY_TARGETED_THERAPY,
                 DrugType.MONOCLONAL_ANTIBODY_IMMUNOTHERAPY,
@@ -43,9 +48,7 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
             "L02BB" to setOf(DrugType.ANTI_ANDROGEN),
             "L01A" to setOf(DrugType.ALKYLATING_AGENT),
             "LO1XL" to setOf(DrugType.ANTI_CLDN6_CAR_T, DrugType.HER2_CAR_T),
-            "L01E" to setOf(DrugType.TYROSINE_KINASE_INHIBITOR),
-            "Anticancer" to setOf(TreatmentCategory.SYSTEMIC_CANCER_TREATMENT_CATEGORIES),
-            "Antineoplastic agents" to setOf(TreatmentCategory.SYSTEMIC_CANCER_TREATMENT_CATEGORIES)
+            "L01E" to setOf(DrugType.TYROSINE_KINASE_INHIBITOR)
         )
 
         fun create(atcTree: AtcTree): MedicationCategories {

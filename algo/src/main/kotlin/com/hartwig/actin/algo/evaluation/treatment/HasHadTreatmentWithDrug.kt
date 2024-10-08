@@ -2,11 +2,11 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentFunctions.createTreatmentHistoryEntriesFromMedications
 import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithAnd
 import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithOr
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
@@ -14,14 +14,13 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEn
 class HasHadTreatmentWithDrug(private val drugsToFind: Set<Drug>) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
+        val effectiveTreatmentHistory = record.oncologicalHistory + createTreatmentHistoryEntriesFromMedications(record.medications)
+
         val namesToMatch = drugsToFind.map { it.name.lowercase() }.toSet()
-        val matchingDrugsInTreatment = record.oncologicalHistory
+        val matchingDrugs = effectiveTreatmentHistory
             .flatMap(TreatmentHistoryEntry::allTreatments)
             .flatMap { (it as? DrugTreatment)?.drugs ?: emptyList() }
             .filter { it.name.lowercase() in namesToMatch }.toSet()
-
-        val matchingDrugsInMedication = record.medications?.mapNotNull(Medication::drug)?.toSet() ?: emptySet()
-        val matchingDrugs = (matchingDrugsInTreatment + matchingDrugsInMedication).filter { it.name.lowercase() in namesToMatch }.toSet()
 
         val drugList = concatItemsWithOr(drugsToFind)
         return when {
@@ -29,7 +28,7 @@ class HasHadTreatmentWithDrug(private val drugsToFind: Set<Drug>) : EvaluationFu
                 EvaluationFactory.pass("Has received treatments with ${concatItemsWithAnd(matchingDrugs)}")
             }
 
-            record.oncologicalHistory.any {
+            effectiveTreatmentHistory.any {
                 it.isTrial && it.allTreatments().any { treatment ->
                     (treatment as? DrugTreatment)?.drugs?.isEmpty() ?: treatment.categories().isEmpty()
                 }

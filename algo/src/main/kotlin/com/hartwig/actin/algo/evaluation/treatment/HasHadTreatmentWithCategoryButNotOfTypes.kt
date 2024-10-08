@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentFunctions.createTreatmentHistoryEntriesFromMedications
 import com.hartwig.actin.algo.evaluation.util.Format.concatItems
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -14,24 +15,20 @@ class HasHadTreatmentWithCategoryButNotOfTypes(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
-            record.oncologicalHistory, category, { historyEntry -> ignoreTypes.none { historyEntry.isOfType(it) == true } }
-        )
+        val effectiveTreatmentHistory = record.oncologicalHistory + createTreatmentHistoryEntriesFromMedications(record.medications)
 
-        val hadCancerMedicationWithCategoryButNotOfTypes = record.medications?.any { medication ->
-            (MedicationFunctions.hasCategory(
-                medication,
-                category
-            ) && MedicationFunctions.doesNotHaveIgnoreType(medication, ignoreTypes))
-        } ?: false
+        val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
+            effectiveTreatmentHistory,
+            category,
+            { historyEntry -> ignoreTypes.none { historyEntry.isOfType(it) == true } })
 
         val ignoreTypesList = concatItems(ignoreTypes)
         return when {
-            treatmentSummary.hasSpecificMatch() || hadCancerMedicationWithCategoryButNotOfTypes -> EvaluationFactory.pass(
+            treatmentSummary.hasSpecificMatch() -> EvaluationFactory.pass(
                 "Has received ${category.display()} ignoring $ignoreTypesList"
             )
 
-            treatmentSummary.hasPossibleTrialMatch() || record.medications?.any { it.isTrialMedication } == true -> EvaluationFactory.undetermined(
+            treatmentSummary.hasPossibleTrialMatch() -> EvaluationFactory.undetermined(
                 "Patient may have received ${category.display()} ignoring $ignoreTypesList due to trial participation",
                 "Undetermined if received ${category.display()} ignoring $ignoreTypesList due to trial participation"
             )

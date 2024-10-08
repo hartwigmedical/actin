@@ -2,6 +2,8 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.treatment.MedicationFunctions.doesNotHaveIgnoreType
+import com.hartwig.actin.algo.evaluation.treatment.MedicationFunctions.hasCategory
 import com.hartwig.actin.algo.evaluation.util.DateComparison.isAfterDate
 import com.hartwig.actin.algo.evaluation.util.Format.concatItems
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
@@ -35,10 +37,7 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecently(
 
         val hadCancerMedicationWithCategoryButNotOfTypes = activeOrRecentlyStoppedMedications
             ?.any { medication ->
-                MedicationFunctions.hasCategory(medication, category) && MedicationFunctions.doesNotHaveIgnoreType(
-                    medication,
-                    ignoreTypes
-                )
+                medication.hasCategory(category) && medication.doesNotHaveIgnoreType(ignoreTypes)
             } ?: false
 
         val ignoringTypesList = concatItems(ignoreTypes)

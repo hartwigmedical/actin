@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentFunctions.createTreatmentHistoryEntriesFromMedications
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
@@ -10,13 +11,12 @@ class HasHadSomeTreatmentsWithCategory(private val category: TreatmentCategory, 
     EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(record.oncologicalHistory, category)
+        val effectiveTreatmentHistory = record.oncologicalHistory + createTreatmentHistoryEntriesFromMedications(record.medications)
 
-        val hadCancerMedicationWithCategory =
-            record.medications?.any { medication -> MedicationFunctions.hasCategory(medication, category) } ?: false
+        val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(effectiveTreatmentHistory, category)
 
         return when {
-            treatmentSummary.numSpecificMatches() >= minTreatmentLines || (minTreatmentLines == 1 && hadCancerMedicationWithCategory) -> {
+            treatmentSummary.numSpecificMatches() >= minTreatmentLines -> {
                 EvaluationFactory.pass(
                     "Patient has received at least $minTreatmentLines line(s) of ${category.display()}",
                     "Has received at least $minTreatmentLines line(s) of ${category.display()}"

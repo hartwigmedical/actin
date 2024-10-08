@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
@@ -27,5 +28,14 @@ object TreatmentFunctions {
         return entry.treatments.filterIsInstance<DrugTreatment>()
             .flatMap(DrugTreatment::drugs)
             .filter { it.category == TreatmentCategory.CHEMOTHERAPY }
+    }
+
+    fun createTreatmentHistoryEntriesFromMedications(medications: List<Medication>?): List<TreatmentHistoryEntry> {
+        return medications?.map {
+            TreatmentHistoryEntry(
+                setOf(DrugTreatment(it.name, setOfNotNull(it.drug))),
+                isTrial = it.isTrialMedication
+            )
+        } ?: emptyList()
     }
 }
