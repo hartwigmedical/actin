@@ -65,13 +65,15 @@
               },
               {
                 "rule": "NOT",
-                "parameters": {
-                  "rule": "MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y",
-                  "parameters": [
-                    "EGFR",
-                    "C797S"
-                  ]
-                }
+                "parameters": [
+                  {
+                    "rule": "MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y",
+                    "parameters": [
+                      "EGFR",
+                      "C797S"
+                    ]
+                  }
+                ]
               }
             ]
           }
