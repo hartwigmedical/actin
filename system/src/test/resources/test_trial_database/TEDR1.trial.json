@@ -3,7 +3,7 @@
     "trialId": "METC 04",
     "open": true,
     "acronym": "TEDR1",
-    "title": "Test Drug 1 Trial: A phase II trial to evaluate efficacy of specific EGFR inhibitors in lung cancer",
+    "title": "TEDR1 Trial: A phase II trial to evaluate efficacy of specific EGFR inhibitors in lung cancer",
     "nctId": "NCT00000004",
     "phase": "2"
   },
@@ -16,18 +16,18 @@
         "open": true,
         "slotsAvailable": true,
         "blacklist": false,
-        "description": "Drug 1"
+        "description": "Lung cancer"
       },
       "eligibility": [
         {
           "references": [
             {
               "id": "I-1",
-              "text": "Drug 1. Patients is ≥18 years of age."
+              "text": "Patient is ≥18 years of age."
             },
             {
               "id": "I-2",
-              "text": "Drug 1 as monotherapy is indicated for the treatment of adults with metastatic cancer."
+              "text": "Drug 1 as monotherapy is indicated for the treatment of adults with advanced lung cancer."
             }
           ],
           "function": {
@@ -55,26 +55,7 @@
               {
                 "rule": "HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_TERM_X",
                 "parameters": [
-                  "Lung non-small cell carcinoma"
-                ]
-              },
-              {
-                "rule": "FUSION_IN_GENE_X",
-                "parameters": [
-                  "RET"
-                ]
-              },
-              {
-                "rule": "HAS_HAD_CATEGORY_X_TREATMENT",
-                "parameters": [
-                  "Immunotherapy"
-                ]
-              },
-              {
-                "rule": "HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y",
-                "parameters": [
-                  "Chemotherapy",
-                  "PLATINUM_COMPOUND"
+                  "Lung cancer"
                 ]
               }
             ]
