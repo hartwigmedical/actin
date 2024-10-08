@@ -32,6 +32,10 @@
             {
               "id": "I-03",
               "text": "Patient should have exhausted applicable available standard-of-care treatments."
+            },
+            {
+              "id": "E-01",
+              "text": "Has an active autoimmune disease that requires systemic treatment and poses a risk according to the investigator."
             }
           ],
           "function": {
@@ -71,6 +75,15 @@
                         "parameters": []
                       }
                     ]
+                  }
+                ]
+              },
+              {
+                "rule": "WARN_IF",
+                "parameters": [
+                  {
+                    "rule": "HAS_HISTORY_OF_AUTOIMMUNE_DISEASE",
+                    "parameters": []
                   }
                 ]
               }

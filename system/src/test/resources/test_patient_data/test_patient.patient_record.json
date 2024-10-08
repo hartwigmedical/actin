@@ -98,13 +98,13 @@
   "priorSecondPrimaries": [],
   "priorOtherConditions": [
     {
-      "name": "Hypertension",
+      "name": "Rheumatoid arthritis",
       "year": 2022,
       "month": null,
       "doids": [
-        "10763"
+        "7148"
       ],
-      "category": "Vascular disease",
+      "category": "Autoimmune disease",
       "isContraindicationForTherapy": true
     }
   ],
