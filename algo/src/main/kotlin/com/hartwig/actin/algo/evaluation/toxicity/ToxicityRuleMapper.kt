@@ -19,7 +19,8 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
             EligibilityRule.HAS_HISTORY_OF_ANAPHYLAXIS to hasHistoryAnaphylaxisCreator(),
             EligibilityRule.HAS_EXPERIENCED_IMMUNE_RELATED_ADVERSE_EVENTS to hasExperiencedImmuneRelatedAdverseEventsCreator(),
             EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X to hasToxicityWithGradeCreator(),
-            EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_Y to hasToxicityWithGradeAndNameCreator(),
+            EligibilityRule.HAS_TOXICITY_CTCAE_OF_AT_LEAST_GRADE_X_IN_Y to hasToxicityWithGradeAndNameCreator(),
+            EligibilityRule.HAS_TOXICITY_ASTCT_OF_AT_LEAST_GRADE_X_IN_Y to hasToxicityWithGradeAndNameCreator(),
             EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y to hasToxicityWithGradeIgnoringNamesCreator()
         )
     }
