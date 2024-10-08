@@ -61,12 +61,23 @@ class HasHadTreatmentWithCategoryButNotOfTypesTest {
     }
 
     @Test
-    fun `Should pass for correct treatment category with incorrect type but medication with correct type`() {
+    fun `Should pass for correct treatment category with incorrect type in treatment history entry but correct type in medication entry`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY, IGNORE_TYPE_SET)))
         val medication = WashoutTestFactory.medication()
             .copy(drug = Drug(name = "", category = MATCHING_CATEGORY, drugTypes = setOf(DrugType.ANTI_TISSUE_FACTOR)))
         assertEvaluation(
             EvaluationResult.PASS,
+            function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(listOf(treatmentHistoryEntry), listOf(medication)))
+        )
+    }
+
+    @Test
+    fun `Should fail for treatment category with correct category but with type to ignore in treatment history entry and incorrect category but correct type in medication entry`() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY, IGNORE_TYPE_SET)))
+        val medication = WashoutTestFactory.medication()
+            .copy(drug = Drug(name = "", category = TreatmentCategory.TRANSPLANTATION, drugTypes = setOf(DrugType.ANTI_TISSUE_FACTOR)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(listOf(treatmentHistoryEntry), listOf(medication)))
         )
     }

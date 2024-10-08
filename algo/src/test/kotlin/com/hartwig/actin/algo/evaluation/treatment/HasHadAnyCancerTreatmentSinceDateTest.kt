@@ -12,7 +12,7 @@ import org.junit.Test
 import java.time.LocalDate
 
 private const val MONTHS_AGO = 6
-private val MIN_DATE = LocalDate.of(2024, 2, 9).minusMonths(MONTHS_AGO.toLong())
+private val MIN_DATE = LocalDate.of(2024, 2, 9)
 private val RECENT_DATE = MIN_DATE.plusMonths(3)
 private val OLDER_DATE = MIN_DATE.minusMonths(3)
 private val ATC_LEVELS = AtcLevel(code = "category to find", name = "")
@@ -67,6 +67,15 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(priorCancerTreatment))
         Assertions.assertThat(function.evaluate(priorCancerTreatment).undeterminedGeneralMessages).containsExactly(
             "Received anti-cancer therapy but undetermined if in the last $MONTHS_AGO months (date unknown)"
+        )
+    }
+
+    @Test
+    fun `Should evaluate to undetermined when medication entry with trial medication`() {
+        val medications = listOf(WashoutTestFactory.medication(isTrialMedication = true))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(WashoutTestFactory.withMedications(medications))
         )
     }
 

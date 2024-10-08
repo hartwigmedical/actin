@@ -57,12 +57,6 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
     }
 
     @Test
-    fun `Should pass when medication is trial medication`() {
-        val medications = listOf(WashoutTestFactory.medication(isTrialMedication = true, stopDate = REFERENCE_DATE.plusDays(1)))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(WashoutTestFactory.withMedications(medications)))
-    }
-
-    @Test
     fun `Should pass when medication has right category and old date but treatment history entry has correct category and date`() {
         val atc = AtcTestFactory.atcClassification("category to find")
         val medications = listOf(WashoutTestFactory.medication(atc, REFERENCE_DATE.minusDays(1)))
@@ -139,6 +133,12 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
         )
+    }
+
+    @Test
+    fun `Should return undetermined when medication is trial medication`() {
+        val medications = listOf(WashoutTestFactory.medication(isTrialMedication = true, stopDate = REFERENCE_DATE.plusDays(1)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(WashoutTestFactory.withMedications(medications)))
     }
 
     @Test

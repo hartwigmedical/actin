@@ -45,7 +45,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
     }
 
     @Test
-    fun `Should pass for recent correct treatment category with incorrect types but medication with correct types`() {
+    fun `Should pass for recent correct treatment category with incorrect types in treatment history entry but medication with correct types`() {
         val function = HasHadSomeTreatmentsWithCategoryOfAllTypes(MATCHING_CATEGORY, MATCHING_TYPES, 1)
         val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(
             setOf(TreatmentTestFactory.drugTreatment("test", MATCHING_CATEGORY, setOf(DrugType.ANTI_TISSUE_FACTOR)))
@@ -131,7 +131,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
     }
 
     @Test
-    fun `Should fail when medication has drug with correct category but not of all requested types`() {
+    fun `Should fail when medication entry has drug with correct category but not of all requested types`() {
         val function = HasHadSomeTreatmentsWithCategoryOfAllTypes(MATCHING_CATEGORY, MATCHING_TYPES, 1)
         val medication = WashoutTestFactory.medication().copy(
             drug = Drug(

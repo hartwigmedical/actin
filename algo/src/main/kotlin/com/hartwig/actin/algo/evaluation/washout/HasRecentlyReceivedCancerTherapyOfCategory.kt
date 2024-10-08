@@ -12,6 +12,7 @@ import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.AtcLevel
+import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
@@ -41,10 +42,8 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
                     foundMedicationNames.add(medication.drug?.name ?: medication.name)
                 }
             }
-            if (medication.isTrialMedication) {
-                foundCategories.add("Trial medication")
-            }
         }
+        val foundTrialMedication = activeMedications.any(Medication::isTrialMedication)
 
         val categoryToDrugTypes = MedicationCategories.MEDICATION_CATEGORIES_TO_DRUG_TYPES.filter { categoryNames.contains(it.key) }
         val drugTypesToFind = categoryNames.flatMap { MedicationCategories.MEDICATION_CATEGORIES_TO_DRUG_TYPES[it] ?: emptySet() }.toSet()
@@ -95,7 +94,7 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
                 EvaluationFactory.undetermined("Has received ${concatLowercaseWithAnd(categoryNames)} treatment but inconclusive date")
             }
 
-            treatmentAssessment.hasHadTrialAfterMinDate -> {
+            treatmentAssessment.hasHadTrialAfterMinDate || foundTrialMedication -> {
                 EvaluationFactory.undetermined(
                     "Patient has participated in a trial recently, inconclusive ${concatLowercaseWithAnd(categoryNames)} treatment",
                     "Inconclusive ${concatLowercaseWithAnd(categoryNames)} treatment due to trial participation"

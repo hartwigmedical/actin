@@ -102,7 +102,7 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
     }
 
     @Test
-    fun `Should pass for recent correct treatment category with incorrect type but medication with correct type`() {
+    fun `Should pass for recent treatment history entry with correct treatment category and incorrect type but medication entry with correct type`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment("test", MATCHING_CATEGORY, IGNORE_TYPE_SET)), startYear = MIN_DATE.year + 1
         )

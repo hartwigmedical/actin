@@ -70,7 +70,7 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugsTest {
     }
 
     @Test
-    fun `Should pass for treatment with correct category and type but ignore drug but medication with correct category and type with other drug`() {
+    fun `Should pass for treatment history entry with correct category and type but drug to ignore, and medication entry with correct category and type without drug to ignore`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment(IGNORE_DRUG_NAME, MATCHING_CATEGORY, setOf(MATCHING_TYPES.iterator().next())))
         )

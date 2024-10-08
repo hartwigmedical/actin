@@ -3,11 +3,11 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithAnd
+import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithComma
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
-import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
@@ -39,13 +39,9 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugs(
                 } ?: true) && (!ignoreDrugs.contains(medication.drug))
             } ?: emptyList()
 
-        val matchingTreatmentTypes = treatmentSummary.specificMatches
-            .map { it.treatments.flatMap(Treatment::types).map { t -> t.display() }.toSet() }
-            .flatten().toSet()
-
-        val matchingMedicationTypes = priorCancerMedication.flatMap { it.drug?.drugTypes?.map(DrugType::display) ?: emptyList() }.toSet()
-
-        val totalMatchingTypes = (matchingTreatmentTypes + matchingMedicationTypes).joinToString { ", " }
+        val matchingTreatmentTypes = treatmentSummary.specificMatches.map { it.treatments.flatMap(Treatment::types) }.flatten().toSet()
+        val matchingMedicationTypes = priorCancerMedication.flatMap { it.drug?.drugTypes ?: emptyList() }.toSet()
+        val totalMatchingTypes = concatItemsWithComma(matchingTreatmentTypes + matchingMedicationTypes)
 
         val ignoreDrugsList = concatItemsWithAnd(ignoreDrugs)
         val typeMessage = if (types != null && totalMatchingTypes.isNotEmpty()) " of types $totalMatchingTypes" else ""

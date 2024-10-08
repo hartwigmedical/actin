@@ -8,6 +8,7 @@ import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.AtcLevel
+import com.hartwig.actin.datamodel.clinical.Medication
 import java.time.LocalDate
 
 class HasHadAnyCancerTreatmentSinceDate(
@@ -22,13 +23,23 @@ class HasHadAnyCancerTreatmentSinceDate(
 
         val activePriorCancerMedication = record.medications
             ?.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
-            ?.filter { (it.allLevels() intersect atcLevelsToFind).isNotEmpty() || it.isTrialMedication } ?: emptyList()
+            ?.filter { (it.allLevels() intersect atcLevelsToFind).isNotEmpty() } ?: emptyList()
+
+        val foundTrialMedication = record.medications?.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
+            ?.any(Medication::isTrialMedication) ?: false
 
         return when {
             priorCancerTreatment.any { treatmentSinceMinDate(it, minDate, false) } || activePriorCancerMedication.isNotEmpty() -> {
                 EvaluationFactory.pass(
                     "Patient has had anti-cancer therapy within the last $monthsAgo months",
                     "Received anti-cancer therapy within the last $monthsAgo months"
+                )
+            }
+
+            foundTrialMedication -> {
+                EvaluationFactory.undetermined(
+                    "Patient has participated in a trial recently, inconclusive if patient has had any cancer treatment",
+                    "Inconclusive if patient had any prior cancer treatment due to trial participation"
                 )
             }
 

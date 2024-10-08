@@ -24,7 +24,9 @@ class HasRecentlyReceivedCancerTherapyWithDrug(
         val lowercaseNamesToFind = drugsToFind.map { it.name.lowercase() }.toSet()
         val medicationsFound = medications
             .filter {
-                lowercaseNamesToFind.contains(it.name.lowercase()) && interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE
+                (lowercaseNamesToFind.contains(it.name.lowercase()) || lowercaseNamesToFind.contains(it.drug?.name?.lowercase())) && interpreter.interpret(
+                    it
+                ) == MedicationStatusInterpretation.ACTIVE
             }
             .map { it.drug?.name ?: it.name }.toSet()
 

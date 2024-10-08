@@ -23,22 +23,36 @@ class HasRecentlyReceivedTrialMedication(
             )
         }
 
-        val hasActiveOrRecentlyStoppedMedication =
+        val hasActiveOrRecentlyStoppedTrialMedication =
             selector.activeOrRecentlyStopped(medications, minStopDate).any(Medication::isTrialMedication)
 
         val hadRecentTrialTreatment =
+            record.oncologicalHistory.any { it.isTrial && TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minStopDate, false) }
+
+        val hadTrialTreatmentWithUnknownDate =
             record.oncologicalHistory.any { it.isTrial && TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minStopDate, true) }
 
-        return if (hasActiveOrRecentlyStoppedMedication || hadRecentTrialTreatment) {
-            EvaluationFactory.pass(
-                "Patient recently received trial medication - pay attention to washout period",
-                "Recent trial medication - pay attention to washout period"
-            )
-        } else {
-            EvaluationFactory.fail(
-                "Patient has not recently received trial medication",
-                "No recent trial medication"
-            )
+        return when {
+            hasActiveOrRecentlyStoppedTrialMedication || hadRecentTrialTreatment -> {
+                EvaluationFactory.pass(
+                    "Patient recently received trial medication - pay attention to washout period",
+                    "Recent trial medication - pay attention to washout period"
+                )
+            }
+
+            hadTrialTreatmentWithUnknownDate -> {
+                EvaluationFactory.undetermined(
+                    "Patient received trial medication but date unknown",
+                    "Trial medication with unknown date"
+                )
+            }
+
+            else -> {
+                EvaluationFactory.fail(
+                    "Patient has not recently received trial medication",
+                    "No recent trial medication"
+                )
+            }
         }
     }
 }

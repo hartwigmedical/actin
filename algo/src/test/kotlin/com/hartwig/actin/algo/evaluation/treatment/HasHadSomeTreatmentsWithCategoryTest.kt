@@ -41,7 +41,7 @@ class HasHadSomeTreatmentsWithCategoryTest {
     }
 
     @Test
-    fun `Should pass for treatment history entry with incorrect treatment category but medication with correct category type`() {
+    fun `Should pass for treatment history entry with incorrect treatment category but correct category type in medication entry`() {
         val function = HasHadSomeTreatmentsWithCategory(MATCHING_CATEGORY, 1)
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)))
         val medication = WashoutTestFactory.medication().copy(drug = Drug(name = "", category = MATCHING_CATEGORY, drugTypes = emptySet()))

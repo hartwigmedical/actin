@@ -162,7 +162,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             val monthsAgo = functionInputResolver().createOneIntegerInput(function)
             val minDate = referenceDateProvider().date().minusMonths(monthsAgo.toLong())
-            val interpreter = MedicationStatusInterpreterOnEvaluationDate(minDate)
+            val interpreter = MedicationStatusInterpreterOnEvaluationDate(minDate.plusWeeks(2))
             HasHadAnyCancerTreatmentSinceDate(minDate, monthsAgo, antiCancerCategories, interpreter)
         }
     }
@@ -260,7 +260,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneTreatmentCategoryManyTypesOneIntegerInput(function)
             val minDate = referenceDateProvider().date().minusWeeks(input.integer.toLong())
-            val interpreter = MedicationStatusInterpreterOnEvaluationDate(minDate)
+            val interpreter = MedicationStatusInterpreterOnEvaluationDate(minDate.plusWeeks(2))
             HasHadTreatmentWithCategoryOfTypesRecently(input.category, input.types, minDate, interpreter)
         }
     }
@@ -276,7 +276,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneTreatmentCategoryManyTypesOneIntegerInput(function)
             val minDate = referenceDateProvider().date().minusWeeks(input.integer.toLong())
-            val interpreter = MedicationStatusInterpreterOnEvaluationDate(minDate)
+            val interpreter = MedicationStatusInterpreterOnEvaluationDate(minDate.plusWeeks(2))
             HasHadTreatmentWithCategoryButNotOfTypesRecently(input.category, input.types, minDate, interpreter)
         }
     }

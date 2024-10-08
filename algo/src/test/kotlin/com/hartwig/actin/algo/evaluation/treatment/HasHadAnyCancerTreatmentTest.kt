@@ -43,7 +43,7 @@ class HasHadAnyCancerTreatmentTest {
     }
 
     @Test
-    fun `Should pass if treatment history contains only treatments which should be ignored but medication present with category that should not be ignored`() {
+    fun `Should pass if treatment history contains only treatments which should be ignored but medication entry present with category that should not be ignored`() {
         val treatments = TreatmentTestFactory.treatment("Chemotherapy", true, setOf(TreatmentCategory.CHEMOTHERAPY))
         val treatmentHistory = listOf(TreatmentTestFactory.treatmentHistoryEntry(setOf(treatments)))
         val atc = AtcTestFactory.atcClassification("category to find")
@@ -63,6 +63,15 @@ class HasHadAnyCancerTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithCategoryToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
+        )
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if medication entry contains trial`() {
+        val medications = listOf(WashoutTestFactory.medication(isTrialMedication = true))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            functionWithCategoryToIgnore.evaluate(WashoutTestFactory.withMedications(medications))
         )
     }
 }

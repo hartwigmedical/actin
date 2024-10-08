@@ -55,7 +55,7 @@ class HasHadSomeTreatmentsWithCategoryOfTypesTest {
     }
 
     @Test
-    fun `Should pass for recent correct treatment category with incorrect type but medication with correct type`() {
+    fun `Should pass for recent correct treatment category with incorrect type in treatment history entry but correct type in medication entry`() {
         val function = HasHadSomeTreatmentsWithCategoryOfTypes(MATCHING_CATEGORY, MATCHING_TYPE_SET, 1)
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment("test", MATCHING_CATEGORY, setOf(DrugType.ANTI_TISSUE_FACTOR)))
