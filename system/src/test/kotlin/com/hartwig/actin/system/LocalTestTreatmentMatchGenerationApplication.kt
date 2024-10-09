@@ -15,7 +15,7 @@ import kotlin.system.exitProcess
 class LocalTestTreatmentMatchGenerationApplication {
 
     private val testPatientRecordJson = LocalTestFunctions.resourceOnClasspath("test_patient_data/EXAMPLE-LUNG-01.patient_record.json")
-    private val testTrialRecordDatabaseDir = LocalTestFunctions.resourceOnClasspath("test_trial_database")
+    private val testTrialDatabaseDir = LocalTestFunctions.resourceOnClasspath("test_trial_database")
 
     private val outputDirectory = testTreatmentMatchLocalDirectory()
 
@@ -23,8 +23,8 @@ class LocalTestTreatmentMatchGenerationApplication {
         LOGGER.info("Loading patient record from {}", testPatientRecordJson)
         val patient = PatientRecordJson.read(testPatientRecordJson)
 
-        LOGGER.info("Loading trial data from {}", testTrialRecordDatabaseDir)
-        val trials = TrialJson.readFromDir(testTrialRecordDatabaseDir)
+        LOGGER.info("Loading trial data from {}", testTrialDatabaseDir)
+        val trials = TrialJson.readFromDir(testTrialDatabaseDir)
 
         val referenceDateProvider = ReferenceDateProviderFactory.create(patient, runHistorically = false)
         val resources = LocalTestFunctions.createTestRuleMappingResources(referenceDateProvider)
