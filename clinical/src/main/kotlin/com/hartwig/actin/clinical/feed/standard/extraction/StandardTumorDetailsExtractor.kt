@@ -27,10 +27,16 @@ class StandardTumorDetailsExtractor(
             primaryTumorConfigCurationDatabase.find(input),
             ehrPatientRecord.patientDetails.hashedId, CurationCategory.PRIMARY_TUMOR, input, "primary tumor", true
         )
+        val curatedTumorResponseFromPriorOtherConditions = ehrPatientRecord.priorOtherConditions.map {
+            CurationResponse.createFromConfigs(
+                primaryTumorConfigCurationDatabase.find(it.name),
+                ehrPatientRecord.patientDetails.hashedId, CurationCategory.PRIMARY_TUMOR, input, "primary tumor"
+            )
+        }.firstNotNullOfOrNull { it.config() }
         val lesionCurationResponse = extractLesions(ehrPatientRecord)
         val curatedLesions = lesionCurationResponse.flatMap { it.configs }
         val tumorDetailsFromEhr = tumorDetails(ehrPatientRecord, curatedLesions)
-        return curatedTumorResponse.config()?.let {
+        return combinedTumorResponse(curatedTumorResponse, curatedTumorResponseFromPriorOtherConditions)?.let {
             val curatedTumorDetails = tumorDetailsFromEhr.copy(
                 primaryTumorLocation = it.primaryTumorLocation,
                 primaryTumorType = it.primaryTumorType,
@@ -45,6 +51,11 @@ class StandardTumorDetailsExtractor(
             )
         } ?: ExtractionResult(tumorDetailsFromEhr, curatedTumorResponse.extractionEvaluation)
     }
+
+    private fun combinedTumorResponse(
+        curatedTumorResponse: CurationResponse<PrimaryTumorConfig>,
+        curatedTumorResponseFromPriorOtherConditions: PrimaryTumorConfig?
+    ) = curatedTumorResponse.config() ?: curatedTumorResponseFromPriorOtherConditions
 
     private fun tumorDetails(
         ehrPatientRecord: ProvidedPatientRecord,
