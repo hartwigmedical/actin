@@ -17,9 +17,9 @@ import com.hartwig.actin.datamodel.clinical.TumorStage
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 private val EHR_PATIENT_RECORD = EhrTestData.createEhrPatientRecord()
 private const val TUMOR_LOCATION = "tumorLocation"
@@ -112,7 +112,9 @@ private val DIAGNOSIS_DATE = LocalDate.of(2024, 8, 1)
 
 class StandardTumorDetailsExtractorTest {
 
-    private val tumorCuration = mockk<CurationDatabase<PrimaryTumorConfig>>()
+    private val tumorCuration = mockk<CurationDatabase<PrimaryTumorConfig>> {
+        every { find(PRIOR_CONDITION_INPUT) } returns emptySet()
+    }
     private val lesionCuration = mockk<CurationDatabase<LesionLocationConfig>> {
         every { find(any()) } returns emptySet()
     }
@@ -125,6 +127,14 @@ class StandardTumorDetailsExtractorTest {
     fun `Should curate primary tumor and extract tumor details, only drawing on curation for (sub)location, (sub)type and doids`() {
         every { tumorCuration.find("tumorLocation | tumorType") } returns setOf(CURATION_CONFIG)
         val result = extractor.extract(EHR_PATIENT_RECORD)
+        assertThat(result.extracted).isEqualTo(TUMOR_DETAILS)
+    }
+
+    @Test
+    fun `Should curate prior other conditions and extract tumor details, only drawing on curation for (sub)location, (sub)type and doids`() {
+        every { tumorCuration.find("tumorLocation | tumorType") } returns setOf(CURATION_CONFIG.copy(ignore = true))
+        every { tumorCuration.find(PRIOR_CONDITION_INPUT) } returns setOf(CURATION_CONFIG)
+        val result = extractor.extract(EHR_PATIENT_RECORD.copy(priorOtherConditions = listOf(EHR_PRIOR_OTHER_CONDITION)))
         assertThat(result.extracted).isEqualTo(TUMOR_DETAILS)
     }
 
@@ -209,6 +219,7 @@ class StandardTumorDetailsExtractorTest {
         setupLesionCuration(
             PRIOR_CONDITION_INPUT, BRAIN_LESION_LOCATION_CONFIG, LUNG_LESION_LOCATION_CONFIG
         )
+        every { tumorCuration.find("another prior condition") } returns emptySet()
         val result =
             extractor.extract(
                 EHR_PATIENT_RECORD.copy(
