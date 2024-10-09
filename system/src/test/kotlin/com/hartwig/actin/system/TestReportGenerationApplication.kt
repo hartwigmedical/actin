@@ -12,8 +12,8 @@ import kotlin.system.exitProcess
 
 class TestReportGenerationApplication {
 
-    private val testPatientRecordJson = resourceOnClasspath("test_patient_data/EXAMPLE-LUNG-01.patient_record.json")
-    private val testTreatmentMatchJson = resourceOnClasspath("test_treatment_match/EXAMPLE-LUNG-01.treatment_match.json")
+    private val testPatientRecordJson = LocalTestFunctions.resourceOnClasspath("test_patient_data/EXAMPLE-LUNG-01.patient_record.json")
+    private val testTreatmentMatchJson = LocalTestFunctions.resourceOnClasspath("test_treatment_match/EXAMPLE-LUNG-01.treatment_match.json")
 
     private val outputDirectory = listOf(System.getProperty("user.home"), "hmf", "tmp").joinToString(File.separator)
 
@@ -24,7 +24,7 @@ class TestReportGenerationApplication {
         LOGGER.info("Loading treatment match results from {}", testTreatmentMatchJson)
         val treatmentMatch = TreatmentMatchJson.read(testTreatmentMatchJson)
 
-        val environmentConfig = TestFunctions.createTestEnvironmentConfiguration()
+        val environmentConfig = LocalTestFunctions.createTestEnvironmentConfiguration()
         val report = ReportFactory.fromInputs(patient, treatmentMatch, environmentConfig.report)
         val writer = ReportWriterFactory.createProductionReportWriter(outputDirectory)
         writer.write(report, false)
@@ -32,18 +32,13 @@ class TestReportGenerationApplication {
         LOGGER.info("Done!")
     }
 
-    private fun resourceOnClasspath(relativePath: String): String {
-        return Companion::class.java.getResource("/" + relativePath.removePrefix("/"))!!.path
-    }
-
     companion object {
         val LOGGER: Logger = LogManager.getLogger(TestReportGenerationApplication::class.java)
-        const val APPLICATION = "ACTIN Test Reporter"
     }
 }
 
 fun main() {
-    TestReportGenerationApplication.LOGGER.info("Running {}", TestReportGenerationApplication.APPLICATION)
+    TestReportGenerationApplication.LOGGER.info("Running ACTIN Test Reporter")
     try {
         TestReportGenerationApplication().run()
     } catch (exception: ParseException) {

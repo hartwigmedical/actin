@@ -14,20 +14,10 @@ import kotlin.system.exitProcess
 
 class TestTreatmentMatchGenerationApplication {
 
-    private val testPatientRecordJson = resourceOnClasspath("test_patient_data/EXAMPLE-LUNG-01.patient_record.json")
-    private val testTrialRecordDatabaseDir = resourceOnClasspath("test_trial_database")
+    private val testPatientRecordJson = LocalTestFunctions.resourceOnClasspath("test_patient_data/EXAMPLE-LUNG-01.patient_record.json")
+    private val testTrialRecordDatabaseDir = LocalTestFunctions.resourceOnClasspath("test_trial_database")
 
-    private val outputDirectory = listOf(
-        System.getProperty("user.home"),
-        "hmf",
-        "repos",
-        "actin",
-        "system",
-        "src",
-        "test",
-        "resources",
-        "test_treatment_match"
-    ).joinToString(File.separator)
+    private val outputDirectory = testTreatmentMatchLocalDirectory()
 
     fun run() {
         LOGGER.info("Loading patient record from {}", testPatientRecordJson)
@@ -37,35 +27,46 @@ class TestTreatmentMatchGenerationApplication {
         val trials = TrialJson.readFromDir(testTrialRecordDatabaseDir)
 
         val referenceDateProvider = ReferenceDateProviderFactory.create(patient, runHistorically = false)
-        val resources = TestFunctions.createTestRuleMappingResources(referenceDateProvider)
+        val resources = LocalTestFunctions.createTestRuleMappingResources(referenceDateProvider)
 
-        LOGGER.info("Matching patient to available trials")
+        LOGGER.info("Matching patient ${patient.patientId} to available trials")
+
         val match = TreatmentMatcher
             .create(
                 resources = resources,
                 trials = trials,
                 efficacyEvidence = emptyList(),
-                resistanceEvidenceMatcher = TestFunctions.createMockResistanceEvidenceMatcher()
+                resistanceEvidenceMatcher = LocalTestFunctions.createMockResistanceEvidenceMatcher()
             )
             .evaluateAndAnnotateMatchesForPatient(patient)
 
         TreatmentMatchPrinter.printMatch(match)
         TreatmentMatchJson.write(match, outputDirectory)
+
         LOGGER.info("Done!")
     }
 
-    private fun resourceOnClasspath(relativePath: String): String {
-        return Companion::class.java.getResource("/" + relativePath.removePrefix("/"))!!.path
+    private fun testTreatmentMatchLocalDirectory(): String {
+        return listOf(
+            System.getProperty("user.home"),
+            "hmf",
+            "repos",
+            "actin",
+            "system",
+            "src",
+            "test",
+            "resources",
+            "test_treatment_match"
+        ).joinToString(File.separator)
     }
 
     companion object {
         val LOGGER: Logger = LogManager.getLogger(TestTreatmentMatchGenerationApplication::class.java)
-        const val APPLICATION = "ACTIN Test Treatment Matcher"
     }
 }
 
 fun main() {
-    TestTreatmentMatchGenerationApplication.LOGGER.info("Running {}", TestTreatmentMatchGenerationApplication.APPLICATION)
+    TestTreatmentMatchGenerationApplication.LOGGER.info("Running ACTIN Test Treatment Matcher")
     try {
         TestTreatmentMatchGenerationApplication().run()
     } catch (exception: ParseException) {

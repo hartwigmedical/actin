@@ -22,11 +22,11 @@ import org.apache.logging.log4j.Logger
 import java.io.File
 import java.time.Period
 
-object TestFunctions {
+object LocalTestFunctions {
 
     private const val TRIAL_SOURCE = "Hartwig"
 
-    private val LOGGER: Logger = LogManager.getLogger(TestFunctions::class.java)
+    private val LOGGER: Logger = LogManager.getLogger(LocalTestFunctions::class.java)
 
     private val resourceDirectory = listOf(System.getProperty("user.home"), "hmf", "repos", "actin-resources-private")
         .joinToString(File.separator)
@@ -92,5 +92,9 @@ object TestFunctions {
         val base = EnvironmentConfiguration.create(null)
 
         return base.copy(algo = AlgoConfiguration(trialSource = TRIAL_SOURCE))
+    }
+
+    fun resourceOnClasspath(relativePath: String): String {
+        return TestTreatmentMatchGenerationApplication.Companion::class.java.getResource("/" + relativePath.removePrefix("/"))!!.path
     }
 }
