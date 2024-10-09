@@ -140,6 +140,14 @@ data class ProvidedMolecularTestResult(
     val fusionGeneUp: String? = null,
     @Description("Downstream gene of a fusion (eg. ALK)")
     val fusionGeneDown: String? = null,
+    @Description("Upstream transcript of a fusion (eg. NM_019063.5)")
+    val fusionTranscriptUp: String? = null,
+    @Description("Downstream transcript of a fusion (eg. NM_004304.5)")
+    val fusionTranscriptDown: String? = null,
+    @Description("Upstream exon of a fusion (eg. 13)")
+    val fusionExonUp: Int? = null,
+    @Description("Downstream exon of a  fusion (eg. 20)")
+    val fusionExonDown: Int? = null,
     @Description("Exon involved in this result (eg. 19)")
     val exon: Int? = null,
     @Description("Codon involved in this result (eg. 1)")
@@ -312,7 +320,7 @@ data class ProvidedWhoEvaluation(
 @JacksonSerializable
 data class ProvidedSurgery(
     @Description("Name of surgery (eg. Diagnostics stomach)")
-    val name: String?,
+    val surgeryName: String?,
     @Description("Date of completion, if applicable.")
     val endDate: LocalDate,
     @Description("Status of surgery (eg. complete)")

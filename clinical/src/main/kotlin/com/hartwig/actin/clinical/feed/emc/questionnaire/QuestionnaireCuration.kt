@@ -3,58 +3,55 @@ package com.hartwig.actin.clinical.feed.emc.questionnaire
 import com.hartwig.actin.datamodel.clinical.ECG
 import com.hartwig.actin.datamodel.clinical.InfectionStatus
 import com.hartwig.actin.datamodel.clinical.TumorStage
+import java.util.TreeMap
 
 internal object QuestionnaireCuration {
-    private val OPTION_MAPPING = mapOf(
-        "no" to false,
-        "No" to false,
-        "NO" to false,
-        "non" to false,
-        "none" to false,
-        "no indien ja welke" to false,
-        "nee" to false,
-        "neee" to false,
-        "o" to false,
-        "n.v.t." to null,
-        "n.v.t" to null,
-        "nvt" to null,
-        "nvt." to null,
-        "NA" to null,
-        "na" to null,
-        "yes" to true,
-        "tes" to true,
-        "Yes" to true,
-        "YES" to true,
-        "JA" to true,
-        "Ja" to true,
-        "ja" to true,
-        "es" to true,
-        "YES related to prostatecarcinoma" to true,
-        "yes bone lesion L1 L2 with epidural extension" to true,
-        "yes manubrium sterni" to true,
-        "yes vertebra L2" to true,
-        "yes wherefore surgery jun 2023" to true,
-        "unknown" to null,
-        "Unknown" to null,
-        "UNKNOWN" to null,
-        "uknown" to null,
-        "unknonw" to null,
-        "onknown" to null,
-        "UNKOWN" to null,
-        "suspect lesion" to null,
-        "unknown after surgery" to null,
-        "-" to null,
-        "yes/no" to null,
-        "yes/no/unknown" to null,
-        "(yes/no)" to null,
-        "botaantasting bij weke delen massa" to false,
-        "no total resection" to false,
-        "probably" to null,
-        "ye" to true,
-        "possible" to null,
-        "onbekend" to null,
-        "suspected" to null,
-    )
+
+    private val OPTION_MAPPING = TreeMap<String, Boolean?>(String.CASE_INSENSITIVE_ORDER).apply {
+        putAll(
+            mapOf(
+                "no" to false,
+                "non" to false,
+                "none" to false,
+                "no indien ja welke" to false,
+                "nee" to false,
+                "neee" to false,
+                "o" to false,
+                "n.v.t." to null,
+                "n.v.t" to null,
+                "nvt" to null,
+                "nvt." to null,
+                "na" to null,
+                "yes" to true,
+                "tes" to true,
+                "ja" to true,
+                "es" to true,
+                "yes/no" to null,
+                "yes/no/unknown" to null,
+                "(yes/no)" to null,
+                "ye" to true,
+                "yes related to prostatecarcinoma" to true,
+                "yes bone lesion l1 l2 with epidural extension" to true,
+                "yes manubrium sterni" to true,
+                "yes vertebra l2" to true,
+                "yes wherefore surgery jun 2023" to true,
+                "unknown" to null,
+                "uknown" to null,
+                "unknonw" to null,
+                "onknown" to null,
+                "unkown" to null,
+                "suspect lesion" to null,
+                "unknown after surgery" to null,
+                "-" to null,
+                "botaantasting bij weke delen massa" to false,
+                "no total resection" to false,
+                "probably" to null,
+                "possible" to null,
+                "onbekend" to null,
+                "suspected" to null
+            )
+        )
+    }
 
     private val STAGE_MAPPING = mapOf(
         "I" to TumorStage.I,
@@ -96,7 +93,7 @@ internal object QuestionnaireCuration {
     }
 
     private fun isConfiguredOption(option: String?): Boolean {
-        return OPTION_MAPPING.containsKey(option)
+        return option != null && OPTION_MAPPING.containsKey(option)
     }
 
     fun toStage(subject: String, stage: String?): ValidatedQuestionnaireCuration<TumorStage> {
@@ -138,7 +135,7 @@ internal object QuestionnaireCuration {
     }
 
     fun toSecondaryPrimaries(secondaryPrimary: String, lastTreatmentInfo: String): List<String> {
-        return listOf(secondaryPrimary + if (lastTreatmentInfo.isEmpty()) "" else " | $lastTreatmentInfo")
+        return listOf(secondaryPrimary + if (lastTreatmentInfo.isEmpty()) "" else " | last treatment date: $lastTreatmentInfo")
     }
 
     fun toInfectionStatus(subject: String, significantCurrentInfection: String?): ValidatedQuestionnaireCuration<InfectionStatus> {

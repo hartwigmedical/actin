@@ -69,7 +69,7 @@ private val VARIANT_MATCH_CRITERIA =
 
 private val ACTIONABILITY_MATCH = ActionabilityMatch(
     onLabelEvents = listOf(
-        TestServeActionabilityFactory.geneBuilder().build().withSource(Knowledgebase.CKB_EVIDENCE).withLevel(ServeEvidenceLevel.A)
+        TestServeActionabilityFactory.geneBuilder().build().withSource(Knowledgebase.CKB_EVIDENCE).withEvidenceLevel(ServeEvidenceLevel.A)
             .withDirection(ServeEvidenceDirection.RESPONSIVE)
     ), offLabelEvents = emptyList()
 )

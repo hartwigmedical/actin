@@ -34,6 +34,21 @@ class QuestionnaireCurationTest {
     }
 
     @Test
+    fun `Should curate options without taking into account the case`() {
+        var curated = toOption(SUBJECT, "SusPectEd")
+        assertThat(curated.curated).isNull()
+        assertThat(curated.errors).isEmpty()
+
+        curated = toOption(SUBJECT, "yEs")
+        assertThat(curated.curated).isTrue()
+        assertThat(curated.errors).isEmpty()
+
+        curated = toOption(SUBJECT, "botaantasting BIJ weke DELEN massa")
+        assertThat(curated.curated).isFalse()
+        assertThat(curated.errors).isEmpty()
+    }
+
+    @Test
     fun shouldCurateTumorStageWhenCurationExists() {
         val curated = toStage(SUBJECT, "IIb")
         assertThat(curated.curated).isEqualTo(TumorStage.IIB)
@@ -82,7 +97,7 @@ class QuestionnaireCurationTest {
 
     @Test
     fun shouldExtractSecondaryPrimaryAndLastTreatmentDateWhenAvailable() {
-        Assert.assertEquals(listOf("sarcoma | Feb 2020"), toSecondaryPrimaries("sarcoma", "Feb 2020"))
+        Assert.assertEquals(listOf("sarcoma | last treatment date: Feb 2020"), toSecondaryPrimaries("sarcoma", "Feb 2020"))
     }
 
     @Test

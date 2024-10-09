@@ -1,3 +1,4 @@
 ﻿"subject"	"class_display"	"period_start"	"period_end"	"code_coding_display_original"	"encounter_status"	"procedure_status"
 "ACTN-01-02-9999"	"surgery"	"2020-08-28 08:00:00.000"	"2020-08-28 08:53:00.000"	"diagnostics stomach"	"planned"	"planned"
 "ACTN-01-02-9999"	"surgery"	"2020-08-29 08:00:00.000"	"2020-08-29 08:54:00.000"	"Procedurele sedatie analgesie ANE op OK"	"in-progress"	"in-progress"
+"ACTN-01-02-9999"	"surgery"	"2020-08-30 08:00:00.000"	"2020-08-30 08:54:00.000"	"Geen ingreep- operatie uitgesteld"	"planned"	"planned"

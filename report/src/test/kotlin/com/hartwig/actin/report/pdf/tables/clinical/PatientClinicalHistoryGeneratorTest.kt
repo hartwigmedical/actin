@@ -2,10 +2,8 @@ package com.hartwig.actin.report.pdf.tables.clinical
 
 import com.hartwig.actin.datamodel.clinical.TestPriorOtherConditionFactory
 import com.hartwig.actin.report.datamodel.TestReportFactory
-import com.itextpdf.layout.element.Cell
-import com.itextpdf.layout.element.Paragraph
+import com.hartwig.actin.report.pdf.tables.clinical.CellTestUtil.extractTextFromCell
 import com.itextpdf.layout.element.Table
-import com.itextpdf.layout.element.Text
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -40,7 +38,8 @@ class PatientClinicalHistoryGeneratorTest {
         val patientClinicalHistoryGenerator = PatientClinicalHistoryGenerator(reportWithOtherConditions, true, KEY_WIDTH, VALUE_WIDTH)
         val cells = patientClinicalHistoryGenerator.contentsAsList()
 
-        val otherHistoryCell = cells.dropWhile { extractTextFromCell(it) != "Relevant non-oncological history" }.drop(1).first()
+        val otherHistoryCell =
+            cells.dropWhile { extractTextFromCell(it) != "Relevant non-oncological history" }.drop(1).first()
         val otherHistoryTable = otherHistoryCell.children.first() as? Table ?: throw IllegalStateException("Expected Table as first child")
 
         assertThat(otherHistoryTable.numberOfRows).isEqualTo(6)
@@ -51,13 +50,6 @@ class PatientClinicalHistoryGeneratorTest {
         assertThat(extractTextFromCell(otherHistoryTable.getCell(4, 0))).isEqualTo("Date unknown")
         assertThat(extractTextFromCell(otherHistoryTable.getCell(5, 0))).isEqualTo("Date unknown")
 
-
-    }
-
-    private fun extractTextFromCell(cell: Cell): String? {
-        val paragraph = cell.children.firstOrNull() as? Paragraph
-        val textElement = paragraph?.children?.firstOrNull() as? Text
-        return textElement?.text
     }
 
 }

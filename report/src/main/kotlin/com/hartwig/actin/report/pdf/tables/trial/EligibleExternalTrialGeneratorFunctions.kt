@@ -6,7 +6,7 @@ import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
-private const val MANY_PLEASE_CHECK_LINK = "Many (please check link)"
+private const val MANY_PLEASE_CHECK_LINK = "Many, please check link"
 
 object EligibleExternalTrialGeneratorFunctions {
 

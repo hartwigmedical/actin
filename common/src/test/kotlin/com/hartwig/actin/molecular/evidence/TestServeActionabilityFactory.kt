@@ -72,7 +72,7 @@ object TestServeActionabilityFactory {
                 return source
             }
 
-            override fun date(): LocalDate {
+            override fun entryDate(): LocalDate {
                 return LocalDate.of(2021, 2, 3)
             }
 
@@ -105,11 +105,15 @@ object TestServeActionabilityFactory {
                 return emptySet()
             }
             
-            override fun description(): String {
+            override fun efficacyDescription(): String {
                 return "efficacy evidence"
             }
 
-            override fun level(): EvidenceLevel {
+            override fun evidenceYear(): Int {
+                return 2021
+            }
+
+            override fun evidenceLevel(): EvidenceLevel {
                 return EvidenceLevel.D
             }
 

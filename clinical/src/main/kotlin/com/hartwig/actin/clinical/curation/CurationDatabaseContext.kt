@@ -32,6 +32,8 @@ import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfigFactory
 import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
 import com.hartwig.actin.clinical.curation.config.SequencingTestConfigFactory
+import com.hartwig.actin.clinical.curation.config.SurgeryNameConfig
+import com.hartwig.actin.clinical.curation.config.SurgeryNameConfigFactory
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityConfigFactory
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
@@ -70,6 +72,7 @@ data class CurationDatabaseContext(
     val toxicityTranslation: TranslationDatabase<String>,
     val bloodTransfusionTranslation: TranslationDatabase<String>,
     val dosageUnitTranslation: TranslationDatabase<String>,
+    val surgeryNameCuration: CurationDatabase<SurgeryNameConfig>,
 ) {
     fun allUnusedConfig(extractionEvaluations: List<CurationExtractionEvaluation>): Set<UnusedCurationConfig> =
         setOf(
@@ -88,7 +91,8 @@ data class CurationDatabaseContext(
             sequencingTestCuration,
             medicationNameCuration,
             medicationDosageCuration,
-            intoleranceCuration
+            intoleranceCuration,
+            surgeryNameCuration
         ).flatMap { it.reportUnusedConfig(extractionEvaluations) }.toSet() + listOf(
             laboratoryTranslation,
             administrationRouteTranslation,
@@ -113,7 +117,8 @@ data class CurationDatabaseContext(
             medicationDosageCuration.validationErrors +
             intoleranceCuration.validationErrors +
             cypInteractionCuration.validationErrors +
-            qtProlongingCuration.validationErrors).toSet()
+            qtProlongingCuration.validationErrors +
+            surgeryNameCuration.validationErrors).toSet()
 
 
     companion object {
@@ -257,6 +262,12 @@ data class CurationDatabaseContext(
                 LaboratoryTranslationFactory(),
                 CurationCategory.LABORATORY_TRANSLATION
             ) { it.laboratoryEvaluatedInputs },
+            surgeryNameCuration = CurationDatabaseReader.read(
+                curationDir,
+                CurationDatabaseReader.SURGERY_NAME_TSV,
+                SurgeryNameConfigFactory(),
+                CurationCategory.SURGERY_NAME
+            ) { it.surgeryTranslationEvaluatedInputs }
         )
     }
 
