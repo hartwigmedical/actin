@@ -36,7 +36,7 @@ class TestTreatmentMatchGenerationApplication {
                 resources = resources,
                 trials = trials,
                 efficacyEvidence = emptyList(),
-                resistanceEvidenceMatcher = LocalTestFunctions.createMockResistanceEvidenceMatcher()
+                resistanceEvidenceMatcher = LocalTestFunctions.createEmptyResistanceEvidenceMatcher()
             )
             .evaluateAndAnnotateMatchesForPatient(patient)
 

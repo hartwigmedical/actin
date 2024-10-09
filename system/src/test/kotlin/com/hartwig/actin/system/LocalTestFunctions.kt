@@ -70,7 +70,7 @@ object LocalTestFunctions {
         )
     }
 
-    fun createMockResistanceEvidenceMatcher(): ResistanceEvidenceMatcher {
+    fun createEmptyResistanceEvidenceMatcher(): ResistanceEvidenceMatcher {
         return ResistanceEvidenceMatcher(
             doidModel = DoidModel(
                 childToParentsMap = emptyMap(),
