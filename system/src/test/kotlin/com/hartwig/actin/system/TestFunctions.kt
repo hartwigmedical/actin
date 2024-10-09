@@ -24,6 +24,8 @@ import java.time.Period
 
 object TestFunctions {
 
+    private const val TRIAL_SOURCE = "Hartwig"
+
     private val LOGGER: Logger = LogManager.getLogger(TestFunctions::class.java)
 
     private val resourceDirectory = listOf(System.getProperty("user.home"), "hmf", "repos", "actin-resources-private")
@@ -89,6 +91,6 @@ object TestFunctions {
     fun createTestEnvironmentConfiguration(): EnvironmentConfiguration {
         val base = EnvironmentConfiguration.create(null)
 
-        return base.copy(algo = AlgoConfiguration(trialSource = "Hartwig"))
+        return base.copy(algo = AlgoConfiguration(trialSource = TRIAL_SOURCE))
     }
 }
