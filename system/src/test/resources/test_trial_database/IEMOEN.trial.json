@@ -99,14 +99,9 @@
         }
       ],
       "function": {
-        "rule": "WARN_IF",
+        "rule": "HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X",
         "parameters": [
-          {
-            "rule": "HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X",
-            "parameters": [
-              "6"
-            ]
-          }
+          "6"
         ]
       }
     },
@@ -118,14 +113,9 @@
         }
       ],
       "function": {
-        "rule": "WARN_IF",
+        "rule": "HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X",
         "parameters": [
-          {
-            "rule": "HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X",
-            "parameters": [
-              "1.5"
-            ]
-          }
+          "1.5"
         ]
       }
     }

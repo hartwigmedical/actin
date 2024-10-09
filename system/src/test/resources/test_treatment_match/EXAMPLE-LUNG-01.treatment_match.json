@@ -194,34 +194,29 @@
               }
             ],
             "function": {
-              "rule": "WARN_IF",
+              "rule": "HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X",
               "parameters": [
-                {
-                  "rule": "HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X",
-                  "parameters": [
-                    "6"
-                  ]
-                }
+                "6"
               ]
             }
           },
           {
-            "result": "PASS",
+            "result": "FAIL",
             "recoverable": true,
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
-            "passSpecificMessages": [
-              "Hemoglobin 5.6 mmol/L is below minimum of 6.0 mmol/L"
-            ],
-            "passGeneralMessages": [
-              "Hemoglobin 5.6 mmol/L below min of 6.0 mmol/L"
-            ],
+            "passSpecificMessages": [],
+            "passGeneralMessages": [],
             "warnSpecificMessages": [],
             "warnGeneralMessages": [],
             "undeterminedSpecificMessages": [],
             "undeterminedGeneralMessages": [],
-            "failSpecificMessages": [],
-            "failGeneralMessages": []
+            "failSpecificMessages": [
+              "Hemoglobin 5.6 mmol/L is below minimum of 6.0 mmol/L"
+            ],
+            "failGeneralMessages": [
+              "Hemoglobin 5.6 mmol/L below min of 6.0 mmol/L"
+            ]
           }
         ],
         [
@@ -233,29 +228,24 @@
               }
             ],
             "function": {
-              "rule": "WARN_IF",
+              "rule": "HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X",
               "parameters": [
-                {
-                  "rule": "HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X",
-                  "parameters": [
-                    "1.5"
-                  ]
-                }
+                "1.5"
               ]
             }
           },
           {
-            "result": "PASS",
+            "result": "UNDETERMINED",
             "recoverable": true,
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
-            "passSpecificMessages": [
-              "No measurement found for absolute neutrophil count"
-            ],
+            "passSpecificMessages": [],
             "passGeneralMessages": [],
             "warnSpecificMessages": [],
             "warnGeneralMessages": [],
-            "undeterminedSpecificMessages": [],
+            "undeterminedSpecificMessages": [
+              "No measurement found for absolute neutrophil count"
+            ],
             "undeterminedGeneralMessages": [],
             "failSpecificMessages": [],
             "failGeneralMessages": []

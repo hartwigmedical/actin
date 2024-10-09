@@ -27,7 +27,9 @@ class LocalTestReportGenerationApplication {
         val environmentConfig = LocalTestFunctions.createTestEnvironmentConfiguration()
         val report = ReportFactory.fromInputs(patient, treatmentMatch, environmentConfig.report)
         val writer = ReportWriterFactory.createProductionReportWriter(outputDirectory)
+
         writer.write(report, enableExtendedMode = false)
+        writer.write(report, enableExtendedMode = true)
 
         LOGGER.info("Done!")
     }
