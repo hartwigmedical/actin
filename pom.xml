@@ -59,6 +59,7 @@
         <kotlinx-serialization-json.version>1.6.2</kotlinx-serialization-json.version>
         <commons-math3.version>3.6.1</commons-math3.version>
         <jsonschema-generator.version>4.36.0</jsonschema-generator.version>
+        
     </properties>
 
     <distributionManagement>

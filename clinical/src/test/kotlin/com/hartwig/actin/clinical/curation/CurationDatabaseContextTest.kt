@@ -20,7 +20,7 @@ class CurationDatabaseContextTest {
 
     @Test
     fun `Should combine all databases validation errors`() {
-        val expectedUnusedConfig = IntRange(0, 17).map {
+        val expectedUnusedConfig = IntRange(0, 18).map {
             CurationConfigValidationError(
                 NOT_IMPORTANT,
                 NOT_IMPORTANT,
@@ -52,7 +52,7 @@ class CurationDatabaseContextTest {
             mockk(),
             mockk(),
             mockk(),
-            mockk()
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[18])
         )
         assertThat(context.validate()).containsExactlyElementsOf(expectedUnusedConfig)
     }
@@ -87,8 +87,7 @@ class CurationDatabaseContextTest {
             translationDatabaseWithUnusedConfig(expectedUnusedConfig[18]),
             bloodTransfusionTranslation,
             translationDatabaseWithUnusedConfig(expectedUnusedConfig[19]),
-            translationDatabaseWithUnusedConfig(expectedUnusedConfig[20])
-
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[20])
         )
         assertThat(context.allUnusedConfig(listOf(CurationExtractionEvaluation()))).containsExactlyInAnyOrderElementsOf(expectedUnusedConfig)
         verify { cypInteractionCuration wasNot Called }

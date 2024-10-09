@@ -172,9 +172,14 @@
       "status": "FINISHED"
     },
     {
-      "surgeryName": null,
-      "endDate": "2020-01-01T10:10:00",
+      "surgeryName": "diagnostics stomach",
+      "endDate": "2021-01-01T10:10:00",
       "status": "CANCELLED"
+    },
+    {
+      "surgeryName": "Geen ingreep- operatie uitgesteld",
+      "endDate": "2024-01-01T10:10:00",
+      "status": "FINISHED"
     }
   ],
   "toxicities": [

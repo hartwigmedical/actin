@@ -12,7 +12,6 @@ class TranslationDatabaseReader {
         const val TOXICITY_TRANSLATION_TSV = "toxicity_translation.tsv"
         const val BLOOD_TRANSFUSION_TRANSLATION_TSV = "blood_transfusion_translation.tsv"
         const val DOSAGE_UNIT_TRANSLATION_TSV = "dosage_unit_translation.tsv"
-        const val SURGERY_TRANSLATION_TSV = "surgery_translation.tsv"
 
         fun <T> read(
             basePath: String,
