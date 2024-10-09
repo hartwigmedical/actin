@@ -29,14 +29,27 @@ object LocalTestFunctions {
 
     private val LOGGER: Logger = LogManager.getLogger(LocalTestFunctions::class.java)
 
-    private val resourceDirectory = listOf(System.getProperty("user.home"), "hmf", "repos", "actin-resources-private")
-        .joinToString(File.separator)
-
-    private val doidJson = listOf(resourceDirectory, "disease_ontology", "doid.json").joinToString(File.separator)
-    private val atcTreeTsv = listOf(resourceDirectory, "atc_config", "atc_tree.tsv").joinToString(File.separator)
-    private val treatmentDatabaseDir = listOf(resourceDirectory, "treatment_db").joinToString(File.separator)
+    fun createTestEnvironmentConfiguration(): EnvironmentConfiguration {
+        val base = EnvironmentConfiguration.create(null)
+        return base.copy(
+            algo = AlgoConfiguration(trialSource = TRIAL_SOURCE),
+            report = ReportConfiguration(
+                includeApprovedTreatmentsInSummary = false,
+                includeExternalTrialsInSummary = false,
+                includeMolecularDetailsChapter = false,
+                includeClinicalDetailsChapter = false
+            )
+        )
+    }
 
     fun createTestRuleMappingResources(referenceDateProvider: ReferenceDateProvider): RuleMappingResources {
+        val resourceDirectory =
+            listOf(System.getProperty("user.home"), "hmf", "repos", "actin-resources-private").joinToString(File.separator)
+
+        val doidJson = listOf(resourceDirectory, "disease_ontology", "doid.json").joinToString(File.separator)
+        val atcTreeTsv = listOf(resourceDirectory, "atc_config", "atc_tree.tsv").joinToString(File.separator)
+        val treatmentDatabaseDir = listOf(resourceDirectory, "treatment_db").joinToString(File.separator)
+
         LOGGER.info("Loading DOID tree from {}", doidJson)
         val doidEntry = DoidJson.readDoidOwlEntry(doidJson)
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
@@ -86,19 +99,6 @@ object LocalTestFunctions {
                 treatmentsByName = emptyMap()
             ),
             molecularHistory = MolecularHistory(molecularTests = emptyList())
-        )
-    }
-
-    fun createTestEnvironmentConfiguration(): EnvironmentConfiguration {
-        val base = EnvironmentConfiguration.create(null)
-        return base.copy(
-            algo = AlgoConfiguration(trialSource = TRIAL_SOURCE),
-            report = ReportConfiguration(
-                includeApprovedTreatmentsInSummary = false,
-                includeExternalTrialsInSummary = false,
-                includeMolecularDetailsChapter = false,
-                includeClinicalDetailsChapter = false
-            )
         )
     }
 
