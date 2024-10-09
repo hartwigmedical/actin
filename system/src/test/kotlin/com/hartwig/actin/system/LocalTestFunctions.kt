@@ -103,6 +103,6 @@ object LocalTestFunctions {
     }
 
     fun resourceOnClasspath(relativePath: String): String {
-        return TestTreatmentMatchGenerationApplication.Companion::class.java.getResource("/" + relativePath.removePrefix("/"))!!.path
+        return LocalTestTreatmentMatchGenerationApplication.Companion::class.java.getResource("/" + relativePath.removePrefix("/"))!!.path
     }
 }

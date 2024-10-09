@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger
 import java.io.File
 import kotlin.system.exitProcess
 
-class TestTreatmentMatchGenerationApplication {
+class LocalTestTreatmentMatchGenerationApplication {
 
     private val testPatientRecordJson = LocalTestFunctions.resourceOnClasspath("test_patient_data/EXAMPLE-LUNG-01.patient_record.json")
     private val testTrialRecordDatabaseDir = LocalTestFunctions.resourceOnClasspath("test_trial_database")
@@ -61,16 +61,16 @@ class TestTreatmentMatchGenerationApplication {
     }
 
     companion object {
-        val LOGGER: Logger = LogManager.getLogger(TestTreatmentMatchGenerationApplication::class.java)
+        val LOGGER: Logger = LogManager.getLogger(LocalTestTreatmentMatchGenerationApplication::class.java)
     }
 }
 
 fun main() {
-    TestTreatmentMatchGenerationApplication.LOGGER.info("Running ACTIN Test Treatment Matcher")
+    LocalTestTreatmentMatchGenerationApplication.LOGGER.info("Running ACTIN Test Treatment Matcher")
     try {
-        TestTreatmentMatchGenerationApplication().run()
+        LocalTestTreatmentMatchGenerationApplication().run()
     } catch (exception: ParseException) {
-        TestTreatmentMatchGenerationApplication.LOGGER.warn(exception)
+        LocalTestTreatmentMatchGenerationApplication.LOGGER.warn(exception)
         exitProcess(1)
     }
 }

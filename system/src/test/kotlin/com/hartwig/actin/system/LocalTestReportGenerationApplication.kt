@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger
 import java.io.File
 import kotlin.system.exitProcess
 
-class TestReportGenerationApplication {
+class LocalTestReportGenerationApplication {
 
     private val testPatientRecordJson = LocalTestFunctions.resourceOnClasspath("test_patient_data/EXAMPLE-LUNG-01.patient_record.json")
     private val testTreatmentMatchJson = LocalTestFunctions.resourceOnClasspath("test_treatment_match/EXAMPLE-LUNG-01.treatment_match.json")
@@ -33,16 +33,16 @@ class TestReportGenerationApplication {
     }
 
     companion object {
-        val LOGGER: Logger = LogManager.getLogger(TestReportGenerationApplication::class.java)
+        val LOGGER: Logger = LogManager.getLogger(LocalTestReportGenerationApplication::class.java)
     }
 }
 
 fun main() {
-    TestReportGenerationApplication.LOGGER.info("Running ACTIN Test Reporter")
+    LocalTestReportGenerationApplication.LOGGER.info("Running ACTIN Test Reporter")
     try {
-        TestReportGenerationApplication().run()
+        LocalTestReportGenerationApplication().run()
     } catch (exception: ParseException) {
-        TestReportGenerationApplication.LOGGER.warn(exception)
+        LocalTestReportGenerationApplication.LOGGER.warn(exception)
         exitProcess(1)
     }
 }
