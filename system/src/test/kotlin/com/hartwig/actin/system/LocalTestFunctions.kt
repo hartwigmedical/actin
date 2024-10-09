@@ -7,6 +7,7 @@ import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.configuration.AlgoConfiguration
 import com.hartwig.actin.configuration.EnvironmentConfiguration
+import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.DoidModelFactory
@@ -90,8 +91,15 @@ object LocalTestFunctions {
 
     fun createTestEnvironmentConfiguration(): EnvironmentConfiguration {
         val base = EnvironmentConfiguration.create(null)
-
-        return base.copy(algo = AlgoConfiguration(trialSource = TRIAL_SOURCE))
+        return base.copy(
+            algo = AlgoConfiguration(trialSource = TRIAL_SOURCE),
+            report = ReportConfiguration(
+                includeApprovedTreatmentsInSummary = false,
+                includeExternalTrialsInSummary = false,
+                includeMolecularDetailsChapter = false,
+                includeClinicalDetailsChapter = false
+            )
+        )
     }
 
     fun resourceOnClasspath(relativePath: String): String {
