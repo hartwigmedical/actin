@@ -98,7 +98,7 @@
   "priorSecondPrimaries": [],
   "priorOtherConditions": [
     {
-      "name": "Rheumatoid arthritis",
+      "name": "rheumatoid arthritis",
       "year": 2022,
       "month": null,
       "doids": [

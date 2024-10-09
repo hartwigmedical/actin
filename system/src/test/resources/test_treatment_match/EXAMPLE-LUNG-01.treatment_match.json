@@ -174,10 +174,10 @@
             "passSpecificMessages": [],
             "passGeneralMessages": [],
             "warnSpecificMessages": [
-              "Patient has history of condition(s) Rheumatoid arthritis, which is indicative of autoimmune disease"
+              "Patient has history of condition(s) rheumatoid arthritis, which is indicative of autoimmune disease"
             ],
             "warnGeneralMessages": [
-              "History of Rheumatoid arthritis"
+              "History of rheumatoid arthritis"
             ],
             "undeterminedSpecificMessages": [],
             "undeterminedGeneralMessages": [],
