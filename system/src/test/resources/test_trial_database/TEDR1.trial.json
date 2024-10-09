@@ -7,7 +7,69 @@
     "nctId": "NCT00000004",
     "phase": "2"
   },
-  "generalEligibility": [],
+  "generalEligibility": [
+    {
+      "references": [
+        {
+          "id": "I-1",
+          "text": "Patient is ≥18 years of age."
+        }
+      ],
+      "function": {
+        "rule": "IS_AT_LEAST_X_YEARS_OLD",
+        "parameters": [
+          "18"
+        ]
+      }
+    },
+    {
+      "references": [
+        {
+          "id": "I-2",
+          "text": "Drug 1 as monotherapy is indicated for the treatment of adults with advanced lung cancer."
+        }
+      ],
+      "function": {
+        "rule": "AND",
+        "parameters": [
+          {
+            "rule": "OR",
+            "parameters": [
+              {
+                "rule": "HAS_LOCALLY_ADVANCED_CANCER",
+                "parameters": []
+              },
+              {
+                "rule": "HAS_METASTATIC_CANCER",
+                "parameters": []
+              }
+            ]
+          },
+          {
+            "rule": "HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_TERM_X",
+            "parameters": [
+              "Lung cancer"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "references": [
+        {
+          "id": "I-3",
+          "text": "Patient has a confirmed EGFR C797S mutation"
+        }
+      ],
+      "function": {
+        "rule": "MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y",
+        "parameters": [
+          "EGFR",
+          "C797S"
+        ]
+      }
+    }
+  ],
   "cohorts": [
     {
       "metadata": {
@@ -16,51 +78,9 @@
         "open": true,
         "slotsAvailable": true,
         "blacklist": false,
-        "description": "Lung cancer"
+        "description": "Lung cancer C797S cohort"
       },
       "eligibility": [
-        {
-          "references": [
-            {
-              "id": "I-1",
-              "text": "Patient is ≥18 years of age."
-            },
-            {
-              "id": "I-2",
-              "text": "Drug 1 as monotherapy is indicated for the treatment of adults with advanced lung cancer."
-            }
-          ],
-          "function": {
-            "rule": "AND",
-            "parameters": [
-              {
-                "rule": "IS_AT_LEAST_X_YEARS_OLD",
-                "parameters": [
-                  "18"
-                ]
-              },
-              {
-                "rule": "OR",
-                "parameters": [
-                  {
-                    "rule": "HAS_LOCALLY_ADVANCED_CANCER",
-                    "parameters": []
-                  },
-                  {
-                    "rule": "HAS_METASTATIC_CANCER",
-                    "parameters": []
-                  }
-                ]
-              },
-              {
-                "rule": "HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_TERM_X",
-                "parameters": [
-                  "Lung cancer"
-                ]
-              }
-            ]
-          }
-        }
       ]
     }
   ]

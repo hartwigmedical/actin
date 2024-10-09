@@ -12,7 +12,7 @@
       "references": [
         {
           "id": "I-01",
-          "text": "1. Patient is ≥18 years old."
+          "text": "Patient is ≥18 years old."
         }
       ],
       "function": {
@@ -55,6 +55,21 @@
         "parameters": [
           3,
           5
+        ]
+      }
+    },
+    {
+      "references": [
+        {
+          "id": "I-04",
+          "text": "Patient has confirmed KRAS G12D mutation"
+        }
+      ],
+      "function": {
+        "rule": "MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y",
+        "parameters": [
+          "KRAS",
+          "G12D"
         ]
       }
     }

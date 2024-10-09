@@ -24,7 +24,7 @@ import java.time.Period
 
 object LocalTestFunctions {
 
-    private const val TRIAL_SOURCE = "Hartwig"
+    private const val TRIAL_SOURCE = "Example"
 
     private val LOGGER: Logger = LogManager.getLogger(LocalTestFunctions::class.java)
 

@@ -90,6 +90,44 @@
           }
         ]
       }
+    },
+    {
+      "references": [
+        {
+          "id": "E-02",
+          "text": "Has hemoglobin below 6 mmol/l"
+        }
+      ],
+      "function": {
+        "rule": "WARN_IF",
+        "parameters": [
+          {
+            "rule": "HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X",
+            "parameters": [
+              "6"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "references": [
+        {
+          "id": "E-03",
+          "text": "Has absolute neutrophil count below 1.5 x 10^9/l"
+        }
+      ],
+      "function": {
+        "rule": "WARN_IF",
+        "parameters": [
+          {
+            "rule": "HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X",
+            "parameters": [
+              "1.5"
+            ]
+          }
+        ]
+      }
     }
   ],
   "cohorts": [
@@ -98,7 +136,7 @@
         "cohortId": "A",
         "evaluable": true,
         "open": true,
-        "slotsAvailable": true,
+        "slotsAvailable": false,
         "blacklist": false,
         "description": "Dose escalation - monotherapy"
       },

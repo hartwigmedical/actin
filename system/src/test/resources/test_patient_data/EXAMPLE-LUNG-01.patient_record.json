@@ -134,7 +134,7 @@
       "code": "Hb",
       "name": "Hemoglobin",
       "comparator": "",
-      "value": 6,
+      "value": 5.6,
       "unit": "MILLIMOLES_PER_LITER",
       "refLimitLow": 8,
       "refLimitUp": 9,
@@ -310,7 +310,39 @@
               "event": "EGFR C797S",
               "driverLikelihood": "HIGH",
               "evidence": {
-                "externalEligibleTrials": [],
+                "externalEligibleTrials": [
+                  {
+                    "title": "Phase 2 trial for evaluation of new C797S inhibitor in lung cancer",
+                    "countries": [
+                      {
+                        "name": "NETHERLANDS",
+                        "hospitalsPerCity": {
+                          "Tilburg": [
+                            "Elisabeth-TweeSteden Ziekenhuis"
+                          ]
+                        }
+                      },
+                      {
+                        "name": "GERMANY",
+                        "hospitalsPerCity": {
+                          "Stuttgart": [
+                            "Robert-Bosch-Krankenhaus - Klinik Schillerhoehe"
+                          ]
+                        }
+                      }
+                    ],
+                    "url": "https://hartwigmedicalfoundation.nl",
+                    "nctId": "NCT00000006",
+                    "isCategoryEvent": false,
+                    "sourceEvent": "EGFR C797S",
+                    "evidenceLevelDetails": "CLINICAL_STUDY",
+                    "applicableCancerType": {
+                      "cancerType": "Lung non-small cell carcinoma",
+                      "excludedCancerTypes": [
+                      ]
+                    }
+                  }
+                ],
                 "treatmentEvidence": []
               },
               "gene": "EGFR",
