@@ -55,7 +55,8 @@ class StandardTumorDetailsExtractor(
     private fun combinedTumorResponse(
         curatedTumorResponse: CurationResponse<PrimaryTumorConfig>,
         curatedTumorResponseFromPriorOtherConditions: PrimaryTumorConfig?
-    ) = curatedTumorResponse.config() ?: curatedTumorResponseFromPriorOtherConditions
+    ) =
+        if (curatedTumorResponse.config() == null || curatedTumorResponse.config()!!.ignore) curatedTumorResponseFromPriorOtherConditions else curatedTumorResponse.config()
 
     private fun tumorDetails(
         ehrPatientRecord: ProvidedPatientRecord,
