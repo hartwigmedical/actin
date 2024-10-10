@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.TreatmentMatcher
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter
+import com.hartwig.actin.testutil.ResourceLocator
 import com.hartwig.actin.trial.serialization.TrialJson
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
@@ -14,9 +15,8 @@ import kotlin.system.exitProcess
 
 class LocalExampleTreatmentMatchApplication {
 
-    private val examplePatientRecordJson =
-        LocalExampleFunctions.resourceOnClasspath("example_patient_data/EXAMPLE-LUNG-01.patient_record.json")
-    private val exampleTrialDatabaseDir = LocalExampleFunctions.resourceOnClasspath("example_trial_database")
+    private val examplePatientRecordJson = ResourceLocator.resourceOnClasspath("example_patient_data/EXAMPLE-LUNG-01.patient_record.json")
+    private val exampleTrialDatabaseDir = ResourceLocator.resourceOnClasspath("example_trial_database")
 
     private val outputDirectory =
         listOf(LocalExampleFunctions.systemTestResourcesDirectory(), "example_treatment_match").joinToString(File.separator)

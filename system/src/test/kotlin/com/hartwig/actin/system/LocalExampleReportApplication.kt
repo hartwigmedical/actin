@@ -4,6 +4,7 @@ import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.report.datamodel.ReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory
+import com.hartwig.actin.testutil.ResourceLocator
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -12,10 +13,9 @@ import kotlin.system.exitProcess
 
 class LocalExampleReportApplication {
 
-    private val examplePatientRecordJson =
-        LocalExampleFunctions.resourceOnClasspath("example_patient_data/EXAMPLE-LUNG-01.patient_record.json")
+    private val examplePatientRecordJson = ResourceLocator.resourceOnClasspath("example_patient_data/EXAMPLE-LUNG-01.patient_record.json")
     private val exampleTreatmentMatchJson =
-        LocalExampleFunctions.resourceOnClasspath("example_treatment_match/EXAMPLE-LUNG-01.treatment_match.json")
+        ResourceLocator.resourceOnClasspath("example_treatment_match/EXAMPLE-LUNG-01.treatment_match.json")
 
     private val outputDirectory =
         listOf(LocalExampleFunctions.systemTestResourcesDirectory(), "example_reports").joinToString(File.separator)

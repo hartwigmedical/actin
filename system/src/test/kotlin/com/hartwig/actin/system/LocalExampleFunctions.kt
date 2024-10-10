@@ -114,8 +114,4 @@ object LocalExampleFunctions {
             "resources"
         ).joinToString(File.separator)
     }
-
-    fun resourceOnClasspath(relativePath: String): String {
-        return LocalExampleTreatmentMatchApplication.Companion::class.java.getResource("/" + relativePath.removePrefix("/"))!!.path
-    }
 }
