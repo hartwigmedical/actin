@@ -1,18 +1,16 @@
-package com.hartwig.actin.system
+package com.hartwig.actin.system.example
 
 import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
-import com.hartwig.actin.testutil.ResourceLocator
 import com.hartwig.actin.trial.serialization.TrialJson
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class ExampleDataDeserializationTest {
 
-    private val examplePatientRecordJson = ResourceLocator.resourceOnClasspath("example_patient_data/EXAMPLE-LUNG-01.patient_record.json")
-    private val exampleTreatmentMatchJson =
-        ResourceLocator.resourceOnClasspath("example_treatment_match/EXAMPLE-LUNG-01.treatment_match.json")
-    private val exampleTrialDatabaseDir = ResourceLocator.resourceOnClasspath("example_trial_database")
+    private val examplePatientRecordJson = ExampleFunctions.resolveExamplePatientRecordJson()
+    private val exampleTreatmentMatchJson = ExampleFunctions.resolveExampleTreatmentMatchJson()
+    private val exampleTrialDatabaseDir = ExampleFunctions.resolveExampleTrialDatabaseDirectory()
 
     @Test
     fun `Should be able to deserialize example data`() {

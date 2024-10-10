@@ -1,4 +1,4 @@
-package com.hartwig.actin.system
+package com.hartwig.actin.system.example
 
 import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
