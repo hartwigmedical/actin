@@ -23,13 +23,13 @@ import org.apache.logging.log4j.Logger
 import java.io.File
 import java.time.Period
 
-object LocalTestFunctions {
+object LocalExampleFunctions {
 
     private const val TRIAL_SOURCE = "Example"
 
-    private val LOGGER: Logger = LogManager.getLogger(LocalTestFunctions::class.java)
+    private val LOGGER: Logger = LogManager.getLogger(LocalExampleFunctions::class.java)
 
-    fun createTestEnvironmentConfiguration(): EnvironmentConfiguration {
+    fun createExampleEnvironmentConfiguration(): EnvironmentConfiguration {
         val base = EnvironmentConfiguration.create(null)
         return base.copy(
             algo = AlgoConfiguration(trialSource = TRIAL_SOURCE),
@@ -42,7 +42,7 @@ object LocalTestFunctions {
         )
     }
 
-    fun createTestRuleMappingResources(referenceDateProvider: ReferenceDateProvider): RuleMappingResources {
+    fun createExampleRuleMappingResources(referenceDateProvider: ReferenceDateProvider): RuleMappingResources {
         val resourceDirectory =
             listOf(System.getProperty("user.home"), "hmf", "repos", "actin-resources-private").joinToString(File.separator)
 
@@ -68,7 +68,7 @@ object LocalTestFunctions {
                 medicationCategories = MedicationCategories.create(atcTree)
             )
 
-        val environmentConfiguration = createTestEnvironmentConfiguration()
+        val environmentConfiguration = createExampleEnvironmentConfiguration()
 
         return RuleMappingResources(
             referenceDateProvider = referenceDateProvider,
@@ -102,7 +102,20 @@ object LocalTestFunctions {
         )
     }
 
+    fun systemTestResourcesDirectory(): String {
+        return listOf(
+            System.getProperty("user.home"),
+            "hmf",
+            "repos",
+            "actin",
+            "system",
+            "src",
+            "test",
+            "resources"
+        ).joinToString(File.separator)
+    }
+
     fun resourceOnClasspath(relativePath: String): String {
-        return LocalTestTreatmentMatchGenerationApplication.Companion::class.java.getResource("/" + relativePath.removePrefix("/"))!!.path
+        return LocalExampleTreatmentMatchApplication.Companion::class.java.getResource("/" + relativePath.removePrefix("/"))!!.path
     }
 }
