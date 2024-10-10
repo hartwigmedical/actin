@@ -62,6 +62,7 @@ private val CURATED_TREATMENT_HISTORY_ENTRY = TreatmentHistoryEntryConfig(
     false,
     TreatmentHistoryEntry(
         treatments = setOf(TREATMENT),
+        intents = setOf(Intent.PALLIATIVE),
         treatmentHistoryDetails = TreatmentHistoryDetails(
             bodyLocations = setOf("bone"),
             bodyLocationCategories = setOf(BodyLocationCategory.BONE),
@@ -83,6 +84,7 @@ private val EXPECTED_TREATMENT_HISTORY_ENTRY = TreatmentHistoryEntry(
     startYear = PROVIDED_TREATMENT_START.year,
     startMonth = PROVIDED_TREATMENT_START.monthValue,
     treatments = CURATED_TREATMENT_HISTORY_ENTRY.curated!!.treatments,
+    intents = setOf(Intent.PALLIATIVE),
     treatmentHistoryDetails = TreatmentHistoryDetails(
         stopYear = PROVIDED_TREATMENT_END.year,
         stopMonth = PROVIDED_TREATMENT_END.monthValue,
@@ -103,7 +105,6 @@ private val EXPECTED_TREATMENT_HISTORY_ENTRY = TreatmentHistoryEntry(
     ),
     isTrial = false,
     trialAcronym = "trialAcronym",
-    intents = setOf(Intent.PALLIATIVE)
 )
 private val EXPECTED_TREATMENT_HISTORY_FALLBACK = EXPECTED_TREATMENT_HISTORY_ENTRY.copy(
     treatmentHistoryDetails = EXPECTED_TREATMENT_HISTORY_ENTRY.treatmentHistoryDetails?.copy(
@@ -145,7 +146,7 @@ class StandardOncologicalHistoryExtractorTest {
     }
 
     @Test
-    fun `Should extract treatment with modifications using curated treatment, curated modification and provided response, stop reason and stop date`() {
+    fun `Should extract treatment with modifications using curated treatment, curated modification and provided response, stop reason, stop date`() {
         every { treatmentCurationDatabase.find(TREATMENT_NAME) } returns setOf(CURATED_TREATMENT_HISTORY_ENTRY)
         every { treatmentCurationDatabase.find(MODIFICATION_NAME) } returns setOf(CURATED_MODIFICATION_TREATMENT_HISTORY_ENTRY)
 
@@ -153,6 +154,23 @@ class StandardOncologicalHistoryExtractorTest {
 
         assertThat(result.evaluation.warnings).isEmpty()
         assertThat(result.extracted).isEqualTo(listOf(EXPECTED_TREATMENT_HISTORY_ENTRY))
+    }
+
+    @Test
+    fun `Should extract treatment with modifications using curated intent when provided`() {
+        every { treatmentCurationDatabase.find(TREATMENT_NAME) } returns setOf(
+            CURATED_TREATMENT_HISTORY_ENTRY.copy(
+                curated = CURATED_TREATMENT_HISTORY_ENTRY.curated?.copy(
+                    intents = setOf(Intent.ADJUVANT)
+                )
+            )
+        )
+        every { treatmentCurationDatabase.find(MODIFICATION_NAME) } returns setOf(CURATED_MODIFICATION_TREATMENT_HISTORY_ENTRY)
+
+        val result = extractor.extract(PROVIDED_EHR_PATIENT_RECORD.copy(treatmentHistory = listOf(PROVIDED_TREATMENT_HISTORY)))
+
+        assertThat(result.evaluation.warnings).isEmpty()
+        assertThat(result.extracted).isEqualTo(listOf(EXPECTED_TREATMENT_HISTORY_ENTRY.copy(intents = setOf(Intent.ADJUVANT))))
     }
 
     @Test
@@ -304,7 +322,8 @@ class StandardOncologicalHistoryExtractorTest {
                 ),
             ),
             isTrial = false,
-            trialAcronym = "trialAcronym"
+            trialAcronym = "trialAcronym",
+            intents = setOf(Intent.PALLIATIVE)
         )
         assertThat(result.extracted).containsExactly(
             firstEntry,
