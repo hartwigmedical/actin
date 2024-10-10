@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
-import com.google.common.collect.Sets
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
@@ -66,26 +65,31 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
     private fun hasToxicityWithGradeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val minGrade = functionInputResolver().createOneIntegerInput(function)
-            HasToxicityWithGrade(minGrade, null, Sets.newHashSet(), resources.algoConfiguration.warnIfToxicitiesNotFromQuestionnaire)
+            createHasToxicityWithGrade(minGrade)
         }
     }
 
     private fun hasToxicityWithGradeAndNameCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneIntegerOneStringInput(function)
-            HasToxicityWithGrade(input.integer, input.string, emptySet(), resources.algoConfiguration.warnIfToxicitiesNotFromQuestionnaire)
+            val (minGrade, name) = functionInputResolver().createOneIntegerOneStringInput(function)
+            createHasToxicityWithGrade(minGrade, name)
         }
     }
 
     private fun hasToxicityWithGradeIgnoringNamesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneIntegerManyStringsInput(function)
-            HasToxicityWithGrade(
-                input.integer,
-                null,
-                input.strings.toSet(),
-                resources.algoConfiguration.warnIfToxicitiesNotFromQuestionnaire
-            )
+            val (minGrade, toxicitiesToIgnore) = functionInputResolver().createOneIntegerManyStringsInput(function)
+            createHasToxicityWithGrade(minGrade, null, toxicitiesToIgnore.toSet())
         }
     }
+
+    private fun createHasToxicityWithGrade(
+        minGrade: Int, nameFilter: String? = null, toxicitiesToIgnore: Set<String> = emptySet()
+    ) = HasToxicityWithGrade(
+        minGrade,
+        nameFilter,
+        toxicitiesToIgnore,
+        resources.algoConfiguration.warnIfToxicitiesNotFromQuestionnaire,
+        referenceDateProvider().date()
+    )
 }

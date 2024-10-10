@@ -7,6 +7,8 @@ import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import org.junit.Test
 import java.time.LocalDate
 
+val referenceDate = LocalDate.of(2024, 10, 1)
+
 class HasToxicityWithGradeTest {
 
     @Test
@@ -28,11 +30,11 @@ class HasToxicityWithGradeTest {
         toxicities.add(ToxicityTestFactory.toxicity(source = ToxicitySource.QUESTIONNAIRE))
         val match = function()
         assertEvaluation(EvaluationResult.PASS, match.evaluate(ToxicityTestFactory.withToxicities(toxicities)))
-        val noMatch = function(minGrade = HasToxicityWithGrade.DEFAULT_QUESTIONNAIRE_GRADE + 1)
+        val noMatch = function(minGrade = DEFAULT_QUESTIONNAIRE_GRADE + 1)
         assertEvaluation(EvaluationResult.UNDETERMINED, noMatch.evaluate(ToxicityTestFactory.withToxicities(toxicities)))
         toxicities.add(
             ToxicityTestFactory.toxicity(
-                source = ToxicitySource.QUESTIONNAIRE, grade = HasToxicityWithGrade.DEFAULT_QUESTIONNAIRE_GRADE + 2
+                source = ToxicitySource.QUESTIONNAIRE, grade = DEFAULT_QUESTIONNAIRE_GRADE + 2
             )
         )
         assertEvaluation(EvaluationResult.PASS, noMatch.evaluate(ToxicityTestFactory.withToxicities(toxicities)))
@@ -109,7 +111,7 @@ class HasToxicityWithGradeTest {
         val toxicities = listOf(
             ToxicityTestFactory.toxicity(
                 source = ToxicitySource.EHR,
-                grade = HasToxicityWithGrade.DEFAULT_QUESTIONNAIRE_GRADE,
+                grade = DEFAULT_QUESTIONNAIRE_GRADE,
                 name = "toxicity 1",
                 evaluatedDate = LocalDate.of(2020, 1, 1)
             )
@@ -123,7 +125,7 @@ class HasToxicityWithGradeTest {
         val toxicities = listOf(
             ToxicityTestFactory.toxicity(
                 source = ToxicitySource.EHR,
-                grade = HasToxicityWithGrade.DEFAULT_QUESTIONNAIRE_GRADE,
+                grade = DEFAULT_QUESTIONNAIRE_GRADE,
                 name = "toxicity 1",
                 evaluatedDate = LocalDate.of(2020, 1, 1)
             )
@@ -131,12 +133,30 @@ class HasToxicityWithGradeTest {
         assertEvaluation(EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)))
     }
 
+    @Test
+    fun `Should not pass for toxicity with earlier end date`() {
+        val function = function()
+        val toxicities = listOf(
+            Toxicity(
+                source = ToxicitySource.QUESTIONNAIRE,
+                grade = DEFAULT_QUESTIONNAIRE_GRADE,
+                name = "toxicity 1",
+                evaluatedDate = LocalDate.of(2020, 1, 1),
+                endDate = LocalDate.of(2022, 1, 2),
+                categories = emptySet()
+            )
+        )
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)))
+    }
+
     private fun function(
-        minGrade: Int = HasToxicityWithGrade.DEFAULT_QUESTIONNAIRE_GRADE,
+        minGrade: Int = DEFAULT_QUESTIONNAIRE_GRADE,
         nameFilter: String? = null,
         ignoreFilters: Set<String> = emptySet(),
         warnIfToxicitiesNotFromQuestionnaire: Boolean = true
     ): HasToxicityWithGrade {
-        return HasToxicityWithGrade(minGrade, nameFilter, ignoreFilters, warnIfToxicitiesNotFromQuestionnaire)
+        return HasToxicityWithGrade(
+            minGrade, nameFilter, ignoreFilters, warnIfToxicitiesNotFromQuestionnaire, referenceDate
+        )
     }
 }
