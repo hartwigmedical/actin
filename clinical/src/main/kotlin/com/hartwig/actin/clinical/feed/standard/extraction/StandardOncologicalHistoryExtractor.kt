@@ -35,13 +35,8 @@ class StandardOncologicalHistoryExtractor(
         oncologicalTreatmentHistory: List<TreatmentHistoryEntry>,
         oncologicalPreviousConditions: List<TreatmentHistoryEntry>
     ): List<TreatmentHistoryEntry> {
-        return oncologicalTreatmentHistory + oncologicalPreviousConditions.filter { oncologicalPreviousConditionsEntry ->
-            oncologicalTreatmentHistory.none { oncologicalTreatmentHistoryEntry ->
-                oncologicalTreatmentHistoryEntry.treatments == oncologicalPreviousConditionsEntry.treatments &&
-                        oncologicalTreatmentHistoryEntry.startYear == oncologicalPreviousConditionsEntry.startYear &&
-                        oncologicalTreatmentHistoryEntry.startMonth == oncologicalPreviousConditionsEntry.startMonth
-            }
-        }
+        val treatmentSignatures = oncologicalTreatmentHistory.map { Triple(it.treatments, it.startYear, it.startMonth) }.toSet()
+        return oncologicalTreatmentHistory + oncologicalPreviousConditions.filter { Triple(it.treatments, it.startYear, it.startMonth) not in treatmentSignatures }
     }
 
     private fun getOncologicalPreviousConditions(ehrPatientRecord: ProvidedPatientRecord) =
