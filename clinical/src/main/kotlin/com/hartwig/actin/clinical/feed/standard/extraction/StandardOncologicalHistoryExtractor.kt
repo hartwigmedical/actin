@@ -35,11 +35,11 @@ class StandardOncologicalHistoryExtractor(
         oncologicalTreatmentHistory: List<TreatmentHistoryEntry>,
         oncologicalPreviousConditions: List<TreatmentHistoryEntry>
     ): List<TreatmentHistoryEntry> {
-        return oncologicalTreatmentHistory + oncologicalPreviousConditions.filter {
-            oncologicalTreatmentHistory.none { previousCondition ->
-                previousCondition.treatments == it.treatments &&
-                        previousCondition.startYear == it.startYear &&
-                        previousCondition.startMonth == it.startMonth
+        return oncologicalTreatmentHistory + oncologicalPreviousConditions.filter { oncologicalPreviousConditionsEntry ->
+            oncologicalTreatmentHistory.none { oncologicalTreatmentHistoryEntry ->
+                oncologicalTreatmentHistoryEntry.treatments == oncologicalPreviousConditionsEntry.treatments &&
+                        oncologicalTreatmentHistoryEntry.startYear == oncologicalPreviousConditionsEntry.startYear &&
+                        oncologicalTreatmentHistoryEntry.startMonth == oncologicalPreviousConditionsEntry.startMonth
             }
         }
     }
