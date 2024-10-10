@@ -13,14 +13,7 @@ import kotlin.system.exitProcess
 
 class LocalExampleReportApplication {
 
-    private val examplePatientRecordJson = ResourceLocator.resourceOnClasspath("example_patient_data/EXAMPLE-LUNG-01.patient_record.json")
-    private val exampleTreatmentMatchJson =
-        ResourceLocator.resourceOnClasspath("example_treatment_match/EXAMPLE-LUNG-01.treatment_match.json")
-
-    private val outputDirectory =
-        listOf(LocalExampleFunctions.systemTestResourcesDirectory(), "example_reports").joinToString(File.separator)
-
-    fun run() {
+    fun run(examplePatientRecordJson: String, exampleTreatmentMatchJson: String, outputDirectory: String) {
         LOGGER.info("Loading patient record from {}", examplePatientRecordJson)
         val patient = PatientRecordJson.read(examplePatientRecordJson)
 
@@ -45,7 +38,13 @@ class LocalExampleReportApplication {
 fun main() {
     LocalExampleReportApplication.LOGGER.info("Running ACTIN Example Reporter")
     try {
-        LocalExampleReportApplication().run()
+        val examplePatientRecordJson = ResourceLocator.resourceOnClasspath("example_patient_data/EXAMPLE-LUNG-01.patient_record.json")
+        val exampleTreatmentMatchJson = ResourceLocator.resourceOnClasspath("example_treatment_match/EXAMPLE-LUNG-01.treatment_match.json")
+
+        val outputDirectory =
+            listOf(LocalExampleFunctions.systemTestResourcesDirectory(), "example_reports").joinToString(File.separator)
+
+        LocalExampleReportApplication().run(examplePatientRecordJson, exampleTreatmentMatchJson, outputDirectory)
     } catch (exception: ParseException) {
         LocalExampleReportApplication.LOGGER.warn(exception)
         exitProcess(1)

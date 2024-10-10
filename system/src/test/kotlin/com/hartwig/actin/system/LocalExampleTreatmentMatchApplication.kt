@@ -15,13 +15,7 @@ import kotlin.system.exitProcess
 
 class LocalExampleTreatmentMatchApplication {
 
-    private val examplePatientRecordJson = ResourceLocator.resourceOnClasspath("example_patient_data/EXAMPLE-LUNG-01.patient_record.json")
-    private val exampleTrialDatabaseDir = ResourceLocator.resourceOnClasspath("example_trial_database")
-
-    private val outputDirectory =
-        listOf(LocalExampleFunctions.systemTestResourcesDirectory(), "example_treatment_match").joinToString(File.separator)
-
-    fun run() {
+    fun run(examplePatientRecordJson: String, exampleTrialDatabaseDir: String, outputDirectory: String) {
         LOGGER.info("Loading patient record from {}", examplePatientRecordJson)
         val patient = PatientRecordJson.read(examplePatientRecordJson)
 
@@ -56,7 +50,13 @@ class LocalExampleTreatmentMatchApplication {
 fun main() {
     LocalExampleTreatmentMatchApplication.LOGGER.info("Running ACTIN Example Treatment Matcher")
     try {
-        LocalExampleTreatmentMatchApplication().run()
+        val examplePatientRecordJson = ResourceLocator.resourceOnClasspath("example_patient_data/EXAMPLE-LUNG-01.patient_record.json")
+        val exampleTrialDatabaseDir = ResourceLocator.resourceOnClasspath("example_trial_database")
+
+        val outputDirectory =
+            listOf(LocalExampleFunctions.systemTestResourcesDirectory(), "example_treatment_match").joinToString(File.separator)
+
+        LocalExampleTreatmentMatchApplication().run(examplePatientRecordJson, exampleTrialDatabaseDir, outputDirectory)
     } catch (exception: ParseException) {
         LocalExampleTreatmentMatchApplication.LOGGER.warn(exception)
         exitProcess(1)
