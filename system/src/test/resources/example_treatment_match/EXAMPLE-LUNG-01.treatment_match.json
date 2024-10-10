@@ -404,7 +404,7 @@
             "references": [
               {
                 "id": "I-03",
-                "text": "AlAT and ASAT should be at most 3*ULN, or at most 5*ULN in case of liver metastases."
+                "text": "ALAT and ASAT should be at most 3*ULN, or at most 5*ULN in case of liver metastases."
               }
             ],
             "function": {

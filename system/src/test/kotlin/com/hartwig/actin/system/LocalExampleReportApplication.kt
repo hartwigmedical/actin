@@ -4,11 +4,9 @@ import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.report.datamodel.ReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory
-import com.hartwig.actin.testutil.ResourceLocator
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.io.File
 import kotlin.system.exitProcess
 
 class LocalExampleReportApplication {
@@ -20,7 +18,7 @@ class LocalExampleReportApplication {
         LOGGER.info("Loading treatment match results from {}", exampleTreatmentMatchJson)
         val treatmentMatch = TreatmentMatchJson.read(exampleTreatmentMatchJson)
 
-        val environmentConfig = LocalExampleFunctions.createExampleEnvironmentConfiguration()
+        val environmentConfig = ExampleFunctions.createExampleEnvironmentConfiguration()
         val report = ReportFactory.fromInputs(patient, treatmentMatch, environmentConfig.report)
         val writer = ReportWriterFactory.createProductionReportWriter(outputDirectory)
 
@@ -38,11 +36,9 @@ class LocalExampleReportApplication {
 fun main() {
     LocalExampleReportApplication.LOGGER.info("Running ACTIN Example Reporter")
     try {
-        val examplePatientRecordJson = ResourceLocator.resourceOnClasspath("example_patient_data/EXAMPLE-LUNG-01.patient_record.json")
-        val exampleTreatmentMatchJson = ResourceLocator.resourceOnClasspath("example_treatment_match/EXAMPLE-LUNG-01.treatment_match.json")
-
-        val outputDirectory =
-            listOf(LocalExampleFunctions.systemTestResourcesDirectory(), "example_reports").joinToString(File.separator)
+        val examplePatientRecordJson = ExampleFunctions.resolveExamplePatientRecordJson()
+        val exampleTreatmentMatchJson = ExampleFunctions.resolveExampleTreatmentMatchJson()
+        val outputDirectory = ExampleFunctions.resolveExampleReportOutputDirectory()
 
         LocalExampleReportApplication().run(examplePatientRecordJson, exampleTreatmentMatchJson, outputDirectory)
     } catch (exception: ParseException) {

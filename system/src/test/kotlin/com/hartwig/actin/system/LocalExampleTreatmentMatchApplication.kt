@@ -18,7 +18,6 @@ import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
-import com.hartwig.actin.testutil.ResourceLocator
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.serialization.TrialJson
 import com.hartwig.serve.datamodel.ImmutableActionableEvents
@@ -84,7 +83,7 @@ class LocalExampleTreatmentMatchApplication {
                 medicationCategories = MedicationCategories.create(atcTree)
             )
 
-        val environmentConfiguration = LocalExampleFunctions.createExampleEnvironmentConfiguration()
+        val environmentConfiguration = ExampleFunctions.createExampleEnvironmentConfiguration()
 
         return RuleMappingResources(
             referenceDateProvider = referenceDateProvider,
@@ -126,11 +125,9 @@ class LocalExampleTreatmentMatchApplication {
 fun main() {
     LocalExampleTreatmentMatchApplication.LOGGER.info("Running ACTIN Example Treatment Matcher")
     try {
-        val examplePatientRecordJson = ResourceLocator.resourceOnClasspath("example_patient_data/EXAMPLE-LUNG-01.patient_record.json")
-        val exampleTrialDatabaseDir = ResourceLocator.resourceOnClasspath("example_trial_database")
-
-        val outputDirectory =
-            listOf(LocalExampleFunctions.systemTestResourcesDirectory(), "example_treatment_match").joinToString(File.separator)
+        val examplePatientRecordJson = ExampleFunctions.resolveExamplePatientRecordJson()
+        val exampleTrialDatabaseDir = ExampleFunctions.resolveExampleTrialDatabaseDirectory()
+        val outputDirectory = ExampleFunctions.resolveExampleTreatmentMatchOutputDirectory()
 
         LocalExampleTreatmentMatchApplication().run(examplePatientRecordJson, exampleTrialDatabaseDir, outputDirectory)
     } catch (exception: ParseException) {
