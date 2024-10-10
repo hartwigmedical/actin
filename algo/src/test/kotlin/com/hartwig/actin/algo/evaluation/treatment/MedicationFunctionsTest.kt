@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
-import com.hartwig.actin.algo.evaluation.treatment.MedicationFunctions.doesNotHaveIgnoreType
 import com.hartwig.actin.algo.evaluation.treatment.MedicationFunctions.hasCategory
 import com.hartwig.actin.algo.evaluation.treatment.MedicationFunctions.hasDrugType
 import com.hartwig.actin.algo.evaluation.washout.WashoutTestFactory
@@ -37,11 +36,5 @@ class MedicationFunctionsTest {
     fun `Should return true if medication has one of the specified drug types`() {
         assertThat(medicationWithChemotherapy.hasDrugType(setOf(DrugType.ALKYLATING_AGENT))).isTrue()
         assertThat(medicationWithImmunotherapy.hasDrugType(setOf(DrugType.ALKYLATING_AGENT))).isFalse()
-    }
-
-    @Test
-    fun `Should return true if medication does not have any of the ignore types`() {
-        assertThat(medicationWithChemotherapy.doesNotHaveIgnoreType(setOf(DrugType.ABL_TYROSINE_KINASE_INHIBITOR))).isTrue()
-        assertThat(medicationWithImmunotherapy.doesNotHaveIgnoreType(setOf(DrugType.ABL_TYROSINE_KINASE_INHIBITOR))).isFalse()
     }
 }

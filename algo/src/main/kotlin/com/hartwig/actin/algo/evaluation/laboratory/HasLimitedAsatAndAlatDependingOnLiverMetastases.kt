@@ -68,7 +68,7 @@ class HasLimitedAsatAndAlatDependingOnLiverMetastases(
                 val message = "$alatLabValueString exceeds maximum of $alatReferenceString"
                 evaluateOutsideMargin(alatWithinLiverMetastasisLimit == true, hasLiverMetastases, message)
             }
-
+//
             asatLimitEvaluation == EXCEEDS_THRESHOLD_BUT_WITHIN_MARGIN && alatLimitEvaluation == EXCEEDS_THRESHOLD_BUT_WITHIN_MARGIN -> {
                 val message = "ASAT ($asatLabValueString) and ALAT ($alatLabValueString) exceed max fold of ULN but within margin of error"
                 EvaluationFactory.recoverableUndetermined(message, message)

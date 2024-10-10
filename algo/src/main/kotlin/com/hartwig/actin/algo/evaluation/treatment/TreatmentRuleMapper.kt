@@ -148,13 +148,13 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     }
 
     private fun hasHadAnyCancerTreatmentCreator(): FunctionCreator {
-        return { HasHadAnyCancerTreatment(null) }
+        return { HasHadAnyCancerTreatment(null, antiCancerCategories) }
     }
 
     private fun hasHadAnyCancerTreatmentIgnoringSomeCategoryCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val treatment = functionInputResolver().createOneTreatmentCategoryOrTypeInput(function)
-            HasHadAnyCancerTreatment(treatment.mappedCategory)
+            HasHadAnyCancerTreatment(treatment.mappedCategory, antiCancerCategories)
         }
     }
 

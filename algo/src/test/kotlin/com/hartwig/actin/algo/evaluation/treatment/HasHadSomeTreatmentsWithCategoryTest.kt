@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.medication.MedicationTestFactory
 import com.hartwig.actin.algo.evaluation.washout.WashoutTestFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
@@ -52,7 +53,14 @@ class HasHadSomeTreatmentsWithCategoryTest {
     }
 
     @Test
-    fun `Should return undetermined when trial treatments meet threshold`() {
+    fun `Should evaluate to undetermined when trial in medication entry`() {
+        val function = HasHadSomeTreatmentsWithCategory(MATCHING_CATEGORY, 1)
+        val medication = WashoutTestFactory.medication().copy(isTrialMedication = true)
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MedicationTestFactory.withMedications(listOf(medication))))
+    }
+
+    @Test
+    fun `Should evaluate to undetermined when trial treatments meet threshold`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment("test", true)), isTrial = true)
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
         assertEvaluation(
