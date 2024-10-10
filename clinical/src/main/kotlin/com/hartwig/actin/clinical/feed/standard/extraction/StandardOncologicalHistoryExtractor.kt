@@ -107,9 +107,7 @@ class StandardOncologicalHistoryExtractor(
                                 startYear = curatedTreatment.curated?.startYear ?: ehrTreatmentHistory.startDate.year,
                                 startMonth = curatedTreatment.curated?.startMonth ?: ehrTreatmentHistory.startDate.monthValue,
                                 intents = curatedTreatment.curated?.intents ?: ehrTreatmentHistory.intention?.let { intent ->
-                                    setOf(
-                                        parseIntent(intent)
-                                    )
+                                    setOf(parseIntent(intent))
                                 },
                                 treatments = curatedTreatment.curated!!.treatments,
                                 treatmentHistoryDetails = TreatmentHistoryDetails(
