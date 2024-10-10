@@ -23,20 +23,24 @@ class StandardTumorDetailsExtractor(
 
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<TumorDetails> {
         val input = "${ehrPatientRecord.tumorDetails.tumorLocation} | ${ehrPatientRecord.tumorDetails.tumorType}"
-        val curatedTumorResponse = CurationResponse.createFromConfigs(
-            primaryTumorConfigCurationDatabase.find(input),
-            ehrPatientRecord.patientDetails.hashedId, CurationCategory.PRIMARY_TUMOR, input, "primary tumor", true
-        )
+
         val curatedTumorResponseFromPriorOtherConditions = ehrPatientRecord.priorOtherConditions.map {
             CurationResponse.createFromConfigs(
                 primaryTumorConfigCurationDatabase.find(it.name),
                 ehrPatientRecord.patientDetails.hashedId, CurationCategory.PRIMARY_TUMOR, input, "primary tumor"
             )
         }.firstNotNullOfOrNull { it.config() }
+
+        val curatedTumorResponse = CurationResponse.createFromConfigs(
+            primaryTumorConfigCurationDatabase.find(input),
+            ehrPatientRecord.patientDetails.hashedId, CurationCategory.PRIMARY_TUMOR, input, "primary tumor", true
+        )
+
         val lesionCurationResponse = extractLesions(ehrPatientRecord)
         val curatedLesions = lesionCurationResponse.flatMap { it.configs }
         val tumorDetailsFromEhr = tumorDetails(ehrPatientRecord, curatedLesions)
-        return combinedTumorResponse(curatedTumorResponse, curatedTumorResponseFromPriorOtherConditions)?.let {
+        val combinedTumorResponse = combinedTumorResponse(curatedTumorResponse, curatedTumorResponseFromPriorOtherConditions)
+        return combinedTumorResponse.config()?.let {
             val curatedTumorDetails = tumorDetailsFromEhr.copy(
                 primaryTumorLocation = it.primaryTumorLocation,
                 primaryTumorType = it.primaryTumorType,
@@ -46,17 +50,17 @@ class StandardTumorDetailsExtractor(
             )
             ExtractionResult(
                 curatedTumorDetails.copy(derivedStages = tumorStageDeriver.derive(curatedTumorDetails)),
-                curatedTumorResponse.extractionEvaluation + lesionCurationResponse.map { l -> l.extractionEvaluation }
+                combinedTumorResponse.extractionEvaluation + lesionCurationResponse.map { l -> l.extractionEvaluation }
                     .fold(CurationExtractionEvaluation()) { acc, extractionEvaluation -> acc + extractionEvaluation }
             )
-        } ?: ExtractionResult(tumorDetailsFromEhr, curatedTumorResponse.extractionEvaluation)
+        } ?: ExtractionResult(tumorDetailsFromEhr, combinedTumorResponse.extractionEvaluation)
     }
 
     private fun combinedTumorResponse(
         curatedTumorResponse: CurationResponse<PrimaryTumorConfig>,
         curatedTumorResponseFromPriorOtherConditions: PrimaryTumorConfig?
-    ) =
-        if (curatedTumorResponse.config() == null || curatedTumorResponse.config()!!.ignore) curatedTumorResponseFromPriorOtherConditions else curatedTumorResponse.config()
+    ) = curatedTumorResponseFromPriorOtherConditions?.let { CurationResponse(setOf(it), CurationExtractionEvaluation()) }
+        ?: curatedTumorResponse
 
     private fun tumorDetails(
         ehrPatientRecord: ProvidedPatientRecord,
