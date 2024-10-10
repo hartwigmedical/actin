@@ -35,8 +35,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypes(
                 )
             }
 
-            treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches + treatmentSummary.numPossibleTrialMatches
-                    >= minTreatmentLines || (minTreatmentLines == 1 && record.medications?.any { it.isTrialMedication } == true) -> {
+            treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches + treatmentSummary.numPossibleTrialMatches >= minTreatmentLines -> {
                 EvaluationFactory.undetermined(
                     "Patient may have received at least $minTreatmentLines line(s) of ${category.display()} due to trial participation",
                     "Trial medication in history - undetermined if received at least $minTreatmentLines line(s) of ${category.display()}"

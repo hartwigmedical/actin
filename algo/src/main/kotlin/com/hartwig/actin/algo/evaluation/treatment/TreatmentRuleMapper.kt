@@ -6,6 +6,7 @@ import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.evaluation.tumor.HasAcquiredResistanceToAnyDrug
 import com.hartwig.actin.algo.evaluation.tumor.HasMetastaticCancer
 import com.hartwig.actin.algo.soc.RecommendationEngineFactory
+import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
@@ -161,8 +162,8 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasHadAnyCancerTreatmentWithinMonthsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val monthsAgo = functionInputResolver().createOneIntegerInput(function)
+            val interpreter = createInterpreterForWashout(null, monthsAgo)
             val minDate = referenceDateProvider().date().minusMonths(monthsAgo.toLong())
-            val interpreter = MedicationStatusInterpreterOnEvaluationDate(minDate.plusWeeks(2))
             HasHadAnyCancerTreatmentSinceDate(minDate, monthsAgo, antiCancerCategories, interpreter)
         }
     }
@@ -259,8 +260,8 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasHadTreatmentCategoryOfTypesWithinWeeksCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneTreatmentCategoryManyTypesOneIntegerInput(function)
+            val interpreter = createInterpreterForWashout(input.integer, null)
             val minDate = referenceDateProvider().date().minusWeeks(input.integer.toLong())
-            val interpreter = MedicationStatusInterpreterOnEvaluationDate(minDate.plusWeeks(2))
             HasHadTreatmentWithCategoryOfTypesRecently(input.category, input.types, minDate, interpreter)
         }
     }
@@ -275,8 +276,8 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasHadTreatmentCategoryIgnoringTypesWithinWeeksCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneTreatmentCategoryManyTypesOneIntegerInput(function)
+            val interpreter = createInterpreterForWashout(input.integer, null)
             val minDate = referenceDateProvider().date().minusWeeks(input.integer.toLong())
-            val interpreter = MedicationStatusInterpreterOnEvaluationDate(minDate.plusWeeks(2))
             HasHadTreatmentWithCategoryButNotOfTypesRecently(input.category, input.types, minDate, interpreter)
         }
     }
@@ -502,5 +503,24 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             HasPreviouslyParticipatedInTrial(functionInputResolver().createOneStringInput(function))
         }
+    }
+
+    private fun createInterpreterForWashout(inputWeeks: Int?, inputMonths: Int?): MedicationStatusInterpreter {
+        val minDate =
+            when {
+                inputWeeks != null && inputMonths == null -> {
+                    referenceDateProvider().date().minusWeeks(inputWeeks.toLong()).plusWeeks(2)
+                }
+
+                inputMonths != null && inputWeeks == null -> {
+                    referenceDateProvider().date().minusMonths(inputMonths.toLong()).plusWeeks(2)
+                }
+
+                else -> {
+                    throw IllegalArgumentException("Exactly one of inputWeeks or inputMonths must be provided")
+                }
+            }
+
+        return MedicationStatusInterpreterOnEvaluationDate(minDate)
     }
 }
