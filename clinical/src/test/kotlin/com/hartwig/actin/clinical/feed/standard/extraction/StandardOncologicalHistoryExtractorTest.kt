@@ -156,7 +156,7 @@ class StandardOncologicalHistoryExtractorTest {
     }
 
     @Test
-    fun `Should merge treatments by taking the oncological history when the same treatment and date exists in both the onco history curation and prior other condition cucration`() {
+    fun `Should merge treatments by taking the oncological history when the same treatment and date exists in both the onco history curation and prior other condition curation`() {
         val duplicatedCuration =
             CURATED_TREATMENT_HISTORY_ENTRY.copy(curated = CURATED_TREATMENT_HISTORY_ENTRY.curated?.copy(startYear = 2024, startMonth = 10))
         every { treatmentCurationDatabase.find(TREATMENT_NAME) } returns setOf(duplicatedCuration)
