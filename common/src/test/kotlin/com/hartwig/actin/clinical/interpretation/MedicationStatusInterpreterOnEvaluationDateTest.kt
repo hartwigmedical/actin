@@ -10,7 +10,7 @@ import java.time.LocalDate
 class MedicationStatusInterpreterOnEvaluationDateTest {
 
     private val evaluationDate = LocalDate.of(2020, 5, 6)
-    private val interpreter = MedicationStatusInterpreterOnEvaluationDate(evaluationDate)
+    private val interpreter = MedicationStatusInterpreterOnEvaluationDate(evaluationDate, null)
 
     @Test
     fun `Should always interpret medication status as unknown when no start date provided`() {

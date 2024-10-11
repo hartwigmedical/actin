@@ -10,7 +10,7 @@ import com.hartwig.actin.medication.MedicationCategories
 
 class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     private val selector: MedicationSelector =
-        MedicationSelector(MedicationStatusInterpreterOnEvaluationDate(referenceDateProvider().date()))
+        MedicationSelector(MedicationStatusInterpreterOnEvaluationDate(referenceDateProvider().date(), null))
     private val categories: MedicationCategories = MedicationCategories.create(atcTree())
 
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {

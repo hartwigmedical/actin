@@ -26,9 +26,9 @@ class HasHadAnyCancerTreatment(private val categoryToIgnore: TreatmentCategory?,
 
         return when {
             hasHadPriorCancerTreatment -> {
-                val categoryDisplay = categoryToIgnore?.let { "other than ${categoryToIgnore.display()} " } ?: ""
+                val categoryDisplay = categoryToIgnore?.let { " other than ${categoryToIgnore.display()} " } ?: ""
                 EvaluationFactory.pass(
-                    "Patient has had prior cancer treatment $categoryDisplay", "Has received prior cancer treatment(s)"
+                    "Patient has had prior cancer treatment$categoryDisplay", "Has received prior cancer treatment(s)"
                 )
             }
 

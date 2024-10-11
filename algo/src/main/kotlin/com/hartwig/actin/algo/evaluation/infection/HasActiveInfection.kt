@@ -14,7 +14,7 @@ import java.time.LocalDate
 class HasActiveInfection(private val atcTree: AtcTree, private val referenceDate: LocalDate) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
 
-        val medicationSelector = MedicationSelector(MedicationStatusInterpreterOnEvaluationDate(referenceDate))
+        val medicationSelector = MedicationSelector(MedicationStatusInterpreterOnEvaluationDate(referenceDate, null))
         val antibioticAtcLevels = MedicationCategories.create(atcTree).resolve("Systemic antibiotics")
         val currentlyUsesAntibiotics = record.medications?.any {
             medicationSelector.isActive(it) && (it.allLevels() intersect antibioticAtcLevels).isNotEmpty()

@@ -5,8 +5,8 @@ import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
-import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
+import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate.Companion.createInterpreterForWashout
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
@@ -14,7 +14,7 @@ import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.medication.MedicationCategories
 
 class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
-    private val selector = MedicationSelector(MedicationStatusInterpreterOnEvaluationDate(referenceDateProvider().date()))
+    private val selector = MedicationSelector(MedicationStatusInterpreterOnEvaluationDate(referenceDateProvider().date(), null))
     private val categories = MedicationCategories.create(atcTree())
     private val antiCancerCategories = mapOf("Anticancer" to categories.resolve("Anticancer"))
 
@@ -50,8 +50,7 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
     }
 
     private fun createReceivedCancerTherapyOfNameFunction(names: Set<Drug>, minWeeks: Int): EvaluationFunction {
-        val interpreter = createInterpreterForWashout(minWeeks)
-        val minDate = referenceDateProvider().date().minusWeeks(minWeeks.toLong())
+        val (interpreter, minDate) = createInterpreterForWashout(minWeeks, null, referenceDateProvider().date())
         return HasRecentlyReceivedCancerTherapyWithDrug(names.toSet(), interpreter, minDate)
     }
 
@@ -72,8 +71,7 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
     private fun createReceivedCancerTherapyOfCategoryFunction(
         mappedCategories: Map<String, Set<AtcLevel>>, minWeeks: Int
     ): EvaluationFunction {
-        val interpreter = createInterpreterForWashout(minWeeks)
-        val minDate = referenceDateProvider().date().minusWeeks(minWeeks.toLong())
+        val (interpreter, minDate) = createInterpreterForWashout(minWeeks, null, referenceDateProvider().date())
         return HasRecentlyReceivedCancerTherapyOfCategory(mappedCategories, emptyMap(), interpreter, minDate)
     }
 
@@ -124,8 +122,7 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
     }
 
     private fun createReceivedAnyCancerTherapyFunction(minWeeks: Int): EvaluationFunction {
-        val interpreter = createInterpreterForWashout(minWeeks)
-        val minDate = referenceDateProvider().date().minusWeeks(minWeeks.toLong())
+        val (interpreter, minDate) = createInterpreterForWashout(minWeeks, null, referenceDateProvider().date())
         return HasRecentlyReceivedCancerTherapyOfCategory(antiCancerCategories, emptyMap(), interpreter, minDate)
     }
 
@@ -147,13 +144,7 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
         mappedIgnoredCategories: Map<String, Set<AtcLevel>>,
         minWeeks: Int
     ): EvaluationFunction {
-        val interpreter = createInterpreterForWashout(minWeeks)
-        val minDate = referenceDateProvider().date().minusWeeks(minWeeks.toLong())
+        val (interpreter, minDate) = createInterpreterForWashout(minWeeks, null, referenceDateProvider().date())
         return HasRecentlyReceivedCancerTherapyOfCategory(antiCancerCategories, mappedIgnoredCategories, interpreter, minDate)
-    }
-
-    fun createInterpreterForWashout(inputWeeks: Int): MedicationStatusInterpreter {
-        val minDate = referenceDateProvider().date().minusWeeks(inputWeeks.toLong()).plusWeeks(2)
-        return MedicationStatusInterpreterOnEvaluationDate(minDate)
     }
 }

@@ -90,7 +90,11 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             PatientCurrentDetailsGenerator(report.patientRecord, keyWidth, valueWidth),
             TumorDetailsGenerator(report.patientRecord, keyWidth, valueWidth),
             report.patientRecord.medications?.let {
-                MedicationGenerator(it, contentWidth, MedicationStatusInterpreterOnEvaluationDate(report.treatmentMatch.referenceDate))
+                MedicationGenerator(
+                    it,
+                    contentWidth,
+                    MedicationStatusInterpreterOnEvaluationDate(report.treatmentMatch.referenceDate, null)
+                )
             },
             if (bloodTransfusions.isEmpty()) null else BloodTransfusionGenerator(bloodTransfusions, contentWidth)
         )
