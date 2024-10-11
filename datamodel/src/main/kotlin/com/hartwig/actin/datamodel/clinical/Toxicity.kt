@@ -7,5 +7,6 @@ data class Toxicity(
     val categories: Set<String>,
     val evaluatedDate: LocalDate,
     val source: ToxicitySource,
-    val grade: Int?
+    val grade: Int?,
+    val endDate: LocalDate? = null
 )
