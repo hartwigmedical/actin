@@ -640,8 +640,7 @@ Systemic corticosteroids ("H02" or "M01BA") <br>
 | HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_WITHIN_X_WEEKS_Y_HALF_LIVES                   | Medication > atc.<atcLevel>.code equal to <category> where <atcLevel> is a level defined above in 1] and <category> is equal to "L01", "L02", "L04" OR a member of the set of ATC codes derived from "Gonadorelin" using the table below in 3] and active X weeks prior to evaluation date                                 | Half-lives is currently ignored. Does not include radiotherapy or surgery, these are separate rules. |
 | HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_EXCL_CATEGORIES_X_WITHIN_Y_WEEKS_Z_HALF_LIVES | Medication > atc.<atcLevel>.code equal to <category> where <atcLevel> is a level defined above in 1] and <category> is equal to "L01", "L02", "L04" OR a member of the set of ATC codes derived from "Gonadorelin" using the table below in 3], excluding ATC codes equal to X OR if X present in 3] use derived ATC codes | Half-lives currently ignored. Does not include radiotherapy or surgery, these are separate rules.    |
 
-3] Can
-cer therapy list (with corresponding ATC level codes between brackets): <br>
+3] Cancer therapy list (with corresponding ATC level codes between brackets): <br>
 Chemotherapy ("L01XA", "L01BC", "L01CD" or "L01A") <br>
 Endocrine therapy ("L02") <br>
 Gonadorelin ("H01CC", "H01CA", "G03XA" or "L02AE") <br>
