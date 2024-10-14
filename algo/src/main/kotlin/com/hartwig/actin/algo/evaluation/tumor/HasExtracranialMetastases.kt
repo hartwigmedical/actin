@@ -10,12 +10,12 @@ class HasExtracranialMetastases : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val hasNonCnsMetastases = with(record.tumor) {
-            hasBoneLesions == true || hasLungLesions == true || hasLiverLesions == true || hasLymphNodeLesions == true
+            hasBoneLesions() == true || hasLungLesions() == true || hasLiverLesions() == true || hasLymphNodeLesions() == true
         }
         val categorizedLesionsUnknown = with(record.tumor) {
-            hasBoneLesions == null || hasLungLesions == null || hasLiverLesions == null || hasLymphNodeLesions == null
+            hasBoneLesions() == null || hasLungLesions() == null || hasLiverLesions() == null || hasLymphNodeLesions() == null
         }
-        val uncategorizedLesions = record.tumor.otherLesions ?: emptyList()
+        val uncategorizedLesions = record.tumor.otherLesions() ?: emptyList()
         val biopsyLocation = record.tumor.biopsyLocation
 
         return when {

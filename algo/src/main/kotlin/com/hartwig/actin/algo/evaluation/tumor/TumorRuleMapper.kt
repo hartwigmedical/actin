@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.tumor
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
-import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 
@@ -200,7 +199,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasOnlyLiverMetastasesCreator(): FunctionCreator {
-        return { HasSpecificMetastasesOnly(TumorDetails::hasLiverLesions, "liver") }
+        return { HasSpecificMetastasesOnly({ it.hasLiverLesions() }, "liver") }
     }
 
     private fun hasKnownCnsMetastasesCreator(): FunctionCreator {
@@ -232,7 +231,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasOnlyBoneMetastasesCreator(): FunctionCreator {
-        return { HasSpecificMetastasesOnly(TumorDetails::hasBoneLesions, "bone") }
+        return { HasSpecificMetastasesOnly({ it.hasBoneLesions() }, "bone") }
     }
 
     private fun hasLungMetastasesCreator(): FunctionCreator {

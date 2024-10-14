@@ -2,13 +2,12 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.clinical.TumorDetails
 import org.junit.Test
 
 class HasSpecificMetastasesOnlyTest {
 
-    private val hasLiverMetastasesOnly = HasSpecificMetastasesOnly(TumorDetails::hasLiverLesions, "liver")
-    private val hasBoneMetastasesOnly = HasSpecificMetastasesOnly(TumorDetails::hasBoneLesions, "bone")
+    private val hasLiverMetastasesOnly = HasSpecificMetastasesOnly({ it.hasLiverLesions() }, "liver")
+    private val hasBoneMetastasesOnly = HasSpecificMetastasesOnly({ it.hasBoneLesions() }, "bone")
 
     @Test
     fun `Should pass when patient has liver metastases only`() {
@@ -20,12 +19,24 @@ class HasSpecificMetastasesOnlyTest {
     }
 
     @Test
+    fun `Should pass when patient has suspected liver metastases only`() {
+        assertEvaluation(
+            EvaluationResult.PASS,
+            hasLiverMetastasesOnly.evaluate(TumorTestFactory.withLiverAndOtherLesions(true, emptyList()))
+        )
+        assertEvaluation(
+            EvaluationResult.PASS,
+            hasLiverMetastasesOnly.evaluate(TumorTestFactory.withBoneAndSuspectedLiverLesions(false, true))
+        )
+    }
+
+    @Test
     fun `Should evaluate to undetermined when data regarding liver metastases is missing`() {
         assertEvaluation(EvaluationResult.UNDETERMINED, hasLiverMetastasesOnly.evaluate(TumorTestFactory.withLiverLesions(null)))
     }
 
     @Test
-    fun `Should warn if patient has liver metastases but data regarding other lesions is missing `() {
+    fun `Should warn if patient has liver metastases but data regarding other lesions is missing`() {
         assertEvaluation(EvaluationResult.WARN, hasLiverMetastasesOnly.evaluate(TumorTestFactory.withLiverLesions(true)))
     }
 

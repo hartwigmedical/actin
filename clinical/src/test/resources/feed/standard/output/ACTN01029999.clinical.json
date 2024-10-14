@@ -36,6 +36,7 @@
     "hasLymphNodeLesions": false,
     "lymphNodeLesionsCount": 0,
     "otherLesions": [],
+    "otherSuspectedLesions": [],
     "biopsyLocation": null
   },
   "clinicalStatus": {

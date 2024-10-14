@@ -22,7 +22,8 @@ class LesionLocationConfigFactory : CurationConfigFactory<LesionLocationConfig> 
                 ignore = CurationUtil.isIgnoreString(location),
                 location = location,
                 category = category,
-                active = ResourceFile.optionalBool(parts[fields["active"]!!])
+                active = ResourceFile.optionalBool(parts[fields["active"]!!]),
+                suspected = ResourceFile.optionalBool(parts[fields["suspected"]!!])
             ), validationErrors
         )
     }

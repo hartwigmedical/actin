@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasKnownBrainMetastases : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val hasBrainMetastases = record.tumor.hasBrainLesions
+        val hasBrainMetastases = record.tumor.hasBrainLesions()
             ?: return EvaluationFactory.fail(
                 "Data regarding presence of brain metastases is missing - assuming there are none",
                 "Assuming no known brain metastases"

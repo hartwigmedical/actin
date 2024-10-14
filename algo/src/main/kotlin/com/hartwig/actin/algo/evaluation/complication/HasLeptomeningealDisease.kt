@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
-class HasLeptomeningealDisease: EvaluationFunction {
+class HasLeptomeningealDisease : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val leptomeningealComplications = ComplicationFunctions.findComplicationNamesMatchingAnyCategory(
             record, LEPTOMENINGEAL_DISEASE_CATEGORY_PATTERNS
@@ -16,8 +16,8 @@ class HasLeptomeningealDisease: EvaluationFunction {
                 "Patient has complication " + concat(leptomeningealComplications), "Present " + concat(leptomeningealComplications)
             )
         }
-        val hasCnsLesions = record.tumor.hasCnsLesions
-        val otherLesions = record.tumor.otherLesions
+        val hasCnsLesions = record.tumor.hasCnsLesions()
+        val otherLesions = record.tumor.otherLesions()
         val potentialMeningealLesions = if (hasCnsLesions != null && otherLesions != null && hasCnsLesions) {
             otherLesions.filter { isPotentialLeptomeningealLesion(it) }.toSet()
         } else emptySet()

@@ -94,14 +94,14 @@ class PatientClinicalHistoryWithOverviewGenerator(
 
     private fun lesions(tumor: TumorDetails): String {
         val categorizedLesions = listOf(
-            "CNS" to tumor.hasCnsLesions,
-            "Brain" to tumor.hasBrainLesions,
-            "Liver" to tumor.hasLiverLesions,
-            "Bone" to tumor.hasBoneLesions,
-            "Lung" to tumor.hasLungLesions
+            "CNS" to tumor.hasCnsLesions(),
+            "Brain" to tumor.hasBrainLesions(),
+            "Liver" to tumor.hasLiverLesions(),
+            "Bone" to tumor.hasBoneLesions(),
+            "Lung" to tumor.hasLungLesions()
         ).filter { it.second == true }.map { it.first }
 
-        val lesions = listOfNotNull(categorizedLesions, tumor.otherLesions, listOfNotNull(tumor.biopsyLocation))
+        val lesions = listOfNotNull(categorizedLesions, tumor.otherLesions(), listOfNotNull(tumor.biopsyLocation))
             .flatten()
             .sorted()
             .distinctBy(String::uppercase)

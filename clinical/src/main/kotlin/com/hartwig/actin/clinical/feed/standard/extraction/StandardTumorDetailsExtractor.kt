@@ -13,7 +13,7 @@ import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.clinical.TumorStage
 
-private const val CONCLUSIE_ = "Conclusie:"
+private const val CONCLUSION_LABEL = "Conclusie:"
 
 class StandardTumorDetailsExtractor(
     private val primaryTumorConfigCurationDatabase: CurationDatabase<PrimaryTumorConfig>,
@@ -54,21 +54,32 @@ class StandardTumorDetailsExtractor(
         primaryTumorType = ehrPatientRecord.tumorDetails.tumorType,
         stage = ehrPatientRecord.tumorDetails.tumorStage?.let { TumorStage.valueOf(it) },
         hasBoneLesions = hasLesions(lesions, LesionLocationCategory.BONE),
+        hasSuspectedBoneLesions = hasSuspectedLesions(lesions, LesionLocationCategory.BONE),
         boneLesionsCount = countLesions(lesions, LesionLocationCategory.BONE),
         hasBrainLesions = hasLesions(lesions, LesionLocationCategory.BRAIN),
+        hasSuspectedBrainLesions = hasSuspectedLesions(lesions, LesionLocationCategory.BRAIN),
         hasActiveBrainLesions = hasLesions(lesions, LesionLocationCategory.BRAIN, true),
         brainLesionsCount = countLesions(lesions, LesionLocationCategory.BRAIN),
         hasLiverLesions = hasLesions(lesions, LesionLocationCategory.LIVER),
+        hasSuspectedLiverLesions = hasSuspectedLesions(lesions, LesionLocationCategory.LIVER),
         liverLesionsCount = countLesions(lesions, LesionLocationCategory.LIVER),
         hasLungLesions = hasLesions(lesions, LesionLocationCategory.LUNG),
+        hasSuspectedLungLesions = hasSuspectedLesions(lesions, LesionLocationCategory.LUNG),
         lungLesionsCount = countLesions(lesions, LesionLocationCategory.LUNG),
         hasLymphNodeLesions = hasLesions(lesions, LesionLocationCategory.LYMPH_NODE),
+        hasSuspectedLymphNodeLesions = hasSuspectedLesions(lesions, LesionLocationCategory.LYMPH_NODE),
         lymphNodeLesionsCount = countLesions(lesions, LesionLocationCategory.LYMPH_NODE),
         hasCnsLesions = hasLesions(lesions, LesionLocationCategory.CNS),
+        hasSuspectedCnsLesions = hasSuspectedLesions(lesions, LesionLocationCategory.CNS),
         cnsLesionsCount = countLesions(lesions, LesionLocationCategory.CNS),
         hasActiveCnsLesions = hasLesions(lesions, LesionLocationCategory.CNS, true),
         otherLesions = lesions.filter { lesion -> lesion.ignore.not() }
             .filter { lesion -> lesion.category == null || lesion.category == LesionLocationCategory.LYMPH_NODE }
+            .filter { lesion -> lesion.suspected == null || lesion.suspected == false }
+            .map { lesion -> lesion.location },
+        otherSuspectedLesions = lesions.filter { lesion -> lesion.ignore.not() }
+            .filter { lesion -> lesion.category == null || lesion.category == LesionLocationCategory.LYMPH_NODE }
+            .filter { lesion -> lesion.suspected == true }
             .map { lesion -> lesion.location },
         hasMeasurableDisease = ehrPatientRecord.tumorDetails.measurableDisease,
         doids = emptySet(),
@@ -76,7 +87,15 @@ class StandardTumorDetailsExtractor(
     )
 
     private fun hasLesions(lesions: List<LesionLocationConfig>, location: LesionLocationCategory, active: Boolean? = null): Boolean {
-        return lesions.any { it.category == location && (active == null || it.active == active) }
+        return lesions.any { it.category == location && (active == null || it.active == active) && (it.suspected == null || it.suspected == false) }
+    }
+
+
+    private fun hasSuspectedLesions(
+        lesions: List<LesionLocationConfig>,
+        location: LesionLocationCategory
+    ): Boolean? {
+        return lesions.any { it.category == location && it.suspected == true }.takeIf { it }
     }
 
     private fun countLesions(lesions: List<LesionLocationConfig>, location: LesionLocationCategory): Int {
@@ -92,10 +111,11 @@ class StandardTumorDetailsExtractor(
         return lesionsFromLesionList + lesionsFromRadiologyReport + lesionsFromPriorOtherConditions + lesionsFromTreatmentHistory
     }
 
-    private fun extractFromLesionList(patientRecord: ProvidedPatientRecord) =
-        patientRecord.tumorDetails.lesions?.map {
+    private fun extractFromLesionList(patientRecord: ProvidedPatientRecord): List<CurationResponse<LesionLocationConfig>> {
+        val categories = LesionLocationCategory.entries.map { e -> e.name.uppercase() }
+        return patientRecord.tumorDetails.lesions?.map {
             val locationAsEnumName = it.location.uppercase().replace(" ", "_")
-            if (LesionLocationCategory.entries.map { e -> e.name.uppercase() }.contains(locationAsEnumName)) {
+            if (categories.contains(locationAsEnumName)) {
                 CurationResponse(
                     configs = setOf(
                         LesionLocationConfig(
@@ -110,6 +130,7 @@ class StandardTumorDetailsExtractor(
                 lesionCurationResponse(patientRecord.patientDetails.hashedId, it.location)
             }
         } ?: emptyList()
+    }
 
     private fun <T> extractFromSecondarySource(
         patientId: String,
@@ -125,7 +146,7 @@ class StandardTumorDetailsExtractor(
         radiologyReport: String?,
         patientId: String
     ): List<CurationResponse<LesionLocationConfig>> {
-        return radiologyReport?.substringAfter(CONCLUSIE_)?.split(CONCLUSIE_)?.flatMap { section ->
+        return radiologyReport?.substringAfter(CONCLUSION_LABEL)?.split(CONCLUSION_LABEL)?.flatMap { section ->
             section.substringBefore("\r\n\n\n").split("\n")
                 .filter { it.isNotBlank() }
                 .map { line -> line.trim().substringBeforeLast(".") }

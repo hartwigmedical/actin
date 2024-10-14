@@ -7,6 +7,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasLiverMetastases : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return TumorMetastasisEvaluator.evaluate(record.tumor.hasLiverLesions, "liver")
+        return TumorMetastasisEvaluator.evaluate(record.tumor.hasLiverLesions(), "liver")
     }
 }

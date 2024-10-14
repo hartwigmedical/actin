@@ -1,3 +1,4 @@
-input	location	category	active
-brain	brain	BRAIN	1
-Lymph node	Lymph node	Lymph node	
+input	location	category	active	suspected
+brain	brain	BRAIN	1	
+Lymph node	Lymph node	Lymph node		
+and possibly lymph nodes	Lymph nodes possibly	Lymph node		1

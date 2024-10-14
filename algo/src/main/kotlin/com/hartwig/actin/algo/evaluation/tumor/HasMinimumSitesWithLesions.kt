@@ -7,21 +7,21 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
-class HasMinimumSitesWithLesions (private val minimumSitesWithLesions: Int) : EvaluationFunction {
+class HasMinimumSitesWithLesions(private val minimumSitesWithLesions: Int) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDetails = record.tumor
         val distinctCategorizedLesionLocations = listOf(
-            tumorDetails.hasBoneLesions,
-            tumorDetails.hasBrainLesions,
-            tumorDetails.hasCnsLesions,
-            tumorDetails.hasLiverLesions,
-            tumorDetails.hasLungLesions,
-            tumorDetails.hasLymphNodeLesions
+            tumorDetails.hasBoneLesions(),
+            tumorDetails.hasBrainLesions(),
+            tumorDetails.hasCnsLesions(),
+            tumorDetails.hasLiverLesions(),
+            tumorDetails.hasLungLesions(),
+            tumorDetails.hasLymphNodeLesions()
         ).count { it == true }
 
-        val otherLesionCount = ((tumorDetails.otherLesions ?: emptyList()) + listOfNotNull(tumorDetails.biopsyLocation))
-            .filterNot { it.lowercase().contains("lymph") && true == tumorDetails.hasLymphNodeLesions }
+        val otherLesionCount = ((tumorDetails.otherLesions() ?: emptyList()) + listOfNotNull(tumorDetails.biopsyLocation))
+            .filterNot { it.lowercase().contains("lymph") && true == tumorDetails.hasLymphNodeLesions() }
             .count()
 
         val sitesWithLesionsLowerBound = distinctCategorizedLesionLocations + otherLesionCount.coerceAtMost(1)
