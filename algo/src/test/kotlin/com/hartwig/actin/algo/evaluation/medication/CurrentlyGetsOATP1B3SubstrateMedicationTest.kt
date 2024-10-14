@@ -4,9 +4,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.Test
 
-class CurrentlyGetsBCRPInhibitingMedicationTest {
+class CurrentlyGetsOATP1B3SubstrateMedicationTest {
 
-    private val function = CurrentlyGetsBCRPInhibitingMedication()
+    private val function = CurrentlyGetsOATP1B3SubstrateMedication()
 
     @Test
     fun `Should evaluate to fail when patient uses no medication`() {
