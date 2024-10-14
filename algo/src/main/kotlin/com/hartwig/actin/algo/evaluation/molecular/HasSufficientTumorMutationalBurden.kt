@@ -12,7 +12,7 @@ class HasSufficientTumorMutationalBurden(private val minTumorMutationalBurden: D
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val tumorMutationalBurden = test.characteristics.tumorMutationalBurden
-            ?: return EvaluationFactory.fail("Unknown tumor mutational burden (TMB)", "Unknown TMB")
+            ?: return EvaluationFactory.undetermined("Unknown tumor mutational burden (TMB)", "Unknown TMB")
 
         if (tumorMutationalBurden >= minTumorMutationalBurden) {
             return EvaluationFactory.pass(
