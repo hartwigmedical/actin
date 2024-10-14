@@ -26,9 +26,23 @@ class StandardOncologicalHistoryExtractor(
         val oncologicalPreviousConditions = getOncologicalPreviousConditions(ehrPatientRecord)
 
         return ExtractionResult(
-            oncologicalTreatmentHistory.extracted + oncologicalPreviousConditions.extracted,
+            merge(oncologicalTreatmentHistory.extracted, oncologicalPreviousConditions.extracted),
             oncologicalTreatmentHistory.evaluation
         )
+    }
+
+    private fun merge(
+        oncologicalTreatmentHistory: List<TreatmentHistoryEntry>,
+        oncologicalPreviousConditions: List<TreatmentHistoryEntry>
+    ): List<TreatmentHistoryEntry> {
+        val treatmentSignatures = oncologicalTreatmentHistory.map { Triple(it.treatments, it.startYear, it.startMonth) }.toSet()
+        return oncologicalTreatmentHistory + oncologicalPreviousConditions.filter {
+            Triple(
+                it.treatments,
+                it.startYear,
+                it.startMonth
+            ) !in treatmentSignatures
+        }
     }
 
     private fun getOncologicalPreviousConditions(ehrPatientRecord: ProvidedPatientRecord) =
@@ -92,7 +106,9 @@ class StandardOncologicalHistoryExtractor(
                             TreatmentHistoryEntry(
                                 startYear = curatedTreatment.curated?.startYear ?: ehrTreatmentHistory.startDate.year,
                                 startMonth = curatedTreatment.curated?.startMonth ?: ehrTreatmentHistory.startDate.monthValue,
-                                intents = ehrTreatmentHistory.intention?.let { intent -> setOf(parseIntent(intent)) },
+                                intents = curatedTreatment.curated?.intents ?: ehrTreatmentHistory.intention?.let { intent ->
+                                    setOf(parseIntent(intent))
+                                },
                                 treatments = curatedTreatment.curated!!.treatments,
                                 treatmentHistoryDetails = TreatmentHistoryDetails(
                                     stopYear = curatedTreatment.curated.treatmentHistoryDetails?.stopYear

@@ -12,7 +12,7 @@ import com.hartwig.actin.datamodel.clinical.Complication
 class StandardComplicationExtractor(private val complicationCuration: CurationDatabase<ComplicationConfig>) :
     StandardDataExtractor<List<Complication>> {
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<Complication>> {
-        return ehrPatientRecord.complications.map {
+        val complications = ehrPatientRecord.complications.map {
             val curatedComplication = CurationResponse.createFromConfigs(
                 complicationCuration.find(it.name),
                 ehrPatientRecord.patientDetails.hashedId,
@@ -28,7 +28,22 @@ class StandardComplicationExtractor(private val complicationCuration: CurationDa
                     )
                 ), curatedComplication.extractionEvaluation
             )
-        }.fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, extractionResult ->
+        }
+        val complicationsFromPriorOtherConditions = ehrPatientRecord.priorOtherConditions.map {
+            CurationResponse.createFromConfigs(
+                complicationCuration.find(it.name),
+                ehrPatientRecord.patientDetails.hashedId,
+                CurationCategory.COMPLICATION,
+                it.name,
+                "complication"
+            )
+        }.map { ExtractionResult(it.configs.mapNotNull { c -> c.curated }, CurationExtractionEvaluation()) }
+        return (complications + complicationsFromPriorOtherConditions).fold(
+            ExtractionResult(
+                emptyList(),
+                CurationExtractionEvaluation()
+            )
+        ) { acc, extractionResult ->
             ExtractionResult(acc.extracted + extractionResult.extracted, acc.evaluation + extractionResult.evaluation)
         }
     }

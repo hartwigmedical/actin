@@ -17,7 +17,7 @@ data class TrialCreatorConfig(
     val treatmentDirectory: String,
     val doidJson: String,
     val atcTsv: String,
-    val knownGenesTsv: String,
+    val serveDbJson: String,
     val outputDirectory: String,
     val overridesYaml: String?
 ) {
@@ -31,7 +31,7 @@ data class TrialCreatorConfig(
         private const val TREATMENT_DIRECTORY = "treatment_directory"
         private const val DOID_JSON = "doid_json"
         private const val ATC_TSV = "atc_tsv"
-        private const val KNOWN_GENES_TSV = "known_genes_tsv"
+        private const val SERVE_DB_JSON = "serve_db_json"
         private const val OUTPUT_DIRECTORY = "output_directory"
         private const val LOG_DEBUG = "log_debug"
 
@@ -43,7 +43,7 @@ data class TrialCreatorConfig(
             options.addOption(TREATMENT_DIRECTORY, true, "Directory containing the treatment database")
             options.addOption(DOID_JSON, true, "Path to JSON file containing the full DOID tree.")
             options.addOption(ATC_TSV, true, "Path to TSV file container the full ATC tree")
-            options.addOption(KNOWN_GENES_TSV, true, "A TSV containing genes which are allowed as valid genes in trial config")
+            options.addOption(SERVE_DB_JSON, true, "SERVE DB json file containing genes which are allowed as valid genes in trial config")
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where treatment data will be written to")
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
             options.addOption(OVERRIDE_YAML_ARGUMENT, true, OVERRIDE_YAML_DESCRIPTION)
@@ -63,7 +63,7 @@ data class TrialCreatorConfig(
                 treatmentDirectory = ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DIRECTORY),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
                 atcTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_TSV),
-                knownGenesTsv = ApplicationConfig.nonOptionalFile(cmd, KNOWN_GENES_TSV),
+                serveDbJson = ApplicationConfig.nonOptionalFile(cmd, SERVE_DB_JSON),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
                 overridesYaml = ApplicationConfig.optionalFile(cmd, OVERRIDE_YAML_ARGUMENT)
             )

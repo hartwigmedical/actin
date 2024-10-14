@@ -8,6 +8,7 @@ const val SURGERY_NAME = "surgeryName"
 const val MODIFICATION_NAME = "modificationName"
 const val PRIOR_CONDITION_INPUT = "prior condition"
 const val TREATMENT_HISTORY_INPUT = "treatment name"
+private val DATE_Y2023_M02_D23 = LocalDate.of(2024, 2, 23)
 
 object EhrTestData {
 
@@ -16,18 +17,18 @@ object EhrTestData {
             hashedId = HASHED_ID_IN_BASE64,
             birthYear = 2024,
             gender = "FEMALE",
-            registrationDate = LocalDate.of(2024, 2, 23),
+            registrationDate = DATE_Y2023_M02_D23,
             hartwigMolecularDataExpected = false
         ),
         tumorDetails = createEhrTumorDetail()
     )
 
     private fun createEhrTumorDetail() = ProvidedTumorDetail(
-        diagnosisDate = LocalDate.of(2024, 2, 23),
+        diagnosisDate = DATE_Y2023_M02_D23,
         tumorLocation = "tumorLocation",
         tumorType = "tumorType",
         lesions = emptyList(),
-        measurableDiseaseDate = LocalDate.of(2024, 2, 23),
+        measurableDiseaseDate = DATE_Y2023_M02_D23,
         measurableDisease = true,
         tumorGradeDifferentiation = "tumorGradeDifferentiation",
         tumorStage = "IV",
@@ -39,7 +40,7 @@ object EhrTestData {
         treatmentName = TREATMENT_NAME,
         administeredCycles = 1,
         intendedCycles = 1,
-        startDate = LocalDate.of(2024, 2, 23),
+        startDate = DATE_Y2023_M02_D23,
         administeredInStudy = false,
         intention = "Palliative",
         stopReason = "TOXICITY",
@@ -50,13 +51,15 @@ object EhrTestData {
         )
     )
 
-    fun createEhrSurgery() = ProvidedSurgery(
-        surgeryName = SURGERY_NAME,
+    fun createEhrSurgery(surgeryName: String? = SURGERY_NAME) = ProvidedSurgery(
+        surgeryName = surgeryName,
         endDate = LocalDate.of(2024, 2, 23),
         status = "FINISHED"
     )
 
     fun createEhrModification() = ProvidedTreatmentModification(
-        name = MODIFICATION_NAME, administeredCycles = 2, date = LocalDate.of(2024, 2, 23)
+        name = MODIFICATION_NAME,
+        administeredCycles = 2,
+        date = DATE_Y2023_M02_D23
     )
 }

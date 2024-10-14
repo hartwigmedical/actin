@@ -1,2 +1,2 @@
 input	name	tumorLocation	tumorSubLocation	tumorType	tumorSubType	doids	diagnosedYear	diagnosedMonth	treatmentHistory	lastTreatmentYear	lastTreatmentMonth	status
-Prostate carconoma | 2019	Prostate carcinoma	Prostate		Carcinoma		10286	2019			2019		ACTIVE
+Prostate carconoma | last treatment date: 2019	Prostate carcinoma	Prostate		Carcinoma		10286	2019			2019		ACTIVE

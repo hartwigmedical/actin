@@ -250,7 +250,7 @@ class QuestionnaireExtractionTest {
 
             val secondaryPrimaries = questionnaire.secondaryPrimaries
             assertThat(secondaryPrimaries!!).hasSize(1)
-            assertThat(secondaryPrimaries).contains("sarcoma | Feb 2020")
+            assertThat(secondaryPrimaries).contains("sarcoma | last treatment date: Feb 2020")
 
             assertThat(questionnaire.hasMeasurableDisease!!).isTrue
             assertThat(questionnaire.hasBrainLesions!!).isTrue

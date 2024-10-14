@@ -36,6 +36,21 @@ class HasLimitedAsatAndAlatDependingOnLiverMetastasesTest {
     }
 
     @Test
+    fun `Should be undetermined when both lab measures are missing`() {
+        evaluateForAllLiverLesionStates(EvaluationResult.UNDETERMINED, emptyList())
+    }
+
+    @Test
+    fun `Should be undetermined when one lab measure is missing and the other one is within margin`() {
+        evaluateForAllLiverLesionStates(EvaluationResult.UNDETERMINED, listOf(ALAT_1_ULN))
+    }
+
+    @Test
+    fun `Should fail when one lab measure is missing but the other one is outside margin`() {
+        evaluateForAllLiverLesionStates(EvaluationResult.FAIL, listOf(ASAT_6_ULN))
+    }
+
+    @Test
     fun `Should fail when both lab values are above requested fold of ULN for both with or without liver metastases`() {
         evaluateForAllLiverLesionStates(EvaluationResult.FAIL, listOf(ASAT_6_ULN, ALAT_6_ULN))
     }

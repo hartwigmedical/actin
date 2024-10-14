@@ -115,7 +115,9 @@ private val DIAGNOSIS_DATE = LocalDate.of(2024, 8, 1)
 
 class StandardTumorDetailsExtractorTest {
 
-    private val tumorCuration = mockk<CurationDatabase<PrimaryTumorConfig>>()
+    private val tumorCuration = mockk<CurationDatabase<PrimaryTumorConfig>> {
+        every { find(PRIOR_CONDITION_INPUT) } returns emptySet()
+    }
     private val lesionCuration = mockk<CurationDatabase<LesionLocationConfig>> {
         every { find(any()) } returns emptySet()
     }
@@ -126,8 +128,16 @@ class StandardTumorDetailsExtractorTest {
 
     @Test
     fun `Should curate primary tumor and extract tumor details, only drawing on curation for (sub)location, (sub)type and doids`() {
-        setupTumorCuration(TUMOR_INPUT, TUMOR_CURATION_CONFIG)
+        every { tumorCuration.find("tumorLocation | tumorType") } returns setOf(TUMOR_CURATION_CONFIG)
         val result = extractor.extract(EHR_PATIENT_RECORD)
+        assertThat(result.extracted).isEqualTo(TUMOR_DETAILS)
+    }
+
+    @Test
+    fun `Should curate prior other conditions and extract tumor details, only drawing on curation for (sub)location, (sub)type and doids`() {
+        setupTumorCuration(TUMOR_INPUT, TUMOR_CURATION_CONFIG.copy(ignore = true))
+        setupTumorCuration(PRIOR_CONDITION_INPUT, TUMOR_CURATION_CONFIG)
+        val result = extractor.extract(EHR_PATIENT_RECORD.copy(priorOtherConditions = listOf(EHR_PRIOR_OTHER_CONDITION)))
         assertThat(result.extracted).isEqualTo(TUMOR_DETAILS)
     }
 
@@ -242,6 +252,7 @@ class StandardTumorDetailsExtractorTest {
     fun `Should curate lesions from prior conditions, supporting multiple configs per input, but ignore any curation warnings`() {
         setupTumorCuration(TUMOR_INPUT, TUMOR_CURATION_CONFIG)
         setupLesionCuration(PRIOR_CONDITION_INPUT, BRAIN_LESION_LOCATION_CONFIG, LUNG_LESION_LOCATION_CONFIG)
+        every { tumorCuration.find("another prior condition") } returns emptySet()
         val result =
             extractor.extract(
                 EHR_PATIENT_RECORD.copy(

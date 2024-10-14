@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
-import com.google.common.collect.Sets
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
@@ -18,9 +17,10 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
             EligibilityRule.HAS_INTOLERANCE_FOR_PD_1_OR_PD_L1_INHIBITORS to hasIntoleranceToPD1OrPDL1InhibitorsCreator(),
             EligibilityRule.HAS_HISTORY_OF_ANAPHYLAXIS to hasHistoryAnaphylaxisCreator(),
             EligibilityRule.HAS_EXPERIENCED_IMMUNE_RELATED_ADVERSE_EVENTS to hasExperiencedImmuneRelatedAdverseEventsCreator(),
-            EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X to hasToxicityWithGradeCreator(),
-            EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IN_Y to hasToxicityWithGradeAndNameCreator(),
-            EligibilityRule.HAS_TOXICITY_OF_AT_LEAST_GRADE_X_IGNORING_Y to hasToxicityWithGradeIgnoringNamesCreator()
+            EligibilityRule.HAS_TOXICITY_CTCAE_OF_AT_LEAST_GRADE_X to hasToxicityWithGradeCreator(),
+            EligibilityRule.HAS_TOXICITY_CTCAE_OF_AT_LEAST_GRADE_X_IN_Y to hasToxicityWithGradeAndNameCreator(),
+            EligibilityRule.HAS_TOXICITY_ASTCT_OF_AT_LEAST_GRADE_X_IN_Y to hasToxicityWithGradeAndNameCreator(),
+            EligibilityRule.HAS_TOXICITY_CTCAE_OF_AT_LEAST_GRADE_X_IGNORING_Y to hasToxicityWithGradeIgnoringNamesCreator()
         )
     }
 
@@ -65,26 +65,31 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
     private fun hasToxicityWithGradeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val minGrade = functionInputResolver().createOneIntegerInput(function)
-            HasToxicityWithGrade(minGrade, null, Sets.newHashSet(), resources.algoConfiguration.warnIfToxicitiesNotFromQuestionnaire)
+            createHasToxicityWithGrade(minGrade)
         }
     }
 
     private fun hasToxicityWithGradeAndNameCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneIntegerOneStringInput(function)
-            HasToxicityWithGrade(input.integer, input.string, emptySet(), resources.algoConfiguration.warnIfToxicitiesNotFromQuestionnaire)
+            val (minGrade, name) = functionInputResolver().createOneIntegerOneStringInput(function)
+            createHasToxicityWithGrade(minGrade, name)
         }
     }
 
     private fun hasToxicityWithGradeIgnoringNamesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneIntegerManyStringsInput(function)
-            HasToxicityWithGrade(
-                input.integer,
-                null,
-                input.strings.toSet(),
-                resources.algoConfiguration.warnIfToxicitiesNotFromQuestionnaire
-            )
+            val (minGrade, toxicitiesToIgnore) = functionInputResolver().createOneIntegerManyStringsInput(function)
+            createHasToxicityWithGrade(minGrade, null, toxicitiesToIgnore.toSet())
         }
     }
+
+    private fun createHasToxicityWithGrade(
+        minGrade: Int, nameFilter: String? = null, toxicitiesToIgnore: Set<String> = emptySet()
+    ) = HasToxicityWithGrade(
+        minGrade,
+        nameFilter,
+        toxicitiesToIgnore,
+        resources.algoConfiguration.warnIfToxicitiesNotFromQuestionnaire,
+        referenceDateProvider().date()
+    )
 }
