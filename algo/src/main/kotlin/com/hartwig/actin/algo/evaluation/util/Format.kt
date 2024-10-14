@@ -34,10 +34,10 @@ object Format {
 
     fun concatLowercaseWithCommaAndOr(strings: Iterable<String>): String {
         val stringList = strings.map(String::lowercase).distinct().sortedWith(String.CASE_INSENSITIVE_ORDER)
-        return when (stringList.size) {
-            0 -> ""
-            1 -> stringList[0]
-            else -> stringList.dropLast(1).joinToString(", ") + SEPARATOR_OR + stringList.last()
+        return if (stringList.size < 2) {
+            concat(stringList)
+        } else {
+            stringList.dropLast(1).joinToString(", ") + SEPARATOR_OR + stringList.last()
         }
     }
 

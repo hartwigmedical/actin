@@ -16,20 +16,11 @@ class PrimaryTumorLocationBelongsToDoid(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val doidTerms: Set<String> = doidsToMatch.mapNotNull { doidModel.resolveTermForDoid(it) }.toSet()
         val tumorDoids = record.tumor.doids
         val doidsTumorBelongsTo = doidsToMatch.filter { DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, it) }
-        val doidTermsTumorBelongsTo = doidsTumorBelongsTo.mapNotNull { doidModel.resolveTermForDoid(it) }.toSet()
-        val potentialAdenoSquamousMatches = if (tumorDoids == null) {
-            emptyList()
-        } else {
-            isPotentialAdenoSquamousMatch(tumorDoids, doidsToMatch)
-        }
-        val undeterminatedUnderMainCancerTypes = if (tumorDoids == null) {
-            emptyList()
-        } else {
-            isUndeterminateUnderMainCancerType(tumorDoids, doidsToMatch)
-        }
+        val doidTermsTumorBelongsTo = doidsToTerms(doidsTumorBelongsTo)
+        val potentialAdenoSquamousMatches = isPotentialAdenoSquamousMatch(tumorDoids ?: emptySet(), doidsToMatch)
+        val undeterminatedUnderMainCancerTypes = isUndeterminateUnderMainCancerType(tumorDoids ?: emptySet(), doidsToMatch)
 
         return when {
             !DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids) -> EvaluationFactory.undetermined(
@@ -55,8 +46,14 @@ class PrimaryTumorLocationBelongsToDoid(
             )
 
             potentialAdenoSquamousMatches.isNotEmpty() -> EvaluationFactory.warn(
-                "Unclear whether tumor type of patient can be considered ${concatLowercaseWithCommaAndOr(potentialAdenoSquamousMatches)}, because patient has adenosquamous tumor type",
-                "Unclear if tumor type is considered ${concatLowercaseWithCommaAndOr(potentialAdenoSquamousMatches)}"
+                "Unclear whether tumor type of patient can be considered ${
+                    concatLowercaseWithCommaAndOr(
+                        doidsToTerms(
+                            potentialAdenoSquamousMatches
+                        )
+                    )
+                }, because patient has adenosquamous tumor type",
+                "Unclear if tumor type is considered ${concatLowercaseWithCommaAndOr(doidsToTerms(potentialAdenoSquamousMatches))}"
             )
 
             undeterminatedUnderMainCancerTypes.isNotEmpty() -> EvaluationFactory.undetermined(
@@ -69,8 +66,8 @@ class PrimaryTumorLocationBelongsToDoid(
             )
 
             else -> EvaluationFactory.fail(
-                "Patient has no ${concatLowercaseWithCommaAndOr(doidTerms)}",
-                "No ${concatLowercaseWithCommaAndOr(doidTerms)}"
+                "Patient has no ${concatLowercaseWithCommaAndOr(doidsToTerms(doidsToMatch))}",
+                "No ${concatLowercaseWithCommaAndOr(doidsToTerms(doidsToMatch))}"
             )
         }
     }
@@ -92,5 +89,9 @@ class PrimaryTumorLocationBelongsToDoid(
                         && tumorDoidTree.intersect(mainCancerTypesToMatch).isNotEmpty()
             }
         }
+    }
+
+    private fun doidsToTerms(test: List<String>): Set<String> {
+        return test.mapNotNull { doidModel.resolveTermForDoid(it) }.toSet()
     }
 }

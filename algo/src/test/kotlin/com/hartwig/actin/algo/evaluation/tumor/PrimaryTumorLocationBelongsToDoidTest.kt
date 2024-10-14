@@ -6,6 +6,7 @@ import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.doid.config.AdenoSquamousMapping
 import com.hartwig.actin.doid.config.TestDoidManualConfigFactory
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val PARENT_DOID_1 = "100"
@@ -45,6 +46,7 @@ class PrimaryTumorLocationBelongsToDoidTest {
         assertResultForDoid(EvaluationResult.PASS, function, stomachCarcinoma)
         assertResultForDoid(EvaluationResult.PASS, function, stomachAdenocarcinoma)
         assertResultForDoids(EvaluationResult.PASS, function, setOf("something else", stomachAdenocarcinoma))
+        assertResultForDoids(EvaluationResult.PASS, function, setOf(esophagusCancer, stomachAdenocarcinoma))
     }
 
     @Test
@@ -56,11 +58,13 @@ class PrimaryTumorLocationBelongsToDoidTest {
         assertResultForDoid(EvaluationResult.FAIL, function, "4")
         assertResultForDoid(EvaluationResult.WARN, function, "1")
         assertResultForDoid(EvaluationResult.PASS, function, "2")
+        assertResultForDoid(EvaluationResult.PASS, function, "5")
     }
 
     private fun assertResultsForFunction(function: PrimaryTumorLocationBelongsToDoid, doidToMatchIsParent: Boolean) {
         val expectedResultForParentDoid = if (doidToMatchIsParent) EvaluationResult.PASS else EvaluationResult.FAIL
         assertResultForDoid(expectedResultForParentDoid, function, PARENT_DOID_1)
+        assertResultForDoid(expectedResultForParentDoid, function, PARENT_DOID_2)
         assertResultForDoid(EvaluationResult.PASS, function, CHILD_DOID_1)
         assertResultForDoid(EvaluationResult.PASS, function, CHILD_DOID_2)
         assertResultForDoids(expectedResultForParentDoid, function, setOf("10", PARENT_DOID_1))
@@ -76,6 +80,21 @@ class PrimaryTumorLocationBelongsToDoidTest {
 
     private fun assertResultForDoids(expectedResult: EvaluationResult, function: PrimaryTumorLocationBelongsToDoid, doids: Set<String>?) {
         assertEvaluation(expectedResult, function.evaluate(TumorTestFactory.withDoids(doids)))
+    }
+
+    @Test
+    fun `Should show correct fail message`() {
+        val function = PrimaryTumorLocationBelongsToDoid(simpleDoidModel, listOf(CHILD_DOID_1, CHILD_DOID_2), null)
+        assertThat(
+            function.evaluate(
+                TumorTestFactory.withDoids(
+                    setOf(
+                        "50",
+                        "250"
+                    )
+                )
+            ).failSpecificMessages
+        ).contains("Patient has no child term 1 or child term 2")
     }
 
     @Test
@@ -103,18 +122,17 @@ class PrimaryTumorLocationBelongsToDoidTest {
 
     @Test
     fun `Should pass when sub location and doid match`() {
-        assertEvaluation(
-            EvaluationResult.PASS,
-            subLocationFunction.evaluate(TumorTestFactory.withDoidAndSubLocation(CHILD_DOID_1, SUB_LOCATION))
-        )
+        val pass = subLocationFunction.evaluate(TumorTestFactory.withDoidAndSubLocation(CHILD_DOID_1, SUB_LOCATION))
+        assertEvaluation(EvaluationResult.PASS, pass)
+        assertThat(pass.passSpecificMessages).contains("Tumor belongs to child term 1 with sub-location specific")
     }
 
     companion object {
         private val simpleDoidModel = TestDoidModelFactory.createWithParentChildAndTermPerDoidMaps(
             mapOf(CHILD_DOID_1 to PARENT_DOID_1, CHILD_DOID_2 to PARENT_DOID_2),
             mapOf(
-                CHILD_DOID_1 to "child term",
-                PARENT_DOID_1 to "parent term",
+                CHILD_DOID_1 to "child term 1",
+                PARENT_DOID_1 to "parent term 1",
                 CHILD_DOID_2 to "child term 2",
                 PARENT_DOID_2 to "parent term 2"
             ),
