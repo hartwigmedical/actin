@@ -60,6 +60,8 @@ object WGSSummaryGeneratorFunctions {
                     )
                 )
             }
+            table.addCell(Cells.createKey("Potentially actionable events with medium/low driver:"))
+            table.addCell(potentiallyActionableEventsCell(summarizer.actionableEventsThatAreNotKeyDrivers()))
         } else {
             table.addCell(
                 Cells.createSpanningContent(
@@ -148,6 +150,21 @@ object WGSSummaryGeneratorFunctions {
         return Cells.create(paragraph)
     }
 
+    private fun potentiallyActionableEventsCell(events: List<String>): Cell {
+        if (events.isEmpty()) return Cells.createValue(Formats.VALUE_NONE)
+
+        val paragraph = Paragraph()
+        events.forEachIndexed { index, event ->
+            paragraph.add(Text(event).addStyle(Styles.tableHighlightStyle()))
+            paragraph.add(Text(" (dubious quality)").addStyle(Styles.tableNoticeStyle()))
+            if (index < events.size - 1) {
+                paragraph.add(Text(", ").addStyle(Styles.tableHighlightStyle()))
+            }
+        }
+
+        return Cells.create(paragraph)
+    }
+
     private fun tumorMutationalLoadAndTumorMutationalBurdenStatus(molecular: MolecularTest): String {
         val hasHighTumorMutationalLoad = molecular.characteristics.hasHighTumorMutationalLoad
         val tumorMutationalLoad = molecular.characteristics.tumorMutationalLoad
@@ -180,7 +197,6 @@ object WGSSummaryGeneratorFunctions {
                 "Homozygously disrupted genes",
                 "Microsatellite (in)stability",
                 "",
-                "Potentially actionable events with medium/low driver:"
             )
         } else {
             listOf(
@@ -194,7 +210,6 @@ object WGSSummaryGeneratorFunctions {
                 "Gene fusions",
                 "Virus detection",
                 "",
-                "Potentially actionable events with medium/low driver:"
             )
         }
     }
@@ -213,7 +228,6 @@ object WGSSummaryGeneratorFunctions {
             "Homozygously disrupted genes" to formatList(summarizer.keyHomozygouslyDisruptedGenes()),
             "Gene fusions" to formatList(summarizer.keyFusionEvents()),
             "Virus detection" to formatList(summarizer.keyVirusEvents()),
-            "Potentially actionable events with medium/low driver:" to formatList(summarizer.actionableEventsThatAreNotKeyDrivers())
         )
         return orderedKeys.mapNotNull { key -> keyToValueMap[key]?.let { value -> key to value } }
     }
