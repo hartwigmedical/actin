@@ -32,6 +32,15 @@ object Format {
         return concatStrings(strings, SEPARATOR_AND)
     }
 
+    fun concatLowercaseWithCommaAndOr(strings: Iterable<String>): String {
+        val stringList = strings.map(String::lowercase).distinct().sortedWith(String.CASE_INSENSITIVE_ORDER)
+        return when (stringList.size) {
+            0 -> ""
+            1 -> stringList[0]
+            else -> stringList.dropLast(1).joinToString(", ") + SEPARATOR_OR + stringList.last()
+        }
+    }
+
     fun concatItemsWithAnd(items: Iterable<Displayable>): String {
         return concatDisplayables(items, SEPARATOR_AND)
     }

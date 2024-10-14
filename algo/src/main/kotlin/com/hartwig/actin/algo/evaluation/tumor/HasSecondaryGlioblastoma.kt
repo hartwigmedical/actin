@@ -28,7 +28,7 @@ class HasSecondaryGlioblastoma(private val doidModel: DoidModel) : EvaluationFun
         }
         return EvaluationFactory.fail(
             "Patient has no (secondary) glioblastoma",
-            "Tumor type"
+            "No (secondary) glioblastoma"
         )
     }
 }

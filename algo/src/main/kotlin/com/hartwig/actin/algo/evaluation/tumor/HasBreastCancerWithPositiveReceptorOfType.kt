@@ -49,7 +49,7 @@ class HasBreastCancerWithPositiveReceptorOfType(
                 )
             }
 
-            !isBreastCancer -> EvaluationFactory.fail("Patient does not have breast cancer", "Tumor type")
+            !isBreastCancer -> EvaluationFactory.fail("Patient does not have breast cancer", "No breast cancer")
 
             targetPriorMolecularTests.isEmpty() && specificArgumentsForStatusDeterminationMissing -> {
                 return if (targetHer2AndErbb2Amplified) {

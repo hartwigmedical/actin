@@ -14,9 +14,9 @@ class HasLeftSidedColorectalTumor(private val doidModel: DoidModel) : Evaluation
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.tumor.doids
         return if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
-            EvaluationFactory.undetermined("Unable to identify tumor type", "Tumor type")
+            EvaluationFactory.undetermined("Unable to identify tumor type", "Unable to identify tumor type")
         } else if (!DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.COLORECTAL_CANCER_DOID)) {
-            EvaluationFactory.fail("Tumor is not colorectal cancer", "Tumor type")
+            EvaluationFactory.fail("Tumor is not colorectal cancer", "No CRC")
         } else {
             val subLocation = record.tumor.primaryTumorSubLocation?.lowercase()
             when {
