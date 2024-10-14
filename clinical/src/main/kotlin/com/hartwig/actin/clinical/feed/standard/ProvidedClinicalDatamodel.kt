@@ -214,7 +214,9 @@ data class ProvidedToxicity(
     @Description("Date of evaluation")
     val evaluatedDate: LocalDate,
     @Description("Grade (eg. 2)")
-    val grade: Int
+    val grade: Int,
+    @Description("End date")
+    val endDate: LocalDate?
 )
 
 @JacksonSerializable

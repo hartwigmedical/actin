@@ -97,12 +97,12 @@ class EligibleExternalTrialGeneratorFunctionsTest {
             externalTrialBelgium,
             CountryName.BELGIUM
         )
-        assertThat(hospitalsAndCitiesExternalTrialNetherlands.first).isEqualTo("Many (please check link)")
+        assertThat(hospitalsAndCitiesExternalTrialNetherlands.first).isEqualTo("Many, please check link")
         assertThat(hospitalsAndCitiesExternalTrialNetherlands.second).isEqualTo("Nijmegen, Leiden, Amsterdam, Groningen")
         assertThat(hospitalsAndCitiesExternalTrialNetherlandsGermany.first).isEqualTo("AMC, LUMC")
         assertThat(hospitalsAndCitiesExternalTrialNetherlandsGermany.second).isEqualTo("Amsterdam, Leiden")
         assertThat(hospitalsAndCitiesExternalTrialBelgium.first).isEqualTo("Brussels hospital")
-        assertThat(hospitalsAndCitiesExternalTrialBelgium.second).isEqualTo("Many (please check link)")
+        assertThat(hospitalsAndCitiesExternalTrialBelgium.second).isEqualTo("Many, please check link")
     }
 
     @Test(expected = IllegalStateException::class)
@@ -113,7 +113,7 @@ class EligibleExternalTrialGeneratorFunctionsTest {
     @Test
     fun `Should return country names and cities`() {
         assertThat(EligibleExternalTrialGeneratorFunctions.countryNamesWithCities(externalTrialNetherlandsGermany)).isEqualTo("Netherlands (Amsterdam, Leiden), Germany (Berlin)")
-        assertThat(EligibleExternalTrialGeneratorFunctions.countryNamesWithCities(externalTrialBelgium)).isEqualTo("Belgium (Many (please check link))")
+        assertThat(EligibleExternalTrialGeneratorFunctions.countryNamesWithCities(externalTrialBelgium)).isEqualTo("Belgium (Many, please check link)")
         assertThat(EligibleExternalTrialGeneratorFunctions.countryNamesWithCities(externalTrialNetherlands)).isEqualTo("Netherlands (Nijmegen, Leiden, Amsterdam, Groningen)")
     }
 }

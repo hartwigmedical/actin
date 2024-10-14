@@ -87,13 +87,13 @@ class ReportContentProvider(private val report: Report, private val enableExtend
 
         return listOfNotNull(
             PatientClinicalHistoryGenerator(report, true, keyWidth, valueWidth),
-            PatientCurrentDetailsGenerator(report.patientRecord, keyWidth, valueWidth),
+            PatientCurrentDetailsGenerator(
+                report.patientRecord, keyWidth, valueWidth, report.treatmentMatch.referenceDate
+            ),
             TumorDetailsGenerator(report.patientRecord, keyWidth, valueWidth),
             report.patientRecord.medications?.let {
                 MedicationGenerator(
-                    it,
-                    contentWidth,
-                    MedicationStatusInterpreterOnEvaluationDate(report.treatmentMatch.referenceDate, null)
+                    it, contentWidth, MedicationStatusInterpreterOnEvaluationDate(report.treatmentMatch.referenceDate, null)
                 )
             },
             if (bloodTransfusions.isEmpty()) null else BloodTransfusionGenerator(bloodTransfusions, contentWidth)

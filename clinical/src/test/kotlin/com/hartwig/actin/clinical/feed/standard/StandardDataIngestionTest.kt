@@ -95,7 +95,7 @@ class StandardDataIngestionTest {
                 TumorStageDeriver.create(doidModel)
             ),
             labValuesExtractor = StandardLabValuesExtractor(curationDatabase.laboratoryTranslation),
-            clinicalStatusExtractor = StandardClinicalStatusExtractor(),
+            clinicalStatusExtractor = StandardClinicalStatusExtractor(curationDatabase.ecgCuration),
             bodyWeightExtractor = StandardBodyWeightExtractor(),
             bodyHeightExtractor = StandardBodyHeightExtractor(),
             bloodTransfusionExtractor = StandardBloodTransfusionExtractor(),

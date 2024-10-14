@@ -27,10 +27,9 @@ import com.hartwig.actin.tools.transvar.TransvarVariantAnnotatorFactory
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
 import com.hartwig.hmftools.datamodel.OrangeJson
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
-import com.hartwig.serve.datamodel.ActionableEventsLoader
 import com.hartwig.serve.datamodel.KnownEvents
-import com.hartwig.serve.datamodel.KnownEventsLoader
 import com.hartwig.serve.datamodel.RefGenome
+import com.hartwig.serve.datamodel.serialization.ServeJson
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
@@ -157,25 +156,16 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         tumorDoids: Set<String>
     ): Pair<KnownEvents, EvidenceDatabase> {
         val serveRefGenomeVersion = toServeRefGenomeVersion(orangeRefGenomeVersion)
-        val serveDirectoryWithGenome = "${config.serveDirectory}/${serveRefGenomeVersion.name.lowercase().replace("v", "")}"
-        val knownEvents = KnownEventsLoader.readFromDir(
-            serveDirectoryWithGenome,
-            serveRefGenomeVersion
-        )
-        val evidenceDatabase = loadEvidenceDatabase(serveDirectoryWithGenome, doidEntry, serveRefGenomeVersion, knownEvents, tumorDoids)
+        val filePath = ServeJson.jsonFilePath(config.serveDirectory, serveRefGenomeVersion)
+
+        LOGGER.info("Loading SERVE from {}", filePath)
+        val serveRecord = ServeJson.read(filePath)
+
+        val knownEvents = serveRecord.knownEvents()
+        val actionableEvents = serveRecord.actionableEvents()
+        val evidenceDatabase = EvidenceDatabaseFactory.create(knownEvents, actionableEvents, doidEntry, tumorDoids)
+
         return Pair(knownEvents, evidenceDatabase)
-    }
-
-    private fun loadEvidenceDatabase(
-        serveDirectoryWithGenome: String,
-        doidEntry: DoidEntry,
-        serveRefGenomeVersion: RefGenome,
-        knownEvents: KnownEvents,
-        tumorDoids: Set<String>
-    ): EvidenceDatabase {
-        val actionableEvents = ActionableEventsLoader.readFromDir(serveDirectoryWithGenome, serveRefGenomeVersion)
-
-        return EvidenceDatabaseFactory.create(knownEvents, actionableEvents, doidEntry, tumorDoids)
     }
 
     private fun toServeRefGenomeVersion(refGenomeVersion: OrangeRefGenomeVersion): RefGenome {

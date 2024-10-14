@@ -216,7 +216,8 @@
         "day": 6
       },
       "source": "EHR",
-      "grade": 0
+      "grade": 0,
+      "endDate": null
     },
     {
       "name": "Pain",
@@ -227,7 +228,8 @@
         "day": 8
       },
       "source": "EHR",
-      "grade": 0
+      "grade": 0,
+      "endDate": null
     },
     {
       "name": "Nausea",
@@ -240,7 +242,8 @@
         "day": 16
       },
       "source": "QUESTIONNAIRE",
-      "grade": 3
+      "grade": 3,
+      "endDate": null
     }
   ],
   "intolerances": [

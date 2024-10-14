@@ -97,7 +97,7 @@ class QuestionnaireCurationTest {
 
     @Test
     fun shouldExtractSecondaryPrimaryAndLastTreatmentDateWhenAvailable() {
-        Assert.assertEquals(listOf("sarcoma | Feb 2020"), toSecondaryPrimaries("sarcoma", "Feb 2020"))
+        Assert.assertEquals(listOf("sarcoma | last treatment date: Feb 2020"), toSecondaryPrimaries("sarcoma", "Feb 2020"))
     }
 
     @Test

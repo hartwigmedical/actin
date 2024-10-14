@@ -11,7 +11,7 @@ import com.hartwig.actin.trial.status.TrialStatusEntry
 import com.hartwig.actin.trial.status.TrialStatusEntryReader
 import java.io.File
 
-private const val TRIALS_JSON = "trial_status.json"
+private const val TRIALS_JSON = "trial_cohort_status.json"
 private const val NKI_OPEN_STATUS = "OPEN"
 private val STATUSES_TO_INCLUDE = setOf(NKI_OPEN_STATUS, "CLOSED", "SUSPENDED")
 
@@ -34,7 +34,9 @@ class NKITrialStatusEntryReader : TrialStatusEntryReader {
                     metcStudyID = it.studyMetc!!,
                     studyAcronym = it.studyAcronym,
                     studyTitle = it.studyTitle,
-                    studyStatus = if (it.studyStatus == NKI_OPEN_STATUS) OPEN else CLOSED
+                    studyStatus = if (it.studyStatus == NKI_OPEN_STATUS) OPEN else CLOSED,
+                    cohortId = it.cohortId,
+                    cohortStatus = if (it.cohortOpen == true) OPEN else CLOSED
                 )
             }
     }
