@@ -246,6 +246,7 @@ enum class EligibilityRule(val input: FunctionInput?) {
     // Rules related to recent laboratory measurements
     HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X(FunctionInput.ONE_DOUBLE),
     HAS_LEUKOCYTES_ABS_LLN_OF_AT_LEAST_X(FunctionInput.ONE_DOUBLE),
+    HAS_POTENTIAL_LEUKOCYTOSIS(FunctionInput.NONE),
     HAS_LYMPHOCYTES_ABS_OF_AT_LEAST_X(FunctionInput.ONE_DOUBLE),
     HAS_LYMPHOCYTES_CELLS_PER_MM3_OF_AT_LEAST_X(FunctionInput.ONE_DOUBLE),
     HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X(FunctionInput.ONE_DOUBLE),

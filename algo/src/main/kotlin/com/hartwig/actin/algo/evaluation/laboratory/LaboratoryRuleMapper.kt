@@ -30,6 +30,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
                 LabMeasurement.LYMPHOCYTES_ABS_EDA,
                 LabUnit.CELLS_PER_CUBIC_MILLIMETER
             ),
+            EligibilityRule.HAS_POTENTIAL_LEUKOCYTOSIS to hasPotentialLeukocytosisCreator(),
             EligibilityRule.HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.NEUTROPHILS_ABS),
             EligibilityRule.HAS_THROMBOCYTES_ABS_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.THROMBOCYTES_ABS),
             EligibilityRule.HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X to hasSufficientLabValueCreator(
@@ -212,7 +213,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             val measurement = retrieveForMethod(method)
             val minimalDateWeightMeasurements = referenceDateProvider().date().minusMonths(BODY_WEIGHT_MAX_AGE_MONTHS.toLong())
             val main = createLabEvaluator(measurement, HasSufficientLabValue(minCreatinineClearance, measurement, measurement.defaultUnit))
-            
+
             val fallback = createLabEvaluator(
                 LabMeasurement.CREATININE,
                 HasSufficientDerivedCreatinineClearance(
@@ -242,6 +243,10 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun hasSufficientMeasuredCreatinineClearanceCreator(): FunctionCreator {
         return { HasSufficientMeasuredCreatinineClearance() }
+    }
+
+    private fun hasPotentialLeukocytosisCreator(): FunctionCreator {
+        return { createLabEvaluator(LabMeasurement.LEUKOCYTES_ABS, HasSufficientLabValueULN(1.0)) }
     }
 
     private fun hasPotentialHypokalemiaCreator(): FunctionCreator {
