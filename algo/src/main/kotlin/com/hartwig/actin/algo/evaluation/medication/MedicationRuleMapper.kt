@@ -31,6 +31,7 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_PGP to getsPGPSubstrateMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_BCRP to getsBCRPInhibitingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_BCRP to getsBCRPSubstrateMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_OATP1B3 to getsOATP1B3SubstrateMedicationCreator(),
             EligibilityRule.HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING to getsStableDosingAnticoagulantMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_HERBAL_MEDICATION to getsHerbalMedicationCreator(),
         )
@@ -120,6 +121,10 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun getsBCRPSubstrateMedicationCreator(): FunctionCreator {
         return { CurrentlyGetsBCRPSubstrateMedication() }
+    }
+
+    private fun getsOATP1B3SubstrateMedicationCreator(): FunctionCreator {
+        return { CurrentlyGetsOATP1B3SubstrateMedication() }
     }
 
     private fun getsStableDosingAnticoagulantMedicationCreator(): FunctionCreator {
