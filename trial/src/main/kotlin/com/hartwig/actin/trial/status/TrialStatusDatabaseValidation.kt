@@ -21,6 +21,6 @@ data class TrialStatusDatabaseValidationError(
     override val config: TrialStatusEntry, override val message: String
 ) : ValidationError<TrialStatusEntry> {
     override fun configFormat(config: TrialStatusEntry): String {
-        return "METC=${config.metcStudyID} cohort=${config.cohortName}"
+        return "METC=${config.metcStudyID} cohort=${config.cohortName ?: config.cohortId}"
     }
 }

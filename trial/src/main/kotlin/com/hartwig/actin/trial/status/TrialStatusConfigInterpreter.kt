@@ -68,7 +68,7 @@ class TrialStatusConfigInterpreter(
                 trialStatusConfigValidationErrors.add(
                     TrialStatusConfigValidationError(
                         trialConfig.trialId,
-                        "Trial has a manually configured status while status could be derived from trial status database"
+                        "Trial has a manually configured status while status could be derived from trial status database (" + if (openInTrialStatusDatabase) "Open )" else "Closed )"
                     )
                 )
             }
@@ -78,7 +78,7 @@ class TrialStatusConfigInterpreter(
         trialStatusConfigValidationErrors.add(
             TrialStatusConfigValidationError(
                 trialConfig.trialId,
-                "No studyI  status found in trial status database overview, using manually configured status for study status"
+                "No study status found in trial status database overview, using manually configured status for study status"
             )
         )
         return null
