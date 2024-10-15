@@ -46,12 +46,7 @@ class IneligibleActinTrialsGenerator private constructor(
             ineligibilityReasonColWith,
             EvaluatedCohort::fails
         )
-        val subNote = listOfNotNull(
-            if (cohorts.any { !it.isOpen }) " Cohorts shown in grey are closed or have no slots available." else null,
-            if (cohorts.any { it.isOpen && !it.hasSlotsAvailable }) {
-                " Open cohorts with no slots available are indicated by an asterisk (*)."
-            } else null
-        ).joinToString("")
+        val subNote = "Open cohorts with no slots available are shown in grey."
 
         if (subNote.isNotEmpty()) {
             table.addCell(Cells.createSpanningSubNote(subNote, table))

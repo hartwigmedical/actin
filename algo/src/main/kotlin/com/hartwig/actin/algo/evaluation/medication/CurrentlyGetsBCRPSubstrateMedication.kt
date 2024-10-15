@@ -6,11 +6,19 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
 class CurrentlyGetsBCRPSubstrateMedication : EvaluationFunction {
-    
+
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined(
-            "Currently not determined if patient gets BCRP substrate medication",
-            "BCRP medication requirements undetermined"
+        val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
+
+        return if (medications.isEmpty()) EvaluationFactory.fail(
+            "Patient does not get BCRP substrate medication",
+            "No BCRP substrate medication"
         )
+        else {
+            EvaluationFactory.undetermined(
+                "Currently not determined if patient gets BCRP substrate medication",
+                "BCRP medication requirements undetermined"
+            )
+        }
     }
 }
