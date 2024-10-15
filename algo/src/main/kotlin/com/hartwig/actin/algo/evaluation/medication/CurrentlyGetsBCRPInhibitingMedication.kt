@@ -11,12 +11,12 @@ class CurrentlyGetsBCRPInhibitingMedication : EvaluationFunction {
         val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
 
         return if (medications.isEmpty()) EvaluationFactory.fail(
-            "Patient does not get BCRP inhibiting/inducing medication",
-            "No BCRP inhibiting/inducing medication"
+            "Patient does not get BCRP inhibiting medication",
+            "No BCRP inhibiting medication"
         )
         else {
             EvaluationFactory.undetermined(
-                "Currently not determined if patient gets BCRP inhibiting/inducing medication",
+                "Currently not determined if patient gets BCRP inhibiting medication",
                 "BCRP medication requirements undetermined"
             )
         }
