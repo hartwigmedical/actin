@@ -11,7 +11,7 @@ java -cp actin.jar com.hartwig.actin.trial.TrialCreatorApplication \
    -trial_config_directory /path/to/trial_config_dir \
    -treatment_directory /path/to/treatment_dir \
    -doid_json /path/to/full_doid_tree_json_file \
-   -known_genes_tsv /path/to/known_genes.tsv \
+   -serve_db_json /path/to/serve_db_json_file \
    -output_directory /path/to/where/treatment_json_files/are/written
 ```
 
