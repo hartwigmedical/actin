@@ -7,20 +7,22 @@ import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.trial.config.TrialConfig
-import com.hartwig.actin.trial.config.TrialDatabaseValidation
+import com.hartwig.actin.trial.config.TrialConfigDatabaseValidation
 import com.hartwig.actin.trial.status.TrialStatusDatabaseValidation
 import java.lang.reflect.Type
 
 enum class TrialIngestionStatus {
     PASS,
-    FAIL;
+    FAIL,
+    WARN;
 
     companion object {
         fun from(
+            trialConfigDatabaseValidation: TrialConfigDatabaseValidation,
             trialStatusDatabaseValidation: TrialStatusDatabaseValidation,
-            trialValidationResult: TrialDatabaseValidation,
+            unusedRules: Set<String>
         ): TrialIngestionStatus {
-            return if (trialStatusDatabaseValidation.hasErrors() || trialValidationResult.hasErrors()) FAIL else PASS
+            return if (trialConfigDatabaseValidation.hasErrors()) FAIL else if (trialStatusDatabaseValidation.hasErrors() || unusedRules.isNotEmpty()) WARN else PASS
         }
     }
 }
@@ -31,7 +33,6 @@ interface ValidationError<T> : Comparable<ValidationError<T>> {
 
     fun configFormat(config: T): String
 
-
     fun warningMessage(): String {
         return "${this::class.java.simpleName} ${configFormat(config)}: $message"
     }
@@ -41,13 +42,13 @@ interface ValidationError<T> : Comparable<ValidationError<T>> {
     }
 }
 
-interface TrialValidationError<T : TrialConfig> : ValidationError<T>
+interface TrialConfigValidationError<T : TrialConfig> : ValidationError<T>
 
 
 data class TrialIngestionResult(
-    val ingestionStatus: TrialIngestionStatus,
+    var ingestionStatus: TrialIngestionStatus,
+    val trialConfigDatabaseValidation: TrialConfigDatabaseValidation,
     val trialStatusDatabaseValidation: TrialStatusDatabaseValidation,
-    val trialValidationResult: TrialDatabaseValidation,
     val unusedRules: Set<String>,
     @Transient val trials: List<Trial>
 ) {
