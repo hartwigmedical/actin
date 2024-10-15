@@ -6,7 +6,7 @@ import org.junit.Test
 
 class CurrentlyGetsPGPInducingMedicationTest {
 
-    private val function = CurrentlyGetsBCRPInhibitingMedication()
+    private val function = CurrentlyGetsBCRPInducingMedication()
 
     @Test
     fun `Should evaluate to fail when patient uses no medication`() {
