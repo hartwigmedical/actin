@@ -563,20 +563,20 @@ isContraindicationForTherapy=0), the condition is ignored for evaluation.
 
 ##### Rules related to infections
 
-| Rule                                                    | When does a patient pass evaluation?                                                   | Note                                                                  |
-|---------------------------------------------------------|----------------------------------------------------------------------------------------|-----------------------------------------------------------------------|
-| HAS_ACTIVE_INFECTION                                    | Clinical status > hasActiveInfection = 1                                               | `WARN` in case patient uses medication of category like %Antibiotics% |
-| HAS_KNOWN_EBV_INFECTION                                 | Prior other conditions > name like %EBV% or %Epstein Barr%                             |                                                                       |
-| HAS_KNOWN_HEPATITIS_A_INFECTION                         | Prior other conditions > configured doid should be equal or be a child of DOID 12549   |                                                                       |
-| HAS_KNOWN_HEPATITIS_B_INFECTION                         | Prior other conditions > configured doid should be equal or be a child of DOID 2043    |                                                                       |
-| HAS_KNOWN_HEPATITIS_C_INFECTION                         | Prior other conditions > configured doid should be equal or be a child of DOID 1883    |                                                                       |
-| HAS_KNOWN_HIV_INFECTION                                 | Prior other conditions > configured doid should be equal or be a child of DOID 526     |                                                                       |
-| HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION                     | Prior other conditions > configured doid should be equal or be a child of DOID 0080827 |                                                                       |
-| HAS_KNOWN_TUBERCULOSIS_INFECTION                        | Prior other conditions > configured doid should be equal or be a child of DOID 399     |                                                                       |
-| MEETS_COVID_19_INFECTION_REQUIREMENTS                   | Currently resolves to `UNDETERMINED`                                                   |                                                                       |
-| HAS_RECEIVED_LIVE_VACCINE_WITHIN_X_MONTHS               | Currently resolves to `UNDETERMINED`                                                   |                                                                       |
-| HAS_RECEIVED_NON_LIVE_VACCINE_WITHIN_X_WEEKS            | Currently resolves to `UNDETERMINED`                                                   |                                                                       |
-| ADHERENCE_TO_PROTOCOL_REGARDING_ ATTENUATED_VACCINE_USE | Won't be evaluated                                                                     |                                                                       |
+| Rule                                                    | When does a patient pass evaluation?                                                   | Note                                                                         |
+|---------------------------------------------------------|----------------------------------------------------------------------------------------|------------------------------------------------------------------------------|
+| HAS_ACTIVE_INFECTION                                    | Clinical status > hasActiveInfection = 1                                               | `WARN` in case patient uses medication of category 'systemic antimicrobials' |
+| HAS_KNOWN_EBV_INFECTION                                 | Prior other conditions > name like %EBV% or %Epstein Barr%                             |                                                                              |
+| HAS_KNOWN_HEPATITIS_A_INFECTION                         | Prior other conditions > configured doid should be equal or be a child of DOID 12549   |                                                                              |
+| HAS_KNOWN_HEPATITIS_B_INFECTION                         | Prior other conditions > configured doid should be equal or be a child of DOID 2043    |                                                                              |
+| HAS_KNOWN_HEPATITIS_C_INFECTION                         | Prior other conditions > configured doid should be equal or be a child of DOID 1883    |                                                                              |
+| HAS_KNOWN_HIV_INFECTION                                 | Prior other conditions > configured doid should be equal or be a child of DOID 526     |                                                                              |
+| HAS_KNOWN_CYTOMEGALOVIRUS_INFECTION                     | Prior other conditions > configured doid should be equal or be a child of DOID 0080827 |                                                                              |
+| HAS_KNOWN_TUBERCULOSIS_INFECTION                        | Prior other conditions > configured doid should be equal or be a child of DOID 399     |                                                                              |
+| MEETS_COVID_19_INFECTION_REQUIREMENTS                   | Currently resolves to `UNDETERMINED`                                                   |                                                                              |
+| HAS_RECEIVED_LIVE_VACCINE_WITHIN_X_MONTHS               | Currently resolves to `UNDETERMINED`                                                   |                                                                              |
+| HAS_RECEIVED_NON_LIVE_VACCINE_WITHIN_X_WEEKS            | Currently resolves to `UNDETERMINED`                                                   |                                                                              |
+| ADHERENCE_TO_PROTOCOL_REGARDING_ ATTENUATED_VACCINE_USE | Won't be evaluated                                                                     |                                                                              |
 
 ##### Rules related to current medication
 
@@ -622,7 +622,11 @@ Immunosuppressants ("L04") <br>
 Other antianemic preparations ("B03X") <br>
 Platelet aggregation inhibitors ("B01AC") <br>
 RANKL targeting agents ("M05BX04") <br>
-Systemic antibiotics ("A07A", "G01AA", "R02AB", "L01D", "J01", "J02" or "J04") <br>
+Systemic antibiotics ("A07A", "G01AA", "R02AB", "J01") <br>
+Systemic antimicrobials = systemicAntibiotics + systemicAntimycobacterials + systemicAntimycotics + systemicAntivirals <br>
+Systemic antimycobacterials ("J04") <br>
+Systemic antimycotics ("J02") <br>
+Systemic antivirals ("J05") <br>
 Systemic corticosteroids ("H02" or "M01BA") <br>
 
 ##### Rules related to washout period
