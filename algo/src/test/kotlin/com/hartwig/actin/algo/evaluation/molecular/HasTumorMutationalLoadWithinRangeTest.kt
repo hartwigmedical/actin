@@ -10,7 +10,7 @@ class HasTumorMutationalLoadWithinRangeTest {
     fun canEvaluate() {
         val function = HasTumorMutationalLoadWithinRange(140, null)
         val function2 = HasTumorMutationalLoadWithinRange(140, 280)
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withTumorMutationalLoad(null)))
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withTumorMutationalLoad(null)))
         assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withTumorMutationalLoad(200)))
         assertMolecularEvaluation(EvaluationResult.PASS, function2.evaluate(MolecularTestFactory.withTumorMutationalLoad(200)))
         assertMolecularEvaluation(EvaluationResult.PASS, function2.evaluate(MolecularTestFactory.withTumorMutationalLoad(280)))
