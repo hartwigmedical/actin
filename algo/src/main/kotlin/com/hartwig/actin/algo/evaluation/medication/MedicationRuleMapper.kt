@@ -26,9 +26,11 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_ANY_CYP to getsAnyCypInhibitingOrInducingMedication(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X to getsCYPXInhibitingOrInducingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_CYP_X to getsCYPSubstrateMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_MEDICATION_INDUCING_PGP to getsPGPInducingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_PGP to getsPGPInhibitingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_PGP to getsPGPInhibitingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_PGP to getsPGPSubstrateMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_MEDICATION_INDUCING_BCRP to getsBCRPInducingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_BCRP to getsBCRPInhibitingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_BCRP to getsBCRPSubstrateMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_OATP1B3 to getsOATP1B3SubstrateMedicationCreator(),
@@ -107,6 +109,10 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         }
     }
 
+    private fun getsPGPInducingMedicationCreator(): FunctionCreator {
+        return { CurrentlyGetsPGPInducingMedication() }
+    }
+
     private fun getsPGPInhibitingMedicationCreator(): FunctionCreator {
         return { CurrentlyGetsPGPInhibitingMedication() }
     }
@@ -117,6 +123,10 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun getsBCRPInhibitingMedicationCreator(): FunctionCreator {
         return { CurrentlyGetsBCRPInhibitingMedication() }
+    }
+
+    private fun getsBCRPInducingMedicationCreator(): FunctionCreator {
+        return { CurrentlyGetsBCRPInducingMedication() }
     }
 
     private fun getsBCRPSubstrateMedicationCreator(): FunctionCreator {
