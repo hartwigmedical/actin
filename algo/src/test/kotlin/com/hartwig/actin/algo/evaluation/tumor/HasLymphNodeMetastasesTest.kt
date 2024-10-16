@@ -9,7 +9,7 @@ class HasLymphNodeMetastasesTest {
     private val function: HasLymphNodeMetastases = HasLymphNodeMetastases()
 
     @Test
-    fun `should Be Undetermined When Has Lymph Node Lesions Is Null`() {
+    fun `Should be undetermined when unknown if has lymph node lesions`() {
         val undetermined = function.evaluate(TumorTestFactory.withLymphNodeLesions(null, null))
         assertEvaluation(EvaluationResult.UNDETERMINED, undetermined)
         assertThat(undetermined.undeterminedSpecificMessages).contains("Data regarding presence of lymph node metastases is missing")
