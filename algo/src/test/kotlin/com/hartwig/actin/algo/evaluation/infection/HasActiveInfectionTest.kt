@@ -18,7 +18,7 @@ class HasActiveInfectionTest {
         AtcTestFactory.createProperAtcTree(),
         referenceDate
     )
-    private val systemicAntibioticAtc = "J01"
+    private val systemicAntimicrobialAtc = "J01"
 
     @Test
     fun `Should pass if patient has active infection`(){
@@ -31,21 +31,21 @@ class HasActiveInfectionTest {
     }
 
     @Test
-    fun `Should warn if infection status unknown but patient uses antibiotics`(){
+    fun `Should warn if infection status unknown but patient uses antimicrobials`(){
         assertEvaluation(
-            EvaluationResult.WARN, function.evaluate(withInfectionStatusAndAtc(null, systemicAntibioticAtc, referenceDate.minusDays(1)))
+            EvaluationResult.WARN, function.evaluate(withInfectionStatusAndAtc(null, systemicAntimicrobialAtc, referenceDate.minusDays(1)))
         )
     }
 
     @Test
-    fun `Should warn if infection status set to false but patient uses antibiotics`(){
+    fun `Should warn if infection status set to false but patient uses antimicrobials`(){
         assertEvaluation(
-            EvaluationResult.WARN, function.evaluate(withInfectionStatusAndAtc(false, systemicAntibioticAtc, referenceDate.minusDays(1)))
+            EvaluationResult.WARN, function.evaluate(withInfectionStatusAndAtc(false, systemicAntimicrobialAtc, referenceDate.minusDays(1)))
         )
     }
 
     @Test
-    fun `Should evaluate to undetermined if infection status is unknown and patient does not use any antibiotics`(){
+    fun `Should evaluate to undetermined if infection status is unknown and patient does not use any antimicrobials`(){
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withInfectionStatus(null)))
     }
 
