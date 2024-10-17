@@ -2,18 +2,85 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.PriorIHCTest
 import com.hartwig.actin.datamodel.molecular.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
+import com.hartwig.actin.molecular.filter.MolecularTestFilter
 import java.time.LocalDate
 
-class HasFusionInGene(private val gene: String, maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
+private val IHC_FUSION_GENES = setOf("ALK", "ROS1")
 
+class HasFusionInGene(private val gene: String, maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
+    private val molecularTestFilter = MolecularTestFilter(maxTestAge)
     override fun genes() = listOf(gene)
 
-    override fun evaluate(test: MolecularTest): Evaluation {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val recentMolecularTests = molecularTestFilter.apply(record.molecularHistory.molecularTests)
+
+        if (gene !in IHC_FUSION_GENES) {
+            if (recentMolecularTests.isEmpty()) {
+                return EvaluationFactory.undetermined(
+                    "No molecular data",
+                    "No molecular data"
+                )
+            }
+
+            if (recentMolecularTests.none { it.testsGene(gene) }) {
+                return EvaluationFactory.undetermined(
+                    "Gene $gene not tested in molecular data",
+                    "Gene $gene not tested"
+                )
+            }
+        }
+
+        val molecularEvaluations =
+            recentMolecularTests.map { MolecularEvaluation(it, evaluateMolecularTest(it)) }
+
+        return molecularEvaluations
+            .takeIf { it.isNotEmpty() }
+            ?.let { MolecularEvaluation.combine(it) }
+            ?: evaluateIHC(record.priorIHCTests)
+            ?: EvaluationFactory.undetermined(
+                "Insufficient molecular data",
+                "Insufficient molecular data"
+            )
+    }
+
+    private fun evaluateIHC(priorIHCTests: List<PriorIHCTest>): Evaluation? {
+        if (gene !in IHC_FUSION_GENES) {
+            return null
+        }
+
+        val positiveIHC = priorIHCTests.any { it.test == "IHC" && it.item == gene && it.scoreText == "Positive" }
+        val negativeIHC = priorIHCTests.any() { it.test == "IHC" && it.item == gene && it.scoreText == "Negative" }
+
+        return when (positiveIHC to negativeIHC) {
+            true to false -> EvaluationFactory.pass(
+                "Fusion(s) detected from IHC in gene $gene",
+                "Fusion(s) detected in gene $gene",
+                inclusionEvents = setOf("IHC Positive")
+            )
+
+            false to true -> EvaluationFactory.fail(
+                "No fusion detected from IHC in gene $gene",
+                "No fusion in gene $gene"
+            )
+
+            true to true -> EvaluationFactory.warn(
+                "Conflicting fusion evidence from IHC for $gene ",
+                "Conflicting fusion for $gene",
+                inclusionEvents = setOf("IHC Positive", "IHC Negative")
+            )
+
+            else -> null
+        }
+    }
+
+    private fun evaluateMolecularTest(test: MolecularTest): Evaluation {
         val matchingFusions: MutableSet<String> = mutableSetOf()
         val fusionsWithNoEffect: MutableSet<String> = mutableSetOf()
         val fusionsWithNoHighDriverLikelihoodWithGainOfFunction: MutableSet<String> = mutableSetOf()
