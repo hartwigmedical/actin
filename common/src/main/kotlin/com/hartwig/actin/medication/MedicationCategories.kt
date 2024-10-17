@@ -4,9 +4,11 @@ import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 
-private val systemicAntibiotics = setOf("A07A", "G01AA", "R02AB", "J01", "J04")
-private val systemicAntimycotics = setOf("J02", "J04")
+private val systemicAntibiotics = setOf("A07A", "G01AA", "R02AB", "J01")
+private val systemicAntimycobacterials = setOf("J04")
+private val systemicAntimycotics = setOf("J02")
 private val systemicAntivirals = setOf("J05")
+private val systemicAntimicrobials = systemicAntibiotics + systemicAntimycobacterials + systemicAntimycotics + systemicAntivirals
 
 class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel>>, private val atcTree: AtcTree) {
 
@@ -77,7 +79,7 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
                     "Platelet aggregation inhibitors" to convertToAtcLevel(setOf("B01AC"), atcTree),
                     "RANKL targeting agents" to convertToAtcLevel(setOf("M05BX04"), atcTree),
                     "Systemic antibiotics" to convertToAtcLevel(systemicAntibiotics, atcTree),
-                    "Systemic antimicrobials" to convertToAtcLevel(systemicAntibiotics + systemicAntimycotics + systemicAntivirals, atcTree),
+                    "Systemic antimicrobials" to convertToAtcLevel(systemicAntimicrobials, atcTree),
                     "Systemic antimycotics" to convertToAtcLevel(systemicAntimycotics, atcTree),
                     "Systemic antivirals" to convertToAtcLevel(systemicAntivirals, atcTree),
                     "Systemic corticosteroids" to convertToAtcLevel(setOf("H02", "M01BA"), atcTree),
