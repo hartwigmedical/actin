@@ -85,16 +85,16 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     private fun hasPrimaryTumorBelongsToDoidTermsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val doidTermToMatch = functionInputResolver().createManyDoidTermsInput(function)
-            val doidTermResolved = doidTermToMatch.mapNotNull { doidModel().resolveDoidForTerm(it) }
-            PrimaryTumorLocationBelongsToDoid(doidModel(), doidTermResolved, null)
+            val doidTermsResolved = doidTermToMatch.mapNotNull { doidModel().resolveDoidForTerm(it) }.toSet()
+            PrimaryTumorLocationBelongsToDoid(doidModel(), doidTermsResolved, null)
         }
     }
 
     private fun hasPrimaryTumorBelongsToDoidTermsDistalSubLocationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val doidTermToMatch = functionInputResolver().createManyDoidTermsInput(function)
-            val doidTermResolved = doidTermToMatch.mapNotNull { doidModel().resolveDoidForTerm(it) }
-            PrimaryTumorLocationBelongsToDoid(doidModel(), doidTermResolved, "distal")
+            val doidTermsResolved = doidTermToMatch.mapNotNull { doidModel().resolveDoidForTerm(it) }.toSet()
+            PrimaryTumorLocationBelongsToDoid(doidModel(), doidTermsResolved, "distal")
         }
     }
 

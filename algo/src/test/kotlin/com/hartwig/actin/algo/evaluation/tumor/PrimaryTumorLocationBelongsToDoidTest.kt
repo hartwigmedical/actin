@@ -17,12 +17,12 @@ private const val CHILD_DOID_2 = "400"
 private const val SUB_LOCATION = "specific"
 
 class PrimaryTumorLocationBelongsToDoidTest {
-    private val subLocationFunction = PrimaryTumorLocationBelongsToDoid(simpleDoidModel, listOf(CHILD_DOID_1, CHILD_DOID_2), SUB_LOCATION)
+    private val subLocationFunction = PrimaryTumorLocationBelongsToDoid(simpleDoidModel, setOf(CHILD_DOID_1, CHILD_DOID_2), SUB_LOCATION)
 
     @Test
     fun `Should evaluate whether tumor doid matches target`() {
-        assertResultsForFunction(PrimaryTumorLocationBelongsToDoid(simpleDoidModel, listOf(PARENT_DOID_1, PARENT_DOID_2), null), true)
-        assertResultsForFunction(PrimaryTumorLocationBelongsToDoid(simpleDoidModel, listOf(CHILD_DOID_1, CHILD_DOID_2), null), false)
+        assertResultsForFunction(PrimaryTumorLocationBelongsToDoid(simpleDoidModel, setOf(PARENT_DOID_1, PARENT_DOID_2), null), true)
+        assertResultsForFunction(PrimaryTumorLocationBelongsToDoid(simpleDoidModel, setOf(CHILD_DOID_1, CHILD_DOID_2), null), false)
     }
 
     @Test
@@ -38,7 +38,7 @@ class PrimaryTumorLocationBelongsToDoidTest {
             stomachLymphoma to stomachCancer, stomachCancer to cancer
         )
         val doidModel: DoidModel = TestDoidModelFactory.createWithMainCancerTypeAndChildToParentMap(stomachCancer, childToParentMap)
-        val function = PrimaryTumorLocationBelongsToDoid(doidModel, listOf(stomachCarcinoma, esophagusCancer), null)
+        val function = PrimaryTumorLocationBelongsToDoid(doidModel, setOf(stomachCarcinoma, esophagusCancer), null)
         assertResultForDoid(EvaluationResult.FAIL, function, "something else")
         assertResultForDoid(EvaluationResult.FAIL, function, cancer)
         assertResultForDoid(EvaluationResult.FAIL, function, stomachLymphoma)
@@ -54,7 +54,7 @@ class PrimaryTumorLocationBelongsToDoidTest {
         val mapping = AdenoSquamousMapping(adenoSquamousDoid = "1", squamousDoid = "2", adenoDoid = "3")
         val config = TestDoidManualConfigFactory.createWithOneAdenoSquamousMapping(mapping)
         val doidModel = TestDoidModelFactory.createWithDoidManualConfig(config)
-        val function = PrimaryTumorLocationBelongsToDoid(doidModel, listOf("2", "5"), null)
+        val function = PrimaryTumorLocationBelongsToDoid(doidModel, setOf("2", "5"), null)
         assertResultForDoid(EvaluationResult.FAIL, function, "4")
         assertResultForDoid(EvaluationResult.WARN, function, "1")
         assertResultForDoid(EvaluationResult.PASS, function, "2")
@@ -84,16 +84,9 @@ class PrimaryTumorLocationBelongsToDoidTest {
 
     @Test
     fun `Should show correct fail message`() {
-        val function = PrimaryTumorLocationBelongsToDoid(simpleDoidModel, listOf(CHILD_DOID_1, CHILD_DOID_2), null)
+        val function = PrimaryTumorLocationBelongsToDoid(simpleDoidModel, setOf(CHILD_DOID_1, CHILD_DOID_2), null)
         assertThat(
-            function.evaluate(
-                TumorTestFactory.withDoids(
-                    setOf(
-                        "50",
-                        "250"
-                    )
-                )
-            ).failSpecificMessages
+            function.evaluate(TumorTestFactory.withDoids(setOf("50", "250"))).failSpecificMessages
         ).contains("Patient has no child term 1 or child term 2")
     }
 

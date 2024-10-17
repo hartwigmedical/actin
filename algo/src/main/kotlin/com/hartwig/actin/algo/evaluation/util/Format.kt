@@ -37,7 +37,7 @@ object Format {
         return if (stringList.size < 2) {
             concat(stringList)
         } else {
-            stringList.dropLast(1).joinToString(", ") + SEPARATOR_OR + stringList.last()
+            listOf(stringList.dropLast(1).joinToString(", "), stringList.last()).joinToString(SEPARATOR_OR)
         }
     }
 
