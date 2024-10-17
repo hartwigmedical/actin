@@ -4,7 +4,7 @@ import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.MedicationStatus
 import java.time.LocalDate
 
-class MedicationStatusInterpreterOnEvaluationDate(private val evaluationDate: LocalDate, private val todayDate: LocalDate?) :
+class MedicationStatusInterpreterOnEvaluationDate(private val evaluationDate: LocalDate, private val referenceDate: LocalDate?) :
     MedicationStatusInterpreter {
 
     override fun interpret(medication: Medication): MedicationStatusInterpretation {
@@ -26,14 +26,14 @@ class MedicationStatusInterpreterOnEvaluationDate(private val evaluationDate: Lo
                 return when {
                     startIsBeforeEvaluation && stopIsBeforeEvaluation -> MedicationStatusInterpretation.STOPPED
                     startIsBeforeEvaluation -> {
-                        if (todayDate == null && medication.status == MedicationStatus.ON_HOLD) {
+                        if (referenceDate == null && medication.status == MedicationStatus.ON_HOLD) {
                             MedicationStatusInterpretation.STOPPED
                         } else {
                             MedicationStatusInterpretation.ACTIVE
                         }
                     }
 
-                    startDate.isAfter(todayDate ?: evaluationDate) -> {
+                    startDate.isAfter(referenceDate ?: evaluationDate) -> {
                         if (medication.status == MedicationStatus.ON_HOLD) {
                             MedicationStatusInterpretation.STOPPED
                         } else {

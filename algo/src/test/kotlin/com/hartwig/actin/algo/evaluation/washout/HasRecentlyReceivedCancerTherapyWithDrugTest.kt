@@ -118,7 +118,7 @@ class HasRecentlyReceivedCancerTherapyWithDrugTest {
     }
 
     @Test
-    fun `Should be undetermined with treatment history entry with drug with correct name but without stopdate `() {
+    fun `Should be undetermined with treatment history entry with drug with correct name but without date `() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(

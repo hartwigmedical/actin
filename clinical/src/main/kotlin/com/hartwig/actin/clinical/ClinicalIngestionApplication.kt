@@ -62,7 +62,7 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
             curationDatabaseContext,
             atcModel,
             doidModel,
-                treatmentDatabase
+            treatmentDatabase
         )
         val clinicalIngestionAdapter =
             ClinicalIngestionFeedAdapter(
