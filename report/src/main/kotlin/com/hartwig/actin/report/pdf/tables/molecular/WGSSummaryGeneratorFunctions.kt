@@ -60,8 +60,10 @@ object WGSSummaryGeneratorFunctions {
                     )
                 )
             }
-            table.addCell(Cells.createKey("Potentially actionable events with medium/low driver:"))
-            table.addCell(potentiallyActionableEventsCell(summarizer.actionableEventsThatAreNotKeyDrivers()))
+            if (summarizer.actionableEventsThatAreNotKeyDrivers().isNotEmpty() || !isShort) {
+                table.addCell(Cells.createKey("Potentially actionable events with medium/low driver:"))
+                table.addCell(potentiallyActionableEventsCell(summarizer.actionableEventsThatAreNotKeyDrivers()))
+            }
         } else {
             table.addCell(
                 Cells.createSpanningContent(
@@ -150,17 +152,17 @@ object WGSSummaryGeneratorFunctions {
         return Cells.create(paragraph)
     }
 
-    private fun potentiallyActionableEventsCell(events: List<String>): Cell {
+    fun potentiallyActionableEventsCell(events: List<String>): Cell {
         if (events.isEmpty()) return Cells.createValue(Formats.VALUE_NONE)
 
-        val paragraph = Paragraph()
-        events.forEachIndexed { index, event ->
-            paragraph.add(Text(event).addStyle(Styles.tableHighlightStyle()))
-            paragraph.add(Text(" (dubious quality)").addStyle(Styles.tableNoticeStyle()))
-            if (index < events.size - 1) {
-                paragraph.add(Text(", ").addStyle(Styles.tableHighlightStyle()))
-            }
-        }
+        val eventText = events.flatMap { event ->
+            listOf(
+                Text(event).addStyle(Styles.tableHighlightStyle()),
+                Text(" (dubious quality)").addStyle(Styles.tableNoticeStyle()),
+                Text(", ").addStyle(Styles.tableHighlightStyle()),
+            )
+        }.dropLast(1)
+        val paragraph = Paragraph().addAll(eventText)
 
         return Cells.create(paragraph)
     }
