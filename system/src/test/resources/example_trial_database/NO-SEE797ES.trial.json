@@ -1,0 +1,93 @@
+{
+  "identification": {
+    "trialId": "METC 03",
+    "open": true,
+    "acronym": "NO-SEE797ES",
+    "title": "Phase I trial for development of NO-SEE797ES, a specific inhibitor for EGFR with C797 mutations but not C797S in solid tumors",
+    "nctId": "NCT00000003",
+    "phase": "1"
+  },
+  "generalEligibility": [
+    {
+      "references": [
+        {
+          "id": "I-01",
+          "text": "Patient is ≥18 years of age."
+        }
+      ],
+      "function": {
+        "rule": "IS_AT_LEAST_X_YEARS_OLD",
+        "parameters": [
+          "18"
+        ]
+      }
+    },
+    {
+      "references": [
+        {
+          "id": "I-02",
+          "text": "Monotherapy is indicated for the treatment of adults with advanced/metastatic solid tumors."
+        }
+      ],
+      "function": {
+        "rule": "OR",
+        "parameters": [
+          {
+            "rule": "HAS_LOCALLY_ADVANCED_CANCER",
+            "parameters": []
+          },
+          {
+            "rule": "HAS_METASTATIC_CANCER",
+            "parameters": []
+          }
+        ]
+      }
+    },
+    {
+      "references": [
+        {
+          "id": "I-03",
+          "text": "Tumors should contain EGFR C797 but not EGFR C797S mutation."
+        }
+      ],
+      "function": {
+        "rule": "AND",
+        "parameters": [
+          {
+            "rule": "MUTATION_IN_GENE_X_IN_ANY_CODONS_Y",
+            "parameters": [
+              "EGFR",
+              "C797"
+            ]
+          },
+          {
+            "rule": "NOT",
+            "parameters": [
+              {
+                "rule": "MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y",
+                "parameters": [
+                  "EGFR",
+                  "C797S"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "cohorts": [
+    {
+      "metadata": {
+        "cohortId": "A",
+        "evaluable": true,
+        "open": true,
+        "slotsAvailable": true,
+        "blacklist": false,
+        "description": "Dose escalation - monotherapy"
+      },
+      "eligibility": [
+      ]
+    }
+  ]
+}
