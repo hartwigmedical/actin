@@ -19,11 +19,6 @@ class TrialStatusDatabaseReader(private val trialStatusEntryReader: TrialStatusE
             unmappedCohortIds = readUnmappedCohorts(basePath + UNMAPPED_COHORTS_TSV),
             studiesNotInTrialStatusDatabase = readStudiesNotInTrialStatusDatabaseStudies(basePath + STUDIES_NOT_IN_TRIAL_STATUS_DATABASE_TSV)
         )
-
-        LOGGER.info("Evaluating usage of trial status database configuration")
-        val trialStatusDatabaseEvaluator = TrialStatusDatabaseEvaluator(trialStatusDatabase)
-        trialStatusDatabaseEvaluator.evaluateDatabaseConfiguration()
-
         return trialStatusDatabase
     }
 
