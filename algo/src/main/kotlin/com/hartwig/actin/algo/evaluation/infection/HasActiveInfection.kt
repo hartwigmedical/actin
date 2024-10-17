@@ -32,8 +32,8 @@ class HasActiveInfection(private val atcTree: AtcTree, private val referenceDate
 
             currentlyUsesAntimicrobials -> {
                 EvaluationFactory.warn(
-                    "Patient uses antimicrobials medication which might indicate an active infection",
-                    "Possible active infection (antimicrobials medication usage)"
+                    "Patient uses antimicrobials which might indicate an active infection",
+                    "Possible active infection (antimicrobials usage)"
                 )
             }
 
