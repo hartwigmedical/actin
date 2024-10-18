@@ -62,7 +62,7 @@ class HasFusionInGene(private val gene: String, maxTestAge: LocalDate? = null) :
             true to false -> EvaluationFactory.pass(
                 "Fusion(s) detected from IHC in gene $gene",
                 "Fusion(s) detected in gene $gene",
-                inclusionEvents = setOf("IHC Positive")
+                inclusionEvents = setOf("$gene Fusion IHC Positive")
             )
 
             false to true -> EvaluationFactory.fail(
@@ -73,7 +73,7 @@ class HasFusionInGene(private val gene: String, maxTestAge: LocalDate? = null) :
             true to true -> EvaluationFactory.warn(
                 "Conflicting fusion evidence from IHC for $gene ",
                 "Conflicting fusion for $gene",
-                inclusionEvents = setOf("IHC Positive", "IHC Negative")
+                inclusionEvents = setOf("$gene Fusion IHC Positive", "$gene Fusion IHC Negative")
             )
 
             else -> null
