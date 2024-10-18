@@ -2,12 +2,13 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.TumorDetails
 import org.junit.Test
 
 class HasSpecificMetastasesOnlyTest {
 
-    private val hasLiverMetastasesOnly = HasSpecificMetastasesOnly({ it.hasLiverLesions() }, "liver")
-    private val hasBoneMetastasesOnly = HasSpecificMetastasesOnly({ it.hasBoneLesions() }, "bone")
+    private val hasLiverMetastasesOnly = HasSpecificMetastasesOnly(TumorDetails::hasConfirmedOrSuspectedLiverLesions, "liver")
+    private val hasBoneMetastasesOnly = HasSpecificMetastasesOnly(TumorDetails::hasConfirmedOrSuspectedBoneLesions, "bone")
 
     @Test
     fun `Should pass when patient has liver metastases only`() {

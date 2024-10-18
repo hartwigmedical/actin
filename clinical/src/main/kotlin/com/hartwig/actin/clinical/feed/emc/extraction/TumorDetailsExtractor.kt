@@ -36,8 +36,10 @@ class TumorDetailsExtractor(
                 lesionLocationCuration.find(it), patientId, CurationCategory.LESION_LOCATION, it, "lesion location", true
             )
         }
-        val lesionLocationConfigMap =
-            ((curatedOtherLesions ?: CurationResponse()) + (curatedBiopsyLocation ?: CurationResponse())).configs.groupBy { it.category }
+
+        val lesionLocationConfigMap = listOf(curatedOtherLesions, curatedBiopsyLocation).mapNotNull { it?.configs }
+            .flatten()
+            .groupBy { it.category }
 
         val (primaryTumorDetails, tumorExtractionResult) = curateTumorDetails(
             patientId,
@@ -152,10 +154,7 @@ class TumorDetailsExtractor(
         otherLesionsConfig: Set<LesionLocationConfig>?,
         suspected: Boolean? = null
     ): List<String>? {
-        if (otherLesionsConfig == null) {
-            return null
-        }
-        val curatedLesions = otherLesionsConfig.filter { config ->
+        return otherLesionsConfig?.filter { config ->
             // We only want to include lesions from the other lesions in actual other lesions
             // if it does not override an explicit lesion location
             val hasRealOtherLesion = config.category == null || config.category == LesionLocationCategory.LYMPH_NODE
@@ -166,9 +165,7 @@ class TumorDetailsExtractor(
                 hasRealOtherLesion && config.location.isNotEmpty() && (config.suspected != true)
             }
         }
-            .map(LesionLocationConfig::location)
-
-        return curatedLesions
+            ?.map(LesionLocationConfig::location)
     }
 
     fun curateOtherLesions(patientId: String, otherLesions: List<String>?):

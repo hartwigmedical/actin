@@ -126,15 +126,15 @@ class SummaryChapter(private val report: Report) : ReportChapter {
 
         fun lesions(tumor: TumorDetails): String {
             val categorizedLesions = listOf(
-                "CNS" to tumor.hasCnsLesions(),
-                "Brain" to (tumor.primaryTumorLocation == "Brain" || tumor.primaryTumorType == "Glioma" || tumor.hasBrainLesions() == true),
-                "Liver" to tumor.hasLiverLesions(),
-                "Bone" to tumor.hasBoneLesions(),
-                "Lung" to tumor.hasLungLesions()
+                "CNS" to tumor.hasConfirmedOrSuspectedCnsLesions(),
+                "Brain" to (tumor.primaryTumorLocation == "Brain" || tumor.primaryTumorType == "Glioma" || tumor.hasConfirmedOrSuspectedBrainLesions() == true),
+                "Liver" to tumor.hasConfirmedOrSuspectedLiverLesions(),
+                "Bone" to tumor.hasConfirmedOrSuspectedBoneLesions(),
+                "Lung" to tumor.hasConfirmedOrSuspectedLungLesions()
             ).filter { it.second == true }.map { it.first }
 
             val lesions =
-                listOfNotNull(categorizedLesions, tumor.otherLesions(), listOfNotNull(tumor.biopsyLocation)).flatten()
+                listOfNotNull(categorizedLesions, tumor.otherConfirmedOrSuspectedLesions(), listOfNotNull(tumor.biopsyLocation)).flatten()
                     .sorted().distinctBy { it.uppercase() }
 
             val (lymphNodeLesions, otherLesions) = lesions.partition { it.lowercase().startsWith("lymph node") }

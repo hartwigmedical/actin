@@ -12,8 +12,8 @@ class HasLesionsCloseToOrInvolvingAirway(private val doidModel: DoidModel) : Eva
         val expandedDoidSet = DoidEvaluationFunctions.createFullExpandedDoidTree(doidModel, record.tumor.doids)
         val isMajorAirwayCancer = MAJOR_AIRWAYS_CANCER.any { it in expandedDoidSet }
         val isLungCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_CANCER_DOID)
-        val hasLungLesions = record.tumor.hasLungLesions()
-        val hasOtherLesions = record.tumor.otherLesions()?.isNotEmpty()
+        val hasLungLesions = record.tumor.hasConfirmedOrSuspectedLungLesions()
+        val hasOtherLesions = record.tumor.otherConfirmedOrSuspectedLesions()?.isNotEmpty()
         val noLesionsCloseToAirway = !isMajorAirwayCancer && !(hasOtherLesions ?: true) && !(hasLungLesions ?: true)
 
         return when {

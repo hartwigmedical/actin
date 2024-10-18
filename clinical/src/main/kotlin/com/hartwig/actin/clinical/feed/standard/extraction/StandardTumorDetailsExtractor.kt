@@ -91,7 +91,7 @@ class StandardTumorDetailsExtractor(
         hasActiveCnsLesions = hasLesions(lesions, LesionLocationCategory.CNS, true),
         otherLesions = lesions.filter { lesion -> lesion.ignore.not() }
             .filter { lesion -> lesion.category == null || lesion.category == LesionLocationCategory.LYMPH_NODE }
-            .filter { lesion -> lesion.suspected == null || lesion.suspected == false }
+            .filter { lesion -> lesion.suspected != true }
             .map { lesion -> lesion.location },
         otherSuspectedLesions = lesions.filter { lesion -> lesion.ignore.not() }
             .filter { lesion -> lesion.category == null || lesion.category == LesionLocationCategory.LYMPH_NODE }
@@ -107,10 +107,7 @@ class StandardTumorDetailsExtractor(
     }
 
 
-    private fun hasSuspectedLesions(
-        lesions: List<LesionLocationConfig>,
-        location: LesionLocationCategory
-    ): Boolean? {
+    private fun hasSuspectedLesions(lesions: List<LesionLocationConfig>, location: LesionLocationCategory): Boolean? {
         return lesions.any { it.category == location && it.suspected == true }.takeIf { it }
     }
 
@@ -128,7 +125,7 @@ class StandardTumorDetailsExtractor(
     }
 
     private fun extractFromLesionList(patientRecord: ProvidedPatientRecord): List<CurationResponse<LesionLocationConfig>> {
-        val categories = LesionLocationCategory.entries.map { e -> e.name.uppercase() }
+        val categories = LesionLocationCategory.entries.toSet().map { e -> e.name.uppercase() }
         return patientRecord.tumorDetails.lesions?.map {
             val locationAsEnumName = it.location.uppercase().replace(" ", "_")
             if (categories.contains(locationAsEnumName)) {

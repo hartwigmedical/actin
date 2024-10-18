@@ -14,7 +14,7 @@ internal object TumorTypeEvaluationFunctions {
 
     fun hasPeritonealMetastases(tumor: TumorDetails): Boolean? {
         val targetTerms = listOf("peritoneum", "peritoneal", "intraperitoneum", "intraperitoneal")
-        return tumor.otherLesions()?.any { lesion ->
+        return tumor.otherConfirmedOrSuspectedLesions()?.any { lesion ->
             val lowercaseLesion = lesion.lowercase()
             targetTerms.any(lowercaseLesion::startsWith) || targetTerms.any { lowercaseLesion.contains(" $it") }
         }

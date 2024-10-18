@@ -42,31 +42,31 @@ data class TumorDetails(
         Until then, suspected lesions are to be considered lesions and the functions below
         were created to minimize the changes needed to keep backwards compatibility.
      */
-    fun hasBrainLesions(): Boolean? {
+    fun hasConfirmedOrSuspectedBrainLesions(): Boolean? {
         return combine(hasBrainLesions, hasSuspectedBrainLesions)
     }
 
-    fun hasCnsLesions(): Boolean? {
+    fun hasConfirmedOrSuspectedCnsLesions(): Boolean? {
         return combine(hasCnsLesions, hasSuspectedCnsLesions)
     }
 
-    fun hasBoneLesions(): Boolean? {
+    fun hasConfirmedOrSuspectedBoneLesions(): Boolean? {
         return combine(hasBoneLesions, hasSuspectedBoneLesions)
     }
 
-    fun hasLiverLesions(): Boolean? {
+    fun hasConfirmedOrSuspectedLiverLesions(): Boolean? {
         return combine(hasLiverLesions, hasSuspectedLiverLesions)
     }
 
-    fun hasLungLesions(): Boolean? {
+    fun hasConfirmedOrSuspectedLungLesions(): Boolean? {
         return combine(hasLungLesions, hasSuspectedLungLesions)
     }
 
-    fun hasLymphNodeLesions(): Boolean? {
+    fun hasConfirmedOrSuspectedLymphNodeLesions(): Boolean? {
         return combine(hasLymphNodeLesions, hasSuspectedLymphNodeLesions)
     }
 
-    fun otherLesions(): List<String>? {
+    fun otherConfirmedOrSuspectedLesions(): List<String>? {
         return otherLesions?.let { otherLesions + (otherSuspectedLesions ?: emptyList()) } ?: otherSuspectedLesions
     }
 

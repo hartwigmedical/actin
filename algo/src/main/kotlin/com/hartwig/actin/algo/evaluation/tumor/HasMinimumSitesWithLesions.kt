@@ -12,17 +12,18 @@ class HasMinimumSitesWithLesions(private val minimumSitesWithLesions: Int) : Eva
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDetails = record.tumor
         val distinctCategorizedLesionLocations = listOf(
-            tumorDetails.hasBoneLesions(),
-            tumorDetails.hasBrainLesions(),
-            tumorDetails.hasCnsLesions(),
-            tumorDetails.hasLiverLesions(),
-            tumorDetails.hasLungLesions(),
-            tumorDetails.hasLymphNodeLesions()
+            tumorDetails.hasConfirmedOrSuspectedBoneLesions(),
+            tumorDetails.hasConfirmedOrSuspectedBrainLesions(),
+            tumorDetails.hasConfirmedOrSuspectedCnsLesions(),
+            tumorDetails.hasConfirmedOrSuspectedLiverLesions(),
+            tumorDetails.hasConfirmedOrSuspectedLungLesions(),
+            tumorDetails.hasConfirmedOrSuspectedLymphNodeLesions()
         ).count { it == true }
 
-        val otherLesionCount = ((tumorDetails.otherLesions() ?: emptyList()) + listOfNotNull(tumorDetails.biopsyLocation))
-            .filterNot { it.lowercase().contains("lymph") && true == tumorDetails.hasLymphNodeLesions() }
-            .count()
+        val otherLesionCount =
+            ((tumorDetails.otherConfirmedOrSuspectedLesions() ?: emptyList()) + listOfNotNull(tumorDetails.biopsyLocation))
+                .filterNot { it.lowercase().contains("lymph") && true == tumorDetails.hasConfirmedOrSuspectedLymphNodeLesions() }
+                .count()
 
         val sitesWithLesionsLowerBound = distinctCategorizedLesionLocations + otherLesionCount.coerceAtMost(1)
         val sitesWithLesionsUpperBound = distinctCategorizedLesionLocations + otherLesionCount + 1

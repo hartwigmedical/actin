@@ -14,10 +14,9 @@ class HasSpecificMetastasesOnly(private val hasSpecificMetastases: (TumorDetails
         val hasSpecificMetastases = hasSpecificMetastases.invoke(tumorDetails) ?: return EvaluationFactory.undetermined(
             "Data regarding presence of $typeOfMetastases metastases is missing", "Missing $typeOfMetastases metastasis data"
         )
-        val otherLesions = tumorDetails.otherLesions()
-        val otherMetastasesAccessors = metastasesAccessors.filterKeys { it != this.typeOfMetastases }.values
-        if (hasSpecificMetastases && tumorDetails.otherLesions() == null
-            && otherMetastasesAccessors.all { it.invoke(tumorDetails) == null }
+        val otherLesions = tumorDetails.otherConfirmedOrSuspectedLesions()
+        val otherMetastasesAccessors = metastasesAccessors - this.hasSpecificMetastases
+        if (hasSpecificMetastases && otherLesions == null && otherMetastasesAccessors.all { it.invoke(tumorDetails) == null }
         ) {
             return EvaluationFactory.warn(
                 "Patient has $typeOfMetastases lesions but data regarding other lesion locations is missing, so unknown if patient has only $typeOfMetastases metastases",
@@ -38,13 +37,13 @@ class HasSpecificMetastasesOnly(private val hasSpecificMetastases: (TumorDetails
     }
 
     companion object {
-        val metastasesAccessors = mapOf<String, (TumorDetails) -> Boolean?>(
-            "bone" to { it.hasBoneLesions() },
-            "liver" to { it.hasLiverLesions() },
-            "cns" to { it.hasCnsLesions() },
-            "brain" to { it.hasBrainLesions() },
-            "lung" to { it.hasLungLesions() },
-            "lymphnode" to { it.hasLymphNodeLesions() }
+        val metastasesAccessors = setOf(
+            TumorDetails::hasConfirmedOrSuspectedBrainLesions,
+            TumorDetails::hasConfirmedOrSuspectedLiverLesions,
+            TumorDetails::hasConfirmedOrSuspectedCnsLesions,
+            TumorDetails::hasConfirmedOrSuspectedBoneLesions,
+            TumorDetails::hasConfirmedOrSuspectedLungLesions,
+            TumorDetails::hasConfirmedOrSuspectedLymphNodeLesions
         )
     }
 }
