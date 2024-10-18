@@ -5,21 +5,21 @@ import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationResponse
-import com.hartwig.actin.clinical.curation.config.SurgeryNameConfig
+import com.hartwig.actin.clinical.curation.config.SurgeryConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.emc.surgery.SurgeryEntry
 import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.SurgeryStatus
 import org.apache.logging.log4j.LogManager
 
-class SurgeryExtractor(private val surgeryNameCuration: CurationDatabase<SurgeryNameConfig>) {
+class SurgeryExtractor(private val surgeryNameCuration: CurationDatabase<SurgeryConfig>) {
 
     fun extract(patientId: String, entries: List<SurgeryEntry>): ExtractionResult<List<Surgery>> {
         return entries.map { entry: SurgeryEntry ->
             val curationResponse = CurationResponse.createFromConfigs(
                 surgeryNameCuration.find(entry.codeCodingDisplayOriginal),
                 patientId,
-                CurationCategory.SURGERY_NAME,
+                CurationCategory.SURGERY,
                 entry.codeCodingDisplayOriginal,
                 "surgery"
             )

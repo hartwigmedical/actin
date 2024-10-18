@@ -32,8 +32,8 @@ import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfigFactory
 import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
 import com.hartwig.actin.clinical.curation.config.SequencingTestConfigFactory
-import com.hartwig.actin.clinical.curation.config.SurgeryNameConfig
-import com.hartwig.actin.clinical.curation.config.SurgeryNameConfigFactory
+import com.hartwig.actin.clinical.curation.config.SurgeryConfig
+import com.hartwig.actin.clinical.curation.config.SurgeryConfigFactory
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityConfigFactory
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
@@ -72,7 +72,7 @@ data class CurationDatabaseContext(
     val toxicityTranslation: TranslationDatabase<String>,
     val bloodTransfusionTranslation: TranslationDatabase<String>,
     val dosageUnitTranslation: TranslationDatabase<String>,
-    val surgeryNameCuration: CurationDatabase<SurgeryNameConfig>,
+    val surgeryNameCuration: CurationDatabase<SurgeryConfig>,
 ) {
     fun allUnusedConfig(extractionEvaluations: List<CurationExtractionEvaluation>): Set<UnusedCurationConfig> =
         setOf(
@@ -264,9 +264,9 @@ data class CurationDatabaseContext(
             ) { it.laboratoryEvaluatedInputs },
             surgeryNameCuration = CurationDatabaseReader.read(
                 curationDir,
-                CurationDatabaseReader.SURGERY_NAME_TSV,
-                SurgeryNameConfigFactory(),
-                CurationCategory.SURGERY_NAME
+                CurationDatabaseReader.SURGERY_TSV,
+                SurgeryConfigFactory(),
+                CurationCategory.SURGERY
             ) { it.surgeryTranslationEvaluatedInputs }
         )
     }

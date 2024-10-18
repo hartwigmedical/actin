@@ -168,7 +168,7 @@ class StandardDataIngestionTest {
                 )
             ),
             CurationResult(
-                categoryName = "Surgery Name",
+                categoryName = "Surgery",
                 requirements = listOf(
                     CurationRequirement(
                         feedInput = "<CRYO Skelet door Radioloog",

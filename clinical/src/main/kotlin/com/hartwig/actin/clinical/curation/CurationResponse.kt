@@ -105,7 +105,7 @@ data class CurationResponse<T>(
                 CurationCategory.INTOLERANCE -> CurationExtractionEvaluation(intoleranceEvaluatedInputs = evaluatedInputs)
                 CurationCategory.CYP_INTERACTIONS -> CurationExtractionEvaluation()
                 CurationCategory.QT_PROLONGATING -> CurationExtractionEvaluation()
-                CurationCategory.SURGERY_NAME -> CurationExtractionEvaluation(surgeryTranslationEvaluatedInputs = evaluatedInputs)
+                CurationCategory.SURGERY -> CurationExtractionEvaluation(surgeryTranslationEvaluatedInputs = evaluatedInputs)
                 else -> throw IllegalStateException("Unsupported curation category for config lookup: $curationCategory")
             }
             return CurationResponse(
