@@ -102,9 +102,20 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
     fun createHRStatusString(): String? {
         val homologousRepairScore = molecular.characteristics.homologousRepairScore
         molecular.characteristics.isHomologousRepairDeficient ?: return null
-        val statusInterpretation = if (molecular.characteristics.isHomologousRepairDeficient!!) "Deficient" else "Proficient"
+        val isDeficient = molecular.characteristics.isHomologousRepairDeficient
+        val statusInterpretation = if (isDeficient == true) "Deficient" else "Proficient"
         val scoreInterpretation = homologousRepairScore?.let { " (${Formats.twoDigitNumber(it)})" } ?: ""
-        return statusInterpretation + scoreInterpretation
+        val hrdType = molecular.characteristics.hrdType
+        val brcaValue = when {
+            hrdType?.contains("BRCA1") == true -> molecular.characteristics.brca1Value
+            hrdType?.contains("BRCA2") == true -> molecular.characteristics.brca2Value
+            else -> ""
+        }
+        val typeInterpretation = if (isDeficient == true) {
+            hrdType?.let { hrdType + brcaValue } ?: ""
+        } else ""
+
+        return statusInterpretation + scoreInterpretation + typeInterpretation
     }
 
     private fun createHRStatusCell(): Cell {

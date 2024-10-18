@@ -20,6 +20,9 @@ internal class CharacteristicsExtractor() {
         val isMicrosatelliteUnstable = isMSI(purple.characteristics().microsatelliteStatus())
         val homologousRepairScore = record.chord()?.hrdValue()
         val isHomologousRepairDeficient = record.chord()?.let { isHRD(it.hrStatus()) }
+        val brca1Value = record.chord()?.brca1Value()
+        val brca2Value = record.chord()?.brca2Value()
+        val hrdType = record.chord()?.hrdType()
         val hasHighTumorMutationalBurden = hasHighStatus(purple.characteristics().tumorMutationalBurdenStatus())
         val hasHighTumorMutationalLoad = hasHighStatus(purple.characteristics().tumorMutationalLoadStatus())
 
@@ -31,6 +34,9 @@ internal class CharacteristicsExtractor() {
             microsatelliteEvidence = createNoEvidence(),
             homologousRepairScore = homologousRepairScore,
             isHomologousRepairDeficient = isHomologousRepairDeficient,
+            brca1Value = brca1Value,
+            brca2Value = brca2Value,
+            hrdType = hrdType,
             homologousRepairEvidence = createNoEvidence(),
             tumorMutationalBurden = purple.characteristics().tumorMutationalBurdenPerMb(),
             hasHighTumorMutationalBurden = hasHighTumorMutationalBurden,
