@@ -16,6 +16,7 @@ object EvaluatedCohortTestFactory {
             acronym = acronym,
             cohort = cohort,
             isPotentiallyEligible = isPotentiallyEligible,
+            missingGenesForSufficientEvaluation = false,
             isOpen = isOpen,
             hasSlotsAvailable = hasSlotsAvailable,
             molecularEvents = molecularEvents.toSet(),

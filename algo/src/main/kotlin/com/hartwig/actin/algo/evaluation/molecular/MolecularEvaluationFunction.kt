@@ -24,7 +24,8 @@ abstract class MolecularEvaluationFunction(maxTestAge: LocalDate? = null) : Eval
                 return EvaluationFactory.undetermined(
                     "Gene(s) ${genes().joinToString { it }} not tested in molecular data",
                     "Gene(s) ${genes().joinToString { it }} not tested"
-                )
+                ).copy(missingGenesForSufficientEvaluation = true)
+
             val testEvaluation =
                 recentMolecularTests.mapNotNull { evaluate(it)?.let { eval -> MolecularEvaluation(it, eval) } }
             if (testEvaluation.isNotEmpty()) {
