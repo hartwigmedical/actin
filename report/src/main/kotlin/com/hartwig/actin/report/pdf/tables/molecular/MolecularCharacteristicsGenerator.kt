@@ -100,19 +100,20 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
     }
 
     fun createHRStatusString(): String? {
-        val homologousRepairScore = molecular.characteristics.homologousRepairScore
-        molecular.characteristics.isHomologousRepairDeficient ?: return null
-        val isDeficient = molecular.characteristics.isHomologousRepairDeficient
+        val characteristics = molecular.characteristics
+        val homologousRepairScore = characteristics.homologousRepairScore
+        characteristics.isHomologousRepairDeficient ?: return null
+        val isDeficient = characteristics.isHomologousRepairDeficient
         val statusInterpretation = if (isDeficient == true) "Deficient" else "Proficient"
         val scoreInterpretation = homologousRepairScore?.let { " (${Formats.twoDigitNumber(it)})" } ?: ""
-        val hrdType = molecular.characteristics.hrdType
-        val brcaValue = when {
-            hrdType?.contains("BRCA1") == true -> molecular.characteristics.brca1Value
-            hrdType?.contains("BRCA2") == true -> molecular.characteristics.brca2Value
-            else -> ""
+        val hrdType = characteristics.hrdType
+        val (typeDisplay, brcaValueDisplay) = when {
+            hrdType?.contains("BRCA1") == true -> Pair("BRCA1-type", "BRCA1-value: ${characteristics.brca1Value}")
+            hrdType?.contains("BRCA2") == true -> Pair("BRCA2-type", "BRCA2-value: ${characteristics.brca2Value}")
+            else -> Pair("", "")
         }
         val typeInterpretation = if (isDeficient == true) {
-            hrdType?.let { hrdType + brcaValue } ?: ""
+            hrdType?.let { " - $typeDisplay ($brcaValueDisplay)" } ?: ""
         } else ""
 
         return statusInterpretation + scoreInterpretation + typeInterpretation
