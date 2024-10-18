@@ -56,12 +56,12 @@ class EligibleActinTrialsGenerator private constructor(
 
         fun forCohortsWithMissingGenes(
             cohorts: List<EvaluatedCohort>, source: String, width: Float
-        ): EligibleActinTrialsGenerator {
+        ): EligibleActinTrialsGenerator? {
             val recruitingAndEligibleCohorts = cohorts.filter {
                 it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable && it.missingGenesForSufficientEvaluation
             }
             val title = "Open $source trials for which additional genes need to be tested to evaluate eligibility"
-            return create(recruitingAndEligibleCohorts, title, width)
+            return if (recruitingAndEligibleCohorts.isNotEmpty()) create(recruitingAndEligibleCohorts, title, width) else null
         }
 
         private fun formatCountWithLabel(count: Int, word: String): String {
