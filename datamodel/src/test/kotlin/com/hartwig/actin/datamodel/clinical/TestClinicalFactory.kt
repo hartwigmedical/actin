@@ -300,17 +300,17 @@ object TestClinicalFactory {
         return listOf(
             PriorIHCTest(
                 item = "EGFR",
-                measure = "c.2240_2254del",
-                scoreText = null,
+                measure = null,
+                scoreText = "c.2240_2254del",
                 scoreValuePrefix = null,
                 scoreValue = null,
                 scoreValueUnit = null,
                 impliesPotentialIndeterminateStatus = false
             ),
             PriorIHCTest(
-                item = null,
-                measure = "GEEN mutaties aangetoond met behulp van het AVL Panel",
-                scoreText = null,
+                item = "Something",
+                measure = null,
+                scoreText = "GEEN mutaties aangetoond",
                 scoreValuePrefix = null,
                 scoreValue = null,
                 scoreValueUnit = null,
