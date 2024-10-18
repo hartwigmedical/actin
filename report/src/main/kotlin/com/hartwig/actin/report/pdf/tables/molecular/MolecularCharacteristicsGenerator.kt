@@ -33,8 +33,8 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
             createTMBStatusCell(),
             createMSStabilityCell(),
             createHRStatusCell(),
-            wgsMolecular?.let { Cells.createContent(createPeachSummaryForGene(it.pharmaco, PharmacoGene.DPYD)) },
-            wgsMolecular?.let { Cells.createContent(createPeachSummaryForGene(it.pharmaco, PharmacoGene.UGT1A1)) }
+            wgsMolecular?.let { Cells.createContent(createPeachSummaryForGene(it.pharmaco, PharmacoGene.DPYD)) } ?: Cells.createEmpty(),
+            wgsMolecular?.let { Cells.createContent(createPeachSummaryForGene(it.pharmaco, PharmacoGene.UGT1A1)) } ?: Cells.createEmpty()
         ).forEach { table.addCell(it) }
 
         return table
