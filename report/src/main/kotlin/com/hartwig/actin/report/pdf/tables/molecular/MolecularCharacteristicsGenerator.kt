@@ -25,7 +25,7 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
         val colWidth = width / 10
         val table = Tables.createFixedWidthCols(colWidth, colWidth, colWidth, colWidth, colWidth, colWidth * 2, colWidth * 2)
 
-        listOf("Purity", "TML Status", "TMB Status", "MS Stability", "HR Status").forEach(
+        listOf("Purity", "TML Status", "TMB Status", "MS Stability", "HR Status", "DPYD", "UGT1A1").forEach(
             Consumer { title: String -> table.addHeaderCell(Cells.createHeader(title)) })
         listOfNotNull(
             createPurityCell(molecular.characteristics.purity),
@@ -33,8 +33,8 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
             createTMBStatusCell(),
             createMSStabilityCell(),
             createHRStatusCell(),
-            wgsMolecular?.let { Cells.createContent(createPeachSummaryForGene(it.pharmaco, PharmacoGene.DPYD)) },
-            wgsMolecular?.let { Cells.createContent(createPeachSummaryForGene(it.pharmaco, PharmacoGene.UGT1A1)) }
+            wgsMolecular?.let { Cells.createContent(createPeachSummaryForGene(it.pharmaco, PharmacoGene.DPYD)) } ?: Cells.createEmpty(),
+            wgsMolecular?.let { Cells.createContent(createPeachSummaryForGene(it.pharmaco, PharmacoGene.UGT1A1)) } ?: Cells.createEmpty()
         ).forEach { table.addCell(it) }
 
         return table
