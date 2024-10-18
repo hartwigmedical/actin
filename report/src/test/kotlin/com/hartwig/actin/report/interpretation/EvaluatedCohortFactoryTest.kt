@@ -31,7 +31,7 @@ class EvaluatedCohortFactoryTest {
         assertThat(trial1cohortA.molecularEvents).isNotEmpty
         assertThat(trial1cohortA.molecularEvents).containsExactly("MSI")
         assertThat(trial1cohortA.isPotentiallyEligible).isTrue
-        assertThat(trial1cohortA.missingGenesForSufficientEvaluation).isFalse
+        assertThat(trial1cohortA.missingGenesForSufficientEvaluation).isEmpty()
         assertThat(trial1cohortA.isOpen).isTrue
         assertThat(trial1cohortA.hasSlotsAvailable).isFalse
         assertThat(trial1cohortA.warnings).isEmpty()
@@ -40,7 +40,7 @@ class EvaluatedCohortFactoryTest {
         val trial1cohortB = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort B")
         assertThat(trial1cohortB.molecularEvents).isEmpty()
         assertThat(trial1cohortB.isPotentiallyEligible).isTrue
-        assertThat(trial1cohortB.missingGenesForSufficientEvaluation).isFalse
+        assertThat(trial1cohortB.missingGenesForSufficientEvaluation).isEmpty()
         assertThat(trial1cohortB.isOpen).isTrue
         assertThat(trial1cohortB.hasSlotsAvailable).isTrue
         assertThat(trial1cohortB.warnings).isEmpty()
@@ -49,7 +49,7 @@ class EvaluatedCohortFactoryTest {
         val trial1cohortC = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort C")
         assertThat(trial1cohortC.molecularEvents).isEmpty()
         assertThat(trial1cohortC.isPotentiallyEligible).isFalse
-        assertThat(trial1cohortC.missingGenesForSufficientEvaluation).isFalse
+        assertThat(trial1cohortC.missingGenesForSufficientEvaluation).isEmpty()
         assertThat(trial1cohortC.isOpen).isFalse
         assertThat(trial1cohortC.hasSlotsAvailable).isFalse
         assertThat(trial1cohortC.warnings).isEmpty()
@@ -59,7 +59,7 @@ class EvaluatedCohortFactoryTest {
         assertThat(trial2cohortA.molecularEvents).isNotEmpty
         assertThat(trial2cohortA.molecularEvents).containsExactly("MSI")
         assertThat(trial2cohortA.isPotentiallyEligible).isTrue
-        assertThat(trial2cohortA.missingGenesForSufficientEvaluation).isFalse
+        assertThat(trial2cohortA.missingGenesForSufficientEvaluation).isEmpty()
         assertThat(trial2cohortA.isOpen).isTrue
         assertThat(trial2cohortA.hasSlotsAvailable).isFalse
         assertThat(trial2cohortA.warnings).isEmpty()
@@ -68,7 +68,7 @@ class EvaluatedCohortFactoryTest {
         val trial2cohortB = findByAcronymAndCohort(cohorts, "TEST-2", "Cohort B")
         assertThat(trial2cohortB.molecularEvents).isEmpty()
         assertThat(trial2cohortB.isPotentiallyEligible).isFalse
-        assertThat(trial2cohortB.missingGenesForSufficientEvaluation).isFalse
+        assertThat(trial2cohortB.missingGenesForSufficientEvaluation).isEmpty()
         assertThat(trial2cohortB.isOpen).isTrue
         assertThat(trial2cohortB.hasSlotsAvailable).isTrue
         assertThat(trial2cohortB.warnings).isEmpty()
@@ -105,11 +105,15 @@ class EvaluatedCohortFactoryTest {
     }
 
     @Test
-    fun `Should set missingGenesForSufficientEvaluation flag to true if this is true for any evaluation in cohort evaluations`() {
-        val cohortAEvaluation =
-            createEvaluation(EligibilityRule.ACTIVATING_MUTATION_IN_ANY_GENES_X, listOf("EGFR"), EvaluationResult.UNDETERMINED, true)
+    fun `Should correctly list missingGenesForSufficientEvaluation`() {
+        val cohortAEvaluation = createEvaluation(
+            EligibilityRule.ACTIVATING_MUTATION_IN_ANY_GENES_X,
+            listOf("EGFR", "ALK", "ROS1"),
+            EvaluationResult.UNDETERMINED,
+            listOf("EGFR", "ALK")
+        )
         val cohortBEvaluation =
-            createEvaluation(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, emptyList(), EvaluationResult.PASS, false)
+            createEvaluation(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, emptyList(), EvaluationResult.PASS, emptyList())
 
         val cohorts = listOf(
             CohortMatch(
@@ -143,8 +147,8 @@ class EvaluatedCohortFactoryTest {
         val evaluatedCohorts = create(treatmentMatch, false)
         val cohortA = findByAcronymAndCohort(evaluatedCohorts, "TEST-1", "Cohort A")
         val cohortB = findByAcronymAndCohort(evaluatedCohorts, "TEST-1", "Cohort B")
-        assertThat(cohortA.missingGenesForSufficientEvaluation).isTrue
-        assertThat(cohortB.missingGenesForSufficientEvaluation).isFalse
+        assertThat(cohortA.missingGenesForSufficientEvaluation).containsExactly("EGFR", "ALK")
+        assertThat(cohortB.missingGenesForSufficientEvaluation).isEmpty()
     }
 
     private fun findByAcronymAndCohort(
@@ -154,7 +158,7 @@ class EvaluatedCohortFactoryTest {
     }
 
     private fun createEvaluation(
-        eligibilityRule: EligibilityRule, parameters: List<Any>, result: EvaluationResult, missingGenesForEvaluation: Boolean
+        eligibilityRule: EligibilityRule, parameters: List<Any>, result: EvaluationResult, missingGenesForEvaluation: List<String>
     ): Map<Eligibility, Evaluation> {
         return mapOf(
             Eligibility(references = emptySet(), EligibilityFunction(eligibilityRule, parameters)) to Evaluation(

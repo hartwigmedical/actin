@@ -109,7 +109,7 @@ class MolecularEvaluationFunctionTest {
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedGeneralMessages).containsExactly("Gene(s) GENE not tested")
         assertThat(evaluation.undeterminedSpecificMessages).containsExactly("Gene(s) GENE not tested in molecular data")
-        assertThat(evaluation.missingGenesForSufficientEvaluation).isTrue
+        assertThat(evaluation.missingGenesForSufficientEvaluation).containsExactly("GENE")
     }
 
     @Test

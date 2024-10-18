@@ -4,6 +4,7 @@ import com.hartwig.actin.report.interpretation.EvaluatedCohort
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.trial.ActinTrialGeneratorFunctions.addTrialsToTable
 import com.hartwig.actin.report.pdf.util.Cells
+import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
@@ -11,6 +12,7 @@ import com.itextpdf.layout.element.Table
 class EligibleActinTrialsGenerator private constructor(
     private val cohorts: List<EvaluatedCohort>,
     private val title: String,
+    private val subTitle: String?,
     private val trialColWidth: Float,
     private val cohortColWidth: Float,
     private val molecularEventColWidth: Float,
@@ -22,6 +24,8 @@ class EligibleActinTrialsGenerator private constructor(
 
     override fun contents(): Table {
         val table = Tables.createFixedWidthCols(trialColWidth, cohortColWidth + molecularEventColWidth + checksColWidth)
+        subTitle?.let { table.addHeaderCell(it) }?.addStyle(Styles.tableSubTitleStyle())
+
         if (cohorts.isNotEmpty()) {
             table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader("Trial")))
             val headerSubTable = Tables.createFixedWidthCols(
@@ -51,17 +55,22 @@ class EligibleActinTrialsGenerator private constructor(
             } else "(0)"
             val title = "$source trials that are open and considered eligible $slotsText $cohortFromTrialsText"
 
-            return create(recruitingAndEligibleCohorts, title, width) to recruitingAndEligibleCohorts
+            return create(recruitingAndEligibleCohorts, title, null, width) to recruitingAndEligibleCohorts
         }
 
         fun forCohortsWithMissingGenes(
             cohorts: List<EvaluatedCohort>, source: String, width: Float
         ): EligibleActinTrialsGenerator? {
             val recruitingAndEligibleCohorts = cohorts.filter {
-                it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable && it.missingGenesForSufficientEvaluation
+                it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable && it.missingGenesForSufficientEvaluation.isNotEmpty()
             }
+
             val title = "Open $source trials for which additional genes need to be tested to evaluate eligibility"
-            return if (recruitingAndEligibleCohorts.isNotEmpty()) create(recruitingAndEligibleCohorts, title, width) else null
+            val subTitle = "Missing genes: ${
+                recruitingAndEligibleCohorts.flatMap(EvaluatedCohort::missingGenesForSufficientEvaluation).distinct().joinToString()
+            }"
+
+            return if (recruitingAndEligibleCohorts.isNotEmpty()) create(recruitingAndEligibleCohorts, title, subTitle, width) else null
         }
 
         private fun formatCountWithLabel(count: Int, word: String): String {
@@ -84,12 +93,13 @@ class EligibleActinTrialsGenerator private constructor(
                 if (enableExtendedMode) "" else "meet molecular requirements and ",
                 unavailableAndEligible.size
             )
-            return create(unavailableAndEligible, title, contentWidth)
+            return create(unavailableAndEligible, title, null, contentWidth)
         }
 
         private fun create(
             cohorts: List<EvaluatedCohort>,
             title: String,
+            subTitle: String?,
             width: Float
         ): EligibleActinTrialsGenerator {
             val trialColWidth = width / 9
@@ -99,6 +109,7 @@ class EligibleActinTrialsGenerator private constructor(
             return EligibleActinTrialsGenerator(
                 cohorts,
                 title,
+                subTitle,
                 trialColWidth,
                 cohortColWidth,
                 molecularColWidth,

@@ -8,7 +8,7 @@ data class EvaluatedCohort(
     val cohort: String?,
     val molecularEvents: Set<String>,
     val isPotentiallyEligible: Boolean,
-    val missingGenesForSufficientEvaluation: Boolean,
+    val missingGenesForSufficientEvaluation: List<String>,
     val isOpen: Boolean,
     val hasSlotsAvailable: Boolean,
     val warnings: Set<String>,
