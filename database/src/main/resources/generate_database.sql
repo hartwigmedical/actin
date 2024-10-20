@@ -181,7 +181,7 @@ DROP TABLE IF EXISTS `intolerance`;
 CREATE TABLE `intolerance`
 (   `id` int NOT NULL AUTO_INCREMENT,
     `patientId` varchar(50) NOT NULL,
-    `name` varchar(50) NOT NULL,
+    `name` varchar(100) NOT NULL,
     `doids` varchar(50) NOT NULL,
     `category` varchar(50) NOT NULL,
     `subcategories` varchar(100) NOT NULL,
