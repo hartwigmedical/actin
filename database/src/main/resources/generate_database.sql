@@ -63,7 +63,7 @@ CREATE TABLE `treatmentHistoryEntry`
     `startYear` int,
     `startMonth` int,
     `name` varchar(100) NOT NULL,
-    `synonyms` varchar(100) NOT NULL,
+    `synonyms` varchar(200) NOT NULL,
     `categories` varchar(100) NOT NULL,
     `drugs` varchar(500),
     `isSystemic` BOOLEAN NOT NULL,

@@ -2,13 +2,13 @@ package com.hartwig.actin.database.molecular
 
 import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.database.dao.DatabaseAccess
-import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import kotlin.system.exitProcess
 
 class MolecularLoaderApplication(private val config: MolecularLoaderConfig) {
 
@@ -17,16 +17,18 @@ class MolecularLoaderApplication(private val config: MolecularLoaderConfig) {
 
         LOGGER.info("Loading patient record from {}", config.patientJson)
         val patientRecord = PatientRecordJson.read(config.patientJson)
-        val record = requireNotNull(patientRecord.molecularHistory.latestOrangeMolecularRecord()) {
-            "No WGS record found in molecular history"
+
+        val molecularRecord = patientRecord.molecularHistory.latestOrangeMolecularRecord()
+        if (molecularRecord != null) {
+            val access: DatabaseAccess = DatabaseAccess.fromCredentials(config.dbUser, config.dbPass, config.dbUrl)
+
+            LOGGER.info("Writing molecular record for {}", molecularRecord.sampleId)
+            access.writeMolecularRecord(molecularRecord)
+
+            LOGGER.info("Done!")
+        } else {
+            LOGGER.warn("No WGS record found in molecular history. Skipping loading")
         }
-
-        val access: DatabaseAccess = DatabaseAccess.fromCredentials(config.dbUser, config.dbPass, config.dbUrl)
-
-        LOGGER.info("Writing molecular record for {}", record.sampleId)
-        access.writeMolecularRecord(record)
-
-        LOGGER.info("Done!")
     }
 
     companion object {
