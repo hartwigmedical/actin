@@ -27,7 +27,7 @@ class MolecularLoaderApplication(private val config: MolecularLoaderConfig) {
 
             LOGGER.info("Done!")
         } else {
-            LOGGER.warn("No WGS record found in molecular history. Skipping loading")
+            LOGGER.warn("No WGS record found in molecular history for ${patientRecord.patientId}")
         }
     }
 
