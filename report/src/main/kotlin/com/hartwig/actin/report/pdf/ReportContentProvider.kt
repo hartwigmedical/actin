@@ -155,6 +155,10 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             IneligibleActinTrialsGenerator.forClosedCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth)
                 .takeIf {
                     report.config.includeIneligibleTrialsInSummary
+                },
+            IneligibleActinTrialsGenerator.forNonEvaluatedCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth)
+                .takeIf {
+                    report.config.includeIneligibleTrialsInSummary
                 }
         )
     }

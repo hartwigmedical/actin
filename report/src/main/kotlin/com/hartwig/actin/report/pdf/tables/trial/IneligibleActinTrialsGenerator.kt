@@ -48,7 +48,7 @@ class IneligibleActinTrialsGenerator private constructor(
         fun forOpenCohorts(
             cohorts: List<EvaluatedCohort>, source: String, width: Float, enableExtendedMode: Boolean
         ): IneligibleActinTrialsGenerator {
-            val ineligibleCohorts = cohorts.filter { !it.isPotentiallyEligible && (it.isOpen || enableExtendedMode) }
+            val ineligibleCohorts = cohorts.filter { !it.isPotentiallyEligible && (it.isOpen || enableExtendedMode) && it.isEvaluable }
             val trialColWidth = width / 9
             val cohortColWidth = width / 4
             val molecularColWidth = width / 7
@@ -74,7 +74,8 @@ class IneligibleActinTrialsGenerator private constructor(
             source: String,
             width: Float,
         ): IneligibleActinTrialsGenerator {
-            val unavailableAndEligible = cohorts.filter { trial: EvaluatedCohort -> !trial.isPotentiallyEligible && !trial.isOpen }
+            val unavailableAndEligible =
+                cohorts.filter { trial: EvaluatedCohort -> !trial.isPotentiallyEligible && !trial.isOpen && trial.isEvaluable }
             val trialColWidth = width / 3
             val cohortColWidth = width * 2 / 3
             val molecularColWidth = width / 3
@@ -86,6 +87,31 @@ class IneligibleActinTrialsGenerator private constructor(
             )
             return IneligibleActinTrialsGenerator(
                 unavailableAndEligible,
+                title,
+                trialColWidth,
+                cohortColWidth,
+                molecularColWidth,
+                ineligibilityReasonColWidth
+            )
+        }
+
+        fun forNonEvaluatedCohorts(
+            cohorts: List<EvaluatedCohort>,
+            source: String,
+            width: Float,
+        ): IneligibleActinTrialsGenerator {
+            val notEvaluated = cohorts.filter { trial: EvaluatedCohort -> !trial.isEvaluable }
+            val trialColWidth = width / 3
+            val cohortColWidth = width * 2 / 3
+            val molecularColWidth = width / 3
+            val ineligibilityReasonColWidth = 0f
+            val title = String.format(
+                "%s trials and cohorts that are not evaluated (%s)",
+                source,
+                notEvaluated.size
+            )
+            return IneligibleActinTrialsGenerator(
+                notEvaluated,
                 title,
                 trialColWidth,
                 cohortColWidth,

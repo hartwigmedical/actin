@@ -13,14 +13,15 @@ object ActinTrialContentFunctions {
         val commonFeedback = findCommonMembersInCohorts(cohorts, feedbackFunction)
         val commonEvents = findCommonMembersInCohorts(cohorts, EvaluatedCohort::molecularEvents)
         val allEventsEmpty = cohorts.all { it.molecularEvents.isEmpty() }
+        val noFeedback = cohorts.all { feedbackFunction.invoke(it).isEmpty() }
         val prefix = if (commonFeedback.isEmpty() && commonEvents.isEmpty()) emptyList() else {
             val deEmphasizeContent = cohorts.all { !it.isOpen || !it.hasSlotsAvailable }
             listOf(
                 ContentDefinition(
                     listOf(
                         "Applies to all cohorts below",
-                        concat(commonEvents, allEventsEmpty && feedbackFunction.invoke(cohorts.first()).isNotEmpty()),
-                        concat(commonFeedback, feedbackFunction.invoke(cohorts.first()).isNotEmpty())
+                        concat(commonEvents, allEventsEmpty && !noFeedback),
+                        concat(commonFeedback, !noFeedback)
                     ), deEmphasizeContent
                 )
             )
@@ -32,7 +33,7 @@ object ActinTrialContentFunctions {
                     concat(cohort.molecularEvents - commonEvents, commonEvents.isEmpty() && !allEventsEmpty),
                     concat(
                         feedbackFunction.invoke(cohort) - commonFeedback,
-                        commonFeedback.isEmpty() && feedbackFunction.invoke(cohort).isNotEmpty()
+                        commonFeedback.isEmpty() && !noFeedback
                     )
                 ),
                 !cohort.isOpen || !cohort.hasSlotsAvailable

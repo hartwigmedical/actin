@@ -21,7 +21,7 @@ class TrialMatcher(private val evaluationFunctionFactory: EvaluationFunctionFact
         return trials.map { trial ->
             val trialEvaluations = evaluateEligibility(patient, trial.generalEligibility + warnIfPreviouslyParticipatedInSameTrial(trial))
             val passesAllTrialEvaluations = isPotentiallyEligible(trialEvaluations.values)
-            val cohortMatches = trial.cohorts.filter { it.metadata.evaluable }.map { cohort ->
+            val cohortMatches = trial.cohorts.map { cohort ->
                 val cohortEvaluations = evaluateEligibility(patient, cohort.eligibility)
                 CohortMatch(
                     metadata = cohort.metadata,

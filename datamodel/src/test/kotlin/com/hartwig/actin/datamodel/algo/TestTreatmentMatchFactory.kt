@@ -142,10 +142,10 @@ object TestTreatmentMatchFactory {
         )
     }
 
-    private fun createTestMetadata(cohortId: String, open: Boolean, slotsAvailable: Boolean): CohortMetadata {
+    private fun createTestMetadata(cohortId: String, evaluable: Boolean, open: Boolean, slotsAvailable: Boolean): CohortMetadata {
         return CohortMetadata(
             cohortId = cohortId,
-            evaluable = true,
+            evaluable = evaluable,
             open = open,
             slotsAvailable = slotsAvailable,
             blacklist = false,
@@ -156,17 +156,17 @@ object TestTreatmentMatchFactory {
     private fun createTestCohortsTrial1(): List<CohortMatch> {
         return listOf(
             CohortMatch(
-                metadata = createTestMetadata("A", true, false),
+                metadata = createTestMetadata("A", true, true, false),
                 isPotentiallyEligible = true,
                 evaluations = createTestCohortEvaluationsTrial1CohortA()
             ),
             CohortMatch(
-                metadata = createTestMetadata("B", true, true),
+                metadata = createTestMetadata("B", true, true, true),
                 isPotentiallyEligible = true,
                 evaluations = emptyMap()
             ),
             CohortMatch(
-                metadata = createTestMetadata("C", false, false),
+                metadata = createTestMetadata("C", true, false, false),
                 isPotentiallyEligible = false,
                 evaluations = createTestCohortEvaluationsTrial1CohortC()
             )
@@ -210,12 +210,12 @@ object TestTreatmentMatchFactory {
     private fun createTestCohortsTrial2(): List<CohortMatch> {
         return listOf(
             CohortMatch(
-                metadata = createTestMetadata("A", true, false),
+                metadata = createTestMetadata("A", true, true, false),
                 isPotentiallyEligible = true,
                 evaluations = createTestCohortEvaluationsTrial2CohortA(),
             ),
             CohortMatch(
-                metadata = createTestMetadata("B", true, true),
+                metadata = createTestMetadata("B", false, true, true),
                 isPotentiallyEligible = false,
                 evaluations = createTestCohortEvaluationsTrial2CohortB(),
             )
