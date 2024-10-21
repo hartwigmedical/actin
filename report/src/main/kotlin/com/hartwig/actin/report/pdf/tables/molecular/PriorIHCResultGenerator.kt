@@ -16,7 +16,7 @@ class PriorIHCResultGenerator(
     fun contents(): Table {
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
         if (patientRecord.priorIHCTests.isEmpty()) {
-            table.addCell(Cells.createValue("No prior IHC molecular tests"))
+            table.addCell(Cells.createSpanningValue("No prior IHC molecular tests", table))
         } else {
             val sortedInterpretation = interpreter.interpret(patientRecord)
             for (priorMolecularTestInterpretation in sortedInterpretation) {
