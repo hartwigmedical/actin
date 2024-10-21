@@ -22,9 +22,9 @@ class HasOvarianBorderlineTumor(private val doidModel: DoidModel) : EvaluationFu
         val isOvarianCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.OVARIAN_CANCER_DOID)
         val hasBorderlineType = TumorTypeEvaluationFunctions.hasTumorWithType(record.tumor, OVARIAN_BORDERLINE_TYPES)
         return if (isOvarianCancer && hasBorderlineType) {
-            EvaluationFactory.pass("Patient has ovarian borderline tumor", "Tumor type")
+            EvaluationFactory.pass("Patient has ovarian borderline tumor", "Has ovarian borderline tumor")
         } else
-            EvaluationFactory.fail("Patient does not have ovarian borderline tumor", "Tumor type")
+            EvaluationFactory.fail("Patient does not have ovarian borderline tumor", "No ovarian borderline tumor")
     }
 
     companion object {

@@ -12,8 +12,8 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         return mapOf(
             EligibilityRule.HAS_SOLID_PRIMARY_TUMOR to hasSolidPrimaryTumorCreator(),
             EligibilityRule.HAS_SOLID_PRIMARY_TUMOR_INCLUDING_LYMPHOMA to hasSolidPrimaryTumorCreatorIncludingLymphomaCreator(),
-            EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_TERM_X to hasPrimaryTumorBelongsToDoidTermCreator(),
-            EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_TERM_X_DISTAL_SUB_LOCATION to hasPrimaryTumorBelongsToDoidTermDistalSubLocationCreator(),
+            EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_ANY_DOID_TERM_X to hasPrimaryTumorBelongsToDoidTermsCreator(),
+            EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_ANY_DOID_TERM_X_DISTAL_SUB_LOCATION to hasPrimaryTumorBelongsToDoidTermsDistalSubLocationCreator(),
             EligibilityRule.HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X to hasCancerOfUnknownPrimaryCreator(),
             EligibilityRule.HAS_CANCER_WITH_NEUROENDOCRINE_COMPONENT to hasCancerWithNeuroendocrineComponentCreator(),
             EligibilityRule.HAS_CANCER_WITH_SMALL_CELL_COMPONENT to hasCancerWithSmallCellComponentCreator(),
@@ -82,17 +82,19 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         return { HasSolidPrimaryTumorIncludingLymphoma(doidModel()) }
     }
 
-    private fun hasPrimaryTumorBelongsToDoidTermCreator(): FunctionCreator {
+    private fun hasPrimaryTumorBelongsToDoidTermsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val doidTermToMatch = functionInputResolver().createOneDoidTermInput(function)
-            PrimaryTumorLocationBelongsToDoid(doidModel(), doidModel().resolveDoidForTerm(doidTermToMatch)!!, null)
+            val doidTermToMatch = functionInputResolver().createManyDoidTermsInput(function)
+            val doidTermsResolved = doidTermToMatch.mapNotNull { doidModel().resolveDoidForTerm(it) }.toSet()
+            PrimaryTumorLocationBelongsToDoid(doidModel(), doidTermsResolved, null)
         }
     }
 
-    private fun hasPrimaryTumorBelongsToDoidTermDistalSubLocationCreator(): FunctionCreator {
+    private fun hasPrimaryTumorBelongsToDoidTermsDistalSubLocationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val doidTermToMatch = functionInputResolver().createOneDoidTermInput(function)
-            PrimaryTumorLocationBelongsToDoid(doidModel(), doidModel().resolveDoidForTerm(doidTermToMatch)!!, "distal")
+            val doidTermToMatch = functionInputResolver().createManyDoidTermsInput(function)
+            val doidTermsResolved = doidTermToMatch.mapNotNull { doidModel().resolveDoidForTerm(it) }.toSet()
+            PrimaryTumorLocationBelongsToDoid(doidModel(), doidTermsResolved, "distal")
         }
     }
 

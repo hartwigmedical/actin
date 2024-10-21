@@ -22,9 +22,12 @@ class HasOvarianCancerWithMucinousComponent(private val doidModel: DoidModel) : 
         )
         val hasSpecificOvarianMucinousCombination = DoidEvaluationFunctions.isOfDoidCombinationType(tumorDoids, OVARIAN_MUCINOUS_DOID_SET)
         return if (isOvarianMucinousType || hasSpecificOvarianMucinousCombination) {
-            EvaluationFactory.pass("Patient has ovarian cancer with mucinous component", "Tumor type")
+            EvaluationFactory.pass("Patient has ovarian cancer with mucinous component", "Has ovarian cancer with mucinous component")
         } else
-            EvaluationFactory.fail("Patient does not have ovarian cancer with mucinous component", "Tumor type")
+            EvaluationFactory.fail(
+                "Patient does not have ovarian cancer with mucinous component",
+                "No ovarian cancer with mucinous component"
+            )
     }
 
     companion object {

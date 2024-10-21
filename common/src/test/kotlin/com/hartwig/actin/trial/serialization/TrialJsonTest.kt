@@ -83,7 +83,7 @@ class TrialJsonTest {
         val functionC2 = findBaseFunction(cohortC.eligibility, EligibilityRule.OR)
         assertThat(functionC2.parameters).hasSize(2)
 
-        val subFunction1 = findSubFunction(functionC2.parameters, EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_TERM_X)
+        val subFunction1 = findSubFunction(functionC2.parameters, EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_ANY_DOID_TERM_X)
         assertThat(subFunction1.parameters).hasSize(1)
         assertThat(subFunction1.parameters).contains("cancer term")
 
