@@ -14,6 +14,7 @@ import io.mockk.every
 import io.mockk.mockk
 import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 
 
@@ -126,5 +127,18 @@ class StandardSurgeryExtractorTest {
             )
         )
         assertThat(result.evaluation.warnings).isEmpty()
+    }
+
+    @Test
+    fun `Should throw when surgery is curated and surgery has no end date and neither does the curation `() {
+        val input = "surgery in prior condition"
+        every { surgeryNameCuration.find(input) } returns setOf(CURATED_SURGERY_CONFIG.copy(endDate = null))
+        assertThatThrownBy {
+            extractor.extract(
+                PROVIDED_EHR_PATIENT_RECORD.copy(
+                    priorOtherConditions = listOf(ProvidedPriorOtherCondition(input))
+                )
+            )
+        }.isInstanceOf(IllegalStateException::class.java)
     }
 }
