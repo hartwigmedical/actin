@@ -19,7 +19,6 @@ import com.hartwig.actin.trial.sort.CriterionReferenceComparator
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.AreaBreak
-import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.properties.AreaBreakType
@@ -220,43 +219,43 @@ class TrialMatchingDetailsChapter(private val report: Report, override val inclu
                     when (evaluation.result) {
                         EvaluationResult.PASS, EvaluationResult.NOT_EVALUATED -> {
                             for (passMessage in evaluation.passSpecificMessages) {
-                                evalTable.addCell(createMessageCell(passMessage))
+                                evalTable.addCell(Cells.create(Paragraph(Formats.insertSpacesAroundPlus(passMessage))))
                             }
                         }
 
                         EvaluationResult.WARN -> {
                             for (warnMessage in evaluation.warnSpecificMessages) {
-                                evalTable.addCell(createMessageCell(warnMessage))
+                                evalTable.addCell(Cells.create(Paragraph(Formats.insertSpacesAroundPlus(warnMessage))))
                             }
                             if (evaluation.undeterminedSpecificMessages.isNotEmpty()) {
                                 evalTable.addCell(createEvaluationResult(EvaluationResult.UNDETERMINED))
                                 for (undeterminedMessage in evaluation.undeterminedSpecificMessages) {
-                                    evalTable.addCell(createMessageCell(undeterminedMessage))
+                                    evalTable.addCell(Cells.create(Paragraph(Formats.insertSpacesAroundPlus(undeterminedMessage))))
                                 }
                             }
                         }
 
                         EvaluationResult.UNDETERMINED -> {
                             for (undeterminedMessage in evaluation.undeterminedSpecificMessages) {
-                                evalTable.addCell(createMessageCell(undeterminedMessage))
+                                evalTable.addCell(Cells.create(Paragraph(Formats.insertSpacesAroundPlus(undeterminedMessage))))
                             }
                         }
 
                         EvaluationResult.FAIL -> {
                             for (failMessage in evaluation.failSpecificMessages) {
-                                evalTable.addCell(createMessageCell(failMessage))
+                                evalTable.addCell(Cells.create(Paragraph(Formats.insertSpacesAroundPlus(failMessage))))
                             }
                             if (evaluation.recoverable) {
                                 if (evaluation.warnSpecificMessages.isNotEmpty()) {
                                     evalTable.addCell(createEvaluationResult(EvaluationResult.WARN))
                                     for (warnMessage in evaluation.warnSpecificMessages) {
-                                        evalTable.addCell(createMessageCell(warnMessage))
+                                        evalTable.addCell(Cells.create(Paragraph(Formats.insertSpacesAroundPlus(warnMessage))))
                                     }
                                 }
                                 if (evaluation.undeterminedSpecificMessages.isNotEmpty()) {
                                     evalTable.addCell(createEvaluationResult(EvaluationResult.UNDETERMINED))
                                     for (undeterminedMessage in evaluation.undeterminedSpecificMessages) {
-                                        evalTable.addCell(createMessageCell(undeterminedMessage))
+                                        evalTable.addCell(Cells.create(Paragraph(Formats.insertSpacesAroundPlus(undeterminedMessage))))
                                     }
                                 }
                             }
@@ -267,18 +266,6 @@ class TrialMatchingDetailsChapter(private val report: Report, override val inclu
                     table.addCell(createContent(evalTable))
                 }
             }
-        }
-
-        private fun createMessageCell(message: String): Cell {
-            return Cells.create(Paragraph(insertSpacesAroundPlus(message)))
-        }
-
-        fun insertSpacesAroundPlus(input: String): String {
-            // Regular expression to match "+" surrounded by non-whitespace characters
-            val regex = "(\\S)\\+(\\S)".toRegex()
-
-            // Replace matched instances with spaces around "+"
-            return input.replace(regex, "$1 + $2")
         }
 
         private fun blankLine(): Paragraph {
