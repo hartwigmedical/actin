@@ -27,7 +27,7 @@ class HasSolidPrimaryTumorIncludingLymphoma(private val doidModel: DoidModel) : 
         )
         return when (result) {
             EvaluationResult.FAIL -> {
-                EvaluationFactory.fail("Patient has non-solid primary tumor", "Tumor type")
+                EvaluationFactory.fail("Patient has non-solid primary tumor", "No solid primary tumor")
             }
 
             EvaluationResult.WARN -> {
@@ -38,7 +38,10 @@ class HasSolidPrimaryTumorIncludingLymphoma(private val doidModel: DoidModel) : 
             }
 
             EvaluationResult.PASS -> {
-                EvaluationFactory.pass("Patient has solid primary tumor (including lymphoma)", "Tumor type")
+                EvaluationFactory.pass(
+                    "Patient has solid primary tumor (including lymphoma)",
+                    "Has solid primary tumor (including lymphoma)"
+                )
             }
 
             else -> {

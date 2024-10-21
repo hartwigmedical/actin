@@ -26,7 +26,7 @@ class HasCancerOfUnknownPrimary(private val doidModel: DoidModel, private val ca
         val hasOrganSystemCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.ORGAN_SYSTEM_CANCER_DOID)
         if (hasCorrectCUPCategory && !hasOrganSystemCancer) {
             return if (isCUP) {
-                EvaluationFactory.pass("Patient has cancer of unknown primary (CUP) of type " + categoryOfCUP.display(), "Tumor type")
+                EvaluationFactory.pass("Patient has cancer of unknown primary (CUP) of type " + categoryOfCUP.display(), "Has CUP")
             } else {
                 EvaluationFactory.warn(
                     "Patient has cancer of type " + categoryOfCUP.display() +
@@ -47,7 +47,7 @@ class HasCancerOfUnknownPrimary(private val doidModel: DoidModel, private val ca
                     "Undetermined if CUP tumor type"
                 )
             }
-        } else EvaluationFactory.fail("Patient has no cancer of unknown primary (CUP) of type " + categoryOfCUP.display(), "Tumor type")
+        } else EvaluationFactory.fail("Patient has no cancer of unknown primary (CUP) of type " + categoryOfCUP.display(), "No CUP")
     }
 
     companion object {
