@@ -1,10 +1,10 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.molecular.Fusion
-import com.hartwig.actin.datamodel.molecular.GeneAlteration
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.Variant
+import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats.VALUE_NOT_AVAILABLE
@@ -38,7 +38,8 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
         for (driver in allDrivers) {
             table.addCell(Cells.createContent("${driver.event}\n(Tier ${driver.evidenceTier()})"))
             when (driver) {
-                is GeneAlteration -> table.addCell(Cells.createContent(LongitudinalDriverInterpretation.interpret(driver)))
+                is Variant -> table.addCell(Cells.createContent(LongitudinalDriverInterpretation.interpret(driver)))
+                is CopyNumber -> table.addCell(Cells.createContent(LongitudinalDriverInterpretation.interpret(driver)))
                 is Fusion -> table.addCell(Cells.createContent(LongitudinalDriverInterpretation.interpret(driver)))
                 else -> throw IllegalArgumentException("Unexpected driver type: ${driver::class.simpleName}")
             }
