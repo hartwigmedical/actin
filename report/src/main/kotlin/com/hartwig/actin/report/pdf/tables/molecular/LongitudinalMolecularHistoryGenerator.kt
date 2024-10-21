@@ -17,13 +17,13 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
     }
 
     override fun contents(): Table {
-        val sortedAndFilteredTests = molecularHistory.molecularTests.sortedBy { it.date }
+        val sortedAndFilteredTests =
+            molecularHistory.molecularTests.sortedBy { it.date }
+                .associateWith { DriverTableFunctions.allDrivers(it).associate { d -> d.event to (d as? Variant)?.variantAlleleFrequency } }
         val testsWithDrivers = DriverTableFunctions.allDrivers(molecularHistory)
 
-        val testsByDriverEvent = testsWithDrivers.flatMap { (test, drivers) -> drivers.map { d -> d.event to test } }
-            .groupBy({ (event, _) -> event }, { (_, test) -> test })
-
-        val allDrivers = testsWithDrivers.flatMap { it.second }.toSet()
+        val allDrivers =
+            testsWithDrivers.flatMap { it.second.map { d -> (d as? Variant)?.copy(variantAlleleFrequency = null) ?: d } }.toSet()
         val columnCount = 3 + sortedAndFilteredTests.size
         val table = Table(columnCount).setWidth(width)
 
@@ -32,7 +32,7 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
         table.addHeaderCell(Cells.createHeader("Driver likelihood"))
 
         for (test in sortedAndFilteredTests) {
-            table.addHeaderCell(Cells.createHeader(testDisplay(test)))
+            table.addHeaderCell(Cells.createHeader(testDisplay(test.key)))
         }
 
         for (driver in allDrivers) {
@@ -45,18 +45,19 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
             }
             table.addCell(Cells.createContent(driver.driverLikelihood?.toString() ?: VALUE_NOT_AVAILABLE))
             for (test in sortedAndFilteredTests) {
-                if (testsByDriverEvent[driver.event]?.contains(test) == true) {
-                    table.addCell(Cells.createContent("Detected${(driver as? Variant)?.let { it.variantAlleleFrequency?.let { v -> " (VAF ${v}%)" } ?: "" } ?: ""}"))
+                if (test.value.containsKey(driver.event)) {
+                    val vafInTest = test.value[driver.event]
+                    table.addCell(Cells.createContent("Detected${vafInTest?.let { v -> " (VAF ${v}%)" } ?: ""}"))
                 } else {
                     table.addCell(Cells.createContent("Not detected"))
                 }
             }
         }
-        characteristicRow(table, sortedAndFilteredTests, "TMB") {
+        characteristicRow(table, sortedAndFilteredTests.keys, "TMB") {
             it.characteristics.tumorMutationalBurden?.toString() ?: ""
         }
         characteristicRow(
-            table, sortedAndFilteredTests, "MSI"
+            table, sortedAndFilteredTests.keys, "MSI"
         ) {
             msiText(it)
         }
@@ -70,12 +71,12 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
     }
 
     private fun characteristicRow(
-        table: Table, sortedAndFilteredTests: List<MolecularTest>, name: String, contentProvider: (MolecularTest) -> String
+        table: Table, sortedAndFilteredTests: Set<MolecularTest>, name: String, contentProvider: (MolecularTest) -> String
     ) {
         table.addCell(Cells.createContent(name))
         table.addCell(Cells.createContent(""))
         table.addCell(Cells.createContent(""))
-        for (test in sortedAndFilteredTests) {
+        for (test in sortedAndFilteredTests.sortedBy { it.date }) {
             table.addCell(Cells.createContent(contentProvider.invoke(test)))
         }
     }
