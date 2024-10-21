@@ -47,10 +47,9 @@ class TrialMatchingChapter(
                 cohorts,
                 report.treatmentMatch.trialSource,
                 contentWidth(),
-                enableExtendedMode
             ).takeIf { !externalTrialsOnly },
             if (includeIneligibleTrialsInSummary || externalTrialsOnly) null else {
-                IneligibleActinTrialsGenerator.fromEvaluatedCohorts(
+                IneligibleActinTrialsGenerator.forOpenCohorts(
                     cohorts, report.treatmentMatch.trialSource, contentWidth(), enableExtendedMode
                 )
             },

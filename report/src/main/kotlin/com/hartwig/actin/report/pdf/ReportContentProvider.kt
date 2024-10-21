@@ -144,7 +144,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             },
             localTrialGenerator.takeIf { report.config.includeExternalTrialsInSummary },
             nonLocalTrialGenerator.takeIf { report.config.includeExternalTrialsInSummary },
-            IneligibleActinTrialsGenerator.fromEvaluatedCohorts(
+            IneligibleActinTrialsGenerator.forOpenCohorts(
                 cohorts,
                 report.treatmentMatch.trialSource,
                 contentWidth,

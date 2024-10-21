@@ -36,8 +36,6 @@ class EligibleActinTrialsGenerator private constructor(
     }
 
     companion object {
-
-
         fun forOpenCohorts(
             cohorts: List<EvaluatedCohort>, source: String, width: Float, slotsAvailable: Boolean
         ): Pair<EligibleActinTrialsGenerator, List<EvaluatedCohort>> {
@@ -63,18 +61,9 @@ class EligibleActinTrialsGenerator private constructor(
             cohorts: List<EvaluatedCohort>,
             source: String,
             contentWidth: Float,
-            enableExtendedMode: Boolean
         ): EligibleActinTrialsGenerator {
-            val unavailableAndEligible = cohorts
-                .filter { trial: EvaluatedCohort -> trial.isPotentiallyEligible && !trial.isOpen }
-                .filter { trial: EvaluatedCohort -> trial.molecularEvents.isNotEmpty() || enableExtendedMode }
-
-            val title = String.format(
-                "%s trials and cohorts that %smay be eligible, but are closed (%s)",
-                source,
-                if (enableExtendedMode) "" else "meet molecular requirements and ",
-                unavailableAndEligible.size
-            )
+            val unavailableAndEligible = cohorts.filter { trial: EvaluatedCohort -> trial.isPotentiallyEligible && !trial.isOpen }
+            val title = String.format("%s trials and cohorts that %sare considered eligible, but are closed (%s)", source)
             return create(unavailableAndEligible, title, contentWidth)
         }
 

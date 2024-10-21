@@ -10,6 +10,7 @@ import com.itextpdf.layout.element.Table
 class IneligibleActinTrialsGenerator private constructor(
     private val cohorts: List<EvaluatedCohort>,
     private val source: String,
+    private val title: String,
     private val trialColWidth: Float,
     private val cohortColWidth: Float,
     private val molecularEventColWidth: Float,
@@ -18,12 +19,7 @@ class IneligibleActinTrialsGenerator private constructor(
 ) : TableGenerator {
 
     override fun title(): String {
-        return String.format(
-            "%s trials and cohorts that are %sconsidered ineligible (%s)",
-            source,
-            if (enableExtendedMode) "" else "open but ",
-            cohorts.size
-        )
+        return title
     }
 
     override fun contents(): Table {
@@ -55,7 +51,7 @@ class IneligibleActinTrialsGenerator private constructor(
     }
 
     companion object {
-        fun fromEvaluatedCohorts(
+        fun forOpenCohorts(
             cohorts: List<EvaluatedCohort>, source: String, contentWidth: Float, enableExtendedMode: Boolean
         ): IneligibleActinTrialsGenerator {
             val ineligibleCohorts = cohorts.filter { !it.isPotentiallyEligible && (it.isOpen || enableExtendedMode) }
@@ -63,9 +59,16 @@ class IneligibleActinTrialsGenerator private constructor(
             val cohortColWidth = contentWidth / 4
             val molecularColWidth = contentWidth / 7
             val ineligibilityReasonColWidth = contentWidth - (trialColWidth + cohortColWidth + molecularColWidth)
+            val title = String.format(
+                "%s trials and cohorts that are %sconsidered ineligible (%s)",
+                source,
+                if (enableExtendedMode) "" else "open but ",
+                cohorts.size
+            )
             return IneligibleActinTrialsGenerator(
                 ineligibleCohorts,
                 source,
+                title,
                 trialColWidth,
                 cohortColWidth,
                 molecularColWidth,
