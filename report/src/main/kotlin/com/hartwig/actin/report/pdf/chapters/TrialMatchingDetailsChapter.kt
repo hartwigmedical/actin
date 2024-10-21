@@ -270,7 +270,15 @@ class TrialMatchingDetailsChapter(private val report: Report, override val inclu
         }
 
         private fun createMessageCell(message: String): Cell {
-            return Cells.create(Paragraph(message.replace("+", " + ").replace("  ", " ")))
+            return Cells.create(Paragraph(insertSpacesAroundPlus(message)))
+        }
+
+        fun insertSpacesAroundPlus(input: String): String {
+            // Regular expression to match "+" surrounded by non-whitespace characters
+            val regex = "(\\S)\\+(\\S)".toRegex()
+
+            // Replace matched instances with spaces around "+"
+            return input.replace(regex, "$1 + $2")
         }
 
         private fun blankLine(): Paragraph {
