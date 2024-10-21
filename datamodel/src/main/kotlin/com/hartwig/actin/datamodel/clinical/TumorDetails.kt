@@ -71,10 +71,6 @@ data class TumorDetails(
     }
 
     private fun combine(b1: Boolean?, b2: Boolean?): Boolean? {
-        return if (b1 == true || b2 == true) {
-            true
-        } else {
-            b1 ?: b2
-        }
+        return b1 == true || b2 == true || (b1 ?: b2)
     }
 }
