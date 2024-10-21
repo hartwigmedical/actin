@@ -250,7 +250,12 @@
         "day": 1
       },
       "source": "EHR",
-      "grade": 5
+      "grade": 5,
+      "endDate": {
+        "year": 2020,
+        "month": 1,
+        "day": 1
+      }
     }
   ],
   "intolerances": [

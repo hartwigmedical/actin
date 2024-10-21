@@ -1,12 +1,13 @@
 # ACTIN
 
 ACTIN is a system that determines available treatment options for cancer patients based on the following inputs:
- - Comprehensive clinical record of the patient 
- - Comprehensive molecular analysis of the tumor
- - Set of all treatment options available (standard-of-care (SOC) and experimental).
+
+- Comprehensive clinical record of the patient
+- Comprehensive molecular analysis of the tumor
+- Set of all treatment options available (standard-of-care (SOC) and experimental).
 
 ![ACTIN System](system/src/main/resources/actin_system.png)
- 
+
 More details on the following modules are available from the links below:
 
 | Module                 | Description                                                                                |
@@ -52,8 +53,9 @@ To make a change in ACTIN and release the process is as follows:
    ```shell
    deploy_actin_data_vm 1.2.3
    ```
-8. When ready for production use the `deploy_actin_operations_vm` to do the same deployment to the operations vm.
+8. When ready for production use the `deploy_actin_emc_ops_vm` to do the same deployment to the EMC operations vm (Note: For other
+   environments similar scripts exist).
    ```shell
-   deploy_actin_operations_vm 1.2.3
+   deploy_actin_emc_ops_vm 1.2.3
    ```
   

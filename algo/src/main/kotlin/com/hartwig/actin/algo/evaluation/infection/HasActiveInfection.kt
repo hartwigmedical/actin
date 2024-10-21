@@ -15,9 +15,9 @@ class HasActiveInfection(private val atcTree: AtcTree, private val referenceDate
     override fun evaluate(record: PatientRecord): Evaluation {
 
         val medicationSelector = MedicationSelector(MedicationStatusInterpreterOnEvaluationDate(referenceDate))
-        val antibioticAtcLevels = MedicationCategories.create(atcTree).resolve("Systemic antibiotics")
-        val currentlyUsesAntibiotics = record.medications?.any {
-            medicationSelector.isActive(it) && (it.allLevels() intersect antibioticAtcLevels).isNotEmpty()
+        val antimicrobialsAtcLevels = MedicationCategories.create(atcTree).resolve("Systemic antimicrobials")
+        val currentlyUsesAntimicrobials = record.medications?.any {
+            medicationSelector.isActive(it) && (it.allLevels() intersect antimicrobialsAtcLevels).isNotEmpty()
         } ?: false
 
         val infection = record.clinicalStatus.infectionStatus
@@ -29,15 +29,19 @@ class HasActiveInfection(private val atcTree: AtcTree, private val referenceDate
                     "Infection presence: " + description(infection)
                 )
             }
-            currentlyUsesAntibiotics -> {
+
+            currentlyUsesAntimicrobials -> {
                 EvaluationFactory.warn(
-                    "Patient uses antibiotics which might indicate an active infection",
-                    "Possible active infection (antibiotics usage)"
+                    "Patient uses antimicrobials which might indicate an active infection",
+                    "Possible active infection (antimicrobials usage)"
                 )
             }
+
             infection == null -> {
                 EvaluationFactory.recoverableUndetermined("Infection status data is missing", "Unknown infection status")
-            } else -> {
+            }
+
+            else -> {
                 EvaluationFactory.fail("Patient has no active infection", "No infection present")
             }
         }

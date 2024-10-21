@@ -1,0 +1,149 @@
+{
+  "identification": {
+    "trialId": "METC 01",
+    "open": true,
+    "acronym": "IEMOEN",
+    "title": "Phase I first-in-human study to evaluate safety of IEMOEN, a new PD-L1 inhibitor in advanced solid tumors",
+    "nctId": "NCT00000001",
+    "phase": "1"
+  },
+  "generalEligibility": [
+    {
+      "references": [
+        {
+          "id": "I-01",
+          "text": "Patients must be ≥18 years old."
+        }
+      ],
+      "function": {
+        "rule": "IS_AT_LEAST_X_YEARS_OLD",
+        "parameters": [
+          "18"
+        ]
+      }
+    },
+    {
+      "references": [
+        {
+          "id": "I-02",
+          "text": "IEMOEN monotherapy is indicated for the treatment of adults with advanced/metastatic solid tumors."
+        }
+      ],
+      "function": {
+        "rule": "AND",
+        "parameters": [
+          {
+            "rule": "OR",
+            "parameters": [
+              {
+                "rule": "HAS_LOCALLY_ADVANCED_CANCER",
+                "parameters": []
+              },
+              {
+                "rule": "HAS_METASTATIC_CANCER",
+                "parameters": []
+              }
+            ]
+          },
+          {
+            "rule": "HAS_SOLID_PRIMARY_TUMOR",
+            "parameters": []
+          }
+        ]
+      }
+    },
+    {
+      "references": [
+        {
+          "id": "I-03",
+          "text": "Patient should have exhausted applicable available standard-of-care treatments."
+        }
+      ],
+      "function": {
+        "rule": "WARN_IF",
+        "parameters": [
+          {
+            "rule": "NOT",
+            "parameters": [
+              {
+                "rule": "HAS_EXHAUSTED_SOC_TREATMENTS",
+                "parameters": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "references": [
+        {
+          "id": "E-01",
+          "text": "Has an active autoimmune disease that requires systemic treatment and poses a risk according to the investigator."
+        }
+      ],
+      "function": {
+        "rule": "WARN_IF",
+        "parameters": [
+          {
+            "rule": "HAS_HISTORY_OF_AUTOIMMUNE_DISEASE",
+            "parameters": []
+          }
+        ]
+      }
+    },
+    {
+      "references": [
+        {
+          "id": "E-02",
+          "text": "Has hemoglobin below 6 mmol/l"
+        }
+      ],
+      "function": {
+        "rule": "HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X",
+        "parameters": [
+          "6"
+        ]
+      }
+    },
+    {
+      "references": [
+        {
+          "id": "E-03",
+          "text": "Has absolute neutrophil count below 1.5 x 10^9/l"
+        }
+      ],
+      "function": {
+        "rule": "HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X",
+        "parameters": [
+          "1.5"
+        ]
+      }
+    }
+  ],
+  "cohorts": [
+    {
+      "metadata": {
+        "cohortId": "A",
+        "evaluable": true,
+        "open": true,
+        "slotsAvailable": false,
+        "blacklist": false,
+        "description": "Dose escalation - monotherapy"
+      },
+      "eligibility": [
+      ]
+    },
+    {
+      "metadata": {
+        "cohortId": "B",
+        "evaluable": true,
+        "open": false,
+        "slotsAvailable": false,
+        "blacklist": false,
+        "description": "Dose expansion - monotherapy"
+      },
+      "eligibility": [
+      ]
+    }
+  ]
+}

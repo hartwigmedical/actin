@@ -10,8 +10,9 @@ import com.hartwig.actin.clinical.feed.standard.ProvidedPatientRecord
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 
-class StandardToxicityExtractor(private val toxicityCuration: CurationDatabase<ToxicityConfig>) :
-    StandardDataExtractor<List<Toxicity>> {
+class StandardToxicityExtractor(
+    private val toxicityCuration: CurationDatabase<ToxicityConfig>
+) : StandardDataExtractor<List<Toxicity>> {
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<Toxicity>> {
 
         return ehrPatientRecord.toxicities.map { toxicity ->
@@ -29,7 +30,8 @@ class StandardToxicityExtractor(private val toxicityCuration: CurationDatabase<T
                     grade = toxicity.grade,
                     categories = it.categories,
                     evaluatedDate = toxicity.evaluatedDate,
-                    source = ToxicitySource.EHR
+                    source = ToxicitySource.EHR,
+                    endDate = toxicity.endDate
                 )
             }), curatedToxicity.extractionEvaluation)
         }.fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, extractionResult ->
