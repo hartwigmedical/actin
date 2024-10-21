@@ -30,7 +30,6 @@ class EligibleActinTrialsGenerator private constructor(
             sequenceOf("Cohort", "Molecular", "Warnings").map(Cells::createHeader).forEach(headerSubTable::addHeaderCell)
             table.addHeaderCell(Cells.createContentNoBorder(headerSubTable))
         }
-
         addTrialsToTable(cohorts, table, cohortColWidth, molecularEventColWidth, checksColWidth, EvaluatedCohort::warnings)
         return makeWrapping(table)
     }
@@ -63,7 +62,11 @@ class EligibleActinTrialsGenerator private constructor(
             contentWidth: Float,
         ): EligibleActinTrialsGenerator {
             val unavailableAndEligible = cohorts.filter { trial: EvaluatedCohort -> trial.isPotentiallyEligible && !trial.isOpen }
-            val title = String.format("%s trials and cohorts that %sare considered eligible, but are closed (%s)", source)
+            val title = String.format(
+                "%s trials and cohorts that are considered eligible, but are closed (%s)",
+                source,
+                unavailableAndEligible.size
+            )
             return create(unavailableAndEligible, title, contentWidth)
         }
 

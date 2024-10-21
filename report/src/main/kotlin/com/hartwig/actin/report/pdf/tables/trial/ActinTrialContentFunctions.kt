@@ -19,8 +19,8 @@ object ActinTrialContentFunctions {
                 ContentDefinition(
                     listOf(
                         "Applies to all cohorts below",
-                        concat(commonEvents, allEventsEmpty),
-                        concat(commonFeedback)
+                        concat(commonEvents, allEventsEmpty && feedbackFunction.invoke(cohorts.first()).isNotEmpty()),
+                        concat(commonFeedback, feedbackFunction.invoke(cohorts.first()).isNotEmpty())
                     ), deEmphasizeContent
                 )
             )
@@ -30,7 +30,10 @@ object ActinTrialContentFunctions {
                 listOf(
                     cohort.cohort ?: "",
                     concat(cohort.molecularEvents - commonEvents, commonEvents.isEmpty() && !allEventsEmpty),
-                    concat(feedbackFunction.invoke(cohort) - commonFeedback, commonFeedback.isEmpty())
+                    concat(
+                        feedbackFunction.invoke(cohort) - commonFeedback,
+                        commonFeedback.isEmpty() && feedbackFunction.invoke(cohort).isNotEmpty()
+                    )
                 ),
                 !cohort.isOpen || !cohort.hasSlotsAvailable
             )

@@ -169,6 +169,7 @@ class ReportContentProviderTest {
             EligibleActinTrialsGenerator::class,
             EligibleLocalExternalTrialsGenerator::class,
             EligibleOtherCountriesExternalTrialsGenerator::class,
+            IneligibleActinTrialsGenerator::class,
             IneligibleActinTrialsGenerator::class
         )
     }
