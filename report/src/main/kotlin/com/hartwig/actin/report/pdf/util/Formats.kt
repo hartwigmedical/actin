@@ -62,12 +62,6 @@ object Formats {
         return if (bool) "Yes" else "No"
     }
 
-    fun insertSpacesAroundPlus(input: String): String {
-        val regex = "(\\S)\\+(\\S)".toRegex()
-
-        return input.replace(regex, "$1 + $2")
-    }
-
     fun valueOrDefault(value: String, defaultValue: String): String {
         return value.ifEmpty { defaultValue }
     }

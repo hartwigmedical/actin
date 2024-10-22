@@ -12,14 +12,4 @@ class FormatsTest {
         assertThat(Formats.twoDigitNumber(2.1)).isEqualTo("2.1")
         assertThat(Formats.twoDigitNumber(2.0)).isEqualTo("2")
     }
-
-    @Test
-    fun `Should insert spaces around plus signs`() {
-        assertThat(Formats.insertSpacesAroundPlus("nothing to be  done here")).isEqualTo("nothing to be  done here")
-
-        assertThat(Formats.insertSpacesAroundPlus(" + ")).isEqualTo(" + ")
-        assertThat(Formats.insertSpacesAroundPlus("t+t")).isEqualTo("t + t")
-        assertThat(Formats.insertSpacesAroundPlus("1+1=2")).isEqualTo("1 + 1=2")
-        assertThat(Formats.insertSpacesAroundPlus("1 + 1=2")).isEqualTo("1 + 1=2")
-    }
 }
