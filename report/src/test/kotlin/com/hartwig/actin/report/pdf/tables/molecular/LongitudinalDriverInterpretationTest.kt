@@ -3,9 +3,11 @@ package com.hartwig.actin.report.pdf.tables.molecular
 import com.hartwig.actin.datamodel.molecular.CodingEffect
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -24,15 +26,17 @@ class LongitudinalDriverInterpretationTest {
         val result = LongitudinalDriverInterpretation.interpret(
             TestCopyNumberFactory.createMinimal().copy(type = CopyNumberType.FULL_GAIN)
         )
-        assertThat(result).isEqualTo("Amplification")
+        assertThat(result).isEqualTo(withUnknownProteinEffect("Amplification"))
     }
+
+    private fun withUnknownProteinEffect(variantType: String) = "$variantType\nUnknown protein effect"
 
     @Test
     fun `Should interpret deletion`() {
         val result = LongitudinalDriverInterpretation.interpret(
             TestCopyNumberFactory.createMinimal().copy(type = CopyNumberType.LOSS)
         )
-        assertThat(result).isEqualTo("Deletion")
+        assertThat(result).isEqualTo(withUnknownProteinEffect("Deletion"))
     }
 
     @Test
@@ -49,6 +53,18 @@ class LongitudinalDriverInterpretationTest {
             TestVariantFactory.createMinimal()
         )
         assertThat(result).contains("VUS")
+    }
+
+    @Test
+    fun `Should interpret fusion`() {
+        val result = LongitudinalDriverInterpretation.interpret(
+            TestFusionFactory.createMinimal().copy(driverType = FusionDriverType.KNOWN_PAIR)
+        )
+        assertThat(result).isEqualTo(
+            "Fusion\n" +
+                    "Known fusion\n" +
+                    "No protein effect"
+        )
     }
 
     private fun testProteinEffect(proteinEffect: ProteinEffect, expectedDescription: String) {
