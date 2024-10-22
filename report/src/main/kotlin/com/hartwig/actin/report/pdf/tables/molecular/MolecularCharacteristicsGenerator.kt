@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
+import com.hartwig.actin.datamodel.molecular.HrdType
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoEntry
@@ -107,14 +108,13 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
 
             val typeInterpretation = characteristics.hrdType?.let { type ->
                 when (type) {
-                    "BRCA1_type" -> {
+                    HrdType.BRCA1_TYPE -> {
                         "- BRCA1-type (BRCA1 value: ${characteristics.brca1Value?.let { Formats.twoDigitNumber(it) }})"
                     }
-                    "BRCA2_type" -> {
+                    HrdType.BRCA2_TYPE -> {
                         "- BRCA2-type (BRCA2 value: ${characteristics.brca2Value?.let { Formats.twoDigitNumber(it) }})"
                     }
-                    "none", "cannot_be_determined" -> null
-                    else -> throw IllegalStateException("Unknown value for HRD-type: $type")
+                    HrdType.NONE, HrdType.CANNOT_BE_DETERMINED -> null
                 }
             }.takeIf { isDeficient }
 

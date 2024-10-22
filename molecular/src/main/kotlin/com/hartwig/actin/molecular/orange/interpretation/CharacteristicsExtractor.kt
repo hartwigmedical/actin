@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
+import com.hartwig.actin.datamodel.molecular.HrdType
 import com.hartwig.actin.datamodel.molecular.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.PredictedTumorOrigin
 import com.hartwig.actin.datamodel.molecular.orange.characteristics.CupPrediction
@@ -29,7 +30,7 @@ internal class CharacteristicsExtractor {
             isHomologousRepairDeficient = chordRecord?.let { isHRD(it.hrStatus()) },
             brca1Value = chordRecord?.brca1Value(),
             brca2Value = chordRecord?.brca2Value(),
-            hrdType = chordRecord?.hrdType(),
+            hrdType = chordRecord?.hrdType()?.let { HrdType.valueOf(it.uppercase()) },
             homologousRepairEvidence = createNoEvidence(),
             tumorMutationalBurden = purple.characteristics().tumorMutationalBurdenPerMb(),
             hasHighTumorMutationalBurden = hasHighStatus(purple.characteristics().tumorMutationalBurdenStatus()),

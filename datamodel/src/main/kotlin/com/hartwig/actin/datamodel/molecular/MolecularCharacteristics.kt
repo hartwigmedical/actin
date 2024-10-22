@@ -12,7 +12,7 @@ data class MolecularCharacteristics(
     val isHomologousRepairDeficient: Boolean? = null,
     val brca1Value: Double? = null,
     val brca2Value: Double? = null,
-    val hrdType: String? = null,
+    val hrdType: HrdType? = null,
     val homologousRepairEvidence: ClinicalEvidence? = null,
     val tumorMutationalBurden: Double? = null,
     val hasHighTumorMutationalBurden: Boolean? = null,
