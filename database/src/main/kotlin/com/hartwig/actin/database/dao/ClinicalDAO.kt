@@ -101,14 +101,21 @@ internal class ClinicalDAO(private val context: DSLContext) {
             Tables.TUMOR.STAGE,
             Tables.TUMOR.HASMEASURABLEDISEASE,
             Tables.TUMOR.HASBRAINLESIONS,
+            Tables.TUMOR.HASSUSPECTEDBRAINLESIONS,
             Tables.TUMOR.HASACTIVEBRAINLESIONS,
             Tables.TUMOR.HASCNSLESIONS,
+            Tables.TUMOR.HASSUSPECTEDCNSLESIONS,
             Tables.TUMOR.HASACTIVECNSLESIONS,
             Tables.TUMOR.HASBONELESIONS,
+            Tables.TUMOR.HASSUSPECTEDBONELESIONS,
             Tables.TUMOR.HASLIVERLESIONS,
+            Tables.TUMOR.HASSUSPECTEDLIVERLESIONS,
             Tables.TUMOR.HASLUNGLESIONS,
+            Tables.TUMOR.HASSUSPECTEDLUNGLESIONS,
             Tables.TUMOR.HASLYMPHNODELESIONS,
+            Tables.TUMOR.HASSUSPECTEDLYMPHNODELESIONS,
             Tables.TUMOR.OTHERLESIONS,
+            Tables.TUMOR.OTHERSUSPECTEDLESIONS,
             Tables.TUMOR.BIOPSYLOCATION
         )
             .values(
@@ -122,14 +129,21 @@ internal class ClinicalDAO(private val context: DSLContext) {
                 stage?.display(),
                 tumor.hasMeasurableDisease,
                 tumor.hasBrainLesions,
+                tumor.hasSuspectedBrainLesions,
                 tumor.hasActiveBrainLesions,
                 tumor.hasCnsLesions,
+                tumor.hasSuspectedCnsLesions,
                 tumor.hasActiveCnsLesions,
                 tumor.hasBoneLesions,
+                tumor.hasSuspectedBoneLesions,
                 tumor.hasLiverLesions,
+                tumor.hasSuspectedLiverLesions,
                 tumor.hasLungLesions,
+                tumor.hasSuspectedLungLesions,
                 tumor.hasLymphNodeLesions,
+                tumor.hasSuspectedLymphNodeLesions,
                 DataUtil.concat(tumor.otherLesions),
+                DataUtil.concat(tumor.otherSuspectedLesions),
                 tumor.biopsyLocation
             )
             .execute()
