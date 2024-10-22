@@ -35,7 +35,7 @@ class StandardSurgeryExtractor(
                 )
             }
         }
-        val fromPriorOtherConditions = ehrPatientRecord.priorOtherConditions.map { curateSurgery(ehrPatientRecord, it.name) }
+        val fromPriorOtherConditions = ehrPatientRecord.priorOtherConditions.map { curateSurgery(ehrPatientRecord, it.name, it.endDate) }
             .map { ExtractionResult(it.extracted, CurationExtractionEvaluation()) }
 
         return (fromPriorOtherConditions + fromSurgeries).fold(ExtractionResult(emptyList(), CurationExtractionEvaluation()))

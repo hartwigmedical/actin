@@ -112,9 +112,13 @@ class StandardSurgeryExtractorTest {
         every { surgeryNameCuration.find(input) } returns setOf(CURATED_SURGERY_CONFIG)
         val anotherInput = "another condition"
         every { surgeryNameCuration.find(anotherInput) } returns emptySet()
+        val priorConditionEndDate = LocalDate.of(2024, 10, 24)
         val result = extractor.extract(
             PROVIDED_EHR_PATIENT_RECORD.copy(
-                priorOtherConditions = listOf(ProvidedPriorOtherCondition(input), ProvidedPriorOtherCondition(anotherInput))
+                priorOtherConditions = listOf(
+                    ProvidedPriorOtherCondition(input, endDate = priorConditionEndDate),
+                    ProvidedPriorOtherCondition(anotherInput)
+                )
             )
         )
         assertThat(result.extracted).isNotEmpty()
@@ -122,7 +126,7 @@ class StandardSurgeryExtractorTest {
         assertThat(result.extracted).containsExactly(
             Surgery(
                 name = CURATED_SURGERY_CONFIG.name,
-                endDate = CURATED_SURGERY_CONFIG.endDate!!,
+                endDate = priorConditionEndDate,
                 status = CURATED_SURGERY_CONFIG.status!!
             )
         )

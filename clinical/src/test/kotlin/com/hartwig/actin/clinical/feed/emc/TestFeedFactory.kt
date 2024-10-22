@@ -86,7 +86,7 @@ object TestFeedFactory {
         )
     }
 
-    private fun surgeryEntry(periodStart: LocalDate, periodEnd: LocalDate): SurgeryEntry {
+    fun surgeryEntry(periodStart: LocalDate, periodEnd: LocalDate): SurgeryEntry {
         return SurgeryEntry(
             subject = TEST_SUBJECT,
             classDisplay = "surgery",

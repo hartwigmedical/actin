@@ -24,6 +24,12 @@ class SurgeryExtractor(private val surgeryNameCuration: CurationDatabase<Surgery
                 "surgery"
             )
             val curatedSurgery = curationResponse.config()?.takeIf { !it.ignore }?.let {
+                if (it.endDate != null || it.status != null) {
+                    throw IllegalStateException(
+                        "Surgery ${it.name} was curated with an end date and/or status. This is not supported in this extractor as it would be applied to other patients, " +
+                                "and the feed is expected to always have both of those fields"
+                    )
+                }
                 Surgery(
                     name = it.name,
                     endDate = entry.periodEnd,
