@@ -6,7 +6,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactor
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class EvaluatedCohortsInterpreterTest {
+class CohortsInterpreterTest {
     @Test
     fun shouldReturnAllEligibleAndOpenCohortsForDriver() {
         val matchingTrials = createInterpreter().trialsForDriver(driverForEvent(ELIGIBLE_EVENT))
@@ -59,8 +59,8 @@ class EvaluatedCohortsInterpreterTest {
             return TestVariantFactory.createMinimal().copy(event = event)
         }
 
-        private fun evaluatedCohort(name: String, isEligible: Boolean, isOpen: Boolean, event: String = name): EvaluatedCohort {
-            return EvaluatedCohortTestFactory.evaluatedCohort(
+        private fun cohort(name: String, isEligible: Boolean, isOpen: Boolean, event: String = name): Cohort {
+            return CohortTestFactory.cohort(
                 acronym = name,
                 isPotentiallyEligible = isEligible,
                 isOpen = isOpen,
@@ -68,13 +68,13 @@ class EvaluatedCohortsInterpreterTest {
             )
         }
 
-        private fun createInterpreter(): EvaluatedCohortsInterpreter {
-            return EvaluatedCohortsInterpreter.fromEvaluatedCohorts(
+        private fun createInterpreter(): CohortsInterpreter {
+            return CohortsInterpreter.fromCohorts(
                 listOf(
-                    evaluatedCohort(INELIGIBLE_COHORT, false, true),
-                    evaluatedCohort(CLOSED_COHORT, true, false),
-                    evaluatedCohort(ELIGIBLE_COHORT, true, true, ELIGIBLE_EVENT),
-                    evaluatedCohort(ELIGIBLE_COHORT_2, true, true, ELIGIBLE_EVENT)
+                    cohort(INELIGIBLE_COHORT, false, true),
+                    cohort(CLOSED_COHORT, true, false),
+                    cohort(ELIGIBLE_COHORT, true, true, ELIGIBLE_EVENT),
+                    cohort(ELIGIBLE_COHORT_2, true, true, ELIGIBLE_EVENT)
                 )
             )
         }

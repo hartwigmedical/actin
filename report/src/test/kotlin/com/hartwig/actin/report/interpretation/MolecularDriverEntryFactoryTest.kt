@@ -7,7 +7,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestVirusFactory
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
-import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
+import com.hartwig.actin.report.interpretation.CohortTestFactory.cohort
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -112,17 +112,17 @@ class MolecularDriverEntryFactoryTest {
     }
 
     private fun createFactoryForMolecularRecordAndCohorts(
-        molecular: MolecularRecord, cohorts: List<EvaluatedCohort>
+        molecular: MolecularRecord, cohorts: List<Cohort>
     ): MolecularDriverEntryFactory {
         return MolecularDriverEntryFactory(
-            MolecularDriversInterpreter(molecular.drivers, EvaluatedCohortsInterpreter.fromEvaluatedCohorts(cohorts))
+            MolecularDriversInterpreter(molecular.drivers, CohortsInterpreter.fromCohorts(cohorts))
         )
     }
 
     private fun createFactoryWithCohortsForEvent(molecularRecord: MolecularRecord, event: String): MolecularDriverEntryFactory {
         val cohorts = listOf(
-            evaluatedCohort(acronym = "trial 1", molecularEvents = setOf(event), isPotentiallyEligible = true, isOpen = true),
-            evaluatedCohort(acronym = "trial 2", molecularEvents = setOf(event), isPotentiallyEligible = true, isOpen = false)
+            cohort(acronym = "trial 1", molecularEvents = setOf(event), isPotentiallyEligible = true, isOpen = true),
+            cohort(acronym = "trial 2", molecularEvents = setOf(event), isPotentiallyEligible = true, isOpen = false)
         )
         return createFactoryForMolecularRecordAndCohorts(molecularRecord, cohorts)
     }

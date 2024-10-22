@@ -19,7 +19,7 @@ import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.orange.driver.HomozygousDisruption
 import com.hartwig.actin.datamodel.molecular.orange.driver.Virus
 import com.hartwig.actin.datamodel.molecular.orange.driver.VirusType
-import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
+import com.hartwig.actin.report.interpretation.CohortTestFactory.cohort
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -109,7 +109,7 @@ class DriversSummarizerTest {
             TestClinicalEvidenceFactory.withExternalEligibleTrial(TestClinicalEvidenceFactory.createTestExternalTrial())
         val approvedTreatment = TestClinicalEvidenceFactory.withApprovedTreatment("approved")
         val cohorts = listOf(
-            evaluatedCohort(
+            cohort(
                 isPotentiallyEligible = true,
                 isOpen = true,
                 molecularEvents = setOf(

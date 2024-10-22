@@ -7,8 +7,8 @@ import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.trial.Eligibility
 
-object EvaluatedCohortFactory {
-    fun create(treatmentMatch: TreatmentMatch, filterOnSOCExhaustionAndTumorType: Boolean): List<EvaluatedCohort> {
+object CohortFactory {
+    fun create(treatmentMatch: TreatmentMatch, filterOnSOCExhaustionAndTumorType: Boolean): List<Cohort> {
         return filteredMatches(
             treatmentMatch.trialMatches, filterOnSOCExhaustionAndTumorType, TrialMatch::evaluations
         ).flatMap { trialMatch: TrialMatch ->
@@ -23,7 +23,7 @@ object EvaluatedCohortFactory {
             // Handle case of trial without cohorts.
             if (trialMatch.cohorts.isEmpty()) {
                 listOf(
-                    EvaluatedCohort(
+                    Cohort(
                         trialId = trialId,
                         acronym = acronym,
                         cohort = null,
@@ -40,7 +40,7 @@ object EvaluatedCohortFactory {
                 filteredMatches(
                     trialMatch.cohorts, filterOnSOCExhaustionAndTumorType, CohortMatch::evaluations
                 ).filter { !it.metadata.ignore }.map { cohortMatch: CohortMatch ->
-                    EvaluatedCohort(
+                    Cohort(
                         trialId = trialId,
                         acronym = acronym,
                         cohort = cohortMatch.metadata.description,
@@ -54,13 +54,13 @@ object EvaluatedCohortFactory {
                     )
                 }
             }
-        }.sortedWith(EvaluatedCohortComparator())
+        }.sortedWith(CohortComparator())
     }
 
     fun createNonEvaluableAndIgnoredCohorts(
         treatmentMatch: TreatmentMatch,
         filterOnSOCExhaustionAndTumorType: Boolean
-    ): List<EvaluatedCohort> {
+    ): List<Cohort> {
         return filteredMatches(
             treatmentMatch.trialMatches, filterOnSOCExhaustionAndTumorType, TrialMatch::evaluations
         ).flatMap { trialMatch: TrialMatch ->
@@ -77,7 +77,7 @@ object EvaluatedCohortFactory {
                     CohortMatch::evaluations
                 ).filter { it.metadata.ignore }
                 totalCohorts.map { cohortMatch: CohortMatch ->
-                    EvaluatedCohort(
+                    Cohort(
                         trialId = identification.trialId,
                         acronym = identification.acronym,
                         cohort = cohortMatch.metadata.description,
@@ -91,7 +91,7 @@ object EvaluatedCohortFactory {
                     )
                 }
             }
-        }.sortedWith(EvaluatedCohortComparator())
+        }.sortedWith(CohortComparator())
     }
 
     private fun extractInclusionEvents(evaluationMap: Map<Eligibility, Evaluation>): Set<String> {

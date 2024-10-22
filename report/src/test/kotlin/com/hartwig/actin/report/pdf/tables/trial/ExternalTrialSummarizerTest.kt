@@ -4,7 +4,7 @@ import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.molecular.evidence.CountryName
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.trial.TrialIdentification
-import com.hartwig.actin.report.interpretation.EvaluatedCohort
+import com.hartwig.actin.report.interpretation.Cohort
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -240,7 +240,7 @@ class ExternalTrialSummarizerTest {
         )
 
     private fun evaluatedCohortTMB() =
-        EvaluatedCohort(
+        Cohort(
             trialId = "id",
             acronym = "acronym",
             cohort = null,

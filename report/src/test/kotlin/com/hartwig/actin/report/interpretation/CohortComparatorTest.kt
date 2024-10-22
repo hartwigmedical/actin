@@ -4,11 +4,11 @@ import com.hartwig.actin.datamodel.trial.TrialPhase
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class EvaluatedCohortComparatorTest {
+class CohortComparatorTest {
     private val cohort = create("trial 3", "cohort 1", true, "Event B")
 
     @Test
-    fun `Should sort evaluated cohorts`() {
+    fun `Should sort cohorts`() {
         val cohorts = listOf(
             create("trial 7", "cohort 1", true),
             create("trial 3", "cohort 2 + cohort 3", false, "Event C"),
@@ -30,7 +30,7 @@ class EvaluatedCohortComparatorTest {
             cohorts[0],
             cohorts[3],
             cohorts[5]
-        ).sortedWith(EvaluatedCohortComparator())
+        ).sortedWith(CohortComparator())
 
         val cohortIterator = cohortList.iterator()
         cohorts.forEach { assertThat(cohortIterator.next()).isEqualTo(it) }
@@ -67,12 +67,12 @@ class EvaluatedCohortComparatorTest {
         assertExpectedOrder(listOf(cohort, cohort.copy(warnings = setOf("Warning"))))
     }
 
-    private fun assertExpectedOrder(expectedCohorts: List<EvaluatedCohort>) {
-        assertThat(expectedCohorts.reversed().sortedWith(EvaluatedCohortComparator())).isEqualTo(expectedCohorts)
+    private fun assertExpectedOrder(expectedCohorts: List<Cohort>) {
+        assertThat(expectedCohorts.reversed().sortedWith(CohortComparator())).isEqualTo(expectedCohorts)
     }
 
-    private fun create(trialId: String, cohort: String?, hasSlotsAvailable: Boolean, vararg molecularEvents: String): EvaluatedCohort {
-        return EvaluatedCohortTestFactory.evaluatedCohort(
+    private fun create(trialId: String, cohort: String?, hasSlotsAvailable: Boolean, vararg molecularEvents: String): Cohort {
+        return CohortTestFactory.cohort(
             trialId = trialId,
             acronym = "",
             molecularEvents = setOf(*molecularEvents),

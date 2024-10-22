@@ -4,7 +4,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.molecular.filter.MolecularTestFilter
-import com.hartwig.actin.report.interpretation.EvaluatedCohort
+import com.hartwig.actin.report.interpretation.Cohort
 import com.hartwig.actin.report.interpretation.PriorIHCTestInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
@@ -14,7 +14,7 @@ import org.apache.logging.log4j.LogManager
 
 class MolecularSummaryGenerator(
     private val patientRecord: PatientRecord,
-    private val cohorts: List<EvaluatedCohort>,
+    private val cohorts: List<Cohort>,
     private val keyWidth: Float,
     private val valueWidth: Float,
     private val isShort: Boolean,

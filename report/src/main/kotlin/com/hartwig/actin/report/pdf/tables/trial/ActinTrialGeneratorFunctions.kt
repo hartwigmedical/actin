@@ -1,8 +1,8 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.datamodel.trial.TrialPhase
-import com.hartwig.actin.report.interpretation.EvaluatedCohort
-import com.hartwig.actin.report.interpretation.EvaluatedCohortComparator
+import com.hartwig.actin.report.interpretation.Cohort
+import com.hartwig.actin.report.interpretation.CohortComparator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Cells.createContent
 import com.hartwig.actin.report.pdf.util.Styles
@@ -14,14 +14,14 @@ import com.itextpdf.layout.element.Text
 object ActinTrialGeneratorFunctions {
 
     fun addTrialsToTable(
-        evaluatedCohorts: List<EvaluatedCohort>,
+        evaluatedCohorts: List<Cohort>,
         table: Table,
         cohortColumnWidth: Float,
         molecularEventColumnWidth: Float,
         feedbackColumnWidth: Float,
-        feedbackFunction: (EvaluatedCohort) -> Set<String>
+        feedbackFunction: (Cohort) -> Set<String>
     ) {
-        sortedCohortGroups(evaluatedCohorts).forEach { cohortList: List<EvaluatedCohort> ->
+        sortedCohortGroups(evaluatedCohorts).forEach { cohortList: List<Cohort> ->
             val trialSubTable = Tables.createFixedWidthCols(
                 cohortColumnWidth, molecularEventColumnWidth, feedbackColumnWidth
             )
@@ -32,11 +32,11 @@ object ActinTrialGeneratorFunctions {
         }
     }
 
-    private fun sortedCohortGroups(cohorts: List<EvaluatedCohort>): List<List<EvaluatedCohort>> {
-        val sortedCohorts = cohorts.sortedWith(EvaluatedCohortComparator())
-        val cohortsByTrialId = sortedCohorts.groupBy(EvaluatedCohort::trialId)
+    private fun sortedCohortGroups(cohorts: List<Cohort>): List<List<Cohort>> {
+        val sortedCohorts = cohorts.sortedWith(CohortComparator())
+        val cohortsByTrialId = sortedCohorts.groupBy(Cohort::trialId)
 
-        return sortedCohorts.map(EvaluatedCohort::trialId).distinct().mapNotNull { cohortsByTrialId[it] }
+        return sortedCohorts.map(Cohort::trialId).distinct().mapNotNull { cohortsByTrialId[it] }
     }
 
     private fun addContentListToTable(cellContent: List<String>, deEmphasizeContent: Boolean, table: Table) {
@@ -46,7 +46,7 @@ object ActinTrialGeneratorFunctions {
         }.forEach(table::addCell)
     }
 
-    private fun insertTrialRow(cohortList: List<EvaluatedCohort>, table: Table, trialSubTable: Table) {
+    private fun insertTrialRow(cohortList: List<Cohort>, table: Table, trialSubTable: Table) {
         if (cohortList.isNotEmpty()) {
             val cohort = cohortList.first()
             val trialLabelText = listOfNotNull(

@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.report.datamodel.Report
-import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory
+import com.hartwig.actin.report.interpretation.CohortFactory
 import com.hartwig.actin.report.pdf.ReportContentProvider
 import com.hartwig.actin.report.pdf.tables.trial.EligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleActinTrialsGenerator
@@ -33,8 +33,8 @@ class TrialMatchingChapter(
 
     private fun addTrialMatchingOverview(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
-        val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
-        val nonEvaluatedCohorts = EvaluatedCohortFactory.createNonEvaluableAndIgnoredCohorts(
+        val cohorts = CohortFactory.create(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
+        val nonEvaluableAndIgnoredCohorts = CohortFactory.createNonEvaluableAndIgnoredCohorts(
             report.treatmentMatch,
             report.config.filterOnSOCExhaustionAndTumorType
         )
@@ -64,7 +64,7 @@ class TrialMatchingChapter(
             },
             if (includeIneligibleTrialsInSummary || externalTrialsOnly) null else {
                 IneligibleActinTrialsGenerator.forNonEvaluableCohorts(
-                    nonEvaluatedCohorts, report.treatmentMatch.trialSource, contentWidth()
+                    nonEvaluableAndIgnoredCohorts, report.treatmentMatch.trialSource, contentWidth()
                 )
             },
             localTrialGenerator.takeIf {

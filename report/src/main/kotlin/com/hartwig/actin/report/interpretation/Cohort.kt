@@ -2,7 +2,7 @@ package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.trial.TrialPhase
 
-data class EvaluatedCohort(
+data class Cohort(
     val trialId: String,
     val acronym: String,
     val cohort: String?,

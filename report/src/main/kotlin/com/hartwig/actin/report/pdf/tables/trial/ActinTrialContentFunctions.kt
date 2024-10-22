@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
-import com.hartwig.actin.report.interpretation.EvaluatedCohort
+import com.hartwig.actin.report.interpretation.Cohort
 import com.hartwig.actin.report.pdf.util.Formats
 
 data class ContentDefinition(val textEntries: List<String>, val deEmphasizeContent: Boolean)
@@ -8,10 +8,10 @@ data class ContentDefinition(val textEntries: List<String>, val deEmphasizeConte
 object ActinTrialContentFunctions {
 
     fun contentForTrialCohortList(
-        cohorts: List<EvaluatedCohort>, feedbackFunction: (EvaluatedCohort) -> Set<String>
+        cohorts: List<Cohort>, feedbackFunction: (Cohort) -> Set<String>
     ): List<ContentDefinition> {
         val commonFeedback = findCommonMembersInCohorts(cohorts, feedbackFunction)
-        val commonEvents = findCommonMembersInCohorts(cohorts, EvaluatedCohort::molecularEvents)
+        val commonEvents = findCommonMembersInCohorts(cohorts, Cohort::molecularEvents)
         val allEventsEmpty = cohorts.all { it.molecularEvents.isEmpty() }
         val noFeedback = cohorts.all { feedbackFunction.invoke(it).isEmpty() }
         val prefix = if (commonFeedback.isEmpty() && commonEvents.isEmpty()) emptyList() else {
@@ -26,7 +26,7 @@ object ActinTrialContentFunctions {
                 )
             )
         }
-        return prefix + cohorts.map { cohort: EvaluatedCohort ->
+        return prefix + cohorts.map { cohort: Cohort ->
             ContentDefinition(
                 listOf(
                     cohort.cohort ?: "",
@@ -39,7 +39,7 @@ object ActinTrialContentFunctions {
     }
 
     private fun findCommonMembersInCohorts(
-        cohorts: List<EvaluatedCohort>, retrieveMemberFunction: (EvaluatedCohort) -> Set<String>
+        cohorts: List<Cohort>, retrieveMemberFunction: (Cohort) -> Set<String>
     ): Set<String> {
         return if (cohorts.size > 1) {
             cohorts.map(retrieveMemberFunction).reduce { acc, set -> acc.intersect(set) }

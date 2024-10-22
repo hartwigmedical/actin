@@ -7,8 +7,8 @@ import com.hartwig.actin.datamodel.molecular.NO_EVIDENCE_SOURCE
 import com.hartwig.actin.molecular.filter.MolecularTestFilter
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
 import com.hartwig.actin.report.datamodel.Report
-import com.hartwig.actin.report.interpretation.EvaluatedCohort
-import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory
+import com.hartwig.actin.report.interpretation.Cohort
+import com.hartwig.actin.report.interpretation.CohortFactory
 import com.hartwig.actin.report.pdf.chapters.ClinicalDetailsChapter
 import com.hartwig.actin.report.pdf.chapters.EfficacyEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.EfficacyEvidenceDetailsChapter
@@ -101,7 +101,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
     }
 
     fun provideSummaryTables(keyWidth: Float, valueWidth: Float, contentWidth: Float): List<TableGenerator> {
-        val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
+        val cohorts = CohortFactory.create(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
 
         val clinicalHistoryGenerator = if (report.config.includeOverviewWithClinicalHistorySummary) {
             PatientClinicalHistoryWithOverviewGenerator(report, cohorts, keyWidth, valueWidth)
@@ -156,7 +156,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
     }
 
     fun provideExternalTrialsTables(
-        patientRecord: PatientRecord, evaluated: List<EvaluatedCohort>, contentWidth: Float
+        patientRecord: PatientRecord, evaluated: List<Cohort>, contentWidth: Float
     ): Pair<TableGenerator?, TableGenerator?> {
         val externalEligibleTrials =
             AggregatedEvidenceFactory.mergeMapsOfSets(patientRecord.molecularHistory.molecularTests.map {
