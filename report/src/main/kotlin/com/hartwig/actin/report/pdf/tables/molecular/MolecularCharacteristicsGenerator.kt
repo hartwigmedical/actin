@@ -106,18 +106,17 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
             val scoreInterpretation = characteristics.homologousRepairScore?.let { " (${Formats.twoDigitNumber(it)})" } ?: ""
 
             val typeInterpretation = characteristics.hrdType?.let { type ->
-                val (typeDisplay, brcaValueDisplay) = when (type) {
+                when (type) {
                     "BRCA1_type" -> {
-                        Pair("BRCA1-type", "BRCA1 value: ${characteristics.brca1Value?.let { Formats.twoDigitNumber(it) }}")
+                        "- BRCA1-type (BRCA1 value: ${characteristics.brca1Value?.let { Formats.twoDigitNumber(it) }})"
                     }
                     "BRCA2_type" -> {
-                        Pair("BRCA2-type", "BRCA2 value: ${characteristics.brca2Value?.let { Formats.twoDigitNumber(it) }}")
+                        "- BRCA2-type (BRCA2 value: ${characteristics.brca2Value?.let { Formats.twoDigitNumber(it) }})"
                     }
-                    "none", "cannot_be_determined" -> Pair(null, null)
+                    "none", "cannot_be_determined" -> null
                     else -> throw IllegalStateException("Unknown value for HRD-type: $type")
                 }
-                listOfNotNull(typeDisplay, brcaValueDisplay).joinToString(" (", prefix = "- ", postfix = ")")
-            }
+            }.takeIf { isDeficient }
 
             listOfNotNull(statusInterpretation, scoreInterpretation, typeInterpretation).joinToString(" ")
         }
