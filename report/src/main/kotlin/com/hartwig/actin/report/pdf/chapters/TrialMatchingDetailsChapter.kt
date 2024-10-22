@@ -8,14 +8,11 @@ import com.hartwig.actin.datamodel.trial.CriterionReference
 import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.report.datamodel.Report
+import com.hartwig.actin.report.interpretation.EvaluationInterpreter
 import com.hartwig.actin.report.pdf.util.Cells
-import com.hartwig.actin.report.pdf.util.Cells.createContent
-import com.hartwig.actin.report.pdf.util.Cells.createEvaluationResult
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
-import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
-import com.hartwig.actin.trial.sort.CriterionReferenceComparator
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.AreaBreak
@@ -23,7 +20,11 @@ import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.properties.AreaBreakType
 
+private const val RULE_COL_WIDTH = 30f
+private const val EVALUATION_COL_WIDTH = 150f
+
 class TrialMatchingDetailsChapter(private val report: Report, override val include: Boolean) : ReportChapter {
+
     override fun name(): String {
         return "Trial Matching Details"
     }
@@ -74,7 +75,7 @@ class TrialMatchingDetailsChapter(private val report: Report, override val inclu
         document.add(blankLine())
         val trialEvaluationPerCriterion = toWorstEvaluationPerReference(trial.evaluations)
         if (hasDisplayableEvaluations(trialEvaluationPerCriterion, displayFailOnly)) {
-            document.add(makeWrapping(createEvaluationTable(trialEvaluationPerCriterion, displayFailOnly)))
+            document.add(Tables.makeWrapping(createEvaluationTable(trialEvaluationPerCriterion, displayFailOnly)))
         }
         for (cohort in trial.cohorts) {
             document.add(blankLine())
@@ -88,7 +89,7 @@ class TrialMatchingDetailsChapter(private val report: Report, override val inclu
             val cohortEvaluationPerCriterion = toWorstEvaluationPerReference(cohort.evaluations)
             if (hasDisplayableEvaluations(cohortEvaluationPerCriterion, displayFailOnly)) {
                 document.add(blankLine())
-                document.add(makeWrapping(createEvaluationTable(cohortEvaluationPerCriterion, displayFailOnly)))
+                document.add(Tables.makeWrapping(createEvaluationTable(cohortEvaluationPerCriterion, displayFailOnly)))
             }
         }
     }
@@ -143,138 +144,77 @@ class TrialMatchingDetailsChapter(private val report: Report, override val inclu
         table.addHeaderCell(Cells.createHeader("Rule"))
         table.addHeaderCell(Cells.createHeader("Reference"))
         table.addHeaderCell(Cells.createHeader("Evaluation"))
-        val references = evaluations.keys.sortedWith(CriterionReferenceComparator()).distinct()
-        addEvaluationsOfType(table, references, evaluations, EvaluationResult.FAIL)
-        if (!displayFailOnly) {
-            addEvaluationsOfType(table, references, evaluations, EvaluationResult.WARN)
-            addEvaluationsOfType(table, references, evaluations, EvaluationResult.UNDETERMINED)
-            addEvaluationsOfType(table, references, evaluations, EvaluationResult.PASS)
-            addEvaluationsOfType(table, references, evaluations, EvaluationResult.NOT_EVALUATED)
+
+        for (interpretation in EvaluationInterpreter.interpretForDetailedTrialMatching(evaluations, displayFailOnly)) {
+            table.addCell(Cells.createContent(interpretation.rule))
+            table.addCell(Cells.createContent(interpretation.reference))
+            val evalTable = Tables.createSingleColWithWidth(EVALUATION_COL_WIDTH).setKeepTogether(true)
+            for (result in interpretation.entriesPerResult.keys) {
+                val entry = interpretation.entriesPerResult[result]!!
+                evalTable.addCell(Cells.createEvaluationResult(result, entry.header))
+                for (message in entry.messages) {
+                    evalTable.addCell(Cells.create(Paragraph(message)))
+                }
+            }
+            table.addCell(Cells.createContent(evalTable))
         }
+
         return table
     }
 
-    companion object {
-        private const val RULE_COL_WIDTH = 30f
-        private const val EVALUATION_COL_WIDTH = 150f
-
-        private fun hasDisplayableEvaluations(
-            evaluationsPerCriterion: Map<CriterionReference, Evaluation>,
-            displayFailOnly: Boolean
-        ): Boolean {
-            if (!displayFailOnly) {
-                return evaluationsPerCriterion.isNotEmpty()
-            }
-            for (evaluation in evaluationsPerCriterion.values) {
-                if (evaluation.result == EvaluationResult.FAIL) {
-                    return true
-                }
-            }
-            return false
+    private fun hasDisplayableEvaluations(
+        evaluationsPerCriterion: Map<CriterionReference, Evaluation>,
+        displayFailOnly: Boolean
+    ): Boolean {
+        if (!displayFailOnly) {
+            return evaluationsPerCriterion.isNotEmpty()
         }
-
-        private fun toWorstEvaluationPerReference(evaluations: Map<Eligibility, Evaluation>): Map<CriterionReference, Evaluation> {
-            val worstResultPerCriterion: MutableMap<CriterionReference, EvaluationResult> = mutableMapOf()
-            for ((key, value) in evaluations) {
-                for (reference in key.references) {
-                    val currentWorst = worstResultPerCriterion[reference]
-                    val evaluation = value.result
-                    if (currentWorst != null) {
-                        val newWorst: EvaluationResult = if (currentWorst.isWorseThan(evaluation)) currentWorst else evaluation
-                        worstResultPerCriterion[reference] = newWorst
-                    } else {
-                        worstResultPerCriterion[reference] = evaluation
-                    }
-                }
+        for (evaluation in evaluationsPerCriterion.values) {
+            if (evaluation.result == EvaluationResult.FAIL) {
+                return true
             }
-            val worstEvaluationPerCriterion: MutableMap<CriterionReference, Evaluation> = mutableMapOf()
-            for ((key, evaluation) in evaluations) {
-                for (reference in key.references) {
-                    val worst = worstResultPerCriterion[reference]!!
-                    val current = worstEvaluationPerCriterion[reference]
-                    if (current == null) {
-                        worstEvaluationPerCriterion[reference] = evaluation.copy(result = worst)
-                    } else {
-                        val recoverable = if (evaluation.result == worst) {
-                            current.recoverable && evaluation.recoverable
-                        } else current.recoverable
-                        worstEvaluationPerCriterion[reference] = current.addMessagesAndEvents(evaluation).copy(recoverable = recoverable)
-                    }
-                }
-            }
-            return worstEvaluationPerCriterion
         }
+        return false
+    }
 
-        private fun addEvaluationsOfType(
-            table: Table, references: Iterable<CriterionReference>,
-            evaluations: Map<CriterionReference, Evaluation>, resultToRender: EvaluationResult
-        ) {
-            for (reference in references) {
-                val evaluation = evaluations[reference]
-                if (evaluation!!.result == resultToRender) {
-                    table.addCell(createContent(reference.id))
-                    table.addCell(createContent(reference.text))
-                    val evalTable = Tables.createSingleColWithWidth(EVALUATION_COL_WIDTH).setKeepTogether(true)
-                    evalTable.addCell(Cells.createEvaluation(evaluation))
-                    when (evaluation.result) {
-                        EvaluationResult.PASS, EvaluationResult.NOT_EVALUATED -> {
-                            for (passMessage in evaluation.passSpecificMessages) {
-                                evalTable.addCell(Cells.create(Paragraph(Formats.insertSpacesAroundPlus(passMessage))))
-                            }
-                        }
-
-                        EvaluationResult.WARN -> {
-                            for (warnMessage in evaluation.warnSpecificMessages) {
-                                evalTable.addCell(Cells.create(Paragraph(Formats.insertSpacesAroundPlus(warnMessage))))
-                            }
-                            if (evaluation.undeterminedSpecificMessages.isNotEmpty()) {
-                                evalTable.addCell(createEvaluationResult(EvaluationResult.UNDETERMINED))
-                                for (undeterminedMessage in evaluation.undeterminedSpecificMessages) {
-                                    evalTable.addCell(Cells.create(Paragraph(Formats.insertSpacesAroundPlus(undeterminedMessage))))
-                                }
-                            }
-                        }
-
-                        EvaluationResult.UNDETERMINED -> {
-                            for (undeterminedMessage in evaluation.undeterminedSpecificMessages) {
-                                evalTable.addCell(Cells.create(Paragraph(Formats.insertSpacesAroundPlus(undeterminedMessage))))
-                            }
-                        }
-
-                        EvaluationResult.FAIL -> {
-                            for (failMessage in evaluation.failSpecificMessages) {
-                                evalTable.addCell(Cells.create(Paragraph(Formats.insertSpacesAroundPlus(failMessage))))
-                            }
-                            if (evaluation.recoverable) {
-                                if (evaluation.warnSpecificMessages.isNotEmpty()) {
-                                    evalTable.addCell(createEvaluationResult(EvaluationResult.WARN))
-                                    for (warnMessage in evaluation.warnSpecificMessages) {
-                                        evalTable.addCell(Cells.create(Paragraph(Formats.insertSpacesAroundPlus(warnMessage))))
-                                    }
-                                }
-                                if (evaluation.undeterminedSpecificMessages.isNotEmpty()) {
-                                    evalTable.addCell(createEvaluationResult(EvaluationResult.UNDETERMINED))
-                                    for (undeterminedMessage in evaluation.undeterminedSpecificMessages) {
-                                        evalTable.addCell(Cells.create(Paragraph(Formats.insertSpacesAroundPlus(undeterminedMessage))))
-                                    }
-                                }
-                            }
-                        }
-
-                        else -> {}
-                    }
-                    table.addCell(createContent(evalTable))
+    private fun toWorstEvaluationPerReference(evaluations: Map<Eligibility, Evaluation>): Map<CriterionReference, Evaluation> {
+        val worstResultPerCriterion: MutableMap<CriterionReference, EvaluationResult> = mutableMapOf()
+        for ((key, value) in evaluations) {
+            for (reference in key.references) {
+                val currentWorst = worstResultPerCriterion[reference]
+                val evaluation = value.result
+                if (currentWorst != null) {
+                    val newWorst: EvaluationResult = if (currentWorst.isWorseThan(evaluation)) currentWorst else evaluation
+                    worstResultPerCriterion[reference] = newWorst
+                } else {
+                    worstResultPerCriterion[reference] = evaluation
                 }
             }
         }
-
-        private fun blankLine(): Paragraph {
-            return Paragraph(" ")
+        val worstEvaluationPerCriterion: MutableMap<CriterionReference, Evaluation> = mutableMapOf()
+        for ((key, evaluation) in evaluations) {
+            for (reference in key.references) {
+                val worst = worstResultPerCriterion[reference]!!
+                val current = worstEvaluationPerCriterion[reference]
+                if (current == null) {
+                    worstEvaluationPerCriterion[reference] = evaluation.copy(result = worst)
+                } else {
+                    val recoverable = if (evaluation.result == worst) {
+                        current.recoverable && evaluation.recoverable
+                    } else current.recoverable
+                    worstEvaluationPerCriterion[reference] = current.addMessagesAndEvents(evaluation).copy(recoverable = recoverable)
+                }
+            }
         }
+        return worstEvaluationPerCriterion
+    }
 
-        private fun pageBreak(): AreaBreak {
-            return AreaBreak(AreaBreakType.NEXT_PAGE)
-        }
+    private fun blankLine(): Paragraph {
+        return Paragraph(" ")
+    }
+
+    private fun pageBreak(): AreaBreak {
+        return AreaBreak(AreaBreakType.NEXT_PAGE)
     }
 
     private data class TrialClassification(val eligible: List<TrialMatch> = emptyList(), val nonEligible: List<TrialMatch> = emptyList()) {
