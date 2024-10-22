@@ -107,10 +107,10 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
 
             val typeInterpretation = characteristics.hrdType?.let { type ->
                 val (typeDisplay, brcaValueDisplay) = when (type) {
-                    "BRCA_type" -> {
+                    "BRCA1_type" -> {
                         Pair("BRCA1-type", "BRCA1 value: ${characteristics.brca1Value?.let { Formats.twoDigitNumber(it) }}")
                     }
-                    "BRCA2-type" -> {
+                    "BRCA2_type" -> {
                         Pair("BRCA2-type", "BRCA2 value: ${characteristics.brca2Value?.let { Formats.twoDigitNumber(it) }}")
                     }
                     "none", "cannot_be_determined" -> Pair(null, null)
