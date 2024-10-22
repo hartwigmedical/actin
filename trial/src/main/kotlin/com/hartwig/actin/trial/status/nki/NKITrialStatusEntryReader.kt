@@ -36,7 +36,8 @@ class NKITrialStatusEntryReader : TrialStatusEntryReader {
                     studyTitle = it.studyTitle,
                     studyStatus = if (it.studyStatus == NKI_OPEN_STATUS) OPEN else CLOSED,
                     cohortId = it.cohortId,
-                    cohortStatus = if (it.cohortOpen == true) OPEN else CLOSED
+                    cohortStatus = if (it.cohortOpen == true) OPEN else CLOSED,
+                    cohortSlotsNumberAvailable = it.studySlotsNumberAvailable ?: 0
                 )
             }
     }
