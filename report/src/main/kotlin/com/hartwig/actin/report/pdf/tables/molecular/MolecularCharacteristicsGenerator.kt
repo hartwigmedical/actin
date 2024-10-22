@@ -104,7 +104,7 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
         val characteristics = molecular.characteristics
         return characteristics.isHomologousRepairDeficient?.let { isDeficient ->
             val statusInterpretation = if (isDeficient) "Deficient" else "Proficient"
-            val scoreInterpretation = characteristics.homologousRepairScore?.let { "(${Formats.twoDigitNumber(it)})" } ?: ""
+            val scoreInterpretation = characteristics.homologousRepairScore?.let { "(${Formats.twoDigitNumber(it)})" }
 
             val typeInterpretation = characteristics.hrdType?.let { type ->
                 when (type) {
@@ -116,7 +116,7 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
                     }
                     HrdType.NONE, HrdType.CANNOT_BE_DETERMINED -> null
                 }
-            }.takeIf { isDeficient }
+            }?.takeIf { isDeficient }
 
             listOfNotNull(statusInterpretation, scoreInterpretation, typeInterpretation).joinToString(" ")
         }

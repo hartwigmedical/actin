@@ -64,15 +64,17 @@ class CharacteristicsExtractorTest {
         assertThat(deficient.isHomologousRepairDeficient).isTrue()
         assertThat(deficient.hrdType).isEqualTo(HrdType.BRCA2_TYPE)
 
-        val proficient = extractor.extract(withHomologousRepairStatus(ChordStatus.HR_PROFICIENT))
+        val proficient = extractor.extract(withHomologousRepairStatus(ChordStatus.HR_PROFICIENT, HrdType.NONE))
         assertThat(proficient.isHomologousRepairDeficient).isFalse()
+        assertThat(proficient.hrdType).isEqualTo(HrdType.NONE)
 
         val cannotBeDetermined = extractor.extract(withHomologousRepairStatus(ChordStatus.CANNOT_BE_DETERMINED, HrdType.BRCA1_TYPE))
         assertThat(cannotBeDetermined.isHomologousRepairDeficient).isNull()
         assertThat(cannotBeDetermined.hrdType).isEqualTo(HrdType.BRCA1_TYPE)
 
-        val unknown = extractor.extract(withHomologousRepairStatus(ChordStatus.UNKNOWN))
+        val unknown = extractor.extract(withHomologousRepairStatus(ChordStatus.UNKNOWN, HrdType.CANNOT_BE_DETERMINED))
         assertThat(unknown.isHomologousRepairDeficient).isNull()
+        assertThat(unknown.hrdType).isEqualTo(HrdType.CANNOT_BE_DETERMINED)
     }
 
     @Test
@@ -103,7 +105,7 @@ class CharacteristicsExtractorTest {
         assertThat(unknown.hasHighTumorMutationalLoad).isNull()
     }
 
-    private fun withHomologousRepairStatus(hrStatus: ChordStatus, hrdType: HrdType = HrdType.NONE): OrangeRecord {
+    private fun withHomologousRepairStatus(hrStatus: ChordStatus, hrdType: HrdType): OrangeRecord {
         return ImmutableOrangeRecord.builder()
             .from(TestOrangeFactory.createMinimalTestOrangeRecord())
             .chord(
