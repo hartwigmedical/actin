@@ -39,7 +39,7 @@ class EligibleActinTrialsGenerator(
             cohorts: List<EvaluatedCohort>, source: String, width: Float, slotsAvailable: Boolean
         ): Pair<EligibleActinTrialsGenerator, List<EvaluatedCohort>> {
             val recruitingAndEligibleCohorts = cohorts.filter {
-                it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable == slotsAvailable && it.isEvaluable
+                it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable == slotsAvailable
             }
             val recruitingAndEligibleTrials = recruitingAndEligibleCohorts.map(EvaluatedCohort::trialId).distinct()
             val slotsText = if (slotsAvailable) "and currently have slots available" else "but currently have no slots available"
@@ -62,7 +62,7 @@ class EligibleActinTrialsGenerator(
             contentWidth: Float,
         ): EligibleActinTrialsGenerator {
             val unavailableAndEligible =
-                cohorts.filter { trial: EvaluatedCohort -> trial.isPotentiallyEligible && !trial.isOpen && trial.isEvaluable }
+                cohorts.filter { trial: EvaluatedCohort -> trial.isPotentiallyEligible && !trial.isOpen }
             val title = String.format(
                 "%s trials and cohorts that are considered eligible, but are closed (%s)",
                 source,

@@ -49,7 +49,7 @@ class IneligibleActinTrialsGenerator(
         fun forOpenCohorts(
             cohorts: List<EvaluatedCohort>, source: String, width: Float, enableExtendedMode: Boolean
         ): IneligibleActinTrialsGenerator {
-            val ineligibleCohorts = cohorts.filter { !it.isPotentiallyEligible && (it.isOpen || enableExtendedMode) && it.isEvaluable }
+            val ineligibleCohorts = cohorts.filter { !it.isPotentiallyEligible && (it.isOpen || enableExtendedMode) }
             val trialColWidth = width / 9
             val cohortColWidth = width / 4
             val molecularColWidth = width / 7
@@ -69,7 +69,7 @@ class IneligibleActinTrialsGenerator(
             width: Float,
         ): IneligibleActinTrialsGenerator {
             val unavailableAndEligible =
-                cohorts.filter { trial: EvaluatedCohort -> !trial.isPotentiallyEligible && !trial.isOpen && trial.isEvaluable }
+                cohorts.filter { trial: EvaluatedCohort -> !trial.isPotentiallyEligible && !trial.isOpen }
             val title = String.format(
                 "%s trials and cohorts that are closed and considered ineligible (%s)",
                 source,
@@ -83,9 +83,8 @@ class IneligibleActinTrialsGenerator(
             source: String,
             width: Float,
         ): IneligibleActinTrialsGenerator {
-            val nonEvaluable = cohorts.filter { trial: EvaluatedCohort -> !trial.isEvaluable }
-            val title = String.format("%s trials and cohorts that are not evaluated (%s)", source, nonEvaluable.size)
-            return create(nonEvaluable, title, width, width * 2, width)
+            val title = String.format("%s trials and cohorts that are not evaluated (%s)", source, cohorts.size)
+            return create(cohorts, title, width, width * 2, width)
         }
 
         private fun create(

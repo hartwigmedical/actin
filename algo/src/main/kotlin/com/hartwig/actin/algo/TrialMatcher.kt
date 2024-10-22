@@ -9,6 +9,7 @@ import com.hartwig.actin.datamodel.algo.CohortMatch
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.TrialMatch
+import com.hartwig.actin.datamodel.trial.Cohort
 import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
@@ -21,23 +22,30 @@ class TrialMatcher(private val evaluationFunctionFactory: EvaluationFunctionFact
         return trials.map { trial ->
             val trialEvaluations = evaluateEligibility(patient, trial.generalEligibility + warnIfPreviouslyParticipatedInSameTrial(trial))
             val passesAllTrialEvaluations = isPotentiallyEligible(trialEvaluations.values)
-            val cohortMatches = trial.cohorts.map { cohort ->
-                val cohortEvaluations = evaluateEligibility(patient, cohort.eligibility)
-                CohortMatch(
-                    metadata = cohort.metadata,
-                    isPotentiallyEligible = isPotentiallyEligible(cohortEvaluations.values) && passesAllTrialEvaluations,
-                    evaluations = cohortEvaluations
-                )
-            }.sortedWith(CohortMatchComparator())
+            val cohortMatches = findCohortMatches(trial.cohorts.filter { it.metadata.evaluable }, patient, passesAllTrialEvaluations)
+            val nonEvaluableCohortMatches =
+                findCohortMatches(trial.cohorts.filter { !it.metadata.evaluable }, patient, passesAllTrialEvaluations)
 
             val isEligible = passesAllTrialEvaluations && (trial.cohorts.isEmpty() || cohortMatches.any(CohortMatch::isPotentiallyEligible))
             TrialMatch(
                 identification = trial.identification,
                 isPotentiallyEligible = isEligible,
                 evaluations = trialEvaluations,
-                cohorts = cohortMatches
+                cohorts = cohortMatches,
+                nonEvaluableCohorts = nonEvaluableCohortMatches
             )
         }.sortedWith(TrialMatchComparator())
+    }
+
+    private fun findCohortMatches(cohorts: List<Cohort>, patient: PatientRecord, passesAllTrialEvaluations: Boolean): List<CohortMatch> {
+        return cohorts.map { cohort ->
+            val cohortEvaluations = evaluateEligibility(patient, cohort.eligibility)
+            CohortMatch(
+                metadata = cohort.metadata,
+                isPotentiallyEligible = isPotentiallyEligible(cohortEvaluations.values) && passesAllTrialEvaluations,
+                evaluations = cohortEvaluations
+            )
+        }.sortedWith(CohortMatchComparator())
     }
 
     private fun evaluateEligibility(patient: PatientRecord, eligibility: List<Eligibility>): Map<Eligibility, Evaluation> {

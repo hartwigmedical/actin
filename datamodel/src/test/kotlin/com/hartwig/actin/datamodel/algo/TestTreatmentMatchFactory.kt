@@ -53,7 +53,8 @@ object TestTreatmentMatchFactory {
                 ),
                 isPotentiallyEligible = true,
                 evaluations = createTestGeneralEvaluationsTrial1(),
-                cohorts = createTestCohortsTrial1()
+                cohorts = createTestCohortsTrial1(),
+                nonEvaluableCohorts = emptyList()
             ),
             TrialMatch(
                 identification = TrialIdentification(
@@ -65,7 +66,8 @@ object TestTreatmentMatchFactory {
                 ),
                 isPotentiallyEligible = true,
                 evaluations = createTestGeneralEvaluationsTrial2(),
-                cohorts = createTestCohortsTrial2()
+                cohorts = createTestCohortsTrial2(),
+                nonEvaluableCohorts = emptyList()
             )
         )
     }

@@ -7,5 +7,6 @@ data class TrialMatch(
     val identification: TrialIdentification,
     val isPotentiallyEligible: Boolean,
     val evaluations: Map<Eligibility, Evaluation>,
-    val cohorts: List<CohortMatch>
+    val cohorts: List<CohortMatch>,
+    val nonEvaluableCohorts: List<CohortMatch>
 )

@@ -25,13 +25,15 @@ private val trialMatches = listOf(
         identification = TrialIdentification("TRIAL-1", true, "TR-1", "Different title of same trial 1", "NCT00000001"),
         isPotentiallyEligible = true,
         evaluations = emptyMap(),
-        cohorts = emptyList()
+        cohorts = emptyList(),
+        nonEvaluableCohorts = emptyList()
     ),
     TrialMatch(
         identification = TrialIdentification("TRIAL-2", true, "TR-2", "Different trial 2", "NCT00000003"),
         isPotentiallyEligible = true,
         evaluations = emptyMap(),
-        cohorts = emptyList()
+        cohorts = emptyList(),
+        nonEvaluableCohorts = emptyList()
     )
 )
 
@@ -244,7 +246,6 @@ class ExternalTrialSummarizerTest {
             cohort = null,
             molecularEvents = setOf(TMB_TARGET),
             isPotentiallyEligible = true,
-            isEvaluable = true,
             isOpen = true,
             hasSlotsAvailable = true,
             warnings = emptySet(),

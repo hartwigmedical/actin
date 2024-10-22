@@ -8,6 +8,55 @@ import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.trial.Eligibility
 
 object EvaluatedCohortFactory {
+    fun createNonEv(treatmentMatch: TreatmentMatch, filterOnSOCExhaustionAndTumorType: Boolean): List<EvaluatedCohort> {
+        return filteredMatches(
+            treatmentMatch.trialMatches, filterOnSOCExhaustionAndTumorType, TrialMatch::evaluations
+        ).flatMap { trialMatch: TrialMatch ->
+            val trialWarnings = extractWarnings(trialMatch.evaluations)
+            val trialFails = extractFails(trialMatch.evaluations)
+            val trialInclusionEvents = extractInclusionEvents(trialMatch.evaluations)
+            val identification = trialMatch.identification
+            val trialId = identification.trialId
+            val acronym = identification.acronym
+            val trialIsOpen = identification.open
+            val phase = identification.phase
+            // Handle case of trial without cohorts.
+            if (trialMatch.nonEvaluableCohorts.isEmpty()) {
+                listOf(
+                    EvaluatedCohort(
+                        trialId = trialId,
+                        acronym = acronym,
+                        cohort = null,
+                        molecularEvents = trialInclusionEvents,
+                        isPotentiallyEligible = trialMatch.isPotentiallyEligible,
+                        isOpen = trialIsOpen,
+                        hasSlotsAvailable = trialIsOpen,
+                        warnings = trialWarnings,
+                        fails = trialFails,
+                        phase = phase
+                    )
+                )
+            } else {
+                filteredMatches(
+                    trialMatch.nonEvaluableCohorts, filterOnSOCExhaustionAndTumorType, CohortMatch::evaluations
+                ).map { cohortMatch: CohortMatch ->
+                    EvaluatedCohort(
+                        trialId = trialId,
+                        acronym = acronym,
+                        cohort = cohortMatch.metadata.description,
+                        molecularEvents = trialInclusionEvents.union(extractInclusionEvents(cohortMatch.evaluations)),
+                        isPotentiallyEligible = cohortMatch.isPotentiallyEligible,
+                        isOpen = trialIsOpen && cohortMatch.metadata.open && !cohortMatch.metadata.blacklist,
+                        hasSlotsAvailable = cohortMatch.metadata.slotsAvailable,
+                        warnings = trialWarnings.union(extractWarnings(cohortMatch.evaluations)),
+                        fails = trialFails.union(extractFails(cohortMatch.evaluations)),
+                        phase = phase
+                    )
+                }
+            }
+        }.sortedWith(EvaluatedCohortComparator())
+    }
+
     fun create(treatmentMatch: TreatmentMatch, filterOnSOCExhaustionAndTumorType: Boolean): List<EvaluatedCohort> {
         return filteredMatches(
             treatmentMatch.trialMatches, filterOnSOCExhaustionAndTumorType, TrialMatch::evaluations
@@ -29,7 +78,6 @@ object EvaluatedCohortFactory {
                         cohort = null,
                         molecularEvents = trialInclusionEvents,
                         isPotentiallyEligible = trialMatch.isPotentiallyEligible,
-                        isEvaluable = true,
                         isOpen = trialIsOpen,
                         hasSlotsAvailable = trialIsOpen,
                         warnings = trialWarnings,
@@ -47,7 +95,6 @@ object EvaluatedCohortFactory {
                         cohort = cohortMatch.metadata.description,
                         molecularEvents = trialInclusionEvents.union(extractInclusionEvents(cohortMatch.evaluations)),
                         isPotentiallyEligible = cohortMatch.isPotentiallyEligible,
-                        isEvaluable = cohortMatch.metadata.evaluable,
                         isOpen = trialIsOpen && cohortMatch.metadata.open && !cohortMatch.metadata.blacklist,
                         hasSlotsAvailable = cohortMatch.metadata.slotsAvailable,
                         warnings = trialWarnings.union(extractWarnings(cohortMatch.evaluations)),
