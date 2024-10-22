@@ -101,22 +101,26 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
 
     fun createHRStatusString(): String? {
         val characteristics = molecular.characteristics
-        val homologousRepairScore = characteristics.homologousRepairScore
-        characteristics.isHomologousRepairDeficient ?: return null
-        val isDeficient = characteristics.isHomologousRepairDeficient
-        val statusInterpretation = if (isDeficient == true) "Deficient" else "Proficient"
-        val scoreInterpretation = homologousRepairScore?.let { " (${Formats.twoDigitNumber(it)})" } ?: ""
-        val hrdType = characteristics.hrdType
-        val (typeDisplay, brcaValueDisplay) = when {
-            hrdType?.contains("BRCA1") == true -> Pair("BRCA1-type", "BRCA1-value: ${characteristics.brca1Value}")
-            hrdType?.contains("BRCA2") == true -> Pair("BRCA2-type", "BRCA2-value: ${characteristics.brca2Value}")
-            else -> Pair("", "")
-        }
-        val typeInterpretation = if (isDeficient == true) {
-            hrdType?.let { " - $typeDisplay ($brcaValueDisplay)" } ?: ""
-        } else ""
+        return characteristics.isHomologousRepairDeficient?.let { isDeficient ->
+            val statusInterpretation = if (isDeficient) "Deficient" else "Proficient"
+            val scoreInterpretation = characteristics.homologousRepairScore?.let { " (${Formats.twoDigitNumber(it)})" } ?: ""
 
-        return statusInterpretation + scoreInterpretation + typeInterpretation
+            val typeInterpretation = characteristics.hrdType?.let { type ->
+                val (typeDisplay, brcaValueDisplay) = when (type) {
+                    "BRCA_type" -> {
+                        Pair("BRCA1-type", "BRCA1 value: ${characteristics.brca1Value?.let { Formats.twoDigitNumber(it) }}")
+                    }
+                    "BRCA2-type" -> {
+                        Pair("BRCA2-type", "BRCA2 value: ${characteristics.brca2Value?.let { Formats.twoDigitNumber(it) }}")
+                    }
+                    "none", "cannot_be_determined" -> Pair(null, null)
+                    else -> throw IllegalStateException("Unknown value for HRD-type: $type")
+                }
+                listOfNotNull(typeDisplay, brcaValueDisplay).joinToString(" (", prefix = "- ", postfix = ")")
+            }
+
+            listOfNotNull(statusInterpretation, scoreInterpretation, typeInterpretation).joinToString(" ")
+        }
     }
 
     private fun createHRStatusCell(): Cell {

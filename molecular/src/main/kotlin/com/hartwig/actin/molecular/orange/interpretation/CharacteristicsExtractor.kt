@@ -10,39 +10,32 @@ import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.hmftools.datamodel.purple.PurpleMicrosatelliteStatus
 import com.hartwig.hmftools.datamodel.purple.PurpleTumorMutationalStatus
 
-internal class CharacteristicsExtractor() {
+internal class CharacteristicsExtractor {
 
     fun extract(record: OrangeRecord): MolecularCharacteristics {
         val predictedTumorOrigin = record.cuppa()?.let {
             PredictedTumorOrigin(predictions = determineCupPredictions(it.predictions()))
         }
         val purple = record.purple()
-        val isMicrosatelliteUnstable = isMSI(purple.characteristics().microsatelliteStatus())
-        val homologousRepairScore = record.chord()?.hrdValue()
-        val isHomologousRepairDeficient = record.chord()?.let { isHRD(it.hrStatus()) }
-        val brca1Value = record.chord()?.brca1Value()
-        val brca2Value = record.chord()?.brca2Value()
-        val hrdType = record.chord()?.hrdType()
-        val hasHighTumorMutationalBurden = hasHighStatus(purple.characteristics().tumorMutationalBurdenStatus())
-        val hasHighTumorMutationalLoad = hasHighStatus(purple.characteristics().tumorMutationalLoadStatus())
+        val chordRecord = record.chord()
 
         return MolecularCharacteristics(
             purity = purple.fit().purity(),
             ploidy = purple.fit().ploidy(),
             predictedTumorOrigin = predictedTumorOrigin,
-            isMicrosatelliteUnstable = isMicrosatelliteUnstable,
+            isMicrosatelliteUnstable = isMSI(purple.characteristics().microsatelliteStatus()),
             microsatelliteEvidence = createNoEvidence(),
-            homologousRepairScore = homologousRepairScore,
-            isHomologousRepairDeficient = isHomologousRepairDeficient,
-            brca1Value = brca1Value,
-            brca2Value = brca2Value,
-            hrdType = hrdType,
+            homologousRepairScore = chordRecord?.hrdValue(),
+            isHomologousRepairDeficient = chordRecord?.let { isHRD(it.hrStatus()) },
+            brca1Value = chordRecord?.brca1Value(),
+            brca2Value = chordRecord?.brca2Value(),
+            hrdType = chordRecord?.hrdType(),
             homologousRepairEvidence = createNoEvidence(),
             tumorMutationalBurden = purple.characteristics().tumorMutationalBurdenPerMb(),
-            hasHighTumorMutationalBurden = hasHighTumorMutationalBurden,
+            hasHighTumorMutationalBurden = hasHighStatus(purple.characteristics().tumorMutationalBurdenStatus()),
             tumorMutationalBurdenEvidence = createNoEvidence(),
             tumorMutationalLoad = purple.characteristics().tumorMutationalLoad(),
-            hasHighTumorMutationalLoad = hasHighTumorMutationalLoad,
+            hasHighTumorMutationalLoad = hasHighStatus(purple.characteristics().tumorMutationalLoadStatus()),
             tumorMutationalLoadEvidence = createNoEvidence()
         )
     }
