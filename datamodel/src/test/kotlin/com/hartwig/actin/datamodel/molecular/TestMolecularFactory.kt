@@ -309,7 +309,7 @@ object TestMolecularFactory {
                 clusterGroup = 0
             ),
             fusions = proper.fusions + Fusion(
-                isReportable = true,
+                isReportable = false,
                 event = "EML4 - ALK fusion",
                 driverLikelihood = DriverLikelihood.HIGH,
                 evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
