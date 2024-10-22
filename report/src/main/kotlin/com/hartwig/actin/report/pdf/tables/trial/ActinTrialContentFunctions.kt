@@ -31,10 +31,7 @@ object ActinTrialContentFunctions {
                 listOf(
                     cohort.cohort ?: "",
                     concat(cohort.molecularEvents - commonEvents, commonEvents.isEmpty() && !allEventsEmpty),
-                    concat(
-                        feedbackFunction.invoke(cohort) - commonFeedback,
-                        commonFeedback.isEmpty() && !noFeedback
-                    )
+                    concat(feedbackFunction.invoke(cohort) - commonFeedback, commonFeedback.isEmpty() && !noFeedback)
                 ),
                 !cohort.isOpen || !cohort.hasSlotsAvailable
             )

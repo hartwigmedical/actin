@@ -59,7 +59,7 @@ class TrialMatchingChapter(
                 )
             },
             if (includeIneligibleTrialsInSummary || externalTrialsOnly) null else {
-                IneligibleActinTrialsGenerator.forNonEvaluatedCohorts(
+                IneligibleActinTrialsGenerator.forNonEvaluableCohorts(
                     cohorts, report.treatmentMatch.trialSource, contentWidth()
                 )
             },

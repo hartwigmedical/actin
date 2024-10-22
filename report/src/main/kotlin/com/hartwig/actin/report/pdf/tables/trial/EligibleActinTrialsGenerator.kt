@@ -8,7 +8,7 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
-class EligibleActinTrialsGenerator private constructor(
+class EligibleActinTrialsGenerator(
     private val cohorts: List<EvaluatedCohort>,
     private val title: String,
     private val trialColWidth: Float,
