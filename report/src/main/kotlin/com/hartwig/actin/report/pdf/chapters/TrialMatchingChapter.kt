@@ -34,7 +34,10 @@ class TrialMatchingChapter(
     private fun addTrialMatchingOverview(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
         val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
-        val nonEvaluatedCohorts = EvaluatedCohortFactory.createNonEv(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
+        val nonEvaluatedCohorts = EvaluatedCohortFactory.createNonEvaluableAndIgnoredCohorts(
+            report.treatmentMatch,
+            report.config.filterOnSOCExhaustionAndTumorType
+        )
         val (_, evaluated) =
             EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = true)
 

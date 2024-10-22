@@ -83,7 +83,7 @@ class IneligibleActinTrialsGenerator(
             source: String,
             width: Float,
         ): IneligibleActinTrialsGenerator {
-            val title = String.format("%s trials and cohorts that are not evaluated (%s)", source, cohorts.size)
+            val title = String.format("%s trials and cohorts that are not evaluable or ignored (%s)", source, cohorts.size)
             return create(cohorts, title, width, width * 2, width)
         }
 

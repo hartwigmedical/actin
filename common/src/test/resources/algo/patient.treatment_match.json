@@ -65,7 +65,7 @@
             "evaluable": true,
             "open": true,
             "slotsAvailable": true,
-            "blacklist": false,
+            "ignore": false,
             "description": "Cohort A"
           },
           "isPotentiallyEligible": true,
@@ -121,7 +121,7 @@
             "evaluable": true,
             "open": true,
             "slotsAvailable": true,
-            "blacklist": false,
+            "ignore": false,
             "description": "Cohort B"
           },
           "isPotentiallyEligible": true,
@@ -133,7 +133,7 @@
             "evaluable": true,
             "open": true,
             "slotsAvailable": true,
-            "blacklist": false,
+            "ignore": false,
             "description": "Cohort C"
           },
           "isPotentiallyEligible": true,

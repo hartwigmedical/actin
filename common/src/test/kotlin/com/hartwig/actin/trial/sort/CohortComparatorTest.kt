@@ -22,7 +22,7 @@ class CohortComparatorTest {
                 evaluable = true,
                 open = true,
                 slotsAvailable = true,
-                blacklist = false,
+                ignore = false,
                 description = ""
             ),
             eligibility = emptyList()

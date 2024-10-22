@@ -552,7 +552,7 @@ CREATE TABLE `cohort`
     `evaluable` BOOLEAN NOT NULL,
     `open` BOOLEAN NOT NULL,
     `slotsAvailable` BOOLEAN NOT NULL,
-    `blacklist` BOOLEAN NOT NULL,
+    `ignore` BOOLEAN NOT NULL,
     `description` varchar(500) NOT NULL,
     PRIMARY KEY (`id`)
 );
@@ -616,7 +616,7 @@ CREATE TABLE `cohortMatch`
     `evaluable` BOOLEAN NOT NULL,
     `open` BOOLEAN NOT NULL,
     `slotsAvailable` BOOLEAN NOT NULL,
-    `blacklist` BOOLEAN NOT NULL,
+    `ignore` BOOLEAN NOT NULL,
     `description` varchar(500) NOT NULL,
     `isEligible` BOOLEAN NOT NULL,
     PRIMARY KEY (`id`)

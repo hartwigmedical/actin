@@ -5,6 +5,6 @@ data class CohortMetadata(
     val evaluable: Boolean,
     val open: Boolean,
     val slotsAvailable: Boolean,
-    val blacklist: Boolean,
+    val ignore: Boolean,
     val description: String
 )

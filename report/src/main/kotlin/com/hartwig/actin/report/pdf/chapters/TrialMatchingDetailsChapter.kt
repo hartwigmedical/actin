@@ -129,10 +129,10 @@ class TrialMatchingDetailsChapter(private val report: Report, override val inclu
         table.addCell(Cells.createEmpty())
         table.addCell(Cells.createKey("Has slots available?"))
         table.addCell(Cells.createValue(Formats.yesNoUnknown(metadata.slotsAvailable)))
-        if (metadata.blacklist) {
+        if (metadata.ignore) {
             table.addCell(Cells.createEmpty())
-            table.addCell(Cells.createKey("Blacklisted for eligibility?"))
-            table.addCell(Cells.createValue(Formats.yesNoUnknown(metadata.blacklist)))
+            table.addCell(Cells.createKey("Ignored for eligibility?"))
+            table.addCell(Cells.createValue(Formats.yesNoUnknown(metadata.ignore)))
         }
         return table
     }
@@ -299,7 +299,7 @@ class TrialMatchingDetailsChapter(private val report: Report, override val inclu
                 if (trial.cohorts.isEmpty()) {
                     return true
                 }
-                return trial.cohorts.any { it.isPotentiallyEligible && !it.metadata.blacklist && it.metadata.open }
+                return trial.cohorts.any { it.isPotentiallyEligible && !it.metadata.ignore && it.metadata.open }
             }
         }
     }

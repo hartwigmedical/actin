@@ -59,7 +59,8 @@ object HistoricTreatmentMatchDeserializer {
             identification = extractIdentification(Json.`object`(trialMatch, "identification")),
             isPotentiallyEligible = Json.bool(trialMatch, "isPotentiallyEligible"),
             evaluations = extractEvaluations(trialMatch.get("evaluations")),
-            cohorts = Json.array(trialMatch, "cohorts").mapNotNull { extractCohortMatch(it) }
+            cohorts = Json.array(trialMatch, "cohorts").mapNotNull { extractCohortMatch(it) },
+            nonEvaluableCohorts = Json.array(trialMatch, "nonEvaluableCohorts").mapNotNull { extractCohortMatch(it) }
         )
     }
 
@@ -161,7 +162,7 @@ object HistoricTreatmentMatchDeserializer {
             evaluable = true,
             open = Json.bool(cohortMetadata, "open"),
             slotsAvailable = Json.bool(cohortMetadata, "slotsAvailable"),
-            blacklist = Json.bool(cohortMetadata, "blacklist"),
+            ignore = Json.bool(cohortMetadata, "ignore"),
             description = Json.string(cohortMetadata, "description")
         )
     }

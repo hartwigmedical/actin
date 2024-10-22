@@ -293,7 +293,7 @@
             "evaluable": true,
             "open": true,
             "slotsAvailable": false,
-            "blacklist": false,
+            "ignore": false,
             "description": "Dose escalation - monotherapy"
           },
           "isPotentiallyEligible": true,
@@ -305,7 +305,7 @@
             "evaluable": true,
             "open": false,
             "slotsAvailable": false,
-            "blacklist": false,
+            "ignore": false,
             "description": "Dose expansion - monotherapy"
           },
           "isPotentiallyEligible": true,
@@ -511,7 +511,7 @@
             "evaluable": true,
             "open": true,
             "slotsAvailable": true,
-            "blacklist": false,
+            "ignore": false,
             "description": "Dose expansion - monotherapy - NSCLC"
           },
           "isPotentiallyEligible": true,
@@ -558,7 +558,7 @@
             "evaluable": true,
             "open": true,
             "slotsAvailable": true,
-            "blacklist": false,
+            "ignore": false,
             "description": "Dose expansion - monotherapy - Colorectum"
           },
           "isPotentiallyEligible": false,
@@ -783,7 +783,7 @@
             "evaluable": true,
             "open": true,
             "slotsAvailable": true,
-            "blacklist": false,
+            "ignore": false,
             "description": "Dose escalation - monotherapy"
           },
           "isPotentiallyEligible": false,
@@ -969,7 +969,7 @@
             "evaluable": true,
             "open": true,
             "slotsAvailable": true,
-            "blacklist": false,
+            "ignore": false,
             "description": "Lung cancer C797S cohort"
           },
           "isPotentiallyEligible": true,

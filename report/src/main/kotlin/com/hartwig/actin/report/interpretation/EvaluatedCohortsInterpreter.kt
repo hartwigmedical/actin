@@ -28,11 +28,11 @@ class EvaluatedCohortsInterpreter(
                 .groupBy({ it.first }, { it.second })
                 .mapValues { (_, acronyms) -> acronyms.sorted().distinct() }
 
-            val inclusionEventsOfNonBlacklistedOpenTrials = openCohorts
+            val inclusionEventsOfNonIgnoredOpenTrials = openCohorts
                 .flatMap(EvaluatedCohort::molecularEvents)
                 .toSet()
 
-            return EvaluatedCohortsInterpreter(eligibleOpenTrialsByInclusionEvent, inclusionEventsOfNonBlacklistedOpenTrials)
+            return EvaluatedCohortsInterpreter(eligibleOpenTrialsByInclusionEvent, inclusionEventsOfNonIgnoredOpenTrials)
         }
     }
 }

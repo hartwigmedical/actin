@@ -95,7 +95,7 @@ In case the set of cohort states for a single study are inconsistent, a warning 
 | externalCohortIds | 462;463                |                                                                                 | 
 | open              | 1                      | Optional (only required in case cohort is not present in trial status database) | 
 | slotsAvailable    | 1                      | Optional (only required in case cohort is not present in trial status database) |
-| blacklist         | 0                      |                                                                                 |
+| ignore            | 0                      |                                                                                 |
 | description       | First evaluation phase |                                                                                 |
 
 The following checks are done on the level of cohort definitions:

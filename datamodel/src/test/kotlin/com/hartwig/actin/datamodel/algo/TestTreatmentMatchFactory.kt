@@ -67,7 +67,7 @@ object TestTreatmentMatchFactory {
                 isPotentiallyEligible = true,
                 evaluations = createTestGeneralEvaluationsTrial2(),
                 cohorts = createTestCohortsTrial2(),
-                nonEvaluableCohorts = emptyList()
+                nonEvaluableCohorts = createNonEvaluableTestCohortsTrial2()
             )
         )
     }
@@ -150,7 +150,7 @@ object TestTreatmentMatchFactory {
             evaluable = evaluable,
             open = open,
             slotsAvailable = slotsAvailable,
-            blacklist = false,
+            ignore = false,
             description = "Cohort $cohortId"
         )
     }
@@ -215,7 +215,12 @@ object TestTreatmentMatchFactory {
                 metadata = createTestMetadata("A", true, true, false),
                 isPotentiallyEligible = true,
                 evaluations = createTestCohortEvaluationsTrial2CohortA(),
-            ),
+            )
+        )
+    }
+
+    private fun createNonEvaluableTestCohortsTrial2(): List<CohortMatch> {
+        return listOf(
             CohortMatch(
                 metadata = createTestMetadata("B", false, true, true),
                 isPotentiallyEligible = false,

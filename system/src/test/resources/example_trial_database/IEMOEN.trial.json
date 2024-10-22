@@ -127,7 +127,7 @@
         "evaluable": true,
         "open": true,
         "slotsAvailable": false,
-        "blacklist": false,
+        "ignore": false,
         "description": "Dose escalation - monotherapy"
       },
       "eligibility": [
@@ -139,7 +139,7 @@
         "evaluable": true,
         "open": false,
         "slotsAvailable": false,
-        "blacklist": false,
+        "ignore": false,
         "description": "Dose expansion - monotherapy"
       },
       "eligibility": [
