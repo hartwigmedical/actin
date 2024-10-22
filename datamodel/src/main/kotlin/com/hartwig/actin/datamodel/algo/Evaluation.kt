@@ -13,7 +13,7 @@ data class Evaluation(
     val undeterminedGeneralMessages: Set<String> = emptySet(),
     val failSpecificMessages: Set<String> = emptySet(),
     val failGeneralMessages: Set<String> = emptySet(),
-    val missingGenesForSufficientEvaluation: List<String> = emptyList(),
+    val isMissingGenesForSufficientEvaluation: Boolean = false,
 ) {
 
     fun addMessagesAndEvents(other: Evaluation): Evaluation {
