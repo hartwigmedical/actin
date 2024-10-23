@@ -16,6 +16,10 @@ val FIRST_TEST = TestMolecularFactory.createMinimalTestMolecularRecord().copy(da
 val SECOND_TEST = FIRST_TEST.copy(date = FIRST_TEST.date?.plusDays(1))
 val VARIANT = TestMolecularFactory.createProperVariant().copy(variantAlleleFrequency = 10.0)
 val FUSION = TestMolecularFactory.createProperFusion()
+private const val HIGH = "High"
+private const val VAF = "VAF 10.0%"
+private const val NOT_DETECTED = ""
+private const val DETECTED = "Detected"
 
 class LongitudinalMolecularHistoryGeneratorTest {
 
@@ -48,9 +52,9 @@ class LongitudinalMolecularHistoryGeneratorTest {
             0,
             "BRAF V600E\n(Tier I)",
             "Missense\nGain of function\nHotspot",
-            "High",
-            "Detected (VAF 10.0%)",
-            "Not detected"
+            HIGH,
+            VAF,
+            NOT_DETECTED
         )
     }
 
@@ -84,24 +88,24 @@ class LongitudinalMolecularHistoryGeneratorTest {
             0,
             "BRAF V600E\n(Tier I)",
             "Missense\nGain of function\nHotspot",
-            "High",
-            "Detected (VAF 10.0%)",
+            HIGH,
+            VAF,
         )
         assertRow(
             getWrappedTable(result),
             1,
             "KRAS G12C\n(Tier I)",
             "Missense\nGain of function\nHotspot",
-            "High",
-            "Detected (VAF 10.0%)",
+            HIGH,
+            VAF,
         )
         assertRow(
             getWrappedTable(result),
             2,
             "KRAS G12D\n(Tier I)",
             "Missense\nGain of function\nHotspot",
-            "High",
-            "Detected (VAF 10.0%)",
+            HIGH,
+            VAF,
         )
         assertRow(
             getWrappedTable(result),
@@ -111,15 +115,15 @@ class LongitudinalMolecularHistoryGeneratorTest {
                     "Known fusion\n" +
                     "Gain of function",
             "Low",
-            "Detected"
+            DETECTED
         )
         assertRow(
             getWrappedTable(result),
             4,
             "BRAF V600E\n(Tier II)",
             "Missense\nGain of function\nHotspot",
-            "High",
-            "Detected (VAF 10.0%)",
+            HIGH,
+            VAF,
         )
     }
 
@@ -169,9 +173,9 @@ class LongitudinalMolecularHistoryGeneratorTest {
             "Fusion\n" +
                     "Known fusion\n" +
                     "Gain of function",
-            "High",
-            "Detected",
-            "Not detected"
+            HIGH,
+            DETECTED,
+            NOT_DETECTED
         )
     }
 }
