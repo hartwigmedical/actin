@@ -118,7 +118,7 @@ class ClinicalIngestionFeedAdapterTest {
             UnusedCurationConfig(categoryName = "Molecular Test PDL1", input = "cps pd l1 > 20"),
             UnusedCurationConfig(categoryName = "Dosage Unit Translation", input = "stuk"),
             UnusedCurationConfig(categoryName = "Sequencing Test", input = "kras g12f"),
-            UnusedCurationConfig(categoryName = "Surgery", input = "surgery1")
+            UnusedCurationConfig(categoryName = "Surgery", input = "surgery1"),
             UnusedCurationConfig(categoryName = "Lesion Location", input = "and possibly lymph nodes")
         )
 
