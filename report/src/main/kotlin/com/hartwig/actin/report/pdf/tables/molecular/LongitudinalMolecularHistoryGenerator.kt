@@ -10,6 +10,7 @@ import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats.VALUE_NOT_AVAILABLE
+import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
@@ -50,9 +51,9 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
             for (test in sortedAndFilteredTests) {
                 if (test.value.containsKey(driver.event)) {
                     val vafInTest = test.value[driver.event]
-                    table.addCell(Cells.createContent("Detected${vafInTest?.let { v -> " (VAF ${v}%)" } ?: ""}"))
+                    table.addCell(Cells.createContent(vafInTest?.let { v -> "VAF ${v}%" } ?: "Detected"))
                 } else {
-                    table.addCell(Cells.createContent("Not detected"))
+                    table.addCell(Cells.createContent("").setFontColor(Styles.PALETTE_MID_GREY))
                 }
             }
         }
