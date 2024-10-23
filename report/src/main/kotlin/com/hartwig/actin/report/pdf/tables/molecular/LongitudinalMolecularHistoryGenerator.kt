@@ -1,6 +1,8 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
+import com.hartwig.actin.datamodel.molecular.Driver
 import com.hartwig.actin.datamodel.molecular.Fusion
+import com.hartwig.actin.datamodel.molecular.GeneAlteration
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.Variant
@@ -24,6 +26,7 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
 
         val allDrivers =
             testsWithDrivers.flatMap { it.second.map { d -> (d as? Variant)?.copy(variantAlleleFrequency = null) ?: d } }.toSet()
+                .sortedWith(driverSortOrder())
         val columnCount = 3 + sortedAndFilteredTests.size
         val table = Table(columnCount).setWidth(width)
 
@@ -63,6 +66,19 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
         }
         return makeWrapping(table)
     }
+
+    private fun driverSortOrder(): Comparator<Driver> = compareBy(
+        { it.evidenceTier() },
+        { it.driverLikelihood },
+        {
+            when (it) {
+                is Fusion -> it.geneStart
+                is GeneAlteration -> it.gene
+                else -> null
+            }
+        },
+        { it.event }
+    )
 
     private fun msiText(it: MolecularTest) = when (it.characteristics.isMicrosatelliteUnstable) {
         false -> "Stable"
