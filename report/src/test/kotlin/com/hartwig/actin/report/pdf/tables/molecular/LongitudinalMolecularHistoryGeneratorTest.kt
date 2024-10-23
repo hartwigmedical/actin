@@ -72,7 +72,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
                                 tierOneGeneTwoVariant,
                                 tierTwoVariant,
                                 tierOneVariant
-                            ).shuffled().toSet(),
+                            ),
                             fusions = setOf(tierOneGeneTwoLowLikelihoodFusion)
                         )
                     )
