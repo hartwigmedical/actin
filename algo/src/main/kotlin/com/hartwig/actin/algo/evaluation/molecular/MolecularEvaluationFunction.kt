@@ -18,6 +18,7 @@ abstract class MolecularEvaluationFunction(maxTestAge: LocalDate? = null) : Eval
         val recentMolecularTests = molecularTestFilter.apply(record.molecularHistory.molecularTests)
         return if (recentMolecularTests.isEmpty()) {
             noMolecularRecordEvaluation() ?: EvaluationFactory.undetermined("No molecular data", "No molecular data")
+                .copy(isMissingGenesForSufficientEvaluation = true)
         } else {
 
             if (genes().isNotEmpty() && genes().none { recentMolecularTests.any { t -> t.testsGene(it) } })
@@ -36,6 +37,7 @@ abstract class MolecularEvaluationFunction(maxTestAge: LocalDate? = null) : Eval
                 ?: record.molecularHistory.latestOrangeMolecularRecord()?.let(::evaluate)
                 ?: noMolecularRecordEvaluation()
                 ?: EvaluationFactory.undetermined("Insufficient molecular data", "Insufficient molecular data")
+                    .copy(isMissingGenesForSufficientEvaluation = true)
         }
     }
 
