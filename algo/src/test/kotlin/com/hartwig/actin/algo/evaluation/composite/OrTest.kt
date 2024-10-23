@@ -89,10 +89,18 @@ class OrTest {
 
     @Test
     fun onlyTakesIsMissingGenesForSufficientEvaluationOfBestEvaluation() {
-        val function1: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, isMissingGenes = true, index = 1)
-        val function2: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.UNDETERMINED, isMissingGenes = false, index = 2)
-        val result: Evaluation = Or(listOf(function1, function2)).evaluate(TEST_PATIENT)
-        assertThat(result.isMissingGenesForSufficientEvaluation).isFalse()
+        val failFunctionWithoutMissingGenes: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, isMissingGenes = true, index = 1)
+        val undeterminedFunctionWithMissingGenes: EvaluationFunction =
+            CompositeTestFactory.create(EvaluationResult.UNDETERMINED, isMissingGenes = true, index = 2)
+        val passFunctionWithoutMissingGenes: EvaluationFunction =
+            CompositeTestFactory.create(EvaluationResult.PASS, isMissingGenes = false, index = 2)
+        val orWithPassFailAndUndetermined: Evaluation =
+            Or(listOf(failFunctionWithoutMissingGenes, undeterminedFunctionWithMissingGenes, passFunctionWithoutMissingGenes)).evaluate(TEST_PATIENT)
+        val orWithFailAndUndetermined: Evaluation =
+            Or(listOf(failFunctionWithoutMissingGenes, undeterminedFunctionWithMissingGenes)).evaluate(TEST_PATIENT)
+
+        assertThat(orWithPassFailAndUndetermined.isMissingGenesForSufficientEvaluation).isFalse()
+        assertThat(orWithFailAndUndetermined.isMissingGenesForSufficientEvaluation).isTrue()
     }
 
     @Test
