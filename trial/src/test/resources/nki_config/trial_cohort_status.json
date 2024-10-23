@@ -82,7 +82,7 @@
     "studyAcronym": "CLS-001",
     "studyTitle": "Suspended trial",
     "studyStatus": "SUSPENDED",
-    "studySlotsNumberAvailable": 7,
+    "studySlotsNumberAvailable": 0,
     "studySlotsDateUpdate": "2024-03-12T00:00:00",
     "cohortId": "ghij",
     "cohortOpen": true
