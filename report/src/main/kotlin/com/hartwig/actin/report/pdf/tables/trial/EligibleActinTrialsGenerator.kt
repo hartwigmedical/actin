@@ -39,10 +39,10 @@ class EligibleActinTrialsGenerator private constructor(
 
 
         fun forOpenCohorts(
-            cohorts: List<EvaluatedCohort>, source: String, width: Float, slotsAvailable: Boolean
+            cohorts: List<EvaluatedCohort>, source: String, width: Float, slotsAvailable: Boolean, includeSlotEvaluation: Boolean
         ): Pair<EligibleActinTrialsGenerator, List<EvaluatedCohort>> {
             val recruitingAndEligibleCohorts = cohorts.filter {
-                it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable == slotsAvailable
+                it.isPotentiallyEligible && it.isOpen && (it.hasSlotsAvailable == slotsAvailable || !includeSlotEvaluation)
             }
             val recruitingAndEligibleTrials = recruitingAndEligibleCohorts.map(EvaluatedCohort::trialId).distinct()
             val slotsText = if (slotsAvailable) "and currently have slots available" else "but currently have no slots available"

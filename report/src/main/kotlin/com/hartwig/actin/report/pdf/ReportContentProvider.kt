@@ -109,10 +109,20 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             PatientClinicalHistoryGenerator(report, false, keyWidth, valueWidth)
         }
 
-        val (openCohortsWithSlotsGenerator, evaluated) =
-            EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth, slotsAvailable = true)
-        val (openCohortsWithoutSlotsGenerator, _) =
-            EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth, slotsAvailable = false)
+        val (openCohortsWithSlotsGenerator, evaluated) = EligibleActinTrialsGenerator.forOpenCohorts(
+            cohorts,
+            report.treatmentMatch.trialSource,
+            contentWidth,
+            slotsAvailable = true,
+            includeSlotEvaluation = report.config.includeSlotEvaluation
+        )
+        val (openCohortsWithoutSlotsGenerator, _) = EligibleActinTrialsGenerator.forOpenCohorts(
+            cohorts,
+            report.treatmentMatch.trialSource,
+            contentWidth,
+            slotsAvailable = false,
+            includeSlotEvaluation = true
+        )
 
         val (localTrialGenerator, nonLocalTrialGenerator) = provideExternalTrialsTables(report.patientRecord, evaluated, contentWidth)
         return listOfNotNull(
@@ -140,7 +150,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 report.config.includeTrialMatchingInSummary
             },
             openCohortsWithoutSlotsGenerator.takeIf {
-                report.config.includeTrialMatchingInSummary
+                report.config.includeTrialMatchingInSummary && report.config.includeSlotEvaluation
             },
             localTrialGenerator.takeIf { report.config.includeExternalTrialsInSummary },
             nonLocalTrialGenerator.takeIf { report.config.includeExternalTrialsInSummary },

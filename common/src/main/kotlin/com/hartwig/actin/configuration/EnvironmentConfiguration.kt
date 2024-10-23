@@ -32,6 +32,7 @@ data class ReportConfiguration(
     val includeRelevantNonOncologicalHistoryInSummary: Boolean = true,
     val includeApprovedTreatmentsInSummary: Boolean = true,
     val includeTrialMatchingInSummary: Boolean = true,
+    val includeSlotEvaluation: Boolean = true,
     val includeExternalTrialsInSummary: Boolean = true,
     val filterOnSOCExhaustionAndTumorType: Boolean = false,
     val includeClinicalDetailsChapter: Boolean = true,
