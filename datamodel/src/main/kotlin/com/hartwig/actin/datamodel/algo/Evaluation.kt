@@ -29,7 +29,8 @@ data class Evaluation(
             undeterminedSpecificMessages = undeterminedSpecificMessages + other.undeterminedSpecificMessages,
             undeterminedGeneralMessages = undeterminedGeneralMessages + other.undeterminedGeneralMessages,
             failSpecificMessages = failSpecificMessages + other.failSpecificMessages,
-            failGeneralMessages = failGeneralMessages + other.failGeneralMessages
+            failGeneralMessages = failGeneralMessages + other.failGeneralMessages,
+            isMissingGenesForSufficientEvaluation = isMissingGenesForSufficientEvaluation || other.isMissingGenesForSufficientEvaluation
         )
     }
 }
