@@ -22,9 +22,10 @@ private const val PROVIDED_SURGERY_NAME = "surgery one"
 private const val CURATED_SURGERY_NAME = "surgery 1"
 private const val PROVIDED_SURGERY_NAME_TO_BE_IGNORED = "Geen ingreep- operatie uitgesteld"
 private val PROVIDED_EHR_PATIENT_RECORD = createEhrPatientRecord()
+
 private val PROVIDED_SURGERY_WITH_NAME = EhrTestData.createEhrSurgery(PROVIDED_SURGERY_NAME)
 private val PROVIDED_SURGERY_TO_BE_IGNORED = EhrTestData.createEhrSurgery(PROVIDED_SURGERY_NAME_TO_BE_IGNORED)
-private val PROVIDED_SURGERY_WITHOUT_NAME = EhrTestData.createEhrSurgery()
+private val PROVIDED_SURGERY_WITHOUT_NAME = EhrTestData.createEhrSurgery(null)
 
 private val CURATED_SURGERY_CONFIG = SurgeryConfig(
     input = PROVIDED_SURGERY_NAME,

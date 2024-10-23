@@ -1,9 +1,11 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
+import com.hartwig.actin.datamodel.molecular.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.Drivers
 import com.hartwig.actin.datamodel.molecular.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.report.pdf.assertRow
 import com.hartwig.actin.report.pdf.getWrappedTable
 import java.time.LocalDate
@@ -53,6 +55,75 @@ class LongitudinalMolecularHistoryGeneratorTest {
     }
 
     @Test
+    fun `Should sort variants by tier then gene then event`() {
+        val tierOneVariant = VARIANT
+        val tierTwoVariant = VARIANT.copy(evidence = TestClinicalEvidenceFactory.withOffLabelExperimentalTreatment("test"))
+        val tierOneGeneTwoVariant = tierOneVariant.copy(gene = "KRAS", event = "KRAS G12C")
+        val tierOneGeneTwoVariantEventTwo = tierOneVariant.copy(gene = "KRAS", event = "KRAS G12D")
+        val tierOneGeneTwoLowLikelihoodFusion =
+            FUSION.copy(geneStart = "BRAF", geneEnd = "KRAS", driverLikelihood = DriverLikelihood.LOW, event = "BRAF - KRAS fusion")
+        val result = LongitudinalMolecularHistoryGenerator(
+            MolecularHistory(
+                listOf(
+                    FIRST_TEST.copy(
+                        drivers = Drivers(
+                            variants = setOf(
+                                tierOneGeneTwoVariantEventTwo,
+                                tierOneGeneTwoVariant,
+                                tierTwoVariant,
+                                tierOneVariant
+                            ),
+                            fusions = setOf(tierOneGeneTwoLowLikelihoodFusion)
+                        )
+                    )
+                )
+            ), 1f
+        )
+        assertRow(
+            getWrappedTable(result),
+            0,
+            "BRAF V600E\n(Tier I)",
+            "Missense\nGain of function\nHotspot",
+            "High",
+            "Detected (VAF 10.0%)",
+        )
+        assertRow(
+            getWrappedTable(result),
+            1,
+            "KRAS G12C\n(Tier I)",
+            "Missense\nGain of function\nHotspot",
+            "High",
+            "Detected (VAF 10.0%)",
+        )
+        assertRow(
+            getWrappedTable(result),
+            2,
+            "KRAS G12D\n(Tier I)",
+            "Missense\nGain of function\nHotspot",
+            "High",
+            "Detected (VAF 10.0%)",
+        )
+        assertRow(
+            getWrappedTable(result),
+            3,
+            "BRAF - KRAS fusion\n(Tier I)",
+            "Fusion\n" +
+                    "Known fusion\n" +
+                    "Gain of function",
+            "Low",
+            "Detected"
+        )
+        assertRow(
+            getWrappedTable(result),
+            4,
+            "BRAF V600E\n(Tier II)",
+            "Missense\nGain of function\nHotspot",
+            "High",
+            "Detected (VAF 10.0%)",
+        )
+    }
+
+    @Test
     fun `Should create row for TMB and assign value to the correct test`() {
         val result = LongitudinalMolecularHistoryGenerator(
             MolecularHistory(
@@ -95,7 +166,9 @@ class LongitudinalMolecularHistoryGeneratorTest {
             getWrappedTable(result),
             0,
             "EML4 - ALK fusion\n(Tier I)",
-            "Gain of function",
+            "Fusion\n" +
+                    "Known fusion\n" +
+                    "Gain of function",
             "High",
             "Detected",
             "Not detected"

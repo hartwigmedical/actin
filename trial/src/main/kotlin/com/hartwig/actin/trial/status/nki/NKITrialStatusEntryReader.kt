@@ -14,6 +14,7 @@ import java.io.File
 private const val TRIALS_JSON = "trial_cohort_status.json"
 private const val NKI_OPEN_STATUS = "OPEN"
 private val STATUSES_TO_INCLUDE = setOf(NKI_OPEN_STATUS, "CLOSED", "SUSPENDED")
+private const val ALWAYS_ASSUME_OPEN_SLOTS_FOR_NKI = 1
 
 class NKITrialStatusEntryReader : TrialStatusEntryReader {
 
@@ -22,7 +23,6 @@ class NKITrialStatusEntryReader : TrialStatusEntryReader {
         registerModule(JavaTimeModule())
         registerModule(KotlinModule.Builder().build())
     }
-
 
     override fun read(inputPath: String): List<TrialStatusEntry> {
         return mapper.readValue(File("$inputPath/$TRIALS_JSON"), object : TypeReference<List<NKITrialStatus>>() {})
@@ -36,7 +36,8 @@ class NKITrialStatusEntryReader : TrialStatusEntryReader {
                     studyTitle = it.studyTitle,
                     studyStatus = if (it.studyStatus == NKI_OPEN_STATUS) OPEN else CLOSED,
                     cohortId = it.cohortId,
-                    cohortStatus = if (it.cohortOpen == true) OPEN else CLOSED
+                    cohortStatus = if (it.cohortOpen == true) OPEN else CLOSED,
+                    cohortSlotsNumberAvailable = ALWAYS_ASSUME_OPEN_SLOTS_FOR_NKI
                 )
             }
     }

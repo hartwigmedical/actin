@@ -35,7 +35,7 @@ internal class ClinicalDAO(private val context: DSLContext) {
         context.truncate(Tables.TREATMENTHISTORYENTRY).execute()
         context.truncate(Tables.PRIORSECONDPRIMARY).execute()
         context.truncate(Tables.PRIOROTHERCONDITION).execute()
-        context.truncate(Tables.PRIORMOLECULARTEST).execute()
+        context.truncate(Tables.PRIORIHCTEST).execute()
         context.truncate(Tables.COMPLICATION).execute()
         context.truncate(Tables.LABVALUE).execute()
         context.truncate(Tables.TOXICITY).execute()
@@ -101,14 +101,21 @@ internal class ClinicalDAO(private val context: DSLContext) {
             Tables.TUMOR.STAGE,
             Tables.TUMOR.HASMEASURABLEDISEASE,
             Tables.TUMOR.HASBRAINLESIONS,
+            Tables.TUMOR.HASSUSPECTEDBRAINLESIONS,
             Tables.TUMOR.HASACTIVEBRAINLESIONS,
             Tables.TUMOR.HASCNSLESIONS,
+            Tables.TUMOR.HASSUSPECTEDCNSLESIONS,
             Tables.TUMOR.HASACTIVECNSLESIONS,
             Tables.TUMOR.HASBONELESIONS,
+            Tables.TUMOR.HASSUSPECTEDBONELESIONS,
             Tables.TUMOR.HASLIVERLESIONS,
+            Tables.TUMOR.HASSUSPECTEDLIVERLESIONS,
             Tables.TUMOR.HASLUNGLESIONS,
+            Tables.TUMOR.HASSUSPECTEDLUNGLESIONS,
             Tables.TUMOR.HASLYMPHNODELESIONS,
+            Tables.TUMOR.HASSUSPECTEDLYMPHNODELESIONS,
             Tables.TUMOR.OTHERLESIONS,
+            Tables.TUMOR.OTHERSUSPECTEDLESIONS,
             Tables.TUMOR.BIOPSYLOCATION
         )
             .values(
@@ -122,14 +129,21 @@ internal class ClinicalDAO(private val context: DSLContext) {
                 stage?.display(),
                 tumor.hasMeasurableDisease,
                 tumor.hasBrainLesions,
+                tumor.hasSuspectedBrainLesions,
                 tumor.hasActiveBrainLesions,
                 tumor.hasCnsLesions,
+                tumor.hasSuspectedCnsLesions,
                 tumor.hasActiveCnsLesions,
                 tumor.hasBoneLesions,
+                tumor.hasSuspectedBoneLesions,
                 tumor.hasLiverLesions,
+                tumor.hasSuspectedLiverLesions,
                 tumor.hasLungLesions,
+                tumor.hasSuspectedLungLesions,
                 tumor.hasLymphNodeLesions,
+                tumor.hasSuspectedLymphNodeLesions,
                 DataUtil.concat(tumor.otherLesions),
+                DataUtil.concat(tumor.otherSuspectedLesions),
                 tumor.biopsyLocation
             )
             .execute()
@@ -295,27 +309,31 @@ internal class ClinicalDAO(private val context: DSLContext) {
     }
 
     private fun writePriorMolecularTests(patientId: String, priorIHCTests: List<PriorIHCTest>) {
-        for (priorMolecularTest in priorIHCTests) {
+        for (priorIHCTest in priorIHCTests) {
             context.insertInto(
-                Tables.PRIORMOLECULARTEST,
-                Tables.PRIORMOLECULARTEST.PATIENTID,
-                Tables.PRIORMOLECULARTEST.ITEM,
-                Tables.PRIORMOLECULARTEST.MEASURE,
-                Tables.PRIORMOLECULARTEST.SCORETEXT,
-                Tables.PRIORMOLECULARTEST.SCOREVALUEPREFIX,
-                Tables.PRIORMOLECULARTEST.SCOREVALUE,
-                Tables.PRIORMOLECULARTEST.SCOREVALUEUNIT,
-                Tables.PRIORMOLECULARTEST.IMPLIESPOTENTIALINDETERMINATESTATUS
+                Tables.PRIORIHCTEST,
+                Tables.PRIORIHCTEST.PATIENTID,
+                Tables.PRIORIHCTEST.TEST,
+                Tables.PRIORIHCTEST.ITEM,
+                Tables.PRIORIHCTEST.MEASURE,
+                Tables.PRIORIHCTEST.MEASUREDATE,
+                Tables.PRIORIHCTEST.SCORETEXT,
+                Tables.PRIORIHCTEST.SCOREVALUEPREFIX,
+                Tables.PRIORIHCTEST.SCOREVALUE,
+                Tables.PRIORIHCTEST.SCOREVALUEUNIT,
+                Tables.PRIORIHCTEST.IMPLIESPOTENTIALINDETERMINATESTATUS
             )
                 .values(
                     patientId,
-                    priorMolecularTest.item,
-                    priorMolecularTest.measure,
-                    priorMolecularTest.scoreText,
-                    priorMolecularTest.scoreValuePrefix,
-                    priorMolecularTest.scoreValue,
-                    priorMolecularTest.scoreValueUnit,
-                    priorMolecularTest.impliesPotentialIndeterminateStatus
+                    priorIHCTest.test,
+                    priorIHCTest.item,
+                    priorIHCTest.measure,
+                    priorIHCTest.measureDate,
+                    priorIHCTest.scoreText,
+                    priorIHCTest.scoreValuePrefix,
+                    priorIHCTest.scoreValue,
+                    priorIHCTest.scoreValueUnit,
+                    priorIHCTest.impliesPotentialIndeterminateStatus
                 )
                 .execute()
         }

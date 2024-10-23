@@ -35,6 +35,15 @@ class FormatTest {
     }
 
     @Test
+    fun shouldLowercaseStringsAndJoinWithCommaAndOr() {
+        assertEquals("", Format.concatLowercaseWithCommaAndOr(emptySet()))
+        assertEquals("x", Format.concatLowercaseWithCommaAndOr(setOf("X")))
+        assertEquals("x or y", Format.concatLowercaseWithCommaAndOr(setOf("X", "Y")))
+        assertEquals("x, y or z", Format.concatLowercaseWithCommaAndOr(setOf("X", "Y", "Z")))
+        assertEquals("a, x, y or z", Format.concatLowercaseWithCommaAndOr(setOf("X", "Y", "Z", "A")))
+    }
+
+    @Test
     fun shouldConcatDisplayableItemsWithCustomDisplaySeparatedByAnd() {
         assertEquals("anti-PD-1 and HPV-16 vaccine", Format.concatItemsWithAnd(listOf(DrugType.HPV16_VACCINE, DrugType.ANTI_PD_1)))
     }
