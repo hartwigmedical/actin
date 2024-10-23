@@ -59,14 +59,13 @@ class PrimaryTumorLocationBelongsToDoid(
                     )
                 }
 
-                undeterminedUnderMainCancerTypes.isNotEmpty() -> EvaluationFactory.undetermined(
-                    "Could not determine based on configured tumor type if patient may have ${
-                        concatLowercaseWithCommaAndOr(
-                            undeterminedUnderMainCancerTypes
-                        )
-                    }",
-                    "Undetermined if ${concatLowercaseWithCommaAndOr(undeterminedUnderMainCancerTypes)}"
-                )
+                undeterminedUnderMainCancerTypes.isNotEmpty() -> {
+                    val terms = concatLowercaseWithCommaAndOr(doidsToTerms(undeterminedUnderMainCancerTypes.toSet()))
+                    EvaluationFactory.undetermined(
+                        "Could not determine based on configured tumor type if patient may have $terms",
+                        "Undetermined if $terms"
+                    )
+                }
 
                 else -> EvaluationFactory.fail(
                     "Patient has no ${concatLowercaseWithCommaAndOr(doidsToTerms(doidsToMatch))}",
