@@ -75,7 +75,7 @@ class AndTest {
     }
 
     @Test
-    fun shouldCombinesMolecularInclusionExclusionEvents() {
+    fun `Should combine molecular inclusion and exclusion events`() {
         val function1: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, includeMolecular = true, index = 1)
         val function2: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, includeMolecular = true, index = 2)
         val function3: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.PASS, includeMolecular = true, index = 3)
@@ -89,7 +89,7 @@ class AndTest {
     }
 
     @Test
-    fun isMissingGenesForSufficientEvaluationPropertyShouldBeTrueIfTrueForAnyEvaluation() {
+    fun `Should set isMissingGenesForSufficientEvaluation property to true if true for any evaluation`() {
         val function1: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.UNDETERMINED, isMissingGenes = true, index = 1)
         val function2: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.UNDETERMINED, isMissingGenes = false, index = 2)
         val result: Evaluation = And(listOf(function1, function2)).evaluate(TEST_PATIENT)
@@ -97,7 +97,7 @@ class AndTest {
     }
 
     @Test
-    fun properlyRespectsRecoverable() {
+    fun `Should respect recoverable`() {
         val recoverable: EvaluationFunction = CompositeTestFactory.create(recoverable = true, index = 1)
         val unrecoverable: EvaluationFunction = CompositeTestFactory.create(recoverable = false, index = 2)
         val result: Evaluation = And(listOf(recoverable, unrecoverable)).evaluate(TEST_PATIENT)
@@ -107,7 +107,7 @@ class AndTest {
     }
 
     @Test(expected = IllegalStateException::class)
-    fun crashOnNoFunctionsToEvaluate() {
+    fun `Should crash on no functions to evaluate`() {
         And(emptyList()).evaluate(TEST_PATIENT)
     }
 

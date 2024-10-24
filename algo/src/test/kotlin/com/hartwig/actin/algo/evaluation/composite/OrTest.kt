@@ -12,7 +12,7 @@ import org.junit.Test
 
 class OrTest {
     @Test
-    fun canCombineEvaluations() {
+    fun `Should combine evaluations`() {
         assertEvaluation(EvaluationResult.NOT_EVALUATED, combineWithNotEvaluated(TestEvaluationFunctionFactory.notEvaluated()))
         assertEvaluation(EvaluationResult.NOT_EVALUATED, combineWithNotEvaluated(TestEvaluationFunctionFactory.pass()))
         assertEvaluation(EvaluationResult.NOT_EVALUATED, combineWithNotEvaluated(TestEvaluationFunctionFactory.undetermined()))
@@ -41,7 +41,7 @@ class OrTest {
     }
 
     @Test
-    fun canRetainMessages() {
+    fun `Should retain messages`() {
         val function1: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, index = 1)
         val function2: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, index = 2)
         val function3: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.PASS, index = 3)
@@ -74,7 +74,7 @@ class OrTest {
     }
 
     @Test
-    fun combinesMolecularInclusionExclusionEvents() {
+    fun `Should combine molecular inclusion and exclusion events`() {
         val function1: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, includeMolecular = true, index = 1)
         val function2: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.PASS, includeMolecular = true, index =2)
         val function3: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.PASS, includeMolecular = true, index =3)
@@ -88,7 +88,7 @@ class OrTest {
     }
 
     @Test
-    fun onlyTakesIsMissingGenesForSufficientEvaluationOfBestEvaluation() {
+    fun `Should only take isMissingGenesForSufficientEvaluation property status from best evaluation`() {
         val failFunctionWithoutMissingGenes: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, isMissingGenes = true, index = 1)
         val undeterminedFunctionWithMissingGenes: EvaluationFunction =
             CompositeTestFactory.create(EvaluationResult.UNDETERMINED, isMissingGenes = true, index = 2)
@@ -104,7 +104,7 @@ class OrTest {
     }
 
     @Test
-    fun properlyRespectsRecoverable() {
+    fun `Should respect recoverable`() {
         val recoverable: EvaluationFunction = CompositeTestFactory.create(recoverable = true, index = 1)
         val unrecoverable: EvaluationFunction = CompositeTestFactory.create(recoverable = false, index = 2)
         val result: Evaluation = Or(listOf(recoverable, unrecoverable)).evaluate(TEST_PATIENT)
@@ -115,7 +115,7 @@ class OrTest {
     }
 
     @Test(expected = IllegalStateException::class)
-    fun crashOnNoFunctionsToEvaluate() {
+    fun `Should crash on no functions to evaluate`() {
         Or(emptyList()).evaluate(TEST_PATIENT)
     }
 

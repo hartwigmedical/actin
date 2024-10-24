@@ -114,7 +114,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         val (openCohortsWithoutSlotsGenerator, _) =
             EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth, slotsAvailable = false)
         val cohortsWithMissingGenesGenerator =
-            EligibleActinTrialsGenerator.forCohortsWithMissingGenes(cohorts, report.treatmentMatch.trialSource, contentWidth)
+            EligibleActinTrialsGenerator.forOpenCohortsWithMissingGenes(cohorts, report.treatmentMatch.trialSource, contentWidth)
 
         val (localTrialGenerator, nonLocalTrialGenerator) = provideExternalTrialsTables(report.patientRecord, evaluated, contentWidth)
         return listOfNotNull(

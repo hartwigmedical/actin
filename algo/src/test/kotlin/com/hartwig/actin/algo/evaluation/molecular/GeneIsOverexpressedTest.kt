@@ -10,6 +10,6 @@ class GeneIsOverexpressedTest {
     @Test
     fun canEvaluate() {
         val function = GeneIsOverexpressed()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
     }
 }

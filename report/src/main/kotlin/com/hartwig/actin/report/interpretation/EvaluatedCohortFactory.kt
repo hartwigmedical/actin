@@ -20,6 +20,7 @@ object EvaluatedCohortFactory {
             val acronym = identification.acronym
             val trialIsOpen = identification.open
             val phase = identification.phase
+            val missingGenesForTrial = trialMatch.evaluations.values.any { it.isMissingGenesForSufficientEvaluation }
             // Handle case of trial without cohorts.
             if (trialMatch.cohorts.isEmpty()) {
                 listOf(
@@ -29,7 +30,7 @@ object EvaluatedCohortFactory {
                         cohort = null,
                         molecularEvents = trialInclusionEvents,
                         isPotentiallyEligible = trialMatch.isPotentiallyEligible,
-                        isMissingGenesForSufficientEvaluation = trialMatch.evaluations.values.any { it.isMissingGenesForSufficientEvaluation },
+                        isMissingGenesForSufficientEvaluation = missingGenesForTrial,
                         isOpen = trialIsOpen,
                         hasSlotsAvailable = trialIsOpen,
                         warnings = trialWarnings,
@@ -47,7 +48,8 @@ object EvaluatedCohortFactory {
                         cohort = cohortMatch.metadata.description,
                         molecularEvents = trialInclusionEvents.union(extractInclusionEvents(cohortMatch.evaluations)),
                         isPotentiallyEligible = cohortMatch.isPotentiallyEligible,
-                        isMissingGenesForSufficientEvaluation = cohortMatch.evaluations.values.any { it.isMissingGenesForSufficientEvaluation },
+                        isMissingGenesForSufficientEvaluation = missingGenesForTrial ||
+                                cohortMatch.evaluations.values.any { it.isMissingGenesForSufficientEvaluation },
                         isOpen = trialIsOpen && cohortMatch.metadata.open && !cohortMatch.metadata.blacklist,
                         hasSlotsAvailable = cohortMatch.metadata.slotsAvailable,
                         warnings = trialWarnings.union(extractWarnings(cohortMatch.evaluations)),

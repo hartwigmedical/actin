@@ -30,9 +30,9 @@ class PDL1EvaluationFunctionsTest {
     }
 
     @Test
-    fun `Should fail with no prior tests`() {
+    fun `Should return undetermined with no prior tests`() {
         val record = MolecularTestFactory.withMolecularTests(emptyList())
-        evaluateFunctions(EvaluationResult.FAIL, record)
+        evaluateFunctions(EvaluationResult.UNDETERMINED, record)
     }
 
     @Test

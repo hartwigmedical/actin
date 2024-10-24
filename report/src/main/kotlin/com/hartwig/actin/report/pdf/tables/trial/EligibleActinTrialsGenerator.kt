@@ -45,17 +45,17 @@ class EligibleActinTrialsGenerator private constructor(
                 it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable == slotsAvailable && !it.isMissingGenesForSufficientEvaluation
             }
             val recruitingAndEligibleTrials = recruitingAndEligibleCohorts.map(EvaluatedCohort::trialId).distinct()
-            val slotsText = if (slotsAvailable) "and currently have slots available" else "but currently have no slots available"
+            val slotsText = if (slotsAvailable) " without any available slots" else ""
             val cohortFromTrialsText = if (recruitingAndEligibleCohorts.isNotEmpty()) {
                 "(${formatCountWithLabel(recruitingAndEligibleCohorts.size, "cohort")}" +
                         " from ${formatCountWithLabel(recruitingAndEligibleTrials.size, "trial")})"
             } else "(0)"
-            val title = "$source trials that are open and considered eligible $slotsText $cohortFromTrialsText"
+            val title = "Open and eligible $source trials$slotsText $cohortFromTrialsText"
 
             return create(recruitingAndEligibleCohorts, title, width) to recruitingAndEligibleCohorts
         }
 
-        fun forCohortsWithMissingGenes(
+        fun forOpenCohortsWithMissingGenes(
             cohorts: List<EvaluatedCohort>, source: String, width: Float
         ): EligibleActinTrialsGenerator? {
             val recruitingAndEligibleCohorts = cohorts.filter {

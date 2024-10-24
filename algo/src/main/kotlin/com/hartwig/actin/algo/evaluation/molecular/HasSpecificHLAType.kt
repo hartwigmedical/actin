@@ -9,8 +9,10 @@ import java.time.LocalDate
 class HasSpecificHLAType(private val hlaAlleleToFind: String, maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
-        val molecular = test as? MolecularRecord ?: return EvaluationFactory.undetermined("Cannot evaluate HLA type without WGS")
-            .copy(isMissingGenesForSufficientEvaluation = true)
+        val molecular = test as? MolecularRecord ?: return EvaluationFactory.undetermined(
+            "Cannot evaluate HLA type without WGS",
+            missingGenesForEvaluation = true
+        )
         val immunology = molecular.immunology
         if (!immunology.isReliable) {
             return EvaluationFactory.recoverableUndetermined("HLA typing has not been performed reliably", "HLA typing unreliable")
