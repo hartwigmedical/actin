@@ -165,7 +165,7 @@ object WGSSummaryGeneratorFunctions {
     fun potentiallyActionableEventsCell(drivers: List<Driver>): Cell {
         if (drivers.isEmpty()) return Cells.createValue(Formats.VALUE_NONE)
 
-        val eventText = drivers.flatMap { driver ->
+        val eventText = drivers.distinctBy(Driver::event).flatMap { driver ->
             val warning = when (driver.driverLikelihood) {
                 DriverLikelihood.LOW -> " (low driver likelihood)"
                 DriverLikelihood.MEDIUM -> " (medium driver likelihood)"
@@ -177,7 +177,7 @@ object WGSSummaryGeneratorFunctions {
                 Text(", ").addStyle(Styles.tableHighlightStyle()),
             )
         }.dropLast(1)
-        val paragraph = Paragraph().addAll(eventText.distinct())
+        val paragraph = Paragraph().addAll(eventText)
 
         return Cells.create(paragraph)
     }
