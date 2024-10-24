@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.feed.standard.extraction
 
+import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
@@ -30,7 +31,8 @@ class StandardMedicationExtractorTest {
     private val qtProlongatingRiskCuration = mockk<CurationDatabase<QTProlongatingConfig>>()
     private val cypInteractionCuration = mockk<CurationDatabase<CypInteractionConfig>>()
     private val atcClassification = atcClassification()
-    private val extractor = StandardMedicationExtractor(atcModel, qtProlongatingRiskCuration, cypInteractionCuration)
+    private val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
+    private val extractor = StandardMedicationExtractor(atcModel, treatmentDatabase, qtProlongatingRiskCuration, cypInteractionCuration)
     private val providedMedication = ProvidedMedication(
         name = MEDICATION_NAME,
         atcCode = "atc",

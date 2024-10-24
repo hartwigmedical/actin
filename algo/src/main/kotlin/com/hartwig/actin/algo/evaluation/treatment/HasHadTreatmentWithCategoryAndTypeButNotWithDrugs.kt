@@ -2,7 +2,9 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.treatment.MedicationFunctions.createTreatmentHistoryEntriesFromMedications
 import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithAnd
+import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithComma
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
@@ -18,8 +20,10 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugs(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
+        val effectiveTreatmentHistory = record.oncologicalHistory + createTreatmentHistoryEntriesFromMedications(record.medications)
+
         val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
-            record.oncologicalHistory,
+            effectiveTreatmentHistory,
             category,
             { historyEntry ->
                 historyEntry.allTreatments().any { treatment ->
@@ -31,22 +35,24 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugs(
             { treatment -> (treatment as? DrugTreatment)?.drugs.isNullOrEmpty() || treatment.types().isEmpty() }
         )
 
-        val ignoreDrugsList = concatItemsWithAnd(ignoreDrugs)
+        val matchingTreatmentTypes = treatmentSummary.specificMatches.flatMap { it.treatments.flatMap(Treatment::types) }
+        val concatenatedMatchingTypes = concatItemsWithComma(matchingTreatmentTypes)
 
-        val matchingTreatmentTypes = treatmentSummary.specificMatches
-            .map { it.treatments.flatMap(Treatment::types).map { t -> t.display() }.toSet() }
-            .flatten()
-            .joinToString(", ")
-        val typeMessage = if (types != null && matchingTreatmentTypes.isNotEmpty()) " of types $matchingTreatmentTypes" else ""
+        val ignoreDrugsList = concatItemsWithAnd(ignoreDrugs)
+        val typeMessage = if (types != null && concatenatedMatchingTypes.isNotEmpty()) " of types $concatenatedMatchingTypes" else ""
         val messageEnding = "received ${category.display()}$typeMessage ignoring $ignoreDrugsList"
 
         return when {
-            treatmentSummary.hasSpecificMatch() -> EvaluationFactory.pass("Patient has $messageEnding", "Has $messageEnding")
+            treatmentSummary.hasSpecificMatch() -> {
+                EvaluationFactory.pass("Patient has $messageEnding", "Has $messageEnding")
+            }
 
-            treatmentSummary.hasPossibleTrialMatch() -> EvaluationFactory.undetermined(
-                "Patient may have $messageEnding due to trial participation",
-                "Undetermined if $messageEnding due to trial participation"
-            )
+            treatmentSummary.hasPossibleTrialMatch() -> {
+                EvaluationFactory.undetermined(
+                    "Patient may have $messageEnding due to trial participation",
+                    "Undetermined if $messageEnding due to trial participation"
+                )
+            }
 
             else -> EvaluationFactory.fail("Patient has not $messageEnding", "Has not $messageEnding")
         }

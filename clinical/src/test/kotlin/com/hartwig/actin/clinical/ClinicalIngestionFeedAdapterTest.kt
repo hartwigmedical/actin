@@ -63,6 +63,7 @@ class ClinicalIngestionFeedAdapterTest {
                 curationDatabase,
                 TestAtcFactory.createProperAtcModel(),
                 testDoidModel,
+                TestTreatmentDatabaseFactory.createProper()
             ), curationDatabase
         )
     }

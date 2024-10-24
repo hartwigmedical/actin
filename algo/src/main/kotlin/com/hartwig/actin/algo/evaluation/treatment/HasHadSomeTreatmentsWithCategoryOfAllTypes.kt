@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.treatment.MedicationFunctions.createTreatmentHistoryEntriesFromMedications
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -13,9 +14,12 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypes(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
+        val effectiveTreatmentHistory = record.oncologicalHistory + createTreatmentHistoryEntriesFromMedications(record.medications)
+
         val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
-            record.oncologicalHistory, category, { historyEntry -> types.all { type -> historyEntry.isOfType(type) == true } }
+            effectiveTreatmentHistory, category, { historyEntry -> types.all { type -> historyEntry.isOfType(type) == true } }
         )
+
         val typesList = Format.concatItemsWithAnd(types)
         val baseMessage = "received at least $minTreatmentLines line(s) of $typesList combination ${category.display()}"
 
@@ -31,8 +35,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypes(
                 )
             }
 
-            treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches + treatmentSummary.numPossibleTrialMatches
-                    >= minTreatmentLines -> {
+            treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches + treatmentSummary.numPossibleTrialMatches >= minTreatmentLines -> {
                 EvaluationFactory.undetermined(
                     "Patient may have received at least $minTreatmentLines line(s) of ${category.display()} due to trial participation",
                     "Trial medication in history - undetermined if received at least $minTreatmentLines line(s) of ${category.display()}"
