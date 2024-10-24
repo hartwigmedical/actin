@@ -71,7 +71,7 @@ object WGSSummaryGeneratorFunctions {
                 table.addCell(potentiallyActionableEventsCell(actionableEventsWithLowOrMediumDriver))
             }
             if (actionableEventsWithUnknownDriver.isNotEmpty()) {
-                table.addCell(Cells.createKey("Potentially actionable events not considered drivers:"))
+                table.addCell(Cells.createKey("Potentially actionable events not considered a driver:"))
                 table.addCell(potentiallyActionableEventsCell(actionableEventsWithUnknownDriver))
             }
         } else {
