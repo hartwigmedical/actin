@@ -8,6 +8,7 @@ data class AnnotatedTreatmentMatch(
     val evaluations: List<Evaluation>,
     val annotations: List<EfficacyEntry>,
     val generalPfs: Measurement? = null,
+    val generalOs: Measurement? = null,
     val resistanceEvidence: List<ResistanceEvidence>,
 ) {
 

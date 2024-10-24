@@ -107,9 +107,9 @@ class SOCGeneratorFunctionsTest {
         return (paragraph.children.first() as Text).text
     }
 
-    private fun annotatedTreatmentMatch(name: String, evaluations: List<Evaluation>, pfs: Measurement? = null): AnnotatedTreatmentMatch {
+    private fun annotatedTreatmentMatch(name: String, evaluations: List<Evaluation>, pfs: Measurement? = null, os: Measurement? = null): AnnotatedTreatmentMatch {
         return AnnotatedTreatmentMatch(
-            TreatmentCandidate(treatment(name, true), false, emptySet()), evaluations, emptyList(), pfs, emptyList()
+            TreatmentCandidate(treatment(name, true), false, emptySet()), evaluations, emptyList(), pfs, os, emptyList()
         )
     }
 

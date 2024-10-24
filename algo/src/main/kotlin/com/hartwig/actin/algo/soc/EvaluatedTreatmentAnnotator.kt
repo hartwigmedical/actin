@@ -21,12 +21,19 @@ class EvaluatedTreatmentAnnotator(
             }
         }?.toMap()
 
+        val osByTreatmentName = treatmentAnalyses?.flatMap { (treatmentGroup, measurementsByType) ->
+            treatmentGroup.memberTreatmentNames.map { treatmentName ->
+                treatmentName to measurementsByType[MeasurementType.OVERALL_SURVIVAL]!![ALL_PATIENTS_POPULATION_NAME]
+            }
+        }?.toMap()
+
         return evaluatedTreatments.map { evaluatedTreatment ->
             AnnotatedTreatmentMatch(
                 treatmentCandidate = evaluatedTreatment.treatmentCandidate,
                 evaluations = evaluatedTreatment.evaluations,
                 annotations = lookUp(evaluatedTreatment),
                 generalPfs = pfsByTreatmentName?.get(evaluatedTreatment.treatmentCandidate.treatment.name.lowercase()),
+                generalOs = osByTreatmentName?.get(evaluatedTreatment.treatmentCandidate.treatment.name.lowercase()),
                 resistanceEvidence = resistanceEvidenceMatcher.match(evaluatedTreatment.treatmentCandidate.treatment)
             )
         }

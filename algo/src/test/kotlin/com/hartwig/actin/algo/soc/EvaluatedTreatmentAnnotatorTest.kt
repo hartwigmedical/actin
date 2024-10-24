@@ -44,7 +44,7 @@ class EvaluatedTreatmentAnnotatorTest {
 
         val actualAnnotatedTreatmentMatches = annotator.annotate(socTreatments)
         val expectedAnnotatedTreatmentMatches =
-            listOf(AnnotatedTreatmentMatch(treatmentCandidate, evaluations, efficacyEntries, null, emptyList()))
+            listOf(AnnotatedTreatmentMatch(treatmentCandidate, evaluations, efficacyEntries, null, null, emptyList()))
 
         assertThat(actualAnnotatedTreatmentMatches).isEqualTo(expectedAnnotatedTreatmentMatches)
     }
@@ -61,7 +61,7 @@ class EvaluatedTreatmentAnnotatorTest {
 
         val actualAnnotatedTreatmentMatches = annotator.annotate(socTreatments)
         val expectedAnnotatedTreatmentMatches =
-            listOf(AnnotatedTreatmentMatch(treatmentCandidate, evaluations, emptyList(), null, emptyList()))
+            listOf(AnnotatedTreatmentMatch(treatmentCandidate, evaluations, emptyList(), null, null, emptyList()))
 
         assertThat(actualAnnotatedTreatmentMatches).isEqualTo(expectedAnnotatedTreatmentMatches)
     }
