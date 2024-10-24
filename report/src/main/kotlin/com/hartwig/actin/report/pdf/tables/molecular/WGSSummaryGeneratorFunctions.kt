@@ -177,7 +177,7 @@ object WGSSummaryGeneratorFunctions {
                 Text(", ").addStyle(Styles.tableHighlightStyle()),
             )
         }.dropLast(1)
-        val paragraph = Paragraph().addAll(eventText)
+        val paragraph = Paragraph().addAll(eventText.distinct())
 
         return Cells.create(paragraph)
     }

@@ -13,9 +13,7 @@ class WGSSummaryGeneratorFunctionsTest {
     @Test
     fun `Should return events concatenated and with warning string`() {
         val drivers = listOf(
-            TestCopyNumberFactory.createMinimal().copy(
-                event = "event 1", driverLikelihood = null
-            ),
+            TestCopyNumberFactory.createMinimal().copy(event = "event 1", driverLikelihood = null),
             TestFusionFactory.createMinimal().copy(event = "event 2", driverLikelihood = null),
             TestFusionFactory.createMinimal().copy(event = "event 3", driverLikelihood = DriverLikelihood.MEDIUM)
         )
