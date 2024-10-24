@@ -21,15 +21,15 @@ class HasFusionInGene(private val gene: String, maxTestAge: LocalDate? = null) :
     override fun evaluate(record: PatientRecord): Evaluation {
         val recentMolecularTests = molecularTestFilter.apply(record.molecularHistory.molecularTests)
 
-        if (gene !in IHC_FUSION_GENES) {
-            if (recentMolecularTests.isEmpty()) {
+        when {
+            gene !in IHC_FUSION_GENES && recentMolecularTests.isEmpty() -> {
                 return EvaluationFactory.undetermined(
                     "No molecular data",
                     "No molecular data"
                 )
             }
 
-            if (recentMolecularTests.none { it.testsGene(gene) }) {
+            gene !in IHC_FUSION_GENES && recentMolecularTests.none { it.testsGene(gene) } -> {
                 return EvaluationFactory.undetermined(
                     "Gene $gene not tested in molecular data",
                     "Gene $gene not tested"
@@ -37,8 +37,7 @@ class HasFusionInGene(private val gene: String, maxTestAge: LocalDate? = null) :
             }
         }
 
-        val molecularEvaluations =
-            recentMolecularTests.map { MolecularEvaluation(it, evaluateMolecularTest(it)) }
+        val molecularEvaluations = recentMolecularTests.map { MolecularEvaluation(it, evaluateMolecularTest(it)) }
 
         return molecularEvaluations
             .takeIf { it.isNotEmpty() }
@@ -55,22 +54,22 @@ class HasFusionInGene(private val gene: String, maxTestAge: LocalDate? = null) :
             return null
         }
 
-        val positiveIHC = priorIHCTests.any { it.test == "IHC" && it.item == gene && it.scoreText == "Positive" }
-        val negativeIHC = priorIHCTests.any() { it.test == "IHC" && it.item == gene && it.scoreText == "Negative" }
+        val positiveIHC = hasIHCResult(priorIHCTests, "Positive")
+        val negativeIHC = hasIHCResult(priorIHCTests, "Negative")
 
-        return when (positiveIHC to negativeIHC) {
-            true to false -> EvaluationFactory.pass(
+        return when {
+            positiveIHC && !negativeIHC -> EvaluationFactory.pass(
                 "Fusion(s) detected from IHC in gene $gene",
                 "Fusion(s) detected in gene $gene",
                 inclusionEvents = setOf("$gene Fusion IHC Positive")
             )
 
-            false to true -> EvaluationFactory.fail(
+            !positiveIHC && negativeIHC -> EvaluationFactory.fail(
                 "No fusion detected from IHC in gene $gene",
                 "No fusion in gene $gene"
             )
 
-            true to true -> EvaluationFactory.warn(
+            positiveIHC && negativeIHC -> EvaluationFactory.warn(
                 "Conflicting fusion evidence from IHC for $gene ",
                 "Conflicting fusion for $gene",
                 inclusionEvents = setOf("$gene Fusion IHC Positive", "$gene Fusion IHC Negative")
@@ -78,6 +77,10 @@ class HasFusionInGene(private val gene: String, maxTestAge: LocalDate? = null) :
 
             else -> null
         }
+    }
+
+    private fun hasIHCResult(priorIHCTests: List<PriorIHCTest>, scoreText: String): Boolean {
+        return priorIHCTests.any { it.test == "IHC" && it.item == gene && it.scoreText == scoreText }
     }
 
     private fun evaluateMolecularTest(test: MolecularTest): Evaluation {
