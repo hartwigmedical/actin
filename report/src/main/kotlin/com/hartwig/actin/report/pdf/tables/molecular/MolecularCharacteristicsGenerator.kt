@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
+import com.hartwig.actin.datamodel.molecular.HrdType
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoEntry
@@ -100,11 +101,25 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
     }
 
     fun createHRStatusString(): String? {
-        val homologousRepairScore = molecular.characteristics.homologousRepairScore
-        molecular.characteristics.isHomologousRepairDeficient ?: return null
-        val statusInterpretation = if (molecular.characteristics.isHomologousRepairDeficient!!) "Deficient" else "Proficient"
-        val scoreInterpretation = homologousRepairScore?.let { " (${Formats.twoDigitNumber(it)})" } ?: ""
-        return statusInterpretation + scoreInterpretation
+        val characteristics = molecular.characteristics
+        return characteristics.isHomologousRepairDeficient?.let { isDeficient ->
+            val statusInterpretation = if (isDeficient) "Deficient" else "Proficient"
+            val scoreInterpretation = characteristics.homologousRepairScore?.let { "(${Formats.twoDigitNumber(it)})" }
+
+            val typeInterpretation = characteristics.hrdType?.let { type ->
+                when (type) {
+                    HrdType.BRCA1_TYPE -> {
+                        "- BRCA1-type (BRCA1 value: ${characteristics.brca1Value?.let { Formats.twoDigitNumber(it) }})"
+                    }
+                    HrdType.BRCA2_TYPE -> {
+                        "- BRCA2-type (BRCA2 value: ${characteristics.brca2Value?.let { Formats.twoDigitNumber(it) }})"
+                    }
+                    HrdType.NONE, HrdType.CANNOT_BE_DETERMINED -> null
+                }
+            }?.takeIf { isDeficient }
+
+            listOfNotNull(statusInterpretation, scoreInterpretation, typeInterpretation).joinToString(" ")
+        }
     }
 
     private fun createHRStatusCell(): Cell {

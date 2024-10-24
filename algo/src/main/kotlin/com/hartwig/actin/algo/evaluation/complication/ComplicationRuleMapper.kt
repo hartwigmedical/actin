@@ -38,7 +38,7 @@ class ComplicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resou
     }
 
     private fun hasPotentialUncontrolledTumorRelatedPainCreator(): FunctionCreator {
-        val interpreter: MedicationStatusInterpreter = MedicationStatusInterpreterOnEvaluationDate(referenceDateProvider().date())
+        val interpreter: MedicationStatusInterpreter = MedicationStatusInterpreterOnEvaluationDate(referenceDateProvider().date(), null)
         return { HasPotentialUncontrolledTumorRelatedPain(interpreter) }
     }
 

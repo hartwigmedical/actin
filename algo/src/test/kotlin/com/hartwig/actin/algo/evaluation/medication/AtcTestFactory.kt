@@ -56,6 +56,7 @@ internal object AtcTestFactory {
                 "J05" to NAME_NOT_APPLICABLE,
                 "L01" to NAME_NOT_APPLICABLE,
                 "L01A" to NAME_NOT_APPLICABLE,
+                "L01AD" to NAME_NOT_APPLICABLE,
                 "L01BC" to NAME_NOT_APPLICABLE,
                 "L01BC07" to NAME_NOT_APPLICABLE,
                 "L01BC08" to NAME_NOT_APPLICABLE,

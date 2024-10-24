@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.feed.emc.extraction
 
+import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
@@ -32,7 +33,8 @@ class MedicationExtractor(
     private val qtProlongatingCuration: CurationDatabase<QTProlongatingConfig>,
     private val administrationRouteTranslation: TranslationDatabase<String>,
     private val dosageUnitTranslation: TranslationDatabase<String>,
-    private val atcModel: AtcModel
+    private val atcModel: AtcModel,
+    private val treatmentDatabase: TreatmentDatabase
 ) {
 
     fun extract(patientId: String, entries: List<MedicationEntry>): ExtractionResult<List<Medication>> {
@@ -62,7 +64,8 @@ class MedicationExtractor(
                     qtProlongatingRisk = QTProlongatingCurationUtil.annotateWithQTProlongating(qtProlongatingCuration, name),
                     atc = atc,
                     isSelfCare = isSelfCare,
-                    isTrialMedication = isTrialMedication
+                    isTrialMedication = isTrialMedication,
+                    drug = treatmentDatabase.findDrugByAtcName(entry.code5ATCDisplay)
                 )
 
                 val evaluation = listOf(nameCuration, administrationRouteCuration, dosage)
@@ -217,7 +220,8 @@ class MedicationExtractor(
         private val LOGGER = LogManager.getLogger(MedicationExtractor::class.java)
         fun create(
             curationDatabaseContext: CurationDatabaseContext,
-            atcModel: AtcModel
+            atcModel: AtcModel,
+            treatmentDatabase: TreatmentDatabase
         ) =
             MedicationExtractor(
                 medicationNameCuration = curationDatabaseContext.medicationNameCuration,
@@ -227,7 +231,8 @@ class MedicationExtractor(
                 qtProlongatingCuration = curationDatabaseContext.qtProlongingCuration,
                 administrationRouteTranslation = curationDatabaseContext.administrationRouteTranslation,
                 dosageUnitTranslation = curationDatabaseContext.dosageUnitTranslation,
-                atcModel = atcModel
+                atcModel = atcModel,
+                treatmentDatabase = treatmentDatabase
             )
     }
 }

@@ -14,6 +14,7 @@ import com.hartwig.actin.trial.input.TestFunctionInputResolverFactory.createTest
 import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 import com.hartwig.actin.trial.input.single.ManyDrugsOneInteger
+import com.hartwig.actin.trial.input.single.ManyDrugsTwoIntegers
 import com.hartwig.actin.trial.input.single.ManyGenes
 import com.hartwig.actin.trial.input.single.ManyIntents
 import com.hartwig.actin.trial.input.single.ManyIntentsOneInteger
@@ -32,12 +33,10 @@ import com.hartwig.actin.trial.input.single.OneIntegerManyDoidTerms
 import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
 import com.hartwig.actin.trial.input.single.OneIntegerOneString
 import com.hartwig.actin.trial.input.single.OneMedicationCategory
-import com.hartwig.actin.trial.input.single.OneSpecificTreatmentOneInteger
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyDrugs
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypesManyDrugs
 import com.hartwig.actin.trial.input.single.TwoDoubles
 import com.hartwig.actin.trial.input.single.TwoIntegers
-import com.hartwig.actin.trial.input.single.TwoIntegersManyStrings
 import com.hartwig.actin.trial.input.single.TwoStrings
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
@@ -246,22 +245,6 @@ class FunctionInputResolverTest {
     }
 
     @Test
-    fun `Should resolve functions with one specific treatment one integer input`() {
-        val rule = firstOfType(FunctionInput.ONE_SPECIFIC_TREATMENT_ONE_INTEGER)
-        val treatmentName = TestTreatmentDatabaseFactory.CAPECITABINE_OXALIPLATIN
-        val valid = create(rule, listOf(treatmentName, "1"))
-        assertThat(resolver.hasValidInputs(valid)!!).isTrue
-
-        val expected = TestTreatmentDatabaseFactory.createProper().findTreatmentByName(treatmentName)!!
-        assertThat(resolver.createOneSpecificTreatmentOneIntegerInput(valid))
-            .isEqualTo(OneSpecificTreatmentOneInteger(treatment = expected, integer = 1))
-
-        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("not a treatment", "1")))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf(treatmentName, treatmentName)))!!).isFalse
-    }
-
-    @Test
     fun `Should resolve functions with many specific treatment two integers input`() {
         val rule = firstOfType(FunctionInput.MANY_SPECIFIC_TREATMENTS_TWO_INTEGERS)
         val treatmentNames = listOf(TestTreatmentDatabaseFactory.CAPECITABINE_OXALIPLATIN, TestTreatmentDatabaseFactory.RADIOTHERAPY)
@@ -357,6 +340,24 @@ class FunctionInputResolverTest {
     }
 
     @Test
+    fun `Should resolve functions with many drugs two integers input`() {
+        val rule = firstOfType(FunctionInput.MANY_DRUGS_TWO_INTEGERS)
+        val drugNames = listOf("CAPECITABINE", "OXALIPLATIN")
+        val valid = create(rule, listOf(drugNames.joinToString(";"), "1", "2"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
+        val expected = ManyDrugsTwoIntegers(drugNames.map { treatmentDatabase.findDrugByName(it)!! }.toSet(), 1, 2)
+        assertThat(resolver.createManyDrugsTwoIntegersInput(valid)).isEqualTo(expected)
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("1", "CAPECITABINE;OXALIPLATIN")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("CAPECITABINE;notADrug", "1", "2")))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("CAPECITABINE;OXALIPLATIN", "1")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("CAPECITABINE;OXALIPLATIN", "1", "not an integer")))!!).isFalse
+    }
+
+    @Test
     fun `Should resolve functions with one tumor type input`() {
         val rule = firstOfType(FunctionInput.ONE_TUMOR_TYPE)
         val category = TumorTypeInput.CARCINOMA.display()
@@ -412,21 +413,6 @@ class FunctionInputResolverTest {
         assertThat(resolver.createManyStringsOneIntegerInput(valid)).isEqualTo(expected)
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("1", "BRAF;KRAS")))!!).isFalse
-    }
-
-    @Test
-    fun `Should resolve functions with many strings two integers input`() {
-        val rule = firstOfType(FunctionInput.MANY_STRINGS_TWO_INTEGERS)
-        val valid = create(rule, listOf("BRAF;KRAS", "1", "2"))
-        assertThat(resolver.hasValidInputs(valid)!!).isTrue
-
-        val expected = TwoIntegersManyStrings(1, 2, listOf("BRAF", "KRAS"))
-        assertThat(resolver.createManyStringsTwoIntegersInput(valid)).isEqualTo(expected)
-
-        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("1", "BRAF;KRAS")))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("BRAF;KRAS", "1")))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("BRAF;KRAS", "1", "not an integer")))!!).isFalse
     }
 
     @Test
@@ -739,8 +725,8 @@ class FunctionInputResolverTest {
         assertThat(resolver.hasValidInputs(create(rule, listOf(ATC_CODE_1, "1")))).isTrue
 
         val expectedCategoryMap = mapOf(
-            ATC_CODE_1 to setOf(AtcLevel(name = CATEGORY_1, code = ATC_CODE_1)),
-            ATC_CODE_2 to setOf(AtcLevel(name = CATEGORY_2, code = ATC_CODE_2))
+            CATEGORY_1 to setOf(AtcLevel(name = CATEGORY_1, code = ATC_CODE_1)),
+            CATEGORY_2 to setOf(AtcLevel(name = CATEGORY_2, code = ATC_CODE_2))
         )
         assertThat(resolver.createManyMedicationCategoriesOneIntegerInput(valid)).isEqualTo(Pair(expectedCategoryMap, 1))
 
@@ -761,8 +747,8 @@ class FunctionInputResolverTest {
         assertThat(resolver.hasValidInputs(create(rule, listOf(ATC_CODE_1, "1", "2")))).isTrue
 
         val expectedCategoryMap = mapOf(
-            ATC_CODE_1 to setOf(AtcLevel(name = CATEGORY_1, code = ATC_CODE_1)),
-            ATC_CODE_2 to setOf(AtcLevel(name = CATEGORY_2, code = ATC_CODE_2))
+            CATEGORY_1 to setOf(AtcLevel(name = CATEGORY_1, code = ATC_CODE_1)),
+            CATEGORY_2 to setOf(AtcLevel(name = CATEGORY_2, code = ATC_CODE_2))
         )
         assertThat(resolver.createManyMedicationCategoriesTwoIntegersInput(valid)).isEqualTo(Triple(expectedCategoryMap, 1, 2))
 

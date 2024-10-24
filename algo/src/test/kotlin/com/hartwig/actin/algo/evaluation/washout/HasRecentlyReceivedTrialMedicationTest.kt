@@ -7,6 +7,8 @@ import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.TestClinicalFactory
+import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.assertj.core.api.Assertions
 import org.junit.Test
 
@@ -43,7 +45,25 @@ class HasRecentlyReceivedTrialMedicationTest {
     }
 
     @Test
-    fun `Should be undetermined when medication stopped after min stop date`() {
+    fun `Should pass when medication is not trial medication but treatment history entry is trial`() {
+        val medications = listOf(medication(isTrialMedication = false))
+        val treatments = TreatmentTestFactory.treatment("Chemotherapy", true, setOf(TreatmentCategory.CHEMOTHERAPY))
+        val treatmentHistory = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(
+                setOf(treatments),
+                isTrial = true,
+                stopYear = evaluationDate.year,
+                stopMonth = evaluationDate.plusMonths(2).monthValue
+            )
+        )
+        assertEvaluation(
+            EvaluationResult.PASS,
+            functionActive.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, medications))
+        )
+    }
+
+    @Test
+    fun `Should evaluate to undetermined when medication stopped after min stop date`() {
         val function = HasRecentlyReceivedTrialMedication(
             MedicationTestFactory.alwaysStopped(),
             evaluationDate.minusWeeks(2)
@@ -56,11 +76,21 @@ class HasRecentlyReceivedTrialMedicationTest {
     }
 
     @Test
-    fun `Should be undetermined if medication is not provided`() {
+    fun `Should evaluate to undetermined if medication is not provided`() {
         val result = functionActive.evaluate(
             TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = null)
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, result)
         Assertions.assertThat(result.recoverable).isTrue()
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if trial in treatment history entry but with unknown date`() {
+        val treatments = TreatmentTestFactory.treatment("Chemotherapy", true, setOf(TreatmentCategory.CHEMOTHERAPY))
+        val treatmentHistory = listOf(TreatmentTestFactory.treatmentHistoryEntry(setOf(treatments), isTrial = true))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            functionActive.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
+        )
     }
 }

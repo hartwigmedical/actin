@@ -46,34 +46,34 @@ class TumorStageDeriver private constructor(private val derivationRules: Map<Pre
 
         private fun lesionCount(doidModel: DoidModel, tumor: TumorDetails): Int {
             return listOf(
-                tumor.hasLiverLesions to DoidConstants.LIVER_CANCER_DOID,
-                tumor.hasLymphNodeLesions to DoidConstants.LYMPH_NODE_CANCER_DOID,
-                tumor.hasCnsLesions to DoidConstants.CNS_CANCER_DOID,
-                tumor.hasBrainLesions to DoidConstants.BRAIN_CANCER_DOID,
-                tumor.hasLungLesions to DoidConstants.LUNG_CANCER_DOID,
-                tumor.hasBoneLesions to DoidConstants.BONE_CANCER_DOID
+                tumor.hasConfirmedOrSuspectedLiverLesions() to DoidConstants.LIVER_CANCER_DOID,
+                tumor.hasConfirmedOrSuspectedLymphNodeLesions() to DoidConstants.LYMPH_NODE_CANCER_DOID,
+                tumor.hasConfirmedOrSuspectedCnsLesions() to DoidConstants.CNS_CANCER_DOID,
+                tumor.hasConfirmedOrSuspectedBrainLesions() to DoidConstants.BRAIN_CANCER_DOID,
+                tumor.hasConfirmedOrSuspectedLungLesions() to DoidConstants.LUNG_CANCER_DOID,
+                tumor.hasConfirmedOrSuspectedBoneLesions() to DoidConstants.BONE_CANCER_DOID
             ).count { (hasLesions, doidToMatch) ->
                 evaluateMetastases(hasLesions, tumor, doidToMatch, doidModel)
             }
         }
 
         private fun hasNoUncategorizedLesions(): Predicate<TumorDetails> {
-            return Predicate<TumorDetails> { tumor: TumorDetails -> tumor.otherLesions.isNullOrEmpty() }
+            return Predicate<TumorDetails> { tumor: TumorDetails -> tumor.otherConfirmedOrSuspectedLesions().isNullOrEmpty() }
         }
 
         private fun hasUncategorizedLesions(): Predicate<TumorDetails> {
-            return Predicate<TumorDetails> { tumor: TumorDetails -> tumor.otherLesions?.isNotEmpty() ?: false }
+            return Predicate<TumorDetails> { tumor: TumorDetails -> tumor.otherConfirmedOrSuspectedLesions()?.isNotEmpty() ?: false }
         }
 
         private fun hasAllKnownLesionDetails(): Predicate<TumorDetails> {
             return Predicate<TumorDetails> { tumor: TumorDetails ->
                 listOf(
-                    tumor.hasLiverLesions,
-                    tumor.hasLymphNodeLesions,
-                    tumor.hasCnsLesions,
-                    tumor.hasBrainLesions,
-                    tumor.hasLungLesions,
-                    tumor.hasBoneLesions
+                    tumor.hasConfirmedOrSuspectedLiverLesions(),
+                    tumor.hasConfirmedOrSuspectedLymphNodeLesions(),
+                    tumor.hasConfirmedOrSuspectedCnsLesions(),
+                    tumor.hasConfirmedOrSuspectedBrainLesions(),
+                    tumor.hasConfirmedOrSuspectedLungLesions(),
+                    tumor.hasConfirmedOrSuspectedBoneLesions()
                 ).all { it != null }
             }
         }

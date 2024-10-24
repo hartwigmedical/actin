@@ -45,7 +45,7 @@ class MolecularDriversSummarizer private constructor(
             .distinct()
     }
 
-    fun actionableEventsThatAreNotKeyDrivers(): List<String> {
+    fun actionableEventsThatAreNotKeyDrivers(): List<Driver> {
         val nonDisruptionDrivers = listOf(
             drivers.variants,
             drivers.copyNumbers,
@@ -55,8 +55,6 @@ class MolecularDriversSummarizer private constructor(
         ).flatten().filterNot(::isKeyDriver)
         return (nonDisruptionDrivers + drivers.disruptions.toList())
             .filter(evaluatedCohortsInterpreter::driverIsActionable)
-            .map(Driver::event)
-            .distinct()
     }
 
     companion object {

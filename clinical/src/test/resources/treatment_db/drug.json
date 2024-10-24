@@ -12,5 +12,12 @@
       "PLATINUM_COMPOUND"
     ],
     "category": "CHEMOTHERAPY"
+  },
+  {
+    "name": "TRIFLURIDINE",
+    "drugTypes": [
+      "ANTIMETABOLITE"
+    ],
+    "category": "CHEMOTHERAPY"
   }
 ]

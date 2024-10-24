@@ -9,7 +9,7 @@ import org.junit.Test
 class NKITrialStatusEntryReaderTest {
 
     @Test
-    fun `Should read all trial status from JSON and only include open, closed and suspended trials`() {
+    fun `Should read all trial status from JSON and only include open, closed and suspended trials but always set slots available to 1`() {
         val status = NKITrialStatusEntryReader().read(resourceOnClasspath("nki_config"))
         assertThat(status).containsExactly(
             TrialStatusEntry(
@@ -19,7 +19,8 @@ class NKITrialStatusEntryReaderTest {
                 studyTitle = "Open trial",
                 studyStatus = TrialStatus.OPEN,
                 cohortId = "abcd",
-                cohortStatus = TrialStatus.OPEN
+                cohortStatus = TrialStatus.OPEN,
+                cohortSlotsNumberAvailable = 1
             ),
             TrialStatusEntry(
                 studyId = 1,
@@ -28,7 +29,8 @@ class NKITrialStatusEntryReaderTest {
                 studyTitle = "Open trial",
                 studyStatus = TrialStatus.OPEN,
                 cohortId = "bcde",
-                cohortStatus = TrialStatus.OPEN
+                cohortStatus = TrialStatus.OPEN,
+                cohortSlotsNumberAvailable = 1
             ),
             TrialStatusEntry(
                 studyId = 1,
@@ -37,7 +39,8 @@ class NKITrialStatusEntryReaderTest {
                 studyTitle = "Open trial",
                 studyStatus = TrialStatus.OPEN,
                 cohortId = "bcdef",
-                cohortStatus = TrialStatus.CLOSED
+                cohortStatus = TrialStatus.CLOSED,
+                cohortSlotsNumberAvailable = 1
             ), TrialStatusEntry(
                 studyId = 1,
                 metcStudyID = "MEC-001",
@@ -45,7 +48,8 @@ class NKITrialStatusEntryReaderTest {
                 studyTitle = "Open trial",
                 studyStatus = TrialStatus.OPEN,
                 cohortId = "bcdeg",
-                cohortStatus = TrialStatus.CLOSED
+                cohortStatus = TrialStatus.CLOSED,
+                cohortSlotsNumberAvailable = 1
             ), TrialStatusEntry(
                 studyId = 2,
                 metcStudyID = "MEC-002",
@@ -53,7 +57,8 @@ class NKITrialStatusEntryReaderTest {
                 studyTitle = "Closed trial",
                 studyStatus = TrialStatus.CLOSED,
                 cohortId = "cdef",
-                cohortStatus = TrialStatus.OPEN
+                cohortStatus = TrialStatus.OPEN,
+                cohortSlotsNumberAvailable = 1
             ),
             TrialStatusEntry(
                 studyId = 5,
@@ -62,7 +67,8 @@ class NKITrialStatusEntryReaderTest {
                 studyTitle = "Suspended trial",
                 studyStatus = TrialStatus.CLOSED,
                 cohortId = "ghij",
-                cohortStatus = TrialStatus.OPEN
+                cohortStatus = TrialStatus.OPEN,
+                cohortSlotsNumberAvailable = 1
             )
         )
     }
