@@ -138,6 +138,7 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
     MTORC1_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "MTORC1 inhibitor"),
     MUC16_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "MUC16 inhibitor"),
     NK_CELL_BASED_THERAPY(TreatmentCategory.IMMUNOTHERAPY, "NK cell-based therapy"),
+    NITROSOUREAS(TreatmentCategory.CHEMOTHERAPY),
     NONSTEROIDAL_ANTI_ANDROGEN(TreatmentCategory.HORMONE_THERAPY),
     NOTCH_INHIBITOR(TreatmentCategory.TARGETED_THERAPY),
     NOVEL_HORMONE_THERAPY_FOR_PROSTATE(TreatmentCategory.HORMONE_THERAPY),
