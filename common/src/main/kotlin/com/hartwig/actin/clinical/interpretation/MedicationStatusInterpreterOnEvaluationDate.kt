@@ -4,17 +4,15 @@ import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.MedicationStatus
 import java.time.LocalDate
 
-class MedicationStatusInterpreterOnEvaluationDate(private val evaluationDate: LocalDate) : MedicationStatusInterpreter {
+class MedicationStatusInterpreterOnEvaluationDate(private val evaluationDate: LocalDate, private val referenceDate: LocalDate?) :
+    MedicationStatusInterpreter {
 
     override fun interpret(medication: Medication): MedicationStatusInterpretation {
         val startDate = medication.startDate ?: return MedicationStatusInterpretation.UNKNOWN
+        val stopDate = medication.stopDate
         when (medication.status) {
             MedicationStatus.CANCELLED -> {
                 return MedicationStatusInterpretation.CANCELLED
-            }
-
-            MedicationStatus.ON_HOLD -> {
-                return MedicationStatusInterpretation.STOPPED
             }
 
             MedicationStatus.UNKNOWN -> {
@@ -23,18 +21,59 @@ class MedicationStatusInterpreterOnEvaluationDate(private val evaluationDate: Lo
 
             else -> {
                 val startIsBeforeEvaluation = startDate.isBefore(evaluationDate)
-                return if (!startIsBeforeEvaluation) {
-                    MedicationStatusInterpretation.PLANNED
-                } else {
-                    val stopDate = medication.stopDate
-                    if (stopDate == null) {
-                        MedicationStatusInterpretation.ACTIVE
-                    } else {
-                        val stopIsBeforeEvaluation = stopDate.isBefore(evaluationDate)
-                        if (stopIsBeforeEvaluation) MedicationStatusInterpretation.STOPPED else MedicationStatusInterpretation.ACTIVE
+                val stopIsBeforeEvaluation = stopDate?.isBefore(evaluationDate) ?: false
+
+                return when {
+                    startIsBeforeEvaluation && stopIsBeforeEvaluation -> MedicationStatusInterpretation.STOPPED
+                    startIsBeforeEvaluation -> {
+                        if (referenceDate == null && medication.status == MedicationStatus.ON_HOLD) {
+                            MedicationStatusInterpretation.STOPPED
+                        } else {
+                            MedicationStatusInterpretation.ACTIVE
+                        }
                     }
+
+                    startDate.isAfter(referenceDate ?: evaluationDate) -> {
+                        if (medication.status == MedicationStatus.ON_HOLD) {
+                            MedicationStatusInterpretation.STOPPED
+                        } else {
+                            MedicationStatusInterpretation.PLANNED
+                        }
+                    }
+
+                    else -> MedicationStatusInterpretation.ACTIVE
                 }
             }
+        }
+    }
+
+    companion object {
+        private const val MINIMUM_EXPECTED_WEEKS_BEFORE_TRIAL = 2L
+
+        fun createInterpreterForWashout(
+            inputWeeks: Int?,
+            inputMonths: Int?,
+            referenceDate: LocalDate
+        ): Pair<MedicationStatusInterpreter, LocalDate> {
+            val minDate =
+                when {
+                    inputWeeks != null && inputMonths == null -> {
+                        referenceDate.minusWeeks(inputWeeks.toLong())
+                    }
+
+                    inputMonths != null && inputWeeks == null -> {
+                        referenceDate.minusMonths(inputMonths.toLong())
+                    }
+
+                    else -> {
+                        throw IllegalArgumentException("Exactly one of inputWeeks or inputMonths must be provided")
+                    }
+                }
+
+            return Pair(
+                MedicationStatusInterpreterOnEvaluationDate(minDate.plusWeeks(MINIMUM_EXPECTED_WEEKS_BEFORE_TRIAL), referenceDate),
+                minDate
+            )
         }
     }
 }

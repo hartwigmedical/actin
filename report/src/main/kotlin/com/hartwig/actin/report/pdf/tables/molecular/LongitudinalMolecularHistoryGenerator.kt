@@ -1,6 +1,8 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
+import com.hartwig.actin.datamodel.molecular.Driver
 import com.hartwig.actin.datamodel.molecular.Fusion
+import com.hartwig.actin.datamodel.molecular.GeneAlteration
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.Variant
@@ -8,6 +10,7 @@ import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats.VALUE_NOT_AVAILABLE
+import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
@@ -24,6 +27,7 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
 
         val allDrivers =
             testsWithDrivers.flatMap { it.second.map { d -> (d as? Variant)?.copy(variantAlleleFrequency = null) ?: d } }.toSet()
+                .sortedWith(driverSortOrder())
         val columnCount = 3 + sortedAndFilteredTests.size
         val table = Table(columnCount).setWidth(width)
 
@@ -47,9 +51,9 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
             for (test in sortedAndFilteredTests) {
                 if (test.value.containsKey(driver.event)) {
                     val vafInTest = test.value[driver.event]
-                    table.addCell(Cells.createContent("Detected${vafInTest?.let { v -> " (VAF ${v}%)" } ?: ""}"))
+                    table.addCell(Cells.createContent(vafInTest?.let { v -> "VAF ${v}%" } ?: "Detected"))
                 } else {
-                    table.addCell(Cells.createContent("Not detected"))
+                    table.addCell(Cells.createContent("").setFontColor(Styles.PALETTE_MID_GREY))
                 }
             }
         }
@@ -63,6 +67,19 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
         }
         return makeWrapping(table)
     }
+
+    private fun driverSortOrder(): Comparator<Driver> = compareBy(
+        { it.evidenceTier() },
+        { it.driverLikelihood },
+        {
+            when (it) {
+                is Fusion -> it.geneStart
+                is GeneAlteration -> it.gene
+                else -> null
+            }
+        },
+        { it.event }
+    )
 
     private fun msiText(it: MolecularTest) = when (it.characteristics.isMicrosatelliteUnstable) {
         false -> "Stable"

@@ -1,6 +1,8 @@
 package com.hartwig.actin.medication
 
 import com.hartwig.actin.datamodel.clinical.AtcLevel
+import com.hartwig.actin.datamodel.clinical.treatment.DrugType
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 
 private val systemicAntibiotics = setOf("A07A", "G01AA", "R02AB", "J01")
 private val systemicAntimycobacterials = setOf("J04")
@@ -15,11 +17,47 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
             ?: setOf(atcTree.resolve(categoryName))
     }
 
+    fun resolveCategoryName(categoryName: String): String {
+        return if (knownCategories[categoryName] != null) categoryName else {
+            atcTree.resolve(categoryName).name
+        }
+    }
+
     companion object {
+        private val ANTI_CANCER_ATC_CODES = setOf("L01", "L02", "L04", "H01CC", "H01CA", "G03XA")
+
+        val MEDICATION_CATEGORIES_TO_TREATMENT_CATEGORY = mapOf(
+            "Chemotherapy" to setOf(TreatmentCategory.CHEMOTHERAPY),
+            "Endocrine therapy" to setOf(TreatmentCategory.HORMONE_THERAPY),
+            "Immunotherapy" to setOf(TreatmentCategory.IMMUNOTHERAPY),
+            "Anticancer" to TreatmentCategory.SYSTEMIC_CANCER_TREATMENT_CATEGORIES,
+            "Antineoplastic agents" to TreatmentCategory.SYSTEMIC_CANCER_TREATMENT_CATEGORIES
+        )
+
+        val MEDICATION_CATEGORIES_TO_DRUG_TYPES = mapOf(
+            "Gonadorelin" to setOf(DrugType.GONADOTROPIN_AGONIST, DrugType.GONADOTROPIN_ANTAGONIST),
+            "Hypomethylating agents" to setOf(DrugType.DNMT_INHIBITOR),
+            "Monoclonal antibodies and antibody drug conjugates" to setOf(
+                DrugType.MONOCLONAL_ANTIBODY_TARGETED_THERAPY,
+                DrugType.MONOCLONAL_ANTIBODY_IMMUNOTHERAPY,
+                DrugType.MONOCLONAL_ANTIBODY_MMAE_CONJUGATE,
+                DrugType.MONOCLONAL_ANTIBODY_SUPPORTIVE_TREATMENT,
+                DrugType.ANTIBODY_DRUG_CONJUGATE_IMMUNOTHERAPY,
+                DrugType.ANTIBODY_DRUG_CONJUGATE_TARGETED_THERAPY
+            ),
+            "PARP inhibitors" to setOf(DrugType.PARP_INHIBITOR),
+            "L01CD" to setOf(DrugType.TAXANE),
+            "L02BB" to setOf(DrugType.ANTI_ANDROGEN),
+            "L01A" to setOf(DrugType.ALKYLATING_AGENT),
+            "LO1XL" to setOf(DrugType.ANTI_CLDN6_CAR_T, DrugType.HER2_CAR_T),
+            "L01E" to setOf(DrugType.TYROSINE_KINASE_INHIBITOR),
+            "Nitrosoureas" to setOf(DrugType.NITROSOUREAS)
+        )
+
         fun create(atcTree: AtcTree): MedicationCategories {
             return MedicationCategories(
                 mapOf(
-                    "Anticancer" to convertToAtcLevel(setOf("L01", "L02", "L04", "H01CC", "H01CA", "G03XA", "L02AE"), atcTree),
+                    "Anticancer" to convertToAtcLevel(ANTI_CANCER_ATC_CODES, atcTree),
                     "Anticoagulants" to convertToAtcLevel(setOf("B01AA", "B01AB", "B01AC", "B01AD", "B01AE", "B01AF", "B01AX"), atcTree),
                     "Antiepileptics" to convertToAtcLevel(setOf("N03"), atcTree),
                     "Antiinflammatory and antirheumatic products" to convertToAtcLevel(setOf("M01"), atcTree),

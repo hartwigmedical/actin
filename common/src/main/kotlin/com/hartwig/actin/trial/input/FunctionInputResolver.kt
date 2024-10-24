@@ -20,6 +20,7 @@ import com.hartwig.actin.trial.input.datamodel.TreatmentCategoryInput
 import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 import com.hartwig.actin.trial.input.single.ManyDrugsOneInteger
+import com.hartwig.actin.trial.input.single.ManyDrugsTwoIntegers
 import com.hartwig.actin.trial.input.single.ManyGenes
 import com.hartwig.actin.trial.input.single.ManyIntents
 import com.hartwig.actin.trial.input.single.ManyIntentsOneInteger
@@ -49,7 +50,6 @@ import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypesOneInte
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryOrTypeOneInteger
 import com.hartwig.actin.trial.input.single.TwoDoubles
 import com.hartwig.actin.trial.input.single.TwoIntegers
-import com.hartwig.actin.trial.input.single.TwoIntegersManyStrings
 import com.hartwig.actin.trial.input.single.TwoStrings
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -173,6 +173,11 @@ class FunctionInputResolver(
                     return true
                 }
 
+                FunctionInput.MANY_DRUGS_TWO_INTEGERS -> {
+                    createManyDrugsTwoIntegersInput(function)
+                    return true
+                }
+
                 FunctionInput.ONE_TUMOR_TYPE -> {
                     createOneTumorTypeInput(function)
                     return true
@@ -195,11 +200,6 @@ class FunctionInputResolver(
 
                 FunctionInput.MANY_STRINGS_ONE_INTEGER -> {
                     createManyStringsOneIntegerInput(function)
-                    return true
-                }
-
-                FunctionInput.MANY_STRINGS_TWO_INTEGERS -> {
-                    createManyStringsTwoIntegersInput(function)
                     return true
                 }
 
@@ -473,6 +473,11 @@ class FunctionInputResolver(
         return ManyDrugsOneInteger(toDrugSet(function.parameters.first()), parameterAsInt(function, 1))
     }
 
+    fun createManyDrugsTwoIntegersInput(function: EligibilityFunction): ManyDrugsTwoIntegers {
+        assertParamConfig(function, FunctionInput.MANY_DRUGS_TWO_INTEGERS, 3)
+        return ManyDrugsTwoIntegers(toDrugSet(function.parameters.first()), parameterAsInt(function, 1), parameterAsInt(function, 2))
+    }
+
     private fun toDrugSet(input: Any): Set<Drug> {
         return toStringList(input).map(::toDrug).toSet()
     }
@@ -512,15 +517,6 @@ class FunctionInputResolver(
         return OneIntegerManyStrings(
             strings = toStringList(function.parameters.first()),
             integer = parameterAsInt(function, 1)
-        )
-    }
-
-    fun createManyStringsTwoIntegersInput(function: EligibilityFunction): TwoIntegersManyStrings {
-        assertParamConfig(function, FunctionInput.MANY_STRINGS_TWO_INTEGERS, 3)
-        return TwoIntegersManyStrings(
-            strings = toStringList(function.parameters.first()),
-            integer1 = parameterAsInt(function, 1),
-            integer2 = parameterAsInt(function, 2)
         )
     }
 
@@ -708,16 +704,20 @@ class FunctionInputResolver(
 
     fun createManyMedicationCategoriesOneIntegerInput(function: EligibilityFunction): Pair<Map<String, Set<AtcLevel>>, Int> {
         assertParamConfig(function, FunctionInput.MANY_MEDICATION_CATEGORIES_ONE_INTEGER, 2)
-        return Pair(toStringList(function.parameters[0]).associateWith(medicationCategories::resolve), parameterAsInt(function, 1))
+        return Pair(toStringList(function.parameters[0]).associate { cat -> toMedicationCategoryMap(cat) }, parameterAsInt(function, 1))
     }
 
     fun createManyMedicationCategoriesTwoIntegersInput(function: EligibilityFunction): Triple<Map<String, Set<AtcLevel>>, Int, Int> {
         assertParamConfig(function, FunctionInput.MANY_MEDICATION_CATEGORIES_TWO_INTEGERS, 3)
         return Triple(
-            toStringList(function.parameters[0]).associateWith(medicationCategories::resolve),
+            toStringList(function.parameters[0]).associate { cat -> toMedicationCategoryMap(cat) },
             parameterAsInt(function, 1),
             parameterAsInt(function, 2)
         )
+    }
+
+    private fun toMedicationCategoryMap(category: String): Pair<String, Set<AtcLevel>> {
+        return medicationCategories.resolveCategoryName(category) to medicationCategories.resolve(category)
     }
 
     private fun toIntents(input: Any): Set<Intent> {

@@ -13,6 +13,7 @@ object Format {
     private const val SEPARATOR_SEMICOLON = "; "
     private const val SEPARATOR_AND = " and "
     private const val SEPARATOR_OR = " or "
+    private const val SEPARATOR_COMMA = ", "
     private val DATE_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy")
     private val PERCENTAGE_FORMAT: DecimalFormat = DecimalFormat("#'%'", DecimalFormatSymbols.getInstance(ApplicationConfig.LOCALE))
 
@@ -47,6 +48,10 @@ object Format {
 
     fun concatItemsWithOr(items: Iterable<Displayable>): String {
         return concatDisplayables(items, SEPARATOR_OR)
+    }
+
+    fun concatItemsWithComma(items: Iterable<Displayable>): String {
+        return concatDisplayables(items, SEPARATOR_COMMA)
     }
 
     fun date(date: LocalDate): String {
