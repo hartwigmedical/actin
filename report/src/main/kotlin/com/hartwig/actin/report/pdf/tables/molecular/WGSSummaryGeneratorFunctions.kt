@@ -2,8 +2,10 @@ package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.molecular.Driver
+import com.hartwig.actin.datamodel.molecular.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter
 import com.hartwig.actin.report.pdf.util.Cells
@@ -63,15 +65,14 @@ object WGSSummaryGeneratorFunctions {
             }
             val (actionableEventsWithUnknownDriver, actionableEventsWithLowOrMediumDriver) = summarizer.actionableEventsThatAreNotKeyDrivers()
                 .partition { it.driverLikelihood == null }
-                .let { (unknown, lowOrMedium) -> unknown.map(Driver::event).distinct() to lowOrMedium.map(Driver::event).distinct() }
 
             if (actionableEventsWithLowOrMediumDriver.isNotEmpty() || !isShort) {
                 table.addCell(Cells.createKey("Potentially actionable events with medium/low driver:"))
-                table.addCell(potentiallyActionableEventsCell(actionableEventsWithLowOrMediumDriver, "dubious quality"))
+                table.addCell(potentiallyActionableEventsCell(actionableEventsWithLowOrMediumDriver))
             }
             if (actionableEventsWithUnknownDriver.isNotEmpty()) {
-                table.addCell(Cells.createKey("Potentially actionable events with unknown driver:"))
-                table.addCell(potentiallyActionableEventsCell(actionableEventsWithUnknownDriver, "unknown driver likelihood"))
+                table.addCell(Cells.createKey("Potentially actionable events not considered drivers:"))
+                table.addCell(potentiallyActionableEventsCell(actionableEventsWithUnknownDriver))
             }
         } else {
             table.addCell(
@@ -161,13 +162,18 @@ object WGSSummaryGeneratorFunctions {
         return Cells.create(paragraph)
     }
 
-    fun potentiallyActionableEventsCell(events: List<String>, warning: String): Cell {
-        if (events.isEmpty()) return Cells.createValue(Formats.VALUE_NONE)
+    fun potentiallyActionableEventsCell(drivers: List<Driver>): Cell {
+        if (drivers.isEmpty()) return Cells.createValue(Formats.VALUE_NONE)
 
-        val eventText = events.flatMap { event ->
+        val eventText = drivers.flatMap { driver ->
+            val warning = when (driver.driverLikelihood) {
+                DriverLikelihood.LOW -> " (low driver likelihood)"
+                DriverLikelihood.MEDIUM -> " (medium driver likelihood)"
+                else -> if (driver is CopyNumber) "" else " (dubious quality)"
+            }
             listOf(
-                Text(event).addStyle(Styles.tableHighlightStyle()),
-                Text(" ($warning)").addStyle(Styles.tableNoticeStyle()),
+                Text(driver.event).addStyle(Styles.tableHighlightStyle()),
+                Text(warning).addStyle(Styles.tableNoticeStyle()),
                 Text(", ").addStyle(Styles.tableHighlightStyle()),
             )
         }.dropLast(1)
