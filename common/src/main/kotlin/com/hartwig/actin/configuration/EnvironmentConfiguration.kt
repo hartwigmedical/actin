@@ -43,10 +43,10 @@ data class ReportConfiguration(
     val countryOfReference: CountryName = CountryName.NETHERLANDS
 )
 
-const val EMC_TRIAL_SOURCE = "EMC"
+const val STANDARD_TRIAL_SOURCE = "TRIAL_SOURCE"
 
 data class AlgoConfiguration(
-    val trialSource: String = EMC_TRIAL_SOURCE,
+    val trialSource: String = STANDARD_TRIAL_SOURCE,
     val warnIfToxicitiesNotFromQuestionnaire: Boolean = true,
     val maxMolecularTestAgeInDays: Int? = null
 )
