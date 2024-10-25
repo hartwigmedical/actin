@@ -79,7 +79,7 @@ class ActinTrialContentFunctionsTest {
 
     @Test
     fun `Should group common molecular events for multiple cohorts in trial`() {
-        val cohort3 = cohort1.copy(cohort = "cohort3")
+        val cohort3 = cohort1.copy(name = "cohort3")
         assertThat(ActinTrialContentFunctions.contentForTrialCohortList(listOf(cohort1, cohort3), Cohort::warnings)).isEqualTo(
             listOf(
                 ContentDefinition(listOf("Applies to all cohorts below", "MSI", "warning1"), true),
@@ -92,7 +92,7 @@ class ActinTrialContentFunctionsTest {
     @Test
     fun `Should group molecular events for multiple cohorts in trial if molecular event is None for all cohorts`() {
         val noMolecularEvent1 = cohort1.copy(molecularEvents = emptySet())
-        val noMolecularEvent2 = cohort1.copy(cohort = "cohort3", molecularEvents = emptySet())
+        val noMolecularEvent2 = cohort1.copy(name = "cohort3", molecularEvents = emptySet())
         assertThat(
             ActinTrialContentFunctions.contentForTrialCohortList(
                 listOf(noMolecularEvent1, noMolecularEvent2),

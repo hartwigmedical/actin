@@ -29,7 +29,7 @@ object ActinTrialContentFunctions {
         return prefix + cohorts.map { cohort: Cohort ->
             ContentDefinition(
                 listOf(
-                    cohort.cohort ?: "",
+                    cohort.name ?: "",
                     concat(cohort.molecularEvents - commonEvents, commonEvents.isEmpty() && !allEventsEmpty),
                     concat(feedbackFunction.invoke(cohort) - commonFeedback, commonFeedback.isEmpty() && !noFeedback)
                 ),

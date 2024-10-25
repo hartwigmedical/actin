@@ -243,7 +243,7 @@ class ExternalTrialSummarizerTest {
         Cohort(
             trialId = "id",
             acronym = "acronym",
-            cohort = null,
+            name = null,
             molecularEvents = setOf(TMB_TARGET),
             isPotentiallyEligible = true,
             isOpen = true,

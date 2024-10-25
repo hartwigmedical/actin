@@ -5,7 +5,7 @@ import com.hartwig.actin.datamodel.trial.TrialPhase
 data class Cohort(
     val trialId: String,
     val acronym: String,
-    val cohort: String?,
+    val name: String?,
     val molecularEvents: Set<String> = emptySet(),
     val isPotentiallyEligible: Boolean = false,
     val isOpen: Boolean,

@@ -20,11 +20,11 @@ class ExternalTrialSummarizer(private val homeCountry: CountryName) {
     fun summarize(
         externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>,
         trialMatches: List<TrialMatch>,
-        cohorts: List<Cohort>
+        evaluatedCohorts: List<Cohort>
     ): ExternalTrialSummary {
         return filterMolecularCriteriaAlreadyPresent(
             filterAndGroupExternalTrialsByNctIdAndEvents(externalTrialsPerEvent, trialMatches),
-            cohorts
+            evaluatedCohorts
         )
     }
 

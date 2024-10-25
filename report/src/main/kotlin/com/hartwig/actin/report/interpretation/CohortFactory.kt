@@ -27,7 +27,7 @@ object CohortFactory {
                     Cohort(
                         trialId = trialId,
                         acronym = acronym,
-                        cohort = null,
+                        name = null,
                         molecularEvents = trialInclusionEvents,
                         isPotentiallyEligible = trialMatch.isPotentiallyEligible,
                         isOpen = trialIsOpen,
@@ -44,7 +44,7 @@ object CohortFactory {
                     Cohort(
                         trialId = trialId,
                         acronym = acronym,
-                        cohort = cohortMatch.metadata.description,
+                        name = cohortMatch.metadata.description,
                         molecularEvents = trialInclusionEvents.union(extractInclusionEvents(cohortMatch.evaluations)),
                         isPotentiallyEligible = cohortMatch.isPotentiallyEligible,
                         isOpen = trialIsOpen && cohortMatch.metadata.open,
@@ -59,15 +59,9 @@ object CohortFactory {
         }.sortedWith(CohortComparator())
     }
 
-    fun createNonEvaluableCohorts(
-        treatmentMatch: TreatmentMatch,
-        filterOnSOCExhaustionAndTumorType: Boolean
-    ): List<Cohort> {
-        return filteredMatches(
-            treatmentMatch.trialMatches, filterOnSOCExhaustionAndTumorType, TrialMatch::evaluations
-        ).flatMap { trialMatch: TrialMatch ->
+    fun createNonEvaluableCohorts(treatmentMatch: TreatmentMatch): List<Cohort> {
+        return treatmentMatch.trialMatches.flatMap { trialMatch: TrialMatch ->
             val identification = trialMatch.identification
-            // Handle case of trial without cohorts.
             if (trialMatch.nonEvaluableCohorts.isEmpty()) {
                 emptyList()
             } else {
@@ -75,7 +69,7 @@ object CohortFactory {
                     Cohort(
                         trialId = identification.trialId,
                         acronym = identification.acronym,
-                        cohort = cohortMetadata.description,
+                        name = cohortMetadata.description,
                         isOpen = identification.open && cohortMetadata.open,
                         hasSlotsAvailable = cohortMetadata.slotsAvailable,
                         ignore = cohortMetadata.ignore

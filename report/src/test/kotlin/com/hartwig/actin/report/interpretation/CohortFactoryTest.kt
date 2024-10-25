@@ -17,7 +17,7 @@ class CohortFactoryTest {
 
     @Test
     fun `Should create non evaluable from minimal match`() {
-        val nonEvaluableCohorts = createNonEvaluableCohorts(TestTreatmentMatchFactory.createMinimalTreatmentMatch(), false)
+        val nonEvaluableCohorts = createNonEvaluableCohorts(TestTreatmentMatchFactory.createMinimalTreatmentMatch())
         assertThat(nonEvaluableCohorts).isEmpty()
     }
 
@@ -67,7 +67,7 @@ class CohortFactoryTest {
 
     @Test
     fun `Should create non evaluable cohorts from proper match`() {
-        val nonEvaluableCohorts = createNonEvaluableCohorts(TestTreatmentMatchFactory.createProperTreatmentMatch(), false)
+        val nonEvaluableCohorts = createNonEvaluableCohorts(TestTreatmentMatchFactory.createProperTreatmentMatch())
         assertThat(nonEvaluableCohorts).hasSize(1)
 
         val trial2cohortB = findByAcronymAndCohort(nonEvaluableCohorts, "TEST-2", "Cohort B")
@@ -113,6 +113,6 @@ class CohortFactoryTest {
     private fun findByAcronymAndCohort(
         cohorts: List<Cohort>, acronymToFind: String, cohortToFind: String?
     ): Cohort {
-        return cohorts.first { it.acronym == acronymToFind && it.cohort == cohortToFind }
+        return cohorts.first { it.acronym == acronymToFind && it.name == cohortToFind }
     }
 }

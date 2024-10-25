@@ -14,7 +14,7 @@ object CohortTestFactory {
         return Cohort(
             trialId = trialId,
             acronym = acronym,
-            cohort = cohort,
+            name = cohort,
             isPotentiallyEligible = isPotentiallyEligible,
             isOpen = isOpen,
             hasSlotsAvailable = hasSlotsAvailable,

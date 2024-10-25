@@ -38,8 +38,7 @@ class TrialMatchingChapter(
             report.config.filterOnSOCExhaustionAndTumorType
         )
             .partition { it.ignore }
-        val nonEvaluableCohorts =
-            CohortFactory.createNonEvaluableCohorts(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
+        val nonEvaluableCohorts = CohortFactory.createNonEvaluableCohorts(report.treatmentMatch)
         val (_, evaluated) =
             EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = true)
 
