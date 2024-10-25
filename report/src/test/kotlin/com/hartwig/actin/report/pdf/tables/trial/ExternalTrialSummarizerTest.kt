@@ -249,6 +249,7 @@ class ExternalTrialSummarizerTest {
             isOpen = true,
             hasSlotsAvailable = true,
             warnings = emptySet(),
-            fails = emptySet()
+            fails = emptySet(),
+            ignore = false
         )
 }

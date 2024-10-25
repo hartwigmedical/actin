@@ -14,14 +14,14 @@ import com.itextpdf.layout.element.Text
 object ActinTrialGeneratorFunctions {
 
     fun addTrialsToTable(
-        evaluatedCohorts: List<Cohort>,
+        cohorts: List<Cohort>,
         table: Table,
         cohortColumnWidth: Float,
         molecularEventColumnWidth: Float,
         feedbackColumnWidth: Float,
         feedbackFunction: (Cohort) -> Set<String>
     ) {
-        sortedCohortGroups(evaluatedCohorts).forEach { cohortList: List<Cohort> ->
+        sortedCohortGroups(cohorts).forEach { cohortList: List<Cohort> ->
             val trialSubTable = Tables.createFixedWidthCols(
                 cohortColumnWidth, molecularEventColumnWidth, feedbackColumnWidth
             )

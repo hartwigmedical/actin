@@ -78,13 +78,15 @@ class IneligibleActinTrialsGenerator(
             return create(unavailableAndEligible, title, width, width * 2, width)
         }
 
-        fun forNonEvaluableCohorts(
-            cohorts: List<Cohort>,
+        fun forNonEvaluableAndIgnoredCohorts(
+            ignoredCohorts: List<Cohort>,
+            nonEvaluableCohorts: List<Cohort>,
             source: String,
             width: Float,
         ): IneligibleActinTrialsGenerator {
-            val title = String.format("%s trials and cohorts that are not evaluable or ignored (%s)", source, cohorts.size)
-            return create(cohorts, title, width, width * 2, width)
+            val totalCohorts = ignoredCohorts + nonEvaluableCohorts
+            val title = String.format("%s trials and cohorts that are not evaluable or ignored (%s)", source, totalCohorts.size)
+            return create(totalCohorts, title, width, width * 2, width)
         }
 
         private fun create(

@@ -10,6 +10,7 @@ data class Cohort(
     val isPotentiallyEligible: Boolean,
     val isOpen: Boolean,
     val hasSlotsAvailable: Boolean,
+    val ignore: Boolean,
     val warnings: Set<String>,
     val fails: Set<String>,
     val phase: TrialPhase? = null

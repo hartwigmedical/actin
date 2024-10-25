@@ -4,7 +4,7 @@ import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.report.interpretation.CohortFactory.create
-import com.hartwig.actin.report.interpretation.CohortFactory.createNonEvaluableAndIgnoredCohorts
+import com.hartwig.actin.report.interpretation.CohortFactory.createNonEvaluableCohorts
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -18,20 +18,31 @@ class CohortFactoryTest {
     @Test
     fun `Should create non evaluable and ignored cohorts from minimal match`() {
         val nonEvaluableAndIgnoredCohorts =
-            createNonEvaluableAndIgnoredCohorts(TestTreatmentMatchFactory.createMinimalTreatmentMatch(), false)
+            createNonEvaluableCohorts(TestTreatmentMatchFactory.createMinimalTreatmentMatch(), false)
         assertThat(nonEvaluableAndIgnoredCohorts).isEmpty()
     }
 
     @Test
     fun `Should create evaluated cohorts from proper match`() {
         val cohorts = create(TestTreatmentMatchFactory.createProperTreatmentMatch(), false)
-        assertThat(cohorts).hasSize(3)
+        assertThat(cohorts).hasSize(4)
+
+        val trial1cohortA = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort A")
+        assertThat(trial1cohortA.molecularEvents).isNotEmpty
+        assertThat(trial1cohortA.molecularEvents).containsExactly("MSI")
+        assertThat(trial1cohortA.isPotentiallyEligible).isTrue
+        assertThat(trial1cohortA.isOpen).isTrue
+        assertThat(trial1cohortA.hasSlotsAvailable).isFalse
+        assertThat(trial1cohortA.ignore).isTrue
+        assertThat(trial1cohortA.warnings).isEmpty()
+        assertThat(trial1cohortA.fails).isNotEmpty()
 
         val trial1cohortB = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort B")
         assertThat(trial1cohortB.molecularEvents).isEmpty()
         assertThat(trial1cohortB.isPotentiallyEligible).isTrue
         assertThat(trial1cohortB.isOpen).isTrue
         assertThat(trial1cohortB.hasSlotsAvailable).isTrue
+        assertThat(trial1cohortB.ignore).isFalse
         assertThat(trial1cohortB.warnings).isEmpty()
         assertThat(trial1cohortB.fails).isNotEmpty()
 
@@ -40,6 +51,7 @@ class CohortFactoryTest {
         assertThat(trial1cohortC.isPotentiallyEligible).isFalse
         assertThat(trial1cohortC.isOpen).isFalse
         assertThat(trial1cohortC.hasSlotsAvailable).isFalse
+        assertThat(trial1cohortC.ignore).isFalse
         assertThat(trial1cohortC.warnings).isEmpty()
         assertThat(trial1cohortC.fails).isNotEmpty
 
@@ -49,30 +61,22 @@ class CohortFactoryTest {
         assertThat(trial2cohortA.isPotentiallyEligible).isTrue
         assertThat(trial2cohortA.isOpen).isTrue
         assertThat(trial2cohortA.hasSlotsAvailable).isFalse
+        assertThat(trial2cohortA.ignore).isFalse
         assertThat(trial2cohortA.warnings).isEmpty()
         assertThat(trial2cohortA.fails).isEmpty()
     }
 
     @Test
     fun `Should create non evaluable and ignored cohorts from proper match`() {
-        val nonEvaluableAndIgnoredCohorts =
-            createNonEvaluableAndIgnoredCohorts(TestTreatmentMatchFactory.createProperTreatmentMatch(), false)
-        assertThat(nonEvaluableAndIgnoredCohorts).hasSize(2)
+        val nonEvaluableCohorts = createNonEvaluableCohorts(TestTreatmentMatchFactory.createProperTreatmentMatch(), false)
+        assertThat(nonEvaluableCohorts).hasSize(1)
 
-        val trial1cohortA = findByAcronymAndCohort(nonEvaluableAndIgnoredCohorts, "TEST-1", "Cohort A")
-        assertThat(trial1cohortA.molecularEvents).isNotEmpty
-        assertThat(trial1cohortA.molecularEvents).containsExactly("MSI")
-        assertThat(trial1cohortA.isPotentiallyEligible).isTrue
-        assertThat(trial1cohortA.isOpen).isTrue
-        assertThat(trial1cohortA.hasSlotsAvailable).isFalse
-        assertThat(trial1cohortA.warnings).isEmpty()
-        assertThat(trial1cohortA.fails).isEmpty()
-
-        val trial2cohortB = findByAcronymAndCohort(nonEvaluableAndIgnoredCohorts, "TEST-2", "Cohort B")
+        val trial2cohortB = findByAcronymAndCohort(nonEvaluableCohorts, "TEST-2", "Cohort B")
         assertThat(trial2cohortB.molecularEvents).isEmpty()
         assertThat(trial2cohortB.isPotentiallyEligible).isFalse
         assertThat(trial2cohortB.isOpen).isTrue
         assertThat(trial2cohortB.hasSlotsAvailable).isTrue
+        assertThat(trial2cohortB.ignore).isFalse
         assertThat(trial2cohortB.warnings).isEmpty()
         assertThat(trial2cohortB.fails).isEmpty()
     }
@@ -102,7 +106,7 @@ class CohortFactoryTest {
     fun `Should filter trials on SOC exhaustion and tumor type`() {
         val treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch()
         val cohortsWithoutFiltering = create(treatmentMatch, false)
-        assertThat(cohortsWithoutFiltering).hasSize(3)
+        assertThat(cohortsWithoutFiltering).hasSize(4)
         val cohortsWithFiltering = create(treatmentMatch, true)
         assertThat(cohortsWithFiltering).hasSize(1)
     }

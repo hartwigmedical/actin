@@ -20,7 +20,8 @@ object CohortTestFactory {
             hasSlotsAvailable = hasSlotsAvailable,
             molecularEvents = molecularEvents.toSet(),
             warnings = emptySet(),
-            fails = emptySet()
+            fails = emptySet(),
+            ignore = false
         )
     }
 }

@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.algo.TrialMatch
+import com.hartwig.actin.datamodel.trial.CohortMetadata
 import com.hartwig.actin.datamodel.trial.Eligibility
 
 object CohortFactory {
@@ -33,13 +34,14 @@ object CohortFactory {
                         hasSlotsAvailable = trialIsOpen,
                         warnings = trialWarnings,
                         fails = trialFails,
-                        phase = phase
+                        phase = phase,
+                        ignore = false
                     )
                 )
             } else {
                 filteredMatches(
                     trialMatch.cohorts, filterOnSOCExhaustionAndTumorType, CohortMatch::evaluations
-                ).filter { !it.metadata.ignore }.map { cohortMatch: CohortMatch ->
+                ).map { cohortMatch: CohortMatch ->
                     Cohort(
                         trialId = trialId,
                         acronym = acronym,
@@ -50,14 +52,15 @@ object CohortFactory {
                         hasSlotsAvailable = cohortMatch.metadata.slotsAvailable,
                         warnings = trialWarnings.union(extractWarnings(cohortMatch.evaluations)),
                         fails = trialFails.union(extractFails(cohortMatch.evaluations)),
-                        phase = phase
+                        phase = phase,
+                        ignore = cohortMatch.metadata.ignore
                     )
                 }
             }
         }.sortedWith(CohortComparator())
     }
 
-    fun createNonEvaluableAndIgnoredCohorts(
+    fun createNonEvaluableCohorts(
         treatmentMatch: TreatmentMatch,
         filterOnSOCExhaustionAndTumorType: Boolean
     ): List<Cohort> {
@@ -66,28 +69,22 @@ object CohortFactory {
         ).flatMap { trialMatch: TrialMatch ->
             val identification = trialMatch.identification
             // Handle case of trial without cohorts.
-            if (trialMatch.nonEvaluableCohorts.isEmpty() && trialMatch.cohorts.none { it.metadata.ignore }) {
+            if (trialMatch.nonEvaluableCohorts.isEmpty()) {
                 emptyList()
             } else {
-                val totalCohorts = filteredMatches(
-                    trialMatch.nonEvaluableCohorts, filterOnSOCExhaustionAndTumorType, CohortMatch::evaluations
-                ) + filteredMatches(
-                    trialMatch.cohorts,
-                    filterOnSOCExhaustionAndTumorType,
-                    CohortMatch::evaluations
-                ).filter { it.metadata.ignore }
-                totalCohorts.map { cohortMatch: CohortMatch ->
+                trialMatch.nonEvaluableCohorts.map { cohortMetadata: CohortMetadata ->
                     Cohort(
                         trialId = identification.trialId,
                         acronym = identification.acronym,
-                        cohort = cohortMatch.metadata.description,
-                        molecularEvents = extractInclusionEvents(trialMatch.evaluations).union(extractInclusionEvents(cohortMatch.evaluations)),
-                        isPotentiallyEligible = cohortMatch.isPotentiallyEligible,
-                        isOpen = identification.open && cohortMatch.metadata.open,
-                        hasSlotsAvailable = cohortMatch.metadata.slotsAvailable,
+                        cohort = cohortMetadata.description,
+                        molecularEvents = emptySet(),
+                        isPotentiallyEligible = false,
+                        isOpen = identification.open && cohortMetadata.open,
+                        hasSlotsAvailable = cohortMetadata.slotsAvailable,
                         warnings = emptySet(),
                         fails = emptySet(),
-                        phase = null
+                        phase = null,
+                        ignore = cohortMetadata.ignore
                     )
                 }
             }

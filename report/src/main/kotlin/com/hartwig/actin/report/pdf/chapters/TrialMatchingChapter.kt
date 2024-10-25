@@ -33,11 +33,10 @@ class TrialMatchingChapter(
 
     private fun addTrialMatchingOverview(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
-        val cohorts = CohortFactory.create(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
-        val nonEvaluableAndIgnoredCohorts = CohortFactory.createNonEvaluableAndIgnoredCohorts(
-            report.treatmentMatch,
-            report.config.filterOnSOCExhaustionAndTumorType
-        )
+        val (ignoredCohorts, cohorts) = CohortFactory.create(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
+            .partition { it.ignore }
+        val nonEvaluableCohorts =
+            CohortFactory.createNonEvaluableCohorts(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
         val (_, evaluated) =
             EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = true)
 
@@ -63,8 +62,8 @@ class TrialMatchingChapter(
                 )
             },
             if (includeIneligibleTrialsInSummary || externalTrialsOnly) null else {
-                IneligibleActinTrialsGenerator.forNonEvaluableCohorts(
-                    nonEvaluableAndIgnoredCohorts, report.treatmentMatch.trialSource, contentWidth()
+                IneligibleActinTrialsGenerator.forNonEvaluableAndIgnoredCohorts(
+                    ignoredCohorts, nonEvaluableCohorts, report.treatmentMatch.trialSource, contentWidth()
                 )
             },
             localTrialGenerator.takeIf {

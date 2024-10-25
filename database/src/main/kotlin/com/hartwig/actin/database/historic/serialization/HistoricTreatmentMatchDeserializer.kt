@@ -60,7 +60,7 @@ object HistoricTreatmentMatchDeserializer {
             isPotentiallyEligible = Json.bool(trialMatch, "isPotentiallyEligible"),
             evaluations = extractEvaluations(trialMatch.get("evaluations")),
             cohorts = Json.array(trialMatch, "cohorts").mapNotNull { extractCohortMatch(it) },
-            nonEvaluableCohorts = Json.array(trialMatch, "nonEvaluableCohorts").mapNotNull { extractCohortMatch(it) }
+            nonEvaluableCohorts = Json.array(trialMatch, "nonEvaluableCohorts").mapNotNull { extractCohortMetadata(it.asJsonObject) }
         )
     }
 
