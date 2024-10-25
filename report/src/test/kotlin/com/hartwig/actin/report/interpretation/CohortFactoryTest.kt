@@ -3,7 +3,7 @@ package com.hartwig.actin.report.interpretation
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.trial.TrialIdentification
-import com.hartwig.actin.report.interpretation.CohortFactory.create
+import com.hartwig.actin.report.interpretation.CohortFactory.createEvaluableCohorts
 import com.hartwig.actin.report.interpretation.CohortFactory.createNonEvaluableCohorts
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -11,20 +11,19 @@ import org.junit.Test
 class CohortFactoryTest {
     @Test
     fun `Should create evaluated cohorts from minimal match`() {
-        val cohorts = create(TestTreatmentMatchFactory.createMinimalTreatmentMatch(), false)
+        val cohorts = createEvaluableCohorts(TestTreatmentMatchFactory.createMinimalTreatmentMatch(), false)
         assertThat(cohorts).isEmpty()
     }
 
     @Test
-    fun `Should create non evaluable and ignored cohorts from minimal match`() {
-        val nonEvaluableAndIgnoredCohorts =
-            createNonEvaluableCohorts(TestTreatmentMatchFactory.createMinimalTreatmentMatch(), false)
-        assertThat(nonEvaluableAndIgnoredCohorts).isEmpty()
+    fun `Should create non evaluable from minimal match`() {
+        val nonEvaluableCohorts = createNonEvaluableCohorts(TestTreatmentMatchFactory.createMinimalTreatmentMatch(), false)
+        assertThat(nonEvaluableCohorts).isEmpty()
     }
 
     @Test
     fun `Should create evaluated cohorts from proper match`() {
-        val cohorts = create(TestTreatmentMatchFactory.createProperTreatmentMatch(), false)
+        val cohorts = createEvaluableCohorts(TestTreatmentMatchFactory.createProperTreatmentMatch(), false)
         assertThat(cohorts).hasSize(4)
 
         val trial1cohortA = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort A")
@@ -67,7 +66,7 @@ class CohortFactoryTest {
     }
 
     @Test
-    fun `Should create non evaluable and ignored cohorts from proper match`() {
+    fun `Should create non evaluable cohorts from proper match`() {
         val nonEvaluableCohorts = createNonEvaluableCohorts(TestTreatmentMatchFactory.createProperTreatmentMatch(), false)
         assertThat(nonEvaluableCohorts).hasSize(1)
 
@@ -98,22 +97,22 @@ class CohortFactoryTest {
         )
 
         val treatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch().copy(trialMatches = listOf(trialMatchWithoutCohort))
-        val cohorts = create(treatmentMatch, false)
+        val cohorts = createEvaluableCohorts(treatmentMatch, false)
         assertThat(cohorts).hasSize(1)
     }
 
     @Test
     fun `Should filter trials on SOC exhaustion and tumor type`() {
         val treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch()
-        val cohortsWithoutFiltering = create(treatmentMatch, false)
+        val cohortsWithoutFiltering = createEvaluableCohorts(treatmentMatch, false)
         assertThat(cohortsWithoutFiltering).hasSize(4)
-        val cohortsWithFiltering = create(treatmentMatch, true)
+        val cohortsWithFiltering = createEvaluableCohorts(treatmentMatch, true)
         assertThat(cohortsWithFiltering).hasSize(1)
     }
 
     private fun findByAcronymAndCohort(
-        evaluatedCohorts: List<Cohort>, acronymToFind: String, cohortToFind: String?
+        cohorts: List<Cohort>, acronymToFind: String, cohortToFind: String?
     ): Cohort {
-        return evaluatedCohorts.first { it.acronym == acronymToFind && it.cohort == cohortToFind }
+        return cohorts.first { it.acronym == acronymToFind && it.cohort == cohortToFind }
     }
 }

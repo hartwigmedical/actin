@@ -33,7 +33,10 @@ class TrialMatchingChapter(
 
     private fun addTrialMatchingOverview(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
-        val (ignoredCohorts, cohorts) = CohortFactory.create(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
+        val (ignoredCohorts, cohorts) = CohortFactory.createEvaluableCohorts(
+            report.treatmentMatch,
+            report.config.filterOnSOCExhaustionAndTumorType
+        )
             .partition { it.ignore }
         val nonEvaluableCohorts =
             CohortFactory.createNonEvaluableCohorts(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)

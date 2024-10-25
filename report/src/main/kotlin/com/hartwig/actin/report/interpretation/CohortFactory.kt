@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.trial.CohortMetadata
 import com.hartwig.actin.datamodel.trial.Eligibility
 
 object CohortFactory {
-    fun create(treatmentMatch: TreatmentMatch, filterOnSOCExhaustionAndTumorType: Boolean): List<Cohort> {
+    fun createEvaluableCohorts(treatmentMatch: TreatmentMatch, filterOnSOCExhaustionAndTumorType: Boolean): List<Cohort> {
         return filteredMatches(
             treatmentMatch.trialMatches, filterOnSOCExhaustionAndTumorType, TrialMatch::evaluations
         ).flatMap { trialMatch: TrialMatch ->
@@ -35,7 +35,6 @@ object CohortFactory {
                         warnings = trialWarnings,
                         fails = trialFails,
                         phase = phase,
-                        ignore = false
                     )
                 )
             } else {
@@ -77,13 +76,8 @@ object CohortFactory {
                         trialId = identification.trialId,
                         acronym = identification.acronym,
                         cohort = cohortMetadata.description,
-                        molecularEvents = emptySet(),
-                        isPotentiallyEligible = false,
                         isOpen = identification.open && cohortMetadata.open,
                         hasSlotsAvailable = cohortMetadata.slotsAvailable,
-                        warnings = emptySet(),
-                        fails = emptySet(),
-                        phase = null,
                         ignore = cohortMetadata.ignore
                     )
                 }

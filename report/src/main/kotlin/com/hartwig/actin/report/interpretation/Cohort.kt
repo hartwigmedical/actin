@@ -6,12 +6,12 @@ data class Cohort(
     val trialId: String,
     val acronym: String,
     val cohort: String?,
-    val molecularEvents: Set<String>,
-    val isPotentiallyEligible: Boolean,
+    val molecularEvents: Set<String> = emptySet(),
+    val isPotentiallyEligible: Boolean = false,
     val isOpen: Boolean,
     val hasSlotsAvailable: Boolean,
-    val ignore: Boolean,
-    val warnings: Set<String>,
-    val fails: Set<String>,
+    val ignore: Boolean = false,
+    val warnings: Set<String> = emptySet(),
+    val fails: Set<String> = emptySet(),
     val phase: TrialPhase? = null
 )

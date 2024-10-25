@@ -54,7 +54,7 @@ class MolecularDetailsChapter(
             if (molecular.hasSufficientQualityButLowPurity()) {
                 table.addCell(Cells.createContentNoBorder("Low tumor purity (${molecular.characteristics.purity?.let { Formats.percentage(it) } ?: "NA"}) indicating that potential (subclonal) DNA aberrations might not have been detected & predicted tumor origin results may be less reliable"))
             }
-            val cohorts = CohortFactory.create(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
+            val cohorts = CohortFactory.createEvaluableCohorts(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
             val evaluated = cohorts.filter { it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable }
 
             val generators =
