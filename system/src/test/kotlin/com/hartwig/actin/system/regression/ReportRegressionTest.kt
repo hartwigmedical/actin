@@ -1,26 +1,33 @@
 package com.hartwig.actin.system.regression
 
 import com.hartwig.actin.system.example.ExampleFunctions
+import com.hartwig.actin.system.example.LUNG_01_EXAMPLE
 import com.hartwig.actin.system.example.LocalExampleReportApplication
+import java.time.LocalDate
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
+import org.junit.runners.Parameterized.Parameters
 
-class ReportRegressionTest {
+@RunWith(Parameterized::class)
+class ReportRegressionTest(private val exampleName: String) {
 
-    @Test
-    fun `Regress EXAMPLE-LUNG-01 text`() {
-        val examplePatientRecordJson = ExampleFunctions.resolveExamplePatientRecordJson()
-        val exampleTreatmentMatchJson = ExampleFunctions.resolveExampleTreatmentMatchJson()
-        val outputDirectory = System.getProperty("user.dir") + "/target/test-classes"
-        LocalExampleReportApplication().run(examplePatientRecordJson, exampleTreatmentMatchJson, outputDirectory)
-        assertThatPdf("$outputDirectory/EXAMPLE-LUNG-01.actin.pdf").isEqualTo("src/test/resources/example_reports/EXAMPLE-LUNG-01.actin.pdf")
+    companion object {
+        @Parameters
+        @JvmStatic
+        fun examples() = listOf(LUNG_01_EXAMPLE)
     }
 
     @Test
-    fun `Regress EXAMPLE-LUNG-01 visual`() {
-        val examplePatientRecordJson = ExampleFunctions.resolveExamplePatientRecordJson()
-        val exampleTreatmentMatchJson = ExampleFunctions.resolveExampleTreatmentMatchJson()
+    fun `Regress report textually and visually`() {
+        System.setProperty("java.locale.providers", "COMPAT")
         val outputDirectory = System.getProperty("user.dir") + "/target/test-classes"
-        LocalExampleReportApplication().run(examplePatientRecordJson, exampleTreatmentMatchJson, outputDirectory)
-        assertThatPdf("$outputDirectory/EXAMPLE-LUNG-01.actin.pdf").isEqualToVisually("src/test/resources/example_reports/EXAMPLE-LUNG-01.actin.pdf")
+        LocalExampleReportApplication(LocalDate.of(2024, 10, 23)).run(
+            ExampleFunctions.resolveExamplePatientRecordJson(exampleName),
+            ExampleFunctions.resolveExampleTreatmentMatchJson(exampleName),
+            outputDirectory
+        )
+        assertThatPdf("$outputDirectory/EXAMPLE-$exampleName.actin.pdf").isEqualToTextually("src/test/resources/example_reports/EXAMPLE-$exampleName.actin.pdf")
+        assertThatPdf("$outputDirectory/EXAMPLE-$exampleName.actin.pdf").isEqualToVisually("src/test/resources/example_reports/EXAMPLE-$exampleName.actin.pdf")
     }
 }

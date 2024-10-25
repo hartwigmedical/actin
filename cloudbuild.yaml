@@ -3,9 +3,14 @@ steps:
   - id: 'Set version for maven'
     name: 'eu.gcr.io/hmf-build/maven-cache'
     args: [ 'versions:set -DnewVersion=$TAG_NAME --batch-mode' ]
+  
+  - id: 'Create the ACTIN build agent image'
+    name: 'gcr.io/cloud-builders/docker'
+    dir: 'system/src/test/docker'
+    args: [ 'build', '.', '-t', 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent:latest']
 
   - id: 'Maven build using cache'
-    name: 'eu.gcr.io/hmf-build/maven-cache'
+    name: 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent'
     args: [ '-T 1C deploy --batch-mode' ]
 
   - id: 'Build and push the molecular image with tag'

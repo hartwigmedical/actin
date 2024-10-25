@@ -21,12 +21,12 @@ import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.serialization.TrialJson
 import com.hartwig.serve.datamodel.ImmutableActionableEvents
-import org.apache.commons.cli.ParseException
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
 import java.io.File
 import java.time.Period
 import kotlin.system.exitProcess
+import org.apache.commons.cli.ParseException
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
 class LocalExampleTreatmentMatchApplication {
 
@@ -125,7 +125,7 @@ class LocalExampleTreatmentMatchApplication {
 fun main() {
     LocalExampleTreatmentMatchApplication.LOGGER.info("Running ACTIN Example Treatment Matcher")
     try {
-        val examplePatientRecordJson = ExampleFunctions.resolveExamplePatientRecordJson()
+        val examplePatientRecordJson = ExampleFunctions.resolveExamplePatientRecordJson(LUNG_01_EXAMPLE)
         val exampleTrialDatabaseDir = ExampleFunctions.resolveExampleTrialDatabaseDirectory()
         val outputDirectory = ExampleFunctions.resolveExampleTreatmentMatchOutputDirectory()
 

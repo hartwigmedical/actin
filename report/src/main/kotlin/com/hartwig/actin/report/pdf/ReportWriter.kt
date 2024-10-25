@@ -14,9 +14,10 @@ import com.itextpdf.kernel.pdf.WriterProperties
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.AreaBreak
 import com.itextpdf.layout.properties.AreaBreakType
-import org.apache.logging.log4j.LogManager
 import java.io.ByteArrayOutputStream
 import java.io.IOException
+import java.time.LocalDate
+import org.apache.logging.log4j.LogManager
 
 class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory: String?) {
 
@@ -34,14 +35,14 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
         Styles.initialize()
 
         val chapters = ReportContentProvider(report, enableExtendedMode).provideChapters()
-        writePdfChapters(report.patientId, chapters, enableExtendedMode)
+        writePdfChapters(report.patientId, chapters, enableExtendedMode, report.reportDate)
     }
 
     @Throws(IOException::class)
-    private fun writePdfChapters(patientId: String, chapters: List<ReportChapter>, enableExtendedMode: Boolean) {
+    private fun writePdfChapters(patientId: String, chapters: List<ReportChapter>, enableExtendedMode: Boolean, reportDate: LocalDate) {
         val doc = initializeReport(patientId, enableExtendedMode)
         val pdfDocument = doc.pdfDocument
-        val pageEventHandler: PageEventHandler = PageEventHandler.create(patientId)
+        val pageEventHandler: PageEventHandler = PageEventHandler.create(patientId, reportDate)
         pdfDocument.addEventHandler(PdfDocumentEvent.START_PAGE, pageEventHandler)
         for (i in chapters.indices) {
             val chapter = chapters[i]
