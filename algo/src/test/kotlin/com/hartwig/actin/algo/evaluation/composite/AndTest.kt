@@ -43,10 +43,10 @@ class AndTest {
 
     @Test
     fun `Should retain messages`() {
-        val function1: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, 1)
-        val function2: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, 2)
-        val function3: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.PASS, 3)
-        val function4: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.PASS, 4)
+        val function1: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, index = 1)
+        val function2: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, index = 2)
+        val function3: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.PASS, index = 3)
+        val function4: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.PASS, index = 4)
         val result: Evaluation = And(listOf(function1, function2, function3, function4)).evaluate(TEST_PATIENT)
         assertThat(result.passSpecificMessages).hasSize(2)
         assertThat(result.passSpecificMessages).contains("pass specific 1")
@@ -75,10 +75,10 @@ class AndTest {
     }
 
     @Test
-    fun shouldCombinesMolecularInclusionExclusionEvents() {
-        val function1: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, true, 1)
-        val function2: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, true, 2)
-        val function3: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.PASS, true, 3)
+    fun `Should combine molecular inclusion and exclusion events`() {
+        val function1: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, includeMolecular = true, index = 1)
+        val function2: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, includeMolecular = true, index = 2)
+        val function3: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.PASS, includeMolecular = true, index = 3)
         val result: Evaluation = And(listOf(function1, function2, function3)).evaluate(TEST_PATIENT)
         assertThat(result.inclusionMolecularEvents).hasSize(2)
         assertThat(result.inclusionMolecularEvents).contains("inclusion event 1")
@@ -89,9 +89,17 @@ class AndTest {
     }
 
     @Test
-    fun properlyRespectsRecoverable() {
-        val recoverable: EvaluationFunction = CompositeTestFactory.create(true, 1)
-        val unrecoverable: EvaluationFunction = CompositeTestFactory.create(false, 2)
+    fun `Should set isMissingGenesForSufficientEvaluation property to true if true for any evaluation`() {
+        val function1: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.UNDETERMINED, isMissingGenes = true, index = 1)
+        val function2: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.UNDETERMINED, isMissingGenes = false, index = 2)
+        val result: Evaluation = And(listOf(function1, function2)).evaluate(TEST_PATIENT)
+        assertThat(result.isMissingGenesForSufficientEvaluation).isTrue()
+    }
+
+    @Test
+    fun `Should respect recoverable`() {
+        val recoverable: EvaluationFunction = CompositeTestFactory.create(recoverable = true, index = 1)
+        val unrecoverable: EvaluationFunction = CompositeTestFactory.create(recoverable = false, index = 2)
         val result: Evaluation = And(listOf(recoverable, unrecoverable)).evaluate(TEST_PATIENT)
         assertThat(result.recoverable).isFalse
         assertThat(result.undeterminedGeneralMessages).hasSize(1)
@@ -99,7 +107,7 @@ class AndTest {
     }
 
     @Test(expected = IllegalStateException::class)
-    fun crashOnNoFunctionsToEvaluate() {
+    fun `Should crash on no functions to evaluate`() {
         And(emptyList()).evaluate(TEST_PATIENT)
     }
 

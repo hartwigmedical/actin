@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory
 import com.hartwig.actin.algo.evaluation.composite.Or
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions
@@ -24,7 +23,7 @@ class AnyGeneHasDriverEventWithApprovedTherapy(
     val doidModel: DoidModel,
     private val evaluationFunctionFactory: EvaluationFunctionFactory,
     private val maxTestAge: LocalDate? = null
-) : EvaluationFunction {
+) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val isLungCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_CANCER_DOID)

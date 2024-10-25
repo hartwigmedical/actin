@@ -22,6 +22,7 @@ class EligibleActinTrialsGenerator private constructor(
 
     override fun contents(): Table {
         val table = Tables.createFixedWidthCols(trialColWidth, cohortColWidth + molecularEventColWidth + checksColWidth)
+
         if (cohorts.isNotEmpty()) {
             table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader("Trial")))
             val headerSubTable = Tables.createFixedWidthCols(
@@ -37,22 +38,39 @@ class EligibleActinTrialsGenerator private constructor(
 
     companion object {
 
-
         fun forOpenCohorts(
             cohorts: List<EvaluatedCohort>, source: String, width: Float, slotsAvailable: Boolean
         ): Pair<EligibleActinTrialsGenerator, List<EvaluatedCohort>> {
             val recruitingAndEligibleCohorts = cohorts.filter {
-                it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable == slotsAvailable
+                it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable == slotsAvailable && !it.isMissingGenesForSufficientEvaluation
             }
             val recruitingAndEligibleTrials = recruitingAndEligibleCohorts.map(EvaluatedCohort::trialId).distinct()
-            val slotsText = if (slotsAvailable) "and currently have slots available" else "but currently have no slots available"
+            val slotsText = if (!slotsAvailable) " but currently have no slots available" else ""
             val cohortFromTrialsText = if (recruitingAndEligibleCohorts.isNotEmpty()) {
                 "(${formatCountWithLabel(recruitingAndEligibleCohorts.size, "cohort")}" +
                         " from ${formatCountWithLabel(recruitingAndEligibleTrials.size, "trial")})"
             } else "(0)"
-            val title = "$source trials that are open and considered eligible $slotsText $cohortFromTrialsText"
+            val title = "$source trials that are open and potentially eligible$slotsText $cohortFromTrialsText"
 
             return create(recruitingAndEligibleCohorts, title, width) to recruitingAndEligibleCohorts
+        }
+
+        fun forOpenCohortsWithMissingGenes(
+            cohorts: List<EvaluatedCohort>, source: String, width: Float
+        ): EligibleActinTrialsGenerator? {
+            val recruitingAndEligibleCohorts = cohorts.filter {
+                it.isPotentiallyEligible && it.isOpen && it.isMissingGenesForSufficientEvaluation
+            }
+            val recruitingAndEligibleTrials = recruitingAndEligibleCohorts.map(EvaluatedCohort::trialId).distinct()
+            val cohortFromTrialsText = if (recruitingAndEligibleCohorts.isNotEmpty()) {
+                "(${formatCountWithLabel(recruitingAndEligibleCohorts.size, "cohort")}" +
+                        " from ${formatCountWithLabel(recruitingAndEligibleTrials.size, "trial")})"
+            } else "(0)"
+
+            val title =
+                "$source trials that are open but for which additional genes need to be tested to evaluate eligibility $cohortFromTrialsText"
+
+            return if (recruitingAndEligibleCohorts.isNotEmpty()) create(recruitingAndEligibleCohorts, title, width) else null
         }
 
         private fun formatCountWithLabel(count: Int, word: String): String {

@@ -35,7 +35,9 @@ class TrialMatchingChapter(
         val table = Tables.createSingleColWithWidth(contentWidth())
         val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
         val (_, evaluated) =
-            EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = true)
+            EligibleActinTrialsGenerator.forOpenCohorts(
+                cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = true
+            )
 
         val (localTrialGenerator, nonLocalTrialGenerator) = reportContentProvider.provideExternalTrialsTables(
             report.patientRecord,

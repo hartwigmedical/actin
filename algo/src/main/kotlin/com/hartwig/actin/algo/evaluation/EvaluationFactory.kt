@@ -33,8 +33,13 @@ object EvaluationFactory {
         return fail(specificMessage, generalMessage, true)
     }
 
-    fun undetermined(specificMessage: String, generalMessage: String? = null, recoverable: Boolean = false): Evaluation {
-        return createUndetermined(recoverable, specificMessage, setOf(generalMessage ?: specificMessage))
+    fun undetermined(
+        specificMessage: String,
+        generalMessage: String? = null,
+        recoverable: Boolean = false,
+        missingGenesForEvaluation: Boolean = false
+    ): Evaluation {
+        return createUndetermined(recoverable, specificMessage, setOf(generalMessage ?: specificMessage), missingGenesForEvaluation)
     }
 
     fun recoverableUndetermined(specificMessage: String, generalMessage: String? = null): Evaluation {
@@ -83,10 +88,16 @@ object EvaluationFactory {
         passGeneralMessages = generalMessages
     )
 
-    private fun createUndetermined(recoverable: Boolean, specificMessage: String, generalMessages: Set<String>) = Evaluation(
+    private fun createUndetermined(
+        recoverable: Boolean,
+        specificMessage: String,
+        generalMessages: Set<String>,
+        isMissingGenesForEvaluation: Boolean = false
+    ) = Evaluation(
         recoverable = recoverable,
         result = EvaluationResult.UNDETERMINED,
         undeterminedSpecificMessages = setOf(specificMessage),
-        undeterminedGeneralMessages = generalMessages
+        undeterminedGeneralMessages = generalMessages,
+        isMissingGenesForSufficientEvaluation = isMissingGenesForEvaluation
     )
 }

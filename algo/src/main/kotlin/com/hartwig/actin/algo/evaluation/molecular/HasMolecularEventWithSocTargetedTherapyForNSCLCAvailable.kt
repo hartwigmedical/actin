@@ -15,11 +15,15 @@ private val EXON_SKIPPING_LIST = listOf("MET" to 14)
 
 class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(
     private val genesToInclude: Set<String>? = null, private val genesToIgnore: Set<String>, private val maxTestAge: LocalDate? = null
-) : EvaluationFunction {
+) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val evaluationFunctions = createEvaluationFunctions(genesToInclude, genesToIgnore)
-        return Or(evaluationFunctions).evaluate(record).copy(inclusionMolecularEvents = emptySet(), exclusionMolecularEvents = emptySet())
+        val evaluation = Or(createEvaluationFunctions(genesToInclude, genesToIgnore)).evaluate(record)
+        return evaluation.copy(
+            inclusionMolecularEvents = emptySet(),
+            exclusionMolecularEvents = emptySet(),
+            isMissingGenesForSufficientEvaluation = evaluation.isMissingGenesForSufficientEvaluation
+        )
     }
 
     private fun createEvaluationFunctions(genesToInclude: Set<String>?, genesToIgnore: Set<String>): List<EvaluationFunction> =
