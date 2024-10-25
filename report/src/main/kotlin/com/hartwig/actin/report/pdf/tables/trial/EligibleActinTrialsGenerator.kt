@@ -27,7 +27,7 @@ class EligibleActinTrialsGenerator private constructor(
             val headerSubTable = Tables.createFixedWidthCols(
                 cohortColWidth, molecularEventColWidth, checksColWidth
             )
-            sequenceOf("Cohort", "Molecular", "Warnings").map(Cells::createHeader).forEach(headerSubTable::addHeaderCell)
+            sequenceOf("Coho", "Molecular", "Warnings").map(Cells::createHeader).forEach(headerSubTable::addHeaderCell)
             table.addHeaderCell(Cells.createContentNoBorder(headerSubTable))
         }
 
