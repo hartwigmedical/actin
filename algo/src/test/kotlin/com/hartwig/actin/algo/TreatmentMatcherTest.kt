@@ -8,7 +8,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.soc.EvaluatedTreatmentAnnotator
 import com.hartwig.actin.algo.soc.RecommendationEngine
 import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
-import com.hartwig.actin.configuration.STANDARD_TRIAL_SOURCE
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluatedTreatment
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
@@ -31,6 +30,7 @@ import org.junit.Test
 import java.time.LocalDate
 
 class TreatmentMatcherTest {
+    private val trialSource = "trial source"
     private val patient = TestPatientFactory.createMinimalTestWGSPatientRecord()
     private val trials = listOf(TestTrialFactory.createMinimalTestTrial())
     private val trialMatches = TestTreatmentMatchFactory.createProperTreatmentMatch().trialMatches
@@ -56,7 +56,7 @@ class TreatmentMatcherTest {
         trials,
         CurrentDateProvider(),
         EvaluatedTreatmentAnnotator.create(evidenceEntries, resistanceEvidenceMatcher),
-        STANDARD_TRIAL_SOURCE
+        trialSource
     )
     private val expectedTreatmentMatch = TreatmentMatch(
         patientId = patient.patientId,
@@ -65,7 +65,7 @@ class TreatmentMatcherTest {
         referenceDateIsLive = true,
         trialMatches = trialMatches,
         standardOfCareMatches = null,
-        trialSource = STANDARD_TRIAL_SOURCE
+        trialSource = trialSource
     )
 
     @Test
@@ -107,7 +107,7 @@ class TreatmentMatcherTest {
             trials,
             CurrentDateProvider(),
             EvaluatedTreatmentAnnotator.create(evidenceEntries, resistanceEvidenceMatcher),
-            STANDARD_TRIAL_SOURCE
+            trialSource
         )
         every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(patientWithoutMolecular) } returns false
         val expectedTreatmentMatchWithoutMolecular = expectedTreatmentMatch.copy(sampleId = "N/A")

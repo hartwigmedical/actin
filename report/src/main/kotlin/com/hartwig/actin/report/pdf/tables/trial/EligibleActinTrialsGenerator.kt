@@ -39,7 +39,7 @@ class EligibleActinTrialsGenerator private constructor(
 
 
         fun forOpenCohorts(
-            cohorts: List<EvaluatedCohort>, source: String, width: Float, slotsAvailable: Boolean
+            cohorts: List<EvaluatedCohort>, source: String?, width: Float, slotsAvailable: Boolean
         ): Pair<EligibleActinTrialsGenerator, List<EvaluatedCohort>> {
             val recruitingAndEligibleCohorts = cohorts.filter {
                 it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable == slotsAvailable
@@ -61,7 +61,7 @@ class EligibleActinTrialsGenerator private constructor(
 
         fun forClosedCohorts(
             cohorts: List<EvaluatedCohort>,
-            source: String,
+            source: String?,
             contentWidth: Float,
             enableExtendedMode: Boolean
         ): EligibleActinTrialsGenerator {
