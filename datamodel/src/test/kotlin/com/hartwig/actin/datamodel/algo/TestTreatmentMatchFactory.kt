@@ -144,8 +144,7 @@ object TestTreatmentMatchFactory {
         )
     }
 
-    fun createTestMetadata(cohortId: String, open: Boolean, slotsAvailable: Boolean): CohortMetadata {
-    private fun createTestMetadata(
+    fun createTestMetadata(
         cohortId: String,
         evaluable: Boolean,
         open: Boolean,

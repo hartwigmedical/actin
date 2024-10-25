@@ -55,12 +55,12 @@ class EligibleActinTrialsGenerator(
         }
 
         fun forOpenCohortsWithMissingGenes(
-            cohorts: List<EvaluatedCohort>, source: String, width: Float
+            cohorts: List<Cohort>, source: String, width: Float
         ): EligibleActinTrialsGenerator? {
             val recruitingAndEligibleCohorts = cohorts.filter {
                 it.isPotentiallyEligible && it.isOpen && it.isMissingGenesForSufficientEvaluation
             }
-            val recruitingAndEligibleTrials = recruitingAndEligibleCohorts.map(EvaluatedCohort::trialId).distinct()
+            val recruitingAndEligibleTrials = recruitingAndEligibleCohorts.map(Cohort::trialId).distinct()
             val cohortFromTrialsText = if (recruitingAndEligibleCohorts.isNotEmpty()) {
                 "(${formatCountWithLabel(recruitingAndEligibleCohorts.size, "cohort")}" +
                         " from ${formatCountWithLabel(recruitingAndEligibleTrials.size, "trial")})"
@@ -84,7 +84,7 @@ class EligibleActinTrialsGenerator(
             val unavailableAndEligible =
                 cohorts.filter { trial: Cohort -> trial.isPotentiallyEligible && !trial.isOpen }
             val title = String.format(
-                "%s trials and cohorts that are considered eligible, but are closed (%s)",
+                "%s trials and cohorts that are potentially eligible, but are closed (%s)",
                 source,
                 unavailableAndEligible.size
             )

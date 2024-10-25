@@ -8,6 +8,7 @@ data class Cohort(
     val name: String?,
     val molecularEvents: Set<String> = emptySet(),
     val isPotentiallyEligible: Boolean = false,
+    val isMissingGenesForSufficientEvaluation: Boolean = false,
     val isOpen: Boolean,
     val hasSlotsAvailable: Boolean,
     val ignore: Boolean = false,
