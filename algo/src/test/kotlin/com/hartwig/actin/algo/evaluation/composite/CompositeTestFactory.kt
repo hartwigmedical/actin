@@ -7,28 +7,13 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 
 internal object CompositeTestFactory {
 
-    private val DEFAULT_RESULT = EvaluationResult.PASS
-    private const val DEFAULT_RECOVERABLE = false
-    private const val DEFAULT_INCLUDE_MOLECULAR = false
-    private const val DEFAULT_INDEX = 1
-
-    fun create(result: EvaluationResult, includeMolecular: Boolean): EvaluationFunction {
-        return create(result, DEFAULT_RECOVERABLE, includeMolecular, DEFAULT_INDEX)
-    }
-
-    fun create(recoverable: Boolean, index: Int): EvaluationFunction {
-        return create(DEFAULT_RESULT, recoverable, DEFAULT_INCLUDE_MOLECULAR, index)
-    }
-
-    fun create(result: EvaluationResult, index: Int): EvaluationFunction {
-        return create(result, DEFAULT_RECOVERABLE, DEFAULT_INCLUDE_MOLECULAR, index)
-    }
-
-    fun create(result: EvaluationResult, includeMolecular: Boolean, index: Int): EvaluationFunction {
-        return create(result, DEFAULT_RECOVERABLE, includeMolecular, index)
-    }
-
-    private fun create(result: EvaluationResult, recoverable: Boolean, includeMolecular: Boolean, index: Int): EvaluationFunction {
+    fun create(
+        result: EvaluationResult = EvaluationResult.PASS,
+        recoverable: Boolean = false,
+        includeMolecular: Boolean = false,
+        isMissingGenes: Boolean = false,
+        index: Int = 1
+    ): EvaluationFunction {
         val evaluation = Evaluation(
             result = result,
             recoverable = recoverable,
@@ -41,7 +26,8 @@ internal object CompositeTestFactory {
             failSpecificMessages = setOf("fail specific $index"),
             failGeneralMessages = setOf("fail general $index"),
             inclusionMolecularEvents = if (includeMolecular) setOf("inclusion event $index") else emptySet(),
-            exclusionMolecularEvents = if (includeMolecular) setOf("exclusion event $index") else emptySet()
+            exclusionMolecularEvents = if (includeMolecular) setOf("exclusion event $index") else emptySet(),
+            isMissingGenesForSufficientEvaluation = isMissingGenes
         )
         return evaluationFunction { evaluation }
     }

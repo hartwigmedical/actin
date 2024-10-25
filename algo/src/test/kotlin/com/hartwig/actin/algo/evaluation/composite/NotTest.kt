@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.composite
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.TestEvaluationFunctionFactory
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
@@ -22,7 +23,7 @@ class NotTest {
 
     @Test
     fun `Should flip messages and molecular events for pass evaluation`() {
-        val passFunction = CompositeTestFactory.create(EvaluationResult.PASS, true)
+        val passFunction = CompositeTestFactory.create(EvaluationResult.PASS, includeMolecular = true)
         val passed = passFunction.evaluate(TEST_PATIENT)
         val result: Evaluation = Not(passFunction).evaluate(TEST_PATIENT)
         assertMessagesAreFlipped(passed, result)
@@ -31,7 +32,7 @@ class NotTest {
 
     @Test
     fun `Should flip messages and molecular events for fail evaluation`() {
-        val failFunction = CompositeTestFactory.create(EvaluationResult.FAIL, true)
+        val failFunction = CompositeTestFactory.create(EvaluationResult.FAIL, includeMolecular = true)
         val failed = failFunction.evaluate(TEST_PATIENT)
         val result: Evaluation = Not(failFunction).evaluate(TEST_PATIENT)
         assertMessagesAreFlipped(failed, result)
@@ -40,7 +41,7 @@ class NotTest {
 
     @Test
     fun `Should retain messages and flip molecular events for undetermined evaluation`() {
-        val undeterminedFunction = CompositeTestFactory.create(EvaluationResult.UNDETERMINED, true)
+        val undeterminedFunction = CompositeTestFactory.create(EvaluationResult.UNDETERMINED, includeMolecular = true)
         val undetermined = undeterminedFunction.evaluate(TEST_PATIENT)
         val result: Evaluation = Not(undeterminedFunction).evaluate(TEST_PATIENT)
         assertMessagesAreRetained(undetermined, result)
@@ -49,7 +50,7 @@ class NotTest {
 
     @Test
     fun `Should retain messages and flip molecular events for warn evaluation`() {
-        val warnFunction = CompositeTestFactory.create(EvaluationResult.WARN, true)
+        val warnFunction = CompositeTestFactory.create(EvaluationResult.WARN, includeMolecular = true)
         val warn = warnFunction.evaluate(TEST_PATIENT)
         val result: Evaluation = Not(warnFunction).evaluate(TEST_PATIENT)
         assertMessagesAreRetained(warn, result)
@@ -58,11 +59,18 @@ class NotTest {
 
     @Test
     fun `Should flip messages and molecular events for not evaluated evaluation`() {
-        val notEvaluatedEvaluation = CompositeTestFactory.create(EvaluationResult.NOT_EVALUATED, true)
+        val notEvaluatedEvaluation = CompositeTestFactory.create(EvaluationResult.NOT_EVALUATED, includeMolecular = true)
         val notEvaluated = notEvaluatedEvaluation.evaluate(TEST_PATIENT)
         val result: Evaluation = Not(notEvaluatedEvaluation).evaluate(TEST_PATIENT)
         assertMessagesAreFlipped(notEvaluated, result)
         assertEventsAreFlipped(notEvaluated, result)
+    }
+
+    @Test
+    fun `Should retain isMissingGenesForSufficientEvaluation value`() {
+        val function: EvaluationFunction = CompositeTestFactory.create(isMissingGenes = true)
+        val result: Evaluation = Not(function).evaluate(TEST_PATIENT)
+        assertThat(result.isMissingGenesForSufficientEvaluation).isTrue()
     }
 
     private fun assertMessagesAreFlipped(evaluation: Evaluation, negatedEvaluation: Evaluation) {
