@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.interpretation
 
+import com.hartwig.actin.datamodel.molecular.Driver
 import com.hartwig.actin.datamodel.molecular.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.Drivers
 import com.hartwig.actin.datamodel.molecular.Fusion
@@ -168,7 +169,7 @@ class DriversSummarizerTest {
         )
 
         val summarizer = MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(drivers, cohorts)
-        val otherActionableEvents = summarizer.actionableEventsThatAreNotKeyDrivers().toSet()
+        val otherActionableEvents = summarizer.actionableEventsThatAreNotKeyDrivers().map(Driver::event).distinct().toSet()
         assertThat(otherActionableEvents).hasSize(12)
         assertThat(otherActionableEvents).allSatisfy { it.startsWith("expected") }
     }

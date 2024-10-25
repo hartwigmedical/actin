@@ -75,6 +75,7 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
                     "Immunosuppressants" to convertToAtcLevel(setOf("L04"), atcTree),
                     "Immunotherapy" to convertToAtcLevel(setOf("L01FF", "L01FX04"), atcTree),
                     "Monoclonal antibodies and antibody drug conjugates" to convertToAtcLevel(setOf("L01F"), atcTree),
+                    "Nitrosoureas" to convertToAtcLevel(setOf("L01AD"), atcTree),
                     "Other antianemic preparations" to convertToAtcLevel(setOf("B03X"), atcTree),
                     "PARP inhibitors" to convertToAtcLevel(setOf("L01XK"), atcTree),
                     "Platelet aggregation inhibitors" to convertToAtcLevel(setOf("B01AC"), atcTree),
