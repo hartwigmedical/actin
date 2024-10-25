@@ -40,7 +40,9 @@ class TrialMatchingChapter(
             .partition { it.ignore }
         val nonEvaluableCohorts = CohortFactory.createNonEvaluableCohorts(report.treatmentMatch)
         val (_, evaluated) =
-            EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = true)
+            EligibleActinTrialsGenerator.forOpenCohorts(
+                cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = true
+            )
 
         val (localTrialGenerator, nonLocalTrialGenerator) = reportContentProvider.provideExternalTrialsTables(
             report.patientRecord,

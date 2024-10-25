@@ -246,6 +246,7 @@ class ExternalTrialSummarizerTest {
             name = null,
             molecularEvents = setOf(TMB_TARGET),
             isPotentiallyEligible = true,
+            isMissingGenesForSufficientEvaluation = false,
             isOpen = true,
             hasSlotsAvailable = true,
             warnings = emptySet(),

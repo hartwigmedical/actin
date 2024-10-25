@@ -16,10 +16,15 @@ class WarnIf(private val function: EvaluationFunction) : EvaluationFunction {
                 inclusionMolecularEvents = emptySet(),
                 exclusionMolecularEvents = emptySet(),
                 warnSpecificMessages = evaluation.passSpecificMessages,
-                warnGeneralMessages = evaluation.passGeneralMessages
+                warnGeneralMessages = evaluation.passGeneralMessages,
+                isMissingGenesForSufficientEvaluation = evaluation.isMissingGenesForSufficientEvaluation
             )
         } else if (evaluation.result == EvaluationResult.WARN) {
-            return evaluation.copy(inclusionMolecularEvents = emptySet(), exclusionMolecularEvents = emptySet())
+            return evaluation.copy(
+                inclusionMolecularEvents = emptySet(),
+                exclusionMolecularEvents = emptySet(),
+                isMissingGenesForSufficientEvaluation = evaluation.isMissingGenesForSufficientEvaluation
+            )
         }
 
         return Evaluation(
@@ -34,7 +39,8 @@ class WarnIf(private val function: EvaluationFunction) : EvaluationFunction {
             passGeneralMessages = (
                     evaluation.passGeneralMessages + evaluation.warnGeneralMessages + evaluation.undeterminedGeneralMessages
                             + evaluation.failGeneralMessages
-                    )
+                    ),
+            isMissingGenesForSufficientEvaluation = evaluation.isMissingGenesForSufficientEvaluation
         )
     }
 }

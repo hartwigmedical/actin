@@ -13,18 +13,24 @@ import java.time.LocalDate
 
 abstract class MolecularEvaluationFunction(maxTestAge: LocalDate? = null) : EvaluationFunction {
     private val molecularTestFilter = MolecularTestFilter(maxTestAge)
-    
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val recentMolecularTests = molecularTestFilter.apply(record.molecularHistory.molecularTests)
         return if (recentMolecularTests.isEmpty()) {
-            noMolecularRecordEvaluation() ?: EvaluationFactory.undetermined("No molecular data", "No molecular data")
+            noMolecularRecordEvaluation() ?: EvaluationFactory.undetermined(
+                "No molecular data",
+                "No molecular data",
+                missingGenesForEvaluation = true
+            )
         } else {
 
             if (genes().isNotEmpty() && genes().none { recentMolecularTests.any { t -> t.testsGene(it) } })
                 return EvaluationFactory.undetermined(
                     "Gene(s) ${genes().joinToString { it }} not tested in molecular data",
-                    "Gene(s) ${genes().joinToString { it }} not tested"
+                    "Gene(s) ${genes().joinToString { it }} not tested",
+                    missingGenesForEvaluation = true
                 )
+
             val testEvaluation =
                 recentMolecularTests.mapNotNull { evaluate(it)?.let { eval -> MolecularEvaluation(it, eval) } }
             if (testEvaluation.isNotEmpty()) {
@@ -34,7 +40,11 @@ abstract class MolecularEvaluationFunction(maxTestAge: LocalDate? = null) : Eval
             evaluate(record.molecularHistory)
                 ?: record.molecularHistory.latestOrangeMolecularRecord()?.let(::evaluate)
                 ?: noMolecularRecordEvaluation()
-                ?: EvaluationFactory.undetermined("Insufficient molecular data", "Insufficient molecular data")
+                ?: EvaluationFactory.undetermined(
+                    "Insufficient molecular data",
+                    "Insufficient molecular data",
+                    missingGenesForEvaluation = true
+                )
         }
     }
 

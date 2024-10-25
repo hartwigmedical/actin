@@ -17,7 +17,7 @@ enum class IhcExpressionComparisonType {
 
 class ProteinExpressionByIHCFunctions(
     private val protein: String, private val referenceExpressionLevel: Int, private val comparisonType: IhcExpressionComparisonType
-): EvaluationFunction {
+) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val ihcTests = PriorIHCTestFunctions.allIHCTestsForProtein(record.priorIHCTests, protein)
@@ -36,7 +36,7 @@ class ProteinExpressionByIHCFunctions(
             IhcExpressionComparisonType.EXACT -> "exactly"
         }
 
-            return when {
+        return when {
             EvaluationResult.PASS in evaluationsVersusReference -> {
                 EvaluationFactory.pass(
                     "Protein $protein has expression level of $comparisonText $referenceExpressionLevel by IHC",
@@ -53,7 +53,9 @@ class ProteinExpressionByIHCFunctions(
 
             ihcTests.isEmpty() -> {
                 EvaluationFactory.undetermined(
-                    "No test result found; protein $protein has not been tested by IHC", "No $protein IHC test result"
+                    "No test result found; protein $protein has not been tested by IHC",
+                    "No $protein IHC test result",
+                    missingGenesForEvaluation = true
                 )
             }
 
@@ -71,12 +73,14 @@ class ProteinExpressionByIHCFunctions(
             IhcExpressionComparisonType.SUFFICIENT -> {
                 evaluateVersusMinValue(Math.round(scoreValue).toDouble(), ihcTest.scoreValuePrefix, referenceExpressionLevel.toDouble())
             }
+
             IhcExpressionComparisonType.EXACT -> {
                 when (referenceExpressionLevel.toLong() == Math.round(scoreValue) && ihcTest.scoreValuePrefix.isNullOrEmpty()) {
                     true -> EvaluationResult.PASS
                     false -> EvaluationResult.FAIL
                 }
             }
+
             IhcExpressionComparisonType.LIMITED -> {
                 evaluateVersusMaxValue(Math.round(scoreValue).toDouble(), ihcTest.scoreValuePrefix, referenceExpressionLevel.toDouble())
             }

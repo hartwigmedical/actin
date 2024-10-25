@@ -6,8 +6,7 @@ import org.junit.Test
 
 class ActinTrialContentFunctionsTest {
     private val cohort1 = Cohort("trial1", "T1", "cohort1", setOf("MSI"), true, true, false, false, setOf("warning1"), emptySet())
-    private val cohort2 =
-        Cohort("trial1", "T1", "cohort2", emptySet(), true, true, true, false, setOf("warning1", "warning2"), emptySet())
+    private val cohort2 = Cohort("trial1", "T1", "cohort2", emptySet(), true, true, true, false, setOf("warning1", "warning2"), emptySet())
 
     @Test
     fun `Should group common warnings for multiple cohorts in trial`() {

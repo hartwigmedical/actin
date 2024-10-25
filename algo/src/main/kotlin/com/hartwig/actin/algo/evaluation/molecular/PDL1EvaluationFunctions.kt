@@ -72,8 +72,8 @@ object PDL1EvaluationFunctions {
                 )
             }
             else -> {
-                EvaluationFactory.recoverableFail(
-                    "PD-L1 expression (IHC) not tested", "PD-L1 expression (IHC) not tested"
+                EvaluationFactory.undetermined(
+                    "PD-L1 expression (IHC) not tested", "PD-L1 expression (IHC) not tested", missingGenesForEvaluation = true
                 )
             }
         }
