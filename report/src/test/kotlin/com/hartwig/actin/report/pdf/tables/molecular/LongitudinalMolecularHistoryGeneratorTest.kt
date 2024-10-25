@@ -1,9 +1,11 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
+import com.hartwig.actin.datamodel.molecular.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.Drivers
 import com.hartwig.actin.datamodel.molecular.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.report.pdf.assertRow
 import com.hartwig.actin.report.pdf.getWrappedTable
 import java.time.LocalDate
@@ -14,6 +16,10 @@ val FIRST_TEST = TestMolecularFactory.createMinimalTestMolecularRecord().copy(da
 val SECOND_TEST = FIRST_TEST.copy(date = FIRST_TEST.date?.plusDays(1))
 val VARIANT = TestMolecularFactory.createProperVariant().copy(variantAlleleFrequency = 10.0)
 val FUSION = TestMolecularFactory.createProperFusion()
+private const val HIGH = "High"
+private const val VAF = "VAF 10.0%"
+private const val NOT_DETECTED = ""
+private const val DETECTED = "Detected"
 
 class LongitudinalMolecularHistoryGeneratorTest {
 
@@ -46,9 +52,78 @@ class LongitudinalMolecularHistoryGeneratorTest {
             0,
             "BRAF V600E\n(Tier I)",
             "Missense\nGain of function\nHotspot",
-            "High",
-            "Detected (VAF 10.0%)",
-            "Not detected"
+            HIGH,
+            VAF,
+            NOT_DETECTED
+        )
+    }
+
+    @Test
+    fun `Should sort variants by tier then gene then event`() {
+        val tierOneVariant = VARIANT
+        val tierTwoVariant = VARIANT.copy(evidence = TestClinicalEvidenceFactory.withOffLabelExperimentalTreatment("test"))
+        val tierOneGeneTwoVariant = tierOneVariant.copy(gene = "KRAS", event = "KRAS G12C")
+        val tierOneGeneTwoVariantEventTwo = tierOneVariant.copy(gene = "KRAS", event = "KRAS G12D")
+        val tierOneGeneTwoLowLikelihoodFusion =
+            FUSION.copy(geneStart = "BRAF", geneEnd = "KRAS", driverLikelihood = DriverLikelihood.LOW, event = "BRAF - KRAS fusion")
+        val result = LongitudinalMolecularHistoryGenerator(
+            MolecularHistory(
+                listOf(
+                    FIRST_TEST.copy(
+                        drivers = Drivers(
+                            variants = setOf(
+                                tierOneGeneTwoVariantEventTwo,
+                                tierOneGeneTwoVariant,
+                                tierTwoVariant,
+                                tierOneVariant
+                            ),
+                            fusions = setOf(tierOneGeneTwoLowLikelihoodFusion)
+                        )
+                    )
+                )
+            ), 1f
+        )
+        assertRow(
+            getWrappedTable(result),
+            0,
+            "BRAF V600E\n(Tier I)",
+            "Missense\nGain of function\nHotspot",
+            HIGH,
+            VAF,
+        )
+        assertRow(
+            getWrappedTable(result),
+            1,
+            "KRAS G12C\n(Tier I)",
+            "Missense\nGain of function\nHotspot",
+            HIGH,
+            VAF,
+        )
+        assertRow(
+            getWrappedTable(result),
+            2,
+            "KRAS G12D\n(Tier I)",
+            "Missense\nGain of function\nHotspot",
+            HIGH,
+            VAF,
+        )
+        assertRow(
+            getWrappedTable(result),
+            3,
+            "BRAF - KRAS fusion\n(Tier I)",
+            "Fusion\n" +
+                    "Known fusion\n" +
+                    "Gain of function",
+            "Low",
+            DETECTED
+        )
+        assertRow(
+            getWrappedTable(result),
+            4,
+            "BRAF V600E\n(Tier II)",
+            "Missense\nGain of function\nHotspot",
+            HIGH,
+            VAF,
         )
     }
 
@@ -98,9 +173,9 @@ class LongitudinalMolecularHistoryGeneratorTest {
             "Fusion\n" +
                     "Known fusion\n" +
                     "Gain of function",
-            "High",
-            "Detected",
-            "Not detected"
+            HIGH,
+            DETECTED,
+            NOT_DETECTED
         )
     }
 }

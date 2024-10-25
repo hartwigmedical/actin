@@ -4,7 +4,6 @@ import com.hartwig.actin.datamodel.clinical.SequencedVariant
 import com.hartwig.actin.datamodel.molecular.CodingEffect
 import com.hartwig.actin.datamodel.molecular.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.GeneAlteration
-import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.TranscriptImpact
 import com.hartwig.actin.datamodel.molecular.Variant
 import com.hartwig.actin.datamodel.molecular.VariantType
@@ -27,6 +26,18 @@ import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.VariantAnnotator
 import com.hartwig.serve.datamodel.hotspot.KnownHotspot
 import com.hartwig.serve.datamodel.range.KnownCodon
+import com.hartwig.serve.datamodel.common.ProteinEffect as ServeProteinEffect
+
+private val SERVE_HOTSPOT_PROTEIN_EFFECTS = setOf(
+    ServeProteinEffect.LOSS_OF_FUNCTION,
+    ServeProteinEffect.LOSS_OF_FUNCTION_PREDICTED,
+    ServeProteinEffect.GAIN_OF_FUNCTION,
+    ServeProteinEffect.GAIN_OF_FUNCTION_PREDICTED
+)
+
+fun isHotspot(geneAlteration: com.hartwig.serve.datamodel.common.GeneAlteration?): Boolean {
+    return (geneAlteration is KnownHotspot || geneAlteration is KnownCodon) && geneAlteration.proteinEffect() in SERVE_HOTSPOT_PROTEIN_EFFECTS
+}
 
 class PanelVariantAnnotator(
     private val evidenceDatabase: EvidenceDatabase,
@@ -152,7 +163,7 @@ class PanelVariantAnnotator(
         variantAlleleFrequency = variant.variantAlleleFrequency,
         canonicalImpact = impact(paveResponse.impact, transcriptAnnotation),
         otherImpacts = otherImpacts(paveResponse, transcriptAnnotation),
-        isHotspot = serveGeneAlteration is KnownHotspot || serveGeneAlteration is KnownCodon,
+        isHotspot = isHotspot(serveGeneAlteration),
         isReportable = true,
         event = "${variant.gene} ${impact(paveResponse)}",
 
@@ -160,14 +171,7 @@ class PanelVariantAnnotator(
         evidence = evidence,
         gene = variant.gene,
         geneRole = geneAlteration.geneRole,
-        proteinEffect = when (geneAlteration.proteinEffect) {
-            ProteinEffect.LOSS_OF_FUNCTION,
-            ProteinEffect.LOSS_OF_FUNCTION_PREDICTED,
-            ProteinEffect.GAIN_OF_FUNCTION,
-            ProteinEffect.GAIN_OF_FUNCTION_PREDICTED -> geneAlteration.proteinEffect
-
-            else -> ProteinEffect.NO_EFFECT
-        },
+        proteinEffect = geneAlteration.proteinEffect,
         isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance
     )
 

@@ -18,7 +18,7 @@ class MolecularDriverEntryFactoryTest {
         val record = TestMolecularFactory.createExhaustiveTestMolecularRecord()
         val factory = createFactoryForMolecularRecord(record)
         val entries = factory.create()
-        assertThat(entries).hasSize(7)
+        assertThat(entries).hasSize(8)
     }
 
     @Test

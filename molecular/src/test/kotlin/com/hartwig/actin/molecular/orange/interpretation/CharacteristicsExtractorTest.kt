@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
+import com.hartwig.actin.datamodel.molecular.HrdType
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory
 import com.hartwig.hmftools.datamodel.chord.ChordStatus
@@ -59,17 +60,21 @@ class CharacteristicsExtractorTest {
     fun `Should interpret all homologous repair states`() {
         val extractor = createTestExtractor()
 
-        val deficient = extractor.extract(withHomologousRepairStatus(ChordStatus.HR_DEFICIENT))
+        val deficient = extractor.extract(withHomologousRepairStatus(ChordStatus.HR_DEFICIENT, HrdType.BRCA2_TYPE))
         assertThat(deficient.isHomologousRepairDeficient).isTrue()
+        assertThat(deficient.hrdType).isEqualTo(HrdType.BRCA2_TYPE)
 
-        val proficient = extractor.extract(withHomologousRepairStatus(ChordStatus.HR_PROFICIENT))
+        val proficient = extractor.extract(withHomologousRepairStatus(ChordStatus.HR_PROFICIENT, HrdType.NONE))
         assertThat(proficient.isHomologousRepairDeficient).isFalse()
+        assertThat(proficient.hrdType).isEqualTo(HrdType.NONE)
 
-        val cannotBeDetermined = extractor.extract(withHomologousRepairStatus(ChordStatus.CANNOT_BE_DETERMINED))
+        val cannotBeDetermined = extractor.extract(withHomologousRepairStatus(ChordStatus.CANNOT_BE_DETERMINED, HrdType.BRCA1_TYPE))
         assertThat(cannotBeDetermined.isHomologousRepairDeficient).isNull()
+        assertThat(cannotBeDetermined.hrdType).isEqualTo(HrdType.BRCA1_TYPE)
 
-        val unknown = extractor.extract(withHomologousRepairStatus(ChordStatus.UNKNOWN))
+        val unknown = extractor.extract(withHomologousRepairStatus(ChordStatus.UNKNOWN, HrdType.CANNOT_BE_DETERMINED))
         assertThat(unknown.isHomologousRepairDeficient).isNull()
+        assertThat(unknown.hrdType).isEqualTo(HrdType.CANNOT_BE_DETERMINED)
     }
 
     @Test
@@ -100,7 +105,7 @@ class CharacteristicsExtractorTest {
         assertThat(unknown.hasHighTumorMutationalLoad).isNull()
     }
 
-    private fun withHomologousRepairStatus(hrStatus: ChordStatus): OrangeRecord {
+    private fun withHomologousRepairStatus(hrStatus: ChordStatus, hrdType: HrdType): OrangeRecord {
         return ImmutableOrangeRecord.builder()
             .from(TestOrangeFactory.createMinimalTestOrangeRecord())
             .chord(
@@ -109,7 +114,7 @@ class CharacteristicsExtractorTest {
                     .brca1Value(0.0)
                     .brca2Value(0.0)
                     .hrdValue(0.0)
-                    .hrdType("")
+                    .hrdType(hrdType.name)
                     .build()
             )
             .build()

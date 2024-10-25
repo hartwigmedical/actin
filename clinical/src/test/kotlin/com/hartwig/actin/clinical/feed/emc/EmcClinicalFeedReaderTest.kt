@@ -21,7 +21,7 @@ class EmcClinicalFeedReaderTest {
 
     @Test
     @Throws(IOException::class)
-    fun `Can read feed from test directory`() {
+    fun canReadFromTestDirectory() {
         val feed = read(FEED_DIRECTORY)
         assertPatients(feed.patientEntries)
         assertQuestionnaires(feed.questionnaireEntries)

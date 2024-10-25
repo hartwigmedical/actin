@@ -8,7 +8,8 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasReceivedSystemicTherapyForBrainMetastases : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val cnsOrBrainMetastases = record.tumor.hasCnsLesions == true || record.tumor.hasBrainLesions == true
+        val cnsOrBrainMetastases =
+            record.tumor.hasConfirmedOrSuspectedCnsLesions() == true || record.tumor.hasConfirmedOrSuspectedBrainLesions() == true
         val hasHadSystemicTreatment = SystemicTreatmentAnalyser.minSystemicTreatments(record.oncologicalHistory) > 0
 
         return if (cnsOrBrainMetastases && hasHadSystemicTreatment) {

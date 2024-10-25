@@ -14,9 +14,9 @@ class HasSpecificMetastasesOnly(private val hasSpecificMetastases: (TumorDetails
         val hasSpecificMetastases = hasSpecificMetastases.invoke(tumorDetails) ?: return EvaluationFactory.undetermined(
             "Data regarding presence of $typeOfMetastases metastases is missing", "Missing $typeOfMetastases metastasis data"
         )
-        val otherLesions = tumorDetails.otherLesions
-        if (hasSpecificMetastases && tumorDetails.otherLesions == null &&
-            (metastasesAccessors - this.hasSpecificMetastases).all { it.invoke(tumorDetails) == null }
+        val otherLesions = tumorDetails.otherConfirmedOrSuspectedLesions()
+        val otherMetastasesAccessors = metastasesAccessors - this.hasSpecificMetastases
+        if (hasSpecificMetastases && otherLesions == null && otherMetastasesAccessors.all { it.invoke(tumorDetails) == null }
         ) {
             return EvaluationFactory.warn(
                 "Patient has $typeOfMetastases lesions but data regarding other lesion locations is missing, so unknown if patient has only $typeOfMetastases metastases",
@@ -24,7 +24,7 @@ class HasSpecificMetastasesOnly(private val hasSpecificMetastases: (TumorDetails
             )
         }
         val hasOtherLesion = !otherLesions.isNullOrEmpty()
-        val hasAnyOtherLesion = (metastasesAccessors - this.hasSpecificMetastases).any { it.invoke(tumorDetails) == true } || hasOtherLesion
+        val hasAnyOtherLesion = otherMetastasesAccessors.any { it.invoke(tumorDetails) == true } || hasOtherLesion
 
         return if (hasSpecificMetastases && !hasAnyOtherLesion) {
             EvaluationFactory.pass(
@@ -38,12 +38,12 @@ class HasSpecificMetastasesOnly(private val hasSpecificMetastases: (TumorDetails
 
     companion object {
         val metastasesAccessors = setOf(
-            TumorDetails::hasBoneLesions,
-            TumorDetails::hasLiverLesions,
-            TumorDetails::hasCnsLesions,
-            TumorDetails::hasBrainLesions,
-            TumorDetails::hasLungLesions,
-            TumorDetails::hasLymphNodeLesions
+            TumorDetails::hasConfirmedOrSuspectedBrainLesions,
+            TumorDetails::hasConfirmedOrSuspectedLiverLesions,
+            TumorDetails::hasConfirmedOrSuspectedCnsLesions,
+            TumorDetails::hasConfirmedOrSuspectedBoneLesions,
+            TumorDetails::hasConfirmedOrSuspectedLungLesions,
+            TumorDetails::hasConfirmedOrSuspectedLymphNodeLesions
         )
     }
 }

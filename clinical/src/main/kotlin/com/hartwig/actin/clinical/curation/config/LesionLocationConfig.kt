@@ -7,5 +7,6 @@ data class LesionLocationConfig(
     override val ignore: Boolean = false,
     val location: String,
     val category: LesionLocationCategory? = null,
-    val active: Boolean? = null
+    val active: Boolean? = null,
+    val suspected: Boolean? = null
 ) : CurationConfig

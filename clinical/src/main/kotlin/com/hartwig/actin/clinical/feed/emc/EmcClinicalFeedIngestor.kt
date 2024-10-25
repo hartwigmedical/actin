@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.feed.emc
 
+import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.ClinicalIngestionFeedAdapter
 import com.hartwig.actin.clinical.PatientIngestionResult
@@ -202,7 +203,8 @@ class EmcClinicalFeedIngestor(
             curationDirectory: String,
             curationDatabaseContext: CurationDatabaseContext,
             atcModel: AtcModel,
-            doidModel: DoidModel
+            doidModel: DoidModel,
+            treatmentDatabase: TreatmentDatabase
         ) = EmcClinicalFeedIngestor(
             feed = FeedModel(
                 ClinicalFeedReader.read(feedDirectory).copy(
@@ -222,7 +224,7 @@ class EmcClinicalFeedIngestor(
             labValueExtractor = LabValueExtractor.create(curationDatabaseContext),
             toxicityExtractor = ToxicityExtractor.create(curationDatabaseContext),
             intoleranceExtractor = IntoleranceExtractor.create(curationDatabaseContext, atcModel),
-            medicationExtractor = MedicationExtractor.create(curationDatabaseContext, atcModel),
+            medicationExtractor = MedicationExtractor.create(curationDatabaseContext, atcModel, treatmentDatabase),
             bloodTransfusionsExtractor = BloodTransfusionsExtractor.create(curationDatabaseContext),
             surgeryExtractor = SurgeryExtractor.create(curationDatabaseContext)
         )

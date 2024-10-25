@@ -2,8 +2,12 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.treatment.MedicationFunctions.hasCategory
+import com.hartwig.actin.algo.evaluation.treatment.MedicationFunctions.hasDrugType
 import com.hartwig.actin.algo.evaluation.util.DateComparison.isAfterDate
 import com.hartwig.actin.algo.evaluation.util.Format.concatItems
+import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
+import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
@@ -12,7 +16,7 @@ import java.time.LocalDate
 
 class HasHadTreatmentWithCategoryButNotOfTypesRecently(
     private val category: TreatmentCategory, private val ignoreTypes: Set<TreatmentType>,
-    private val minDate: LocalDate
+    private val minDate: LocalDate, private val interpreter: MedicationStatusInterpreter
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -28,9 +32,17 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecently(
             )
         }.fold(TreatmentAssessment()) { acc, element -> acc.combineWith(element) }
 
+        val activeOrRecentlyStoppedMedications = record.medications
+            ?.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
+
+        val hadCancerMedicationWithCategoryButNotOfTypes =
+            activeOrRecentlyStoppedMedications?.any { medication -> medication.hasCategory(category) && !medication.hasDrugType(ignoreTypes) }
+                ?: false
+
         val ignoringTypesList = concatItems(ignoreTypes)
+
         return when {
-            treatmentAssessment.hasHadValidTreatment -> {
+            treatmentAssessment.hasHadValidTreatment || hadCancerMedicationWithCategoryButNotOfTypes -> {
                 EvaluationFactory.pass("Has received ${category.display()} treatment ignoring $ignoringTypesList")
             }
 
@@ -38,7 +50,7 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecently(
                 EvaluationFactory.undetermined("Has received ${category.display()} treatment ignoring $ignoringTypesList but inconclusive date")
             }
 
-            treatmentAssessment.hasHadTrialAfterMinDate -> {
+            treatmentAssessment.hasHadTrialAfterMinDate || activeOrRecentlyStoppedMedications?.any { it.isTrialMedication } == true -> {
                 EvaluationFactory.undetermined(
                     "Patient has participated in a trial recently, inconclusive ${category.display()} treatment",
                     "Inconclusive ${category.display()} treatment due to trial participation"
@@ -50,21 +62,6 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecently(
                     "Has not had recent ${category.display()} treatment ignoring $ignoringTypesList"
                 )
             }
-        }
-    }
-
-    private data class TreatmentAssessment(
-        val hasHadValidTreatment: Boolean = false,
-        val hasInconclusiveDate: Boolean = false,
-        val hasHadTrialAfterMinDate: Boolean = false
-    ) {
-
-        fun combineWith(other: TreatmentAssessment): TreatmentAssessment {
-            return TreatmentAssessment(
-                hasHadValidTreatment || other.hasHadValidTreatment,
-                hasInconclusiveDate || other.hasInconclusiveDate,
-                hasHadTrialAfterMinDate || other.hasHadTrialAfterMinDate
-            )
         }
     }
 }

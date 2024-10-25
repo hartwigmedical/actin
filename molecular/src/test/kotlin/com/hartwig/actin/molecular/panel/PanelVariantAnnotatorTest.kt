@@ -38,7 +38,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import com.hartwig.serve.datamodel.EvidenceDirection as ServeEvidenceDirection
 import com.hartwig.serve.datamodel.EvidenceLevel as ServeEvidenceLevel
-
+import com.hartwig.serve.datamodel.common.ProteinEffect as ServeProteinEffect
 
 private const val ALT = "T"
 private const val REF = "G"
@@ -342,6 +342,27 @@ class PanelVariantAnnotatorTest {
                 )
             )
         ).isEqualTo("something&another_thing")
+    }
+
+    @Test
+    fun `Should determine hotspot from gene alteration`() {
+        assertThat(isHotspot(TestServeKnownFactory.hotspotBuilder()
+            .proteinEffect(ServeProteinEffect.GAIN_OF_FUNCTION)
+            .build())).isTrue()
+
+        assertThat(isHotspot(TestServeKnownFactory.hotspotBuilder()
+            .proteinEffect(ServeProteinEffect.NO_EFFECT)
+            .build())).isFalse()
+
+        assertThat(isHotspot(TestServeKnownFactory.codonBuilder()
+            .proteinEffect(ServeProteinEffect.LOSS_OF_FUNCTION)
+            .build())).isTrue()
+
+        assertThat(isHotspot(TestServeKnownFactory.exonBuilder()
+            .proteinEffect(ServeProteinEffect.GAIN_OF_FUNCTION)
+            .build())).isFalse()
+
+        assertThat(isHotspot(null)).isFalse()
     }
 
     private fun minimalPaveImpact() = PaveImpact(

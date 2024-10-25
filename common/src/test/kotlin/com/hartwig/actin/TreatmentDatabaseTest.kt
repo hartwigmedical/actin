@@ -49,6 +49,25 @@ class TreatmentDatabaseTest {
         assertThat(treatmentDatabase.findDrugByName("Multiword name")).isEqualTo(drug)
     }
 
+    @Test
+    fun `Should find drug by ATC code`() {
+        val capecitabine = treatmentDatabase().findDrugByAtcName("Capecitabine")
+        assertThat<Drug>(capecitabine).isNotNull()
+        assertThat(capecitabine!!.name).isEqualTo("CAPECITABINE")
+        assertThat(capecitabine.drugTypes).containsExactly(DrugType.ANTIMETABOLITE)
+
+        val trifluridine = treatmentDatabase().findDrugByAtcName("Trifluridine, combinations")
+        assertThat<Drug>(trifluridine).isNotNull()
+        assertThat(trifluridine!!.name).isEqualTo("TRIFLURIDINE")
+        assertThat(trifluridine.drugTypes).containsExactly(DrugType.ANTIMETABOLITE)
+    }
+
+    @Test
+    fun `Should return null for unknown ATC codes`() {
+        assertThat<Drug>(treatmentDatabase().findDrugByAtcName("paracetamol")).isNull()
+        assertThat<Drug>(treatmentDatabase().findDrugByAtcName("temoporfin")).isNull()
+    }
+
     private fun treatmentDatabase(): TreatmentDatabase {
         return TreatmentDatabaseFactory.createFromPath(resourceOnClasspath("clinical/treatment_db"))
     }

@@ -12,4 +12,8 @@ class TreatmentDatabase(private val drugsByName: Map<String, Drug>, private val 
     fun findDrugByName(drugName: String): Drug? {
         return drugsByName[drugName.replace(" ", "_").lowercase()]
     }
+
+    fun findDrugByAtcName(atcName: String): Drug? {
+        return findDrugByName(atcName.split(", ").first())
+    }
 }
