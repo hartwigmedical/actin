@@ -41,7 +41,7 @@ class EligibleActinTrialsGenerator(
             cohorts: List<Cohort>, source: String, width: Float, slotsAvailable: Boolean
         ): Pair<EligibleActinTrialsGenerator, List<Cohort>> {
             val recruitingAndEligibleCohorts = cohorts.filter {
-                it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable == slotsAvailable && !it.isMissingGenesForSufficientEvaluation
+                it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable == slotsAvailable && !it.isMissingGenesForSufficientEvaluation!!
             }
             val recruitingAndEligibleTrials = recruitingAndEligibleCohorts.map(Cohort::trialId).distinct()
             val slotsText = if (!slotsAvailable) " but currently have no slots available" else ""
@@ -58,7 +58,7 @@ class EligibleActinTrialsGenerator(
             cohorts: List<Cohort>, source: String, width: Float
         ): EligibleActinTrialsGenerator? {
             val recruitingAndEligibleCohorts = cohorts.filter {
-                it.isPotentiallyEligible && it.isOpen && it.isMissingGenesForSufficientEvaluation
+                it.isPotentiallyEligible && it.isOpen && it.isMissingGenesForSufficientEvaluation!!
             }
             val recruitingAndEligibleTrials = recruitingAndEligibleCohorts.map(Cohort::trialId).distinct()
             val cohortFromTrialsText = if (recruitingAndEligibleCohorts.isNotEmpty()) {

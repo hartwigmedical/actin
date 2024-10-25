@@ -90,7 +90,7 @@ class CohortFactoryTest {
         val trial2cohortB = findByAcronymAndCohort(nonEvaluableCohorts, "TEST-2", "Cohort B")
         assertThat(trial2cohortB.molecularEvents).isEmpty()
         assertThat(trial2cohortB.isPotentiallyEligible).isFalse
-        assertThat(trial2cohortB.isMissingGenesForSufficientEvaluation).isFalse()
+        assertThat(trial2cohortB.isMissingGenesForSufficientEvaluation).isEqualTo(null)
         assertThat(trial2cohortB.isOpen).isTrue
         assertThat(trial2cohortB.hasSlotsAvailable).isTrue
         assertThat(trial2cohortB.ignore).isFalse

@@ -5,9 +5,28 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class ActinTrialContentFunctionsTest {
-    private val cohort1 = Cohort("trial1", "T1", "cohort1", setOf("MSI"), true, false, true, false, false, setOf("warning1"), emptySet())
+    private val cohort1 = Cohort(
+        "trial1",
+        "T1",
+        name = "cohort1",
+        isOpen = true,
+        hasSlotsAvailable = false,
+        molecularEvents = setOf("MSI"),
+        isPotentiallyEligible = true,
+        warnings = setOf("warning1"),
+        fails = emptySet()
+    )
     private val cohort2 =
-        Cohort("trial1", "T1", "cohort2", emptySet(), true, false, true, true, false, setOf("warning1", "warning2"), emptySet())
+        Cohort(
+            "trial1",
+            "T1",
+            name = "cohort2",
+            isOpen = true,
+            hasSlotsAvailable = true,
+            isPotentiallyEligible = true,
+            warnings = setOf("warning1", "warning2"),
+            fails = emptySet()
+        )
 
     @Test
     fun `Should group common warnings for multiple cohorts in trial`() {

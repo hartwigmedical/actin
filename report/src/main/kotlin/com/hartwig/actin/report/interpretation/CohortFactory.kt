@@ -76,7 +76,8 @@ object CohortFactory {
                         name = cohortMetadata.description,
                         isOpen = identification.open && cohortMetadata.open,
                         hasSlotsAvailable = cohortMetadata.slotsAvailable,
-                        ignore = cohortMetadata.ignore
+                        ignore = cohortMetadata.ignore,
+                        phase = identification.phase
                     )
                 }
             }
