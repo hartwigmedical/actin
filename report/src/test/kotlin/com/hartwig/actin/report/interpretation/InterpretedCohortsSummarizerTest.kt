@@ -6,7 +6,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactor
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class CohortsInterpreterTest {
+class InterpretedCohortsSummarizerTest {
     @Test
     fun shouldReturnAllEligibleAndOpenCohortsForDriver() {
         val matchingTrials = createInterpreter().trialsForDriver(driverForEvent(ELIGIBLE_EVENT))
@@ -59,8 +59,8 @@ class CohortsInterpreterTest {
             return TestVariantFactory.createMinimal().copy(event = event)
         }
 
-        private fun cohort(name: String, isEligible: Boolean, isOpen: Boolean, event: String = name): Cohort {
-            return CohortTestFactory.cohort(
+        private fun cohort(name: String, isEligible: Boolean, isOpen: Boolean, event: String = name): InterpretedCohort {
+            return InterpretedCohortTestFactory.interpretedCohort(
                 acronym = name,
                 isPotentiallyEligible = isEligible,
                 isOpen = isOpen,
@@ -68,8 +68,8 @@ class CohortsInterpreterTest {
             )
         }
 
-        private fun createInterpreter(): CohortsInterpreter {
-            return CohortsInterpreter.fromCohorts(
+        private fun createInterpreter(): InterpretedCohortsSummarizer {
+            return InterpretedCohortsSummarizer.fromCohorts(
                 listOf(
                     cohort(INELIGIBLE_COHORT, false, true),
                     cohort(CLOSED_COHORT, true, false),

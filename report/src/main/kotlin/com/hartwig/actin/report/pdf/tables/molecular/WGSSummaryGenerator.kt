@@ -3,7 +3,7 @@ package com.hartwig.actin.report.pdf.tables.molecular
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
-import com.hartwig.actin.report.interpretation.Cohort
+import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.itextpdf.layout.element.Table
@@ -13,7 +13,7 @@ class WGSSummaryGenerator(
     private val isShort: Boolean,
     private val patientRecord: PatientRecord,
     private val molecular: MolecularTest,
-    cohorts: List<Cohort>,
+    cohorts: List<InterpretedCohort>,
     private val keyWidth: Float,
     private val valueWidth: Float
 ) : TableGenerator {

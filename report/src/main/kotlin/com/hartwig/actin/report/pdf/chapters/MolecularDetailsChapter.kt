@@ -2,8 +2,8 @@ package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.report.datamodel.Report
-import com.hartwig.actin.report.interpretation.Cohort
-import com.hartwig.actin.report.interpretation.CohortFactory
+import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
+import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.PriorIHCTestInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularCharacteristicsGenerator
@@ -54,7 +54,8 @@ class MolecularDetailsChapter(
             if (molecular.hasSufficientQualityButLowPurity()) {
                 table.addCell(Cells.createContentNoBorder("Low tumor purity (${molecular.characteristics.purity?.let { Formats.percentage(it) } ?: "NA"}) indicating that potential (subclonal) DNA aberrations might not have been detected & predicted tumor origin results may be less reliable"))
             }
-            val cohorts = CohortFactory.createEvaluableCohorts(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
+            val cohorts =
+                InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
             val evaluated = cohorts.filter { it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable }
 
             val generators =
@@ -74,7 +75,7 @@ class MolecularDetailsChapter(
         document.add(table)
     }
 
-    private fun tumorDetailsGenerators(molecular: MolecularRecord, evaluated: List<Cohort>): List<TableGenerator> {
+    private fun tumorDetailsGenerators(molecular: MolecularRecord, evaluated: List<InterpretedCohort>): List<TableGenerator> {
         return if (molecular.hasSufficientQuality) {
             listOf(
                 PredictedTumorOriginGenerator(molecular, contentWidth()),

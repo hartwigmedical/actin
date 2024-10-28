@@ -11,8 +11,8 @@ import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.datamodel.trial.TrialPhase
-import com.hartwig.actin.report.interpretation.CohortFactory.createEvaluableCohorts
-import com.hartwig.actin.report.interpretation.CohortFactory.createNonEvaluableCohorts
+import com.hartwig.actin.report.interpretation.InterpretedCohortFactory.createEvaluableCohorts
+import com.hartwig.actin.report.interpretation.InterpretedCohortFactory.createNonEvaluableCohorts
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -20,7 +20,7 @@ private val RULE_1 = EligibilityRule.ACTIVATING_MUTATION_IN_ANY_GENES_X
 private val RULE_2 = EligibilityRule.IS_AT_LEAST_X_YEARS_OLD
 private const val TRIAL_NAME = "TEST-1"
 
-class CohortFactoryTest {
+class InterpretedCohortFactoryTest {
 
     @Test
     fun `Should create evaluated cohorts from minimal match`() {
@@ -29,7 +29,7 @@ class CohortFactoryTest {
     }
 
     @Test
-    fun `Should create non evaluable from minimal match`() {
+    fun `Should create non evaluable cohorts from minimal match`() {
         val nonEvaluableCohorts = createNonEvaluableCohorts(TestTreatmentMatchFactory.createMinimalTreatmentMatch())
         assertThat(nonEvaluableCohorts).isEmpty()
     }
@@ -162,8 +162,8 @@ class CohortFactoryTest {
     }
 
     private fun findByAcronymAndCohort(
-        cohorts: List<Cohort>, acronymToFind: String, cohortToFind: String?
-    ): Cohort {
+        cohorts: List<InterpretedCohort>, acronymToFind: String, cohortToFind: String?
+    ): InterpretedCohort {
         return cohorts.first { it.acronym == acronymToFind && it.name == cohortToFind }
     }
 

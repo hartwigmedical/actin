@@ -8,8 +8,8 @@ import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.trial.CohortMetadata
 import com.hartwig.actin.datamodel.trial.Eligibility
 
-object CohortFactory {
-    fun createEvaluableCohorts(treatmentMatch: TreatmentMatch, filterOnSOCExhaustionAndTumorType: Boolean): List<Cohort> {
+object InterpretedCohortFactory {
+    fun createEvaluableCohorts(treatmentMatch: TreatmentMatch, filterOnSOCExhaustionAndTumorType: Boolean): List<InterpretedCohort> {
         return filteredMatches(
             treatmentMatch.trialMatches, filterOnSOCExhaustionAndTumorType, TrialMatch::evaluations
         ).flatMap { trialMatch: TrialMatch ->
@@ -25,7 +25,7 @@ object CohortFactory {
             // Handle case of trial without cohorts.
             if (trialMatch.cohorts.isEmpty()) {
                 listOf(
-                    Cohort(
+                    InterpretedCohort(
                         trialId = trialId,
                         acronym = acronym,
                         name = null,
@@ -43,7 +43,7 @@ object CohortFactory {
                 filteredMatches(
                     trialMatch.cohorts, filterOnSOCExhaustionAndTumorType, CohortMatch::evaluations
                 ).map { cohortMatch: CohortMatch ->
-                    Cohort(
+                    InterpretedCohort(
                         trialId = trialId,
                         acronym = acronym,
                         name = cohortMatch.metadata.description,
@@ -60,28 +60,24 @@ object CohortFactory {
                     )
                 }
             }
-        }.sortedWith(CohortComparator())
+        }.sortedWith(InterpretedCohortComparator())
     }
 
-    fun createNonEvaluableCohorts(treatmentMatch: TreatmentMatch): List<Cohort> {
+    fun createNonEvaluableCohorts(treatmentMatch: TreatmentMatch): List<InterpretedCohort> {
         return treatmentMatch.trialMatches.flatMap { trialMatch: TrialMatch ->
             val identification = trialMatch.identification
-            if (trialMatch.nonEvaluableCohorts.isEmpty()) {
-                emptyList()
-            } else {
-                trialMatch.nonEvaluableCohorts.map { cohortMetadata: CohortMetadata ->
-                    Cohort(
-                        trialId = identification.trialId,
-                        acronym = identification.acronym,
-                        name = cohortMetadata.description,
-                        isOpen = identification.open && cohortMetadata.open,
-                        hasSlotsAvailable = cohortMetadata.slotsAvailable,
-                        ignore = cohortMetadata.ignore,
-                        phase = identification.phase
-                    )
-                }
+            trialMatch.nonEvaluableCohorts.map { cohortMetadata: CohortMetadata ->
+                InterpretedCohort(
+                    trialId = identification.trialId,
+                    acronym = identification.acronym,
+                    name = cohortMetadata.description,
+                    isOpen = identification.open && cohortMetadata.open,
+                    hasSlotsAvailable = cohortMetadata.slotsAvailable,
+                    ignore = cohortMetadata.ignore,
+                    phase = identification.phase
+                )
             }
-        }.sortedWith(CohortComparator())
+        }.sortedWith(InterpretedCohortComparator())
     }
 
     private fun extractInclusionEvents(evaluationMap: Map<Eligibility, Evaluation>): Set<String> {

@@ -8,14 +8,14 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactor
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.onLabelPreclinical
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.onLabelSuspectResistant
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidence
-import com.hartwig.actin.report.interpretation.CohortTestFactory.cohort
+import com.hartwig.actin.report.interpretation.InterpretedCohortTestFactory.interpretedCohort
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class EvidenceInterpreterTest {
     @Test
     fun shouldInterpretEvidence() {
-        val cohortWithInclusion: Cohort = cohort(molecularEvents = setOf("inclusion"))
+        val cohortWithInclusion: InterpretedCohort = interpretedCohort(molecularEvents = setOf("inclusion"))
         val interpreter = EvidenceInterpreter.fromCohorts(listOf(cohortWithInclusion))
         val evidence = AggregatedEvidence(
             treatmentEvidence = mapOf("approved" to setOf(approved()))

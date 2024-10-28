@@ -11,7 +11,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVirusFactory
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
-import com.hartwig.actin.report.interpretation.CohortTestFactory.cohort
+import com.hartwig.actin.report.interpretation.InterpretedCohortTestFactory.interpretedCohort
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -68,9 +68,9 @@ class DriversInterpreterTest {
             assertCountForRecordAndCohorts(expectedCount, molecularRecord, emptyList())
         }
 
-        private fun assertCountForRecordAndCohorts(expectedCount: Int, molecularRecord: MolecularRecord, cohorts: List<Cohort>) {
+        private fun assertCountForRecordAndCohorts(expectedCount: Int, molecularRecord: MolecularRecord, cohorts: List<InterpretedCohort>) {
             val interpreter =
-                MolecularDriversInterpreter(molecularRecord.drivers, CohortsInterpreter.fromCohorts(cohorts))
+                MolecularDriversInterpreter(molecularRecord.drivers, InterpretedCohortsSummarizer.fromCohorts(cohorts))
             assertThat(interpreter.filteredVariants()).hasSize(expectedCount)
             assertThat(interpreter.filteredCopyNumbers()).hasSize(expectedCount)
             assertThat(interpreter.filteredHomozygousDisruptions()).hasSize(expectedCount)
@@ -110,10 +110,10 @@ class DriversInterpreterTest {
             )
         }
 
-        private fun createCohortsForEvents(events: List<String>): List<Cohort> {
+        private fun createCohortsForEvents(events: List<String>): List<InterpretedCohort> {
             return listOf(
-                cohort(acronym = "trial 1", molecularEvents = events, isPotentiallyEligible = true, isOpen = true),
-                cohort(acronym = "trial 2", molecularEvents = events, isPotentiallyEligible = true, isOpen = false)
+                interpretedCohort(acronym = "trial 1", molecularEvents = events, isPotentiallyEligible = true, isOpen = true),
+                interpretedCohort(acronym = "trial 2", molecularEvents = events, isPotentiallyEligible = true, isOpen = false)
             )
         }
     }

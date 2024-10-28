@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
-import com.hartwig.actin.report.interpretation.Cohort
+import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.trial.ActinTrialGeneratorFunctions.addTrialsToTable
 import com.hartwig.actin.report.pdf.util.Cells
@@ -9,13 +9,13 @@ import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
 class IneligibleActinTrialsGenerator(
-    private val cohorts: List<Cohort>,
+    private val cohorts: List<InterpretedCohort>,
     private val title: String,
     private val trialColWidth: Float,
     private val cohortColWidth: Float,
     private val molecularEventColWidth: Float,
     private val ineligibilityReasonColWith: Float,
-    private val includeIneligibilityReasonCol: Boolean
+    private val includeIneligibilityReasons: Boolean
 ) : TableGenerator {
 
     override fun title(): String {
@@ -26,77 +26,69 @@ class IneligibleActinTrialsGenerator(
         val table = Tables.createFixedWidthCols(trialColWidth, cohortColWidth + molecularEventColWidth + ineligibilityReasonColWith)
         if (cohorts.isNotEmpty()) {
             table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader("Trial")))
-            val headerSubTable = Tables.createFixedWidthCols(
-                cohortColWidth, molecularEventColWidth, ineligibilityReasonColWith
-            )
-            headerSubTable.addHeaderCell(Cells.createHeader("Cohort"))
-            headerSubTable.addHeaderCell(Cells.createHeader("Molecular"))
-            if (includeIneligibilityReasonCol) {
-                headerSubTable.addHeaderCell(Cells.createHeader("Ineligibility reasons"))
+            val headerSubTable = if (includeIneligibilityReasons) {
+                Tables.createFixedWidthCols(cohortColWidth, molecularEventColWidth, ineligibilityReasonColWith).apply {
+                    addHeaderCell(Cells.createHeader("Cohort"))
+                    addHeaderCell(Cells.createHeader("Molecular"))
+                    addHeaderCell(Cells.createHeader("Ineligibility reasons"))
+                }
+            } else {
+                Tables.createFixedWidthCols(cohortColWidth, molecularEventColWidth).apply {
+                    addHeaderCell(Cells.createHeader("Cohort"))
+                    addHeaderCell(Cells.createHeader("Molecular"))
+                }
             }
             table.addHeaderCell(Cells.createContentNoBorder(headerSubTable))
         }
-        val feedbackFunction = if (includeIneligibilityReasonCol) Cohort::fails else { _: Cohort -> emptySet() }
-        addTrialsToTable(cohorts, table, cohortColWidth, molecularEventColWidth, ineligibilityReasonColWith, feedbackFunction)
-        val subNote = "Open cohorts with no slots available are shown in grey."
-        if (includeIneligibilityReasonCol && cohorts.isNotEmpty()) {
-            table.addCell(Cells.createSpanningSubNote(subNote, table))
+        addTrialsToTable(
+            cohorts, table, cohortColWidth, molecularEventColWidth, ineligibilityReasonColWith, InterpretedCohort::fails, includeIneligibilityReasons)
+        if (includeIneligibilityReasons && cohorts.isNotEmpty()) {
+            table.addCell(Cells.createSpanningSubNote("Open cohorts with no slots available are shown in grey.", table))
         }
         return makeWrapping(table)
     }
 
     companion object {
-        fun forOpenCohorts(
-            cohorts: List<Cohort>, source: String, width: Float, enableExtendedMode: Boolean
+        fun forEvaluableCohorts(
+            cohorts: List<InterpretedCohort>, source: String, width: Float, includeOpen: Boolean, includeClosed: Boolean
         ): IneligibleActinTrialsGenerator {
-            val ineligibleCohorts = cohorts.filter { !it.isPotentiallyEligible && (it.isOpen || enableExtendedMode) }
-            val trialColWidth = width / 9
-            val cohortColWidth = width / 4
-            val molecularColWidth = width / 7
-            val ineligibilityReasonColWidth = width - (trialColWidth + cohortColWidth + molecularColWidth)
+            val ineligibleCohorts = cohorts.filter { !it.isPotentiallyEligible && (it.isOpen == includeOpen || (includeClosed && includeOpen)) }
+            val trialColWidth =  if (includeOpen) width / 9 else width / 4
+            val cohortColWidth = if (includeOpen) width / 4 else width / 2
+            val molecularColWidth = if (includeOpen) width / 7 else width / 4
+            val ineligibilityReasonColWidth = if (includeOpen) {width - (trialColWidth + cohortColWidth + molecularColWidth)} else 0f
             val title = String.format(
                 "%s trials and cohorts that are %sconsidered ineligible (%s)",
                 source,
-                if (enableExtendedMode) "" else "open but ",
+                if (includeOpen) {
+                    if (includeClosed) "" else "open but "
+                } else {
+                    "closed and "
+                },
                 ineligibleCohorts.size
             )
-            return create(ineligibleCohorts, title, trialColWidth, cohortColWidth, molecularColWidth, ineligibilityReasonColWidth, true)
-        }
-
-        fun forClosedCohorts(
-            cohorts: List<Cohort>,
-            source: String,
-            width: Float,
-        ): IneligibleActinTrialsGenerator {
-            val unavailableAndEligible =
-                cohorts.filter { trial: Cohort -> !trial.isPotentiallyEligible && !trial.isOpen }
-            val title = String.format(
-                "%s trials and cohorts that are closed and considered ineligible (%s)",
-                source,
-                unavailableAndEligible.size
-            )
-            return create(unavailableAndEligible, title, width, width * 2, width)
+            return create(ineligibleCohorts, title, trialColWidth, cohortColWidth, molecularColWidth, ineligibilityReasonColWidth, includeIneligibilityReasons = includeOpen)
         }
 
         fun forNonEvaluableAndIgnoredCohorts(
-            ignoredCohorts: List<Cohort>,
-            nonEvaluableCohorts: List<Cohort>,
+            ignoredCohorts: List<InterpretedCohort>,
+            nonEvaluableCohorts: List<InterpretedCohort>,
             source: String,
             width: Float,
         ): IneligibleActinTrialsGenerator {
             val totalCohorts = ignoredCohorts + nonEvaluableCohorts
             val title = String.format("%s trials and cohorts that are not evaluable or ignored (%s)", source, totalCohorts.size)
-            return create(totalCohorts, title, width, width * 2, width)
+            return create(totalCohorts, title, width / 4, width / 2, width / 4)
         }
 
         private fun create(
-            cohorts: List<Cohort>,
+            cohorts: List<InterpretedCohort>,
             title: String,
             trialColWidth: Float,
             cohortColWidth: Float,
             molecularColWidth: Float,
             ineligibilityReasonColWidth: Float = 0f,
-            includeIneligibilityReasonCol: Boolean = false
+            includeIneligibilityReasons: Boolean = false
         ): IneligibleActinTrialsGenerator {
             return IneligibleActinTrialsGenerator(
                 cohorts,
@@ -105,7 +97,7 @@ class IneligibleActinTrialsGenerator(
                 cohortColWidth,
                 molecularColWidth,
                 ineligibilityReasonColWidth,
-                includeIneligibilityReasonCol
+                includeIneligibilityReasons
             )
         }
     }

@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 
 class MolecularDriversSummarizer private constructor(
     private val drivers: Drivers,
-    private val cohortsInterpreter: CohortsInterpreter
+    private val interpretedCohortsSummarizer: InterpretedCohortsSummarizer
 ) {
 
     fun keyVariants(): List<String> {
@@ -54,15 +54,15 @@ class MolecularDriversSummarizer private constructor(
             drivers.viruses
         ).flatten().filterNot(::isKeyDriver)
         return (nonDisruptionDrivers + drivers.disruptions.toList())
-            .filter(cohortsInterpreter::driverIsActionable)
+            .filter(interpretedCohortsSummarizer::driverIsActionable)
     }
 
     companion object {
         fun fromMolecularDriversAndEvaluatedCohorts(
             drivers: Drivers,
-            cohorts: List<Cohort>
+            cohorts: List<InterpretedCohort>
         ): MolecularDriversSummarizer {
-            return MolecularDriversSummarizer(drivers, CohortsInterpreter.fromCohorts(cohorts))
+            return MolecularDriversSummarizer(drivers, InterpretedCohortsSummarizer.fromCohorts(cohorts))
         }
 
         private fun isKeyDriver(driver: Driver): Boolean {

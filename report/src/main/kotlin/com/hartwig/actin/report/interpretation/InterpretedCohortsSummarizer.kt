@@ -3,7 +3,7 @@ package com.hartwig.actin.report.interpretation
 import com.hartwig.actin.datamodel.molecular.Driver
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidenceCategories.approved
 
-class CohortsInterpreter(
+class InterpretedCohortsSummarizer(
     private val eligibleOpenTrialsByInclusionEvent: Map<String, List<String>>,
     private val inclusionEventsOfOpenTrials: Set<String>
 ) {
@@ -19,20 +19,20 @@ class CohortsInterpreter(
 
     companion object {
 
-        fun fromCohorts(cohorts: List<Cohort>): CohortsInterpreter {
-            val openCohorts = cohorts.filter(Cohort::isOpen)
+        fun fromCohorts(cohorts: List<InterpretedCohort>): InterpretedCohortsSummarizer {
+            val openCohorts = cohorts.filter(InterpretedCohort::isOpen)
 
             val eligibleOpenTrialsByInclusionEvent = openCohorts
-                .filter(Cohort::isPotentiallyEligible)
+                .filter(InterpretedCohort::isPotentiallyEligible)
                 .flatMap { cohort -> cohort.molecularEvents.map { it to cohort.acronym } }
                 .groupBy({ it.first }, { it.second })
                 .mapValues { (_, acronyms) -> acronyms.sorted().distinct() }
 
             val inclusionEventsOfNonIgnoredOpenTrials = openCohorts
-                .flatMap(Cohort::molecularEvents)
+                .flatMap(InterpretedCohort::molecularEvents)
                 .toSet()
 
-            return CohortsInterpreter(eligibleOpenTrialsByInclusionEvent, inclusionEventsOfNonIgnoredOpenTrials)
+            return InterpretedCohortsSummarizer(eligibleOpenTrialsByInclusionEvent, inclusionEventsOfNonIgnoredOpenTrials)
         }
     }
 }
