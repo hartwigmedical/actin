@@ -61,9 +61,12 @@
             {
               "name": "OSIMERTINIB",
               "drugTypes": [
-                "EGFR_INHIBITOR"
+                "EGFR_INHIBITOR",
+                "EGFR_INHIBITOR_GEN_3",
+                "EGFR_TYROSINE_KINASE_INHIBITOR",
+                "TYROSINE_KINASE_INHIBITOR"
               ],
-              "category": "CHEMOTHERAPY",
+              "category": "TARGETED_THERAPY",
               "displayOverride": null
             }
           ],
