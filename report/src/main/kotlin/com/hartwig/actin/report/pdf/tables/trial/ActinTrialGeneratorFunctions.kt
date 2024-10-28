@@ -20,12 +20,13 @@ object ActinTrialGeneratorFunctions {
         molecularEventColumnWidth: Float,
         feedbackColumnWidth: Float,
         feedbackFunction: (InterpretedCohort) -> Set<String>,
-        hasFeedback: Boolean = true
+        hasFeedback: Boolean = true,
+        paddingDistance: Float = 1f
     ) {
         sortedCohortGroups(cohorts).forEach { cohortList: List<InterpretedCohort> ->
             val trialSubTable = if (hasFeedback) { Tables.createFixedWidthCols(cohortColumnWidth, molecularEventColumnWidth, feedbackColumnWidth) } else {Tables.createFixedWidthCols(cohortColumnWidth, molecularEventColumnWidth)}
             ActinTrialContentFunctions.contentForTrialCohortList(cohortList, feedbackFunction, hasFeedback)
-                .forEach { addContentListToTable(it.textEntries, it.deEmphasizeContent, trialSubTable) }
+                .forEach { addContentListToTable(it.textEntries, it.deEmphasizeContent, trialSubTable, paddingDistance) }
 
             insertTrialRow(cohortList, table, trialSubTable)
         }
@@ -38,10 +39,11 @@ object ActinTrialGeneratorFunctions {
         return sortedCohorts.map(InterpretedCohort::trialId).distinct().mapNotNull { cohortsByTrialId[it] }
     }
 
-    private fun addContentListToTable(cellContent: List<String>, deEmphasizeContent: Boolean, table: Table) {
+    private fun addContentListToTable(cellContent: List<String>, deEmphasizeContent: Boolean, table: Table, paddingDistance: Float) {
         cellContent.map {
             val paragraph = Paragraph(it).setKeepTogether(true)
-            if (deEmphasizeContent) Cells.createContentNoBorderDeEmphasize(paragraph) else Cells.createContentNoBorder(paragraph)
+            if (deEmphasizeContent) Cells.createContentNoBorderDeEmphasize(paragraph)
+                .setPadding(paddingDistance) else Cells.createContentNoBorder(paragraph).setPadding(paddingDistance)
         }.forEach(table::addCell)
     }
 

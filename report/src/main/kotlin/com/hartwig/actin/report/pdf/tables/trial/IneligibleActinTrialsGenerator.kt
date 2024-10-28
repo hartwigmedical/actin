@@ -8,6 +8,9 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
+private const val SMALL_PADDING_DISTANCE = 0.1f
+private const val NORMAL_PADDING_DISTANCE = 1f
+
 class IneligibleActinTrialsGenerator(
     private val cohorts: List<InterpretedCohort>,
     private val title: String,
@@ -15,7 +18,8 @@ class IneligibleActinTrialsGenerator(
     private val cohortColWidth: Float,
     private val molecularEventColWidth: Float,
     private val ineligibilityReasonColWith: Float,
-    private val includeIneligibilityReasons: Boolean
+    private val includeIneligibilityReasons: Boolean,
+    private val paddingDistance: Float
 ) : TableGenerator {
 
     override fun title(): String {
@@ -41,7 +45,15 @@ class IneligibleActinTrialsGenerator(
             table.addHeaderCell(Cells.createContentNoBorder(headerSubTable))
         }
         addTrialsToTable(
-            cohorts, table, cohortColWidth, molecularEventColWidth, ineligibilityReasonColWith, InterpretedCohort::fails, includeIneligibilityReasons)
+            cohorts,
+            table,
+            cohortColWidth,
+            molecularEventColWidth,
+            ineligibilityReasonColWith,
+            InterpretedCohort::fails,
+            includeIneligibilityReasons,
+            paddingDistance
+        )
         if (includeIneligibilityReasons && cohorts.isNotEmpty()) {
             table.addCell(Cells.createSpanningSubNote("Open cohorts with no slots available are shown in grey.", table))
         }
@@ -67,7 +79,17 @@ class IneligibleActinTrialsGenerator(
                 },
                 ineligibleCohorts.size
             )
-            return create(ineligibleCohorts, title, trialColWidth, cohortColWidth, molecularColWidth, ineligibilityReasonColWidth, includeIneligibilityReasons = includeOpen)
+            val paddingDistance = if (!includeOpen && includeClosed) SMALL_PADDING_DISTANCE else NORMAL_PADDING_DISTANCE
+            return create(
+                ineligibleCohorts,
+                title,
+                trialColWidth,
+                cohortColWidth,
+                molecularColWidth,
+                ineligibilityReasonColWidth,
+                includeIneligibilityReasons = includeOpen,
+                paddingDistance = paddingDistance
+            )
         }
 
         fun forNonEvaluableAndIgnoredCohorts(
@@ -79,7 +101,7 @@ class IneligibleActinTrialsGenerator(
             val nonEvaluableAndIgnoredCohorts = ignoredCohorts + nonEvaluableCohorts
             val title =
                 String.format("%s trials and cohorts that are not evaluable or ignored (%s)", source, nonEvaluableAndIgnoredCohorts.size)
-            return create(nonEvaluableAndIgnoredCohorts, title, width / 4, width / 2, width / 4)
+            return create(nonEvaluableAndIgnoredCohorts, title, width / 4, width / 2, width / 4, paddingDistance = SMALL_PADDING_DISTANCE)
         }
 
         private fun create(
@@ -89,7 +111,8 @@ class IneligibleActinTrialsGenerator(
             cohortColWidth: Float,
             molecularColWidth: Float,
             ineligibilityReasonColWidth: Float = 0f,
-            includeIneligibilityReasons: Boolean = false
+            includeIneligibilityReasons: Boolean = false,
+            paddingDistance: Float,
         ): IneligibleActinTrialsGenerator {
             return IneligibleActinTrialsGenerator(
                 cohorts,
@@ -98,7 +121,8 @@ class IneligibleActinTrialsGenerator(
                 cohortColWidth,
                 molecularColWidth,
                 ineligibilityReasonColWidth,
-                includeIneligibilityReasons
+                includeIneligibilityReasons,
+                paddingDistance
             )
         }
     }
