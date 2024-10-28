@@ -40,7 +40,7 @@ class MolecularDriversGenerator(
         table.addHeaderCell(Cells.createHeader("Type"))
         table.addHeaderCell(Cells.createHeader("Driver"))
         table.addHeaderCell(Cells.createHeader("Driver likelihood"))
-        table.addHeaderCell(Cells.createHeader(trialSource?.let { "Trials in $it" } ?: "Local Trials"))
+        table.addHeaderCell(Cells.createHeader(trialSource?.let { "Trials in $it" } ?: "Trials"))
         table.addHeaderCell(Cells.createHeader("Trials in ${molecular.externalTrialSource}"))
         table.addHeaderCell(Cells.createHeader("Best evidence in ${molecular.evidenceSource}"))
         table.addHeaderCell(Cells.createHeader("Resistance in ${molecular.evidenceSource}"))

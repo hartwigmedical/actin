@@ -18,11 +18,9 @@ class IneligibleActinTrialsGenerator(
 ) : TableGenerator {
 
     override fun title(): String {
-        val titleStart = source?.let { "$it trials" } ?: "Trials"
-
         return String.format(
             "%s and cohorts that are %sconsidered ineligible (%s)",
-            titleStart,
+            ActinTrialGeneratorFunctions.createTableTitleStart(source),
             if (enableExtendedMode) "" else "open but ",
             cohorts.size
         )

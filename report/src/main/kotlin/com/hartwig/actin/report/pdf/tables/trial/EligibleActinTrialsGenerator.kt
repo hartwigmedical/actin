@@ -51,7 +51,7 @@ class EligibleActinTrialsGenerator private constructor(
                         " from ${formatCountWithLabel(recruitingAndEligibleTrials.size, "trial")})"
             } else "(0)"
 
-            val titleStart = source?.let { "$it trials" } ?: "Trials"
+            val titleStart = ActinTrialGeneratorFunctions.createTableTitleStart(source)
             val title = "$titleStart that are open and potentially eligible$slotsText $cohortFromTrialsText"
 
             return create(recruitingAndEligibleCohorts, title, width) to recruitingAndEligibleCohorts
@@ -69,7 +69,7 @@ class EligibleActinTrialsGenerator private constructor(
                         " from ${formatCountWithLabel(recruitingAndEligibleTrials.size, "trial")})"
             } else "(0)"
 
-            val titleStart = source?.let { "$it trials" } ?: "Trials"
+            val titleStart = ActinTrialGeneratorFunctions.createTableTitleStart(source)
             val title =
                 "$titleStart that are open but for which additional genes need to be tested to evaluate eligibility $cohortFromTrialsText"
 
@@ -90,7 +90,7 @@ class EligibleActinTrialsGenerator private constructor(
                 .filter { trial: EvaluatedCohort -> trial.isPotentiallyEligible && !trial.isOpen }
                 .filter { trial: EvaluatedCohort -> trial.molecularEvents.isNotEmpty() || enableExtendedMode }
 
-            val titleStart = source?.let { "$it trials" } ?: "Trials"
+            val titleStart = ActinTrialGeneratorFunctions.createTableTitleStart(source)
             val title = String.format(
                 "%s and cohorts that %smay be eligible, but are closed (%s)",
                 titleStart,
