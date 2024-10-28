@@ -59,7 +59,7 @@ class InterpretedCohortsSummarizerTest {
             return TestVariantFactory.createMinimal().copy(event = event)
         }
 
-        private fun cohort(name: String, isEligible: Boolean, isOpen: Boolean, event: String = name): InterpretedCohort {
+        private fun interpretedCohort(name: String, isEligible: Boolean, isOpen: Boolean, event: String = name): InterpretedCohort {
             return InterpretedCohortTestFactory.interpretedCohort(
                 acronym = name,
                 isPotentiallyEligible = isEligible,
@@ -71,10 +71,10 @@ class InterpretedCohortsSummarizerTest {
         private fun createInterpreter(): InterpretedCohortsSummarizer {
             return InterpretedCohortsSummarizer.fromCohorts(
                 listOf(
-                    cohort(INELIGIBLE_COHORT, false, true),
-                    cohort(CLOSED_COHORT, true, false),
-                    cohort(ELIGIBLE_COHORT, true, true, ELIGIBLE_EVENT),
-                    cohort(ELIGIBLE_COHORT_2, true, true, ELIGIBLE_EVENT)
+                    interpretedCohort(INELIGIBLE_COHORT, false, true),
+                    interpretedCohort(CLOSED_COHORT, true, false),
+                    interpretedCohort(ELIGIBLE_COHORT, true, true, ELIGIBLE_EVENT),
+                    interpretedCohort(ELIGIBLE_COHORT_2, true, true, ELIGIBLE_EVENT)
                 )
             )
         }

@@ -16,7 +16,7 @@ class EvidenceInterpreterTest {
     @Test
     fun shouldInterpretEvidence() {
         val cohortWithInclusion: InterpretedCohort = interpretedCohort(molecularEvents = setOf("inclusion"))
-        val interpreter = EvidenceInterpreter.fromCohorts(listOf(cohortWithInclusion))
+        val interpreter = EvidenceInterpreter.fromInterpretedCohorts(listOf(cohortWithInclusion))
         val evidence = AggregatedEvidence(
             treatmentEvidence = mapOf("approved" to setOf(approved()))
                     + mapOf(

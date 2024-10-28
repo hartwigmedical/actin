@@ -33,7 +33,7 @@ class TrialMatchingChapter(
 
     private fun addTrialMatchingOverview(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
-        val (ignoredCohorts, cohorts) = InterpretedCohortFactory.createEvaluableCohorts(
+        val (ignoredCohorts, nonIgnoredCohorts) = InterpretedCohortFactory.createEvaluableCohorts(
             report.treatmentMatch,
             report.config.filterOnSOCExhaustionAndTumorType
         )
@@ -41,7 +41,7 @@ class TrialMatchingChapter(
         val nonEvaluableCohorts = InterpretedCohortFactory.createNonEvaluableCohorts(report.treatmentMatch)
         val (_, evaluated) =
             EligibleActinTrialsGenerator.forOpenCohorts(
-                cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = true
+                nonIgnoredCohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = true
             )
 
         val (localTrialGenerator, nonLocalTrialGenerator) = reportContentProvider.provideExternalTrialsTables(
@@ -51,18 +51,22 @@ class TrialMatchingChapter(
         )
         val generators = listOfNotNull(
             EligibleActinTrialsGenerator.forClosedCohorts(
-                cohorts,
+                nonIgnoredCohorts,
                 report.treatmentMatch.trialSource,
                 contentWidth(),
             ).takeIf { !externalTrialsOnly },
             if (includeIneligibleTrialsInSummary || externalTrialsOnly) null else {
                 IneligibleActinTrialsGenerator.forEvaluableCohorts(
-                    cohorts, report.treatmentMatch.trialSource, contentWidth(), includeOpen = true, includeClosed = enableExtendedMode
+                    nonIgnoredCohorts,
+                    report.treatmentMatch.trialSource,
+                    contentWidth(),
+                    includeOpen = true,
+                    includeClosed = enableExtendedMode
                 )
             },
             if ((includeIneligibleTrialsInSummary || externalTrialsOnly) || enableExtendedMode) null else {
                 IneligibleActinTrialsGenerator.forEvaluableCohorts(
-                    cohorts, report.treatmentMatch.trialSource, contentWidth(), includeOpen = false, includeClosed = true
+                    nonIgnoredCohorts, report.treatmentMatch.trialSource, contentWidth(), includeOpen = false, includeClosed = true
                 )
             },
             if (includeIneligibleTrialsInSummary || externalTrialsOnly) null else {
