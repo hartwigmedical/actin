@@ -114,7 +114,7 @@ class PanelAnnotatorTest {
     }
 
     @Test
-    fun `Should infer copy numbers and ploidy and annotate with evidence from serve`() {
+    fun `Should infer copy numbers and ploidy and annotate with evidence`() {
         setupGeneAlteration()
         val unannotatedCopyNumberSlot = mutableListOf<CopyNumber>()
         every { evidenceDatabase.geneAlterationForCopyNumber(capture(unannotatedCopyNumberSlot)) } returns HOTSPOT
@@ -131,7 +131,7 @@ class PanelAnnotatorTest {
     }
 
     @Test
-    fun `Should annotate gene deletion with evidence from serve`() {
+    fun `Should annotate gene deletion with evidence`() {
         every { evidenceDatabase.geneAlterationForCopyNumber(any()) } returns HOTSPOT
         every { evidenceDatabase.evidenceForCopyNumber(any()) } returns ACTIONABILITY_MATCH
 
@@ -153,6 +153,37 @@ class PanelAnnotatorTest {
                 )
             )
         )
+    }
+
+    @Test
+    fun `Should annotate tumor mutational burden with evidence`() {
+        every { evidenceDatabase.evidenceForTumorMutationalBurdenStatus(true) } returns ACTIONABILITY_MATCH
+        every { evidenceDatabase.evidenceForTumorMutationalBurdenStatus(false) } returns EMPTY_MATCH
+
+        val panelWithHighTmb = annotator.annotate(PriorSequencingTest(test = "test", tumorMutationalBurden = 200.0))
+        assertThat(panelWithHighTmb.characteristics.tumorMutationalBurdenEvidence)
+            .isEqualTo(ClinicalEvidenceFactory.create(ACTIONABILITY_MATCH))
+
+        val panelWithLowTmb = annotator.annotate(PriorSequencingTest(test = "test", tumorMutationalBurden = 2.0))
+        assertThat(panelWithLowTmb.characteristics.tumorMutationalBurdenEvidence).isEqualTo(ClinicalEvidenceFactory.create(EMPTY_MATCH))
+
+        val panelWithoutTmb = annotator.annotate(PriorSequencingTest(test = "test", tumorMutationalBurden = null))
+        assertThat(panelWithoutTmb.characteristics.tumorMutationalBurdenEvidence).isNull()
+    }
+
+    @Test
+    fun `Should annotate microsatellite status with evidence`() {
+        every { evidenceDatabase.evidenceForMicrosatelliteStatus(true) } returns ACTIONABILITY_MATCH
+        every { evidenceDatabase.evidenceForMicrosatelliteStatus(false) } returns EMPTY_MATCH
+
+        val panelWithMSI = annotator.annotate(PriorSequencingTest(test = "test", isMicrosatelliteUnstable = true))
+        assertThat(panelWithMSI.characteristics.microsatelliteEvidence).isEqualTo(ClinicalEvidenceFactory.create(ACTIONABILITY_MATCH))
+
+        val panelWithMSS = annotator.annotate(PriorSequencingTest(test = "test", isMicrosatelliteUnstable = false))
+        assertThat(panelWithMSS.characteristics.microsatelliteEvidence).isEqualTo(ClinicalEvidenceFactory.create(EMPTY_MATCH))
+
+        val panelWithoutMicrosatelliteStatus = annotator.annotate(PriorSequencingTest(test = "test", isMicrosatelliteUnstable = null))
+        assertThat(panelWithoutMicrosatelliteStatus.characteristics.microsatelliteEvidence).isNull()
     }
 
     private fun assertCopyNumber(annotatedVariant: CopyNumber) {

@@ -38,6 +38,8 @@ class PanelAnnotator(
         val annotatedDeletions = input.deletedGenes.map(::inferredCopyNumber).map(::annotatedInferredCopyNumber)
         val annotatedFusions = panelFusionAnnotator.annotate(input.fusions, input.skippedExons)
 
+        val hasHighTumorMutationalBurden = input.tumorMutationalBurden?.let { it > TMB_HIGH_CUTOFF }
+
         return PanelRecord(
             testedGenes = input.testedGenes ?: emptySet(),
             experimentType = ExperimentType.PANEL,
@@ -50,8 +52,14 @@ class PanelAnnotator(
             ),
             characteristics = MolecularCharacteristics(
                 isMicrosatelliteUnstable = input.isMicrosatelliteUnstable,
+                microsatelliteEvidence = input.isMicrosatelliteUnstable?.let {
+                    ClinicalEvidenceFactory.create(evidenceDatabase.evidenceForMicrosatelliteStatus(it))
+                },
                 tumorMutationalBurden = input.tumorMutationalBurden,
-                hasHighTumorMutationalBurden = input.tumorMutationalBurden?.let { it > TMB_HIGH_CUTOFF },
+                hasHighTumorMutationalBurden = hasHighTumorMutationalBurden,
+                tumorMutationalBurdenEvidence = hasHighTumorMutationalBurden?.let {
+                    ClinicalEvidenceFactory.create(evidenceDatabase.evidenceForTumorMutationalBurdenStatus(it))
+                },
                 ploidy = PLOIDY
             ),
             evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display()
