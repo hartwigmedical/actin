@@ -34,11 +34,13 @@ class LocalExampleReportApplication(private val reportingDate: LocalDate) {
     }
 }
 
+private const val EXAMPLE_TO_RUN = LUNG_01_EXAMPLE
+
 fun main() {
     LocalExampleReportApplication.LOGGER.info("Running ACTIN Example Reporter")
     try {
-        val examplePatientRecordJson = ExampleFunctions.resolveExamplePatientRecordJson(LUNG_01_EXAMPLE)
-        val exampleTreatmentMatchJson = ExampleFunctions.resolveExampleTreatmentMatchJson(LUNG_01_EXAMPLE)
+        val examplePatientRecordJson = ExampleFunctions.resolveExamplePatientRecordJson(EXAMPLE_TO_RUN)
+        val exampleTreatmentMatchJson = ExampleFunctions.resolveExampleTreatmentMatchJson(EXAMPLE_TO_RUN)
         val outputDirectory = ExampleFunctions.resolveExampleReportOutputDirectory()
 
         LocalExampleReportApplication(LocalDate.now()).run(examplePatientRecordJson, exampleTreatmentMatchJson, outputDirectory)

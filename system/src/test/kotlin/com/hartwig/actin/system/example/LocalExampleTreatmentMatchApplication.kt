@@ -122,10 +122,12 @@ class LocalExampleTreatmentMatchApplication {
     }
 }
 
+private const val EXAMPLE_TO_RUN = LUNG_01_EXAMPLE
+
 fun main() {
     LocalExampleTreatmentMatchApplication.LOGGER.info("Running ACTIN Example Treatment Matcher")
     try {
-        val examplePatientRecordJson = ExampleFunctions.resolveExamplePatientRecordJson(LUNG_01_EXAMPLE)
+        val examplePatientRecordJson = ExampleFunctions.resolveExamplePatientRecordJson(EXAMPLE_TO_RUN)
         val exampleTrialDatabaseDir = ExampleFunctions.resolveExampleTrialDatabaseDirectory()
         val outputDirectory = ExampleFunctions.resolveExampleTreatmentMatchOutputDirectory()
 
