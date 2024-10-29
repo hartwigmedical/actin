@@ -6,6 +6,8 @@ import com.hartwig.actin.datamodel.trial.CriterionReference
 import com.hartwig.actin.trial.sort.CriterionReferenceComparator
 import java.util.stream.Collectors
 
+private val SURROUND_PLUS_WITH_SPACES_REGEX = "(\\S)\\+(\\S)".toRegex()
+
 object EvaluationInterpreter {
 
     fun interpretForDetailedTrialMatching(
@@ -103,8 +105,6 @@ object EvaluationInterpreter {
     }
 
     private fun insertSpacesAroundPlus(inputs: Set<String>): Set<String> {
-        val regex = "(\\S)\\+(\\S)".toRegex()
-
-        return inputs.stream().map { s -> s.replace(regex, "$1 + $2") }.collect(Collectors.toSet())
+        return inputs.stream().map { s -> s.replace(SURROUND_PLUS_WITH_SPACES_REGEX, "$1 + $2") }.collect(Collectors.toSet())
     }
 }
