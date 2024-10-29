@@ -35,13 +35,13 @@
     "hasActiveCnsLesions": false,
     "hasBoneLesions": false,
     "boneLesionsCount": null,
-    "hasLiverLesions": true,
-    "liverLesionsCount": 1,
+    "hasLiverLesions": false,
+    "liverLesionsCount": null,
     "hasLungLesions": true,
     "lungLesionsCount": 1,
     "hasLymphNodeLesions": true,
     "lymphNodeLesionsCount": 1,
-    "otherLesions": ["Adrenal gland"],
+    "otherLesions": [],
     "biopsyLocation": "Lung",
     "rawPathologyReport": null
   },
@@ -109,7 +109,7 @@
   "priorSecondPrimaries": [
     {
       "tumorLocation": "Skin",
-      "tumorSubLocation": "Neck",
+      "tumorSubLocation": "neck",
       "tumorType": "Carcinoma",
       "tumorSubType": "Squamous cell carcinoma",
       "doids": [ "3151" ],
@@ -715,7 +715,7 @@
               "fusedExonUp": 14,
               "fusedExonDown": 14,
               "isReportable": true,
-              "event": "MET_EXON_14_SKIPPING",
+              "event": "MET_MET",
               "driverLikelihood": "HIGH",
               "evidence": {
                 "externalEligibleTrials": [],
@@ -731,7 +731,7 @@
           "predictedTumorOrigin": {
             "predictions": [
               {
-                "cancerType": "Lung: Non-small cell",
+                "cancerType": "Lung: Non-small cell: LUAD",
                 "likelihood": 0.98,
                 "snvPairwiseClassifier": 0.6,
                 "genomicPositionClassifier": 0.7,
