@@ -47,8 +47,8 @@ class PrimaryTumorLocationBelongsToDoid(
                 }
 
                 doidsTumorBelongsTo.isNotEmpty() -> EvaluationFactory.pass(
-                    "Patient has tumor belonging to doid term(s) $doidTermsTumorBelongsTo",
-                    "Has tumor belonging to $doidTermsTumorBelongsTo"
+                    "Patient has tumor belonging to DOID term(s) $doidTermsTumorBelongsTo",
+                    "Has tumor belonging to DOID term(s) $doidTermsTumorBelongsTo"
                 )
 
                 potentialAdenoSquamousMatches.isNotEmpty() -> {
