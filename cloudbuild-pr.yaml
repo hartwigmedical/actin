@@ -11,6 +11,11 @@ steps:
       - path: '/cache/.m2'
         name: 'm2_cache'
 
+  - id: 'Create the ACTIN build agent image'
+    name: 'gcr.io/cloud-builders/docker'
+    dir: 'system/src/test/docker'
+    args: [ 'build', '.', '-t', 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent:latest' ]
+    
   - id: 'Compile, package, release'
     name: 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent:latest'
     entrypoint: mvn
