@@ -11,6 +11,7 @@ import com.itextpdf.layout.element.Table
 class EligibleActinTrialsGenerator(
     private val cohorts: List<InterpretedCohort>,
     private val title: String,
+    private val footNote: String?,
     private val trialColWidth: Float,
     private val cohortColWidth: Float,
     private val molecularEventColWidth: Float,
@@ -31,7 +32,13 @@ class EligibleActinTrialsGenerator(
             sequenceOf("Cohort", "Molecular", "Warnings").map(Cells::createHeader).forEach(headerSubTable::addHeaderCell)
             table.addHeaderCell(Cells.createContentNoBorder(headerSubTable))
         }
+
         addTrialsToTable(cohorts, table, floatArrayOf(cohortColWidth, molecularEventColWidth, checksColWidth), InterpretedCohort::warnings)
+
+        if (footNote != null) {
+            table.addCell(Cells.createSpanningSubNote(footNote, table))
+        }
+
         return makeWrapping(table)
     }
 
@@ -73,7 +80,9 @@ class EligibleActinTrialsGenerator(
             val title =
                 "$source trials that are open but for which additional genes need to be tested to evaluate eligibility $cohortFromTrialsText"
 
-            return if (recruitingAndEligibleCohorts.isNotEmpty()) create(recruitingAndEligibleCohorts, title, width) else null
+            val footNote = "Open cohorts with no slots available are shown in grey."
+
+            return if (recruitingAndEligibleCohorts.isNotEmpty()) create(recruitingAndEligibleCohorts, title, width, footNote) else null
         }
 
         private fun formatCountWithLabel(count: Int, word: String): String {
@@ -98,7 +107,8 @@ class EligibleActinTrialsGenerator(
         private fun create(
             cohorts: List<InterpretedCohort>,
             title: String,
-            width: Float
+            width: Float,
+            footNote: String? = null
         ): EligibleActinTrialsGenerator {
             val trialColWidth = width / 9
             val cohortColWidth = width / 4
@@ -107,6 +117,7 @@ class EligibleActinTrialsGenerator(
             return EligibleActinTrialsGenerator(
                 cohorts,
                 title,
+                footNote,
                 trialColWidth,
                 cohortColWidth,
                 molecularColWidth,
