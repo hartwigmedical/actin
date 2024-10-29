@@ -1,8 +1,11 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.molecular.Driver
+import com.hartwig.actin.datamodel.molecular.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter
 import com.hartwig.actin.report.pdf.util.Cells
@@ -59,6 +62,17 @@ object WGSSummaryGeneratorFunctions {
                         table
                     )
                 )
+            }
+            val (actionableEventsWithUnknownDriver, actionableEventsWithLowOrMediumDriver) = summarizer.actionableEventsThatAreNotKeyDrivers()
+                .partition { it.driverLikelihood == null }
+
+            if (actionableEventsWithLowOrMediumDriver.isNotEmpty() || !isShort) {
+                table.addCell(Cells.createKey("Potentially actionable events with medium/low driver:"))
+                table.addCell(potentiallyActionableEventsCell(actionableEventsWithLowOrMediumDriver))
+            }
+            if (actionableEventsWithUnknownDriver.isNotEmpty()) {
+                table.addCell(Cells.createKey("Potentially actionable events not considered a driver:"))
+                table.addCell(potentiallyActionableEventsCell(actionableEventsWithUnknownDriver))
             }
         } else {
             table.addCell(
@@ -148,6 +162,26 @@ object WGSSummaryGeneratorFunctions {
         return Cells.create(paragraph)
     }
 
+    fun potentiallyActionableEventsCell(drivers: List<Driver>): Cell {
+        if (drivers.isEmpty()) return Cells.createValue(Formats.VALUE_NONE)
+
+        val eventText = drivers.distinctBy(Driver::event).flatMap { driver ->
+            val warning = when (driver.driverLikelihood) {
+                DriverLikelihood.LOW -> " (low driver likelihood)"
+                DriverLikelihood.MEDIUM -> " (medium driver likelihood)"
+                else -> if (driver is CopyNumber) "" else " (dubious quality)"
+            }
+            listOf(
+                Text(driver.event).addStyle(Styles.tableHighlightStyle()),
+                Text(warning).addStyle(Styles.tableNoticeStyle()),
+                Text(", ").addStyle(Styles.tableHighlightStyle()),
+            )
+        }.dropLast(1)
+        val paragraph = Paragraph().addAll(eventText)
+
+        return Cells.create(paragraph)
+    }
+
     private fun tumorMutationalLoadAndTumorMutationalBurdenStatus(molecular: MolecularTest): String {
         val hasHighTumorMutationalLoad = molecular.characteristics.hasHighTumorMutationalLoad
         val tumorMutationalLoad = molecular.characteristics.tumorMutationalLoad
@@ -180,7 +214,6 @@ object WGSSummaryGeneratorFunctions {
                 "Homozygously disrupted genes",
                 "Microsatellite (in)stability",
                 "",
-                "Potentially actionable events with medium/low driver:"
             )
         } else {
             listOf(
@@ -194,7 +227,6 @@ object WGSSummaryGeneratorFunctions {
                 "Gene fusions",
                 "Virus detection",
                 "",
-                "Potentially actionable events with medium/low driver:"
             )
         }
     }
@@ -213,7 +245,6 @@ object WGSSummaryGeneratorFunctions {
             "Homozygously disrupted genes" to formatList(summarizer.keyHomozygouslyDisruptedGenes()),
             "Gene fusions" to formatList(summarizer.keyFusionEvents()),
             "Virus detection" to formatList(summarizer.keyVirusEvents()),
-            "Potentially actionable events with medium/low driver:" to formatList(summarizer.actionableEventsThatAreNotKeyDrivers())
         )
         return orderedKeys.mapNotNull { key -> keyToValueMap[key]?.let { value -> key to value } }
     }

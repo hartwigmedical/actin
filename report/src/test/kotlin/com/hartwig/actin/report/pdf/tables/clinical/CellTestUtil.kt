@@ -8,7 +8,7 @@ object CellTestUtil {
 
     fun extractTextFromCell(cell: Cell): String? {
         val paragraph = cell.children.firstOrNull() as? Paragraph
-        val textElement = paragraph?.children?.firstOrNull() as? Text
-        return textElement?.text
+        val textElements = paragraph?.children?.filterIsInstance<Text>()
+        return textElements?.joinToString("") { it.text }
     }
 }

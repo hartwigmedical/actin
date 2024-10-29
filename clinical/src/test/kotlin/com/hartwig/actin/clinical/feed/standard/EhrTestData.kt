@@ -4,6 +4,7 @@ import java.time.LocalDate
 
 const val HASHED_ID_IN_BASE64 = "9E9uYbFvpFDjJVCs9XjDGF1LmP8Po6Zb80pYnoBrWg0="
 const val TREATMENT_NAME = "treatmentName"
+const val SURGERY_NAME = "surgeryName"
 const val MODIFICATION_NAME = "modificationName"
 const val PRIOR_CONDITION_INPUT = "prior condition"
 const val TREATMENT_HISTORY_INPUT = "treatment name"
@@ -50,9 +51,9 @@ object EhrTestData {
         )
     )
 
-    fun createEhrSurgery(surgeryName: String? = null) = ProvidedSurgery(
+    fun createEhrSurgery(surgeryName: String? = SURGERY_NAME) = ProvidedSurgery(
         surgeryName = surgeryName,
-        endDate = DATE_Y2023_M02_D23,
+        endDate = LocalDate.of(2024, 2, 23),
         status = "FINISHED"
     )
 

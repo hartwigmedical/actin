@@ -525,7 +525,7 @@
                   }
                 ],
                 "function": {
-                  "rule": "HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_TERM_X",
+                  "rule": "HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_ANY_DOID_TERM_X",
                   "parameters": [
                     "Lung non-small cell carcinoma"
                   ]
@@ -572,7 +572,7 @@
                   }
                 ],
                 "function": {
-                  "rule": "HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_TERM_X",
+                  "rule": "HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_ANY_DOID_TERM_X",
                   "parameters": [
                     "Colorectal cancer"
                   ]
@@ -861,7 +861,7 @@
                   ]
                 },
                 {
-                  "rule": "HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_DOID_TERM_X",
+                  "rule": "HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_ANY_DOID_TERM_X",
                   "parameters": [
                     "Lung cancer"
                   ]

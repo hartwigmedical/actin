@@ -48,7 +48,8 @@ class HasPositiveHER2ExpressionByIHC(private val maxTestAge: LocalDate? = null) 
                     else -> {
                         EvaluationFactory.undetermined(
                             "No (reliable) HER2 expression test by IHC available",
-                            "HER2 expression not tested by IHC"
+                            "HER2 expression not tested by IHC",
+                            missingGenesForEvaluation = true
                         )
                     }
                 }

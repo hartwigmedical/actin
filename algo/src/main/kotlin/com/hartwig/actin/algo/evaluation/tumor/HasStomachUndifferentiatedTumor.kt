@@ -24,9 +24,9 @@ class HasStomachUndifferentiatedTumor(private val doidModel: DoidModel) : Evalua
             TumorTypeEvaluationFunctions.hasTumorWithType(record.tumor, UNDIFFERENTIATED_TYPES) ||
                     TumorTypeEvaluationFunctions.hasTumorWithDetails(record.tumor, UNDIFFERENTIATED_DETAILS)
         return if (isStomachCancer && isUndifferentiatedType) {
-            EvaluationFactory.pass("Patient has undifferentiated stomach tumor", "Tumor type")
+            EvaluationFactory.pass("Patient has undifferentiated stomach tumor", "Has undifferentiated stomach tumor")
         } else
-            EvaluationFactory.fail("Patient does not have undifferentiated stomach tumor", "Tumor type")
+            EvaluationFactory.fail("Patient does not have undifferentiated stomach tumor", "No undifferentiated stomach tumor")
     }
 
     companion object {

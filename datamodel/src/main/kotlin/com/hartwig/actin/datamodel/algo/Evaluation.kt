@@ -12,7 +12,8 @@ data class Evaluation(
     val undeterminedSpecificMessages: Set<String> = emptySet(),
     val undeterminedGeneralMessages: Set<String> = emptySet(),
     val failSpecificMessages: Set<String> = emptySet(),
-    val failGeneralMessages: Set<String> = emptySet()
+    val failGeneralMessages: Set<String> = emptySet(),
+    val isMissingGenesForSufficientEvaluation: Boolean = false
 ) {
 
     fun addMessagesAndEvents(other: Evaluation): Evaluation {
@@ -28,7 +29,8 @@ data class Evaluation(
             undeterminedSpecificMessages = undeterminedSpecificMessages + other.undeterminedSpecificMessages,
             undeterminedGeneralMessages = undeterminedGeneralMessages + other.undeterminedGeneralMessages,
             failSpecificMessages = failSpecificMessages + other.failSpecificMessages,
-            failGeneralMessages = failGeneralMessages + other.failGeneralMessages
+            failGeneralMessages = failGeneralMessages + other.failGeneralMessages,
+            isMissingGenesForSufficientEvaluation = isMissingGenesForSufficientEvaluation || other.isMissingGenesForSufficientEvaluation
         )
     }
 }

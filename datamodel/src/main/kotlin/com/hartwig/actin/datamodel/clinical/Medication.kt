@@ -1,5 +1,6 @@
 package com.hartwig.actin.datamodel.clinical
 
+import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import java.time.LocalDate
 
 data class Medication(
@@ -9,6 +10,7 @@ data class Medication(
     val dosage: Dosage,
     val startDate: LocalDate? = null,
     val stopDate: LocalDate? = null,
+    val drug: Drug? = null,
     val cypInteractions: List<CypInteraction> = emptyList(),
     val qtProlongatingRisk: QTProlongatingRisk,
     val atc: AtcClassification? = null,

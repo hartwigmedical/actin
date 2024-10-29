@@ -111,4 +111,8 @@ object TreatmentTestFactory {
     fun withTreatmentHistory(treatmentHistory: List<TreatmentHistoryEntry>): PatientRecord {
         return base.copy(oncologicalHistory = treatmentHistory)
     }
+
+    fun withTreatmentsAndMedications(treatmentHistory: List<TreatmentHistoryEntry>, medications: List<Medication>): PatientRecord {
+        return base.copy(oncologicalHistory = treatmentHistory, medications = medications)
+    }
 }

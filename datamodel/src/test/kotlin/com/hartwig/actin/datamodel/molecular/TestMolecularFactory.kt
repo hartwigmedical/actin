@@ -281,6 +281,18 @@ object TestMolecularFactory {
                 geneRole = GeneRole.UNKNOWN,
                 proteinEffect = ProteinEffect.UNKNOWN,
                 isAssociatedWithDrugResistance = null
+            ) + CopyNumber(
+                isReportable = false,
+                event = "MET copy number",
+                driverLikelihood = null,
+                evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
+                gene = "MET",
+                type = CopyNumberType.NONE,
+                minCopies = 6,
+                maxCopies = 6,
+                geneRole = GeneRole.UNKNOWN,
+                proteinEffect = ProteinEffect.UNKNOWN,
+                isAssociatedWithDrugResistance = null
             ),
             homozygousDisruptions = proper.homozygousDisruptions + HomozygousDisruption(
                 isReportable = true,
@@ -309,7 +321,7 @@ object TestMolecularFactory {
                 clusterGroup = 0
             ),
             fusions = proper.fusions + Fusion(
-                isReportable = true,
+                isReportable = false,
                 event = "EML4 - ALK fusion",
                 driverLikelihood = DriverLikelihood.HIGH,
                 evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),

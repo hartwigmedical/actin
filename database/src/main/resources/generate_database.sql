@@ -25,14 +25,21 @@ CREATE TABLE `tumor`
     `stage` varchar(50),
     `hasMeasurableDisease` BOOLEAN,
     `hasBrainLesions` BOOLEAN,
+    `hasSuspectedBrainLesions` BOOLEAN,
     `hasActiveBrainLesions` BOOLEAN,
     `hasCnsLesions` BOOLEAN,
+    `hasSuspectedCnsLesions` BOOLEAN,
     `hasActiveCnsLesions` BOOLEAN,
     `hasBoneLesions` BOOLEAN,
+    `hasSuspectedBoneLesions` BOOLEAN,
     `hasLiverLesions` BOOLEAN,
+    `hasSuspectedLiverLesions` BOOLEAN,
     `hasLungLesions` BOOLEAN,
+    `hasSuspectedLungLesions` BOOLEAN,
     `hasLymphNodeLesions` BOOLEAN,
+    `hasSuspectedLymphNodeLesions` BOOLEAN,
     `otherLesions` varchar(500),
+    `otherSuspectedLesions` varchar(500),
     `biopsyLocation` varchar(100),
     PRIMARY KEY (`id`)
 );
@@ -63,7 +70,7 @@ CREATE TABLE `treatmentHistoryEntry`
     `startYear` int,
     `startMonth` int,
     `name` varchar(100) NOT NULL,
-    `synonyms` varchar(100) NOT NULL,
+    `synonyms` varchar(200) NOT NULL,
     `categories` varchar(100) NOT NULL,
     `drugs` varchar(500),
     `isSystemic` BOOLEAN NOT NULL,
@@ -122,13 +129,14 @@ CREATE TABLE `priorOtherCondition`
     PRIMARY KEY (`id`)
 );
 
-DROP TABLE IF EXISTS `priorMolecularTest`;
-CREATE TABLE `priorMolecularTest`
+DROP TABLE IF EXISTS `priorIHCTest`;
+CREATE TABLE `priorIHCTest`
 (   `id` int NOT NULL AUTO_INCREMENT,
     `patientId` varchar(50) NOT NULL,
     `test` varchar(50) NOT NULL,
-    `item` varchar(50) NOT NULL,
+    `item` varchar(50),
     `measure` varchar(50),
+    `measureDate` DATE,
     `scoreText` varchar(100),
     `scoreValuePrefix` varchar(50),
     `scoreValue` double precision,
@@ -180,7 +188,7 @@ DROP TABLE IF EXISTS `intolerance`;
 CREATE TABLE `intolerance`
 (   `id` int NOT NULL AUTO_INCREMENT,
     `patientId` varchar(50) NOT NULL,
-    `name` varchar(50) NOT NULL,
+    `name` varchar(100) NOT NULL,
     `doids` varchar(50) NOT NULL,
     `category` varchar(50) NOT NULL,
     `subcategories` varchar(100) NOT NULL,

@@ -288,6 +288,7 @@
         "month": 2,
         "day": 1
       },
+      "drug": null,
       "cypInteractions": [
         {
           "cyp": "2A6",
