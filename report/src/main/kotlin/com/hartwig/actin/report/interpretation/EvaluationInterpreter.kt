@@ -30,9 +30,9 @@ object EvaluationInterpreter {
         evaluations: Map<CriterionReference, Evaluation>,
         resultToRender: EvaluationResult
     ): List<EvaluationInterpretation> {
-        return evaluations.keys.asSequence().sortedWith(CriterionReferenceComparator())
-            .mapNotNull { evaluations.entries.find { it.key.equals(it) } }
-            .filter { it.value.result == resultToRender }
+        return evaluations.keys.asSequence().sortedWith(CriterionReferenceComparator()).mapNotNull { key ->
+            evaluations.entries.find { it.key == key }
+        }.filter { it.value.result == resultToRender }
             .map {
                 EvaluationInterpretation(
                     rule = it.key.id,
@@ -49,13 +49,15 @@ object EvaluationInterpreter {
             }
 
             EvaluationResult.WARN -> {
-                mapOf(Pair(evaluation.result, generateEntry(evaluation, evaluation.warnSpecificMessages)),
-                    evaluation.undeterminedSpecificMessages.isNotEmpty().let {
+                listOfNotNull(
+                    Pair(evaluation.result, generateEntry(evaluation, evaluation.warnSpecificMessages)),
+                    evaluation.undeterminedSpecificMessages.takeIf { it.isNotEmpty() }?.let {
                         Pair(
                             EvaluationResult.UNDETERMINED,
                             generateEntry(EvaluationResult.UNDETERMINED, evaluation.undeterminedSpecificMessages)
                         )
-                    })
+                    }
+                ).toMap()
             }
 
             EvaluationResult.UNDETERMINED -> {
@@ -63,19 +65,18 @@ object EvaluationInterpreter {
             }
 
             EvaluationResult.FAIL -> {
-                mapOf(Pair(evaluation.result, generateEntry(evaluation, evaluation.failSpecificMessages)),
-                    evaluation.warnSpecificMessages.isNotEmpty().let {
-                        Pair(
-                            EvaluationResult.WARN,
-                            generateEntry(EvaluationResult.WARN, evaluation.warnSpecificMessages)
-                        )
+                listOfNotNull(
+                    Pair(evaluation.result, generateEntry(evaluation, evaluation.failSpecificMessages)),
+                    evaluation.warnSpecificMessages.takeIf { it.isNotEmpty() }?.let {
+                        Pair(EvaluationResult.WARN, generateEntry(EvaluationResult.WARN, evaluation.warnSpecificMessages))
                     },
-                    evaluation.undeterminedSpecificMessages.isNotEmpty().let {
+                    evaluation.undeterminedSpecificMessages.takeIf { it.isNotEmpty() }?.let {
                         Pair(
                             EvaluationResult.UNDETERMINED,
                             generateEntry(EvaluationResult.UNDETERMINED, evaluation.undeterminedSpecificMessages)
                         )
-                    })
+                    }
+                ).toMap()
             }
         }
     }
