@@ -164,7 +164,7 @@ object TestTreatmentMatchFactory {
     private fun createTestCohortsTrial1(): List<CohortMatch> {
         return listOf(
             CohortMatch(
-                metadata = createTestMetadata("A", true, true, false, true),
+                metadata = createTestMetadata("A", true, true, false, false),
                 isPotentiallyEligible = true,
                 evaluations = createTestCohortEvaluationsTrial1CohortA()
             ),

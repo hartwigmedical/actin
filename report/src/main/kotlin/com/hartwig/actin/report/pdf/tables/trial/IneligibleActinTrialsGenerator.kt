@@ -12,7 +12,7 @@ private const val SMALL_PADDING_DISTANCE = 0.1f
 private const val NORMAL_PADDING_DISTANCE = 1f
 
 class IneligibleActinTrialsGenerator(
-    val cohorts: List<InterpretedCohort>,
+    private val cohorts: List<InterpretedCohort>,
     private val title: String,
     private val trialColWidth: Float,
     private val subTableWidths: FloatArray,
@@ -51,6 +51,10 @@ class IneligibleActinTrialsGenerator(
             }
         }
         return makeWrapping(table)
+    }
+
+    fun getCohortSize(): Int {
+        return cohorts.size
     }
 
     companion object {

@@ -46,7 +46,7 @@ class InterpretedCohortFactoryTest {
         assertThat(trial1cohortA.isMissingGenesForSufficientEvaluation).isFalse()
         assertThat(trial1cohortA.isOpen).isTrue
         assertThat(trial1cohortA.hasSlotsAvailable).isFalse
-        assertThat(trial1cohortA.ignore).isTrue
+        assertThat(trial1cohortA.ignore).isFalse
         assertThat(trial1cohortA.warnings).isEmpty()
         assertThat(trial1cohortA.fails).isNotEmpty()
 

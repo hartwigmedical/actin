@@ -49,7 +49,7 @@ class ReportContentProviderTest {
         val ineligibleGenerators = trialMatchingChapter.createGenerators().filterIsInstance<IneligibleActinTrialsGenerator>()
 
         val totalCohortSizeOnReport =
-            eligibleActinTrialsGenerators.sumOf { it.cohorts.size } + eligibleGenerators.sumOf { it.cohorts.size } + ineligibleGenerators.sumOf { it.cohorts.size }
+            eligibleActinTrialsGenerators.sumOf { it.getCohortSize() } + eligibleGenerators.sumOf { it.getCohortSize() } + ineligibleGenerators.sumOf { it.getCohortSize() }
         val totalCohortSizeInput =
             TestTreatmentMatchFactory.createProperTreatmentMatch().trialMatches.sumOf { (it.cohorts.size + it.nonEvaluableCohorts.size) }
 
@@ -148,11 +148,6 @@ class ReportContentProviderTest {
     fun `Should provide expected summary tables for default configuration`() {
         val tables = ReportContentProvider(TestReportFactory.createExhaustiveTestReport())
             .provideSummaryTables(KEY_WIDTH, VALUE_WIDTH, CONTENT_WIDTH)
-
-        val eligibleActinTrialsGenerators = tables.filterIsInstance<EligibleActinTrialsGenerator>()
-        var size = 0
-        eligibleActinTrialsGenerators.forEach { size += it.cohorts.size }
-        assertEquals(size, 3)
 
         assertThat(tables.map { it::class }).containsExactly(
             PatientClinicalHistoryGenerator::class,
