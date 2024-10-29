@@ -142,11 +142,33 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
     }
 
     @Test
-    fun `Should be undetermined if medication is not provided`() {
+    fun `Should be undetermined if medication is not provided and no matching treatment history entry`() {
         val result = function.evaluate(
             TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = null)
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, result)
         Assertions.assertThat(result.recoverable).isTrue()
+    }
+
+    @Test
+    fun `Should pass if medication is not provided but matching treatment history entry`() {
+        val treatments = TreatmentTestFactory.drugTreatment(
+            "PARP inhibitor",
+            category = TreatmentCategory.IMMUNOTHERAPY,
+            types = setOf(DrugType.MONOCLONAL_ANTIBODY_IMMUNOTHERAPY)
+        )
+        val treatmentHistory = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(
+                setOf(treatments),
+                startYear = REFERENCE_DATE.year,
+                startMonth = REFERENCE_DATE.plusMonths(1).monthValue,
+                stopYear = REFERENCE_DATE.year,
+                stopMonth = REFERENCE_DATE.plusMonths(2).monthValue
+            )
+        )
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, null))
+        )
     }
 }
