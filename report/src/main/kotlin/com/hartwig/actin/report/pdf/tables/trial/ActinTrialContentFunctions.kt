@@ -20,7 +20,7 @@ object ActinTrialContentFunctions {
                 ContentDefinition(
                     listOfNotNull(
                         "Applies to all cohorts below",
-                        concat(commonEvents, allEventsEmpty),
+                        concat(commonEvents, allEventsEmpty).takeIf { includeFeedback },
                         concat(commonFeedback).takeIf { includeFeedback }), deEmphasizeContent
                 )
             )
