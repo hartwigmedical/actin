@@ -9,7 +9,7 @@ import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
 class EligibleActinTrialsGenerator(
-    private val cohorts: List<InterpretedCohort>,
+    val cohorts: List<InterpretedCohort>,
     private val title: String,
     private val trialColWidth: Float,
     private val cohortColWidth: Float,
@@ -31,7 +31,7 @@ class EligibleActinTrialsGenerator(
             sequenceOf("Cohort", "Molecular", "Warnings").map(Cells::createHeader).forEach(headerSubTable::addHeaderCell)
             table.addHeaderCell(Cells.createContentNoBorder(headerSubTable))
         }
-        addTrialsToTable(cohorts, table, cohortColWidth, molecularEventColWidth, checksColWidth, InterpretedCohort::warnings)
+        addTrialsToTable(cohorts, table, floatArrayOf(cohortColWidth, molecularEventColWidth, checksColWidth), InterpretedCohort::warnings)
         return makeWrapping(table)
     }
 

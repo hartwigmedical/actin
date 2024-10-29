@@ -3,6 +3,7 @@ package com.hartwig.actin.report.pdf.chapters
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 import com.hartwig.actin.report.pdf.ReportContentProvider
+import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.util.Cells
@@ -31,8 +32,23 @@ class TrialMatchingChapter(
         addTrialMatchingOverview(document)
     }
 
-    private fun addTrialMatchingOverview(document: Document) {
+    private fun addTrialMatchingOverview(document: Document): List<TableGenerator> {
         val table = Tables.createSingleColWithWidth(contentWidth())
+        val generators = createGenerators()
+
+        for (i in generators.indices) {
+            val generator = generators[i]
+            table.addCell(Cells.createTitle(generator.title()))
+            table.addCell(Cells.create(generator.contents()))
+            if (i < generators.size - 1) {
+                table.addCell(Cells.createEmpty())
+            }
+        }
+        document.add(table)
+        return generators
+    }
+
+    fun createGenerators(): List<TableGenerator> {
         val (ignoredCohorts, nonIgnoredCohorts) = InterpretedCohortFactory.createEvaluableCohorts(
             report.treatmentMatch,
             report.config.filterOnSOCExhaustionAndTumorType
@@ -49,25 +65,23 @@ class TrialMatchingChapter(
             evaluated,
             contentWidth()
         )
-        val generators = listOfNotNull(
+
+        return listOfNotNull(
             EligibleActinTrialsGenerator.forClosedCohorts(
                 nonIgnoredCohorts,
                 report.treatmentMatch.trialSource,
                 contentWidth(),
             ).takeIf { !externalTrialsOnly },
             if (includeIneligibleTrialsInSummary || externalTrialsOnly) null else {
-                IneligibleActinTrialsGenerator.forEvaluableCohorts(
+                IneligibleActinTrialsGenerator.forOpenCohorts(
                     nonIgnoredCohorts,
                     report.treatmentMatch.trialSource,
                     contentWidth(),
-                    includeOpen = true,
-                    includeClosed = enableExtendedMode
+                    enableExtendedMode
                 )
             },
             if ((includeIneligibleTrialsInSummary || externalTrialsOnly) || enableExtendedMode) null else {
-                IneligibleActinTrialsGenerator.forEvaluableCohorts(
-                    nonIgnoredCohorts, report.treatmentMatch.trialSource, contentWidth(), includeOpen = false, includeClosed = true
-                )
+                IneligibleActinTrialsGenerator.forClosedCohorts(nonIgnoredCohorts, report.treatmentMatch.trialSource, contentWidth())
             },
             if (includeIneligibleTrialsInSummary || externalTrialsOnly) null else {
                 IneligibleActinTrialsGenerator.forNonEvaluableAndIgnoredCohorts(
@@ -81,15 +95,5 @@ class TrialMatchingChapter(
                 externalTrialsOnly
             }
         )
-
-        for (i in generators.indices) {
-            val generator = generators[i]
-            table.addCell(Cells.createTitle(generator.title()))
-            table.addCell(Cells.create(generator.contents()))
-            if (i < generators.size - 1) {
-                table.addCell(Cells.createEmpty())
-            }
-        }
-        document.add(table)
     }
 }

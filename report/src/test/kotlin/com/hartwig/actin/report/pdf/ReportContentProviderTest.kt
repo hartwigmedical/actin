@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.pdf
 
 import com.hartwig.actin.configuration.EnvironmentConfiguration
+import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.pdf.chapters.ClinicalDetailsChapter
@@ -25,6 +26,7 @@ import com.hartwig.actin.report.pdf.tables.trial.EligibleApprovedTreatmentGenera
 import com.hartwig.actin.report.pdf.tables.trial.EligibleLocalExternalTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleOtherCountriesExternalTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleActinTrialsGenerator
+import junit.framework.TestCase.assertEquals
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -34,6 +36,25 @@ private const val CONTENT_WIDTH = 300f
 
 class ReportContentProviderTest {
     private val proper = TestReportFactory.createProperTestReport()
+
+    @Test
+    fun `Should match total cohort size between report and input`() {
+        val eligibleActinTrialsGenerators = ReportContentProvider(TestReportFactory.createExhaustiveTestReport()).provideSummaryTables(
+            KEY_WIDTH,
+            VALUE_WIDTH,
+            CONTENT_WIDTH
+        ).filterIsInstance<EligibleActinTrialsGenerator>()
+        val trialMatchingChapter = ReportContentProvider(proper, false).provideChapters().filterIsInstance<TrialMatchingChapter>().first()
+        val eligibleGenerators = trialMatchingChapter.createGenerators().filterIsInstance<EligibleActinTrialsGenerator>()
+        val ineligibleGenerators = trialMatchingChapter.createGenerators().filterIsInstance<IneligibleActinTrialsGenerator>()
+
+        val totalCohortSizeOnReport =
+            eligibleActinTrialsGenerators.sumOf { it.cohorts.size } + eligibleGenerators.sumOf { it.cohorts.size } + ineligibleGenerators.sumOf { it.cohorts.size }
+        val totalCohortSizeInput =
+            TestTreatmentMatchFactory.createProperTreatmentMatch().trialMatches.sumOf { (it.cohorts.size + it.nonEvaluableCohorts.size) }
+
+        assertEquals(totalCohortSizeOnReport, totalCohortSizeInput)
+    }
 
     @Test
     fun `Should include molecular chapter and omit efficacy chapters by default`() {
@@ -127,6 +148,11 @@ class ReportContentProviderTest {
     fun `Should provide expected summary tables for default configuration`() {
         val tables = ReportContentProvider(TestReportFactory.createExhaustiveTestReport())
             .provideSummaryTables(KEY_WIDTH, VALUE_WIDTH, CONTENT_WIDTH)
+
+        val eligibleActinTrialsGenerators = tables.filterIsInstance<EligibleActinTrialsGenerator>()
+        var size = 0
+        eligibleActinTrialsGenerators.forEach { size += it.cohorts.size }
+        assertEquals(size, 3)
 
         assertThat(tables.map { it::class }).containsExactly(
             PatientClinicalHistoryGenerator::class,

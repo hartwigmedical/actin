@@ -8,7 +8,7 @@ data class ContentDefinition(val textEntries: List<String>, val deEmphasizeConte
 object ActinTrialContentFunctions {
 
     fun contentForTrialCohortList(
-        cohorts: List<InterpretedCohort>, feedbackFunction: (InterpretedCohort) -> Set<String>, hasFeedback: Boolean = true
+        cohorts: List<InterpretedCohort>, feedbackFunction: (InterpretedCohort) -> Set<String>, includeFeedback: Boolean = true
     ): List<ContentDefinition> {
         val commonFeedback = findCommonMembersInCohorts(cohorts, feedbackFunction)
         val commonEvents = findCommonMembersInCohorts(cohorts, InterpretedCohort::molecularEvents)
@@ -18,21 +18,19 @@ object ActinTrialContentFunctions {
             val deEmphasizeContent = cohorts.all { !it.isOpen || !it.hasSlotsAvailable }
             listOf(
                 ContentDefinition(
-                    listOf(
+                    listOfNotNull(
                         "Applies to all cohorts below",
                         concat(commonEvents, allEventsEmpty),
-                        if (hasFeedback) {
-                            concat(commonFeedback)} else ""
-                    ), deEmphasizeContent
+                        concat(commonFeedback).takeIf { includeFeedback }), deEmphasizeContent
                 )
             )
         }
         return prefix + cohorts.map { cohort: InterpretedCohort ->
             ContentDefinition(
-                listOf(
+                listOfNotNull(
                     cohort.name ?: "",
                     concat(cohort.molecularEvents - commonEvents, commonEvents.isEmpty() && !allEventsEmpty),
-                    if (hasFeedback) {concat(feedbackFunction.invoke(cohort) - commonFeedback, commonFeedback.isEmpty())} else ""
+                    concat(feedbackFunction.invoke(cohort) - commonFeedback, commonFeedback.isEmpty()).takeIf { includeFeedback }
                 ),
                 !cohort.isOpen || !cohort.hasSlotsAvailable
             )
