@@ -117,7 +117,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             throw IllegalArgumentException("Failed to load known fusions from ${config.knownFusionsPath}")
         }
 
-        LOGGER.info("Interpreting prior sequencing tests without orange results")
+        LOGGER.info("Interpreting {} prior sequencing tests without orange results", priorSequencingTests.size)
         val geneDriverLikelihoodModel = GeneDriverLikelihoodModel(dndsDatabase)
         val variantAnnotator = TransvarVariantAnnotatorFactory.withRefGenome(
             com.hartwig.actin.tools.ensemblcache.RefGenome.V37,
