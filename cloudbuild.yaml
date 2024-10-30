@@ -16,6 +16,7 @@ steps:
     name: 'gcr.io/cloud-builders/docker'
     dir: 'system/src/test/docker'
     args: [ 'build', '.', '-t', 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent:latest' ]
+    waitFor: ['-'] 
 
   - id: 'Set version for maven'
     name: 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent'
