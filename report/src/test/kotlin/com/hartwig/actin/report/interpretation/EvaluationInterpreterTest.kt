@@ -6,20 +6,20 @@ import com.hartwig.actin.datamodel.trial.CriterionReference
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-private val FIRST_CRITERION = CriterionReference(id = "first", text = "test 1")
-private val SECOND_CRITERION = CriterionReference(id = "second", text = "test 2")
-private val THIRD_CRITERION = CriterionReference(id = "third", text = "test 3")
-private val FOURTH_CRITERION = CriterionReference(id = "fourth", text = "test 4")
+private val FIRST_CRITERION = CriterionReference(id = "1. first", text = "test 1")
+private val SECOND_CRITERION = CriterionReference(id = "2. second", text = "test 2")
+private val THIRD_CRITERION = CriterionReference(id = "3. third", text = "test 3")
+private val FOURTH_CRITERION = CriterionReference(id = "4. fourth", text = "test 4")
 
 class EvaluationInterpreterTest {
 
     @Test
     fun `Should only generate FAIL when configured for FAIL only`() {
         val evaluations = mapOf(
-            Pair(SECOND_CRITERION, createBaseEvaluation(result = EvaluationResult.PASS)),
+            Pair(SECOND_CRITERION, createBaseEvaluation(result = EvaluationResult.WARN)),
             Pair(FIRST_CRITERION, createBaseEvaluation(result = EvaluationResult.FAIL)),
-            Pair(THIRD_CRITERION, createBaseEvaluation(result = EvaluationResult.WARN)),
-            Pair(FOURTH_CRITERION, createBaseEvaluation(result = EvaluationResult.UNDETERMINED))
+            Pair(THIRD_CRITERION, createBaseEvaluation(result = EvaluationResult.UNDETERMINED)),
+            Pair(FOURTH_CRITERION, createBaseEvaluation(result = EvaluationResult.PASS))
         )
         val interpretation = EvaluationInterpreter.interpretForDetailedTrialMatching(evaluations, interpretFailOnly = true)
 
@@ -41,10 +41,10 @@ class EvaluationInterpreterTest {
     @Test
     fun `Should generate all when configured for all evaluations`() {
         val evaluations = mapOf(
-            Pair(SECOND_CRITERION, createBaseEvaluation(result = EvaluationResult.PASS)),
+            Pair(FOURTH_CRITERION, createBaseEvaluation(result = EvaluationResult.PASS)),
+            Pair(SECOND_CRITERION, createBaseEvaluation(result = EvaluationResult.WARN)),
             Pair(FIRST_CRITERION, createBaseEvaluation(result = EvaluationResult.FAIL)),
-            Pair(THIRD_CRITERION, createBaseEvaluation(result = EvaluationResult.WARN)),
-            Pair(FOURTH_CRITERION, createBaseEvaluation(result = EvaluationResult.UNDETERMINED))
+            Pair(THIRD_CRITERION, createBaseEvaluation(result = EvaluationResult.UNDETERMINED))
         )
         val interpretation = EvaluationInterpreter.interpretForDetailedTrialMatching(evaluations, interpretFailOnly = false)
 
@@ -60,23 +60,23 @@ class EvaluationInterpreterTest {
                     )
                 ),
                 EvaluationInterpretation(
-                    rule = THIRD_CRITERION.id,
-                    reference = THIRD_CRITERION.text,
+                    rule = SECOND_CRITERION.id,
+                    reference = SECOND_CRITERION.text,
                     entriesPerResult = mapOf(
                         Pair(EvaluationResult.WARN, EvaluationEntry("WARN", setOf("warn specific 1", "warn specific 2"))),
                         Pair(EvaluationResult.UNDETERMINED, EvaluationEntry("UNDETERMINED", setOf("undetermined specific")))
                     )
                 ),
                 EvaluationInterpretation(
-                    rule = FOURTH_CRITERION.id,
-                    reference = FOURTH_CRITERION.text,
+                    rule = THIRD_CRITERION.id,
+                    reference = THIRD_CRITERION.text,
                     entriesPerResult = mapOf(
                         Pair(EvaluationResult.UNDETERMINED, EvaluationEntry("UNDETERMINED", setOf("undetermined specific")))
                     )
                 ),
                 EvaluationInterpretation(
-                    rule = SECOND_CRITERION.id,
-                    reference = SECOND_CRITERION.text,
+                    rule = FOURTH_CRITERION.id,
+                    reference = FOURTH_CRITERION.text,
                     entriesPerResult = mapOf(
                         Pair(EvaluationResult.PASS, EvaluationEntry("PASS", setOf("pass specific")))
                     )
