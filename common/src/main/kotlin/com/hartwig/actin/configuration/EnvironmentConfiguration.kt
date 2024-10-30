@@ -6,6 +6,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.hartwig.actin.datamodel.molecular.evidence.CountryName
 import java.io.File
+import java.time.LocalDate
 import org.apache.logging.log4j.LogManager
 
 enum class ConfigurationProfile {
@@ -40,7 +41,8 @@ data class ReportConfiguration(
     val includeLongitudinalMolecularChapter: Boolean = false,
     val includeMolecularEvidenceChapter: Boolean = false,
     val includeRawPathologyReport: Boolean = false,
-    val countryOfReference: CountryName = CountryName.NETHERLANDS
+    val countryOfReference: CountryName = CountryName.NETHERLANDS,
+    val reportDate: LocalDate? = null
 )
 
 data class AlgoConfiguration(

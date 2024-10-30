@@ -3,6 +3,7 @@ package com.hartwig.actin.report.datamodel
 import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
+import java.time.LocalDate
 import org.apache.logging.log4j.LogManager
 
 object ReportFactory {
@@ -19,6 +20,7 @@ object ReportFactory {
             )
         }
         return Report(
+            reportDate = config.reportDate ?: LocalDate.now(),
             patientId = patient.patientId,
             patientRecord = patient,
             treatmentMatch = treatmentMatch,

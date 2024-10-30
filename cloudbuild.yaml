@@ -1,45 +1,98 @@
 steps:
 
-  - id: 'Set version for maven'
-    name: 'eu.gcr.io/hmf-build/maven-cache'
-    args: [ 'versions:set -DnewVersion=$TAG_NAME --batch-mode' ]
+  - name: 'gcr.io/cloud-builders/gsutil'
+    id: 'Populate the maven cache'
+    args:
+      - '-m'
+      - 'rsync'
+      - '-r'
+      - 'gs://actin-build-maven-cache/actin/.m2'
+      - '/cache/.m2'
+    volumes:
+      - path: '/cache/.m2'
+        name: 'm2_cache'
 
-  - id: 'Maven build using cache'
-    name: 'eu.gcr.io/hmf-build/maven-cache'
+  - id: 'Set version for maven'
+    name: 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent'
+    entrypoint: mvn
+    args: [ 'versions:set -DnewVersion=$TAG_NAME --batch-mode' ]
+    volumes:
+      - path: '/cache/.m2'
+        name: 'm2_cache'
+    env:
+      - MAVEN_OPTS=-Dmaven.repo.local=/cache/.m2
+  
+  - id: 'Create the ACTIN build agent image'
+    name: 'gcr.io/cloud-builders/docker'
+    dir: 'system/src/test/docker'
+    args: [ 'build', '.', '-t', 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent:latest']
+
+  - id: 'Maven build, test and deploy'
+    name: 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent'
+    entrypoint: mvn
     args: [ '-T 1C deploy --batch-mode' ]
+    volumes:
+      - path: '/cache/.m2'
+        name: 'm2_cache'
+    env:
+      - MAVEN_OPTS=-Dmaven.repo.local=/cache/.m2
 
   - id: 'Build and push the molecular image with tag'
     name: 'eu.gcr.io/hmf-build/docker-tag'
     dir: 'molecular'
     args: [ 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-molecular', '$TAG_NAME', 'Dockerfile', '--build-arg', 'VERSION=$TAG_NAME' ]
+    waitFor:
+      - 'Build and push the molecular image with tag'
 
   - id: 'Build and push the trial image with tag'
     name: 'eu.gcr.io/hmf-build/docker-tag'
     dir: 'trial'
     args: [ 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-trial', '$TAG_NAME', 'Dockerfile','--build-arg', 'VERSION=$TAG_NAME' ]
+    waitFor:
+      - 'Build and push the molecular image with tag'
 
   - id: 'Build and push the algo image with tag'
     name: 'eu.gcr.io/hmf-build/docker-tag'
     dir: 'algo'
     args: [ 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-algo', '$TAG_NAME', 'Dockerfile','--build-arg', 'VERSION=$TAG_NAME' ]
+    waitFor:
+      - 'Build and push the molecular image with tag'
 
   - id: 'Build and push the report image with tag'
     name: 'eu.gcr.io/hmf-build/docker-tag'
     dir: 'report'
     args: [ 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-report', '$TAG_NAME', 'report.Dockerfile', '--build-arg', 'VERSION=$TAG_NAME' ]
+    waitFor:
+      - 'Build and push the molecular image with tag'
 
   - id: 'Build and push the evaluation image with tag'
     name: 'eu.gcr.io/hmf-build/docker-tag'
     dir: 'report'
     args: [ 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-evaluation', '$TAG_NAME', 'evaluation.Dockerfile', '--build-arg', 'VERSION=$TAG_NAME' ]
+    waitFor:
+      - 'Build and push the molecular image with tag'
 
   - id: 'Build and push the clinical image with tag'
     name: 'eu.gcr.io/hmf-build/docker-tag'
     dir: 'clinical'
     args: [ 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-clinical', '$TAG_NAME', 'Dockerfile', '--build-arg', 'VERSION=$TAG_NAME' ]
+    waitFor:
+      - 'Build and push the molecular image with tag'
 
   - name: 'gcr.io/cloud-builders/gcloud'
     args: [ 'pubsub', 'topics', 'publish', 'actin-upgrade.pending', '--project', 'actin-build', '--message', '{ "tag": "$TAG_NAME", "repository": "actin"}' ]
+
+  - name: 'gcr.io/cloud-builders/gsutil'
+    id: 'Update the maven cache'
+    args:
+      - '-m'
+      - 'rsync'
+      - '-r'
+      - '/cache/.m2'
+      - 'gs://actin-build-maven-cache/actin/.m2/'
+    volumes:
+      - path: '/cache/.m2'
+        name: 'm2_cache'
 
 options:
   machineType: 'E2_HIGHCPU_8'
