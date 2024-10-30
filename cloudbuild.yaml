@@ -18,19 +18,6 @@ steps:
     args: [ 'build', '.', '-t', 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent:latest' ]
     waitFor: [ '-' ]
 
-  - id: 'Create the ACTIN transvar image'
-    name: 'gcr.io/cloud-builders/docker'
-    dir: 'molecular'
-    args: [ 'build','-f','transvar.Dockerfile','.', '-t', 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-transvar:1.0.0' ]
-    waitFor: [ '-' ]
-
-  - id: 'Push the ACTIN transvar image'
-    name: 'gcr.io/cloud-builders/docker'
-    dir: 'molecular'
-    args: [ 'push','europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-transvar:1.0.0' ]
-    waitFor: 
-      - "Create the ACTIN transvar image"
-
   - id: 'Set version for maven'
     name: 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent'
     entrypoint: mvn
