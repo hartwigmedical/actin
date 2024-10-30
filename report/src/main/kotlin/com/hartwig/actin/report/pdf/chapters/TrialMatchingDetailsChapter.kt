@@ -166,15 +166,11 @@ class TrialMatchingDetailsChapter(private val report: Report, override val inclu
         evaluationsPerCriterion: Map<CriterionReference, Evaluation>,
         displayFailOnly: Boolean
     ): Boolean {
-        if (!displayFailOnly) {
-            return evaluationsPerCriterion.isNotEmpty()
+        return if (displayFailOnly) {
+            evaluationsPerCriterion.values.any { it.result == EvaluationResult.FAIL }
+        } else {
+            evaluationsPerCriterion.isNotEmpty()
         }
-        for (evaluation in evaluationsPerCriterion.values) {
-            if (evaluation.result == EvaluationResult.FAIL) {
-                return true
-            }
-        }
-        return false
     }
 
     private fun toWorstEvaluationPerReference(evaluations: Map<Eligibility, Evaluation>): Map<CriterionReference, Evaluation> {
@@ -217,7 +213,10 @@ class TrialMatchingDetailsChapter(private val report: Report, override val inclu
         return AreaBreak(AreaBreakType.NEXT_PAGE)
     }
 
-    private data class TrialClassification(val eligible: List<TrialMatch> = emptyList(), val nonEligible: List<TrialMatch> = emptyList()) {
+    private data class TrialClassification(
+        val eligible: List<TrialMatch> = emptyList(),
+        val nonEligible: List<TrialMatch> = emptyList()
+    ) {
 
         fun combine(other: TrialClassification): TrialClassification {
             return TrialClassification(eligible + other.eligible, nonEligible + other.nonEligible)
