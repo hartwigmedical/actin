@@ -149,13 +149,12 @@ class TrialMatchingDetailsChapter(private val report: Report, override val inclu
             table.addCell(Cells.createContent(interpretation.rule))
             table.addCell(Cells.createContent(interpretation.reference))
             val evalTable = Tables.createSingleColWithWidth(EVALUATION_COL_WIDTH).setKeepTogether(true)
-            for (result in interpretation.entriesPerResult.keys) {
-                val entry = interpretation.entriesPerResult[result]!!
-                evalTable.addCell(Cells.createEvaluationResult(result, entry.header))
-                for (message in entry.messages) {
-                    evalTable.addCell(Cells.create(Paragraph(message)))
-                }
+
+            val evalCells = interpretation.entriesPerResult.flatMap { (result, entry) ->
+                listOf(Cells.createEvaluationResult(result, entry.header)) + entry.messages.map { Cells.create(Paragraph(it)) }
             }
+            evalCells.forEach(evalTable::addCell)
+
             table.addCell(Cells.createContent(evalTable))
         }
 
