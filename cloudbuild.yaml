@@ -6,8 +6,8 @@ steps:
       - '-m'
       - 'cp'
       - '-r'
-      - 'gs://actin-build-maven-cache/actin/.m2'
-      - '/cache/.m2'
+      - 'gs://actin-build-maven-cache/actin/.m2/*'
+      - '/cache/.m2/'
     volumes:
       - path: '/cache/.m2'
         name: 'm2_cache'
