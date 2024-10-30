@@ -36,7 +36,6 @@ class ReportRegressionTest(private val exampleName: String) {
 
     @Test
     fun `Regress report textually and visually`() {
-        System.setProperty("java.locale.providers", "COMPAT")
         val outputDirectory = System.getProperty("user.dir") + "/target/test-classes"
         LocalExampleReportApplication(LocalDate.of(2024, 10, 23)).run(
             ExampleFunctions.resolveExamplePatientRecordJson(exampleName),
