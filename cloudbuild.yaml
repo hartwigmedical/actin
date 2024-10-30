@@ -1,10 +1,10 @@
 steps:
 
-  - name: 'gcr.io/cloud-builders/gsutil'
+  - name: 'gcr.io/cloud-builders/gcloud'
     id: 'Populate the maven cache'
     args:
-      - '-m'
-      - 'rsync'
+      - 'storage'
+      - 'cp'
       - '-r'
       - 'gs://actin-build-maven-cache/actin/.m2'
       - '/cache/.m2'
@@ -16,7 +16,13 @@ steps:
     name: 'gcr.io/cloud-builders/docker'
     dir: 'system/src/test/docker'
     args: [ 'build', '.', '-t', 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent:latest' ]
-    waitFor: ['-'] 
+    waitFor: [ '-' ]
+
+  - id: 'Create the ACTIN build agent image'
+    name: 'gcr.io/cloud-builders/docker'
+    dir: 'molecular'
+    args: [ 'build','-f','transvar.Dockerfile',' '.', '-t', 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-transvar:1.0.0' ]
+    waitFor: [ '-' ]
 
   - id: 'Set version for maven'
     name: 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent'
