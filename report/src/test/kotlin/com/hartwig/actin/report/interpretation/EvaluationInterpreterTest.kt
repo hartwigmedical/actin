@@ -39,7 +39,7 @@ class EvaluationInterpreterTest {
     }
 
     @Test
-    fun `Should only generate all when configured for all evaluations`() {
+    fun `Should generate all when configured for all evaluations`() {
         val evaluations = mapOf(
             Pair(SECOND_CRITERION, createBaseEvaluation(result = EvaluationResult.PASS)),
             Pair(FIRST_CRITERION, createBaseEvaluation(result = EvaluationResult.FAIL)),
