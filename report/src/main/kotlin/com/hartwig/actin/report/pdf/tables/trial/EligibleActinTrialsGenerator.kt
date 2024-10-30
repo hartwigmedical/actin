@@ -45,7 +45,7 @@ class EligibleActinTrialsGenerator(
     companion object {
 
         fun forOpenCohorts(
-            cohorts: List<EvaluatedCohort>, source: String, width: Float, slotsAvailable: Boolean
+            cohorts: List<EvaluatedCohort>, source: String?, width: Float, slotsAvailable: Boolean
         ): Pair<EligibleActinTrialsGenerator, List<EvaluatedCohort>> {
             val recruitingAndEligibleCohorts = cohorts.filter {
                 it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable == slotsAvailable && !it.isMissingGenesForSufficientEvaluation
@@ -56,13 +56,15 @@ class EligibleActinTrialsGenerator(
                 "(${formatCountWithLabel(recruitingAndEligibleCohorts.size, "cohort")}" +
                         " from ${formatCountWithLabel(recruitingAndEligibleTrials.size, "trial")})"
             } else "(0)"
-            val title = "$source trials that are open and potentially eligible$slotsText $cohortFromTrialsText"
+
+            val titleStart = ActinTrialGeneratorFunctions.createTableTitleStart(source)
+            val title = "$titleStart that are open and potentially eligible$slotsText $cohortFromTrialsText"
 
             return create(recruitingAndEligibleCohorts, title, width) to recruitingAndEligibleCohorts
         }
 
         fun forOpenCohortsWithMissingGenes(
-            cohorts: List<EvaluatedCohort>, source: String, width: Float
+            cohorts: List<EvaluatedCohort>, source: String?, width: Float
         ): EligibleActinTrialsGenerator? {
             val recruitingAndEligibleCohorts = cohorts.filter {
                 it.isPotentiallyEligible && it.isOpen && it.isMissingGenesForSufficientEvaluation
@@ -73,8 +75,9 @@ class EligibleActinTrialsGenerator(
                         " from ${formatCountWithLabel(recruitingAndEligibleTrials.size, "trial")})"
             } else "(0)"
 
+            val titleStart = ActinTrialGeneratorFunctions.createTableTitleStart(source)
             val title =
-                "$source trials that are open but for which additional genes need to be tested to evaluate eligibility $cohortFromTrialsText"
+                "$titleStart that are open but for which additional genes need to be tested to evaluate eligibility $cohortFromTrialsText"
 
             val footNote = "Open cohorts with no slots available are shown in grey."
 
@@ -87,7 +90,7 @@ class EligibleActinTrialsGenerator(
 
         fun forClosedCohorts(
             cohorts: List<EvaluatedCohort>,
-            source: String,
+            source: String?,
             contentWidth: Float,
             enableExtendedMode: Boolean
         ): EligibleActinTrialsGenerator {
@@ -95,9 +98,10 @@ class EligibleActinTrialsGenerator(
                 .filter { trial: EvaluatedCohort -> trial.isPotentiallyEligible && !trial.isOpen }
                 .filter { trial: EvaluatedCohort -> trial.molecularEvents.isNotEmpty() || enableExtendedMode }
 
+            val titleStart = ActinTrialGeneratorFunctions.createTableTitleStart(source)
             val title = String.format(
-                "%s trials and cohorts that %smay be eligible, but are closed (%s)",
-                source,
+                "%s and cohorts that %smay be eligible, but are closed (%s)",
+                titleStart,
                 if (enableExtendedMode) "" else "meet molecular requirements and ",
                 unavailableAndEligible.size
             )

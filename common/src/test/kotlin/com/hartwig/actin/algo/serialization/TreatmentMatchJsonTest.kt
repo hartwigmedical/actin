@@ -49,7 +49,7 @@ class TreatmentMatchJsonTest {
             ),
             personalizedDataAnalysis = null
         )
-        val expectedJson = ("{\"patientId\":\"ACTN01029999\",\"sampleId\":\"ACTN01029999T\",\"trialSource\":\"EMC\","
+        val expectedJson = ("{\"patientId\":\"ACTN01029999\",\"sampleId\":\"ACTN01029999T\",\"trialSource\":\"Test hospital\","
                 + "\"referenceDate\":{\"year\":2021,\"month\":8,\"day\":2},\"referenceDateIsLive\":true,\"trialMatches\":["
                 + "{\"identification\":{\"trialId\":\"Test Trial 1\",\"open\":true,\"acronym\":\"TEST-1\","
                 + "\"title\":\"Example test trial 1\",\"nctId\":\"NCT00000010\",\"phase\":\"PHASE_1\"},\"isPotentiallyEligible\":true,\"evaluations\":[["
