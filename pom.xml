@@ -76,7 +76,7 @@
     <repositories>
         <repository>
             <id>actin-artifact-registry</id>
-            <url>artifactregistry://europe-west4-maven.pkg.dev/actin-build/build-registry-maven</url>
+            <url>artifactregistry://europe-west4-maven.pkg.dev/actin-build/build-registry-maven-virtual</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
