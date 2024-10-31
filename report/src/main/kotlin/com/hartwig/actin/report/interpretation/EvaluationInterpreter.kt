@@ -67,10 +67,10 @@ object EvaluationInterpreter {
             EvaluationResult.FAIL -> {
                 listOfNotNull(
                     Pair(evaluation.result, generateEntry(evaluation, evaluation.failSpecificMessages)),
-                    evaluation.warnSpecificMessages.takeIf { it.isNotEmpty() }?.let {
+                    evaluation.warnSpecificMessages.takeIf { it.isNotEmpty() && evaluation.recoverable }?.let {
                         Pair(EvaluationResult.WARN, generateEntry(EvaluationResult.WARN, evaluation.warnSpecificMessages))
                     },
-                    evaluation.undeterminedSpecificMessages.takeIf { it.isNotEmpty() }?.let {
+                    evaluation.undeterminedSpecificMessages.takeIf { it.isNotEmpty() && evaluation.recoverable }?.let {
                         Pair(
                             EvaluationResult.UNDETERMINED,
                             generateEntry(EvaluationResult.UNDETERMINED, evaluation.undeterminedSpecificMessages)
