@@ -5,3 +5,5 @@ RUN apt-get update && apt-get install -y \
     imagemagick 
 
 RUN ln -s /usr/bin/convert /usr/bin/magick
+
+COPY repository /.m2/repository
