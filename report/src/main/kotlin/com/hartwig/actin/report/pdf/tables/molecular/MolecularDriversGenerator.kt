@@ -21,7 +21,7 @@ import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
 class MolecularDriversGenerator(
-    private val trialSource: String,
+    private val trialSource: String?,
     private val molecular: MolecularRecord,
     private val cohorts: List<InterpretedCohort>,
     private val trialMatches: List<TrialMatch>,
@@ -40,7 +40,7 @@ class MolecularDriversGenerator(
         table.addHeaderCell(Cells.createHeader("Type"))
         table.addHeaderCell(Cells.createHeader("Driver"))
         table.addHeaderCell(Cells.createHeader("Driver likelihood"))
-        table.addHeaderCell(Cells.createHeader("Trials in $trialSource"))
+        table.addHeaderCell(Cells.createHeader(trialSource?.let { "Trials in $it" } ?: "Trials"))
         table.addHeaderCell(Cells.createHeader("Trials in ${molecular.externalTrialSource}"))
         table.addHeaderCell(Cells.createHeader("Best evidence in ${molecular.evidenceSource}"))
         table.addHeaderCell(Cells.createHeader("Resistance in ${molecular.evidenceSource}"))

@@ -25,7 +25,7 @@ object TestTreatmentMatchFactory {
         return TreatmentMatch(
             patientId = TestPatientFactory.TEST_PATIENT,
             sampleId = TestPatientFactory.TEST_SAMPLE,
-            trialSource = "EMC",
+            trialSource = "Test hospital",
             referenceDate = LocalDate.of(2021, 8, 2),
             referenceDateIsLive = true,
             trialMatches = emptyList()

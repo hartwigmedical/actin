@@ -69,9 +69,10 @@ class IneligibleActinTrialsGenerator(
             val cohortColWidth = width / 4
             val molecularColWidth = width / 7
             val ineligibilityReasonColWidth = width - (trialColWidth + cohortColWidth + molecularColWidth)
+
             val title = String.format(
-                "%s trials and cohorts that are %sconsidered ineligible (%s)",
-                source,
+                "%s and cohorts that are %sconsidered ineligible (%s)",
+                ActinTrialGeneratorFunctions.createTableTitleStart(source),
                 if (enableExtendedMode) "" else "open but ",
                 ineligibleCohorts.size
             )
@@ -93,8 +94,8 @@ class IneligibleActinTrialsGenerator(
             val unavailableAndEligible =
                 cohorts.filter { trial: InterpretedCohort -> !trial.isPotentiallyEligible && !trial.isOpen }
             val title = String.format(
-                "%s trials and cohorts that are closed and considered ineligible (%s)",
-                source,
+                "%s and cohorts that are closed and considered ineligible (%s)",
+                ActinTrialGeneratorFunctions.createTableTitleStart(source),
                 unavailableAndEligible.size
             )
             return IneligibleActinTrialsGenerator(
@@ -115,7 +116,7 @@ class IneligibleActinTrialsGenerator(
         ): IneligibleActinTrialsGenerator {
             val nonEvaluableAndIgnoredCohorts = ignoredCohorts + nonEvaluableCohorts
             val title =
-                String.format("%s trials and cohorts that are not evaluable or ignored (%s)", source, nonEvaluableAndIgnoredCohorts.size)
+                String.format("%s and cohorts that are not evaluable or ignored (%s)", ActinTrialGeneratorFunctions.createTableTitleStart(source), nonEvaluableAndIgnoredCohorts.size)
             return IneligibleActinTrialsGenerator(
                 nonEvaluableAndIgnoredCohorts,
                 title,

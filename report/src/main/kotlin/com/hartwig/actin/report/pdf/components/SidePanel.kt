@@ -1,6 +1,5 @@
 package com.hartwig.actin.report.pdf.components
 
-import com.hartwig.actin.report.pdf.util.Constants
 import com.hartwig.actin.report.pdf.util.Formats.date
 import com.hartwig.actin.report.pdf.util.Styles
 import com.itextpdf.kernel.font.PdfFont
@@ -10,9 +9,10 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas
 import com.itextpdf.layout.Canvas
 import com.itextpdf.layout.element.Div
 import com.itextpdf.layout.element.Paragraph
-import java.util.*
+import java.time.LocalDate
+import java.util.Locale
 
-class SidePanel(private val patientId: String) {
+class SidePanel(private val patientId: String, private val reportDate: LocalDate) {
 
     fun render(page: PdfPage) {
         val canvas = PdfCanvas(page.lastContentStream, page.resources, page.document)
@@ -23,7 +23,7 @@ class SidePanel(private val patientId: String) {
         var sideTextIndex = 0
         val cv = Canvas(canvas, page.pageSize)
         cv.add(createDiv(pageSize, ++sideTextIndex, "Patient", patientId))
-        cv.add(createDiv(pageSize, ++sideTextIndex, "Report Date", date(Constants.REPORT_DATE)))
+        cv.add(createDiv(pageSize, ++sideTextIndex, "Report Date", date(reportDate)))
         canvas.release()
     }
 

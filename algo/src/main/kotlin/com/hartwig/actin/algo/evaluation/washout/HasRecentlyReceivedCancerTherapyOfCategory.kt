@@ -45,15 +45,19 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
     private val minDate: LocalDate
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
-
         val categoryNames: Set<String> = categories.keys - categoriesToIgnore.keys
+        val treatmentAssessment = assessTreatmentHistory(record, categoryNames)
+        val matchingTreatmentFound =
+            treatmentAssessment.hasHadValidTreatment || treatmentAssessment.hasInconclusiveDate || treatmentAssessment.hasHadTrialAfterMinDate
 
-        val activeMedications = medications.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
+        if (!matchingTreatmentFound && record.medications == null) {
+            return MEDICATION_NOT_PROVIDED
+        }
+
+        val activeMedications =
+            record.medications?.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE } ?: emptyList()
         val (foundMedicationCategories, foundMedicationNames) = findMatchingMedications(activeMedications)
         val foundTrialMedication = activeMedications.any(Medication::isTrialMedication)
-
-        val treatmentAssessment = assessTreatmentHistory(record, categoryNames)
 
         val foundDrugNames = foundMedicationNames + treatmentAssessment.matchingDrugs
         val foundMedicationString = if (foundDrugNames.isNotEmpty()) ": ${concatLowercaseWithAnd(foundDrugNames)}" else ""
