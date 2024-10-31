@@ -1,17 +1,5 @@
 steps:
 
-  - name: 'gcr.io/cloud-builders/gsutil'
-    id: 'Populate the maven cache'
-    args:
-      - '-m'
-      - 'cp'
-      - '-r'
-      - 'gs://actin-build-maven-cache/actin/.m2/*'
-      - '/cache/.m2/'
-    volumes:
-      - path: '/cache/.m2'
-        name: 'm2_cache'
-
   - id: 'Create the ACTIN build agent image'
     name: 'gcr.io/cloud-builders/docker'
     dir: 'system/src/test/docker'
