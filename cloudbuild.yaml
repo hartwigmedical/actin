@@ -1,17 +1,5 @@
 steps:
 
-  - id: 'Create the ACTIN build agent image'
-    name: 'gcr.io/cloud-builders/docker'
-    dir: 'system/src/test/docker'
-    args: [ 'build', '.', '-t', 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent:1.0.0' ]
-    waitFor: [ '-' ]
-    
-  - id: 'Push the ACTIN build agent image'
-    name: 'gcr.io/cloud-builders/docker'
-    dir: 'system/src/test/docker'
-    args: [ 'push', 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent:1.0.0' ]
-    waitFor: [ '-' ]
-
   - id: 'Set version for maven'
     name: 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent'
     entrypoint: mvn
