@@ -1,9 +1,9 @@
 steps:
 
-  - name: 'gcr.io/cloud-builders/gcloud'
+  - name: 'gcr.io/cloud-builders/gsutil'
     id: 'Populate the maven cache'
     args:
-      - 'storage'
+      - '-m'
       - 'cp'
       - '-r'
       - 'gs://actin-build-maven-cache/actin/.m2/*'
