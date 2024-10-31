@@ -32,6 +32,10 @@ object ActinTrialGeneratorFunctions {
         }
     }
 
+    fun createTableTitleStart(source: String?): String {
+        return source?.let { "$it trials" } ?: "Trials"
+    }
+
     private fun sortedCohortGroups(cohorts: List<EvaluatedCohort>): List<List<EvaluatedCohort>> {
         val sortedCohorts = cohorts.sortedWith(EvaluatedCohortComparator())
         val cohortsByTrialId = sortedCohorts.groupBy(EvaluatedCohort::trialId)

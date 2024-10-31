@@ -8,9 +8,10 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
-class EligibleActinTrialsGenerator private constructor(
+class EligibleActinTrialsGenerator(
     private val cohorts: List<EvaluatedCohort>,
     private val title: String,
+    private val footNote: String?,
     private val trialColWidth: Float,
     private val cohortColWidth: Float,
     private val molecularEventColWidth: Float,
@@ -22,6 +23,7 @@ class EligibleActinTrialsGenerator private constructor(
 
     override fun contents(): Table {
         val table = Tables.createFixedWidthCols(trialColWidth, cohortColWidth + molecularEventColWidth + checksColWidth)
+
         if (cohorts.isNotEmpty()) {
             table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader("Trial")))
             val headerSubTable = Tables.createFixedWidthCols(
@@ -32,27 +34,54 @@ class EligibleActinTrialsGenerator private constructor(
         }
 
         addTrialsToTable(cohorts, table, cohortColWidth, molecularEventColWidth, checksColWidth, EvaluatedCohort::warnings)
+
+        if (footNote != null) {
+            table.addCell(Cells.createSpanningSubNote(footNote, table))
+        }
+
         return makeWrapping(table)
     }
 
     companion object {
 
-
         fun forOpenCohorts(
-            cohorts: List<EvaluatedCohort>, source: String, width: Float, slotsAvailable: Boolean
+            cohorts: List<EvaluatedCohort>, source: String?, width: Float, slotsAvailable: Boolean
         ): Pair<EligibleActinTrialsGenerator, List<EvaluatedCohort>> {
             val recruitingAndEligibleCohorts = cohorts.filter {
-                it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable == slotsAvailable
+                it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable == slotsAvailable && !it.isMissingGenesForSufficientEvaluation
             }
             val recruitingAndEligibleTrials = recruitingAndEligibleCohorts.map(EvaluatedCohort::trialId).distinct()
-            val slotsText = if (slotsAvailable) "and currently have slots available" else "but currently have no slots available"
+            val slotsText = if (!slotsAvailable) " but currently have no slots available" else ""
             val cohortFromTrialsText = if (recruitingAndEligibleCohorts.isNotEmpty()) {
                 "(${formatCountWithLabel(recruitingAndEligibleCohorts.size, "cohort")}" +
                         " from ${formatCountWithLabel(recruitingAndEligibleTrials.size, "trial")})"
             } else "(0)"
-            val title = "$source trials that are open and considered eligible $slotsText $cohortFromTrialsText"
+
+            val titleStart = ActinTrialGeneratorFunctions.createTableTitleStart(source)
+            val title = "$titleStart that are open and potentially eligible$slotsText $cohortFromTrialsText"
 
             return create(recruitingAndEligibleCohorts, title, width) to recruitingAndEligibleCohorts
+        }
+
+        fun forOpenCohortsWithMissingGenes(
+            cohorts: List<EvaluatedCohort>, source: String?, width: Float
+        ): EligibleActinTrialsGenerator? {
+            val recruitingAndEligibleCohorts = cohorts.filter {
+                it.isPotentiallyEligible && it.isOpen && it.isMissingGenesForSufficientEvaluation
+            }
+            val recruitingAndEligibleTrials = recruitingAndEligibleCohorts.map(EvaluatedCohort::trialId).distinct()
+            val cohortFromTrialsText = if (recruitingAndEligibleCohorts.isNotEmpty()) {
+                "(${formatCountWithLabel(recruitingAndEligibleCohorts.size, "cohort")}" +
+                        " from ${formatCountWithLabel(recruitingAndEligibleTrials.size, "trial")})"
+            } else "(0)"
+
+            val titleStart = ActinTrialGeneratorFunctions.createTableTitleStart(source)
+            val title =
+                "$titleStart that are open but for which additional genes need to be tested to evaluate eligibility $cohortFromTrialsText"
+
+            val footNote = "Open cohorts with no slots available are shown in grey."
+
+            return if (recruitingAndEligibleCohorts.isNotEmpty()) create(recruitingAndEligibleCohorts, title, width, footNote) else null
         }
 
         private fun formatCountWithLabel(count: Int, word: String): String {
@@ -61,7 +90,7 @@ class EligibleActinTrialsGenerator private constructor(
 
         fun forClosedCohorts(
             cohorts: List<EvaluatedCohort>,
-            source: String,
+            source: String?,
             contentWidth: Float,
             enableExtendedMode: Boolean
         ): EligibleActinTrialsGenerator {
@@ -69,9 +98,10 @@ class EligibleActinTrialsGenerator private constructor(
                 .filter { trial: EvaluatedCohort -> trial.isPotentiallyEligible && !trial.isOpen }
                 .filter { trial: EvaluatedCohort -> trial.molecularEvents.isNotEmpty() || enableExtendedMode }
 
+            val titleStart = ActinTrialGeneratorFunctions.createTableTitleStart(source)
             val title = String.format(
-                "%s trials and cohorts that %smay be eligible, but are closed (%s)",
-                source,
+                "%s and cohorts that %smay be eligible, but are closed (%s)",
+                titleStart,
                 if (enableExtendedMode) "" else "meet molecular requirements and ",
                 unavailableAndEligible.size
             )
@@ -81,7 +111,8 @@ class EligibleActinTrialsGenerator private constructor(
         private fun create(
             cohorts: List<EvaluatedCohort>,
             title: String,
-            width: Float
+            width: Float,
+            footNote: String? = null
         ): EligibleActinTrialsGenerator {
             val trialColWidth = width / 9
             val cohortColWidth = width / 4
@@ -90,6 +121,7 @@ class EligibleActinTrialsGenerator private constructor(
             return EligibleActinTrialsGenerator(
                 cohorts,
                 title,
+                footNote,
                 trialColWidth,
                 cohortColWidth,
                 molecularColWidth,

@@ -8,8 +8,8 @@ import org.junit.Test
 
 class ExampleDataDeserializationTest {
 
-    private val examplePatientRecordJson = ExampleFunctions.resolveExamplePatientRecordJson()
-    private val exampleTreatmentMatchJson = ExampleFunctions.resolveExampleTreatmentMatchJson()
+    private val examplePatientRecordJson = ExampleFunctions.resolveExamplePatientRecordJson(LUNG_01_EXAMPLE)
+    private val exampleTreatmentMatchJson = ExampleFunctions.resolveExampleTreatmentMatchJson(LUNG_01_EXAMPLE)
     private val exampleTrialDatabaseDir = ExampleFunctions.resolveExampleTrialDatabaseDirectory()
 
     @Test

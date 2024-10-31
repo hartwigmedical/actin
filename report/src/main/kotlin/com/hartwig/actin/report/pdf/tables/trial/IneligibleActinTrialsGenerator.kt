@@ -7,9 +7,9 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
-class IneligibleActinTrialsGenerator private constructor(
+class IneligibleActinTrialsGenerator(
     private val cohorts: List<EvaluatedCohort>,
-    private val source: String,
+    private val source: String?,
     private val trialColWidth: Float,
     private val cohortColWidth: Float,
     private val molecularEventColWidth: Float,
@@ -19,8 +19,8 @@ class IneligibleActinTrialsGenerator private constructor(
 
     override fun title(): String {
         return String.format(
-            "%s trials and cohorts that are %sconsidered ineligible (%s)",
-            source,
+            "%s and cohorts that are %sconsidered ineligible (%s)",
+            ActinTrialGeneratorFunctions.createTableTitleStart(source),
             if (enableExtendedMode) "" else "open but ",
             cohorts.size
         )
@@ -56,7 +56,7 @@ class IneligibleActinTrialsGenerator private constructor(
 
     companion object {
         fun fromEvaluatedCohorts(
-            cohorts: List<EvaluatedCohort>, source: String, contentWidth: Float, enableExtendedMode: Boolean
+            cohorts: List<EvaluatedCohort>, source: String?, contentWidth: Float, enableExtendedMode: Boolean
         ): IneligibleActinTrialsGenerator {
             val ineligibleCohorts = cohorts.filter { !it.isPotentiallyEligible && (it.isOpen || enableExtendedMode) }
             val trialColWidth = contentWidth / 9
