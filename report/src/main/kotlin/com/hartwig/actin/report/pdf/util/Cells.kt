@@ -1,6 +1,5 @@
 package com.hartwig.actin.report.pdf.util
 
-import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.report.pdf.util.Formats.styleForTableValue
 import com.itextpdf.layout.Style
@@ -137,13 +136,8 @@ object Cells {
         return cell
     }
 
-    fun createEvaluation(evaluation: Evaluation): Cell {
-        return createEvaluationResult(evaluation.result, evaluation.recoverable)
-    }
-
-    fun createEvaluationResult(result: EvaluationResult, recoverable: Boolean = false): Cell {
-        val addon = if (result == EvaluationResult.FAIL && recoverable) " (potentially recoverable)" else ""
-        val cell = create(Paragraph(result.toString() + addon))
+    fun createEvaluationResult(result: EvaluationResult, display: String): Cell {
+        val cell = create(Paragraph(display))
         cell.setFontColor(Formats.fontColorForEvaluation(result))
         return cell
     }
