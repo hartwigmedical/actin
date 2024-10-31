@@ -5,14 +5,14 @@ steps:
     entrypoint: mvn
     args: [ 'versions:set', '-DnewVersion=$TAG_NAME', '--batch-mode' ]
     env:
-      - MAVEN_OPTS="-Dmaven.repo.local=/.m2/repository -Daether.dependencyCollector.impl=bf"
+      - MAVEN_OPTS="-Dmaven.repo.local=/.m2/repository -Daether.dependencyCollector.impl=bf -Dmaven.artifact.threads=4"
 
   - id: 'Maven build, test and deploy'
     name: 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent:1.1.0'
     entrypoint: mvn
     args: [ '-T', '1C', 'deploy', '--batch-mode' ]
     env:
-      - MAVEN_OPTS="-Dmaven.repo.local=/.m2/repository -Daether.dependencyCollector.impl=bf"
+      - MAVEN_OPTS="-Dmaven.repo.local=/.m2/repository -Daether.dependencyCollector.impl=bf -Dmaven.artifact.threads=4"
 
   - id: 'Build and push the molecular image with tag'
     name: 'eu.gcr.io/hmf-build/docker-tag'
