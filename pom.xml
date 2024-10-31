@@ -96,6 +96,19 @@
         </repository>
     </repositories>
 
+    <pluginRepositories>
+        <pluginRepository>
+            <id>actin-artifact-registry</id>
+            <url>artifactregistry://europe-west4-maven.pkg.dev/actin-build/build-registry-maven-virtual</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
     <build>
         <extensions>
             <extension>
