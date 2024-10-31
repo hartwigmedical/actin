@@ -15,7 +15,6 @@ class HasRecentlyReceivedTrialMedication(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
         if (minStopDate.isBefore(record.patient.registrationDate)) {
             return EvaluationFactory.undetermined(
                 "Required stop date prior to registration date for recent trial medication usage evaluation",
@@ -23,14 +22,18 @@ class HasRecentlyReceivedTrialMedication(
             )
         }
 
-        val hasActiveOrRecentlyStoppedTrialMedication =
-            selector.activeOrRecentlyStopped(medications, minStopDate).any(Medication::isTrialMedication)
-
         val hadRecentTrialTreatment =
             record.oncologicalHistory.any { it.isTrial && TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minStopDate, false) }
 
         val hadTrialTreatmentWithUnknownDate =
             record.oncologicalHistory.any { it.isTrial && TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minStopDate, true) }
+
+        if (!(hadRecentTrialTreatment || hadTrialTreatmentWithUnknownDate) && record.medications == null) {
+            return MEDICATION_NOT_PROVIDED
+        }
+
+        val hasActiveOrRecentlyStoppedTrialMedication =
+            selector.activeOrRecentlyStopped(record.medications ?: emptyList(), minStopDate).any(Medication::isTrialMedication)
 
         return when {
             hasActiveOrRecentlyStoppedTrialMedication || hadRecentTrialTreatment -> {
