@@ -1,7 +1,6 @@
 package com.hartwig.actin.report.pdf
 
 import com.hartwig.actin.configuration.EnvironmentConfiguration
-import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.pdf.chapters.ClinicalDetailsChapter
@@ -39,19 +38,19 @@ class ReportContentProviderTest {
 
     @Test
     fun `Should match total cohort size between report and input`() {
-        val eligibleActinTrialsGenerators = ReportContentProvider(TestReportFactory.createExhaustiveTestReport()).provideSummaryTables(
+        val report = TestReportFactory.createExhaustiveTestReport()
+        val eligibleActinTrialsGenerators = ReportContentProvider(report).provideSummaryTables(
             KEY_WIDTH,
             VALUE_WIDTH,
             CONTENT_WIDTH
         ).filterIsInstance<EligibleActinTrialsGenerator>()
-        val trialMatchingChapter = ReportContentProvider(proper, false).provideChapters().filterIsInstance<TrialMatchingChapter>().first()
+        val trialMatchingChapter = ReportContentProvider(report).provideChapters().filterIsInstance<TrialMatchingChapter>().first()
         val eligibleGenerators = trialMatchingChapter.createGenerators().filterIsInstance<EligibleActinTrialsGenerator>()
         val ineligibleGenerators = trialMatchingChapter.createGenerators().filterIsInstance<IneligibleActinTrialsGenerator>()
 
         val totalCohortSizeOnReport =
             eligibleActinTrialsGenerators.sumOf { it.getCohortSize() } + eligibleGenerators.sumOf { it.getCohortSize() } + ineligibleGenerators.sumOf { it.getCohortSize() }
-        val totalCohortSizeInput =
-            TestTreatmentMatchFactory.createProperTreatmentMatch().trialMatches.sumOf { (it.cohorts.size + it.nonEvaluableCohorts.size) }
+        val totalCohortSizeInput = report.treatmentMatch.trialMatches.sumOf { (it.cohorts.size + it.nonEvaluableCohorts.size) }
 
         assertEquals(totalCohortSizeOnReport, totalCohortSizeInput)
     }

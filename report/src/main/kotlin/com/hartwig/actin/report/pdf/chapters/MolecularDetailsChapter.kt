@@ -5,6 +5,7 @@ import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.PriorIHCTestInterpreter
+import com.hartwig.actin.report.pdf.chapters.ChapterContentFunctions.addGenerators
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularCharacteristicsGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularDriversGenerator
@@ -60,14 +61,8 @@ class MolecularDetailsChapter(
 
             val generators =
                 listOf(MolecularCharacteristicsGenerator(molecular, contentWidth())) + tumorDetailsGenerators(molecular, evaluated)
+            addGenerators(generators, table, addSubTitle = true)
 
-            generators.forEachIndexed { i, generator ->
-                table.addCell(Cells.createSubTitle(generator.title()))
-                table.addCell(Cells.create(generator.contents()))
-                if (i < generators.size - 1) {
-                    table.addCell(Cells.createEmpty())
-                }
-            }
             if (!molecular.hasSufficientQuality) {
                 table.addCell(Cells.createContent("No successful OncoAct WGS and/or tumor NGS panel could be performed on the submitted biopsy (insufficient quality for reporting)"))
             }

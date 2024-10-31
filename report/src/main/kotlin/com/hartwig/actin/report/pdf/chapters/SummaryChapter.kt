@@ -66,15 +66,16 @@ class SummaryChapter(private val report: Report) : ReportChapter {
         val valueWidth = contentWidth - keyWidth
         val generators = ReportContentProvider(report).provideSummaryTables(keyWidth, valueWidth, contentWidth)
 
-        for (i in generators.indices) {
-            val generator = generators[i]
-            table.addCell(Cells.createTitle(generator.title()))
-            table.addCell(Cells.create(generator.contents()))
-            if (i < generators.size - 1) {
-                table.addCell(Cells.createEmpty())
-                table.addCell(Cells.createEmpty())
-            }
+        generators.flatMap { generator ->
+            sequenceOf(
+                Cells.createTitle(generator.title()),
+                Cells.create(generator.contents()),
+                Cells.createEmpty(),
+                Cells.createEmpty()
+            )
         }
+            .dropLast(2)
+            .forEach(table::addCell)
         document.add(table)
     }
 

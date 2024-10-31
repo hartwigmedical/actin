@@ -37,12 +37,11 @@ class IneligibleActinTrialsGenerator(
             }
             table.addHeaderCell(Cells.createContentNoBorder(headerSubTable))
 
-            val feedbackFunction = if (includeIneligibilityReasonCol) InterpretedCohort::fails else { _: InterpretedCohort -> emptySet() }
             addTrialsToTable(
                 cohorts,
                 table,
                 subTableWidths,
-                feedbackFunction,
+                InterpretedCohort::fails,
                 includeIneligibilityReasonCol,
                 paddingDistance
             )

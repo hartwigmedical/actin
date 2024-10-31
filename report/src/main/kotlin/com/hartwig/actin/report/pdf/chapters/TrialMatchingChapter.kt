@@ -3,10 +3,10 @@ package com.hartwig.actin.report.pdf.chapters
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 import com.hartwig.actin.report.pdf.ReportContentProvider
+import com.hartwig.actin.report.pdf.chapters.ChapterContentFunctions.addGenerators
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleActinTrialsGenerator
-import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
@@ -32,20 +32,10 @@ class TrialMatchingChapter(
         addTrialMatchingOverview(document)
     }
 
-    private fun addTrialMatchingOverview(document: Document): List<TableGenerator> {
+    private fun addTrialMatchingOverview(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
-        val generators = createGenerators()
-
-        for (i in generators.indices) {
-            val generator = generators[i]
-            table.addCell(Cells.createTitle(generator.title()))
-            table.addCell(Cells.create(generator.contents()))
-            if (i < generators.size - 1) {
-                table.addCell(Cells.createEmpty())
-            }
-        }
+        addGenerators(createGenerators(), table, false)
         document.add(table)
-        return generators
     }
 
     fun createGenerators(): List<TableGenerator> {

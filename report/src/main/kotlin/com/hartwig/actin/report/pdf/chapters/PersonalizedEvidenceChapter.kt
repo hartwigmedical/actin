@@ -2,6 +2,7 @@ package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.datamodel.algo.AnnotatedTreatmentMatch
 import com.hartwig.actin.report.datamodel.Report
+import com.hartwig.actin.report.pdf.chapters.ChapterContentFunctions.addGenerators
 import com.hartwig.actin.report.pdf.tables.soc.RealWorldPFSOutcomesGenerator
 import com.hartwig.actin.report.pdf.tables.soc.RealWorldTreatmentDecisionsGenerator
 import com.hartwig.actin.report.pdf.util.Cells
@@ -26,18 +27,11 @@ class PersonalizedEvidenceChapter(private val report: Report, override val inclu
         addChapterTitle(document)
 
         val table = Tables.createSingleColWithWidth(contentWidth())
-        listOf(
+        val generators = listOf(
             RealWorldTreatmentDecisionsGenerator(report.treatmentMatch.personalizedDataAnalysis!!, eligibleSocTreatments, contentWidth()),
             RealWorldPFSOutcomesGenerator(report.treatmentMatch.personalizedDataAnalysis!!, eligibleSocTreatments, contentWidth())
-        ).flatMap { generator ->
-            sequenceOf(
-                Cells.createSubTitle(generator.title()),
-                Cells.create(generator.contents()),
-                Cells.createEmpty()
-            )
-        }
-            .dropLast(1)
-            .forEach(table::addCell)
+        )
+        addGenerators(generators, table, addSubTitle = true)
 
         table.addCell(Cells.createSubTitle("Explanation:"))
         sequenceOf(
