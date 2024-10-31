@@ -60,7 +60,7 @@ class IneligibleActinTrialsGenerator(
     companion object {
         fun forOpenCohorts(
             cohorts: List<InterpretedCohort>,
-            source: String,
+            source: String?,
             width: Float,
             enableExtendedMode: Boolean
         ): IneligibleActinTrialsGenerator {
@@ -88,7 +88,7 @@ class IneligibleActinTrialsGenerator(
 
         fun forClosedCohorts(
             cohorts: List<InterpretedCohort>,
-            source: String,
+            source: String?,
             width: Float,
         ): IneligibleActinTrialsGenerator {
             val unavailableAndEligible =
@@ -111,12 +111,16 @@ class IneligibleActinTrialsGenerator(
         fun forNonEvaluableAndIgnoredCohorts(
             ignoredCohorts: List<InterpretedCohort>,
             nonEvaluableCohorts: List<InterpretedCohort>,
-            source: String,
+            source: String?,
             width: Float,
         ): IneligibleActinTrialsGenerator {
             val nonEvaluableAndIgnoredCohorts = ignoredCohorts + nonEvaluableCohorts
             val title =
-                String.format("%s and cohorts that are not evaluable or ignored (%s)", ActinTrialGeneratorFunctions.createTableTitleStart(source), nonEvaluableAndIgnoredCohorts.size)
+                String.format(
+                    "%s and cohorts that are not evaluable or ignored (%s)", ActinTrialGeneratorFunctions.createTableTitleStart(
+                        source
+                    ), nonEvaluableAndIgnoredCohorts.size
+                )
             return IneligibleActinTrialsGenerator(
                 nonEvaluableAndIgnoredCohorts,
                 title,

@@ -5,7 +5,7 @@
   "referenceDate": {
     "year": 2024,
     "month": 10,
-    "day": 10
+    "day": 31
   },
   "referenceDateIsLive": true,
   "trialMatches": [
@@ -51,7 +51,8 @@
             "undeterminedSpecificMessages": [],
             "undeterminedGeneralMessages": [],
             "failSpecificMessages": [],
-            "failGeneralMessages": []
+            "failGeneralMessages": [],
+            "isMissingGenesForSufficientEvaluation": false
           }
         ],
         [
@@ -95,15 +96,16 @@
               "Tumor stage IV is considered metastatic"
             ],
             "passGeneralMessages": [
-              "Metastatic cancer",
-              "Tumor type"
+              "Has solid primary tumor",
+              "Metastatic cancer"
             ],
             "warnSpecificMessages": [],
             "warnGeneralMessages": [],
             "undeterminedSpecificMessages": [],
             "undeterminedGeneralMessages": [],
             "failSpecificMessages": [],
-            "failGeneralMessages": []
+            "failGeneralMessages": [],
+            "isMissingGenesForSufficientEvaluation": false
           }
         ],
         [
@@ -145,7 +147,8 @@
             "undeterminedSpecificMessages": [],
             "undeterminedGeneralMessages": [],
             "failSpecificMessages": [],
-            "failGeneralMessages": []
+            "failGeneralMessages": [],
+            "isMissingGenesForSufficientEvaluation": false
           }
         ],
         [
@@ -182,7 +185,8 @@
             "undeterminedSpecificMessages": [],
             "undeterminedGeneralMessages": [],
             "failSpecificMessages": [],
-            "failGeneralMessages": []
+            "failGeneralMessages": [],
+            "isMissingGenesForSufficientEvaluation": false
           }
         ],
         [
@@ -216,7 +220,8 @@
             ],
             "failGeneralMessages": [
               "Hemoglobin 5.6 mmol/L below min of 6.0 mmol/L"
-            ]
+            ],
+            "isMissingGenesForSufficientEvaluation": false
           }
         ],
         [
@@ -248,7 +253,8 @@
             ],
             "undeterminedGeneralMessages": [],
             "failSpecificMessages": [],
-            "failGeneralMessages": []
+            "failGeneralMessages": [],
+            "isMissingGenesForSufficientEvaluation": false
           }
         ],
         [
@@ -282,7 +288,8 @@
             "undeterminedSpecificMessages": [],
             "undeterminedGeneralMessages": [],
             "failSpecificMessages": [],
-            "failGeneralMessages": []
+            "failGeneralMessages": [],
+            "isMissingGenesForSufficientEvaluation": false
           }
         ]
       ],
@@ -311,7 +318,8 @@
           "isPotentiallyEligible": true,
           "evaluations": {}
         }
-      ]
+      ],
+      "nonEvaluableCohorts": []
     },
     {
       "identification": {
@@ -355,7 +363,8 @@
             "undeterminedSpecificMessages": [],
             "undeterminedGeneralMessages": [],
             "failSpecificMessages": [],
-            "failGeneralMessages": []
+            "failGeneralMessages": [],
+            "isMissingGenesForSufficientEvaluation": false
           }
         ],
         [
@@ -396,7 +405,8 @@
             "undeterminedSpecificMessages": [],
             "undeterminedGeneralMessages": [],
             "failSpecificMessages": [],
-            "failGeneralMessages": []
+            "failGeneralMessages": [],
+            "isMissingGenesForSufficientEvaluation": false
           }
         ],
         [
@@ -425,11 +435,14 @@
             "warnSpecificMessages": [],
             "warnGeneralMessages": [],
             "undeterminedSpecificMessages": [
-              "No measurement found for ASAT"
+              "ASAT and ALAT are not present or cannot be evaluated"
             ],
-            "undeterminedGeneralMessages": [],
+            "undeterminedGeneralMessages": [
+              "ASAT and ALAT are not present or cannot be evaluated"
+            ],
             "failSpecificMessages": [],
-            "failGeneralMessages": []
+            "failGeneralMessages": [],
+            "isMissingGenesForSufficientEvaluation": false
           }
         ],
         [
@@ -466,7 +479,8 @@
             "undeterminedSpecificMessages": [],
             "undeterminedGeneralMessages": [],
             "failSpecificMessages": [],
-            "failGeneralMessages": []
+            "failGeneralMessages": [],
+            "isMissingGenesForSufficientEvaluation": false
           }
         ],
         [
@@ -500,7 +514,8 @@
             "undeterminedSpecificMessages": [],
             "undeterminedGeneralMessages": [],
             "failSpecificMessages": [],
-            "failGeneralMessages": []
+            "failGeneralMessages": [],
+            "isMissingGenesForSufficientEvaluation": false
           }
         ]
       ],
@@ -537,17 +552,18 @@
                 "inclusionMolecularEvents": [],
                 "exclusionMolecularEvents": [],
                 "passSpecificMessages": [
-                  "Patient has lung non-small cell carcinoma"
+                  "Patient has tumor belonging to DOID term(s) lung non-small cell carcinoma"
                 ],
                 "passGeneralMessages": [
-                  "Tumor type"
+                  "Has tumor belonging to DOID term(s) lung non-small cell carcinoma"
                 ],
                 "warnSpecificMessages": [],
                 "warnGeneralMessages": [],
                 "undeterminedSpecificMessages": [],
                 "undeterminedGeneralMessages": [],
                 "failSpecificMessages": [],
-                "failGeneralMessages": []
+                "failGeneralMessages": [],
+                "isMissingGenesForSufficientEvaluation": false
               }
             ]
           ]
@@ -593,13 +609,15 @@
                   "Patient has no colorectal cancer"
                 ],
                 "failGeneralMessages": [
-                  "Tumor type"
-                ]
+                  "No colorectal cancer"
+                ],
+                "isMissingGenesForSufficientEvaluation": false
               }
             ]
           ]
         }
-      ]
+      ],
+      "nonEvaluableCohorts": []
     },
     {
       "identification": {
@@ -643,7 +661,8 @@
             "undeterminedSpecificMessages": [],
             "undeterminedGeneralMessages": [],
             "failSpecificMessages": [],
-            "failGeneralMessages": []
+            "failGeneralMessages": [],
+            "isMissingGenesForSufficientEvaluation": false
           }
         ],
         [
@@ -684,7 +703,8 @@
             "undeterminedSpecificMessages": [],
             "undeterminedGeneralMessages": [],
             "failSpecificMessages": [],
-            "failGeneralMessages": []
+            "failGeneralMessages": [],
+            "isMissingGenesForSufficientEvaluation": false
           }
         ],
         [
@@ -738,7 +758,8 @@
             ],
             "failGeneralMessages": [
               "C797S detected in EGFR"
-            ]
+            ],
+            "isMissingGenesForSufficientEvaluation": false
           }
         ],
         [
@@ -772,7 +793,8 @@
             "undeterminedSpecificMessages": [],
             "undeterminedGeneralMessages": [],
             "failSpecificMessages": [],
-            "failGeneralMessages": []
+            "failGeneralMessages": [],
+            "isMissingGenesForSufficientEvaluation": false
           }
         ]
       ],
@@ -789,7 +811,8 @@
           "isPotentiallyEligible": false,
           "evaluations": {}
         }
-      ]
+      ],
+      "nonEvaluableCohorts": []
     },
     {
       "identification": {
@@ -833,7 +856,8 @@
             "undeterminedSpecificMessages": [],
             "undeterminedGeneralMessages": [],
             "failSpecificMessages": [],
-            "failGeneralMessages": []
+            "failGeneralMessages": [],
+            "isMissingGenesForSufficientEvaluation": false
           }
         ],
         [
@@ -875,19 +899,20 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passSpecificMessages": [
-              "Patient has lung cancer",
+              "Patient has tumor belonging to DOID term(s) lung cancer",
               "Tumor stage IV is considered metastatic"
             ],
             "passGeneralMessages": [
-              "Metastatic cancer",
-              "Tumor type"
+              "Has tumor belonging to DOID term(s) lung cancer",
+              "Metastatic cancer"
             ],
             "warnSpecificMessages": [],
             "warnGeneralMessages": [],
             "undeterminedSpecificMessages": [],
             "undeterminedGeneralMessages": [],
             "failSpecificMessages": [],
-            "failGeneralMessages": []
+            "failGeneralMessages": [],
+            "isMissingGenesForSufficientEvaluation": false
           }
         ],
         [
@@ -924,7 +949,8 @@
             "undeterminedSpecificMessages": [],
             "undeterminedGeneralMessages": [],
             "failSpecificMessages": [],
-            "failGeneralMessages": []
+            "failGeneralMessages": [],
+            "isMissingGenesForSufficientEvaluation": false
           }
         ],
         [
@@ -958,7 +984,8 @@
             "undeterminedSpecificMessages": [],
             "undeterminedGeneralMessages": [],
             "failSpecificMessages": [],
-            "failGeneralMessages": []
+            "failGeneralMessages": [],
+            "isMissingGenesForSufficientEvaluation": false
           }
         ]
       ],
@@ -975,7 +1002,8 @@
           "isPotentiallyEligible": true,
           "evaluations": {}
         }
-      ]
+      ],
+      "nonEvaluableCohorts": []
     }
   ],
   "standardOfCareMatches": null,
