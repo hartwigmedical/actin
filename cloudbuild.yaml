@@ -64,7 +64,7 @@ steps:
     args: [ 'pubsub', 'topics', 'publish', 'actin-upgrade.pending', '--project', 'actin-build', '--message', '{ "tag": "$TAG_NAME", "repository": "actin"}' ]
 
 options:
-  machineType: 'N1_HIGHCPU_8'
+  machineType: 'E2_HIGHCPU_8'
 images:
   - europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-molecular
   - europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-trial
