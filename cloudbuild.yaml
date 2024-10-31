@@ -4,21 +4,11 @@ steps:
     name: 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent:1.0.0'
     entrypoint: mvn
     args: [ 'versions:set', '-DnewVersion=$TAG_NAME', '--batch-mode' ]
-    volumes:
-      - path: '/cache/.m2'
-        name: 'm2_cache'
-    env:
-      - MAVEN_OPTS=-Dmaven.repo.local=/cache/.m2
-
+    
   - id: 'Maven build, test and deploy'
     name: 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent:1.0.0'
     entrypoint: mvn
     args: [ '-T', '1C', 'deploy', '--batch-mode' ]
-    volumes:
-      - path: '/cache/.m2'
-        name: 'm2_cache'
-    env:
-      - MAVEN_OPTS=-Dmaven.repo.local=/cache/.m2
 
   - id: 'Build and push the molecular image with tag'
     name: 'eu.gcr.io/hmf-build/docker-tag'
