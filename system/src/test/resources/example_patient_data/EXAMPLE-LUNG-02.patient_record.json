@@ -92,7 +92,9 @@
 	  ],
 	  "startYear": 2023,
 	  "startMonth": 6,
-	  "intents": "PALLIATIVE",
+	  "intents": [
+		"PALLIATIVE"
+	  ],
 	  "isTrial": false,
 	  "trialAcronym": null,
 	  "treatmentHistoryDetails": {
@@ -135,14 +137,15 @@
 	{
 	  "treatments": [
 		{
-		  "name": "PEMBROLIZUMAB",
+		  "name": "DOCETAXEL",
 		  "drugs": [
 			{
-			  "name": "PEMBROLIZUMAB",
+			  "name": "DOCETAXEL",
 			  "drugTypes": [
-				"IMMUNOTHERAPY"
+				"ANTIMICROTUBULE_AGENT",
+				"TAXANE"
 			  ],
-			  "category": "IMMUNOTHERAPY",
+			  "category": "CHEMOTHERAPY",
 			  "displayOverride": null
 			}
 		  ],
@@ -155,7 +158,9 @@
 	  ],
 	  "startYear": 2024,
 	  "startMonth": 7,
-	  "intents": "PALLIATIVE",
+	  "intents": [
+		"PALLIATIVE"
+	  ],
 	  "isTrial": false,
 	  "trialAcronym": null,
 	  "treatmentHistoryDetails": {
@@ -398,6 +403,7 @@
 		  "EGFR",
 		  "ERBB2",
 		  "HRAS",
+		  "KEAP1",
 		  "KRAS",
 		  "MET",
 		  "NRAS",
@@ -421,18 +427,18 @@
 		"drivers": {
 		  "variants": [
 			{
-			  "chromosome": "12",
-			  "position": 25398285,
-			  "ref": "C",
+			  "chromosome": "3",
+			  "position": 178936091,
+			  "ref": "G",
 			  "alt": "A",
 			  "type": "SNV",
 			  "variantAlleleFrequency": 0.5,
 			  "canonicalImpact": {
 				"transcriptId": "",
-				"hgvsCodingImpact": "c.34G>T",
-				"hgvsProteinImpact": "p.G12C",
-				"affectedCodon": 12,
-				"affectedExon": 2,
+				"hgvsCodingImpact": "c.1633G>A",
+				"hgvsProteinImpact": "p.E545K",
+				"affectedCodon": 545,
+				"affectedExon": 9,
 				"isSpliceRegion": false,
 				"effects": [
 				  "MISSENSE"
@@ -443,12 +449,12 @@
 			  "extendedVariantDetails": null,
 			  "isHotspot": true,
 			  "isReportable": true,
-			  "event": "KRAS G12C",
+			  "event": "PIK3CA E545K",
 			  "driverLikelihood": "HIGH",
 			  "evidence": {
 				"externalEligibleTrials": [
 				  {
-					"title": "KRAS-G12C-TRIAL",
+					"title": "PIK3CA-TRIAL",
 					"countries": [
 					  {
 						"name": "NETHERLANDS",
@@ -469,8 +475,8 @@
 					],
 					"url": "https://hartwigmedicalfoundation.nl",
 					"nctId": "NCT00000016",
-					"isCategoryEvent": false,
-					"sourceEvent": "KRAS G12C",
+					"isCategoryEvent": true,
+					"sourceEvent": "PIK3CA activating mutations",
 					"evidenceLevelDetails": "CLINICAL_STUDY",
 					"applicableCancerType": {
 					  "cancerType": "Lung cancer",
@@ -479,9 +485,43 @@
 				  }
 				]
 			  },
-			  "gene": "KRAS",
+			  "gene": "PIK3CA",
 			  "geneRole": "ONCO",
 			  "proteinEffect": "GAIN_OF_FUNCTION",
+			  "isAssociatedWithDrugResistance": null
+			}
+		  ],
+		  "copyNumbers": [
+			{
+			  "type": "LOSS",
+			  "minCopies": 0,
+			  "maxCopies": 0,
+			  "isReportable": true,
+			  "event": "TP53 del",
+			  "driverLikelihood": "HIGH",
+			  "evidence": {
+				"externalEligibleTrials": [],
+				"treatmentEvidence": []
+			  },
+			  "gene": "TP53",
+			  "geneRole": "TSG",
+			  "proteinEffect": "UNKNOWN",
+			  "isAssociatedWithDrugResistance": null
+			},
+			{
+			  "type": "LOSS",
+			  "minCopies": 0,
+			  "maxCopies": 0,
+			  "isReportable": true,
+			  "event": "KEAP1 del",
+			  "driverLikelihood": "HIGH",
+			  "evidence": {
+				"externalEligibleTrials": [],
+				"treatmentEvidence": []
+			  },
+			  "gene": "KEAP1",
+			  "geneRole": "TSG",
+			  "proteinEffect": "UNKNOWN",
 			  "isAssociatedWithDrugResistance": null
 			}
 		  ],
