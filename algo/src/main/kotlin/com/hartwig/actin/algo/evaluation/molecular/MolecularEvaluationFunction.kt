@@ -16,7 +16,7 @@ abstract class MolecularEvaluationFunction(maxTestAge: LocalDate? = null) : Eval
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val recentMolecularTests = molecularTestFilter.apply(record.molecularHistory.molecularTests)
-        return if (recentMolecularTests.isEmpty()) {
+        return if (recentMolecularTests.isEmpty() || recentMolecularTests.all { (it as? MolecularRecord)?.hasSufficientQuality == false }) {
             noMolecularRecordEvaluation() ?: EvaluationFactory.undetermined(
                 "No molecular data",
                 "No molecular data",
