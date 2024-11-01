@@ -13,7 +13,7 @@ object MolecularClinicalEvidenceFunctions {
         val allMSI =
             extractCharacteristics(
                 molecularHistory,
-                { MolecularCharacteristicFormat.formatMicrosatelliteStability(it) },
+                { "MS ${MolecularCharacteristicFormat.formatMicrosatelliteStability(it)}" },
                 { it.microsatelliteEvidence })
         val allTML =
             extractCharacteristics(
@@ -28,7 +28,7 @@ object MolecularClinicalEvidenceFunctions {
         val allHRD =
             extractCharacteristics(
                 molecularHistory,
-                { MolecularCharacteristicFormat.formatHomologuousRepair(it) },
+                { "HR ${MolecularCharacteristicFormat.formatHomologuousRepair(it)}" },
                 { it.homologousRepairEvidence })
         return allMSI + allTMB + allTML + allHRD + allDrivers.map { it.event to it.evidence }
     }

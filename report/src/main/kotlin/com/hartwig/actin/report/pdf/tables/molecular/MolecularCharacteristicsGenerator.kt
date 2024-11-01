@@ -92,7 +92,7 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
         return cell
     }
 
-    fun createMSStabilityString(): String? {
+    fun createMSStabilityString(): String {
         return MolecularCharacteristicFormat.formatMicrosatelliteStability(molecular.characteristics)
     }
 
@@ -100,7 +100,7 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
         return createCellForCharacteristic(createMSStabilityString(), molecular.characteristics.isMicrosatelliteUnstable)
     }
 
-    fun createHRStatusString(): String? {
+    fun createHRStatusString(): String {
         return MolecularCharacteristicFormat.formatHomologuousRepair(molecular.characteristics)
     }
 
