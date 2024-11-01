@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
+import com.hartwig.actin.algo.evaluation.composite.Or
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 
@@ -143,11 +144,16 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
 
     private fun hasHistoryOfCardiacDiseaseCreator(): FunctionCreator {
         return {
-            HasHadPriorConditionWithDoidComplicationOrToxicity(
-                doidModel(),
-                DoidConstants.HEART_DISEASE_DOID,
-                CARDIAC_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY,
-                CARDIAC_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY
+            Or(
+                listOf(
+                    HasHadPriorConditionWithDoidComplicationOrToxicity(
+                    doidModel(),
+                    DoidConstants.HEART_DISEASE_DOID,
+                    CARDIAC_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY,
+                    CARDIAC_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY
+                    ),
+                    HasHadPriorConditionWithDoid(doidModel(), DoidConstants.CORONARY_ARTERY_DISEASE_DOID)
+                )
             )
         }
     }
