@@ -10,7 +10,7 @@ steps:
   - id: 'Maven build, test and deploy'
     name: 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent:1.1.3'
     entrypoint: mvn
-    args: [ '-T', '1C', 'deploy', '--batch-mode' ]
+    args: [ '-T', '2', 'deploy', '--batch-mode' ]
     env:
       - MAVEN_OPTS=-Dmaven.repo.local=/.m2/repository
 
