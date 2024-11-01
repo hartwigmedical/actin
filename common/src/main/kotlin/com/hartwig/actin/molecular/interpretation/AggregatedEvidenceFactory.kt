@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular.interpretation
 
 import com.hartwig.actin.datamodel.molecular.Drivers
 import com.hartwig.actin.datamodel.molecular.MolecularCharacteristics
+import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
@@ -12,9 +13,11 @@ object AggregatedEvidenceFactory {
     private val LOGGER = LogManager.getLogger(AggregatedEvidenceFactory::class.java)
 
     fun create(molecular: MolecularTest): AggregatedEvidence {
-        return mergeAggregatedEvidenceList(
-            aggregateCharacteristicsEvidence(molecular.characteristics) + aggregateDriverEvidence(molecular.drivers)
-        )
+        return if ((molecular as? MolecularRecord)?.hasSufficientQuality != false) {
+            mergeAggregatedEvidenceList(
+                aggregateCharacteristicsEvidence(molecular.characteristics) + aggregateDriverEvidence(molecular.drivers)
+            )
+        } else AggregatedEvidence()
     }
 
     private fun aggregateCharacteristicsEvidence(characteristics: MolecularCharacteristics): List<AggregatedEvidence> {

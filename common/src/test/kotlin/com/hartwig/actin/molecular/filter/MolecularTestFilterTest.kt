@@ -64,6 +64,12 @@ class MolecularTestFilterTest {
         testFilter(newOncoPanel, oldPanel)
     }
 
+    @Test
+    fun `Should filter out failed WGS record`() {
+        val failedWGS = BASE_WGS_TEST.copy(hasSufficientQuality = false)
+        testFilter(BASE_WGS_TEST, failedWGS)
+    }
+
     private fun testFilter(toInclude: MolecularTest, toFilter: MolecularTest) {
         val filtered = filter.apply(listOf(toInclude, toFilter))
         assertThat(filtered).containsOnly(toInclude)
