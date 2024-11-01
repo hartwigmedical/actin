@@ -11,7 +11,8 @@ import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.datamodel.trial.TrialPhase
-import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory.create
+import com.hartwig.actin.report.interpretation.InterpretedCohortFactory.createEvaluableCohorts
+import com.hartwig.actin.report.interpretation.InterpretedCohortFactory.createNonEvaluableCohorts
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -19,18 +20,24 @@ private val RULE_1 = EligibilityRule.ACTIVATING_MUTATION_IN_ANY_GENES_X
 private val RULE_2 = EligibilityRule.IS_AT_LEAST_X_YEARS_OLD
 private const val TRIAL_NAME = "TEST-1"
 
-class EvaluatedCohortFactoryTest {
+class InterpretedCohortFactoryTest {
 
     @Test
     fun `Should create evaluated cohorts from minimal match`() {
-        val cohorts = create(TestTreatmentMatchFactory.createMinimalTreatmentMatch(), false)
+        val cohorts = createEvaluableCohorts(TestTreatmentMatchFactory.createMinimalTreatmentMatch(), false)
         assertThat(cohorts).isEmpty()
     }
 
     @Test
+    fun `Should create non evaluable cohorts from minimal match`() {
+        val nonEvaluableCohorts = createNonEvaluableCohorts(TestTreatmentMatchFactory.createMinimalTreatmentMatch())
+        assertThat(nonEvaluableCohorts).isEmpty()
+    }
+
+    @Test
     fun `Should create evaluated cohorts from proper match`() {
-        val cohorts = create(TestTreatmentMatchFactory.createProperTreatmentMatch(), false)
-        assertThat(cohorts).hasSize(5)
+        val cohorts = createEvaluableCohorts(TestTreatmentMatchFactory.createProperTreatmentMatch(), false)
+        assertThat(cohorts).hasSize(4)
 
         val trial1cohortA = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort A")
         assertThat(trial1cohortA.molecularEvents).isNotEmpty
@@ -39,6 +46,7 @@ class EvaluatedCohortFactoryTest {
         assertThat(trial1cohortA.isMissingGenesForSufficientEvaluation).isFalse()
         assertThat(trial1cohortA.isOpen).isTrue
         assertThat(trial1cohortA.hasSlotsAvailable).isFalse
+        assertThat(trial1cohortA.ignore).isFalse
         assertThat(trial1cohortA.warnings).isEmpty()
         assertThat(trial1cohortA.fails).isNotEmpty()
 
@@ -48,6 +56,7 @@ class EvaluatedCohortFactoryTest {
         assertThat(trial1cohortB.isMissingGenesForSufficientEvaluation).isFalse()
         assertThat(trial1cohortB.isOpen).isTrue
         assertThat(trial1cohortB.hasSlotsAvailable).isTrue
+        assertThat(trial1cohortB.ignore).isFalse
         assertThat(trial1cohortB.warnings).isEmpty()
         assertThat(trial1cohortB.fails).isNotEmpty()
 
@@ -57,6 +66,7 @@ class EvaluatedCohortFactoryTest {
         assertThat(trial1cohortC.isMissingGenesForSufficientEvaluation).isFalse()
         assertThat(trial1cohortC.isOpen).isFalse
         assertThat(trial1cohortC.hasSlotsAvailable).isFalse
+        assertThat(trial1cohortC.ignore).isFalse
         assertThat(trial1cohortC.warnings).isEmpty()
         assertThat(trial1cohortC.fails).isNotEmpty
 
@@ -67,17 +77,25 @@ class EvaluatedCohortFactoryTest {
         assertThat(trial2cohortA.isMissingGenesForSufficientEvaluation).isFalse()
         assertThat(trial2cohortA.isOpen).isTrue
         assertThat(trial2cohortA.hasSlotsAvailable).isFalse
+        assertThat(trial2cohortA.ignore).isFalse
         assertThat(trial2cohortA.warnings).isEmpty()
         assertThat(trial2cohortA.fails).isEmpty()
+    }
 
-        val trial2cohortB = findByAcronymAndCohort(cohorts, "TEST-2", "Cohort B")
+    @Test
+    fun `Should create non evaluable cohorts from proper match`() {
+        val nonEvaluableCohorts = createNonEvaluableCohorts(TestTreatmentMatchFactory.createProperTreatmentMatch())
+        assertThat(nonEvaluableCohorts).hasSize(1)
+
+        val trial2cohortB = findByAcronymAndCohort(nonEvaluableCohorts, "TEST-2", "Cohort B")
         assertThat(trial2cohortB.molecularEvents).isEmpty()
         assertThat(trial2cohortB.isPotentiallyEligible).isFalse
-        assertThat(trial2cohortB.isMissingGenesForSufficientEvaluation).isFalse()
+        assertThat(trial2cohortB.isMissingGenesForSufficientEvaluation).isEqualTo(null)
         assertThat(trial2cohortB.isOpen).isTrue
         assertThat(trial2cohortB.hasSlotsAvailable).isTrue
+        assertThat(trial2cohortB.ignore).isFalse
         assertThat(trial2cohortB.warnings).isEmpty()
-        assertThat(trial2cohortB.fails).isNotEmpty
+        assertThat(trial2cohortB.fails).isEmpty()
     }
 
     @Test
@@ -92,21 +110,22 @@ class EvaluatedCohortFactoryTest {
             ),
             isPotentiallyEligible = true,
             cohorts = emptyList(),
+            nonEvaluableCohorts = emptyList(),
             evaluations = emptyMap()
         )
 
         val treatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch().copy(trialMatches = listOf(trialMatchWithoutCohort))
-        val cohorts = create(treatmentMatch, false)
+        val cohorts = createEvaluableCohorts(treatmentMatch, false)
         assertThat(cohorts).hasSize(1)
     }
 
     @Test
     fun `Should filter trials on SOC exhaustion and tumor type`() {
         val treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch()
-        val cohortsWithoutFiltering = create(treatmentMatch, false)
-        assertThat(cohortsWithoutFiltering).hasSize(5)
-        val cohortsWithFiltering = create(treatmentMatch, true)
-        assertThat(cohortsWithFiltering).hasSize(2)
+        val cohortsWithoutFiltering = createEvaluableCohorts(treatmentMatch, false)
+        assertThat(cohortsWithoutFiltering).hasSize(4)
+        val cohortsWithFiltering = createEvaluableCohorts(treatmentMatch, true)
+        assertThat(cohortsWithFiltering).hasSize(1)
     }
 
     @Test
@@ -118,7 +137,7 @@ class EvaluatedCohortFactoryTest {
         val trialMatch = createTrialMatch(cohorts, emptyMap())
         val treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch().copy(trialMatches = listOf(trialMatch))
 
-        val evaluatedCohorts = create(treatmentMatch, false)
+        val evaluatedCohorts = createEvaluableCohorts(treatmentMatch, false)
         val cohortA = findByAcronymAndCohort(evaluatedCohorts, TRIAL_NAME, "Cohort A")
         val cohortB = findByAcronymAndCohort(evaluatedCohorts, TRIAL_NAME, "Cohort B")
         assertThat(cohortA.isMissingGenesForSufficientEvaluation).isTrue()
@@ -135,7 +154,7 @@ class EvaluatedCohortFactoryTest {
         val trialMatch = createTrialMatch(cohorts, trialEvaluation)
         val treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch().copy(trialMatches = listOf(trialMatch))
 
-        val evaluatedCohorts = create(treatmentMatch, false)
+        val evaluatedCohorts = createEvaluableCohorts(treatmentMatch, false)
         val cohortA = findByAcronymAndCohort(evaluatedCohorts, TRIAL_NAME, "Cohort A")
         val cohortB = findByAcronymAndCohort(evaluatedCohorts, TRIAL_NAME, "Cohort B")
         assertThat(cohortA.isMissingGenesForSufficientEvaluation).isTrue()
@@ -143,9 +162,9 @@ class EvaluatedCohortFactoryTest {
     }
 
     private fun findByAcronymAndCohort(
-        evaluatedCohorts: List<EvaluatedCohort>, acronymToFind: String, cohortToFind: String?
-    ): EvaluatedCohort {
-        return evaluatedCohorts.first { it.acronym == acronymToFind && it.cohort == cohortToFind }
+        cohorts: List<InterpretedCohort>, acronymToFind: String, cohortToFind: String?
+    ): InterpretedCohort {
+        return cohorts.first { it.acronym == acronymToFind && it.name == cohortToFind }
     }
 
     private fun createEvaluation(
@@ -164,7 +183,7 @@ class EvaluatedCohortFactoryTest {
 
     private fun createCohortMatch(name: String, evaluation: Map<Eligibility, Evaluation>): CohortMatch {
         return CohortMatch(
-            metadata = createTestMetadata(name, open = true, slotsAvailable = true),
+            metadata = createTestMetadata(name, open = true, evaluable = true, slotsAvailable = true, ignore = false),
             isPotentiallyEligible = true,
             evaluations = evaluation
         )
@@ -182,7 +201,8 @@ class EvaluatedCohortFactoryTest {
             ),
             isPotentiallyEligible = true,
             evaluations = evaluation,
-            cohorts = cohorts
+            cohorts = cohorts,
+            nonEvaluableCohorts = emptyList()
         )
     }
 }

@@ -11,7 +11,7 @@ import com.hartwig.actin.datamodel.molecular.orange.driver.Virus
 
 class MolecularDriversInterpreter(
     private val drivers: Drivers,
-    private val evaluatedCohortsInterpreter: EvaluatedCohortsInterpreter
+    private val interpretedCohortsSummarizer: InterpretedCohortsSummarizer
 ) {
     fun filteredVariants(): List<Variant> {
         return filterDrivers(drivers.variants)
@@ -42,10 +42,10 @@ class MolecularDriversInterpreter(
     }
 
     fun trialsForDriver(driver: Driver): List<String> {
-        return evaluatedCohortsInterpreter.trialsForDriver(driver)
+        return interpretedCohortsSummarizer.trialsForDriver(driver)
     }
 
     private fun <T : Driver> filterDrivers(drivers: Set<T>): List<T> {
-        return drivers.filter { it.isReportable || evaluatedCohortsInterpreter.driverIsActionable(it) }
+        return drivers.filter { it.isReportable || interpretedCohortsSummarizer.driverIsActionable(it) }
     }
 }

@@ -44,7 +44,8 @@ class TreatmentMatchJsonTest {
                             passSpecificMessages = setOf("msg 2", "msg 1", "msg 3"),
                         )
                     ),
-                    cohorts = emptyList()
+                    cohorts = emptyList(),
+                    nonEvaluableCohorts = emptyList()
                 )
             ),
             personalizedDataAnalysis = null
@@ -58,7 +59,7 @@ class TreatmentMatchJsonTest {
                 + "{\"result\":\"PASS\",\"recoverable\":false,\"inclusionMolecularEvents\":[],\"exclusionMolecularEvents\":[],"
                 + "\"passSpecificMessages\":[\"msg 1\",\"msg 2\",\"msg 3\"],\"passGeneralMessages\":[],"
                 + "\"warnSpecificMessages\":[],\"warnGeneralMessages\":[],\"undeterminedSpecificMessages\":[],\"undeterminedGeneralMessages\":[],"
-                + "\"failSpecificMessages\":[],\"failGeneralMessages\":[],\"isMissingGenesForSufficientEvaluation\":false}]],\"cohorts\":[]}],"
+                + "\"failSpecificMessages\":[],\"failGeneralMessages\":[],\"isMissingGenesForSufficientEvaluation\":false}]],\"cohorts\":[],\"nonEvaluableCohorts\":[]}],"
                 + "\"standardOfCareMatches\":[{\"treatmentCandidate\":{\"treatment\":{\"name\":\"Pembrolizumab\",\"isSystemic\":true,"
                 + "\"synonyms\":[],\"displayOverride\":null,\"categories\":[],\"types\":[],\"treatmentClass\":\"OTHER_TREATMENT\"},"
                 + "\"optional\":true,\"eligibilityFunctions\":[{\"rule\":\"HAS_KNOWN_ACTIVE_CNS_METASTASES\",\"parameters\":[]}],\"additionalCriteriaForRequirement\":[]},"

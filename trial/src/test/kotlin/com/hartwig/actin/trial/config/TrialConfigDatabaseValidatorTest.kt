@@ -71,10 +71,10 @@ class TrialConfigDatabaseValidatorTest {
         val TRIAL_DEFINITION_3 = TestTrialDefinitionConfigFactory.MINIMAL.copy(trialId = TRIAL_ID_3, open = true, phase = "invalid phase")
 
         private val COHORT_DEFINITION_1 = TestCohortDefinitionConfigFactory.MINIMAL.copy(
-            trialId = TRIAL_ID_1, evaluable = true, open = true, slotsAvailable = true, blacklist = false, cohortId = "A"
+            trialId = TRIAL_ID_1, evaluable = true, open = true, slotsAvailable = true, ignore = false, cohortId = "A"
         )
         private val COHORT_DEFINITION_2 = TestCohortDefinitionConfigFactory.MINIMAL.copy(
-            trialId = TRIAL_ID_2, evaluable = true, open = true, slotsAvailable = false, blacklist = false, cohortId = "A"
+            trialId = TRIAL_ID_2, evaluable = true, open = true, slotsAvailable = false, ignore = false, cohortId = "A"
         )
 
         private val INCLUSION_CRITERIA_1 = InclusionCriteriaConfig(
@@ -118,7 +118,7 @@ class TrialConfigDatabaseValidatorTest {
                 ),
                 cohortDefinitionConfigs = listOf(
                     COHORT_DEFINITION_1, COHORT_DEFINITION_1, TestCohortDefinitionConfigFactory.MINIMAL.copy(
-                        trialId = TRIAL_ID_2, evaluable = true, open = true, slotsAvailable = false, blacklist = false, cohortId = "A"
+                        trialId = TRIAL_ID_2, evaluable = true, open = true, slotsAvailable = false, ignore = false, cohortId = "A"
                     )
                 ),
                 inclusionCriteriaConfigs = listOf(INCLUSION_CRITERIA_1, INCLUSION_CRITERIA_2, INCLUSION_CRITERIA_3),

@@ -3,7 +3,7 @@ package com.hartwig.actin.report.pdf.tables.trial
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.molecular.evidence.CountryName
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
-import com.hartwig.actin.report.interpretation.EvaluatedCohort
+import com.hartwig.actin.report.interpretation.InterpretedCohort
 
 data class ExternalTrialSummary(
     val localTrials: Map<String, Iterable<ExternalTrial>>,
@@ -20,7 +20,7 @@ class ExternalTrialSummarizer(private val homeCountry: CountryName) {
     fun summarize(
         externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>,
         trialMatches: List<TrialMatch>,
-        evaluatedCohorts: List<EvaluatedCohort>
+        evaluatedCohorts: List<InterpretedCohort>
     ): ExternalTrialSummary {
         return filterMolecularCriteriaAlreadyPresent(
             filterAndGroupExternalTrialsByNctIdAndEvents(externalTrialsPerEvent, trialMatches),
@@ -48,7 +48,7 @@ class ExternalTrialSummarizer(private val homeCountry: CountryName) {
 
     fun filterMolecularCriteriaAlreadyPresent(
         externalEligibleTrials: Map<String, Iterable<ExternalTrial>>,
-        hospitalLocalEvaluatedCohorts: List<EvaluatedCohort>
+        hospitalLocalEvaluatedCohorts: List<InterpretedCohort>
     ): ExternalTrialSummary {
 
         val hospitalTrialMolecularEvents = hospitalLocalEvaluatedCohorts.flatMap { e -> e.molecularEvents }.toSet()

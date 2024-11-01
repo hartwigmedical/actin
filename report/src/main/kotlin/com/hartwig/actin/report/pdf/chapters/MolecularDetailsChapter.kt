@@ -2,9 +2,10 @@ package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.report.datamodel.Report
-import com.hartwig.actin.report.interpretation.EvaluatedCohort
-import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory
+import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
+import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.PriorIHCTestInterpreter
+import com.hartwig.actin.report.pdf.chapters.ChapterContentFunctions.addGenerators
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularCharacteristicsGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularDriversGenerator
@@ -54,19 +55,14 @@ class MolecularDetailsChapter(
             if (molecular.hasSufficientQualityButLowPurity()) {
                 table.addCell(Cells.createContentNoBorder("Low tumor purity (${molecular.characteristics.purity?.let { Formats.percentage(it) } ?: "NA"}) indicating that potential (subclonal) DNA aberrations might not have been detected & predicted tumor origin results may be less reliable"))
             }
-            val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
+            val cohorts =
+                InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
             val evaluated = cohorts.filter { it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable }
 
             val generators =
                 listOf(MolecularCharacteristicsGenerator(molecular, contentWidth())) + tumorDetailsGenerators(molecular, evaluated)
+            addGenerators(generators, table, addSubTitle = true)
 
-            generators.forEachIndexed { i, generator ->
-                table.addCell(Cells.createSubTitle(generator.title()))
-                table.addCell(Cells.create(generator.contents()))
-                if (i < generators.size - 1) {
-                    table.addCell(Cells.createEmpty())
-                }
-            }
             if (!molecular.hasSufficientQuality) {
                 table.addCell(Cells.createContent("No successful OncoAct WGS and/or tumor NGS panel could be performed on the submitted biopsy (insufficient quality for reporting)"))
             }
@@ -74,7 +70,7 @@ class MolecularDetailsChapter(
         document.add(table)
     }
 
-    private fun tumorDetailsGenerators(molecular: MolecularRecord, evaluated: List<EvaluatedCohort>): List<TableGenerator> {
+    private fun tumorDetailsGenerators(molecular: MolecularRecord, evaluated: List<InterpretedCohort>): List<TableGenerator> {
         return if (molecular.hasSufficientQuality) {
             listOf(
                 PredictedTumorOriginGenerator(molecular, contentWidth()),
