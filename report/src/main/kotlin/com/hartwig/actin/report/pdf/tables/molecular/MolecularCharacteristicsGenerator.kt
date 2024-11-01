@@ -1,10 +1,10 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.datamodel.molecular.HrdType
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoEntry
 import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoGene
+import com.hartwig.actin.report.interpretation.MolecularCharacteristicFormat
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
@@ -93,7 +93,7 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
     }
 
     fun createMSStabilityString(): String? {
-        return molecular.characteristics.isMicrosatelliteUnstable?.let { unstable -> if (unstable) "Unstable" else "Stable" }
+        return MolecularCharacteristicFormat.formatMicrosatelliteStability(molecular.characteristics)
     }
 
     private fun createMSStabilityCell(): Cell {
@@ -101,25 +101,7 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
     }
 
     fun createHRStatusString(): String? {
-        val characteristics = molecular.characteristics
-        return characteristics.isHomologousRepairDeficient?.let { isDeficient ->
-            val statusInterpretation = if (isDeficient) "Deficient" else "Proficient"
-            val scoreInterpretation = characteristics.homologousRepairScore?.let { "(${Formats.twoDigitNumber(it)})" }
-
-            val typeInterpretation = characteristics.hrdType?.let { type ->
-                when (type) {
-                    HrdType.BRCA1_TYPE -> {
-                        "- BRCA1-type (BRCA1 value: ${characteristics.brca1Value?.let { Formats.twoDigitNumber(it) }})"
-                    }
-                    HrdType.BRCA2_TYPE -> {
-                        "- BRCA2-type (BRCA2 value: ${characteristics.brca2Value?.let { Formats.twoDigitNumber(it) }})"
-                    }
-                    HrdType.NONE, HrdType.CANNOT_BE_DETERMINED -> null
-                }
-            }?.takeIf { isDeficient }
-
-            listOfNotNull(statusInterpretation, scoreInterpretation, typeInterpretation).joinToString(" ")
-        }
+        return MolecularCharacteristicFormat.formatHomologuousRepair(molecular.characteristics)
     }
 
     private fun createHRStatusCell(): Cell {

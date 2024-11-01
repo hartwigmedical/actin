@@ -22,8 +22,6 @@ class MolecularClinicalEvidenceGenerator(
     }
 
     override fun contents(): Table {
-        val allDrivers =
-            DriverTableFunctions.allDrivers(molecularHistory).flatMap { it.second }.toSortedSet(Comparator.comparing { it.event })
         val columnCount = 6
 
         val eventWidth = (0.7 * width / 6).toFloat()
@@ -39,8 +37,8 @@ class MolecularClinicalEvidenceGenerator(
             .map(Cells::createHeader)
             .forEach(table::addHeaderCell)
 
-        for (driver in allDrivers) {
-            val filteredEvidence = filterTreatmentEvidence(driver.evidence.treatmentEvidence, isOnLabel)
+        for ((event, evidence) in MolecularClinicalEvidenceFunctions.molecularEvidenceByEvent(molecularHistory)) {
+            val filteredEvidence = filterTreatmentEvidence(evidence.treatmentEvidence, isOnLabel)
             if (filteredEvidence.isNotEmpty()) {
                 val groupedBySourceEvent = TreatmentEvidenceFunctions.groupBySourceEvent(filteredEvidence)
 
@@ -48,7 +46,7 @@ class MolecularClinicalEvidenceGenerator(
                     val treatmentEvidencesByLevel = TreatmentEvidenceFunctions.createPerLevelEvidenceList(evidences)
 
                     if (treatmentEvidencesByLevel.any { it.isNotEmpty() }) {
-                        table.addCell(Cells.createContent(driver.event))
+                        table.addCell(Cells.createContent(event))
                         table.addCell(Cells.createContent(sourceEvent))
 
                         treatmentEvidencesByLevel.forEach { perLevelEvidences ->
