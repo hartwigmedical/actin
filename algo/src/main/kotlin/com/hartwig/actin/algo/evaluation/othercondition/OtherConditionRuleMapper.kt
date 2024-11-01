@@ -147,10 +147,10 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             Or(
                 listOf(
                     HasHadPriorConditionWithDoidComplicationOrToxicity(
-                        doidModel(),
-                        DoidConstants.HEART_DISEASE_DOID,
-                        CARDIAC_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY,
-                        CARDIAC_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY
+                    doidModel(),
+                    DoidConstants.HEART_DISEASE_DOID,
+                    CARDIAC_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY,
+                    CARDIAC_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY
                     ),
                     HasHadPriorConditionWithDoid(doidModel(), DoidConstants.CORONARY_ARTERY_DISEASE_DOID)
                 )
