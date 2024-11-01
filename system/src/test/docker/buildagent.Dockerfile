@@ -6,4 +6,4 @@ RUN apt-get update && apt-get install -y \
 
 RUN ln -s /usr/bin/convert /usr/bin/magick
 
-COPY repository /.m2/repository
+COPY .m2/repository /.m2/repository
