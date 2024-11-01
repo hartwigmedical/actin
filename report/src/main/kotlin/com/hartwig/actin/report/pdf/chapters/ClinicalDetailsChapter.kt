@@ -2,7 +2,7 @@ package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.pdf.ReportContentProvider
-import com.hartwig.actin.report.pdf.util.Cells
+import com.hartwig.actin.report.pdf.chapters.ChapterContentFunctions.addGenerators
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.geom.PageSize
@@ -29,15 +29,7 @@ class ClinicalDetailsChapter(private val report: Report, override val include: B
         val valueWidth = contentWidth - keyWidth - 10
 
         val generators = ReportContentProvider(report).provideClinicalDetailsTables(keyWidth, valueWidth, contentWidth)
-
-        for (i in generators.indices) {
-            val generator = generators[i]
-            table.addCell(Cells.createTitle(generator.title()))
-            table.addCell(Cells.create(generator.contents()))
-            if (i < generators.size - 1) {
-                table.addCell(Cells.createEmpty())
-            }
-        }
+        addGenerators(generators, table, false)
         document.add(table)
     }
 }

@@ -4,7 +4,7 @@ import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.molecular.evidence.CountryName
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.trial.TrialIdentification
-import com.hartwig.actin.report.interpretation.EvaluatedCohort
+import com.hartwig.actin.report.interpretation.InterpretedCohort
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -25,13 +25,15 @@ private val trialMatches = listOf(
         identification = TrialIdentification("TRIAL-1", true, "TR-1", "Different title of same trial 1", "NCT00000001"),
         isPotentiallyEligible = true,
         evaluations = emptyMap(),
-        cohorts = emptyList()
+        cohorts = emptyList(),
+        nonEvaluableCohorts = emptyList()
     ),
     TrialMatch(
         identification = TrialIdentification("TRIAL-2", true, "TR-2", "Different trial 2", "NCT00000003"),
         isPotentiallyEligible = true,
         evaluations = emptyMap(),
-        cohorts = emptyList()
+        cohorts = emptyList(),
+        nonEvaluableCohorts = emptyList()
     )
 )
 
@@ -238,16 +240,17 @@ class ExternalTrialSummarizerTest {
         )
 
     private fun evaluatedCohortTMB() =
-        EvaluatedCohort(
+        InterpretedCohort(
             trialId = "id",
             acronym = "acronym",
-            cohort = null,
+            name = null,
             molecularEvents = setOf(TMB_TARGET),
             isPotentiallyEligible = true,
             isMissingGenesForSufficientEvaluation = false,
             isOpen = true,
             hasSlotsAvailable = true,
             warnings = emptySet(),
-            fails = emptySet()
+            fails = emptySet(),
+            ignore = false
         )
 }

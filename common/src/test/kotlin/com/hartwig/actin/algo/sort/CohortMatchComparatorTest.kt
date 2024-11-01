@@ -23,7 +23,7 @@ class CohortMatchComparatorTest {
                 evaluable = true,
                 open = true,
                 slotsAvailable = true,
-                blacklist = false,
+                ignore = false,
                 description = "",
             ),
             isPotentiallyEligible = true,

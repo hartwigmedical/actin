@@ -27,6 +27,7 @@ class TrialMatchComparatorTest {
             ),
             isPotentiallyEligible = true,
             cohorts = emptyList(),
+            nonEvaluableCohorts = emptyList(),
             evaluations = emptyMap()
         )
     }

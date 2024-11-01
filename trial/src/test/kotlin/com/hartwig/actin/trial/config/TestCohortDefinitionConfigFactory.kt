@@ -9,7 +9,7 @@ object TestCohortDefinitionConfigFactory {
         evaluable = true,
         open = null,
         slotsAvailable = null,
-        blacklist = false,
+        ignore = false,
         description = ""
     )
 }

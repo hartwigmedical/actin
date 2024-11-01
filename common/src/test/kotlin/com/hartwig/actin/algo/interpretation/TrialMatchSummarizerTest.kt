@@ -11,7 +11,7 @@ class TrialMatchSummarizerTest {
     fun `Should be able to summarize proper treatment match test data`() {
         val summary = TrialMatchSummarizer.summarize(TestTreatmentMatchFactory.createProperTreatmentMatch().trialMatches)
         assertThat(summary.trialCount).isEqualTo(2)
-        assertThat(summary.cohortCount).isEqualTo(5)
+        assertThat(summary.cohortCount).isEqualTo(4)
         assertThat(summary.eligibleTrialMap).hasSize(2)
 
         val eligibleCohorts = summary.eligibleTrialMap.entries.first { (key, _) -> key.trialId == "Test Trial 1" }.value

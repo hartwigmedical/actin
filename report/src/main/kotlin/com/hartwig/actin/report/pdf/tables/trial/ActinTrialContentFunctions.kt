@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
-import com.hartwig.actin.report.interpretation.EvaluatedCohort
+import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.pdf.util.Formats
 
 data class ContentDefinition(val textEntries: List<String>, val deEmphasizeContent: Boolean)
@@ -8,29 +8,31 @@ data class ContentDefinition(val textEntries: List<String>, val deEmphasizeConte
 object ActinTrialContentFunctions {
 
     fun contentForTrialCohortList(
-        cohorts: List<EvaluatedCohort>, feedbackFunction: (EvaluatedCohort) -> Set<String>
+        cohorts: List<InterpretedCohort>, feedbackFunction: (InterpretedCohort) -> Set<String>, includeFeedback: Boolean = true
     ): List<ContentDefinition> {
-        val commonFeedback = findCommonMembersInCohorts(cohorts, feedbackFunction)
-        val commonEvents = findCommonMembersInCohorts(cohorts, EvaluatedCohort::molecularEvents)
+        val commonFeedback = if (includeFeedback) findCommonMembersInCohorts(cohorts, feedbackFunction) else emptySet()
+        val commonEvents = findCommonMembersInCohorts(cohorts, InterpretedCohort::molecularEvents)
         val allEventsEmpty = cohorts.all { it.molecularEvents.isEmpty() }
+
         val prefix = if (commonFeedback.isEmpty() && commonEvents.isEmpty()) emptyList() else {
             val deEmphasizeContent = cohorts.all { !it.isOpen || !it.hasSlotsAvailable }
             listOf(
                 ContentDefinition(
-                    listOf(
+                    listOfNotNull(
                         "Applies to all cohorts below",
-                        concat(commonEvents, allEventsEmpty),
-                        concat(commonFeedback)
-                    ), deEmphasizeContent
+                        concat(commonEvents, allEventsEmpty && includeFeedback),
+                        concat(commonFeedback).takeIf { includeFeedback }
+                    ),
+                    deEmphasizeContent
                 )
             )
         }
-        return prefix + cohorts.map { cohort: EvaluatedCohort ->
+        return prefix + cohorts.map { cohort: InterpretedCohort ->
             ContentDefinition(
-                listOf(
-                    cohort.cohort ?: "",
+                listOfNotNull(
+                    cohort.name ?: "",
                     concat(cohort.molecularEvents - commonEvents, commonEvents.isEmpty() && !allEventsEmpty),
-                    concat(feedbackFunction.invoke(cohort) - commonFeedback, commonFeedback.isEmpty())
+                    if (includeFeedback) concat(feedbackFunction(cohort) - commonFeedback, commonFeedback.isEmpty()) else null
                 ),
                 !cohort.isOpen || !cohort.hasSlotsAvailable
             )
@@ -38,7 +40,7 @@ object ActinTrialContentFunctions {
     }
 
     private fun findCommonMembersInCohorts(
-        cohorts: List<EvaluatedCohort>, retrieveMemberFunction: (EvaluatedCohort) -> Set<String>
+        cohorts: List<InterpretedCohort>, retrieveMemberFunction: (InterpretedCohort) -> Set<String>
     ): Set<String> {
         return if (cohorts.size > 1) {
             cohorts.map(retrieveMemberFunction).reduce { acc, set -> acc.intersect(set) }

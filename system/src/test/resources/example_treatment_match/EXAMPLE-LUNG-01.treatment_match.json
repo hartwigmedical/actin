@@ -300,7 +300,7 @@
             "evaluable": true,
             "open": true,
             "slotsAvailable": false,
-            "blacklist": false,
+            "ignore": false,
             "description": "Dose escalation - monotherapy"
           },
           "isPotentiallyEligible": true,
@@ -312,13 +312,14 @@
             "evaluable": true,
             "open": false,
             "slotsAvailable": false,
-            "blacklist": false,
+            "ignore": false,
             "description": "Dose expansion - monotherapy"
           },
           "isPotentiallyEligible": true,
           "evaluations": {}
         }
-      ]
+      ],
+      "nonEvaluableCohorts": []
     },
     {
       "identification": {
@@ -461,23 +462,25 @@
             }
           },
           {
-            "result": "UNDETERMINED",
+            "result": "WARN",
             "recoverable": false,
-            "inclusionMolecularEvents": [],
+            "inclusionMolecularEvents": [
+              "KRAS G12D"
+            ],
             "exclusionMolecularEvents": [],
             "passSpecificMessages": [],
             "passGeneralMessages": [],
-            "warnSpecificMessages": [],
-            "warnGeneralMessages": [],
-            "undeterminedSpecificMessages": [
-              "No molecular data with sufficient quality"
+            "warnSpecificMessages": [
+              "Variant(s) KRAS G12D in KRAS detected in canonical transcript but subclonal likelihood of \u003e 50%"
             ],
-            "undeterminedGeneralMessages": [
-              "No molecular data with sufficient quality"
+            "warnGeneralMessages": [
+              "Variant(s) KRAS G12D in KRAS but subclonal likelihood of \u003e 50%"
             ],
+            "undeterminedSpecificMessages": [],
+            "undeterminedGeneralMessages": [],
             "failSpecificMessages": [],
             "failGeneralMessages": [],
-            "isMissingGenesForSufficientEvaluation": true
+            "isMissingGenesForSufficientEvaluation": false
           }
         ],
         [
@@ -523,7 +526,7 @@
             "evaluable": true,
             "open": true,
             "slotsAvailable": true,
-            "blacklist": false,
+            "ignore": false,
             "description": "Dose expansion - monotherapy - NSCLC"
           },
           "isPotentiallyEligible": true,
@@ -571,7 +574,7 @@
             "evaluable": true,
             "open": true,
             "slotsAvailable": true,
-            "blacklist": false,
+            "ignore": false,
             "description": "Dose expansion - monotherapy - Colorectum"
           },
           "isPotentiallyEligible": false,
@@ -613,7 +616,8 @@
             ]
           ]
         }
-      ]
+      ],
+      "nonEvaluableCohorts": []
     },
     {
       "identification": {
@@ -624,7 +628,7 @@
         "nctId": "NCT00000003",
         "phase": null
       },
-      "isPotentiallyEligible": true,
+      "isPotentiallyEligible": false,
       "evaluations": [
         [
           {
@@ -737,23 +741,25 @@
             }
           },
           {
-            "result": "UNDETERMINED",
+            "result": "FAIL",
             "recoverable": false,
             "inclusionMolecularEvents": [],
-            "exclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [
+              "EGFR C797S"
+            ],
             "passSpecificMessages": [],
             "passGeneralMessages": [],
             "warnSpecificMessages": [],
             "warnGeneralMessages": [],
-            "undeterminedSpecificMessages": [
-              "No molecular data with sufficient quality"
+            "undeterminedSpecificMessages": [],
+            "undeterminedGeneralMessages": [],
+            "failSpecificMessages": [
+              "Variant(s) C797S in gene EGFR detected in canonical transcript"
             ],
-            "undeterminedGeneralMessages": [
-              "No molecular data with sufficient quality"
+            "failGeneralMessages": [
+              "C797S detected in EGFR"
             ],
-            "failSpecificMessages": [],
-            "failGeneralMessages": [],
-            "isMissingGenesForSufficientEvaluation": true
+            "isMissingGenesForSufficientEvaluation": false
           }
         ],
         [
@@ -799,13 +805,14 @@
             "evaluable": true,
             "open": true,
             "slotsAvailable": true,
-            "blacklist": false,
+            "ignore": false,
             "description": "Dose escalation - monotherapy"
           },
-          "isPotentiallyEligible": true,
+          "isPotentiallyEligible": false,
           "evaluations": {}
         }
-      ]
+      ],
+      "nonEvaluableCohorts": []
     },
     {
       "identification": {
@@ -925,23 +932,25 @@
             }
           },
           {
-            "result": "UNDETERMINED",
+            "result": "PASS",
             "recoverable": false,
-            "inclusionMolecularEvents": [],
+            "inclusionMolecularEvents": [
+              "EGFR C797S"
+            ],
             "exclusionMolecularEvents": [],
-            "passSpecificMessages": [],
-            "passGeneralMessages": [],
+            "passSpecificMessages": [
+              "Variant(s) C797S in gene EGFR detected in canonical transcript"
+            ],
+            "passGeneralMessages": [
+              "C797S detected in EGFR"
+            ],
             "warnSpecificMessages": [],
             "warnGeneralMessages": [],
-            "undeterminedSpecificMessages": [
-              "No molecular data with sufficient quality"
-            ],
-            "undeterminedGeneralMessages": [
-              "No molecular data with sufficient quality"
-            ],
+            "undeterminedSpecificMessages": [],
+            "undeterminedGeneralMessages": [],
             "failSpecificMessages": [],
             "failGeneralMessages": [],
-            "isMissingGenesForSufficientEvaluation": true
+            "isMissingGenesForSufficientEvaluation": false
           }
         ],
         [
@@ -987,13 +996,14 @@
             "evaluable": true,
             "open": true,
             "slotsAvailable": true,
-            "blacklist": false,
+            "ignore": false,
             "description": "Lung cancer C797S cohort"
           },
           "isPotentiallyEligible": true,
           "evaluations": {}
         }
-      ]
+      ],
+      "nonEvaluableCohorts": []
     }
   ],
   "standardOfCareMatches": null,

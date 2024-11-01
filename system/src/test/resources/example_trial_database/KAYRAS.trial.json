@@ -81,7 +81,7 @@
         "evaluable": true,
         "open": true,
         "slotsAvailable": true,
-        "blacklist": false,
+        "ignore": false,
         "description": "Dose expansion - monotherapy - NSCLC"
       },
       "eligibility": [
@@ -107,7 +107,7 @@
         "evaluable": true,
         "open": true,
         "slotsAvailable": true,
-        "blacklist": false,
+        "ignore": false,
         "description": "Dose expansion - monotherapy - Colorectum"
       },
       "eligibility": [

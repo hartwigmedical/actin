@@ -30,8 +30,6 @@ class EvaluationInterpreterTest {
                     reference = FIRST_CRITERION.text,
                     entriesPerResult = mapOf(
                         Pair(EvaluationResult.FAIL, EvaluationEntry("FAIL", setOf("fail specific 1", "fail specific 2"))),
-                        Pair(EvaluationResult.WARN, EvaluationEntry("WARN", setOf("warn specific 1", "warn specific 2"))),
-                        Pair(EvaluationResult.UNDETERMINED, EvaluationEntry("UNDETERMINED", setOf("undetermined specific")))
                     )
                 )
             )
@@ -55,8 +53,6 @@ class EvaluationInterpreterTest {
                     reference = FIRST_CRITERION.text,
                     entriesPerResult = mapOf(
                         Pair(EvaluationResult.FAIL, EvaluationEntry("FAIL", setOf("fail specific 1", "fail specific 2"))),
-                        Pair(EvaluationResult.WARN, EvaluationEntry("WARN", setOf("warn specific 1", "warn specific 2"))),
-                        Pair(EvaluationResult.UNDETERMINED, EvaluationEntry("UNDETERMINED", setOf("undetermined specific")))
                     )
                 ),
                 EvaluationInterpretation(
@@ -113,7 +109,7 @@ class EvaluationInterpreterTest {
     }
 
     @Test
-    fun `Should clarify recoverable in header`() {
+    fun `Should clarify recoverable in header and add WARN and UNDETERMINED`() {
         val evaluations = mapOf(
             Pair(FIRST_CRITERION, createBaseEvaluation(result = EvaluationResult.FAIL).copy(recoverable = true)),
         )

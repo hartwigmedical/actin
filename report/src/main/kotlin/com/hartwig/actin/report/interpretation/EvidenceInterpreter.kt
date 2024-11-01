@@ -31,8 +31,8 @@ class EvidenceInterpreter private constructor(private val actinInclusionEvents: 
     }
 
     companion object {
-        fun fromEvaluatedCohorts(cohorts: List<EvaluatedCohort>): EvidenceInterpreter {
-            return EvidenceInterpreter(cohorts.flatMap(EvaluatedCohort::molecularEvents).toSet())
+        fun fromInterpretedCohorts(cohorts: List<InterpretedCohort>): EvidenceInterpreter {
+            return EvidenceInterpreter(cohorts.flatMap(InterpretedCohort::molecularEvents).toSet())
         }
     }
 }

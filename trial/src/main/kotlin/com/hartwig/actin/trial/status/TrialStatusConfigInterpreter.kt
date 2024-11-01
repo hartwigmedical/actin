@@ -98,7 +98,7 @@ class TrialStatusConfigInterpreter(
             evaluable = cohortConfig.evaluable,
             open = interpretedCohortStatus.open,
             slotsAvailable = interpretedCohortStatus.slotsAvailable,
-            blacklist = cohortConfig.blacklist,
+            ignore = cohortConfig.ignore,
             description = cohortConfig.description
         )
     }

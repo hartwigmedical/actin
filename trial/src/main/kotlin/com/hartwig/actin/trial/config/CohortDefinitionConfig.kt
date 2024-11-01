@@ -7,6 +7,6 @@ data class CohortDefinitionConfig(
     val evaluable: Boolean,
     val open: Boolean?,
     val slotsAvailable: Boolean?,
-    val blacklist: Boolean,
+    val ignore: Boolean,
     val description: String
 ) : TrialConfig

@@ -3,6 +3,8 @@ package com.hartwig.actin.molecular
 import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
+import com.hartwig.actin.datamodel.clinical.ClinicalRecord
+import com.hartwig.actin.datamodel.clinical.PriorIHCTest
 import com.hartwig.actin.datamodel.clinical.PriorSequencingTest
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
@@ -15,6 +17,8 @@ import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.orange.MolecularRecordAnnotator
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
 import com.hartwig.actin.molecular.orange.interpretation.OrangeExtractor
+import com.hartwig.actin.molecular.panel.IHCAnnotator
+import com.hartwig.actin.molecular.panel.IHCExtractor
 import com.hartwig.actin.molecular.panel.PanelAnnotator
 import com.hartwig.actin.molecular.panel.PanelFusionAnnotator
 import com.hartwig.actin.molecular.panel.PanelVariantAnnotator
@@ -58,8 +62,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
 
         val orangeMolecularTests = interpretOrangeRecord(config, doidEntry, tumorDoids)
-        val clinicalMolecularTests =
-            interpretClinicalMolecularTests(config, clinical.priorSequencingTests, doidEntry, tumorDoids)
+        val clinicalMolecularTests = interpretClinicalMolecularTests(config, clinical, doidEntry, tumorDoids)
 
         val history = MolecularHistory(orangeMolecularTests + clinicalMolecularTests)
         MolecularHistoryPrinter.printRecord(history)
@@ -95,7 +98,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
 
     private fun interpretClinicalMolecularTests(
         config: MolecularInterpreterConfig,
-        priorSequencingTests: List<PriorSequencingTest>,
+        clinical: ClinicalRecord,
         doidEntry: DoidEntry,
         tumorDoids: Set<String>
     ): List<MolecularTest> {
@@ -117,7 +120,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             throw IllegalArgumentException("Failed to load known fusions from ${config.knownFusionsPath}")
         }
 
-        LOGGER.info("Interpreting {} prior sequencing tests without orange results", priorSequencingTests.size)
+        LOGGER.info("Interpreting {} prior sequencing tests without orange results", clinical.priorSequencingTests.size)
         val geneDriverLikelihoodModel = GeneDriverLikelihoodModel(dndsDatabase)
         val variantAnnotator = TransvarVariantAnnotatorFactory.withRefGenome(
             com.hartwig.actin.tools.ensemblcache.RefGenome.V37,
@@ -133,7 +136,30 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val panelVariantAnnotator = PanelVariantAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite)
         val panelFusionAnnotator = PanelFusionAnnotator(evidenceDatabase, knownFusionCache, ensemblDataCache)
 
-        val sequencingMolecularTests = MolecularInterpreter(
+        val sequencingMolecularTests = interpretPriorSequencingMolecularTests(
+            clinical.priorSequencingTests,
+            evidenceDatabase,
+            panelVariantAnnotator,
+            panelFusionAnnotator
+        )
+
+        val ihcMolecularTests = interpretPriorIHCMolecularTests(
+            clinical.priorIHCTests,
+            panelFusionAnnotator
+        )
+
+        LOGGER.info(" Completed interpretation of {} clinical molecular tests", sequencingMolecularTests.size)
+        return sequencingMolecularTests + ihcMolecularTests
+    }
+
+    private fun interpretPriorSequencingMolecularTests(
+        priorSequencingTests: List<PriorSequencingTest>,
+        evidenceDatabase: EvidenceDatabase,
+        panelVariantAnnotator: PanelVariantAnnotator,
+        panelFusionAnnotator: PanelFusionAnnotator
+    ): List<MolecularTest> {
+
+        return MolecularInterpreter(
             extractor = object : MolecularExtractor<PriorSequencingTest, PriorSequencingTest> {
                 override fun extract(input: List<PriorSequencingTest>): List<PriorSequencingTest> {
                     return input
@@ -145,9 +171,17 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
                 panelFusionAnnotator
             ),
         ).run(priorSequencingTests)
-        LOGGER.info(" Completed interpretation of {} clinical molecular tests", sequencingMolecularTests.size)
+    }
 
-        return sequencingMolecularTests
+    private fun interpretPriorIHCMolecularTests(
+        priorIHCTests: List<PriorIHCTest>,
+        panelFusionAnnotator: PanelFusionAnnotator
+    ): List<MolecularTest> {
+
+        return MolecularInterpreter(
+            extractor = IHCExtractor(),
+            annotator = IHCAnnotator(panelFusionAnnotator),
+        ).run(priorIHCTests)
     }
 
     private fun loadEvidence(

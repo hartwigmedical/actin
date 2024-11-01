@@ -34,7 +34,7 @@ class TrialIngestionResultTest {
     private val trialDefinition = TestTrialDefinitionConfigFactory.MINIMAL.copy(trialId = TRIAL_ID_1, open = true)
 
     private val cohortDefinition = TestCohortDefinitionConfigFactory.MINIMAL.copy(
-        trialId = TRIAL_ID_1, evaluable = true, open = true, slotsAvailable = true, blacklist = false, cohortId = "A"
+        trialId = TRIAL_ID_1, evaluable = true, open = true, slotsAvailable = true, ignore = false, cohortId = "A"
     )
 
     @Test

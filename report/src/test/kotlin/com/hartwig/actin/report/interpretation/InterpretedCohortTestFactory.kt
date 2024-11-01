@@ -1,8 +1,8 @@
 package com.hartwig.actin.report.interpretation
 
-object EvaluatedCohortTestFactory {
+object InterpretedCohortTestFactory {
 
-    fun evaluatedCohort(
+    fun interpretedCohort(
         trialId: String = "",
         acronym: String = "",
         isPotentiallyEligible: Boolean = false,
@@ -10,18 +10,19 @@ object EvaluatedCohortTestFactory {
         hasSlotsAvailable: Boolean = false,
         molecularEvents: Iterable<String> = emptySet(),
         cohort: String? = null
-    ): EvaluatedCohort {
-        return EvaluatedCohort(
+    ): InterpretedCohort {
+        return InterpretedCohort(
             trialId = trialId,
             acronym = acronym,
-            cohort = cohort,
+            name = cohort,
             isPotentiallyEligible = isPotentiallyEligible,
             isMissingGenesForSufficientEvaluation = false,
             isOpen = isOpen,
             hasSlotsAvailable = hasSlotsAvailable,
             molecularEvents = molecularEvents.toSet(),
             warnings = emptySet(),
-            fails = emptySet()
+            fails = emptySet(),
+            ignore = false
         )
     }
 }

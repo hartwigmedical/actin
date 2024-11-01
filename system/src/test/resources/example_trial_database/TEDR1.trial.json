@@ -77,7 +77,7 @@
         "evaluable": true,
         "open": true,
         "slotsAvailable": true,
-        "blacklist": false,
+        "ignore": false,
         "description": "Lung cancer C797S cohort"
       },
       "eligibility": [

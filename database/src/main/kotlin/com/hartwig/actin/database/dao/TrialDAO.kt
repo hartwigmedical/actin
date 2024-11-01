@@ -63,7 +63,7 @@ internal class TrialDAO(private val context: DSLContext) {
             Tables.COHORT.EVALUABLE,
             Tables.COHORT.OPEN,
             Tables.COHORT.SLOTSAVAILABLE,
-            Tables.COHORT.BLACKLIST,
+            Tables.COHORT.IGNORE,
             Tables.COHORT.DESCRIPTION
         )
             .values(
@@ -72,7 +72,7 @@ internal class TrialDAO(private val context: DSLContext) {
                 metadata.evaluable,
                 metadata.open,
                 metadata.slotsAvailable,
-                metadata.blacklist,
+                metadata.ignore,
                 metadata.description
             )
             .returning(Tables.COHORT.ID)

@@ -157,7 +157,7 @@ SELECT * FROM (
 SELECT  referenceDate, referenceDateIsLive, patientId, trialMatch.code AS trialId, trialMatch.acronym AS trialAcronym, trialMatch.open AS trialOpen,
         IF(trialMatch.id IN (SELECT trialMatchId FROM cohortMatch),1,0) AS trialHasCohorts, trialMatch.isEligible AS isEligibleTrial,
         cohortMatch.code AS cohortId, cohortMatch.description AS cohortDescription, cohortMatch.open AS cohortOpen,
-        cohortMatch.slotsAvailable AS cohortSlotsAvailable, cohortMatch.blacklist AS cohortBlacklist, cohortMatch.isEligible AS isEligibleCohort,
+        cohortMatch.slotsAvailable AS cohortSlotsAvailable, cohortMatch.ignore AS cohortIgnore, cohortMatch.isEligible AS isEligibleCohort,
         eligibility AS eligibilityRule, result, recoverable, passSpecificMessages, passGeneralMessages, warnSpecificMessages, warnGeneralMessages,
         undeterminedSpecificMessages, undeterminedGeneralMessages, failSpecificMessages, failGeneralMessages,
         inclusionMolecularEvents, exclusionMolecularEvents
@@ -169,7 +169,7 @@ UNION
 SELECT  DISTINCT referenceDate, referenceDateIsLive, patientId, trialMatch.code AS trialId, trialMatch.acronym AS trialAcronym, trialMatch.open AS trialOpen,
         IF(trialMatch.id IN (SELECT trialMatchId FROM cohortMatch),1,0) AS trialHasCohorts, trialMatch.isEligible AS isEligibleTrial,
         cohortMatch.code AS cohortId, cohortMatch.description AS cohortDescription, cohortMatch.open AS cohortOpen,
-        cohortMatch.slotsAvailable AS cohortSlotsAvailable, cohortMatch.blacklist AS cohortBlacklist, cohortMatch.isEligible AS isEligibleCohort,
+        cohortMatch.slotsAvailable AS cohortSlotsAvailable, cohortMatch.ignore AS cohortIgnore, cohortMatch.isEligible AS isEligibleCohort,
         NULL AS eligibilityRule, NULL AS result, NULL as recoverable, NULL AS passSpecificMessages, NULL AS passGeneralMessages,
         NULL AS warnSpecificMessages, NULL AS warnGeneralMessages, NULL AS undeterminedSpecificMessages,
         NULL AS undeterminedGeneralMessages, NULL AS failSpecificMessages, NULL AS failGeneralMessages,
@@ -186,6 +186,6 @@ CREATE OR REPLACE VIEW eligibleCohorts
 AS (
 SELECT DISTINCT patientId, trialId, trialAcronym, cohortDescription, group_concat(DISTINCT(IF(inclusionMolecularEvents<>"", inclusionMolecularEvents, null)) SEPARATOR ';') AS event
     FROM trialEvaluation
-    WHERE ((isEligibleTrial AND NOT trialHasCohorts AND trialOpen) OR (isEligibleTrial AND isEligibleCohort AND cohortOpen AND NOT cohortBlacklist))
+    WHERE ((isEligibleTrial AND NOT trialHasCohorts AND trialOpen) OR (isEligibleTrial AND isEligibleCohort AND cohortOpen AND NOT cohortIgnore))
     GROUP BY patientId, trialId, trialAcronym, cohortDescription
 );
