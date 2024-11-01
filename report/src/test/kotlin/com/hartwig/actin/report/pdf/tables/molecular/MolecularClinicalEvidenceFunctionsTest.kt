@@ -31,10 +31,6 @@ class MolecularClinicalEvidenceFunctionsTest {
         assertThat(events).containsExactly("BRAF V600E" to CLINICAL_EVIDENCE)
     }
 
-    private fun molecularHistory(molecularRecord: MolecularRecord) = MolecularHistory(
-        molecularTests = listOf(molecularRecord)
-    )
-
     @Test
     fun `Should return mss and msi events and associated evidence`() {
         assertThat(
@@ -116,5 +112,8 @@ class MolecularClinicalEvidenceFunctionsTest {
             )
         ).containsExactly("TML high (10)" to CLINICAL_EVIDENCE)
     }
-
+    
+    private fun molecularHistory(molecularRecord: MolecularRecord) = MolecularHistory(
+        molecularTests = listOf(molecularRecord)
+    )
 }
