@@ -228,7 +228,7 @@
             ]
           }
         ],
-        "hasSufficientQuality": false,
+        "hasSufficientQuality": true,
         "testTypeDisplay": null,
         "experimentType": "HARTWIG_WHOLE_GENOME",
         "date": {
