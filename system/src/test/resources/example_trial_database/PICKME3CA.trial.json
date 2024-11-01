@@ -71,6 +71,23 @@
 		  "PIK3CA"
 		]
 	  }
+	},
+	{
+	  "references": [
+		{
+		  "id": "I-04",
+		  "text": "Patient can not have a severe cardiac condition."
+		}
+	  ],
+	  "function": {
+		"rule": "WARN_IF",
+		"parameters": [
+		  {
+			"rule": "HAS_HISTORY_OF_CARDIAC_DISEASE",
+			"parameters": []
+		  }
+		]
+	  }
 	}
   ],
   "cohorts": [
