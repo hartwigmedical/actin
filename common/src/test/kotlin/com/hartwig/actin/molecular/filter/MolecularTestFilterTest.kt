@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.filter
 import com.hartwig.actin.datamodel.molecular.Drivers
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.Fusion
+import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.TestPanelRecordFactory
@@ -65,9 +66,11 @@ class MolecularTestFilterTest {
     }
 
     @Test
-    fun `Should filter out failed WGS record`() {
+    fun `Should filter out somatic information from failed WGS record`() {
         val failedWGS = BASE_WGS_TEST.copy(hasSufficientQuality = false)
-        testFilter(BASE_WGS_TEST, failedWGS)
+        val filtered = filter.apply(listOf(failedWGS)).first()
+        assertThat(filtered.drivers).isEqualTo(Drivers())
+        assertThat((filtered as MolecularRecord).pharmaco).isEqualTo(failedWGS.pharmaco)
     }
 
     private fun testFilter(toInclude: MolecularTest, toFilter: MolecularTest) {

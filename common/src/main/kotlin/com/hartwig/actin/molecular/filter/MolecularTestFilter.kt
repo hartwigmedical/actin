@@ -1,6 +1,8 @@
 package com.hartwig.actin.molecular.filter
 
+import com.hartwig.actin.datamodel.molecular.Drivers
 import com.hartwig.actin.datamodel.molecular.ExperimentType
+import com.hartwig.actin.datamodel.molecular.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import java.time.LocalDate
@@ -8,7 +10,7 @@ import java.time.LocalDate
 class MolecularTestFilter(private val maxTestAge: LocalDate? = null) {
 
     fun apply(tests: List<MolecularTest>): List<MolecularTest> {
-        val filteredTests = removeFailedTests(tests)
+        val filteredTests = removeSomaticResultsFromFailedTests(tests)
         if (filteredTests.isNotEmpty() && maxTestAge != null) {
             val sortedTests = filteredTests.sortedBy { it.date }.reversed()
             val mostRecentTestDate = sortedTests.first().date
@@ -28,7 +30,15 @@ class MolecularTestFilter(private val maxTestAge: LocalDate? = null) {
         return filteredTests
     }
 
-    private fun removeFailedTests(tests: List<MolecularTest>): List<MolecularTest> {
-        return tests.filterNot { (it as? MolecularRecord)?.hasSufficientQuality == false }
+    private fun removeSomaticResultsFromFailedTests(tests: List<MolecularTest>): List<MolecularTest> {
+        return tests.map {
+            if ((it as? MolecularRecord)?.hasSufficientQuality == false) {
+                it.copy(
+                    immunology = it.immunology.copy(isReliable = false),
+                    characteristics = MolecularCharacteristics(),
+                    drivers = Drivers()
+                )
+            } else it
+        }
     }
 }
