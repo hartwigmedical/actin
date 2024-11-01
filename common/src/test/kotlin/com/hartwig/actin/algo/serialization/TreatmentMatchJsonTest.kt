@@ -44,12 +44,13 @@ class TreatmentMatchJsonTest {
                             passSpecificMessages = setOf("msg 2", "msg 1", "msg 3"),
                         )
                     ),
-                    cohorts = emptyList()
+                    cohorts = emptyList(),
+                    nonEvaluableCohorts = emptyList()
                 )
             ),
             personalizedDataAnalysis = null
         )
-        val expectedJson = ("{\"patientId\":\"ACTN01029999\",\"sampleId\":\"ACTN01029999T\",\"trialSource\":\"EMC\","
+        val expectedJson = ("{\"patientId\":\"ACTN01029999\",\"sampleId\":\"ACTN01029999T\",\"trialSource\":\"Test hospital\","
                 + "\"referenceDate\":{\"year\":2021,\"month\":8,\"day\":2},\"referenceDateIsLive\":true,\"trialMatches\":["
                 + "{\"identification\":{\"trialId\":\"Test Trial 1\",\"open\":true,\"acronym\":\"TEST-1\","
                 + "\"title\":\"Example test trial 1\",\"nctId\":\"NCT00000010\",\"phase\":\"PHASE_1\"},\"isPotentiallyEligible\":true,\"evaluations\":[["
@@ -58,7 +59,7 @@ class TreatmentMatchJsonTest {
                 + "{\"result\":\"PASS\",\"recoverable\":false,\"inclusionMolecularEvents\":[],\"exclusionMolecularEvents\":[],"
                 + "\"passSpecificMessages\":[\"msg 1\",\"msg 2\",\"msg 3\"],\"passGeneralMessages\":[],"
                 + "\"warnSpecificMessages\":[],\"warnGeneralMessages\":[],\"undeterminedSpecificMessages\":[],\"undeterminedGeneralMessages\":[],"
-                + "\"failSpecificMessages\":[],\"failGeneralMessages\":[],\"isMissingGenesForSufficientEvaluation\":false}]],\"cohorts\":[]}],"
+                + "\"failSpecificMessages\":[],\"failGeneralMessages\":[],\"isMissingGenesForSufficientEvaluation\":false}]],\"cohorts\":[],\"nonEvaluableCohorts\":[]}],"
                 + "\"standardOfCareMatches\":[{\"treatmentCandidate\":{\"treatment\":{\"name\":\"Pembrolizumab\",\"isSystemic\":true,"
                 + "\"synonyms\":[],\"displayOverride\":null,\"categories\":[],\"types\":[],\"treatmentClass\":\"OTHER_TREATMENT\"},"
                 + "\"optional\":true,\"eligibilityFunctions\":[{\"rule\":\"HAS_KNOWN_ACTIVE_CNS_METASTASES\",\"parameters\":[]}],\"additionalCriteriaForRequirement\":[]},"

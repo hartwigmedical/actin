@@ -18,7 +18,7 @@ class TreatmentMatcher(
     private val trials: List<Trial>,
     private val referenceDateProvider: ReferenceDateProvider,
     private val evaluatedTreatmentAnnotator: EvaluatedTreatmentAnnotator,
-    private val trialSource: String,
+    private val trialSource: String?,
     private val personalizationDataPath: String? = null
 ) {
 

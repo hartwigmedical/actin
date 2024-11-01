@@ -6,6 +6,7 @@ import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
 import com.hartwig.actin.datamodel.clinical.TestClinicalFactory
+import java.time.LocalDate
 
 object TestReportFactory {
     fun createMinimalTestReport(): Report {
@@ -13,7 +14,8 @@ object TestReportFactory {
             patientId = TestPatientFactory.TEST_PATIENT,
             patientRecord = TestPatientFactory.createMinimalTestWGSPatientRecord(),
             treatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch(),
-            config = ReportConfiguration()
+            config = ReportConfiguration(),
+            reportDate = LocalDate.now()
         )
     }
 

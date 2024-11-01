@@ -10,8 +10,8 @@ object ExampleFunctions {
 
     private const val TRIAL_SOURCE = "Example"
 
-    private const val EXAMPLE_PATIENT_RECORD_JSON = "example_patient_data/EXAMPLE-LUNG-02.patient_record.json"
-    private const val EXAMPLE_TREATMENT_MATCH_JSON = "example_treatment_match/EXAMPLE-LUNG-02.treatment_match.json"
+    private const val EXAMPLE_PATIENT_RECORD_JSON = "example_patient_data/EXAMPLE-LUNG-01.patient_record.json"
+    private const val EXAMPLE_TREATMENT_MATCH_JSON = "example_treatment_match/EXAMPLE-LUNG-01.treatment_match.json"
     private const val EXAMPLE_TRIAL_DATABASE_DIRECTORY = "example_trial_database"
 
     private const val EXAMPLE_TREATMENT_MATCH_DIRECTORY = "example_treatment_match"

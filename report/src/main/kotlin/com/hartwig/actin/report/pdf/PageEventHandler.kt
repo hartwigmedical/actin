@@ -9,6 +9,7 @@ import com.itextpdf.kernel.events.PdfDocumentEvent
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfOutline
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitRemoteGoToDestination
+import java.time.LocalDate
 
 class PageEventHandler private constructor(private val header: Header, private val footer: Footer, private val sidePanel: SidePanel) :
     IEventHandler {
@@ -51,8 +52,8 @@ class PageEventHandler private constructor(private val header: Header, private v
     }
 
     companion object {
-        fun create(patientId: String): PageEventHandler {
-            return PageEventHandler(Header(), Footer(), SidePanel(patientId))
+        fun create(patientId: String, reportDate: LocalDate): PageEventHandler {
+            return PageEventHandler(Header(), Footer(), SidePanel(patientId, reportDate))
         }
     }
 }

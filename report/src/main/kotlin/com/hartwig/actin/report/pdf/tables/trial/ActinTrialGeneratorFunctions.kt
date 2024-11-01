@@ -1,8 +1,8 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.datamodel.trial.TrialPhase
-import com.hartwig.actin.report.interpretation.EvaluatedCohort
-import com.hartwig.actin.report.interpretation.EvaluatedCohortComparator
+import com.hartwig.actin.report.interpretation.InterpretedCohortComparator
+import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Cells.createContent
 import com.hartwig.actin.report.pdf.util.Styles
@@ -14,39 +14,42 @@ import com.itextpdf.layout.element.Text
 object ActinTrialGeneratorFunctions {
 
     fun addTrialsToTable(
-        evaluatedCohorts: List<EvaluatedCohort>,
+        cohorts: List<InterpretedCohort>,
         table: Table,
-        cohortColumnWidth: Float,
-        molecularEventColumnWidth: Float,
-        feedbackColumnWidth: Float,
-        feedbackFunction: (EvaluatedCohort) -> Set<String>
+        tableWidths: FloatArray,
+        feedbackFunction: (InterpretedCohort) -> Set<String>,
+        includeFeedback: Boolean = true,
+        paddingDistance: Float = 1f
     ) {
-        sortedCohortGroups(evaluatedCohorts).forEach { cohortList: List<EvaluatedCohort> ->
-            val trialSubTable = Tables.createFixedWidthCols(
-                cohortColumnWidth, molecularEventColumnWidth, feedbackColumnWidth
-            )
-            ActinTrialContentFunctions.contentForTrialCohortList(cohortList, feedbackFunction)
-                .forEach { addContentListToTable(it.textEntries, it.deEmphasizeContent, trialSubTable) }
+        sortedCohortGroups(cohorts).forEach { cohortList: List<InterpretedCohort> ->
+            val trialSubTable = Tables.createFixedWidthCols(*tableWidths)
+            ActinTrialContentFunctions.contentForTrialCohortList(cohortList, feedbackFunction, includeFeedback)
+                .forEach { addContentListToTable(it.textEntries, it.deEmphasizeContent, trialSubTable, paddingDistance) }
 
             insertTrialRow(cohortList, table, trialSubTable)
         }
     }
 
-    private fun sortedCohortGroups(cohorts: List<EvaluatedCohort>): List<List<EvaluatedCohort>> {
-        val sortedCohorts = cohorts.sortedWith(EvaluatedCohortComparator())
-        val cohortsByTrialId = sortedCohorts.groupBy(EvaluatedCohort::trialId)
-
-        return sortedCohorts.map(EvaluatedCohort::trialId).distinct().mapNotNull { cohortsByTrialId[it] }
+    fun createTableTitleStart(source: String?): String {
+        return source?.let { "$it trials" } ?: "Trials"
     }
 
-    private fun addContentListToTable(cellContent: List<String>, deEmphasizeContent: Boolean, table: Table) {
+    private fun sortedCohortGroups(cohorts: List<InterpretedCohort>): List<List<InterpretedCohort>> {
+        val sortedCohorts = cohorts.sortedWith(InterpretedCohortComparator())
+        val cohortsByTrialId = sortedCohorts.groupBy(InterpretedCohort::trialId)
+
+        return sortedCohorts.map(InterpretedCohort::trialId).distinct().mapNotNull { cohortsByTrialId[it] }
+    }
+
+    private fun addContentListToTable(cellContent: List<String>, deEmphasizeContent: Boolean, table: Table, paddingDistance: Float) {
         cellContent.map {
             val paragraph = Paragraph(it).setKeepTogether(true)
-            if (deEmphasizeContent) Cells.createContentNoBorderDeEmphasize(paragraph) else Cells.createContentNoBorder(paragraph)
+            val cell = if (deEmphasizeContent) Cells.createContentNoBorderDeEmphasize(paragraph) else Cells.createContentNoBorder(paragraph)
+            cell.setPadding(paddingDistance)
         }.forEach(table::addCell)
     }
 
-    private fun insertTrialRow(cohortList: List<EvaluatedCohort>, table: Table, trialSubTable: Table) {
+    private fun insertTrialRow(cohortList: List<InterpretedCohort>, table: Table, trialSubTable: Table) {
         if (cohortList.isNotEmpty()) {
             val cohort = cohortList.first()
             val trialLabelText = listOfNotNull(

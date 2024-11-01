@@ -27,6 +27,7 @@ class MolecularTestAdapter(private val gson: Gson) : TypeAdapter<MolecularTest>(
             ExperimentType.HARTWIG_WHOLE_GENOME -> gson.fromJson(jsonObject, MolecularRecord::class.java)
             ExperimentType.HARTWIG_TARGETED -> gson.fromJson(jsonObject, MolecularRecord::class.java)
             ExperimentType.PANEL -> PanelRecordAdapter(gson).fromJsonTree(jsonObject)
+            ExperimentType.IHC -> PanelRecordAdapter(gson).fromJsonTree(jsonObject)
         }
     }
 }

@@ -7,8 +7,8 @@ import com.hartwig.actin.datamodel.molecular.evidence.CountryName
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
 import com.hartwig.actin.report.interpretation.ClonalityInterpreter
-import com.hartwig.actin.report.interpretation.EvaluatedCohort
-import com.hartwig.actin.report.interpretation.EvaluatedCohortsInterpreter
+import com.hartwig.actin.report.interpretation.InterpretedCohortsSummarizer
+import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.MolecularDriverEntry
 import com.hartwig.actin.report.interpretation.MolecularDriverEntryFactory
 import com.hartwig.actin.report.interpretation.MolecularDriversInterpreter
@@ -21,9 +21,9 @@ import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
 class MolecularDriversGenerator(
-    private val trialSource: String,
+    private val trialSource: String?,
     private val molecular: MolecularRecord,
-    private val cohorts: List<EvaluatedCohort>,
+    private val cohorts: List<InterpretedCohort>,
     private val trialMatches: List<TrialMatch>,
     private val width: Float,
     private val homeCountry: CountryName
@@ -40,12 +40,12 @@ class MolecularDriversGenerator(
         table.addHeaderCell(Cells.createHeader("Type"))
         table.addHeaderCell(Cells.createHeader("Driver"))
         table.addHeaderCell(Cells.createHeader("Driver likelihood"))
-        table.addHeaderCell(Cells.createHeader("Trials in $trialSource"))
+        table.addHeaderCell(Cells.createHeader(trialSource?.let { "Trials in $it" } ?: "Trials"))
         table.addHeaderCell(Cells.createHeader("Trials in ${molecular.externalTrialSource}"))
         table.addHeaderCell(Cells.createHeader("Best evidence in ${molecular.evidenceSource}"))
         table.addHeaderCell(Cells.createHeader("Resistance in ${molecular.evidenceSource}"))
 
-        val molecularDriversInterpreter = MolecularDriversInterpreter(molecular.drivers, EvaluatedCohortsInterpreter.fromEvaluatedCohorts(cohorts))
+        val molecularDriversInterpreter = MolecularDriversInterpreter(molecular.drivers, InterpretedCohortsSummarizer.fromCohorts(cohorts))
 
         val externalTrialSummarizer = ExternalTrialSummarizer(homeCountry)
         val externalTrialSummary = externalTrialSummarizer.summarize(AggregatedEvidenceFactory.create(molecular).externalEligibleTrialsPerEvent, trialMatches, cohorts)

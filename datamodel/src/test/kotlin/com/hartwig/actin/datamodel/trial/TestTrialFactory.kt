@@ -79,7 +79,7 @@ object TestTrialFactory {
             evaluable = evaluable,
             open = true,
             slotsAvailable = true,
-            blacklist = false,
+            ignore = false,
             description = "Cohort $cohortId"
         )
     }

@@ -29,13 +29,15 @@ class TrialMatcher(private val evaluationFunctionFactory: EvaluationFunctionFact
                     evaluations = cohortEvaluations
                 )
             }.sortedWith(CohortMatchComparator())
+            val nonEvaluableCohorts = trial.cohorts.filter { !it.metadata.evaluable }.map { it.metadata }
 
             val isEligible = passesAllTrialEvaluations && (trial.cohorts.isEmpty() || cohortMatches.any(CohortMatch::isPotentiallyEligible))
             TrialMatch(
                 identification = trial.identification,
                 isPotentiallyEligible = isEligible,
                 evaluations = trialEvaluations,
-                cohorts = cohortMatches
+                cohorts = cohortMatches,
+                nonEvaluableCohorts = nonEvaluableCohorts
             )
         }.sortedWith(TrialMatchComparator())
     }

@@ -12,7 +12,7 @@ class CohortDefinitionConfigFactory : TrialConfigFactory<CohortDefinitionConfig>
             evaluable = ResourceFile.bool(parts[fields["evaluable"]!!]),
             open = ResourceFile.optionalBool(parts[fields["open"]!!]),
             slotsAvailable = ResourceFile.optionalBool(parts[fields["slotsAvailable"]!!]),
-            blacklist = ResourceFile.bool(parts[fields["blacklist"]!!]),
+            ignore = ResourceFile.bool(parts[fields["ignore"]!!]),
             description = parts[fields["description"]!!]
         )
     }

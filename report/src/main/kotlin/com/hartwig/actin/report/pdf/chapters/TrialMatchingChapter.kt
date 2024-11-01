@@ -1,11 +1,12 @@
 package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.report.datamodel.Report
-import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory
+import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 import com.hartwig.actin.report.pdf.ReportContentProvider
+import com.hartwig.actin.report.pdf.chapters.ChapterContentFunctions.addGenerators
+import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleActinTrialsGenerator
-import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
@@ -33,10 +34,20 @@ class TrialMatchingChapter(
 
     private fun addTrialMatchingOverview(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
-        val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
+        addGenerators(createGenerators(), table, false)
+        document.add(table)
+    }
+
+    fun createGenerators(): List<TableGenerator> {
+        val (ignoredCohorts, nonIgnoredCohorts) = InterpretedCohortFactory.createEvaluableCohorts(
+            report.treatmentMatch,
+            report.config.filterOnSOCExhaustionAndTumorType
+        )
+            .partition { it.ignore }
+        val nonEvaluableCohorts = InterpretedCohortFactory.createNonEvaluableCohorts(report.treatmentMatch)
         val (_, evaluated) =
             EligibleActinTrialsGenerator.forOpenCohorts(
-                cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = true
+                nonIgnoredCohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = true
             )
 
         val (localTrialGenerator, nonLocalTrialGenerator) = reportContentProvider.provideExternalTrialsTables(
@@ -44,16 +55,27 @@ class TrialMatchingChapter(
             evaluated,
             contentWidth()
         )
-        val generators = listOfNotNull(
+
+        return listOfNotNull(
             EligibleActinTrialsGenerator.forClosedCohorts(
-                cohorts,
+                nonIgnoredCohorts,
                 report.treatmentMatch.trialSource,
                 contentWidth(),
-                enableExtendedMode
             ).takeIf { !externalTrialsOnly },
             if (includeIneligibleTrialsInSummary || externalTrialsOnly) null else {
-                IneligibleActinTrialsGenerator.fromEvaluatedCohorts(
-                    cohorts, report.treatmentMatch.trialSource, contentWidth(), enableExtendedMode
+                IneligibleActinTrialsGenerator.forOpenCohorts(
+                    nonIgnoredCohorts,
+                    report.treatmentMatch.trialSource,
+                    contentWidth(),
+                    enableExtendedMode
+                )
+            },
+            if ((includeIneligibleTrialsInSummary || externalTrialsOnly) || enableExtendedMode) null else {
+                IneligibleActinTrialsGenerator.forClosedCohorts(nonIgnoredCohorts, report.treatmentMatch.trialSource, contentWidth())
+            },
+            if (includeIneligibleTrialsInSummary || externalTrialsOnly) null else {
+                IneligibleActinTrialsGenerator.forNonEvaluableAndIgnoredCohorts(
+                    ignoredCohorts, nonEvaluableCohorts, report.treatmentMatch.trialSource, contentWidth()
                 )
             },
             localTrialGenerator.takeIf {
@@ -63,15 +85,5 @@ class TrialMatchingChapter(
                 externalTrialsOnly
             }
         )
-
-        for (i in generators.indices) {
-            val generator = generators[i]
-            table.addCell(Cells.createTitle(generator.title()))
-            table.addCell(Cells.create(generator.contents()))
-            if (i < generators.size - 1) {
-                table.addCell(Cells.createEmpty())
-            }
-        }
-        document.add(table)
     }
 }

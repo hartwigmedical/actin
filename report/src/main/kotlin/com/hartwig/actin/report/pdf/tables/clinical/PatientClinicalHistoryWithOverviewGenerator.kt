@@ -5,8 +5,8 @@ import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoEntry
 import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoGene
 import com.hartwig.actin.report.datamodel.Report
-import com.hartwig.actin.report.interpretation.EvaluatedCohort
-import com.hartwig.actin.report.interpretation.EvaluatedCohortsInterpreter
+import com.hartwig.actin.report.interpretation.InterpretedCohortsSummarizer
+import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.MolecularDriverEntry
 import com.hartwig.actin.report.interpretation.MolecularDriverEntryFactory
 import com.hartwig.actin.report.interpretation.MolecularDriversInterpreter
@@ -20,7 +20,7 @@ import com.hartwig.actin.report.pdf.util.Tables.createFixedWidthCols
 import com.itextpdf.layout.element.Table
 
 class PatientClinicalHistoryWithOverviewGenerator(
-    private val report: Report, private val cohorts: List<EvaluatedCohort>, private val keyWidth: Float, val valueWidth: Float
+    private val report: Report, private val cohorts: List<InterpretedCohort>, private val keyWidth: Float, val valueWidth: Float
 ) : TableGenerator {
 
     override fun title(): String {
@@ -155,7 +155,7 @@ class PatientClinicalHistoryWithOverviewGenerator(
 
     private fun molecularResults(molecular: MolecularRecord): String {
         val molecularDriversInterpreter =
-            MolecularDriversInterpreter(molecular.drivers, EvaluatedCohortsInterpreter.fromEvaluatedCohorts(cohorts))
+            MolecularDriversInterpreter(molecular.drivers, InterpretedCohortsSummarizer.fromCohorts(cohorts))
         val factory = MolecularDriverEntryFactory(molecularDriversInterpreter)
         val driverEntries = factory.create()
         val drivers = listOf("KRAS", "NRAS", "BRAF", "HER2").map { geneToDrivers(driverEntries, it) }

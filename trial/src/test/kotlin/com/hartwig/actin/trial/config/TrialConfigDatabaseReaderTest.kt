@@ -47,7 +47,7 @@ class TrialConfigDatabaseReaderTest {
         assertThat(config1.evaluable).isTrue
         assertThat(config1.open).isNull()
         assertThat(config1.slotsAvailable).isNull()
-        assertThat(config1.blacklist).isFalse
+        assertThat(config1.ignore).isFalse
         assertThat(config1.description).isEqualTo("Dose escalation phase (monotherapy)")
 
         val config2: CohortDefinitionConfig = findCohort(configs, "B")
@@ -56,7 +56,7 @@ class TrialConfigDatabaseReaderTest {
         assertThat(config2.evaluable).isFalse
         assertThat(config2.open).isFalse
         assertThat(config2.slotsAvailable).isFalse
-        assertThat(config2.blacklist).isTrue
+        assertThat(config2.ignore).isTrue
         assertThat(config2.description).isEqualTo("Dose escalation phase (combination therapy)")
     }
 

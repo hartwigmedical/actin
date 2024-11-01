@@ -51,6 +51,12 @@ class TrialMatcherTest {
         assertThat(TrialMatcher.isPotentiallyEligible(evaluations + unrecoverableFail)).isFalse
     }
 
+    @Test
+    fun `Should return the same number of cohorts`() {
+        val matches = matcher.determineEligibility(patient, listOf(trial))
+        assertThat(matches.sumOf { it.cohorts.size + it.nonEvaluableCohorts.size }).isEqualTo(trial.cohorts.size)
+    }
+
     companion object {
         private fun createTestEvaluationFunctionFactory(): EvaluationFunctionFactory {
             return EvaluationFunctionFactory.create(RuleMappingResourcesTestFactory.create())

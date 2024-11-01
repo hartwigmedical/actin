@@ -45,7 +45,7 @@ object TestTrialConfigDatabaseFactory {
                 evaluable = true,
                 open = null,
                 slotsAvailable = null,
-                blacklist = false,
+                ignore = false,
                 description = "Cohort A"
             ),
             CohortDefinitionConfig(
@@ -55,7 +55,7 @@ object TestTrialConfigDatabaseFactory {
                 evaluable = true,
                 open = true,
                 slotsAvailable = false,
-                blacklist = true,
+                ignore = true,
                 description = "Cohort B"
             ),
             CohortDefinitionConfig(
@@ -65,7 +65,7 @@ object TestTrialConfigDatabaseFactory {
                 evaluable = false,
                 open = false,
                 slotsAvailable = false,
-                blacklist = false,
+                ignore = false,
                 description = "Cohort C"
             )
         )
