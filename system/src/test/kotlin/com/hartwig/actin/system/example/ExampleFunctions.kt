@@ -9,6 +9,7 @@ import java.time.LocalDate
 
 const val LUNG_01_EXAMPLE = "LUNG-01"
 const val LUNG_02_EXAMPLE = "LUNG-02"
+const val LUNG_03_EXAMPLE = "LUNG-03"
 
 private const val EXAMPLE_NAME_ = "<example_name>"
 
