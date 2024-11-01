@@ -34,7 +34,15 @@ class MolecularTestFilter(private val maxTestAge: LocalDate? = null) {
         return tests.map {
             if ((it as? MolecularRecord)?.hasSufficientQuality == false) {
                 it.copy(
-                    immunology = it.immunology.copy(isReliable = false),
+                    immunology = it.immunology.copy(
+                        isReliable = false,
+                        hlaAlleles = it.immunology.hlaAlleles.map { allele ->
+                            allele.copy(
+                                hasSomaticMutations = null,
+                                tumorCopyNumber = null
+                            )
+                        }.toSet()
+                    ),
                     characteristics = MolecularCharacteristics(),
                     drivers = Drivers()
                 )

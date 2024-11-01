@@ -20,9 +20,9 @@ class HasSpecificHLAType(private val hlaAlleleToFind: String, maxTestAge: LocalD
         val (matchingAllelesUnmodifiedInTumor, matchingAllelesModifiedInTumor) = immunology.hlaAlleles
             .filter { it.name == hlaAlleleToFind }
             .partition { hlaAllele ->
-                val alleleIsPresentInTumor = hlaAllele.tumorCopyNumber >= 0.5
+                val alleleIsPresentInTumor = hlaAllele.tumorCopyNumber!! >= 0.5
                 val alleleHasSomaticMutations = hlaAllele.hasSomaticMutations
-                alleleIsPresentInTumor && !alleleHasSomaticMutations
+                alleleIsPresentInTumor && !alleleHasSomaticMutations!!
             }
         return when {
             matchingAllelesUnmodifiedInTumor.isNotEmpty() -> {
