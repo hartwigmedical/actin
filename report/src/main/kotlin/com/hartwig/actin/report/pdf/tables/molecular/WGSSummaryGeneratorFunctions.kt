@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.molecular.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
+import com.hartwig.actin.report.interpretation.MolecularCharacteristicFormat
 import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter
 import com.hartwig.actin.report.pdf.util.Cells
@@ -183,20 +184,8 @@ object WGSSummaryGeneratorFunctions {
     }
 
     private fun tumorMutationalLoadAndTumorMutationalBurdenStatus(molecular: MolecularTest): String {
-        val hasHighTumorMutationalLoad = molecular.characteristics.hasHighTumorMutationalLoad
-        val tumorMutationalLoad = molecular.characteristics.tumorMutationalLoad
-        val tmlString = if (tumorMutationalLoad == null || hasHighTumorMutationalLoad == null) Formats.VALUE_UNKNOWN else String.format(
-            "TML %s (%d)",
-            if (hasHighTumorMutationalLoad) "high" else "low",
-            tumorMutationalLoad
-        )
-        val hasHighTumorMutationalBurden = molecular.characteristics.hasHighTumorMutationalBurden
-        val tumorMutationalBurden = molecular.characteristics.tumorMutationalBurden
-        val tmbString = if (tumorMutationalBurden == null || hasHighTumorMutationalBurden == null) Formats.VALUE_UNKNOWN else String.format(
-            "TMB %s (%s)",
-            if (hasHighTumorMutationalBurden) "high" else "low",
-            Formats.singleDigitNumber(tumorMutationalBurden)
-        )
+        val tmlString = MolecularCharacteristicFormat.formatTumorMutationalLoad(molecular.characteristics)
+        val tmbString = MolecularCharacteristicFormat.formatTumorMutationalBurden(molecular.characteristics)
         return String.format("%s / %s", tmlString, tmbString)
     }
 
