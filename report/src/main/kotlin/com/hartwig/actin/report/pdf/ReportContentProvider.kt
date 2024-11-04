@@ -143,7 +143,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 report.config.includeTrialMatchingInSummary
             },
             openCohortsWithoutSlotsGenerator.takeIf {
-                report.config.includeTrialMatchingInSummary
+                report.config.includeTrialMatchingInSummary && !it.contents().isEmpty
             },
             cohortsWithMissingGenesGenerator.takeIf {
                 report.config.includeTrialMatchingInSummary
