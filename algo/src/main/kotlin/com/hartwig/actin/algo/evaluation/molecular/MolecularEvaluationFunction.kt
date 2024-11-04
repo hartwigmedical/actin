@@ -18,8 +18,8 @@ abstract class MolecularEvaluationFunction(maxTestAge: LocalDate? = null) : Eval
         val recentMolecularTests = molecularTestFilter.apply(record.molecularHistory.molecularTests)
         return if (recentMolecularTests.isEmpty() || recentMolecularTests.all { (it as? MolecularRecord)?.hasSufficientQuality == false }) {
             noMolecularRecordEvaluation() ?: EvaluationFactory.undetermined(
-                "No molecular data",
-                "No molecular data",
+                "Molecular criteria cannot be evaluated: no molecular results",
+                "Molecular criteria cannot be evaluated: no molecular results",
                 missingGenesForEvaluation = true
             )
         } else {
