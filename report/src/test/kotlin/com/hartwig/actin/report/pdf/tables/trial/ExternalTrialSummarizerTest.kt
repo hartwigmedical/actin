@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactor
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.entry
 import org.junit.Test
 
 private const val TMB_TARGET = "TMB"
@@ -44,18 +45,19 @@ class ExternalTrialSummarizerTest {
     @Test
     fun `Should correctly group trials with identical nctIds combining all events of these trials`() {
         val externalTrialTargetingTwoEvents = externalTrial(5)
+        val anotherExternalTrialTargetingTwoEvents = externalTrial(7)
         val externalTrialTargetingOneEvent = externalTrial(6)
         val externalTrialsPerEvent = mapOf(
-            "event1" to listOf(externalTrialTargetingTwoEvents),
+            "event1" to listOf(externalTrialTargetingTwoEvents, anotherExternalTrialTargetingTwoEvents),
             "event2" to listOf(externalTrialTargetingOneEvent),
-            "event3" to listOf(externalTrialTargetingTwoEvents)
+            "event3" to listOf(externalTrialTargetingTwoEvents, anotherExternalTrialTargetingTwoEvents)
         )
 
-        assertThat(externalTrialSummarizer.filterAndGroupExternalTrialsByNctIdAndEvents(externalTrialsPerEvent, trialMatches)).isEqualTo(
-            mapOf(
-                "event1,\nevent3" to listOf(externalTrialTargetingTwoEvents),
-                "event2" to listOf(externalTrialTargetingOneEvent),
-            )
+        val filterAndGroupExternalTrialsByNctIdAndEvents =
+            externalTrialSummarizer.filterAndGroupExternalTrialsByNctIdAndEvents(externalTrialsPerEvent, trialMatches)
+        assertThat(filterAndGroupExternalTrialsByNctIdAndEvents).containsOnly(
+            entry("event1,\nevent3", setOf(externalTrialTargetingTwoEvents, anotherExternalTrialTargetingTwoEvents)),
+            entry("event2", setOf(externalTrialTargetingOneEvent))
         )
     }
 
