@@ -36,7 +36,6 @@ import com.hartwig.actin.report.pdf.tables.trial.EligibleLocalExternalTrialsGene
 import com.hartwig.actin.report.pdf.tables.trial.EligibleOtherCountriesExternalTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummarizer
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleActinTrialsGenerator
-import com.hartwig.actin.report.pdf.util.Formats
 import org.apache.logging.log4j.LogManager
 
 class ReportContentProvider(private val report: Report, private val enableExtendedMode: Boolean = false) {
@@ -144,7 +143,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 report.config.includeTrialMatchingInSummary
             },
             openCohortsWithoutSlotsGenerator.takeIf {
-                report.config.includeTrialMatchingInSummary && !it.contents().equals(Formats.VALUE_NONE)
+                report.config.includeTrialMatchingInSummary && it.getCohortSize() > 0
             },
             cohortsWithMissingGenesGenerator.takeIf {
                 report.config.includeTrialMatchingInSummary
