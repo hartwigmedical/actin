@@ -70,14 +70,14 @@ class ExternalTrialSummarizerTest {
         )
         assertThat(externalTrialSummarizer.filterAndGroupExternalTrialsByNctIdAndEvents(externalTrialsPerEvent, trialMatches)).isEqualTo(
             mapOf(
-                "event1" to listOf(externalTrialWithoutMatchToLocal)
+                "event1" to setOf(externalTrialWithoutMatchToLocal)
             )
         )
     }
 
     @Test
     fun `Should return unchanged external trial map when trialMatches is empty`() {
-        val externalTrialsPerEvent = mapOf("event1" to listOf(externalTrial(1), externalTrial(2)))
+        val externalTrialsPerEvent = mapOf("event1" to setOf(externalTrial(1), externalTrial(2)))
         assertThat(externalTrialSummarizer.filterAndGroupExternalTrialsByNctIdAndEvents(externalTrialsPerEvent, emptyList())).isEqualTo(
             externalTrialsPerEvent
         )
@@ -196,7 +196,7 @@ class ExternalTrialSummarizerTest {
     fun `Should not filter trial running outside of home country in hospital matching children's hospital names`() {
         val externalEligibleTrials =
             mapOf(
-                TMB_TARGET to listOf(
+                TMB_TARGET to setOf(
                     TRIAL_1.copy(
                         countries = setOf(
                             TestClinicalEvidenceFactory.createCountry(
