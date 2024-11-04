@@ -53,9 +53,7 @@ class ExternalTrialSummarizerTest {
             "event3" to listOf(externalTrialTargetingTwoEvents, anotherExternalTrialTargetingTwoEvents)
         )
 
-        val filterAndGroupExternalTrialsByNctIdAndEvents =
-            externalTrialSummarizer.filterAndGroupExternalTrialsByNctIdAndEvents(externalTrialsPerEvent, trialMatches)
-        assertThat(filterAndGroupExternalTrialsByNctIdAndEvents).containsOnly(
+        assertThat(externalTrialSummarizer.filterAndGroupExternalTrialsByNctIdAndEvents(externalTrialsPerEvent, trialMatches)).containsOnly(
             entry("event1,\nevent3", setOf(externalTrialTargetingTwoEvents, anotherExternalTrialTargetingTwoEvents)),
             entry("event2", setOf(externalTrialTargetingOneEvent))
         )
