@@ -51,13 +51,13 @@ class MolecularEvaluationFunctionTest {
     }
 
     @Test
-    fun `Should return no molecular data message when no ORANGE nor other molecular data`() {
+    fun `Should return no molecular results message when no ORANGE nor other molecular data`() {
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
         val evaluation = function.evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        assertThat(evaluation.undeterminedSpecificMessages).containsExactly("No molecular data")
-        assertThat(evaluation.undeterminedGeneralMessages).containsExactly("No molecular data")
+        assertThat(evaluation.undeterminedSpecificMessages).containsExactly("Molecular criteria cannot be evaluated: no molecular results")
+        assertThat(evaluation.undeterminedGeneralMessages).containsExactly("Molecular criteria cannot be evaluated: no molecular results")
     }
 
     @Test
