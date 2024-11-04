@@ -94,7 +94,7 @@ class MolecularClinicalEvidenceFunctionsTest {
                     )
                 )
             )
-        ).containsExactly("TMB high (61)" to CLINICAL_EVIDENCE)
+        ).containsExactly("TMB high" to CLINICAL_EVIDENCE)
 
         assertThat(
             MolecularClinicalEvidenceFunctions.molecularEvidenceByEvent(
@@ -110,7 +110,33 @@ class MolecularClinicalEvidenceFunctionsTest {
                     )
                 )
             )
-        ).containsExactly("TML high (10)" to CLINICAL_EVIDENCE)
+        ).containsExactly("TML high" to CLINICAL_EVIDENCE)
+    }
+
+    @Test
+    fun `Should remove any duplicate events and evidence`() {
+        assertThat(
+            MolecularClinicalEvidenceFunctions.molecularEvidenceByEvent(
+                MolecularHistory(
+                    molecularTests = listOf(
+                        BASE_MOLECULAR_TEST.copy(
+                            characteristics = MolecularCharacteristics(
+                                tumorMutationalBurden = 61.0,
+                                hasHighTumorMutationalBurden = true,
+                                tumorMutationalBurdenEvidence = CLINICAL_EVIDENCE
+                            )
+                        ),
+                        BASE_MOLECULAR_TEST.copy(
+                            characteristics = MolecularCharacteristics(
+                                tumorMutationalBurden = 61.0,
+                                hasHighTumorMutationalBurden = true,
+                                tumorMutationalBurdenEvidence = CLINICAL_EVIDENCE
+                            )
+                        )
+                    )
+                )
+            )
+        ).containsExactly("TMB high" to CLINICAL_EVIDENCE)
     }
     
     private fun molecularHistory(molecularRecord: MolecularRecord) = MolecularHistory(

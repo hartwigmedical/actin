@@ -33,7 +33,7 @@ class MolecularClinicalEvidenceGenerator(
 
         val table = Tables.createFixedWidthCols(eventWidth, sourceEventWidth, levelAWidth, levelBWidth, levelCWidth, levelDWidth)
 
-        listOf("Driver", "CKB Event", "Level A", "Level B", "Level C", "Level D")
+        listOf("Event", "CKB Event", "Level A", "Level B", "Level C", "Level D")
             .map(Cells::createHeader)
             .forEach(table::addHeaderCell)
 

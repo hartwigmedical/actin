@@ -7,7 +7,7 @@ import com.hartwig.actin.report.interpretation.MolecularCharacteristicFormat
 
 object MolecularClinicalEvidenceFunctions {
 
-    fun molecularEvidenceByEvent(molecularHistory: MolecularHistory): List<Pair<String, ClinicalEvidence>> {
+    fun molecularEvidenceByEvent(molecularHistory: MolecularHistory): Set<Pair<String, ClinicalEvidence>> {
         val allDrivers =
             DriverTableFunctions.allDrivers(molecularHistory).flatMap { it.second }.toSortedSet(Comparator.comparing { it.event })
         val allMSI =
@@ -18,17 +18,17 @@ object MolecularClinicalEvidenceFunctions {
         val allTML =
             extractCharacteristics(
                 molecularHistory,
-                { MolecularCharacteristicFormat.formatTumorMutationalLoad(it) },
+                { MolecularCharacteristicFormat.formatTumorMutationalLoad(it, false) },
                 { it.tumorMutationalLoadEvidence })
         val allTMB =
             extractCharacteristics(
                 molecularHistory,
-                { MolecularCharacteristicFormat.formatTumorMutationalBurden(it) },
+                { MolecularCharacteristicFormat.formatTumorMutationalBurden(it, false) },
                 { it.tumorMutationalBurdenEvidence })
         val allHRD =
             extractCharacteristics(
                 molecularHistory,
-                { "HR ${MolecularCharacteristicFormat.formatHomologuousRepair(it)}" },
+                { "HR ${MolecularCharacteristicFormat.formatHomologuousRepair(it, false)}" },
                 { it.homologousRepairEvidence })
         return allMSI + allTMB + allTML + allHRD + allDrivers.map { it.event to it.evidence }
     }
@@ -37,8 +37,8 @@ object MolecularClinicalEvidenceFunctions {
         molecularHistory: MolecularHistory,
         eventFormatter: (MolecularCharacteristics) -> String,
         extractor: (MolecularCharacteristics) -> ClinicalEvidence?
-    ): List<Pair<String, ClinicalEvidence>> =
+    ): Set<Pair<String, ClinicalEvidence>> =
         molecularHistory.molecularTests.mapNotNull {
             extractor.invoke(it.characteristics)?.let { e -> eventFormatter.invoke(it.characteristics) to e }
-        }
+        }.toSet()
 }

@@ -62,7 +62,7 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
         return if (hasHighTumorMutationalLoad == null || tumorMutationalLoad == null) {
             null
         } else {
-            String.format("%s (%d)", if (hasHighTumorMutationalLoad) "High" else "Low", tumorMutationalLoad)
+            MolecularCharacteristicFormat.formatHighLowCharacteristic(tumorMutationalLoad, hasHighTumorMutationalLoad)
         }
     }
 
@@ -79,8 +79,7 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
         if (hasHighTumorMutationalBurden == null || tumorMutationalBurden == null) {
             return Cells.createContentWarn(Formats.VALUE_UNKNOWN)
         }
-        val interpretation = if (hasHighTumorMutationalBurden) "High" else "Low"
-        val value = interpretation + " (" + Formats.singleDigitNumber(tumorMutationalBurden) + ")"
+        val value = MolecularCharacteristicFormat.formatHighLowCharacteristic(tumorMutationalBurden, hasHighTumorMutationalBurden)
         val cell = if (wgsMolecular?.hasSufficientQualityAndPurity() == true) {
             Cells.createContent(value)
         } else {

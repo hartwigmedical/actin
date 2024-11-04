@@ -29,10 +29,11 @@ class MolecularCharacteristicFormatTest {
         assertThat(
             MolecularCharacteristicFormat.formatTumorMutationalBurden(
                 MolecularCharacteristics(
-                    hasHighTumorMutationalBurden = null
+                    hasHighTumorMutationalBurden = null,
+                    tumorMutationalBurden = null
                 )
             )
-        ).isEqualTo(Formats.VALUE_UNKNOWN)
+        ).isEqualTo("TMB ${Formats.VALUE_UNKNOWN}")
     }
 
     @Test
@@ -54,16 +55,17 @@ class MolecularCharacteristicFormatTest {
             )
         ).isEqualTo("TML low (10)")
         assertThat(
-            MolecularCharacteristicFormat.formatTumorMutationalBurden(
+            MolecularCharacteristicFormat.formatTumorMutationalLoad(
                 MolecularCharacteristics(
-                    hasHighTumorMutationalLoad = null
+                    hasHighTumorMutationalLoad = null,
+                    tumorMutationalLoad = null
                 )
             )
-        ).isEqualTo(Formats.VALUE_UNKNOWN)
+        ).isEqualTo("TML ${Formats.VALUE_UNKNOWN}")
     }
 
     @Test
-    fun `Should format ms stable and unstable`() {
+    fun `Should format microsatellite stable and unstable`() {
         assertThat(
             MolecularCharacteristicFormat.formatMicrosatelliteStability(
                 MolecularCharacteristics(
