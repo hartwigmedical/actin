@@ -26,7 +26,8 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypes(
         val hadCombinationWithTrialWithUnknownType = relevantHistory.any { TrialFunctions.treatmentMayMatchAsTrial(it, category) }
         val hadTrialWithUnspecifiedTreatment = record.oncologicalHistory.any { it.isTrial && it.allTreatments().isEmpty() }
 
-        val treatmentDesc = "combined therapy with $drugToFind and ${types?.let { concatItemsWithAnd(types) } ?: ""} ${category.display()}"
+        val treatmentDesc =
+            "combined therapy with ${drugToFind.display()} and ${types?.let { concatItemsWithAnd(types) } ?: ""}${category.display()}"
 
         return when {
             hadSpecificCombination -> {
