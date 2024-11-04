@@ -57,10 +57,9 @@ class MolecularDetailsChapter(
             }
             val cohorts =
                 InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
-            val evaluated = cohorts.filter { it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable }
 
             val generators =
-                listOf(MolecularCharacteristicsGenerator(molecular, contentWidth())) + tumorDetailsGenerators(molecular, evaluated)
+                listOf(MolecularCharacteristicsGenerator(molecular, contentWidth())) + tumorDetailsGenerators(molecular, cohorts)
             addGenerators(generators, table, addSubTitle = true)
 
             if (!molecular.hasSufficientQuality) {
