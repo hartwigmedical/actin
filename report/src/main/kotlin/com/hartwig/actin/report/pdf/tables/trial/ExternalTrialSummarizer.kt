@@ -12,15 +12,17 @@ data class ExternalTrialSummary(
     val nctId: String,
     val title: String,
     val url: String,
-    val actinMolecularEvents: SortedSet<String>,
-    val sourceMolecularEvents: SortedSet<String>,
-    val cancerTypes: SortedSet<ApplicableCancerType>,
-    val countries: SortedSet<Country>,
-    val cities: SortedSet<String>,
-    val hospitals: SortedSet<String>
+    val actinMolecularEvents: SortedSet<String> = sortedSetOf(),
+    val sourceMolecularEvents: SortedSet<String> = sortedSetOf(),
+    val cancerTypes: SortedSet<ApplicableCancerType> = sortedSetOf(),
+    val countries: SortedSet<Country> = sortedSetOf(),
+    val cities: SortedSet<String> = sortedSetOf(),
+    val hospitals: SortedSet<Hospital> = sortedSetOf()
 )
 
 data class EventWithExternalTrial(val event: String, val trial: ExternalTrial)
+
+data class Hospital(val name: String, val isChildrensHospital: Boolean = false)
 
 private val CHILDREN_HOSPITALS =
     setOf("PMC", "WKZ", "EKZ", "JKZ", "BKZ", "WAKZ", "Sophia Kinderziekenhuis", "Amalia Kinderziekenhuis", "MosaKids Kinderziekenhuis")
@@ -43,7 +45,7 @@ fun Set<ExternalTrialSummary>.filterNotInHomeCountry(country: CountryName): Set<
 
 fun Set<ExternalTrialSummary>.filterChildrensHospitals(): Set<ExternalTrialSummary> {
     return this.filter {
-        it.cities.all { c -> c !in CHILDREN_HOSPITALS }
+        !it.hospitals.all(Hospital::isChildrensHospital)
     }.toSet()
 }
 
@@ -61,19 +63,24 @@ object ExternalTrialSummarizer {
         }
         return flattened.groupBy { t -> t.trial.nctId }.map { e ->
             val countries = e.value.flatMap { ewe -> ewe.trial.countries }
-            val hospitals = countries.flatMap { ewe -> ewe.hospitalsPerCity.entries }
+            val hospitals = countries.flatMap { c -> c.hospitalsPerCity.entries.map { hpc -> c to hpc } }
             val trial = e.value.first().trial
-            ExternalTrialSummary(
-                e.key,
+            ExternalTrialSummary(e.key,
                 trial.title,
                 trial.url,
                 e.value.map { ewe -> ewe.event }.toSortedSet(),
                 e.value.map { ewe -> ewe.trial.sourceEvent }.toSortedSet(),
                 e.value.map { ewe -> ewe.trial.applicableCancerType }.toSortedSet(Comparator.comparing { c -> c.cancerType }),
                 countries.toSortedSet(Comparator.comparing { c -> c.name }),
-                hospitals.map { h -> h.key }.toSortedSet(),
-                hospitals.map { h -> h.value }.flatten().toSortedSet()
+                hospitals.map { h -> h.second.key }.toSortedSet(),
+                hospitals.map { h -> h.second.value.map { i -> h.first to i } }.flatten()
+                    .map { h -> Hospital(h.second, isChildrensHospitalInNetherlands(h)) }.toSortedSet(Comparator.comparing { h -> h.name })
             )
-        }.toSet()
+        }
+            .toSortedSet(compareBy<ExternalTrialSummary> { it.actinMolecularEvents.joinToString() }.thenBy { it.sourceMolecularEvents.joinToString() }
+                .thenBy { it.cancerTypes.joinToString { t -> t.cancerType } }.thenBy { it.nctId })
     }
+
+    private fun isChildrensHospitalInNetherlands(h: Pair<Country, String>) =
+        h.second in CHILDREN_HOSPITALS && h.first.name == CountryName.NETHERLANDS
 }
