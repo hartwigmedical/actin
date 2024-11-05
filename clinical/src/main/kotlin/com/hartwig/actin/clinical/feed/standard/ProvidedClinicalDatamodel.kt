@@ -93,9 +93,9 @@ data class ProvidedTreatmentHistory(
     val response: String? = null,
     val responseDate: LocalDate? = null,
     @Description("Intended number of cycles (eg. 6)")
-    val intendedCycles: Int,
+    val intendedCycles: Int? = null,
     @Description("Administered number of cycles (eg. 6)")
-    val administeredCycles: Int,
+    val administeredCycles: Int? = null,
     val modifications: List<ProvidedTreatmentModification>? = null,
     @Description("Treatment administered in clinical study")
     val administeredInStudy: Boolean

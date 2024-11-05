@@ -30,7 +30,7 @@ class ExternalTrialSummarizer(private val homeCountry: CountryName) {
 
     fun filterAndGroupExternalTrialsByNctIdAndEvents(
         externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>, trialMatches: List<TrialMatch>
-    ): Map<String, List<ExternalTrial>> {
+    ): Map<String, Set<ExternalTrial>> {
         val localTrialNctIds = trialMatches.mapNotNull { it.identification.nctId }.toSet()
         return externalTrialsPerEvent.flatMap { (event, trials) ->
             trials.filter { it.nctId !in localTrialNctIds }.filter { trial ->
@@ -41,9 +41,9 @@ class ExternalTrialSummarizer(private val homeCountry: CountryName) {
             .groupBy { (_, trial) -> trial.nctId }
             .map { (_, eventAndTrialPairs) ->
                 val (events, trials) = eventAndTrialPairs.unzip()
-                events.toSet().joinToString(",\n") to trials.first()
+                events.toSet().joinToString(",\n") to trials
             }
-            .groupBy({ it.first }, { it.second })
+            .groupBy({ it.first }, { it.second }).mapValues { it.value.flatten().toSet() }
     }
 
     fun filterMolecularCriteriaAlreadyPresent(
