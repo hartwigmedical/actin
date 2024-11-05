@@ -15,7 +15,6 @@ class HasAbnormalElectrolyteLevels(private val minValidLabDate: LocalDate, priva
 
         val measurements = listOf(
             LabMeasurement.CALCIUM,
-            LabMeasurement.PHOSPHORUS,
             LabMeasurement.SODIUM,
             LabMeasurement.MAGNESIUM,
             LabMeasurement.POTASSIUM
