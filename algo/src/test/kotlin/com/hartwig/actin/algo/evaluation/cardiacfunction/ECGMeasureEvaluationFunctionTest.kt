@@ -1,135 +1,67 @@
 package com.hartwig.actin.algo.evaluation.cardiacfunction
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.cardiacfunction.CardiacFunctionTestFactory.withValueAndUnit
 import com.hartwig.actin.algo.evaluation.cardiacfunction.ECGMeasureEvaluationFunction.ThresholdCriteria
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.ECG
-import com.hartwig.actin.datamodel.clinical.ECGMeasure
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ECGMeasureEvaluationFunctionTest {
 
     @Test
-    fun performNoEvaluationWhenNoECGPresent() {
-        assertEvaluation(
-            EvaluationResult.NOT_EVALUATED,
-            withThresholdCriteria(ThresholdCriteria.MAXIMUM).evaluate(
-                CardiacFunctionTestFactory.withECG(
-                    null
-                )
-            )
-        )
+    fun `Should evaluate to recoverable undetermined when no ECG present`() {
+        val evaluation = withThresholdCriteria(ThresholdCriteria.MAXIMUM).evaluate(CardiacFunctionTestFactory.withECG(null))
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertTrue(evaluation.recoverable)
     }
 
     @Test
-    fun evaluatesToUndeterminedWhenWrongUnit() {
+    fun `Should evaluate to undetermined when unit is wrong`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            withThresholdCriteria(ThresholdCriteria.MAXIMUM).evaluate(
-                CardiacFunctionTestFactory.withECG(
-                    CardiacFunctionTestFactory.createMinimal().copy(
-                        qtcfMeasure = ECGMeasure(value = 400, unit = "wrong unit")
-                    )
-                )
-            )
+            withThresholdCriteria(ThresholdCriteria.MAXIMUM).evaluate(withValueAndUnit(400, "wrong unit"))
         )
     }
 
     @Test
-    fun maxThresholdCriteriaEvaluatesToPassWhenBelowThreshold() {
-        assertEvaluation(
-            EvaluationResult.PASS,
-            withThresholdCriteria(ThresholdCriteria.MAXIMUM).evaluate(
-                CardiacFunctionTestFactory.withECG(
-                    CardiacFunctionTestFactory.createMinimal().copy(
-                        qtcfMeasure = ECGMeasure(value = 300, unit = ECGUnit.MILLISECONDS.symbol())
-                    )
-                )
-            )
-        )
+    fun `Should pass when value below max threshold`() {
+        assertEvaluation(EvaluationResult.PASS, withThresholdCriteria(ThresholdCriteria.MAXIMUM).evaluate(withValueAndUnit(300)))
     }
 
     @Test
-    fun maxThresholdCriteriaEvaluatesToPassWhenEqualThreshold() {
-        assertEvaluation(
-            EvaluationResult.PASS,
-            withThresholdCriteria(ThresholdCriteria.MAXIMUM).evaluate(
-                CardiacFunctionTestFactory.withECG(
-                    CardiacFunctionTestFactory.createMinimal().copy(
-                        qtcfMeasure = ECGMeasure(value = 450, unit = ECGUnit.MILLISECONDS.symbol())
-                    )
-                )
-            )
-        )
+    fun `Should pass when value equals max threshold`() {
+        assertEvaluation(EvaluationResult.PASS, withThresholdCriteria(ThresholdCriteria.MAXIMUM).evaluate(withValueAndUnit(450)))
     }
 
     @Test
-    fun maxThresholdCriteriaEvaluatesToFailWhenAboveThreshold() {
-        assertEvaluation(
-            EvaluationResult.FAIL,
-            withThresholdCriteria(ThresholdCriteria.MAXIMUM).evaluate(
-                CardiacFunctionTestFactory.withECG(
-                    CardiacFunctionTestFactory.createMinimal().copy(
-                        qtcfMeasure = ECGMeasure(value = 500, unit = ECGUnit.MILLISECONDS.symbol())
-                    )
-                )
-            )
-        )
+    fun `Should fail when value above max threshold`() {
+        assertEvaluation(EvaluationResult.FAIL, withThresholdCriteria(ThresholdCriteria.MAXIMUM).evaluate(withValueAndUnit(500)))
     }
 
     @Test
-    fun minThresholdCriteriaEvaluatesToPassWhenAboveThreshold() {
-        assertEvaluation(
-            EvaluationResult.PASS,
-            withThresholdCriteria(ThresholdCriteria.MINIMUM).evaluate(
-                CardiacFunctionTestFactory.withECG(
-                    CardiacFunctionTestFactory.createMinimal().copy(
-                        qtcfMeasure = ECGMeasure(value = 500, unit = ECGUnit.MILLISECONDS.symbol())
-                    )
-                )
-            )
-        )
+    fun `Should pass when value above min threshold`() {
+        assertEvaluation(EvaluationResult.PASS, withThresholdCriteria(ThresholdCriteria.MINIMUM).evaluate(withValueAndUnit(500)))
     }
 
     @Test
-    fun minThresholdCriteriaEvaluatesToPassWhenEqualThreshold() {
-        assertEvaluation(
-            EvaluationResult.PASS,
-            withThresholdCriteria(ThresholdCriteria.MINIMUM).evaluate(
-                CardiacFunctionTestFactory.withECG(
-                    CardiacFunctionTestFactory.createMinimal().copy(
-                        qtcfMeasure = ECGMeasure(value = 450, unit = ECGUnit.MILLISECONDS.symbol())
-                    )
-                )
-            )
-        )
+    fun `Should pass when value equals min threshold`() {
+        assertEvaluation(EvaluationResult.PASS, withThresholdCriteria(ThresholdCriteria.MINIMUM).evaluate(withValueAndUnit(450)))
     }
 
     @Test
-    fun minThresholdCriteriaEvaluatesToFailWhenBelowThreshold() {
-        assertEvaluation(
-            EvaluationResult.FAIL,
-            withThresholdCriteria(ThresholdCriteria.MINIMUM).evaluate(
-                CardiacFunctionTestFactory.withECG(
-                    CardiacFunctionTestFactory.createMinimal().copy(
-                        qtcfMeasure = ECGMeasure(value = 300, unit = ECGUnit.MILLISECONDS.symbol())
-                    )
-                )
-            )
-        )
+    fun `Should fail when value below min threshold`() {
+        assertEvaluation(EvaluationResult.FAIL, withThresholdCriteria(ThresholdCriteria.MINIMUM).evaluate(withValueAndUnit(300)))
     }
 
-    companion object {
-        private fun withThresholdCriteria(
-            thresholdCriteria: ThresholdCriteria
-        ): ECGMeasureEvaluationFunction {
-            return ECGMeasureEvaluationFunction(
-                ECGMeasureName.QTCF,
-                450.0,
-                ECGUnit.MILLISECONDS,
-                ECG::qtcfMeasure,
-                thresholdCriteria
-            )
-        }
+    private fun withThresholdCriteria(thresholdCriteria: ThresholdCriteria): ECGMeasureEvaluationFunction {
+        return ECGMeasureEvaluationFunction(
+            ECGMeasureName.QTCF,
+            450.0,
+            ECGUnit.MILLISECONDS,
+            ECG::qtcfMeasure,
+            thresholdCriteria
+        )
     }
 }

@@ -53,6 +53,10 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
                 listOf("1", "2")
             }
 
+            FunctionInput.ONE_DOUBLE_ONE_GENDER -> {
+                listOf("1", "female")
+            }
+
             FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE -> {
                 listOf(TreatmentCategory.IMMUNOTHERAPY.display())
             }

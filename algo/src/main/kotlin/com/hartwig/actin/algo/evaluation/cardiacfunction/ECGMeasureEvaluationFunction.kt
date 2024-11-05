@@ -33,7 +33,7 @@ class ECGMeasureEvaluationFunction internal constructor(
     override fun evaluate(record: PatientRecord): Evaluation {
         return record.clinicalStatus.ecg?.let(extractingECGMeasure)
             ?.let { measure: ECGMeasure -> this.evaluate(measure) }
-            ?: EvaluationFactory.notEvaluated(
+            ?: EvaluationFactory.recoverableUndetermined(
                 String.format("No %s known", measureName), String.format("Undetermined %s", measureName)
             )
     }
