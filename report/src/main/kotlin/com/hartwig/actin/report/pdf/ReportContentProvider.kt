@@ -7,8 +7,8 @@ import com.hartwig.actin.datamodel.molecular.NO_EVIDENCE_SOURCE
 import com.hartwig.actin.molecular.filter.MolecularTestFilter
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
 import com.hartwig.actin.report.datamodel.Report
-import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 import com.hartwig.actin.report.interpretation.InterpretedCohort
+import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 import com.hartwig.actin.report.pdf.chapters.ClinicalDetailsChapter
 import com.hartwig.actin.report.pdf.chapters.EfficacyEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.EfficacyEvidenceDetailsChapter
@@ -33,9 +33,13 @@ import com.hartwig.actin.report.pdf.tables.soc.SOCEligibleApprovedTreatmentGener
 import com.hartwig.actin.report.pdf.tables.trial.EligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleApprovedTreatmentGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleLocalExternalTrialsGenerator
-import com.hartwig.actin.report.pdf.tables.trial.EligibleOtherCountriesExternalTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummarizer
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleActinTrialsGenerator
+import com.hartwig.actin.report.pdf.tables.trial.filterChildrensHospitals
+import com.hartwig.actin.report.pdf.tables.trial.filterInHomeCountry
+import com.hartwig.actin.report.pdf.tables.trial.filterInternalTrials
+import com.hartwig.actin.report.pdf.tables.trial.filterMolecularCriteriaAlreadyPresent
+import com.hartwig.actin.report.pdf.tables.trial.filterNotInHomeCountry
 import org.apache.logging.log4j.LogManager
 
 class ReportContentProvider(private val report: Report, private val enableExtendedMode: Boolean = false) {
@@ -169,30 +173,38 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 AggregatedEvidenceFactory.create(it).externalEligibleTrialsPerEvent
             })
 
-        val externalTrialSummarizer = ExternalTrialSummarizer(report.config.countryOfReference)
-        val externalTrialSummary = externalTrialSummarizer.summarize(
-            externalEligibleTrials,
-            report.treatmentMatch.trialMatches,
-            evaluated
-        )
+
+        val localTrials = ExternalTrialSummarizer.summarize(externalEligibleTrials)
+            .filterInternalTrials(report.treatmentMatch.trialMatches.toSet())
+            .filterChildrensHospitals()
+            .filterInHomeCountry(report.config.countryOfReference)
+            .filterMolecularCriteriaAlreadyPresent(evaluated)
+
+        val nonLocalTrials = ExternalTrialSummarizer.summarize(externalEligibleTrials)
+            .filterInternalTrials(report.treatmentMatch.trialMatches.toSet())
+            .filterChildrensHospitals()
+            .filterNotInHomeCountry(report.config.countryOfReference)
+            .filterMolecularCriteriaAlreadyPresent(evaluated)
+
         val allEvidenceSources =
             patientRecord.molecularHistory.molecularTests.map { it.evidenceSource }.filter { it != NO_EVIDENCE_SOURCE }.toSet()
         return Pair(
-            if (externalTrialSummary.localTrials.isNotEmpty()) {
+            if (localTrials.first.isNotEmpty()) {
                 EligibleLocalExternalTrialsGenerator(
                     allEvidenceSources,
-                    externalTrialSummary.localTrials,
+                    localTrials.first,
                     contentWidth,
-                    externalTrialSummary.localTrialsFiltered,
+                    localTrials.second,
                     report.config.countryOfReference
                 )
             } else null,
-            if (externalTrialSummary.nonLocalTrials.isNotEmpty()) {
-                EligibleOtherCountriesExternalTrialsGenerator(
+            if (nonLocalTrials.first.isNotEmpty()) {
+                EligibleLocalExternalTrialsGenerator(
                     allEvidenceSources,
-                    externalTrialSummary.nonLocalTrials,
+                    nonLocalTrials.first,
                     contentWidth,
-                    externalTrialSummary.nonLocalTrialsFiltered
+                    nonLocalTrials.second,
+                    report.config.countryOfReference
                 )
             } else null
         )

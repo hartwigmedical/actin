@@ -1,90 +1,79 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.datamodel.algo.TrialMatch
+import com.hartwig.actin.datamodel.molecular.evidence.ApplicableCancerType
+import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.CountryName
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.report.interpretation.InterpretedCohort
+import java.util.SortedSet
 
 data class ExternalTrialSummary(
-    val localTrials: Map<String, Iterable<ExternalTrial>>,
-    val localTrialsFiltered: Int,
-    val nonLocalTrials: Map<String, Iterable<ExternalTrial>>,
-    val nonLocalTrialsFiltered: Int
+    val nctId: String,
+    val title: String,
+    val url: String,
+    val actinMolecularEvents: SortedSet<String>,
+    val sourceMolecularEvents: SortedSet<String>,
+    val cancerTypes: SortedSet<ApplicableCancerType>,
+    val countries: SortedSet<Country>,
+    val cities: SortedSet<String>,
+    val hospitals: SortedSet<String>
 )
+
+data class EventWithExternalTrial(val event: String, val trial: ExternalTrial)
 
 private val CHILDREN_HOSPITALS =
     setOf("PMC", "WKZ", "EKZ", "JKZ", "BKZ", "WAKZ", "Sophia Kinderziekenhuis", "Amalia Kinderziekenhuis", "MosaKids Kinderziekenhuis")
 
-class ExternalTrialSummarizer(private val homeCountry: CountryName) {
 
-    fun summarize(
-        externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>,
-        trialMatches: List<TrialMatch>,
-        evaluatedCohorts: List<InterpretedCohort>
-    ): ExternalTrialSummary {
-        return filterMolecularCriteriaAlreadyPresent(
-            filterAndGroupExternalTrialsByNctIdAndEvents(externalTrialsPerEvent, trialMatches),
-            evaluatedCohorts
-        )
-    }
+fun Set<ExternalTrialSummary>.filterInternalTrials(internalTrials: Set<TrialMatch>): Set<ExternalTrialSummary> {
+    val internalIds = internalTrials.map { it.identification.nctId }.toSet()
+    return this.filter { it.nctId !in internalIds }.toSet()
+}
 
-    fun filterAndGroupExternalTrialsByNctIdAndEvents(
-        externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>, trialMatches: List<TrialMatch>
-    ): Map<String, Set<ExternalTrial>> {
-        val localTrialNctIds = trialMatches.mapNotNull { it.identification.nctId }.toSet()
-        return externalTrialsPerEvent.flatMap { (event, trials) ->
-            trials.filter { it.nctId !in localTrialNctIds }.filter { trial ->
-                val hospitalsInHomeCountry = findHospitalsInHomeCountry(trial)
-                hospitalsInHomeCountry.isEmpty() || !hospitalsInHomeCountry.all { hospital -> hospital in CHILDREN_HOSPITALS }
-            }.map { event to it }
+fun Set<ExternalTrialSummary>.filterInHomeCountry(country: CountryName): Set<ExternalTrialSummary> {
+    return this.filter { country in countryNames(it).toSet() }.toSet()
+}
+
+private fun countryNames(it: ExternalTrialSummary) = it.countries.map { c -> c.name }
+
+fun Set<ExternalTrialSummary>.filterNotInHomeCountry(country: CountryName): Set<ExternalTrialSummary> {
+    return this.filter { country !in countryNames(it) }.toSet()
+}
+
+fun Set<ExternalTrialSummary>.filterChildrensHospitals(): Set<ExternalTrialSummary> {
+    return this.filter {
+        it.cities.all { c -> c !in CHILDREN_HOSPITALS }
+    }.toSet()
+}
+
+fun Set<ExternalTrialSummary>.filterMolecularCriteriaAlreadyPresent(hospitalLocalEvaluatedCohorts: List<InterpretedCohort>): Pair<Set<ExternalTrialSummary>, Int> {
+    val hospitalTrialMolecularEvents = hospitalLocalEvaluatedCohorts.flatMap { e -> e.molecularEvents }.toSet()
+    val filtered = this.filter { it.actinMolecularEvents.subtract(hospitalTrialMolecularEvents).isNotEmpty() }.toSet()
+    return filtered to (this.size - filtered.size)
+}
+
+object ExternalTrialSummarizer {
+
+    fun summarize(externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>): Set<ExternalTrialSummary> {
+        val flattened = externalTrialsPerEvent.flatMap {
+            it.value.map { t -> EventWithExternalTrial(it.key, t) }
         }
-            .groupBy { (_, trial) -> trial.nctId }
-            .map { (_, eventAndTrialPairs) ->
-                val (events, trials) = eventAndTrialPairs.unzip()
-                events.toSet().joinToString(",\n") to trials
-            }
-            .groupBy({ it.first }, { it.second }).mapValues { it.value.flatten().toSet() }
-    }
-
-    fun filterMolecularCriteriaAlreadyPresent(
-        externalEligibleTrials: Map<String, Iterable<ExternalTrial>>,
-        hospitalLocalEvaluatedCohorts: List<InterpretedCohort>
-    ): ExternalTrialSummary {
-
-        val hospitalTrialMolecularEvents = hospitalLocalEvaluatedCohorts.flatMap { e -> e.molecularEvents }.toSet()
-        val (localTrials, localTrialsFiltered) = filteredMolecularEvents(
-            hospitalTrialMolecularEvents,
-            EligibleExternalTrialGeneratorFunctions.localTrials(externalEligibleTrials, homeCountry)
-        )
-        val (nonLocalTrials, nonLocalTrialsFiltered) = filteredMolecularEvents(
-            hospitalTrialMolecularEvents + localTrials.keys.flatMap { splitMolecularEvents(it) },
-            EligibleExternalTrialGeneratorFunctions.nonLocalTrials(externalEligibleTrials, homeCountry)
-        )
-        return ExternalTrialSummary(localTrials, localTrialsFiltered, nonLocalTrials, nonLocalTrialsFiltered)
-    }
-
-    private fun filteredMolecularEvents(
-        molecularTargetsAlreadyIncluded: Set<String>,
-        trials: Map<String, Iterable<ExternalTrial>>
-    ): Pair<Map<String, Iterable<ExternalTrial>>, Int> {
-        val filtered = trials.filterNot {
-            splitMolecularEvents(it.key).all { mt -> molecularTargetsAlreadyIncluded.contains(mt) }
-        }
-        return filtered to uniqueTrialCount(trials) - uniqueTrialCount(filtered)
-    }
-
-    private fun uniqueTrialCount(trials: Map<String, Iterable<ExternalTrial>>) =
-        trials.flatMap { it.value }.toSet().size
-
-    private fun splitMolecularEvents(molecularEvents: String) =
-        molecularEvents.split(",").map { it.trim() }.toSet()
-
-    private fun findHospitalsInHomeCountry(trial: ExternalTrial): Set<String> {
-        val homeCountries = trial.countries.filter { it.name == homeCountry }
-        if (homeCountries.size > 1) throw IllegalStateException(
-            "Country ${homeCountry.display()} is configured multiple times for trial ${trial.nctId}. " +
-                    "This should not be possible and indicates an issue in the SERVE data export"
-        )
-        return homeCountries.firstOrNull()?.hospitalsPerCity?.values?.flatten()?.toSet() ?: emptySet()
+        return flattened.groupBy { t -> t.trial.nctId }.map { e ->
+            val countries = e.value.flatMap { ewe -> ewe.trial.countries }
+            val hospitals = countries.flatMap { ewe -> ewe.hospitalsPerCity.entries }
+            val trial = e.value.first().trial
+            ExternalTrialSummary(
+                e.key,
+                trial.title,
+                trial.url,
+                e.value.map { ewe -> ewe.event }.toSortedSet(),
+                e.value.map { ewe -> ewe.trial.sourceEvent }.toSortedSet(),
+                e.value.map { ewe -> ewe.trial.applicableCancerType }.toSortedSet(Comparator.comparing { c -> c.cancerType }),
+                countries.toSortedSet(Comparator.comparing { c -> c.name }),
+                hospitals.map { h -> h.key }.toSortedSet(),
+                hospitals.map { h -> h.value }.flatten().toSortedSet()
+            )
+        }.toSet()
     }
 }

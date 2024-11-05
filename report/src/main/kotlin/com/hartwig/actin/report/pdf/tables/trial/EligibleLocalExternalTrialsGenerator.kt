@@ -1,7 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.datamodel.molecular.evidence.CountryName
-import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Styles
@@ -12,7 +11,7 @@ import com.itextpdf.layout.element.Table
 
 class EligibleLocalExternalTrialsGenerator(
     private val sources: Set<String>,
-    private val externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>,
+    private val trials: Set<ExternalTrialSummary>,
     private val width: Float,
     private val filteredCount: Int,
     private val homeCountry: CountryName
@@ -22,7 +21,7 @@ class EligibleLocalExternalTrialsGenerator(
             "%s trials potentially eligible based on molecular results which are potentially recruiting locally in %s (%d)",
             sources.joinToString(),
             homeCountry.display(),
-            externalTrialsPerEvent.values.flatten().size
+            trials.size
         )
     }
 
@@ -33,36 +32,31 @@ class EligibleLocalExternalTrialsGenerator(
         val titleWidth = (1.5 * width / 5).toFloat()
         val hospitalsOrCitiesWidth = (0.8 * width / 5).toFloat()
 
-        val table = Tables.createFixedWidthCols(eventWidth, sourceEventWidth + cancerTypeWidth + titleWidth + hospitalsOrCitiesWidth)
-        table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader("Event")))
-        val headerSubTable = Tables.createFixedWidthCols(sourceEventWidth, cancerTypeWidth, titleWidth, hospitalsOrCitiesWidth)
+        val table = Tables.createFixedWidthCols(titleWidth, eventWidth, sourceEventWidth, cancerTypeWidth, hospitalsOrCitiesWidth)
         val hospitalsOrCities = if (homeCountry == CountryName.NETHERLANDS) "Hospitals" else "Cities"
         listOf(
-            "Source Event",
-            "Cancer Type",
             "Trial title",
+            "Events",
+            "Source Events",
+            "Cancer Types",
             hospitalsOrCities
-        ).forEach { headerSubTable.addHeaderCell(Cells.createHeader(it)) }
-        table.addHeaderCell(Cells.createContentNoBorder(headerSubTable))
+        ).forEach { table.addHeaderCell(Cells.createHeader(it)) }
 
-        externalTrialsPerEvent.forEach { (event, externalTrials) ->
-            val subTable = Tables.createFixedWidthCols(sourceEventWidth, cancerTypeWidth, titleWidth, hospitalsOrCitiesWidth)
-            externalTrials.forEach { externalTrial ->
-                subTable.addCell(Cells.createContentNoBorder(externalTrial.sourceEvent))
-                subTable.addCell(Cells.createContentNoBorder(externalTrial.applicableCancerType.cancerType))
-                subTable.addCell(
-                    Cells.createContentNoBorder(EligibleExternalTrialGeneratorFunctions.shortenTitle(externalTrial.title))
-                        .setAction(PdfAction.createURI(externalTrial.url)).addStyle(Styles.urlStyle())
-                )
-                val hospitalsOrCitiesCell = if (homeCountry == CountryName.NETHERLANDS) {
-                    EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(externalTrial, homeCountry).first
-                } else {
-                    EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(externalTrial, homeCountry).second
-                }
-                subTable.addCell(Cells.createContentNoBorder(hospitalsOrCitiesCell))
+        trials.forEach { trial ->
+            table.addCell(
+                Cells.createContent(EligibleExternalTrialGeneratorFunctions.shortenTitle(trial.title))
+                    .setAction(PdfAction.createURI(trial.url)).addStyle(Styles.urlStyle())
+            )
+            table.addCell(Cells.createContent(trial.actinMolecularEvents.joinToString(",\n")))
+            table.addCell(Cells.createContent(trial.sourceMolecularEvents.joinToString(",\n")))
+            table.addCell(Cells.createContent(trial.cancerTypes.joinToString(",\n") { it.cancerType }))
+
+            val hospitalsOrCitiesCell = if (homeCountry == CountryName.NETHERLANDS) {
+                EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(trial, homeCountry).first
+            } else {
+                EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(trial, homeCountry).second
             }
-            table.addCell(Cells.createContent(event))
-            EligibleExternalTrialGeneratorFunctions.insertRow(table, subTable)
+            table.addCell(Cells.createContent(hospitalsOrCitiesCell))
         }
         if (filteredCount > 0)
             table.addCell(

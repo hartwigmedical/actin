@@ -41,27 +41,25 @@ object EligibleExternalTrialGeneratorFunctions {
         table.addCell(Cells.createContent(finalSubTable))
     }
 
-    fun hospitalsAndCitiesInCountry(externalTrial: ExternalTrial, country: CountryName): Pair<String, String> {
-        val homeCountries = externalTrial.countries.filter { it.name == country }
+    fun hospitalsAndCitiesInCountry(trial: ExternalTrialSummary, country: CountryName): Pair<String, String> {
+        val homeCountries = trial.countries.filter { it.name == country }
         return if (homeCountries.size > 1 || homeCountries.isEmpty()) {
             throw IllegalStateException(
-                "Country ${country.display()} not configured or configured multiple times for trial ${externalTrial.nctId}. " +
+                "Country ${country.display()} not configured or configured multiple times for trial ${trial.nctId}. " +
                         "This should not be possible and indicates an issue in the SERVE data export"
             )
         } else {
-            val hospitals = homeCountries.first().hospitalsPerCity.flatMap { it.value }
-            val cities = homeCountries.first().hospitalsPerCity.keys
-            val hospitalsString = if (hospitals.size > 10) {
+            val hospitalsString = if (trial.hospitals.size > 10) {
                 MANY_PLEASE_CHECK_LINK
-            } else hospitals.joinToString { it }
-            val citiesString = if (cities.size > 8) {
+            } else trial.hospitals.joinToString { it }
+            val citiesString = if (trial.cities.size > 8) {
                 MANY_PLEASE_CHECK_LINK
-            } else cities.joinToString { it }
+            } else trial.cities.joinToString { it }
             Pair(hospitalsString, citiesString)
         }
     }
 
-    fun countryNamesWithCities(externalTrial: ExternalTrial): String {
+    fun countryNamesWithCities(externalTrial: ExternalTrialSummary): String {
         return externalTrial.countries.joinToString { country ->
             val cities = if (country.hospitalsPerCity.keys.size > 8) {
                 MANY_PLEASE_CHECK_LINK
