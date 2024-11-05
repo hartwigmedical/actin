@@ -58,10 +58,9 @@ fun Set<ExternalTrialSummary>.filterMolecularCriteriaAlreadyPresent(hospitalLoca
 object ExternalTrialSummarizer {
 
     fun summarize(externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>): Set<ExternalTrialSummary> {
-        val flattened = externalTrialsPerEvent.flatMap {
+        return externalTrialsPerEvent.flatMap {
             it.value.map { t -> EventWithExternalTrial(it.key, t) }
-        }
-        return flattened.groupBy { t -> t.trial.nctId }.map { e ->
+        }.groupBy { t -> t.trial.nctId }.map { e ->
             val countries = e.value.flatMap { ewe -> ewe.trial.countries }
             val hospitals = countries.flatMap { c -> c.hospitalsPerCity.entries.map { hpc -> c to hpc } }
             val trial = e.value.first().trial

@@ -22,12 +22,14 @@ object EligibleExternalTrialGeneratorFunctions {
                         "This should not be possible and indicates an issue in the SERVE data export"
             )
         } else {
-            val hospitalsString = if (trial.hospitals.size > 10) {
+            val hospitals = homeCountries.first().hospitalsPerCity.flatMap { it.value }
+            val cities = homeCountries.first().hospitalsPerCity.keys
+            val hospitalsString = if (hospitals.size > 10) {
                 MANY_PLEASE_CHECK_LINK
-            } else trial.hospitals.joinToString { it.name }
-            val citiesString = if (trial.cities.size > 8) {
+            } else hospitals.joinToString { it }
+            val citiesString = if (cities.size > 8) {
                 MANY_PLEASE_CHECK_LINK
-            } else trial.cities.joinToString { it }
+            } else cities.joinToString { it }
             Pair(hospitalsString, citiesString)
         }
     }
