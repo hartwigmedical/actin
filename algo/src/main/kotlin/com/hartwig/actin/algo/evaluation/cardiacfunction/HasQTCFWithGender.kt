@@ -6,11 +6,15 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.Gender
 
-class HasQTCFOfAtLeastWithGender(private val minQTCF: Double, private val gender: Gender) : EvaluationFunction {
+class HasQTCFWithGender(
+    private val threshold: Double,
+    private val gender: Gender,
+    private val evalFunction: (Double) -> EvaluationFunction
+) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return if (record.patient.gender == gender) {
-            ECGMeasureEvaluationFunctions.hasSufficientQTCF(minQTCF).evaluate(record)
+            evalFunction(threshold).evaluate(record)
         } else {
             EvaluationFactory.fail(
                 "${gender.display()} QTCF exceptable bound not applicable for ${

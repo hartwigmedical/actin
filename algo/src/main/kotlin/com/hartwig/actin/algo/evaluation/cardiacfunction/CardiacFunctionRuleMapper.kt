@@ -48,7 +48,7 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
     private fun hasLimitedQTCFWithGenderCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val (maxQTCF, gender) = functionInputResolver().createOneDoubleOneGenderInput(function)
-            HasQTCFOfAtMostWithGender(maxQTCF, gender)
+            HasQTCFWithGender(maxQTCF, gender, ECGMeasureEvaluationFunctions::hasLimitedQTCF)
         }
     }
 
@@ -61,7 +61,7 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
     private fun hasSufficientQTCFWithGenderCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val (minQTCF, gender) = functionInputResolver().createOneDoubleOneGenderInput(function)
-            HasQTCFOfAtLeastWithGender(minQTCF, gender)
+            HasQTCFWithGender(minQTCF, gender, ECGMeasureEvaluationFunctions::hasSufficientQTCF)
         }
     }
 
