@@ -55,9 +55,7 @@ class ECGMeasureEvaluationFunctionTest {
         assertEvaluation(EvaluationResult.FAIL, withThresholdCriteria(ThresholdCriteria.MINIMUM).evaluate(withValueAndUnit(300)))
     }
 
-    private fun withThresholdCriteria(
-        thresholdCriteria: ThresholdCriteria
-    ): ECGMeasureEvaluationFunction {
+    private fun withThresholdCriteria(thresholdCriteria: ThresholdCriteria): ECGMeasureEvaluationFunction {
         return ECGMeasureEvaluationFunction(
             ECGMeasureName.QTCF,
             450.0,
