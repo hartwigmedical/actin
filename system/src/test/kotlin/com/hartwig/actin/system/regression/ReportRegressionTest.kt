@@ -37,10 +37,18 @@ class ReportRegressionTest(private val exampleName: String) {
     @Test
     fun `Regress report textually and visually`() {
         val outputDirectory = System.getProperty("user.dir") + "/target/test-classes"
-        LocalExampleReportApplication(LocalDate.of(2024, 10, 31)).run(
+        val localExampleReportApplication = LocalExampleReportApplication()
+        localExampleReportApplication.run(
             ExampleFunctions.resolveExamplePatientRecordJson(exampleName),
             ExampleFunctions.resolveExampleTreatmentMatchJson(exampleName),
-            outputDirectory
+            outputDirectory,
+            ExampleFunctions.createExhaustiveEnvironmentConfiguration(
+                LocalDate.of(
+                    2024,
+                    11,
+                    5
+                )
+            )
         )
         assertThat(logLevelRecorder.levelRecorded(Level.WARN) || logLevelRecorder.levelRecorded(Level.ERROR)).withFailMessage("There are errors or warnings in the logs")
             .isFalse()
