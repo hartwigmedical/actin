@@ -81,7 +81,7 @@ class EligibleActinTrialsGenerator(
 
             val titleStart = ActinTrialGeneratorFunctions.createTableTitleStart(source)
             val title =
-                "$titleStart that are open but for which additional genes need to be tested to evaluate eligibility $cohortFromTrialsText"
+                "$titleStart that are open but for which additional molecular tests needed to evaluate eligibility $cohortFromTrialsText"
 
             val footNote = "Open cohorts with no slots available are shown in grey."
 
