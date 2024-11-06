@@ -96,10 +96,6 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.HAS_CORRECTED_MAGNESIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to undeterminedLabValueCreator("corrected magnesium"),
             EligibilityRule.HAS_PHOSPHATE_MMOL_PER_L_OF_AT_MOST_X to hasLimitedLabValueCreator(LabMeasurement.PHOSPHATE),
             EligibilityRule.HAS_PHOSPHATE_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.PHOSPHATE),
-            EligibilityRule.HAS_PHOSPHORUS_ULN_OF_AT_MOST_X to undeterminedLabValueCreator("phosphorus"),
-            EligibilityRule.HAS_PHOSPHORUS_MMOL_PER_L_OF_AT_MOST_X to undeterminedLabValueCreator("phosphorus"),
-            EligibilityRule.HAS_PHOSPHORUS_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to undeterminedLabValueCreator("phosphorus"),
-            EligibilityRule.HAS_CORRECTED_PHOSPHORUS_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to undeterminedLabValueCreator("corrected phosphorus"),
             EligibilityRule.HAS_POTASSIUM_MMOL_PER_L_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.POTASSIUM),
             EligibilityRule.HAS_POTASSIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinInstitutionalNormalLimitCreator(
                 LabMeasurement.POTASSIUM
