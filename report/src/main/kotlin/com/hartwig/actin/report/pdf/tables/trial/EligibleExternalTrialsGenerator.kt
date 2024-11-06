@@ -17,7 +17,8 @@ class EligibleExternalTrialsGenerator(
     private val homeCountry: CountryName? = null
 ) : TableGenerator {
     override fun title() =
-        "${sources.joinToString()} trials potentially eligible based on molecular results which are potentially recruiting ${homeCountry?.let { "locally in $it" } ?: "potentially recruiting internationally"} (${trials.size})"
+        "${sources.joinToString()} trials potentially eligible based on molecular results which are potentially " +
+                "recruiting ${homeCountry?.let { "locally in ${it.display()}" } ?: "internationally"} (${trials.size})"
 
 
     override fun contents(): Table {
