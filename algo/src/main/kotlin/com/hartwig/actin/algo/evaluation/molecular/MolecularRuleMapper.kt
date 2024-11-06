@@ -45,8 +45,8 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HOMOZYGOUS_DPYD_DEFICIENCY to { HasHomozygousDPYDDeficiency(maxMolecularTestAge()) },
             EligibilityRule.HAS_HETEROZYGOUS_DPYD_DEFICIENCY to { HasHeterozygousDPYDDeficiency(maxMolecularTestAge()) },
             EligibilityRule.HAS_KNOWN_HPV_STATUS to { HasKnownHPVStatus() },
-            EligibilityRule.OVEREXPRESSION_OF_GENE_X to geneIsOverExpressedCreator(),
-            EligibilityRule.NON_EXPRESSION_OF_GENE_X to geneIsNotExpressedCreator(),
+            EligibilityRule.OVEREXPRESSION_OF_ANY_GENE_X to anyGeneFromSetIsOverExpressedCreator(),
+            EligibilityRule.NON_EXPRESSION_OF_ANY_GENE_X to anyGeneFromSetIsNotExpressedCreator(),
             EligibilityRule.SPECIFIC_MRNA_EXPRESSION_REQUIREMENTS_MET_FOR_GENES_X to { GenesMeetSpecificMRNAExpressionRequirements() },
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC to proteinIsExpressedByIHCCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_EXACTLY_Y to proteinHasExactExpressionByIHCCreator(),
@@ -230,17 +230,17 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
-    private fun geneIsOverExpressedCreator(): FunctionCreator {
+    private fun anyGeneFromSetIsOverExpressedCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val gene = functionInputResolver().createOneGeneInput(function).geneName
-            GeneIsOverexpressed(maxMolecularTestAge(), gene)
+            val geneSet = functionInputResolver().createManyGenesInput(function).geneNames.toSet()
+            AnyGeneFromSetIsOverexpressed(maxMolecularTestAge(), geneSet)
         }
     }
 
-    private fun geneIsNotExpressedCreator(): FunctionCreator {
+    private fun anyGeneFromSetIsNotExpressedCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val gene = functionInputResolver().createOneGeneInput(function).geneName
-            GeneIsNotExpressed(maxMolecularTestAge(), gene)
+            val geneSet = functionInputResolver().createManyGenesInput(function).geneNames.toSet()
+            AnyGeneFromSetIsNotExpressed(maxMolecularTestAge(), geneSet)
         }
     }
 
