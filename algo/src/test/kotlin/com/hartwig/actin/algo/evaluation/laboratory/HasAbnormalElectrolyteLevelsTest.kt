@@ -14,6 +14,7 @@ class HasAbnormalElectrolyteLevelsTest {
     private val function = HasAbnormalElectrolyteLevels(minValidDate, minPassDate)
     private val labMeasurements = listOf(
         LabMeasurement.CALCIUM,
+        LabMeasurement.PHOSPHATE,
         LabMeasurement.SODIUM,
         LabMeasurement.MAGNESIUM,
         LabMeasurement.POTASSIUM
