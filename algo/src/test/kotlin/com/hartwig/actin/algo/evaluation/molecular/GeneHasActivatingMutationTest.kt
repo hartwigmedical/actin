@@ -193,6 +193,19 @@ class GeneHasActivatingMutationTest {
         )
     }
 
+    @Test
+    fun `Should evaluate to warn when activating mutation with potentially activating mutation`() {
+        assertMolecularEvaluation(
+            EvaluationResult.WARN, functionNotIgnoringCodons.evaluate(
+                MolecularTestFactory.withHasTumorMutationalLoadAndVariants(
+                    false,
+                    ACTIVATING_VARIANT,
+                    ACTIVATING_VARIANT.copy(isHotspot = false, geneRole = GeneRole.UNKNOWN, proteinEffect = ProteinEffect.UNKNOWN),
+                )
+            )
+        )
+    }
+
     private fun assertResultForVariant(expectedResult: EvaluationResult, variant: Variant) {
         assertResultForVariantWithTML(expectedResult, variant, null)
 

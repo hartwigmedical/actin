@@ -50,7 +50,7 @@ class GeneHasActivatingMutation(
                 }
 
         val activatingVariants = variantCharacteristics.filter(ActivationProfile::activating).map(ActivationProfile::event).toSet()
-        if (activatingVariants.isNotEmpty()) {
+        if (activatingVariants.isNotEmpty() && !hasPotentiallyActivatingMutation(variantCharacteristics)) {
             return EvaluationFactory.pass(
                 "Activating mutation(s) detected in gene + $gene: ${Format.concat(activatingVariants)}",
                 "$gene activating mutation(s)",
@@ -60,6 +60,7 @@ class GeneHasActivatingMutation(
         val warningsByType =
             variantCharacteristics.groupBy { it.warningType }.mapValues { entry -> entry.value.map(ActivationProfile::event).toSet() }
         val potentialWarnEvaluation = evaluatePotentialWarns(
+            activatingVariants,
             warningsByType[ActivationWarningType.ASSOCIATED_WITH_RESISTANCE] ?: emptySet(),
             warningsByType[ActivationWarningType.NON_ONCOGENE] ?: emptySet(),
             warningsByType[ActivationWarningType.NO_HOTSPOT_AND_NO_GAIN_OF_FUNCTION] ?: emptySet(),
@@ -129,6 +130,7 @@ class GeneHasActivatingMutation(
     }
 
     private fun evaluatePotentialWarns(
+        activatingVariants: Set<String>,
         activatingVariantsAssociatedWithResistance: Set<String>,
         activatingVariantsInNonOncogene: Set<String>,
         activatingVariantsNoHotspotAndNoGainOfFunction: Set<String>,
@@ -151,11 +153,25 @@ class GeneHasActivatingMutation(
                     "Gene $gene has activating mutation(s) ${Format.concat(activatingVariantsInNonOncogene)} but gene known as TSG in $evidenceSource",
                     "$gene activating mutation(s) but gene known as TSG in $evidenceSource"
                 ),
-                EventsWithMessages(
-                    activatingVariantsNoHotspotAndNoGainOfFunction,
-                    "Gene $gene has potentially activating mutation(s) " + Format.concat(activatingVariantsNoHotspotAndNoGainOfFunction) + " that have high driver likelihood," + " but is not a hotspot and not associated with gain-of-function protein effect evidence in $evidenceSource",
-                    "$gene potentially activating mutation(s) with high driver likelihood but not a hotspot" + " and not associated with gain-of-function protein effect evidence in $evidenceSource"
-                ),
+                if (activatingVariants.isNotEmpty() && activatingVariantsNoHotspotAndNoGainOfFunction.isNotEmpty()) {
+                    EventsWithMessages(
+                        activatingVariants + nonHighDriverVariants,
+                        "Activating mutation(s) detected in gene + $gene: ${Format.concat(activatingVariants)} together with potentially activating variants ${
+                            Format.concat(
+                                activatingVariantsNoHotspotAndNoGainOfFunction
+                            )
+                        }" +
+                                " that have high driver likelihood, but not a hotspot and not associated with gain-of-function protein effect evidence in $evidenceSource",
+                        "$gene activating mutation(s): $gene: ${Format.concat(activatingVariants)}, together with potentially activating mutation(s) with high driver likelihood but not a hotspot"
+                                + " and not associated with gain-of-function protein effect evidence in $evidenceSource",
+                    )
+                } else {
+                    EventsWithMessages(
+                        activatingVariantsNoHotspotAndNoGainOfFunction,
+                        "Gene $gene has potentially activating mutation(s) ${Format.concat(activatingVariantsNoHotspotAndNoGainOfFunction)} that have high driver likelihood, but is not a hotspot and not associated with gain-of-function protein effect evidence in $evidenceSource",
+                        "$gene potentially activating mutation(s) with high driver likelihood but not a hotspot and not associated with gain-of-function protein effect evidence in $evidenceSource"
+                    )
+                },
                 EventsWithMessages(
                     activatingSubclonalVariants,
                     "Gene $gene potentially activating mutation(s) " + Format.concat(activatingSubclonalVariants) + " but have subclonal likelihood of > " + Format.percentage(
@@ -210,4 +226,7 @@ class GeneHasActivatingMutation(
         return codonIndexToMatch == affectedCodon
     }
 
+    private fun hasPotentiallyActivatingMutation(variantCharacteristics: List<ActivationProfile>): Boolean {
+        return variantCharacteristics.any { !it.activating && it.warningType == ActivationWarningType.NO_HOTSPOT_AND_NO_GAIN_OF_FUNCTION }
+    }
 }
