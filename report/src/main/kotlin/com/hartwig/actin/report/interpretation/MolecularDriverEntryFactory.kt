@@ -2,6 +2,7 @@ package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.molecular.Driver
 import com.hartwig.actin.datamodel.molecular.Fusion
+import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.Variant
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidenceCategories.approved
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidenceCategories.experimental
@@ -46,7 +47,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         val subClonalIndicator = if (ClonalityInterpreter.isPotentiallySubclonal(variant)) "*" else ""
         val name = "${variant.event} ($variantCopyString/$totalCopyString copies)$subClonalIndicator"
 
-        return driverEntry(driverType, name, variant)
+        return driverEntry(driverType, name, variant, variant.gene, variant.proteinEffect)
     }
 
     private fun fromCopyNumber(copyNumber: CopyNumber): MolecularDriverEntry {
@@ -56,7 +57,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
             CopyNumberType.NONE -> "Copy Number"
         }
         val name = copyNumber.event + ", " + copyNumber.minCopies + " copies"
-        return driverEntry(driverType, name, copyNumber)
+        return driverEntry(driverType, name, copyNumber, copyNumber.gene, copyNumber.proteinEffect)
     }
 
     private fun fromHomozygousDisruption(homozygousDisruption: HomozygousDisruption): MolecularDriverEntry {
@@ -77,7 +78,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         } else {
             "${fusion.event}, exon ${fusion.fusedExonUp} - exon ${fusion.fusedExonDown}"
         }
-        return driverEntry(fusion.driverType.display(), name, fusion)
+        return driverEntry(fusion.driverType.display(), name, fusion, fusion.geneStart, fusion.proteinEffect)
     }
 
     private fun fromVirus(virus: Virus): MolecularDriverEntry {
@@ -85,12 +86,17 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         return driverEntry("Virus", name, virus)
     }
 
-    private fun driverEntry(driverType: String, name: String, driver: Driver): MolecularDriverEntry {
+    private fun driverEntry(
+        driverType: String, name: String, driver: Driver, gene: String? = null, proteinEffect: ProteinEffect? = null
+    ): MolecularDriverEntry {
         return MolecularDriverEntry(
             driverType = driverType,
             displayedName = name,
             eventName = driver.event,
             driverLikelihood = driver.driverLikelihood,
+            evidenceTier = driver.evidenceTier(),
+            gene = gene,
+            proteinEffect = proteinEffect,
             actinTrials = molecularDriversInterpreter.trialsForDriver(driver).toSet(),
             externalTrials = driver.evidence.externalEligibleTrials,
             bestResponsiveEvidence = bestResponsiveEvidence(driver),
@@ -98,43 +104,41 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         )
     }
 
-    companion object {
-        private fun bestResponsiveEvidence(driver: Driver): String? {
-            val evidence = driver.evidence
-            return when {
-                approved(evidence.treatmentEvidence).isNotEmpty() -> {
-                    "Approved"
-                }
-
-                experimental(evidence.treatmentEvidence, true).isNotEmpty() -> {
-                    "On-label experimental"
-                }
-
-                experimental(evidence.treatmentEvidence, false).isNotEmpty() -> {
-                    "Off-label experimental"
-                }
-
-                preclinical(evidence.treatmentEvidence).isNotEmpty() -> {
-                    "Pre-clinical"
-                }
-
-                else -> null
+    private fun bestResponsiveEvidence(driver: Driver): String? {
+        val evidence = driver.evidence
+        return when {
+            approved(evidence.treatmentEvidence).isNotEmpty() -> {
+                "Approved"
             }
+
+            experimental(evidence.treatmentEvidence, true).isNotEmpty() -> {
+                "On-label experimental"
+            }
+
+            experimental(evidence.treatmentEvidence, false).isNotEmpty() -> {
+                "Off-label experimental"
+            }
+
+            preclinical(evidence.treatmentEvidence).isNotEmpty() -> {
+                "Pre-clinical"
+            }
+
+            else -> null
         }
+    }
 
-        private fun bestResistanceEvidence(driver: Driver): String? {
-            val evidence = driver.evidence
-            return when {
-                knownResistant(evidence.treatmentEvidence).isNotEmpty() -> {
-                    "Known resistance"
-                }
-
-                suspectResistant(evidence.treatmentEvidence).isNotEmpty() -> {
-                    "Suspect resistance"
-                }
-
-                else -> null
+    private fun bestResistanceEvidence(driver: Driver): String? {
+        val evidence = driver.evidence
+        return when {
+            knownResistant(evidence.treatmentEvidence).isNotEmpty() -> {
+                "Known resistance"
             }
+
+            suspectResistant(evidence.treatmentEvidence).isNotEmpty() -> {
+                "Suspect resistance"
+            }
+
+            else -> null
         }
     }
 }

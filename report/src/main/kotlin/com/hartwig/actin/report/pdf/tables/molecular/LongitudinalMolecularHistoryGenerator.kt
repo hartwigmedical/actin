@@ -1,85 +1,70 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.datamodel.molecular.Driver
-import com.hartwig.actin.datamodel.molecular.Fusion
-import com.hartwig.actin.datamodel.molecular.GeneAlteration
+import com.hartwig.actin.datamodel.molecular.Drivers
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.Variant
-import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
+import com.hartwig.actin.report.interpretation.InterpretedCohortsSummarizer
+import com.hartwig.actin.report.interpretation.MolecularDriverEntry
+import com.hartwig.actin.report.interpretation.MolecularDriverEntryFactory
+import com.hartwig.actin.report.interpretation.MolecularDriversInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats.VALUE_NOT_AVAILABLE
-import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
 class LongitudinalMolecularHistoryGenerator(private val molecularHistory: MolecularHistory, private val width: Float) : TableGenerator {
+    private val driverSortOrder: Comparator<MolecularDriverEntry> = compareBy(
+        MolecularDriverEntry::evidenceTier,
+        MolecularDriverEntry::driverLikelihood,
+        MolecularDriverEntry::gene,
+        MolecularDriverEntry::eventName
+    )
+
     override fun title(): String {
         return "Molecular history"
     }
 
     override fun contents(): Table {
-        val sortedAndFilteredTests =
-            molecularHistory.molecularTests.sortedBy { it.date }
-                .associateWith { DriverTableFunctions.allDrivers(it).associate { d -> d.event to (d as? Variant)?.variantAlleleFrequency } }
-        val testsWithDrivers = DriverTableFunctions.allDrivers(molecularHistory)
+        val eventVAFMapByTest = molecularHistory.molecularTests.sortedBy { it.date }
+            .associateWith { test ->
+                DriverTableFunctions.allDrivers(test).associate { it.event to (it as? Variant)?.variantAlleleFrequency }
+            }
 
-        val allDrivers =
-            testsWithDrivers.flatMap { it.second.map { d -> (d as? Variant)?.copy(variantAlleleFrequency = null) ?: d } }.toSet()
-                .sortedWith(driverSortOrder())
-        val columnCount = 3 + sortedAndFilteredTests.size
+        val columnCount = 3 + eventVAFMapByTest.size
         val table = Table(columnCount).setWidth(width)
 
-        table.addHeaderCell(Cells.createHeader("Event"))
-        table.addHeaderCell(Cells.createHeader("Description"))
-        table.addHeaderCell(Cells.createHeader("Driver likelihood"))
+        val headers = listOf("Event", "Description", "Driver likelihood") + eventVAFMapByTest.keys.map(::testDisplay)
+        headers.forEach { table.addHeaderCell(Cells.createHeader(it)) }
 
-        for (test in sortedAndFilteredTests) {
-            table.addHeaderCell(Cells.createHeader(testDisplay(test.key)))
-        }
+        val allDrivers = molecularHistory.molecularTests.map(MolecularTest::drivers).reduce(Drivers::combine)
+        val molecularDriversInterpreter = MolecularDriversInterpreter(allDrivers, InterpretedCohortsSummarizer(emptyMap(), emptySet()))
 
-        for (driver in allDrivers) {
-            table.addCell(Cells.createContent("${driver.event}\n(Tier ${driver.evidenceTier()})"))
-            when (driver) {
-                is Variant -> table.addCell(Cells.createContent(LongitudinalDriverInterpretation.interpret(driver)))
-                is CopyNumber -> table.addCell(Cells.createContent(LongitudinalDriverInterpretation.interpret(driver)))
-                is Fusion -> table.addCell(Cells.createContent(LongitudinalDriverInterpretation.interpret(driver)))
-                else -> throw IllegalArgumentException("Unexpected driver type: ${driver::class.simpleName}")
-            }
-            table.addCell(Cells.createContent(driver.driverLikelihood?.toString() ?: VALUE_NOT_AVAILABLE))
-            for (test in sortedAndFilteredTests) {
-                if (test.value.containsKey(driver.event)) {
-                    val vafInTest = test.value[driver.event]
-                    table.addCell(Cells.createContent(vafInTest?.let { v -> "VAF ${v}%" } ?: "Detected"))
-                } else {
-                    table.addCell(Cells.createContent("").setFontColor(Styles.PALETTE_MID_GREY))
+        MolecularDriverEntryFactory(molecularDriversInterpreter).create()
+            .sortedWith(driverSortOrder)
+            .distinct()
+            .flatMap { entry ->
+                val driverTextFields = listOf(
+                    "${entry.eventName}\n(Tier ${entry.evidenceTier})",
+                    listOfNotNull(entry.driverType, entry.proteinEffect?.display()).joinToString("\n"),
+                    entry.driverLikelihood?.toString() ?: VALUE_NOT_AVAILABLE
+                )
+                val testTextFields = eventVAFMapByTest.values.map { eventVAFMap ->
+                    if (entry.eventName in eventVAFMap) {
+                        eventVAFMap[entry.eventName]?.let { "VAF ${it}%" } ?: "Detected"
+                    } else ""
                 }
+                driverTextFields + testTextFields
             }
-        }
-        characteristicRow(table, sortedAndFilteredTests.keys, "TMB") {
+            .forEach { table.addCell(Cells.createContent(it)) }
+
+        characteristicRow(table, eventVAFMapByTest.keys, "TMB") {
             it.characteristics.tumorMutationalBurden?.toString() ?: ""
         }
-        characteristicRow(
-            table, sortedAndFilteredTests.keys, "MSI"
-        ) {
-            msiText(it)
-        }
+        characteristicRow(table, eventVAFMapByTest.keys, "MSI", ::msiText)
         return makeWrapping(table)
     }
-
-    private fun driverSortOrder(): Comparator<Driver> = compareBy(
-        { it.evidenceTier() },
-        { it.driverLikelihood },
-        {
-            when (it) {
-                is Fusion -> it.geneStart
-                is GeneAlteration -> it.gene
-                else -> null
-            }
-        },
-        { it.event }
-    )
 
     private fun msiText(it: MolecularTest) = when (it.characteristics.isMicrosatelliteUnstable) {
         false -> "Stable"
@@ -90,12 +75,7 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
     private fun characteristicRow(
         table: Table, sortedAndFilteredTests: Set<MolecularTest>, name: String, contentProvider: (MolecularTest) -> String
     ) {
-        table.addCell(Cells.createContent(name))
-        table.addCell(Cells.createContent(""))
-        table.addCell(Cells.createContent(""))
-        for (test in sortedAndFilteredTests.sortedBy { it.date }) {
-            table.addCell(Cells.createContent(contentProvider.invoke(test)))
-        }
+        (listOf(name, "", "") + sortedAndFilteredTests.map(contentProvider)).forEach { table.addCell(Cells.createContent(it)) }
     }
 
     private fun testDisplay(test: MolecularTest): String {

@@ -51,7 +51,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
             getWrappedTable(result),
             0,
             "BRAF V600E\n(Tier I)",
-            "Missense\nGain of function\nHotspot",
+            "Mutation (Hotspot)\nGain of function",
             HIGH,
             VAF,
             NOT_DETECTED
@@ -87,7 +87,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
             getWrappedTable(result),
             0,
             "BRAF V600E\n(Tier I)",
-            "Missense\nGain of function\nHotspot",
+            "Mutation (Hotspot)\nGain of function",
             HIGH,
             VAF,
         )
@@ -95,7 +95,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
             getWrappedTable(result),
             1,
             "KRAS G12C\n(Tier I)",
-            "Missense\nGain of function\nHotspot",
+            "Mutation (Hotspot)\nGain of function",
             HIGH,
             VAF,
         )
@@ -103,7 +103,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
             getWrappedTable(result),
             2,
             "KRAS G12D\n(Tier I)",
-            "Missense\nGain of function\nHotspot",
+            "Mutation (Hotspot)\nGain of function",
             HIGH,
             VAF,
         )
@@ -111,9 +111,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
             getWrappedTable(result),
             3,
             "BRAF - KRAS fusion\n(Tier I)",
-            "Fusion\n" +
-                    "Known fusion\n" +
-                    "Gain of function",
+            "Known fusion\nGain of function",
             "Low",
             DETECTED
         )
@@ -121,7 +119,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
             getWrappedTable(result),
             4,
             "BRAF V600E\n(Tier II)",
-            "Missense\nGain of function\nHotspot",
+            "Mutation (Hotspot)\nGain of function",
             HIGH,
             VAF,
         )
@@ -170,9 +168,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
             getWrappedTable(result),
             0,
             "EML4 - ALK fusion\n(Tier I)",
-            "Fusion\n" +
-                    "Known fusion\n" +
-                    "Gain of function",
+            "Known fusion\nGain of function",
             HIGH,
             DETECTED,
             NOT_DETECTED
