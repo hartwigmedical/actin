@@ -2,8 +2,8 @@ package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.report.datamodel.Report
-import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 import com.hartwig.actin.report.interpretation.InterpretedCohort
+import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 import com.hartwig.actin.report.interpretation.PriorIHCTestInterpreter
 import com.hartwig.actin.report.pdf.chapters.ChapterContentFunctions.addGenerators
 import com.hartwig.actin.report.pdf.tables.TableGenerator
