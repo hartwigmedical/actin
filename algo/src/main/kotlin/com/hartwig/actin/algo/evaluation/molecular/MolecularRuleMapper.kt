@@ -45,8 +45,8 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HOMOZYGOUS_DPYD_DEFICIENCY to { HasHomozygousDPYDDeficiency(maxMolecularTestAge()) },
             EligibilityRule.HAS_HETEROZYGOUS_DPYD_DEFICIENCY to { HasHeterozygousDPYDDeficiency(maxMolecularTestAge()) },
             EligibilityRule.HAS_KNOWN_HPV_STATUS to { HasKnownHPVStatus() },
-            EligibilityRule.OVEREXPRESSION_OF_GENE_X to { GeneIsOverexpressed(maxMolecularTestAge()) },
-            EligibilityRule.NON_EXPRESSION_OF_GENE_X to { GeneIsNotExpressed(maxMolecularTestAge()) },
+            EligibilityRule.OVEREXPRESSION_OF_GENE_X to geneIsOverExpressedCreator(),
+            EligibilityRule.NON_EXPRESSION_OF_GENE_X to geneIsNotExpressedCreator(),
             EligibilityRule.SPECIFIC_MRNA_EXPRESSION_REQUIREMENTS_MET_FOR_GENES_X to { GenesMeetSpecificMRNAExpressionRequirements() },
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC to proteinIsExpressedByIHCCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_EXACTLY_Y to proteinHasExactExpressionByIHCCreator(),
@@ -227,6 +227,20 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             val haplotypeToFind = functionInputResolver().createOneHaplotypeInput(function)
             HasUGT1A1Haplotype(haplotypeToFind.haplotype, maxMolecularTestAge())
+        }
+    }
+
+    private fun geneIsOverExpressedCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val gene = functionInputResolver().createOneGeneInput(function).geneName
+            GeneIsOverexpressed(maxMolecularTestAge(), gene)
+        }
+    }
+
+    private fun geneIsNotExpressedCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val gene = functionInputResolver().createOneGeneInput(function).geneName
+            GeneIsNotExpressed(maxMolecularTestAge(), gene)
         }
     }
 
