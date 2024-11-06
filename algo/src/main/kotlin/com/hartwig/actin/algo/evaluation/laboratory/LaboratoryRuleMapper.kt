@@ -25,9 +25,9 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         return mapOf(
             EligibilityRule.HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.LEUKOCYTES_ABS),
             EligibilityRule.HAS_LEUKOCYTES_ABS_LLN_OF_AT_LEAST_X to hasSufficientLabValueLLNCreator(LabMeasurement.LEUKOCYTES_ABS),
-            EligibilityRule.HAS_LYMPHOCYTES_ABS_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.LYMPHOCYTES_ABS_EDA),
+            EligibilityRule.HAS_LYMPHOCYTES_ABS_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.LYMPHOCYTES_ABS),
             EligibilityRule.HAS_LYMPHOCYTES_CELLS_PER_MM3_OF_AT_LEAST_X to hasSufficientLabValueCreator(
-                LabMeasurement.LYMPHOCYTES_ABS_EDA,
+                LabMeasurement.LYMPHOCYTES_ABS,
                 LabUnit.CELLS_PER_CUBIC_MILLIMETER
             ),
             EligibilityRule.HAS_POTENTIAL_LEUKOCYTOSIS to hasPotentialLeukocytosisCreator(),
