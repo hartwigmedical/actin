@@ -10,7 +10,7 @@ import java.time.LocalDate
 class AnyGeneFromSetIsNotExpressedTest {
 
     @Test
-    fun canEvaluate() {
+    fun `Should evaluate to undetermined with correct message`() {
         val function = AnyGeneFromSetIsNotExpressed(LocalDate.of(2024, 11, 6), setOf("gene a", "gene b", "gene c"))
         val evaluation = function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
