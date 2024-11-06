@@ -21,6 +21,12 @@ private val BASE_EXTERNAL_TRIAL_SUMMARY = ExternalTrialSummary(
     nctId = NCT_01,
     title = "title",
     url = URL,
+    actinMolecularEvents = sortedSetOf(),
+    sourceMolecularEvents = sortedSetOf(),
+    cancerTypes = sortedSetOf(),
+    countries = sortedSetOf(),
+    cities = sortedSetOf(),
+    hospitals = sortedSetOf()
 )
 private val NETHERLANDS = TestClinicalEvidenceFactory.createCountry(CountryName.NETHERLANDS)
 private val BELGIUM = TestClinicalEvidenceFactory.createCountry(CountryName.BELGIUM)
@@ -119,7 +125,7 @@ class ExternalTrialSummarizerTest {
                     countries = countrySet(NETHERLANDS)
                 ),
                 notFilteredOneAdultHospital
-            ).filterChildrensHospitals()
+            ).filterExclusivelyInChildrensHospitals()
         ).containsExactlyInAnyOrder(notFilteredOneAdultHospital)
     }
 
@@ -127,8 +133,15 @@ class ExternalTrialSummarizerTest {
     fun `Should filter trials in home country and not in home country`() {
         val inHomeCountry = BASE_EXTERNAL_TRIAL_SUMMARY.copy(countries = countrySet(NETHERLANDS))
         val notInHomeCountry = BASE_EXTERNAL_TRIAL_SUMMARY.copy(countries = countrySet(BELGIUM))
-        assertThat(setOf(inHomeCountry, notInHomeCountry).filterInHomeCountry(CountryName.NETHERLANDS)).containsExactly(inHomeCountry)
-        assertThat(setOf(inHomeCountry, notInHomeCountry).filterNotInHomeCountry(CountryName.NETHERLANDS)).containsExactly(notInHomeCountry)
+        assertThat(
+            setOf(
+                inHomeCountry,
+                notInHomeCountry
+            ).filterInCountryOfReference(CountryName.NETHERLANDS)
+        ).containsExactly(inHomeCountry)
+        assertThat(setOf(inHomeCountry, notInHomeCountry).filterNotInCountryOfReference(CountryName.NETHERLANDS)).containsExactly(
+            notInHomeCountry
+        )
     }
 
     @Test
@@ -148,8 +161,7 @@ class ExternalTrialSummarizerTest {
             filtered,
             notFiltered
         ).filterMolecularCriteriaAlreadyPresent(hospitalLocalEvaluatedCohorts)
-        assertThat(result.first).containsExactly(notFiltered)
-        assertThat(result.second).isEqualTo(1)
+        assertThat(result).containsExactly(notFiltered)
     }
 
     private fun hospitalSet(vararg hospitals: String) = hospitalSet(*hospitals.map { Hospital(it) }.toTypedArray())

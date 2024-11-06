@@ -10,6 +10,12 @@ private val BASE_EXTERNAL_TRIAL_SUMMARY = ExternalTrialSummary(
     nctId = "nct",
     title = "title",
     url = "url",
+    actinMolecularEvents = sortedSetOf(),
+    sourceMolecularEvents = sortedSetOf(),
+    cancerTypes = sortedSetOf(),
+    countries = sortedSetOf(),
+    cities = sortedSetOf(),
+    hospitals = sortedSetOf()
 )
 
 class EligibleExternalTrialGeneratorFunctionsTest {

@@ -34,12 +34,13 @@ import com.hartwig.actin.report.pdf.tables.trial.EligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleApprovedTreatmentGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleLocalExternalTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummarizer
+import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummary
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleActinTrialsGenerator
-import com.hartwig.actin.report.pdf.tables.trial.filterChildrensHospitals
-import com.hartwig.actin.report.pdf.tables.trial.filterInHomeCountry
+import com.hartwig.actin.report.pdf.tables.trial.filterExclusivelyInChildrensHospitals
+import com.hartwig.actin.report.pdf.tables.trial.filterInCountryOfReference
 import com.hartwig.actin.report.pdf.tables.trial.filterInternalTrials
 import com.hartwig.actin.report.pdf.tables.trial.filterMolecularCriteriaAlreadyPresent
-import com.hartwig.actin.report.pdf.tables.trial.filterNotInHomeCountry
+import com.hartwig.actin.report.pdf.tables.trial.filterNotInCountryOfReference
 import org.apache.logging.log4j.LogManager
 
 class ReportContentProvider(private val report: Report, private val enableExtendedMode: Boolean = false) {
@@ -172,42 +173,55 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             AggregatedEvidenceFactory.mergeMapsOfSets(patientRecord.molecularHistory.molecularTests.map {
                 AggregatedEvidenceFactory.create(it).externalEligibleTrialsPerEvent
             })
-
-
-        val localTrials = ExternalTrialSummarizer.summarize(externalEligibleTrials)
+        
+        val externalEligibleTrialsFiltered = ExternalTrialSummarizer.summarize(externalEligibleTrials)
             .filterInternalTrials(report.treatmentMatch.trialMatches.toSet())
-            .filterChildrensHospitals()
-            .filterInHomeCountry(report.config.countryOfReference)
-            .filterMolecularCriteriaAlreadyPresent(evaluated)
+            .filterExclusivelyInChildrensHospitals()
 
-        val nonLocalTrials = ExternalTrialSummarizer.summarize(externalEligibleTrials)
-            .filterInternalTrials(report.treatmentMatch.trialMatches.toSet())
-            .filterChildrensHospitals()
-            .filterNotInHomeCountry(report.config.countryOfReference)
-            .filterMolecularCriteriaAlreadyPresent(evaluated)
+        val externalEligibleTrialsLocal = filterTrialsForMolecularCriteria(
+            evaluated,
+            externalEligibleTrialsFiltered.filterInCountryOfReference(report.config.countryOfReference)
+        )
+
+        val externalEligibleTrialsNonLocal = filterTrialsForMolecularCriteria(
+            evaluated,
+            externalEligibleTrialsFiltered.filterNotInCountryOfReference(report.config.countryOfReference)
+        )
 
         val allEvidenceSources =
             patientRecord.molecularHistory.molecularTests.map { it.evidenceSource }.filter { it != NO_EVIDENCE_SOURCE }.toSet()
         return Pair(
-            if (localTrials.first.isNotEmpty()) {
+            if (externalEligibleTrialsLocal.isNotEmpty()) {
                 EligibleLocalExternalTrialsGenerator(
                     allEvidenceSources,
-                    localTrials.first,
+                    externalEligibleTrialsLocal.filtered,
                     contentWidth,
-                    localTrials.second,
+                    externalEligibleTrialsLocal.numFiltered(),
                     report.config.countryOfReference
                 )
             } else null,
-            if (nonLocalTrials.first.isNotEmpty()) {
+            if (externalEligibleTrialsNonLocal.isNotEmpty()) {
                 EligibleLocalExternalTrialsGenerator(
                     allEvidenceSources,
-                    nonLocalTrials.first,
+                    externalEligibleTrialsNonLocal.filtered,
                     contentWidth,
-                    nonLocalTrials.second,
+                    externalEligibleTrialsNonLocal.numFiltered(),
                     report.config.countryOfReference
                 )
             } else null
         )
+    }
+
+    data class MolecularFilteredExternalTrials(val original: Set<ExternalTrialSummary>, val filtered: Set<ExternalTrialSummary>) {
+        fun numFiltered() = original.size - filtered.size
+        fun isNotEmpty() = filtered.isNotEmpty()
+    }
+
+    private fun filterTrialsForMolecularCriteria(
+        internalEvaluatedCohorts: List<InterpretedCohort>,
+        original: Set<ExternalTrialSummary>
+    ): MolecularFilteredExternalTrials {
+        return MolecularFilteredExternalTrials(original, original.filterMolecularCriteriaAlreadyPresent(internalEvaluatedCohorts))
     }
 
     companion object {

@@ -13,7 +13,7 @@ import com.hartwig.actin.report.interpretation.MolecularDriversInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummarizer
 import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummary
-import com.hartwig.actin.report.pdf.tables.trial.filterChildrensHospitals
+import com.hartwig.actin.report.pdf.tables.trial.filterExclusivelyInChildrensHospitals
 import com.hartwig.actin.report.pdf.tables.trial.filterInternalTrials
 import com.hartwig.actin.report.pdf.tables.trial.filterMolecularCriteriaAlreadyPresent
 import com.hartwig.actin.report.pdf.util.Cells
@@ -51,10 +51,10 @@ class MolecularDriversGenerator(
         val externalTrialSummaries =
             ExternalTrialSummarizer.summarize(AggregatedEvidenceFactory.create(molecular).externalEligibleTrialsPerEvent)
                 .filterInternalTrials(trialMatches.toSet())
-                .filterChildrensHospitals()
+                .filterExclusivelyInChildrensHospitals()
                 .filterMolecularCriteriaAlreadyPresent(cohorts)
 
-        val externalTrialsPerSingleEvent = externalTrialSummaries.first.groupBy { it.actinMolecularEvents.joinToString { "\n" } }
+        val externalTrialsPerSingleEvent = externalTrialSummaries.groupBy { it.actinMolecularEvents.joinToString { "\n" } }
 
         val factory = MolecularDriverEntryFactory(molecularDriversInterpreter)
         factory.create().forEach { entry: MolecularDriverEntry ->

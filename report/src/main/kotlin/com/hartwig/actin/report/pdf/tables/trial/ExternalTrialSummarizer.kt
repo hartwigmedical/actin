@@ -12,12 +12,12 @@ data class ExternalTrialSummary(
     val nctId: String,
     val title: String,
     val url: String,
-    val actinMolecularEvents: SortedSet<String> = sortedSetOf(),
-    val sourceMolecularEvents: SortedSet<String> = sortedSetOf(),
-    val cancerTypes: SortedSet<ApplicableCancerType> = sortedSetOf(),
-    val countries: SortedSet<Country> = sortedSetOf(),
-    val cities: SortedSet<String> = sortedSetOf(),
-    val hospitals: SortedSet<Hospital> = sortedSetOf()
+    val actinMolecularEvents: SortedSet<String>,
+    val sourceMolecularEvents: SortedSet<String>,
+    val cancerTypes: SortedSet<ApplicableCancerType>,
+    val countries: SortedSet<Country>,
+    val cities: SortedSet<String>,
+    val hospitals: SortedSet<Hospital>
 )
 
 data class EventWithExternalTrial(val event: String, val trial: ExternalTrial)
@@ -33,26 +33,26 @@ fun Set<ExternalTrialSummary>.filterInternalTrials(internalTrials: Set<TrialMatc
     return this.filter { it.nctId !in internalIds }.toSet()
 }
 
-fun Set<ExternalTrialSummary>.filterInHomeCountry(country: CountryName): Set<ExternalTrialSummary> {
+fun Set<ExternalTrialSummary>.filterInCountryOfReference(country: CountryName): Set<ExternalTrialSummary> {
     return this.filter { country in countryNames(it).toSet() }.toSet()
 }
 
 private fun countryNames(it: ExternalTrialSummary) = it.countries.map { c -> c.name }
 
-fun Set<ExternalTrialSummary>.filterNotInHomeCountry(country: CountryName): Set<ExternalTrialSummary> {
+fun Set<ExternalTrialSummary>.filterNotInCountryOfReference(country: CountryName): Set<ExternalTrialSummary> {
     return this.filter { country !in countryNames(it) }.toSet()
 }
 
-fun Set<ExternalTrialSummary>.filterChildrensHospitals(): Set<ExternalTrialSummary> {
+fun Set<ExternalTrialSummary>.filterExclusivelyInChildrensHospitals(): Set<ExternalTrialSummary> {
     return this.filter {
         !it.hospitals.all(Hospital::isChildrensHospital)
     }.toSet()
 }
 
-fun Set<ExternalTrialSummary>.filterMolecularCriteriaAlreadyPresent(hospitalLocalEvaluatedCohorts: List<InterpretedCohort>): Pair<Set<ExternalTrialSummary>, Int> {
-    val hospitalTrialMolecularEvents = hospitalLocalEvaluatedCohorts.flatMap { e -> e.molecularEvents }.toSet()
-    val filtered = this.filter { it.actinMolecularEvents.subtract(hospitalTrialMolecularEvents).isNotEmpty() }.toSet()
-    return filtered to (this.size - filtered.size)
+fun Set<ExternalTrialSummary>.filterMolecularCriteriaAlreadyPresent(internalEvaluatedCohorts: List<InterpretedCohort>): Set<ExternalTrialSummary> {
+    return filter {
+        it.actinMolecularEvents.subtract(internalEvaluatedCohorts.flatMap { e -> e.molecularEvents }.toSet()).isNotEmpty()
+    }.toSet()
 }
 
 object ExternalTrialSummarizer {
