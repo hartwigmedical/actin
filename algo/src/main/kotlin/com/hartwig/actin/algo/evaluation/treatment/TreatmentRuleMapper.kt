@@ -30,6 +30,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                 )
             },
             EligibilityRule.IS_ELIGIBLE_FOR_LOCAL_TREATMENT_OF_METASTASES to isEligibleForLocalTreatmentOfMetastasesCreator(),
+            EligibilityRule.CURRENTLY_IS_TREATED_WITH_ANY_DRUG_X to currentlyGetsTreatmentWithAnyDrugCreator(),
             EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS to hasExhaustedSOCTreatmentsCreator(),
             EligibilityRule.HAS_HAD_AT_LEAST_X_APPROVED_TREATMENT_LINES to hasHadSomeApprovedTreatmentCreator(),
             EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES to hasHadSomeSystemicTreatmentCreator(),
@@ -198,6 +199,12 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasHadTreatmentWithDrugsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             HasHadTreatmentWithDrug(functionInputResolver().createManyDrugsInput(function))
+        }
+    }
+
+    private fun currentlyGetsTreatmentWithAnyDrugCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            CurrentlyGetsTreatmentWithDrugFromSet(functionInputResolver().createManyDrugsInput(function))
         }
     }
 
