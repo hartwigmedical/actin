@@ -23,7 +23,6 @@ import com.hartwig.actin.report.pdf.tables.soc.SOCEligibleApprovedTreatmentGener
 import com.hartwig.actin.report.pdf.tables.trial.EligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleApprovedTreatmentGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleLocalExternalTrialsGenerator
-import com.hartwig.actin.report.pdf.tables.trial.EligibleOtherCountriesExternalTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleActinTrialsGenerator
 import junit.framework.TestCase.assertEquals
 import org.assertj.core.api.Assertions.assertThat
@@ -154,8 +153,7 @@ class ReportContentProviderTest {
             EligibleApprovedTreatmentGenerator::class,
             EligibleActinTrialsGenerator::class,
             EligibleActinTrialsGenerator::class,
-            EligibleLocalExternalTrialsGenerator::class,
-            EligibleOtherCountriesExternalTrialsGenerator::class
+            EligibleLocalExternalTrialsGenerator::class
         )
     }
 
@@ -188,7 +186,6 @@ class ReportContentProviderTest {
             EligibleActinTrialsGenerator::class,
             EligibleActinTrialsGenerator::class,
             EligibleLocalExternalTrialsGenerator::class,
-            EligibleOtherCountriesExternalTrialsGenerator::class,
             IneligibleActinTrialsGenerator::class
         )
     }
