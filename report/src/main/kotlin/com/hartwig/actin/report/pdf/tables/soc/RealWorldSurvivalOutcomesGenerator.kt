@@ -9,14 +9,18 @@ import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
-class RealWorldPFSOutcomesGenerator(
+class RealWorldSurvivalOutcomesGenerator(
     private val analysis: PersonalizedDataAnalysis,
     private val eligibleTreatments: Set<String>,
-    private val width: Float
+    private val width: Float,
+    private val measurementType: MeasurementType
 ) : TableGenerator {
 
     override fun title(): String {
-        return "Median progression-free survival (months) in NCR real-world data set"
+        return when (measurementType) {
+            MeasurementType.PROGRESSION_FREE_SURVIVAL -> "Median progression-free survival (months) in NCR real-world data set"
+            MeasurementType.OVERALL_SURVIVAL -> "Median overall survival (months) in NCR real-world data set"
+        }
     }
 
     override fun contents(): Table {
@@ -25,7 +29,7 @@ class RealWorldPFSOutcomesGenerator(
                 .addCell(Cells.createContentNoBorder("There are no standard of care treatment options for this patient"))
         } else {
             val content = SOCPersonalizedTableContent.fromPersonalizedDataAnalysis(
-                analysis, eligibleTreatments, MeasurementType.PROGRESSION_FREE_SURVIVAL
+                analysis, eligibleTreatments, measurementType
             ) {
                 when {
                     it.value.isNaN() -> TableElement.regular("-")
