@@ -46,7 +46,7 @@ class ReportRegressionTest(private val exampleName: String) {
                 LocalDate.of(
                     2024,
                     11,
-                    5
+                    7
                 )
             )
         )
