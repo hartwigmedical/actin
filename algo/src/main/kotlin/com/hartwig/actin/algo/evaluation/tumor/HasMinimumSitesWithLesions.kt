@@ -20,7 +20,7 @@ class HasMinimumSitesWithLesions(private val minimumSitesWithLesions: Int) : Eva
 
         val otherLesionCount =
             ((tumorDetails.otherLesions ?: emptyList()) + listOfNotNull(tumorDetails.biopsyLocation))
-                .filterNot { it.lowercase().contains("lymph") && true == tumorDetails.hasConfirmedOrSuspectedLymphNodeLesions() }
+                .filterNot { it.lowercase().contains("lymph") && true == tumorDetails.hasLymphNodeLesions }
                 .count()
 
         val distinctCategorizedSuspectedLesionLocations = listOf(

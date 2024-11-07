@@ -58,18 +58,18 @@ class HasAnyLesionTest {
     @Test
     fun `Should evaluate to undetermined if only suspected lesions are present`() {
         val function = HasAnyLesion()
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withSuspectedLesions(true)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withOtherSuspectedLesions(listOf("lesion"))))
     }
 
     @Test
     fun `Should evaluate to undetermined if no lesions and only suspected lesions are present`() {
         val function = HasAnyLesion()
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withSuspectedLesions(true)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withOtherSuspectedLesions(listOf("lesion"))))
     }
 
     @Test
     fun `Should evaluate to undetermined if only suspected lesions are present (message)`() {
         val function = HasAnyLesion()
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withSuspectedLesions(true)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withOtherSuspectedLesions(listOf("lesion"))))
     }
 }

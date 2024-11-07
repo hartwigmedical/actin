@@ -12,19 +12,24 @@ class HasLesionsCloseToOrInvolvingAirway(private val doidModel: DoidModel) : Eva
         val expandedDoidSet = DoidEvaluationFunctions.createFullExpandedDoidTree(doidModel, record.tumor.doids)
         val isMajorAirwayCancer = MAJOR_AIRWAYS_CANCER.any { it in expandedDoidSet }
         val isLungCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_CANCER_DOID)
-        val hasLungLesions = record.tumor.hasConfirmedOrSuspectedLungLesions()
-        val hasOtherLesions = record.tumor.otherConfirmedOrSuspectedLesions()?.isNotEmpty()
-        val noLesionsCloseToAirway = !isMajorAirwayCancer && !(hasOtherLesions ?: true) && !(hasLungLesions ?: true)
+        val hasLungLesions = record.tumor.hasLungLesions
+        val hasSuspectedLungLesions = record.tumor.hasSuspectedLungLesions
+        val hasOtherLesions = !record.tumor.otherLesions.isNullOrEmpty()
+        val hasSuspectedOtherLesions = !record.tumor.otherSuspectedLesions.isNullOrEmpty()
+        val noLesionsCloseToAirway =
+            !isMajorAirwayCancer && !hasOtherLesions && !hasSuspectedOtherLesions && hasLungLesions == false
 
         return when {
             isMajorAirwayCancer -> {
                 EvaluationFactory.pass("Patient has lesions close to or involving airway", "Lesions close to or involving airway")
             }
 
-            hasLungLesions == true || isLungCancer -> {
+            hasLungLesions == true || isLungCancer || hasSuspectedLungLesions == true -> {
+                val specificMessage = if (hasSuspectedLungLesions == true) " suspected" else ""
+                val generalMessage = if (hasSuspectedLungLesions == true) "Suspected lung" else "Lung"
                 EvaluationFactory.warn(
-                    "Patient has lung lesions which may be close to or involving airways",
-                    "Lung lesions which may be close to or involving airway"
+                    "Patient has$specificMessage lung lesions which may be close to or involving airways",
+                    "$generalMessage lesions which may be close to or involving airway"
                 )
             }
 

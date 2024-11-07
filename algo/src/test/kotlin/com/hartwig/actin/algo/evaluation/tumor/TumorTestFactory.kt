@@ -125,9 +125,8 @@ internal object TumorTestFactory {
         return withTumorDetails(TumorDetails(hasMeasurableDisease = hasMeasurableDisease, doids = setOf(doid)))
     }
 
-    fun withSuspectedLesions(hasSuspectedLesions: Boolean): PatientRecord {
-        val otherSuspectedLesions = if (hasSuspectedLesions) listOf("suspected lesion") else emptyList()
-        return withTumorDetails(TumorDetails(otherSuspectedLesions = otherSuspectedLesions))
+    fun withOtherSuspectedLesions(suspectedLesions: List<String>?): PatientRecord {
+        return withTumorDetails(TumorDetails(otherSuspectedLesions = suspectedLesions))
     }
 
     fun withBrainAndCnsLesions(
@@ -246,8 +245,8 @@ internal object TumorTestFactory {
         return withTumorDetails(TumorDetails(hasLiverLesions = hasLiverLesions))
     }
 
-    fun withLungLesions(hasLungLesions: Boolean?): PatientRecord {
-        return withTumorDetails(TumorDetails(hasLungLesions = hasLungLesions))
+    fun withLungLesions(hasLungLesions: Boolean?, hasSuspectedLungLesions: Boolean? = false): PatientRecord {
+        return withTumorDetails(TumorDetails(hasLungLesions = hasLungLesions, hasSuspectedLungLesions = hasSuspectedLungLesions))
     }
 
     fun withLymphNodeLesions(hasLymphNodeLesions: Boolean?, hasSuspectedLymphNodeLesions: Boolean? = null): PatientRecord {
