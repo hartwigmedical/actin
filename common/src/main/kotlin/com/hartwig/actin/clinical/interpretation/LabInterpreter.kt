@@ -6,10 +6,10 @@ object LabInterpreter {
 
     val MAPPINGS: Map<LabMeasurement, LabMeasurement> = mapOf(
         LabMeasurement.INTERNATIONAL_NORMALIZED_RATIO_POCT to LabMeasurement.INTERNATIONAL_NORMALIZED_RATIO,
-        LabMeasurement.LYMPHOCYTES_ABS_EDM to LabMeasurement.LYMPHOCYTES_ABS_EDA,
+        LabMeasurement.LYMPHOCYTES_ABS_EDA to LabMeasurement.LYMPHOCYTES_ABS,
+        LabMeasurement.LYMPHOCYTES_ABS_EDM to LabMeasurement.LYMPHOCYTES_ABS,
         LabMeasurement.NEUTROPHILS_ABS_EDA to LabMeasurement.NEUTROPHILS_ABS,
         LabMeasurement.PROTHROMBIN_TIME_POCT to LabMeasurement.PROTHROMBIN_TIME,
-        LabMeasurement.THROMBOCYTES_ABS_M to LabMeasurement.THROMBOCYTES_ABS,
         LabMeasurement.BOUND_T3_ATEL to LabMeasurement.BOUND_T3,
         LabMeasurement.FREE_T3_ATEL to LabMeasurement.FREE_T3,
         LabMeasurement.FREE_T4_ATEL to LabMeasurement.FREE_T4,

@@ -2,6 +2,7 @@ package com.hartwig.actin.system.example
 
 import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
+import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.report.datamodel.ReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory
 import java.time.LocalDate
@@ -10,17 +11,21 @@ import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
-class LocalExampleReportApplication(private val reportingDate: LocalDate) {
+class LocalExampleReportApplication {
 
-    fun run(examplePatientRecordJson: String, exampleTreatmentMatchJson: String, outputDirectory: String) {
+    fun run(
+        examplePatientRecordJson: String,
+        exampleTreatmentMatchJson: String,
+        outputDirectory: String,
+        environmentConfiguration: EnvironmentConfiguration
+    ) {
         LOGGER.info("Loading patient record from {}", examplePatientRecordJson)
         val patient = PatientRecordJson.read(examplePatientRecordJson)
 
         LOGGER.info("Loading treatment match results from {}", exampleTreatmentMatchJson)
         val treatmentMatch = TreatmentMatchJson.read(exampleTreatmentMatchJson)
 
-        val environmentConfig = ExampleFunctions.createExampleEnvironmentConfiguration(reportingDate)
-        val report = ReportFactory.fromInputs(patient, treatmentMatch, environmentConfig.report)
+        val report = ReportFactory.fromInputs(patient, treatmentMatch, environmentConfiguration.report)
         val writer = ReportWriterFactory.createProductionReportWriter(outputDirectory)
 
         writer.write(report, enableExtendedMode = false)
@@ -43,7 +48,13 @@ fun main() {
         val exampleTreatmentMatchJson = ExampleFunctions.resolveExampleTreatmentMatchJson(EXAMPLE_TO_RUN)
         val outputDirectory = ExampleFunctions.resolveExampleReportOutputDirectory()
 
-        LocalExampleReportApplication(LocalDate.now()).run(examplePatientRecordJson, exampleTreatmentMatchJson, outputDirectory)
+        val localExampleReportApplication = LocalExampleReportApplication()
+        localExampleReportApplication.run(
+            examplePatientRecordJson,
+            exampleTreatmentMatchJson,
+            outputDirectory,
+            ExampleFunctions.createExampleEnvironmentConfiguration(LocalDate.now())
+        )
     } catch (exception: ParseException) {
         LocalExampleReportApplication.LOGGER.warn(exception)
         exitProcess(1)
