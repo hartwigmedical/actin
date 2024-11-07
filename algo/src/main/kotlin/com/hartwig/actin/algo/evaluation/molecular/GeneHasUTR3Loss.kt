@@ -10,7 +10,7 @@ import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.orange.driver.RegionType
 import java.time.LocalDate
 
-class GeneHasUTR3Loss(private val gene: String, maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
+class GeneHasUTR3Loss(private val gene: String, maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge, false) {
 
     override fun genes() = listOf(gene)
 

@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
 import java.time.LocalDate
 
-class HasFusionInGene(private val gene: String, maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
+class HasFusionInGene(private val gene: String, maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge, false) {
 
     override fun genes() = listOf(gene)
 

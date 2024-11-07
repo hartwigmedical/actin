@@ -13,7 +13,7 @@ class GeneHasVariantInExonRangeOfType(
     private val gene: String, private val minExon: Int, private val maxExon: Int,
     private val requiredVariantType: VariantTypeInput?,
     maxTestAge: LocalDate? = null
-) : MolecularEvaluationFunction(maxTestAge) {
+) : MolecularEvaluationFunction(maxTestAge, false) {
 
     override fun genes() = listOf(gene)
 

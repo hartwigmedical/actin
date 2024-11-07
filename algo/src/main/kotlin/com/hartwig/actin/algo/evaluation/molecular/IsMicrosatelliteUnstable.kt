@@ -10,7 +10,7 @@ import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 import java.time.LocalDate
 
-class IsMicrosatelliteUnstable(maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
+class IsMicrosatelliteUnstable(maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge, false) {
 
     override fun noMolecularRecordEvaluation() = EvaluationFactory.undetermined("Undetermined if tumor is MSI", "Undetermined MSI status")
 

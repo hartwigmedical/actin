@@ -54,7 +54,7 @@ private enum class CopyNumberEvaluation {
 }
 
 class GeneIsAmplified(private val gene: String, private val requestedMinCopyNumber: Int?, maxTestAge: LocalDate? = null) :
-    MolecularEvaluationFunction(maxTestAge) {
+    MolecularEvaluationFunction(maxTestAge, false) {
 
     override fun genes() = listOf(gene)
 

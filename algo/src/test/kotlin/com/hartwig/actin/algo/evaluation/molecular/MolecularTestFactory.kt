@@ -128,6 +128,15 @@ internal object MolecularTestFactory {
         return withMolecularImmunology(MolecularImmunology(isReliable = true, hlaAlleles = setOf(hlaAllele)))
     }
 
+    fun withHlaAlleleAndInsufficientQuality(hlaAllele: HlaAllele): PatientRecord {
+        return withMolecularRecord(
+            baseMolecular.copy(
+                immunology = MolecularImmunology(isReliable = true, hlaAlleles = setOf(hlaAllele)),
+                hasSufficientQuality = false
+            )
+        )
+    }
+
     fun withHaplotype(pharmacoEntry: PharmacoEntry): PatientRecord {
         return withMolecularRecord(baseMolecular.copy(pharmaco = setOf(pharmacoEntry)))
     }

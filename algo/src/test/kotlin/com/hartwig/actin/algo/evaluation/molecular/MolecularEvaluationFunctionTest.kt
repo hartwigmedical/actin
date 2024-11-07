@@ -21,13 +21,13 @@ private const val FAIL_GENERAL_MESSAGE = "Fail general message"
 private val MAX_AGE = LocalDate.of(2023, 9, 6)
 
 class MolecularEvaluationFunctionTest {
-    private val function = object : MolecularEvaluationFunction() {
+    private val function = object : MolecularEvaluationFunction(useInsufficientQualityRecords = false) {
         override fun evaluate(molecular: MolecularRecord): Evaluation {
             return EvaluationFactory.fail(FAIL_SPECIFIC_MESSAGE, FAIL_GENERAL_MESSAGE)
         }
     }
 
-    private val functionWithOverride = object : MolecularEvaluationFunction() {
+    private val functionWithOverride = object : MolecularEvaluationFunction(useInsufficientQualityRecords = false) {
         override fun evaluate(molecular: MolecularRecord): Evaluation {
             return EvaluationFactory.pass("OK")
         }
@@ -35,7 +35,7 @@ class MolecularEvaluationFunctionTest {
         override fun noMolecularRecordEvaluation() = EvaluationFactory.fail(OVERRIDE_MESSAGE)
     }
 
-    private val functionOnMolecularHistory = object : MolecularEvaluationFunction() {
+    private val functionOnMolecularHistory = object : MolecularEvaluationFunction(useInsufficientQualityRecords = false) {
         override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
             return EvaluationFactory.fail(
                 FAIL_SPECIFIC_MESSAGE,
@@ -44,7 +44,7 @@ class MolecularEvaluationFunctionTest {
         }
     }
 
-    private val functionWithGenes = object : MolecularEvaluationFunction() {
+    private val functionWithGenes = object : MolecularEvaluationFunction(useInsufficientQualityRecords = false) {
         override fun genes(): List<String> {
             return listOf("GENE")
         }
@@ -115,7 +115,7 @@ class MolecularEvaluationFunctionTest {
     @Test
     fun `Should only evaluate tests under max age when specified`() {
         val evaluatedTests = mutableSetOf<MolecularTest>()
-        val function = object : MolecularEvaluationFunction(MAX_AGE) {
+        val function = object : MolecularEvaluationFunction(MAX_AGE, false) {
             override fun evaluate(test: MolecularTest): Evaluation {
                 evaluatedTests.add(test)
                 return EvaluationFactory.fail(FAIL_SPECIFIC_MESSAGE, FAIL_GENERAL_MESSAGE)

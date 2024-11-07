@@ -3,7 +3,6 @@ package com.hartwig.actin.molecular.filter
 import com.hartwig.actin.datamodel.molecular.Drivers
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.Fusion
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.TestPanelRecordFactory
@@ -18,7 +17,7 @@ private val ONE_YEAR_AGO = LocalDate.of(2023, 9, 9)
 
 class MolecularTestFilterTest {
 
-    private val filter = MolecularTestFilter(ONE_YEAR_AGO)
+    private val filter = MolecularTestFilter(ONE_YEAR_AGO, true)
 
     @Test
     fun `Should filter tests both older than max age date when more recent data is available`() {
@@ -66,11 +65,10 @@ class MolecularTestFilterTest {
     }
 
     @Test
-    fun `Should filter out somatic information from failed WGS record`() {
-        val failedWGS = BASE_WGS_TEST.copy(hasSufficientQuality = false)
-        val filtered = filter.apply(listOf(failedWGS)).first()
-        assertThat(filtered.drivers).isEqualTo(Drivers())
-        assertThat((filtered as MolecularRecord).pharmaco).isEqualTo(failedWGS.pharmaco)
+    fun `Should filter out records with insufficient quality if useInsufficientQualityRecords is false`() {
+        val filterInsufficientQuality = MolecularTestFilter(ONE_YEAR_AGO, false)
+        val filtered = filterInsufficientQuality.apply(listOf(BASE_WGS_TEST, BASE_WGS_TEST.copy(hasSufficientQuality = false)))
+        assertThat(filtered).containsOnly(BASE_WGS_TEST)
     }
 
     private fun testFilter(toInclude: MolecularTest, toFilter: MolecularTest) {

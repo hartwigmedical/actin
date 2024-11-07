@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.molecular.MolecularTest
 import java.time.LocalDate
 
 class GeneHasVariantInCodon(private val gene: String, private val codons: List<String>, maxTestAge: LocalDate? = null) :
-    MolecularEvaluationFunction(maxTestAge) {
+    MolecularEvaluationFunction(maxTestAge, false) {
 
     override fun genes() = listOf(gene)
 

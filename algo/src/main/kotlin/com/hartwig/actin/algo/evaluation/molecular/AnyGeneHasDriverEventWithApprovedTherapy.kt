@@ -23,7 +23,7 @@ class AnyGeneHasDriverEventWithApprovedTherapy(
     val doidModel: DoidModel,
     private val evaluationFunctionFactory: EvaluationFunctionFactory,
     private val maxTestAge: LocalDate? = null
-) : MolecularEvaluationFunction(maxTestAge) {
+) : MolecularEvaluationFunction(maxTestAge, false) {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val isLungCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_CANCER_DOID)

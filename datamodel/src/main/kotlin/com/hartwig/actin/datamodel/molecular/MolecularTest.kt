@@ -9,6 +9,7 @@ interface MolecularTest {
     val drivers: Drivers
     val characteristics: MolecularCharacteristics
     val evidenceSource: String
+    val hasSufficientQuality: Boolean?
 
     fun testsGene(gene: String): Boolean
 }

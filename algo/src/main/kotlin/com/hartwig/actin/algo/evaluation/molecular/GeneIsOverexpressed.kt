@@ -5,8 +5,8 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import java.time.LocalDate
 
-class GeneIsOverexpressed(maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
-    
+class GeneIsOverexpressed(maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge, false) {
+
     override fun evaluate(molecular: MolecularRecord): Evaluation {
         return EvaluationFactory.undetermined("RNA gene expression not yet evaluated")
     }

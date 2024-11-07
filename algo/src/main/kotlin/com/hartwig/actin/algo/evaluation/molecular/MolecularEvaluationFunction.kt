@@ -11,12 +11,13 @@ import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.molecular.filter.MolecularTestFilter
 import java.time.LocalDate
 
-abstract class MolecularEvaluationFunction(maxTestAge: LocalDate? = null) : EvaluationFunction {
-    private val molecularTestFilter = MolecularTestFilter(maxTestAge)
+abstract class MolecularEvaluationFunction(maxTestAge: LocalDate? = null, useInsufficientQualityRecords: Boolean) : EvaluationFunction {
+    private val molecularTestFilter = MolecularTestFilter(maxTestAge, useInsufficientQualityRecords)
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val recentMolecularTests = molecularTestFilter.apply(record.molecularHistory.molecularTests)
-        return if (recentMolecularTests.isEmpty() || recentMolecularTests.all { (it as? MolecularRecord)?.hasSufficientQuality == false }) {
+
+        return if (recentMolecularTests.isEmpty()) {
             noMolecularRecordEvaluation() ?: EvaluationFactory.undetermined(
                 "Molecular criteria cannot be evaluated: no molecular results",
                 "Molecular criteria cannot be evaluated: no molecular results",
