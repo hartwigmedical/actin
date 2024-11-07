@@ -39,7 +39,10 @@ class HasKnownActiveCnsMetastases : EvaluationFunction {
             }
 
             unknownIfActive && (hasCnsMetastases == null && hasBrainMetastases == null) -> {
-                EvaluationFactory.undetermined("Unknown if (active) CNS metastases present", "Unknown if (active) CNS metastases present")
+                EvaluationFactory.recoverableUndetermined(
+                    "Unknown if (active) CNS metastases present",
+                    "Unknown if (active) CNS metastases present"
+                )
             }
 
             hasActiveCnsLesions == true -> EvaluationFactory.pass("Active CNS metastases are present", "Active CNS metastases")

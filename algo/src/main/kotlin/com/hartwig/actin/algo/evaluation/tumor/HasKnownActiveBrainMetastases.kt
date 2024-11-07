@@ -32,7 +32,7 @@ class HasKnownActiveBrainMetastases : EvaluationFunction {
             }
 
             unknownIfActive && hasBrainMetastases == null -> {
-                EvaluationFactory.undetermined(
+                EvaluationFactory.recoverableUndetermined(
                     "Unknown if (active) brain metastases present",
                     "Unknown if (active) brain metastases present"
                 )

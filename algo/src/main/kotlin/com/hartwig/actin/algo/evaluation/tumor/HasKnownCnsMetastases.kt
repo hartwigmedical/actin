@@ -8,25 +8,31 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasKnownCnsMetastases : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val hasCnsLesions = record.tumor.hasConfirmedOrSuspectedCnsLesions()
-        val hasBrainLesions = record.tumor.hasConfirmedOrSuspectedBrainLesions()
-        if (hasCnsLesions == null && hasBrainLesions == null) {
-            return EvaluationFactory.fail(
-                "Data regarding presence of CNS metastases is missing - assuming there are none",
-                "Assuming no known CNS metastases"
-            )
-        }
-        val (hasKnownCnsMetastases, hasAtLeastActiveBrainMetastases) = if (hasBrainLesions == true) {
-            Pair(true, true)
-        } else {
-            Pair(hasCnsLesions != null && hasCnsLesions, false)
-        }
-        return if (!hasKnownCnsMetastases) {
-            EvaluationFactory.fail("No known CNS metastases present", "No known CNS metastases")
-        } else if (hasAtLeastActiveBrainMetastases) {
-            EvaluationFactory.pass("CNS (Brain) metastases are present", "CNS (Brain) metastases")
-        } else {
-            EvaluationFactory.pass("CNS metastases are present", "CNS metastases")
+        val tumorDetails = record.tumor
+        val (hasCnsLesions, hasSuspectedCnsLesions) = listOf(tumorDetails.hasCnsLesions, tumorDetails.hasSuspectedCnsLesions)
+        val (hasBrainLesions, hasSuspectedBrainLesions) = listOf(tumorDetails.hasBrainLesions, tumorDetails.hasSuspectedBrainLesions)
+        val undeterminedMessage = "Undetermined if CNS metastases present"
+
+        return when {
+            hasCnsLesions == true -> {
+                EvaluationFactory.pass("CNS metastases are present", "CNS metastases")
+            }
+
+            hasBrainLesions == true -> {
+                EvaluationFactory.pass("Brain metastases are present", "Brain metastases")
+            }
+
+            hasSuspectedCnsLesions == true || hasSuspectedBrainLesions == true -> {
+                val message = "$undeterminedMessage (suspected lesions only)"
+                EvaluationFactory.undetermined(message, message)
+            }
+
+            hasCnsLesions == null || hasBrainLesions == null -> {
+                val message = "$undeterminedMessage (data missing)"
+                EvaluationFactory.recoverableUndetermined(message, message)
+            }
+
+            else -> EvaluationFactory.fail("No known CNS metastases present", "No known CNS metastases")
         }
     }
 }
