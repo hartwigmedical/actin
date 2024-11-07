@@ -78,8 +78,7 @@ class MolecularDetailsChapter(
                     molecular,
                     evaluated,
                     report.treatmentMatch.trialMatches,
-                    contentWidth(),
-                    report.config.countryOfReference
+                    contentWidth()
                 )
             )
         } else emptyList()

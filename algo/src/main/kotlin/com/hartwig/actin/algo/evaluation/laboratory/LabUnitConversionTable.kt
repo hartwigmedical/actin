@@ -7,7 +7,7 @@ internal object LabUnitConversionTable {
     val CONVERSION_MAP: Map<LabMeasurement, Map<LabUnit, Map<LabUnit, Double>>> = mapOf(
         LabMeasurement.CREATININE to createCreatinineConversionMap(),
         LabMeasurement.ALBUMIN to createAlbuminConversionMap(),
-        LabMeasurement.LYMPHOCYTES_ABS_EDA to createLymphocytesConversionMap(),
+        LabMeasurement.LYMPHOCYTES_ABS to createLymphocytesConversionMap(),
         LabMeasurement.HEMOGLOBIN to createHemoglobinConversionMap(),
         LabMeasurement.CALCIUM to createCalciumConversionMap()
     )
