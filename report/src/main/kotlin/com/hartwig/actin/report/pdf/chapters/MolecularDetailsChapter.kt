@@ -2,8 +2,8 @@ package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.report.datamodel.Report
-import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 import com.hartwig.actin.report.interpretation.InterpretedCohort
+import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 import com.hartwig.actin.report.interpretation.PriorIHCTestInterpreter
 import com.hartwig.actin.report.pdf.chapters.ChapterContentFunctions.addGenerators
 import com.hartwig.actin.report.pdf.tables.TableGenerator
@@ -57,10 +57,9 @@ class MolecularDetailsChapter(
             }
             val cohorts =
                 InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
-            val evaluated = cohorts.filter { it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable }
 
             val generators =
-                listOf(MolecularCharacteristicsGenerator(molecular, contentWidth())) + tumorDetailsGenerators(molecular, evaluated)
+                listOf(MolecularCharacteristicsGenerator(molecular, contentWidth())) + tumorDetailsGenerators(molecular, cohorts)
             addGenerators(generators, table, addSubTitle = true)
 
             if (!molecular.hasSufficientQuality) {
@@ -79,8 +78,7 @@ class MolecularDetailsChapter(
                     molecular,
                     evaluated,
                     report.treatmentMatch.trialMatches,
-                    contentWidth(),
-                    report.config.countryOfReference
+                    contentWidth()
                 )
             )
         } else emptyList()

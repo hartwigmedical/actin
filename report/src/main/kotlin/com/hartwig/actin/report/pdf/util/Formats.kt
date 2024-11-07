@@ -30,7 +30,7 @@ object Formats {
         return TWO_DIGIT_FORMAT.format(number)
     }
 
-    fun singleDigitNumber(number: Double): String {
+    fun singleDigitNumber(number: Number): String {
         return SINGLE_DIGIT_FORMAT.format(number)
     }
 

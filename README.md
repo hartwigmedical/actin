@@ -18,6 +18,7 @@ More details on the following modules are available from the links below:
 | [Algo](algo)           | Matching all data from a patient to available treatment options.                           |
 | [Database](database)   | Capture of all ACTIN data in a database.                                                   |
 | [Report](report)       | Create a patient-centric PDF report with available treatment options.                      |
+| [System](system)       | Module which bundles everything and adds example patients and reports + regression tests   |
 
 ### Developing and Releasing ACTIN
 
@@ -53,8 +54,8 @@ To make a change in ACTIN and release the process is as follows:
    ```shell
    deploy_actin_data_vm 1.2.3
    ```
-8. When ready for production use the `deploy_actin_emc_ops_vm` to do the same deployment to the EMC operations vm (Note: For other
-   environments similar scripts exist).
+8. When you want to test using a specific environment, use the environment script (e.g. `deploy_actin_emc_ops_vm`) to do the same deployment
+   to the EMC operations vm (Note: For other environments similar scripts exist).
    ```shell
    deploy_actin_emc_ops_vm 1.2.3
    ```
