@@ -16,6 +16,7 @@ object EligibleExternalTrialGeneratorFunctions {
     
     fun hospitalsAndCitiesInCountry(trial: ExternalTrialSummary, country: CountryName): Pair<String, String> {
         val homeCountries = trial.countries.filter { it.name == country }
+        
         return if (homeCountries.size > 1 || homeCountries.isEmpty()) {
             throw IllegalStateException(
                 "Country ${country.display()} not configured or configured multiple times for trial ${trial.nctId}. " +
@@ -31,6 +32,17 @@ object EligibleExternalTrialGeneratorFunctions {
                 MANY_PLEASE_CHECK_LINK
             } else cities.joinToString { it }
             Pair(hospitalsString, citiesString)
+        }
+    }
+
+    fun countryNamesWithCities(externalTrial: ExternalTrialSummary): String {
+        return externalTrial.countries.joinToString { country ->
+            val cities = if (country.hospitalsPerCity.keys.size > 8) {
+                MANY_PLEASE_CHECK_LINK
+            } else {
+                country.hospitalsPerCity.keys.joinToString(", ")
+            }
+            "${country.name.display()} ($cities)"
         }
     }
 }

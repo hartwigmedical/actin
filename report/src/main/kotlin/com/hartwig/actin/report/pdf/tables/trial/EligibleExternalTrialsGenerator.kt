@@ -9,21 +9,17 @@ import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.kernel.pdf.action.PdfAction
 import com.itextpdf.layout.element.Table
 
-class EligibleLocalExternalTrialsGenerator(
+class EligibleExternalTrialsGenerator(
     private val sources: Set<String>,
     private val trials: Set<ExternalTrialSummary>,
     private val width: Float,
     private val filteredCount: Int,
-    private val homeCountry: CountryName
+    private val homeCountry: CountryName? = null
 ) : TableGenerator {
-    override fun title(): String {
-        return String.format(
-            "%s trials potentially eligible based on molecular results which are potentially recruiting locally in %s (%d)",
-            sources.joinToString(),
-            homeCountry.display(),
-            trials.size
-        )
-    }
+    override fun title() =
+        "${sources.joinToString()} trials potentially eligible based on molecular results which are potentially " +
+                "recruiting ${homeCountry?.let { "locally in ${it.display()}" } ?: "internationally"} (${trials.size})"
+
 
     override fun contents(): Table {
         val eventWidth = (0.9 * width / 5).toFloat()
@@ -33,13 +29,12 @@ class EligibleLocalExternalTrialsGenerator(
         val hospitalsOrCitiesWidth = (0.8 * width / 5).toFloat()
 
         val table = Tables.createFixedWidthCols(titleWidth, eventWidth, sourceEventWidth, cancerTypeWidth, hospitalsOrCitiesWidth)
-        val hospitalsOrCities = if (homeCountry == CountryName.NETHERLANDS) "Hospitals" else "Cities"
         listOf(
             "Trial title",
             "Events",
             "Source Events",
             "Cancer Types",
-            hospitalsOrCities
+            homeCountry?.let { if (it == CountryName.NETHERLANDS) "Hospitals" else "Cities" } ?: "Country (cities)"
         ).forEach { table.addHeaderCell(Cells.createHeader(it)) }
 
         trials.forEach { trial ->
@@ -50,13 +45,16 @@ class EligibleLocalExternalTrialsGenerator(
             table.addCell(Cells.createContent(trial.actinMolecularEvents.joinToString(",\n")))
             table.addCell(Cells.createContent(trial.sourceMolecularEvents.joinToString(",\n")))
             table.addCell(Cells.createContent(trial.cancerTypes.joinToString(",\n") { it.cancerType }))
-
-            val hospitalsOrCitiesCell = if (homeCountry == CountryName.NETHERLANDS) {
-                EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(trial, homeCountry).first
-            } else {
-                EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(trial, homeCountry).second
-            }
-            table.addCell(Cells.createContent(hospitalsOrCitiesCell))
+            table.addCell(
+                Cells.createContent(
+                    homeCountry?.let {
+                        EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(
+                            trial,
+                            it
+                        ).second
+                    } ?: EligibleExternalTrialGeneratorFunctions.countryNamesWithCities(trial)
+                )
+            )
         }
         if (filteredCount > 0)
             table.addCell(

@@ -27,7 +27,6 @@ data class Hospital(val name: String, val isChildrensHospital: Boolean = false)
 private val CHILDREN_HOSPITALS =
     setOf("PMC", "WKZ", "EKZ", "JKZ", "BKZ", "WAKZ", "Sophia Kinderziekenhuis", "Amalia Kinderziekenhuis", "MosaKids Kinderziekenhuis")
 
-
 fun Set<ExternalTrialSummary>.filterInternalTrials(internalTrials: Set<TrialMatch>): Set<ExternalTrialSummary> {
     val internalIds = internalTrials.map { it.identification.nctId }.toSet()
     return this.filter { it.nctId !in internalIds }.toSet()

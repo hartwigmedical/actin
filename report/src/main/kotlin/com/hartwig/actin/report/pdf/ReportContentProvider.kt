@@ -32,7 +32,7 @@ import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.soc.SOCEligibleApprovedTreatmentGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleApprovedTreatmentGenerator
-import com.hartwig.actin.report.pdf.tables.trial.EligibleLocalExternalTrialsGenerator
+import com.hartwig.actin.report.pdf.tables.trial.EligibleExternalTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummarizer
 import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummary
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleActinTrialsGenerator
@@ -173,7 +173,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             AggregatedEvidenceFactory.mergeMapsOfSets(patientRecord.molecularHistory.molecularTests.map {
                 AggregatedEvidenceFactory.create(it).externalEligibleTrialsPerEvent
             })
-        
+
         val externalEligibleTrialsFiltered = ExternalTrialSummarizer.summarize(externalEligibleTrials)
             .filterInternalTrials(report.treatmentMatch.trialMatches.toSet())
             .filterExclusivelyInChildrensHospitals()
@@ -192,7 +192,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             patientRecord.molecularHistory.molecularTests.map { it.evidenceSource }.filter { it != NO_EVIDENCE_SOURCE }.toSet()
         return Pair(
             if (externalEligibleTrialsLocal.isNotEmpty()) {
-                EligibleLocalExternalTrialsGenerator(
+                EligibleExternalTrialsGenerator(
                     allEvidenceSources,
                     externalEligibleTrialsLocal.filtered,
                     contentWidth,
@@ -201,12 +201,11 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 )
             } else null,
             if (externalEligibleTrialsNonLocal.isNotEmpty()) {
-                EligibleLocalExternalTrialsGenerator(
+                EligibleExternalTrialsGenerator(
                     allEvidenceSources,
                     externalEligibleTrialsNonLocal.filtered,
                     contentWidth,
-                    externalEligibleTrialsNonLocal.numFiltered(),
-                    report.config.countryOfReference
+                    externalEligibleTrialsNonLocal.numFiltered()
                 )
             } else null
         )
