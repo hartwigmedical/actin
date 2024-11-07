@@ -12,8 +12,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class HomologousRepairDeficiencyGeneSummaryTest {
+
     @Test
-    fun `Should correctly classify HRD genes`() {
+    fun `Should correctly classify HRD drivers`() {
         val drivers = Drivers(
             variants = setOf(
                 hrdVariant(
@@ -27,12 +28,6 @@ class HomologousRepairDeficiencyGeneSummaryTest {
                     isBiallelic = false,
                     isHotspot = true,
                     driverLikelihood = DriverLikelihood.HIGH
-                ),
-                hrdVariant(
-                    gene = "RAD51C",
-                    isBiallelic = true,
-                    isHotspot = true,
-                    driverLikelihood = DriverLikelihood.LOW
                 ),
                 hrdVariant(
                     gene = "PALB2",
@@ -84,7 +79,7 @@ class HomologousRepairDeficiencyGeneSummaryTest {
 
         val summary = HomologousRepairDeficiencyGeneSummary.createForDrivers(drivers)
         assertThat(summary.hrdGenesWithNonBiallelicHotspot).containsExactlyInAnyOrder("BRCA2")
-        assertThat(summary.hrdGenesWithBiallelicHotspot).containsExactlyInAnyOrder("BRCA1", "RAD51C")
+        assertThat(summary.hrdGenesWithBiallelicHotspot).containsExactlyInAnyOrder("BRCA1")
         assertThat(summary.hrdGenesWithNonBiallelicNonHotspotHighDriver).containsExactlyInAnyOrder("BRCA1")
         assertThat(summary.hrdGenesWithNonBiallelicNonHotspotNonHighDriver).containsExactlyInAnyOrder("RAD51C")
         assertThat(summary.hrdGenesWithBiallelicNonHotspotHighDriver).containsExactlyInAnyOrder("PALB2")

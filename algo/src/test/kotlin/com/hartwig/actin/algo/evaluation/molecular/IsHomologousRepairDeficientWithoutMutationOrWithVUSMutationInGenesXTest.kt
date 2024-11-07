@@ -45,7 +45,7 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesXTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
-                    true, hrdVariant(isReportable = true, isHotspot = true)
+                    true, hrdVariant(isReportable = true, isHotspot = true, driverLikelihood = DriverLikelihood.HIGH)
                 )
             )
         )
@@ -224,7 +224,7 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesXTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
-                    true, hrdVariant("RAD51C", true, true, true)
+                    true, hrdVariant("RAD51C", true, true, true, DriverLikelihood.HIGH)
                 )
             )
         )

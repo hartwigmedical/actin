@@ -6,7 +6,7 @@ import com.hartwig.actin.datamodel.molecular.GeneAlteration
 import com.hartwig.actin.datamodel.molecular.Variant
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 
-private data class HRDGeneClassification(val isBiallelic: Boolean, val isHotspot: Boolean, val isHighDriver: Boolean)
+private data class HRDDriverClassification(val isBiallelic: Boolean, val isHotspot: Boolean, val isHighDriver: Boolean)
 
 data class HomologousRepairDeficiencyGeneSummary(
     val hrdGenesWithNonBiallelicHotspot: Set<String>,
@@ -25,25 +25,25 @@ data class HomologousRepairDeficiencyGeneSummary(
             hrdGenesWithNonHomozygousDisruption + hrdGenesWithNonBiallelicNonHotspotNonHighDriver)
 
     companion object {
-        private val BIALLELIC_HOTSPOT = HRDGeneClassification(isBiallelic = true, isHotspot = true, isHighDriver = true)
-        private val NON_BIALLELIC_HOTSPOT = HRDGeneClassification(isBiallelic = false, isHotspot = true, isHighDriver = true)
-        private val BIALLELIC_NON_HOTSPOT_HIGH_DRIVER = HRDGeneClassification(isBiallelic = true, isHotspot = false, isHighDriver = true)
+        private val BIALLELIC_HOTSPOT = HRDDriverClassification(isBiallelic = true, isHotspot = true, isHighDriver = true)
+        private val NON_BIALLELIC_HOTSPOT = HRDDriverClassification(isBiallelic = false, isHotspot = true, isHighDriver = true)
+        private val BIALLELIC_NON_HOTSPOT_HIGH_DRIVER = HRDDriverClassification(isBiallelic = true, isHotspot = false, isHighDriver = true)
         private val BIALLELIC_NON_HOTSPOT_NON_HIGH_DRIVER =
-            HRDGeneClassification(isBiallelic = true, isHotspot = false, isHighDriver = false)
+            HRDDriverClassification(isBiallelic = true, isHotspot = false, isHighDriver = false)
         private val NON_BIALLELIC_NON_HOTSPOT_HIGH_DRIVER =
-            HRDGeneClassification(isBiallelic = false, isHotspot = false, isHighDriver = true)
+            HRDDriverClassification(isBiallelic = false, isHotspot = false, isHighDriver = true)
         private val NON_BIALLELIC_NON_HOTSPOT_NON_HIGH_DRIVER =
-            HRDGeneClassification(isBiallelic = false, isHotspot = false, isHighDriver = false)
+            HRDDriverClassification(isBiallelic = false, isHotspot = false, isHighDriver = false)
 
         fun createForDrivers(drivers: Drivers): HomologousRepairDeficiencyGeneSummary {
             val hrdVariantGroups = drivers.variants
                 .filter { it.gene in MolecularConstants.HRD_GENES && it.isReportable && it.extendedVariantDetails != null }
                 .groupBy(
                     { variant ->
-                        HRDGeneClassification(
+                        HRDDriverClassification(
                             variant.extendedVariantDetails!!.isBiallelic,
                             variant.isHotspot,
-                            variant.isHotspot || variant.driverLikelihood == DriverLikelihood.HIGH
+                            variant.driverLikelihood == DriverLikelihood.HIGH
                         )
                     },
                     Variant::gene

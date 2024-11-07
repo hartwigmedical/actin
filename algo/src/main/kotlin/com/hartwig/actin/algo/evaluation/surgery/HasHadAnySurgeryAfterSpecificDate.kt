@@ -39,29 +39,29 @@ class HasHadAnySurgeryAfterSpecificDate(private val minDate: LocalDate, private 
         return when {
             SurgeryEvent.HAS_FINISHED_SURGERY_BETWEEN_MIN_AND_EVAL in summary -> {
                 EvaluationFactory.pass(
-                    "Patient has had surgery after " + date(minDate),
-                    "Surgery after " + date(minDate)
+                    "Patient has had surgery after ${date(minDate)}",
+                    "Surgery after ${date(minDate)}"
+                )
+            }
+
+            surgicalTreatmentsOccurredAfterMinDate.any { it == true } -> {
+                EvaluationFactory.pass(
+                    "Patient has had surgery after ${date(minDate)}",
+                    "Has had surgery after ${date(minDate)}"
                 )
             }
 
             SurgeryEvent.HAS_PLANNED_SURGERY_AFTER_EVAL in summary -> {
-                EvaluationFactory.pass(
-                    "Patient has surgery planned after " + date(minDate),
+                EvaluationFactory.warn(
+                    "Patient has surgery planned after ${date(evaluationDate)}",
                     "Patient has surgery planned"
                 )
             }
 
             SurgeryEvent.HAS_UNEXPECTED_SURGERY in summary -> {
                 EvaluationFactory.warn(
-                    "Patient may have had or may get surgery after " + date(minDate),
+                    "Patient may have had or may get surgery after ${date(minDate)}",
                     "Potential recent surgery"
-                )
-            }
-
-            surgicalTreatmentsOccurredAfterMinDate.any { it == true } -> {
-                EvaluationFactory.pass(
-                    "Patient has had surgery after " + date(minDate),
-                    "Has had surgery after " + date(minDate)
                 )
             }
 
@@ -77,7 +77,7 @@ class HasHadAnySurgeryAfterSpecificDate(private val minDate: LocalDate, private 
             }
 
             else -> {
-                EvaluationFactory.fail("Patient has not received surgery in past nr of months", "No recent surgery")
+                EvaluationFactory.fail("Patient has not received surgery after ${date(minDate)}", "No recent surgery")
             }
         }
     }
