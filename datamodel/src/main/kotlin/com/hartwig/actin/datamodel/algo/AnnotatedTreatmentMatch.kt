@@ -1,5 +1,6 @@
 package com.hartwig.actin.datamodel.algo
 
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentClass
 import com.hartwig.actin.datamodel.efficacy.EfficacyEntry
 import com.hartwig.actin.datamodel.personalization.Measurement
 
@@ -12,5 +13,7 @@ data class AnnotatedTreatmentMatch(
     val resistanceEvidence: List<ResistanceEvidence>,
 ) {
 
-    fun eligible() = evaluations.none { it.result == EvaluationResult.FAIL }
+    fun eligible(): Boolean {
+        return treatmentCandidate.treatment.treatmentClass == TreatmentClass.NONE || evaluations.none { it.result == EvaluationResult.FAIL }
+    }
 }

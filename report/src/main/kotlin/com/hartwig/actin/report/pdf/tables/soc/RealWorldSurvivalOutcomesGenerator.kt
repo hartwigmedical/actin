@@ -20,6 +20,7 @@ class RealWorldSurvivalOutcomesGenerator(
         return when (measurementType) {
             MeasurementType.PROGRESSION_FREE_SURVIVAL -> "Median progression-free survival (months) in NCR real-world data set"
             MeasurementType.OVERALL_SURVIVAL -> "Median overall survival (months) in NCR real-world data set"
+            MeasurementType.TREATMENT_DECISION -> error("Unexpected measurement type: TREATMENT_DECISION")
         }
     }
 

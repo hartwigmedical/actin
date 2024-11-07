@@ -11,7 +11,8 @@ enum class TreatmentCategory : Displayable {
     TRANSPLANTATION,
     RADIOTHERAPY,
     ABLATION,
-    SUPPORTIVE_TREATMENT;
+    SUPPORTIVE_TREATMENT,
+    NONE;
 
     override fun display(): String {
         return this.toString().replace("_".toRegex(), " ").lowercase()
