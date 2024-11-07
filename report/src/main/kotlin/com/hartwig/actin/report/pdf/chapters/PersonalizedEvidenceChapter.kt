@@ -21,9 +21,11 @@ class PersonalizedEvidenceChapter(private val report: Report, override val inclu
     }
 
     override fun render(document: Document) {
-        val eligibleSocTreatments = report.treatmentMatch.standardOfCareMatches?.filter(AnnotatedTreatmentMatch::eligible)
+        val eligibleSocTreatments = report.treatmentMatch.standardOfCareMatches
+            ?.filter(AnnotatedTreatmentMatch::eligible)
             ?.map { it.treatmentCandidate.treatment.name.lowercase() }
-            ?.toSet() ?: emptySet()
+            ?.toSet() ?: emptySet() //Not pretty but for testing purposes: still have to change
+
 
         addChapterTitle(document)
 

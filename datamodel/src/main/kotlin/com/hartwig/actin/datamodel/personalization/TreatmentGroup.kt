@@ -14,7 +14,7 @@ enum class TreatmentGroup(val display: String, val memberTreatmentNames: List<St
     IRINOTECAN("Irinotecan", listOf("irinotecan")),
     NIVOLUMAB("Nivolumab", listOf("nivolumab")),
     PEMBROLIZUMAB("Pembrolizumab", listOf("pembrolizumab")),
-    NONE("None", listOf("none"));
+    NONE("None", listOf("none", "no treatment"));
 
     companion object {
         private val groupsByTreatmentName = entries.flatMap { group -> group.memberTreatmentNames.map { it to group } }.toMap()

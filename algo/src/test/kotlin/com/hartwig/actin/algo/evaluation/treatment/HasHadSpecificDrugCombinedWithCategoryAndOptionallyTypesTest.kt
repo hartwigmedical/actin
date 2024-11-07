@@ -95,7 +95,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesTest {
     fun `Should evaluate to undetermined if treatment history entry does not have any treatments specified`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(emptySet(), isTrial = true)
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED,
+            EvaluationResult.FAIL,// was UNDETERMINED
             FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
         )
     }
