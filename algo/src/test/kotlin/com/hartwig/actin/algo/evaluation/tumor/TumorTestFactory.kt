@@ -234,6 +234,10 @@ internal object TumorTestFactory {
         return withTumorDetails(TumorDetails(hasBoneLesions = hasBoneLesions, otherLesions = otherLesions))
     }
 
+    fun withSuspectedBoneAndOtherLesions(hasSuspectedBoneLesions: Boolean?, otherLesions: List<String>?): PatientRecord {
+        return withTumorDetails(TumorDetails(hasSuspectedBoneLesions = hasSuspectedBoneLesions, otherLesions = otherLesions))
+    }
+
     fun withLiverAndOtherLesions(hasLiverLesions: Boolean?, otherLesions: List<String>): PatientRecord {
         return withTumorDetails(TumorDetails(hasLiverLesions = hasLiverLesions, otherLesions = otherLesions))
     }

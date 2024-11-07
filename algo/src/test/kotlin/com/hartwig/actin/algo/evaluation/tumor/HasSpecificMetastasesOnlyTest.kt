@@ -7,8 +7,10 @@ import org.junit.Test
 
 class HasSpecificMetastasesOnlyTest {
 
-    private val hasLiverMetastasesOnly = HasSpecificMetastasesOnly(TumorDetails::hasConfirmedOrSuspectedLiverLesions, "liver")
-    private val hasBoneMetastasesOnly = HasSpecificMetastasesOnly(TumorDetails::hasConfirmedOrSuspectedBoneLesions, "bone")
+    private val hasLiverMetastasesOnly =
+        HasSpecificMetastasesOnly(TumorDetails::hasLiverLesions, TumorDetails::hasSuspectedLiverLesions, "liver")
+    private val hasBoneMetastasesOnly =
+        HasSpecificMetastasesOnly(TumorDetails::hasBoneLesions, TumorDetails::hasSuspectedBoneLesions, "bone")
 
     @Test
     fun `Should pass when patient has liver metastases only`() {
@@ -20,13 +22,9 @@ class HasSpecificMetastasesOnlyTest {
     }
 
     @Test
-    fun `Should pass when patient has suspected liver metastases only`() {
+    fun `Should evaluate to undetermined when patient has suspected liver metastases only`() {
         assertEvaluation(
-            EvaluationResult.PASS,
-            hasLiverMetastasesOnly.evaluate(TumorTestFactory.withLiverAndOtherLesions(true, emptyList()))
-        )
-        assertEvaluation(
-            EvaluationResult.PASS,
+            EvaluationResult.UNDETERMINED,
             hasLiverMetastasesOnly.evaluate(TumorTestFactory.withBoneAndSuspectedLiverLesions(false, true))
         )
     }
@@ -59,6 +57,14 @@ class HasSpecificMetastasesOnlyTest {
     fun `Should pass when patient has bone metastases only`() {
         assertEvaluation(EvaluationResult.PASS, hasBoneMetastasesOnly.evaluate(TumorTestFactory.withBoneAndOtherLesions(true, emptyList())))
         assertEvaluation(EvaluationResult.PASS, hasBoneMetastasesOnly.evaluate(TumorTestFactory.withBoneAndLiverLesions(true, false)))
+    }
+
+    @Test
+    fun `Should evaluate to undetermined when patient has suspected bone metastases only`() {
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            hasLiverMetastasesOnly.evaluate(TumorTestFactory.withSuspectedBoneAndOtherLesions(true, emptyList()))
+        )
     }
 
     @Test

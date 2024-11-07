@@ -11,25 +11,30 @@ class HasLeptomeningealDisease : EvaluationFunction {
         val leptomeningealComplications = ComplicationFunctions.findComplicationNamesMatchingAnyCategory(
             record, LEPTOMENINGEAL_DISEASE_CATEGORY_PATTERNS
         )
-        if (leptomeningealComplications.isNotEmpty()) {
-            return EvaluationFactory.pass(
-                "Patient has complication " + concat(leptomeningealComplications), "Present " + concat(leptomeningealComplications)
-            )
-        }
-        val hasCnsLesions = record.tumor.hasConfirmedOrSuspectedCnsLesions()
-        val otherLesions = record.tumor.otherConfirmedOrSuspectedLesions()
-        val potentialMeningealLesions = if (hasCnsLesions != null && otherLesions != null && hasCnsLesions) {
+        val tumorDetails = record.tumor
+        val hasCnsLesions = listOf(tumorDetails.hasConfirmedCnsLesions(), tumorDetails.hasSuspectedCnsLesions).any { it == true }
+        val otherLesions = listOfNotNull(tumorDetails.otherLesions, tumorDetails.otherSuspectedLesions).flatten()
+
+        val potentialMeningealLesions = if (hasCnsLesions && otherLesions.isNotEmpty()) {
             otherLesions.filter { isPotentialLeptomeningealLesion(it) }.toSet()
         } else emptySet()
 
-        return if (potentialMeningealLesions.isNotEmpty()) {
-            EvaluationFactory.warn(
-                "Patient has lesions indicating potential leptomeningeal disease: " + concat(potentialMeningealLesions),
-                "Presence of lesions potentially indicating leptomeningeal disease"
+        return when {
+            leptomeningealComplications.isNotEmpty() -> {
+                return EvaluationFactory.pass(
+                    "Patient has complication " + concat(leptomeningealComplications), "Present " + concat(leptomeningealComplications)
+                )
+            }
+            potentialMeningealLesions.isNotEmpty() -> {
+                EvaluationFactory.warn(
+                    "Patient has lesions indicating potential leptomeningeal disease: " + concat(potentialMeningealLesions),
+                    "Presence of lesions potentially indicating leptomeningeal disease"
+                )
+            }
+            else -> EvaluationFactory.fail(
+                "Patient does not have leptomeningeal disease", "No leptomeningeal disease"
             )
-        } else EvaluationFactory.fail(
-            "Patient does not have leptomeningeal disease", "No leptomeningeal disease"
-        )
+        }
     }
 
     companion object {
