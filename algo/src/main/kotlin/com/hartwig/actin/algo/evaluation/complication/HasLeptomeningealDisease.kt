@@ -12,10 +12,11 @@ class HasLeptomeningealDisease : EvaluationFunction {
             record, LEPTOMENINGEAL_DISEASE_CATEGORY_PATTERNS
         )
         val tumorDetails = record.tumor
-        val hasCnsLesions = listOf(tumorDetails.hasConfirmedCnsLesions(), tumorDetails.hasSuspectedCnsLesions).any { it == true }
+        val hasConfirmedOrSuspectedCnsLesions =
+            listOf(tumorDetails.hasConfirmedCnsLesions(), tumorDetails.hasSuspectedCnsLesions).any { it == true }
         val otherLesions = listOfNotNull(tumorDetails.otherLesions, tumorDetails.otherSuspectedLesions).flatten()
 
-        val potentialMeningealLesions = if (hasCnsLesions && otherLesions.isNotEmpty()) {
+        val potentialMeningealLesions = if (hasConfirmedOrSuspectedCnsLesions && otherLesions.isNotEmpty()) {
             otherLesions.filter { isPotentialLeptomeningealLesion(it) }.toSet()
         } else emptySet()
 

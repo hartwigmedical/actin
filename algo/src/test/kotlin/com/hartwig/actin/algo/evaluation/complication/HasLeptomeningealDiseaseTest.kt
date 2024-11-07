@@ -40,7 +40,7 @@ class HasLeptomeningealDiseaseTest {
     }
 
     @Test
-    fun `Should warn when suspectd CNS lesion suggests leptomeningeal disease`() {
+    fun `Should warn when suspected CNS lesion suggests leptomeningeal disease`() {
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(ComplicationTestFactory.withSuspectedCnsLesion("carcinomatous meningitis"))
