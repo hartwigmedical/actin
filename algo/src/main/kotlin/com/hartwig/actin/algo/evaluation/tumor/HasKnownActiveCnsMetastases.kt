@@ -5,42 +5,53 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
+
 class HasKnownActiveCnsMetastases : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val hasCnsMetastases = record.tumor.hasConfirmedOrSuspectedCnsLesions()
-        // If a patient's active CNS lesion status is unknown, set to false if patient is known to have no CNS metastases
-        val hasActiveCnsLesions = record.tumor.hasActiveCnsLesions ?: if (hasCnsMetastases == false) false else null
+        val tumorDetails = record.tumor
 
-        val hasBrainMetastases = record.tumor.hasConfirmedOrSuspectedBrainLesions()
-        // If a patient's active brain metastases status is unknown, set to false if patient is known to have no brain metastases
-        val hasActiveBrainMetastases = record.tumor.hasActiveBrainLesions ?: if (hasBrainMetastases == false) false else null
+        val (hasCnsMetastases, hasActiveCnsLesions, hasSuspectedCnsMetastases) = listOf(
+            tumorDetails.hasCnsLesions,
+            tumorDetails.hasActiveCnsLesions,
+            tumorDetails.hasSuspectedCnsLesions
+        )
 
-        if (hasActiveCnsLesions == null && hasActiveBrainMetastases == null) {
-            return if (hasCnsMetastases == true || hasBrainMetastases == true) {
-                EvaluationFactory.undetermined(
-                    "CNS metastases in history but data regarding active CNS metastases is missing - assuming there are none",
-                    "CNS metastases present but unknown if active (data missing)"
-                )
-            } else {
-                EvaluationFactory.recoverableUndetermined(
-                    "Data regarding presence of active CNS metastases is missing",
-                    "Missing active CNS metastases data"
-                )
-            }
-        }
+        val (hasBrainMetastases, hasActiveBrainMetastases, hasSuspectedBrainMetastases) = listOf(
+            tumorDetails.hasBrainLesions,
+            tumorDetails.hasActiveBrainLesions,
+            tumorDetails.hasSuspectedBrainLesions
+        )
+
+        val unknownIfActive = hasActiveCnsLesions == null && hasActiveBrainMetastases == null
+
+        val undeterminedSpecificMessage =
+            "CNS metastases in history but data regarding active CNS metastases is missing - assuming inactive"
+        val undeterminedGeneralMessage = "CNS metastases present but unknown if active (data missing)"
+
         return when {
-            hasActiveCnsLesions == true ->
-                EvaluationFactory.pass("Active CNS metastases are present", "Active CNS metastases")
+            unknownIfActive && (hasCnsMetastases == true || hasBrainMetastases == true) -> {
+                EvaluationFactory.undetermined(undeterminedSpecificMessage, undeterminedGeneralMessage)
+            }
 
-            hasActiveBrainMetastases == true ->
+            unknownIfActive && (hasSuspectedCnsMetastases == true || hasSuspectedBrainMetastases == true) -> {
+                EvaluationFactory.undetermined("Suspected $undeterminedSpecificMessage, Suspected $undeterminedGeneralMessage")
+            }
+
+            unknownIfActive && (hasCnsMetastases == null && hasBrainMetastases == null) -> {
+                EvaluationFactory.undetermined("Unknown if (active) CNS metastases present", "Unknown if (active) CNS metastases present")
+            }
+
+            hasActiveCnsLesions == true -> EvaluationFactory.pass("Active CNS metastases are present", "Active CNS metastases")
+
+            hasActiveBrainMetastases == true -> {
                 EvaluationFactory.pass(
                     "Active CNS (Brain) metastases are present",
                     "Active CNS (Brain) metastases"
                 )
+            }
 
-            else ->
-                EvaluationFactory.fail("No known active CNS metastases present", "No known active CNS metastases")
+            else -> EvaluationFactory.fail("No known active CNS metastases present", "No known active CNS metastases")
         }
     }
 }

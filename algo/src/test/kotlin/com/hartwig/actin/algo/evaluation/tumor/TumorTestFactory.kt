@@ -136,14 +136,20 @@ internal object TumorTestFactory {
 
     fun withActiveBrainAndCnsLesionStatus(
         hasBrainLesions: Boolean?,
-        hasActiveBrainLesions: Boolean?, hasCnsLesions: Boolean?, hasActiveCnsLesions: Boolean?
+        hasActiveBrainLesions: Boolean?,
+        hasCnsLesions: Boolean?,
+        hasActiveCnsLesions: Boolean?,
+        hasSuspectedBrainLesions: Boolean? = false,
+        hasSuspectedCnsLesions: Boolean? = false
     ): PatientRecord {
         return withTumorDetails(
             TumorDetails(
                 hasBrainLesions = hasBrainLesions,
                 hasActiveBrainLesions = hasActiveBrainLesions,
                 hasCnsLesions = hasCnsLesions,
-                hasActiveCnsLesions = hasActiveCnsLesions
+                hasActiveCnsLesions = hasActiveCnsLesions,
+                hasSuspectedBrainLesions = hasSuspectedBrainLesions,
+                hasSuspectedCnsLesions = hasSuspectedCnsLesions
             )
         )
     }
@@ -152,8 +158,18 @@ internal object TumorTestFactory {
         return withTumorDetails(TumorDetails(hasBrainLesions = hasBrainLesions))
     }
 
-    fun withBrainLesionStatus(hasBrainLesions: Boolean?, hasActiveBrainLesions: Boolean?): PatientRecord {
-        return withTumorDetails(TumorDetails(hasBrainLesions = hasBrainLesions, hasActiveBrainLesions = hasActiveBrainLesions))
+    fun withBrainLesionStatus(
+        hasBrainLesions: Boolean?,
+        hasActiveBrainLesions: Boolean?,
+        hasSuspectedBrainLesions: Boolean? = false
+    ): PatientRecord {
+        return withTumorDetails(
+            TumorDetails(
+                hasBrainLesions = hasBrainLesions,
+                hasActiveBrainLesions = hasActiveBrainLesions,
+                hasSuspectedBrainLesions = hasSuspectedBrainLesions
+            )
+        )
     }
 
     fun withCnsOrBrainLesionsAndOncologicalHistory(
