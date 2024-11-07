@@ -53,10 +53,10 @@ object ExampleFunctions {
         return base.copy(
             algo = AlgoConfiguration(trialSource = TRIAL_SOURCE),
             report = ReportConfiguration(
-                includeApprovedTreatmentsInSummary = false,
-                includeExternalTrialsInSummary = false,
-                includeMolecularDetailsChapter = false,
-                includeClinicalDetailsChapter = false,
+                includeApprovedTreatmentsInSummary = true,
+                includeExternalTrialsInSummary = true,
+                includeMolecularDetailsChapter = true,
+                includeClinicalDetailsChapter = true,
                 reportDate = reportDate
             )
         )
@@ -67,11 +67,11 @@ object ExampleFunctions {
         return base.copy(
             algo = AlgoConfiguration(trialSource = TRIAL_SOURCE),
             report = ReportConfiguration(
-                includeOverviewWithClinicalHistorySummary = true,
+                includeOverviewWithClinicalHistorySummary = false,
                 includeMolecularDetailsChapter = true,
-                includeIneligibleTrialsInSummary = true,
-                includeSOCLiteratureEfficacyEvidence = true,
-                includeEligibleSOCTreatmentSummary = true,
+                includeIneligibleTrialsInSummary = false,
+                includeSOCLiteratureEfficacyEvidence = false,
+                includeEligibleSOCTreatmentSummary = false,
                 molecularSummaryType = MolecularSummaryType.STANDARD,
                 includeOtherOncologicalHistoryInSummary = true,
                 includePatientHeader = true,
@@ -79,13 +79,13 @@ object ExampleFunctions {
                 includeApprovedTreatmentsInSummary = true,
                 includeTrialMatchingInSummary = true,
                 includeExternalTrialsInSummary = true,
-                filterOnSOCExhaustionAndTumorType = true,
+                filterOnSOCExhaustionAndTumorType = false,
                 includeClinicalDetailsChapter = true,
                 includeTrialMatchingChapter = true,
-                includeOnlyExternalTrialsInTrialMatching = true,
-                includeLongitudinalMolecularChapter = true,
-                includeMolecularEvidenceChapter = true,
-                includeRawPathologyReport = true,
+                includeOnlyExternalTrialsInTrialMatching = false,
+                includeLongitudinalMolecularChapter = false,
+                includeMolecularEvidenceChapter = false,
+                includeRawPathologyReport = false,
                 reportDate = reportDate
             )
         )
