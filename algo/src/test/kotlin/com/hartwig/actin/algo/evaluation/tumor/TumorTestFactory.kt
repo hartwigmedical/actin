@@ -125,6 +125,11 @@ internal object TumorTestFactory {
         return withTumorDetails(TumorDetails(hasMeasurableDisease = hasMeasurableDisease, doids = setOf(doid)))
     }
 
+    fun withSuspectedLesions(hasSuspectedLesions: Boolean): PatientRecord {
+        val otherSuspectedLesions = if (hasSuspectedLesions) listOf("suspected lesion") else emptyList()
+        return withTumorDetails(TumorDetails(otherSuspectedLesions = otherSuspectedLesions))
+    }
+
     fun withBrainAndCnsLesions(hasBrainLesions: Boolean?, hasCnsLesions: Boolean?): PatientRecord {
         return withTumorDetails(TumorDetails(hasBrainLesions = hasBrainLesions, hasCnsLesions = hasCnsLesions))
     }
@@ -158,7 +163,26 @@ internal object TumorTestFactory {
     ): PatientRecord {
         return base.copy(
             oncologicalHistory = listOf(oncologicalHistoryEntry),
-            tumor = TumorDetails(hasCnsLesions = hasCnsLesions, hasBrainLesions = hasBrainLesions)
+            tumor = TumorDetails(
+                hasCnsLesions = hasCnsLesions,
+                hasBrainLesions = hasBrainLesions,
+            )
+        )
+    }
+
+    fun withSuspectedCnsOrBrainLesionsAndOncologicalHistory(
+        hasSuspectedCnsLesions: Boolean?,
+        hasSuspectedBrainLesions: Boolean?,
+        oncologicalHistoryEntry: TreatmentHistoryEntry
+    ): PatientRecord {
+        return base.copy(
+            oncologicalHistory = listOf(oncologicalHistoryEntry),
+            tumor = TumorDetails(
+                hasCnsLesions = false,
+                hasBrainLesions = false,
+                hasSuspectedCnsLesions = hasSuspectedCnsLesions,
+                hasSuspectedBrainLesions = hasSuspectedBrainLesions
+            )
         )
     }
 

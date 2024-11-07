@@ -36,6 +36,18 @@ data class TumorDetails(
     val rawPathologyReport: String? = null
 ) {
 
+    fun hasConfirmedBrainLesions() = hasBrainLesions == true || hasActiveBrainLesions == true
+    fun hasConfirmedCnsLesions() = hasCnsLesions == true || hasActiveCnsLesions == true
+    fun hasSuspectedLesions() = listOf(
+        hasSuspectedCnsLesions,
+        hasSuspectedBrainLesions,
+        hasSuspectedBoneLesions,
+        hasSuspectedLiverLesions,
+        hasSuspectedLungLesions,
+        hasSuspectedLymphNodeLesions,
+        !otherSuspectedLesions.isNullOrEmpty()
+    ).any { it == true }
+
     /*
         The functions below are only necessary to maintain backwards compatibility until
         the algo's are updated to handle suspected lesions (scope for ACTIN-1319).

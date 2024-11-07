@@ -8,22 +8,68 @@ import org.junit.Test
 
 class HasAnyLesionTest {
     @Test
-    fun canEvaluate() {
+    fun `Should fail if patient has no lesions`() {
         val function = HasAnyLesion()
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+    }
+
+    @Test
+    fun `Should evaluate to pass if only bone lesions are present only`() {
+        val function = HasAnyLesion()
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withBoneLesions(true)))
+    }
+
+    @Test
+    fun `Should evaluate to pass if only liver lesions are present`() {
+        val function = HasAnyLesion()
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withLiverLesions(true)))
+    }
+
+    @Test
+    fun `Should evaluate to pass if only CNS lesions are present`() {
+        val function = HasAnyLesion()
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withCnsLesions(true)))
+    }
+
+    @Test
+    fun `Should evaluate to pass if only brain lesions are present`() {
+        val function = HasAnyLesion()
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withBrainLesions(true)))
+    }
+
+    @Test
+    fun `Should evaluate to pass if only lung lesions are present`() {
+        val function = HasAnyLesion()
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withLungLesions(true)))
+    }
+
+    @Test
+    fun `Should evaluate to pass if only lymph node lesions are present`() {
+        val function = HasAnyLesion()
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withLymphNodeLesions(true)))
+    }
+
+    @Test
+    fun `Should evaluate to pass if only other lesions are present`() {
+        val function = HasAnyLesion()
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withOtherLesions(Lists.newArrayList("other"))))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withBoneLesions(false)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withLiverLesions(false)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withCnsLesions(false)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withBrainLesions(false)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withLungLesions(false)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withLymphNodeLesions(false)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withOtherLesions(Lists.newArrayList())))
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if only suspected lesions are present`() {
+        val function = HasAnyLesion()
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withSuspectedLesions(true)))
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if no lesions and only suspected lesions are present`() {
+        val function = HasAnyLesion()
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withSuspectedLesions(true)))
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if only suspected lesions are present (message)`() {
+        val function = HasAnyLesion()
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withSuspectedLesions(true)))
     }
 }
