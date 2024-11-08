@@ -42,6 +42,15 @@ object Format {
         }
     }
 
+    fun concatWithCommaAndAnd(strings: Iterable<String>): String {
+        val stringList = strings.distinct().sortedWith(String.CASE_INSENSITIVE_ORDER)
+        return if (stringList.size < 2) {
+            concat(stringList)
+        } else {
+            listOf(stringList.dropLast(1).joinToString(", "), stringList.last()).joinToString(SEPARATOR_AND)
+        }
+    }
+
     fun concatItemsWithAnd(items: Iterable<Displayable>): String {
         return concatDisplayables(items, SEPARATOR_AND)
     }

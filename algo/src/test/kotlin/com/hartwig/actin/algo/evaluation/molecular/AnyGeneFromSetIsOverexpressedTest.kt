@@ -15,6 +15,6 @@ class AnyGeneFromSetIsOverexpressedTest {
         val evaluation = function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         Assertions.assertThat(evaluation.undeterminedGeneralMessages)
-            .contains("Overexpression of gene a, gene b, and gene c in RNA undetermined")
+            .contains("Overexpression of gene a, gene b and gene c in RNA undetermined")
     }
 }
