@@ -15,33 +15,33 @@ class CurrentlyGetsTransporterMedication(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
-        val transporterInhibitingReceived =
-            selector.activeWithTransporterInteraction(medications, name, type).map { it.name }
+        val transporterReceived =
+            selector.activeWithInteraction(medications, name, type, "transporter").map { it.name }
 
-        val transporterInhibitingPlanned =
-            selector.plannedWithTransporterInteraction(medications, name, type).map { it.name }
+        val transporterPlanned =
+            selector.plannedWithInteraction(medications, name, type, "transporter").map { it.name }
 
         val typeText = type.name.lowercase()
 
         return when {
-            transporterInhibitingReceived.isNotEmpty() -> {
+            transporterReceived.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass(
-                    "Patient currently gets $name $typeText medication: ${Format.concatLowercaseWithAnd(transporterInhibitingReceived)}",
-                    "$name inhibiting medication use: ${Format.concatLowercaseWithAnd(transporterInhibitingReceived)}"
+                    "Patient currently gets $name $typeText medication: ${Format.concatLowercaseWithAnd(transporterReceived)}",
+                    "$name inhibiting medication use: ${Format.concatLowercaseWithAnd(transporterReceived)}"
                 )
             }
 
-            transporterInhibitingPlanned.isNotEmpty() -> {
+            transporterPlanned.isNotEmpty() -> {
                 EvaluationFactory.recoverableWarn(
-                    "Patient plans to get $name $typeText medication: ${Format.concatLowercaseWithAnd(transporterInhibitingPlanned)}",
-                    "Planned $name $typeText medication use: ${Format.concatLowercaseWithAnd(transporterInhibitingPlanned)}"
+                    "Patient plans to get $name $typeText medication: ${Format.concatLowercaseWithAnd(transporterPlanned)}",
+                    "Planned $name $typeText medication use: ${Format.concatLowercaseWithAnd(transporterPlanned)}"
                 )
             }
 
             else -> {
                 EvaluationFactory.recoverableFail(
-                    "Patient currently does not get $name $typeText medication ",
-                    "No $name $typeText medication use "
+                    "Patient currently does not get $name $typeText medication",
+                    "No $name $typeText medication use"
                 )
             }
         }

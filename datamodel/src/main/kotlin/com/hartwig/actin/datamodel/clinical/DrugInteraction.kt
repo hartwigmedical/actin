@@ -17,6 +17,7 @@ data class DrugInteraction(
         MODERATE,
         WEAK,
         SENSITIVE,
-        MODERATE_SENSITIVE
+        MODERATE_SENSITIVE,
+        UNKNOWN
     }
 }

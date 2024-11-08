@@ -28,43 +28,33 @@ class MedicationSelector(private val interpreter: MedicationStatusInterpreter) {
         return planned(medications).filter { stringCaseInsensitivelyMatchesQueryCollection(it.name, termsToFind) }
     }
 
-    fun activeWithCypInteraction(
+    fun activeWithInteraction(
         medications: List<Medication>,
         interactionToFind: String?,
-        typeOfCyp: DrugInteraction.Type
+        typeOfInteraction: DrugInteraction.Type,
+        name: String
     ): List<Medication> {
         return active(medications).filter { medication ->
-            medication.cypInteractions.any { (interactionToFind == null || interactionToFind == it.name) && typeOfCyp == it.type }
+            when (name) {
+                "CYP" -> medication.cypInteractions.any { (interactionToFind == null || interactionToFind == it.name) && typeOfInteraction == it.type }
+                "transporter" -> medication.transporterInteractions.any { (interactionToFind == null || interactionToFind == it.name) && typeOfInteraction == it.type }
+                else -> throw IllegalArgumentException("Unknown interaction name: $name")
+            }
         }
     }
 
-    fun activeWithTransporterInteraction(
-        medications: List<Medication>,
-        transporterToFind: String,
-        typeOfInteraction: DrugInteraction.Type
-    ): List<Medication> {
-        return active(medications).filter { medication ->
-            medication.transporterInteractions.any { (transporterToFind == it.name) && typeOfInteraction == it.type }
-        }
-    }
-
-    fun plannedWithCypInteraction(
+    fun plannedWithInteraction(
         medications: List<Medication>,
         interactionToFind: String?,
-        typeOfCyp: DrugInteraction.Type
+        typeOfInteraction: DrugInteraction.Type,
+        name: String
     ): List<Medication> {
         return planned(medications).filter { medication ->
-            medication.cypInteractions.any { (interactionToFind == null || interactionToFind == it.name) && typeOfCyp == it.type }
-        }
-    }
-
-    fun plannedWithTransporterInteraction(
-        medications: List<Medication>,
-        transporterToFind: String,
-        typeOfCyp: DrugInteraction.Type
-    ): List<Medication> {
-        return planned(medications).filter { medication ->
-            medication.transporterInteractions.any { (transporterToFind == it.name) && typeOfCyp == it.type }
+            when (name) {
+                "CYP" -> medication.cypInteractions.any { (interactionToFind == null || interactionToFind == it.name) && typeOfInteraction == it.type }
+                "transporter" -> medication.transporterInteractions.any { (interactionToFind == it.name) && typeOfInteraction == it.type }
+                else -> throw IllegalArgumentException("Unknown interaction name: $name")
+            }
         }
     }
 

@@ -14,7 +14,7 @@ private const val SUBSTRATE = "SUB"
 class DrugInteractionConfigFactory : CurationConfigFactory<DrugInteractionConfig> {
 
     override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<DrugInteractionConfig> {
-        val strongInhibitors =
+        val strongCypInhibitors =
             extractInteractions(
                 parts,
                 fields,
@@ -22,20 +22,20 @@ class DrugInteractionConfigFactory : CurationConfigFactory<DrugInteractionConfig
                 DrugInteraction.Strength.STRONG,
                 DrugInteraction.Type.INHIBITOR
             )
-        val moderateInhibitors =
+        val moderateCypInhibitors =
             extractInteractions(parts, fields, fieldName(WEAK, INHIBITOR), DrugInteraction.Strength.WEAK, DrugInteraction.Type.INHIBITOR)
-        val weakInhibitors = extractInteractions(
+        val weakCypInhibitors = extractInteractions(
             parts,
             fields,
             fieldName(MODERATE, INHIBITOR),
             DrugInteraction.Strength.MODERATE,
             DrugInteraction.Type.INHIBITOR
         )
-        val strongInducers =
+        val strongCypInducers =
             extractInteractions(parts, fields, fieldName(STRONG, INDUCER), DrugInteraction.Strength.STRONG, DrugInteraction.Type.INDUCER)
-        val moderateInducers =
+        val moderateCypInducers =
             extractInteractions(parts, fields, fieldName(WEAK, INDUCER), DrugInteraction.Strength.WEAK, DrugInteraction.Type.INDUCER)
-        val weakInducers =
+        val weakCypInducers =
             extractInteractions(
                 parts,
                 fields,
@@ -43,14 +43,14 @@ class DrugInteractionConfigFactory : CurationConfigFactory<DrugInteractionConfig
                 DrugInteraction.Strength.MODERATE,
                 DrugInteraction.Type.INDUCER
             )
-        val sensitiveSubstrates = extractInteractions(
+        val sensitiveCypSubstrates = extractInteractions(
             parts,
             fields,
             fieldName(SENSITIVE, SUBSTRATE),
             DrugInteraction.Strength.SENSITIVE,
             DrugInteraction.Type.SUBSTRATE
         )
-        val moderateSensitiveSubstrates = extractInteractions(
+        val moderateSensitiveCypSubstrates = extractInteractions(
             parts,
             fields,
             fieldName(MODERATE_SENSITIVE, SUBSTRATE),
@@ -58,17 +58,17 @@ class DrugInteractionConfigFactory : CurationConfigFactory<DrugInteractionConfig
             DrugInteraction.Type.SUBSTRATE
         )
         val transporterSubstrates =
-            extractInteractions(parts, fields, "TRNSP SUB", DrugInteraction.Strength.STRONG, DrugInteraction.Type.SUBSTRATE)
+            extractInteractions(parts, fields, "TRNSP SUB", DrugInteraction.Strength.UNKNOWN, DrugInteraction.Type.SUBSTRATE)
         val transporterInhibitors =
-            extractInteractions(parts, fields, "TRNSP INH", DrugInteraction.Strength.STRONG, DrugInteraction.Type.INHIBITOR)
-        val interactions =
-            strongInhibitors + moderateInhibitors + weakInhibitors + strongInducers + moderateInducers + weakInducers + sensitiveSubstrates + moderateSensitiveSubstrates
+            extractInteractions(parts, fields, "TRNSP INH", DrugInteraction.Strength.UNKNOWN, DrugInteraction.Type.INHIBITOR)
+        val cypInteractions =
+            strongCypInhibitors + moderateCypInhibitors + weakCypInhibitors + strongCypInducers + moderateCypInducers + weakCypInducers + sensitiveCypSubstrates + moderateSensitiveCypSubstrates
         val transporterInteractions = transporterSubstrates + transporterInhibitors
         return ValidatedCurationConfig(
             DrugInteractionConfig(
                 input = parts[fields["Drug or Other Substance"]!!],
                 ignore = false,
-                cypInteractions = interactions,
+                cypInteractions = cypInteractions,
                 transporterInteractions = transporterInteractions
             ), emptyList()
         )

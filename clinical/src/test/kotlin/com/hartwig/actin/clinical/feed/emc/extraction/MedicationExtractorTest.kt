@@ -51,7 +51,7 @@ private val DOSAGE = Dosage(
 
 private val cypInteraction = DrugInteraction(name = "2D6", strength = DrugInteraction.Strength.WEAK, type = DrugInteraction.Type.INHIBITOR)
 private val bcrpInteraction =
-    DrugInteraction(name = "BCRP", strength = DrugInteraction.Strength.STRONG, type = DrugInteraction.Type.SUBSTRATE)
+    DrugInteraction(name = "BCRP", strength = DrugInteraction.Strength.UNKNOWN, type = DrugInteraction.Type.SUBSTRATE)
 
 private const val TRANSLATED_ADMINISTRATION_ROUTE_ORAL = "oral"
 

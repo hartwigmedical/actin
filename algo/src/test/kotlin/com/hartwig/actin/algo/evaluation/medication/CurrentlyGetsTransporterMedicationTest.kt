@@ -17,7 +17,7 @@ class CurrentlyGetsTransporterMedicationTest {
     fun `Should pass with BCRP substrate medication`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS, alwaysActiveFunction.evaluate(
-                MedicationTestFactory.withTransporterInteraction("BCRP", DrugInteraction.Type.SUBSTRATE, DrugInteraction.Strength.STRONG)
+                MedicationTestFactory.withTransporterInteraction("BCRP", DrugInteraction.Type.SUBSTRATE, DrugInteraction.Strength.UNKNOWN)
             )
         )
     }
@@ -26,7 +26,7 @@ class CurrentlyGetsTransporterMedicationTest {
     fun `Should fail when no BCRP substrate medication`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL, alwaysActiveFunction.evaluate(
-                MedicationTestFactory.withTransporterInteraction("BCRP", DrugInteraction.Type.INHIBITOR, DrugInteraction.Strength.STRONG)
+                MedicationTestFactory.withTransporterInteraction("BCRP", DrugInteraction.Type.INHIBITOR, DrugInteraction.Strength.UNKNOWN)
             )
         )
     }
@@ -35,7 +35,7 @@ class CurrentlyGetsTransporterMedicationTest {
     fun `Should warn when patient plans to use BCRP substrate medication`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN, alwaysPlannedFunction.evaluate(
-                MedicationTestFactory.withTransporterInteraction("BCRP", DrugInteraction.Type.SUBSTRATE, DrugInteraction.Strength.STRONG)
+                MedicationTestFactory.withTransporterInteraction("BCRP", DrugInteraction.Type.SUBSTRATE, DrugInteraction.Strength.UNKNOWN)
             )
         )
     }
@@ -44,7 +44,7 @@ class CurrentlyGetsTransporterMedicationTest {
     fun `Should fail when patient plans to use medication which is not BCRP substrate medication`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL, alwaysPlannedFunction.evaluate(
-                MedicationTestFactory.withTransporterInteraction("BCRP", DrugInteraction.Type.INHIBITOR, DrugInteraction.Strength.STRONG)
+                MedicationTestFactory.withTransporterInteraction("BCRP", DrugInteraction.Type.INHIBITOR, DrugInteraction.Strength.UNKNOWN)
             )
         )
     }
