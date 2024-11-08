@@ -18,7 +18,10 @@ class HasSpecificMetastasesOnlyTest {
             EvaluationResult.PASS,
             hasLiverMetastasesOnly.evaluate(TumorTestFactory.withLiverAndOtherLesions(true, emptyList()))
         )
-        assertEvaluation(EvaluationResult.PASS, hasLiverMetastasesOnly.evaluate(TumorTestFactory.withBoneAndLiverLesions(false, true)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            hasLiverMetastasesOnly.evaluate(TumorTestFactory.withTumorDetails(createDetails(false, true)))
+        )
     }
 
     @Test
@@ -57,7 +60,10 @@ class HasSpecificMetastasesOnlyTest {
     @Test
     fun `Should pass when patient has bone metastases only`() {
         assertEvaluation(EvaluationResult.PASS, hasBoneMetastasesOnly.evaluate(TumorTestFactory.withBoneAndOtherLesions(true, emptyList())))
-        assertEvaluation(EvaluationResult.PASS, hasBoneMetastasesOnly.evaluate(TumorTestFactory.withBoneAndLiverLesions(true, false)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            hasBoneMetastasesOnly.evaluate(TumorTestFactory.withTumorDetails(createDetails(true, false)))
+        )
     }
 
     @Test
@@ -90,5 +96,16 @@ class HasSpecificMetastasesOnlyTest {
     @Test
     fun `Should fail when patient has no bone metastases`() {
         assertEvaluation(EvaluationResult.FAIL, hasBoneMetastasesOnly.evaluate(TumorTestFactory.withBoneLesions(false)))
+    }
+
+    private fun createDetails(hasBoneMetastases: Boolean, hasLiverMetastases: Boolean): TumorDetails {
+        return TumorDetails(
+            hasBoneLesions = hasBoneMetastases,
+            hasLiverLesions = hasLiverMetastases,
+            hasBrainLesions = false,
+            hasCnsLesions = false,
+            hasLymphNodeLesions = false,
+            hasLungLesions = false
+        )
     }
 }

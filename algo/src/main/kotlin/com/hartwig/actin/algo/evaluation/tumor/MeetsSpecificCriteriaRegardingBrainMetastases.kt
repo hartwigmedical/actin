@@ -47,13 +47,6 @@ class MeetsSpecificCriteriaRegardingBrainMetastases : EvaluationFunction {
                     )
                 }
 
-                unknownBrainLesions && hasCnsLesions == true -> {
-                    EvaluationFactory.undetermined(
-                        "Patient has $unknownBrainMetastasesMessageEnding",
-                        "$unknownBrainMetastasesMessageStart brain metastases are met"
-                    )
-                }
-
                 unknownBrainLesions && hasSuspectedCnsLesions == true -> {
                     EvaluationFactory.undetermined(
                         "Patient has suspected $unknownBrainMetastasesMessageEnding",
