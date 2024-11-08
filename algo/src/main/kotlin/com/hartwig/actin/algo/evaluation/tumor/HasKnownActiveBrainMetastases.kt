@@ -15,18 +15,9 @@ class HasKnownActiveBrainMetastases : EvaluationFunction {
 
         val unknownIfActive = hasActiveBrainMetastases == null
 
-        val undeterminedSpecificMessage =
-            "metastases in history but data regarding active brain metastases is missing - assuming inactive"
-        val undeterminedGeneralMessage = " metastases present but unknown if active (data missing)"
-
         return when {
-            unknownIfActive && hasBrainMetastases == true -> {
-                EvaluationFactory.undetermined("Brain $undeterminedSpecificMessage", "Brain $undeterminedGeneralMessage")
-            }
-
-            unknownIfActive && hasSuspectedBrainMetastases == true -> {
-                EvaluationFactory.undetermined("Suspected brain $undeterminedSpecificMessage, Suspected brain $undeterminedGeneralMessage")
-            }
+            unknownIfActive && hasBrainMetastases == true -> undeterminedActivityEvaluation("Brain")
+            unknownIfActive && hasSuspectedBrainMetastases == true -> undeterminedActivityEvaluation("Suspected brain")
 
             unknownIfActive && hasBrainMetastases == null -> {
                 EvaluationFactory.recoverableUndetermined(
@@ -39,5 +30,12 @@ class HasKnownActiveBrainMetastases : EvaluationFunction {
 
             else -> EvaluationFactory.fail("No known active brain metastases present", "No known active brain metastases")
         }
+    }
+
+    private fun undeterminedActivityEvaluation(prefix: String): Evaluation {
+        return EvaluationFactory.undetermined(
+            "$prefix metastases in history but data regarding active brain metastases is missing - assuming inactive",
+            "$prefix metastases present but unknown if active (data missing)"
+        )
     }
 }

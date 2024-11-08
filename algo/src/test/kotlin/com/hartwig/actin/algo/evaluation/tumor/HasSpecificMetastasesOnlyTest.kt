@@ -35,8 +35,9 @@ class HasSpecificMetastasesOnlyTest {
     }
 
     @Test
-    fun `Should warn if patient has liver metastases but data regarding other lesions is missing`() {
+    fun `Should warn if patient has liver metastases but data regarding any other lesion is missing`() {
         assertEvaluation(EvaluationResult.WARN, hasLiverMetastasesOnly.evaluate(TumorTestFactory.withLiverLesions(true)))
+        assertEvaluation(EvaluationResult.WARN, hasLiverMetastasesOnly.evaluate(TumorTestFactory.withBoneAndLiverLesions(null, true)))
     }
 
     @Test

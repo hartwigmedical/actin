@@ -8,77 +8,70 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class MeetsSpecificCriteriaRegardingBrainMetastases : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val tumorDetails = record.tumor
 
-        val (hasBrainMetastases, hasActiveBrainMetastases, hasSuspectedBrainMetastases) = listOf(
-            tumorDetails.hasBrainLesions,
-            tumorDetails.hasActiveBrainLesions,
-            tumorDetails.hasSuspectedBrainLesions
-        )
+        with(record.tumor) {
+            val specificMessageEnding = "if these meet the specific protocol criteria"
+            val generalMessageStart = "Undetermined if study specific criteria regarding"
+            val unknownBrainLesions = hasBrainLesions == null
+            val unknownBrainMetastasesMessageEnding =
+                "CNS metastases, undetermined if patient also has brain metastases and $specificMessageEnding"
+            val unknownBrainMetastasesMessageStart = "Undetermined if study specific criteria regarding"
 
-        val (hasCNSMetastases, hasSuspectedCnsMetastases) = listOf(
-            tumorDetails.hasCnsLesions,
-            tumorDetails.hasSuspectedCnsLesions
-        )
-
-        val specificMessageEnding = "if these meet the specific protocol criteria"
-        val generalMessageStart = "Undetermined if study specific criteria regarding"
-
-        // We assume that if a patient has active brain metastases, hasBrainMetastases is allowed to be (theoretically) null/false
-        return when {
-            hasActiveBrainMetastases == true -> {
-                EvaluationFactory.undetermined(
-                    "Patient has brain metastases that are considered active, undetermined $specificMessageEnding",
-                    "$generalMessageStart brain metastases are met"
-                )
-            }
-
-            hasBrainMetastases == true -> {
-                EvaluationFactory.undetermined(
-                    "Patient has brain metastases, undetermined $specificMessageEnding",
-                    "$generalMessageStart brain metastases are met"
-                )
-            }
-
-            hasSuspectedBrainMetastases == true -> {
-                EvaluationFactory.undetermined(
-                    "Patient has suspected brain metastases, undetermined $specificMessageEnding",
-                    "$generalMessageStart suspected brain metastases are met"
-                )
-            }
-
-            hasBrainMetastases == null -> {
-                val unknownBrainMetastasesMessageEnding =
-                    "CNS metastases, undetermined if patient also has brain metastases and $specificMessageEnding"
-                val unknownBrainMetastasesMessageStart = "Undetermined if study specific criteria regarding"
-
-                when {
-                    hasCNSMetastases == true -> {
-                        EvaluationFactory.undetermined(
-                            "Patient has $unknownBrainMetastasesMessageEnding",
-                            "$unknownBrainMetastasesMessageStart brain metastases are met"
-                        )
-                    }
-
-                    hasSuspectedCnsMetastases == true -> {
-                        EvaluationFactory.undetermined(
-                            "Patient has suspected $unknownBrainMetastasesMessageEnding",
-                            "$unknownBrainMetastasesMessageStart suspected brain metastases are met"
-                        )
-                    }
-
-                    else -> {
-                        val message = "$generalMessageStart brain metastases are met (data missing)"
-                        EvaluationFactory.recoverableUndetermined(message, message)
-                    }
+            // We assume that if a patient has active brain metastases, hasBrainMetastases is allowed to be (theoretically) null/false
+            return when {
+                hasActiveBrainLesions == true -> {
+                    EvaluationFactory.undetermined(
+                        "Patient has brain metastases that are considered active, undetermined $specificMessageEnding",
+                        "$generalMessageStart brain metastases are met"
+                    )
                 }
-            }
 
-            else -> {
-                EvaluationFactory.fail(
-                    "No known brain metastases present hence also won't meet specific protocol criteria regarding brain metastases",
-                    "No known brain metastases"
-                )
+                hasBrainLesions == true -> {
+                    EvaluationFactory.undetermined(
+                        "Patient has brain metastases, undetermined $specificMessageEnding",
+                        "$generalMessageStart brain metastases are met"
+                    )
+                }
+
+                hasSuspectedBrainLesions == true -> {
+                    EvaluationFactory.undetermined(
+                        "Patient has suspected brain metastases, undetermined $specificMessageEnding",
+                        "$generalMessageStart suspected brain metastases are met"
+                    )
+                }
+
+                unknownBrainLesions && hasCnsLesions == true -> {
+                    EvaluationFactory.undetermined(
+                        "Patient has $unknownBrainMetastasesMessageEnding",
+                        "$unknownBrainMetastasesMessageStart brain metastases are met"
+                    )
+                }
+
+                unknownBrainLesions && hasCnsLesions == true -> {
+                    EvaluationFactory.undetermined(
+                        "Patient has $unknownBrainMetastasesMessageEnding",
+                        "$unknownBrainMetastasesMessageStart brain metastases are met"
+                    )
+                }
+
+                unknownBrainLesions && hasSuspectedCnsLesions == true -> {
+                    EvaluationFactory.undetermined(
+                        "Patient has suspected $unknownBrainMetastasesMessageEnding",
+                        "$unknownBrainMetastasesMessageStart suspected brain metastases are met"
+                    )
+                }
+
+                unknownBrainLesions -> {
+                    val message = "$generalMessageStart brain metastases are met (data missing)"
+                    EvaluationFactory.recoverableUndetermined(message, message)
+                }
+
+                else -> {
+                    EvaluationFactory.fail(
+                        "No known brain metastases present hence also won't meet specific protocol criteria regarding brain metastases",
+                        "No known brain metastases"
+                    )
+                }
             }
         }
     }

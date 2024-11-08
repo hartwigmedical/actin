@@ -14,46 +14,52 @@ object TumorDetailsInterpreter {
     }
 
     fun lesions(tumor: TumorDetails): String {
-        val categorizedLesions = listOf(
-            "CNS" to tumor.hasCnsLesions,
-            "Brain" to (tumor.primaryTumorLocation == "Brain" || tumor.primaryTumorType == "Glioma" || tumor.hasBrainLesions == true),
-            "Liver" to tumor.hasLiverLesions,
-            "Bone" to tumor.hasBoneLesions,
-            "Lung" to tumor.hasLungLesions,
-            "Lymph node" to tumor.hasLymphNodeLesions
-        ).filter { it.second == true }.map { it.first }
+        with(tumor) {
+            val allCategorizedLesions = listOf(
+                Triple("CNS", hasCnsLesions, hasSuspectedCnsLesions),
+                Triple(
+                    "Brain",
+                    (primaryTumorLocation == "Brain" || primaryTumorType == "Glioma" || hasBrainLesions == true),
+                    hasSuspectedBrainLesions
+                ),
+                Triple("Liver", hasLiverLesions, hasSuspectedLiverLesions),
+                Triple("Bone", hasBoneLesions, hasSuspectedBoneLesions),
+                Triple("Lung", hasLungLesions, hasSuspectedLungLesions),
+                Triple("Lymph node", hasLymphNodeLesions, hasSuspectedLymphNodeLesions)
+            )
 
-        val suspectedCategorizedLesions = listOf(
-            "CNS" to tumor.hasSuspectedCnsLesions,
-            "Brain" to tumor.hasSuspectedBrainLesions,
-            "Liver" to tumor.hasSuspectedLiverLesions,
-            "Bone" to tumor.hasSuspectedBoneLesions,
-            "Lung" to tumor.hasSuspectedLungLesions,
-            "Lymph node" to tumor.hasSuspectedLymphNodeLesions
-        ).filter { it.second == true }.map { it.first }
-            .filterNot { it in categorizedLesions }
-            .map { "$it (suspected)" }
+            val confirmedCategorizedLesions = allCategorizedLesions
+                .filter { it.second == true }
+                .map { it.first }
+            val suspectedCategorizedLesions = allCategorizedLesions
+                .filter { it.second != true && it.third == true }
+                .map { "${it.first} (suspected)" }
 
-        val otherLesions = tumor.otherLesions
-        val suspectedOtherLesions =
-            tumor.otherSuspectedLesions?.filterNot { otherLesions?.contains(it) == true }?.map { "$it (suspected)" }
+            val confirmedOtherLesions = otherLesions.orEmpty()
+            val suspectedOtherLesions = otherSuspectedLesions
+                ?.filterNot { it in confirmedOtherLesions }
+                ?.map { "$it (suspected)" }
+                .orEmpty()
 
-        val lesions =
-            listOfNotNull(categorizedLesions, otherLesions, listOfNotNull(tumor.biopsyLocation)).flatten()
-                .sorted().distinctBy(String::uppercase)
-        val suspectedLesions = (suspectedCategorizedLesions + suspectedOtherLesions.orEmpty())
-        val (lymphNodeLesions, nonLymphNodeLesions) = lesions.partition { it.lowercase().startsWith("lymph node") }
+            val allLesions = (confirmedCategorizedLesions + confirmedOtherLesions + listOfNotNull(biopsyLocation))
+                .sorted()
+                .distinctBy(String::uppercase)
 
-        val filteredLymphNodeLesions = lymphNodeLesions.map { lesion ->
-            lesion.split(" ").filterNot { it.lowercase() in setOf("lymph", "node", "nodes", "") }.joinToString(" ")
-        }.filterNot(String::isEmpty).distinctBy(String::uppercase)
+            val (lymphNodeLesions, nonLymphNodeLesions) = allLesions.partition { it.lowercase().startsWith("lymph node") }
+            val filteredLymphNodeLesions = lymphNodeLesions.map { lesion ->
+                lesion.split(" ").filterNot { it.lowercase() in setOf("lymph", "node", "nodes", "") }
+                    .joinToString(" ")
+            }.filterNot(String::isEmpty).distinctBy(String::uppercase)
 
-        val lymphNodeLesionsString = if (filteredLymphNodeLesions.isNotEmpty()) {
-            listOf("Lymph nodes (${filteredLymphNodeLesions.joinToString(", ")})")
-        } else if (lymphNodeLesions.isNotEmpty()) {
-            listOf("Lymph nodes")
-        } else emptyList()
+            val lymphNodeLesionsString = if (filteredLymphNodeLesions.isNotEmpty()) {
+                listOf("Lymph nodes (${filteredLymphNodeLesions.joinToString(", ")})")
+            } else if (lymphNodeLesions.isNotEmpty()) {
+                listOf("Lymph nodes")
+            } else emptyList()
 
-        return (nonLymphNodeLesions + lymphNodeLesionsString + suspectedLesions).joinToString(", ").ifEmpty { Formats.VALUE_UNKNOWN }
+            return (nonLymphNodeLesions + lymphNodeLesionsString + suspectedCategorizedLesions + suspectedOtherLesions)
+                .joinToString(", ")
+                .ifEmpty { Formats.VALUE_UNKNOWN }
+        }
     }
 }

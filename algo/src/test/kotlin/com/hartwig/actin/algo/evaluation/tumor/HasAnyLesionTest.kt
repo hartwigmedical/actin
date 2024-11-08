@@ -16,14 +16,14 @@ class HasAnyLesionTest {
 
     @Test
     fun `Should evaluate to pass if only one type of lesion present`() {
-        listOf(true).forEach { patient ->
-            assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withBoneLesions(patient)))
-            assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withLiverLesions(patient)))
-            assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withCnsLesions(patient)))
-            assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withBrainLesions(patient)))
-            assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withLungLesions(patient)))
-            assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withLymphNodeLesions(patient)))
-        }
+        listOf(
+            TumorTestFactory.withBoneLesions(true),
+            TumorTestFactory.withLiverLesions(true),
+            TumorTestFactory.withCnsLesions(true),
+            TumorTestFactory.withBrainLesions(true),
+            TumorTestFactory.withLungLesions(true),
+            TumorTestFactory.withLymphNodeLesions(true)
+        ).forEach { patient -> assertEvaluation(EvaluationResult.PASS, function.evaluate(patient)) }
     }
 
     @Test

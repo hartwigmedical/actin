@@ -29,7 +29,7 @@ class HasSpecificMetastasesOnly(
         val metastasisString = "${typeOfMetastases.replaceFirstChar { it.uppercase() }}-only metastases"
 
         return when {
-            (hasSpecificMetastases && otherLesions == null && otherMetastasesAccessors.all { it.invoke(tumorDetails) == null }) -> {
+            hasSpecificMetastases && otherLesions == null && otherMetastasesAccessors.any { it.invoke(tumorDetails) == null } -> {
                 EvaluationFactory.warn(
                     "Patient has $typeOfMetastases lesions but data regarding other lesion locations is missing " +
                             "so unknown if patient has only $typeOfMetastases metastases",
@@ -37,7 +37,7 @@ class HasSpecificMetastasesOnly(
                 )
             }
 
-            (hasSpecificMetastases && !hasAnyOtherLesion) -> {
+            hasSpecificMetastases && !hasAnyOtherLesion -> {
                 if (hasSuspectedOtherLesion) {
                     EvaluationFactory.undetermined(
                         "Undetermined if $metastasisString - suspected other lesion(s) present",
