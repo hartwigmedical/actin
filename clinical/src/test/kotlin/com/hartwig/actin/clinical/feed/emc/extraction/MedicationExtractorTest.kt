@@ -11,7 +11,7 @@ import com.hartwig.actin.clinical.curation.PHARMACOLOGICAL
 import com.hartwig.actin.clinical.curation.THERAPEUTIC
 import com.hartwig.actin.clinical.curation.TestAtcFactory
 import com.hartwig.actin.clinical.curation.TestCurationFactory
-import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
+import com.hartwig.actin.clinical.curation.config.DrugInteractionConfig
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig
 import com.hartwig.actin.clinical.curation.config.MedicationNameConfig
 import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
@@ -21,7 +21,7 @@ import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.feed.emc.TestFeedFactory
 import com.hartwig.actin.datamodel.clinical.AtcClassification
 import com.hartwig.actin.datamodel.clinical.AtcLevel
-import com.hartwig.actin.datamodel.clinical.CypInteraction
+import com.hartwig.actin.datamodel.clinical.DrugInteraction
 import com.hartwig.actin.datamodel.clinical.Dosage
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.MedicationStatus
@@ -49,7 +49,9 @@ private val DOSAGE = Dosage(
     ifNeeded = false
 )
 
-private val cypInteraction = CypInteraction(cyp = "2D6", strength = CypInteraction.Strength.WEAK, type = CypInteraction.Type.INHIBITOR)
+private val cypInteraction = DrugInteraction(name = "2D6", strength = DrugInteraction.Strength.WEAK, type = DrugInteraction.Type.INHIBITOR)
+private val bcrpInteraction =
+    DrugInteraction(name = "BCRP", strength = DrugInteraction.Strength.STRONG, type = DrugInteraction.Type.SUBSTRATE)
 
 private const val TRANSLATED_ADMINISTRATION_ROUTE_ORAL = "oral"
 
@@ -96,10 +98,11 @@ class MedicationExtractorTest {
                 )
             ),
             TestCurationFactory.curationDatabase(
-                CypInteractionConfig(
+                DrugInteractionConfig(
                     input = CURATED_MEDICATION_NAME,
                     ignore = false,
-                    interactions = listOf(cypInteraction)
+                    cypInteractions = listOf(cypInteraction),
+                    transporterInteractions = listOf(bcrpInteraction)
                 )
             ),
             TestCurationFactory.curationDatabase(
@@ -152,6 +155,7 @@ class MedicationExtractorTest {
                 startDate = LocalDate.of(2023, 12, 12),
                 stopDate = LocalDate.of(2023, 12, 13),
                 cypInteractions = listOf(cypInteraction),
+                transporterInteractions = listOf(bcrpInteraction),
                 qtProlongatingRisk = QTProlongatingRisk.POSSIBLE,
                 atc = AtcClassification(
                     anatomicalMainGroup = AtcLevel("N", ANATOMICAL),

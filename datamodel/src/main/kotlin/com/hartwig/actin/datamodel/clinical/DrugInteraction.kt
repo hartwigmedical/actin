@@ -1,9 +1,9 @@
 package com.hartwig.actin.datamodel.clinical
 
-data class CypInteraction(
+data class DrugInteraction(
     val type: Type,
     val strength: Strength,
-    val cyp: String,
+    val name: String,
 ) {
 
     enum class Type {

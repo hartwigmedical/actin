@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.medication
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
-import com.hartwig.actin.datamodel.clinical.CypInteraction
+import com.hartwig.actin.datamodel.clinical.DrugInteraction
 import com.hartwig.actin.datamodel.clinical.Medication
 import java.time.LocalDate
 
@@ -31,28 +31,48 @@ class MedicationSelector(private val interpreter: MedicationStatusInterpreter) {
     fun activeWithCypInteraction(
         medications: List<Medication>,
         interactionToFind: String?,
-        typeOfCyp: CypInteraction.Type
+        typeOfCyp: DrugInteraction.Type
     ): List<Medication> {
         return active(medications).filter { medication ->
-            medication.cypInteractions.any { (interactionToFind == null || interactionToFind == it.cyp) && typeOfCyp == it.type }
+            medication.cypInteractions.any { (interactionToFind == null || interactionToFind == it.name) && typeOfCyp == it.type }
+        }
+    }
+
+    fun activeWithTransporterInteraction(
+        medications: List<Medication>,
+        transporterToFind: String,
+        typeOfInteraction: DrugInteraction.Type
+    ): List<Medication> {
+        return active(medications).filter { medication ->
+            medication.transporterInteractions.any { (transporterToFind == it.name) && typeOfInteraction == it.type }
         }
     }
 
     fun plannedWithCypInteraction(
         medications: List<Medication>,
         interactionToFind: String?,
-        typeOfCyp: CypInteraction.Type
+        typeOfCyp: DrugInteraction.Type
     ): List<Medication> {
         return planned(medications).filter { medication ->
-            medication.cypInteractions.any { (interactionToFind == null || interactionToFind == it.cyp) && typeOfCyp == it.type }
+            medication.cypInteractions.any { (interactionToFind == null || interactionToFind == it.name) && typeOfCyp == it.type }
+        }
+    }
+
+    fun plannedWithTransporterInteraction(
+        medications: List<Medication>,
+        transporterToFind: String,
+        typeOfCyp: DrugInteraction.Type
+    ): List<Medication> {
+        return planned(medications).filter { medication ->
+            medication.transporterInteractions.any { (transporterToFind == it.name) && typeOfCyp == it.type }
         }
     }
 
     fun activeOrRecentlyStoppedWithCypInteraction(
-        medications: List<Medication>, interactionToFind: String?, typeOfCyp: CypInteraction.Type, minStopDate: LocalDate
+        medications: List<Medication>, interactionToFind: String?, typeOfCyp: DrugInteraction.Type, minStopDate: LocalDate
     ): List<Medication> {
         return medications.filter { medication ->
-            medication.cypInteractions.any { (interactionToFind == null || interactionToFind == it.cyp) && typeOfCyp == it.type }
+            medication.cypInteractions.any { (interactionToFind == null || interactionToFind == it.name) && typeOfCyp == it.type }
         }
             .filter { isActive(it) || isRecentlyStopped(it, minStopDate) }
     }

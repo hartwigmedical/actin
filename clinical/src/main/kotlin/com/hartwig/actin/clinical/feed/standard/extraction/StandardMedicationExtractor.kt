@@ -4,9 +4,9 @@ import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationDatabase
-import com.hartwig.actin.clinical.curation.CypInteractionCurationUtil
+import com.hartwig.actin.clinical.curation.DrugInteractionCurationUtil
 import com.hartwig.actin.clinical.curation.QTProlongatingCurationUtil
-import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
+import com.hartwig.actin.clinical.curation.config.DrugInteractionConfig
 import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.standard.ProvidedPatientRecord
@@ -17,7 +17,7 @@ class StandardMedicationExtractor(
     private val atcModel: AtcModel,
     private val treatmentDatabase: TreatmentDatabase,
     private val qtProlongatingRiskCuration: CurationDatabase<QTProlongatingConfig>,
-    private val cypInteractionCuration: CurationDatabase<CypInteractionConfig>
+    private val drugInteractionCuration: CurationDatabase<DrugInteractionConfig>
 ) : StandardDataExtractor<List<Medication>?> {
 
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<Medication>?> {
@@ -44,7 +44,7 @@ class StandardMedicationExtractor(
                 stopDate = it.endDate,
                 atc = atcClassification,
                 qtProlongatingRisk = QTProlongatingCurationUtil.annotateWithQTProlongating(qtProlongatingRiskCuration, atcNameOrInput),
-                cypInteractions = CypInteractionCurationUtil.curateMedicationCypInteractions(cypInteractionCuration, atcNameOrInput),
+                cypInteractions = DrugInteractionCurationUtil.curateMedicationCypInteractions(drugInteractionCuration, atcNameOrInput),
                 isTrialMedication = it.isTrial,
                 isSelfCare = it.isSelfCare,
                 drug = treatmentDatabase.findDrugByAtcName(atcNameOrInput)

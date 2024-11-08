@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.medication
 
-import com.hartwig.actin.datamodel.clinical.CypInteraction
+import com.hartwig.actin.datamodel.clinical.DrugInteraction
 import com.hartwig.actin.datamodel.clinical.Medication
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -64,19 +64,22 @@ class MedicationSelectorTest {
         val medications = listOf(
             MedicationTestFactory.medication(name = "no cyp interactions"),
             MedicationTestFactory.medicationWithCypInteraction(
-                name = "uses CYP9A9 inducer", cyp = "9A9", type = CypInteraction.Type.INDUCER, strength = CypInteraction.Strength.STRONG
+                name = "uses CYP9A9 inducer", cyp = "9A9", type = DrugInteraction.Type.INDUCER, strength = DrugInteraction.Strength.STRONG
             ),
             MedicationTestFactory.medicationWithCypInteraction(
-                name = "uses CYP9A9 inhibitor", cyp = "9A9", type = CypInteraction.Type.INHIBITOR, strength = CypInteraction.Strength.STRONG
+                name = "uses CYP9A9 inhibitor",
+                cyp = "9A9",
+                type = DrugInteraction.Type.INHIBITOR,
+                strength = DrugInteraction.Strength.STRONG
             ),
             MedicationTestFactory.medicationWithCypInteraction(
                 name = "uses different CYP inhibitor",
                 cyp = "3A4",
-                type = CypInteraction.Type.INHIBITOR,
-                strength = CypInteraction.Strength.STRONG
+                type = DrugInteraction.Type.INHIBITOR,
+                strength = DrugInteraction.Strength.STRONG
             )
         )
-        val filtered = MedicationTestFactory.alwaysActive().activeWithCypInteraction(medications, "9A9", CypInteraction.Type.INHIBITOR)
+        val filtered = MedicationTestFactory.alwaysActive().activeWithCypInteraction(medications, "9A9", DrugInteraction.Type.INHIBITOR)
         assertThat(filtered.map(Medication::name)).containsExactly("uses CYP9A9 inhibitor")
     }
 
@@ -85,16 +88,16 @@ class MedicationSelectorTest {
         val medications = listOf(
             MedicationTestFactory.medication(name = "no cyp interactions"),
             MedicationTestFactory.medicationWithCypInteraction(
-                "9A9", CypInteraction.Type.INDUCER, CypInteraction.Strength.STRONG, name = "plans to use CYP9A9 inducer"
+                "9A9", DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG, name = "plans to use CYP9A9 inducer"
             ),
             MedicationTestFactory.medicationWithCypInteraction(
-                "9A9", CypInteraction.Type.INHIBITOR, CypInteraction.Strength.STRONG, name = "plans to use CYP9A9 inhibitor"
+                "9A9", DrugInteraction.Type.INHIBITOR, DrugInteraction.Strength.STRONG, name = "plans to use CYP9A9 inhibitor"
             ),
             MedicationTestFactory.medicationWithCypInteraction(
-                "3A4", CypInteraction.Type.INHIBITOR, CypInteraction.Strength.STRONG, name = "plans to use different CYP inhibitor"
+                "3A4", DrugInteraction.Type.INHIBITOR, DrugInteraction.Strength.STRONG, name = "plans to use different CYP inhibitor"
             )
         )
-        val filtered = MedicationTestFactory.alwaysPlanned().plannedWithCypInteraction(medications, "9A9", CypInteraction.Type.INHIBITOR)
+        val filtered = MedicationTestFactory.alwaysPlanned().plannedWithCypInteraction(medications, "9A9", DrugInteraction.Type.INHIBITOR)
         assertThat(filtered.map(Medication::name)).containsExactly("plans to use CYP9A9 inhibitor")
     }
 
@@ -102,16 +105,19 @@ class MedicationSelectorTest {
     fun `Should filter on active with any CYP inducer`() {
         val medications = listOf(
             MedicationTestFactory.medicationWithCypInteraction(
-                name = "uses a CYP inducer", cyp = "9A9", type = CypInteraction.Type.INDUCER, strength = CypInteraction.Strength.STRONG
+                name = "uses a CYP inducer", cyp = "9A9", type = DrugInteraction.Type.INDUCER, strength = DrugInteraction.Strength.STRONG
             ),
             MedicationTestFactory.medicationWithCypInteraction(
-                name = "uses other CYP inducer", cyp = "3A4", type = CypInteraction.Type.INDUCER, strength = CypInteraction.Strength.STRONG
+                name = "uses other CYP inducer",
+                cyp = "3A4",
+                type = DrugInteraction.Type.INDUCER,
+                strength = DrugInteraction.Strength.STRONG
             ),
             MedicationTestFactory.medicationWithCypInteraction(
-                name = "uses CYP inhibitor", cyp = "3A4", type = CypInteraction.Type.INHIBITOR, strength = CypInteraction.Strength.STRONG
+                name = "uses CYP inhibitor", cyp = "3A4", type = DrugInteraction.Type.INHIBITOR, strength = DrugInteraction.Strength.STRONG
             )
         )
-        val filtered = MedicationTestFactory.alwaysActive().activeWithCypInteraction(medications, null, CypInteraction.Type.INDUCER)
+        val filtered = MedicationTestFactory.alwaysActive().activeWithCypInteraction(medications, null, DrugInteraction.Type.INDUCER)
         assertThat(filtered.map(Medication::name)).containsExactlyInAnyOrder("uses a CYP inducer", "uses other CYP inducer")
     }
 
@@ -121,28 +127,31 @@ class MedicationSelectorTest {
         val medications = listOf(
             MedicationTestFactory.medication(name = "no cyp interactions"),
             MedicationTestFactory.medicationWithCypInteraction(
-                name = "uses CYP9A9 inducer", cyp = "9A9", type = CypInteraction.Type.INDUCER, strength = CypInteraction.Strength.STRONG
+                name = "uses CYP9A9 inducer", cyp = "9A9", type = DrugInteraction.Type.INDUCER, strength = DrugInteraction.Strength.STRONG
             ),
             MedicationTestFactory.medicationWithCypInteraction(
-                name = "uses other CYP inducer", cyp = "3A4", type = CypInteraction.Type.INDUCER, strength = CypInteraction.Strength.STRONG
+                name = "uses other CYP inducer",
+                cyp = "3A4",
+                type = DrugInteraction.Type.INDUCER,
+                strength = DrugInteraction.Strength.STRONG
             ),
             MedicationTestFactory.medicationWithCypInteraction(
                 name = "CYP9A9 inhibitor recently stopped",
                 cyp = "9A9",
-                type = CypInteraction.Type.INHIBITOR,
-                strength = CypInteraction.Strength.STRONG,
+                type = DrugInteraction.Type.INHIBITOR,
+                strength = DrugInteraction.Strength.STRONG,
                 stopDate = minStopDate.plusDays(1)
             ),
             MedicationTestFactory.medicationWithCypInteraction(
                 name = "CYP9A9 inhibitor stopped long ago",
                 cyp = "9A9",
-                type = CypInteraction.Type.INDUCER,
-                strength = CypInteraction.Strength.STRONG,
+                type = DrugInteraction.Type.INDUCER,
+                strength = DrugInteraction.Strength.STRONG,
                 stopDate = minStopDate.minusDays(1)
             )
         )
         val filtered = MedicationTestFactory.alwaysInactive()
-            .activeOrRecentlyStoppedWithCypInteraction(medications, "9A9", CypInteraction.Type.INHIBITOR, minStopDate)
+            .activeOrRecentlyStoppedWithCypInteraction(medications, "9A9", DrugInteraction.Type.INHIBITOR, minStopDate)
         assertThat(filtered.map(Medication::name)).containsExactly("CYP9A9 inhibitor recently stopped")
     }
 }

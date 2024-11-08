@@ -271,7 +271,10 @@ The details may include multiple treatment stages representing switches from the
 | drug.drugTypes                   | "VEGF_ANTIBODY"                                                   | Added in curation                        |
 | cypInteractions.type             | 'Inducer', 'Inhibitor' or 'Substrate'                             | Added in curation                        |
 | cypInteractions.strength         | 'Strong', 'Moderate', 'Weak', 'Sensitive' or 'Moderate sensitive' | Added in curation                        |
-| cypInteractions.cyp              | CYP type                                                          | Added in curation                        |
+| cypInteractions.name             | CYP type                                                          | Added in curation                        |
+| transporterInteractions.type     | 'Inducer', 'Inhibitor' or 'Substrate'                             | Added in curation                        |
+| transporterInteractions.strength | 'Strong', 'Moderate', 'Weak', 'Sensitive' or 'Moderate sensitive' | Added in curation                        |
+| transporterInteractions.name     | Transporter name                                                  | Added in curation                        |
 | atc.anatomicalMainGroup.code     | N                                                                 | Optional/added in curation               |
 | atc.anatomicalMainGroup.name     | NERVOUS SYSTEM                                                    | Optional/added in curation               |
 | atc.therapeuticSubGroup.code     | N02                                                               | Optional/added in curation               |

@@ -552,7 +552,7 @@ internal class ClinicalDAO(private val context: DSLContext) {
                     medication.dosage.ifNeeded,
                     medication.startDate,
                     medication.stopDate,
-                    DataUtil.concat(medication.cypInteractions.map { "${it.strength} ${it.type} (${it.cyp})" }.toSet()),
+                    DataUtil.concat(medication.cypInteractions.map { "${it.strength} ${it.type} (${it.name})" }.toSet()),
                     medication.qtProlongatingRisk.toString(),
                     atc?.anatomicalMainGroup?.name,
                     atc?.therapeuticSubGroup?.name,
