@@ -14,7 +14,7 @@ class HasReceivedSystemicTherapyForBrainMetastases : EvaluationFunction {
         val hasHadSystemicTreatment = SystemicTreatmentAnalyser.minSystemicTreatments(record.oncologicalHistory) > 0
 
         return if ((confirmedCnsOrBrainMetastases || suspectedCnsOrBrainMetastases) && hasHadSystemicTreatment) {
-            val suspectedMessage = if (suspectedCnsOrBrainMetastases) " (suspected)" else ""
+            val suspectedMessage = if (!confirmedCnsOrBrainMetastases) " (suspected)" else ""
             EvaluationFactory.warn(
                 "Patient has possibly received systemic therapy for$suspectedMessage brain metastases",
                 "Has possibly received systemic therapy for$suspectedMessage brain metastases"

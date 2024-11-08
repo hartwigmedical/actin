@@ -47,7 +47,7 @@ class MeetsSpecificCriteriaRegardingBrainMetastases : EvaluationFunction {
                 )
             }
 
-            (hasBrainMetastases == null) -> {
+            hasBrainMetastases == null -> {
                 val specificEnding = "CNS metastases, undetermined if patient also has brain metastases and $specificMessageEnding"
                 val generalStart = "Undetermined if study specific criteria regarding"
 

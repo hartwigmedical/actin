@@ -17,12 +17,13 @@ class HasHadBrainRadiationTherapyTest {
 
     @Test
     fun `Should pass if radiotherapy with body location brain in oncological history`() {
-        val history = TreatmentTestFactory.treatmentHistoryEntry(
-            treatments = radiotherapy, bodyLocationCategory = setOf(BodyLocationCategory.BRAIN)
+        val history = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(treatments = radiotherapy, bodyLocationCategory = null),
+            TreatmentTestFactory.treatmentHistoryEntry(treatments = radiotherapy, bodyLocationCategory = setOf(BodyLocationCategory.BRAIN))
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            HasHadBrainRadiationTherapy().evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history))
+            HasHadBrainRadiationTherapy().evaluate(withTreatmentHistory(history))
         )
     }
 

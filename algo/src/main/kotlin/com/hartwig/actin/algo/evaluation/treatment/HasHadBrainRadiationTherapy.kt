@@ -31,7 +31,7 @@ class HasHadBrainRadiationTherapy : EvaluationFunction {
             )
 
             (hasConfirmedBrainOrCNSMetastases || hasSuspectedBrainOrCNSMetastases) && anyRadiotherapy -> {
-                val suspectedMessage = if (hasSuspectedBrainOrCNSMetastases) " suspected" else ""
+                val suspectedMessage = if (!hasConfirmedBrainOrCNSMetastases) " suspected" else ""
                 EvaluationFactory.undetermined(
                     "Patient has$suspectedMessage brain and/or CNS metastases and has received radiotherapy but undetermined if brain radiation therapy",
                     "Undetermined prior brain radiation therapy"
@@ -48,18 +48,23 @@ class HasHadBrainRadiationTherapy : EvaluationFunction {
     private fun hasHadBrainRadiotherapy(priorRadiotherapyEntries: List<TreatmentHistoryEntry>): Boolean? {
         val brainOrCnsLocations = setOf(BodyLocationCategory.BRAIN, BodyLocationCategory.CNS)
 
-        return priorRadiotherapyEntries.any { entry ->
-            val details = entry.treatmentHistoryDetails ?: return null
+        val radiotherapyEvaluations = priorRadiotherapyEntries.map { entry ->
+            entry.treatmentHistoryDetails?.let { details ->
+                val hasBrainOrCnsLocation = details.bodyLocationCategories
+                    ?.intersect(brainOrCnsLocations)
+                    ?.isNotEmpty() ?: false
 
-            val hasBrainOrCnsLocation = details.bodyLocationCategories
-                ?.intersect(brainOrCnsLocations)
-                ?.isNotEmpty() ?: false
+                val hasSpinalLocation = details.bodyLocations?.any {
+                    stringCaseInsensitivelyMatchesQueryCollection(it, listOf("spine", "spinal"))
+                } ?: false
 
-            val hasSpinalLocation = details.bodyLocations?.any {
-                stringCaseInsensitivelyMatchesQueryCollection(it, listOf("spine", "spinal"))
-            } ?: false
-
-            hasBrainOrCnsLocation && !hasSpinalLocation
+                hasBrainOrCnsLocation && !hasSpinalLocation
+            }
+        }.toSet()
+        return when {
+            true in radiotherapyEvaluations -> true
+            null in radiotherapyEvaluations -> null
+            else -> false
         }
     }
 }

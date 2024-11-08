@@ -9,52 +9,40 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasKnownActiveCnsMetastases : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val tumorDetails = record.tumor
 
-        val (hasCnsMetastases, hasActiveCnsLesions, hasSuspectedCnsMetastases) = listOf(
-            tumorDetails.hasCnsLesions,
-            tumorDetails.hasActiveCnsLesions,
-            tumorDetails.hasSuspectedCnsLesions
-        )
+        with(record.tumor) {
+            val unknownIfActive = hasActiveCnsLesions == null && hasActiveBrainLesions == null
+            val undeterminedSpecificMessage =
+                "CNS metastases in history but data regarding active CNS metastases is missing - assuming inactive"
+            val undeterminedGeneralMessage = "CNS metastases present but unknown if active (data missing)"
 
-        val (hasBrainMetastases, hasActiveBrainMetastases, hasSuspectedBrainMetastases) = listOf(
-            tumorDetails.hasBrainLesions,
-            tumorDetails.hasActiveBrainLesions,
-            tumorDetails.hasSuspectedBrainLesions
-        )
+            return when {
+                unknownIfActive && (hasCnsLesions == true || hasBrainLesions == true) -> {
+                    EvaluationFactory.undetermined(undeterminedSpecificMessage, undeterminedGeneralMessage)
+                }
 
-        val unknownIfActive = hasActiveCnsLesions == null && hasActiveBrainMetastases == null
+                unknownIfActive && (hasSuspectedCnsLesions == true || hasSuspectedBrainLesions == true) -> {
+                    EvaluationFactory.undetermined("Suspected $undeterminedSpecificMessage, Suspected $undeterminedGeneralMessage")
+                }
 
-        val undeterminedSpecificMessage =
-            "CNS metastases in history but data regarding active CNS metastases is missing - assuming inactive"
-        val undeterminedGeneralMessage = "CNS metastases present but unknown if active (data missing)"
+                unknownIfActive && (hasCnsLesions == null && hasBrainLesions == null) -> {
+                    EvaluationFactory.recoverableUndetermined(
+                        "Unknown if (active) CNS metastases present",
+                        "Unknown if (active) CNS metastases present"
+                    )
+                }
 
-        return when {
-            unknownIfActive && (hasCnsMetastases == true || hasBrainMetastases == true) -> {
-                EvaluationFactory.undetermined(undeterminedSpecificMessage, undeterminedGeneralMessage)
+                hasActiveCnsLesions == true -> EvaluationFactory.pass("Active CNS metastases are present", "Active CNS metastases")
+
+                hasActiveBrainLesions == true -> {
+                    EvaluationFactory.pass(
+                        "Active CNS (Brain) metastases are present",
+                        "Active CNS (Brain) metastases"
+                    )
+                }
+
+                else -> EvaluationFactory.fail("No known active CNS metastases present", "No known active CNS metastases")
             }
-
-            unknownIfActive && (hasSuspectedCnsMetastases == true || hasSuspectedBrainMetastases == true) -> {
-                EvaluationFactory.undetermined("Suspected $undeterminedSpecificMessage, Suspected $undeterminedGeneralMessage")
-            }
-
-            unknownIfActive && (hasCnsMetastases == null && hasBrainMetastases == null) -> {
-                EvaluationFactory.recoverableUndetermined(
-                    "Unknown if (active) CNS metastases present",
-                    "Unknown if (active) CNS metastases present"
-                )
-            }
-
-            hasActiveCnsLesions == true -> EvaluationFactory.pass("Active CNS metastases are present", "Active CNS metastases")
-
-            hasActiveBrainMetastases == true -> {
-                EvaluationFactory.pass(
-                    "Active CNS (Brain) metastases are present",
-                    "Active CNS (Brain) metastases"
-                )
-            }
-
-            else -> EvaluationFactory.fail("No known active CNS metastases present", "No known active CNS metastases")
         }
     }
 }

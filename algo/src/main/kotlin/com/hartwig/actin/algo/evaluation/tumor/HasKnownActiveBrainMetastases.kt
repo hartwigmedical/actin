@@ -8,13 +8,10 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasKnownActiveBrainMetastases : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val tumorDetails = record.tumor
-
-        val (hasBrainMetastases, hasActiveBrainMetastases, hasSuspectedBrainMetastases) = listOf(
-            tumorDetails.hasBrainLesions,
-            tumorDetails.hasActiveBrainLesions,
-            tumorDetails.hasSuspectedBrainLesions
-        )
+        val (hasBrainMetastases, hasActiveBrainMetastases, hasSuspectedBrainMetastases) =
+            with(record.tumor) {
+                listOf(hasBrainLesions, hasActiveBrainLesions, hasSuspectedBrainLesions)
+            }
 
         val unknownIfActive = hasActiveBrainMetastases == null
 
