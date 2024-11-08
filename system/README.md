@@ -31,6 +31,5 @@ When making a reporting change, the workflow is as follows:
   directly in the test result. The image diffs can be found in `system/test-classes/EXAMPLE.actin.pdf.diff.*`
     - If something unexpected changes, fix it.
     - When only the intended change, we simply copy the new report from `system/test-classes` into the `example_reports` directory and the
-      test
-      passes.
+      test passes.
 

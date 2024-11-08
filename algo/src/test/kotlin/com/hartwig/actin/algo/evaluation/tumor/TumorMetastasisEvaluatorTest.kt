@@ -26,16 +26,12 @@ class TumorMetastasisEvaluatorTest {
 
     @Test
     fun `Should evaluate to undetermined when only suspected metastasis boolean is true`() {
-        val firstUndetermined = TumorMetastasisEvaluator.evaluate(false, true, METASTASIS_TYPE)
-        val secondUndetermined = TumorMetastasisEvaluator.evaluate(null, true, METASTASIS_TYPE)
-
-        assertEvaluation(EvaluationResult.UNDETERMINED, firstUndetermined)
-        assertEvaluation(EvaluationResult.UNDETERMINED, secondUndetermined)
-
-        assertThat(firstUndetermined.undeterminedSpecificMessages).contains("Undetermined if Bone metastases present (only suspected lesions)")
-        assertThat(firstUndetermined.undeterminedGeneralMessages).contains("Undetermined Bone metastases (suspected lesions only)")
-        assertThat(secondUndetermined.undeterminedSpecificMessages).contains("Undetermined if Bone metastases present (only suspected lesions)")
-        assertThat(secondUndetermined.undeterminedGeneralMessages).contains("Undetermined Bone metastases (suspected lesions only)")
+        listOf(false, null).forEach { hasKnownLesion ->
+            val undetermined = TumorMetastasisEvaluator.evaluate(hasKnownLesion, true, METASTASIS_TYPE)
+            assertEvaluation(EvaluationResult.UNDETERMINED, undetermined)
+            assertThat(undetermined.undeterminedSpecificMessages).contains("Undetermined if Bone metastases present (only suspected lesions)")
+            assertThat(undetermined.undeterminedGeneralMessages).contains("Undetermined Bone metastases (suspected lesions only)")
+        }
     }
 
     @Test

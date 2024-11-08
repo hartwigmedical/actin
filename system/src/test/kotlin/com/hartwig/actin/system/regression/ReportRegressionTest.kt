@@ -51,9 +51,12 @@ class ReportRegressionTest(private val exampleName: String) {
                 )
             )
         )
-        assertThat(logLevelRecorder.levelRecorded(Level.WARN) || logLevelRecorder.levelRecorded(Level.ERROR)).withFailMessage("There are errors or warnings in the logs")
+        assertThat(logLevelRecorder.levelRecorded(Level.WARN) || logLevelRecorder.levelRecorded(Level.ERROR))
+            .withFailMessage("There are errors or warnings in the logs")
             .isFalse()
-        assertThatPdf("$outputDirectory/EXAMPLE-$exampleName.actin.pdf").isEqualToTextually("src/test/resources/example_reports/EXAMPLE-$exampleName.actin.pdf")
-        assertThatPdf("$outputDirectory/EXAMPLE-$exampleName.actin.pdf").isEqualToVisually("src/test/resources/example_reports/EXAMPLE-$exampleName.actin.pdf")
+        assertThatPdf("$outputDirectory/EXAMPLE-$exampleName.actin.pdf")
+            .isEqualToTextually("src/test/resources/example_reports/EXAMPLE-$exampleName.actin.pdf")
+        assertThatPdf("$outputDirectory/EXAMPLE-$exampleName.actin.pdf")
+            .isEqualToVisually("src/test/resources/example_reports/EXAMPLE-$exampleName.actin.pdf")
     }
 }

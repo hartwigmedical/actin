@@ -4,13 +4,13 @@ import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoEntry
 import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoGene
-import com.hartwig.actin.report.ReportFunctions
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.InterpretedCohortsSummarizer
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.MolecularDriverEntry
 import com.hartwig.actin.report.interpretation.MolecularDriverEntryFactory
 import com.hartwig.actin.report.interpretation.MolecularDriversInterpreter
+import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells.create
 import com.hartwig.actin.report.pdf.util.Cells.createKey
@@ -39,7 +39,7 @@ class PatientClinicalHistoryWithOverviewGenerator(
             "Birth year" to record.patient.birthYear.toString(),
             "WHO" to whoStatus(record.clinicalStatus.who),
             "Tumor" to tumor(record.tumor),
-            "Lesions" to ReportFunctions.lesions(record.tumor),
+            "Lesions" to TumorDetailsInterpreter.lesions(record.tumor),
             "Stage" to stage(record.tumor),
             "Measurable disease (RECIST)" to measurableDisease(record.tumor),
             "DPYD" to createPeachSummaryForGene(pharmaco, PharmacoGene.DPYD),

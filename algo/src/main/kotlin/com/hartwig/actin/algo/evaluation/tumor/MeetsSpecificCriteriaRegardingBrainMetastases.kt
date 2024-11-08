@@ -48,18 +48,22 @@ class MeetsSpecificCriteriaRegardingBrainMetastases : EvaluationFunction {
             }
 
             hasBrainMetastases == null -> {
-                val specificEnding = "CNS metastases, undetermined if patient also has brain metastases and $specificMessageEnding"
-                val generalStart = "Undetermined if study specific criteria regarding"
+                val unknownBrainMetastasesMessageEnding =
+                    "CNS metastases, undetermined if patient also has brain metastases and $specificMessageEnding"
+                val unknownBrainMetastasesMessageStart = "Undetermined if study specific criteria regarding"
 
                 when {
                     hasCNSMetastases == true -> {
-                        EvaluationFactory.undetermined("Patient has $specificEnding", "$generalStart brain metastases are met")
+                        EvaluationFactory.undetermined(
+                            "Patient has $unknownBrainMetastasesMessageEnding",
+                            "$unknownBrainMetastasesMessageStart brain metastases are met"
+                        )
                     }
 
                     hasSuspectedCnsMetastases == true -> {
                         EvaluationFactory.undetermined(
-                            "Patient has suspected $specificEnding",
-                            "$generalStart suspected brain metastases are met"
+                            "Patient has suspected $unknownBrainMetastasesMessageEnding",
+                            "$unknownBrainMetastasesMessageStart suspected brain metastases are met"
                         )
                     }
 

@@ -1,8 +1,8 @@
 package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.datamodel.clinical.TumorDetails
-import com.hartwig.actin.report.ReportFunctions
 import com.hartwig.actin.report.datamodel.Report
+import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter
 import com.hartwig.actin.report.pdf.ReportContentProvider
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
@@ -43,7 +43,7 @@ class SummaryChapter(private val report: Report) : ReportChapter {
         val (stageTitle, stages) = stageSummary(report.patientRecord.tumor)
         val tumorDetailFields = listOf(
             "Tumor: " to tumor(report.patientRecord.tumor),
-            " | Lesions: " to ReportFunctions.lesions(report.patientRecord.tumor),
+            " | Lesions: " to TumorDetailsInterpreter.lesions(report.patientRecord.tumor),
             " | $stageTitle: " to stages
         )
         addParagraphWithContent(tumorDetailFields, document)
