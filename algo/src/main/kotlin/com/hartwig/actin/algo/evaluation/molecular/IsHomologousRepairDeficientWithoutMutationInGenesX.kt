@@ -7,7 +7,7 @@ import com.hartwig.actin.datamodel.molecular.MolecularTest
 import java.time.LocalDate
 
 class IsHomologousRepairDeficientWithoutMutationInGenesX(private val genesToFind: Set<String>, maxTestAge: LocalDate? = null) :
-    MolecularEvaluationFunction(maxTestAge, false) {
+    MolecularEvaluationFunction(maxTestAge) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val isHRD = test.characteristics.isHomologousRepairDeficient

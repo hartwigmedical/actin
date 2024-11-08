@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 import java.time.LocalDate
 
-class IsHomologousRepairDeficient(maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge, false) {
+class IsHomologousRepairDeficient(maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val hrdGenesWithBiallelicDriver: MutableSet<String> = mutableSetOf()

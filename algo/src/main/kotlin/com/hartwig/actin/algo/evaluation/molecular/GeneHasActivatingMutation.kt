@@ -35,7 +35,7 @@ class GeneHasActivatingMutation(
     private val gene: String,
     private val codonsToIgnore: List<String>?,
     maxTestAge: LocalDate? = null
-) : MolecularEvaluationFunction(maxTestAge, false) {
+) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun genes() = listOf(gene)
 

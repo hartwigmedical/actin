@@ -6,7 +6,7 @@ import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 import java.time.LocalDate
 
-class MmrStatusIsAvailable(maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge, false) {
+class MmrStatusIsAvailable(maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun noMolecularRecordEvaluation() =
         EvaluationFactory.fail("No molecular data to determine mismatch repair (MMR) status", "No molecular data to determine MMR status")

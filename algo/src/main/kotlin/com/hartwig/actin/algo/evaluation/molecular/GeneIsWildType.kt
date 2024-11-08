@@ -13,7 +13,7 @@ import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.orange.driver.HomozygousDisruption
 import java.time.LocalDate
 
-class GeneIsWildType(private val gene: String, maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge, false) {
+class GeneIsWildType(private val gene: String, maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun genes() = listOf(gene)
 

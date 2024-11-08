@@ -11,7 +11,7 @@ class HasTumorMutationalLoadWithinRange(
     private val minTumorMutationalLoad: Int,
     private val maxTumorMutationalLoad: Int?,
     maxTestAge: LocalDate? = null
-) : MolecularEvaluationFunction(maxTestAge, false) {
+) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val tumorMutationalLoad = test.characteristics.tumorMutationalLoad

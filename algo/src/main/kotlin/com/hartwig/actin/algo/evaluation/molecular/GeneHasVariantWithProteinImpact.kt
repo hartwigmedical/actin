@@ -14,7 +14,7 @@ import org.apache.logging.log4j.LogManager
 class GeneHasVariantWithProteinImpact(
     private val gene: String, private val allowedProteinImpacts: List<String>,
     maxTestAge: LocalDate? = null
-) : MolecularEvaluationFunction(maxTestAge, false) {
+) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun genes() = listOf(gene)
 

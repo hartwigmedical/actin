@@ -11,7 +11,7 @@ import com.hartwig.actin.datamodel.molecular.Variant
 import java.time.LocalDate
 
 class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSkip: Int, maxTestAge: LocalDate? = null) :
-    MolecularEvaluationFunction(maxTestAge, false) {
+    MolecularEvaluationFunction(maxTestAge) {
 
     override fun genes() = listOf(gene)
 
