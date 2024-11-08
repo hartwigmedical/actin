@@ -11,16 +11,24 @@ import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.Variant
 import java.time.LocalDate
 
-enum class ActivationWarningType(val description: String) {
-    ASSOCIATED_WITH_RESISTANCE("TODO"),
-    NON_ONCOGENE("TODO"),
-    NO_HOTSPOT_AND_NO_GAIN_OF_FUNCTION("TODO"),
-    SUBCLONAL("TODO"),
-    NON_HIGH_DRIVER_GAIN_OF_FUNCTION("TODO"),
-    NON_HIGH_DRIVER_SUBCLONAL("TODO"),
-    NON_HIGH_DRIVER("TODO"),
-    OTHER_MISSENSE_OR_HOTSPOT("TODO")
-
+enum class ActivationWarningType(val description: String? = null) {
+    ASSOCIATED_WITH_RESISTANCE(
+        "Potentially activating mutation(s) that have high driver likelihood " +
+                "but are also associated with drug resistance"
+    ),
+    NON_ONCOGENE,
+    NO_HOTSPOT_AND_NO_GAIN_OF_FUNCTION(
+        "Potentially activating mutation(s) that have high driver likelihood, " +
+                "but is not a hotspot and not associated with gain-of-function"
+    ),
+    SUBCLONAL(
+        "Potentially activating mutation(s) that have high driver likelihood " +
+                "but also have subclonal likelihood of > ${Format.percentage(1 - CLONAL_CUTOFF)}"
+    ),
+    NON_HIGH_DRIVER_GAIN_OF_FUNCTION,
+    NON_HIGH_DRIVER_SUBCLONAL,
+    NON_HIGH_DRIVER,
+    OTHER_MISSENSE_OR_HOTSPOT
 }
 
 data class ActivationProfile(
@@ -55,7 +63,6 @@ class GeneHasActivatingMutation(
 
         val potentiallyActivatingWarnings = listOf(
             ActivationWarningType.ASSOCIATED_WITH_RESISTANCE,
-            ActivationWarningType.NON_ONCOGENE,
             ActivationWarningType.NO_HOTSPOT_AND_NO_GAIN_OF_FUNCTION,
             ActivationWarningType.SUBCLONAL,
         ).flatMap { warningType -> eventsByWarningType[warningType]?.map { event -> event to warningType } ?: emptyList() }
@@ -69,7 +76,7 @@ class GeneHasActivatingMutation(
                 )
             }
 
-            activatingVariants.isNotEmpty() && potentiallyActivatingWarnings.isNotEmpty() -> {
+            activatingVariants.isNotEmpty() -> {
                 EvaluationFactory.warn(
                     "$gene activating mutation(s): ${Format.concat(activatingVariants)}, " +
                             "together with $gene potentially activating mutation(s): " +
