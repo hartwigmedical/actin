@@ -44,7 +44,7 @@ fun Set<ExternalTrialSummary>.filterNotInCountryOfReference(country: CountryName
 
 fun Set<ExternalTrialSummary>.filterExclusivelyInChildrensHospitals(): Set<ExternalTrialSummary> {
     return this.filter {
-        !it.hospitals.all(Hospital::isChildrensHospital)
+        it.hospitals.isEmpty() || !it.hospitals.all(Hospital::isChildrensHospital)
     }.toSet()
 }
 
