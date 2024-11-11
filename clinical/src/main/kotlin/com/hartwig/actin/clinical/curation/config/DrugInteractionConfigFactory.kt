@@ -20,47 +20,84 @@ class DrugInteractionConfigFactory : CurationConfigFactory<DrugInteractionConfig
                 fields,
                 fieldName(STRONG, INHIBITOR),
                 DrugInteraction.Strength.STRONG,
-                DrugInteraction.Type.INHIBITOR
+                DrugInteraction.Type.INHIBITOR,
+                DrugInteraction.Group.CYP
             )
         val moderateCypInhibitors =
-            extractInteractions(parts, fields, fieldName(WEAK, INHIBITOR), DrugInteraction.Strength.WEAK, DrugInteraction.Type.INHIBITOR)
+            extractInteractions(
+                parts,
+                fields,
+                fieldName(WEAK, INHIBITOR),
+                DrugInteraction.Strength.WEAK,
+                DrugInteraction.Type.INHIBITOR,
+                DrugInteraction.Group.CYP
+            )
         val weakCypInhibitors = extractInteractions(
             parts,
             fields,
             fieldName(MODERATE, INHIBITOR),
             DrugInteraction.Strength.MODERATE,
-            DrugInteraction.Type.INHIBITOR
+            DrugInteraction.Type.INHIBITOR,
+            DrugInteraction.Group.CYP
         )
         val strongCypInducers =
-            extractInteractions(parts, fields, fieldName(STRONG, INDUCER), DrugInteraction.Strength.STRONG, DrugInteraction.Type.INDUCER)
+            extractInteractions(
+                parts,
+                fields,
+                fieldName(STRONG, INDUCER),
+                DrugInteraction.Strength.STRONG,
+                DrugInteraction.Type.INDUCER,
+                DrugInteraction.Group.CYP
+            )
         val moderateCypInducers =
-            extractInteractions(parts, fields, fieldName(WEAK, INDUCER), DrugInteraction.Strength.WEAK, DrugInteraction.Type.INDUCER)
+            extractInteractions(
+                parts,
+                fields,
+                fieldName(WEAK, INDUCER),
+                DrugInteraction.Strength.WEAK,
+                DrugInteraction.Type.INDUCER,
+                DrugInteraction.Group.CYP
+            )
         val weakCypInducers =
             extractInteractions(
                 parts,
                 fields,
                 fieldName(MODERATE, INDUCER),
                 DrugInteraction.Strength.MODERATE,
-                DrugInteraction.Type.INDUCER
+                DrugInteraction.Type.INDUCER, DrugInteraction.Group.CYP
             )
         val sensitiveCypSubstrates = extractInteractions(
             parts,
             fields,
             fieldName(SENSITIVE, SUBSTRATE),
             DrugInteraction.Strength.SENSITIVE,
-            DrugInteraction.Type.SUBSTRATE
+            DrugInteraction.Type.SUBSTRATE, DrugInteraction.Group.CYP
         )
         val moderateSensitiveCypSubstrates = extractInteractions(
             parts,
             fields,
             fieldName(MODERATE_SENSITIVE, SUBSTRATE),
             DrugInteraction.Strength.MODERATE_SENSITIVE,
-            DrugInteraction.Type.SUBSTRATE
+            DrugInteraction.Type.SUBSTRATE, DrugInteraction.Group.CYP
         )
         val transporterSubstrates =
-            extractInteractions(parts, fields, "TRNSP SUB", DrugInteraction.Strength.UNKNOWN, DrugInteraction.Type.SUBSTRATE)
+            extractInteractions(
+                parts,
+                fields,
+                "TRNSP SUB",
+                DrugInteraction.Strength.UNKNOWN,
+                DrugInteraction.Type.SUBSTRATE,
+                DrugInteraction.Group.TRANSPORTER
+            )
         val transporterInhibitors =
-            extractInteractions(parts, fields, "TRNSP INH", DrugInteraction.Strength.UNKNOWN, DrugInteraction.Type.INHIBITOR)
+            extractInteractions(
+                parts,
+                fields,
+                "TRNSP INH",
+                DrugInteraction.Strength.UNKNOWN,
+                DrugInteraction.Type.INHIBITOR,
+                DrugInteraction.Group.TRANSPORTER
+            )
         val cypInteractions =
             strongCypInhibitors + moderateCypInhibitors + weakCypInhibitors + strongCypInducers + moderateCypInducers + weakCypInducers + sensitiveCypSubstrates + moderateSensitiveCypSubstrates
         val transporterInteractions = transporterSubstrates + transporterInhibitors
@@ -79,8 +116,13 @@ class DrugInteractionConfigFactory : CurationConfigFactory<DrugInteractionConfig
     }
 
     private fun extractInteractions(
-        parts: Array<String>, fields: Map<String, Int>, fieldName: String, strength: DrugInteraction.Strength, type: DrugInteraction.Type
+        parts: Array<String>,
+        fields: Map<String, Int>,
+        fieldName: String,
+        strength: DrugInteraction.Strength,
+        type: DrugInteraction.Type,
+        group: DrugInteraction.Group
     ) = parts[fields[fieldName]!!].split(";").map { it.trim() }.filter { it.isNotEmpty() }
-        .map { cyp -> DrugInteraction(name = cyp, strength = strength, type = type) }
+        .map { name -> DrugInteraction(name = name, strength = strength, type = type, group = group) }
 
 }

@@ -100,8 +100,22 @@ class StandardMedicationExtractorTest {
             DrugInteractionConfig(
                 ATC_NAME,
                 false,
-                listOf(DrugInteraction(DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG, "cyp_gene")),
-                listOf(DrugInteraction(DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG, "bcrp_gene"))
+                listOf(
+                    DrugInteraction(
+                        DrugInteraction.Type.INDUCER,
+                        DrugInteraction.Strength.STRONG,
+                        DrugInteraction.Group.CYP,
+                        "cyp_gene"
+                    )
+                ),
+                listOf(
+                    DrugInteraction(
+                        DrugInteraction.Type.INDUCER,
+                        DrugInteraction.Strength.STRONG,
+                        DrugInteraction.Group.TRANSPORTER,
+                        "bcrp_gene"
+                    )
+                )
             )
         )
 
@@ -110,7 +124,14 @@ class StandardMedicationExtractorTest {
         assertThat(result.extracted).containsExactly(
             medication.copy(
                 qtProlongatingRisk = QTProlongatingRisk.KNOWN,
-                cypInteractions = listOf(DrugInteraction(DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG, "cyp_gene")),
+                cypInteractions = listOf(
+                    DrugInteraction(
+                        DrugInteraction.Type.INDUCER,
+                        DrugInteraction.Strength.STRONG,
+                        DrugInteraction.Group.CYP,
+                        "cyp_gene"
+                    )
+                ),
             )
         )
     }

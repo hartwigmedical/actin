@@ -11,11 +11,13 @@ class CurrentlyGetsCypXInducingMedication(private val selector: MedicationSelect
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
-        val cypInducersReceived = selector.activeWithInteraction(medications, termToFind, DrugInteraction.Type.INDUCER, "CYP")
-            .map { it.name }.toSet()
+        val cypInducersReceived =
+            selector.activeWithInteraction(medications, termToFind, DrugInteraction.Type.INDUCER, DrugInteraction.Group.CYP)
+                .map { it.name }.toSet()
 
-        val cypInducersPlanned = selector.plannedWithInteraction(medications, termToFind, DrugInteraction.Type.INDUCER, "CYP")
-            .map { it.name }.toSet()
+        val cypInducersPlanned =
+            selector.plannedWithInteraction(medications, termToFind, DrugInteraction.Type.INDUCER, DrugInteraction.Group.CYP)
+                .map { it.name }.toSet()
 
         return when {
             cypInducersReceived.isNotEmpty() -> {

@@ -12,10 +12,12 @@ class CurrentlyGetsCypXInhibitingMedication(private val selector: MedicationSele
     override fun evaluate(record: PatientRecord): Evaluation {
         val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
         val cypInhibitorsReceived =
-            selector.activeWithInteraction(medications, termToFind, DrugInteraction.Type.INHIBITOR, "CYP").map { it.name }
+            selector.activeWithInteraction(medications, termToFind, DrugInteraction.Type.INHIBITOR, DrugInteraction.Group.CYP)
+                .map { it.name }
 
         val cypInhibitorsPlanned =
-            selector.plannedWithInteraction(medications, termToFind, DrugInteraction.Type.INHIBITOR, "CYP").map { it.name }
+            selector.plannedWithInteraction(medications, termToFind, DrugInteraction.Type.INHIBITOR, DrugInteraction.Group.CYP)
+                .map { it.name }
 
         return when {
             cypInhibitorsReceived.isNotEmpty() -> {

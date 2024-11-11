@@ -45,7 +45,9 @@ internal object MedicationTestFactory {
         cyp: String, type: DrugInteraction.Type, strength: DrugInteraction.Strength, stopDate: LocalDate? = null, name: String = ""
     ): Medication {
         return TestMedicationFactory.createMinimal().copy(
-            cypInteractions = listOf(DrugInteraction(name = cyp, type = type, strength = strength)), stopDate = stopDate, name = name
+            cypInteractions = listOf(DrugInteraction(name = cyp, type = type, strength = strength, group = DrugInteraction.Group.CYP)),
+            stopDate = stopDate,
+            name = name
         )
     }
 
@@ -53,7 +55,14 @@ internal object MedicationTestFactory {
         transporter: String, type: DrugInteraction.Type, strength: DrugInteraction.Strength, stopDate: LocalDate? = null, name: String = ""
     ): Medication {
         return TestMedicationFactory.createMinimal().copy(
-            transporterInteractions = listOf(DrugInteraction(name = transporter, type = type, strength = strength)),
+            transporterInteractions = listOf(
+                DrugInteraction(
+                    name = transporter,
+                    type = type,
+                    strength = strength,
+                    group = DrugInteraction.Group.TRANSPORTER
+                )
+            ),
             stopDate = stopDate,
             name = name
         )

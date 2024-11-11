@@ -32,13 +32,13 @@ class MedicationSelector(private val interpreter: MedicationStatusInterpreter) {
         medications: List<Medication>,
         interactionToFind: String?,
         typeOfInteraction: DrugInteraction.Type,
-        name: String
+        group: DrugInteraction.Group
     ): List<Medication> {
         return active(medications).filter { medication ->
-            when (name) {
-                "CYP" -> medication.cypInteractions.any { (interactionToFind == null || interactionToFind == it.name) && typeOfInteraction == it.type }
-                "transporter" -> medication.transporterInteractions.any { (interactionToFind == null || interactionToFind == it.name) && typeOfInteraction == it.type }
-                else -> throw IllegalArgumentException("Unknown interaction name: $name")
+            when (group) {
+                DrugInteraction.Group.CYP -> medication.cypInteractions.any { (interactionToFind == null || interactionToFind == it.name) && typeOfInteraction == it.type }
+                DrugInteraction.Group.TRANSPORTER -> medication.transporterInteractions.any { (interactionToFind == null || interactionToFind == it.name) && typeOfInteraction == it.type }
+                else -> throw IllegalArgumentException("Unknown interaction name: $group")
             }
         }
     }
@@ -47,13 +47,13 @@ class MedicationSelector(private val interpreter: MedicationStatusInterpreter) {
         medications: List<Medication>,
         interactionToFind: String?,
         typeOfInteraction: DrugInteraction.Type,
-        name: String
+        group: DrugInteraction.Group
     ): List<Medication> {
         return planned(medications).filter { medication ->
-            when (name) {
-                "CYP" -> medication.cypInteractions.any { (interactionToFind == null || interactionToFind == it.name) && typeOfInteraction == it.type }
-                "transporter" -> medication.transporterInteractions.any { (interactionToFind == it.name) && typeOfInteraction == it.type }
-                else -> throw IllegalArgumentException("Unknown interaction name: $name")
+            when (group) {
+                DrugInteraction.Group.CYP -> medication.cypInteractions.any { (interactionToFind == null || interactionToFind == it.name) && typeOfInteraction == it.type }
+                DrugInteraction.Group.TRANSPORTER -> medication.transporterInteractions.any { (interactionToFind == null || interactionToFind == it.name) && typeOfInteraction == it.type }
+                else -> throw IllegalArgumentException("Unknown interaction name: $group")
             }
         }
     }

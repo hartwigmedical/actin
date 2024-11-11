@@ -12,10 +12,12 @@ class CurrentlyGetsCypXSubstrateMedication(private val selector: MedicationSelec
     override fun evaluate(record: PatientRecord): Evaluation {
         val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
         val cypSubstratesReceived =
-            selector.activeWithInteraction(medications, termToFind, DrugInteraction.Type.SUBSTRATE, "CYP").map { it.name }
+            selector.activeWithInteraction(medications, termToFind, DrugInteraction.Type.SUBSTRATE, DrugInteraction.Group.CYP)
+                .map { it.name }
 
         val cypSubstratesPlanned =
-            selector.plannedWithInteraction(medications, termToFind, DrugInteraction.Type.SUBSTRATE, "CYP").map { it.name }
+            selector.plannedWithInteraction(medications, termToFind, DrugInteraction.Type.SUBSTRATE, DrugInteraction.Group.CYP)
+                .map { it.name }
 
         return when {
             cypSubstratesReceived.isNotEmpty() -> {

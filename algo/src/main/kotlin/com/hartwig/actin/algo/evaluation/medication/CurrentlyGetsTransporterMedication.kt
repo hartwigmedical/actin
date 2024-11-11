@@ -16,10 +16,10 @@ class CurrentlyGetsTransporterMedication(
     override fun evaluate(record: PatientRecord): Evaluation {
         val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
         val transporterReceived =
-            selector.activeWithInteraction(medications, name, type, "transporter").map { it.name }
+            selector.activeWithInteraction(medications, name, type, DrugInteraction.Group.TRANSPORTER).map { it.name }
 
         val transporterPlanned =
-            selector.plannedWithInteraction(medications, name, type, "transporter").map { it.name }
+            selector.plannedWithInteraction(medications, name, type, DrugInteraction.Group.TRANSPORTER).map { it.name }
 
         val typeText = type.name.lowercase()
 

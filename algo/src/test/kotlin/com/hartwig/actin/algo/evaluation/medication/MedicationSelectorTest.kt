@@ -79,7 +79,8 @@ class MedicationSelectorTest {
                 strength = DrugInteraction.Strength.STRONG
             )
         )
-        val filtered = MedicationTestFactory.alwaysActive().activeWithInteraction(medications, "9A9", DrugInteraction.Type.INHIBITOR, "CYP")
+        val filtered = MedicationTestFactory.alwaysActive()
+            .activeWithInteraction(medications, "9A9", DrugInteraction.Type.INHIBITOR, DrugInteraction.Group.CYP)
         assertThat(filtered.map(Medication::name)).containsExactly("uses CYP9A9 inhibitor")
     }
 
@@ -98,7 +99,8 @@ class MedicationSelectorTest {
             )
         )
         val filtered =
-            MedicationTestFactory.alwaysPlanned().plannedWithInteraction(medications, "9A9", DrugInteraction.Type.INHIBITOR, "CYP")
+            MedicationTestFactory.alwaysPlanned()
+                .plannedWithInteraction(medications, "9A9", DrugInteraction.Type.INHIBITOR, DrugInteraction.Group.CYP)
         assertThat(filtered.map(Medication::name)).containsExactly("plans to use CYP9A9 inhibitor")
     }
 
@@ -118,7 +120,8 @@ class MedicationSelectorTest {
                 name = "uses CYP inhibitor", cyp = "3A4", type = DrugInteraction.Type.INHIBITOR, strength = DrugInteraction.Strength.STRONG
             )
         )
-        val filtered = MedicationTestFactory.alwaysActive().activeWithInteraction(medications, null, DrugInteraction.Type.INDUCER, "CYP")
+        val filtered = MedicationTestFactory.alwaysActive()
+            .activeWithInteraction(medications, null, DrugInteraction.Type.INDUCER, DrugInteraction.Group.CYP)
         assertThat(filtered.map(Medication::name)).containsExactlyInAnyOrder("uses a CYP inducer", "uses other CYP inducer")
     }
 
