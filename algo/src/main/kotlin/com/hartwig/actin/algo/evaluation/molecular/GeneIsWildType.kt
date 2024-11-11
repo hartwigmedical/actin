@@ -81,8 +81,8 @@ class GeneIsWildType(private val gene: String, maxTestAge: LocalDate? = null) : 
 
             test is MolecularRecord && test.hasSufficientQualityButLowPurity() ->
                 EvaluationFactory.warn(
-                    "Gene $gene is considered wild-type but tumor purity is low",
-                    "$gene is wild-type but tumor purity is low",
+                    "Gene $gene is considered wild-type although tumor purity is low",
+                    "$gene is wild-type although tumor purity is low",
                     inclusionEvents = setOf("$gene wild-type")
                 )
 
