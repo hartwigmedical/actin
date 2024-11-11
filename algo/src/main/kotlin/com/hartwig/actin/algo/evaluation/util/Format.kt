@@ -33,12 +33,17 @@ object Format {
         return concatStrings(strings, SEPARATOR_AND)
     }
 
-    fun concatLowercaseWithCommaAndOr(strings: Iterable<String>): String {
-        val stringList = strings.map(String::lowercase).distinct().sortedWith(String.CASE_INSENSITIVE_ORDER)
-        return if (stringList.size < 2) {
-            concat(stringList)
+    fun concatLowercaseWithCommaAndOr(strings: Iterable<String>) = concatWithCommaAndSeparator(strings, SEPARATOR_OR, toLowercase = true)
+
+    fun concatWithCommaAndAnd(strings: Iterable<String>) = concatWithCommaAndSeparator(strings, SEPARATOR_AND, toLowercase = false)
+
+    private fun concatWithCommaAndSeparator(strings: Iterable<String>, separator: String, toLowercase: Boolean): String {
+        val stringList = if (toLowercase) strings.distinct().map(String::lowercase) else strings.distinct()
+        val sortedStringList = stringList.sortedWith(String.CASE_INSENSITIVE_ORDER)
+        return if (sortedStringList.size < 2) {
+            concat(sortedStringList)
         } else {
-            listOf(stringList.dropLast(1).joinToString(", "), stringList.last()).joinToString(SEPARATOR_OR)
+            listOf(sortedStringList.dropLast(1).joinToString(", "), sortedStringList.last()).joinToString(separator)
         }
     }
 
