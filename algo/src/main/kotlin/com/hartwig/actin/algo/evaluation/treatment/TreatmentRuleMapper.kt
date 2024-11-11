@@ -396,7 +396,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     }
 
     private fun hasHadSocTargetedTherapyForNsclcCreator(): FunctionCreator {
-        return { HasHadSOCTargetedTherapyForNSCLC(emptyList()) }
+        return { HasHadSOCTargetedTherapyForNSCLC(emptySet()) }
     }
 
     private fun hasHadSocTargetedTherapyForNsclcExcludingSomeGenesCreator(): FunctionCreator {

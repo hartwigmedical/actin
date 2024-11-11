@@ -19,7 +19,7 @@ private val EXCLUDED_CRC_TUMOR_DOIDS = setOf(
 )
 
 class AnyGeneHasDriverEventWithApprovedTherapy(
-    private val genes: List<String>,
+    private val genes: Set<String>,
     val doidModel: DoidModel,
     private val evaluationFunctionFactory: EvaluationFunctionFactory,
     private val maxTestAge: LocalDate? = null

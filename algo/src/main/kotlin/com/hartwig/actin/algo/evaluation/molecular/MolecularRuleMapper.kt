@@ -86,7 +86,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasMolecularEventExcludingSomeGeneWithSocTargetedTherapyForNSCLCAvailableCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genes = functionInputResolver().createManyGenesInput(function)
-            HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(null, genes.geneNames.toSet(), maxMolecularTestAge())
+            HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(null, genes.geneNames, maxMolecularTestAge())
         }
     }
 
@@ -232,14 +232,14 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun anyGeneFromSetIsOverExpressedCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val geneSet = functionInputResolver().createManyGenesInput(function).geneNames.toSet()
+            val geneSet = functionInputResolver().createManyGenesInput(function).geneNames
             AnyGeneFromSetIsOverexpressed(maxMolecularTestAge(), geneSet)
         }
     }
 
     private fun anyGeneFromSetIsNotExpressedCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val geneSet = functionInputResolver().createManyGenesInput(function).geneNames.toSet()
+            val geneSet = functionInputResolver().createManyGenesInput(function).geneNames
             AnyGeneFromSetIsNotExpressed(maxMolecularTestAge(), geneSet)
         }
     }
@@ -335,14 +335,14 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun isHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesXCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genesToFind = functionInputResolver().createManyGenesInput(function)
-            IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesX(genesToFind.geneNames.toSet(), maxMolecularTestAge())
+            IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesX(genesToFind.geneNames, maxMolecularTestAge())
         }
     }
 
     private fun isHomologousRepairDeficientWithoutMutationInGenesXCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genesToFind = functionInputResolver().createManyGenesInput(function)
-            IsHomologousRepairDeficientWithoutMutationInGenesX(genesToFind.geneNames.toSet(), maxMolecularTestAge())
+            IsHomologousRepairDeficientWithoutMutationInGenesX(genesToFind.geneNames, maxMolecularTestAge())
         }
     }
 

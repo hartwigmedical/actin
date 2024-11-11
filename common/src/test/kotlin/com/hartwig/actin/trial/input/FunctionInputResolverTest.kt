@@ -602,7 +602,7 @@ class FunctionInputResolverTest {
         val valid = create(rule, listOf("gene;gene"))
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
 
-        val expected = ManyGenes(listOf("gene", "gene"))
+        val expected = ManyGenes(setOf("gene", "gene"))
         assertThat(resolver.createManyGenesInput(valid)).isEqualTo(expected)
 
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
