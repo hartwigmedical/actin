@@ -6,7 +6,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.GeneRole
-import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.Variant
@@ -65,31 +64,29 @@ class GeneIsWildType(private val gene: String, maxTestAge: LocalDate? = null) : 
             }
         }
 
-        val evaluation = when {
+        val potentialWarnEvaluation =
+            evaluatePotentialWarns(reportableEventsWithNoEffect, reportableEventsWithEffectPotentiallyWildtype, evidenceSource)
+
+        return when {
+            !test.hasSufficientQuality ->
+                EvaluationFactory.undetermined(
+                    "Gene $gene wild-type status undetermined due to insufficient quality",
+                    "$gene wild-type status undetermined due to insufficient quality",
+                )
+
             reportableEventsWithEffect.isNotEmpty() ->
                 EvaluationFactory.fail(
                     "Gene $gene is not considered wild-type due to ${Format.concat(reportableEventsWithEffect)}",
                     "$gene not wild-type"
                 )
 
-            reportableEventsWithNoEffect.size > 0 || reportableEventsWithEffectPotentiallyWildtype.size > 0 ->
-                evaluatePotentialWarns(
-                    reportableEventsWithNoEffect,
-                    reportableEventsWithEffectPotentiallyWildtype,
-                    evidenceSource
-                )
+            potentialWarnEvaluation != null -> potentialWarnEvaluation
 
-            test is MolecularRecord && test.hasSufficientQualityButLowPurity() ->
+            test.hasSufficientQualityButLowPurity() ->
                 EvaluationFactory.warn(
                     "Gene $gene is considered wild-type although tumor purity is low",
                     "$gene is wild-type although tumor purity is low",
                     inclusionEvents = setOf("$gene wild-type")
-                )
-
-            test is MolecularRecord && !test.hasSufficientQuality ->
-                EvaluationFactory.undetermined(
-                    "Gene $gene wild-type status undetermined due to insufficient quality",
-                    "$gene wild-type status undetermined due to insufficient quality",
                 )
 
             else ->
@@ -97,7 +94,6 @@ class GeneIsWildType(private val gene: String, maxTestAge: LocalDate? = null) : 
                     "Gene $gene is considered wild-type", "$gene is wild-type", inclusionEvents = setOf("$gene wild-type")
                 )
         }
-        return evaluation!!
     }
 
     private fun evaluatePotentialWarns(
