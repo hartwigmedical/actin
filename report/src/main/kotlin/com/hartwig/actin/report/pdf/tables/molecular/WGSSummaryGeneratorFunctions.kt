@@ -6,7 +6,6 @@ import com.hartwig.actin.datamodel.molecular.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
-import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.report.interpretation.MolecularCharacteristicFormat
 import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter
@@ -172,11 +171,7 @@ object WGSSummaryGeneratorFunctions {
                 DriverLikelihood.LOW -> " (low driver likelihood)"
                 DriverLikelihood.MEDIUM -> " (medium driver likelihood)"
                 else -> if (driver is CopyNumber) {
-                    when (driver.type) {
-                        CopyNumberType.NONE -> " (no amplification)"
-                        CopyNumberType.LOSS -> " (no deletion)"
-                        else -> ""
-                    }
+                    " (no amplification or deletion)"
                 } else " (dubious quality)"
             }
             listOf(
