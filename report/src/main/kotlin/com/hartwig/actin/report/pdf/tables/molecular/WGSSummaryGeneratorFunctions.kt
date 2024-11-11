@@ -119,7 +119,7 @@ object WGSSummaryGeneratorFunctions {
         }
     }
 
-    private fun tumorOriginPredictionCell(molecular: MolecularTest): Cell {
+    fun tumorOriginPredictionCell(molecular: MolecularTest): Cell {
         val wgsMolecular = if (molecular is MolecularRecord) molecular else null
         val paragraph = Paragraph(Text(tumorOriginPrediction(molecular, wgsMolecular)).addStyle(Styles.tableHighlightStyle()))
         val purity = molecular.characteristics.purity
