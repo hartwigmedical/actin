@@ -170,7 +170,7 @@ object WGSSummaryGeneratorFunctions {
             val warning = when (driver.driverLikelihood) {
                 DriverLikelihood.LOW -> " (low driver likelihood)"
                 DriverLikelihood.MEDIUM -> " (medium driver likelihood)"
-                else -> if (driver is CopyNumber) " (NO amplification)" else " (dubious quality)"
+                else -> if (driver is CopyNumber) " (no amplification)" else " (dubious quality)"
             }
             listOf(
                 Text(driver.event).addStyle(Styles.tableHighlightStyle()),
