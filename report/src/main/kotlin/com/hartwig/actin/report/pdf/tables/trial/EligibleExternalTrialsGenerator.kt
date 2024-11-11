@@ -59,7 +59,8 @@ class EligibleExternalTrialsGenerator(
         if (filteredCount > 0)
             table.addCell(
                 Cells.createSpanningSubNote(
-                    "$filteredCount trials were filtered out due to multiple trials for the same molecular target. See extended report for all matches.",
+                    homeCountry?.let { "$filteredCount trials were filtered out due to eligible trials for the same molecular target. See extended report for all matches." }
+                        ?: "$filteredCount trials were filtered out due to local ${sources.joinToString()} trials for the same molecular target. See extended report for all matches.",
                     table
                 )
             )
