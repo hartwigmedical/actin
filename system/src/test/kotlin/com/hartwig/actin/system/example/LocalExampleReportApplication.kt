@@ -5,11 +5,11 @@ import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.report.datamodel.ReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory
-import java.time.LocalDate
-import kotlin.system.exitProcess
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.time.LocalDate
+import kotlin.system.exitProcess
 
 class LocalExampleReportApplication {
 
@@ -41,18 +41,19 @@ class LocalExampleReportApplication {
 
 private const val EXAMPLE_TO_RUN = LUNG_01_EXAMPLE
 
+
 fun main() {
     LocalExampleReportApplication.LOGGER.info("Running ACTIN Example Reporter")
+    val localOutputPath = System.getProperty("user.home") + "/hmf/tmp"
     try {
         val examplePatientRecordJson = ExampleFunctions.resolveExamplePatientRecordJson(EXAMPLE_TO_RUN)
         val exampleTreatmentMatchJson = ExampleFunctions.resolveExampleTreatmentMatchJson(EXAMPLE_TO_RUN)
-        val outputDirectory = ExampleFunctions.resolveExampleReportOutputDirectory()
 
         val localExampleReportApplication = LocalExampleReportApplication()
         localExampleReportApplication.run(
             examplePatientRecordJson,
             exampleTreatmentMatchJson,
-            outputDirectory,
+            localOutputPath,
             ExampleFunctions.createExampleEnvironmentConfiguration(LocalDate.now())
         )
     } catch (exception: ParseException) {
