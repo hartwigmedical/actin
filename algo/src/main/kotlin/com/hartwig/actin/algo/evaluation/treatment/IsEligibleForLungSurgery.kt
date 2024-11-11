@@ -5,12 +5,12 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
-class IsEligibleForSurgery : EvaluationFunction {
+class IsEligibleForLungSurgery : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return EvaluationFactory.undetermined(
-            "Undetermined if patient is eligible for surgery",
-            "Undetermined eligibility for surgery"
+            "Undetermined if patient is eligible for lung surgery",
+            "Undetermined eligibility for lung surgery"
         )
     }
 }
