@@ -226,5 +226,58 @@ class GeneHasVariantInExonRangeOfTypeTest {
         )
     }
 
+
+    @Test
+    fun `Should warn when canonical variant match but also other reportable match`() {
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(
+                MolecularTestFactory.withDrivers(
+                    TestVariantFactory.createMinimal().copy(
+                        gene = TARGET_GENE,
+                        isReportable = true,
+                        type = VariantType.INSERT,
+                        canonicalImpact = impactWithExon(MATCHING_EXON),
+                        extendedVariantDetails = TestVariantFactory.createMinimalExtended()
+                    ),
+                    TestVariantFactory.createMinimal().copy(
+                        gene = TARGET_GENE,
+                        isReportable = true,
+                        type = VariantType.INSERT,
+                        canonicalImpact = impactWithExon(OTHER_EXON),
+                        otherImpacts = setOf(impactWithExon(MATCHING_EXON)),
+                        extendedVariantDetails = TestVariantFactory.createMinimalExtended()
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should warn when reportable exon skips but other reportable matches`() {
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(
+                MolecularTestFactory.withDrivers(
+                    TestVariantFactory.createMinimal().copy(
+                        gene = TARGET_GENE,
+                        isReportable = true,
+                        type = VariantType.INSERT,
+                        canonicalImpact = impactWithExon(OTHER_EXON),
+                        otherImpacts = setOf(impactWithExon(MATCHING_EXON)),
+                        extendedVariantDetails = TestVariantFactory.createMinimalExtended()
+                    ),
+                    TestFusionFactory.createMinimal().copy(
+                        geneStart = TARGET_GENE,
+                        geneEnd = TARGET_GENE,
+                        isReportable = true,
+                        fusedExonUp = 2,
+                        fusedExonDown = 3
+                    )
+                )
+            )
+        )
+    }
+
     private fun impactWithExon(affectedExon: Int) = TestTranscriptImpactFactory.createMinimal().copy(affectedExon = affectedExon)
 }

@@ -52,26 +52,55 @@ class HasFusionInGene(private val gene: String, maxTestAge: LocalDate? = null) :
             }
         }
 
-        if (matchingFusions.isNotEmpty()) {
-            return EvaluationFactory.pass(
-                "Fusion(s) ${concat(matchingFusions)} detected in gene $gene",
-                "Fusion(s) detected in gene $gene",
-                inclusionEvents = matchingFusions
-            )
-        }
-
-        val potentialWarnEvaluation = evaluatePotentialWarns(
+        val anyWarns = listOf(
             fusionsWithNoEffect,
             fusionsWithNoHighDriverLikelihoodWithGainOfFunction,
             fusionsWithNoHighDriverLikelihoodOther,
-            unreportableFusionsWithGainOfFunction,
-            evidenceSource
-        )
+            unreportableFusionsWithGainOfFunction
+        ).any { it.isNotEmpty() }
 
-        return potentialWarnEvaluation ?: EvaluationFactory.fail(
-            "No fusion detected with gene $gene",
-            "No fusion in gene $gene"
-        )
+        return when {
+            matchingFusions.isNotEmpty() && !anyWarns -> {
+                EvaluationFactory.pass(
+                    "Fusion(s) ${concat(matchingFusions)} detected in gene $gene",
+                    "Fusion(s) detected in gene $gene",
+                    inclusionEvents = matchingFusions
+                )
+            }
+
+            matchingFusions.isNotEmpty() -> {
+                val eventWarningDescriptions = concat(listOf(
+                    fusionsWithNoEffect.map { event -> "$event: Fusion having no protein effect" },
+                    fusionsWithNoHighDriverLikelihoodWithGainOfFunction.map { event -> "$event: Fusion having gain-of-function evidence but no high driver likelihood" },
+                    fusionsWithNoHighDriverLikelihoodOther.map { event -> "$event: Fusion having no high driver likelihood" },
+                    unreportableFusionsWithGainOfFunction.map { event -> "$event: Fusion having gain-of-function evidence but not considered reportable" }
+                ).flatten())
+
+                EvaluationFactory.warn(
+                    "Fusion(s) ${concat(matchingFusions)} detected in gene $gene, but other fusion events present: " + eventWarningDescriptions,
+                    "Fusion(s) detected in gene $gene, but other fusion events present",
+                    inclusionEvents = matchingFusions + fusionsWithNoEffect +
+                            fusionsWithNoHighDriverLikelihoodWithGainOfFunction +
+                            fusionsWithNoHighDriverLikelihoodOther +
+                            unreportableFusionsWithGainOfFunction
+                )
+            }
+
+            else -> {
+                val potentialWarnEvaluation = evaluatePotentialWarns(
+                    fusionsWithNoEffect,
+                    fusionsWithNoHighDriverLikelihoodWithGainOfFunction,
+                    fusionsWithNoHighDriverLikelihoodOther,
+                    unreportableFusionsWithGainOfFunction,
+                    evidenceSource
+                )
+
+                potentialWarnEvaluation ?: EvaluationFactory.fail(
+                    "No fusion detected with gene $gene",
+                    "No fusion in gene $gene"
+                )
+            }
+        }
     }
 
     private fun evaluatePotentialWarns(

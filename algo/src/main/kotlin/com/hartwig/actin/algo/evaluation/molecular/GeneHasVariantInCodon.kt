@@ -45,23 +45,43 @@ class GeneHasVariantInCodon(private val gene: String, private val codons: List<S
                 }
             }
         }
-        if (canonicalReportableVariantMatches.isNotEmpty()) {
-            return EvaluationFactory.pass(
-                "Variant(s) in codon(s) ${concat(canonicalCodonMatches)} in gene $gene detected in canonical transcript",
-                "Variant(s) in codon(s) ${concat(canonicalCodonMatches)} in $gene",
-                inclusionEvents = canonicalReportableVariantMatches
-            )
+
+        return when {
+            canonicalReportableVariantMatches.isNotEmpty() && reportableOtherVariantMatches.isEmpty() && canonicalReportableSubclonalVariantMatches.isEmpty() -> {
+                EvaluationFactory.pass(
+                    "Variant(s) in codon(s) detected in canonical transcript",
+                    "Variant(s) in codon(s) ${concat(canonicalCodonMatches)} in $gene",
+                    inclusionEvents = canonicalReportableVariantMatches
+                )
+            }
+
+            canonicalReportableVariantMatches.isNotEmpty() -> {
+                val (specificExtension, generalExtension) = extendedWarnings(
+                    reportableOtherVariantMatches,
+                    canonicalReportableSubclonalVariantMatches,
+                    reportableOtherCodonMatches
+                )
+                EvaluationFactory.warn(
+                    "Variant(s) in codon(s) ${concat(canonicalCodonMatches)} in gene $gene detected in canonical transcript together with: " + specificExtension,
+                    "Variant(s) in codon(s) ${concat(canonicalCodonMatches)} in $gene together with: " + generalExtension,
+                    inclusionEvents = canonicalReportableVariantMatches + reportableOtherVariantMatches + canonicalUnreportableVariantMatches,
+                )
+            }
+
+            else -> {
+                val potentialWarnEvaluation = evaluatePotentialWarns(
+                    canonicalReportableSubclonalVariantMatches,
+                    canonicalUnreportableVariantMatches,
+                    canonicalCodonMatches,
+                    reportableOtherVariantMatches,
+                    reportableOtherCodonMatches
+                )
+
+                potentialWarnEvaluation ?: EvaluationFactory.fail(
+                    "No variants in codon(s) ${concat(codons)} detected in gene $gene", "No variants in codon(s) ${concat(codons)} in $gene"
+                )
+            }
         }
-        val potentialWarnEvaluation = evaluatePotentialWarns(
-            canonicalReportableSubclonalVariantMatches,
-            canonicalUnreportableVariantMatches,
-            canonicalCodonMatches,
-            reportableOtherVariantMatches,
-            reportableOtherCodonMatches
-        )
-        return potentialWarnEvaluation ?: EvaluationFactory.fail(
-            "No variants in codon(s) ${concat(codons)} detected in gene $gene", "No variants in codon(s) ${concat(codons)} in $gene"
-        )
     }
 
     private fun evaluatePotentialWarns(
@@ -86,10 +106,34 @@ class GeneHasVariantInCodon(private val gene: String, private val codons: List<S
                 EventsWithMessages(
                     reportableOtherVariantMatches,
                     "Variant(s) in codon(s) ${concat(reportableOtherCodonMatches)} in $gene detected but in non-canonical transcript",
-                    "Variant(s) in codon(s) ${concat(canonicalCodonMatches)} in $gene but in non-canonical transcript"
+                    "Variant(s) in codon(s) ${concat(reportableOtherCodonMatches)} in $gene but in non-canonical transcript"
                 )
             )
         )
+    }
+
+    private fun extendedWarnings(
+        reportableOtherVariantMatches: Set<String>,
+        canonicalReportableSubclonalVariantMatches: Set<String>,
+        reportableOtherCodonMatches: Set<String>
+    ): Pair<String, String> {
+        val specificGeneralMessagePairs = listOfNotNull(
+            if (reportableOtherVariantMatches.isNotEmpty()) {
+                Pair(
+                    "Variant(s) in codon(s) ${concat(reportableOtherCodonMatches)} but in non-canonical transcript",
+                    "Variant(s) in codon(s) ${concat(reportableOtherCodonMatches)} but in non-canonical transcript"
+                )
+            } else null,
+            if (canonicalReportableSubclonalVariantMatches.isNotEmpty()) {
+                Pair(
+                    "Variant(s) in codon(s) ${concat(canonicalReportableSubclonalVariantMatches)} in canonical transcript"
+                            + " but subclonal likelihood of > ${percentage(1 - CLONAL_CUTOFF)}",
+                    "Variant(s) in codon(s) ${concat(canonicalReportableSubclonalVariantMatches)} but subclonal likelihood of > "
+                            + percentage(1 - CLONAL_CUTOFF)
+                )
+            } else null
+        )
+        return Pair(concat(specificGeneralMessagePairs.map { it.first }), concat(specificGeneralMessagePairs.map { it.second }))
     }
 
     companion object {

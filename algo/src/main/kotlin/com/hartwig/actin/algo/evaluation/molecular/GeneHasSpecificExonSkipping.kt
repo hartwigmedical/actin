@@ -20,11 +20,23 @@ class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSk
         val exonSplicingVariants = molecularHistory.molecularTests.flatMap(::findExonSplicingVariants).toSet()
 
         return when {
-            fusionSkippingEvents.isNotEmpty() -> {
+            fusionSkippingEvents.isNotEmpty() && exonSplicingVariants.isEmpty() -> {
                 EvaluationFactory.pass(
                     "Exon $exonToSkip skipped in gene $gene due to ${concat(fusionSkippingEvents)}",
                     "Exon $exonToSkip skipping in $gene",
                     inclusionEvents = fusionSkippingEvents
+                )
+            }
+
+            fusionSkippingEvents.isNotEmpty() -> {
+                EvaluationFactory.warn(
+                    "Exon $exonToSkip skipped in gene $gene due to ${concat(fusionSkippingEvents)}, but potential skipping due to ${
+                        concat(
+                            exonSplicingVariants
+                        )
+                    }",
+                    "Exon $exonToSkip skipping in $gene but potential skipping due to splice variant",
+                    inclusionEvents = fusionSkippingEvents + exonSplicingVariants
                 )
             }
 

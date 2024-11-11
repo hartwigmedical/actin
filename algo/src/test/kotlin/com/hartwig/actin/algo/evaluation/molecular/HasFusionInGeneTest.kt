@@ -90,4 +90,16 @@ class HasFusionInGeneTest {
             function.evaluate(MolecularTestFactory.withFusion(matchingFusion.copy(proteinEffect = ProteinEffect.NO_EFFECT)))
         )
     }
+
+    @Test
+    fun `Should warn on high driver reportable gain of function matching fusion when other fusion types present`() {
+        assertMolecularEvaluation(
+            EvaluationResult.WARN, function.evaluate(
+                MolecularTestFactory.withDrivers(
+                    matchingFusion,
+                    matchingFusion.copy(isReportable = false)
+                )
+            )
+        )
+    }
 }
