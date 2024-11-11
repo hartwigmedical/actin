@@ -51,9 +51,9 @@ class HasHadAnySurgeryAfterSpecificDateTest {
     }
 
     @Test
-    fun `Should pass with future planned surgery`() {
+    fun `Should warn with future planned surgery`() {
         val futurePlanned: Surgery = surgery(evaluationDate.plusWeeks(2), SurgeryStatus.PLANNED)
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withSurgery(futurePlanned)))
+        assertEvaluation(EvaluationResult.WARN, function.evaluate(withSurgery(futurePlanned)))
     }
 
     @Test
@@ -101,6 +101,14 @@ class HasHadAnySurgeryAfterSpecificDateTest {
     fun `Should pass with surgical treatment in month just after min date`() {
         val treatments = listOf(treatmentHistoryEntry(setOf(TreatmentCategory.SURGERY), minDate.year, minDate.monthValue + 1))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(SurgeryTestFactory.withOncologicalHistory(treatments)))
+    }
+
+    @Test
+    fun `Should pass with recent surgical treatment, even with other unexpected surgeries`() {
+        val treatments = listOf(treatmentHistoryEntry(setOf(TreatmentCategory.SURGERY), minDate.year, minDate.monthValue + 1))
+        val patient = withSurgery(surgery(evaluationDate.plusWeeks(2), SurgeryStatus.FINISHED))
+            .copy(oncologicalHistory = treatments)
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(patient))
     }
 
     private fun treatmentHistoryEntry(

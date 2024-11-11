@@ -106,6 +106,30 @@ private val EXPECTED_TREATMENT_HISTORY_ENTRY = TreatmentHistoryEntry(
     isTrial = false,
     trialAcronym = "trialAcronym",
 )
+private val EXPECTED_TREATMENT_HISTORY_FROM_PRIOR_OTHER_CONDITION = TreatmentHistoryEntry(
+    startYear = PROVIDED_PRIOR_CONDITION_START.year,
+    startMonth = PROVIDED_PRIOR_CONDITION_START.monthValue,
+    treatments = CURATED_TREATMENT_HISTORY_ENTRY.curated!!.treatments,
+    treatmentHistoryDetails = TreatmentHistoryDetails(
+        stopYear = PROVIDED_PRIOR_CONDITION_END.year,
+        stopMonth = PROVIDED_PRIOR_CONDITION_END.monthValue,
+        stopReason = null,
+        bestResponse = null,
+        bodyLocations = setOf("bone"),
+        bodyLocationCategories = setOf(BodyLocationCategory.BONE),
+        switchToTreatments = null,
+        cycles = null,
+        maintenanceTreatment = TreatmentStage(
+            treatment = TREATMENT,
+            cycles = 1,
+            startYear = CURATED_MODIFICATION_START.year,
+            startMonth = CURATED_TREATMENT_END.monthValue
+        ),
+    ),
+    isTrial = false,
+    trialAcronym = "trialAcronym",
+    intents = setOf(Intent.PALLIATIVE)
+)
 private val EXPECTED_TREATMENT_HISTORY_FALLBACK = EXPECTED_TREATMENT_HISTORY_ENTRY.copy(
     treatmentHistoryDetails = EXPECTED_TREATMENT_HISTORY_ENTRY.treatmentHistoryDetails?.copy(
         switchToTreatments = listOf(
@@ -174,7 +198,7 @@ class StandardOncologicalHistoryExtractorTest {
     }
 
     @Test
-    fun `Should merge treatments by taking the oncological history when the same treatment and date exists in both the onco history curation and prior other condition curation`() {
+    fun `Should merge treatments by taking the prior other condition when the same treatment and date exists in both the onco history curation and prior other condition curation`() {
         val duplicatedCuration =
             CURATED_TREATMENT_HISTORY_ENTRY.copy(curated = CURATED_TREATMENT_HISTORY_ENTRY.curated?.copy(startYear = 2024, startMonth = 10))
         every { treatmentCurationDatabase.find(TREATMENT_NAME) } returns setOf(duplicatedCuration)
@@ -190,7 +214,12 @@ class StandardOncologicalHistoryExtractorTest {
         )
 
         assertThat(result.evaluation.warnings).isEmpty()
-        assertThat(result.extracted).containsOnly(EXPECTED_TREATMENT_HISTORY_ENTRY.copy(startYear = 2024, startMonth = 10))
+        assertThat(result.extracted).containsOnly(
+            EXPECTED_TREATMENT_HISTORY_FROM_PRIOR_OTHER_CONDITION.copy(
+                startYear = 2024,
+                startMonth = 10
+            )
+        )
     }
 
     @Test
@@ -301,33 +330,9 @@ class StandardOncologicalHistoryExtractorTest {
                 )
             )
         )
-        val firstEntry = TreatmentHistoryEntry(
-            startYear = PROVIDED_PRIOR_CONDITION_START.year,
-            startMonth = PROVIDED_PRIOR_CONDITION_START.monthValue,
-            treatments = curated.treatments,
-            treatmentHistoryDetails = TreatmentHistoryDetails(
-                stopYear = PROVIDED_PRIOR_CONDITION_END.year,
-                stopMonth = PROVIDED_PRIOR_CONDITION_END.monthValue,
-                stopReason = null,
-                bestResponse = null,
-                bodyLocations = setOf("bone"),
-                bodyLocationCategories = setOf(BodyLocationCategory.BONE),
-                switchToTreatments = null,
-                cycles = null,
-                maintenanceTreatment = TreatmentStage(
-                    treatment = TREATMENT,
-                    cycles = 1,
-                    startYear = CURATED_MODIFICATION_START.year,
-                    startMonth = CURATED_TREATMENT_END.monthValue
-                ),
-            ),
-            isTrial = false,
-            trialAcronym = "trialAcronym",
-            intents = setOf(Intent.PALLIATIVE)
-        )
         assertThat(result.extracted).containsExactly(
-            firstEntry,
-            firstEntry.copy(isTrial = true)
+            EXPECTED_TREATMENT_HISTORY_FROM_PRIOR_OTHER_CONDITION,
+            EXPECTED_TREATMENT_HISTORY_FROM_PRIOR_OTHER_CONDITION.copy(isTrial = true)
         )
     }
 

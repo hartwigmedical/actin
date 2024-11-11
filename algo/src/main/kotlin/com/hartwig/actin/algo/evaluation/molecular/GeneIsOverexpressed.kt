@@ -8,6 +8,6 @@ import java.time.LocalDate
 class GeneIsOverexpressed(maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
     
     override fun evaluate(molecular: MolecularRecord): Evaluation {
-        return EvaluationFactory.undetermined("RNA gene expression not yet evaluated")
+        return EvaluationFactory.undetermined("Overexpression of genes in RNA undetermined", missingGenesForEvaluation = true)
     }
 }

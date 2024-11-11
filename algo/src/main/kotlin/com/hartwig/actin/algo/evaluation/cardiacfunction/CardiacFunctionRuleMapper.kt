@@ -14,7 +14,9 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
             EligibilityRule.HAS_LVEF_OF_AT_LEAST_X to hasSufficientLVEFCreator(),
             EligibilityRule.HAS_QTC_OF_AT_MOST_X to hasLimitedQTCFCreator(),
             EligibilityRule.HAS_QTCF_OF_AT_MOST_X to hasLimitedQTCFCreator(),
+            EligibilityRule.HAS_QTCF_OF_AT_MOST_X_WITH_GENDER_Y to hasLimitedQTCFWithGenderCreator(),
             EligibilityRule.HAS_QTCF_OF_AT_LEAST_X to hasSufficientQTCFCreator(),
+            EligibilityRule.HAS_QTCF_OF_AT_LEAST_X_WITH_GENDER_Y to hasSufficientQTCFWithGenderCreator(),
             EligibilityRule.HAS_JTC_OF_AT_LEAST_X to hasSufficientJTcCreator(),
             EligibilityRule.HAS_LONG_QT_SYNDROME to hasLongQTSyndromeCreator(),
             EligibilityRule.HAS_NORMAL_CARDIAC_FUNCTION_BY_MUGA_OR_TTE to hasNormalCardiacFunctionByMUGAOrTTECreator(),
@@ -43,9 +45,23 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
         }
     }
 
+    private fun hasLimitedQTCFWithGenderCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val (maxQTCF, gender) = functionInputResolver().createOneDoubleOneGenderInput(function)
+            HasQTCFWithGender(maxQTCF, gender, ECGMeasureEvaluationFunctions::hasLimitedQTCF)
+        }
+    }
+
     private fun hasSufficientQTCFCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             ECGMeasureEvaluationFunctions.hasSufficientQTCF(functionInputResolver().createOneDoubleInput(function))
+        }
+    }
+
+    private fun hasSufficientQTCFWithGenderCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val (minQTCF, gender) = functionInputResolver().createOneDoubleOneGenderInput(function)
+            HasQTCFWithGender(minQTCF, gender, ECGMeasureEvaluationFunctions::hasSufficientQTCF)
         }
     }
 

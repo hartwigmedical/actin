@@ -1,42 +1,11 @@
 steps:
-  - name: 'gcr.io/cloud-builders/gsutil'
-    id: 'Populate the maven cache'
-    args:
-      - '-m'
-      - 'rsync'
-      - '-r'
-      - 'gs://actin-build-maven-cache/actin/.m2'
-      - '/cache/.m2'
-    volumes:
-      - path: '/cache/.m2'
-        name: 'm2_cache'
-
-  - id: 'Create the ACTIN build agent image'
-    name: 'gcr.io/cloud-builders/docker'
-    dir: 'system/src/test/docker'
-    args: [ 'build', '.', '-t', 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent:latest' ]
     
   - id: 'Compile, package, release'
-    name: 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent:latest'
+    name: 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-build-agent:1.1.3'
     entrypoint: mvn
     args: [ 'test', '-B' ]
-    volumes:
-      - path: '/cache/.m2'
-        name: 'm2_cache'
     env:
-      - MAVEN_OPTS=-Dmaven.repo.local=/cache/.m2
-
-  - name: 'gcr.io/cloud-builders/gsutil'
-    id: 'Update the maven cache'
-    args:
-      - '-m'
-      - 'rsync'
-      - '-r'
-      - '/cache/.m2'
-      - 'gs://actin-build-maven-cache/actin/.m2/'
-    volumes:
-      - path: '/cache/.m2'
-        name: 'm2_cache'
+      - MAVEN_OPTS=-Dmaven.repo.local=/.m2/repository
 
 options:
   machineType: 'E2_HIGHCPU_8'

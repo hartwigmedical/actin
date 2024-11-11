@@ -27,11 +27,11 @@
     "stage": "IV",
     "derivedStages": null,
     "hasMeasurableDisease": true,
-    "hasBrainLesions": true,
-    "brainLesionsCount": 1,
+    "hasBrainLesions": false,
+    "brainLesionsCount": null,
     "hasActiveBrainLesions": false,
-    "hasCnsLesions": true,
-    "cnsLesionsCount": 1,
+    "hasCnsLesions": false,
+    "cnsLesionsCount": null,
     "hasActiveCnsLesions": false,
     "hasBoneLesions": false,
     "boneLesionsCount": null,
@@ -47,10 +47,7 @@
   },
   "clinicalStatus": {
     "who": 1,
-    "infectionStatus": {
-      "hasActiveInfection": true,
-      "description": "Pneumonia"
-    },
+    "infectionStatus": null,
     "ecg": {
       "hasSigAberrationLatestECG": false,
       "aberrationDescription": "",
@@ -106,21 +103,7 @@
       }
     }
   ],
-  "priorSecondPrimaries": [
-    {
-      "tumorLocation": "Skin",
-      "tumorSubLocation": "neck",
-      "tumorType": "Carcinoma",
-      "tumorSubType": "Squamous cell carcinoma",
-      "doids": [ "3151" ],
-      "diagnosedYear": 2022,
-      "diagnosedMonth": 1,
-      "treatmentHistory": "Radical excision",
-      "lastTreatmentYear": 2022,
-      "lastTreatmentMonth": 1,
-      "status": "INACTIVE"
-    }
-  ],
+  "priorSecondPrimaries": [],
   "priorOtherConditions": [
     {
       "name": "Rheumatoid arthritis",
@@ -130,16 +113,6 @@
         "7148"
       ],
       "category": "Autoimmune disease",
-      "isContraindicationForTherapy": true
-    },
-    {
-      "name": "Bacterial pneumonia",
-      "year": 2024,
-      "month": 9,
-      "doids": [
-        "874"
-      ],
-      "category": "Lung disease",
       "isContraindicationForTherapy": true
     }
   ],
