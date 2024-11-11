@@ -254,7 +254,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
     }
 
     @Test
-    fun `Should warn when reportable exon skips but other reportable matches`() {
+    fun `Should warn when reportable exon skips but also other reportable matches`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(

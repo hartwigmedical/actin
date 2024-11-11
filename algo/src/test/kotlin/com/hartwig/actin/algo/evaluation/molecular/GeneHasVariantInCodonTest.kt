@@ -131,7 +131,7 @@ class GeneHasVariantInCodonTest {
                         gene = TARGET_GENE,
                         isReportable = true,
                         canonicalImpact = impactWithCodon(OTHER_CODON),
-                        otherImpacts = setOf(impactWithCodon(OTHER_CODON), impactWithCodon(MATCHING_CODON))
+                        otherImpacts = setOf(impactWithCodon(MATCHING_CODON))
                     )
                 )
             )

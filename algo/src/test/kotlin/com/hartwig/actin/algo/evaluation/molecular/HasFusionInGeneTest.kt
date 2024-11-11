@@ -92,12 +92,48 @@ class HasFusionInGeneTest {
     }
 
     @Test
-    fun `Should warn on high driver reportable gain of function matching fusion when other fusion types present`() {
+    fun `Should warn on matching high driver reportable gain of function fusion when non-reportable fusion also present`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
                 MolecularTestFactory.withDrivers(
                     matchingFusion,
                     matchingFusion.copy(isReportable = false)
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should warn on matching high driver reportable gain of function fusion when non-high driver likelihood gain of function fusion also present`() {
+        assertMolecularEvaluation(
+            EvaluationResult.WARN, function.evaluate(
+                MolecularTestFactory.withDrivers(
+                    matchingFusion,
+                    matchingFusion.copy(driverLikelihood = DriverLikelihood.LOW)
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should warn on matching high driver reportable gain of function fusion when fusion with no effect also present`() {
+        assertMolecularEvaluation(
+            EvaluationResult.WARN, function.evaluate(
+                MolecularTestFactory.withDrivers(
+                    matchingFusion,
+                    matchingFusion.copy(proteinEffect = ProteinEffect.NO_EFFECT)
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should warn on matching high driver reportable gain of function fusion when non-gain of function and non-high driver likelihood fusion present`() {
+        assertMolecularEvaluation(
+            EvaluationResult.WARN, function.evaluate(
+                MolecularTestFactory.withDrivers(
+                    matchingFusion,
+                    matchingFusion.copy(proteinEffect = ProteinEffect.NO_EFFECT, driverLikelihood = DriverLikelihood.LOW)
                 )
             )
         )
