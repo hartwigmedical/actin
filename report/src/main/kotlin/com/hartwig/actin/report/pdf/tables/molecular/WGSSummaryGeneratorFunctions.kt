@@ -226,8 +226,8 @@ object WGSSummaryGeneratorFunctions {
         val characteristicsGenerator = MolecularCharacteristicsGenerator(molecular, keyWidth + valueWidth)
         val orderedKeys = getOrderedKeys(isShort)
         val keyToValueMap = mapOf(
-            "Microsatellite (in)stability" to (characteristicsGenerator.createMSStabilityString() ?: Formats.VALUE_UNKNOWN),
-            "HR status" to (characteristicsGenerator.createHRStatusString() ?: Formats.VALUE_UNKNOWN),
+            "Microsatellite (in)stability" to (characteristicsGenerator.createMSStabilityString()),
+            "HR status" to (characteristicsGenerator.createHRStatusString()),
             "High driver mutations" to formatList(summarizer.keyVariants()),
             "Amplified genes" to formatList(summarizer.keyAmplifiedGenes()),
             "Deleted genes" to formatList(summarizer.keyDeletedGenes()),

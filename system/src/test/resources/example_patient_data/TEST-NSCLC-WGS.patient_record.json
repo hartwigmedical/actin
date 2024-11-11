@@ -46,7 +46,7 @@
 	"rawPathologyReport": null
   },
   "clinicalStatus": {
-	"who": 1,
+	"who": 0,
 	"infectionStatus": {
 	  "hasActiveInfection": true,
 	  "description": "Pneumonia"
@@ -236,7 +236,22 @@
 	  "isOutsideRef": false
 	}
   ],
-  "toxicities": [],
+  "toxicities": [
+	{
+	  "name": "Nausea",
+	  "categories": [
+		"Gastrointestinal"
+	  ],
+	  "evaluatedDate": {
+		"year": 2024,
+		"month": 9,
+		"day": 9
+	  },
+	  "source": "EHR",
+	  "grade": 3,
+	  "endDate": null
+	}
+  ],
   "intolerances": [],
   "surgeries": [
 	{
