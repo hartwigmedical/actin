@@ -18,6 +18,7 @@ object ExampleFunctions {
 
     private const val EXAMPLE_PATIENT_RECORD_JSON = "example_patient_data/EXAMPLE-$EXAMPLE_NAME_.patient_record.json"
     private const val EXAMPLE_TREATMENT_MATCH_JSON = "example_treatment_match/EXAMPLE-$EXAMPLE_NAME_.treatment_match.json"
+    private const val EXAMPLE_REPORT_PDF = "example_reports/EXAMPLE-$EXAMPLE_NAME_.actin.pdf"
     private const val EXAMPLE_TRIAL_DATABASE_DIRECTORY = "example_trial_database"
 
     private const val EXAMPLE_TREATMENT_MATCH_DIRECTORY = "example_treatment_match"
@@ -29,6 +30,10 @@ object ExampleFunctions {
 
     fun resolveExampleTreatmentMatchJson(exampleName: String): String {
         return ResourceLocator.resourceOnClasspath(EXAMPLE_TREATMENT_MATCH_JSON.replace(EXAMPLE_NAME_, exampleName))
+    }
+
+    fun resolveExampleReportPdf(exampleName: String): String {
+        return ResourceLocator.resourceOnClasspath(EXAMPLE_REPORT_PDF.replace(EXAMPLE_NAME_, exampleName))
     }
 
     fun resolveExampleTrialDatabaseDirectory(): String {

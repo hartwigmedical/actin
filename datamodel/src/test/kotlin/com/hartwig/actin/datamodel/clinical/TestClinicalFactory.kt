@@ -17,8 +17,8 @@ import java.time.LocalDateTime
 
 object TestClinicalFactory {
 
-    private val NOW = LocalDateTime.now()
-    private val TODAY = NOW.toLocalDate()
+    private val FIXED_DATETIME = LocalDateTime.of(2024, 10, 10, 0, 0)
+    private val FIXED_DATE = FIXED_DATETIME.toLocalDate()
     private const val DAYS_SINCE_QUESTIONNAIRE = 10
     private const val DAYS_SINCE_REGISTRATION = 15
     private const val DAYS_SINCE_LAB_MEASUREMENT_1 = 30
@@ -87,8 +87,8 @@ object TestClinicalFactory {
         return PatientDetails(
             gender = Gender.MALE,
             birthYear = 1950,
-            registrationDate = TODAY.minusDays(DAYS_SINCE_REGISTRATION.toLong()),
-            questionnaireDate = TODAY.minusDays(DAYS_SINCE_QUESTIONNAIRE.toLong()),
+            registrationDate = FIXED_DATE.minusDays(DAYS_SINCE_REGISTRATION.toLong()),
+            questionnaireDate = FIXED_DATE.minusDays(DAYS_SINCE_QUESTIONNAIRE.toLong()),
             hasHartwigSequencing = true
         )
     }
@@ -265,8 +265,8 @@ object TestClinicalFactory {
                 tumorType = "Carcinoma",
                 tumorSubType = "Adenocarcinoma",
                 doids = setOf("3905"),
-                diagnosedYear = TODAY.year - YEARS_SINCE_SECOND_PRIMARY_DIAGNOSIS,
-                diagnosedMonth = TODAY.monthValue,
+                diagnosedYear = FIXED_DATE.year - YEARS_SINCE_SECOND_PRIMARY_DIAGNOSIS,
+                diagnosedMonth = FIXED_DATE.monthValue,
                 treatmentHistory = "Surgery",
                 status = TumorStatus.INACTIVE,
                 lastTreatmentYear = null,
@@ -353,7 +353,7 @@ object TestClinicalFactory {
     private fun createTestLabValues(): List<LabValue> {
         return listOf(
             LabValue(
-                date = TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3.toLong()),
+                date = FIXED_DATE.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3.toLong()),
                 code = "ASAT",
                 name = "Aspartate aminotransferase",
                 comparator = "",
@@ -364,7 +364,7 @@ object TestClinicalFactory {
                 refLimitLow = null
             ),
             LabValue(
-                date = TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3.toLong()),
+                date = FIXED_DATE.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3.toLong()),
                 code = "Hb",
                 name = "Hemoglobin",
                 comparator = "",
@@ -375,7 +375,7 @@ object TestClinicalFactory {
                 isOutsideRef = true
             ),
             LabValue(
-                date = TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_1.toLong()),
+                date = FIXED_DATE.minusDays(DAYS_SINCE_LAB_MEASUREMENT_1.toLong()),
                 code = "THROMBO-ABS",
                 name = "Thrombocytes",
                 comparator = "",
@@ -386,7 +386,7 @@ object TestClinicalFactory {
                 isOutsideRef = false
             ),
             LabValue(
-                date = TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_2.toLong()),
+                date = FIXED_DATE.minusDays(DAYS_SINCE_LAB_MEASUREMENT_2.toLong()),
                 code = "THROMBO-ABS",
                 name = "Thrombocytes",
                 comparator = "",
@@ -397,7 +397,7 @@ object TestClinicalFactory {
                 isOutsideRef = true
             ),
             LabValue(
-                date = TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3.toLong()),
+                date = FIXED_DATE.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3.toLong()),
                 code = "THROMBO-ABS",
                 name = "Thrombocytes",
                 comparator = "",
@@ -408,7 +408,7 @@ object TestClinicalFactory {
                 isOutsideRef = true
             ),
             LabValue(
-                date = TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_1.toLong()),
+                date = FIXED_DATE.minusDays(DAYS_SINCE_LAB_MEASUREMENT_1.toLong()),
                 code = "LEUKO-ABS",
                 name = "Leukocytes",
                 comparator = "",
@@ -419,7 +419,7 @@ object TestClinicalFactory {
                 isOutsideRef = false
             ),
             LabValue(
-                date = TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_1.toLong()),
+                date = FIXED_DATE.minusDays(DAYS_SINCE_LAB_MEASUREMENT_1.toLong()),
                 code = "CKD-EPIeGFR",
                 name = "CKD-EPI eGFR",
                 comparator = ">",
@@ -430,7 +430,7 @@ object TestClinicalFactory {
                 isOutsideRef = false
             ),
             LabValue(
-                date = TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_2.toLong()),
+                date = FIXED_DATE.minusDays(DAYS_SINCE_LAB_MEASUREMENT_2.toLong()),
                 code = "LDH",
                 name = "Lactate dehydrogenase",
                 comparator = "",
@@ -448,14 +448,14 @@ object TestClinicalFactory {
             Toxicity(
                 name = "Nausea",
                 categories = setOf("Nausea"),
-                evaluatedDate = TODAY.minusDays(DAYS_SINCE_TOXICITIES.toLong()),
+                evaluatedDate = FIXED_DATE.minusDays(DAYS_SINCE_TOXICITIES.toLong()),
                 source = ToxicitySource.EHR,
                 grade = 1
             ),
             Toxicity(
                 name = "Fatigue",
                 categories = setOf("Fatigue"),
-                evaluatedDate = TODAY.minusDays(DAYS_SINCE_TOXICITIES.toLong()),
+                evaluatedDate = FIXED_DATE.minusDays(DAYS_SINCE_TOXICITIES.toLong()),
                 source = ToxicitySource.QUESTIONNAIRE,
                 grade = 2
             )
@@ -480,22 +480,22 @@ object TestClinicalFactory {
 
     private fun createTestSurgeries(): List<Surgery> {
         return listOf(
-            Surgery(name = "Surgery 1", endDate = TODAY.minusDays(DAYS_SINCE_SURGERY.toLong()), status = SurgeryStatus.FINISHED),
-            Surgery(name = "Surgery 2", endDate = TODAY.minusDays(DAYS_SINCE_SURGERY_2.toLong()), status = SurgeryStatus.FINISHED)
+            Surgery(name = "Surgery 1", endDate = FIXED_DATE.minusDays(DAYS_SINCE_SURGERY.toLong()), status = SurgeryStatus.FINISHED),
+            Surgery(name = "Surgery 2", endDate = FIXED_DATE.minusDays(DAYS_SINCE_SURGERY_2.toLong()), status = SurgeryStatus.FINISHED)
         )
     }
 
     private fun createTestBodyWeights(): List<BodyWeight> {
         return listOf(
-            BodyWeight(date = NOW.minusDays(DAYS_SINCE_BODY_WEIGHT_1.toLong()), value = 70.0, unit = "Kilogram", valid = true),
-            BodyWeight(date = NOW.minusDays(DAYS_SINCE_BODY_WEIGHT_2.toLong()), value = 68.0, unit = "Kilogram", valid = true)
+            BodyWeight(date = FIXED_DATETIME.minusDays(DAYS_SINCE_BODY_WEIGHT_1.toLong()), value = 70.0, unit = "Kilogram", valid = true),
+            BodyWeight(date = FIXED_DATETIME.minusDays(DAYS_SINCE_BODY_WEIGHT_2.toLong()), value = 68.0, unit = "Kilogram", valid = true)
         )
     }
 
     private fun createTestVitalFunctions(): List<VitalFunction> {
         return listOf(
             VitalFunction(
-                date = NOW.minusDays(DAYS_SINCE_BLOOD_PRESSURE.toLong()),
+                date = FIXED_DATETIME.minusDays(DAYS_SINCE_BLOOD_PRESSURE.toLong()),
                 category = VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE,
                 subcategory = "Mean blood pressure",
                 value = 99.0,
@@ -506,7 +506,7 @@ object TestClinicalFactory {
     }
 
     private fun createTestBloodTransfusions(): List<BloodTransfusion> {
-        return listOf(BloodTransfusion(date = TODAY.minusDays(DAYS_SINCE_BLOOD_TRANSFUSION.toLong()), product = "Thrombocyte concentrate"))
+        return listOf(BloodTransfusion(date = FIXED_DATE.minusDays(DAYS_SINCE_BLOOD_TRANSFUSION.toLong()), product = "Thrombocyte concentrate"))
     }
 
     private fun createTestMedications(): List<Medication> {
@@ -522,8 +522,8 @@ object TestClinicalFactory {
                     frequencyUnit = "day",
                     ifNeeded = false
                 ),
-                startDate = TODAY.minusDays(DAYS_SINCE_MEDICATION_START.toLong()),
-                stopDate = TODAY.plusDays(DAYS_UNTIL_MEDICATION_END.toLong()),
+                startDate = FIXED_DATE.minusDays(DAYS_SINCE_MEDICATION_START.toLong()),
+                stopDate = FIXED_DATE.plusDays(DAYS_UNTIL_MEDICATION_END.toLong()),
                 isSelfCare = false,
                 isTrialMedication = false,
             ),
@@ -540,8 +540,8 @@ object TestClinicalFactory {
                     periodBetweenValue = 2.0,
                     ifNeeded = false
                 ),
-                startDate = TODAY.minusDays(DAYS_SINCE_MEDICATION_START.toLong()),
-                stopDate = TODAY.plusDays(DAYS_UNTIL_MEDICATION_END.toLong()),
+                startDate = FIXED_DATE.minusDays(DAYS_SINCE_MEDICATION_START.toLong()),
+                stopDate = FIXED_DATE.plusDays(DAYS_UNTIL_MEDICATION_END.toLong()),
                 isSelfCare = false,
                 isTrialMedication = false,
             )
