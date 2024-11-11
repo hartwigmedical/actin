@@ -51,7 +51,7 @@ class EligibleExternalTrialsGenerator(
                         EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(
                             trial,
                             it
-                        ).second
+                        ).first
                     } ?: EligibleExternalTrialGeneratorFunctions.countryNamesWithCities(trial)
                 )
             )
