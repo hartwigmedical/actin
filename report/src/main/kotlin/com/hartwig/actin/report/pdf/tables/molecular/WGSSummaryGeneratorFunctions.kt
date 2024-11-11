@@ -72,7 +72,7 @@ object WGSSummaryGeneratorFunctions {
                 table.addCell(potentiallyActionableEventsCell(actionableEventsWithLowOrMediumDriver))
             }
             if (actionableEventsWithUnknownDriver.isNotEmpty()) {
-                table.addCell(Cells.createKey("Potentially actionable events not considered a driver:"))
+                table.addCell(Cells.createKey("Events relevant for trial inclusion, but not considered a tumor driver:"))
                 table.addCell(potentiallyActionableEventsCell(actionableEventsWithUnknownDriver))
             }
         } else {
@@ -170,7 +170,7 @@ object WGSSummaryGeneratorFunctions {
             val warning = when (driver.driverLikelihood) {
                 DriverLikelihood.LOW -> " (low driver likelihood)"
                 DriverLikelihood.MEDIUM -> " (medium driver likelihood)"
-                else -> if (driver is CopyNumber) "" else " (dubious quality)"
+                else -> if (driver is CopyNumber) " (NO amplification)" else " (dubious quality)"
             }
             listOf(
                 Text(driver.event).addStyle(Styles.tableHighlightStyle()),
@@ -226,8 +226,8 @@ object WGSSummaryGeneratorFunctions {
         val characteristicsGenerator = MolecularCharacteristicsGenerator(molecular, keyWidth + valueWidth)
         val orderedKeys = getOrderedKeys(isShort)
         val keyToValueMap = mapOf(
-            "Microsatellite (in)stability" to (characteristicsGenerator.createMSStabilityString() ?: Formats.VALUE_UNKNOWN),
-            "HR status" to (characteristicsGenerator.createHRStatusString() ?: Formats.VALUE_UNKNOWN),
+            "Microsatellite (in)stability" to (characteristicsGenerator.createMSStabilityString()),
+            "HR status" to (characteristicsGenerator.createHRStatusString()),
             "High driver mutations" to formatList(summarizer.keyVariants()),
             "Amplified genes" to formatList(summarizer.keyAmplifiedGenes()),
             "Deleted genes" to formatList(summarizer.keyDeletedGenes()),
