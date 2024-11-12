@@ -237,19 +237,6 @@ class GeneIsWildTypeTest {
     }
 
     @Test
-    fun `Should be undetermined in case no variant is found and insufficient quality`() {
-        assertMolecularEvaluation(
-            EvaluationResult.UNDETERMINED,
-            function.evaluate(
-                MolecularTestFactory.withHasSufficientQualityAndPurity(
-                    hasSufficientPurity = false,
-                    hasSufficientQuality = false
-                )
-            )
-        )
-    }
-
-    @Test
     fun `Should be pass in case no variant is found and sufficient quality and purity`() {
         assertMolecularEvaluation(
             EvaluationResult.PASS,

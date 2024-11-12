@@ -68,12 +68,6 @@ class GeneIsWildType(private val gene: String, maxTestAge: LocalDate? = null) : 
             evaluatePotentialWarns(reportableEventsWithNoEffect, reportableEventsWithEffectPotentiallyWildtype, evidenceSource)
 
         return when {
-            !test.hasSufficientQuality ->
-                EvaluationFactory.undetermined(
-                    "Gene $gene wild-type status undetermined due to insufficient quality",
-                    "$gene wild-type status undetermined due to insufficient quality",
-                )
-
             reportableEventsWithEffect.isNotEmpty() ->
                 EvaluationFactory.fail(
                     "Gene $gene is not considered wild-type due to ${Format.concat(reportableEventsWithEffect)}",
