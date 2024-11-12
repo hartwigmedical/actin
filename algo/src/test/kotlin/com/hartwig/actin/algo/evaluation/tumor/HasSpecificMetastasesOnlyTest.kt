@@ -25,9 +25,9 @@ class HasSpecificMetastasesOnlyTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined when patient has suspected liver metastases only`() {
+    fun `Should warn when patient has suspected liver metastases only`() {
         assertEvaluation(
-            EvaluationResult.UNDETERMINED,
+            EvaluationResult.WARN,
             hasLiverMetastasesOnly.evaluate(TumorTestFactory.withBoneAndSuspectedLiverLesions(false, true))
         )
     }
@@ -67,10 +67,10 @@ class HasSpecificMetastasesOnlyTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined when patient has suspected bone metastases only`() {
+    fun `Should warn when patient has suspected bone metastases only`() {
         assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            hasLiverMetastasesOnly.evaluate(TumorTestFactory.withSuspectedBoneAndOtherLesions(true, emptyList()))
+            EvaluationResult.WARN,
+            hasBoneMetastasesOnly.evaluate(TumorTestFactory.withSuspectedBoneAndOtherLesions(true, emptyList()))
         )
     }
 

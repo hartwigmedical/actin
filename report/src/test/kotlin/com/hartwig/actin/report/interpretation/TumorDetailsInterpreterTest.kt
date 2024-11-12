@@ -3,6 +3,7 @@ package com.hartwig.actin.report.interpretation
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.isCUP
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.lesions
+import com.hartwig.actin.report.pdf.util.Formats
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.junit.experimental.runners.Enclosed
@@ -31,37 +32,37 @@ class TumorDetailsInterpreterTest {
         @Test
         fun `Should return UNKNOWN string when no lesions`() {
             val lesions = lesions(TumorDetails())
-            assertThat(lesions).isEqualTo("Unknown")
+            assertThat(lesions).isEqualTo(Formats.VALUE_UNKNOWN)
         }
 
         @Test
         fun `Should return string for bone lesions`() {
             val lesions = lesions(TumorDetails(hasBoneLesions = true))
-            assertThat(lesions).isEqualTo("Bone")
+            assertThat(lesions).isEqualTo(TumorDetails.BONE)
         }
 
         @Test
         fun `Should return string for brain lesions`() {
             val lesions = lesions(TumorDetails(hasBrainLesions = true))
-            assertThat(lesions).isEqualTo("Brain")
+            assertThat(lesions).isEqualTo(TumorDetails.BRAIN)
         }
 
         @Test
         fun `Should return string for cns lesions`() {
             val lesions = lesions(TumorDetails(hasCnsLesions = true))
-            assertThat(lesions).isEqualTo("CNS")
+            assertThat(lesions).isEqualTo(TumorDetails.CNS)
         }
 
         @Test
         fun `Should return string for liver lesions`() {
             val lesions = lesions(TumorDetails(hasLiverLesions = true))
-            assertThat(lesions).isEqualTo("Liver")
+            assertThat(lesions).isEqualTo(TumorDetails.LIVER)
         }
 
         @Test
         fun `Should return string for lung lesions`() {
             val lesions = lesions(TumorDetails(hasLungLesions = true))
-            assertThat(lesions).isEqualTo("Lung")
+            assertThat(lesions).isEqualTo(TumorDetails.LUNG)
         }
 
         @Test

@@ -16,16 +16,16 @@ object TumorDetailsInterpreter {
     fun lesions(tumor: TumorDetails): String {
         val allCategorizedLesions = with(tumor) {
             listOf(
-                Triple("CNS", hasCnsLesions, hasSuspectedCnsLesions),
+                Triple(TumorDetails.CNS, hasCnsLesions, hasSuspectedCnsLesions),
                 Triple(
-                    "Brain",
+                    TumorDetails.BRAIN,
                     (primaryTumorLocation == "Brain" || primaryTumorType == "Glioma" || hasBrainLesions == true),
                     hasSuspectedBrainLesions
                 ),
-                Triple("Liver", hasLiverLesions, hasSuspectedLiverLesions),
-                Triple("Bone", hasBoneLesions, hasSuspectedBoneLesions),
-                Triple("Lung", hasLungLesions, hasSuspectedLungLesions),
-                Triple("Lymph node", hasLymphNodeLesions, hasSuspectedLymphNodeLesions)
+                Triple(TumorDetails.LIVER, hasLiverLesions, hasSuspectedLiverLesions),
+                Triple(TumorDetails.BONE, hasBoneLesions, hasSuspectedBoneLesions),
+                Triple(TumorDetails.LUNG, hasLungLesions, hasSuspectedLungLesions),
+                Triple(TumorDetails.LYMPH_NODE, hasLymphNodeLesions, hasSuspectedLymphNodeLesions)
             )
         }
 
@@ -46,7 +46,7 @@ object TumorDetailsInterpreter {
             .sorted()
             .distinctBy(String::uppercase)
 
-        val (lymphNodeLesions, nonLymphNodeLesions) = allLesions.partition { it.lowercase().startsWith("lymph node") }
+        val (lymphNodeLesions, nonLymphNodeLesions) = allLesions.partition { it.lowercase().startsWith(TumorDetails.LYMPH_NODE.lowercase()) }
         val filteredLymphNodeLesions = lymphNodeLesions.map { lesion ->
             lesion.split(" ").filterNot { it.lowercase() in setOf("lymph", "node", "nodes", "") }
                 .joinToString(" ")

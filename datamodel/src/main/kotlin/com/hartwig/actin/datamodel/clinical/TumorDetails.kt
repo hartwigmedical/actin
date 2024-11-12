@@ -12,12 +12,12 @@ data class TumorDetails(
     val hasMeasurableDisease: Boolean? = null,
     val hasBrainLesions: Boolean? = null,
     val hasSuspectedBrainLesions: Boolean? = null,
-    val brainLesionsCount: Int? = null,
     val hasActiveBrainLesions: Boolean? = null,
+    val brainLesionsCount: Int? = null,
     val hasCnsLesions: Boolean? = null,
     val hasSuspectedCnsLesions: Boolean? = null,
-    val cnsLesionsCount: Int? = null,
     val hasActiveCnsLesions: Boolean? = null,
+    val cnsLesionsCount: Int? = null,
     val hasBoneLesions: Boolean? = null,
     val hasSuspectedBoneLesions: Boolean? = null,
     val boneLesionsCount: Int? = null,
@@ -39,18 +39,30 @@ data class TumorDetails(
     fun hasConfirmedBrainLesions() = hasBrainLesions == true || hasActiveBrainLesions == true
     fun hasConfirmedCnsLesions() = hasCnsLesions == true || hasActiveCnsLesions == true
 
-    fun hasSuspectedLesions() = listOf(
-        hasSuspectedCnsLesions,
-        hasSuspectedBrainLesions,
-        hasSuspectedBoneLesions,
-        hasSuspectedLiverLesions,
-        hasSuspectedLungLesions,
-        hasSuspectedLymphNodeLesions,
-        !otherSuspectedLesions.isNullOrEmpty()
-    ).any { it == true }
+    fun confirmedCategoricalLesionList(): List<Boolean?> {
+        return listOf(hasLiverLesions, hasCnsLesions, hasBrainLesions, hasBoneLesions, hasLungLesions, hasLymphNodeLesions)
+    }
 
-    val confirmedCategoricalLesionList =
-        listOf(hasLiverLesions, hasCnsLesions, hasBrainLesions, hasBoneLesions, hasLungLesions, hasLymphNodeLesions)
+    fun suspectedCategoricalLesionList(): List<Boolean?> {
+        return listOf(
+            hasSuspectedLiverLesions,
+            hasSuspectedCnsLesions,
+            hasSuspectedBrainLesions,
+            hasSuspectedBoneLesions,
+            hasSuspectedLungLesions,
+            hasSuspectedLymphNodeLesions
+        )
+    }
 
-    fun hasConfirmedLesions() = confirmedCategoricalLesionList.any { it == true } || !otherLesions.isNullOrEmpty()
+    fun hasConfirmedLesions() = confirmedCategoricalLesionList().any { it == true } || !otherLesions.isNullOrEmpty()
+    fun hasSuspectedLesions() = suspectedCategoricalLesionList().any { it == true } || !otherSuspectedLesions.isNullOrEmpty()
+
+    companion object {
+        const val BONE = "Bone"
+        const val LIVER = "Liver"
+        const val LUNG = "Lung"
+        const val LYMPH_NODE = "Lymph node"
+        const val CNS = "CNS"
+        const val BRAIN = "Brain"
+    }
 }

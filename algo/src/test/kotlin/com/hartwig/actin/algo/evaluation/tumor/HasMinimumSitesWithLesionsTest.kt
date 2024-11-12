@@ -47,9 +47,9 @@ class HasMinimumSitesWithLesionsTest {
     }
 
     @Test
-    fun `Should pass when number of categorized lesions are one less than threshold and one suspected lesion present`() {
+    fun `Should warn when number of categorized lesions meets threshold when including suspected lesions`() {
         assertEvaluation(
-            EvaluationResult.PASS,
+            EvaluationResult.WARN,
             HasMinimumSitesWithLesions(4).evaluate(testPatient.copy(tumor = testPatient.tumor.copy(hasSuspectedLiverLesions = true)))
         )
     }

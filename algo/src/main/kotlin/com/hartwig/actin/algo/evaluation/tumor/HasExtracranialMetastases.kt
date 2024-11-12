@@ -27,10 +27,8 @@ class HasExtracranialMetastases : EvaluationFunction {
             }
 
             hasSuspectedNonCnsMetastases || uncategorizedSuspectedLesions.any(::isExtraCranialLesion) -> {
-                EvaluationFactory.undetermined(
-                    "Undetermined extracranial metastases (only suspected lesions extracranial)",
-                    "Undetermined extracranial metastases (only suspected lesions)"
-                )
+                val message = "Has extracranial metastases but only suspected lesions"
+                EvaluationFactory.warn(message, message)
             }
 
             uncategorizedLesions.isNotEmpty() || anyCategorizedLesionUnknown || biopsyLocation == null -> {

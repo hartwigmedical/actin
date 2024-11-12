@@ -65,9 +65,9 @@ class HasKnownCnsMetastasesTest {
     }
 
     @Test
-    fun `Should return undetermined when only suspected brain lesions present`() {
+    fun `Should warn when only suspected brain lesions present`() {
         assertEvaluation(
-            EvaluationResult.UNDETERMINED,
+            EvaluationResult.WARN,
             function.evaluate(
                 TumorTestFactory.withBrainAndCnsLesions(
                     hasBrainLesions = false,
@@ -80,9 +80,9 @@ class HasKnownCnsMetastasesTest {
     }
 
     @Test
-    fun `Should return undetermined when only suspected CNS lesions present`() {
+    fun `Should warn when only suspected CNS lesions present`() {
         assertEvaluation(
-            EvaluationResult.UNDETERMINED,
+            EvaluationResult.WARN,
             function.evaluate(
                 TumorTestFactory.withBrainAndCnsLesions(
                     hasBrainLesions = false,

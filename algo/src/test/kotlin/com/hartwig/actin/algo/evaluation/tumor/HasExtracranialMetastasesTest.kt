@@ -72,9 +72,9 @@ class HasExtracranialMetastasesTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined when only suspected extracranial metastases present`() {
+    fun `Should warn when only suspected extracranial metastases present`() {
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED,
+            EvaluationResult.WARN,
             function.evaluate(TumorTestFactory.withSuspectedBoneAndOtherLesions(true, listOf("unknown site")))
         )
     }

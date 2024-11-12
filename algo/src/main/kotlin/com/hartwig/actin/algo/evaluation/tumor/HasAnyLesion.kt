@@ -10,7 +10,7 @@ class HasAnyLesion : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDetails = record.tumor
         with(tumorDetails) {
-            if (confirmedCategoricalLesionList.all { it == null } && otherLesions == null && !hasSuspectedLesions()) {
+            if (confirmedCategoricalLesionList().all { it == null } && otherLesions == null && !hasSuspectedLesions()) {
                 return EvaluationFactory.undetermined("Data about lesions is missing", "Missing lesions details")
             }
         }

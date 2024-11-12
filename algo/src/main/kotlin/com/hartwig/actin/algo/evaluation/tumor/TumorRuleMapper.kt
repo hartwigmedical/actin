@@ -202,7 +202,13 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasOnlyLiverMetastasesCreator(): FunctionCreator {
-        return { HasSpecificMetastasesOnly(TumorDetails::hasLiverLesions, TumorDetails::hasSuspectedLiverLesions, "liver") }
+        return {
+            HasSpecificMetastasesOnly(
+                TumorDetails::hasLiverLesions,
+                TumorDetails::hasSuspectedLiverLesions,
+                TumorDetails.LIVER.lowercase()
+            )
+        }
     }
 
     private fun hasKnownCnsMetastasesCreator(): FunctionCreator {
@@ -234,7 +240,13 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasOnlyBoneMetastasesCreator(): FunctionCreator {
-        return { HasSpecificMetastasesOnly(TumorDetails::hasBoneLesions, TumorDetails::hasSuspectedBoneLesions, "bone") }
+        return {
+            HasSpecificMetastasesOnly(
+                TumorDetails::hasBoneLesions,
+                TumorDetails::hasSuspectedBoneLesions,
+                TumorDetails.BONE.lowercase()
+            )
+        }
     }
 
     private fun hasLungMetastasesCreator(): FunctionCreator {

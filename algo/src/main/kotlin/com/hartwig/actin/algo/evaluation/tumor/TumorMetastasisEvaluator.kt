@@ -5,18 +5,15 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 
 object TumorMetastasisEvaluator {
     fun evaluate(hasMetastases: Boolean?, hasSuspectedMetastases: Boolean?, metastasisType: String): Evaluation {
+        val capitalizedType = metastasisType.substring(0, 1).uppercase() + metastasisType.substring(1)
         return when {
             hasMetastases == true -> {
-                val capitalizedType = metastasisType.substring(0, 1).uppercase() + metastasisType.substring(1)
                 EvaluationFactory.pass("$capitalizedType metastases are present", "$capitalizedType metastases")
             }
 
             hasSuspectedMetastases == true -> {
-                val capitalizedType = metastasisType.substring(0, 1).uppercase() + metastasisType.substring(1)
-                EvaluationFactory.undetermined(
-                    "Undetermined if $capitalizedType metastases present (only suspected lesions)",
-                    "Undetermined $capitalizedType metastases (suspected lesions only)"
-                )
+                val message = "$capitalizedType metastases present but only suspected lesions"
+                EvaluationFactory.warn(message, message)
             }
 
             hasMetastases == null -> EvaluationFactory.undetermined(
