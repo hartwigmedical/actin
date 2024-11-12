@@ -16,7 +16,7 @@ class HasUnresectablePeritonealMetastases : EvaluationFunction {
             }
 
             certainPeritonealMetastasesEvaluation == true || suspectedPeritonealMetastasesEvaluation == true -> {
-                val suspectedString = if (suspectedPeritonealMetastasesEvaluation == true) " (suspected)" else ""
+                val suspectedString = if (certainPeritonealMetastasesEvaluation != true) " (suspected)" else ""
                 EvaluationFactory.warn("Undetermined if$suspectedString peritoneal metastases are unresectable")
             }
 

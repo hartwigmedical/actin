@@ -30,7 +30,7 @@ class TumorDetailsInterpreterTest {
 
     class LesionInterpreterTest {
         @Test
-        fun `Should return UNKNOWN string when no lesions`() {
+        fun `Should return unknown string when lesion data is missing`() {
             val lesions = lesions(TumorDetails())
             assertThat(lesions).isEqualTo(Formats.VALUE_UNKNOWN)
         }
