@@ -26,6 +26,8 @@ class IHCAnnotator(
             ),
             characteristics = MolecularCharacteristics(),
             evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display(),
+            hasSufficientPurity = true,
+            hasSufficientQuality = true
         )
     }
 }
