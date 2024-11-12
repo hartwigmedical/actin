@@ -1,0 +1,626 @@
+{
+  "patientId": "EXAMPLE-LUNG-03",
+  "patient": {
+	"gender": "FEMALE",
+	"birthYear": 1980,
+	"registrationDate": {
+	  "year": 2024,
+	  "month": 10,
+	  "day": 1
+	},
+	"questionnaireDate": {
+	  "year": 2024,
+	  "month": 10,
+	  "day": 1
+	},
+	"hasHartwigSequencing": false
+  },
+  "tumor": {
+	"primaryTumorLocation": "Lung",
+	"primaryTumorSubLocation": "",
+	"primaryTumorType": "Carcinoma",
+	"primaryTumorSubType": "Small cell carcinoma",
+	"primaryTumorExtraDetails": "",
+	"doids": [
+	  "5409"
+	],
+	"stage": "IV",
+	"derivedStages": null,
+	"hasMeasurableDisease": true,
+	"hasBrainLesions": false,
+	"brainLesionsCount": null,
+	"hasActiveBrainLesions": false,
+	"hasCnsLesions": false,
+	"cnsLesionsCount": null,
+	"hasActiveCnsLesions": false,
+	"hasBoneLesions": true,
+	"boneLesionsCount": 1,
+	"hasLiverLesions": false,
+	"liverLesionsCount": null,
+	"hasLungLesions": true,
+	"lungLesionsCount": 1,
+	"hasLymphNodeLesions": true,
+	"lymphNodeLesionsCount": 1,
+	"otherLesions": [],
+	"biopsyLocation": "Lung",
+	"rawPathologyReport": null
+  },
+  "clinicalStatus": {
+	"who": 2,
+	"infectionStatus": {
+	  "hasActiveInfection": false,
+	  "description": null
+	},
+	"ecg": {
+	  "hasSigAberrationLatestECG": false,
+	  "aberrationDescription": "",
+	  "qtcfValue": 430,
+	  "qtcfUnit": "ms"
+	},
+	"lvef": 0.5,
+	"hasComplications": true
+  },
+  "oncologicalHistory": [
+	{
+	  "treatments": [
+		{
+		  "name": "CISPLATIN+ETOPOSIDE",
+		  "drugs": [
+			{
+			  "name": "CISPLATIN",
+			  "drugTypes": [
+				"PLATINUM_COMPOUND"
+			  ],
+			  "category": "CHEMOTHERAPY",
+			  "displayOverride": null
+			},
+			{
+			  "name": "ETOPOSIDE",
+			  "drugTypes": [
+				"TOPO2_INHIBITOR"
+			  ],
+			  "category": "CHEMOTHERAPY",
+			  "displayOverride": null
+			}
+		  ],
+		  "synonyms": [],
+		  "displayOverride": null,
+		  "isSystemic": true,
+		  "maxCycles": null,
+		  "treatmentClass": "DRUG_TREATMENT"
+		}
+	  ],
+	  "startYear": 2024,
+	  "startMonth": 3,
+	  "intents": [
+		"PALLIATIVE"
+	  ],
+	  "isTrial": false,
+	  "trialAcronym": null,
+	  "treatmentHistoryDetails": {
+		"stopYear": 2024,
+		"stopMonth": 9,
+		"ongoingAsOf": null,
+		"cycles": null,
+		"bestResponse": "PARTIAL_RESPONSE",
+		"stopReason": "PROGRESSIVE_DISEASE",
+		"stopReasonDetail": null,
+		"switchToTreatments": null,
+		"maintenanceTreatment": null
+	  },
+	  "toxicities": [
+		{
+		  "name": "Thrombocytopenia",
+		  "categories": [
+			"HEMATOLOGIC"
+		  ],
+		  "evaluatedDate": {
+			"year": 2024,
+			"month": 8
+		  },
+		  "source": "EHR",
+		  "grade": 2,
+		  "endDate": {
+			"year": 2024,
+			"month": 9
+		  }
+		}
+	  ],
+	  "bodyLocationCategories": null,
+	  "bodyLocations": null
+	}
+  ],
+  "priorSecondPrimaries": [],
+  "priorOtherConditions": [
+	{
+	  "name": "Cerebrovascular accident",
+	  "year": 2019,
+	  "month": 1,
+	  "doids": [
+		"3526"
+	  ],
+	  "category": "Cerebrovascular disease",
+	  "isContraindicationForTherapy": true
+	}
+  ],
+  "complications": [
+	{
+	  "name": "Pleural effusion",
+	  "categories": [
+		"Pleural effusion"
+	  ],
+	  "year": 2023,
+	  "month": 1
+	}
+  ],
+  "labValues": [
+	{
+	  "date": {
+		"year": 2024,
+		"month": 9,
+		"day": 9
+	  },
+	  "code": "ALAT",
+	  "name": "Alanine aminotransferase",
+	  "comparator": "",
+	  "value": 44.0,
+	  "unit": "UNITS_PER_LITER",
+	  "refLimitLow": 7.0,
+	  "refLimitUp": 56.0,
+	  "isOutsideRef": false
+	},
+	{
+	  "date": {
+		"year": 2024,
+		"month": 9,
+		"day": 9
+	  },
+	  "code": "ASAT",
+	  "name": "Aspartate aminotransferase",
+	  "comparator": "",
+	  "value": 32.0,
+	  "unit": "UNITS_PER_LITER",
+	  "refLimitLow": 8.0,
+	  "refLimitUp": 33.0,
+	  "isOutsideRef": false
+	},
+	{
+	  "date": {
+		"year": 2024,
+		"month": 9,
+		"day": 9
+	  },
+	  "code": "TOTAL_BILIRUBIN",
+	  "name": "total bilirubin",
+	  "comparator": "",
+	  "value": 8.0,
+	  "unit": "MICROMOLES_PER_LITER",
+	  "refLimitLow": 0,
+	  "refLimitUp": 17.0,
+	  "isOutsideRef": false
+	},
+	{
+	  "date": {
+		"year": 2024,
+		"month": 9,
+		"day": 9
+	  },
+	  "code": "ALKALINE_PHOSPHATASE",
+	  "name": "alkaline phosphatase",
+	  "comparator": "",
+	  "value": 500.0,
+	  "unit": "UNITS_PER_LITER",
+	  "refLimitLow": 30.0,
+	  "refLimitUp": 120.0,
+	  "isOutsideRef": true
+	},
+	{
+	  "date": {
+		"year": 2024,
+		"month": 9,
+		"day": 9
+	  },
+	  "code": "Hb",
+	  "name": "hemoglobin",
+	  "comparator": "",
+	  "value": 8.2,
+	  "unit": "MILLIMOLES_PER_LITER",
+	  "refLimitLow": 8,
+	  "refLimitUp": 10,
+	  "isOutsideRef": false
+	},
+	{
+	  "date": {
+		"year": 2024,
+		"month": 9,
+		"day": 9
+	  },
+	  "code": "THROMBOCYTES_ABS",
+	  "name": "absolute thrombocyte count",
+	  "comparator": "",
+	  "value": 250.0,
+	  "unit": "BILLIONS_PER_LITER",
+	  "refLimitLow": 150.0,
+	  "refLimitUp": 370.0,
+	  "isOutsideRef": false
+	},
+	{
+	  "date": {
+		"year": 2024,
+		"month": 9,
+		"day": 9
+	  },
+	  "code": "LYMPHOCYTES_ABS_EDA",
+	  "name": "absolute lymphocyte count eDA",
+	  "comparator": "",
+	  "value": 3.0,
+	  "unit": "BILLIONS_PER_LITER",
+	  "refLimitLow": 0.5,
+	  "refLimitUp": 5.0,
+	  "isOutsideRef": false
+	}
+  ],
+  "toxicities": [],
+  "intolerances": [],
+  "surgeries": [],
+  "bodyWeights": [
+	{
+	  "date": "2024-09-09T08:00:00",
+	  "value": 55.0,
+	  "unit": "KILOGRAMS",
+	  "valid": true
+	},
+	{
+	  "date": "2024-05-01T08:00:00",
+	  "value": 58.0,
+	  "unit": "KILOGRAMS",
+	  "valid": true
+	}
+  ],
+  "bodyHeights": [
+	{
+	  "date": "2024-05-01T08:00:00",
+	  "value": 165.0,
+	  "unit": "CENTIMETERS",
+	  "valid": true
+	}
+  ],
+  "vitalFunctions": [
+	{
+	  "date": "2024-09-09T08:00:00",
+	  "category": "NON_INVASIVE_BLOOD_PRESSURE",
+	  "subCategory": "SYSTOLIC_BLOOD_PRESSURE",
+	  "value": 130.0,
+	  "unit": "MILLIMETERS_OF_MERCURY",
+	  "valid": true
+	},
+	{
+	  "date": "2024-09-09T08:00:00",
+	  "category": "NON_INVASIVE_BLOOD_PRESSURE",
+	  "subCategory": "DIASTOLIC_BLOOD_PRESSURE",
+	  "value": 85.0,
+	  "unit": "MILLIMETERS_OF_MERCURY",
+	  "valid": true
+	}
+  ],
+  "bloodTransfusions": [
+	{
+	  "date": {
+		"year": 2024,
+		"month": 8,
+		"day": 20
+	  },
+	  "product": "PLATELETS_POOLED"
+	}
+  ],
+  "medications": [
+	{
+	  "name": "Simvastatin",
+	  "status": "ACTIVE",
+	  "administrationRoute": "Oral",
+	  "dosage": {
+		"dosageMin": 20.0,
+		"dosageMax": 20.0,
+		"dosageUnit": "MILLIGRAMS",
+		"frequency": 1.0,
+		"frequencyUnit": "DAYS",
+		"periodBetweenValue": 1.0,
+		"periodBetweenUnit": "DAYS",
+		"ifNeeded": false
+	  },
+	  "startDate": {
+		"year": 2019,
+		"month": 1,
+		"day": 1
+	  },
+	  "stopDate": null,
+	  "drug": null,
+	  "cypInteractions": [
+		{
+		  "type": "SUBSTRATE",
+		  "strength": "SENSITIVE",
+		  "cyp": "CYP3A4/5"
+		}
+	  ],
+	  "qtProlongatingRisk": "NONE",
+	  "atc": {
+	  "anatomicalMainGroup":  {
+		"name": "CARDIOVASCULAR SYSTEM",
+		"code": "C"
+	  },
+	  "therapeuticSubGroup": {
+		"name": "LIPID MODIFYING AGENTS",
+		"code": "C10"
+	  },
+	  "pharmacologicalSubGroup": {
+		"name": "LIPID MODIFYING AGENTS, PLAIN",
+		"code": "C10AA"
+	  },
+	  "chemicalSubGroup": {
+		"name": "HMG CoA reductase inhibitors",
+		"code": "C10AA01"
+	  },
+	  "chemicalSubstance": {
+		"name": "Simvastatin",
+		"code": "C10AA01"
+	  },
+	  "isSelfCare": false,
+	  "isTrialMedication": false
+	},
+	  "isSelfCare": false,
+	  "isTrialMedication": false
+	},
+	{
+	  "name": "Clopidogrel",
+	  "status": "ACTIVE",
+	  "administrationRoute": "Oral",
+	  "dosage": {
+		"dosageMin": 75.0,
+		"dosageMax": 75.0,
+		"dosageUnit": "MILLIGRAMS",
+		"frequency": 1.0,
+		"frequencyUnit": "DAYS",
+		"periodBetweenValue": 1.0,
+		"periodBetweenUnit": "DAYS",
+		"ifNeeded": false
+	  },
+	  "startDate": {
+		"year": 2019,
+		"month": 1,
+		"day": 1
+	  },
+	  "stopDate": null,
+	  "drug": null,
+	  "cypInteractions": [
+		{
+		  "type": "INHIBITOR",
+		  "strength": "MODERATE",
+		  "cyp": "CYP2C8"
+		},
+		{
+		  "type": "INHIBITOR",
+		  "strength": "WEAK",
+		  "cyp": "CYP2B6"
+		}
+	  ],
+	  "qtProlongatingRisk": "NONE",
+	  "atc": {
+		"anatomicalMainGroup": {
+		  "name": "BLOOD_AND_BLOOD_FORMING_ORGANS",
+		  "code": "B"
+		},
+		"therapeuticSubGroup": {
+		  "name": "ANTITHROMBOTIC_AGENTS",
+		  "code": "B01"
+		},
+		"pharmacologicalSubGroup": {
+		  "name": "ANTITHROMBOTIC_AGENTS",
+		  "code": "B01AC"
+		},
+		"chemicalSubGroup": {
+		  "name": "Platelet aggregation inhibitors excl. heparin",
+		  "code": "B01AC04"
+		},
+		"chemicalSubstance": {
+		  "name": "Clopidogrel",
+		  "code": "B01AC04"
+		},
+		"isSelfCare": false,
+		"isTrialMedication": false
+	  }
+	}
+  ],
+  "priorIHCTests": [
+	{
+	  "test": "IHC",
+	  "item": "PD-L1",
+	  "measure": null,
+	  "scoreText": null,
+	  "scoreValuePrefix": "<",
+	  "scoreValue": 1,
+	  "scoreValueUnit": "%",
+	  "impliesPotentialIndeterminateStatus": false
+	}
+  ],
+  "molecularHistory": {
+	"molecularTests": [
+	  {
+		"testedGenes": [
+		  "ALK",
+		  "BRAF",
+		  "EGFR",
+		  "KRAS",
+		  "MET",
+		  "RET",
+		  "ROS1",
+		  "SMARCA4",
+		  "TP53"
+		],
+		"experimentType": "PANEL",
+		"testTypeDisplay": "Small NGS Lung Panel",
+		"date": {
+		  "year": 2024,
+		  "month": 9,
+		  "day": 15
+		},
+		"drivers": {
+		  "variants": [
+			{
+			  "chromosome": "17",
+			  "position": 7577120,
+			  "ref": "C",
+			  "alt": "T",
+			  "type": "SNV",
+			  "variantAlleleFrequency": 0.5,
+			  "canonicalImpact": {
+				"transcriptId": "",
+				"hgvsCodingImpact": "c.818G>A",
+				"hgvsProteinImpact": "p.R273H",
+				"affectedCodon": 273,
+				"affectedExon": 7,
+				"isSpliceRegion": false,
+				"effects": [
+				  "MISSENSE"
+				],
+				"codingEffect": "MISSENSE"
+			  },
+			  "otherImpacts": [],
+			  "extendedVariantDetails": null,
+			  "isHotspot": true,
+			  "isReportable": true,
+			  "event": "TP53 R273H",
+			  "driverLikelihood": "HIGH",
+			  "evidence": {
+				"externalEligibleTrials": [
+				  {
+					"title": "TP53-TRIAL",
+					"countries": [
+					  {
+						"name": "NETHERLANDS",
+						"hospitalsPerCity": {
+						  "Tilburg": [
+							"Elisabeth-TweeSteden Ziekenhuis"
+						  ]
+						}
+					  },
+					  {
+						"name": "GERMANY",
+						"hospitalsPerCity": {
+						  "Stuttgart": [
+							"Robert-Bosch-Krankenhaus - Klinik Schillerhoehe"
+						  ]
+						}
+					  }
+					],
+					"url": "https://hartwigmedicalfoundation.nl",
+					"nctId": "NCT00000026",
+					"isCategoryEvent": true,
+					"sourceEvent": "TP53 mutations",
+					"evidenceLevelDetails": "CLINICAL_STUDY",
+					"applicableCancerType": {
+					  "cancerType": "Lung cancer",
+					  "excludedCancerTypes": []
+					}
+				  }
+				]
+			  },
+			  "gene": "TP53",
+			  "geneRole": "TSG",
+			  "proteinEffect": "LOSS_OF_FUNCTION",
+			  "isAssociatedWithDrugResistance": null
+			},
+			{
+			  "chromosome": "19",
+			  "position": 7577120,
+			  "ref": "C",
+			  "alt": "T",
+			  "type": "SNV",
+			  "variantAlleleFrequency": 0.5,
+			  "canonicalImpact": {
+				"transcriptId": "",
+				"hgvsCodingImpact": "c.2729CT",
+				"hgvsProteinImpact": "p.T910M",
+				"affectedCodon": 910,
+				"affectedExon": 18,
+				"isSpliceRegion": false,
+				"effects": [
+				  "MISSENSE"
+				],
+				"codingEffect": "MISSENSE"
+			  },
+			  "otherImpacts": [],
+			  "extendedVariantDetails": null,
+			  "isHotspot": true,
+			  "isReportable": true,
+			  "event": "SMARCA4 T910M",
+			  "driverLikelihood": "HIGH",
+			  "evidence": {
+				"externalEligibleTrials": [
+				  {
+					"title": "SMARCA4-TRIAL",
+					"countries": [
+					  {
+						"name": "NETHERLANDS",
+						"hospitalsPerCity": {
+						  "Tilburg": [
+							"Elisabeth-TweeSteden Ziekenhuis"
+						  ]
+						}
+					  },
+					  {
+						"name": "GERMANY",
+						"hospitalsPerCity": {
+						  "Stuttgart": [
+							"Robert-Bosch-Krankenhaus - Klinik Schillerhoehe"
+						  ]
+						}
+					  }
+					],
+					"url": "https://hartwigmedicalfoundation.nl",
+					"nctId": "NCT00000036",
+					"isCategoryEvent": true,
+					"sourceEvent": "SMARCA4 mutations",
+					"evidenceLevelDetails": "CLINICAL_STUDY",
+					"applicableCancerType": {
+					  "cancerType": "Lung cancer",
+					  "excludedCancerTypes": []
+					}
+				  }
+				]
+			  },
+			  "gene": "SMARCA4",
+			  "geneRole": "TSG",
+			  "proteinEffect": "LOSS_OF_FUNCTION",
+			  "isAssociatedWithDrugResistance": null
+			}
+		  ],
+		  "copyNumbers": [],
+		  "homozygousDisruptions": [],
+		  "disruptions": [],
+		  "fusions": [],
+		  "viruses": []
+		},
+		"characteristics": {
+		  "purity": null,
+		  "ploidy": 2.0,
+		  "predictedTumorOrigin": null,
+		  "isMicrosatelliteUnstable": false,
+		  "microsatelliteEvidence": null,
+		  "homologousRepairScore": null,
+		  "isHomologousRepairDeficient": false,
+		  "brca1Value": null,
+		  "brca2Value": null,
+		  "hrdType": null,
+		  "homologousRepairEvidence": null,
+		  "tumorMutationalBurden": 8.0,
+		  "hasHighTumorMutationalBurden": false,
+		  "tumorMutationalBurdenEvidence": null,
+		  "tumorMutationalLoad": null,
+		  "hasHighTumorMutationalLoad": null,
+		  "tumorMutationalLoadEvidence": null
+		},
+		"evidenceSource": "Hartwig"
+	  }
+	]
+  }
+}
