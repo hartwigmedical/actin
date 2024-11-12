@@ -14,9 +14,9 @@ import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary
 import com.hartwig.actin.datamodel.clinical.TumorStatus
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 private const val BRAIN_LOCATION = "brain"
 private const val TYPE = "type"
@@ -37,7 +37,7 @@ private val DIAGNOSIS_DATE = LocalDate.of(2024, 2, 23)
 private val EHR_PRIOR_PRIMARY = ProvidedPriorPrimary(
     tumorLocation = BRAIN_LOCATION,
     tumorType = TYPE,
-    status = "ACTIVE",
+    status = "Active",
     diagnosisDate = DIAGNOSIS_DATE,
     lastTreatmentDate = DIAGNOSIS_DATE
 )
