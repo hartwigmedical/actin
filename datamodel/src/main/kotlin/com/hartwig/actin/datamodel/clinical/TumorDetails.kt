@@ -38,6 +38,7 @@ data class TumorDetails(
 
     fun hasConfirmedBrainLesions() = hasBrainLesions == true || hasActiveBrainLesions == true
     fun hasConfirmedCnsLesions() = hasCnsLesions == true || hasActiveCnsLesions == true
+
     fun hasSuspectedLesions() = listOf(
         hasSuspectedCnsLesions,
         hasSuspectedBrainLesions,
@@ -47,4 +48,9 @@ data class TumorDetails(
         hasSuspectedLymphNodeLesions,
         !otherSuspectedLesions.isNullOrEmpty()
     ).any { it == true }
+
+    val confirmedCategoricalLesionList =
+        listOf(hasLiverLesions, hasCnsLesions, hasBrainLesions, hasBoneLesions, hasLungLesions, hasLymphNodeLesions)
+
+    fun hasConfirmedLesions() = confirmedCategoricalLesionList.any { it == true } || !otherLesions.isNullOrEmpty()
 }

@@ -1,7 +1,6 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.Test
 
@@ -11,7 +10,7 @@ class HasAnyLesionTest {
 
     @Test
     fun `Should fail if patient has no lesions`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withNoConfirmedLesions()))
     }
 
     @Test
@@ -33,6 +32,6 @@ class HasAnyLesionTest {
 
     @Test
     fun `Should evaluate to undetermined if only suspected lesions are present`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withOtherSuspectedLesions(listOf("lesion"))))
+        assertEvaluation(EvaluationResult.WARN, function.evaluate(TumorTestFactory.withOtherSuspectedLesions(listOf("lesion"))))
     }
 }

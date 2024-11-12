@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.complication
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.Complication
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class HasLeptomeningealDiseaseTest {
@@ -41,10 +42,10 @@ class HasLeptomeningealDiseaseTest {
 
     @Test
     fun `Should warn when suspected CNS lesion suggests leptomeningeal disease`() {
-        assertEvaluation(
-            EvaluationResult.WARN,
-            function.evaluate(ComplicationTestFactory.withSuspectedCnsLesion("carcinomatous meningitis"))
-        )
+        val evaluation = function.evaluate(ComplicationTestFactory.withSuspectedCnsLesion("carcinomatous meningitis"))
+        assertEvaluation(EvaluationResult.WARN, evaluation)
+        assertThat(evaluation.warnSpecificMessages)
+            .containsExactly("Patient has suspected lesion indicating potential leptomeningeal disease: carcinomatous meningitis")
     }
 
     @Test
