@@ -6,7 +6,7 @@ import com.hartwig.actin.datamodel.molecular.orange.characteristics.CupPredictio
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter.greatestOmittedLikelihood
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter.hasConfidentPrediction
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter.likelihoodMeetsConfidenceThreshold
-import com.hartwig.actin.report.interpretation.TumorOriginInterpreter.generateDetailsPredictions
+import com.hartwig.actin.report.interpretation.TumorOriginInterpreter.topPredictionsToDisplay
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.within
 import org.junit.Test
@@ -55,24 +55,24 @@ class TumorOriginInterpreterTest {
 
     @Test
     fun `Should return empty list for display when predicted tumor origin is null`() {
-        assertThat(generateDetailsPredictions(null)).isEmpty()
+        assertThat(topPredictionsToDisplay(null)).isEmpty()
     }
 
     @Test
     fun `Should return empty list for display when all predictions are below threshold`() {
-        assertThat(generateDetailsPredictions(withPredictions(0.09, 0.02, 0.05, 0.08))).isEmpty()
+        assertThat(topPredictionsToDisplay(withPredictions(0.09, 0.02, 0.05, 0.08))).isEmpty()
     }
 
     @Test
     fun `Should omit predictions below threshold for display`() {
-        val predictions = generateDetailsPredictions(withPredictions(0.4, 0.02, 0.05, 0.08))
+        val predictions = topPredictionsToDisplay(withPredictions(0.4, 0.02, 0.05, 0.08))
         assertThat(predictions).hasSize(1)
         assertThat(predictions.iterator().next().likelihood).isCloseTo(0.4, within(EPSILON))
     }
 
     @Test
     fun `Should display at most three predictions`() {
-        val predictions = generateDetailsPredictions(withPredictions(0.4, 0.12, 0.15, 0.25))
+        val predictions = topPredictionsToDisplay(withPredictions(0.4, 0.12, 0.15, 0.25))
         assertThat(predictions.map(CupPrediction::likelihood)).containsExactlyInAnyOrder(0.4, 0.25, 0.15)
     }
 

@@ -26,7 +26,7 @@ object TumorOriginInterpreter {
         return if (predictedTumorOrigin != null && hasConfidentPrediction(predictedTumorOrigin) && wgsMolecular?.hasSufficientQuality == true) {
             predictedTumorOrigin.cancerType() + " (" + Formats.percentage(predictedTumorOrigin.likelihood()) + ")"
         } else if (wgsMolecular?.hasSufficientQuality == true && predictedTumorOrigin != null) {
-            val predictionsMeetingThreshold = generateDetailsPredictions(predictedTumorOrigin)
+            val predictionsMeetingThreshold = topPredictionsToDisplay(predictedTumorOrigin)
             if (predictionsMeetingThreshold.isEmpty()) {
                 String.format(
                     "Inconclusive (%s %s)",
@@ -43,7 +43,7 @@ object TumorOriginInterpreter {
         }
     }
 
-    fun generateDetailsPredictions(predictedTumorOrigin: PredictedTumorOrigin?): List<CupPrediction> {
+    fun topPredictionsToDisplay(predictedTumorOrigin: PredictedTumorOrigin?): List<CupPrediction> {
         return if (predictedTumorOrigin == null) emptyList() else bestNPredictions(predictedTumorOrigin, MAX_PREDICTIONS_TO_DISPLAY)
             .filter { it.likelihood > LIKELIHOOD_DISPLAY_THRESHOLD }
     }
