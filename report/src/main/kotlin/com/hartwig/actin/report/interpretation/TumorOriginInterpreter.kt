@@ -1,5 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
+import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.PredictedTumorOrigin
 import com.hartwig.actin.datamodel.molecular.orange.characteristics.CupPrediction
 import com.hartwig.actin.report.pdf.util.Formats
@@ -17,13 +19,31 @@ object TumorOriginInterpreter {
         return likelihood.compareTo(LIKELIHOOD_CONFIDENCE_THRESHOLD) >= 0
     }
 
-    fun interpret(predictedTumorOrigin: PredictedTumorOrigin?): String {
-        return if (predictedTumorOrigin == null) {
+    fun generateSummaryString(molecular: MolecularTest): String {
+        val predictedTumorOrigin = molecular.characteristics.predictedTumorOrigin
+        val wgsMolecular = if (molecular is MolecularRecord) molecular else null
+
+        return if (predictedTumorOrigin != null && hasConfidentPrediction(predictedTumorOrigin) && wgsMolecular?.hasSufficientQuality == true) {
+            predictedTumorOrigin.cancerType() + " (" + Formats.percentage(predictedTumorOrigin.likelihood()) + ")"
+        } else if (wgsMolecular?.hasSufficientQuality == true && predictedTumorOrigin != null) {
+            val predictionsMeetingThreshold = generateDetailsPredictions(predictedTumorOrigin)
+            if (predictionsMeetingThreshold.isEmpty()) {
+                String.format(
+                    "Inconclusive (%s %s)",
+                    predictedTumorOrigin.cancerType(),
+                    Formats.percentage(predictedTumorOrigin.likelihood())
+                )
+            } else {
+                String.format("Inconclusive (%s)", predictionsMeetingThreshold.joinToString(", ") {
+                    "${it.cancerType} ${Formats.percentage(it.likelihood)}"
+                })
+            }
+        } else {
             Formats.VALUE_UNKNOWN
-        } else predictedTumorOrigin.cancerType() + " (" + Formats.percentage(predictedTumorOrigin.likelihood()) + ")"
+        }
     }
 
-    fun predictionsToDisplay(predictedTumorOrigin: PredictedTumorOrigin?): List<CupPrediction> {
+    fun generateDetailsPredictions(predictedTumorOrigin: PredictedTumorOrigin?): List<CupPrediction> {
         return if (predictedTumorOrigin == null) emptyList() else bestNPredictions(predictedTumorOrigin, MAX_PREDICTIONS_TO_DISPLAY)
             .filter { it.likelihood > LIKELIHOOD_DISPLAY_THRESHOLD }
     }

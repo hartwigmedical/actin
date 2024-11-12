@@ -121,35 +121,13 @@ object WGSSummaryGeneratorFunctions {
 
     fun tumorOriginPredictionCell(molecular: MolecularTest): Cell {
         val wgsMolecular = if (molecular is MolecularRecord) molecular else null
-        val paragraph = Paragraph(Text(tumorOriginPrediction(molecular, wgsMolecular)).addStyle(Styles.tableHighlightStyle()))
+        val paragraph = Paragraph(Text(TumorOriginInterpreter.generateSummaryString(molecular)).addStyle(Styles.tableHighlightStyle()))
         val purity = molecular.characteristics.purity
         if (wgsMolecular != null && purity != null && wgsMolecular.hasSufficientQualityButLowPurity()) {
             val purityText = Text(" (low purity)").addStyle(Styles.tableNoticeStyle())
             paragraph.add(purityText)
         }
         return Cells.create(paragraph)
-    }
-
-    private fun tumorOriginPrediction(molecular: MolecularTest, wgsMolecular: MolecularRecord?): String {
-        val predictedTumorOrigin = molecular.characteristics.predictedTumorOrigin
-        return if (TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin) && wgsMolecular?.hasSufficientQuality == true) {
-            TumorOriginInterpreter.interpret(predictedTumorOrigin)
-        } else if (wgsMolecular?.hasSufficientQuality == true && predictedTumorOrigin != null) {
-            val predictionsMeetingThreshold = TumorOriginInterpreter.predictionsToDisplay(predictedTumorOrigin)
-            if (predictionsMeetingThreshold.isEmpty()) {
-                String.format(
-                    "Inconclusive (%s %s)",
-                    predictedTumorOrigin.cancerType(),
-                    Formats.percentage(predictedTumorOrigin.likelihood())
-                )
-            } else {
-                String.format("Inconclusive (%s)", predictionsMeetingThreshold.joinToString(", ") {
-                    "${it.cancerType} ${Formats.percentage(it.likelihood)}"
-                })
-            }
-        } else {
-            Formats.VALUE_UNKNOWN
-        }
     }
 
     private fun tumorMutationalLoadAndTumorMutationalBurdenStatusCell(molecular: MolecularTest, status: String): Cell {

@@ -18,7 +18,7 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, priv
 
     override fun contents(): Table {
         val predictedTumorOrigin = molecular.characteristics.predictedTumorOrigin
-        val predictions = TumorOriginInterpreter.predictionsToDisplay(predictedTumorOrigin)
+        val predictions = TumorOriginInterpreter.generateDetailsPredictions(predictedTumorOrigin)
         return if (predictions.isEmpty()) {
             val message = if (predictedTumorOrigin == null) Formats.VALUE_UNKNOWN else String.format(
                 "All tumor cohorts have a prediction lower than 10%%. Highest prediction: %s (%s)",

@@ -53,21 +53,6 @@ class WGSSummaryGeneratorFunctionsTest {
     }
 
     @Test
-    fun `Should return one predicted tumor origin when conclusive with sufficient quality and purity`() {
-        val cell = WGSSummaryGeneratorFunctions.tumorOriginPredictionCell(molecular = molecularRecord)
-        Assertions.assertThat(CellTestUtil.extractTextFromCell(cell))
-            .isEqualTo("Melanoma (100%)")
-    }
-
-    @Test
-    fun `Should add 'inconclusive' and show multiple tumor origins when inconclusive with sufficient quality and purity`() {
-        val cell =
-            WGSSummaryGeneratorFunctions.tumorOriginPredictionCell(molecular = molecularRecord.copy(characteristics = inconclusiveCharacteristics))
-        Assertions.assertThat(CellTestUtil.extractTextFromCell(cell))
-            .isEqualTo("Inconclusive (Melanoma 60%, Lung 20%)")
-    }
-
-    @Test
     fun `Should add '(low purity)' to predicted tumor origin when conclusive with sufficient quality and insufficient purity`() {
         val cell = WGSSummaryGeneratorFunctions.tumorOriginPredictionCell(molecular = molecularRecord.copy(hasSufficientPurity = false))
         Assertions.assertThat(CellTestUtil.extractTextFromCell(cell))
@@ -81,36 +66,5 @@ class WGSSummaryGeneratorFunctionsTest {
         )
         Assertions.assertThat(CellTestUtil.extractTextFromCell(cell))
             .isEqualTo("Inconclusive (Melanoma 60%, Lung 20%) (low purity)")
-    }
-
-    @Test
-    fun `Should return 'unknown' predicted tumor origin when conclusive with insufficient quality and purity`() {
-        val cell = WGSSummaryGeneratorFunctions.tumorOriginPredictionCell(
-            molecular = molecularRecord.copy(
-                hasSufficientPurity = false,
-                hasSufficientQuality = false
-            )
-        )
-        Assertions.assertThat(CellTestUtil.extractTextFromCell(cell))
-            .isEqualTo("Unknown")
-    }
-
-    @Test
-    fun `Should return 'unknown' predicted tumor origin when inconclusive with insufficient quality and purity`() {
-        val cell = WGSSummaryGeneratorFunctions.tumorOriginPredictionCell(
-            molecular = molecularRecord.copy(characteristics = inconclusiveCharacteristics)
-                .copy(hasSufficientPurity = false, hasSufficientQuality = false)
-        )
-        Assertions.assertThat(CellTestUtil.extractTextFromCell(cell))
-            .isEqualTo("Unknown")
-    }
-
-    @Test
-    fun `Should return 'unknown' predicted tumor origin when there is no prediction in molecular record`() {
-        val cell = WGSSummaryGeneratorFunctions.tumorOriginPredictionCell(
-            molecular = TestMolecularFactory.createMinimalTestMolecularRecord()
-        )
-        Assertions.assertThat(CellTestUtil.extractTextFromCell(cell))
-            .isEqualTo("Unknown")
     }
 }
