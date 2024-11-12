@@ -84,7 +84,7 @@ object TestMolecularFactory {
         return MolecularCharacteristics(null, null, null, null, null, null, null, null, null, null, null, null, null, null)
     }
 
-    fun createProperTestCharacteristics(): MolecularCharacteristics {
+    private fun createProperTestCharacteristics(): MolecularCharacteristics {
         return MolecularCharacteristics(
             purity = 0.98,
             ploidy = 3.1,
@@ -103,7 +103,7 @@ object TestMolecularFactory {
         )
     }
 
-    fun createProperPredictedTumorOrigin(): PredictedTumorOrigin {
+    private fun createProperPredictedTumorOrigin(): PredictedTumorOrigin {
         return PredictedTumorOrigin(
             predictions = listOf(
                 CupPrediction(

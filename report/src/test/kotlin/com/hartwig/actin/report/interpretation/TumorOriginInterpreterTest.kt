@@ -24,7 +24,8 @@ class TumorOriginInterpreterTest {
         ),
     )
     private val inconclusiveInterpreter = TumorOriginInterpreter(PredictedTumorOrigin(inconclusivePredictions))
-    private val conclusiveInterpreter = TumorOriginInterpreter(TestMolecularFactory.createProperPredictedTumorOrigin())
+    private val conclusiveInterpreter =
+        TumorOriginInterpreter(TestMolecularFactory.createProperTestMolecularRecord().characteristics.predictedTumorOrigin)
 
     @Test
     fun `Should determine confidence of predicted tumor origin`() {
