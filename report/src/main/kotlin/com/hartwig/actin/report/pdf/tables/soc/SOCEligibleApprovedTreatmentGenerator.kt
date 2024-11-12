@@ -1,6 +1,5 @@
 package com.hartwig.actin.report.pdf.tables.soc
 
-import com.hartwig.actin.datamodel.algo.AnnotatedTreatmentMatch
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.soc.SOCGeneratorFunctions.approvedTreatmentCells
@@ -18,7 +17,7 @@ class SOCEligibleApprovedTreatmentGenerator(
     }
 
     override fun contents(): Table {
-        val treatments = report.treatmentMatch.standardOfCareMatches?.filter(AnnotatedTreatmentMatch::eligible)
+        val treatments = report.treatmentMatch.standardOfCareMatches?.filter { it.eligible(includeNone = false) }
         if (treatments.isNullOrEmpty()) {
             return Tables.createSingleColWithWidth(width)
                 .addCell(Cells.createContentNoBorder("There are no standard of care treatment options for this patient"))

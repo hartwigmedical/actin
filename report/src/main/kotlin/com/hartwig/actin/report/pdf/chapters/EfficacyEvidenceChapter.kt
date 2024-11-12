@@ -25,7 +25,7 @@ class EfficacyEvidenceChapter(private val report: Report, override val include: 
     private fun addEfficacyEvidenceDetails(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
         val efficacyEvidenceGenerator =
-            EfficacyEvidenceGenerator(report.treatmentMatch.standardOfCareMatches?.filter { it.eligible() }, contentWidth())
+            EfficacyEvidenceGenerator(report.treatmentMatch.standardOfCareMatches?.filter { it.eligible(includeNone = false) }, contentWidth())
         table.addCell(Cells.createTitle(efficacyEvidenceGenerator.title()))
         table.addCell(
             Cells.createKey(

@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.algo.AnnotatedTreatmentMatch
 import com.hartwig.actin.datamodel.efficacy.EfficacyEntry
 import com.hartwig.actin.datamodel.efficacy.PatientPopulation
 import com.hartwig.actin.datamodel.efficacy.TrialReference
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentClass
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.soc.SOCGeneratorFunctions.addEndPointsToTable
 import com.hartwig.actin.report.pdf.tables.soc.SOCGeneratorFunctions.analysisGroupForPopulation
@@ -17,6 +18,7 @@ class EfficacyEvidenceGenerator(
     private val treatments: List<AnnotatedTreatmentMatch>?,
     private val width: Float
 ) : TableGenerator {
+
     private val patientCharacteristicHeadersAndFunctions = listOf<Pair<String, (PatientPopulation) -> String?>>(
         "WHO/ECOG" to SOCGeneratorFunctions::createWhoString,
         "Primary tumor location" to { it.formatTumorLocation(", ") },
@@ -31,14 +33,18 @@ class EfficacyEvidenceGenerator(
     }
 
     override fun contents(): Table {
-        if (treatments.isNullOrEmpty()) {
+        val filteredTreatments = treatments?.filter {
+            it.treatmentCandidate.treatment.treatmentClass != TreatmentClass.NONE
+        }
+
+        if (filteredTreatments.isNullOrEmpty()) {
             return Tables.createSingleColWithWidth(width)
                 .addCell(Cells.createContentNoBorder("There are no standard of care treatment options for this patient"))
         } else {
             val table = Tables.createFixedWidthCols(1f, 3f).setWidth(width)
             table.addHeaderCell(Cells.createHeader("Treatment"))
             table.addHeaderCell(Cells.createHeader("Literature efficacy evidence"))
-            treatments.sortedBy { it.annotations.size }.reversed().forEach { treatment: AnnotatedTreatmentMatch ->
+            filteredTreatments.sortedBy { it.annotations.size }.reversed().forEach { treatment: AnnotatedTreatmentMatch ->
                 table.addCell(Cells.createContentBold(SOCGeneratorFunctions.abbreviate(treatment.treatmentCandidate.treatment.name)))
                 if (treatment.annotations.isNotEmpty()) {
                     val subtable = Tables.createSingleColWithWidth(width / 2)

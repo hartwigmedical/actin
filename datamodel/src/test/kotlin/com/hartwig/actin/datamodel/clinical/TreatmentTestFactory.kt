@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
+import com.hartwig.actin.datamodel.clinical.treatment.NoTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
@@ -40,13 +41,11 @@ object TreatmentTestFactory {
     }
 
     fun noneTreatment(): Treatment {
-        return OtherTreatment(
+        return NoTreatment(
             name = "None",
             isSystemic = false,
             synonyms = setOf("none", "no treatment"),
-            displayOverride = null,
-            categories = emptySet(),
-            types = emptySet()
+            displayOverride = null
         )
     }
 

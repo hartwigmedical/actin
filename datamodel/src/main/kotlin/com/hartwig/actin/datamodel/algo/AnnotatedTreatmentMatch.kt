@@ -13,7 +13,8 @@ data class AnnotatedTreatmentMatch(
     val resistanceEvidence: List<ResistanceEvidence>,
 ) {
 
-    fun eligible(): Boolean {
-        return treatmentCandidate.treatment.treatmentClass == TreatmentClass.NONE || evaluations.none { it.result == EvaluationResult.FAIL }
+    fun eligible(includeNone: Boolean = true): Boolean {
+        return (includeNone || treatmentCandidate.treatment.treatmentClass != TreatmentClass.NONE) &&
+                evaluations.none { it.result == EvaluationResult.FAIL }
     }
 }

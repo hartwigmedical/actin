@@ -25,12 +25,18 @@ class RealWorldSurvivalOutcomesGenerator(
     }
 
     override fun contents(): Table {
-        return if (eligibleTreatments.isEmpty()) {
+        val filteredTreatments = if (measurementType == MeasurementType.PROGRESSION_FREE_SURVIVAL) {
+            eligibleTreatments.filterNot { it.equals("None", ignoreCase = true) }
+        } else {
+            eligibleTreatments
+        }
+
+        return if (filteredTreatments.isEmpty()) {
             Tables.createSingleColWithWidth(width)
                 .addCell(Cells.createContentNoBorder("There are no standard of care treatment options for this patient"))
         } else {
             val content = SOCPersonalizedTableContent.fromPersonalizedDataAnalysis(
-                analysis, eligibleTreatments, measurementType
+                analysis, filteredTreatments.toSet(), measurementType
             ) {
                 when {
                     it.value.isNaN() -> TableElement.regular("-")

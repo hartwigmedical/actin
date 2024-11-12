@@ -11,6 +11,9 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
 
+import com.itextpdf.layout.element.AreaBreak
+import com.itextpdf.layout.properties.AreaBreakType
+
 class PersonalizedEvidenceChapter(private val report: Report, override val include: Boolean) : ReportChapter {
     override fun name(): String {
         return "SOC personalized real-world evidence annotation"
@@ -24,22 +27,28 @@ class PersonalizedEvidenceChapter(private val report: Report, override val inclu
         val eligibleSocTreatments = report.treatmentMatch.standardOfCareMatches
             ?.filter(AnnotatedTreatmentMatch::eligible)
             ?.map { it.treatmentCandidate.treatment.name.lowercase() }
-            ?.toSet() ?: emptySet() //Not pretty but for testing purposes: still have to change
-
+            ?.toSet() ?: emptySet() // Not pretty but for testing purposes: still have to change
 
         addChapterTitle(document)
 
         val table = Tables.createSingleColWithWidth(contentWidth())
-        val generators = listOf(
-            RealWorldTreatmentDecisionsGenerator(report.treatmentMatch.personalizedDataAnalysis!!, eligibleSocTreatments, contentWidth()),
-            RealWorldSurvivalOutcomesGenerator(report.treatmentMatch.personalizedDataAnalysis!!, eligibleSocTreatments, contentWidth(), MeasurementType.PROGRESSION_FREE_SURVIVAL),
-            RealWorldSurvivalOutcomesGenerator(report.treatmentMatch.personalizedDataAnalysis!!, eligibleSocTreatments, contentWidth(), MeasurementType.OVERALL_SURVIVAL)
-        )
 
+        val treatmentDecisionsGenerator = RealWorldTreatmentDecisionsGenerator(report.treatmentMatch.personalizedDataAnalysis!!, eligibleSocTreatments, contentWidth())
+        val pfsGenerator = RealWorldSurvivalOutcomesGenerator(report.treatmentMatch.personalizedDataAnalysis!!, eligibleSocTreatments, contentWidth(), MeasurementType.PROGRESSION_FREE_SURVIVAL)
+        val osGenerator = RealWorldSurvivalOutcomesGenerator(report.treatmentMatch.personalizedDataAnalysis!!, eligibleSocTreatments, contentWidth(), MeasurementType.OVERALL_SURVIVAL)
 
-        addGenerators(generators, table, addSubTitle = true)
+        addGenerators(listOf(treatmentDecisionsGenerator, pfsGenerator), table, addSubTitle = true)
 
-        table.addCell(Cells.createSubTitle("Explanation:"))
+        document.add(table)
+
+        document.add(AreaBreak(AreaBreakType.NEXT_PAGE))
+
+        val osTable = Tables.createSingleColWithWidth(contentWidth())
+        addGenerators(listOf(osGenerator), osTable, addSubTitle = true)
+        document.add(osTable)
+
+        val explanationTable = Tables.createSingleColWithWidth(contentWidth())
+        explanationTable.addCell(Cells.createSubTitle("Explanation:"))
         sequenceOf(
             "These tables only shows treatments that are considered standard of care (SOC) in colorectal cancer in the Netherlands.\n",
             "The ‘All’ column shows results in NCR patients who were previously untreated, diagnosed with colorectal cancer with distant " +
@@ -51,8 +60,8 @@ class PersonalizedEvidenceChapter(private val report: Report, override val inclu
             "When patient number is too low (n <= 20) to predict PFS or OS, \"NA\" is shown.\n",
         )
             .map(Cells::createContentNoBorder)
-            .forEach(table::addCell)
+            .forEach(explanationTable::addCell)
 
-        document.add(table)
+        document.add(explanationTable)
     }
 }

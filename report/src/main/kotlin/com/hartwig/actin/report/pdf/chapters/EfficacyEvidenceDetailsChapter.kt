@@ -25,7 +25,8 @@ class EfficacyEvidenceDetailsChapter(private val report: Report, override val in
     }
 
     private fun addEfficacyEvidenceDetails(document: Document) {
-        val socMatches = report.treatmentMatch.standardOfCareMatches?.filter(AnnotatedTreatmentMatch::eligible)
+        val socMatches = report.treatmentMatch.standardOfCareMatches?.filter { it.eligible(includeNone = false) }
+
         val table = Tables.createSingleColWithWidth(contentWidth())
 
         val allAnnotations = socMatches?.flatMap { it.annotations } ?: emptyList()

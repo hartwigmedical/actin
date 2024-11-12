@@ -18,7 +18,7 @@ import com.hartwig.actin.datamodel.algo.TreatmentCandidate
 import com.hartwig.actin.datamodel.efficacy.EfficacyEntry
 import com.hartwig.actin.datamodel.trial.Trial
 
-import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatment
+import com.hartwig.actin.datamodel.clinical.treatment.NoTreatment
 
 
 
@@ -66,13 +66,11 @@ class TreatmentMatcher(
     }
 
     private fun createNoneEvaluatedTreatment(): EvaluatedTreatment {
-        val noneTreatment = OtherTreatment(
+        val noneTreatment = NoTreatment(
             name = "None",
             isSystemic = false,
             synonyms = setOf("none", "no treatment"),
-            displayOverride = null,
-            categories = emptySet(),
-            types = emptySet()
+            displayOverride = null
         )
 
         val treatmentCandidate = TreatmentCandidate(
