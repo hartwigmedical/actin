@@ -120,12 +120,13 @@ object WGSSummaryGeneratorFunctions {
     }
 
     fun tumorOriginPredictionCell(molecular: MolecularTest): Cell {
-        val wgsMolecular = if (molecular is MolecularRecord) molecular else null
-        val paragraph = Paragraph(Text(TumorOriginInterpreter.generateSummaryString(molecular)).addStyle(Styles.tableHighlightStyle()))
-        val purity = molecular.characteristics.purity
-        if (wgsMolecular != null && purity != null && wgsMolecular.hasSufficientQualityButLowPurity()) {
-            val purityText = Text(" (low purity)").addStyle(Styles.tableNoticeStyle())
-            paragraph.add(purityText)
+        val wgsMolecular = molecular as? MolecularRecord
+        val originSummary = TumorOriginInterpreter(molecular.characteristics.predictedTumorOrigin)
+            .generateSummaryString(wgsMolecular?.hasSufficientQuality)
+
+        val paragraph = Paragraph(Text(originSummary).addStyle(Styles.tableHighlightStyle()))
+        if (molecular.characteristics.purity != null && wgsMolecular?.hasSufficientQuality == true) {
+            paragraph.add(Text(" (low purity)").addStyle(Styles.tableNoticeStyle()))
         }
         return Cells.create(paragraph)
     }
@@ -204,8 +205,8 @@ object WGSSummaryGeneratorFunctions {
         val characteristicsGenerator = MolecularCharacteristicsGenerator(molecular, keyWidth + valueWidth)
         val orderedKeys = getOrderedKeys(isShort)
         val keyToValueMap = mapOf(
-            "Microsatellite (in)stability" to (characteristicsGenerator.createMSStabilityString() ?: Formats.VALUE_UNKNOWN),
-            "HR status" to (characteristicsGenerator.createHRStatusString() ?: Formats.VALUE_UNKNOWN),
+            "Microsatellite (in)stability" to characteristicsGenerator.createMSStabilityString(),
+            "HR status" to characteristicsGenerator.createHRStatusString(),
             "High driver mutations" to formatList(summarizer.keyVariants()),
             "Amplified genes" to formatList(summarizer.keyAmplifiedGenes()),
             "Deleted genes" to formatList(summarizer.keyDeletedGenes()),

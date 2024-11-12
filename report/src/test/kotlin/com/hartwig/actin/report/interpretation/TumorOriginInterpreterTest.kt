@@ -3,18 +3,10 @@ package com.hartwig.actin.report.interpretation
 import com.hartwig.actin.datamodel.molecular.PredictedTumorOrigin
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.orange.characteristics.CupPrediction
-import com.hartwig.actin.report.interpretation.TumorOriginInterpreter.greatestOmittedLikelihood
-import com.hartwig.actin.report.interpretation.TumorOriginInterpreter.hasConfidentPrediction
-import com.hartwig.actin.report.interpretation.TumorOriginInterpreter.likelihoodMeetsConfidenceThreshold
-import com.hartwig.actin.report.interpretation.TumorOriginInterpreter.topPredictionsToDisplay
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.within
 import org.junit.Test
 
-const val EPSILON = 0.0001
-
 class TumorOriginInterpreterTest {
-    private val molecularRecord = TestMolecularFactory.createProperTestMolecularRecord()
     private val inconclusivePredictions = listOf(
         CupPrediction(
             cancerType = "Melanoma",
@@ -31,113 +23,107 @@ class TumorOriginInterpreterTest {
             featureClassifier = 0.0102
         ),
     )
-    private val inconclusiveCharacteristics =
-        molecularRecord.characteristics.copy(predictedTumorOrigin = PredictedTumorOrigin(inconclusivePredictions))
+    private val inconclusiveInterpreter = TumorOriginInterpreter(PredictedTumorOrigin(inconclusivePredictions))
+    private val conclusiveInterpreter = TumorOriginInterpreter(TestMolecularFactory.createProperPredictedTumorOrigin())
 
     @Test
-    fun `Can determine confidence of predicted tumor origin`() {
-        assertThat(hasConfidentPrediction(null)).isFalse
-        assertThat(hasConfidentPrediction(withPredictions(0.4))).isFalse
-        assertThat(hasConfidentPrediction(withPredictions(0.8))).isTrue
-        assertThat(hasConfidentPrediction(withPredictions(0.99))).isTrue
-    }
-
-    @Test
-    fun `Should return false for likelihood below confidence threshold`() {
-        assertThat(likelihoodMeetsConfidenceThreshold(0.5)).isFalse
-    }
-
-    @Test
-    fun `Should return true for likelihood that meets confidence threshold`() {
-        assertThat(likelihoodMeetsConfidenceThreshold(0.8)).isTrue
-        assertThat(likelihoodMeetsConfidenceThreshold(1.0)).isTrue
+    fun `Should determine confidence of predicted tumor origin`() {
+        assertThat(TumorOriginInterpreter(null).hasConfidentPrediction()).isFalse
+        assertThat(inconclusiveInterpreter.hasConfidentPrediction()).isFalse
+        assertThat(withPredictions(0.8).hasConfidentPrediction()).isTrue
+        assertThat(conclusiveInterpreter.hasConfidentPrediction()).isTrue
     }
 
     @Test
     fun `Should return empty list for display when predicted tumor origin is null`() {
-        assertThat(topPredictionsToDisplay(null)).isEmpty()
+        assertThat(TumorOriginInterpreter(null).topPredictions()).isEmpty()
     }
 
     @Test
     fun `Should return empty list for display when all predictions are below threshold`() {
-        assertThat(topPredictionsToDisplay(withPredictions(0.09, 0.02, 0.05, 0.08))).isEmpty()
+        assertThat(withPredictions(0.09, 0.02, 0.05, 0.08).topPredictions()).isEmpty()
     }
 
     @Test
     fun `Should omit predictions below threshold for display`() {
-        val predictions = topPredictionsToDisplay(withPredictions(0.4, 0.02, 0.05, 0.08))
+        val predictions = withPredictions(0.4, 0.02, 0.05, 0.08).topPredictions()
         assertThat(predictions).hasSize(1)
-        assertThat(predictions.iterator().next().likelihood).isCloseTo(0.4, within(EPSILON))
+        assertThat(predictions.first().likelihood).isEqualTo(0.4)
     }
 
     @Test
     fun `Should display at most three predictions`() {
-        val predictions = topPredictionsToDisplay(withPredictions(0.4, 0.12, 0.15, 0.25))
-        assertThat(predictions.map(CupPrediction::likelihood)).containsExactlyInAnyOrder(0.4, 0.25, 0.15)
+        assertThat(withPredictions(0.4, 0.12, 0.15, 0.25).topPredictions().map(CupPrediction::likelihood))
+            .containsExactly(0.4, 0.25, 0.15)
     }
 
     @Test
     fun `Should return greatest likelihood limited by threshold`() {
-        assertThat(greatestOmittedLikelihood(withPredictions(0.4, 0.02, 0.05, 0.08))).isCloseTo(0.08, within(EPSILON))
+        assertThat(withPredictions(0.4, 0.02, 0.05, 0.08).greatestOmittedLikelihood()).isEqualTo(0.08)
     }
 
     @Test
     fun `Should return greatest likelihood limited by count`() {
-        assertThat(greatestOmittedLikelihood(withPredictions(0.4, 0.12, 0.15, 0.25))).isCloseTo(0.12, within(EPSILON))
+        assertThat(withPredictions(0.4, 0.12, 0.15, 0.25).greatestOmittedLikelihood()).isEqualTo(0.12)
     }
 
     @Test
     fun `Should return one predicted tumor origin when conclusive with sufficient quality and purity`() {
-        val string = TumorOriginInterpreter.generateSummaryString(molecular = molecularRecord)
+        val string = conclusiveInterpreter.generateSummaryString(true)
         assertThat(string).isEqualTo("Melanoma (100%)")
     }
 
     @Test
     fun `Should add 'inconclusive' and show multiple tumor origins when inconclusive with sufficient quality and purity`() {
-        val string =
-            TumorOriginInterpreter.generateSummaryString(molecular = molecularRecord.copy(characteristics = inconclusiveCharacteristics))
-        assertThat(string).isEqualTo("Inconclusive (Melanoma 60%, Lung 20%)")
+        assertThat(inconclusiveInterpreter.generateSummaryString(hasSufficientQuality = true))
+            .isEqualTo("Inconclusive (Melanoma 60%, Lung 20%)")
     }
 
     @Test
-    fun `Should return 'unknown' predicted tumor origin when conclusive with insufficient quality and purity`() {
-        val string = TumorOriginInterpreter.generateSummaryString(
-            molecular = molecularRecord.copy(
-                hasSufficientPurity = false,
-                hasSufficientQuality = false
-            )
-        )
-        assertThat(string).isEqualTo("Unknown")
+    fun `Should add 'inconclusive' and show only predictions above threshold when inconclusive with sufficient quality and purity`() {
+        assertThat(withPredictions(0.4, 0.02, 0.05, 0.08).generateSummaryString(true))
+            .isEqualTo("Inconclusive (type 1 40%)")
+    }
+
+    @Test
+    fun `Should add 'inconclusive' and show only top prediction when all predictions are below threshold`() {
+        assertThat(withPredictions(0.09, 0.02, 0.05, 0.08).generateSummaryString(true))
+            .isEqualTo("Inconclusive (type 1 9%)")
+    }
+
+    @Test
+    fun `Should display at most three predictions in summary`() {
+        assertThat(withPredictions(0.4, 0.12, 0.15, 0.25).generateSummaryString(true))
+            .isEqualTo("Inconclusive (type 1 40%, type 4 25%, type 3 15%)")
+    }
+
+    @Test
+    fun `Should return 'unknown' predicted tumor origin when conclusive with insufficient quality`() {
+        assertThat(conclusiveInterpreter.generateSummaryString(hasSufficientQuality = false))
+            .isEqualTo("Unknown")
     }
 
     @Test
     fun `Should return 'unknown' predicted tumor origin when inconclusive with insufficient quality and purity`() {
-        val string = TumorOriginInterpreter.generateSummaryString(
-            molecular = molecularRecord.copy(characteristics = inconclusiveCharacteristics)
-                .copy(hasSufficientPurity = false, hasSufficientQuality = false)
-        )
-        assertThat(string).isEqualTo("Unknown")
+        assertThat(inconclusiveInterpreter.generateSummaryString(hasSufficientQuality = false))
+            .isEqualTo("Unknown")
     }
 
     @Test
     fun `Should return 'unknown' predicted tumor origin when there is no prediction in molecular record`() {
-        val string = TumorOriginInterpreter.generateSummaryString(
-            molecular = TestMolecularFactory.createMinimalTestMolecularRecord()
-        )
-        assertThat(string).isEqualTo("Unknown")
+        assertThat(TumorOriginInterpreter(null).generateSummaryString(true)).isEqualTo("Unknown")
     }
 
-    private fun withPredictions(vararg likelihoods: Double): PredictedTumorOrigin {
-        return PredictedTumorOrigin(
-            predictions = likelihoods.mapIndexed { i, likelihood ->
-                CupPrediction(
-                    cancerType = String.format("type %s", i + 1),
-                    likelihood = likelihood,
-                    snvPairwiseClassifier = likelihood,
-                    genomicPositionClassifier = likelihood,
-                    featureClassifier = likelihood
-                )
-            }
-        )
+    private fun withPredictions(vararg likelihoods: Double): TumorOriginInterpreter {
+        val predictions = likelihoods.mapIndexed { i, likelihood ->
+            CupPrediction(
+                cancerType = "type ${i + 1}",
+                likelihood = likelihood,
+                snvPairwiseClassifier = likelihood,
+                genomicPositionClassifier = likelihood,
+                featureClassifier = likelihood
+            )
+        }
+        return TumorOriginInterpreter(PredictedTumorOrigin(predictions))
     }
 }
