@@ -19,7 +19,7 @@ object LabInterpreter {
     
     fun interpret(labValues: List<LabValue>): LabInterpretation {
         val labValuesByCode = labValues.groupBy(LabValue::code)
-        val baseMeasurements = LabMeasurement.values().associateWith { labValuesByCode[it.code] ?: emptyList() }
+        val baseMeasurements = LabMeasurement.entries.associateWith { labValuesByCode[it.code] ?: emptyList() }
         val mappedMeasurements = MAPPINGS.entries.associate { (fromMeasurement, toMeasurement) ->
             toMeasurement to baseMeasurements[fromMeasurement]!!.map { convert(it, toMeasurement) }
         }

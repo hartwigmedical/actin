@@ -45,8 +45,8 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HOMOZYGOUS_DPYD_DEFICIENCY to { HasHomozygousDPYDDeficiency(maxMolecularTestAge()) },
             EligibilityRule.HAS_HETEROZYGOUS_DPYD_DEFICIENCY to { HasHeterozygousDPYDDeficiency(maxMolecularTestAge()) },
             EligibilityRule.HAS_KNOWN_HPV_STATUS to { HasKnownHPVStatus() },
-            EligibilityRule.OVEREXPRESSION_OF_GENE_X to { GeneIsOverexpressed(maxMolecularTestAge()) },
-            EligibilityRule.NON_EXPRESSION_OF_GENE_X to { GeneIsNotExpressed(maxMolecularTestAge()) },
+            EligibilityRule.OVEREXPRESSION_OF_ANY_GENE_X to anyGeneFromSetIsOverExpressedCreator(),
+            EligibilityRule.NON_EXPRESSION_OF_ANY_GENE_X to anyGeneFromSetIsNotExpressedCreator(),
             EligibilityRule.SPECIFIC_MRNA_EXPRESSION_REQUIREMENTS_MET_FOR_GENES_X to { GenesMeetSpecificMRNAExpressionRequirements() },
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC to proteinIsExpressedByIHCCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_EXACTLY_Y to proteinHasExactExpressionByIHCCreator(),
@@ -86,7 +86,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasMolecularEventExcludingSomeGeneWithSocTargetedTherapyForNSCLCAvailableCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genes = functionInputResolver().createManyGenesInput(function)
-            HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(null, genes.geneNames.toSet(), maxMolecularTestAge())
+            HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(null, genes.geneNames, maxMolecularTestAge())
         }
     }
 
@@ -230,6 +230,20 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
+    private fun anyGeneFromSetIsOverExpressedCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val geneSet = functionInputResolver().createManyGenesInput(function).geneNames
+            AnyGeneFromSetIsOverexpressed(maxMolecularTestAge(), geneSet)
+        }
+    }
+
+    private fun anyGeneFromSetIsNotExpressedCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val geneSet = functionInputResolver().createManyGenesInput(function).geneNames
+            AnyGeneFromSetIsNotExpressed(maxMolecularTestAge(), geneSet)
+        }
+    }
+
     private fun proteinIsExpressedByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             ProteinIsExpressedByIHC(functionInputResolver().createOneStringInput(function))
@@ -321,14 +335,14 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun isHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesXCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genesToFind = functionInputResolver().createManyGenesInput(function)
-            IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesX(genesToFind.geneNames.toSet(), maxMolecularTestAge())
+            IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesX(genesToFind.geneNames, maxMolecularTestAge())
         }
     }
 
     private fun isHomologousRepairDeficientWithoutMutationInGenesXCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genesToFind = functionInputResolver().createManyGenesInput(function)
-            IsHomologousRepairDeficientWithoutMutationInGenesX(genesToFind.geneNames.toSet(), maxMolecularTestAge())
+            IsHomologousRepairDeficientWithoutMutationInGenesX(genesToFind.geneNames, maxMolecularTestAge())
         }
     }
 

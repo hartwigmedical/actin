@@ -1,0 +1,556 @@
+{
+  "patientId": "EXAMPLE-LUNG-02",
+  "patient": {
+	"gender": "MALE",
+	"birthYear": 1965,
+	"registrationDate": {
+	  "year": 2024,
+	  "month": 10,
+	  "day": 1
+	},
+	"questionnaireDate": {
+	  "year": 2024,
+	  "month": 10,
+	  "day": 1
+	},
+	"hasHartwigSequencing": false
+  },
+  "tumor": {
+	"primaryTumorLocation": "Lung",
+	"primaryTumorSubLocation": "",
+	"primaryTumorType": "Carcinoma",
+	"primaryTumorSubType": "Squamous cell carcinoma",
+	"primaryTumorExtraDetails": "",
+	"doids": [
+	  "3907"
+	],
+	"stage": "III",
+	"derivedStages": null,
+	"hasMeasurableDisease": true,
+	"hasBrainLesions": false,
+	"brainLesionsCount": null,
+	"hasActiveBrainLesions": false,
+	"hasCnsLesions": false,
+	"cnsLesionsCount": null,
+	"hasActiveCnsLesions": false,
+	"hasBoneLesions": false,
+	"boneLesionsCount": null,
+	"hasLiverLesions": true,
+	"liverLesionsCount": 1,
+	"hasLungLesions": true,
+	"lungLesionsCount": 1,
+	"hasLymphNodeLesions": true,
+	"lymphNodeLesionsCount": 1,
+	"otherLesions": [],
+	"biopsyLocation": "Lung",
+	"rawPathologyReport": null
+  },
+  "clinicalStatus": {
+	"who": 1,
+	"infectionStatus": {
+	  "hasActiveInfection": false,
+	  "description": null
+	},
+	"ecg": {
+	  "hasSigAberrationLatestECG": true,
+	  "aberrationDescription": "Left bundle branch block",
+	  "qtcfValue": 430,
+	  "qtcfUnit": "ms"
+	},
+	"lvef": 0.4,
+	"hasComplications": false
+  },
+  "oncologicalHistory": [
+	{
+	  "treatments": [
+		{
+		  "name": "CARBOPLATIN+PEMETREXED",
+		  "drugs": [
+			{
+			  "name": "CARBOPLATIN",
+			  "drugTypes": [
+				"PLATINUM_COMPOUND"
+			  ],
+			  "category": "CHEMOTHERAPY",
+			  "displayOverride": null
+			},
+			{
+			  "name": "PEMETREXED",
+			  "drugTypes": [
+				"ANTIMETABOLITE"
+			  ],
+			  "category": "CHEMOTHERAPY",
+			  "displayOverride": null
+			}
+		  ],
+		  "synonyms": [],
+		  "displayOverride": null,
+		  "isSystemic": true,
+		  "maxCycles": null,
+		  "treatmentClass": "DRUG_TREATMENT"
+		}
+	  ],
+	  "startYear": 2023,
+	  "startMonth": 6,
+	  "intents": [
+		"PALLIATIVE"
+	  ],
+	  "isTrial": false,
+	  "trialAcronym": null,
+	  "treatmentHistoryDetails": {
+		"stopYear": 2024,
+		"stopMonth": 6,
+		"ongoingAsOf": null,
+		"cycles": null,
+		"bestResponse": "PARTIAL_RESPONSE",
+		"stopReason": "PROGRESSIVE_DISEASE",
+		"stopReasonDetail": null,
+		"switchToTreatments": null,
+		"maintenanceTreatment": {
+		  "treatment": {
+			"name": "PEMETREXED",
+			"drugs": [
+			  {
+				"name": "PEMETREXED",
+				"drugTypes": [
+				  "ANTIMETABOLITE"
+				],
+				"category": "CHEMOTHERAPY",
+				"displayOverride": null
+			  }
+			],
+			"synonyms": [],
+			"displayOverride": null,
+			"isSystemic": true,
+			"maxCycles": null,
+			"treatmentClass": "DRUG_TREATMENT"
+		  },
+		  "cycles": 9,
+		  "startYear": 2023,
+		  "startMonth": 9
+		}
+	  },
+	  "toxicities": [],
+	  "bodyLocationCategories": null,
+	  "bodyLocations": null
+	},
+	{
+	  "treatments": [
+		{
+		  "name": "DOCETAXEL",
+		  "drugs": [
+			{
+			  "name": "DOCETAXEL",
+			  "drugTypes": [
+				"ANTIMICROTUBULE_AGENT",
+				"TAXANE"
+			  ],
+			  "category": "CHEMOTHERAPY",
+			  "displayOverride": null
+			}
+		  ],
+		  "synonyms": [],
+		  "displayOverride": null,
+		  "isSystemic": true,
+		  "maxCycles": null,
+		  "treatmentClass": "DRUG_TREATMENT"
+		}
+	  ],
+	  "startYear": 2024,
+	  "startMonth": 7,
+	  "intents": [
+		"PALLIATIVE"
+	  ],
+	  "isTrial": false,
+	  "trialAcronym": null,
+	  "treatmentHistoryDetails": {
+		"stopYear": 2024,
+		"stopMonth": 8,
+		"ongoingAsOf": null,
+		"cycles": null,
+		"bestResponse": "STABLE_DISEASE",
+		"stopReason": "TOXICITY",
+		"stopReasonDetail": null,
+		"switchToTreatments": null,
+		"maintenanceTreatment": null
+	  },
+	  "toxicities": [
+		{
+		  "name": "Neutropenia",
+		  "categories": [
+			"HEMATOLOGIC"
+		  ],
+		  "evaluatedDate": {
+			"year": 2023,
+			"month": 2
+		  },
+		  "source": "EHR",
+		  "grade": 3,
+		  "endDate": null
+		}
+	  ],
+	  "bodyLocationCategories": null,
+	  "bodyLocations": null
+	}
+  ],
+  "priorSecondPrimaries": [],
+  "priorOtherConditions": [
+	{
+	  "name": "Acute myocardial infarction",
+	  "year": 2020,
+	  "month": 1,
+	  "doids": [
+		"9408"
+	  ],
+	  "category": "Heart disease",
+	  "isContraindicationForTherapy": true
+	},
+	{
+	  "name": "Bipolar disorder",
+	  "year": 2000,
+	  "month": 1,
+	  "doids": [
+		"3312"
+	  ],
+	  "category": "Psychiatric disease",
+	  "isContraindicationForTherapy": true
+	}
+  ],
+  "complications": [],
+  "labValues": [
+	{
+	  "date": {
+		"year": 2024,
+		"month": 9,
+		"day": 9
+	  },
+	  "code": "ALAT",
+	  "name": "Alanine aminotransferase",
+	  "comparator": "",
+	  "value": 224.0,
+	  "unit": "UNITS_PER_LITER",
+	  "refLimitLow": 7.0,
+	  "refLimitUp": 56.0,
+	  "isOutsideRef": true
+	},
+	{
+	  "date": {
+		"year": 2024,
+		"month": 9,
+		"day": 9
+	  },
+	  "code": "ASAT",
+	  "name": "Aspartate aminotransferase",
+	  "comparator": "",
+	  "value": 132.0,
+	  "unit": "UNITS_PER_LITER",
+	  "refLimitLow": 8.0,
+	  "refLimitUp": 33.0,
+	  "isOutsideRef": true
+	},
+	{
+	  "date": {
+		"year": 2024,
+		"month": 9,
+		"day": 9
+	  },
+	  "code": "TOTAL_BILIRUBIN",
+	  "name": "total bilirubin",
+	  "comparator": "",
+	  "value": 8.0,
+	  "unit": "MICROMOLES_PER_LITER",
+	  "refLimitLow": 0,
+	  "refLimitUp": 17.0,
+	  "isOutsideRef": false
+	},
+	{
+	  "date": {
+		"year": 2024,
+		"month": 9,
+		"day": 9
+	  },
+	  "code": "Hb",
+	  "name": "hemoglobin",
+	  "comparator": "",
+	  "value": 8.2,
+	  "unit": "MILLIMOLES_PER_LITER",
+	  "refLimitLow": 8,
+	  "refLimitUp": 10,
+	  "isOutsideRef": false
+	},
+	{
+	  "date": {
+		"year": 2024,
+		"month": 9,
+		"day": 9
+	  },
+	  "code": "THROMBOCYTES_ABS",
+	  "name": "absolute thrombocyte count",
+	  "comparator": "",
+	  "value": 250.0,
+	  "unit": "BILLIONS_PER_LITER",
+	  "refLimitLow": 150.0,
+	  "refLimitUp": 370.0,
+	  "isOutsideRef": false
+	},
+	{
+	  "date": {
+		"year": 2024,
+		"month": 9,
+		"day": 9
+	  },
+	  "code": "LYMPHOCYTES_ABS_EDA",
+	  "name": "absolute lymphocyte count eDA",
+	  "comparator": "",
+	  "value": 3.0,
+	  "unit": "BILLIONS_PER_LITER",
+	  "refLimitLow": 0.5,
+	  "refLimitUp": 5.0,
+	  "isOutsideRef": false
+	}
+  ],
+  "toxicities": [],
+  "intolerances": [],
+  "surgeries": [],
+  "bodyWeights": [
+	{
+	  "date": "2024-09-09T08:00:00",
+	  "value": 75.0,
+	  "unit": "KILOGRAMS",
+	  "valid": true
+	},
+	{
+	  "date": "2024-05-01T08:00:00",
+	  "value": 78.0,
+	  "unit": "KILOGRAMS",
+	  "valid": true
+	}
+  ],
+  "bodyHeights": [
+	{
+	  "date": "2024-05-01T08:00:00",
+	  "value": 185.0,
+	  "unit": "CENTIMETERS",
+	  "valid": true
+	}
+  ],
+  "vitalFunctions": [
+	{
+	  "date": "2024-09-09T08:00:00",
+	  "category": "NON_INVASIVE_BLOOD_PRESSURE",
+	  "subCategory": "SYSTOLIC_BLOOD_PRESSURE",
+	  "value": 130.0,
+	  "unit": "MILLIMETERS_OF_MERCURY",
+	  "valid": true
+	},
+	{
+	  "date": "2024-09-09T08:00:00",
+	  "category": "NON_INVASIVE_BLOOD_PRESSURE",
+	  "subCategory": "DIASTOLIC_BLOOD_PRESSURE",
+	  "value": 85.0,
+	  "unit": "MILLIMETERS_OF_MERCURY",
+	  "valid": true
+	}
+  ],
+  "bloodTransfusions": [],
+  "medications": [
+	{
+	  "name": "Lithium",
+	  "status": "ACTIVE",
+	  "administrationRoute": "Oral",
+	  "dosage": {
+		"dosageMin": 600.0,
+		"dosageMax": 600.0,
+		"dosageUnit": "MILLIGRAMS",
+		"frequency": 2.0,
+		"frequencyUnit": "DAYS",
+		"periodBetweenValue": 1.0,
+		"periodBetweenUnit": "DAYS",
+		"ifNeeded": false
+	  },
+	  "startDate": {
+		"year": 2000,
+		"month": 1,
+		"day": 1
+	  },
+	  "stopDate": null,
+	  "drug": null,
+	  "cypInteractions": [],
+	  "qtProlongatingRisk": "POSSIBLE",
+	  "atc": null,
+	  "isSelfCare": false,
+	  "isTrialMedication": false
+	}
+  ],
+  "priorIHCTests": [
+	{
+	  "test": "IHC",
+	  "item": "PD-L1",
+	  "measure": null,
+	  "scoreText": null,
+	  "scoreValuePrefix": "<",
+	  "scoreValue": 1,
+	  "scoreValueUnit": "%",
+	  "impliesPotentialIndeterminateStatus": false
+	}
+  ],
+  "molecularHistory": {
+	"molecularTests": [
+	  {
+		"testedGenes": [
+		  "ALK",
+		  "BRAF",
+		  "EGFR",
+		  "ERBB2",
+		  "HRAS",
+		  "KEAP1",
+		  "KRAS",
+		  "MET",
+		  "NRAS",
+		  "NTRK1",
+		  "NTRK2",
+		  "NTRK3",
+		  "PIK3CA",
+		  "RET",
+		  "ROS1",
+		  "SMARCA4",
+		  "STK11",
+		  "TP53"
+		],
+		"experimentType": "PANEL",
+		"testTypeDisplay": "NGS Lung Panel 1.2",
+		"date": {
+		  "year": 2024,
+		  "month": 9,
+		  "day": 15
+		},
+		"drivers": {
+		  "variants": [
+			{
+			  "chromosome": "3",
+			  "position": 178936091,
+			  "ref": "G",
+			  "alt": "A",
+			  "type": "SNV",
+			  "variantAlleleFrequency": 0.5,
+			  "canonicalImpact": {
+				"transcriptId": "",
+				"hgvsCodingImpact": "c.1633G>A",
+				"hgvsProteinImpact": "p.E545K",
+				"affectedCodon": 545,
+				"affectedExon": 9,
+				"isSpliceRegion": false,
+				"effects": [
+				  "MISSENSE"
+				],
+				"codingEffect": "MISSENSE"
+			  },
+			  "otherImpacts": [],
+			  "extendedVariantDetails": null,
+			  "isHotspot": true,
+			  "isReportable": true,
+			  "event": "PIK3CA E545K",
+			  "driverLikelihood": "HIGH",
+			  "evidence": {
+				"externalEligibleTrials": [
+				  {
+					"title": "PIK3CA-TRIAL",
+					"countries": [
+					  {
+						"name": "NETHERLANDS",
+						"hospitalsPerCity": {
+						  "Tilburg": [
+							"Elisabeth-TweeSteden Ziekenhuis"
+						  ]
+						}
+					  },
+					  {
+						"name": "GERMANY",
+						"hospitalsPerCity": {
+						  "Stuttgart": [
+							"Robert-Bosch-Krankenhaus - Klinik Schillerhoehe"
+						  ]
+						}
+					  }
+					],
+					"url": "https://hartwigmedicalfoundation.nl",
+					"nctId": "NCT00000016",
+					"isCategoryEvent": true,
+					"sourceEvent": "PIK3CA activating mutations",
+					"evidenceLevelDetails": "CLINICAL_STUDY",
+					"applicableCancerType": {
+					  "cancerType": "Lung cancer",
+					  "excludedCancerTypes": []
+					}
+				  }
+				]
+			  },
+			  "gene": "PIK3CA",
+			  "geneRole": "ONCO",
+			  "proteinEffect": "GAIN_OF_FUNCTION",
+			  "isAssociatedWithDrugResistance": null
+			}
+		  ],
+		  "copyNumbers": [
+			{
+			  "type": "LOSS",
+			  "minCopies": 0,
+			  "maxCopies": 0,
+			  "isReportable": true,
+			  "event": "TP53 del",
+			  "driverLikelihood": "HIGH",
+			  "evidence": {
+				"externalEligibleTrials": [],
+				"treatmentEvidence": []
+			  },
+			  "gene": "TP53",
+			  "geneRole": "TSG",
+			  "proteinEffect": "UNKNOWN",
+			  "isAssociatedWithDrugResistance": null
+			},
+			{
+			  "type": "LOSS",
+			  "minCopies": 0,
+			  "maxCopies": 0,
+			  "isReportable": true,
+			  "event": "KEAP1 del",
+			  "driverLikelihood": "HIGH",
+			  "evidence": {
+				"externalEligibleTrials": [],
+				"treatmentEvidence": []
+			  },
+			  "gene": "KEAP1",
+			  "geneRole": "TSG",
+			  "proteinEffect": "UNKNOWN",
+			  "isAssociatedWithDrugResistance": null
+			}
+		  ],
+		  "homozygousDisruptions": [],
+		  "disruptions": [],
+		  "fusions": [],
+		  "viruses": []
+		},
+		"characteristics": {
+		  "purity": null,
+		  "ploidy": 2.0,
+		  "predictedTumorOrigin": null,
+		  "isMicrosatelliteUnstable": false,
+		  "microsatelliteEvidence": null,
+		  "homologousRepairScore": null,
+		  "isHomologousRepairDeficient": false,
+		  "brca1Value": null,
+		  "brca2Value": null,
+		  "hrdType": null,
+		  "homologousRepairEvidence": null,
+		  "tumorMutationalBurden": 8.0,
+		  "hasHighTumorMutationalBurden": false,
+		  "tumorMutationalBurdenEvidence": null,
+		  "tumorMutationalLoad": null,
+		  "hasHighTumorMutationalLoad": null,
+		  "tumorMutationalLoadEvidence": null
+		},
+		"evidenceSource": "Hartwig"
+	  }
+	]
+  }
+}
