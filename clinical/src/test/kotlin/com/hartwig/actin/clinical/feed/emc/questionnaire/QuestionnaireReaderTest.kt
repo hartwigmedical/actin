@@ -2,33 +2,44 @@ package com.hartwig.actin.clinical.feed.emc.questionnaire
 
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireReader.read
 import org.apache.logging.log4j.util.Strings
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class QuestionnaireReaderTest {
+
     @Test
-    fun shouldReadSimpleQuestionnaire() {
+    fun `Should read simple questionnaire`() {
         val questionnaireText = """this: \n is: \n a: \n questionnaire:"""
-        Assert.assertEquals(
-            4,
-            read(questionnaireText, listOf(*questionnaireText.split(": \\n ").dropLastWhile { it.isEmpty() }
-                .toTypedArray())).size.toLong())
+        val lines = read(
+            questionnaireText, listOf(*questionnaireText.split(": \\n ").dropLastWhile { it.isEmpty() }.toTypedArray())
+        )
+        assertThat(lines.size).isEqualTo(4)
     }
 
     @Test
-    fun shouldCleanTermsFromQuestionnaire() {
+    fun `Should clean terms from questionnaire`() {
         val lines = read(
             """${QuestionnaireReader.TERMS_TO_CLEAN.joinToString("")}\ntest:""", listOf("test")
         )
-        Assert.assertEquals(2, lines.size.toLong())
-        Assert.assertEquals(Strings.EMPTY, lines[0])
+        assertThat(lines.size).isEqualTo(2)
+        assertThat(lines[0]).isEqualTo(Strings.EMPTY)
+
     }
 
     @Test
-    fun shouldMergeLinesForMultilineResponses() {
+    fun `Should merge lines for multi line responses`() {
         val lines = read("""value1: x\nand y\nand more\nvalue2: z\n\nheader\nvalue3: 5\nvalue4: 6\n7""", listOf("value"))
-        Assert.assertEquals(6, lines.size.toLong())
-        Assert.assertEquals("value1: x,and y,and more", lines[0])
-        Assert.assertEquals("value4: 6,7", lines[5])
+        assertThat(lines.size).isEqualTo(6)
+        assertThat(lines[0]).isEqualTo("value1: x,and y,and more")
+        assertThat(lines[5]).isEqualTo("value4: 6,7")
+    }
+
+    @Test
+    fun `Should clean empty lines between keys and text`() {
+        val text = "- IHC test results: \\n\\nERBB2 3+\\n- PD L1 test results: Positive"
+        val lines = read(text, listOf("IHC test results", "PD L1 test results"))
+        assertThat(lines.size).isEqualTo(2)
+        assertThat(lines[0]).isEqualTo("- IHC test results: ERBB2 3+")
+        assertThat(lines[1]).isEqualTo("- PD L1 test results: Positive")
     }
 }

@@ -95,7 +95,7 @@ object TestQuestionnaireFactory {
              + "Measurable disease: YES\n"
              + "\n"
              + "Previous Molecular tests\n"
-             + "- IHC test results: ERBB2 3+\n"
+             + "- IHC test results: \\n\\nERBB2 3+\n"
              + "- PD L1 test results: Positive\n"
              + "\n"
              + "Clinical details\n"
