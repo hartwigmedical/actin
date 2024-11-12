@@ -255,6 +255,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
 
     @Test
     fun `Should warn when reportable exon skips but also other reportable matches`() {
+        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, 1, 4, VariantTypeInput.DELETE)
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -262,7 +263,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
                     TestVariantFactory.createMinimal().copy(
                         gene = TARGET_GENE,
                         isReportable = true,
-                        type = VariantType.INSERT,
+                        type = VariantType.DELETE,
                         canonicalImpact = impactWithExon(OTHER_EXON),
                         otherImpacts = setOf(impactWithExon(MATCHING_EXON)),
                         extendedVariantDetails = TestVariantFactory.createMinimalExtended()
