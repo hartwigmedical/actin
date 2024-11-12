@@ -85,12 +85,16 @@ class GeneHasVariantInExonRangeOfType(
 
             canonicalReportableVariantMatches.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "Variant(s) $baseMessage in canonical transcript, together with variant(s) in non-canonical transcript: ${
+                    "Variant(s) $baseMessage in canonical transcript together with variant(s) in non-canonical transcript: ${
                         Format.concat(
                             reportableOtherVariantMatches
                         )
                     }",
-                    "Variant(s) $baseMessage",
+                    "Variant(s) $baseMessage together with variant(s) in non-canonical transcript: ${
+                        Format.concat(
+                            reportableOtherVariantMatches
+                        )
+                    }",
                     inclusionEvents = canonicalReportableVariantMatches + reportableOtherVariantMatches
                 )
             }
