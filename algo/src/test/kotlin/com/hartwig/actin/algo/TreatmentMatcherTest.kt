@@ -78,19 +78,42 @@ class TreatmentMatcherTest {
     fun `Should include SOC evaluations for patient when SOC evaluation is available`() {
         val eligibilityFunction = EligibilityFunction(EligibilityRule.MSI_SIGNATURE, emptyList())
         val treatmentCandidate = TreatmentCandidate(
-            TreatmentTestFactory.drugTreatment("test", TreatmentCategory.CHEMOTHERAPY), false, setOf(eligibilityFunction)
+            TreatmentTestFactory.drugTreatment("test", TreatmentCategory.CHEMOTHERAPY),
+            optional = false,
+            eligibilityFunctions = setOf(eligibilityFunction)
         )
-        val expectedSocTreatments = listOf(EvaluatedTreatment(treatmentCandidate, listOf(EvaluationFactory.pass("Has MSI"))))
+        val expectedSocTreatments = listOf(
+            EvaluatedTreatment(
+                treatmentCandidate,
+                listOf(EvaluationFactory.pass("Has MSI"))
+            )
+        )
+        val noneEvaluatedTreatment = EvaluatedTreatment(
+            treatmentCandidate = TreatmentCandidate(
+                TreatmentTestFactory.noneTreatment(),
+                optional = false,
+                eligibilityFunctions = emptySet()
+                ),
+            evaluations = listOf(
+                EvaluationFactory.pass("No suitable treatments matched.")
+            )
+        )
+        val expectedSocTreatmentsWithNone = expectedSocTreatments + noneEvaluatedTreatment
 
         every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(patient) } returns true
         every { recommendationEngine.standardOfCareEvaluatedTreatments(patient) } returns expectedSocTreatments
 
+        val expectedAnnotatedMatches = EvaluatedTreatmentAnnotator.create(
+            evidenceEntries,
+            resistanceEvidenceMatcher
+        ).annotate(expectedSocTreatmentsWithNone)
+
         assertThat(treatmentMatcher.evaluateAndAnnotateMatchesForPatient(patient))
+            .usingRecursiveComparison()
+            .withStrictTypeChecking()
             .isEqualTo(
                 expectedTreatmentMatch.copy(
-                    standardOfCareMatches = EvaluatedTreatmentAnnotator.create(evidenceEntries, resistanceEvidenceMatcher).annotate(
-                        expectedSocTreatments
-                    )
+                    standardOfCareMatches = expectedAnnotatedMatches
                 )
             )
     }

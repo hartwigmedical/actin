@@ -8,9 +8,19 @@ import com.hartwig.actin.algo.soc.RecommendationEngine
 import com.hartwig.actin.algo.soc.RecommendationEngineFactory
 import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.datamodel.PatientRecord
+
+import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.EvaluatedTreatment
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
+import com.hartwig.actin.datamodel.algo.TreatmentCandidate
+
 import com.hartwig.actin.datamodel.efficacy.EfficacyEntry
 import com.hartwig.actin.datamodel.trial.Trial
+
+import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatment
+
+
 
 class TreatmentMatcher(
     private val trialMatcher: TrialMatcher,
@@ -26,7 +36,14 @@ class TreatmentMatcher(
         val trialMatches = trialMatcher.determineEligibility(patient, trials)
 
         val (standardOfCareMatches, personalizedDataAnalysis) = if (recommendationEngine.standardOfCareCanBeEvaluatedForPatient(patient)) {
-            val evaluatedTreatments = recommendationEngine.standardOfCareEvaluatedTreatments(patient)
+            val evaluatedTreatments = recommendationEngine.standardOfCareEvaluatedTreatments(patient).toMutableList()
+
+            if (recommendationEngine.standardOfCareCanBeEvaluatedForPatient(patient)) {
+                val noneEvaluatedTreatment = createNoneEvaluatedTreatment()
+                evaluatedTreatments.add(noneEvaluatedTreatment)
+            }
+
+
             val personalizedDataAnalysis = personalizationDataPath?.let { PersonalizedDataInterpreter.create(it).interpret(patient) }
             Pair(
                 evaluatedTreatmentAnnotator.annotate(evaluatedTreatments, personalizedDataAnalysis?.treatmentAnalyses),
@@ -47,6 +64,47 @@ class TreatmentMatcher(
             personalizedDataAnalysis = personalizedDataAnalysis
         )
     }
+
+    private fun createNoneEvaluatedTreatment(): EvaluatedTreatment {
+        val noneTreatment = OtherTreatment(
+            name = "None",
+            isSystemic = false,
+            synonyms = setOf("none", "no treatment"),
+            displayOverride = null,
+            categories = emptySet(),
+            types = emptySet()
+        )
+
+        val treatmentCandidate = TreatmentCandidate(
+            treatment = noneTreatment,
+            optional = false,
+            eligibilityFunctions = emptySet()
+        )
+
+        val evaluations = listOf(
+            Evaluation(
+                result = EvaluationResult.PASS,
+                recoverable = false,
+                passSpecificMessages = setOf("No suitable treatments matched."),
+                passGeneralMessages = setOf("No suitable treatments matched."),
+                inclusionMolecularEvents = emptySet(),
+                exclusionMolecularEvents = emptySet(),
+                warnSpecificMessages = emptySet(),
+                warnGeneralMessages = emptySet(),
+                undeterminedSpecificMessages = emptySet(),
+                undeterminedGeneralMessages = emptySet(),
+                failSpecificMessages = emptySet(),
+                failGeneralMessages = emptySet(),
+                isMissingGenesForSufficientEvaluation = false
+            )
+        )
+
+        return EvaluatedTreatment(
+            treatmentCandidate = treatmentCandidate,
+            evaluations = evaluations
+        )
+    }
+
 
     companion object {
         fun create(

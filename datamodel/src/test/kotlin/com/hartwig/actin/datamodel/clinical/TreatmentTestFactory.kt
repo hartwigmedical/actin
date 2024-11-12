@@ -39,6 +39,17 @@ object TreatmentTestFactory {
         return DrugTreatment(name = name, drugs = emptySet())
     }
 
+    fun noneTreatment(): Treatment {
+        return OtherTreatment(
+            name = "None",
+            isSystemic = false,
+            synonyms = setOf("none", "no treatment"),
+            displayOverride = null,
+            categories = emptySet(),
+            types = emptySet()
+        )
+    }
+
     fun treatmentHistoryEntry(
         treatments: Collection<Treatment> = emptySet(),
         startYear: Int? = null,

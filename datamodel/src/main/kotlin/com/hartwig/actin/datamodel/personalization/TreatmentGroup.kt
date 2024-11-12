@@ -19,7 +19,10 @@ enum class TreatmentGroup(val display: String, val memberTreatmentNames: List<St
     companion object {
         private val groupsByTreatmentName = entries.flatMap { group -> group.memberTreatmentNames.map { it to group } }.toMap()
 
-        fun fromTreatmentName(treatmentName: String): TreatmentGroup? {
+        fun fromTreatmentName(treatmentName: String?): TreatmentGroup? {
+            if (treatmentName.isNullOrBlank()) {
+                return NONE
+            }
             return groupsByTreatmentName[treatmentName.lowercase()]
         }
     }

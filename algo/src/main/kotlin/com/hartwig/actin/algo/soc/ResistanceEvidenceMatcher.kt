@@ -172,10 +172,18 @@ class ResistanceEvidenceMatcher(
     }
 
     private fun drugsInOtherTreatment(treatment1: Treatment, treatment2: Treatment): Boolean {
-        val drugs1 = (treatment1 as DrugTreatment).drugs
-        val drugs2 = (treatment2 as DrugTreatment).drugs
-        return (drugs2.all { it in drugs1 })
+        return when {
+            treatment1 is DrugTreatment && treatment2 is DrugTreatment -> {
+                val drugs1 = treatment1.drugs
+                val drugs2 = treatment2.drugs
+                drugs2.all { it in drugs1 }
+            }
+            else -> {
+                false
+            }
+        }
     }
+
 
     companion object {
         fun create(
