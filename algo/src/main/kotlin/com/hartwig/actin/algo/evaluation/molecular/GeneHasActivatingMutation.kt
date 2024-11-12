@@ -78,10 +78,12 @@ class GeneHasActivatingMutation(
 
             activatingVariants.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "$gene activating mutation(s): ${Format.concat(activatingVariants)}, " +
-                            "together with $gene potentially activating mutation(s): " +
+                    "$gene activating mutation(s): ${Format.concat(activatingVariants)} " +
+                            "together with potentially activating mutation(s): " +
                             Format.concat(potentiallyActivatingWarnings.map { (event, type) -> "$event (${type.description})" }),
-                    "$gene activating mutation(s) together with potentially activating mutation(s)",
+                    "$gene activating mutation(s): ${Format.concat(activatingVariants)} " +
+                            "together with potentially activating mutation(s): " +
+                            Format.concat(potentiallyActivatingWarnings.map { (event, type) -> "$event (${type.description})" }),
                     inclusionEvents = activatingVariants + potentiallyActivatingWarnings.map { (event, _) -> event }
                 )
             }
