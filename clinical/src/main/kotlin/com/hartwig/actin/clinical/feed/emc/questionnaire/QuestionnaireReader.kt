@@ -37,14 +37,11 @@ internal object QuestionnaireReader {
     }
 
     private fun clean(entryText: String, validKeys: List<String>): String {
-        val cleanedTerms = TERMS_TO_CLEAN.fold(entryText) { acc, term ->
+        val cleanedText = TERMS_TO_CLEAN.fold(entryText) { acc, term ->
             acc.replace(term, "")
         }
-        val pattern = validKeys
-            .joinToString("|")
-            .let { "($it):\\s*((\\\\n){2,})" }
-            .toRegex()
-        return pattern.replace(cleanedTerms) { match ->
+        val pattern = "(${validKeys.joinToString("|")}):\\s*((\\\\n){2,})".toRegex()
+        return pattern.replace(cleanedText) { match ->
             "${match.groupValues[1]}: "
         }
     }
