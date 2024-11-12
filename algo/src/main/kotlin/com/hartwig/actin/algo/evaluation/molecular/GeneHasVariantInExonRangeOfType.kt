@@ -106,7 +106,11 @@ class GeneHasVariantInExonRangeOfType(
                             reportableOtherVariantMatches
                         )
                     }",
-                    "Exons skipped $baseMessage, together with variant(s) in non-canonical transcript",
+                    "Exons skipped $baseMessage together with variant(s) in non-canonical transcript: ${
+                        Format.concat(
+                            reportableOtherVariantMatches
+                        )
+                    }",
                     inclusionEvents = reportableExonSkips.map { it.event }.toSet() + reportableOtherVariantMatches
                 )
             }
