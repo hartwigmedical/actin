@@ -125,7 +125,7 @@ object WGSSummaryGeneratorFunctions {
             .generateSummaryString(wgsMolecular?.hasSufficientQuality)
 
         val paragraph = Paragraph(Text(originSummary).addStyle(Styles.tableHighlightStyle()))
-        if (molecular.characteristics.purity != null && wgsMolecular?.hasSufficientQuality == true) {
+        if (molecular.characteristics.purity != null && wgsMolecular?.hasSufficientQualityButLowPurity() == true) {
             paragraph.add(Text(" (low purity)").addStyle(Styles.tableNoticeStyle()))
         }
         return Cells.create(paragraph)

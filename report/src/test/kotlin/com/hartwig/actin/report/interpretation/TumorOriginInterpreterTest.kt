@@ -36,24 +36,24 @@ class TumorOriginInterpreterTest {
 
     @Test
     fun `Should return empty list for display when predicted tumor origin is null`() {
-        assertThat(TumorOriginInterpreter(null).topPredictions()).isEmpty()
+        assertThat(TumorOriginInterpreter(null).topPredictionsToDisplay()).isEmpty()
     }
 
     @Test
     fun `Should return empty list for display when all predictions are below threshold`() {
-        assertThat(withPredictions(0.09, 0.02, 0.05, 0.08).topPredictions()).isEmpty()
+        assertThat(withPredictions(0.09, 0.02, 0.05, 0.08).topPredictionsToDisplay()).isEmpty()
     }
 
     @Test
     fun `Should omit predictions below threshold for display`() {
-        val predictions = withPredictions(0.4, 0.02, 0.05, 0.08).topPredictions()
+        val predictions = withPredictions(0.4, 0.02, 0.05, 0.08).topPredictionsToDisplay()
         assertThat(predictions).hasSize(1)
         assertThat(predictions.first().likelihood).isEqualTo(0.4)
     }
 
     @Test
     fun `Should display at most three predictions`() {
-        assertThat(withPredictions(0.4, 0.12, 0.15, 0.25).topPredictions().map(CupPrediction::likelihood))
+        assertThat(withPredictions(0.4, 0.12, 0.15, 0.25).topPredictionsToDisplay().map(CupPrediction::likelihood))
             .containsExactly(0.4, 0.25, 0.15)
     }
 
