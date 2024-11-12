@@ -2,6 +2,7 @@ package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.molecular.Driver
 import com.hartwig.actin.datamodel.molecular.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.PredictedTumorOrigin
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
@@ -30,8 +31,7 @@ class WGSSummaryGeneratorFunctionsTest {
         ),
     )
     private val inconclusiveCharacteristics =
-        TestMolecularFactory.createProperTestCharacteristics()
-            .copy(predictedTumorOrigin = TestMolecularFactory.createProperPredictedTumorOrigin().copy(inconclusivePredictions))
+        molecularRecord.characteristics.copy(predictedTumorOrigin = PredictedTumorOrigin(inconclusivePredictions))
 
     @Test
     fun `Should return events concatenated and with warning string`() {
@@ -53,14 +53,14 @@ class WGSSummaryGeneratorFunctionsTest {
     }
 
     @Test
-    fun `Should return correct tumor origin prediction string in case conclusive and quality and purity sufficient`() {
+    fun `Should return one predicted tumor origin when conclusive with sufficient quality and purity`() {
         val cell = WGSSummaryGeneratorFunctions.tumorOriginPredictionCell(molecular = molecularRecord)
         Assertions.assertThat(CellTestUtil.extractTextFromCell(cell))
             .isEqualTo("Melanoma (100%)")
     }
 
     @Test
-    fun `Should return correct tumor origin prediction string in case inconclusive and quality and purity sufficient`() {
+    fun `Should add 'inconclusive' and show multiple tumor origins when inconclusive with sufficient quality and purity`() {
         val cell =
             WGSSummaryGeneratorFunctions.tumorOriginPredictionCell(molecular = molecularRecord.copy(characteristics = inconclusiveCharacteristics))
         Assertions.assertThat(CellTestUtil.extractTextFromCell(cell))
@@ -68,14 +68,14 @@ class WGSSummaryGeneratorFunctionsTest {
     }
 
     @Test
-    fun `Should return correct tumor origin prediction string in case conclusive and quality sufficient but purity insufficient`() {
+    fun `Should add '(low purity)' to predicted tumor origin when conclusive with sufficient quality and insufficient purity`() {
         val cell = WGSSummaryGeneratorFunctions.tumorOriginPredictionCell(molecular = molecularRecord.copy(hasSufficientPurity = false))
         Assertions.assertThat(CellTestUtil.extractTextFromCell(cell))
             .isEqualTo("Melanoma (100%) (low purity)")
     }
 
     @Test
-    fun `Should return correct tumor origin prediction string in case inconclusive and quality sufficient but purity insufficient`() {
+    fun `Should add '(low purity)' to predicted tumor origin when inconclusive with sufficient quality and insufficient purity`() {
         val cell = WGSSummaryGeneratorFunctions.tumorOriginPredictionCell(
             molecular = molecularRecord.copy(characteristics = inconclusiveCharacteristics).copy(hasSufficientPurity = false)
         )
@@ -84,7 +84,7 @@ class WGSSummaryGeneratorFunctionsTest {
     }
 
     @Test
-    fun `Should return correct tumor origin prediction string in case conclusive but quality and purity insufficient`() {
+    fun `Should return 'unknown' predicted tumor origin when conclusive with insufficient quality and purity`() {
         val cell = WGSSummaryGeneratorFunctions.tumorOriginPredictionCell(
             molecular = molecularRecord.copy(
                 hasSufficientPurity = false,
@@ -96,7 +96,7 @@ class WGSSummaryGeneratorFunctionsTest {
     }
 
     @Test
-    fun `Should return correct tumor origin prediction string in case inconclusive but quality and purity insufficient`() {
+    fun `Should return 'unknown' predicted tumor origin when inconclusive with insufficient quality and purity`() {
         val cell = WGSSummaryGeneratorFunctions.tumorOriginPredictionCell(
             molecular = molecularRecord.copy(characteristics = inconclusiveCharacteristics)
                 .copy(hasSufficientPurity = false, hasSufficientQuality = false)
@@ -106,7 +106,7 @@ class WGSSummaryGeneratorFunctionsTest {
     }
 
     @Test
-    fun `Should return correct tumor origin prediction string in case there is no prediction in molecular record`() {
+    fun `Should return 'unknown' predicted tumor origin when there is no prediction in molecular record`() {
         val cell = WGSSummaryGeneratorFunctions.tumorOriginPredictionCell(
             molecular = TestMolecularFactory.createMinimalTestMolecularRecord()
         )
