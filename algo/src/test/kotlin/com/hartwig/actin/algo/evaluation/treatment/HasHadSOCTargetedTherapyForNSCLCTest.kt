@@ -12,8 +12,8 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.junit.Test
 
 class HasHadSOCTargetedTherapyForNSCLCTest {
-    private val genesToIgnore = listOf("EGFR")
-    private val functionNotIgnoringGenes = HasHadSOCTargetedTherapyForNSCLC(emptyList())
+    private val genesToIgnore = setOf("EGFR")
+    private val functionNotIgnoringGenes = HasHadSOCTargetedTherapyForNSCLC(emptySet())
     private val functionIgnoringGenes = HasHadSOCTargetedTherapyForNSCLC(genesToIgnore)
     private val CORRECT_DRUG_TYPE = NSCLC_SOC_TARGETED_THERAPY_DRUG_TYPES.values.flatten().first()
     private val CORRECT_TREATMENT = drugTreatment("Correct", TreatmentCategory.TARGETED_THERAPY, setOf(CORRECT_DRUG_TYPE))

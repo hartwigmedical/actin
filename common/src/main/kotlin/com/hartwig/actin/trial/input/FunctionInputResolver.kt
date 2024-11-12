@@ -642,7 +642,7 @@ class FunctionInputResolver(
 
     fun createManyGenesInput(function: EligibilityFunction): ManyGenes {
         assertParamConfig(function, FunctionInput.MANY_GENES, 1)
-        val geneNames = toStringList(function.parameters.first())
+        val geneNames = toStringList(function.parameters.first()).toSet()
         for (gene in geneNames) {
             if (!molecularInputChecker.isGene(gene)) {
                 throw IllegalStateException("Not a valid gene: $gene")

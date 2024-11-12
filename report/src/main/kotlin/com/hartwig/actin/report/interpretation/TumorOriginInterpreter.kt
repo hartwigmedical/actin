@@ -20,7 +20,7 @@ class TumorOriginInterpreter(private val predictedTumorOrigin: PredictedTumorOri
                 Formats.VALUE_UNKNOWN
             }
             hasConfidentPrediction() -> {
-                predictedTumorOrigin.cancerType() + " (" + Formats.percentage(predictedTumorOrigin.likelihood()) + ")"
+                "${predictedTumorOrigin.cancerType()} (${Formats.percentage(predictedTumorOrigin.likelihood())})"
             }
             else -> {
                 val predictionsMeetingThreshold = topPredictionsToDisplay().map { it.cancerType to it.likelihood }
@@ -41,9 +41,7 @@ class TumorOriginInterpreter(private val predictedTumorOrigin: PredictedTumorOri
         ?.let { topLikelihoods -> topLikelihoods.firstOrNull { it < LIKELIHOOD_DISPLAY_THRESHOLD } ?: topLikelihoods.last() }
         ?: Double.NaN
 
-    private fun bestNPredictions(limit: Int): List<CupPrediction>? {
-        return predictedTumorOrigin?.predictions
-            ?.sortedWith(compareByDescending(CupPrediction::likelihood))
-            ?.take(limit)
-    }
+    private fun bestNPredictions(limit: Int): List<CupPrediction>? = predictedTumorOrigin?.predictions
+        ?.sortedWith(compareByDescending(CupPrediction::likelihood))
+        ?.take(limit)
 }

@@ -70,8 +70,7 @@ class TumorOriginInterpreterTest {
 
     @Test
     fun `Should return one predicted tumor origin when conclusive with sufficient quality and purity`() {
-        val string = conclusiveInterpreter.generateSummaryString(true)
-        assertThat(string).isEqualTo("Melanoma (100%)")
+        assertThat(conclusiveInterpreter.generateSummaryString(true)).isEqualTo("Melanoma (100%)")
     }
 
     @Test

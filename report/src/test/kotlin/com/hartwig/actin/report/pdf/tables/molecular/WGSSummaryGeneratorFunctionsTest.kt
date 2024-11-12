@@ -42,7 +42,7 @@ class WGSSummaryGeneratorFunctionsTest {
         )
         val cell = WGSSummaryGeneratorFunctions.potentiallyActionableEventsCell(drivers)
         Assertions.assertThat(CellTestUtil.extractTextFromCell(cell))
-            .isEqualTo("event 1, event 2 (dubious quality), event 3 (medium driver likelihood)")
+            .isEqualTo("event 1 (no amplification or deletion), event 2 (dubious quality), event 3 (medium driver likelihood)")
     }
 
     @Test

@@ -68,11 +68,11 @@ object WGSSummaryGeneratorFunctions {
                 .partition { it.driverLikelihood == null }
 
             if (actionableEventsWithLowOrMediumDriver.isNotEmpty() || !isShort) {
-                table.addCell(Cells.createKey("Potentially actionable events with medium/low driver:"))
+                table.addCell(Cells.createKey("Trial-relevant events, considered medium/low driver:"))
                 table.addCell(potentiallyActionableEventsCell(actionableEventsWithLowOrMediumDriver))
             }
             if (actionableEventsWithUnknownDriver.isNotEmpty()) {
-                table.addCell(Cells.createKey("Potentially actionable events not considered a driver:"))
+                table.addCell(Cells.createKey("Trial-relevant events, not considered a tumor driver:"))
                 table.addCell(potentiallyActionableEventsCell(actionableEventsWithUnknownDriver))
             }
         } else {
@@ -149,7 +149,9 @@ object WGSSummaryGeneratorFunctions {
             val warning = when (driver.driverLikelihood) {
                 DriverLikelihood.LOW -> " (low driver likelihood)"
                 DriverLikelihood.MEDIUM -> " (medium driver likelihood)"
-                else -> if (driver is CopyNumber) "" else " (dubious quality)"
+                else -> if (driver is CopyNumber) {
+                    " (no amplification or deletion)"
+                } else " (dubious quality)"
             }
             listOf(
                 Text(driver.event).addStyle(Styles.tableHighlightStyle()),
