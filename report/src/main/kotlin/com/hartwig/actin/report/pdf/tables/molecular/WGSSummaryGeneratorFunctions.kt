@@ -119,37 +119,16 @@ object WGSSummaryGeneratorFunctions {
         }
     }
 
-    private fun tumorOriginPredictionCell(molecular: MolecularTest): Cell {
-        val wgsMolecular = if (molecular is MolecularRecord) molecular else null
-        val paragraph = Paragraph(Text(tumorOriginPrediction(molecular, wgsMolecular)).addStyle(Styles.tableHighlightStyle()))
-        val purity = molecular.characteristics.purity
-        if (wgsMolecular != null && purity != null && wgsMolecular.hasSufficientQualityButLowPurity()) {
-            val purityText = Text(" (low purity)").addStyle(Styles.tableNoticeStyle())
-            paragraph.add(purityText)
+    fun tumorOriginPredictionCell(molecular: MolecularTest): Cell {
+        val wgsMolecular = molecular as? MolecularRecord
+        val originSummary = TumorOriginInterpreter(molecular.characteristics.predictedTumorOrigin)
+            .generateSummaryString(wgsMolecular?.hasSufficientQuality)
+
+        val paragraph = Paragraph(Text(originSummary).addStyle(Styles.tableHighlightStyle()))
+        if (molecular.characteristics.purity != null && wgsMolecular?.hasSufficientQualityButLowPurity() == true) {
+            paragraph.add(Text(" (low purity)").addStyle(Styles.tableNoticeStyle()))
         }
         return Cells.create(paragraph)
-    }
-
-    private fun tumorOriginPrediction(molecular: MolecularTest, wgsMolecular: MolecularRecord?): String {
-        val predictedTumorOrigin = molecular.characteristics.predictedTumorOrigin
-        return if (TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin) && wgsMolecular?.hasSufficientQualityAndPurity() == true) {
-            TumorOriginInterpreter.interpret(predictedTumorOrigin)
-        } else if (wgsMolecular?.hasSufficientQuality == true && predictedTumorOrigin != null) {
-            val predictionsMeetingThreshold = TumorOriginInterpreter.predictionsToDisplay(predictedTumorOrigin)
-            if (predictionsMeetingThreshold.isEmpty()) {
-                String.format(
-                    "Inconclusive (%s %s)",
-                    predictedTumorOrigin.cancerType(),
-                    Formats.percentage(predictedTumorOrigin.likelihood())
-                )
-            } else {
-                String.format("Inconclusive (%s)", predictionsMeetingThreshold.joinToString(", ") {
-                    "${it.cancerType} ${Formats.percentage(it.likelihood)}"
-                })
-            }
-        } else {
-            Formats.VALUE_UNKNOWN
-        }
     }
 
     private fun tumorMutationalLoadAndTumorMutationalBurdenStatusCell(molecular: MolecularTest, status: String): Cell {
@@ -228,8 +207,8 @@ object WGSSummaryGeneratorFunctions {
         val characteristicsGenerator = MolecularCharacteristicsGenerator(molecular, keyWidth + valueWidth)
         val orderedKeys = getOrderedKeys(isShort)
         val keyToValueMap = mapOf(
-            "Microsatellite (in)stability" to (characteristicsGenerator.createMSStabilityString()),
-            "HR status" to (characteristicsGenerator.createHRStatusString()),
+            "Microsatellite (in)stability" to characteristicsGenerator.createMSStabilityString(),
+            "HR status" to characteristicsGenerator.createHRStatusString(),
             "High driver mutations" to formatList(summarizer.keyVariants()),
             "Amplified genes" to formatList(summarizer.keyAmplifiedGenes()),
             "Deleted genes" to formatList(summarizer.keyDeletedGenes()),
