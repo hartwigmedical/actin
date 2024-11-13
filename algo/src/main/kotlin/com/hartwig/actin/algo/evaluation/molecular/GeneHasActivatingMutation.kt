@@ -13,7 +13,7 @@ import java.time.LocalDate
 
 enum class ActivationWarningType(val description: String? = null) {
     ASSOCIATED_WITH_RESISTANCE(
-        "Potentially activating mutation(s) that have high driver likelihood " +
+        "Potentially activating mutation(s) that have high driver likelihood, " +
                 "but are also associated with drug resistance"
     ),
     NON_ONCOGENE,
@@ -22,7 +22,7 @@ enum class ActivationWarningType(val description: String? = null) {
                 "but is not a hotspot and not associated with gain-of-function"
     ),
     SUBCLONAL(
-        "Potentially activating mutation(s) that have high driver likelihood " +
+        "Potentially activating mutation(s) that have high driver likelihood, " +
                 "but also have subclonal likelihood of > ${Format.percentage(1 - CLONAL_CUTOFF)}"
     ),
     NON_HIGH_DRIVER_GAIN_OF_FUNCTION,

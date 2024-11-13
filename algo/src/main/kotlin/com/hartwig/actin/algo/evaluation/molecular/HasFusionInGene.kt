@@ -77,8 +77,8 @@ class HasFusionInGene(private val gene: String, maxTestAge: LocalDate? = null) :
                 ).flatten())
 
                 EvaluationFactory.warn(
-                    "Fusion(s) ${concat(matchingFusions)} detected in gene $gene, but other fusion events present: " + eventWarningDescriptions,
-                    "Fusion(s) ${concat(matchingFusions)} detected in gene $gene, but other fusion events present: " + eventWarningDescriptions,
+                    "Valid fusion(s) ${concat(matchingFusions)} detected in gene $gene, together with other fusion events(s): " + eventWarningDescriptions,
+                    "Valid fusion(s) ${concat(matchingFusions)} detected in gene $gene, together with other fusion event(s): " + eventWarningDescriptions,
                     inclusionEvents = matchingFusions + fusionsWithNoEffect +
                             fusionsWithNoHighDriverLikelihoodWithGainOfFunction +
                             fusionsWithNoHighDriverLikelihoodOther +

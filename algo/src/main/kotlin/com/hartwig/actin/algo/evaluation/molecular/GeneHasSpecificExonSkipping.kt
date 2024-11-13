@@ -30,12 +30,16 @@ class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSk
 
             fusionSkippingEvents.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "Exon $exonToSkip skipped in gene $gene due to ${concat(fusionSkippingEvents)} together with potentially exon skipping variant(s) ${
+                    "Exon $exonToSkip skipped in gene $gene due to ${concat(fusionSkippingEvents)}, together with potentially exon skipping variant(s) ${
                         concat(
                             exonSplicingVariants
                         )
                     }",
-                    "Exon $exonToSkip skipping in $gene but potential skipping variant(s) ${concat(exonSplicingVariants)}",
+                    "Exon $exonToSkip skipping in $gene due to ${concat(fusionSkippingEvents)}, together with potentially exon skipping variant(s) ${
+                        concat(
+                            exonSplicingVariants
+                        )
+                    }",
                     inclusionEvents = fusionSkippingEvents + exonSplicingVariants
                 )
             }
