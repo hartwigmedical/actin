@@ -5,7 +5,8 @@ import java.util.StringJoiner
 
 internal object QuestionnaireReader {
 
-    val TERMS_TO_CLEAN = setOf("{", "}", "\\tab", "\\li0", "\\ri0", "\\sa0", "\\sb0", "\\u000ci0", "\\ql", "\\par", "\\u000c2", "\\ltrch")
+    val TERMS_TO_CLEAN =
+        setOf("{", "}", "\\tab", "\\li0", "\\ri0", "\\sa0", "\\sb0", "\\u000ci0", "\\ql", "\\par", "\\u000c2", "\\ltrch", "\\fi0", "\\f2")
 
     fun read(entryText: String, validKeys: List<String>): Array<String> {
         return merge(clean(entryText, validKeys).split("\\n").dropLastWhile { it.isEmpty() }.toTypedArray(), validKeys)
@@ -42,7 +43,7 @@ internal object QuestionnaireReader {
         }
         val pattern = "(${validKeys.joinToString("|")}):\\s*((\\\\n){2,})".toRegex()
         return pattern.replace(cleanedText) { match ->
-            "${match.groupValues[1]}: "
+            "${match.groupValues[1]}:\\n"
         }
     }
 }

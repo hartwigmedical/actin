@@ -44,11 +44,20 @@ class QuestionnaireReaderTest {
     }
 
     @Test
-    fun `Should clean empty lines between keys and text`() {
+    fun `Should replace multiple empty lines with one line between key and value when value exists`() {
         val text = "- IHC test results: \\n\\nERBB2 3+\\n- PD L1 test results: Positive"
         val lines = read(text, listOf("IHC test results", "PD L1 test results"))
         assertThat(lines.size).isEqualTo(2)
-        assertThat(lines[0]).isEqualTo("- IHC test results: ERBB2 3+")
+        assertThat(lines[0]).isEqualTo("- IHC test results:,ERBB2 3+")
+        assertThat(lines[1]).isEqualTo("- PD L1 test results: Positive")
+    }
+
+    @Test
+    fun `Should replace multiple empty lines with one line between key and value when value is missing`() {
+        val text = "- IHC test results: \\n\\n- PD L1 test results: Positive"
+        val lines = read(text, listOf("IHC test results", "PD L1 test results"))
+        assertThat(lines.size).isEqualTo(2)
+        assertThat(lines[0]).isEqualTo("- IHC test results:")
         assertThat(lines[1]).isEqualTo("- PD L1 test results: Positive")
     }
 }
