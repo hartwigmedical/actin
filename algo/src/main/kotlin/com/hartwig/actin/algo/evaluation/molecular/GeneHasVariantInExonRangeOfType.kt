@@ -85,12 +85,12 @@ class GeneHasVariantInExonRangeOfType(
 
             canonicalReportableVariantMatches.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "Variant(s) $baseMessage in canonical transcript together with variant(s) in non-canonical transcript: ${
+                    "Variant(s) ${Format.concat(canonicalReportableVariantMatches)} $baseMessage in canonical transcript, together with variant(s) in non-canonical transcript: ${
                         Format.concat(
                             reportableOtherVariantMatches
                         )
                     }",
-                    "Variant(s) $baseMessage together with variant(s) in non-canonical transcript: ${
+                    "Variant(s) ${Format.concat(canonicalReportableVariantMatches)} $baseMessage, together with variant(s) in non-canonical transcript: ${
                         Format.concat(
                             reportableOtherVariantMatches
                         )
@@ -100,18 +100,19 @@ class GeneHasVariantInExonRangeOfType(
             }
 
             reportableExonSkips.isNotEmpty() -> {
+                val reportableExonSkipEvents = reportableExonSkips.map { it.event }.toSet()
                 EvaluationFactory.warn(
-                    "Exon(s) skipped $baseMessage, together with variant(s) in non-canonical transcript: ${
+                    "Exon(s) skipped $baseMessage due to ${Format.concat(reportableExonSkipEvents)}, together with variant(s) in non-canonical transcript: ${
                         Format.concat(
                             reportableOtherVariantMatches
                         )
                     }",
-                    "Exons skipped $baseMessage together with variant(s) in non-canonical transcript: ${
+                    "Exon(s) skipped $baseMessage due to ${Format.concat(reportableExonSkipEvents)}, together with variant(s) in non-canonical transcript: ${
                         Format.concat(
                             reportableOtherVariantMatches
                         )
                     }",
-                    inclusionEvents = reportableExonSkips.map { it.event }.toSet() + reportableOtherVariantMatches
+                    inclusionEvents = reportableExonSkipEvents + reportableOtherVariantMatches
                 )
             }
 
@@ -169,7 +170,7 @@ class GeneHasVariantInExonRangeOfType(
         return if (minExon == maxExon) {
             minExon.toString()
         } else {
-            "$minExon - $maxExon"
+            "$minExon-$maxExon"
         }
     }
 
