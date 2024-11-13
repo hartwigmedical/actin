@@ -62,7 +62,9 @@ class PanelAnnotator(
                 },
                 ploidy = PLOIDY
             ),
-            evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display()
+            evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display(),
+            hasSufficientPurity = true,
+            hasSufficientQuality = true
         )
     }
 

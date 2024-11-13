@@ -270,6 +270,17 @@ internal object MolecularTestFactory {
         )
     }
 
+    fun withHasSufficientQualityAndPurity(
+        hasSufficientPurity: Boolean, hasSufficientQuality: Boolean
+    ): PatientRecord {
+        return withMolecularRecord(
+            baseMolecular.copy(
+                hasSufficientPurity = hasSufficientPurity,
+                hasSufficientQuality = hasSufficientQuality
+            )
+        )
+    }
+
     fun withTumorMutationalLoadAndHasSufficientQualityAndPurity(
         tumorMutationalLoad: Int?, hasSufficientPurity: Boolean, hasSufficientQuality: Boolean
     ): PatientRecord {
