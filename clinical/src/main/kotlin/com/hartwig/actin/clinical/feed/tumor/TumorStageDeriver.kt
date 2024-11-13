@@ -44,15 +44,20 @@ class TumorStageDeriver(private val derivationRules: Map<Predicate<TumorDetails>
             return Predicate<TumorDetails> { tumor: TumorDetails -> lesionCount(doidModel, tumor) == count }
         }
 
-        // Suspected lesions are not counted for in tumor stage derivation
+        private fun hasConfirmedOrSuspectedLesions(hasLesions: Boolean?, hasSuspectedLesions: Boolean?) =
+            hasLesions == true || hasSuspectedLesions == true
+
         private fun lesionCount(doidModel: DoidModel, tumor: TumorDetails): Int {
             return listOf(
-                tumor.hasLiverLesions to DoidConstants.LIVER_CANCER_DOID,
-                tumor.hasLymphNodeLesions to DoidConstants.LYMPH_NODE_CANCER_DOID,
-                tumor.hasCnsLesions to DoidConstants.CNS_CANCER_DOID,
-                tumor.hasBrainLesions to DoidConstants.BRAIN_CANCER_DOID,
-                tumor.hasLungLesions to DoidConstants.LUNG_CANCER_DOID,
-                tumor.hasBoneLesions to DoidConstants.BONE_CANCER_DOID
+                hasConfirmedOrSuspectedLesions(tumor.hasLiverLesions, tumor.hasSuspectedLiverLesions) to DoidConstants.LIVER_CANCER_DOID,
+                hasConfirmedOrSuspectedLesions(
+                    tumor.hasLymphNodeLesions,
+                    tumor.hasSuspectedLymphNodeLesions
+                ) to DoidConstants.LYMPH_NODE_CANCER_DOID,
+                hasConfirmedOrSuspectedLesions(tumor.hasCnsLesions, tumor.hasSuspectedCnsLesions) to DoidConstants.CNS_CANCER_DOID,
+                hasConfirmedOrSuspectedLesions(tumor.hasBrainLesions, tumor.hasSuspectedBrainLesions) to DoidConstants.BRAIN_CANCER_DOID,
+                hasConfirmedOrSuspectedLesions(tumor.hasLungLesions, tumor.hasSuspectedLungLesions) to DoidConstants.LUNG_CANCER_DOID,
+                hasConfirmedOrSuspectedLesions(tumor.hasBoneLesions, tumor.hasSuspectedBoneLesions) to DoidConstants.BONE_CANCER_DOID
             ).count { (hasLesions, doidToMatch) ->
                 evaluateMetastases(hasLesions, tumor, doidToMatch, doidModel)
             }
@@ -63,7 +68,12 @@ class TumorStageDeriver(private val derivationRules: Map<Predicate<TumorDetails>
         }
 
         private fun hasUncategorizedLesions(): Predicate<TumorDetails> {
-            return Predicate<TumorDetails> { tumor: TumorDetails -> tumor.otherLesions?.isNotEmpty() ?: false }
+            return Predicate<TumorDetails> { tumor: TumorDetails ->
+                listOf(
+                    tumor.otherLesions,
+                    tumor.otherSuspectedLesions
+                ).any { it?.isNotEmpty() ?: false }
+            }
         }
 
         private fun hasAllKnownLesionDetails(): Predicate<TumorDetails> {
@@ -79,12 +89,12 @@ class TumorStageDeriver(private val derivationRules: Map<Predicate<TumorDetails>
             }
         }
 
-        private fun evaluateMetastases(hasLesions: Boolean?, tumor: TumorDetails, doidToMatch: String, doidModel: DoidModel): Boolean {
+        private fun evaluateMetastases(hasLesions: Boolean, tumor: TumorDetails, doidToMatch: String, doidModel: DoidModel): Boolean {
             // Currently only for lung cancer multiple lesions are resolved to stage III/IV
             return if (checkingLungMetastasesForLungCancer(doidModel, doidToMatch, tumor.doids) && tumor.lungLesionsCount != null) {
                 tumor.lungLesionsCount!! >= 2
             } else {
-                (hasLesions ?: false) && !DoidEvaluationFunctions.isOfDoidType(doidModel, tumor.doids, doidToMatch)
+                (hasLesions) && !DoidEvaluationFunctions.isOfDoidType(doidModel, tumor.doids, doidToMatch)
             }
         }
 

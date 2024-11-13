@@ -109,13 +109,21 @@ class TumorDetailsInterpreterTest {
         }
 
         @Test
+        fun `Should only show lesion once and without (suspected) if both suspected and confirmed`() {
+            val details = TumorDetails(hasBoneLesions = true, hasSuspectedBoneLesions = true)
+            assertThat(lesions(details)).isEqualTo("Bone")
+        }
+
+        @Test
         fun `Should put suspected lesions at the end with (suspected) postfix`() {
             val details = TumorDetails(
+                hasBoneLesions = true,
                 hasSuspectedLiverLesions = true,
                 hasLymphNodeLesions = true,
+                otherLesions = listOf("Lymph nodes inguinal", "Lymph nodes mediastinal"),
                 otherSuspectedLesions = listOf("Adrenal gland", "Bladder")
             )
-            val expected = "Lymph nodes, Liver (suspected), Adrenal gland (suspected), Bladder (suspected)"
+            val expected = "Bone, Lymph nodes (inguinal, mediastinal), Liver (suspected), Adrenal gland (suspected), Bladder (suspected)"
             assertThat(lesions(details)).isEqualTo(expected)
         }
     }
