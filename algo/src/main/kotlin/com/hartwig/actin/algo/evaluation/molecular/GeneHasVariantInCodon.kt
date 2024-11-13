@@ -65,8 +65,8 @@ class GeneHasVariantInCodon(private val gene: String, private val codons: List<S
                     canonicalReportableSubclonalCodonMatches
                 )
                 EvaluationFactory.warn(
-                    "Variant(s) ${concat(canonicalReportableVariantMatches)} in codon(s) ${concat(canonicalCodonMatches)} in gene $gene detected in canonical transcript, together with " + specificExtension,
-                    "Variant(s) ${concat(canonicalReportableVariantMatches)} in codon(s) ${concat(canonicalCodonMatches)} in $gene, together with " + generalExtension,
+                    "Valid variant(s) ${concat(canonicalReportableVariantMatches)} in codon(s) ${concat(canonicalCodonMatches)} detected in gene $gene detected in canonical transcript, together with " + specificExtension,
+                    "Valid variant(s) ${concat(canonicalReportableVariantMatches)} in codon(s) ${concat(canonicalCodonMatches)} detected in $gene, together with " + generalExtension,
                     inclusionEvents = canonicalReportableVariantMatches + reportableOtherVariantMatches + canonicalReportableSubclonalVariantMatches,
                 )
             }
