@@ -276,8 +276,8 @@ object TestQuestionnaireFactory {
                \tab Active: yes/no}\li0\ri0\sa0\sb0\u000ci0\ql\par}
                {\u000c2 {\ltrch Symptomatic:  yes/no
                Brain lesions yes/no/unknown: UNKNOWN
-               \tab Active: yes/no}\li0\ri0\sa0\sb0\u000ci0\ql\par}
-               {\u000c2 {\ltrch Symptomatic: yes/no
+               \tab Active: yes/no}\li0\ri0\sa0\sb0\fi0\ql\par}
+               {\f2 {\ltrch Symptomatic: yes/no
                Bone lesions yes/no/unknown: NO
                Liver lesions yes/no/unknown: NO
                Other lesions (e.g. lymph node, pulmonal): peritoneal; lymph nodes, lung;
