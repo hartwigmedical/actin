@@ -35,7 +35,7 @@ class QuestionnaireReaderTest {
     }
 
     @Test
-    fun `Should merge lines with one new line between key and text`() {
+    fun `Should keep one new line between key and value`() {
         val text = "- IHC test results: \\nERBB2 3+\\n- PD L1 test results: Positive"
         val lines = read(text, listOf("IHC test results", "PD L1 test results"))
         assertThat(lines.size).isEqualTo(2)
