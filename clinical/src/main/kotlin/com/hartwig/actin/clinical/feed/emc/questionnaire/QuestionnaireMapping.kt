@@ -1,6 +1,9 @@
 package com.hartwig.actin.clinical.feed.emc.questionnaire
 
 internal object QuestionnaireMapping {
+
+    val SECTION_HEADERS = listOf("Relevant patient history", "Tumor details", "Previous Molecular tests", "Clinical details")
+
     private val NEW_KEYS: Map<QuestionnaireKey, String?> =
         listOf(QuestionnaireKey.FAMILY_HISTORY).associateWith { null }
 

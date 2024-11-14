@@ -251,38 +251,41 @@ The details may include multiple treatment stages representing switches from the
 
 #### N medications
 
-| Field                            | Example Value                                                     | Origin                                   |
-|----------------------------------|-------------------------------------------------------------------|------------------------------------------|
-| name                             | Ibuprofen                                                         | Medication: name                         | 
-| administrationRoute              | Oral                                                              | Medication: Administration route         |
-| status                           | ON_HOLD                                                           | Added in curation                        |
-| dosageMin                        | 750                                                               | Medication: min dosage                   |
-| dosageMax                        | 1000                                                              | Medication: max dosage                   |
-| dosageUnit                       | mg                                                                | Medication: Dosage unit                  |
-| frequency                        | 1                                                                 | Medication: Dosage frequency             |
-| frequencyUnit                    | day                                                               | Medication: Dosage frequency unit        |
-| periodBetweenValue               | Months                                                            | Medication: Period between dosages value |
-| periodBetweenUnit                | 2                                                                 | Medication: PPeriod between dosages unit |
-| ifNeeded                         | 0                                                                 | Medication: If needed                    |
-| startDate                        | 2021-07-01                                                        | Medication: Start date                   |
-| stopDate                         | 2021-10-01                                                        | Medication: Stop date                    |
-| drug.name                        | "BEVACIZUMAB"                                                     | Added in curation                        |
-| drug.category                    | "TARGETED THERAPY"                                                | Added in curation                        |
-| drug.drugTypes                   | "VEGF_ANTIBODY"                                                   | Added in curation                        |
-| cypInteractions.type             | 'Inducer', 'Inhibitor' or 'Substrate'                             | Added in curation                        |
-| cypInteractions.strength         | 'Strong', 'Moderate', 'Weak', 'Sensitive' or 'Moderate sensitive' | Added in curation                        |
-| cypInteractions.cyp              | CYP type                                                          | Added in curation                        |
-| atc.anatomicalMainGroup.code     | N                                                                 | Optional/added in curation               |
-| atc.anatomicalMainGroup.name     | NERVOUS SYSTEM                                                    | Optional/added in curation               |
-| atc.therapeuticSubGroup.code     | N02                                                               | Optional/added in curation               |
-| atc.therapeuticSubGroup.name     | ANALGESICS                                                        | Optional/added in curation               |
-| atc.pharmacologicalSubGroup.code | N02A                                                              | Optional/added in curation               |
-| atc.pharmacologicalSubGroup.name | OPIOIDS                                                           | Optional/added in curation               |
-| atc.chemicalSubGroup.code        | N02AJ                                                             | Optional/added in curation               |
-| atc.chemicalSubGroup.name        | Opioids in combination with non-opioid analgesics                 | Optional/added in curation               |
-| atc.chemicalSubstance.code       | N02AJ08                                                           | Optional/added in curation               |
-| atc.chemicalSubstance.name       | codeine and ibuprofen 	                                           | Optional/added in curation               |
-| qtProlongatingRisk               | NONE 	                                                            | Added in curation                        |
+| Field                            | Example Value                                                                | Origin                                   |
+|----------------------------------|------------------------------------------------------------------------------|------------------------------------------|
+| name                             | Ibuprofen                                                                    | Medication: name                         | 
+| administrationRoute              | Oral                                                                         | Medication: Administration route         |
+| status                           | ON_HOLD                                                                      | Added in curation                        |
+| dosageMin                        | 750                                                                          | Medication: min dosage                   |
+| dosageMax                        | 1000                                                                         | Medication: max dosage                   |
+| dosageUnit                       | mg                                                                           | Medication: Dosage unit                  |
+| frequency                        | 1                                                                            | Medication: Dosage frequency             |
+| frequencyUnit                    | day                                                                          | Medication: Dosage frequency unit        |
+| periodBetweenValue               | Months                                                                       | Medication: Period between dosages value |
+| periodBetweenUnit                | 2                                                                            | Medication: PPeriod between dosages unit |
+| ifNeeded                         | 0                                                                            | Medication: If needed                    |
+| startDate                        | 2021-07-01                                                                   | Medication: Start date                   |
+| stopDate                         | 2021-10-01                                                                   | Medication: Stop date                    |
+| drug.name                        | "BEVACIZUMAB"                                                                | Added in curation                        |
+| drug.category                    | "TARGETED THERAPY"                                                           | Added in curation                        |
+| drug.drugTypes                   | "VEGF_ANTIBODY"                                                              | Added in curation                        |
+| cypInteractions.type             | 'Inducer', 'Inhibitor' or 'Substrate'                                        | Added in curation                        |
+| cypInteractions.strength         | 'Strong', 'Moderate', 'Weak', 'Sensitive', 'Moderate sensitive' or 'Unknown' | Added in curation                        |
+| cypInteractions.name             | 2C8                                                                          | Added in curation                        |
+| transporterInteractions.type     | 'Inducer', 'Inhibitor' or 'Substrate'                                        | Added in curation                        |
+| transporterInteractions.strength | 'Strong', 'Moderate', 'Weak', 'Sensitive', 'Moderate sensitive' or 'Unknown' | Added in curation                        |
+| transporterInteractions.name     | BCRP                                                                         | Added in curation                        |
+| atc.anatomicalMainGroup.code     | N                                                                            | Optional/added in curation               |
+| atc.anatomicalMainGroup.name     | NERVOUS SYSTEM                                                               | Optional/added in curation               |
+| atc.therapeuticSubGroup.code     | N02                                                                          | Optional/added in curation               |
+| atc.therapeuticSubGroup.name     | ANALGESICS                                                                   | Optional/added in curation               |
+| atc.pharmacologicalSubGroup.code | N02A                                                                         | Optional/added in curation               |
+| atc.pharmacologicalSubGroup.name | OPIOIDS                                                                      | Optional/added in curation               |
+| atc.chemicalSubGroup.code        | N02AJ                                                                        | Optional/added in curation               |
+| atc.chemicalSubGroup.name        | Opioids in combination with non-opioid analgesics                            | Optional/added in curation               |
+| atc.chemicalSubstance.code       | N02AJ08                                                                      | Optional/added in curation               |
+| atc.chemicalSubstance.name       | codeine and ibuprofen 	                                                      | Optional/added in curation               |
+| qtProlongatingRisk               | NONE 	                                                                       | Added in curation                        |
 
 ### Filtering of Clinical Data
 

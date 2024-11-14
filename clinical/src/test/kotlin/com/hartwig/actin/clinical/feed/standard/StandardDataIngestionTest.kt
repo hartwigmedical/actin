@@ -69,7 +69,7 @@ class StandardDataIngestionTest {
             medicationExtractor = StandardMedicationExtractor(
                 atcModel = TestAtcFactory.createProperAtcModel(),
                 qtProlongatingRiskCuration = curationDatabase.qtProlongingCuration,
-                cypInteractionCuration = curationDatabase.cypInteractionCuration,
+                drugInteractionCuration = curationDatabase.drugInteractionCuration,
                 treatmentDatabase = treatmentDatabase
             ),
             surgeryExtractor = StandardSurgeryExtractor(curationDatabase.surgeryNameCuration),

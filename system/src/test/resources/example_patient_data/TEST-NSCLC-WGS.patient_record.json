@@ -27,27 +27,30 @@
     "stage": "IV",
     "derivedStages": null,
     "hasMeasurableDisease": true,
-    "hasBrainLesions": false,
-    "brainLesionsCount": null,
+    "hasBrainLesions": true,
+    "brainLesionsCount": 1,
     "hasActiveBrainLesions": false,
-    "hasCnsLesions": false,
-    "cnsLesionsCount": null,
+    "hasCnsLesions": true,
+    "cnsLesionsCount": 1,
     "hasActiveCnsLesions": false,
     "hasBoneLesions": false,
     "boneLesionsCount": null,
-    "hasLiverLesions": true,
-    "liverLesionsCount": 1,
+    "hasLiverLesions": false,
+    "liverLesionsCount": null,
     "hasLungLesions": true,
     "lungLesionsCount": 1,
-    "hasLymphNodeLesions": false,
-    "lymphNodeLesionsCount": null,
+    "hasLymphNodeLesions": true,
+    "lymphNodeLesionsCount": 1,
     "otherLesions": [],
     "biopsyLocation": "Lung",
     "rawPathologyReport": null
   },
   "clinicalStatus": {
-    "who": 1,
-    "infectionStatus": null,
+    "who": 0,
+    "infectionStatus": {
+      "hasActiveInfection": true,
+      "description": "Pneumonia"
+    },
     "ecg": {
       "hasSigAberrationLatestECG": false,
       "aberrationDescription": "",
@@ -103,7 +106,23 @@
       }
     }
   ],
-  "priorSecondPrimaries": [],
+  "priorSecondPrimaries": [
+    {
+      "tumorLocation": "Skin",
+      "tumorSubLocation": "neck",
+      "tumorType": "Carcinoma",
+      "tumorSubType": "Squamous cell carcinoma",
+      "doids": [
+        "3151"
+      ],
+      "diagnosedYear": 2022,
+      "diagnosedMonth": 1,
+      "treatmentHistory": "Radical excision",
+      "lastTreatmentYear": 2022,
+      "lastTreatmentMonth": 1,
+      "status": "INACTIVE"
+    }
+  ],
   "priorOtherConditions": [
     {
       "name": "Rheumatoid arthritis",
@@ -113,6 +132,16 @@
         "7148"
       ],
       "category": "Autoimmune disease",
+      "isContraindicationForTherapy": true
+    },
+    {
+      "name": "Bacterial pneumonia",
+      "year": 2024,
+      "month": 9,
+      "doids": [
+        "874"
+      ],
+      "category": "Lung disease",
       "isContraindicationForTherapy": true
     }
   ],
@@ -209,7 +238,22 @@
       "isOutsideRef": false
     }
   ],
-  "toxicities": [],
+  "toxicities": [
+    {
+      "name": "Nausea",
+      "categories": [
+        "Gastrointestinal"
+      ],
+      "evaluatedDate": {
+        "year": 2024,
+        "month": 9,
+        "day": 9
+      },
+      "source": "EHR",
+      "grade": 3,
+      "endDate": null
+    }
+  ],
   "intolerances": [],
   "surgeries": [
     {
@@ -459,29 +503,6 @@
                     "applicableCancerType": {
                       "cancerType": "Lung non-small cell carcinoma",
                       "excludedCancerTypes": []
-                    }
-                  },
-                  {
-                    "title": "EGFR-BE",
-                    "countries": [
-                      {
-                        "name": "BELGIUM",
-                        "hospitalsPerCity": {
-                          "Brussels": [
-                            "Jules Bordet"
-                          ]
-                        }
-                      }
-                    ],
-                    "url": "https://hartwigmedicalfoundation.nl",
-                    "nctId": "NCT00000007",
-                    "isCategoryEvent": false,
-                    "sourceEvent": "EGFR L858R",
-                    "evidenceLevelDetails": "CLINICAL_STUDY",
-                    "applicableCancerType": {
-                      "cancerType": "Lung non-small cell carcinoma",
-                      "excludedCancerTypes": [
-                      ]
                     }
                   }
                 ],
