@@ -64,7 +64,8 @@ class StandardMedicationExtractorTest {
         isTrialMedication = false,
         isSelfCare = false,
         qtProlongatingRisk = QTProlongatingRisk.NONE,
-        cypInteractions = emptyList()
+        cypInteractions = emptyList(),
+        transporterInteractions = emptyList()
     )
     private val ehrPatientRecord = ProvidedPatientRecord(
         patientDetails = ProvidedPatientDetail(
@@ -88,7 +89,7 @@ class StandardMedicationExtractorTest {
 
 
     @Test
-    fun `Should curate QT and CYP and extract medication`() {
+    fun `Should curate QT and drug interactions and extract medication`() {
         every { qtProlongatingRiskCuration.find(ATC_NAME) } returns setOf(
             QTProlongatingConfig(
                 ATC_NAME,
@@ -132,12 +133,20 @@ class StandardMedicationExtractorTest {
                         "cyp_gene"
                     )
                 ),
+                transporterInteractions = listOf(
+                    DrugInteraction(
+                        DrugInteraction.Type.INDUCER,
+                        DrugInteraction.Strength.STRONG,
+                        DrugInteraction.Group.TRANSPORTER,
+                        "bcrp_gene"
+                    )
+                )
             )
         )
     }
 
     @Test
-    fun `Should default CYP and QT when no config found`() {
+    fun `Should default drug interactions and QT when no config found`() {
         every { qtProlongatingRiskCuration.find(ATC_NAME) } returns emptySet()
         every { drugInteractionCuration.find(ATC_NAME) } returns emptySet()
         val result = extractor.extract(ehrPatientRecord)

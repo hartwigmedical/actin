@@ -27,16 +27,16 @@ class DrugInteractionConfigFactory : CurationConfigFactory<DrugInteractionConfig
             extractInteractions(
                 parts,
                 fields,
-                fieldName(WEAK, INHIBITOR),
-                DrugInteraction.Strength.WEAK,
+                fieldName(MODERATE, INHIBITOR),
+                DrugInteraction.Strength.MODERATE,
                 DrugInteraction.Type.INHIBITOR,
                 DrugInteraction.Group.CYP
             )
         val weakCypInhibitors = extractInteractions(
             parts,
             fields,
-            fieldName(MODERATE, INHIBITOR),
-            DrugInteraction.Strength.MODERATE,
+            fieldName(WEAK, INHIBITOR),
+            DrugInteraction.Strength.WEAK,
             DrugInteraction.Type.INHIBITOR,
             DrugInteraction.Group.CYP
         )
@@ -53,8 +53,8 @@ class DrugInteractionConfigFactory : CurationConfigFactory<DrugInteractionConfig
             extractInteractions(
                 parts,
                 fields,
-                fieldName(WEAK, INDUCER),
-                DrugInteraction.Strength.WEAK,
+                fieldName(MODERATE, INDUCER),
+                DrugInteraction.Strength.MODERATE,
                 DrugInteraction.Type.INDUCER,
                 DrugInteraction.Group.CYP
             )
@@ -62,8 +62,8 @@ class DrugInteractionConfigFactory : CurationConfigFactory<DrugInteractionConfig
             extractInteractions(
                 parts,
                 fields,
-                fieldName(MODERATE, INDUCER),
-                DrugInteraction.Strength.MODERATE,
+                fieldName(WEAK, INDUCER),
+                DrugInteraction.Strength.WEAK,
                 DrugInteraction.Type.INDUCER, DrugInteraction.Group.CYP
             )
         val sensitiveCypSubstrates = extractInteractions(

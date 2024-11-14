@@ -291,11 +291,13 @@
       "drug": null,
       "cypInteractions": [
         {
-          "cyp": "2A6",
+          "name": "2A6",
           "strength": "WEAK",
+          "group": "CYP",
           "type": "INDUCER"
         }
       ],
+      "transporterInteractions": [],
       "qtProlongatingRisk": "NONE",
       "isSelfCare": false,
       "isTrialMedication": false

@@ -45,6 +45,10 @@ class StandardMedicationExtractor(
                 atc = atcClassification,
                 qtProlongatingRisk = QTProlongatingCurationUtil.annotateWithQTProlongating(qtProlongatingRiskCuration, atcNameOrInput),
                 cypInteractions = DrugInteractionCurationUtil.curateMedicationCypInteractions(drugInteractionCuration, atcNameOrInput),
+                transporterInteractions = DrugInteractionCurationUtil.curateMedicationTransporterInteractions(
+                    drugInteractionCuration,
+                    atcNameOrInput
+                ),
                 isTrialMedication = it.isTrial,
                 isSelfCare = it.isSelfCare,
                 drug = treatmentDatabase.findDrugByAtcName(atcNameOrInput)

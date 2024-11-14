@@ -5,16 +5,16 @@ import com.hartwig.actin.datamodel.clinical.DrugInteraction
 
 object DrugInteractionCurationUtil {
     fun curateMedicationCypInteractions(
-        cypInteractionCuration: CurationDatabase<DrugInteractionConfig>,
+        drugInteractionCuration: CurationDatabase<DrugInteractionConfig>,
         medicationName: String
     ): List<DrugInteraction> {
-        return cypInteractionCuration.find(medicationName).flatMap(DrugInteractionConfig::cypInteractions)
+        return drugInteractionCuration.find(medicationName).flatMap(DrugInteractionConfig::cypInteractions)
     }
 
     fun curateMedicationTransporterInteractions(
-        cypInteractionCuration: CurationDatabase<DrugInteractionConfig>,
+        drugInteractionCuration: CurationDatabase<DrugInteractionConfig>,
         medicationName: String
     ): List<DrugInteraction> {
-        return cypInteractionCuration.find(medicationName).flatMap(DrugInteractionConfig::transporterInteractions)
+        return drugInteractionCuration.find(medicationName).flatMap(DrugInteractionConfig::transporterInteractions)
     }
 }

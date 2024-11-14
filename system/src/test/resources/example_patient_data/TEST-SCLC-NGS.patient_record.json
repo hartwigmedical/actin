@@ -340,7 +340,7 @@
           "type": "SUBSTRATE",
           "strength": "SENSITIVE",
           "group": "CYP",
-          "name": "CYP3A4/5"
+          "name": "3A4/5"
         }
       ],
       "transporterInteractions": [
@@ -410,14 +410,17 @@
         {
           "type": "INHIBITOR",
           "strength": "MODERATE",
-          "cyp": "CYP2C8"
+          "group": "CYP",
+          "name": "2C8"
         },
         {
           "type": "INHIBITOR",
           "strength": "WEAK",
-          "cyp": "CYP2B6"
+          "group": "CYP",
+          "name": "2B6"
         }
       ],
+      "transporterInteractions": [],
       "qtProlongatingRisk": "NONE",
       "atc": {
         "anatomicalMainGroup": {

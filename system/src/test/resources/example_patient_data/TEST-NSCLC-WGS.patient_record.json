@@ -343,7 +343,7 @@
           "type": "INDUCER",
           "strength": "STRONG",
           "group": "CYP",
-          "cyp": "CYP3A4/5"
+          "name": "3A4/5"
         }
       ],
       "transporterInteractions": [],
