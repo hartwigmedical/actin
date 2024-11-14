@@ -54,10 +54,7 @@ class MolecularDriversGenerator(
                 .filterExclusivelyInChildrensHospitals()
                 .filterMolecularCriteriaAlreadyPresent(cohorts)
 
-        val externalTrialsPerSingleEvent = externalTrialSummaries.flatMap { summary ->
-            summary.actinMolecularEvents.map { event -> event to summary }
-        }.groupBy({ it.first }, { it.second })
-
+        val externalTrialsPerSingleEvent = DriverTableFunctions.groupByEvent(externalTrialSummaries)
         val factory = MolecularDriverEntryFactory(molecularDriversInterpreter)
         factory.create().forEach { entry: MolecularDriverEntry ->
             table.addCell(Cells.createContent(entry.driverType))

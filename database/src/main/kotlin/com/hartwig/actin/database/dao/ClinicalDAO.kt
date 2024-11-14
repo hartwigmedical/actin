@@ -22,8 +22,8 @@ import com.hartwig.actin.datamodel.clinical.VitalFunction
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.Radiotherapy
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
-import org.jooq.DSLContext
 import java.util.Optional
+import org.jooq.DSLContext
 
 internal class ClinicalDAO(private val context: DSLContext) {
 

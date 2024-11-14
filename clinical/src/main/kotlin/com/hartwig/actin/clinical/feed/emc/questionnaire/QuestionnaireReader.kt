@@ -1,8 +1,8 @@
 package com.hartwig.actin.clinical.feed.emc.questionnaire
 
 import com.google.common.collect.Lists
-import org.apache.logging.log4j.util.Strings
 import java.util.StringJoiner
+import org.apache.logging.log4j.util.Strings
 
 internal object QuestionnaireReader {
 

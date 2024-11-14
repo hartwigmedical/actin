@@ -2,9 +2,9 @@ package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.datamodel.clinical.DrugInteraction
 import com.hartwig.actin.datamodel.clinical.Medication
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 class MedicationSelectorTest {
 
