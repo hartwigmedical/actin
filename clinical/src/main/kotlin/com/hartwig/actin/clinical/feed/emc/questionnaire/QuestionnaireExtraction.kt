@@ -16,7 +16,7 @@ object QuestionnaireExtraction {
             return null to emptyList()
         }
         val mapping = QuestionnaireMapping.mapping(entry)
-        val lines = QuestionnaireReader.read(entry.text, QuestionnaireMapping.keyStrings(entry))
+        val lines = QuestionnaireReader.read(entry.text, QuestionnaireMapping.keyStrings(entry), QuestionnaireMapping.SECTION_HEADERS)
         val brainLesionData = lesionData(entry.subject, lines, mapping[QuestionnaireKey.HAS_BRAIN_LESIONS]!!)
         val cnsLesionData = lesionData(entry.subject, lines, mapping[QuestionnaireKey.HAS_CNS_LESIONS]!!)
         val hasMeasurableDisease =
@@ -118,10 +118,6 @@ object QuestionnaireExtraction {
             }
         }
         return trimmed
-    }
-
-    private fun optionalValue(lines: Array<String>, key: String?): String? {
-        return value(lines, key, true)
     }
 
     private fun value(lines: Array<String>, key: String?, isOptional: Boolean = false): String? {
