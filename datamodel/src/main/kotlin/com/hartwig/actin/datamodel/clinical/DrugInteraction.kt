@@ -1,9 +1,10 @@
 package com.hartwig.actin.datamodel.clinical
 
-data class CypInteraction(
+data class DrugInteraction(
     val type: Type,
     val strength: Strength,
-    val cyp: String,
+    val group: Group,
+    val name: String,
 ) {
 
     enum class Type {
@@ -17,6 +18,12 @@ data class CypInteraction(
         MODERATE,
         WEAK,
         SENSITIVE,
-        MODERATE_SENSITIVE
+        MODERATE_SENSITIVE,
+        UNKNOWN
+    }
+
+    enum class Group {
+        CYP,
+        TRANSPORTER
     }
 }

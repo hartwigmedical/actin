@@ -164,7 +164,7 @@ class StandardDataIngestion(
                 atcModel,
                 treatmentDatabase,
                 curationDatabaseContext.qtProlongingCuration,
-                curationDatabaseContext.cypInteractionCuration,
+                curationDatabaseContext.drugInteractionCuration,
             ),
             StandardSurgeryExtractor(curationDatabaseContext.surgeryNameCuration),
             StandardIntolerancesExtractor(
