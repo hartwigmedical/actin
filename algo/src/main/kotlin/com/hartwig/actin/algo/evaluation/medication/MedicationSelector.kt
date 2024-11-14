@@ -16,6 +16,54 @@ class MedicationSelector(private val interpreter: MedicationStatusInterpreter) {
         return medications.filter(::isPlanned)
     }
 
+    fun withInteraction(
+        medications: List<Medication>,
+        interactionToFind: String?,
+        typeOfInteraction: DrugInteraction.Type,
+        group: DrugInteraction.Group
+    ): List<Medication> {
+        return medications.filter { medication ->
+            when (group) {
+                DrugInteraction.Group.CYP -> medication.cypInteractions.any { matchesInteraction(it, interactionToFind, typeOfInteraction) }
+                DrugInteraction.Group.TRANSPORTER -> medication.transporterInteractions.any {
+                    matchesInteraction(
+                        it,
+                        interactionToFind,
+                        typeOfInteraction
+                    )
+                }
+
+                else -> throw IllegalArgumentException("Unknown interaction name: $group")
+            }
+        }
+    }
+
+    private fun matchesInteraction(
+        interaction: DrugInteraction,
+        interactionToFind: String?,
+        typeOfInteraction: DrugInteraction.Type
+    ): Boolean {
+        return (interactionToFind == null || interactionToFind == interaction.name) && typeOfInteraction == interaction.type
+    }
+
+    fun activeWithInteraction(
+        medications: List<Medication>,
+        interactionToFind: String?,
+        typeOfInteraction: DrugInteraction.Type,
+        group: DrugInteraction.Group
+    ): List<Medication> {
+        return withInteraction(active(medications), interactionToFind, typeOfInteraction, group)
+    }
+
+    fun plannedWithInteraction(
+        medications: List<Medication>,
+        interactionToFind: String?,
+        typeOfInteraction: DrugInteraction.Type,
+        group: DrugInteraction.Group
+    ): List<Medication> {
+        return withInteraction(planned(medications), interactionToFind, typeOfInteraction, group)
+    }
+
     fun activeOrRecentlyStopped(medications: List<Medication>, minStopDate: LocalDate): List<Medication> {
         return medications.filter { isActive(it) || isRecentlyStopped(it, minStopDate) }
     }
@@ -26,36 +74,6 @@ class MedicationSelector(private val interpreter: MedicationStatusInterpreter) {
 
     fun plannedWithAnyTermInName(medications: List<Medication>, termsToFind: Set<String>): List<Medication> {
         return planned(medications).filter { stringCaseInsensitivelyMatchesQueryCollection(it.name, termsToFind) }
-    }
-
-    fun activeWithInteraction(
-        medications: List<Medication>,
-        interactionToFind: String?,
-        typeOfInteraction: DrugInteraction.Type,
-        group: DrugInteraction.Group
-    ): List<Medication> {
-        return active(medications).filter { medication ->
-            when (group) {
-                DrugInteraction.Group.CYP -> medication.cypInteractions.any { (interactionToFind == null || interactionToFind == it.name) && typeOfInteraction == it.type }
-                DrugInteraction.Group.TRANSPORTER -> medication.transporterInteractions.any { (interactionToFind == null || interactionToFind == it.name) && typeOfInteraction == it.type }
-                else -> throw IllegalArgumentException("Unknown interaction name: $group")
-            }
-        }
-    }
-
-    fun plannedWithInteraction(
-        medications: List<Medication>,
-        interactionToFind: String?,
-        typeOfInteraction: DrugInteraction.Type,
-        group: DrugInteraction.Group
-    ): List<Medication> {
-        return planned(medications).filter { medication ->
-            when (group) {
-                DrugInteraction.Group.CYP -> medication.cypInteractions.any { (interactionToFind == null || interactionToFind == it.name) && typeOfInteraction == it.type }
-                DrugInteraction.Group.TRANSPORTER -> medication.transporterInteractions.any { (interactionToFind == null || interactionToFind == it.name) && typeOfInteraction == it.type }
-                else -> throw IllegalArgumentException("Unknown interaction name: $group")
-            }
-        }
     }
 
     fun activeOrRecentlyStoppedWithCypInteraction(

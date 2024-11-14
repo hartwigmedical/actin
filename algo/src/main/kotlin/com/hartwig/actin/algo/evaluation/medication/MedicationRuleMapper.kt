@@ -109,27 +109,27 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     }
 
     private fun getsPGPInhibitingMedicationCreator(): FunctionCreator {
-        return { CurrentlyGetsTransporterMedication(selector, "PGP", DrugInteraction.Type.INHIBITOR) }
+        return { CurrentlyGetsTransporterInteractingMedication(selector, "PGP", DrugInteraction.Type.INHIBITOR) }
     }
 
     private fun getsPGPSubstrateMedicationCreator(): FunctionCreator {
-        return { CurrentlyGetsTransporterMedication(selector, "PGP", DrugInteraction.Type.SUBSTRATE) }
+        return { CurrentlyGetsTransporterInteractingMedication(selector, "PGP", DrugInteraction.Type.SUBSTRATE) }
     }
 
     private fun getsBCRPInhibitingMedicationCreator(): FunctionCreator {
-        return { CurrentlyGetsTransporterMedication(selector, "BCRP", DrugInteraction.Type.INHIBITOR) }
+        return { CurrentlyGetsTransporterInteractingMedication(selector, "BCRP", DrugInteraction.Type.INHIBITOR) }
     }
 
     private fun getsBCRPSubstrateMedicationCreator(): FunctionCreator {
-        return { CurrentlyGetsTransporterMedication(selector, "BCRP", DrugInteraction.Type.SUBSTRATE) }
+        return { CurrentlyGetsTransporterInteractingMedication(selector, "BCRP", DrugInteraction.Type.SUBSTRATE) }
     }
 
     private fun getsOATP1B1SubstrateMedicationCreator(): FunctionCreator {
-        return { CurrentlyGetsTransporterMedication(selector, "OATP1B1", DrugInteraction.Type.SUBSTRATE) }
+        return { CurrentlyGetsTransporterInteractingMedication(selector, "OATP1B1", DrugInteraction.Type.SUBSTRATE) }
     }
 
     private fun getsOATP1B3SubstrateMedicationCreator(): FunctionCreator {
-        return { CurrentlyGetsTransporterMedication(selector, "OATP1B3", DrugInteraction.Type.SUBSTRATE) }
+        return { CurrentlyGetsTransporterInteractingMedication(selector, "OATP1B3", DrugInteraction.Type.SUBSTRATE) }
     }
 
     private fun getsStableDosingAnticoagulantMedicationCreator(): FunctionCreator {

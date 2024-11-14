@@ -7,11 +7,11 @@ import com.hartwig.actin.datamodel.clinical.DrugInteraction
 import org.assertj.core.api.Assertions
 import org.junit.Test
 
-class CurrentlyGetsTransporterMedicationTest {
+class CurrentlyGetsTransporterInteractingMedicationTest {
     private val alwaysActiveFunction =
-        CurrentlyGetsTransporterMedication(MedicationTestFactory.alwaysActive(), "BCRP", DrugInteraction.Type.SUBSTRATE)
+        CurrentlyGetsTransporterInteractingMedication(MedicationTestFactory.alwaysActive(), "BCRP", DrugInteraction.Type.SUBSTRATE)
     private val alwaysPlannedFunction =
-        CurrentlyGetsTransporterMedication(MedicationTestFactory.alwaysPlanned(), "BCRP", DrugInteraction.Type.SUBSTRATE)
+        CurrentlyGetsTransporterInteractingMedication(MedicationTestFactory.alwaysPlanned(), "BCRP", DrugInteraction.Type.SUBSTRATE)
 
     @Test
     fun `Should pass with BCRP substrate medication`() {

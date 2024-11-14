@@ -7,7 +7,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.DrugInteraction
 
-class CurrentlyGetsTransporterMedication(
+class CurrentlyGetsTransporterInteractingMedication(
     private val selector: MedicationSelector,
     private val name: String,
     private val type: DrugInteraction.Type
@@ -15,26 +15,34 @@ class CurrentlyGetsTransporterMedication(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
-        val transporterReceived =
+        val transporterInteractingMedicationReceived =
             selector.activeWithInteraction(medications, name, type, DrugInteraction.Group.TRANSPORTER).map { it.name }
 
-        val transporterPlanned =
+        val transporterInteractingMedicationPlanned =
             selector.plannedWithInteraction(medications, name, type, DrugInteraction.Group.TRANSPORTER).map { it.name }
 
         val typeText = type.name.lowercase()
 
         return when {
-            transporterReceived.isNotEmpty() -> {
+            transporterInteractingMedicationReceived.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass(
-                    "Patient currently gets $name $typeText medication: ${Format.concatLowercaseWithAnd(transporterReceived)}",
-                    "$name inhibiting medication use: ${Format.concatLowercaseWithAnd(transporterReceived)}"
+                    "Patient currently gets $name $typeText medication: ${
+                        Format.concatLowercaseWithAnd(
+                            transporterInteractingMedicationReceived
+                        )
+                    }",
+                    "$name inhibiting medication use: ${Format.concatLowercaseWithAnd(transporterInteractingMedicationReceived)}"
                 )
             }
 
-            transporterPlanned.isNotEmpty() -> {
+            transporterInteractingMedicationPlanned.isNotEmpty() -> {
                 EvaluationFactory.recoverableWarn(
-                    "Patient plans to get $name $typeText medication: ${Format.concatLowercaseWithAnd(transporterPlanned)}",
-                    "Planned $name $typeText medication use: ${Format.concatLowercaseWithAnd(transporterPlanned)}"
+                    "Patient plans to get $name $typeText medication: ${
+                        Format.concatLowercaseWithAnd(
+                            transporterInteractingMedicationPlanned
+                        )
+                    }",
+                    "Planned $name $typeText medication use: ${Format.concatLowercaseWithAnd(transporterInteractingMedicationPlanned)}"
                 )
             }
 

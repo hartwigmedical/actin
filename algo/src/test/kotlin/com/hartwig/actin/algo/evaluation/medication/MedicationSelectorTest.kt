@@ -24,6 +24,25 @@ class MedicationSelectorTest {
     }
 
     @Test
+    fun `Should filter for interaction`() {
+        val medications = listOf(
+            MedicationTestFactory.medication(name = "cyp substrate").copy(
+                cypInteractions = listOf(
+                    DrugInteraction(
+                        DrugInteraction.Type.SUBSTRATE,
+                        DrugInteraction.Strength.STRONG,
+                        DrugInteraction.Group.CYP,
+                        "3A4"
+                    )
+                )
+            )
+        )
+        val filtered = MedicationTestFactory.alwaysActive()
+            .withInteraction(medications, "3A4", DrugInteraction.Type.SUBSTRATE, DrugInteraction.Group.CYP)
+        assertThat(filtered.map(Medication::name)).containsExactly("cyp substrate")
+    }
+
+    @Test
     fun `Should filter on active or recently stopped`() {
         val minStopDate = LocalDate.of(2019, 11, 20)
         val medications = listOf(
