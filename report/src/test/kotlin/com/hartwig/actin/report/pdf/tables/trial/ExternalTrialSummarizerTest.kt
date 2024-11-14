@@ -159,10 +159,7 @@ class ExternalTrialSummarizerTest {
         val notFiltered = BASE_EXTERNAL_TRIAL_SUMMARY.copy(
             actinMolecularEvents = sortedSetOf(TMB_TARGET)
         )
-        val result = setOf(
-            filtered,
-            notFiltered
-        ).filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(hospitalLocalEvaluatedCohorts)
+        val result = setOf(filtered, notFiltered).filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(hospitalLocalEvaluatedCohorts)
         assertThat(result).containsExactly(notFiltered)
     }
 
@@ -177,10 +174,7 @@ class ExternalTrialSummarizerTest {
         val notFiltered = BASE_EXTERNAL_TRIAL_SUMMARY.copy(
             actinMolecularEvents = sortedSetOf(TMB_TARGET)
         )
-        val result = setOf(
-            filtered,
-            notFiltered
-        ).filterMolecularCriteriaAlreadyPresentInTrials(setOf(nationalTrial))
+        val result = setOf(filtered, notFiltered).filterMolecularCriteriaAlreadyPresentInTrials(setOf(nationalTrial))
         assertThat(result).containsExactly(notFiltered)
     }
 
