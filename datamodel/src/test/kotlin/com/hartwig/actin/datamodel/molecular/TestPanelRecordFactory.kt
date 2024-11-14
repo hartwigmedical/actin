@@ -14,5 +14,7 @@ object TestPanelRecordFactory {
             characteristics = MolecularCharacteristics(),
             evidenceSource = "",
             experimentType = ExperimentType.PANEL,
+            hasSufficientPurity = true,
+            hasSufficientQuality = true
         )
 }

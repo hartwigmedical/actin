@@ -48,10 +48,8 @@ class EligibleExternalTrialsGenerator(
             table.addCell(
                 Cells.createContent(
                     homeCountry?.let {
-                        EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(
-                            trial,
-                            it
-                        ).second
+                        val hospitalsToCities = EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(trial, it)
+                        if (homeCountry == CountryName.NETHERLANDS) hospitalsToCities.first else hospitalsToCities.second
                     } ?: EligibleExternalTrialGeneratorFunctions.countryNamesWithCities(trial)
                 )
             )
@@ -59,7 +57,8 @@ class EligibleExternalTrialsGenerator(
         if (filteredCount > 0)
             table.addCell(
                 Cells.createSpanningSubNote(
-                    "$filteredCount trials were filtered out due to overlapping molecular targets. See extended report for all matches.",
+                    homeCountry?.let { "$filteredCount trials were filtered out due to eligible trials in above tables for the same molecular target. See extended report for all matches." }
+                        ?: "$filteredCount trials were filtered out due to ${sources.joinToString()} trials recruiting locally for the same molecular target. See extended report for all matches.",
                     table
                 )
             )

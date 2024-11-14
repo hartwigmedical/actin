@@ -224,6 +224,32 @@ class GeneIsWildTypeTest {
     }
 
     @Test
+    fun `Should warn in case no variant is found and purity is low`() {
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(
+                MolecularTestFactory.withHasSufficientQualityAndPurity(
+                    hasSufficientPurity = false,
+                    hasSufficientQuality = true
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should be pass in case no variant is found and sufficient quality and purity`() {
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(
+                MolecularTestFactory.withHasSufficientQualityAndPurity(
+                    hasSufficientPurity = true,
+                    hasSufficientQuality = true
+                )
+            )
+        )
+    }
+
+    @Test
     fun `Should pass for tested gene having no event in panel `() {
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
             .copy(

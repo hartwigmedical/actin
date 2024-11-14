@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugType.Companion.NSCLC_S
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 
-class HasHadSOCTargetedTherapyForNSCLC(private val genesToIgnore: List<String>) : EvaluationFunction {
+class HasHadSOCTargetedTherapyForNSCLC(private val genesToIgnore: Set<String>) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val drugTypeSet = returnDrugTypeSet(genesToIgnore)
@@ -35,7 +35,7 @@ class HasHadSOCTargetedTherapyForNSCLC(private val genesToIgnore: List<String>) 
         }
     }
 
-    private fun returnDrugTypeSet(genesToIgnore: List<String>): Set<TreatmentType> {
+    private fun returnDrugTypeSet(genesToIgnore: Set<String>): Set<TreatmentType> {
         return NSCLC_SOC_TARGETED_THERAPY_DRUG_TYPES.filterNot { it.key in genesToIgnore }.values.flatten().toSet()
     }
 

@@ -94,4 +94,14 @@ class GeneHasSpecificExonSkippingTest {
             )
         )
     }
+
+    @Test
+    fun `Should warn when fusion skipping but also splice variant`() {
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(
+                MolecularTestFactory.withDrivers(EXON_SKIPPING_FUSION, SPLICE_VARIANT)
+            )
+        )
+    }
 }

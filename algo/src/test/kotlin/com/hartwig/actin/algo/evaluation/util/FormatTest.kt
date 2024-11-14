@@ -44,6 +44,15 @@ class FormatTest {
     }
 
     @Test
+    fun `Should join strings with comma and and`() {
+        assertEquals("", Format.concatWithCommaAndAnd(emptySet()))
+        assertEquals("X", Format.concatWithCommaAndAnd(setOf("X")))
+        assertEquals("X and Y", Format.concatWithCommaAndAnd(setOf("X", "Y")))
+        assertEquals("X, Y and z", Format.concatWithCommaAndAnd(setOf("X", "Y", "z")))
+        assertEquals("A, X, Y and z", Format.concatWithCommaAndAnd(setOf("X", "Y", "z", "A")))
+    }
+
+    @Test
     fun shouldConcatDisplayableItemsWithCustomDisplaySeparatedByAnd() {
         assertEquals("anti-PD-1 and HPV-16 vaccine", Format.concatItemsWithAnd(listOf(DrugType.HPV16_VACCINE, DrugType.ANTI_PD_1)))
     }

@@ -19,6 +19,7 @@ object ExampleFunctions {
     private const val EXAMPLE_PATIENT_RECORD_JSON = "example_patient_data/EXAMPLE-$EXAMPLE_NAME_.patient_record.json"
     private const val EXAMPLE_TREATMENT_MATCH_JSON = "example_treatment_match/EXAMPLE-$EXAMPLE_NAME_.treatment_match.json"
     private const val EXAMPLE_REPORT_PDF = "example_reports/EXAMPLE-$EXAMPLE_NAME_.actin.pdf"
+    private const val EXAMPLE_REPORT_EXTENDED_PDF = "example_reports/EXAMPLE-$EXAMPLE_NAME_.actin.extended.pdf"
     private const val EXAMPLE_TRIAL_DATABASE_DIRECTORY = "example_trial_database"
 
     private const val EXAMPLE_TREATMENT_MATCH_DIRECTORY = "example_treatment_match"
@@ -36,16 +37,16 @@ object ExampleFunctions {
         return ResourceLocator.resourceOnClasspath(EXAMPLE_REPORT_PDF.replace(EXAMPLE_NAME_, exampleName))
     }
 
+    fun resolveExampleReportExtendedPdf(exampleName: String): String {
+        return ResourceLocator.resourceOnClasspath(EXAMPLE_REPORT_EXTENDED_PDF.replace(EXAMPLE_NAME_, exampleName))
+    }
+
     fun resolveExampleTrialDatabaseDirectory(): String {
         return ResourceLocator.resourceOnClasspath(EXAMPLE_TRIAL_DATABASE_DIRECTORY)
     }
 
     fun resolveExampleTreatmentMatchOutputDirectory(): String {
         return listOf(systemTestResourcesDirectory(), EXAMPLE_TREATMENT_MATCH_DIRECTORY).joinToString(File.separator)
-    }
-
-    fun resolveExampleReportOutputDirectory(): String {
-        return listOf(systemTestResourcesDirectory(), EXAMPLE_REPORT_DIRECTORY).joinToString(File.separator)
     }
 
     fun createExampleEnvironmentConfiguration(reportDate: LocalDate? = null): EnvironmentConfiguration {

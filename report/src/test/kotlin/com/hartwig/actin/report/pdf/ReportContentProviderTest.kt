@@ -153,6 +153,7 @@ class ReportContentProviderTest {
             EligibleApprovedTreatmentGenerator::class,
             EligibleActinTrialsGenerator::class,
             EligibleActinTrialsGenerator::class,
+            EligibleExternalTrialsGenerator::class,
             EligibleExternalTrialsGenerator::class
         )
     }
@@ -185,6 +186,7 @@ class ReportContentProviderTest {
             SOCEligibleApprovedTreatmentGenerator::class,
             EligibleActinTrialsGenerator::class,
             EligibleActinTrialsGenerator::class,
+            EligibleExternalTrialsGenerator::class,
             EligibleExternalTrialsGenerator::class,
             IneligibleActinTrialsGenerator::class
         )

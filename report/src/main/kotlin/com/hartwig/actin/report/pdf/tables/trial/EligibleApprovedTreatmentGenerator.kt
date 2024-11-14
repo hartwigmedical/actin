@@ -21,7 +21,7 @@ class EligibleApprovedTreatmentGenerator(private val patientRecord: PatientRecor
         val isCUP = TumorDetailsInterpreter.isCUP(patientRecord.tumor)
         val molecular = patientRecord.molecularHistory.latestOrangeMolecularRecord()
         val hasConfidentPrediction =
-            molecular?.let { TumorOriginInterpreter.hasConfidentPrediction(molecular.characteristics.predictedTumorOrigin) } ?: false
+            molecular?.let { TumorOriginInterpreter(molecular.characteristics.predictedTumorOrigin).hasConfidentPrediction() } ?: false
         if (isCUP && hasConfidentPrediction) {
             table.addCell(Cells.createContent("Potential SOC for " + molecular!!.characteristics.predictedTumorOrigin!!.cancerType()))
         } else {
