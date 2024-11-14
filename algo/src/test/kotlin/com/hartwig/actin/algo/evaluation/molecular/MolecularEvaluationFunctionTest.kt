@@ -56,8 +56,8 @@ class MolecularEvaluationFunctionTest {
         val evaluation = function.evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        assertThat(evaluation.undeterminedSpecificMessages).containsExactly("Molecular criteria cannot be evaluated: no molecular results")
-        assertThat(evaluation.undeterminedGeneralMessages).containsExactly("Molecular criteria cannot be evaluated: no molecular results")
+        assertThat(evaluation.undeterminedSpecificMessages).containsExactly("No molecular results of sufficient quality")
+        assertThat(evaluation.undeterminedGeneralMessages).containsExactly("No molecular results of sufficient quality")
     }
 
     @Test

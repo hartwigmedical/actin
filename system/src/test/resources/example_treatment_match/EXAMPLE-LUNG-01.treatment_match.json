@@ -5,7 +5,7 @@
   "referenceDate": {
     "year": 2024,
     "month": 11,
-    "day": 11
+    "day": 14
   },
   "referenceDateIsLive": true,
   "trialMatches": [
@@ -212,7 +212,7 @@
             "passSpecificMessages": [],
             "passGeneralMessages": [],
             "warnSpecificMessages": [
-              "Hemoglobin 8.2 mmol/L exceeds minimum of 6.0 mmol/L, but measurement occurred before 13-Aug-2024"
+              "Hemoglobin 8.2 mmol/L exceeds minimum of 6.0 mmol/L, but measurement occurred before 16-Aug-2024"
             ],
             "warnGeneralMessages": [],
             "undeterminedSpecificMessages": [],

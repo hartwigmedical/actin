@@ -10,7 +10,7 @@ interface MolecularTest {
     val characteristics: MolecularCharacteristics
     val evidenceSource: String
     val hasSufficientPurity: Boolean
-    val hasSufficientQuality: Boolean?
+    val hasSufficientQuality: Boolean
 
     fun testsGene(gene: String): Boolean
 

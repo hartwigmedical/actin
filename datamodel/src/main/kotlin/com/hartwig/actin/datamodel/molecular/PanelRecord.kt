@@ -11,7 +11,7 @@ data class PanelRecord(
     override val characteristics: MolecularCharacteristics = MolecularCharacteristics(),
     override val evidenceSource: String,
     override val hasSufficientPurity: Boolean,
-    override val hasSufficientQuality: Boolean? = null
+    override val hasSufficientQuality: Boolean
 ) : MolecularTest {
 
     override fun testsGene(gene: String): Boolean {

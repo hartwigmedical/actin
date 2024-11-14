@@ -7,11 +7,7 @@ import java.time.LocalDate
 class MolecularTestFilter(private val maxTestAge: LocalDate? = null, private val useInsufficientQualityRecords: Boolean) {
 
     fun apply(tests: List<MolecularTest>): List<MolecularTest> {
-        val filteredTests = if (!useInsufficientQualityRecords) {
-            tests.filterNot { it.hasSufficientQuality == false }
-        } else {
-            tests
-        }
+        val filteredTests = if (useInsufficientQualityRecords) tests else tests.filter { it.hasSufficientQuality }
 
         if (filteredTests.isNotEmpty() && maxTestAge != null) {
             val sortedTests = filteredTests.sortedBy { it.date }.reversed()

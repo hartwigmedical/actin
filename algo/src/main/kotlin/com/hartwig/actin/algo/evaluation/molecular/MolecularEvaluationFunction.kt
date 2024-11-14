@@ -20,8 +20,8 @@ abstract class MolecularEvaluationFunction(maxTestAge: LocalDate? = null, useIns
 
         return if (recentMolecularTests.isEmpty()) {
             noMolecularRecordEvaluation() ?: EvaluationFactory.undetermined(
-                "Molecular criteria cannot be evaluated: no molecular results",
-                "Molecular criteria cannot be evaluated: no molecular results",
+                "No molecular results of sufficient quality",
+                "No molecular results of sufficient quality",
                 missingGenesForEvaluation = true
             )
         } else {
