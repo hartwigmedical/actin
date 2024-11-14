@@ -12,7 +12,7 @@ object AggregatedEvidenceFactory {
     private val LOGGER = LogManager.getLogger(AggregatedEvidenceFactory::class.java)
 
     fun create(molecular: MolecularTest): AggregatedEvidence {
-        return if (molecular.hasSufficientQuality == false) {
+        return if (!molecular.hasSufficientQuality) {
             AggregatedEvidence()
         } else mergeAggregatedEvidenceList(
             aggregateCharacteristicsEvidence(molecular.characteristics) + aggregateDriverEvidence(molecular.drivers)

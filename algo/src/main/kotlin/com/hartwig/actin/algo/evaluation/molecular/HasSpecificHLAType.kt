@@ -19,7 +19,7 @@ class HasSpecificHLAType(private val hlaAlleleToFind: String, maxTestAge: LocalD
             return EvaluationFactory.recoverableUndetermined("HLA typing has not been performed reliably", "HLA typing unreliable")
         }
 
-        if (test.hasSufficientQuality == false) {
+        if (!test.hasSufficientQuality) {
             return when {
                 immunology.hlaAlleles.any { it.name == hlaAlleleToFind } -> {
                     EvaluationFactory.undetermined(
