@@ -17,7 +17,7 @@ private val ONE_YEAR_AGO = LocalDate.of(2023, 9, 9)
 
 class MolecularTestFilterTest {
 
-    private val filter = MolecularTestFilter(ONE_YEAR_AGO)
+    private val filter = MolecularTestFilter(ONE_YEAR_AGO, true)
 
     @Test
     fun `Should filter tests both older than max age date when more recent data is available`() {
@@ -62,6 +62,13 @@ class MolecularTestFilterTest {
         val oldPanel = BASE_PANEL_TEST.copy(date = ONE_YEAR_AGO.minusDays(1), drivers = Drivers(fusions = setOf(fusion)))
         val newOncoPanel = BASE_WGS_TEST.copy(date = ONE_YEAR_AGO.plusDays(2), experimentType = ExperimentType.HARTWIG_TARGETED)
         testFilter(newOncoPanel, oldPanel)
+    }
+
+    @Test
+    fun `Should filter out records with insufficient quality if useInsufficientQualityRecords is false`() {
+        val filterInsufficientQuality = MolecularTestFilter(ONE_YEAR_AGO, false)
+        val filtered = filterInsufficientQuality.apply(listOf(BASE_WGS_TEST, BASE_WGS_TEST.copy(hasSufficientQuality = false)))
+        assertThat(filtered).containsOnly(BASE_WGS_TEST)
     }
 
     private fun testFilter(toInclude: MolecularTest, toFilter: MolecularTest) {

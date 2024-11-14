@@ -4,15 +4,17 @@ import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import java.time.LocalDate
 
-class MolecularTestFilter(private val maxTestAge: LocalDate? = null) {
+class MolecularTestFilter(private val maxTestAge: LocalDate? = null, private val useInsufficientQualityRecords: Boolean) {
 
     fun apply(tests: List<MolecularTest>): List<MolecularTest> {
-        if (tests.isNotEmpty() && maxTestAge != null) {
-            val sortedTests = tests.sortedBy { it.date }.reversed()
+        val filteredTests = if (useInsufficientQualityRecords) tests else tests.filter { it.hasSufficientQuality }
+
+        if (filteredTests.isNotEmpty() && maxTestAge != null) {
+            val sortedTests = filteredTests.sortedBy { it.date }.reversed()
             val mostRecentTestDate = sortedTests.first().date
-            val mostRecentOncoAct = tests.firstOrNull { it.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME }?.date
-            val mostRecentOncoPanel = tests.firstOrNull { it.experimentType == ExperimentType.HARTWIG_TARGETED }?.date
-            return tests.filter {
+            val mostRecentOncoAct = filteredTests.firstOrNull { it.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME }?.date
+            val mostRecentOncoPanel = filteredTests.firstOrNull { it.experimentType == ExperimentType.HARTWIG_TARGETED }?.date
+            return filteredTests.filter {
                 it.date?.let { testDate ->
                     when {
                         it.experimentType == ExperimentType.PANEL && mostRecentOncoPanel != null && mostRecentOncoAct == null && it.drivers.fusions.isNotEmpty() -> testDate >= maxTestAge
@@ -23,6 +25,6 @@ class MolecularTestFilter(private val maxTestAge: LocalDate? = null) {
                 } ?: true
             }
         }
-        return tests
+        return filteredTests
     }
 }
