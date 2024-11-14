@@ -162,7 +162,7 @@ class ExternalTrialSummarizerTest {
         val result = setOf(
             filtered,
             notFiltered
-        ).filterMolecularCriteriaAlreadyPresent(hospitalLocalEvaluatedCohorts)
+        ).filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(hospitalLocalEvaluatedCohorts)
         assertThat(result).containsExactly(notFiltered)
     }
 

@@ -39,7 +39,8 @@ import com.hartwig.actin.report.pdf.tables.trial.IneligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.filterExclusivelyInChildrensHospitals
 import com.hartwig.actin.report.pdf.tables.trial.filterInCountryOfReference
 import com.hartwig.actin.report.pdf.tables.trial.filterInternalTrials
-import com.hartwig.actin.report.pdf.tables.trial.filterMolecularCriteriaAlreadyPresent
+import com.hartwig.actin.report.pdf.tables.trial.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts
+import com.hartwig.actin.report.pdf.tables.trial.filterMolecularCriteriaAlreadyPresentInTrials
 import com.hartwig.actin.report.pdf.tables.trial.filterNotInCountryOfReference
 import org.apache.logging.log4j.LogManager
 
@@ -178,34 +179,35 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             .filterInternalTrials(report.treatmentMatch.trialMatches.toSet())
             .filterExclusivelyInChildrensHospitals()
 
-        val externalEligibleTrialsLocal = filterTrialsForMolecularCriteria(
-            evaluated,
-            externalEligibleTrialsFiltered.filterInCountryOfReference(report.config.countryOfReference)
-        )
+        val nationalTrials = externalEligibleTrialsFiltered.filterInCountryOfReference(report.config.countryOfReference)
+        val nationalTrialsNotOverlappingHospital =
+            hideOverlappingTrials(nationalTrials, nationalTrials.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(evaluated))
 
-        val externalEligibleTrialsNonLocal = filterTrialsForMolecularCriteria(
-            evaluated,
-            externalEligibleTrialsFiltered.filterNotInCountryOfReference(report.config.countryOfReference)
+        val internationalTrials = externalEligibleTrialsFiltered.filterNotInCountryOfReference(report.config.countryOfReference)
+        val internationalTrialsNotOverlappingHospitalOrNational = hideOverlappingTrials(
+            internationalTrials,
+            internationalTrials.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(evaluated)
+                .filterMolecularCriteriaAlreadyPresentInTrials(nationalTrials)
         )
 
         val allEvidenceSources =
             patientRecord.molecularHistory.molecularTests.map { it.evidenceSource }.filter { it != NO_EVIDENCE_SOURCE }.toSet()
         return Pair(
-            if (externalEligibleTrialsLocal.isNotEmpty()) {
+            if (nationalTrialsNotOverlappingHospital.isNotEmpty()) {
                 EligibleExternalTrialsGenerator(
                     allEvidenceSources,
-                    externalEligibleTrialsLocal.filtered,
+                    nationalTrialsNotOverlappingHospital.filtered,
                     contentWidth,
-                    externalEligibleTrialsLocal.numFiltered(),
+                    nationalTrialsNotOverlappingHospital.numFiltered(),
                     report.config.countryOfReference
                 )
             } else null,
-            if (externalEligibleTrialsNonLocal.isNotEmpty()) {
+            if (internationalTrialsNotOverlappingHospitalOrNational.isNotEmpty()) {
                 EligibleExternalTrialsGenerator(
                     allEvidenceSources,
-                    externalEligibleTrialsNonLocal.filtered,
+                    internationalTrialsNotOverlappingHospitalOrNational.filtered,
                     contentWidth,
-                    externalEligibleTrialsNonLocal.numFiltered()
+                    internationalTrialsNotOverlappingHospitalOrNational.numFiltered()
                 )
             } else null
         )
@@ -213,16 +215,16 @@ class ReportContentProvider(private val report: Report, private val enableExtend
 
     data class MolecularFilteredExternalTrials(val original: Set<ExternalTrialSummary>, val filtered: Set<ExternalTrialSummary>) {
         fun numFiltered() = original.size - filtered.size
-        fun isNotEmpty() = filtered.isNotEmpty()
+        fun isNotEmpty() = original.isNotEmpty()
     }
 
-    private fun filterTrialsForMolecularCriteria(
-        internalEvaluatedCohorts: List<InterpretedCohort>,
-        original: Set<ExternalTrialSummary>
+    private fun hideOverlappingTrials(
+        original: Set<ExternalTrialSummary>,
+        filtered: Set<ExternalTrialSummary>
     ): MolecularFilteredExternalTrials {
         return if (enableExtendedMode) MolecularFilteredExternalTrials(original, original) else MolecularFilteredExternalTrials(
             original,
-            original.filterMolecularCriteriaAlreadyPresent(internalEvaluatedCohorts)
+            filtered
         )
     }
 
