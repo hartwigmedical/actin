@@ -24,4 +24,3 @@ interface MolecularTest {
 }
 
 const val NO_EVIDENCE_SOURCE = "none"
-

@@ -36,6 +36,15 @@ class AggregatedEvidenceFactoryTest {
     }
 
     @Test
+    fun `Should find no external eligible trials when hasSufficientQuality is false`() {
+        assertThat(
+            AggregatedEvidenceFactory.create(
+                TestMolecularFactory.createMinimalTestMolecularRecord().copy(hasSufficientQuality = false)
+            ).externalEligibleTrialsPerEvent
+        ).isEmpty()
+    }
+
+    @Test
     fun `Should aggregate characteristics`() {
         val characteristics = TestMolecularFactory.createMinimalTestMolecularRecord().characteristics.copy(
             isMicrosatelliteUnstable = true,

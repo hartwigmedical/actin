@@ -131,7 +131,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 keyWidth,
                 valueWidth,
                 report.config.molecularSummaryType == MolecularSummaryType.SHORT,
-                MolecularTestFilter(report.treatmentMatch.maxMolecularTestAge)
+                MolecularTestFilter(report.treatmentMatch.maxMolecularTestAge, true)
             ).takeIf {
                 report.config.molecularSummaryType != MolecularSummaryType.NONE && report.patientRecord.molecularHistory.molecularTests.isNotEmpty()
             },

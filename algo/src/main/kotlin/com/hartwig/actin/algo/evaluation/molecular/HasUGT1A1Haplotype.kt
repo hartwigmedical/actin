@@ -7,7 +7,8 @@ import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoEntry
 import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoGene
 import java.time.LocalDate
 
-class HasUGT1A1Haplotype(private val haplotypeToFind: String, maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
+class HasUGT1A1Haplotype(private val haplotypeToFind: String, maxTestAge: LocalDate? = null) :
+    MolecularEvaluationFunction(maxTestAge, true) {
 
     override fun evaluate(molecular: MolecularRecord): Evaluation {
         val pharmaco = molecular.pharmaco.firstOrNull { it.gene == PharmacoGene.UGT1A1 }
