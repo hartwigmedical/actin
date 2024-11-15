@@ -31,7 +31,16 @@ object TumorDetailsInterpreter {
 
         val confirmedCategorizedLesions = allCategorizedLesions
             .filter { it.second == true }
-            .map { it.first }
+            .map {
+                when {
+                    (it.first == TumorDetails.CNS && tumor.hasActiveCnsLesions == true) ||
+                            (it.first == TumorDetails.BRAIN && tumor.hasActiveBrainLesions == true) -> {
+                                "${it.first} (active)"
+                    }
+                    else -> it.first
+                }
+            }
+
         val suspectedCategorizedLesions = allCategorizedLesions
             .filter { it.second != true && it.third == true }
             .map { "${it.first} (suspected)" }
@@ -46,7 +55,9 @@ object TumorDetailsInterpreter {
             .sorted()
             .distinctBy(String::uppercase)
 
-        val (lymphNodeLesions, nonLymphNodeLesions) = allLesions.partition { it.lowercase().startsWith(TumorDetails.LYMPH_NODE.lowercase()) }
+        val (lymphNodeLesions, nonLymphNodeLesions) = allLesions.partition {
+            it.lowercase().startsWith(TumorDetails.LYMPH_NODE.lowercase())
+        }
         val filteredLymphNodeLesions = lymphNodeLesions.map { lesion ->
             lesion.split(" ").filterNot { it.lowercase() in setOf("lymph", "node", "nodes", "") }
                 .joinToString(" ")
