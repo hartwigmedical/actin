@@ -774,9 +774,9 @@ has been exhausted. In the future, SOC recommendations will be incorporated into
 For rules about e.g. primary tumor location and type, second primaries and 'other conditions', one or more DOIDs may be implemented. For
 more information, see https://disease-ontology.org/.
 
-#### CYP interactions
+#### Drug interactions
 
-To evaluates rules about CYP interactions, we made use of the list of interactions on the following
+To evaluates rules about CYP, BCRP, P-gp, OATP1B1 and OATP1B3 interactions, we made use of the list of interactions on the FDA
 website: https://www.fda.gov/drugs/drug-interactions-labeling/healthcare-professionals-fdas-examples-drugs-interact-cyp-enzymes-and-transporter-systems
 .
 

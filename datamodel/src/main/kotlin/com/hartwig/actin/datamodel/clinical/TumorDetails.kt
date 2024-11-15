@@ -12,12 +12,12 @@ data class TumorDetails(
     val hasMeasurableDisease: Boolean? = null,
     val hasBrainLesions: Boolean? = null,
     val hasSuspectedBrainLesions: Boolean? = null,
-    val brainLesionsCount: Int? = null,
     val hasActiveBrainLesions: Boolean? = null,
+    val brainLesionsCount: Int? = null,
     val hasCnsLesions: Boolean? = null,
     val hasSuspectedCnsLesions: Boolean? = null,
-    val cnsLesionsCount: Int? = null,
     val hasActiveCnsLesions: Boolean? = null,
+    val cnsLesionsCount: Int? = null,
     val hasBoneLesions: Boolean? = null,
     val hasSuspectedBoneLesions: Boolean? = null,
     val boneLesionsCount: Int? = null,
@@ -36,45 +36,33 @@ data class TumorDetails(
     val rawPathologyReport: String? = null
 ) {
 
-    /*
-        The functions below are only necessary to maintain backwards compatibility until
-        the algo's are updated to handle suspected lesions (scope for ACTIN-1319).
-        Until then, suspected lesions are to be considered lesions and the functions below
-        were created to minimize the changes needed to keep backwards compatibility.
-     */
-    fun hasConfirmedOrSuspectedBrainLesions(): Boolean? {
-        return combine(hasBrainLesions, hasSuspectedBrainLesions)
+    fun hasConfirmedBrainLesions() = hasBrainLesions == true || hasActiveBrainLesions == true
+    fun hasConfirmedCnsLesions() = hasCnsLesions == true || hasActiveCnsLesions == true
+
+    fun confirmedCategoricalLesionList(): List<Boolean?> {
+        return listOf(hasLiverLesions, hasCnsLesions, hasBrainLesions, hasBoneLesions, hasLungLesions, hasLymphNodeLesions)
     }
 
-    fun hasConfirmedOrSuspectedCnsLesions(): Boolean? {
-        return combine(hasCnsLesions, hasSuspectedCnsLesions)
+    fun suspectedCategoricalLesionList(): List<Boolean?> {
+        return listOf(
+            hasSuspectedLiverLesions,
+            hasSuspectedCnsLesions,
+            hasSuspectedBrainLesions,
+            hasSuspectedBoneLesions,
+            hasSuspectedLungLesions,
+            hasSuspectedLymphNodeLesions
+        )
     }
 
-    fun hasConfirmedOrSuspectedBoneLesions(): Boolean? {
-        return combine(hasBoneLesions, hasSuspectedBoneLesions)
-    }
+    fun hasConfirmedLesions() = confirmedCategoricalLesionList().any { it == true } || !otherLesions.isNullOrEmpty()
+    fun hasSuspectedLesions() = suspectedCategoricalLesionList().any { it == true } || !otherSuspectedLesions.isNullOrEmpty()
 
-    fun hasConfirmedOrSuspectedLiverLesions(): Boolean? {
-        return combine(hasLiverLesions, hasSuspectedLiverLesions)
-    }
-
-    fun hasConfirmedOrSuspectedLungLesions(): Boolean? {
-        return combine(hasLungLesions, hasSuspectedLungLesions)
-    }
-
-    fun hasConfirmedOrSuspectedLymphNodeLesions(): Boolean? {
-        return combine(hasLymphNodeLesions, hasSuspectedLymphNodeLesions)
-    }
-
-    fun otherConfirmedOrSuspectedLesions(): List<String>? {
-        return otherLesions?.let { otherLesions + (otherSuspectedLesions ?: emptyList()) } ?: otherSuspectedLesions
-    }
-
-    private fun combine(b1: Boolean?, b2: Boolean?): Boolean? {
-        return if (b1 == true || b2 == true) {
-            true
-        } else {
-            b1 ?: b2
-        }
+    companion object {
+        const val BONE = "Bone"
+        const val LIVER = "Liver"
+        const val LUNG = "Lung"
+        const val LYMPH_NODE = "Lymph node"
+        const val CNS = "CNS"
+        const val BRAIN = "Brain"
     }
 }

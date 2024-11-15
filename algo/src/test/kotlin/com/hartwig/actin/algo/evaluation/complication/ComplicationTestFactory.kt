@@ -39,4 +39,12 @@ internal object ComplicationTestFactory {
             )
         )
     }
+
+    fun withSuspectedCnsLesion(lesion: String): PatientRecord {
+        return base.copy(
+            tumor = base.tumor.copy(
+                hasCnsLesions = false, hasSuspectedCnsLesions = true, otherLesions = listOf(lesion)
+            )
+        )
+    }
 }

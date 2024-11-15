@@ -13,8 +13,16 @@ internal object TumorTypeEvaluationFunctions {
     }
 
     fun hasPeritonealMetastases(tumor: TumorDetails): Boolean? {
+        return evaluatePeritonealMetastases(tumor.otherLesions)
+    }
+
+    fun hasSuspectedPeritonealMetastases(tumor: TumorDetails): Boolean? {
+        return evaluatePeritonealMetastases(tumor.otherSuspectedLesions)
+    }
+
+    private fun evaluatePeritonealMetastases(lesions: List<String>?): Boolean? {
         val targetTerms = listOf("peritoneum", "peritoneal", "intraperitoneum", "intraperitoneal")
-        return tumor.otherConfirmedOrSuspectedLesions()?.any { lesion ->
+        return lesions?.any { lesion ->
             val lowercaseLesion = lesion.lowercase()
             targetTerms.any(lowercaseLesion::startsWith) || targetTerms.any { lowercaseLesion.contains(" $it") }
         }

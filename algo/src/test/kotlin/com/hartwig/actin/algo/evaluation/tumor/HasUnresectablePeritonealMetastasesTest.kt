@@ -55,4 +55,12 @@ class HasUnresectablePeritonealMetastasesTest {
             function.evaluate(TumorTestFactory.withOtherLesions(listOf("intraperitoneal")))
         )
     }
+
+    @Test
+    fun `Should warn if patient has suspected peritoneal metastases`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(TumorTestFactory.withOtherSuspectedLesions(listOf("peritoneal")))
+        )
+    }
 }

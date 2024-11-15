@@ -6,44 +6,74 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 
-class HasSpecificMetastasesOnly(private val hasSpecificMetastases: (TumorDetails) -> Boolean?, private val typeOfMetastases: String) :
+class HasSpecificMetastasesOnly(
+    private val hasSpecificMetastases: (TumorDetails) -> Boolean?,
+    private val hasSuspectedSpecificMetastases: (TumorDetails) -> Boolean?,
+    private val typeOfMetastases: String
+) :
     EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val tumorDetails = record.tumor
-        val hasSpecificMetastases = hasSpecificMetastases.invoke(tumorDetails) ?: return EvaluationFactory.undetermined(
-            "Data regarding presence of $typeOfMetastases metastases is missing", "Missing $typeOfMetastases metastasis data"
-        )
-        val otherLesions = tumorDetails.otherConfirmedOrSuspectedLesions()
-        val otherMetastasesAccessors = metastasesAccessors - this.hasSpecificMetastases
-        if (hasSpecificMetastases && otherLesions == null && otherMetastasesAccessors.all { it.invoke(tumorDetails) == null }
-        ) {
-            return EvaluationFactory.warn(
-                "Patient has $typeOfMetastases lesions but data regarding other lesion locations is missing, so unknown if patient has only $typeOfMetastases metastases",
-                "Lesion location data is missing: unknown if $typeOfMetastases metastases only"
-            )
-        }
-        val hasOtherLesion = !otherLesions.isNullOrEmpty()
-        val hasAnyOtherLesion = otherMetastasesAccessors.any { it.invoke(tumorDetails) == true } || hasOtherLesion
+        with(record.tumor) {
+            val hasSpecificMetastases = hasSpecificMetastases(this)
+                ?: return EvaluationFactory.undetermined(
+                    "Data regarding presence of $typeOfMetastases metastases is missing",
+                    "Missing $typeOfMetastases metastasis data"
+                )
+            val hasSuspectedSpecificMetastases = hasSuspectedSpecificMetastases(this) ?: false
 
-        return if (hasSpecificMetastases && !hasAnyOtherLesion) {
-            EvaluationFactory.pass(
-                "Patient only has $typeOfMetastases metastases",
-                "${typeOfMetastases.replaceFirstChar { it.uppercase() }}-only metastases"
-            )
-        } else {
-            EvaluationFactory.fail("Patient does not have $typeOfMetastases metastases exclusively", "No $typeOfMetastases-only metastases")
-        }
-    }
+            val otherMetastasesAccessors = confirmedCategoricalLesionList() - hasSpecificMetastases
+            val suspectedOtherMetastasesAccessors = suspectedCategoricalLesionList() - hasSuspectedSpecificMetastases
+            val hasAnyOtherLesion = otherMetastasesAccessors.any { it == true } || !otherLesions.isNullOrEmpty()
+            val hasSuspectedOtherLesion = !otherSuspectedLesions.isNullOrEmpty() || suspectedOtherMetastasesAccessors.any { it == true }
 
-    companion object {
-        val metastasesAccessors = setOf(
-            TumorDetails::hasConfirmedOrSuspectedBrainLesions,
-            TumorDetails::hasConfirmedOrSuspectedLiverLesions,
-            TumorDetails::hasConfirmedOrSuspectedCnsLesions,
-            TumorDetails::hasConfirmedOrSuspectedBoneLesions,
-            TumorDetails::hasConfirmedOrSuspectedLungLesions,
-            TumorDetails::hasConfirmedOrSuspectedLymphNodeLesions
-        )
+            val metastasisString = "${typeOfMetastases.replaceFirstChar { it.uppercase() }}-only metastases"
+
+            return when {
+                hasSpecificMetastases && !hasAnyOtherLesion && otherLesions == null && otherMetastasesAccessors.any { it == null } -> {
+                    EvaluationFactory.warn(
+                        "Patient has $typeOfMetastases lesions but data regarding other lesion locations is missing " +
+                                "so unknown if patient has only $typeOfMetastases metastases",
+                        "Lesion location data is missing: unknown if $typeOfMetastases metastases only"
+                    )
+                }
+
+                hasSpecificMetastases && !hasAnyOtherLesion -> {
+                    val specificMessage = "Patient only has $typeOfMetastases metastases"
+
+                    if (hasSuspectedOtherLesion) {
+                        EvaluationFactory.warn(
+                            "$specificMessage but suspected other lesion(s) present as well",
+                            "Uncertain $metastasisString - suspected other lesions present"
+                        )
+                    } else {
+                        EvaluationFactory.pass(specificMessage, metastasisString)
+                    }
+                }
+
+                hasSuspectedSpecificMetastases && !hasAnyOtherLesion -> {
+                    val specificMessage = "Patient only has $typeOfMetastases metastases but lesion is suspected only"
+
+                    if (hasSuspectedOtherLesion) {
+                        EvaluationFactory.warn(
+                            "$specificMessage and suspected other lesion(s) present as well",
+                            "Uncertain $metastasisString - lesion is suspected and other suspected lesion(s) present as well"
+                        )
+                    } else {
+                        EvaluationFactory.warn(
+                            specificMessage,
+                            "Uncertain $metastasisString - lesion is suspected only"
+                        )
+                    }
+                }
+
+                else -> {
+                    EvaluationFactory.fail(
+                        "Patient does not have $typeOfMetastases metastases exclusively",
+                        "No $typeOfMetastases-only metastases"
+                    )
+                }
+            }
+        }
     }
 }
