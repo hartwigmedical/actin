@@ -26,7 +26,7 @@ class HasKnownCnsMetastases : EvaluationFunction {
 
                 hasCnsLesions == null || hasBrainLesions == null -> {
                     val message = "Undetermined if CNS metastases present (data missing)"
-                    EvaluationFactory.recoverableUndetermined(message, message)
+                    EvaluationFactory.undetermined(message, message)
                 }
 
                 else -> EvaluationFactory.fail("No known CNS metastases present", "No known CNS metastases")

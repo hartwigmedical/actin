@@ -11,6 +11,7 @@ import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.Variant
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class GeneHasActivatingMutationTest {
@@ -191,6 +192,25 @@ class GeneHasActivatingMutationTest {
                 TestPatientFactory.createMinimalTestWGSPatientRecord().copy(molecularHistory = MolecularHistory.empty())
             )
         )
+    }
+
+    @Test
+    fun `Should evaluate to warn when activating mutation with potentially activating mutation`() {
+        val evaluation = functionNotIgnoringCodons.evaluate(
+            MolecularTestFactory.withHasTumorMutationalLoadAndVariants(
+                false,
+                ACTIVATING_VARIANT.copy(event = "event"),
+                ACTIVATING_VARIANT.copy(
+                    event = "event2",
+                    isHotspot = false,
+                    geneRole = GeneRole.UNKNOWN,
+                    proteinEffect = ProteinEffect.UNKNOWN
+                ),
+            )
+        )
+
+        assertMolecularEvaluation(EvaluationResult.WARN, evaluation)
+        assertThat(evaluation.inclusionMolecularEvents).containsExactly("event", "event2")
     }
 
     private fun assertResultForVariant(expectedResult: EvaluationResult, variant: Variant) {

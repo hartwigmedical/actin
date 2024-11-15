@@ -3,6 +3,7 @@ package com.hartwig.actin.system.regression
 import com.hartwig.actin.system.example.ExampleFunctions
 import com.hartwig.actin.system.example.LUNG_01_EXAMPLE
 import com.hartwig.actin.system.example.LocalExampleReportApplication
+import java.time.LocalDate
 import org.apache.logging.log4j.Level
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
@@ -11,7 +12,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
-import java.time.LocalDate
 
 @RunWith(Parameterized::class)
 class ReportRegressionTest(private val exampleName: String) {
@@ -51,12 +51,18 @@ class ReportRegressionTest(private val exampleName: String) {
                 )
             )
         )
+
         assertThat(logLevelRecorder.levelRecorded(Level.WARN) || logLevelRecorder.levelRecorded(Level.ERROR))
-            .withFailMessage("There are errors or warnings in the logs")
-            .isFalse()
-        assertThatPdf("$outputDirectory/EXAMPLE-$exampleName.actin.pdf")
-            .isEqualToTextually("src/test/resources/example_reports/EXAMPLE-$exampleName.actin.pdf")
-        assertThatPdf("$outputDirectory/EXAMPLE-$exampleName.actin.pdf")
-            .isEqualToVisually("src/test/resources/example_reports/EXAMPLE-$exampleName.actin.pdf")
+            .withFailMessage("There are errors or warnings in the logs").isFalse()
+
+        val outputReportPdf = "$outputDirectory/EXAMPLE-$exampleName.actin.pdf"
+        val originalReportPdf = ExampleFunctions.resolveExampleReportPdf(exampleName)
+        assertThatPdf(outputReportPdf).isEqualToTextually(originalReportPdf)
+        assertThatPdf(outputReportPdf).isEqualToVisually(originalReportPdf)
+
+        val outputExtendedReportPdf = "$outputDirectory/EXAMPLE-$exampleName.actin.extended.pdf"
+        val originalExtendedReportPdf = ExampleFunctions.resolveExampleReportExtendedPdf(exampleName)
+        assertThatPdf(outputExtendedReportPdf).isEqualToTextually(outputExtendedReportPdf)
+        assertThatPdf(outputExtendedReportPdf).isEqualToVisually(originalExtendedReportPdf)
     }
 }

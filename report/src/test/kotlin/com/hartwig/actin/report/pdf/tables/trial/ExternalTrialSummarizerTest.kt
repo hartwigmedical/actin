@@ -118,15 +118,17 @@ class ExternalTrialSummarizerTest {
             hospitals = hospitalSet(Hospital("PMC", true), Hospital("NKI")),
             countries = countrySet(NETHERLANDS)
         )
+        val notFilteredNoHospitals = BASE_EXTERNAL_TRIAL_SUMMARY.copy(hospitals = sortedSetOf(), countries = countrySet(NETHERLANDS))
         assertThat(
             setOf(
                 BASE_EXTERNAL_TRIAL_SUMMARY.copy(
                     hospitals = hospitalSet(Hospital("PMC", true), Hospital("JKZ", true)),
                     countries = countrySet(NETHERLANDS)
                 ),
-                notFilteredOneAdultHospital
+                notFilteredOneAdultHospital,
+                notFilteredNoHospitals
             ).filterExclusivelyInChildrensHospitals()
-        ).containsExactlyInAnyOrder(notFilteredOneAdultHospital)
+        ).containsExactlyInAnyOrder(notFilteredOneAdultHospital, notFilteredNoHospitals)
     }
 
     @Test

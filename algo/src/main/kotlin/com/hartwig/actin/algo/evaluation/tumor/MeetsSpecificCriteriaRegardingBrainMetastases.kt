@@ -55,8 +55,8 @@ class MeetsSpecificCriteriaRegardingBrainMetastases : EvaluationFunction {
                 }
 
                 unknownBrainLesions -> {
-                    val message = "$generalMessageStart brain metastases are met (data missing)"
-                    EvaluationFactory.recoverableUndetermined(message, message)
+                    val message = "Undetermined if specific criteria regarding brain metastases are met (data missing)"
+                    EvaluationFactory.undetermined(message, message)
                 }
 
                 else -> {

@@ -68,9 +68,9 @@ class TumorStageDeriverTest {
         assertThat(
             tumorStageDeriver.derive(
                 breastCancerWithNoStage.copy(
-                    hasSuspectedLungLesions = true,
+                    hasLungLesions = true,
                     hasSuspectedBoneLesions = true,
-                    otherSuspectedLesions = listOf("lesion")
+                    otherLesions = listOf("lesion")
                 )
             )
         ).containsOnly(TumorStage.IV)

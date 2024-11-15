@@ -11,16 +11,24 @@ import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.Variant
 import java.time.LocalDate
 
-enum class ActivationWarningType {
-    ASSOCIATED_WITH_RESISTANCE,
+enum class ActivationWarningType(val description: String? = null) {
+    ASSOCIATED_WITH_RESISTANCE(
+        "Potentially activating mutation(s) that have high driver likelihood, " +
+                "but are also associated with drug resistance"
+    ),
     NON_ONCOGENE,
-    NO_HOTSPOT_AND_NO_GAIN_OF_FUNCTION,
-    SUBCLONAL,
+    NO_HOTSPOT_AND_NO_GAIN_OF_FUNCTION(
+        "Potentially activating mutation(s) that have high driver likelihood, " +
+                "but is not a hotspot and not associated with gain-of-function"
+    ),
+    SUBCLONAL(
+        "Potentially activating mutation(s) that have high driver likelihood, " +
+                "but also have subclonal likelihood of > ${Format.percentage(1 - CLONAL_CUTOFF)}"
+    ),
     NON_HIGH_DRIVER_GAIN_OF_FUNCTION,
     NON_HIGH_DRIVER_SUBCLONAL,
     NON_HIGH_DRIVER,
     OTHER_MISSENSE_OR_HOTSPOT
-
 }
 
 data class ActivationProfile(
@@ -50,30 +58,54 @@ class GeneHasActivatingMutation(
                 }
 
         val activatingVariants = variantCharacteristics.filter(ActivationProfile::activating).map(ActivationProfile::event).toSet()
-        if (activatingVariants.isNotEmpty()) {
-            return EvaluationFactory.pass(
-                "Activating mutation(s) detected in gene + $gene: ${Format.concat(activatingVariants)}",
-                "$gene activating mutation(s)",
-                inclusionEvents = activatingVariants
-            )
-        }
-        val warningsByType =
+        val eventsByWarningType =
             variantCharacteristics.groupBy { it.warningType }.mapValues { entry -> entry.value.map(ActivationProfile::event).toSet() }
-        val potentialWarnEvaluation = evaluatePotentialWarns(
-            warningsByType[ActivationWarningType.ASSOCIATED_WITH_RESISTANCE] ?: emptySet(),
-            warningsByType[ActivationWarningType.NON_ONCOGENE] ?: emptySet(),
-            warningsByType[ActivationWarningType.NO_HOTSPOT_AND_NO_GAIN_OF_FUNCTION] ?: emptySet(),
-            warningsByType[ActivationWarningType.SUBCLONAL] ?: emptySet(),
-            warningsByType[ActivationWarningType.NON_HIGH_DRIVER_GAIN_OF_FUNCTION] ?: emptySet(),
-            warningsByType[ActivationWarningType.NON_HIGH_DRIVER_SUBCLONAL] ?: emptySet(),
-            warningsByType[ActivationWarningType.NON_HIGH_DRIVER] ?: emptySet(),
-            warningsByType[ActivationWarningType.OTHER_MISSENSE_OR_HOTSPOT] ?: emptySet(),
-            evidenceSource
-        )
 
-        return potentialWarnEvaluation ?: EvaluationFactory.fail(
-            "No activating mutation(s) detected in gene $gene", "No $gene activating mutation(s)"
-        )
+        val potentiallyActivatingWarnings = listOf(
+            ActivationWarningType.ASSOCIATED_WITH_RESISTANCE,
+            ActivationWarningType.NO_HOTSPOT_AND_NO_GAIN_OF_FUNCTION,
+            ActivationWarningType.SUBCLONAL,
+        ).flatMap { warningType -> eventsByWarningType[warningType]?.map { event -> event to warningType } ?: emptyList() }
+
+        return when {
+            activatingVariants.isNotEmpty() && potentiallyActivatingWarnings.isEmpty() -> {
+                EvaluationFactory.pass(
+                    "Activating mutation(s) detected in gene $gene: ${Format.concat(activatingVariants)}",
+                    "$gene activating mutation(s)",
+                    inclusionEvents = activatingVariants
+                )
+            }
+
+            activatingVariants.isNotEmpty() -> {
+                EvaluationFactory.warn(
+                    "$gene activating mutation(s): ${Format.concat(activatingVariants)} " +
+                            "together with potentially activating mutation(s): " +
+                            Format.concat(potentiallyActivatingWarnings.map { (event, type) -> "$event (${type.description})" }),
+                    "$gene activating mutation(s): ${Format.concat(activatingVariants)} " +
+                            "together with potentially activating mutation(s): " +
+                            Format.concat(potentiallyActivatingWarnings.map { (event, type) -> "$event (${type.description})" }),
+                    inclusionEvents = activatingVariants + potentiallyActivatingWarnings.map { (event, _) -> event }
+                )
+            }
+
+            else -> {
+                val potentialWarnEvaluation = evaluatePotentialWarns(
+                    eventsByWarningType[ActivationWarningType.ASSOCIATED_WITH_RESISTANCE],
+                    eventsByWarningType[ActivationWarningType.NON_ONCOGENE],
+                    eventsByWarningType[ActivationWarningType.NO_HOTSPOT_AND_NO_GAIN_OF_FUNCTION],
+                    eventsByWarningType[ActivationWarningType.SUBCLONAL],
+                    eventsByWarningType[ActivationWarningType.NON_HIGH_DRIVER_GAIN_OF_FUNCTION],
+                    eventsByWarningType[ActivationWarningType.NON_HIGH_DRIVER_SUBCLONAL],
+                    eventsByWarningType[ActivationWarningType.NON_HIGH_DRIVER],
+                    eventsByWarningType[ActivationWarningType.OTHER_MISSENSE_OR_HOTSPOT],
+                    evidenceSource
+                )
+
+                potentialWarnEvaluation ?: EvaluationFactory.fail(
+                    "No activating mutation(s) detected in gene $gene", "No $gene activating mutation(s)"
+                )
+            }
+        }
     }
 
     private fun evaluateVariant(
@@ -129,50 +161,60 @@ class GeneHasActivatingMutation(
     }
 
     private fun evaluatePotentialWarns(
-        activatingVariantsAssociatedWithResistance: Set<String>,
-        activatingVariantsInNonOncogene: Set<String>,
-        activatingVariantsNoHotspotAndNoGainOfFunction: Set<String>,
-        activatingSubclonalVariants: Set<String>,
-        nonHighDriverGainOfFunctionVariants: Set<String>,
-        nonHighDriverSubclonalVariants: Set<String>,
-        nonHighDriverVariants: Set<String>,
-        otherMissenseOrHotspotVariants: Set<String>,
+        activatingVariantsAssociatedWithResistance: Set<String>?,
+        activatingVariantsInNonOncogene: Set<String>?,
+        activatingVariantsNoHotspotAndNoGainOfFunction: Set<String>?,
+        activatingSubclonalVariants: Set<String>?,
+        nonHighDriverGainOfFunctionVariants: Set<String>?,
+        nonHighDriverSubclonalVariants: Set<String>?,
+        nonHighDriverVariants: Set<String>?,
+        otherMissenseOrHotspotVariants: Set<String>?,
         evidenceSource: String
     ): Evaluation? {
         return MolecularEventUtil.evaluatePotentialWarnsForEventGroups(
             listOf(
                 EventsWithMessages(
                     activatingVariantsAssociatedWithResistance,
-                    "Gene $gene should have activating mutation(s): ${Format.concat(activatingVariantsAssociatedWithResistance)}, " + "however, these are (also) associated with drug resistance in $evidenceSource",
+                    "Gene $gene should have activating mutation(s): ${activatingVariantsAssociatedWithResistance?.let { Format.concat(it) }}, " + "however, these are (also) associated with drug resistance in $evidenceSource",
                     "$gene activating mutation(s) but are associated with drug resistance in $evidenceSource"
                 ),
                 EventsWithMessages(
                     activatingVariantsInNonOncogene,
-                    "Gene $gene has activating mutation(s) ${Format.concat(activatingVariantsInNonOncogene)} but gene known as TSG in $evidenceSource",
+                    "Gene $gene has activating mutation(s) ${activatingVariantsInNonOncogene?.let { Format.concat(it) }} but gene known as TSG in $evidenceSource",
                     "$gene activating mutation(s) but gene known as TSG in $evidenceSource"
                 ),
                 EventsWithMessages(
                     activatingVariantsNoHotspotAndNoGainOfFunction,
-                    "Gene $gene has potentially activating mutation(s) " + Format.concat(activatingVariantsNoHotspotAndNoGainOfFunction) + " that have high driver likelihood," + " but is not a hotspot and not associated with gain-of-function protein effect evidence in $evidenceSource",
-                    "$gene potentially activating mutation(s) with high driver likelihood but not a hotspot" + " and not associated with gain-of-function protein effect evidence in $evidenceSource"
+                    "Gene $gene has potentially activating mutation(s) ${
+                        activatingVariantsNoHotspotAndNoGainOfFunction?.let {
+                            Format.concat(
+                                it
+                            )
+                        }
+                    } that have high driver likelihood, but is not a hotspot and not associated with gain-of-function protein effect evidence in $evidenceSource",
+                    "$gene potentially activating mutation(s) with high driver likelihood but not a hotspot and not associated with gain-of-function protein effect evidence in $evidenceSource"
                 ),
                 EventsWithMessages(
                     activatingSubclonalVariants,
-                    "Gene $gene potentially activating mutation(s) " + Format.concat(activatingSubclonalVariants) + " but have subclonal likelihood of > " + Format.percentage(
+                    "Gene $gene potentially activating mutation(s) " + activatingSubclonalVariants?.let { Format.concat(it) } + " but have subclonal likelihood of > " + Format.percentage(
                         1 - CLONAL_CUTOFF
                     ),
-                    gene + " potentially activating mutation(s) " + Format.concat(activatingSubclonalVariants) + " but subclonal likelihood > " + Format.percentage(
+                    gene + " potentially activating mutation(s) " + activatingSubclonalVariants?.let { Format.concat(it) } + " but subclonal likelihood > " + Format.percentage(
                         1 - CLONAL_CUTOFF
                     )
                 ),
                 EventsWithMessages(
                     nonHighDriverGainOfFunctionVariants,
-                    "Gene " + gene + " has potentially activating mutation(s) " + Format.concat(nonHighDriverGainOfFunctionVariants) + " that do not have high driver likelihood prediction, but annotated with having gain-of-function protein effect evidence in $evidenceSource",
+                    "Gene " + gene + " has potentially activating mutation(s) " + nonHighDriverGainOfFunctionVariants?.let {
+                        Format.concat(
+                            it
+                        )
+                    } + " that do not have high driver likelihood prediction, but annotated with having gain-of-function protein effect evidence in $evidenceSource",
                     "$gene potentially activating mutation(s) having gain-of-function protein effect evidence in $evidenceSource but without high driver prediction"
                 ),
                 EventsWithMessages(
                     nonHighDriverSubclonalVariants,
-                    "Gene $gene has potentially activating mutation(s) " + Format.concat(activatingSubclonalVariants) + " have subclonal likelihood of > ${
+                    "Gene $gene has potentially activating mutation(s) " + activatingSubclonalVariants?.let { Format.concat(it) } + " have subclonal likelihood of > ${
                         Format.percentage(1 - CLONAL_CUTOFF)
                     } and no high driver likelihood",
                     "$gene potentially activating mutation(s) without high driver likelihood and subclonal likelihood > " + Format.percentage(
@@ -181,12 +223,12 @@ class GeneHasActivatingMutation(
                 ),
                 EventsWithMessages(
                     nonHighDriverVariants,
-                    "Gene $gene has potentially activating mutation(s) " + Format.concat(nonHighDriverVariants) + " but no high driver likelihood",
+                    "Gene $gene has potentially activating mutation(s) " + nonHighDriverVariants?.let { Format.concat(it) } + " but no high driver likelihood",
                     "$gene potentially activating mutation(s) but no high driver likelihood"
                 ),
                 EventsWithMessages(
                     otherMissenseOrHotspotVariants,
-                    "Gene $gene has potentially activating mutation(s) " + Format.concat(otherMissenseOrHotspotVariants) + " that are missense or have hotspot status, but are not considered reportable",
+                    "Gene $gene has potentially activating mutation(s) " + otherMissenseOrHotspotVariants?.let { Format.concat(it) } + " that are missense or have hotspot status, but are not considered reportable",
                     "$gene potentially activating mutation(s) but mutation(s) not reportable"
                 )
             )
@@ -209,5 +251,4 @@ class GeneHasActivatingMutation(
         val codonIndexToMatch = codonsToMatch.substring(1).takeWhile { it.isDigit() }.toInt()
         return codonIndexToMatch == affectedCodon
     }
-
 }
