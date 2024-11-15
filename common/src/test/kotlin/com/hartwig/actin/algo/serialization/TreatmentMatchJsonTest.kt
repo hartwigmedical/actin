@@ -61,7 +61,7 @@ class TreatmentMatchJsonTest {
                 + "\"warnSpecificMessages\":[],\"warnGeneralMessages\":[],\"undeterminedSpecificMessages\":[],\"undeterminedGeneralMessages\":[],"
                 + "\"failSpecificMessages\":[],\"failGeneralMessages\":[],\"isMissingGenesForSufficientEvaluation\":false}]],\"cohorts\":[],\"nonEvaluableCohorts\":[]}],"
                 + "\"standardOfCareMatches\":[{\"treatmentCandidate\":{\"treatment\":{\"name\":\"Pembrolizumab\",\"isSystemic\":true,"
-                + "\"synonyms\":[],\"displayOverride\":null,\"categories\":[],\"types\":[],\"treatmentClass\":\"OTHER_TREATMENT\"},"
+                + "\"synonyms\":[],\"treatmentClass\":\"OTHER_TREATMENT\",\"displayOverride\":null,\"categories\":[],\"types\":[]},"
                 + "\"optional\":true,\"eligibilityFunctions\":[{\"rule\":\"HAS_KNOWN_ACTIVE_CNS_METASTASES\",\"parameters\":[]}],\"additionalCriteriaForRequirement\":[]},"
                 + "\"evaluations\":[{\"result\":\"PASS\",\"recoverable\":false,\"inclusionMolecularEvents\":[],"
                 + "\"exclusionMolecularEvents\":[],\"passSpecificMessages\":[\"Patient has active CNS metastases\"],"
