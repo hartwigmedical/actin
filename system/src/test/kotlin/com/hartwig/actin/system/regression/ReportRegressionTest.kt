@@ -37,14 +37,32 @@ class ReportRegressionTest(private val exampleName: String) {
     @Test
     fun `Regress report textually and visually`() {
         val outputDirectory = System.getProperty("user.dir") + "/target/test-classes"
-        LocalExampleReportApplication(LocalDate.of(2024, 10, 31)).run(
+        val localExampleReportApplication = LocalExampleReportApplication()
+
+        localExampleReportApplication.run(
             ExampleFunctions.resolveExamplePatientRecordJson(exampleName),
             ExampleFunctions.resolveExampleTreatmentMatchJson(exampleName),
-            outputDirectory
+            outputDirectory,
+            ExampleFunctions.createExhaustiveEnvironmentConfiguration(
+                LocalDate.of(
+                    2024,
+                    11,
+                    7
+                )
+            )
         )
-        assertThat(logLevelRecorder.levelRecorded(Level.WARN) || logLevelRecorder.levelRecorded(Level.ERROR)).withFailMessage("There are errors or warnings in the logs")
-            .isFalse()
-        assertThatPdf("$outputDirectory/EXAMPLE-$exampleName.actin.pdf").isEqualToTextually("src/test/resources/example_reports/EXAMPLE-$exampleName.actin.pdf")
-        assertThatPdf("$outputDirectory/EXAMPLE-$exampleName.actin.pdf").isEqualToVisually("src/test/resources/example_reports/EXAMPLE-$exampleName.actin.pdf")
+
+        assertThat(logLevelRecorder.levelRecorded(Level.WARN) || logLevelRecorder.levelRecorded(Level.ERROR))
+            .withFailMessage("There are errors or warnings in the logs").isFalse()
+
+        val outputReportPdf = "$outputDirectory/EXAMPLE-$exampleName.actin.pdf"
+        val originalReportPdf = ExampleFunctions.resolveExampleReportPdf(exampleName)
+        assertThatPdf(outputReportPdf).isEqualToTextually(originalReportPdf)
+        assertThatPdf(outputReportPdf).isEqualToVisually(originalReportPdf)
+
+        val outputExtendedReportPdf = "$outputDirectory/EXAMPLE-$exampleName.actin.extended.pdf"
+        val originalExtendedReportPdf = ExampleFunctions.resolveExampleReportExtendedPdf(exampleName)
+        assertThatPdf(outputExtendedReportPdf).isEqualToTextually(outputExtendedReportPdf)
+        assertThatPdf(outputExtendedReportPdf).isEqualToVisually(originalExtendedReportPdf)
     }
 }

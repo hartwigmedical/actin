@@ -343,6 +343,7 @@
       },
       "drug": null,
       "cypInteractions": [],
+      "transporterInteractions": [],
       "qtProlongatingRisk": "NONE",
       "atc": null,
       "isSelfCare": false,

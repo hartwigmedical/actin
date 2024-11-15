@@ -2,6 +2,7 @@ package com.hartwig.actin.trial.input
 
 import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.datamodel.clinical.AtcLevel
+import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.ReceptorType
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
@@ -21,6 +22,7 @@ import com.hartwig.actin.trial.input.single.ManyIntentsOneInteger
 import com.hartwig.actin.trial.input.single.ManySpecificTreatmentsTwoIntegers
 import com.hartwig.actin.trial.input.single.OneCyp
 import com.hartwig.actin.trial.input.single.OneCypOneInteger
+import com.hartwig.actin.trial.input.single.OneDoubleOneGender
 import com.hartwig.actin.trial.input.single.OneGene
 import com.hartwig.actin.trial.input.single.OneGeneManyCodons
 import com.hartwig.actin.trial.input.single.OneGeneManyProteinImpacts
@@ -600,7 +602,7 @@ class FunctionInputResolverTest {
         val valid = create(rule, listOf("gene;gene"))
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
 
-        val expected = ManyGenes(listOf("gene", "gene"))
+        val expected = ManyGenes(setOf("gene", "gene"))
         assertThat(resolver.createManyGenesInput(valid)).isEqualTo(expected)
 
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
@@ -784,6 +786,21 @@ class FunctionInputResolverTest {
         assertThat(resolver.hasValidInputs(create(rule, listOf("3A4")))).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("3A4", "1", "2")))).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("CYP3A4", "1")))).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with one double one gender input`() {
+        val rule = firstOfType(FunctionInput.ONE_DOUBLE_ONE_GENDER)
+        val valid = create(rule, listOf("1.0", "female"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val expected = OneDoubleOneGender(gender = Gender.FEMALE, double = 1.0)
+        assertThat(resolver.createOneDoubleOneGenderInput(valid)).isEqualTo(expected)
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("1", "not a gender")))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("een", "female")))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("female", "1.0")))).isFalse
     }
 
     private fun firstOfType(input: FunctionInput): EligibilityRule {

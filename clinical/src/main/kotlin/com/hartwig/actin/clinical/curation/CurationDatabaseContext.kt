@@ -4,8 +4,8 @@ import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.UnusedCurationConfig
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig
 import com.hartwig.actin.clinical.curation.config.ComplicationConfigFactory
-import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
-import com.hartwig.actin.clinical.curation.config.CypInteractionConfigFactory
+import com.hartwig.actin.clinical.curation.config.DrugInteractionConfig
+import com.hartwig.actin.clinical.curation.config.DrugInteractionConfigFactory
 import com.hartwig.actin.clinical.curation.config.ECGConfig
 import com.hartwig.actin.clinical.curation.config.ECGConfigFactory
 import com.hartwig.actin.clinical.curation.config.IHCTestConfig
@@ -65,7 +65,7 @@ data class CurationDatabaseContext(
     val medicationNameCuration: CurationDatabase<MedicationNameConfig>,
     val medicationDosageCuration: CurationDatabase<MedicationDosageConfig>,
     val intoleranceCuration: CurationDatabase<IntoleranceConfig>,
-    val cypInteractionCuration: CurationDatabase<CypInteractionConfig>,
+    val drugInteractionCuration: CurationDatabase<DrugInteractionConfig>,
     val qtProlongingCuration: CurationDatabase<QTProlongatingConfig>,
     val administrationRouteTranslation: TranslationDatabase<String>,
     val laboratoryTranslation: TranslationDatabase<LaboratoryIdentifiers>,
@@ -116,7 +116,7 @@ data class CurationDatabaseContext(
             medicationNameCuration.validationErrors +
             medicationDosageCuration.validationErrors +
             intoleranceCuration.validationErrors +
-            cypInteractionCuration.validationErrors +
+            drugInteractionCuration.validationErrors +
             qtProlongingCuration.validationErrors +
             surgeryNameCuration.validationErrors).toSet()
 
@@ -208,11 +208,11 @@ data class CurationDatabaseContext(
                 QTProlongatingConfigFactory(),
                 CurationCategory.QT_PROLONGATING
             ) { emptySet() },
-            cypInteractionCuration = CurationDatabaseReader.read(
+            drugInteractionCuration = CurationDatabaseReader.read(
                 curationDir,
-                CurationDatabaseReader.CYP_INTERACTIONS_TSV,
-                CypInteractionConfigFactory(),
-                CurationCategory.CYP_INTERACTIONS
+                CurationDatabaseReader.DRUG_INTERACTIONS_TSV,
+                DrugInteractionConfigFactory(),
+                CurationCategory.DRUG_INTERACTIONS
             ) { emptySet() },
             medicationNameCuration = CurationDatabaseReader.read(
                 curationDir,

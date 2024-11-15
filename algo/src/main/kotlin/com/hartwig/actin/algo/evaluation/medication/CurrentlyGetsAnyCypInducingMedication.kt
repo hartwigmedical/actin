@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.clinical.CypInteraction
+import com.hartwig.actin.datamodel.clinical.DrugInteraction
 
 class CurrentlyGetsAnyCypInducingMedication(private val selector: MedicationSelector) :
     EvaluationFunction {
@@ -13,10 +13,10 @@ class CurrentlyGetsAnyCypInducingMedication(private val selector: MedicationSele
     override fun evaluate(record: PatientRecord): Evaluation {
         val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
         val cypInducersReceived =
-            selector.activeWithCypInteraction(medications, null, CypInteraction.Type.INDUCER).map { it.name }
+            selector.activeWithInteraction(medications, null, DrugInteraction.Type.INDUCER, DrugInteraction.Group.CYP).map { it.name }
 
         val cypInducersPlanned =
-            selector.plannedWithCypInteraction(medications, null, CypInteraction.Type.INDUCER).map { it.name }
+            selector.plannedWithInteraction(medications, null, DrugInteraction.Type.INDUCER, DrugInteraction.Group.CYP).map { it.name }
 
         return when {
             cypInducersReceived.isNotEmpty() -> {
