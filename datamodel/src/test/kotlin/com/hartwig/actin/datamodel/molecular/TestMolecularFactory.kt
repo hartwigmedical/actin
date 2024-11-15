@@ -168,7 +168,7 @@ object TestMolecularFactory {
                     TestClinicalEvidenceFactory.createCountry(CountryName.GERMANY, mapOf("Berlin" to emptySet()))
                 ),
                 url = "https://clinicaltrials.gov/study/NCT00000002",
-                nctId = "NCT00000020"
+                nctId = "NCT00000002"
             )
         ),
         gene = "PTEN",
@@ -261,17 +261,30 @@ object TestMolecularFactory {
                 isReportable = true,
                 event = "MYC amp",
                 driverLikelihood = DriverLikelihood.HIGH,
-                evidence = TestClinicalEvidenceFactory.withExternalEligibleTrial(
-                    TestClinicalEvidenceFactory.createExternalTrial(
-                        title = "A Phase 1 Study of XYXYXY, a T-Cell-Redirecting Agent Targeting Z, for Advanced Prostate Cancer",
-                        countries = setOf(
-                            TestClinicalEvidenceFactory.createCountry(
-                                CountryName.NETHERLANDS,
-                                mapOf("Nijmegen" to setOf("Radboud UMC"), "Amsterdam" to setOf("AMC", "VUmc"))
-                            )
+                evidence = TestClinicalEvidenceFactory.withExternalEligibleTrials(
+                    setOf(
+                        TestClinicalEvidenceFactory.createExternalTrial(
+                            title = "A Phase 1 Study of XYXYXY, a T-Cell-Redirecting Agent Targeting Z, for Advanced Prostate Cancer",
+                            countries = setOf(
+                                TestClinicalEvidenceFactory.createCountry(
+                                    CountryName.NETHERLANDS,
+                                    mapOf("Nijmegen" to setOf("Radboud UMC"), "Amsterdam" to setOf("AMC", "VUmc"))
+                                )
+                            ),
+                            url = "https://clinicaltrials.gov/study/NCT00000003",
+                            nctId = "NCT00000003",
                         ),
-                        url = "https://clinicaltrials.gov/study/NCT00000003",
-                        nctId = "NCT00000003",
+                        TestClinicalEvidenceFactory.createExternalTrial(
+                            title = "this trial should be filtered out",
+                            countries = setOf(
+                                TestClinicalEvidenceFactory.createCountry(
+                                    CountryName.BELGIUM,
+                                    mapOf("Leuven" to setOf("hospital"))
+                                )
+                            ),
+                            url = "https://clinicaltrials.gov/study/NCT00000011",
+                            nctId = "NCT00000011",
+                        )
                     )
                 ),
                 gene = "MYC",
