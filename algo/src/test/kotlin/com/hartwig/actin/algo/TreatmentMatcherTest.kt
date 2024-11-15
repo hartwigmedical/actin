@@ -79,7 +79,7 @@ class TreatmentMatcherTest {
         val eligibilityFunction = EligibilityFunction(EligibilityRule.MSI_SIGNATURE, emptyList())
         val treatmentCandidate = TreatmentCandidate(
             TreatmentTestFactory.drugTreatment("test", TreatmentCategory.CHEMOTHERAPY),
-            optional = false,
+            optional = true,
             eligibilityFunctions = setOf(eligibilityFunction)
         )
         val expectedSocTreatments = listOf(
@@ -88,25 +88,25 @@ class TreatmentMatcherTest {
                 listOf(EvaluationFactory.pass("Has MSI"))
             )
         )
-        val noneEvaluatedTreatment = EvaluatedTreatment(
-            treatmentCandidate = TreatmentCandidate(
-                TreatmentTestFactory.noneTreatment(),
-                optional = false,
-                eligibilityFunctions = emptySet()
-                ),
-            evaluations = listOf(
-                EvaluationFactory.pass("No suitable treatments matched.")
-            )
-        )
-        val expectedSocTreatmentsWithNone = expectedSocTreatments + noneEvaluatedTreatment
 
         every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(patient) } returns true
         every { recommendationEngine.standardOfCareEvaluatedTreatments(patient) } returns expectedSocTreatments
 
+        val noneTreatment = EvaluatedTreatment(
+            treatmentCandidate = TreatmentCandidate(
+                TreatmentTestFactory.noneTreatment(),
+                optional = true,
+                eligibilityFunctions = emptySet()
+            ),
+            evaluations = listOf(
+                EvaluationFactory.pass("No suitable treatments matched.")
+            )
+        )
+
         val expectedAnnotatedMatches = EvaluatedTreatmentAnnotator.create(
             evidenceEntries,
             resistanceEvidenceMatcher
-        ).annotate(expectedSocTreatmentsWithNone)
+        ).annotate(expectedSocTreatments + noneTreatment)
 
         assertThat(treatmentMatcher.evaluateAndAnnotateMatchesForPatient(patient))
             .usingRecursiveComparison()

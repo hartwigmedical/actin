@@ -88,8 +88,7 @@ class HasHadTreatmentWithDrugFromSetAsMostRecentTest {
     fun `Should evaluate to undetermined if most recent line is trial without a treatment specified`() {
         val treatmentHistory = listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = emptySet(), isTrial = true))
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL, FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
-        // was UNDETERMINED
+            EvaluationResult.UNDETERMINED, FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
         )
     }
 

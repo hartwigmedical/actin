@@ -57,7 +57,7 @@ class HasRecentlyReceivedTrialMedicationTest {
             )
         )
         assertEvaluation(
-            EvaluationResult.FAIL, //was pass, still need to check
+            EvaluationResult.PASS,
             functionActive.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, medications))
         )
     }
@@ -96,7 +96,7 @@ class HasRecentlyReceivedTrialMedicationTest {
             )
         )
         assertEvaluation(
-            EvaluationResult.UNDETERMINED, //Was pass, still need to check
+            EvaluationResult.PASS,
             functionActive.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, null))
         )
     }

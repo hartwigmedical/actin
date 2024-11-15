@@ -3,7 +3,6 @@ package com.hartwig.actin.datamodel.clinical.treatment.history
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
-import com.hartwig.actin.datamodel.clinical.treatment.NoTreatment
 
 private const val DELIMITER = ";"
 
@@ -19,9 +18,10 @@ data class TreatmentHistoryEntry(
 
     fun allTreatments(): Set<Treatment> {
         val switchToTreatments = treatmentHistoryDetails?.switchToTreatments?.map(TreatmentStage::treatment)?.toSet() ?: emptySet()
-        val aggregatedTreatments = treatments + setOfNotNull(treatmentHistoryDetails?.maintenanceTreatment?.treatment) + switchToTreatments
+        return treatments + setOfNotNull(treatmentHistoryDetails?.maintenanceTreatment?.treatment) + switchToTreatments
 
-        return if (aggregatedTreatments.isEmpty()) setOf(NoTreatment()) else aggregatedTreatments
+        // CHECK: This is the original code that was replaced by the above code, maybe it now does not take no treatments into account?
+//        return if (aggregatedTreatments.isEmpty()) setOf(NoTreatment()) else aggregatedTreatments
     }
 
     fun treatmentName(): String {

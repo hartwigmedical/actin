@@ -25,14 +25,11 @@ class HasRecentlyReceivedTrialMedication(
         }
 
         val hadRecentTrialTreatment =
-            record.oncologicalHistory
-                .filter { oncologicalHistoryEntry -> oncologicalHistoryEntry.treatments.none { it.treatmentClass == TreatmentClass.NONE } }
-                .any { it.isTrial && TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minStopDate, false) }
+            record.oncologicalHistory.any { it.isTrial && TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minStopDate, false) }
 
         val hadTrialTreatmentWithUnknownDate =
-            record.oncologicalHistory
-                .filter { oncologicalHistoryEntry -> oncologicalHistoryEntry.treatments.none { it.treatmentClass == TreatmentClass.NONE } }
-                .any { it.isTrial && TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minStopDate, true) }
+            record.oncologicalHistory.any { it.isTrial && TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minStopDate, true) }
+
 
         if (!(hadRecentTrialTreatment || hadTrialTreatmentWithUnknownDate) && record.medications == null) {
             return MEDICATION_NOT_PROVIDED

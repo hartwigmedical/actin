@@ -30,11 +30,12 @@ class TreatmentHistoryEntryConfigFactoryTest {
                 "UNKNOWN_THERAPY",
                 "treatment",
                 "Treatment with name UNKNOWN_THERAPY does not exist in database. Please add with one of the following templates: " +
-                        "[{\"name\":\"UNKNOWN_THERAPY\",\"drugs\":[],\"synonyms\":[],\"isSystemic\":?,\"treatmentClass\":\"DRUG_TREATMENT\"}, {\"name\":\"UNKNOWN_THERAPY\"," +
-                        "\"synonyms\":[],\"isSystemic\":?,\"radioType\":null,\"isInternal\":null,\"treatmentClass\":\"RADIOTHERAPY\"}, {\"name\":\"UNKNOWN_THERAPY\",\"isSystemic\":?," +
-                        "\"synonyms\":[],\"categories\":[],\"types\":[],\"treatmentClass\":\"OTHER_TREATMENT\"}]"
+                        "[{\"name\":\"UNKNOWN_THERAPY\",\"drugs\":[],\"synonyms\":[],\"isSystemic\":?,\"treatmentClass\":\"DRUG_TREATMENT\"}, " +
+                        "{\"name\":\"UNKNOWN_THERAPY\",\"synonyms\":[],\"isSystemic\":?,\"radioType\":null,\"isInternal\":null,\"treatmentClass\":\"RADIOTHERAPY\"}, " +
+                        "{\"name\":\"UNKNOWN_THERAPY\",\"isSystemic\":?,\"synonyms\":[],\"treatmentClass\":\"OTHER_TREATMENT\",\"categories\":[],\"types\":[]}]"
             )
         )
+
     }
 
     @Test
@@ -118,9 +119,9 @@ class TreatmentHistoryEntryConfigFactoryTest {
                 "TRIAL_NAME",
                 "treatment",
                 "Treatment with name TRIAL_NAME does not exist in database. Please add with one of the following templates: " +
-                        "[{\"name\":\"TRIAL_NAME\",\"drugs\":[],\"synonyms\":[],\"isSystemic\":?,\"treatmentClass\":\"DRUG_TREATMENT\"}, {\"name\":\"TRIAL_NAME\"," +
-                        "\"synonyms\":[],\"isSystemic\":?,\"radioType\":null,\"isInternal\":null,\"treatmentClass\":\"RADIOTHERAPY\"}, {\"name\":\"TRIAL_NAME\"," +
-                        "\"isSystemic\":?,\"synonyms\":[],\"categories\":[],\"types\":[],\"treatmentClass\":\"OTHER_TREATMENT\"}]"
+                        "[{\"name\":\"TRIAL_NAME\",\"drugs\":[],\"synonyms\":[],\"isSystemic\":?,\"treatmentClass\":\"DRUG_TREATMENT\"}, " +
+                        "{\"name\":\"TRIAL_NAME\",\"synonyms\":[],\"isSystemic\":?,\"radioType\":null,\"isInternal\":null,\"treatmentClass\":\"RADIOTHERAPY\"}, " +
+                        "{\"name\":\"TRIAL_NAME\",\"isSystemic\":?,\"synonyms\":[],\"treatmentClass\":\"OTHER_TREATMENT\",\"categories\":[],\"types\":[]}]"
             )
         )
     }

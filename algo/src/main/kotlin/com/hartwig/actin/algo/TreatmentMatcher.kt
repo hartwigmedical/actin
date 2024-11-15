@@ -18,8 +18,7 @@ import com.hartwig.actin.datamodel.algo.TreatmentCandidate
 import com.hartwig.actin.datamodel.efficacy.EfficacyEntry
 import com.hartwig.actin.datamodel.trial.Trial
 
-import com.hartwig.actin.datamodel.clinical.treatment.NoTreatment
-
+import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatment
 
 
 class TreatmentMatcher(
@@ -36,14 +35,7 @@ class TreatmentMatcher(
         val trialMatches = trialMatcher.determineEligibility(patient, trials)
 
         val (standardOfCareMatches, personalizedDataAnalysis) = if (recommendationEngine.standardOfCareCanBeEvaluatedForPatient(patient)) {
-            val evaluatedTreatments = recommendationEngine.standardOfCareEvaluatedTreatments(patient).toMutableList()
-
-            if (recommendationEngine.standardOfCareCanBeEvaluatedForPatient(patient)) {
-                val noneEvaluatedTreatment = createNoneEvaluatedTreatment()
-                evaluatedTreatments.add(noneEvaluatedTreatment)
-            }
-
-
+            val evaluatedTreatments = recommendationEngine.standardOfCareEvaluatedTreatments(patient) + createNoneEvaluatedTreatment()
             val personalizedDataAnalysis = personalizationDataPath?.let { PersonalizedDataInterpreter.create(it).interpret(patient) }
             Pair(
                 evaluatedTreatmentAnnotator.annotate(evaluatedTreatments, personalizedDataAnalysis?.treatmentAnalyses),
@@ -66,16 +58,9 @@ class TreatmentMatcher(
     }
 
     private fun createNoneEvaluatedTreatment(): EvaluatedTreatment {
-        val noneTreatment = NoTreatment(
-            name = "None",
-            isSystemic = false,
-            synonyms = setOf("none", "no treatment"),
-            displayOverride = null
-        )
-
         val treatmentCandidate = TreatmentCandidate(
-            treatment = noneTreatment,
-            optional = false,
+            treatment = OtherTreatment.NONE,
+            optional = true,
             eligibilityFunctions = emptySet()
         )
 
