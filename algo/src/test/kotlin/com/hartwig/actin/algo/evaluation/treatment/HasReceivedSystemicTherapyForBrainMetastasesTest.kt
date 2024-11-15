@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory.withCnsOrBrainLesionsAndOncologicalHistory
+import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory.withSuspectedCnsOrBrainLesionsAndOncologicalHistory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import org.junit.Test
@@ -21,8 +22,28 @@ class HasReceivedSystemicTherapyForBrainMetastasesTest {
     }
 
     @Test
+    fun `Should warn if suspected brain metastases present and received any systemic anti-cancer therapy`() {
+        val clinicalRecord = withSuspectedCnsOrBrainLesionsAndOncologicalHistory(
+            hasSuspectedCnsLesions = false,
+            hasSuspectedBrainLesions = true,
+            systemicTreatment
+        )
+        EvaluationAssert.assertEvaluation(EvaluationResult.WARN, function.evaluate(clinicalRecord))
+    }
+
+    @Test
     fun `Should warn if CNS metastases present and received any systemic anti-cancer therapy`() {
         val clinicalRecord = withCnsOrBrainLesionsAndOncologicalHistory(hasCnsLesions = true, hasBrainLesions = false, systemicTreatment)
+        EvaluationAssert.assertEvaluation(EvaluationResult.WARN, function.evaluate(clinicalRecord))
+    }
+
+    @Test
+    fun `Should warn if suspected CNS metastases present and received any systemic anti-cancer therapy`() {
+        val clinicalRecord = withSuspectedCnsOrBrainLesionsAndOncologicalHistory(
+            hasSuspectedCnsLesions = true,
+            hasSuspectedBrainLesions = false,
+            systemicTreatment
+        )
         EvaluationAssert.assertEvaluation(EvaluationResult.WARN, function.evaluate(clinicalRecord))
     }
 
