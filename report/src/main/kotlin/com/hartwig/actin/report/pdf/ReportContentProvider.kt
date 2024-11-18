@@ -131,7 +131,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 keyWidth,
                 valueWidth,
                 report.config.molecularSummaryType == MolecularSummaryType.SHORT,
-                MolecularTestFilter(report.treatmentMatch.maxMolecularTestAge)
+                MolecularTestFilter(report.treatmentMatch.maxMolecularTestAge, true)
             ).takeIf {
                 report.config.molecularSummaryType != MolecularSummaryType.NONE && report.patientRecord.molecularHistory.molecularTests.isNotEmpty()
             },
@@ -220,7 +220,10 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         internalEvaluatedCohorts: List<InterpretedCohort>,
         original: Set<ExternalTrialSummary>
     ): MolecularFilteredExternalTrials {
-        return MolecularFilteredExternalTrials(original, original.filterMolecularCriteriaAlreadyPresent(internalEvaluatedCohorts))
+        return if (enableExtendedMode) MolecularFilteredExternalTrials(original, original) else MolecularFilteredExternalTrials(
+            original,
+            original.filterMolecularCriteriaAlreadyPresent(internalEvaluatedCohorts)
+        )
     }
 
     companion object {

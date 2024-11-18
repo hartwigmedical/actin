@@ -17,7 +17,7 @@ class MolecularCharacteristicFormatTest {
                     hasHighTumorMutationalBurden = true
                 )
             )
-        ).isEqualTo("TMB High (61)")
+        ).isEqualTo("TMB high (61)")
         assertThat(
             MolecularCharacteristicFormat.formatTumorMutationalBurden(
                 MolecularCharacteristics(
@@ -25,7 +25,7 @@ class MolecularCharacteristicFormatTest {
                     hasHighTumorMutationalBurden = false
                 )
             )
-        ).isEqualTo("TMB Low (61)")
+        ).isEqualTo("TMB low (61)")
         assertThat(
             MolecularCharacteristicFormat.formatTumorMutationalBurden(
                 MolecularCharacteristics(
@@ -45,7 +45,7 @@ class MolecularCharacteristicFormatTest {
                     hasHighTumorMutationalLoad = true
                 )
             )
-        ).isEqualTo("TML High (10)")
+        ).isEqualTo("TML high (10)")
         assertThat(
             MolecularCharacteristicFormat.formatTumorMutationalLoad(
                 MolecularCharacteristics(
@@ -53,7 +53,7 @@ class MolecularCharacteristicFormatTest {
                     hasHighTumorMutationalLoad = false
                 )
             )
-        ).isEqualTo("TML Low (10)")
+        ).isEqualTo("TML low (10)")
         assertThat(
             MolecularCharacteristicFormat.formatTumorMutationalLoad(
                 MolecularCharacteristics(

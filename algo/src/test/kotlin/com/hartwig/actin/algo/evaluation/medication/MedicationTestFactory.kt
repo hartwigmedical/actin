@@ -5,8 +5,8 @@ import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.clinical.AtcClassification
-import com.hartwig.actin.datamodel.clinical.CypInteraction
 import com.hartwig.actin.datamodel.clinical.Dosage
+import com.hartwig.actin.datamodel.clinical.DrugInteraction
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.QTProlongatingRisk
 import com.hartwig.actin.datamodel.clinical.TestMedicationFactory
@@ -33,15 +33,38 @@ internal object MedicationTestFactory {
         return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = medications)
     }
 
-    fun withCypInteraction(cyp: String, type: CypInteraction.Type, strength: CypInteraction.Strength): PatientRecord {
+    fun withCypInteraction(cyp: String, type: DrugInteraction.Type, strength: DrugInteraction.Strength): PatientRecord {
         return withMedications(listOf(medicationWithCypInteraction(cyp, type, strength)))
     }
 
+    fun withTransporterInteraction(transporter: String, type: DrugInteraction.Type, strength: DrugInteraction.Strength): PatientRecord {
+        return withMedications(listOf(medicationWithTransporterInteraction(transporter, type, strength)))
+    }
+
     fun medicationWithCypInteraction(
-        cyp: String, type: CypInteraction.Type, strength: CypInteraction.Strength, stopDate: LocalDate? = null, name: String = ""
+        cyp: String, type: DrugInteraction.Type, strength: DrugInteraction.Strength, stopDate: LocalDate? = null, name: String = ""
     ): Medication {
         return TestMedicationFactory.createMinimal().copy(
-            cypInteractions = listOf(CypInteraction(cyp = cyp, type = type, strength = strength)), stopDate = stopDate, name = name
+            cypInteractions = listOf(DrugInteraction(name = cyp, type = type, strength = strength, group = DrugInteraction.Group.CYP)),
+            stopDate = stopDate,
+            name = name
+        )
+    }
+
+    fun medicationWithTransporterInteraction(
+        transporter: String, type: DrugInteraction.Type, strength: DrugInteraction.Strength, stopDate: LocalDate? = null, name: String = ""
+    ): Medication {
+        return TestMedicationFactory.createMinimal().copy(
+            transporterInteractions = listOf(
+                DrugInteraction(
+                    name = transporter,
+                    type = type,
+                    strength = strength,
+                    group = DrugInteraction.Group.TRANSPORTER
+                )
+            ),
+            stopDate = stopDate,
+            name = name
         )
     }
 

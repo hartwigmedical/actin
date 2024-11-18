@@ -10,6 +10,7 @@ import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.MolecularDriverEntry
 import com.hartwig.actin.report.interpretation.MolecularDriverEntryFactory
 import com.hartwig.actin.report.interpretation.MolecularDriversInterpreter
+import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells.create
 import com.hartwig.actin.report.pdf.util.Cells.createKey
@@ -38,7 +39,7 @@ class PatientClinicalHistoryWithOverviewGenerator(
             "Birth year" to record.patient.birthYear.toString(),
             "WHO" to whoStatus(record.clinicalStatus.who),
             "Tumor" to tumor(record.tumor),
-            "Lesions" to lesions(record.tumor),
+            "Lesions" to TumorDetailsInterpreter.lesions(record.tumor),
             "Stage" to stage(record.tumor),
             "Measurable disease (RECIST)" to measurableDisease(record.tumor),
             "DPYD" to createPeachSummaryForGene(pharmaco, PharmacoGene.DPYD),
@@ -90,41 +91,6 @@ class PatientClinicalHistoryWithOverviewGenerator(
 
     private fun stage(tumor: TumorDetails): String {
         return tumor.stage?.display() ?: Formats.VALUE_UNKNOWN
-    }
-
-    private fun lesions(tumor: TumorDetails): String {
-        val categorizedLesions = listOf(
-            "CNS" to tumor.hasConfirmedOrSuspectedCnsLesions(),
-            "Brain" to tumor.hasConfirmedOrSuspectedBrainLesions(),
-            "Liver" to tumor.hasConfirmedOrSuspectedLiverLesions(),
-            "Bone" to tumor.hasConfirmedOrSuspectedBoneLesions(),
-            "Lung" to tumor.hasConfirmedOrSuspectedLungLesions()
-        ).filter { it.second == true }.map { it.first }
-
-        val lesions = listOfNotNull(categorizedLesions, tumor.otherConfirmedOrSuspectedLesions(), listOfNotNull(tumor.biopsyLocation))
-            .flatten()
-            .sorted()
-            .distinctBy(String::uppercase)
-
-        val (lymphNodeLesions, otherLesions) = lesions.partition { it.lowercase().startsWith("lymph node") }
-
-        val filteredLymphNodeLesions = lymphNodeLesions.map { lesion ->
-            lesion.split(" ").filterNot { it.lowercase() in setOf("lymph", "node", "nodes", "") }.joinToString(" ")
-        }
-            .filterNot(String::isEmpty)
-            .distinctBy(String::lowercase)
-
-        val lymphNodeLesionsString = if (filteredLymphNodeLesions.isNotEmpty()) {
-            listOf("Lymph nodes (${filteredLymphNodeLesions.joinToString(", ")})")
-        } else if (lymphNodeLesions.isNotEmpty()) {
-            listOf("Lymph nodes")
-        } else emptyList()
-
-        return if (lesions.isEmpty()) {
-            Formats.VALUE_UNKNOWN
-        } else {
-            (otherLesions + lymphNodeLesionsString).joinToString(", ")
-        }
     }
 
     private fun geneToDrivers(drivers: List<MolecularDriverEntry>, geneToFind: String): String {

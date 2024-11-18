@@ -10,12 +10,15 @@ class HasExtracranialMetastases : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val hasNonCnsMetastases = with(record.tumor) {
-            hasConfirmedOrSuspectedBoneLesions() == true || hasConfirmedOrSuspectedLungLesions() == true || hasConfirmedOrSuspectedLiverLesions() == true || hasConfirmedOrSuspectedLymphNodeLesions() == true
+            listOf(hasLiverLesions, hasBoneLesions, hasLungLesions, hasLymphNodeLesions).any { it == true }
         }
-        val categorizedLesionsUnknown = with(record.tumor) {
-            hasConfirmedOrSuspectedBoneLesions() == null || hasConfirmedOrSuspectedLungLesions() == null || hasConfirmedOrSuspectedLiverLesions() == null || hasConfirmedOrSuspectedLymphNodeLesions() == null
+        val hasSuspectedNonCnsMetastases = with(record.tumor) {
+            hasSuspectedLesions() && listOf(hasSuspectedCnsLesions, hasSuspectedBrainLesions).none { it == true }
         }
-        val uncategorizedLesions = record.tumor.otherConfirmedOrSuspectedLesions() ?: emptyList()
+        val anyCategorizedLesionUnknown =
+            with(record.tumor) { listOf(hasBoneLesions, hasLungLesions, hasLiverLesions, hasLymphNodeLesions) }.any { it == null }
+        val uncategorizedLesions = record.tumor.otherLesions ?: emptyList()
+        val uncategorizedSuspectedLesions = record.tumor.otherSuspectedLesions ?: emptyList()
         val biopsyLocation = record.tumor.biopsyLocation
 
         return when {
@@ -23,7 +26,12 @@ class HasExtracranialMetastases : EvaluationFunction {
                 EvaluationFactory.pass("Patient has extracranial metastases", "Extracranial metastases present")
             }
 
-            uncategorizedLesions.isNotEmpty() || categorizedLesionsUnknown || biopsyLocation == null -> {
+            hasSuspectedNonCnsMetastases || uncategorizedSuspectedLesions.any(::isExtraCranialLesion) -> {
+                val message = "Has extracranial metastases but only suspected lesions"
+                EvaluationFactory.warn(message, message)
+            }
+
+            uncategorizedLesions.isNotEmpty() || anyCategorizedLesionUnknown || biopsyLocation == null -> {
                 val message = "Undetermined if extracranial metastases present"
                 EvaluationFactory.undetermined(message, message)
             }

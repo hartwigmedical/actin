@@ -24,7 +24,7 @@ class HasSufficientTumorMutationalBurdenTest {
             )
         )
         assertMolecularEvaluation(
-            EvaluationResult.FAIL,
+            EvaluationResult.UNDETERMINED,
             function.evaluate(
                 MolecularTestFactory.withTumorMutationalBurdenAndHasSufficientQualityAndPurity(
                     9.5,

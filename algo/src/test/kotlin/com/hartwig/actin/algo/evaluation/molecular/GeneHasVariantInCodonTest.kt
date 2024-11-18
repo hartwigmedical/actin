@@ -115,5 +115,51 @@ class GeneHasVariantInCodonTest {
         )
     }
 
+    @Test
+    fun `Should warn when reportable codon matches but also variant on non-canonical transcript `() {
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(
+                MolecularTestFactory.withDrivers(
+                    TestVariantFactory.createMinimal().copy(
+                        gene = TARGET_GENE,
+                        isReportable = true,
+                        canonicalImpact = impactWithCodon(MATCHING_CODON),
+                        extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 1.0)
+                    ),
+                    TestVariantFactory.createMinimal().copy(
+                        gene = TARGET_GENE,
+                        isReportable = true,
+                        canonicalImpact = impactWithCodon(OTHER_CODON),
+                        otherImpacts = setOf(impactWithCodon(MATCHING_CODON))
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should warn when reportable codon matches but also subclonal variant`() {
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(
+                MolecularTestFactory.withDrivers(
+                    TestVariantFactory.createMinimal().copy(
+                        gene = TARGET_GENE,
+                        isReportable = true,
+                        canonicalImpact = impactWithCodon(MATCHING_CODON),
+                        extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 1.0)
+                    ),
+                    TestVariantFactory.createMinimal().copy(
+                        gene = TARGET_GENE,
+                        isReportable = true,
+                        extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.3),
+                        canonicalImpact = impactWithCodon(MATCHING_CODON)
+                    )
+                )
+            )
+        )
+    }
+
     private fun impactWithCodon(affectedCodon: Int) = TestTranscriptImpactFactory.createMinimal().copy(affectedCodon = affectedCodon)
 }

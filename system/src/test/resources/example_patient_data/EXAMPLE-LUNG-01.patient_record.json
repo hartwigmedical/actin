@@ -298,9 +298,11 @@
         {
           "type": "INDUCER",
           "strength": "STRONG",
-          "cyp": "CYP3A4/5"
+          "group": "CYP",
+          "name": "3A4/5"
         }
       ],
+      "transporterInteractions": [],
       "qtProlongatingRisk": "NONE",
       "atc": null,
       "isSelfCare": true,
@@ -457,6 +459,29 @@
                     "applicableCancerType": {
                       "cancerType": "Lung non-small cell carcinoma",
                       "excludedCancerTypes": []
+                    }
+                  },
+                  {
+                    "title": "EGFR-BE",
+                    "countries": [
+                      {
+                        "name": "BELGIUM",
+                        "hospitalsPerCity": {
+                          "Brussels": [
+                            "Jules Bordet"
+                          ]
+                        }
+                      }
+                    ],
+                    "url": "https://hartwigmedicalfoundation.nl",
+                    "nctId": "NCT00000007",
+                    "isCategoryEvent": false,
+                    "sourceEvent": "EGFR L858R",
+                    "evidenceLevelDetails": "CLINICAL_STUDY",
+                    "applicableCancerType": {
+                      "cancerType": "Lung non-small cell carcinoma",
+                      "excludedCancerTypes": [
+                      ]
                     }
                   }
                 ],

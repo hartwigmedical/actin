@@ -3,7 +3,7 @@ package com.hartwig.actin.clinical.feed.standard.extraction
 import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.curation.CurationDatabase
-import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
+import com.hartwig.actin.clinical.curation.config.DrugInteractionConfig
 import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
 import com.hartwig.actin.clinical.feed.standard.ProvidedMedication
 import com.hartwig.actin.clinical.feed.standard.ProvidedPatientDetail
@@ -11,16 +11,16 @@ import com.hartwig.actin.clinical.feed.standard.ProvidedPatientRecord
 import com.hartwig.actin.clinical.feed.standard.ProvidedTumorDetail
 import com.hartwig.actin.datamodel.clinical.AtcClassification
 import com.hartwig.actin.datamodel.clinical.AtcLevel
-import com.hartwig.actin.datamodel.clinical.CypInteraction
 import com.hartwig.actin.datamodel.clinical.Dosage
+import com.hartwig.actin.datamodel.clinical.DrugInteraction
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.QTProlongatingRisk
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert.assertThrows
 import org.junit.Test
-import java.time.LocalDate
 
 private const val MEDICATION_NAME = "medication_name"
 private const val ATC_NAME = "atc_name"
@@ -29,10 +29,10 @@ class StandardMedicationExtractorTest {
 
     private val atcModel = mockk<AtcModel>()
     private val qtProlongatingRiskCuration = mockk<CurationDatabase<QTProlongatingConfig>>()
-    private val cypInteractionCuration = mockk<CurationDatabase<CypInteractionConfig>>()
+    private val drugInteractionCuration = mockk<CurationDatabase<DrugInteractionConfig>>()
     private val atcClassification = atcClassification()
     private val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
-    private val extractor = StandardMedicationExtractor(atcModel, treatmentDatabase, qtProlongatingRiskCuration, cypInteractionCuration)
+    private val extractor = StandardMedicationExtractor(atcModel, treatmentDatabase, qtProlongatingRiskCuration, drugInteractionCuration)
     private val providedMedication = ProvidedMedication(
         name = MEDICATION_NAME,
         atcCode = "atc",
@@ -64,7 +64,8 @@ class StandardMedicationExtractorTest {
         isTrialMedication = false,
         isSelfCare = false,
         qtProlongatingRisk = QTProlongatingRisk.NONE,
-        cypInteractions = emptyList()
+        cypInteractions = emptyList(),
+        transporterInteractions = emptyList()
     )
     private val ehrPatientRecord = ProvidedPatientRecord(
         patientDetails = ProvidedPatientDetail(
@@ -88,7 +89,7 @@ class StandardMedicationExtractorTest {
 
 
     @Test
-    fun `Should curate QT and CYP and extract medication`() {
+    fun `Should curate QT and drug interactions and extract medication`() {
         every { qtProlongatingRiskCuration.find(ATC_NAME) } returns setOf(
             QTProlongatingConfig(
                 ATC_NAME,
@@ -96,11 +97,26 @@ class StandardMedicationExtractorTest {
                 QTProlongatingRisk.KNOWN
             )
         )
-        every { cypInteractionCuration.find(ATC_NAME) } returns setOf(
-            CypInteractionConfig(
+        every { drugInteractionCuration.find(ATC_NAME) } returns setOf(
+            DrugInteractionConfig(
                 ATC_NAME,
                 false,
-                listOf(CypInteraction(CypInteraction.Type.INDUCER, CypInteraction.Strength.STRONG, "cyp_gene"))
+                listOf(
+                    DrugInteraction(
+                        DrugInteraction.Type.INDUCER,
+                        DrugInteraction.Strength.STRONG,
+                        DrugInteraction.Group.CYP,
+                        "cyp_gene"
+                    )
+                ),
+                listOf(
+                    DrugInteraction(
+                        DrugInteraction.Type.INDUCER,
+                        DrugInteraction.Strength.STRONG,
+                        DrugInteraction.Group.TRANSPORTER,
+                        "bcrp_gene"
+                    )
+                )
             )
         )
 
@@ -109,15 +125,30 @@ class StandardMedicationExtractorTest {
         assertThat(result.extracted).containsExactly(
             medication.copy(
                 qtProlongatingRisk = QTProlongatingRisk.KNOWN,
-                cypInteractions = listOf(CypInteraction(CypInteraction.Type.INDUCER, CypInteraction.Strength.STRONG, "cyp_gene")),
+                cypInteractions = listOf(
+                    DrugInteraction(
+                        DrugInteraction.Type.INDUCER,
+                        DrugInteraction.Strength.STRONG,
+                        DrugInteraction.Group.CYP,
+                        "cyp_gene"
+                    )
+                ),
+                transporterInteractions = listOf(
+                    DrugInteraction(
+                        DrugInteraction.Type.INDUCER,
+                        DrugInteraction.Strength.STRONG,
+                        DrugInteraction.Group.TRANSPORTER,
+                        "bcrp_gene"
+                    )
+                )
             )
         )
     }
 
     @Test
-    fun `Should default CYP and QT when no config found`() {
+    fun `Should default drug interactions and QT when no config found`() {
         every { qtProlongatingRiskCuration.find(ATC_NAME) } returns emptySet()
-        every { cypInteractionCuration.find(ATC_NAME) } returns emptySet()
+        every { drugInteractionCuration.find(ATC_NAME) } returns emptySet()
         val result = extractor.extract(ehrPatientRecord)
         assertThat(result.evaluation.warnings).isEmpty()
         assertThat(result.extracted).containsExactly(medication)
@@ -142,7 +173,7 @@ class StandardMedicationExtractorTest {
     @Test
     fun `Should throw an exception if atc code is null but medication is not trial or self care`() {
         every { qtProlongatingRiskCuration.find(MEDICATION_NAME) } returns emptySet()
-        every { cypInteractionCuration.find(MEDICATION_NAME) } returns emptySet()
+        every { drugInteractionCuration.find(MEDICATION_NAME) } returns emptySet()
         assertThrows(java.lang.IllegalStateException::class.java) {
             extractor.extract(ehrPatientRecord.copy(medications = listOf(providedMedication.copy(atcCode = null))))
         }
@@ -150,7 +181,7 @@ class StandardMedicationExtractorTest {
 
     private fun noAtcLookupTest(modifiedMedication: ProvidedMedication, expected: Medication) {
         every { qtProlongatingRiskCuration.find(MEDICATION_NAME) } returns emptySet()
-        every { cypInteractionCuration.find(MEDICATION_NAME) } returns emptySet()
+        every { drugInteractionCuration.find(MEDICATION_NAME) } returns emptySet()
         val result = extractor.extract(ehrPatientRecord.copy(medications = listOf(modifiedMedication)))
         assertThat(result.evaluation.warnings).isEmpty()
         assertThat(result.extracted).containsExactly(expected)

@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.clinical.PriorIHCTest
 import com.hartwig.actin.datamodel.molecular.Driver
+import com.hartwig.actin.datamodel.molecular.Drivers
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.Fusion
 import com.hartwig.actin.datamodel.molecular.MolecularCharacteristics
@@ -126,6 +127,15 @@ internal object MolecularTestFactory {
 
     fun withHlaAllele(hlaAllele: HlaAllele): PatientRecord {
         return withMolecularImmunology(MolecularImmunology(isReliable = true, hlaAlleles = setOf(hlaAllele)))
+    }
+
+    fun withHlaAlleleAndInsufficientQuality(hlaAllele: HlaAllele): PatientRecord {
+        return withMolecularRecord(
+            baseMolecular.copy(
+                immunology = MolecularImmunology(isReliable = true, hlaAlleles = setOf(hlaAllele)),
+                hasSufficientQuality = false
+            )
+        )
     }
 
     fun withHaplotype(pharmacoEntry: PharmacoEntry): PatientRecord {
@@ -288,6 +298,20 @@ internal object MolecularTestFactory {
                 characteristics = baseMolecular.characteristics.copy(tumorMutationalLoad = tumorMutationalLoad),
                 hasSufficientPurity = hasSufficientPurity,
                 hasSufficientQuality = hasSufficientQuality
+            )
+        )
+    }
+
+    fun withDrivers(vararg drivers: Driver): PatientRecord {
+        return withMolecularRecord(
+            baseMolecular.copy(
+                drivers = Drivers(
+                    variants = drivers.filterIsInstance<Variant>().toSet(),
+                    copyNumbers = drivers.filterIsInstance<CopyNumber>().toSet(),
+                    homozygousDisruptions = drivers.filterIsInstance<HomozygousDisruption>().toSet(),
+                    disruptions = drivers.filterIsInstance<Disruption>().toSet(),
+                    fusions = drivers.filterIsInstance<Fusion>().toSet()
+                )
             )
         )
     }
