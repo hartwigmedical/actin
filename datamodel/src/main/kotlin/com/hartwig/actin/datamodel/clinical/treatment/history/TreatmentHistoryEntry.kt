@@ -19,9 +19,6 @@ data class TreatmentHistoryEntry(
     fun allTreatments(): Set<Treatment> {
         val switchToTreatments = treatmentHistoryDetails?.switchToTreatments?.map(TreatmentStage::treatment)?.toSet() ?: emptySet()
         return treatments + setOfNotNull(treatmentHistoryDetails?.maintenanceTreatment?.treatment) + switchToTreatments
-
-        // CHECK: This is the original code that was replaced by the above code, maybe it now does not take no treatments into account?
-//        return if (aggregatedTreatments.isEmpty()) setOf(NoTreatment()) else aggregatedTreatments
     }
 
     fun treatmentName(): String {

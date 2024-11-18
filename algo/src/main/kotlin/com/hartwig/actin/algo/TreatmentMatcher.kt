@@ -9,8 +9,7 @@ import com.hartwig.actin.algo.soc.RecommendationEngineFactory
 import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.datamodel.PatientRecord
 
-import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.datamodel.algo.EvaluatedTreatment
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.algo.TreatmentCandidate
@@ -64,30 +63,11 @@ class TreatmentMatcher(
             eligibilityFunctions = emptySet()
         )
 
-        val evaluations = listOf(
-            Evaluation(
-                result = EvaluationResult.PASS,
-                recoverable = false,
-                passSpecificMessages = setOf("No suitable treatments matched."),
-                passGeneralMessages = setOf("No suitable treatments matched."),
-                inclusionMolecularEvents = emptySet(),
-                exclusionMolecularEvents = emptySet(),
-                warnSpecificMessages = emptySet(),
-                warnGeneralMessages = emptySet(),
-                undeterminedSpecificMessages = emptySet(),
-                undeterminedGeneralMessages = emptySet(),
-                failSpecificMessages = emptySet(),
-                failGeneralMessages = emptySet(),
-                isMissingGenesForSufficientEvaluation = false
-            )
-        )
-
         return EvaluatedTreatment(
             treatmentCandidate = treatmentCandidate,
-            evaluations = evaluations
+            evaluations = listOf( EvaluationFactory.pass("No suitable treatments matched."))
         )
     }
-
 
     companion object {
         fun create(
