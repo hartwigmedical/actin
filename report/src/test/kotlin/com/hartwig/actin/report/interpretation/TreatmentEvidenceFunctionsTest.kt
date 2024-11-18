@@ -68,7 +68,6 @@ class TreatmentEvidenceFunctionsTest {
         assertThat(result).containsExactlyElementsOf(expected)
     }
 
-
     @Test
     fun `Should correctly filter treatment with preclinical level D evidence`() {
         val preclinicalEvidence =

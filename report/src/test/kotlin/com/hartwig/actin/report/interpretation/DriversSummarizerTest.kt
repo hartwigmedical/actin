@@ -28,10 +28,11 @@ private const val EXPECTED_GENE = "found"
 private const val VIRUS_INTEGRATIONS = 3
 
 class DriversSummarizerTest {
+
     private val minimalDrivers = TestMolecularFactory.createMinimalTestMolecularRecord().drivers
     
     @Test
-    fun shouldReturnKeyVariants() {
+    fun `Should return key variants`() {
         val variants = setOf(
             variant(EXPECTED_GENE, DriverLikelihood.HIGH, true),
             variant("non-reportable", DriverLikelihood.HIGH, false),
@@ -42,7 +43,7 @@ class DriversSummarizerTest {
     }
 
     @Test
-    fun shouldReturnKeyAmplifiedGenesAndIndicatePartialAmplifications() {
+    fun `Should return key amflified genes and indicate partial amplifications`() {
         val partialAmpGene = "partial amp"
         val fullAmpGene = "full amp"
         val copyNumbers = setOf(
@@ -58,7 +59,7 @@ class DriversSummarizerTest {
     }
 
     @Test
-    fun shouldReturnKeyDeletedGenes() {
+    fun `Should return key deleted genes`() {
         val copyNumbers = setOf(
             copyNumber(CopyNumberType.FULL_GAIN, "full amp", DriverLikelihood.HIGH, true),
             copyNumber(CopyNumberType.PARTIAL_GAIN, "partial amp", DriverLikelihood.HIGH, true),
@@ -71,7 +72,7 @@ class DriversSummarizerTest {
     }
 
     @Test
-    fun shouldReturnKeyHomozygouslyDisruptedGenes() {
+    fun `Should return key homozygously disrupted genes`() {
         val homozygousDisruptions = setOf(
             homozygousDisruption(EXPECTED_GENE, DriverLikelihood.HIGH, true),
             homozygousDisruption("non-reportable", DriverLikelihood.HIGH, false),
@@ -82,7 +83,7 @@ class DriversSummarizerTest {
     }
 
     @Test
-    fun shouldReturnKeyFusions() {
+    fun `Should return key fusions`() {
         val fusions = setOf(
             fusion(EXPECTED_GENE, DriverLikelihood.HIGH, true),
             fusion("non-reportable", DriverLikelihood.HIGH, false),
@@ -93,7 +94,7 @@ class DriversSummarizerTest {
     }
 
     @Test
-    fun shouldReturnKeyViruses() {
+    fun `Should return key viruses`() {
         val viruses = setOf(
             virus("virus", DriverLikelihood.HIGH, true),
             virus("non-reportable", DriverLikelihood.HIGH, false),
@@ -105,7 +106,7 @@ class DriversSummarizerTest {
     }
 
     @Test
-    fun shouldReturnActionableEventsThatAreNotKeyDrivers() {
+    fun `Should return actionable events that are not key drivers`() {
         val externalEvidence =
             TestClinicalEvidenceFactory.withExternalEligibleTrial(TestClinicalEvidenceFactory.createTestExternalTrial())
         val approvedTreatment = TestClinicalEvidenceFactory.withApprovedTreatment("approved")

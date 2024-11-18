@@ -33,6 +33,7 @@ private const val VALUE_WIDTH = 200f
 private const val CONTENT_WIDTH = 300f
 
 class ReportContentProviderTest {
+
     private val proper = TestReportFactory.createProperTestReport()
 
     @Test

@@ -13,7 +13,7 @@ import org.junit.runner.RunWith
 class TumorDetailsInterpreterTest {
 
     @Test
-    fun shouldCorrectlyDetermineIfTumorIsCUP() {
+    fun `Should correctly determine if tumor is CUP`() {
         assertThat(isCUP(TumorDetails())).isFalse
 
         assertThat(isCUP(TumorDetails(primaryTumorLocation = TumorDetailsInterpreter.CUP_LOCATION))).isFalse
@@ -29,6 +29,7 @@ class TumorDetailsInterpreterTest {
     }
 
     class LesionInterpreterTest {
+
         @Test
         fun `Should return unknown string when lesion data is missing`() {
             val lesions = lesions(TumorDetails())
