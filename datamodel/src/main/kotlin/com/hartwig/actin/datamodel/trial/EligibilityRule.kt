@@ -90,6 +90,7 @@ enum class EligibilityRule(val input: FunctionInput?) {
     // Rules related to previous cancer treatments
     IS_NOT_ELIGIBLE_FOR_TREATMENT_WITH_CURATIVE_INTENT(FunctionInput.NONE),
     IS_ELIGIBLE_FOR_ON_LABEL_TREATMENT_X(FunctionInput.ONE_SPECIFIC_TREATMENT),
+    IS_ELIGIBLE_FOR_RADIOTHERAPY(FunctionInput.NONE),
     IS_ELIGIBLE_FOR_PALLIATIVE_RADIOTHERAPY(FunctionInput.NONE),
     IS_ELIGIBLE_FOR_LOCO_REGIONAL_THERAPY(FunctionInput.NONE),
     IS_ELIGIBLE_FOR_TREATMENT_LINES_X(FunctionInput.MANY_INTEGERS),
