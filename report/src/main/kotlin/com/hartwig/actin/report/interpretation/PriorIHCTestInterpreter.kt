@@ -7,6 +7,7 @@ import com.hartwig.actin.report.pdf.util.Formats
 import org.apache.logging.log4j.LogManager
 
 class PriorIHCTestInterpreter {
+
     private val logger = LogManager.getLogger(PriorIHCTestInterpreter::class.java)
 
     private val interpretationBuilder = PriorMolecularTestInterpretationBuilder()

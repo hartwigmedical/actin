@@ -35,7 +35,7 @@ class EfficacyEvidenceDetailsGenerator(
                 table.addCell(Cells.createEmpty())
             }
         }
-        
+
         return table
     }
 
@@ -46,7 +46,10 @@ class EfficacyEvidenceDetailsGenerator(
         table.addCell(Cells.createValue("Molecular requirements: "))
         if (annotation.variantRequirements.isNotEmpty()) {
             val variantRequirements =
-                annotation.variantRequirements.map { variantRequirement -> variantRequirement.name + " (" + variantRequirement.requirementType + ")" }
+                annotation.variantRequirements.map { variantRequirement ->
+                    variantRequirement.name +
+                            " (" + variantRequirement.requirementType + ")"
+                }
             table.addCell(Cells.createKey(variantRequirements.joinToString(" and ") { it }))
         } else {
             table.addCell(Cells.createKey("None"))
@@ -86,7 +89,6 @@ class EfficacyEvidenceDetailsGenerator(
         )
             .flatMap { (characteristic, extractAsString) -> contentForCharacteristic(characteristic, extractAsString, patientPopulations) }
             .forEach { table.addCell(Cells.createContent(it)) }
-
 
         return table
     }
@@ -128,7 +130,7 @@ class EfficacyEvidenceDetailsGenerator(
                 )
             }
             .forEach { table.addCell(Cells.createContent(it)) }
-        
+
         table.addCell(Cells.createSpanningSubNote("Median follow-up for PFS was ${patientPopulations[0].medianFollowUpPFS} months", table))
 
         return table

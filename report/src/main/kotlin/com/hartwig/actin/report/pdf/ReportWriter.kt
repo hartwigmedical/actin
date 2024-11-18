@@ -14,31 +14,29 @@ import com.itextpdf.kernel.pdf.WriterProperties
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.AreaBreak
 import com.itextpdf.layout.properties.AreaBreakType
-import java.io.ByteArrayOutputStream
-import java.io.IOException
-import java.time.LocalDate
 import org.apache.logging.log4j.LogManager
+import java.io.ByteArrayOutputStream
+import java.time.LocalDate
 
 class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory: String?) {
 
-    @Throws(IOException::class)
+    private val logger = LogManager.getLogger(ReportWriter::class.java)
+
     fun write(report: Report) {
         write(report, false)
     }
 
     @Synchronized
-    @Throws(IOException::class)
     fun write(report: Report, enableExtendedMode: Boolean) {
-        LOGGER.info("Building report for patient ${report.patientId} with configuration ${report.config}")
+        logger.info("Building report for patient ${report.patientId} with configuration ${report.config}")
 
-        LOGGER.debug("Initializing output styles")
+        logger.debug("Initializing output styles")
         Styles.initialize()
 
         val chapters = ReportContentProvider(report, enableExtendedMode).provideChapters()
         writePdfChapters(report.patientId, chapters, enableExtendedMode, report.reportDate)
     }
 
-    @Throws(IOException::class)
     private fun writePdfChapters(patientId: String, chapters: List<ReportChapter>, enableExtendedMode: Boolean, reportDate: LocalDate) {
         val doc = initializeReport(patientId, enableExtendedMode)
         val pdfDocument = doc.pdfDocument
@@ -59,23 +57,23 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
         pdfDocument.close()
     }
 
-    @Throws(IOException::class)
     private fun initializeReport(patientId: String, enableExtendedMode: Boolean): Document {
         val writer: PdfWriter
         if (writeToDisk && outputDirectory != null) {
             val outputFilePath =
                 (Paths.forceTrailingFileSeparator(outputDirectory) + patientId + ".actin" + (if (enableExtendedMode) ".extended" else "")
                         + ".pdf")
-            LOGGER.info("Writing PDF report to {}", outputFilePath)
+            logger.info("Writing PDF report to {}", outputFilePath)
             val properties = WriterProperties().setFullCompressionMode(true)
                 .setCompressionLevel(CompressionConstants.BEST_COMPRESSION)
                 .useSmartMode()
             writer = PdfWriter(outputFilePath, properties)
             writer.compressionLevel = 9
         } else {
-            LOGGER.info("Generating in-memory PDF report")
+            logger.info("Generating in-memory PDF report")
             writer = PdfWriter(ByteArrayOutputStream())
         }
+
         val pdf = PdfDocument(writer)
         pdf.defaultPageSize = PageSize.A4
         pdf.documentInfo.title = Constants.METADATA_TITLE
@@ -87,10 +85,7 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
             Constants.PAGE_MARGIN_BOTTOM,
             Constants.PAGE_MARGIN_LEFT
         )
-        return document
-    }
 
-    companion object {
-        private val LOGGER = LogManager.getLogger(ReportWriter::class.java)
+        return document
     }
 }

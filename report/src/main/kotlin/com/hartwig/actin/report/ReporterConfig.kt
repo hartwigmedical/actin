@@ -6,7 +6,6 @@ import com.hartwig.actin.configuration.OVERRIDE_YAML_DESCRIPTION
 import com.hartwig.actin.util.ApplicationConfig
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Options
-import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -34,16 +33,17 @@ data class ReporterConfig(
             return options
         }
 
-        @Throws(ParseException::class)
         fun createConfig(cmd: CommandLine): ReporterConfig {
             if (cmd.hasOption(LOG_DEBUG)) {
                 Configurator.setRootLevel(Level.DEBUG)
                 LOGGER.debug("Switched root level logging to DEBUG")
             }
+
             val enableExtendedMode = cmd.hasOption(ENABLE_EXTENDED_MODE)
             if (enableExtendedMode) {
                 LOGGER.info("Extended reporting mode has been enabled")
             }
+
             return ReporterConfig(
                 patientJson = ApplicationConfig.nonOptionalFile(cmd, PATIENT_JSON),
                 treatmentMatchJson = ApplicationConfig.nonOptionalFile(cmd, TREATMENT_MATCH_JSON),
@@ -55,6 +55,7 @@ data class ReporterConfig(
         }
 
         val LOGGER: Logger = LogManager.getLogger(ReporterConfig::class.java)
+
         private const val PATIENT_JSON = "patient_json"
         private const val TREATMENT_MATCH_JSON = "treatment_match_json"
         private const val OUTPUT_DIRECTORY = "output_directory"

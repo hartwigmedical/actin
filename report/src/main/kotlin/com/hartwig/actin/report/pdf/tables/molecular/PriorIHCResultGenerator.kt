@@ -13,6 +13,7 @@ class PriorIHCResultGenerator(
     private val valueWidth: Float,
     private val interpreter: PriorIHCTestInterpreter
 ) {
+
     fun contents(): Table {
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
         if (patientRecord.priorIHCTests.isEmpty()) {

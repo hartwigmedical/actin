@@ -6,6 +6,7 @@ import com.hartwig.actin.report.pdf.util.Styles
 import com.itextpdf.layout.element.Table
 
 class PathologyReportGenerator(private val tumorDetails: TumorDetails, private val width: Float) : TableGenerator {
+
     override fun title(): String {
         return "Raw pathology report:"
     }

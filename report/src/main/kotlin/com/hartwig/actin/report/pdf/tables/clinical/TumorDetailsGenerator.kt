@@ -11,6 +11,7 @@ import com.itextpdf.layout.element.Table
 
 class TumorDetailsGenerator(private val record: PatientRecord, private val keyWidth: Float, private val valueWidth: Float) :
     TableGenerator {
+
     override fun title(): String {
         return "Tumor details (" + date(record.patient.questionnaireDate) + ")"
     }
@@ -26,42 +27,40 @@ class TumorDetailsGenerator(private val record: PatientRecord, private val keyWi
         return table
     }
 
-    companion object {
-        private fun cnsLesions(tumor: TumorDetails): String {
-            return when (tumor.hasCnsLesions) {
-                true -> {
-                    activeLesionString("Present CNS lesions", tumor.hasActiveCnsLesions)
-                }
+    private fun cnsLesions(tumor: TumorDetails): String {
+        return when (tumor.hasCnsLesions) {
+            true -> {
+                activeLesionString("Present CNS lesions", tumor.hasActiveCnsLesions)
+            }
 
-                false -> {
-                    "No known CNS lesions"
-                }
+            false -> {
+                "No known CNS lesions"
+            }
 
-                null -> {
-                    Formats.VALUE_UNKNOWN
-                }
+            null -> {
+                Formats.VALUE_UNKNOWN
             }
         }
+    }
 
-        private fun brainLesions(tumor: TumorDetails): String {
-            return when (tumor.hasBrainLesions) {
-                true -> {
-                    activeLesionString("Present brain lesions", tumor.hasActiveBrainLesions)
-                }
+    private fun brainLesions(tumor: TumorDetails): String {
+        return when (tumor.hasBrainLesions) {
+            true -> {
+                activeLesionString("Present brain lesions", tumor.hasActiveBrainLesions)
+            }
 
-                false -> {
-                    "No known brain lesions"
-                }
+            false -> {
+                "No known brain lesions"
+            }
 
-                null -> {
-                    Formats.VALUE_UNKNOWN
-                }
+            null -> {
+                Formats.VALUE_UNKNOWN
             }
         }
+    }
 
-        private fun activeLesionString(type: String, active: Boolean?): String {
-            val activeString = active?.let { if (it) " (active)" else " (not active)" } ?: ""
-            return type + activeString
-        }
+    private fun activeLesionString(type: String, active: Boolean?): String {
+        val activeString = active?.let { if (it) " (active)" else " (not active)" } ?: ""
+        return type + activeString
     }
 }

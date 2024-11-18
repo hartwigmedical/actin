@@ -24,6 +24,7 @@ import com.itextpdf.layout.element.Div
 class MolecularDetailsChapter(
     private val report: Report, override val include: Boolean, private val includeRawPathologyReport: Boolean
 ) : ReportChapter {
+
     override fun name(): String {
         return "Molecular Details"
     }

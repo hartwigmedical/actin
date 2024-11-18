@@ -17,6 +17,7 @@ class EfficacyEvidenceGenerator(
     private val treatments: List<AnnotatedTreatmentMatch>?,
     private val width: Float
 ) : TableGenerator {
+
     private val patientCharacteristicHeadersAndFunctions = listOf<Pair<String, (PatientPopulation) -> String?>>(
         "WHO/ECOG" to SOCGeneratorFunctions::createWhoString,
         "Primary tumor location" to { it.formatTumorLocation(", ") },

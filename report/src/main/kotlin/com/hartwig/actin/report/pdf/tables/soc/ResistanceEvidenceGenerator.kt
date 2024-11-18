@@ -12,6 +12,7 @@ class ResistanceEvidenceGenerator(
     private val treatments: Set<AnnotatedTreatmentMatch>,
     private val width: Float
 ) : TableGenerator {
+
     override fun title(): String {
         return ""
     }
@@ -24,10 +25,12 @@ class ResistanceEvidenceGenerator(
             val treatmentToEvidence = treatments.flatMap { it.resistanceEvidence }.groupBy({ it.treatmentName }, { it })
             if (treatmentToEvidence.isEmpty()) {
                 Tables.createSingleColWithWidth(width)
-                    .addCell(Cells.createContentNoBorder("No resistance evidence found for the standard of care treatment options of this patient"))
-            }
-
-            else {
+                    .addCell(
+                        Cells.createContentNoBorder(
+                            "No resistance evidence found for the standard of care treatment options of this patient"
+                        )
+                    )
+            } else {
                 val table = Tables.createFixedWidthCols(3f, 2f, 3f, 2f).setWidth(width)
                 table.addHeaderCell(Cells.createHeader("Treatment"))
                 table.addHeaderCell(Cells.createHeader("Mutation"))
@@ -62,17 +65,14 @@ class ResistanceEvidenceGenerator(
                 }
                 table
             }
-            }
-    }
-
-    companion object {
-        private fun booleanToString(isFound: Boolean?): String {
-            return when (isFound) {
-                true -> "Yes"
-                false -> "No"
-                null -> "NA"
-            }
         }
     }
 
+    private fun booleanToString(isFound: Boolean?): String {
+        return when (isFound) {
+            true -> "Yes"
+            false -> "No"
+            null -> "NA"
+        }
+    }
 }
