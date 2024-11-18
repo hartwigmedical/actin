@@ -5,8 +5,8 @@ import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoEntry
 import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoGene
 import com.hartwig.actin.report.datamodel.Report
-import com.hartwig.actin.report.interpretation.InterpretedCohortsSummarizer
 import com.hartwig.actin.report.interpretation.InterpretedCohort
+import com.hartwig.actin.report.interpretation.InterpretedCohortsSummarizer
 import com.hartwig.actin.report.interpretation.MolecularDriverEntry
 import com.hartwig.actin.report.interpretation.MolecularDriverEntryFactory
 import com.hartwig.actin.report.interpretation.MolecularDriversInterpreter

@@ -134,6 +134,10 @@ object TestClinicalEvidenceFactory {
         return ClinicalEvidence(externalEligibleTrials = setOf(trial))
     }
 
+    fun withExternalEligibleTrials(trials: Set<ExternalTrial>): ClinicalEvidence {
+        return ClinicalEvidence(externalEligibleTrials = trials)
+    }
+
     fun withOnLabelExperimentalTreatment(treatment: String): ClinicalEvidence {
         return ClinicalEvidence(treatmentEvidence = setOf(onLabelExperimental().copy(treatment = treatment)))
     }

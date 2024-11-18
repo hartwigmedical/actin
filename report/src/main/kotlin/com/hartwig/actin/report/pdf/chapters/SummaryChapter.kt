@@ -2,6 +2,7 @@ package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.report.datamodel.Report
+import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter
 import com.hartwig.actin.report.pdf.ReportContentProvider
 import com.hartwig.actin.report.pdf.util.Cells
@@ -14,7 +15,11 @@ import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
 import com.itextpdf.layout.properties.TextAlignment
 
-class SummaryChapter(private val report: Report) : ReportChapter {
+class SummaryChapter(
+    private val report: Report,
+    private val reportContentProvider: ReportContentProvider,
+    private val interpretedCohorts: List<InterpretedCohort>
+) : ReportChapter {
 
     override fun name(): String {
         return "Summary"
@@ -65,7 +70,7 @@ class SummaryChapter(private val report: Report) : ReportChapter {
         val table = Tables.createSingleColWithWidth(contentWidth)
         val keyWidth = Formats.STANDARD_KEY_WIDTH
         val valueWidth = contentWidth - keyWidth
-        val generators = ReportContentProvider(report).provideSummaryTables(keyWidth, valueWidth, contentWidth)
+        val generators = reportContentProvider.provideSummaryTables(keyWidth, valueWidth, contentWidth, interpretedCohorts)
 
         generators.flatMap { generator ->
             sequenceOf(
