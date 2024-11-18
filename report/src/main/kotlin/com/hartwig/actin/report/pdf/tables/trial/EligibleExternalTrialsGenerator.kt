@@ -54,6 +54,9 @@ class EligibleExternalTrialsGenerator(
                 )
             )
         }
+        if (table.numberOfRows == 0) {
+            table.addCell(Cells.createSpanningNoneEntry(table))
+        }
         if (filteredCount > 0)
             table.addCell(
                 Cells.createSpanningSubNote(

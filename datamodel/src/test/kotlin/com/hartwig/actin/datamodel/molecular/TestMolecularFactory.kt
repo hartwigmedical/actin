@@ -167,8 +167,8 @@ object TestMolecularFactory {
                     TestClinicalEvidenceFactory.createCountry(CountryName.BELGIUM, mapOf("Brussels" to emptySet())),
                     TestClinicalEvidenceFactory.createCountry(CountryName.GERMANY, mapOf("Berlin" to emptySet()))
                 ),
-                url = "https://clinicaltrials.gov/study/NCT00000002",
-                nctId = "NCT00000002"
+                url = "https://clinicaltrials.gov/study/NCT00000020",
+                nctId = "NCT00000020"
             )
         ),
         gene = "PTEN",
