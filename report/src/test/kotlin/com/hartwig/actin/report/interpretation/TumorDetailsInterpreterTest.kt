@@ -72,7 +72,7 @@ class TumorDetailsInterpreterTest {
         }
 
         @Test
-        fun `Should combine lymph node lesions into one object with sublocations in parentheses`() {
+        fun `Should combine lymph node lesions into one object with sub-locations in parentheses`() {
             val details = TumorDetails(
                 hasLymphNodeLesions = true,
                 otherLesions = listOf("lymph nodes abdominal", "lymph nodes inguinal")

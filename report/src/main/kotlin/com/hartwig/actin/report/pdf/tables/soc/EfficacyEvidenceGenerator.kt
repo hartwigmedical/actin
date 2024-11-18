@@ -42,13 +42,13 @@ class EfficacyEvidenceGenerator(
             treatments.sortedBy { it.annotations.size }.reversed().forEach { treatment: AnnotatedTreatmentMatch ->
                 table.addCell(Cells.createContentBold(SOCGeneratorFunctions.abbreviate(treatment.treatmentCandidate.treatment.name)))
                 if (treatment.annotations.isNotEmpty()) {
-                    val subtable = Tables.createSingleColWithWidth(width / 2)
+                    val subTable = Tables.createSingleColWithWidth(width / 2)
                     for (annotation in treatment.annotations) {
                         for (trialReference in annotation.trialReferences) {
-                            subtable.addCell(Cells.create(createOneLiteraturePart(width, annotation, trialReference, treatment)))
+                            subTable.addCell(Cells.create(createOneLiteraturePart(width, annotation, trialReference, treatment)))
                         }
                     }
-                    table.addCell(Cells.createContent(subtable))
+                    table.addCell(Cells.createContent(subTable))
                 } else table.addCell(Cells.createContent("No literature efficacy evidence available yet"))
             }
             return table

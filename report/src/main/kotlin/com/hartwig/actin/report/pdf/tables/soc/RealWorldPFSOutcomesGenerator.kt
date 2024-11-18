@@ -26,7 +26,7 @@ class RealWorldPFSOutcomesGenerator(
         } else {
             val content = SOCPersonalizedTableContent.fromPersonalizedDataAnalysis(
                 analysis, eligibleTreatments, MeasurementType.PROGRESSION_FREE_SURVIVAL
-            ) {
+            ) { it ->
                 when {
                     it.value.isNaN() -> TableElement.regular("-")
 

@@ -38,13 +38,13 @@ class ResistanceEvidenceGenerator(
                 table.addHeaderCell(Cells.createHeader("Found in molecular analysis"))
                 treatmentToEvidence.forEach { entry ->
                     table.addCell(Cells.createContentBold(entry.key))
-                    val subtable = Tables.createFixedWidthCols(100f, 22f, 22f, 22f, 125f, 70f, 10f).setWidth((width / 3) * 2)
+                    val subTable = Tables.createFixedWidthCols(100f, 22f, 22f, 22f, 125f, 70f, 10f).setWidth((width / 3) * 2)
                     for (resistanceEvidence in entry.value.distinct().sortedBy { it.resistanceLevel }) {
-                        subtable.addCell(Cells.createContentNoBorder(resistanceEvidence.event))
+                        subTable.addCell(Cells.createContentNoBorder(resistanceEvidence.event))
 
                         resistanceEvidence.evidenceUrls.forEachIndexed { index, url ->
                             if (index < 4) {
-                                subtable.addCell(
+                                subTable.addCell(
                                     Cells.createContentNoBorder("[${index + 1}]")
                                         .setAction(PdfAction.createURI(url))
                                         .addStyle(Styles.urlStyle())
@@ -53,13 +53,13 @@ class ResistanceEvidenceGenerator(
                         }
 
                         repeat(4 - resistanceEvidence.evidenceUrls.size) {
-                            subtable.addCell(Cells.createEmpty())
+                            subTable.addCell(Cells.createEmpty())
                         }
 
-                        subtable.addCell(Cells.createContentNoBorder(resistanceEvidence.resistanceLevel))
-                        subtable.addCell(Cells.createContentNoBorder(booleanToString(resistanceEvidence.isFound)))
+                        subTable.addCell(Cells.createContentNoBorder(resistanceEvidence.resistanceLevel))
+                        subTable.addCell(Cells.createContentNoBorder(booleanToString(resistanceEvidence.isFound)))
                     }
-                    table.addCell(Cells.createContent(subtable))
+                    table.addCell(Cells.createContent(subTable))
                     table.addCell(Cells.createContent(""))
                     table.addCell(Cells.createContent(""))
                 }
