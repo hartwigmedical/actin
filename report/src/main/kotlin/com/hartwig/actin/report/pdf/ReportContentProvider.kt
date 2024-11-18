@@ -65,7 +65,10 @@ class ReportContentProvider(private val report: Report, private val enableExtend
 
         val cohorts =
             InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
-        val (nationalTrials, internationalTrials) = summarizeExternalTrials(report.patientRecord, cohorts)
+        val (_, evaluated) =
+            EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, 0f, slotsAvailable = true)
+
+        val (nationalTrials, internationalTrials) = summarizeExternalTrials(report.patientRecord, evaluated)
         return listOf(
             SummaryChapter(report, this, cohorts),
             PersonalizedEvidenceChapter(
