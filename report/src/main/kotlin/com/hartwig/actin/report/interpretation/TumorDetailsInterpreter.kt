@@ -16,9 +16,13 @@ object TumorDetailsInterpreter {
     fun lesions(tumor: TumorDetails): String {
         val allCategorizedLesions = with(tumor) {
             listOf(
-                Triple(TumorDetails.CNS, hasCnsLesions, hasSuspectedCnsLesions),
                 Triple(
-                    TumorDetails.BRAIN,
+                    TumorDetails.CNS + if (hasCnsLesions == true && hasActiveCnsLesions == true) " (active)" else "",
+                    hasCnsLesions,
+                    hasSuspectedCnsLesions
+                ),
+                Triple(
+                    TumorDetails.BRAIN + if (hasBrainLesions == true && hasActiveBrainLesions == true) " (active)" else "",
                     (primaryTumorLocation == "Brain" || primaryTumorType == "Glioma" || hasBrainLesions == true),
                     hasSuspectedBrainLesions
                 ),
@@ -31,15 +35,7 @@ object TumorDetailsInterpreter {
 
         val confirmedCategorizedLesions = allCategorizedLesions
             .filter { it.second == true }
-            .map {
-                when {
-                    (it.first == TumorDetails.CNS && tumor.hasActiveCnsLesions == true) ||
-                            (it.first == TumorDetails.BRAIN && tumor.hasActiveBrainLesions == true) -> {
-                                "${it.first} (active)"
-                    }
-                    else -> it.first
-                }
-            }
+            .map { it.first }
 
         val suspectedCategorizedLesions = allCategorizedLesions
             .filter { it.second != true && it.third == true }
