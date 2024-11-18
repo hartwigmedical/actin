@@ -109,6 +109,13 @@ class TumorDetailsInterpreterTest {
         }
 
         @Test
+        fun `Should show (active) postfix if active CNS or brain lesion`() {
+            val details =
+                TumorDetails(hasActiveBrainLesions = true, hasBrainLesions = true, hasCnsLesions = true, hasActiveCnsLesions = true)
+            assertThat(lesions(details)).isEqualTo("Brain (active), CNS (active)")
+        }
+
+        @Test
         fun `Should only show lesion once and without (suspected) if both suspected and confirmed`() {
             val details = TumorDetails(hasBoneLesions = true, hasSuspectedBoneLesions = true)
             assertThat(lesions(details)).isEqualTo("Bone")
