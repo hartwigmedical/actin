@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.soc
 
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
+import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions
 import com.hartwig.actin.datamodel.algo.ResistanceEvidence
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
@@ -30,17 +31,18 @@ class ResistanceEvidenceMatcher(
 ) {
 
     fun match(treatment: Treatment): List<ResistanceEvidence> {
-        return candidateActionableEvents.filter { findTreatmentInDatabase(it.intervention(), treatment) != null }
-            .map { actionableEvent ->
+        return candidateActionableEvents.mapNotNull { actionableEvent ->
+            findTreatmentInDatabase(actionableEvent.intervention(), treatment)?.let { treatmentName ->
                 ResistanceEvidence(
                     event = actionableEvent.sourceEvent(),
                     isTested = null,
                     isFound = isFound(actionableEvent, molecularHistory),
                     resistanceLevel = actionableEvent.evidenceLevel().toString(),
                     evidenceUrls = actionableEvent.evidenceUrls(),
-                    treatmentName = findTreatmentInDatabase(actionableEvent.intervention(), treatment)!!
+                    treatmentName = treatmentName
                 )
-            }.distinctBy { it.event }
+            }
+        }.distinctBy { it.event }
     }
 
     fun isFound(event: ActionableEvent, molecularHistory: MolecularHistory): Boolean? {
@@ -114,7 +116,7 @@ class ResistanceEvidenceMatcher(
     private fun drugsInOtherTreatment(treatment1: Treatment, treatment2: Treatment): Boolean {
         val drugs1 = (treatment1 as DrugTreatment).drugs
         val drugs2 = (treatment2 as DrugTreatment).drugs
-        return (drugs2.all { it in drugs1 })
+        return drugs1.containsAll(drugs2)
     }
 
     companion object {
@@ -142,7 +144,7 @@ class ResistanceEvidenceMatcher(
         }
 
         private fun expandDoids(doidModel: DoidModel, doids: Set<String>): Set<String> {
-            return doids.flatMap { doidModel.doidWithParents(it) }.toSet()
+            return DoidEvaluationFunctions.createFullExpandedDoidTree(doidModel, doids)
         }
 
         private fun hasNoPositiveResponse(resistanceEvent: ActionableEvent): Boolean {
