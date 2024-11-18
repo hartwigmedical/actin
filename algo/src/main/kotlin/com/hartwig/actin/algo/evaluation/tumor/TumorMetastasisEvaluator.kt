@@ -4,17 +4,26 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.datamodel.algo.Evaluation
 
 object TumorMetastasisEvaluator {
-    fun evaluate(hasMetastases: Boolean?, metastasisType: String): Evaluation {
-        return if (hasMetastases == null) {
-            EvaluationFactory.undetermined(
+    fun evaluate(hasMetastases: Boolean?, hasSuspectedMetastases: Boolean?, metastasisType: String): Evaluation {
+        val capitalizedType = metastasisType.replaceFirstChar { it.uppercase() }
+        return when {
+            hasMetastases == true -> {
+                EvaluationFactory.pass("$capitalizedType metastases are present", "$capitalizedType metastases")
+            }
+
+            hasSuspectedMetastases == true -> {
+                val message = "$capitalizedType metastases present but only suspected lesions"
+                EvaluationFactory.warn(message, message)
+            }
+
+            hasMetastases == null -> EvaluationFactory.undetermined(
                 "Data regarding presence of $metastasisType metastases is missing",
                 "Missing $metastasisType metastasis data"
             )
-        } else if (hasMetastases) {
-            val capitalizedType = metastasisType.substring(0, 1).uppercase() + metastasisType.substring(1)
-            EvaluationFactory.pass("$capitalizedType metastases are present", "$capitalizedType metastases")
-        } else {
-            EvaluationFactory.fail("No $metastasisType metastases present", "No $metastasisType metastases")
+
+            else -> {
+                EvaluationFactory.fail("No $metastasisType metastases present", "No $metastasisType metastases")
+            }
         }
     }
 }

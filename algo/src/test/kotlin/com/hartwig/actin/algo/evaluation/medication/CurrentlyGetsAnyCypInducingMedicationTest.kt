@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.medication
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.clinical.CypInteraction
+import com.hartwig.actin.datamodel.clinical.DrugInteraction
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -11,9 +11,9 @@ class CurrentlyGetsAnyCypInducingMedicationTest {
     private val alwaysActiveFunction = CurrentlyGetsAnyCypInducingMedication(MedicationTestFactory.alwaysActive())
     private val alwaysPlannedFunction = CurrentlyGetsAnyCypInducingMedication(MedicationTestFactory.alwaysPlanned())
     private val patientWithCypInducingMedication =
-        MedicationTestFactory.withCypInteraction("9A9", CypInteraction.Type.INDUCER, CypInteraction.Strength.STRONG)
+        MedicationTestFactory.withCypInteraction("9A9", DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG)
     private val patientWithCypSubstrateMedication =
-        MedicationTestFactory.withCypInteraction("9A9", CypInteraction.Type.SUBSTRATE, CypInteraction.Strength.STRONG)
+        MedicationTestFactory.withCypInteraction("9A9", DrugInteraction.Type.SUBSTRATE, DrugInteraction.Strength.STRONG)
 
     @Test
     fun `Should pass when any CYP-inducing medication`() {

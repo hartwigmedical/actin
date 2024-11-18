@@ -33,32 +33,26 @@ class HasLymphNodeMetastasesTest {
     }
 
     @Test
-    fun `Should pass when has suspected lymph node lesions is true`() {
-        val pass = function.evaluate(TumorTestFactory.withLymphNodeLesions(null, true))
-        assertEvaluation(EvaluationResult.PASS, pass)
-        assertThat(pass.passSpecificMessages).contains("Lymph node metastases are present")
-        assertThat(pass.passGeneralMessages).contains("Lymph node metastases")
+    fun `Should warn when has suspected lymph node lesions only`() {
+        val warn = function.evaluate(TumorTestFactory.withLymphNodeLesions(false, true))
+        val message = "Lymph node metastases present but only suspected lesions"
+        assertEvaluation(EvaluationResult.WARN, warn)
+        listOf(warn.warnSpecificMessages, warn.warnGeneralMessages).forEach {
+            assertThat(it).contains(message)
+        }
     }
 
     @Test
-    fun `Should fail when has suspected lymph node lesions is false`() {
+    fun `Should evaluate to undetermined when no suspected lymph node lesions but unknown certain lymph node lesions`() {
         val fail = function.evaluate(TumorTestFactory.withLymphNodeLesions(null, false))
-        assertEvaluation(EvaluationResult.FAIL, fail)
-        assertThat(fail.failSpecificMessages).contains("No lymph node metastases present")
-        assertThat(fail.failGeneralMessages).contains("No lymph node metastases")
+        assertEvaluation(EvaluationResult.UNDETERMINED, fail)
+        assertThat(fail.undeterminedSpecificMessages).contains("Data regarding presence of lymph node metastases is missing")
+        assertThat(fail.undeterminedGeneralMessages).contains("Missing lymph node metastasis data")
     }
 
     @Test
     fun `Should pass when has lymph node lesions is true and no suspected lymph node lesions`() {
         val pass = function.evaluate(TumorTestFactory.withLymphNodeLesions(true, false))
-        assertEvaluation(EvaluationResult.PASS, pass)
-        assertThat(pass.passSpecificMessages).contains("Lymph node metastases are present")
-        assertThat(pass.passGeneralMessages).contains("Lymph node metastases")
-    }
-
-    @Test
-    fun `Should pass when has lymph node lesions is false and has suspected lymph node lesions`() {
-        val pass = function.evaluate(TumorTestFactory.withLymphNodeLesions(false, true))
         assertEvaluation(EvaluationResult.PASS, pass)
         assertThat(pass.passSpecificMessages).contains("Lymph node metastases are present")
         assertThat(pass.passGeneralMessages).contains("Lymph node metastases")

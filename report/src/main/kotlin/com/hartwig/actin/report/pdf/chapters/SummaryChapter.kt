@@ -2,6 +2,8 @@ package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.report.datamodel.Report
+import com.hartwig.actin.report.interpretation.InterpretedCohort
+import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter
 import com.hartwig.actin.report.pdf.ReportContentProvider
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
@@ -13,7 +15,11 @@ import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
 import com.itextpdf.layout.properties.TextAlignment
 
-class SummaryChapter(private val report: Report) : ReportChapter {
+class SummaryChapter(
+    private val report: Report,
+    private val reportContentProvider: ReportContentProvider,
+    private val interpretedCohorts: List<InterpretedCohort>
+) : ReportChapter {
 
     override fun name(): String {
         return "Summary"
@@ -42,7 +48,7 @@ class SummaryChapter(private val report: Report) : ReportChapter {
         val (stageTitle, stages) = stageSummary(report.patientRecord.tumor)
         val tumorDetailFields = listOf(
             "Tumor: " to tumor(report.patientRecord.tumor),
-            " | Lesions: " to lesions(report.patientRecord.tumor),
+            " | Lesions: " to TumorDetailsInterpreter.lesions(report.patientRecord.tumor),
             " | $stageTitle: " to stages
         )
         addParagraphWithContent(tumorDetailFields, document)
@@ -64,7 +70,7 @@ class SummaryChapter(private val report: Report) : ReportChapter {
         val table = Tables.createSingleColWithWidth(contentWidth)
         val keyWidth = Formats.STANDARD_KEY_WIDTH
         val valueWidth = contentWidth - keyWidth
-        val generators = ReportContentProvider(report).provideSummaryTables(keyWidth, valueWidth, contentWidth)
+        val generators = reportContentProvider.provideSummaryTables(keyWidth, valueWidth, contentWidth, interpretedCohorts)
 
         generators.flatMap { generator ->
             sequenceOf(
@@ -122,38 +128,6 @@ class SummaryChapter(private val report: Report) : ReportChapter {
                 else -> {
                     Pair(knownStage, "Unknown")
                 }
-            }
-        }
-
-        fun lesions(tumor: TumorDetails): String {
-            val categorizedLesions = listOf(
-                "CNS" to tumor.hasConfirmedOrSuspectedCnsLesions(),
-                "Brain" to (tumor.primaryTumorLocation == "Brain" || tumor.primaryTumorType == "Glioma" || tumor.hasConfirmedOrSuspectedBrainLesions() == true),
-                "Liver" to tumor.hasConfirmedOrSuspectedLiverLesions(),
-                "Bone" to tumor.hasConfirmedOrSuspectedBoneLesions(),
-                "Lung" to tumor.hasConfirmedOrSuspectedLungLesions()
-            ).filter { it.second == true }.map { it.first }
-
-            val lesions =
-                listOfNotNull(categorizedLesions, tumor.otherConfirmedOrSuspectedLesions(), listOfNotNull(tumor.biopsyLocation)).flatten()
-                    .sorted().distinctBy { it.uppercase() }
-
-            val (lymphNodeLesions, otherLesions) = lesions.partition { it.lowercase().startsWith("lymph node") }
-
-            val filteredLymphNodeLesions = lymphNodeLesions.map { lesion ->
-                lesion.split(" ").filterNot { it.lowercase() in setOf("lymph", "node", "nodes", "") }.joinToString(" ")
-            }.filterNot(String::isEmpty).distinctBy(String::lowercase)
-
-            val lymphNodeLesionsString = if (filteredLymphNodeLesions.isNotEmpty()) {
-                listOf("Lymph nodes (${filteredLymphNodeLesions.joinToString(", ")})")
-            } else if (lymphNodeLesions.isNotEmpty()) {
-                listOf("Lymph nodes")
-            } else emptyList()
-
-            return if (lesions.isEmpty()) {
-                Formats.VALUE_UNKNOWN
-            } else {
-                (otherLesions + lymphNodeLesionsString).joinToString(", ")
             }
         }
     }

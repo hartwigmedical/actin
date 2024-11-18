@@ -72,6 +72,14 @@ class HasExtracranialMetastasesTest {
     }
 
     @Test
+    fun `Should warn when only suspected extracranial metastases present`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(TumorTestFactory.withSuspectedBoneAndOtherLesions(true, listOf("unknown site")))
+        )
+    }
+
+    @Test
     fun `Should fail when only brain metastases present`() {
         val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
             tumor = TumorDetails(

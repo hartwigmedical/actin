@@ -9,9 +9,9 @@ import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.CurationUtil.fullTrim
-import com.hartwig.actin.clinical.curation.CypInteractionCurationUtil
+import com.hartwig.actin.clinical.curation.DrugInteractionCurationUtil
 import com.hartwig.actin.clinical.curation.QTProlongatingCurationUtil
-import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
+import com.hartwig.actin.clinical.curation.config.DrugInteractionConfig
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig
 import com.hartwig.actin.clinical.curation.config.MedicationNameConfig
 import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
@@ -29,7 +29,7 @@ class MedicationExtractor(
     private val medicationNameCuration: CurationDatabase<MedicationNameConfig>,
     private val medicationDosageCuration: CurationDatabase<MedicationDosageConfig>,
     private val periodBetweenUnitCuration: CurationDatabase<PeriodBetweenUnitConfig>,
-    private val cypInteractionCuration: CurationDatabase<CypInteractionConfig>,
+    private val drugInteractionCuration: CurationDatabase<DrugInteractionConfig>,
     private val qtProlongatingCuration: CurationDatabase<QTProlongatingConfig>,
     private val administrationRouteTranslation: TranslationDatabase<String>,
     private val dosageUnitTranslation: TranslationDatabase<String>,
@@ -60,7 +60,11 @@ class MedicationExtractor(
                     administrationRoute = administrationRouteCuration.extracted,
                     startDate = entry.periodOfUseValuePeriodStart,
                     stopDate = entry.periodOfUseValuePeriodEnd,
-                    cypInteractions = CypInteractionCurationUtil.curateMedicationCypInteractions(cypInteractionCuration, name),
+                    cypInteractions = DrugInteractionCurationUtil.curateMedicationCypInteractions(drugInteractionCuration, name),
+                    transporterInteractions = DrugInteractionCurationUtil.curateMedicationTransporterInteractions(
+                        drugInteractionCuration,
+                        name
+                    ),
                     qtProlongatingRisk = QTProlongatingCurationUtil.annotateWithQTProlongating(qtProlongatingCuration, name),
                     atc = atc,
                     isSelfCare = isSelfCare,
@@ -227,7 +231,7 @@ class MedicationExtractor(
                 medicationNameCuration = curationDatabaseContext.medicationNameCuration,
                 medicationDosageCuration = curationDatabaseContext.medicationDosageCuration,
                 periodBetweenUnitCuration = curationDatabaseContext.periodBetweenUnitCuration,
-                cypInteractionCuration = curationDatabaseContext.cypInteractionCuration,
+                drugInteractionCuration = curationDatabaseContext.drugInteractionCuration,
                 qtProlongatingCuration = curationDatabaseContext.qtProlongingCuration,
                 administrationRouteTranslation = curationDatabaseContext.administrationRouteTranslation,
                 dosageUnitTranslation = curationDatabaseContext.dosageUnitTranslation,

@@ -36,7 +36,9 @@ class PanelRecordAdapter(private val gson: Gson) : TypeAdapter<PanelRecord>() {
             date = gson.fromJson(jsonObject.get("date"), LocalDate::class.java),
             drivers = gson.fromJson(jsonObject.get("drivers"), Drivers::class.java),
             characteristics = gson.fromJson(jsonObject.get("characteristics"), MolecularCharacteristics::class.java),
-            evidenceSource = jsonObject.get("evidenceSource").asString
+            evidenceSource = jsonObject.get("evidenceSource").asString,
+            hasSufficientPurity = true,
+            hasSufficientQuality = true
         )
     }
 }

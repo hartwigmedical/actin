@@ -1,7 +1,6 @@
 package com.hartwig.actin.clinical.feed.emc.questionnaire
 
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireReader.read
-import org.apache.logging.log4j.util.Strings
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -32,7 +31,7 @@ class QuestionnaireReaderTest {
             """${QuestionnaireReader.TERMS_TO_CLEAN.joinToString("")}\ntest:""", listOf("test"), SECTION_HEADERS
         )
         assertThat(lines.size).isEqualTo(2)
-        assertThat(lines[0]).isEqualTo(Strings.EMPTY)
+        assertThat(lines[0]).isEqualTo("")
     }
 
     @Test

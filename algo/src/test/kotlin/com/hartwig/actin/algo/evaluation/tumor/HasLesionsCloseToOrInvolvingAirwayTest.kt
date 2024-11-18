@@ -54,4 +54,12 @@ class HasLesionsCloseToOrInvolvingAirwayTest {
             function.evaluate(TumorTestFactory.withLungLesions(true))
         )
     }
+
+    @Test
+    fun `Should warn if patient has suspected lung lesions`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(TumorTestFactory.withLungLesions(false, true))
+        )
+    }
 }

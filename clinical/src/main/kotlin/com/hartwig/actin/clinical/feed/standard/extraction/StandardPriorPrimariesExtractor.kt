@@ -64,7 +64,7 @@ class StandardPriorPrimariesExtractor(private val priorPrimaryCuration: Curation
                         diagnosedYear = it.diagnosisDate?.year,
                         lastTreatmentYear = it.lastTreatmentDate?.year,
                         lastTreatmentMonth = it.lastTreatmentDate?.monthValue,
-                        status = it.status?.let { status -> TumorStatus.valueOf(status) } ?: TumorStatus.UNKNOWN
+                        status = it.status?.let { status -> TumorStatus.valueOf(status.uppercase()) } ?: TumorStatus.UNKNOWN
                     )
                 }
             }), curatedPriorPrimary.extractionEvaluation)

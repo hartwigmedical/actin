@@ -17,8 +17,20 @@ class HasHadBrainRadiationTherapyTest {
 
     @Test
     fun `Should pass if radiotherapy with body location brain in oncological history`() {
+        val history = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(treatments = radiotherapy, bodyLocationCategory = null),
+            TreatmentTestFactory.treatmentHistoryEntry(treatments = radiotherapy, bodyLocationCategory = setOf(BodyLocationCategory.BRAIN))
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            HasHadBrainRadiationTherapy().evaluate(withTreatmentHistory(history))
+        )
+    }
+
+    @Test
+    fun `Should pass if radiotherapy with body location CNS (non spinal cord) in oncological history`() {
         val history = TreatmentTestFactory.treatmentHistoryEntry(
-            treatments = radiotherapy, bodyLocationCategory = setOf(BodyLocationCategory.BRAIN)
+            treatments = radiotherapy, bodyLocationCategory = setOf(BodyLocationCategory.CNS), bodyLocations = setOf("Cerebellum")
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
@@ -27,10 +39,34 @@ class HasHadBrainRadiationTherapyTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined if radiotherapy and brain metastases in history but radiotherapy location not specifically brain`() {
+    fun `Should fail if radiotherapy with body location CNS spinal cord in oncological history`() {
+        val history = TreatmentTestFactory.treatmentHistoryEntry(
+            treatments = radiotherapy, bodyLocationCategory = setOf(BodyLocationCategory.CNS), bodyLocations = setOf("Spinal Cord")
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            HasHadBrainRadiationTherapy().evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history))
+        )
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if radiotherapy and brain metastases in history but radiotherapy location unknown`() {
         val history =
             TumorTestFactory.withCnsOrBrainLesionsAndOncologicalHistory(
                 hasCnsLesions = true, hasBrainLesions = true,
+                TreatmentTestFactory.treatmentHistoryEntry(treatments = radiotherapy, bodyLocationCategory = null)
+            )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            HasHadBrainRadiationTherapy().evaluate(history)
+        )
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if radiotherapy and suspected brain metastases in history but radiotherapy location unknown`() {
+        val history =
+            TumorTestFactory.withSuspectedCnsOrBrainLesionsAndOncologicalHistory(
+                hasSuspectedCnsLesions = null, hasSuspectedBrainLesions = true,
                 TreatmentTestFactory.treatmentHistoryEntry(treatments = radiotherapy, bodyLocationCategory = null)
             )
         EvaluationAssert.assertEvaluation(
@@ -54,11 +90,27 @@ class HasHadBrainRadiationTherapyTest {
     }
 
     @Test
-    fun `Should fail if radiotherapy in history but no brain metastases`() {
+    fun `Should fail if radiotherapy in history but no brain or CNS metastases`() {
         val history =
             TumorTestFactory.withCnsOrBrainLesionsAndOncologicalHistory(
-                hasCnsLesions = true, hasBrainLesions = false,
+                hasCnsLesions = false, hasBrainLesions = false,
                 TreatmentTestFactory.treatmentHistoryEntry(treatments = radiotherapy, bodyLocationCategory = null)
+            )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            HasHadBrainRadiationTherapy().evaluate(history)
+        )
+    }
+
+    @Test
+    fun `Should fail if radiotherapy in history but with body location other than brain or CNS`() {
+        val history =
+            TumorTestFactory.withCnsOrBrainLesionsAndOncologicalHistory(
+                hasCnsLesions = true, hasBrainLesions = true,
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    treatments = radiotherapy,
+                    bodyLocationCategory = setOf(BodyLocationCategory.BONE)
+                )
             )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,

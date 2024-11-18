@@ -50,6 +50,8 @@ class IHCAnnotatorTest {
                 drivers = Drivers(fusions = setOf(fusion)),
                 characteristics = MolecularCharacteristics(),
                 evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display(),
+                hasSufficientPurity = true,
+                hasSufficientQuality = true
             )
         )
     }
@@ -73,6 +75,8 @@ class IHCAnnotatorTest {
                 drivers = Drivers(),
                 characteristics = MolecularCharacteristics(),
                 evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display(),
+                hasSufficientPurity = true,
+                hasSufficientQuality = true
             )
         )
     }
