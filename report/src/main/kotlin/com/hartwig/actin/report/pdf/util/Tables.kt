@@ -27,9 +27,11 @@ object Tables {
 
         val wrappingTable = Table(1).setMinWidth(table.width)
 
-        (0 until table.numberOfRows).forEach { i ->
-            (0 until table.numberOfColumns).forEach { j ->
-                wrappingTable.addCell(table.getCell(i, j)).setKeepTogether(true)
+        (0 until wrappingTable.numberOfRows).forEach { i ->
+            (0 until wrappingTable.numberOfColumns).forEach { j ->
+                wrappingTable.addCell(
+                    table.getCell(i, j).setKeepTogether(true)
+                )
             }
         }
 
