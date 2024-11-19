@@ -5,6 +5,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class EnvironmentConfigurationTest {
+
     private val defaultConfig = EnvironmentConfiguration()
     
     @Test
@@ -14,13 +15,13 @@ class EnvironmentConfigurationTest {
 
     @Test
     fun `Should load config from file`() {
-        val config = EnvironmentConfiguration.create(resourceOnClasspath("/config.yaml"))
+        val config = EnvironmentConfiguration.create(resourceOnClasspath("/environment/proper_config.yaml"))
         assertThat(config.algo.warnIfToxicitiesNotFromQuestionnaire).isFalse
     }
 
     @Test
     fun `Should use defaults for fields not provided in file`() {
-        val config = EnvironmentConfiguration.create(resourceOnClasspath("/minimal_config.yaml"))
+        val config = EnvironmentConfiguration.create(resourceOnClasspath("/environment/minimal_config.yaml"))
         assertThat(config.algo.warnIfToxicitiesNotFromQuestionnaire).isTrue
     }
 
@@ -31,7 +32,7 @@ class EnvironmentConfigurationTest {
 
     @Test
     fun `Should override configuration from file with profile`() {
-        val config = EnvironmentConfiguration.create(resourceOnClasspath("/config.yaml"), "CRC")
+        val config = EnvironmentConfiguration.create(resourceOnClasspath("/environment/proper_config.yaml"), "CRC")
         assertThat(config.algo.warnIfToxicitiesNotFromQuestionnaire).isFalse
         assertThat(config.report.includeOverviewWithClinicalHistorySummary).isTrue
         assertThat(config.report.includeMolecularDetailsChapter).isFalse
