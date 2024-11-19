@@ -33,18 +33,14 @@ class EfficacyEvidenceGenerator(
     }
 
     override fun contents(): Table {
-        val filteredTreatments = treatments?.filter {
-            it.treatmentCandidate.treatment.treatmentClass != TreatmentClass.NONE
-        }
-
-        if (filteredTreatments.isNullOrEmpty()) {
+        if (treatments.isNullOrEmpty()) {
             return Tables.createSingleColWithWidth(width)
                 .addCell(Cells.createContentNoBorder("There are no standard of care treatment options for this patient"))
         } else {
             val table = Tables.createFixedWidthCols(1f, 3f).setWidth(width)
             table.addHeaderCell(Cells.createHeader("Treatment"))
             table.addHeaderCell(Cells.createHeader("Literature efficacy evidence"))
-            filteredTreatments.sortedBy { it.annotations.size }.reversed().forEach { treatment: AnnotatedTreatmentMatch ->
+            treatments.sortedBy { it.annotations.size }.reversed().forEach { treatment: AnnotatedTreatmentMatch ->
                 table.addCell(Cells.createContentBold(SOCGeneratorFunctions.abbreviate(treatment.treatmentCandidate.treatment.name)))
                 if (treatment.annotations.isNotEmpty()) {
                     val subtable = Tables.createSingleColWithWidth(width / 2)

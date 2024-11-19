@@ -39,10 +39,6 @@ object TreatmentTestFactory {
         return DrugTreatment(name = name, drugs = emptySet())
     }
 
-    fun noneTreatment(): Treatment {
-        return OtherTreatment.NONE
-    }
-
     fun treatmentHistoryEntry(
         treatments: Collection<Treatment> = emptySet(),
         startYear: Int? = null,

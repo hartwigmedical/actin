@@ -8,8 +8,6 @@ import com.hartwig.actin.algo.evaluation.treatment.TreatmentSinceDateFunctions
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.Medication
-import com.hartwig.actin.datamodel.clinical.treatment.Treatment
-import com.hartwig.actin.datamodel.clinical.treatment.TreatmentClass
 import java.time.LocalDate
 
 class HasRecentlyReceivedTrialMedication(
@@ -29,7 +27,6 @@ class HasRecentlyReceivedTrialMedication(
 
         val hadTrialTreatmentWithUnknownDate =
             record.oncologicalHistory.any { it.isTrial && TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minStopDate, true) }
-
 
         if (!(hadRecentTrialTreatment || hadTrialTreatmentWithUnknownDate) && record.medications == null) {
             return MEDICATION_NOT_PROVIDED

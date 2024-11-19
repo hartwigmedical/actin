@@ -13,17 +13,12 @@ enum class TreatmentGroup(val display: String, val memberTreatmentNames: List<St
     FOLFOXIRI_B("FOLFOXIRI-B", listOf("folfoxiri+bevacizumab")),
     IRINOTECAN("Irinotecan", listOf("irinotecan")),
     NIVOLUMAB("Nivolumab", listOf("nivolumab")),
-    PEMBROLIZUMAB("Pembrolizumab", listOf("pembrolizumab")),
-    NONE("None", listOf("none", "no treatment"));
-
+    PEMBROLIZUMAB("Pembrolizumab", listOf("pembrolizumab"));
     companion object {
         private val groupsByTreatmentName = entries.flatMap { group -> group.memberTreatmentNames.map { it to group } }.toMap()
 
         fun fromTreatmentName(treatmentName: String?): TreatmentGroup? {
-            if (treatmentName.isNullOrBlank()) {
-                return NONE
-            }
-            return groupsByTreatmentName[treatmentName.lowercase()]
+            return groupsByTreatmentName[treatmentName?.lowercase()]
         }
     }
 }

@@ -34,7 +34,7 @@ class TreatmentMatcher(
         val trialMatches = trialMatcher.determineEligibility(patient, trials)
 
         val (standardOfCareMatches, personalizedDataAnalysis) = if (recommendationEngine.standardOfCareCanBeEvaluatedForPatient(patient)) {
-            val evaluatedTreatments = recommendationEngine.standardOfCareEvaluatedTreatments(patient) + createNoneEvaluatedTreatment()
+            val evaluatedTreatments = recommendationEngine.standardOfCareEvaluatedTreatments(patient)
             val personalizedDataAnalysis = personalizationDataPath?.let { PersonalizedDataInterpreter.create(it).interpret(patient) }
             Pair(
                 evaluatedTreatmentAnnotator.annotate(evaluatedTreatments, personalizedDataAnalysis?.treatmentAnalyses),
@@ -53,19 +53,6 @@ class TreatmentMatcher(
             standardOfCareMatches = standardOfCareMatches,
             trialSource = trialSource,
             personalizedDataAnalysis = personalizedDataAnalysis
-        )
-    }
-
-    private fun createNoneEvaluatedTreatment(): EvaluatedTreatment {
-        val treatmentCandidate = TreatmentCandidate(
-            treatment = OtherTreatment.NONE,
-            optional = true,
-            eligibilityFunctions = emptySet()
-        )
-
-        return EvaluatedTreatment(
-            treatmentCandidate = treatmentCandidate,
-            evaluations = listOf( EvaluationFactory.pass("No suitable treatments matched."))
         )
     }
 

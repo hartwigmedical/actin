@@ -17,7 +17,7 @@ class SOCEligibleApprovedTreatmentGenerator(
     }
 
     override fun contents(): Table {
-        val treatments = report.treatmentMatch.standardOfCareMatches?.filter { it.eligible(includeNone = false) }
+        val treatments = report.treatmentMatch.standardOfCareMatches?.filter { it.eligible() }
         if (treatments.isNullOrEmpty()) {
             return Tables.createSingleColWithWidth(width)
                 .addCell(Cells.createContentNoBorder("There are no standard of care treatment options for this patient"))
