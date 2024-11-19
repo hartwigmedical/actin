@@ -29,7 +29,7 @@ object Tables {
         if (printSubNotes) {
             wrappingTable.addHeaderCell(Cells.createSubNote("Continued from the previous page"))
         }
-        wrappingTable.setSkipFirstHeader(true).addCell(Cells.create(table).setPadding(0f).setKeepTogether(false))
+        wrappingTable.setSkipFirstHeader(true).addCell(Cells.create(table).setPadding(0f).setKeepTogether(true))
         return wrappingTable
     }
 }
