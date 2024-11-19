@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.util
 
+import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.properties.UnitValue
 import com.itextpdf.layout.properties.VerticalAlignment
@@ -26,11 +27,7 @@ object Tables {
 
         val wrappingTable = Table(1).setMinWidth(table.width)
 
-        (0 until table.numberOfRows).forEach { i ->
-            (0 until table.numberOfColumns).forEach { j ->
-                table.getCell(i, j)?.setKeepTogether(true)
-            }
-        }
+        table.children.filterIsInstance<Cell>().forEach { it.setKeepTogether(true) }
 
         if (printSubNotes) {
             wrappingTable.addHeaderCell(Cells.createSubNote("Continued from the previous page"))
