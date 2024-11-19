@@ -43,7 +43,7 @@ class DriversSummarizerTest {
     }
 
     @Test
-    fun `Should return key amflified genes and indicate partial amplifications`() {
+    fun `Should return key amplified genes and indicate partial amplifications`() {
         val partialAmpGene = "partial amp"
         val fullAmpGene = "full amp"
         val copyNumbers = setOf(
