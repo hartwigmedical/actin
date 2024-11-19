@@ -72,10 +72,10 @@ class InterpretedCohortsSummarizerTest {
     private fun createInterpreter(): InterpretedCohortsSummarizer {
         return InterpretedCohortsSummarizer.fromCohorts(
             listOf(
-                interpretedCohort(INELIGIBLE_COHORT, false, true),
-                interpretedCohort(CLOSED_COHORT, true, false),
-                interpretedCohort(ELIGIBLE_COHORT, true, true, ELIGIBLE_EVENT),
-                interpretedCohort(ELIGIBLE_COHORT_2, true, true, ELIGIBLE_EVENT)
+                interpretedCohort(INELIGIBLE_COHORT, isEligible = false, isOpen = true),
+                interpretedCohort(CLOSED_COHORT, isEligible = true, isOpen = false),
+                interpretedCohort(ELIGIBLE_COHORT, isEligible = true, isOpen = true, ELIGIBLE_EVENT),
+                interpretedCohort(ELIGIBLE_COHORT_2, isEligible = true, isOpen = true, ELIGIBLE_EVENT)
             )
         )
     }
