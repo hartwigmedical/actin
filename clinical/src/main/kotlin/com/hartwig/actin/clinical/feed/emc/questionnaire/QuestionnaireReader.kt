@@ -2,7 +2,6 @@ package com.hartwig.actin.clinical.feed.emc.questionnaire
 
 import com.google.common.collect.Lists
 import java.util.StringJoiner
-import org.apache.logging.log4j.util.Strings
 
 internal object QuestionnaireReader {
 
@@ -42,7 +41,7 @@ internal object QuestionnaireReader {
 
     private fun clean(entryText: String, validKeys: List<String>): String {
         val cleanedText = TERMS_TO_CLEAN.fold(entryText) { acc, term ->
-            acc.replace(term, Strings.EMPTY)
+            acc.replace(term, "")
         }
         val pattern = "(${validKeys.joinToString("|")}):\\s*((\\\\n){2,})".toRegex()
         return pattern.replace(cleanedText) { match ->
