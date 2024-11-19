@@ -21,6 +21,15 @@ data class ReporterConfig(
 ) {
 
     companion object {
+        val LOGGER: Logger = LogManager.getLogger(ReporterConfig::class.java)
+
+        private const val PATIENT_JSON = "patient_json"
+        private const val TREATMENT_MATCH_JSON = "treatment_match_json"
+        private const val OUTPUT_DIRECTORY = "output_directory"
+        private const val ENABLE_EXTENDED_MODE = "enable_extended_mode"
+        private const val LOG_DEBUG = "log_debug"
+        private const val PROFILE = "profile"
+
         fun createOptions(): Options {
             val options = Options()
             options.addOption(PATIENT_JSON, true, "File containing the patient record")
@@ -53,14 +62,5 @@ data class ReporterConfig(
                 profile = ApplicationConfig.optionalValue(cmd, PROFILE)
             )
         }
-
-        val LOGGER: Logger = LogManager.getLogger(ReporterConfig::class.java)
-
-        private const val PATIENT_JSON = "patient_json"
-        private const val TREATMENT_MATCH_JSON = "treatment_match_json"
-        private const val OUTPUT_DIRECTORY = "output_directory"
-        private const val ENABLE_EXTENDED_MODE = "enable_extended_mode"
-        private const val LOG_DEBUG = "log_debug"
-        private const val PROFILE = "profile"
     }
 }

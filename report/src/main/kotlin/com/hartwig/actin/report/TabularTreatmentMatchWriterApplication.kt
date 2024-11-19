@@ -30,8 +30,9 @@ class TabularTreatmentMatchWriterApplication(private val config: TabularTreatmen
     }
 
     companion object {
-        val LOGGER: Logger = LogManager.getLogger(TabularTreatmentMatchWriterApplication::class.java)
         const val APPLICATION = "ACTIN Tabular Treatment Match Writer"
+
+        val LOGGER: Logger = LogManager.getLogger(TabularTreatmentMatchWriterApplication::class.java)
         val VERSION: String? = TabularTreatmentMatchWriterApplication::class.java.getPackage().implementationVersion
     }
 }

@@ -14,6 +14,12 @@ data class TabularTreatmentMatchWriterConfig(
 ) {
 
     companion object {
+        val LOGGER: Logger = LogManager.getLogger(TabularTreatmentMatchWriterConfig::class.java)
+
+        private const val TREATMENT_MATCH_JSON = "treatment_match_json"
+        private const val OUTPUT_DIRECTORY = "output_directory"
+        private const val LOG_DEBUG = "log_debug"
+
         fun createOptions(): Options {
             val options = Options()
             options.addOption(TREATMENT_MATCH_JSON, true, "File containing all available treatments, matched to the patient")
@@ -33,11 +39,5 @@ data class TabularTreatmentMatchWriterConfig(
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY)
             )
         }
-
-        val LOGGER: Logger = LogManager.getLogger(TabularTreatmentMatchWriterConfig::class.java)
-
-        private const val TREATMENT_MATCH_JSON = "treatment_match_json"
-        private const val OUTPUT_DIRECTORY = "output_directory"
-        private const val LOG_DEBUG = "log_debug"
     }
 }
