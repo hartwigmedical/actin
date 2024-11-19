@@ -18,11 +18,7 @@ object Tables {
         if (table.numberOfRows == 0) {
             table.addCell(Cells.createSpanningNoneEntry(table))
         }
-        if (printSubNotes) {
-            table.addFooterCell(
-                Cells.createSpanningSubNote("The table continues on the next page", table).setVerticalAlignment(VerticalAlignment.BOTTOM)
-            )
-        }
+
         table.isSkipLastFooter = true
 
         val wrappingTable = Table(1).setMinWidth(table.width)
@@ -30,10 +26,13 @@ object Tables {
         table.children.filterIsInstance<Cell>().forEach { it.setKeepTogether(true) }
 
         if (printSubNotes) {
+            wrappingTable.addFooterCell(
+                Cells.createSpanningSubNote("The table continues on the next page", table).setVerticalAlignment(VerticalAlignment.BOTTOM)
+            )
             wrappingTable.addHeaderCell(Cells.createSubNote("Continued from the previous page"))
         }
 
-        wrappingTable.setSkipFirstHeader(true).addCell(Cells.create(table).setPadding(0f))
+        wrappingTable.setSkipFirstHeader(true).setSkipLastFooter(true).addCell(Cells.create(table).setPadding(0f))
         return wrappingTable
     }
 }
