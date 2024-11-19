@@ -22,11 +22,10 @@ import com.itextpdf.layout.element.Text
 object WGSSummaryGeneratorFunctions {
 
     fun createMolecularSummaryTitle(molecular: MolecularTest, isIncludedInTrialMatching: Boolean = false): String {
-        return "${molecular.testTypeDisplay ?: molecular.experimentType.display()} " +
-                "(${
-                    if (isIncludedInTrialMatching) date(molecular.date) else
-                        "${molecular.date} - Test not included in trial matching as test age exceeds cutoff."
-                })"
+        val dateAddition = if (isIncludedInTrialMatching) date(molecular.date) else {
+            "${molecular.date} - Test not included in trial matching as test age exceeds cutoff."
+        }
+        return "${molecular.testTypeDisplay ?: molecular.experimentType.display()} ($dateAddition)"
     }
 
     fun createMolecularSummaryTable(
@@ -117,8 +116,7 @@ object WGSSummaryGeneratorFunctions {
             val biopsyText = Text(biopsyLocation).addStyle(Styles.tableHighlightStyle())
             val purityText = Text(String.format(" (purity %s)", Formats.percentage(purity)))
             purityText.addStyle(
-                if (wgsMolecular.hasSufficientQualityButLowPurity()) Styles.tableNoticeStyle()
-                else Styles.tableHighlightStyle()
+                if (wgsMolecular.hasSufficientQualityButLowPurity()) Styles.tableNoticeStyle() else Styles.tableHighlightStyle()
             )
             Cells.create(Paragraph().addAll(listOf(biopsyText, purityText)))
         } else {
