@@ -31,7 +31,7 @@ class InterpretedCohortsSummarizerTest {
     }
 
     @Test
-    fun `Should indicate drivr is actionable if event matches open trial`() {
+    fun `Should indicate driver is actionable if event matches open trial`() {
         assertThat(createInterpreter().driverIsActionable(driverForEvent(CLOSED_COHORT))).isFalse
         assertThat(createInterpreter().driverIsActionable(driverForEvent(ELIGIBLE_EVENT))).isTrue
     }
