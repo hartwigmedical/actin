@@ -10,7 +10,6 @@ import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter
 import com.hartwig.actin.configuration.EnvironmentConfiguration
-import com.hartwig.actin.configuration.EnvironmentConfigurationPrinter
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
@@ -60,8 +59,8 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
         val functionInputResolver =
             FunctionInputResolver(doidModel, molecularInputChecker, treatmentDatabase, MedicationCategories.create(atcTree))
-        val algoConfiguration = EnvironmentConfiguration.create(config.overridesYaml).algo
-        EnvironmentConfigurationPrinter.printAlgoConfig(algoConfiguration)
+        val configuration = EnvironmentConfiguration.create(config.overridesYaml).algo
+        LOGGER.info(" Loaded algo config: $configuration")
 
         val resources = RuleMappingResources(
             referenceDateProvider,
@@ -70,8 +69,8 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
             atcTree,
             treatmentDatabase,
             config.personalizationDataPath,
-            algoConfiguration,
-            algoConfiguration.maxMolecularTestAgeInDays?.let { referenceDateProvider.date().minus(Period.ofDays(it)) }
+            configuration,
+            configuration.maxMolecularTestAgeInDays?.let { referenceDateProvider.date().minus(Period.ofDays(it)) }
         )
         val evidenceEntries = EfficacyEntryFactory(treatmentDatabase).extractEfficacyEvidenceFromCkbFile(config.extendedEfficacyJson)
 

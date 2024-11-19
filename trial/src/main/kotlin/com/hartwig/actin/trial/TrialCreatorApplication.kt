@@ -2,7 +2,6 @@ package com.hartwig.actin.trial
 
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.configuration.EnvironmentConfiguration
-import com.hartwig.actin.configuration.EnvironmentConfigurationPrinter
 import com.hartwig.actin.configuration.TrialConfiguration
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
@@ -75,7 +74,7 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
     }
 
     private fun configInterpreter(configuration: TrialConfiguration): TrialStatusConfigInterpreter {
-        EnvironmentConfigurationPrinter.printTrialConfig(configuration)
+        LOGGER.info(" Using trial configuration: $configuration")
 
         if (config.ctcConfigDirectory != null && config.nkiConfigDirectory != null) {
             throw IllegalArgumentException("Only one of CTC and NKI config directories can be specified")

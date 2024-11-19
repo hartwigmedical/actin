@@ -3,7 +3,6 @@ package com.hartwig.actin.report
 import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.configuration.EnvironmentConfiguration
-import com.hartwig.actin.configuration.EnvironmentConfigurationPrinter
 import com.hartwig.actin.report.datamodel.ReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory
 import org.apache.commons.cli.DefaultParser
@@ -26,7 +25,7 @@ class ReporterApplication(private val config: ReporterConfig) {
         val treatmentMatch = TreatmentMatchJson.read(config.treatmentMatchJson)
 
         val reportConfig = EnvironmentConfiguration.create(config.overrideYaml, config.profile).report
-        EnvironmentConfigurationPrinter.printReportConfig(reportConfig)
+        LOGGER.info(" Loaded report config: $reportConfig")
 
         val report = ReportFactory.fromInputs(patient, treatmentMatch, reportConfig)
         val writer = ReportWriterFactory.createProductionReportWriter(config.outputDirectory)
