@@ -26,13 +26,13 @@ class RealWorldPFSOutcomesGenerator(
         } else {
             val content = SOCPersonalizedTableContent.fromPersonalizedDataAnalysis(
                 analysis, eligibleTreatments, MeasurementType.PROGRESSION_FREE_SURVIVAL
-            ) { it ->
+            ) { measurement ->
                 when {
-                    it.value.isNaN() -> TableElement.regular("-")
+                    measurement.value.isNaN() -> TableElement.regular("-")
 
-                    it.numPatients <= MIN_PATIENT_COUNT -> TableElement.regular(NA)
+                    measurement.numPatients <= MIN_PATIENT_COUNT -> TableElement.regular(NA)
 
-                    else -> with(it) {
+                    else -> with(measurement) {
                         val iqrString = iqr?.takeUnless(Double::isNaN)?.let { ", IQR: " + Formats.daysToMonths(it) } ?: ""
                         TableElement(Formats.daysToMonths(value), "$iqrString\n(n=$numPatients)")
                     }
