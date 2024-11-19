@@ -54,6 +54,29 @@ class TumorStageDeriverTest {
     }
 
     @Test
+    fun `Should include suspected lesions into stage derivation`() {
+        assertThat(
+            tumorStageDeriver.derive(
+                breastCancerWithNoStage.copy(
+                    hasSuspectedLungLesions = true,
+                    hasSuspectedBoneLesions = true,
+                    hasSuspectedBrainLesions = true
+                )
+            )
+        ).containsOnly(TumorStage.IV)
+
+        assertThat(
+            tumorStageDeriver.derive(
+                breastCancerWithNoStage.copy(
+                    hasLungLesions = true,
+                    hasSuspectedBoneLesions = true,
+                    otherLesions = listOf("lesion")
+                )
+            )
+        ).containsOnly(TumorStage.IV)
+    }
+
+    @Test
     fun `Should return stage III and IV when one uncategorized location`() {
         assertThat(tumorStageDeriver.derive(breastCancerWithNoStage.copy(otherLesions = listOf("lesion"))))
             .containsOnly(TumorStage.III, TumorStage.IV)

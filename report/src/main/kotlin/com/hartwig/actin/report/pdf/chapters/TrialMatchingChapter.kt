@@ -19,6 +19,7 @@ class TrialMatchingChapter(
     private val reportContentProvider: ReportContentProvider,
     override val include: Boolean
 ) : ReportChapter {
+
     override fun name(): String {
         return "Trial Matching Summary"
     }

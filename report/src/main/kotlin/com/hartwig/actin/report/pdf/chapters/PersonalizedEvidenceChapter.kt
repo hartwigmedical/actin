@@ -15,6 +15,7 @@ import com.itextpdf.layout.element.AreaBreak
 import com.itextpdf.layout.properties.AreaBreakType
 
 class PersonalizedEvidenceChapter(private val report: Report, override val include: Boolean) : ReportChapter {
+
     override fun name(): String {
         return "SOC personalized real-world evidence annotation"
     }

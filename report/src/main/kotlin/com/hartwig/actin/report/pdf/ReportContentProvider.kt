@@ -39,11 +39,14 @@ import com.hartwig.actin.report.pdf.tables.trial.IneligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.filterExclusivelyInChildrensHospitals
 import com.hartwig.actin.report.pdf.tables.trial.filterInCountryOfReference
 import com.hartwig.actin.report.pdf.tables.trial.filterInternalTrials
-import com.hartwig.actin.report.pdf.tables.trial.filterMolecularCriteriaAlreadyPresent
+import com.hartwig.actin.report.pdf.tables.trial.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts
+import com.hartwig.actin.report.pdf.tables.trial.filterMolecularCriteriaAlreadyPresentInTrials
 import com.hartwig.actin.report.pdf.tables.trial.filterNotInCountryOfReference
 import org.apache.logging.log4j.LogManager
 
 class ReportContentProvider(private val report: Report, private val enableExtendedMode: Boolean = false) {
+
+    private val logger = LogManager.getLogger(ReportContentProvider::class.java)
 
     fun provideChapters(): List<ReportChapter> {
         val (includeEfficacyEvidenceDetailsChapter, includeTrialMatchingDetailsChapter) = when {
@@ -52,24 +55,35 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             }
 
             report.config.includeSOCLiteratureEfficacyEvidence -> {
-                LOGGER.info("Including SOC literature details")
+                logger.info("Including SOC literature details")
                 Pair(true, false)
             }
 
             else -> {
-                LOGGER.info("Including trial matching details")
+                logger.info("Including trial matching details")
                 Pair(false, true)
             }
         }
 
+        val cohorts =
+            InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
+        val (_, evaluated) =
+            EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, 0f, slotsAvailable = true)
+
+        val (nationalTrials, internationalTrials) = summarizeExternalTrials(report.patientRecord, evaluated)
         return listOf(
-            SummaryChapter(report),
+            SummaryChapter(report, this, cohorts),
             PersonalizedEvidenceChapter(
                 report,
                 include = report.config.includeSOCLiteratureEfficacyEvidence && report.treatmentMatch.personalizedDataAnalysis != null
             ),
             ResistanceEvidenceChapter(report, include = report.config.includeSOCLiteratureEfficacyEvidence),
-            MolecularDetailsChapter(report, report.config.includeMolecularDetailsChapter, report.config.includeRawPathologyReport),
+            MolecularDetailsChapter(
+                report,
+                report.config.includeMolecularDetailsChapter,
+                report.config.includeRawPathologyReport,
+                nationalTrials.filtered + internationalTrials.filtered
+            ),
             LongitudinalMolecularHistoryChapter(report, include = report.config.includeLongitudinalMolecularChapter),
             EfficacyEvidenceChapter(report, include = report.config.includeSOCLiteratureEfficacyEvidence),
             ClinicalDetailsChapter(report, include = report.config.includeClinicalDetailsChapter),
@@ -105,10 +119,12 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         )
     }
 
-    fun provideSummaryTables(keyWidth: Float, valueWidth: Float, contentWidth: Float): List<TableGenerator> {
-        val cohorts =
-            InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
-
+    fun provideSummaryTables(
+        keyWidth: Float,
+        valueWidth: Float,
+        contentWidth: Float,
+        cohorts: List<InterpretedCohort>
+    ): List<TableGenerator> {
         val clinicalHistoryGenerator = if (report.config.includeOverviewWithClinicalHistorySummary) {
             PatientClinicalHistoryWithOverviewGenerator(report, cohorts, keyWidth, valueWidth)
         } else {
@@ -169,6 +185,38 @@ class ReportContentProvider(private val report: Report, private val enableExtend
     fun provideExternalTrialsTables(
         patientRecord: PatientRecord, evaluated: List<InterpretedCohort>, contentWidth: Float
     ): Pair<TableGenerator?, TableGenerator?> {
+        val (nationalTrialsNotOverlappingHospital, internationalTrialsNotOverlappingHospitalOrNational) = summarizeExternalTrials(
+            patientRecord,
+            evaluated
+        )
+
+        val allEvidenceSources =
+            patientRecord.molecularHistory.molecularTests.map { it.evidenceSource }.filter { it != NO_EVIDENCE_SOURCE }.toSet()
+        return Pair(
+            if (nationalTrialsNotOverlappingHospital.isNotEmpty()) {
+                EligibleExternalTrialsGenerator(
+                    allEvidenceSources,
+                    nationalTrialsNotOverlappingHospital.filtered,
+                    contentWidth,
+                    nationalTrialsNotOverlappingHospital.numFiltered(),
+                    report.config.countryOfReference
+                )
+            } else null,
+            if (internationalTrialsNotOverlappingHospitalOrNational.isNotEmpty()) {
+                EligibleExternalTrialsGenerator(
+                    allEvidenceSources,
+                    internationalTrialsNotOverlappingHospitalOrNational.filtered,
+                    contentWidth,
+                    internationalTrialsNotOverlappingHospitalOrNational.numFiltered()
+                )
+            } else null
+        )
+    }
+
+    private fun summarizeExternalTrials(
+        patientRecord: PatientRecord,
+        evaluated: List<InterpretedCohort>
+    ): Pair<MolecularFilteredExternalTrials, MolecularFilteredExternalTrials> {
         val externalEligibleTrials =
             AggregatedEvidenceFactory.mergeMapsOfSets(patientRecord.molecularHistory.molecularTests.map {
                 AggregatedEvidenceFactory.create(it).externalEligibleTrialsPerEvent
@@ -178,55 +226,31 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             .filterInternalTrials(report.treatmentMatch.trialMatches.toSet())
             .filterExclusivelyInChildrensHospitals()
 
-        val externalEligibleTrialsLocal = filterTrialsForMolecularCriteria(
-            evaluated,
-            externalEligibleTrialsFiltered.filterInCountryOfReference(report.config.countryOfReference)
-        )
+        val nationalTrials = externalEligibleTrialsFiltered.filterInCountryOfReference(report.config.countryOfReference)
+        val nationalTrialsNotOverlappingHospital =
+            hideOverlappingTrials(nationalTrials, nationalTrials.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(evaluated))
 
-        val externalEligibleTrialsNonLocal = filterTrialsForMolecularCriteria(
-            evaluated,
-            externalEligibleTrialsFiltered.filterNotInCountryOfReference(report.config.countryOfReference)
+        val internationalTrials = externalEligibleTrialsFiltered.filterNotInCountryOfReference(report.config.countryOfReference)
+        val internationalTrialsNotOverlappingHospitalOrNational = hideOverlappingTrials(
+            internationalTrials,
+            internationalTrials.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(evaluated)
+                .filterMolecularCriteriaAlreadyPresentInTrials(nationalTrials)
         )
-
-        val allEvidenceSources =
-            patientRecord.molecularHistory.molecularTests.map { it.evidenceSource }.filter { it != NO_EVIDENCE_SOURCE }.toSet()
-        return Pair(
-            if (externalEligibleTrialsLocal.isNotEmpty()) {
-                EligibleExternalTrialsGenerator(
-                    allEvidenceSources,
-                    externalEligibleTrialsLocal.filtered,
-                    contentWidth,
-                    externalEligibleTrialsLocal.numFiltered(),
-                    report.config.countryOfReference
-                )
-            } else null,
-            if (externalEligibleTrialsNonLocal.isNotEmpty()) {
-                EligibleExternalTrialsGenerator(
-                    allEvidenceSources,
-                    externalEligibleTrialsNonLocal.filtered,
-                    contentWidth,
-                    externalEligibleTrialsNonLocal.numFiltered()
-                )
-            } else null
-        )
+        return Pair(nationalTrialsNotOverlappingHospital, internationalTrialsNotOverlappingHospitalOrNational)
     }
 
     data class MolecularFilteredExternalTrials(val original: Set<ExternalTrialSummary>, val filtered: Set<ExternalTrialSummary>) {
         fun numFiltered() = original.size - filtered.size
-        fun isNotEmpty() = filtered.isNotEmpty()
+        fun isNotEmpty() = original.isNotEmpty()
     }
 
-    private fun filterTrialsForMolecularCriteria(
-        internalEvaluatedCohorts: List<InterpretedCohort>,
-        original: Set<ExternalTrialSummary>
+    private fun hideOverlappingTrials(
+        original: Set<ExternalTrialSummary>,
+        filtered: Set<ExternalTrialSummary>
     ): MolecularFilteredExternalTrials {
         return if (enableExtendedMode) MolecularFilteredExternalTrials(original, original) else MolecularFilteredExternalTrials(
             original,
-            original.filterMolecularCriteriaAlreadyPresent(internalEvaluatedCohorts)
+            filtered
         )
-    }
-
-    companion object {
-        private val LOGGER = LogManager.getLogger(ReportContentProvider::class.java)
     }
 }

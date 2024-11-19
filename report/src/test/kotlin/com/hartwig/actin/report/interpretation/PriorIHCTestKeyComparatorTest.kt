@@ -4,8 +4,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class PriorIHCTestKeyComparatorTest {
+
     @Test
-    fun canSortPriorMolecularTestKeys() {
+    fun `Should sort prior molecular test keys`() {
         val key1 = create("text 1", "test 1")
         val key2 = create("text 1", "test 2")
         val key3 = create("text 2", "test 1")

@@ -4,7 +4,6 @@ import com.hartwig.actin.datamodel.algo.AnnotatedTreatmentMatch
 import com.hartwig.actin.datamodel.efficacy.EfficacyEntry
 import com.hartwig.actin.datamodel.efficacy.PatientPopulation
 import com.hartwig.actin.datamodel.efficacy.TrialReference
-import com.hartwig.actin.datamodel.clinical.treatment.TreatmentClass
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.soc.SOCGeneratorFunctions.addEndPointsToTable
 import com.hartwig.actin.report.pdf.tables.soc.SOCGeneratorFunctions.analysisGroupForPopulation
@@ -43,13 +42,13 @@ class EfficacyEvidenceGenerator(
             treatments.sortedBy { it.annotations.size }.reversed().forEach { treatment: AnnotatedTreatmentMatch ->
                 table.addCell(Cells.createContentBold(SOCGeneratorFunctions.abbreviate(treatment.treatmentCandidate.treatment.name)))
                 if (treatment.annotations.isNotEmpty()) {
-                    val subtable = Tables.createSingleColWithWidth(width / 2)
+                    val subTable = Tables.createSingleColWithWidth(width / 2)
                     for (annotation in treatment.annotations) {
                         for (trialReference in annotation.trialReferences) {
-                            subtable.addCell(Cells.create(createOneLiteraturePart(width, annotation, trialReference, treatment)))
+                            subTable.addCell(Cells.create(createOneLiteraturePart(width, annotation, trialReference, treatment)))
                         }
                     }
-                    table.addCell(Cells.createContent(subtable))
+                    table.addCell(Cells.createContent(subTable))
                 } else table.addCell(Cells.createContent("No literature efficacy evidence available yet"))
             }
             return table

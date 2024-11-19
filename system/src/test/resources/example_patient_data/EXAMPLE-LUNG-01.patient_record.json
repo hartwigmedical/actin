@@ -597,7 +597,7 @@
                       }
                     ],
                     "url": "https://hartwigmedicalfoundation.nl",
-                    "nctId": "NCT00000007",
+                    "nctId": "NCT00000008",
                     "isCategoryEvent": false,
                     "sourceEvent": "EGFR C797S",
                     "evidenceLevelDetails": "CLINICAL_STUDY",
@@ -673,6 +673,69 @@
               "driverLikelihood": "HIGH",
               "evidence": {
                 "externalEligibleTrials": [],
+                "treatmentEvidence": []
+              },
+              "gene": "KRAS",
+              "geneRole": "ONCO",
+              "proteinEffect": "GAIN_OF_FUNCTION",
+              "isAssociatedWithDrugResistance": null
+            },
+            {
+              "chromosome": "12",
+              "position": 25398284,
+              "ref": "G",
+              "alt": "T",
+              "type": "SNV",
+              "variantAlleleFrequency": 0.15,
+              "canonicalImpact": {
+                "transcriptId": "",
+                "hgvsCodingImpact": "c.34G>T",
+                "hgvsProteinImpact": "p.G12C",
+                "affectedCodon": 12,
+                "affectedExon": 2,
+                "isSpliceRegion": false,
+                "effects": [
+                  "MISSENSE"
+                ],
+                "codingEffect": "MISSENSE"
+              },
+              "otherImpacts": [],
+              "extendedVariantDetails": {
+                "variantCopyNumber": 0.3,
+                "totalCopyNumber": 2,
+                "isBiallelic": false,
+                "phaseGroups": null,
+                "clonalLikelihood": 0.4
+              },
+              "isHotspot": true,
+              "isReportable": true,
+              "event": "KRAS G12C",
+              "driverLikelihood": "HIGH",
+              "evidence": {
+                "externalEligibleTrials": [
+                  {
+                    "title": "KRAS-G12C-TRIAL-DE",
+                    "countries": [
+                      {
+                        "name": "GERMANY",
+                        "hospitalsPerCity": {
+                          "Stuttgart": [
+                            "Robert-Bosch-Krankenhaus - Klinik Schillerhoehe"
+                          ]
+                        }
+                      }
+                    ],
+                    "url": "https://hartwigmedicalfoundation.nl",
+                    "nctId": "NCT00000009",
+                    "isCategoryEvent": false,
+                    "sourceEvent": "KRAS G12C",
+                    "evidenceLevelDetails": "CLINICAL_STUDY",
+                    "applicableCancerType": {
+                      "cancerType": "Lung non-small cell carcinoma",
+                      "excludedCancerTypes": []
+                    }
+                  }
+                ],
                 "treatmentEvidence": []
               },
               "gene": "KRAS",

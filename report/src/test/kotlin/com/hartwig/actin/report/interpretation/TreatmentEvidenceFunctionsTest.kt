@@ -5,9 +5,9 @@ import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 import com.hartwig.serve.datamodel.EvidenceLevelDetails
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 private const val TREATMENT = "treatment"
 
@@ -68,7 +68,6 @@ class TreatmentEvidenceFunctionsTest {
         assertThat(result).containsExactlyElementsOf(expected)
     }
 
-
     @Test
     fun `Should correctly filter treatment with preclinical level D evidence`() {
         val preclinicalEvidence =
@@ -113,7 +112,7 @@ class TreatmentEvidenceFunctionsTest {
     }
 
     @Test
-    fun `Should keep only highest evidence for specific treatment-cancertype combination and should prioritize non-categorical`() {
+    fun `Should keep only highest evidence for specific treatment-cancer-type combination and should prioritize non-categorical`() {
         val levelACategory = onLabelCategoryLevelA.copy(
             "treatment",
             sourceEvent = "category event",

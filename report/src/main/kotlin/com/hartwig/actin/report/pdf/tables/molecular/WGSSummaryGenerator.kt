@@ -17,6 +17,7 @@ class WGSSummaryGenerator(
     private val keyWidth: Float,
     private val valueWidth: Float
 ) : TableGenerator {
+
     private val summarizer: MolecularDriversSummarizer =
         MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(molecular.drivers, cohorts)
     private val wgsMolecular = molecular as? MolecularRecord
