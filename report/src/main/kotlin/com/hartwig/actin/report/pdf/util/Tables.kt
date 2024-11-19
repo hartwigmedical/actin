@@ -26,10 +26,17 @@ object Tables {
         table.isSkipLastFooter = true
 
         val wrappingTable = Table(1).setMinWidth(table.width)
+
+        (0 until table.numberOfRows).forEach { i ->
+            (0 until table.numberOfColumns).forEach { j ->
+                wrappingTable.addCell(table.getCell(i, j)).setKeepTogether(true)
+            }
+        }
+
         if (printSubNotes) {
             wrappingTable.addHeaderCell(Cells.createSubNote("Continued from the previous page"))
         }
-        wrappingTable.setSkipFirstHeader(true).addCell(Cells.create(table).setPadding(0f).setKeepTogether(true))
+        wrappingTable.setSkipFirstHeader(true).addCell(Cells.create(table).setPadding(0f))
         return wrappingTable
     }
 }
