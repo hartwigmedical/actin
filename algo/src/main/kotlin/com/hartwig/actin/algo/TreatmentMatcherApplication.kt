@@ -10,6 +10,7 @@ import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter
 import com.hartwig.actin.configuration.EnvironmentConfiguration
+import com.hartwig.actin.configuration.EnvironmentConfigurationPrinter
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
@@ -21,13 +22,13 @@ import com.hartwig.actin.trial.serialization.TrialJson
 import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.RefGenome
 import com.hartwig.serve.datamodel.serialization.ServeJson
-import java.time.Period
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.time.Period
 import kotlin.system.exitProcess
 
 class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
@@ -59,8 +60,9 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
         val functionInputResolver =
             FunctionInputResolver(doidModel, molecularInputChecker, treatmentDatabase, MedicationCategories.create(atcTree))
-        val environmentConfiguration =
-            config.overridesYaml?.let { EnvironmentConfiguration.create(config.overridesYaml) } ?: EnvironmentConfiguration()
+        val algoConfiguration = EnvironmentConfiguration.create(config.overridesYaml).algo
+        EnvironmentConfigurationPrinter.printAlgoConfig(algoConfiguration)
+
         val resources = RuleMappingResources(
             referenceDateProvider,
             doidModel,
@@ -68,9 +70,8 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
             atcTree,
             treatmentDatabase,
             config.personalizationDataPath,
-            environmentConfiguration.algo,
-            environmentConfiguration.algo.maxMolecularTestAgeInDays?.let { referenceDateProvider.date().minus(Period.ofDays(it)) }
-
+            algoConfiguration,
+            algoConfiguration.maxMolecularTestAgeInDays?.let { referenceDateProvider.date().minus(Period.ofDays(it)) }
         )
         val evidenceEntries = EfficacyEntryFactory(treatmentDatabase).extractEfficacyEvidenceFromCkbFile(config.extendedEfficacyJson)
 
@@ -108,8 +109,9 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
     }
 
     companion object {
-        val LOGGER: Logger = LogManager.getLogger(TreatmentMatcherApplication::class.java)
         const val APPLICATION = "ACTIN Treatment Matcher"
+        
+        val LOGGER: Logger = LogManager.getLogger(TreatmentMatcherApplication::class.java)
         val VERSION: String = TreatmentMatcherApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
     }
 }

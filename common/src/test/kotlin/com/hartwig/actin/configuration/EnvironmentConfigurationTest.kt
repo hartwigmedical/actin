@@ -7,6 +7,8 @@ import org.junit.Test
 class EnvironmentConfigurationTest {
 
     private val defaultConfig = EnvironmentConfiguration()
+    private val minimalConfigFile = resourceOnClasspath("environment/minimal_config.yaml")
+    private val properConfigFile = resourceOnClasspath("environment/proper_config.yaml")
     
     @Test
     fun `Should create with default values`() {
@@ -14,14 +16,14 @@ class EnvironmentConfigurationTest {
     }
 
     @Test
-    fun `Should load config from file`() {
-        val config = EnvironmentConfiguration.create(resourceOnClasspath("/environment/proper_config.yaml"))
+    fun `Should load proper config from file`() {
+        val config = EnvironmentConfiguration.create(properConfigFile)
         assertThat(config.algo.warnIfToxicitiesNotFromQuestionnaire).isFalse
     }
 
     @Test
     fun `Should use defaults for fields not provided in file`() {
-        val config = EnvironmentConfiguration.create(resourceOnClasspath("/environment/minimal_config.yaml"))
+        val config = EnvironmentConfiguration.create(minimalConfigFile)
         assertThat(config.algo.warnIfToxicitiesNotFromQuestionnaire).isTrue
     }
 
@@ -32,7 +34,7 @@ class EnvironmentConfigurationTest {
 
     @Test
     fun `Should override configuration from file with profile`() {
-        val config = EnvironmentConfiguration.create(resourceOnClasspath("/environment/proper_config.yaml"), "CRC")
+        val config = EnvironmentConfiguration.create(properConfigFile, "CRC")
         assertThat(config.algo.warnIfToxicitiesNotFromQuestionnaire).isFalse
         assertThat(config.report.includeOverviewWithClinicalHistorySummary).isTrue
         assertThat(config.report.includeMolecularDetailsChapter).isFalse
