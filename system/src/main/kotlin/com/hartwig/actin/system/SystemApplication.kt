@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger
 
 object SystemApplication {
     val LOGGER: Logger = LogManager.getLogger(SystemApplication::class.java)
-    val VERSION: String = SystemApplication::class.java.getPackage().implementationVersion
+    val VERSION = SystemApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
 }
 
 fun main() {

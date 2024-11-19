@@ -13,6 +13,14 @@ data class TreatmentMatchLoaderConfig(
 ) : DatabaseLoaderConfig {
 
     companion object {
+        private val LOGGER = LogManager.getLogger(TreatmentMatchLoaderConfig::class.java)
+
+        private const val TREATMENT_MATCH_JSON = "treatment_match_json"
+        private const val DB_USER = "db_user"
+        private const val DB_PASS = "db_pass"
+        private const val DB_URL = "db_url"
+        private const val LOG_DEBUG = "log_debug"
+
         fun createOptions(): Options {
             val options = Options()
             options.addOption(TREATMENT_MATCH_JSON, true, "File containing all available treatments, matched to the patient")
@@ -35,12 +43,5 @@ data class TreatmentMatchLoaderConfig(
                 dbUrl = ApplicationConfig.nonOptionalValue(cmd, DB_URL)
             )
         }
-
-        private val LOGGER = LogManager.getLogger(TreatmentMatchLoaderConfig::class.java)
-        private const val TREATMENT_MATCH_JSON = "treatment_match_json"
-        private const val DB_USER = "db_user"
-        private const val DB_PASS = "db_pass"
-        private const val DB_URL = "db_url"
-        private const val LOG_DEBUG = "log_debug"
     }
 }
