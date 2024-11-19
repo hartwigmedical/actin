@@ -21,6 +21,7 @@ class PatientCurrentDetailsGenerator(
     private val valueWidth: Float,
     private val referenceDate: LocalDate
 ) : TableGenerator {
+
     override fun title(): String {
         return "Patient current details (" + date(record.patient.questionnaireDate) + ")"
     }

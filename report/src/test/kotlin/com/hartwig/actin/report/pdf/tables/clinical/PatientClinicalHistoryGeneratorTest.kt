@@ -49,7 +49,5 @@ class PatientClinicalHistoryGeneratorTest {
         assertThat(extractTextFromCell(otherHistoryTable.getCell(3, 0))).isEqualTo("9/2023")
         assertThat(extractTextFromCell(otherHistoryTable.getCell(4, 0))).isEqualTo("Date unknown")
         assertThat(extractTextFromCell(otherHistoryTable.getCell(5, 0))).isEqualTo("Date unknown")
-
     }
-
 }

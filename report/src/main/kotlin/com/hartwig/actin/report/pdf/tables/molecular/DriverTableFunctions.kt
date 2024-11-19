@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummary
 
 object DriverTableFunctions {
+
     fun groupByEvent(externalTrialSummaries: Set<ExternalTrialSummary>): Map<String, Set<ExternalTrialSummary>> {
         return externalTrialSummaries.flatMap { summary -> summary.actinMolecularEvents.map { event -> event to summary } }
             .groupBy({ it.first }, { it.second }).mapValues { (_, value) -> value.toSet() }

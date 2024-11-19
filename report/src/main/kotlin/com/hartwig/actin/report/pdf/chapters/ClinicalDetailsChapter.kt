@@ -9,6 +9,7 @@ import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
 
 class ClinicalDetailsChapter(private val report: Report, override val include: Boolean) : ReportChapter {
+
     override fun name(): String {
         return "Clinical Details"
     }

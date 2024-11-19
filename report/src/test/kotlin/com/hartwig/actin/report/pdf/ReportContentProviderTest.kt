@@ -34,6 +34,7 @@ private const val VALUE_WIDTH = 200f
 private const val CONTENT_WIDTH = 300f
 
 class ReportContentProviderTest {
+
     private val proper = TestReportFactory.createProperTestReport()
 
     @Test
@@ -99,7 +100,7 @@ class ReportContentProviderTest {
     }
 
     @Test
-    fun `Should omit molecular chapter and include both efficacy chapters and resistance evidencde chapter when CRC profile is provided in extended mode`() {
+    fun `Should omit molecular chapter and include both efficacy chapters and resistance evidence chapter when CRC profile is provided in extended mode`() {
         val report = proper.copy(
             config = EnvironmentConfiguration.create(null, "CRC").report
         )

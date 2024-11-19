@@ -59,17 +59,15 @@ class MolecularDriversGenerator(
         return makeWrapping(table)
     }
 
-    companion object {
-        private fun formatDriverLikelihood(driverLikelihood: DriverLikelihood?): String {
-            return driverLikelihood?.let(DriverLikelihood::toString) ?: Formats.VALUE_UNKNOWN
-        }
+    private fun formatDriverLikelihood(driverLikelihood: DriverLikelihood?): String {
+        return driverLikelihood?.let(DriverLikelihood::toString) ?: Formats.VALUE_UNKNOWN
+    }
 
-        private fun concat(treatments: Set<String>): String {
-            return treatments.joinToString(", ")
-        }
+    private fun concat(treatments: Set<String>): String {
+        return treatments.joinToString(", ")
+    }
 
-        private fun concatEligibleTrials(externalTrials: Iterable<ExternalTrialSummary>): String {
-            return externalTrials.map { it.nctId }.toSet().joinToString(", ")
-        }
+    private fun concatEligibleTrials(externalTrials: Iterable<ExternalTrialSummary>): String {
+        return externalTrials.map { it.nctId }.toSet().joinToString(", ")
     }
 }

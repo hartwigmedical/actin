@@ -10,6 +10,9 @@ import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
+private const val PADDING_LEFT = 20
+private const val PADDING_RIGHT = 25
+
 class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, private val width: Float) : TableGenerator {
 
     override fun title(): String {
@@ -66,21 +69,16 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, priv
         }
     }
 
-    companion object {
-        private const val PADDING_LEFT = 20
-        private const val PADDING_RIGHT = 25
-
-        private fun addClassifierRow(
-            classifierText: String, predictions: List<CupPrediction>,
-            classifierFunction: (CupPrediction) -> Double, table: Table
-        ) {
-            table.addCell(Cells.createContent(classifierText).setPaddingLeft(PADDING_LEFT.toFloat()))
-            predictions
-                .asSequence()
-                .map(classifierFunction)
-                .map(Formats::percentage)
-                .map { Cells.createContent(it).setPaddingLeft(PADDING_LEFT.toFloat()).setPaddingRight(PADDING_RIGHT.toFloat()) }
-                .forEach(table::addCell)
-        }
+    private fun addClassifierRow(
+        classifierText: String, predictions: List<CupPrediction>,
+        classifierFunction: (CupPrediction) -> Double, table: Table
+    ) {
+        table.addCell(Cells.createContent(classifierText).setPaddingLeft(PADDING_LEFT.toFloat()))
+        predictions
+            .asSequence()
+            .map(classifierFunction)
+            .map(Formats::percentage)
+            .map { Cells.createContent(it).setPaddingLeft(PADDING_LEFT.toFloat()).setPaddingRight(PADDING_RIGHT.toFloat()) }
+            .forEach(table::addCell)
     }
 }

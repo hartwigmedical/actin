@@ -11,6 +11,7 @@ import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.Paragraph
 
 class EfficacyEvidenceDetailsChapter(private val report: Report, override val include: Boolean) : ReportChapter {
+
     override fun name(): String {
         return "SOC literature details"
     }

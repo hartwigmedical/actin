@@ -28,6 +28,7 @@ class MolecularDetailsChapter(
     private val includeRawPathologyReport: Boolean,
     private val trials: Set<ExternalTrialSummary>
 ) : ReportChapter {
+
     override fun name(): String {
         return "Molecular Details"
     }

@@ -8,12 +8,10 @@ import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.io.IOException
 import kotlin.system.exitProcess
 
 class TabularTreatmentMatchWriterApplication(private val config: TabularTreatmentMatchWriterConfig) {
 
-    @Throws(IOException::class)
     fun run() {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
         LOGGER.info("Loading treatment match results from {}", config.treatmentMatchJson)
@@ -32,8 +30,9 @@ class TabularTreatmentMatchWriterApplication(private val config: TabularTreatmen
     }
 
     companion object {
-        val LOGGER: Logger = LogManager.getLogger(TabularTreatmentMatchWriterApplication::class.java)
         const val APPLICATION = "ACTIN Tabular Treatment Match Writer"
+
+        val LOGGER: Logger = LogManager.getLogger(TabularTreatmentMatchWriterApplication::class.java)
         val VERSION: String? = TabularTreatmentMatchWriterApplication::class.java.getPackage().implementationVersion
     }
 }

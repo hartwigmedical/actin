@@ -11,6 +11,8 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
+private const val SPECIFIC_OR_UNKNOWN = "specific prescription|unknown prescription"
+
 class MedicationGenerator(
     private val medications: List<Medication>, private val totalWidth: Float, private val interpreter: MedicationStatusInterpreter
 ) : TableGenerator {
@@ -42,62 +44,58 @@ class MedicationGenerator(
         return makeWrapping(table)
     }
 
-    companion object {
-        private const val SPECIFIC_OR_UNKNOWN = "specific prescription|unknown prescription"
+    private fun administrationRoute(medication: Medication): String {
+        return if (medication.administrationRoute != null) medication.administrationRoute!! else ""
+    }
 
-        private fun administrationRoute(medication: Medication): String {
-            return if (medication.administrationRoute != null) medication.administrationRoute!! else ""
+    private fun dosage(medication: Medication): String {
+        val dosage = medication.dosage
+        if (medication.administrationRoute in setOf("Cutaneous", "Intravenous") && dosage.dosageMin == 0.0) {
+            return ""
         }
+        val dosageMin = formatDosageLimit(dosage.dosageMin)
+        val dosageMax = formatDosageLimit(dosage.dosageMax)
+        val dosageString = if (dosageMin == dosageMax) dosageMin else "$dosageMin - $dosageMax"
+        val result = if (dosage.ifNeeded == true) "if needed $dosageString" else dosageString
 
-        private fun dosage(medication: Medication): String {
-            val dosage = medication.dosage
-            if (medication.administrationRoute in setOf("Cutaneous", "Intravenous") && dosage.dosageMin == 0.0) {
-                return ""
+        val dosageUnit = dosage.dosageUnit
+        return when {
+            dosageUnit == null -> {
+                "unknown prescription"
             }
-            val dosageMin = formatDosageLimit(dosage.dosageMin)
-            val dosageMax = formatDosageLimit(dosage.dosageMax)
-            val dosageString = if (dosageMin == dosageMax) dosageMin else "$dosageMin - $dosageMax"
-            val result = if (dosage.ifNeeded == true) "if needed $dosageString" else dosageString
 
-            val dosageUnit = dosage.dosageUnit
-            return when {
-                dosageUnit == null -> {
-                    "unknown prescription"
-                }
+            dosageUnit.matches(SPECIFIC_OR_UNKNOWN.toRegex()) -> {
+                dosageUnit
+            }
 
-                dosageUnit.matches(SPECIFIC_OR_UNKNOWN.toRegex()) -> {
-                    dosageUnit
-                }
-
-                else -> {
-                    "$result $dosageUnit"
-                }
+            else -> {
+                "$result $dosageUnit"
             }
         }
+    }
 
-        private fun formatDosageLimit(dosageLimit: Double?) =
-            if (dosageLimit != null && dosageLimit != 0.0) Formats.twoDigitNumber(dosageLimit) else "?"
+    private fun formatDosageLimit(dosageLimit: Double?) =
+        if (dosageLimit != null && dosageLimit != 0.0) Formats.twoDigitNumber(dosageLimit) else "?"
 
-        private fun frequency(dosage: Dosage): String {
-            val frequency =
-                if (dosage.frequency != null && dosage.frequency != 0.0) Formats.twoDigitNumber(dosage.frequency!!) else "?"
-            val frequencyUnit = dosage.frequencyUnit
-            return when {
-                frequencyUnit == null -> {
-                    "unknown prescription"
-                }
+    private fun frequency(dosage: Dosage): String {
+        val frequency =
+            if (dosage.frequency != null && dosage.frequency != 0.0) Formats.twoDigitNumber(dosage.frequency!!) else "?"
+        val frequencyUnit = dosage.frequencyUnit
+        return when {
+            frequencyUnit == null -> {
+                "unknown prescription"
+            }
 
-                frequencyUnit.matches(("$SPECIFIC_OR_UNKNOWN|once").toRegex()) -> {
-                    frequencyUnit
-                }
+            frequencyUnit.matches(("$SPECIFIC_OR_UNKNOWN|once").toRegex()) -> {
+                frequencyUnit
+            }
 
-                dosage.periodBetweenUnit != null -> {
-                    "$frequency / ${Formats.noDigitNumber(dosage.periodBetweenValue!! + 1)} ${dosage.periodBetweenUnit}"
-                }
+            dosage.periodBetweenUnit != null -> {
+                "$frequency / ${Formats.noDigitNumber(dosage.periodBetweenValue!! + 1)} ${dosage.periodBetweenUnit}"
+            }
 
-                else -> {
-                    "$frequency / $frequencyUnit"
-                }
+            else -> {
+                "$frequency / $frequencyUnit"
             }
         }
     }

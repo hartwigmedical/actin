@@ -10,13 +10,12 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 object Formats {
+
     const val VALUE_UNKNOWN = "Unknown"
     const val VALUE_NONE = "None"
-    const val VALUE_COMING_SOON = "Coming soon"
     const val VALUE_NOT_AVAILABLE = "N/A"
     const val COMMA_SEPARATOR = ", "
     const val STANDARD_KEY_WIDTH = 210f
-    private val NON_HIGHLIGHT_VALUES = setOf(VALUE_COMING_SOON)
     const val DATE_UNKNOWN = "Date unknown"
     private val DATE_FORMAT = DateTimeFormatter.ofPattern("dd-MMM-yyyy")
     private val DECIMAL_FORMAT_SYMBOLS = DecimalFormatSymbols.getInstance(Locale.ENGLISH)
@@ -67,7 +66,7 @@ object Formats {
     }
 
     fun styleForTableValue(value: String): Style {
-        return if (!NON_HIGHLIGHT_VALUES.contains(value) && !DATE_UNKNOWN.equals(value)) {
+        return if (value != DATE_UNKNOWN) {
             Styles.tableHighlightStyle()
         } else Styles.tableUnknownStyle()
     }

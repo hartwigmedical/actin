@@ -11,6 +11,7 @@ import com.itextpdf.layout.borders.SolidBorder
 import java.io.IOException
 
 object Styles {
+
     val PALETTE_WHITE = DeviceRgb(255, 255, 255)
     val PALETTE_BLACK = DeviceRgb(0, 0, 0)
     val PALETTE_MID_GREY = DeviceRgb(101, 106, 108)

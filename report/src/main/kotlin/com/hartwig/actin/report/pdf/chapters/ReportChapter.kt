@@ -7,6 +7,7 @@ import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.Paragraph
 
 interface ReportChapter {
+
     fun name(): String
 
     fun pageSize(): PageSize
