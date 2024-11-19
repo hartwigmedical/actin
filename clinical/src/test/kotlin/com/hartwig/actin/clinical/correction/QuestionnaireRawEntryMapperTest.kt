@@ -4,11 +4,10 @@ import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper.Compani
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.io.IOException
 
 class QuestionnaireRawEntryMapperTest {
+
     @Test
-    @Throws(IOException::class)
     fun shouldReplaceStringInQuestionnaireEntryUsingFileMapping() {
         val questionnaireRawEntryMapper = createFromCurationDirectory(resourceOnClasspath("curation"))
         val correctionResult = questionnaireRawEntryMapper.correctQuestionnaireEntry("a problematic, incorrect entry")

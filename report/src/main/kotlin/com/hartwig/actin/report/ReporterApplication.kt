@@ -17,6 +17,8 @@ import kotlin.system.exitProcess
 class ReporterApplication(private val config: ReporterConfig) {
 
     fun run() {
+        LOGGER.info("Running {} v{}", APPLICATION, VERSION)
+
         LOGGER.info("Loading patient record from {}", config.patientJson)
         val patient = PatientRecordJson.read(config.patientJson)
 
@@ -36,19 +38,20 @@ class ReporterApplication(private val config: ReporterConfig) {
         const val APPLICATION = "ACTIN Reporter"
 
         val LOGGER: Logger = LogManager.getLogger(ReporterApplication::class.java)
-        val VERSION: String? = ReporterApplication::class.java.getPackage().implementationVersion
+        val VERSION = ReporterApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
     }
 }
 
 fun main(args: Array<String>) {
-    ReporterApplication.LOGGER.info("Running {} v{}", ReporterApplication.APPLICATION, ReporterApplication.VERSION)
     val options: Options = ReporterConfig.createOptions()
+    val config: ReporterConfig
     try {
-        val config = ReporterConfig.createConfig(DefaultParser().parse(options, args))
-        ReporterApplication(config).run()
+        config = ReporterConfig.createConfig(DefaultParser().parse(options, args))
     } catch (exception: ParseException) {
         ReporterApplication.LOGGER.warn(exception)
         HelpFormatter().printHelp(ReporterApplication.APPLICATION, options)
         exitProcess(1)
     }
+
+    ReporterApplication(config).run()
 }

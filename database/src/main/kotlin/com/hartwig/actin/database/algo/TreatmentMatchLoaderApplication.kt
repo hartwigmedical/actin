@@ -25,20 +25,23 @@ class TreatmentMatchLoaderApplication(private val config: TreatmentMatchLoaderCo
     }
 
     companion object {
-        val LOGGER: Logger = LogManager.getLogger(TreatmentMatchLoaderApplication::class.java)
         const val APPLICATION = "ACTIN Treatment Match Loader"
-        private val VERSION = TreatmentMatchLoaderApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN"
+
+        val LOGGER: Logger = LogManager.getLogger(TreatmentMatchLoaderApplication::class.java)
+        private val VERSION = TreatmentMatchLoaderApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
     }
 }
 
 fun main(args: Array<String>) {
     val options: Options = TreatmentMatchLoaderConfig.createOptions()
+    val config: TreatmentMatchLoaderConfig
     try {
-        val config = TreatmentMatchLoaderConfig.createConfig(DefaultParser().parse(options, args))
-        TreatmentMatchLoaderApplication(config).run()
+        config = TreatmentMatchLoaderConfig.createConfig(DefaultParser().parse(options, args))
     } catch (exception: ParseException) {
         TreatmentMatchLoaderApplication.LOGGER.warn(exception)
         HelpFormatter().printHelp(TreatmentMatchLoaderApplication.APPLICATION, options)
         exitProcess(1)
     }
+
+    TreatmentMatchLoaderApplication(config).run()
 }

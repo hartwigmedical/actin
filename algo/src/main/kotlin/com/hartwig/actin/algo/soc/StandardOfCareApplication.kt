@@ -77,7 +77,7 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
         const val APPLICATION = "ACTIN Standard of Care"
 
         val LOGGER: Logger = LogManager.getLogger(StandardOfCareApplication::class.java)
-        val VERSION = StandardOfCareApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
+        private val VERSION = StandardOfCareApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
     }
 }
 

@@ -120,9 +120,10 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
     }
 
     companion object {
-        val LOGGER: Logger = LogManager.getLogger(TrialCreatorApplication::class.java)
         const val APPLICATION = "ACTIN Trial Creator"
-        private val VERSION: String = TrialCreatorApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
+
+        val LOGGER: Logger = LogManager.getLogger(TrialCreatorApplication::class.java)
+        private val VERSION = TrialCreatorApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
     }
 }
 
@@ -136,5 +137,6 @@ fun main(args: Array<String>) {
         HelpFormatter().printHelp(TrialCreatorApplication.APPLICATION, options)
         exitProcess(1)
     }
+
     TrialCreatorApplication(config).run()
 }

@@ -16,6 +16,14 @@ data class MolecularLoaderConfig(
 ) : DatabaseLoaderConfig {
 
     companion object {
+        private val LOGGER = LogManager.getLogger(MolecularLoaderConfig::class.java)
+
+        private const val PATIENT_JSON = "patient_json"
+        private const val DB_USER = "db_user"
+        private const val DB_PASS = "db_pass"
+        private const val DB_URL = "db_url"
+        private const val LOG_DEBUG = "log_debug"
+
         fun createOptions(): Options {
             val options = Options()
             options.addOption(PATIENT_JSON, true, "Path of the patient json to load up")
@@ -38,12 +46,5 @@ data class MolecularLoaderConfig(
                 dbUrl = ApplicationConfig.nonOptionalValue(cmd, DB_URL)
             )
         }
-
-        private val LOGGER = LogManager.getLogger(MolecularLoaderConfig::class.java)
-        private const val PATIENT_JSON = "patient_json"
-        private const val DB_USER = "db_user"
-        private const val DB_PASS = "db_pass"
-        private const val DB_URL = "db_url"
-        private const val LOG_DEBUG = "log_debug"
     }
 }

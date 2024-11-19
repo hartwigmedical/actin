@@ -33,18 +33,20 @@ class TabularTreatmentMatchWriterApplication(private val config: TabularTreatmen
         const val APPLICATION = "ACTIN Tabular Treatment Match Writer"
 
         val LOGGER: Logger = LogManager.getLogger(TabularTreatmentMatchWriterApplication::class.java)
-        val VERSION: String? = TabularTreatmentMatchWriterApplication::class.java.getPackage().implementationVersion
+        private val VERSION = TabularTreatmentMatchWriterApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
     }
 }
 
 fun main(args: Array<String>) {
     val options: Options = TabularTreatmentMatchWriterConfig.createOptions()
+    val config: TabularTreatmentMatchWriterConfig
     try {
-        val config = TabularTreatmentMatchWriterConfig.createConfig(DefaultParser().parse(options, args))
-        TabularTreatmentMatchWriterApplication(config).run()
+        config = TabularTreatmentMatchWriterConfig.createConfig(DefaultParser().parse(options, args))
     } catch (exception: ParseException) {
         TabularTreatmentMatchWriterApplication.LOGGER.warn(exception)
         HelpFormatter().printHelp(TabularTreatmentMatchWriterApplication.APPLICATION, options)
         exitProcess(1)
     }
+
+    TabularTreatmentMatchWriterApplication(config).run()
 }

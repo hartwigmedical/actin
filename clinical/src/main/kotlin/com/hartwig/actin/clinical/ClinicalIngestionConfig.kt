@@ -3,7 +3,6 @@ package com.hartwig.actin.clinical
 import com.hartwig.actin.util.ApplicationConfig
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Options
-import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -27,6 +26,7 @@ data class ClinicalIngestionConfig(
 
     companion object {
         val LOGGER: Logger = LogManager.getLogger(ClinicalIngestionConfig::class.java)
+
         private const val FEED_DIRECTORY = "feed_directory"
         private const val CURATION_DIRECTORY = "curation_directory"
         private const val DOID_JSON = "doid_json"
@@ -55,7 +55,6 @@ data class ClinicalIngestionConfig(
             return options
         }
 
-        @Throws(ParseException::class)
         fun createConfig(cmd: CommandLine): ClinicalIngestionConfig {
             if (cmd.hasOption(LOG_DEBUG)) {
                 Configurator.setRootLevel(Level.DEBUG)

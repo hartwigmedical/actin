@@ -110,20 +110,22 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
 
     companion object {
         const val APPLICATION = "ACTIN Treatment Matcher"
-        
+
         val LOGGER: Logger = LogManager.getLogger(TreatmentMatcherApplication::class.java)
-        val VERSION: String = TreatmentMatcherApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
+        private val VERSION = TreatmentMatcherApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
     }
 }
 
 fun main(args: Array<String>) {
     val options: Options = TreatmentMatcherConfig.createOptions()
+    val config: TreatmentMatcherConfig
     try {
-        val config = TreatmentMatcherConfig.createConfig(DefaultParser().parse(options, args))
-        TreatmentMatcherApplication(config).run()
+        config = TreatmentMatcherConfig.createConfig(DefaultParser().parse(options, args))
     } catch (exception: ParseException) {
         TreatmentMatcherApplication.LOGGER.error(exception)
         HelpFormatter().printHelp(TreatmentMatcherApplication.APPLICATION, options)
         exitProcess(1)
     }
+
+    TreatmentMatcherApplication(config).run()
 }
