@@ -47,8 +47,7 @@ class EfficacyEvidenceDetailsGenerator(
         if (annotation.variantRequirements.isNotEmpty()) {
             val variantRequirements =
                 annotation.variantRequirements.map { variantRequirement ->
-                    variantRequirement.name +
-                            " (" + variantRequirement.requirementType + ")"
+                    "${variantRequirement.name} (${variantRequirement.requirementType})"
                 }
             table.addCell(Cells.createKey(variantRequirements.joinToString(" and ") { it }))
         } else {
