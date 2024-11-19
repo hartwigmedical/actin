@@ -2,6 +2,7 @@ package com.hartwig.actin.report.pdf.util
 
 import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.properties.UnitValue
+import com.itextpdf.layout.properties.VerticalAlignment
 
 object Tables {
     fun createFixedWidthCols(vararg widths: Float): Table {
@@ -17,13 +18,18 @@ object Tables {
         if (table.numberOfRows == 0) {
             table.addCell(Cells.createSpanningNoneEntry(table))
         }
-        table.addFooterCell(Cells.createSpanningSubNote(if (printSubNotes) "The table continues on the next page" else "", table))
+        if (printSubNotes) {
+            table.addFooterCell(
+                Cells.createSpanningSubNote("The table continues on the next page", table).setVerticalAlignment(VerticalAlignment.BOTTOM)
+            )
+        }
         table.isSkipLastFooter = true
+
         val wrappingTable = Table(1).setMinWidth(table.width)
         if (printSubNotes) {
             wrappingTable.addHeaderCell(Cells.createSubNote("Continued from the previous page"))
         }
-        wrappingTable.setSkipFirstHeader(true).addCell(Cells.create(table).setPadding(0f))
+        wrappingTable.setSkipFirstHeader(true).addCell(Cells.create(table).setPadding(0f).setKeepTogether(false))
         return wrappingTable
     }
 }
