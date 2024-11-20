@@ -46,7 +46,10 @@ class HasHadSystemicTherapyWithAnyIntent(
             }
 
             matchingTreatments[null]?.let(::anyTreatmentPotentiallySinceMinDate) == true -> {
-                EvaluationFactory.undetermined("Undetermined if intent of received systemic treatment is $intentsLowercase")
+                EvaluationFactory.undetermined(
+                    "Has received systemic treatment (${systemicTreatments.joinToString { it.treatmentDisplay() }}) " +
+                            "but undetermined if intent is $intentsLowercase"
+                )
             }
 
             !matchingTreatments.containsKey(true) -> {

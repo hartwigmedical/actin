@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
@@ -179,7 +180,7 @@ class HasHadSystemicTherapyWithAnyIntentTest {
 
     @Test
     fun `Should be undetermined with treatment with missing intent, if intent is evaluated`() {
-        val treatment = TreatmentTestFactory.treatment("systemic treatment", true)
+        val treatment = TreatmentTestFactory.treatment("treatment x", true)
         val patientRecord = withTreatmentHistory(
             listOf(
                 TreatmentTestFactory.treatmentHistoryEntry(
@@ -190,9 +191,18 @@ class HasHadSystemicTherapyWithAnyIntentTest {
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, functionWithDate.evaluate(patientRecord))
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, functionWithoutDate.evaluate(patientRecord))
+        val evaluationWithDate = functionWithDate.evaluate(patientRecord)
+        val evaluationWithoutDate = functionWithoutDate.evaluate(patientRecord)
+
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, evaluationWithDate)
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, evaluationWithoutDate)
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionWithoutIntents.evaluate(patientRecord))
+
+        listOf(evaluationWithDate, evaluationWithoutDate).forEach {
+            assertThat(it.undeterminedGeneralMessages).containsExactly(
+                "Has received systemic treatment (Treatment x) but undetermined if intent is adjuvant or neoadjuvant"
+            )
+        }
     }
 
     @Test
