@@ -5,6 +5,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class InterpretedCohortComparatorTest {
+
     private val cohort = create("trial 3", "cohort 1", true, "Event B")
 
     @Test
@@ -20,6 +21,7 @@ class InterpretedCohortComparatorTest {
             create("trial 1", "cohort 2", false),
             create("trial 2", "cohort 1", false)
         )
+
         val cohortList = listOf(
             cohorts[7],
             cohorts[4],
@@ -45,7 +47,6 @@ class InterpretedCohortComparatorTest {
     fun `Should place cohorts with molecular events before those without`() {
         assertExpectedOrder(listOf(cohort, cohort.copy(molecularEvents = emptySet())))
     }
-
 
     @Test
     fun `Should prioritize later phases and put null phases last when comparing cohorts with phases`() {

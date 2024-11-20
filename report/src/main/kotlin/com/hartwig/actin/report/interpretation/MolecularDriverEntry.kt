@@ -14,6 +14,7 @@ data class MolecularDriverEntry(
     val bestResponsiveEvidence: String? = null,
     val bestResistanceEvidence: String? = null
 ) : Displayable {
+
     override fun display(): String {
         return displayedName
     }

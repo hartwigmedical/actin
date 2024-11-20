@@ -57,20 +57,20 @@ class MolecularDriversSummarizer private constructor(
             .filter(interpretedCohortsSummarizer::driverIsActionable)
     }
 
+    private fun isKeyDriver(driver: Driver): Boolean {
+        return driver.driverLikelihood == DriverLikelihood.HIGH && driver.isReportable
+    }
+
+    private fun <T> keyGenesForAlterations(geneAlterationStream: Iterable<T>): List<String> where T : GeneAlteration, T : Driver {
+        return geneAlterationStream.filter(::isKeyDriver).map(GeneAlteration::gene).distinct()
+    }
+
     companion object {
         fun fromMolecularDriversAndEvaluatedCohorts(
             drivers: Drivers,
             cohorts: List<InterpretedCohort>
         ): MolecularDriversSummarizer {
             return MolecularDriversSummarizer(drivers, InterpretedCohortsSummarizer.fromCohorts(cohorts))
-        }
-
-        private fun isKeyDriver(driver: Driver): Boolean {
-            return driver.driverLikelihood == DriverLikelihood.HIGH && driver.isReportable
-        }
-
-        private fun <T> keyGenesForAlterations(geneAlterationStream: Iterable<T>): List<String> where T : GeneAlteration, T : Driver {
-            return geneAlterationStream.filter(::isKeyDriver).map(GeneAlteration::gene).distinct()
         }
     }
 }

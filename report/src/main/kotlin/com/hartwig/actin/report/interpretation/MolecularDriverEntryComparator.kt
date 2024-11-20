@@ -3,12 +3,16 @@ package com.hartwig.actin.report.interpretation
 import com.hartwig.actin.datamodel.molecular.sort.driver.DriverLikelihoodComparator
 
 class MolecularDriverEntryComparator : Comparator<MolecularDriverEntry> {
+
+    private val driverLikelihoodComparator = DriverLikelihoodComparator()
+    private val driverTypeComparator = DriverTypeComparator()
+
     override fun compare(entry1: MolecularDriverEntry, entry2: MolecularDriverEntry): Int {
-        val driverLikelihoodCompare = DRIVER_LIKELIHOOD_COMPARATOR.compare(entry1.driverLikelihood, entry2.driverLikelihood)
+        val driverLikelihoodCompare = driverLikelihoodComparator.compare(entry1.driverLikelihood, entry2.driverLikelihood)
         if (driverLikelihoodCompare != 0) {
             return driverLikelihoodCompare
         }
-        val driverTypeCompare = DRIVER_TYPE_COMPARATOR.compare(entry1.driverType, entry2.driverType)
+        val driverTypeCompare = driverTypeComparator.compare(entry1.driverType, entry2.driverType)
         return if (driverTypeCompare != 0) {
             driverTypeCompare
         } else entry1.displayedName.compareTo(entry2.displayedName)
@@ -25,10 +29,5 @@ class MolecularDriverEntryComparator : Comparator<MolecularDriverEntry> {
                 .thenByDescending { it }
                 .compare(string2.lowercase(), string1.lowercase())
         }
-    }
-
-    companion object {
-        private val DRIVER_LIKELIHOOD_COMPARATOR = DriverLikelihoodComparator()
-        private val DRIVER_TYPE_COMPARATOR = DriverTypeComparator()
     }
 }

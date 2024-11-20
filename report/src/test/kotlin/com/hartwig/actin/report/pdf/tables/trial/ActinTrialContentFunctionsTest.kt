@@ -5,6 +5,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class ActinTrialContentFunctionsTest {
+
     private val cohort1 = InterpretedCohort(
         "trial1",
         "T1",
@@ -30,7 +31,6 @@ class ActinTrialContentFunctionsTest {
 
     @Test
     fun `Should group common warnings for multiple cohorts in trial`() {
-
         assertThat(ActinTrialContentFunctions.contentForTrialCohortList(listOf(cohort1, cohort2), InterpretedCohort::warnings)).isEqualTo(
             listOf(
                 ContentDefinition(listOf("Applies to all cohorts below", "", "warning1"), false),

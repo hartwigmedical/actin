@@ -13,6 +13,7 @@ import java.time.LocalDate
 
 class PageEventHandler private constructor(private val header: Header, private val footer: Footer, private val sidePanel: SidePanel) :
     IEventHandler {
+
     private var chapterTitle = "Undefined"
     private var firstPageOfChapter = true
     private var outline: PdfOutline? = null

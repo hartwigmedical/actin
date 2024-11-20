@@ -7,6 +7,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class TumorOriginInterpreterTest {
+
     private val inconclusivePredictions = listOf(
         CupPrediction(
             cancerType = "Melanoma",

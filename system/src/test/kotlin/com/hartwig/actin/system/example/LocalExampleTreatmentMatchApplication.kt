@@ -100,14 +100,14 @@ class LocalExampleTreatmentMatchApplication {
     }
 
     private fun createEmptyResistanceEvidenceMatcher(): ResistanceEvidenceMatcher {
-        return ResistanceEvidenceMatcher(
+        return ResistanceEvidenceMatcher.create(
             doidModel = DoidModel(
                 childToParentsMap = emptyMap(),
                 termForDoidMap = emptyMap(),
                 doidForLowerCaseTermMap = emptyMap(),
                 doidManualConfig = DoidManualConfig.create()
             ),
-            applicableDoids = emptySet(),
+            tumorDoids = emptySet(),
             actionableEvents = ImmutableActionableEvents.builder().build(),
             treatmentDatabase = TreatmentDatabase(
                 drugsByName = emptyMap(),

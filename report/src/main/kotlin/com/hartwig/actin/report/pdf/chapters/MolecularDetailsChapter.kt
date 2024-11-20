@@ -28,6 +28,7 @@ class MolecularDetailsChapter(
     private val includeRawPathologyReport: Boolean,
     private val trials: Set<ExternalTrialSummary>
 ) : ReportChapter {
+
     override fun name(): String {
         return "Molecular Details"
     }
@@ -39,7 +40,6 @@ class MolecularDetailsChapter(
     override fun render(document: Document) {
         addChapterTitle(document)
         addMolecularDetails(document)
-        document.add(Div().setHeight(20F))
         if (includeRawPathologyReport) report.patientRecord.tumor.rawPathologyReport?.let { addPathologyReport(document) }
     }
 
@@ -93,6 +93,7 @@ class MolecularDetailsChapter(
     }
 
     private fun addPathologyReport(document: Document) {
+        document.add(Div().setHeight(20F))
         val table = Tables.createSingleColWithWidth(contentWidth())
         val generator = PathologyReportGenerator(report.patientRecord.tumor, contentWidth())
         table.addCell(Cells.createTitle(generator.title()))

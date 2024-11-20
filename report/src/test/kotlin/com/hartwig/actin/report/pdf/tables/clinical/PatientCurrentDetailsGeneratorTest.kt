@@ -18,6 +18,7 @@ private const val VALUE_WIDTH = 200f
 private val DATE_FORMAT = DateTimeFormatter.ofPattern("dd-MMM-yyyy")
 
 class PatientCurrentDetailsGeneratorTest {
+
     private val minimalPatientRecord = TestPatientFactory.createMinimalTestWGSPatientRecord()
     private val referenceDate = LocalDate.of(2024, 10, 1)
 

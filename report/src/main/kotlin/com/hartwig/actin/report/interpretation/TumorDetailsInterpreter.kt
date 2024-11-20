@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.report.pdf.util.Formats
 
 object TumorDetailsInterpreter {
+
     const val CUP_LOCATION = "Unknown"
     const val CUP_SUB_LOCATION = "CUP"
 

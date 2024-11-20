@@ -1,9 +1,10 @@
 package com.hartwig.actin.algo.soc
 
+import com.hartwig.actin.configuration.OVERRIDE_YAML_ARGUMENT
+import com.hartwig.actin.configuration.OVERRIDE_YAML_DESCRIPTION
 import com.hartwig.actin.util.ApplicationConfig
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Options
-import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -18,7 +19,18 @@ data class StandardOfCareConfig(
     val personalizationDataPath: String?,
     val overridesYaml: String?
 ) {
+
     companion object {
+        private val LOGGER: Logger = LogManager.getLogger(StandardOfCareConfig::class)
+
+        private const val PATIENT_JSON = "patient_json"
+        private const val DOID_JSON = "doid_json"
+        private const val ATC_TSV = "atc_tsv"
+        private const val TREATMENT_DIRECTORY = "treatment_directory"
+        private const val RUN_HISTORICALLY = "run_historically"
+        private const val PERSONALIZATION_DATA_PATH = "personalization_data_path"
+        private const val LOG_DEBUG = "log_debug"
+
         fun createOptions(): Options {
             val options = Options()
             options.addOption(PATIENT_JSON, true, "File containing the patient record")
@@ -31,12 +43,11 @@ data class StandardOfCareConfig(
                 "If set, runs the algo with a date just after the original patient registration date"
             )
             options.addOption(PERSONALIZATION_DATA_PATH, true, "Path to personalization data file")
-            options.addOption(OVERRIDES_YAML, true, "Path to optional configuration overrides YAML file")
+            options.addOption(OVERRIDE_YAML_ARGUMENT, true, OVERRIDE_YAML_DESCRIPTION)
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
             return options
         }
 
-        @Throws(ParseException::class)
         fun createConfig(cmd: CommandLine): StandardOfCareConfig {
             if (cmd.hasOption(LOG_DEBUG)) {
                 Configurator.setRootLevel(Level.DEBUG)
@@ -53,18 +64,8 @@ data class StandardOfCareConfig(
                 runHistorically = runHistorically,
                 atcTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_TSV),
                 personalizationDataPath = ApplicationConfig.optionalFile(cmd, PERSONALIZATION_DATA_PATH),
-                overridesYaml = ApplicationConfig.optionalFile(cmd, OVERRIDES_YAML)
+                overridesYaml = ApplicationConfig.optionalFile(cmd, OVERRIDE_YAML_ARGUMENT)
             )
         }
-
-        private val LOGGER: Logger = LogManager.getLogger(StandardOfCareConfig::class)
-        private const val PATIENT_JSON = "patient_json"
-        private const val DOID_JSON = "doid_json"
-        private const val ATC_TSV = "atc_tsv"
-        private const val TREATMENT_DIRECTORY = "treatment_directory"
-        private const val RUN_HISTORICALLY = "run_historically"
-        private const val LOG_DEBUG = "log_debug"
-        private const val OVERRIDES_YAML = "overrides_yaml"
-        private const val PERSONALIZATION_DATA_PATH = "personalization_data_path"
     }
 }

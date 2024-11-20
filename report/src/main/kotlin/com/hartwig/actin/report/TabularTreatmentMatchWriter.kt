@@ -9,14 +9,13 @@ import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.trial.util.EligibilityFunctionDisplay
 import java.io.BufferedWriter
 import java.io.File
-import java.io.IOException
 import java.time.format.DateTimeFormatter
 
 object TabularTreatmentMatchWriter {
+
     private val DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     private const val DELIMITER = "\t"
 
-    @Throws(IOException::class)
     fun writeEvaluationSummaryToTsv(treatmentMatch: TreatmentMatch, tsv: String) {
         File(tsv).bufferedWriter().use { out ->
             writeLine(out, createEvaluationSummaryHeader())
@@ -38,6 +37,7 @@ object TabularTreatmentMatchWriter {
                     ).joinToString(DELIMITER)
                     writeLine(out, cohortLine)
                 }
+
                 if (trialMatch.cohorts.isEmpty()) {
                     val trialLine = listOf(
                         treatmentMatch.patientId,
@@ -80,7 +80,6 @@ object TabularTreatmentMatchWriter {
             .toSet()
     }
 
-    @Throws(IOException::class)
     fun writeEvaluationDetailsToTsv(treatmentMatch: TreatmentMatch, tsv: String) {
         File(tsv).bufferedWriter().use { out ->
             writeLine(out, createEvaluationDetailsHeader())

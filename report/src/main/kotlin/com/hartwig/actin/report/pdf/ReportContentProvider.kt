@@ -46,6 +46,8 @@ import org.apache.logging.log4j.LogManager
 
 class ReportContentProvider(private val report: Report, private val enableExtendedMode: Boolean = false) {
 
+    private val logger = LogManager.getLogger(ReportContentProvider::class.java)
+
     fun provideChapters(): List<ReportChapter> {
         val (includeEfficacyEvidenceDetailsChapter, includeTrialMatchingDetailsChapter) = when {
             !enableExtendedMode -> {
@@ -53,12 +55,12 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             }
 
             report.config.includeSOCLiteratureEfficacyEvidence -> {
-                LOGGER.info("Including SOC literature details")
+                logger.info("Including SOC literature details")
                 Pair(true, false)
             }
 
             else -> {
-                LOGGER.info("Including trial matching details")
+                logger.info("Including trial matching details")
                 Pair(false, true)
             }
         }
@@ -250,9 +252,5 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             original,
             filtered
         )
-    }
-
-    companion object {
-        private val LOGGER = LogManager.getLogger(ReportContentProvider::class.java)
     }
 }

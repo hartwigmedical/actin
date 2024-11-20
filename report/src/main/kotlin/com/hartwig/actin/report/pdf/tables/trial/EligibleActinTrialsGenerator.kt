@@ -17,6 +17,7 @@ class EligibleActinTrialsGenerator(
     private val molecularEventColWidth: Float,
     private val checksColWidth: Float
 ) : TableGenerator {
+
     override fun title(): String {
         return title
     }
@@ -47,7 +48,6 @@ class EligibleActinTrialsGenerator(
     }
 
     companion object {
-
         fun forOpenCohorts(
             cohorts: List<InterpretedCohort>, source: String?, width: Float, slotsAvailable: Boolean
         ): Pair<EligibleActinTrialsGenerator, List<InterpretedCohort>> {

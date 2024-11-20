@@ -11,6 +11,7 @@ import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
 
 class PersonalizedEvidenceChapter(private val report: Report, override val include: Boolean) : ReportChapter {
+
     override fun name(): String {
         return "SOC personalized real-world evidence annotation"
     }

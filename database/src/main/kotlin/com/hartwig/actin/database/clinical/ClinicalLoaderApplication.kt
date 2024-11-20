@@ -28,20 +28,23 @@ class ClinicalLoaderApplication(private val config: ClinicalLoaderConfig) {
     }
 
     companion object {
-        val LOGGER: Logger = LogManager.getLogger(ClinicalLoaderApplication::class.java)
         const val APPLICATION = "ACTIN Clinical Loader"
-        private val VERSION = ClinicalLoaderApplication::class.java.getPackage().implementationVersion
+
+        val LOGGER: Logger = LogManager.getLogger(ClinicalLoaderApplication::class.java)
+        private val VERSION = ClinicalLoaderApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
     }
 }
 
 fun main(args: Array<String>) {
     val options: Options = ClinicalLoaderConfig.createOptions()
+    val config: ClinicalLoaderConfig
     try {
-        val config = ClinicalLoaderConfig.createConfig(DefaultParser().parse(options, args))
-        ClinicalLoaderApplication(config).run()
+        config = ClinicalLoaderConfig.createConfig(DefaultParser().parse(options, args))
     } catch (exception: ParseException) {
         ClinicalLoaderApplication.LOGGER.warn(exception)
         HelpFormatter().printHelp(ClinicalLoaderApplication.APPLICATION, options)
         exitProcess(1)
     }
+
+    ClinicalLoaderApplication(config).run()
 }

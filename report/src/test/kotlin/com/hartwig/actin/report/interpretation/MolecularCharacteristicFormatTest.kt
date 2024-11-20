@@ -18,6 +18,7 @@ class MolecularCharacteristicFormatTest {
                 )
             )
         ).isEqualTo("TMB high (61)")
+
         assertThat(
             MolecularCharacteristicFormat.formatTumorMutationalBurden(
                 MolecularCharacteristics(
@@ -26,6 +27,7 @@ class MolecularCharacteristicFormatTest {
                 )
             )
         ).isEqualTo("TMB low (61)")
+
         assertThat(
             MolecularCharacteristicFormat.formatTumorMutationalBurden(
                 MolecularCharacteristics(
@@ -46,6 +48,7 @@ class MolecularCharacteristicFormatTest {
                 )
             )
         ).isEqualTo("TML high (10)")
+
         assertThat(
             MolecularCharacteristicFormat.formatTumorMutationalLoad(
                 MolecularCharacteristics(
@@ -54,6 +57,7 @@ class MolecularCharacteristicFormatTest {
                 )
             )
         ).isEqualTo("TML low (10)")
+
         assertThat(
             MolecularCharacteristicFormat.formatTumorMutationalLoad(
                 MolecularCharacteristics(
@@ -73,6 +77,7 @@ class MolecularCharacteristicFormatTest {
                 )
             )
         ).isEqualTo("Unstable")
+
         assertThat(
             MolecularCharacteristicFormat.formatMicrosatelliteStability(
                 MolecularCharacteristics(
@@ -80,6 +85,7 @@ class MolecularCharacteristicFormatTest {
                 )
             )
         ).isEqualTo("Stable")
+
         assertThat(
             MolecularCharacteristicFormat.formatMicrosatelliteStability(
                 MolecularCharacteristics(
@@ -101,6 +107,7 @@ class MolecularCharacteristicFormatTest {
                 )
             )
         ).isEqualTo("Deficient (1) - BRCA1-type (BRCA1 value: 2)")
+
         assertThat(
             MolecularCharacteristicFormat.formatHomologousRepair(
                 MolecularCharacteristics(
@@ -109,6 +116,7 @@ class MolecularCharacteristicFormatTest {
                 )
             )
         ).isEqualTo("Proficient (1)")
+
         assertThat(
             MolecularCharacteristicFormat.formatHomologousRepair(
                 MolecularCharacteristics(

@@ -36,7 +36,6 @@ class MolecularCharacteristicsGeneratorTest {
             .isEqualTo("Deficient (0.81) - BRCA2-type (BRCA2 value: 0.78)")
     }
 
-
     private fun withHomologousRepairStatusAndType(
         isHrd: Boolean,
         hrScore: Double = 0.0,

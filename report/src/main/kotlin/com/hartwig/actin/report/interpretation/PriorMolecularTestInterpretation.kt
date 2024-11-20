@@ -8,6 +8,7 @@ data class PriorMolecularTestInterpretation(
 data class PriorMolecularTestResultInterpretation(val grouping: String, val details: String, val sortPrecedence: Int = 0)
 
 class PriorMolecularTestInterpretationBuilder {
+
     private val results = mutableMapOf<Triple<String, String, String>, Int>()
 
     fun addInterpretation(type: String, grouping: String, details: String, sortPrecedence: Int = 0) {
