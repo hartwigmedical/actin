@@ -8,15 +8,24 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasKnownBrainMetastases : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val hasBrainMetastases = record.tumor.hasConfirmedOrSuspectedBrainLesions()
-            ?: return EvaluationFactory.fail(
-                "Data regarding presence of brain metastases is missing - assuming there are none",
-                "Assuming no known brain metastases"
-            )
-        return if (hasBrainMetastases) {
-            EvaluationFactory.pass("Brain metastases are present", "Brain metastases")
-        } else {
-            EvaluationFactory.fail("No known brain metastases present", "No known brain metastases")
+        with(record.tumor) {
+            return when {
+                hasBrainLesions == true -> {
+                    EvaluationFactory.pass("Brain metastases are present", "Brain metastases")
+                }
+
+                hasSuspectedBrainLesions == true -> {
+                    val message = "Brain metastases present but suspected lesions only"
+                    EvaluationFactory.warn(message, message)
+                }
+
+                hasBrainLesions == null -> {
+                    val message = "Undetermined if brain metastases present (data missing)"
+                    EvaluationFactory.undetermined(message, message)
+                }
+
+                else -> EvaluationFactory.fail("No known brain metastases present", "No known brain metastases")
+            }
         }
     }
 }

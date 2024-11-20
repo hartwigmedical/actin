@@ -19,6 +19,17 @@ data class SharedDataLoaderConfig(
 ) : DatabaseLoaderConfig {
 
     companion object {
+        private val LOGGER = LogManager.getLogger(SharedDataLoaderConfig::class.java)
+
+        private const val SHARED_DATA_DIRECTORY = "shared_data_directory"
+        private const val CLINICAL_DIRECTORY = "clinical_directory"
+        private const val MOLECULAR_DIRECTORY = "molecular_directory"
+        private const val WRITE_DATA_TO_DB = "write_data_to_db"
+        private const val DB_USER = "db_user"
+        private const val DB_PASS = "db_pass"
+        private const val DB_URL = "db_url"
+        private const val LOG_DEBUG = "log_debug"
+
         fun createOptions(): Options {
             val options = Options()
             options.addOption(SHARED_DATA_DIRECTORY, true, "Directory containing the shared data to be loaded")
@@ -48,15 +59,5 @@ data class SharedDataLoaderConfig(
                 dbUrl = ApplicationConfig.nonOptionalValue(cmd, DB_URL)
             )
         }
-
-        private val LOGGER = LogManager.getLogger(SharedDataLoaderConfig::class.java)
-        private const val SHARED_DATA_DIRECTORY = "shared_data_directory"
-        private const val CLINICAL_DIRECTORY = "clinical_directory"
-        private const val MOLECULAR_DIRECTORY = "molecular_directory"
-        private const val WRITE_DATA_TO_DB = "write_data_to_db"
-        private const val DB_USER = "db_user"
-        private const val DB_PASS = "db_pass"
-        private const val DB_URL = "db_url"
-        private const val LOG_DEBUG = "log_debug"
     }
 }

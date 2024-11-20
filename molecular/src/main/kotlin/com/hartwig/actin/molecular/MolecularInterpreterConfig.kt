@@ -24,6 +24,22 @@ data class MolecularInterpreterConfig(
 ) {
 
     companion object {
+        private val LOGGER: Logger = LogManager.getLogger(MolecularInterpreterConfig::class.java)
+
+        private const val CLINICAL_JSON: String = "clinical_json"
+        private const val ORANGE_JSON: String = "orange_json"
+        private const val SERVE_DIRECTORY: String = "serve_directory"
+        private const val DOID_JSON: String = "doid_json"
+        private const val ONCO_DNDS_DATABASE_PATH: String = "onco_dnds_database_path"
+        private const val TSG_DNDS_DATABASE_PATH: String = "tsg_dnds_database_path"
+        private const val REFERENCE_GENOME_FASTA_PATH = "ref_genome_fasta_file"
+        private const val ENSEMBL_CACHE_PATH = "ensembl_data_dir"
+        private const val DRIVER_GENE_PANEL_PATH = "driver_gene_panel"
+        private const val KNOWN_FUSIONS_PATH = "known_fusions_file"
+        private const val TEMP_DIR: String = "temp"
+        private const val OUTPUT_DIRECTORY: String = "output_directory"
+        private const val LOG_DEBUG: String = "log_debug"
+
         fun createOptions(): Options {
             val options = Options()
             options.addOption(CLINICAL_JSON, true, "The clinical JSON of the patient for which a sample is analyzed")
@@ -62,21 +78,5 @@ data class MolecularInterpreterConfig(
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY)
             )
         }
-
-        private val LOGGER: Logger = LogManager.getLogger(MolecularInterpreterConfig::class.java)
-
-        private const val CLINICAL_JSON: String = "clinical_json"
-        private const val ORANGE_JSON: String = "orange_json"
-        private const val SERVE_DIRECTORY: String = "serve_directory"
-        private const val DOID_JSON: String = "doid_json"
-        private const val ONCO_DNDS_DATABASE_PATH: String = "onco_dnds_database_path"
-        private const val TSG_DNDS_DATABASE_PATH: String = "tsg_dnds_database_path"
-        private const val REFERENCE_GENOME_FASTA_PATH = "ref_genome_fasta_file"
-        private const val ENSEMBL_CACHE_PATH = "ensembl_data_dir"
-        private const val DRIVER_GENE_PANEL_PATH = "driver_gene_panel"
-        private const val KNOWN_FUSIONS_PATH = "known_fusions_file"
-        private const val TEMP_DIR: String = "temp"
-        private const val OUTPUT_DIRECTORY: String = "output_directory"
-        private const val LOG_DEBUG: String = "log_debug"
     }
 }

@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.clinical.CypInteraction
+import com.hartwig.actin.datamodel.clinical.DrugInteraction
 
 class CurrentlyGetsCypXInhibitingOrInducingMedication(
     private val selector: MedicationSelector, private val termToFind: String
@@ -15,7 +15,7 @@ class CurrentlyGetsCypXInhibitingOrInducingMedication(
         val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
         val cypMedications = medications.filter { medication ->
             medication.cypInteractions
-                .any { it.cyp == termToFind && (it.type == CypInteraction.Type.INDUCER || it.type == CypInteraction.Type.INHIBITOR) }
+                .any { it.name == termToFind && (it.type == DrugInteraction.Type.INDUCER || it.type == DrugInteraction.Type.INHIBITOR) }
         }
 
         val activeCypMedications = cypMedications.filter { selector.isActive(it) }.map { it.name }.toSet()

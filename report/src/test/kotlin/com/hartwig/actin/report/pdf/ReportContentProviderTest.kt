@@ -3,6 +3,7 @@ package com.hartwig.actin.report.pdf
 import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.report.datamodel.TestReportFactory
+import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 import com.hartwig.actin.report.pdf.chapters.ClinicalDetailsChapter
 import com.hartwig.actin.report.pdf.chapters.EfficacyEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.EfficacyEvidenceDetailsChapter
@@ -33,6 +34,7 @@ private const val VALUE_WIDTH = 200f
 private const val CONTENT_WIDTH = 300f
 
 class ReportContentProviderTest {
+
     private val proper = TestReportFactory.createProperTestReport()
 
     @Test
@@ -41,7 +43,8 @@ class ReportContentProviderTest {
         val eligibleActinTrialsGenerators = ReportContentProvider(report).provideSummaryTables(
             KEY_WIDTH,
             VALUE_WIDTH,
-            CONTENT_WIDTH
+            CONTENT_WIDTH,
+            InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
         ).filterIsInstance<EligibleActinTrialsGenerator>()
         val trialMatchingChapter = ReportContentProvider(report).provideChapters().filterIsInstance<TrialMatchingChapter>().first()
         val eligibleGenerators = trialMatchingChapter.createGenerators().filterIsInstance<EligibleActinTrialsGenerator>()
@@ -97,7 +100,7 @@ class ReportContentProviderTest {
     }
 
     @Test
-    fun `Should omit molecular chapter and include both efficacy chapters and resistance evidencde chapter when CRC profile is provided in extended mode`() {
+    fun `Should omit molecular chapter and include both efficacy chapters and resistance evidence chapter when CRC profile is provided in extended mode`() {
         val report = proper.copy(
             config = EnvironmentConfiguration.create(null, "CRC").report
         )
@@ -145,7 +148,7 @@ class ReportContentProviderTest {
     @Test
     fun `Should provide expected summary tables for default configuration`() {
         val tables = ReportContentProvider(TestReportFactory.createExhaustiveTestReport())
-            .provideSummaryTables(KEY_WIDTH, VALUE_WIDTH, CONTENT_WIDTH)
+            .provideSummaryTables(KEY_WIDTH, VALUE_WIDTH, CONTENT_WIDTH, emptyList())
 
         assertThat(tables.map { it::class }).containsExactly(
             PatientClinicalHistoryGenerator::class,
@@ -153,6 +156,7 @@ class ReportContentProviderTest {
             EligibleApprovedTreatmentGenerator::class,
             EligibleActinTrialsGenerator::class,
             EligibleActinTrialsGenerator::class,
+            EligibleExternalTrialsGenerator::class,
             EligibleExternalTrialsGenerator::class
         )
     }
@@ -162,7 +166,7 @@ class ReportContentProviderTest {
         val report = TestReportFactory.createExhaustiveTestReport().copy(
             patientRecord = proper.patientRecord.copy(molecularHistory = MolecularHistory.empty())
         )
-        val tables = ReportContentProvider(report).provideSummaryTables(KEY_WIDTH, VALUE_WIDTH, CONTENT_WIDTH)
+        val tables = ReportContentProvider(report).provideSummaryTables(KEY_WIDTH, VALUE_WIDTH, CONTENT_WIDTH, emptyList())
 
         assertThat(tables.map { it::class }).containsExactly(
             PatientClinicalHistoryGenerator::class,
@@ -178,13 +182,14 @@ class ReportContentProviderTest {
             config = EnvironmentConfiguration.create(null, "CRC").report
         )
         val tables = ReportContentProvider(report)
-            .provideSummaryTables(KEY_WIDTH, VALUE_WIDTH, CONTENT_WIDTH)
+            .provideSummaryTables(KEY_WIDTH, VALUE_WIDTH, CONTENT_WIDTH, emptyList())
 
         assertThat(tables.map { it::class }).containsExactly(
             PatientClinicalHistoryWithOverviewGenerator::class,
             SOCEligibleApprovedTreatmentGenerator::class,
             EligibleActinTrialsGenerator::class,
             EligibleActinTrialsGenerator::class,
+            EligibleExternalTrialsGenerator::class,
             EligibleExternalTrialsGenerator::class,
             IneligibleActinTrialsGenerator::class
         )

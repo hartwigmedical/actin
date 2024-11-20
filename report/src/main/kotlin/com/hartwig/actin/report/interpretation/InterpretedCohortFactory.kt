@@ -9,6 +9,7 @@ import com.hartwig.actin.datamodel.trial.CohortMetadata
 import com.hartwig.actin.datamodel.trial.Eligibility
 
 object InterpretedCohortFactory {
+
     fun createEvaluableCohorts(treatmentMatch: TreatmentMatch, filterOnSOCExhaustionAndTumorType: Boolean): List<InterpretedCohort> {
         return filteredMatches(
             treatmentMatch.trialMatches, filterOnSOCExhaustionAndTumorType, TrialMatch::evaluations
@@ -22,7 +23,7 @@ object InterpretedCohortFactory {
             val trialIsOpen = identification.open
             val phase = identification.phase
             val missingGenesForTrial = trialMatch.evaluations.values.any { it.isMissingGenesForSufficientEvaluation }
-            // Handle case of trial without cohorts.
+
             if (trialMatch.cohorts.isEmpty()) {
                 listOf(
                     InterpretedCohort(
@@ -106,7 +107,8 @@ object InterpretedCohortFactory {
     ) = if (!filterOnSOCExhaustionAndTumorType) matches else {
         matches.filter {
             val trialWarningsAndFails = extractWarnings(evaluations(it)) + extractFails(evaluations(it))
-            !trialWarningsAndFails.any { trialWarningOrFail -> trialWarningOrFail.contains("Patient has not exhausted SOC") } && "Tumor type" !in trialWarningsAndFails
+            !trialWarningsAndFails.any { trialWarningOrFail -> trialWarningOrFail.contains("Patient has not exhausted SOC") }
+                    && "Tumor type" !in trialWarningsAndFails
         }
     }
 

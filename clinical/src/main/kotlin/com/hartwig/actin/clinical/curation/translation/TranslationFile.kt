@@ -2,13 +2,12 @@ package com.hartwig.actin.clinical.curation.translation
 
 import com.hartwig.actin.util.TabularFile
 import java.io.File
-import java.io.IOException
 import java.nio.file.Files
 
 object TranslationFile {
+
     private const val DELIMITER = "\t"
 
-    @Throws(IOException::class)
     fun <T> read(tsv: String, factory: TranslationFactory<T>): List<T> {
         val lines = Files.readAllLines(File(tsv).toPath())
         val fields = TabularFile.createFields(lines[0].split(DELIMITER.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())

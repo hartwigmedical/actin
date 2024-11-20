@@ -44,15 +44,24 @@ fun Set<ExternalTrialSummary>.filterNotInCountryOfReference(country: CountryName
 
 fun Set<ExternalTrialSummary>.filterExclusivelyInChildrensHospitals(): Set<ExternalTrialSummary> {
     return this.filter {
-        !it.hospitals.all(Hospital::isChildrensHospital)
+        it.hospitals.isEmpty() || !it.hospitals.all(Hospital::isChildrensHospital)
     }.toSet()
 }
 
-fun Set<ExternalTrialSummary>.filterMolecularCriteriaAlreadyPresent(internalEvaluatedCohorts: List<InterpretedCohort>): Set<ExternalTrialSummary> {
+fun Set<ExternalTrialSummary>.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(internalEvaluatedCohorts: List<InterpretedCohort>): Set<ExternalTrialSummary> {
+    return filterMolecularCriteriaAlreadyPresent(internalEvaluatedCohorts.flatMap { it.molecularEvents }.toSet())
+}
+
+fun Set<ExternalTrialSummary>.filterMolecularCriteriaAlreadyPresentInTrials(trials: Set<ExternalTrialSummary>): Set<ExternalTrialSummary> {
+    return filterMolecularCriteriaAlreadyPresent(trials.flatMap { it.actinMolecularEvents }.toSet())
+}
+
+private fun Set<ExternalTrialSummary>.filterMolecularCriteriaAlreadyPresent(presentEvents: Set<String>): Set<ExternalTrialSummary> {
     return filter {
-        it.actinMolecularEvents.subtract(internalEvaluatedCohorts.flatMap { e -> e.molecularEvents }.toSet()).isNotEmpty()
+        it.actinMolecularEvents.subtract(presentEvents).isNotEmpty()
     }.toSet()
 }
+
 
 object ExternalTrialSummarizer {
 

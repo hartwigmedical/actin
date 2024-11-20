@@ -3,9 +3,9 @@ package com.hartwig.actin.report.pdf
 import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import org.junit.Test
-import java.io.IOException
 
 class ReportWriterTest {
+
     private val reports = listOf(
         TestReportFactory.createMinimalTestReport(),
         TestReportFactory.createProperTestReport(),
@@ -14,14 +14,12 @@ class ReportWriterTest {
     private val memoryWriter = ReportWriterFactory.createInMemoryReportWriter()
 
     @Test
-    @Throws(IOException::class)
-    fun canGenerateInMemoryTrialReports() {
+    fun `Should generate in-memory trial matching reports`() {
         reports.forEach(memoryWriter::write)
     }
 
     @Test
-    @Throws(IOException::class)
-    fun canGenerateInMemoryCRCReports() {
+    fun `Should generate in-memory CRC reports`() {
         val crcConfig = EnvironmentConfiguration.create(null, "CRC").report
         reports.forEach { memoryWriter.write(it.copy(config = crcConfig)) }
     }

@@ -63,18 +63,31 @@ class GeneIsWildType(private val gene: String, maxTestAge: LocalDate? = null) : 
                 }
             }
         }
-        val evaluation = if (reportableEventsWithEffect.isNotEmpty()) {
-            EvaluationFactory.fail(
-                "Gene $gene is not considered wild-type due to ${Format.concat(reportableEventsWithEffect)}",
-                "$gene not wild-type"
-            )
-        } else {
+
+        val potentialWarnEvaluation =
             evaluatePotentialWarns(reportableEventsWithNoEffect, reportableEventsWithEffectPotentiallyWildtype, evidenceSource)
-                ?: EvaluationFactory.pass(
+
+        return when {
+            reportableEventsWithEffect.isNotEmpty() ->
+                EvaluationFactory.fail(
+                    "Gene $gene is not considered wild-type due to ${Format.concat(reportableEventsWithEffect)}",
+                    "$gene not wild-type"
+                )
+
+            potentialWarnEvaluation != null -> potentialWarnEvaluation
+
+            test.hasSufficientQualityButLowPurity() ->
+                EvaluationFactory.warn(
+                    "Gene $gene is considered wild-type although tumor purity is low",
+                    "$gene is wild-type although tumor purity is low",
+                    inclusionEvents = setOf("$gene wild-type")
+                )
+
+            else ->
+                EvaluationFactory.pass(
                     "Gene $gene is considered wild-type", "$gene is wild-type", inclusionEvents = setOf("$gene wild-type")
                 )
         }
-        return evaluation
     }
 
     private fun evaluatePotentialWarns(

@@ -13,16 +13,15 @@ import com.hartwig.actin.datamodel.clinical.Gender
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.withPrecision
 import org.junit.Test
-import java.io.IOException
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 class EmcClinicalFeedReaderTest {
 
     @Test
-    @Throws(IOException::class)
     fun canReadFromTestDirectory() {
         val feed = read(FEED_DIRECTORY)
+
         assertPatients(feed.patientEntries)
         assertQuestionnaires(feed.questionnaireEntries)
         assertSurgeries(feed.surgeryEntries)

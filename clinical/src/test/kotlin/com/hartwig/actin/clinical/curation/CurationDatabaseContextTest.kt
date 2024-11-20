@@ -3,7 +3,7 @@ package com.hartwig.actin.clinical.curation
 import com.hartwig.actin.clinical.UnusedCurationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfigValidationError
-import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
+import com.hartwig.actin.clinical.curation.config.DrugInteractionConfig
 import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
@@ -60,7 +60,7 @@ class CurationDatabaseContextTest {
     @Test
     fun `Should combine all unused configs in curation databases, except cyp, qt and blood transfusions`() {
         val expectedUnusedConfig = IntRange(0, 20).map { UnusedCurationConfig(CurationCategory.TOXICITY.name, it.toString()) }
-        val cypInteractionCuration = mockk<CurationDatabase<CypInteractionConfig>>()
+        val cypInteractionCuration = mockk<CurationDatabase<DrugInteractionConfig>>()
         val qtProlongingCuration = mockk<CurationDatabase<QTProlongatingConfig>>()
         val bloodTransfusionTranslation = mockk<TranslationDatabase<String>>()
         val context = CurationDatabaseContext(

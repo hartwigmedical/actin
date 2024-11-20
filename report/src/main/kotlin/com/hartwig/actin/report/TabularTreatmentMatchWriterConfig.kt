@@ -3,7 +3,6 @@ package com.hartwig.actin.report
 import com.hartwig.actin.util.ApplicationConfig
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Options
-import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -16,6 +15,7 @@ data class TabularTreatmentMatchWriterConfig(
 
     companion object {
         val LOGGER: Logger = LogManager.getLogger(TabularTreatmentMatchWriterConfig::class.java)
+
         private const val TREATMENT_MATCH_JSON = "treatment_match_json"
         private const val OUTPUT_DIRECTORY = "output_directory"
         private const val LOG_DEBUG = "log_debug"
@@ -28,12 +28,12 @@ data class TabularTreatmentMatchWriterConfig(
             return options
         }
 
-        @Throws(ParseException::class)
         fun createConfig(cmd: CommandLine): TabularTreatmentMatchWriterConfig {
             if (cmd.hasOption(LOG_DEBUG)) {
                 Configurator.setRootLevel(Level.DEBUG)
                 LOGGER.debug("Switched root level logging to DEBUG")
             }
+
             return TabularTreatmentMatchWriterConfig(
                 treatmentMatchJson = ApplicationConfig.nonOptionalFile(cmd, TREATMENT_MATCH_JSON),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY)

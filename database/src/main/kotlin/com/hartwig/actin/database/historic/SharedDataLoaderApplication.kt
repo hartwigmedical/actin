@@ -6,7 +6,6 @@ import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.database.dao.DatabaseAccess
 import com.hartwig.actin.database.historic.serialization.HistoricMolecularDeserializer
 import com.hartwig.actin.database.historic.serialization.HistoricTreatmentMatchDeserializer
-import com.hartwig.actin.database.molecular.MolecularLoaderApplication
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import org.apache.commons.cli.DefaultParser
@@ -144,21 +143,23 @@ class SharedDataLoaderApplication(private val config: SharedDataLoaderConfig) {
     }
 
     companion object {
-        val LOGGER: Logger = LogManager.getLogger(MolecularLoaderApplication::class.java)
         const val APPLICATION = "ACTIN Shared Data Loader"
 
-        private val VERSION = MolecularLoaderApplication::class.java.getPackage().implementationVersion
+        val LOGGER: Logger = LogManager.getLogger(SharedDataLoaderApplication::class.java)
+        private val VERSION = SharedDataLoaderApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
     }
 }
 
 fun main(args: Array<String>) {
     val options: Options = SharedDataLoaderConfig.createOptions()
+    val config: SharedDataLoaderConfig
     try {
-        val config = SharedDataLoaderConfig.createConfig(DefaultParser().parse(options, args))
-        SharedDataLoaderApplication(config).run()
+        config = SharedDataLoaderConfig.createConfig(DefaultParser().parse(options, args))
     } catch (exception: ParseException) {
         SharedDataLoaderApplication.LOGGER.warn(exception)
         HelpFormatter().printHelp(SharedDataLoaderApplication.APPLICATION, options)
         exitProcess(1)
     }
+
+    SharedDataLoaderApplication(config).run()
 }

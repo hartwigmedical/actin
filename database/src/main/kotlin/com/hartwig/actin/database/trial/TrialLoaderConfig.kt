@@ -16,6 +16,14 @@ data class TrialLoaderConfig(
 ) : DatabaseLoaderConfig {
 
     companion object {
+        private val LOGGER = LogManager.getLogger(TrialLoaderConfig::class.java)
+
+        private const val TRIAL_DATABASE_DIRECTORY = "trial_database_directory"
+        private const val DB_USER = "db_user"
+        private const val DB_PASS = "db_pass"
+        private const val DB_URL = "db_url"
+        private const val LOG_DEBUG = "log_debug"
+
         fun createOptions(): Options {
             val options = Options()
             options.addOption(TRIAL_DATABASE_DIRECTORY, true, "Directory containing all the trials that are expected to be loaded")
@@ -38,12 +46,5 @@ data class TrialLoaderConfig(
                 dbUrl = ApplicationConfig.nonOptionalValue(cmd, DB_URL)
             )
         }
-
-        private val LOGGER = LogManager.getLogger(TrialLoaderConfig::class.java)
-        private const val TRIAL_DATABASE_DIRECTORY = "trial_database_directory"
-        private const val DB_USER = "db_user"
-        private const val DB_PASS = "db_pass"
-        private const val DB_URL = "db_url"
-        private const val LOG_DEBUG = "log_debug"
     }
 }

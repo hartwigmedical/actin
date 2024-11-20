@@ -215,15 +215,16 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
     }
 
     companion object {
-        val LOGGER: Logger = LogManager.getLogger(MolecularInterpreterApplication::class.java)
         const val APPLICATION: String = "ACTIN Molecular Interpreter"
-        private val VERSION = MolecularInterpreterApplication::class.java.getPackage().implementationVersion
+
+        val LOGGER: Logger = LogManager.getLogger(MolecularInterpreterApplication::class.java)
+        private val VERSION = MolecularInterpreterApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
     }
 }
 
 fun main(args: Array<String>) {
     val options: Options = MolecularInterpreterConfig.createOptions()
-    val config: MolecularInterpreterConfig?
+    val config: MolecularInterpreterConfig
     try {
         config = MolecularInterpreterConfig.createConfig(DefaultParser().parse(options, args))
     } catch (exception: ParseException) {

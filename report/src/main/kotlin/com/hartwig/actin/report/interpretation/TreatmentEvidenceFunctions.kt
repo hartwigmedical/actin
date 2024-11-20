@@ -82,7 +82,7 @@ object TreatmentEvidenceFunctions {
         }.toSet()
     }
 
-    fun groupByTreatment(treatmentEvidence: List<TreatmentEvidence>) =
+    private fun groupByTreatment(treatmentEvidence: List<TreatmentEvidence>) =
         treatmentEvidence.groupBy { it.treatment }
 
     fun groupByTreatmentAndCancerType(treatmentEvidence: List<TreatmentEvidence>) =

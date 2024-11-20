@@ -7,18 +7,20 @@ import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.gene.ActionableGene
 import com.hartwig.serve.datamodel.gene.GeneEvent
 
-class HomozygousDisruptionEvidence(private val actionableGenes: List<ActionableGene>) :
+class HomozygousDisruptionEvidence(private val actionableGenes: Map<String, List<ActionableGene>>) :
     EvidenceMatcher<HomozygousDisruption> {
 
     override fun findMatches(event: HomozygousDisruption): List<ActionableEvent> {
-        return actionableGenes.filter { it.gene() == event.gene }
+        return actionableGenes[event.gene] ?: emptyList()
     }
 
     companion object {
         private val APPLICABLE_GENE_EVENTS = setOf(GeneEvent.DELETION, GeneEvent.INACTIVATION, GeneEvent.ANY_MUTATION)
 
         fun create(actionableEvents: ActionableEvents): HomozygousDisruptionEvidence {
-            return HomozygousDisruptionEvidence(actionableEvents.genes().filter { APPLICABLE_GENE_EVENTS.contains(it.event()) })
+            return HomozygousDisruptionEvidence(
+                actionableEvents.genes().filter { APPLICABLE_GENE_EVENTS.contains(it.event()) }.groupBy(ActionableGene::gene)
+            )
         }
     }
 }

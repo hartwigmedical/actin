@@ -19,6 +19,7 @@ import com.hartwig.actin.report.pdf.util.Formats
 import kotlin.math.min
 
 class MolecularDriverEntryFactory(private val molecularDriversInterpreter: MolecularDriversInterpreter) {
+
     fun create(): List<MolecularDriverEntry> {
         with(molecularDriversInterpreter) {
             return listOf(

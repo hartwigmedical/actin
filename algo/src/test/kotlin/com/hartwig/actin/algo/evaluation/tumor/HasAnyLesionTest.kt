@@ -1,29 +1,37 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
-import com.google.common.collect.Lists
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.Test
 
 class HasAnyLesionTest {
+
+    private val function = HasAnyLesion()
+
     @Test
-    fun canEvaluate() {
-        val function = HasAnyLesion()
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withBoneLesions(true)))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withLiverLesions(true)))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withCnsLesions(true)))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withBrainLesions(true)))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withLungLesions(true)))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withLymphNodeLesions(true)))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withOtherLesions(Lists.newArrayList("other"))))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withBoneLesions(false)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withLiverLesions(false)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withCnsLesions(false)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withBrainLesions(false)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withLungLesions(false)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withLymphNodeLesions(false)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withOtherLesions(Lists.newArrayList())))
+    fun `Should fail if patient has no lesions`() {
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withNoConfirmedLesions()))
+    }
+
+    @Test
+    fun `Should evaluate to pass if only one type of lesion present`() {
+        listOf(
+            TumorTestFactory.withBoneLesions(true),
+            TumorTestFactory.withLiverLesions(true),
+            TumorTestFactory.withCnsLesions(true),
+            TumorTestFactory.withBrainLesions(true),
+            TumorTestFactory.withLungLesions(true),
+            TumorTestFactory.withLymphNodeLesions(true)
+        ).forEach { patient -> assertEvaluation(EvaluationResult.PASS, function.evaluate(patient)) }
+    }
+
+    @Test
+    fun `Should evaluate to pass if only other lesions are present`() {
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withOtherLesions(listOf("other"))))
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if only suspected lesions are present`() {
+        assertEvaluation(EvaluationResult.WARN, function.evaluate(TumorTestFactory.withOtherSuspectedLesions(listOf("lesion"))))
     }
 }

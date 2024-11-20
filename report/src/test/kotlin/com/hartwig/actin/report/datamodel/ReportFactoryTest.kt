@@ -8,6 +8,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class ReportFactoryTest {
+
     @Test
     fun `Should create report from test data`() {
         assertThat(
@@ -17,6 +18,7 @@ class ReportFactoryTest {
                 ReportConfiguration()
             )
         ).isNotNull
+
         assertThat(
             fromInputs(
                 TestPatientFactory.createProperTestPatientRecord(),
@@ -30,6 +32,7 @@ class ReportFactoryTest {
     fun `Should use clinical patient ID on mismatch`() {
         val patient = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(patientId = "clinical")
         val treatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch().copy(patientId = "treatment-match")
+
         assertThat(fromInputs(patient, treatmentMatch, ReportConfiguration()).patientId).isEqualTo("clinical")
     }
 }

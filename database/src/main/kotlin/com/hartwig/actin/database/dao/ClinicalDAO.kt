@@ -22,8 +22,8 @@ import com.hartwig.actin.datamodel.clinical.VitalFunction
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.Radiotherapy
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
-import org.jooq.DSLContext
 import java.util.Optional
+import org.jooq.DSLContext
 
 internal class ClinicalDAO(private val context: DSLContext) {
 
@@ -552,7 +552,7 @@ internal class ClinicalDAO(private val context: DSLContext) {
                     medication.dosage.ifNeeded,
                     medication.startDate,
                     medication.stopDate,
-                    DataUtil.concat(medication.cypInteractions.map { "${it.strength} ${it.type} (${it.cyp})" }.toSet()),
+                    DataUtil.concat(medication.cypInteractions.map { "${it.strength} ${it.type} (${it.name})" }.toSet()),
                     medication.qtProlongatingRisk.toString(),
                     atc?.anatomicalMainGroup?.name,
                     atc?.therapeuticSubGroup?.name,

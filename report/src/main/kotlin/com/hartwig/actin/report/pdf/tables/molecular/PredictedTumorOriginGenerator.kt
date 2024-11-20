@@ -10,6 +10,9 @@ import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
+private const val PADDING_LEFT = 20
+private const val PADDING_RIGHT = 25
+
 class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, private val width: Float) : TableGenerator {
 
     override fun title(): String {
@@ -18,7 +21,8 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, priv
 
     override fun contents(): Table {
         val predictedTumorOrigin = molecular.characteristics.predictedTumorOrigin
-        val predictions = TumorOriginInterpreter.predictionsToDisplay(predictedTumorOrigin)
+        val tumorOriginInterpreter = TumorOriginInterpreter(predictedTumorOrigin)
+        val predictions = tumorOriginInterpreter.topPredictionsToDisplay()
         return if (predictions.isEmpty()) {
             val message = if (predictedTumorOrigin == null) Formats.VALUE_UNKNOWN else String.format(
                 "All tumor cohorts have a prediction lower than 10%%. Highest prediction: %s (%s)",
@@ -38,14 +42,14 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, priv
             table.addCell(Cells.createContentBold("Combined prediction score"))
             predictions.map {
                 val likelihoodCell = Cells.createContentBold(Formats.percentage(it.likelihood)).setPaddingLeft(PADDING_LEFT.toFloat())
-                if (!TumorOriginInterpreter.likelihoodMeetsConfidenceThreshold(it.likelihood)) {
+                if (!tumorOriginInterpreter.hasConfidentPrediction()) {
                     likelihoodCell.addStyle(Styles.tableNoticeStyle())
                 }
                 likelihoodCell
             }.forEach(table::addCell)
 
             table.addCell(Cells.createContent("This score is calculated by combining information on:"))
-            predictions.forEach { table.addCell(Cells.createContent("")) }
+            repeat(predictions.size) { table.addCell(Cells.createContent("")) }
             addClassifierRow("(1) SNV types", predictions, CupPrediction::snvPairwiseClassifier, table)
             addClassifierRow(
                 "(2) SNV genomic localisation distribution", predictions, CupPrediction::genomicPositionClassifier, table
@@ -57,7 +61,7 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, priv
                 Cells.createSpanningSubNote(
                     String.format(
                         "Other cohorts have a combined prediction of %s or lower",
-                        Formats.percentage(TumorOriginInterpreter.greatestOmittedLikelihood(predictedTumorOrigin!!))
+                        Formats.percentage(tumorOriginInterpreter.greatestOmittedLikelihood())
                     ), table
                 )
             )
@@ -65,21 +69,16 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, priv
         }
     }
 
-    companion object {
-        private const val PADDING_LEFT = 20
-        private const val PADDING_RIGHT = 25
-
-        private fun addClassifierRow(
-            classifierText: String, predictions: List<CupPrediction>,
-            classifierFunction: (CupPrediction) -> Double, table: Table
-        ) {
-            table.addCell(Cells.createContent(classifierText).setPaddingLeft(PADDING_LEFT.toFloat()))
-            predictions
-                .asSequence()
-                .map(classifierFunction)
-                .map(Formats::percentage)
-                .map { Cells.createContent(it).setPaddingLeft(PADDING_LEFT.toFloat()).setPaddingRight(PADDING_RIGHT.toFloat()) }
-                .forEach(table::addCell)
-        }
+    private fun addClassifierRow(
+        classifierText: String, predictions: List<CupPrediction>,
+        classifierFunction: (CupPrediction) -> Double, table: Table
+    ) {
+        table.addCell(Cells.createContent(classifierText).setPaddingLeft(PADDING_LEFT.toFloat()))
+        predictions
+            .asSequence()
+            .map(classifierFunction)
+            .map(Formats::percentage)
+            .map { Cells.createContent(it).setPaddingLeft(PADDING_LEFT.toFloat()).setPaddingRight(PADDING_RIGHT.toFloat()) }
+            .forEach(table::addCell)
     }
 }

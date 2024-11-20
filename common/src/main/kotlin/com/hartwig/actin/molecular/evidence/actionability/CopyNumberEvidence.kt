@@ -9,8 +9,8 @@ import com.hartwig.serve.datamodel.gene.ActionableGene
 import com.hartwig.serve.datamodel.gene.GeneEvent
 
 class CopyNumberEvidence(
-    private val actionableAmplifications: List<ActionableGene>,
-    private val actionableLosses: List<ActionableGene>
+    private val actionableAmplifications: Map<String, List<ActionableGene>>,
+    private val actionableLosses: Map<String, List<ActionableGene>>
 ) : EvidenceMatcher<CopyNumber> {
 
     override fun findMatches(event: CopyNumber): List<ActionableEvent> {
@@ -39,11 +39,13 @@ class CopyNumberEvidence(
                         else -> acc
                     }
                 }
-            return CopyNumberEvidence(actionableAmplifications, actionableLosses)
+            return CopyNumberEvidence(
+                actionableAmplifications.groupBy(ActionableGene::gene), actionableLosses.groupBy(ActionableGene::gene)
+            )
         }
 
-        private fun findMatches(copyNumber: CopyNumber, actionableEvents: List<ActionableGene>): List<ActionableEvent> {
-            return actionableEvents.filter { it.gene() == copyNumber.gene }
+        private fun findMatches(copyNumber: CopyNumber, actionableEvents: Map<String, List<ActionableGene>>): List<ActionableEvent> {
+            return actionableEvents[copyNumber.gene] ?: emptyList()
         }
     }
 }

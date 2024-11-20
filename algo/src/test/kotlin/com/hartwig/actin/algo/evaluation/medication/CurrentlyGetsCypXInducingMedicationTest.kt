@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.medication
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.clinical.CypInteraction
+import com.hartwig.actin.datamodel.clinical.DrugInteraction
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -17,7 +17,7 @@ class CurrentlyGetsCypXInducingMedicationTest {
     fun `Should pass when CYP inducing medication`() {
         assertEvaluation(
             EvaluationResult.PASS, alwaysActiveFunction.evaluate(
-                MedicationTestFactory.withCypInteraction(TARGET_CYP, CypInteraction.Type.INDUCER, CypInteraction.Strength.STRONG)
+                MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG)
             )
         )
     }
@@ -26,7 +26,7 @@ class CurrentlyGetsCypXInducingMedicationTest {
     fun `Should fail when CYP inducing medication that does not match CYP`() {
         assertEvaluation(
             EvaluationResult.FAIL, alwaysActiveFunction.evaluate(
-                MedicationTestFactory.withCypInteraction("3A4", CypInteraction.Type.INDUCER, CypInteraction.Strength.STRONG)
+                MedicationTestFactory.withCypInteraction("3A4", DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG)
             )
         )
     }
@@ -35,7 +35,7 @@ class CurrentlyGetsCypXInducingMedicationTest {
     fun `Should fail when no CYP inducing medication`() {
         assertEvaluation(
             EvaluationResult.FAIL, alwaysActiveFunction.evaluate(
-                MedicationTestFactory.withCypInteraction(TARGET_CYP, CypInteraction.Type.SUBSTRATE, CypInteraction.Strength.STRONG)
+                MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.SUBSTRATE, DrugInteraction.Strength.STRONG)
             )
         )
     }
@@ -49,7 +49,7 @@ class CurrentlyGetsCypXInducingMedicationTest {
     fun `Should warn when patient plans to use CYP inducing medication`() {
         assertEvaluation(
             EvaluationResult.WARN, alwaysPlannedFunction.evaluate(
-                MedicationTestFactory.withCypInteraction(TARGET_CYP, CypInteraction.Type.INDUCER, CypInteraction.Strength.STRONG)
+                MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG)
             )
         )
     }
@@ -58,7 +58,7 @@ class CurrentlyGetsCypXInducingMedicationTest {
     fun `Should fail when patient plans to use CYP medication that does not match CYP`() {
         assertEvaluation(
             EvaluationResult.FAIL, alwaysPlannedFunction.evaluate(
-                MedicationTestFactory.withCypInteraction("3A4", CypInteraction.Type.INDUCER, CypInteraction.Strength.STRONG)
+                MedicationTestFactory.withCypInteraction("3A4", DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG)
             )
         )
     }

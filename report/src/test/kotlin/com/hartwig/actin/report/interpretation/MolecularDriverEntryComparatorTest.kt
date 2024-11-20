@@ -6,8 +6,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class MolecularDriverEntryComparatorTest {
+
     @Test
-    fun canCompareMolecularDriverEntries() {
+    fun `Should sort molecular driver entries`() {
         val expectedEntries = listOf(
             create(DriverLikelihood.HIGH, "mutation", "driver 3"),
             create(DriverLikelihood.HIGH, "amplification", "driver 4"),
@@ -20,6 +21,7 @@ class MolecularDriverEntryComparatorTest {
             create(DriverLikelihood.LOW, "disruption (A)", "driver 2"),
             create(DriverLikelihood.LOW, "disruption (B)", "driver 2")
         )
+
         val entries = listOf(
             expectedEntries[7],
             expectedEntries[5],

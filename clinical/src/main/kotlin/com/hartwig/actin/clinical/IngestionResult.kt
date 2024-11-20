@@ -27,6 +27,7 @@ data class PatientIngestionResult(
     val questionnaireCurationErrors: Set<QuestionnaireCurationError>,
     val feedValidationWarnings: Set<FeedValidationWarning>
 ) {
+
     companion object {
         fun create(
             questionnaire: Questionnaire?,

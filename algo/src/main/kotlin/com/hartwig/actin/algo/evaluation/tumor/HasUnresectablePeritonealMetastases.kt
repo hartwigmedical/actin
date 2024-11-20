@@ -7,13 +7,17 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 
 class HasUnresectablePeritonealMetastases : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        return when (TumorTypeEvaluationFunctions.hasPeritonealMetastases(record.tumor)) {
-            null -> {
+        val certainPeritonealMetastasesEvaluation = TumorTypeEvaluationFunctions.hasPeritonealMetastases(record.tumor)
+        val suspectedPeritonealMetastasesEvaluation = TumorTypeEvaluationFunctions.hasSuspectedPeritonealMetastases(record.tumor)
+
+        return when {
+            certainPeritonealMetastasesEvaluation == null && suspectedPeritonealMetastasesEvaluation != true -> {
                 EvaluationFactory.undetermined("Missing metastases data")
             }
 
-            true -> {
-                EvaluationFactory.warn("Undetermined if peritoneal metastases are unresectable")
+            certainPeritonealMetastasesEvaluation == true || suspectedPeritonealMetastasesEvaluation == true -> {
+                val suspectedString = if (certainPeritonealMetastasesEvaluation != true) " (suspected)" else ""
+                EvaluationFactory.warn("Undetermined if$suspectedString peritoneal metastases are unresectable")
             }
 
             else -> {

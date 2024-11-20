@@ -22,7 +22,10 @@ import com.itextpdf.layout.element.Text
 object WGSSummaryGeneratorFunctions {
 
     fun createMolecularSummaryTitle(molecular: MolecularTest, isIncludedInTrialMatching: Boolean = false): String {
-        return "${molecular.testTypeDisplay ?: molecular.experimentType.display()} (${if (isIncludedInTrialMatching) date(molecular.date) else "${molecular.date} - Test not included in trial matching as test age exceeds cutoff."})"
+        val dateAddition = if (isIncludedInTrialMatching) date(molecular.date) else {
+            "${molecular.date} - Test not included in trial matching as test age exceeds cutoff."
+        }
+        return "${molecular.testTypeDisplay ?: molecular.experimentType.display()} ($dateAddition)"
     }
 
     fun createMolecularSummaryTable(
@@ -68,11 +71,11 @@ object WGSSummaryGeneratorFunctions {
                 .partition { it.driverLikelihood == null }
 
             if (actionableEventsWithLowOrMediumDriver.isNotEmpty() || !isShort) {
-                table.addCell(Cells.createKey("Potentially actionable events with medium/low driver:"))
+                table.addCell(Cells.createKey("Trial-relevant events, considered medium/low driver:"))
                 table.addCell(potentiallyActionableEventsCell(actionableEventsWithLowOrMediumDriver))
             }
             if (actionableEventsWithUnknownDriver.isNotEmpty()) {
-                table.addCell(Cells.createKey("Potentially actionable events not considered a driver:"))
+                table.addCell(Cells.createKey("Trial-relevant events, not considered a tumor driver:"))
                 table.addCell(potentiallyActionableEventsCell(actionableEventsWithUnknownDriver))
             }
         } else {
@@ -112,44 +115,25 @@ object WGSSummaryGeneratorFunctions {
         return if (wgsMolecular != null && purity != null) {
             val biopsyText = Text(biopsyLocation).addStyle(Styles.tableHighlightStyle())
             val purityText = Text(String.format(" (purity %s)", Formats.percentage(purity)))
-            purityText.addStyle(if (wgsMolecular.hasSufficientQualityButLowPurity()) Styles.tableNoticeStyle() else Styles.tableHighlightStyle())
+            purityText.addStyle(
+                if (wgsMolecular.hasSufficientQualityButLowPurity()) Styles.tableNoticeStyle() else Styles.tableHighlightStyle()
+            )
             Cells.create(Paragraph().addAll(listOf(biopsyText, purityText)))
         } else {
             Cells.createValue(biopsyLocation)
         }
     }
 
-    private fun tumorOriginPredictionCell(molecular: MolecularTest): Cell {
-        val wgsMolecular = if (molecular is MolecularRecord) molecular else null
-        val paragraph = Paragraph(Text(tumorOriginPrediction(molecular, wgsMolecular)).addStyle(Styles.tableHighlightStyle()))
-        val purity = molecular.characteristics.purity
-        if (wgsMolecular != null && purity != null && wgsMolecular.hasSufficientQualityButLowPurity()) {
-            val purityText = Text(" (low purity)").addStyle(Styles.tableNoticeStyle())
-            paragraph.add(purityText)
+    fun tumorOriginPredictionCell(molecular: MolecularTest): Cell {
+        val wgsMolecular = molecular as? MolecularRecord
+        val originSummary = TumorOriginInterpreter(molecular.characteristics.predictedTumorOrigin)
+            .generateSummaryString(wgsMolecular?.hasSufficientQuality)
+
+        val paragraph = Paragraph(Text(originSummary).addStyle(Styles.tableHighlightStyle()))
+        if (molecular.characteristics.purity != null && wgsMolecular?.hasSufficientQualityButLowPurity() == true) {
+            paragraph.add(Text(" (low purity)").addStyle(Styles.tableNoticeStyle()))
         }
         return Cells.create(paragraph)
-    }
-
-    private fun tumorOriginPrediction(molecular: MolecularTest, wgsMolecular: MolecularRecord?): String {
-        val predictedTumorOrigin = molecular.characteristics.predictedTumorOrigin
-        return if (TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin) && wgsMolecular?.hasSufficientQualityAndPurity() == true) {
-            TumorOriginInterpreter.interpret(predictedTumorOrigin)
-        } else if (wgsMolecular?.hasSufficientQuality == true && predictedTumorOrigin != null) {
-            val predictionsMeetingThreshold = TumorOriginInterpreter.predictionsToDisplay(predictedTumorOrigin)
-            if (predictionsMeetingThreshold.isEmpty()) {
-                String.format(
-                    "Inconclusive (%s %s)",
-                    predictedTumorOrigin.cancerType(),
-                    Formats.percentage(predictedTumorOrigin.likelihood())
-                )
-            } else {
-                String.format("Inconclusive (%s)", predictionsMeetingThreshold.joinToString(", ") {
-                    "${it.cancerType} ${Formats.percentage(it.likelihood)}"
-                })
-            }
-        } else {
-            Formats.VALUE_UNKNOWN
-        }
     }
 
     private fun tumorMutationalLoadAndTumorMutationalBurdenStatusCell(molecular: MolecularTest, status: String): Cell {
@@ -170,7 +154,9 @@ object WGSSummaryGeneratorFunctions {
             val warning = when (driver.driverLikelihood) {
                 DriverLikelihood.LOW -> " (low driver likelihood)"
                 DriverLikelihood.MEDIUM -> " (medium driver likelihood)"
-                else -> if (driver is CopyNumber) "" else " (dubious quality)"
+                else -> if (driver is CopyNumber) {
+                    " (no amplification or deletion)"
+                } else " (dubious quality)"
             }
             listOf(
                 Text(driver.event).addStyle(Styles.tableHighlightStyle()),
@@ -226,8 +212,8 @@ object WGSSummaryGeneratorFunctions {
         val characteristicsGenerator = MolecularCharacteristicsGenerator(molecular, keyWidth + valueWidth)
         val orderedKeys = getOrderedKeys(isShort)
         val keyToValueMap = mapOf(
-            "Microsatellite (in)stability" to (characteristicsGenerator.createMSStabilityString() ?: Formats.VALUE_UNKNOWN),
-            "HR status" to (characteristicsGenerator.createHRStatusString() ?: Formats.VALUE_UNKNOWN),
+            "Microsatellite (in)stability" to characteristicsGenerator.createMSStabilityString(),
+            "HR status" to characteristicsGenerator.createHRStatusString(),
             "High driver mutations" to formatList(summarizer.keyVariants()),
             "Amplified genes" to formatList(summarizer.keyAmplifiedGenes()),
             "Deleted genes" to formatList(summarizer.keyDeletedGenes()),

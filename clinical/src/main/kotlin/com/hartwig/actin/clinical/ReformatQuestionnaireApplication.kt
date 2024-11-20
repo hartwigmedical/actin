@@ -8,14 +8,13 @@ import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.io.File
-import java.io.IOException
 import java.nio.file.Files
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.system.exitProcess
 
 class ReformatQuestionnaireApplication(private val questionnaireFile: String) {
-    @Throws(IOException::class)
+
     fun run() {
         val parts = Files.readAllLines(File(questionnaireFile).toPath()).joinToString("\\n").split("\\n", limit = 2)
         val questionnaire =
@@ -30,13 +29,13 @@ class ReformatQuestionnaireApplication(private val questionnaireFile: String) {
     }
 
     companion object {
-        val LOGGER: Logger = LogManager.getLogger(ReformatQuestionnaireApplication::class.java)
-        const val QUESTIONNAIRE = "questionnaire"
         const val APPLICATION = "ACTIN Questionnaire Reformat"
+
+        const val QUESTIONNAIRE = "questionnaire"
+        val LOGGER: Logger = LogManager.getLogger(ReformatQuestionnaireApplication::class.java)
     }
 }
 
-@Throws(IOException::class)
 fun main(args: Array<String>) {
     val options = Options()
     options.addOption(ReformatQuestionnaireApplication.QUESTIONNAIRE, true, "File containing the questionnaire txt")

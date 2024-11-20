@@ -40,6 +40,7 @@ internal object QuestionnaireCuration {
                 "unknonw" to null,
                 "onknown" to null,
                 "unkown" to null,
+                "Unknown (can be seem on CT but not clearly demarcated, has not been measured before)" to null,
                 "suspect lesion" to null,
                 "unknown after surgery" to null,
                 "-" to null,

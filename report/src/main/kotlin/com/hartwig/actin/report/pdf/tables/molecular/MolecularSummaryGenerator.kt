@@ -20,6 +20,9 @@ class MolecularSummaryGenerator(
     private val isShort: Boolean,
     private val molecularTestFilter: MolecularTestFilter
 ) : TableGenerator {
+
+    private val logger = LogManager.getLogger(MolecularSummaryGenerator::class.java)
+
     override fun title(): String {
         return "Recent molecular results"
     }
@@ -30,7 +33,7 @@ class MolecularSummaryGenerator(
         for (molecularTest in patientRecord.molecularHistory.molecularTests.sortedByDescending { it.date }) {
             if ((molecularTest as? MolecularRecord)?.hasSufficientQuality != false) {
                 if (molecularTest.experimentType != ExperimentType.HARTWIG_WHOLE_GENOME) {
-                    LOGGER.warn("Generating WGS results for non-WGS sample")
+                    logger.warn("Generating WGS results for non-WGS sample")
                 }
                 val wgsGenerator = WGSSummaryGenerator(
                     molecularTest in testsIncludedInTrialMatching,
@@ -56,9 +59,5 @@ class MolecularSummaryGenerator(
         table.addCell(Cells.createEmpty())
         table.addCell(Cells.create(priorMolecularResultGenerator.contents()))
         return table
-    }
-
-    companion object {
-        private val LOGGER = LogManager.getLogger(MolecularSummaryGenerator::class.java)
     }
 }
