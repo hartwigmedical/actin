@@ -36,14 +36,14 @@ class WGSSummaryGeneratorFunctionsTest {
     @Test
     fun `Should return events concatenated and with warning string`() {
         val drivers = listOf(
-            TestCopyNumberFactory.createMinimal().copy(event = "event 1", driverLikelihood = null),
+            TestCopyNumberFactory.createMinimal().copy(event = "event 1", driverLikelihood = null, minCopies = 4),
             TestFusionFactory.createMinimal().copy(event = "event 2", driverLikelihood = null),
             TestFusionFactory.createMinimal().copy(event = "event 3", driverLikelihood = DriverLikelihood.MEDIUM)
         )
         val cell = WGSSummaryGeneratorFunctions.potentiallyActionableEventsCell(drivers)
 
         assertThat(CellTestUtil.extractTextFromCell(cell))
-            .isEqualTo("event 1 (no amplification or deletion), event 2 (dubious quality), event 3 (medium driver likelihood)")
+            .isEqualTo("event 1 (no amplification or deletion - 4 copies), event 2 (dubious quality), event 3 (medium driver likelihood)")
     }
 
     @Test
