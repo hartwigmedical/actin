@@ -19,8 +19,6 @@ object Tables {
             table.addCell(Cells.createSpanningNoneEntry(table))
         }
 
-        table.isSkipLastFooter = true
-
         val wrappingTable = Table(1).setMinWidth(table.width)
 
         table.children.filterIsInstance<Cell>().forEach { it.setKeepTogether(true) }
@@ -30,9 +28,11 @@ object Tables {
                 Cells.createSpanningSubNote("The table continues on the next page", table).setVerticalAlignment(VerticalAlignment.BOTTOM)
             )
             wrappingTable.addHeaderCell(Cells.createSubNote("Continued from the previous page"))
+                .setSkipFirstHeader(true)
+                .setSkipLastFooter(true)
         }
 
-        wrappingTable.setSkipFirstHeader(true).setSkipLastFooter(true).addCell(Cells.create(table).setPadding(0f))
+        wrappingTable.addCell(Cells.create(table).setPaddingBottom(17.5f))
         return wrappingTable
     }
 }
