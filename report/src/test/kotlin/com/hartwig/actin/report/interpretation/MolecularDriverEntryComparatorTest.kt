@@ -40,15 +40,13 @@ class MolecularDriverEntryComparatorTest {
         }
     }
 
-    companion object {
-        private fun create(driverLikelihood: DriverLikelihood, driverType: String, driver: String): MolecularDriverEntry {
-            return MolecularDriverEntry(
-                driverType = driverType,
-                displayedName = driver,
-                eventName = driver,
-                driverLikelihood = driverLikelihood,
-                evidenceTier = EvidenceTier.I
-            )
-        }
+    private fun create(driverLikelihood: DriverLikelihood, driverType: String, driver: String): MolecularDriverEntry {
+        return MolecularDriverEntry(
+            driverType = driverType,
+            name = driver,
+            eventName = driver,
+            driverLikelihood = driverLikelihood,
+            evidenceTier = EvidenceTier.I
+        )
     }
 }

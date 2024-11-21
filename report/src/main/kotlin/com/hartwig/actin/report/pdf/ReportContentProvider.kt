@@ -84,7 +84,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 report.config.includeRawPathologyReport,
                 nationalTrials.filtered + internationalTrials.filtered
             ),
-            LongitudinalMolecularHistoryChapter(report, include = report.config.includeLongitudinalMolecularChapter),
+            LongitudinalMolecularHistoryChapter(report, cohorts, include = report.config.includeLongitudinalMolecularChapter),
             EfficacyEvidenceChapter(report, include = report.config.includeSOCLiteratureEfficacyEvidence),
             ClinicalDetailsChapter(report, include = report.config.includeClinicalDetailsChapter),
             EfficacyEvidenceDetailsChapter(report, include = includeEfficacyEvidenceDetailsChapter),

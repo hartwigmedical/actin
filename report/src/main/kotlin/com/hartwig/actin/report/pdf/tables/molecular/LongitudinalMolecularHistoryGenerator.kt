@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.molecular.Drivers
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.Variant
+import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortsSummarizer
 import com.hartwig.actin.report.interpretation.MolecularDriverEntry
 import com.hartwig.actin.report.interpretation.MolecularDriverEntryFactory
@@ -14,12 +15,13 @@ import com.hartwig.actin.report.pdf.util.Formats.VALUE_NOT_AVAILABLE
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
-class LongitudinalMolecularHistoryGenerator(private val molecularHistory: MolecularHistory, private val width: Float) : TableGenerator {
+class LongitudinalMolecularHistoryGenerator(
+    private val molecularHistory: MolecularHistory, private val cohorts: List<InterpretedCohort>, private val width: Float
+) : TableGenerator {
 
     private val driverSortOrder: Comparator<MolecularDriverEntry> = compareBy(
         MolecularDriverEntry::evidenceTier,
         MolecularDriverEntry::driverLikelihood,
-        MolecularDriverEntry::gene,
         MolecularDriverEntry::eventName
     )
 
@@ -40,7 +42,7 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
         headers.forEach { table.addHeaderCell(Cells.createHeader(it)) }
 
         val allDrivers = molecularHistory.molecularTests.map(MolecularTest::drivers).reduce(Drivers::combine)
-        val molecularDriversInterpreter = MolecularDriversInterpreter(allDrivers, InterpretedCohortsSummarizer(emptyMap(), emptySet()))
+        val molecularDriversInterpreter = MolecularDriversInterpreter(allDrivers, InterpretedCohortsSummarizer.fromCohorts(cohorts))
 
         MolecularDriverEntryFactory(molecularDriversInterpreter).create()
             .sortedWith(driverSortOrder)
