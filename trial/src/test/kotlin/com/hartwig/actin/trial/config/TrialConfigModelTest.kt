@@ -4,14 +4,20 @@ import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import com.hartwig.actin.trial.TestTrialData
 import com.hartwig.actin.trial.interpretation.TestEligibilityFactoryFactory
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Assert
 import org.junit.Test
 
 class TrialConfigModelTest {
 
+    private val trialConfigDirectory = resourceOnClasspath("trial_config")
+
     @Test
     fun `Should create from trial config directory`() {
-        Assert.assertNotNull(TrialConfigModel.create(TRIAL_CONFIG_DIRECTORY, TestEligibilityFactoryFactory.createTestEligibilityFactory()))
+        assertThat(
+            TrialConfigModel.create(
+                trialConfigDirectory,
+                TestEligibilityFactoryFactory.createTestEligibilityFactory()
+            )
+        ).isNotNull()
     }
 
     @Test
@@ -42,9 +48,5 @@ class TrialConfigModelTest {
         assertThat(model.cohortsForTrial(TestTrialData.TEST_TRIAL_METC_2)).hasSize(0)
         assertThat(model.generalInclusionCriteriaForTrial(TestTrialData.TEST_TRIAL_METC_2)).hasSize(1)
         assertThat(model.referencesForTrial(TestTrialData.TEST_TRIAL_METC_2)).hasSize(1)
-    }
-
-    companion object {
-        private val TRIAL_CONFIG_DIRECTORY = resourceOnClasspath("trial_config")
     }
 }

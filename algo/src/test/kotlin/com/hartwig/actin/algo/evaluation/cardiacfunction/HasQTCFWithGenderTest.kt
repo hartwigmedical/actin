@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.evaluation.cardiacfunction.CardiacFunctionTestFact
 import com.hartwig.actin.algo.evaluation.general.GeneralTestFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.Gender
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class HasQTCFWithGenderTest {
@@ -31,8 +31,8 @@ class HasQTCFWithGenderTest {
         val atMostEvaluation = hasQTCFOfAtMostWithGenderFunction.evaluate(CardiacFunctionTestFactory.withECG(null))
         EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, atLeastEvaluation)
         EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, atMostEvaluation)
-        Assert.assertTrue(atLeastEvaluation.recoverable)
-        Assert.assertTrue(atMostEvaluation.recoverable)
+        assertThat(atLeastEvaluation.recoverable).isTrue()
+        assertThat(atMostEvaluation.recoverable).isTrue()
     }
 
     @Test
