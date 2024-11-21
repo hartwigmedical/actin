@@ -1,9 +1,9 @@
 package com.hartwig.actin.report.pdf.util
 
+import com.hartwig.actin.report.pdf.util.Cells.createSpanningSubNote
 import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.properties.UnitValue
-import com.itextpdf.layout.properties.VerticalAlignment
 
 object Tables {
 
@@ -22,18 +22,18 @@ object Tables {
 
         val wrappingTable = Table(1).setMinWidth(table.width)
 
-        table.children.filterIsInstance<Cell>().forEach { it.setKeepTogether(true) }
+        table.children.filterIsInstance<Cell>().forEach { it.setKeepTogether(true).setPadding(0f) }
 
         if (printSubNotes) {
             wrappingTable.addFooterCell(
-                Cells.createSpanningSubNote("The table continues on the next page", table).setVerticalAlignment(VerticalAlignment.BOTTOM)
+                createSpanningSubNote("The table continues on the next page", table).setFixedPosition(30f, 40f, 0f)
             )
             wrappingTable.addHeaderCell(Cells.createSubNote("Continued from the previous page"))
                 .setSkipFirstHeader(true)
                 .setSkipLastFooter(true)
         }
 
-        wrappingTable.addCell(Cells.create(table).setPaddingBottom(17.5f))
+        wrappingTable.addCell(Cells.create(table))
         return wrappingTable
     }
 }
