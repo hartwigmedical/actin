@@ -22,18 +22,18 @@ object Tables {
 
         val wrappingTable = Table(1).setMinWidth(table.width)
 
-        table.children.filterIsInstance<Cell>().forEach { it.setKeepTogether(true).setPadding(0f) }
+        table.children.filterIsInstance<Cell>().forEach { it.setKeepTogether(true) }
 
         if (printSubNotes) {
             wrappingTable.addFooterCell(
-                createSpanningSubNote("The table continues on the next page", table).setFixedPosition(30f, 40f, 0f)
+                createSpanningSubNote("The table continues on the next page", table).setFixedPosition(30f, 35f, 0f)
             )
             wrappingTable.addHeaderCell(Cells.createSubNote("Continued from the previous page"))
                 .setSkipFirstHeader(true)
                 .setSkipLastFooter(true)
         }
 
-        wrappingTable.addCell(Cells.create(table)).setPadding(0f)
+        wrappingTable.addCell(Cells.create(table).setPadding(0f))
         return wrappingTable
     }
 }
