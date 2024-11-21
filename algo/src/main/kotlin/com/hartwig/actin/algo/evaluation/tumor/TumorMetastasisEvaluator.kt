@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.datamodel.algo.Evaluation
 
 object TumorMetastasisEvaluator {
+
     fun evaluate(hasMetastases: Boolean?, hasSuspectedMetastases: Boolean?, metastasisType: String): Evaluation {
         val capitalizedType = metastasisType.replaceFirstChar { it.uppercase() }
         return when {

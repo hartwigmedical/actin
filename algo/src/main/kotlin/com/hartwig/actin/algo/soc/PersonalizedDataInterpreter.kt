@@ -16,6 +16,7 @@ import com.hartwig.actin.personalization.similarity.population.Measurement as Po
 import com.hartwig.actin.personalization.similarity.population.PersonalizedDataAnalysis as PersonalAnalysis
 
 class PersonalizedDataInterpreter(private val analyzer: PersonalizedDataAnalyzer) {
+
     private val measurementTypeLookup = MeasurementType.entries.associateBy { it.name }
 
     fun interpret(patient: PatientRecord): PersonalizedDataAnalysis {

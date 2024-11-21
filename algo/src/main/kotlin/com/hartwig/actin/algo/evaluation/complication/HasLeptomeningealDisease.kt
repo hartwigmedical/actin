@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
 class HasLeptomeningealDisease : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val leptomeningealComplications = ComplicationFunctions.findComplicationNamesMatchingAnyCategory(
             record, LEPTOMENINGEAL_DISEASE_CATEGORY_PATTERNS

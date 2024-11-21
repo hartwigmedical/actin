@@ -8,7 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasReceivedPlatinumBasedDoublet : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-
         val message = "received platinum based doublet chemotherapy"
 
         return when {

@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
 class HasAnyComplication: EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         return record.clinicalStatus.hasComplications?.let { hasComplications: Boolean ->
             if (hasComplications) {

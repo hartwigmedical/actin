@@ -12,6 +12,7 @@ import com.hartwig.actin.datamodel.clinical.ReceptorType
 import java.time.LocalDate
 
 class HasPositiveHER2ExpressionByIHC(private val maxTestAge: LocalDate? = null) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val receptorType = ReceptorType.HER2
         val (indeterminateIhcTests, validIhcTests) = PriorIHCTestFunctions.allIHCTestsForProtein(record.priorIHCTests, receptorType.name)
@@ -109,7 +110,6 @@ class HasPositiveHER2ExpressionByIHC(private val maxTestAge: LocalDate? = null) 
                 "Patient does not have positive HER2 expression determined by IHC",
                 "No positive IHC HER2 expression"
             )
-
         }
     }
 }

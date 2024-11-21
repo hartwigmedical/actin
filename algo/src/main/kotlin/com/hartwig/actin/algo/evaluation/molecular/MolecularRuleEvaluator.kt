@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import java.time.LocalDate
 
 object MolecularRuleEvaluator {
+
     fun geneIsAmplifiedForPatient(gene: String, record: PatientRecord, maxTestAge: LocalDate?): Boolean {
         return GeneIsAmplified(gene, null, maxTestAge).evaluate(record).result == EvaluationResult.PASS
     }
