@@ -44,8 +44,9 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         LOGGER.info(" Loaded {} known genes", knownGenes.size)
         val geneFilter = GeneFilterFactory.createFromKnownGenes(knownGenes)
 
-        val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
         val configInterpreter = configInterpreter(EnvironmentConfiguration.create(config.overridesYaml).trial)
+        val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
+
         LOGGER.info("Creating ATC tree from file {}", config.atcTsv)
         val atcTree = AtcTree.createFromFile(config.atcTsv)
 
@@ -76,6 +77,8 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
     }
 
     private fun configInterpreter(configuration: TrialConfiguration): TrialStatusConfigInterpreter {
+        LOGGER.info(" Using trial configuration: $configuration")
+
         if (config.ctcConfigDirectory != null && config.nkiConfigDirectory != null) {
             throw IllegalArgumentException("Only one of CTC and NKI config directories can be specified")
         }
@@ -119,9 +122,10 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
     }
 
     companion object {
-        val LOGGER: Logger = LogManager.getLogger(TrialCreatorApplication::class.java)
         const val APPLICATION = "ACTIN Trial Creator"
-        private val VERSION: String = TrialCreatorApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
+
+        val LOGGER: Logger = LogManager.getLogger(TrialCreatorApplication::class.java)
+        private val VERSION = TrialCreatorApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
     }
 }
 
@@ -135,5 +139,6 @@ fun main(args: Array<String>) {
         HelpFormatter().printHelp(TrialCreatorApplication.APPLICATION, options)
         exitProcess(1)
     }
+
     TrialCreatorApplication(config).run()
 }

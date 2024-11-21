@@ -9,6 +9,7 @@ import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
 class BloodTransfusionGenerator(private val bloodTransfusions: List<BloodTransfusion>, private val totalWidth: Float) : TableGenerator {
+
     override fun title(): String {
         return "Blood transfusions"
     }

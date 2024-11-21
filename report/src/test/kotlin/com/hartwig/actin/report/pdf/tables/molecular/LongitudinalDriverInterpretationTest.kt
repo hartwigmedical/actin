@@ -29,8 +29,6 @@ class LongitudinalDriverInterpretationTest {
         assertThat(result).isEqualTo(withUnknownProteinEffect("Amplification"))
     }
 
-    private fun withUnknownProteinEffect(variantType: String) = "$variantType\nUnknown protein effect"
-
     @Test
     fun `Should interpret deletion`() {
         val result = LongitudinalDriverInterpretation.interpret(
@@ -76,4 +74,6 @@ class LongitudinalDriverInterpretationTest {
         )
         assertThat(result).isEqualTo("Missense\n$expectedDescription")
     }
+
+    private fun withUnknownProteinEffect(variantType: String) = "$variantType\nUnknown protein effect"
 }

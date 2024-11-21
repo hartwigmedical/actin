@@ -20,6 +20,7 @@ private val BASE_EXTERNAL_TRIAL_SUMMARY = ExternalTrialSummary(
 )
 
 class EligibleExternalTrialGeneratorFunctionsTest {
+
     private val externalTrialNetherlandsGermany = BASE_EXTERNAL_TRIAL_SUMMARY.copy(
         countries = countrySet(
             TestClinicalEvidenceFactory.createCountry(

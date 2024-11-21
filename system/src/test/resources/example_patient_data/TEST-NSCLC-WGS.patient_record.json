@@ -1,5 +1,5 @@
 {
-  "patientId": "EXAMPLE-LUNG-01",
+  "patientId": "TEST-NSCLC-WGS",
   "patient": {
     "gender": "FEMALE",
     "birthYear": 1975,
@@ -368,8 +368,8 @@
   "molecularHistory": {
     "molecularTests": [
       {
-        "patientId": "EXAMPLE-LUNG-01",
-        "sampleId": "EXAMPLE-LUNG-01-T",
+        "patientId": "TEST-NSCLC-WGS",
+        "sampleId": "TEST-NSCLC-WGS-T",
         "refGenomeVersion": "V37",
         "externalTrialSource": "Hartwig",
         "containsTumorCells": true,

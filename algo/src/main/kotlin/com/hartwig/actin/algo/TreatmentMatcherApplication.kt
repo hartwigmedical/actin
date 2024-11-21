@@ -21,13 +21,13 @@ import com.hartwig.actin.trial.serialization.TrialJson
 import com.hartwig.serve.datamodel.RefGenome
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.serialization.ServeJson
-import java.time.Period
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.time.Period
 import kotlin.system.exitProcess
 
 class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
@@ -59,8 +59,9 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
         val functionInputResolver =
             FunctionInputResolver(doidModel, molecularInputChecker, treatmentDatabase, MedicationCategories.create(atcTree))
-        val environmentConfiguration =
-            config.overridesYaml?.let { EnvironmentConfiguration.create(config.overridesYaml) } ?: EnvironmentConfiguration()
+        val configuration = EnvironmentConfiguration.create(config.overridesYaml).algo
+        LOGGER.info(" Loaded algo config: $configuration")
+
         val resources = RuleMappingResources(
             referenceDateProvider,
             doidModel,
@@ -68,9 +69,8 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
             atcTree,
             treatmentDatabase,
             config.personalizationDataPath,
-            environmentConfiguration.algo,
-            environmentConfiguration.algo.maxMolecularTestAgeInDays?.let { referenceDateProvider.date().minus(Period.ofDays(it)) }
-
+            configuration,
+            configuration.maxMolecularTestAgeInDays?.let { referenceDateProvider.date().minus(Period.ofDays(it)) }
         )
         val evidenceEntries = EfficacyEntryFactory(treatmentDatabase).extractEfficacyEvidenceFromCkbFile(config.extendedEfficacyJson)
 
@@ -110,20 +110,23 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
     }
 
     companion object {
-        val LOGGER: Logger = LogManager.getLogger(TreatmentMatcherApplication::class.java)
         const val APPLICATION = "ACTIN Treatment Matcher"
-        val VERSION: String = TreatmentMatcherApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
+
+        val LOGGER: Logger = LogManager.getLogger(TreatmentMatcherApplication::class.java)
+        private val VERSION = TreatmentMatcherApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
     }
 }
 
 fun main(args: Array<String>) {
     val options: Options = TreatmentMatcherConfig.createOptions()
+    val config: TreatmentMatcherConfig
     try {
-        val config = TreatmentMatcherConfig.createConfig(DefaultParser().parse(options, args))
-        TreatmentMatcherApplication(config).run()
+        config = TreatmentMatcherConfig.createConfig(DefaultParser().parse(options, args))
     } catch (exception: ParseException) {
         TreatmentMatcherApplication.LOGGER.error(exception)
         HelpFormatter().printHelp(TreatmentMatcherApplication.APPLICATION, options)
         exitProcess(1)
     }
+
+    TreatmentMatcherApplication(config).run()
 }

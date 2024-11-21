@@ -3,9 +3,9 @@ package com.hartwig.actin.clinical.correction
 import com.hartwig.actin.util.Paths
 import org.apache.logging.log4j.LogManager
 import java.io.File
-import java.io.IOException
 
 class QuestionnaireRawEntryMapper(private val correctionMap: Map<String, String>) {
+
     tailrec fun correctQuestionnaireEntry(
         questionnaireText: String,
         keyIterator: Iterator<String> = correctionMap.keys.iterator(),
@@ -34,7 +34,6 @@ class QuestionnaireRawEntryMapper(private val correctionMap: Map<String, String>
         private const val HEADER_ORIGINAL = "original"
         private const val HEADER_CORRECTED = "corrected"
 
-        @Throws(IOException::class)
         fun createFromCurationDirectory(curationDirectory: String): QuestionnaireRawEntryMapper {
             val filePath = Paths.forceTrailingFileSeparator(curationDirectory) + QUESTIONNAIRE_MAPPING_TSV
             val lines = File(filePath).readLines()

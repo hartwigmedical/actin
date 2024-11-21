@@ -14,14 +14,13 @@ import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.FunctionInputResolver
-import java.io.IOException
-import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import kotlin.system.exitProcess
 
 class StandardOfCareApplication(private val config: StandardOfCareConfig) {
 
@@ -40,15 +39,15 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
         LOGGER.info("Creating ATC tree from file {}", config.atcTsv)
         val atcTree = AtcTree.createFromFile(config.atcTsv)
 
-        LOGGER.info("Loading treatment data from {}", config.treatmentDirectory)
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
 
         val referenceDateProvider = ReferenceDateProviderFactory.create(patient, config.runHistorically)
         val functionInputResolver = FunctionInputResolver(
             doidModel, MolecularInputChecker.createAnyGeneValid(), treatmentDatabase, MedicationCategories.create(atcTree)
         )
-        val environmentConfiguration =
-            config.overridesYaml?.let { EnvironmentConfiguration.create(config.overridesYaml) } ?: EnvironmentConfiguration()
+        val configuration = EnvironmentConfiguration.create(config.overridesYaml).algo
+        LOGGER.info(" Loaded algo config: $configuration")
+
         val resources = RuleMappingResources(
             referenceDateProvider,
             doidModel,
@@ -56,7 +55,7 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
             atcTree,
             treatmentDatabase,
             config.personalizationDataPath,
-            environmentConfiguration.algo
+            configuration
         )
         val recommendationEngine = RecommendationEngineFactory(resources).create()
 
@@ -74,13 +73,13 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
     }
 
     companion object {
-        val LOGGER: Logger = LogManager.getLogger(StandardOfCareApplication::class.java)
         const val APPLICATION = "ACTIN Standard of Care"
-        private val VERSION = StandardOfCareApplication::class.java.getPackage().implementationVersion
+
+        val LOGGER: Logger = LogManager.getLogger(StandardOfCareApplication::class.java)
+        private val VERSION = StandardOfCareApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
     }
 }
 
-@Throws(IOException::class)
 fun main(args: Array<String>) {
     val options: Options = StandardOfCareConfig.createOptions()
 

@@ -12,6 +12,7 @@ import com.hartwig.actin.report.pdf.tables.molecular.MolecularDriversGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.PathologyReportGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.PredictedTumorOriginGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.PriorIHCResultGenerator
+import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummary
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Formats.date
@@ -22,8 +23,12 @@ import com.itextpdf.layout.borders.Border
 import com.itextpdf.layout.element.Div
 
 class MolecularDetailsChapter(
-    private val report: Report, override val include: Boolean, private val includeRawPathologyReport: Boolean
+    private val report: Report,
+    override val include: Boolean,
+    private val includeRawPathologyReport: Boolean,
+    private val trials: Set<ExternalTrialSummary>
 ) : ReportChapter {
+
     override fun name(): String {
         return "Molecular Details"
     }
@@ -35,7 +40,6 @@ class MolecularDetailsChapter(
     override fun render(document: Document) {
         addChapterTitle(document)
         addMolecularDetails(document)
-        document.add(Div().setHeight(20F))
         if (includeRawPathologyReport) report.patientRecord.tumor.rawPathologyReport?.let { addPathologyReport(document) }
     }
 
@@ -59,7 +63,7 @@ class MolecularDetailsChapter(
                 InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
 
             val generators =
-                listOf(MolecularCharacteristicsGenerator(molecular, contentWidth())) + tumorDetailsGenerators(molecular, cohorts)
+                listOf(MolecularCharacteristicsGenerator(molecular, contentWidth())) + tumorDetailsGenerators(molecular, cohorts, trials)
             addGenerators(generators, table, addSubTitle = true)
 
             if (!molecular.hasSufficientQuality) {
@@ -69,7 +73,11 @@ class MolecularDetailsChapter(
         document.add(table)
     }
 
-    private fun tumorDetailsGenerators(molecular: MolecularRecord, evaluated: List<InterpretedCohort>): List<TableGenerator> {
+    private fun tumorDetailsGenerators(
+        molecular: MolecularRecord,
+        evaluated: List<InterpretedCohort>,
+        trials: Set<ExternalTrialSummary>
+    ): List<TableGenerator> {
         return if (molecular.hasSufficientQuality) {
             listOf(
                 PredictedTumorOriginGenerator(molecular, contentWidth()),
@@ -77,7 +85,7 @@ class MolecularDetailsChapter(
                     report.treatmentMatch.trialSource,
                     molecular,
                     evaluated,
-                    report.treatmentMatch.trialMatches,
+                    trials,
                     contentWidth()
                 )
             )
@@ -85,6 +93,7 @@ class MolecularDetailsChapter(
     }
 
     private fun addPathologyReport(document: Document) {
+        document.add(Div().setHeight(20F))
         val table = Tables.createSingleColWithWidth(contentWidth())
         val generator = PathologyReportGenerator(report.patientRecord.tumor, contentWidth())
         table.addCell(Cells.createTitle(generator.title()))

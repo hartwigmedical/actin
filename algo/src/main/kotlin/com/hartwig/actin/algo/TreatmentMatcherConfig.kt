@@ -5,7 +5,6 @@ import com.hartwig.actin.configuration.OVERRIDE_YAML_DESCRIPTION
 import com.hartwig.actin.util.ApplicationConfig
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Options
-import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -26,6 +25,20 @@ data class TreatmentMatcherConfig(
 ) {
 
     companion object {
+        val LOGGER: Logger = LogManager.getLogger(TreatmentMatcherConfig::class.java)
+
+        private const val PATIENT_RECORD_JSON = "patient_json"
+        private const val TRIAL_DATABASE_DIRECTORY = "trial_database_directory"
+        private const val TREATMENT_DIRECTORY = "treatment_directory"
+        private const val DOID_JSON = "doid_json"
+        private const val ATC_TSV = "atc_tsv"
+        private const val EXTENDED_EFFICACY_JSON = "extended_efficacy_json"
+        private const val PERSONALIZATION_DATA_PATH = "personalization_data_path"
+        private const val SERVE_DIRECTORY: String = "serve_directory"
+        private const val OUTPUT_DIRECTORY = "output_directory"
+        private const val RUN_HISTORICALLY = "run_historically"
+        private const val TRIAL_SOURCE = "trial_source"
+        private const val LOG_DEBUG = "log_debug"
 
         fun createOptions(): Options {
             val options = Options()
@@ -53,7 +66,6 @@ data class TreatmentMatcherConfig(
             return options
         }
 
-        @Throws(ParseException::class)
         fun createConfig(cmd: CommandLine): TreatmentMatcherConfig {
             if (cmd.hasOption(LOG_DEBUG)) {
                 Configurator.setRootLevel(Level.DEBUG)
@@ -79,19 +91,5 @@ data class TreatmentMatcherConfig(
                 overridesYaml = ApplicationConfig.optionalFile(cmd, OVERRIDE_YAML_ARGUMENT)
             )
         }
-
-        val LOGGER: Logger = LogManager.getLogger(TreatmentMatcherConfig::class.java)
-        private const val PATIENT_RECORD_JSON = "patient_json"
-        private const val TRIAL_DATABASE_DIRECTORY = "trial_database_directory"
-        private const val TREATMENT_DIRECTORY = "treatment_directory"
-        private const val DOID_JSON = "doid_json"
-        private const val ATC_TSV = "atc_tsv"
-        private const val EXTENDED_EFFICACY_JSON = "extended_efficacy_json"
-        private const val PERSONALIZATION_DATA_PATH = "personalization_data_path"
-        private const val SERVE_DIRECTORY: String = "serve_directory"
-        private const val OUTPUT_DIRECTORY = "output_directory"
-        private const val RUN_HISTORICALLY = "run_historically"
-        private const val TRIAL_SOURCE = "trial_source"
-        private const val LOG_DEBUG = "log_debug"
     }
 }

@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.report.pdf.util.Formats
 
 object TumorDetailsInterpreter {
+
     const val CUP_LOCATION = "Unknown"
     const val CUP_SUB_LOCATION = "CUP"
 
@@ -16,9 +17,13 @@ object TumorDetailsInterpreter {
     fun lesions(tumor: TumorDetails): String {
         val allCategorizedLesions = with(tumor) {
             listOf(
-                Triple(TumorDetails.CNS, hasCnsLesions, hasSuspectedCnsLesions),
                 Triple(
-                    TumorDetails.BRAIN,
+                    TumorDetails.CNS + if (hasCnsLesions == true && hasActiveCnsLesions == true) " (active)" else "",
+                    hasCnsLesions,
+                    hasSuspectedCnsLesions
+                ),
+                Triple(
+                    TumorDetails.BRAIN + if (hasBrainLesions == true && hasActiveBrainLesions == true) " (active)" else "",
                     (primaryTumorLocation == "Brain" || primaryTumorType == "Glioma" || hasBrainLesions == true),
                     hasSuspectedBrainLesions
                 ),
@@ -32,6 +37,7 @@ object TumorDetailsInterpreter {
         val confirmedCategorizedLesions = allCategorizedLesions
             .filter { it.second == true }
             .map { it.first }
+
         val suspectedCategorizedLesions = allCategorizedLesions
             .filter { it.second != true && it.third == true }
             .map { "${it.first} (suspected)" }
@@ -46,7 +52,9 @@ object TumorDetailsInterpreter {
             .sorted()
             .distinctBy(String::uppercase)
 
-        val (lymphNodeLesions, nonLymphNodeLesions) = allLesions.partition { it.lowercase().startsWith(TumorDetails.LYMPH_NODE.lowercase()) }
+        val (lymphNodeLesions, nonLymphNodeLesions) = allLesions.partition {
+            it.lowercase().startsWith(TumorDetails.LYMPH_NODE.lowercase())
+        }
         val filteredLymphNodeLesions = lymphNodeLesions.map { lesion ->
             lesion.split(" ").filterNot { it.lowercase() in setOf("lymph", "node", "nodes", "") }
                 .joinToString(" ")

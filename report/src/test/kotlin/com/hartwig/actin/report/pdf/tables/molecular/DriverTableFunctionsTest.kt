@@ -18,6 +18,7 @@ private val BASE_EXTERNAL_TRIAL_SUMMARY = ExternalTrialSummary(
 )
 
 class DriverTableFunctionsTest {
+
     private val trial1 = BASE_EXTERNAL_TRIAL_SUMMARY.copy(title = "trial 1", actinMolecularEvents = sortedSetOf("PTEN del"))
     private val trial2 = BASE_EXTERNAL_TRIAL_SUMMARY.copy(title = "trial 2", actinMolecularEvents = sortedSetOf("PTEN del", "MYC amp"))
     private val trial3 = BASE_EXTERNAL_TRIAL_SUMMARY.copy(title = "trial 3", actinMolecularEvents = sortedSetOf("PTEN del", "MYC amp"))

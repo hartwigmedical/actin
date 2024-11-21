@@ -5,9 +5,9 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.hartwig.actin.datamodel.molecular.evidence.CountryName
+import org.apache.logging.log4j.LogManager
 import java.io.File
 import java.time.LocalDate
-import org.apache.logging.log4j.LogManager
 
 enum class ConfigurationProfile {
     STANDARD,
@@ -20,6 +20,16 @@ enum class MolecularSummaryType {
     STANDARD,
     SHORT;
 }
+
+data class AlgoConfiguration(
+    val trialSource: String? = null,
+    val warnIfToxicitiesNotFromQuestionnaire: Boolean = true,
+    val maxMolecularTestAgeInDays: Int? = null
+)
+
+data class TrialConfiguration(
+    val ignoreAllNewTrialsInTrialStatusDatabase: Boolean = false,
+)
 
 data class ReportConfiguration(
     val includeOverviewWithClinicalHistorySummary: Boolean = false,
@@ -46,41 +56,31 @@ data class ReportConfiguration(
     val reportDate: LocalDate? = null
 )
 
-data class AlgoConfiguration(
-    val trialSource: String? = null,
-    val warnIfToxicitiesNotFromQuestionnaire: Boolean = true,
-    val maxMolecularTestAgeInDays: Int? = null
-)
-
-data class TrialConfiguration(
-    val ignoreAllNewTrialsInTrialStatusDatabase: Boolean = false,
-)
-
 const val OVERRIDE_YAML_ARGUMENT = "override_yaml"
 const val OVERRIDE_YAML_DESCRIPTION = "Optional file specifying configuration overrides"
 
 data class EnvironmentConfiguration(
     val algo: AlgoConfiguration = AlgoConfiguration(),
-    val report: ReportConfiguration = ReportConfiguration(),
-    val trial: TrialConfiguration = TrialConfiguration()
+    val trial: TrialConfiguration = TrialConfiguration(),
+    val report: ReportConfiguration = ReportConfiguration()
 ) {
 
     companion object {
         private val LOGGER = LogManager.getLogger(EnvironmentConfiguration::class.java)
 
-        fun create(filePath: String?, profile: String? = null): EnvironmentConfiguration {
-            val rawConfig = filePath?.let {
+        fun create(overridesPath: String?, profile: String? = null): EnvironmentConfiguration {
+            val initialConfig = overridesPath?.let {
                 val mapper = ObjectMapper(YAMLFactory())
                 mapper.registerModules(KotlinModule.Builder().configure(KotlinFeature.NullIsSameAsDefault, true).build())
                 mapper.findAndRegisterModules()
-                mapper.readValue(File(filePath), EnvironmentConfiguration::class.java)
+                mapper.readValue(File(overridesPath), EnvironmentConfiguration::class.java)
             } ?: EnvironmentConfiguration()
 
             val configProfile = profile?.let(ConfigurationProfile::valueOf) ?: ConfigurationProfile.STANDARD
 
             val configuration = when (configProfile) {
-                ConfigurationProfile.CRC -> rawConfig.copy(
-                    report = rawConfig.report.copy(
+                ConfigurationProfile.CRC -> initialConfig.copy(
+                    report = initialConfig.report.copy(
                         includeOverviewWithClinicalHistorySummary = true,
                         includeMolecularDetailsChapter = false,
                         includeIneligibleTrialsInSummary = true,
@@ -93,8 +93,8 @@ data class EnvironmentConfiguration(
                     )
                 )
 
-                ConfigurationProfile.MCGI -> rawConfig.copy(
-                    report = rawConfig.report.copy(
+                ConfigurationProfile.MCGI -> initialConfig.copy(
+                    report = initialConfig.report.copy(
                         includeMolecularDetailsChapter = false,
                         molecularSummaryType = MolecularSummaryType.NONE,
                         includeApprovedTreatmentsInSummary = false,
@@ -109,11 +109,11 @@ data class EnvironmentConfiguration(
                     )
                 )
 
-                ConfigurationProfile.STANDARD -> rawConfig
+                ConfigurationProfile.STANDARD -> initialConfig
             }
 
-            val configSource = filePath?.let { "file $it" } ?: "defaults"
-            LOGGER.info("Loaded environment configuration from $configSource using $configProfile profile:\n$configuration")
+            val configSource = overridesPath?.let { "file $it" } ?: "defaults"
+            LOGGER.info("Loaded environment configuration from $configSource using $configProfile profile.")
             return configuration
         }
     }

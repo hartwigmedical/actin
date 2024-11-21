@@ -1,5 +1,5 @@
 {
-  "patientId": "EXAMPLE-LUNG-02",
+  "patientId": "TEST-NSCLC-NGS",
   "patient": {
     "gender": "MALE",
     "birthYear": 1965,

@@ -7,8 +7,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class ClonalityInterpreterTest {
+
     @Test
-    fun shouldDetermineClonalityAccordingToThreshold() {
+    fun `Should determine clonality according to threshold`() {
         assertThat(isPotentiallySubclonal(create(ClonalityInterpreter.CLONAL_CUTOFF + 0.01))).isFalse
         assertThat(isPotentiallySubclonal(create(ClonalityInterpreter.CLONAL_CUTOFF - 0.01))).isTrue
     }

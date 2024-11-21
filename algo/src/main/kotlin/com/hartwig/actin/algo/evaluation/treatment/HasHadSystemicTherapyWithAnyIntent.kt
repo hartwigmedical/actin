@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentSinceDateFunctions.treatmentSinceMinDate
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithOr
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -46,7 +47,10 @@ class HasHadSystemicTherapyWithAnyIntent(
             }
 
             matchingTreatments[null]?.let(::anyTreatmentPotentiallySinceMinDate) == true -> {
-                EvaluationFactory.undetermined("Undetermined if intent of received systemic treatment is $intentsLowercase")
+                EvaluationFactory.undetermined(
+                    "Has received systemic treatment (${Format.concatWithCommaAndAnd(systemicTreatments.map { it.treatmentName() })}) " +
+                            "but undetermined if intent is $intentsLowercase"
+                )
             }
 
             !matchingTreatments.containsKey(true) -> {

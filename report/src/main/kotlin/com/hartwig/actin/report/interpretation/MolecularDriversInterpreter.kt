@@ -13,6 +13,7 @@ class MolecularDriversInterpreter(
     private val drivers: Drivers,
     private val interpretedCohortsSummarizer: InterpretedCohortsSummarizer
 ) {
+
     fun filteredVariants(): List<Variant> {
         return filterDrivers(drivers.variants)
     }

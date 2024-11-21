@@ -17,6 +17,7 @@ import com.hartwig.actin.report.pdf.util.Formats
 import kotlin.math.min
 
 class MolecularDriverEntryFactory(private val molecularDriversInterpreter: MolecularDriversInterpreter) {
+
     fun create(): List<MolecularDriverEntry> {
         return listOf(
             molecularDriversInterpreter.filteredVariants().map { variant: Variant -> fromVariant(variant) },
@@ -98,43 +99,41 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         )
     }
 
-    companion object {
-        private fun bestResponsiveEvidence(driver: Driver): String? {
-            val evidence = driver.evidence
-            return when {
-                approved(evidence.treatmentEvidence).isNotEmpty() -> {
-                    "Approved"
-                }
-
-                experimental(evidence.treatmentEvidence, true).isNotEmpty() -> {
-                    "On-label experimental"
-                }
-
-                experimental(evidence.treatmentEvidence, false).isNotEmpty() -> {
-                    "Off-label experimental"
-                }
-
-                preclinical(evidence.treatmentEvidence).isNotEmpty() -> {
-                    "Pre-clinical"
-                }
-
-                else -> null
+    private fun bestResponsiveEvidence(driver: Driver): String? {
+        val evidence = driver.evidence
+        return when {
+            approved(evidence.treatmentEvidence).isNotEmpty() -> {
+                "Approved"
             }
+
+            experimental(evidence.treatmentEvidence, true).isNotEmpty() -> {
+                "On-label experimental"
+            }
+
+            experimental(evidence.treatmentEvidence, false).isNotEmpty() -> {
+                "Off-label experimental"
+            }
+
+            preclinical(evidence.treatmentEvidence).isNotEmpty() -> {
+                "Pre-clinical"
+            }
+
+            else -> null
         }
+    }
 
-        private fun bestResistanceEvidence(driver: Driver): String? {
-            val evidence = driver.evidence
-            return when {
-                knownResistant(evidence.treatmentEvidence).isNotEmpty() -> {
-                    "Known resistance"
-                }
-
-                suspectResistant(evidence.treatmentEvidence).isNotEmpty() -> {
-                    "Suspect resistance"
-                }
-
-                else -> null
+    private fun bestResistanceEvidence(driver: Driver): String? {
+        val evidence = driver.evidence
+        return when {
+            knownResistant(evidence.treatmentEvidence).isNotEmpty() -> {
+                "Known resistance"
             }
+
+            suspectResistant(evidence.treatmentEvidence).isNotEmpty() -> {
+                "Suspect resistance"
+            }
+
+            else -> null
         }
     }
 }

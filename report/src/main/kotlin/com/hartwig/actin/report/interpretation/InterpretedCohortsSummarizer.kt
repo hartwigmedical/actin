@@ -18,7 +18,6 @@ class InterpretedCohortsSummarizer(
     }
 
     companion object {
-
         fun fromCohorts(cohorts: List<InterpretedCohort>): InterpretedCohortsSummarizer {
             val openCohorts = cohorts.filter(InterpretedCohort::isOpen)
 

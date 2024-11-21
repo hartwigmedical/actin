@@ -29,20 +29,23 @@ class MolecularLoaderApplication(private val config: MolecularLoaderConfig) {
     }
 
     companion object {
-        val LOGGER: Logger = LogManager.getLogger(MolecularLoaderApplication::class.java)
         const val APPLICATION = "ACTIN Molecular Loader"
-        private val VERSION = MolecularLoaderApplication::class.java.getPackage().implementationVersion
+
+        val LOGGER: Logger = LogManager.getLogger(MolecularLoaderApplication::class.java)
+        private val VERSION = MolecularLoaderApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
     }
 }
 
 fun main(args: Array<String>) {
     val options: Options = MolecularLoaderConfig.createOptions()
+    val config: MolecularLoaderConfig
     try {
-        val config = MolecularLoaderConfig.createConfig(DefaultParser().parse(options, args))
-        MolecularLoaderApplication(config).run()
+        config = MolecularLoaderConfig.createConfig(DefaultParser().parse(options, args))
     } catch (exception: ParseException) {
         MolecularLoaderApplication.LOGGER.warn(exception)
         HelpFormatter().printHelp(MolecularLoaderApplication.APPLICATION, options)
         exitProcess(1)
     }
+
+    MolecularLoaderApplication(config).run()
 }

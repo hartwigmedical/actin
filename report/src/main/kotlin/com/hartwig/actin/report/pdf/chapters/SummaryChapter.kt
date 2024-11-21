@@ -2,6 +2,7 @@ package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.report.datamodel.Report
+import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter
 import com.hartwig.actin.report.pdf.ReportContentProvider
 import com.hartwig.actin.report.pdf.util.Cells
@@ -14,7 +15,11 @@ import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
 import com.itextpdf.layout.properties.TextAlignment
 
-class SummaryChapter(private val report: Report) : ReportChapter {
+class SummaryChapter(
+    private val report: Report,
+    private val reportContentProvider: ReportContentProvider,
+    private val interpretedCohorts: List<InterpretedCohort>
+) : ReportChapter {
 
     override fun name(): String {
         return "Summary"
@@ -65,7 +70,7 @@ class SummaryChapter(private val report: Report) : ReportChapter {
         val table = Tables.createSingleColWithWidth(contentWidth)
         val keyWidth = Formats.STANDARD_KEY_WIDTH
         val valueWidth = contentWidth - keyWidth
-        val generators = ReportContentProvider(report).provideSummaryTables(keyWidth, valueWidth, contentWidth)
+        val generators = reportContentProvider.provideSummaryTables(keyWidth, valueWidth, contentWidth, interpretedCohorts)
 
         generators.flatMap { generator ->
             sequenceOf(
@@ -80,49 +85,47 @@ class SummaryChapter(private val report: Report) : ReportChapter {
         document.add(table)
     }
 
-    companion object {
-        private fun whoStatus(who: Int?): String {
-            return who?.toString() ?: Formats.VALUE_UNKNOWN
-        }
+    private fun whoStatus(who: Int?): String {
+        return who?.toString() ?: Formats.VALUE_UNKNOWN
+    }
 
-        private fun tumor(tumor: TumorDetails): String {
-            val location = tumorLocation(tumor)
-            val type = tumorType(tumor)
-            return if (location == null || type == null) {
-                Formats.VALUE_UNKNOWN
-            } else {
-                location + if (type.isNotEmpty()) " - $type" else ""
+    private fun tumor(tumor: TumorDetails): String {
+        val location = tumorLocation(tumor)
+        val type = tumorType(tumor)
+        return if (location == null || type == null) {
+            Formats.VALUE_UNKNOWN
+        } else {
+            location + if (type.isNotEmpty()) " - $type" else ""
+        }
+    }
+
+    private fun tumorLocation(tumor: TumorDetails): String? {
+        return tumor.primaryTumorLocation?.let { tumorLocation ->
+            val tumorSubLocation = tumor.primaryTumorSubLocation
+            return if (!tumorSubLocation.isNullOrEmpty()) "$tumorLocation ($tumorSubLocation)" else tumorLocation
+        }
+    }
+
+    private fun tumorType(tumor: TumorDetails): String? {
+        return tumor.primaryTumorType?.let { tumorType ->
+            val tumorSubType = tumor.primaryTumorSubType
+            if (!tumorSubType.isNullOrEmpty()) tumorSubType else tumorType
+        }
+    }
+
+    private fun stageSummary(tumor: TumorDetails): Pair<String, String> {
+        val knownStage = "Stage"
+        return when {
+            tumor.stage != null -> {
+                Pair(knownStage, tumor.stage!!.display())
             }
-        }
 
-        private fun tumorLocation(tumor: TumorDetails): String? {
-            return tumor.primaryTumorLocation?.let { tumorLocation ->
-                val tumorSubLocation = tumor.primaryTumorSubLocation
-                return if (!tumorSubLocation.isNullOrEmpty()) "$tumorLocation ($tumorSubLocation)" else tumorLocation
+            !tumor.derivedStages.isNullOrEmpty() -> {
+                Pair("Derived stage(s)", tumor.derivedStages!!.sorted().joinToString(", ") { it.display() })
             }
-        }
 
-        private fun tumorType(tumor: TumorDetails): String? {
-            return tumor.primaryTumorType?.let { tumorType ->
-                val tumorSubType = tumor.primaryTumorSubType
-                if (!tumorSubType.isNullOrEmpty()) tumorSubType else tumorType
-            }
-        }
-
-        private fun stageSummary(tumor: TumorDetails): Pair<String, String> {
-            val knownStage = "Stage"
-            return when {
-                tumor.stage != null -> {
-                    Pair(knownStage, tumor.stage!!.display())
-                }
-
-                !tumor.derivedStages.isNullOrEmpty() -> {
-                    Pair("Derived stage(s)", tumor.derivedStages!!.sorted().joinToString(", ") { it.display() })
-                }
-
-                else -> {
-                    Pair(knownStage, "Unknown")
-                }
+            else -> {
+                Pair(knownStage, "Unknown")
             }
         }
     }

@@ -137,9 +137,7 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
 
     private fun insufficientQuality() = wgsMolecular?.hasSufficientQuality == false
 
-    companion object {
-        private fun findPharmacoEntry(pharmaco: Set<PharmacoEntry>, geneToFind: PharmacoGene): PharmacoEntry? {
-            return pharmaco.find { it.gene == geneToFind }
-        }
+    private fun findPharmacoEntry(pharmaco: Set<PharmacoEntry>, geneToFind: PharmacoGene): PharmacoEntry? {
+        return pharmaco.find { it.gene == geneToFind }
     }
 }

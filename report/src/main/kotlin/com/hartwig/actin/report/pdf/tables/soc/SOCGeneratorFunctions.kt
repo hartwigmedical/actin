@@ -17,6 +17,7 @@ import com.itextpdf.layout.element.Table
 const val NA = "NA"
 
 object SOCGeneratorFunctions {
+
     private val annotatedTreatmentComparator = Comparator.nullsLast(compareByDescending<AnnotatedTreatmentMatch> { it.generalPfs?.value }
         .thenByDescending { it.annotations.size })
 

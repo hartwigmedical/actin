@@ -22,7 +22,10 @@ import com.itextpdf.layout.element.Text
 object WGSSummaryGeneratorFunctions {
 
     fun createMolecularSummaryTitle(molecular: MolecularTest, isIncludedInTrialMatching: Boolean = false): String {
-        return "${molecular.testTypeDisplay ?: molecular.experimentType.display()} (${if (isIncludedInTrialMatching) date(molecular.date) else "${molecular.date} - Test not included in trial matching as test age exceeds cutoff."})"
+        val dateAddition = if (isIncludedInTrialMatching) date(molecular.date) else {
+            "${molecular.date} - Test not included in trial matching as test age exceeds cutoff."
+        }
+        return "${molecular.testTypeDisplay ?: molecular.experimentType.display()} ($dateAddition)"
     }
 
     fun createMolecularSummaryTable(
@@ -112,7 +115,9 @@ object WGSSummaryGeneratorFunctions {
         return if (wgsMolecular != null && purity != null) {
             val biopsyText = Text(biopsyLocation).addStyle(Styles.tableHighlightStyle())
             val purityText = Text(String.format(" (purity %s)", Formats.percentage(purity)))
-            purityText.addStyle(if (wgsMolecular.hasSufficientQualityButLowPurity()) Styles.tableNoticeStyle() else Styles.tableHighlightStyle())
+            purityText.addStyle(
+                if (wgsMolecular.hasSufficientQualityButLowPurity()) Styles.tableNoticeStyle() else Styles.tableHighlightStyle()
+            )
             Cells.create(Paragraph().addAll(listOf(biopsyText, purityText)))
         } else {
             Cells.createValue(biopsyLocation)
@@ -146,12 +151,16 @@ object WGSSummaryGeneratorFunctions {
         if (drivers.isEmpty()) return Cells.createValue(Formats.VALUE_NONE)
 
         val eventText = drivers.distinctBy(Driver::event).flatMap { driver ->
+            val driverLikelihoodText = " (${driver.driverLikelihood?.name?.lowercase()} driver likelihood)"
             val warning = when (driver.driverLikelihood) {
-                DriverLikelihood.LOW -> " (low driver likelihood)"
-                DriverLikelihood.MEDIUM -> " (medium driver likelihood)"
-                else -> if (driver is CopyNumber) {
-                    " (no amplification or deletion)"
-                } else " (dubious quality)"
+                DriverLikelihood.LOW -> driverLikelihoodText
+                DriverLikelihood.MEDIUM -> driverLikelihoodText
+                DriverLikelihood.HIGH -> ""
+                null -> {
+                    if (driver is CopyNumber) {
+                        " (${driver.minCopies} copies - no amplification or deletion)"
+                    } else " (dubious quality)"
+                }
             }
             listOf(
                 Text(driver.event).addStyle(Styles.tableHighlightStyle()),

@@ -1,7 +1,6 @@
 package com.hartwig.actin.report.datamodel
 
 import com.hartwig.actin.PatientRecordFactory
-import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
@@ -9,6 +8,7 @@ import com.hartwig.actin.datamodel.clinical.TestClinicalFactory
 import java.time.LocalDate
 
 object TestReportFactory {
+
     fun createMinimalTestReport(): Report {
         return Report(
             patientId = TestPatientFactory.TEST_PATIENT,
@@ -40,9 +40,5 @@ object TestReportFactory {
             treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch(),
             config = ReportConfiguration(includeMolecularEvidenceChapter = true)
         )
-    }
-
-    fun createExhaustiveCRCTestReport(): Report {
-        return createExhaustiveTestReport().copy(config = EnvironmentConfiguration.create(null, "CRC").report)
     }
 }

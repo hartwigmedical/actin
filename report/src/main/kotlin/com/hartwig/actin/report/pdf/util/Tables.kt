@@ -4,6 +4,7 @@ import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.properties.UnitValue
 
 object Tables {
+
     fun createFixedWidthCols(vararg widths: Float): Table {
         return Table(UnitValue.createPointArray(widths))
     }
