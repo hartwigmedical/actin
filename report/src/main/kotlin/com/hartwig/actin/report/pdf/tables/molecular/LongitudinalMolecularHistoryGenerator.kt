@@ -15,6 +15,7 @@ import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
 class LongitudinalMolecularHistoryGenerator(private val molecularHistory: MolecularHistory, private val width: Float) : TableGenerator {
+
     private val driverSortOrder: Comparator<MolecularDriverEntry> = compareBy(
         MolecularDriverEntry::evidenceTier,
         MolecularDriverEntry::driverLikelihood,
