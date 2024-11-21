@@ -20,7 +20,6 @@ import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.serialization.TrialJson
-import com.hartwig.serve.datamodel.ImmutableActionableEvents
 import java.io.File
 import java.time.Period
 import kotlin.system.exitProcess
@@ -108,7 +107,7 @@ class LocalExampleTreatmentMatchApplication {
                 doidManualConfig = DoidManualConfig.create()
             ),
             applicableDoids = emptySet(),
-            actionableEvents = ImmutableActionableEvents.builder().build(),
+            actionableEvents = emptyList(),
             treatmentDatabase = TreatmentDatabase(
                 drugsByName = emptyMap(),
                 treatmentsByName = emptyMap()

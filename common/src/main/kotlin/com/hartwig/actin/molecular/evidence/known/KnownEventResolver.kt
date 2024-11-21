@@ -7,13 +7,13 @@ import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.HotspotMatching
 import com.hartwig.actin.molecular.evidence.matching.RangeMatching
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
-import com.hartwig.serve.datamodel.KnownEvents
-import com.hartwig.serve.datamodel.common.GeneAlteration
-import com.hartwig.serve.datamodel.fusion.KnownFusion
-import com.hartwig.serve.datamodel.gene.KnownGene
-import com.hartwig.serve.datamodel.hotspot.KnownHotspot
-import com.hartwig.serve.datamodel.range.KnownCodon
-import com.hartwig.serve.datamodel.range.KnownExon
+import com.hartwig.serve.datamodel.molecular.KnownEvents
+import com.hartwig.serve.datamodel.molecular.common.GeneAlteration
+import com.hartwig.serve.datamodel.molecular.fusion.KnownFusion
+import com.hartwig.serve.datamodel.molecular.gene.KnownGene
+import com.hartwig.serve.datamodel.molecular.hotspot.KnownHotspot
+import com.hartwig.serve.datamodel.molecular.range.KnownCodon
+import com.hartwig.serve.datamodel.molecular.range.KnownExon
 
 class KnownEventResolver(private val knownEvents: KnownEvents, private val aggregatedKnownGenes: Set<KnownGene>) {
 

@@ -1,34 +1,65 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.filterAndExpandTrials
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.filterEfficacyEvidence
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.fusionFilter
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.geneFilter
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.getFusion
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.getGene
 import com.hartwig.actin.molecular.evidence.matching.EvidenceMatcher
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.FusionMatching
-import com.hartwig.serve.datamodel.ActionableEvent
-import com.hartwig.serve.datamodel.ActionableEvents
-import com.hartwig.serve.datamodel.fusion.ActionableFusion
-import com.hartwig.serve.datamodel.gene.ActionableGene
-import com.hartwig.serve.datamodel.gene.GeneEvent
+import com.hartwig.serve.datamodel.molecular.fusion.FusionPair
+import com.hartwig.serve.datamodel.molecular.gene.ActionableGene
+import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 
 class FusionEvidence(
-    private val actionablePromiscuous: List<ActionableGene>,
-    private val actionableFusions: List<ActionableFusion>
+    private val actionablePromiscuous: ActionableEvents,
+    private val actionableFusions: ActionableEvents
 ) : EvidenceMatcher<FusionMatchCriteria> {
 
-    override fun findMatches(event: FusionMatchCriteria): List<ActionableEvent> {
-        return actionablePromiscuous.filter {
-            isPromiscuousMatch(it, event) && event.isReportable
-        } + actionableFusions.filter {
-            FusionMatching.isGeneMatch(it, event) && FusionMatching.isExonMatch(it, event) && event.isReportable
-        }
+    override fun findMatches(event: FusionMatchCriteria): ActionableEvents {
+        val evidences =
+            filterPromiscuousAndFusion(actionablePromiscuous.evidences, actionableFusions.evidences, event, ::getGene, ::getFusion)
+        val trials = filterPromiscuousAndFusion(actionablePromiscuous.trials, actionableFusions.trials, event, ::getGene, ::getFusion)
+        return ActionableEvents(evidences, trials)
     }
 
     companion object {
         private val APPLICABLE_PROMISCUOUS_EVENTS = setOf(GeneEvent.FUSION, GeneEvent.ACTIVATION, GeneEvent.ANY_MUTATION)
 
         fun create(actionableEvents: ActionableEvents): FusionEvidence {
-            val actionablePromiscuous = actionableEvents.genes().filter { APPLICABLE_PROMISCUOUS_EVENTS.contains(it.event()) }
-            return FusionEvidence(actionablePromiscuous, actionableEvents.fusions())
+            val evidences = filterEfficacyEvidence(actionableEvents.evidences, fusionFilter())
+            val trials = filterAndExpandTrials(actionableEvents.trials, fusionFilter())
+            val actionablePromiscuousEvidences = filterEfficacyEvidence(actionableEvents.evidences, geneFilter()).filter {
+                APPLICABLE_PROMISCUOUS_EVENTS.contains(
+                    ActionableEventsFiltering.getGene(it).event()
+                )
+            }
+            val actionablePromiscuousTrials = filterAndExpandTrials(actionableEvents.trials, geneFilter()).filter {
+                APPLICABLE_PROMISCUOUS_EVENTS.contains(
+                    ActionableEventsFiltering.getGene(it).event()
+                )
+            }
+            return FusionEvidence(
+                ActionableEvents(actionablePromiscuousEvidences, actionablePromiscuousTrials),
+                ActionableEvents(evidences, trials)
+            )
+        }
+
+        private fun <T> filterPromiscuousAndFusion(
+            promiscuousItems: List<T>,
+            fusionItems: List<T>,
+            event: FusionMatchCriteria,
+            getGene: (T) -> ActionableGene,
+            getFusion: (T) -> FusionPair
+        ): List<T> {
+            return promiscuousItems.filter {
+                isPromiscuousMatch(getGene(it), event) && event.isReportable
+            } + fusionItems.filter {
+                FusionMatching.isGeneMatch(getFusion(it), event) && FusionMatching.isExonMatch(getFusion(it), event) && event.isReportable
+            }
         }
 
         private fun isPromiscuousMatch(actionable: ActionableGene, fusion: FusionMatchCriteria): Boolean {

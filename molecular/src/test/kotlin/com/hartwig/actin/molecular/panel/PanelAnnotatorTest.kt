@@ -20,25 +20,26 @@ import com.hartwig.actin.molecular.HGVS_CODING
 import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEvents
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
-import com.hartwig.serve.datamodel.EvidenceDirection
-import com.hartwig.serve.datamodel.EvidenceLevel
 import com.hartwig.serve.datamodel.Knowledgebase
+import com.hartwig.serve.datamodel.efficacy.EvidenceDirection
+import com.hartwig.serve.datamodel.efficacy.EvidenceLevel
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import com.hartwig.serve.datamodel.common.GeneRole as ServeGeneRole
-import com.hartwig.serve.datamodel.common.ProteinEffect as ServeProteinEffect
+import com.hartwig.serve.datamodel.molecular.common.GeneRole as ServeGeneRole
+import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
 
 private const val ALT = "T"
 private const val REF = "G"
 private const val OTHER_GENE = "other_gene"
 private const val CHROMOSOME = "1"
 private const val POSITION = 1
-private val EMPTY_MATCH = ActionabilityMatch(emptyList(), emptyList())
+private val EMPTY_MATCH = ActionabilityMatch(ActionableEvents(), ActionableEvents())
 private val ARCHER_VARIANT = SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING)
 private val VARIANT_MATCH_CRITERIA =
     VariantMatchCriteria(
@@ -58,10 +59,8 @@ private val HOTSPOT = TestServeKnownFactory.hotspotBuilder().build()
     .withProteinEffect(ServeProteinEffect.GAIN_OF_FUNCTION)
 
 private val ACTIONABILITY_MATCH = ActionabilityMatch(
-    onLabelEvents = listOf(
-        TestServeActionabilityFactory.geneBuilder().build().withSource(Knowledgebase.CKB_EVIDENCE).withEvidenceLevel(EvidenceLevel.A)
-            .withDirection(EvidenceDirection.RESPONSIVE)
-    ), offLabelEvents = emptyList()
+    onLabelEvidence = ActionableEvents(listOf(TestServeActionabilityFactory.withGene()), emptyList()),
+    offLabelEvidence = ActionableEvents()
 )
 
 private val ARCHER_SKIPPED_EXON = SequencedSkippedExons(GENE, 2, 3)

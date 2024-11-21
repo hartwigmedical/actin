@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.evidence.matching
 
-import com.hartwig.serve.datamodel.range.RangeAnnotation
+import com.hartwig.serve.datamodel.molecular.range.RangeAnnotation
 
 object RangeMatching {
 

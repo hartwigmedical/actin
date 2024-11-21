@@ -14,14 +14,15 @@ import com.hartwig.actin.trial.status.TrialStatusConfigInterpreter
 import com.hartwig.actin.trial.status.TrialStatusDatabaseReader
 import com.hartwig.actin.trial.status.ctc.CTCTrialStatusEntryReader
 import com.hartwig.actin.trial.status.nki.NKITrialStatusEntryReader
+import com.hartwig.serve.datamodel.RefGenome
 import com.hartwig.serve.datamodel.serialization.ServeJson
-import java.nio.file.Files
-import java.nio.file.Paths
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.nio.file.Files
+import java.nio.file.Paths
 import kotlin.system.exitProcess
 
 const val CTC_TRIAL_PREFIX = "MEC"
@@ -37,7 +38,9 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
         LOGGER.info("Loading known genes from serve db {}", config.serveDbJson)
-        val knownGenes = ServeJson.read(config.serveDbJson).knownEvents().genes()
+        val serveDatabase = ServeJson.read(config.serveDbJson)
+        val serveRecord = serveDatabase.records()[RefGenome.V37] //TODO (CB): which ref genome?
+        val knownGenes = serveRecord!!.knownEvents().genes()
         LOGGER.info(" Loaded {} known genes", knownGenes.size)
         val geneFilter = GeneFilterFactory.createFromKnownGenes(knownGenes)
 

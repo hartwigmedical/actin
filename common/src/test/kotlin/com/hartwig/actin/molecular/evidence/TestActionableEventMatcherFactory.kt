@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular.evidence
 
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventMatcher
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEvents
 import com.hartwig.actin.molecular.evidence.actionability.BreakendEvidence
 import com.hartwig.actin.molecular.evidence.actionability.CopyNumberEvidence
 import com.hartwig.actin.molecular.evidence.actionability.FusionEvidence
@@ -10,11 +11,9 @@ import com.hartwig.actin.molecular.evidence.actionability.PersonalizedActionabil
 import com.hartwig.actin.molecular.evidence.actionability.SignatureEvidence
 import com.hartwig.actin.molecular.evidence.actionability.VariantEvidence
 import com.hartwig.actin.molecular.evidence.actionability.VirusEvidence
-import com.hartwig.serve.datamodel.ActionableEvents
-import com.hartwig.serve.datamodel.ImmutableActionableEvents
-import com.hartwig.serve.datamodel.characteristic.ActionableCharacteristic
-import com.hartwig.serve.datamodel.characteristic.TumorCharacteristicType
-import com.hartwig.serve.datamodel.gene.GeneEvent
+import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
+import com.hartwig.serve.datamodel.molecular.characteristic.TumorCharacteristicType
+import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 
 object TestActionableEventMatcherFactory {
 
@@ -22,21 +21,23 @@ object TestActionableEventMatcherFactory {
         val doidModel = TestDoidModelFactory.createWithOneParentChild("parent", "child")
         val applicableDoids = setOf("parent")
         val personalizedActionabilityFactory = PersonalizedActionabilityFactory(doidModel, applicableDoids)
-        val actionableEvents: ActionableEvents = ImmutableActionableEvents.builder()
-            .addHotspots(TestServeActionabilityFactory.hotspotBuilder().build())
-            .addCodons(TestServeActionabilityFactory.rangeBuilder().build())
-            .addExons(TestServeActionabilityFactory.rangeBuilder().build())
-            .addGenes(TestServeActionabilityFactory.geneBuilder().event(GeneEvent.DELETION).build())
-            .addGenes(TestServeActionabilityFactory.geneBuilder().event(GeneEvent.AMPLIFICATION).build())
-            .addGenes(TestServeActionabilityFactory.geneBuilder().event(GeneEvent.ANY_MUTATION).build())
-            .addFusions(TestServeActionabilityFactory.fusionBuilder().build())
-            .addCharacteristics(create(TumorCharacteristicType.MICROSATELLITE_UNSTABLE))
-            .addCharacteristics(create(TumorCharacteristicType.HOMOLOGOUS_RECOMBINATION_DEFICIENT))
-            .addCharacteristics(create(TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN))
-            .addCharacteristics(create(TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD))
-            .addCharacteristics(create(TumorCharacteristicType.HPV_POSITIVE))
-            .addCharacteristics(create(TumorCharacteristicType.EBV_POSITIVE))
-            .build()
+        val evidences: List<EfficacyEvidence> = listOf(
+            TestServeActionabilityFactory.withHotspot(),
+            TestServeActionabilityFactory.withCodon(),
+            TestServeActionabilityFactory.withExon(),
+            TestServeActionabilityFactory.withGene(GeneEvent.DELETION),
+            TestServeActionabilityFactory.withGene(GeneEvent.AMPLIFICATION),
+            TestServeActionabilityFactory.withGene(GeneEvent.ANY_MUTATION),
+            TestServeActionabilityFactory.withFusion(),
+            TestServeActionabilityFactory.withCharacteristic(TumorCharacteristicType.MICROSATELLITE_UNSTABLE),
+            TestServeActionabilityFactory.withCharacteristic(TumorCharacteristicType.HOMOLOGOUS_RECOMBINATION_DEFICIENT),
+            TestServeActionabilityFactory.withCharacteristic(TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN),
+            TestServeActionabilityFactory.withCharacteristic(TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD),
+            TestServeActionabilityFactory.withCharacteristic(TumorCharacteristicType.HPV_POSITIVE),
+            TestServeActionabilityFactory.withCharacteristic(TumorCharacteristicType.EBV_POSITIVE),
+            TestServeActionabilityFactory.withHla()
+        )
+        val actionableEvents = ActionableEvents(evidences, emptyList())
 
         return ActionableEventMatcher(
             personalizedActionabilityFactory,
@@ -48,9 +49,5 @@ object TestActionableEventMatcherFactory {
             FusionEvidence.create(actionableEvents),
             VirusEvidence.create(actionableEvents)
         )
-    }
-
-    private fun create(type: TumorCharacteristicType): ActionableCharacteristic {
-        return TestServeActionabilityFactory.characteristicBuilder().type(type).build()
     }
 }

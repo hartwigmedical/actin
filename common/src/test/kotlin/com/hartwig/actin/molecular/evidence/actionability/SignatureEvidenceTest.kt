@@ -1,10 +1,9 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
-import com.hartwig.serve.datamodel.ActionableEvents
-import com.hartwig.serve.datamodel.ImmutableActionableEvents
-import com.hartwig.serve.datamodel.characteristic.ActionableCharacteristic
-import com.hartwig.serve.datamodel.characteristic.TumorCharacteristicType
+import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
+import com.hartwig.serve.datamodel.molecular.characteristic.ActionableCharacteristic
+import com.hartwig.serve.datamodel.molecular.characteristic.TumorCharacteristicType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -12,64 +11,59 @@ class SignatureEvidenceTest {
 
     @Test
     fun `Should determine evidence for microsatellite instability`() {
-        val characteristic1: ActionableCharacteristic =
-            TestServeActionabilityFactory.characteristicBuilder().type(TumorCharacteristicType.MICROSATELLITE_UNSTABLE).build()
-        val characteristic2: ActionableCharacteristic =
-            TestServeActionabilityFactory.characteristicBuilder().type(TumorCharacteristicType.MICROSATELLITE_STABLE).build()
-        val actionable: ActionableEvents = ImmutableActionableEvents.builder().addCharacteristics(characteristic1, characteristic2).build()
+        val characteristic1: EfficacyEvidence =
+            TestServeActionabilityFactory.withCharacteristic(TumorCharacteristicType.MICROSATELLITE_UNSTABLE)
+        val characteristic2: EfficacyEvidence =
+            TestServeActionabilityFactory.withCharacteristic(TumorCharacteristicType.MICROSATELLITE_STABLE)
+        val actionable = ActionableEvents(listOf(characteristic1, characteristic2), emptyList())
         val signatureEvidence: SignatureEvidence = SignatureEvidence.create(actionable)
 
         val matches = signatureEvidence.findMicrosatelliteMatches(true)
-        assertThat(matches.size).isEqualTo(1)
-        assertThat(matches).contains(characteristic1)
-        assertThat(signatureEvidence.findMicrosatelliteMatches(false)).isEmpty()
+        assertThat(matches.evidences.size).isEqualTo(1)
+        assertThat(matches.evidences).contains(characteristic1)
+        assertThat(signatureEvidence.findMicrosatelliteMatches(false).evidences).isEmpty()
     }
 
     @Test
     fun `Should determine evidence for homologous repair deficiency`() {
-        val characteristic1: ActionableCharacteristic = TestServeActionabilityFactory.characteristicBuilder()
-            .type(TumorCharacteristicType.HOMOLOGOUS_RECOMBINATION_DEFICIENT)
-            .build()
-        val actionable: ActionableEvents = ImmutableActionableEvents.builder().addCharacteristics(characteristic1).build()
+        val characteristic1: EfficacyEvidence =
+            TestServeActionabilityFactory.withCharacteristic(TumorCharacteristicType.HOMOLOGOUS_RECOMBINATION_DEFICIENT)
+        val actionable = ActionableEvents(listOf(characteristic1), emptyList())
         val signatureEvidence: SignatureEvidence = SignatureEvidence.create(actionable)
 
         val matches = signatureEvidence.findHomologousRepairMatches(true)
-        assertThat(matches.size).isEqualTo(1)
-        assertThat(matches).contains(characteristic1)
-        assertThat(signatureEvidence.findHomologousRepairMatches(false)).isEmpty()
+        assertThat(matches.evidences.size).isEqualTo(1)
+        assertThat(matches.evidences).contains(characteristic1)
+        assertThat(signatureEvidence.findHomologousRepairMatches(false).evidences).isEmpty()
     }
 
     @Test
     fun `Should determine evidence for high tumor mutational burden`() {
-        val characteristic1: ActionableCharacteristic = TestServeActionabilityFactory.characteristicBuilder()
-            .type(TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN)
-            .build()
-        val characteristic2: ActionableCharacteristic? = TestServeActionabilityFactory.characteristicBuilder()
-            .type(TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_BURDEN)
-            .build()
-        val actionable: ActionableEvents = ImmutableActionableEvents.builder().addCharacteristics(characteristic1, characteristic2).build()
+        val characteristic1: EfficacyEvidence =
+            TestServeActionabilityFactory.withCharacteristic(TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN)
+        val characteristic2: EfficacyEvidence =
+            TestServeActionabilityFactory.withCharacteristic(TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_BURDEN)
+        val actionable = ActionableEvents(listOf(characteristic1), emptyList())
         val signatureEvidence: SignatureEvidence = SignatureEvidence.create(actionable)
 
         val matches = signatureEvidence.findTumorBurdenMatches(true)
-        assertThat(matches.size).isEqualTo(1)
-        assertThat(matches).contains(characteristic1)
-        assertThat(signatureEvidence.findTumorBurdenMatches(false)).isEmpty()
+        assertThat(matches.evidences.size).isEqualTo(1)
+        assertThat(matches.evidences).contains(characteristic1)
+        assertThat(signatureEvidence.findTumorBurdenMatches(false).evidences).isEmpty()
     }
 
     @Test
     fun `Should determine evidence for high mutational load`() {
-        val characteristic1: ActionableCharacteristic = TestServeActionabilityFactory.characteristicBuilder()
-            .type(TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD)
-            .build()
-        val characteristic2: ActionableCharacteristic? = TestServeActionabilityFactory.characteristicBuilder()
-            .type(TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_LOAD)
-            .build()
-        val actionable: ActionableEvents = ImmutableActionableEvents.builder().addCharacteristics(characteristic1, characteristic2).build()
+        val characteristic1: EfficacyEvidence =
+            TestServeActionabilityFactory.withCharacteristic(TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD)
+        val characteristic2: EfficacyEvidence =
+            TestServeActionabilityFactory.withCharacteristic(TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_LOAD)
+        val actionable = ActionableEvents(listOf(characteristic1, characteristic2), emptyList())
         val signatureEvidence: SignatureEvidence = SignatureEvidence.create(actionable)
 
         val matches = signatureEvidence.findTumorLoadMatches(true)
-        assertThat(matches.size).isEqualTo(1)
-        assertThat(matches).contains(characteristic1)
-        assertThat(signatureEvidence.findTumorLoadMatches(false)).isEmpty()
+        assertThat(matches.evidences.size).isEqualTo(1)
+        assertThat(matches.evidences).contains(characteristic1)
+        assertThat(signatureEvidence.findTumorLoadMatches(false).evidences).isEmpty()
     }
 }

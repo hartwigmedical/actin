@@ -15,7 +15,9 @@ import com.hartwig.actin.molecular.GENE
 import com.hartwig.actin.molecular.HGVS_CODING
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
+import com.hartwig.actin.molecular.evidence.TestServeFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEvents
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
@@ -29,16 +31,17 @@ import com.hartwig.actin.tools.pave.ImmutableVariantTranscriptImpact
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.ImmutableVariant
 import com.hartwig.actin.tools.variant.VariantAnnotator
-import com.hartwig.serve.datamodel.EvidenceLevelDetails
-import com.hartwig.serve.datamodel.Knowledgebase
+import com.hartwig.serve.datamodel.efficacy.EvidenceLevelDetails
+import com.hartwig.serve.datamodel.molecular.ImmutableMolecularCriterium
+import com.hartwig.serve.datamodel.molecular.gene.ImmutableActionableGene
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import com.hartwig.serve.datamodel.EvidenceDirection as ServeEvidenceDirection
-import com.hartwig.serve.datamodel.EvidenceLevel as ServeEvidenceLevel
-import com.hartwig.serve.datamodel.common.ProteinEffect as ServeProteinEffect
+import com.hartwig.serve.datamodel.efficacy.EvidenceDirection as ServeEvidenceDirection
+import com.hartwig.serve.datamodel.efficacy.EvidenceLevel as ServeEvidenceLevel
+import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
 
 private const val ALT = "T"
 private const val REF = "G"
@@ -52,7 +55,7 @@ private const val CHROMOSOME = "1"
 private const val POSITION = 1
 private const val HGVS_PROTEIN_3LETTER = "p.Met1Leu"
 private const val HGVS_PROTEIN_1LETTER = "p.M1L"
-private val EMPTY_MATCH = ActionabilityMatch(emptyList(), emptyList())
+private val EMPTY_MATCH = ActionabilityMatch(ActionableEvents(), ActionableEvents())
 private val ARCHER_VARIANT = SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING)
 
 private val VARIANT_MATCH_CRITERIA =
@@ -67,11 +70,22 @@ private val VARIANT_MATCH_CRITERIA =
         type = VariantType.SNV
     )
 
+private val MOLECULAR_CRITERIUM = ImmutableMolecularCriterium.builder().addGenes(
+    ImmutableActionableGene.builder().from(TestServeActionabilityFactory.actionableEventBuiler())
+        .from(TestServeFactory.createEmptyGeneAnnotation()).build()
+).build()
+
 private val ACTIONABILITY_MATCH = ActionabilityMatch(
-    onLabelEvents = listOf(
-        TestServeActionabilityFactory.geneBuilder().build().withSource(Knowledgebase.CKB_EVIDENCE).withEvidenceLevel(ServeEvidenceLevel.A)
-            .withDirection(ServeEvidenceDirection.RESPONSIVE)
-    ), offLabelEvents = emptyList()
+    onLabelEvidence = ActionableEvents(
+        listOf(
+            TestServeActionabilityFactory.createEfficacyEvidence(
+                level = ServeEvidenceLevel.A,
+                direction = ServeEvidenceDirection.RESPONSIVE,
+                molecularCriterium = MOLECULAR_CRITERIUM
+            )
+        ), emptyList()
+    ),
+    offLabelEvidence = ActionableEvents()
 )
 
 private val TRANSCRIPT_ANNOTATION =
@@ -105,8 +119,8 @@ private val PAVE_ANNOTATION = PaveResponse(
 )
 
 private val HOTSPOT = TestServeKnownFactory.hotspotBuilder().build()
-    .withGeneRole(com.hartwig.serve.datamodel.common.GeneRole.ONCO)
-    .withProteinEffect(com.hartwig.serve.datamodel.common.ProteinEffect.GAIN_OF_FUNCTION)
+    .withGeneRole(com.hartwig.serve.datamodel.molecular.common.GeneRole.ONCO)
+    .withProteinEffect(com.hartwig.serve.datamodel.molecular.common.ProteinEffect.GAIN_OF_FUNCTION)
 
 class PanelVariantAnnotatorTest {
 

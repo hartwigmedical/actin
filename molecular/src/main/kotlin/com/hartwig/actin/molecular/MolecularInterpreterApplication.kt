@@ -13,6 +13,7 @@ import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabaseFactory
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEvents
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.orange.MolecularRecordAnnotator
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
@@ -31,8 +32,8 @@ import com.hartwig.actin.tools.transvar.TransvarVariantAnnotatorFactory
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
 import com.hartwig.hmftools.datamodel.OrangeJson
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
-import com.hartwig.serve.datamodel.KnownEvents
 import com.hartwig.serve.datamodel.RefGenome
+import com.hartwig.serve.datamodel.molecular.KnownEvents
 import com.hartwig.serve.datamodel.serialization.ServeJson
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
@@ -190,13 +191,14 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         tumorDoids: Set<String>
     ): Pair<KnownEvents, EvidenceDatabase> {
         val serveRefGenomeVersion = toServeRefGenomeVersion(orangeRefGenomeVersion)
-        val filePath = ServeJson.jsonFilePath(config.serveDirectory, serveRefGenomeVersion)
+        val filePath = ServeJson.jsonFilePath(config.serveDirectory)
 
         LOGGER.info("Loading SERVE from {}", filePath)
-        val serveRecord = ServeJson.read(filePath)
-
-        val knownEvents = serveRecord.knownEvents()
-        val actionableEvents = serveRecord.actionableEvents()
+        val serveDatabase = ServeJson.read(filePath)
+        val serveRecord = serveDatabase.records()[serveRefGenomeVersion]
+        val knownEvents =
+            serveRecord?.knownEvents() ?: throw IllegalStateException("No serve record for ref genome version $serveRefGenomeVersion")
+        val actionableEvents = ActionableEvents(serveRecord.evidences(), serveRecord.trials())
         val evidenceDatabase = EvidenceDatabaseFactory.create(knownEvents, actionableEvents, doidEntry, tumorDoids)
 
         return Pair(knownEvents, evidenceDatabase)

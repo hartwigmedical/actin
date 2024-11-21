@@ -4,12 +4,15 @@ import com.hartwig.actin.datamodel.molecular.evidence.CountryName
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
+import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory.createActionableTrial
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
-import com.hartwig.serve.datamodel.EvidenceLevelDetails
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEvents
 import com.hartwig.serve.datamodel.Knowledgebase
+import com.hartwig.serve.datamodel.efficacy.EvidenceLevelDetails
+import com.hartwig.serve.datamodel.molecular.ImmutableMolecularCriterium
+import com.hartwig.serve.datamodel.molecular.hotspot.ImmutableActionableHotspot
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import com.hartwig.serve.datamodel.EvidenceDirection as ServeDirection
 
 class ClinicalEvidenceFactoryTest {
 
@@ -26,15 +29,11 @@ class ClinicalEvidenceFactoryTest {
         val result =
             ClinicalEvidenceFactory.create(
                 ActionabilityMatch(
-                    onLabelEvents = listOf(
-                        TestServeActionabilityFactory.hotspotBuilder().from(
-                            TestServeActionabilityFactory.createActionableEvent(
-                                Knowledgebase.CKB_EVIDENCE,
-                                onlabel.treatment
-                            )
-                        ).build()
+                    onLabelEvidence = ActionableEvents(
+                        listOf(TestServeActionabilityFactory.withHotspot(intervention = onlabel.treatment)),
+                        emptyList()
                     ),
-                    offLabelEvents = emptyList()
+                    offLabelEvidence = ActionableEvents()
                 )
             )
         assertThat(result.externalEligibleTrials).isEmpty()
@@ -43,7 +42,7 @@ class ClinicalEvidenceFactoryTest {
 
     @Test
     fun `Should convert SERVE actionable off-label events to clinical evidence`() {
-        val onlabel = TestClinicalEvidenceFactory.treatment(
+        val offlabel = TestClinicalEvidenceFactory.treatment(
             "off-label",
             EvidenceLevel.D,
             EvidenceLevelDetails.GUIDELINE,
@@ -54,38 +53,33 @@ class ClinicalEvidenceFactoryTest {
         val result =
             ClinicalEvidenceFactory.create(
                 ActionabilityMatch(
-                    offLabelEvents = listOf(
-                        TestServeActionabilityFactory.hotspotBuilder().from(
-                            TestServeActionabilityFactory.createActionableEvent(
-                                Knowledgebase.CKB_EVIDENCE,
-                                onlabel.treatment
-                            )
-                        ).build()
-                    ),
-                    onLabelEvents = emptyList()
+                    onLabelEvidence = ActionableEvents(),
+                    offLabelEvidence = ActionableEvents(
+                        listOf(TestServeActionabilityFactory.withHotspot(intervention = offlabel.treatment)),
+                        emptyList()
+                    )
                 )
             )
         assertThat(result.externalEligibleTrials).isEmpty()
-        assertThat(result.treatmentEvidence).containsExactly(onlabel)
+        assertThat(result.treatmentEvidence).containsExactly(offlabel)
     }
 
     @Test
     fun `Should convert SERVE external trials to clinical evidence`() {
         val trial = TestClinicalEvidenceFactory.createTestExternalTrial()
             .copy(countries = setOf(TestClinicalEvidenceFactory.createCountry(CountryName.OTHER, emptyMap())), isCategoryEvent = false)
+        val molecularCriterium = ImmutableMolecularCriterium.builder().addHotspots(
+            ImmutableActionableHotspot.builder().from(TestServeActionabilityFactory.actionableEventBuiler())
+                .from(TestServeFactory.createEmptyHotspot()).build()
+        ).build()
         val result =
             ClinicalEvidenceFactory.create(
                 ActionabilityMatch(
-                    onLabelEvents = listOf(
-                        TestServeActionabilityFactory.hotspotBuilder().from(
-                            TestServeActionabilityFactory.createActionableEvent(
-                                Knowledgebase.CKB_TRIAL,
-                                trial.title,
-                                ServeDirection.RESPONSIVE
-                            )
-                        ).build()
+                    onLabelEvidence = ActionableEvents(
+                        emptyList(),
+                        listOf(createActionableTrial(Knowledgebase.CKB, trial.title, molecularCriterium))
                     ),
-                    offLabelEvents = emptyList()
+                    offLabelEvidence = ActionableEvents()
                 )
             )
         assertThat(result.treatmentEvidence).isEmpty()

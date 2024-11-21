@@ -2,19 +2,22 @@ package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.orange.driver.Virus
 import com.hartwig.actin.datamodel.molecular.orange.driver.VirusType
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.characteristicsFilter
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.filterAndExpandTrials
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.filterEfficacyEvidence
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.getCharacteristic
 import com.hartwig.actin.molecular.evidence.matching.EvidenceMatcher
-import com.hartwig.serve.datamodel.ActionableEvent
-import com.hartwig.serve.datamodel.ActionableEvents
-import com.hartwig.serve.datamodel.characteristic.TumorCharacteristicType
+import com.hartwig.serve.datamodel.molecular.characteristic.ActionableCharacteristic
+import com.hartwig.serve.datamodel.molecular.characteristic.TumorCharacteristicType
 
 internal class VirusEvidence private constructor(
-    private val hpvCharacteristics: List<ActionableEvent>,
-    private val ebvCharacteristics: List<ActionableEvent>
+    private val hpvCharacteristics: ActionableEvents,
+    private val ebvCharacteristics: ActionableEvents
 ) : EvidenceMatcher<Virus> {
 
-    override fun findMatches(event: Virus): List<ActionableEvent> {
+    override fun findMatches(event: Virus): ActionableEvents {
         return if (!event.isReportable) {
-            emptyList()
+            ActionableEvents()
         } else when (event.type) {
             VirusType.HUMAN_PAPILLOMA_VIRUS -> {
                 hpvCharacteristics
@@ -25,30 +28,39 @@ internal class VirusEvidence private constructor(
             }
 
             else -> {
-                emptyList()
+                ActionableEvents()
             }
         }
     }
 
     companion object {
         fun create(actionableEvents: ActionableEvents): VirusEvidence {
-            val (hpvCharacteristics, ebvCharacteristics) = actionableEvents.characteristics()
-                .fold(Pair(emptyList<ActionableEvent>(), emptyList<ActionableEvent>())) { acc, actionableCharacteristic ->
-                    when (actionableCharacteristic.type()) {
-                        TumorCharacteristicType.HPV_POSITIVE -> {
-                            Pair(acc.first + actionableCharacteristic, acc.second)
-                        }
+            val evidences = filterEfficacyEvidence(actionableEvents.evidences, characteristicsFilter())
+            val trials = filterAndExpandTrials(actionableEvents.trials, characteristicsFilter())
+            val (hpvCharacteristicsEvidence, ebvCharacteristicsEvidence) = extractHPVAndEBV(evidences, ::getCharacteristic)
+            val (hpvCharacteristicsTrials, ebvCharacteristicsTrials) = extractHPVAndEBV(trials, ::getCharacteristic)
+            return VirusEvidence(
+                ActionableEvents(hpvCharacteristicsEvidence, hpvCharacteristicsTrials),
+                ActionableEvents(ebvCharacteristicsEvidence, ebvCharacteristicsTrials)
+            )
+        }
 
-                        TumorCharacteristicType.EBV_POSITIVE -> {
-                            Pair(acc.first, acc.second + actionableCharacteristic)
-                        }
+        private fun <T> extractHPVAndEBV(items: List<T>, getCharacteristic: (T) -> ActionableCharacteristic): Pair<List<T>, List<T>> {
+            return items.fold(Pair(emptyList(), emptyList())) { acc, actionableCharacteristic ->
+                when (getCharacteristic(actionableCharacteristic).type()) {
+                    TumorCharacteristicType.HPV_POSITIVE -> {
+                        Pair(acc.first + actionableCharacteristic, acc.second)
+                    }
 
-                        else -> {
-                            acc
-                        }
+                    TumorCharacteristicType.EBV_POSITIVE -> {
+                        Pair(acc.first, acc.second + actionableCharacteristic)
+                    }
+
+                    else -> {
+                        acc
                     }
                 }
-            return VirusEvidence(hpvCharacteristics, ebvCharacteristics)
+            }
         }
     }
 }

@@ -1,24 +1,42 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.orange.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.filterAndExpandTrials
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.filterEfficacyEvidence
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.geneFilter
 import com.hartwig.actin.molecular.evidence.matching.EvidenceMatcher
-import com.hartwig.serve.datamodel.ActionableEvent
-import com.hartwig.serve.datamodel.ActionableEvents
-import com.hartwig.serve.datamodel.gene.ActionableGene
-import com.hartwig.serve.datamodel.gene.GeneEvent
+import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 
-class HomozygousDisruptionEvidence(private val actionableGenes: List<ActionableGene>) :
+class HomozygousDisruptionEvidence(private val actionableGenes: ActionableEvents) :
     EvidenceMatcher<HomozygousDisruption> {
 
-    override fun findMatches(event: HomozygousDisruption): List<ActionableEvent> {
-        return actionableGenes.filter { it.gene() == event.gene }
+    override fun findMatches(event: HomozygousDisruption): ActionableEvents {
+        val evidences = actionableGenes.evidences.filter {
+            ActionableEventsFiltering.getGene(it)
+                .gene() == event.gene
+        }
+        val trials = actionableGenes.trials.filter {
+            ActionableEventsFiltering.getGene(it)
+                .gene() == event.gene
+        }
+        return ActionableEvents(evidences, trials)
     }
 
     companion object {
         private val APPLICABLE_GENE_EVENTS = setOf(GeneEvent.DELETION, GeneEvent.INACTIVATION, GeneEvent.ANY_MUTATION)
 
         fun create(actionableEvents: ActionableEvents): HomozygousDisruptionEvidence {
-            return HomozygousDisruptionEvidence(actionableEvents.genes().filter { APPLICABLE_GENE_EVENTS.contains(it.event()) })
+            val evidences = filterEfficacyEvidence(actionableEvents.evidences, geneFilter()).filter {
+                APPLICABLE_GENE_EVENTS.contains(
+                    ActionableEventsFiltering.getGene(it).event()
+                )
+            }
+            val trials = filterAndExpandTrials(actionableEvents.trials, geneFilter()).filter {
+                APPLICABLE_GENE_EVENTS.contains(
+                    ActionableEventsFiltering.getGene(it).event()
+                )
+            }
+            return HomozygousDisruptionEvidence(ActionableEvents(evidences, trials))
         }
     }
 }

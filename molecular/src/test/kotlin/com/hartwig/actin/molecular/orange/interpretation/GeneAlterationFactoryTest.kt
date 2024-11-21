@@ -20,8 +20,8 @@ class GeneAlterationFactoryTest {
 
     @Test
     fun `Should convert all roles and effects`() {
-        for (geneRole in com.hartwig.serve.datamodel.common.GeneRole.values()) {
-            for (proteinEffect in com.hartwig.serve.datamodel.common.ProteinEffect.values()) {
+        for (geneRole in com.hartwig.serve.datamodel.molecular.common.GeneRole.values()) {
+            for (proteinEffect in com.hartwig.serve.datamodel.molecular.common.ProteinEffect.values()) {
                 val alteration = GeneAlterationFactory.convertAlteration(
                     "",
                     TestServeKnownFactory.createGeneAlteration(geneRole, proteinEffect)
@@ -38,8 +38,8 @@ class GeneAlterationFactoryTest {
         val withDrugAssociation = GeneAlterationFactory.convertAlteration(
             "",
             TestServeKnownFactory.createGeneAlteration(
-                com.hartwig.serve.datamodel.common.GeneRole.UNKNOWN,
-                com.hartwig.serve.datamodel.common.ProteinEffect.UNKNOWN,
+                com.hartwig.serve.datamodel.molecular.common.GeneRole.UNKNOWN,
+                com.hartwig.serve.datamodel.molecular.common.ProteinEffect.UNKNOWN,
                 true
             )
         )
@@ -48,8 +48,8 @@ class GeneAlterationFactoryTest {
         val withNoDrugAssociation = GeneAlterationFactory.convertAlteration(
             "",
             TestServeKnownFactory.createGeneAlteration(
-                com.hartwig.serve.datamodel.common.GeneRole.UNKNOWN,
-                com.hartwig.serve.datamodel.common.ProteinEffect.UNKNOWN,
+                com.hartwig.serve.datamodel.molecular.common.GeneRole.UNKNOWN,
+                com.hartwig.serve.datamodel.molecular.common.ProteinEffect.UNKNOWN,
                 false
             )
         )

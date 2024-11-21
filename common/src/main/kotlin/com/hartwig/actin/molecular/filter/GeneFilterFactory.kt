@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.filter
 
-import com.hartwig.serve.datamodel.gene.KnownGene
+import com.hartwig.serve.datamodel.molecular.gene.KnownGene
+
 
 object GeneFilterFactory {
 

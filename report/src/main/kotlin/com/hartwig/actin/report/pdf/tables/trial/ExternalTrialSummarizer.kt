@@ -22,10 +22,7 @@ data class ExternalTrialSummary(
 
 data class EventWithExternalTrial(val event: String, val trial: ExternalTrial)
 
-data class Hospital(val name: String, val isChildrensHospital: Boolean = false)
-
-private val CHILDREN_HOSPITALS =
-    setOf("PMC", "WKZ", "EKZ", "JKZ", "BKZ", "WAKZ", "Sophia Kinderziekenhuis", "Amalia Kinderziekenhuis", "MosaKids Kinderziekenhuis")
+data class Hospital(val name: String, val isChildrensHospital: Boolean?)
 
 fun Set<ExternalTrialSummary>.filterInternalTrials(internalTrials: Set<TrialMatch>): Set<ExternalTrialSummary> {
     val internalIds = internalTrials.map { it.identification.nctId }.toSet()
@@ -44,7 +41,7 @@ fun Set<ExternalTrialSummary>.filterNotInCountryOfReference(country: CountryName
 
 fun Set<ExternalTrialSummary>.filterExclusivelyInChildrensHospitals(): Set<ExternalTrialSummary> {
     return this.filter {
-        it.hospitals.isEmpty() || !it.hospitals.all(Hospital::isChildrensHospital)
+        it.hospitals.isEmpty() || !it.hospitals.all { hospital -> hospital.isChildrensHospital == true }
     }.toSet()
 }
 
@@ -72,13 +69,10 @@ object ExternalTrialSummarizer {
                 countries.toSortedSet(Comparator.comparing { c -> c.name }),
                 hospitals.map { h -> h.second.key }.toSortedSet(),
                 hospitals.map { h -> h.second.value.map { i -> h.first to i } }.flatten()
-                    .map { h -> Hospital(h.second, isChildrensHospitalInNetherlands(h)) }.toSortedSet(Comparator.comparing { h -> h.name })
+                    .map { h -> Hospital(h.second.name, h.second.isChildrensHospital) }.toSortedSet(Comparator.comparing { h -> h.name })
             )
         }
             .toSortedSet(compareBy<ExternalTrialSummary> { it.actinMolecularEvents.joinToString() }.thenBy { it.sourceMolecularEvents.joinToString() }
                 .thenBy { it.cancerTypes.joinToString { t -> t.cancerType } }.thenBy { it.nctId })
     }
-
-    private fun isChildrensHospitalInNetherlands(h: Pair<Country, String>) =
-        h.second in CHILDREN_HOSPITALS && h.first.name == CountryName.NETHERLANDS
 }

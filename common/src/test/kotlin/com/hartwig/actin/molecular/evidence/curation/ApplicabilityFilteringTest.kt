@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.evidence.curation
 
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
-import com.hartwig.serve.datamodel.gene.GeneEvent
+import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -12,10 +12,14 @@ class ApplicabilityFilteringTest {
         val nonApplicableGene = TestApplicabilityFilteringUtil.nonApplicableGene()
         assertThat(
             ApplicabilityFiltering.isApplicable(
-                TestServeActionabilityFactory.hotspotBuilder().gene(nonApplicableGene).build()
+                TestServeActionabilityFactory.withHotspot(nonApplicableGene).molecularCriterium().hotspots().first()
             )
         ).isFalse()
-        assertThat(ApplicabilityFiltering.isApplicable(TestServeActionabilityFactory.hotspotBuilder().gene("other").build())).isTrue()
+        assertThat(
+            ApplicabilityFiltering.isApplicable(
+                TestServeActionabilityFactory.withHotspot("other").molecularCriterium().hotspots().first()
+            )
+        ).isTrue()
     }
 
     @Test
@@ -23,10 +27,14 @@ class ApplicabilityFilteringTest {
         val nonApplicableGene = TestApplicabilityFilteringUtil.nonApplicableGene()
         assertThat(
             ApplicabilityFiltering.isApplicable(
-                TestServeActionabilityFactory.rangeBuilder().gene(nonApplicableGene).build()
+                TestServeActionabilityFactory.withCodon(nonApplicableGene).molecularCriterium().codons().first()
             )
         ).isFalse()
-        assertThat(ApplicabilityFiltering.isApplicable(TestServeActionabilityFactory.rangeBuilder().gene("other").build())).isTrue()
+        assertThat(
+            ApplicabilityFiltering.isApplicable(
+                TestServeActionabilityFactory.withCodon("other").molecularCriterium().codons().first()
+            )
+        ).isTrue()
     }
 
     @Test
@@ -34,27 +42,31 @@ class ApplicabilityFilteringTest {
         val nonApplicableGene = TestApplicabilityFilteringUtil.nonApplicableGene()
         assertThat(
             ApplicabilityFiltering.isApplicable(
-                TestServeActionabilityFactory.geneBuilder().gene(nonApplicableGene).build()
+                TestServeActionabilityFactory.withGene(gene = nonApplicableGene).molecularCriterium().genes().first()
             )
         ).isFalse()
-        assertThat(ApplicabilityFiltering.isApplicable(TestServeActionabilityFactory.geneBuilder().gene("other").build())).isTrue()
+        assertThat(
+            ApplicabilityFiltering.isApplicable(
+                TestServeActionabilityFactory.withGene(GeneEvent.ANY_MUTATION, "other").molecularCriterium().genes().first()
+            )
+        ).isTrue()
 
         val nonApplicableAmp = TestApplicabilityFilteringUtil.nonApplicableAmplification()
         assertThat(
             ApplicabilityFiltering.isApplicable(
-                TestServeActionabilityFactory.geneBuilder().gene(nonApplicableAmp).event(GeneEvent.ANY_MUTATION).build()
+                TestServeActionabilityFactory.withGene(GeneEvent.ANY_MUTATION, nonApplicableAmp).molecularCriterium().genes().first()
             )
         ).isTrue()
 
         assertThat(
             ApplicabilityFiltering.isApplicable(
-                TestServeActionabilityFactory.geneBuilder().gene("other gene").event(GeneEvent.AMPLIFICATION).build()
+                TestServeActionabilityFactory.withGene(GeneEvent.AMPLIFICATION, "other gene").molecularCriterium().genes().first()
             )
         ).isTrue()
 
         assertThat(
             ApplicabilityFiltering.isApplicable(
-                TestServeActionabilityFactory.geneBuilder().gene(nonApplicableAmp).event(GeneEvent.AMPLIFICATION).build()
+                TestServeActionabilityFactory.withGene(GeneEvent.AMPLIFICATION, nonApplicableAmp).molecularCriterium().genes().first()
             )
         ).isFalse()
     }

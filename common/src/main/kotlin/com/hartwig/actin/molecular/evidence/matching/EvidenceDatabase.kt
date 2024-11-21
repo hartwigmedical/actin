@@ -7,8 +7,8 @@ import com.hartwig.actin.datamodel.molecular.orange.driver.Virus
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventMatcher
 import com.hartwig.actin.molecular.evidence.known.KnownEventResolver
-import com.hartwig.serve.datamodel.common.GeneAlteration
-import com.hartwig.serve.datamodel.fusion.KnownFusion
+import com.hartwig.serve.datamodel.molecular.common.GeneAlteration
+import com.hartwig.serve.datamodel.molecular.fusion.KnownFusion
 
 class EvidenceDatabase(
     private val knownEventResolver: KnownEventResolver,

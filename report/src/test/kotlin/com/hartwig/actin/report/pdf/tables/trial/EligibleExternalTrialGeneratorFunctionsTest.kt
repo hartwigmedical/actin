@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.CountryName
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import org.assertj.core.api.Assertions.assertThat
+import com.hartwig.actin.datamodel.molecular.evidence.Hospital as Hospital
 import org.junit.Test
 
 private val BASE_EXTERNAL_TRIAL_SUMMARY = ExternalTrialSummary(
@@ -23,7 +24,7 @@ class EligibleExternalTrialGeneratorFunctionsTest {
         countries = countrySet(
             TestClinicalEvidenceFactory.createCountry(
                 CountryName.NETHERLANDS,
-                mapOf("Amsterdam" to setOf("AMC"), "Leiden" to setOf("LUMC"))
+                mapOf("Amsterdam" to setOf(Hospital("AMC", false)), "Leiden" to setOf(Hospital("LUMC", false)))
             ),
             TestClinicalEvidenceFactory.createCountry(CountryName.GERMANY, mapOf("Berlin" to emptySet()))
         )
@@ -33,7 +34,7 @@ class EligibleExternalTrialGeneratorFunctionsTest {
             TestClinicalEvidenceFactory.createCountry(
                 CountryName.BELGIUM,
                 mapOf(
-                    "Brussels" to setOf("Brussels hospital"),
+                    "Brussels" to setOf(Hospital("Brussels hospital", null)),
                     "Liege" to emptySet(),
                     "Gent" to emptySet(),
                     "Antwerp" to emptySet(),
@@ -51,10 +52,16 @@ class EligibleExternalTrialGeneratorFunctionsTest {
             TestClinicalEvidenceFactory.createCountry(
                 CountryName.NETHERLANDS,
                 mapOf(
-                    "Nijmegen" to setOf("Radboud UMC", "CWZ"),
-                    "Leiden" to setOf("LUMC"),
-                    "Amsterdam" to setOf("NKI-AVL", "AMC", "VUmc", "OLVG", "BovenIJ"),
-                    "Groningen" to setOf("Martini", "UMCG", "Ommelander")
+                    "Nijmegen" to setOf(Hospital("Radboud UMC", false), Hospital("CWZ", false)),
+                    "Leiden" to setOf(Hospital("LUMC", false)),
+                    "Amsterdam" to setOf(
+                        Hospital("NKI-AVL", false),
+                        Hospital("AMC", false),
+                        Hospital("VUmc", false),
+                        Hospital("OLVG", false),
+                        Hospital("BovenIJ", false)
+                    ),
+                    "Groningen" to setOf(Hospital("Martini", false), Hospital("UMCG", false), Hospital("Ommelander", false))
                 )
             )
         )

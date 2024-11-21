@@ -2,7 +2,9 @@ package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
-import com.hartwig.serve.datamodel.ActionableEvent
+import com.hartwig.serve.datamodel.common.ImmutableCancerType
+import com.hartwig.serve.datamodel.common.ImmutableIndication
+import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -18,12 +20,12 @@ class PersonalizedActionabilityFactoryTest {
         val event2 = create("other doid")
         val event3 = create("parent", "blacklist")
         val events = listOf(event1, event2, event3)
-        val match = factory.create(events)
-        assertThat(match.onLabelEvents.size).isEqualTo(1)
-        assertThat(match.onLabelEvents).contains(event1)
-        assertThat(match.offLabelEvents.size).isEqualTo(2)
-        assertThat(match.offLabelEvents).contains(event2)
-        assertThat(match.offLabelEvents).contains(event3)
+        val match = factory.create(ActionableEvents(events, emptyList()))
+        assertThat(match.onLabelEvidence.evidences.size).isEqualTo(1)
+        assertThat(match.onLabelEvidence.evidences).contains(event1)
+        assertThat(match.offLabelEvidence.evidences.size).isEqualTo(2)
+        assertThat(match.offLabelEvidence.evidences).contains(event2)
+        assertThat(match.offLabelEvidence.evidences).contains(event3)
     }
 
     @Test
@@ -35,21 +37,22 @@ class PersonalizedActionabilityFactoryTest {
         val event2 = create("doid 2")
         val event3 = create("doid 1", "blacklist")
         val events = listOf(event1, event2, event3)
-        val match = factory.create(events)
-        assertThat(match.onLabelEvents.size).isEqualTo(0)
-        assertThat(match.offLabelEvents.size).isEqualTo(3)
+        val match = factory.create(ActionableEvents(events, emptyList()))
+        assertThat(match.onLabelEvidence.evidences.size).isEqualTo(0)
+        assertThat(match.offLabelEvidence.evidences.size).isEqualTo(3)
     }
 
-    private fun create(doid: String): ActionableEvent {
-        return TestServeActionabilityFactory.hotspotBuilder()
-            .applicableCancerType(TestServeActionabilityFactory.cancerTypeBuilder().doid(doid).build())
-            .build()
+    private fun create(doid: String): EfficacyEvidence {
+        val molecularCriterium = TestServeActionabilityFactory.createHotspot()
+        val indication = ImmutableIndication.builder().applicableType(ImmutableCancerType.builder().name("").doid(doid).build())
+            .excludedSubTypes(emptySet()).build()
+        return TestServeActionabilityFactory.createEfficacyEvidence(molecularCriterium = molecularCriterium, indication = indication)
     }
 
-    private fun create(doid: String, blacklistDoid: String): ActionableEvent {
-        return TestServeActionabilityFactory.hotspotBuilder()
-            .from(create(doid))
-            .addBlacklistCancerTypes(TestServeActionabilityFactory.cancerTypeBuilder().doid(blacklistDoid).build())
-            .build()
+    private fun create(doid: String, blacklistDoid: String): EfficacyEvidence {
+        val molecularCriterium = TestServeActionabilityFactory.createHotspot()
+        val indication = ImmutableIndication.builder().applicableType(ImmutableCancerType.builder().name("").doid(doid).build())
+            .excludedSubTypes(setOf(ImmutableCancerType.builder().name("").doid(blacklistDoid).build())).build()
+        return TestServeActionabilityFactory.createEfficacyEvidence(molecularCriterium = molecularCriterium, indication = indication)
     }
 }

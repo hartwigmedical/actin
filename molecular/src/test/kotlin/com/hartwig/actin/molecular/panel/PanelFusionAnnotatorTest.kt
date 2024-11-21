@@ -12,22 +12,25 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactor
 import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.GENE
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
+import com.hartwig.actin.molecular.evidence.TestServeFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEvents
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.ensemblcache.TranscriptData
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
-import com.hartwig.serve.datamodel.EvidenceLevelDetails
-import com.hartwig.serve.datamodel.Knowledgebase
+import com.hartwig.serve.datamodel.efficacy.EvidenceLevelDetails
+import com.hartwig.serve.datamodel.molecular.ImmutableMolecularCriterium
+import com.hartwig.serve.datamodel.molecular.gene.ImmutableActionableGene
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import com.hartwig.serve.datamodel.EvidenceDirection as ServeEvidenceDirection
-import com.hartwig.serve.datamodel.EvidenceLevel as ServeEvidenceLevel
+import com.hartwig.serve.datamodel.efficacy.EvidenceDirection as ServeEvidenceDirection
+import com.hartwig.serve.datamodel.efficacy.EvidenceLevel as ServeEvidenceLevel
 
-private val EMPTY_MATCH = ActionabilityMatch(emptyList(), emptyList())
+private val EMPTY_MATCH = ActionabilityMatch(ActionableEvents(), ActionableEvents())
 private const val TRANSCRIPT = "transcript"
 private const val CANONICAL_TRANSCRIPT = "canonical_transcript"
 private const val GENE_START = "gene_start"
@@ -66,11 +69,22 @@ private val FULLY_SPECIFIED_FUSION_MATCH_CRITERIA = FusionMatchCriteria(
     fusedExonDown = FUSED_EXON_DOWN
 )
 
+private val MOLECULAR_CRITERIUM = ImmutableMolecularCriterium.builder().addGenes(
+    ImmutableActionableGene.builder().from(TestServeActionabilityFactory.actionableEventBuiler())
+        .from(TestServeFactory.createEmptyGeneAnnotation()).build()
+).build()
+
 private val ACTIONABILITY_MATCH = ActionabilityMatch(
-    onLabelEvents = listOf(
-        TestServeActionabilityFactory.geneBuilder().build().withSource(Knowledgebase.CKB_EVIDENCE).withEvidenceLevel(ServeEvidenceLevel.A)
-            .withDirection(ServeEvidenceDirection.RESPONSIVE)
-    ), offLabelEvents = emptyList()
+    onLabelEvidence = ActionableEvents(
+        listOf(
+            TestServeActionabilityFactory.createEfficacyEvidence(
+                level = ServeEvidenceLevel.A,
+                direction = ServeEvidenceDirection.RESPONSIVE,
+                molecularCriterium = MOLECULAR_CRITERIUM
+            )
+        ), emptyList()
+    ),
+    offLabelEvidence = ActionableEvents()
 )
 
 class PanelFusionAnnotatorTest {
@@ -310,8 +324,8 @@ class PanelFusionAnnotatorTest {
     private fun setupEvidenceDatabaseWithNoEvidence() {
         every { evidenceDatabase.lookupKnownFusion(EXON_SKIP_FUSION_MATCHING_CRITERIA) } returns null
         every { evidenceDatabase.evidenceForFusion(EXON_SKIP_FUSION_MATCHING_CRITERIA) } returns ActionabilityMatch(
-            onLabelEvents = emptyList(),
-            offLabelEvents = emptyList()
+            onLabelEvidence = ActionableEvents(),
+            offLabelEvidence = ActionableEvents()
         )
     }
 }
