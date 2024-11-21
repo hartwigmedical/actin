@@ -39,13 +39,13 @@ class ResistanceEvidenceMatcher(
         }.distinctBy { it.event }
     }
 
-    fun isFound(event: EfficacyEvidence, molecularHistory: MolecularHistory): Boolean? {
+    fun isFound(evidence: EfficacyEvidence, molecularHistory: MolecularHistory): Boolean? {
         val molecularTests = molecularHistory.molecularTests
 
-        with(event.molecularCriterium()) {
+        with(evidence.molecularCriterium()) {
             return when {
                 hotspots().isNotEmpty() -> {
-                    val variantEvidence = VariantEvidence(ActionableEvents(listOf(event)), ActionableEvents(), ActionableEvents())
+                    val variantEvidence = VariantEvidence(ActionableEvents(listOf(evidence)), ActionableEvents(), ActionableEvents())
                     molecularTests.any { molecularTest ->
                         molecularTest.drivers.variants.any {
                             variantEvidence.findMatches(MolecularRecordAnnotatorFunctions.createCriteria(it)).evidences.isNotEmpty()
@@ -54,7 +54,7 @@ class ResistanceEvidenceMatcher(
                 }
 
                 genes().isNotEmpty() -> {
-                    val actionableEvents = ActionableEvents(listOf(event))
+                    val actionableEvents = ActionableEvents(listOf(evidence))
 
                     val variantEvidence = VariantEvidence.create(actionableEvents)
                     val fusionEvidence = FusionEvidence.create(actionableEvents)
@@ -77,7 +77,7 @@ class ResistanceEvidenceMatcher(
                 }
 
                 fusions().isNotEmpty() -> {
-                    val fusionEvidence = FusionEvidence(ActionableEvents(), ActionableEvents(listOf(event)))
+                    val fusionEvidence = FusionEvidence(ActionableEvents(), ActionableEvents(listOf(evidence)))
                     molecularTests.any { molecularTest ->
                         molecularTest.drivers.fusions.any {
                             fusionEvidence.findMatches(MolecularRecordAnnotatorFunctions.createFusionCriteria(it)).evidences.isNotEmpty()
@@ -86,7 +86,7 @@ class ResistanceEvidenceMatcher(
                 }
 
                 exons().isNotEmpty() -> {
-                    val variantEvidence = VariantEvidence(ActionableEvents(), ActionableEvents(listOf(event)), ActionableEvents())
+                    val variantEvidence = VariantEvidence(ActionableEvents(), ActionableEvents(listOf(evidence)), ActionableEvents())
                     molecularTests.any { molecularTest ->
                         molecularTest.drivers.variants.any {
                             variantEvidence.findMatches(MolecularRecordAnnotatorFunctions.createCriteria(it)).evidences.isNotEmpty()
@@ -95,7 +95,7 @@ class ResistanceEvidenceMatcher(
                 }
 
                 codons().isNotEmpty() -> {
-                    val variantEvidence = VariantEvidence(ActionableEvents(), ActionableEvents(listOf(event)), ActionableEvents())
+                    val variantEvidence = VariantEvidence(ActionableEvents(), ActionableEvents(listOf(evidence)), ActionableEvents())
                     molecularTests.any { molecularTest ->
                         molecularTest.drivers.variants.any {
                             variantEvidence.findMatches(MolecularRecordAnnotatorFunctions.createCriteria(it)).evidences.isNotEmpty()
@@ -127,12 +127,12 @@ class ResistanceEvidenceMatcher(
         fun create(
             doidModel: DoidModel,
             tumorDoids: Set<String>,
-            actionableEvents: List<EfficacyEvidence>,
+            evidences: List<EfficacyEvidence>,
             treatmentDatabase: TreatmentDatabase,
             molecularHistory: MolecularHistory
         ): ResistanceEvidenceMatcher {
             val expandedTumorDoids = expandDoids(doidModel, tumorDoids)
-            val filteredActionableEvents = actionableEvents.filter { hasNoPositiveResponse(it) && isOnLabel(it, expandedTumorDoids) }
+            val filteredActionableEvents = evidences.filter { hasNoPositiveResponse(it) && isOnLabel(it, expandedTumorDoids) }
 
             return ResistanceEvidenceMatcher(filteredActionableEvents, treatmentDatabase, molecularHistory)
         }

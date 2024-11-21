@@ -76,10 +76,9 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
 
         LOGGER.info("Loading evidence database for resistance evidence")
         val tumorDoids = patient.tumor.doids.orEmpty().toSet()
-        val actionableEvents =
-            loadEvidence(patient.molecularHistory.latestOrangeMolecularRecord()?.refGenomeVersion ?: RefGenomeVersion.V37)
+        val evidences = loadEvidence(patient.molecularHistory.latestOrangeMolecularRecord()?.refGenomeVersion ?: RefGenomeVersion.V37)
         val resistanceEvidenceMatcher =
-            ResistanceEvidenceMatcher.create(doidModel, tumorDoids, actionableEvents, treatmentDatabase, patient.molecularHistory)
+            ResistanceEvidenceMatcher.create(doidModel, tumorDoids, evidences, treatmentDatabase, patient.molecularHistory)
         val match = TreatmentMatcher.create(resources, trials, evidenceEntries, resistanceEvidenceMatcher)
             .evaluateAndAnnotateMatchesForPatient(patient)
 
@@ -94,7 +93,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         LOGGER.info("Loading SERVE from {}", jsonFilePath)
         val serveDatabase = ServeJson.read(jsonFilePath)
         val serveRecord = serveDatabase.records()[serveRefGenomeVersion]
-        return serveRecord!!.evidences()
+        return serveRecord?.evidences() ?: throw IllegalStateException("No serve record for ref genome version $serveRefGenomeVersion")
     }
 
     private fun toServeRefGenomeVersion(refGenomeVersion: RefGenomeVersion): RefGenome {

@@ -20,13 +20,13 @@ import org.junit.Test
 class EvaluatedTreatmentAnnotatorTest {
 
     private val efficacyEntries = TestExtendedEvidenceEntryFactory.createProperTestExtendedEvidenceEntries()
-    private val actionableEvents: List<EfficacyEvidence> = emptyList()
+    private val evidences: List<EfficacyEvidence> = emptyList()
     private val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
     private val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
     private val resistanceEvidenceMatcher = ResistanceEvidenceMatcher.create(
         doidModel,
         emptySet(),
-        actionableEvents,
+        evidences,
         treatmentDatabase,
         TestMolecularFactory.createMinimalTestMolecularHistory()
     )

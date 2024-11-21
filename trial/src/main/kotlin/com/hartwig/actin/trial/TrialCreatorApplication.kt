@@ -39,8 +39,8 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
 
         LOGGER.info("Loading known genes from serve db {}", config.serveDbJson)
         val serveDatabase = ServeJson.read(config.serveDbJson)
-        val serveRecord = serveDatabase.records()[RefGenome.V37] //TODO (CB): which ref genome?
-        val knownGenes = serveRecord!!.knownEvents().genes()
+        val serveRecord = serveDatabase.records()[RefGenome.V37] //TODO (CB): shouldn't be hard coded?
+        val knownGenes = serveRecord?.knownEvents()?.genes() ?: throw IllegalStateException("No serve record for ref genome version 37")
         LOGGER.info(" Loaded {} known genes", knownGenes.size)
         val geneFilter = GeneFilterFactory.createFromKnownGenes(knownGenes)
 

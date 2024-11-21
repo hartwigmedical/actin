@@ -39,13 +39,13 @@ class TreatmentMatcherTest {
     private val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
     private val evidenceEntries =
         EfficacyEntryFactory(treatmentDatabase).convertCkbExtendedEvidence(CkbExtendedEvidenceTestFactory.createProperTestExtendedEvidenceDatabase())
-    private val actionableEvents: List<EfficacyEvidence> = emptyList()
+    private val evidences: List<EfficacyEvidence> = emptyList()
     private val recommendationEngine = mockk<RecommendationEngine>()
     private val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
     private val resistanceEvidenceMatcher = ResistanceEvidenceMatcher.create(
         doidModel,
         emptySet(),
-        actionableEvents,
+        evidences,
         treatmentDatabase,
         TestMolecularFactory.createMinimalTestMolecularHistory()
     )

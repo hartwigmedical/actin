@@ -107,7 +107,7 @@ class LocalExampleTreatmentMatchApplication {
                 doidManualConfig = DoidManualConfig.create()
             ),
             tumorDoids = emptySet(),
-            actionableEvents = emptyList(),
+            evidences = emptyList(),
             treatmentDatabase = TreatmentDatabase(
                 drugsByName = emptyMap(),
                 treatmentsByName = emptyMap()

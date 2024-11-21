@@ -90,21 +90,21 @@ class VariantEvidence(
                         ActionableEventsFiltering.getGene(it).event()
                     )
                 }
-                val codonsEvidence = filterEfficacyEvidence(evidences, codonFilter())
+                val codonsEvidences = filterEfficacyEvidence(evidences, codonFilter())
                 val codonsTrials = filterAndExpandTrials(trials, codonFilter())
 
-                val exonsEvidence = filterEfficacyEvidence(evidences, exonFilter())
+                val exonsEvidences = filterEfficacyEvidence(evidences, exonFilter())
                 val exonsTrials = filterAndExpandTrials(trials, exonFilter())
 
-                val hotspotsEvidence = filterEfficacyEvidence(evidences, hotspotFilter())
+                val hotspotsEvidences = filterEfficacyEvidence(evidences, hotspotFilter())
                 val hotspotsTrials = filterAndExpandTrials(trials, hotspotFilter())
 
-                val rangesEvidence = listOf(codonsEvidence, exonsEvidence).flatten()
+                val rangesEvidences = listOf(codonsEvidences, exonsEvidences).flatten()
                 val rangesTrials = listOf(codonsTrials, exonsTrials).flatten()
 
                 return VariantEvidence(
-                    ActionableEvents(hotspotsEvidence, hotspotsTrials),
-                    ActionableEvents(rangesEvidence, rangesTrials),
+                    ActionableEvents(hotspotsEvidences, hotspotsTrials),
+                    ActionableEvents(rangesEvidences, rangesTrials),
                     ActionableEvents(applicableActionableGenesEvidences, applicableActionableGenesTrials)
                 )
             }
