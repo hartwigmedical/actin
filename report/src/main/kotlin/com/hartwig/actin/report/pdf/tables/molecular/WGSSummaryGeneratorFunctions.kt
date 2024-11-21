@@ -155,7 +155,7 @@ object WGSSummaryGeneratorFunctions {
                 DriverLikelihood.LOW -> " (low driver likelihood)"
                 DriverLikelihood.MEDIUM -> " (medium driver likelihood)"
                 else -> if (driver is CopyNumber) {
-                    " (no amplification or deletion - ${driver.minCopies} copies)"
+                    " (${driver.minCopies} copies - no amplification or deletion)"
                 } else " (dubious quality)"
             }
             listOf(
