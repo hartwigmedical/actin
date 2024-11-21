@@ -33,7 +33,7 @@ object Tables {
                 .setSkipLastFooter(true)
         }
 
-        wrappingTable.addCell(Cells.create(table))
+        wrappingTable.addCell(Cells.create(table)).setPadding(0f)
         return wrappingTable
     }
 }
