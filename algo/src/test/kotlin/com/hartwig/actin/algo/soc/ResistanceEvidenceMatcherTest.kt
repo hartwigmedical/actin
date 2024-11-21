@@ -30,7 +30,7 @@ import org.junit.Test
 private val INDICATION = ImmutableIndication.builder().applicableType(
     ImmutableCancerType.builder().name("").doid("1520").build()
 ).build()
-private val MOLECULAR_CRITERIUM = TestServeActionabilityFactory.createGene("BRAF", GeneEvent.AMPLIFICATION)
+private val MOLECULAR_CRITERIUM = TestServeActionabilityFactory.createGene("BRAF", GeneEvent.AMPLIFICATION, "BRAF amp")
 private val ACTIONABLE_EVENTS: EfficacyEvidence = TestServeActionabilityFactory.createEfficacyEvidence(
     Knowledgebase.CKB,
     "pembrolizumab",

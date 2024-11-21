@@ -732,7 +732,9 @@
                         "name": "GERMANY",
                         "hospitalsPerCity": {
                           "Stuttgart": [
-                            "Robert-Bosch-Krankenhaus - Klinik Schillerhoehe"
+                            {
+                              "name": "Robert-Bosch-Krankenhaus - Klinik Schillerhoehe"
+                            }
                           ]
                         }
                       }

@@ -111,9 +111,11 @@ object TestServeActionabilityFactory {
         )
     }
 
-    fun createGene(gene: String = "", geneEvent: GeneEvent = GeneEvent.ANY_MUTATION): MolecularCriterium {
+    fun createGene(gene: String = "", geneEvent: GeneEvent = GeneEvent.ANY_MUTATION, sourceEvent: String = ""): MolecularCriterium {
         return ImmutableMolecularCriterium.builder()
-            .addGenes(ImmutableActionableGene.builder().from(actionableEventBuiler()).event(geneEvent).gene(gene).build()).build()
+            .addGenes(
+                ImmutableActionableGene.builder().from(actionableEventBuiler()).event(geneEvent).gene(gene).sourceEvent(sourceEvent).build()
+            ).build()
     }
 
     fun withGene(
