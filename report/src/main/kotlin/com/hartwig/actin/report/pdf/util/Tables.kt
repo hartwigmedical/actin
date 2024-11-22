@@ -1,5 +1,7 @@
 package com.hartwig.actin.report.pdf.util
 
+import com.hartwig.actin.report.pdf.util.Cells.createSpanningSubNote
+import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.properties.UnitValue
 
@@ -13,18 +15,25 @@ object Tables {
         return Table(UnitValue.createPercentArray(floatArrayOf(1f))).setWidth(width)
     }
 
-    @JvmOverloads
     fun makeWrapping(table: Table, printSubNotes: Boolean = true): Table {
         if (table.numberOfRows == 0) {
             table.addCell(Cells.createSpanningNoneEntry(table))
         }
-        table.addFooterCell(Cells.createSpanningSubNote(if (printSubNotes) "The table continues on the next page" else "", table))
-        table.isSkipLastFooter = true
+
         val wrappingTable = Table(1).setMinWidth(table.width)
+
+        table.children.filterIsInstance<Cell>().forEach { it.setKeepTogether(true) }
+
         if (printSubNotes) {
+            wrappingTable.addFooterCell(
+                createSpanningSubNote("The table continues on the next page", table).setFixedPosition(30f, 35f, 0f)
+            )
             wrappingTable.addHeaderCell(Cells.createSubNote("Continued from the previous page"))
+                .setSkipFirstHeader(true)
+                .setSkipLastFooter(true)
         }
-        wrappingTable.setSkipFirstHeader(true).addCell(Cells.create(table).setPadding(0f))
+
+        wrappingTable.addCell(Cells.create(table).setPadding(0f))
         return wrappingTable
     }
 }

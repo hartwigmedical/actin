@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 
 class HasMinimumLanskyKarnofskyScore internal constructor(private val performanceScore: PerformanceScore, private val minScore: Int) :
     EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val who = record.clinicalStatus.who ?: return EvaluationFactory.recoverableUndetermined(
             "Cannot evaluate ${performanceScore.display()} performance score because WHO is missing",

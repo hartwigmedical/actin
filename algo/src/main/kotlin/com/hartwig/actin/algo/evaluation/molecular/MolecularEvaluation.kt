@@ -48,6 +48,5 @@ data class MolecularEvaluation(
                 ExperimentType.HARTWIG_WHOLE_GENOME,
                 ExperimentType.HARTWIG_TARGETED
             )
-
     }
 }

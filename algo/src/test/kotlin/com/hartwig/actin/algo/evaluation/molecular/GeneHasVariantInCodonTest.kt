@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.google.common.collect.Lists
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -13,7 +12,8 @@ private const val OTHER_CODON = 300
 private const val TARGET_GENE = "gene A"
 
 class GeneHasVariantInCodonTest {
-    private val function = GeneHasVariantInCodon(TARGET_GENE, Lists.newArrayList("A100", "B200"))
+
+    private val function = GeneHasVariantInCodon(TARGET_GENE, listOf("A100", "B200"))
 
     @Test
     fun `Should fail when gene not present`() {

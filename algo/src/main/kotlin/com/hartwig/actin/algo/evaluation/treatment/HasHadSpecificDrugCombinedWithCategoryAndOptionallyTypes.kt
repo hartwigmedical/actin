@@ -16,8 +16,8 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypes(
     private val category: TreatmentCategory,
     private val types: Set<TreatmentType>?
 ) : EvaluationFunction {
-    override fun evaluate(record: PatientRecord): Evaluation {
 
+    override fun evaluate(record: PatientRecord): Evaluation {
         val relevantHistory = record.oncologicalHistory.filter { history ->
             history.allTreatments().any { (it as? DrugTreatment)?.drugs?.contains(drugToFind) == true }
         }

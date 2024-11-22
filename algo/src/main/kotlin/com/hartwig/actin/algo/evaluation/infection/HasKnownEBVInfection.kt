@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
 class HasKnownEBVInfection: EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val matchingCondition = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
             .find { stringCaseInsensitivelyMatchesQueryCollection(it.name, EBV_TERMS) }

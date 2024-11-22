@@ -11,8 +11,8 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 
 class HasPotentialUncontrolledTumorRelatedPain(private val interpreter: MedicationStatusInterpreter) :
     EvaluationFunction {
-    override fun evaluate(record: PatientRecord): Evaluation {
 
+    override fun evaluate(record: PatientRecord): Evaluation {
         val painComplications = ComplicationFunctions.findComplicationNamesMatchingAnyCategory(record, listOf(SEVERE_PAIN_COMPLICATION))
         if (painComplications.isNotEmpty()) {
             return EvaluationFactory.pass(

@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 
 object MolecularDecisions {
+
     val brafV600EMutation = EligibilityFunction(EligibilityRule.MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y, listOf("BRAF", "V600E"))
     val rasWildTypeAndLeftSided =
         listOf("KRAS", "NRAS").map { EligibilityFunction(EligibilityRule.WILDTYPE_OF_GENE_X, listOf(it)) } + EligibilityFunction(

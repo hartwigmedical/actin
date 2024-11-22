@@ -11,7 +11,6 @@ import com.hartwig.actin.datamodel.molecular.MolecularHistory
 class MolecularResultsAreAvailableForGene(private val gene: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-
         if (record.molecularHistory.molecularTests.isEmpty()) {
             return EvaluationFactory.undetermined("No molecular data", "No molecular data")
         }

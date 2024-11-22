@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.complication
 
 internal object PatternMatcher {
+
     fun isMatch(term: String, patterns: Set<List<String>>): Boolean {
         val termToEvaluate = term.lowercase()
         for (pattern in patterns) {

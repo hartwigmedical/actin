@@ -24,11 +24,9 @@ class BreakendEvidenceTest {
         assertThat(evidencesMatch.size).isEqualTo(1)
         assertThat(evidencesMatch).contains(gene1)
 
-        // Not reported
         val notReportedDisruption = disruption.copy(isReportable = false)
         assertThat(breakendEvidence.findMatches(notReportedDisruption)).isEmpty()
 
-        // Wrong event
         val wrongEventDisruption = disruption.copy(gene = "gene 2")
         assertThat(breakendEvidence.findMatches(wrongEventDisruption)).isEmpty()
     }

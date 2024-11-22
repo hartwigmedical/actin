@@ -7,71 +7,77 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Assert.assertNull
 import org.junit.Test
 
 class SystemicTreatmentAnalyserTest {
+
+    private val systemicTreatment = treatment("treatment A", isSystemic = true)
+    private val systemicTreatmentHistoryEntry = treatmentHistoryEntry(setOf(systemicTreatment), 2022, 5)
+    private val earlierSystemicTreatmentHistoryEntry = systemicTreatmentHistoryEntry.copy(startYear = 2021, startMonth = 5)
+    private val nonSystemicTreatment = treatment("treatment B", isSystemic = false)
+    private val nonSystemicTreatmentHistoryEntry = treatmentHistoryEntry(setOf(nonSystemicTreatment), 2022, 2)
+
     @Test
-    fun shouldReturnZeroWhenTreatmentListEmpty() {
+    fun `Should return zero when treatment list is empty`() {
         val treatmentHistory = emptyList<TreatmentHistoryEntry>()
         assertThat(minSystemicTreatments(treatmentHistory).toLong()).isEqualTo(0)
         assertThat(maxSystemicTreatments(treatmentHistory).toLong()).isEqualTo(0)
     }
 
     @Test
-    fun shouldReturnOneWhenOneSystemicTreatmentProvided() {
-        val treatmentHistory = listOf(SYSTEMIC_TREATMENT_HISTORY_ENTRY)
+    fun `Should return one when one systemic treatment provided`() {
+        val treatmentHistory = listOf(systemicTreatmentHistoryEntry)
         assertThat(minSystemicTreatments(treatmentHistory).toLong()).isEqualTo(1)
         assertThat(maxSystemicTreatments(treatmentHistory).toLong()).isEqualTo(1)
     }
 
     @Test
-    fun shouldNotCountNonSystemicTreatments() {
-        val treatmentHistory = listOf(NON_SYSTEMIC_TREATMENT_HISTORY_ENTRY)
+    fun `Should not count not systemic treatments`() {
+        val treatmentHistory = listOf(nonSystemicTreatmentHistoryEntry)
         assertThat(minSystemicTreatments(treatmentHistory).toLong()).isEqualTo(0)
         assertThat(maxSystemicTreatments(treatmentHistory).toLong()).isEqualTo(0)
     }
 
     @Test
-    fun shouldCountBlocksOfConsecutiveSystemicTreatmentsForMinAndEachSystemicTreatmentForMax() {
+    fun `Should count block of consecutive systemic treatments for min and each systemic treatment for max`() {
         val treatmentHistory = mutableListOf(
-            SYSTEMIC_TREATMENT_HISTORY_ENTRY,
-            NON_SYSTEMIC_TREATMENT_HISTORY_ENTRY,
-            EARLIER_SYSTEMIC_TREATMENT_HISTORY_ENTRY
+            systemicTreatmentHistoryEntry,
+            nonSystemicTreatmentHistoryEntry,
+            earlierSystemicTreatmentHistoryEntry
         )
         assertThat(minSystemicTreatments(treatmentHistory).toLong()).isEqualTo(2)
         assertThat(maxSystemicTreatments(treatmentHistory).toLong()).isEqualTo(2)
 
-        treatmentHistory.add(treatmentHistoryEntry(setOf(SYSTEMIC_TREATMENT), 2021, 10))
+        treatmentHistory.add(treatmentHistoryEntry(setOf(systemicTreatment), 2021, 10))
         assertThat(minSystemicTreatments(treatmentHistory).toLong()).isEqualTo(2)
         assertThat(maxSystemicTreatments(treatmentHistory).toLong()).isEqualTo(3)
     }
 
     @Test
-    fun shouldNotCountInterruptionsBetweenTreatmentsWithSameNameAndUnknownDates() {
+    fun `Should not count interruptions between treatments with same name and unknown dates`() {
         val treatmentHistory = mutableListOf(
-            SYSTEMIC_TREATMENT_HISTORY_ENTRY,
-            NON_SYSTEMIC_TREATMENT_HISTORY_ENTRY,
-            EARLIER_SYSTEMIC_TREATMENT_HISTORY_ENTRY
+            systemicTreatmentHistoryEntry,
+            nonSystemicTreatmentHistoryEntry,
+            earlierSystemicTreatmentHistoryEntry
         )
         assertThat(minSystemicTreatments(treatmentHistory).toLong()).isEqualTo(2)
         assertThat(maxSystemicTreatments(treatmentHistory).toLong()).isEqualTo(2)
 
-        treatmentHistory.add(treatmentHistoryEntry(setOf(SYSTEMIC_TREATMENT), null, null))
+        treatmentHistory.add(treatmentHistoryEntry(setOf(systemicTreatment), null, null))
         assertThat(minSystemicTreatments(treatmentHistory).toLong()).isEqualTo(2)
         assertThat(maxSystemicTreatments(treatmentHistory).toLong()).isEqualTo(3)
 
-        treatmentHistory.add(treatmentHistoryEntry(setOf(SYSTEMIC_TREATMENT), 2021, null))
+        treatmentHistory.add(treatmentHistoryEntry(setOf(systemicTreatment), 2021, null))
         assertThat(minSystemicTreatments(treatmentHistory).toLong()).isEqualTo(2)
         assertThat(maxSystemicTreatments(treatmentHistory).toLong()).isEqualTo(4)
     }
 
     @Test
-    fun shouldCountInterruptionsBetweenDifferentTreatmentsAndUnknownDates() {
+    fun `Should count interruptions between different treatments and unknown dates`() {
         val treatmentHistory = mutableListOf(
-            SYSTEMIC_TREATMENT_HISTORY_ENTRY,
-            NON_SYSTEMIC_TREATMENT_HISTORY_ENTRY,
-            EARLIER_SYSTEMIC_TREATMENT_HISTORY_ENTRY
+            systemicTreatmentHistoryEntry,
+            nonSystemicTreatmentHistoryEntry,
+            earlierSystemicTreatmentHistoryEntry
         )
         assertThat(minSystemicTreatments(treatmentHistory).toLong()).isEqualTo(2)
         assertThat(maxSystemicTreatments(treatmentHistory).toLong()).isEqualTo(2)
@@ -86,17 +92,17 @@ class SystemicTreatmentAnalyserTest {
     }
 
     @Test
-    fun shouldReturnNullForLastSystemicTreatmentWhenNoTreatmentsProvided() {
+    fun `Should return null for last systemic treatment when no treatments provided`() {
         assertThat(lastSystemicTreatment(emptyList())).isNull()
     }
 
     @Test
-    fun shouldReturnNullForLastSystemicTreatmentWhenOnlyNonSystemicTreatments() {
-        assertNull(lastSystemicTreatment(listOf(NON_SYSTEMIC_TREATMENT_HISTORY_ENTRY)))
+    fun `Should return null for last systemic treatment when only non systemic treatments`() {
+        assertThat(lastSystemicTreatment(listOf(nonSystemicTreatmentHistoryEntry))).isNull()
     }
 
     @Test
-    fun canDetermineLastSystemicTreatment() {
+    fun `Should determine last systemic treatment`() {
         val treatmentHistory = mutableListOf(treatmentHistoryEntry(setOf(treatment("1", true)), 2020, 5))
         assertNameForLastSystemicTreatmentHistoryEntry(treatmentHistory, "1")
 
@@ -113,15 +119,7 @@ class SystemicTreatmentAnalyserTest {
         assertNameForLastSystemicTreatmentHistoryEntry(treatmentHistory, "4")
     }
 
-    companion object {
-        private val SYSTEMIC_TREATMENT = treatment("treatment A", true)
-        private val SYSTEMIC_TREATMENT_HISTORY_ENTRY = treatmentHistoryEntry(setOf(SYSTEMIC_TREATMENT), 2022, 5)
-        private val EARLIER_SYSTEMIC_TREATMENT_HISTORY_ENTRY = SYSTEMIC_TREATMENT_HISTORY_ENTRY.copy(startYear = 2021, startMonth = 5)
-        private val NON_SYSTEMIC_TREATMENT = treatment("treatment B", false)
-        private val NON_SYSTEMIC_TREATMENT_HISTORY_ENTRY = treatmentHistoryEntry(setOf(NON_SYSTEMIC_TREATMENT), 2022, 2)
-
-        private fun assertNameForLastSystemicTreatmentHistoryEntry(treatmentHistory: List<TreatmentHistoryEntry>, name: String) {
-            assertThat(lastSystemicTreatment(treatmentHistory)!!.treatments.first().name).isEqualTo(name)
-        }
+    private fun assertNameForLastSystemicTreatmentHistoryEntry(treatmentHistory: List<TreatmentHistoryEntry>, name: String) {
+        assertThat(lastSystemicTreatment(treatmentHistory)!!.treatments.first().name).isEqualTo(name)
     }
 }

@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
 class HasHistoryOfSecondMalignancy: EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         return if (record.priorSecondPrimaries.isNotEmpty()) {
             EvaluationFactory.pass("Patient has second malignancy", "Presence of second malignancy")

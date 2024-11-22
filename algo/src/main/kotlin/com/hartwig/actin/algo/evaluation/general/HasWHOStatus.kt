@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import kotlin.math.abs
 
 class HasWHOStatus(private val requiredWHO: Int) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val who = record.clinicalStatus.who
         return when {

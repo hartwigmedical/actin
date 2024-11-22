@@ -6,6 +6,7 @@ import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 
 class ReproductionRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
+
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
             EligibilityRule.IS_BREASTFEEDING to isBreastfeedingCreator(),

@@ -8,6 +8,7 @@ import java.time.LocalDate
 
 class HasHadRecentBloodTransfusion internal constructor(private val product: TransfusionProduct, private val minDate: LocalDate) :
     EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val productString = product.display().lowercase()
         for (transfusion in record.bloodTransfusions) {

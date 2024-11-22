@@ -9,8 +9,8 @@ import java.time.LocalDate
 
 class HasRestingHeartRateWithinBounds(
     private val minMedianRestingHeartRate: Double, private val maxMedianRestingHeartRate: Double, private val minimumDate: LocalDate
-) :
-    EvaluationFunction {
+) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val relevant =
             VitalFunctionSelector.selectMedianPerDay(record, VitalFunctionCategory.HEART_RATE, MAX_HEART_RATES_TO_USE, minimumDate)

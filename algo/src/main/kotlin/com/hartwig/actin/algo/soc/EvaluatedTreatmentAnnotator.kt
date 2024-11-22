@@ -13,7 +13,8 @@ class EvaluatedTreatmentAnnotator(
 ) {
 
     fun annotate(
-        evaluatedTreatments: List<EvaluatedTreatment>, treatmentAnalyses: List<TreatmentAnalysis>? = null
+        evaluatedTreatments: List<EvaluatedTreatment>,
+        treatmentAnalyses: List<TreatmentAnalysis>? = null
     ): List<AnnotatedTreatmentMatch> {
         val pfsByTreatmentName = treatmentAnalyses?.flatMap { (treatmentGroup, measurementsByType) ->
             treatmentGroup.memberTreatmentNames.map { treatmentName ->

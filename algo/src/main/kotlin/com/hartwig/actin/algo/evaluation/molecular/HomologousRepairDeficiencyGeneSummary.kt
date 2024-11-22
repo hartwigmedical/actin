@@ -19,6 +19,7 @@ data class HomologousRepairDeficiencyGeneSummary(
     val hrdGenesWithHomozygousDisruption: Set<String>,
     val hrdGenesWithNonHomozygousDisruption : Set<String>
 ) {
+
     val hrdGenesWithBiallelicDriver = (hrdGenesWithBiallelicHotspot + hrdGenesWithBiallelicNonHotspotHighDriver +
             hrdGenesWithBiallelicNonHotspotNonHighDriver + hrdGenesWithHomozygousDisruption + hrdGenesWithDeletionOrPartialLoss)
     val hrdGenesWithNonBiallelicDriver = (hrdGenesWithNonBiallelicNonHotspotHighDriver + hrdGenesWithNonBiallelicHotspot +

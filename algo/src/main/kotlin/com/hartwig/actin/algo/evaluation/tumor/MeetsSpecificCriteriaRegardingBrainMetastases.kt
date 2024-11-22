@@ -8,7 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class MeetsSpecificCriteriaRegardingBrainMetastases : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-
         with(record.tumor) {
             val specificMessageEnding = "if these meet the specific protocol criteria"
             val generalMessageStart = "Undetermined if study specific criteria regarding"

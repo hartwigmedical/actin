@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical
 
-import com.google.common.collect.Lists
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
@@ -25,7 +24,7 @@ class BuildClinicalFromDoidsOnly(private val command: CommandLine) {
         val outputDirectory = command.getOptionValue(OUTPUT_DIRECTORY)
 
         LOGGER.info("Writing clinical record for {} to {}", patientId, outputDirectory)
-        ClinicalRecordJson.write(Lists.newArrayList(record), outputDirectory)
+        ClinicalRecordJson.write(listOf(record), outputDirectory)
 
         LOGGER.info("Done!")
     }

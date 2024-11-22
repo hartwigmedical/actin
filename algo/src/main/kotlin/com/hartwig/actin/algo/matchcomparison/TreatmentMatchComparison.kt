@@ -9,6 +9,7 @@ import com.hartwig.actin.datamodel.trial.TrialIdentification
 import org.apache.logging.log4j.LogManager
 
 object TreatmentMatchComparison {
+
     private const val INDENT_WIDTH = 2
     private val LOGGER = LogManager.getLogger(TreatmentMatchComparison::class.java)
 

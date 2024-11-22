@@ -1,12 +1,13 @@
 package com.hartwig.actin.clinical.feed.emc.questionnaire
 
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireVersion.Companion.version
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class QuestionnaireVersionTest {
+
     @Test
-    fun canResolveAllVersions() {
+    fun `Should resolve all versions`() {
         assertVersion(QuestionnaireVersion.V1_7, TestQuestionnaireFactory.createTestQuestionnaireValueV1_7())
         assertVersion(QuestionnaireVersion.V1_6, TestQuestionnaireFactory.createTestQuestionnaireValueV1_6())
         assertVersion(QuestionnaireVersion.V1_5, TestQuestionnaireFactory.createTestQuestionnaireValueV1_5())
@@ -20,13 +21,11 @@ class QuestionnaireVersionTest {
     }
 
     @Test(expected = IllegalStateException::class)
-    fun crashOnUnresolvedVersion() {
+    fun `Should throw exception on unresolved version`() {
         version(TestQuestionnaireFactory.entryWithText("Not an entry"))
     }
 
-    companion object {
-        private fun assertVersion(expected: QuestionnaireVersion, questionnaire: String) {
-            Assert.assertEquals(expected, version(TestQuestionnaireFactory.entryWithText(questionnaire)))
-        }
+    private fun assertVersion(expected: QuestionnaireVersion, questionnaire: String) {
+        assertThat(version(TestQuestionnaireFactory.entryWithText(questionnaire))).isEqualTo(expected)
     }
 }

@@ -126,8 +126,7 @@ class StandardOncologicalHistoryExtractor(
                                     maintenanceTreatment = curatedTreatment.curated.treatmentHistoryDetails?.maintenanceTreatment,
                                 ),
                                 isTrial = ehrTreatmentHistory.administeredInStudy,
-                                trialAcronym = curatedTreatment.curated.trialAcronym
-
+                                trialAcronym = curatedTreatment.curated.trialAcronym ?: ehrTreatmentHistory.trialAcronym
                             )
                         ), switchToTreatments.evaluation + treatment.extractionEvaluation
                     )

@@ -98,7 +98,9 @@ data class ProvidedTreatmentHistory(
     val administeredCycles: Int? = null,
     val modifications: List<ProvidedTreatmentModification>? = null,
     @Description("Treatment administered in clinical study")
-    val administeredInStudy: Boolean
+    val administeredInStudy: Boolean,
+    @Description("Trial acronym or other short identifier if administered in study")
+    val trialAcronym: String? = null
 )
 
 @JacksonSerializable

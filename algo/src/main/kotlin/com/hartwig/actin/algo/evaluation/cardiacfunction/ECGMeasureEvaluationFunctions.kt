@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.evaluation.cardiacfunction.ECGMeasureEvaluationFun
 import com.hartwig.actin.datamodel.clinical.ECG
 
 object ECGMeasureEvaluationFunctions {
+
     fun hasLimitedQTCF(maxQTCF: Double): ECGMeasureEvaluationFunction {
         return ECGMeasureEvaluationFunction(
             ECGMeasureName.QTCF,

@@ -9,7 +9,9 @@ import com.hartwig.actin.datamodel.clinical.LabValue
 import java.time.LocalDate
 
 internal object LabEvaluation {
+
     val REF_LIMIT_UP_OVERRIDES = mapOf(LabMeasurement.INTERNATIONAL_NORMALIZED_RATIO.code to 1.1)
+
     const val LAB_VALUE_NEGATIVE_MARGIN_OF_ERROR = 0.95
     const val LAB_VALUE_POSITIVE_MARGIN_OF_ERROR = 1.05
 

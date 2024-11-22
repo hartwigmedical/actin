@@ -10,6 +10,7 @@ import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.doid.DoidModel
 
 class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
+
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
             EligibilityRule.DRIVER_EVENT_IN_ANY_GENES_X_WITH_APPROVED_THERAPY_AVAILABLE to
