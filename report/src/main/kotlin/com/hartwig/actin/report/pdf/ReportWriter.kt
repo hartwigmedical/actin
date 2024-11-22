@@ -78,7 +78,7 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
         pdf.defaultPageSize = PageSize.A4
         pdf.documentInfo.title = Constants.METADATA_TITLE
         pdf.documentInfo.author = Constants.METADATA_AUTHOR
-        val document = Document(pdf, pdf.defaultPageSize, false)
+        val document = Document(pdf)
         document.setMargins(
             Constants.PAGE_MARGIN_TOP,
             Constants.PAGE_MARGIN_RIGHT,
