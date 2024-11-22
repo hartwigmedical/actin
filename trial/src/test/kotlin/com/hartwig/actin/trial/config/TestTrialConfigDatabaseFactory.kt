@@ -16,7 +16,7 @@ object TestTrialConfigDatabaseFactory {
             cohortDefinitionConfigs = createTestCohortDefinitionConfigs(),
             inclusionCriteriaConfigs = createTestInclusionCriteriaConfigs(),
             inclusionCriteriaReferenceConfigs = createTestInclusionCriteriaReferenceConfigs(),
-            unusedRulesToKeep = EligibilityRule.values().map(EligibilityRule::toString)
+            unusedRulesToKeep = EligibilityRule.entries.map(EligibilityRule::toString)
         )
     }
 
@@ -33,7 +33,9 @@ object TestTrialConfigDatabaseFactory {
         acronym = "Acronym-$trialId",
         title = "Title for $trialId",
         nctId = "nctId for $trialId",
-        phase = null
+        phase = null,
+        source = "EMC",
+        location = ""
     )
 
     private fun createTestCohortDefinitionConfigs(): List<CohortDefinitionConfig> {
