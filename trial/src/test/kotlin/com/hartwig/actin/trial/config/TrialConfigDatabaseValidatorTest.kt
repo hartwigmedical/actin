@@ -15,7 +15,7 @@ class TrialConfigDatabaseValidatorTest {
     }
 
     @Test
-    fun `Should confirm trial config databases are valid ignoring inclusion criteria for not evaluable cohorts`() {
+    fun `Should not validate inclusion criteria for not evaluable cohorts`() {
         val properConfig = TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase()
         val invalidInclusionCriteriaConfig = properConfig.copy(
             inclusionCriteriaConfigs = properConfig.inclusionCriteriaConfigs.map { it.copy(inclusionRule = "INVALID_RULE[ABC]") },

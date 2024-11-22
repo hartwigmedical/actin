@@ -14,7 +14,7 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
             cohortDefinitionValidationErrors = validateCohorts(trialIds, database.cohortDefinitionConfigs),
             inclusionCriteriaValidationErrors = validateInclusionCriteria(
                 trialIds,
-                extractCohortIdsPerTrial(trialIds, database.cohortDefinitionConfigs),
+                extractCohortWithEvaluablePerTrial(trialIds, database.cohortDefinitionConfigs),
                 database.inclusionCriteriaConfigs,
                 database.inclusionCriteriaReferenceConfigs
             ),
@@ -25,18 +25,16 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
         )
     }
 
-
-    private fun anyCohortEvaluable(cohortIds: Set<String>, cohortsToEvaluable: Set<Pair<String, Boolean>>): Boolean = when {
-        cohortIds.isEmpty() -> cohortsToEvaluable.any { it.second }
+    private fun anyCohortEvaluable(cohortIds: Set<String>, allCohorts: Set<Pair<String, Boolean>>): Boolean = when {
+        cohortIds.isEmpty() -> allCohorts.any { it.second }
         else -> cohortIds.any { cohortId ->
-            cohortsToEvaluable.firstOrNull { it.first == cohortId }?.second ?: false
+            allCohorts.firstOrNull { it.first == cohortId }?.second ?: false
         }
     }
 
-
     private fun validateInclusionCriteria(
         trialIds: Set<String>,
-        cohortIdsPerTrial: Map<String, Set<Pair<String, Boolean>>>,
+        cohortsPerTrial: Map<String, Set<Pair<String, Boolean>>>,
         inclusionCriteria: List<InclusionCriteriaConfig>,
         inclusionCriteriaReferenceConfigs: List<InclusionCriteriaReferenceConfig>
     ): Set<InclusionCriteriaValidationError> {
@@ -48,14 +46,14 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
             val criterionWithNonExistentTrial = if (!trialExists) setOf(criterion) else emptySet()
 
             val nonExistentCohorts: Set<Pair<InclusionCriteriaConfig, String>> = if (!trialExists) emptySet() else {
-                (criterion.appliesToCohorts - cohortIdsPerTrial[criterion.trialId]!!.map { it.first }.toSet()).map { Pair(criterion, it) }
+                (criterion.appliesToCohorts - cohortsPerTrial[criterion.trialId]!!.map { it.first }.toSet()).map { Pair(criterion, it) }
                     .toSet()
             }
 
             val validateCriteria = criterionWithNonExistentTrial.size == 1
                     || (nonExistentCohorts.size == criterion.appliesToCohorts.size && criterion.appliesToCohorts.isNotEmpty())
                     || anyCohortEvaluable(
-                criterion.appliesToCohorts, cohortIdsPerTrial[criterion.trialId]!!
+                criterion.appliesToCohorts, cohortsPerTrial[criterion.trialId]!!
             )
 
             val invalidInclusionCriteria =
@@ -145,7 +143,7 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
         }
     }
 
-    private fun extractCohortIdsPerTrial(
+    private fun extractCohortWithEvaluablePerTrial(
         trialIds: Set<String>, cohortDefinitions: List<CohortDefinitionConfig>
     ): Map<String, Set<Pair<String, Boolean>>> {
         val cohortIdsByTrial =
