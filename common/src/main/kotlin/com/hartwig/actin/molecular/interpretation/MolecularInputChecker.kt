@@ -1,9 +1,7 @@
 package com.hartwig.actin.molecular.interpretation
 
-import com.google.common.collect.Sets
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.filter.GeneFilterFactory.createAlwaysValid
-
 
 class MolecularInputChecker(private val geneFilter: GeneFilter) {
 
@@ -13,7 +11,7 @@ class MolecularInputChecker(private val geneFilter: GeneFilter) {
 
     companion object {
         private const val TERMINATION_CODON = "Ter"
-        private val VALID_PROTEIN_ENDINGS: Set<String> = Sets.newHashSet("del", "dup", "ins", "=", "*", "fs", "ext*?")
+        private val VALID_PROTEIN_ENDINGS: Set<String> = setOf("del", "dup", "ins", "=", "*", "fs", "ext*?")
 
         fun createAnyGeneValid(): MolecularInputChecker {
             return MolecularInputChecker(createAlwaysValid())

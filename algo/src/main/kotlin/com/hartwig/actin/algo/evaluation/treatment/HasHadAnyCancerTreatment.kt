@@ -14,7 +14,8 @@ class HasHadAnyCancerTreatment(private val categoryToIgnore: TreatmentCategory?,
     override fun evaluate(record: PatientRecord): Evaluation {
         val effectiveTreatmentHistoryWithoutTrialMedication =
             record.oncologicalHistory + createTreatmentHistoryEntriesFromMedications(
-                record.medications?.filter { (it.allLevels() intersect atcLevelsToFind).isNotEmpty() })
+                record.medications?.filter { (it.allLevels() intersect atcLevelsToFind).isNotEmpty() }
+            )
 
         val hasHadPriorCancerTreatment =
             if (categoryToIgnore == null) {

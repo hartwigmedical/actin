@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical.curation
 
-import com.google.common.collect.Sets
 import com.hartwig.actin.clinical.curation.CurationUtil.capitalizeFirstLetterOnly
 import com.hartwig.actin.clinical.curation.CurationUtil.fullTrim
 import org.apache.logging.log4j.util.Strings
@@ -44,11 +43,9 @@ class CurationUtilTest {
 
     private fun assertConversionToSet(element1: String, element2: String, convert: (String) -> Set<String>) {
         assertThat(convert("")).isEmpty()
-        assertThat(convert(element1)).isEqualTo(Sets.newHashSet(element1))
+        assertThat(convert(element1)).isEqualTo(setOf(element1))
 
         val multiple = convert("$element1;$element2")
-        assertThat(multiple).hasSize(2)
-        assertThat(multiple).contains(element1)
-        assertThat(multiple).contains(element2)
+        assertThat(multiple).containsExactly(element1, element2)
     }
 }
