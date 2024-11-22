@@ -8,7 +8,6 @@ import com.hartwig.actin.report.interpretation.TreatmentEvidenceFunctions.sortTr
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Styles.PALETTE_RED
-import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
@@ -31,7 +30,7 @@ class MolecularEfficacyDescriptionGenerator(val molecularHistory: MolecularHisto
 
         cells.forEach(table::addCell)
 
-        return makeWrapping(table)
+        return table
     }
 
     private fun createEventCells(event: String, evidences: List<TreatmentEvidence>): List<Cell> {
