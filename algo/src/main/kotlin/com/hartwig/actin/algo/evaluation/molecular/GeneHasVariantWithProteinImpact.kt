@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.google.common.annotations.VisibleForTesting
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.percentage
@@ -11,10 +10,13 @@ import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import java.time.LocalDate
 import org.apache.logging.log4j.LogManager
 
+private const val CLONAL_CUTOFF = 0.5
+
 class GeneHasVariantWithProteinImpact(
     private val gene: String, private val allowedProteinImpacts: List<String>,
     maxTestAge: LocalDate? = null
 ) : MolecularEvaluationFunction(maxTestAge) {
+    private val logger = LogManager.getLogger(GeneHasVariantWithProteinImpact::class.java)
 
     override fun genes() = listOf(gene)
 
@@ -100,25 +102,18 @@ class GeneHasVariantWithProteinImpact(
         )
     }
 
-    companion object {
-        private val LOGGER = LogManager.getLogger(
-            GeneHasVariantWithProteinImpact::class.java
-        )
-        private const val CLONAL_CUTOFF = 0.5
-        private fun toProteinImpacts(impacts: Set<TranscriptImpact>): Set<String> {
-            return impacts.map { toProteinImpact(it.hgvsProteinImpact) }.toSet()
-        }
+    private fun toProteinImpacts(impacts: Set<TranscriptImpact>): Set<String> {
+        return impacts.map { toProteinImpact(it.hgvsProteinImpact) }.toSet()
+    }
 
-        @VisibleForTesting
-        fun toProteinImpact(hgvsProteinImpact: String): String {
-            val impact = if (hgvsProteinImpact.startsWith("p.")) hgvsProteinImpact.substring(2) else hgvsProteinImpact
-            if (impact.isEmpty()) {
-                return impact
-            }
-            if (!MolecularInputChecker.isProteinImpact(impact)) {
-                LOGGER.warn("Cannot convert hgvs protein impact to a usable protein impact: {}", hgvsProteinImpact)
-            }
+    private fun toProteinImpact(hgvsProteinImpact: String): String {
+        val impact = if (hgvsProteinImpact.startsWith("p.")) hgvsProteinImpact.substring(2) else hgvsProteinImpact
+        if (impact.isEmpty()) {
             return impact
         }
+        if (!MolecularInputChecker.isProteinImpact(impact)) {
+            logger.warn("Cannot convert hgvs protein impact to a usable protein impact: {}", hgvsProteinImpact)
+        }
+        return impact
     }
 }
