@@ -103,8 +103,8 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
     ): MolecularDriverEntry {
         return MolecularDriverEntry(
             driverType = driverType,
-            name = name,
-            eventName = driver.event,
+            description = name,
+            event = driver.event,
             driverLikelihood = driver.driverLikelihood,
             evidenceTier = driver.evidenceTier(),
             proteinEffect = proteinEffect,

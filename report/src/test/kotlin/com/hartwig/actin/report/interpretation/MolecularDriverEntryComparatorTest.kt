@@ -43,8 +43,8 @@ class MolecularDriverEntryComparatorTest {
     private fun create(driverLikelihood: DriverLikelihood, driverType: String, driver: String): MolecularDriverEntry {
         return MolecularDriverEntry(
             driverType = driverType,
-            name = driver,
-            eventName = driver,
+            description = driver,
+            event = driver,
             driverLikelihood = driverLikelihood,
             evidenceTier = EvidenceTier.I
         )

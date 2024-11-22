@@ -8,8 +8,8 @@ import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 
 data class MolecularDriverEntry(
     val driverType: String,
-    val name: String,
-    val eventName: String,
+    val description: String,
+    val event: String,
     val driverLikelihood: DriverLikelihood?,
     val evidenceTier: EvidenceTier,
     val proteinEffect: ProteinEffect? = null,
@@ -20,6 +20,6 @@ data class MolecularDriverEntry(
 ) : Displayable {
 
     override fun display(): String {
-        return name
+        return description
     }
 }

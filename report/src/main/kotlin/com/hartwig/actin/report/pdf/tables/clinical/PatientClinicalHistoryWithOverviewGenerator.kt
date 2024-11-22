@@ -94,7 +94,7 @@ class PatientClinicalHistoryWithOverviewGenerator(
     }
 
     private fun geneToDrivers(drivers: List<MolecularDriverEntry>, geneToFind: String): String {
-        val events = drivers.filter { it.eventName.contains(geneToFind) }.joinToString { it.name }
+        val events = drivers.filter { it.event.contains(geneToFind) }.joinToString { it.description }
         return events.ifEmpty { "$geneToFind: No reportable events" }
     }
 

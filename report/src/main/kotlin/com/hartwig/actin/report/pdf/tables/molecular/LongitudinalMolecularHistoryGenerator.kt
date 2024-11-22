@@ -22,7 +22,7 @@ class LongitudinalMolecularHistoryGenerator(
     private val driverSortOrder: Comparator<MolecularDriverEntry> = compareBy(
         MolecularDriverEntry::evidenceTier,
         MolecularDriverEntry::driverLikelihood,
-        MolecularDriverEntry::eventName
+        MolecularDriverEntry::event
     )
 
     override fun title(): String {
@@ -49,13 +49,13 @@ class LongitudinalMolecularHistoryGenerator(
             .distinct()
             .flatMap { entry ->
                 val driverTextFields = listOf(
-                    "${entry.eventName}\n(Tier ${entry.evidenceTier})",
+                    "${entry.event}\n(Tier ${entry.evidenceTier})",
                     listOfNotNull(entry.driverType, entry.proteinEffect?.display()).joinToString("\n"),
                     entry.driverLikelihood?.toString() ?: VALUE_NOT_AVAILABLE
                 )
                 val testTextFields = eventVAFMapByTest.values.map { eventVAFMap ->
-                    if (entry.eventName in eventVAFMap) {
-                        eventVAFMap[entry.eventName]?.let { "VAF ${it}%" } ?: "Detected"
+                    if (entry.event in eventVAFMap) {
+                        eventVAFMap[entry.event]?.let { "VAF ${it}%" } ?: "Detected"
                     } else ""
                 }
                 driverTextFields + testTextFields
