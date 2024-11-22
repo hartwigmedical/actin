@@ -19,13 +19,13 @@ import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevel
 
 class ResistanceEvidenceMatcher(
-    private val candidateActionableEvents: List<EfficacyEvidence>,
+    private val candidateEvidences: List<EfficacyEvidence>,
     private val treatmentDatabase: TreatmentDatabase,
     private val molecularHistory: MolecularHistory
 ) {
 
     fun match(treatment: Treatment): List<ResistanceEvidence> {
-        return candidateActionableEvents.mapNotNull { evidence ->
+        return candidateEvidences.mapNotNull { evidence ->
             findTreatmentInDatabase(evidence.treatment(), treatment)?.let { treatmentName ->
                 ResistanceEvidence(
                     event = findSourceEvent(evidence),

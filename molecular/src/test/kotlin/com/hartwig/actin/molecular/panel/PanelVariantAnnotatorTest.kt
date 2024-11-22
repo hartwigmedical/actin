@@ -79,9 +79,9 @@ private val ACTIONABILITY_MATCH = ActionabilityMatch(
     onLabelEvidence = ActionableEvents(
         listOf(
             TestServeActionabilityFactory.createEfficacyEvidence(
+                MOLECULAR_CRITERIUM,
                 level = ServeEvidenceLevel.A,
-                direction = ServeEvidenceDirection.RESPONSIVE,
-                molecularCriterium = MOLECULAR_CRITERIUM
+                direction = ServeEvidenceDirection.RESPONSIVE
             )
         ), emptyList()
     ),

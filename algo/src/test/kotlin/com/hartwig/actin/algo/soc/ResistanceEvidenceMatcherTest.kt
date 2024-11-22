@@ -80,8 +80,8 @@ class ResistanceEvidenceMatcherTest {
 
     @Test
     fun `Should find actionable gene in molecular history`() {
-        val amplification = TestServeActionabilityFactory.createGene("BRAF", GeneEvent.AMPLIFICATION)
-        val amplificationWithResistanceEvidence = TestServeActionabilityFactory.createEfficacyEvidence(molecularCriterium = amplification)
+        val amplificationWithResistanceEvidence =
+            TestServeActionabilityFactory.createEfficacyEvidenceWithGene(GeneEvent.AMPLIFICATION, "BRAF")
         val hasAmplification = MolecularTestFactory.withCopyNumber(
             TestCopyNumberFactory.createMinimal().copy(
                 gene = "BRAF", type = CopyNumberType.FULL_GAIN, isReportable = true
@@ -117,12 +117,7 @@ class ResistanceEvidenceMatcherTest {
 
     @Test
     fun `Should find actionable fusion in molecular history`() {
-        val fusionWithResistanceEvidence = TestServeActionabilityFactory.createEfficacyEvidence(
-            molecularCriterium = TestServeActionabilityFactory.createGene(
-                "gene 1",
-                GeneEvent.FUSION
-            )
-        )
+        val fusionWithResistanceEvidence = TestServeActionabilityFactory.createEfficacyEvidenceWithGene(GeneEvent.FUSION, "gene 1")
         val hasFusion = MolecularTestFactory.withFusion(
             TestFusionFactory.createMinimal()
                 .copy(geneStart = "gene 1", driverType = FusionDriverType.PROMISCUOUS_5, isReportable = true)
@@ -140,7 +135,7 @@ class ResistanceEvidenceMatcherTest {
     @Test
     fun `Should find actionable range in molecular history`() {
         val rangeWithResistanceEvidence = TestServeActionabilityFactory.createEfficacyEvidence(
-            molecularCriterium = TestServeActionabilityFactory.createExon(
+            TestServeActionabilityFactory.createExon(
                 "gene 1",
                 "X",
                 4,

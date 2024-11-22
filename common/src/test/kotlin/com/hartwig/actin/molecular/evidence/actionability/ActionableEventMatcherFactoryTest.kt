@@ -31,27 +31,27 @@ class ActionableEventMatcherFactoryTest {
     @Test
     fun `Should be able to filter external trials`() {
         val hotspot1: ActionableTrial = createActionableTrial(
-            TestServeActionabilityFactory.createHotspot(gene = "unknown gene"),
+            TestServeActionabilityFactory.createHotspot("unknown gene"),
             Knowledgebase.UNKNOWN,
             "external"
         )
         val hotspot2: ActionableTrial = createActionableTrial(
-            TestServeActionabilityFactory.createHotspot(gene = TestApplicabilityFilteringUtil.nonApplicableGene()),
+            TestServeActionabilityFactory.createHotspot(TestApplicabilityFilteringUtil.nonApplicableGene()),
             Knowledgebase.CKB,
             "external"
         )
         val hotspot3: ActionableTrial = createActionableTrial(
-            TestServeActionabilityFactory.createHotspot(gene = "gene 1"),
+            TestServeActionabilityFactory.createHotspot("gene 1"),
             Knowledgebase.CKB,
             "external"
         )
         val hotspot4: ActionableTrial = createActionableTrial(
-            TestServeActionabilityFactory.createHotspot(gene = "gene 2"),
+            TestServeActionabilityFactory.createHotspot("gene 2"),
             Knowledgebase.CKB,
             "internal"
         )
         val hotspot5: ActionableTrial = createActionableTrial(
-            TestServeActionabilityFactory.createHotspot(gene = "gene 3"),
+            TestServeActionabilityFactory.createHotspot("gene 3"),
             Knowledgebase.CKB,
             "external"
         )
