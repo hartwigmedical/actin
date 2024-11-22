@@ -30,6 +30,40 @@ import java.time.LocalDate
 
 object TestServeActionabilityFactory {
 
+    fun createEfficacyEvidenceWithHotspot(
+        gene: String = "",
+        chromosome: String = "",
+        position: Int = 0,
+        ref: String = "",
+        alt: String = ""
+    ): EfficacyEvidence {
+        return createEfficacyEvidence(createHotspot(gene, chromosome, position, ref, alt))
+    }
+
+    fun createEfficacyEvidenceWithCodon(gene: String = ""): EfficacyEvidence {
+        return createEfficacyEvidence(createCodon(gene))
+    }
+
+    fun createEfficacyEvidenceWithExon(): EfficacyEvidence {
+        return createEfficacyEvidence(createExon())
+    }
+
+    fun createEfficacyEvidenceWithGene(geneEvent: GeneEvent = GeneEvent.ANY_MUTATION, gene: String = ""): EfficacyEvidence {
+        return createEfficacyEvidence(createGene(gene, geneEvent))
+    }
+
+    fun createEfficacyEvidenceWithFusion(): EfficacyEvidence {
+        return createEfficacyEvidence(createFusion())
+    }
+
+    fun createEfficacyEvidenceWithCharacteristic(type: TumorCharacteristicType = TumorCharacteristicType.MICROSATELLITE_STABLE): EfficacyEvidence {
+        return createEfficacyEvidence(createCharacteristic(type))
+    }
+
+    fun createEfficacyEvidenceWithHla(): EfficacyEvidence {
+        return createEfficacyEvidence(createHla())
+    }
+
     fun createHotspot(
         gene: String = "",
         chromosome: String = "",
@@ -38,21 +72,9 @@ object TestServeActionabilityFactory {
         alt: String = ""
     ): MolecularCriterium {
         return ImmutableMolecularCriterium.builder().addHotspots(
-            ImmutableActionableHotspot.builder().from(actionableEventBuiler()).gene(gene).chromosome(chromosome).position(position).ref(ref)
+            ImmutableActionableHotspot.builder().from(createActionableEvent()).gene(gene).chromosome(chromosome).position(position).ref(ref)
                 .alt(alt).build()
         ).build()
-    }
-
-    fun withHotspot(
-        gene: String = "",
-        chromosome: String = "",
-        position: Int = 0,
-        ref: String = "",
-        alt: String = "",
-        intervention: String = "intervention",
-        source: Knowledgebase = Knowledgebase.CKB
-    ): EfficacyEvidence {
-        return createEfficacyEvidence(source, intervention, molecularCriterium = createHotspot(gene, chromosome, position, ref, alt))
     }
 
     fun createCodon(
@@ -63,24 +85,9 @@ object TestServeActionabilityFactory {
         applicableMutationType: MutationType = MutationType.ANY
     ): MolecularCriterium {
         return ImmutableMolecularCriterium.builder().addCodons(
-            ImmutableActionableRange.builder().from(actionableEventBuiler()).gene(gene).chromosome(chromosome).start(start).end(end)
+            ImmutableActionableRange.builder().from(createActionableEvent()).gene(gene).chromosome(chromosome).start(start).end(end)
                 .applicableMutationType(applicableMutationType).build()
         ).build()
-    }
-
-    fun withCodon(
-        gene: String = "",
-        chromosome: String = "",
-        start: Int = 0,
-        end: Int = 0,
-        applicableMutationType: MutationType = MutationType.ANY,
-        intervention: String = "intervention"
-    ): EfficacyEvidence {
-        return createEfficacyEvidence(
-            Knowledgebase.CKB,
-            intervention,
-            molecularCriterium = createCodon(gene, chromosome, start, end, applicableMutationType)
-        )
     }
 
     fun createExon(
@@ -91,84 +98,36 @@ object TestServeActionabilityFactory {
         applicableMutationType: MutationType = MutationType.ANY
     ): MolecularCriterium {
         return ImmutableMolecularCriterium.builder().addExons(
-            ImmutableActionableRange.builder().from(actionableEventBuiler()).gene(gene).chromosome(chromosome).start(start).end(end)
+            ImmutableActionableRange.builder().from(createActionableEvent()).gene(gene).chromosome(chromosome).start(start).end(end)
                 .applicableMutationType(applicableMutationType).build()
         ).build()
-    }
-
-    fun withExon(
-        gene: String = "",
-        chromosome: String = "",
-        start: Int = 0,
-        end: Int = 0,
-        applicableMutationType: MutationType = MutationType.ANY,
-        intervention: String = "intervention"
-    ): EfficacyEvidence {
-        return createEfficacyEvidence(
-            Knowledgebase.CKB,
-            intervention,
-            molecularCriterium = createExon(gene, chromosome, start, end, applicableMutationType)
-        )
     }
 
     fun createGene(gene: String = "", geneEvent: GeneEvent = GeneEvent.ANY_MUTATION, sourceEvent: String = ""): MolecularCriterium {
         return ImmutableMolecularCriterium.builder()
             .addGenes(
-                ImmutableActionableGene.builder().from(actionableEventBuiler()).event(geneEvent).gene(gene).sourceEvent(sourceEvent).build()
+                ImmutableActionableGene.builder().from(createActionableEvent()).event(geneEvent).gene(gene).sourceEvent(sourceEvent).build()
             ).build()
-    }
-
-    fun withGene(
-        geneEvent: GeneEvent = GeneEvent.ANY_MUTATION,
-        gene: String = "",
-        intervention: String = "intervention"
-    ): EfficacyEvidence {
-        return createEfficacyEvidence(Knowledgebase.CKB, intervention, molecularCriterium = createGene(gene, geneEvent))
     }
 
     fun createFusion(geneUp: String = "", geneDown: String = "", minExonUp: Int? = null, maxExonUp: Int? = null): MolecularCriterium {
         return ImmutableMolecularCriterium.builder().addFusions(
-            ImmutableActionableFusion.builder().from(actionableEventBuiler()).geneUp(geneUp).geneDown(geneDown).minExonUp(minExonUp)
+            ImmutableActionableFusion.builder().from(createActionableEvent()).geneUp(geneUp).geneDown(geneDown).minExonUp(minExonUp)
                 .maxExonUp(maxExonUp).build()
         ).build()
     }
 
-    fun withFusion(
-        geneUp: String = "",
-        geneDown: String = "",
-        minExonUp: Int? = null,
-        maxExonUp: Int? = null,
-        intervention: String = "intervention"
-    ): EfficacyEvidence {
-        return createEfficacyEvidence(
-            Knowledgebase.CKB,
-            intervention,
-            molecularCriterium = createFusion(geneUp, geneDown, minExonUp, maxExonUp)
-        )
-    }
-
     fun createCharacteristic(type: TumorCharacteristicType = TumorCharacteristicType.MICROSATELLITE_STABLE): MolecularCriterium {
         return ImmutableMolecularCriterium.builder()
-            .addCharacteristics(ImmutableActionableCharacteristic.builder().from(actionableEventBuiler()).type(type).build()).build()
-    }
-
-    fun withCharacteristic(
-        type: TumorCharacteristicType = TumorCharacteristicType.MICROSATELLITE_STABLE,
-        intervention: String = "intervention"
-    ): EfficacyEvidence {
-        return createEfficacyEvidence(Knowledgebase.CKB, intervention, molecularCriterium = createCharacteristic(type))
+            .addCharacteristics(ImmutableActionableCharacteristic.builder().from(createActionableEvent()).type(type).build()).build()
     }
 
     fun createHla(): MolecularCriterium {
         return ImmutableMolecularCriterium.builder()
-            .addHla(ImmutableActionableHLA.builder().from(actionableEventBuiler()).hlaAllele("").build()).build()
+            .addHla(ImmutableActionableHLA.builder().from(createActionableEvent()).hlaAllele("").build()).build()
     }
 
-    fun withHla(intervention: String = "intervention"): EfficacyEvidence {
-        return createEfficacyEvidence(Knowledgebase.CKB, intervention, molecularCriterium = createHla())
-    }
-
-    fun actionableEventBuiler(): ActionableEvent {
+    fun createActionableEvent(): ActionableEvent {
         return object : ActionableEvent {
             override fun sourceDate(): LocalDate {
                 return LocalDate.of(2021, 2, 3)
@@ -185,11 +144,11 @@ object TestServeActionabilityFactory {
     }
 
     fun createEfficacyEvidence(
+        molecularCriterium: MolecularCriterium,
         source: Knowledgebase = Knowledgebase.CKB,
-        interventionName: String = "intervention",
+        intervention: String = "intervention",
         direction: EvidenceDirection = EvidenceDirection.NO_BENEFIT,
         level: EvidenceLevel = EvidenceLevel.D,
-        molecularCriterium: MolecularCriterium,
         indication: Indication = ImmutableIndication.builder().applicableType(ImmutableCancerType.builder().name("").doid("").build())
             .excludedSubTypes(emptySet()).build()
     ): EfficacyEvidence {
@@ -203,7 +162,7 @@ object TestServeActionabilityFactory {
             }
 
             override fun treatment(): Treatment {
-                return ImmutableTreatment.builder().name(interventionName).build()
+                return ImmutableTreatment.builder().name(intervention).build()
             }
 
             override fun indication(): Indication {
@@ -237,9 +196,9 @@ object TestServeActionabilityFactory {
     }
 
     fun createActionableTrial(
+        molecularCriterium: MolecularCriterium,
         source: Knowledgebase = Knowledgebase.CKB,
         interventionName: String,
-        molecularCriterium: MolecularCriterium,
         indication: Indication = ImmutableIndication.builder().applicableType(ImmutableCancerType.builder().name("").doid("").build())
             .excludedSubTypes(emptySet()).build()
     ): ActionableTrial {

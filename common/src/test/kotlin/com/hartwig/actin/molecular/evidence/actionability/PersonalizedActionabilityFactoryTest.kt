@@ -46,13 +46,13 @@ class PersonalizedActionabilityFactoryTest {
         val molecularCriterium = TestServeActionabilityFactory.createHotspot()
         val indication = ImmutableIndication.builder().applicableType(ImmutableCancerType.builder().name("").doid(doid).build())
             .excludedSubTypes(emptySet()).build()
-        return TestServeActionabilityFactory.createEfficacyEvidence(molecularCriterium = molecularCriterium, indication = indication)
+        return TestServeActionabilityFactory.createEfficacyEvidence(molecularCriterium, indication = indication)
     }
 
     private fun create(doid: String, blacklistDoid: String): EfficacyEvidence {
         val molecularCriterium = TestServeActionabilityFactory.createHotspot()
         val indication = ImmutableIndication.builder().applicableType(ImmutableCancerType.builder().name("").doid(doid).build())
             .excludedSubTypes(setOf(ImmutableCancerType.builder().name("").doid(blacklistDoid).build())).build()
-        return TestServeActionabilityFactory.createEfficacyEvidence(molecularCriterium = molecularCriterium, indication = indication)
+        return TestServeActionabilityFactory.createEfficacyEvidence(molecularCriterium, indication = indication)
     }
 }

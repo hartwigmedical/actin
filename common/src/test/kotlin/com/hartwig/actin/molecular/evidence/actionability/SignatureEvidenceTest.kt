@@ -2,7 +2,6 @@ package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
-import com.hartwig.serve.datamodel.molecular.characteristic.ActionableCharacteristic
 import com.hartwig.serve.datamodel.molecular.characteristic.TumorCharacteristicType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -12,9 +11,9 @@ class SignatureEvidenceTest {
     @Test
     fun `Should determine evidence for microsatellite instability`() {
         val characteristic1: EfficacyEvidence =
-            TestServeActionabilityFactory.withCharacteristic(TumorCharacteristicType.MICROSATELLITE_UNSTABLE)
+            TestServeActionabilityFactory.createEfficacyEvidenceWithCharacteristic(TumorCharacteristicType.MICROSATELLITE_UNSTABLE)
         val characteristic2: EfficacyEvidence =
-            TestServeActionabilityFactory.withCharacteristic(TumorCharacteristicType.MICROSATELLITE_STABLE)
+            TestServeActionabilityFactory.createEfficacyEvidenceWithCharacteristic(TumorCharacteristicType.MICROSATELLITE_STABLE)
         val actionable = ActionableEvents(listOf(characteristic1, characteristic2), emptyList())
         val signatureEvidence: SignatureEvidence = SignatureEvidence.create(actionable)
 
@@ -27,7 +26,7 @@ class SignatureEvidenceTest {
     @Test
     fun `Should determine evidence for homologous repair deficiency`() {
         val characteristic1: EfficacyEvidence =
-            TestServeActionabilityFactory.withCharacteristic(TumorCharacteristicType.HOMOLOGOUS_RECOMBINATION_DEFICIENT)
+            TestServeActionabilityFactory.createEfficacyEvidenceWithCharacteristic(TumorCharacteristicType.HOMOLOGOUS_RECOMBINATION_DEFICIENT)
         val actionable = ActionableEvents(listOf(characteristic1), emptyList())
         val signatureEvidence: SignatureEvidence = SignatureEvidence.create(actionable)
 
@@ -40,10 +39,10 @@ class SignatureEvidenceTest {
     @Test
     fun `Should determine evidence for high tumor mutational burden`() {
         val characteristic1: EfficacyEvidence =
-            TestServeActionabilityFactory.withCharacteristic(TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN)
+            TestServeActionabilityFactory.createEfficacyEvidenceWithCharacteristic(TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN)
         val characteristic2: EfficacyEvidence =
-            TestServeActionabilityFactory.withCharacteristic(TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_BURDEN)
-        val actionable = ActionableEvents(listOf(characteristic1), emptyList())
+            TestServeActionabilityFactory.createEfficacyEvidenceWithCharacteristic(TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_BURDEN)
+        val actionable = ActionableEvents(listOf(characteristic1, characteristic2), emptyList())
         val signatureEvidence: SignatureEvidence = SignatureEvidence.create(actionable)
 
         val matches = signatureEvidence.findTumorBurdenMatches(true)
@@ -55,9 +54,9 @@ class SignatureEvidenceTest {
     @Test
     fun `Should determine evidence for high mutational load`() {
         val characteristic1: EfficacyEvidence =
-            TestServeActionabilityFactory.withCharacteristic(TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD)
+            TestServeActionabilityFactory.createEfficacyEvidenceWithCharacteristic(TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD)
         val characteristic2: EfficacyEvidence =
-            TestServeActionabilityFactory.withCharacteristic(TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_LOAD)
+            TestServeActionabilityFactory.createEfficacyEvidenceWithCharacteristic(TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_LOAD)
         val actionable = ActionableEvents(listOf(characteristic1, characteristic2), emptyList())
         val signatureEvidence: SignatureEvidence = SignatureEvidence.create(actionable)
 

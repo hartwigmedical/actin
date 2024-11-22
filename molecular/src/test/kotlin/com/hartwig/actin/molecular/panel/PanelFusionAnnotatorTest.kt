@@ -70,7 +70,7 @@ private val FULLY_SPECIFIED_FUSION_MATCH_CRITERIA = FusionMatchCriteria(
 )
 
 private val MOLECULAR_CRITERIUM = ImmutableMolecularCriterium.builder().addGenes(
-    ImmutableActionableGene.builder().from(TestServeActionabilityFactory.actionableEventBuiler())
+    ImmutableActionableGene.builder().from(TestServeActionabilityFactory.createActionableEvent())
         .from(TestServeFactory.createEmptyGeneAnnotation()).build()
 ).build()
 

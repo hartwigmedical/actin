@@ -22,20 +22,20 @@ object TestActionableEventMatcherFactory {
         val applicableDoids = setOf("parent")
         val personalizedActionabilityFactory = PersonalizedActionabilityFactory(doidModel, applicableDoids)
         val evidences: List<EfficacyEvidence> = listOf(
-            TestServeActionabilityFactory.withHotspot(),
-            TestServeActionabilityFactory.withCodon(),
-            TestServeActionabilityFactory.withExon(),
-            TestServeActionabilityFactory.withGene(GeneEvent.DELETION),
-            TestServeActionabilityFactory.withGene(GeneEvent.AMPLIFICATION),
-            TestServeActionabilityFactory.withGene(GeneEvent.ANY_MUTATION),
-            TestServeActionabilityFactory.withFusion(),
-            TestServeActionabilityFactory.withCharacteristic(TumorCharacteristicType.MICROSATELLITE_UNSTABLE),
-            TestServeActionabilityFactory.withCharacteristic(TumorCharacteristicType.HOMOLOGOUS_RECOMBINATION_DEFICIENT),
-            TestServeActionabilityFactory.withCharacteristic(TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN),
-            TestServeActionabilityFactory.withCharacteristic(TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD),
-            TestServeActionabilityFactory.withCharacteristic(TumorCharacteristicType.HPV_POSITIVE),
-            TestServeActionabilityFactory.withCharacteristic(TumorCharacteristicType.EBV_POSITIVE),
-            TestServeActionabilityFactory.withHla()
+            TestServeActionabilityFactory.createEfficacyEvidenceWithHotspot(),
+            TestServeActionabilityFactory.createEfficacyEvidenceWithCodon(),
+            TestServeActionabilityFactory.createEfficacyEvidenceWithExon(),
+            TestServeActionabilityFactory.createEfficacyEvidenceWithGene(geneEvent = GeneEvent.DELETION),
+            TestServeActionabilityFactory.createEfficacyEvidenceWithGene(geneEvent = GeneEvent.AMPLIFICATION),
+            TestServeActionabilityFactory.createEfficacyEvidenceWithGene(geneEvent = GeneEvent.ANY_MUTATION),
+            TestServeActionabilityFactory.createEfficacyEvidenceWithFusion(),
+            TestServeActionabilityFactory.createEfficacyEvidenceWithCharacteristic(TumorCharacteristicType.MICROSATELLITE_UNSTABLE),
+            TestServeActionabilityFactory.createEfficacyEvidenceWithCharacteristic(TumorCharacteristicType.HOMOLOGOUS_RECOMBINATION_DEFICIENT),
+            TestServeActionabilityFactory.createEfficacyEvidenceWithCharacteristic(TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN),
+            TestServeActionabilityFactory.createEfficacyEvidenceWithCharacteristic(TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD),
+            TestServeActionabilityFactory.createEfficacyEvidenceWithCharacteristic(TumorCharacteristicType.HPV_POSITIVE),
+            TestServeActionabilityFactory.createEfficacyEvidenceWithCharacteristic(TumorCharacteristicType.EBV_POSITIVE),
+            TestServeActionabilityFactory.createEfficacyEvidenceWithHla()
         )
         val actionableEvents = ActionableEvents(evidences, emptyList())
 

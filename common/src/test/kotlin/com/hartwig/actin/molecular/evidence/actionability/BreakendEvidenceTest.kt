@@ -11,9 +11,9 @@ class BreakendEvidenceTest {
 
     @Test
     fun `Should determine breakend evidence`() {
-        val gene1: EfficacyEvidence = TestServeActionabilityFactory.withGene(GeneEvent.ANY_MUTATION, "gene 1")
-        val gene2: EfficacyEvidence = TestServeActionabilityFactory.withGene(GeneEvent.AMPLIFICATION, "gene 2")
-        val gene3: EfficacyEvidence = TestServeActionabilityFactory.withGene(GeneEvent.INACTIVATION, "gene 1")
+        val gene1: EfficacyEvidence = TestServeActionabilityFactory.createEfficacyEvidenceWithGene(GeneEvent.ANY_MUTATION, "gene 1")
+        val gene2: EfficacyEvidence = TestServeActionabilityFactory.createEfficacyEvidenceWithGene(GeneEvent.AMPLIFICATION, "gene 2")
+        val gene3: EfficacyEvidence = TestServeActionabilityFactory.createEfficacyEvidenceWithGene(GeneEvent.INACTIVATION, "gene 1")
         val actionableEvents = ActionableEvents(listOf(gene1, gene2, gene3), emptyList())
         val breakendEvidence: BreakendEvidence = BreakendEvidence.create(actionableEvents)
 

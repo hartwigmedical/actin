@@ -13,9 +13,9 @@ class FusionEvidenceTest {
 
     @Test
     fun `Should determine promiscuous fusion evidence`() {
-        val gene1: EfficacyEvidence = TestServeActionabilityFactory.withGene(GeneEvent.FUSION, "gene 1")
-        val gene2: EfficacyEvidence = TestServeActionabilityFactory.withGene(GeneEvent.ANY_MUTATION, "gene 2")
-        val gene3: EfficacyEvidence = TestServeActionabilityFactory.withGene(GeneEvent.INACTIVATION, "gene 1")
+        val gene1: EfficacyEvidence = TestServeActionabilityFactory.createEfficacyEvidenceWithGene(GeneEvent.FUSION, "gene 1")
+        val gene2: EfficacyEvidence = TestServeActionabilityFactory.createEfficacyEvidenceWithGene(GeneEvent.ANY_MUTATION, "gene 2")
+        val gene3: EfficacyEvidence = TestServeActionabilityFactory.createEfficacyEvidenceWithGene(GeneEvent.INACTIVATION, "gene 1")
         val actionableEvents = ActionableEvents(listOf(gene1, gene2, gene3), emptyList())
         val fusionEvidence: FusionEvidence = FusionEvidence.create(actionableEvents)
 
@@ -38,7 +38,8 @@ class FusionEvidenceTest {
 
     @Test
     fun `Should determine evidence for known fusions`() {
-        val actionableFusion: EfficacyEvidence = TestServeActionabilityFactory.withFusion("up", "down", 4, 6)
+        val actionableFusion: EfficacyEvidence =
+            TestServeActionabilityFactory.createEfficacyEvidence(TestServeActionabilityFactory.createFusion("up", "down", 4, 6))
         val actionableEvents = ActionableEvents(listOf(actionableFusion), emptyList())
         val fusionEvidence: FusionEvidence = FusionEvidence.create(actionableEvents)
 

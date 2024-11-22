@@ -32,11 +32,11 @@ private val INDICATION = ImmutableIndication.builder().applicableType(
 ).build()
 private val MOLECULAR_CRITERIUM = TestServeActionabilityFactory.createGene("BRAF", GeneEvent.AMPLIFICATION, "BRAF amp")
 private val ACTIONABLE_EVENTS: EfficacyEvidence = TestServeActionabilityFactory.createEfficacyEvidence(
+    MOLECULAR_CRITERIUM,
     Knowledgebase.CKB,
     "pembrolizumab",
     EvidenceDirection.RESISTANT,
     EvidenceLevel.A,
-    MOLECULAR_CRITERIUM,
     INDICATION
 )
 private val DOID_MODEL = TestDoidModelFactory.createMinimalTestDoidModel()
@@ -100,7 +100,7 @@ class ResistanceEvidenceMatcherTest {
 
     @Test
     fun `Should find actionable hotspot in molecular history`() {
-        val hotspotWithResistanceEvidence = TestServeActionabilityFactory.withHotspot("gene 1", "X", 2, "A", "G")
+        val hotspotWithResistanceEvidence = TestServeActionabilityFactory.createEfficacyEvidenceWithHotspot("gene 1", "X", 2, "A", "G")
         val hasHotspot = MolecularTestFactory.withVariant(
             TestVariantFactory.createMinimal()
                 .copy(gene = "gene 1", chromosome = "X", position = 2, ref = "A", alt = "G", isReportable = true)
@@ -117,7 +117,12 @@ class ResistanceEvidenceMatcherTest {
 
     @Test
     fun `Should find actionable fusion in molecular history`() {
-        val fusionWithResistanceEvidence = TestServeActionabilityFactory.withGene(GeneEvent.FUSION, "gene 1")
+        val fusionWithResistanceEvidence = TestServeActionabilityFactory.createEfficacyEvidence(
+            molecularCriterium = TestServeActionabilityFactory.createGene(
+                "gene 1",
+                GeneEvent.FUSION
+            )
+        )
         val hasFusion = MolecularTestFactory.withFusion(
             TestFusionFactory.createMinimal()
                 .copy(geneStart = "gene 1", driverType = FusionDriverType.PROMISCUOUS_5, isReportable = true)
@@ -134,7 +139,15 @@ class ResistanceEvidenceMatcherTest {
 
     @Test
     fun `Should find actionable range in molecular history`() {
-        val rangeWithResistanceEvidence = TestServeActionabilityFactory.withExon("gene 1", "X", 4, 8, MutationType.ANY)
+        val rangeWithResistanceEvidence = TestServeActionabilityFactory.createEfficacyEvidence(
+            molecularCriterium = TestServeActionabilityFactory.createExon(
+                "gene 1",
+                "X",
+                4,
+                8,
+                MutationType.ANY
+            )
+        )
         val hasRange = MolecularTestFactory.withVariant(
             TestVariantFactory.createMinimal().copy(
                 gene = "gene 1",

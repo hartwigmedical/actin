@@ -3,7 +3,6 @@ package com.hartwig.actin.molecular.evidence.actionability
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalHomozygousDisruption
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
-import com.hartwig.serve.datamodel.molecular.gene.ActionableGene
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -12,9 +11,9 @@ class HomozygousDisruptionEvidenceTest {
 
     @Test
     fun `Should determine homozygous disruption evidence`() {
-        val gene1: EfficacyEvidence = TestServeActionabilityFactory.withGene(GeneEvent.DELETION, "gene 1")
-        val gene2: EfficacyEvidence = TestServeActionabilityFactory.withGene(GeneEvent.INACTIVATION, "gene 2")
-        val gene3: EfficacyEvidence = TestServeActionabilityFactory.withGene(GeneEvent.AMPLIFICATION, "gene 3")
+        val gene1: EfficacyEvidence = TestServeActionabilityFactory.createEfficacyEvidenceWithGene(GeneEvent.DELETION, "gene 1")
+        val gene2: EfficacyEvidence = TestServeActionabilityFactory.createEfficacyEvidenceWithGene(GeneEvent.INACTIVATION, "gene 2")
+        val gene3: EfficacyEvidence = TestServeActionabilityFactory.createEfficacyEvidenceWithGene(GeneEvent.AMPLIFICATION, "gene 3")
         val actionableEvents = ActionableEvents(listOf(gene1, gene2, gene3), emptyList())
         val homozygousDisruptionEvidence: HomozygousDisruptionEvidence = HomozygousDisruptionEvidence.create(actionableEvents)
 

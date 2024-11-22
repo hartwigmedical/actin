@@ -30,7 +30,12 @@ class ClinicalEvidenceFactoryTest {
             ClinicalEvidenceFactory.create(
                 ActionabilityMatch(
                     onLabelEvidence = ActionableEvents(
-                        listOf(TestServeActionabilityFactory.withHotspot(intervention = onlabel.treatment)),
+                        listOf(
+                            TestServeActionabilityFactory.createEfficacyEvidence(
+                                TestServeActionabilityFactory.createHotspot(),
+                                intervention = onlabel.treatment
+                            )
+                        ),
                         emptyList()
                     ),
                     offLabelEvidence = ActionableEvents()
@@ -55,7 +60,12 @@ class ClinicalEvidenceFactoryTest {
                 ActionabilityMatch(
                     onLabelEvidence = ActionableEvents(),
                     offLabelEvidence = ActionableEvents(
-                        listOf(TestServeActionabilityFactory.withHotspot(intervention = offlabel.treatment)),
+                        listOf(
+                            TestServeActionabilityFactory.createEfficacyEvidence(
+                                TestServeActionabilityFactory.createHotspot(),
+                                intervention = offlabel.treatment
+                            )
+                        ),
                         emptyList()
                     )
                 )
@@ -69,7 +79,7 @@ class ClinicalEvidenceFactoryTest {
         val trial = TestClinicalEvidenceFactory.createTestExternalTrial()
             .copy(countries = setOf(TestClinicalEvidenceFactory.createCountry(CountryName.OTHER, emptyMap())), isCategoryEvent = false)
         val molecularCriterium = ImmutableMolecularCriterium.builder().addHotspots(
-            ImmutableActionableHotspot.builder().from(TestServeActionabilityFactory.actionableEventBuiler())
+            ImmutableActionableHotspot.builder().from(TestServeActionabilityFactory.createActionableEvent())
                 .from(TestServeFactory.createEmptyHotspot()).build()
         ).build()
         val result =
@@ -77,7 +87,7 @@ class ClinicalEvidenceFactoryTest {
                 ActionabilityMatch(
                     onLabelEvidence = ActionableEvents(
                         emptyList(),
-                        listOf(createActionableTrial(Knowledgebase.CKB, trial.title, molecularCriterium))
+                        listOf(createActionableTrial(molecularCriterium, Knowledgebase.CKB, trial.title))
                     ),
                     offLabelEvidence = ActionableEvents()
                 )

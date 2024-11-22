@@ -24,9 +24,6 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionableEvents
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
-import com.hartwig.serve.datamodel.Knowledgebase
-import com.hartwig.serve.datamodel.efficacy.EvidenceDirection
-import com.hartwig.serve.datamodel.efficacy.EvidenceLevel
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -59,7 +56,7 @@ private val HOTSPOT = TestServeKnownFactory.hotspotBuilder().build()
     .withProteinEffect(ServeProteinEffect.GAIN_OF_FUNCTION)
 
 private val ACTIONABILITY_MATCH = ActionabilityMatch(
-    onLabelEvidence = ActionableEvents(listOf(TestServeActionabilityFactory.withGene()), emptyList()),
+    onLabelEvidence = ActionableEvents(listOf(TestServeActionabilityFactory.createEfficacyEvidenceWithGene()), emptyList()),
     offLabelEvidence = ActionableEvents()
 )
 

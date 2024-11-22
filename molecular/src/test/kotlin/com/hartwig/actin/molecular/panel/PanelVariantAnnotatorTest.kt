@@ -71,7 +71,7 @@ private val VARIANT_MATCH_CRITERIA =
     )
 
 private val MOLECULAR_CRITERIUM = ImmutableMolecularCriterium.builder().addGenes(
-    ImmutableActionableGene.builder().from(TestServeActionabilityFactory.actionableEventBuiler())
+    ImmutableActionableGene.builder().from(TestServeActionabilityFactory.createActionableEvent())
         .from(TestServeFactory.createEmptyGeneAnnotation()).build()
 ).build()
 
