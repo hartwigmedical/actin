@@ -52,14 +52,11 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
                     .toSet()
             }
 
-
             val validateCriteria = criterionWithNonExistentTrial.size == 1
                     || (nonExistentCohorts.size == criterion.appliesToCohorts.size && criterion.appliesToCohorts.isNotEmpty())
                     || anyCohortEvaluable(
                 criterion.appliesToCohorts, cohortIdsPerTrial[criterion.trialId]!!
             )
-
-            //val validateCriteria = true
 
             val invalidInclusionCriteria =
                 criterion.takeIf { validateCriteria && !eligibilityFactory.isValidInclusionCriterion(it.inclusionRule) }?.let { setOf(it) }
@@ -99,7 +96,11 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
             }.flatMap { (trialId, referenceId, configs) ->
                 configs.map { InclusionCriteriaValidationError(it, "Undefined reference ID on trial '$trialId': '$referenceId'") }
             }
-        return (allCriteriaWithNonExistentTrialErrors + allNonExistentCohortsErrors + allInvalidInclusionCriteriaErrors + trialsWithUndefinedReferenceIdErrors).toSet()
+        return (allCriteriaWithNonExistentTrialErrors +
+                allNonExistentCohortsErrors +
+                allInvalidInclusionCriteriaErrors +
+                trialsWithUndefinedReferenceIdErrors
+                ).toSet()
     }
 
 
@@ -108,11 +109,10 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
     }
 
     private fun validateTrials(trialDefinitions: List<TrialDefinitionConfig>): Set<TrialDefinitionValidationError> {
-        val duplicatedTrialIds = duplicatedConfigsByKey(trialDefinitions, TrialDefinitionConfig::trialId).map {
-            TrialDefinitionValidationError(
-                it.second, "Duplicated trial id of ${it.first}"
-            )
-        }
+        val duplicatedTrialIds = duplicatedConfigsByKey(trialDefinitions, TrialDefinitionConfig::trialId)
+            .map {
+                TrialDefinitionValidationError(it.second, "Duplicated trial id of ${it.first}")
+            }
 
         val duplicatedTrialFileIds = duplicatedConfigsByKey(trialDefinitions) { trialDef -> TrialJson.trialFileId(trialDef.trialId) }.map {
             TrialDefinitionValidationError(
@@ -141,11 +141,7 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
 
     private fun <T> duplicatedConfigsByKey(allConfigs: Collection<T>, extractKey: (T) -> String): List<Pair<String, T>> {
         return allConfigs.groupBy(extractKey).filter { it.value.size > 1 }.entries.flatMap { (key, configs) ->
-            configs.map {
-                Pair(
-                    key, it
-                )
-            }
+            configs.map { Pair(key, it) }
         }
     }
 
@@ -153,7 +149,7 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
         trialIds: Set<String>, cohortDefinitions: List<CohortDefinitionConfig>
     ): Map<String, Set<Pair<String, Boolean>>> {
         val cohortIdsByTrial =
-            cohortDefinitions.filter { it.trialId in trialIds }.groupBy(CohortDefinitionConfig::trialId, { it.cohortId to it.evaluable })
+            cohortDefinitions.filter { it.trialId in trialIds }.groupBy(CohortDefinitionConfig::trialId) { it.cohortId to it.evaluable }
                 .mapValues { it.value.toSet() }
         return trialIds.associateWith { emptySet<Pair<String, Boolean>>() } + cohortIdsByTrial
     }
