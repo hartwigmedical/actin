@@ -157,6 +157,7 @@ class ResistanceEvidenceMatcher(
         }
 
         private fun findSourceEvent(event: EfficacyEvidence): String {
+            // Assumes there is no combined/complex evidence yet
             with(event.molecularCriterium()) {
                 return when {
                     hotspots().isNotEmpty() -> {
@@ -177,6 +178,14 @@ class ResistanceEvidenceMatcher(
 
                     fusions().isNotEmpty() -> {
                         fusions().iterator().next().sourceEvent()
+                    }
+
+                    characteristics().isNotEmpty() -> {
+                        characteristics().iterator().next().sourceEvent()
+                    }
+
+                    hla().isNotEmpty() -> {
+                        hla().iterator().next().sourceEvent()
                     }
 
                     else -> ""

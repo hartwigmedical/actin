@@ -1,8 +1,6 @@
 package com.hartwig.actin.datamodel.molecular.evidence
 
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevelDetails
-import com.hartwig.serve.datamodel.trial.Hospital
-import com.hartwig.serve.datamodel.trial.ImmutableHospital
 import java.time.LocalDate
 
 object TestClinicalEvidenceFactory {
@@ -187,7 +185,7 @@ object TestClinicalEvidenceFactory {
 
     fun createCountry(
         countryName: CountryName,
-        hospitalsPerCity: Map<String, Set<com.hartwig.actin.datamodel.molecular.evidence.Hospital>> = emptyMap()
+        hospitalsPerCity: Map<String, Set<Hospital>> = emptyMap()
     ): Country {
         return Country(countryName, hospitalsPerCity)
     }

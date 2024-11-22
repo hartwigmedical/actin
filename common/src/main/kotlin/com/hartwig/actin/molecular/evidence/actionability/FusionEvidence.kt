@@ -1,12 +1,12 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.filterAndExpandTrials
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.filterEfficacyEvidence
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.fusionFilter
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.geneFilter
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.getFusion
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.getGene
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterAndExpandTrials
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterEfficacyEvidence
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.fusionFilter
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.geneFilter
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractFusion
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractGene
 import com.hartwig.actin.molecular.evidence.matching.EvidenceMatcher
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.FusionMatching
@@ -21,8 +21,9 @@ class FusionEvidence(
 
     override fun findMatches(event: FusionMatchCriteria): ActionableEvents {
         val evidences =
-            filterPromiscuousAndFusion(actionablePromiscuous.evidences, actionableFusions.evidences, event, ::getGene, ::getFusion)
-        val trials = filterPromiscuousAndFusion(actionablePromiscuous.trials, actionableFusions.trials, event, ::getGene, ::getFusion)
+            filterPromiscuousAndFusion(actionablePromiscuous.evidences, actionableFusions.evidences, event, ::extractGene, ::extractFusion)
+        val trials =
+            filterPromiscuousAndFusion(actionablePromiscuous.trials, actionableFusions.trials, event, ::extractGene, ::extractFusion)
         return ActionableEvents(evidences, trials)
     }
 
@@ -34,12 +35,12 @@ class FusionEvidence(
             val trials = filterAndExpandTrials(actionableEvents.trials, fusionFilter())
             val actionablePromiscuousEvidences = filterEfficacyEvidence(actionableEvents.evidences, geneFilter()).filter {
                 APPLICABLE_PROMISCUOUS_EVENTS.contains(
-                    ActionableEventsFiltering.getGene(it).event()
+                    ActionableEventsExtraction.extractGene(it).event()
                 )
             }
             val actionablePromiscuousTrials = filterAndExpandTrials(actionableEvents.trials, geneFilter()).filter {
                 APPLICABLE_PROMISCUOUS_EVENTS.contains(
-                    ActionableEventsFiltering.getGene(it).event()
+                    ActionableEventsExtraction.extractGene(it).event()
                 )
             }
             return FusionEvidence(

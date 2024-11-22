@@ -1,11 +1,11 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.codonFilter
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.exonFilter
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.filterAndExpandTrials
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.filterEfficacyEvidence
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.geneFilter
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.hotspotFilter
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.codonFilter
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.exonFilter
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterAndExpandTrials
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterEfficacyEvidence
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.geneFilter
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.hotspotFilter
 import com.hartwig.actin.molecular.evidence.matching.EvidenceMatcher
 import com.hartwig.actin.molecular.evidence.matching.GeneMatching
 import com.hartwig.actin.molecular.evidence.matching.HotspotMatching
@@ -35,8 +35,8 @@ class VariantEvidence(
             actionableHotspots,
             variant,
             HotspotMatching::isMatch,
-            ActionableEventsFiltering::getHotspot,
-            ActionableEventsFiltering::getHotspot
+            ActionableEventsExtraction::extractHotspot,
+            ActionableEventsExtraction::extractHotspot
         )
     }
 
@@ -45,8 +45,8 @@ class VariantEvidence(
             actionableRanges,
             variant,
             RangeMatching::isMatch,
-            ActionableEventsFiltering::getRange,
-            ActionableEventsFiltering::getRange
+            ActionableEventsExtraction::extractRange,
+            ActionableEventsExtraction::extractRange
         )
     }
 
@@ -55,8 +55,8 @@ class VariantEvidence(
             applicableActionableGenes,
             variant,
             GeneMatching::isMatch,
-            ActionableEventsFiltering::getGene,
-            ActionableEventsFiltering::getGene
+            ActionableEventsExtraction::extractGene,
+            ActionableEventsExtraction::extractGene
         )
     }
 
@@ -82,12 +82,12 @@ class VariantEvidence(
             with(actionableEvents) {
                 val applicableActionableGenesEvidences = filterEfficacyEvidence(evidences, geneFilter()).filter {
                     APPLICABLE_GENE_EVENTS.contains(
-                        ActionableEventsFiltering.getGene(it).event()
+                        ActionableEventsExtraction.extractGene(it).event()
                     )
                 }
                 val applicableActionableGenesTrials = filterAndExpandTrials(trials, geneFilter()).filter {
                     APPLICABLE_GENE_EVENTS.contains(
-                        ActionableEventsFiltering.getGene(it).event()
+                        ActionableEventsExtraction.extractGene(it).event()
                     )
                 }
                 val codonsEvidences = filterEfficacyEvidence(evidences, codonFilter())

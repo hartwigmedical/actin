@@ -9,19 +9,19 @@ import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.characteristicsFilter
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.filterEfficacyEvidence
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.geneFilter
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.codonFilter
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.exonFilter
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.filterAndExpandTrials
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.fusionFilter
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.getCharacteristic
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.getFusion
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.getGene
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.getRange
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.hotspotFilter
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.characteristicsFilter
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterEfficacyEvidence
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.geneFilter
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.codonFilter
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.exonFilter
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterAndExpandTrials
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.fusionFilter
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractCharacteristic
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractFusion
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractGene
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractRange
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.hotspotFilter
 import com.hartwig.actin.molecular.evidence.actionability.isCategoryEvent
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevelDetails
@@ -45,12 +45,12 @@ object ClinicalEvidenceFactory {
 
     private fun createAllTreatmentEvidences(isOnLabel: Boolean, evidences: List<EfficacyEvidence>): Set<TreatmentEvidence> {
         val filters = listOf(
-            geneFilter() to { evidence: EfficacyEvidence -> getGene(evidence) },
-            codonFilter() to { evidence: EfficacyEvidence -> getRange(evidence) },
-            hotspotFilter() to { evidence: EfficacyEvidence -> ActionableEventsFiltering.getHotspot(evidence) },
-            exonFilter() to { evidence: EfficacyEvidence -> getRange(evidence) },
-            fusionFilter() to { evidence: EfficacyEvidence -> getFusion(evidence) },
-            characteristicsFilter() to { evidence: EfficacyEvidence -> getCharacteristic(evidence) },
+            geneFilter() to { evidence: EfficacyEvidence -> extractGene(evidence) },
+            codonFilter() to { evidence: EfficacyEvidence -> extractRange(evidence) },
+            hotspotFilter() to { evidence: EfficacyEvidence -> ActionableEventsExtraction.extractHotspot(evidence) },
+            exonFilter() to { evidence: EfficacyEvidence -> extractRange(evidence) },
+            fusionFilter() to { evidence: EfficacyEvidence -> extractFusion(evidence) },
+            characteristicsFilter() to { evidence: EfficacyEvidence -> extractCharacteristic(evidence) },
         )
 
         return filters.flatMap { (filter, extractor) ->
@@ -98,12 +98,12 @@ object ClinicalEvidenceFactory {
 
     private fun createAllExternalTrials(trials: List<ActionableTrial>): Set<ExternalTrial> {
         return listOf(
-            geneFilter() to { trial: ActionableTrial -> getGene(trial) },
-            codonFilter() to { trial: ActionableTrial -> getRange(trial) },
-            hotspotFilter() to { trial: ActionableTrial -> ActionableEventsFiltering.getHotspot(trial) },
-            exonFilter() to { trial: ActionableTrial -> getRange(trial) },
-            fusionFilter() to { trial: ActionableTrial -> getFusion(trial) },
-            characteristicsFilter() to { trial: ActionableTrial -> getCharacteristic(trial) },
+            geneFilter() to { trial: ActionableTrial -> extractGene(trial) },
+            codonFilter() to { trial: ActionableTrial -> extractRange(trial) },
+            hotspotFilter() to { trial: ActionableTrial -> ActionableEventsExtraction.extractHotspot(trial) },
+            exonFilter() to { trial: ActionableTrial -> extractRange(trial) },
+            fusionFilter() to { trial: ActionableTrial -> extractFusion(trial) },
+            characteristicsFilter() to { trial: ActionableTrial -> extractCharacteristic(trial) },
         ).flatMap { (filter, extractor) ->
             filterAndExpandTrials(trials, filter).map {
                 createExternalTrial(it, extractor(it).sourceEvent(), extractor(it).isCategoryEvent())

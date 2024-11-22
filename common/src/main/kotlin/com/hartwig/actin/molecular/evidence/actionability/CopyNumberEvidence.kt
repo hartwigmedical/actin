@@ -2,10 +2,10 @@ package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.filterAndExpandTrials
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.filterEfficacyEvidence
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.geneFilter
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.getGene
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterAndExpandTrials
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterEfficacyEvidence
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.geneFilter
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractGene
 import com.hartwig.actin.molecular.evidence.matching.EvidenceMatcher
 import com.hartwig.serve.datamodel.molecular.gene.ActionableGene
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
@@ -37,9 +37,9 @@ class CopyNumberEvidence(
             val trials = filterAndExpandTrials(actionableEvents.trials, geneFilter())
             val (actionableAmplificationsEvidence, actionableLossesEvidence) = extractActionableAmplificationsAndLosses(
                 evidences,
-                ::getGene
+                ::extractGene
             )
-            val (actionableAmplificationsTrials, actionableLossesTrials) = extractActionableAmplificationsAndLosses(trials, ::getGene)
+            val (actionableAmplificationsTrials, actionableLossesTrials) = extractActionableAmplificationsAndLosses(trials, ::extractGene)
             return CopyNumberEvidence(
                 ActionableEvents(actionableAmplificationsEvidence, actionableAmplificationsTrials),
                 ActionableEvents(actionableLossesEvidence, actionableLossesTrials)
@@ -58,10 +58,10 @@ class CopyNumberEvidence(
 
         private fun findMatches(copyNumber: CopyNumber, actionableEvents: ActionableEvents): ActionableEvents {
             return ActionableEvents(actionableEvents.evidences.filter {
-                getGene(it)
+                extractGene(it)
                     .gene() == copyNumber.gene
             }, actionableEvents.trials.filter {
-                getGene(it)
+                extractGene(it)
                     .gene() == copyNumber.gene
             })
         }

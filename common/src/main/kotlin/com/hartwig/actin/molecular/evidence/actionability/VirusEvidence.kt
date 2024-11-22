@@ -2,10 +2,10 @@ package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.orange.driver.Virus
 import com.hartwig.actin.datamodel.molecular.orange.driver.VirusType
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.characteristicsFilter
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.filterAndExpandTrials
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.filterEfficacyEvidence
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsFiltering.getCharacteristic
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.characteristicsFilter
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterAndExpandTrials
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterEfficacyEvidence
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractCharacteristic
 import com.hartwig.actin.molecular.evidence.matching.EvidenceMatcher
 import com.hartwig.serve.datamodel.molecular.characteristic.ActionableCharacteristic
 import com.hartwig.serve.datamodel.molecular.characteristic.TumorCharacteristicType
@@ -37,8 +37,8 @@ internal class VirusEvidence private constructor(
         fun create(actionableEvents: ActionableEvents): VirusEvidence {
             val evidences = filterEfficacyEvidence(actionableEvents.evidences, characteristicsFilter())
             val trials = filterAndExpandTrials(actionableEvents.trials, characteristicsFilter())
-            val (hpvCharacteristicsEvidence, ebvCharacteristicsEvidence) = extractHPVAndEBV(evidences, ::getCharacteristic)
-            val (hpvCharacteristicsTrials, ebvCharacteristicsTrials) = extractHPVAndEBV(trials, ::getCharacteristic)
+            val (hpvCharacteristicsEvidence, ebvCharacteristicsEvidence) = extractHPVAndEBV(evidences, ::extractCharacteristic)
+            val (hpvCharacteristicsTrials, ebvCharacteristicsTrials) = extractHPVAndEBV(trials, ::extractCharacteristic)
             return VirusEvidence(
                 ActionableEvents(hpvCharacteristicsEvidence, hpvCharacteristicsTrials),
                 ActionableEvents(ebvCharacteristicsEvidence, ebvCharacteristicsTrials)

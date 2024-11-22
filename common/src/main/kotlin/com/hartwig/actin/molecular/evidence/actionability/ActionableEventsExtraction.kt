@@ -12,17 +12,17 @@ import com.hartwig.serve.datamodel.trial.ImmutableActionableTrial
 import java.util.function.Predicate
 import java.util.stream.Collectors
 
-object ActionableEventsFiltering {
+object ActionableEventsExtraction {
 
-    fun getHotspot(efficacyEvidence: EfficacyEvidence): ActionableHotspot {
+    fun extractHotspot(efficacyEvidence: EfficacyEvidence): ActionableHotspot {
         return efficacyEvidence.molecularCriterium().hotspots().iterator().next()
     }
 
-    fun getHotspot(actionableTrial: ActionableTrial): ActionableHotspot {
+    fun extractHotspot(actionableTrial: ActionableTrial): ActionableHotspot {
         return actionableTrial.anyMolecularCriteria().iterator().next().hotspots().iterator().next()
     }
 
-    fun getRange(efficacyEvidence: EfficacyEvidence): ActionableRange {
+    fun extractRange(efficacyEvidence: EfficacyEvidence): ActionableRange {
         return if (efficacyEvidence.molecularCriterium().codons().isNotEmpty()) {
             efficacyEvidence.molecularCriterium().codons().iterator().next()
         } else if (efficacyEvidence.molecularCriterium().exons().isNotEmpty()) {
@@ -32,7 +32,7 @@ object ActionableEventsFiltering {
         }
     }
 
-    fun getRange(actionableTrial: ActionableTrial): ActionableRange {
+    fun extractRange(actionableTrial: ActionableTrial): ActionableRange {
         return if (actionableTrial.anyMolecularCriteria().iterator().next().codons().isNotEmpty()) {
             actionableTrial.anyMolecularCriteria().iterator().next().codons().iterator().next()
         } else if (actionableTrial.anyMolecularCriteria().iterator().next().exons().isNotEmpty()) {
@@ -46,27 +46,27 @@ object ActionableEventsFiltering {
         }
     }
 
-    fun getGene(efficacyEvidence: EfficacyEvidence): ActionableGene {
+    fun extractGene(efficacyEvidence: EfficacyEvidence): ActionableGene {
         return efficacyEvidence.molecularCriterium().genes().iterator().next()
     }
 
-    fun getGene(actionableTrial: ActionableTrial): ActionableGene {
+    fun extractGene(actionableTrial: ActionableTrial): ActionableGene {
         return actionableTrial.anyMolecularCriteria().iterator().next().genes().iterator().next()
     }
 
-    fun getFusion(efficacyEvidence: EfficacyEvidence): ActionableFusion {
+    fun extractFusion(efficacyEvidence: EfficacyEvidence): ActionableFusion {
         return efficacyEvidence.molecularCriterium().fusions().iterator().next()
     }
 
-    fun getFusion(actionableTrial: ActionableTrial): ActionableFusion {
+    fun extractFusion(actionableTrial: ActionableTrial): ActionableFusion {
         return actionableTrial.anyMolecularCriteria().iterator().next().fusions().iterator().next()
     }
 
-    fun getCharacteristic(efficacyEvidence: EfficacyEvidence): ActionableCharacteristic {
+    fun extractCharacteristic(efficacyEvidence: EfficacyEvidence): ActionableCharacteristic {
         return efficacyEvidence.molecularCriterium().characteristics().iterator().next()
     }
 
-    fun getCharacteristic(actionableTrial: ActionableTrial): ActionableCharacteristic {
+    fun extractCharacteristic(actionableTrial: ActionableTrial): ActionableCharacteristic {
         return actionableTrial.anyMolecularCriteria().iterator().next().characteristics().iterator().next()
     }
 
