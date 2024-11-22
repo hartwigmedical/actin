@@ -16,16 +16,19 @@ class ValueComparisonTest {
     }
 
     @Test
-    fun `Should be undetermined if value is less than min value`() {
-        assertThat(evaluateAgainstMinValue2(4.0, ValueComparison.SMALLER_THAN)).isEqualTo(EvaluationResult.UNDETERMINED)
-        assertThat(evaluateAgainstMinValue2(4.0, ValueComparison.SMALLER_THAN_OR_EQUAL)).isEqualTo(EvaluationResult.UNDETERMINED)
-        assertThat(evaluateAgainstMinValue2(1.0, ValueComparison.LARGER_THAN)).isEqualTo(EvaluationResult.UNDETERMINED)
-        assertThat(evaluateAgainstMinValue2(1.0, ValueComparison.LARGER_THAN_OR_EQUAL)).isEqualTo(EvaluationResult.UNDETERMINED)
+    fun `Should fail if value is less than min value`() {
+        assertThat(evaluateAgainstMinValue2(2.0, ValueComparison.SMALLER_THAN)).isEqualTo(EvaluationResult.FAIL)
+        assertThat(evaluateAgainstMinValue2(1.0, ValueComparison.SMALLER_THAN_OR_EQUAL)).isEqualTo(EvaluationResult.FAIL)
+        assertThat(evaluateAgainstMinValue2(1.0, "")).isEqualTo(EvaluationResult.FAIL)
+        assertThat(evaluateAgainstMinValue2(1.0, null)).isEqualTo(EvaluationResult.FAIL)
     }
 
     @Test
     fun `Should evaluate to undetermined if value is possibly smaller than min value with uncertainty due to comparator`() {
         assertThat(evaluateAgainstMinValue2(2.0, ValueComparison.SMALLER_THAN_OR_EQUAL)).isEqualTo(EvaluationResult.UNDETERMINED)
+        assertThat(evaluateAgainstMinValue2(4.0, ValueComparison.SMALLER_THAN_OR_EQUAL)).isEqualTo(EvaluationResult.UNDETERMINED)
+        assertThat(evaluateAgainstMinValue2(1.0, ValueComparison.LARGER_THAN)).isEqualTo(EvaluationResult.UNDETERMINED)
+        assertThat(evaluateAgainstMinValue2(1.0, ValueComparison.LARGER_THAN_OR_EQUAL)).isEqualTo(EvaluationResult.UNDETERMINED)
     }
 
     @Test
