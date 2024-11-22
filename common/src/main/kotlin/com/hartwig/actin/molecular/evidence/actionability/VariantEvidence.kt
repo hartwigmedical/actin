@@ -2,7 +2,7 @@ package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.codonFilter
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.exonFilter
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterAndExpandTrials
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterTrials
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterEfficacyEvidence
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.geneFilter
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.hotspotFilter
@@ -85,19 +85,19 @@ class VariantEvidence(
                         ActionableEventsExtraction.extractGene(it).event()
                     )
                 }
-                val applicableActionableGenesTrials = filterAndExpandTrials(trials, geneFilter()).filter {
+                val applicableActionableGenesTrials = filterTrials(trials, geneFilter()).filter {
                     APPLICABLE_GENE_EVENTS.contains(
                         ActionableEventsExtraction.extractGene(it).event()
                     )
                 }
                 val codonsEvidences = filterEfficacyEvidence(evidences, codonFilter())
-                val codonsTrials = filterAndExpandTrials(trials, codonFilter())
+                val codonsTrials = filterTrials(trials, codonFilter())
 
                 val exonsEvidences = filterEfficacyEvidence(evidences, exonFilter())
-                val exonsTrials = filterAndExpandTrials(trials, exonFilter())
+                val exonsTrials = filterTrials(trials, exonFilter())
 
                 val hotspotsEvidences = filterEfficacyEvidence(evidences, hotspotFilter())
-                val hotspotsTrials = filterAndExpandTrials(trials, hotspotFilter())
+                val hotspotsTrials = filterTrials(trials, hotspotFilter())
 
                 val rangesEvidences = listOf(codonsEvidences, exonsEvidences).flatten()
                 val rangesTrials = listOf(codonsTrials, exonsTrials).flatten()

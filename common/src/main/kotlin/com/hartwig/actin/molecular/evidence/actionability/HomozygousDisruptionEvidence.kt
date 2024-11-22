@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.orange.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterAndExpandTrials
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterTrials
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterEfficacyEvidence
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.geneFilter
 import com.hartwig.actin.molecular.evidence.matching.EvidenceMatcher
@@ -31,7 +31,7 @@ class HomozygousDisruptionEvidence(private val actionableGenes: ActionableEvents
                     ActionableEventsExtraction.extractGene(it).event()
                 )
             }
-            val trials = filterAndExpandTrials(actionableEvents.trials, geneFilter()).filter {
+            val trials = filterTrials(actionableEvents.trials, geneFilter()).filter {
                 APPLICABLE_GENE_EVENTS.contains(
                     ActionableEventsExtraction.extractGene(it).event()
                 )

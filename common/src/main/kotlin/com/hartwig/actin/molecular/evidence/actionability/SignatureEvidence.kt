@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.characteristicsFilter
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterAndExpandTrials
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterTrials
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterEfficacyEvidence
 import com.hartwig.serve.datamodel.molecular.characteristic.TumorCharacteristicType
 
@@ -50,7 +50,7 @@ internal class SignatureEvidence private constructor(private val signatureCharac
                 ActionableEventsExtraction.extractCharacteristic(it)
                     .type() in signatureCharacteristicTypes
             }
-            val characteristicsTrials = filterAndExpandTrials(actionableEvents.trials, characteristicsFilter()).filter {
+            val characteristicsTrials = filterTrials(actionableEvents.trials, characteristicsFilter()).filter {
                 ActionableEventsExtraction.extractCharacteristic(it)
                     .type() in signatureCharacteristicTypes
             }

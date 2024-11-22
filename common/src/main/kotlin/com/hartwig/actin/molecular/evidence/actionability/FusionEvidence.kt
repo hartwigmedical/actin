@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterAndExpandTrials
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterTrials
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterEfficacyEvidence
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.fusionFilter
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.geneFilter
@@ -32,16 +32,12 @@ class FusionEvidence(
 
         fun create(actionableEvents: ActionableEvents): FusionEvidence {
             val evidences = filterEfficacyEvidence(actionableEvents.evidences, fusionFilter())
-            val trials = filterAndExpandTrials(actionableEvents.trials, fusionFilter())
+            val trials = filterTrials(actionableEvents.trials, fusionFilter())
             val actionablePromiscuousEvidences = filterEfficacyEvidence(actionableEvents.evidences, geneFilter()).filter {
-                APPLICABLE_PROMISCUOUS_EVENTS.contains(
-                    ActionableEventsExtraction.extractGene(it).event()
-                )
+                APPLICABLE_PROMISCUOUS_EVENTS.contains(extractGene(it).event())
             }
-            val actionablePromiscuousTrials = filterAndExpandTrials(actionableEvents.trials, geneFilter()).filter {
-                APPLICABLE_PROMISCUOUS_EVENTS.contains(
-                    ActionableEventsExtraction.extractGene(it).event()
-                )
+            val actionablePromiscuousTrials = filterTrials(actionableEvents.trials, geneFilter()).filter {
+                APPLICABLE_PROMISCUOUS_EVENTS.contains(extractGene(it).event())
             }
             return FusionEvidence(
                 ActionableEvents(actionablePromiscuousEvidences, actionablePromiscuousTrials),

@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterAndExpandTrials
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterTrials
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterEfficacyEvidence
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.geneFilter
 import com.hartwig.actin.molecular.evidence.matching.EvidenceMatcher
@@ -28,7 +28,7 @@ class BreakendEvidence(private val applicableActionableGenes: ActionableEvents) 
                 ActionableEventsExtraction.extractGene(it)
                     .event() == GeneEvent.ANY_MUTATION
             }
-            val trials = filterAndExpandTrials(actionableEvents.trials, geneFilter()).filter {
+            val trials = filterTrials(actionableEvents.trials, geneFilter()).filter {
                 ActionableEventsExtraction.extractGene(it)
                     .event() == GeneEvent.ANY_MUTATION
             }

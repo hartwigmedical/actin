@@ -2,7 +2,7 @@ package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterAndExpandTrials
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterTrials
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterEfficacyEvidence
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.geneFilter
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractGene
@@ -34,7 +34,7 @@ class CopyNumberEvidence(
     companion object {
         fun create(actionableEvents: ActionableEvents): CopyNumberEvidence {
             val evidences = filterEfficacyEvidence(actionableEvents.evidences, geneFilter())
-            val trials = filterAndExpandTrials(actionableEvents.trials, geneFilter())
+            val trials = filterTrials(actionableEvents.trials, geneFilter())
             val (actionableAmplificationsEvidence, actionableLossesEvidence) = extractActionableAmplificationsAndLosses(
                 evidences,
                 ::extractGene

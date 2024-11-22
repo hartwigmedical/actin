@@ -14,6 +14,7 @@ import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabaseFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEvents
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.expandTrials
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.orange.MolecularRecordAnnotator
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
@@ -198,7 +199,8 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val serveRecord = serveDatabase.records()[serveRefGenomeVersion]
         val knownEvents =
             serveRecord?.knownEvents() ?: throw IllegalStateException("No serve record for ref genome version $serveRefGenomeVersion")
-        val actionableEvents = ActionableEvents(serveRecord.evidences(), serveRecord.trials())
+        val expandedTrials = expandTrials(serveRecord.trials())
+        val actionableEvents = ActionableEvents(serveRecord.evidences(), expandedTrials)
         val evidenceDatabase = EvidenceDatabaseFactory.create(knownEvents, actionableEvents, doidEntry, tumorDoids)
 
         return Pair(knownEvents, evidenceDatabase)

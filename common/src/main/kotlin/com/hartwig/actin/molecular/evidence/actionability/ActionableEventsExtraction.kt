@@ -115,19 +115,31 @@ object ActionableEventsExtraction {
             .collect(Collectors.toList())
     }
 
-    fun filterAndExpandTrials(
+    fun filterTrials(
         trials: List<ActionableTrial>,
         molecularCriteriumPredicate: Predicate<MolecularCriterium>
     ): List<ActionableTrial> {
-        val expandedFilteredTrials: MutableList<ActionableTrial> = mutableListOf()
+        val filteredTrials: MutableList<ActionableTrial> = mutableListOf()
         for (trial in trials) {
             for (criterium in trial.anyMolecularCriteria()) {
                 if (molecularCriteriumPredicate.test(criterium)) {
-                    expandedFilteredTrials.addAll(expandWithIndicationAndCriterium(trial, criterium))
+                    filteredTrials.add(trial)
                 }
             }
         }
-        return expandedFilteredTrials
+        return filteredTrials
+    }
+
+    fun expandTrials(
+        trials: List<ActionableTrial>
+    ): List<ActionableTrial> {
+        val expandededTrials: MutableList<ActionableTrial> = mutableListOf()
+        for (trial in trials) {
+            for (criterium in trial.anyMolecularCriteria()) {
+                expandededTrials.addAll(expandWithIndicationAndCriterium(trial, criterium))
+            }
+        }
+        return expandededTrials
     }
 
     private fun expandWithIndicationAndCriterium(

@@ -15,7 +15,7 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtrac
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.geneFilter
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.codonFilter
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.exonFilter
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterAndExpandTrials
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterTrials
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.fusionFilter
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractCharacteristic
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractFusion
@@ -105,7 +105,7 @@ object ClinicalEvidenceFactory {
             fusionFilter() to { trial: ActionableTrial -> extractFusion(trial) },
             characteristicsFilter() to { trial: ActionableTrial -> extractCharacteristic(trial) },
         ).flatMap { (filter, extractor) ->
-            filterAndExpandTrials(trials, filter).map {
+            filterTrials(trials, filter).map {
                 createExternalTrial(it, extractor(it).sourceEvent(), extractor(it).isCategoryEvent())
             }
         }.toSet()
