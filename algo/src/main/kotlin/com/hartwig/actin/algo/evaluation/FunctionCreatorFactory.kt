@@ -40,7 +40,6 @@ object FunctionCreatorFactory {
             TumorRuleMapper(resources),
             VitalFunctionRuleMapper(resources),
             WashoutRuleMapper(resources)
-        )
-            .fold(emptyMap()) { acc, mapper -> acc + mapper.createMappings() }
+        ).fold(emptyMap()) { acc, mapper -> acc + mapper.createMappings() }
     }
 }

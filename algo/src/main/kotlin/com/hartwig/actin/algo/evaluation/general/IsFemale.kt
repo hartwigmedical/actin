@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.Gender
 
 class IsFemale: EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         return when (record.patient.gender) {
             Gender.FEMALE -> EvaluationFactory.pass("Patient is female", "Adequate gender")

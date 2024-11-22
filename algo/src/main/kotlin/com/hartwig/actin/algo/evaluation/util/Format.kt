@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 object Format {
+
     private const val SEPARATOR_SEMICOLON = "; "
     private const val SEPARATOR_AND = " and "
     private const val SEPARATOR_OR = " or "

@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
 class HasUnresectablePeritonealMetastases : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val certainPeritonealMetastasesEvaluation = TumorTypeEvaluationFunctions.hasPeritonealMetastases(record.tumor)
         val suspectedPeritonealMetastasesEvaluation = TumorTypeEvaluationFunctions.hasSuspectedPeritonealMetastases(record.tumor)

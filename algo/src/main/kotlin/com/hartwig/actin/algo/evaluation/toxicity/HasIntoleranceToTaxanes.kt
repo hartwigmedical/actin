@@ -9,6 +9,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.Intolerance
 
 class HasIntoleranceToTaxanes : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val taxaneAllergies = record.intolerances.map(Intolerance::name)
             .filter { stringCaseInsensitivelyMatchesQueryCollection(it, TAXANES) }

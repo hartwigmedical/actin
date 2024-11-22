@@ -6,8 +6,7 @@ import com.hartwig.actin.clinical.interpretation.LabMeasurement
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.LabUnit
-import org.assertj.core.api.Assertions
-import org.junit.Assert.assertTrue
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class HasSufficientLabValueTest {
@@ -28,7 +27,7 @@ class HasSufficientLabValueTest {
     fun `Should evaluate to recoverable undetermined if lab value is under minimal value but within 10 percent error margin`() {
         val evaluation = function.evaluate(record, measurement, LabTestFactory.create(measurement, 190.0))
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        Assertions.assertThat(evaluation.recoverable).isTrue()
+        assertThat(evaluation.recoverable).isTrue()
     }
 
     @Test
@@ -46,7 +45,7 @@ class HasSufficientLabValueTest {
     fun `Should fail if lab value is below minimal value and outside error margin`() {
         val actual = function.evaluate(record, measurement, LabTestFactory.create(measurement, 100.0))
         assertEvaluation(EvaluationResult.FAIL, actual)
-        assertTrue(actual.recoverable)
+        assertThat(actual.recoverable).isTrue()
     }
 
     @Test

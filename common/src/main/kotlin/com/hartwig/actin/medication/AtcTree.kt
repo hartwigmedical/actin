@@ -6,6 +6,7 @@ import java.io.File
 import java.nio.file.Files
 
 class AtcTree(private val atcMap: Map<String, String>) {
+
     fun resolve(rawAtcCode: String): AtcLevel {
         val atcName = atcMap[rawAtcCode]
         return atcName?.let { AtcLevel(name = atcName, code = rawAtcCode) }

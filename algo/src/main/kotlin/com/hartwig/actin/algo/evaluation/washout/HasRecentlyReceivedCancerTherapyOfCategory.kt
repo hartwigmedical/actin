@@ -44,6 +44,7 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
     private val interpreter: MedicationStatusInterpreter,
     private val minDate: LocalDate
 ) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val categoryNames: Set<String> = categories.keys - categoriesToIgnore.keys
         val treatmentAssessment = assessTreatmentHistory(record, categoryNames)

@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
 class HasSpecificComplication(private val termToFind: String) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val complications = record.complications ?: return EvaluationFactory.recoverableUndetermined(
             "Undetermined whether patient has cancer-related complications",

@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical.feed.emc.questionnaire
 
-import com.google.common.collect.Lists
 import java.util.StringJoiner
 
 internal object QuestionnaireReader {
@@ -13,7 +12,7 @@ internal object QuestionnaireReader {
     }
 
     private fun merge(lines: Array<String>, validKeys: List<String>, sectionHeaders: List<String>): Array<String> {
-        val merged: MutableList<String> = Lists.newArrayList()
+        val merged: MutableList<String> = mutableListOf()
         var curLine = newValueStringJoiner()
         for (i in lines.indices) {
             curLine.add(lines[i])

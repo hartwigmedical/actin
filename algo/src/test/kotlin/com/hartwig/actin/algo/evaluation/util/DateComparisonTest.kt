@@ -1,54 +1,54 @@
 package com.hartwig.actin.algo.evaluation.util
 
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
 class DateComparisonTest {
+
     @Test
-    fun canDetermineIfYearMonthAreAfterMinDate() {
-        val minDate: LocalDate = LocalDate.of(2020, 6, 20)
-        assertNull(DateComparison.isAfterDate(minDate, null, null))
-        assertNull(DateComparison.isAfterDate(minDate, 2020, null))
-        assertNull(DateComparison.isAfterDate(minDate, 2020, 6))
-        assertEquals(false, DateComparison.isAfterDate(minDate, 2019, null))
-        assertEquals(false, DateComparison.isAfterDate(minDate, 2020, 4))
-        assertEquals(true, DateComparison.isAfterDate(minDate, 2021, null))
-        assertEquals(true, DateComparison.isAfterDate(minDate, 2021, 8))
+    fun `Should determine if year and month are after min date`() {
+        val minDate = LocalDate.of(2020, 6, 20)
+        assertThat(DateComparison.isAfterDate(minDate, null, null)).isNull()
+        assertThat(DateComparison.isAfterDate(minDate, 2020, null)).isNull()
+        assertThat(DateComparison.isAfterDate(minDate, 2020, 6)).isNull()
+        assertThat(DateComparison.isAfterDate(minDate, 2019, null)).isFalse()
+        assertThat(DateComparison.isAfterDate(minDate, 2020, 4)).isFalse()
+        assertThat(DateComparison.isAfterDate(minDate, 2021, null)).isTrue()
+        assertThat(DateComparison.isAfterDate(minDate, 2021, 8)).isTrue()
     }
 
     @Test
-    fun canDetermineIfYearMonthAreBeforeMaxDate() {
-        val maxDate: LocalDate = LocalDate.of(2020, 6, 20)
-        assertNull(DateComparison.isBeforeDate(maxDate, null, null))
-        assertNull(DateComparison.isBeforeDate(maxDate, 2020, null))
-        assertNull(DateComparison.isBeforeDate(maxDate, 2020, 6))
-        assertEquals(true, DateComparison.isBeforeDate(maxDate, 2019, null))
-        assertEquals(true, DateComparison.isBeforeDate(maxDate, 2020, 4))
-        assertEquals(false, DateComparison.isBeforeDate(maxDate, 2021, null))
-        assertEquals(false, DateComparison.isBeforeDate(maxDate, 2021, 8))
+    fun `Should determine if year and month are before max date`() {
+        val maxDate = LocalDate.of(2020, 6, 20)
+        assertThat(DateComparison.isBeforeDate(maxDate, null, null)).isNull()
+        assertThat(DateComparison.isBeforeDate(maxDate, 2020, null)).isNull()
+        assertThat(DateComparison.isBeforeDate(maxDate, 2020, 6)).isNull()
+        assertThat(DateComparison.isBeforeDate(maxDate, 2019, null)).isTrue()
+        assertThat(DateComparison.isBeforeDate(maxDate, 2020, 4)).isTrue()
+        assertThat(DateComparison.isBeforeDate(maxDate, 2021, null)).isFalse()
+        assertThat(DateComparison.isBeforeDate(maxDate, 2021, 8)).isFalse()
     }
 
     @Test
-    fun minWeeksBetweenDatesShouldReturnEmptyForNullStartOrStopYear() {
-        assertNull(DateComparison.minWeeksBetweenDates(null, null, null, null))
-        assertNull(DateComparison.minWeeksBetweenDates(1900, null, null, null))
-        assertNull(DateComparison.minWeeksBetweenDates(null, 2000, null, null))
+    fun `Should return null when start or stop year is null`() {
+        assertThat(DateComparison.minWeeksBetweenDates(null, null, null, null)).isNull()
+        assertThat(DateComparison.minWeeksBetweenDates(1900, null, null, null)).isNull()
+        assertThat(DateComparison.minWeeksBetweenDates(null, 2000, null, null)).isNull()
     }
 
     @Test
-    fun minWeeksBetweenDatesShouldCalculateNumberOfWeeksUsingYearsAndMonths() {
-        assertEquals(4L, DateComparison.minWeeksBetweenDates(2023, 1, 2023, 3))
+    fun `Should calculate min weeks using years and months`() {
+        assertThat(DateComparison.minWeeksBetweenDates(2023, 1, 2023, 3)).isEqualTo(4)
     }
 
     @Test
-    fun minWeeksBetweenDatesShouldAssumeMinimumDurationWhenMonthsNotProvided() {
-        assertEquals(52L, DateComparison.minWeeksBetweenDates(2021, null, 2023, null))
+    fun `Should assume minimum duration when months are not provided`() {
+        assertThat(DateComparison.minWeeksBetweenDates(2021, null, 2023, null)).isEqualTo(52)
     }
 
     @Test
-    fun minWeeksBetweenDatesShouldReturnZeroWhenStopDateIsBeforeStartDate() {
-        assertEquals(0L, DateComparison.minWeeksBetweenDates(2023, 3, 2023, 1))
+    fun `Should return zero when stop date is before start date`() {
+        assertThat(DateComparison.minWeeksBetweenDates(2023, 3, 2023, 1)).isEqualTo(0)
     }
 }

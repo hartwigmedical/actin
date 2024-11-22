@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.clinical.Complication
 
 object ComplicationFunctions {
+
     fun findComplicationNamesMatchingAnyCategory(record: PatientRecord, categorySearchTerms: List<String>): Set<String> {
         return record.complications
             ?.filter { it.categories.any { category -> stringCaseInsensitivelyMatchesQueryCollection(category, categorySearchTerms) } }

@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.trial.EligibilityRule
 import java.time.LocalDate
 
 class VitalFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
+
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
             EligibilityRule.HAS_SBP_MMHG_OF_AT_LEAST_X to hasSufficientBloodPressureCreator(BloodPressureCategory.SYSTOLIC),

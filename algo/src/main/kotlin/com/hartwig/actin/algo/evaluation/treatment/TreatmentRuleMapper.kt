@@ -12,6 +12,7 @@ import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.medication.MedicationCategories
 
 class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
+
     private val categories = MedicationCategories.create(atcTree())
     private val antiCancerCategories = categories.resolve("Anticancer")
 
