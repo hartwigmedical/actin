@@ -28,15 +28,19 @@ class EvaluatedTreatmentAnnotator(
         }?.toMap()
 
         return evaluatedTreatments.map { evaluatedTreatment ->
+            val treatment = evaluatedTreatment.treatmentCandidate.treatment
+            val treatmentName = treatment.name.lowercase()
+
             AnnotatedTreatmentMatch(
                 treatmentCandidate = evaluatedTreatment.treatmentCandidate,
                 evaluations = evaluatedTreatment.evaluations,
                 annotations = lookUp(evaluatedTreatment),
-                generalPfs = pfsByTreatmentName?.get(evaluatedTreatment.treatmentCandidate.treatment.name.lowercase()),
-                generalOs = osByTreatmentName?.get(evaluatedTreatment.treatmentCandidate.treatment.name.lowercase()),
-                resistanceEvidence = resistanceEvidenceMatcher.match(evaluatedTreatment.treatmentCandidate.treatment)
+                generalPfs = pfsByTreatmentName?.get(treatmentName),
+                generalOs = osByTreatmentName?.get(treatmentName),
+                resistanceEvidence = resistanceEvidenceMatcher.match(treatment)
             )
         }
+
     }
 
     private fun lookUp(treatment: EvaluatedTreatment): List<EfficacyEntry> {

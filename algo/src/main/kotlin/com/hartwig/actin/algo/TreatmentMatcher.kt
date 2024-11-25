@@ -9,15 +9,10 @@ import com.hartwig.actin.algo.soc.RecommendationEngineFactory
 import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.datamodel.PatientRecord
 
-import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.datamodel.algo.EvaluatedTreatment
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
-import com.hartwig.actin.datamodel.algo.TreatmentCandidate
-
 import com.hartwig.actin.datamodel.efficacy.EfficacyEntry
 import com.hartwig.actin.datamodel.trial.Trial
 
-import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatment
 
 
 class TreatmentMatcher(

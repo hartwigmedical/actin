@@ -32,32 +32,32 @@ class PersonalizedEvidenceChapter(private val report: Report, override val inclu
 
         val table = Tables.createSingleColWithWidth(contentWidth())
 
+        val personalizedDataAnalysis = report.treatmentMatch.personalizedDataAnalysis!!
+
         val generators = listOf(
-            RealWorldTreatmentDecisionsGenerator(report.treatmentMatch.personalizedDataAnalysis!!, eligibleSocTreatments, contentWidth()),
-            RealWorldSurvivalOutcomesGenerator(report.treatmentMatch.personalizedDataAnalysis!!, eligibleSocTreatments, contentWidth(), MeasurementType.PROGRESSION_FREE_SURVIVAL),
-            RealWorldSurvivalOutcomesGenerator(report.treatmentMatch.personalizedDataAnalysis!!, eligibleSocTreatments, contentWidth(), MeasurementType.OVERALL_SURVIVAL)
+            RealWorldTreatmentDecisionsGenerator(personalizedDataAnalysis, eligibleSocTreatments, contentWidth()),
+            RealWorldSurvivalOutcomesGenerator(personalizedDataAnalysis, eligibleSocTreatments, contentWidth(), MeasurementType.PROGRESSION_FREE_SURVIVAL),
+            RealWorldSurvivalOutcomesGenerator(personalizedDataAnalysis, eligibleSocTreatments, contentWidth(), MeasurementType.OVERALL_SURVIVAL)
         )
 
         generators.forEach { generator ->
-            val innerTable = Table(1).apply { setProperty(Property.KEEP_TOGETHER, true) }
+            val groupingTable = Table(1).setKeepTogether(true).setPadding(0f)
 
-            val titleCell = Cells.createSubTitle(generator.title())
+            groupingTable.addCell(Cells.createSubTitle(generator.title()))
+            groupingTable.addCell(Cells.create(generator.contents()))
 
-            innerTable.addCell(titleCell)
-            innerTable.addCell(Cells.create(generator.contents()))
-
-            table.addCell(Cells.create(innerTable))
+            table.addCell(Cells.create(groupingTable))
         }
 
         table.addCell(Cells.createSubTitle("Explanation:"))
         sequenceOf(
-            "These tables only shows treatments that are considered standard of care (SOC) in colorectal cancer in the Netherlands.\n",
+            "These tables only show treatments that are considered standard of care (SOC) in colorectal cancer in the Netherlands.\n",
             "The ‘All’ column shows results in NCR patients who were previously untreated, diagnosed with colorectal cancer with distant " +
                     "metastases and treated systemically without surgery, for whom the treatment could be categorized in SOC treatments.\n",
             "The ‘Age’, ‘WHO’, ‘RAS’ and ‘Lesions’ columns show results based on patients from the ‘All’ population, filtered " +
                     "for equal WHO, similar age, equal RAS status or equal lesion localization, respectively.\n",
             "‘PFS’ is calculated as the duration from the date on which the first compound of the treatment was administered, until first progression. ",
-            "‘OS’ is calculated as the duration from the incidence date until death from any cause.\n",
+            "‘OS’ is calculated as the duration from the date on which the first compound of the treatment was administered, until death from any cause.\n",
             "When patient number is too low (n <= 20) to predict PFS or OS, \"NA\" is shown.\n",
         )
             .map(Cells::createContentNoBorder)

@@ -78,7 +78,7 @@ class TreatmentMatcherTest {
     fun `Should include SOC evaluations for patient when SOC evaluation is available`() {
         val eligibilityFunction = EligibilityFunction(EligibilityRule.MSI_SIGNATURE, emptyList())
         val treatmentCandidate = TreatmentCandidate(
-            TreatmentTestFactory.drugTreatment("test", TreatmentCategory.CHEMOTHERAPY), true, setOf(eligibilityFunction)
+            TreatmentTestFactory.drugTreatment("test", TreatmentCategory.CHEMOTHERAPY), false, setOf(eligibilityFunction)
         )
         val expectedSocTreatments = listOf(EvaluatedTreatment(treatmentCandidate, listOf(EvaluationFactory.pass("Has MSI"))))
 
