@@ -1,0 +1,7 @@
+Foundation URI	Linearization URI	Code	BlockId	Title	ClassKind	DepthInKind	IsResidual	ChapterNo	BrowserLink	isLeaf	Primary tabulation	Grouping1	Grouping2	Grouping3	Grouping4	Grouping5	Version:2024 Nov 25 - 12:00 CET
+http://foundationlink/1234	http://linearizationlink/4321			Test chapter 1	chapter	1	False	1	browser	False
+http://foundationlink/1235	http://linearizationlink/5321		Block1-A	Test block 1A	block	1	False	1	browser	False
+	http://linearizationlink/6321		Block1-B	Test block 1B	block	2	False	1	browser	False		Block1-A
+http://foundationlink/1237	http://linearizationlink/7321	1A01		Test category	category	1	False	1	browser	False		Block1-A	Block1-B
+http://foundationlink/12371	http://linearizationlink/17321	1A01.1		Test subcategory - specific	category	2	False	1	browser	True	Block1-A	Block1-B
+http://foundationlink/12372	http://linearizationlink/27321	1A01.Z		Test subcategory - other	category	2	True	1	browser	True	Block1-A	Block1-B
