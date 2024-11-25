@@ -2,6 +2,8 @@ package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.molecular.Driver
 import com.hartwig.actin.datamodel.molecular.Fusion
+import com.hartwig.actin.datamodel.molecular.GeneAlteration
+import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.Variant
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidenceCategories.approved
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidenceCategories.experimental
@@ -19,17 +21,18 @@ import kotlin.math.min
 class MolecularDriverEntryFactory(private val molecularDriversInterpreter: MolecularDriversInterpreter) {
 
     fun create(): List<MolecularDriverEntry> {
-        return listOf(
-            molecularDriversInterpreter.filteredVariants().map { variant: Variant -> fromVariant(variant) },
-            molecularDriversInterpreter.filteredCopyNumbers().map { copyNumber: CopyNumber -> fromCopyNumber(copyNumber) },
-            molecularDriversInterpreter.filteredHomozygousDisruptions()
-                .map { homozygousDisruption: HomozygousDisruption -> fromHomozygousDisruption(homozygousDisruption) },
-            molecularDriversInterpreter.filteredDisruptions().map { disruption: Disruption -> fromDisruption(disruption) },
-            molecularDriversInterpreter.filteredFusions().map { fusion: Fusion -> fromFusion(fusion) },
-            molecularDriversInterpreter.filteredViruses().map { virus: Virus -> fromVirus(virus) }
-        )
-            .flatten()
-            .sortedWith(MolecularDriverEntryComparator())
+        with(molecularDriversInterpreter) {
+            return listOf(
+                filteredVariants().map(::fromVariant),
+                filteredCopyNumbers().map(::fromCopyNumber),
+                filteredHomozygousDisruptions().map(::fromHomozygousDisruption),
+                filteredDisruptions().map(::fromDisruption),
+                filteredFusions().map(::fromFusion),
+                filteredViruses().map(::fromVirus)
+            )
+                .flatten()
+                .sortedWith(MolecularDriverEntryComparator())
+        }
     }
 
     private fun fromVariant(variant: Variant): MolecularDriverEntry {
@@ -37,17 +40,20 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         val mutationTypeString = if (variant.isHotspot) "Hotspot" else "VUS"
         val driverType = "Mutation ($biallelicIndicator$mutationTypeString)"
 
-        val boundedVariantCopies =
-            variant.extendedVariantDetails?.let { min(it.variantCopyNumber, it.totalCopyNumber).coerceAtLeast(0.0) } ?: 0.0
-        val variantCopyString =
-            if (boundedVariantCopies < 1) Formats.singleDigitNumber(boundedVariantCopies) else Formats.noDigitNumber(boundedVariantCopies)
-        val boundedTotalCopies = variant.extendedVariantDetails?.totalCopyNumber?.coerceAtLeast(0.0) ?: 0.0
-        val totalCopyString =
-            if (boundedTotalCopies < 1) Formats.singleDigitNumber(boundedTotalCopies) else Formats.noDigitNumber(boundedTotalCopies)
+        val variantAndTotalCopies = variant.extendedVariantDetails?.let { details ->
+            listOf(min(details.variantCopyNumber, details.totalCopyNumber), details.totalCopyNumber)
+        } ?: listOf(0.0, 0.0)
+        val (variantCopyString, totalCopyString) = variantAndTotalCopies.map(::formatCopyNumberString)
+
         val subClonalIndicator = if (ClonalityInterpreter.isPotentiallySubclonal(variant)) "*" else ""
         val name = "${variant.event} ($variantCopyString/$totalCopyString copies)$subClonalIndicator"
 
-        return driverEntry(driverType, name, variant)
+        return driverEntryForGeneAlteration(driverType, name, variant)
+    }
+
+    private fun formatCopyNumberString(copyNumber: Double): String {
+        val boundedCopyNumber = copyNumber.coerceAtLeast(0.0)
+        return if (boundedCopyNumber < 1) Formats.singleDigitNumber(boundedCopyNumber) else Formats.noDigitNumber(boundedCopyNumber)
     }
 
     private fun fromCopyNumber(copyNumber: CopyNumber): MolecularDriverEntry {
@@ -57,11 +63,11 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
             CopyNumberType.NONE -> "Copy Number"
         }
         val name = copyNumber.event + ", " + copyNumber.minCopies + " copies"
-        return driverEntry(driverType, name, copyNumber)
+        return driverEntryForGeneAlteration(driverType, name, copyNumber)
     }
 
     private fun fromHomozygousDisruption(homozygousDisruption: HomozygousDisruption): MolecularDriverEntry {
-        return driverEntry("Disruption (homozygous)", homozygousDisruption.gene, homozygousDisruption)
+        return driverEntryForGeneAlteration("Disruption (homozygous)", homozygousDisruption.gene, homozygousDisruption)
     }
 
     private fun fromDisruption(disruption: Disruption): MolecularDriverEntry {
@@ -69,7 +75,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         val undisruptedCopyNumber = Formats.singleDigitNumber(disruption.undisruptedCopyNumber)
         val name = "${disruption.gene}, ${disruption.type} ($disruptionCopyNumber disr. / $undisruptedCopyNumber undisr. copies)"
 
-        return driverEntry("Disruption", name, disruption)
+        return driverEntryForGeneAlteration("Disruption", name, disruption)
     }
 
     private fun fromFusion(fusion: Fusion): MolecularDriverEntry {
@@ -78,7 +84,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         } else {
             "${fusion.event}, exon ${fusion.fusedExonUp} - exon ${fusion.fusedExonDown}"
         }
-        return driverEntry(fusion.driverType.display(), name, fusion)
+        return driverEntry(fusion.driverType.display(), name, fusion, fusion.proteinEffect)
     }
 
     private fun fromVirus(virus: Virus): MolecularDriverEntry {
@@ -86,12 +92,22 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         return driverEntry("Virus", name, virus)
     }
 
-    private fun driverEntry(driverType: String, name: String, driver: Driver): MolecularDriverEntry {
+    private fun <T> driverEntryForGeneAlteration(
+        driverType: String, name: String, geneAlteration: T
+    ): MolecularDriverEntry where T : Driver, T : GeneAlteration {
+        return driverEntry(driverType, name, geneAlteration, geneAlteration.proteinEffect)
+    }
+
+    private fun driverEntry(
+        driverType: String, name: String, driver: Driver, proteinEffect: ProteinEffect? = null
+    ): MolecularDriverEntry {
         return MolecularDriverEntry(
             driverType = driverType,
-            displayedName = name,
-            eventName = driver.event,
+            description = name,
+            event = driver.event,
             driverLikelihood = driver.driverLikelihood,
+            evidenceTier = driver.evidenceTier(),
+            proteinEffect = proteinEffect,
             actinTrials = molecularDriversInterpreter.trialsForDriver(driver).toSet(),
             externalTrials = driver.evidence.externalEligibleTrials,
             bestResponsiveEvidence = bestResponsiveEvidence(driver),

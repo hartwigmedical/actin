@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.molecular.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceTier
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -42,9 +43,10 @@ class MolecularDriverEntryComparatorTest {
     private fun create(driverLikelihood: DriverLikelihood, driverType: String, driver: String): MolecularDriverEntry {
         return MolecularDriverEntry(
             driverType = driverType,
-            displayedName = driver,
-            eventName = driver,
-            driverLikelihood = driverLikelihood
+            description = driver,
+            event = driver,
+            driverLikelihood = driverLikelihood,
+            evidenceTier = EvidenceTier.I
         )
     }
 }
