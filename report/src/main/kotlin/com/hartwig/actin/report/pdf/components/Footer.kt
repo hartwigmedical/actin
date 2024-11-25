@@ -47,8 +47,7 @@ class Footer {
             val disclaimerParagraph = Paragraph(disclaimer).setMaxWidth(420f).addStyle(Styles.disclaimerStyle())
             canvas.showTextAligned(disclaimerParagraph, 30f, 10f, TextAlignment.LEFT)
 
-            val attribution =
-                "Somatic gene and variant annotations and related content have been powered by Genomenon Clinical Knowledgebase (CKB)."
+            val attribution = "Gene and variant annotations and related content have been powered by Genomenon Cancer Knowledgebase (CKB)."
             val attributionParagraph = Paragraph(attribution).setMaxWidth(420f).addStyle(Styles.disclaimerStyle())
             canvas.showTextAligned(attributionParagraph, 30f, 0f, TextAlignment.LEFT)
         }
