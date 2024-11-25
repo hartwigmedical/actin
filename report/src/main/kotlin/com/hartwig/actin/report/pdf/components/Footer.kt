@@ -14,6 +14,7 @@ class Footer {
 
     private val footerTemplates: MutableList<FooterTemplate> = mutableListOf()
 
+    // TODO (KD) Only add CKB disclaimer in case we have done molecular interpretation with evidenceSource = CKB.
     fun render(page: PdfPage) {
         val canvas = PdfCanvas(page.lastContentStream, page.resources, page.document)
         val pageNumber = page.document.getPageNumber(page)
