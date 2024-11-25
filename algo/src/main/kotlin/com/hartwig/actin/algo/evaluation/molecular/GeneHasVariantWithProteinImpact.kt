@@ -87,7 +87,7 @@ class GeneHasVariantWithProteinImpact(
         val unreportableWarning = eventsWithMessagesForVariantsAndImpacts(
             canonicalUnreportableMatches,
             { "Variant(s) $it in $gene detected in canonical transcript but are not reportable" },
-            { "Variant(s) $it in $gene but not reportable" },
+            { "$it found in $gene but not reportable" },
             useEventsInMessage = false
         )
         val reportableOtherWarning = eventsWithMessagesForVariantsAndImpacts(
@@ -106,12 +106,10 @@ class GeneHasVariantWithProteinImpact(
         makeSpecificMessage: (String) -> String,
         makeGeneralMessage: (String) -> String,
         useEventsInMessage: Boolean
-    ): EventsWithMessages? {
-        return variantsAndImpacts?.let { matches ->
-            val events = matches.map { it.variant.event }
-            val listAsString = concat(if (useEventsInMessage) events else matches.map { it.proteinImpact })
-            EventsWithMessages(events, makeSpecificMessage(listAsString), makeGeneralMessage(listAsString))
-        }
+    ): EventsWithMessages? = variantsAndImpacts?.let { matches ->
+        val events = matches.map { it.variant.event }
+        val listAsString = concat(if (useEventsInMessage) events else matches.map { it.proteinImpact })
+        EventsWithMessages(events, makeSpecificMessage(listAsString), makeGeneralMessage(listAsString))
     }
 
     private fun toProteinImpacts(impacts: Set<TranscriptImpact>): Set<String> {
