@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 
-data class EventsWithMessages(val events: Set<String>?, val specificMessage: String, val generalMessage: String)
+data class EventsWithMessages(val events: Collection<String>?, val specificMessage: String, val generalMessage: String)
 
 object MolecularEventUtil {
 

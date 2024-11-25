@@ -37,7 +37,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(
                     maxTestAge
                 )
             },
-            PROTEIN_IMPACT_LIST.map { (gene, impact) -> gene to GeneHasVariantWithProteinImpact(gene, listOf(impact), maxTestAge) },
+            PROTEIN_IMPACT_LIST.map { (gene, impact) -> gene to GeneHasVariantWithProteinImpact(gene, setOf(impact), maxTestAge) },
             ACTIVATING_MUTATION_LIST.map { it to GeneHasActivatingMutation(it, null, maxTestAge) },
             FUSION_LIST.map { it to HasFusionInGene(it, maxTestAge) },
             EXON_SKIPPING_LIST.map { it.first to GeneHasSpecificExonSkipping(it.first, it.second, maxTestAge) }
