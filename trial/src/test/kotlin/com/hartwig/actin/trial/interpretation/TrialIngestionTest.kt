@@ -46,7 +46,7 @@ class TrialIngestionTest {
             eligibilityFactory
         )
         val ingestionResult = ingestion.ingestTrials()
-        assertThat(ingestionResult.trials).hasSize(2)
+        assertThat(ingestionResult.trials).hasSize(1)
 
         val trial = findTrial(ingestionResult.trials, "TEST-1")
         assertThat(trial.identification.open).isTrue

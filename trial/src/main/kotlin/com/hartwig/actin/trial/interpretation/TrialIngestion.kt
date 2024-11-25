@@ -22,6 +22,8 @@ import com.hartwig.actin.trial.sort.CohortComparator
 import com.hartwig.actin.trial.sort.CriterionReferenceComparator
 import com.hartwig.actin.trial.sort.EligibilityComparator
 import com.hartwig.actin.trial.status.TrialStatusConfigInterpreter
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
 class TrialIngestion(
     private val trialConfigModel: TrialConfigModel,
@@ -55,16 +57,23 @@ class TrialIngestion(
     }
 
     private fun createTrials(): List<Trial> {
-        val trials = trialConfigModel.trials().map { trialConfig ->
-            val trialId = trialConfig.trialId
-            val referencesById = trialConfigModel.referencesForTrial(trialId)
-            Trial(
-                identification = toIdentification(trialConfig),
-                generalEligibility = toEligibility(trialConfigModel.generalInclusionCriteriaForTrial(trialId), referencesById),
-                cohorts = cohortsForTrial(trialId, referencesById)
-            )
+
+        val trialsWithEvaluableCohorts = trialConfigModel.cohorts().filter { it.evaluable }.map { it.trialId }.distinct()
+
+        return trialConfigModel.trials().mapNotNull { trialConfig ->
+            trialConfig.takeIf { it.trialId in trialsWithEvaluableCohorts }?.let { config ->
+                val trialId = config.trialId
+                val referencesById = trialConfigModel.referencesForTrial(trialId)
+                Trial(
+                    identification = toIdentification(config),
+                    generalEligibility = toEligibility(trialConfigModel.generalInclusionCriteriaForTrial(trialId), referencesById),
+                    cohorts = cohortsForTrial(trialId, referencesById)
+                )
+            } ?: run {
+                LOGGER.warn("Trial ${trialConfig.trialId} not created as it has no evaluable cohorts")
+                null
+            }
         }
-        return trials
     }
 
     private fun cohortsForTrial(trialId: String, referencesById: Map<String, InclusionCriteriaReferenceConfig>): List<Cohort> {
@@ -114,6 +123,8 @@ class TrialIngestion(
     }
 
     companion object {
+
+        private val LOGGER: Logger = LogManager.getLogger(TrialIngestion::class.java)
 
         fun create(
             trialConfigDirectory: String,

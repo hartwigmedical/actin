@@ -8,9 +8,7 @@ import com.hartwig.actin.trial.config.TrialDefinitionConfig
 import com.hartwig.actin.trial.config.TrialDefinitionValidationError
 
 class TrialStatusConfigInterpreter(
-    private val trialStatusDatabase: TrialStatusDatabase,
-    private val trialPrefix: String? = null,
-    private val ignoreNewTrials: Boolean = false
+    private val trialStatusDatabase: TrialStatusDatabase, trialPrefix: String? = null, private val ignoreNewTrials: Boolean = false
 ) {
 
     private val trialStatusDatabaseExtractor = TrialStatusDatabaseExtractor(trialStatusDatabase, trialPrefix)
@@ -110,7 +108,7 @@ class TrialStatusConfigInterpreter(
             LOGGER.info(" No new studies found in trial status database that are not explicitly ignored.")
         } else {
             if (!ignoreNewTrials) {
-                trialStatusDatabaseValidationErrors.addAll(newTrialsInTrialStatusDatabase.distinctBy { it.studyId }.map {
+                trialStatusDatabaseValidationErrors.addAll(newTrialsInTrialStatusDatabase.distinctBy { it.metcStudyID }.map {
                     TrialStatusDatabaseValidationError(
                         it,
                         " New trial detected in trial status database that is not configured to be ignored"
