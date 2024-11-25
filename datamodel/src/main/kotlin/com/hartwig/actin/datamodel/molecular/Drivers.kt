@@ -12,4 +12,16 @@ data class Drivers(
     val disruptions: Set<Disruption> = emptySet(),
     val fusions: Set<Fusion> = emptySet(),
     val viruses: Set<Virus> = emptySet()
-)
+) {
+
+    fun combine(other: Drivers): Drivers {
+        return Drivers(
+            variants = variants + other.variants,
+            copyNumbers = copyNumbers + other.copyNumbers,
+            homozygousDisruptions = homozygousDisruptions + other.homozygousDisruptions,
+            disruptions = disruptions + other.disruptions,
+            fusions = fusions + other.fusions,
+            viruses = viruses + other.viruses
+        )
+    }
+}
