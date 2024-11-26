@@ -9,10 +9,20 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 class HasHadSystemicTreatmentInAdvancedOrMetastaticSettingTest {
 
-    private val function = HasHadSystemicTreatmentInAdvancedOrMetastaticSetting()
+    private val referenceDate = LocalDate.of(2024, 11, 26)
+    private val recentDate = referenceDate.minusMonths(1)
+    private val nonRecentDate = recentDate.minusMonths(7)
+    private val function = HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(referenceDate)
+
+    @Test
+    fun `Should fail if patient has only had systemic treatments with curative intent`() {
+        val record = withTreatmentHistory(listOf(createTreatment(Intent.CURATIVE, systemic = true, "Treatment a")))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
+    }
 
     @Test
     fun `Should pass if patient has had systemic treatment with palliative intent`() {
@@ -29,15 +39,31 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSettingTest {
     }
 
     @Test
-    fun `Should return undetermined if patient has had systemic treatment with unknown or induction, consolidation or maintenance intent`() {
-        val unknownIntent = withTreatmentHistory(listOf(createTreatment(null, systemic = true)))
-        val inductionIntent = withTreatmentHistory(listOf(createTreatment(Intent.INDUCTION, systemic = true)))
-        val consolidationIntent = withTreatmentHistory(listOf(createTreatment(Intent.CONSOLIDATION, systemic = true)))
-        val maintenanceIntent = withTreatmentHistory(listOf(createTreatment(Intent.MAINTENANCE, systemic = true)))
-
-        listOf(unknownIntent, inductionIntent, consolidationIntent, maintenanceIntent).forEach {
-            assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(it))
+    fun `Should pass if patient has had systemic treatment within 6 months with intent other than curative`() {
+        listOf(
+            createTreatment(Intent.ADJUVANT, systemic = true, "Treatment a", stopYear = recentDate.year, stopMonth = recentDate.monthValue),
+            createTreatment(intent = null, systemic = true, "Treatment b", stopYear = recentDate.year, stopMonth = recentDate.monthValue)
+        ).forEach {
+            assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistory(listOf(it))))
         }
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if patient has had systemic treatment longer than 6 months ago with intent other than curative`() {
+        listOf(
+            createTreatment(Intent.ADJUVANT, systemic = true, stopYear = nonRecentDate.year, stopMonth = nonRecentDate.monthValue),
+            createTreatment(intent = null, systemic = true, stopYear = nonRecentDate.year, stopMonth = nonRecentDate.monthValue)
+        ).forEach {
+            assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistory(listOf(it))))
+        }
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if patient has had systemic treatment with unknown stop date and intent other than curative`() {
+        val record = withTreatmentHistory(
+            listOf(createTreatment(Intent.ADJUVANT, systemic = true, stopYear = null, stopMonth = null))
+        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
     }
 
     @Test
@@ -47,26 +73,22 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSettingTest {
     }
 
     @Test
-    fun `Should fail for (neo)adjuvant and curative treatments`() {
-        val patientRecord = withTreatmentHistory(
-            listOf(
-                createTreatment(Intent.NEOADJUVANT, systemic = true),
-                createTreatment(Intent.ADJUVANT, systemic = true),
-                createTreatment(Intent.CURATIVE, systemic = true),
-            )
-        )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(patientRecord))
-    }
-
-    @Test
     fun `Should fail for empty treatment history`() {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())))
     }
 
-    private fun createTreatment(intent: Intent?, systemic: Boolean, name: String = "treatment name"): TreatmentHistoryEntry {
+    private fun createTreatment(
+        intent: Intent?,
+        systemic: Boolean,
+        name: String = "treatment name",
+        stopYear: Int? = recentDate.year,
+        stopMonth: Int? = recentDate.monthValue
+    ): TreatmentHistoryEntry {
         return treatmentHistoryEntry(
             setOf(TreatmentTestFactory.treatment(name, isSystemic = systemic)),
-            intents = intent?.let { setOf(it) }
+            intents = intent?.let { setOf(it) },
+            stopMonth = stopMonth,
+            stopYear = stopYear
         )
     }
 }
