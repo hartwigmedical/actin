@@ -25,6 +25,25 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSettingTest {
     }
 
     @Test
+    fun `Should pass if patient has had more than two systemic lines with unknown or non-curative intent`() {
+        val treatment = createTreatment(
+            intent = null,
+            systemic = true,
+            "Treatment a",
+            stopYear = nonRecentDate.year,
+            stopMonth = nonRecentDate.monthValue
+        )
+
+        val noCurative =
+            listOf(treatment, treatment.copy(intents = setOf(Intent.INDUCTION)), treatment.copy(intents = setOf(Intent.ADJUVANT)))
+        val oneCurative =
+            listOf(treatment, treatment.copy(intents = setOf(Intent.CURATIVE)), treatment.copy(intents = setOf(Intent.ADJUVANT)))
+
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistory(noCurative)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistory(oneCurative)))
+    }
+
+    @Test
     fun `Should pass if patient has had systemic treatment with palliative intent`() {
         val patientRecord = withTreatmentHistory(
             listOf(

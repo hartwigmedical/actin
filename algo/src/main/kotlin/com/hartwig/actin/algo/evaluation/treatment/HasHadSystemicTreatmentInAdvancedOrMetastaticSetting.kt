@@ -39,6 +39,14 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val reference
                 EvaluationFactory.pass("Patient has $messageEnding", "Has $messageEnding")
             }
 
+            nonCurativeTreatments.size > 2 -> {
+                val messageEnding = createMessageEnding(
+                    "had more than two systemic lines with unknown or non-curative intent - presumably at least one in metastatic setting",
+                    nonCurativeTreatments
+                )
+                EvaluationFactory.pass("Patient has $messageEnding", "Has $messageEnding")
+            }
+
             nonCurativeTreatmentsWithUnknownStopDate.isNotEmpty() -> {
                 val messageEnding = createMessageEnding(
                     "had prior systemic treatment but undetermined if in advanced or metastatic setting",
