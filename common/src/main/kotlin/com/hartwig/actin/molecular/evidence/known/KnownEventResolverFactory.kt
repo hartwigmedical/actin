@@ -19,7 +19,7 @@ object KnownEventResolverFactory {
         return KnownEventResolver(filterKnownEvents(knownEvents), GeneAggregator.aggregate(knownEvents.genes()))
     }
 
-    fun filterKnownEvents(knownEvents: KnownEvents): KnownEvents {
+    internal fun filterKnownEvents(knownEvents: KnownEvents): KnownEvents {
         return ImmutableKnownEvents.builder()
             .hotspots(filterKnown<KnownHotspot>(knownEvents.hotspots()))
             .codons(filterKnown<KnownCodon>(knownEvents.codons()))

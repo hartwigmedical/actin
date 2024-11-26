@@ -6,6 +6,8 @@ import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import com.hartwig.serve.datamodel.molecular.common.GeneRole as ServeGeneRole
+import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
 
 class GeneAlterationFactoryTest {
 
@@ -20,11 +22,10 @@ class GeneAlterationFactoryTest {
 
     @Test
     fun `Should convert all roles and effects`() {
-        for (geneRole in com.hartwig.serve.datamodel.molecular.common.GeneRole.values()) {
-            for (proteinEffect in com.hartwig.serve.datamodel.molecular.common.ProteinEffect.values()) {
+        for (geneRole in ServeGeneRole.values()) {
+            for (proteinEffect in ServeProteinEffect.values()) {
                 val alteration = GeneAlterationFactory.convertAlteration(
-                    "",
-                    TestServeKnownFactory.createGeneAlteration(geneRole, proteinEffect)
+                    "", TestServeKnownFactory.createGeneAlteration(geneRole, proteinEffect)
                 )
                 assertThat(alteration.gene).isNotNull()
                 assertThat(alteration.geneRole).isNotNull()
@@ -37,21 +38,13 @@ class GeneAlterationFactoryTest {
     fun `Should handle drug associations`() {
         val withDrugAssociation = GeneAlterationFactory.convertAlteration(
             "",
-            TestServeKnownFactory.createGeneAlteration(
-                com.hartwig.serve.datamodel.molecular.common.GeneRole.UNKNOWN,
-                com.hartwig.serve.datamodel.molecular.common.ProteinEffect.UNKNOWN,
-                true
-            )
+            TestServeKnownFactory.createGeneAlteration(ServeGeneRole.UNKNOWN, ServeProteinEffect.UNKNOWN, true)
         )
         assertThat(withDrugAssociation.isAssociatedWithDrugResistance).isTrue()
 
         val withNoDrugAssociation = GeneAlterationFactory.convertAlteration(
             "",
-            TestServeKnownFactory.createGeneAlteration(
-                com.hartwig.serve.datamodel.molecular.common.GeneRole.UNKNOWN,
-                com.hartwig.serve.datamodel.molecular.common.ProteinEffect.UNKNOWN,
-                false
-            )
+            TestServeKnownFactory.createGeneAlteration(ServeGeneRole.UNKNOWN, ServeProteinEffect.UNKNOWN, false)
         )
         assertThat(withNoDrugAssociation.isAssociatedWithDrugResistance == false).isTrue()
     }

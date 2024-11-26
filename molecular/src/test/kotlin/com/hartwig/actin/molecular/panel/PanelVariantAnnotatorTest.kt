@@ -39,6 +39,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import com.hartwig.serve.datamodel.molecular.common.GeneRole as ServeGeneRole
 import com.hartwig.serve.datamodel.efficacy.EvidenceDirection as ServeEvidenceDirection
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevel as ServeEvidenceLevel
 import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
@@ -118,9 +119,8 @@ private val PAVE_ANNOTATION = PaveResponse(
     transcriptImpact = emptyList()
 )
 
-private val HOTSPOT = TestServeKnownFactory.hotspotBuilder().build()
-    .withGeneRole(com.hartwig.serve.datamodel.molecular.common.GeneRole.ONCO)
-    .withProteinEffect(com.hartwig.serve.datamodel.molecular.common.ProteinEffect.GAIN_OF_FUNCTION)
+private val HOTSPOT =
+    TestServeKnownFactory.hotspotBuilder().build().withGeneRole(ServeGeneRole.ONCO).withProteinEffect(ServeProteinEffect.GAIN_OF_FUNCTION)
 
 class PanelVariantAnnotatorTest {
 
@@ -360,21 +360,37 @@ class PanelVariantAnnotatorTest {
 
     @Test
     fun `Should determine hotspot from gene alteration`() {
-        assertThat(isHotspot(TestServeKnownFactory.hotspotBuilder()
-            .proteinEffect(ServeProteinEffect.GAIN_OF_FUNCTION)
-            .build())).isTrue()
+        assertThat(
+            isHotspot(
+                TestServeKnownFactory.hotspotBuilder()
+                    .proteinEffect(ServeProteinEffect.GAIN_OF_FUNCTION)
+                    .build()
+            )
+        ).isTrue()
 
-        assertThat(isHotspot(TestServeKnownFactory.hotspotBuilder()
-            .proteinEffect(ServeProteinEffect.NO_EFFECT)
-            .build())).isFalse()
+        assertThat(
+            isHotspot(
+                TestServeKnownFactory.hotspotBuilder()
+                    .proteinEffect(ServeProteinEffect.NO_EFFECT)
+                    .build()
+            )
+        ).isFalse()
 
-        assertThat(isHotspot(TestServeKnownFactory.codonBuilder()
-            .proteinEffect(ServeProteinEffect.LOSS_OF_FUNCTION)
-            .build())).isTrue()
+        assertThat(
+            isHotspot(
+                TestServeKnownFactory.codonBuilder()
+                    .proteinEffect(ServeProteinEffect.LOSS_OF_FUNCTION)
+                    .build()
+            )
+        ).isTrue()
 
-        assertThat(isHotspot(TestServeKnownFactory.exonBuilder()
-            .proteinEffect(ServeProteinEffect.GAIN_OF_FUNCTION)
-            .build())).isFalse()
+        assertThat(
+            isHotspot(
+                TestServeKnownFactory.exonBuilder()
+                    .proteinEffect(ServeProteinEffect.GAIN_OF_FUNCTION)
+                    .build()
+            )
+        ).isFalse()
 
         assertThat(isHotspot(null)).isFalse()
     }

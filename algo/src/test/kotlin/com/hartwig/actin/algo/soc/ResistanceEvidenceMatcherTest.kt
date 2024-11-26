@@ -27,9 +27,7 @@ import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-private val INDICATION = ImmutableIndication.builder().applicableType(
-    ImmutableCancerType.builder().name("").doid("1520").build()
-).build()
+private val INDICATION = ImmutableIndication.builder().applicableType(ImmutableCancerType.builder().name("").doid("1520").build()).build()
 private val MOLECULAR_CRITERIUM = TestServeActionabilityFactory.createGene("BRAF", GeneEvent.AMPLIFICATION, "BRAF amp")
 private val ACTIONABLE_EVENTS: EfficacyEvidence = TestServeActionabilityFactory.createEfficacyEvidence(
     MOLECULAR_CRITERIUM,
