@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensit
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 
 internal object TumorTypeEvaluationFunctions {
+
     fun hasTumorWithType(tumor: TumorDetails, validTypes: Set<String>): Boolean {
         return listOf(tumor.primaryTumorType, tumor.primaryTumorSubType).any { stringNotNullAndMatchesCollection(it, validTypes) }
     }

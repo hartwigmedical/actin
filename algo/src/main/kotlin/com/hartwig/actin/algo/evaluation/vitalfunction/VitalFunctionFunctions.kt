@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.clinical.VitalFunction
 import kotlin.math.ceil
 
 internal object VitalFunctionFunctions {
+
     fun selectMedianFunction(vitalFunctions: Iterable<VitalFunction>): VitalFunction {
         val values = sortedValues(vitalFunctions)
         val median = values[ceil(values.size / 2.0).toInt() - 1]

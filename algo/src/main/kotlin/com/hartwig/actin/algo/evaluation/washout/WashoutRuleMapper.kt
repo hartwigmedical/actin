@@ -14,6 +14,7 @@ import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.medication.MedicationCategories
 
 class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
+
     private val selector = MedicationSelector(MedicationStatusInterpreterOnEvaluationDate(referenceDateProvider().date(), null))
     private val categories = MedicationCategories.create(atcTree())
     private val antiCancerCategories = mapOf("Anticancer" to categories.resolve("Anticancer"))

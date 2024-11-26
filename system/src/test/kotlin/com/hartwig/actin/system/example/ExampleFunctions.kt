@@ -16,14 +16,14 @@ object ExampleFunctions {
 
     private const val TRIAL_SOURCE = "Example"
 
-    private const val EXAMPLE_PATIENT_RECORD_JSON = "example_patient_data/EXAMPLE-$EXAMPLE_NAME_.patient_record.json"
-    private const val EXAMPLE_TREATMENT_MATCH_JSON = "example_treatment_match/EXAMPLE-$EXAMPLE_NAME_.treatment_match.json"
-    private const val EXAMPLE_REPORT_PDF = "example_reports/EXAMPLE-$EXAMPLE_NAME_.actin.pdf"
-    private const val EXAMPLE_REPORT_EXTENDED_PDF = "example_reports/EXAMPLE-$EXAMPLE_NAME_.actin.extended.pdf"
-    private const val EXAMPLE_TRIAL_DATABASE_DIRECTORY = "example_trial_database"
-
     private const val EXAMPLE_TREATMENT_MATCH_DIRECTORY = "example_treatment_match"
+    private const val EXAMPLE_TRIAL_DATABASE_DIRECTORY = "example_trial_database"
     private const val EXAMPLE_REPORT_DIRECTORY = "example_reports"
+
+    private const val EXAMPLE_PATIENT_RECORD_JSON = "example_patient_data/EXAMPLE-$EXAMPLE_NAME_.patient_record.json"
+    private const val EXAMPLE_TREATMENT_MATCH_JSON = "$EXAMPLE_TREATMENT_MATCH_DIRECTORY/EXAMPLE-$EXAMPLE_NAME_.treatment_match.json"
+    private const val EXAMPLE_REPORT_PDF = "$EXAMPLE_REPORT_DIRECTORY/EXAMPLE-$EXAMPLE_NAME_.actin.pdf"
+    private const val EXAMPLE_REPORT_EXTENDED_PDF = "$EXAMPLE_REPORT_DIRECTORY/EXAMPLE-$EXAMPLE_NAME_.actin.extended.pdf"
 
     fun resolveExamplePatientRecordJson(exampleName: String): String {
         return ResourceLocator.resourceOnClasspath(EXAMPLE_PATIENT_RECORD_JSON.replace(EXAMPLE_NAME_, exampleName))
@@ -55,7 +55,6 @@ object ExampleFunctions {
             algo = AlgoConfiguration(trialSource = TRIAL_SOURCE),
             report = ReportConfiguration(
                 includeApprovedTreatmentsInSummary = false,
-                includeExternalTrialsInSummary = false,
                 includeMolecularDetailsChapter = false,
                 includeClinicalDetailsChapter = false,
                 reportDate = reportDate

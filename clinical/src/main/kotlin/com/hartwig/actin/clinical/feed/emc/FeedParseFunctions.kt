@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical.feed.emc
 
-import com.google.common.collect.Sets
 import com.hartwig.actin.datamodel.clinical.Gender
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -8,7 +7,7 @@ import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
 object FeedParseFunctions {
-    private val DATE_FORMATS: MutableSet<DateTimeFormatter> = Sets.newHashSet()
+    private val DATE_FORMATS: MutableSet<DateTimeFormatter> = mutableSetOf()
 
     init {
         DATE_FORMATS.add(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"))

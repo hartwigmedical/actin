@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
 class CurrentlyGetsHerbalMedication(private val selector: MedicationSelector) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
         val hasActiveSelfCareMedication = medications.filter { it.isSelfCare }.any(selector::isActive)

@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 
 internal object PriorConditionMessages {
+
     fun failSpecific(doidTerm: String?): String {
         return "Patient has no other condition belonging to category $doidTerm"
     }

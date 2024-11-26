@@ -2,10 +2,11 @@ package com.hartwig.actin.clinical.feed.emc
 
 import com.hartwig.actin.util.Paths
 import org.apache.logging.log4j.LogManager
-import java.io.IOException
 
 object ClinicalFeedReader {
+
     private val LOGGER = LogManager.getLogger(ClinicalFeedReader::class.java)
+
     private const val PATIENT_TSV = "patient.tsv"
     private const val DIGITAL_FILE_TSV = "digital_file.tsv"
     private const val QUESTIONNAIRE_TSV = "questionnaire.tsv"
@@ -16,7 +17,6 @@ object ClinicalFeedReader {
     private const val INTOLERANCE_TSV = "intolerance.tsv"
     private const val BODY_WEIGHT_TSV = "bodyweight.tsv"
 
-    @Throws(IOException::class)
     fun read(clinicalFeedDirectory: String): EmcClinicalFeed {
         LOGGER.info("Reading clinical feed data from {}", clinicalFeedDirectory)
         val basePath = Paths.forceTrailingFileSeparator(clinicalFeedDirectory)

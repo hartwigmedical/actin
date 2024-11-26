@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.evaluation.util.Format
 import org.apache.logging.log4j.LogManager
 
 object DifferenceExtractionUtil {
+
     private val LOGGER = LogManager.getLogger(DifferenceExtractionUtil::class.java)
 
     fun <T> extractDifferences(old: T, new: T, properties: Map<String, (T) -> Any>): List<String> {

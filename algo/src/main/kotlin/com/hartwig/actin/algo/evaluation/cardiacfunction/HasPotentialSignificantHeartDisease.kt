@@ -11,6 +11,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.doid.DoidModel
 
 class HasPotentialSignificantHeartDisease(private val doidModel: DoidModel) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val ecg = record.clinicalStatus.ecg
         if (ecg != null && ecg.hasSigAberrationLatestECG) {

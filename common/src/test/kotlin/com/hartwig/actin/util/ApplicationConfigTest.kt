@@ -13,6 +13,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class ApplicationConfigTest {
+
     private val configDirectory = resourceOnClasspath("config")
     private val configFile = resourceOnClasspath("config/file.empty")
 

@@ -10,9 +10,12 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 
 class HasHadAnyCancerTreatment(private val categoryToIgnore: TreatmentCategory?, private val atcLevelsToFind: Set<AtcLevel>) :
     EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val effectiveTreatmentHistoryWithoutTrialMedication =
-            record.oncologicalHistory + createTreatmentHistoryEntriesFromMedications(record.medications?.filter { (it.allLevels() intersect atcLevelsToFind).isNotEmpty() })
+            record.oncologicalHistory + createTreatmentHistoryEntriesFromMedications(
+                record.medications?.filter { (it.allLevels() intersect atcLevelsToFind).isNotEmpty() }
+            )
 
         val hasHadPriorCancerTreatment =
             if (categoryToIgnore == null) {

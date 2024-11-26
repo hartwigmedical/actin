@@ -1,7 +1,5 @@
 package com.hartwig.actin.clinical.feed.emc
 
-import java.io.IOException
-
 class FeedModel(private val feed: EmcClinicalFeed) {
     fun read(): List<FeedRecord> {
         val patientEntries = feed.patientEntries.groupBy(FeedEntry::subject)
@@ -34,7 +32,6 @@ class FeedModel(private val feed: EmcClinicalFeed) {
 
 
     companion object {
-        @Throws(IOException::class)
         fun fromFeedDirectory(clinicalFeedDirectory: String): FeedModel {
             return FeedModel(ClinicalFeedReader.read(clinicalFeedDirectory))
         }

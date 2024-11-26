@@ -1,12 +1,12 @@
 package com.hartwig.actin.clinical.feed.emc.lab
 
 import com.google.common.annotations.VisibleForTesting
-import com.google.common.collect.Maps
 import com.hartwig.actin.datamodel.clinical.LabUnit
 
 internal object LabUnitResolver {
+
     @VisibleForTesting
-    val CURATION_MAP: MutableMap<String, LabUnit> = Maps.newHashMap()
+    val CURATION_MAP: MutableMap<String, LabUnit> = mutableMapOf()
 
     init {
         CURATION_MAP["10*6/L"] = LabUnit.MILLIONS_PER_LITER

@@ -28,20 +28,23 @@ class TrialLoaderApplication(private val config: TrialLoaderConfig) {
     }
 
     companion object {
-        val LOGGER: Logger = LogManager.getLogger(TrialLoaderApplication::class.java)
         const val APPLICATION = "ACTIN Trial Loader"
-        private val VERSION = TrialLoaderApplication::class.java.getPackage().implementationVersion
+
+        val LOGGER: Logger = LogManager.getLogger(TrialLoaderApplication::class.java)
+        private val VERSION = TrialLoaderApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
     }
 }
 
 fun main(args: Array<String>) {
     val options: Options = TrialLoaderConfig.createOptions()
+    val config: TrialLoaderConfig
     try {
-        val config = TrialLoaderConfig.createConfig(DefaultParser().parse(options, args))
-        TrialLoaderApplication(config).run()
+        config = TrialLoaderConfig.createConfig(DefaultParser().parse(options, args))
     } catch (exception: ParseException) {
         TrialLoaderApplication.LOGGER.warn(exception)
         HelpFormatter().printHelp(TrialLoaderApplication.APPLICATION, options)
         exitProcess(1)
     }
+
+    TrialLoaderApplication(config).run()
 }

@@ -12,6 +12,7 @@ import com.hartwig.actin.datamodel.clinical.LabValue
 class HasSufficientLabValue(
     private val minValue: Double, private val measurement: LabMeasurement, private val targetUnit: LabUnit
 ) : LabEvaluationFunction {
+
     override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
         val convertedValue = LabUnitConverter.convert(measurement, labValue, targetUnit)
             ?: return EvaluationFactory.recoverableUndetermined(

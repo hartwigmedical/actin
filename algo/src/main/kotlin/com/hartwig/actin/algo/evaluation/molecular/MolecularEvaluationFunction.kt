@@ -13,6 +13,7 @@ import java.time.LocalDate
 
 abstract class MolecularEvaluationFunction(maxTestAge: LocalDate? = null, useInsufficientQualityRecords: Boolean = false) :
     EvaluationFunction {
+
     private val molecularTestFilter = MolecularTestFilter(maxTestAge, useInsufficientQualityRecords)
 
     override fun evaluate(record: PatientRecord): Evaluation {

@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.medication.AtcTree
 
 class BloodTransfusionRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
+
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
             EligibilityRule.REQUIRES_REGULAR_HEMATOPOIETIC_SUPPORT to requiresRegularHematopoieticSupportCreator(atcTree()),

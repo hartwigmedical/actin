@@ -10,6 +10,7 @@ import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import org.apache.logging.log4j.LogManager
 
 object EvaluationComparison {
+
     private const val INDENT_WIDTH = 2
     private val LOGGER = LogManager.getLogger(EvaluationComparison::class.java)
 

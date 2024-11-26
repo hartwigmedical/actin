@@ -1,1 +1,979 @@
-{"$schema":"https://json-schema.org/draft/2020-12/schema","type":"object","properties":{"allergies":{"description":"none","type":"array","items":{"type":"object","properties":{"category":{"type":"string","description":"Category of allergy (eg. medication)"},"clinicalStatus":{"type":"string","description":"Clinical status of allergy (eg. active)"},"endDate":{"type":["string","null"],"format":"date","description":"End date of appearance of allergy, if applicable"},"name":{"type":"string","description":"Name of allergy (eg. Pembrolizumab)"},"severity":{"type":"string","description":"Severity of allergy (eg. low)"},"startDate":{"type":"string","format":"date","description":"Start date of appearance of allergy"},"verificationStatus":{"type":"string","description":"Verification status of allergy (eg. confirmed)"}},"required":["category","clinicalStatus","name","severity","startDate","verificationStatus"],"description":"none"}},"bloodTransfusions":{"description":"none","type":"array","items":{"type":"object","properties":{"evaluationTime":{"type":"string","format":"date-time","description":"Time of transfusion"},"product":{"type":"string","description":"Product (eg. Thrombocyte concentrate)"}},"required":["evaluationTime","product"],"description":"none"}},"complications":{"description":"none","type":"array","items":{"type":"object","properties":{"endDate":{"type":["string","null"],"format":"date","description":"End date of complication"},"name":{"type":"string","description":"Name of complication (eg. Ascites)"},"startDate":{"type":"string","format":"date","description":"Start date of complication"}},"required":["name","startDate"],"description":"none"}},"labValues":{"description":"none","type":"array","items":{"type":"object","properties":{"comparator":{"type":["string","null"],"description":"Comparator if applicable (eg. >)"},"evaluationTime":{"type":"string","format":"date-time","description":"Time of evaluation"},"measure":{"type":"string","description":"Measure (eg. Carcinoembryonic antigen)"},"measureCode":{"type":"string","description":"Measure code (eg. CEA)"},"refLowerBound":{"type":["number","null"],"description":"Institutional lower reference limit"},"refUpperBound":{"type":["number","null"],"description":"Institutional upper reference limit"},"unit":{"type":["string","null"],"description":"Unit (eg. ug/L)"},"value":{"type":"number","description":"Value (eg. 3.5)"}},"required":["evaluationTime","measure","measureCode","value"],"description":"none"}},"measurements":{"description":"none","type":"array","items":{"type":"object","properties":{"category":{"type":"string","description":"Measurement category (eg. Body weight, Arterial blood pressure)"},"date":{"type":"string","format":"date","description":"Date of measurement"},"subcategory":{"type":["string","null"],"description":"Measurement subcategory (eg. Mean blood pressure)"},"unit":{"type":"string","description":"Unit (eg. kilograms)"},"value":{"type":"number","description":"Value (eg. 70)"}},"required":["category","date","unit","value"],"description":"none"}},"medications":{"description":"none","type":["array","null"],"items":{"type":"object","properties":{"administrationOnlyIfNeeded":{"type":["boolean","null"],"description":"Administration only if needed"},"administrationRoute":{"type":["string","null"],"description":"Administration route (eg. Oral)"},"atcCode":{"type":["string","null"],"description":"ATC code, required if not trial or self care (eg. N02BE01)"},"dosage":{"type":["number","null"],"description":"Dosage (eg. 500)"},"dosageUnit":{"type":["string","null"],"description":"Dosage unit (eg. mg)"},"endDate":{"type":["string","null"],"format":"date","description":"End date of use"},"frequency":{"type":["number","null"],"description":"Frequency (eg. 2)"},"frequencyUnit":{"type":["string","null"],"description":"Frequency unit (eg. day)"},"isSelfCare":{"type":"boolean","description":"Drug is administered as self-care"},"isTrial":{"type":"boolean","description":"Drug is still in clinical study"},"name":{"type":"string","description":"Drug name (eg. Paracetamol)"},"periodBetweenDosagesUnit":{"type":["string","null"],"description":"Period between dosages unit"},"periodBetweenDosagesValue":{"type":["number","null"],"description":"Period between dosages value "},"startDate":{"type":["string","null"],"format":"date","description":"Start date of use"}},"required":["isSelfCare","isTrial","name"],"description":"none"}},"molecularTests":{"description":"none","type":"array","items":{"type":"object","properties":{"datasource":{"type":["string","null"],"description":"Name of the source system from which the data came (eg. PALGA, DNA-DB)"},"date":{"type":["string","null"],"format":"date","description":"Date the test was administered"},"results":{"description":"none","type":"array","items":{"type":"object","properties":{"amplifiedGene":{"type":["string","null"],"description":"Gene detected as amplified (eg. MET)"},"codon":{"type":["integer","null"],"description":"Codon involved in this result (eg. 1)"},"deletedGene":{"type":["string","null"],"description":"Gene detected as fully deleted (eg. MET)"},"exon":{"type":["integer","null"],"description":"Exon involved in this result (eg. 19)"},"exonSkipEnd":{"type":["integer","null"],"description":"Exons skipped in a structural variant end (eg. 20)"},"exonSkipStart":{"type":["integer","null"],"description":"Exons skipped in a structural variant start (eg. 18)"},"freeText":{"type":["string","null"],"description":"Free text for a test result which does not fit into any of the other fields. This value will be curated."},"fusionExonDown":{"type":["integer","null"],"description":"Downstream exon of a  fusion (eg. 20)"},"fusionExonUp":{"type":["integer","null"],"description":"Upstream exon of a fusion (eg. 13)"},"fusionGeneDown":{"type":["string","null"],"description":"Downstream gene of a fusion (eg. ALK)"},"fusionGeneUp":{"type":["string","null"],"description":"Upstream gene of a fusion (eg. EML4)"},"fusionTranscriptDown":{"type":["string","null"],"description":"Downstream transcript of a fusion (eg. NM_004304.5)"},"fusionTranscriptUp":{"type":["string","null"],"description":"Upstream transcript of a fusion (eg. NM_019063.5)"},"gene":{"type":["string","null"],"description":"Gene involved in this result. (eg. KRAS)"},"hgvsCodingImpact":{"type":["string","null"],"description":"HGVS notation describing coding impact ie. (eg. c.4375C>T)"},"hgvsProteinImpact":{"type":["string","null"],"description":"HGVS notation describing protein impact ie. (eg. p.G12V)"},"ihcResult":{"type":["string","null"],"description":"Full result string of IHC test ie. (eg. PD-L1 weak positive 20%)"},"msi":{"type":["boolean","null"],"description":"Result of microsatellite instability test."},"noMutationsFound":{"type":["boolean","null"],"description":"Flag should be set to indicate a negative result for a gene (ie. nothing was found)"},"tmb":{"type":["number","null"],"description":"Tumor mutational burden in m/MB (eg. 8.0)"},"transcript":{"type":["string","null"],"description":"Transcript referenced in other positional attributes (eg. NM_004304.5)"},"vaf":{"type":["number","null"],"description":"Variant allele frequency as a fraction (eg. 0.01 is interpreted as 1%)"}},"description":"none"}},"test":{"type":"string","description":"Name of the test administered, as specific as possible (eg. Archer, NGS, IHC)"},"testedGenes":{"description":"List of genes that were tested.","type":["array","null"],"items":{"type":"string","description":"List of genes that were tested."}}},"required":["results","test"],"description":"none"}},"patientDetails":{"type":"object","properties":{"birthYear":{"type":"integer","description":"Year of birth of this patient (eg. 1940)"},"gender":{"type":"string","description":"Year of birth of this patient (eg. Male, Female, Other)"},"hartwigMolecularDataExpected":{"type":"boolean","description":"Flag to indicate there is pending Hartwig analysis data for this patient"},"hashedId":{"type":"string","description":"Base64 encoded SHA-256 hash of source hospital's identifier."},"registrationDate":{"type":"string","format":"date","description":"Registration data of this patient with ACTIN"}},"required":["birthYear","gender","hartwigMolecularDataExpected","hashedId","registrationDate"],"description":"none"},"priorOtherConditions":{"description":"none","type":"array","items":{"type":"object","properties":{"endDate":{"type":["string","null"],"format":"date","description":"End date of condition if applicable"},"name":{"type":"string","description":"Name of condition (eg. Pancreatis)"},"startDate":{"type":["string","null"],"format":"date","description":"Start date of condition"}},"required":["name"],"description":"none"}},"priorPrimaries":{"description":"none","type":"array","items":{"type":"object","properties":{"diagnosisDate":{"type":["string","null"],"format":"date","description":"Diagnosis date"},"lastTreatmentDate":{"type":["string","null"],"format":"date","description":"Date of last treatment"},"status":{"type":["string","null"],"description":"Observed status of tumor (eg. Active/Inactive - null if unknown)"},"tumorLocation":{"type":"string","description":"Tumor localization details (eg. Colon)"},"tumorType":{"type":"string","description":"Tumor type details (eg. Carcinoma)"}},"required":["tumorLocation","tumorType"],"description":"none"}},"surgeries":{"description":"none","type":"array","items":{"type":"object","properties":{"endDate":{"type":"string","format":"date","description":"Date of completion, if applicable."},"name":{"type":["string","null"],"description":"Name of surgery (eg. Diagnostics stomach)"},"status":{"type":"string","description":"Status of surgery (eg. complete)"}},"required":["endDate","status"],"description":"none"}},"toxicities":{"description":"none","type":"array","items":{"type":"object","properties":{"evaluatedDate":{"type":"string","format":"date","description":"Date of evaluation"},"grade":{"type":"integer","description":"Grade (eg. 2)"},"name":{"type":"string","description":"Name of toxicity (eg. Neuropathy)"}},"required":["evaluatedDate","grade","name"],"description":"none"}},"treatmentHistory":{"description":"none","type":"array","items":{"type":"object","properties":{"administeredCycles":{"type":"integer","description":"Administered number of cycles (eg. 6)"},"administeredInStudy":{"type":"boolean","description":"Treatment administered in clinical study"},"endDate":{"type":["string","null"],"format":"date","description":"Date of the end of treatment"},"intendedCycles":{"type":"integer","description":"Intended number of cycles (eg. 6)"},"intention":{"type":["string","null"],"description":"Intention of the treatment given (eg. Palliative)"},"modifications":{"description":"none","type":["array","null"],"items":{"type":"object","properties":{"administeredCycles":{"type":"integer","description":"Modified number of cycles (eg. 6)"},"date":{"type":"string","format":"date","description":"Date of the start of modification of treatment"},"name":{"type":"string","description":"Name of the modified treatment given (eg. Gemcitabine+Cisplatin)"}},"required":["administeredCycles","date","name"],"description":"none"}},"response":{"type":["string","null"],"description":"Response to treatment (eg. Partial Response)"},"responseDate":{"type":["string","null"],"format":"date","description":"none"},"startDate":{"type":"string","format":"date","description":"Date of the start of treatment"},"stopReason":{"type":["string","null"],"description":"Reason of stopping treatment (eg. Progressive disease)"},"stopReasonDate":{"type":["string","null"],"format":"date","description":"none"},"treatmentName":{"type":"string","description":"Name of the treatment given (eg. Gemcitabine+Cisplatin)"}},"required":["administeredCycles","administeredInStudy","intendedCycles","startDate","treatmentName"],"description":"none"}},"tumorDetails":{"type":"object","properties":{"diagnosisDate":{"type":"string","format":"date","description":"Date of diagnosis"},"lesionSite":{"type":["string","null"],"description":"Deprecated: currently use to store radiology report. Should move to lesions"},"lesions":{"description":"none","type":["array","null"],"items":{"type":"object","properties":{"active":{"type":["boolean","null"],"description":"Whether this lesion considered active, only applicable to brain or CNS lesions."},"diagnosisDate":{"type":"string","format":"date","description":"Diagnosis date of the lesion"},"location":{"type":"string","description":"Location of lesion (eg. brain)"}},"required":["diagnosisDate","location"],"description":"none"}},"measurableDisease":{"type":["boolean","null"],"description":"Has measurable disease"},"measurableDiseaseDate":{"type":["string","null"],"format":"date","description":"none"},"rawPathologyReport":{"type":["string","null"],"description":"Raw pathology report of molecular test results."},"tumorGradeDifferentiation":{"type":["string","null"],"description":"Tumor grade/differentiation details (eg. Poorly differentiated)"},"tumorLocation":{"type":"string","description":"Tumor localization details (eg. Lung)"},"tumorStage":{"type":["string","null"],"description":"Tumor stage (roman numeral, eg. IV)"},"tumorStageDate":{"type":["string","null"],"format":"date","description":"Date associated with tumor stage diagnosis"},"tumorType":{"type":"string","description":"Tumor type details (eg. Adenocarcinoma)"}},"required":["diagnosisDate","tumorLocation","tumorType"],"description":"none"},"whoEvaluations":{"description":"none","type":"array","items":{"type":"object","properties":{"evaluationDate":{"type":"string","format":"date","description":"Date of WHO evaluation."},"status":{"type":"integer","description":"WHO performance status (eg. 1)"}},"required":["evaluationDate","status"],"description":"none"}}},"required":["allergies","bloodTransfusions","complications","labValues","measurements","molecularTests","patientDetails","priorOtherConditions","priorPrimaries","surgeries","toxicities","treatmentHistory","tumorDetails","whoEvaluations"]}
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "allergies": {
+      "description": "none",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "Category of allergy (eg. medication)"
+          },
+          "clinicalStatus": {
+            "type": "string",
+            "description": "Clinical status of allergy (eg. active)"
+          },
+          "endDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "description": "End date of appearance of allergy, if applicable"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of allergy (eg. Pembrolizumab)"
+          },
+          "severity": {
+            "type": "string",
+            "description": "Severity of allergy (eg. low)"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date",
+            "description": "Start date of appearance of allergy"
+          },
+          "verificationStatus": {
+            "type": "string",
+            "description": "Verification status of allergy (eg. confirmed)"
+          }
+        },
+        "required": [
+          "category",
+          "clinicalStatus",
+          "name",
+          "severity",
+          "startDate",
+          "verificationStatus"
+        ],
+        "description": "none"
+      }
+    },
+    "bloodTransfusions": {
+      "description": "none",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "evaluationTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Time of transfusion"
+          },
+          "product": {
+            "type": "string",
+            "description": "Product (eg. Thrombocyte concentrate)"
+          }
+        },
+        "required": [
+          "evaluationTime",
+          "product"
+        ],
+        "description": "none"
+      }
+    },
+    "complications": {
+      "description": "none",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "endDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "description": "End date of complication"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of complication (eg. Ascites)"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date",
+            "description": "Start date of complication"
+          }
+        },
+        "required": [
+          "name",
+          "startDate"
+        ],
+        "description": "none"
+      }
+    },
+    "labValues": {
+      "description": "none",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "comparator": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Comparator if applicable (eg. >)"
+          },
+          "evaluationTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Time of evaluation"
+          },
+          "measure": {
+            "type": "string",
+            "description": "Measure (eg. Carcinoembryonic antigen)"
+          },
+          "measureCode": {
+            "type": "string",
+            "description": "Measure code (eg. CEA)"
+          },
+          "refLowerBound": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Institutional lower reference limit"
+          },
+          "refUpperBound": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Institutional upper reference limit"
+          },
+          "unit": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Unit (eg. ug/L)"
+          },
+          "value": {
+            "type": "number",
+            "description": "Value (eg. 3.5)"
+          }
+        },
+        "required": [
+          "evaluationTime",
+          "measure",
+          "measureCode",
+          "value"
+        ],
+        "description": "none"
+      }
+    },
+    "measurements": {
+      "description": "none",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "Measurement category (eg. Body weight, Arterial blood pressure)"
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Date of measurement"
+          },
+          "subcategory": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Measurement subcategory (eg. Mean blood pressure)"
+          },
+          "unit": {
+            "type": "string",
+            "description": "Unit (eg. kilograms)"
+          },
+          "value": {
+            "type": "number",
+            "description": "Value (eg. 70)"
+          }
+        },
+        "required": [
+          "category",
+          "date",
+          "unit",
+          "value"
+        ],
+        "description": "none"
+      }
+    },
+    "medications": {
+      "description": "none",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "object",
+        "properties": {
+          "administrationOnlyIfNeeded": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "Administration only if needed"
+          },
+          "administrationRoute": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Administration route (eg. Oral)"
+          },
+          "atcCode": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "ATC code, required if not trial or self care (eg. N02BE01)"
+          },
+          "dosage": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Dosage (eg. 500)"
+          },
+          "dosageUnit": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Dosage unit (eg. mg)"
+          },
+          "endDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "description": "End date of use"
+          },
+          "frequency": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Frequency (eg. 2)"
+          },
+          "frequencyUnit": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Frequency unit (eg. day)"
+          },
+          "isSelfCare": {
+            "type": "boolean",
+            "description": "Drug is administered as self-care"
+          },
+          "isTrial": {
+            "type": "boolean",
+            "description": "Drug is still in clinical study"
+          },
+          "name": {
+            "type": "string",
+            "description": "Drug name (eg. Paracetamol)"
+          },
+          "periodBetweenDosagesUnit": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Period between dosages unit"
+          },
+          "periodBetweenDosagesValue": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Period between dosages value "
+          },
+          "startDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "description": "Start date of use"
+          }
+        },
+        "required": [
+          "isSelfCare",
+          "isTrial",
+          "name"
+        ],
+        "description": "none"
+      }
+    },
+    "molecularTests": {
+      "description": "none",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "datasource": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Name of the source system from which the data came (eg. PALGA, DNA-DB)"
+          },
+          "date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "description": "Date the test was administered"
+          },
+          "results": {
+            "description": "none",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "amplifiedGene": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Gene detected as amplified (eg. MET)"
+                },
+                "codon": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Codon involved in this result (eg. 1)"
+                },
+                "deletedGene": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Gene detected as fully deleted (eg. MET)"
+                },
+                "exon": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Exon involved in this result (eg. 19)"
+                },
+                "exonSkipEnd": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Exons skipped in a structural variant end (eg. 20)"
+                },
+                "exonSkipStart": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Exons skipped in a structural variant start (eg. 18)"
+                },
+                "freeText": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Free text for a test result which does not fit into any of the other fields. This value will be curated."
+                },
+                "fusionExonDown": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Downstream exon of a  fusion (eg. 20)"
+                },
+                "fusionExonUp": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Upstream exon of a fusion (eg. 13)"
+                },
+                "fusionGeneDown": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Downstream gene of a fusion (eg. ALK)"
+                },
+                "fusionGeneUp": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Upstream gene of a fusion (eg. EML4)"
+                },
+                "fusionTranscriptDown": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Downstream transcript of a fusion (eg. NM_004304.5)"
+                },
+                "fusionTranscriptUp": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Upstream transcript of a fusion (eg. NM_019063.5)"
+                },
+                "gene": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Gene involved in this result. (eg. KRAS)"
+                },
+                "hgvsCodingImpact": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "HGVS notation describing coding impact ie. (eg. c.4375C>T)"
+                },
+                "hgvsProteinImpact": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "HGVS notation describing protein impact ie. (eg. p.G12V)"
+                },
+                "ihcResult": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Full result string of IHC test ie. (eg. PD-L1 weak positive 20%)"
+                },
+                "msi": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "Result of microsatellite instability test."
+                },
+                "noMutationsFound": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "Flag should be set to indicate a negative result for a gene (ie. nothing was found)"
+                },
+                "tmb": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Tumor mutational burden in m/MB (eg. 8.0)"
+                },
+                "transcript": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Transcript referenced in other positional attributes (eg. NM_004304.5)"
+                },
+                "vaf": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Variant allele frequency as a fraction (eg. 0.01 is interpreted as 1%)"
+                }
+              },
+              "description": "none"
+            }
+          },
+          "test": {
+            "type": "string",
+            "description": "Name of the test administered, as specific as possible (eg. Archer, NGS, IHC)"
+          },
+          "testedGenes": {
+            "description": "List of genes that were tested.",
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string",
+              "description": "List of genes that were tested."
+            }
+          }
+        },
+        "required": [
+          "results",
+          "test"
+        ],
+        "description": "none"
+      }
+    },
+    "patientDetails": {
+      "type": "object",
+      "properties": {
+        "birthYear": {
+          "type": "integer",
+          "description": "Year of birth of this patient (eg. 1940)"
+        },
+        "gender": {
+          "type": "string",
+          "description": "Year of birth of this patient (eg. Male, Female, Other)"
+        },
+        "hartwigMolecularDataExpected": {
+          "type": "boolean",
+          "description": "Flag to indicate there is pending Hartwig analysis data for this patient"
+        },
+        "hashedId": {
+          "type": "string",
+          "description": "Base64 encoded SHA-256 hash of source hospital's identifier."
+        },
+        "registrationDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Registration data of this patient with ACTIN"
+        }
+      },
+      "required": [
+        "birthYear",
+        "gender",
+        "hartwigMolecularDataExpected",
+        "hashedId",
+        "registrationDate"
+      ],
+      "description": "none"
+    },
+    "priorOtherConditions": {
+      "description": "none",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "endDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "description": "End date of condition if applicable"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of condition (eg. Pancreatis)"
+          },
+          "startDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "description": "Start date of condition"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "description": "none"
+      }
+    },
+    "priorPrimaries": {
+      "description": "none",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "diagnosisDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "description": "Diagnosis date"
+          },
+          "lastTreatmentDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "description": "Date of last treatment"
+          },
+          "status": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Observed status of tumor (eg. Active/Inactive - null if unknown)"
+          },
+          "tumorLocation": {
+            "type": "string",
+            "description": "Tumor localization details (eg. Colon)"
+          },
+          "tumorType": {
+            "type": "string",
+            "description": "Tumor type details (eg. Carcinoma)"
+          }
+        },
+        "required": [
+          "tumorLocation",
+          "tumorType"
+        ],
+        "description": "none"
+      }
+    },
+    "surgeries": {
+      "description": "none",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "endDate": {
+            "type": "string",
+            "format": "date",
+            "description": "Date of completion, if applicable."
+          },
+          "status": {
+            "type": "string",
+            "description": "Status of surgery (eg. complete)"
+          },
+          "surgeryName": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Name of surgery (eg. Diagnostics stomach)"
+          }
+        },
+        "required": [
+          "endDate",
+          "status"
+        ],
+        "description": "none"
+      }
+    },
+    "toxicities": {
+      "description": "none",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "endDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "description": "End date"
+          },
+          "evaluatedDate": {
+            "type": "string",
+            "format": "date",
+            "description": "Date of evaluation"
+          },
+          "grade": {
+            "type": "integer",
+            "description": "Grade (eg. 2)"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of toxicity (eg. Neuropathy)"
+          }
+        },
+        "required": [
+          "evaluatedDate",
+          "grade",
+          "name"
+        ],
+        "description": "none"
+      }
+    },
+    "treatmentHistory": {
+      "description": "none",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "administeredCycles": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Administered number of cycles (eg. 6)"
+          },
+          "administeredInStudy": {
+            "type": "boolean",
+            "description": "Treatment administered in clinical study"
+          },
+          "endDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "description": "Date of the end of treatment"
+          },
+          "intendedCycles": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Intended number of cycles (eg. 6)"
+          },
+          "intention": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Intention of the treatment given (eg. Palliative)"
+          },
+          "modifications": {
+            "description": "none",
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "object",
+              "properties": {
+                "administeredCycles": {
+                  "type": "integer",
+                  "description": "Modified number of cycles (eg. 6)"
+                },
+                "date": {
+                  "type": "string",
+                  "format": "date",
+                  "description": "Date of the start of modification of treatment"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Name of the modified treatment given (eg. Gemcitabine+Cisplatin)"
+                }
+              },
+              "required": [
+                "administeredCycles",
+                "date",
+                "name"
+              ],
+              "description": "none"
+            }
+          },
+          "response": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Response to treatment (eg. Partial Response)"
+          },
+          "responseDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "description": "none"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date",
+            "description": "Date of the start of treatment"
+          },
+          "stopReason": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Reason of stopping treatment (eg. Progressive disease)"
+          },
+          "stopReasonDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "description": "none"
+          },
+          "treatmentName": {
+            "type": "string",
+            "description": "Name of the treatment given (eg. Gemcitabine+Cisplatin)"
+          },
+          "trialAcronym": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Trial acronym or other short identifier if administered in study"
+          }
+        },
+        "required": [
+          "administeredInStudy",
+          "startDate",
+          "treatmentName"
+        ],
+        "description": "none"
+      }
+    },
+    "tumorDetails": {
+      "type": "object",
+      "properties": {
+        "diagnosisDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of diagnosis"
+        },
+        "lesionSite": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Deprecated: currently use to store radiology report. Should move to lesions"
+        },
+        "lesions": {
+          "description": "none",
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object",
+            "properties": {
+              "active": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Whether this lesion considered active, only applicable to brain or CNS lesions."
+              },
+              "diagnosisDate": {
+                "type": "string",
+                "format": "date",
+                "description": "Diagnosis date of the lesion"
+              },
+              "location": {
+                "type": "string",
+                "description": "Location of lesion (eg. brain)"
+              }
+            },
+            "required": [
+              "diagnosisDate",
+              "location"
+            ],
+            "description": "none"
+          }
+        },
+        "measurableDisease": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Has measurable disease"
+        },
+        "measurableDiseaseDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date",
+          "description": "none"
+        },
+        "rawPathologyReport": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Raw pathology report of molecular test results."
+        },
+        "tumorGradeDifferentiation": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Tumor grade/differentiation details (eg. Poorly differentiated)"
+        },
+        "tumorLocation": {
+          "type": "string",
+          "description": "Tumor localization details (eg. Lung)"
+        },
+        "tumorStage": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Tumor stage (roman numeral, eg. IV)"
+        },
+        "tumorStageDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date",
+          "description": "Date associated with tumor stage diagnosis"
+        },
+        "tumorType": {
+          "type": "string",
+          "description": "Tumor type details (eg. Adenocarcinoma)"
+        }
+      },
+      "required": [
+        "diagnosisDate",
+        "tumorLocation",
+        "tumorType"
+      ],
+      "description": "none"
+    },
+    "whoEvaluations": {
+      "description": "none",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "evaluationDate": {
+            "type": "string",
+            "format": "date",
+            "description": "Date of WHO evaluation."
+          },
+          "status": {
+            "type": "integer",
+            "description": "WHO performance status (eg. 1)"
+          }
+        },
+        "required": [
+          "evaluationDate",
+          "status"
+        ],
+        "description": "none"
+      }
+    }
+  },
+  "required": [
+    "allergies",
+    "bloodTransfusions",
+    "complications",
+    "labValues",
+    "measurements",
+    "molecularTests",
+    "patientDetails",
+    "priorOtherConditions",
+    "priorPrimaries",
+    "surgeries",
+    "toxicities",
+    "treatmentHistory",
+    "tumorDetails",
+    "whoEvaluations"
+  ]
+}
