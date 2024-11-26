@@ -22,9 +22,9 @@ object IcdDeserializer {
                 blockId = readNullableField(fields, values, "BlockId"),
                 title = values[fields["Title"]!!],
                 classKind = resolveClassKind(fields, values),
-                depthInKind = values[fields["DepthInKind"]!!].toInt(),
+                depthInKind = handleDepthInKind(values[fields["DepthInKind"]!!].toInt()),
                 isResidual = values[fields["IsResidual"]!!].toBoolean(),
-                chapterNo = values[fields["ChapterNo"]!!],
+                chapterNo = handleChapterNo(values[fields["ChapterNo"]!!]),
                 browserLink = values[fields["BrowserLink"]!!],
                 isLeaf = values[fields["isLeaf"]!!].toBoolean(),
                 primaryTabulation = readNullableField(fields, values, "Primary tabulation")?.toBoolean(),
@@ -44,6 +44,14 @@ object IcdDeserializer {
 
     private fun resolveClassKind(fields: Fields, values: Array<String>): ClassKind {
         return ClassKind.valueOf(values[fields["ClassKind"]!!].uppercase())
+    }
+
+    private fun handleDepthInKind(input: Int) = verifyNonZeroStatus(input, "DepthInKind") as Int
+
+    private fun handleChapterNo(input: String): String = verifyNonZeroStatus(input, "ChapterNo") as String
+
+    private fun verifyNonZeroStatus(input: Any, property: String): Any {
+        return if (input.toString() == "0") throw IllegalArgumentException("$property must be non-zero") else input
     }
 
     private fun solveCode(fields: Fields, values: Array<String>): String {

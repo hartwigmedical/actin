@@ -3,6 +3,7 @@ package com.hartwig.actin.icd.serialization
 import com.hartwig.actin.icd.datamodel.ClassKind
 import com.hartwig.actin.icd.serialization.IcdDeserializer.readFromFile
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import org.junit.Test
 
 class IcdDeserializerTest {
@@ -11,9 +12,16 @@ class IcdDeserializerTest {
         readFromFile("${System.getProperty("user.home")}/hmf/repos/actin/common/src/test/resources/icd/example_icd.tsv")
 
     @Test
-    fun `Should read from file and create list of IcdNode instances`() {
+    fun `Should not ingest nodes with a letter as ChapterNo`() {
         assertThat(result).hasSize(6)
 
+        listOf(1, 2, 3, 4, 5).forEach {
+            assertThat(result[it].chapterNo).isEqualTo("1")
+        }
+    }
+
+    @Test
+    fun `Should read from file and create list of IcdNode instances`() {
         assertThat(result[0].foundationUri).isEqualTo("http://foundationlink/1234")
         assertThat(result[0].linearizationUri).isEqualTo("http://linearizationlink/4321")
         assertThat(result[0].blockId).isNull()
@@ -54,8 +62,9 @@ class IcdDeserializerTest {
     }
 
     @Test
-    fun `Should not ingest nodes with a letter as ChapterNo`() {
-        assertThat(readFromFile("${System.getProperty("user.home")}/hmf/repos/actin/common/src/test/resources/icd/invalid_icd_example.tsv"))
-            .hasSize(0)
+    fun `Should throw IllegalArgumentException when DepthInKind or ChapterNo is zero`() {
+        assertThatIllegalArgumentException().isThrownBy {
+            readFromFile("${System.getProperty("user.home")}/hmf/repos/actin/common/src/test/resources/icd/invalid_icd_example.tsv")
+        }
     }
 }
