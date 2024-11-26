@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
-import com.google.common.collect.Sets
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory.createActionableTrial
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory.createEfficacyEvidence
@@ -21,6 +20,7 @@ import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import com.hartwig.serve.datamodel.molecular.gene.ImmutableActionableGene
 import com.hartwig.serve.datamodel.molecular.hotspot.ImmutableActionableHotspot
 import com.hartwig.serve.datamodel.molecular.range.ImmutableActionableRange
+import com.hartwig.serve.datamodel.trial.ImmutableActionableTrial
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -40,7 +40,7 @@ class ActionableEventsExtractionTest {
                 .chromosome("chromosome").position(0).ref("ref").alt("alt").build()
         val molecularCriterium = ImmutableMolecularCriterium.builder().addHotspots(actionableHotspot).build()
         val efficacyEvidence = createEfficacyEvidence(molecularCriterium)
-        val actionableTrial = createActionableTrial(Sets.newHashSet(molecularCriterium))
+        val actionableTrial = createActionableTrial(setOf(molecularCriterium))
         assertThat(extractHotspot(efficacyEvidence)).isEqualTo(actionableHotspot)
         assertThat(extractHotspot(actionableTrial)).isEqualTo(actionableHotspot)
     }
@@ -51,7 +51,7 @@ class ActionableEventsExtractionTest {
             .chromosome("chromosome").start(0).end(1).applicableMutationType(MutationType.ANY).build()
         val molecularCriterium = ImmutableMolecularCriterium.builder().addCodons(actionableRange).build()
         val efficacyEvidence = createEfficacyEvidence(molecularCriterium)
-        val actionableTrial = createActionableTrial(Sets.newHashSet(molecularCriterium))
+        val actionableTrial = createActionableTrial(setOf(molecularCriterium))
         assertThat(extractRange(efficacyEvidence)).isEqualTo(actionableRange)
         assertThat(extractRange(actionableTrial)).isEqualTo(actionableRange)
     }
@@ -63,7 +63,7 @@ class ActionableEventsExtractionTest {
                 .gene("gene").sourceEvent("sourceEvent").build()
         val molecularCriterium = ImmutableMolecularCriterium.builder().addGenes(actionableGene).build()
         val efficacyEvidence = createEfficacyEvidence(molecularCriterium)
-        val actionableTrial = createActionableTrial(Sets.newHashSet(molecularCriterium))
+        val actionableTrial = createActionableTrial(setOf(molecularCriterium))
         assertThat(ActionableEventsExtraction.extractGene(efficacyEvidence)).isEqualTo(actionableGene)
         assertThat(ActionableEventsExtraction.extractGene(actionableTrial)).isEqualTo(actionableGene)
     }
@@ -75,7 +75,7 @@ class ActionableEventsExtractionTest {
                 .geneDown("geneDown").minExonUp(0).maxExonUp(0).build()
         val molecularCriterium = ImmutableMolecularCriterium.builder().addFusions(actionableFusion).build()
         val efficacyEvidence = createEfficacyEvidence(molecularCriterium)
-        val actionableTrial = createActionableTrial(Sets.newHashSet(molecularCriterium))
+        val actionableTrial = createActionableTrial(setOf(molecularCriterium))
         assertThat(ActionableEventsExtraction.extractFusion(efficacyEvidence)).isEqualTo(actionableFusion)
         assertThat(ActionableEventsExtraction.extractFusion(actionableTrial)).isEqualTo(actionableFusion)
     }
@@ -87,7 +87,7 @@ class ActionableEventsExtractionTest {
                 .type(TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_LOAD).build()
         val molecularCriterium = ImmutableMolecularCriterium.builder().addCharacteristics(actionableCharacteristic).build()
         val efficacyEvidence = createEfficacyEvidence(molecularCriterium)
-        val actionableTrial = createActionableTrial(Sets.newHashSet(molecularCriterium))
+        val actionableTrial = createActionableTrial(setOf(molecularCriterium))
         assertThat(ActionableEventsExtraction.extractCharacteristic(efficacyEvidence)).isEqualTo(actionableCharacteristic)
         assertThat(ActionableEventsExtraction.extractCharacteristic(actionableTrial)).isEqualTo(actionableCharacteristic)
     }
@@ -106,9 +106,9 @@ class ActionableEventsExtractionTest {
 
     @Test
     fun `Can filter trials`() {
-        val actionableTrial1 = createActionableTrial(Sets.newHashSet(MOLECULAR_CRITERIUM_1))
-        val actionableTrial2 = createActionableTrial(Sets.newHashSet(MOLECULAR_CRITERIUM_2))
-        val actionableTrial3 = createActionableTrial(Sets.newHashSet(MOLECULAR_CRITERIUM_1, MOLECULAR_CRITERIUM_2))
+        val actionableTrial1 = createActionableTrial(setOf(MOLECULAR_CRITERIUM_1))
+        val actionableTrial2 = createActionableTrial(setOf(MOLECULAR_CRITERIUM_2))
+        val actionableTrial3 = createActionableTrial(setOf(MOLECULAR_CRITERIUM_1, MOLECULAR_CRITERIUM_2))
         val filteredTrials =
             ActionableEventsExtraction.filterTrials(listOf(actionableTrial1, actionableTrial2, actionableTrial3), geneFilter())
         assertThat(filteredTrials).containsExactly(actionableTrial2, actionableTrial3)
@@ -116,18 +116,21 @@ class ActionableEventsExtractionTest {
 
     @Test
     fun `Can expand trials`() {
-        val actionableTrial = createActionableTrial(
-            Sets.newHashSet(MOLECULAR_CRITERIUM_1, MOLECULAR_CRITERIUM_2),
-            indications = Sets.newHashSet(INDICATION_1, INDICATION_2)
-        )
+        val actionableTrial =
+            createActionableTrial(setOf(MOLECULAR_CRITERIUM_1, MOLECULAR_CRITERIUM_2), indications = setOf(INDICATION_1, INDICATION_2))
         val expandedTrial = ActionableEventsExtraction.expandTrials(listOf(actionableTrial))
-        assertThat(expandedTrial[0].indications()).containsExactly(INDICATION_1)
-        assertThat(expandedTrial[0].anyMolecularCriteria()).containsExactly(MOLECULAR_CRITERIUM_1)
-        assertThat(expandedTrial[1].indications()).containsExactly(INDICATION_2)
-        assertThat(expandedTrial[1].anyMolecularCriteria()).containsExactly(MOLECULAR_CRITERIUM_1)
-        assertThat(expandedTrial[2].indications()).containsExactly(INDICATION_1)
-        assertThat(expandedTrial[2].anyMolecularCriteria()).containsExactly(MOLECULAR_CRITERIUM_2)
-        assertThat(expandedTrial[3].indications()).containsExactly(INDICATION_2)
-        assertThat(expandedTrial[3].anyMolecularCriteria()).containsExactly(MOLECULAR_CRITERIUM_2)
+        val expandedTrial1 =
+            ImmutableActionableTrial.builder().from(createActionableTrial(setOf(MOLECULAR_CRITERIUM_1), indications = setOf(INDICATION_1)))
+                .build()
+        val expandedTrial2 =
+            ImmutableActionableTrial.builder().from(createActionableTrial(setOf(MOLECULAR_CRITERIUM_1), indications = setOf(INDICATION_2)))
+                .build()
+        val expandedTrial3 =
+            ImmutableActionableTrial.builder().from(createActionableTrial(setOf(MOLECULAR_CRITERIUM_2), indications = setOf(INDICATION_1)))
+                .build()
+        val expandedTrial4 =
+            ImmutableActionableTrial.builder().from(createActionableTrial(setOf(MOLECULAR_CRITERIUM_2), indications = setOf(INDICATION_2)))
+                .build()
+        assertThat(expandedTrial).containsAll(listOf(expandedTrial1, expandedTrial2, expandedTrial3, expandedTrial4))
     }
 }
