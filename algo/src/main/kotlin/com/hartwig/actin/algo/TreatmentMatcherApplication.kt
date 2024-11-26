@@ -15,7 +15,7 @@ import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
-import com.hartwig.actin.molecular.evidence.ServeLoader.loadServe
+import com.hartwig.actin.molecular.evidence.ServeLoader
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.serialization.TrialJson
@@ -92,7 +92,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val serveRefGenomeVersion = toServeRefGenomeVersion(orangeRefGenomeVersion)
         val jsonFilePath = ServeJson.jsonFilePath(config.serveDirectory)
         LOGGER.info("Loading SERVE from {}", jsonFilePath)
-        val (_, actionableEvents) = loadServe(jsonFilePath, serveRefGenomeVersion)
+        val (_, actionableEvents) = ServeLoader.loadServe(jsonFilePath, serveRefGenomeVersion)
         return actionableEvents.evidences
     }
 
