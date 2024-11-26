@@ -6,10 +6,7 @@ import com.hartwig.actin.trial.status.TrialStatusEntry
 object TestTrialStatusDatabaseEntryFactory {
 
     val MINIMAL = TrialStatusEntry(
-        studyId = 0,
         metcStudyID = "",
-        studyAcronym = "",
-        studyTitle = "",
         studyStatus = TrialStatus.OPEN
     )
 

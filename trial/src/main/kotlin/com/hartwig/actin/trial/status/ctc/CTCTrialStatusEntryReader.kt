@@ -18,14 +18,10 @@ class CTCTrialStatusEntryReader : TrialStatusEntryReader {
 
     private fun create(fields: Map<String, Int>, parts: List<String>): TrialStatusEntry {
         return TrialStatusEntry(
-            studyId = ResourceFile.integer(parts[fields["StudyID"]!!]),
             metcStudyID = parts[fields["StudyMETC"]!!],
-            studyAcronym = parts[fields["StudyAcroniem"]!!],
-            studyTitle = parts[fields["StudyTitle"]!!],
             studyStatus = CTCStatusResolver.resolve(parts[fields["StudyStatus"]!!]),
             cohortId = ResourceFile.optionalString(parts[fields["CohortId"]!!]),
             cohortParentId = ResourceFile.optionalString(parts[fields["CohortParentId"]!!]),
-            cohortName = ResourceFile.optionalString(parts[fields["CohortName"]!!]),
             cohortStatus = ResourceFile.optionalString(parts[fields["CohortStatus"]!!])?.let { CTCStatusResolver.resolve(it) },
             cohortSlotsNumberAvailable = ResourceFile.optionalInteger(parts[fields["CohortSlotsNumberAvailable"]!!]),
             cohortSlotsDateUpdate = ResourceFile.optionalString(parts[fields["CohortSlotsDateUpdate"]!!])
