@@ -17,6 +17,7 @@ data class ClinicalIngestionConfig(
     val feedDirectory: String,
     val curationDirectory: String,
     val doidJson: String,
+    val icdTsv: String,
     val atcTsv: String,
     val atcOverridesTsv: String,
     val treatmentDirectory: String,
@@ -30,6 +31,7 @@ data class ClinicalIngestionConfig(
         private const val FEED_DIRECTORY = "feed_directory"
         private const val CURATION_DIRECTORY = "curation_directory"
         private const val DOID_JSON = "doid_json"
+        private const val ICD_TSV = "icd_tsv"
         private const val ATC_TSV = "atc_tsv"
         private const val ATC_OVERRIDES_TSV = "atc_overrides_tsv"
         private const val TREATMENT_DIRECTORY = "treatment_directory"
@@ -50,7 +52,7 @@ data class ClinicalIngestionConfig(
             options.addOption(
                 FEED_FORMAT,
                 true,
-                "The format of the feed. Accepted values [${FeedFormat.values().joinToString()}]. Default is ${FeedFormat.EMC_TSV.name}."
+                "The format of the feed. Accepted values [${FeedFormat.entries.joinToString()}]. Default is ${FeedFormat.EMC_TSV.name}."
             )
             return options
         }
@@ -64,6 +66,7 @@ data class ClinicalIngestionConfig(
                 feedDirectory = ApplicationConfig.nonOptionalDir(cmd, FEED_DIRECTORY),
                 curationDirectory = ApplicationConfig.nonOptionalDir(cmd, CURATION_DIRECTORY),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
+                icdTsv = ApplicationConfig.nonOptionalFile(cmd, ICD_TSV),
                 atcTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_TSV),
                 atcOverridesTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_OVERRIDES_TSV),
                 treatmentDirectory = ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DIRECTORY),

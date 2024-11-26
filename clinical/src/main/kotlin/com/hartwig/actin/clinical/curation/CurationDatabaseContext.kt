@@ -125,6 +125,7 @@ data class CurationDatabaseContext(
         fun create(
             curationDir: String,
             curationDoidValidator: CurationDoidValidator,
+            curationIcdValidator: CurationIcdValidator,
             treatmentDatabase: TreatmentDatabase
         ) = CurationDatabaseContext(
             ecgCuration = CurationDatabaseReader.read(
@@ -187,7 +188,7 @@ data class CurationDatabaseContext(
             toxicityCuration = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.TOXICITY_TSV,
-                ToxicityConfigFactory(),
+                ToxicityConfigFactory(curationIcdValidator),
                 CurationCategory.TOXICITY
             ) { it.toxicityEvaluatedInputs },
             lesionLocationCuration = CurationDatabaseReader.read(

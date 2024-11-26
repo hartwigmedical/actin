@@ -3,21 +3,33 @@ package com.hartwig.actin.icd
 import com.hartwig.actin.icd.datamodel.ClassKind
 import com.hartwig.actin.icd.datamodel.IcdNode
 
+private const val DEFAULT_ICD_URI = "uri"
+const val DEFAULT_ICD_CODE = "1A01"
+private const val DEFAULT_ICD_TITLE = "node"
+private val DEFAULT_ICD_CLASS_KIND = ClassKind.CATEGORY
+private const val DEFAULT_ICD_DEPTH_IN_KIND = 1
+private const val DEFAULT_ICD_IS_RESIDUAL = false
+private const val DEFAULT_ICD_CHAPTER_NO = "01"
+private const val DEFAULT_ICD_BROWSER_LINK = "browser"
+private const val DEFAULT_ICD_IS_LEAF = true
+
 object TestIcdFactory {
 
-    fun createMinimalIcdModel(): IcdModel = create()
+    fun createProperTestModel(): IcdModel = create(
+        titleToCodeMap = listOf(1, 2, 3).associate { i -> "$DEFAULT_ICD_TITLE$i" to "$DEFAULT_ICD_CODE.$i" },
+    )
 
     private fun createMinimalTestIcdNode(): IcdNode {
         return IcdNode(
-            linearizationUri = "uri",
-            code = "A01",
-            title = "Test entry",
-            classKind = ClassKind.CATEGORY,
-            depthInKind = 1,
-            isResidual = false,
-            chapterNo = "01",
-            browserLink = "browser",
-            isLeaf = true
+            linearizationUri = DEFAULT_ICD_URI,
+            code = DEFAULT_ICD_CODE,
+            title = DEFAULT_ICD_TITLE,
+            classKind = DEFAULT_ICD_CLASS_KIND,
+            depthInKind = DEFAULT_ICD_DEPTH_IN_KIND,
+            isResidual = DEFAULT_ICD_IS_RESIDUAL,
+            chapterNo = DEFAULT_ICD_CHAPTER_NO,
+            browserLink = DEFAULT_ICD_BROWSER_LINK,
+            isLeaf = DEFAULT_ICD_IS_LEAF
         )
     }
 

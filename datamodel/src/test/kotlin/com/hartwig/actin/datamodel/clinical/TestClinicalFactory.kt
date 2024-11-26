@@ -448,6 +448,7 @@ object TestClinicalFactory {
             Toxicity(
                 name = "Nausea",
                 categories = setOf("Nausea"),
+                icdCode = "A01",
                 evaluatedDate = FIXED_DATE.minusDays(DAYS_SINCE_TOXICITIES.toLong()),
                 source = ToxicitySource.EHR,
                 grade = 1
@@ -455,6 +456,7 @@ object TestClinicalFactory {
             Toxicity(
                 name = "Fatigue",
                 categories = setOf("Fatigue"),
+                icdCode = "A02",
                 evaluatedDate = FIXED_DATE.minusDays(DAYS_SINCE_TOXICITIES.toLong()),
                 source = ToxicitySource.QUESTIONNAIRE,
                 grade = 2

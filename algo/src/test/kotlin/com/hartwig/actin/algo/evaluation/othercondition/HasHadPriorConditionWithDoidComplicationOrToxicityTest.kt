@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.doid.TestDoidModelFactory
+import com.hartwig.actin.icd.DEFAULT_ICD_CODE
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
@@ -127,6 +128,7 @@ class HasHadPriorConditionWithDoidComplicationOrToxicityTest {
     private fun toxicity(toxicitySource: ToxicitySource, grade: Int?): Toxicity {
         return Toxicity(
             categories = setOf(TOXICITY_CATEGORY),
+            icdCode = DEFAULT_ICD_CODE,
             name = TOXICITY_NAME,
             evaluatedDate = LocalDate.now(),
             source = toxicitySource,

@@ -359,6 +359,7 @@ object HistoricClinicalDeserializer {
         return Toxicity(
             name = Json.string(toxicity, "name"),
             categories = emptySet(),
+            icdCode = "1A01",
             evaluatedDate = Json.date(toxicity, "evaluatedDate"),
             source = ToxicitySource.valueOf(Json.string(toxicity, "source")),
             grade = Json.nullableInteger(toxicity, "grade")

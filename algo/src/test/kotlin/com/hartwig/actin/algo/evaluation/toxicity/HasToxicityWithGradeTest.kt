@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
+import com.hartwig.actin.icd.DEFAULT_ICD_CODE
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
@@ -181,6 +182,6 @@ class HasToxicityWithGradeTest {
         endDate: LocalDate? = null,
         evaluatedDate: LocalDate? = null
     ) =
-        Toxicity(name, emptySet(), evaluatedDate ?: referenceDate.minusMonths(1), source, grade, endDate)
+        Toxicity(name, emptySet(), DEFAULT_ICD_CODE, evaluatedDate ?: referenceDate.minusMonths(1), source, grade, endDate)
 
 }

@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.SurgeryStatus
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
+import com.hartwig.actin.icd.DEFAULT_ICD_CODE
 import com.hartwig.actin.report.pdf.tables.clinical.CellTestUtil.extractTextFromCell
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -91,5 +92,5 @@ class PatientCurrentDetailsGeneratorTest {
     }
 
     private fun toxicity(name: String, endDate: LocalDate?, grade: Int?) =
-        Toxicity(name, emptySet(), referenceDate.minusMonths(1), ToxicitySource.EHR, grade, endDate)
+        Toxicity(name, emptySet(), DEFAULT_ICD_CODE, referenceDate.minusMonths(1), ToxicitySource.EHR, grade, endDate)
 }

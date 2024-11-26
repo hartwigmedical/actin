@@ -22,6 +22,8 @@ private const val TOXICITY_NAME = "Toxicity name"
 
 private const val TOXICITY_CATEGORY = "Toxicity category"
 
+private const val TOXICITY_ICD_CODE = "Toxicity icd code"
+
 private const val TOXICITY_TRANSLATED = "Toxicity translated"
 
 class ToxicityExtractorTest {
@@ -32,7 +34,8 @@ class ToxicityExtractorTest {
                 ignore = false,
                 name = TOXICITY_NAME,
                 categories = setOf(TOXICITY_CATEGORY),
-                3
+                grade = 3,
+                icdCode = TOXICITY_ICD_CODE
             )
         ),
         TranslationDatabase(
@@ -51,6 +54,7 @@ class ToxicityExtractorTest {
         val toxicity = toxicities[0]
         assertThat(toxicity.name).isEqualTo(TOXICITY_NAME)
         assertThat(toxicity.categories).containsExactly(TOXICITY_CATEGORY)
+        assertThat(toxicity.icdCode).isEqualTo(TOXICITY_ICD_CODE)
         assertThat(toxicity.evaluatedDate).isEqualTo(date)
         assertThat(toxicity.source).isEqualTo(ToxicitySource.QUESTIONNAIRE)
         assertThat(toxicity.grade).isEqualTo(Integer.valueOf(3))

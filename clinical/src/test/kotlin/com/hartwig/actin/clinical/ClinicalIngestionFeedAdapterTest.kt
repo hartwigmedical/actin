@@ -5,6 +5,7 @@ import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
+import com.hartwig.actin.clinical.curation.CurationIcdValidator
 import com.hartwig.actin.clinical.curation.TestAtcFactory
 import com.hartwig.actin.clinical.feed.emc.ClinicalFeedReader
 import com.hartwig.actin.clinical.feed.emc.EmcClinicalFeedIngestor
@@ -16,6 +17,7 @@ import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireVersion
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.doid.config.DoidManualConfig
+import com.hartwig.actin.icd.TestIcdFactory
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import com.hartwig.actin.util.json.GsonSerializer
 import org.assertj.core.api.Assertions.assertThat
@@ -51,9 +53,12 @@ class ClinicalIngestionFeedAdapterTest {
                 emptySet()
             )
         )
+        val testIcdModel = TestIcdFactory.createProperTestModel()
+
         curationDatabase = CurationDatabaseContext.create(
             CURATION_DIRECTORY,
             CurationDoidValidator(testDoidModel),
+            CurationIcdValidator(testIcdModel),
             TestTreatmentDatabaseFactory.createProper()
         )
         adapter = ClinicalIngestionFeedAdapter(
@@ -120,7 +125,7 @@ class ClinicalIngestionFeedAdapterTest {
             UnusedCurationConfig(categoryName = "Dosage Unit Translation", input = "stuk"),
             UnusedCurationConfig(categoryName = "Sequencing Test", input = "kras g12f"),
             UnusedCurationConfig(categoryName = "Surgery Name", input = "surgery1"),
-            UnusedCurationConfig(categoryName = "Lesion Location", input = "and possibly lymph nodes")
+            UnusedCurationConfig(categoryName = "Lesion Location", input = "and possibly lymph nodes"),
         )
 
         val gson = GsonSerializer.create()

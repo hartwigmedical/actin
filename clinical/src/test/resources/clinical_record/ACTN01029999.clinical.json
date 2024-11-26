@@ -217,6 +217,7 @@
     {
       "name": "Nausea",
       "categories": [],
+      "icdCode": "",
       "evaluatedDate": {
         "year": 2021,
         "month": 6,
@@ -229,6 +230,7 @@
     {
       "name": "Pain",
       "categories": [],
+      "icdCode": "",
       "evaluatedDate": {
         "year": 2021,
         "month": 8,
@@ -243,6 +245,7 @@
       "categories": [
         "Gastrointestinal"
       ],
+      "icdCode": "1A01.3",
       "evaluatedDate": {
         "year": 2021,
         "month": 8,

@@ -6,9 +6,9 @@ import org.junit.Test
 
 class IcdModelFactoryTest {
 
-    private val mainCode = "1A01"
-    private val subCode = "1A01.1"
-    private val secondDegreeSubcode = "1A01.10"
+    private val mainCode = DEFAULT_ICD_CODE
+    private val subCode = "$DEFAULT_ICD_CODE.1"
+    private val secondDegreeSubcode = "$DEFAULT_ICD_CODE.10"
     private val chapterOne = TestIcdFactory.createChapter("01")
     private val chapterTwo = TestIcdFactory.createChapter("02")
     private val blockInChapterOne = TestIcdFactory.createBlock("Block1-C").copy(chapterNo = "01")

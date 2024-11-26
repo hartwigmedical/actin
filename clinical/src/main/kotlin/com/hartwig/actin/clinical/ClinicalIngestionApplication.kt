@@ -3,11 +3,14 @@ package com.hartwig.actin.clinical
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
+import com.hartwig.actin.clinical.curation.CurationIcdValidator
 import com.hartwig.actin.clinical.feed.emc.EmcClinicalFeedIngestor
 import com.hartwig.actin.clinical.feed.standard.StandardDataIngestion
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
+import com.hartwig.actin.icd.IcdModelFactory
+import com.hartwig.actin.icd.serialization.IcdDeserializer
 import com.hartwig.actin.util.json.GsonSerializer
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
@@ -27,6 +30,10 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
         val doidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
 
+        LOGGER.info("Loading ICD nodes from {}", config.icdTsv)
+        val icdNodes = IcdDeserializer.readFromFile(config.icdTsv)
+        LOGGER.info(" Loaded {} nodes", icdNodes.size)
+
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
 
         LOGGER.info("Creating ATC model from file {}", config.atcTsv)
@@ -34,8 +41,10 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
 
         LOGGER.info("Creating clinical curation database from directory {}", config.curationDirectory)
         val curationDoidValidator = CurationDoidValidator(DoidModelFactory.createFromDoidEntry(doidEntry))
+        val curationIcdValidator = CurationIcdValidator(IcdModelFactory.create(icdNodes))
         val outputDirectory: String = config.outputDirectory
-        val curationDatabaseContext = CurationDatabaseContext.create(config.curationDirectory, curationDoidValidator, treatmentDatabase)
+        val curationDatabaseContext =
+            CurationDatabaseContext.create(config.curationDirectory, curationDoidValidator, curationIcdValidator, treatmentDatabase)
         val validationErrors = curationDatabaseContext.validate()
         if (validationErrors.isNotEmpty()) {
             LOGGER.warn("Curation input had validation errors:")

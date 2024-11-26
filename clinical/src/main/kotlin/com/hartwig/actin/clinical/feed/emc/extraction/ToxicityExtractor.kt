@@ -40,10 +40,12 @@ class ToxicityExtractor(
             extractGrade(toxicityEntry)?.let { grade ->
                 Toxicity(
                     name = toxicityEntry.itemText,
+                    categories = emptySet(),
+                    icdCode = "",
                     evaluatedDate = toxicityEntry.authored,
                     source = ToxicitySource.EHR,
                     grade = grade,
-                    categories = emptySet()
+
                 )
             }
         }
@@ -77,6 +79,7 @@ class ToxicityExtractor(
                 Toxicity(
                     name = config.name,
                     categories = config.categories,
+                    icdCode = config.icdCode,
                     evaluatedDate = questionnaire.date,
                     source = ToxicitySource.QUESTIONNAIRE,
                     grade = config.grade

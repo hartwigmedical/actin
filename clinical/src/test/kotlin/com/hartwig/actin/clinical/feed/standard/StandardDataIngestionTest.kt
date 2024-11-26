@@ -7,6 +7,7 @@ import com.hartwig.actin.clinical.PatientIngestionStatus
 import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
+import com.hartwig.actin.clinical.curation.CurationIcdValidator
 import com.hartwig.actin.clinical.curation.TestAtcFactory
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBloodTransfusionExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyHeightExtractor
@@ -30,6 +31,7 @@ import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.doid.config.DoidManualConfig
+import com.hartwig.actin.icd.TestIcdFactory
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -58,10 +60,12 @@ class StandardDataIngestionTest {
                 emptySet()
             )
         )
+        val icdModel = TestIcdFactory.createProperTestModel()
         val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
         val curationDatabase = CurationDatabaseContext.create(
             CURATION_DIRECTORY,
             CurationDoidValidator(doidModel),
+            CurationIcdValidator(icdModel),
             TestTreatmentDatabaseFactory.createProper()
         )
         val feed = StandardDataIngestion(

@@ -48,6 +48,31 @@ fun validateDoids(
     }
 }
 
+fun validateIcd(
+    curationCategory: CurationCategory,
+    input: String,
+    fieldName: String,
+    fields: Map<String, Int>,
+    parts: Array<String>,
+    icdValidator: (String) -> Boolean
+): Pair<String?, List<CurationConfigValidationError>> {
+    val title = parts[fields["icd"]!!]
+    return if (icdValidator.invoke(title)) {
+        title to emptyList()
+    } else {
+        null to listOf(
+            CurationConfigValidationError(
+                curationCategory.categoryName,
+                input,
+                fieldName,
+                title,
+                "string",
+                "ICD title is not known - check for existence in resource"
+            )
+        )
+    }
+}
+
 fun validateBoolean(
     curationCategory: CurationCategory,
     input: String,
