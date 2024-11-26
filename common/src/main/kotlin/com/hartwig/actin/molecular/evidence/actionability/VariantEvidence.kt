@@ -2,8 +2,8 @@ package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.codonFilter
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.exonFilter
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterTrials
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterEfficacyEvidence
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterTrials
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.geneFilter
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.hotspotFilter
 import com.hartwig.actin.molecular.evidence.matching.EvidenceMatcher
@@ -17,7 +17,8 @@ import com.hartwig.serve.datamodel.trial.ActionableTrial
 
 class VariantEvidence(
     private val actionableHotspots: ActionableEvents,
-    private val actionableRanges: ActionableEvents, private val applicableActionableGenes: ActionableEvents
+    private val actionableRanges: ActionableEvents,
+    private val applicableActionableGenes: ActionableEvents
 ) : EvidenceMatcher<VariantMatchCriteria> {
 
     override fun findMatches(event: VariantMatchCriteria): ActionableEvents {
@@ -80,32 +81,29 @@ class VariantEvidence(
 
         fun create(actionableEvents: ActionableEvents): VariantEvidence {
             with(actionableEvents) {
-                val applicableActionableGenesEvidences = filterEfficacyEvidence(evidences, geneFilter()).filter {
-                    APPLICABLE_GENE_EVENTS.contains(
-                        ActionableEventsExtraction.extractGene(it).event()
-                    )
+                val hotspotEvidences = filterEfficacyEvidence(evidences, hotspotFilter())
+                val hotspotTrials = filterTrials(trials, hotspotFilter())
+
+                val codonEvidences = filterEfficacyEvidence(evidences, codonFilter())
+                val codonTrials = filterTrials(trials, codonFilter())
+
+                val exonEvidences = filterEfficacyEvidence(evidences, exonFilter())
+                val exonTrials = filterTrials(trials, exonFilter())
+
+                val rangeEvidences = listOf(codonEvidences, exonEvidences).flatten()
+                val rangeTrials = listOf(codonTrials, exonTrials).flatten()
+
+                val applicableActionableGeneEvidences = filterEfficacyEvidence(evidences, geneFilter()).filter {
+                    APPLICABLE_GENE_EVENTS.contains(ActionableEventsExtraction.extractGene(it).event())
                 }
-                val applicableActionableGenesTrials = filterTrials(trials, geneFilter()).filter {
-                    APPLICABLE_GENE_EVENTS.contains(
-                        ActionableEventsExtraction.extractGene(it).event()
-                    )
+                val applicableActionableGeneTrials = filterTrials(trials, geneFilter()).filter {
+                    APPLICABLE_GENE_EVENTS.contains(ActionableEventsExtraction.extractGene(it).event())
                 }
-                val codonsEvidences = filterEfficacyEvidence(evidences, codonFilter())
-                val codonsTrials = filterTrials(trials, codonFilter())
-
-                val exonsEvidences = filterEfficacyEvidence(evidences, exonFilter())
-                val exonsTrials = filterTrials(trials, exonFilter())
-
-                val hotspotsEvidences = filterEfficacyEvidence(evidences, hotspotFilter())
-                val hotspotsTrials = filterTrials(trials, hotspotFilter())
-
-                val rangesEvidences = listOf(codonsEvidences, exonsEvidences).flatten()
-                val rangesTrials = listOf(codonsTrials, exonsTrials).flatten()
 
                 return VariantEvidence(
-                    ActionableEvents(hotspotsEvidences, hotspotsTrials),
-                    ActionableEvents(rangesEvidences, rangesTrials),
-                    ActionableEvents(applicableActionableGenesEvidences, applicableActionableGenesTrials)
+                    ActionableEvents(hotspotEvidences, hotspotTrials),
+                    ActionableEvents(rangeEvidences, rangeTrials),
+                    ActionableEvents(applicableActionableGeneEvidences, applicableActionableGeneTrials)
                 )
             }
         }

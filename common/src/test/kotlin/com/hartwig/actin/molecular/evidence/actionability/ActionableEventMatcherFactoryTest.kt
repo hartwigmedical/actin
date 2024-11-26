@@ -9,16 +9,16 @@ import com.hartwig.serve.datamodel.trial.ActionableTrial
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-val DOID_MODEL = TestDoidModelFactory.createMinimalTestDoidModel()
-val FACTORY = ActionableEventMatcherFactory(DOID_MODEL, emptySet())
-
 class ActionableEventMatcherFactoryTest {
+
+    val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
+    val factory = ActionableEventMatcherFactory(doidModel, emptySet())
 
     @Test
     fun `Should create actionable event matcher on empty inputs`() {
-        assertThat(FACTORY.create(ActionableEvents())).isNotNull
+        assertThat(factory.create(ActionableEvents())).isNotNull
         assertThat(
-            FACTORY.create(
+            factory.create(
                 ActionableEvents(
                     listOf(
                         TestServeActionabilityFactory.createEfficacyEvidenceWithHotspot()
@@ -72,10 +72,10 @@ class ActionableEventMatcherFactoryTest {
             listOf(hotspot1, hotspot2, hotspot3, hotspot4, hotspot5, codon1, exon1, gene1, characteristic1, fusion1, hla1)
         )
 
-        val filteredOnSource = FACTORY.filterForSources(actionable, FACTORY.actionableEventSources)
+        val filteredOnSource = factory.filterForSources(actionable, factory.actionableEventSources)
         assertThat(filteredOnSource.trials.size).isEqualTo(10)
 
-        val filteredOnApplicability = FACTORY.filterForApplicability(filteredOnSource)
+        val filteredOnApplicability = factory.filterForApplicability(filteredOnSource)
         assertThat(filteredOnApplicability.trials).hasSize(9)
 
         assertThat(findByGene(filteredOnApplicability.trials, "gene 2")).isEqualTo("internal")

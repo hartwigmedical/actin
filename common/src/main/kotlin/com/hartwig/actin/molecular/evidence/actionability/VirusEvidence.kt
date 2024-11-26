@@ -3,9 +3,9 @@ package com.hartwig.actin.molecular.evidence.actionability
 import com.hartwig.actin.datamodel.molecular.orange.driver.Virus
 import com.hartwig.actin.datamodel.molecular.orange.driver.VirusType
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.characteristicsFilter
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterTrials
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterEfficacyEvidence
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractCharacteristic
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterEfficacyEvidence
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterTrials
 import com.hartwig.actin.molecular.evidence.matching.EvidenceMatcher
 import com.hartwig.serve.datamodel.molecular.characteristic.ActionableCharacteristic
 import com.hartwig.serve.datamodel.molecular.characteristic.TumorCharacteristicType
@@ -39,6 +39,7 @@ internal class VirusEvidence private constructor(
             val trials = filterTrials(actionableEvents.trials, characteristicsFilter())
             val (hpvCharacteristicsEvidence, ebvCharacteristicsEvidence) = extractHPVAndEBV(evidences, ::extractCharacteristic)
             val (hpvCharacteristicsTrials, ebvCharacteristicsTrials) = extractHPVAndEBV(trials, ::extractCharacteristic)
+
             return VirusEvidence(
                 ActionableEvents(hpvCharacteristicsEvidence, hpvCharacteristicsTrials),
                 ActionableEvents(ebvCharacteristicsEvidence, ebvCharacteristicsTrials)
