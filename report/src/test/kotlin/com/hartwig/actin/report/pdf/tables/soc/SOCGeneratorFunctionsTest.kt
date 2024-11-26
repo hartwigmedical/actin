@@ -10,6 +10,7 @@ import com.hartwig.actin.datamodel.efficacy.PatientPopulation
 import com.hartwig.actin.datamodel.personalization.Measurement
 import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Paragraph
+import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.element.Text
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -85,26 +86,52 @@ class SOCGeneratorFunctionsTest {
         )
         val cells = SOCGeneratorFunctions.approvedTreatmentCells(treatments)
         assertThat(cells).hasSize(12)
-        assertThat(cells.map(::firstTextFromOneParagraphElement)).containsExactly(
+        assertThat(cells.flatMap(::extractAllTextFromCell)).containsExactly(
             "t2",
             "Not available yet",
-            "3.8",
+            "PFS: ",
+            "3.8 months",
+            "OS: ",
+             NA,
             "no data",
             "t1",
             "Not available yet",
-            "3.4, IQR: 3.3",
+            "PFS: ",
+            "3.4 months, IQR: 3.3",
+            "OS: ",
+             NA,
             "no data, not recommended",
             "t3",
             "Not available yet",
+            "PFS: ",
+            NA,
+            "OS: ",
             NA,
             "lab value out of range"
         )
-
     }
 
-    private fun firstTextFromOneParagraphElement(cell: Cell): String? {
-        val paragraph = cell.children.first() as Paragraph
-        return (paragraph.children.first() as Text).text
+    private fun extractAllTextFromCell(cell: Cell): List<String> {
+        val textList = mutableListOf<String>()
+        for (element in cell.children) {
+            when (element) {
+                is Paragraph -> {
+                    val textElement = element.children.filterIsInstance<Text>().firstOrNull()
+                    textElement?.text?.let { textList.add(it) }
+                }
+                is Table -> {
+                    for (child in element.children) {
+                        if (child is Cell) {
+                            textList.addAll(extractAllTextFromCell(child))
+                        }
+                    }
+                }
+                is Cell -> {
+                    textList.addAll(extractAllTextFromCell(element))
+                }
+            }
+        }
+        return textList
     }
 
     private fun annotatedTreatmentMatch(name: String, evaluations: List<Evaluation>, pfs: Measurement? = null, os: Measurement? = null): AnnotatedTreatmentMatch {

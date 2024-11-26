@@ -10,7 +10,6 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.Table
-import com.itextpdf.layout.properties.Property
 
 class PersonalizedEvidenceChapter(private val report: Report, override val include: Boolean) : ReportChapter {
 
@@ -36,8 +35,8 @@ class PersonalizedEvidenceChapter(private val report: Report, override val inclu
 
         val generators = listOf(
             RealWorldTreatmentDecisionsGenerator(personalizedDataAnalysis, eligibleSocTreatments, contentWidth()),
+            RealWorldSurvivalOutcomesGenerator(personalizedDataAnalysis, eligibleSocTreatments, contentWidth(), MeasurementType.OVERALL_SURVIVAL),
             RealWorldSurvivalOutcomesGenerator(personalizedDataAnalysis, eligibleSocTreatments, contentWidth(), MeasurementType.PROGRESSION_FREE_SURVIVAL),
-            RealWorldSurvivalOutcomesGenerator(personalizedDataAnalysis, eligibleSocTreatments, contentWidth(), MeasurementType.OVERALL_SURVIVAL)
         )
 
         generators.forEach { generator ->

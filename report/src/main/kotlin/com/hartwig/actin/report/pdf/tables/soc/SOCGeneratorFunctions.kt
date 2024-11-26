@@ -24,15 +24,15 @@ object SOCGeneratorFunctions {
     fun addEndPointsToTable(analysisGroup: AnalysisGroup?, endPointName: String, subTable: Table) {
         val primaryEndPoint = analysisGroup?.endPoints?.find { it.name == endPointName }
         if (primaryEndPoint?.value != null) {
-            val ciLower = primaryEndPoint.confidenceInterval?.lowerLimit ?: "NA"
-            val ciUpper = primaryEndPoint.confidenceInterval?.upperLimit ?: "NA"
+            val ciLower = primaryEndPoint.confidenceInterval?.lowerLimit ?: NA
+            val ciUpper = primaryEndPoint.confidenceInterval?.upperLimit ?: NA
             subTable.addCell(
                 Cells.createKey(
                     "${primaryEndPoint.value.toString()} ${primaryEndPoint.unitOfMeasure.display()} (95% CI: $ciLower-$ciUpper)"
                 )
             )
         } else {
-            subTable.addCell(Cells.createKey("NE"))
+            subTable.addCell(Cells.createKey(NA))
         }
     }
 
@@ -82,24 +82,40 @@ object SOCGeneratorFunctions {
                     Cells.createContent(subTable)
                 }
 
+                val efficacySubTable = Tables.createFixedWidthCols(25f, 150f).setWidth(175f)
+                val efficacyDataList = listOf(
+                    "PFS" to treatment.generalPfs,
+                    "OS" to treatment.generalOs
+                )
+
+                if (treatment.annotations.isNotEmpty()){
+                    efficacySubTable.addCell(Cells.createValue("\n"))
+                    efficacySubTable.addCell(Cells.createKey("\n"))
+                }
+
+                for ((name, data) in efficacyDataList) {
+                    val value = data?.let {
+                        if (it.numPatients <= MIN_PATIENT_COUNT) NA else {
+                            val iqrString = if (it.iqr != null && !it.iqr!!.isNaN()) {
+                                ", IQR: ${Formats.daysToMonths(it.iqr!!)}"
+                            } else ""
+                            "${Formats.daysToMonths(it.value)} months$iqrString"
+                        }
+                    } ?: NA
+                    efficacySubTable.addCell(Cells.createValue("$name: "))
+                    efficacySubTable.addCell(Cells.createKey(value))
+                }
+
+                val efficacyEvidenceCell = Cells.createContent(efficacySubTable)
+
+
                 val warningMessages = treatment.evaluations.flatMap {
                     it.undeterminedGeneralMessages + it.warnGeneralMessages + if (it.recoverable) it.failGeneralMessages else emptyList()
                 }
                 val warningsCell = Cells.createContent(
                     warningMessages.sorted().distinct().joinToString(Formats.COMMA_SEPARATOR)
                 )
-                val pfsCell = Cells.createContent(
-                    treatment.generalPfs?.run {
-                        if (numPatients <= MIN_PATIENT_COUNT) NA else {
-                            val iqrString = if (iqr != null && !iqr!!.isNaN()) {
-                                ", IQR: ${Formats.daysToMonths(iqr!!)}"
-                            } else ""
-                            Formats.daysToMonths(value) + iqrString
-                        }
-                    } ?: NA
-                )
-
-                sequenceOf(nameCell, annotationsCell, pfsCell, warningsCell)
+                sequenceOf(nameCell, annotationsCell, efficacyEvidenceCell, warningsCell)
             }
     }
 

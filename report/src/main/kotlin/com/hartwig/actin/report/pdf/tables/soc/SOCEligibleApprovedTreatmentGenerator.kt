@@ -24,7 +24,7 @@ class SOCEligibleApprovedTreatmentGenerator(
         }
         val widths = listOf(0.18F, 0.35F, 0.20F, 0.27F).map { it * width }.toFloatArray()
         val table = Tables.createFixedWidthCols(*widths)
-        sequenceOf("Treatment", "Literature efficacy evidence", "PFS general (months)", "Warnings")
+        sequenceOf("Treatment", "Literature efficacy evidence", "Real-World efficacy evidence", "Warnings")
             .map(Cells::createHeader)
             .forEach(table::addHeaderCell)
 
