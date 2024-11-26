@@ -45,7 +45,6 @@ class ToxicityExtractor(
                     evaluatedDate = toxicityEntry.authored,
                     source = ToxicitySource.EHR,
                     grade = grade,
-
                 )
             }
         }
