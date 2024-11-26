@@ -14,8 +14,6 @@ import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabaseFactory
 import com.hartwig.actin.molecular.evidence.ServeLoader
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEvents
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.expandTrials
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.orange.MolecularRecordAnnotator
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
@@ -193,7 +191,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         tumorDoids: Set<String>
     ): Pair<KnownEvents, EvidenceDatabase> {
         val serveRefGenomeVersion = toServeRefGenomeVersion(orangeRefGenomeVersion)
-        val filePath = ServeJson.jsonFilePath(config.serveDirectory)
+        val filePath = ServeJson.jsonFilePath("/home/cbruel")
 
         LOGGER.info("Loading SERVE from {}", filePath)
         val (knownEvents, actionableEvents) = ServeLoader.loadServe(filePath, serveRefGenomeVersion)

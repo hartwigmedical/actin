@@ -90,7 +90,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
 
     private fun loadEvidence(orangeRefGenomeVersion: RefGenomeVersion): List<EfficacyEvidence> {
         val serveRefGenomeVersion = toServeRefGenomeVersion(orangeRefGenomeVersion)
-        val jsonFilePath = ServeJson.jsonFilePath(config.serveDirectory)
+        val jsonFilePath = ServeJson.jsonFilePath("/home/cbruel")
         LOGGER.info("Loading SERVE from {}", jsonFilePath)
         val (_, actionableEvents) = ServeLoader.loadServe(jsonFilePath, serveRefGenomeVersion)
         return actionableEvents.evidences

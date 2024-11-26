@@ -85,7 +85,7 @@ data class TreatmentMatcherConfig(
                 atcTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_TSV),
                 extendedEfficacyJson = ApplicationConfig.nonOptionalFile(cmd, EXTENDED_EFFICACY_JSON),
                 personalizationDataPath = ApplicationConfig.optionalFile(cmd, PERSONALIZATION_DATA_PATH),
-                serveDirectory = ApplicationConfig.nonOptionalDir(cmd, SERVE_DIRECTORY),
+                serveDirectory = "/home/cbruel/",
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
                 runHistorically = runHistorically,
                 overridesYaml = ApplicationConfig.optionalFile(cmd, OVERRIDE_YAML_ARGUMENT)
