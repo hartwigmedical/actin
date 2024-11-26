@@ -160,7 +160,7 @@ object TestClinicalEvidenceFactory {
 
     fun createTestExternalTrial(): ExternalTrial {
         return createExternalTrial(
-            "treatment",
+            "",
             setOf(
                 createCountry(CountryName.NETHERLANDS, mapOf("Leiden" to setOf(Hospital("LUMC", false)))),
                 createCountry(CountryName.BELGIUM, mapOf("Brussels" to emptySet()))

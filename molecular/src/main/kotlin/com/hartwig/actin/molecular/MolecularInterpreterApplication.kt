@@ -13,6 +13,7 @@ import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabaseFactory
+import com.hartwig.actin.molecular.evidence.ServeLoader
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEvents
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.expandTrials
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
@@ -195,12 +196,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val filePath = ServeJson.jsonFilePath(config.serveDirectory)
 
         LOGGER.info("Loading SERVE from {}", filePath)
-        val serveDatabase = ServeJson.read(filePath)
-        val serveRecord = serveDatabase.records()[serveRefGenomeVersion]
-        val knownEvents =
-            serveRecord?.knownEvents() ?: throw IllegalStateException("No serve record for ref genome version $serveRefGenomeVersion")
-        val expandedTrials = expandTrials(serveRecord.trials())
-        val actionableEvents = ActionableEvents(serveRecord.evidences(), expandedTrials)
+        val (knownEvents, actionableEvents) = ServeLoader.loadServe(filePath, serveRefGenomeVersion)
         val evidenceDatabase = EvidenceDatabaseFactory.create(knownEvents, actionableEvents, doidEntry, tumorDoids)
 
         return Pair(knownEvents, evidenceDatabase)

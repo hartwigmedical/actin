@@ -28,7 +28,9 @@ object ActionableEventsExtraction {
         } else if (efficacyEvidence.molecularCriterium().exons().isNotEmpty()) {
             efficacyEvidence.molecularCriterium().exons().iterator().next()
         } else {
-            throw IllegalStateException("Neither codon nor range present in trial on actionable range: ${efficacyEvidence.molecularCriterium()}")
+            throw IllegalStateException(
+                "Neither codon nor range present in trial on actionable range: ${efficacyEvidence.molecularCriterium()}"
+            )
         }
     }
 
@@ -119,38 +121,31 @@ object ActionableEventsExtraction {
         trials: List<ActionableTrial>,
         molecularCriteriumPredicate: Predicate<MolecularCriterium>
     ): List<ActionableTrial> {
-        val filteredTrials: MutableList<ActionableTrial> = mutableListOf()
-        for (trial in trials) {
-            for (criterium in trial.anyMolecularCriteria()) {
-                if (molecularCriteriumPredicate.test(criterium)) {
-                    filteredTrials.add(trial)
-                }
+        return trials.filter { trial ->
+            trial.anyMolecularCriteria().any { criterium ->
+                molecularCriteriumPredicate.test(criterium)
             }
         }
-        return filteredTrials
     }
 
     fun expandTrials(
         trials: List<ActionableTrial>
     ): List<ActionableTrial> {
-        val expandededTrials: MutableList<ActionableTrial> = mutableListOf()
-        for (trial in trials) {
-            for (criterium in trial.anyMolecularCriteria()) {
-                expandededTrials.addAll(expandWithIndicationAndCriterium(trial, criterium))
-            }
+        return trials.flatMap { trial ->
+            trial.anyMolecularCriteria().flatMap { criterium -> expandWithIndicationAndCriterium(trial, criterium) }
         }
-        return expandededTrials
     }
 
     private fun expandWithIndicationAndCriterium(
         baseTrial: ActionableTrial,
         criterium: MolecularCriterium
     ): List<ActionableTrial> {
-        val expandedTrials: MutableList<ActionableTrial> = mutableListOf()
-        val trialBuilder = ImmutableActionableTrial.builder().from(baseTrial).anyMolecularCriteria(listOf(criterium))
-        for (indication in baseTrial.indications()) {
-            expandedTrials.add(trialBuilder.indications(listOf(indication)).build())
+        return baseTrial.indications().map { indication ->
+            ImmutableActionableTrial.builder()
+                .from(baseTrial)
+                .anyMolecularCriteria(listOf(criterium))
+                .indications(listOf(indication))
+                .build()
         }
-        return expandedTrials
     }
 }

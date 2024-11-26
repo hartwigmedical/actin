@@ -193,7 +193,7 @@ class PanelFusionAnnotatorTest {
                 evidence = ClinicalEvidence(
                     treatmentEvidence = setOf(
                         treatment(
-                            treatment = "intervention",
+                            treatment = "treatment",
                             evidenceLevel = EvidenceLevel.A,
                             evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
                             direction = EvidenceDirection(hasPositiveResponse = true, isCertain = true, hasBenefit = true),
@@ -228,7 +228,7 @@ class PanelFusionAnnotatorTest {
                 evidence = ClinicalEvidence(
                     treatmentEvidence = setOf(
                         treatment(
-                            treatment = "intervention",
+                            treatment = "treatment",
                             evidenceLevel = EvidenceLevel.A,
                             evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
                             direction = EvidenceDirection(hasPositiveResponse = true, isCertain = true, hasBenefit = true),

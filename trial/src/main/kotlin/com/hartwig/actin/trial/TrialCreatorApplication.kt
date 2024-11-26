@@ -7,6 +7,7 @@ import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
+import com.hartwig.actin.molecular.evidence.ServeLoader
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
 import com.hartwig.actin.trial.interpretation.TrialIngestion
 import com.hartwig.actin.trial.serialization.TrialJson
@@ -38,9 +39,8 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
         LOGGER.info("Loading known genes from serve db {}", config.serveDbJson)
-        val serveDatabase = ServeJson.read(config.serveDbJson)
-        val serveRecord = serveDatabase.records()[RefGenome.V37] //TODO (CB): shouldn't be hard coded?
-        val knownGenes = serveRecord?.knownEvents()?.genes() ?: throw IllegalStateException("No serve record for ref genome version 37")
+        val (knownEvents, _) = ServeLoader.loadServe(config.serveDbJson, RefGenome.V37)
+        val knownGenes = knownEvents.genes()
         LOGGER.info(" Loaded {} known genes", knownGenes.size)
         val geneFilter = GeneFilterFactory.createFromKnownGenes(knownGenes)
 

@@ -159,7 +159,7 @@ class PanelVariantAnnotatorTest {
             ClinicalEvidence(
                 treatmentEvidence = setOf(
                     treatment(
-                        treatment = "intervention",
+                        treatment = "treatment",
                         evidenceLevel = EvidenceLevel.A,
                         evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
                         direction = EvidenceDirection(hasPositiveResponse = true, isCertain = true, hasBenefit = true),

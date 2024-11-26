@@ -146,7 +146,7 @@ object TestServeActionabilityFactory {
     fun createEfficacyEvidence(
         molecularCriterium: MolecularCriterium,
         source: Knowledgebase = Knowledgebase.CKB,
-        intervention: String = "intervention",
+        treatment: String = "treatment",
         direction: EvidenceDirection = EvidenceDirection.NO_BENEFIT,
         level: EvidenceLevel = EvidenceLevel.D,
         indication: Indication = ImmutableIndication.builder().applicableType(ImmutableCancerType.builder().name("").doid("").build())
@@ -162,7 +162,7 @@ object TestServeActionabilityFactory {
             }
 
             override fun treatment(): Treatment {
-                return ImmutableTreatment.builder().name(intervention).build()
+                return ImmutableTreatment.builder().name(treatment).build()
             }
 
             override fun indication(): Indication {
@@ -196,11 +196,13 @@ object TestServeActionabilityFactory {
     }
 
     fun createActionableTrial(
-        molecularCriterium: MolecularCriterium,
+        molecularCriteria: Set<MolecularCriterium>,
         source: Knowledgebase = Knowledgebase.CKB,
-        interventionName: String,
-        indication: Indication = ImmutableIndication.builder().applicableType(ImmutableCancerType.builder().name("").doid("").build())
-            .excludedSubTypes(emptySet()).build()
+        treatment: String = "",
+        indications: Set<Indication> = setOf(
+            ImmutableIndication.builder().applicableType(ImmutableCancerType.builder().name("").doid("").build())
+                .excludedSubTypes(emptySet()).build()
+        )
     ): ActionableTrial {
         return object : ActionableTrial() {
             override fun source(): Knowledgebase {
@@ -216,7 +218,7 @@ object TestServeActionabilityFactory {
             }
 
             override fun acronym(): String {
-                return interventionName
+                return ""
             }
 
             override fun countries(): Set<Country> {
@@ -224,7 +226,7 @@ object TestServeActionabilityFactory {
             }
 
             override fun therapyNames(): Set<String> {
-                return setOf(interventionName)
+                return setOf(treatment)
             }
 
             override fun genderCriterium(): GenderCriterium? {
@@ -232,11 +234,11 @@ object TestServeActionabilityFactory {
             }
 
             override fun indications(): Set<Indication> {
-                return setOf(indication)
+                return indications
             }
 
             override fun anyMolecularCriteria(): Set<MolecularCriterium> {
-                return setOf(molecularCriterium)
+                return molecularCriteria
             }
 
             override fun urls(): Set<String> {

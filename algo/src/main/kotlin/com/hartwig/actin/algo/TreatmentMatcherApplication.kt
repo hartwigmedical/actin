@@ -15,6 +15,7 @@ import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
+import com.hartwig.actin.molecular.evidence.ServeLoader.loadServe
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.serialization.TrialJson
@@ -91,9 +92,8 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val serveRefGenomeVersion = toServeRefGenomeVersion(orangeRefGenomeVersion)
         val jsonFilePath = ServeJson.jsonFilePath(config.serveDirectory)
         LOGGER.info("Loading SERVE from {}", jsonFilePath)
-        val serveDatabase = ServeJson.read(jsonFilePath)
-        val serveRecord = serveDatabase.records()[serveRefGenomeVersion]
-        return serveRecord?.evidences() ?: throw IllegalStateException("No serve record for ref genome version $serveRefGenomeVersion")
+        val (_, actionableEvents) = loadServe(jsonFilePath, serveRefGenomeVersion)
+        return actionableEvents.evidences
     }
 
     private fun toServeRefGenomeVersion(refGenomeVersion: RefGenomeVersion): RefGenome {

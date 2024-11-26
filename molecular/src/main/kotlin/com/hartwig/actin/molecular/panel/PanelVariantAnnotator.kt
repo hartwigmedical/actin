@@ -27,6 +27,7 @@ import com.hartwig.actin.tools.variant.VariantAnnotator
 import com.hartwig.serve.datamodel.molecular.hotspot.KnownHotspot
 import com.hartwig.serve.datamodel.molecular.range.KnownCodon
 import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
+import com.hartwig.serve.datamodel.molecular.common.GeneAlteration as ServeGeneAlteration
 
 private val SERVE_HOTSPOT_PROTEIN_EFFECTS = setOf(
     ServeProteinEffect.LOSS_OF_FUNCTION,
@@ -35,7 +36,7 @@ private val SERVE_HOTSPOT_PROTEIN_EFFECTS = setOf(
     ServeProteinEffect.GAIN_OF_FUNCTION_PREDICTED
 )
 
-fun isHotspot(geneAlteration: com.hartwig.serve.datamodel.molecular.common.GeneAlteration?): Boolean {
+fun isHotspot(geneAlteration: ServeGeneAlteration?): Boolean {
     return (geneAlteration is KnownHotspot || geneAlteration is KnownCodon) && geneAlteration.proteinEffect() in SERVE_HOTSPOT_PROTEIN_EFFECTS
 }
 
@@ -151,7 +152,7 @@ class PanelVariantAnnotator(
         variant: SequencedVariant,
         evidence: ClinicalEvidence,
         geneAlteration: GeneAlteration,
-        serveGeneAlteration: com.hartwig.serve.datamodel.molecular.common.GeneAlteration?,
+        serveGeneAlteration: ServeGeneAlteration?,
         transcriptAnnotation: com.hartwig.actin.tools.variant.Variant,
         paveResponse: PaveResponse
     ) = Variant(
