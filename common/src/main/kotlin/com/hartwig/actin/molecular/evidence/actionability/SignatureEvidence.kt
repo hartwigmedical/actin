@@ -26,12 +26,10 @@ internal class SignatureEvidence private constructor(private val signatureCharac
     private fun findMatches(hasCharacteristic: Boolean, typeToFind: TumorCharacteristicType): ActionableEvents {
         return if (!hasCharacteristic) ActionableEvents() else {
             val evidences = signatureCharacteristics.evidences.filter {
-                ActionableEventsExtraction.extractCharacteristic(it)
-                    .type() == typeToFind
+                ActionableEventsExtraction.extractCharacteristic(it).type() == typeToFind
             }
             val trials = signatureCharacteristics.trials.filter {
-                ActionableEventsExtraction.extractCharacteristic(it)
-                    .type() == typeToFind
+                ActionableEventsExtraction.extractCharacteristic(it).type() == typeToFind
             }
             ActionableEvents(evidences, trials)
         }

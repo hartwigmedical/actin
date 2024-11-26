@@ -11,12 +11,10 @@ class HomozygousDisruptionEvidence(private val actionableGenes: ActionableEvents
 
     override fun findMatches(event: HomozygousDisruption): ActionableEvents {
         val evidences = actionableGenes.evidences.filter {
-            ActionableEventsExtraction.extractGene(it)
-                .gene() == event.gene
+            ActionableEventsExtraction.extractGene(it).gene() == event.gene
         }
         val trials = actionableGenes.trials.filter {
-            ActionableEventsExtraction.extractGene(it)
-                .gene() == event.gene
+            ActionableEventsExtraction.extractGene(it).gene() == event.gene
         }
         return ActionableEvents(evidences, trials)
     }

@@ -2,10 +2,10 @@ package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterTrials
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterEfficacyEvidence
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.geneFilter
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractGene
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterEfficacyEvidence
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterTrials
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.geneFilter
 import com.hartwig.actin.molecular.evidence.matching.EvidenceMatcher
 import com.hartwig.serve.datamodel.molecular.gene.ActionableGene
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
@@ -57,13 +57,13 @@ class CopyNumberEvidence(
         }
 
         private fun findMatches(copyNumber: CopyNumber, actionableEvents: ActionableEvents): ActionableEvents {
-            return ActionableEvents(actionableEvents.evidences.filter {
-                extractGene(it)
-                    .gene() == copyNumber.gene
-            }, actionableEvents.trials.filter {
-                extractGene(it)
-                    .gene() == copyNumber.gene
-            })
+            return ActionableEvents(
+                actionableEvents.evidences.filter {
+                    extractGene(it).gene() == copyNumber.gene
+                },
+                actionableEvents.trials.filter {
+                    extractGene(it).gene() == copyNumber.gene
+                })
         }
     }
 }

@@ -65,7 +65,6 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
         )
     }
 
-
     private fun annotateVariant(variant: Variant): Variant {
         val evidence = if (variant.driverLikelihood == DriverLikelihood.HIGH) {
             ClinicalEvidenceFactory.create(evidenceDatabase.evidenceForVariant(createCriteria(variant)))
