@@ -13,8 +13,6 @@ import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.efficacy.EfficacyEntry
 import com.hartwig.actin.datamodel.trial.Trial
 
-
-
 class TreatmentMatcher(
     private val trialMatcher: TrialMatcher,
     private val recommendationEngine: RecommendationEngine,

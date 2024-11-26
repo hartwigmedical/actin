@@ -31,7 +31,7 @@ class RealWorldSurvivalOutcomesGenerator(
                 .addCell(Cells.createContentNoBorder("There are no standard of care treatment options for this patient"))
         } else {
             val content = SOCPersonalizedTableContent.fromPersonalizedDataAnalysis(
-                analysis, eligibleTreatments.toSet(), measurementType
+                analysis, eligibleTreatments, measurementType
             ) { measurement ->
                 when {
                     measurement.value.isNaN() -> TableElement.regular("-")
