@@ -9,6 +9,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.sort.driver.CopyNumberComparator
 
 data class CopyNumber(
+    // TODO (KD): Change datamodel to 1) canonicalImpact (type, minCopies, maxCopies) 2) otherImpacts (type, minCopies, maxCopies)
     val type: CopyNumberType,
     val minCopies: Int,
     val maxCopies: Int,
