@@ -135,7 +135,7 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun getsAnyOtherSubstrateOrInhibitingMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val types = functionInputResolver().createManyStringsInput(function).strings
+            val types = functionInputResolver().createManyStringsInput(function)
             CurrentlyGetsAnyOtherSubstrateOrInhibitingMedication(selector, types)
         }
     }
