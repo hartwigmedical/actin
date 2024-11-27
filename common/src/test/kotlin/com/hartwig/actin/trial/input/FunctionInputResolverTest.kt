@@ -20,6 +20,7 @@ import com.hartwig.actin.trial.input.single.ManyGenes
 import com.hartwig.actin.trial.input.single.ManyIntents
 import com.hartwig.actin.trial.input.single.ManyIntentsOneInteger
 import com.hartwig.actin.trial.input.single.ManySpecificTreatmentsTwoIntegers
+import com.hartwig.actin.trial.input.single.ManyStrings
 import com.hartwig.actin.trial.input.single.OneCyp
 import com.hartwig.actin.trial.input.single.OneCypOneInteger
 import com.hartwig.actin.trial.input.single.OneDoubleOneGender
@@ -403,6 +404,17 @@ class FunctionInputResolverTest {
 
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("1", "string")))!!).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with many strings`() {
+        val rule = firstOfType(FunctionInput.MANY_STRINGS)
+        val valid = create(rule, listOf("BRAF;KRAS"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val expected = ManyStrings(listOf("BRAF", "KRAS"))
+        assertThat(resolver.createManyStringsInput(valid)).isEqualTo(expected)
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
     }
 
     @Test

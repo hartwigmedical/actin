@@ -140,6 +140,10 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
                 listOf("string", "1")
             }
 
+            FunctionInput.MANY_STRINGS -> {
+                listOf("string1;string2")
+            }
+
             FunctionInput.MANY_STRINGS_ONE_INTEGER -> {
                 listOf("string1;string2", "1")
             }

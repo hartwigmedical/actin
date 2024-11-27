@@ -26,6 +26,7 @@ import com.hartwig.actin.trial.input.single.ManyGenes
 import com.hartwig.actin.trial.input.single.ManyIntents
 import com.hartwig.actin.trial.input.single.ManyIntentsOneInteger
 import com.hartwig.actin.trial.input.single.ManySpecificTreatmentsTwoIntegers
+import com.hartwig.actin.trial.input.single.ManyStrings
 import com.hartwig.actin.trial.input.single.OneCyp
 import com.hartwig.actin.trial.input.single.OneCypOneInteger
 import com.hartwig.actin.trial.input.single.OneDoidTermOneInteger
@@ -202,6 +203,11 @@ class FunctionInputResolver(
 
                 FunctionInput.ONE_STRING_ONE_INTEGER -> {
                     createOneStringOneIntegerInput(function)
+                    return true
+                }
+
+                FunctionInput.MANY_STRINGS -> {
+                    createManyStringsInput(function)
                     return true
                 }
 
@@ -524,6 +530,13 @@ class FunctionInputResolver(
         return OneIntegerOneString(
             string = parameterAsString(function, 0),
             integer = parameterAsInt(function, 1)
+        )
+    }
+
+    fun createManyStringsInput(function: EligibilityFunction): ManyStrings {
+        assertParamConfig(function, FunctionInput.MANY_STRINGS, 1)
+        return ManyStrings(
+            strings = toStringList(function.parameters.first())
         )
     }
 
