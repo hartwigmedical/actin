@@ -60,7 +60,7 @@ internal object MolecularTestFactory {
     fun withCopyNumberAndPriorIHCTests(copyNumber: CopyNumber, priorIHCTests: List<PriorIHCTest>): PatientRecord {
         val molecular = baseMolecular.copy(
             characteristics = MolecularCharacteristics(0.80, 3.0),
-            drivers = baseMolecular.drivers.copy(copyNumbers = setOf(copyNumber))
+            drivers = baseMolecular.drivers.copy(copyNumbers = listOf(copyNumber))
         )
         return base.copy(priorIHCTests = priorIHCTests, molecularHistory = MolecularHistory(listOf(molecular)))
     }
@@ -77,7 +77,7 @@ internal object MolecularTestFactory {
         return withMolecularRecord(
             baseMolecular.copy(
                 characteristics = baseMolecular.characteristics.copy(hasHighTumorMutationalLoad = hasHighTumorMutationalLoad),
-                drivers = baseMolecular.drivers.copy(variants = setOf(*variants))
+                drivers = baseMolecular.drivers.copy(variants = listOf(*variants))
             )
         )
     }
@@ -91,7 +91,7 @@ internal object MolecularTestFactory {
             baseMolecular.copy(
                 characteristics = baseMolecular.characteristics.copy(hasHighTumorMutationalLoad = hasHighTumorMutationalLoad),
                 drivers = baseMolecular.drivers.copy(
-                    variants = setOf(variant), disruptions = setOf(disruption)
+                    variants = listOf(variant), disruptions = listOf(disruption)
                 )
             )
         )
@@ -236,7 +236,7 @@ internal object MolecularTestFactory {
         return withMolecularRecord(
             baseMolecular.copy(
                 characteristics = baseMolecular.characteristics.copy(isHomologousRepairDeficient = isHomologousRepairDeficient),
-                drivers = baseMolecular.drivers.copy(variants = setOf(variant), disruptions = setOf(disruption))
+                drivers = baseMolecular.drivers.copy(variants = listOf(variant), disruptions = listOf(disruption))
             )
         )
     }
@@ -306,11 +306,11 @@ internal object MolecularTestFactory {
         return withMolecularRecord(
             baseMolecular.copy(
                 drivers = Drivers(
-                    variants = drivers.filterIsInstance<Variant>().toSet(),
-                    copyNumbers = drivers.filterIsInstance<CopyNumber>().toSet(),
-                    homozygousDisruptions = drivers.filterIsInstance<HomozygousDisruption>().toSet(),
-                    disruptions = drivers.filterIsInstance<Disruption>().toSet(),
-                    fusions = drivers.filterIsInstance<Fusion>().toSet()
+                    variants = drivers.filterIsInstance<Variant>().toList(),
+                    copyNumbers = drivers.filterIsInstance<CopyNumber>().toList(),
+                    homozygousDisruptions = drivers.filterIsInstance<HomozygousDisruption>().toList(),
+                    disruptions = drivers.filterIsInstance<Disruption>().toList(),
+                    fusions = drivers.filterIsInstance<Fusion>().toList()
                 )
             )
         )
@@ -322,11 +322,11 @@ internal object MolecularTestFactory {
 
     private fun withCharacteristicsAndDriver(characteristics: MolecularCharacteristics, driver: Driver?): PatientRecord {
         val drivers = when (driver) {
-            is Variant -> baseMolecular.drivers.copy(variants = setOf(driver))
-            is CopyNumber -> baseMolecular.drivers.copy(copyNumbers = setOf(driver))
-            is HomozygousDisruption -> baseMolecular.drivers.copy(homozygousDisruptions = setOf(driver))
-            is Disruption -> baseMolecular.drivers.copy(disruptions = setOf(driver))
-            is Fusion -> baseMolecular.drivers.copy(fusions = setOf(driver))
+            is Variant -> baseMolecular.drivers.copy(variants = listOf(driver))
+            is CopyNumber -> baseMolecular.drivers.copy(copyNumbers = listOf(driver))
+            is HomozygousDisruption -> baseMolecular.drivers.copy(homozygousDisruptions = listOf(driver))
+            is Disruption -> baseMolecular.drivers.copy(disruptions = listOf(driver))
+            is Fusion -> baseMolecular.drivers.copy(fusions = listOf(driver))
             else -> baseMolecular.drivers
         }
         return withMolecularRecord(baseMolecular.copy(characteristics = characteristics, drivers = drivers))

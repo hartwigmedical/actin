@@ -12,9 +12,9 @@ object DriverTableFunctions {
             .groupBy({ it.first }, { it.second }).mapValues { (_, value) -> value.toSet() }
     }
 
-    fun allDrivers(molecularHistory: MolecularHistory): List<Pair<MolecularTest, Set<Driver>>> =
+    fun allDrivers(molecularHistory: MolecularHistory): List<Pair<MolecularTest, List<Driver>>> =
         molecularHistory.molecularTests.map { it to allDrivers(it) }
 
-    fun allDrivers(molecularTest: MolecularTest): Set<Driver> =
+    fun allDrivers(molecularTest: MolecularTest): List<Driver> =
         with(molecularTest.drivers) { variants + fusions + viruses + copyNumbers + disruptions }
 }

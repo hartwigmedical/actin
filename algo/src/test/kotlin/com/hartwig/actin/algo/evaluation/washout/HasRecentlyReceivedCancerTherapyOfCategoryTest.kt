@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
@@ -46,7 +46,6 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         val atc = AtcTestFactory.atcClassification("category to find")
         val medications = listOf(WashoutTestFactory.medication(atc, REFERENCE_DATE.minusDays(1)))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(WashoutTestFactory.withMedications(medications)))
-
     }
 
     @Test
@@ -147,7 +146,7 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
             TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = null)
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, result)
-        Assertions.assertThat(result.recoverable).isTrue()
+        assertThat(result.recoverable).isTrue()
     }
 
     @Test

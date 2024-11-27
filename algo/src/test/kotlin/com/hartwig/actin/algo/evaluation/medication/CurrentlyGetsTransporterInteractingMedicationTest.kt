@@ -4,10 +4,11 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.DrugInteraction
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class CurrentlyGetsTransporterInteractingMedicationTest {
+
     private val alwaysActiveFunction =
         CurrentlyGetsTransporterInteractingMedication(MedicationTestFactory.alwaysActive(), "BCRP", DrugInteraction.Type.SUBSTRATE)
     private val alwaysPlannedFunction =
@@ -49,7 +50,6 @@ class CurrentlyGetsTransporterInteractingMedicationTest {
         )
     }
 
-
     @Test
     fun `Should fail when patient uses no medication`() {
         EvaluationAssert.assertEvaluation(
@@ -63,9 +63,10 @@ class CurrentlyGetsTransporterInteractingMedicationTest {
         val medicationNotProvided = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = null)
         val alwaysPlannedResult = alwaysPlannedFunction.evaluate(medicationNotProvided)
         EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, alwaysPlannedResult)
-        Assertions.assertThat(alwaysPlannedResult.recoverable).isTrue()
+        assertThat(alwaysPlannedResult.recoverable).isTrue()
+
         val alwaysActiveResult = alwaysActiveFunction.evaluate(medicationNotProvided)
         EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, alwaysActiveResult)
-        Assertions.assertThat(alwaysActiveResult.recoverable).isTrue()
+        assertThat(alwaysActiveResult.recoverable).isTrue()
     }
 }
