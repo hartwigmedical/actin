@@ -7,11 +7,10 @@ object TestTrialFactory {
     fun createMinimalTestTrial(): Trial {
         return Trial(
             identification = TrialIdentification(
-                trialId = TEST_TRIAL,
+                nctId = TEST_TRIAL,
                 open = true,
                 acronym = "",
-                title = "",
-                nctId = null
+                title = ""
             ),
             cohorts = emptyList(),
             generalEligibility = emptyList()

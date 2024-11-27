@@ -67,43 +67,43 @@ class TrialConfigDatabaseValidatorTest {
         private const val TRIAL_ID_2 = "trial 2"
         private const val TRIAL_ID_3 = "trial 3"
 
-        val TRIAL_DEFINITION_1 = TestTrialDefinitionConfigFactory.MINIMAL.copy(trialId = TRIAL_ID_1, open = true)
-        val TRIAL_DEFINITION_3 = TestTrialDefinitionConfigFactory.MINIMAL.copy(trialId = TRIAL_ID_3, open = true, phase = "invalid phase")
+        val TRIAL_DEFINITION_1 = TestTrialDefinitionConfigFactory.MINIMAL.copy(nctId = TRIAL_ID_1, open = true)
+        val TRIAL_DEFINITION_3 = TestTrialDefinitionConfigFactory.MINIMAL.copy(nctId = TRIAL_ID_3, open = true, phase = "invalid phase")
 
         private val COHORT_DEFINITION_1 = TestCohortDefinitionConfigFactory.MINIMAL.copy(
-            trialId = TRIAL_ID_1, evaluable = true, open = true, slotsAvailable = true, ignore = false, cohortId = "A"
+            nctId = TRIAL_ID_1, evaluable = true, open = true, slotsAvailable = true, ignore = false, cohortId = "A"
         )
         private val COHORT_DEFINITION_2 = TestCohortDefinitionConfigFactory.MINIMAL.copy(
-            trialId = TRIAL_ID_2, evaluable = true, open = true, slotsAvailable = false, ignore = false, cohortId = "A"
+            nctId = TRIAL_ID_2, evaluable = true, open = true, slotsAvailable = false, ignore = false, cohortId = "A"
         )
 
         private val INCLUSION_CRITERIA_1 = InclusionCriteriaConfig(
-            trialId = TRIAL_ID_1,
+            nctId = TRIAL_ID_1,
             referenceIds = setOf("I-01"),
             appliesToCohorts = setOf("B"),
             inclusionRule = EligibilityRule.IS_AT_LEAST_X_YEARS_OLD.toString()
         )
 
         private val INCLUSION_CRITERIA_2 = InclusionCriteriaConfig(
-            trialId = TRIAL_ID_2,
+            nctId = TRIAL_ID_2,
             referenceIds = setOf("I-02"),
             appliesToCohorts = setOf("A"),
             inclusionRule = EligibilityRule.IS_AT_LEAST_X_YEARS_OLD.toString()
         )
 
         private val INCLUSION_CRITERIA_3 = InclusionCriteriaConfig(
-            trialId = TRIAL_ID_1,
+            nctId = TRIAL_ID_1,
             referenceIds = emptySet(),
             appliesToCohorts = setOf("A"),
             inclusionRule = "not a valid inclusion criterion"
         )
 
         private val INCLUSION_REFERENCE_CONFIG_1 = InclusionCriteriaReferenceConfig(
-            trialId = "does not exist", referenceId = "I-01", referenceText = "irrelevant"
+            nctId = "does not exist", referenceId = "I-01", referenceText = "irrelevant"
         )
 
         private val INCLUSION_REFERENCE_CONFIG_2 = InclusionCriteriaReferenceConfig(
-            trialId = TRIAL_ID_2,
+            nctId = TRIAL_ID_2,
             referenceId = "I-02",
             referenceText = "Some rule",
         )
@@ -118,7 +118,7 @@ class TrialConfigDatabaseValidatorTest {
                 ),
                 cohortDefinitionConfigs = listOf(
                     COHORT_DEFINITION_1, COHORT_DEFINITION_1, TestCohortDefinitionConfigFactory.MINIMAL.copy(
-                        trialId = TRIAL_ID_2, evaluable = true, open = true, slotsAvailable = false, ignore = false, cohortId = "A"
+                        nctId = TRIAL_ID_2, evaluable = true, open = true, slotsAvailable = false, ignore = false, cohortId = "A"
                     )
                 ),
                 inclusionCriteriaConfigs = listOf(INCLUSION_CRITERIA_1, INCLUSION_CRITERIA_2, INCLUSION_CRITERIA_3),

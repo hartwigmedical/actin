@@ -3,7 +3,7 @@ package com.hartwig.actin.trial.config
 object TestCohortDefinitionConfigFactory {
 
     val MINIMAL = CohortDefinitionConfig(
-        trialId = "",
+        nctId = "",
         cohortId = "",
         externalCohortIds = emptySet(),
         evaluable = true,

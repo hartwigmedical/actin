@@ -22,8 +22,6 @@ import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
-const val CTC_TRIAL_PREFIX = "MEC"
-
 class TrialCreatorApplication(private val config: TrialCreatorConfig) {
 
     fun run() {
@@ -76,7 +74,6 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
 
         return TrialStatusConfigInterpreter(
             TrialStatusDatabaseReader().read(configDirectory),
-            CTC_TRIAL_PREFIX,
             ignoreNewTrials = configuration.ignoreAllNewTrialsInTrialStatusDatabase
         )
     }

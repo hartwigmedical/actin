@@ -17,10 +17,10 @@ import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.util.json.Json
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
 import java.io.File
 import java.io.FileReader
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
 object HistoricTreatmentMatchDeserializer {
 
@@ -66,11 +66,10 @@ object HistoricTreatmentMatchDeserializer {
 
     private fun extractIdentification(identification: JsonObject): TrialIdentification {
         return TrialIdentification(
-            trialId = Json.string(identification, "trialId"),
+            nctId = Json.string(identification, "nctId"),
             open = Json.bool(identification, "open"),
             acronym = Json.string(identification, "acronym"),
             title = Json.string(identification, "title"),
-            nctId = null,
             phase = null
         )
     }

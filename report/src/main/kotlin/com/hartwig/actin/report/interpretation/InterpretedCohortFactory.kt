@@ -18,7 +18,7 @@ object InterpretedCohortFactory {
             val trialFails = extractFails(trialMatch.evaluations)
             val trialInclusionEvents = extractInclusionEvents(trialMatch.evaluations)
             val identification = trialMatch.identification
-            val trialId = identification.trialId
+            val trialId = identification.nctId
             val acronym = identification.acronym
             val trialIsOpen = identification.open
             val phase = identification.phase
@@ -69,7 +69,7 @@ object InterpretedCohortFactory {
             val identification = trialMatch.identification
             trialMatch.nonEvaluableCohorts.map { cohortMetadata: CohortMetadata ->
                 InterpretedCohort(
-                    trialId = identification.trialId,
+                    trialId = identification.nctId,
                     acronym = identification.acronym,
                     name = cohortMetadata.description,
                     isOpen = identification.open && cohortMetadata.open,

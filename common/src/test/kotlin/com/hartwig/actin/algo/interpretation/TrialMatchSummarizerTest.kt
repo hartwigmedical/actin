@@ -14,7 +14,7 @@ class TrialMatchSummarizerTest {
         assertThat(summary.cohortCount).isEqualTo(4)
         assertThat(summary.eligibleTrialMap).hasSize(2)
 
-        val eligibleCohorts = summary.eligibleTrialMap.entries.first { (key, _) -> key.trialId == "Test Trial 1" }.value
+        val eligibleCohorts = summary.eligibleTrialMap.entries.first { (key, _) -> key.nctId == "NCT00000010" }.value
         assertThat(eligibleCohorts.map(CohortMetadata::cohortId)).containsExactlyInAnyOrder("A", "B")
     }
 }

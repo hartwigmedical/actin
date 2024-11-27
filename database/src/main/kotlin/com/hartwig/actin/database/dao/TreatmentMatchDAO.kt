@@ -73,7 +73,7 @@ class TreatmentMatchDAO(private val context: DSLContext) {
         )
             .values(
                 treatmentMatchId,
-                trialMatch.identification.trialId,
+                trialMatch.identification.nctId,
                 trialMatch.identification.open,
                 trialMatch.identification.acronym,
                 trialMatch.identification.title,
@@ -216,7 +216,7 @@ class TreatmentMatchDAO(private val context: DSLContext) {
             val dbRecord = transactionContext.newRecord(Tables.TRIALMATCH)
             dbRecord.from(trialMatch.identification)
             dbRecord.set(Tables.TRIALMATCH.TREATMENTMATCHID, treatmentMatchId)
-            dbRecord.set(Tables.TRIALMATCH.CODE, trialMatch.identification.trialId)
+            dbRecord.set(Tables.TRIALMATCH.CODE, trialMatch.identification.nctId)
             dbRecord.set(Tables.TRIALMATCH.ISELIGIBLE, trialMatch.isPotentiallyEligible)
             trialMatch to dbRecord
         }

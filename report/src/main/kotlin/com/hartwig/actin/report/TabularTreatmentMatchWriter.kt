@@ -26,7 +26,7 @@ object TabularTreatmentMatchWriter {
                     val cohortLine = listOf(
                         treatmentMatch.patientId,
                         treatmentMatch.sampleId,
-                        trialMatch.identification.trialId,
+                        trialMatch.identification.nctId,
                         trialMatch.identification.acronym,
                         cohortMatch.metadata.cohortId,
                         cohortMatch.metadata.description,
@@ -42,7 +42,7 @@ object TabularTreatmentMatchWriter {
                     val trialLine = listOf(
                         treatmentMatch.patientId,
                         treatmentMatch.sampleId,
-                        trialMatch.identification.trialId,
+                        trialMatch.identification.nctId,
                         trialMatch.identification.acronym,
                         "",
                         "",
@@ -106,7 +106,7 @@ object TabularTreatmentMatchWriter {
         val lines = listOf(
             DATE_FORMAT.format(treatmentMatch.referenceDate),
             treatmentMatch.referenceDateIsLive.toString(),
-            trialMatch.identification.trialId,
+            trialMatch.identification.nctId,
             trialMatch.identification.acronym,
             trialMatch.identification.open.toString(),
             trialMatch.cohorts.isNotEmpty().toString(),

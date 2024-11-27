@@ -9,11 +9,10 @@ import com.hartwig.actin.trial.config.TrialDefinitionValidationError
 
 class TrialStatusConfigInterpreter(
     private val trialStatusDatabase: TrialStatusDatabase,
-    trialPrefix: String? = null,
     private val ignoreNewTrials: Boolean = false
 ) {
 
-    private val trialStatusDatabaseExtractor = TrialStatusDatabaseExtractor(trialStatusDatabase, trialPrefix)
+    private val trialStatusDatabaseExtractor = TrialStatusDatabaseExtractor(trialStatusDatabase)
     private val trialDefinitionValidationErrors = mutableListOf<TrialDefinitionValidationError>()
     private val cohortDefinitionValidationErrors = mutableListOf<CohortDefinitionValidationError>()
     private val trialStatusConfigValidationErrors = mutableListOf<TrialStatusConfigValidationError>()
@@ -40,34 +39,15 @@ class TrialStatusConfigInterpreter(
         val (openInTrialStatusDatabase, interpreterValidationErrors) = TrialStatusInterpreter.isOpen(
             trialStatusDatabase.entries,
             trialConfig,
-            trialStatusDatabaseExtractor::constructTrialId
+            CohortStatusEntry::nctId
         )
         trialDefinitionValidationErrors.addAll(interpreterValidationErrors)
-
-        if (trialStatusDatabase.studiesNotInTrialStatusDatabase.contains(trialConfig.trialId) && openInTrialStatusDatabase != null) {
-            trialStatusConfigValidationErrors.add(
-                TrialStatusConfigValidationError(
-                    trialConfig.trialId,
-                    "Trial is configured as not in trial status database while status could be derived from trial status database"
-                )
-            )
-        }
-
-        if (trialStatusDatabase.studiesNotInTrialStatusDatabase.contains(trialConfig.trialId)) {
-            LOGGER.debug(
-                " Skipping study status retrieval for {} ({}) since study is not deemed a trial status database trial",
-                trialConfig.trialId,
-                trialConfig.acronym
-            )
-
-            return null
-        }
 
         if (openInTrialStatusDatabase != null) {
             if (trialConfig.open != null) {
                 trialStatusConfigValidationErrors.add(
                     TrialStatusConfigValidationError(
-                        trialConfig.trialId,
+                        trialConfig.nctId,
                         "Trial has a manually configured status while status could be derived from trial status database (" + if (openInTrialStatusDatabase) "Open)" else "Closed)"
                     )
                 )
@@ -77,7 +57,7 @@ class TrialStatusConfigInterpreter(
 
         trialStatusConfigValidationErrors.add(
             TrialStatusConfigValidationError(
-                trialConfig.trialId,
+                trialConfig.nctId,
                 "No study status found in trial status database overview, using manually configured status for study status"
             )
         )
@@ -120,22 +100,6 @@ class TrialStatusConfigInterpreter(
         }
     }
 
-    fun checkModelForUnusedStudiesNotInTrialStatusDatabase(trialConfigs: List<TrialDefinitionConfig>) {
-        val unusedMecStudiesNotInTrialStatusDatabase =
-            trialStatusDatabaseExtractor.extractUnusedStudiesNotInTrialStatusDatabase(trialConfigs)
-
-        if (unusedMecStudiesNotInTrialStatusDatabase.isNotEmpty()) {
-            unusedMecStudiesNotInTrialStatusDatabase.map {
-                trialStatusConfigValidationErrors.add(
-                    TrialStatusConfigValidationError(
-                        it,
-                        "Trial ID that is configured to be ignored is not actually present in trial database"
-                    )
-                )
-            }
-        }
-    }
-
     fun checkModelForNewCohorts(cohortConfigs: List<CohortDefinitionConfig>) {
         val newCohortEntriesInTrialStatusDatabase = trialStatusDatabaseExtractor.extractNewTrialStatusDatabaseCohorts(cohortConfigs)
 
@@ -147,41 +111,6 @@ class TrialStatusConfigInterpreter(
                     it, "New cohort detected in trial status database that is not configured as unmapped"
                 )
             })
-        }
-    }
-
-    fun checkModelForUnusedStudyMETCsToIgnore() {
-        val unusedStudyMETCsToIgnore = trialStatusDatabaseExtractor.extractUnusedStudyMETCsToIgnore()
-
-        if (unusedStudyMETCsToIgnore.isEmpty()) {
-            LOGGER.info(" No unused study METCs to ignore found")
-        } else {
-            unusedStudyMETCsToIgnore.map {
-                trialStatusConfigValidationErrors.add(
-                    TrialStatusConfigValidationError(
-                        it,
-                        "Study that is configured to be ignored is not actually referenced in trial status database"
-                    )
-                )
-            }
-        }
-    }
-
-    fun checkModelForUnusedUnmappedCohortIds() {
-
-        val unusedUnmappedCohortIds = trialStatusDatabaseExtractor.extractUnusedUnmappedCohorts()
-
-        if (unusedUnmappedCohortIds.isEmpty()) {
-            LOGGER.info(" No unused unmapped cohort IDs found")
-        } else {
-            unusedUnmappedCohortIds.map {
-                trialStatusConfigValidationErrors.add(
-                    TrialStatusConfigValidationError(
-                        it,
-                        "Cohort ID that is configured to be unmapped is not actually referenced in trial status database"
-                    )
-                )
-            }
         }
     }
 

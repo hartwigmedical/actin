@@ -79,7 +79,7 @@ class TrialConfigModel(
         }
 
         private fun <T : TrialConfig> configsByTrial(configs: List<T>): Map<String, List<T>> {
-            return configs.groupBy(TrialConfig::trialId)
+            return configs.groupBy(TrialConfig::nctId)
         }
     }
 }

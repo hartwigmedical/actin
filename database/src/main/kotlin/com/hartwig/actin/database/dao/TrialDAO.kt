@@ -36,7 +36,7 @@ internal class TrialDAO(private val context: DSLContext) {
 
     private fun writeTrialIdentification(identification: TrialIdentification): Int {
         return context.insertInto(Tables.TRIAL, Tables.TRIAL.CODE, Tables.TRIAL.OPEN, Tables.TRIAL.ACRONYM, Tables.TRIAL.TITLE)
-            .values(identification.trialId, identification.open, identification.acronym, identification.title)
+            .values(identification.nctId, identification.open, identification.acronym, identification.title)
             .returning(Tables.TRIAL.ID)
             .fetchOne()!!
             .getValue(Tables.TRIAL.ID)

@@ -11,13 +11,13 @@ import com.hartwig.actin.util.json.CriterionReferenceDeserializer
 import com.hartwig.actin.util.json.CriterionReferenceDeserializer.Companion.toJsonReferenceText
 import com.hartwig.actin.util.json.EligibilityFunctionDeserializer
 import com.hartwig.actin.util.json.GsonSerializer
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
 import java.nio.file.Files
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
 object TrialJson {
 
@@ -27,8 +27,8 @@ object TrialJson {
     fun write(trials: List<Trial>, directory: String) {
         val path: String = Paths.forceTrailingFileSeparator(directory)
         for (trial: Trial in trials) {
-            val jsonFile: String = path + trialFileId(trial.identification.trialId) + TRIAL_JSON_EXTENSION
-            LOGGER.info(" Writing '{} ({})' to {}", trial.identification.trialId, trial.identification.acronym, jsonFile)
+            val jsonFile: String = path + trialFileId(trial.identification.nctId) + TRIAL_JSON_EXTENSION
+            LOGGER.info(" Writing '{} ({})' to {}", trial.identification.nctId, trial.identification.acronym, jsonFile)
             val writer = BufferedWriter(FileWriter(jsonFile))
             writer.write(toJson(reformatTrial(trial)))
             writer.close()

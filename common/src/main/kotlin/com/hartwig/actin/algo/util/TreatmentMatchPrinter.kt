@@ -63,7 +63,7 @@ class TreatmentMatchPrinter(private val printer: DatamodelPrinter) {
     }
 
     private fun trialName(trial: TrialIdentification): String {
-        return trial.trialId + " (" + trial.acronym + ")"
+        return trial.nctId + " (" + trial.acronym + ")"
     }
 
     private fun recruitingCohortString(eligibleTrialMap: Map<TrialIdentification, List<CohortMetadata>>): String {
@@ -74,7 +74,7 @@ class TreatmentMatchPrinter(private val printer: DatamodelPrinter) {
     }
 
     private fun cohortName(trial: TrialIdentification, cohort: CohortMetadata): String {
-        return trial.trialId + " - " + cohort.description
+        return trial.nctId + " - " + cohort.description
     }
 
     companion object {

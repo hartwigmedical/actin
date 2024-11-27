@@ -18,7 +18,9 @@ import org.junit.Test
 
 private val RULE_1 = EligibilityRule.ACTIVATING_MUTATION_IN_ANY_GENES_X
 private val RULE_2 = EligibilityRule.IS_AT_LEAST_X_YEARS_OLD
-private const val TRIAL_NAME = "TEST-1"
+private const val NCT_ID = "NCT00000010"
+
+private const val ACRONYM = "acronym"
 
 class InterpretedCohortFactoryTest {
 
@@ -102,11 +104,10 @@ class InterpretedCohortFactoryTest {
     fun `Should evaluate trials without cohort`() {
         val trialMatchWithoutCohort = TrialMatch(
             identification = TrialIdentification(
-                trialId = "test",
+                nctId = "test",
                 open = true,
                 acronym = "test-1",
                 title = "Example test trial 1",
-                nctId = null
             ),
             isPotentiallyEligible = true,
             cohorts = emptyList(),
@@ -138,8 +139,8 @@ class InterpretedCohortFactoryTest {
         val treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch().copy(trialMatches = listOf(trialMatch))
 
         val evaluatedCohorts = createEvaluableCohorts(treatmentMatch, false)
-        val cohortA = findByAcronymAndCohort(evaluatedCohorts, TRIAL_NAME, "Cohort A")
-        val cohortB = findByAcronymAndCohort(evaluatedCohorts, TRIAL_NAME, "Cohort B")
+        val cohortA = findByAcronymAndCohort(evaluatedCohorts, ACRONYM, "Cohort A")
+        val cohortB = findByAcronymAndCohort(evaluatedCohorts, ACRONYM, "Cohort B")
         assertThat(cohortA.isMissingGenesForSufficientEvaluation).isTrue()
         assertThat(cohortB.isMissingGenesForSufficientEvaluation).isFalse()
     }
@@ -155,8 +156,8 @@ class InterpretedCohortFactoryTest {
         val treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch().copy(trialMatches = listOf(trialMatch))
 
         val evaluatedCohorts = createEvaluableCohorts(treatmentMatch, false)
-        val cohortA = findByAcronymAndCohort(evaluatedCohorts, TRIAL_NAME, "Cohort A")
-        val cohortB = findByAcronymAndCohort(evaluatedCohorts, TRIAL_NAME, "Cohort B")
+        val cohortA = findByAcronymAndCohort(evaluatedCohorts, ACRONYM, "Cohort A")
+        val cohortB = findByAcronymAndCohort(evaluatedCohorts, ACRONYM, "Cohort B")
         assertThat(cohortA.isMissingGenesForSufficientEvaluation).isTrue()
         assertThat(cohortB.isMissingGenesForSufficientEvaluation).isTrue()
     }
@@ -192,11 +193,10 @@ class InterpretedCohortFactoryTest {
     private fun createTrialMatch(cohorts: List<CohortMatch>, evaluation: Map<Eligibility, Evaluation>): TrialMatch {
         return TrialMatch(
             identification = TrialIdentification(
-                trialId = TRIAL_NAME,
+                nctId = NCT_ID,
                 open = true,
-                acronym = TRIAL_NAME,
+                acronym = ACRONYM,
                 title = "Example test trial 1",
-                nctId = "NCT00000010",
                 phase = TrialPhase.PHASE_1
             ),
             isPotentiallyEligible = true,

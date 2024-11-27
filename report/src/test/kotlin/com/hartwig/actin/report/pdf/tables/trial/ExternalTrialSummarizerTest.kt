@@ -43,14 +43,14 @@ private val TRIAL_2_INSTANCE_1 = TestClinicalEvidenceFactory.createExternalTrial
 
 private val TRIAL_MATCHES = setOf(
     TrialMatch(
-        identification = TrialIdentification("TRIAL-1", true, "TR-1", "Different title of same trial 1", NCT_01),
+        identification = TrialIdentification(NCT_01, true, "TR-1", "Different title of same trial 1"),
         isPotentiallyEligible = true,
         evaluations = emptyMap(),
         cohorts = emptyList(),
         nonEvaluableCohorts = emptyList()
     ),
     TrialMatch(
-        identification = TrialIdentification("TRIAL-2", true, "TR-2", "Different trial 2", "NCT00000003"),
+        identification = TrialIdentification("NCT00000003", true, "TR-2", "Different trial 2"),
         isPotentiallyEligible = true,
         evaluations = emptyMap(),
         cohorts = emptyList(),

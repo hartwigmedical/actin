@@ -10,7 +10,7 @@ internal object TrialStatusInterpreter {
         trialDefinitionConfig: TrialDefinitionConfig,
         trialIdConstructor: (CohortStatusEntry) -> String,
     ): Pair<Boolean?, List<TrialDefinitionValidationError>> {
-        val trialId = trialDefinitionConfig.trialId
+        val trialId = trialDefinitionConfig.nctId
         val trialStates = entries.filter {
             val other = trialIdConstructor.invoke(it).trim()
             trialId.equals(other, ignoreCase = true) }

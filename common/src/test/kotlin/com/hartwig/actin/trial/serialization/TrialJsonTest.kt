@@ -40,7 +40,7 @@ class TrialJsonTest {
     }
 
     private fun assertTrial(trial: Trial) {
-        assertThat(trial.identification.trialId).isEqualTo("test trial")
+        assertThat(trial.identification.nctId).isEqualTo("test trial")
         assertThat(trial.identification.acronym).isEqualTo("TEST-TRIAL")
         assertThat(trial.identification.title).isEqualTo("This is a trial to test ACTIN")
         assertThat(trial.generalEligibility).hasSize(1)

@@ -63,7 +63,7 @@ class TrialStatusInterpreterTest {
         ).isFalse
     }
 
-    private fun trialDefinitionConfig(trialId: String, open: Boolean) = TrialDefinitionConfig(trialId, open, "", "", "", null)
+    private fun trialDefinitionConfig(trialId: String, open: Boolean) = TrialDefinitionConfig(trialId, open, "", "", "")
 
     private fun createEntry(studyMETC: String, studyStatus: TrialStatus): CohortStatusEntry {
         return TestTrialStatusDatabaseEntryFactory.MINIMAL.copy(nctId = studyMETC, trialStatus = studyStatus)

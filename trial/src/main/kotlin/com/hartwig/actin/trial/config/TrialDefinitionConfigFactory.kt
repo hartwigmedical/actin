@@ -6,11 +6,10 @@ class TrialDefinitionConfigFactory : TrialConfigFactory<TrialDefinitionConfig> {
 
     override fun create(fields: Map<String, Int>, parts: List<String>): TrialDefinitionConfig {
         return TrialDefinitionConfig(
-            trialId = parts[fields["trialId"]!!],
+            nctId = parts[fields["nctId"]!!],
             open = ResourceFile.optionalBool(parts[fields["open"]!!]),
             acronym = parts[fields["acronym"]!!],
             title = parts[fields["title"]!!],
-            nctId = ResourceFile.optionalString(parts[fields["nctId"]!!]),
             phase = ResourceFile.optionalString(parts[fields["phase"]!!])
         )
     }

@@ -18,7 +18,7 @@ class EvaluationSummarizerTest {
     @Test
     fun `Should be able to summarize proper treatment match test data`() {
         val match = TestTreatmentMatchFactory.createProperTreatmentMatch()
-        val firstTrialEvaluations = match.trialMatches.first { it.identification.trialId == "Test Trial 1" }.evaluations.values
+        val firstTrialEvaluations = match.trialMatches.first { it.identification.nctId == "NCT00000010" }.evaluations.values
         assertThat(summarize(firstTrialEvaluations)).isEqualTo(
             EvaluationSummary(
                 count = 3,

@@ -17,7 +17,7 @@ object TreatmentMatchComparison {
         val oldTrialSummary = trialMatchesById(oldMatches)
         val newTrialSummary = trialMatchesById(newMatches)
 
-        val trialKeyDifferences = mapKeyDifferences(oldTrialSummary, newTrialSummary, "trials", TrialIdentification::trialId)
+        val trialKeyDifferences = mapKeyDifferences(oldTrialSummary, newTrialSummary, "trials", TrialIdentification::nctId)
 
         return oldTrialSummary.map { (key, oldTrialMatch) ->
             val newTrialMatch = newTrialSummary[key]
@@ -28,7 +28,7 @@ object TreatmentMatchComparison {
                 eligibilityDifferences.forEach(::logDebug)
 
                 val evaluationDifferences = EvaluationComparison.determineEvaluationDifferences(
-                    oldTrialMatch.evaluations, newTrialMatch.evaluations, key.trialId, 0
+                    oldTrialMatch.evaluations, newTrialMatch.evaluations, key.nctId, 0
                 ).copy(eligibilityDifferences = eligibilityDifferences)
 
                 evaluationDifferences + determineCohortDifferences(oldTrialMatch, newTrialMatch)
@@ -46,7 +46,7 @@ object TreatmentMatchComparison {
             if (newCohortMatch == null) EvaluationDifferences.create() else {
                 val cohortEligibilityDifferences = extractDifferences(oldCohortMatch, newCohortMatch, mapOf("eligibility" to CohortMatch::isPotentiallyEligible))
                 cohortEligibilityDifferences.forEach { logDebug(it, INDENT_WIDTH) }
-                val id = "${oldTrialMatch.identification.trialId}, cohort$cohortId"
+                val id = "${oldTrialMatch.identification.nctId}, cohort$cohortId"
                 EvaluationComparison.determineEvaluationDifferences(
                     oldCohortMatch.evaluations,
                     newCohortMatch.evaluations,

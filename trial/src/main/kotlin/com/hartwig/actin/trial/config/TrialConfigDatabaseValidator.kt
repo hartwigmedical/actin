@@ -35,11 +35,11 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
             return emptySet()
         }
         val (allCriteriaWithNonExistentTrial, allNonExistentCohorts, allInvalidInclusionCriteria) = inclusionCriteria.map { criterion ->
-            val trialExists = trialIds.contains(criterion.trialId)
+            val trialExists = trialIds.contains(criterion.nctId)
             val criterionWithNonExistentTrial = if (!trialExists) setOf(criterion) else emptySet()
 
             val nonExistentCohorts: Set<Pair<InclusionCriteriaConfig, String>> = if (!trialExists) emptySet() else {
-                (criterion.appliesToCohorts - cohortIdsPerTrial[criterion.trialId]!!).map { Pair(criterion, it) }.toSet()
+                (criterion.appliesToCohorts - cohortIdsPerTrial[criterion.nctId]!!).map { Pair(criterion, it) }.toSet()
             }
             val invalidInclusionCriteria = if (eligibilityFactory.isValidInclusionCriterion(criterion.inclusionRule)) emptySet() else {
                 setOf(criterion)
@@ -87,14 +87,14 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
 
 
     private fun extractTrialIds(configs: List<TrialDefinitionConfig>): Set<String> {
-        return configs.map(TrialDefinitionConfig::trialId).toSet()
+        return configs.map(TrialDefinitionConfig::nctId).toSet()
     }
 
     private fun validateTrials(trialDefinitions: List<TrialDefinitionConfig>): Set<TrialDefinitionValidationError> {
-        val duplicatedTrialIds = duplicatedConfigsByKey(trialDefinitions, TrialDefinitionConfig::trialId)
+        val duplicatedTrialIds = duplicatedConfigsByKey(trialDefinitions, TrialDefinitionConfig::nctId)
             .map { TrialDefinitionValidationError(it.second, "Duplicated trial id of ${it.first}") }
 
-        val duplicatedTrialFileIds = duplicatedConfigsByKey(trialDefinitions) { trialDef -> TrialJson.trialFileId(trialDef.trialId) }
+        val duplicatedTrialFileIds = duplicatedConfigsByKey(trialDefinitions) { trialDef -> TrialJson.trialFileId(trialDef.nctId) }
             .map { TrialDefinitionValidationError(it.second, "Duplicated trial file id of ${it.first}") }
 
         val invalidPhases = trialDefinitions.filter { it.phase != null && TrialPhase.fromString(it.phase) == null }
@@ -106,12 +106,12 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
     private fun validateCohorts(
         trialIds: Set<String>, cohortDefinitions: List<CohortDefinitionConfig>
     ): Set<CohortDefinitionValidationError> {
-        val duplicatedCohortErrors = cohortDefinitions.groupBy(CohortDefinitionConfig::trialId)
+        val duplicatedCohortErrors = cohortDefinitions.groupBy(CohortDefinitionConfig::nctId)
             .flatMap { duplicatedConfigsByKey(it.value, CohortDefinitionConfig::cohortId) }
             .map { CohortDefinitionValidationError(it.second, "Cohort '${it.second.cohortId}' is duplicated.") }
 
-        val nonExistingTrialErrors = cohortDefinitions.filterNot { trialIds.contains(it.trialId) }
-            .map { CohortDefinitionValidationError(it, "Cohort '${it.cohortId}' defined on non-existing trial: '${it.trialId}'") }
+        val nonExistingTrialErrors = cohortDefinitions.filterNot { trialIds.contains(it.nctId) }
+            .map { CohortDefinitionValidationError(it, "Cohort '${it.cohortId}' defined on non-existing trial: '${it.nctId}'") }
 
         return (duplicatedCohortErrors + nonExistingTrialErrors).toSet()
     }
@@ -123,8 +123,8 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
     }
 
     private fun extractCohortIdsPerTrial(trialIds: Set<String>, cohortDefinitions: List<CohortDefinitionConfig>): Map<String, Set<String>> {
-        val cohortIdsByTrial = cohortDefinitions.filter { it.trialId in trialIds }
-            .groupBy(CohortDefinitionConfig::trialId, CohortDefinitionConfig::cohortId)
+        val cohortIdsByTrial = cohortDefinitions.filter { it.nctId in trialIds }
+            .groupBy(CohortDefinitionConfig::nctId, CohortDefinitionConfig::cohortId)
             .mapValues { it.value.toSet() }
 
         return trialIds.associateWith { emptySet<String>() } + cohortIdsByTrial
@@ -133,20 +133,20 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
     private fun validateInclusionCriteriaReferences(
         trialIds: Set<String>, inclusionCriteriaReferenceConfigs: List<InclusionCriteriaReferenceConfig>
     ): Set<InclusionCriteriaReferenceValidationError> {
-        val referenceConfigsWithNonExistentTrials = inclusionCriteriaReferenceConfigs.filterNot { trialIds.contains(it.trialId) }
+        val referenceConfigsWithNonExistentTrials = inclusionCriteriaReferenceConfigs.filterNot { trialIds.contains(it.nctId) }
 
-        val duplicatedReferenceIdByTrialErrors = inclusionCriteriaReferenceConfigs.groupBy(InclusionCriteriaReferenceConfig::trialId)
+        val duplicatedReferenceIdByTrialErrors = inclusionCriteriaReferenceConfigs.groupBy(InclusionCriteriaReferenceConfig::nctId)
             .flatMap { duplicatedConfigsByKey(it.value, InclusionCriteriaReferenceConfig::referenceId) }
             .map { InclusionCriteriaReferenceValidationError(it.second, "Reference ID for trial '${it.second}") }
 
         val nonExistingTrialErrors = referenceConfigsWithNonExistentTrials.map {
-            InclusionCriteriaReferenceValidationError(it, "Reference '${it.referenceId}' defined on non-existing trial: '${it.trialId}'")
+            InclusionCriteriaReferenceValidationError(it, "Reference '${it.referenceId}' defined on non-existing trial: '${it.nctId}'")
         }
         return (duplicatedReferenceIdByTrialErrors + nonExistingTrialErrors).toSet()
     }
 
     private fun <T : TrialConfig> buildMapPerTrial(configs: List<T>): Map<String, List<T>> {
-        return configs.groupBy(TrialConfig::trialId)
+        return configs.groupBy(TrialConfig::nctId)
     }
 
     private fun validateRulesToKeep(ruleNames: List<String>): Set<UnusedRulesToKeepValidationError> {

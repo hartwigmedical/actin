@@ -19,11 +19,10 @@ class TrialMatchComparatorTest {
     private fun withId(id: String): TrialMatch {
         return TrialMatch(
             identification = TrialIdentification(
-                trialId = id,
+                nctId = id,
                 open = true,
                 acronym = "",
                 title = "",
-                nctId = null
             ),
             isPotentiallyEligible = true,
             cohorts = emptyList(),

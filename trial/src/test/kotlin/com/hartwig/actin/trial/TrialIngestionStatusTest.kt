@@ -12,7 +12,7 @@ import org.junit.Test
 class TrialIngestionStatusTest {
 
     private val inclusionCriterion = InclusionCriteriaConfig(
-        trialId = "trial 1",
+        nctId = "trial 1",
         referenceIds = setOf("I-01"),
         appliesToCohorts = setOf("B"),
         inclusionRule = EligibilityRule.IS_AT_LEAST_X_YEARS_OLD.toString()

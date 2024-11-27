@@ -7,7 +7,7 @@ class InclusionCriteriaReferenceConfigFactory : TrialConfigFactory<InclusionCrit
             "Invalid criteria reference config provided. Possibly due to hard line breaks? ('" + parts.joinToString(" ") + "')"
         }
         return InclusionCriteriaReferenceConfig(
-            trialId = parts[fields["trialId"]!!],
+            nctId = parts[fields["trialId"]!!],
             referenceId = parts[fields["referenceId"]!!],
             referenceText = parts[fields["referenceText"]!!]
         )

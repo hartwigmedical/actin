@@ -3,11 +3,10 @@ package com.hartwig.actin.trial.config
 object TestTrialDefinitionConfigFactory {
 
     val MINIMAL = TrialDefinitionConfig(
-        trialId = "",
+        nctId = "",
         open = null,
         acronym = "",
         title = "",
-        nctId = "",
         phase = null
     )
 }

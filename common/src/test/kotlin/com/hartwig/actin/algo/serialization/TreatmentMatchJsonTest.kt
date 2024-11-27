@@ -52,8 +52,8 @@ class TreatmentMatchJsonTest {
         )
         val expectedJson = ("{\"patientId\":\"ACTN01029999\",\"sampleId\":\"ACTN01029999T\",\"trialSource\":\"Test hospital\","
                 + "\"referenceDate\":{\"year\":2021,\"month\":8,\"day\":2},\"referenceDateIsLive\":true,\"trialMatches\":["
-                + "{\"identification\":{\"trialId\":\"Test Trial 1\",\"open\":true,\"acronym\":\"TEST-1\","
-                + "\"title\":\"Example test trial 1\",\"nctId\":\"NCT00000010\",\"phase\":\"PHASE_1\"},\"isPotentiallyEligible\":true,\"evaluations\":[["
+                + "{\"identification\":{\"nctId\":\"NCT00000010\",\"open\":true,\"acronym\":\"TEST-1\","
+                + "\"title\":\"Example test trial 1\",\"phase\":\"PHASE_1\"},\"isPotentiallyEligible\":true,\"evaluations\":[["
                 + "{\"references\":[{\"id\":\"I-01\",\"text\":\"Patient must be an adult\"}],"
                 + "\"function\":{\"rule\":\"IS_AT_LEAST_X_YEARS_OLD\",\"parameters\":[]}},"
                 + "{\"result\":\"PASS\",\"recoverable\":false,\"inclusionMolecularEvents\":[],\"exclusionMolecularEvents\":[],"

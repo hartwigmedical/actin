@@ -30,11 +30,8 @@ class TrialIngestion(
 ) {
 
     fun ingestTrials(): TrialIngestionResult {
-        trialStatusConfigInterpreter.checkModelForUnusedStudyMETCsToIgnore()
-        trialStatusConfigInterpreter.checkModelForUnusedUnmappedCohortIds()
         trialStatusConfigInterpreter.checkModelForNewTrials(trialConfigModel.trials())
         trialStatusConfigInterpreter.checkModelForNewCohorts(trialConfigModel.cohorts())
-        trialStatusConfigInterpreter.checkModelForUnusedStudiesNotInTrialStatusDatabase(trialConfigModel.trials())
 
         val trials = if (!trialConfigModel.validation().hasErrors()) createTrials() else emptyList()
 
@@ -56,7 +53,7 @@ class TrialIngestion(
 
     private fun createTrials(): List<Trial> {
         val trials = trialConfigModel.trials().map { trialConfig ->
-            val trialId = trialConfig.trialId
+            val trialId = trialConfig.nctId
             val referencesById = trialConfigModel.referencesForTrial(trialId)
             Trial(
                 identification = toIdentification(trialConfig),
@@ -93,11 +90,10 @@ class TrialIngestion(
 
     private fun toIdentification(trialConfig: TrialDefinitionConfig): TrialIdentification {
         return TrialIdentification(
-            trialId = trialConfig.trialId,
+            nctId = trialConfig.nctId,
             open = determineOpenStatus(trialConfig),
             acronym = trialConfig.acronym,
             title = trialConfig.title,
-            nctId = trialConfig.nctId,
             phase = trialConfig.phase?.let(TrialPhase::fromString)
         )
     }
@@ -109,7 +105,7 @@ class TrialIngestion(
         }
 
         return trialConfig.open ?: throw java.lang.IllegalStateException(
-            "Could not determine open status for trial, either from CTC or from manual config for '${trialConfig.trialId}'"
+            "Could not determine open status for trial, either from CTC or from manual config for '${trialConfig.nctId}'"
         )
     }
 

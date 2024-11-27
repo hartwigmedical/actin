@@ -23,18 +23,18 @@ private const val TRIAL_ID_1 = "trial 1"
 
 class TrialIngestionResultTest {
     private val inclusionCriterion = InclusionCriteriaConfig(
-        trialId = TRIAL_ID_1,
+        nctId = TRIAL_ID_1,
         referenceIds = setOf("I-01"),
         appliesToCohorts = setOf("B"),
         inclusionRule = EligibilityRule.IS_AT_LEAST_X_YEARS_OLD.toString()
     )
     private val inclusionReference = InclusionCriteriaReferenceConfig(
-        trialId = "does not exist", referenceId = "I-01", referenceText = "irrelevant"
+        nctId = "does not exist", referenceId = "I-01", referenceText = "irrelevant"
     )
-    private val trialDefinition = TestTrialDefinitionConfigFactory.MINIMAL.copy(trialId = TRIAL_ID_1, open = true)
+    private val trialDefinition = TestTrialDefinitionConfigFactory.MINIMAL.copy(nctId = TRIAL_ID_1, open = true)
 
     private val cohortDefinition = TestCohortDefinitionConfigFactory.MINIMAL.copy(
-        trialId = TRIAL_ID_1, evaluable = true, open = true, slotsAvailable = true, ignore = false, cohortId = "A"
+        nctId = TRIAL_ID_1, evaluable = true, open = true, slotsAvailable = true, ignore = false, cohortId = "A"
     )
 
     @Test

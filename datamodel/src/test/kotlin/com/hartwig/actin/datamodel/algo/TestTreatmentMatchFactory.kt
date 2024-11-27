@@ -44,11 +44,10 @@ object TestTreatmentMatchFactory {
         return listOf(
             TrialMatch(
                 identification = TrialIdentification(
-                    trialId = "Test Trial 1",
+                    nctId = "NCT00000010",
                     open = true,
                     acronym = "TEST-1",
                     title = "Example test trial 1",
-                    nctId = "NCT00000010",
                     phase = TrialPhase.PHASE_1
                 ),
                 isPotentiallyEligible = true,
@@ -58,12 +57,11 @@ object TestTreatmentMatchFactory {
             ),
             TrialMatch(
                 identification = TrialIdentification(
-                    trialId = "Test Trial 2",
+                    nctId = "NCT00000002",
                     open = true,
                     acronym = "TEST-2",
                     title = "Example test trial 2",
-                    nctId = "NCT00000002"
-                ),
+                    ),
                 isPotentiallyEligible = true,
                 evaluations = createTestGeneralEvaluationsTrial2(),
                 cohorts = createTestCohortsTrial2(),
@@ -235,19 +233,6 @@ object TestTreatmentMatchFactory {
                 function = EligibilityFunction(rule = EligibilityRule.MSI_SIGNATURE, parameters = emptyList()),
                 references = setOf(CriterionReference(id = "I-01", text = "MSI")),
             ) to unrecoverable(EvaluationResult.PASS, "Tumor is MSI", "MSI", "MSI")
-        )
-    }
-
-    private fun createTestCohortEvaluationsTrial2CohortB(): Map<Eligibility, Evaluation> {
-        return mapOf(
-            Eligibility(
-                function = EligibilityFunction(
-                    rule = EligibilityRule.NOT, parameters = listOf(
-                        EligibilityFunction(rule = EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES)
-                    )
-                ),
-                references = setOf(CriterionReference(id = "I-03", text = "Patient should not have had pembrolizumab treatment"))
-            ) to unrecoverable(EvaluationResult.FAIL, "Patient has had pembrolizumab treatment", "Pembrolizumab treatment", null)
         )
     }
 

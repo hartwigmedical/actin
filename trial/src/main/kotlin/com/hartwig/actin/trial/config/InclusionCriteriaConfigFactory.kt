@@ -4,7 +4,7 @@ class InclusionCriteriaConfigFactory : TrialConfigFactory<InclusionCriteriaConfi
 
     override fun create(fields: Map<String, Int>, parts: List<String>): InclusionCriteriaConfig {
         return InclusionCriteriaConfig(
-            trialId = parts[fields["trialId"]!!],
+            nctId = parts[fields["trialId"]!!],
             referenceIds = TrialConfigDatabaseUtil.toReferenceIds(parts[fields["referenceIds"]!!]),
             appliesToCohorts = TrialConfigDatabaseUtil.toCohorts(parts[fields["appliesToCohorts"]!!]),
             inclusionRule = parts[fields["inclusionRule"]!!]

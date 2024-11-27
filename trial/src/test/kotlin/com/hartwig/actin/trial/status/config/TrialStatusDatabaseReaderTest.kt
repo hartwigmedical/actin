@@ -14,9 +14,6 @@ class TrialStatusDatabaseReaderTest {
         val database = TrialStatusDatabaseReader().read(CONFIG_DIRECTORY)
 
         assertEntries(database.entries)
-        assertStudyMETCsToIgnore(database.studyMETCsToIgnore)
-        assertUnmappedCohortIds(database.unmappedCohortIds)
-        assertStudiesNotInTrialStatusDatabase(database.studiesNotInTrialStatusDatabase)
     }
 
     companion object {
@@ -45,22 +42,6 @@ class TrialStatusDatabaseReaderTest {
 
         private fun findEntryByNctId(entries: List<CohortStatusEntry>, nctId: String): CohortStatusEntry {
             return entries.first { it.nctId == nctId }
-        }
-
-        private fun assertStudyMETCsToIgnore(studyMETCsToIgnore: Set<String>) {
-            assertThat(studyMETCsToIgnore).hasSize(2)
-            assertThat(studyMETCsToIgnore.contains("METC 1")).isTrue
-            assertThat(studyMETCsToIgnore.contains("METC 10")).isTrue
-        }
-
-        private fun assertUnmappedCohortIds(unmappedCohortIds: Set<String>) {
-            assertThat(unmappedCohortIds).hasSize(1)
-            assertThat(unmappedCohortIds.contains("1")).isTrue
-        }
-
-        private fun assertStudiesNotInTrialStatusDatabase(studiesNotInTrialStatusDatabase: Set<String>) {
-            assertThat(studiesNotInTrialStatusDatabase).hasSize(1)
-            assertThat(studiesNotInTrialStatusDatabase.contains("ACTN 2021")).isTrue
         }
     }
 }

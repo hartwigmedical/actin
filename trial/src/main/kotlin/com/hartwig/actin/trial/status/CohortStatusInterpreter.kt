@@ -23,13 +23,13 @@ internal object CohortStatusInterpreter {
                 " Trial status entry for cohort '{}' of trial '{}' explicitly configured to be unavailable or incorrect in trial status database. "
                         + "Ingesting cohort status as configured",
                 cohortConfig.cohortId,
-                cohortConfig.trialId
+                cohortConfig.nctId
             )
             return CohortStatusInterpretation(null, emptyList(), emptyList())
         } else if (isMissingBecauseClosedOrUnavailable(externalCohortIds)) {
             LOGGER.debug(
                 " Trial status entry missing for cohort '{}' of trial '{}' because it's assumed closed or not available. "
-                        + "Setting cohort to closed without slots", cohortConfig.cohortId, cohortConfig.trialId
+                        + "Setting cohort to closed without slots", cohortConfig.cohortId, cohortConfig.nctId
             )
             return CohortStatusInterpretation(closedWithoutSlots(), emptyList(), emptyList())
         }

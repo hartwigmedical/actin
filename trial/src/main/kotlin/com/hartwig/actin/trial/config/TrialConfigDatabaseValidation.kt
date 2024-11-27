@@ -26,7 +26,7 @@ data class TrialDefinitionValidationError(
     override val message: String
 ) : TrialConfigValidationError<TrialDefinitionConfig> {
     override fun configFormat(config: TrialDefinitionConfig): String {
-        return "trial id=${config.trialId}"
+        return "trial id=${config.nctId}"
     }
 }
 
@@ -35,7 +35,7 @@ data class CohortDefinitionValidationError(
     override val message: String
 ) : TrialConfigValidationError<CohortDefinitionConfig> {
     override fun configFormat(config: CohortDefinitionConfig): String {
-        return "trial id=${config.trialId} cohort id=${config.cohortId}"
+        return "trial id=${config.nctId} cohort id=${config.cohortId}"
     }
 }
 
@@ -44,7 +44,7 @@ data class InclusionCriteriaValidationError(
     override val message: String
 ) : TrialConfigValidationError<InclusionCriteriaConfig> {
     override fun configFormat(config: InclusionCriteriaConfig): String {
-        return "trial id=${config.trialId} rule=${config.inclusionRule}"
+        return "trial id=${config.nctId} rule=${config.inclusionRule}"
     }
 }
 
@@ -53,7 +53,7 @@ data class InclusionCriteriaReferenceValidationError(
     override val message: String
 ) : TrialConfigValidationError<InclusionCriteriaReferenceConfig> {
     override fun configFormat(config: InclusionCriteriaReferenceConfig): String {
-        return "trial id=${config.trialId} reference id=${config.referenceId}"
+        return "trial id=${config.nctId} reference id=${config.referenceId}"
     }
 }
 

@@ -6,7 +6,7 @@ class CohortDefinitionConfigFactory : TrialConfigFactory<CohortDefinitionConfig>
 
     override fun create(fields: Map<String, Int>, parts: List<String>): CohortDefinitionConfig {
         return CohortDefinitionConfig(
-            trialId = parts[fields["trialId"]!!],
+            nctId = parts[fields["trialId"]!!],
             cohortId = parts[fields["cohortId"]!!],
             externalCohortIds = toSet(parts[fields["externalCohortIds"]!!]),
             evaluable = ResourceFile.bool(parts[fields["evaluable"]!!]),

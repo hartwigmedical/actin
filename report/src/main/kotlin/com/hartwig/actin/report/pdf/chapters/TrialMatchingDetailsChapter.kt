@@ -81,7 +81,7 @@ class TrialMatchingDetailsChapter(private val report: Report, override val inclu
             document.add(blankLine())
             document.add(
                 createCohortIdentificationTable(
-                    trial.identification.trialId,
+                    trial.identification.nctId,
                     cohort.metadata,
                     cohort.isPotentiallyEligible
                 )
@@ -99,7 +99,7 @@ class TrialMatchingDetailsChapter(private val report: Report, override val inclu
         val keyWidth = 90f
         val valueWidth = contentWidth() - (keyWidth + indentWidth + 10)
         val table = Tables.createFixedWidthCols(indentWidth, keyWidth, valueWidth).setWidth(contentWidth()).setKeepTogether(true)
-        table.addCell(Cells.createSpanningTitle(identification.trialId, table))
+        table.addCell(Cells.createSpanningTitle(identification.nctId, table))
         table.addCell(Cells.createEmpty())
         table.addCell(Cells.createKey("Potentially eligible"))
         table.addCell(Cells.createValueYesNo(Formats.yesNoUnknown(isPotentiallyEligible)))

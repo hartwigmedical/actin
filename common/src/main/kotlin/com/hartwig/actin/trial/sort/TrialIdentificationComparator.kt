@@ -4,7 +4,7 @@ import com.hartwig.actin.datamodel.trial.TrialIdentification
 
 class TrialIdentificationComparator : Comparator<TrialIdentification> {
 
-    private val comparator = Comparator.comparing(TrialIdentification::trialId)
+    private val comparator = Comparator.comparing(TrialIdentification::nctId)
         .thenComparing(TrialIdentification::acronym)
         .thenComparing(TrialIdentification::open)
         .thenComparing(TrialIdentification::title)

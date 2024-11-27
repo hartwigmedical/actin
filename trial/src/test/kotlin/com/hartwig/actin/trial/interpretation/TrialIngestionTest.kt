@@ -48,10 +48,10 @@ class TrialIngestionTest {
         val ingestionResult = ingestion.ingestTrials()
         assertThat(ingestionResult.trials).hasSize(2)
 
-        val trial = findTrial(ingestionResult.trials, "TEST-1")
+        val trial = findTrial(ingestionResult.trials, "NCT1")
         assertThat(trial.identification.open).isTrue
-        assertThat(trial.identification.acronym).isEqualTo("Acronym-TEST-1")
-        assertThat(trial.identification.title).isEqualTo("Title for TEST-1")
+        assertThat(trial.identification.acronym).isEqualTo("Acronym-NCT1")
+        assertThat(trial.identification.title).isEqualTo("Title for NCT1")
         assertThat(trial.generalEligibility).hasSize(1)
 
         val generalFunction = findFunction(trial.generalEligibility, EligibilityRule.IS_AT_LEAST_X_YEARS_OLD)
@@ -129,9 +129,9 @@ class TrialIngestionTest {
     companion object {
         private val TRIAL_CONFIG_DIRECTORY = resourceOnClasspath("trial_config")
 
-        private fun findTrial(trials: List<Trial>, trialId: String): Trial {
-            return trials.firstOrNull { it.identification.trialId == trialId }
-                ?: throw IllegalStateException("Could not find trial with ID: $trialId")
+        private fun findTrial(trials: List<Trial>, nctId: String): Trial {
+            return trials.firstOrNull { it.identification.nctId == nctId }
+                ?: throw IllegalStateException("Could not find trial with ID: $nctId")
         }
 
         private fun findCohort(cohorts: List<Cohort>, cohortId: String): Cohort {
