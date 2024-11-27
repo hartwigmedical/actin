@@ -11,18 +11,18 @@ class CurrentlyGetsAnyOtherSubstrateOrInhibitingMedicationTest {
 
     @Test
     fun `Should fail when patient medication list is empty`() {
-        assertEvaluation(EvaluationResult.FAIL, createFunction(MedicationTestFactory::alwaysActive).evaluate(MedicationTestFactory.withMedications(emptyList())))
+        assertEvaluation(EvaluationResult.FAIL, createFunction(MedicationTestFactory.alwaysActive()).evaluate(MedicationTestFactory.withMedications(emptyList())))
     }
 
     @Test
     fun `Should fail when no active or planned medication`() {
-        assertEvaluation(EvaluationResult.FAIL, createFunction(MedicationTestFactory::alwaysInactive).evaluate(patientWithMedication))
+        assertEvaluation(EvaluationResult.FAIL, createFunction(MedicationTestFactory.alwaysInactive()).evaluate(patientWithMedication))
     }
 
     @Test
     fun `Should warn when any planned or active medication`() {
-        val resultPlanned = createFunction(MedicationTestFactory::alwaysPlanned).evaluate(patientWithMedication)
-        val resultActive = createFunction(MedicationTestFactory::alwaysActive).evaluate(patientWithMedication)
+        val resultPlanned = createFunction(MedicationTestFactory.alwaysPlanned()).evaluate(patientWithMedication)
+        val resultActive = createFunction(MedicationTestFactory.alwaysActive()).evaluate(patientWithMedication)
 
         assertEvaluation(EvaluationResult.WARN, resultPlanned)
         assertEvaluation(EvaluationResult.WARN, resultActive)
@@ -31,14 +31,14 @@ class CurrentlyGetsAnyOtherSubstrateOrInhibitingMedicationTest {
 
     @Test
     fun `Should be undetermined if medication is not provided`() {
-        val result = createFunction(MedicationTestFactory::alwaysActive).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = null))
+        val result = createFunction(MedicationTestFactory.alwaysActive()).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = null))
 
         assertEvaluation(EvaluationResult.UNDETERMINED, result)
         assertThat(result.recoverable).isTrue()
     }
 
-    private fun createFunction(selector: () -> MedicationSelector): CurrentlyGetsAnyOtherSubstrateOrInhibitingMedication {
+    private fun createFunction(selector: MedicationSelector): CurrentlyGetsAnyOtherSubstrateOrInhibitingMedication {
         val types = listOf("TYPE-A", "type-B", "TYPE-C")
-        return CurrentlyGetsAnyOtherSubstrateOrInhibitingMedication(selector(), types)
+        return CurrentlyGetsAnyOtherSubstrateOrInhibitingMedication(selector, types)
     }
 }
