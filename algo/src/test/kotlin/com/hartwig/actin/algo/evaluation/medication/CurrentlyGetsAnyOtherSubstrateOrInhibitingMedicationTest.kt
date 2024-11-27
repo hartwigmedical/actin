@@ -7,7 +7,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class CurrentlyGetsAnyOtherSubstrateOrInhibitingMedicationTest {
-    private val types = listOf("COMPONENT-A", "COMPONENT-B", "COMPONENT-C")
+    private val types = listOf("TYPE-A", "type-B", "TYPE-C")
     private val alwaysActiveFunction = CurrentlyGetsAnyOtherSubstrateOrInhibitingMedication(MedicationTestFactory.alwaysActive(), types)
     private val alwaysPlannedFunction = CurrentlyGetsAnyOtherSubstrateOrInhibitingMedication(MedicationTestFactory.alwaysPlanned(), types)
     private val alwaysInactiveFunction = CurrentlyGetsAnyOtherSubstrateOrInhibitingMedication(MedicationTestFactory.alwaysInactive(), types)
@@ -34,7 +34,7 @@ class CurrentlyGetsAnyOtherSubstrateOrInhibitingMedicationTest {
 
         assertEvaluation(EvaluationResult.WARN, resultPlanned)
         assertEvaluation(EvaluationResult.WARN, resultActive)
-        assertThat(resultActive.warnGeneralMessages).containsExactly("Undetermined if patient may use COMPONENT-A, COMPONENT-B or COMPONENT-C substrate or inhibiting medication")
+        assertThat(resultActive.warnGeneralMessages).containsExactly("Undetermined if patient may use TYPE-A, type-B or TYPE-C substrate or inhibiting medication")
     }
 
     @Test
