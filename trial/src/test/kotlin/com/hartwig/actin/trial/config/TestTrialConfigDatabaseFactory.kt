@@ -20,14 +20,14 @@ object TestTrialConfigDatabaseFactory {
         )
     }
 
-    private fun createTestTrialDefinitionConfigs(): List<TrialDefinitionConfig> {
+    fun createTestTrialDefinitionConfigs(): List<TrialDefinitionConfig> {
         return listOf(
             trialDefinitionConfig(TestTrialData.TEST_TRIAL_METC_1),
             trialDefinitionConfig(TestTrialData.TEST_TRIAL_METC_2)
         )
     }
 
-    private fun trialDefinitionConfig(trialId: String) = TrialDefinitionConfig(
+    fun trialDefinitionConfig(trialId: String) = TrialDefinitionConfig(
         trialId = trialId,
         open = true,
         acronym = "Acronym-$trialId",
@@ -38,7 +38,7 @@ object TestTrialConfigDatabaseFactory {
         location = ""
     )
 
-    private fun createTestCohortDefinitionConfigs(): List<CohortDefinitionConfig> {
+    fun createTestCohortDefinitionConfigs(): List<CohortDefinitionConfig> {
         return listOf(
             CohortDefinitionConfig(
                 trialId = TestTrialData.TEST_TRIAL_METC_1,

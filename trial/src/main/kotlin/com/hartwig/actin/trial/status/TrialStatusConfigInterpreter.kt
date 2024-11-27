@@ -8,7 +8,9 @@ import com.hartwig.actin.trial.config.TrialDefinitionConfig
 import com.hartwig.actin.trial.config.TrialDefinitionValidationError
 
 class TrialStatusConfigInterpreter(
-    private val trialStatusDatabase: TrialStatusDatabase, trialPrefix: String? = null, private val ignoreNewTrials: Boolean = false
+    private val trialStatusDatabase: TrialStatusDatabase,
+    private val trialPrefix: String? = null,
+    private val ignoreNewTrials: Boolean = false
 ) {
 
     private val trialStatusDatabaseExtractor = TrialStatusDatabaseExtractor(trialStatusDatabase, trialPrefix)

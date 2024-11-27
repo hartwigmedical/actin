@@ -58,10 +58,16 @@ class TrialIngestion(
 
     private fun createTrials(): List<Trial> {
 
-        val trialsWithEvaluableCohorts = trialConfigModel.cohorts().filter { it.evaluable }.map { it.trialId }.distinct()
+        val cohortsByTrial = trialConfigModel.cohorts().groupBy { it.trialId }
+        val trialsWithEvaluableOrNoCohorts = trialConfigModel.trials()
+            .mapNotNull { trial ->
+                val cohorts = cohortsByTrial[trial.trialId]
+                if (cohorts.isNullOrEmpty() || cohorts.any { it.evaluable }) trial.trialId else null
+            }
+            .distinct()
 
         return trialConfigModel.trials().mapNotNull { trialConfig ->
-            trialConfig.takeIf { it.trialId in trialsWithEvaluableCohorts }?.let { config ->
+            trialConfig.takeIf { it.trialId in trialsWithEvaluableOrNoCohorts }?.let { config ->
                 val trialId = config.trialId
                 val referencesById = trialConfigModel.referencesForTrial(trialId)
                 Trial(

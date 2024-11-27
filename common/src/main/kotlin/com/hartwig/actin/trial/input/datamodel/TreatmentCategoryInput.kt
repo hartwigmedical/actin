@@ -30,16 +30,15 @@ class TreatmentCategoryInput(val mappedCategory: TreatmentCategory, val mappedTy
         }
 
         private fun resolveTreatmentType(query: String): TreatmentType {
-            val type = listOf(DrugType::valueOf, RadiotherapyType::valueOf, OtherTreatmentType::valueOf).firstOrNull { typeCreator ->
-                try {
-                    typeCreator.invoke(query)
-                    true
-                } catch (e: IllegalArgumentException) {
-                    false
+            val type =
+                listOf(DrugType::valueOf, RadiotherapyType::valueOf, OtherTreatmentType::valueOf).firstNotNullOfOrNull { createType ->
+                    try {
+                        createType(query)
+                    } catch (e: IllegalArgumentException) {
+                        null
+                    }
                 }
-            }
-            return type?.invoke(query)
-                ?: throw IllegalArgumentException("Could not resolve string to a treatment category or type: $query")
+            return type ?: throw IllegalArgumentException("Could not resolve string to a treatment category or type: $query")
         }
 
         private fun inputToEnumString(input: String): String {
