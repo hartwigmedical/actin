@@ -31,8 +31,8 @@ class PanelAnnotator(
 
     override fun annotate(input: PriorSequencingTest): PanelRecord {
         val annotatedVariants = panelVariantAnnotator.annotate(input.variants)
-        val annotatedAmplifications = input.amplifications.map(::inferredCopyNumber).map(::annotatedInferredCopyNumber)
-        val annotatedDeletions = input.deletedGenes.map(::inferredCopyNumber).map(::annotatedInferredCopyNumber)
+        val annotatedAmplifications = input.amplifications.map(::inferredCopyNumber).map(::annotatedInferredCopyNumber).toList()
+        val annotatedDeletions = input.deletedGenes.map(::inferredCopyNumber).map(::annotatedInferredCopyNumber).toList()
         val annotatedFusions = panelFusionAnnotator.annotate(input.fusions, input.skippedExons)
 
         val hasHighTumorMutationalBurden = input.tumorMutationalBurden?.let { it > TMB_HIGH_CUTOFF }
@@ -44,7 +44,7 @@ class PanelAnnotator(
             date = input.date,
             drivers = Drivers(
                 variants = annotatedVariants,
-                copyNumbers = annotatedAmplifications.toSet() + annotatedDeletions.toSet(),
+                copyNumbers = annotatedAmplifications + annotatedDeletions,
                 fusions = annotatedFusions,
             ),
             characteristics = MolecularCharacteristics(

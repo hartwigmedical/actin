@@ -73,10 +73,10 @@ class PanelAnnotatorTest {
         every { geneAlterationForVariant(any()) } returns null
     }
     private val panelVariantAnnotator = mockk<PanelVariantAnnotator> {
-        every { annotate(any()) } returns emptySet()
+        every { annotate(any()) } returns emptyList()
     }
     private val panelFusionAnnotator = mockk<PanelFusionAnnotator> {
-        every { annotate(any(), any()) } returns emptySet()
+        every { annotate(any(), any()) } returns emptyList()
     }
 
     private val annotator =
@@ -89,7 +89,7 @@ class PanelAnnotatorTest {
     @Test
     fun `Should annotate variant`() {
         val expected = mockk<Variant>()
-        every { panelVariantAnnotator.annotate(setOf(ARCHER_VARIANT)) } returns setOf(expected)
+        every { panelVariantAnnotator.annotate(setOf(ARCHER_VARIANT)) } returns listOf(expected)
 
         val annotatedPanel = annotator.annotate(createTestPriorSequencingTest().copy(variants = setOf(ARCHER_VARIANT)))
         assertThat(annotatedPanel.drivers.variants).isEqualTo(setOf(expected))
@@ -98,7 +98,7 @@ class PanelAnnotatorTest {
     @Test
     fun `Should annotate fusion`() {
         val expected = mockk<Fusion>()
-        every { panelFusionAnnotator.annotate(setOf(ARCHER_FUSION), emptySet()) } returns setOf(expected)
+        every { panelFusionAnnotator.annotate(setOf(ARCHER_FUSION), emptySet()) } returns listOf(expected)
 
         val annotatedPanel = annotator.annotate(createTestPriorSequencingTest().copy(fusions = setOf(ARCHER_FUSION)))
         assertThat(annotatedPanel.drivers.fusions).isEqualTo(setOf(expected))
@@ -107,7 +107,7 @@ class PanelAnnotatorTest {
     @Test
     fun `Should annotate exon skip`() {
         val expected = mockk<Fusion>()
-        every { panelFusionAnnotator.annotate(emptySet(), setOf(ARCHER_SKIPPED_EXON)) } returns setOf(expected)
+        every { panelFusionAnnotator.annotate(emptySet(), setOf(ARCHER_SKIPPED_EXON)) } returns listOf(expected)
 
         val annotatedPanel = annotator.annotate(createTestPriorSequencingTest().copy(skippedExons = setOf(ARCHER_SKIPPED_EXON)))
         assertThat(annotatedPanel.drivers.fusions).isEqualTo(setOf(expected))

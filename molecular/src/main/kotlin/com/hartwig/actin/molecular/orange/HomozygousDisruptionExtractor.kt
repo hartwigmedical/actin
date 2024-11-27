@@ -11,7 +11,7 @@ import com.hartwig.hmftools.datamodel.linx.LinxRecord
 
 internal class HomozygousDisruptionExtractor(private val geneFilter: GeneFilter) {
 
-    fun extractHomozygousDisruptions(linx: LinxRecord): MutableSet<HomozygousDisruption> {
+    fun extractHomozygousDisruptions(linx: LinxRecord): List<HomozygousDisruption> {
         val relevantHomozygousDisruptions = relevantHomozygousDisruptions(linx)
 
         relevantHomozygousDisruptions.find { !geneFilter.include(it.gene()) }
@@ -33,7 +33,7 @@ internal class HomozygousDisruptionExtractor(private val geneFilter: GeneFilter)
                 driverLikelihood = DriverLikelihood.HIGH,
                 evidence = ClinicalEvidenceFactory.createNoEvidence(),
             )
-        }.toSortedSet(HomozygousDisruptionComparator())
+        }.toList().sortedWith(HomozygousDisruptionComparator())
     }
 
     private fun relevantHomozygousDisruptions(linx: LinxRecord): Set<com.hartwig.hmftools.datamodel.linx.LinxHomozygousDisruption> {

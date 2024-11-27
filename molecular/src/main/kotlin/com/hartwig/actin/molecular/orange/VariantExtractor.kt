@@ -38,7 +38,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
 
     private val mutationDriverTypes = setOf(PurpleDriverType.MUTATION, PurpleDriverType.GERMLINE_MUTATION)
 
-    fun extract(purple: PurpleRecord): Set<Variant> {
+    fun extract(purple: PurpleRecord): List<Variant> {
         val drivers = DriverExtractor.relevantPurpleDrivers(purple)
 
         return VariantDedup.apply(relevantPurpleVariants(purple)).filter { variant ->
@@ -52,40 +52,38 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
                 )
             }
             geneIncluded && (reported || coding)
-        }
-            .map { variant ->
-                val event = DriverEventFactory.variantEvent(variant)
-                val driver = findBestMutationDriver(drivers, variant.gene(), variant.canonicalImpact().transcript())
-                val driverLikelihood = determineDriverLikelihood(driver)
-                val evidence = ClinicalEvidenceFactory.createNoEvidence()
-                Variant(
-                    chromosome = variant.chromosome(),
-                    position = variant.position(),
-                    ref = variant.ref(),
-                    alt = variant.alt(),
-                    type = determineVariantType(variant),
-                    variantAlleleFrequency = variant.adjustedVAF(),
-                    canonicalImpact = extractCanonicalImpact(variant),
-                    otherImpacts = extractOtherImpacts(variant),
-                    extendedVariantDetails = ExtendedVariantDetails(
-                        variantCopyNumber = ExtractionUtil.keep3Digits(variant.variantCopyNumber()),
-                        totalCopyNumber = ExtractionUtil.keep3Digits(variant.adjustedCopyNumber()),
-                        isBiallelic = variant.biallelic(),
-                        phaseGroups = variant.localPhaseSets()?.toSet(),
-                        clonalLikelihood = ExtractionUtil.keep3Digits(1 - variant.subclonalLikelihood()),
-                    ),
-                    isHotspot = variant.hotspot() == HotspotType.HOTSPOT,
-                    isReportable = variant.reported(),
-                    event = event,
-                    driverLikelihood = driverLikelihood,
-                    evidence = evidence,
-                    gene = variant.gene(),
-                    geneRole = GeneRole.UNKNOWN,
-                    proteinEffect = ProteinEffect.UNKNOWN,
-                    isAssociatedWithDrugResistance = null,
-                )
-            }
-            .toSortedSet(VariantComparator())
+        }.map { variant ->
+            val event = DriverEventFactory.variantEvent(variant)
+            val driver = findBestMutationDriver(drivers, variant.gene(), variant.canonicalImpact().transcript())
+            val driverLikelihood = determineDriverLikelihood(driver)
+            val evidence = ClinicalEvidenceFactory.createNoEvidence()
+            Variant(
+                chromosome = variant.chromosome(),
+                position = variant.position(),
+                ref = variant.ref(),
+                alt = variant.alt(),
+                type = determineVariantType(variant),
+                variantAlleleFrequency = variant.adjustedVAF(),
+                canonicalImpact = extractCanonicalImpact(variant),
+                otherImpacts = extractOtherImpacts(variant),
+                extendedVariantDetails = ExtendedVariantDetails(
+                    variantCopyNumber = ExtractionUtil.keep3Digits(variant.variantCopyNumber()),
+                    totalCopyNumber = ExtractionUtil.keep3Digits(variant.adjustedCopyNumber()),
+                    isBiallelic = variant.biallelic(),
+                    phaseGroups = variant.localPhaseSets()?.toSet(),
+                    clonalLikelihood = ExtractionUtil.keep3Digits(1 - variant.subclonalLikelihood()),
+                ),
+                isHotspot = variant.hotspot() == HotspotType.HOTSPOT,
+                isReportable = variant.reported(),
+                event = event,
+                driverLikelihood = driverLikelihood,
+                evidence = evidence,
+                gene = variant.gene(),
+                geneRole = GeneRole.UNKNOWN,
+                proteinEffect = ProteinEffect.UNKNOWN,
+                isAssociatedWithDrugResistance = null,
+            )
+        }.toList().sortedWith(VariantComparator())
     }
 
     private fun relevantPurpleVariants(purple: PurpleRecord): Set<PurpleVariant> {

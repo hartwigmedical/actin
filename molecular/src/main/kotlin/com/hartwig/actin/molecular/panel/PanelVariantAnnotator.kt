@@ -50,17 +50,17 @@ class PanelVariantAnnotator(
 
     private val logger = LogManager.getLogger(PanelVariantAnnotator::class.java)
 
-    fun annotate(variants: Set<SequencedVariant>): Set<Variant> {
+    fun annotate(variants: Set<SequencedVariant>): List<Variant> {
         val variantExtractions = indexVariantExtractionsToUniqueIds(variants)
         val transvarVariants = resolveVariants(variantExtractions)
         val paveAnnotations = annotateWithPave(transvarVariants)
         val variantsWithEvidence = annotateWithEvidence(transvarVariants, paveAnnotations, variantExtractions)
         val variantsWithDriverLikelihoodModel = annotateWithDriverLikelihood(variantsWithEvidence)
 
-        return variantsWithDriverLikelihoodModel.toSet()
+        return variantsWithDriverLikelihoodModel.toList()
     }
 
-    private fun indexVariantExtractionsToUniqueIds(variants: Set<SequencedVariant>): Map<String, SequencedVariant> {
+    private fun indexVariantExtractionsToUniqueIds(variants: Collection<SequencedVariant>): Map<String, SequencedVariant> {
         return variants.withIndex().associate { it.index.toString() to it.value }
     }
 

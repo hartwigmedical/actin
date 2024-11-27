@@ -40,7 +40,7 @@ internal class DriverExtractor private constructor(
         LOGGER.info(" Extracted {} fusions of which {} reportable", fusions.size, reportableCount(fusions))
 
         val virusInterpreter = record.virusInterpreter()
-        val viruses = if (virusInterpreter != null) virusExtractor.extract(virusInterpreter) else emptySet()
+        val viruses = if (virusInterpreter != null) virusExtractor.extract(virusInterpreter) else emptyList()
         LOGGER.info(" Extracted {} viruses of which {} reportable", viruses.size, reportableCount(viruses))
 
         return Drivers(

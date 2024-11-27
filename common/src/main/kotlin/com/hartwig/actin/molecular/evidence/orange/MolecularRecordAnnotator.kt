@@ -56,15 +56,14 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
 
     private fun annotateDrivers(drivers: Drivers): Drivers {
         return drivers.copy(
-            variants = drivers.variants.map { annotateVariant(it) }.toSet(),
-            copyNumbers = drivers.copyNumbers.map { annotateCopyNumber(it) }.toSet(),
-            homozygousDisruptions = drivers.homozygousDisruptions.map { annotateHomozygousDisruption(it) }.toSet(),
-            disruptions = drivers.disruptions.map { annotateDisruption(it) }.toSet(),
-            fusions = drivers.fusions.map { annotateFusion(it) }.toSet(),
-            viruses = drivers.viruses.map { annotateVirus(it) }.toSet()
+            variants = drivers.variants.map { annotateVariant(it) }.toList(),
+            copyNumbers = drivers.copyNumbers.map { annotateCopyNumber(it) }.toList(),
+            homozygousDisruptions = drivers.homozygousDisruptions.map { annotateHomozygousDisruption(it) }.toList(),
+            disruptions = drivers.disruptions.map { annotateDisruption(it) }.toList(),
+            fusions = drivers.fusions.map { annotateFusion(it) }.toList(),
+            viruses = drivers.viruses.map { annotateVirus(it) }.toList()
         )
     }
-
 
     private fun annotateVariant(variant: Variant): Variant {
         val evidence = if (variant.driverLikelihood == DriverLikelihood.HIGH) {

@@ -19,7 +19,7 @@ private val DEL_DRIVERS = setOf(PurpleDriverType.DEL)
 
 internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
 
-    fun extract(purple: PurpleRecord): Set<CopyNumber> {
+    fun extract(purple: PurpleRecord): List<CopyNumber> {
         val drivers = DriverExtractor.relevantPurpleDrivers(purple)
         return purple.allSomaticGeneCopyNumbers()
             .map { geneCopyNumber ->
@@ -69,7 +69,7 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
                         maxCopies = Math.round(geneCopyNumber.maxCopyNumber()).toInt()
                     )
                 }
-            }.toSortedSet(CopyNumberComparator())
+            }.toList().sortedWith(CopyNumberComparator())
     }
 
     internal fun determineType(interpretation: CopyNumberInterpretation): CopyNumberType {

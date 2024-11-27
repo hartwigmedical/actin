@@ -76,7 +76,7 @@ class VirusExtractorTest {
         }
     }
 
-    private fun findByName(viruses: Set<Virus>, nameToFind: String): Virus {
+    private fun findByName(viruses: Collection<Virus>, nameToFind: String): Virus {
         return viruses.find { it.name == nameToFind }
             ?: throw IllegalStateException("Could not find virus with name: $nameToFind")
     }
