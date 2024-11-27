@@ -24,92 +24,88 @@ internal class FusionExtractor(private val geneFilter: GeneFilter) {
                 )
             }
             included
-        }
-            .map { fusion ->
-                Fusion(
-                    isReportable = fusion.reported(),
-                    event = DriverEventFactory.fusionEvent(fusion),
-                    driverLikelihood = determineDriverLikelihood(fusion),
-                    evidence = ClinicalEvidenceFactory.createNoEvidence(),
-                    geneStart = fusion.geneStart(),
-                    geneEnd = fusion.geneEnd(),
-                    driverType = determineDriverType(fusion),
-                    proteinEffect = ProteinEffect.UNKNOWN,
-                    isAssociatedWithDrugResistance = null,
-                    geneTranscriptStart = fusion.geneTranscriptStart(),
-                    geneTranscriptEnd = fusion.geneTranscriptEnd(),
-                    fusedExonUp = fusion.fusedExonUp(),
-                    fusedExonDown = fusion.fusedExonDown()
-                )
-            }
-            .toSortedSet(FusionComparator())
+        }.map { fusion ->
+            Fusion(
+                isReportable = fusion.reported(),
+                event = DriverEventFactory.fusionEvent(fusion),
+                driverLikelihood = determineDriverLikelihood(fusion),
+                evidence = ClinicalEvidenceFactory.createNoEvidence(),
+                geneStart = fusion.geneStart(),
+                geneEnd = fusion.geneEnd(),
+                driverType = determineDriverType(fusion),
+                proteinEffect = ProteinEffect.UNKNOWN,
+                isAssociatedWithDrugResistance = null,
+                geneTranscriptStart = fusion.geneTranscriptStart(),
+                geneTranscriptEnd = fusion.geneTranscriptEnd(),
+                fusedExonUp = fusion.fusedExonUp(),
+                fusedExonDown = fusion.fusedExonDown()
+            )
+        }.toSortedSet(FusionComparator())
     }
 
-    companion object {
-        internal fun determineDriverType(fusion: LinxFusion): FusionDriverType {
-            return when (fusion.reportedType()) {
-                LinxFusionType.PROMISCUOUS_3 -> {
-                    FusionDriverType.PROMISCUOUS_3
-                }
+    internal fun determineDriverType(fusion: LinxFusion): FusionDriverType {
+        return when (fusion.reportedType()) {
+            LinxFusionType.PROMISCUOUS_3 -> {
+                FusionDriverType.PROMISCUOUS_3
+            }
 
-                LinxFusionType.PROMISCUOUS_5 -> {
-                    FusionDriverType.PROMISCUOUS_5
-                }
+            LinxFusionType.PROMISCUOUS_5 -> {
+                FusionDriverType.PROMISCUOUS_5
+            }
 
-                LinxFusionType.PROMISCUOUS_BOTH -> {
-                    FusionDriverType.PROMISCUOUS_BOTH
-                }
+            LinxFusionType.PROMISCUOUS_BOTH -> {
+                FusionDriverType.PROMISCUOUS_BOTH
+            }
 
-                LinxFusionType.IG_PROMISCUOUS -> {
-                    FusionDriverType.PROMISCUOUS_IG
-                }
+            LinxFusionType.IG_PROMISCUOUS -> {
+                FusionDriverType.PROMISCUOUS_IG
+            }
 
-                LinxFusionType.KNOWN_PAIR -> {
-                    FusionDriverType.KNOWN_PAIR
-                }
+            LinxFusionType.KNOWN_PAIR -> {
+                FusionDriverType.KNOWN_PAIR
+            }
 
-                LinxFusionType.IG_KNOWN_PAIR -> {
-                    FusionDriverType.KNOWN_PAIR_IG
-                }
+            LinxFusionType.IG_KNOWN_PAIR -> {
+                FusionDriverType.KNOWN_PAIR_IG
+            }
 
-                LinxFusionType.EXON_DEL_DUP -> {
-                    FusionDriverType.KNOWN_PAIR_DEL_DUP
-                }
+            LinxFusionType.EXON_DEL_DUP -> {
+                FusionDriverType.KNOWN_PAIR_DEL_DUP
+            }
 
-                LinxFusionType.PROMISCUOUS_ENHANCER_TARGET -> {
-                    FusionDriverType.PROMISCUOUS_ENHANCER_TARGET
-                }
+            LinxFusionType.PROMISCUOUS_ENHANCER_TARGET -> {
+                FusionDriverType.PROMISCUOUS_ENHANCER_TARGET
+            }
 
-                LinxFusionType.NONE -> {
-                    FusionDriverType.NONE
-                }
+            LinxFusionType.NONE -> {
+                FusionDriverType.NONE
+            }
 
-                else -> {
-                    throw IllegalStateException("Cannot determine driver type for fusion of type: " + fusion.reportedType())
-                }
+            else -> {
+                throw IllegalStateException("Cannot determine driver type for fusion of type: " + fusion.reportedType())
             }
         }
+    }
 
-        internal fun determineDriverLikelihood(fusion: LinxFusion): DriverLikelihood? {
-            return when (fusion.driverLikelihood()) {
-                FusionLikelihoodType.HIGH -> {
-                    DriverLikelihood.HIGH
-                }
+    internal fun determineDriverLikelihood(fusion: LinxFusion): DriverLikelihood? {
+        return when (fusion.driverLikelihood()) {
+            FusionLikelihoodType.HIGH -> {
+                DriverLikelihood.HIGH
+            }
 
-                FusionLikelihoodType.LOW -> {
-                    DriverLikelihood.LOW
-                }
+            FusionLikelihoodType.LOW -> {
+                DriverLikelihood.LOW
+            }
 
-                FusionLikelihoodType.NA -> {
-                    null
-                }
+            FusionLikelihoodType.NA -> {
+                null
+            }
 
-                else -> {
-                    throw IllegalStateException(
-                        "Cannot determine driver likelihood for fusion driver likelihood: " +
-                                fusion.driverLikelihood()
-                    )
-                }
+            else -> {
+                throw IllegalStateException(
+                    "Cannot determine driver likelihood for fusion driver likelihood: " +
+                            fusion.driverLikelihood()
+                )
             }
         }
     }

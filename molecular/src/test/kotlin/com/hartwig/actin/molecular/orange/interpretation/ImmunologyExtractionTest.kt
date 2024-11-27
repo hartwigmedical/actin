@@ -11,6 +11,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
 import org.junit.Test
 
+private const val EPSILON = 1.0E-10
+
 class ImmunologyExtractionTest {
 
     @Test
@@ -61,9 +63,5 @@ class ImmunologyExtractionTest {
                 ImmutableLilacRecord.builder().from(base.lilac()).qc(ImmunologyExtraction.LILAC_QC_PASS).addAlleles(*alleles).build()
             )
             .build()
-    }
-
-    companion object {
-        private const val EPSILON = 1.0E-10
     }
 }

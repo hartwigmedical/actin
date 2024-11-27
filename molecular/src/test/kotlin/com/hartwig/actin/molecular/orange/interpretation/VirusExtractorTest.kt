@@ -13,12 +13,14 @@ import org.junit.Test
 
 class VirusExtractorTest {
 
+    private val extractor = VirusExtractor()
+
     @Test
     fun `Should extract viruses`() {
         val virusEntry1 = TestVirusInterpreterFactory.builder()
             .reported(true)
             .name("virus 1")
-            .qcStatus(VirusExtractor.QC_PASS_STATUS)
+            .qcStatus(VirusBreakendQCStatus.NO_ABNORMALITIES)
             .interpretation(VirusInterpretation.HPV)
             .integrations(2)
             .driverLikelihood(VirusLikelihoodType.HIGH)
@@ -33,9 +35,8 @@ class VirusExtractorTest {
             .driverLikelihood(VirusLikelihoodType.LOW)
             .build()
         val virusInterpreter = ImmutableVirusInterpreterData.builder().addAllViruses(virusEntry1, virusEntry2).build()
-        val virusExtractor = VirusExtractor()
 
-        val viruses = virusExtractor.extract(virusInterpreter)
+        val viruses = extractor.extract(virusInterpreter)
         assertThat(viruses.size.toLong()).isEqualTo(2)
 
         val virus1 = findByName(viruses, "virus 1")
@@ -60,17 +61,18 @@ class VirusExtractorTest {
             VirusLikelihoodType.HIGH to DriverLikelihood.HIGH,
             VirusLikelihoodType.UNKNOWN to null
         )
+
         for (virusDriverLikelihood in VirusLikelihoodType.values()) {
-            assertThat(VirusExtractor.determineDriverLikelihood(virusDriverLikelihood))
+            assertThat(extractor.determineDriverLikelihood(virusDriverLikelihood))
                 .isEqualTo(expectedDriverLikelihoodLookup[virusDriverLikelihood])
         }
     }
 
     @Test
     fun `Should determine type for all interpretations`() {
-        assertThat(VirusExtractor.determineType(null)).isEqualTo(VirusType.OTHER)
+        assertThat(extractor.determineType(null)).isEqualTo(VirusType.OTHER)
         for (interpretation in VirusInterpretation.values()) {
-            assertThat(VirusExtractor.determineType(interpretation)).isNotNull()
+            assertThat(extractor.determineType(interpretation)).isNotNull()
         }
     }
 

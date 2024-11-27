@@ -23,15 +23,15 @@ import java.time.LocalDate
 
 class OrangeExtractorTest {
 
+    private val interpreter = OrangeExtractor(TestGeneFilterFactory.createAlwaysValid())
+
     @Test
     fun `Should not crash on minimal orange record`() {
-        val interpreter = createTestInterpreter()
         assertThat(interpreter.interpret(TestOrangeFactory.createMinimalTestOrangeRecord())).isNotNull()
     }
 
     @Test
     fun `Should interpret proper orange record`() {
-        val interpreter = createTestInterpreter()
         val record = interpreter.interpret(TestOrangeFactory.createProperTestOrangeRecord())
         assertThat(record.patientId).isEqualTo(TestPatientFactory.TEST_PATIENT)
         assertThat(record.sampleId).isEqualTo(TestPatientFactory.TEST_SAMPLE)
@@ -62,134 +62,126 @@ class OrangeExtractorTest {
 
     @Test
     fun `Should be able to convert sample id to patient id`() {
-        assertThat(OrangeExtractor.toPatientId("ACTN01029999T")).isEqualTo("ACTN01029999")
-        assertThat(OrangeExtractor.toPatientId("ACTN01029999T2")).isEqualTo("ACTN01029999")
+        assertThat(interpreter.toPatientId("ACTN01029999T")).isEqualTo("ACTN01029999")
+        assertThat(interpreter.toPatientId("ACTN01029999T2")).isEqualTo("ACTN01029999")
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun `Should throw exception on invalid sample id`() {
-        OrangeExtractor.toPatientId("no sample")
+        interpreter.toPatientId("no sample")
     }
 
     @Test
     fun `Should be able to resolve all ref genome versions`() {
         for (refGenomeVersion in OrangeRefGenomeVersion.values()) {
-            assertThat(OrangeExtractor.determineRefGenomeVersion(refGenomeVersion)).isNotNull()
+            assertThat(interpreter.determineRefGenomeVersion(refGenomeVersion)).isNotNull()
         }
     }
 
     @Test
     fun `Should determine quality and purity to be sufficient when only pass status is present`() {
         val record = orangeRecordWithQCStatus(PurpleQCStatus.PASS)
-        assertThat(OrangeExtractor.hasSufficientQuality(record)).isTrue
-        assertThat(OrangeExtractor.hasSufficientPurity(record)).isTrue
+        assertThat(interpreter.hasSufficientQuality(record)).isTrue
+        assertThat(interpreter.hasSufficientPurity(record)).isTrue
     }
 
     @Test
     fun `Should determine quality but not purity to be sufficient when only low purity warning is present`() {
         val record = orangeRecordWithQCStatus(PurpleQCStatus.WARN_LOW_PURITY)
-        assertThat(OrangeExtractor.hasSufficientQuality(record)).isTrue
-        assertThat(OrangeExtractor.hasSufficientPurity(record)).isFalse
+        assertThat(interpreter.hasSufficientQuality(record)).isTrue
+        assertThat(interpreter.hasSufficientPurity(record)).isFalse
     }
 
     @Test
     fun `Should determine quality and purity to be sufficient when other warning is present`() {
         val record = orangeRecordWithQCStatus(PurpleQCStatus.WARN_DELETED_GENES)
-        assertThat(OrangeExtractor.hasSufficientQuality(record)).isTrue
-        assertThat(OrangeExtractor.hasSufficientPurity(record)).isTrue
+        assertThat(interpreter.hasSufficientQuality(record)).isTrue
+        assertThat(interpreter.hasSufficientPurity(record)).isTrue
     }
 
     @Test
     fun `Should determine quality excluding purity to be sufficient when other warning is present with low purity warning`() {
         val record = orangeRecordWithQCStatuses(setOf(PurpleQCStatus.WARN_LOW_PURITY, PurpleQCStatus.WARN_DELETED_GENES))
-        assertThat(OrangeExtractor.hasSufficientQuality(record)).isTrue
-        assertThat(OrangeExtractor.hasSufficientPurity(record)).isFalse
+        assertThat(interpreter.hasSufficientQuality(record)).isTrue
+        assertThat(interpreter.hasSufficientPurity(record)).isFalse
     }
 
     @Test(expected = IllegalStateException::class)
     fun `Should throw exception on empty QC States`() {
-        val interpreter = createTestInterpreter()
         interpreter.interpret(orangeRecordWithQCStatuses(mutableSetOf()))
     }
 
     @Test(expected = IllegalStateException::class)
     fun `Should throw exception on missing cuppa prediction classifiers`() {
         val proper = TestOrangeFactory.createProperTestOrangeRecord()
-        val record: OrangeRecord = ImmutableOrangeRecord.copyOf(proper)
+        val record = ImmutableOrangeRecord.copyOf(proper)
             .withCuppa(ImmutableCuppaData.copyOf(proper.cuppa()).withPredictions(TestCuppaFactory.builder().build()))
-        val interpreter = createTestInterpreter()
         interpreter.interpret(record)
     }
 
     @Test(expected = IllegalStateException::class)
     fun `Should throw exception on germline disruption present`() {
         val proper = TestOrangeFactory.createProperTestOrangeRecord()
-        val record: OrangeRecord = ImmutableOrangeRecord.copyOf(proper)
+        val record = ImmutableOrangeRecord.copyOf(proper)
             .withLinx(
                 ImmutableLinxRecord.copyOf(proper.linx())
                     .withGermlineHomozygousDisruptions(TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build())
             )
-        val interpreter = createTestInterpreter()
         interpreter.interpret(record)
     }
 
     @Test(expected = IllegalStateException::class)
     fun `Should throw exception on germline breakend present`() {
         val proper = TestOrangeFactory.createProperTestOrangeRecord()
-        val record: OrangeRecord = ImmutableOrangeRecord.copyOf(proper)
+        val record = ImmutableOrangeRecord.copyOf(proper)
             .withLinx(
                 ImmutableLinxRecord.copyOf(proper.linx())
                     .withAllGermlineBreakends(TestLinxFactory.breakendBuilder().gene("gene 1").build())
             )
-        val interpreter = createTestInterpreter()
         interpreter.interpret(record)
     }
 
     @Test(expected = IllegalStateException::class)
     fun `Should throw exception on germline SV present`() {
         val proper = TestOrangeFactory.createProperTestOrangeRecord()
-        val record: OrangeRecord = ImmutableOrangeRecord.copyOf(proper)
+        val record = ImmutableOrangeRecord.copyOf(proper)
             .withLinx(
                 ImmutableLinxRecord.copyOf(proper.linx())
                     .withAllGermlineStructuralVariants(TestLinxFactory.structuralVariantBuilder().svId(1).build())
             )
-        val interpreter = createTestInterpreter()
         interpreter.interpret(record)
     }
 
     @Test
     fun `Should accept empty list as scrubbed for germline disruption`() {
         val proper = TestOrangeFactory.createProperTestOrangeRecord()
-        val record: OrangeRecord = ImmutableOrangeRecord.copyOf(proper)
+        val record = ImmutableOrangeRecord.copyOf(proper)
             .withLinx(
                 ImmutableLinxRecord.copyOf(proper.linx())
                     .withGermlineHomozygousDisruptions(emptyList())
             )
-        val interpreter = createTestInterpreter()
         interpreter.interpret(record)
     }
 
     @Test
     fun `Should accept empty list as scrubbed for germline breakends`() {
         val proper = TestOrangeFactory.createProperTestOrangeRecord()
-        val record: OrangeRecord = ImmutableOrangeRecord.copyOf(proper)
+        val record = ImmutableOrangeRecord.copyOf(proper)
             .withLinx(
                 ImmutableLinxRecord.copyOf(proper.linx())
                     .withAllGermlineBreakends(emptyList())
             )
-        val interpreter = createTestInterpreter()
         interpreter.interpret(record)
     }
 
     @Test
     fun `Should accept empty list as for scrubbed germline SV`() {
         val proper = TestOrangeFactory.createProperTestOrangeRecord()
-        val record: OrangeRecord = ImmutableOrangeRecord.copyOf(proper)
+        val record = ImmutableOrangeRecord.copyOf(proper)
             .withLinx(
                 ImmutableLinxRecord.copyOf(proper.linx())
                     .withAllGermlineStructuralVariants(emptyList())
             )
-        val interpreter = createTestInterpreter()
         interpreter.interpret(record)
     }
 
@@ -207,9 +199,5 @@ class OrangeExtractorTest {
                             .withQc(TestPurpleFactory.purpleQCBuilder().addAllStatus(statuses).build())
                     )
             )
-    }
-
-    private fun createTestInterpreter(): OrangeExtractor {
-        return OrangeExtractor(TestGeneFilterFactory.createAlwaysValid())
     }
 }

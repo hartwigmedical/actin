@@ -20,7 +20,11 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
 import org.junit.Test
 
+private const val EPSILON = 1.0E-10
+
 class DisruptionExtractorTest {
+
+    private val extractor = DisruptionExtractor(TestGeneFilterFactory.createAlwaysValid())
 
     @Test
     fun `Should extract breakends`() {
@@ -88,7 +92,7 @@ class DisruptionExtractorTest {
     @Test
     fun `Should determine all disruption types`() {
         for (breakendType in LinxBreakendType.values()) {
-            assertThat(DisruptionExtractor.determineDisruptionType(breakendType)).isNotNull()
+            assertThat(extractor.determineDisruptionType(breakendType)).isNotNull()
         }
     }
 
@@ -96,7 +100,7 @@ class DisruptionExtractorTest {
     fun `Should determine all region types`() {
         for (regionType in TranscriptRegionType.values()) {
             if (regionType != TranscriptRegionType.UNKNOWN) {
-                assertThat(DisruptionExtractor.determineRegionType(regionType)).isNotNull()
+                assertThat(extractor.determineRegionType(regionType)).isNotNull()
             }
         }
     }
@@ -105,7 +109,7 @@ class DisruptionExtractorTest {
     fun `Should determine all coding types`() {
         for (codingType in TranscriptCodingType.values()) {
             if (codingType != TranscriptCodingType.UNKNOWN) {
-                assertThat(DisruptionExtractor.determineCodingContext(codingType)).isNotNull()
+                assertThat(extractor.determineCodingContext(codingType)).isNotNull()
             }
         }
     }
@@ -140,9 +144,5 @@ class DisruptionExtractorTest {
             .addAllSomaticStructuralVariants(structuralVariantBuilder().svId(breakend.svId()).build())
             .addAllSomaticBreakends(breakend)
             .build()
-    }
-
-    companion object {
-        private const val EPSILON = 1.0E-10
     }
 }

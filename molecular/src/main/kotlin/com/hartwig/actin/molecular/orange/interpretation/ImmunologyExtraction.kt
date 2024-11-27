@@ -28,7 +28,6 @@ internal object ImmunologyExtraction {
                 tumorCopyNumber = allele.tumorCopyNumber(),
                 hasSomaticMutations = hasSomaticVariants
             )
-        }
-            .toSet()
+        }.toSet()
     }
 }

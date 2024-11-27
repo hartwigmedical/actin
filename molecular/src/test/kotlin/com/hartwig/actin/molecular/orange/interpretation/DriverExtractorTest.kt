@@ -12,11 +12,11 @@ import org.junit.Test
 
 class DriverExtractorTest {
 
+    private val extractor = DriverExtractor.create(TestGeneFilterFactory.createAlwaysValid())
+
     @Test
     fun `Should extract from minimal test data`() {
-        val driverExtractor = createTestExtractor()
-
-        val drivers = driverExtractor.extract(TestOrangeFactory.createMinimalTestOrangeRecord())
+        val drivers = extractor.extract(TestOrangeFactory.createMinimalTestOrangeRecord())
         assertThat(drivers.variants).hasSize(0)
         assertThat(drivers.copyNumbers).hasSize(0)
         assertThat(drivers.homozygousDisruptions).hasSize(0)
@@ -27,9 +27,7 @@ class DriverExtractorTest {
 
     @Test
     fun `Should extract from proper test data`() {
-        val driverExtractor = createTestExtractor()
-
-        val drivers = driverExtractor.extract(TestOrangeFactory.createProperTestOrangeRecord())
+        val drivers = extractor.extract(TestOrangeFactory.createProperTestOrangeRecord())
         assertThat(drivers.variants).hasSize(1)
         assertThat(drivers.copyNumbers).hasSize(3)
         assertThat(drivers.homozygousDisruptions).hasSize(1)
@@ -45,7 +43,7 @@ class DriverExtractorTest {
             TestCopyNumberFactory.createMinimal().copy(gene = "gene 2", type = CopyNumberType.FULL_GAIN, isReportable = true),
             TestCopyNumberFactory.createMinimal().copy(gene = "gene 3", type = CopyNumberType.LOSS, isReportable = false)
         )
-        val lostGenes = DriverExtractor.reportableLostGenes(copyNumbers)
+        val lostGenes = extractor.reportableLostGenes(copyNumbers)
         assertThat(lostGenes).hasSize(1)
         assertThat(lostGenes.first()).isEqualTo("gene 1")
     }
@@ -58,13 +56,7 @@ class DriverExtractorTest {
             TestFusionFactory.createMinimal().copy(isReportable = true),
             TestVirusFactory.createMinimal().copy(isReportable = false)
         )
-        assertThat(DriverExtractor.reportableCount(drivers)).isEqualTo(2)
-        assertThat(DriverExtractor.reportableCount(emptyList())).isEqualTo(0)
-    }
-
-    companion object {
-        private fun createTestExtractor(): DriverExtractor {
-            return DriverExtractor.create(TestGeneFilterFactory.createAlwaysValid())
-        }
+        assertThat(extractor.reportableCount(drivers)).isEqualTo(2)
+        assertThat(extractor.reportableCount(emptyList())).isEqualTo(0)
     }
 }

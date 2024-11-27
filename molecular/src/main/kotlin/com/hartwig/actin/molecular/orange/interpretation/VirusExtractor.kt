@@ -10,6 +10,8 @@ import com.hartwig.hmftools.datamodel.virus.VirusInterpretation
 import com.hartwig.hmftools.datamodel.virus.VirusInterpreterData
 import com.hartwig.hmftools.datamodel.virus.VirusLikelihoodType
 
+private val QC_PASS_STATUS = VirusBreakendQCStatus.NO_ABNORMALITIES
+
 internal class VirusExtractor() {
 
     fun extract(virusInterpreter: VirusInterpreterData): Set<Virus> {
@@ -27,57 +29,54 @@ internal class VirusExtractor() {
         }.toSortedSet(VirusComparator())
     }
 
-    companion object {
-        val QC_PASS_STATUS: VirusBreakendQCStatus = VirusBreakendQCStatus.NO_ABNORMALITIES
+    internal fun determineDriverLikelihood(driverLikelihood: VirusLikelihoodType): DriverLikelihood? {
+        return when (driverLikelihood) {
+            VirusLikelihoodType.HIGH -> {
+                DriverLikelihood.HIGH
+            }
 
-        internal fun determineDriverLikelihood(driverLikelihood: VirusLikelihoodType): DriverLikelihood? {
-            return when (driverLikelihood) {
-                VirusLikelihoodType.HIGH -> {
-                    DriverLikelihood.HIGH
-                }
+            VirusLikelihoodType.LOW -> {
+                DriverLikelihood.LOW
+            }
 
-                VirusLikelihoodType.LOW -> {
-                    DriverLikelihood.LOW
-                }
+            VirusLikelihoodType.UNKNOWN -> {
+                null
+            }
 
-                VirusLikelihoodType.UNKNOWN -> {
-                    null
-                }
-
-                else -> {
-                    throw IllegalStateException(
-                        "Cannot determine driver likelihood type for virus driver likelihood: $driverLikelihood")
-                }
+            else -> {
+                throw IllegalStateException(
+                    "Cannot determine driver likelihood type for virus driver likelihood: $driverLikelihood"
+                )
             }
         }
+    }
 
-        internal fun determineType(interpretation: VirusInterpretation?): VirusType {
-            return if (interpretation == null) {
-                VirusType.OTHER
-            } else when (interpretation) {
-                VirusInterpretation.MCV -> {
-                    VirusType.MERKEL_CELL_VIRUS
-                }
+    internal fun determineType(interpretation: VirusInterpretation?): VirusType {
+        return if (interpretation == null) {
+            VirusType.OTHER
+        } else when (interpretation) {
+            VirusInterpretation.MCV -> {
+                VirusType.MERKEL_CELL_VIRUS
+            }
 
-                VirusInterpretation.EBV -> {
-                    VirusType.EPSTEIN_BARR_VIRUS
-                }
+            VirusInterpretation.EBV -> {
+                VirusType.EPSTEIN_BARR_VIRUS
+            }
 
-                VirusInterpretation.HPV -> {
-                    VirusType.HUMAN_PAPILLOMA_VIRUS
-                }
+            VirusInterpretation.HPV -> {
+                VirusType.HUMAN_PAPILLOMA_VIRUS
+            }
 
-                VirusInterpretation.HBV -> {
-                    VirusType.HEPATITIS_B_VIRUS
-                }
+            VirusInterpretation.HBV -> {
+                VirusType.HEPATITIS_B_VIRUS
+            }
 
-                VirusInterpretation.HHV8 -> {
-                    VirusType.HUMAN_HERPES_VIRUS_8
-                }
+            VirusInterpretation.HHV8 -> {
+                VirusType.HUMAN_HERPES_VIRUS_8
+            }
 
-                else -> {
-                    throw IllegalStateException("Cannot determine virus type for interpretation: $interpretation")
-                }
+            else -> {
+                throw IllegalStateException("Cannot determine virus type for interpretation: $interpretation")
             }
         }
     }

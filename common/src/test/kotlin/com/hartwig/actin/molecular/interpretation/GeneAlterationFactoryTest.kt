@@ -1,9 +1,8 @@
-package com.hartwig.actin.molecular.orange.interpretation
+package com.hartwig.actin.molecular.interpretation
 
 import com.hartwig.actin.datamodel.molecular.GeneRole
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
-import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

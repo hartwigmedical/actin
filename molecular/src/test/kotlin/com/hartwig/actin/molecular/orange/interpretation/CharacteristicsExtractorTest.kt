@@ -15,6 +15,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
 import org.junit.Test
 
+private const val EPSILON = 1.0E-10
+
 class CharacteristicsExtractorTest {
 
     @Test
@@ -138,9 +140,5 @@ class CharacteristicsExtractorTest {
             .from(base)
             .purple(ImmutablePurpleRecord.builder().from(base.purple()).characteristics(characteristics).build())
             .build()
-    }
-
-    companion object {
-        private const val EPSILON = 1.0E-10
     }
 }

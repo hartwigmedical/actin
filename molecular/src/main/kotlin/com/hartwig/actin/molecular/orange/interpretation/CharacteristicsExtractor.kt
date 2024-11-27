@@ -41,60 +41,58 @@ internal class CharacteristicsExtractor {
         )
     }
 
-    companion object {
-        private fun isMSI(microsatelliteStatus: PurpleMicrosatelliteStatus): Boolean? {
-            return when (microsatelliteStatus) {
-                PurpleMicrosatelliteStatus.MSI -> true
-                PurpleMicrosatelliteStatus.MSS -> false
-                PurpleMicrosatelliteStatus.UNKNOWN -> null
-            }
+    private fun isMSI(microsatelliteStatus: PurpleMicrosatelliteStatus): Boolean? {
+        return when (microsatelliteStatus) {
+            PurpleMicrosatelliteStatus.MSI -> true
+            PurpleMicrosatelliteStatus.MSS -> false
+            PurpleMicrosatelliteStatus.UNKNOWN -> null
         }
+    }
 
-        private fun isHRD(hrStatus: ChordStatus): Boolean? {
-            return when (hrStatus) {
-                ChordStatus.HR_DEFICIENT -> true
-                ChordStatus.HR_PROFICIENT -> false
-                ChordStatus.UNKNOWN, ChordStatus.CANNOT_BE_DETERMINED -> null
-            }
+    private fun isHRD(hrStatus: ChordStatus): Boolean? {
+        return when (hrStatus) {
+            ChordStatus.HR_DEFICIENT -> true
+            ChordStatus.HR_PROFICIENT -> false
+            ChordStatus.UNKNOWN, ChordStatus.CANNOT_BE_DETERMINED -> null
         }
+    }
 
-        private fun hasHighStatus(tumorMutationalStatus: PurpleTumorMutationalStatus): Boolean? {
-            return when (tumorMutationalStatus) {
-                PurpleTumorMutationalStatus.HIGH -> {
-                    true
-                }
-
-                PurpleTumorMutationalStatus.LOW -> {
-                    false
-                }
-
-                PurpleTumorMutationalStatus.UNKNOWN -> {
-                    null
-                }
-            }
-        }
-
-        private fun determineCupPredictions(cuppaPredictions: List<CuppaPrediction>): List<CupPrediction> {
-            return cuppaPredictions.map { cuppaPrediction: CuppaPrediction -> determineCupPrediction(cuppaPrediction) }
-        }
-
-        private fun determineCupPrediction(cuppaPrediction: CuppaPrediction): CupPrediction {
-            if (cuppaPrediction.snvPairwiseClassifier() == null || cuppaPrediction.genomicPositionClassifier() == null ||
-                cuppaPrediction.featureClassifier() == null
-            ) {
-                throw IllegalStateException(
-                    "CUPPA classifiers are not supposed to be missing at this point " +
-                            "in cuppa prediction: $cuppaPrediction"
-                )
+    private fun hasHighStatus(tumorMutationalStatus: PurpleTumorMutationalStatus): Boolean? {
+        return when (tumorMutationalStatus) {
+            PurpleTumorMutationalStatus.HIGH -> {
+                true
             }
 
-            return CupPrediction(
-                cancerType = cuppaPrediction.cancerType(),
-                likelihood = cuppaPrediction.likelihood(),
-                snvPairwiseClassifier = cuppaPrediction.snvPairwiseClassifier()!!,
-                genomicPositionClassifier = cuppaPrediction.genomicPositionClassifier()!!,
-                featureClassifier = cuppaPrediction.featureClassifier()!!
+            PurpleTumorMutationalStatus.LOW -> {
+                false
+            }
+
+            PurpleTumorMutationalStatus.UNKNOWN -> {
+                null
+            }
+        }
+    }
+
+    private fun determineCupPredictions(cuppaPredictions: List<CuppaPrediction>): List<CupPrediction> {
+        return cuppaPredictions.map { cuppaPrediction: CuppaPrediction -> determineCupPrediction(cuppaPrediction) }
+    }
+
+    private fun determineCupPrediction(cuppaPrediction: CuppaPrediction): CupPrediction {
+        if (cuppaPrediction.snvPairwiseClassifier() == null || cuppaPrediction.genomicPositionClassifier() == null ||
+            cuppaPrediction.featureClassifier() == null
+        ) {
+            throw IllegalStateException(
+                "CUPPA classifiers are not supposed to be missing at this point " +
+                        "in cuppa prediction: $cuppaPrediction"
             )
         }
+
+        return CupPrediction(
+            cancerType = cuppaPrediction.cancerType(),
+            likelihood = cuppaPrediction.likelihood(),
+            snvPairwiseClassifier = cuppaPrediction.snvPairwiseClassifier()!!,
+            genomicPositionClassifier = cuppaPrediction.genomicPositionClassifier()!!,
+            featureClassifier = cuppaPrediction.featureClassifier()!!
+        )
     }
 }

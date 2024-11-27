@@ -14,6 +14,8 @@ import org.junit.Test
 
 class FusionExtractorTest {
 
+    private val extractor = FusionExtractor(TestGeneFilterFactory.createAlwaysValid())
+
     @Test
     fun `Should extract fusions`() {
         val linxFusion = TestLinxFactory.fusionBuilder()
@@ -66,19 +68,19 @@ class FusionExtractorTest {
     fun `Should determine driver type for all fusions`() {
         for (type in LinxFusionType.values()) {
             val fusion: LinxFusion = TestLinxFactory.fusionBuilder().reportedType(type).build()
-            assertThat(FusionExtractor.determineDriverType(fusion)).isNotNull()
+            assertThat(extractor.determineDriverType(fusion)).isNotNull()
         }
     }
 
     @Test
     fun `Should determine driver likelihood for all fusions`() {
         val high = TestLinxFactory.fusionBuilder().driverLikelihood(FusionLikelihoodType.HIGH).build()
-        assertThat(FusionExtractor.determineDriverLikelihood(high)).isEqualTo(DriverLikelihood.HIGH)
+        assertThat(extractor.determineDriverLikelihood(high)).isEqualTo(DriverLikelihood.HIGH)
 
         val low = TestLinxFactory.fusionBuilder().driverLikelihood(FusionLikelihoodType.LOW).build()
-        assertThat(FusionExtractor.determineDriverLikelihood(low)).isEqualTo(DriverLikelihood.LOW)
+        assertThat(extractor.determineDriverLikelihood(low)).isEqualTo(DriverLikelihood.LOW)
 
         val na = TestLinxFactory.fusionBuilder().driverLikelihood(FusionLikelihoodType.NA).build()
-        assertThat(FusionExtractor.determineDriverLikelihood(na)).isNull()
+        assertThat(extractor.determineDriverLikelihood(na)).isNull()
     }
 }

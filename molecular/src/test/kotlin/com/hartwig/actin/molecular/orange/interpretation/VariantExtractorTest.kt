@@ -24,6 +24,8 @@ private const val EPSILON = 1.0E-10
 
 class VariantExtractorTest {
 
+    private val extractor = VariantExtractor(TestGeneFilterFactory.createAlwaysValid())
+
     @Test
     fun `Should extract set of variants successfully`() {
         val driver1: PurpleDriver = TestPurpleFactory.driverBuilder()
@@ -178,40 +180,40 @@ class VariantExtractorTest {
     @Test
     fun `Should determine correct type for all variant types`() {
         val mnp = TestPurpleFactory.variantBuilder().type(PurpleVariantType.MNP).build()
-        assertThat(VariantExtractor.determineVariantType(mnp)).isEqualTo(VariantType.MNV)
+        assertThat(extractor.determineVariantType(mnp)).isEqualTo(VariantType.MNV)
 
         val snp = TestPurpleFactory.variantBuilder().type(PurpleVariantType.SNP).build()
-        assertThat(VariantExtractor.determineVariantType(snp)).isEqualTo(VariantType.SNV)
+        assertThat(extractor.determineVariantType(snp)).isEqualTo(VariantType.SNV)
 
         val insert = TestPurpleFactory.variantBuilder().type(PurpleVariantType.INDEL).ref("A").alt("AT").build()
-        assertThat(VariantExtractor.determineVariantType(insert)).isEqualTo(VariantType.INSERT)
+        assertThat(extractor.determineVariantType(insert)).isEqualTo(VariantType.INSERT)
 
         val delete = TestPurpleFactory.variantBuilder().type(PurpleVariantType.INDEL).ref("AT").alt("A").build()
-        assertThat(VariantExtractor.determineVariantType(delete)).isEqualTo(VariantType.DELETE)
+        assertThat(extractor.determineVariantType(delete)).isEqualTo(VariantType.DELETE)
     }
 
     @Test
     fun `Should correctly assess whether transcript is ensembl`() {
         val ensembl = TestPurpleFactory.transcriptImpactBuilder().transcript("ENST01").build()
-        assertThat(VariantExtractor.isEnsemblTranscript(ensembl)).isTrue
+        assertThat(extractor.isEnsemblTranscript(ensembl)).isTrue
 
         val nonEnsembl = TestPurpleFactory.transcriptImpactBuilder().transcript("something else").build()
-        assertThat(VariantExtractor.isEnsemblTranscript(nonEnsembl)).isFalse
+        assertThat(extractor.isEnsemblTranscript(nonEnsembl)).isFalse
     }
 
     @Test
     fun `Should determine an effect for all variant effects`() {
         for (variantEffect in PurpleVariantEffect.values()) {
-            assertThat(VariantExtractor.determineVariantEffect(variantEffect)).isNotNull()
+            assertThat(extractor.determineVariantEffect(variantEffect)).isNotNull()
         }
     }
 
     @Test
     fun `Should determine an effect for all defined coding effects`() {
-        assertThat(VariantExtractor.determineCodingEffect(PurpleCodingEffect.UNDEFINED)).isNull()
+        assertThat(extractor.determineCodingEffect(PurpleCodingEffect.UNDEFINED)).isNull()
         PurpleCodingEffect.values().filter { it != PurpleCodingEffect.UNDEFINED }
             .forEach { codingEffect ->
-                assertThat(VariantExtractor.determineCodingEffect(codingEffect)).isNotNull()
+                assertThat(extractor.determineCodingEffect(codingEffect)).isNotNull()
             }
     }
 }

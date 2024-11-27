@@ -5,12 +5,16 @@ import com.hartwig.actin.datamodel.molecular.Drivers
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
+import com.hartwig.hmftools.datamodel.purple.PurpleDriver
+import com.hartwig.hmftools.datamodel.purple.PurpleRecord
 import org.apache.logging.log4j.LogManager
 
 internal class DriverExtractor private constructor(
-    private val variantExtractor: VariantExtractor, private val copyNumberExtractor: CopyNumberExtractor,
+    private val variantExtractor: VariantExtractor,
+    private val copyNumberExtractor: CopyNumberExtractor,
     private val homozygousDisruptionExtractor: HomozygousDisruptionExtractor,
-    private val disruptionExtractor: DisruptionExtractor, private val fusionExtractor: FusionExtractor,
+    private val disruptionExtractor: DisruptionExtractor,
+    private val fusionExtractor: FusionExtractor,
     private val virusExtractor: VirusExtractor
 ) {
 
@@ -49,6 +53,16 @@ internal class DriverExtractor private constructor(
         )
     }
 
+    internal fun reportableLostGenes(copyNumbers: Iterable<CopyNumber>): Set<String> {
+        return copyNumbers.filter { copyNumber -> copyNumber.isReportable && copyNumber.type.isLoss }
+            .map(CopyNumber::gene)
+            .toSet()
+    }
+
+    internal fun <T : Driver> reportableCount(drivers: Collection<T>): Int {
+        return drivers.count(Driver::isReportable)
+    }
+
     companion object {
         private val LOGGER = LogManager.getLogger(DriverExtractor::class.java)
 
@@ -63,14 +77,8 @@ internal class DriverExtractor private constructor(
             )
         }
 
-        internal fun reportableLostGenes(copyNumbers: Iterable<CopyNumber>): Set<String> {
-            return copyNumbers.filter { copyNumber -> copyNumber.isReportable && copyNumber.type.isLoss }
-                .map(CopyNumber::gene)
-                .toSet()
-        }
-
-        internal fun <T : Driver> reportableCount(drivers: Collection<T>): Int {
-            return drivers.count(Driver::isReportable)
+        fun relevantPurpleDrivers(purple: PurpleRecord): Set<PurpleDriver> {
+            return listOfNotNull(purple.somaticDrivers(), purple.germlineDrivers()).flatten().toSet()
         }
     }
 }
