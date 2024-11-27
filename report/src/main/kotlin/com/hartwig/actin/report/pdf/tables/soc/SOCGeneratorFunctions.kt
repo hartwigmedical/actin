@@ -82,11 +82,7 @@ object SOCGeneratorFunctions {
                     Cells.createContent(subTable)
                 }
 
-                val efficacySubTable = Tables.createFixedWidthCols(25f, 150f).setWidth(175f)
-
-                addRealWorldEfficacyToTable(treatment, efficacySubTable)
-
-                val efficacyEvidenceCell = Cells.createContent(efficacySubTable)
+                val efficacyEvidenceCell = addRealWorldEfficacyToTable(treatment)
 
                 val warningMessages = treatment.evaluations.flatMap {
                     it.undeterminedGeneralMessages + it.warnGeneralMessages + if (it.recoverable) it.failGeneralMessages else emptyList()
@@ -120,29 +116,34 @@ object SOCGeneratorFunctions {
             }
     }
 
-    private fun addRealWorldEfficacyToTable(treatment: AnnotatedTreatmentMatch, subTable: Table) {
-        if (treatment.annotations.isNotEmpty()) {
-            subTable.addCell(Cells.createValue("\n"))
-            subTable.addCell(Cells.createKey("\n"))
-        }
+    private fun addRealWorldEfficacyToTable(treatment: AnnotatedTreatmentMatch): Cell {
+        val subTable = Tables.createFixedWidthCols(25f, 150f).setWidth(175f)
 
         val efficacyDataList = listOf(
             "PFS" to treatment.generalPfs,
             "OS" to treatment.generalOs
         )
 
-        for ((name, data) in efficacyDataList) {
-            val value = data?.let {
-                if (it.numPatients <= MIN_PATIENT_COUNT) NA else {
-                    val iqrString = if (it.iqr != null && !it.iqr!!.isNaN()) {
-                        ", IQR: ${Formats.daysToMonths(it.iqr!!)}"
-                    } else ""
-                    "${Formats.daysToMonths(it.value)} months$iqrString"
-                }
-            } ?: NA
+        if (efficacyDataList.all { (_, data) -> data == null || data.numPatients <= MIN_PATIENT_COUNT }) {
+            return Cells.createContent("Not available yet")
+        }
 
+        if (treatment.annotations.isNotEmpty()) {
+            subTable.addCell(Cells.createValue("\n"))
+            subTable.addCell(Cells.createKey("\n"))
+        }
+
+        for ((name, data) in efficacyDataList) {
+            val value = data?.takeIf { it.numPatients > MIN_PATIENT_COUNT }?.let {
+                val iqrString = if (it.iqr != null && !it.iqr!!.isNaN()) {
+                    ", IQR: ${Formats.daysToMonths(it.iqr!!)}"
+                } else ""
+                "${Formats.daysToMonths(it.value)} months$iqrString"
+            } ?: NA
             subTable.addCell(Cells.createValue("$name: "))
             subTable.addCell(Cells.createKey(value))
         }
+
+        return Cells.createContent(subTable)
     }
 }

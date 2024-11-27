@@ -8,10 +8,7 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.efficacy.AnalysisGroup
 import com.hartwig.actin.datamodel.efficacy.PatientPopulation
 import com.hartwig.actin.datamodel.personalization.Measurement
-import com.itextpdf.layout.element.Cell
-import com.itextpdf.layout.element.Paragraph
-import com.itextpdf.layout.element.Table
-import com.itextpdf.layout.element.Text
+import com.itextpdf.layout.element.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -86,52 +83,46 @@ class SOCGeneratorFunctionsTest {
         )
         val cells = SOCGeneratorFunctions.approvedTreatmentCells(treatments)
         assertThat(cells).hasSize(12)
-        assertThat(cells.flatMap(::extractAllTextFromCell)).containsExactly(
+        assertThat(extractAllTextFromCell(cells)).containsExactly(
             "t2",
             "Not available yet",
             "PFS: ",
             "3.8 months",
             "OS: ",
-             NA,
+            NA,
             "no data",
             "t1",
             "Not available yet",
             "PFS: ",
             "3.4 months, IQR: 3.3",
             "OS: ",
-             NA,
+            NA,
             "no data, not recommended",
             "t3",
             "Not available yet",
-            "PFS: ",
-            NA,
-            "OS: ",
-            NA,
+            "Not available yet",
             "lab value out of range"
         )
     }
 
-    private fun extractAllTextFromCell(cell: Cell): List<String> {
-        val textList = mutableListOf<String>()
-        for (element in cell.children) {
-            when (element) {
+    private tailrec fun extractAllTextFromCell(elements: List<IElement>, textList: List<String> = emptyList()): List<String> {
+        return if (elements.isEmpty()) {
+            textList
+        } else {
+            when (val element = elements.first()) {
                 is Paragraph -> {
-                    val textElement = element.children.filterIsInstance<Text>().firstOrNull()
-                    textElement?.text?.let { textList.add(it) }
+                    val newText = listOfNotNull(element.children.filterIsInstance<Text>().firstOrNull()?.text)
+                    extractAllTextFromCell(elements.drop(1), textList + newText)
                 }
                 is Table -> {
-                    for (child in element.children) {
-                        if (child is Cell) {
-                            textList.addAll(extractAllTextFromCell(child))
-                        }
-                    }
+                    extractAllTextFromCell(element.children.filterIsInstance<Cell>() + elements.drop(1), textList)
                 }
                 is Cell -> {
-                    textList.addAll(extractAllTextFromCell(element))
+                    extractAllTextFromCell(element.children + elements.drop(1), textList)
                 }
+                else -> extractAllTextFromCell(elements.drop(1), textList)
             }
         }
-        return textList
     }
 
     private fun annotatedTreatmentMatch(name: String, evaluations: List<Evaluation>, pfs: Measurement? = null, os: Measurement? = null): AnnotatedTreatmentMatch {
