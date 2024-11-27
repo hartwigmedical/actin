@@ -1,21 +1,23 @@
 package com.hartwig.actin.trial.status.config
 
+import com.hartwig.actin.trial.status.CohortStatusEntry
 import com.hartwig.actin.trial.status.TrialStatus
-import com.hartwig.actin.trial.status.TrialStatusEntry
 
 object TestTrialStatusDatabaseEntryFactory {
 
-    val MINIMAL = TrialStatusEntry(
-        metcStudyID = "",
-        studyStatus = TrialStatus.OPEN
+    val MINIMAL = CohortStatusEntry(
+        nctId = "",
+        trialStatus = TrialStatus.OPEN,
+        cohortId = "",
+        cohortStatus = TrialStatus.OPEN
     )
 
     fun createEntry(
-        cohortId: String?,
+        cohortId: String,
         cohortParentId: String?,
-        cohortStatus: TrialStatus?,
+        cohortStatus: TrialStatus,
         cohortSlotsNumberAvailable: Int?
-    ): TrialStatusEntry {
+    ): CohortStatusEntry {
         return MINIMAL.copy(
             cohortId = cohortId,
             cohortParentId = cohortParentId,

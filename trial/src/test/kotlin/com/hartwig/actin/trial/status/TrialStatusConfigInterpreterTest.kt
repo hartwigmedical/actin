@@ -188,7 +188,7 @@ class TrialStatusConfigInterpreterTest {
     fun `Should return validation errors as trial to be ignored is not on the trial status database`() {
         val properTrialStatusDatabase = TestTrialStatusDatabaseFactory.createProperTestTrialStatusDatabase()
         val trialStatusDatabase =
-            properTrialStatusDatabase.copy(entries = properTrialStatusDatabase.entries.filter { it.metcStudyID != "Ignore-Study" })
+            properTrialStatusDatabase.copy(entries = properTrialStatusDatabase.entries.filter { it.nctId != "Ignore-Study" })
         val trialStatusConfigInterpreter = TrialStatusConfigInterpreter(
             trialStatusDatabase,
             CTC_TRIAL_PREFIX,

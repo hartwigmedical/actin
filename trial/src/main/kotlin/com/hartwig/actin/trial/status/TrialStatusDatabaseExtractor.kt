@@ -8,12 +8,12 @@ class TrialStatusDatabaseExtractor(
     private val trialPrefix: String? = null
 ) {
     fun extractUnusedStudyMETCsToIgnore(): List<String> {
-        val trialStatusStudyMETCs = trialStatusDatabase.entries.map { it.metcStudyID }.toSet()
+        val trialStatusStudyMETCs = trialStatusDatabase.entries.map { it.nctId }.toSet()
         return trialStatusDatabase.studyMETCsToIgnore.filter { !trialStatusStudyMETCs.contains(it) }
     }
 
     fun extractUnusedUnmappedCohorts(): List<String> {
-        val trialStatusCohortIds = trialStatusDatabase.entries.mapNotNull { it.cohortId }.toSet()
+        val trialStatusCohortIds = trialStatusDatabase.entries.map { it.cohortId }.toSet()
         return trialStatusDatabase.unmappedCohortIds.filter { !trialStatusCohortIds.contains(it) }
     }
 
@@ -22,15 +22,15 @@ class TrialStatusDatabaseExtractor(
         return trialStatusDatabase.studiesNotInTrialStatusDatabase.filter { !trialConfigIds.contains(it) }
     }
 
-    fun extractNewTrialStatusDatabaseStudies(trialConfigs: List<TrialDefinitionConfig>): Set<TrialStatusEntry> {
+    fun extractNewTrialStatusDatabaseStudies(trialConfigs: List<TrialDefinitionConfig>): Set<CohortStatusEntry> {
         val configuredTrialIds = trialConfigs.map { it.trialId }
 
-        return trialStatusDatabase.entries.filter { !trialStatusDatabase.studyMETCsToIgnore.contains(it.metcStudyID) }
+        return trialStatusDatabase.entries.filter { !trialStatusDatabase.studyMETCsToIgnore.contains(it.nctId) }
             .filter { !configuredTrialIds.contains(constructTrialId(it)) }
             .toSet()
     }
 
-    fun extractNewTrialStatusDatabaseCohorts(cohortConfigs: List<CohortDefinitionConfig>): Set<TrialStatusEntry> {
+    fun extractNewTrialStatusDatabaseCohorts(cohortConfigs: List<CohortDefinitionConfig>): Set<CohortStatusEntry> {
         val configuredTrialIds = cohortConfigs.map { it.trialId }.toSet()
         val configuredCohortIds = cohortConfigs.flatMap(CohortDefinitionConfig::externalCohortIds)
 
@@ -40,8 +40,7 @@ class TrialStatusDatabaseExtractor(
 
         return trialStatusDatabase.entries.asSequence()
             .filter { configuredTrialIds.contains(constructTrialId(it)) }
-            .filter { !trialStatusDatabase.studyMETCsToIgnore.contains(it.metcStudyID) }
-            .filter { it.cohortId != null }
+            .filter { !trialStatusDatabase.studyMETCsToIgnore.contains(it.nctId) }
             .filter { !trialStatusDatabase.unmappedCohortIds.contains(it.cohortId) }
             .filter { !configuredCohortIds.contains(it.cohortId) }
             .filter { childrenPerParent[it.cohortId] == null || !childrenPerParent[it.cohortId]!!.containsAll(configuredCohortIds) }
@@ -49,7 +48,7 @@ class TrialStatusDatabaseExtractor(
     }
 
 
-    fun constructTrialId(entry: TrialStatusEntry): String {
-        return trialPrefix?.let { "$it ${entry.metcStudyID}" } ?: entry.metcStudyID
+    fun constructTrialId(entry: CohortStatusEntry): String {
+        return trialPrefix?.let { "$it ${entry.nctId}" } ?: entry.nctId
     }
 }

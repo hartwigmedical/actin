@@ -6,13 +6,14 @@ import org.apache.logging.log4j.LogManager
 private const val IGNORE_STUDIES_TSV = "ignore_studies.tsv"
 private const val UNMAPPED_COHORTS_TSV = "unmapped_cohorts.tsv"
 private const val STUDIES_NOT_IN_TRIAL_STATUS_DATABASE_TSV = "studies_not_in_trial_status_database.tsv"
+private const val COHORT_STATUS_TSV = "cohort_status.tsv"
 
-class TrialStatusDatabaseReader(private val trialStatusEntryReader: TrialStatusEntryReader) {
+class TrialStatusDatabaseReader() {
 
     fun read(configDirectory: String): TrialStatusDatabase {
-        LOGGER.info("Reading trial status config from {}", configDirectory)
+        LOGGER.info("Reading trial and cohort status config from {}", configDirectory)
         val basePath = Paths.forceTrailingFileSeparator(configDirectory)
-        val entries = trialStatusEntryReader.read(configDirectory)
+        val entries = CohortStatusFile.read(basePath + COHORT_STATUS_TSV)
         val trialStatusDatabase = TrialStatusDatabase(
             entries = entries,
             studyMETCsToIgnore = readIgnoreStudies(basePath + IGNORE_STUDIES_TSV),

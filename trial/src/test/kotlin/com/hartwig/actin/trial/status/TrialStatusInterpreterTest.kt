@@ -17,7 +17,7 @@ class TrialStatusInterpreterTest {
             TrialStatusInterpreter.isOpen(
                 listOf(),
                 trialDefinitionConfig("trial-1", true)
-            ) { it.metcStudyID }
+            ) { it.nctId }
         ).isEqualTo(null to emptyList<TrialDefinitionValidationError>())
     }
 
@@ -28,8 +28,8 @@ class TrialStatusInterpreterTest {
         assertThat(
             TrialStatusInterpreter.isOpen(
                 listOf(openMETC1, closedMETC2),
-                trialDefinitionConfig(openMETC1.metcStudyID, true)
-            ) { it.metcStudyID }.first
+                trialDefinitionConfig(openMETC1.nctId, true)
+            ) { it.nctId }.first
         ).isTrue
     }
 
@@ -37,11 +37,11 @@ class TrialStatusInterpreterTest {
     fun `Should resolve to closed for trials with inconsistent entries and return validation error`() {
         val openMETC1 = createEntry(STUDY_METC_1, TrialStatus.OPEN)
         val closedMETC1 = createEntry(STUDY_METC_1, TrialStatus.CLOSED)
-        val config = trialDefinitionConfig(closedMETC1.metcStudyID, false)
+        val config = trialDefinitionConfig(closedMETC1.nctId, false)
         val (isOpen, validation) = TrialStatusInterpreter.isOpen(
             listOf(openMETC1, closedMETC1),
             config
-        ) { it.metcStudyID }
+        ) { it.nctId }
         assertThat(isOpen).isFalse
         assertThat(validation).containsExactly(
             TrialDefinitionValidationError(
@@ -58,14 +58,14 @@ class TrialStatusInterpreterTest {
         assertThat(
             TrialStatusInterpreter.isOpen(
                 listOf(closedMETC1, openMETC2),
-                trialDefinitionConfig(closedMETC1.metcStudyID, false)
-            ) { it.metcStudyID }.first
+                trialDefinitionConfig(closedMETC1.nctId, false)
+            ) { it.nctId }.first
         ).isFalse
     }
 
     private fun trialDefinitionConfig(trialId: String, open: Boolean) = TrialDefinitionConfig(trialId, open, "", "", "", null)
 
-    private fun createEntry(studyMETC: String, studyStatus: TrialStatus): TrialStatusEntry {
-        return TestTrialStatusDatabaseEntryFactory.MINIMAL.copy(metcStudyID = studyMETC, studyStatus = studyStatus)
+    private fun createEntry(studyMETC: String, studyStatus: TrialStatus): CohortStatusEntry {
+        return TestTrialStatusDatabaseEntryFactory.MINIMAL.copy(nctId = studyMETC, trialStatus = studyStatus)
     }
 }

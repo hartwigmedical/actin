@@ -12,17 +12,15 @@ import com.hartwig.actin.trial.interpretation.TrialIngestion
 import com.hartwig.actin.trial.serialization.TrialJson
 import com.hartwig.actin.trial.status.TrialStatusConfigInterpreter
 import com.hartwig.actin.trial.status.TrialStatusDatabaseReader
-import com.hartwig.actin.trial.status.ctc.CTCTrialStatusEntryReader
-import com.hartwig.actin.trial.status.nki.NKITrialStatusEntryReader
 import com.hartwig.serve.datamodel.serialization.ServeJson
+import java.nio.file.Files
+import java.nio.file.Paths
+import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.nio.file.Files
-import java.nio.file.Paths
-import kotlin.system.exitProcess
 
 const val CTC_TRIAL_PREFIX = "MEC"
 
@@ -41,7 +39,7 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         LOGGER.info(" Loaded {} known genes", knownGenes.size)
         val geneFilter = GeneFilterFactory.createFromKnownGenes(knownGenes)
 
-        val configInterpreter = configInterpreter(EnvironmentConfiguration.create(config.overridesYaml).trial)
+        val configInterpreter = configInterpreter(EnvironmentConfiguration.create(config.overridesYaml).trial, config.treatmentDirectory)
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
 
         LOGGER.info("Creating ATC tree from file {}", config.atcTsv)
@@ -73,27 +71,14 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         printAllValidationErrors(result)
     }
 
-    private fun configInterpreter(configuration: TrialConfiguration): TrialStatusConfigInterpreter {
+    private fun configInterpreter(configuration: TrialConfiguration, configDirectory: String): TrialStatusConfigInterpreter {
         LOGGER.info(" Using trial configuration: $configuration")
 
-        if (config.ctcConfigDirectory != null && config.nkiConfigDirectory != null) {
-            throw IllegalArgumentException("Only one of CTC and NKI config directories can be specified")
-        }
-
-        return if (config.ctcConfigDirectory != null) {
-            TrialStatusConfigInterpreter(
-                TrialStatusDatabaseReader(CTCTrialStatusEntryReader()).read(config.ctcConfigDirectory),
-                CTC_TRIAL_PREFIX,
-                ignoreNewTrials = configuration.ignoreAllNewTrialsInTrialStatusDatabase
-            )
-        } else if (config.nkiConfigDirectory != null) {
-            TrialStatusConfigInterpreter(
-                TrialStatusDatabaseReader(NKITrialStatusEntryReader()).read(config.nkiConfigDirectory),
-                ignoreNewTrials = configuration.ignoreAllNewTrialsInTrialStatusDatabase
-            )
-        } else {
-            throw IllegalArgumentException("At least one of CTC and NKI config directories must be specified")
-        }
+        return TrialStatusConfigInterpreter(
+            TrialStatusDatabaseReader().read(configDirectory),
+            CTC_TRIAL_PREFIX,
+            ignoreNewTrials = configuration.ignoreAllNewTrialsInTrialStatusDatabase
+        )
     }
 
     private fun printAllValidationErrors(result: TrialIngestionResult) {

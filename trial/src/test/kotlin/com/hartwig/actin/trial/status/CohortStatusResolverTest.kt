@@ -12,7 +12,7 @@ class CohortStatusResolverTest {
 
     @Test
     fun `Should assume cohort is closed and return validation error for non-existing cohortId`() {
-        val doesNotExist = TestCohortDefinitionConfigFactory.MINIMAL.copy(cohortId = DOES_NOT_EXIST_COHORT_ID.toString())
+        val doesNotExist = TestCohortDefinitionConfigFactory.MINIMAL.copy(cohortId = DOES_NOT_EXIST_COHORT_ID)
         val status =
             CohortStatusResolver.resolve(
                 entries,
@@ -196,24 +196,6 @@ class CohortStatusResolverTest {
     }
 
     @Test
-    fun `Should return validation error when no cohort status available in trial status database for cohort`() {
-        val config = cohortDefinitionConfig(PARENT_1_OPEN_WITH_SLOTS_COHORT_ID)
-        val noStatus = TestTrialStatusDatabaseEntryFactory.createEntry(PARENT_1_OPEN_WITH_SLOTS_COHORT_ID, null, null, 0)
-        val (_, _, trialDatabaseValidation) = CohortStatusResolver.resolve(
-            listOf(
-                noStatus,
-            ),
-            config
-        )
-        assertThat(trialDatabaseValidation).containsExactly(
-            TrialStatusDatabaseValidationError(
-                config = noStatus,
-                message = "No cohort status available in trial status database for cohort"
-            ),
-        )
-    }
-
-    @Test
     fun `Should return validation error when uninterpretable cohort status`() {
         val config = cohortDefinitionConfig(PARENT_1_OPEN_WITH_SLOTS_COHORT_ID)
         val uninterpretable =
@@ -277,7 +259,7 @@ class CohortStatusResolverTest {
         private const val GRANDPARENT_FOR_GRANDCHILD_OPEN_WITH_SLOTS_COHORT_ID = "10"
         private const val CHILD_OF_GRANDPARENT_OPEN_WITH_SLOTS_COHORT_ID = "11"
 
-        private fun createTestEntries(): List<TrialStatusEntry> {
+        private fun createTestEntries(): List<CohortStatusEntry> {
             val parentOpenWithSlots =
                 TestTrialStatusDatabaseEntryFactory.createEntry(PARENT_1_OPEN_WITH_SLOTS_COHORT_ID, null, TrialStatus.OPEN, 1)
             val parentClosedWithoutSlots =

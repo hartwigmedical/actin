@@ -14,7 +14,7 @@ internal object CohortStatusInterpreter {
     const val WONT_BE_MAPPED_BECAUSE_NOT_AVAILABLE = "wont_be_mapped_because_not_available"
 
     fun interpret(
-        entries: List<TrialStatusEntry>,
+        entries: List<CohortStatusEntry>,
         cohortConfig: CohortDefinitionConfig
     ): CohortStatusInterpretation {
         val externalCohortIds = cohortConfig.externalCohortIds

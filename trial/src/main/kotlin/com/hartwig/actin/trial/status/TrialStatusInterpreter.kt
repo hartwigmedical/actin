@@ -6,15 +6,15 @@ import com.hartwig.actin.trial.config.TrialDefinitionValidationError
 internal object TrialStatusInterpreter {
 
     fun isOpen(
-        entries: List<TrialStatusEntry>,
+        entries: List<CohortStatusEntry>,
         trialDefinitionConfig: TrialDefinitionConfig,
-        trialIdConstructor: (TrialStatusEntry) -> String,
+        trialIdConstructor: (CohortStatusEntry) -> String,
     ): Pair<Boolean?, List<TrialDefinitionValidationError>> {
         val trialId = trialDefinitionConfig.trialId
         val trialStates = entries.filter {
             val other = trialIdConstructor.invoke(it).trim()
             trialId.equals(other, ignoreCase = true) }
-            .map { it.studyStatus }
+            .map { it.trialStatus }
             .distinct()
         if (trialStates.size > 1) {
             return false to listOf(
