@@ -13,13 +13,15 @@ import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
 import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
 
 class PanelFusionAnnotator(
     private val evidenceDatabase: EvidenceDatabase,
     private val knownFusionCache: KnownFusionCache,
     private val ensembleDataCache: EnsemblDataCache
 ) {
+
+    private val logger = LogManager.getLogger(PanelAnnotator::class.java)
+
     fun annotate(fusions: Set<SequencedFusion>, skippedExons: Set<SequencedSkippedExons>): Set<Fusion> {
         return (fusions.map { createFusion(it) } + skippedExons.map { createFusionFromExonSkip(it) })
             .map { annotateFusion(it) }
@@ -88,7 +90,7 @@ class PanelFusionAnnotator(
         val isReportable = true
         val driverType = determineFusionDriverType(sequencedSkippedExons.gene, sequencedSkippedExons.gene)
         val transcript = sequencedSkippedExons.transcript ?: run {
-            LOGGER.warn("No transcript provided for panel skipped exons in gene ${sequencedSkippedExons.gene}, using canonical transcript")
+            logger.warn("No transcript provided for panel skipped exons in gene ${sequencedSkippedExons.gene}, using canonical transcript")
             canonicalTranscriptForGene(sequencedSkippedExons.gene)
         }
 
@@ -142,8 +144,4 @@ class PanelFusionAnnotator(
         fusedExonUp = fusion.fusedExonUp,
         fusedExonDown = fusion.fusedExonDown
     )
-
-    companion object {
-        val LOGGER: Logger = LogManager.getLogger(PanelAnnotator::class.java)
-    }
 }

@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.util
 
-import com.hartwig.actin.molecular.orange.interpretation.AminoAcid.forceSingleLetterAminoAcids
+import com.hartwig.actin.molecular.orange.AminoAcid.forceSingleLetterAminoAcids
 
 object ImpactDisplay {
     fun formatVariantImpact(
