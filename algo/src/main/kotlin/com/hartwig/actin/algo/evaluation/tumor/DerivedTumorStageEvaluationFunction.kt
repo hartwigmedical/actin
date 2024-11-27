@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TumorStage
 
 internal class DerivedTumorStageEvaluationFunction(private val originalFunction: EvaluationFunction) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         if (record.tumor.stage != null) {
             return originalFunction.evaluate(record)

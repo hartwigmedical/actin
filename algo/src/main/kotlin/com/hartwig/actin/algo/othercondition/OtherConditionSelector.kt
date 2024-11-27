@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 import com.hartwig.actin.doid.DoidModel
 
 object OtherConditionSelector {
+
     fun selectClinicallyRelevant(conditions: List<PriorOtherCondition>): List<PriorOtherCondition> {
         return conditions.filter { it.isContraindicationForTherapy }
     }

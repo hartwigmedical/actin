@@ -1,6 +1,5 @@
 package com.hartwig.actin.trial.config
 
-import com.google.common.collect.Sets
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.trial.TestTrialData
 
@@ -93,7 +92,7 @@ object TestTrialConfigDatabaseFactory {
                 appliesToCohorts = setOf("A")
             ), InclusionCriteriaConfig(
                 trialId = TestTrialData.TEST_TRIAL_METC_1,
-                referenceIds = Sets.newHashSet("I-03"),
+                referenceIds = setOf("I-03"),
                 inclusionRule = "NOT(OR($rule1, $rule2))",
                 appliesToCohorts = setOf("A")
             )

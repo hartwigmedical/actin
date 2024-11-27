@@ -15,7 +15,6 @@ class GeneHasUTR3Loss(private val gene: String, maxTestAge: LocalDate? = null) :
     override fun genes() = listOf(gene)
 
     override fun evaluate(test: MolecularTest): Evaluation {
-
         val (hotspotsIn3UTR, hotspotsIn3UTRUnreportable, vusIn3UTR) = test.drivers.variants.filter { variant ->
             variant.gene == gene && variant.canonicalImpact.effects.contains(VariantEffect.THREE_PRIME_UTR)
         }

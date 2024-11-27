@@ -7,6 +7,7 @@ import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 
 class InfectionRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
+
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
             EligibilityRule.HAS_ACTIVE_INFECTION to hasActiveInfectionCreator(),

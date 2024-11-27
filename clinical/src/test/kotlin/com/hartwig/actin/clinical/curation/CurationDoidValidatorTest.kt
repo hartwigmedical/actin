@@ -1,34 +1,42 @@
 package com.hartwig.actin.clinical.curation
 
 import com.hartwig.actin.doid.TestDoidModelFactory
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class CurationDoidValidatorTest {
+
     @Test
-    fun shouldIdentifyInvalidCancerDoidSets() {
+    fun `Should identify invalid cancer DOID sets`() {
         val doidModel = TestDoidModelFactory.createWithOneParentChild(CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID, "child")
         val curationDoidValidator = CurationDoidValidator(doidModel)
-        val valid: Set<String> = setOf("child")
-        Assert.assertTrue(curationDoidValidator.isValidCancerDoidSet(valid))
-        val generic: Set<String> = setOf(CurationDoidValidator.DISEASE_DOID)
-        Assert.assertFalse(curationDoidValidator.isValidCancerDoidSet(generic))
-        val notAllValid: Set<String> = setOf("child", "other")
-        Assert.assertFalse(curationDoidValidator.isValidCancerDoidSet(notAllValid))
-        val empty: Set<String> = emptySet()
-        Assert.assertFalse(curationDoidValidator.isValidCancerDoidSet(empty))
+
+        val valid = setOf("child")
+        assertThat(curationDoidValidator.isValidCancerDoidSet(valid)).isTrue()
+
+        val generic = setOf(CurationDoidValidator.DISEASE_DOID)
+        assertThat(curationDoidValidator.isValidCancerDoidSet(generic)).isFalse()
+
+        val notAllValid = setOf("child", "other")
+        assertThat(curationDoidValidator.isValidCancerDoidSet(notAllValid)).isFalse()
+
+        assertThat(curationDoidValidator.isValidCancerDoidSet(emptySet())).isFalse()
     }
 
     @Test
-    fun shouldIdentifyInvalidDiseaseDoidSets() {
+    fun `Should identify invalid disease DOID sets`() {
         val doidModel = TestDoidModelFactory.createWithOneParentChild(CurationDoidValidator.DISEASE_DOID, "child")
         val curationDoidValidator = CurationDoidValidator(doidModel)
-        val valid: Set<String> = setOf("child")
-        Assert.assertTrue(curationDoidValidator.isValidDiseaseDoidSet(valid))
-        val cancer: Set<String> = setOf(CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID)
-        Assert.assertFalse(curationDoidValidator.isValidDiseaseDoidSet(cancer))
-        val notAllValid: Set<String> = setOf("child", "other")
-        Assert.assertFalse(curationDoidValidator.isValidDiseaseDoidSet(notAllValid))
-        Assert.assertFalse(curationDoidValidator.isValidDiseaseDoidSet(emptySet()))
+
+        val valid = setOf("child")
+        assertThat(curationDoidValidator.isValidDiseaseDoidSet(valid)).isTrue()
+
+        val cancer = setOf(CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID)
+        assertThat(curationDoidValidator.isValidDiseaseDoidSet(cancer)).isFalse()
+
+        val notAllValid = setOf("child", "other")
+        assertThat(curationDoidValidator.isValidDiseaseDoidSet(notAllValid)).isFalse()
+
+        assertThat(curationDoidValidator.isValidDiseaseDoidSet(emptySet())).isFalse()
     }
 }

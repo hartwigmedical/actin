@@ -22,7 +22,8 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val effectiveTreatmentHistory =
-            record.oncologicalHistory + createTreatmentHistoryEntriesFromMedications(record.medications?.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE })
+            record.oncologicalHistory + createTreatmentHistoryEntriesFromMedications(
+                record.medications?.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE })
 
         val treatmentAssessment = effectiveTreatmentHistory.map { treatmentHistoryEntry ->
             val startedPastMinDate = isAfterDate(minDate, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)

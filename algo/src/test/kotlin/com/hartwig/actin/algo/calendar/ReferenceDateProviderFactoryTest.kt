@@ -1,21 +1,21 @@
 package com.hartwig.actin.algo.calendar
 
 import com.hartwig.actin.datamodel.TestPatientFactory
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class ReferenceDateProviderFactoryTest {
 
     @Test
-    fun canCreateAllFlavors() {
+    fun `Should create all flavors`() {
         val patient = TestPatientFactory.createMinimalTestWGSPatientRecord()
 
         val provider1 = ReferenceDateProviderFactory.create(patient, true)
-        Assert.assertNotNull(provider1.date())
-        Assert.assertFalse(provider1.isLive)
+        assertThat(provider1.date()).isNotNull()
+        assertThat(provider1.isLive).isFalse()
 
         val provider2 = ReferenceDateProviderFactory.create(patient, false)
-        Assert.assertNotNull(provider2.date())
-        Assert.assertTrue(provider2.isLive)
+        assertThat(provider2.date()).isNotNull()
+        assertThat(provider2.isLive).isTrue()
     }
 }

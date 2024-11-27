@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.clinical.Medication
 import java.time.LocalDate
 
 class MedicationSelector(private val interpreter: MedicationStatusInterpreter) {
+
     fun active(medications: List<Medication>): List<Medication> {
         return medications.filter(::isActive)
     }

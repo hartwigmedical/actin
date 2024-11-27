@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.Gender
 
 class IsPregnant: EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         return if (record.patient.gender == Gender.MALE) {
             EvaluationFactory.fail("Patient is male, hence won't be pregnant", "No pregnancy")

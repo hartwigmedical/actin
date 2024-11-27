@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.clinical.LabValue
 import kotlin.math.pow
 
 internal object CreatinineFunctions {
+
     private const val DEFAULT_MIN_WEIGHT_FEMALE = 50.0
     private const val DEFAULT_MIN_WEIGHT_MALE = 65.0
 

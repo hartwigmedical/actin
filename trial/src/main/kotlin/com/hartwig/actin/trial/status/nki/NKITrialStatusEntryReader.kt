@@ -30,10 +30,7 @@ class NKITrialStatusEntryReader : TrialStatusEntryReader {
             .filter { it.studyStatus in STATUSES_TO_INCLUDE }
             .map {
                 TrialStatusEntry(
-                    studyId = it.studyId?.toInt(),
                     metcStudyID = it.studyMetc!!,
-                    studyAcronym = it.studyAcronym,
-                    studyTitle = it.studyTitle,
                     studyStatus = if (it.studyStatus == NKI_OPEN_STATUS) OPEN else CLOSED,
                     cohortId = it.cohortId,
                     cohortStatus = if (it.cohortOpen == true) OPEN else CLOSED,

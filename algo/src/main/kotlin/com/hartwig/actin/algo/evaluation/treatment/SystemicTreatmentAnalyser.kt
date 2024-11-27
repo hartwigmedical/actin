@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 
 object SystemicTreatmentAnalyser {
+
     fun maxSystemicTreatments(treatmentHistory: List<TreatmentHistoryEntry>): Int {
         return treatmentHistory.count(::treatmentHistoryEntryIsSystemic)
     }

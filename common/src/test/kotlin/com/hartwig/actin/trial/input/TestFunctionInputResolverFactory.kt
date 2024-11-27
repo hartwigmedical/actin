@@ -15,6 +15,7 @@ const val CATEGORY_1 = "category1"
 const val CATEGORY_2 = "category2"
 
 object TestFunctionInputResolverFactory {
+
     private val medicationCategories =
         MedicationCategories(emptyMap(), AtcTree(mapOf(ATC_CODE_1 to CATEGORY_1, ATC_CODE_2 to CATEGORY_2)))
 

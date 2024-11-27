@@ -3,51 +3,50 @@ package com.hartwig.actin.algo.evaluation.tumor
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.doid.TestDoidModelFactory
-import org.junit.Assert.assertTrue
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class HasMeasurableDiseaseRecistTest {
+
+    private val doidModel = TestDoidModelFactory.createWithOneParentChild("100", "200")
+    private val function = HasMeasurableDiseaseRecist(doidModel)
+
     @Test
-    fun shouldPassWhenHasMeasurableDiseaseIsTrue() {
-        val evaluation = FUNCTION.evaluate(TumorTestFactory.withMeasurableDisease(true))
+    fun `Should pass when has measurable disease is true`() {
+        val evaluation = function.evaluate(TumorTestFactory.withMeasurableDisease(true))
         assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertTrue(evaluation.recoverable)
+        assertThat(evaluation.recoverable).isTrue()
     }
 
     @Test
-    fun shouldPassWhenHasMeasurableDiseaseIsTrueAndRandomDoid() {
-        val evaluation = FUNCTION.evaluate(TumorTestFactory.withMeasurableDiseaseAndDoid(true, "random"))
+    fun `Should pass when has measurable disease is true and arbitrary doid`() {
+        val evaluation = function.evaluate(TumorTestFactory.withMeasurableDiseaseAndDoid(true, "arbitrary"))
         assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertTrue(evaluation.recoverable)
+        assertThat(evaluation.recoverable).isTrue()
     }
 
     @Test
-    fun shouldFailWhenHasMeasurableDiseaseIsFalse() {
-        val evaluation = FUNCTION.evaluate(TumorTestFactory.withMeasurableDisease(false))
+    fun `Should fail when measurable disease is false`() {
+        val evaluation = function.evaluate(TumorTestFactory.withMeasurableDisease(false))
         assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertTrue(evaluation.recoverable)
+        assertThat(evaluation.recoverable).isTrue()
     }
 
     @Test
-    fun shouldBeUndeterminedWhenHasMeasurableDiseaseIsUndetermined() {
-        val evaluation = FUNCTION.evaluate(TumorTestFactory.withMeasurableDisease(null))
+    fun `Should be undetermined when has measurable disease is undetermined`() {
+        val evaluation = function.evaluate(TumorTestFactory.withMeasurableDisease(null))
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertTrue(evaluation.recoverable)
+        assertThat(evaluation.recoverable).isTrue()
     }
 
     @Test
-    fun shouldWarnWhenUncertainIfEvaluatedAgainstRecist() {
-        val evaluation = FUNCTION.evaluate(
+    fun `Should warn when uncertain if evaluated against RECIST`() {
+        val evaluation = function.evaluate(
             TumorTestFactory.withMeasurableDiseaseAndDoid(
                 true,
                 HasMeasurableDiseaseRecist.NON_RECIST_TUMOR_DOIDS.iterator().next()
             )
         )
         assertEvaluation(EvaluationResult.WARN, evaluation)
-    }
-
-    companion object {
-        private val DOID_MODEL = TestDoidModelFactory.createWithOneParentChild("100", "200")
-        private val FUNCTION = HasMeasurableDiseaseRecist(DOID_MODEL)
     }
 }

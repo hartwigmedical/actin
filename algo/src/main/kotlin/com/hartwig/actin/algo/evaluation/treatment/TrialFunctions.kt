@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 
 object TrialFunctions {
+
     private val CATEGORIES_NOT_MATCHING_TRIALS = setOf(
         TreatmentCategory.TRANSPLANTATION,
         TreatmentCategory.RADIOTHERAPY,

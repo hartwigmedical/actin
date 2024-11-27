@@ -12,8 +12,8 @@ import com.hartwig.actin.medication.MedicationCategories
 import java.time.LocalDate
 
 class HasActiveInfection(private val atcTree: AtcTree, private val referenceDate: LocalDate) : EvaluationFunction {
-    override fun evaluate(record: PatientRecord): Evaluation {
 
+    override fun evaluate(record: PatientRecord): Evaluation {
         val medicationSelector = MedicationSelector(MedicationStatusInterpreterOnEvaluationDate(referenceDate, null))
         val antimicrobialsAtcLevels = MedicationCategories.create(atcTree).resolve("Systemic antimicrobials")
         val currentlyUsesAntimicrobials = record.medications?.any {

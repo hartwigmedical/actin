@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical.feed.emc.questionnaire
 
-import com.google.common.collect.Lists
 import org.apache.logging.log4j.LogManager
 
 object QuestionnaireExtraction {
@@ -110,7 +109,7 @@ object QuestionnaireExtraction {
     }
 
     private fun cleanAndTrim(values: Array<String>): List<String> {
-        val trimmed: MutableList<String> = Lists.newArrayList()
+        val trimmed: MutableList<String> = mutableListOf()
         for (value in values) {
             val trim = value.trim { it <= ' ' }
             if (trim.isNotEmpty()) {
