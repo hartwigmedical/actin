@@ -26,7 +26,7 @@ import java.time.LocalDate
 
 object TestMolecularFactory {
 
-    private val TODAY: LocalDate = LocalDate.now()
+    private val TODAY = LocalDate.now()
     private const val DAYS_SINCE_MOLECULAR_ANALYSIS = 5
 
     fun createMinimalTestMolecularRecord(): MolecularRecord {
@@ -42,7 +42,7 @@ object TestMolecularFactory {
             hasSufficientPurity = true,
             hasSufficientQuality = true,
             characteristics = createMinimalTestCharacteristics(),
-            drivers = createMinimalMolecularDrivers(),
+            drivers = Drivers(),
             immunology = MolecularImmunology(isReliable = false, hlaAlleles = emptySet()),
             date = null,
             pharmaco = emptySet()
@@ -140,17 +140,10 @@ object TestMolecularFactory {
         )
     }
 
-    private fun createMinimalMolecularDrivers() =
-        Drivers(emptySet(), emptySet(), emptySet(), emptySet(), emptySet(), emptySet())
-
     fun createProperTestDrivers(): Drivers {
-        return createMinimalMolecularDrivers().copy(
-            variants = setOf(
-                createProperVariant()
-            ),
-            copyNumbers = setOf(
-                createProperCopyNumber()
-            )
+        return Drivers(
+            variants = listOf(createProperVariant()),
+            copyNumbers = listOf(createProperCopyNumber())
         )
     }
 
@@ -254,7 +247,7 @@ object TestMolecularFactory {
         )
     }
 
-    fun createExhaustiveTestDrivers(): Drivers {
+    private fun createExhaustiveTestDrivers(): Drivers {
         val proper = createProperTestDrivers()
         return proper.copy(
             copyNumbers = proper.copyNumbers + CopyNumber(
