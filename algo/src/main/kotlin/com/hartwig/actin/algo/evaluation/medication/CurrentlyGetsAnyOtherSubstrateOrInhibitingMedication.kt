@@ -11,20 +11,20 @@ class CurrentlyGetsAnyOtherSubstrateOrInhibitingMedication(private val selector:
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
-        val hasActiveOrPlannedMedication = (medications.any(selector::isActive) || medications.any(selector::isPlanned))
+        val hasActiveOrPlannedMedication = medications.any(selector::isActive) || medications.any(selector::isPlanned)
         val concatenatedTypes = concatWithCommaAndOr(types)
 
         return when {
             medications.isEmpty() -> {
                 EvaluationFactory.recoverableFail(
-                    "Patient has empty medication list hence should not currently get $concatenatedTypes substrate or inhibiting medication",
+                    "Patient has empty medication list hence does not currently receive $concatenatedTypes substrate or inhibiting medication",
                     "No current $concatenatedTypes substrate or inhibiting medication use (no medication use)"
                 )
             }
 
             !hasActiveOrPlannedMedication -> {
                 EvaluationFactory.recoverableFail(
-                    "Patient has no active or planned medication hence should not currently use $concatenatedTypes substrate or inhibiting medication",
+                    "Patient has no active or planned medication hence does not currently receive $concatenatedTypes substrate or inhibiting medication",
                     "No current $concatenatedTypes substrate or inhibiting medication use (no planned or active medication)"
                 )
             }

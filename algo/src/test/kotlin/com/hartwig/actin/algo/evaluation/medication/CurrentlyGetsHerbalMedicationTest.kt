@@ -20,7 +20,7 @@ class CurrentlyGetsHerbalMedicationTest {
     }
 
     @Test
-    fun `Should be fail when no self care medication`() {
+    fun `Should fail when no self care medication`() {
         val medications = listOf(MedicationTestFactory.medication())
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
@@ -48,7 +48,7 @@ class CurrentlyGetsHerbalMedicationTest {
     }
 
     @Test
-    fun `Should be fail when medication is self care but not active or planned`() {
+    fun `Should fail when medication is self care but not active or planned`() {
         val medications = listOf(MedicationTestFactory.medication(isSelfCare = true))
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
