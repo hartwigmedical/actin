@@ -14,6 +14,9 @@ import com.hartwig.hmftools.datamodel.purple.PurpleDriverType
 import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
 import com.hartwig.hmftools.datamodel.purple.PurpleRecord
 
+private val AMP_DRIVERS = setOf(PurpleDriverType.AMP, PurpleDriverType.PARTIAL_AMP)
+private val DEL_DRIVERS = setOf(PurpleDriverType.DEL)
+
 internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
 
     fun extract(purple: PurpleRecord): Set<CopyNumber> {
@@ -34,7 +37,7 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
             }
             .map { (geneCopyNumber, driver) ->
                 if (driver != null) {
-                    val gainLoss = findGainLoss(purple.allSomaticGainsLosses(), geneCopyNumber.gene())
+                    val gainLoss = findGainLoss(purple.allSomaticGainsLosses(), driver)
                     val event = DriverEventFactory.gainLossEvent(gainLoss)
                     CopyNumber(
                         gene = gainLoss.gene(),
@@ -69,48 +72,47 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
             }.toSortedSet(CopyNumberComparator())
     }
 
-    companion object {
-        private val AMP_DRIVERS = setOf(PurpleDriverType.AMP, PurpleDriverType.PARTIAL_AMP)
-        private val DEL_DRIVERS = setOf(PurpleDriverType.DEL)
+    internal fun determineType(interpretation: CopyNumberInterpretation): CopyNumberType {
+        return when (interpretation) {
+            CopyNumberInterpretation.FULL_GAIN -> {
+                CopyNumberType.FULL_GAIN
+            }
 
-        internal fun determineType(interpretation: CopyNumberInterpretation): CopyNumberType {
-            return when (interpretation) {
-                CopyNumberInterpretation.FULL_GAIN -> {
-                    CopyNumberType.FULL_GAIN
-                }
+            CopyNumberInterpretation.PARTIAL_GAIN -> {
+                CopyNumberType.PARTIAL_GAIN
+            }
 
-                CopyNumberInterpretation.PARTIAL_GAIN -> {
-                    CopyNumberType.PARTIAL_GAIN
-                }
+            CopyNumberInterpretation.FULL_LOSS, CopyNumberInterpretation.PARTIAL_LOSS -> {
+                CopyNumberType.LOSS
+            }
 
-                CopyNumberInterpretation.FULL_LOSS, CopyNumberInterpretation.PARTIAL_LOSS -> {
-                    CopyNumberType.LOSS
-                }
-
-                else -> {
-                    throw IllegalStateException("Could not determine copy number type for purple interpretation: $interpretation")
-                }
+            else -> {
+                throw IllegalStateException("Could not determine copy number type for purple interpretation: $interpretation")
             }
         }
+    }
 
-        private fun findCopyNumberDriver(drivers: Set<PurpleDriver>, geneToFind: String): PurpleDriver? {
-            return drivers.find { driver ->
-                (DEL_DRIVERS.contains(driver.type()) || AMP_DRIVERS.contains(driver.type())) &&
-                        driver.gene() == geneToFind && driver.isCanonical
-            }
+    private fun findCopyNumberDriver(drivers: Set<PurpleDriver>, geneToFind: String): PurpleDriver? {
+        val matches = drivers.filter { driver ->
+            driver.gene() == geneToFind && (DEL_DRIVERS.contains(driver.type()) || AMP_DRIVERS.contains(driver.type()))
         }
 
-        private fun findGainLoss(gainsLosses: List<PurpleGainLoss>, geneToFind: String): PurpleGainLoss {
-            val gainLoss = gainsLosses.find { gainLoss ->
-                (gainLoss.gene() == geneToFind && gainLoss.isCanonical)
+        // TODO (KD) We prefer canonical over non-canonical but proper solution would be to always capture both.
+        return matches.firstOrNull { it.isCanonical } ?: matches.firstOrNull()
+    }
+
+    private fun findGainLoss(gainsLosses: List<PurpleGainLoss>, driverToMatch: PurpleDriver): PurpleGainLoss {
+        val gainLoss =
+            gainsLosses.firstOrNull { gainLoss ->
+                gainLoss.gene() == driverToMatch.gene() && gainLoss.isCanonical == driverToMatch.isCanonical
             }
-            if (gainLoss != null) {
-                return gainLoss
-            } else {
-                throw IllegalStateException(
-                    "Copy number driver found but could not find corresponding PurpleGainLoss for gene : '$geneToFind'."
-                )
-            }
+
+        if (gainLoss != null) {
+            return gainLoss
+        } else {
+            throw IllegalStateException(
+                "Copy number driver found but could not find corresponding PurpleGainLoss for driver : '$driverToMatch'."
+            )
         }
     }
 }
