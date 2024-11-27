@@ -13,8 +13,7 @@ import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
-import com.hartwig.actin.molecular.orange.interpretation.AminoAcid.forceSingleLetterAminoAcids
-import com.hartwig.actin.molecular.panel.PanelAnnotator.Companion.LOGGER
+import com.hartwig.actin.molecular.orange.AminoAcid.forceSingleLetterAminoAcids
 import com.hartwig.actin.molecular.paver.PaveCodingEffect
 import com.hartwig.actin.molecular.paver.PaveImpact
 import com.hartwig.actin.molecular.paver.PaveQuery
@@ -26,6 +25,7 @@ import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.VariantAnnotator
 import com.hartwig.serve.datamodel.hotspot.KnownHotspot
 import com.hartwig.serve.datamodel.range.KnownCodon
+import org.apache.logging.log4j.LogManager
 import com.hartwig.serve.datamodel.common.ProteinEffect as ServeProteinEffect
 
 private val SERVE_HOTSPOT_PROTEIN_EFFECTS = setOf(
@@ -36,7 +36,8 @@ private val SERVE_HOTSPOT_PROTEIN_EFFECTS = setOf(
 )
 
 fun isHotspot(geneAlteration: com.hartwig.serve.datamodel.common.GeneAlteration?): Boolean {
-    return (geneAlteration is KnownHotspot || geneAlteration is KnownCodon) && geneAlteration.proteinEffect() in SERVE_HOTSPOT_PROTEIN_EFFECTS
+    return (geneAlteration is KnownHotspot || geneAlteration is KnownCodon) &&
+            geneAlteration.proteinEffect() in SERVE_HOTSPOT_PROTEIN_EFFECTS
 }
 
 class PanelVariantAnnotator(
@@ -46,6 +47,8 @@ class PanelVariantAnnotator(
     private val paver: Paver,
     private val paveLite: PaveLite,
 ) {
+
+    private val logger = LogManager.getLogger(PanelVariantAnnotator::class.java)
 
     fun annotate(variants: Set<SequencedVariant>): Set<Variant> {
         val variantExtractions = indexVariantExtractionsToUniqueIds(variants)
@@ -76,7 +79,7 @@ class PanelVariantAnnotator(
             )
 
         if (externalVariantAnnotation == null) {
-            LOGGER.error("Unable to resolve variant '$panelVariantExtraction' in variant annotator. See prior warnings.")
+            logger.error("Unable to resolve variant '$panelVariantExtraction' in variant annotator. See prior warnings.")
             return null
         }
 
