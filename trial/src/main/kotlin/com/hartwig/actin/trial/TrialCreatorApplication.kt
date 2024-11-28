@@ -7,6 +7,7 @@ import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
+import com.hartwig.actin.molecular.evidence.ServeLoader
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
 import com.hartwig.actin.trial.interpretation.TrialIngestion
 import com.hartwig.actin.trial.serialization.TrialJson
@@ -14,6 +15,7 @@ import com.hartwig.actin.trial.status.TrialStatusConfigInterpreter
 import com.hartwig.actin.trial.status.TrialStatusDatabaseReader
 import com.hartwig.actin.trial.status.ctc.CTCTrialStatusEntryReader
 import com.hartwig.actin.trial.status.nki.NKITrialStatusEntryReader
+import com.hartwig.serve.datamodel.RefGenome
 import com.hartwig.serve.datamodel.serialization.ServeJson
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
@@ -37,7 +39,8 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
         LOGGER.info("Loading known genes from serve db {}", config.serveDbJson)
-        val knownGenes = ServeJson.read(config.serveDbJson).knownEvents().genes()
+        val (knownEvents, _) = ServeLoader.loadServe(config.serveDbJson, RefGenome.V37)
+        val knownGenes = knownEvents.genes()
         LOGGER.info(" Loaded {} known genes", knownGenes.size)
         val geneFilter = GeneFilterFactory.createFromKnownGenes(knownGenes)
 

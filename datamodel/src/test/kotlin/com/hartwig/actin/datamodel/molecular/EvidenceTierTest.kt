@@ -6,7 +6,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.EvidenceTier
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.treatment
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
-import com.hartwig.serve.datamodel.EvidenceLevelDetails
+import com.hartwig.serve.datamodel.efficacy.EvidenceLevelDetails
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat

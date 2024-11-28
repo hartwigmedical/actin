@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.evidence.known
 
 import com.hartwig.actin.molecular.evidence.matching.FUSION_CRITERIA
-import com.hartwig.serve.datamodel.fusion.KnownFusion
+import com.hartwig.serve.datamodel.molecular.fusion.KnownFusion
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

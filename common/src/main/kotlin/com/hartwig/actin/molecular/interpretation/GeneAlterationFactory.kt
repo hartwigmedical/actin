@@ -2,15 +2,18 @@ package com.hartwig.actin.molecular.interpretation
 
 import com.hartwig.actin.datamodel.molecular.GeneRole
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
-import com.hartwig.serve.datamodel.common.GeneAlteration
+import com.hartwig.actin.datamodel.molecular.GeneAlteration
+import com.hartwig.serve.datamodel.molecular.common.GeneAlteration as ServeGeneAlteration
+import com.hartwig.serve.datamodel.molecular.common.GeneRole as ServeGeneRole
+import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
 
 object GeneAlterationFactory {
 
     fun convertAlteration(
         gene: String,
-        input: GeneAlteration?
-    ): com.hartwig.actin.datamodel.molecular.GeneAlteration {
-        return object : com.hartwig.actin.datamodel.molecular.GeneAlteration {
+        input: ServeGeneAlteration?
+    ): GeneAlteration {
+        return object : GeneAlteration {
             override val gene: String = gene
 
             override val geneRole: GeneRole = if (input != null) convertGeneRole(input.geneRole()) else GeneRole.UNKNOWN
@@ -22,21 +25,21 @@ object GeneAlterationFactory {
         }
     }
 
-    private fun convertGeneRole(input: com.hartwig.serve.datamodel.common.GeneRole): GeneRole {
+    private fun convertGeneRole(input: ServeGeneRole): GeneRole {
         return when (input) {
-            com.hartwig.serve.datamodel.common.GeneRole.BOTH -> {
+            ServeGeneRole.BOTH -> {
                 GeneRole.BOTH
             }
 
-            com.hartwig.serve.datamodel.common.GeneRole.ONCO -> {
+            ServeGeneRole.ONCO -> {
                 GeneRole.ONCO
             }
 
-            com.hartwig.serve.datamodel.common.GeneRole.TSG -> {
+            ServeGeneRole.TSG -> {
                 GeneRole.TSG
             }
 
-            com.hartwig.serve.datamodel.common.GeneRole.UNKNOWN -> {
+            ServeGeneRole.UNKNOWN -> {
                 GeneRole.UNKNOWN
             }
 
@@ -46,37 +49,37 @@ object GeneAlterationFactory {
         }
     }
 
-    fun convertProteinEffect(input: com.hartwig.serve.datamodel.common.ProteinEffect): ProteinEffect {
+    fun convertProteinEffect(input: ServeProteinEffect): ProteinEffect {
         return when (input) {
-            com.hartwig.serve.datamodel.common.ProteinEffect.UNKNOWN -> {
+            ServeProteinEffect.UNKNOWN -> {
                 ProteinEffect.UNKNOWN
             }
 
-            com.hartwig.serve.datamodel.common.ProteinEffect.AMBIGUOUS -> {
+            ServeProteinEffect.AMBIGUOUS -> {
                 ProteinEffect.AMBIGUOUS
             }
 
-            com.hartwig.serve.datamodel.common.ProteinEffect.NO_EFFECT -> {
+            ServeProteinEffect.NO_EFFECT -> {
                 ProteinEffect.NO_EFFECT
             }
 
-            com.hartwig.serve.datamodel.common.ProteinEffect.NO_EFFECT_PREDICTED -> {
+            ServeProteinEffect.NO_EFFECT_PREDICTED -> {
                 ProteinEffect.NO_EFFECT_PREDICTED
             }
 
-            com.hartwig.serve.datamodel.common.ProteinEffect.LOSS_OF_FUNCTION -> {
+            ServeProteinEffect.LOSS_OF_FUNCTION -> {
                 ProteinEffect.LOSS_OF_FUNCTION
             }
 
-            com.hartwig.serve.datamodel.common.ProteinEffect.LOSS_OF_FUNCTION_PREDICTED -> {
+            ServeProteinEffect.LOSS_OF_FUNCTION_PREDICTED -> {
                 ProteinEffect.LOSS_OF_FUNCTION_PREDICTED
             }
 
-            com.hartwig.serve.datamodel.common.ProteinEffect.GAIN_OF_FUNCTION -> {
+            ServeProteinEffect.GAIN_OF_FUNCTION -> {
                 ProteinEffect.GAIN_OF_FUNCTION
             }
 
-            com.hartwig.serve.datamodel.common.ProteinEffect.GAIN_OF_FUNCTION_PREDICTED -> {
+            ServeProteinEffect.GAIN_OF_FUNCTION_PREDICTED -> {
                 ProteinEffect.GAIN_OF_FUNCTION_PREDICTED
             }
 

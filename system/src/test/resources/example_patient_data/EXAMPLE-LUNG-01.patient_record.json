@@ -438,7 +438,10 @@
                         "name": "NETHERLANDS",
                         "hospitalsPerCity": {
                           "Tilburg": [
-                            "Elisabeth-TweeSteden Ziekenhuis"
+                            {
+                              "name": "Elisabeth-TweeSteden Ziekenhuis",
+                              "isChildrensHospital": false
+                            }
                           ]
                         }
                       },
@@ -446,7 +449,9 @@
                         "name": "GERMANY",
                         "hospitalsPerCity": {
                           "Stuttgart": [
-                            "Robert-Bosch-Krankenhaus - Klinik Schillerhoehe"
+                            {
+                              "name": "Robert-Bosch-Krankenhaus - Klinik Schillerhoehe"
+                            }
                           ]
                         }
                       }
@@ -468,7 +473,9 @@
                         "name": "BELGIUM",
                         "hospitalsPerCity": {
                           "Brussels": [
-                            "Jules Bordet"
+                            {
+                              "name": "Jules Bordet"
+                            }
                           ]
                         }
                       }
@@ -583,7 +590,10 @@
                         "name": "NETHERLANDS",
                         "hospitalsPerCity": {
                           "Tilburg": [
-                            "Elisabeth-TweeSteden Ziekenhuis"
+                            {
+                              "name": "Elisabeth-TweeSteden Ziekenhuis",
+                              "isChildrensHospital": false
+                            }
                           ]
                         }
                       },
@@ -591,7 +601,9 @@
                         "name": "GERMANY",
                         "hospitalsPerCity": {
                           "Stuttgart": [
-                            "Robert-Bosch-Krankenhaus - Klinik Schillerhoehe"
+                            {
+                              "name": "Robert-Bosch-Krankenhaus - Klinik Schillerhoehe"
+                            }
                           ]
                         }
                       }
@@ -720,7 +732,9 @@
                         "name": "GERMANY",
                         "hospitalsPerCity": {
                           "Stuttgart": [
-                            "Robert-Bosch-Krankenhaus - Klinik Schillerhoehe"
+                            {
+                              "name": "Robert-Bosch-Krankenhaus - Klinik Schillerhoehe"
+                            }
                           ]
                         }
                       }

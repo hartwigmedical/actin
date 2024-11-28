@@ -3,6 +3,7 @@ package com.hartwig.actin.datamodel.molecular
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.CountryName
+import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.orange.characteristics.CupPrediction
 import com.hartwig.actin.datamodel.molecular.orange.driver.CodingContext
@@ -22,6 +23,7 @@ import com.hartwig.actin.datamodel.molecular.orange.pharmaco.Haplotype
 import com.hartwig.actin.datamodel.molecular.orange.pharmaco.HaplotypeFunction
 import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoEntry
 import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoGene
+import com.hartwig.serve.datamodel.trial.ImmutableHospital
 import java.time.LocalDate
 
 object TestMolecularFactory {
@@ -261,9 +263,9 @@ object TestMolecularFactory {
                             countries = setOf(
                                 TestClinicalEvidenceFactory.createCountry(
                                     CountryName.NETHERLANDS,
-                                    mapOf("Nijmegen" to setOf("Radboud UMC"), "Amsterdam" to setOf("AMC", "VUmc"))
+                                    mapOf("Nijmegen" to setOf(Hospital("Radbouc UMC", false)), "Amsterdam" to setOf(Hospital("AMC", false), Hospital("VUmc", false))
                                 )
-                            ),
+                            )),
                             url = "https://clinicaltrials.gov/study/NCT00000003",
                             nctId = "NCT00000003",
                         ),
@@ -272,9 +274,9 @@ object TestMolecularFactory {
                             countries = setOf(
                                 TestClinicalEvidenceFactory.createCountry(
                                     CountryName.BELGIUM,
-                                    mapOf("Leuven" to setOf("hospital"))
+                                    mapOf("Leuven" to setOf(Hospital("hospital", null))
                                 )
-                            ),
+                            )),
                             url = "https://clinicaltrials.gov/study/NCT00000011",
                             nctId = "NCT00000011",
                         )

@@ -8,13 +8,25 @@ import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
-import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.characteristicsFilter
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterEfficacyEvidence
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.geneFilter
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.codonFilter
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.exonFilter
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterTrials
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.fusionFilter
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractCharacteristic
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractFusion
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractGene
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractRange
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.hotspotFilter
 import com.hartwig.actin.molecular.evidence.actionability.isCategoryEvent
-import com.hartwig.serve.datamodel.ActionableEvent
-import com.hartwig.serve.datamodel.ClinicalTrial
-import com.hartwig.serve.datamodel.EvidenceLevelDetails
-import com.hartwig.serve.datamodel.Treatment
+import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
+import com.hartwig.serve.datamodel.efficacy.EvidenceLevelDetails
+import com.hartwig.serve.datamodel.trial.ActionableTrial
+import java.time.LocalDate
 
 object ClinicalEvidenceFactory {
 
@@ -23,62 +35,111 @@ object ClinicalEvidenceFactory {
     }
 
     fun create(actionabilityMatch: ActionabilityMatch): ClinicalEvidence {
-        val onLabelEvidence = createTreatmentEvidence(true, actionabilityMatch.onLabelEvents)
-        val offLabelEvidence = createTreatmentEvidence(false, actionabilityMatch.offLabelEvents)
+        val onLabelEvidence = createAllTreatmentEvidences(true, actionabilityMatch.onLabelEvidence.evidences)
+        val offLabelEvidence = createAllTreatmentEvidences(false, actionabilityMatch.offLabelEvidence.evidences)
         return ClinicalEvidence(
-            externalEligibleTrials = createExternalTrialEvidence(actionabilityMatch.onLabelEvents),
+            externalEligibleTrials = createAllExternalTrials(actionabilityMatch.onLabelEvidence.trials),
             treatmentEvidence = onLabelEvidence + offLabelEvidence
         )
     }
 
-    private fun createTreatmentEvidence(isOnLabel: Boolean, events: List<ActionableEvent>) =
-        events.filter { it.source() == ActionabilityConstants.EVIDENCE_SOURCE }.map {
-            TreatmentEvidence(
-                it.treatmentName(),
-                EvidenceLevel.valueOf(it.evidenceLevel().name),
-                isOnLabel,
-                EvidenceDirection(
-                    hasPositiveResponse = it.direction().hasPositiveResponse(),
-                    hasBenefit = it.direction().hasBenefit(),
-                    isResistant = it.direction().isResistant,
-                    isCertain = it.direction().isCertain
-                ),
-                it.entryDate(),
-                it.efficacyDescription(),
-                it.evidenceYear(),
-                it.isCategoryEvent(),
-                it.sourceEvent(),
-                it.evidenceLevelDetails(),
-                ApplicableCancerType(it.applicableCancerType().name(), it.blacklistCancerTypes().map { ct -> ct.name() }.toSet()),
-            )
-        }.toSet()
+    private fun createAllTreatmentEvidences(isOnLabel: Boolean, evidences: List<EfficacyEvidence>): Set<TreatmentEvidence> {
+        val filters = listOf(
+            geneFilter() to { evidence: EfficacyEvidence -> extractGene(evidence) },
+            codonFilter() to { evidence: EfficacyEvidence -> extractRange(evidence) },
+            hotspotFilter() to { evidence: EfficacyEvidence -> ActionableEventsExtraction.extractHotspot(evidence) },
+            exonFilter() to { evidence: EfficacyEvidence -> extractRange(evidence) },
+            fusionFilter() to { evidence: EfficacyEvidence -> extractFusion(evidence) },
+            characteristicsFilter() to { evidence: EfficacyEvidence -> extractCharacteristic(evidence) },
+        )
 
-    private fun createExternalTrialEvidence(onLabelEvents: List<ActionableEvent>): Set<ExternalTrial> {
-        return onLabelEvents.filter { onLabelEvent ->
-            onLabelEvent.source() == ActionabilityConstants.EXTERNAL_TRIAL_SOURCE && onLabelEvent.direction().hasPositiveResponse()
-        }
-            .map { onLabelEvent ->
-                val trial = onLabelEvent.intervention() as ClinicalTrial
-                ExternalTrial(
-                    title = trial.acronym() ?: trial.title(),
-                    countries = trial.countries()
-                        .map { Country(name = determineCountryName(it.countryName()), hospitalsPerCity = it.hospitalsPerCity()) }
-                        .toSet(),
-                    url = extractNctUrl(onLabelEvent),
-                    nctId = trial.nctId(),
-                    applicableCancerType = ApplicableCancerType(
-                        onLabelEvent.applicableCancerType().name(),
-                        onLabelEvent.blacklistCancerTypes().map { it.name() }.toSet()
-                    ),
-                    isCategoryEvent = onLabelEvent.isCategoryEvent(),
-                    sourceEvent = onLabelEvent.sourceEvent(),
-                    evidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY
+        return filters.flatMap { (filter, extractor) ->
+            filterEfficacyEvidence(evidences, filter).map {
+                createTreatmentEvidence(
+                    isOnLabel,
+                    it,
+                    extractor(it).sourceDate(),
+                    extractor(it).sourceEvent(),
+                    extractor(it).isCategoryEvent()
                 )
             }
-            .toSet()
+        }.toSet()
     }
 
-    private fun ActionableEvent.treatmentName(): String = (this.intervention() as Treatment).name()
+    private fun createTreatmentEvidence(
+        isOnLabel: Boolean,
+        evidence: EfficacyEvidence,
+        sourceDate: LocalDate,
+        sourceEvent: String,
+        isCategoryEvent: Boolean
+    ): TreatmentEvidence {
+        return TreatmentEvidence(
+            evidence.treatment().name(),
+            EvidenceLevel.valueOf(evidence.evidenceLevel().name),
+            isOnLabel,
+            EvidenceDirection(
+                hasPositiveResponse = evidence.evidenceDirection().hasPositiveResponse(),
+                hasBenefit = evidence.evidenceDirection().hasBenefit(),
+                isResistant = evidence.evidenceDirection().isResistant,
+                isCertain = evidence.evidenceDirection().isCertain
+            ),
+            sourceDate,
+            evidence.efficacyDescription(),
+            evidence.evidenceYear(),
+            isCategoryEvent,
+            sourceEvent,
+            evidence.evidenceLevelDetails(),
+            ApplicableCancerType(
+                evidence.indication().applicableType().name(),
+                evidence.indication().excludedSubTypes().map { ct -> ct.name() }.toSet()
+            ),
+        )
+    }
+
+    private fun createAllExternalTrials(trials: List<ActionableTrial>): Set<ExternalTrial> {
+        return listOf(
+            geneFilter() to { trial: ActionableTrial -> extractGene(trial) },
+            codonFilter() to { trial: ActionableTrial -> extractRange(trial) },
+            hotspotFilter() to { trial: ActionableTrial -> ActionableEventsExtraction.extractHotspot(trial) },
+            exonFilter() to { trial: ActionableTrial -> extractRange(trial) },
+            fusionFilter() to { trial: ActionableTrial -> extractFusion(trial) },
+            characteristicsFilter() to { trial: ActionableTrial -> extractCharacteristic(trial) },
+        ).flatMap { (filter, extractor) ->
+            filterTrials(trials, filter).map {
+                createExternalTrial(it, extractor(it).sourceEvent(), extractor(it).isCategoryEvent())
+            }
+        }.toSet()
+    }
+
+    private fun createExternalTrial(trial: ActionableTrial, sourceEvent: String, isCategoryEvent: Boolean): ExternalTrial {
+        return ExternalTrial(
+            title = trial.acronym() ?: trial.title(),
+            countries = trial.countries()
+                .map {
+                    Country(
+                        name = determineCountryName(it.name()),
+                        hospitalsPerCity = it.hospitalsPerCity()
+                            .mapValues { entry -> entry.value.map { hospital -> convertHospital(hospital) }.toSet() })
+                }
+                .toSet(),
+            url = extractNctUrl(trial),
+            nctId = trial.nctId(),
+            applicableCancerType = ApplicableCancerType(
+                trial.indications().iterator().next().applicableType().name(),
+                trial.indications().iterator().next().excludedSubTypes().map { it.name() }.toSet()
+            ),
+            isCategoryEvent = isCategoryEvent,
+            sourceEvent = sourceEvent,
+            evidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY
+        )
+    }
+
+    private fun convertHospital(hospital: com.hartwig.serve.datamodel.trial.Hospital): com.hartwig.actin.datamodel.molecular.evidence.Hospital {
+        return com.hartwig.actin.datamodel.molecular.evidence.Hospital(
+            name = hospital.name(),
+            isChildrensHospital = hospital.isChildrensHospital()
+        )
+    }
 
     private fun determineCountryName(countryName: String): CountryName {
         return when (countryName) {
@@ -90,8 +151,8 @@ object ClinicalEvidenceFactory {
         }
     }
 
-    private fun extractNctUrl(event: ActionableEvent): String {
-        return event.evidenceUrls().find { it.length > 11 && it.takeLast(11).substring(0, 3) == "NCT" }
-            ?: throw IllegalStateException("Found no URL ending with a NCT id: " + event.sourceUrls().joinToString(", "))
+    private fun extractNctUrl(trial: ActionableTrial): String {
+        return trial.urls().find { it.length > 11 && it.takeLast(11).substring(0, 3) == "NCT" }
+            ?: throw IllegalStateException("Found no URL ending with a NCT id: " + trial.urls().joinToString(", "))
     }
 }

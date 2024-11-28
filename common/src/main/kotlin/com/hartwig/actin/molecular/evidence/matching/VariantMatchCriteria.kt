@@ -11,5 +11,5 @@ data class VariantMatchCriteria(
     val chromosome: String? = null,
     val position: Int? = null,
     val ref: String? = null,
-    val alt: String? = null,
+    val alt: String? = null
 )

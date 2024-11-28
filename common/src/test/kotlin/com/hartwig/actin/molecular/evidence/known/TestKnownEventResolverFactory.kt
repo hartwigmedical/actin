@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.evidence.known
 
-import com.hartwig.serve.datamodel.ImmutableKnownEvents
-import com.hartwig.serve.datamodel.KnownEvents
+import com.hartwig.serve.datamodel.molecular.ImmutableKnownEvents
+import com.hartwig.serve.datamodel.molecular.KnownEvents
 
 object TestKnownEventResolverFactory {
 
