@@ -1,5 +1,7 @@
 package com.hartwig.actin.medication
 
+import com.hartwig.actin.datamodel.clinical.Transporter
+
 class MedicationInputChecker {
 
     companion object {
@@ -15,7 +17,7 @@ class MedicationInputChecker {
         }
 
         fun isTransporter(string: String): Boolean {
-            return listOf("OATP1B1", "OATP1B3", "PGP", "OCT2", "MATE1", "BCRP").contains(string)
+            return enumValues<Transporter>().any { it.name == string }
         }
     }
 }

@@ -30,7 +30,11 @@ class CurrentlyGetsTransporterInteractingMedication(
                             transporterInteractingMedicationActive
                         )
                     }",
-                    "Active $termToFind $typeText medication use: ${Format.concatLowercaseWithAnd(transporterInteractingMedicationActive)}"
+                    "Active $termToFind $typeText medication use: ${
+                        Format.concatLowercaseWithAnd(
+                            transporterInteractingMedicationActive
+                        )
+                    }"
                 )
             }
 
@@ -41,7 +45,11 @@ class CurrentlyGetsTransporterInteractingMedication(
                             transporterInteractingMedicationPlanned
                         )
                     }",
-                    "Planned $termToFind $typeText medication use: ${Format.concatLowercaseWithAnd(transporterInteractingMedicationPlanned)}"
+                    "Planned $termToFind $typeText medication use: ${
+                        Format.concatLowercaseWithAnd(
+                            transporterInteractingMedicationPlanned
+                        )
+                    }"
                 )
             }
 

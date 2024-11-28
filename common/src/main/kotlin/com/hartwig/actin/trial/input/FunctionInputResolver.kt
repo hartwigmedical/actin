@@ -5,6 +5,7 @@ import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.ReceptorType
+import com.hartwig.actin.datamodel.clinical.Transporter
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
@@ -45,7 +46,6 @@ import com.hartwig.actin.trial.input.single.OneIntegerOneString
 import com.hartwig.actin.trial.input.single.OneMedicationCategory
 import com.hartwig.actin.trial.input.single.OneSpecificDrugOneTreatmentCategoryManyTypes
 import com.hartwig.actin.trial.input.single.OneSpecificTreatmentOneInteger
-import com.hartwig.actin.trial.input.single.OneTransporter
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyDrugs
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyIntents
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypes
@@ -792,14 +792,14 @@ class FunctionInputResolver(
         return OneCypOneInteger(cyp = cyp, integer = parameterAsString(function, 1).toInt())
     }
 
-    fun createOneTransporterInput(function: EligibilityFunction): OneTransporter {
+    fun createOneTransporterInput(function: EligibilityFunction): Transporter {
         assertParamConfig(function, FunctionInput.ONE_TRANSPORTER, 1)
 
         val transporter = function.parameters.first() as String
         if (!MedicationInputChecker.isTransporter(transporter)) {
             throw IllegalArgumentException("Not a proper transporter: $transporter")
         }
-        return OneTransporter(transporter)
+        return Transporter.valueOf(transporter)
     }
 
     private fun parameterAsString(function: EligibilityFunction, i: Int) = function.parameters[i] as String

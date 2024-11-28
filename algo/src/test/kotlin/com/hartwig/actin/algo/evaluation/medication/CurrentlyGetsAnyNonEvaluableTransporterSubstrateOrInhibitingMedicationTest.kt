@@ -11,7 +11,10 @@ class CurrentlyGetsAnyNonEvaluableTransporterSubstrateOrInhibitingMedicationTest
 
     @Test
     fun `Should fail when patient medication list is empty`() {
-        assertEvaluation(EvaluationResult.FAIL, createFunction(MedicationTestFactory.alwaysActive()).evaluate(MedicationTestFactory.withMedications(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            createFunction(MedicationTestFactory.alwaysActive()).evaluate(MedicationTestFactory.withMedications(emptyList()))
+        )
     }
 
     @Test
@@ -31,8 +34,9 @@ class CurrentlyGetsAnyNonEvaluableTransporterSubstrateOrInhibitingMedicationTest
 
     @Test
     fun `Should be undetermined if medication is not provided`() {
-        val result = createFunction(MedicationTestFactory.alwaysActive()).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = null))
-
+        val result = createFunction(MedicationTestFactory.alwaysActive()).evaluate(
+            TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = null)
+        )
         assertEvaluation(EvaluationResult.UNDETERMINED, result)
         assertThat(result.recoverable).isTrue()
     }

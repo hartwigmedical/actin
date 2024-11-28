@@ -4,6 +4,7 @@ import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.ReceptorType
+import com.hartwig.actin.datamodel.clinical.Transporter
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
@@ -35,7 +36,6 @@ import com.hartwig.actin.trial.input.single.OneIntegerManyDoidTerms
 import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
 import com.hartwig.actin.trial.input.single.OneIntegerOneString
 import com.hartwig.actin.trial.input.single.OneMedicationCategory
-import com.hartwig.actin.trial.input.single.OneTransporter
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyDrugs
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypesManyDrugs
 import com.hartwig.actin.trial.input.single.TwoDoubles
@@ -456,7 +456,8 @@ class FunctionInputResolverTest {
 
     @Test
     fun `Should resolve functions with one integer many doid terms input`() {
-        val resolver = TestFunctionInputResolverFactory.createResolverWithTwoDoidsAndTerms(listOf("doid 1", "doid 2"), listOf("term 1", "term 2"))
+        val resolver =
+            TestFunctionInputResolverFactory.createResolverWithTwoDoidsAndTerms(listOf("doid 1", "doid 2"), listOf("term 1", "term 2"))
         val rule: EligibilityRule = firstOfType(FunctionInput.ONE_INTEGER_MANY_DOID_TERMS)
         val valid: EligibilityFunction = create(rule, listOf("2", "term 1;term 2"))
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
@@ -808,9 +809,10 @@ class FunctionInputResolverTest {
         val valid = create(rule, listOf(transporter))
         assertThat(resolver.hasValidInputs(valid)).isTrue
 
-        val expected = OneTransporter(transporter)
+        val expected = Transporter.valueOf(transporter)
         assertThat(resolver.createOneTransporterInput(valid)).isEqualTo(expected)
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("OatP1b1")))).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("BCRP, OATP1B1")))).isFalse
     }
 

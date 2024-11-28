@@ -107,14 +107,14 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun getsTransporterInhibitingMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-        val termToFind = functionInputResolver().createOneTransporterInput(function)
-            CurrentlyGetsTransporterInteractingMedication(selector, termToFind.transporter, DrugInteraction.Type.INHIBITOR) }
+        val termToFind = functionInputResolver().createOneTransporterInput(function).toString()
+            CurrentlyGetsTransporterInteractingMedication(selector, termToFind, DrugInteraction.Type.INHIBITOR) }
     }
 
     private fun getsTransporterSubstrateMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val termToFind = functionInputResolver().createOneTransporterInput(function)
-            CurrentlyGetsTransporterInteractingMedication(selector, termToFind.transporter, DrugInteraction.Type.SUBSTRATE) }
+            val termToFind = functionInputResolver().createOneTransporterInput(function).toString()
+            CurrentlyGetsTransporterInteractingMedication(selector, termToFind, DrugInteraction.Type.SUBSTRATE) }
     }
 
     private fun getsAnyNonEvaluableTransporterSubstrateOrInhibitingMedicationCreator(): FunctionCreator {
