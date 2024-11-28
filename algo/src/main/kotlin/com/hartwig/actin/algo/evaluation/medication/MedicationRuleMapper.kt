@@ -31,6 +31,7 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_PGP to getsPGPSubstrateMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_BCRP to getsBCRPInhibitingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_BCRP to getsBCRPSubstrateMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OATP1B1 to getsOATP1B1InhibitingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_OATP1B1 to getsOATP1B1SubstrateMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_OATP1B3 to getsOATP1B3SubstrateMedicationCreator(),
             EligibilityRule.HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING to getsStableDosingAnticoagulantMedicationCreator(),
@@ -122,6 +123,10 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun getsBCRPSubstrateMedicationCreator(): FunctionCreator {
         return { CurrentlyGetsTransporterInteractingMedication(selector, "BCRP", DrugInteraction.Type.SUBSTRATE) }
+    }
+
+    private fun getsOATP1B1InhibitingMedicationCreator(): FunctionCreator {
+        return { CurrentlyGetsTransporterInteractingMedication(selector, "OATP1B1", DrugInteraction.Type.INHIBITOR) }
     }
 
     private fun getsOATP1B1SubstrateMedicationCreator(): FunctionCreator {
