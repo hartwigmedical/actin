@@ -92,7 +92,8 @@ class GeneIsWildType(private val gene: String, maxTestAge: LocalDate? = null) : 
 
     private fun evaluatePotentialWarns(
         reportableEventsWithNoEffect: Set<String>,
-        reportableEventsWithEffectPotentiallyWildtype: Set<String>, evidenceSource: String
+        reportableEventsWithEffectPotentiallyWildtype: Set<String>,
+        evidenceSource: String
     ): Evaluation? {
         return MolecularEventUtil.evaluatePotentialWarnsForEventGroups(
             listOf(

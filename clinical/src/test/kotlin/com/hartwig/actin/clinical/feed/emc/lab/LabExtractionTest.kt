@@ -2,8 +2,6 @@ package com.hartwig.actin.clinical.feed.emc.lab
 
 import com.hartwig.actin.clinical.feed.emc.TestFeedFactory
 import com.hartwig.actin.clinical.feed.emc.lab.LabExtraction.extract
-import com.hartwig.actin.clinical.feed.emc.lab.LabExtraction.extractLimits
-import com.hartwig.actin.clinical.feed.emc.lab.LabExtraction.findSeparatingHyphenIndex
 import com.hartwig.actin.datamodel.clinical.LabUnit
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
@@ -15,7 +13,7 @@ private const val EPSILON = 1.0E-10
 class LabExtractionTest {
 
     @Test
-    fun canExtractLabValues() {
+    fun `Should extract lab values`() {
         val testEntries = TestFeedFactory.createTestLabEntries()
         val lab1 = extract(findByCodeCodeOriginal(testEntries, "LAB1"))
         assertThat(lab1.date).isEqualTo(LocalDate.of(2018, 5, 29))
@@ -51,49 +49,57 @@ class LabExtractionTest {
     }
 
     @Test
-    fun canExtractLimits() {
-        val bothPositive = extractLimits("12 - 14")
-        assertThat(bothPositive.lower!!).isEqualTo(12.0, Offset.offset(EPSILON))
-        assertThat(bothPositive.upper!!).isEqualTo(14.0, Offset.offset(EPSILON))
-        val bothOneNegative = extractLimits("-3 - 3")
-        assertThat(bothOneNegative.lower!!).isEqualTo(-3.0, Offset.offset(EPSILON))
-        assertThat(bothOneNegative.upper!!).isEqualTo(3.0, Offset.offset(EPSILON))
-        val bothTwoNegative = extractLimits("-6 - -3")
-        assertThat(bothTwoNegative.lower!!).isEqualTo(-6.0, Offset.offset(EPSILON))
-        assertThat(bothTwoNegative.upper!!).isEqualTo(-3.0, Offset.offset(EPSILON))
-        val lowerOnlyPositive = extractLimits("> 50")
-        assertThat(lowerOnlyPositive.lower!!).isEqualTo(50.0, Offset.offset(EPSILON))
-        assertThat(lowerOnlyPositive.upper).isNull()
-        val lowerOnlyNegative = extractLimits("> -6")
-        assertThat(lowerOnlyNegative.lower!!).isEqualTo(-6.0, Offset.offset(EPSILON))
-        assertThat(lowerOnlyNegative.upper).isNull()
-        val upperOnly = extractLimits("<90")
-        assertThat(upperOnly.lower).isNull()
-        assertThat(upperOnly.upper!!).isEqualTo(90.0, Offset.offset(EPSILON))
-        val failed = extractLimits("not a limit")
-        assertThat(failed.lower).isNull()
-        assertThat(failed.upper).isNull()
+    fun `Should extract limits from referenceRangeString`() {
+        assertLimits("12 - 14", 12.0, 14.0)
+        assertLimits("-3 - 3", -3.0, 3.0)
+        assertLimits("-6 - -3", -6.0, -3.0)
+        assertLimits("> 50", 50.0, null)
+        assertLimits("> -6", -6.0, null)
+        assertLimits("<90", null, 90.0)
+        assertLimits("not a limit", null, null)
+        assertLimits("3,1 - 5,1", 3.1, 5.1)
+        assertLimits("-3-5", -3.0, 5.0)
+        assertLimits("-3--5", -3.0, -5.0)
     }
 
-    @Test
-    fun canFindSeparatingHyphen() {
-        assertThat(findSeparatingHyphenIndex("3 - 5")).isEqualTo(2)
-        assertThat(findSeparatingHyphenIndex("3,1 - 5,1")).isEqualTo(4)
-        assertThat(findSeparatingHyphenIndex("-3-5")).isEqualTo(2)
-        assertThat(findSeparatingHyphenIndex("-3--5")).isEqualTo(2)
+    private fun assertLimits(referenceRangeText: String, lower: Double?, upper: Double?) {
+        val extracted = extract(labEntryWithRange(referenceRangeText))
+        listOf(
+            extracted.refLimitLow to lower,
+            extracted.refLimitUp to upper
+        ).forEach { (actual, expected) ->
+            if (expected == null) {
+                assertThat(actual).isNull()
+            } else {
+                assertThat(actual).isEqualTo(expected, Offset.offset(EPSILON))
+            }
+        }
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun crashFindSeparatingHyphenOnHyphenStarting() {
-        findSeparatingHyphenIndex("-Nope")
+    fun `Should throw for lab entry with leading hyphen but no measurement`() {
+        extract(labEntryWithRange("-Nope"))
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun crashFindSeparatingHyphenOnInvalidReferenceRangeText() {
-        findSeparatingHyphenIndex("not a reference-range-text")
+    fun `Should throw for lab entry with internal hyphen but no measurement`() {
+        extract(labEntryWithRange("not a reference-range-text"))
     }
 
     private fun findByCodeCodeOriginal(entries: List<LabEntry>, code: String): LabEntry {
         return entries.find { it.codeCodeOriginal == code } ?: throw IllegalStateException("Could not find lab entry with code: $code")
+    }
+
+    private fun labEntryWithRange(referenceRangeText: String): LabEntry {
+        return LabEntry(
+            subject = "test",
+            codeCodeOriginal = "test",
+            codeDisplayOriginal = "test",
+            valueQuantityComparator = "test",
+            valueQuantityValue = 0.0,
+            valueQuantityUnit = "mmol/L",
+            referenceRangeText = referenceRangeText,
+            effectiveDateTime = LocalDate.of(2024, 11, 22)
+        )
     }
 }

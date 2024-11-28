@@ -587,7 +587,7 @@ class FunctionInputResolverTest {
         val valid = create(rule, listOf("gene", "V600E;V601K"))
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
 
-        val expected = OneGeneManyProteinImpacts("gene", listOf("V600E", "V601K"))
+        val expected = OneGeneManyProteinImpacts("gene", setOf("V600E", "V601K"))
         assertThat(resolver.createOneGeneManyProteinImpactsInput(valid)).isEqualTo(expected)
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("not a gene", "V600E")))!!).isFalse

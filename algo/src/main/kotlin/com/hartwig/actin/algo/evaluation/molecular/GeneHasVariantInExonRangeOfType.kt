@@ -116,14 +116,12 @@ class GeneHasVariantInExonRangeOfType(
             }
 
             else -> {
-                val potentialWarnEvaluation =
-                    evaluatePotentialWarns(
-                        canonicalUnreportableVariantMatches,
-                        reportableOtherVariantMatches,
-                        unreportableExonSkips.map { it.event }.toSet(),
-                        baseMessage
-                    )
-                potentialWarnEvaluation
+                evaluatePotentialWarns(
+                    canonicalUnreportableVariantMatches,
+                    reportableOtherVariantMatches,
+                    unreportableExonSkips.map { it.event }.toSet(),
+                    baseMessage
+                )
                     ?: EvaluationFactory.fail("No variant $baseMessage in canonical transcript", "No variant $baseMessage")
             }
         }
