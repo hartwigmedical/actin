@@ -244,10 +244,6 @@ object TestServeActionabilityFactory {
             override fun urls(): Set<String> {
                 return setOf("https://clinicaltrials.gov/study/NCT00000001")
             }
-
-            override fun evidenceYear(): Int {
-                return 1960
-            }
         }
     }
 }
