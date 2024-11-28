@@ -6,7 +6,7 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class CurrentlyGetsAnyUnresolvableTransporterSubstrateOrInhibitingMedicationTest {
+class CurrentlyGetsAnyNonEvaluableTransporterSubstrateOrInhibitingMedicationTest {
     private val patientWithMedication = MedicationTestFactory.withMedications(listOf(MedicationTestFactory.medication("Some medication")))
 
     @Test
@@ -37,8 +37,8 @@ class CurrentlyGetsAnyUnresolvableTransporterSubstrateOrInhibitingMedicationTest
         assertThat(result.recoverable).isTrue()
     }
 
-    private fun createFunction(selector: MedicationSelector): CurrentlyGetsAnyUnresolvableTransporterSubstrateOrInhibitingMedication {
+    private fun createFunction(selector: MedicationSelector): CurrentlyGetsAnyNonEvaluableTransporterSubstrateOrInhibitingMedication {
         val types = listOf("TYPE-A", "type-B", "TYPE-C")
-        return CurrentlyGetsAnyUnresolvableTransporterSubstrateOrInhibitingMedication(selector, types)
+        return CurrentlyGetsAnyNonEvaluableTransporterSubstrateOrInhibitingMedication(selector, types)
     }
 }
