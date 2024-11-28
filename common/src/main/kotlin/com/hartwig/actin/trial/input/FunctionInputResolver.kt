@@ -14,6 +14,7 @@ import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.FunctionInput
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.medication.MedicationCategories
+import com.hartwig.actin.medication.MedicationInputChecker
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.composite.CompositeInput
 import com.hartwig.actin.trial.input.composite.CompositeRules
@@ -44,6 +45,7 @@ import com.hartwig.actin.trial.input.single.OneIntegerOneString
 import com.hartwig.actin.trial.input.single.OneMedicationCategory
 import com.hartwig.actin.trial.input.single.OneSpecificDrugOneTreatmentCategoryManyTypes
 import com.hartwig.actin.trial.input.single.OneSpecificTreatmentOneInteger
+import com.hartwig.actin.trial.input.single.OneTransporter
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyDrugs
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyIntents
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypes
@@ -97,6 +99,11 @@ class FunctionInputResolver(
 
                 FunctionInput.ONE_CYP_ONE_INTEGER -> {
                     createOneCypOneIntegerInput(function)
+                    return true
+                }
+
+                FunctionInput.ONE_TRANSPORTER -> {
+                    createOneTransporterInput(function)
                     return true
                 }
 
@@ -769,7 +776,7 @@ class FunctionInputResolver(
         assertParamConfig(function, FunctionInput.ONE_CYP, 1)
 
         val cyp = function.parameters.first() as String
-        if (!MolecularInputChecker.isCyp(cyp)) {
+        if (!MedicationInputChecker.isCyp(cyp)) {
             throw IllegalArgumentException("Not a proper CYP: $cyp")
         }
 
@@ -779,10 +786,20 @@ class FunctionInputResolver(
     fun createOneCypOneIntegerInput(function: EligibilityFunction): OneCypOneInteger {
         assertParamConfig(function, FunctionInput.ONE_CYP_ONE_INTEGER, 2)
         val cyp = parameterAsString(function, 0)
-        if (!MolecularInputChecker.isCyp(cyp)) {
+        if (!MedicationInputChecker.isCyp(cyp)) {
             throw IllegalArgumentException("Not a proper CYP: $cyp")
         }
         return OneCypOneInteger(cyp = cyp, integer = parameterAsString(function, 1).toInt())
+    }
+
+    fun createOneTransporterInput(function: EligibilityFunction): OneTransporter {
+        assertParamConfig(function, FunctionInput.ONE_TRANSPORTER, 1)
+
+        val transporter = function.parameters.first() as String
+        if (!MedicationInputChecker.isTransporter(transporter)) {
+            throw IllegalArgumentException("Not a proper transporter: $transporter")
+        }
+        return OneTransporter(transporter)
     }
 
     private fun parameterAsString(function: EligibilityFunction, i: Int) = function.parameters[i] as String

@@ -247,6 +247,10 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
             FunctionInput.ONE_CYP_ONE_INTEGER -> {
                 listOf("3A4", "1")
             }
+
+            FunctionInput.ONE_TRANSPORTER -> {
+                listOf("OATP1B1")
+            }
         }
     }
 

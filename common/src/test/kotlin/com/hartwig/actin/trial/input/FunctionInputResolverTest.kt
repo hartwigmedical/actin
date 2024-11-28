@@ -35,6 +35,7 @@ import com.hartwig.actin.trial.input.single.OneIntegerManyDoidTerms
 import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
 import com.hartwig.actin.trial.input.single.OneIntegerOneString
 import com.hartwig.actin.trial.input.single.OneMedicationCategory
+import com.hartwig.actin.trial.input.single.OneTransporter
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyDrugs
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypesManyDrugs
 import com.hartwig.actin.trial.input.single.TwoDoubles
@@ -797,6 +798,20 @@ class FunctionInputResolverTest {
         assertThat(resolver.hasValidInputs(create(rule, listOf("3A4")))).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("3A4", "1", "2")))).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("CYP3A4", "1")))).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with one transporter input`() {
+        val resolver = createTestResolver()
+        val rule = firstOfType(FunctionInput.ONE_TRANSPORTER)
+        val transporter = "OATP1B1"
+        val valid = create(rule, listOf(transporter))
+        assertThat(resolver.hasValidInputs(valid)).isTrue
+
+        val expected = OneTransporter(transporter)
+        assertThat(resolver.createOneTransporterInput(valid)).isEqualTo(expected)
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("BCRP, OATP1B1")))).isFalse
     }
 
     @Test

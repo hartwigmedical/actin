@@ -27,13 +27,9 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_ANY_CYP to getsAnyCypInhibitingOrInducingMedication(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X to getsCYPXInhibitingOrInducingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_CYP_X to getsCYPSubstrateMedicationCreator(),
-            EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_PGP to getsPGPInhibitingMedicationCreator(),
-            EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_PGP to getsPGPSubstrateMedicationCreator(),
-            EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_BCRP to getsBCRPInhibitingMedicationCreator(),
-            EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_BCRP to getsBCRPSubstrateMedicationCreator(),
-            EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_OATP1B1 to getsOATP1B1SubstrateMedicationCreator(),
-            EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_OATP1B3 to getsOATP1B3SubstrateMedicationCreator(),
-            EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OR_INHIBITING_ANY_TYPE_X to getsAnyOtherSubstrateOrInhibitingMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_TRANSPORTER_X to getsTransporterInhibitingMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_TRANSPORTER_X to getsTransporterSubstrateMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OR_INHIBITING_ANY_UNRESOLVABLE_TRANSPORTER_X to getsAnyUnresolvableTransporterSubstrateOrInhibitingMedicationCreator(),
             EligibilityRule.HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING to getsStableDosingAnticoagulantMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_HERBAL_MEDICATION to getsHerbalMedicationCreator(),
         )
@@ -109,34 +105,22 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         }
     }
 
-    private fun getsPGPInhibitingMedicationCreator(): FunctionCreator {
-        return { CurrentlyGetsTransporterInteractingMedication(selector, "PGP", DrugInteraction.Type.INHIBITOR) }
+    private fun getsTransporterInhibitingMedicationCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+        val termToFind = functionInputResolver().createOneTransporterInput(function)
+            CurrentlyGetsTransporterInteractingMedication(selector, termToFind.transporter, DrugInteraction.Type.INHIBITOR) }
     }
 
-    private fun getsPGPSubstrateMedicationCreator(): FunctionCreator {
-        return { CurrentlyGetsTransporterInteractingMedication(selector, "PGP", DrugInteraction.Type.SUBSTRATE) }
+    private fun getsTransporterSubstrateMedicationCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val termToFind = functionInputResolver().createOneTransporterInput(function)
+            CurrentlyGetsTransporterInteractingMedication(selector, termToFind.transporter, DrugInteraction.Type.SUBSTRATE) }
     }
 
-    private fun getsBCRPInhibitingMedicationCreator(): FunctionCreator {
-        return { CurrentlyGetsTransporterInteractingMedication(selector, "BCRP", DrugInteraction.Type.INHIBITOR) }
-    }
-
-    private fun getsBCRPSubstrateMedicationCreator(): FunctionCreator {
-        return { CurrentlyGetsTransporterInteractingMedication(selector, "BCRP", DrugInteraction.Type.SUBSTRATE) }
-    }
-
-    private fun getsOATP1B1SubstrateMedicationCreator(): FunctionCreator {
-        return { CurrentlyGetsTransporterInteractingMedication(selector, "OATP1B1", DrugInteraction.Type.SUBSTRATE) }
-    }
-
-    private fun getsOATP1B3SubstrateMedicationCreator(): FunctionCreator {
-        return { CurrentlyGetsTransporterInteractingMedication(selector, "OATP1B3", DrugInteraction.Type.SUBSTRATE) }
-    }
-
-    private fun getsAnyOtherSubstrateOrInhibitingMedicationCreator(): FunctionCreator {
+    private fun getsAnyUnresolvableTransporterSubstrateOrInhibitingMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val types = functionInputResolver().createManyStringsInput(function)
-            CurrentlyGetsAnyOtherSubstrateOrInhibitingMedication(selector, types)
+            CurrentlyGetsAnyUnresolvableTransporterSubstrateOrInhibitingMedication(selector, types)
         }
     }
 

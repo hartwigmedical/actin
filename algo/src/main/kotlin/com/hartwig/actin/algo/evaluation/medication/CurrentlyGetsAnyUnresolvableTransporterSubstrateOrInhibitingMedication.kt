@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.evaluation.util.Format.concatWithCommaAndOr
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
-class CurrentlyGetsAnyOtherSubstrateOrInhibitingMedication(private val selector: MedicationSelector, private val types: List<String>) :
+class CurrentlyGetsAnyUnresolvableTransporterSubstrateOrInhibitingMedication(private val selector: MedicationSelector, private val types: List<String>) :
     EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
