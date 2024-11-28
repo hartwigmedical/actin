@@ -22,33 +22,35 @@ import com.hartwig.hmftools.datamodel.linx.LinxSvAnnotation
 internal class DisruptionExtractor(private val geneFilter: GeneFilter) {
 
     fun extractDisruptions(linx: LinxRecord, lostGenes: Set<String>, drivers: List<LinxDriver>): List<Disruption> {
-        return linx.allSomaticBreakends().filter { breakend ->
-            val geneIncluded = geneFilter.include(breakend.gene())
-            if (!geneIncluded && breakend.reported()) {
-                throw IllegalStateException(
-                    "Filtered a reported breakend through gene filtering: '${DriverEventFactory.disruptionEvent(breakend)}'."
-                            + " Please make sure '${breakend.gene()}' is configured as a known gene."
+        return linx.allSomaticBreakends()
+            .filter { breakend -> breakend.isCanonical }
+            .filter { breakend ->
+                val geneIncluded = geneFilter.include(breakend.gene())
+                if (!geneIncluded && breakend.reported()) {
+                    throw IllegalStateException(
+                        "Filtered a reported breakend through gene filtering: '${DriverEventFactory.disruptionEvent(breakend)}'."
+                                + " Please make sure '${breakend.gene()}' is configured as a known gene."
+                    )
+                }
+                geneIncluded && include(breakend, lostGenes)
+            }.map { breakend ->
+                Disruption(
+                    gene = breakend.gene(),
+                    geneRole = GeneRole.UNKNOWN,
+                    proteinEffect = ProteinEffect.UNKNOWN,
+                    isAssociatedWithDrugResistance = null,
+                    isReportable = breakend.reported(),
+                    event = DriverEventFactory.disruptionEvent(breakend),
+                    driverLikelihood = DriverLikelihood.LOW,
+                    evidence = ClinicalEvidenceFactory.createNoEvidence(),
+                    type = determineDisruptionType(breakend.type()),
+                    junctionCopyNumber = ExtractionUtil.keep3Digits(breakend.junctionCopyNumber()),
+                    undisruptedCopyNumber = ExtractionUtil.keep3Digits(correctUndisruptedCopyNumber(breakend, drivers)),
+                    regionType = determineRegionType(breakend.regionType()),
+                    codingContext = determineCodingContext(breakend.codingType()),
+                    clusterGroup = lookupClusterId(breakend, linx.allSomaticStructuralVariants())
                 )
-            }
-            geneIncluded && include(breakend, lostGenes)
-        }.map { breakend ->
-            Disruption(
-                gene = breakend.gene(),
-                geneRole = GeneRole.UNKNOWN,
-                proteinEffect = ProteinEffect.UNKNOWN,
-                isAssociatedWithDrugResistance = null,
-                isReportable = breakend.reported(),
-                event = DriverEventFactory.disruptionEvent(breakend),
-                driverLikelihood = DriverLikelihood.LOW,
-                evidence = ClinicalEvidenceFactory.createNoEvidence(),
-                type = determineDisruptionType(breakend.type()),
-                junctionCopyNumber = ExtractionUtil.keep3Digits(breakend.junctionCopyNumber()),
-                undisruptedCopyNumber = ExtractionUtil.keep3Digits(correctUndisruptedCopyNumber(breakend, drivers)),
-                regionType = determineRegionType(breakend.regionType()),
-                codingContext = determineCodingContext(breakend.codingType()),
-                clusterGroup = lookupClusterId(breakend, linx.allSomaticStructuralVariants())
-            )
-        }.sortedWith(DisruptionComparator())
+            }.sortedWith(DisruptionComparator())
     }
 
     private fun include(breakend: LinxBreakend, lostGenes: Set<String>): Boolean {
