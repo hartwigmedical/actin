@@ -3,6 +3,7 @@ package com.hartwig.actin.medication
 class MedicationInputChecker {
 
     companion object {
+
         fun isCyp(string: String): Boolean {
             if (string.length < 3 || string.length > 5) {
                 return false
