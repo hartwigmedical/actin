@@ -40,7 +40,7 @@ internal class FusionExtractor(private val geneFilter: GeneFilter) {
                 fusedExonUp = fusion.fusedExonUp(),
                 fusedExonDown = fusion.fusedExonDown()
             )
-        }.toList().sortedWith(FusionComparator())
+        }.sortedWith(FusionComparator())
     }
 
     internal fun determineDriverType(fusion: LinxFusion): FusionDriverType {

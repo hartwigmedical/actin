@@ -55,9 +55,8 @@ class PanelVariantAnnotator(
         val transvarVariants = resolveVariants(variantExtractions)
         val paveAnnotations = annotateWithPave(transvarVariants)
         val variantsWithEvidence = annotateWithEvidence(transvarVariants, paveAnnotations, variantExtractions)
-        val variantsWithDriverLikelihoodModel = annotateWithDriverLikelihood(variantsWithEvidence)
 
-        return variantsWithDriverLikelihoodModel.toList()
+        return annotateWithDriverLikelihood(variantsWithEvidence)
     }
 
     private fun indexVariantExtractionsToUniqueIds(variants: Collection<SequencedVariant>): Map<String, SequencedVariant> {

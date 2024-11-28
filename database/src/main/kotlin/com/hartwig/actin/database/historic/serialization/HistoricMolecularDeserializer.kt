@@ -200,9 +200,8 @@ object HistoricMolecularDeserializer {
     )
 
     private fun extractCopyNumbers(drivers: JsonObject): List<CopyNumber> {
-        return sequenceOf("copyNumbers" to null, "amplifications" to CopyNumberType.FULL_GAIN, "losses" to CopyNumberType.LOSS)
+        return listOf("copyNumbers" to null, "amplifications" to CopyNumberType.FULL_GAIN, "losses" to CopyNumberType.LOSS)
             .flatMap { (field, type) -> Json.optionalArray(drivers, field)?.map { extractCopyNumber(it, type) } ?: emptyList() }
-            .toList()
     }
 
     private fun extractCopyNumber(copyNumberElement: JsonElement, typeGroup: CopyNumberType?): CopyNumber {

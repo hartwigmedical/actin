@@ -69,7 +69,7 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
                         maxCopies = Math.round(geneCopyNumber.maxCopyNumber()).toInt()
                     )
                 }
-            }.toList().sortedWith(CopyNumberComparator())
+            }.sortedWith(CopyNumberComparator())
     }
 
     internal fun determineType(interpretation: CopyNumberInterpretation): CopyNumberType {

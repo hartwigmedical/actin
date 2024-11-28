@@ -48,7 +48,7 @@ internal class DisruptionExtractor(private val geneFilter: GeneFilter) {
                 codingContext = determineCodingContext(breakend.codingType()),
                 clusterGroup = lookupClusterId(breakend, linx.allSomaticStructuralVariants())
             )
-        }.toList().sortedWith(DisruptionComparator())
+        }.sortedWith(DisruptionComparator())
     }
 
     private fun include(breakend: LinxBreakend, lostGenes: Set<String>): Boolean {

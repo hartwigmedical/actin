@@ -25,7 +25,6 @@ class PanelFusionAnnotator(
     fun annotate(fusions: Set<SequencedFusion>, skippedExons: Set<SequencedSkippedExons>): List<Fusion> {
         return (fusions.map { createFusion(it) } + skippedExons.map { createFusionFromExonSkip(it) })
             .map { annotateFusion(it) }
-            .toList()
     }
 
     fun fusionDriverLikelihood(driverType: FusionDriverType): DriverLikelihood {

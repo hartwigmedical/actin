@@ -26,7 +26,7 @@ internal class VirusExtractor() {
                 type = determineType(virus.interpretation()),
                 integrations = virus.integrations()
             )
-        }.toList().sortedWith(VirusComparator())
+        }.sortedWith(VirusComparator())
     }
 
     internal fun determineDriverLikelihood(driverLikelihood: VirusLikelihoodType): DriverLikelihood? {

@@ -306,11 +306,11 @@ internal object MolecularTestFactory {
         return withMolecularRecord(
             baseMolecular.copy(
                 drivers = Drivers(
-                    variants = drivers.filterIsInstance<Variant>().toList(),
-                    copyNumbers = drivers.filterIsInstance<CopyNumber>().toList(),
-                    homozygousDisruptions = drivers.filterIsInstance<HomozygousDisruption>().toList(),
-                    disruptions = drivers.filterIsInstance<Disruption>().toList(),
-                    fusions = drivers.filterIsInstance<Fusion>().toList()
+                    variants = drivers.filterIsInstance<Variant>(),
+                    copyNumbers = drivers.filterIsInstance<CopyNumber>(),
+                    homozygousDisruptions = drivers.filterIsInstance<HomozygousDisruption>(),
+                    disruptions = drivers.filterIsInstance<Disruption>(),
+                    fusions = drivers.filterIsInstance<Fusion>()
                 )
             )
         )
