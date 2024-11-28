@@ -10,6 +10,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 class HasBMIUpToLimitTest {
+
     private val function: HasBMIUpToLimit = HasBMIUpToLimit(40, LocalDate.of(2023, 12, 1))
     private val referenceDate = LocalDateTime.of(2023, 12, 2, 0, 0)
 

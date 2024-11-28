@@ -14,7 +14,7 @@ import com.hartwig.actin.datamodel.molecular.VariantType
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val CORRECT_GENE = "EGFR"
@@ -109,7 +109,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
 
     @Test
     fun `Should pass for multiple correct variants and should display correct message`() {
-        val variants = setOf(
+        val variants = listOf(
             BASE_VARIANT.copy(
                 gene = CORRECT_VARIANT_GENE,
                 proteinEffect = ProteinEffect.UNKNOWN,
@@ -125,7 +125,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
             molecularHistory = MolecularHistory(
                 listOf(
                     TestMolecularFactory.createMinimalTestMolecularRecord().copy(
-                        drivers = Drivers(variants = variants, emptySet(), emptySet(), emptySet(), emptySet(), emptySet())
+                        drivers = Drivers(variants = variants)
                     )
                 )
             )
@@ -242,6 +242,6 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
     }
 
     private fun evaluateMessages(expected: Set<String>, fromEvaluation: Set<String>) {
-        Assertions.assertThat(fromEvaluation).isEqualTo(expected)
+        assertThat(fromEvaluation).isEqualTo(expected)
     }
 }

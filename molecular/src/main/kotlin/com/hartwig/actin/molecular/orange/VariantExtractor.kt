@@ -38,7 +38,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
 
     private val mutationDriverTypes = setOf(PurpleDriverType.MUTATION, PurpleDriverType.GERMLINE_MUTATION)
 
-    fun extract(purple: PurpleRecord): Set<Variant> {
+    fun extract(purple: PurpleRecord): List<Variant> {
         val drivers = DriverExtractor.relevantPurpleDrivers(purple)
 
         return VariantDedup.apply(relevantPurpleVariants(purple)).filter { variant ->
@@ -84,8 +84,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
                     proteinEffect = ProteinEffect.UNKNOWN,
                     isAssociatedWithDrugResistance = null,
                 )
-            }
-            .toSortedSet(VariantComparator())
+            }.sortedWith(VariantComparator())
     }
 
     private fun relevantPurpleVariants(purple: PurpleRecord): Set<PurpleVariant> {

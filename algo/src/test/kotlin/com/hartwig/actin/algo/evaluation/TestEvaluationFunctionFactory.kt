@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.EvaluationTestFactory
 
 object TestEvaluationFunctionFactory {
+
     fun pass(): EvaluationFunction {
         return fixedEvaluation(EvaluationResult.PASS)
     }

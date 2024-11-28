@@ -14,7 +14,7 @@ import com.hartwig.hmftools.datamodel.linx.LinxRecord
 
 internal class FusionExtractor(private val geneFilter: GeneFilter) {
 
-    fun extract(linx: LinxRecord): Set<Fusion> {
+    fun extract(linx: LinxRecord): List<Fusion> {
         return linx.allSomaticFusions().filter { fusion ->
             val included = geneFilter.include(fusion.geneStart()) || geneFilter.include(fusion.geneEnd())
             if (!included && fusion.reported()) {
@@ -40,7 +40,7 @@ internal class FusionExtractor(private val geneFilter: GeneFilter) {
                 fusedExonUp = fusion.fusedExonUp(),
                 fusedExonDown = fusion.fusedExonDown()
             )
-        }.toSortedSet(FusionComparator())
+        }.sortedWith(FusionComparator())
     }
 
     internal fun determineDriverType(fusion: LinxFusion): FusionDriverType {

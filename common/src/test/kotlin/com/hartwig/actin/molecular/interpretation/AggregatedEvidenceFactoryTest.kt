@@ -79,32 +79,32 @@ class AggregatedEvidenceFactoryTest {
     @Test
     fun `Should aggregate drivers`() {
         val drivers = TestMolecularFactory.createMinimalTestMolecularRecord().drivers.copy(
-            variants = setOf(
+            variants = listOf(
                 TestVariantFactory.createMinimal().copy(
                     event = "variant", evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence()
                 )
             ),
-            copyNumbers = setOf(
+            copyNumbers = listOf(
                 TestCopyNumberFactory.createMinimal().copy(
                     event = "amplification", evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence()
                 )
             ),
-            homozygousDisruptions = setOf(
+            homozygousDisruptions = listOf(
                 TestHomozygousDisruptionFactory.createMinimal().copy(
                     event = "hom disruption", evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence()
                 )
             ),
-            disruptions = setOf(
+            disruptions = listOf(
                 TestDisruptionFactory.createMinimal().copy(
                     event = "disruption", evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence()
                 )
             ),
-            fusions = setOf(
+            fusions = listOf(
                 TestFusionFactory.createMinimal().copy(
                     event = "fusion", evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence()
                 )
             ),
-            viruses = setOf(
+            viruses = listOf(
                 TestVirusFactory.createMinimal().copy(
                     event = "virus", evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence()
                 )
@@ -122,7 +122,7 @@ class AggregatedEvidenceFactoryTest {
             evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
         )
         val drivers = TestMolecularFactory.createMinimalTestMolecularRecord().drivers.copy(
-            variants = setOf(variant, variant.copy(driverLikelihood = DriverLikelihood.MEDIUM))
+            variants = listOf(variant, variant.copy(driverLikelihood = DriverLikelihood.MEDIUM))
         )
         val evidence = AggregatedEvidenceFactory.create(withDrivers(drivers))
         assertThat(evidence.treatmentEvidence).hasSize(1)

@@ -7,7 +7,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType.Companion.RAS_MEK_MAPK_DIRECTLY_TARGETING_DRUG_SET
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType.Companion.RAS_MEK_MAPK_INDIRECTLY_TARGETING_DRUG_SET
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class HasHadTargetedTherapyInterferingWithRasMekMapkPathwayTest {
@@ -39,7 +39,7 @@ class HasHadTargetedTherapyInterferingWithRasMekMapkPathwayTest {
             )
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry)))
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, evaluation)
-        Assertions.assertThat(evaluation.passGeneralMessages).containsExactly(
+        assertThat(evaluation.passGeneralMessages).containsExactly(
             "Has had targeted therapy interfering with RAS/MEK/MAPK pathway (Test)"
         )
     }
@@ -54,7 +54,7 @@ class HasHadTargetedTherapyInterferingWithRasMekMapkPathwayTest {
             )
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry)))
         EvaluationAssert.assertEvaluation(EvaluationResult.WARN, evaluation)
-        Assertions.assertThat(evaluation.warnGeneralMessages).containsExactly(
+        assertThat(evaluation.warnGeneralMessages).containsExactly(
             "Has had targeted therapy (Test) - indirectly interfering with RAS/MEK/MAPK pathway"
         )
     }
@@ -67,7 +67,7 @@ class HasHadTargetedTherapyInterferingWithRasMekMapkPathwayTest {
             )
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry)))
         EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        Assertions.assertThat(evaluation.undeterminedGeneralMessages).containsExactly(
+        assertThat(evaluation.undeterminedGeneralMessages).containsExactly(
             "Has had trial drug - undetermined interference with RAS/MEK/MAPK pathway"
         )
     }
@@ -80,7 +80,7 @@ class HasHadTargetedTherapyInterferingWithRasMekMapkPathwayTest {
             )
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry)))
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, evaluation)
-        Assertions.assertThat(evaluation.failGeneralMessages).containsExactly(
+        assertThat(evaluation.failGeneralMessages).containsExactly(
             "Has not received targeted therapy interfering with RAS/MEK/MAPK pathway"
         )
     }

@@ -88,22 +88,22 @@ class DriversInterpreterTest {
 
     private fun createDriversWithEvidence(evidence: ClinicalEvidence, isReportable: Boolean): Drivers {
         return Drivers(
-            variants = setOf(
+            variants = listOf(
                 TestVariantFactory.createMinimal().copy(isReportable = isReportable, evidence = evidence, event = EVENT_VARIANT)
             ),
-            copyNumbers = setOf(
+            copyNumbers = listOf(
                 TestCopyNumberFactory.createMinimal().copy(isReportable = isReportable, evidence = evidence, event = EVENT_CN)
             ),
-            homozygousDisruptions = setOf(
+            homozygousDisruptions = listOf(
                 TestHomozygousDisruptionFactory.createMinimal().copy(isReportable = isReportable, evidence = evidence, event = EVENT_HD)
             ),
-            disruptions = setOf(
+            disruptions = listOf(
                 TestDisruptionFactory.createMinimal().copy(isReportable = isReportable, evidence = evidence, event = EVENT_DISRUPTION)
             ),
-            fusions = setOf(
+            fusions = listOf(
                 TestFusionFactory.createMinimal().copy(isReportable = isReportable, evidence = evidence, event = EVENT_FUSION)
             ),
-            viruses = setOf(
+            viruses = listOf(
                 TestVirusFactory.createMinimal().copy(isReportable = isReportable, evidence = evidence, event = EVENT_VIRUS)
             )
         )

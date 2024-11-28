@@ -14,7 +14,7 @@ private val QC_PASS_STATUS = VirusBreakendQCStatus.NO_ABNORMALITIES
 
 internal class VirusExtractor() {
 
-    fun extract(virusInterpreter: VirusInterpreterData): Set<Virus> {
+    fun extract(virusInterpreter: VirusInterpreterData): List<Virus> {
         return virusInterpreter.allViruses().map { virus ->
             Virus(
                 isReportable = virus.reported(),
@@ -26,7 +26,7 @@ internal class VirusExtractor() {
                 type = determineType(virus.interpretation()),
                 integrations = virus.integrations()
             )
-        }.toSortedSet(VirusComparator())
+        }.sortedWith(VirusComparator())
     }
 
     internal fun determineDriverLikelihood(driverLikelihood: VirusLikelihoodType): DriverLikelihood? {

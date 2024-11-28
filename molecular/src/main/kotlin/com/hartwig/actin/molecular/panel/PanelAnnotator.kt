@@ -44,7 +44,7 @@ class PanelAnnotator(
             date = input.date,
             drivers = Drivers(
                 variants = annotatedVariants,
-                copyNumbers = annotatedAmplifications.toSet() + annotatedDeletions.toSet(),
+                copyNumbers = annotatedAmplifications + annotatedDeletions,
                 fusions = annotatedFusions,
             ),
             characteristics = MolecularCharacteristics(

@@ -16,7 +16,7 @@ class HomologousRepairDeficiencyGeneSummaryTest {
     @Test
     fun `Should correctly classify HRD drivers`() {
         val drivers = Drivers(
-            variants = setOf(
+            variants = listOf(
                 hrdVariant(
                     gene = "BRCA1",
                     isBiallelic = true,
@@ -61,16 +61,16 @@ class HomologousRepairDeficiencyGeneSummaryTest {
                     driverLikelihood = DriverLikelihood.HIGH
                 )
             ),
-            copyNumbers = setOf(
+            copyNumbers = listOf(
                 TestCopyNumberFactory.createMinimal().copy(gene = "BRCA2", type = CopyNumberType.LOSS),
                 TestCopyNumberFactory.createMinimal().copy(gene = "BRCA1", type = CopyNumberType.FULL_GAIN),
                 TestCopyNumberFactory.createMinimal().copy(gene = "Unmatched", type = CopyNumberType.LOSS)
             ),
-            homozygousDisruptions = setOf(
+            homozygousDisruptions = listOf(
                 TestHomozygousDisruptionFactory.createMinimal().copy(gene = "PALB2"),
                 TestHomozygousDisruptionFactory.createMinimal().copy(gene = "Unmatched")
             ),
-            disruptions = setOf(
+            disruptions = listOf(
                 TestDisruptionFactory.createMinimal().copy(gene = "RAD51C", isReportable = true),
                 TestDisruptionFactory.createMinimal().copy(gene = "BRCA1", isReportable = false),
                 TestDisruptionFactory.createMinimal().copy(gene = "Unmatched", isReportable = true)

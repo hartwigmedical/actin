@@ -49,7 +49,7 @@ object TestLinxFactory {
 
     fun breakendBuilder(): ImmutableLinxBreakend.Builder {
         return ImmutableLinxBreakend.builder()
-            .reported(true)
+            .reported(false)
             .svId(0)
             .gene("")
             .type(LinxBreakendType.BND)

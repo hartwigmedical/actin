@@ -17,6 +17,7 @@ import com.hartwig.hmftools.datamodel.linx.LinxBreakendType
 import com.hartwig.hmftools.datamodel.linx.LinxDriverType
 import com.hartwig.hmftools.datamodel.linx.LinxRecord
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatIllegalStateException
 import org.assertj.core.data.Offset
 import org.junit.Test
 
@@ -32,6 +33,7 @@ class DisruptionExtractorTest {
         val linxBreakend = breakendBuilder()
             .gene("gene 1")
             .reported(true)
+            .isCanonical(true)
             .type(LinxBreakendType.DUP)
             .junctionCopyNumber(0.2)
             .undisruptedCopyNumber(1.6)
@@ -45,13 +47,11 @@ class DisruptionExtractorTest {
             .addAllSomaticStructuralVariants(structuralVariant1)
             .addAllSomaticBreakends(linxBreakend)
             .build()
-        val geneFilter = TestGeneFilterFactory.createValidForGenes(linxBreakend.gene())
-        val disruptionExtractor = DisruptionExtractor(geneFilter)
 
-        val disruptions = disruptionExtractor.extractDisruptions(linx, emptySet(), listOf())
+        val disruptions = extractor.extractDisruptions(linx, emptySet(), listOf())
         assertThat(disruptions).hasSize(1)
 
-        val disruption = disruptions.iterator().next()
+        val disruption = disruptions.first()
         assertThat(disruption.isReportable).isTrue
         assertThat(disruption.driverLikelihood).isEqualTo(DriverLikelihood.LOW)
         assertThat(disruption.type).isEqualTo(DisruptionType.DUP)
@@ -62,31 +62,50 @@ class DisruptionExtractorTest {
         assertThat(disruption.clusterGroup).isEqualTo(5)
     }
 
-    @Test(expected = IllegalStateException::class)
-    fun shouldThrowExceptionWhenFilteringReportedDisruption() {
-        val linxBreakend = breakendBuilder().gene("gene 1").reported(true).build()
+    @Test
+    fun `Should only extract disruptions on canonical transcripts`() {
+        val structuralVariant = structuralVariantBuilder().svId(1).clusterId(5).build()
+        val canonical = breakendBuilder().gene("gene 1").svId(1).isCanonical(true).build()
+        val nonCanonical = breakendBuilder().gene("gene 2").svId(1).isCanonical(false).build()
+
+        val linx = ImmutableLinxRecord.builder()
+            .from(createMinimalTestOrangeRecord().linx())
+            .addAllSomaticStructuralVariants(structuralVariant)
+            .addAllSomaticBreakends(canonical, nonCanonical)
+            .build()
+
+        val disruptions = extractor.extractDisruptions(linx, emptySet(), listOf())
+        assertThat(disruptions).hasSize(1)
+
+        val disruption = disruptions.first()
+        assertThat(disruption.gene).isEqualTo("gene 1")
+    }
+
+    @Test
+    fun `Should throw exception when filtering reported disruption`() {
+        val linxBreakend = breakendBuilder().gene("gene 1").reported(true).isCanonical(true).build()
         val linx = ImmutableLinxRecord.builder()
             .from(createMinimalTestOrangeRecord().linx())
             .addAllSomaticBreakends(linxBreakend)
             .build()
-        val geneFilter = TestGeneFilterFactory.createValidForGenes("weird gene")
-        val disruptionExtractor = DisruptionExtractor(geneFilter)
-        disruptionExtractor.extractDisruptions(linx, emptySet(), emptyList())
+
+        val neverValidExtractor = DisruptionExtractor(TestGeneFilterFactory.createNeverValid())
+
+        assertThatIllegalStateException().isThrownBy { neverValidExtractor.extractDisruptions(linx, emptySet(), emptyList()) }
     }
 
     @Test
     fun `Should filter breakend with losses`() {
         val gene = "gene"
-        val disruptionExtractor = DisruptionExtractor(TestGeneFilterFactory.createAlwaysValid())
 
-        val breakend1 = breakendBuilder().gene(gene).type(LinxBreakendType.DEL).build()
-        assertThat(disruptionExtractor.extractDisruptions(withBreakend(breakend1), setOf(gene), listOf())).hasSize(0)
+        val breakend1 = breakendBuilder().gene(gene).type(LinxBreakendType.DEL).isCanonical(true).build()
+        assertThat(extractor.extractDisruptions(withBreakend(breakend1), setOf(gene), listOf())).hasSize(0)
 
-        val breakend2 = breakendBuilder().gene(gene).type(LinxBreakendType.DUP).build()
-        assertThat(disruptionExtractor.extractDisruptions(withBreakend(breakend2), setOf(gene), listOf())).hasSize(1)
+        val breakend2 = breakendBuilder().gene(gene).type(LinxBreakendType.DUP).isCanonical(true).build()
+        assertThat(extractor.extractDisruptions(withBreakend(breakend2), setOf(gene), listOf())).hasSize(1)
 
-        val breakend3 = breakendBuilder().gene("other").type(LinxBreakendType.DEL).build()
-        assertThat(disruptionExtractor.extractDisruptions(withBreakend(breakend3), setOf(gene), listOf())).hasSize(1)
+        val breakend3 = breakendBuilder().gene("other").type(LinxBreakendType.DEL).isCanonical(true).build()
+        assertThat(extractor.extractDisruptions(withBreakend(breakend3), setOf(gene), listOf())).hasSize(1)
     }
 
     @Test
@@ -118,6 +137,8 @@ class DisruptionExtractorTest {
     fun `Should generate undisrupted copy number for hom dup disruptions`() {
         val linxBreakend = breakendBuilder()
             .gene("gene")
+            .reported(true)
+            .isCanonical(true)
             .type(LinxBreakendType.DUP)
             .junctionCopyNumber(1.2)
             .undisruptedCopyNumber(1.4)
@@ -130,11 +151,10 @@ class DisruptionExtractorTest {
             .addAllSomaticBreakends(linxBreakend)
             .build()
         val driver = TestLinxFactory.driverBuilder().gene("gene").type(LinxDriverType.HOM_DUP_DISRUPTION).build()
-        val geneFilter = TestGeneFilterFactory.createValidForGenes(linxBreakend.gene())
-        val disruptionExtractor = DisruptionExtractor(geneFilter)
 
-        val disruptions = disruptionExtractor.extractDisruptions(linx, emptySet(), listOf(driver))
+        val disruptions = extractor.extractDisruptions(linx, emptySet(), listOf(driver))
         val disruption = disruptions.first()
+
         assertThat(disruption.undisruptedCopyNumber).isEqualTo(0.2, Offset.offset(EPSILON))
     }
 
