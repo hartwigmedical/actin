@@ -6,7 +6,9 @@ import com.hartwig.actin.datamodel.clinical.LabValue
 import org.apache.logging.log4j.LogManager
 
 internal object LabUnitConverter {
+
     private val LOGGER = LogManager.getLogger(LabUnitConverter::class.java)
+
     fun convert(measurement: LabMeasurement, labValue: LabValue, targetUnit: LabUnit): Double? {
         if (labValue.unit == targetUnit) {
             return labValue.value

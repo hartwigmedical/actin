@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.doid.DoidModel
 
 class HasSpecificInfection(private val doidModel: DoidModel, private val doidToFind: String) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val doidTerm = doidModel.resolveTermForDoid(doidToFind)
         val hasSpecificInfection = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)

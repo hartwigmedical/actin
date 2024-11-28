@@ -5,5 +5,5 @@ import java.time.LocalDate
 data class IHCExtraction(
     val date: LocalDate?,
     val fusionPositiveGenes: Set<String>,
-    val fusionNegativeGenes: Set<String>,
+    val fusionNegativeGenes: Set<String>
 )

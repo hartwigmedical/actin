@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.othercondition
 
-import com.google.common.collect.Lists
 import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -11,7 +10,7 @@ class OtherConditionSelectorTest {
     fun canSelectClinicallyRelevant() {
         val relevant = create(true)
         val irrelevant = create(false)
-        val filtered = OtherConditionSelector.selectClinicallyRelevant(Lists.newArrayList(relevant, irrelevant))
+        val filtered = OtherConditionSelector.selectClinicallyRelevant(listOf(relevant, irrelevant))
         assertThat(filtered).containsExactly(relevant)
     }
 

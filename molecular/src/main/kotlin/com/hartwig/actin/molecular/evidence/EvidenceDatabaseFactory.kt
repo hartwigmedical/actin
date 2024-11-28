@@ -11,7 +11,10 @@ import com.hartwig.serve.datamodel.molecular.KnownEvents
 object EvidenceDatabaseFactory {
 
     fun create(
-        knownEvents: KnownEvents, actionableEvents: ActionableEvents, doidEntry: DoidEntry, tumorDoids: Set<String>
+        knownEvents: KnownEvents,
+        actionableEvents: ActionableEvents,
+        doidEntry: DoidEntry,
+        tumorDoids: Set<String>
     ): EvidenceDatabase {
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
         val factory = ActionableEventMatcherFactory(doidModel, tumorDoids)

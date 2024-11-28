@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.evaluation.vitalfunction.BloodPressureFunctions.ev
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.VitalFunction
 import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -84,7 +84,7 @@ class BloodPressureFunctionsTest {
             VitalFunctionTestFactory.withVitalFunctions(bloodPressures), SYSTOLIC, 100, minimumValidDate
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        Assertions.assertThat(evaluation.recoverable).isTrue()
+        assertThat(evaluation.recoverable).isTrue()
     }
 
     @Test
@@ -97,7 +97,7 @@ class BloodPressureFunctionsTest {
             VitalFunctionTestFactory.withVitalFunctions(bloodPressures), SYSTOLIC, 120, minimumValidDate
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        Assertions.assertThat(evaluation.recoverable).isTrue()
+        assertThat(evaluation.recoverable).isTrue()
     }
 
     @Test

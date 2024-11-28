@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.google.common.collect.Sets.union
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.concatStringsWithAnd
@@ -78,14 +77,9 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesX(
                 genesToFindWithBiallelicHotspot.isNotEmpty() || genesToFindWithNonBiallelicHotspot.isNotEmpty() -> {
                     EvaluationFactory.fail(
                         "Homologous repair deficiency (HRD) detected with ${
-                            concat(
-                                union(
-                                    genesToFindWithNonBiallelicHotspot,
-                                    genesToFindWithBiallelicHotspot
-                                )
-                            )
+                            concat(genesToFindWithNonBiallelicHotspot + genesToFindWithBiallelicHotspot)
                         } hotspot",
-                        "Tumor is HRD with ${concat(union(genesToFindWithNonBiallelicHotspot, genesToFindWithBiallelicHotspot))} hotspot"
+                        "Tumor is HRD with ${concat(genesToFindWithNonBiallelicHotspot + genesToFindWithBiallelicHotspot)} hotspot"
                     )
                 }
 

@@ -13,7 +13,6 @@ import java.time.LocalDate
 class HasKnownSCLCTransformation(private val doidModel: DoidModel, private val maxTestAge: LocalDate? = null) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-
         val isNSCLC = DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID in DoidEvaluationFunctions.createFullExpandedDoidTree(
             doidModel,
             record.tumor.doids

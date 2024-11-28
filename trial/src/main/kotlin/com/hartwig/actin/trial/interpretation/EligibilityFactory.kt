@@ -1,6 +1,5 @@
 package com.hartwig.actin.trial.interpretation
 
-import com.google.common.collect.Lists
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.trial.input.FunctionInputResolver
@@ -63,7 +62,7 @@ class EligibilityFactory(private val functionInputResolver: FunctionInputResolve
             if (relevantCommaPositions.isEmpty()) {
                 return listOf(params.trim { it <= ' ' })
             }
-            val result: MutableList<String> = Lists.newArrayList()
+            val result: MutableList<String> = mutableListOf()
             var index = 0
             while (index < relevantCommaPositions.size) {
                 val start = if (index == 0) -1 else relevantCommaPositions[index - 1]
@@ -77,7 +76,7 @@ class EligibilityFactory(private val functionInputResolver: FunctionInputResolve
         private fun findSeparatingCommaPositions(params: String): List<Int> {
             var nestedCompositeLevel = 0
             var nestedParameterSection = 0
-            val commaPositions: MutableList<Int> = Lists.newArrayList()
+            val commaPositions: MutableList<Int> = mutableListOf()
             for (i in params.indices) {
                 val character = params[i]
                 if (character == COMPOSITE_START) {

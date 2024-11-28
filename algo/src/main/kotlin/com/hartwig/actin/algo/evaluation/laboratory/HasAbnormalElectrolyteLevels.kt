@@ -12,7 +12,6 @@ import java.time.LocalDate
 class HasAbnormalElectrolyteLevels(private val minValidLabDate: LocalDate, private val minPassLabDate: LocalDate): EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-
         val measurements = listOf(
             LabMeasurement.CALCIUM,
             LabMeasurement.PHOSPHATE,

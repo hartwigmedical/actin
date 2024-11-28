@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
 class HasComplicationOfCategory(private val categoryToFind: String) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         if (record.complications == null) {
             return undetermined()

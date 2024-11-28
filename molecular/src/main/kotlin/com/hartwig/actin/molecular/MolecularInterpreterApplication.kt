@@ -17,7 +17,7 @@ import com.hartwig.actin.molecular.evidence.ServeLoader
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.orange.MolecularRecordAnnotator
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
-import com.hartwig.actin.molecular.orange.interpretation.OrangeExtractor
+import com.hartwig.actin.molecular.orange.OrangeExtractor
 import com.hartwig.actin.molecular.panel.IHCAnnotator
 import com.hartwig.actin.molecular.panel.IHCExtractor
 import com.hartwig.actin.molecular.panel.PanelAnnotator
@@ -159,7 +159,6 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         panelVariantAnnotator: PanelVariantAnnotator,
         panelFusionAnnotator: PanelFusionAnnotator
     ): List<MolecularTest> {
-
         return MolecularInterpreter(
             extractor = object : MolecularExtractor<PriorSequencingTest, PriorSequencingTest> {
                 override fun extract(input: List<PriorSequencingTest>): List<PriorSequencingTest> {
@@ -178,7 +177,6 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         priorIHCTests: List<PriorIHCTest>,
         panelFusionAnnotator: PanelFusionAnnotator
     ): List<MolecularTest> {
-
         return MolecularInterpreter(
             extractor = IHCExtractor(),
             annotator = IHCAnnotator(panelFusionAnnotator),

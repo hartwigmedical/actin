@@ -17,10 +17,9 @@ import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.QTProlongatingRisk
 import io.mockk.every
 import io.mockk.mockk
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Assert.assertThrows
 import org.junit.Test
+import java.time.LocalDate
 
 private const val MEDICATION_NAME = "medication_name"
 private const val ATC_NAME = "atc_name"
@@ -170,13 +169,11 @@ class StandardMedicationExtractorTest {
         )
     }
 
-    @Test
+    @Test(expected = IllegalStateException::class)
     fun `Should throw an exception if atc code is null but medication is not trial or self care`() {
         every { qtProlongatingRiskCuration.find(MEDICATION_NAME) } returns emptySet()
         every { drugInteractionCuration.find(MEDICATION_NAME) } returns emptySet()
-        assertThrows(java.lang.IllegalStateException::class.java) {
-            extractor.extract(ehrPatientRecord.copy(medications = listOf(providedMedication.copy(atcCode = null))))
-        }
+        extractor.extract(ehrPatientRecord.copy(medications = listOf(providedMedication.copy(atcCode = null))))
     }
 
     private fun noAtcLookupTest(modifiedMedication: ProvidedMedication, expected: Medication) {
@@ -193,5 +190,4 @@ class StandardMedicationExtractorTest {
         every { atcModel.resolveByCode("atc", "") } returns atcClassification
         return atcClassification
     }
-
 }

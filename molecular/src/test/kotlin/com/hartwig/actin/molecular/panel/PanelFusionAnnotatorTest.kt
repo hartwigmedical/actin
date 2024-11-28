@@ -43,7 +43,6 @@ private val SEQUENCED_FUSION = SequencedFusion(GENE_START, GENE_END)
 private val FULLY_SPECIFIED_SEQUENCED_FUSION =
     SequencedFusion(GENE_START, GENE_END, TRANSCRIPT_START, TRANSCRIPT_END, FUSED_EXON_UP, FUSED_EXON_DOWN)
 
-
 private val EXON_SKIP_FUSION_MATCHING_CRITERIA = FusionMatchCriteria(
     isReportable = true,
     geneStart = GENE,
@@ -118,48 +117,43 @@ class PanelFusionAnnotatorTest {
     @Test
     fun `Should determine fusion driver type known_pair`() {
         every { knownFusionCache.hasKnownFusion("gene1", "gene2") } returns true
-        assertThat(annotator.determineFusionDriverType("gene1", "gene2"))
-            .isEqualTo(FusionDriverType.KNOWN_PAIR)
-    }
 
+        assertThat(annotator.determineFusionDriverType("gene1", "gene2")).isEqualTo(FusionDriverType.KNOWN_PAIR)
+    }
 
     @Test
     fun `Should determine fusion driver type del_dup`() {
-
         every { knownFusionCache.hasKnownFusion("gene1", "gene1") } returns false
         every { knownFusionCache.hasExonDelDup("gene1") } returns true
-        assertThat(annotator.determineFusionDriverType("gene1", "gene1"))
-            .isEqualTo(FusionDriverType.KNOWN_PAIR_DEL_DUP)
+
+        assertThat(annotator.determineFusionDriverType("gene1", "gene1")).isEqualTo(FusionDriverType.KNOWN_PAIR_DEL_DUP)
     }
 
     @Test
     fun `Should determine fusion driver type promiscuous_both`() {
-
         every { knownFusionCache.hasKnownFusion("gene1", "gene2") } returns false
         every { knownFusionCache.hasPromiscuousFiveGene("gene1") } returns true
         every { knownFusionCache.hasPromiscuousThreeGene("gene2") } returns true
-        assertThat(annotator.determineFusionDriverType("gene1", "gene2"))
-            .isEqualTo(FusionDriverType.PROMISCUOUS_BOTH)
+
+        assertThat(annotator.determineFusionDriverType("gene1", "gene2")).isEqualTo(FusionDriverType.PROMISCUOUS_BOTH)
     }
 
     @Test
     fun `Should determine fusion driver type promiscuous_5`() {
-
         every { knownFusionCache.hasKnownFusion("gene1", "gene2") } returns false
         every { knownFusionCache.hasPromiscuousFiveGene("gene1") } returns true
         every { knownFusionCache.hasPromiscuousThreeGene("gene2") } returns false
-        assertThat(annotator.determineFusionDriverType("gene1", "gene2"))
-            .isEqualTo(FusionDriverType.PROMISCUOUS_5)
+
+        assertThat(annotator.determineFusionDriverType("gene1", "gene2")).isEqualTo(FusionDriverType.PROMISCUOUS_5)
     }
 
     @Test
     fun `Should determine fusion driver type promiscuous_3`() {
-
         every { knownFusionCache.hasKnownFusion("gene1", "gene2") } returns false
         every { knownFusionCache.hasPromiscuousFiveGene("gene1") } returns false
         every { knownFusionCache.hasPromiscuousThreeGene("gene2") } returns true
-        assertThat(annotator.determineFusionDriverType("gene1", "gene2"))
-            .isEqualTo(FusionDriverType.PROMISCUOUS_3)
+
+        assertThat(annotator.determineFusionDriverType("gene1", "gene2")).isEqualTo(FusionDriverType.PROMISCUOUS_3)
     }
 
     @Test
@@ -167,8 +161,8 @@ class PanelFusionAnnotatorTest {
         every { knownFusionCache.hasKnownFusion("gene1", "gene2") } returns false
         every { knownFusionCache.hasPromiscuousFiveGene("gene1") } returns false
         every { knownFusionCache.hasPromiscuousThreeGene("gene2") } returns false
-        assertThat(annotator.determineFusionDriverType("gene1", "gene2"))
-            .isEqualTo(FusionDriverType.NONE)
+
+        assertThat(annotator.determineFusionDriverType("gene1", "gene2")).isEqualTo(FusionDriverType.NONE)
     }
 
     @Test
@@ -176,6 +170,7 @@ class PanelFusionAnnotatorTest {
         setupKnownFusionCache()
         setupEvidenceForFusion(FUSION_MATCH_CRITERIA)
         val annotated = annotator.annotate(setOf(SEQUENCED_FUSION), emptySet())
+
         assertThat(annotated).containsExactly(
             Fusion(
                 geneStart = GENE_START,
@@ -211,6 +206,7 @@ class PanelFusionAnnotatorTest {
         setupKnownFusionCache()
         setupEvidenceForFusion(FULLY_SPECIFIED_FUSION_MATCH_CRITERIA)
         val annotated = annotator.annotate(setOf(FULLY_SPECIFIED_SEQUENCED_FUSION), emptySet())
+
         assertThat(annotated).containsExactly(
             Fusion(
                 geneStart = GENE_START,
@@ -257,7 +253,7 @@ class PanelFusionAnnotatorTest {
         val panelSkippedExonsExtraction = setOf(SequencedSkippedExons(GENE, 2, 4, null))
         val fusions = annotator.annotate(emptySet(), panelSkippedExonsExtraction)
         assertThat(fusions).isEqualTo(
-            setOf(
+            listOf(
                 Fusion(
                     geneStart = GENE,
                     geneEnd = GENE,
@@ -285,7 +281,7 @@ class PanelFusionAnnotatorTest {
         val panelSkippedExonsExtraction = setOf(SequencedSkippedExons(GENE, FUSED_EXON_UP, FUSED_EXON_DOWN, TRANSCRIPT))
         val fusions = annotator.annotate(emptySet(), panelSkippedExonsExtraction)
         assertThat(fusions).isEqualTo(
-            setOf(
+            listOf(
                 Fusion(
                     geneStart = GENE,
                     geneEnd = GENE,

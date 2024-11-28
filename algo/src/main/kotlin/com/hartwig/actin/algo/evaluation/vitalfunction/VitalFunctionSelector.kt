@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory
 import java.time.LocalDate
 
 internal object VitalFunctionSelector {
+
     private const val MAX_BLOOD_PRESSURES_TO_USE = 5
     private const val MAX_AGE_MONTHS = 1
 

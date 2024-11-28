@@ -241,7 +241,6 @@ class PanelVariantAnnotatorTest {
         assertThat(transcriptImpact).isEqualTo(emptySet<TranscriptImpact>())
     }
 
-
     @Test
     fun `Should annotate valid other transcripts with paveLite`() {
         val complexPaveAnnotation = PAVE_ANNOTATION.copy(
@@ -407,7 +406,6 @@ class PanelVariantAnnotatorTest {
         worstCodingEffect = PaveCodingEffect.NONE,
         genesAffected = 1
     )
-
 
     private fun setupGeneAlteration() {
         every { evidenceDatabase.geneAlterationForVariant(VARIANT_MATCH_CRITERIA) } returns HOTSPOT

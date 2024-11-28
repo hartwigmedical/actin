@@ -13,8 +13,7 @@ import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
-import com.hartwig.actin.molecular.orange.interpretation.AminoAcid.forceSingleLetterAminoAcids
-import com.hartwig.actin.molecular.panel.PanelAnnotator.Companion.LOGGER
+import com.hartwig.actin.molecular.orange.AminoAcid.forceSingleLetterAminoAcids
 import com.hartwig.actin.molecular.paver.PaveCodingEffect
 import com.hartwig.actin.molecular.paver.PaveImpact
 import com.hartwig.actin.molecular.paver.PaveQuery
@@ -26,6 +25,7 @@ import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.VariantAnnotator
 import com.hartwig.serve.datamodel.molecular.hotspot.KnownHotspot
 import com.hartwig.serve.datamodel.molecular.range.KnownCodon
+import org.apache.logging.log4j.LogManager
 import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
 import com.hartwig.serve.datamodel.molecular.common.GeneAlteration as ServeGeneAlteration
 
@@ -37,7 +37,8 @@ private val SERVE_HOTSPOT_PROTEIN_EFFECTS = setOf(
 )
 
 fun isHotspot(geneAlteration: ServeGeneAlteration?): Boolean {
-    return (geneAlteration is KnownHotspot || geneAlteration is KnownCodon) && geneAlteration.proteinEffect() in SERVE_HOTSPOT_PROTEIN_EFFECTS
+    return (geneAlteration is KnownHotspot || geneAlteration is KnownCodon) &&
+            geneAlteration.proteinEffect() in SERVE_HOTSPOT_PROTEIN_EFFECTS
 }
 
 class PanelVariantAnnotator(
@@ -48,17 +49,18 @@ class PanelVariantAnnotator(
     private val paveLite: PaveLite,
 ) {
 
-    fun annotate(variants: Set<SequencedVariant>): Set<Variant> {
+    private val logger = LogManager.getLogger(PanelVariantAnnotator::class.java)
+
+    fun annotate(variants: Set<SequencedVariant>): List<Variant> {
         val variantExtractions = indexVariantExtractionsToUniqueIds(variants)
         val transvarVariants = resolveVariants(variantExtractions)
         val paveAnnotations = annotateWithPave(transvarVariants)
         val variantsWithEvidence = annotateWithEvidence(transvarVariants, paveAnnotations, variantExtractions)
-        val variantsWithDriverLikelihoodModel = annotateWithDriverLikelihood(variantsWithEvidence)
 
-        return variantsWithDriverLikelihoodModel.toSet()
+        return annotateWithDriverLikelihood(variantsWithEvidence)
     }
 
-    private fun indexVariantExtractionsToUniqueIds(variants: Set<SequencedVariant>): Map<String, SequencedVariant> {
+    private fun indexVariantExtractionsToUniqueIds(variants: Collection<SequencedVariant>): Map<String, SequencedVariant> {
         return variants.withIndex().associate { it.index.toString() to it.value }
     }
 
@@ -77,7 +79,7 @@ class PanelVariantAnnotator(
             )
 
         if (externalVariantAnnotation == null) {
-            LOGGER.error("Unable to resolve variant '$panelVariantExtraction' in variant annotator. See prior warnings.")
+            logger.error("Unable to resolve variant '$panelVariantExtraction' in variant annotator. See prior warnings.")
             return null
         }
 

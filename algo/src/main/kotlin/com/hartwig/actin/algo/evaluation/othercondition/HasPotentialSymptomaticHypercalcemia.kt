@@ -19,7 +19,6 @@ import java.time.LocalDate
 class HasPotentialSymptomaticHypercalcemia(private val minValidDate: LocalDate) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-
         val interpretation = LabInterpreter.interpret(record.labValues)
         val evaluations = sequenceOf(CALCIUM, IONIZED_CALCIUM, CORRECTED_CALCIUM)
             .map { evaluateLabValue(interpretation.mostRecentValue(it), it) }

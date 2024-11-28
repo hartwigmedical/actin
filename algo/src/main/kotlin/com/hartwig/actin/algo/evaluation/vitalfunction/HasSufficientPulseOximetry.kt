@@ -10,6 +10,7 @@ import java.time.LocalDate
 
 class HasSufficientPulseOximetry internal constructor(private val minMedianPulseOximetry: Double, private val minimumDate: LocalDate) :
     EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val relevant = VitalFunctionSelector.selectMedianPerDay(record, VitalFunctionCategory.SPO2, MAX_PULSE_OXIMETRY_TO_USE, minimumDate)
         val wrongUnit = VitalFunctionSelector.selectRecentVitalFunctionsWrongUnit(record, VitalFunctionCategory.SPO2)

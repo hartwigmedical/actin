@@ -21,6 +21,7 @@ import com.hartwig.actin.datamodel.trial.EligibilityRule
 import java.time.LocalDate
 
 class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
+
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
             EligibilityRule.HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.LEUKOCYTES_ABS),

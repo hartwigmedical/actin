@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.evaluation.cardiacfunction.CardiacFunctionTestFact
 import com.hartwig.actin.algo.evaluation.cardiacfunction.ECGMeasureEvaluationFunction.ThresholdCriteria
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.ECG
-import org.junit.Assert.assertTrue
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class ECGMeasureEvaluationFunctionTest {
@@ -14,7 +14,7 @@ class ECGMeasureEvaluationFunctionTest {
     fun `Should evaluate to recoverable undetermined when no ECG present`() {
         val evaluation = withThresholdCriteria(ThresholdCriteria.MAXIMUM).evaluate(CardiacFunctionTestFactory.withECG(null))
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertTrue(evaluation.recoverable)
+        assertThat(evaluation.recoverable).isTrue()
     }
 
     @Test

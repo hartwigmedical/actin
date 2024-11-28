@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEn
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentStage
 
 object TreatmentHistoryEntryFunctions {
+
     private data class NullableYearMonth(val year: Int?, val month: Int?)
 
     private val nullSafeComparator = Comparator.nullsLast(Comparator.naturalOrder<Int>())
