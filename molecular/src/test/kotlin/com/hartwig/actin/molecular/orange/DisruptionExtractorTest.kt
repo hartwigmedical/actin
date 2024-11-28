@@ -51,7 +51,7 @@ class DisruptionExtractorTest {
         val disruptions = extractor.extractDisruptions(linx, emptySet(), listOf())
         assertThat(disruptions).hasSize(1)
 
-        val disruption = disruptions.iterator().next()
+        val disruption = disruptions.first()
         assertThat(disruption.isReportable).isTrue
         assertThat(disruption.driverLikelihood).isEqualTo(DriverLikelihood.LOW)
         assertThat(disruption.type).isEqualTo(DisruptionType.DUP)
@@ -77,7 +77,7 @@ class DisruptionExtractorTest {
         val disruptions = extractor.extractDisruptions(linx, emptySet(), listOf())
         assertThat(disruptions).hasSize(1)
 
-        val disruption = disruptions.iterator().next()
+        val disruption = disruptions.first()
         assertThat(disruption.gene).isEqualTo("gene 1")
     }
 
