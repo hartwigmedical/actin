@@ -1,78 +1,135 @@
 package com.hartwig.actin.molecular.evidence
 
-import com.hartwig.serve.datamodel.ActionableEvent
-import com.hartwig.serve.datamodel.CancerType
-import com.hartwig.serve.datamodel.EvidenceDirection
-import com.hartwig.serve.datamodel.EvidenceLevel
-import com.hartwig.serve.datamodel.EvidenceLevelDetails
-import com.hartwig.serve.datamodel.ImmutableCancerType
-import com.hartwig.serve.datamodel.ImmutableClinicalTrial
-import com.hartwig.serve.datamodel.ImmutableCountry
-import com.hartwig.serve.datamodel.ImmutableTreatment
-import com.hartwig.serve.datamodel.Intervention
 import com.hartwig.serve.datamodel.Knowledgebase
-import com.hartwig.serve.datamodel.characteristic.ImmutableActionableCharacteristic
-import com.hartwig.serve.datamodel.characteristic.TumorCharacteristicType
-import com.hartwig.serve.datamodel.fusion.ImmutableActionableFusion
-import com.hartwig.serve.datamodel.gene.ImmutableActionableGene
-import com.hartwig.serve.datamodel.hotspot.ImmutableActionableHotspot
-import com.hartwig.serve.datamodel.immuno.ImmutableActionableHLA
-import com.hartwig.serve.datamodel.range.ImmutableActionableRange
+import com.hartwig.serve.datamodel.common.ImmutableCancerType
+import com.hartwig.serve.datamodel.common.ImmutableIndication
+import com.hartwig.serve.datamodel.common.Indication
+import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
+import com.hartwig.serve.datamodel.efficacy.EvidenceDirection
+import com.hartwig.serve.datamodel.efficacy.EvidenceLevel
+import com.hartwig.serve.datamodel.efficacy.EvidenceLevelDetails
+import com.hartwig.serve.datamodel.efficacy.ImmutableTreatment
+import com.hartwig.serve.datamodel.efficacy.Treatment
+import com.hartwig.serve.datamodel.molecular.ActionableEvent
+import com.hartwig.serve.datamodel.molecular.ImmutableMolecularCriterium
+import com.hartwig.serve.datamodel.molecular.MolecularCriterium
+import com.hartwig.serve.datamodel.molecular.MutationType
+import com.hartwig.serve.datamodel.molecular.characteristic.ImmutableActionableCharacteristic
+import com.hartwig.serve.datamodel.molecular.characteristic.TumorCharacteristicType
+import com.hartwig.serve.datamodel.molecular.fusion.ImmutableActionableFusion
+import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
+import com.hartwig.serve.datamodel.molecular.gene.ImmutableActionableGene
+import com.hartwig.serve.datamodel.molecular.hotspot.ImmutableActionableHotspot
+import com.hartwig.serve.datamodel.molecular.immuno.ImmutableActionableHLA
+import com.hartwig.serve.datamodel.molecular.range.ImmutableActionableRange
+import com.hartwig.serve.datamodel.trial.ActionableTrial
+import com.hartwig.serve.datamodel.trial.Country
+import com.hartwig.serve.datamodel.trial.GenderCriterium
+import com.hartwig.serve.datamodel.trial.ImmutableCountry
 import java.time.LocalDate
 
 object TestServeActionabilityFactory {
 
-    fun hotspotBuilder(): ImmutableActionableHotspot.Builder {
-        return ImmutableActionableHotspot.builder().from(createEmptyActionableEvent()).from(TestServeFactory.createEmptyHotspot())
+    fun createEfficacyEvidenceWithHotspot(
+        gene: String = "",
+        chromosome: String = "",
+        position: Int = 0,
+        ref: String = "",
+        alt: String = ""
+    ): EfficacyEvidence {
+        return createEfficacyEvidence(createHotspot(gene, chromosome, position, ref, alt))
     }
 
-    fun rangeBuilder(): ImmutableActionableRange.Builder {
-        return ImmutableActionableRange.builder().from(createEmptyActionableEvent()).from(TestServeFactory.createEmptyRangeAnnotation())
+    fun createEfficacyEvidenceWithCodon(gene: String = ""): EfficacyEvidence {
+        return createEfficacyEvidence(createCodon(gene))
     }
 
-    fun geneBuilder(): ImmutableActionableGene.Builder {
-        return ImmutableActionableGene.builder().from(createEmptyActionableEvent()).from(TestServeFactory.createEmptyGeneAnnotation())
+    fun createEfficacyEvidenceWithExon(): EfficacyEvidence {
+        return createEfficacyEvidence(createExon())
     }
 
-    fun fusionBuilder(): ImmutableActionableFusion.Builder {
-        return ImmutableActionableFusion.builder().from(createEmptyActionableEvent()).from(TestServeFactory.createEmptyFusionPair())
+    fun createEfficacyEvidenceWithGene(geneEvent: GeneEvent = GeneEvent.ANY_MUTATION, gene: String = ""): EfficacyEvidence {
+        return createEfficacyEvidence(createGene(gene, geneEvent))
     }
 
-    fun characteristicBuilder(): ImmutableActionableCharacteristic.Builder {
-        return ImmutableActionableCharacteristic.builder()
-            .from(createEmptyActionableEvent())
-            .type(TumorCharacteristicType.MICROSATELLITE_STABLE)
+    fun createEfficacyEvidenceWithFusion(): EfficacyEvidence {
+        return createEfficacyEvidence(createFusion())
     }
 
-    fun hlaBuilder(): ImmutableActionableHLA.Builder {
-        return ImmutableActionableHLA.builder().from(createEmptyActionableEvent()).hlaAllele("")
+    fun createEfficacyEvidenceWithCharacteristic(type: TumorCharacteristicType = TumorCharacteristicType.MICROSATELLITE_STABLE): EfficacyEvidence {
+        return createEfficacyEvidence(createCharacteristic(type))
     }
 
-    fun treatmentBuilder(): ImmutableTreatment.Builder {
-        return ImmutableTreatment.builder().name("")
+    fun createEfficacyEvidenceWithHla(): EfficacyEvidence {
+        return createEfficacyEvidence(createHla())
     }
 
-    fun cancerTypeBuilder(): ImmutableCancerType.Builder {
-        return ImmutableCancerType.builder().name("").doid("")
+    fun createHotspot(
+        gene: String = "",
+        chromosome: String = "",
+        position: Int = 0,
+        ref: String = "",
+        alt: String = ""
+    ): MolecularCriterium {
+        return ImmutableMolecularCriterium.builder().addHotspots(
+            ImmutableActionableHotspot.builder().from(createActionableEvent()).gene(gene).chromosome(chromosome).position(position).ref(ref)
+                .alt(alt).build()
+        ).build()
     }
 
-    private fun createEmptyActionableEvent(): ActionableEvent {
-        return createActionableEvent(Knowledgebase.CKB_EVIDENCE, "intervention")
+    fun createCodon(
+        gene: String = "",
+        chromosome: String = "",
+        start: Int = 0,
+        end: Int = 0,
+        applicableMutationType: MutationType = MutationType.ANY
+    ): MolecularCriterium {
+        return ImmutableMolecularCriterium.builder().addCodons(
+            ImmutableActionableRange.builder().from(createActionableEvent()).gene(gene).chromosome(chromosome).start(start).end(end)
+                .applicableMutationType(applicableMutationType).build()
+        ).build()
     }
 
-    fun createActionableEvent(
-        source: Knowledgebase,
-        interventionName: String,
-        direction: EvidenceDirection = EvidenceDirection.NO_BENEFIT
-    ): ActionableEvent {
-        val nctId = "NCT00000001"
-        val isTrial = source == Knowledgebase.CKB_TRIAL
+    fun createExon(
+        gene: String = "",
+        chromosome: String = "",
+        start: Int = 0,
+        end: Int = 0,
+        applicableMutationType: MutationType = MutationType.ANY
+    ): MolecularCriterium {
+        return ImmutableMolecularCriterium.builder().addExons(
+            ImmutableActionableRange.builder().from(createActionableEvent()).gene(gene).chromosome(chromosome).start(start).end(end)
+                .applicableMutationType(applicableMutationType).build()
+        ).build()
+    }
+
+    fun createGene(gene: String = "", geneEvent: GeneEvent = GeneEvent.ANY_MUTATION, sourceEvent: String = ""): MolecularCriterium {
+        return ImmutableMolecularCriterium.builder()
+            .addGenes(
+                ImmutableActionableGene.builder().from(createActionableEvent()).event(geneEvent).gene(gene).sourceEvent(sourceEvent).build()
+            ).build()
+    }
+
+    fun createFusion(geneUp: String = "", geneDown: String = "", minExonUp: Int? = null, maxExonUp: Int? = null): MolecularCriterium {
+        return ImmutableMolecularCriterium.builder().addFusions(
+            ImmutableActionableFusion.builder().from(createActionableEvent()).geneUp(geneUp).geneDown(geneDown).minExonUp(minExonUp)
+                .maxExonUp(maxExonUp).build()
+        ).build()
+    }
+
+    fun createCharacteristic(type: TumorCharacteristicType = TumorCharacteristicType.MICROSATELLITE_STABLE): MolecularCriterium {
+        return ImmutableMolecularCriterium.builder()
+            .addCharacteristics(ImmutableActionableCharacteristic.builder().from(createActionableEvent()).type(type).build()).build()
+    }
+
+    fun createHla(): MolecularCriterium {
+        return ImmutableMolecularCriterium.builder()
+            .addHla(ImmutableActionableHLA.builder().from(createActionableEvent()).hlaAllele("").build()).build()
+    }
+
+    fun createActionableEvent(): ActionableEvent {
         return object : ActionableEvent {
-            override fun source(): Knowledgebase {
-                return source
-            }
-
-            override fun entryDate(): LocalDate {
+            override fun sourceDate(): LocalDate {
                 return LocalDate.of(2021, 2, 3)
             }
 
@@ -83,28 +140,35 @@ object TestServeActionabilityFactory {
             override fun sourceUrls(): Set<String> {
                 return setOf("https://ckbhome.jax.org/profileResponse/advancedEvidenceFind?molecularProfileId=29716")
             }
+        }
+    }
 
-            override fun intervention(): Intervention {
-                return if (isTrial) {
-                    ImmutableClinicalTrial.builder()
-                        .acronym(interventionName)
-                        .nctId(nctId)
-                        .title("")
-                        .countries(setOf(ImmutableCountry.builder().countryName("country").build()))
-                        .build()
-                } else {
-                    ImmutableTreatment.builder().name(interventionName).build()
-                }
+    fun createEfficacyEvidence(
+        molecularCriterium: MolecularCriterium,
+        source: Knowledgebase = Knowledgebase.CKB,
+        treatment: String = "treatment",
+        direction: EvidenceDirection = EvidenceDirection.NO_BENEFIT,
+        level: EvidenceLevel = EvidenceLevel.D,
+        indication: Indication = ImmutableIndication.builder().applicableType(ImmutableCancerType.builder().name("").doid("").build())
+            .excludedSubTypes(emptySet()).build()
+    ): EfficacyEvidence {
+        return object : EfficacyEvidence() {
+            override fun source(): Knowledgebase {
+                return source
             }
 
-            override fun applicableCancerType(): CancerType {
-                return cancerTypeBuilder().build()
+            override fun molecularCriterium(): MolecularCriterium {
+                return molecularCriterium
             }
 
-            override fun blacklistCancerTypes(): Set<CancerType> {
-                return emptySet()
+            override fun treatment(): Treatment {
+                return ImmutableTreatment.builder().name(treatment).build()
             }
-            
+
+            override fun indication(): Indication {
+                return indication
+            }
+
             override fun efficacyDescription(): String {
                 return "efficacy evidence"
             }
@@ -114,19 +178,71 @@ object TestServeActionabilityFactory {
             }
 
             override fun evidenceLevel(): EvidenceLevel {
-                return EvidenceLevel.D
+                return level
             }
 
             override fun evidenceLevelDetails(): EvidenceLevelDetails {
                 return EvidenceLevelDetails.GUIDELINE
             }
 
-            override fun direction(): EvidenceDirection {
+            override fun evidenceDirection(): EvidenceDirection {
                 return direction
             }
 
-            override fun evidenceUrls(): Set<String> {
-                return if (isTrial) setOf("https://clinicaltrials.gov/study/$nctId") else emptySet()
+            override fun urls(): Set<String> {
+                return emptySet()
+            }
+        }
+    }
+
+    fun createActionableTrial(
+        molecularCriteria: Set<MolecularCriterium>,
+        source: Knowledgebase = Knowledgebase.CKB,
+        treatment: String = "",
+        indications: Set<Indication> = setOf(
+            ImmutableIndication.builder().applicableType(ImmutableCancerType.builder().name("").doid("").build())
+                .excludedSubTypes(emptySet()).build()
+        )
+    ): ActionableTrial {
+        return object : ActionableTrial() {
+            override fun source(): Knowledgebase {
+                return source
+            }
+
+            override fun nctId(): String {
+                return "NCT00000001"
+            }
+
+            override fun title(): String {
+                return ""
+            }
+
+            override fun acronym(): String {
+                return ""
+            }
+
+            override fun countries(): Set<Country> {
+                return setOf(ImmutableCountry.builder().name("country").build())
+            }
+
+            override fun therapyNames(): Set<String> {
+                return setOf(treatment)
+            }
+
+            override fun genderCriterium(): GenderCriterium? {
+                return null
+            }
+
+            override fun indications(): Set<Indication> {
+                return indications
+            }
+
+            override fun anyMolecularCriteria(): Set<MolecularCriterium> {
+                return molecularCriteria
+            }
+
+            override fun urls(): Set<String> {
+                return setOf("https://clinicaltrials.gov/study/NCT00000001")
             }
         }
     }

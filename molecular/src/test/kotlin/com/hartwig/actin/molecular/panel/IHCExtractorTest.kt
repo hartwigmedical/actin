@@ -1,15 +1,16 @@
 package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.PriorIHCTest
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 private const val POSITIVE_FUSION_GENE = "ALK"
 private const val NEGATIVE_FUSION_GENE = "ROS1"
 private const val OTHER_GENE = "GENE"
 
 class IHCExtractorTest {
+
     @Test
     fun `Should extract fusion positives from IHC`() {
         val priorIHCTests = listOf(positiveIHC(POSITIVE_FUSION_GENE))
@@ -25,7 +26,6 @@ class IHCExtractorTest {
         val result = IHCExtractor().extract(priorIHCTests)
         assertThat(result).isEqualTo(listOf(IHCExtraction(null, emptySet(), setOf(NEGATIVE_FUSION_GENE))))
     }
-
 
     @Test
     fun `Should ignore other genes`() {

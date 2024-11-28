@@ -11,8 +11,9 @@ import com.hartwig.actin.datamodel.clinical.TestMedicationFactory
 import java.time.LocalDate
 
 internal object WashoutTestFactory {
+
     private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
-    
+
     fun activeFromDate(referenceDate: LocalDate): MedicationStatusInterpreter {
         return object : MedicationStatusInterpreter {
             override fun interpret(medication: Medication): MedicationStatusInterpretation {
@@ -27,7 +28,10 @@ internal object WashoutTestFactory {
     }
 
     fun medication(
-        atc: AtcClassification? = null, stopDate: LocalDate? = null, name: String = "", isTrialMedication: Boolean = false
+        atc: AtcClassification? = null,
+        stopDate: LocalDate? = null,
+        name: String = "",
+        isTrialMedication: Boolean = false
     ): Medication {
         return TestMedicationFactory.createMinimal().copy(
             atc = atc,

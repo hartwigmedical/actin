@@ -15,11 +15,12 @@ import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
+import com.hartwig.actin.molecular.evidence.ServeLoader
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.serialization.TrialJson
-import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.RefGenome
+import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.serialization.ServeJson
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
@@ -76,10 +77,9 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
 
         LOGGER.info("Loading evidence database for resistance evidence")
         val tumorDoids = patient.tumor.doids.orEmpty().toSet()
-        val actionableEvents =
-            loadEvidence(patient.molecularHistory.latestOrangeMolecularRecord()?.refGenomeVersion ?: RefGenomeVersion.V37)
+        val evidences = loadEvidence(patient.molecularHistory.latestOrangeMolecularRecord()?.refGenomeVersion ?: RefGenomeVersion.V37)
         val resistanceEvidenceMatcher =
-            ResistanceEvidenceMatcher.create(doidModel, tumorDoids, actionableEvents, treatmentDatabase, patient.molecularHistory)
+            ResistanceEvidenceMatcher.create(doidModel, tumorDoids, evidences, treatmentDatabase, patient.molecularHistory)
         val match = TreatmentMatcher.create(resources, trials, evidenceEntries, resistanceEvidenceMatcher)
             .evaluateAndAnnotateMatchesForPatient(patient)
 
@@ -88,11 +88,12 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         LOGGER.info("Done!")
     }
 
-    private fun loadEvidence(orangeRefGenomeVersion: RefGenomeVersion): ActionableEvents {
+    private fun loadEvidence(orangeRefGenomeVersion: RefGenomeVersion): List<EfficacyEvidence> {
         val serveRefGenomeVersion = toServeRefGenomeVersion(orangeRefGenomeVersion)
-        val jsonFilePath = ServeJson.jsonFilePath(config.serveDirectory, serveRefGenomeVersion)
+        val jsonFilePath = ServeJson.jsonFilePath(config.serveDirectory)
         LOGGER.info("Loading SERVE from {}", jsonFilePath)
-        return ServeJson.read(jsonFilePath).actionableEvents()
+        val (_, actionableEvents) = ServeLoader.loadServe(jsonFilePath, serveRefGenomeVersion)
+        return actionableEvents.evidences
     }
 
     private fun toServeRefGenomeVersion(refGenomeVersion: RefGenomeVersion): RefGenome {

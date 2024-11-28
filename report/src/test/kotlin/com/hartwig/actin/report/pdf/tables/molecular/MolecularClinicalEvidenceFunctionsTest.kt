@@ -19,7 +19,7 @@ class MolecularClinicalEvidenceFunctionsTest {
         val variant = TestMolecularFactory.createProperVariant().copy(evidence = CLINICAL_EVIDENCE)
         val events =
             MolecularClinicalEvidenceFunctions.molecularEvidenceByEvent(
-                molecularHistory(BASE_MOLECULAR_TEST.copy(drivers = Drivers(variants = setOf(variant))))
+                molecularHistory(BASE_MOLECULAR_TEST.copy(drivers = Drivers(variants = listOf(variant))))
             )
         assertThat(events).containsExactly(variant.event to CLINICAL_EVIDENCE)
     }

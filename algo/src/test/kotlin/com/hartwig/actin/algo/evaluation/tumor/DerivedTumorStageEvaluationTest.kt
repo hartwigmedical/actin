@@ -6,10 +6,11 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory.pass
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.undetermined
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TumorStage
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class DerivedTumorStageEvaluationTest {
+
     @Test
     fun `Should use message from worst outcome along with derivation note`() {
         val evaluation = DerivedTumorStageEvaluation.create(
@@ -19,9 +20,9 @@ class DerivedTumorStageEvaluationTest {
             ), EvaluationFactory::undetermined
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        Assertions.assertThat(evaluation.undeterminedSpecificMessages).containsOnly(
+        assertThat(evaluation.undeterminedSpecificMessages).containsOnly(
             "Undetermined specific message. Tumor stage has been implied to be I or II"
         )
-        Assertions.assertThat(evaluation.undeterminedGeneralMessages).containsOnly("Undetermined general message")
+        assertThat(evaluation.undeterminedGeneralMessages).containsOnly("Undetermined general message")
     }
 }

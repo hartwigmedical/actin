@@ -1,9 +1,9 @@
 package com.hartwig.actin.molecular.evidence.known
 
-import com.hartwig.serve.datamodel.ImmutableKnownEvents
 import com.hartwig.serve.datamodel.Knowledgebase
-import com.hartwig.serve.datamodel.KnownEvents
-import com.hartwig.serve.datamodel.hotspot.KnownHotspot
+import com.hartwig.serve.datamodel.molecular.ImmutableKnownEvents
+import com.hartwig.serve.datamodel.molecular.KnownEvents
+import com.hartwig.serve.datamodel.molecular.hotspot.KnownHotspot
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
