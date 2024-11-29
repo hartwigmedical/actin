@@ -22,10 +22,10 @@ class WarnIf(private val function: EvaluationFunction) : EvaluationFunction {
                 )
             }
 
-            evaluation.result == EvaluationResult.UNDETERMINED && evaluation.recoverable -> {
+            evaluation.result == EvaluationResult.UNDETERMINED && !evaluation.recoverable -> {
                 Evaluation(
                     result = EvaluationResult.WARN,
-                    recoverable = true,
+                    recoverable = false,
                     inclusionMolecularEvents = emptySet(),
                     exclusionMolecularEvents = emptySet(),
                     warnSpecificMessages = evaluation.undeterminedSpecificMessages + evaluation.passSpecificMessages,
