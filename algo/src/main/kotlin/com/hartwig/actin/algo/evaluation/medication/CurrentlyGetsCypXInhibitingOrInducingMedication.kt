@@ -44,7 +44,7 @@ class CurrentlyGetsCypXInhibitingOrInducingMedication(
                 )
             }
 
-            termToFind in MedicationRuleMapper.UNDETERMINED_CYP -> {
+            termToFind in MedicationRuleMapper.UNDETERMINED_CYP.toString().substring(3) -> {
                 EvaluationFactory.undetermined(
                     "Undetermined if patient currently gets CYP$termToFind inhibiting/inducing medication",
                     "Undetermined CYP$termToFind inhibiting/inducing medication use"

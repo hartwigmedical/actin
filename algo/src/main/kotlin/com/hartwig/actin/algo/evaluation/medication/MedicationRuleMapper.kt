@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
+import com.hartwig.actin.datamodel.clinical.Cyp
 import com.hartwig.actin.datamodel.clinical.DrugInteraction
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
@@ -67,23 +68,24 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun getsCYPXInducingMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val termToFind = functionInputResolver().createOneCypInput(function)
-            CurrentlyGetsCypXInducingMedication(selector, termToFind.cyp)
+            val termToFind = functionInputResolver().createOneCypInput(function).toString().substring(3)
+            CurrentlyGetsCypXInducingMedication(selector, termToFind)
         }
     }
 
     private fun hasRecentlyReceivedCYPXInducingMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneCypOneIntegerInput(function)
+            val termToFind = input.cyp.toString().substring(3)
             val maxStopDate = referenceDateProvider().date().minusWeeks(input.integer.toLong())
-            HasRecentlyReceivedCypXInducingMedication(selector, input.cyp, maxStopDate)
+            HasRecentlyReceivedCypXInducingMedication(selector, termToFind, maxStopDate)
         }
     }
 
     private fun getsCYPXInhibitingMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val termToFind = functionInputResolver().createOneCypInput(function)
-            CurrentlyGetsCypXInhibitingMedication(selector, termToFind.cyp)
+            val termToFind = functionInputResolver().createOneCypInput(function).toString().substring(3)
+            CurrentlyGetsCypXInhibitingMedication(selector, termToFind)
         }
     }
 
@@ -93,15 +95,15 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun getsCYPXInhibitingOrInducingMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val termToFind = functionInputResolver().createOneCypInput(function)
-            CurrentlyGetsCypXInhibitingOrInducingMedication(selector, termToFind.cyp)
+            val termToFind = functionInputResolver().createOneCypInput(function).toString().substring(3)
+            CurrentlyGetsCypXInhibitingOrInducingMedication(selector, termToFind)
         }
     }
 
     private fun getsCYPSubstrateMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val termToFind = functionInputResolver().createOneCypInput(function)
-            CurrentlyGetsCypXSubstrateMedication(selector, termToFind.cyp)
+            val termToFind = functionInputResolver().createOneCypInput(function).toString().substring(3)
+            CurrentlyGetsCypXSubstrateMedication(selector, termToFind)
         }
     }
 
@@ -139,7 +141,6 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     }
 
     companion object {
-        // Undetermined Cyp
-        val UNDETERMINED_CYP = setOf("2J2")
+        val UNDETERMINED_CYP = Cyp.CYP2J2
     }
 }
