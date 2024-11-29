@@ -2,8 +2,10 @@ package com.hartwig.actin.trial.input
 
 import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.datamodel.clinical.AtcLevel
+import com.hartwig.actin.datamodel.clinical.Cyp
 import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.ReceptorType
+import com.hartwig.actin.datamodel.clinical.Transporter
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
@@ -20,7 +22,6 @@ import com.hartwig.actin.trial.input.single.ManyGenes
 import com.hartwig.actin.trial.input.single.ManyIntents
 import com.hartwig.actin.trial.input.single.ManyIntentsOneInteger
 import com.hartwig.actin.trial.input.single.ManySpecificTreatmentsTwoIntegers
-import com.hartwig.actin.trial.input.single.OneCyp
 import com.hartwig.actin.trial.input.single.OneCypOneInteger
 import com.hartwig.actin.trial.input.single.OneDoubleOneGender
 import com.hartwig.actin.trial.input.single.OneGene
@@ -406,6 +407,17 @@ class FunctionInputResolverTest {
     }
 
     @Test
+    fun `Should resolve functions with many strings`() {
+        val rule = firstOfType(FunctionInput.MANY_STRINGS)
+        val valid = create(rule, listOf("BRAF;KRAS"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val expected = listOf("BRAF", "KRAS")
+        assertThat(resolver.createManyStringsInput(valid)).isEqualTo(expected)
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+    }
+
+    @Test
     fun `Should resolve functions with many strings one integer input`() {
         val rule = firstOfType(FunctionInput.MANY_STRINGS_ONE_INTEGER)
         val valid = create(rule, listOf("BRAF;KRAS", "1"))
@@ -444,7 +456,8 @@ class FunctionInputResolverTest {
 
     @Test
     fun `Should resolve functions with one integer many doid terms input`() {
-        val resolver = TestFunctionInputResolverFactory.createResolverWithTwoDoidsAndTerms(listOf("doid 1", "doid 2"), listOf("term 1", "term 2"))
+        val resolver =
+            TestFunctionInputResolverFactory.createResolverWithTwoDoidsAndTerms(listOf("doid 1", "doid 2"), listOf("term 1", "term 2"))
         val rule: EligibilityRule = firstOfType(FunctionInput.ONE_INTEGER_MANY_DOID_TERMS)
         val valid: EligibilityFunction = create(rule, listOf("2", "term 1;term 2"))
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
@@ -763,29 +776,45 @@ class FunctionInputResolverTest {
     fun `Should resolve functions with one cyp input`() {
         val resolver = createTestResolver()
         val rule = firstOfType(FunctionInput.ONE_CYP)
-        val cyp = "3A4"
+        val cyp = "CYP3A4_5"
         val valid = create(rule, listOf(cyp))
         assertThat(resolver.hasValidInputs(valid)).isTrue
 
-        val expected = OneCyp(cyp)
+        val expected = Cyp.valueOf(cyp)
         assertThat(resolver.createOneCypInput(valid)).isEqualTo(expected)
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("not a cyp")))).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("3A", "33")))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("3A4_5")))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("CYP")))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("CYP3A4_5;CYP2J2")))).isFalse
     }
 
     @Test
     fun `Should resolve functions with one cyp and one integer input`() {
         val resolver = createTestResolver()
         val rule = firstOfType(FunctionInput.ONE_CYP_ONE_INTEGER)
-        val valid = create(rule, listOf("3A4", "1"))
+        val valid = create(rule, listOf("CYP3A4_5", "1"))
         assertThat(resolver.hasValidInputs(valid)).isTrue
 
-        assertThat(resolver.createOneCypOneIntegerInput(valid)).isEqualTo(OneCypOneInteger("3A4", 1))
+        assertThat(resolver.createOneCypOneIntegerInput(valid)).isEqualTo(OneCypOneInteger(Cyp.CYP3A4_5, 1))
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("3A4")))).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("3A4", "1", "2")))).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("CYP3A4", "1")))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("3A4_5")))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("CYP", "2")))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("CYP3A4_5;CYP2J2", "1")))).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with one transporter input`() {
+        val resolver = createTestResolver()
+        val rule = firstOfType(FunctionInput.ONE_TRANSPORTER)
+        val transporter = "OATP1B1"
+        val valid = create(rule, listOf(transporter))
+        assertThat(resolver.hasValidInputs(valid)).isTrue
+
+        val expected = Transporter.valueOf(transporter)
+        assertThat(resolver.createOneTransporterInput(valid)).isEqualTo(expected)
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("OatP1b1")))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("BCRP, OATP1B1")))).isFalse
     }
 
     @Test

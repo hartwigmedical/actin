@@ -3,7 +3,6 @@ package com.hartwig.actin.molecular.interpretation
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory.createAlwaysValid
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory.createValidForGenes
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker.Companion.isCodon
-import com.hartwig.actin.molecular.interpretation.MolecularInputChecker.Companion.isCyp
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker.Companion.isHaplotype
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker.Companion.isHlaAllele
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker.Companion.isProteinImpact
@@ -60,15 +59,6 @@ class MolecularInputCheckerTest {
         assertThat(isProteinImpact("600E")).isFalse
         assertThat(isProteinImpact("v600e")).isFalse
         assertThat(isProteinImpact("BRAF")).isFalse
-    }
-
-    @Test
-    fun `Should determine if string is CYP`() {
-        assertThat(isCyp("3A4")).isTrue
-        assertThat(isCyp("CYP3A4")).isFalse
-        assertThat(isCyp("A4")).isFalse
-        assertThat(isCyp("A4A")).isFalse
-        assertThat(isCyp("3A")).isFalse
     }
 
     @Test
