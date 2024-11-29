@@ -27,7 +27,7 @@ object EligibleExternalTrialGeneratorFunctions {
             val cities = homeCountries.first().hospitalsPerCity.keys
             val hospitalsString = if (hospitals.size > 10) {
                 MANY_PLEASE_CHECK_LINK
-            } else hospitals.joinToString { it }
+            } else hospitals.joinToString { it.name }
             val citiesString = if (cities.size > 8) {
                 MANY_PLEASE_CHECK_LINK
             } else cities.joinToString { it }

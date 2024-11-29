@@ -1,10 +1,10 @@
 package com.hartwig.actin.molecular.evidence.curation
 
-import com.hartwig.serve.datamodel.ActionableEvent
-import com.hartwig.serve.datamodel.gene.ActionableGene
-import com.hartwig.serve.datamodel.gene.GeneEvent
-import com.hartwig.serve.datamodel.hotspot.ActionableHotspot
-import com.hartwig.serve.datamodel.range.ActionableRange
+import com.hartwig.serve.datamodel.molecular.ActionableEvent
+import com.hartwig.serve.datamodel.molecular.gene.ActionableGene
+import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
+import com.hartwig.serve.datamodel.molecular.hotspot.ActionableHotspot
+import com.hartwig.serve.datamodel.molecular.range.ActionableRange
 import org.apache.logging.log4j.LogManager
 
 object ApplicabilityFiltering {

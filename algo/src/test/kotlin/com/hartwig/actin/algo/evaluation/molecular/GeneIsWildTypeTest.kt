@@ -286,7 +286,7 @@ class GeneIsWildTypeTest {
                         TestPanelRecordFactory.empty().copy(
                             testedGenes = setOf("ALK"),
                             drivers = Drivers(
-                                variants = setOf(
+                                variants = listOf(
                                     TestVariantFactory.createMinimal()
                                         .copy(
                                             gene = "ALK",
@@ -313,7 +313,7 @@ class GeneIsWildTypeTest {
                         TestPanelRecordFactory.empty().copy(
                             testedGenes = setOf("ALK"),
                             drivers = Drivers(
-                                fusions = setOf(
+                                fusions = listOf(
                                     TestFusionFactory.createMinimal().copy(
                                         geneEnd = "ALK",
                                         geneStart = "EML4",

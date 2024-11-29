@@ -13,21 +13,20 @@ import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.doid.TestDoidModelFactory
-import com.hartwig.serve.datamodel.ActionableEvents
-import com.hartwig.serve.datamodel.ImmutableActionableEvents
+import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class EvaluatedTreatmentAnnotatorTest {
 
     private val efficacyEntries = TestExtendedEvidenceEntryFactory.createProperTestExtendedEvidenceEntries()
-    private val actionableEvents: ActionableEvents = ImmutableActionableEvents.builder().build()
+    private val evidences: List<EfficacyEvidence> = emptyList()
     private val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
     private val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
     private val resistanceEvidenceMatcher = ResistanceEvidenceMatcher.create(
         doidModel,
         emptySet(),
-        actionableEvents,
+        evidences,
         treatmentDatabase,
         TestMolecularFactory.createMinimalTestMolecularHistory()
     )

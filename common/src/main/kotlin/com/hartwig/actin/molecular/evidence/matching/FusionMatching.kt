@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.evidence.matching
 
-import com.hartwig.serve.datamodel.fusion.FusionPair
+import com.hartwig.serve.datamodel.molecular.fusion.FusionPair
 
 object FusionMatching {
 

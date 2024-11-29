@@ -1,23 +1,33 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterEfficacyEvidence
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterTrials
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.geneFilter
 import com.hartwig.actin.molecular.evidence.matching.EvidenceMatcher
-import com.hartwig.serve.datamodel.ActionableEvent
-import com.hartwig.serve.datamodel.ActionableEvents
-import com.hartwig.serve.datamodel.gene.ActionableGene
-import com.hartwig.serve.datamodel.gene.GeneEvent
+import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 
-class BreakendEvidence(private val applicableActionableGenes: List<ActionableGene>) :
-    EvidenceMatcher<Disruption> {
+class BreakendEvidence(private val applicableActionableGenes: ActionableEvents) : EvidenceMatcher<Disruption> {
 
-    override fun findMatches(event: Disruption): List<ActionableEvent> {
-        return applicableActionableGenes.filter { event.isReportable && it.gene() == event.gene }
-
+    override fun findMatches(event: Disruption): ActionableEvents {
+        val evidences = applicableActionableGenes.evidences.filter {
+            event.isReportable && ActionableEventsExtraction.extractGene(it).gene() == event.gene
+        }
+        val trials = applicableActionableGenes.trials.filter {
+            event.isReportable && ActionableEventsExtraction.extractGene(it).gene() == event.gene
+        }
+        return ActionableEvents(evidences, trials)
     }
 
     companion object {
         fun create(actionableEvents: ActionableEvents): BreakendEvidence {
-            return BreakendEvidence(actionableEvents.genes().filter { it.event() == GeneEvent.ANY_MUTATION })
+            val evidences = filterEfficacyEvidence(actionableEvents.evidences, geneFilter()).filter {
+                ActionableEventsExtraction.extractGene(it).event() == GeneEvent.ANY_MUTATION
+            }
+            val trials = filterTrials(actionableEvents.trials, geneFilter()).filter {
+                ActionableEventsExtraction.extractGene(it).event() == GeneEvent.ANY_MUTATION
+            }
+            return BreakendEvidence(ActionableEvents(evidences, trials))
         }
     }
 }

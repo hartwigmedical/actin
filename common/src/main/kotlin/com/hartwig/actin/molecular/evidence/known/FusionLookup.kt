@@ -2,7 +2,7 @@ package com.hartwig.actin.molecular.evidence.known
 
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.FusionMatching
-import com.hartwig.serve.datamodel.fusion.KnownFusion
+import com.hartwig.serve.datamodel.molecular.fusion.KnownFusion
 
 internal object FusionLookup {
 

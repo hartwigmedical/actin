@@ -30,7 +30,7 @@ internal object TumorTestFactory {
                     baseMolecular.copy(
                         characteristics = baseMolecular.characteristics.copy(ploidy = 2.0),
                         drivers = baseMolecular.drivers.copy(
-                            copyNumbers = setOf(
+                            copyNumbers = listOf(
                                 TestCopyNumberFactory.createMinimal().copy(
                                     isReportable = true,
                                     gene = amplifiedGene,
@@ -61,7 +61,7 @@ internal object TumorTestFactory {
                     baseMolecular.copy(
                         characteristics = baseMolecular.characteristics.copy(ploidy = 2.0),
                         drivers = baseMolecular.drivers.copy(
-                            copyNumbers = setOf(
+                            copyNumbers = listOf(
                                 TestCopyNumberFactory.createMinimal().copy(
                                     isReportable = true,
                                     gene = amplifiedGene,

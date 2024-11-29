@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.ApplicableCancerType
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.CountryName
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
+import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import java.util.SortedSet
 
@@ -21,11 +22,6 @@ data class ExternalTrialSummary(
 )
 
 data class EventWithExternalTrial(val event: String, val trial: ExternalTrial)
-
-data class Hospital(val name: String, val isChildrensHospital: Boolean = false)
-
-private val CHILDREN_HOSPITALS =
-    setOf("PMC", "WKZ", "EKZ", "JKZ", "BKZ", "WAKZ", "Sophia Kinderziekenhuis", "Amalia Kinderziekenhuis", "MosaKids Kinderziekenhuis")
 
 fun Set<ExternalTrialSummary>.filterInternalTrials(internalTrials: Set<TrialMatch>): Set<ExternalTrialSummary> {
     val internalIds = internalTrials.map { it.identification.nctId }.toSet()
@@ -44,7 +40,7 @@ fun Set<ExternalTrialSummary>.filterNotInCountryOfReference(country: CountryName
 
 fun Set<ExternalTrialSummary>.filterExclusivelyInChildrensHospitals(): Set<ExternalTrialSummary> {
     return this.filter {
-        it.hospitals.isEmpty() || !it.hospitals.all(Hospital::isChildrensHospital)
+        it.hospitals.isEmpty() || !it.hospitals.all { hospital -> hospital.isChildrensHospital == true }
     }.toSet()
 }
 
@@ -80,14 +76,10 @@ object ExternalTrialSummarizer {
                 e.value.map { ewe -> ewe.trial.applicableCancerType }.toSortedSet(Comparator.comparing { c -> c.cancerType }),
                 countries.toSortedSet(Comparator.comparing { c -> c.name }),
                 hospitals.map { h -> h.second.key }.toSortedSet(),
-                hospitals.map { h -> h.second.value.map { i -> h.first to i } }.flatten()
-                    .map { h -> Hospital(h.second, isChildrensHospitalInNetherlands(h)) }.toSortedSet(Comparator.comparing { h -> h.name })
+                hospitals.flatMap { it.second.value.map { h -> h } }.toSortedSet(Comparator.comparing { h -> h.name })
             )
         }
             .toSortedSet(compareBy<ExternalTrialSummary> { it.actinMolecularEvents.joinToString() }.thenBy { it.sourceMolecularEvents.joinToString() }
                 .thenBy { it.cancerTypes.joinToString { t -> t.cancerType } }.thenBy { it.nctId })
     }
-
-    private fun isChildrensHospitalInNetherlands(h: Pair<Country, String>) =
-        h.second in CHILDREN_HOSPITALS && h.first.name == CountryName.NETHERLANDS
 }

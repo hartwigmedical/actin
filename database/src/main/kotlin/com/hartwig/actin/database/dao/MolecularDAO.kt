@@ -229,7 +229,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         inserter.execute()
     }
 
-    private fun writeVariants(sampleId: String, variants: Set<Variant>) {
+    private fun writeVariants(sampleId: String, variants: Collection<Variant>) {
         for (variant in variants) {
             val variantId = context.insertInto(
                 Tables.VARIANT,
@@ -302,7 +302,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         inserter.execute()
     }
 
-    private fun writeCopyNumbers(sampleId: String, copyNumbers: Set<CopyNumber>) {
+    private fun writeCopyNumbers(sampleId: String, copyNumbers: Collection<CopyNumber>) {
         for (copyNumber in copyNumbers) {
             val copyNumberId = context.insertInto(
                 Tables.COPYNUMBER,
@@ -351,7 +351,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         inserter.execute()
     }
 
-    private fun writeHomozygousDisruptions(sampleId: String, homozygousDisruptions: Set<HomozygousDisruption>) {
+    private fun writeHomozygousDisruptions(sampleId: String, homozygousDisruptions: Collection<HomozygousDisruption>) {
         for (homozygousDisruption in homozygousDisruptions) {
             val homozygousDisruptionId = context.insertInto(
                 Tables.HOMOZYGOUSDISRUPTION,
@@ -394,7 +394,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         inserter.execute()
     }
 
-    private fun writeDisruptions(sampleId: String, disruptions: Set<Disruption>) {
+    private fun writeDisruptions(sampleId: String, disruptions: Collection<Disruption>) {
         for (disruption in disruptions) {
             val disruptionId = context.insertInto(
                 Tables.DISRUPTION,
@@ -449,7 +449,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         inserter.execute()
     }
 
-    private fun writeFusions(sampleId: String, fusions: Set<Fusion>) {
+    private fun writeFusions(sampleId: String, fusions: Collection<Fusion>) {
         for (fusion in fusions) {
             val fusionId = context.insertInto(
                 Tables.FUSION,
@@ -502,7 +502,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         inserter.execute()
     }
 
-    private fun writeViruses(sampleId: String, viruses: Set<Virus>) {
+    private fun writeViruses(sampleId: String, viruses: Collection<Virus>) {
         for (virus in viruses) {
             val virusId = context.insertInto(
                 Tables.VIRUS,

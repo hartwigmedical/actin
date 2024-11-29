@@ -8,10 +8,8 @@ import com.hartwig.actin.datamodel.molecular.PanelRecord
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 
-class IHCAnnotator(
-    private val panelFusionAnnotator: PanelFusionAnnotator
-) :
-    MolecularAnnotator<IHCExtraction, PanelRecord> {
+class IHCAnnotator(private val panelFusionAnnotator: PanelFusionAnnotator) : MolecularAnnotator<IHCExtraction, PanelRecord> {
+
     override fun annotate(input: IHCExtraction): PanelRecord {
         return PanelRecord(
             date = input.date,

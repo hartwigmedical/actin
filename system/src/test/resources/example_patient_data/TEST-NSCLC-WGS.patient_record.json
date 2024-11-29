@@ -482,7 +482,10 @@
                         "name": "NETHERLANDS",
                         "hospitalsPerCity": {
                           "Tilburg": [
-                            "Elisabeth-TweeSteden Ziekenhuis"
+                            {
+                              "name": "Elisabeth-TweeSteden Ziekenhuis",
+                              "isChildrensHospital": false
+                            }
                           ]
                         }
                       },
@@ -490,7 +493,9 @@
                         "name": "GERMANY",
                         "hospitalsPerCity": {
                           "Stuttgart": [
-                            "Robert-Bosch-Krankenhaus - Klinik Schillerhoehe"
+                            {
+                              "name": "Robert-Bosch-Krankenhaus - Klinik Schillerhoehe"
+                            }
                           ]
                         }
                       }
@@ -604,7 +609,9 @@
                         "name": "NETHERLANDS",
                         "hospitalsPerCity": {
                           "Tilburg": [
-                            "Elisabeth-TweeSteden Ziekenhuis"
+                            {
+                              "name": "Elisabeth-TweeSteden Ziekenhuis"
+                            }
                           ]
                         }
                       },
@@ -612,7 +619,9 @@
                         "name": "GERMANY",
                         "hospitalsPerCity": {
                           "Stuttgart": [
-                            "Robert-Bosch-Krankenhaus - Klinik Schillerhoehe"
+                            {
+                              "name": "Robert-Bosch-Krankenhaus - Klinik Schillerhoehe"
+                            }
                           ]
                         }
                       }

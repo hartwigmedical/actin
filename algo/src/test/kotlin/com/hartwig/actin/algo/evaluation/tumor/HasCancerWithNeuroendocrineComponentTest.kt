@@ -62,10 +62,10 @@ class HasCancerWithNeuroendocrineComponentTest {
                 listOf(
                     baseMolecular.copy(
                         drivers = baseMolecular.drivers.copy(
-                            copyNumbers = setOf(
+                            copyNumbers = listOf(
                                 TestCopyNumberFactory.createMinimal().copy(type = CopyNumberType.LOSS, isReportable = true, gene = "TP53")
                             ),
-                            homozygousDisruptions = setOf(
+                            homozygousDisruptions = listOf(
                                 TestHomozygousDisruptionFactory.createMinimal().copy(isReportable = true, gene = "RB1")
                             )
                         )

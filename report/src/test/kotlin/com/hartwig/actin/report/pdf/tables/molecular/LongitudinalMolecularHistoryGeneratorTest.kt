@@ -8,9 +8,9 @@ import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.report.pdf.assertRow
 import com.hartwig.actin.report.pdf.getWrappedTable
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 val FIRST_TEST = TestMolecularFactory.createMinimalTestMolecularRecord().copy(date = LocalDate.of(2024, 7, 21))
 val SECOND_TEST = FIRST_TEST.copy(date = FIRST_TEST.date?.plusDays(1))
@@ -40,7 +40,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
 
     @Test
     fun `Should create row for each variant and mark as detected in correct tests`() {
-        val molecularHistory = MolecularHistory(listOf(FIRST_TEST.copy(drivers = Drivers(variants = setOf(VARIANT))), SECOND_TEST))
+        val molecularHistory = MolecularHistory(listOf(FIRST_TEST.copy(drivers = Drivers(variants = listOf(VARIANT))), SECOND_TEST))
         val result = LongitudinalMolecularHistoryGenerator(molecularHistory, emptyList(), 1f)
         assertRow(
             getWrappedTable(result),
@@ -65,8 +65,8 @@ class LongitudinalMolecularHistoryGeneratorTest {
             listOf(
                 FIRST_TEST.copy(
                     drivers = Drivers(
-                        variants = setOf(tierOneGeneTwoVariantEventTwo, tierOneGeneTwoVariant, tierTwoVariant, tierOneVariant),
-                        fusions = setOf(tierOneGeneTwoLowLikelihoodFusion)
+                        variants = listOf(tierOneGeneTwoVariantEventTwo, tierOneGeneTwoVariant, tierTwoVariant, tierOneVariant),
+                        fusions = listOf(tierOneGeneTwoLowLikelihoodFusion)
                     )
                 )
             )
@@ -143,7 +143,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
 
     @Test
     fun `Should create row for fusion and mark as detected in correct tests`() {
-        val molecularHistory = MolecularHistory(listOf(FIRST_TEST.copy(drivers = Drivers(fusions = setOf(FUSION))), SECOND_TEST))
+        val molecularHistory = MolecularHistory(listOf(FIRST_TEST.copy(drivers = Drivers(fusions = listOf(FUSION))), SECOND_TEST))
         val result = LongitudinalMolecularHistoryGenerator(molecularHistory, emptyList(), 1f)
         assertRow(
             getWrappedTable(result),

@@ -1,6 +1,6 @@
 package com.hartwig.actin.datamodel.molecular.evidence
 
-import com.hartwig.serve.datamodel.EvidenceLevelDetails
+import com.hartwig.serve.datamodel.efficacy.EvidenceLevelDetails
 import java.time.LocalDate
 
 object TestClinicalEvidenceFactory {
@@ -160,9 +160,9 @@ object TestClinicalEvidenceFactory {
 
     fun createTestExternalTrial(): ExternalTrial {
         return createExternalTrial(
-            "treatment",
+            "",
             setOf(
-                createCountry(CountryName.NETHERLANDS, mapOf("Leiden" to setOf("LUMC"))),
+                createCountry(CountryName.NETHERLANDS, mapOf("Leiden" to setOf(Hospital("LUMC", false)))),
                 createCountry(CountryName.BELGIUM, mapOf("Brussels" to emptySet()))
             ),
             url = "https://clinicaltrials.gov/study/NCT00000001",
@@ -183,7 +183,10 @@ object TestClinicalEvidenceFactory {
         )
     }
 
-    fun createCountry(countryName: CountryName, hospitalsPerCity: Map<String, Set<String>> = emptyMap()): Country {
+    fun createCountry(
+        countryName: CountryName,
+        hospitalsPerCity: Map<String, Set<Hospital>> = emptyMap()
+    ): Country {
         return Country(countryName, hospitalsPerCity)
     }
 }

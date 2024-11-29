@@ -1,13 +1,13 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
-import com.hartwig.serve.datamodel.ActionableEvent
-import com.hartwig.serve.datamodel.characteristic.ActionableCharacteristic
-import com.hartwig.serve.datamodel.fusion.ActionableFusion
-import com.hartwig.serve.datamodel.gene.ActionableGene
-import com.hartwig.serve.datamodel.gene.GeneEvent
-import com.hartwig.serve.datamodel.hotspot.ActionableHotspot
-import com.hartwig.serve.datamodel.immuno.ActionableHLA
-import com.hartwig.serve.datamodel.range.ActionableRange
+import com.hartwig.serve.datamodel.molecular.ActionableEvent
+import com.hartwig.serve.datamodel.molecular.characteristic.ActionableCharacteristic
+import com.hartwig.serve.datamodel.molecular.fusion.ActionableFusion
+import com.hartwig.serve.datamodel.molecular.gene.ActionableGene
+import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
+import com.hartwig.serve.datamodel.molecular.hotspot.ActionableHotspot
+import com.hartwig.serve.datamodel.molecular.immuno.ActionableHLA
+import com.hartwig.serve.datamodel.molecular.range.ActionableRange
 
 fun ActionableEvent.isCategoryEvent(): Boolean {
     return when (this) {
@@ -33,6 +33,6 @@ fun ActionableEvent.isCategoryEvent(): Boolean {
 }
 
 data class ActionabilityMatch(
-    val onLabelEvents: List<ActionableEvent>,
-    val offLabelEvents: List<ActionableEvent>
+    val onLabelEvidence: ActionableEvents,
+    val offLabelEvidence: ActionableEvents
 )

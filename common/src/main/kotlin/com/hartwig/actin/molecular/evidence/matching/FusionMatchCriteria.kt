@@ -8,5 +8,5 @@ data class FusionMatchCriteria(
     val geneEnd: String,
     val fusedExonUp: Int? = null,
     val fusedExonDown: Int? = null,
-    val driverType: FusionDriverType,
+    val driverType: FusionDriverType
 )

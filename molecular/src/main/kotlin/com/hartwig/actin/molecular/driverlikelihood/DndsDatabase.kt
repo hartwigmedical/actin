@@ -36,6 +36,7 @@ class DndsDatabase(
     private val oncoGeneLookup: Map<String, Map<DndsDriverType, DndsDatabaseEntry>>,
     private val tsgGeneLookup: Map<String, Map<DndsDriverType, DndsDatabaseEntry>>,
 ) {
+
     fun find(gene: String, geneRole: GeneRole, driverType: DndsDriverType): DndsDatabaseEntry? {
         return when (geneRole) {
             GeneRole.ONCO -> oncoGeneLookup[gene]?.get(driverType)

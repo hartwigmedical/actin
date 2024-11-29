@@ -15,11 +15,13 @@ import org.apache.logging.log4j.Logger
 import java.io.File
 import java.nio.file.Paths
 
-class Paver(private val ensemblDataDir: String,
-            private val refGenomeFasta: String,
-            private val refGenomeVersion: PaveRefGenomeVersion,
-            private val driverGenePanel: String,
-            private val tempDir: String) {
+class Paver(
+    private val ensemblDataDir: String,
+    private val refGenomeFasta: String,
+    private val refGenomeVersion: PaveRefGenomeVersion,
+    private val driverGenePanel: String,
+    private val tempDir: String
+) {
 
     private val logger: Logger = LogManager.getLogger(Paver::class.java)
 
@@ -33,14 +35,16 @@ class Paver(private val ensemblDataDir: String,
 
         buildPaveInputVcf(paveVcfQueryFile, queries)
 
-        configBuilder.checkAndParseCommandLine(arrayOf(
-            "-vcf_file", paveVcfQueryFile,
-            "-ensembl_data_dir", ensemblDataDir,
-            "-ref_genome", refGenomeFasta,
-            "-ref_genome_version", refGenomeVersion.display(),
-            "-driver_gene_panel", driverGenePanel,
-            "-output_dir", tempDir,
-        ))
+        configBuilder.checkAndParseCommandLine(
+            arrayOf(
+                "-vcf_file", paveVcfQueryFile,
+                "-ensembl_data_dir", ensemblDataDir,
+                "-ref_genome", refGenomeFasta,
+                "-ref_genome_version", refGenomeVersion.display(),
+                "-driver_gene_panel", driverGenePanel,
+                "-output_dir", tempDir,
+            )
+        )
 
         val paveApplication = PaveApplication(configBuilder)
         paveApplication.run()
@@ -58,7 +62,7 @@ class Paver(private val ensemblDataDir: String,
     private fun buildPaveInputVcf(vcfFile: String, queries: List<PaveQuery>) {
         logger.debug("Writing {} variants to {}", queries.size, vcfFile)
         val refSequence = IndexedFastaSequenceFile(File(refGenomeFasta))
-        val writer = VCFWriterFactory.openIndexedVCFWriter(vcfFile, refSequence);
+        val writer = VCFWriterFactory.openIndexedVCFWriter(vcfFile, refSequence)
 
         val sortedQueries = queries.sortedWith(
             compareBy<PaveQuery> { chromToIndex(it.chromosome) }.thenBy { it.position }
@@ -164,7 +168,8 @@ fun parsePaveTranscriptImpact(impacts: List<String>?): List<PaveTranscriptImpact
                 effects = interpretVariantEffects(it[3]),
                 spliceRegion = interpretSpliceRegion(it[4]),
                 hgvsCodingImpact = it[5],
-                hgvsProteinImpact = it[6])
+                hgvsProteinImpact = it[6]
+            )
         }
 }
 
