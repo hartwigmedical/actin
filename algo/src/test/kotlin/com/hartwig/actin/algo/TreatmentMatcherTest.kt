@@ -87,9 +87,8 @@ class TreatmentMatcherTest {
         assertThat(treatmentMatcher.evaluateAndAnnotateMatchesForPatient(patient))
             .isEqualTo(
                 expectedTreatmentMatch.copy(
-                    standardOfCareMatches = EvaluatedTreatmentAnnotator.create(evidenceEntries, resistanceEvidenceMatcher).annotate(
-                        expectedSocTreatments
-                    )
+                    standardOfCareMatches = EvaluatedTreatmentAnnotator.create(evidenceEntries, resistanceEvidenceMatcher)
+                        .annotate(expectedSocTreatments)
                 )
             )
     }
