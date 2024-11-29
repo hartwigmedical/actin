@@ -4,7 +4,6 @@ import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
-import com.hartwig.actin.datamodel.clinical.Cyp
 import com.hartwig.actin.datamodel.clinical.DrugInteraction
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
@@ -141,6 +140,6 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     }
 
     companion object {
-        val UNDETERMINED_CYP = Cyp.CYP2J2
+        val UNDETERMINED_CYP_STRING = "2J2"
     }
 }
