@@ -15,8 +15,10 @@ import com.hartwig.actin.datamodel.trial.CriterionReference
 import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
+import com.hartwig.actin.datamodel.trial.Location
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.datamodel.trial.TrialPhase
+import com.hartwig.actin.datamodel.trial.TrialSource
 import java.time.LocalDate
 
 object TestTreatmentMatchFactory {
@@ -49,7 +51,9 @@ object TestTreatmentMatchFactory {
                     acronym = "TEST-1",
                     title = "Example test trial 1",
                     nctId = "NCT00000010",
-                    phase = TrialPhase.PHASE_1
+                    phase = TrialPhase.PHASE_1,
+                    source = TrialSource.LKO,
+                    locations = listOf(Location(1, "Erasmus MC"))
                 ),
                 isPotentiallyEligible = true,
                 evaluations = createTestGeneralEvaluationsTrial1(),

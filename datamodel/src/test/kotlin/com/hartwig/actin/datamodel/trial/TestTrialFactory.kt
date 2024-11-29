@@ -11,7 +11,8 @@ object TestTrialFactory {
                 open = true,
                 acronym = "",
                 title = "",
-                nctId = null
+                nctId = null,
+                source = TrialSource.EMC
             ),
             cohorts = emptyList(),
             generalEligibility = emptyList()
@@ -23,7 +24,8 @@ object TestTrialFactory {
         return minimal.copy(
             identification = minimal.identification.copy(
                 acronym = "TEST-TRIAL",
-                title = "This is an ACTIN test trial"
+                title = "This is an ACTIN test trial",
+                locations = listOf(Location(1, "Amsterdam UMC"), Location(2, "Antoni van Leeuwenhoek"))
             ),
             generalEligibility = createGeneralEligibility(),
             cohorts = createTestCohorts(),
@@ -49,7 +51,7 @@ object TestTrialFactory {
                             rule = EligibilityRule.NOT,
                             parameters = listOf(
                                 EligibilityFunction(rule = EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES, parameters = emptyList())
-                                )
+                            )
                         ),
                         references = setOf(
                             CriterionReference(id = "E-01", text = "Has no active CNS metastases and has exhausted SOC")

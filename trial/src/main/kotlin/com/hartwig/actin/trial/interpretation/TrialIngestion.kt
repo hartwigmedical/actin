@@ -4,9 +4,11 @@ import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.datamodel.trial.Cohort
 import com.hartwig.actin.datamodel.trial.CriterionReference
 import com.hartwig.actin.datamodel.trial.Eligibility
+import com.hartwig.actin.datamodel.trial.Location
 import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.datamodel.trial.TrialPhase
+import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.filter.GeneFilter
@@ -60,11 +62,13 @@ class TrialIngestion(
 
         val cohortsByTrial = trialConfigModel.cohorts().groupBy { it.trialId }
         val trialsWithEvaluableOrNoCohorts = trialConfigModel.trials()
-            .mapNotNull { trial ->
+            .filter { trial ->
                 val cohorts = cohortsByTrial[trial.trialId]
-                if (cohorts.isNullOrEmpty() || cohorts.any { it.evaluable }) trial.trialId else null
+                (cohorts.isNullOrEmpty() || cohorts.any { it.evaluable })
             }
+            .map { it.trialId }
             .distinct()
+            .toSet()
 
         return trialConfigModel.trials().mapNotNull { trialConfig ->
             trialConfig.takeIf { it.trialId in trialsWithEvaluableOrNoCohorts }?.let { config ->
@@ -113,8 +117,14 @@ class TrialIngestion(
             acronym = trialConfig.acronym,
             title = trialConfig.title,
             nctId = trialConfig.nctId,
-            phase = trialConfig.phase?.let(TrialPhase::fromString)
-        )
+            phase = trialConfig.phase?.let(TrialPhase::fromString),
+            source = trialConfig.source?.let { TrialSource.valueOf(it) },
+            locations =
+                trialConfig.location.takeIf { !it.isNullOrEmpty() }?.let {
+                    it.split(":")
+                        .map { loc -> loc.split(":") }
+                        .map { (id, name) -> Location(id.toInt(), name) }
+                })
     }
 
     private fun determineOpenStatus(trialConfig: TrialDefinitionConfig): Boolean {
