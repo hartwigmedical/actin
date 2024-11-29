@@ -19,18 +19,22 @@ object TestEvaluationFunctionFactory {
         return fixedEvaluation(EvaluationResult.FAIL)
     }
 
-    fun undetermined(): EvaluationFunction {
+    fun unrecoverableUndetermined(): EvaluationFunction {
         return fixedEvaluation(EvaluationResult.UNDETERMINED)
+    }
+
+    fun recoverableUndetermined(): EvaluationFunction {
+        return fixedEvaluation(EvaluationResult.UNDETERMINED, recoverable = true)
     }
 
     fun notEvaluated(): EvaluationFunction {
         return fixedEvaluation(EvaluationResult.NOT_EVALUATED)
     }
 
-    private fun fixedEvaluation(output: EvaluationResult): EvaluationFunction {
+    private fun fixedEvaluation(output: EvaluationResult, recoverable: Boolean = false): EvaluationFunction {
         return object : EvaluationFunction {
             override fun evaluate(record: PatientRecord): Evaluation {
-                return EvaluationTestFactory.withResult(output)
+                return EvaluationTestFactory.withResult(output, recoverable)
             }
         }
     }

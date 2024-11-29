@@ -73,7 +73,7 @@ class HasLimitedDerivedCreatinineClearance internal constructor(
                 "Cockcroft-Gault evaluation ambiguous"
             )
 
-            result == EvaluationResult.PASS && weight == null -> EvaluationFactory.notEvaluated(
+            result == EvaluationResult.PASS && weight == null -> EvaluationFactory.recoverableUndetermined(
                 "Body weight is unknown but Cockcroft-Gault is most likely below maximum of $maxCreatinineClearance",
                 "Cockcroft-Gault most likely below max of $maxCreatinineClearance but weight unknown",
             )

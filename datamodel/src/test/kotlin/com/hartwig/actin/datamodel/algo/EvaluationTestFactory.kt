@@ -2,8 +2,8 @@ package com.hartwig.actin.datamodel.algo
 
 object EvaluationTestFactory {
 
-    fun withResult(result: EvaluationResult): Evaluation {
-        val base = Evaluation(result = result, recoverable = false)
+    fun withResult(result: EvaluationResult, recoverable: Boolean = false): Evaluation {
+        val base = Evaluation(result = result, recoverable = recoverable)
 
         return when (result) {
             EvaluationResult.PASS -> {

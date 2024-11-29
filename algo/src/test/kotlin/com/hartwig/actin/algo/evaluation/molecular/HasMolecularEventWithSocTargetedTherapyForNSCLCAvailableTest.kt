@@ -237,8 +237,8 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
     private fun impactWithExon(affectedExon: Int) = TestTranscriptImpactFactory.createMinimal().copy(affectedExon = affectedExon)
 
     private fun evaluateFunctions(expected: EvaluationResult, record: PatientRecord) {
-        EvaluationAssert.assertEvaluation(expected, functionIncludingAllGenes.evaluate(record))
-        EvaluationAssert.assertEvaluation(expected, functionIncludingSpecificGene.evaluate(record))
+        assertThat(functionIncludingAllGenes.evaluate(record).result).isEqualTo(expected)
+        assertThat(functionIncludingSpecificGene.evaluate(record).result).isEqualTo(expected)
     }
 
     private fun evaluateMessages(expected: Set<String>, fromEvaluation: Set<String>) {

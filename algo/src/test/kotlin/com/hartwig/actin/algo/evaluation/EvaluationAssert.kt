@@ -15,6 +15,10 @@ object EvaluationAssert {
         }
     }
 
+    fun assertCombinedEvaluation(expected: EvaluationResult, actual: Evaluation) {
+        assertThat(actual.result).isEqualTo(expected)
+    }
+
     fun assertEvaluation(expected: EvaluationResult, actual: Evaluation) {
         assertThat(actual.result).isEqualTo(expected)
         when (actual.result) {

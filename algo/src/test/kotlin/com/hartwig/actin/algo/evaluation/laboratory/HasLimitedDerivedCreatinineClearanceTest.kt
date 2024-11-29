@@ -95,7 +95,7 @@ class HasLimitedDerivedCreatinineClearanceTest {
 
         // CG 67
         val fallBack2 = create(Gender.FEMALE, listOf(creatinine), emptyList())
-        assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(fallBack2, LabMeasurement.CREATININE, creatinine))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(fallBack2, LabMeasurement.CREATININE, creatinine))
     }
 
     private fun create(gender: Gender, labValues: List<LabValue>, bodyWeights: List<BodyWeight>): PatientRecord {

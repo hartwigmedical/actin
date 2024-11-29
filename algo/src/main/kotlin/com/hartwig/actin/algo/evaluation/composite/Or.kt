@@ -9,15 +9,20 @@ class Or(private val functions: List<EvaluationFunction>) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val evaluationsByResult = functions.map { it.evaluate(record) }.distinct().groupBy(Evaluation::result)
-        val best = evaluationsByResult.keys.maxOrNull()
+        val evaluationResult = evaluationsByResult.keys.maxOrNull()
             ?: throw IllegalStateException("Could not determine OR result for functions: $functions")
 
-        val additionalEvaluations = if (best == EvaluationResult.PASS) {
+        val additionalEvaluations = if (evaluationResult == EvaluationResult.PASS) {
             evaluationsByResult[EvaluationResult.WARN]?.filter { it.exclusionMolecularEvents.isNotEmpty() || it.inclusionMolecularEvents.isNotEmpty() }
                 ?: emptyList()
         } else emptyList()
-        val evaluations = evaluationsByResult[best]!! + additionalEvaluations
+        val evaluationsToDetermineRecoverable = evaluationsByResult[evaluationResult]!! + additionalEvaluations
 
-        return evaluations.fold(Evaluation(best, evaluations.any(Evaluation::recoverable)), Evaluation::addMessagesAndEvents)
+        return if (evaluationResult == EvaluationResult.PASS) {
+            evaluationsByResult[evaluationResult]!!.fold(Evaluation(evaluationResult, true), Evaluation::addMessagesAndEvents)
+        } else evaluationsByResult.map { it.value }.flatten().fold(
+            Evaluation(evaluationResult, evaluationsToDetermineRecoverable.any(Evaluation::recoverable)),
+            Evaluation::addMessagesAndEvents
+        ).copy(result = evaluationResult)
     }
 }

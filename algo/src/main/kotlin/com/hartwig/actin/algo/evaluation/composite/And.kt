@@ -3,18 +3,30 @@ package com.hartwig.actin.algo.evaluation.composite
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.EvaluationResult
 
 class And(private val functions: List<EvaluationFunction>) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val evaluationsByResult = functions.map { it.evaluate(record) }.distinct().groupBy(Evaluation::result)
-        val worst = evaluationsByResult.keys.minOrNull()
+        val evaluationResult = evaluationsByResult.keys.minOrNull()
             ?: throw IllegalStateException("Could not determine AND result for functions: $functions")
 
-        val (recoverableEvaluations, unrecoverableEvaluations) = evaluationsByResult[worst]!!.partition(Evaluation::recoverable)
+        val (_, unrecoverableEvaluations) = evaluationsByResult[evaluationResult]!!.partition(Evaluation::recoverable)
         val recoverable = unrecoverableEvaluations.isEmpty()
-        val evaluations = if (recoverable) recoverableEvaluations else unrecoverableEvaluations
+        val additionalEvaluations =
+            evaluationsByResult[EvaluationResult.PASS]?.filter { it.exclusionMolecularEvents.isNotEmpty() || it.inclusionMolecularEvents.isNotEmpty() }
+                ?: emptyList()
 
-        return evaluations.fold(Evaluation(worst, recoverable), Evaluation::addMessagesAndEvents)
+        return if (evaluationResult == EvaluationResult.FAIL && !recoverable) {
+            val result = evaluationsByResult[evaluationResult]!!.map { it.copy(result = evaluationResult) }
+                .fold(Evaluation(evaluationResult, false), Evaluation::addMessagesAndEvents)
+            result.copy(
+                inclusionMolecularEvents = result.inclusionMolecularEvents + additionalEvaluations.flatMap { it.inclusionMolecularEvents },
+                exclusionMolecularEvents = result.exclusionMolecularEvents + additionalEvaluations.flatMap { it.exclusionMolecularEvents })
+        } else {
+            evaluationsByResult.map { it.value }.flatten().fold(Evaluation(evaluationResult, recoverable), Evaluation::addMessagesAndEvents)
+                .copy(result = evaluationResult)
+        }
     }
 }

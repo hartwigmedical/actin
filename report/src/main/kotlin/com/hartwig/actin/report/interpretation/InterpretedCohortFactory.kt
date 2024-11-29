@@ -87,17 +87,10 @@ object InterpretedCohortFactory {
 
     private fun extractWarnings(evaluationMap: Map<Eligibility, Evaluation>): Set<String> {
         return evaluationMap.values.flatMap { evaluation ->
-            when {
-                evaluation.result == EvaluationResult.FAIL && evaluation.recoverable ->
-                    evaluation.failGeneralMessages
-
-                evaluation.result == EvaluationResult.WARN ->
-                    evaluation.warnGeneralMessages
-
-                evaluation.result == EvaluationResult.UNDETERMINED && !evaluation.recoverable ->
-                    evaluation.undeterminedGeneralMessages
-
-                else -> emptySet()
+            if ((evaluation.result == EvaluationResult.FAIL && evaluation.recoverable) || evaluation.result == EvaluationResult.WARN || (evaluation.result == EvaluationResult.UNDETERMINED && !evaluation.recoverable)) {
+                (evaluation.failGeneralMessages + evaluation.warnGeneralMessages + evaluation.undeterminedGeneralMessages).toSet()
+            } else {
+                emptySet()
             }
         }.toSet()
     }

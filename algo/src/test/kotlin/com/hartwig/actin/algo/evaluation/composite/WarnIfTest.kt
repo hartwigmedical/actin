@@ -12,17 +12,18 @@ import org.junit.Test
 class WarnIfTest {
 
     @Test
-    fun canWarnIf() {
+    fun `Should properly warn if`() {
         val patient: PatientRecord = TestPatientFactory.createProperTestPatientRecord()
         assertEvaluation(EvaluationResult.WARN, WarnIf(TestEvaluationFunctionFactory.pass()).evaluate(patient))
         assertEvaluation(EvaluationResult.WARN, WarnIf(TestEvaluationFunctionFactory.warn()).evaluate(patient))
         assertEvaluation(EvaluationResult.PASS, WarnIf(TestEvaluationFunctionFactory.fail()).evaluate(patient))
-        assertEvaluation(EvaluationResult.PASS, WarnIf(TestEvaluationFunctionFactory.undetermined()).evaluate(patient))
+        assertEvaluation(EvaluationResult.PASS, WarnIf(TestEvaluationFunctionFactory.unrecoverableUndetermined()).evaluate(patient))
         assertEvaluation(EvaluationResult.PASS, WarnIf(TestEvaluationFunctionFactory.notEvaluated()).evaluate(patient))
+        assertEvaluation(EvaluationResult.WARN, WarnIf(TestEvaluationFunctionFactory.recoverableUndetermined()).evaluate(patient))
     }
 
     @Test
-    fun canMoveMessagesToWarnOnPass() {
+    fun `Should move messages to warn on pass`() {
         val result: Evaluation =
             WarnIf(TestEvaluationFunctionFactory.pass()).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         assertThat(result.passSpecificMessages).isEmpty()

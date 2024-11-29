@@ -96,7 +96,7 @@ class HasSufficientDerivedCreatinineClearanceTest {
 
         // CG 103
         val fallBack1 = create(Gender.MALE, listOf(creatinine), emptyList())
-        assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(fallBack1, LabMeasurement.CREATININE, creatinine))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(fallBack1, LabMeasurement.CREATININE, creatinine))
 
         // CG 67
         val fallBack2 = create(Gender.FEMALE, listOf(creatinine), emptyList())
