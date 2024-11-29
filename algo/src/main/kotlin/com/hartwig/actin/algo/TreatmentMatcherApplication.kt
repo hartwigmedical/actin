@@ -41,7 +41,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         PatientPrinter.printRecord(patient)
 
         LOGGER.info("Loading trials from {}", config.trialDatabaseDirectory)
-        val trials = TrialJson.readFromDir(config.trialDatabaseDirectory).filterNot { it.identification.source == TrialSource.NKI }
+        val trials = TrialJson.readFromDir(config.trialDatabaseDirectory).filterNot { it.identification.source == TrialSource.LKO }
         LOGGER.info(" Loaded {} trials", trials.size)
 
         LOGGER.info("Loading DOID tree from {}", config.doidJson)
