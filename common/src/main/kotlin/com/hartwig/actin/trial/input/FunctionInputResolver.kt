@@ -3,6 +3,7 @@ package com.hartwig.actin.trial.input
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver
 import com.hartwig.actin.datamodel.clinical.AtcLevel
+import com.hartwig.actin.datamodel.clinical.Cyp
 import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.ReceptorType
 import com.hartwig.actin.datamodel.clinical.Transporter
@@ -28,7 +29,6 @@ import com.hartwig.actin.trial.input.single.ManyGenes
 import com.hartwig.actin.trial.input.single.ManyIntents
 import com.hartwig.actin.trial.input.single.ManyIntentsOneInteger
 import com.hartwig.actin.trial.input.single.ManySpecificTreatmentsTwoIntegers
-import com.hartwig.actin.trial.input.single.OneCyp
 import com.hartwig.actin.trial.input.single.OneCypOneInteger
 import com.hartwig.actin.trial.input.single.OneDoidTermOneInteger
 import com.hartwig.actin.trial.input.single.OneDoubleOneGender
@@ -772,7 +772,7 @@ class FunctionInputResolver(
         }
     }
 
-    fun createOneCypInput(function: EligibilityFunction): OneCyp {
+    fun createOneCypInput(function: EligibilityFunction): Cyp {
         assertParamConfig(function, FunctionInput.ONE_CYP, 1)
 
         val cyp = function.parameters.first() as String
@@ -780,7 +780,7 @@ class FunctionInputResolver(
             throw IllegalArgumentException("Not a proper CYP: $cyp")
         }
 
-        return OneCyp(cyp)
+        return Cyp.valueOf(cyp)
     }
 
     fun createOneCypOneIntegerInput(function: EligibilityFunction): OneCypOneInteger {
@@ -789,7 +789,7 @@ class FunctionInputResolver(
         if (!MedicationInputChecker.isCyp(cyp)) {
             throw IllegalArgumentException("Not a proper CYP: $cyp")
         }
-        return OneCypOneInteger(cyp = cyp, integer = parameterAsString(function, 1).toInt())
+        return OneCypOneInteger(cyp = Cyp.valueOf(cyp), integer = parameterAsString(function, 1).toInt())
     }
 
     fun createOneTransporterInput(function: EligibilityFunction): Transporter {

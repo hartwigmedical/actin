@@ -9,11 +9,11 @@ class MedicationInputCheckerTest {
 
     @Test
     fun `Should determine if string is CYP`() {
-        assertThat(isCyp("3A4")).isTrue
+        assertThat(isCyp("CYP3A4_5")).isTrue
+        assertThat(isCyp("CYP2B6")).isTrue
+        assertThat(isCyp("3A4")).isFalse
+        assertThat(isCyp("CYP")).isFalse
         assertThat(isCyp("CYP3A4")).isFalse
-        assertThat(isCyp("A4")).isFalse
-        assertThat(isCyp("A4A")).isFalse
-        assertThat(isCyp("3A")).isFalse
     }
 
     @Test

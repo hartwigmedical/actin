@@ -2,6 +2,7 @@ package com.hartwig.actin.trial.input
 
 import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.datamodel.clinical.AtcLevel
+import com.hartwig.actin.datamodel.clinical.Cyp
 import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.ReceptorType
 import com.hartwig.actin.datamodel.clinical.Transporter
@@ -21,7 +22,6 @@ import com.hartwig.actin.trial.input.single.ManyGenes
 import com.hartwig.actin.trial.input.single.ManyIntents
 import com.hartwig.actin.trial.input.single.ManyIntentsOneInteger
 import com.hartwig.actin.trial.input.single.ManySpecificTreatmentsTwoIntegers
-import com.hartwig.actin.trial.input.single.OneCyp
 import com.hartwig.actin.trial.input.single.OneCypOneInteger
 import com.hartwig.actin.trial.input.single.OneDoubleOneGender
 import com.hartwig.actin.trial.input.single.OneGene
@@ -776,29 +776,30 @@ class FunctionInputResolverTest {
     fun `Should resolve functions with one cyp input`() {
         val resolver = createTestResolver()
         val rule = firstOfType(FunctionInput.ONE_CYP)
-        val cyp = "3A4"
+        val cyp = "CYP3A4_5"
         val valid = create(rule, listOf(cyp))
         assertThat(resolver.hasValidInputs(valid)).isTrue
 
-        val expected = OneCyp(cyp)
+        val expected = Cyp.valueOf(cyp)
         assertThat(resolver.createOneCypInput(valid)).isEqualTo(expected)
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("not a cyp")))).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("3A", "33")))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("3A4_5")))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("CYP")))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("CYP3A4_5;CYP2J2")))).isFalse
     }
 
     @Test
     fun `Should resolve functions with one cyp and one integer input`() {
         val resolver = createTestResolver()
         val rule = firstOfType(FunctionInput.ONE_CYP_ONE_INTEGER)
-        val valid = create(rule, listOf("3A4", "1"))
+        val valid = create(rule, listOf("CYP3A4_5", "1"))
         assertThat(resolver.hasValidInputs(valid)).isTrue
 
-        assertThat(resolver.createOneCypOneIntegerInput(valid)).isEqualTo(OneCypOneInteger("3A4", 1))
+        assertThat(resolver.createOneCypOneIntegerInput(valid)).isEqualTo(OneCypOneInteger(Cyp.CYP3A4_5, 1))
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("3A4")))).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("3A4", "1", "2")))).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("CYP3A4", "1")))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("3A4_5")))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("CYP", "2")))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("CYP3A4_5;CYP2J2", "1")))).isFalse
     }
 
     @Test
