@@ -6,7 +6,7 @@
     "registrationDate": {
       "year": 2024,
       "month": 9,
-      "day": 1
+      "day": 10
     },
     "questionnaireDate": {
       "year": 2024,
@@ -54,8 +54,10 @@
     "ecg": {
       "hasSigAberrationLatestECG": false,
       "aberrationDescription": "",
-      "qtcfValue": 430,
-      "qtcfUnit": "ms"
+      "qtcfMeasure": {
+        "value": 430.0,
+        "unit": "ms"
+      }
     },
     "lvef": 0.5,
     "hasComplications": true
@@ -392,19 +394,19 @@
   ],
   "vitalFunctions": [
     {
-      "date": "2024-09-01T08:00:00",
+      "date": "2024-09-09T00:00:00",
       "category": "NON_INVASIVE_BLOOD_PRESSURE",
-      "subCategory": "SYSTOLIC_BLOOD_PRESSURE",
+      "subcategory": "systolic blood pressure",
       "value": 130.0,
-      "unit": "MILLIMETERS_OF_MERCURY",
+      "unit": "mmHg",
       "valid": true
     },
     {
-      "date": "2024-09-01T08:00:00",
+      "date": "2024-09-09T00:00:00",
       "category": "NON_INVASIVE_BLOOD_PRESSURE",
-      "subCategory": "DIASTOLIC_BLOOD_PRESSURE",
+      "subcategory": "diastolic blood pressure",
       "value": 85.0,
-      "unit": "MILLIMETERS_OF_MERCURY",
+      "unit": "mmHg",
       "valid": true
     }
   ],
