@@ -1,6 +1,7 @@
 package com.hartwig.actin.trial.config
 
 import com.hartwig.actin.datamodel.trial.EligibilityRule
+import com.hartwig.actin.datamodel.trial.TrialLocation
 import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.trial.interpretation.EligibilityFactory
 import com.hartwig.actin.trial.serialization.TrialJson
@@ -119,7 +120,11 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
         val invalidPhases = trialDefinitions.filter { it.phase != null && TrialPhase.fromString(it.phase) == null }
             .map { TrialDefinitionValidationError(it, "Invalid phase: '${it.phase}'") }
 
-        return (duplicatedTrialIds + duplicatedTrialFileIds + invalidPhases).toSet()
+        val invalidLocations = trialDefinitions.filter { trial ->
+            trial.location?.let { runCatching { TrialLocation.fromString(it) }.isFailure } ?: false
+        }.map { TrialDefinitionValidationError(it, "Invalid Location: '${it.location}'") }
+
+        return (duplicatedTrialIds + duplicatedTrialFileIds + invalidPhases + invalidLocations).toSet()
     }
 
     private fun validateCohorts(

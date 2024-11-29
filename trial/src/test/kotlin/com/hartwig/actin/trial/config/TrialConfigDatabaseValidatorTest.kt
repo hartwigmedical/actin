@@ -37,7 +37,9 @@ class TrialConfigDatabaseValidatorTest {
                 config = TRIAL_DEFINITION_1,
                 message = "Duplicated trial file id of trial_1"
             ),
-            TrialDefinitionValidationError(config = TRIAL_DEFINITION_3, message = "Invalid phase: 'invalid phase'")
+            TrialDefinitionValidationError(config = TRIAL_DEFINITION_3, message = "Invalid phase: 'invalid phase'"),
+            TrialDefinitionValidationError(config = TRIAL_DEFINITION_3, message = "Invalid Location: '1,EMC:,'")
+
         )
         assertThat(validation.cohortDefinitionValidationErrors).containsExactly(
             CohortDefinitionValidationError(
@@ -82,7 +84,8 @@ class TrialConfigDatabaseValidatorTest {
         private const val TRIAL_ID_3 = "trial 3"
 
         val TRIAL_DEFINITION_1 = TestTrialDefinitionConfigFactory.MINIMAL.copy(trialId = TRIAL_ID_1, open = true)
-        val TRIAL_DEFINITION_3 = TestTrialDefinitionConfigFactory.MINIMAL.copy(trialId = TRIAL_ID_3, open = true, phase = "invalid phase")
+        val TRIAL_DEFINITION_3 =
+            TestTrialDefinitionConfigFactory.MINIMAL.copy(trialId = TRIAL_ID_3, open = true, phase = "invalid phase", location = "1,EMC:,")
 
         private val COHORT_DEFINITION_1 = TestCohortDefinitionConfigFactory.MINIMAL.copy(
             trialId = TRIAL_ID_1, evaluable = true, open = true, slotsAvailable = true, ignore = false, cohortId = "A"

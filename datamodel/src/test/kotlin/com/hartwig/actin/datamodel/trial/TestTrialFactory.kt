@@ -25,7 +25,7 @@ object TestTrialFactory {
             identification = minimal.identification.copy(
                 acronym = "TEST-TRIAL",
                 title = "This is an ACTIN test trial",
-                locations = listOf(Location(1, "Amsterdam UMC"), Location(2, "Antoni van Leeuwenhoek"))
+                locations = listOf(TrialLocation(1, "Amsterdam UMC"), TrialLocation(2, "Antoni van Leeuwenhoek"))
             ),
             generalEligibility = createGeneralEligibility(),
             cohorts = createTestCohorts(),

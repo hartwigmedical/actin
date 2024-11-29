@@ -15,8 +15,8 @@ import com.hartwig.actin.datamodel.trial.CriterionReference
 import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
-import com.hartwig.actin.datamodel.trial.Location
 import com.hartwig.actin.datamodel.trial.TrialIdentification
+import com.hartwig.actin.datamodel.trial.TrialLocation
 import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
 import java.time.LocalDate
@@ -53,7 +53,7 @@ object TestTreatmentMatchFactory {
                     nctId = "NCT00000010",
                     phase = TrialPhase.PHASE_1,
                     source = TrialSource.LKO,
-                    locations = listOf(Location(1, "Erasmus MC"))
+                    locations = listOf(TrialLocation(1, "Erasmus MC"))
                 ),
                 isPotentiallyEligible = true,
                 evaluations = createTestGeneralEvaluationsTrial1(),
@@ -239,19 +239,6 @@ object TestTreatmentMatchFactory {
                 function = EligibilityFunction(rule = EligibilityRule.MSI_SIGNATURE, parameters = emptyList()),
                 references = setOf(CriterionReference(id = "I-01", text = "MSI")),
             ) to unrecoverable(EvaluationResult.PASS, "Tumor is MSI", "MSI", "MSI")
-        )
-    }
-
-    private fun createTestCohortEvaluationsTrial2CohortB(): Map<Eligibility, Evaluation> {
-        return mapOf(
-            Eligibility(
-                function = EligibilityFunction(
-                    rule = EligibilityRule.NOT, parameters = listOf(
-                        EligibilityFunction(rule = EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES)
-                    )
-                ),
-                references = setOf(CriterionReference(id = "I-03", text = "Patient should not have had pembrolizumab treatment"))
-            ) to unrecoverable(EvaluationResult.FAIL, "Patient has had pembrolizumab treatment", "Pembrolizumab treatment", null)
         )
     }
 

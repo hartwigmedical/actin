@@ -4,9 +4,9 @@ import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.datamodel.trial.Cohort
 import com.hartwig.actin.datamodel.trial.CriterionReference
 import com.hartwig.actin.datamodel.trial.Eligibility
-import com.hartwig.actin.datamodel.trial.Location
 import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.datamodel.trial.TrialIdentification
+import com.hartwig.actin.datamodel.trial.TrialLocation
 import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.doid.DoidModel
@@ -64,10 +64,9 @@ class TrialIngestion(
         val trialsWithEvaluableOrNoCohorts = trialConfigModel.trials()
             .filter { trial ->
                 val cohorts = cohortsByTrial[trial.trialId]
-                (cohorts.isNullOrEmpty() || cohorts.any { it.evaluable })
+                cohorts.isNullOrEmpty() || cohorts.any { it.evaluable }
             }
             .map { it.trialId }
-            .distinct()
             .toSet()
 
         return trialConfigModel.trials().mapNotNull { trialConfig ->
@@ -118,13 +117,9 @@ class TrialIngestion(
             title = trialConfig.title,
             nctId = trialConfig.nctId,
             phase = trialConfig.phase?.let(TrialPhase::fromString),
-            source = trialConfig.source?.let { TrialSource.valueOf(it) },
-            locations =
-                trialConfig.location.takeIf { !it.isNullOrEmpty() }?.let {
-                    it.split(":")
-                        .map { loc -> loc.split(":") }
-                        .map { (id, name) -> Location(id.toInt(), name) }
-                })
+            source = trialConfig.source?.let(TrialSource::valueOf),
+            locations = trialConfig.location?.let(TrialLocation::fromString)
+        )
     }
 
     private fun determineOpenStatus(trialConfig: TrialDefinitionConfig): Boolean {

@@ -86,7 +86,7 @@ class TrialIngestionTest {
     }
 
 
-    @Test(expected = IllegalStateException::class)
+    @Test
     fun `Should ignore trials without evaluable cohorts`() {
 
         val trialConfigDatabase = TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase().copy(
@@ -112,10 +112,7 @@ class TrialIngestionTest {
         )
         val ingestionResult = ingestion.ingestTrials()
         assertThat(ingestionResult.trials).hasSize(2)
-
-        findTrial(ingestionResult.trials, "TEST-1")
-        findTrial(ingestionResult.trials, "TEST-2")
-        findTrial(ingestionResult.trials, "TEST-3")
+        assertThat(ingestionResult.trials.map { it.identification.trialId }).containsExactly("TEST-1", "TEST-2")
     }
 
     @Test(expected = IllegalStateException::class)

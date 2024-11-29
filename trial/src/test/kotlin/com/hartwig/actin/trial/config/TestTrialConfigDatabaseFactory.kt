@@ -34,7 +34,7 @@ object TestTrialConfigDatabaseFactory {
         nctId = "nctId for $trialId",
         phase = null,
         source = "EMC",
-        location = ""
+        location = "1,EMC"
     )
 
     fun createTestCohortDefinitionConfigs(): List<CohortDefinitionConfig> {
