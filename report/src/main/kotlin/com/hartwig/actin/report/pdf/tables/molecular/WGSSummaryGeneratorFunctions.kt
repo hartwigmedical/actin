@@ -89,7 +89,7 @@ object WGSSummaryGeneratorFunctions {
         return table
     }
 
-    private fun createTmbCells(
+    fun createTmbCells(
         molecular: MolecularTest,
         isShort: Boolean,
         table: Table
