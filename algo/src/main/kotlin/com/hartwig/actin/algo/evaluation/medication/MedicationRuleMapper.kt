@@ -108,14 +108,16 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun getsTransporterInhibitingMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-        val termToFind = functionInputResolver().createOneTransporterInput(function).toString()
-            CurrentlyGetsTransporterInteractingMedication(selector, termToFind, DrugInteraction.Type.INHIBITOR) }
+            val termToFind = functionInputResolver().createOneTransporterInput(function).toString()
+            CurrentlyGetsTransporterInteractingMedication(selector, termToFind, DrugInteraction.Type.INHIBITOR)
+        }
     }
 
     private fun getsTransporterSubstrateMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val termToFind = functionInputResolver().createOneTransporterInput(function).toString()
-            CurrentlyGetsTransporterInteractingMedication(selector, termToFind, DrugInteraction.Type.SUBSTRATE) }
+            CurrentlyGetsTransporterInteractingMedication(selector, termToFind, DrugInteraction.Type.SUBSTRATE)
+        }
     }
 
     private fun getsAnyNonEvaluableTransporterSubstrateOrInhibitingMedicationCreator(): FunctionCreator {
@@ -139,11 +141,11 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         return { CurrentlyGetsHerbalMedication(selector) }
     }
 
-    private fun toCypString(cyp: Cyp): String {
-        return cyp.toString().substring(3).replace("_","/")
-    }
-
     companion object {
         val UNDETERMINED_CYP_STRING = "2J2"
+
+        fun toCypString(cyp: Cyp): String {
+            return cyp.toString().substring(3).replace("_", "/")
+        }
     }
 }
