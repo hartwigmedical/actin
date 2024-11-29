@@ -1,11 +1,11 @@
 package com.hartwig.actin.molecular.evidence
 
-import com.hartwig.serve.datamodel.MutationType
-import com.hartwig.serve.datamodel.fusion.FusionPair
-import com.hartwig.serve.datamodel.gene.GeneAnnotation
-import com.hartwig.serve.datamodel.gene.GeneEvent
-import com.hartwig.serve.datamodel.hotspot.VariantHotspot
-import com.hartwig.serve.datamodel.range.RangeAnnotation
+import com.hartwig.serve.datamodel.molecular.MutationType
+import com.hartwig.serve.datamodel.molecular.fusion.FusionPair
+import com.hartwig.serve.datamodel.molecular.gene.GeneAnnotation
+import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
+import com.hartwig.serve.datamodel.molecular.hotspot.VariantHotspot
+import com.hartwig.serve.datamodel.molecular.range.RangeAnnotation
 
 object TestServeFactory {
 

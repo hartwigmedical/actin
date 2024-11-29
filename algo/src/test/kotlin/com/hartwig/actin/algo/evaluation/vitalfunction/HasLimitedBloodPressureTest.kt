@@ -25,5 +25,4 @@ class HasLimitedBloodPressureTest {
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(bloodPressures)))
     }
-
 }

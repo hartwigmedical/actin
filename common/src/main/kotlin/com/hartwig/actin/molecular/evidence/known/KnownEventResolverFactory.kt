@@ -1,15 +1,15 @@
 package com.hartwig.actin.molecular.evidence.known
 
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
-import com.hartwig.serve.datamodel.ImmutableKnownEvents
-import com.hartwig.serve.datamodel.KnownEvent
-import com.hartwig.serve.datamodel.KnownEvents
-import com.hartwig.serve.datamodel.fusion.KnownFusion
-import com.hartwig.serve.datamodel.gene.KnownCopyNumber
-import com.hartwig.serve.datamodel.gene.KnownGene
-import com.hartwig.serve.datamodel.hotspot.KnownHotspot
-import com.hartwig.serve.datamodel.range.KnownCodon
-import com.hartwig.serve.datamodel.range.KnownExon
+import com.hartwig.serve.datamodel.molecular.ImmutableKnownEvents
+import com.hartwig.serve.datamodel.molecular.KnownEvent
+import com.hartwig.serve.datamodel.molecular.KnownEvents
+import com.hartwig.serve.datamodel.molecular.fusion.KnownFusion
+import com.hartwig.serve.datamodel.molecular.gene.KnownCopyNumber
+import com.hartwig.serve.datamodel.molecular.gene.KnownGene
+import com.hartwig.serve.datamodel.molecular.hotspot.KnownHotspot
+import com.hartwig.serve.datamodel.molecular.range.KnownCodon
+import com.hartwig.serve.datamodel.molecular.range.KnownExon
 
 object KnownEventResolverFactory {
 

@@ -14,12 +14,11 @@ enum class TreatmentGroup(val display: String, val memberTreatmentNames: List<St
     IRINOTECAN("Irinotecan", listOf("irinotecan")),
     NIVOLUMAB("Nivolumab", listOf("nivolumab")),
     PEMBROLIZUMAB("Pembrolizumab", listOf("pembrolizumab"));
-
     companion object {
         private val groupsByTreatmentName = entries.flatMap { group -> group.memberTreatmentNames.map { it to group } }.toMap()
 
-        fun fromTreatmentName(treatmentName: String): TreatmentGroup? {
-            return groupsByTreatmentName[treatmentName.lowercase()]
+        fun fromTreatmentName(treatmentName: String?): TreatmentGroup? {
+            return groupsByTreatmentName[treatmentName?.lowercase()]
         }
     }
 }

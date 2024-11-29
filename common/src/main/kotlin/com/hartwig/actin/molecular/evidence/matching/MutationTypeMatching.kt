@@ -2,7 +2,7 @@ package com.hartwig.actin.molecular.evidence.matching
 
 import com.hartwig.actin.datamodel.molecular.CodingEffect
 import com.hartwig.actin.datamodel.molecular.VariantType
-import com.hartwig.serve.datamodel.MutationType
+import com.hartwig.serve.datamodel.molecular.MutationType
 import org.apache.logging.log4j.LogManager
 
 object MutationTypeMatching {

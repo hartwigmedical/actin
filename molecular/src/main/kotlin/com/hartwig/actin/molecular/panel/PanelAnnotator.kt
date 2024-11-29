@@ -17,8 +17,6 @@ import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
 
 private const val TMB_HIGH_CUTOFF = 10.0
 private const val MIN_COPY_NUMBER = 6
@@ -29,8 +27,7 @@ class PanelAnnotator(
     private val evidenceDatabase: EvidenceDatabase,
     private val panelVariantAnnotator: PanelVariantAnnotator,
     private val panelFusionAnnotator: PanelFusionAnnotator
-) :
-    MolecularAnnotator<PriorSequencingTest, PanelRecord> {
+) : MolecularAnnotator<PriorSequencingTest, PanelRecord> {
 
     override fun annotate(input: PriorSequencingTest): PanelRecord {
         val annotatedVariants = panelVariantAnnotator.annotate(input.variants)
@@ -47,7 +44,7 @@ class PanelAnnotator(
             date = input.date,
             drivers = Drivers(
                 variants = annotatedVariants,
-                copyNumbers = annotatedAmplifications.toSet() + annotatedDeletions.toSet(),
+                copyNumbers = annotatedAmplifications + annotatedDeletions,
                 fusions = annotatedFusions,
             ),
             characteristics = MolecularCharacteristics(
@@ -107,8 +104,4 @@ class PanelAnnotator(
         minCopies = 0,
         maxCopies = 0
     )
-
-    companion object {
-        val LOGGER: Logger = LogManager.getLogger(PanelAnnotator::class.java)
-    }
 }

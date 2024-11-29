@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical.feed.emc.lab
 
-import com.google.common.annotations.VisibleForTesting
 import com.hartwig.actin.clinical.feed.emc.FeedParseFunctions
 import com.hartwig.actin.datamodel.clinical.LabValue
 import org.apache.logging.log4j.LogManager
@@ -27,8 +26,7 @@ object LabExtraction {
         )
     }
 
-    @VisibleForTesting
-    fun extractLimits(referenceRangeText: String): Limits {
+    private fun extractLimits(referenceRangeText: String): Limits {
         return when {
             referenceRangeText.contains(">") -> {
                 val index = referenceRangeText.indexOf(">")
@@ -58,22 +56,12 @@ object LabExtraction {
         }
     }
 
-    @VisibleForTesting
-    fun findSeparatingHyphenIndex(referenceRangeText: String): Int {
-        assert(referenceRangeText.contains("-"))
-        var isReadingDigit = false
-        for (i in referenceRangeText.indices) {
-            if (isReadingDigit && referenceRangeText[i] == '-') {
-                return i
-            } else if (isDigit(referenceRangeText[i])) {
-                isReadingDigit = true
+    private fun findSeparatingHyphenIndex(referenceRangeText: String): Int {
+        return referenceRangeText.indexOfFirst(Char::isDigit).takeIf { it != -1 }
+            ?.let { indexOfFirstDigit ->
+                referenceRangeText.indexOf("-", startIndex = indexOfFirstDigit).takeIf { it != -1 }
             }
-        }
-        throw IllegalArgumentException("Could not determine separating hyphen index from $referenceRangeText")
-    }
-
-    private fun isDigit(character: Char): Boolean {
-        return character in '0'..'9'
+            ?: throw IllegalArgumentException("Could not determine separating hyphen index from $referenceRangeText")
     }
 
     data class Limits(val lower: Double?, val upper: Double?)

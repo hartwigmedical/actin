@@ -1,15 +1,15 @@
 package com.hartwig.actin.molecular.evidence.known
 
 import com.hartwig.actin.molecular.evidence.TestServeFactory
-import com.hartwig.serve.datamodel.common.GeneAlteration
-import com.hartwig.serve.datamodel.common.GeneRole
-import com.hartwig.serve.datamodel.common.ProteinEffect
-import com.hartwig.serve.datamodel.fusion.ImmutableKnownFusion
-import com.hartwig.serve.datamodel.gene.ImmutableKnownCopyNumber
-import com.hartwig.serve.datamodel.gene.ImmutableKnownGene
-import com.hartwig.serve.datamodel.hotspot.ImmutableKnownHotspot
-import com.hartwig.serve.datamodel.range.ImmutableKnownCodon
-import com.hartwig.serve.datamodel.range.ImmutableKnownExon
+import com.hartwig.serve.datamodel.molecular.common.GeneAlteration
+import com.hartwig.serve.datamodel.molecular.common.GeneRole
+import com.hartwig.serve.datamodel.molecular.common.ProteinEffect
+import com.hartwig.serve.datamodel.molecular.fusion.ImmutableKnownFusion
+import com.hartwig.serve.datamodel.molecular.gene.ImmutableKnownCopyNumber
+import com.hartwig.serve.datamodel.molecular.gene.ImmutableKnownGene
+import com.hartwig.serve.datamodel.molecular.hotspot.ImmutableKnownHotspot
+import com.hartwig.serve.datamodel.molecular.range.ImmutableKnownCodon
+import com.hartwig.serve.datamodel.molecular.range.ImmutableKnownExon
 
 object TestServeKnownFactory {
 

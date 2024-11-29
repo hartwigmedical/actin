@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 
 internal object VitalFunctionTestFactory {
     private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
-    
+
     fun withBodyWeights(bodyWeights: List<BodyWeight>): PatientRecord {
         return base.copy(bodyWeights = bodyWeights)
     }

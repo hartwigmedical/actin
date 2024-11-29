@@ -17,4 +17,5 @@ object ChapterContentFunctions {
             .dropLast(1)
             .forEach(table::addCell)
     }
+
 }

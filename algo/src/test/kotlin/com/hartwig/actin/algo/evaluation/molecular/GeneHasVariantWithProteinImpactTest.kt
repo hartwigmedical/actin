@@ -13,7 +13,7 @@ private const val MATCHING_GENE = "gene A"
 private const val MATCHING_PROTEIN_IMPACT = "V600E"
 
 class GeneHasVariantWithProteinImpactTest {
-    private val function = GeneHasVariantWithProteinImpact(MATCHING_GENE, listOf(MATCHING_PROTEIN_IMPACT, "V600K"))
+    private val function = GeneHasVariantWithProteinImpact(MATCHING_GENE, setOf(MATCHING_PROTEIN_IMPACT, "V600K"))
 
     @Test
     fun `Should fail when gene not present`() {

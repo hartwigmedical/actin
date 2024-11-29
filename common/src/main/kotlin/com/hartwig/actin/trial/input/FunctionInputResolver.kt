@@ -648,7 +648,7 @@ class FunctionInputResolver(
     fun createOneGeneManyProteinImpactsInput(function: EligibilityFunction): OneGeneManyProteinImpacts {
         assertParamConfig(function, FunctionInput.ONE_GENE_MANY_PROTEIN_IMPACTS, 2)
         val gene = firstParameterAsGene(function)
-        val proteinImpacts = toStringList(function.parameters[1])
+        val proteinImpacts = toStringList(function.parameters[1]).toSet()
         for (proteinImpact in proteinImpacts) {
             if (!MolecularInputChecker.isProteinImpact(proteinImpact)) {
                 throw IllegalStateException("Not a valid protein impact: $proteinImpact")

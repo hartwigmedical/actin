@@ -5,7 +5,7 @@ import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.Dosage
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val CATEGORY_1 = "category 1"
@@ -107,9 +107,10 @@ class CurrentlyGetsStableMedicationOfCategoryTest {
         val medicationNotProvided = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = null)
         val alwaysPlannedResult = oneCategoryFunction.evaluate(medicationNotProvided)
         assertEvaluation(EvaluationResult.UNDETERMINED, alwaysPlannedResult)
-        Assertions.assertThat(alwaysPlannedResult.recoverable).isTrue()
+        assertThat(alwaysPlannedResult.recoverable).isTrue()
+
         val alwaysActiveResult = multipleCategoriesFunction.evaluate(medicationNotProvided)
         assertEvaluation(EvaluationResult.UNDETERMINED, alwaysActiveResult)
-        Assertions.assertThat(alwaysActiveResult.recoverable).isTrue()
+        assertThat(alwaysActiveResult.recoverable).isTrue()
     }
 }

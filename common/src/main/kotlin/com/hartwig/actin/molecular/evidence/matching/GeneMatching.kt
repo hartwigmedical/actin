@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.evidence.matching
 
-import com.hartwig.serve.datamodel.MutationType
-import com.hartwig.serve.datamodel.gene.GeneAnnotation
+import com.hartwig.serve.datamodel.molecular.MutationType
+import com.hartwig.serve.datamodel.molecular.gene.GeneAnnotation
 
 object GeneMatching {
 
