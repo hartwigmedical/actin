@@ -7,7 +7,7 @@ import org.junit.Test
 class MedicationRuleMapperTest {
 
     @Test
-    fun `Should accurately convert Cyp to usable cyp-string`() {
+    fun `Should convert Cyp to string in format where 'CYP' is lost and '_' is replaced`() {
         assertThat(MedicationRuleMapper.toCypString(Cyp.CYP2C19)).isEqualTo("2C19")
         assertThat(MedicationRuleMapper.toCypString(Cyp.CYP3A4_5)).isEqualTo("3A4/5")
     }
