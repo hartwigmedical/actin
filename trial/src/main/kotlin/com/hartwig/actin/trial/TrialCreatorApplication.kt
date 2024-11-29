@@ -62,6 +62,7 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         val result = trialIngestion.ingestTrials()
 
         val outputDirectory = config.outputDirectory
+        // TODO (KD): Would potentially be nicer to return null trials in case trial ingestion was explicitly skipped due to errors
         if (result.trialConfigDatabaseValidation.hasErrors() && result.trials.isEmpty()) {
             LOGGER.warn("No trials were created due to presence of trial config database validation errors")
         } else {
