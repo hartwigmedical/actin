@@ -95,7 +95,7 @@ object WGSSummaryGeneratorFunctions {
         table: Table
     ): Boolean {
         val tmbStatus = tumorMutationalLoadAndTumorMutationalBurdenStatus(molecular)
-        if (!isShort || tmbStatus != "${Formats.VALUE_UNKNOWN} / ${Formats.VALUE_UNKNOWN}") {
+        if (!isShort || tmbStatus != "TML ${Formats.VALUE_UNKNOWN} / TMB ${Formats.VALUE_UNKNOWN}") {
             table.addCell(Cells.createKey("Tumor mutational load / burden"))
             table.addCell(
                 tumorMutationalLoadAndTumorMutationalBurdenStatusCell(
