@@ -30,7 +30,8 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_CYP_X to getsCYPSubstrateMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_TRANSPORTER_X to getsTransporterInhibitingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_TRANSPORTER_X to getsTransporterSubstrateMedicationCreator(),
-            EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OR_INHIBITING_ANY_NON_EVALUABLE_TRANSPORTER_X to getsAnyNonEvaluableTransporterSubstrateOrInhibitingMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OR_INHIBITING_ANY_NON_EVALUABLE_TRANSPORTER_X to
+                    getsAnyNonEvaluableTransporterSubstrateOrInhibitingMedicationCreator(),
             EligibilityRule.HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING to getsStableDosingAnticoagulantMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_HERBAL_MEDICATION to getsHerbalMedicationCreator(),
         )
