@@ -69,7 +69,7 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     private fun getsCYPXInducingMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val termToFind = functionInputResolver().createOneCypInput(function)
-            CurrentlyGetsCypXInducingMedication(selector, toCypString(termToFind))
+            CurrentlyGetsCypXInducingMedication(selector, extractCypString(termToFind))
         }
     }
 
@@ -77,14 +77,14 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneCypOneIntegerInput(function)
             val maxStopDate = referenceDateProvider().date().minusWeeks(input.integer.toLong())
-            HasRecentlyReceivedCypXInducingMedication(selector, toCypString(input.cyp), maxStopDate)
+            HasRecentlyReceivedCypXInducingMedication(selector, extractCypString(input.cyp), maxStopDate)
         }
     }
 
     private fun getsCYPXInhibitingMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val termToFind = functionInputResolver().createOneCypInput(function)
-            CurrentlyGetsCypXInhibitingMedication(selector, toCypString(termToFind))
+            CurrentlyGetsCypXInhibitingMedication(selector, extractCypString(termToFind))
         }
     }
 
@@ -95,14 +95,14 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     private fun getsCYPXInhibitingOrInducingMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val termToFind = functionInputResolver().createOneCypInput(function)
-            CurrentlyGetsCypXInhibitingOrInducingMedication(selector, toCypString(termToFind))
+            CurrentlyGetsCypXInhibitingOrInducingMedication(selector, extractCypString(termToFind))
         }
     }
 
     private fun getsCYPSubstrateMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val termToFind = functionInputResolver().createOneCypInput(function)
-            CurrentlyGetsCypXSubstrateMedication(selector, toCypString(termToFind))
+            CurrentlyGetsCypXSubstrateMedication(selector, extractCypString(termToFind))
         }
     }
 
@@ -142,9 +142,7 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     }
 
     companion object {
-        val UNDETERMINED_CYP_STRING = "2J2"
-
-        fun toCypString(cyp: Cyp): String {
+        fun extractCypString(cyp: Cyp): String {
             return cyp.toString().substring(3).replace("_", "/")
         }
     }

@@ -7,6 +7,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class CurrentlyGetsAnyNonEvaluableTransporterSubstrateOrInhibitingMedicationTest {
+
     private val patientWithMedication = MedicationTestFactory.withMedications(listOf(MedicationTestFactory.medication("Some medication")))
 
     @Test
@@ -29,7 +30,9 @@ class CurrentlyGetsAnyNonEvaluableTransporterSubstrateOrInhibitingMedicationTest
 
         assertEvaluation(EvaluationResult.WARN, resultPlanned)
         assertEvaluation(EvaluationResult.WARN, resultActive)
-        assertThat(resultActive.warnGeneralMessages).containsExactly("Undetermined if patient may use TYPE-A, type-B or TYPE-C substrate or inhibiting medication")
+        assertThat(resultActive.warnGeneralMessages).containsExactly(
+            "Undetermined if patient may use TYPE-A, type-B or TYPE-C substrate or inhibiting medication"
+        )
     }
 
     @Test
