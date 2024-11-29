@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.orange.characteristics.CupPrediction
 import com.hartwig.actin.report.pdf.tables.clinical.CellTestUtil
+import com.hartwig.actin.report.pdf.util.Tables
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -45,8 +46,9 @@ class WGSSummaryGeneratorFunctionsTest {
         val cell = WGSSummaryGeneratorFunctions.potentiallyActionableEventsCell(drivers)
 
         assertThat(CellTestUtil.extractTextFromCell(cell))
-            .isEqualTo("event 1 (4 copies - no amplification or deletion), event 2 (dubious quality), event 3 (low driver likelihood), " +
-                    "event 4 (medium driver likelihood), event 5"
+            .isEqualTo(
+                "event 1 (4 copies - no amplification or deletion), event 2 (dubious quality), event 3 (low driver likelihood), " +
+                        "event 4 (medium driver likelihood), event 5"
             )
     }
 
@@ -72,5 +74,19 @@ class WGSSummaryGeneratorFunctionsTest {
         )
 
         assertThat(CellTestUtil.extractTextFromCell(cell)).isEqualTo("Inconclusive (Melanoma 60%, Lung 20%) (low purity)")
+    }
+
+    @Test
+    fun `Should not create tumor mutational cell when result is unknown and summary table configuration is short type`() {
+        val record = molecularRecord.copy(
+            characteristics = molecularRecord.characteristics.copy(
+                tumorMutationalLoad = null,
+                tumorMutationalBurden = null,
+                hasHighTumorMutationalLoad = null,
+                hasHighTumorMutationalBurden = null
+            )
+        )
+        val hasTmbTmlCells = WGSSummaryGeneratorFunctions.createTmbCells(record, true, Tables.createFixedWidthCols(100f, 100f))
+        assertThat(hasTmbTmlCells).isFalse()
     }
 }
