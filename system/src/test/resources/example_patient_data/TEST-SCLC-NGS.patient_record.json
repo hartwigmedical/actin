@@ -235,6 +235,21 @@
         "month": 9,
         "day": 1
       },
+      "code": "LEUKO-ABS",
+      "name": "absolute leukocyte count",
+      "comparator": "",
+      "value": 5.0,
+      "unit": "BILLIONS_PER_LITER",
+      "refLimitLow": 4.0,
+      "refLimitUp": 10.0,
+      "isOutsideRef": false
+    },
+    {
+      "date": {
+        "year": 2024,
+        "month": 9,
+        "day": 1
+      },
       "code": "THROMBO-ABS",
       "name": "absolute thrombocyte count",
       "comparator": "",
@@ -325,11 +340,11 @@
         "month": 9,
         "day": 1
       },
-      "code": "INR",
-      "name": "INR",
+      "code": "POCT_INR",
+      "name": "POCT INR",
       "comparator": "",
       "value": 1.0,
-      "unit": "",
+      "unit": "INR",
       "refLimitLow": 0.8,
       "refLimitUp": 1.2,
       "isOutsideRef": false
