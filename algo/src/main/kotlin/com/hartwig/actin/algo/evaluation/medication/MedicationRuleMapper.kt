@@ -4,13 +4,13 @@ import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
-import com.hartwig.actin.datamodel.clinical.Cyp
 import com.hartwig.actin.datamodel.clinical.DrugInteraction
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.medication.MedicationCategories
 
 class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
+
     private val selector: MedicationSelector =
         MedicationSelector(MedicationStatusInterpreterOnEvaluationDate(referenceDateProvider().date(), null))
     private val categories: MedicationCategories = MedicationCategories.create(atcTree())
@@ -70,7 +70,7 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     private fun getsCYPXInducingMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val termToFind = functionInputResolver().createOneCypInput(function)
-            CurrentlyGetsCypXInducingMedication(selector, extractCypString(termToFind))
+            CurrentlyGetsCypXInducingMedication(selector, MedicationUtil.extractCypString(termToFind))
         }
     }
 
@@ -78,14 +78,14 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneCypOneIntegerInput(function)
             val maxStopDate = referenceDateProvider().date().minusWeeks(input.integer.toLong())
-            HasRecentlyReceivedCypXInducingMedication(selector, extractCypString(input.cyp), maxStopDate)
+            HasRecentlyReceivedCypXInducingMedication(selector, MedicationUtil.extractCypString(input.cyp), maxStopDate)
         }
     }
 
     private fun getsCYPXInhibitingMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val termToFind = functionInputResolver().createOneCypInput(function)
-            CurrentlyGetsCypXInhibitingMedication(selector, extractCypString(termToFind))
+            CurrentlyGetsCypXInhibitingMedication(selector, MedicationUtil.extractCypString(termToFind))
         }
     }
 
@@ -96,14 +96,14 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     private fun getsCYPXInhibitingOrInducingMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val termToFind = functionInputResolver().createOneCypInput(function)
-            CurrentlyGetsCypXInhibitingOrInducingMedication(selector, extractCypString(termToFind))
+            CurrentlyGetsCypXInhibitingOrInducingMedication(selector, MedicationUtil.extractCypString(termToFind))
         }
     }
 
     private fun getsCYPSubstrateMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val termToFind = functionInputResolver().createOneCypInput(function)
-            CurrentlyGetsCypXSubstrateMedication(selector, extractCypString(termToFind))
+            CurrentlyGetsCypXSubstrateMedication(selector, MedicationUtil.extractCypString(termToFind))
         }
     }
 
@@ -140,11 +140,5 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun getsHerbalMedicationCreator(): FunctionCreator {
         return { CurrentlyGetsHerbalMedication(selector) }
-    }
-
-    companion object {
-        fun extractCypString(cyp: Cyp): String {
-            return cyp.toString().substring(3).replace("_", "/")
-        }
     }
 }
