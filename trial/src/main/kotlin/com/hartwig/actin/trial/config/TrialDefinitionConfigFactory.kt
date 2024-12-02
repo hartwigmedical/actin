@@ -12,8 +12,8 @@ class TrialDefinitionConfigFactory : TrialConfigFactory<TrialDefinitionConfig> {
             title = parts[fields["title"]!!],
             nctId = ResourceFile.optionalString(parts[fields["nctId"]!!]),
             phase = ResourceFile.optionalString(parts[fields["phase"]!!]),
-            source = parts[fields["source"]!!],
-            location = parts[fields["location"]!!],
+            source = ResourceFile.optionalString(parts[fields["source"]!!]),
+            location = ResourceFile.optionalString(parts[fields["location"]!!])
         )
     }
 }

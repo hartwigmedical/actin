@@ -6,7 +6,6 @@ import com.hartwig.actin.datamodel.trial.CriterionReference
 import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.datamodel.trial.TrialIdentification
-import com.hartwig.actin.datamodel.trial.TrialLocation
 import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.doid.DoidModel
@@ -17,6 +16,7 @@ import com.hartwig.actin.trial.TrialIngestionResult
 import com.hartwig.actin.trial.TrialIngestionStatus
 import com.hartwig.actin.trial.config.InclusionCriteriaConfig
 import com.hartwig.actin.trial.config.InclusionCriteriaReferenceConfig
+import com.hartwig.actin.trial.config.TrialConfigDatabaseUtil
 import com.hartwig.actin.trial.config.TrialConfigModel
 import com.hartwig.actin.trial.config.TrialDefinitionConfig
 import com.hartwig.actin.trial.input.FunctionInputResolver
@@ -118,7 +118,7 @@ class TrialIngestion(
             nctId = trialConfig.nctId,
             phase = trialConfig.phase?.let(TrialPhase::fromString),
             source = trialConfig.source?.let(TrialSource::valueOf),
-            locations = trialConfig.location?.let(TrialLocation::fromString)
+            locations = trialConfig.location?.let(TrialConfigDatabaseUtil::toTrialLocation)
         )
     }
 
