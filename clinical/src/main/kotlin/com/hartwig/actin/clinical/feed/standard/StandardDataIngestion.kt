@@ -6,10 +6,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.AtcModel
-import com.hartwig.actin.clinical.DrugInteractionsDatabase
 import com.hartwig.actin.clinical.PatientIngestionResult
 import com.hartwig.actin.clinical.PatientIngestionStatus
-import com.hartwig.actin.clinical.QtProlongatingDatabase
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.ClinicalFeedIngestion
@@ -158,17 +156,15 @@ class StandardDataIngestion(
             directory: String,
             curationDatabaseContext: CurationDatabaseContext,
             atcModel: AtcModel,
-            drugInteractionDatabase: DrugInteractionsDatabase,
-            qtProlongatingDatabase: QtProlongatingDatabase,
             doidModel: DoidModel,
             treatmentDatabase: TreatmentDatabase
         ) = StandardDataIngestion(
             directory,
             StandardMedicationExtractor(
                 atcModel,
-                drugInteractionDatabase,
-                qtProlongatingDatabase,
-                treatmentDatabase
+                treatmentDatabase,
+                curationDatabaseContext.qtProlongingCuration,
+                curationDatabaseContext.drugInteractionCuration,
             ),
             StandardSurgeryExtractor(curationDatabaseContext.surgeryNameCuration),
             StandardIntolerancesExtractor(

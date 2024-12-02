@@ -8,8 +8,6 @@ import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.TestAtcFactory
-import com.hartwig.actin.clinical.curation.TestDrugInteractionsFactory
-import com.hartwig.actin.clinical.curation.TestQtProlongatingFactory
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBloodTransfusionExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyHeightExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyWeightExtractor
@@ -70,8 +68,8 @@ class StandardDataIngestionTest {
             directory = INPUT_JSON,
             medicationExtractor = StandardMedicationExtractor(
                 atcModel = TestAtcFactory.createProperAtcModel(),
-                drugInteractionsDatabase = TestDrugInteractionsFactory.createProper(),
-                qtProlongatingDatabase = TestQtProlongatingFactory.createProper(),
+                qtProlongatingRiskCuration = curationDatabase.qtProlongingCuration,
+                drugInteractionCuration = curationDatabase.drugInteractionCuration,
                 treatmentDatabase = treatmentDatabase
             ),
             surgeryExtractor = StandardSurgeryExtractor(curationDatabase.surgeryNameCuration),

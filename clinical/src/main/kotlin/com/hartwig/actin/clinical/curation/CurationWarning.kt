@@ -7,6 +7,8 @@ enum class CurationCategory(val categoryName: String) {
     ADMINISTRATION_ROUTE_TRANSLATION("Administration Route Translation"),
     BLOOD_TRANSFUSION_TRANSLATION("Blood Transfusion Translation"),
     COMPLICATION("Complication"),
+    DRUG_INTERACTIONS("Drug Interactions"),
+    QT_PROLONGATING("QT Prolongating"),
     DOSAGE_UNIT_TRANSLATION("Dosage Unit Translation"),
     ECG("ECG"),
     INFECTION("Infection"),

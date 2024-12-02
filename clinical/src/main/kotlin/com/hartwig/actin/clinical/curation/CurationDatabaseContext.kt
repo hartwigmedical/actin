@@ -4,6 +4,8 @@ import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.UnusedCurationConfig
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig
 import com.hartwig.actin.clinical.curation.config.ComplicationConfigFactory
+import com.hartwig.actin.clinical.curation.config.DrugInteractionConfig
+import com.hartwig.actin.clinical.curation.config.DrugInteractionConfigFactory
 import com.hartwig.actin.clinical.curation.config.ECGConfig
 import com.hartwig.actin.clinical.curation.config.ECGConfigFactory
 import com.hartwig.actin.clinical.curation.config.IHCTestConfig
@@ -24,6 +26,8 @@ import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
 import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfigFactory
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfigFactory
+import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
+import com.hartwig.actin.clinical.curation.config.QTProlongatingConfigFactory
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfigFactory
 import com.hartwig.actin.clinical.curation.config.SequencingTestConfig
@@ -61,6 +65,8 @@ data class CurationDatabaseContext(
     val medicationNameCuration: CurationDatabase<MedicationNameConfig>,
     val medicationDosageCuration: CurationDatabase<MedicationDosageConfig>,
     val intoleranceCuration: CurationDatabase<IntoleranceConfig>,
+    val drugInteractionCuration: CurationDatabase<DrugInteractionConfig>,
+    val qtProlongingCuration: CurationDatabase<QTProlongatingConfig>,
     val administrationRouteTranslation: TranslationDatabase<String>,
     val laboratoryTranslation: TranslationDatabase<LaboratoryIdentifiers>,
     val toxicityTranslation: TranslationDatabase<String>,
@@ -110,6 +116,8 @@ data class CurationDatabaseContext(
             medicationNameCuration.validationErrors +
             medicationDosageCuration.validationErrors +
             intoleranceCuration.validationErrors +
+            drugInteractionCuration.validationErrors +
+            qtProlongingCuration.validationErrors +
             surgeryNameCuration.validationErrors).toSet()
 
 
@@ -194,6 +202,18 @@ data class CurationDatabaseContext(
                 PrimaryTumorConfigFactory(curationDoidValidator),
                 CurationCategory.PRIMARY_TUMOR
             ) { it.primaryTumorEvaluatedInputs },
+            qtProlongingCuration = CurationDatabaseReader.read(
+                curationDir,
+                CurationDatabaseReader.QT_PROLONGATING_TSV,
+                QTProlongatingConfigFactory(),
+                CurationCategory.QT_PROLONGATING
+            ) { emptySet() },
+            drugInteractionCuration = CurationDatabaseReader.read(
+                curationDir,
+                CurationDatabaseReader.DRUG_INTERACTIONS_TSV,
+                DrugInteractionConfigFactory(),
+                CurationCategory.DRUG_INTERACTIONS
+            ) { emptySet() },
             medicationNameCuration = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.MEDICATION_NAME_TSV,
