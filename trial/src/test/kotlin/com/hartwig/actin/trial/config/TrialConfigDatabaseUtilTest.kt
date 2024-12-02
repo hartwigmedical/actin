@@ -28,58 +28,58 @@ class TrialConfigDatabaseUtilTest {
     }
 
     @Test
-    fun `Should return false when location input is null or empty`() {
-        assertThat(TrialConfigDatabaseUtil.validateTrialLocation(null)).isTrue()
-        assertThat(TrialConfigDatabaseUtil.validateTrialLocation("")).isTrue()
+    fun `Should return true when trial location input is null or empty`() {
+        assertThat(TrialConfigDatabaseUtil.trialLocationInputIsValid(null)).isTrue()
+        assertThat(TrialConfigDatabaseUtil.trialLocationInputIsValid("")).isTrue()
     }
 
     @Test
-    fun `Should return true when input is valid`() {
-        assertThat(TrialConfigDatabaseUtil.validateTrialLocation("1,A A")).isTrue()
-        assertThat(TrialConfigDatabaseUtil.validateTrialLocation("1,A A:2,B B")).isTrue()
-        assertThat(TrialConfigDatabaseUtil.validateTrialLocation("1,Erasmus MC")).isTrue()
-        assertThat(TrialConfigDatabaseUtil.validateTrialLocation("1,Erasmus MC:2,Antoni van Leeuwenhoek")).isTrue()
+    fun `Should return true when trial location input is valid`() {
+        assertThat(TrialConfigDatabaseUtil.trialLocationInputIsValid("1,A A")).isTrue()
+        assertThat(TrialConfigDatabaseUtil.trialLocationInputIsValid("1,A A:2,B B")).isTrue()
+        assertThat(TrialConfigDatabaseUtil.trialLocationInputIsValid("1,Erasmus MC")).isTrue()
+        assertThat(TrialConfigDatabaseUtil.trialLocationInputIsValid("1,Erasmus MC:2,Antoni van Leeuwenhoek")).isTrue()
     }
 
     @Test
-    fun `Should return false when input is invalid`() {
-        assertThat(TrialConfigDatabaseUtil.validateTrialLocation("1,:2,")).isFalse()
-        assertThat(TrialConfigDatabaseUtil.validateTrialLocation(",")).isFalse()
-        assertThat(TrialConfigDatabaseUtil.validateTrialLocation(":")).isFalse()
-        assertThat(TrialConfigDatabaseUtil.validateTrialLocation(",Erasmus MC:,Antoni van Leeuwenhoek")).isFalse()
-        assertThat(TrialConfigDatabaseUtil.validateTrialLocation("1:2,Antoni van Leeuwenhoek")).isFalse()
+    fun `Should return false when trial location input is invalid`() {
+        assertThat(TrialConfigDatabaseUtil.trialLocationInputIsValid("1,:2,")).isFalse()
+        assertThat(TrialConfigDatabaseUtil.trialLocationInputIsValid(",")).isFalse()
+        assertThat(TrialConfigDatabaseUtil.trialLocationInputIsValid(":")).isFalse()
+        assertThat(TrialConfigDatabaseUtil.trialLocationInputIsValid(",Erasmus MC:,Antoni van Leeuwenhoek")).isFalse()
+        assertThat(TrialConfigDatabaseUtil.trialLocationInputIsValid("1:2,Antoni van Leeuwenhoek")).isFalse()
     }
 
     @Test
-    fun `Should return empty when input is null or empty`() {
-        assertThat(TrialConfigDatabaseUtil.toTrialLocation(null)).isEmpty()
-        assertThat(TrialConfigDatabaseUtil.toTrialLocation("")).isEmpty()
+    fun `Should extract empty trial location list when input is null or empty`() {
+        assertThat(TrialConfigDatabaseUtil.toTrialLocations(null)).isEmpty()
+        assertThat(TrialConfigDatabaseUtil.toTrialLocations("")).isEmpty()
     }
 
     @Test
-    fun `Should return a list with one location when input is valid`() {
-        val locations = TrialConfigDatabaseUtil.toTrialLocation("1,Erasmus MC")
+    fun `Should extract a list with one trial location when input has one valid location`() {
+        val locations = TrialConfigDatabaseUtil.toTrialLocations("1,Erasmus MC")
         assertThat(locations).isNotEmpty
         assertThat(locations.size).isEqualTo(1)
         assertThat(locations).containsExactly(TrialLocation(1, "Erasmus MC"))
     }
 
     @Test
-    fun `Should return a list of locations when input is valid`() {
-        val locations = TrialConfigDatabaseUtil.toTrialLocation("1,Erasmus MC:2,Antoni van Leeuwenhoek")
+    fun `Should extract a list with multiple trial locations when input has multiple valid locations`() {
+        val locations = TrialConfigDatabaseUtil.toTrialLocations("1,Erasmus MC:2,Antoni van Leeuwenhoek")
         assertThat(locations).isNotEmpty
         assertThat(locations.size).isEqualTo(2)
         assertThat(locations).containsExactly(TrialLocation(1, "Erasmus MC"), TrialLocation(2, "Antoni van Leeuwenhoek"))
     }
 
     @Test
-    fun `Should throw exception when input is invalid`() {
-        assertThatThrownBy { TrialConfigDatabaseUtil.toTrialLocation("1,:2,") }.isInstanceOf(IllegalArgumentException::class.java)
-        assertThatThrownBy { TrialConfigDatabaseUtil.toTrialLocation(",Erasmus MC:,Antoni van Leeuwenhoek") }.isInstanceOf(
+    fun `Should throw exception when trial location input is invalid`() {
+        assertThatThrownBy { TrialConfigDatabaseUtil.toTrialLocations("1,:2,") }.isInstanceOf(IllegalArgumentException::class.java)
+        assertThatThrownBy { TrialConfigDatabaseUtil.toTrialLocations(",Erasmus MC:,Antoni van Leeuwenhoek") }.isInstanceOf(
             IllegalArgumentException::class.java
         )
-        assertThatThrownBy { TrialConfigDatabaseUtil.toTrialLocation("1:2,Antoni van Leeuwenhoek") }.isInstanceOf(IllegalArgumentException::class.java)
-        assertThatThrownBy { TrialConfigDatabaseUtil.toTrialLocation("A,1:B,2") }.isInstanceOf(IllegalArgumentException::class.java)
+        assertThatThrownBy { TrialConfigDatabaseUtil.toTrialLocations("1:2,Antoni van Leeuwenhoek") }.isInstanceOf(IllegalArgumentException::class.java)
+        assertThatThrownBy { TrialConfigDatabaseUtil.toTrialLocations("A,1:B,2") }.isInstanceOf(IllegalArgumentException::class.java)
     }
 
 }

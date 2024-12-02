@@ -7,7 +7,7 @@ object TrialConfigDatabaseUtil {
     private const val COMMA_SEPARATOR = ","
     private const val TRIAL_LOCATION_SEPARATOR = ":"
     private const val ALL_COHORTS = "all"
-    private const val TRIAL_LOCATION_REG_EXP = "^\\d+,[^,:]+(:\\d+,[^,:]+)*$"
+    private val TRIAL_LOCATION_REG_EXP = Regex("^\\d+,[^,:]+(:\\d+,[^,:]+)*$")
 
     fun toReferenceIds(referenceIdsString: String): Set<String> {
         return if (referenceIdsString.isEmpty()) emptySet() else toSet(referenceIdsString, COMMA_SEPARATOR)
@@ -29,13 +29,11 @@ object TrialConfigDatabaseUtil {
         }
     }
 
-    fun validateTrialLocation(input: String?): Boolean {
-        return input.isNullOrEmpty() || Regex(TRIAL_LOCATION_REG_EXP).matches(input)
-    }
+    fun trialLocationInputIsValid(input: String?): Boolean = input.isNullOrEmpty() || TRIAL_LOCATION_REG_EXP.matches(input)
 
-    fun toTrialLocation(input: String?): List<TrialLocation> {
+    fun toTrialLocations(input: String?): List<TrialLocation> {
 
-        if (!validateTrialLocation(input)) {
+        if (!trialLocationInputIsValid(input)) {
             throw IllegalArgumentException("Invalid location $input")
         }
 

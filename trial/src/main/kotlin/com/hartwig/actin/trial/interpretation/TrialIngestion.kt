@@ -118,7 +118,7 @@ class TrialIngestion(
             nctId = trialConfig.nctId,
             phase = trialConfig.phase?.let(TrialPhase::fromString),
             source = trialConfig.source?.let(TrialSource::valueOf),
-            locations = trialConfig.location?.let(TrialConfigDatabaseUtil::toTrialLocation)
+            locations = trialConfig.location?.let(TrialConfigDatabaseUtil::toTrialLocations)
         )
     }
 

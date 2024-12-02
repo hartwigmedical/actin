@@ -119,7 +119,7 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
         val invalidPhases = trialDefinitions.filter { it.phase != null && TrialPhase.fromString(it.phase) == null }
             .map { TrialDefinitionValidationError(it, "Invalid phase: '${it.phase}'") }
 
-        val invalidLocations = trialDefinitions.filter { !TrialConfigDatabaseUtil.validateTrialLocation(it.location) }
+        val invalidLocations = trialDefinitions.filter { !TrialConfigDatabaseUtil.trialLocationInputIsValid(it.location) }
             .map { TrialDefinitionValidationError(it, "Invalid Location: '${it.location}'") }
 
         return (duplicatedTrialIds + duplicatedTrialFileIds + invalidPhases + invalidLocations).toSet()
