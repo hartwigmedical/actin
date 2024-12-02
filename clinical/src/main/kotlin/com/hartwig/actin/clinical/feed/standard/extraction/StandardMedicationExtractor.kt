@@ -2,12 +2,9 @@ package com.hartwig.actin.clinical.feed.standard.extraction
 
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.AtcModel
+import com.hartwig.actin.clinical.DrugInteractionsDatabase
 import com.hartwig.actin.clinical.ExtractionResult
-import com.hartwig.actin.clinical.curation.CurationDatabase
-import com.hartwig.actin.clinical.curation.DrugInteractionCurationUtil
-import com.hartwig.actin.clinical.curation.QTProlongatingCurationUtil
-import com.hartwig.actin.clinical.curation.config.DrugInteractionConfig
-import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
+import com.hartwig.actin.clinical.QtProlongatingDatabase
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.standard.ProvidedPatientRecord
 import com.hartwig.actin.datamodel.clinical.Dosage
@@ -15,9 +12,9 @@ import com.hartwig.actin.datamodel.clinical.Medication
 
 class StandardMedicationExtractor(
     private val atcModel: AtcModel,
-    private val treatmentDatabase: TreatmentDatabase,
-    private val qtProlongatingRiskCuration: CurationDatabase<QTProlongatingConfig>,
-    private val drugInteractionCuration: CurationDatabase<DrugInteractionConfig>
+    private val drugInteractionsDatabase: DrugInteractionsDatabase,
+    private val qtProlongatingDatabase: QtProlongatingDatabase,
+    private val treatmentDatabase: TreatmentDatabase
 ) : StandardDataExtractor<List<Medication>?> {
 
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<Medication>?> {
@@ -43,12 +40,9 @@ class StandardMedicationExtractor(
                 startDate = it.startDate,
                 stopDate = it.endDate,
                 atc = atcClassification,
-                qtProlongatingRisk = QTProlongatingCurationUtil.annotateWithQTProlongating(qtProlongatingRiskCuration, atcNameOrInput),
-                cypInteractions = DrugInteractionCurationUtil.curateMedicationCypInteractions(drugInteractionCuration, atcNameOrInput),
-                transporterInteractions = DrugInteractionCurationUtil.curateMedicationTransporterInteractions(
-                    drugInteractionCuration,
-                    atcNameOrInput
-                ),
+                qtProlongatingRisk = qtProlongatingDatabase.annotateWithQTProlongating(atcNameOrInput),
+                cypInteractions = drugInteractionsDatabase.curateMedicationCypInteractions(atcNameOrInput),
+                transporterInteractions = drugInteractionsDatabase.curateMedicationTransporterInteractions(atcNameOrInput),
                 isTrialMedication = it.isTrial,
                 isSelfCare = it.isSelfCare,
                 drug = treatmentDatabase.findDrugByAtcName(atcNameOrInput)
