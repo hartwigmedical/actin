@@ -92,7 +92,7 @@ class TrialMatchingChapter(
                     allEvidenceSources,
                     filteredNationalTrials,
                     contentWidth(),
-                    filteredNationalTrials.size,
+                    0,
                     report.config.countryOfReference,
                     true
                 )
@@ -102,7 +102,7 @@ class TrialMatchingChapter(
                     allEvidenceSources,
                     filteredInternationalTrials,
                     contentWidth(),
-                    filteredInternationalTrials.size,
+                    0,
                     isFilteredTrialsTable = true
                 )
             },
