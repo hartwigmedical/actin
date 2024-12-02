@@ -8,11 +8,11 @@ import org.junit.Test
 class DrugInteractionsDatabaseTest {
 
     private val database: DrugInteractionsDatabase =
-        DrugInteractionsDatabase.read(ResourceLocator.resourceOnClasspath("medication/drug_interactions.tsv"))
+        DrugInteractionsDatabase.create(ResourceLocator.resourceOnClasspath("medication/drug_interactions.tsv"))
 
     @Test
     fun `Should return DrugInteraction from medication name`() {
-        assertThat(database.curateMedicationTransporterInteractions("paracetamol")).isEqualTo(
+        assertThat(database.annotateWithTransporterInteractions("paracetamol")).isEqualTo(
             listOf(
                 DrugInteraction(
                     DrugInteraction.Type.SUBSTRATE,
@@ -22,7 +22,7 @@ class DrugInteractionsDatabaseTest {
                 )
             )
         )
-        assertThat(database.curateMedicationCypInteractions("paracetamol")).isEqualTo(
+        assertThat(database.annotateWithCypInteractions("paracetamol")).isEqualTo(
             listOf(
                 DrugInteraction(
                     DrugInteraction.Type.INHIBITOR,
@@ -38,5 +38,11 @@ class DrugInteractionsDatabaseTest {
                 )
             )
         )
+    }
+
+    @Test
+    fun `Should return empty list for unknown medication`() {
+        assertThat(database.annotateWithCypInteractions("unknown medication")).isEqualTo(emptyList<DrugInteraction>())
+        assertThat(database.annotateWithTransporterInteractions("unknown medication")).isEqualTo(emptyList<DrugInteraction>())
     }
 }
