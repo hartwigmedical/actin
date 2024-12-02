@@ -6,6 +6,8 @@ import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.TestAtcFactory
+import com.hartwig.actin.clinical.curation.TestDrugInteractionsFactory
+import com.hartwig.actin.clinical.curation.TestQtProlongatingFactory
 import com.hartwig.actin.clinical.feed.emc.ClinicalFeedReader
 import com.hartwig.actin.clinical.feed.emc.EmcClinicalFeedIngestor
 import com.hartwig.actin.clinical.feed.emc.FEED_DIRECTORY
@@ -62,6 +64,8 @@ class ClinicalIngestionFeedAdapterTest {
                 CURATION_DIRECTORY,
                 curationDatabase,
                 TestAtcFactory.createProperAtcModel(),
+                TestDrugInteractionsFactory.createProper(),
+                TestQtProlongatingFactory.createProper(),
                 testDoidModel,
                 TestTreatmentDatabaseFactory.createProper()
             ), curationDatabase

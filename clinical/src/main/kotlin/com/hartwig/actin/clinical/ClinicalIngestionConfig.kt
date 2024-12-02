@@ -17,6 +17,8 @@ data class ClinicalIngestionConfig(
     val feedDirectory: String,
     val curationDirectory: String,
     val doidJson: String,
+    val drugInteractionTsv: String,
+    val qtProlongatingTsv: String,
     val atcTsv: String,
     val atcOverridesTsv: String,
     val treatmentDirectory: String,
@@ -30,6 +32,8 @@ data class ClinicalIngestionConfig(
         private const val FEED_DIRECTORY = "feed_directory"
         private const val CURATION_DIRECTORY = "curation_directory"
         private const val DOID_JSON = "doid_json"
+        private const val DRUG_INTERACTION_TSV = "drug_interaction_tsv"
+        private const val QT_PROLONGATING_TSV = "qt_prolongating_tsv"
         private const val ATC_TSV = "atc_tsv"
         private const val ATC_OVERRIDES_TSV = "atc_overrides_tsv"
         private const val TREATMENT_DIRECTORY = "treatment_directory"
@@ -42,6 +46,8 @@ data class ClinicalIngestionConfig(
             options.addOption(FEED_DIRECTORY, true, "Directory containing the clinical feed data")
             options.addOption(CURATION_DIRECTORY, true, "Directory containing the clinical curation config data")
             options.addOption(DOID_JSON, true, "Path to JSON file containing the full DOID tree.")
+            options.addOption(DRUG_INTERACTION_TSV, true, "Path to TSV file containing drug interactions")
+            options.addOption(QT_PROLONGATING_TSV, true, "Path to TSV file containing QT prolongating drugs")
             options.addOption(ATC_TSV, true, "Path to TSV file containing the full ATC tree")
             options.addOption(ATC_OVERRIDES_TSV, true, "Path to TSV file containing ATC code overrides")
             options.addOption(TREATMENT_DIRECTORY, true, "Directory containing the treatment data")
@@ -64,6 +70,8 @@ data class ClinicalIngestionConfig(
                 feedDirectory = ApplicationConfig.nonOptionalDir(cmd, FEED_DIRECTORY),
                 curationDirectory = ApplicationConfig.nonOptionalDir(cmd, CURATION_DIRECTORY),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
+                drugInteractionTsv = ApplicationConfig.nonOptionalFile(cmd, DRUG_INTERACTION_TSV),
+                qtProlongatingTsv = ApplicationConfig.nonOptionalFile(cmd, QT_PROLONGATING_TSV),
                 atcTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_TSV),
                 atcOverridesTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_OVERRIDES_TSV),
                 treatmentDirectory = ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DIRECTORY),
