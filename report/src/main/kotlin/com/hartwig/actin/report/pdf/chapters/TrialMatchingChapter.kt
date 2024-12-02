@@ -1,11 +1,14 @@
 package com.hartwig.actin.report.pdf.chapters
 
+import com.hartwig.actin.datamodel.molecular.NO_EVIDENCE_SOURCE
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 import com.hartwig.actin.report.pdf.ReportContentProvider
 import com.hartwig.actin.report.pdf.chapters.ChapterContentFunctions.addGenerators
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleActinTrialsGenerator
+import com.hartwig.actin.report.pdf.tables.trial.EligibleExternalTrialsGenerator
+import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummary
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.geom.PageSize
@@ -17,6 +20,8 @@ class TrialMatchingChapter(
     private val includeIneligibleTrialsInSummary: Boolean,
     private val externalTrialsOnly: Boolean,
     private val reportContentProvider: ReportContentProvider,
+    private val filteredNationalTrials: Set<ExternalTrialSummary>,
+    private val filteredInternationalTrials: Set<ExternalTrialSummary>,
     override val include: Boolean
 ) : ReportChapter {
 
@@ -57,6 +62,9 @@ class TrialMatchingChapter(
             contentWidth()
         )
 
+        val allEvidenceSources =
+            report.patientRecord.molecularHistory.molecularTests.map { it.evidenceSource }.filter { it != NO_EVIDENCE_SOURCE }.toSet()
+
         return listOfNotNull(
             EligibleActinTrialsGenerator.forClosedCohorts(
                 nonIgnoredCohorts,
@@ -77,6 +85,25 @@ class TrialMatchingChapter(
             if (includeIneligibleTrialsInSummary || externalTrialsOnly) null else {
                 IneligibleActinTrialsGenerator.forNonEvaluableAndIgnoredCohorts(
                     ignoredCohorts, nonEvaluableCohorts, report.treatmentMatch.trialSource, contentWidth()
+                )
+            },
+            if (filteredNationalTrials.isEmpty()) null else {
+                EligibleExternalTrialsGenerator(
+                    allEvidenceSources,
+                    filteredNationalTrials,
+                    contentWidth(),
+                    filteredNationalTrials.size,
+                    report.config.countryOfReference,
+                    true
+                )
+            },
+            if (filteredInternationalTrials.isEmpty()) null else {
+                EligibleExternalTrialsGenerator(
+                    allEvidenceSources,
+                    filteredInternationalTrials,
+                    contentWidth(),
+                    filteredInternationalTrials.size,
+                    isFilteredTrialsTable = true
                 )
             },
             localTrialGenerator.takeIf {

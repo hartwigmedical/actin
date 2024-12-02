@@ -14,13 +14,13 @@ class EligibleExternalTrialsGenerator(
     private val trials: Set<ExternalTrialSummary>,
     private val width: Float,
     private val filteredCount: Int,
-    private val homeCountry: CountryName? = null
+    private val homeCountry: CountryName? = null,
+    private val isFilteredTrialsTable: Boolean = false
 ) : TableGenerator {
 
     override fun title() =
-        "${sources.joinToString()} trials potentially eligible based on molecular results which are potentially " +
+        "${if (isFilteredTrialsTable) "Filtered" else ""} ${sources.joinToString()} trials potentially eligible based on molecular results which are potentially " +
                 "recruiting ${homeCountry?.let { "locally in ${it.display()}" } ?: "internationally"} (${trials.size})"
-
 
     override fun contents(): Table {
         val eventWidth = (0.9 * width / 5).toFloat()
@@ -62,11 +62,11 @@ class EligibleExternalTrialsGenerator(
             table.addCell(
                 Cells.createSpanningSubNote(
                     homeCountry?.let {
-                        "$filteredCount trials were filtered out due to eligible trials in above tables for the same molecular target. " +
-                                "See extended report for all matches."
+                        "$filteredCount trials were filtered out due to eligible local trials for the same molecular target. " +
+                                "See trial matching summary for filtered matches."
                     }
-                        ?: ("$filteredCount trials were filtered out due to ${sources.joinToString()} trials recruiting locally for "
-                                + "the same molecular target. See extended report for all matches."),
+                        ?: ("$filteredCount trials were filtered out due to ${sources.joinToString()} trials recruiting nationally for "
+                                + "the same molecular target. See trial matching summary for filtered matches."),
                     table
                 )
             )
