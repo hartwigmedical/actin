@@ -58,7 +58,7 @@ class EligibleExternalTrialsGenerator(
         if (table.numberOfRows == 0) {
             table.addCell(Cells.createSpanningNoneEntry(table))
         }
-        if (filteredCount > 0)
+        if (filteredCount > 0 && !isFilteredTrialsTable)
             table.addCell(
                 Cells.createSpanningSubNote(
                     homeCountry?.let {
