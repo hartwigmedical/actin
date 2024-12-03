@@ -456,7 +456,7 @@ class RecommendationEngineTest {
         )
         private val MOLECULAR_RECORD_WITH_OTHER_BRAF_MUTATION = MINIMAL_MOLECULAR_RECORD.copy(
             drivers = MINIMAL_MOLECULAR_RECORD.drivers.copy(
-                variants = setOf(
+                variants = listOf(
                     TestVariantFactory.createMinimal().copy(
                         canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(hgvsProteinImpact = "p.D594A"),
                         isReportable = true

@@ -1,10 +1,10 @@
 package com.hartwig.actin.datamodel.molecular.evidence
 
 import com.hartwig.actin.datamodel.Displayable
-import com.hartwig.serve.datamodel.EvidenceLevelDetails
+import com.hartwig.serve.datamodel.efficacy.EvidenceLevelDetails
 import java.time.LocalDate
 
-data class Country(val name: CountryName, val hospitalsPerCity: Map<String, Set<String>>)
+data class Country(val name: CountryName, val hospitalsPerCity: Map<String, Set<Hospital>>)
 
 enum class CountryName(private val display: String) : Displayable {
     NETHERLANDS("Netherlands"),
@@ -17,6 +17,8 @@ enum class CountryName(private val display: String) : Displayable {
         return display
     }
 }
+
+data class Hospital(val name: String, val isChildrensHospital: Boolean?)
 
 data class ApplicableCancerType(val cancerType: String, val excludedCancerTypes: Set<String>)
 

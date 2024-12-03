@@ -11,7 +11,7 @@ import org.junit.Test
 class FunctionCreatorFactoryTest {
 
     @Test
-    fun everyFunctionCanBeCreated() {
+    fun `Should create every function`() {
         val doidTerm = "term 1"
         val doidModel = TestDoidModelFactory.createWithOneDoidAndTerm("doid 1", doidTerm)
         val map = create(RuleMappingResourcesTestFactory.create(doidModel))

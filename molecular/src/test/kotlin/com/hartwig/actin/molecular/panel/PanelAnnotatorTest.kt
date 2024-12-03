@@ -20,25 +20,23 @@ import com.hartwig.actin.molecular.HGVS_CODING
 import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEvents
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
-import com.hartwig.serve.datamodel.EvidenceDirection
-import com.hartwig.serve.datamodel.EvidenceLevel
-import com.hartwig.serve.datamodel.Knowledgebase
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import com.hartwig.serve.datamodel.common.GeneRole as ServeGeneRole
-import com.hartwig.serve.datamodel.common.ProteinEffect as ServeProteinEffect
+import com.hartwig.serve.datamodel.molecular.common.GeneRole as ServeGeneRole
+import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
 
 private const val ALT = "T"
 private const val REF = "G"
 private const val OTHER_GENE = "other_gene"
 private const val CHROMOSOME = "1"
 private const val POSITION = 1
-private val EMPTY_MATCH = ActionabilityMatch(emptyList(), emptyList())
+private val EMPTY_MATCH = ActionabilityMatch(ActionableEvents(), ActionableEvents())
 private val ARCHER_VARIANT = SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING)
 private val VARIANT_MATCH_CRITERIA =
     VariantMatchCriteria(
@@ -58,10 +56,8 @@ private val HOTSPOT = TestServeKnownFactory.hotspotBuilder().build()
     .withProteinEffect(ServeProteinEffect.GAIN_OF_FUNCTION)
 
 private val ACTIONABILITY_MATCH = ActionabilityMatch(
-    onLabelEvents = listOf(
-        TestServeActionabilityFactory.geneBuilder().build().withSource(Knowledgebase.CKB_EVIDENCE).withEvidenceLevel(EvidenceLevel.A)
-            .withDirection(EvidenceDirection.RESPONSIVE)
-    ), offLabelEvents = emptyList()
+    onLabelEvidence = ActionableEvents(listOf(TestServeActionabilityFactory.createEfficacyEvidenceWithGene()), emptyList()),
+    offLabelEvidence = ActionableEvents()
 )
 
 private val ARCHER_SKIPPED_EXON = SequencedSkippedExons(GENE, 2, 3)
@@ -73,10 +69,10 @@ class PanelAnnotatorTest {
         every { geneAlterationForVariant(any()) } returns null
     }
     private val panelVariantAnnotator = mockk<PanelVariantAnnotator> {
-        every { annotate(any()) } returns emptySet()
+        every { annotate(any()) } returns emptyList()
     }
     private val panelFusionAnnotator = mockk<PanelFusionAnnotator> {
-        every { annotate(any(), any()) } returns emptySet()
+        every { annotate(any(), any()) } returns emptyList()
     }
 
     private val annotator =
@@ -89,28 +85,28 @@ class PanelAnnotatorTest {
     @Test
     fun `Should annotate variant`() {
         val expected = mockk<Variant>()
-        every { panelVariantAnnotator.annotate(setOf(ARCHER_VARIANT)) } returns setOf(expected)
+        every { panelVariantAnnotator.annotate(setOf(ARCHER_VARIANT)) } returns listOf(expected)
 
         val annotatedPanel = annotator.annotate(createTestPriorSequencingTest().copy(variants = setOf(ARCHER_VARIANT)))
-        assertThat(annotatedPanel.drivers.variants).isEqualTo(setOf(expected))
+        assertThat(annotatedPanel.drivers.variants).isEqualTo(listOf(expected))
     }
 
     @Test
     fun `Should annotate fusion`() {
         val expected = mockk<Fusion>()
-        every { panelFusionAnnotator.annotate(setOf(ARCHER_FUSION), emptySet()) } returns setOf(expected)
+        every { panelFusionAnnotator.annotate(setOf(ARCHER_FUSION), emptySet()) } returns listOf(expected)
 
         val annotatedPanel = annotator.annotate(createTestPriorSequencingTest().copy(fusions = setOf(ARCHER_FUSION)))
-        assertThat(annotatedPanel.drivers.fusions).isEqualTo(setOf(expected))
+        assertThat(annotatedPanel.drivers.fusions).isEqualTo(listOf(expected))
     }
 
     @Test
     fun `Should annotate exon skip`() {
         val expected = mockk<Fusion>()
-        every { panelFusionAnnotator.annotate(emptySet(), setOf(ARCHER_SKIPPED_EXON)) } returns setOf(expected)
+        every { panelFusionAnnotator.annotate(emptySet(), setOf(ARCHER_SKIPPED_EXON)) } returns listOf(expected)
 
         val annotatedPanel = annotator.annotate(createTestPriorSequencingTest().copy(skippedExons = setOf(ARCHER_SKIPPED_EXON)))
-        assertThat(annotatedPanel.drivers.fusions).isEqualTo(setOf(expected))
+        assertThat(annotatedPanel.drivers.fusions).isEqualTo(listOf(expected))
     }
 
     @Test
@@ -138,7 +134,7 @@ class PanelAnnotatorTest {
 
         val annotatedPanel = annotator.annotate(createTestPriorSequencingTest().copy(deletedGenes = setOf(SequencedDeletedGene(GENE))))
         assertThat(annotatedPanel.drivers.copyNumbers).isEqualTo(
-            setOf(
+            listOf(
                 CopyNumber(
                     type = CopyNumberType.LOSS,
                     minCopies = 0,

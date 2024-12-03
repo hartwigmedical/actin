@@ -5,10 +5,11 @@ import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.assertj.core.api.AbstractBooleanAssert
 import org.assertj.core.api.AbstractComparableAssert
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class HasSufficientLabValueLLNTest {
+
     private val function = HasSufficientLabValueLLN(2.0)
     private val record = TestPatientFactory.createMinimalTestWGSPatientRecord()
 
@@ -40,7 +41,7 @@ class HasSufficientLabValueLLNTest {
     ): AbstractComparableAssert<*, *> {
         val evaluation =
             function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.create(value = labValue, refLimitLow = referenceLimitLow))
-        return Assertions.assertThat(evaluation.result).isEqualTo(result)
+        return assertThat(evaluation.result).isEqualTo(result)
     }
 
     private fun assertRecoverable(
@@ -48,6 +49,6 @@ class HasSufficientLabValueLLNTest {
     ): AbstractBooleanAssert<*> {
         val evaluation =
             function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.create(value = labValue, refLimitLow = referenceLimitLow))
-        return Assertions.assertThat(evaluation.recoverable).isTrue()
+        return assertThat(evaluation.recoverable).isTrue()
     }
 }

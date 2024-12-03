@@ -7,7 +7,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class TreatmentFunctionsTest {
@@ -41,8 +41,8 @@ class TreatmentFunctionsTest {
 
     @Test
     fun `Should return false if treatment history is empty`() {
-        Assertions.assertThat(receivedPlatinumDoublet(TreatmentTestFactory.withTreatmentHistory(emptyList()))).isFalse()
-        Assertions.assertThat(receivedPlatinumTripletOrAbove(TreatmentTestFactory.withTreatmentHistory(emptyList()))).isFalse()
+        assertThat(receivedPlatinumDoublet(TreatmentTestFactory.withTreatmentHistory(emptyList()))).isFalse()
+        assertThat(receivedPlatinumTripletOrAbove(TreatmentTestFactory.withTreatmentHistory(emptyList()))).isFalse()
     }
 
     // Tests for fun receivedPlatinumDoublet
@@ -51,7 +51,7 @@ class TreatmentFunctionsTest {
         val record = TreatmentTestFactory.withTreatmentHistory(
             listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(platinumDoublet)))
         )
-        Assertions.assertThat(receivedPlatinumDoublet(record)).isTrue()
+        assertThat(receivedPlatinumDoublet(record)).isTrue()
     }
 
     @Test
@@ -62,7 +62,7 @@ class TreatmentFunctionsTest {
                 TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(nonPlatinumDoublet))
             )
         )
-        Assertions.assertThat(receivedPlatinumDoublet(record)).isFalse()
+        assertThat(receivedPlatinumDoublet(record)).isFalse()
     }
 
     // Tests for fun receivedPlatinumTripletOrAbove
@@ -71,7 +71,7 @@ class TreatmentFunctionsTest {
         val record = TreatmentTestFactory.withTreatmentHistory(
             listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(platinumTriplet)))
         )
-        Assertions.assertThat(receivedPlatinumTripletOrAbove(record)).isTrue()
+        assertThat(receivedPlatinumTripletOrAbove(record)).isTrue()
     }
 
     @Test
@@ -85,7 +85,7 @@ class TreatmentFunctionsTest {
         val record = TreatmentTestFactory.withTreatmentHistory(
             listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(drugs)))
         )
-        Assertions.assertThat(receivedPlatinumTripletOrAbove(record)).isTrue()
+        assertThat(receivedPlatinumTripletOrAbove(record)).isTrue()
     }
 
     @Test
@@ -96,6 +96,6 @@ class TreatmentFunctionsTest {
                 TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(nonPlatinumDoublet))
             )
         )
-        Assertions.assertThat(receivedPlatinumTripletOrAbove(record)).isFalse()
+        assertThat(receivedPlatinumTripletOrAbove(record)).isFalse()
     }
 }

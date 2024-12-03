@@ -130,10 +130,13 @@ class GeneIsInactivated(private val gene: String, maxTestAge: LocalDate? = null)
 
     private fun evaluatePotentialWarns(
         inactivationEventsThatAreUnreportable: Set<String>,
-        inactivationEventsNoTSG: Set<String>, inactivationEventsGainOfFunction: Set<String>,
-        inactivationHighDriverNonBiallelicVariants: Set<String>, inactivationSubclonalVariants: Set<String>,
+        inactivationEventsNoTSG: Set<String>,
+        inactivationEventsGainOfFunction: Set<String>,
+        inactivationHighDriverNonBiallelicVariants: Set<String>,
+        inactivationSubclonalVariants: Set<String>,
         reportableNonDriverBiallelicVariantsOther: Set<String>,
-        reportableNonDriverNonBiallelicVariantsOther: Set<String>, eventsThatMayBeTransPhased: List<String>, evidenceSource: String
+        reportableNonDriverNonBiallelicVariantsOther: Set<String>,
+        eventsThatMayBeTransPhased: List<String>, evidenceSource: String
     ): Evaluation? {
         return MolecularEventUtil.evaluatePotentialWarnsForEventGroups(
             listOfNotNull(

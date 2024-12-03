@@ -38,6 +38,8 @@ object Format {
 
     fun concatWithCommaAndAnd(strings: Iterable<String>) = concatWithCommaAndSeparator(strings, SEPARATOR_AND, toLowercase = false)
 
+    fun concatWithCommaAndOr(strings: Iterable<String>) = concatWithCommaAndSeparator(strings, SEPARATOR_OR, toLowercase = false)
+
     private fun concatWithCommaAndSeparator(strings: Iterable<String>, separator: String, toLowercase: Boolean): String {
         val stringList = if (toLowercase) strings.distinct().map(String::lowercase) else strings.distinct()
         val sortedStringList = stringList.sortedWith(String.CASE_INSENSITIVE_ORDER)

@@ -31,7 +31,7 @@ class CurrentlyGetsCypXSubstrateMedication(private val selector: MedicationSelec
                 )
             }
 
-            termToFind in MedicationRuleMapper.UNDETERMINED_CYP -> {
+            termToFind in MedicationConstants.UNDETERMINED_CYP_STRING -> {
                 EvaluationFactory.undetermined(
                     "Undetermined if patient currently gets CYP$termToFind substrate medication",
                     "Undetermined CYP$termToFind substrate medication use"

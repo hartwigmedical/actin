@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.molecular.evidence.ApplicableCancerType
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.CountryName
+import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.report.interpretation.InterpretedCohortTestFactory
@@ -115,7 +116,7 @@ class ExternalTrialSummarizerTest {
     @Test
     fun `Should filter trials in childrens hospitals`() {
         val notFilteredOneAdultHospital = BASE_EXTERNAL_TRIAL_SUMMARY.copy(
-            hospitals = hospitalSet(Hospital("PMC", true), Hospital("NKI")),
+            hospitals = hospitalSet(Hospital("PMC", true), Hospital("NKI", false)),
             countries = countrySet(NETHERLANDS)
         )
         val notFilteredNoHospitals = BASE_EXTERNAL_TRIAL_SUMMARY.copy(hospitals = sortedSetOf(), countries = countrySet(NETHERLANDS))
@@ -178,7 +179,7 @@ class ExternalTrialSummarizerTest {
         assertThat(result).containsExactly(notFiltered)
     }
 
-    private fun hospitalSet(vararg hospitals: String) = hospitalSet(*hospitals.map { Hospital(it) }.toTypedArray())
+    private fun hospitalSet(vararg hospitals: String) = hospitalSet(*hospitals.map { Hospital(it, null) }.toTypedArray())
 
     private fun hospitalSet(vararg hospitals: Hospital) = sortedSetOf(Comparator.comparing { it.name }, *hospitals)
 

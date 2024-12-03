@@ -39,10 +39,10 @@ import com.hartwig.actin.datamodel.molecular.orange.pharmaco.HaplotypeFunction
 import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoEntry
 import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoGene
 import com.hartwig.actin.util.json.Json
-import java.io.File
-import java.io.FileReader
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.io.File
+import java.io.FileReader
 
 object HistoricMolecularDeserializer {
 
@@ -140,8 +140,8 @@ object HistoricMolecularDeserializer {
         )
     }
 
-    private fun <T> extractDriversFromField(drivers: JsonObject, field: String, convertJson: (JsonElement) -> T): Set<T> {
-        return Json.array(drivers, field).map(convertJson).toSet()
+    private fun <T> extractDriversFromField(drivers: JsonObject, field: String, convertJson: (JsonElement) -> T): List<T> {
+        return Json.array(drivers, field).map(convertJson).toList()
     }
 
     private fun extractVariant(variantElement: JsonElement): Variant {
@@ -199,10 +199,9 @@ object HistoricMolecularDeserializer {
         clonalLikelihood = Json.double(variant, "clonalLikelihood")
     )
 
-    private fun extractCopyNumbers(drivers: JsonObject): Set<CopyNumber> {
-        return sequenceOf("copyNumbers" to null, "amplifications" to CopyNumberType.FULL_GAIN, "losses" to CopyNumberType.LOSS)
+    private fun extractCopyNumbers(drivers: JsonObject): List<CopyNumber> {
+        return listOf("copyNumbers" to null, "amplifications" to CopyNumberType.FULL_GAIN, "losses" to CopyNumberType.LOSS)
             .flatMap { (field, type) -> Json.optionalArray(drivers, field)?.map { extractCopyNumber(it, type) } ?: emptyList() }
-            .toSet()
     }
 
     private fun extractCopyNumber(copyNumberElement: JsonElement, typeGroup: CopyNumberType?): CopyNumber {

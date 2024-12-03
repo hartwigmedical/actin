@@ -9,10 +9,11 @@ import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.TestClinicalFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class HasRecentlyReceivedTrialMedicationTest {
+
     private val evaluationDate = TestClinicalFactory.createMinimalTestClinicalRecord().patient.registrationDate.plusWeeks(1)
     private val functionActive = HasRecentlyReceivedTrialMedication(MedicationTestFactory.alwaysActive(), evaluationDate.plusDays(1))
 
@@ -81,7 +82,7 @@ class HasRecentlyReceivedTrialMedicationTest {
             TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = null)
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, result)
-        Assertions.assertThat(result.recoverable).isTrue()
+        assertThat(result.recoverable).isTrue()
     }
 
     @Test

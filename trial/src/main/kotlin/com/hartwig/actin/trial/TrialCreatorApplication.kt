@@ -7,6 +7,7 @@ import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
+import com.hartwig.actin.molecular.evidence.ServeLoader
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
 import com.hartwig.actin.trial.interpretation.TrialIngestion
 import com.hartwig.actin.trial.serialization.TrialJson
@@ -14,7 +15,7 @@ import com.hartwig.actin.trial.status.TrialStatusConfigInterpreter
 import com.hartwig.actin.trial.status.TrialStatusDatabaseReader
 import com.hartwig.actin.trial.status.ctc.CTCTrialStatusEntryReader
 import com.hartwig.actin.trial.status.nki.NKITrialStatusEntryReader
-import com.hartwig.serve.datamodel.serialization.ServeJson
+import com.hartwig.serve.datamodel.RefGenome
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.ParseException
@@ -37,7 +38,8 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
         LOGGER.info("Loading known genes from serve db {}", config.serveDbJson)
-        val knownGenes = ServeJson.read(config.serveDbJson).knownEvents().genes()
+        val (knownEvents, _) = ServeLoader.loadServe(config.serveDbJson, RefGenome.V37)
+        val knownGenes = knownEvents.genes()
         LOGGER.info(" Loaded {} known genes", knownGenes.size)
         val geneFilter = GeneFilterFactory.createFromKnownGenes(knownGenes)
 
@@ -60,17 +62,23 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         val result = trialIngestion.ingestTrials()
 
         val outputDirectory = config.outputDirectory
-        LOGGER.info("Writing {} trials to {}", result.trials.size, outputDirectory)
-        TrialJson.write(result.trials, outputDirectory)
-        LOGGER.info("Done!")
+        // TODO (KD): Would potentially be nicer to return null trials in case trial ingestion was explicitly skipped due to errors
+        if (result.trialConfigDatabaseValidation.hasErrors() && result.trials.isEmpty()) {
+            LOGGER.warn("No trials were created due to presence of trial config database validation errors")
+        } else {
+            LOGGER.info("Writing {} trials to {}", result.trials.size, outputDirectory)
+            TrialJson.write(result.trials, outputDirectory)
+        }
 
         val resultsJson = Paths.get(outputDirectory).resolve("treatment_ingestion_result.json")
-        LOGGER.info("Writing {} trial ingestion results to {}", result.trials.size, resultsJson)
+        LOGGER.info("Writing trial ingestion results to {}", resultsJson)
         Files.write(
             resultsJson,
             result.serialize().toByteArray()
         )
+
         printAllValidationErrors(result)
+        LOGGER.info("Done!")
     }
 
     private fun configInterpreter(configuration: TrialConfiguration): TrialStatusConfigInterpreter {
@@ -97,7 +105,6 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
     }
 
     private fun printAllValidationErrors(result: TrialIngestionResult) {
-
         if (result.trialConfigDatabaseValidation.hasErrors()) {
             LOGGER.warn("There were validation errors in the trial definition configuration")
             printValidationErrors(result.trialConfigDatabaseValidation.cohortDefinitionValidationErrors)

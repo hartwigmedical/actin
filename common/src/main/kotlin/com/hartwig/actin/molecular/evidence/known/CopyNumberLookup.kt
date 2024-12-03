@@ -3,8 +3,8 @@ package com.hartwig.actin.molecular.evidence.known
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.orange.driver.HomozygousDisruption
-import com.hartwig.serve.datamodel.gene.GeneEvent
-import com.hartwig.serve.datamodel.gene.KnownCopyNumber
+import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
+import com.hartwig.serve.datamodel.molecular.gene.KnownCopyNumber
 
 internal object CopyNumberLookup {
 

@@ -3,8 +3,10 @@ package com.hartwig.actin.trial.input
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver
 import com.hartwig.actin.datamodel.clinical.AtcLevel
+import com.hartwig.actin.datamodel.clinical.Cyp
 import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.ReceptorType
+import com.hartwig.actin.datamodel.clinical.Transporter
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
@@ -14,6 +16,7 @@ import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.FunctionInput
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.medication.MedicationCategories
+import com.hartwig.actin.medication.MedicationInputChecker
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.composite.CompositeInput
 import com.hartwig.actin.trial.input.composite.CompositeRules
@@ -26,7 +29,6 @@ import com.hartwig.actin.trial.input.single.ManyGenes
 import com.hartwig.actin.trial.input.single.ManyIntents
 import com.hartwig.actin.trial.input.single.ManyIntentsOneInteger
 import com.hartwig.actin.trial.input.single.ManySpecificTreatmentsTwoIntegers
-import com.hartwig.actin.trial.input.single.OneCyp
 import com.hartwig.actin.trial.input.single.OneCypOneInteger
 import com.hartwig.actin.trial.input.single.OneDoidTermOneInteger
 import com.hartwig.actin.trial.input.single.OneDoubleOneGender
@@ -97,6 +99,11 @@ class FunctionInputResolver(
 
                 FunctionInput.ONE_CYP_ONE_INTEGER -> {
                     createOneCypOneIntegerInput(function)
+                    return true
+                }
+
+                FunctionInput.ONE_TRANSPORTER -> {
+                    createOneTransporterInput(function)
                     return true
                 }
 
@@ -202,6 +209,11 @@ class FunctionInputResolver(
 
                 FunctionInput.ONE_STRING_ONE_INTEGER -> {
                     createOneStringOneIntegerInput(function)
+                    return true
+                }
+
+                FunctionInput.MANY_STRINGS -> {
+                    createManyStringsInput(function)
                     return true
                 }
 
@@ -527,6 +539,11 @@ class FunctionInputResolver(
         )
     }
 
+    fun createManyStringsInput(function: EligibilityFunction): List<String> {
+        assertParamConfig(function, FunctionInput.MANY_STRINGS, 1)
+        return toStringList(function.parameters.first())
+    }
+
     fun createManyStringsOneIntegerInput(function: EligibilityFunction): OneIntegerManyStrings {
         assertParamConfig(function, FunctionInput.MANY_STRINGS_ONE_INTEGER, 2)
         return OneIntegerManyStrings(
@@ -631,7 +648,7 @@ class FunctionInputResolver(
     fun createOneGeneManyProteinImpactsInput(function: EligibilityFunction): OneGeneManyProteinImpacts {
         assertParamConfig(function, FunctionInput.ONE_GENE_MANY_PROTEIN_IMPACTS, 2)
         val gene = firstParameterAsGene(function)
-        val proteinImpacts = toStringList(function.parameters[1])
+        val proteinImpacts = toStringList(function.parameters[1]).toSet()
         for (proteinImpact in proteinImpacts) {
             if (!MolecularInputChecker.isProteinImpact(proteinImpact)) {
                 throw IllegalStateException("Not a valid protein impact: $proteinImpact")
@@ -755,24 +772,34 @@ class FunctionInputResolver(
         }
     }
 
-    fun createOneCypInput(function: EligibilityFunction): OneCyp {
+    fun createOneCypInput(function: EligibilityFunction): Cyp {
         assertParamConfig(function, FunctionInput.ONE_CYP, 1)
 
         val cyp = function.parameters.first() as String
-        if (!MolecularInputChecker.isCyp(cyp)) {
+        if (!MedicationInputChecker.isCyp(cyp)) {
             throw IllegalArgumentException("Not a proper CYP: $cyp")
         }
 
-        return OneCyp(cyp)
+        return Cyp.valueOf(cyp)
     }
 
     fun createOneCypOneIntegerInput(function: EligibilityFunction): OneCypOneInteger {
         assertParamConfig(function, FunctionInput.ONE_CYP_ONE_INTEGER, 2)
         val cyp = parameterAsString(function, 0)
-        if (!MolecularInputChecker.isCyp(cyp)) {
+        if (!MedicationInputChecker.isCyp(cyp)) {
             throw IllegalArgumentException("Not a proper CYP: $cyp")
         }
-        return OneCypOneInteger(cyp = cyp, integer = parameterAsString(function, 1).toInt())
+        return OneCypOneInteger(cyp = Cyp.valueOf(cyp), integer = parameterAsString(function, 1).toInt())
+    }
+
+    fun createOneTransporterInput(function: EligibilityFunction): Transporter {
+        assertParamConfig(function, FunctionInput.ONE_TRANSPORTER, 1)
+
+        val transporter = function.parameters.first() as String
+        if (!MedicationInputChecker.isTransporter(transporter)) {
+            throw IllegalArgumentException("Not a proper transporter: $transporter")
+        }
+        return Transporter.valueOf(transporter)
     }
 
     private fun parameterAsString(function: EligibilityFunction, i: Int) = function.parameters[i] as String

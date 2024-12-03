@@ -10,6 +10,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 class HasSufficientPulseOximetryTest {
+
     private val referenceDateTime = LocalDateTime.of(2023, 12, 2, 0, 0)
     private val function = HasSufficientPulseOximetry(90.0, LocalDate.of(2023, 12, 1))
 

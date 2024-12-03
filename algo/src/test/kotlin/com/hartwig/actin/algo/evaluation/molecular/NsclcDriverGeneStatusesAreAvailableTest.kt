@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestPanelRecordFactory
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class NsclcDriverGeneStatusesAreAvailableTest {
@@ -78,7 +78,7 @@ class NsclcDriverGeneStatusesAreAvailableTest {
                 NSCLC_DRIVER_GENE_SET.drop(1).map { panelWithTestForGene(it) })
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, evaluation)
-        Assertions.assertThat(evaluation.failSpecificMessages).containsExactly(
+        assertThat(evaluation.failSpecificMessages).containsExactly(
             "NSCLC driver gene statuses not available (missing: ${NSCLC_DRIVER_GENE_SET.first()})"
         )
     }

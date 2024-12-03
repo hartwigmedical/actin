@@ -46,7 +46,7 @@ class MolecularDriversInterpreter(
         return interpretedCohortsSummarizer.trialsForDriver(driver)
     }
 
-    private fun <T : Driver> filterDrivers(drivers: Set<T>): List<T> {
+    private fun <T : Driver> filterDrivers(drivers: Collection<T>): List<T> {
         return drivers.filter { it.isReportable || interpretedCohortsSummarizer.driverIsActionable(it) }
     }
 }

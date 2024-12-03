@@ -94,6 +94,7 @@ object TestTreatmentMatchFactory {
                 ),
                 annotations = TestExtendedEvidenceEntryFactory.createProperTestExtendedEvidenceEntries(),
                 generalPfs = Measurement(136.5, 98, 74, 281, 46.0),
+                generalOs = Measurement(215.0, 90, 121, 470, 110.1),
                 resistanceEvidence = listOf(
                     ResistanceEvidence(
                         event = "BRAF amp",
@@ -279,9 +280,18 @@ object TestTreatmentMatchFactory {
             Triple("Age 45-55", 356.5, 0.4),
             Triple("WHO 1", 321.0, 0.25)
         )
+        val populationOsAndDecision = listOf(
+            Triple("All", 236.5, 0.3),
+            Triple("Age 45-55", 356.5, 0.4),
+            Triple("WHO 1", 321.0, 0.25)
+        )
 
         val pfsMap = populationPfsAndDecision.map { (name, pfs, _) ->
             name to Measurement(pfs, 100, (pfs / 2).toInt(), (pfs * 2).toInt(), pfs * 0.4)
+        }.toMap()
+
+        val osMap = populationOsAndDecision.map { (name, os, _) ->
+            name to Measurement(os, 100, (os / 2).toInt(), (os * 2).toInt(), os * 0.4)
         }.toMap()
 
         val decisionMap = populationPfsAndDecision.map { (name, _, decision) -> name to Measurement(decision, 100) }.toMap()
@@ -291,6 +301,7 @@ object TestTreatmentMatchFactory {
                 TreatmentGroup.fromTreatmentName(pembrolizumab.name)!!,
                 mapOf(
                     MeasurementType.PROGRESSION_FREE_SURVIVAL to pfsMap,
+                    MeasurementType.OVERALL_SURVIVAL to osMap,
                     MeasurementType.TREATMENT_DECISION to decisionMap
                 )
             )

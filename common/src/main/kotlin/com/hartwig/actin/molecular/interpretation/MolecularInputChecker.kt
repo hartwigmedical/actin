@@ -45,16 +45,6 @@ class MolecularInputChecker(private val geneFilter: GeneFilter) {
             return hasValidStart && hasValidEnd && hasValidMid
         }
 
-        fun isCyp(string: String): Boolean {
-            if (string.length < 3 || string.length > 5) {
-                return false
-            }
-            val hasValidStart = string[0].isDigit()
-            val hasValidMid = string[1].isLetter()
-            val hasValidEnd = string[string.length - 1].isDigit()
-            return hasValidStart && hasValidMid && hasValidEnd
-        }
-
         private fun hasSpecificValidProteinEnding(string: String): Boolean {
             return VALID_PROTEIN_ENDINGS.any { string.endsWith(it) }
         }

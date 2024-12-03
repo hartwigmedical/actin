@@ -140,6 +140,10 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
                 listOf("string", "1")
             }
 
+            FunctionInput.MANY_STRINGS -> {
+                listOf("string1;string2")
+            }
+
             FunctionInput.MANY_STRINGS_ONE_INTEGER -> {
                 listOf("string1;string2", "1")
             }
@@ -237,11 +241,15 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
             }
 
             FunctionInput.ONE_CYP -> {
-                listOf("3A4")
+                listOf("CYP3A4_5")
             }
 
             FunctionInput.ONE_CYP_ONE_INTEGER -> {
-                listOf("3A4", "1")
+                listOf("CYP3A4_5", "1")
+            }
+
+            FunctionInput.ONE_TRANSPORTER -> {
+                listOf("OATP1B1")
             }
         }
     }

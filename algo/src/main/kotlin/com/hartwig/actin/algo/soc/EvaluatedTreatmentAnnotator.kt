@@ -22,15 +22,26 @@ class EvaluatedTreatmentAnnotator(
             }
         }?.toMap()
 
+        val osByTreatmentName = treatmentAnalyses?.flatMap { (treatmentGroup, measurementsByType) ->
+            treatmentGroup.memberTreatmentNames.map { treatmentName ->
+                treatmentName to measurementsByType[MeasurementType.OVERALL_SURVIVAL]!![ALL_PATIENTS_POPULATION_NAME]
+            }
+        }?.toMap()
+
         return evaluatedTreatments.map { evaluatedTreatment ->
+            val treatment = evaluatedTreatment.treatmentCandidate.treatment
+            val treatmentName = treatment.name.lowercase()
+
             AnnotatedTreatmentMatch(
                 treatmentCandidate = evaluatedTreatment.treatmentCandidate,
                 evaluations = evaluatedTreatment.evaluations,
                 annotations = lookUp(evaluatedTreatment),
-                generalPfs = pfsByTreatmentName?.get(evaluatedTreatment.treatmentCandidate.treatment.name.lowercase()),
-                resistanceEvidence = resistanceEvidenceMatcher.match(evaluatedTreatment.treatmentCandidate.treatment)
+                generalPfs = pfsByTreatmentName?.get(treatmentName),
+                generalOs = osByTreatmentName?.get(treatmentName),
+                resistanceEvidence = resistanceEvidenceMatcher.match(treatment)
             )
         }
+
     }
 
     private fun lookUp(treatment: EvaluatedTreatment): List<EfficacyEntry> {
