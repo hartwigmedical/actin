@@ -2,20 +2,18 @@ package com.hartwig.actin.clinical.feed.emc.extraction
 
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.AtcModel
+import com.hartwig.actin.clinical.DrugInteractionsDatabase
 import com.hartwig.actin.clinical.ExtractionResult
+import com.hartwig.actin.clinical.QtProlongatingDatabase
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.CurationUtil.fullTrim
-import com.hartwig.actin.clinical.curation.DrugInteractionCurationUtil
-import com.hartwig.actin.clinical.curation.QTProlongatingCurationUtil
-import com.hartwig.actin.clinical.curation.config.DrugInteractionConfig
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig
 import com.hartwig.actin.clinical.curation.config.MedicationNameConfig
 import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
-import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
@@ -29,8 +27,8 @@ class MedicationExtractor(
     private val medicationNameCuration: CurationDatabase<MedicationNameConfig>,
     private val medicationDosageCuration: CurationDatabase<MedicationDosageConfig>,
     private val periodBetweenUnitCuration: CurationDatabase<PeriodBetweenUnitConfig>,
-    private val drugInteractionCuration: CurationDatabase<DrugInteractionConfig>,
-    private val qtProlongatingCuration: CurationDatabase<QTProlongatingConfig>,
+    private val drugInteractionsDatabase: DrugInteractionsDatabase,
+    private val qtProlongatingDatabase: QtProlongatingDatabase,
     private val administrationRouteTranslation: TranslationDatabase<String>,
     private val dosageUnitTranslation: TranslationDatabase<String>,
     private val atcModel: AtcModel,
@@ -60,12 +58,9 @@ class MedicationExtractor(
                     administrationRoute = administrationRouteCuration.extracted,
                     startDate = entry.periodOfUseValuePeriodStart,
                     stopDate = entry.periodOfUseValuePeriodEnd,
-                    cypInteractions = DrugInteractionCurationUtil.curateMedicationCypInteractions(drugInteractionCuration, name),
-                    transporterInteractions = DrugInteractionCurationUtil.curateMedicationTransporterInteractions(
-                        drugInteractionCuration,
-                        name
-                    ),
-                    qtProlongatingRisk = QTProlongatingCurationUtil.annotateWithQTProlongating(qtProlongatingCuration, name),
+                    cypInteractions = drugInteractionsDatabase.annotateWithCypInteractions(name),
+                    transporterInteractions = drugInteractionsDatabase.annotateWithTransporterInteractions(name),
+                    qtProlongatingRisk = qtProlongatingDatabase.annotateWithQTProlongating(name),
                     atc = atc,
                     isSelfCare = isSelfCare,
                     isTrialMedication = isTrialMedication,
@@ -225,14 +220,16 @@ class MedicationExtractor(
         fun create(
             curationDatabaseContext: CurationDatabaseContext,
             atcModel: AtcModel,
+            drugInteractionsDatabase: DrugInteractionsDatabase,
+            qtProlongatingDatabase: QtProlongatingDatabase,
             treatmentDatabase: TreatmentDatabase
         ) =
             MedicationExtractor(
                 medicationNameCuration = curationDatabaseContext.medicationNameCuration,
                 medicationDosageCuration = curationDatabaseContext.medicationDosageCuration,
                 periodBetweenUnitCuration = curationDatabaseContext.periodBetweenUnitCuration,
-                drugInteractionCuration = curationDatabaseContext.drugInteractionCuration,
-                qtProlongatingCuration = curationDatabaseContext.qtProlongingCuration,
+                drugInteractionsDatabase = drugInteractionsDatabase,
+                qtProlongatingDatabase = qtProlongatingDatabase,
                 administrationRouteTranslation = curationDatabaseContext.administrationRouteTranslation,
                 dosageUnitTranslation = curationDatabaseContext.dosageUnitTranslation,
                 atcModel = atcModel,

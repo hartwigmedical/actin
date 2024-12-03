@@ -15,27 +15,29 @@ object TestTrialConfigDatabaseFactory {
             cohortDefinitionConfigs = createTestCohortDefinitionConfigs(),
             inclusionCriteriaConfigs = createTestInclusionCriteriaConfigs(),
             inclusionCriteriaReferenceConfigs = createTestInclusionCriteriaReferenceConfigs(),
-            unusedRulesToKeep = EligibilityRule.values().map(EligibilityRule::toString)
+            unusedRulesToKeep = EligibilityRule.entries.map(EligibilityRule::toString)
         )
     }
 
-    private fun createTestTrialDefinitionConfigs(): List<TrialDefinitionConfig> {
+    fun createTestTrialDefinitionConfigs(): List<TrialDefinitionConfig> {
         return listOf(
             trialDefinitionConfig(TestTrialData.TEST_TRIAL_METC_1),
             trialDefinitionConfig(TestTrialData.TEST_TRIAL_METC_2)
         )
     }
 
-    private fun trialDefinitionConfig(trialId: String) = TrialDefinitionConfig(
+    fun trialDefinitionConfig(trialId: String) = TrialDefinitionConfig(
         trialId = trialId,
         open = true,
         acronym = "Acronym-$trialId",
         title = "Title for $trialId",
         nctId = "nctId for $trialId",
-        phase = null
+        phase = null,
+        source = "EMC",
+        location = "1,EMC"
     )
 
-    private fun createTestCohortDefinitionConfigs(): List<CohortDefinitionConfig> {
+    fun createTestCohortDefinitionConfigs(): List<CohortDefinitionConfig> {
         return listOf(
             CohortDefinitionConfig(
                 trialId = TestTrialData.TEST_TRIAL_METC_1,
