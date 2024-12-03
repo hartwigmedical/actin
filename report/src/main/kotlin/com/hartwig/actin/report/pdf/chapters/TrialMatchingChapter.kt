@@ -87,22 +87,22 @@ class TrialMatchingChapter(
                     ignoredCohorts, nonEvaluableCohorts, report.treatmentMatch.trialSource, contentWidth()
                 )
             },
-            if (filteredNationalTrials.isEmpty()) null else {
+            filteredNationalTrials.takeIf { it.isNotEmpty() }?.let {
                 EligibleExternalTrialsGenerator(
                     allEvidenceSources,
-                    filteredNationalTrials,
+                    it,
                     contentWidth(),
-                    filteredNationalTrials.size,
+                    it.size,
                     report.config.countryOfReference,
                     true
                 )
             },
-            if (filteredInternationalTrials.isEmpty()) null else {
+            filteredInternationalTrials.takeIf { it.isNotEmpty() }?.let {
                 EligibleExternalTrialsGenerator(
                     allEvidenceSources,
-                    filteredInternationalTrials,
+                    it,
                     contentWidth(),
-                    filteredInternationalTrials.size,
+                    it.size,
                     isFilteredTrialsTable = true
                 )
             },
