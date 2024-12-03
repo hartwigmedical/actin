@@ -9,9 +9,9 @@ import com.hartwig.actin.datamodel.molecular.PanelRecord
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import io.mockk.every
 import io.mockk.mockk
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 private val TEST_DATE = LocalDate.of(2023, 1, 1)
 private const val POSITIVE_FUSION_GENE = "ALK"
@@ -25,8 +25,8 @@ class IHCAnnotatorTest {
     }
 
     private val panelFusionAnnotator = mockk<PanelFusionAnnotator> {
-        every { annotate(setOf(SequencedFusion(POSITIVE_FUSION_GENE)), emptySet()) } returns setOf(fusion)
-        every { annotate(emptySet(), emptySet()) } returns emptySet()
+        every { annotate(setOf(SequencedFusion(POSITIVE_FUSION_GENE)), emptySet()) } returns listOf(fusion)
+        every { annotate(emptySet(), emptySet()) } returns emptyList()
     }
 
     private val ihcAnnotator = IHCAnnotator(panelFusionAnnotator)
@@ -47,7 +47,7 @@ class IHCAnnotatorTest {
                 testedGenes = setOf("ALK"),
                 experimentType = ExperimentType.IHC,
                 testTypeDisplay = ExperimentType.IHC.display(),
-                drivers = Drivers(fusions = setOf(fusion)),
+                drivers = Drivers(fusions = listOf(fusion)),
                 characteristics = MolecularCharacteristics(),
                 evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display(),
                 hasSufficientPurity = true,

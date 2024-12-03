@@ -68,7 +68,7 @@ class MolecularDriverEntryFactoryTest {
         val firstVariant = record.drivers.variants.iterator().next()
         val driverToFind = firstVariant.event
         val entry = createFactoryWithCohortsForEvent(record, driverToFind).create()
-            .find { it.displayedName.startsWith(driverToFind) }
+            .find { it.description.startsWith(driverToFind) }
             ?: throw IllegalStateException(
                 "Could not find molecular driver entry starting with driver: $driverToFind"
             )
@@ -87,7 +87,7 @@ class MolecularDriverEntryFactoryTest {
         val loss = TestMolecularFactory.createProperCopyNumber().copy(type = copyNumberType)
         val record = TestMolecularFactory.createProperTestMolecularRecord().copy(
             drivers = TestMolecularFactory.createProperTestDrivers()
-                .copy(variants = emptySet(), copyNumbers = setOf(loss))
+                .copy(variants = emptyList(), copyNumbers = listOf(loss))
         )
         val result = createFactoryForMolecularRecord(record).create()
         assertThat(result[0].driverType).isEqualTo(expectedDriverType)
@@ -103,7 +103,7 @@ class MolecularDriverEntryFactoryTest {
 
     private fun createDriversWithEvidence(evidence: ClinicalEvidence, isReportable: Boolean): Drivers {
         return TestMolecularFactory.createMinimalTestMolecularRecord().drivers.copy(
-            viruses = setOf(TestVirusFactory.createMinimal().copy(isReportable = isReportable, evidence = evidence))
+            viruses = listOf(TestVirusFactory.createMinimal().copy(isReportable = isReportable, evidence = evidence))
         )
     }
 

@@ -32,7 +32,7 @@ object MolecularCharacteristicFormat {
         }
     }
 
-    private fun formHighLow(i: Boolean) = if (i) "high" else "low"
+    private fun formHighLow(i: Boolean) = if (i) "High" else "Low"
 
     fun formatMicrosatelliteStability(molecularCharacteristics: MolecularCharacteristics): String {
         return molecularCharacteristics.isMicrosatelliteUnstable?.let { unstable -> if (unstable) "Unstable" else "Stable" }

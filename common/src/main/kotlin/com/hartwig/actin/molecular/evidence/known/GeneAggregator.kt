@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.evidence.known
 
-import com.hartwig.serve.datamodel.common.GeneRole
-import com.hartwig.serve.datamodel.gene.KnownGene
+import com.hartwig.serve.datamodel.molecular.common.GeneRole
+import com.hartwig.serve.datamodel.molecular.gene.KnownGene
 
 internal object GeneAggregator {
 

@@ -8,6 +8,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 class HasSufficientBloodPressureTest {
+
     private val function = HasSufficientBloodPressure(BloodPressureCategory.SYSTOLIC, 140, LocalDate.of(2023, 12, 1))
 
     @Test

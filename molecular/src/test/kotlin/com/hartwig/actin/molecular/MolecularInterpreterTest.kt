@@ -7,7 +7,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class MolecularInterpreterTest {
+
     private val output = mockk<MolecularTest>()
+
     var annotatorCalled: Boolean = false
 
     private val extractor = object : MolecularExtractor<PriorSequencingTest, PriorSequencingTest> {
@@ -28,6 +30,7 @@ class MolecularInterpreterTest {
             extractor = extractor,
             annotator = annotator
         ).run(listOf(PriorSequencingTest(test = "test")))
+
         assertThat(annotatorCalled).isTrue()
         assertThat(result).containsExactly(output)
     }

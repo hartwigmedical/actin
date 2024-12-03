@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.evidence.known
 
-import com.hartwig.serve.datamodel.gene.KnownGene
+import com.hartwig.serve.datamodel.molecular.gene.KnownGene
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

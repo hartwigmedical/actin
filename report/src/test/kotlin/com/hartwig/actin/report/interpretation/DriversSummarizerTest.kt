@@ -33,7 +33,7 @@ class DriversSummarizerTest {
     
     @Test
     fun `Should return key variants`() {
-        val variants = setOf(
+        val variants = listOf(
             variant(EXPECTED_GENE, DriverLikelihood.HIGH, true),
             variant("non-reportable", DriverLikelihood.HIGH, false),
             variant("medium likelihood", DriverLikelihood.MEDIUM, true)
@@ -46,7 +46,7 @@ class DriversSummarizerTest {
     fun `Should return key amplified genes and indicate partial amplifications`() {
         val partialAmpGene = "partial amp"
         val fullAmpGene = "full amp"
-        val copyNumbers = setOf(
+        val copyNumbers = listOf(
             copyNumber(CopyNumberType.FULL_GAIN, fullAmpGene, DriverLikelihood.HIGH, true),
             copyNumber(CopyNumberType.PARTIAL_GAIN, partialAmpGene, DriverLikelihood.HIGH, true),
             copyNumber(CopyNumberType.LOSS, "loss", DriverLikelihood.HIGH, true),
@@ -60,7 +60,7 @@ class DriversSummarizerTest {
 
     @Test
     fun `Should return key deleted genes`() {
-        val copyNumbers = setOf(
+        val copyNumbers = listOf(
             copyNumber(CopyNumberType.FULL_GAIN, "full amp", DriverLikelihood.HIGH, true),
             copyNumber(CopyNumberType.PARTIAL_GAIN, "partial amp", DriverLikelihood.HIGH, true),
             copyNumber(CopyNumberType.LOSS, EXPECTED_GENE, DriverLikelihood.HIGH, true),
@@ -73,7 +73,7 @@ class DriversSummarizerTest {
 
     @Test
     fun `Should return key homozygously disrupted genes`() {
-        val homozygousDisruptions = setOf(
+        val homozygousDisruptions = listOf(
             homozygousDisruption(EXPECTED_GENE, DriverLikelihood.HIGH, true),
             homozygousDisruption("non-reportable", DriverLikelihood.HIGH, false),
             homozygousDisruption("medium likelihood", DriverLikelihood.MEDIUM, true)
@@ -84,7 +84,7 @@ class DriversSummarizerTest {
 
     @Test
     fun `Should return key fusions`() {
-        val fusions = setOf(
+        val fusions = listOf(
             fusion(EXPECTED_GENE, DriverLikelihood.HIGH, true),
             fusion("non-reportable", DriverLikelihood.HIGH, false),
             fusion("medium likelihood", DriverLikelihood.MEDIUM, true)
@@ -95,7 +95,7 @@ class DriversSummarizerTest {
 
     @Test
     fun `Should return key viruses`() {
-        val viruses = setOf(
+        val viruses = listOf(
             virus("virus", DriverLikelihood.HIGH, true),
             virus("non-reportable", DriverLikelihood.HIGH, false),
             virus("medium likelihood", DriverLikelihood.MEDIUM, true)
@@ -127,34 +127,34 @@ class DriversSummarizerTest {
                 )
             )
         )
-        val variants = setOf(
+        val variants = listOf(
             variant("key variant", DriverLikelihood.HIGH, true, externalEvidence),
             variant("expected non-reportable variant", DriverLikelihood.HIGH, false, approvedTreatment),
             variant("expected medium likelihood variant", DriverLikelihood.MEDIUM, true),
             variant("no evidence", DriverLikelihood.MEDIUM, true)
         )
-        val copyNumbers = setOf(
+        val copyNumbers = listOf(
             copyNumber(CopyNumberType.FULL_GAIN, "key gain", DriverLikelihood.HIGH, true),
             copyNumber(CopyNumberType.PARTIAL_GAIN, "expected amplification", null, false),
             copyNumber(CopyNumberType.LOSS, "expected loss", DriverLikelihood.HIGH, false),
             copyNumber(CopyNumberType.FULL_GAIN, "no evidence", DriverLikelihood.LOW, true)
         )
-        val homozygousDisruptions = setOf(
+        val homozygousDisruptions = listOf(
             homozygousDisruption("key HD", DriverLikelihood.HIGH, true, approvedTreatment),
             homozygousDisruption("expected non-reportable HD", DriverLikelihood.HIGH, false, approvedTreatment),
             homozygousDisruption("expected null likelihood HD", null, true, externalEvidence)
         )
-        val disruptions = setOf(
+        val disruptions = listOf(
             disruption("expected key disruption", DriverLikelihood.HIGH, true),
             disruption("expected non-reportable disruption", DriverLikelihood.LOW, false, approvedTreatment),
             disruption("no evidence disruption", DriverLikelihood.MEDIUM, false)
         )
-        val fusions = setOf(
+        val fusions = listOf(
             fusion("key fusion", DriverLikelihood.HIGH, true, externalEvidence),
             fusion("expected non-reportable fusion", DriverLikelihood.HIGH, false),
             fusion("expected medium likelihood fusion", DriverLikelihood.MEDIUM, true, approvedTreatment)
         )
-        val viruses = setOf(
+        val viruses = listOf(
             virus("expected low likelihood virus", DriverLikelihood.LOW, true),
             virus("expected non-reportable virus", DriverLikelihood.LOW, false),
             virus("key virus", DriverLikelihood.HIGH, true)

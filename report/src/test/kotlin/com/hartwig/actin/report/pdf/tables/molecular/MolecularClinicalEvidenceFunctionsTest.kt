@@ -19,7 +19,7 @@ class MolecularClinicalEvidenceFunctionsTest {
         val variant = TestMolecularFactory.createProperVariant().copy(evidence = CLINICAL_EVIDENCE)
         val events =
             MolecularClinicalEvidenceFunctions.molecularEvidenceByEvent(
-                molecularHistory(BASE_MOLECULAR_TEST.copy(drivers = Drivers(variants = setOf(variant))))
+                molecularHistory(BASE_MOLECULAR_TEST.copy(drivers = Drivers(variants = listOf(variant))))
             )
         assertThat(events).containsExactly(variant.event to CLINICAL_EVIDENCE)
     }
@@ -87,7 +87,7 @@ class MolecularClinicalEvidenceFunctionsTest {
                     )
                 )
             )
-        ).containsExactly("TMB high" to CLINICAL_EVIDENCE)
+        ).containsExactly("TMB High" to CLINICAL_EVIDENCE)
 
         assertThat(
             MolecularClinicalEvidenceFunctions.molecularEvidenceByEvent(
@@ -103,7 +103,7 @@ class MolecularClinicalEvidenceFunctionsTest {
                     )
                 )
             )
-        ).containsExactly("TML high" to CLINICAL_EVIDENCE)
+        ).containsExactly("TML High" to CLINICAL_EVIDENCE)
     }
 
     @Test
@@ -129,7 +129,7 @@ class MolecularClinicalEvidenceFunctionsTest {
                     )
                 )
             )
-        ).containsExactly("TMB high" to CLINICAL_EVIDENCE)
+        ).containsExactly("TMB High" to CLINICAL_EVIDENCE)
     }
 
     private fun molecularHistory(molecularRecord: MolecularRecord) = MolecularHistory(

@@ -11,7 +11,7 @@ import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.doid.TestDoidModelFactory
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class HasKnownSCLCTransformationTest {
@@ -85,8 +85,6 @@ class HasKnownSCLCTransformationTest {
         )
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        Assertions.assertThat(evaluation.undeterminedGeneralMessages).containsExactly(
-            "Undetermined small cell transformation (RB1 loss detected)"
-        )
+        assertThat(evaluation.undeterminedGeneralMessages).containsExactly("Undetermined small cell transformation (RB1 loss detected)")
     }
 }

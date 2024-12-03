@@ -21,8 +21,7 @@ import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.datamodel.trial.TestTrialFactory
 import com.hartwig.actin.doid.TestDoidModelFactory
-import com.hartwig.serve.datamodel.ActionableEvents
-import com.hartwig.serve.datamodel.ImmutableActionableEvents
+import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -40,13 +39,13 @@ class TreatmentMatcherTest {
     private val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
     private val evidenceEntries =
         EfficacyEntryFactory(treatmentDatabase).convertCkbExtendedEvidence(CkbExtendedEvidenceTestFactory.createProperTestExtendedEvidenceDatabase())
-    private val actionableEvents: ActionableEvents = ImmutableActionableEvents.builder().build()
+    private val evidences: List<EfficacyEvidence> = emptyList()
     private val recommendationEngine = mockk<RecommendationEngine>()
     private val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
     private val resistanceEvidenceMatcher = ResistanceEvidenceMatcher.create(
         doidModel,
         emptySet(),
-        actionableEvents,
+        evidences,
         treatmentDatabase,
         TestMolecularFactory.createMinimalTestMolecularHistory()
     )
@@ -88,9 +87,8 @@ class TreatmentMatcherTest {
         assertThat(treatmentMatcher.evaluateAndAnnotateMatchesForPatient(patient))
             .isEqualTo(
                 expectedTreatmentMatch.copy(
-                    standardOfCareMatches = EvaluatedTreatmentAnnotator.create(evidenceEntries, resistanceEvidenceMatcher).annotate(
-                        expectedSocTreatments
-                    )
+                    standardOfCareMatches = EvaluatedTreatmentAnnotator.create(evidenceEntries, resistanceEvidenceMatcher)
+                        .annotate(expectedSocTreatments)
                 )
             )
     }

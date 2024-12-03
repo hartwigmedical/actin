@@ -7,7 +7,7 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
@@ -65,7 +65,7 @@ class HasHadAnyCancerTreatmentSinceDateTest {
             )
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(priorCancerTreatment))
-        Assertions.assertThat(function.evaluate(priorCancerTreatment).undeterminedGeneralMessages).containsExactly(
+        assertThat(function.evaluate(priorCancerTreatment).undeterminedGeneralMessages).containsExactly(
             "Received anti-cancer therapy but undetermined if in the last $MONTHS_AGO months (date unknown)"
         )
     }
@@ -101,7 +101,7 @@ class HasHadAnyCancerTreatmentSinceDateTest {
             )
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(priorCancerTreatment))
-        Assertions.assertThat(function.evaluate(priorCancerTreatment).passGeneralMessages).containsExactly(
+        assertThat(function.evaluate(priorCancerTreatment).passGeneralMessages).containsExactly(
             "Received anti-cancer therapy within the last $MONTHS_AGO months"
         )
     }

@@ -1,43 +1,30 @@
 package com.hartwig.actin.clinical.feed.emc.lab
 
-import com.google.common.annotations.VisibleForTesting
 import com.hartwig.actin.datamodel.clinical.LabUnit
 
-internal object LabUnitResolver {
+object LabUnitResolver {
 
-    @VisibleForTesting
-    val CURATION_MAP: MutableMap<String, LabUnit> = mutableMapOf()
-
-    init {
-        CURATION_MAP["10*6/L"] = LabUnit.MILLIONS_PER_LITER
-        CURATION_MAP["*10E6/l"] = LabUnit.MILLIONS_PER_LITER
-        CURATION_MAP["10*9/L"] = LabUnit.BILLIONS_PER_LITER
-        CURATION_MAP["*10E9/l"] = LabUnit.BILLIONS_PER_LITER
-        CURATION_MAP["10*12/L"] = LabUnit.TRILLIONS_PER_LITER
-        CURATION_MAP["% van de leukocyten"] = LabUnit.PERCENTAGE_OF_LEUKOCYTES
-        CURATION_MAP["% van de T-cellen"] = LabUnit.PERCENTAGE_OF_T_CELLS
-        CURATION_MAP["mmol/mol Kreatinine"] = LabUnit.MILLIMOLES_PER_MOLE
-        CURATION_MAP["g/mol Kreatinine"] = LabUnit.GRAMS_PER_MOLE
-        CURATION_MAP["µg/L"] = LabUnit.MICROGRAMS_PER_LITER
-        CURATION_MAP["µmol/L"] = LabUnit.MICROMOLES_PER_LITER
-        CURATION_MAP["micromol/l"] = LabUnit.MICROMOLES_PER_LITER
-        CURATION_MAP["E/ml"] = LabUnit.UNITS_PER_MILLILITER
-
+    val CURATION_MAP = mapOf(
+        "10*6/L" to LabUnit.MILLIONS_PER_LITER,
+        "*10E6/l" to LabUnit.MILLIONS_PER_LITER,
+        "10*9/L" to LabUnit.BILLIONS_PER_LITER,
+        "*10E9/l" to LabUnit.BILLIONS_PER_LITER,
+        "10*12/L" to LabUnit.TRILLIONS_PER_LITER,
+        "% van de leukocyten" to LabUnit.PERCENTAGE_OF_LEUKOCYTES,
+        "% van de T-cellen" to LabUnit.PERCENTAGE_OF_T_CELLS,
+        "mmol/mol Kreatinine" to LabUnit.MILLIMOLES_PER_MOLE,
+        "g/mol Kreatinine" to LabUnit.GRAMS_PER_MOLE,
+        "µg/L" to LabUnit.MICROGRAMS_PER_LITER,
+        "µmol/L" to LabUnit.MICROMOLES_PER_LITER,
+        "micromol/l" to LabUnit.MICROMOLES_PER_LITER,
+        "E/ml" to LabUnit.UNITS_PER_MILLILITER,
         // L/L is an implied unit used for hematocrit
-        CURATION_MAP["L/L"] = LabUnit.NONE
-        CURATION_MAP["mol/mol"] = LabUnit.NONE
-        CURATION_MAP["Ratio"] = LabUnit.NONE
-    }
+        "L/L" to LabUnit.NONE,
+        "mol/mol" to LabUnit.NONE,
+        "Ratio" to LabUnit.NONE
+    )
 
-    fun resolve(unit: String): LabUnit {
-        if (CURATION_MAP.containsKey(unit)) {
-            return CURATION_MAP[unit]!!
-        }
-        for (labUnit in LabUnit.values()) {
-            if (labUnit.display().equals(unit, ignoreCase = true)) {
-                return labUnit
-            }
-        }
-        throw IllegalStateException("Could not map lab unit: '$unit'")
-    }
+    fun resolve(unit: String) = CURATION_MAP[unit]
+        ?: LabUnit.entries.firstOrNull { it.display().equals(unit, ignoreCase = true) }
+        ?: throw IllegalStateException("Could not map lab unit: '$unit'")
 }

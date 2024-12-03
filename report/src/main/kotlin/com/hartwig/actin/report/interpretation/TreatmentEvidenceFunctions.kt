@@ -2,7 +2,7 @@ package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
-import com.hartwig.serve.datamodel.EvidenceLevelDetails
+import com.hartwig.serve.datamodel.efficacy.EvidenceLevelDetails
 
 object TreatmentEvidenceFunctions {
 

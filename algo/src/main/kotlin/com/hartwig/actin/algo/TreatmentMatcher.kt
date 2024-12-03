@@ -8,6 +8,7 @@ import com.hartwig.actin.algo.soc.RecommendationEngine
 import com.hartwig.actin.algo.soc.RecommendationEngineFactory
 import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.datamodel.PatientRecord
+
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.efficacy.EfficacyEntry
 import com.hartwig.actin.datamodel.trial.Trial

@@ -9,6 +9,20 @@ import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.doid.DoidModel
 
+private val EGFR_PACC_VARIANTS = setOf(
+    "G719X",
+    "S768I",
+    "L747P",
+    "L747S",
+    "V769L",
+    "E709_T710 delinsD",
+    "C797S",
+    "L792H",
+    "G724S",
+    "L718X",
+    "T854I",
+)
+
 class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
@@ -49,6 +63,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.OVEREXPRESSION_OF_ANY_GENE_X to anyGeneFromSetIsOverExpressedCreator(),
             EligibilityRule.NON_EXPRESSION_OF_ANY_GENE_X to anyGeneFromSetIsNotExpressedCreator(),
             EligibilityRule.SPECIFIC_MRNA_EXPRESSION_REQUIREMENTS_MET_FOR_GENES_X to { GenesMeetSpecificMRNAExpressionRequirements() },
+            EligibilityRule.LOSS_OF_PROTEIN_X_BY_IHC to proteinIsLostByIHCCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC to proteinIsExpressedByIHCCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_EXACTLY_Y to proteinHasExactExpressionByIHCCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_LEAST_Y to proteinHasSufficientExpressionByIHCCreator(),
@@ -245,6 +260,12 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
+    private fun proteinIsLostByIHCCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            ProteinIsLostByIHC(functionInputResolver().createOneStringInput(function))
+        }
+    }
+
     private fun proteinIsExpressedByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             ProteinIsExpressedByIHC(functionInputResolver().createOneStringInput(function))
@@ -323,7 +344,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     }
 
     private fun hasEgfrPaccMutationCreator(): FunctionCreator {
-        return { GeneHasVariantWithProteinImpact("EGFR", EGFR_PACC_VARIANT_LIST, maxMolecularTestAge()) }
+        return { GeneHasVariantWithProteinImpact("EGFR", EGFR_PACC_VARIANTS, maxMolecularTestAge()) }
     }
 
     private fun hasCoDeletionOfChromosomeArmsCreator(): FunctionCreator {
@@ -346,19 +367,4 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             IsHomologousRepairDeficientWithoutMutationInGenesX(genesToFind.geneNames, maxMolecularTestAge())
         }
     }
-
-    private val EGFR_PACC_VARIANT_LIST =
-        listOf(
-            "G719X",
-            "S768I",
-            "L747P",
-            "L747S",
-            "V769L",
-            "E709_T710 delinsD",
-            "C797S",
-            "L792H",
-            "G724S",
-            "L718X",
-            "T854I",
-        )
 }

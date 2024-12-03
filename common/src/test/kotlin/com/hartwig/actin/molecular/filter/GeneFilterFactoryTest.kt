@@ -2,9 +2,9 @@ package com.hartwig.actin.molecular.filter
 
 import com.hartwig.actin.molecular.filter.GeneFilterFactory.createAlwaysValid
 import com.hartwig.actin.molecular.filter.GeneFilterFactory.createFromKnownGenes
-import com.hartwig.serve.datamodel.common.GeneRole
-import com.hartwig.serve.datamodel.gene.ImmutableKnownGene
-import com.hartwig.serve.datamodel.gene.KnownGene
+import com.hartwig.serve.datamodel.molecular.common.GeneRole
+import com.hartwig.serve.datamodel.molecular.gene.ImmutableKnownGene
+import com.hartwig.serve.datamodel.molecular.gene.KnownGene
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
