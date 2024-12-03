@@ -11,11 +11,6 @@ object TestDrugInteractionsFactory {
         cypInteractions: List<DrugInteraction> = emptyList(),
         transporterInteractions: List<DrugInteraction> = emptyList()
     ): DrugInteractionsDatabase {
-        return DrugInteractionsDatabase(
-            mapOf(
-                medication to
-                        DrugInteractions(cypInteractions, transporterInteractions)
-            )
-        )
+        return DrugInteractionsDatabase(mapOf(medication to DrugInteractions(cypInteractions, transporterInteractions)))
     }
 }
