@@ -147,7 +147,7 @@ data class CurationDatabaseContext(
             complicationCuration = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.COMPLICATION_TSV,
-                ComplicationConfigFactory(),
+                ComplicationConfigFactory(icdModel),
                 CurationCategory.COMPLICATION
             ) { it.complicationEvaluatedInputs },
             intoleranceCuration = CurationDatabaseReader.read(

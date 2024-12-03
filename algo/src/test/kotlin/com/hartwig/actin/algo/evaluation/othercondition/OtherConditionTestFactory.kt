@@ -55,8 +55,8 @@ internal object OtherConditionTestFactory {
         )
     }
 
-    fun complication(name: String = "", categories: Set<String> = emptySet()): Complication {
-        return Complication(name = name, categories = categories, year = null, month = null)
+    fun complication(name: String = "", categories: Set<String> = emptySet(), icdCode: String = ""): Complication {
+        return Complication(name = name, categories = categories, icdCode = icdCode, year = null, month = null)
     }
 
     fun toxicity(name: String, toxicitySource: ToxicitySource, grade: Int?): Toxicity {

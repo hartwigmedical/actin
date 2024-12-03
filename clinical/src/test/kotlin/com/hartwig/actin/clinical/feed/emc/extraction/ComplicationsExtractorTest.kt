@@ -16,7 +16,7 @@ class ComplicationsExtractorTest {
         ComplicationConfig(
             input = "term",
             ignore = false,
-            curated = Complication(name = "Curated", categories = emptySet(), year = null, month = null),
+            curated = Complication(name = "Curated", categories = emptySet(), icdCode = "code", year = null, month = null),
             impliesUnknownComplicationState = false
         ),
         ComplicationConfig(

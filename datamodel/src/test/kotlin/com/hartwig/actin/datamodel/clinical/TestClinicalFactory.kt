@@ -347,7 +347,7 @@ object TestClinicalFactory {
     }
 
     private fun createTestComplications(): List<Complication> {
-        return listOf(Complication(name = "Ascites", categories = setOf("Ascites"), year = null, month = null))
+        return listOf(Complication(name = "Ascites", categories = setOf("Ascites"), icdCode = "1A01", year = null, month = null))
     }
 
     private fun createTestLabValues(): List<LabValue> {

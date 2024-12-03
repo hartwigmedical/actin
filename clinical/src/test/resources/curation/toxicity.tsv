@@ -1,4 +1,4 @@
 input	name	categories	grade	icd
-Neuropathy GR3	Neuropathy	Neuro	3	node1
-Dysphagia	Dysphagia	Neuro		node2
-Nausea	Nausea	Gastrointestinal	3	node3
+Neuropathy GR3	Neuropathy	Neuro	3	node 1
+Dysphagia	Dysphagia	Neuro		node 2
+Nausea	Nausea	Gastrointestinal	3	node 3

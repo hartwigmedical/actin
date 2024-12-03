@@ -66,7 +66,7 @@ fun validateIcd(
                 fieldName,
                 title,
                 "string",
-                "ICD title is not known - check for existence in resource"
+                "ICD title \"$title\" is not known - check for existence in resource"
             )
         )
     )

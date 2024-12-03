@@ -58,7 +58,7 @@ class ToxicityConfigFactoryTest {
                 "icd",
                 "icdTitle",
                 "string",
-                "ICD title is not known - check for existence in resource"
+                "ICD title \"icdTitle\" is not known - check for existence in resource"
             )
         )
     }

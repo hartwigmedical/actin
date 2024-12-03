@@ -56,7 +56,7 @@ class ClinicalIngestionFeedAdapterTest {
         curationDatabase = CurationDatabaseContext.create(
             CURATION_DIRECTORY,
             CurationDoidValidator(testDoidModel),
-            TestIcdFactory.createProperTestModel(),
+            TestIcdFactory.createTestModel(),
             TestTreatmentDatabaseFactory.createProper()
         )
         adapter = ClinicalIngestionFeedAdapter(

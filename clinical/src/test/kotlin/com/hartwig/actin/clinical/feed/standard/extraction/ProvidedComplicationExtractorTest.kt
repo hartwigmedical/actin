@@ -13,7 +13,7 @@ import java.time.LocalDate
 
 private const val COMPLICATION_NAME = "complication"
 private val EHR_START_DATE = LocalDate.of(2023, 6, 15)
-private val CURATED_COMPLICATION = Complication(COMPLICATION_NAME, emptySet(), EHR_START_DATE.year, EHR_START_DATE.monthValue)
+private val CURATED_COMPLICATION = Complication(COMPLICATION_NAME, emptySet(), "code", EHR_START_DATE.year, EHR_START_DATE.monthValue)
 
 class ProvidedComplicationExtractorTest {
     private val curationDb = mockk<CurationDatabase<ComplicationConfig>> {

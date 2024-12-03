@@ -63,7 +63,7 @@ class StandardDataIngestionTest {
         val curationDatabase = CurationDatabaseContext.create(
             CURATION_DIRECTORY,
             CurationDoidValidator(doidModel),
-            TestIcdFactory.createProperTestModel(),
+            TestIcdFactory.createTestModel(),
             TestTreatmentDatabaseFactory.createProper()
         )
         val feed = StandardDataIngestion(
