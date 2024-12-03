@@ -2,7 +2,8 @@ package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType.PROMISCUOUS_3
 import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType.PROMISCUOUS_5
-import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
+import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
+import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
 import com.hartwig.actin.molecular.evidence.matching.FUSION_CRITERIA
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
@@ -13,9 +14,9 @@ class FusionEvidenceTest {
 
     @Test
     fun `Should determine promiscuous fusion evidence`() {
-        val gene1: EfficacyEvidence = TestServeActionabilityFactory.createEvidenceForGene(GeneEvent.FUSION, "gene 1")
-        val gene2: EfficacyEvidence = TestServeActionabilityFactory.createEvidenceForGene(GeneEvent.ANY_MUTATION, "gene 2")
-        val gene3: EfficacyEvidence = TestServeActionabilityFactory.createEvidenceForGene(GeneEvent.INACTIVATION, "gene 1")
+        val gene1: EfficacyEvidence = TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.FUSION, "gene 1")
+        val gene2: EfficacyEvidence = TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.ANY_MUTATION, "gene 2")
+        val gene3: EfficacyEvidence = TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.INACTIVATION, "gene 1")
         val actionableEvents = ActionableEvents(listOf(gene1, gene2, gene3), emptyList())
         val fusionEvidence: FusionEvidence = FusionEvidence.create(actionableEvents)
 
@@ -39,7 +40,7 @@ class FusionEvidenceTest {
     @Test
     fun `Should determine evidence for known fusions`() {
         val actionableFusion: EfficacyEvidence =
-            TestServeActionabilityFactory.createEvidence(TestServeActionabilityFactory.createFusion("up", "down", 4, 6))
+            TestServeEvidenceFactory.create(TestServeMolecularFactory.createFusion("up", "down", 4, 6))
         val actionableEvents = ActionableEvents(listOf(actionableFusion), emptyList())
         val fusionEvidence: FusionEvidence = FusionEvidence.create(actionableEvents)
 

@@ -18,7 +18,7 @@ import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.GENE
 import com.hartwig.actin.molecular.HGVS_CODING
 import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
-import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
+import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
 import com.hartwig.actin.molecular.evidence.actionability.TestActionabilityMatchFactory
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
@@ -57,7 +57,7 @@ private val HOTSPOT = TestServeKnownFactory.hotspotBuilder().build()
 
 private val EMPTY_MATCH = TestActionabilityMatchFactory.createEmpty()
 private val ON_LABEL_MATCH = TestActionabilityMatchFactory.withOnLabelEvidence(
-    TestServeActionabilityFactory.createEvidenceForGene()
+    TestServeEvidenceFactory.createEvidenceForGene()
 )
 
 private val ARCHER_SKIPPED_EXON = SequencedSkippedExons(GENE, 2, 3)

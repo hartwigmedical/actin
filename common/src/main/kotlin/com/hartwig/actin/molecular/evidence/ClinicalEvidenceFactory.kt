@@ -35,8 +35,8 @@ object ClinicalEvidenceFactory {
     }
 
     fun create(actionabilityMatch: ActionabilityMatch): ClinicalEvidence {
-        val onLabelEvidence = createAllTreatmentEvidences(true, actionabilityMatch.onLabelEvidences)
-        val offLabelEvidence = createAllTreatmentEvidences(false, actionabilityMatch.offLabelEvidences)
+        val onLabelEvidence = createAllTreatmentEvidences(true, actionabilityMatch.onLabelEvidence)
+        val offLabelEvidence = createAllTreatmentEvidences(false, actionabilityMatch.offLabelEvidence)
 
         return ClinicalEvidence(
             treatmentEvidence = onLabelEvidence + offLabelEvidence,

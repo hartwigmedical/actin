@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
-import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
+import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -10,16 +10,16 @@ class ActionabilityMatchTest {
     @Test
     fun `Should extend actionable event with category event false when hotspot, fusion, HLA or characteristic`() {
         assertThat(
-            TestServeActionabilityFactory.createEvidenceForHotspot().molecularCriterium().hotspots().first().isCategoryEvent()
+            TestServeEvidenceFactory.createEvidenceForHotspot().molecularCriterium().hotspots().first().isCategoryEvent()
         ).isFalse()
         assertThat(
-            TestServeActionabilityFactory.createEvidenceForFusion().molecularCriterium().fusions().first().isCategoryEvent()
+            TestServeEvidenceFactory.createEvidenceForFusion().molecularCriterium().fusions().first().isCategoryEvent()
         ).isFalse()
         assertThat(
-            TestServeActionabilityFactory.createEvidenceForHLA().molecularCriterium().hla().first().isCategoryEvent()
+            TestServeEvidenceFactory.createEvidenceForHLA().molecularCriterium().hla().first().isCategoryEvent()
         ).isFalse()
         assertThat(
-            TestServeActionabilityFactory.createEvidenceForCharacteristic().molecularCriterium().characteristics().first()
+            TestServeEvidenceFactory.createEvidenceForCharacteristic().molecularCriterium().characteristics().first()
                 .isCategoryEvent()
         ).isFalse()
     }
@@ -27,18 +27,18 @@ class ActionabilityMatchTest {
     @Test
     fun `Should extend actionable event with category event true when range`() {
         assertThat(
-            TestServeActionabilityFactory.createEvidenceForCodon().molecularCriterium().codons().first().isCategoryEvent()
+            TestServeEvidenceFactory.createEvidenceForCodon().molecularCriterium().codons().first().isCategoryEvent()
         ).isTrue()
     }
 
     @Test
     fun `Should extend actionable event with category event false when gene in included list of events, true otherwise`() {
         assertThat(
-            TestServeActionabilityFactory.createEvidenceForGene(GeneEvent.AMPLIFICATION).molecularCriterium().genes().first()
+            TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.AMPLIFICATION).molecularCriterium().genes().first()
                 .isCategoryEvent()
         ).isFalse()
         assertThat(
-            TestServeActionabilityFactory.createEvidenceForGene(GeneEvent.ANY_MUTATION).molecularCriterium().genes().first()
+            TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.ANY_MUTATION).molecularCriterium().genes().first()
                 .isCategoryEvent()
         ).isTrue()
     }

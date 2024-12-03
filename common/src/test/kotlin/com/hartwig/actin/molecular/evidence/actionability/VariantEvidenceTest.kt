@@ -1,7 +1,8 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.CodingEffect
-import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
+import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
+import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
 import com.hartwig.actin.molecular.evidence.matching.VARIANT_CRITERIA
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.molecular.MutationType
@@ -11,8 +12,8 @@ import org.junit.Test
 
 class VariantEvidenceTest {
 
-    private val actionableExon: EfficacyEvidence = TestServeActionabilityFactory.createEvidence(
-        TestServeActionabilityFactory.createExon(
+    private val actionableCodon: EfficacyEvidence = TestServeEvidenceFactory.create(
+        TestServeMolecularFactory.createCodon(
             "gene 1",
             "X",
             4,
@@ -20,8 +21,9 @@ class VariantEvidenceTest {
             MutationType.ANY
         )
     )
-    private val actionableCodon: EfficacyEvidence = TestServeActionabilityFactory.createEvidence(
-        TestServeActionabilityFactory.createCodon(
+
+    private val actionableExon: EfficacyEvidence = TestServeEvidenceFactory.create(
+        TestServeMolecularFactory.createExon(
             "gene 1",
             "X",
             4,
@@ -32,9 +34,9 @@ class VariantEvidenceTest {
 
     @Test
     fun `Should determine evidence for hotpots`() {
-        val hotspot1: EfficacyEvidence = TestServeActionabilityFactory.createEvidenceForHotspot("gene 1", "X", 2, "A", "G")
-        val hotspot2: EfficacyEvidence = TestServeActionabilityFactory.createEvidenceForHotspot("gene 2", "X", 2, "A", "G")
-        val hotspot3: EfficacyEvidence = TestServeActionabilityFactory.createEvidenceForHotspot("gene 1", "X", 2, "A", "C")
+        val hotspot1: EfficacyEvidence = TestServeEvidenceFactory.createEvidenceForHotspot("gene 1", "X", 2, "A", "G")
+        val hotspot2: EfficacyEvidence = TestServeEvidenceFactory.createEvidenceForHotspot("gene 2", "X", 2, "A", "G")
+        val hotspot3: EfficacyEvidence = TestServeEvidenceFactory.createEvidenceForHotspot("gene 1", "X", 2, "A", "C")
         val actionable = ActionableEvents(listOf(hotspot1, hotspot2, hotspot3), emptyList())
         val variantEvidence: VariantEvidence = VariantEvidence.create(actionable)
 
@@ -65,9 +67,9 @@ class VariantEvidenceTest {
 
     @Test
     fun `Should determine evidence for genes`() {
-        val gene1: EfficacyEvidence = TestServeActionabilityFactory.createEvidenceForGene(GeneEvent.ANY_MUTATION, "gene 1")
-        val gene2: EfficacyEvidence = TestServeActionabilityFactory.createEvidenceForGene(GeneEvent.ACTIVATION, "gene 2")
-        val gene3: EfficacyEvidence = TestServeActionabilityFactory.createEvidenceForGene(GeneEvent.AMPLIFICATION, "gene 2")
+        val gene1: EfficacyEvidence = TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.ANY_MUTATION, "gene 1")
+        val gene2: EfficacyEvidence = TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.ACTIVATION, "gene 2")
+        val gene3: EfficacyEvidence = TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.AMPLIFICATION, "gene 2")
         val actionable = ActionableEvents(listOf(gene1, gene2, gene3), emptyList())
         val variantEvidence: VariantEvidence = VariantEvidence.create(actionable)
 

@@ -15,8 +15,9 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactor
 import com.hartwig.actin.molecular.GENE
 import com.hartwig.actin.molecular.HGVS_CODING
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
-import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
+import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeFactory
+import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
 import com.hartwig.actin.molecular.evidence.actionability.TestActionabilityMatchFactory
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
@@ -72,13 +73,13 @@ private val VARIANT_MATCH_CRITERIA =
     )
 
 private val MOLECULAR_CRITERIUM = ImmutableMolecularCriterium.builder().addGenes(
-    ImmutableActionableGene.builder().from(TestServeActionabilityFactory.createActionableEvent())
+    ImmutableActionableGene.builder().from(TestServeMolecularFactory.createActionableEvent())
         .from(TestServeFactory.createEmptyGeneAnnotation()).build()
 ).build()
 
 private val ACTIONABILITY_MATCH = TestActionabilityMatchFactory.createEmpty().copy(
-    onLabelEvidences = listOf(
-        TestServeActionabilityFactory.createEvidence(
+    onLabelEvidence = listOf(
+        TestServeEvidenceFactory.create(
             MOLECULAR_CRITERIUM,
             level = ServeEvidenceLevel.A,
             direction = ServeEvidenceDirection.RESPONSIVE

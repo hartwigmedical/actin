@@ -11,7 +11,6 @@ import com.hartwig.serve.datamodel.molecular.range.ActionableRange
 
 fun ActionableEvent.isCategoryEvent(): Boolean {
     return when (this) {
-
         is ActionableHotspot,
         is ActionableHLA,
         is ActionableCharacteristic,

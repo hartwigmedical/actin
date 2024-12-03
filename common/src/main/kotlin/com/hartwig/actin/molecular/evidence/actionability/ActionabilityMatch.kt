@@ -4,8 +4,8 @@ import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.trial.ActionableTrial
 
 data class ActionabilityMatch(
-    val onLabelEvidences: List<EfficacyEvidence>,
-    val offLabelEvidences: List<EfficacyEvidence>,
+    val onLabelEvidence: List<EfficacyEvidence>,
+    val offLabelEvidence: List<EfficacyEvidence>,
 
     val onLabelTrials: List<ActionableTrial>,
     val offLabelTrials: List<ActionableTrial>

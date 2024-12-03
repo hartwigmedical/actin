@@ -2,7 +2,7 @@ package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalCopyNumber
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
-import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
+import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import org.assertj.core.api.Assertions.assertThat
@@ -12,9 +12,9 @@ class CopyNumberEvidenceTest {
 
     @Test
     fun `Should determine copy number evidence`() {
-        val gene1: EfficacyEvidence = TestServeActionabilityFactory.createEvidenceForGene(GeneEvent.AMPLIFICATION, "gene 1")
-        val gene2: EfficacyEvidence = TestServeActionabilityFactory.createEvidenceForGene(GeneEvent.DELETION, "gene 2")
-        val gene3: EfficacyEvidence = TestServeActionabilityFactory.createEvidenceForGene(GeneEvent.INACTIVATION, "gene 1")
+        val gene1: EfficacyEvidence = TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.AMPLIFICATION, "gene 1")
+        val gene2: EfficacyEvidence = TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.DELETION, "gene 2")
+        val gene3: EfficacyEvidence = TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.INACTIVATION, "gene 1")
         val actionable = ActionableEvents(listOf(gene1, gene2, gene3), emptyList())
         val copyNumberEvidence: CopyNumberEvidence = CopyNumberEvidence.create(actionable)
 

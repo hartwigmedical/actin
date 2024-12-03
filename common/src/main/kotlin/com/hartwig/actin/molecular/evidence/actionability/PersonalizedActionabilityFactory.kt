@@ -6,36 +6,31 @@ import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.trial.ActionableTrial
 
 internal class PersonalizedActionabilityFactory internal constructor(
-    private val applicableDoids: Set<String>
+    private val expandedTumorDoids: Set<String>
 ) {
 
     fun create(matches: ActionableEvents): ActionabilityMatch {
-        val (onLabelEvidences, offLabelEvidences) = partitionEvidences(matches.evidences, applicableDoids)
-        val (onLabelTrials, offLabelTrials) = partitionTrials(matches.trials, applicableDoids)
+        val (onLabelEvidences, offLabelEvidences) = partitionEvidences(matches.evidences)
+        val (onLabelTrials, offLabelTrials) = partitionTrials(matches.trials)
 
         return ActionabilityMatch(
-            onLabelEvidences = onLabelEvidences,
-            offLabelEvidences = offLabelEvidences,
+            onLabelEvidence = onLabelEvidences,
+            offLabelEvidence = offLabelEvidences,
             onLabelTrials = onLabelTrials,
             offLabelTrials = offLabelTrials
         )
     }
 
-    private fun partitionEvidences(
-        evidences: List<EfficacyEvidence>,
-        expandedTumorDoids: Set<String>
-    ): Pair<List<EfficacyEvidence>, List<EfficacyEvidence>> {
-        return evidences.partition { isOnLabel(it.indication(), expandedTumorDoids) }
+    private fun partitionEvidences(evidence: List<EfficacyEvidence>): Pair<List<EfficacyEvidence>, List<EfficacyEvidence>> {
+        return evidence.partition { isOnLabel(it.indication()) }
     }
 
-    private fun partitionTrials(
-        trials: List<ActionableTrial>,
-        expandedTumorDoids: Set<String>
-    ): Pair<List<ActionableTrial>, List<ActionableTrial>> {
-        return trials.partition { isOnLabel(it.indications().iterator().next(), expandedTumorDoids) }
+    private fun partitionTrials(trials: List<ActionableTrial>): Pair<List<ActionableTrial>, List<ActionableTrial>> {
+        // TODO (KD): Deal with N indications
+        return trials.partition { isOnLabel(it.indications().iterator().next()) }
     }
 
-    private fun isOnLabel(indication: Indication, expandedTumorDoids: Set<String>): Boolean {
+    private fun isOnLabel(indication: Indication): Boolean {
         return expandedTumorDoids.contains(indication.applicableType().doid()) &&
                 indication.excludedSubTypes().none { expandedTumorDoids.contains(it.doid()) }
     }

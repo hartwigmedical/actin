@@ -73,6 +73,6 @@ class EvidenceDatabaseTest {
     }
 
     private fun assertEvidenceCountMatchesExpected(match: ActionabilityMatch, expectedCount: Int) {
-        assertThat(match.onLabelEvidences.size + match.offLabelEvidences.size).isEqualTo(expectedCount)
+        assertThat(match.onLabelEvidence.size + match.offLabelEvidence.size).isEqualTo(expectedCount)
     }
 }

@@ -6,8 +6,8 @@ object TestActionabilityMatchFactory {
 
     fun createEmpty(): ActionabilityMatch {
         return ActionabilityMatch(
-            onLabelEvidences = emptyList(),
-            offLabelEvidences = emptyList(),
+            onLabelEvidence = emptyList(),
+            offLabelEvidence = emptyList(),
             onLabelTrials = emptyList(),
             offLabelTrials = emptyList()
         )
@@ -15,8 +15,8 @@ object TestActionabilityMatchFactory {
 
     fun withOnLabelEvidence(evidence: EfficacyEvidence): ActionabilityMatch {
         return ActionabilityMatch(
-            onLabelEvidences = listOf(evidence),
-            offLabelEvidences = emptyList(),
+            onLabelEvidence = listOf(evidence),
+            offLabelEvidence = emptyList(),
             onLabelTrials = emptyList(),
             offLabelTrials = emptyList()
         )

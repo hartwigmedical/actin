@@ -1,5 +1,8 @@
 package com.hartwig.actin.molecular.evidence
 
+import com.hartwig.serve.datamodel.common.ImmutableCancerType
+import com.hartwig.serve.datamodel.common.ImmutableIndication
+import com.hartwig.serve.datamodel.common.Indication
 import com.hartwig.serve.datamodel.molecular.MutationType
 import com.hartwig.serve.datamodel.molecular.fusion.FusionPair
 import com.hartwig.serve.datamodel.molecular.gene.GeneAnnotation
@@ -8,6 +11,20 @@ import com.hartwig.serve.datamodel.molecular.hotspot.VariantHotspot
 import com.hartwig.serve.datamodel.molecular.range.RangeAnnotation
 
 object TestServeFactory {
+
+    fun createWithDoid(doid: String): Indication {
+        return ImmutableIndication.builder()
+            .applicableType(ImmutableCancerType.builder().name("").doid(doid).build())
+            .excludedSubTypes(emptySet())
+            .build()
+    }
+
+    fun createWithDoidAndExcludedDoid(doid: String, excludedDoid: String): Indication {
+        return ImmutableIndication.builder()
+            .applicableType(ImmutableCancerType.builder().name("").doid(doid).build())
+            .addExcludedSubTypes(ImmutableCancerType.builder().name("").doid(excludedDoid).build())
+            .build()
+    }
 
     fun createEmptyHotspot(): VariantHotspot {
         return object : VariantHotspot {

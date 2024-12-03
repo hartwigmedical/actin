@@ -2,7 +2,7 @@ package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalVirus
 import com.hartwig.actin.datamodel.molecular.orange.driver.VirusType
-import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
+import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.molecular.characteristic.TumorCharacteristicType
 import org.assertj.core.api.Assertions.assertThat
@@ -13,7 +13,7 @@ class VirusEvidenceTest {
     @Test
     fun `Should determine evidence for HPV`() {
         val hpv: EfficacyEvidence =
-            TestServeActionabilityFactory.createEvidenceForCharacteristic(TumorCharacteristicType.HPV_POSITIVE)
+            TestServeEvidenceFactory.createEvidenceForCharacteristic(TumorCharacteristicType.HPV_POSITIVE)
         val actionable = ActionableEvents(listOf(hpv), emptyList())
         val virusEvidence: VirusEvidence = VirusEvidence.create(actionable)
 
@@ -35,7 +35,7 @@ class VirusEvidenceTest {
     @Test
     fun `Should determine evidence for EBV`() {
         val ebv: EfficacyEvidence =
-            TestServeActionabilityFactory.createEvidenceForCharacteristic(TumorCharacteristicType.EBV_POSITIVE)
+            TestServeEvidenceFactory.createEvidenceForCharacteristic(TumorCharacteristicType.EBV_POSITIVE)
         val actionable = ActionableEvents(listOf(ebv), emptyList())
         val virusEvidence: VirusEvidence = VirusEvidence.create(actionable)
 

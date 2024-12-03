@@ -4,12 +4,9 @@ import com.hartwig.actin.datamodel.molecular.evidence.CountryName
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
-import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory.createActionableTrial
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.serve.datamodel.Knowledgebase
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevelDetails
-import com.hartwig.serve.datamodel.molecular.ImmutableMolecularCriterium
-import com.hartwig.serve.datamodel.molecular.hotspot.ImmutableActionableHotspot
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -29,13 +26,13 @@ class ClinicalEvidenceFactoryTest {
         val result =
             ClinicalEvidenceFactory.create(
                 ActionabilityMatch(
-                    onLabelEvidences = listOf(
-                        TestServeActionabilityFactory.createEvidence(
-                            TestServeActionabilityFactory.createHotspot(),
+                    onLabelEvidence = listOf(
+                        TestServeEvidenceFactory.create(
+                            TestServeMolecularFactory.createHotspot(),
                             treatment = onLabel.treatment
                         )
                     ),
-                    offLabelEvidences = emptyList(),
+                    offLabelEvidence = emptyList(),
                     onLabelTrials = emptyList(),
                     offLabelTrials = emptyList()
                 )
@@ -59,10 +56,10 @@ class ClinicalEvidenceFactoryTest {
         val result =
             ClinicalEvidenceFactory.create(
                 ActionabilityMatch(
-                    onLabelEvidences = emptyList(),
-                    offLabelEvidences = listOf(
-                        TestServeActionabilityFactory.createEvidence(
-                            TestServeActionabilityFactory.createHotspot(),
+                    onLabelEvidence = emptyList(),
+                    offLabelEvidence = listOf(
+                        TestServeEvidenceFactory.create(
+                            TestServeMolecularFactory.createHotspot(),
                             treatment = offLabel.treatment
                         )
                     ),
@@ -80,17 +77,14 @@ class ClinicalEvidenceFactoryTest {
         val trial = TestClinicalEvidenceFactory.createTestExternalTrial()
             .copy(countries = setOf(TestClinicalEvidenceFactory.createCountry(CountryName.OTHER, emptyMap())), isCategoryEvent = false)
 
-        val molecularCriterium = ImmutableMolecularCriterium.builder().addHotspots(
-            ImmutableActionableHotspot.builder().from(TestServeActionabilityFactory.createActionableEvent())
-                .from(TestServeFactory.createEmptyHotspot()).build()
-        ).build()
+        val molecularCriterium = TestServeMolecularFactory.createHotspot()
 
         val result =
             ClinicalEvidenceFactory.create(
                 ActionabilityMatch(
-                    onLabelEvidences = emptyList(),
-                    offLabelEvidences = emptyList(),
-                    onLabelTrials = listOf(createActionableTrial(setOf(molecularCriterium), Knowledgebase.CKB, trial.title)),
+                    onLabelEvidence = emptyList(),
+                    offLabelEvidence = emptyList(),
+                    onLabelTrials = listOf(TestServeTrialFactory.create(setOf(molecularCriterium), Knowledgebase.CKB, trial.title)),
                     offLabelTrials = emptyList()
                 )
             )

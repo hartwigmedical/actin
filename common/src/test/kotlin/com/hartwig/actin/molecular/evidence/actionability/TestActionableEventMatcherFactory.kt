@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
-import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
+import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.molecular.characteristic.TumorCharacteristicType
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
@@ -12,20 +12,20 @@ object TestActionableEventMatcherFactory {
         val personalizedActionabilityFactory = PersonalizedActionabilityFactory(applicableDoids)
 
         val evidences: List<EfficacyEvidence> = listOf(
-            TestServeActionabilityFactory.createEvidenceForHotspot(),
-            TestServeActionabilityFactory.createEvidenceForCodon(),
-            TestServeActionabilityFactory.createEvidenceForExon(),
-            TestServeActionabilityFactory.createEvidenceForGene(geneEvent = GeneEvent.DELETION),
-            TestServeActionabilityFactory.createEvidenceForGene(geneEvent = GeneEvent.AMPLIFICATION),
-            TestServeActionabilityFactory.createEvidenceForGene(geneEvent = GeneEvent.ANY_MUTATION),
-            TestServeActionabilityFactory.createEvidenceForFusion(),
-            TestServeActionabilityFactory.createEvidenceForCharacteristic(TumorCharacteristicType.MICROSATELLITE_UNSTABLE),
-            TestServeActionabilityFactory.createEvidenceForCharacteristic(TumorCharacteristicType.HOMOLOGOUS_RECOMBINATION_DEFICIENT),
-            TestServeActionabilityFactory.createEvidenceForCharacteristic(TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN),
-            TestServeActionabilityFactory.createEvidenceForCharacteristic(TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD),
-            TestServeActionabilityFactory.createEvidenceForCharacteristic(TumorCharacteristicType.HPV_POSITIVE),
-            TestServeActionabilityFactory.createEvidenceForCharacteristic(TumorCharacteristicType.EBV_POSITIVE),
-            TestServeActionabilityFactory.createEvidenceForHLA()
+            TestServeEvidenceFactory.createEvidenceForHotspot(),
+            TestServeEvidenceFactory.createEvidenceForCodon(),
+            TestServeEvidenceFactory.createEvidenceForExon(),
+            TestServeEvidenceFactory.createEvidenceForGene(geneEvent = GeneEvent.DELETION),
+            TestServeEvidenceFactory.createEvidenceForGene(geneEvent = GeneEvent.AMPLIFICATION),
+            TestServeEvidenceFactory.createEvidenceForGene(geneEvent = GeneEvent.ANY_MUTATION),
+            TestServeEvidenceFactory.createEvidenceForFusion(),
+            TestServeEvidenceFactory.createEvidenceForCharacteristic(TumorCharacteristicType.MICROSATELLITE_UNSTABLE),
+            TestServeEvidenceFactory.createEvidenceForCharacteristic(TumorCharacteristicType.HOMOLOGOUS_RECOMBINATION_DEFICIENT),
+            TestServeEvidenceFactory.createEvidenceForCharacteristic(TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN),
+            TestServeEvidenceFactory.createEvidenceForCharacteristic(TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD),
+            TestServeEvidenceFactory.createEvidenceForCharacteristic(TumorCharacteristicType.HPV_POSITIVE),
+            TestServeEvidenceFactory.createEvidenceForCharacteristic(TumorCharacteristicType.EBV_POSITIVE),
+            TestServeEvidenceFactory.createEvidenceForHLA()
         )
         val actionableEvents = ActionableEvents(evidences, emptyList())
 

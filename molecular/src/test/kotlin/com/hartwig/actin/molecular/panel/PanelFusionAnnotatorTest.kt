@@ -11,8 +11,9 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactor
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.treatment
 import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.GENE
-import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
+import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeFactory
+import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
 import com.hartwig.actin.molecular.evidence.actionability.TestActionabilityMatchFactory
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
@@ -67,13 +68,13 @@ private val FULLY_SPECIFIED_FUSION_MATCH_CRITERIA = FusionMatchCriteria(
 )
 
 private val MOLECULAR_CRITERIUM = ImmutableMolecularCriterium.builder().addGenes(
-    ImmutableActionableGene.builder().from(TestServeActionabilityFactory.createActionableEvent())
+    ImmutableActionableGene.builder().from(TestServeMolecularFactory.createActionableEvent())
         .from(TestServeFactory.createEmptyGeneAnnotation()).build()
 ).build()
 
 private val EMPTY_MATCH = TestActionabilityMatchFactory.createEmpty()
 private val ON_LABEL_MATCH = TestActionabilityMatchFactory.withOnLabelEvidence(
-    TestServeActionabilityFactory.createEvidence(
+    TestServeEvidenceFactory.create(
         MOLECULAR_CRITERIUM,
         level = ServeEvidenceLevel.A,
         direction = ServeEvidenceDirection.RESPONSIVE

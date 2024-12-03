@@ -1,8 +1,9 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.doid.TestDoidModelFactory
-import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
-import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory.createActionableTrial
+import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
+import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
+import com.hartwig.actin.molecular.evidence.TestServeTrialFactory
 import com.hartwig.actin.molecular.evidence.curation.TestApplicabilityFilteringUtil
 import com.hartwig.serve.datamodel.Knowledgebase
 import com.hartwig.serve.datamodel.trial.ActionableTrial
@@ -21,7 +22,7 @@ class ActionableEventMatcherFactoryTest {
             factory.create(
                 ActionableEvents(
                     listOf(
-                        TestServeActionabilityFactory.createEvidenceForHotspot()
+                        TestServeEvidenceFactory.createEvidenceForHotspot()
                     )
                 )
             )
@@ -30,43 +31,43 @@ class ActionableEventMatcherFactoryTest {
 
     @Test
     fun `Should be able to filter external trials`() {
-        val hotspot1: ActionableTrial = createActionableTrial(
-            setOf(TestServeActionabilityFactory.createHotspot("unknown gene")),
+        val hotspot1: ActionableTrial = TestServeTrialFactory.create(
+            setOf(TestServeMolecularFactory.createHotspot("unknown gene")),
             Knowledgebase.UNKNOWN,
             "external"
         )
-        val hotspot2: ActionableTrial = createActionableTrial(
-            setOf(TestServeActionabilityFactory.createHotspot(TestApplicabilityFilteringUtil.nonApplicableGene())),
+        val hotspot2: ActionableTrial = TestServeTrialFactory.create(
+            setOf(TestServeMolecularFactory.createHotspot(TestApplicabilityFilteringUtil.nonApplicableGene())),
             Knowledgebase.CKB,
             "external"
         )
-        val hotspot3: ActionableTrial = createActionableTrial(
-            setOf(TestServeActionabilityFactory.createHotspot("gene 1")),
+        val hotspot3: ActionableTrial = TestServeTrialFactory.create(
+            setOf(TestServeMolecularFactory.createHotspot("gene 1")),
             Knowledgebase.CKB,
             "external"
         )
-        val hotspot4: ActionableTrial = createActionableTrial(
-            setOf(TestServeActionabilityFactory.createHotspot("gene 2")),
+        val hotspot4: ActionableTrial = TestServeTrialFactory.create(
+            setOf(TestServeMolecularFactory.createHotspot("gene 2")),
             Knowledgebase.CKB,
             "internal"
         )
-        val hotspot5: ActionableTrial = createActionableTrial(
-            setOf(TestServeActionabilityFactory.createHotspot("gene 3")),
+        val hotspot5: ActionableTrial = TestServeTrialFactory.create(
+            setOf(TestServeMolecularFactory.createHotspot("gene 3")),
             Knowledgebase.CKB,
             "external"
         )
         val codon1: ActionableTrial =
-            createActionableTrial(setOf(TestServeActionabilityFactory.createCodon()), Knowledgebase.CKB, "external")
+            TestServeTrialFactory.create(setOf(TestServeMolecularFactory.createCodon()), Knowledgebase.CKB, "external")
         val exon1: ActionableTrial =
-            createActionableTrial(setOf(TestServeActionabilityFactory.createExon()), Knowledgebase.CKB, "external")
+            TestServeTrialFactory.create(setOf(TestServeMolecularFactory.createExon()), Knowledgebase.CKB, "external")
         val gene1: ActionableTrial =
-            createActionableTrial(setOf(TestServeActionabilityFactory.createGene()), Knowledgebase.CKB, "external")
+            TestServeTrialFactory.create(setOf(TestServeMolecularFactory.createGene()), Knowledgebase.CKB, "external")
         val characteristic1: ActionableTrial =
-            createActionableTrial(setOf(TestServeActionabilityFactory.createCharacteristic()), Knowledgebase.CKB, "external")
+            TestServeTrialFactory.create(setOf(TestServeMolecularFactory.createCharacteristic()), Knowledgebase.CKB, "external")
         val fusion1: ActionableTrial =
-            createActionableTrial(setOf(TestServeActionabilityFactory.createFusion()), Knowledgebase.CKB, "external")
+            TestServeTrialFactory.create(setOf(TestServeMolecularFactory.createFusion()), Knowledgebase.CKB, "external")
         val hla1: ActionableTrial =
-            createActionableTrial(setOf(TestServeActionabilityFactory.createHLA()), Knowledgebase.CKB, "external")
+            TestServeTrialFactory.create(setOf(TestServeMolecularFactory.createHLA()), Knowledgebase.CKB, "external")
         val actionable = ActionableEvents(
             emptyList(),
             listOf(hotspot1, hotspot2, hotspot3, hotspot4, hotspot5, codon1, exon1, gene1, characteristic1, fusion1, hla1)
