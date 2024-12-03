@@ -32,10 +32,10 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
         LOGGER.info("Creating ATC model from file {}", config.atcTsv)
         val atcModel = WhoAtcModel.createFromFiles(config.atcTsv, config.atcOverridesTsv)
 
-        LOGGER.info("Loading drug interactions database from file {}", config.drugInteractionTsv)
-        val drugInteractionsDatabase = DrugInteractionsDatabase.read(config.drugInteractionTsv)
+        LOGGER.info("Loading drug interactions database from file {}", config.drugInteractionsTsv)
+        val drugInteractionsDatabase = DrugInteractionsDatabase.create(config.drugInteractionsTsv)
         LOGGER.info("Loading QT prolongating drugs database from file {}", config.qtProlongatingTsv)
-        val qtProlongatingDatabase = QtProlongatingDatabase.read(config.qtProlongatingTsv)
+        val qtProlongatingDatabase = QtProlongatingDatabase.create(config.qtProlongatingTsv)
 
         LOGGER.info("Creating clinical curation database from directory {}", config.curationDirectory)
         val curationDoidValidator = CurationDoidValidator(DoidModelFactory.createFromDoidEntry(doidEntry))

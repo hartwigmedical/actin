@@ -89,7 +89,7 @@ class StandardMedicationExtractorTest {
     @Test
     fun `Should curate QT and drug interactions and extract medication`() {
         every { qtProlongatingDatabase.annotateWithQTProlongating(ATC_NAME) } returns QTProlongatingRisk.KNOWN
-        every { drugInteractionsDatabase.curateMedicationCypInteractions(ATC_NAME) } returns
+        every { drugInteractionsDatabase.annotateWithCypInteractions(ATC_NAME) } returns
                 listOf(
                     DrugInteraction(
                         DrugInteraction.Type.INDUCER,
@@ -99,7 +99,7 @@ class StandardMedicationExtractorTest {
                     )
                 )
 
-        every { drugInteractionsDatabase.curateMedicationTransporterInteractions(ATC_NAME) } returns
+        every { drugInteractionsDatabase.annotateWithTransporterInteractions(ATC_NAME) } returns
                 listOf(
                     DrugInteraction(
                         DrugInteraction.Type.INDUCER,
@@ -137,8 +137,8 @@ class StandardMedicationExtractorTest {
     @Test
     fun `Should default drug interactions and QT when no config found`() {
         every { qtProlongatingDatabase.annotateWithQTProlongating(ATC_NAME) } returns QTProlongatingRisk.NONE
-        every { drugInteractionsDatabase.curateMedicationCypInteractions(ATC_NAME) } returns emptyList()
-        every { drugInteractionsDatabase.curateMedicationTransporterInteractions(ATC_NAME) } returns emptyList()
+        every { drugInteractionsDatabase.annotateWithCypInteractions(ATC_NAME) } returns emptyList()
+        every { drugInteractionsDatabase.annotateWithTransporterInteractions(ATC_NAME) } returns emptyList()
         val result = extractor.extract(ehrPatientRecord)
         assertThat(result.evaluation.warnings).isEmpty()
         assertThat(result.extracted).containsExactly(medication)
@@ -163,15 +163,15 @@ class StandardMedicationExtractorTest {
     @Test(expected = IllegalStateException::class)
     fun `Should throw an exception if atc code is null but medication is not trial or self care`() {
         every { qtProlongatingDatabase.annotateWithQTProlongating(MEDICATION_NAME) } returns QTProlongatingRisk.NONE
-        every { drugInteractionsDatabase.curateMedicationCypInteractions(MEDICATION_NAME) } returns emptyList()
-        every { drugInteractionsDatabase.curateMedicationTransporterInteractions(MEDICATION_NAME) } returns emptyList()
+        every { drugInteractionsDatabase.annotateWithCypInteractions(MEDICATION_NAME) } returns emptyList()
+        every { drugInteractionsDatabase.annotateWithTransporterInteractions(MEDICATION_NAME) } returns emptyList()
         extractor.extract(ehrPatientRecord.copy(medications = listOf(providedMedication.copy(atcCode = null))))
     }
 
     private fun noAtcLookupTest(modifiedMedication: ProvidedMedication, expected: Medication) {
         every { qtProlongatingDatabase.annotateWithQTProlongating(MEDICATION_NAME) } returns QTProlongatingRisk.NONE
-        every { drugInteractionsDatabase.curateMedicationCypInteractions(MEDICATION_NAME) } returns emptyList()
-        every { drugInteractionsDatabase.curateMedicationTransporterInteractions(MEDICATION_NAME) } returns emptyList()
+        every { drugInteractionsDatabase.annotateWithCypInteractions(MEDICATION_NAME) } returns emptyList()
+        every { drugInteractionsDatabase.annotateWithTransporterInteractions(MEDICATION_NAME) } returns emptyList()
         val result = extractor.extract(ehrPatientRecord.copy(medications = listOf(modifiedMedication)))
         assertThat(result.evaluation.warnings).isEmpty()
         assertThat(result.extracted).containsExactly(expected)

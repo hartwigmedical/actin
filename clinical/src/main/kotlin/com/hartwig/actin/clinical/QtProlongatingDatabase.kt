@@ -11,19 +11,19 @@ data class QTProlongatingEntry(
     val risk: String
 )
 
-class QtProlongatingDatabase(private val qtProlongatingRisksPerDrug: Map<String, QTProlongatingRisk>) {
+class QtProlongatingDatabase(private val qtProlongatingRiskPerDrug: Map<String, QTProlongatingRisk>) {
 
     fun annotateWithQTProlongating(
         medicationName: String
     ): QTProlongatingRisk {
-        return qtProlongatingRisksPerDrug[medicationName.lowercase()] ?: QTProlongatingRisk.NONE
+        return qtProlongatingRiskPerDrug[medicationName.lowercase()] ?: QTProlongatingRisk.NONE
     }
 
     companion object {
-        fun read(tsv: String): QtProlongatingDatabase {
+        fun create(tsv: String): QtProlongatingDatabase {
             val reader = CsvMapper().apply { registerModule(KotlinModule.Builder().build()) }.readerFor(QTProlongatingEntry::class.java)
                 .with(CsvSchema.emptySchema().withHeader().withColumnSeparator('\t'))
-            val qtProlongatingRisksPerDrug =
+            val qtProlongatingRiskPerDrug =
                 reader.readValues<QTProlongatingEntry>(File(tsv)).readAll().groupBy { it.name.lowercase() }.map { (name, risks) ->
                     if (risks.size > 1) {
                         throw IllegalStateException(
@@ -31,16 +31,15 @@ class QtProlongatingDatabase(private val qtProlongatingRisksPerDrug: Map<String,
                                     "Check the qt_prolongating.tsv for a duplicate"
                         )
                     } else {
-                        val trimmedUppercase = risks.first().risk.trim().replace(" ".toRegex(), "_").uppercase()
                         val qtRisk = try {
-                            QTProlongatingRisk.valueOf(trimmedUppercase)
+                            QTProlongatingRisk.valueOf(risks.first().risk)
                         } catch (e: IllegalArgumentException) {
-                            throw IllegalStateException("Invalid QTProlongatingRisk value: $trimmedUppercase", e)
+                            throw IllegalArgumentException("Invalid QTProlongatingRisk value: ${risks.first().risk}", e)
                         }
                         name.lowercase() to qtRisk
                     }
                 }.toMap()
-            return QtProlongatingDatabase(qtProlongatingRisksPerDrug)
+            return QtProlongatingDatabase(qtProlongatingRiskPerDrug)
         }
     }
 }
