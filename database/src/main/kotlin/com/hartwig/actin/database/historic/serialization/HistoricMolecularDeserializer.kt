@@ -161,7 +161,7 @@ object HistoricMolecularDeserializer {
             isReportable = determineIsReportable(obj),
             event = Json.string(obj, "event"),
             driverLikelihood = determineDriverLikelihood(obj),
-            evidence = ClinicalEvidence(),
+            evidence = createEmptyClinicalEvidence(),
             gene = Json.string(obj, "gene"),
             geneRole = GeneRole.UNKNOWN,
             proteinEffect = ProteinEffect.UNKNOWN,
@@ -216,7 +216,7 @@ object HistoricMolecularDeserializer {
             isReportable = determineIsReportable(obj),
             event = Json.string(obj, "event"),
             driverLikelihood = determineDriverLikelihood(obj),
-            evidence = ClinicalEvidence(),
+            evidence = createEmptyClinicalEvidence(),
             gene = Json.string(obj, "gene"),
             geneRole = GeneRole.UNKNOWN,
             proteinEffect = ProteinEffect.UNKNOWN,
@@ -240,7 +240,7 @@ object HistoricMolecularDeserializer {
             isReportable = determineIsReportable(obj),
             event = Json.string(obj, "event"),
             driverLikelihood = determineDriverLikelihood(obj),
-            evidence = ClinicalEvidence(),
+            evidence = createEmptyClinicalEvidence(),
             gene = Json.string(obj, "gene"),
             geneRole = GeneRole.UNKNOWN,
             proteinEffect = ProteinEffect.UNKNOWN,
@@ -261,7 +261,7 @@ object HistoricMolecularDeserializer {
             isReportable = isReportable,
             event = Json.string(obj, "event"),
             driverLikelihood = if (isReportable) determineDriverLikelihood(obj) else null,
-            evidence = ClinicalEvidence(),
+            evidence = createEmptyClinicalEvidence(),
             gene = Json.string(obj, "gene"),
             geneRole = GeneRole.UNKNOWN,
             proteinEffect = ProteinEffect.UNKNOWN,
@@ -283,7 +283,7 @@ object HistoricMolecularDeserializer {
             isReportable = determineIsReportable(obj),
             event = Json.string(obj, "event"),
             driverLikelihood = determineDriverLikelihood(obj),
-            evidence = ClinicalEvidence(),
+            evidence = createEmptyClinicalEvidence(),
             isAssociatedWithDrugResistance = null
         )
     }
@@ -309,7 +309,7 @@ object HistoricMolecularDeserializer {
             isReportable = determineIsReportable(obj),
             event = Json.string(obj, "event"),
             driverLikelihood = determineDriverLikelihood(obj),
-            evidence = ClinicalEvidence()
+            evidence = createEmptyClinicalEvidence()
         )
     }
 
@@ -355,6 +355,10 @@ object HistoricMolecularDeserializer {
 
     private fun extractCancerType(prediction: JsonObject): String {
         return Json.optionalString(prediction, "tumorType") ?: Json.string(prediction, "cancerType")
+    }
+
+    private fun createEmptyClinicalEvidence(): ClinicalEvidence {
+        return ClinicalEvidence(treatmentEvidence = emptySet(), externalEligibleTrials = emptySet())
     }
 
     private fun extractEvidence(evidence: JsonObject?): ClinicalEvidence? {

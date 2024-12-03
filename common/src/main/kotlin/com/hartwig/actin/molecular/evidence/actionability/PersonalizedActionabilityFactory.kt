@@ -6,17 +6,18 @@ import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.trial.ActionableTrial
 
 internal class PersonalizedActionabilityFactory internal constructor(
-    private val doidModel: DoidModel,
     private val applicableDoids: Set<String>
 ) {
 
     fun create(matches: ActionableEvents): ActionabilityMatch {
-        val expandedTumorDoids = expandDoids(doidModel, applicableDoids)
-        val (onLabelEvents, offLabelEvents) = partitionEvidences(matches.evidences, expandedTumorDoids)
-        val (onLabelEventsTrials, offLabelEventsTrials) = partitionTrials(matches.trials, expandedTumorDoids)
+        val (onLabelEvidences, offLabelEvidences) = partitionEvidences(matches.evidences, applicableDoids)
+        val (onLabelTrials, offLabelTrials) = partitionTrials(matches.trials, applicableDoids)
+
         return ActionabilityMatch(
-            ActionableEvents(onLabelEvents, onLabelEventsTrials),
-            ActionableEvents(offLabelEvents, offLabelEventsTrials)
+            onLabelEvidences = onLabelEvidences,
+            offLabelEvidences = offLabelEvidences,
+            onLabelTrials = onLabelTrials,
+            offLabelTrials = offLabelTrials
         )
     }
 
@@ -41,7 +42,7 @@ internal class PersonalizedActionabilityFactory internal constructor(
 
     companion object {
         fun create(doidModel: DoidModel, tumorDoids: Set<String>): PersonalizedActionabilityFactory {
-            return PersonalizedActionabilityFactory(doidModel, expandDoids(doidModel, tumorDoids))
+            return PersonalizedActionabilityFactory(expandDoids(doidModel, tumorDoids))
         }
 
         private fun expandDoids(doidModel: DoidModel, doids: Set<String>): Set<String> {

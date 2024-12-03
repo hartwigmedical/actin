@@ -78,7 +78,7 @@ private val MOLECULAR_CRITERIUM = ImmutableMolecularCriterium.builder().addGenes
 
 private val ACTIONABILITY_MATCH = TestActionabilityMatchFactory.createEmpty().copy(
     onLabelEvidences = listOf(
-        TestServeActionabilityFactory.createEfficacyEvidence(
+        TestServeActionabilityFactory.createEvidence(
             MOLECULAR_CRITERIUM,
             level = ServeEvidenceLevel.A,
             direction = ServeEvidenceDirection.RESPONSIVE

@@ -12,9 +12,9 @@ class CopyNumberEvidenceTest {
 
     @Test
     fun `Should determine copy number evidence`() {
-        val gene1: EfficacyEvidence = TestServeActionabilityFactory.createEfficacyEvidenceWithGene(GeneEvent.AMPLIFICATION, "gene 1")
-        val gene2: EfficacyEvidence = TestServeActionabilityFactory.createEfficacyEvidenceWithGene(GeneEvent.DELETION, "gene 2")
-        val gene3: EfficacyEvidence = TestServeActionabilityFactory.createEfficacyEvidenceWithGene(GeneEvent.INACTIVATION, "gene 1")
+        val gene1: EfficacyEvidence = TestServeActionabilityFactory.createEvidenceForGene(GeneEvent.AMPLIFICATION, "gene 1")
+        val gene2: EfficacyEvidence = TestServeActionabilityFactory.createEvidenceForGene(GeneEvent.DELETION, "gene 2")
+        val gene3: EfficacyEvidence = TestServeActionabilityFactory.createEvidenceForGene(GeneEvent.INACTIVATION, "gene 1")
         val actionable = ActionableEvents(listOf(gene1, gene2, gene3), emptyList())
         val copyNumberEvidence: CopyNumberEvidence = CopyNumberEvidence.create(actionable)
 

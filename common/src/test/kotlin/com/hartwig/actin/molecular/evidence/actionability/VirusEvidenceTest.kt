@@ -13,7 +13,7 @@ class VirusEvidenceTest {
     @Test
     fun `Should determine evidence for HPV`() {
         val hpv: EfficacyEvidence =
-            TestServeActionabilityFactory.createEfficacyEvidenceWithCharacteristic(TumorCharacteristicType.HPV_POSITIVE)
+            TestServeActionabilityFactory.createEvidenceForCharacteristic(TumorCharacteristicType.HPV_POSITIVE)
         val actionable = ActionableEvents(listOf(hpv), emptyList())
         val virusEvidence: VirusEvidence = VirusEvidence.create(actionable)
 
@@ -35,7 +35,7 @@ class VirusEvidenceTest {
     @Test
     fun `Should determine evidence for EBV`() {
         val ebv: EfficacyEvidence =
-            TestServeActionabilityFactory.createEfficacyEvidenceWithCharacteristic(TumorCharacteristicType.EBV_POSITIVE)
+            TestServeActionabilityFactory.createEvidenceForCharacteristic(TumorCharacteristicType.EBV_POSITIVE)
         val actionable = ActionableEvents(listOf(ebv), emptyList())
         val virusEvidence: VirusEvidence = VirusEvidence.create(actionable)
 

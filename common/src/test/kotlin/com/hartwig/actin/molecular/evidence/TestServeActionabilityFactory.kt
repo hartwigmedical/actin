@@ -30,38 +30,38 @@ import java.time.LocalDate
 
 object TestServeActionabilityFactory {
 
-    fun createEfficacyEvidenceWithHotspot(
+    fun createEvidenceForHotspot(
         gene: String = "",
         chromosome: String = "",
         position: Int = 0,
         ref: String = "",
         alt: String = ""
     ): EfficacyEvidence {
-        return createEfficacyEvidence(createHotspot(gene, chromosome, position, ref, alt))
+        return createEvidence(createHotspot(gene, chromosome, position, ref, alt))
     }
 
-    fun createEfficacyEvidenceWithCodon(gene: String = ""): EfficacyEvidence {
-        return createEfficacyEvidence(createCodon(gene))
+    fun createEvidenceForCodon(gene: String = ""): EfficacyEvidence {
+        return createEvidence(createCodon(gene))
     }
 
-    fun createEfficacyEvidenceWithExon(): EfficacyEvidence {
-        return createEfficacyEvidence(createExon())
+    fun createEvidenceForExon(): EfficacyEvidence {
+        return createEvidence(createExon())
     }
 
-    fun createEfficacyEvidenceWithGene(geneEvent: GeneEvent = GeneEvent.ANY_MUTATION, gene: String = ""): EfficacyEvidence {
-        return createEfficacyEvidence(createGene(gene, geneEvent))
+    fun createEvidenceForGene(geneEvent: GeneEvent = GeneEvent.ANY_MUTATION, gene: String = ""): EfficacyEvidence {
+        return createEvidence(createGene(gene, geneEvent))
     }
 
-    fun createEfficacyEvidenceWithFusion(): EfficacyEvidence {
-        return createEfficacyEvidence(createFusion())
+    fun createEvidenceForFusion(): EfficacyEvidence {
+        return createEvidence(createFusion())
     }
 
-    fun createEfficacyEvidenceWithCharacteristic(type: TumorCharacteristicType = TumorCharacteristicType.MICROSATELLITE_STABLE): EfficacyEvidence {
-        return createEfficacyEvidence(createCharacteristic(type))
+    fun createEvidenceForCharacteristic(type: TumorCharacteristicType = TumorCharacteristicType.MICROSATELLITE_STABLE): EfficacyEvidence {
+        return createEvidence(createCharacteristic(type))
     }
 
-    fun createEfficacyEvidenceWithHla(): EfficacyEvidence {
-        return createEfficacyEvidence(createHla())
+    fun createEvidenceForHLA(): EfficacyEvidence {
+        return createEvidence(createHLA())
     }
 
     fun createHotspot(
@@ -122,7 +122,7 @@ object TestServeActionabilityFactory {
             .addCharacteristics(ImmutableActionableCharacteristic.builder().from(createActionableEvent()).type(type).build()).build()
     }
 
-    fun createHla(): MolecularCriterium {
+    fun createHLA(): MolecularCriterium {
         return ImmutableMolecularCriterium.builder()
             .addHla(ImmutableActionableHLA.builder().from(createActionableEvent()).hlaAllele("").build()).build()
     }
@@ -143,7 +143,7 @@ object TestServeActionabilityFactory {
         }
     }
 
-    fun createEfficacyEvidence(
+    fun createEvidence(
         molecularCriterium: MolecularCriterium,
         source: Knowledgebase = Knowledgebase.CKB,
         treatment: String = "treatment",

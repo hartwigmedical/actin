@@ -30,7 +30,7 @@ class ClinicalEvidenceFactoryTest {
             ClinicalEvidenceFactory.create(
                 ActionabilityMatch(
                     onLabelEvidences = listOf(
-                        TestServeActionabilityFactory.createEfficacyEvidence(
+                        TestServeActionabilityFactory.createEvidence(
                             TestServeActionabilityFactory.createHotspot(),
                             treatment = onLabel.treatment
                         )
@@ -61,7 +61,7 @@ class ClinicalEvidenceFactoryTest {
                 ActionabilityMatch(
                     onLabelEvidences = emptyList(),
                     offLabelEvidences = listOf(
-                        TestServeActionabilityFactory.createEfficacyEvidence(
+                        TestServeActionabilityFactory.createEvidence(
                             TestServeActionabilityFactory.createHotspot(),
                             treatment = offLabel.treatment
                         )

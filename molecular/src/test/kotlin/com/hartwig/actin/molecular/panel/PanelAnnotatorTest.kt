@@ -19,8 +19,6 @@ import com.hartwig.actin.molecular.GENE
 import com.hartwig.actin.molecular.HGVS_CODING
 import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
-import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEvents
 import com.hartwig.actin.molecular.evidence.actionability.TestActionabilityMatchFactory
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
@@ -32,32 +30,35 @@ import org.junit.Test
 import com.hartwig.serve.datamodel.molecular.common.GeneRole as ServeGeneRole
 import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
 
-private const val ALT = "T"
-private const val REF = "G"
-private const val OTHER_GENE = "other_gene"
 private const val CHROMOSOME = "1"
 private const val POSITION = 1
-private val EMPTY_MATCH = ActionabilityMatch(ActionableEvents(), ActionableEvents())
+private const val REF = "G"
+private const val ALT = "T"
+
 private val ARCHER_VARIANT = SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING)
 private val VARIANT_MATCH_CRITERIA =
     VariantMatchCriteria(
         isReportable = true,
         gene = GENE,
-        chromosome = CHROMOSOME,
-        ref = REF,
-        alt = ALT,
-        position = POSITION,
         codingEffect = CodingEffect.MISSENSE,
-        type = VariantType.SNV
+        type = VariantType.SNV,
+        chromosome = CHROMOSOME,
+        position = POSITION,
+        ref = REF,
+        alt = ALT
     )
+
+private const val OTHER_GENE = "other_gene"
 private val ARCHER_FUSION = SequencedFusion(GENE, OTHER_GENE)
 
 private val HOTSPOT = TestServeKnownFactory.hotspotBuilder().build()
     .withGeneRole(ServeGeneRole.ONCO)
     .withProteinEffect(ServeProteinEffect.GAIN_OF_FUNCTION)
 
-private val ACTIONABILITY_MATCH = TestActionabilityMatchFactory.createEmpty()
-    .copy(onLabelEvidences = listOf(TestServeActionabilityFactory.createEfficacyEvidenceWithGene()))
+private val EMPTY_MATCH = TestActionabilityMatchFactory.createEmpty()
+private val ON_LABEL_MATCH = TestActionabilityMatchFactory.withOnLabelEvidence(
+    TestServeActionabilityFactory.createEvidenceForGene()
+)
 
 private val ARCHER_SKIPPED_EXON = SequencedSkippedExons(GENE, 2, 3)
 
@@ -114,7 +115,7 @@ class PanelAnnotatorTest {
 
         val unannotatedCopyNumberSlot = mutableListOf<CopyNumber>()
         every { evidenceDatabase.geneAlterationForCopyNumber(capture(unannotatedCopyNumberSlot)) } returns HOTSPOT
-        every { evidenceDatabase.evidenceForCopyNumber(capture(unannotatedCopyNumberSlot)) } returns ACTIONABILITY_MATCH
+        every { evidenceDatabase.evidenceForCopyNumber(capture(unannotatedCopyNumberSlot)) } returns ON_LABEL_MATCH
 
         val annotated = annotator.annotate(createTestPriorSequencingTest().copy(amplifications = setOf(SequencedAmplification(GENE))))
         val annotatedVariant = annotated.drivers.copyNumbers.first()
@@ -129,7 +130,7 @@ class PanelAnnotatorTest {
     @Test
     fun `Should annotate gene deletion with evidence`() {
         every { evidenceDatabase.geneAlterationForCopyNumber(any()) } returns HOTSPOT
-        every { evidenceDatabase.evidenceForCopyNumber(any()) } returns ACTIONABILITY_MATCH
+        every { evidenceDatabase.evidenceForCopyNumber(any()) } returns ON_LABEL_MATCH
 
         val annotatedPanel = annotator.annotate(createTestPriorSequencingTest().copy(deletedGenes = setOf(SequencedDeletedGene(GENE))))
         assertThat(annotatedPanel.drivers.copyNumbers).isEqualTo(
@@ -141,7 +142,7 @@ class PanelAnnotatorTest {
                     isReportable = true,
                     event = GENE,
                     driverLikelihood = DriverLikelihood.HIGH,
-                    evidence = ClinicalEvidenceFactory.create(ACTIONABILITY_MATCH),
+                    evidence = ClinicalEvidenceFactory.create(ON_LABEL_MATCH),
                     gene = GENE,
                     geneRole = GeneRole.ONCO,
                     proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
@@ -153,12 +154,12 @@ class PanelAnnotatorTest {
 
     @Test
     fun `Should annotate tumor mutational burden with evidence`() {
-        every { evidenceDatabase.evidenceForTumorMutationalBurdenStatus(true) } returns ACTIONABILITY_MATCH
+        every { evidenceDatabase.evidenceForTumorMutationalBurdenStatus(true) } returns ON_LABEL_MATCH
         every { evidenceDatabase.evidenceForTumorMutationalBurdenStatus(false) } returns EMPTY_MATCH
 
         val panelWithHighTmb = annotator.annotate(createTestPriorSequencingTest().copy(tumorMutationalBurden = 200.0))
         assertThat(panelWithHighTmb.characteristics.tumorMutationalBurdenEvidence)
-            .isEqualTo(ClinicalEvidenceFactory.create(ACTIONABILITY_MATCH))
+            .isEqualTo(ClinicalEvidenceFactory.create(ON_LABEL_MATCH))
 
         val panelWithLowTmb = annotator.annotate(createTestPriorSequencingTest().copy(tumorMutationalBurden = 2.0))
         assertThat(panelWithLowTmb.characteristics.tumorMutationalBurdenEvidence).isEqualTo(ClinicalEvidenceFactory.create(EMPTY_MATCH))
@@ -169,11 +170,11 @@ class PanelAnnotatorTest {
 
     @Test
     fun `Should annotate microsatellite status with evidence`() {
-        every { evidenceDatabase.evidenceForMicrosatelliteStatus(true) } returns ACTIONABILITY_MATCH
+        every { evidenceDatabase.evidenceForMicrosatelliteStatus(true) } returns ON_LABEL_MATCH
         every { evidenceDatabase.evidenceForMicrosatelliteStatus(false) } returns EMPTY_MATCH
 
         val panelWithMSI = annotator.annotate(createTestPriorSequencingTest().copy(isMicrosatelliteUnstable = true))
-        assertThat(panelWithMSI.characteristics.microsatelliteEvidence).isEqualTo(ClinicalEvidenceFactory.create(ACTIONABILITY_MATCH))
+        assertThat(panelWithMSI.characteristics.microsatelliteEvidence).isEqualTo(ClinicalEvidenceFactory.create(ON_LABEL_MATCH))
 
         val panelWithMSS = annotator.annotate(createTestPriorSequencingTest().copy(isMicrosatelliteUnstable = false))
         assertThat(panelWithMSS.characteristics.microsatelliteEvidence).isEqualTo(ClinicalEvidenceFactory.create(EMPTY_MATCH))

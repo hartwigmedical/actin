@@ -13,8 +13,6 @@ import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.GENE
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.TestServeFactory
-import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEvents
 import com.hartwig.actin.molecular.evidence.actionability.TestActionabilityMatchFactory
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
@@ -31,7 +29,6 @@ import org.junit.Test
 import com.hartwig.serve.datamodel.efficacy.EvidenceDirection as ServeEvidenceDirection
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevel as ServeEvidenceLevel
 
-private val EMPTY_MATCH = ActionabilityMatch(ActionableEvents(), ActionableEvents())
 private const val TRANSCRIPT = "transcript"
 private const val CANONICAL_TRANSCRIPT = "canonical_transcript"
 private const val GENE_START = "gene_start"
@@ -74,13 +71,12 @@ private val MOLECULAR_CRITERIUM = ImmutableMolecularCriterium.builder().addGenes
         .from(TestServeFactory.createEmptyGeneAnnotation()).build()
 ).build()
 
-private val ACTIONABILITY_MATCH = TestActionabilityMatchFactory.createEmpty().copy(
-    onLabelEvidences = listOf(
-        TestServeActionabilityFactory.createEfficacyEvidence(
-            MOLECULAR_CRITERIUM,
-            level = ServeEvidenceLevel.A,
-            direction = ServeEvidenceDirection.RESPONSIVE
-        )
+private val EMPTY_MATCH = TestActionabilityMatchFactory.createEmpty()
+private val ON_LABEL_MATCH = TestActionabilityMatchFactory.withOnLabelEvidence(
+    TestServeActionabilityFactory.createEvidence(
+        MOLECULAR_CRITERIUM,
+        level = ServeEvidenceLevel.A,
+        direction = ServeEvidenceDirection.RESPONSIVE
     )
 )
 
@@ -184,15 +180,13 @@ class PanelFusionAnnotatorTest {
                 isReportable = true,
                 driverLikelihood = DriverLikelihood.HIGH,
                 evidence = TestClinicalEvidenceFactory.withEvidence(
-                    treatmentEvidence = setOf(
-                        treatment(
-                            treatment = "treatment",
-                            evidenceLevel = EvidenceLevel.A,
-                            evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
-                            direction = EvidenceDirection(hasPositiveResponse = true, isCertain = true, hasBenefit = true),
-                            onLabel = true,
-                            isCategoryEvent = true
-                        )
+                    treatment(
+                        treatment = "treatment",
+                        evidenceLevel = EvidenceLevel.A,
+                        evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
+                        direction = EvidenceDirection(hasPositiveResponse = true, isCertain = true, hasBenefit = true),
+                        onLabel = true,
+                        isCategoryEvent = true
                     )
                 )
             )
@@ -220,15 +214,13 @@ class PanelFusionAnnotatorTest {
                 isReportable = true,
                 driverLikelihood = DriverLikelihood.HIGH,
                 evidence = TestClinicalEvidenceFactory.withEvidence(
-                    treatmentEvidence = setOf(
-                        treatment(
-                            treatment = "treatment",
-                            evidenceLevel = EvidenceLevel.A,
-                            evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
-                            direction = EvidenceDirection(hasPositiveResponse = true, isCertain = true, hasBenefit = true),
-                            onLabel = true,
-                            isCategoryEvent = true
-                        )
+                    treatment(
+                        treatment = "treatment",
+                        evidenceLevel = EvidenceLevel.A,
+                        evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
+                        direction = EvidenceDirection(hasPositiveResponse = true, isCertain = true, hasBenefit = true),
+                        onLabel = true,
+                        isCategoryEvent = true
                     )
                 )
             )
@@ -305,7 +297,7 @@ class PanelFusionAnnotatorTest {
 
     private fun setupEvidenceForFusion(fusionMatchCriteria: FusionMatchCriteria) {
         every { evidenceDatabase.lookupKnownFusion(fusionMatchCriteria) } returns null
-        every { evidenceDatabase.evidenceForFusion(fusionMatchCriteria) } returns ACTIONABILITY_MATCH
+        every { evidenceDatabase.evidenceForFusion(fusionMatchCriteria) } returns ON_LABEL_MATCH
     }
 
     private fun setupKnownFusionCacheForExonDeletion() {

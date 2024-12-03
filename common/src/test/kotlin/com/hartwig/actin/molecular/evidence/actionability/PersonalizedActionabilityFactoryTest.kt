@@ -31,28 +31,29 @@ class PersonalizedActionabilityFactoryTest {
     @Test
     fun `Should qualify everything as off-label if tumor doids are unknown`() {
         val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
-        val factory: PersonalizedActionabilityFactory = PersonalizedActionabilityFactory.create(doidModel, mutableSetOf())
+        val factory = PersonalizedActionabilityFactory.create(doidModel, mutableSetOf())
 
         val event1 = create("doid 1")
         val event2 = create("doid 2")
         val event3 = create("doid 1", "blacklist")
         val events = listOf(event1, event2, event3)
         val match = factory.create(ActionableEvents(events, emptyList()))
-        assertThat(match.onLabelEvidence.evidences.size).isEqualTo(0)
-        assertThat(match.offLabelEvidence.evidences.size).isEqualTo(3)
+
+        assertThat(match.onLabelEvidences.size).isEqualTo(0)
+        assertThat(match.offLabelEvidences.size).isEqualTo(3)
     }
 
     private fun create(doid: String): EfficacyEvidence {
         val molecularCriterium = TestServeActionabilityFactory.createHotspot()
         val indication = ImmutableIndication.builder().applicableType(ImmutableCancerType.builder().name("").doid(doid).build())
             .excludedSubTypes(emptySet()).build()
-        return TestServeActionabilityFactory.createEfficacyEvidence(molecularCriterium, indication = indication)
+        return TestServeActionabilityFactory.createEvidence(molecularCriterium, indication = indication)
     }
 
-    private fun create(doid: String, blacklistDoid: String): EfficacyEvidence {
+    private fun create(doid: String, excludedDoid: String): EfficacyEvidence {
         val molecularCriterium = TestServeActionabilityFactory.createHotspot()
         val indication = ImmutableIndication.builder().applicableType(ImmutableCancerType.builder().name("").doid(doid).build())
-            .excludedSubTypes(setOf(ImmutableCancerType.builder().name("").doid(blacklistDoid).build())).build()
-        return TestServeActionabilityFactory.createEfficacyEvidence(molecularCriterium, indication = indication)
+            .excludedSubTypes(setOf(ImmutableCancerType.builder().name("").doid(excludedDoid).build())).build()
+        return TestServeActionabilityFactory.createEvidence(molecularCriterium, indication = indication)
     }
 }

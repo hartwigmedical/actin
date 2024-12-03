@@ -12,12 +12,12 @@ class ApplicabilityFilteringTest {
         val nonApplicableGene = TestApplicabilityFilteringUtil.nonApplicableGene()
         assertThat(
             ApplicabilityFiltering.isApplicable(
-                TestServeActionabilityFactory.createEfficacyEvidenceWithHotspot(nonApplicableGene).molecularCriterium().hotspots().first()
+                TestServeActionabilityFactory.createEvidenceForHotspot(nonApplicableGene).molecularCriterium().hotspots().first()
             )
         ).isFalse()
         assertThat(
             ApplicabilityFiltering.isApplicable(
-                TestServeActionabilityFactory.createEfficacyEvidenceWithHotspot("other").molecularCriterium().hotspots().first()
+                TestServeActionabilityFactory.createEvidenceForHotspot("other").molecularCriterium().hotspots().first()
             )
         ).isTrue()
     }
@@ -27,12 +27,12 @@ class ApplicabilityFilteringTest {
         val nonApplicableGene = TestApplicabilityFilteringUtil.nonApplicableGene()
         assertThat(
             ApplicabilityFiltering.isApplicable(
-                TestServeActionabilityFactory.createEfficacyEvidenceWithCodon(nonApplicableGene).molecularCriterium().codons().first()
+                TestServeActionabilityFactory.createEvidenceForCodon(nonApplicableGene).molecularCriterium().codons().first()
             )
         ).isFalse()
         assertThat(
             ApplicabilityFiltering.isApplicable(
-                TestServeActionabilityFactory.createEfficacyEvidenceWithCodon("other").molecularCriterium().codons().first()
+                TestServeActionabilityFactory.createEvidenceForCodon("other").molecularCriterium().codons().first()
             )
         ).isTrue()
     }
@@ -42,12 +42,12 @@ class ApplicabilityFilteringTest {
         val nonApplicableGene = TestApplicabilityFilteringUtil.nonApplicableGene()
         assertThat(
             ApplicabilityFiltering.isApplicable(
-                TestServeActionabilityFactory.createEfficacyEvidenceWithGene(gene = nonApplicableGene).molecularCriterium().genes().first()
+                TestServeActionabilityFactory.createEvidenceForGene(gene = nonApplicableGene).molecularCriterium().genes().first()
             )
         ).isFalse()
         assertThat(
             ApplicabilityFiltering.isApplicable(
-                TestServeActionabilityFactory.createEfficacyEvidenceWithGene(GeneEvent.ANY_MUTATION, "other").molecularCriterium().genes()
+                TestServeActionabilityFactory.createEvidenceForGene(GeneEvent.ANY_MUTATION, "other").molecularCriterium().genes()
                     .first()
             )
         ).isTrue()
@@ -55,21 +55,21 @@ class ApplicabilityFilteringTest {
         val nonApplicableAmp = TestApplicabilityFilteringUtil.nonApplicableAmplification()
         assertThat(
             ApplicabilityFiltering.isApplicable(
-                TestServeActionabilityFactory.createEfficacyEvidenceWithGene(GeneEvent.ANY_MUTATION, nonApplicableAmp).molecularCriterium()
+                TestServeActionabilityFactory.createEvidenceForGene(GeneEvent.ANY_MUTATION, nonApplicableAmp).molecularCriterium()
                     .genes().first()
             )
         ).isTrue()
 
         assertThat(
             ApplicabilityFiltering.isApplicable(
-                TestServeActionabilityFactory.createEfficacyEvidenceWithGene(GeneEvent.AMPLIFICATION, "other gene").molecularCriterium()
+                TestServeActionabilityFactory.createEvidenceForGene(GeneEvent.AMPLIFICATION, "other gene").molecularCriterium()
                     .genes().first()
             )
         ).isTrue()
 
         assertThat(
             ApplicabilityFiltering.isApplicable(
-                TestServeActionabilityFactory.createEfficacyEvidenceWithGene(GeneEvent.AMPLIFICATION, nonApplicableAmp).molecularCriterium()
+                TestServeActionabilityFactory.createEvidenceForGene(GeneEvent.AMPLIFICATION, nonApplicableAmp).molecularCriterium()
                     .genes().first()
             )
         ).isFalse()

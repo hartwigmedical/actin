@@ -10,16 +10,16 @@ class ActionabilityMatchTest {
     @Test
     fun `Should extend actionable event with category event false when hotspot, fusion, HLA or characteristic`() {
         assertThat(
-            TestServeActionabilityFactory.createEfficacyEvidenceWithHotspot().molecularCriterium().hotspots().first().isCategoryEvent()
+            TestServeActionabilityFactory.createEvidenceForHotspot().molecularCriterium().hotspots().first().isCategoryEvent()
         ).isFalse()
         assertThat(
-            TestServeActionabilityFactory.createEfficacyEvidenceWithFusion().molecularCriterium().fusions().first().isCategoryEvent()
+            TestServeActionabilityFactory.createEvidenceForFusion().molecularCriterium().fusions().first().isCategoryEvent()
         ).isFalse()
         assertThat(
-            TestServeActionabilityFactory.createEfficacyEvidenceWithHla().molecularCriterium().hla().first().isCategoryEvent()
+            TestServeActionabilityFactory.createEvidenceForHLA().molecularCriterium().hla().first().isCategoryEvent()
         ).isFalse()
         assertThat(
-            TestServeActionabilityFactory.createEfficacyEvidenceWithCharacteristic().molecularCriterium().characteristics().first()
+            TestServeActionabilityFactory.createEvidenceForCharacteristic().molecularCriterium().characteristics().first()
                 .isCategoryEvent()
         ).isFalse()
     }
@@ -27,18 +27,18 @@ class ActionabilityMatchTest {
     @Test
     fun `Should extend actionable event with category event true when range`() {
         assertThat(
-            TestServeActionabilityFactory.createEfficacyEvidenceWithCodon().molecularCriterium().codons().first().isCategoryEvent()
+            TestServeActionabilityFactory.createEvidenceForCodon().molecularCriterium().codons().first().isCategoryEvent()
         ).isTrue()
     }
 
     @Test
     fun `Should extend actionable event with category event false when gene in included list of events, true otherwise`() {
         assertThat(
-            TestServeActionabilityFactory.createEfficacyEvidenceWithGene(GeneEvent.AMPLIFICATION).molecularCriterium().genes().first()
+            TestServeActionabilityFactory.createEvidenceForGene(GeneEvent.AMPLIFICATION).molecularCriterium().genes().first()
                 .isCategoryEvent()
         ).isFalse()
         assertThat(
-            TestServeActionabilityFactory.createEfficacyEvidenceWithGene(GeneEvent.ANY_MUTATION).molecularCriterium().genes().first()
+            TestServeActionabilityFactory.createEvidenceForGene(GeneEvent.ANY_MUTATION).molecularCriterium().genes().first()
                 .isCategoryEvent()
         ).isTrue()
     }

@@ -21,7 +21,7 @@ class ActionableEventMatcherFactoryTest {
             factory.create(
                 ActionableEvents(
                     listOf(
-                        TestServeActionabilityFactory.createEfficacyEvidenceWithHotspot()
+                        TestServeActionabilityFactory.createEvidenceForHotspot()
                     )
                 )
             )
@@ -66,7 +66,7 @@ class ActionableEventMatcherFactoryTest {
         val fusion1: ActionableTrial =
             createActionableTrial(setOf(TestServeActionabilityFactory.createFusion()), Knowledgebase.CKB, "external")
         val hla1: ActionableTrial =
-            createActionableTrial(setOf(TestServeActionabilityFactory.createHla()), Knowledgebase.CKB, "external")
+            createActionableTrial(setOf(TestServeActionabilityFactory.createHLA()), Knowledgebase.CKB, "external")
         val actionable = ActionableEvents(
             emptyList(),
             listOf(hotspot1, hotspot2, hotspot3, hotspot4, hotspot5, codon1, exon1, gene1, characteristic1, fusion1, hla1)
