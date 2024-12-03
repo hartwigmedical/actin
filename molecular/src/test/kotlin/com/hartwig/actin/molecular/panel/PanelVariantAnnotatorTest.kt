@@ -8,10 +8,10 @@ import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.TranscriptImpact
 import com.hartwig.actin.datamodel.molecular.VariantType
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
+import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
 import com.hartwig.actin.molecular.GENE
 import com.hartwig.actin.molecular.HGVS_CODING
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
@@ -161,7 +161,7 @@ class PanelVariantAnnotatorTest {
                         isCategoryEvent = true,
                         evidenceLevel = EvidenceLevel.A,
                         evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
-                        evidenceDirection = EvidenceDirection(hasPositiveResponse = true, isCertain = true, hasBenefit = true),
+                        evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
                     )
                 ),
                 eligibleTrials = emptySet()

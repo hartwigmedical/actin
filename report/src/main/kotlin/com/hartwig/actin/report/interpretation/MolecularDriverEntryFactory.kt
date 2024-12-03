@@ -5,11 +5,11 @@ import com.hartwig.actin.datamodel.molecular.Fusion
 import com.hartwig.actin.datamodel.molecular.GeneAlteration
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.Variant
-import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidenceCategories.approved
-import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidenceCategories.experimental
-import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidenceCategories.knownResistant
-import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidenceCategories.preclinical
-import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidenceCategories.suspectResistant
+import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.approved
+import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.experimental
+import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.knownResistant
+import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.preclinical
+import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.suspectResistant
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption

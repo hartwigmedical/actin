@@ -1,11 +1,11 @@
 package com.hartwig.actin.datamodel.molecular
 
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceTier
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.evidence
+import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 import io.mockk.every
 import io.mockk.mockk
@@ -57,7 +57,7 @@ class EvidenceTierTest {
                     isCategoryEvent = isCategoryEvent,
                     evidenceLevel = evidenceLevel,
                     evidenceLevelDetails = evidenceLevelDetails,
-                    evidenceDirection = EvidenceDirection(hasPositiveResponse = true, isCertain = true),
+                    evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse()
                 )
             )
         )

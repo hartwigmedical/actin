@@ -105,7 +105,7 @@ data class EnvironmentConfiguration(
                         includeExternalTrialsInSummary = false,
                         includeLongitudinalMolecularChapter = true,
                         includeMolecularEvidenceChapter = true,
-                        countryOfReference = Country.US
+                        countryOfReference = Country.USA
                     )
                 )
 

@@ -5,10 +5,10 @@ import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.molecular.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.Fusion
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
+import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
 import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.GENE
 import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
@@ -186,7 +186,7 @@ class PanelFusionAnnotatorTest {
                         isCategoryEvent = true,
                         evidenceLevel = EvidenceLevel.A,
                         evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
-                        evidenceDirection = EvidenceDirection(hasPositiveResponse = true, isCertain = true, hasBenefit = true),
+                        evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
                     )
                 )
             )
@@ -218,7 +218,7 @@ class PanelFusionAnnotatorTest {
                         treatment = "treatment",
                         evidenceLevel = EvidenceLevel.A,
                         evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
-                        evidenceDirection = EvidenceDirection(hasPositiveResponse = true, isCertain = true, hasBenefit = true),
+                        evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
                         isOnLabel = true,
                         isCategoryEvent = true
                     )

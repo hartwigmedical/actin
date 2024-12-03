@@ -43,7 +43,7 @@ object TestClinicalEvidenceFactory {
             isOnLabel = true,
             evidenceLevel = EvidenceLevel.A,
             evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
-            evidenceDirection = EvidenceDirection(hasPositiveResponse = true, isCertain = true)
+            evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse()
         )
 
     fun onLabelExperimental() =
@@ -52,7 +52,7 @@ object TestClinicalEvidenceFactory {
             isOnLabel = true,
             evidenceLevel = EvidenceLevel.A,
             evidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY,
-            evidenceDirection = EvidenceDirection(hasPositiveResponse = true, isCertain = false)
+            evidenceDirection = TestEvidenceDirectionFactory.uncertainPositiveResponse()
         )
 
     fun offLabelExperimental() =
@@ -61,7 +61,7 @@ object TestClinicalEvidenceFactory {
             isOnLabel = false,
             evidenceLevel = EvidenceLevel.B,
             evidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY,
-            evidenceDirection = EvidenceDirection(hasPositiveResponse = true, isCertain = true)
+            evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse()
         )
 
     fun onLabelPreclinical() =
@@ -70,7 +70,7 @@ object TestClinicalEvidenceFactory {
             isOnLabel = true,
             evidenceLevel = EvidenceLevel.C,
             evidenceLevelDetails = EvidenceLevelDetails.PRECLINICAL,
-            evidenceDirection = EvidenceDirection(hasPositiveResponse = true)
+            evidenceDirection = TestEvidenceDirectionFactory.uncertainPositiveResponse()
         )
 
     fun offLabelPreclinical() =
@@ -79,7 +79,7 @@ object TestClinicalEvidenceFactory {
             isOnLabel = false,
             evidenceLevel = EvidenceLevel.D,
             evidenceLevelDetails = EvidenceLevelDetails.PRECLINICAL,
-            evidenceDirection = EvidenceDirection(hasPositiveResponse = true)
+            evidenceDirection = TestEvidenceDirectionFactory.uncertainPositiveResponse()
         )
 
     fun onLabelKnownResistant() =
@@ -88,7 +88,7 @@ object TestClinicalEvidenceFactory {
             isOnLabel = true,
             evidenceLevel = EvidenceLevel.A,
             evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
-            evidenceDirection = EvidenceDirection(isResistant = true, isCertain = true)
+            evidenceDirection = TestEvidenceDirectionFactory.certainResistant()
         )
 
     fun offLabelKnownResistant() =
@@ -97,7 +97,7 @@ object TestClinicalEvidenceFactory {
             isOnLabel = false,
             evidenceLevel = EvidenceLevel.A,
             evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
-            evidenceDirection = EvidenceDirection(isResistant = true, isCertain = true)
+            evidenceDirection = TestEvidenceDirectionFactory.certainResistant()
         )
 
     fun onLabelSuspectResistant() =
@@ -106,7 +106,7 @@ object TestClinicalEvidenceFactory {
             isOnLabel = true,
             evidenceLevel = EvidenceLevel.C,
             evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
-            evidenceDirection = EvidenceDirection(isResistant = true, isCertain = false)
+            evidenceDirection = TestEvidenceDirectionFactory.uncertainResistant()
         )
 
     fun offLabelSuspectResistant() =
@@ -115,7 +115,7 @@ object TestClinicalEvidenceFactory {
             isOnLabel = false,
             evidenceLevel = EvidenceLevel.C,
             evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
-            evidenceDirection = EvidenceDirection(isResistant = true, isCertain = false)
+            evidenceDirection = TestEvidenceDirectionFactory.uncertainResistant()
         )
 
     fun evidence(

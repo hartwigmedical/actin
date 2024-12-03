@@ -1,6 +1,6 @@
 package com.hartwig.actin.datamodel.molecular.evidence
 
-object ClinicalEvidenceCategories {
+object TreatmentEvidenceCategories {
 
     fun approved(treatmentEvidence: Set<TreatmentEvidence>) =
         responsive(treatmentEvidence).filter { it.evidenceLevel == EvidenceLevel.A && it.evidenceDirection.isCertain }

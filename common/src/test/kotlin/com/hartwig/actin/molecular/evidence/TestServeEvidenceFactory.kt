@@ -64,10 +64,6 @@ object TestServeEvidenceFactory {
                 return source
             }
 
-            override fun molecularCriterium(): MolecularCriterium {
-                return molecularCriterium
-            }
-
             override fun treatment(): Treatment {
                 return ImmutableTreatment.builder().name(treatment).build()
             }
@@ -76,12 +72,12 @@ object TestServeEvidenceFactory {
                 return indication
             }
 
-            override fun efficacyDescription(): String {
-                return "efficacy evidence"
+            override fun molecularCriterium(): MolecularCriterium {
+                return molecularCriterium
             }
 
-            override fun evidenceYear(): Int {
-                return 2021
+            override fun efficacyDescription(): String {
+                return "efficacy evidence"
             }
 
             override fun evidenceLevel(): EvidenceLevel {
@@ -94,6 +90,10 @@ object TestServeEvidenceFactory {
 
             override fun evidenceDirection(): EvidenceDirection {
                 return direction
+            }
+
+            override fun evidenceYear(): Int {
+                return 2021
             }
 
             override fun urls(): Set<String> {

@@ -1,10 +1,10 @@
 package com.hartwig.actin.molecular.evidence
 
 import com.hartwig.actin.datamodel.molecular.evidence.Country
-import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
+import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.serve.datamodel.Knowledgebase
 import org.assertj.core.api.Assertions.assertThat
@@ -20,7 +20,7 @@ class ClinicalEvidenceFactoryTest {
             isCategoryEvent = false,
             evidenceLevel = EvidenceLevel.D,
             evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
-            evidenceDirection = EvidenceDirection(isCertain = true)
+            evidenceDirection = TestEvidenceDirectionFactory.noBenefit()
         )
 
         val result =
@@ -50,7 +50,7 @@ class ClinicalEvidenceFactoryTest {
             isCategoryEvent = false,
             evidenceLevel = EvidenceLevel.D,
             evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
-            evidenceDirection = EvidenceDirection(isCertain = true)
+            evidenceDirection = TestEvidenceDirectionFactory.noBenefit()
         )
 
         val result =

@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.MolecularMatchDetails
+import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -64,7 +65,11 @@ class TreatmentEvidenceFunctionsTest {
     @Test
     fun `Should correctly filter treatment without direction hasBenefit or isResistant`() {
         val noBenefitEvidence =
-            createTreatmentEvidence("noBenefit", evidenceLevel = EvidenceLevel.A, direction = EvidenceDirection())
+            createTreatmentEvidence(
+                treatment = "noBenefit",
+                evidenceLevel = EvidenceLevel.A,
+                direction = TestEvidenceDirectionFactory.noBenefit()
+            )
         val evidence = setOf(onLabelCategoryLevelA, noBenefitEvidence)
         val result = TreatmentEvidenceFunctions.onlyIncludeBenefitAndResistanceEvidence(evidence)
         val expected = setOf(onLabelCategoryLevelA)
@@ -75,7 +80,11 @@ class TreatmentEvidenceFunctionsTest {
     @Test
     fun `Should correctly filter treatment with preclinical level D evidence`() {
         val preclinicalEvidence =
-            createTreatmentEvidence("preclinical", evidenceLevel = EvidenceLevel.D, evidenceLevelDetails = EvidenceLevelDetails.PRECLINICAL)
+            createTreatmentEvidence(
+                treatment = "preclinical",
+                evidenceLevel = EvidenceLevel.D,
+                evidenceLevelDetails = EvidenceLevelDetails.PRECLINICAL
+            )
         val evidence = setOf(onLabelCategoryLevelA, preclinicalEvidence)
         val result = TreatmentEvidenceFunctions.filterPreClinicalEvidence(evidence)
         val expected = setOf(onLabelCategoryLevelA)
@@ -85,9 +94,9 @@ class TreatmentEvidenceFunctionsTest {
 
     @Test
     fun `Should correctly filter treatment with level D evidence if level A or B evidence present for same source event`() {
-        val levelDEvidence = createTreatmentEvidence("level D", evidenceLevel = EvidenceLevel.D, sourceEvent = "event 1")
-        val levelAEvidence = createTreatmentEvidence("level A", evidenceLevel = EvidenceLevel.A, sourceEvent = "event 1")
-        val otherLevelDEvidence = createTreatmentEvidence("level D2", evidenceLevel = EvidenceLevel.D, sourceEvent = "event 2")
+        val levelDEvidence = createTreatmentEvidence(treatment = "level D", evidenceLevel = EvidenceLevel.D, sourceEvent = "event 1")
+        val levelAEvidence = createTreatmentEvidence(treatment = "level A", evidenceLevel = EvidenceLevel.A, sourceEvent = "event 1")
+        val otherLevelDEvidence = createTreatmentEvidence(treatment = "level D2", evidenceLevel = EvidenceLevel.D, sourceEvent = "event 2")
 
         val evidence = setOf(levelDEvidence, levelAEvidence, otherLevelDEvidence)
         val result = TreatmentEvidenceFunctions.filterLevelDWhenAorBExists(evidence)
@@ -143,7 +152,7 @@ class TreatmentEvidenceFunctionsTest {
         val evidence = listOf(
             treatmentEvidence,
             treatmentEvidence.copy(evidenceYear = year.minus(1), applicableCancerType = cancerType.copy("Cancer type 2")),
-            treatmentEvidence.copy(treatment = "other treatment", evidenceDirection = EvidenceDirection(isResistant = true))
+            treatmentEvidence.copy(treatment = "other treatment", evidenceDirection = TestEvidenceDirectionFactory.certainResistant())
         )
         val result = TreatmentEvidenceFunctions.generateEvidenceCellContents(evidence)
         val expected = listOf(
@@ -181,7 +190,7 @@ class TreatmentEvidenceFunctionsTest {
     private fun createTreatmentEvidence(
         treatment: String = TREATMENT,
         isOnLabel: Boolean = true,
-        direction: EvidenceDirection = EvidenceDirection(hasBenefit = true),
+        direction: EvidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
         evidenceLevel: EvidenceLevel = EvidenceLevel.A,
         entryDate: LocalDate = LocalDate.EPOCH,
         evidenceYear: Int = 2024,

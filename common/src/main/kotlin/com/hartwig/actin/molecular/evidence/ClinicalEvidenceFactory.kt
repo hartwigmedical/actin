@@ -152,7 +152,7 @@ object ClinicalEvidenceFactory {
             "Netherlands" -> Country.NETHERLANDS
             "Belgium" -> Country.BELGIUM
             "Germany" -> Country.GERMANY
-            "United States" -> Country.US
+            "United States" -> Country.USA
             else -> Country.OTHER
         }
     }
