@@ -56,7 +56,7 @@ class DriversInterpreterTest {
     @Test
     fun `Should include non-reportable drivers with external trial matches`() {
         val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(
-            TestClinicalEvidenceFactory.withTrial(TestClinicalEvidenceFactory.createTestExternalTrial())
+            TestClinicalEvidenceFactory.withEligibleTrial(TestClinicalEvidenceFactory.createTestExternalTrial())
         )
         assertCountForRecord(1, record)
     }

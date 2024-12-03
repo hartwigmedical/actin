@@ -1,10 +1,11 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.datamodel.algo.TrialMatch
-import com.hartwig.actin.datamodel.molecular.evidence.ApplicableCancerType
+import com.hartwig.actin.datamodel.molecular.evidence.CancerType
 import com.hartwig.actin.datamodel.molecular.evidence.Country
-import com.hartwig.actin.datamodel.molecular.evidence.CountryName
+import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
+import com.hartwig.actin.datamodel.molecular.evidence.MolecularMatchDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.report.interpretation.InterpretedCohortTestFactory
@@ -29,18 +30,38 @@ private val BASE_EXTERNAL_TRIAL_SUMMARY = ExternalTrialSummary(
     cities = sortedSetOf(),
     hospitals = sortedSetOf()
 )
-private val NETHERLANDS = TestClinicalEvidenceFactory.createCountry(CountryName.NETHERLANDS)
-private val BELGIUM = TestClinicalEvidenceFactory.createCountry(CountryName.BELGIUM)
+private val NETHERLANDS = TestClinicalEvidenceFactory.createCountry(Country.NETHERLANDS)
+private val BELGIUM = TestClinicalEvidenceFactory.createCountry(Country.BELGIUM)
 
 private val TRIAL_1_INSTANCE_1 = TestClinicalEvidenceFactory.createExternalTrial(
-    TITLE, setOf(NETHERLANDS), URL, NCT_01
-).copy(sourceEvent = "sourceEvent1", applicableCancerType = ApplicableCancerType("cancerType1", emptySet()))
+    nctId = NCT_01,
+    title = TITLE,
+    countries = setOf(NETHERLANDS),
+    url = URL,
+).copy(
+    molecularMatches = setOf(MolecularMatchDetails(sourceEvent = "sourceEvent1", isCategoryEvent = false)),
+    applicableCancerTypes = setOf(CancerType("cancerType1", emptySet()))
+)
+
 private val TRIAL_1_INSTANCE_2 = TestClinicalEvidenceFactory.createExternalTrial(
-    TITLE, setOf(BELGIUM), URL, NCT_01
-).copy(sourceEvent = "sourceEvent2", applicableCancerType = ApplicableCancerType("cancerType2", emptySet()))
+    nctId = NCT_01,
+    title = TITLE,
+    countries = setOf(BELGIUM),
+    url = URL,
+).copy(
+    molecularMatches = setOf(MolecularMatchDetails(sourceEvent = "sourceEvent2", isCategoryEvent = false)),
+    applicableCancerTypes = setOf(CancerType("cancerType2", emptySet()))
+)
+
 private val TRIAL_2_INSTANCE_1 = TestClinicalEvidenceFactory.createExternalTrial(
-    TITLE, setOf(BELGIUM), URL, NCT_02
-).copy(sourceEvent = "sourceEvent3", applicableCancerType = ApplicableCancerType("cancerType3", emptySet()))
+    nctId = NCT_02,
+    title = TITLE,
+    countries = setOf(BELGIUM),
+    url = URL,
+).copy(
+    molecularMatches = setOf(MolecularMatchDetails(sourceEvent = "sourceEvent3", isCategoryEvent = false)),
+    applicableCancerTypes = setOf(CancerType("cancerType3", emptySet()))
+)
 
 private val TRIAL_MATCHES = setOf(
     TrialMatch(
@@ -76,9 +97,9 @@ class ExternalTrialSummarizerTest {
                 title = TRIAL_2_INSTANCE_1.title,
                 url = TRIAL_2_INSTANCE_1.url,
                 actinMolecularEvents = sortedSetOf(EGFR_TARGET),
-                sourceMolecularEvents = sortedSetOf(TRIAL_2_INSTANCE_1.sourceEvent),
+                sourceMolecularEvents = sortedSetOf(TRIAL_2_INSTANCE_1.molecularMatches.first().sourceEvent),
                 cancerTypes = sortedSetOf(
-                    Comparator.comparing { it.cancerType }, TRIAL_2_INSTANCE_1.applicableCancerType
+                    Comparator.comparing { it.matchedCancerType }, TRIAL_2_INSTANCE_1.applicableCancerTypes.first()
                 ),
                 countries = countrySet(BELGIUM),
                 cities = sortedSetOf("Brussels"),
@@ -89,11 +110,14 @@ class ExternalTrialSummarizerTest {
                 title = TRIAL_1_INSTANCE_1.title,
                 url = TRIAL_1_INSTANCE_1.url,
                 actinMolecularEvents = sortedSetOf(TMB_TARGET, EGFR_TARGET),
-                sourceMolecularEvents = sortedSetOf(TRIAL_1_INSTANCE_1.sourceEvent, TRIAL_1_INSTANCE_2.sourceEvent),
+                sourceMolecularEvents = sortedSetOf(
+                    TRIAL_1_INSTANCE_1.molecularMatches.first().sourceEvent,
+                    TRIAL_1_INSTANCE_2.molecularMatches.first().sourceEvent
+                ),
                 cancerTypes = sortedSetOf(
-                    Comparator.comparing { it.cancerType },
-                    TRIAL_1_INSTANCE_1.applicableCancerType,
-                    TRIAL_1_INSTANCE_2.applicableCancerType
+                    Comparator.comparing { it.matchedCancerType },
+                    TRIAL_1_INSTANCE_1.applicableCancerTypes.first(),
+                    TRIAL_1_INSTANCE_2.applicableCancerTypes.first()
                 ),
                 countries = countrySet(NETHERLANDS, BELGIUM),
                 cities = sortedSetOf("Leiden", "Brussels"),
@@ -140,9 +164,9 @@ class ExternalTrialSummarizerTest {
             setOf(
                 inHomeCountry,
                 notInHomeCountry
-            ).filterInCountryOfReference(CountryName.NETHERLANDS)
+            ).filterInCountryOfReference(Country.NETHERLANDS)
         ).containsExactly(inHomeCountry)
-        assertThat(setOf(inHomeCountry, notInHomeCountry).filterNotInCountryOfReference(CountryName.NETHERLANDS)).containsExactly(
+        assertThat(setOf(inHomeCountry, notInHomeCountry).filterNotInCountryOfReference(Country.NETHERLANDS)).containsExactly(
             notInHomeCountry
         )
     }
@@ -183,6 +207,6 @@ class ExternalTrialSummarizerTest {
 
     private fun hospitalSet(vararg hospitals: Hospital) = sortedSetOf(Comparator.comparing { it.name }, *hospitals)
 
-    private fun countrySet(vararg countries: Country) = sortedSetOf(Comparator.comparing { it.name }, *countries)
+    private fun countrySet(vararg countries: CountryDetails) = sortedSetOf(Comparator.comparing { it.country }, *countries)
 
 }

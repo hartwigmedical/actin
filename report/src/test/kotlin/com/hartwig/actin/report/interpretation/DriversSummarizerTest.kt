@@ -107,7 +107,7 @@ class DriversSummarizerTest {
 
     @Test
     fun `Should return actionable events that are not key drivers`() {
-        val externalEvidence = TestClinicalEvidenceFactory.withTrial(TestClinicalEvidenceFactory.createTestExternalTrial())
+        val externalEvidence = TestClinicalEvidenceFactory.withEligibleTrial(TestClinicalEvidenceFactory.createTestExternalTrial())
         val approvedTreatment = TestClinicalEvidenceFactory.withApprovedTreatment("approved")
 
         val cohorts = listOf(

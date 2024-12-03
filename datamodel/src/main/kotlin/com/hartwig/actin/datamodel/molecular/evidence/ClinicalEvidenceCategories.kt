@@ -3,15 +3,15 @@ package com.hartwig.actin.datamodel.molecular.evidence
 object ClinicalEvidenceCategories {
 
     fun approved(treatmentEvidence: Set<TreatmentEvidence>) =
-        responsive(treatmentEvidence).filter { it.evidenceLevel == EvidenceLevel.A && it.direction.isCertain }
+        responsive(treatmentEvidence).filter { it.evidenceLevel == EvidenceLevel.A && it.evidenceDirection.isCertain }
 
     fun experimental(treatmentEvidence: Set<TreatmentEvidence>, onLabel: Boolean? = null) =
         filterOnLabel(
             responsive(treatmentEvidence),
             onLabel
         ).filter {
-            (it.evidenceLevel == EvidenceLevel.A && !it.direction.isCertain) ||
-                    (it.evidenceLevel == EvidenceLevel.B && it.direction.isCertain)
+            (it.evidenceLevel == EvidenceLevel.A && !it.evidenceDirection.isCertain) ||
+                    (it.evidenceLevel == EvidenceLevel.B && it.evidenceDirection.isCertain)
 
         }
 
@@ -20,7 +20,7 @@ object ClinicalEvidenceCategories {
             responsive(treatmentEvidence),
             onLabel
         ).filter {
-            (it.evidenceLevel == EvidenceLevel.B && !it.direction.isCertain) ||
+            (it.evidenceLevel == EvidenceLevel.B && !it.evidenceDirection.isCertain) ||
                     it.evidenceLevel == EvidenceLevel.C || it.evidenceLevel == EvidenceLevel.D
         }
 
@@ -28,21 +28,22 @@ object ClinicalEvidenceCategories {
         filterOnLabel(
             resistant(treatmentEvidence),
             onLabel
-        ).filter { (it.evidenceLevel == EvidenceLevel.A || it.evidenceLevel == EvidenceLevel.B) && it.direction.isCertain }
+        ).filter { (it.evidenceLevel == EvidenceLevel.A || it.evidenceLevel == EvidenceLevel.B) && it.evidenceDirection.isCertain }
 
     fun suspectResistant(treatmentEvidence: Set<TreatmentEvidence>, onLabel: Boolean? = null) =
         filterOnLabel(resistant(treatmentEvidence), onLabel)
             .filter {
-                ((it.evidenceLevel == EvidenceLevel.A || it.evidenceLevel == EvidenceLevel.B) && !it.direction.isCertain) ||
+                ((it.evidenceLevel == EvidenceLevel.A || it.evidenceLevel == EvidenceLevel.B) && !it.evidenceDirection.isCertain) ||
                         it.evidenceLevel == EvidenceLevel.C || it.evidenceLevel == EvidenceLevel.D
             }
 
-    private fun responsive(treatmentEvidence: Set<TreatmentEvidence>) = treatmentEvidence.filter { it.direction.hasPositiveResponse }
+    private fun responsive(treatmentEvidence: Set<TreatmentEvidence>) =
+        treatmentEvidence.filter { it.evidenceDirection.hasPositiveResponse }
 
-    private fun resistant(treatmentEvidence: Set<TreatmentEvidence>) = treatmentEvidence.filter { it.direction.isResistant }
+    private fun resistant(treatmentEvidence: Set<TreatmentEvidence>) = treatmentEvidence.filter { it.evidenceDirection.isResistant }
 
     private fun filterOnLabel(
         treatmentEvidence: Collection<TreatmentEvidence>,
         onLabel: Boolean?
-    ) = treatmentEvidence.filter { onLabel?.let { l -> l == it.onLabel } ?: true }
+    ) = treatmentEvidence.filter { onLabel?.let { l -> l == it.isOnLabel } ?: true }
 }

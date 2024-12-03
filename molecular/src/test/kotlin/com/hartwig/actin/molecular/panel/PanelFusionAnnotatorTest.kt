@@ -7,8 +7,8 @@ import com.hartwig.actin.datamodel.molecular.Fusion
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
-import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.treatment
 import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.GENE
 import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
@@ -20,7 +20,6 @@ import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.ensemblcache.TranscriptData
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
-import com.hartwig.serve.datamodel.efficacy.EvidenceLevelDetails
 import com.hartwig.serve.datamodel.molecular.ImmutableMolecularCriterium
 import com.hartwig.serve.datamodel.molecular.gene.ImmutableActionableGene
 import io.mockk.every
@@ -181,13 +180,13 @@ class PanelFusionAnnotatorTest {
                 isReportable = true,
                 driverLikelihood = DriverLikelihood.HIGH,
                 evidence = TestClinicalEvidenceFactory.withEvidence(
-                    treatment(
+                    TestClinicalEvidenceFactory.evidence(
                         treatment = "treatment",
+                        isOnLabel = true,
+                        isCategoryEvent = true,
                         evidenceLevel = EvidenceLevel.A,
                         evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
-                        direction = EvidenceDirection(hasPositiveResponse = true, isCertain = true, hasBenefit = true),
-                        onLabel = true,
-                        isCategoryEvent = true
+                        evidenceDirection = EvidenceDirection(hasPositiveResponse = true, isCertain = true, hasBenefit = true),
                     )
                 )
             )
@@ -215,12 +214,12 @@ class PanelFusionAnnotatorTest {
                 isReportable = true,
                 driverLikelihood = DriverLikelihood.HIGH,
                 evidence = TestClinicalEvidenceFactory.withEvidence(
-                    treatment(
+                    TestClinicalEvidenceFactory.evidence(
                         treatment = "treatment",
                         evidenceLevel = EvidenceLevel.A,
                         evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
-                        direction = EvidenceDirection(hasPositiveResponse = true, isCertain = true, hasBenefit = true),
-                        onLabel = true,
+                        evidenceDirection = EvidenceDirection(hasPositiveResponse = true, isCertain = true, hasBenefit = true),
+                        isOnLabel = true,
                         isCategoryEvent = true
                     )
                 )

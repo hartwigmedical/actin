@@ -1,12 +1,12 @@
 package com.hartwig.actin.molecular.evidence
 
-import com.hartwig.actin.datamodel.molecular.evidence.CountryName
+import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.serve.datamodel.Knowledgebase
-import com.hartwig.serve.datamodel.efficacy.EvidenceLevelDetails
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -14,13 +14,13 @@ class ClinicalEvidenceFactoryTest {
 
     @Test
     fun `Should convert SERVE actionable on-label events to clinical evidence`() {
-        val onLabel = TestClinicalEvidenceFactory.treatment(
-            "on-label",
-            EvidenceLevel.D,
-            EvidenceLevelDetails.GUIDELINE,
-            EvidenceDirection(isCertain = true),
-            true,
-            isCategoryEvent = false
+        val onLabel = TestClinicalEvidenceFactory.evidence(
+            treatment = "on-label",
+            isOnLabel = true,
+            isCategoryEvent = false,
+            evidenceLevel = EvidenceLevel.D,
+            evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
+            evidenceDirection = EvidenceDirection(isCertain = true)
         )
 
         val result =
@@ -39,18 +39,18 @@ class ClinicalEvidenceFactoryTest {
             )
 
         assertThat(result.treatmentEvidence).containsExactly(onLabel)
-        assertThat(result.externalEligibleTrials).isEmpty()
+        assertThat(result.eligibleTrials).isEmpty()
     }
 
     @Test
     fun `Should convert SERVE actionable off-label events to clinical evidence`() {
-        val offLabel = TestClinicalEvidenceFactory.treatment(
-            "off-label",
-            EvidenceLevel.D,
-            EvidenceLevelDetails.GUIDELINE,
-            EvidenceDirection(isCertain = true),
-            false,
-            isCategoryEvent = false
+        val offLabel = TestClinicalEvidenceFactory.evidence(
+            treatment = "off-label",
+            isOnLabel = false,
+            isCategoryEvent = false,
+            evidenceLevel = EvidenceLevel.D,
+            evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
+            evidenceDirection = EvidenceDirection(isCertain = true)
         )
 
         val result =
@@ -69,13 +69,14 @@ class ClinicalEvidenceFactoryTest {
             )
 
         assertThat(result.treatmentEvidence).containsExactly(offLabel)
-        assertThat(result.externalEligibleTrials).isEmpty()
+        assertThat(result.eligibleTrials).isEmpty()
     }
 
     @Test
     fun `Should convert SERVE external trials to clinical evidence`() {
+        // TODO (KD) Handle "isCategoryEvent = false"
         val trial = TestClinicalEvidenceFactory.createTestExternalTrial()
-            .copy(countries = setOf(TestClinicalEvidenceFactory.createCountry(CountryName.OTHER, emptyMap())), isCategoryEvent = false)
+            .copy(countries = setOf(TestClinicalEvidenceFactory.createCountry(Country.OTHER, emptyMap())))
 
         val molecularCriterium = TestServeMolecularFactory.createHotspot()
 
@@ -90,6 +91,6 @@ class ClinicalEvidenceFactoryTest {
             )
 
         assertThat(result.treatmentEvidence).isEmpty()
-        assertThat(result.externalEligibleTrials).containsExactly(trial)
+        assertThat(result.eligibleTrials).containsExactly(trial)
     }
 }

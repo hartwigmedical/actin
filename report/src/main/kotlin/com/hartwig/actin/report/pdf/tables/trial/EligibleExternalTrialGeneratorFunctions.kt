@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
-import com.hartwig.actin.datamodel.molecular.evidence.CountryName
+import com.hartwig.actin.datamodel.molecular.evidence.Country
 
 private const val MANY_PLEASE_CHECK_LINK = "Many, please check link"
 
@@ -13,9 +13,9 @@ object EligibleExternalTrialGeneratorFunctions {
             title
         }
     }
-    
-    fun hospitalsAndCitiesInCountry(trial: ExternalTrialSummary, country: CountryName): Pair<String, String> {
-        val homeCountries = trial.countries.filter { it.name == country }
+
+    fun hospitalsAndCitiesInCountry(trial: ExternalTrialSummary, country: Country): Pair<String, String> {
+        val homeCountries = trial.countries.filter { it.country == country }
         
         return if (homeCountries.size > 1 || homeCountries.isEmpty()) {
             throw IllegalStateException(
@@ -42,7 +42,7 @@ object EligibleExternalTrialGeneratorFunctions {
             } else {
                 country.hospitalsPerCity.keys.joinToString(", ")
             }
-            "${country.name.display()} ($cities)"
+            "${country.country.display()} ($cities)"
         }
     }
 }

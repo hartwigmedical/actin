@@ -597,7 +597,7 @@ internal class MolecularDAO(private val context: DSLContext) {
 
     private fun <T : Record?> writeEvidence(inserter: EvidenceInserter<T>, topicId: Int, evidence: ClinicalEvidence) {
         writeTreatments(inserter, topicId, treatments(approved(evidence.treatmentEvidence)), "Approved")
-        writeTrials(inserter, topicId, evidence.externalEligibleTrials)
+        writeTrials(inserter, topicId, evidence.eligibleTrials)
         writeTreatments(inserter, topicId, treatments(experimental(evidence.treatmentEvidence, true)), "On-label experimental")
         writeTreatments(inserter, topicId, treatments(experimental(evidence.treatmentEvidence, false)), "Off-label experimental")
         writeTreatments(inserter, topicId, treatments(preclinical(evidence.treatmentEvidence)), "Pre-clinical")

@@ -358,14 +358,14 @@ object HistoricMolecularDeserializer {
     }
 
     private fun createEmptyClinicalEvidence(): ClinicalEvidence {
-        return ClinicalEvidence(treatmentEvidence = emptySet(), externalEligibleTrials = emptySet())
+        return ClinicalEvidence(treatmentEvidence = emptySet(), eligibleTrials = emptySet())
     }
 
     private fun extractEvidence(evidence: JsonObject?): ClinicalEvidence? {
         // (KD): This is explicitly not read since it contains confidential data (from CKB).
         return evidence?.let {
             ClinicalEvidence(
-                externalEligibleTrials = emptySet(),
+                eligibleTrials = emptySet(),
                 treatmentEvidence = emptySet()
             )
         }

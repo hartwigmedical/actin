@@ -62,7 +62,7 @@ object AggregatedEvidenceFactory {
     private fun hasEvidence(evidence: ClinicalEvidence?): Boolean {
         return if (evidence == null) false else {
             listOf(
-                evidence.externalEligibleTrials,
+                evidence.eligibleTrials,
                 evidence.treatmentEvidence
             ).any(Set<Any>::isNotEmpty)
         }
@@ -79,7 +79,7 @@ object AggregatedEvidenceFactory {
             AggregatedEvidence()
         } else {
             AggregatedEvidence(
-                externalEligibleTrialsPerEvent = evidenceMap(event, evidence.externalEligibleTrials),
+                externalEligibleTrialsPerEvent = evidenceMap(event, evidence.eligibleTrials),
                 treatmentEvidence = evidenceMap(event, evidence.treatmentEvidence),
             )
         }

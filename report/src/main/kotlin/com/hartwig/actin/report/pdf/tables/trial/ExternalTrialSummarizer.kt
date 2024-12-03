@@ -1,9 +1,9 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.datamodel.algo.TrialMatch
-import com.hartwig.actin.datamodel.molecular.evidence.ApplicableCancerType
+import com.hartwig.actin.datamodel.molecular.evidence.CancerType
 import com.hartwig.actin.datamodel.molecular.evidence.Country
-import com.hartwig.actin.datamodel.molecular.evidence.CountryName
+import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.report.interpretation.InterpretedCohort
@@ -15,8 +15,8 @@ data class ExternalTrialSummary(
     val url: String,
     val actinMolecularEvents: SortedSet<String>,
     val sourceMolecularEvents: SortedSet<String>,
-    val cancerTypes: SortedSet<ApplicableCancerType>,
-    val countries: SortedSet<Country>,
+    val cancerTypes: SortedSet<CancerType>,
+    val countries: SortedSet<CountryDetails>,
     val cities: SortedSet<String>,
     val hospitals: SortedSet<Hospital>
 )
@@ -28,13 +28,13 @@ fun Set<ExternalTrialSummary>.filterInternalTrials(internalTrials: Set<TrialMatc
     return this.filter { it.nctId !in internalIds }.toSet()
 }
 
-fun Set<ExternalTrialSummary>.filterInCountryOfReference(country: CountryName): Set<ExternalTrialSummary> {
+fun Set<ExternalTrialSummary>.filterInCountryOfReference(country: Country): Set<ExternalTrialSummary> {
     return this.filter { country in countryNames(it).toSet() }.toSet()
 }
 
-private fun countryNames(it: ExternalTrialSummary) = it.countries.map { c -> c.name }
+private fun countryNames(it: ExternalTrialSummary) = it.countries.map { c -> c.country }
 
-fun Set<ExternalTrialSummary>.filterNotInCountryOfReference(country: CountryName): Set<ExternalTrialSummary> {
+fun Set<ExternalTrialSummary>.filterNotInCountryOfReference(country: Country): Set<ExternalTrialSummary> {
     return this.filter { country !in countryNames(it) }.toSet()
 }
 
@@ -72,14 +72,15 @@ object ExternalTrialSummarizer {
                 trial.title,
                 trial.url,
                 e.value.map { ewe -> ewe.event }.toSortedSet(),
-                e.value.map { ewe -> ewe.trial.sourceEvent }.toSortedSet(),
-                e.value.map { ewe -> ewe.trial.applicableCancerType }.toSortedSet(Comparator.comparing { c -> c.cancerType }),
-                countries.toSortedSet(Comparator.comparing { c -> c.name }),
+                e.value.map { ewe -> ewe.trial.molecularMatches.first().sourceEvent }.toSortedSet(),
+                e.value.map { ewe -> ewe.trial.applicableCancerTypes.first() }
+                    .toSortedSet(Comparator.comparing { c -> c.matchedCancerType }),
+                countries.toSortedSet(Comparator.comparing { c -> c.country }),
                 hospitals.map { h -> h.second.key }.toSortedSet(),
                 hospitals.flatMap { it.second.value.map { h -> h } }.toSortedSet(Comparator.comparing { h -> h.name })
             )
         }
             .toSortedSet(compareBy<ExternalTrialSummary> { it.actinMolecularEvents.joinToString() }.thenBy { it.sourceMolecularEvents.joinToString() }
-                .thenBy { it.cancerTypes.joinToString { t -> t.cancerType } }.thenBy { it.nctId })
+                .thenBy { it.cancerTypes.joinToString { t -> t.matchedCancerType } }.thenBy { it.nctId })
     }
 }

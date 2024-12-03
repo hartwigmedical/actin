@@ -109,7 +109,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
             evidenceTier = driver.evidenceTier(),
             proteinEffect = proteinEffect,
             actinTrials = molecularDriversInterpreter.trialsForDriver(driver).toSet(),
-            externalTrials = driver.evidence.externalEligibleTrials,
+            externalTrials = driver.evidence.eligibleTrials,
             bestResponsiveEvidence = bestResponsiveEvidence(driver),
             bestResistanceEvidence = bestResistanceEvidence(driver)
         )

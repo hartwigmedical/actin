@@ -1,24 +1,23 @@
 package com.hartwig.actin.datamodel.molecular.evidence
 
-import com.hartwig.serve.datamodel.efficacy.EvidenceLevelDetails
 import java.time.LocalDate
 
 object TestClinicalEvidenceFactory {
 
     fun createEmpty(): ClinicalEvidence {
-        return ClinicalEvidence(treatmentEvidence = emptySet(), externalEligibleTrials = emptySet())
+        return ClinicalEvidence(treatmentEvidence = emptySet(), eligibleTrials = emptySet())
     }
 
     fun withEvidence(treatmentEvidence: TreatmentEvidence): ClinicalEvidence {
-        return ClinicalEvidence(treatmentEvidence = setOf(treatmentEvidence), externalEligibleTrials = emptySet())
+        return ClinicalEvidence(treatmentEvidence = setOf(treatmentEvidence), eligibleTrials = emptySet())
     }
 
-    fun withTrial(externalEligibleTrial: ExternalTrial): ClinicalEvidence {
-        return withTrials(setOf(externalEligibleTrial))
+    fun withEligibleTrial(eligibleTrial: ExternalTrial): ClinicalEvidence {
+        return withEligibleTrials(setOf(eligibleTrial))
     }
 
-    fun withTrials(externalEligibleTrials: Set<ExternalTrial>): ClinicalEvidence {
-        return ClinicalEvidence(treatmentEvidence = emptySet(), externalEligibleTrials = externalEligibleTrials)
+    fun withEligibleTrials(eligibleTrials: Set<ExternalTrial>): ClinicalEvidence {
+        return ClinicalEvidence(treatmentEvidence = emptySet(), eligibleTrials = eligibleTrials)
     }
 
     fun createExhaustive(): ClinicalEvidence {
@@ -34,113 +33,112 @@ object TestClinicalEvidenceFactory {
                 onLabelSuspectResistant(),
                 offLabelSuspectResistant(),
             ),
-            externalEligibleTrials = setOf(createTestExternalTrial()),
+            eligibleTrials = setOf(createTestExternalTrial()),
         )
     }
 
-    fun offLabelSuspectResistant() =
-        treatment(
-            "off-label suspect resistant",
-            EvidenceLevel.C,
-            EvidenceLevelDetails.GUIDELINE,
-            EvidenceDirection(isResistant = true, isCertain = false),
-            false
-        )
-
-    fun onLabelSuspectResistant() =
-        treatment(
-            "on-label suspect resistant",
-            EvidenceLevel.C,
-            EvidenceLevelDetails.GUIDELINE,
-            EvidenceDirection(isResistant = true, isCertain = false),
-            true
-        )
-
-    fun offLabelKnownResistant() =
-        treatment(
-            "off-label known resistant",
-            EvidenceLevel.A,
-            EvidenceLevelDetails.GUIDELINE,
-            EvidenceDirection(isResistant = true, isCertain = true),
-            false
-        )
-
-    fun onLabelKnownResistant() =
-        treatment(
-            "on-label known resistant",
-            EvidenceLevel.A,
-            EvidenceLevelDetails.GUIDELINE,
-            EvidenceDirection(isResistant = true, isCertain = true),
-            true
-        )
-
-    fun offLabelPreclinical() =
-        treatment(
-            "off-label pre-clinical",
-            EvidenceLevel.D,
-            EvidenceLevelDetails.PRECLINICAL,
-            EvidenceDirection(hasPositiveResponse = true),
-            false
-        )
-
-    fun onLabelPreclinical() =
-        treatment(
-            "on-label pre-clinical",
-            EvidenceLevel.C,
-            EvidenceLevelDetails.PRECLINICAL,
-            EvidenceDirection(hasPositiveResponse = true),
-            true
-        )
-
-    fun offLabelExperimental() =
-        treatment(
-            "off-label experimental",
-            EvidenceLevel.B,
-            EvidenceLevelDetails.CLINICAL_STUDY,
-            EvidenceDirection(hasPositiveResponse = true, isCertain = true),
-            false
+    fun approved() =
+        evidence(
+            treatment = "approved",
+            isOnLabel = true,
+            evidenceLevel = EvidenceLevel.A,
+            evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
+            evidenceDirection = EvidenceDirection(hasPositiveResponse = true, isCertain = true)
         )
 
     fun onLabelExperimental() =
-        treatment(
-            "on-label experimental",
-            EvidenceLevel.A,
-            EvidenceLevelDetails.CLINICAL_STUDY,
-            EvidenceDirection(hasPositiveResponse = true, isCertain = false),
-            true
+        evidence(
+            treatment = "on-label experimental",
+            isOnLabel = true,
+            evidenceLevel = EvidenceLevel.A,
+            evidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY,
+            evidenceDirection = EvidenceDirection(hasPositiveResponse = true, isCertain = false)
         )
 
-    fun approved() =
-        treatment(
-            "approved",
-            EvidenceLevel.A,
-            EvidenceLevelDetails.GUIDELINE,
-            EvidenceDirection(hasPositiveResponse = true, isCertain = true),
-            true
+    fun offLabelExperimental() =
+        evidence(
+            treatment = "off-label experimental",
+            isOnLabel = false,
+            evidenceLevel = EvidenceLevel.B,
+            evidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY,
+            evidenceDirection = EvidenceDirection(hasPositiveResponse = true, isCertain = true)
         )
 
-    fun treatment(
+    fun onLabelPreclinical() =
+        evidence(
+            treatment = "on-label pre-clinical",
+            isOnLabel = true,
+            evidenceLevel = EvidenceLevel.C,
+            evidenceLevelDetails = EvidenceLevelDetails.PRECLINICAL,
+            evidenceDirection = EvidenceDirection(hasPositiveResponse = true)
+        )
+
+    fun offLabelPreclinical() =
+        evidence(
+            treatment = "off-label pre-clinical",
+            isOnLabel = false,
+            evidenceLevel = EvidenceLevel.D,
+            evidenceLevelDetails = EvidenceLevelDetails.PRECLINICAL,
+            evidenceDirection = EvidenceDirection(hasPositiveResponse = true)
+        )
+
+    fun onLabelKnownResistant() =
+        evidence(
+            treatment = "on-label known resistant",
+            isOnLabel = true,
+            evidenceLevel = EvidenceLevel.A,
+            evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
+            evidenceDirection = EvidenceDirection(isResistant = true, isCertain = true)
+        )
+
+    fun offLabelKnownResistant() =
+        evidence(
+            treatment = "off-label known resistant",
+            isOnLabel = false,
+            evidenceLevel = EvidenceLevel.A,
+            evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
+            evidenceDirection = EvidenceDirection(isResistant = true, isCertain = true)
+        )
+
+    fun onLabelSuspectResistant() =
+        evidence(
+            treatment = "on-label suspect resistant",
+            isOnLabel = true,
+            evidenceLevel = EvidenceLevel.C,
+            evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
+            evidenceDirection = EvidenceDirection(isResistant = true, isCertain = false)
+        )
+
+    fun offLabelSuspectResistant() =
+        evidence(
+            treatment = "off-label suspect resistant",
+            isOnLabel = false,
+            evidenceLevel = EvidenceLevel.C,
+            evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
+            evidenceDirection = EvidenceDirection(isResistant = true, isCertain = false)
+        )
+
+    fun evidence(
         treatment: String,
+        isOnLabel: Boolean,
+        isCategoryEvent: Boolean = false,
         evidenceLevel: EvidenceLevel,
         evidenceLevelDetails: EvidenceLevelDetails,
-        direction: EvidenceDirection,
-        onLabel: Boolean,
-        isCategoryEvent: Boolean = false
+        evidenceDirection: EvidenceDirection
     ) = TreatmentEvidence(
-        treatment,
-        evidenceLevel,
-        onLabel,
-        direction,
-        LocalDate.of(2021, 2, 3),
-        "efficacy evidence",
-        2021,
-        isCategoryEvent,
-        "",
-        evidenceLevelDetails,
-        applicableCancerType()
+        treatment = treatment,
+        molecularMatch = MolecularMatchDetails(sourceEvent = "", isCategoryEvent = isCategoryEvent),
+        applicableCancerType = createEmptyApplicableCancerType(),
+        isOnLabel = isOnLabel,
+        evidenceLevel = evidenceLevel,
+        evidenceLevelDetails = evidenceLevelDetails,
+        evidenceDirection = evidenceDirection,
+        evidenceDate = LocalDate.of(2021, 2, 3),
+        evidenceYear = 2021,
+        efficacyDescription = "efficacy evidence"
     )
 
-    private fun applicableCancerType() = ApplicableCancerType(cancerType = "", excludedCancerTypes = emptySet())
+    private fun createEmptyApplicableCancerType() = CancerType(matchedCancerType = "", excludedCancerSubTypes = emptySet())
 
     fun withApprovedTreatment(treatment: String): ClinicalEvidence {
         return withEvidence(treatmentEvidence = approved().copy(treatment = treatment))
@@ -162,36 +160,39 @@ object TestClinicalEvidenceFactory {
         return withEvidence(treatmentEvidence = onLabelKnownResistant().copy(treatment = treatment))
     }
 
-    fun withSuspectResistantTreatment(treatment: String): ClinicalEvidence {
+    fun withOnLabelSuspectResistantTreatment(treatment: String): ClinicalEvidence {
         return withEvidence(treatmentEvidence = onLabelSuspectResistant().copy(treatment = treatment))
     }
 
     fun createTestExternalTrial(): ExternalTrial {
         return createExternalTrial(
+            nctId = "NCT00000001",
             title = "",
             countries = setOf(
-                createCountry(CountryName.NETHERLANDS, mapOf("Leiden" to setOf(Hospital("LUMC", false)))),
-                createCountry(CountryName.BELGIUM, mapOf("Brussels" to emptySet()))
+                createCountry(Country.NETHERLANDS, mapOf("Leiden" to setOf(Hospital("LUMC", false)))),
+                createCountry(Country.BELGIUM, mapOf("Brussels" to emptySet()))
             ),
-            url = "https://clinicaltrials.gov/study/NCT00000001",
-            nctId = "NCT00000001"
+            url = "https://clinicaltrials.gov/study/NCT00000001"
         )
     }
 
-    fun createExternalTrial(title: String = "", countries: Set<Country> = emptySet(), url: String = "", nctId: String = ""): ExternalTrial {
+    fun createExternalTrial(
+        nctId: String = "",
+        title: String = "",
+        countries: Set<CountryDetails> = emptySet(),
+        url: String = ""
+    ): ExternalTrial {
         return ExternalTrial(
-            title = title,
-            countries = countries,
-            url = url,
             nctId = nctId,
-            sourceEvent = "",
-            evidenceLevelDetails = EvidenceLevelDetails.CLINICAL_STUDY,
-            applicableCancerType = ApplicableCancerType(cancerType = "", excludedCancerTypes = emptySet()),
-            isCategoryEvent = false
+            title = title,
+            molecularMatches = setOf(MolecularMatchDetails(sourceEvent = "", isCategoryEvent = false)),
+            applicableCancerTypes = setOf(createEmptyApplicableCancerType()),
+            countries = countries,
+            url = url
         )
     }
 
-    fun createCountry(countryName: CountryName, hospitalsPerCity: Map<String, Set<Hospital>> = emptyMap()): Country {
-        return Country(countryName, hospitalsPerCity)
+    fun createCountry(country: Country, hospitalsPerCity: Map<String, Set<Hospital>> = emptyMap()): CountryDetails {
+        return CountryDetails(country, hospitalsPerCity)
     }
 }

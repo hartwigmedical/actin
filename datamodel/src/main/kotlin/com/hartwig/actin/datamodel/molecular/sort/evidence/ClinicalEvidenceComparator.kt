@@ -15,14 +15,14 @@ class ClinicalEvidenceComparator : Comparator<ClinicalEvidence> {
     private fun rank(evidence: ClinicalEvidence): Int {
         return when {
             ClinicalEvidenceCategories.approved(evidence.treatmentEvidence).isNotEmpty() -> 1
-            evidence.externalEligibleTrials.isNotEmpty() -> 2
-            ClinicalEvidenceCategories.experimental(evidence.treatmentEvidence).any { it.onLabel } -> 3
+            evidence.eligibleTrials.isNotEmpty() -> 2
+            ClinicalEvidenceCategories.experimental(evidence.treatmentEvidence).any { it.isOnLabel } -> 3
             ClinicalEvidenceCategories.experimental(evidence.treatmentEvidence).isNotEmpty() -> 4
-            ClinicalEvidenceCategories.preclinical(evidence.treatmentEvidence).any { it.onLabel } -> 5
+            ClinicalEvidenceCategories.preclinical(evidence.treatmentEvidence).any { it.isOnLabel } -> 5
             ClinicalEvidenceCategories.preclinical(evidence.treatmentEvidence).isNotEmpty() -> 6
-            ClinicalEvidenceCategories.knownResistant(evidence.treatmentEvidence).any { it.onLabel } -> 7
+            ClinicalEvidenceCategories.knownResistant(evidence.treatmentEvidence).any { it.isOnLabel } -> 7
             ClinicalEvidenceCategories.knownResistant(evidence.treatmentEvidence).isNotEmpty() -> 8
-            ClinicalEvidenceCategories.suspectResistant(evidence.treatmentEvidence).any { it.onLabel } -> 9
+            ClinicalEvidenceCategories.suspectResistant(evidence.treatmentEvidence).any { it.isOnLabel } -> 9
             ClinicalEvidenceCategories.suspectResistant(evidence.treatmentEvidence).isNotEmpty() -> 10
             else -> 11
         }

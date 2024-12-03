@@ -9,12 +9,12 @@ class ClinicalEvidenceComparatorTest {
     @Test
     fun `Should sort actionable evidences`() {
         val evidence1 = TestClinicalEvidenceFactory.withApprovedTreatment("treatment")
-        val evidence2 = TestClinicalEvidenceFactory.withTrial(TestClinicalEvidenceFactory.createTestExternalTrial())
+        val evidence2 = TestClinicalEvidenceFactory.withEligibleTrial(TestClinicalEvidenceFactory.createTestExternalTrial())
         val evidence3 = TestClinicalEvidenceFactory.withOnLabelExperimentalTreatment("treatment")
         val evidence4 = TestClinicalEvidenceFactory.withOffLabelExperimentalTreatment("treatment")
         val evidence5 = TestClinicalEvidenceFactory.withOnLabelPreClinicalTreatment("treatment")
         val evidence6 = TestClinicalEvidenceFactory.withOnLabelKnownResistantTreatment("treatment")
-        val evidence7 = TestClinicalEvidenceFactory.withSuspectResistantTreatment("treatment")
+        val evidence7 = TestClinicalEvidenceFactory.withOnLabelSuspectResistantTreatment("treatment")
         val evidences =
             listOf(evidence5, evidence4, evidence1, evidence2, evidence6, evidence7, evidence3).sortedWith(ClinicalEvidenceComparator())
 

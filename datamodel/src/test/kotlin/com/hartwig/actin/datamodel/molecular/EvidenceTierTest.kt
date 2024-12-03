@@ -2,11 +2,11 @@ package com.hartwig.actin.datamodel.molecular
 
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceTier
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
-import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.treatment
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.evidence
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
-import com.hartwig.serve.datamodel.efficacy.EvidenceLevelDetails
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -51,13 +51,13 @@ class EvidenceTierTest {
     ): Driver {
         return mockDriver(
             setOf(
-                treatment(
-                    "on-label",
-                    evidenceLevel,
-                    evidenceLevelDetails,
-                    EvidenceDirection(hasPositiveResponse = true, isCertain = true),
-                    onLabel,
-                    isCategoryEvent
+                evidence(
+                    treatment = "on-label",
+                    isOnLabel = onLabel,
+                    isCategoryEvent = isCategoryEvent,
+                    evidenceLevel = evidenceLevel,
+                    evidenceLevelDetails = evidenceLevelDetails,
+                    evidenceDirection = EvidenceDirection(hasPositiveResponse = true, isCertain = true),
                 )
             )
         )

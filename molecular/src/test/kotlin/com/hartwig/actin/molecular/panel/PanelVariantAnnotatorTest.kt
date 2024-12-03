@@ -10,8 +10,8 @@ import com.hartwig.actin.datamodel.molecular.VariantType
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
-import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.treatment
 import com.hartwig.actin.molecular.GENE
 import com.hartwig.actin.molecular.HGVS_CODING
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
@@ -32,7 +32,6 @@ import com.hartwig.actin.tools.pave.ImmutableVariantTranscriptImpact
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.ImmutableVariant
 import com.hartwig.actin.tools.variant.VariantAnnotator
-import com.hartwig.serve.datamodel.efficacy.EvidenceLevelDetails
 import com.hartwig.serve.datamodel.molecular.ImmutableMolecularCriterium
 import com.hartwig.serve.datamodel.molecular.gene.ImmutableActionableGene
 import io.mockk.every
@@ -156,16 +155,16 @@ class PanelVariantAnnotatorTest {
         assertThat(annotated.first().evidence).isEqualTo(
             ClinicalEvidence(
                 treatmentEvidence = setOf(
-                    treatment(
+                    TestClinicalEvidenceFactory.evidence(
                         treatment = "treatment",
+                        isOnLabel = true,
+                        isCategoryEvent = true,
                         evidenceLevel = EvidenceLevel.A,
                         evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
-                        direction = EvidenceDirection(hasPositiveResponse = true, isCertain = true, hasBenefit = true),
-                        onLabel = true,
-                        isCategoryEvent = true
+                        evidenceDirection = EvidenceDirection(hasPositiveResponse = true, isCertain = true, hasBenefit = true),
                     )
                 ),
-                externalEligibleTrials = emptySet()
+                eligibleTrials = emptySet()
             )
         )
     }
