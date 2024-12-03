@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.evidence
 
+import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.serve.datamodel.Knowledgebase
 import com.hartwig.serve.datamodel.common.ImmutableCancerType
 import com.hartwig.serve.datamodel.common.ImmutableIndication
@@ -14,7 +15,7 @@ object TestServeTrialFactory {
 
     fun create(
         molecularCriteria: Set<MolecularCriterium>,
-        source: Knowledgebase = Knowledgebase.CKB,
+        source: Knowledgebase = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
         title: String = "",
         indications: Set<Indication> = setOf(
             ImmutableIndication.builder().applicableType(ImmutableCancerType.builder().name("").doid("").build())

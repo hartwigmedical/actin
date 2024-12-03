@@ -17,7 +17,7 @@ import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
-import com.hartwig.serve.datamodel.Knowledgebase
+import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.serve.datamodel.common.ImmutableCancerType
 import com.hartwig.serve.datamodel.common.ImmutableIndication
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
@@ -32,7 +32,7 @@ private val INDICATION = ImmutableIndication.builder().applicableType(ImmutableC
 private val MOLECULAR_CRITERIUM = TestServeMolecularFactory.createGene("BRAF", GeneEvent.AMPLIFICATION, "BRAF amp")
 private val ACTIONABLE_EVENTS: EfficacyEvidence = TestServeEvidenceFactory.create(
     MOLECULAR_CRITERIUM,
-    Knowledgebase.CKB,
+    ActionabilityConstants.EVIDENCE_SOURCE,
     "pembrolizumab",
     EvidenceDirection.RESISTANT,
     EvidenceLevel.A,

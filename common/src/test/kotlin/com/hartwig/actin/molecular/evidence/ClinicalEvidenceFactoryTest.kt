@@ -7,8 +7,8 @@ import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
+import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
-import com.hartwig.serve.datamodel.Knowledgebase
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -85,7 +85,13 @@ class ClinicalEvidenceFactoryTest {
                 ActionabilityMatch(
                     onLabelEvidence = emptyList(),
                     offLabelEvidence = emptyList(),
-                    onLabelTrials = listOf(TestServeTrialFactory.create(setOf(molecularCriterium), Knowledgebase.CKB, trial.title)),
+                    onLabelTrials = listOf(
+                        TestServeTrialFactory.create(
+                            setOf(molecularCriterium),
+                            ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
+                            trial.title
+                        )
+                    ),
                     offLabelTrials = emptyList()
                 )
             )

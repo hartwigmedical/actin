@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.evidence
 
+import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.serve.datamodel.Knowledgebase
 import com.hartwig.serve.datamodel.common.ImmutableCancerType
 import com.hartwig.serve.datamodel.common.ImmutableIndication
@@ -52,7 +53,7 @@ object TestServeEvidenceFactory {
 
     fun create(
         molecularCriterium: MolecularCriterium = TestServeMolecularFactory.createHotspot(),
-        source: Knowledgebase = Knowledgebase.CKB,
+        source: Knowledgebase = ActionabilityConstants.EVIDENCE_SOURCE,
         treatment: String = "treatment",
         direction: EvidenceDirection = EvidenceDirection.NO_BENEFIT,
         level: EvidenceLevel = EvidenceLevel.D,
