@@ -5,8 +5,8 @@ import com.hartwig.actin.datamodel.molecular.evidence.ApplicableCancerType
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.CountryName
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
-import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.report.interpretation.InterpretedCohort
+import java.time.LocalDate
 import java.util.SortedSet
 
 data class ExternalTrialSummary(
@@ -16,12 +16,15 @@ data class ExternalTrialSummary(
     val actinMolecularEvents: SortedSet<String>,
     val sourceMolecularEvents: SortedSet<String>,
     val cancerTypes: SortedSet<ApplicableCancerType>,
-    val countries: SortedSet<Country>,
-    val cities: SortedSet<String>,
-    val hospitals: SortedSet<Hospital>
+    val countries: SortedSet<Country>
 )
 
 data class EventWithExternalTrial(val event: String, val trial: ExternalTrial)
+
+private fun countryNames(it: ExternalTrialSummary) = it.countries.map { c -> c.name }
+
+private fun hospitalsNamesForCountry(trial: ExternalTrialSummary, country: CountryName) =
+    trial.countries.first { it.name == country }.hospitalsPerCity.flatMap { it.value }.toSet()
 
 fun Set<ExternalTrialSummary>.filterInternalTrials(internalTrials: Set<TrialMatch>): Set<ExternalTrialSummary> {
     val internalIds = internalTrials.map { it.identification.nctId }.toSet()
@@ -32,15 +35,21 @@ fun Set<ExternalTrialSummary>.filterInCountryOfReference(country: CountryName): 
     return this.filter { country in countryNames(it).toSet() }.toSet()
 }
 
-private fun countryNames(it: ExternalTrialSummary) = it.countries.map { c -> c.name }
-
 fun Set<ExternalTrialSummary>.filterNotInCountryOfReference(country: CountryName): Set<ExternalTrialSummary> {
     return this.filter { country !in countryNames(it) }.toSet()
 }
 
-fun Set<ExternalTrialSummary>.filterExclusivelyInChildrensHospitals(): Set<ExternalTrialSummary> {
-    return this.filter {
-        it.hospitals.isEmpty() || !it.hospitals.all { hospital -> hospital.isChildrensHospital == true }
+fun Set<ExternalTrialSummary>.filterExclusivelyInChildrensHospitals(
+    birthYear: Int,
+    referenceDate: LocalDate,
+    countryOfReference: CountryName
+): Set<ExternalTrialSummary> {
+    val isYoungAdult = referenceDate.year - birthYear < 25
+    return this.filter { trial ->
+        !(countryOfReference in countryNames(trial) && hospitalsNamesForCountry(
+            trial,
+            countryOfReference
+        ).all { it.isChildrensHospital == true }) || isYoungAdult || (countryOfReference !in countryNames(trial))
     }.toSet()
 }
 
@@ -66,7 +75,6 @@ object ExternalTrialSummarizer {
             it.value.map { t -> EventWithExternalTrial(it.key, t) }
         }.groupBy { t -> t.trial.nctId }.map { e ->
             val countries = e.value.flatMap { ewe -> ewe.trial.countries }
-            val hospitals = countries.flatMap { c -> c.hospitalsPerCity.entries.map { hpc -> c to hpc } }
             val trial = e.value.first().trial
             ExternalTrialSummary(e.key,
                 trial.title,
@@ -74,9 +82,7 @@ object ExternalTrialSummarizer {
                 e.value.map { ewe -> ewe.event }.toSortedSet(),
                 e.value.map { ewe -> ewe.trial.sourceEvent }.toSortedSet(),
                 e.value.map { ewe -> ewe.trial.applicableCancerType }.toSortedSet(Comparator.comparing { c -> c.cancerType }),
-                countries.toSortedSet(Comparator.comparing { c -> c.name }),
-                hospitals.map { h -> h.second.key }.toSortedSet(),
-                hospitals.flatMap { it.second.value.map { h -> h } }.toSortedSet(Comparator.comparing { h -> h.name })
+                countries.toSortedSet(Comparator.comparing { c -> c.name })
             )
         }
             .toSortedSet(compareBy<ExternalTrialSummary> { it.actinMolecularEvents.joinToString() }.thenBy { it.sourceMolecularEvents.joinToString() }
