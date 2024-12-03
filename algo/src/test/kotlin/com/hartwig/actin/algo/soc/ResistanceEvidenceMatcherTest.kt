@@ -20,7 +20,6 @@ import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.serve.datamodel.common.ImmutableCancerType
 import com.hartwig.serve.datamodel.common.ImmutableIndication
-import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.EvidenceDirection
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevel
 import com.hartwig.serve.datamodel.molecular.MutationType
@@ -30,7 +29,7 @@ import org.junit.Test
 
 private val INDICATION = ImmutableIndication.builder().applicableType(ImmutableCancerType.builder().name("").doid("1520").build()).build()
 private val MOLECULAR_CRITERIUM = TestServeMolecularFactory.createGene("BRAF", GeneEvent.AMPLIFICATION, "BRAF amp")
-private val ACTIONABLE_EVENTS: EfficacyEvidence = TestServeEvidenceFactory.create(
+private val EFFICACY_EVIDENCE = TestServeEvidenceFactory.create(
     MOLECULAR_CRITERIUM,
     ActionabilityConstants.EVIDENCE_SOURCE,
     "pembrolizumab",
@@ -46,7 +45,7 @@ private val MOLECULAR_HISTORY = TestMolecularFactory.createMinimalTestMolecularH
 class ResistanceEvidenceMatcherTest {
 
     private val resistanceEvidenceMatcher =
-        ResistanceEvidenceMatcher.create(DOID_MODEL, TUMOR_DOIDS, listOf(ACTIONABLE_EVENTS), TREATMENT_DATABASE, MOLECULAR_HISTORY)
+        ResistanceEvidenceMatcher.create(DOID_MODEL, TUMOR_DOIDS, listOf(EFFICACY_EVIDENCE), TREATMENT_DATABASE, MOLECULAR_HISTORY)
 
     @Test
     fun `Should match resistance evidence to SOC treatments`() {

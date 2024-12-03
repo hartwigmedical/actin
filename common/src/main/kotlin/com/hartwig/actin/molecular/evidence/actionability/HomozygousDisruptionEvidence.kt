@@ -4,32 +4,36 @@ import com.hartwig.actin.datamodel.molecular.orange.driver.HomozygousDisruption
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterEfficacyEvidence
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterTrials
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.geneFilter
-import com.hartwig.actin.molecular.evidence.matching.EvidenceMatcher
+import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
+import com.hartwig.serve.datamodel.trial.ActionableTrial
 
-class HomozygousDisruptionEvidence(private val actionableGenes: ActionableEvents) : EvidenceMatcher<HomozygousDisruption> {
+class HomozygousDisruptionEvidence(
+    private val applicableEvidences: List<EfficacyEvidence>,
+    private val applicableTrials: List<ActionableTrial>
+) : ActionabilityMatcher<HomozygousDisruption> {
 
-    override fun findMatches(event: HomozygousDisruption): ActionableEvents {
-        val evidences = actionableGenes.evidences.filter {
+    override fun findMatches(event: HomozygousDisruption): ActionabilityMatch {
+        val evidences = applicableEvidences.filter {
             ActionableEventsExtraction.extractGene(it).gene() == event.gene
         }
-        val trials = actionableGenes.trials.filter {
+        val trials = applicableTrials.filter {
             ActionableEventsExtraction.extractGene(it).gene() == event.gene
         }
-        return ActionableEvents(evidences, trials)
+        return ActionabilityMatch(evidences, trials)
     }
 
     companion object {
         private val APPLICABLE_GENE_EVENTS = setOf(GeneEvent.DELETION, GeneEvent.INACTIVATION, GeneEvent.ANY_MUTATION)
 
-        fun create(actionableEvents: ActionableEvents): HomozygousDisruptionEvidence {
-            val evidences = filterEfficacyEvidence(actionableEvents.evidences, geneFilter()).filter {
+        fun create(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial>): HomozygousDisruptionEvidence {
+            val applicableEvidences = filterEfficacyEvidence(evidences, geneFilter()).filter {
                 APPLICABLE_GENE_EVENTS.contains(ActionableEventsExtraction.extractGene(it).event())
             }
-            val trials = filterTrials(actionableEvents.trials, geneFilter()).filter {
+            val applicableTrials = filterTrials(trials, geneFilter()).filter {
                 APPLICABLE_GENE_EVENTS.contains(ActionableEventsExtraction.extractGene(it).event())
             }
-            return HomozygousDisruptionEvidence(ActionableEvents(evidences, trials))
+            return HomozygousDisruptionEvidence(applicableEvidences, applicableTrials)
         }
     }
 }

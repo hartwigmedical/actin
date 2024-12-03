@@ -1,9 +1,8 @@
 package com.hartwig.actin.molecular.evidence
 
 import com.hartwig.actin.doid.datamodel.TestDoidEntryFactory
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEvents
+import com.hartwig.serve.datamodel.ImmutableServeRecord
 import com.hartwig.serve.datamodel.molecular.ImmutableKnownEvents
-import com.hartwig.serve.datamodel.molecular.KnownEvents
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -11,10 +10,13 @@ class EvidenceDatabaseFactoryTest {
 
     @Test
     fun `Should create from minimal inputs`() {
-        val knownEvents: KnownEvents = ImmutableKnownEvents.builder().build()
-        val actionableEvents = ActionableEvents()
+        val serveRecord = ImmutableServeRecord.builder()
+            .knownEvents(ImmutableKnownEvents.builder().build())
+            .evidences(emptyList())
+            .trials(emptyList())
+            .build()
         val doidEntry = TestDoidEntryFactory.createMinimalTestDoidEntry()
 
-        assertThat(EvidenceDatabaseFactory.create(knownEvents, actionableEvents, doidEntry, emptySet())).isNotNull()
+        assertThat(EvidenceDatabaseFactory.create(serveRecord, doidEntry, emptySet())).isNotNull()
     }
 }

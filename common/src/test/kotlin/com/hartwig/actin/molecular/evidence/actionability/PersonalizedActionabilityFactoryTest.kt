@@ -13,18 +13,16 @@ class PersonalizedActionabilityFactoryTest {
     fun `Should be able to distinguish on-label and off-label`() {
         val doidModel = TestDoidModelFactory.createWithOneParentChild("parent", "child")
         val tumorDoids = setOf("child", "exclude")
-        val factory: PersonalizedActionabilityFactory = PersonalizedActionabilityFactory.create(doidModel, tumorDoids)
+        val factory = PersonalizedActionabilityFactory.create(doidModel, tumorDoids)
 
         val evidence1 = create("parent", "not excluded")
         val evidence2 = create("other doid")
         val evidence3 = create("parent", "exclude")
 
-        val match = factory.create(ActionableEvents(listOf(evidence1, evidence2, evidence3), emptyList()))
+        val match = factory.create(ActionabilityMatch(listOf(evidence1, evidence2, evidence3), emptyList()))
 
-        assertThat(match.onLabelEvidence.size).isEqualTo(1)
-        assertThat(match.onLabelEvidence).containsExactly(evidence1)
-        assertThat(match.offLabelEvidence.size).isEqualTo(2)
-        assertThat(match.offLabelEvidence).containsExactly(evidence2, evidence3)
+        assertThat(match.treatmentEvidence.filter { it.isOnLabel }.size).isEqualTo(1)
+        assertThat(match.treatmentEvidence.filter { !it.isOnLabel }.size).isEqualTo(2)
     }
 
     @Test
@@ -34,19 +32,19 @@ class PersonalizedActionabilityFactoryTest {
 
         val evidence1 = create("doid 1")
         val evidence2 = create("doid 2")
-        val evidence3 = create("doid 1", "blacklist")
+        val evidence3 = create("doid 1", "exclude")
 
-        val match = factory.create(ActionableEvents(listOf(evidence1, evidence2, evidence3), emptyList()))
+        val match = factory.create(ActionabilityMatch(listOf(evidence1, evidence2, evidence3), emptyList()))
 
-        assertThat(match.onLabelEvidence.size).isEqualTo(0)
-        assertThat(match.offLabelEvidence.size).isEqualTo(3)
+        assertThat(match.treatmentEvidence.filter { it.isOnLabel }.size).isEqualTo(0)
+        assertThat(match.treatmentEvidence.filter { !it.isOnLabel }.size).isEqualTo(3)
     }
 
     private fun create(doid: String): EfficacyEvidence {
-        return TestServeEvidenceFactory.create(indication = TestServeFactory.createWithDoid(doid))
+        return TestServeEvidenceFactory.create(indication = TestServeFactory.createIndicationWithDoid(doid))
     }
 
     private fun create(doid: String, excludedDoid: String): EfficacyEvidence {
-        return TestServeEvidenceFactory.create(indication = TestServeFactory.createWithDoidAndExcludedDoid(doid, excludedDoid))
+        return TestServeEvidenceFactory.create(indication = TestServeFactory.createIndicationWithDoidAndExcludedDoid(doid, excludedDoid))
     }
 }

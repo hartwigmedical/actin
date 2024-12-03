@@ -13,13 +13,12 @@ import com.hartwig.actin.datamodel.molecular.GeneRole
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.Variant
 import com.hartwig.actin.datamodel.molecular.VariantType
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
+import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.GENE
 import com.hartwig.actin.molecular.HGVS_CODING
-import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
-import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
-import com.hartwig.actin.molecular.evidence.actionability.TestActionabilityMatchFactory
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
@@ -55,10 +54,8 @@ private val HOTSPOT = TestServeKnownFactory.hotspotBuilder().build()
     .withGeneRole(ServeGeneRole.ONCO)
     .withProteinEffect(ServeProteinEffect.GAIN_OF_FUNCTION)
 
-private val EMPTY_MATCH = TestActionabilityMatchFactory.createEmpty()
-private val ON_LABEL_MATCH = TestActionabilityMatchFactory.withOnLabelEvidence(
-    TestServeEvidenceFactory.createEvidenceForGene()
-)
+private val EMPTY_MATCH = TestClinicalEvidenceFactory.createEmpty()
+private val ON_LABEL_MATCH = TestClinicalEvidenceFactory.withEvidence(TestTreatmentEvidenceFactory.approved())
 
 private val ARCHER_SKIPPED_EXON = SequencedSkippedExons(GENE, 2, 3)
 
@@ -142,7 +139,7 @@ class PanelAnnotatorTest {
                     isReportable = true,
                     event = GENE,
                     driverLikelihood = DriverLikelihood.HIGH,
-                    evidence = ClinicalEvidenceFactory.create(ON_LABEL_MATCH),
+                    evidence = ON_LABEL_MATCH,
                     gene = GENE,
                     geneRole = GeneRole.ONCO,
                     proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
@@ -158,11 +155,10 @@ class PanelAnnotatorTest {
         every { evidenceDatabase.evidenceForTumorMutationalBurdenStatus(false) } returns EMPTY_MATCH
 
         val panelWithHighTmb = annotator.annotate(createTestPriorSequencingTest().copy(tumorMutationalBurden = 200.0))
-        assertThat(panelWithHighTmb.characteristics.tumorMutationalBurdenEvidence)
-            .isEqualTo(ClinicalEvidenceFactory.create(ON_LABEL_MATCH))
+        assertThat(panelWithHighTmb.characteristics.tumorMutationalBurdenEvidence).isEqualTo(ON_LABEL_MATCH)
 
         val panelWithLowTmb = annotator.annotate(createTestPriorSequencingTest().copy(tumorMutationalBurden = 2.0))
-        assertThat(panelWithLowTmb.characteristics.tumorMutationalBurdenEvidence).isEqualTo(ClinicalEvidenceFactory.create(EMPTY_MATCH))
+        assertThat(panelWithLowTmb.characteristics.tumorMutationalBurdenEvidence).isEqualTo(EMPTY_MATCH)
 
         val panelWithoutTmb = annotator.annotate(createTestPriorSequencingTest().copy(tumorMutationalBurden = null))
         assertThat(panelWithoutTmb.characteristics.tumorMutationalBurdenEvidence).isNull()
@@ -174,10 +170,10 @@ class PanelAnnotatorTest {
         every { evidenceDatabase.evidenceForMicrosatelliteStatus(false) } returns EMPTY_MATCH
 
         val panelWithMSI = annotator.annotate(createTestPriorSequencingTest().copy(isMicrosatelliteUnstable = true))
-        assertThat(panelWithMSI.characteristics.microsatelliteEvidence).isEqualTo(ClinicalEvidenceFactory.create(ON_LABEL_MATCH))
+        assertThat(panelWithMSI.characteristics.microsatelliteEvidence).isEqualTo(ON_LABEL_MATCH)
 
         val panelWithMSS = annotator.annotate(createTestPriorSequencingTest().copy(isMicrosatelliteUnstable = false))
-        assertThat(panelWithMSS.characteristics.microsatelliteEvidence).isEqualTo(ClinicalEvidenceFactory.create(EMPTY_MATCH))
+        assertThat(panelWithMSS.characteristics.microsatelliteEvidence).isEqualTo(EMPTY_MATCH)
 
         val panelWithoutMicrosatelliteStatus = annotator.annotate(createTestPriorSequencingTest().copy(isMicrosatelliteUnstable = null))
         assertThat(panelWithoutMicrosatelliteStatus.characteristics.microsatelliteEvidence).isNull()

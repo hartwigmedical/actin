@@ -120,7 +120,6 @@ class PanelFusionAnnotator(
 
     private fun annotateFusion(fusion: Fusion): Fusion {
         val fusionMatchCriteria = createFusionMatchCriteria(fusion)
-        val evidence = ClinicalEvidenceFactory.create(evidenceDatabase.evidenceForFusion(fusionMatchCriteria))
         val knownFusion = evidenceDatabase.lookupKnownFusion(fusionMatchCriteria)
 
         val proteinEffect = if (knownFusion == null) ProteinEffect.UNKNOWN else {
@@ -129,7 +128,7 @@ class PanelFusionAnnotator(
         val isAssociatedWithDrugResistance = knownFusion?.associatedWithDrugResistance()
 
         return fusion.copy(
-            evidence = evidence,
+            evidence = evidenceDatabase.evidenceForFusion(fusionMatchCriteria),
             proteinEffect = proteinEffect,
             isAssociatedWithDrugResistance = isAssociatedWithDrugResistance,
         )

@@ -2,8 +2,9 @@ package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.molecular.evidence.curation.ApplicabilityFiltering
-import com.hartwig.serve.datamodel.Knowledgebase
+import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
+import com.hartwig.serve.datamodel.trial.ActionableTrial
 
 class ActionableEventMatcherFactory(
     private val doidModel: DoidModel,
@@ -12,25 +13,18 @@ class ActionableEventMatcherFactory(
 
     val actionableEventSources = setOf(ActionabilityConstants.EVIDENCE_SOURCE, ActionabilityConstants.EXTERNAL_TRIAL_SOURCE)
 
-    fun create(actionableEvents: ActionableEvents): ActionableEventMatcher {
-        val filtered = filterForApplicability(filterForSources(actionableEvents, actionableEventSources))
+    fun create(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial>): ActionableEventMatcher {
+        val filteredEvidences = evidences
+            .filter { actionableEventSources.contains(it.source()) }
+            .filter { isMolecularCriteriumApplicable(it.molecularCriterium()) }
 
-        val personalizedActionabilityFactory: PersonalizedActionabilityFactory =
-            PersonalizedActionabilityFactory.create(doidModel, tumorDoids)
+        val filteredTrials = trials
+            .filter { actionableEventSources.contains(it.source()) }
+            .filter { isMolecularCriteriumApplicable(it.anyMolecularCriteria().iterator().next()) }
 
-        return fromActionableEvents(personalizedActionabilityFactory, filtered)
-    }
+        val personalizedActionabilityFactory = PersonalizedActionabilityFactory.create(doidModel, tumorDoids)
 
-    fun filterForSources(actionableEvents: ActionableEvents, sourcesToInclude: Set<Knowledgebase>): ActionableEvents {
-        val filteredEvidences = actionableEvents.evidences.filter { sourcesToInclude.contains(it.source()) }
-        val filteredTrials = actionableEvents.trials.filter { sourcesToInclude.contains(it.source()) }
-        return ActionableEvents(filteredEvidences, filteredTrials)
-    }
-
-    fun filterForApplicability(actionableEvents: ActionableEvents): ActionableEvents {
-        val evidences = actionableEvents.evidences.filter { isMolecularCriteriumApplicable(it.molecularCriterium()) }
-        val trials = actionableEvents.trials.filter { isMolecularCriteriumApplicable(it.anyMolecularCriteria().iterator().next()) }
-        return ActionableEvents(evidences, trials)
+        return create(personalizedActionabilityFactory, filteredEvidences, filteredTrials)
     }
 
     private fun isMolecularCriteriumApplicable(molecularCriterium: MolecularCriterium): Boolean {
@@ -45,27 +39,28 @@ class ActionableEventMatcherFactory(
         }
     }
 
-    private fun fromActionableEvents(
+    private fun create(
         personalizedActionabilityFactory: PersonalizedActionabilityFactory,
-        actionableEvents: ActionableEvents
+        evidences: List<EfficacyEvidence>,
+        trials: List<ActionableTrial>
     ): ActionableEventMatcher {
-        val signatureEvidence = SignatureEvidence.create(actionableEvents)
-        val variantEvidence = VariantEvidence.create(actionableEvents)
-        val copyNumberEvidence = CopyNumberEvidence.create(actionableEvents)
-        val homozygousDisruptionEvidence = HomozygousDisruptionEvidence.create(actionableEvents)
-        val breakendEvidence = BreakendEvidence.create(actionableEvents)
-        val fusionEvidence = FusionEvidence.create(actionableEvents)
-        val virusEvidence = VirusEvidence.create(actionableEvents)
+        val variantEvidence = VariantEvidence.create(evidences, trials)
+        val copyNumberEvidence = CopyNumberEvidence.create(evidences, trials)
+        val breakendEvidence = BreakendEvidence.create(evidences, trials)
+        val homozygousDisruptionEvidence = HomozygousDisruptionEvidence.create(evidences, trials)
+        val fusionEvidence = FusionEvidence.create(evidences, trials)
+        val virusEvidence = VirusEvidence.create(evidences, trials)
+        val signatureEvidence = SignatureEvidence.create(evidences, trials)
 
         return ActionableEventMatcher(
-            personalizedActionabilityFactory,
-            signatureEvidence,
-            variantEvidence,
-            copyNumberEvidence,
-            homozygousDisruptionEvidence,
-            breakendEvidence,
-            fusionEvidence,
-            virusEvidence
+            personalizedActionabilityFactory = personalizedActionabilityFactory,
+            variantEvidence = variantEvidence,
+            copyNumberEvidence = copyNumberEvidence,
+            breakendEvidence = breakendEvidence,
+            homozygousDisruptionEvidence = homozygousDisruptionEvidence,
+            fusionEvidence = fusionEvidence,
+            virusEvidence = virusEvidence,
+            signatureEvidence = signatureEvidence
         )
     }
 }

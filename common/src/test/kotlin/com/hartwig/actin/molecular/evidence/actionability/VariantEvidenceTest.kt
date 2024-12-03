@@ -34,44 +34,43 @@ class VariantEvidenceTest {
 
     @Test
     fun `Should determine evidence for hotpots`() {
-        val hotspot1: EfficacyEvidence = TestServeEvidenceFactory.createEvidenceForHotspot("gene 1", "X", 2, "A", "G")
-        val hotspot2: EfficacyEvidence = TestServeEvidenceFactory.createEvidenceForHotspot("gene 2", "X", 2, "A", "G")
-        val hotspot3: EfficacyEvidence = TestServeEvidenceFactory.createEvidenceForHotspot("gene 1", "X", 2, "A", "C")
-        val actionable = ActionableEvents(listOf(hotspot1, hotspot2, hotspot3), emptyList())
-        val variantEvidence: VariantEvidence = VariantEvidence.create(actionable)
+        val hotspot1 = TestServeEvidenceFactory.createEvidenceForHotspot("gene 1", "X", 2, "A", "G")
+        val hotspot2 = TestServeEvidenceFactory.createEvidenceForHotspot("gene 2", "X", 2, "A", "G")
+        val hotspot3 = TestServeEvidenceFactory.createEvidenceForHotspot("gene 1", "X", 2, "A", "C")
+        val variantEvidence = VariantEvidence.create(evidences = listOf(hotspot1, hotspot2, hotspot3), trials = emptyList())
 
         val variantGene1 = VARIANT_CRITERIA.copy(gene = "gene 1", chromosome = "X", position = 2, ref = "A", alt = "G", isReportable = true)
         val matchesVariant1 = variantEvidence.findMatches(variantGene1)
-        assertThat(matchesVariant1.evidences.size).isEqualTo(1)
-        assertThat(matchesVariant1.evidences).contains(hotspot1)
+        assertThat(matchesVariant1.evidenceMatches.size).isEqualTo(1)
+        assertThat(matchesVariant1.evidenceMatches).contains(hotspot1)
 
         val variantGene2 = VARIANT_CRITERIA.copy(gene = "gene 2", chromosome = "X", position = 2, ref = "A", alt = "G", isReportable = true)
         val matchesVariant2 = variantEvidence.findMatches(variantGene2)
-        assertThat(matchesVariant2.evidences.size).isEqualTo(1)
-        assertThat(matchesVariant2.evidences).contains(hotspot2)
+        assertThat(matchesVariant2.evidenceMatches.size).isEqualTo(1)
+        assertThat(matchesVariant2.evidenceMatches).contains(hotspot2)
 
         val otherVariantGene1 =
             VARIANT_CRITERIA.copy(gene = "gene 1", chromosome = "X", position = 2, ref = "A", alt = "T", isReportable = true)
-        assertThat(variantEvidence.findMatches(otherVariantGene1).evidences).isEmpty()
+        assertThat(variantEvidence.findMatches(otherVariantGene1).evidenceMatches).isEmpty()
     }
 
     @Test
     fun `Should determine evidence for codons`() {
-        assertEvidenceDeterminedForRange(ActionableEvents(listOf(actionableCodon), emptyList()), actionableCodon)
+        assertEvidenceDeterminedForRange(actionableCodon)
     }
 
     @Test
     fun `Should determine evidence for exons`() {
-        assertEvidenceDeterminedForRange(ActionableEvents(listOf(actionableExon), emptyList()), actionableExon)
+        assertEvidenceDeterminedForRange(actionableExon)
     }
 
     @Test
     fun `Should determine evidence for genes`() {
-        val gene1: EfficacyEvidence = TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.ANY_MUTATION, "gene 1")
-        val gene2: EfficacyEvidence = TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.ACTIVATION, "gene 2")
-        val gene3: EfficacyEvidence = TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.AMPLIFICATION, "gene 2")
-        val actionable = ActionableEvents(listOf(gene1, gene2, gene3), emptyList())
-        val variantEvidence: VariantEvidence = VariantEvidence.create(actionable)
+        val gene1 = TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.ANY_MUTATION, "gene 1")
+        val gene2 = TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.ACTIVATION, "gene 2")
+        val gene3 = TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.AMPLIFICATION, "gene 2")
+
+        val variantEvidence = VariantEvidence.create(evidences = listOf(gene1, gene2, gene3), trials = emptyList())
 
         val variantGene1 = VARIANT_CRITERIA.copy(
             gene = "gene 1",
@@ -79,8 +78,8 @@ class VariantEvidenceTest {
             isReportable = true
         )
         val matchesVariant1 = variantEvidence.findMatches(variantGene1)
-        assertThat(matchesVariant1.evidences.size).isEqualTo(1)
-        assertThat(matchesVariant1.evidences).contains(gene1)
+        assertThat(matchesVariant1.evidenceMatches.size).isEqualTo(1)
+        assertThat(matchesVariant1.evidenceMatches).contains(gene1)
 
         val variantGene2 = VARIANT_CRITERIA.copy(
             gene = "gene 2",
@@ -88,12 +87,12 @@ class VariantEvidenceTest {
             isReportable = true
         )
         val matchesVariant2 = variantEvidence.findMatches(variantGene2)
-        assertThat(matchesVariant2.evidences.size).isEqualTo(1)
-        assertThat(matchesVariant2.evidences).contains(gene2)
+        assertThat(matchesVariant2.evidenceMatches.size).isEqualTo(1)
+        assertThat(matchesVariant2.evidenceMatches).contains(gene2)
     }
 
-    private fun assertEvidenceDeterminedForRange(actionable: ActionableEvents, actionableRange: EfficacyEvidence) {
-        val variantEvidence: VariantEvidence = VariantEvidence.create(actionable)
+    private fun assertEvidenceDeterminedForRange(evidence: EfficacyEvidence) {
+        val variantEvidence = VariantEvidence.create(evidences = listOf(evidence), trials = emptyList())
 
         val variantGene1 = VARIANT_CRITERIA.copy(
             gene = "gene 1",
@@ -103,8 +102,8 @@ class VariantEvidenceTest {
             codingEffect = CodingEffect.MISSENSE
         )
         val matchesVariant1 = variantEvidence.findMatches(variantGene1)
-        assertThat(matchesVariant1.evidences.size).isEqualTo(1)
-        assertThat(matchesVariant1.evidences).contains(actionableRange)
+        assertThat(matchesVariant1.evidenceMatches.size).isEqualTo(1)
+        assertThat(matchesVariant1.evidenceMatches).contains(evidence)
 
         val otherVariantGene1 = VARIANT_CRITERIA.copy(
             gene = "gene 1",
@@ -113,6 +112,6 @@ class VariantEvidenceTest {
             isReportable = true,
             codingEffect = CodingEffect.MISSENSE
         )
-        assertThat(variantEvidence.findMatches(otherVariantGene1).evidences).isEmpty()
+        assertThat(variantEvidence.findMatches(otherVariantGene1).evidenceMatches).isEmpty()
     }
 }

@@ -9,7 +9,6 @@ import com.hartwig.actin.datamodel.molecular.Variant
 import com.hartwig.actin.datamodel.molecular.VariantType
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
-import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
@@ -26,8 +25,8 @@ import com.hartwig.actin.tools.variant.VariantAnnotator
 import com.hartwig.serve.datamodel.molecular.hotspot.KnownHotspot
 import com.hartwig.serve.datamodel.molecular.range.KnownCodon
 import org.apache.logging.log4j.LogManager
-import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
 import com.hartwig.serve.datamodel.molecular.common.GeneAlteration as ServeGeneAlteration
+import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
 
 private val SERVE_HOTSPOT_PROTEIN_EFFECTS = setOf(
     ServeProteinEffect.LOSS_OF_FUNCTION,
@@ -119,7 +118,7 @@ class PanelVariantAnnotator(
             val extraction = variantExtractions[id]!!
 
             val criteria = variantMatchCriteria(extraction, transvarAnnotation, paveResponse)
-            val evidence = ClinicalEvidenceFactory.create(evidenceDatabase.evidenceForVariant(criteria))
+            val evidence = evidenceDatabase.evidenceForVariant(criteria)
             val serveGeneAlteration = evidenceDatabase.geneAlterationForVariant(criteria)
             val geneAlteration = GeneAlterationFactory.convertAlteration(extraction.gene, serveGeneAlteration)
 
@@ -143,9 +142,9 @@ class PanelVariantAnnotator(
         isReportable = true,
         gene = panelVariantExtraction.gene,
         chromosome = transvarVariant.chromosome(),
+        position = transvarVariant.position(),
         ref = transvarVariant.ref(),
         alt = transvarVariant.alt(),
-        position = transvarVariant.position(),
         type = variantType(transvarVariant),
         codingEffect = codingEffect(paveResponse.impact.canonicalCodingEffect)
     )
@@ -179,13 +178,11 @@ class PanelVariantAnnotator(
     )
 
     private fun impact(paveImpact: PaveImpact, transvarVariant: com.hartwig.actin.tools.variant.Variant): TranscriptImpact {
-
         val paveLiteAnnotation = paveLite.run(
             paveImpact.gene,
             paveImpact.transcript,
             transvarVariant.position()
         ) ?: throw IllegalStateException("PaveLite did not return a response for $transvarVariant")
-
 
         return TranscriptImpact(
             transcriptId = paveImpact.transcript,

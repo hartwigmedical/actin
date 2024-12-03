@@ -9,8 +9,6 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtrac
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractRange
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.fusionFilter
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.geneFilter
-import com.hartwig.serve.datamodel.common.ImmutableCancerType
-import com.hartwig.serve.datamodel.common.ImmutableIndication
 import com.hartwig.serve.datamodel.molecular.ImmutableMolecularCriterium
 import com.hartwig.serve.datamodel.molecular.MutationType
 import com.hartwig.serve.datamodel.molecular.characteristic.ImmutableActionableCharacteristic
@@ -20,18 +18,13 @@ import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import com.hartwig.serve.datamodel.molecular.gene.ImmutableActionableGene
 import com.hartwig.serve.datamodel.molecular.hotspot.ImmutableActionableHotspot
 import com.hartwig.serve.datamodel.molecular.range.ImmutableActionableRange
-import com.hartwig.serve.datamodel.trial.ImmutableActionableTrial
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-private val INDICATION_1 = ImmutableIndication.builder().applicableType(ImmutableCancerType.builder().name("name1").doid("doid1").build())
-    .excludedSubTypes(emptySet()).build()
-private val INDICATION_2 = ImmutableIndication.builder().applicableType(ImmutableCancerType.builder().name("name2").doid("doid2").build())
-    .excludedSubTypes(emptySet()).build()
 private val MOLECULAR_CRITERIUM_1 = TestServeMolecularFactory.createHotspot()
 private val MOLECULAR_CRITERIUM_2 = TestServeMolecularFactory.createGene()
 
-class ActionableEventsExtractionTest {
+class ActionabilityMatchExtractionTest {
 
     @Test
     fun `Can extract hotspot`() {
@@ -113,33 +106,5 @@ class ActionableEventsExtractionTest {
         val filteredTrials =
             ActionableEventsExtraction.filterTrials(listOf(actionableTrial1, actionableTrial2, actionableTrial3), geneFilter())
         assertThat(filteredTrials).containsExactly(actionableTrial2, actionableTrial3)
-    }
-
-    @Test
-    fun `Can expand trials`() {
-        val actionableTrial =
-            TestServeTrialFactory.create(
-                setOf(MOLECULAR_CRITERIUM_1, MOLECULAR_CRITERIUM_2),
-                indications = setOf(INDICATION_1, INDICATION_2)
-            )
-        val expandedTrial = ActionableEventsExtraction.expandTrials(listOf(actionableTrial))
-        val expandedTrial1 =
-            ImmutableActionableTrial.builder()
-                .from(TestServeTrialFactory.create(setOf(MOLECULAR_CRITERIUM_1), indications = setOf(INDICATION_1)))
-                .build()
-        val expandedTrial2 =
-            ImmutableActionableTrial.builder()
-                .from(TestServeTrialFactory.create(setOf(MOLECULAR_CRITERIUM_1), indications = setOf(INDICATION_2)))
-                .build()
-        val expandedTrial3 =
-            ImmutableActionableTrial.builder()
-                .from(TestServeTrialFactory.create(setOf(MOLECULAR_CRITERIUM_2), indications = setOf(INDICATION_1)))
-                .build()
-        val expandedTrial4 =
-            ImmutableActionableTrial.builder()
-                .from(TestServeTrialFactory.create(setOf(MOLECULAR_CRITERIUM_2), indications = setOf(INDICATION_2)))
-                .build()
-
-        assertThat(expandedTrial).containsAll(listOf(expandedTrial1, expandedTrial2, expandedTrial3, expandedTrial4))
     }
 }

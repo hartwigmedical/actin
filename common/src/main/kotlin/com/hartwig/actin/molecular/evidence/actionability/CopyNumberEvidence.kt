@@ -6,43 +6,62 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtrac
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterEfficacyEvidence
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterTrials
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.geneFilter
-import com.hartwig.actin.molecular.evidence.matching.EvidenceMatcher
+import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.molecular.gene.ActionableGene
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
+import com.hartwig.serve.datamodel.trial.ActionableTrial
 
 class CopyNumberEvidence(
-    private val actionableAmplifications: ActionableEvents,
-    private val actionableLosses: ActionableEvents
-) : EvidenceMatcher<CopyNumber> {
+    private val applicableAmplificationEvidences: List<EfficacyEvidence>,
+    private val applicableAmplificationTrials: List<ActionableTrial>,
+    private val applicableLossEvidences: List<EfficacyEvidence>,
+    private val applicableLossTrials: List<ActionableTrial>
+) : ActionabilityMatcher<CopyNumber> {
 
-    override fun findMatches(event: CopyNumber): ActionableEvents {
+    override fun findMatches(event: CopyNumber): ActionabilityMatch {
         return when (event.type) {
             CopyNumberType.FULL_GAIN, CopyNumberType.PARTIAL_GAIN -> {
-                findMatches(event, actionableAmplifications)
+                findMatches(event, applicableAmplificationEvidences, applicableAmplificationTrials)
             }
 
             CopyNumberType.LOSS -> {
-                findMatches(event, actionableLosses)
+                findMatches(event, applicableLossEvidences, applicableLossTrials)
             }
 
             else -> {
-                ActionableEvents()
+                ActionabilityMatch(evidenceMatches = emptyList(), trialMatches = emptyList())
             }
         }
     }
 
+    private fun findMatches(
+        copyNumber: CopyNumber,
+        applicableEvidences: List<EfficacyEvidence>,
+        applicableTrials: List<ActionableTrial>
+    ): ActionabilityMatch {
+        return ActionabilityMatch(
+            evidenceMatches = applicableEvidences.filter { extractGene(it).gene() == copyNumber.gene },
+            trialMatches = applicableTrials.filter { extractGene(it).gene() == copyNumber.gene }
+        )
+    }
+
     companion object {
-        fun create(actionableEvents: ActionableEvents): CopyNumberEvidence {
-            val evidences = filterEfficacyEvidence(actionableEvents.evidences, geneFilter())
-            val trials = filterTrials(actionableEvents.trials, geneFilter())
-            val (actionableAmplificationsEvidence, actionableLossesEvidence) = extractActionableAmplificationsAndLosses(
-                evidences,
-                ::extractGene
+        fun create(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial>): CopyNumberEvidence {
+            val applicableEvidences = filterEfficacyEvidence(evidences, geneFilter())
+            val applicableTrials = filterTrials(trials, geneFilter())
+
+            val (applicableAmplificationEvidences, applicableLossEvidences) = extractActionableAmplificationsAndLosses(
+                applicableEvidences, ::extractGene
             )
-            val (actionableAmplificationsTrials, actionableLossesTrials) = extractActionableAmplificationsAndLosses(trials, ::extractGene)
+            val (applicableAmplificationTrials, applicableLossTrials) = extractActionableAmplificationsAndLosses(
+                applicableTrials, ::extractGene
+            )
+
             return CopyNumberEvidence(
-                ActionableEvents(actionableAmplificationsEvidence, actionableAmplificationsTrials),
-                ActionableEvents(actionableLossesEvidence, actionableLossesTrials)
+                applicableAmplificationEvidences,
+                applicableAmplificationTrials,
+                applicableLossEvidences,
+                applicableLossTrials
             )
         }
 
@@ -54,16 +73,6 @@ class CopyNumberEvidence(
                     else -> acc
                 }
             }
-        }
-
-        private fun findMatches(copyNumber: CopyNumber, actionableEvents: ActionableEvents): ActionableEvents {
-            return ActionableEvents(
-                actionableEvents.evidences.filter {
-                    extractGene(it).gene() == copyNumber.gene
-                },
-                actionableEvents.trials.filter {
-                    extractGene(it).gene() == copyNumber.gene
-                })
         }
     }
 }

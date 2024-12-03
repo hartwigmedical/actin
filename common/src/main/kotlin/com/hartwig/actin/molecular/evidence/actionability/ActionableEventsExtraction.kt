@@ -8,7 +8,6 @@ import com.hartwig.serve.datamodel.molecular.gene.ActionableGene
 import com.hartwig.serve.datamodel.molecular.hotspot.ActionableHotspot
 import com.hartwig.serve.datamodel.molecular.range.ActionableRange
 import com.hartwig.serve.datamodel.trial.ActionableTrial
-import com.hartwig.serve.datamodel.trial.ImmutableActionableTrial
 import java.util.function.Predicate
 import java.util.stream.Collectors
 
@@ -125,27 +124,6 @@ object ActionableEventsExtraction {
             trial.anyMolecularCriteria().any { criterium ->
                 molecularCriteriumPredicate.test(criterium)
             }
-        }
-    }
-
-    fun expandTrials(
-        trials: List<ActionableTrial>
-    ): List<ActionableTrial> {
-        return trials.flatMap { trial ->
-            trial.anyMolecularCriteria().flatMap { criterium -> expandWithIndicationAndCriterium(trial, criterium) }
-        }
-    }
-
-    private fun expandWithIndicationAndCriterium(
-        baseTrial: ActionableTrial,
-        criterium: MolecularCriterium
-    ): List<ActionableTrial> {
-        return baseTrial.indications().map { indication ->
-            ImmutableActionableTrial.builder()
-                .from(baseTrial)
-                .anyMolecularCriteria(listOf(criterium))
-                .indications(listOf(indication))
-                .build()
         }
     }
 }

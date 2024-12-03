@@ -14,7 +14,7 @@ object MolecularRecordAnnotatorFunctions {
         driverType = fusion.driverType
     )
 
-    fun createCriteria(variant: Variant) = VariantMatchCriteria(
+    fun createVariantCriteria(variant: Variant) = VariantMatchCriteria(
         gene = variant.gene,
         chromosome = variant.chromosome,
         position = variant.position,

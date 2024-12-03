@@ -5,7 +5,7 @@ import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class ActionabilityMatchTest {
+class PersonalizedActionabilityMatchTest {
 
     @Test
     fun `Should extend actionable event with category event false when hotspot, fusion, HLA or characteristic`() {

@@ -50,12 +50,12 @@ class PanelAnnotator(
             characteristics = MolecularCharacteristics(
                 isMicrosatelliteUnstable = input.isMicrosatelliteUnstable,
                 microsatelliteEvidence = input.isMicrosatelliteUnstable?.let {
-                    ClinicalEvidenceFactory.create(evidenceDatabase.evidenceForMicrosatelliteStatus(it))
+                    evidenceDatabase.evidenceForMicrosatelliteStatus(it)
                 },
                 tumorMutationalBurden = input.tumorMutationalBurden,
                 hasHighTumorMutationalBurden = hasHighTumorMutationalBurden,
                 tumorMutationalBurdenEvidence = hasHighTumorMutationalBurden?.let {
-                    ClinicalEvidenceFactory.create(evidenceDatabase.evidenceForTumorMutationalBurdenStatus(it))
+                    evidenceDatabase.evidenceForTumorMutationalBurdenStatus(it)
                 },
                 ploidy = PLOIDY
             ),
@@ -66,11 +66,10 @@ class PanelAnnotator(
     }
 
     private fun annotatedInferredCopyNumber(copyNumber: CopyNumber): CopyNumber {
-        val evidence = ClinicalEvidenceFactory.create(evidenceDatabase.evidenceForCopyNumber(copyNumber))
         val geneAlteration =
             GeneAlterationFactory.convertAlteration(copyNumber.gene, evidenceDatabase.geneAlterationForCopyNumber(copyNumber))
         return copyNumber.copy(
-            evidence = evidence,
+            evidence = evidenceDatabase.evidenceForCopyNumber(copyNumber),
             geneRole = geneAlteration.geneRole,
             proteinEffect = geneAlteration.proteinEffect,
             isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance

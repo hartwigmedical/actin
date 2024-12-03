@@ -27,17 +27,16 @@ object TestActionableEventMatcherFactory {
             TestServeEvidenceFactory.createEvidenceForCharacteristic(TumorCharacteristicType.EBV_POSITIVE),
             TestServeEvidenceFactory.createEvidenceForHLA()
         )
-        val actionableEvents = ActionableEvents(evidences, emptyList())
 
         return ActionableEventMatcher(
-            personalizedActionabilityFactory,
-            SignatureEvidence.create(actionableEvents),
-            VariantEvidence.create(actionableEvents),
-            CopyNumberEvidence.create(actionableEvents),
-            HomozygousDisruptionEvidence.create(actionableEvents),
-            BreakendEvidence.create(actionableEvents),
-            FusionEvidence.create(actionableEvents),
-            VirusEvidence.create(actionableEvents)
+            personalizedActionabilityFactory = personalizedActionabilityFactory,
+            variantEvidence = VariantEvidence.create(evidences, emptyList()),
+            copyNumberEvidence = CopyNumberEvidence.create(evidences, emptyList()),
+            breakendEvidence = BreakendEvidence.create(evidences, emptyList()),
+            homozygousDisruptionEvidence = HomozygousDisruptionEvidence.create(evidences, emptyList()),
+            fusionEvidence = FusionEvidence.create(evidences, emptyList()),
+            virusEvidence = VirusEvidence.create(evidences, emptyList()),
+            signatureEvidence = SignatureEvidence.create(evidences, emptyList())
         )
     }
 }

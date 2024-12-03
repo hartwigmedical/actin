@@ -12,17 +12,17 @@ import com.hartwig.serve.datamodel.molecular.range.RangeAnnotation
 
 object TestServeFactory {
 
-    fun createWithDoid(doid: String): Indication {
+    fun createIndicationWithDoid(doid: String): Indication {
         return ImmutableIndication.builder()
-            .applicableType(ImmutableCancerType.builder().name("").doid(doid).build())
+            .applicableType(ImmutableCancerType.builder().name(doid).doid(doid).build())
             .excludedSubTypes(emptySet())
             .build()
     }
 
-    fun createWithDoidAndExcludedDoid(doid: String, excludedDoid: String): Indication {
+    fun createIndicationWithDoidAndExcludedDoid(doid: String, excludedDoid: String): Indication {
         return ImmutableIndication.builder()
-            .applicableType(ImmutableCancerType.builder().name("").doid(doid).build())
-            .addExcludedSubTypes(ImmutableCancerType.builder().name("").doid(excludedDoid).build())
+            .applicableType(ImmutableCancerType.builder().name(doid).doid(doid).build())
+            .addExcludedSubTypes(ImmutableCancerType.builder().name(excludedDoid).doid(excludedDoid).build())
             .build()
     }
 

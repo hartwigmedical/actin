@@ -1,6 +1,8 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
+import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.serve.datamodel.common.Indication
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.trial.ActionableTrial
@@ -9,15 +11,14 @@ internal class PersonalizedActionabilityFactory internal constructor(
     private val expandedTumorDoids: Set<String>
 ) {
 
-    fun create(matches: ActionableEvents): ActionabilityMatch {
-        val (onLabelEvidences, offLabelEvidences) = partitionEvidences(matches.evidences)
-        val (onLabelTrials, offLabelTrials) = partitionTrials(matches.trials)
+    fun create(match: ActionabilityMatch): ClinicalEvidence {
+        val (onLabelEvidences, offLabelEvidences) = partitionEvidences(match.evidenceMatches)
+        val (onLabelTrials, _) = partitionTrials(match.trialMatches)
 
-        return ActionabilityMatch(
-            onLabelEvidence = onLabelEvidences,
-            offLabelEvidence = offLabelEvidences,
-            onLabelTrials = onLabelTrials,
-            offLabelTrials = offLabelTrials
+        return ClinicalEvidenceFactory.create(
+            onLabelEvidences = onLabelEvidences,
+            offLabelEvidences = offLabelEvidences,
+            onLabelTrials = onLabelTrials
         )
     }
 

@@ -188,14 +188,13 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         doidEntry: DoidEntry,
         tumorDoids: Set<String>
     ): Pair<KnownEvents, EvidenceDatabase> {
-        val serveRefGenomeVersion = toServeRefGenomeVersion(orangeRefGenomeVersion)
-        val filePath = ServeJson.jsonFilePath(config.serveDirectory)
+        val jsonFilePath = ServeJson.jsonFilePath(config.serveDirectory)
 
-        LOGGER.info("Loading SERVE from {}", filePath)
-        val (knownEvents, actionableEvents) = ServeLoader.loadServe(filePath, serveRefGenomeVersion)
-        val evidenceDatabase = EvidenceDatabaseFactory.create(knownEvents, actionableEvents, doidEntry, tumorDoids)
+        LOGGER.info("Loading SERVE from {}", jsonFilePath)
+        val serveRecord = ServeLoader.load(jsonFilePath, toServeRefGenomeVersion(orangeRefGenomeVersion))
+        val evidenceDatabase = EvidenceDatabaseFactory.create(serveRecord, doidEntry, tumorDoids)
 
-        return Pair(knownEvents, evidenceDatabase)
+        return Pair(serveRecord.knownEvents(), evidenceDatabase)
     }
 
     private fun toServeRefGenomeVersion(refGenomeVersion: OrangeRefGenomeVersion): RefGenome {

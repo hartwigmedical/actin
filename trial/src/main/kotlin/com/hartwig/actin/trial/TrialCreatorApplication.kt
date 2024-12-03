@@ -38,9 +38,9 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
         LOGGER.info("Loading known genes from serve db {}", config.serveDbJson)
-        val (knownEvents, _) = ServeLoader.loadServe(config.serveDbJson, RefGenome.V37)
-        val knownGenes = knownEvents.genes()
+        val knownGenes = ServeLoader.load(config.serveDbJson, RefGenome.V37).knownEvents().genes()
         LOGGER.info(" Loaded {} known genes", knownGenes.size)
+
         val geneFilter = GeneFilterFactory.createFromKnownGenes(knownGenes)
 
         val configInterpreter = configInterpreter(EnvironmentConfiguration.create(config.overridesYaml).trial)

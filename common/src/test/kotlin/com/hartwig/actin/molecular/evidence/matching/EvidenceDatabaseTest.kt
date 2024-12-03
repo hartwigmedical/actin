@@ -6,10 +6,10 @@ import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalDisrupt
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalHomozygousDisruption
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalVirus
 import com.hartwig.actin.datamodel.molecular.VariantType
+import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.orange.driver.VirusType
-import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -66,13 +66,13 @@ class EvidenceDatabaseTest {
             isReportable = true,
         )
         assertThat(database.lookupKnownFusion(fusion)).isNotNull
-        assertEvidenceCountMatchesExpected(database.evidenceForFusion(fusion), 2)
+        assertThat(database.evidenceForFusion(fusion).treatmentEvidence.size).isEqualTo(2)
 
         val virus = minimalVirus().copy(isReportable = true, type = VirusType.HUMAN_PAPILLOMA_VIRUS)
-        assertEvidenceCountMatchesExpected(database.evidenceForVirus(virus), 1)
+        assertThat(database.evidenceForVirus(virus).treatmentEvidence.size).isEqualTo(1)
     }
 
-    private fun assertEvidenceCountMatchesExpected(match: ActionabilityMatch, expectedCount: Int) {
-        assertThat(match.onLabelEvidence.size + match.offLabelEvidence.size).isEqualTo(expectedCount)
+    private fun assertEvidenceCountMatchesExpected(match: ClinicalEvidence, expectedCount: Int) {
+        assertThat(match.treatmentEvidence.size).isEqualTo(expectedCount)
     }
 }

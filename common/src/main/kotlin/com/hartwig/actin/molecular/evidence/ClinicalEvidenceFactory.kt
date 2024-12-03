@@ -11,7 +11,6 @@ import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.datamodel.molecular.evidence.MolecularMatchDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
-import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.characteristicsFilter
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.codonFilter
@@ -37,17 +36,21 @@ object ClinicalEvidenceFactory {
         return ClinicalEvidence(treatmentEvidence = emptySet(), eligibleTrials = emptySet())
     }
 
-    fun create(actionabilityMatch: ActionabilityMatch): ClinicalEvidence {
-        val onLabelEvidence = createAllTreatmentEvidences(true, actionabilityMatch.onLabelEvidence)
-        val offLabelEvidence = createAllTreatmentEvidences(false, actionabilityMatch.offLabelEvidence)
+    fun create(
+        onLabelEvidences: List<EfficacyEvidence>,
+        offLabelEvidences: List<EfficacyEvidence>,
+        onLabelTrials: List<ActionableTrial>
+    ): ClinicalEvidence {
+        val onLabelTreatmentEvidences = convertToTreatmentEvidences(true, onLabelEvidences)
+        val offLabelTreatmentEvidences = convertToTreatmentEvidences(false, offLabelEvidences)
 
         return ClinicalEvidence(
-            treatmentEvidence = onLabelEvidence + offLabelEvidence,
-            eligibleTrials = createAllExternalTrials(actionabilityMatch.onLabelTrials)
+            treatmentEvidence = onLabelTreatmentEvidences + offLabelTreatmentEvidences,
+            eligibleTrials = convertToExternalTrials(onLabelTrials)
         )
     }
 
-    private fun createAllTreatmentEvidences(isOnLabel: Boolean, evidences: List<EfficacyEvidence>): Set<TreatmentEvidence> {
+    private fun convertToTreatmentEvidences(isOnLabel: Boolean, evidences: List<EfficacyEvidence>): Set<TreatmentEvidence> {
         val filters = listOf(
             geneFilter() to { evidence: EfficacyEvidence -> extractGene(evidence) },
             codonFilter() to { evidence: EfficacyEvidence -> extractRange(evidence) },
@@ -99,7 +102,7 @@ object ClinicalEvidenceFactory {
         )
     }
 
-    private fun createAllExternalTrials(trials: List<ActionableTrial>): Set<ExternalTrial> {
+    private fun convertToExternalTrials(trials: List<ActionableTrial>): Set<ExternalTrial> {
         return listOf(
             geneFilter() to { trial: ActionableTrial -> extractGene(trial) },
             codonFilter() to { trial: ActionableTrial -> extractRange(trial) },

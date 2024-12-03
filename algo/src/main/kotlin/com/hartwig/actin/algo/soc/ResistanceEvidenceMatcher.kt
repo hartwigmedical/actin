@@ -8,7 +8,6 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.doid.DoidModel
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEvents
 import com.hartwig.actin.molecular.evidence.actionability.BreakendEvidence
 import com.hartwig.actin.molecular.evidence.actionability.CopyNumberEvidence
 import com.hartwig.actin.molecular.evidence.actionability.FusionEvidence
@@ -41,64 +40,67 @@ class ResistanceEvidenceMatcher(
 
     fun isFound(evidence: EfficacyEvidence, molecularHistory: MolecularHistory): Boolean? {
         val molecularTests = molecularHistory.molecularTests
+        val variantEvidence = VariantEvidence.create(evidences = listOf(evidence), trials = emptyList())
 
         with(evidence.molecularCriterium()) {
             return when {
                 hotspots().isNotEmpty() -> {
-                    val variantEvidence = VariantEvidence(ActionableEvents(listOf(evidence)), ActionableEvents(), ActionableEvents())
                     molecularTests.any { molecularTest ->
                         molecularTest.drivers.variants.any {
-                            variantEvidence.findMatches(MolecularRecordAnnotatorFunctions.createCriteria(it)).evidences.isNotEmpty()
+                            val criteria = MolecularRecordAnnotatorFunctions.createVariantCriteria(it)
+                            variantEvidence.findMatches(criteria).evidenceMatches.isNotEmpty()
                         }
                     }
                 }
 
                 genes().isNotEmpty() -> {
-                    val actionableEvents = ActionableEvents(listOf(evidence))
-
-                    val variantEvidence = VariantEvidence.create(actionableEvents)
-                    val fusionEvidence = FusionEvidence.create(actionableEvents)
-                    val copyNumberEvidence = CopyNumberEvidence.create(actionableEvents)
-                    val homDisEvidence = HomozygousDisruptionEvidence.create(actionableEvents)
-                    val disruptionEvidence = BreakendEvidence.create(actionableEvents)
+                    val fusionEvidence = FusionEvidence.create(evidences = listOf(evidence), trials = emptyList())
+                    val copyNumberEvidence = CopyNumberEvidence.create(evidences = listOf(evidence), trials = emptyList())
+                    val homDisEvidence = HomozygousDisruptionEvidence.create(evidences = listOf(evidence), trials = emptyList())
+                    val disruptionEvidence = BreakendEvidence.create(evidences = listOf(evidence), trials = emptyList())
 
                     molecularTests.any { molecularTest ->
                         with(molecularTest.drivers) {
-                            val variantMatch =
-                                variants.any { variantEvidence.findMatches(MolecularRecordAnnotatorFunctions.createCriteria(it)).evidences.isNotEmpty() }
-                            val fusionMatch = fusions.any {
-                                fusionEvidence.findMatches(MolecularRecordAnnotatorFunctions.createFusionCriteria(it)).evidences.isNotEmpty()
+                            val variantMatch = variants.any {
+                                val criteria = MolecularRecordAnnotatorFunctions.createVariantCriteria(it)
+                                variantEvidence.findMatches(criteria).evidenceMatches.isNotEmpty()
                             }
-                            variantMatch || fusionMatch || copyNumbers.any { copyNumberEvidence.findMatches(it).evidences.isNotEmpty() } ||
-                                    homozygousDisruptions.any { homDisEvidence.findMatches(it).evidences.isNotEmpty() } ||
-                                    disruptions.any { disruptionEvidence.findMatches(it).evidences.isNotEmpty() }
+                            val fusionMatch = fusions.any {
+                                val criteria = MolecularRecordAnnotatorFunctions.createFusionCriteria(it)
+                                fusionEvidence.findMatches(criteria).evidenceMatches.isNotEmpty()
+                            }
+                            variantMatch || fusionMatch ||
+                                    copyNumbers.any { copyNumberEvidence.findMatches(it).evidenceMatches.isNotEmpty() } ||
+                                    homozygousDisruptions.any { homDisEvidence.findMatches(it).evidenceMatches.isNotEmpty() } ||
+                                    disruptions.any { disruptionEvidence.findMatches(it).evidenceMatches.isNotEmpty() }
                         }
                     }
                 }
 
                 fusions().isNotEmpty() -> {
-                    val fusionEvidence = FusionEvidence(ActionableEvents(), ActionableEvents(listOf(evidence)))
+                    val fusionEvidence = FusionEvidence.create(evidences = listOf(evidence), trials = emptyList())
                     molecularTests.any { molecularTest ->
                         molecularTest.drivers.fusions.any {
-                            fusionEvidence.findMatches(MolecularRecordAnnotatorFunctions.createFusionCriteria(it)).evidences.isNotEmpty()
+                            val criteria = MolecularRecordAnnotatorFunctions.createFusionCriteria(it)
+                            fusionEvidence.findMatches(criteria).evidenceMatches.isNotEmpty()
                         }
                     }
                 }
 
                 exons().isNotEmpty() -> {
-                    val variantEvidence = VariantEvidence(ActionableEvents(), ActionableEvents(listOf(evidence)), ActionableEvents())
                     molecularTests.any { molecularTest ->
                         molecularTest.drivers.variants.any {
-                            variantEvidence.findMatches(MolecularRecordAnnotatorFunctions.createCriteria(it)).evidences.isNotEmpty()
+                            val criteria = MolecularRecordAnnotatorFunctions.createVariantCriteria(it)
+                            variantEvidence.findMatches(criteria).evidenceMatches.isNotEmpty()
                         }
                     }
                 }
 
                 codons().isNotEmpty() -> {
-                    val variantEvidence = VariantEvidence(ActionableEvents(), ActionableEvents(listOf(evidence)), ActionableEvents())
                     molecularTests.any { molecularTest ->
                         molecularTest.drivers.variants.any {
-                            variantEvidence.findMatches(MolecularRecordAnnotatorFunctions.createCriteria(it)).evidences.isNotEmpty()
+                            val criteria = MolecularRecordAnnotatorFunctions.createVariantCriteria(it)
+                            variantEvidence.findMatches(criteria).evidenceMatches.isNotEmpty()
                         }
                     }
                 }

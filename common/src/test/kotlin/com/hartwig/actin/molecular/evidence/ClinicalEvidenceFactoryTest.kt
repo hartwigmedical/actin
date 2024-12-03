@@ -8,7 +8,6 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFacto
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
-import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -27,17 +26,14 @@ class ClinicalEvidenceFactoryTest {
 
         val result =
             ClinicalEvidenceFactory.create(
-                ActionabilityMatch(
-                    onLabelEvidence = listOf(
-                        TestServeEvidenceFactory.create(
-                            TestServeMolecularFactory.createHotspot(),
-                            treatment = onLabel.treatment
-                        )
-                    ),
-                    offLabelEvidence = emptyList(),
-                    onLabelTrials = emptyList(),
-                    offLabelTrials = emptyList()
-                )
+                onLabelEvidences = listOf(
+                    TestServeEvidenceFactory.create(
+                        TestServeMolecularFactory.createHotspot(),
+                        treatment = onLabel.treatment
+                    )
+                ),
+                offLabelEvidences = emptyList(),
+                onLabelTrials = emptyList()
             )
 
         assertThat(result.treatmentEvidence).containsExactly(onLabel)
@@ -57,17 +53,14 @@ class ClinicalEvidenceFactoryTest {
 
         val result =
             ClinicalEvidenceFactory.create(
-                ActionabilityMatch(
-                    onLabelEvidence = emptyList(),
-                    offLabelEvidence = listOf(
-                        TestServeEvidenceFactory.create(
-                            TestServeMolecularFactory.createHotspot(),
-                            treatment = offLabel.treatment
-                        )
-                    ),
-                    onLabelTrials = emptyList(),
-                    offLabelTrials = emptyList()
-                )
+                onLabelEvidences = emptyList(),
+                offLabelEvidences = listOf(
+                    TestServeEvidenceFactory.create(
+                        TestServeMolecularFactory.createHotspot(),
+                        treatment = offLabel.treatment
+                    )
+                ),
+                onLabelTrials = emptyList()
             )
 
         assertThat(result.treatmentEvidence).containsExactly(offLabel)
@@ -82,17 +75,14 @@ class ClinicalEvidenceFactoryTest {
 
         val result =
             ClinicalEvidenceFactory.create(
-                ActionabilityMatch(
-                    onLabelEvidence = emptyList(),
-                    offLabelEvidence = emptyList(),
-                    onLabelTrials = listOf(
-                        TestServeTrialFactory.create(
-                            setOf(molecularCriterium),
-                            ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
-                            trial.title
-                        )
-                    ),
-                    offLabelTrials = emptyList()
+                onLabelEvidences = emptyList(),
+                offLabelEvidences = emptyList(),
+                onLabelTrials = listOf(
+                    TestServeTrialFactory.create(
+                        setOf(molecularCriterium),
+                        ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
+                        trial.title
+                    )
                 )
             )
 

@@ -1,10 +1,10 @@
 package com.hartwig.actin.molecular.evidence.matching
 
+import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.orange.driver.HomozygousDisruption
 import com.hartwig.actin.datamodel.molecular.orange.driver.Virus
-import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventMatcher
 import com.hartwig.actin.molecular.evidence.known.KnownEventResolver
 import com.hartwig.serve.datamodel.molecular.common.GeneAlteration
@@ -15,19 +15,19 @@ class EvidenceDatabase(
     private val actionableEventMatcher: ActionableEventMatcher
 ) {
 
-    fun evidenceForMicrosatelliteStatus(isMicrosatelliteUnstable: Boolean): ActionabilityMatch {
+    fun evidenceForMicrosatelliteStatus(isMicrosatelliteUnstable: Boolean): ClinicalEvidence {
         return actionableEventMatcher.matchForMicrosatelliteStatus(isMicrosatelliteUnstable)
     }
 
-    fun evidenceForHomologousRepairStatus(isHomologousRepairDeficient: Boolean): ActionabilityMatch {
+    fun evidenceForHomologousRepairStatus(isHomologousRepairDeficient: Boolean): ClinicalEvidence {
         return actionableEventMatcher.matchForHomologousRepairStatus(isHomologousRepairDeficient)
     }
 
-    fun evidenceForTumorMutationalBurdenStatus(hasHighTumorMutationalBurden: Boolean): ActionabilityMatch {
+    fun evidenceForTumorMutationalBurdenStatus(hasHighTumorMutationalBurden: Boolean): ClinicalEvidence {
         return actionableEventMatcher.matchForHighTumorMutationalBurden(hasHighTumorMutationalBurden)
     }
 
-    fun evidenceForTumorMutationalLoadStatus(hasHighTumorMutationalLoad: Boolean): ActionabilityMatch {
+    fun evidenceForTumorMutationalLoadStatus(hasHighTumorMutationalLoad: Boolean): ClinicalEvidence {
         return actionableEventMatcher.matchForHighTumorMutationalLoad(hasHighTumorMutationalLoad)
     }
 
@@ -35,7 +35,7 @@ class EvidenceDatabase(
         return knownEventResolver.resolveForVariant(variant)
     }
 
-    fun evidenceForVariant(variant: VariantMatchCriteria): ActionabilityMatch {
+    fun evidenceForVariant(variant: VariantMatchCriteria): ClinicalEvidence {
         return actionableEventMatcher.matchForVariant(variant)
     }
 
@@ -43,7 +43,7 @@ class EvidenceDatabase(
         return knownEventResolver.resolveForCopyNumber(copyNumber)
     }
 
-    fun evidenceForCopyNumber(copyNumber: CopyNumber): ActionabilityMatch {
+    fun evidenceForCopyNumber(copyNumber: CopyNumber): ClinicalEvidence {
         return actionableEventMatcher.matchForCopyNumber(copyNumber)
     }
 
@@ -51,7 +51,7 @@ class EvidenceDatabase(
         return knownEventResolver.resolveForHomozygousDisruption(homozygousDisruption)
     }
 
-    fun evidenceForHomozygousDisruption(homozygousDisruption: HomozygousDisruption): ActionabilityMatch {
+    fun evidenceForHomozygousDisruption(homozygousDisruption: HomozygousDisruption): ClinicalEvidence {
         return actionableEventMatcher.matchForHomozygousDisruption(homozygousDisruption)
     }
 
@@ -59,7 +59,7 @@ class EvidenceDatabase(
         return knownEventResolver.resolveForBreakend(disruption)
     }
 
-    fun evidenceForBreakend(disruption: Disruption): ActionabilityMatch {
+    fun evidenceForBreakend(disruption: Disruption): ClinicalEvidence {
         return actionableEventMatcher.matchForBreakend(disruption)
     }
 
@@ -67,11 +67,11 @@ class EvidenceDatabase(
         return knownEventResolver.resolveForFusion(fusion)
     }
 
-    fun evidenceForFusion(fusion: FusionMatchCriteria): ActionabilityMatch {
+    fun evidenceForFusion(fusion: FusionMatchCriteria): ClinicalEvidence {
         return actionableEventMatcher.matchForFusion(fusion)
     }
 
-    fun evidenceForVirus(virus: Virus): ActionabilityMatch {
+    fun evidenceForVirus(virus: Virus): ClinicalEvidence {
         return actionableEventMatcher.matchForVirus(virus)
     }
 }
