@@ -121,15 +121,10 @@ class ExternalTrialSummarizerTest {
                 "Utrecht" to setOf(Hospital("Sophia KinderZiekenhuis", true))
             )
         )
-        val notFilteredHospitalInOtherCountry = createExternalTrialSummaryWithHospitals(
-            BELGIUM to mapOf(
-                "Leuven" to setOf(Hospital("Leuven hospital", null))
-            )
-        )
         assertThat(
-            setOf(notFilteredHospital, filteredHospital, notFilteredHospitalInOtherCountry)
+            setOf(notFilteredHospital, filteredHospital)
                 .filterExclusivelyInChildrensHospitalsInReferenceCountry(1960, LocalDate.of(2021, 1, 1), CountryName.NETHERLANDS)
-        ).containsExactlyInAnyOrder(notFilteredHospital, notFilteredHospitalInOtherCountry)
+        ).containsExactlyInAnyOrder(notFilteredHospital)
     }
 
     @Test

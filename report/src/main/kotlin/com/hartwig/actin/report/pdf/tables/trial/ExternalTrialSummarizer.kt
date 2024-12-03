@@ -24,7 +24,8 @@ data class EventWithExternalTrial(val event: String, val trial: ExternalTrial)
 private fun countryNames(it: ExternalTrialSummary) = it.countries.map { c -> c.name }
 
 private fun hospitalsNamesForCountry(trial: ExternalTrialSummary, country: CountryName) =
-    trial.countries.firstOrNull { it.name == country }?.hospitalsPerCity?.flatMap { it.value }?.toSet() ?: emptySet()
+    trial.countries.firstOrNull { it.name == country }?.hospitalsPerCity?.flatMap { it.value }?.toSet()
+        ?: throw IllegalArgumentException("Country not found")
 
 fun Set<ExternalTrialSummary>.filterInternalTrials(internalTrials: Set<TrialMatch>): Set<ExternalTrialSummary> {
     val internalIds = internalTrials.map { it.identification.nctId }.toSet()
@@ -46,12 +47,9 @@ fun Set<ExternalTrialSummary>.filterExclusivelyInChildrensHospitalsInReferenceCo
 ): Set<ExternalTrialSummary> {
     val isYoungAdult = referenceDate.year - birthYear < 25
     return this.filter { trial ->
-        val isInReferenceCountry = countryOfReference in countryNames(trial)
-        val hospitalsInReferenceCountry = hospitalsNamesForCountry(trial, countryOfReference)
         val allHospitalsAreChildrensInReferenceCountry =
-            hospitalsInReferenceCountry.takeIf { it.isNotEmpty() }?.all { it.isChildrensHospital == true } ?: false
-
-        !allHospitalsAreChildrensInReferenceCountry || isYoungAdult || !isInReferenceCountry
+            hospitalsNamesForCountry(trial, countryOfReference).all { it.isChildrensHospital == true }
+        !allHospitalsAreChildrensInReferenceCountry || isYoungAdult
     }.toSet()
 }
 

@@ -224,15 +224,18 @@ class ReportContentProvider(private val report: Report, private val enableExtend
 
         val externalEligibleTrialsFiltered = ExternalTrialSummarizer.summarize(externalEligibleTrials)
             .filterInternalTrials(report.treatmentMatch.trialMatches.toSet())
-            .filterExclusivelyInChildrensHospitalsInReferenceCountry(
-                patientRecord.patient.birthYear,
-                report.treatmentMatch.referenceDate,
-                report.config.countryOfReference
-            )
 
         val nationalTrials = externalEligibleTrialsFiltered.filterInCountryOfReference(report.config.countryOfReference)
         val nationalTrialsNotOverlappingHospital =
-            hideOverlappingTrials(nationalTrials, nationalTrials.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(evaluated))
+            hideOverlappingTrials(
+                nationalTrials,
+                nationalTrials.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(evaluated)
+                    .filterExclusivelyInChildrensHospitalsInReferenceCountry(
+                        patientRecord.patient.birthYear,
+                        report.treatmentMatch.referenceDate,
+                        report.config.countryOfReference
+                    )
+            )
 
         val internationalTrials = externalEligibleTrialsFiltered.filterNotInCountryOfReference(report.config.countryOfReference)
         val internationalTrialsNotOverlappingHospitalOrNational = hideOverlappingTrials(
