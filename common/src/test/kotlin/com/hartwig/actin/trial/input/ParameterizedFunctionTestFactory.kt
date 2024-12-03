@@ -11,7 +11,7 @@ import com.hartwig.actin.trial.input.composite.CompositeInput
 import com.hartwig.actin.trial.input.composite.CompositeRules
 import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
 
-class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
+class ParameterizedFunctionTestFactory(private val doidTermToUse: String, private val icdTitleToUse: String) {
 
     private val arbitraryRule: EligibilityRule = firstNonComposite()
 
@@ -148,16 +148,12 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
                 listOf("string1;string2", "1")
             }
 
-            FunctionInput.ONE_INTEGER_ONE_STRING -> {
-                listOf("1", "string")
-            }
-
-            FunctionInput.ONE_INTEGER_MANY_STRINGS -> {
-                listOf("1", "string1;string2")
-            }
-
             FunctionInput.ONE_INTEGER_MANY_DOID_TERMS -> {
                 listOf("1", "$doidTermToUse;$doidTermToUse")
+            }
+
+            FunctionInput.ONE_INTEGER_MANY_ICD_TITLES -> {
+                listOf("1", "$icdTitleToUse;$icdTitleToUse")
             }
 
             FunctionInput.MANY_TUMOR_STAGES -> {

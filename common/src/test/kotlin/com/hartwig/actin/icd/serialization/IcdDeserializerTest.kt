@@ -108,11 +108,18 @@ class IcdDeserializerTest {
         assertThat(IcdDeserializer.resolveParentCode(depthThreeChild)).isEqualTo("1A01.1")
     }
 
+    @Test
+    fun `Should trim all leading '-' characters from title`() {
+        val raw = createRawNode(title = "---some--title---")
+        assertThat(IcdDeserializer.trimTitle(raw)).isEqualTo("some--title---")
+    }
+
     private fun createRawNode(
         chapterNo: String = "1",
         blockId: String? = null,
+        title: String = "title",
         code: String? = null,
-        classKind: ClassKind,
+        classKind: ClassKind = ClassKind.CATEGORY,
         depthInKind: Int = 1,
         grouping1: String? = null,
         grouping2: String? = null,
@@ -125,7 +132,7 @@ class IcdDeserializerTest {
             "http://linearizationlink/4321",
             code,
             blockId,
-            "title",
+            title,
             classKind,
             depthInKind,
             isResidual = false,

@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.doid.TestDoidModelFactory
+import com.hartwig.actin.icd.TestIcdFactory
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
@@ -28,6 +29,7 @@ class TrialIngestionTest {
                 TRIAL_CONFIG_DIRECTORY,
                 TestTrialStatusConfigInterpreterFactory.createWithMinimalTestTrialStatusDatabase(),
                 TestDoidModelFactory.createMinimalTestDoidModel(),
+                TestIcdFactory.createTestModel(),
                 TestGeneFilterFactory.createNeverValid(),
                 TreatmentDatabase(emptyMap(), emptyMap()),
                 MedicationCategories(emptyMap(), AtcTree(emptyMap()))

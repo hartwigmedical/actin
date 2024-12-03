@@ -9,7 +9,7 @@ class IcdNode(val code: String, val parentCode: String?, val title: String) {
             return IcdNode(
                 IcdDeserializer.resolveCode(rawNode),
                 IcdDeserializer.resolveParentCode(rawNode),
-                rawNode.title
+                IcdDeserializer.trimTitle(rawNode)
             )
         }
     }

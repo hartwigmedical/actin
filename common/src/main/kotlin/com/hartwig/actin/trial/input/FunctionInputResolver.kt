@@ -15,6 +15,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.FunctionInput
 import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.medication.MedicationInputChecker
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
@@ -41,6 +42,7 @@ import com.hartwig.actin.trial.input.single.OneGeneTwoIntegers
 import com.hartwig.actin.trial.input.single.OneHaplotype
 import com.hartwig.actin.trial.input.single.OneHlaAllele
 import com.hartwig.actin.trial.input.single.OneIntegerManyDoidTerms
+import com.hartwig.actin.trial.input.single.OneIntegerManyIcdTitles
 import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
 import com.hartwig.actin.trial.input.single.OneIntegerOneString
 import com.hartwig.actin.trial.input.single.OneMedicationCategory
@@ -61,6 +63,7 @@ import java.util.Locale
 
 class FunctionInputResolver(
     private val doidModel: DoidModel,
+    val icdModel: IcdModel,
     private val molecularInputChecker: MolecularInputChecker,
     private val treatmentDatabase: TreatmentDatabase,
     private val medicationCategories: MedicationCategories
@@ -222,18 +225,13 @@ class FunctionInputResolver(
                     return true
                 }
 
-                FunctionInput.ONE_INTEGER_ONE_STRING -> {
-                    createOneIntegerOneStringInput(function)
-                    return true
-                }
-
-                FunctionInput.ONE_INTEGER_MANY_STRINGS -> {
-                    createOneIntegerManyStringsInput(function)
-                    return true
-                }
-
                 FunctionInput.ONE_INTEGER_MANY_DOID_TERMS -> {
                     createOneIntegerManyDoidTermsInput(function)
+                    return true
+                }
+
+                FunctionInput.ONE_INTEGER_MANY_ICD_TITLES -> {
+                    createOneIntegerManyIcdTitlesInput(function)
                     return true
                 }
 
@@ -552,22 +550,6 @@ class FunctionInputResolver(
         )
     }
 
-    fun createOneIntegerOneStringInput(function: EligibilityFunction): OneIntegerOneString {
-        assertParamConfig(function, FunctionInput.ONE_INTEGER_ONE_STRING, 2)
-        return OneIntegerOneString(
-            integer = parameterAsInt(function, 0),
-            string = parameterAsString(function, 1)
-        )
-    }
-
-    fun createOneIntegerManyStringsInput(function: EligibilityFunction): OneIntegerManyStrings {
-        assertParamConfig(function, FunctionInput.ONE_INTEGER_MANY_STRINGS, 2)
-        return OneIntegerManyStrings(
-            integer = parameterAsInt(function, 0),
-            strings = toStringList(function.parameters[1])
-        )
-    }
-
     fun createOneIntegerManyDoidTermsInput(function: EligibilityFunction): OneIntegerManyDoidTerms {
         assertParamConfig(function, FunctionInput.ONE_INTEGER_MANY_DOID_TERMS, 2)
         val doidStringList = toStringList(function.parameters[1])
@@ -578,6 +560,20 @@ class FunctionInputResolver(
         return OneIntegerManyDoidTerms(
             integer = parameterAsInt(function, 0),
             doidTerms = doidStringList
+        )
+    }
+
+    fun createOneIntegerManyIcdTitlesInput(function: EligibilityFunction): OneIntegerManyIcdTitles {
+        assertParamConfig(function, FunctionInput.ONE_INTEGER_MANY_ICD_TITLES, 2)
+        val icdStringList = toStringList(function.parameters[1])
+        val invalidTitles = icdStringList.filter { !icdModel.isValidIcdTitle(it) }
+        if (invalidTitles.isNotEmpty()) {
+            throw IllegalStateException("ICD title(s) not valid: ${invalidTitles.joinToString(", ")}")
+        }
+
+        return OneIntegerManyIcdTitles(
+            integer = parameterAsInt(function, 0),
+            icdTitles = icdStringList
         )
     }
 

@@ -13,11 +13,10 @@ import java.time.LocalDate
 
 const val DEFAULT_QUESTIONNAIRE_GRADE = 2
 
-//TODO: In case X => 2, ignore EHR toxicities in evaluation
-class HasToxicityWithGrade internal constructor(
+class HasToxicityWithGrade(
     private val minGrade: Int,
-    private val nameFilter: String?,
-    private val ignoreFilters: Set<String>,
+    private val icdTitleFilter: List<String>?,
+    private val ignoreFilters: List<String>,
     private val warnIfToxicitiesNotFromQuestionnaire: Boolean,
     private val referenceDate: LocalDate
 ) : EvaluationFunction {
@@ -31,9 +30,10 @@ class HasToxicityWithGrade internal constructor(
                     } else toxicity.grade to false
 
                 val gradeMatch = grade != null && grade >= minGrade
-                val nameMatch = nameFilter == null || toxicity.name.lowercase().contains(nameFilter.lowercase())
+//                val nameMatch = nameFilter == null || toxicity.name.lowercase().contains(nameFilter.lowercase())
 
-                val (matchingToxicity, isMatchingQuestionnaireToxicity) = if (gradeMatch && nameMatch) {
+//                val (matchingToxicity, isMatchingQuestionnaireToxicity) = if (gradeMatch && nameMatch) {
+                val (matchingToxicity, isMatchingQuestionnaireToxicity) = if (gradeMatch) {
                     setOf(toxicity.name) to (toxicity.source == ToxicitySource.QUESTIONNAIRE)
                 } else emptySet<String>() to false
 

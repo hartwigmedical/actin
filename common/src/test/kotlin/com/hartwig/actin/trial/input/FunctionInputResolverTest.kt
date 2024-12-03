@@ -13,6 +13,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.datamodel.trial.FunctionInput
+import com.hartwig.actin.icd.datamodel.IcdNode
 import com.hartwig.actin.trial.input.TestFunctionInputResolverFactory.createTestResolver
 import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
@@ -33,8 +34,8 @@ import com.hartwig.actin.trial.input.single.OneGeneTwoIntegers
 import com.hartwig.actin.trial.input.single.OneHaplotype
 import com.hartwig.actin.trial.input.single.OneHlaAllele
 import com.hartwig.actin.trial.input.single.OneIntegerManyDoidTerms
+import com.hartwig.actin.trial.input.single.OneIntegerManyIcdTitles
 import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
-import com.hartwig.actin.trial.input.single.OneIntegerOneString
 import com.hartwig.actin.trial.input.single.OneMedicationCategory
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyDrugs
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypesManyDrugs
@@ -430,31 +431,6 @@ class FunctionInputResolverTest {
     }
 
     @Test
-    fun `Should resolve functions with one integer one string input`() {
-        val rule = firstOfType(FunctionInput.ONE_INTEGER_ONE_STRING)
-        val valid = create(rule, listOf("2", "test"))
-        assertThat(resolver.hasValidInputs(valid)!!).isTrue
-        assertThat(resolver.createOneIntegerOneStringInput(valid)).isEqualTo(OneIntegerOneString(2, "test"))
-        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("1")))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("not an integer", "not an integer")))!!).isFalse
-    }
-
-    @Test
-    fun `Should resolve functions with one integer many strings input`() {
-        val rule: EligibilityRule = firstOfType(FunctionInput.ONE_INTEGER_MANY_STRINGS)
-        val valid: EligibilityFunction = create(rule, listOf("2", "test1;test2;test3"))
-        assertThat(resolver.hasValidInputs(valid)!!).isTrue
-
-        val expected = OneIntegerManyStrings(2, listOf("test1", "test2", "test3"))
-        assertThat(resolver.createOneIntegerManyStringsInput(valid)).isEqualTo(expected)
-
-        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("1")))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("not an integer", "not an integer")))!!).isFalse
-    }
-
-    @Test
     fun `Should resolve functions with one integer many doid terms input`() {
         val resolver =
             TestFunctionInputResolverFactory.createResolverWithTwoDoidsAndTerms(listOf("doid 1", "doid 2"), listOf("term 1", "term 2"))
@@ -468,6 +444,23 @@ class FunctionInputResolverTest {
         assertThat(resolver.hasValidInputs(create(rule, listOf("1")))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("not an integer", "not an integer")))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("1", "doid term", "other string")))!!).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with one integer many icd titles input`() {
+        val resolver = TestFunctionInputResolverFactory.createResolverWithIcdNodes(
+            listOf(IcdNode("code 1", "parent 1", "title 1"), IcdNode("code 2", "parent 2", "title 2"))
+        )
+        val rule: EligibilityRule = firstOfType(FunctionInput.ONE_INTEGER_MANY_ICD_TITLES)
+        val valid: EligibilityFunction = create(rule, listOf("2", "title 1;title 2"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val expected = OneIntegerManyIcdTitles(2, listOf("title 1", "title 2"))
+        assertThat(resolver.createOneIntegerManyIcdTitlesInput(valid)).isEqualTo(expected)
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("1")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("not an integer", "not an integer")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("1", "icd title", "other string")))!!).isFalse
     }
 
     @Test

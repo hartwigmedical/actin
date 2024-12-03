@@ -51,6 +51,10 @@ object IcdDeserializer {
         }
     }
 
+    fun trimTitle(rawNode: SerializedIcdNode): String {
+        return rawNode.title.trimStart { it == '-' }
+    }
+
     private fun isValid(rawNode: SerializedIcdNode) = rawNode.chapterNo != "0" && rawNode.depthInKind > 0
 
     private fun returnHighestGrouping(rawNode: SerializedIcdNode): String? {
