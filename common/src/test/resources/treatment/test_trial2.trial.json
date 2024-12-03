@@ -1,20 +1,12 @@
 {
   "identification": {
-    "trialId": "test trial",
+    "trialId": "test trial 2",
     "open": true,
-    "acronym": "TEST-TRIAL",
+    "acronym": "TEST-TRIAL2",
     "title": "This is a trial to test ACTIN",
-    "source": "EMC",
-    "locations": [
-      {
-        "id": 1,
-        "name": "Amsterdam UMC"
-      },
-      {
-        "id": 2,
-        "name": "Antoni van Leeuwenhoek"
-      }
-    ]
+    "phase": null,
+    "source": null,
+    "locations": null
   },
   "generalEligibility": [
     {

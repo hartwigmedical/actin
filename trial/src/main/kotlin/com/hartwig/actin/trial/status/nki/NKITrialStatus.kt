@@ -1,7 +1,7 @@
 package com.hartwig.actin.trial.status.nki
 
 data class NKITrialStatus(
-    val studyId: String,
+    val studyId: String?,
     val cohortId: String?,
     val studyMetc: String?,
     val studyAcronym: String?,
