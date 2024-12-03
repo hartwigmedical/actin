@@ -1,16 +1,7 @@
-package com.hartwig.actin.molecular.evidence
+package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.doid.TestDoidModelFactory
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventMatcher
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEvents
-import com.hartwig.actin.molecular.evidence.actionability.BreakendEvidence
-import com.hartwig.actin.molecular.evidence.actionability.CopyNumberEvidence
-import com.hartwig.actin.molecular.evidence.actionability.FusionEvidence
-import com.hartwig.actin.molecular.evidence.actionability.HomozygousDisruptionEvidence
-import com.hartwig.actin.molecular.evidence.actionability.PersonalizedActionabilityFactory
-import com.hartwig.actin.molecular.evidence.actionability.SignatureEvidence
-import com.hartwig.actin.molecular.evidence.actionability.VariantEvidence
-import com.hartwig.actin.molecular.evidence.actionability.VirusEvidence
+import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.molecular.characteristic.TumorCharacteristicType
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent

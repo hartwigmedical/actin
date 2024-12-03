@@ -1,7 +1,6 @@
 package com.hartwig.actin.datamodel.molecular
 
 import com.hartwig.actin.datamodel.TestPatientFactory
-import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.CountryName
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
@@ -23,7 +22,6 @@ import com.hartwig.actin.datamodel.molecular.orange.pharmaco.Haplotype
 import com.hartwig.actin.datamodel.molecular.orange.pharmaco.HaplotypeFunction
 import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoEntry
 import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoGene
-import com.hartwig.serve.datamodel.trial.ImmutableHospital
 import java.time.LocalDate
 
 object TestMolecularFactory {
@@ -135,10 +133,10 @@ object TestMolecularFactory {
 
     private fun createExhaustiveTestCharacteristics(): MolecularCharacteristics {
         return createProperTestCharacteristics().copy(
-            microsatelliteEvidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
-            homologousRepairEvidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
-            tumorMutationalBurdenEvidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
-            tumorMutationalLoadEvidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence()
+            microsatelliteEvidence = TestClinicalEvidenceFactory.createExhaustive(),
+            homologousRepairEvidence = TestClinicalEvidenceFactory.createExhaustive(),
+            tumorMutationalBurdenEvidence = TestClinicalEvidenceFactory.createExhaustive(),
+            tumorMutationalLoadEvidence = TestClinicalEvidenceFactory.createExhaustive()
         )
     }
 
@@ -153,7 +151,7 @@ object TestMolecularFactory {
         isReportable = true,
         event = "PTEN del",
         driverLikelihood = DriverLikelihood.HIGH,
-        evidence = TestClinicalEvidenceFactory.withExternalEligibleTrial(
+        evidence = TestClinicalEvidenceFactory.withTrial(
             TestClinicalEvidenceFactory.createExternalTrial(
                 title = "A Phase 1/2 Randomized Study to Evaluate the Safety and Efficacy of treatment X Plus treatment Y in "
                         + "Combination With Investigational Agents Versus treatment X Plus treatment Y, as First-Line Treatment "
@@ -214,7 +212,7 @@ object TestMolecularFactory {
         isReportable = true,
         event = "EML4 - ALK fusion",
         driverLikelihood = DriverLikelihood.HIGH,
-        evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
+        evidence = TestClinicalEvidenceFactory.createExhaustive(),
         geneStart = "EML4",
         geneEnd = "ALK",
         proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
@@ -256,7 +254,7 @@ object TestMolecularFactory {
                 isReportable = true,
                 event = "MYC amp",
                 driverLikelihood = DriverLikelihood.HIGH,
-                evidence = TestClinicalEvidenceFactory.withExternalEligibleTrials(
+                evidence = TestClinicalEvidenceFactory.withTrials(
                     setOf(
                         TestClinicalEvidenceFactory.createExternalTrial(
                             title = "A Phase 1 Study of XYXYXY, a T-Cell-Redirecting Agent Targeting Z, for Advanced Prostate Cancer",
@@ -293,7 +291,7 @@ object TestMolecularFactory {
                 isReportable = false,
                 event = "MET copy number",
                 driverLikelihood = null,
-                evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
+                evidence = TestClinicalEvidenceFactory.createExhaustive(),
                 gene = "MET",
                 type = CopyNumberType.NONE,
                 minCopies = 6,
@@ -306,7 +304,7 @@ object TestMolecularFactory {
                 isReportable = true,
                 event = "PTEN hom disruption",
                 driverLikelihood = DriverLikelihood.HIGH,
-                evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
+                evidence = TestClinicalEvidenceFactory.createExhaustive(),
                 gene = "PTEN",
                 geneRole = GeneRole.UNKNOWN,
                 proteinEffect = ProteinEffect.UNKNOWN,
@@ -316,7 +314,7 @@ object TestMolecularFactory {
                 isReportable = true,
                 event = "PTEN disruption",
                 driverLikelihood = DriverLikelihood.LOW,
-                evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
+                evidence = TestClinicalEvidenceFactory.createExhaustive(),
                 gene = "PTEN",
                 type = DisruptionType.DEL,
                 junctionCopyNumber = 1.1,
@@ -332,7 +330,7 @@ object TestMolecularFactory {
                 isReportable = false,
                 event = "EML4 - ALK fusion",
                 driverLikelihood = DriverLikelihood.HIGH,
-                evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
+                evidence = TestClinicalEvidenceFactory.createExhaustive(),
                 geneStart = "EML4",
                 geneEnd = "ALK",
                 proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
@@ -347,7 +345,7 @@ object TestMolecularFactory {
                 isReportable = true,
                 event = "HPV positive",
                 driverLikelihood = DriverLikelihood.HIGH,
-                evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
+                evidence = TestClinicalEvidenceFactory.createExhaustive(),
                 name = "Human papillomavirus type 16",
                 type = VirusType.HUMAN_PAPILLOMA_VIRUS,
                 integrations = 3,
@@ -367,7 +365,7 @@ object TestMolecularFactory {
             isReportable = false,
             event = "",
             driverLikelihood = DriverLikelihood.LOW,
-            evidence = ClinicalEvidence(),
+            evidence = TestClinicalEvidenceFactory.createEmpty(),
             gene = "",
             geneRole = GeneRole.UNKNOWN,
             proteinEffect = ProteinEffect.UNKNOWN,
@@ -384,7 +382,7 @@ object TestMolecularFactory {
             isAssociatedWithDrugResistance = false,
             event = "",
             driverLikelihood = DriverLikelihood.LOW,
-            evidence = ClinicalEvidence(),
+            evidence = TestClinicalEvidenceFactory.createEmpty(),
             gene = "",
             geneRole = GeneRole.UNKNOWN,
             proteinEffect = ProteinEffect.UNKNOWN
@@ -396,7 +394,7 @@ object TestMolecularFactory {
             isReportable = false,
             event = "",
             driverLikelihood = DriverLikelihood.LOW,
-            evidence = ClinicalEvidence(),
+            evidence = TestClinicalEvidenceFactory.createEmpty(),
             gene = "",
             geneRole = GeneRole.UNKNOWN,
             proteinEffect = ProteinEffect.UNKNOWN,
@@ -413,7 +411,7 @@ object TestMolecularFactory {
             isReportable = false,
             event = "",
             driverLikelihood = DriverLikelihood.LOW,
-            evidence = ClinicalEvidence(),
+            evidence = TestClinicalEvidenceFactory.createEmpty(),
         )
     }
 }

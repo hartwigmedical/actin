@@ -21,11 +21,11 @@ class PersonalizedActionabilityFactoryTest {
         val event3 = create("parent", "blacklist")
         val events = listOf(event1, event2, event3)
         val match = factory.create(ActionableEvents(events, emptyList()))
-        assertThat(match.onLabelEvidence.evidences.size).isEqualTo(1)
-        assertThat(match.onLabelEvidence.evidences).contains(event1)
-        assertThat(match.offLabelEvidence.evidences.size).isEqualTo(2)
-        assertThat(match.offLabelEvidence.evidences).contains(event2)
-        assertThat(match.offLabelEvidence.evidences).contains(event3)
+
+        assertThat(match.onLabelEvidences.size).isEqualTo(1)
+        assertThat(match.onLabelEvidences).containsExactly(event1)
+        assertThat(match.offLabelEvidences.size).isEqualTo(2)
+        assertThat(match.offLabelEvidences).containsExactly(event2, event3)
     }
 
     @Test

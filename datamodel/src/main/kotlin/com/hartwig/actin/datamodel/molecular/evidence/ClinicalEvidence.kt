@@ -75,13 +75,14 @@ data class ExternalTrial(
 }
 
 data class ClinicalEvidence(
-    val externalEligibleTrials: Set<ExternalTrial> = emptySet(),
-    val treatmentEvidence: Set<TreatmentEvidence> = emptySet(),
+    val treatmentEvidence: Set<TreatmentEvidence>,
+    val externalEligibleTrials: Set<ExternalTrial>,
 ) {
+
     operator fun plus(other: ClinicalEvidence): ClinicalEvidence {
         return ClinicalEvidence(
-            externalEligibleTrials + other.externalEligibleTrials,
-            treatmentEvidence + other.treatmentEvidence
+            treatmentEvidence + other.treatmentEvidence,
+            externalEligibleTrials + other.externalEligibleTrials
         )
     }
 }

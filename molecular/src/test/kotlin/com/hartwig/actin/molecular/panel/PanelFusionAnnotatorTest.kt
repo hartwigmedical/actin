@@ -5,9 +5,9 @@ import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.molecular.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.Fusion
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
-import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.treatment
 import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.GENE
@@ -15,6 +15,7 @@ import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.TestServeFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEvents
+import com.hartwig.actin.molecular.evidence.actionability.TestActionabilityMatchFactory
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
@@ -73,17 +74,14 @@ private val MOLECULAR_CRITERIUM = ImmutableMolecularCriterium.builder().addGenes
         .from(TestServeFactory.createEmptyGeneAnnotation()).build()
 ).build()
 
-private val ACTIONABILITY_MATCH = ActionabilityMatch(
-    onLabelEvidence = ActionableEvents(
-        listOf(
-            TestServeActionabilityFactory.createEfficacyEvidence(
-                MOLECULAR_CRITERIUM,
-                level = ServeEvidenceLevel.A,
-                direction = ServeEvidenceDirection.RESPONSIVE
-            )
-        ), emptyList()
-    ),
-    offLabelEvidence = ActionableEvents()
+private val ACTIONABILITY_MATCH = TestActionabilityMatchFactory.createEmpty().copy(
+    onLabelEvidences = listOf(
+        TestServeActionabilityFactory.createEfficacyEvidence(
+            MOLECULAR_CRITERIUM,
+            level = ServeEvidenceLevel.A,
+            direction = ServeEvidenceDirection.RESPONSIVE
+        )
+    )
 )
 
 class PanelFusionAnnotatorTest {
@@ -185,7 +183,7 @@ class PanelFusionAnnotatorTest {
                 event = "$GENE_START-$GENE_END fusion",
                 isReportable = true,
                 driverLikelihood = DriverLikelihood.HIGH,
-                evidence = ClinicalEvidence(
+                evidence = TestClinicalEvidenceFactory.withEvidence(
                     treatmentEvidence = setOf(
                         treatment(
                             treatment = "treatment",
@@ -221,7 +219,7 @@ class PanelFusionAnnotatorTest {
                 event = "$GENE_START-$GENE_END fusion",
                 isReportable = true,
                 driverLikelihood = DriverLikelihood.HIGH,
-                evidence = ClinicalEvidence(
+                evidence = TestClinicalEvidenceFactory.withEvidence(
                     treatmentEvidence = setOf(
                         treatment(
                             treatment = "treatment",
@@ -267,7 +265,7 @@ class PanelFusionAnnotatorTest {
                     event = "$GENE skipped exons $FUSED_EXON_UP-$FUSED_EXON_DOWN",
                     isReportable = true,
                     driverLikelihood = DriverLikelihood.HIGH,
-                    evidence = ClinicalEvidence()
+                    evidence = TestClinicalEvidenceFactory.createEmpty()
                 )
             )
         )
@@ -295,7 +293,7 @@ class PanelFusionAnnotatorTest {
                     event = "$GENE skipped exons $FUSED_EXON_UP-$FUSED_EXON_DOWN",
                     isReportable = true,
                     driverLikelihood = DriverLikelihood.HIGH,
-                    evidence = ClinicalEvidence()
+                    evidence = TestClinicalEvidenceFactory.createEmpty()
                 )
             )
         )
@@ -319,9 +317,7 @@ class PanelFusionAnnotatorTest {
 
     private fun setupEvidenceDatabaseWithNoEvidence() {
         every { evidenceDatabase.lookupKnownFusion(EXON_SKIP_FUSION_MATCHING_CRITERIA) } returns null
-        every { evidenceDatabase.evidenceForFusion(EXON_SKIP_FUSION_MATCHING_CRITERIA) } returns ActionabilityMatch(
-            onLabelEvidence = ActionableEvents(),
-            offLabelEvidence = ActionableEvents()
-        )
+        every { evidenceDatabase.evidenceForFusion(EXON_SKIP_FUSION_MATCHING_CRITERIA) } returns
+                TestActionabilityMatchFactory.createEmpty()
     }
 }

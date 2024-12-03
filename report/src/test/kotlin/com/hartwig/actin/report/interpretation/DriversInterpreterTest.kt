@@ -26,19 +26,19 @@ class DriversInterpreterTest {
 
     @Test
     fun `Should include non-actionable reportable drivers`() {
-        val record = createTestMolecularRecordWithDriverEvidence(TestClinicalEvidenceFactory.createEmptyClinicalEvidence(), true)
+        val record = createTestMolecularRecordWithDriverEvidence(TestClinicalEvidenceFactory.createEmpty(), true)
         assertCountForRecord(1, record)
     }
 
     @Test
     fun `Should skip non-actionable not-reportable drivers`() {
-        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.createEmptyClinicalEvidence())
+        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.createEmpty())
         assertCountForRecord(0, record)
     }
 
     @Test
     fun `Should include non-reportable drivers with ACTIN trial matches`() {
-        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.createEmptyClinicalEvidence())
+        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.createEmpty())
         assertCountForRecordAndCohorts(
             1,
             record,
@@ -56,9 +56,7 @@ class DriversInterpreterTest {
     @Test
     fun `Should include non-reportable drivers with external trial matches`() {
         val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(
-            TestClinicalEvidenceFactory.withExternalEligibleTrial(
-                TestClinicalEvidenceFactory.createTestExternalTrial()
-            )
+            TestClinicalEvidenceFactory.withTrial(TestClinicalEvidenceFactory.createTestExternalTrial())
         )
         assertCountForRecord(1, record)
     }

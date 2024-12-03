@@ -5,11 +5,23 @@ import java.time.LocalDate
 
 object TestClinicalEvidenceFactory {
 
-    fun createEmptyClinicalEvidence(): ClinicalEvidence {
-        return ClinicalEvidence()
+    fun createEmpty(): ClinicalEvidence {
+        return ClinicalEvidence(treatmentEvidence = emptySet(), externalEligibleTrials = emptySet())
     }
 
-    fun createExhaustiveClinicalEvidence(): ClinicalEvidence {
+    fun withEvidence(treatmentEvidence: TreatmentEvidence): ClinicalEvidence {
+        return ClinicalEvidence(treatmentEvidence = setOf(treatmentEvidence), externalEligibleTrials = emptySet())
+    }
+
+    fun withTrial(externalEligibleTrial: ExternalTrial): ClinicalEvidence {
+        return withTrials(setOf(externalEligibleTrial))
+    }
+
+    fun withTrials(externalEligibleTrials: Set<ExternalTrial>): ClinicalEvidence {
+        return ClinicalEvidence(treatmentEvidence = emptySet(), externalEligibleTrials = externalEligibleTrials)
+    }
+
+    fun createExhaustive(): ClinicalEvidence {
         return ClinicalEvidence(
             treatmentEvidence = setOf(
                 approved(),
@@ -26,21 +38,23 @@ object TestClinicalEvidenceFactory {
         )
     }
 
-    fun offLabelSuspectResistant() = treatment(
-        "off-label suspect resistant",
-        EvidenceLevel.C,
-        EvidenceLevelDetails.GUIDELINE,
-        EvidenceDirection(isResistant = true, isCertain = false),
-        false
-    )
+    fun offLabelSuspectResistant() =
+        treatment(
+            "off-label suspect resistant",
+            EvidenceLevel.C,
+            EvidenceLevelDetails.GUIDELINE,
+            EvidenceDirection(isResistant = true, isCertain = false),
+            false
+        )
 
-    fun onLabelSuspectResistant() = treatment(
-        "on-label suspect resistant",
-        EvidenceLevel.C,
-        EvidenceLevelDetails.GUIDELINE,
-        EvidenceDirection(isResistant = true, isCertain = false),
-        true
-    )
+    fun onLabelSuspectResistant() =
+        treatment(
+            "on-label suspect resistant",
+            EvidenceLevel.C,
+            EvidenceLevelDetails.GUIDELINE,
+            EvidenceDirection(isResistant = true, isCertain = false),
+            true
+        )
 
     fun offLabelKnownResistant() =
         treatment(
@@ -78,21 +92,23 @@ object TestClinicalEvidenceFactory {
             true
         )
 
-    fun offLabelExperimental() = treatment(
-        "off-label experimental",
-        EvidenceLevel.B,
-        EvidenceLevelDetails.CLINICAL_STUDY,
-        EvidenceDirection(hasPositiveResponse = true, isCertain = true),
-        false
-    )
+    fun offLabelExperimental() =
+        treatment(
+            "off-label experimental",
+            EvidenceLevel.B,
+            EvidenceLevelDetails.CLINICAL_STUDY,
+            EvidenceDirection(hasPositiveResponse = true, isCertain = true),
+            false
+        )
 
-    fun onLabelExperimental() = treatment(
-        "on-label experimental",
-        EvidenceLevel.A,
-        EvidenceLevelDetails.CLINICAL_STUDY,
-        EvidenceDirection(hasPositiveResponse = true, isCertain = false),
-        true
-    )
+    fun onLabelExperimental() =
+        treatment(
+            "on-label experimental",
+            EvidenceLevel.A,
+            EvidenceLevelDetails.CLINICAL_STUDY,
+            EvidenceDirection(hasPositiveResponse = true, isCertain = false),
+            true
+        )
 
     fun approved() =
         treatment(
@@ -124,49 +140,41 @@ object TestClinicalEvidenceFactory {
         applicableCancerType()
     )
 
-    private fun applicableCancerType() = ApplicableCancerType("", emptySet())
+    private fun applicableCancerType() = ApplicableCancerType(cancerType = "", excludedCancerTypes = emptySet())
 
     fun withApprovedTreatment(treatment: String): ClinicalEvidence {
-        return ClinicalEvidence(treatmentEvidence = setOf(approved().copy(treatment = treatment)))
-    }
-
-    fun withExternalEligibleTrial(trial: ExternalTrial): ClinicalEvidence {
-        return ClinicalEvidence(externalEligibleTrials = setOf(trial))
-    }
-
-    fun withExternalEligibleTrials(trials: Set<ExternalTrial>): ClinicalEvidence {
-        return ClinicalEvidence(externalEligibleTrials = trials)
+        return withEvidence(treatmentEvidence = approved().copy(treatment = treatment))
     }
 
     fun withOnLabelExperimentalTreatment(treatment: String): ClinicalEvidence {
-        return ClinicalEvidence(treatmentEvidence = setOf(onLabelExperimental().copy(treatment = treatment)))
+        return withEvidence(treatmentEvidence = onLabelExperimental().copy(treatment = treatment))
     }
 
     fun withOffLabelExperimentalTreatment(treatment: String): ClinicalEvidence {
-        return ClinicalEvidence(treatmentEvidence = setOf(offLabelExperimental().copy(treatment = treatment)))
+        return withEvidence(treatmentEvidence = offLabelExperimental().copy(treatment = treatment))
     }
 
     fun withOnLabelPreClinicalTreatment(treatment: String): ClinicalEvidence {
-        return ClinicalEvidence(treatmentEvidence = setOf(onLabelPreclinical().copy(treatment = treatment)))
+        return withEvidence(treatmentEvidence = onLabelPreclinical().copy(treatment = treatment))
     }
 
     fun withOnLabelKnownResistantTreatment(treatment: String): ClinicalEvidence {
-        return ClinicalEvidence(treatmentEvidence = setOf(onLabelKnownResistant().copy(treatment = treatment)))
+        return withEvidence(treatmentEvidence = onLabelKnownResistant().copy(treatment = treatment))
     }
 
     fun withSuspectResistantTreatment(treatment: String): ClinicalEvidence {
-        return ClinicalEvidence(treatmentEvidence = setOf(onLabelSuspectResistant().copy(treatment = treatment)))
+        return withEvidence(treatmentEvidence = onLabelSuspectResistant().copy(treatment = treatment))
     }
 
     fun createTestExternalTrial(): ExternalTrial {
         return createExternalTrial(
-            "",
-            setOf(
+            title = "",
+            countries = setOf(
                 createCountry(CountryName.NETHERLANDS, mapOf("Leiden" to setOf(Hospital("LUMC", false)))),
                 createCountry(CountryName.BELGIUM, mapOf("Brussels" to emptySet()))
             ),
             url = "https://clinicaltrials.gov/study/NCT00000001",
-            "NCT00000001"
+            nctId = "NCT00000001"
         )
     }
 
@@ -183,10 +191,7 @@ object TestClinicalEvidenceFactory {
         )
     }
 
-    fun createCountry(
-        countryName: CountryName,
-        hospitalsPerCity: Map<String, Set<Hospital>> = emptyMap()
-    ): Country {
+    fun createCountry(countryName: CountryName, hospitalsPerCity: Map<String, Set<Hospital>> = emptyMap()): Country {
         return Country(countryName, hospitalsPerCity)
     }
 }

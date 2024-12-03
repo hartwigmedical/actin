@@ -11,16 +11,16 @@ import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.characteristicsFilter
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterEfficacyEvidence
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.geneFilter
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.codonFilter
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.exonFilter
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterTrials
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.fusionFilter
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractCharacteristic
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractFusion
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractGene
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractRange
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterEfficacyEvidence
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterTrials
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.fusionFilter
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.geneFilter
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.hotspotFilter
 import com.hartwig.actin.molecular.evidence.actionability.isCategoryEvent
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
@@ -31,15 +31,16 @@ import java.time.LocalDate
 object ClinicalEvidenceFactory {
 
     fun createNoEvidence(): ClinicalEvidence {
-        return ClinicalEvidence()
+        return ClinicalEvidence(treatmentEvidence = emptySet(), externalEligibleTrials = emptySet())
     }
 
     fun create(actionabilityMatch: ActionabilityMatch): ClinicalEvidence {
-        val onLabelEvidence = createAllTreatmentEvidences(true, actionabilityMatch.onLabelEvidence.evidences)
-        val offLabelEvidence = createAllTreatmentEvidences(false, actionabilityMatch.offLabelEvidence.evidences)
+        val onLabelEvidence = createAllTreatmentEvidences(true, actionabilityMatch.onLabelEvidences)
+        val offLabelEvidence = createAllTreatmentEvidences(false, actionabilityMatch.offLabelEvidences)
+
         return ClinicalEvidence(
-            externalEligibleTrials = createAllExternalTrials(actionabilityMatch.onLabelEvidence.trials),
-            treatmentEvidence = onLabelEvidence + offLabelEvidence
+            treatmentEvidence = onLabelEvidence + offLabelEvidence,
+            externalEligibleTrials = createAllExternalTrials(actionabilityMatch.onLabelTrials)
         )
     }
 

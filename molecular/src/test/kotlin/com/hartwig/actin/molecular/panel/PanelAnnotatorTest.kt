@@ -21,6 +21,7 @@ import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEvents
+import com.hartwig.actin.molecular.evidence.actionability.TestActionabilityMatchFactory
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
@@ -55,10 +56,8 @@ private val HOTSPOT = TestServeKnownFactory.hotspotBuilder().build()
     .withGeneRole(ServeGeneRole.ONCO)
     .withProteinEffect(ServeProteinEffect.GAIN_OF_FUNCTION)
 
-private val ACTIONABILITY_MATCH = ActionabilityMatch(
-    onLabelEvidence = ActionableEvents(listOf(TestServeActionabilityFactory.createEfficacyEvidenceWithGene()), emptyList()),
-    offLabelEvidence = ActionableEvents()
-)
+private val ACTIONABILITY_MATCH = TestActionabilityMatchFactory.createEmpty()
+    .copy(onLabelEvidences = listOf(TestServeActionabilityFactory.createEfficacyEvidenceWithGene()))
 
 private val ARCHER_SKIPPED_EXON = SequencedSkippedExons(GENE, 2, 3)
 

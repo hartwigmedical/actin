@@ -10,14 +10,14 @@ import com.hartwig.actin.datamodel.molecular.VariantType
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.treatment
 import com.hartwig.actin.molecular.GENE
 import com.hartwig.actin.molecular.HGVS_CODING
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.TestServeFactory
-import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEvents
+import com.hartwig.actin.molecular.evidence.actionability.TestActionabilityMatchFactory
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
@@ -39,9 +39,9 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import com.hartwig.serve.datamodel.molecular.common.GeneRole as ServeGeneRole
 import com.hartwig.serve.datamodel.efficacy.EvidenceDirection as ServeEvidenceDirection
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevel as ServeEvidenceLevel
+import com.hartwig.serve.datamodel.molecular.common.GeneRole as ServeGeneRole
 import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
 
 private const val ALT = "T"
@@ -56,7 +56,7 @@ private const val CHROMOSOME = "1"
 private const val POSITION = 1
 private const val HGVS_PROTEIN_3LETTER = "p.Met1Leu"
 private const val HGVS_PROTEIN_1LETTER = "p.M1L"
-private val EMPTY_MATCH = ActionabilityMatch(ActionableEvents(), ActionableEvents())
+private val EMPTY_MATCH = TestActionabilityMatchFactory.createEmpty()
 private val ARCHER_VARIANT = SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING)
 
 private val VARIANT_MATCH_CRITERIA =
@@ -76,17 +76,14 @@ private val MOLECULAR_CRITERIUM = ImmutableMolecularCriterium.builder().addGenes
         .from(TestServeFactory.createEmptyGeneAnnotation()).build()
 ).build()
 
-private val ACTIONABILITY_MATCH = ActionabilityMatch(
-    onLabelEvidence = ActionableEvents(
-        listOf(
-            TestServeActionabilityFactory.createEfficacyEvidence(
-                MOLECULAR_CRITERIUM,
-                level = ServeEvidenceLevel.A,
-                direction = ServeEvidenceDirection.RESPONSIVE
-            )
-        ), emptyList()
-    ),
-    offLabelEvidence = ActionableEvents()
+private val ACTIONABILITY_MATCH = TestActionabilityMatchFactory.createEmpty().copy(
+    onLabelEvidences = listOf(
+        TestServeActionabilityFactory.createEfficacyEvidence(
+            MOLECULAR_CRITERIUM,
+            level = ServeEvidenceLevel.A,
+            direction = ServeEvidenceDirection.RESPONSIVE
+        )
+    )
 )
 
 private val TRANSCRIPT_ANNOTATION =
@@ -148,7 +145,7 @@ class PanelVariantAnnotatorTest {
     @Test
     fun `Should return empty annotation when no matches found`() {
         val annotated = annotator.annotate(setOf(ARCHER_VARIANT))
-        assertThat(annotated.first().evidence).isEqualTo(ClinicalEvidence())
+        assertThat(annotated.first().evidence).isEqualTo(TestClinicalEvidenceFactory.createEmpty())
     }
 
     @Test
@@ -166,7 +163,8 @@ class PanelVariantAnnotatorTest {
                         onLabel = true,
                         isCategoryEvent = true
                     )
-                )
+                ),
+                externalEligibleTrials = emptySet()
             )
         )
     }

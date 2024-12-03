@@ -9,7 +9,6 @@ import com.hartwig.actin.datamodel.molecular.VariantType
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.orange.driver.VirusType
-import com.hartwig.actin.molecular.evidence.TestEvidenceDatabaseFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -74,6 +73,6 @@ class EvidenceDatabaseTest {
     }
 
     private fun assertEvidenceCountMatchesExpected(match: ActionabilityMatch, expectedCount: Int) {
-        assertThat(match.onLabelEvidence.evidences.size + match.offLabelEvidence.evidences.size).isEqualTo(expectedCount)
+        assertThat(match.onLabelEvidences.size + match.offLabelEvidences.size).isEqualTo(expectedCount)
     }
 }

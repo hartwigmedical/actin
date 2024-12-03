@@ -23,21 +23,21 @@ class MolecularDriverEntryFactoryTest {
 
     @Test
     fun `Should include non-actionable reportable drivers`() {
-        val record = createTestMolecularRecordWithDriverEvidence(TestClinicalEvidenceFactory.createEmptyClinicalEvidence(), true)
+        val record = createTestMolecularRecordWithDriverEvidence(TestClinicalEvidenceFactory.createEmpty(), true)
         val factory = createFactoryForMolecularRecord(record)
         assertThat(factory.create()).hasSize(1)
     }
 
     @Test
     fun `Should skip non actionable not reportable drivers`() {
-        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.createEmptyClinicalEvidence())
+        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.createEmpty())
         val factory = createFactoryForMolecularRecord(record)
         assertThat(factory.create()).hasSize(0)
     }
 
     @Test
     fun `Should include non-reportable drivers with actin trial matches`() {
-        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.createEmptyClinicalEvidence())
+        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.createEmpty())
         val driverToFind = record.drivers.viruses.iterator().next().event
         assertThat(createFactoryWithCohortsForEvent(record, driverToFind).create()).hasSize(1)
     }
@@ -53,11 +53,10 @@ class MolecularDriverEntryFactoryTest {
     @Test
     fun `Should include non-reportable drivers with external trial matches`() {
         val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(
-            TestClinicalEvidenceFactory.withExternalEligibleTrial(
-                TestClinicalEvidenceFactory.createTestExternalTrial()
-            )
+            TestClinicalEvidenceFactory.withTrial(TestClinicalEvidenceFactory.createTestExternalTrial())
         )
         val factory = createFactoryForMolecularRecord(record)
+
         assertThat(factory.create()).hasSize(1)
     }
 

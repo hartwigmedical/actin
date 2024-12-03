@@ -67,7 +67,7 @@ class EvidenceTierTest {
         treatments: Set<TreatmentEvidence>
     ): Driver {
         val driver = mockk<Driver>()
-        every { driver.evidence } returns TestClinicalEvidenceFactory.createEmptyClinicalEvidence()
+        every { driver.evidence } returns TestClinicalEvidenceFactory.createEmpty()
             .copy(treatmentEvidence = treatments)
         return driver
     }

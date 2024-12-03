@@ -41,7 +41,7 @@ class InterpretedCohortsSummarizerTest {
         assertThat(createInterpreter().driverIsActionable(driverForEvent(CLOSED_COHORT))).isFalse
         val driver: Driver = TestVariantFactory.createMinimal().copy(
             event = CLOSED_COHORT,
-            evidence = TestClinicalEvidenceFactory.withExternalEligibleTrial(TestClinicalEvidenceFactory.createTestExternalTrial())
+            evidence = TestClinicalEvidenceFactory.withTrial(TestClinicalEvidenceFactory.createTestExternalTrial())
         )
         assertThat(createInterpreter().driverIsActionable(driver)).isTrue
     }
