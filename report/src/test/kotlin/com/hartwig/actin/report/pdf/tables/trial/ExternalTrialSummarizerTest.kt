@@ -4,9 +4,9 @@ import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.molecular.evidence.CancerType
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
+import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.datamodel.molecular.evidence.MolecularMatchDetails
-import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.report.interpretation.InterpretedCohortTestFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -30,37 +30,35 @@ private val BASE_EXTERNAL_TRIAL_SUMMARY = ExternalTrialSummary(
     cities = sortedSetOf(),
     hospitals = sortedSetOf()
 )
-private val NETHERLANDS = TestClinicalEvidenceFactory.createCountry(Country.NETHERLANDS)
-private val BELGIUM = TestClinicalEvidenceFactory.createCountry(Country.BELGIUM)
 
-private val TRIAL_1_INSTANCE_1 = TestClinicalEvidenceFactory.createExternalTrial(
+private val NETHERLANDS = CountryDetails(country = Country.NETHERLANDS, hospitalsPerCity = emptyMap())
+private val BELGIUM = CountryDetails(country = Country.BELGIUM, hospitalsPerCity = emptyMap())
+
+private val TRIAL_1_INSTANCE_1 = ExternalTrial(
     nctId = NCT_01,
     title = TITLE,
-    countries = setOf(NETHERLANDS),
-    url = URL,
-).copy(
     molecularMatches = setOf(MolecularMatchDetails(sourceEvent = "sourceEvent1", isCategoryEvent = false)),
-    applicableCancerTypes = setOf(CancerType("cancerType1", emptySet()))
+    applicableCancerTypes = setOf(CancerType("cancerType1", emptySet())),
+    countries = setOf(NETHERLANDS),
+    url = URL
 )
 
-private val TRIAL_1_INSTANCE_2 = TestClinicalEvidenceFactory.createExternalTrial(
+private val TRIAL_1_INSTANCE_2 = ExternalTrial(
     nctId = NCT_01,
     title = TITLE,
-    countries = setOf(BELGIUM),
-    url = URL,
-).copy(
     molecularMatches = setOf(MolecularMatchDetails(sourceEvent = "sourceEvent2", isCategoryEvent = false)),
-    applicableCancerTypes = setOf(CancerType("cancerType2", emptySet()))
+    applicableCancerTypes = setOf(CancerType("cancerType2", emptySet())),
+    countries = setOf(BELGIUM),
+    url = URL
 )
 
-private val TRIAL_2_INSTANCE_1 = TestClinicalEvidenceFactory.createExternalTrial(
+private val TRIAL_2_INSTANCE_1 = ExternalTrial(
     nctId = NCT_02,
     title = TITLE,
-    countries = setOf(BELGIUM),
-    url = URL,
-).copy(
     molecularMatches = setOf(MolecularMatchDetails(sourceEvent = "sourceEvent3", isCategoryEvent = false)),
-    applicableCancerTypes = setOf(CancerType("cancerType3", emptySet()))
+    applicableCancerTypes = setOf(CancerType("cancerType3", emptySet())),
+    countries = setOf(BELGIUM),
+    url = URL
 )
 
 private val TRIAL_MATCHES = setOf(
@@ -86,11 +84,11 @@ class ExternalTrialSummarizerTest {
     fun `Should summarize trials by aggregating events, source events and cancer types and sorting by event`() {
         val summarized = ExternalTrialSummarizer.summarize(
             mapOf(
-                TMB_TARGET to setOf(TRIAL_1_INSTANCE_1), EGFR_TARGET to setOf(
-                    TRIAL_1_INSTANCE_2, TRIAL_2_INSTANCE_1
-                )
+                TMB_TARGET to setOf(TRIAL_1_INSTANCE_1),
+                EGFR_TARGET to setOf(TRIAL_1_INSTANCE_2, TRIAL_2_INSTANCE_1)
             )
         )
+
         assertThat(summarized).containsExactly(
             ExternalTrialSummary(
                 nctId = TRIAL_2_INSTANCE_1.nctId,

@@ -14,6 +14,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVirusFactory
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
+import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
@@ -107,7 +108,7 @@ class DriversSummarizerTest {
 
     @Test
     fun `Should return actionable events that are not key drivers`() {
-        val externalEvidence = TestClinicalEvidenceFactory.withEligibleTrial(TestClinicalEvidenceFactory.createTestExternalTrial())
+        val externalEvidence = TestClinicalEvidenceFactory.withEligibleTrial(TestExternalTrialFactory.createTestTrial())
         val approvedTreatment = TestClinicalEvidenceFactory.withApprovedTreatment("approved")
 
         val cohorts = listOf(

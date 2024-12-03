@@ -2,8 +2,10 @@ package com.hartwig.actin.datamodel.molecular
 
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.molecular.evidence.Country
+import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
+import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.datamodel.molecular.orange.characteristics.CupPrediction
 import com.hartwig.actin.datamodel.molecular.orange.driver.CodingContext
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
@@ -152,16 +154,16 @@ object TestMolecularFactory {
         event = "PTEN del",
         driverLikelihood = DriverLikelihood.HIGH,
         evidence = TestClinicalEvidenceFactory.withEligibleTrial(
-            TestClinicalEvidenceFactory.createExternalTrial(
+            TestExternalTrialFactory.create(
+                nctId = "NCT00000020",
                 title = "A Phase 1/2 Randomized Study to Evaluate the Safety and Efficacy of treatment X Plus treatment Y in "
                         + "Combination With Investigational Agents Versus treatment X Plus treatment Y, as First-Line Treatment "
                         + "for Participants With Advanced Solid Tumor (acronym)",
                 countries = setOf(
-                    TestClinicalEvidenceFactory.createCountry(Country.BELGIUM, mapOf("Brussels" to emptySet())),
-                    TestClinicalEvidenceFactory.createCountry(Country.GERMANY, mapOf("Berlin" to emptySet()))
+                    CountryDetails(Country.BELGIUM, mapOf("Brussels" to emptySet())),
+                    CountryDetails(Country.GERMANY, mapOf("Berlin" to emptySet()))
                 ),
-                url = "https://clinicaltrials.gov/study/NCT00000020",
-                nctId = "NCT00000020"
+                url = "https://clinicaltrials.gov/study/NCT00000020"
             )
         ),
         gene = "PTEN",
@@ -249,6 +251,7 @@ object TestMolecularFactory {
 
     private fun createExhaustiveTestDrivers(): Drivers {
         val proper = createProperTestDrivers()
+
         return proper.copy(
             copyNumbers = proper.copyNumbers + CopyNumber(
                 isReportable = true,
@@ -256,10 +259,11 @@ object TestMolecularFactory {
                 driverLikelihood = DriverLikelihood.HIGH,
                 evidence = TestClinicalEvidenceFactory.withEligibleTrials(
                     setOf(
-                        TestClinicalEvidenceFactory.createExternalTrial(
+                        TestExternalTrialFactory.create(
+                            nctId = "NCT00000003",
                             title = "A Phase 1 Study of XYXYXY, a T-Cell-Redirecting Agent Targeting Z, for Advanced Prostate Cancer",
                             countries = setOf(
-                                TestClinicalEvidenceFactory.createCountry(
+                                CountryDetails(
                                     Country.NETHERLANDS,
                                     mapOf(
                                         "Nijmegen" to setOf(Hospital("Radboud UMC", false)),
@@ -267,21 +271,18 @@ object TestMolecularFactory {
                                     )
                                 )
                             ),
-                            url = "https://clinicaltrials.gov/study/NCT00000003",
-                            nctId = "NCT00000003",
+                            url = "https://clinicaltrials.gov/study/NCT00000003"
                         ),
-                        TestClinicalEvidenceFactory.createExternalTrial(
+                        TestExternalTrialFactory.create(
+                            nctId = "NCT00000011",
                             title = "this trial should be filtered out",
                             countries = setOf(
-                                TestClinicalEvidenceFactory.createCountry(
+                                CountryDetails(
                                     Country.BELGIUM,
-                                    mapOf(
-                                        "Leuven" to setOf(Hospital("hospital", null))
-                                    )
+                                    mapOf("Leuven" to setOf(Hospital("hospital", null)))
                                 )
                             ),
-                            url = "https://clinicaltrials.gov/study/NCT00000011",
-                            nctId = "NCT00000011",
+                            url = "https://clinicaltrials.gov/study/NCT00000011"
                         )
                     )
                 ),

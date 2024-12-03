@@ -12,6 +12,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
+import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
 import com.hartwig.actin.molecular.GENE
 import com.hartwig.actin.molecular.HGVS_CODING
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
@@ -155,7 +156,7 @@ class PanelVariantAnnotatorTest {
         assertThat(annotated.first().evidence).isEqualTo(
             ClinicalEvidence(
                 treatmentEvidence = setOf(
-                    TestClinicalEvidenceFactory.evidence(
+                    TestTreatmentEvidenceFactory.create(
                         treatment = "treatment",
                         isOnLabel = true,
                         isCategoryEvent = true,

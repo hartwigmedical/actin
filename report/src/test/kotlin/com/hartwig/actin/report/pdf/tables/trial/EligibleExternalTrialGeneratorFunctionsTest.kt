@@ -3,7 +3,6 @@ package com.hartwig.actin.report.pdf.tables.trial
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
-import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -23,16 +22,16 @@ class EligibleExternalTrialGeneratorFunctionsTest {
 
     private val externalTrialNetherlandsGermany = BASE_EXTERNAL_TRIAL_SUMMARY.copy(
         countries = countrySet(
-            TestClinicalEvidenceFactory.createCountry(
+            CountryDetails(
                 Country.NETHERLANDS,
                 mapOf("Amsterdam" to setOf(Hospital("AMC", false)), "Leiden" to setOf(Hospital("LUMC", false)))
             ),
-            TestClinicalEvidenceFactory.createCountry(Country.GERMANY, mapOf("Berlin" to emptySet()))
+            CountryDetails(Country.GERMANY, mapOf("Berlin" to emptySet()))
         )
     )
     private val externalTrialBelgium = BASE_EXTERNAL_TRIAL_SUMMARY.copy(
         countries = countrySet(
-            TestClinicalEvidenceFactory.createCountry(
+            CountryDetails(
                 Country.BELGIUM,
                 mapOf(
                     "Brussels" to setOf(Hospital("Brussels hospital", null)),
@@ -50,7 +49,7 @@ class EligibleExternalTrialGeneratorFunctionsTest {
     )
     private val externalTrialNetherlands = BASE_EXTERNAL_TRIAL_SUMMARY.copy(
         countries = countrySet(
-            TestClinicalEvidenceFactory.createCountry(
+            CountryDetails(
                 Country.NETHERLANDS,
                 mapOf(
                     "Nijmegen" to setOf(Hospital("Radboud UMC", false), Hospital("CWZ", false)),

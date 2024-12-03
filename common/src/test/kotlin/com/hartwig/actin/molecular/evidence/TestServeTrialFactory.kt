@@ -15,7 +15,7 @@ object TestServeTrialFactory {
     fun create(
         molecularCriteria: Set<MolecularCriterium>,
         source: Knowledgebase = Knowledgebase.CKB,
-        treatment: String = "",
+        title: String = "",
         indications: Set<Indication> = setOf(
             ImmutableIndication.builder().applicableType(ImmutableCancerType.builder().name("").doid("").build())
                 .excludedSubTypes(emptySet()).build()
@@ -31,11 +31,11 @@ object TestServeTrialFactory {
             }
 
             override fun title(): String {
-                return ""
+                return title
             }
 
             override fun acronym(): String {
-                return ""
+                return title
             }
 
             override fun countries(): Set<Country> {
@@ -43,7 +43,7 @@ object TestServeTrialFactory {
             }
 
             override fun therapyNames(): Set<String> {
-                return setOf(treatment)
+                return setOf(title)
             }
 
             override fun genderCriterium(): GenderCriterium? {

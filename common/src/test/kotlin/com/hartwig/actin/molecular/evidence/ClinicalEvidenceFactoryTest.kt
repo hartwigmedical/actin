@@ -1,10 +1,12 @@
 package com.hartwig.actin.molecular.evidence
 
 import com.hartwig.actin.datamodel.molecular.evidence.Country
+import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
-import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
+import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
+import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.serve.datamodel.Knowledgebase
 import org.assertj.core.api.Assertions.assertThat
@@ -14,7 +16,7 @@ class ClinicalEvidenceFactoryTest {
 
     @Test
     fun `Should convert SERVE actionable on-label events to clinical evidence`() {
-        val onLabel = TestClinicalEvidenceFactory.evidence(
+        val onLabel = TestTreatmentEvidenceFactory.create(
             treatment = "on-label",
             isOnLabel = true,
             isCategoryEvent = false,
@@ -44,7 +46,7 @@ class ClinicalEvidenceFactoryTest {
 
     @Test
     fun `Should convert SERVE actionable off-label events to clinical evidence`() {
-        val offLabel = TestClinicalEvidenceFactory.evidence(
+        val offLabel = TestTreatmentEvidenceFactory.create(
             treatment = "off-label",
             isOnLabel = false,
             isCategoryEvent = false,
@@ -74,9 +76,7 @@ class ClinicalEvidenceFactoryTest {
 
     @Test
     fun `Should convert SERVE external trials to clinical evidence`() {
-        // TODO (KD) Handle "isCategoryEvent = false"
-        val trial = TestClinicalEvidenceFactory.createTestExternalTrial()
-            .copy(countries = setOf(TestClinicalEvidenceFactory.createCountry(Country.OTHER, emptyMap())))
+        val trial = TestExternalTrialFactory.createTestTrial().copy(countries = setOf(CountryDetails(Country.OTHER, emptyMap())))
 
         val molecularCriterium = TestServeMolecularFactory.createHotspot()
 
