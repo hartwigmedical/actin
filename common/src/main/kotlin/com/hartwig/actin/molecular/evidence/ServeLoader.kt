@@ -21,9 +21,7 @@ object ServeLoader {
             .build()
     }
 
-    fun expandTrials(
-        trials: List<ActionableTrial>
-    ): List<ActionableTrial> {
+    fun expandTrials(trials: List<ActionableTrial>): List<ActionableTrial> {
         return trials.flatMap { trial ->
             trial.anyMolecularCriteria().flatMap { criterium -> expandWithIndicationAndCriterium(trial, criterium) }
         }

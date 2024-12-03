@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.evidence
+package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.evidence.CancerType
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
@@ -11,7 +11,6 @@ import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.datamodel.molecular.evidence.MolecularMatchDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.characteristicsFilter
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.codonFilter
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.exonFilter
@@ -24,17 +23,12 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtrac
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.fusionFilter
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.geneFilter
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.hotspotFilter
-import com.hartwig.actin.molecular.evidence.actionability.isCategoryEvent
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.trial.ActionableTrial
 import java.time.LocalDate
 import com.hartwig.serve.datamodel.trial.Hospital as ServeHospital
 
 object ClinicalEvidenceFactory {
-
-    fun createNoEvidence(): ClinicalEvidence {
-        return ClinicalEvidence(treatmentEvidence = emptySet(), eligibleTrials = emptySet())
-    }
 
     fun create(
         onLabelEvidences: List<EfficacyEvidence>,

@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.evidence.matching
+package com.hartwig.actin.molecular.evidence
 
 import com.hartwig.actin.datamodel.molecular.CodingEffect
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalCopyNumber
@@ -10,6 +10,8 @@ import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.orange.driver.VirusType
+import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
+import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

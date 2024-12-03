@@ -13,10 +13,10 @@ import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.MolecularAnnotator
-import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
+import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
-import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
+import com.hartwig.actin.molecular.util.ExtractionUtil
 
 private const val TMB_HIGH_CUTOFF = 10.0
 private const val MIN_COPY_NUMBER = 6
@@ -84,7 +84,7 @@ class PanelAnnotator(
         isReportable = true,
         event = panelAmplificationExtraction.gene,
         driverLikelihood = DriverLikelihood.HIGH,
-        evidence = ClinicalEvidenceFactory.createNoEvidence(),
+        evidence = ExtractionUtil.noEvidence(),
         type = CopyNumberType.FULL_GAIN,
         minCopies = MIN_COPY_NUMBER,
         maxCopies = MAX_COPY_NUMBER
@@ -98,7 +98,7 @@ class PanelAnnotator(
         isReportable = true,
         event = sequencedDeletedGene.gene,
         driverLikelihood = DriverLikelihood.HIGH,
-        evidence = ClinicalEvidenceFactory.createNoEvidence(),
+        evidence = ExtractionUtil.noEvidence(),
         type = CopyNumberType.LOSS,
         minCopies = 0,
         maxCopies = 0

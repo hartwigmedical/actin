@@ -1,12 +1,12 @@
-package com.hartwig.actin.molecular
+package com.hartwig.actin.molecular.orange
 
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
-import com.hartwig.actin.molecular.evidence.matching.TestEvidenceDatabaseFactory
-import com.hartwig.actin.molecular.evidence.orange.MolecularRecordAnnotator
+import com.hartwig.actin.molecular.evidence.TestEvidenceDatabaseFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class MolecularRecordAnnotatorTest {
+
     private val annotator = MolecularRecordAnnotator(TestEvidenceDatabaseFactory.createProperDatabase())
 
     @Test

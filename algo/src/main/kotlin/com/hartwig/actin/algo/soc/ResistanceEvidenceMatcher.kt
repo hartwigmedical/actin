@@ -13,7 +13,7 @@ import com.hartwig.actin.molecular.evidence.actionability.CopyNumberEvidence
 import com.hartwig.actin.molecular.evidence.actionability.FusionEvidence
 import com.hartwig.actin.molecular.evidence.actionability.HomozygousDisruptionEvidence
 import com.hartwig.actin.molecular.evidence.actionability.VariantEvidence
-import com.hartwig.actin.molecular.evidence.orange.MolecularRecordAnnotatorFunctions
+import com.hartwig.actin.molecular.evidence.matching.MatchingCriteriaFunctions
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevel
 
@@ -47,7 +47,7 @@ class ResistanceEvidenceMatcher(
                 hotspots().isNotEmpty() -> {
                     molecularTests.any { molecularTest ->
                         molecularTest.drivers.variants.any {
-                            val criteria = MolecularRecordAnnotatorFunctions.createVariantCriteria(it)
+                            val criteria = MatchingCriteriaFunctions.createVariantCriteria(it)
                             variantEvidence.findMatches(criteria).evidenceMatches.isNotEmpty()
                         }
                     }
@@ -62,11 +62,11 @@ class ResistanceEvidenceMatcher(
                     molecularTests.any { molecularTest ->
                         with(molecularTest.drivers) {
                             val variantMatch = variants.any {
-                                val criteria = MolecularRecordAnnotatorFunctions.createVariantCriteria(it)
+                                val criteria = MatchingCriteriaFunctions.createVariantCriteria(it)
                                 variantEvidence.findMatches(criteria).evidenceMatches.isNotEmpty()
                             }
                             val fusionMatch = fusions.any {
-                                val criteria = MolecularRecordAnnotatorFunctions.createFusionCriteria(it)
+                                val criteria = MatchingCriteriaFunctions.createFusionCriteria(it)
                                 fusionEvidence.findMatches(criteria).evidenceMatches.isNotEmpty()
                             }
                             variantMatch || fusionMatch ||
@@ -81,7 +81,7 @@ class ResistanceEvidenceMatcher(
                     val fusionEvidence = FusionEvidence.create(evidences = listOf(evidence), trials = emptyList())
                     molecularTests.any { molecularTest ->
                         molecularTest.drivers.fusions.any {
-                            val criteria = MolecularRecordAnnotatorFunctions.createFusionCriteria(it)
+                            val criteria = MatchingCriteriaFunctions.createFusionCriteria(it)
                             fusionEvidence.findMatches(criteria).evidenceMatches.isNotEmpty()
                         }
                     }
@@ -90,7 +90,7 @@ class ResistanceEvidenceMatcher(
                 exons().isNotEmpty() -> {
                     molecularTests.any { molecularTest ->
                         molecularTest.drivers.variants.any {
-                            val criteria = MolecularRecordAnnotatorFunctions.createVariantCriteria(it)
+                            val criteria = MatchingCriteriaFunctions.createVariantCriteria(it)
                             variantEvidence.findMatches(criteria).evidenceMatches.isNotEmpty()
                         }
                     }
@@ -99,7 +99,7 @@ class ResistanceEvidenceMatcher(
                 codons().isNotEmpty() -> {
                     molecularTests.any { molecularTest ->
                         molecularTest.drivers.variants.any {
-                            val criteria = MolecularRecordAnnotatorFunctions.createVariantCriteria(it)
+                            val criteria = MatchingCriteriaFunctions.createVariantCriteria(it)
                             variantEvidence.findMatches(criteria).evidenceMatches.isNotEmpty()
                         }
                     }

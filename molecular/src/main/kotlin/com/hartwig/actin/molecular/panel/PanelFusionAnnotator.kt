@@ -6,10 +6,10 @@ import com.hartwig.actin.datamodel.molecular.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.Fusion
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
-import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
-import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
+import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
+import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
 import org.apache.logging.log4j.LogManager
@@ -53,7 +53,7 @@ class PanelFusionAnnotator(
             isReportable = isReportable,
             event = sequencedFusion.display(),
             driverLikelihood = if (isReportable) fusionDriverLikelihood(driverType) else null,
-            evidence = ClinicalEvidenceFactory.createNoEvidence(),
+            evidence = ExtractionUtil.noEvidence(),
             isAssociatedWithDrugResistance = null,
             geneTranscriptStart = sequencedFusion.transcriptUp,
             geneTranscriptEnd = sequencedFusion.transcriptDown,
@@ -101,7 +101,7 @@ class PanelFusionAnnotator(
             isReportable = isReportable,
             event = sequencedSkippedExons.display(),
             driverLikelihood = if (isReportable) fusionDriverLikelihood(driverType) else null,
-            evidence = ClinicalEvidenceFactory.createNoEvidence(),
+            evidence = ExtractionUtil.noEvidence(),
             isAssociatedWithDrugResistance = null,
             geneTranscriptStart = transcript,
             geneTranscriptEnd = transcript,

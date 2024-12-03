@@ -5,5 +5,5 @@ import com.hartwig.serve.datamodel.trial.ActionableTrial
 
 data class ActionabilityMatch(
     val evidenceMatches: List<EfficacyEvidence>,
-    val trialMatches: List<ActionableTrial>,
+    val trialMatches: List<ActionableTrial>
 )

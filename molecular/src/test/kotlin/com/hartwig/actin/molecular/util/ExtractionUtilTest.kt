@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.orange
+package com.hartwig.actin.molecular.util
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

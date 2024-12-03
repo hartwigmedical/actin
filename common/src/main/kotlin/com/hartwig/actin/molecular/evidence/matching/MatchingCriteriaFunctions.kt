@@ -1,11 +1,9 @@
-package com.hartwig.actin.molecular.evidence.orange
+package com.hartwig.actin.molecular.evidence.matching
 
 import com.hartwig.actin.datamodel.molecular.Fusion
 import com.hartwig.actin.datamodel.molecular.Variant
-import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
-import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 
-object MolecularRecordAnnotatorFunctions {
+object MatchingCriteriaFunctions {
 
     fun createFusionCriteria(fusion: Fusion) = FusionMatchCriteria(
         isReportable = fusion.isReportable,

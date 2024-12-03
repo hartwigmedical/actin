@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.evidence.orange
+package com.hartwig.actin.molecular.orange
 
 import com.hartwig.actin.datamodel.molecular.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.Drivers
@@ -13,10 +13,9 @@ import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.orange.driver.HomozygousDisruption
 import com.hartwig.actin.datamodel.molecular.orange.driver.Virus
 import com.hartwig.actin.molecular.MolecularAnnotator
-import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
-import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
-import com.hartwig.actin.molecular.evidence.orange.MolecularRecordAnnotatorFunctions.createFusionCriteria
-import com.hartwig.actin.molecular.evidence.orange.MolecularRecordAnnotatorFunctions.createVariantCriteria
+import com.hartwig.actin.molecular.evidence.EvidenceDatabase
+import com.hartwig.actin.molecular.evidence.matching.MatchingCriteriaFunctions.createFusionCriteria
+import com.hartwig.actin.molecular.evidence.matching.MatchingCriteriaFunctions.createVariantCriteria
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 
 class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) : MolecularAnnotator<MolecularRecord, MolecularRecord> {
@@ -68,7 +67,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
         val evidence = if (variant.driverLikelihood == DriverLikelihood.HIGH) {
             evidenceDatabase.evidenceForVariant(createVariantCriteria(variant))
         } else {
-            ClinicalEvidenceFactory.createNoEvidence()
+            ClinicalEvidence(treatmentEvidence = emptySet(), eligibleTrials = emptySet())
         }
 
         val alteration = GeneAlterationFactory.convertAlteration(

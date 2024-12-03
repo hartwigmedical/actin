@@ -10,8 +10,8 @@ import com.hartwig.actin.datamodel.molecular.VariantEffect
 import com.hartwig.actin.datamodel.molecular.VariantType
 import com.hartwig.actin.datamodel.molecular.orange.driver.ExtendedVariantDetails
 import com.hartwig.actin.datamodel.molecular.sort.driver.VariantComparator
-import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.filter.GeneFilter
+import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.hmftools.datamodel.purple.HotspotType
 import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect
 import com.hartwig.hmftools.datamodel.purple.PurpleDriver
@@ -57,7 +57,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
                 val event = DriverEventFactory.variantEvent(variant)
                 val driver = findBestMutationDriver(drivers, variant.gene(), variant.canonicalImpact().transcript())
                 val driverLikelihood = determineDriverLikelihood(driver)
-                val evidence = ClinicalEvidenceFactory.createNoEvidence()
+                val evidence = ExtractionUtil.noEvidence()
                 Variant(
                     chromosome = variant.chromosome(),
                     position = variant.position(),
