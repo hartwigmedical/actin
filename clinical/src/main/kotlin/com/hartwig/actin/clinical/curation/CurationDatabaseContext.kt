@@ -47,6 +47,7 @@ import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslationFact
 import com.hartwig.actin.clinical.curation.translation.ToxicityTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabaseReader
+import com.hartwig.actin.icd.IcdModel
 
 data class CurationDatabaseContext(
     val primaryTumorCuration: CurationDatabase<PrimaryTumorConfig>,
@@ -125,7 +126,7 @@ data class CurationDatabaseContext(
         fun create(
             curationDir: String,
             curationDoidValidator: CurationDoidValidator,
-            curationIcdValidator: CurationIcdValidator,
+            icdModel: IcdModel,
             treatmentDatabase: TreatmentDatabase
         ) = CurationDatabaseContext(
             ecgCuration = CurationDatabaseReader.read(
@@ -188,7 +189,7 @@ data class CurationDatabaseContext(
             toxicityCuration = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.TOXICITY_TSV,
-                ToxicityConfigFactory(curationIcdValidator),
+                ToxicityConfigFactory(icdModel),
                 CurationCategory.TOXICITY
             ) { it.toxicityEvaluatedInputs },
             lesionLocationCuration = CurationDatabaseReader.read(

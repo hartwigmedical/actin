@@ -7,7 +7,6 @@ import com.hartwig.actin.clinical.PatientIngestionStatus
 import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
-import com.hartwig.actin.clinical.curation.CurationIcdValidator
 import com.hartwig.actin.clinical.curation.TestAtcFactory
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBloodTransfusionExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyHeightExtractor
@@ -60,12 +59,11 @@ class StandardDataIngestionTest {
                 emptySet()
             )
         )
-        val icdModel = TestIcdFactory.createProperTestModel()
         val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
         val curationDatabase = CurationDatabaseContext.create(
             CURATION_DIRECTORY,
             CurationDoidValidator(doidModel),
-            CurationIcdValidator(icdModel),
+            TestIcdFactory.createProperTestModel(),
             TestTreatmentDatabaseFactory.createProper()
         )
         val feed = StandardDataIngestion(

@@ -2,6 +2,7 @@ package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationUtil
+import com.hartwig.actin.icd.IcdModel
 
 data class CurationConfigValidationError(
     val categoryName: String,
@@ -54,13 +55,11 @@ fun validateIcd(
     fieldName: String,
     fields: Map<String, Int>,
     parts: Array<String>,
-    icdValidator: (String) -> Boolean
+    icdModel: IcdModel,
 ): Pair<String?, List<CurationConfigValidationError>> {
     val title = parts[fields["icd"]!!]
-    return if (icdValidator.invoke(title)) {
-        title to emptyList()
-    } else {
-        null to listOf(
+    return icdModel.resolveCodeForTitle(title)?.let { code -> code to emptyList() } ?: Pair(
+        null, listOf(
             CurationConfigValidationError(
                 curationCategory.categoryName,
                 input,
@@ -70,7 +69,7 @@ fun validateIcd(
                 "ICD title is not known - check for existence in resource"
             )
         )
-    }
+    )
 }
 
 fun validateBoolean(

@@ -5,7 +5,6 @@ import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
-import com.hartwig.actin.clinical.curation.CurationIcdValidator
 import com.hartwig.actin.clinical.curation.TestAtcFactory
 import com.hartwig.actin.clinical.feed.emc.ClinicalFeedReader
 import com.hartwig.actin.clinical.feed.emc.EmcClinicalFeedIngestor
@@ -53,12 +52,11 @@ class ClinicalIngestionFeedAdapterTest {
                 emptySet()
             )
         )
-        val testIcdModel = TestIcdFactory.createProperTestModel()
 
         curationDatabase = CurationDatabaseContext.create(
             CURATION_DIRECTORY,
             CurationDoidValidator(testDoidModel),
-            CurationIcdValidator(testIcdModel),
+            TestIcdFactory.createProperTestModel(),
             TestTreatmentDatabaseFactory.createProper()
         )
         adapter = ClinicalIngestionFeedAdapter(

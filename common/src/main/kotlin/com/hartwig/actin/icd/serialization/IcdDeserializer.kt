@@ -1,66 +1,77 @@
 package com.hartwig.actin.icd.serialization
 
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.DeserializationContext
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.JsonDeserializer
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.module.SimpleModule
 import com.hartwig.actin.icd.datamodel.ClassKind
-import com.hartwig.actin.icd.datamodel.IcdNode
-import com.hartwig.actin.util.TabularFile
+import com.fasterxml.jackson.dataformat.csv.CsvMapper
+import com.fasterxml.jackson.dataformat.csv.CsvParser
+import com.fasterxml.jackson.dataformat.csv.CsvSchema
+import com.hartwig.actin.icd.datamodel.SerializedIcdNode
 import java.io.File
-import java.nio.file.Files
 
 object IcdDeserializer {
 
-    fun readFromFile(tsvPath: String): List<IcdNode> {
-        val lines = Files.readAllLines(File(tsvPath).toPath())
-        val fields = TabularFile.createFields(lines[0].split(TabularFile.DELIMITER).dropLastWhile { it.isEmpty() }.toTypedArray())
-
-        val icdNodeList = lines.drop(1).map { line ->
-            val values = line.split(TabularFile.DELIMITER).toTypedArray()
-
-            IcdNode(
-                foundationUri = readNullableField(fields, values, "Foundation URI"),
-                linearizationUri = values[fields["Linearization URI"]!!],
-                code = solveCode(fields, values),
-                blockId = readNullableField(fields, values, "BlockId"),
-                title = values[fields["Title"]!!],
-                classKind = resolveClassKind(fields, values),
-                depthInKind = handleDepthInKind(values[fields["DepthInKind"]!!].toInt()),
-                isResidual = values[fields["IsResidual"]!!].toBoolean(),
-                chapterNo = handleChapterNo(values[fields["ChapterNo"]!!]),
-                browserLink = values[fields["BrowserLink"]!!],
-                isLeaf = values[fields["isLeaf"]!!].toBoolean(),
-                primaryTabulation = readNullableField(fields, values, "Primary tabulation")?.toBoolean(),
-                grouping1 = readNullableField(fields, values, "Grouping1"),
-                grouping2 = readNullableField(fields, values, "Grouping2"),
-                grouping3 = readNullableField(fields, values, "Grouping3"),
-                grouping4 = readNullableField(fields, values, "Grouping4"),
-                grouping5 = readNullableField(fields, values, "Grouping5")
+    fun readFromFile(tsvPath: String): List<SerializedIcdNode> {
+        val reader = CsvMapper().apply {
+            enable(CsvParser.Feature.FAIL_ON_MISSING_HEADER_COLUMNS)
+            enable(CsvParser.Feature.EMPTY_STRING_AS_NULL)
+            enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
+            registerModule(
+                SimpleModule().apply {
+                    addDeserializer(ClassKind::class.java, ClassKindDeserializer())
+                }
             )
+        }.readerFor(SerializedIcdNode::class.java).with(CsvSchema.emptySchema().withHeader().withColumnSeparator('\t'))
+
+        val file = File(tsvPath)
+        val nodes = reader.readValues<SerializedIcdNode>(file).readAll().toList()
+            .filterNot { it.chapterNo.any { char -> char.isLetter() } }
+
+        nodes.forEach { if (!isValid(it)) throw IllegalArgumentException("Invalid ICD node: $it") }
+        return nodes
+    }
+
+    fun resolveCode(rawNode: SerializedIcdNode): String {
+        return when (rawNode.classKind) {
+            ClassKind.CHAPTER -> rawNode.chapterNo
+            ClassKind.BLOCK -> rawNode.blockId!!
+            ClassKind.CATEGORY -> rawNode.code!!
         }
-
-        return icdNodeList.filterNot { it.chapterNo.any { char -> char.isLetter() } }
     }
 
-    private fun readNullableField(fields: Fields, values: Array<String>, column: String): String? =
-        fields[column]?.let { field -> values.getOrNull(field)?.takeIf { it.isNotBlank() } }
-
-    private fun resolveClassKind(fields: Fields, values: Array<String>): ClassKind {
-        return ClassKind.valueOf(values[fields["ClassKind"]!!].uppercase())
-    }
-
-    private fun handleDepthInKind(input: Int) = verifyNonZeroStatus(input, "DepthInKind") as Int
-
-    private fun handleChapterNo(input: String): String = verifyNonZeroStatus(input, "ChapterNo") as String
-
-    private fun verifyNonZeroStatus(input: Any, property: String): Any {
-        return if (input.toString() == "0") throw IllegalArgumentException("$property must be non-zero") else input
-    }
-
-    private fun solveCode(fields: Fields, values: Array<String>): String {
-        return when (resolveClassKind(fields, values)) {
-            ClassKind.CHAPTER -> values[fields["ChapterNo"]!!]
-            ClassKind.BLOCK -> values[fields["BlockId"]!!]
-            else -> values[fields["Code"]!!]
+    fun resolveParentCode(rawNode: SerializedIcdNode): String? {
+        return when (rawNode.classKind) {
+            ClassKind.CHAPTER -> null
+            ClassKind.BLOCK -> if (rawNode.depthInKind == 1) rawNode.chapterNo else returnHighestGrouping(rawNode)
+            ClassKind.CATEGORY -> if (rawNode.depthInKind == 1) returnHighestGrouping(rawNode)!! else removeSubCode(rawNode)
         }
+    }
+
+    private fun isValid(rawNode: SerializedIcdNode) = rawNode.chapterNo != "0" && rawNode.depthInKind > 0
+
+    private fun returnHighestGrouping(rawNode: SerializedIcdNode): String? {
+        with(rawNode) {
+            return sequenceOf(grouping5, grouping4, grouping3, grouping2, grouping1).firstOrNull { !it.isNullOrBlank() }
+        }
+    }
+
+    private fun removeSubCode(rawNode: SerializedIcdNode): String? {
+        val subtractionLength = when (rawNode.depthInKind) {
+            1 -> 0
+            2 -> 2
+            else -> 1
+        }
+        return rawNode.code?.substring(0, rawNode.code.length - subtractionLength)
     }
 }
 
-private typealias Fields = Map<String, Int>
+class ClassKindDeserializer : JsonDeserializer<ClassKind>() {
+    override fun deserialize(parser: JsonParser, context: DeserializationContext): ClassKind {
+        val node = parser.readValueAsTree<JsonNode>()
+        return ClassKind.valueOf(node.asText().uppercase())
+    }
+}

@@ -3,16 +3,24 @@ package com.hartwig.actin.icd
 import com.hartwig.actin.icd.datamodel.IcdNode
 
 data class IcdModel(
-    val childToParentsMap: Map<IcdNode, IcdNode?>,
     val codeToNodeMap: Map<String, IcdNode>,
     val titleToCodeMap: Map<String, String>
 ) {
 
-    fun resolveTitleForCode(code: String): String? {
-        return codeToNodeMap[code]?.title
+    fun isValidIcdTitle(icdTitle: String): Boolean {
+        return titleToCodeMap.containsKey(icdTitle)
     }
 
-    fun resolveCodeForTitle(title: String): String? {
-        return titleToCodeMap[title.lowercase()]
+    fun resolveCodeForTitle(icdTitle: String): String? {
+        return titleToCodeMap[icdTitle]
+    }
+
+    companion object {
+        fun create(nodes: List<IcdNode>): IcdModel {
+            return IcdModel(createCodeToNodeMap(nodes), createTitleToCodeMap(nodes))
+        }
+
+        private fun createCodeToNodeMap(icdNodes: List<IcdNode>): Map<String, IcdNode> = icdNodes.associateBy { it.code }
+        private fun createTitleToCodeMap(icdNodes: List<IcdNode>): Map<String, String> = icdNodes.associate { it.title to it.code }
     }
 }
