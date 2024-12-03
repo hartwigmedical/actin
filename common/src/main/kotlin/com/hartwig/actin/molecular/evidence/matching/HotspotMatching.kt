@@ -1,8 +1,6 @@
 package com.hartwig.actin.molecular.evidence.matching
 
-import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.molecular.hotspot.VariantHotspot
-import com.hartwig.serve.datamodel.trial.ActionableTrial
 
 object HotspotMatching {
 

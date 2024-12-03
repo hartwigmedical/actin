@@ -17,7 +17,7 @@ import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.PredictedTumorOrigin
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
-import com.hartwig.actin.datamodel.molecular.TranscriptImpact
+import com.hartwig.actin.datamodel.molecular.TranscriptVariantImpact
 import com.hartwig.actin.datamodel.molecular.Variant
 import com.hartwig.actin.datamodel.molecular.VariantType
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
@@ -31,6 +31,7 @@ import com.hartwig.actin.datamodel.molecular.orange.driver.ExtendedVariantDetail
 import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.orange.driver.HomozygousDisruption
 import com.hartwig.actin.datamodel.molecular.orange.driver.RegionType
+import com.hartwig.actin.datamodel.molecular.orange.driver.TranscriptCopyNumberImpact
 import com.hartwig.actin.datamodel.molecular.orange.driver.Virus
 import com.hartwig.actin.datamodel.molecular.orange.driver.VirusType
 import com.hartwig.actin.datamodel.molecular.orange.immunology.MolecularImmunology
@@ -169,17 +170,17 @@ object HistoricMolecularDeserializer {
         )
     }
 
-    private fun extractCanonicalImpact(variant: JsonObject): TranscriptImpact {
+    private fun extractCanonicalImpact(variant: JsonObject): TranscriptVariantImpact {
         return Json.optionalObject(variant, "canonicalImpact")?.let { impactJson ->
             try {
-                val impact = gson.fromJson(impactJson, TranscriptImpact::class.java)
+                val impact = gson.fromJson(impactJson, TranscriptVariantImpact::class.java)
                 impact.hashCode()
                 impact
             } catch (_: Exception) {
                 logger.info("Failure deserializing: {}", impactJson)
                 null
             }
-        } ?: TranscriptImpact(
+        } ?: TranscriptVariantImpact(
             transcriptId = "",
             hgvsCodingImpact = "",
             hgvsProteinImpact = "",
@@ -212,7 +213,13 @@ object HistoricMolecularDeserializer {
             else -> typeGroup
         }
         return CopyNumber(
-            type = type,
+            canonicalImpact = TranscriptCopyNumberImpact(
+                "",
+                type,
+                determineCopies(obj, "minCopies", type),
+                determineCopies(obj, "maxCopies", type)
+            ), // CHANGE!
+            otherImpacts = emptySet(),
             isReportable = determineIsReportable(obj),
             event = Json.string(obj, "event"),
             driverLikelihood = determineDriverLikelihood(obj),
@@ -221,8 +228,6 @@ object HistoricMolecularDeserializer {
             geneRole = GeneRole.UNKNOWN,
             proteinEffect = ProteinEffect.UNKNOWN,
             isAssociatedWithDrugResistance = null,
-            minCopies = determineCopies(obj, "minCopies", type),
-            maxCopies = determineCopies(obj, "maxCopies", type)
         )
     }
 

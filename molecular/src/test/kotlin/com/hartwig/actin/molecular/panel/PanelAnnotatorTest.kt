@@ -13,6 +13,7 @@ import com.hartwig.actin.datamodel.molecular.GeneRole
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.Variant
 import com.hartwig.actin.datamodel.molecular.VariantType
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.GENE
@@ -136,9 +137,8 @@ class PanelAnnotatorTest {
         assertThat(annotatedPanel.drivers.copyNumbers).isEqualTo(
             listOf(
                 CopyNumber(
-                    type = CopyNumberType.LOSS,
-                    minCopies = 0,
-                    maxCopies = 0,
+                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS),
+                    otherImpacts = emptySet(),
                     isReportable = true,
                     event = GENE,
                     driverLikelihood = DriverLikelihood.HIGH,
@@ -184,9 +184,9 @@ class PanelAnnotatorTest {
     }
 
     private fun assertCopyNumber(annotatedVariant: CopyNumber) {
-        assertThat(annotatedVariant.minCopies).isEqualTo(6)
-        assertThat(annotatedVariant.maxCopies).isEqualTo(6)
-        assertThat(annotatedVariant.type).isEqualTo(CopyNumberType.FULL_GAIN)
+        assertThat(annotatedVariant.canonicalImpact.minCopies).isEqualTo(6)
+        assertThat(annotatedVariant.canonicalImpact.maxCopies).isEqualTo(6)
+        assertThat(annotatedVariant.canonicalImpact.type).isEqualTo(CopyNumberType.FULL_GAIN)
         assertThat(annotatedVariant.driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
         assertThat(annotatedVariant.isReportable).isTrue()
     }

@@ -12,6 +12,7 @@ import com.hartwig.actin.datamodel.molecular.PanelRecord
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.orange.driver.TranscriptCopyNumberImpact
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
@@ -86,9 +87,13 @@ class PanelAnnotator(
         event = panelAmplificationExtraction.gene,
         driverLikelihood = DriverLikelihood.HIGH,
         evidence = ClinicalEvidenceFactory.createNoEvidence(),
-        type = CopyNumberType.FULL_GAIN,
-        minCopies = MIN_COPY_NUMBER,
-        maxCopies = MAX_COPY_NUMBER
+        canonicalImpact = TranscriptCopyNumberImpact( // Question for mr. Duyvesteyn: Is it also correct for CDKN2A to only look at canonical here (for panels)?
+            transcriptId = panelAmplificationExtraction.transcript ?: "",
+            type = CopyNumberType.FULL_GAIN,
+            minCopies = MIN_COPY_NUMBER,
+            maxCopies = MAX_COPY_NUMBER
+        ),
+        otherImpacts = emptySet()
     )
 
     private fun inferredCopyNumber(sequencedDeletedGene: SequencedDeletedGene) = CopyNumber(
@@ -100,8 +105,12 @@ class PanelAnnotator(
         event = sequencedDeletedGene.gene,
         driverLikelihood = DriverLikelihood.HIGH,
         evidence = ClinicalEvidenceFactory.createNoEvidence(),
-        type = CopyNumberType.LOSS,
-        minCopies = 0,
-        maxCopies = 0
+        canonicalImpact = TranscriptCopyNumberImpact(
+            transcriptId = sequencedDeletedGene.transcript ?: "",
+            type = CopyNumberType.LOSS,
+            minCopies = 0,
+            maxCopies = 0
+        ),
+        otherImpacts = emptySet()
     )
 }

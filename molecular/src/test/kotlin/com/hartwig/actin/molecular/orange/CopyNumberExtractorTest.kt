@@ -61,30 +61,30 @@ class CopyNumberExtractorTest {
         val gene1 = findByGene(copyNumbers, "gene 1")
         assertThat(gene1.isReportable).isTrue
         assertThat(gene1.driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
-        assertThat(gene1.type).isEqualTo(CopyNumberType.LOSS)
-        assertThat(gene1.minCopies).isEqualTo(0)
-        assertThat(gene1.maxCopies).isEqualTo(1)
+        assertThat(gene1.canonicalImpact.type).isEqualTo(CopyNumberType.LOSS)
+        assertThat(gene1.canonicalImpact.minCopies).isEqualTo(0)
+        assertThat(gene1.canonicalImpact.maxCopies).isEqualTo(1)
 
         val gene2 = findByGene(copyNumbers, "gene 2")
         assertThat(gene2.isReportable).isFalse
         assertThat(gene2.driverLikelihood).isNull()
-        assertThat(gene2.type).isEqualTo(CopyNumberType.NONE)
-        assertThat(gene2.minCopies).isEqualTo(4)
-        assertThat(gene2.maxCopies).isEqualTo(5)
+        assertThat(gene2.canonicalImpact.type).isEqualTo(CopyNumberType.NONE)
+        assertThat(gene2.canonicalImpact.minCopies).isEqualTo(4)
+        assertThat(gene2.canonicalImpact.maxCopies).isEqualTo(5)
 
         val gene4 = findByGene(copyNumbers, "gene 4")
         assertThat(gene4.isReportable).isFalse
         assertThat(gene4.driverLikelihood).isNull()
-        assertThat(gene4.type).isEqualTo(CopyNumberType.NONE)
-        assertThat(gene4.minCopies).isEqualTo(1)
-        assertThat(gene4.maxCopies).isEqualTo(2)
+        assertThat(gene4.canonicalImpact.type).isEqualTo(CopyNumberType.NONE)
+        assertThat(gene4.canonicalImpact.minCopies).isEqualTo(1)
+        assertThat(gene4.canonicalImpact.maxCopies).isEqualTo(2)
 
         val gene5 = findByGene(copyNumbers, "gene 5")
         assertThat(gene5.isReportable).isFalse
         assertThat(gene5.driverLikelihood).isNull()
-        assertThat(gene5.type).isEqualTo(CopyNumberType.NONE)
-        assertThat(gene5.minCopies).isEqualTo(14)
-        assertThat(gene5.maxCopies).isEqualTo(15)
+        assertThat(gene5.canonicalImpact.type).isEqualTo(CopyNumberType.NONE)
+        assertThat(gene5.canonicalImpact.minCopies).isEqualTo(14)
+        assertThat(gene5.canonicalImpact.maxCopies).isEqualTo(15)
     }
 
     @Test(expected = IllegalStateException::class)
@@ -138,7 +138,7 @@ class CopyNumberExtractorTest {
         val copyNumbers = extractor.extract(purple)
 
         assertThat(copyNumbers).hasSize(1)
-        assertThat(copyNumbers.first().minCopies).isEqualTo(4)
+        assertThat(copyNumbers.first().canonicalImpact.minCopies).isEqualTo(4)
     }
 
     @Test
@@ -161,7 +161,7 @@ class CopyNumberExtractorTest {
         val copyNumbers = extractor.extract(purple)
 
         assertThat(copyNumbers).hasSize(1)
-        assertThat(copyNumbers.first().minCopies).isEqualTo(12)
+        assertThat(copyNumbers.first().otherImpacts.first().minCopies).isEqualTo(12)
     }
 
     private fun findByGene(copyNumbers: Iterable<CopyNumber>, geneToFind: String): CopyNumber {

@@ -24,7 +24,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         with(molecularDriversInterpreter) {
             return listOf(
                 filteredVariants().map(::fromVariant),
-                filteredCopyNumbers().map(::fromCopyNumber),
+                filteredCopyNumbers().flatMap(::fromCopyNumber),
                 filteredHomozygousDisruptions().map(::fromHomozygousDisruption),
                 filteredDisruptions().map(::fromDisruption),
                 filteredFusions().map(::fromFusion),
@@ -56,14 +56,25 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         return if (boundedCopyNumber < 1) Formats.singleDigitNumber(boundedCopyNumber) else Formats.noDigitNumber(boundedCopyNumber)
     }
 
-    private fun fromCopyNumber(copyNumber: CopyNumber): MolecularDriverEntry {
-        val driverType = when (copyNumber.type) {
+    private fun fromCopyNumber(copyNumber: CopyNumber): List<MolecularDriverEntry> {
+        val canonicalDriverType = getDriverType(copyNumber.canonicalImpact.type)
+        val canonicalName = "${copyNumber.event}, ${copyNumber.canonicalImpact.minCopies} copies"
+
+        val entries = mutableListOf(driverEntryForGeneAlteration(canonicalDriverType, canonicalName, copyNumber))
+        copyNumber.otherImpacts.forEach { impact ->
+            val otherDriverType = getDriverType(impact.type)
+            val otherName = "${copyNumber.event} (alt), ${impact.minCopies} copies"
+            entries.add(driverEntryForGeneAlteration(otherDriverType, otherName, copyNumber))
+        }
+        return entries
+    }
+
+    private fun getDriverType(type: CopyNumberType): String {
+        return when (type) {
             CopyNumberType.FULL_GAIN, CopyNumberType.PARTIAL_GAIN -> "Amplification"
             CopyNumberType.LOSS -> "Loss"
             CopyNumberType.NONE -> "Copy Number"
         }
-        val name = copyNumber.event + ", " + copyNumber.minCopies + " copies"
-        return driverEntryForGeneAlteration(driverType, name, copyNumber)
     }
 
     private fun fromHomozygousDisruption(homozygousDisruption: HomozygousDisruption): MolecularDriverEntry {

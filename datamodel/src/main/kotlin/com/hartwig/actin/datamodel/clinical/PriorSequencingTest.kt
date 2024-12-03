@@ -20,7 +20,7 @@ data class SequencedVariant(
         impact?.let { if (!impact.startsWith(notationPrefix)) "$notationPrefix.$it" else it }
 }
 
-data class SequencedAmplification(val gene: String)
+data class SequencedAmplification(val gene: String, val transcript: String? = null)
 
 data class SequencedSkippedExons(val gene: String, val exonStart: Int, val exonEnd: Int, val transcript: String? = null) : Displayable {
     override fun display(): String {
@@ -46,7 +46,7 @@ data class SequencedFusion(
     }
 }
 
-data class SequencedDeletedGene(val gene: String)
+data class SequencedDeletedGene(val gene: String, val transcript: String? = null)
 
 data class PriorSequencingTest(
     val test: String,

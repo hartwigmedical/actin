@@ -13,7 +13,8 @@ import com.hartwig.actin.datamodel.molecular.Variant
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestDisruptionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestHomozygousDisruptionFactory
-import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptImpactFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import org.junit.Test
@@ -33,7 +34,7 @@ class GeneIsInactivatedTest {
         isReportable = true,
         geneRole = GeneRole.TSG,
         proteinEffect = ProteinEffect.LOSS_OF_FUNCTION,
-        type = CopyNumberType.LOSS
+        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS)
     )
 
     private val matchingVariant = TestVariantFactory.createMinimal().copy(
@@ -43,7 +44,7 @@ class GeneIsInactivatedTest {
         extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 1.0, isBiallelic = true),
         geneRole = GeneRole.TSG,
         proteinEffect = ProteinEffect.LOSS_OF_FUNCTION,
-        canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(
+        canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(
             codingEffect = GeneIsInactivated.INACTIVATING_CODING_EFFECTS.first()
         )
     )
@@ -161,7 +162,7 @@ class GeneIsInactivatedTest {
     fun `Should fail when TSG variant has no coding impact`() {
         assertResultForVariant(
             EvaluationResult.FAIL, matchingVariant.copy(
-                canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(codingEffect = CodingEffect.NONE)
+                canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(codingEffect = CodingEffect.NONE)
             )
         )
     }
@@ -308,7 +309,7 @@ class GeneIsInactivatedTest {
     private fun variantWithPhaseGroups(phaseGroups: Set<Int>?) = TestVariantFactory.createMinimal().copy(
         gene = GENE,
         isReportable = true,
-        canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(codingEffect = CodingEffect.NONSENSE_OR_FRAMESHIFT),
+        canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(codingEffect = CodingEffect.NONSENSE_OR_FRAMESHIFT),
         driverLikelihood = DriverLikelihood.LOW,
         extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(phaseGroups = phaseGroups)
     )

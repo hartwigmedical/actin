@@ -21,12 +21,21 @@ class GeneIsInactivated(private val gene: String, maxTestAge: LocalDate? = null)
         val inactivationEventsThatAreUnreportable: MutableSet<String> = mutableSetOf()
         val inactivationEventsNoTSG: MutableSet<String> = mutableSetOf()
         val inactivationEventsGainOfFunction: MutableSet<String> = mutableSetOf()
+        val inactivationEventsOnNonCanonicalTranscript: MutableSet<String> = mutableSetOf()
         val evidenceSource = test.evidenceSource
+
+        test.drivers
+        sequenceOf(
+            test.drivers.homozygousDisruptions.asSequence(),
+            test.drivers.copyNumbers.asSequence().filter { it.otherImpacts.any { impact -> impact.type == CopyNumberType.LOSS } }
+        ).flatten()
+            .filter { it.gene == gene }
+            .forEach { geneAlterationDriver -> inactivationEventsOnNonCanonicalTranscript.add(geneAlterationDriver.event) }
 
         val drivers = test.drivers
         sequenceOf(
             drivers.homozygousDisruptions.asSequence(),
-            drivers.copyNumbers.asSequence().filter { it.type == CopyNumberType.LOSS }
+            drivers.copyNumbers.asSequence().filter { it.canonicalImpact.type == CopyNumberType.LOSS }
         ).flatten()
             .filter { it.gene == gene }
             .forEach { geneAlterationDriver ->
@@ -116,6 +125,7 @@ class GeneIsInactivated(private val gene: String, maxTestAge: LocalDate? = null)
             inactivationEventsGainOfFunction,
             inactivationHighDriverNonBiallelicVariants,
             inactivationSubclonalVariants,
+            inactivationEventsOnNonCanonicalTranscript,
             reportableNonDriverBiallelicVariantsOther,
             reportableNonDriverNonBiallelicVariantsOther,
             eventsThatMayBeTransPhased,
@@ -134,6 +144,7 @@ class GeneIsInactivated(private val gene: String, maxTestAge: LocalDate? = null)
         inactivationEventsGainOfFunction: Set<String>,
         inactivationHighDriverNonBiallelicVariants: Set<String>,
         inactivationSubclonalVariants: Set<String>,
+        inactivationEventsOnNonCanonicalTranscript: Set<String>,
         reportableNonDriverBiallelicVariantsOther: Set<String>,
         reportableNonDriverNonBiallelicVariantsOther: Set<String>,
         eventsThatMayBeTransPhased: List<String>, evidenceSource: String
@@ -170,6 +181,11 @@ class GeneIsInactivated(private val gene: String, maxTestAge: LocalDate? = null)
                             + percentage(1 - CLONAL_CUTOFF),
                     "Inactivation event(s) detected for $gene: ${concat(inactivationSubclonalVariants)} but subclonal likelihood > "
                             + percentage(1 - CLONAL_CUTOFF)
+                ),
+                EventsWithMessages(
+                    inactivationEventsOnNonCanonicalTranscript,
+                    "Inactivation event(s) detected for $gene: ${concat(inactivationSubclonalVariants)} but only on non-canonical transcript",
+                    "Inactivation event(s) detected for $gene: ${concat(inactivationSubclonalVariants)} but only on non-canonical transcript"
                 ),
                 EventsWithMessages(
                     reportableNonDriverBiallelicVariantsOther,

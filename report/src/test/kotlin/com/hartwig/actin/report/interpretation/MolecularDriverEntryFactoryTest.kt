@@ -3,6 +3,7 @@ package com.hartwig.actin.report.interpretation
 import com.hartwig.actin.datamodel.molecular.Drivers
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVirusFactory
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
@@ -84,7 +85,8 @@ class MolecularDriverEntryFactoryTest {
     }
 
     private fun assertCopyNumberType(copyNumberType: CopyNumberType, expectedDriverType: String) {
-        val loss = TestMolecularFactory.createProperCopyNumber().copy(type = copyNumberType)
+        val loss = TestMolecularFactory.createProperCopyNumber()
+            .copy(canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(copyNumberType))
         val record = TestMolecularFactory.createProperTestMolecularRecord().copy(
             drivers = TestMolecularFactory.createProperTestDrivers()
                 .copy(variants = emptyList(), copyNumbers = listOf(loss))

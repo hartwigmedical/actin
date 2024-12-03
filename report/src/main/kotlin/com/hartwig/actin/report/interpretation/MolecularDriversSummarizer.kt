@@ -19,15 +19,15 @@ class MolecularDriversSummarizer private constructor(
     fun keyAmplifiedGenes(): List<String> {
         return drivers.copyNumbers
             .asSequence()
-            .filter { it.type.isGain }
+            .filter { it.canonicalImpact.type.isGain }
             .filter(::isKeyDriver)
-            .map { it.gene + if (it.type == CopyNumberType.PARTIAL_GAIN) " (partial)" else "" }
+            .map { it.gene + if (it.canonicalImpact.type == CopyNumberType.PARTIAL_GAIN) " (partial)" else "" }
             .distinct()
             .toList()
     }
 
     fun keyDeletedGenes(): List<String> {
-        return keyGenesForAlterations(drivers.copyNumbers.filter { it.type.isLoss })
+        return keyGenesForAlterations(drivers.copyNumbers.filter { it.canonicalImpact.type.isLoss })
     }
 
     fun keyHomozygouslyDisruptedGenes(): List<String> {

@@ -5,7 +5,7 @@ import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
-import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptImpactFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import org.junit.Test
 
@@ -22,7 +22,7 @@ private val EXON_SKIPPING_FUSION = TestFusionFactory.createMinimal().copy(
 private val SPLICE_VARIANT = TestVariantFactory.createMinimal().copy(
     gene = MATCHING_GENE,
     isReportable = true,
-    canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(affectedExon = 2, isSpliceRegion = true)
+    canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(affectedExon = 2, isSpliceRegion = true)
 )
 
 class GeneHasSpecificExonSkippingTest {
@@ -55,7 +55,7 @@ class GeneHasSpecificExonSkippingTest {
             function.evaluate(
                 MolecularTestFactory.withVariant(
                     SPLICE_VARIANT.copy(
-                        canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(
+                        canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(
                             affectedExon = 2, codingEffect = CodingEffect.SPLICE
                         )
                     )

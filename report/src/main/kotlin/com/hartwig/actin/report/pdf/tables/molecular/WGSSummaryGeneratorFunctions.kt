@@ -158,7 +158,7 @@ object WGSSummaryGeneratorFunctions {
                 DriverLikelihood.HIGH -> ""
                 null -> {
                     if (driver is CopyNumber) {
-                        " (${driver.minCopies} copies - no amplification or deletion)"
+                        " (${driver.canonicalImpact.minCopies} copies - no amplification or deletion)"
                     } else " (dubious quality)"
                 }
             }
