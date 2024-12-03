@@ -36,7 +36,7 @@ import com.hartwig.actin.report.pdf.tables.trial.EligibleExternalTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummarizer
 import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummary
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleActinTrialsGenerator
-import com.hartwig.actin.report.pdf.tables.trial.filterExclusivelyInChildrensHospitals
+import com.hartwig.actin.report.pdf.tables.trial.filterExclusivelyInChildrensHospitalsInReferenceCountry
 import com.hartwig.actin.report.pdf.tables.trial.filterInCountryOfReference
 import com.hartwig.actin.report.pdf.tables.trial.filterInternalTrials
 import com.hartwig.actin.report.pdf.tables.trial.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts
@@ -224,7 +224,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
 
         val externalEligibleTrialsFiltered = ExternalTrialSummarizer.summarize(externalEligibleTrials)
             .filterInternalTrials(report.treatmentMatch.trialMatches.toSet())
-            .filterExclusivelyInChildrensHospitals(
+            .filterExclusivelyInChildrensHospitalsInReferenceCountry(
                 patientRecord.patient.birthYear,
                 report.treatmentMatch.referenceDate,
                 report.config.countryOfReference

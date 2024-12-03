@@ -109,25 +109,42 @@ class ExternalTrialSummarizerTest {
     }
 
     @Test
-    fun `Should filter trials in childrens hospitals`() {
-        val notFilteredOneAdultHospital = BASE_EXTERNAL_TRIAL_SUMMARY.copy(
-            countries = countrySet(
-                NETHERLANDS.copy(
-                    hospitalsPerCity = mapOf(
-                        "Utrecht" to setOf(Hospital("PMC", true)),
-                        "Amsterdam" to setOf(Hospital("NKI", false))
-                    )
-                )
+    fun `Should filter trials exclusively in childrens hospitals in reference country`() {
+        val notFilteredHospital = createExternalTrialSummaryWithHospitals(
+            NETHERLANDS to mapOf(
+                "Utrecht" to setOf(Hospital("PMC", true)),
+                "Amsterdam" to setOf(Hospital("NKI", false))
+            )
+        )
+        val filteredHospital = createExternalTrialSummaryWithHospitals(
+            NETHERLANDS to mapOf(
+                "Utrecht" to setOf(Hospital("Sophia KinderZiekenhuis", true))
+            )
+        )
+        val notFilteredHospitalInOtherCountry = createExternalTrialSummaryWithHospitals(
+            BELGIUM to mapOf(
+                "Leuven" to setOf(Hospital("Leuven hospital", null))
             )
         )
         assertThat(
-            setOf(
-                BASE_EXTERNAL_TRIAL_SUMMARY.copy(
-                    countries = countrySet(NETHERLANDS)
-                ),
-                notFilteredOneAdultHospital
-            ).filterExclusivelyInChildrensHospitals(1960, LocalDate.of(2021, 1, 1), CountryName.NETHERLANDS)
-        ).containsExactlyInAnyOrder(notFilteredOneAdultHospital)
+            setOf(notFilteredHospital, filteredHospital, notFilteredHospitalInOtherCountry)
+                .filterExclusivelyInChildrensHospitalsInReferenceCountry(1960, LocalDate.of(2021, 1, 1), CountryName.NETHERLANDS)
+        ).containsExactlyInAnyOrder(notFilteredHospital, notFilteredHospitalInOtherCountry)
+    }
+
+    @Test
+    fun `Should not filter trials exclusively in childrens hospitals in reference country when patient is younger than 25 years old`() {
+        val notFilteredHospital = createExternalTrialSummaryWithHospitals(
+            NETHERLANDS to mapOf(
+                "Utrecht" to setOf(Hospital("PMC", true))
+            )
+        )
+        val result = setOf(notFilteredHospital).filterExclusivelyInChildrensHospitalsInReferenceCountry(
+            birthYear = 2000,
+            referenceDate = LocalDate.of(2021, 1, 1),
+            countryOfReference = CountryName.NETHERLANDS
+        )
+        assertThat(result).containsExactlyInAnyOrder(notFilteredHospital)
     }
 
     @Test
@@ -178,5 +195,12 @@ class ExternalTrialSummarizerTest {
     }
 
     private fun countrySet(vararg countries: Country) = sortedSetOf(Comparator.comparing { it.name }, *countries)
+
+    private fun createExternalTrialSummaryWithHospitals(vararg countryHospitals: Pair<Country, Map<String, Set<Hospital>>>): ExternalTrialSummary {
+        val countries = countryHospitals.map { (country, hospitals) ->
+            country.copy(hospitalsPerCity = hospitals)
+        }.toSortedSet(Comparator.comparing { it.name })
+        return BASE_EXTERNAL_TRIAL_SUMMARY.copy(countries = countries)
+    }
 
 }
