@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.molecular.orange.driver.Virus
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 
-class ActionableEventMatcher internal constructor(
+class ClinicalEvidenceMatcher internal constructor(
     private val personalizedActionabilityFactory: PersonalizedActionabilityFactory,
     private val variantEvidence: VariantEvidence,
     private val copyNumberEvidence: CopyNumberEvidence,

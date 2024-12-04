@@ -5,7 +5,7 @@ import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.orange.driver.HomozygousDisruption
 import com.hartwig.actin.datamodel.molecular.orange.driver.Virus
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventMatcher
+import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceMatcher
 import com.hartwig.actin.molecular.evidence.known.KnownEventResolver
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
@@ -14,23 +14,23 @@ import com.hartwig.serve.datamodel.molecular.fusion.KnownFusion
 
 class EvidenceDatabase(
     private val knownEventResolver: KnownEventResolver,
-    private val actionableEventMatcher: ActionableEventMatcher
+    private val clinicalEvidenceMatcher: ClinicalEvidenceMatcher
 ) {
 
     fun evidenceForMicrosatelliteStatus(isMicrosatelliteUnstable: Boolean): ClinicalEvidence {
-        return actionableEventMatcher.matchForMicrosatelliteStatus(isMicrosatelliteUnstable)
+        return clinicalEvidenceMatcher.matchForMicrosatelliteStatus(isMicrosatelliteUnstable)
     }
 
     fun evidenceForHomologousRepairStatus(isHomologousRepairDeficient: Boolean): ClinicalEvidence {
-        return actionableEventMatcher.matchForHomologousRepairStatus(isHomologousRepairDeficient)
+        return clinicalEvidenceMatcher.matchForHomologousRepairStatus(isHomologousRepairDeficient)
     }
 
     fun evidenceForTumorMutationalBurdenStatus(hasHighTumorMutationalBurden: Boolean): ClinicalEvidence {
-        return actionableEventMatcher.matchForHighTumorMutationalBurden(hasHighTumorMutationalBurden)
+        return clinicalEvidenceMatcher.matchForHighTumorMutationalBurden(hasHighTumorMutationalBurden)
     }
 
     fun evidenceForTumorMutationalLoadStatus(hasHighTumorMutationalLoad: Boolean): ClinicalEvidence {
-        return actionableEventMatcher.matchForHighTumorMutationalLoad(hasHighTumorMutationalLoad)
+        return clinicalEvidenceMatcher.matchForHighTumorMutationalLoad(hasHighTumorMutationalLoad)
     }
 
     fun geneAlterationForVariant(variant: VariantMatchCriteria): GeneAlteration? {
@@ -38,7 +38,7 @@ class EvidenceDatabase(
     }
 
     fun evidenceForVariant(variant: VariantMatchCriteria): ClinicalEvidence {
-        return actionableEventMatcher.matchForVariant(variant)
+        return clinicalEvidenceMatcher.matchForVariant(variant)
     }
 
     fun geneAlterationForCopyNumber(copyNumber: CopyNumber): GeneAlteration? {
@@ -46,7 +46,7 @@ class EvidenceDatabase(
     }
 
     fun evidenceForCopyNumber(copyNumber: CopyNumber): ClinicalEvidence {
-        return actionableEventMatcher.matchForCopyNumber(copyNumber)
+        return clinicalEvidenceMatcher.matchForCopyNumber(copyNumber)
     }
 
     fun geneAlterationForHomozygousDisruption(homozygousDisruption: HomozygousDisruption): GeneAlteration? {
@@ -54,7 +54,7 @@ class EvidenceDatabase(
     }
 
     fun evidenceForHomozygousDisruption(homozygousDisruption: HomozygousDisruption): ClinicalEvidence {
-        return actionableEventMatcher.matchForHomozygousDisruption(homozygousDisruption)
+        return clinicalEvidenceMatcher.matchForHomozygousDisruption(homozygousDisruption)
     }
 
     fun geneAlterationForBreakend(disruption: Disruption): GeneAlteration? {
@@ -62,7 +62,7 @@ class EvidenceDatabase(
     }
 
     fun evidenceForBreakend(disruption: Disruption): ClinicalEvidence {
-        return actionableEventMatcher.matchForBreakend(disruption)
+        return clinicalEvidenceMatcher.matchForBreakend(disruption)
     }
 
     fun lookupKnownFusion(fusion: FusionMatchCriteria): KnownFusion? {
@@ -70,10 +70,10 @@ class EvidenceDatabase(
     }
 
     fun evidenceForFusion(fusion: FusionMatchCriteria): ClinicalEvidence {
-        return actionableEventMatcher.matchForFusion(fusion)
+        return clinicalEvidenceMatcher.matchForFusion(fusion)
     }
 
     fun evidenceForVirus(virus: Virus): ClinicalEvidence {
-        return actionableEventMatcher.matchForVirus(virus)
+        return clinicalEvidenceMatcher.matchForVirus(virus)
     }
 }

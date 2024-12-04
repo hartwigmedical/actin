@@ -8,9 +8,9 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.doid.DoidModel
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventMatcher
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventMatcherFactory
 import com.hartwig.actin.molecular.evidence.actionability.BreakendEvidence
+import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceMatcher
+import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceMatcherFactory
 import com.hartwig.actin.molecular.evidence.actionability.CopyNumberEvidence
 import com.hartwig.actin.molecular.evidence.actionability.FusionEvidence
 import com.hartwig.actin.molecular.evidence.actionability.HomozygousDisruptionEvidence
@@ -23,12 +23,12 @@ import com.hartwig.serve.datamodel.efficacy.Treatment as ServeTreatment
 class ResistanceEvidenceMatcher(
     private val candidateEvidences: List<EfficacyEvidence>,
     private val treatmentDatabase: TreatmentDatabase,
-    private val actionableEventMatcher: ActionableEventMatcher,
+    // TODO (CB): Use clinicalEvidenceMatcher to generate all matches and then simplify this function?
+    @Suppress("unused") private val clinicalEvidenceMatcher: ClinicalEvidenceMatcher,
     private val molecularHistory: MolecularHistory
 ) {
 
     fun match(treatment: Treatment): List<ResistanceEvidence> {
-        // TODO (CB): Use actionableEventMatcher to generate all matches and then simplify this function?
         return candidateEvidences.mapNotNull { evidence ->
             findTreatmentInDatabase(evidence.treatment(), treatment)?.let { treatmentName ->
                 ResistanceEvidence(
@@ -178,8 +178,8 @@ class ResistanceEvidenceMatcher(
             val expandedTumorDoids = expandDoids(doidModel, tumorDoids)
             val onLabelNonPositiveEvidence = evidences.filter { hasNoPositiveResponse(it) && isOnLabel(it, expandedTumorDoids) }
 
-            val actionableEventMatcherFactory = ActionableEventMatcherFactory(doidModel, tumorDoids)
-            val actionableEventMatcher = actionableEventMatcherFactory.create(evidences = onLabelNonPositiveEvidence, trials = emptyList())
+            val clinicalEvidenceMatcherFactory = ClinicalEvidenceMatcherFactory(doidModel, tumorDoids)
+            val actionableEventMatcher = clinicalEvidenceMatcherFactory.create(evidences = onLabelNonPositiveEvidence, trials = emptyList())
 
             return ResistanceEvidenceMatcher(onLabelNonPositiveEvidence, treatmentDatabase, actionableEventMatcher, molecularHistory)
         }

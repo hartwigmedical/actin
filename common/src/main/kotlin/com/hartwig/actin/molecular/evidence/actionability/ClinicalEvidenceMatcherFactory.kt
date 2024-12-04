@@ -6,14 +6,14 @@ import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.trial.ActionableTrial
 
-class ActionableEventMatcherFactory(
+class ClinicalEvidenceMatcherFactory(
     private val doidModel: DoidModel,
     private val tumorDoids: Set<String>
 ) {
 
     val actionableEventSources = setOf(ActionabilityConstants.EVIDENCE_SOURCE, ActionabilityConstants.EXTERNAL_TRIAL_SOURCE)
 
-    fun create(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial>): ActionableEventMatcher {
+    fun create(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial>): ClinicalEvidenceMatcher {
         val filteredEvidences = evidences
             .filter { actionableEventSources.contains(it.source()) }
             .filter { isMolecularCriteriumApplicable(it.molecularCriterium()) }
@@ -43,7 +43,7 @@ class ActionableEventMatcherFactory(
         personalizedActionabilityFactory: PersonalizedActionabilityFactory,
         evidences: List<EfficacyEvidence>,
         trials: List<ActionableTrial>
-    ): ActionableEventMatcher {
+    ): ClinicalEvidenceMatcher {
         val variantEvidence = VariantEvidence.create(evidences, trials)
         val copyNumberEvidence = CopyNumberEvidence.create(evidences, trials)
         val breakendEvidence = BreakendEvidence.create(evidences, trials)
@@ -52,7 +52,7 @@ class ActionableEventMatcherFactory(
         val virusEvidence = VirusEvidence.create(evidences, trials)
         val signatureEvidence = SignatureEvidence.create(evidences, trials)
 
-        return ActionableEventMatcher(
+        return ClinicalEvidenceMatcher(
             personalizedActionabilityFactory = personalizedActionabilityFactory,
             variantEvidence = variantEvidence,
             copyNumberEvidence = copyNumberEvidence,

@@ -20,6 +20,7 @@ class EvidenceDatabaseTest {
     @Test
     fun `Should match evidence for signatures`() {
         val database = TestEvidenceDatabaseFactory.createProperDatabase()
+
         assertEvidenceCountMatchesExpected(database.evidenceForMicrosatelliteStatus(false), 0)
         assertEvidenceCountMatchesExpected(database.evidenceForMicrosatelliteStatus(true), 1)
         assertEvidenceCountMatchesExpected(database.evidenceForHomologousRepairStatus(false), 0)

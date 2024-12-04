@@ -2,7 +2,7 @@ package com.hartwig.actin.molecular.evidence
 
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.datamodel.DoidEntry
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventMatcherFactory
+import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceMatcherFactory
 import com.hartwig.actin.molecular.evidence.known.KnownEventResolverFactory
 import com.hartwig.serve.datamodel.ServeRecord
 
@@ -14,7 +14,7 @@ object EvidenceDatabaseFactory {
         tumorDoids: Set<String>
     ): EvidenceDatabase {
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
-        val factory = ActionableEventMatcherFactory(doidModel, tumorDoids)
+        val factory = ClinicalEvidenceMatcherFactory(doidModel, tumorDoids)
         val actionableEventMatcher = factory.create(serveRecord.evidences(), serveRecord.trials())
         val knownEventResolver = KnownEventResolverFactory.create(serveRecord.knownEvents())
 

@@ -7,7 +7,7 @@ import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 
 object TestActionableEventMatcherFactory {
 
-    fun createProper(): ActionableEventMatcher {
+    fun createProper(): ClinicalEvidenceMatcher {
         val applicableDoids = setOf("parent", "child")
         val personalizedActionabilityFactory = PersonalizedActionabilityFactory(applicableDoids)
 
@@ -28,7 +28,7 @@ object TestActionableEventMatcherFactory {
             TestServeEvidenceFactory.createEvidenceForHLA()
         )
 
-        return ActionableEventMatcher(
+        return ClinicalEvidenceMatcher(
             personalizedActionabilityFactory = personalizedActionabilityFactory,
             variantEvidence = VariantEvidence.create(evidences, emptyList()),
             copyNumberEvidence = CopyNumberEvidence.create(evidences, emptyList()),

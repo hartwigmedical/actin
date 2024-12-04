@@ -10,10 +10,10 @@ import com.hartwig.serve.datamodel.trial.ActionableTrial
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class ActionableEventMatcherFactoryTest {
+class ClinicalEvidenceMatcherFactoryTest {
 
     val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
-    val factory = ActionableEventMatcherFactory(doidModel, emptySet())
+    val factory = ClinicalEvidenceMatcherFactory(doidModel, emptySet())
 
     @Test
     fun `Should create actionable event matcher on empty inputs`() {
