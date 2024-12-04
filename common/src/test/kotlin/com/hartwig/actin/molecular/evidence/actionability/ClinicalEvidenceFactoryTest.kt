@@ -63,7 +63,7 @@ class ClinicalEvidenceFactoryTest {
     fun `Should convert SERVE external trials to clinical evidence`() {
         val trial = TestExternalTrialFactory.createTestTrial().copy(countries = setOf(CountryDetails(Country.OTHER, emptyMap())))
 
-        val molecularCriterium = TestServeMolecularFactory.createHotspot()
+        val molecularCriterium = TestServeMolecularFactory.createHotspotCriterium()
 
         val result =
             ClinicalEvidenceFactory.create(

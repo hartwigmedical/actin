@@ -22,38 +22,38 @@ object TestServeEvidenceFactory {
         ref: String = "",
         alt: String = ""
     ): EfficacyEvidence {
-        return create(molecularCriterium = TestServeMolecularFactory.createHotspot(gene, chromosome, position, ref, alt))
+        return create(molecularCriterium = TestServeMolecularFactory.createHotspotCriterium(gene, chromosome, position, ref, alt))
     }
 
     fun createEvidenceForCodon(gene: String = ""): EfficacyEvidence {
-        return create(molecularCriterium = TestServeMolecularFactory.createCodon(gene))
+        return create(molecularCriterium = TestServeMolecularFactory.createCodonCriterium(gene))
     }
 
     fun createEvidenceForExon(): EfficacyEvidence {
-        return create(molecularCriterium = TestServeMolecularFactory.createExon())
+        return create(molecularCriterium = TestServeMolecularFactory.createExonCriterium())
     }
 
     fun createEvidenceForGene(geneEvent: GeneEvent = GeneEvent.ANY_MUTATION, gene: String = ""): EfficacyEvidence {
-        return create(molecularCriterium = TestServeMolecularFactory.createGene(gene, geneEvent))
+        return create(molecularCriterium = TestServeMolecularFactory.createGeneCriterium(gene, geneEvent))
     }
 
     fun createEvidenceForFusion(): EfficacyEvidence {
-        return create(molecularCriterium = TestServeMolecularFactory.createFusion())
+        return create(molecularCriterium = TestServeMolecularFactory.createFusionCriterium())
     }
 
     fun createEvidenceForCharacteristic(type: TumorCharacteristicType = TumorCharacteristicType.MICROSATELLITE_STABLE): EfficacyEvidence {
-        return create(molecularCriterium = TestServeMolecularFactory.createCharacteristic(type))
+        return create(molecularCriterium = TestServeMolecularFactory.createCharacteristicCriterium(type))
     }
 
     fun createEvidenceForHLA(): EfficacyEvidence {
-        return create(molecularCriterium = TestServeMolecularFactory.createHLA())
+        return create(molecularCriterium = TestServeMolecularFactory.createHLACriterium())
     }
 
     fun create(
         source: Knowledgebase = ActionabilityConstants.EVIDENCE_SOURCE,
         treatment: String = "treatment",
         indication: Indication = TestServeFactory.createEmptyIndication(),
-        molecularCriterium: MolecularCriterium = TestServeMolecularFactory.createHotspot(),
+        molecularCriterium: MolecularCriterium = TestServeMolecularFactory.createHotspotCriterium(),
         evidenceLevel: EvidenceLevel = EvidenceLevel.D,
         evidenceDirection: EvidenceDirection = EvidenceDirection.NO_BENEFIT
     ): EfficacyEvidence {

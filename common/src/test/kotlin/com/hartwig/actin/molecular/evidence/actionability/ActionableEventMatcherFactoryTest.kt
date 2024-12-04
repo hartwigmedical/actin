@@ -31,57 +31,57 @@ class ActionableEventMatcherFactoryTest {
         val hotspot1 = TestServeTrialFactory.create(
             source = Knowledgebase.UNKNOWN,
             title = "external",
-            molecularCriteria = setOf(TestServeMolecularFactory.createHotspot("unknown gene"))
+            molecularCriteria = setOf(TestServeMolecularFactory.createHotspotCriterium("unknown gene"))
         )
         val hotspot2 = TestServeTrialFactory.create(
             source = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
             title = "external",
-            molecularCriteria = setOf(TestServeMolecularFactory.createHotspot(TestApplicabilityFilteringUtil.nonApplicableGene())),
+            molecularCriteria = setOf(TestServeMolecularFactory.createHotspotCriterium(TestApplicabilityFilteringUtil.nonApplicableGene())),
         )
         val hotspot3 = TestServeTrialFactory.create(
             source = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
             title = "external",
-            molecularCriteria = setOf(TestServeMolecularFactory.createHotspot("gene 1"))
+            molecularCriteria = setOf(TestServeMolecularFactory.createHotspotCriterium("gene 1"))
         )
         val hotspot4 = TestServeTrialFactory.create(
             source = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
             title = "internal",
-            molecularCriteria = setOf(TestServeMolecularFactory.createHotspot("gene 2"))
+            molecularCriteria = setOf(TestServeMolecularFactory.createHotspotCriterium("gene 2"))
         )
         val hotspot5 = TestServeTrialFactory.create(
             source = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
             title = "external",
-            molecularCriteria = setOf(TestServeMolecularFactory.createHotspot("gene 3"))
+            molecularCriteria = setOf(TestServeMolecularFactory.createHotspotCriterium("gene 3"))
         )
         val codon1 = TestServeTrialFactory.create(
             source = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
             title = "external",
-            molecularCriteria = setOf(TestServeMolecularFactory.createCodon())
+            molecularCriteria = setOf(TestServeMolecularFactory.createCodonCriterium())
         )
         val exon1 = TestServeTrialFactory.create(
             source = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
             title = "external",
-            molecularCriteria = setOf(TestServeMolecularFactory.createExon())
+            molecularCriteria = setOf(TestServeMolecularFactory.createExonCriterium())
         )
         val gene1 = TestServeTrialFactory.create(
             source = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
             title = "external",
-            molecularCriteria = setOf(TestServeMolecularFactory.createGene())
+            molecularCriteria = setOf(TestServeMolecularFactory.createGeneCriterium())
         )
         val characteristic1 = TestServeTrialFactory.create(
             source = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
             title = "external",
-            molecularCriteria = setOf(TestServeMolecularFactory.createCharacteristic())
+            molecularCriteria = setOf(TestServeMolecularFactory.createCharacteristicCriterium())
         )
         val fusion1 = TestServeTrialFactory.create(
             source = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
             title = "external",
-            molecularCriteria = setOf(TestServeMolecularFactory.createFusion())
+            molecularCriteria = setOf(TestServeMolecularFactory.createFusionCriterium())
         )
         val hla1 = TestServeTrialFactory.create(
             source = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
             title = "external",
-            molecularCriteria = setOf(TestServeMolecularFactory.createHLA())
+            molecularCriteria = setOf(TestServeMolecularFactory.createHLACriterium())
         )
 
         val actionable = ActionabilityMatch(

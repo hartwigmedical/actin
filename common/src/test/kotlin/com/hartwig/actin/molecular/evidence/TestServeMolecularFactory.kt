@@ -16,7 +16,7 @@ import java.time.LocalDate
 
 object TestServeMolecularFactory {
 
-    fun createHotspot(
+    fun createHotspotCriterium(
         gene: String = "",
         chromosome: String = "",
         position: Int = 0,
@@ -34,7 +34,7 @@ object TestServeMolecularFactory {
         return ImmutableMolecularCriterium.builder().addHotspots(actionableHotspot).build()
     }
 
-    fun createCodon(
+    fun createCodonCriterium(
         gene: String = "",
         chromosome: String = "",
         start: Int = 0,
@@ -52,7 +52,7 @@ object TestServeMolecularFactory {
         return ImmutableMolecularCriterium.builder().addCodons(actionableCodon).build()
     }
 
-    fun createExon(
+    fun createExonCriterium(
         gene: String = "",
         chromosome: String = "",
         start: Int = 0,
@@ -70,7 +70,11 @@ object TestServeMolecularFactory {
         return ImmutableMolecularCriterium.builder().addExons(actionableExon).build()
     }
 
-    fun createGene(gene: String = "", geneEvent: GeneEvent = GeneEvent.ANY_MUTATION, sourceEvent: String = ""): MolecularCriterium {
+    fun createGeneCriterium(
+        gene: String = "",
+        geneEvent: GeneEvent = GeneEvent.ANY_MUTATION,
+        sourceEvent: String = ""
+    ): MolecularCriterium {
         val actionableGene = ImmutableActionableGene.builder().from(createActionableEvent())
             .sourceEvent(sourceEvent)
             .event(geneEvent)
@@ -80,7 +84,12 @@ object TestServeMolecularFactory {
         return ImmutableMolecularCriterium.builder().addGenes(actionableGene).build()
     }
 
-    fun createFusion(geneUp: String = "", geneDown: String = "", minExonUp: Int? = null, maxExonUp: Int? = null): MolecularCriterium {
+    fun createFusionCriterium(
+        geneUp: String = "",
+        geneDown: String = "",
+        minExonUp: Int? = null,
+        maxExonUp: Int? = null
+    ): MolecularCriterium {
         val actionableFusion = ImmutableActionableFusion.builder().from(createActionableEvent())
             .geneUp(geneUp)
             .geneDown(geneDown)
@@ -91,27 +100,27 @@ object TestServeMolecularFactory {
         return ImmutableMolecularCriterium.builder().addFusions(actionableFusion).build()
     }
 
-    fun createCharacteristic(type: TumorCharacteristicType = TumorCharacteristicType.MICROSATELLITE_STABLE): MolecularCriterium {
+    fun createCharacteristicCriterium(type: TumorCharacteristicType = TumorCharacteristicType.MICROSATELLITE_STABLE): MolecularCriterium {
         val actionableCharacteristic = ImmutableActionableCharacteristic.builder().from(createActionableEvent()).type(type).build()
 
         return ImmutableMolecularCriterium.builder().addCharacteristics(actionableCharacteristic).build()
     }
 
-    fun createHLA(): MolecularCriterium {
+    fun createHLACriterium(): MolecularCriterium {
         val actionableHLA = ImmutableActionableHLA.builder().from(createActionableEvent()).hlaAllele("").build()
 
         return ImmutableMolecularCriterium.builder().addHla(actionableHLA).build()
     }
 
-    fun createCombined(): MolecularCriterium {
+    fun createCombinedCriterium(): MolecularCriterium {
         return ImmutableMolecularCriterium.builder()
-            .from(createHotspot())
-            .from(createCodon())
-            .from(createExon())
-            .from(createGene())
-            .from(createFusion())
-            .from(createCharacteristic())
-            .from(createHLA())
+            .from(createHotspotCriterium())
+            .from(createCodonCriterium())
+            .from(createExonCriterium())
+            .from(createGeneCriterium())
+            .from(createFusionCriterium())
+            .from(createCharacteristicCriterium())
+            .from(createHLACriterium())
             .build()
     }
 

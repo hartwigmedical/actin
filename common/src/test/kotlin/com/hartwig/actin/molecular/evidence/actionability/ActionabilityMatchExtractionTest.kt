@@ -19,8 +19,8 @@ import com.hartwig.serve.datamodel.molecular.range.ImmutableActionableRange
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-private val MOLECULAR_CRITERIUM_1 = TestServeMolecularFactory.createHotspot()
-private val MOLECULAR_CRITERIUM_2 = TestServeMolecularFactory.createGene()
+private val MOLECULAR_CRITERIUM_1 = TestServeMolecularFactory.createHotspotCriterium()
+private val MOLECULAR_CRITERIUM_2 = TestServeMolecularFactory.createGeneCriterium()
 
 class ActionabilityMatchExtractionTest {
 

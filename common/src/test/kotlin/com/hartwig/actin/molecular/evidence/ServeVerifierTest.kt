@@ -12,9 +12,9 @@ import org.assertj.core.api.Assertions.assertThatCode
 import org.assertj.core.api.Assertions.assertThatIllegalStateException
 import org.junit.Test
 
-val SINGLE_PROFILE_1 = TestServeMolecularFactory.createHotspot()
-val SINGLE_PROFILE_2 = TestServeMolecularFactory.createGene()
-val COMBINED_PROFILE = TestServeMolecularFactory.createCombined()
+val SINGLE_PROFILE_1 = TestServeMolecularFactory.createHotspotCriterium()
+val SINGLE_PROFILE_2 = TestServeMolecularFactory.createGeneCriterium()
+val COMBINED_PROFILE = TestServeMolecularFactory.createCombinedCriterium()
 
 class ServeVerifierTest {
 

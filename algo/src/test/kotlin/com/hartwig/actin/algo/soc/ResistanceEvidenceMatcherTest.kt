@@ -27,7 +27,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private val INDICATION = TestServeFactory.createIndicationWithDoid("1520")
-private val MOLECULAR_CRITERIUM = TestServeMolecularFactory.createGene("BRAF", GeneEvent.AMPLIFICATION, "BRAF amp")
+private val MOLECULAR_CRITERIUM = TestServeMolecularFactory.createGeneCriterium("BRAF", GeneEvent.AMPLIFICATION, "BRAF amp")
 private val EFFICACY_EVIDENCE = TestServeEvidenceFactory.create(
     source = ActionabilityConstants.EVIDENCE_SOURCE,
     treatment = "pembrolizumab",
@@ -140,7 +140,7 @@ class ResistanceEvidenceMatcherTest {
     @Test
     fun `Should find actionable range in molecular history`() {
         val rangeWithResistanceEvidence = TestServeEvidenceFactory.create(
-            molecularCriterium = TestServeMolecularFactory.createExon(
+            molecularCriterium = TestServeMolecularFactory.createExonCriterium(
                 gene = "gene 1",
                 chromosome = "X",
                 start = 4,
