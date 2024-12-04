@@ -18,7 +18,7 @@ class BreakendEvidence(
             event.isReportable && ActionableEventsExtraction.extractGene(it).gene() == event.gene
         }
         val trials = applicableGeneTrials.filter {
-            event.isReportable && ActionableEventsExtraction.extractGene(it).gene() == event.gene
+            event.isReportable && ActionableEventsExtraction.extractGenes(it).gene() == event.gene
         }
         return ActionabilityMatch(evidences, trials)
     }
@@ -29,7 +29,7 @@ class BreakendEvidence(
                 ActionableEventsExtraction.extractGene(it).event() == GeneEvent.ANY_MUTATION
             }
             val applicableTrials = filterTrials(trials, geneFilter()).filter {
-                ActionableEventsExtraction.extractGene(it).event() == GeneEvent.ANY_MUTATION
+                ActionableEventsExtraction.extractGenes(it).event() == GeneEvent.ANY_MUTATION
             }
             return BreakendEvidence(applicableEvidences, applicableTrials)
         }

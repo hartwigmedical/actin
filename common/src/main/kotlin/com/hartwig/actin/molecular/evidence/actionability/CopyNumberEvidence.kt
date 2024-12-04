@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.evidence.actionability
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractGene
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractGenes
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterEfficacyEvidence
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterTrials
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.geneFilter
@@ -41,7 +42,7 @@ class CopyNumberEvidence(
     ): ActionabilityMatch {
         return ActionabilityMatch(
             evidenceMatches = applicableEvidences.filter { extractGene(it).gene() == copyNumber.gene },
-            trialMatches = applicableTrials.filter { extractGene(it).gene() == copyNumber.gene }
+            trialMatches = applicableTrials.filter { extractGenes(it).gene() == copyNumber.gene }
         )
     }
 
@@ -54,7 +55,7 @@ class CopyNumberEvidence(
                 applicableEvidences, ::extractGene
             )
             val (applicableAmplificationTrials, applicableLossTrials) = extractActionableAmplificationsAndLosses(
-                applicableTrials, ::extractGene
+                applicableTrials, ::extractGenes
             )
 
             return CopyNumberEvidence(

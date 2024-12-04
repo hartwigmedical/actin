@@ -17,36 +17,20 @@ class FusionEvidence(
 ) : ActionabilityMatcher<FusionMatchCriteria> {
 
     override fun findMatches(event: FusionMatchCriteria): ActionabilityMatch {
-        val matchedEvidence =
-            matchFusionAndPromiscuous(
-                fusionItems = applicableFusionEvidences,
-                promiscuousItems = applicablePromiscuousEvidences,
-                event = event,
-                extractActionableFusion = ActionableEventsExtraction::extractFusion,
-                extractActionableGene = ActionableEventsExtraction::extractGene
-            )
-        val matchedTrials =
-            matchFusionAndPromiscuous(
-                fusionItems = applicableFusionTrials,
-                promiscuousItems = applicablePromiscuousTrials,
-                event = event,
-                extractActionableFusion = ActionableEventsExtraction::extractFusion,
-                extractActionableGene = ActionableEventsExtraction::extractGene
-            )
-        return ActionabilityMatch(matchedEvidence, matchedTrials)
-    }
+        val matchedFusionEvidence = applicableFusionEvidences.filter { isFusionMatch(ActionableEventsExtraction.extractFusion(it), event) }
+        val matchedPromiscuousEvidence =
+            applicablePromiscuousEvidences.filter { isPromiscuousMatch(ActionableEventsExtraction.extractGene(it), event) }
 
-    private fun <T> matchFusionAndPromiscuous(
-        fusionItems: List<T>,
-        promiscuousItems: List<T>,
-        event: FusionMatchCriteria,
-        extractActionableFusion: (T) -> ActionableFusion,
-        extractActionableGene: (T) -> ActionableGene
-    ): List<T> {
-        val fusionMatches = fusionItems.filter { isFusionMatch(extractActionableFusion(it), event) }
-        val promiscuousMatches = promiscuousItems.filter { isPromiscuousMatch(extractActionableGene(it), event) }
+        val matchedFusionTrials =
+            applicableFusionTrials.filter {
+                ActionableEventsExtraction.extractFusions(it).any { actionableFusion -> isFusionMatch(actionableFusion, event) }
+            }
+        val matchedPromiscuousTrials =
+            applicablePromiscuousTrials.filter {
+                ActionableEventsExtraction.extractGenes(it).any { actionableGene -> isPromiscuousMatch(actionableGene, event) }
+            }
 
-        return fusionMatches + promiscuousMatches
+        return ActionabilityMatch(matchedFusionEvidence + matchedPromiscuousEvidence, matchedFusionTrials + matchedPromiscuousTrials)
     }
 
     private fun isFusionMatch(actionable: ActionableFusion, fusion: FusionMatchCriteria): Boolean {
@@ -82,13 +66,15 @@ class FusionEvidence(
             val applicableFusionTrials = ActionableEventsExtraction.filterTrials(trials, ActionableEventsExtraction.fusionFilter())
 
             val applicablePromiscuousEvidences =
-                ActionableEventsExtraction.filterEfficacyEvidence(evidences, ActionableEventsExtraction.geneFilter()).filter {
-                    APPLICABLE_PROMISCUOUS_EVENTS.contains(ActionableEventsExtraction.extractGene(it).event())
-                }
+                ActionableEventsExtraction.filterEfficacyEvidence(
+                    evidences,
+                    ActionableEventsExtraction.geneFilter(APPLICABLE_PROMISCUOUS_EVENTS)
+                )
             val applicablePromiscuousTrials =
-                ActionableEventsExtraction.filterTrials(applicableFusionTrials, ActionableEventsExtraction.geneFilter()).filter {
-                    APPLICABLE_PROMISCUOUS_EVENTS.contains(ActionableEventsExtraction.extractGene(it).event())
-                }
+                ActionableEventsExtraction.filterTrials(
+                    trials,
+                    ActionableEventsExtraction.geneFilter(APPLICABLE_PROMISCUOUS_EVENTS)
+                )
 
             return FusionEvidence(
                 applicableFusionEvidences,

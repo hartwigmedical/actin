@@ -5,6 +5,7 @@ import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.molecular.characteristic.ActionableCharacteristic
 import com.hartwig.serve.datamodel.molecular.fusion.ActionableFusion
 import com.hartwig.serve.datamodel.molecular.gene.ActionableGene
+import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import com.hartwig.serve.datamodel.molecular.hotspot.ActionableHotspot
 import com.hartwig.serve.datamodel.molecular.range.ActionableRange
 import com.hartwig.serve.datamodel.trial.ActionableTrial
@@ -66,16 +67,16 @@ object ActionableEventsExtraction {
         return efficacyEvidence.molecularCriterium().genes().iterator().next()
     }
 
-    fun extractGene(actionableTrial: ActionableTrial): ActionableGene {
-        return actionableTrial.anyMolecularCriteria().iterator().next().genes().iterator().next()
+    fun extractGenes(actionableTrial: ActionableTrial): Set<ActionableGene> {
+        return actionableTrial.anyMolecularCriteria().flatMap { it.genes() }.toSet()
     }
 
     fun extractFusion(efficacyEvidence: EfficacyEvidence): ActionableFusion {
         return efficacyEvidence.molecularCriterium().fusions().iterator().next()
     }
 
-    fun extractFusion(actionableTrial: ActionableTrial): ActionableFusion {
-        return actionableTrial.anyMolecularCriteria().iterator().next().fusions().iterator().next()
+    fun extractFusions(actionableTrial: ActionableTrial): Set<ActionableFusion> {
+        return actionableTrial.anyMolecularCriteria().flatMap { it.fusions() }.toSet()
     }
 
     fun extractCharacteristic(efficacyEvidence: EfficacyEvidence): ActionableCharacteristic {
@@ -98,8 +99,8 @@ object ActionableEventsExtraction {
         return Predicate { molecularCriterium -> molecularCriterium.exons().isNotEmpty() }
     }
 
-    fun geneFilter(): Predicate<MolecularCriterium> {
-        return Predicate { molecularCriterium -> molecularCriterium.genes().isNotEmpty() }
+    fun geneFilter(validGeneEvents: Set<GeneEvent> = GeneEvent.values().toSet()): Predicate<MolecularCriterium> {
+        return Predicate { molecularCriterium -> molecularCriterium.genes().any { validGeneEvents.contains(it.event()) } }
     }
 
     fun fusionFilter(): Predicate<MolecularCriterium> {

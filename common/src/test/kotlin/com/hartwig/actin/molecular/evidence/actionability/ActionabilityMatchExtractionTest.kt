@@ -56,7 +56,7 @@ class ActionabilityMatchExtractionTest {
         val efficacyEvidence = TestServeEvidenceFactory.create(molecularCriterium = molecularCriterium)
         val actionableTrial = TestServeTrialFactory.create(molecularCriteria = setOf(molecularCriterium))
         assertThat(ActionableEventsExtraction.extractGene(efficacyEvidence)).isEqualTo(actionableGene)
-        assertThat(ActionableEventsExtraction.extractGene(actionableTrial)).isEqualTo(actionableGene)
+        assertThat(ActionableEventsExtraction.extractGenes(actionableTrial)).isEqualTo(actionableGene)
     }
 
     @Test
@@ -68,7 +68,7 @@ class ActionabilityMatchExtractionTest {
         val efficacyEvidence = TestServeEvidenceFactory.create(molecularCriterium = molecularCriterium)
         val actionableTrial = TestServeTrialFactory.create(molecularCriteria = setOf(molecularCriterium))
         assertThat(ActionableEventsExtraction.extractFusion(efficacyEvidence)).isEqualTo(actionableFusion)
-        assertThat(ActionableEventsExtraction.extractFusion(actionableTrial)).isEqualTo(actionableFusion)
+        assertThat(ActionableEventsExtraction.extractFusions(actionableTrial)).isEqualTo(actionableFusion)
     }
 
     @Test

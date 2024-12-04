@@ -16,7 +16,9 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtrac
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.exonFilter
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractCharacteristic
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractFusion
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractFusions
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractGene
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractGenes
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractRange
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterEfficacyEvidence
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterTrials
@@ -97,11 +99,11 @@ object ClinicalEvidenceFactory {
 
     private fun convertToExternalTrials(trials: List<ActionableTrial>): Set<ExternalTrial> {
         return listOf(
-            geneFilter() to { trial: ActionableTrial -> extractGene(trial) },
+            geneFilter() to { trial: ActionableTrial -> extractGenes(trial) },
             codonFilter() to { trial: ActionableTrial -> extractRange(trial) },
             hotspotFilter() to { trial: ActionableTrial -> ActionableEventsExtraction.extractHotspot(trial) },
             exonFilter() to { trial: ActionableTrial -> extractRange(trial) },
-            fusionFilter() to { trial: ActionableTrial -> extractFusion(trial) },
+            fusionFilter() to { trial: ActionableTrial -> extractFusions(trial) },
             characteristicsFilter() to { trial: ActionableTrial -> extractCharacteristic(trial) },
         ).flatMap { (filter, extractor) ->
             filterTrials(trials, filter).map {

@@ -80,7 +80,7 @@ class VariantEvidence(
             applicableGeneTrials,
             variant,
             GeneMatching::isMatch,
-            ActionableEventsExtraction::extractGene
+            ActionableEventsExtraction::extractGenes
         )
     }
 
@@ -140,7 +140,7 @@ class VariantEvidence(
                 APPLICABLE_GENE_EVENTS.contains(ActionableEventsExtraction.extractGene(it).event())
             }
             val applicableGeneTrials = filterTrials(trials, geneFilter()).filter {
-                APPLICABLE_GENE_EVENTS.contains(ActionableEventsExtraction.extractGene(it).event())
+                APPLICABLE_GENE_EVENTS.contains(ActionableEventsExtraction.extractGenes(it).event())
             }
 
             return VariantEvidence(

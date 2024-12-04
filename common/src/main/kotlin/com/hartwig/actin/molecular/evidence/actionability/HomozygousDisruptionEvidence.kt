@@ -18,7 +18,7 @@ class HomozygousDisruptionEvidence(
             ActionableEventsExtraction.extractGene(it).gene() == event.gene
         }
         val trials = applicableTrials.filter {
-            ActionableEventsExtraction.extractGene(it).gene() == event.gene
+            ActionableEventsExtraction.extractGenes(it).gene() == event.gene
         }
         return ActionabilityMatch(evidences, trials)
     }
@@ -31,7 +31,7 @@ class HomozygousDisruptionEvidence(
                 APPLICABLE_GENE_EVENTS.contains(ActionableEventsExtraction.extractGene(it).event())
             }
             val applicableTrials = filterTrials(trials, geneFilter()).filter {
-                APPLICABLE_GENE_EVENTS.contains(ActionableEventsExtraction.extractGene(it).event())
+                APPLICABLE_GENE_EVENTS.contains(ActionableEventsExtraction.extractGenes(it).event())
             }
             return HomozygousDisruptionEvidence(applicableEvidences, applicableTrials)
         }
