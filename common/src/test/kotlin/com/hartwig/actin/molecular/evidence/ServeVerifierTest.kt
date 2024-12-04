@@ -16,7 +16,7 @@ val SINGLE_PROFILE_1 = TestServeMolecularFactory.createHotspot()
 val SINGLE_PROFILE_2 = TestServeMolecularFactory.createGene()
 val COMBINED_PROFILE = TestServeMolecularFactory.createCombined()
 
-class ServeLoaderTest {
+class ServeVerifierTest {
 
     @Test
     fun `Should pass on single profile evidence and trial`() {
