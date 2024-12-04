@@ -24,7 +24,7 @@ class ServeLoaderTest {
         val trial = TestServeTrialFactory.create(molecularCriteria = setOf(SINGLE_PROFILE_1, SINGLE_PROFILE_2))
 
         val database = toServeDatabase(evidence, trial)
-        assertThatCode { ServeLoader.verifyNoCombinedMolecularProfiles(database) }.doesNotThrowAnyException()
+        assertThatCode { ServeVerifier.verifyNoCombinedMolecularProfiles(database) }.doesNotThrowAnyException()
     }
 
     @Test
@@ -34,7 +34,7 @@ class ServeLoaderTest {
 
         val database = toServeDatabase(evidence, trial)
 
-        assertThatIllegalStateException().isThrownBy { ServeLoader.verifyNoCombinedMolecularProfiles(database) }
+        assertThatIllegalStateException().isThrownBy { ServeVerifier.verifyNoCombinedMolecularProfiles(database) }
     }
 
     @Test
@@ -44,7 +44,7 @@ class ServeLoaderTest {
 
         val database = toServeDatabase(evidence, trial)
 
-        assertThatIllegalStateException().isThrownBy { ServeLoader.verifyNoCombinedMolecularProfiles(database) }
+        assertThatIllegalStateException().isThrownBy { ServeVerifier.verifyNoCombinedMolecularProfiles(database) }
     }
 
     private fun toServeDatabase(evidence: EfficacyEvidence, trial: ActionableTrial): ServeDatabase {
