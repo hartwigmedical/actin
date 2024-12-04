@@ -9,9 +9,9 @@ import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
-import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.io.File
 
 class TreatmentMatchJsonTest {
 
@@ -50,6 +50,7 @@ class TreatmentMatchJsonTest {
             ),
             personalizedDataAnalysis = null
         )
+
         val expectedJson = ("{\"patientId\":\"ACTN01029999\",\"sampleId\":\"ACTN01029999T\",\"trialSource\":\"Test hospital\","
                 + "\"referenceDate\":{\"year\":2021,\"month\":8,\"day\":2},\"referenceDateIsLive\":true,\"trialMatches\":["
                 + "{\"identification\":{\"trialId\":\"Test Trial 1\",\"open\":true,\"acronym\":\"TEST-1\","
@@ -62,12 +63,13 @@ class TreatmentMatchJsonTest {
                 + "\"failSpecificMessages\":[],\"failGeneralMessages\":[],\"isMissingGenesForSufficientEvaluation\":false}]],\"cohorts\":[],\"nonEvaluableCohorts\":[]}],"
                 + "\"standardOfCareMatches\":[{\"treatmentCandidate\":{\"treatment\":{\"name\":\"Pembrolizumab\",\"isSystemic\":true,"
                 + "\"synonyms\":[],\"displayOverride\":null,\"categories\":[],\"types\":[],\"treatmentClass\":\"OTHER_TREATMENT\"},"
-                + "\"optional\":true,\"eligibilityFunctions\":[{\"rule\":\"HAS_KNOWN_ACTIVE_CNS_METASTASES\",\"parameters\":[]}],\"additionalCriteriaForRequirement\":[]},"
-                + "\"evaluations\":[{\"result\":\"PASS\",\"recoverable\":false,\"inclusionMolecularEvents\":[],"
-                + "\"exclusionMolecularEvents\":[],\"passSpecificMessages\":[\"Patient has active CNS metastases\"],"
+                + "\"optional\":true,\"eligibilityFunctions\":[{\"rule\":\"HAS_KNOWN_ACTIVE_CNS_METASTASES\",\"parameters\":[]}],"
+                + "\"additionalCriteriaForRequirement\":[]},\"evaluations\":[{\"result\":\"PASS\",\"recoverable\":false,"
+                + "\"inclusionMolecularEvents\":[],\"exclusionMolecularEvents\":[],\"passSpecificMessages\":[\"Patient has active CNS metastases\"],"
                 + "\"passGeneralMessages\":[\"Active CNS metastases\"],\"warnSpecificMessages\":[],\"warnGeneralMessages\":[],"
                 + "\"undeterminedSpecificMessages\":[],\"undeterminedGeneralMessages\":[],\"failSpecificMessages\":[],"
-                + "\"failGeneralMessages\":[],\"isMissingGenesForSufficientEvaluation\":false}],\"annotations\":[{\"acronym\":\"Study of Pembrolizumab\",\"phase\":\"Phase III\","
+                + "\"failGeneralMessages\":[],\"isMissingGenesForSufficientEvaluation\":false}],\"annotations\":[{\"acronym\":"
+                + "\"Study of Pembrolizumab\",\"phase\":\"Phase III\","
                 + "\"treatments\":[{\"name\":\"PEMBROLIZUMAB\",\"drugs\":[{\"name\":\"PEMBROLIZUMAB\",\"drugTypes\":[\"TOPO1_INHIBITOR\"],"
                 + "\"category\":\"CHEMOTHERAPY\",\"displayOverride\":null}],\"synonyms\":[],\"displayOverride\":null,\"isSystemic\":true,"
                 + "\"maxCycles\":null,\"treatmentClass\":\"DRUG_TREATMENT\"}],\"therapeuticSetting\":\"ADJUVANT\",\"variantRequirements\":"
@@ -89,8 +91,10 @@ class TreatmentMatchJsonTest {
                 + "\"patientsPerRegion\":null}],\"url\":\"http://www.ncbi.nlm.nih.gov/pubmed/12345678\"}]}],"
                 + "\"generalPfs\":{\"value\":136.5,\"numPatients\":98,\"min\":74,\"max\":281,\"iqr\":46.0},"
                 + "\"generalOs\":{\"value\":215.0,\"numPatients\":90,\"min\":121,\"max\":470,\"iqr\":110.1},"
-                + "\"resistanceEvidence\":[{\"event\":\"BRAF amp\",\"isTested\":null,\"isFound\":false,\"resistanceLevel\":\"A\",\"evidenceUrls\":[\"website\"],\"treatmentName\":\"Pembrolizumab\"}]}],"
+                + "\"resistanceEvidence\":[{\"event\":\"BRAF amp\",\"treatmentName\":\"Pembrolizumab\",\"resistanceLevel\":\"A\","
+                + "\"isTested\":null,\"isFound\":false,\"evidenceUrls\":[\"website\"]}]}],"
                 + "\"personalizedDataAnalysis\":null,\"maxMolecularTestAge\":null}")
+
         assertThat(toJson(match)).isEqualTo(expectedJson)
     }
 

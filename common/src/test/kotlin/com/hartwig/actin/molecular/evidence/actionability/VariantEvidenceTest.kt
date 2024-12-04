@@ -13,22 +13,22 @@ import org.junit.Test
 class VariantEvidenceTest {
 
     private val actionableCodon: EfficacyEvidence = TestServeEvidenceFactory.create(
-        TestServeMolecularFactory.createCodon(
-            "gene 1",
-            "X",
-            4,
-            8,
-            MutationType.ANY
+        molecularCriterium = TestServeMolecularFactory.createCodon(
+            gene = "gene 1",
+            chromosome = "X",
+            start = 4,
+            end = 8,
+            applicableMutationType = MutationType.ANY
         )
     )
 
     private val actionableExon: EfficacyEvidence = TestServeEvidenceFactory.create(
-        TestServeMolecularFactory.createExon(
-            "gene 1",
-            "X",
-            4,
-            8,
-            MutationType.ANY
+        molecularCriterium = TestServeMolecularFactory.createExon(
+            gene = "gene 1",
+            chromosome = "X",
+            start = 4,
+            end = 8,
+            applicableMutationType = MutationType.ANY
         )
     )
 

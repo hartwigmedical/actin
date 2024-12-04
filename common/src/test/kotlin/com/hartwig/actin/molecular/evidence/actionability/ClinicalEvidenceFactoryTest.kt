@@ -28,12 +28,7 @@ class ClinicalEvidenceFactoryTest {
 
         val result =
             ClinicalEvidenceFactory.create(
-                onLabelEvidences = listOf(
-                    TestServeEvidenceFactory.create(
-                        TestServeMolecularFactory.createHotspot(),
-                        treatment = onLabel.treatment
-                    )
-                ),
+                onLabelEvidences = listOf(TestServeEvidenceFactory.create(treatment = onLabel.treatment)),
                 offLabelEvidences = emptyList(),
                 onLabelTrials = emptyList()
             )
@@ -56,12 +51,7 @@ class ClinicalEvidenceFactoryTest {
         val result =
             ClinicalEvidenceFactory.create(
                 onLabelEvidences = emptyList(),
-                offLabelEvidences = listOf(
-                    TestServeEvidenceFactory.create(
-                        TestServeMolecularFactory.createHotspot(),
-                        treatment = offLabel.treatment
-                    )
-                ),
+                offLabelEvidences = listOf(TestServeEvidenceFactory.create(treatment = offLabel.treatment)),
                 onLabelTrials = emptyList()
             )
 
@@ -81,9 +71,9 @@ class ClinicalEvidenceFactoryTest {
                 offLabelEvidences = emptyList(),
                 onLabelTrials = listOf(
                     TestServeTrialFactory.create(
-                        setOf(molecularCriterium),
-                        ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
-                        trial.title
+                        source = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
+                        title = trial.title,
+                        molecularCriteria = setOf(molecularCriterium)
                     )
                 )
             )

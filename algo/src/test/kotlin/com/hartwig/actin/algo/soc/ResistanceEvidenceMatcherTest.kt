@@ -16,10 +16,9 @@ import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
+import com.hartwig.actin.molecular.evidence.TestServeFactory
 import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
-import com.hartwig.serve.datamodel.common.ImmutableCancerType
-import com.hartwig.serve.datamodel.common.ImmutableIndication
 import com.hartwig.serve.datamodel.efficacy.EvidenceDirection
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevel
 import com.hartwig.serve.datamodel.molecular.MutationType
@@ -27,18 +26,18 @@ import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-private val INDICATION = ImmutableIndication.builder().applicableType(ImmutableCancerType.builder().name("").doid("1520").build()).build()
+private val INDICATION = TestServeFactory.createIndicationWithDoid("1520")
 private val MOLECULAR_CRITERIUM = TestServeMolecularFactory.createGene("BRAF", GeneEvent.AMPLIFICATION, "BRAF amp")
 private val EFFICACY_EVIDENCE = TestServeEvidenceFactory.create(
-    MOLECULAR_CRITERIUM,
-    ActionabilityConstants.EVIDENCE_SOURCE,
-    "pembrolizumab",
-    EvidenceDirection.RESISTANT,
-    EvidenceLevel.A,
-    INDICATION
+    source = ActionabilityConstants.EVIDENCE_SOURCE,
+    treatment = "pembrolizumab",
+    indication = INDICATION,
+    molecularCriterium = MOLECULAR_CRITERIUM,
+    evidenceLevel = EvidenceLevel.A,
+    evidenceDirection = EvidenceDirection.RESISTANT
 )
 private val DOID_MODEL = TestDoidModelFactory.createMinimalTestDoidModel()
-private val TUMOR_DOIDS = setOf("1520")
+private val TUMOR_DOIDS = setOf(INDICATION.applicableType().doid())
 private val TREATMENT_DATABASE = TestTreatmentDatabaseFactory.createProper()
 private val MOLECULAR_HISTORY = TestMolecularFactory.createMinimalTestMolecularHistory()
 
@@ -56,11 +55,11 @@ class ResistanceEvidenceMatcherTest {
         val expectedResistanceEvidence = listOf(
             ResistanceEvidence(
                 event = "BRAF amp",
+                treatmentName = "PEMBROLIZUMAB",
+                resistanceLevel = "A",
                 isTested = null,
                 isFound = false,
-                resistanceLevel = "A",
-                evidenceUrls = emptySet(),
-                treatmentName = "PEMBROLIZUMAB"
+                evidenceUrls = emptySet()
             )
         )
 
@@ -78,20 +77,22 @@ class ResistanceEvidenceMatcherTest {
 
     @Test
     fun `Should find actionable gene in molecular history`() {
-        val amplificationWithResistanceEvidence =
-            TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.AMPLIFICATION, "BRAF")
+        val amplificationWithResistanceEvidence = TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.AMPLIFICATION, "BRAF")
         val hasAmplification = MolecularTestFactory.withCopyNumber(
             TestCopyNumberFactory.createMinimal().copy(
                 gene = "BRAF", type = CopyNumberType.FULL_GAIN, isReportable = true
             )
         ).molecularHistory
+
         val hasLoss = MolecularTestFactory.withCopyNumber(
             TestCopyNumberFactory.createMinimal().copy(
                 gene = "BRAF", type = CopyNumberType.LOSS, isReportable = true
             )
         ).molecularHistory
+
         val amplificationFound = resistanceEvidenceMatcher.isFound(amplificationWithResistanceEvidence, hasAmplification)
         assertThat(amplificationFound).isTrue()
+
         val amplificationNotFound = resistanceEvidenceMatcher.isFound(amplificationWithResistanceEvidence, hasLoss)
         assertThat(amplificationNotFound).isFalse()
     }
@@ -103,12 +104,15 @@ class ResistanceEvidenceMatcherTest {
             TestVariantFactory.createMinimal()
                 .copy(gene = "gene 1", chromosome = "X", position = 2, ref = "A", alt = "G", isReportable = true)
         ).molecularHistory
+
         val hasOtherHotspot = MolecularTestFactory.withVariant(
             TestVariantFactory.createMinimal()
                 .copy(gene = "gene 2", chromosome = "X", position = 2, ref = "A", alt = "G", isReportable = true)
         ).molecularHistory
+
         val hotspotFound = resistanceEvidenceMatcher.isFound(hotspotWithResistanceEvidence, hasHotspot)
         assertThat(hotspotFound).isTrue()
+
         val anotherHotspotFound = resistanceEvidenceMatcher.isFound(hotspotWithResistanceEvidence, hasOtherHotspot)
         assertThat(anotherHotspotFound).isFalse()
     }
@@ -120,12 +124,15 @@ class ResistanceEvidenceMatcherTest {
             TestFusionFactory.createMinimal()
                 .copy(geneStart = "gene 1", driverType = FusionDriverType.PROMISCUOUS_5, isReportable = true)
         ).molecularHistory
+
         val hasOtherFusion = MolecularTestFactory.withFusion(
             TestFusionFactory.createMinimal()
                 .copy(geneStart = "gene 2", driverType = FusionDriverType.PROMISCUOUS_5, isReportable = true)
         ).molecularHistory
+
         val fusionFound = resistanceEvidenceMatcher.isFound(fusionWithResistanceEvidence, hasFusion)
         assertThat(fusionFound).isTrue()
+
         val anotherFusionFound = resistanceEvidenceMatcher.isFound(fusionWithResistanceEvidence, hasOtherFusion)
         assertThat(anotherFusionFound).isFalse()
     }
@@ -133,12 +140,12 @@ class ResistanceEvidenceMatcherTest {
     @Test
     fun `Should find actionable range in molecular history`() {
         val rangeWithResistanceEvidence = TestServeEvidenceFactory.create(
-            TestServeMolecularFactory.createExon(
-                "gene 1",
-                "X",
-                4,
-                8,
-                MutationType.ANY
+            molecularCriterium = TestServeMolecularFactory.createExon(
+                gene = "gene 1",
+                chromosome = "X",
+                start = 4,
+                end = 8,
+                applicableMutationType = MutationType.ANY
             )
         )
         val hasRange = MolecularTestFactory.withVariant(
@@ -150,6 +157,7 @@ class ResistanceEvidenceMatcherTest {
                 canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(codingEffect = CodingEffect.MISSENSE)
             )
         ).molecularHistory
+
         val hasAnotherRange = MolecularTestFactory.withVariant(
             TestVariantFactory.createMinimal().copy(
                 gene = "gene 2",
@@ -159,8 +167,10 @@ class ResistanceEvidenceMatcherTest {
                 canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(codingEffect = CodingEffect.MISSENSE)
             )
         ).molecularHistory
+
         val rangeFound = resistanceEvidenceMatcher.isFound(rangeWithResistanceEvidence, hasRange)
         assertThat(rangeFound).isTrue()
+
         val anotherRangeFound = resistanceEvidenceMatcher.isFound(rangeWithResistanceEvidence, hasAnotherRange)
         assertThat(anotherRangeFound).isFalse()
     }

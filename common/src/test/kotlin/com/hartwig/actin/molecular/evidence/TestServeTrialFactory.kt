@@ -11,10 +11,10 @@ import com.hartwig.serve.datamodel.trial.ImmutableCountry
 object TestServeTrialFactory {
 
     fun create(
-        molecularCriteria: Set<MolecularCriterium>,
         source: Knowledgebase = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
         title: String = "",
-        indications: Set<Indication> = setOf(TestServeFactory.createIndicationWithDoid(""))
+        indications: Set<Indication> = setOf(TestServeFactory.createEmptyIndication()),
+        molecularCriteria: Set<MolecularCriterium>
     ): ActionableTrial {
         return ImmutableActionableTrial.builder()
             .source(source)

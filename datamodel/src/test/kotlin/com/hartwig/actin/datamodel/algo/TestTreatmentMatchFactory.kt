@@ -94,11 +94,11 @@ object TestTreatmentMatchFactory {
                 resistanceEvidence = listOf(
                     ResistanceEvidence(
                         event = "BRAF amp",
+                        treatmentName = "Pembrolizumab",
+                        resistanceLevel = "A",
                         isTested = null,
                         isFound = false,
-                        resistanceLevel = "A",
-                        evidenceUrls = setOf("website"),
-                        treatmentName = "Pembrolizumab"
+                        evidenceUrls = setOf("website")
                     )
                 )
             )

@@ -12,6 +12,10 @@ import com.hartwig.serve.datamodel.molecular.range.RangeAnnotation
 
 object TestServeFactory {
 
+    fun createEmptyIndication(): Indication {
+        return createIndicationWithDoid("")
+    }
+
     fun createIndicationWithDoid(doid: String): Indication {
         return ImmutableIndication.builder()
             .applicableType(ImmutableCancerType.builder().name(doid).doid(doid).build())

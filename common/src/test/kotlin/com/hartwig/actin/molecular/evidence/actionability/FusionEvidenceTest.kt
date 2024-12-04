@@ -37,7 +37,8 @@ class FusionEvidenceTest {
 
     @Test
     fun `Should determine evidence for known fusions`() {
-        val actionableFusion = TestServeEvidenceFactory.create(TestServeMolecularFactory.createFusion("up", "down", 4, 6))
+        val actionableFusion =
+            TestServeEvidenceFactory.create(molecularCriterium = TestServeMolecularFactory.createFusion("up", "down", 4, 6))
         val fusionEvidence = FusionEvidence.create(evidences = listOf(actionableFusion), trials = emptyList())
 
         val match = FUSION_CRITERIA.copy(geneStart = "up", geneEnd = "down", fusedExonUp = 5, isReportable = true)

@@ -8,6 +8,8 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventMatcher
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEventMatcherFactory
 import com.hartwig.actin.molecular.evidence.actionability.BreakendEvidence
 import com.hartwig.actin.molecular.evidence.actionability.CopyNumberEvidence
 import com.hartwig.actin.molecular.evidence.actionability.FusionEvidence
@@ -16,23 +18,26 @@ import com.hartwig.actin.molecular.evidence.actionability.VariantEvidence
 import com.hartwig.actin.molecular.evidence.matching.MatchingCriteriaFunctions
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevel
+import com.hartwig.serve.datamodel.efficacy.Treatment as ServeTreatment
 
 class ResistanceEvidenceMatcher(
     private val candidateEvidences: List<EfficacyEvidence>,
     private val treatmentDatabase: TreatmentDatabase,
+    private val actionableEventMatcher: ActionableEventMatcher,
     private val molecularHistory: MolecularHistory
 ) {
 
     fun match(treatment: Treatment): List<ResistanceEvidence> {
+        // TODO (CB): Use actionableEventMatcher to generate all matches and then simplify this function?
         return candidateEvidences.mapNotNull { evidence ->
             findTreatmentInDatabase(evidence.treatment(), treatment)?.let { treatmentName ->
                 ResistanceEvidence(
                     event = findSourceEvent(evidence),
+                    treatmentName = treatmentName,
+                    resistanceLevel = evidence.evidenceLevel().toString(),
                     isTested = null,
                     isFound = isFound(evidence, molecularHistory),
-                    resistanceLevel = evidence.evidenceLevel().toString(),
-                    evidenceUrls = evidence.urls(),
-                    treatmentName = treatmentName
+                    evidenceUrls = evidence.urls()
                 )
             }
         }.distinctBy { it.event }
@@ -40,34 +45,52 @@ class ResistanceEvidenceMatcher(
 
     fun isFound(evidence: EfficacyEvidence, molecularHistory: MolecularHistory): Boolean? {
         val molecularTests = molecularHistory.molecularTests
+
         val variantEvidence = VariantEvidence.create(evidences = listOf(evidence), trials = emptyList())
+        val copyNumberEvidence = CopyNumberEvidence.create(evidences = listOf(evidence), trials = emptyList())
+        val disruptionEvidence = BreakendEvidence.create(evidences = listOf(evidence), trials = emptyList())
+        val homDisEvidence = HomozygousDisruptionEvidence.create(evidences = listOf(evidence), trials = emptyList())
+        val fusionEvidence = FusionEvidence.create(evidences = listOf(evidence), trials = emptyList())
 
         with(evidence.molecularCriterium()) {
             return when {
                 hotspots().isNotEmpty() -> {
                     molecularTests.any { molecularTest ->
                         molecularTest.drivers.variants.any {
-                            val criteria = MatchingCriteriaFunctions.createVariantCriteria(it)
-                            variantEvidence.findMatches(criteria).evidenceMatches.isNotEmpty()
+                            val variantCriteria = MatchingCriteriaFunctions.createVariantCriteria(it)
+                            variantEvidence.findMatches(variantCriteria).evidenceMatches.isNotEmpty()
+                        }
+                    }
+                }
+
+                codons().isNotEmpty() -> {
+                    molecularTests.any { molecularTest ->
+                        molecularTest.drivers.variants.any {
+                            val variantCriteria = MatchingCriteriaFunctions.createVariantCriteria(it)
+                            variantEvidence.findMatches(variantCriteria).evidenceMatches.isNotEmpty()
+                        }
+                    }
+                }
+
+                exons().isNotEmpty() -> {
+                    molecularTests.any { molecularTest ->
+                        molecularTest.drivers.variants.any {
+                            val variantCriteria = MatchingCriteriaFunctions.createVariantCriteria(it)
+                            variantEvidence.findMatches(variantCriteria).evidenceMatches.isNotEmpty()
                         }
                     }
                 }
 
                 genes().isNotEmpty() -> {
-                    val fusionEvidence = FusionEvidence.create(evidences = listOf(evidence), trials = emptyList())
-                    val copyNumberEvidence = CopyNumberEvidence.create(evidences = listOf(evidence), trials = emptyList())
-                    val homDisEvidence = HomozygousDisruptionEvidence.create(evidences = listOf(evidence), trials = emptyList())
-                    val disruptionEvidence = BreakendEvidence.create(evidences = listOf(evidence), trials = emptyList())
-
                     molecularTests.any { molecularTest ->
                         with(molecularTest.drivers) {
                             val variantMatch = variants.any {
-                                val criteria = MatchingCriteriaFunctions.createVariantCriteria(it)
-                                variantEvidence.findMatches(criteria).evidenceMatches.isNotEmpty()
+                                val variantCriteria = MatchingCriteriaFunctions.createVariantCriteria(it)
+                                variantEvidence.findMatches(variantCriteria).evidenceMatches.isNotEmpty()
                             }
                             val fusionMatch = fusions.any {
-                                val criteria = MatchingCriteriaFunctions.createFusionCriteria(it)
-                                fusionEvidence.findMatches(criteria).evidenceMatches.isNotEmpty()
+                                val fusionCriteria = MatchingCriteriaFunctions.createFusionCriteria(it)
+                                fusionEvidence.findMatches(fusionCriteria).evidenceMatches.isNotEmpty()
                             }
                             variantMatch || fusionMatch ||
                                     copyNumbers.any { copyNumberEvidence.findMatches(it).evidenceMatches.isNotEmpty() } ||
@@ -78,40 +101,22 @@ class ResistanceEvidenceMatcher(
                 }
 
                 fusions().isNotEmpty() -> {
-                    val fusionEvidence = FusionEvidence.create(evidences = listOf(evidence), trials = emptyList())
                     molecularTests.any { molecularTest ->
                         molecularTest.drivers.fusions.any {
-                            val criteria = MatchingCriteriaFunctions.createFusionCriteria(it)
-                            fusionEvidence.findMatches(criteria).evidenceMatches.isNotEmpty()
+                            val fusionCriteria = MatchingCriteriaFunctions.createFusionCriteria(it)
+                            fusionEvidence.findMatches(fusionCriteria).evidenceMatches.isNotEmpty()
                         }
                     }
                 }
 
-                exons().isNotEmpty() -> {
-                    molecularTests.any { molecularTest ->
-                        molecularTest.drivers.variants.any {
-                            val criteria = MatchingCriteriaFunctions.createVariantCriteria(it)
-                            variantEvidence.findMatches(criteria).evidenceMatches.isNotEmpty()
-                        }
-                    }
-                }
-
-                codons().isNotEmpty() -> {
-                    molecularTests.any { molecularTest ->
-                        molecularTest.drivers.variants.any {
-                            val criteria = MatchingCriteriaFunctions.createVariantCriteria(it)
-                            variantEvidence.findMatches(criteria).evidenceMatches.isNotEmpty()
-                        }
-                    }
-                }
-
+                // TODO (CB): Also look for resistance for HLA and characteristics?
                 else -> null
             }
         }
     }
 
-    private fun findTreatmentInDatabase(intervention: com.hartwig.serve.datamodel.efficacy.Treatment, treatmentToFind: Treatment): String? {
-        return EfficacyEntryFactory(treatmentDatabase).generateOptions(listOf(intervention.name()))
+    private fun findTreatmentInDatabase(treatment: ServeTreatment, treatmentToFind: Treatment): String? {
+        return EfficacyEntryFactory(treatmentDatabase).generateOptions(listOf(treatment.name()))
             .mapNotNull(treatmentDatabase::findTreatmentByName)
             .distinct()
             .singleOrNull()
@@ -125,6 +130,43 @@ class ResistanceEvidenceMatcher(
         return drugs1.containsAll(drugs2)
     }
 
+    private fun findSourceEvent(evidence: EfficacyEvidence): String {
+        // Assumes there is no combined/complex evidence yet
+        with(evidence.molecularCriterium()) {
+            return when {
+                hotspots().isNotEmpty() -> {
+                    hotspots().iterator().next().sourceEvent()
+                }
+
+                codons().isNotEmpty() -> {
+                    codons().iterator().next().sourceEvent()
+                }
+
+                exons().isNotEmpty() -> {
+                    exons().iterator().next().sourceEvent()
+                }
+
+                genes().isNotEmpty() -> {
+                    genes().iterator().next().sourceEvent()
+                }
+
+                fusions().isNotEmpty() -> {
+                    fusions().iterator().next().sourceEvent()
+                }
+
+                characteristics().isNotEmpty() -> {
+                    characteristics().iterator().next().sourceEvent()
+                }
+
+                hla().isNotEmpty() -> {
+                    hla().iterator().next().sourceEvent()
+                }
+
+                else -> ""
+            }
+        }
+    }
+
     companion object {
         fun create(
             doidModel: DoidModel,
@@ -134,9 +176,12 @@ class ResistanceEvidenceMatcher(
             molecularHistory: MolecularHistory
         ): ResistanceEvidenceMatcher {
             val expandedTumorDoids = expandDoids(doidModel, tumorDoids)
-            val filteredActionableEvents = evidences.filter { hasNoPositiveResponse(it) && isOnLabel(it, expandedTumorDoids) }
+            val onLabelNonPositiveEvidence = evidences.filter { hasNoPositiveResponse(it) && isOnLabel(it, expandedTumorDoids) }
 
-            return ResistanceEvidenceMatcher(filteredActionableEvents, treatmentDatabase, molecularHistory)
+            val actionableEventMatcherFactory = ActionableEventMatcherFactory(doidModel, tumorDoids)
+            val actionableEventMatcher = actionableEventMatcherFactory.create(evidences = onLabelNonPositiveEvidence, trials = emptyList())
+
+            return ResistanceEvidenceMatcher(onLabelNonPositiveEvidence, treatmentDatabase, actionableEventMatcher, molecularHistory)
         }
 
         private fun isOnLabel(event: EfficacyEvidence, expandedTumorDoids: Set<String>): Boolean {
@@ -156,43 +201,6 @@ class ResistanceEvidenceMatcher(
                 EvidenceLevel.B,
                 EvidenceLevel.C
             ) && !resistanceEvent.evidenceDirection().hasPositiveResponse()
-        }
-
-        private fun findSourceEvent(event: EfficacyEvidence): String {
-            // Assumes there is no combined/complex evidence yet
-            with(event.molecularCriterium()) {
-                return when {
-                    hotspots().isNotEmpty() -> {
-                        hotspots().iterator().next().sourceEvent()
-                    }
-
-                    codons().isNotEmpty() -> {
-                        codons().iterator().next().sourceEvent()
-                    }
-
-                    exons().isNotEmpty() -> {
-                        exons().iterator().next().sourceEvent()
-                    }
-
-                    genes().isNotEmpty() -> {
-                        genes().iterator().next().sourceEvent()
-                    }
-
-                    fusions().isNotEmpty() -> {
-                        fusions().iterator().next().sourceEvent()
-                    }
-
-                    characteristics().isNotEmpty() -> {
-                        characteristics().iterator().next().sourceEvent()
-                    }
-
-                    hla().isNotEmpty() -> {
-                        hla().iterator().next().sourceEvent()
-                    }
-
-                    else -> ""
-                }
-            }
         }
     }
 }

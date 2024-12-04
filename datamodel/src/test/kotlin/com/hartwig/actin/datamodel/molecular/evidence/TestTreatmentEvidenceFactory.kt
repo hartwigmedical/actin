@@ -102,6 +102,6 @@ object TestTreatmentEvidenceFactory {
         evidenceDirection = evidenceDirection,
         evidenceDate = LocalDate.of(2021, 2, 3),
         evidenceYear = 2021,
-        efficacyDescription = "efficacy evidence"
+        efficacyDescription = "efficacy description"
     )
 }

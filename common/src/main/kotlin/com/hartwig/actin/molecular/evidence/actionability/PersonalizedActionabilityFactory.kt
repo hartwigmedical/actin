@@ -6,9 +6,7 @@ import com.hartwig.serve.datamodel.common.Indication
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.trial.ActionableTrial
 
-internal class PersonalizedActionabilityFactory internal constructor(
-    private val expandedTumorDoids: Set<String>
-) {
+class PersonalizedActionabilityFactory(private val expandedTumorDoids: Set<String>) {
 
     fun create(match: ActionabilityMatch): ClinicalEvidence {
         val (onLabelEvidences, offLabelEvidences) = partitionEvidences(match.evidenceMatches)
