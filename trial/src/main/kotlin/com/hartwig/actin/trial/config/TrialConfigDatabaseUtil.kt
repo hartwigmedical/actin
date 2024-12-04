@@ -7,7 +7,7 @@ object TrialConfigDatabaseUtil {
     private const val COMMA_SEPARATOR = ","
     private const val TRIAL_LOCATION_SEPARATOR = ":"
     private const val ALL_COHORTS = "all"
-    private val TRIAL_LOCATION_REG_EXP = Regex("^\\d+,[^,:]+(:\\d+,[^,:]+)*$")
+    private val TRIAL_LOCATION_REG_EXP = Regex("^\\d+:[^,:]+(,\\d+:[^,:]+)*$")
 
     fun toReferenceIds(referenceIdsString: String): Set<String> {
         return if (referenceIdsString.isEmpty()) emptySet() else toSet(referenceIdsString, COMMA_SEPARATOR)
@@ -38,8 +38,8 @@ object TrialConfigDatabaseUtil {
         }
 
         return input.takeIf { !it.isNullOrEmpty() }?.let {
-            it.split(TRIAL_LOCATION_SEPARATOR)
-                .map { loc -> loc.split(COMMA_SEPARATOR).let { (id, name) -> TrialLocation(id.toInt(), name) } }
+            it.split(COMMA_SEPARATOR)
+                .map { loc -> loc.split(TRIAL_LOCATION_SEPARATOR).let { (id, name) -> TrialLocation(id.toInt(), name) } }
         } ?: emptyList()
     }
 
