@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.evidence
 
+import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.serve.datamodel.ImmutableServeRecord
 import com.hartwig.serve.datamodel.RefGenome
 import com.hartwig.serve.datamodel.ServeDatabase
@@ -11,12 +12,17 @@ import com.hartwig.serve.datamodel.trial.ImmutableActionableTrial
 
 object ServeLoader {
 
-    fun loadServe37Record(jsonFilePath: String): ServeRecord {
-        return loadServeRecord(jsonFilePath, RefGenome.V37)
+    fun loadServeDatabase(jsonFilePath: String): ServeDatabase {
+        return ServeJson.read(jsonFilePath)
     }
 
-    fun loadServeRecord(jsonFilePath: String, serveRefGenomeVersion: RefGenome): ServeRecord {
+    fun loadServe37Record(jsonFilePath: String): ServeRecord {
+        return loadServeRecord(jsonFilePath, RefGenomeVersion.V37)
+    }
+
+    fun loadServeRecord(jsonFilePath: String, refGenomeVersion: RefGenomeVersion): ServeRecord {
         val serveDatabase = loadServeDatabase(jsonFilePath)
+        val serveRefGenomeVersion = toServeRefGenomeVersion(refGenomeVersion)
         val serveRecord = serveDatabase.records()[serveRefGenomeVersion]
             ?: throw IllegalStateException("No serve record for ref genome version $serveRefGenomeVersion")
 
@@ -26,8 +32,16 @@ object ServeLoader {
             .build()
     }
 
-    fun loadServeDatabase(jsonFilePath: String): ServeDatabase {
-        return ServeJson.read(jsonFilePath)
+    private fun toServeRefGenomeVersion(refGenomeVersion: RefGenomeVersion): RefGenome {
+        return when (refGenomeVersion) {
+            RefGenomeVersion.V37 -> {
+                RefGenome.V37
+            }
+
+            RefGenomeVersion.V38 -> {
+                RefGenome.V38
+            }
+        }
     }
 
     fun expandTrials(trials: List<ActionableTrial>): List<ActionableTrial> {
