@@ -35,19 +35,22 @@ class TrialConfigDatabaseUtilTest {
 
     @Test
     fun `Should return true when trial location input is valid`() {
-        assertThat(TrialConfigDatabaseUtil.trialLocationInputIsValid("1,A A")).isTrue()
-        assertThat(TrialConfigDatabaseUtil.trialLocationInputIsValid("1,A A:2,B B")).isTrue()
-        assertThat(TrialConfigDatabaseUtil.trialLocationInputIsValid("1,Erasmus MC")).isTrue()
-        assertThat(TrialConfigDatabaseUtil.trialLocationInputIsValid("1,Erasmus MC:2,Antoni van Leeuwenhoek")).isTrue()
+        assertThat(TrialConfigDatabaseUtil.trialLocationInputIsValid("1:A A")).isTrue()
+        assertThat(TrialConfigDatabaseUtil.trialLocationInputIsValid("1:A A,2:B B")).isTrue()
+        assertThat(TrialConfigDatabaseUtil.trialLocationInputIsValid("1:Erasmus MC")).isTrue()
+        assertThat(TrialConfigDatabaseUtil.trialLocationInputIsValid("1:Erasmus MC,2:Antoni van Leeuwenhoek")).isTrue()
+        assertThat(TrialConfigDatabaseUtil.trialLocationInputIsValid("4:Radboud UMC")).isTrue()
+        assertThat(TrialConfigDatabaseUtil.trialLocationInputIsValid("8:MUMC+")).isTrue()
+        assertThat(TrialConfigDatabaseUtil.trialLocationInputIsValid("4:Radboud UMC,8:MUMC+,3:Erasmus MC,7:UMC Groningen")).isTrue()
     }
 
     @Test
     fun `Should return false when trial location input is invalid`() {
-        assertThat(TrialConfigDatabaseUtil.trialLocationInputIsValid("1,:2,")).isFalse()
+        assertThat(TrialConfigDatabaseUtil.trialLocationInputIsValid("1:,2:")).isFalse()
         assertThat(TrialConfigDatabaseUtil.trialLocationInputIsValid(",")).isFalse()
         assertThat(TrialConfigDatabaseUtil.trialLocationInputIsValid(":")).isFalse()
-        assertThat(TrialConfigDatabaseUtil.trialLocationInputIsValid(",Erasmus MC:,Antoni van Leeuwenhoek")).isFalse()
-        assertThat(TrialConfigDatabaseUtil.trialLocationInputIsValid("1:2,Antoni van Leeuwenhoek")).isFalse()
+        assertThat(TrialConfigDatabaseUtil.trialLocationInputIsValid(":Erasmus MC,:Antoni van Leeuwenhoek")).isFalse()
+        assertThat(TrialConfigDatabaseUtil.trialLocationInputIsValid("1,2:Antoni van Leeuwenhoek")).isFalse()
     }
 
     @Test
@@ -58,15 +61,23 @@ class TrialConfigDatabaseUtilTest {
 
     @Test
     fun `Should extract a list with one trial location when input has one valid location`() {
-        val locations = TrialConfigDatabaseUtil.toTrialLocations("1,Erasmus MC")
+        val locations = TrialConfigDatabaseUtil.toTrialLocations("1:Erasmus MC")
         assertThat(locations).isNotEmpty
         assertThat(locations.size).isEqualTo(1)
         assertThat(locations).containsExactly(TrialLocation(1, "Erasmus MC"))
     }
 
     @Test
+    fun `Should extract a list with one trial location when input has one valid location with special chart`() {
+        val locations = TrialConfigDatabaseUtil.toTrialLocations("8:MUMC+")
+        assertThat(locations).isNotEmpty
+        assertThat(locations.size).isEqualTo(1)
+        assertThat(locations).containsExactly(TrialLocation(8, "MUMC+"))
+    }
+
+    @Test
     fun `Should extract a list with multiple trial locations when input has multiple valid locations`() {
-        val locations = TrialConfigDatabaseUtil.toTrialLocations("1,Erasmus MC:2,Antoni van Leeuwenhoek")
+        val locations = TrialConfigDatabaseUtil.toTrialLocations("1:Erasmus MC,2:Antoni van Leeuwenhoek")
         assertThat(locations).isNotEmpty
         assertThat(locations.size).isEqualTo(2)
         assertThat(locations).containsExactly(TrialLocation(1, "Erasmus MC"), TrialLocation(2, "Antoni van Leeuwenhoek"))
@@ -74,12 +85,12 @@ class TrialConfigDatabaseUtilTest {
 
     @Test
     fun `Should throw exception when trial location input is invalid`() {
-        assertThatThrownBy { TrialConfigDatabaseUtil.toTrialLocations("1,:2,") }.isInstanceOf(IllegalArgumentException::class.java)
-        assertThatThrownBy { TrialConfigDatabaseUtil.toTrialLocations(",Erasmus MC:,Antoni van Leeuwenhoek") }.isInstanceOf(
+        assertThatThrownBy { TrialConfigDatabaseUtil.toTrialLocations("1:,2:") }.isInstanceOf(IllegalArgumentException::class.java)
+        assertThatThrownBy { TrialConfigDatabaseUtil.toTrialLocations(":Erasmus MC,:Antoni van Leeuwenhoek") }.isInstanceOf(
             IllegalArgumentException::class.java
         )
-        assertThatThrownBy { TrialConfigDatabaseUtil.toTrialLocations("1:2,Antoni van Leeuwenhoek") }.isInstanceOf(IllegalArgumentException::class.java)
-        assertThatThrownBy { TrialConfigDatabaseUtil.toTrialLocations("A,1:B,2") }.isInstanceOf(IllegalArgumentException::class.java)
+        assertThatThrownBy { TrialConfigDatabaseUtil.toTrialLocations("1,2:Antoni van Leeuwenhoek") }.isInstanceOf(IllegalArgumentException::class.java)
+        assertThatThrownBy { TrialConfigDatabaseUtil.toTrialLocations("A:1,B:2") }.isInstanceOf(IllegalArgumentException::class.java)
     }
 
 }
