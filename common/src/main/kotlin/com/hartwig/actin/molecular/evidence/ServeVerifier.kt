@@ -7,7 +7,7 @@ import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 object ServeVerifier {
 
     fun verifyNoCombinedMolecularProfiles(serveDatabase: ServeDatabase) {
-        serveDatabase.records().values.map { verifyNoCombinedMolecularProfiles(it) }
+        serveDatabase.records().values.forEach { verifyNoCombinedMolecularProfiles(it) }
     }
 
     private fun verifyNoCombinedMolecularProfiles(serveRecord: ServeRecord) {
