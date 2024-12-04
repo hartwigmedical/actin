@@ -103,6 +103,18 @@ object TestServeMolecularFactory {
         return ImmutableMolecularCriterium.builder().addHla(actionableHLA).build()
     }
 
+    fun createCombined(): MolecularCriterium {
+        return ImmutableMolecularCriterium.builder()
+            .from(createHotspot())
+            .from(createCodon())
+            .from(createExon())
+            .from(createGene())
+            .from(createFusion())
+            .from(createCharacteristic())
+            .from(createHLA())
+            .build()
+    }
+
     fun createActionableEvent(): ActionableEvent {
         return object : ActionableEvent {
             override fun sourceDate(): LocalDate {
