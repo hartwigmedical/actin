@@ -11,6 +11,7 @@ import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.report.interpretation.InterpretedCohortTestFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 private const val TMB_TARGET = "TMB"
 private const val EGFR_TARGET = "EGFR"
@@ -37,7 +38,13 @@ private val BELGIUM = CountryDetails(country = Country.BELGIUM, hospitalsPerCity
 private val TRIAL_1_INSTANCE_1 = ExternalTrial(
     nctId = NCT_01,
     title = TITLE,
-    molecularMatches = setOf(MolecularMatchDetails(sourceEvent = "sourceEvent1", isCategoryEvent = false)),
+    molecularMatches = setOf(
+        MolecularMatchDetails(
+            sourceDate = LocalDate.of(2023, 2, 3),
+            sourceEvent = "sourceEvent1",
+            isCategoryEvent = false
+        )
+    ),
     applicableCancerTypes = setOf(CancerType("cancerType1", emptySet())),
     countries = setOf(NETHERLANDS),
     url = URL
@@ -46,7 +53,13 @@ private val TRIAL_1_INSTANCE_1 = ExternalTrial(
 private val TRIAL_1_INSTANCE_2 = ExternalTrial(
     nctId = NCT_01,
     title = TITLE,
-    molecularMatches = setOf(MolecularMatchDetails(sourceEvent = "sourceEvent2", isCategoryEvent = false)),
+    molecularMatches = setOf(
+        MolecularMatchDetails(
+            sourceDate = LocalDate.of(2023, 2, 3),
+            sourceEvent = "sourceEvent2",
+            isCategoryEvent = false
+        )
+    ),
     applicableCancerTypes = setOf(CancerType("cancerType2", emptySet())),
     countries = setOf(BELGIUM),
     url = URL
@@ -55,7 +68,13 @@ private val TRIAL_1_INSTANCE_2 = ExternalTrial(
 private val TRIAL_2_INSTANCE_1 = ExternalTrial(
     nctId = NCT_02,
     title = TITLE,
-    molecularMatches = setOf(MolecularMatchDetails(sourceEvent = "sourceEvent3", isCategoryEvent = false)),
+    molecularMatches = setOf(
+        MolecularMatchDetails(
+            sourceDate = LocalDate.of(2023, 2, 3),
+            sourceEvent = "sourceEvent3",
+            isCategoryEvent = false
+        )
+    ),
     applicableCancerTypes = setOf(CancerType("cancerType3", emptySet())),
     countries = setOf(BELGIUM),
     url = URL

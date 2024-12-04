@@ -94,13 +94,12 @@ object TestTreatmentEvidenceFactory {
         evidenceDirection: EvidenceDirection
     ) = TreatmentEvidence(
         treatment = treatment,
-        molecularMatch = MolecularMatchDetails(sourceEvent = "", isCategoryEvent = isCategoryEvent),
+        molecularMatch = MolecularMatchDetails(sourceDate = LocalDate.of(2021, 2, 3), sourceEvent = "", isCategoryEvent = isCategoryEvent),
         applicableCancerType = CancerType(matchedCancerType = "", excludedCancerSubTypes = emptySet()),
         isOnLabel = isOnLabel,
         evidenceLevel = evidenceLevel,
         evidenceLevelDetails = evidenceLevelDetails,
         evidenceDirection = evidenceDirection,
-        evidenceDate = LocalDate.of(2021, 2, 3),
         evidenceYear = 2021,
         efficacyDescription = "efficacy description"
     )

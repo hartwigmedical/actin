@@ -1,5 +1,7 @@
 package com.hartwig.actin.datamodel.molecular.evidence
 
+import java.time.LocalDate
+
 object TestExternalTrialFactory {
 
     fun createTestTrial(): ExternalTrial {
@@ -18,7 +20,13 @@ object TestExternalTrialFactory {
         return ExternalTrial(
             nctId = nctId,
             title = title,
-            molecularMatches = setOf(MolecularMatchDetails(sourceEvent = "", isCategoryEvent = false)),
+            molecularMatches = setOf(
+                MolecularMatchDetails(
+                    sourceDate = LocalDate.of(2021, 2, 3),
+                    sourceEvent = "",
+                    isCategoryEvent = false
+                )
+            ),
             applicableCancerTypes = setOf(CancerType(matchedCancerType = "", excludedCancerSubTypes = emptySet())),
             countries = countries,
             url = url

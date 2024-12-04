@@ -201,13 +201,12 @@ class TreatmentEvidenceFunctionsTest {
     ): TreatmentEvidence {
         return TreatmentEvidence(
             treatment = treatment,
-            molecularMatch = MolecularMatchDetails(sourceEvent, isCategoryEvent),
+            molecularMatch = MolecularMatchDetails(sourceDate = entryDate, sourceEvent = sourceEvent, isCategoryEvent = isCategoryEvent),
             applicableCancerType = cancerType,
             isOnLabel = isOnLabel,
             evidenceLevel = evidenceLevel,
             evidenceLevelDetails = evidenceLevelDetails,
             evidenceDirection = direction,
-            evidenceDate = entryDate,
             evidenceYear = evidenceYear,
             efficacyDescription = ""
         )

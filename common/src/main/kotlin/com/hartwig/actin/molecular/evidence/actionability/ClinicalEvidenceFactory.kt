@@ -77,10 +77,10 @@ object ClinicalEvidenceFactory {
         return TreatmentEvidence(
             treatment = evidence.treatment().name(),
             isOnLabel = isOnLabel,
-            molecularMatch = MolecularMatchDetails(sourceEvent, isCategoryEvent),
+            molecularMatch = MolecularMatchDetails(sourceDate = sourceDate, sourceEvent = sourceEvent, isCategoryEvent = isCategoryEvent),
             applicableCancerType = CancerType(
-                evidence.indication().applicableType().name(),
-                evidence.indication().excludedSubTypes().map { ct -> ct.name() }.toSet()
+                matchedCancerType = evidence.indication().applicableType().name(),
+                excludedCancerSubTypes = evidence.indication().excludedSubTypes().map { ct -> ct.name() }.toSet()
             ),
             evidenceLevel = EvidenceLevel.valueOf(evidence.evidenceLevel().name),
             evidenceLevelDetails = EvidenceLevelDetails.valueOf(evidence.evidenceLevelDetails().name),
@@ -90,7 +90,6 @@ object ClinicalEvidenceFactory {
                 isResistant = evidence.evidenceDirection().isResistant,
                 isCertain = evidence.evidenceDirection().isCertain
             ),
-            evidenceDate = sourceDate,
             evidenceYear = evidence.evidenceYear(),
             efficacyDescription = evidence.efficacyDescription()
         )
@@ -106,25 +105,27 @@ object ClinicalEvidenceFactory {
             characteristicsFilter() to { trial: ActionableTrial -> extractCharacteristic(trial) },
         ).flatMap { (filter, extractor) ->
             filterTrials(trials, filter).map {
-                createExternalTrial(it, extractor(it).sourceEvent(), extractor(it).isCategoryEvent())
+                createExternalTrial(it, extractor(it).sourceDate(), extractor(it).sourceEvent(), extractor(it).isCategoryEvent())
             }
         }.toSet()
     }
 
-    private fun createExternalTrial(trial: ActionableTrial, sourceEvent: String, isCategoryEvent: Boolean): ExternalTrial {
+    private fun createExternalTrial(
+        trial: ActionableTrial,
+        sourceDate: LocalDate,
+        sourceEvent: String,
+        isCategoryEvent: Boolean
+    ): ExternalTrial {
         return ExternalTrial(
             nctId = trial.nctId(),
             title = trial.acronym() ?: trial.title(),
             molecularMatches = setOf(
-                MolecularMatchDetails(
-                    sourceEvent = sourceEvent,
-                    isCategoryEvent = isCategoryEvent
-                )
+                MolecularMatchDetails(sourceDate = sourceDate, sourceEvent = sourceEvent, isCategoryEvent = isCategoryEvent)
             ),
             applicableCancerTypes = setOf(
                 CancerType(
-                    trial.indications().iterator().next().applicableType().name(),
-                    trial.indications().iterator().next().excludedSubTypes().map { it.name() }.toSet()
+                    matchedCancerType = trial.indications().iterator().next().applicableType().name(),
+                    excludedCancerSubTypes = trial.indications().iterator().next().excludedSubTypes().map { it.name() }.toSet()
                 )
             ),
             countries = trial.countries().map {

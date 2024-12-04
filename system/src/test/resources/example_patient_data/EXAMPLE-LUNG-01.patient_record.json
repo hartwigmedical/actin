@@ -434,6 +434,11 @@
                   {
                     "treatment": "OSIMERTINIB",
                     "molecularMatch": {
+                      "sourceDate": {
+                        "year": 2012,
+                        "month": 1,
+                        "day": 1
+                      },
                       "sourceEvent": "EGFR L858R",
                       "isCategoryEvent": false
                     },
@@ -449,11 +454,6 @@
                       "hasBenefit": true,
                       "isResistant": false,
                       "isCertain": true
-                    },
-                    "evidenceDate": {
-                      "year": 2012,
-                      "month": 1,
-                      "day": 1
                     },
                     "evidenceYear": 2016,
                     "efficacyDescription": "Osimertinib is effective in patients with EGFR L858R mutations"
@@ -461,6 +461,11 @@
                   {
                     "treatment": "AFATINIB",
                     "molecularMatch": {
+                      "sourceDate": {
+                        "year": 2012,
+                        "month": 1,
+                        "day": 1
+                      },
                       "sourceEvent": "EGFR L858R",
                       "isCategoryEvent": false
                     },
@@ -476,11 +481,6 @@
                       "hasBenefit": true,
                       "isResistant": false,
                       "isCertain": true
-                    },
-                    "evidenceDate": {
-                      "year": 2012,
-                      "month": 1,
-                      "day": 1
                     },
                     "evidenceYear": 2013,
                     "efficacyDescription": "Afatinib is effective in patients with EGFR L858R mutations"
@@ -492,6 +492,11 @@
                     "title": "EGFR-L858R-TRIAL",
                     "molecularMatches": [
                       {
+                        "sourceDate": {
+                          "year": 2012,
+                          "month": 1,
+                          "day": 1
+                        },
                         "sourceEvent": "EGFR L858R",
                         "isCategoryEvent": false
                       }
@@ -532,6 +537,11 @@
                     "title": "EGFR-BE",
                     "molecularMatches": [
                       {
+                        "sourceDate": {
+                          "year": 2012,
+                          "month": 1,
+                          "day": 1
+                        },
                         "sourceEvent": "EGFR L858R",
                         "isCategoryEvent": false
                       }
@@ -599,6 +609,11 @@
                   {
                     "treatment": "AFATINIB",
                     "molecularMatch": {
+                      "sourceDate": {
+                        "year": 2012,
+                        "month": 1,
+                        "day": 1
+                      },
                       "sourceEvent": "EGFR C797S",
                       "isCategoryEvent": false
                     },
@@ -615,11 +630,6 @@
                       "isResistant": false,
                       "isCertain": true
                     },
-                    "evidenceDate": {
-                      "year": 2012,
-                      "month": 1,
-                      "day": 1
-                    },
                     "evidenceYear": 2015,
                     "efficacyDescription": "In a case-report, afatinib was effective against EGFR L858R/C797S positive lung cancer."
                   }
@@ -630,6 +640,11 @@
                     "title": "EGFR-C797S-TRIAL",
                     "molecularMatches": [
                       {
+                        "sourceDate": {
+                          "year": 2012,
+                          "month": 1,
+                          "day": 1
+                        },
                         "sourceEvent": "EGFR C797S",
                         "isCategoryEvent": false
                       }
@@ -751,6 +766,11 @@
                     "title": "KRAS-G12C-TRIAL-DE",
                     "molecularMatches": [
                       {
+                        "sourceDate": {
+                          "year": 2012,
+                          "month": 1,
+                          "day": 1
+                        },
                         "sourceEvent": "KRAS G12C",
                         "isCategoryEvent": false
                       }
