@@ -23,10 +23,15 @@ object TestServeMolecularFactory {
         ref: String = "",
         alt: String = ""
     ): MolecularCriterium {
-        return ImmutableMolecularCriterium.builder().addHotspots(
-            ImmutableActionableHotspot.builder().from(createActionableEvent()).gene(gene).chromosome(chromosome).position(position).ref(ref)
-                .alt(alt).build()
-        ).build()
+        val actionableHotspot = ImmutableActionableHotspot.builder().from(createActionableEvent())
+            .gene(gene)
+            .chromosome(chromosome)
+            .position(position)
+            .ref(ref)
+            .alt(alt)
+            .build()
+
+        return ImmutableMolecularCriterium.builder().addHotspots(actionableHotspot).build()
     }
 
     fun createCodon(
@@ -36,10 +41,15 @@ object TestServeMolecularFactory {
         end: Int = 0,
         applicableMutationType: MutationType = MutationType.ANY
     ): MolecularCriterium {
-        return ImmutableMolecularCriterium.builder().addCodons(
-            ImmutableActionableRange.builder().from(createActionableEvent()).gene(gene).chromosome(chromosome).start(start).end(end)
-                .applicableMutationType(applicableMutationType).build()
-        ).build()
+        val actionableCodon = ImmutableActionableRange.builder().from(createActionableEvent())
+            .gene(gene)
+            .chromosome(chromosome)
+            .start(start)
+            .end(end)
+            .applicableMutationType(applicableMutationType)
+            .build()
+
+        return ImmutableMolecularCriterium.builder().addCodons(actionableCodon).build()
     }
 
     fun createExon(
@@ -49,34 +59,48 @@ object TestServeMolecularFactory {
         end: Int = 0,
         applicableMutationType: MutationType = MutationType.ANY
     ): MolecularCriterium {
-        return ImmutableMolecularCriterium.builder().addExons(
-            ImmutableActionableRange.builder().from(createActionableEvent()).gene(gene).chromosome(chromosome).start(start).end(end)
-                .applicableMutationType(applicableMutationType).build()
-        ).build()
+        val actionableExon = ImmutableActionableRange.builder().from(createActionableEvent())
+            .gene(gene)
+            .chromosome(chromosome)
+            .start(start)
+            .end(end)
+            .applicableMutationType(applicableMutationType)
+            .build()
+
+        return ImmutableMolecularCriterium.builder().addExons(actionableExon).build()
     }
 
     fun createGene(gene: String = "", geneEvent: GeneEvent = GeneEvent.ANY_MUTATION, sourceEvent: String = ""): MolecularCriterium {
-        return ImmutableMolecularCriterium.builder()
-            .addGenes(
-                ImmutableActionableGene.builder().from(createActionableEvent()).event(geneEvent).gene(gene).sourceEvent(sourceEvent).build()
-            ).build()
+        val actionableGene = ImmutableActionableGene.builder().from(createActionableEvent())
+            .sourceEvent(sourceEvent)
+            .event(geneEvent)
+            .gene(gene)
+            .build()
+
+        return ImmutableMolecularCriterium.builder().addGenes(actionableGene).build()
     }
 
     fun createFusion(geneUp: String = "", geneDown: String = "", minExonUp: Int? = null, maxExonUp: Int? = null): MolecularCriterium {
-        return ImmutableMolecularCriterium.builder().addFusions(
-            ImmutableActionableFusion.builder().from(createActionableEvent()).geneUp(geneUp).geneDown(geneDown).minExonUp(minExonUp)
-                .maxExonUp(maxExonUp).build()
-        ).build()
+        val actionableFusion = ImmutableActionableFusion.builder().from(createActionableEvent())
+            .geneUp(geneUp)
+            .geneDown(geneDown)
+            .minExonUp(minExonUp)
+            .maxExonUp(maxExonUp)
+            .build()
+
+        return ImmutableMolecularCriterium.builder().addFusions(actionableFusion).build()
     }
 
     fun createCharacteristic(type: TumorCharacteristicType = TumorCharacteristicType.MICROSATELLITE_STABLE): MolecularCriterium {
-        return ImmutableMolecularCriterium.builder()
-            .addCharacteristics(ImmutableActionableCharacteristic.builder().from(createActionableEvent()).type(type).build()).build()
+        val actionableCharacteristic = ImmutableActionableCharacteristic.builder().from(createActionableEvent()).type(type).build()
+
+        return ImmutableMolecularCriterium.builder().addCharacteristics(actionableCharacteristic).build()
     }
 
     fun createHLA(): MolecularCriterium {
-        return ImmutableMolecularCriterium.builder()
-            .addHla(ImmutableActionableHLA.builder().from(createActionableEvent()).hlaAllele("").build()).build()
+        val actionableHLA = ImmutableActionableHLA.builder().from(createActionableEvent()).hlaAllele("").build()
+
+        return ImmutableMolecularCriterium.builder().addHla(actionableHLA).build()
     }
 
     fun createActionableEvent(): ActionableEvent {
