@@ -9,9 +9,24 @@ import com.hartwig.serve.datamodel.molecular.hotspot.ActionableHotspot
 import com.hartwig.serve.datamodel.molecular.range.ActionableRange
 import com.hartwig.serve.datamodel.trial.ActionableTrial
 import java.util.function.Predicate
-import java.util.stream.Collectors
 
 object ActionableEventsExtraction {
+
+    fun filterEfficacyEvidence(
+        evidences: List<EfficacyEvidence>,
+        molecularCriteriumPredicate: Predicate<MolecularCriterium>
+    ): List<EfficacyEvidence> {
+        return evidences.filter { evidence -> molecularCriteriumPredicate.test(evidence.molecularCriterium()) }
+    }
+
+    fun filterTrials(
+        trials: List<ActionableTrial>,
+        molecularCriteriumPredicate: Predicate<MolecularCriterium>
+    ): List<ActionableTrial> {
+        return trials.filter { trial ->
+            trial.anyMolecularCriteria().any { criterium -> molecularCriteriumPredicate.test(criterium) }
+        }
+    }
 
     fun extractHotspot(efficacyEvidence: EfficacyEvidence): ActionableHotspot {
         return efficacyEvidence.molecularCriterium().hotspots().iterator().next()
@@ -72,58 +87,26 @@ object ActionableEventsExtraction {
     }
 
     fun hotspotFilter(): Predicate<MolecularCriterium> {
-        return Predicate { molecularCriterium: MolecularCriterium ->
-            molecularCriterium.hotspots().isNotEmpty()
-        }
+        return Predicate { molecularCriterium -> molecularCriterium.hotspots().isNotEmpty() }
     }
 
     fun codonFilter(): Predicate<MolecularCriterium> {
-        return Predicate { molecularCriterium: MolecularCriterium ->
-            molecularCriterium.codons().isNotEmpty()
-        }
+        return Predicate { molecularCriterium -> molecularCriterium.codons().isNotEmpty() }
     }
 
     fun exonFilter(): Predicate<MolecularCriterium> {
-        return Predicate { molecularCriterium: MolecularCriterium ->
-            molecularCriterium.exons().isNotEmpty()
-        }
-    }
-
-    fun fusionFilter(): Predicate<MolecularCriterium> {
-        return Predicate { molecularCriterium: MolecularCriterium ->
-            molecularCriterium.fusions().isNotEmpty()
-        }
+        return Predicate { molecularCriterium -> molecularCriterium.exons().isNotEmpty() }
     }
 
     fun geneFilter(): Predicate<MolecularCriterium> {
-        return Predicate { molecularCriterium: MolecularCriterium ->
-            molecularCriterium.genes().isNotEmpty()
-        }
+        return Predicate { molecularCriterium -> molecularCriterium.genes().isNotEmpty() }
+    }
+
+    fun fusionFilter(): Predicate<MolecularCriterium> {
+        return Predicate { molecularCriterium -> molecularCriterium.fusions().isNotEmpty() }
     }
 
     fun characteristicsFilter(): Predicate<MolecularCriterium> {
-        return Predicate { molecularCriterium: MolecularCriterium ->
-            molecularCriterium.characteristics().isNotEmpty()
-        }
-    }
-
-    fun filterEfficacyEvidence(
-        evidences: List<EfficacyEvidence>,
-        molecularCriteriumPredicate: Predicate<MolecularCriterium>
-    ): List<EfficacyEvidence> {
-        return evidences.stream()
-            .filter { evidence: EfficacyEvidence -> molecularCriteriumPredicate.test(evidence.molecularCriterium()) }
-            .collect(Collectors.toList())
-    }
-
-    fun filterTrials(
-        trials: List<ActionableTrial>,
-        molecularCriteriumPredicate: Predicate<MolecularCriterium>
-    ): List<ActionableTrial> {
-        return trials.filter { trial ->
-            trial.anyMolecularCriteria().any { criterium ->
-                molecularCriteriumPredicate.test(criterium)
-            }
-        }
+        return Predicate { molecularCriterium -> molecularCriterium.characteristics().isNotEmpty() }
     }
 }
