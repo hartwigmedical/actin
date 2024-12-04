@@ -36,7 +36,7 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
-        LOGGER.info("Loading known genes from serve db {}", config.serveDbJson)
+        LOGGER.info("Loading SERVE known genes from {}", config.serveDbJson)
         val knownGenes = ServeLoader.loadServe37Record(config.serveDbJson).knownEvents().genes()
         LOGGER.info(" Loaded {} known genes", knownGenes.size)
 
