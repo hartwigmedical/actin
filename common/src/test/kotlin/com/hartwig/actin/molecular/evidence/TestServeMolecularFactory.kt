@@ -90,7 +90,7 @@ object TestServeMolecularFactory {
             }
 
             override fun sourceUrls(): Set<String> {
-                return setOf("https://ckbhome.jax.org/profileResponse/advancedEvidenceFind?molecularProfileId=29716")
+                return setOf("https://url")
             }
         }
     }
