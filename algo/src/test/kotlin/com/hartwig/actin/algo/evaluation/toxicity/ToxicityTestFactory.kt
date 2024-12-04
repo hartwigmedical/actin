@@ -13,9 +13,9 @@ internal object ToxicityTestFactory {
         return base.copy(toxicities = toxicities)
     }
 
-    fun withToxicityThatIsAlsoComplication(toxicity: Toxicity): PatientRecord {
-        val complication = Complication(name = toxicity.name, categories = emptySet(), icdCode = "", year = null, month = null)
-        return base.copy(toxicities = listOf(toxicity), complications = listOf(complication))
+    fun withToxicityThatIsAlsoComplication(toxicity: Toxicity, icdCode: String = ""): PatientRecord {
+        val complication = Complication(name = toxicity.name, categories = emptySet(), icdCode = icdCode, year = null, month = null)
+        return base.copy(toxicities = listOf(toxicity.copy(icdCode = icdCode)), complications = listOf(complication))
     }
 
     fun withIntolerance(intolerance: Intolerance): PatientRecord {

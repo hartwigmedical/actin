@@ -43,6 +43,7 @@ object IcdDeserializer {
         }
     }
 
+// TODO: Determine if this function is actually needed (i.e. if direct parent property is needed or only full tree)
     fun resolveParentCode(rawNode: SerializedIcdNode): String? {
         return when (rawNode.classKind) {
             ClassKind.CHAPTER -> null
@@ -51,11 +52,28 @@ object IcdDeserializer {
         }
     }
 
+    fun resolveFullParentTree(rawNode: SerializedIcdNode): List<String> {
+        val groupings = returnAllGroupings(rawNode)
+        val chapterNo = listOf(rawNode.chapterNo)
+
+        return when (rawNode.classKind) {
+            ClassKind.CHAPTER -> emptyList()
+            ClassKind.BLOCK -> if (rawNode.depthInKind == 1) chapterNo else chapterNo + groupings
+            ClassKind.CATEGORY -> chapterNo + groupings + if (rawNode.depthInKind > 1) listOfNotNull(removeSubCode(rawNode)) else emptyList()
+        }
+    }
+
     fun trimTitle(rawNode: SerializedIcdNode): String {
         return rawNode.title.trimStart { it == '-' }
     }
 
     private fun isValid(rawNode: SerializedIcdNode) = rawNode.chapterNo != "0" && rawNode.depthInKind > 0
+
+    private fun returnAllGroupings(rawNode: SerializedIcdNode): List<String> {
+        with(rawNode) {
+            return listOfNotNull(grouping1, grouping2, grouping3, grouping4, grouping5).filterNot { it.isBlank() }
+        }
+    }
 
     private fun returnHighestGrouping(rawNode: SerializedIcdNode): String? {
         with(rawNode) {

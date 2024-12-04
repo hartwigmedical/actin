@@ -9,7 +9,6 @@ import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
-import com.hartwig.actin.icd.DEFAULT_ICD_CODE
 import java.time.LocalDate
 
 internal object OtherConditionTestFactory {
@@ -63,7 +62,7 @@ internal object OtherConditionTestFactory {
         return Toxicity(
             name = name,
             categories = emptySet(),
-            icdCode = DEFAULT_ICD_CODE,
+            icdCode = "code",
             evaluatedDate = LocalDate.of(2010, 1, 1),
             source = toxicitySource,
             grade = grade

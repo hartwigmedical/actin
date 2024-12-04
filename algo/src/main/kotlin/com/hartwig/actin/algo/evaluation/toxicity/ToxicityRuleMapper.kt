@@ -8,6 +8,8 @@ import com.hartwig.actin.datamodel.trial.EligibilityRule
 
 class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
+    private val icdModel = resources.icdModel
+
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
             EligibilityRule.HAS_INTOLERANCE_TO_NAME_X to hasIntoleranceWithSpecificNameCreator(),
@@ -85,11 +87,12 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
     }
 
     private fun createHasToxicityWithGrade(
-        minGrade: Int, icdTitleFilter: List<String>? = null, toxicitiesToIgnore: List<String> = emptyList()
+        minGrade: Int, targetIcdTitles: List<String>? = null, icdTitlesToIgnore: List<String> = emptyList()
     ) = HasToxicityWithGrade(
+        icdModel,
         minGrade,
-        icdTitleFilter,
-        toxicitiesToIgnore,
+        targetIcdTitles,
+        icdTitlesToIgnore,
         resources.algoConfiguration.warnIfToxicitiesNotFromQuestionnaire,
         referenceDateProvider().date()
     )

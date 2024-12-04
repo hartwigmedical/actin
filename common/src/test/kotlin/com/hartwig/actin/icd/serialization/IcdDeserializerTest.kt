@@ -109,6 +109,24 @@ class IcdDeserializerTest {
     }
 
     @Test
+    fun `Should correctly solve codes of full parent tree`() {
+        val chapter = createRawNode(classKind = ClassKind.CHAPTER)
+        assertThat(IcdDeserializer.resolveFullParentTree(chapter)).isEmpty()
+
+        val (blockDepthOne, blockDepthTwo) = listOf(1, 2).map {
+            createRawNode(chapterNo = "1", classKind = ClassKind.BLOCK, depthInKind = it, grouping1 = "Block1-A", grouping2 = "Block1-B")
+        }
+        assertThat(IcdDeserializer.resolveFullParentTree(blockDepthOne)).containsExactlyElementsOf(listOf("1"))
+        assertThat(IcdDeserializer.resolveFullParentTree(blockDepthTwo)).containsExactlyElementsOf(listOf("1", "Block1-A", "Block1-B"))
+
+        val (categoryDepthOne, categoryDepthTwo) = listOf(1 to "1A01", 2 to "1A01.1").map {
+            createRawNode(chapterNo = "2", code = it.second, classKind = ClassKind.CATEGORY, depthInKind = it.first, grouping1 = "Block1-A")
+        }
+        assertThat(IcdDeserializer.resolveFullParentTree(categoryDepthOne)).containsExactlyElementsOf(listOf("2", "Block1-A"))
+        assertThat(IcdDeserializer.resolveFullParentTree(categoryDepthTwo)).containsExactlyElementsOf(listOf("2", "Block1-A", "1A01"))
+    }
+
+    @Test
     fun `Should trim all leading '-' characters from title`() {
         val raw = createRawNode(title = "---some--title---")
         assertThat(IcdDeserializer.trimTitle(raw)).isEqualTo("some--title---")

@@ -449,7 +449,7 @@ class FunctionInputResolverTest {
     @Test
     fun `Should resolve functions with one integer many icd titles input`() {
         val resolver = TestFunctionInputResolverFactory.createResolverWithIcdNodes(
-            listOf(IcdNode("code 1", "parent 1", "title 1"), IcdNode("code 2", "parent 2", "title 2"))
+            listOf(IcdNode("code 1", listOf("parent 1"), "title 1"), IcdNode("code 2", listOf("parent 2"), "title 2"))
         )
         val rule: EligibilityRule = firstOfType(FunctionInput.ONE_INTEGER_MANY_ICD_TITLES)
         val valid: EligibilityFunction = create(rule, listOf("2", "title 1;title 2"))
