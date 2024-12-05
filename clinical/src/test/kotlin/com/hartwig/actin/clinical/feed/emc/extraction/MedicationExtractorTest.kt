@@ -11,11 +11,11 @@ import com.hartwig.actin.clinical.curation.PHARMACOLOGICAL
 import com.hartwig.actin.clinical.curation.THERAPEUTIC
 import com.hartwig.actin.clinical.curation.TestAtcFactory
 import com.hartwig.actin.clinical.curation.TestCurationFactory
-import com.hartwig.actin.clinical.curation.config.DrugInteractionConfig
+import com.hartwig.actin.clinical.curation.TestDrugInteractionsFactory
+import com.hartwig.actin.clinical.curation.TestQtProlongatingFactory
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig
 import com.hartwig.actin.clinical.curation.config.MedicationNameConfig
 import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
-import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
 import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.feed.emc.TestFeedFactory
@@ -107,21 +107,8 @@ class MedicationExtractorTest {
                     interpretation = CURATED_PERIOD_BETWEEN_UNIT
                 )
             ),
-            TestCurationFactory.curationDatabase(
-                DrugInteractionConfig(
-                    input = CURATED_MEDICATION_NAME,
-                    ignore = false,
-                    cypInteractions = listOf(cypInteraction),
-                    transporterInteractions = listOf(bcrpInteraction)
-                )
-            ),
-            TestCurationFactory.curationDatabase(
-                QTProlongatingConfig(
-                    input = CURATED_MEDICATION_NAME,
-                    ignore = false,
-                    status = QTProlongatingRisk.POSSIBLE
-                )
-            ),
+            TestDrugInteractionsFactory.createProper(CURATED_MEDICATION_NAME.lowercase(), listOf(cypInteraction), listOf(bcrpInteraction)),
+            TestQtProlongatingFactory.createProper(CURATED_MEDICATION_NAME.lowercase(), QTProlongatingRisk.POSSIBLE),
             TranslationDatabase(
                 mapOf(
                     ADMINISTRATION_ROUTE_INPUT_ORAL to Translation(
