@@ -45,7 +45,7 @@ fun Set<ExternalTrialSummary>.filterExclusivelyInChildrensHospitalsInReferenceCo
     referenceDate: LocalDate,
     countryOfReference: CountryName
 ): Set<ExternalTrialSummary> {
-    val isYoungAdult = referenceDate.year - birthYear < 25
+    val isYoungAdult = referenceDate.year - birthYear < 40
     return this.filter { trial ->
         val allHospitalsAreChildrensInReferenceCountry =
             hospitalsNamesForCountry(trial, countryOfReference).all { it.isChildrensHospital == true }
