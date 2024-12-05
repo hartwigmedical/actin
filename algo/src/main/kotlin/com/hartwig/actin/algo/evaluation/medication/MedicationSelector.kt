@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.medication
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
-import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.DrugInteraction
 import com.hartwig.actin.datamodel.clinical.Medication
 import java.time.LocalDate
@@ -98,20 +97,4 @@ class MedicationSelector(private val interpreter: MedicationStatusInterpreter) {
     fun isPlanned(medication: Medication): Boolean {
         return interpreter.interpret(medication) == MedicationStatusInterpretation.PLANNED
     }
-
-    fun extractActiveAndPlannedWithCategory(
-        medications: List<Medication>,
-        categoryAtcLevels: Set<AtcLevel>
-    ): Pair<List<String>, List<String>> {
-        val medicationsWithAtcLevel = medications.filter {
-            (it.allLevels() intersect categoryAtcLevels).isNotEmpty()
-        }
-        val activeMedicationsWithAtcLevel = filteredMedicationNames(medicationsWithAtcLevel, ::isActive)
-        val plannedMedicationsWithAtcLevel = filteredMedicationNames(medicationsWithAtcLevel, ::isPlanned)
-        return Pair(activeMedicationsWithAtcLevel, plannedMedicationsWithAtcLevel)
-    }
-
-    private fun filteredMedicationNames(
-        medications: List<Medication>, filter: (Medication) -> Boolean
-    ) = medications.filter(filter::invoke).map(Medication::name)
 }

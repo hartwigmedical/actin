@@ -6,6 +6,7 @@ import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.AtcLevel
+import com.hartwig.actin.datamodel.clinical.Medication
 
 class CurrentlyGetsMedicationOfAtcLevel(
     private val selector: MedicationSelector, private val categoryName: String, private val categoryAtcLevels: Set<AtcLevel>
@@ -13,10 +14,12 @@ class CurrentlyGetsMedicationOfAtcLevel(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
-        val (activeMedicationsWithAtcLevel, plannedMedicationsWithAtcLevel) = selector.extractActiveAndPlannedWithCategory(
-            medications,
-            categoryAtcLevels
-        )
+        val medicationsWithAtcLevel = medications.filter {
+            (it.allLevels() intersect categoryAtcLevels).isNotEmpty()
+        }
+
+        val activeMedicationsWithAtcLevel = filteredMedicationNames(medicationsWithAtcLevel, selector::isActive)
+        val plannedMedicationsWithAtcLevel = filteredMedicationNames(medicationsWithAtcLevel, selector::isPlanned)
 
         return when {
             activeMedicationsWithAtcLevel.isNotEmpty() -> {
@@ -43,5 +46,10 @@ class CurrentlyGetsMedicationOfAtcLevel(
             }
         }
     }
+
+    private fun filteredMedicationNames(
+        medications: List<Medication>, filter: (Medication) -> Boolean
+    ) = medications.filter(filter::invoke).map(Medication::name)
+
 }
 
