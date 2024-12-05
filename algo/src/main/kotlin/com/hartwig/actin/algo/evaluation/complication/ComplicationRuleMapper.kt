@@ -16,7 +16,6 @@ class ComplicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resou
         return mapOf(
             EligibilityRule.HAS_ANY_COMPLICATION to hasAnyComplicationCreator(),
             EligibilityRule.HAS_ANY_COMPLICATION_X to hasSpecificComplicationCreator(),
-            EligibilityRule.HAS_COMPLICATION_OF_CATEGORY_X to hasComplicationOfCategoryCreator(),
             EligibilityRule.HAS_POTENTIAL_UNCONTROLLED_TUMOR_RELATED_PAIN to hasPotentialUncontrolledTumorRelatedPainCreator(),
             EligibilityRule.HAS_LEPTOMENINGEAL_DISEASE to hasLeptomeningealDiseaseCreator(),
         )
@@ -30,13 +29,6 @@ class ComplicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resou
         return { function: EligibilityFunction ->
             val targetIcdTitles = functionInputResolver().createManyIcdTitlesInput(function)
             HasSpecificComplication(icdModel, targetIcdTitles)
-        }
-    }
-
-    private fun hasComplicationOfCategoryCreator(): FunctionCreator {
-        return { function: EligibilityFunction ->
-            val categoryToFind = functionInputResolver().createOneStringInput(function)
-            HasComplicationOfCategory(categoryToFind)
         }
     }
 

@@ -436,7 +436,6 @@ enum class EligibilityRule(val input: FunctionInput?) {
     // Rules related to complications
     HAS_ANY_COMPLICATION(FunctionInput.NONE),
     HAS_ANY_COMPLICATION_X(FunctionInput.MANY_ICD_TITLES),
-    HAS_COMPLICATION_OF_CATEGORY_X(FunctionInput.ONE_STRING),
     HAS_POTENTIAL_UNCONTROLLED_TUMOR_RELATED_PAIN(FunctionInput.NONE),
     HAS_LEPTOMENINGEAL_DISEASE(FunctionInput.NONE),
 
