@@ -15,7 +15,7 @@ class EligibleExternalTrialsGenerator(
     private val width: Float,
     private val filteredCount: Int,
     private val homeCountry: CountryName? = null,
-    private val isFilteredTrialsTable: Boolean = false
+    private val isFilteredTrialsTable: Boolean = true
 ) : TableGenerator {
 
     override fun title() =
@@ -58,7 +58,7 @@ class EligibleExternalTrialsGenerator(
         if (table.numberOfRows == 0) {
             table.addCell(Cells.createSpanningNoneEntry(table))
         }
-        if (filteredCount > 0 && !isFilteredTrialsTable)
+        if (filteredCount > 0 && isFilteredTrialsTable)
             table.addCell(
                 Cells.createSpanningSubNote(
                     homeCountry?.let {

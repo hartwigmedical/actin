@@ -94,7 +94,7 @@ class TrialMatchingChapter(
                     contentWidth(),
                     it.size,
                     report.config.countryOfReference,
-                    true
+                    false
                 )
             },
             filteredInternationalTrials.takeIf { it.isNotEmpty() }?.let {
@@ -103,7 +103,7 @@ class TrialMatchingChapter(
                     it,
                     contentWidth(),
                     it.size,
-                    isFilteredTrialsTable = true
+                    isFilteredTrialsTable = false
                 )
             },
             localTrialGenerator.takeIf {
