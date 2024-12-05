@@ -431,6 +431,22 @@ class FunctionInputResolverTest {
     }
 
     @Test
+    fun `Should resolve functions with many icd titles input`() {
+        val resolver = TestFunctionInputResolverFactory.createResolverWithIcdNodes(
+            listOf(IcdNode("code 1", listOf("parent 1"), "title 1"), IcdNode("code 2", listOf("parent 2"), "title 2"))
+        )
+        val rule: EligibilityRule = firstOfType(FunctionInput.MANY_ICD_TITLES)
+        val valid: EligibilityFunction = create(rule, listOf("title 1;title 2"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val expected = listOf("title 1", "title 2")
+        assertThat(resolver.createManyIcdTitlesInput(valid)).isEqualTo(expected)
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("title 1", "title 2")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("title 1;invalid title")))!!).isFalse
+    }
+
+    @Test
     fun `Should resolve functions with one integer many doid terms input`() {
         val resolver =
             TestFunctionInputResolverFactory.createResolverWithTwoDoidsAndTerms(listOf("doid 1", "doid 2"), listOf("term 1", "term 2"))

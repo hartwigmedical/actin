@@ -225,6 +225,11 @@ class FunctionInputResolver(
                     return true
                 }
 
+                FunctionInput.MANY_ICD_TITLES -> {
+                    createManyIcdTitlesInput(function)
+                    return true
+                }
+
                 FunctionInput.ONE_INTEGER_MANY_DOID_TERMS -> {
                     createOneIntegerManyDoidTermsInput(function)
                     return true
@@ -548,6 +553,16 @@ class FunctionInputResolver(
             strings = toStringList(function.parameters.first()),
             integer = parameterAsInt(function, 1)
         )
+    }
+
+    fun createManyIcdTitlesInput(function: EligibilityFunction): List<String> {
+        assertParamConfig(function, FunctionInput.MANY_ICD_TITLES, 1)
+        val icdStringList = toStringList(function.parameters.first())
+        val invalidTitles = icdStringList.filter { !icdModel.isValidIcdTitle(it) }
+        if (invalidTitles.isNotEmpty()) {
+            throw IllegalStateException("ICD title(s) not valid: ${invalidTitles.joinToString(", ")}")
+        }
+        return icdStringList
     }
 
     fun createOneIntegerManyDoidTermsInput(function: EligibilityFunction): OneIntegerManyDoidTerms {

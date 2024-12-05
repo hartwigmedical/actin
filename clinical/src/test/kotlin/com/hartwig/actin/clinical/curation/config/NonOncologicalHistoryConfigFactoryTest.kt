@@ -4,6 +4,7 @@ import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabaseReader
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.TestCurationFactory
+import com.hartwig.actin.icd.TestIcdFactory
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -12,14 +13,17 @@ import org.junit.Test
 class NonOncologicalHistoryConfigFactoryTest {
     private val fields: Map<String, Int> =
         TestCurationFactory.curationHeaders(CurationDatabaseReader.NON_ONCOLOGICAL_HISTORY_TSV)
+    private val icdModel = TestIcdFactory.createTestModel()
+    private val icdCode = icdModel.codeToNodeMap.keys.first()
+    private val icdTitle = icdModel.codeToNodeMap[icdCode]!!.title
 
     @Test
     fun `Should return NonOncologicalHistoryConfig with no prior other condition from valid inputs is lvef`() {
-        val doidValidator = mockk<CurationDoidValidator>()
-        every { doidValidator.isValidDiseaseDoidSet(setOf("123")) }
-        val config = NonOncologicalHistoryConfigFactory(doidValidator).create(
+        val doidValidator = setupDoidValidator()
+        every { doidValidator.isValidDiseaseDoidSet(setOf("123")) } returns true
+        val config = NonOncologicalHistoryConfigFactory(doidValidator, icdModel).create(
             fields,
-            arrayOf("input", "name", "2023", "12", "123", "category", "1", "1.0", "")
+            arrayOf("input", "name", "2023", "12", "123", "category", icdTitle, "1", "1.0", "")
         )
         assertThat(config.errors).isEmpty()
         assertThat(config.config.input).isEqualTo("input")
@@ -31,9 +35,9 @@ class NonOncologicalHistoryConfigFactoryTest {
     @Test
     fun `Should return NonOncologicalHistoryConfig with prior other condition from valid inputs is not lvef`() {
         val doidValidator = setupDoidValidator()
-        val config = NonOncologicalHistoryConfigFactory(doidValidator).create(
+        val config = NonOncologicalHistoryConfigFactory(doidValidator, icdModel).create(
             fields,
-            arrayOf("input", "name", "2023", "12", "123", "category", "0", "", "1")
+            arrayOf("input", "name", "2023", "12", "123", "category", icdTitle, "0", "", "1")
         )
         assertThat(config.errors).isEmpty()
         assertThat(config.config.input).isEqualTo("input")
@@ -51,9 +55,9 @@ class NonOncologicalHistoryConfigFactoryTest {
     @Test
     fun `Should return validation error when year and month are not numbers`() {
         val doidValidator = setupDoidValidator()
-        val config = NonOncologicalHistoryConfigFactory(doidValidator).create(
+        val config = NonOncologicalHistoryConfigFactory(doidValidator, icdModel).create(
             fields,
-            arrayOf("input", "name", "year", "month", "123", "category", "0", "", "1")
+            arrayOf("input", "name", "year", "month", "123", "category", icdTitle, "0", "", "1")
         )
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
@@ -75,9 +79,9 @@ class NonOncologicalHistoryConfigFactoryTest {
     @Test
     fun `Should return validation error when is lvef and lvef value is not a number`() {
         val doidValidator = setupDoidValidator()
-        val config = NonOncologicalHistoryConfigFactory(doidValidator).create(
+        val config = NonOncologicalHistoryConfigFactory(doidValidator, icdModel).create(
             fields,
-            arrayOf("input", "name", "2023", "12", "123", "category", "1", "invalid", "1")
+            arrayOf("input", "name", "2023", "12", "123", "category", icdTitle, "1", "invalid", "1")
         )
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
@@ -93,9 +97,9 @@ class NonOncologicalHistoryConfigFactoryTest {
     @Test
     fun `Should return validation error when is isContraindicationForTherapy is not a boolean`() {
         val doidValidator = setupDoidValidator()
-        val config = NonOncologicalHistoryConfigFactory(doidValidator).create(
+        val config = NonOncologicalHistoryConfigFactory(doidValidator, icdModel).create(
             fields,
-            arrayOf("input", "name", "2023", "12", "123", "category", "string", "1.0", "no")
+            arrayOf("input", "name", "2023", "12", "123", "category", icdTitle, "string", "1.0", "no")
         )
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
@@ -111,9 +115,9 @@ class NonOncologicalHistoryConfigFactoryTest {
     @Test
     fun `Should return validation error when not lvef and doids are not valid`() {
         val doidValidator = setupDoidValidator(false)
-        val config = NonOncologicalHistoryConfigFactory(doidValidator).create(
+        val config = NonOncologicalHistoryConfigFactory(doidValidator, icdModel).create(
             fields,
-            arrayOf("input", "name", "2023", "12", "123", "category", "0", "1.0", "1")
+            arrayOf("input", "name", "2023", "12", "123", "category", icdTitle, "0", "1.0", "1")
         )
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
@@ -122,6 +126,26 @@ class NonOncologicalHistoryConfigFactoryTest {
                 "doids",
                 "[123]",
                 "doids"
+            )
+        )
+    }
+
+    @Test
+    fun `Should return validation error when impossible to solve icd code for title`() {
+        val doidValidator = setupDoidValidator()
+        val config = NonOncologicalHistoryConfigFactory(doidValidator, icdModel).create(
+            fields,
+            arrayOf("input", "name", "2023", "12", "123", "category", "unknown title", "0", "", "1")
+        )
+        println(config)
+        assertThat(config.errors).containsExactly(
+            CurationConfigValidationError(
+                CurationCategory.NON_ONCOLOGICAL_HISTORY.categoryName,
+                "input",
+                "icd",
+                "unknown title",
+                "string",
+                "ICD title \"unknown title\" is not known - check for existence in resource"
             )
         )
     }

@@ -2,16 +2,21 @@ package com.hartwig.actin.algo.evaluation.complication
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.othercondition.PriorOtherConditionFunctions
 import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.icd.IcdModel
 
-class HasLeptomeningealDisease : EvaluationFunction {
+class HasLeptomeningealDisease(private val icdModel: IcdModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val leptomeningealComplications = ComplicationFunctions.findComplicationNamesMatchingAnyCategory(
-            record, LEPTOMENINGEAL_DISEASE_CATEGORY_PATTERNS
-        )
+        val icdCode = IcdConstants.LEPTOMENINGEAL_METASTASES_ICD
+        val hasConfirmedLeptomeningealDisease =
+            ComplicationFunctions.findComplicationsMatchingAnyIcdCode(record, listOf(icdCode), icdModel).isNotEmpty() ||
+                PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(record, listOf(icdCode), icdModel).isNotEmpty()
+
         val tumorDetails = record.tumor
         val otherLesions = listOfNotNull(tumorDetails.otherLesions, tumorDetails.otherSuspectedLesions).flatten()
         val (hasSuspectedPotentialMeningealLesions, hasConfirmedPotentialMeningealLesions) = listOf(
@@ -20,11 +25,7 @@ class HasLeptomeningealDisease : EvaluationFunction {
         ).map { filterPotentiallyMeningealLesions(it, otherLesions).isNotEmpty() }
 
         return when {
-            leptomeningealComplications.isNotEmpty() -> {
-                return EvaluationFactory.pass(
-                    "Patient has complication " + concat(leptomeningealComplications), "Present " + concat(leptomeningealComplications)
-                )
-            }
+            hasConfirmedLeptomeningealDisease -> return EvaluationFactory.pass("Has leptomeningeal disease")
 
             hasConfirmedPotentialMeningealLesions -> createWarnEvaluation(suspected = false, otherLesions)
 
@@ -37,7 +38,6 @@ class HasLeptomeningealDisease : EvaluationFunction {
     }
 
     companion object {
-        private val LEPTOMENINGEAL_DISEASE_CATEGORY_PATTERNS = listOf("leptomeningeal disease", "leptomeningeal metastases")
         private val LESION_WARNING_PATTERNS = setOf(listOf("leptomeningeal"), listOf("carcinomatous", "meningitis"))
 
         private fun filterPotentiallyMeningealLesions(hasLesions: Boolean?, otherLesions: List<String>): Set<String> {

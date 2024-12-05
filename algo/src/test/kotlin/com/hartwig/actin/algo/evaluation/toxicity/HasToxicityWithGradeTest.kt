@@ -38,7 +38,6 @@ class HasToxicityWithGradeTest {
         val toxicities = listOf(toxicity(name = "tox", source = ToxicitySource.QUESTIONNAIRE, grade = 2))
         val evaluation = function().evaluate(ToxicityTestFactory.withToxicities(toxicities))
         assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passSpecificMessages).containsOnly("Has toxicities grade >= 2 (tox)")
     }
 
     @Test
@@ -67,7 +66,7 @@ class HasToxicityWithGradeTest {
 
     @Test
     fun `Should ignore toxicities that match icd code of icd titles in ignore list`() {
-        val icdModel = icdModelWithNodes(listOf("ignore", "keep"))
+        val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("ignore", "keep"))
         val function = function(icdModel, ignoreFilters = listOf("ignoreTitle"))
         val toxicities = listOf(
             toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "ignore me", icdCode = "ignoreCode"),
@@ -83,7 +82,7 @@ class HasToxicityWithGradeTest {
 
     @Test
     fun `Should match selectively using icd codes of icd titles in target list`() {
-        val icdModel = icdModelWithNodes(listOf("target", "nonTarget"))
+        val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("target", "nonTarget"))
         val function = function(icdModel, targetIcdTitles = listOf("targetTitle"))
         val toxicities = listOf(
             toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "not a target", icdCode = "nonTargetCode"),
@@ -91,9 +90,7 @@ class HasToxicityWithGradeTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)))
 
         val matchingToxicity = toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "targetTox", icdCode = "targetCode")
-        val evaluation = function.evaluate(ToxicityTestFactory.withToxicities(toxicities + matchingToxicity))
-        assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passSpecificMessages).containsExactly("Has toxicities grade >= 2 (targetTox)")
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withToxicities(toxicities + matchingToxicity)))
     }
 
     @Test
@@ -108,9 +105,7 @@ class HasToxicityWithGradeTest {
         val toxicities = listOf(
             toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "target tox", icdCode = "targetCode"),
         )
-        val evaluation = function.evaluate(ToxicityTestFactory.withToxicities(toxicities))
-        assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passSpecificMessages).containsExactly("Has toxicities grade >= 2 (target tox - indicative of parentTitle)")
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)))
     }
 
     @Test
@@ -208,7 +203,4 @@ class HasToxicityWithGradeTest {
         evaluatedDate: LocalDate? = null
     ) =
         Toxicity(name, emptySet(), icdCode, evaluatedDate ?: referenceDate.minusMonths(1), source, grade, endDate)
-
-    private fun icdModelWithNodes(prefixes: List<String>) =
-        IcdModel.create(prefixes.map { IcdNode(it + "Code", listOf(it + "ParentCode"), it + "Title") })
 }

@@ -29,7 +29,7 @@ class HasLongQTSyndromeTest {
 
     companion object {
         private fun conditionWithDoid(doid: String): PriorOtherCondition {
-            return PriorOtherCondition(name = "", category = "", isContraindicationForTherapy = true, doids = setOf(doid))
+            return PriorOtherCondition(name = "", category = "", icdCode = "", isContraindicationForTherapy = true, doids = setOf(doid))
         }
 
         private fun withPriorOtherConditionsWithDoid(doid: String): PatientRecord {

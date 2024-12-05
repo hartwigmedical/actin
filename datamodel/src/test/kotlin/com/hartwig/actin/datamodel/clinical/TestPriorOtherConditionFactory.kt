@@ -6,14 +6,16 @@ object TestPriorOtherConditionFactory {
         return PriorOtherCondition(
             name = "",
             category = "",
+            icdCode = "",
             isContraindicationForTherapy = false
         )
     }
 
-    fun create(name: String, year: Int?, month: Int?): PriorOtherCondition {
+    fun create(name: String, year: Int?, month: Int?, icdCode: String = ""): PriorOtherCondition {
         return PriorOtherCondition(
             name = name,
             category = "",
+            icdCode = icdCode,
             isContraindicationForTherapy = false,
             year = year,
             month = month

@@ -15,10 +15,9 @@ data class IcdModel(
         return titleToCodeMap[icdTitle]
     }
 
-    fun codeToNode(code: String): IcdNode? = codeToNodeMap[code]
-    fun codeToParentNodes(code: String): List<IcdNode> = codeToNode(code)?.parentTreeCodes?.mapNotNull { codeToNodeMap[it] } ?: emptyList()
-
-    fun codeToNodeWithParents(code: String): List<IcdNode> = listOfNotNull(codeToNode(code)) + codeToParentNodes(code)
+    fun returnCodeWithParents(code: String): List<String> = resolveParentCodes(code) + code
+    private fun resolveParentCodes(code: String): List<String> = codeToNode(code)?.parentTreeCodes ?: emptyList()
+    private fun codeToNode(code: String): IcdNode? = codeToNodeMap[code]
 
     companion object {
         fun create(nodes: List<IcdNode>): IcdModel {

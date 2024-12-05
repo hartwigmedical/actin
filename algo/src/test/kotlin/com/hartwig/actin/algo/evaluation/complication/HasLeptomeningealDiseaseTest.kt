@@ -1,14 +1,38 @@
 package com.hartwig.actin.algo.evaluation.complication
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory
+import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.clinical.Complication
+import com.hartwig.actin.icd.IcdModel
+import com.hartwig.actin.icd.datamodel.IcdNode
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class HasLeptomeningealDiseaseTest {
 
-    private val function = HasLeptomeningealDisease()
+    private val targetCode = IcdConstants.LEPTOMENINGEAL_METASTASES_ICD
+    private val targetNode = IcdNode(targetCode, emptyList(), "Leptomeningeal metastasis")
+    private val childOfTargetNode = IcdNode("childCode", listOf(targetCode), "Child leptomeningeal metastasis")
+    private val icdModel = IcdModel.create(listOf(targetNode, childOfTargetNode))
+    private val function = HasLeptomeningealDisease(icdModel)
+
+    @Test
+    fun `Should pass when record contains complication or non oncological history entry with direct or parent match on target icd code`() {
+        val (complicationWithDirectMatch, complicationWithParentMatch) =
+            listOf(targetNode.code, childOfTargetNode.code).map { ComplicationTestFactory.complication(icdCode = it) }
+        val (historyWithDirectMatch, historyWithParentMatch) =
+            listOf(targetNode.code, childOfTargetNode.code).map { OtherConditionTestFactory.priorOtherCondition(icdCode = it) }
+
+        listOf(
+            ComplicationTestFactory.withComplication(complicationWithDirectMatch),
+            ComplicationTestFactory.withComplication(complicationWithParentMatch),
+            OtherConditionTestFactory.withPriorOtherCondition(historyWithDirectMatch),
+            OtherConditionTestFactory.withPriorOtherCondition(historyWithParentMatch)
+        ).forEach {
+            assertEvaluation(EvaluationResult.PASS, function.evaluate(it))
+        }
+    }
 
     @Test
     fun `Should fail when no complications are present`() {
@@ -16,15 +40,9 @@ class HasLeptomeningealDiseaseTest {
     }
 
     @Test
-    fun `Should fail when complications do not match leptomeningeal disease`() {
-        val different: Complication = ComplicationTestFactory.complication(categories = setOf("other complication"))
+    fun `Should fail when complications do not match leptomeningeal disease icd code`() {
+        val different = ComplicationTestFactory.complication(icdCode = "other")
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withComplication(different)))
-    }
-
-    @Test
-    fun `Should pass when complications match leptomeningeal disease categories`() {
-        val matching: Complication = ComplicationTestFactory.complication(categories = setOf("leptomeningeal disease type 1"))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(ComplicationTestFactory.withComplication(matching)))
     }
 
     @Test

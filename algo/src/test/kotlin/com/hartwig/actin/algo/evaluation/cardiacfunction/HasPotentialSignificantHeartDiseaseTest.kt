@@ -32,7 +32,7 @@ class HasPotentialSignificantHeartDiseaseTest {
 
     companion object {
         private fun priorOtherCondition(name: String = "", doid: String? = null): PriorOtherCondition {
-            return PriorOtherCondition(name = name, category = "", isContraindicationForTherapy = true, doids = setOfNotNull(doid))
+            return PriorOtherCondition(name = name, category = "", icdCode = "", isContraindicationForTherapy = true, doids = setOfNotNull(doid))
         }
     }
 }

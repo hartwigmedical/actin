@@ -281,6 +281,7 @@ object TestClinicalFactory {
                 name = "pancreatitis",
                 doids = setOf("4989"),
                 category = "Pancreas disease",
+                icdCode = "DC31",
                 isContraindicationForTherapy = true,
                 year = null,
                 month = null
@@ -289,6 +290,7 @@ object TestClinicalFactory {
                 name = "Coronary artery bypass graft (CABG)",
                 doids = setOf("3393"),
                 category = "Heart disease",
+                icdCode = "QB50.1",
                 isContraindicationForTherapy = true,
                 year = 2023,
                 month = 10

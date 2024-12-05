@@ -10,6 +10,7 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
 
     private val icdModel = resources.icdModel
 
+    //TODO(Add icd to intolerances - nb. check how to implement extension codes to specify intolerance)
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
             EligibilityRule.HAS_INTOLERANCE_TO_NAME_X to hasIntoleranceWithSpecificNameCreator(),
@@ -57,6 +58,7 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
         return { HasIntoleranceForPD1OrPDL1Inhibitors(doidModel()) }
     }
 
+    //TODO("Add icd-11 for non oncological history and check history for anaphylaxis code")
     private fun hasHistoryAnaphylaxisCreator(): FunctionCreator {
         return { HasHistoryOfAnaphylaxis() }
     }

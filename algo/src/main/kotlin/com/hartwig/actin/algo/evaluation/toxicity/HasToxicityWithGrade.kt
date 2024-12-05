@@ -8,7 +8,6 @@ import com.hartwig.actin.datamodel.clinical.Complication
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.icd.IcdModel
-import com.hartwig.actin.icd.datamodel.IcdNode
 import java.time.LocalDate
 
 const val DEFAULT_QUESTIONNAIRE_GRADE = 2
@@ -23,30 +22,19 @@ class HasToxicityWithGrade(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val (matchingToxicities, unresolvableToxicities, hasAtLeastOneMatchingQuestionnaireToxicity) =
-            selectRelevantToxicities(record).map { toxicity ->
-                val (grade, unresolvable) =
-                    if (toxicity.grade == null && toxicity.source == ToxicitySource.QUESTIONNAIRE) {
-                        DEFAULT_QUESTIONNAIRE_GRADE to (minGrade > DEFAULT_QUESTIONNAIRE_GRADE)
-                    } else toxicity.grade to false
-                val gradeMatch = grade != null && grade >= minGrade
+        val (matchingToxicities, otherToxicities) = selectRelevantToxicities(record).partition { toxicity ->
+            val grade = toxicity.grade ?: DEFAULT_QUESTIONNAIRE_GRADE.takeIf { toxicity.source == ToxicitySource.QUESTIONNAIRE }
+            val gradeMatch = grade?.let { it >= minGrade } ?: false
+            val matchesIcd = hasIcdMatch(toxicity, targetIcdTitles, icdModel)
+            gradeMatch && matchesIcd
+        }
 
-                val (icdMatches, isParentMatch) = resolveIcdMatches(toxicity, targetIcdTitles, icdModel)
-                val hasIcdMatch = targetIcdTitles == null || icdMatches.isNotEmpty()
-
-                val (matchingToxicity, isMatchingQuestionnaireToxicity) = if (gradeMatch && hasIcdMatch) {
-                    setOf(Triple(toxicity.name,icdMatches, isParentMatch)) to (toxicity.source == ToxicitySource.QUESTIONNAIRE)
-                } else emptySet<MatchingToxicity>() to false
-
-                Triple(
-                    matchingToxicity,
-                    if (unresolvable) setOf(Triple(toxicity.name, icdMatches, isParentMatch)) else emptySet(),
-                    isMatchingQuestionnaireToxicity
-                )
+        val hasAtLeastOneMatchingQuestionnaireToxicity = matchingToxicities.any { it.source == ToxicitySource.QUESTIONNAIRE }
+        val unresolvableToxicities = if (minGrade <= DEFAULT_QUESTIONNAIRE_GRADE) emptyList() else {
+            otherToxicities.filter {
+                with(it) { grade == null && source == ToxicitySource.QUESTIONNAIRE }
             }
-                .fold(Triple(emptySet<MatchingToxicity>(), emptySet<MatchingToxicity>(), false)) { acc, triple ->
-                    Triple(acc.first + triple.first, acc.second + triple.second, acc.third || triple.third)
-                }
+        }
 
         return when {
             matchingToxicities.isNotEmpty() && (hasAtLeastOneMatchingQuestionnaireToxicity || !warnIfToxicitiesNotFromQuestionnaire) -> {
@@ -94,27 +82,11 @@ class HasToxicityWithGrade(
         return otherToxicities + mostRecentEhrToxicitiesByCode
     }
 
-    private fun resolveIcdMatches(toxicity: Toxicity, targetIcdTitles: List<String>?, icdModel: IcdModel): Pair<List<IcdNode>, Boolean> {
-        if (targetIcdTitles == null) return emptyList<IcdNode>() to false
-
+    private fun hasIcdMatch(toxicity: Toxicity, targetIcdTitles: List<String>?, icdModel: IcdModel): Boolean {
+        if (targetIcdTitles == null) return true
         val targetIcdCodes = targetIcdTitles.mapNotNull { icdModel.resolveCodeForTitle(it) }
-        val (toxicityIcdNode, toxicityParentNodes) = with(icdModel) {
-            codeToNode(toxicity.icdCode) to codeToParentNodes(toxicity.icdCode)
-        }
-
-        return when {
-            targetIcdCodes.contains(toxicityIcdNode?.code) -> listOfNotNull(toxicityIcdNode) to false
-            else -> toxicityParentNodes.filter { targetIcdCodes.contains(it.code) } to true
-        }
+        return targetIcdCodes.any { it in icdModel.returnCodeWithParents(toxicity.icdCode) }
     }
 
-    private fun formatToxicities(toxicities: Set<MatchingToxicity>): String {
-        val formattedToxicities = toxicities.joinToString(", ") { (name, nodes, isParentMatch) ->
-            val indicativeNodes = nodes.joinToString(", ") { it.title }
-            if (indicativeNodes.isEmpty() || !isParentMatch) name else "$name - indicative of $indicativeNodes"
-        }
-        return if (formattedToxicities.isNotEmpty()) " ($formattedToxicities)" else ""
-    }
+    private fun formatToxicities(toxicities: List<Toxicity>) = if (toxicities.isNotEmpty()) " (${toxicities.joinToString(", ")})" else ""
 }
-
-private typealias MatchingToxicity = Triple<String, List<IcdNode>, Boolean>

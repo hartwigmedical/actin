@@ -148,6 +148,10 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
                 listOf("string1;string2", "1")
             }
 
+            FunctionInput.MANY_ICD_TITLES -> {
+                listOf("$icdTitleToUse;$icdTitleToUse")
+            }
+
             FunctionInput.ONE_INTEGER_MANY_DOID_TERMS -> {
                 listOf("1", "$doidTermToUse;$doidTermToUse")
             }

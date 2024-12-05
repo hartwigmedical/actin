@@ -19,6 +19,9 @@ object TestIcdFactory {
         titleToCodeMap = listOf(1, 2, 3).associate { i -> "$DEFAULT_ICD_TITLE $i" to "$DEFAULT_ICD_CODE.$i" },
     )
 
+    fun createModelWithSpecificNodes(nodePrefixes: List<String>) =
+        IcdModel.create(nodePrefixes.map { IcdNode(it + "Code", listOf(it + "ParentCode"), it + "Title") })
+
     private fun create(
         codeToNodeMap: Map<String, IcdNode> = emptyMap(),
         titleToCodeMap: Map<String, String> = emptyMap(),

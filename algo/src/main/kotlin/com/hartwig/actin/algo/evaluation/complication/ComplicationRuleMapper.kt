@@ -10,10 +10,12 @@ import com.hartwig.actin.datamodel.trial.EligibilityRule
 
 class ComplicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
+    private val icdModel = resources.icdModel
+
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
             EligibilityRule.HAS_ANY_COMPLICATION to hasAnyComplicationCreator(),
-            EligibilityRule.HAS_COMPLICATION_X to hasSpecificComplicationCreator(),
+            EligibilityRule.HAS_ANY_COMPLICATION_X to hasSpecificComplicationCreator(),
             EligibilityRule.HAS_COMPLICATION_OF_CATEGORY_X to hasComplicationOfCategoryCreator(),
             EligibilityRule.HAS_POTENTIAL_UNCONTROLLED_TUMOR_RELATED_PAIN to hasPotentialUncontrolledTumorRelatedPainCreator(),
             EligibilityRule.HAS_LEPTOMENINGEAL_DISEASE to hasLeptomeningealDiseaseCreator(),
@@ -26,8 +28,8 @@ class ComplicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resou
 
     private fun hasSpecificComplicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val termToFind = functionInputResolver().createOneStringInput(function)
-            HasSpecificComplication(termToFind)
+            val targetIcdTitles = functionInputResolver().createManyIcdTitlesInput(function)
+            HasSpecificComplication(icdModel, targetIcdTitles)
         }
     }
 
@@ -40,10 +42,10 @@ class ComplicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resou
 
     private fun hasPotentialUncontrolledTumorRelatedPainCreator(): FunctionCreator {
         val interpreter: MedicationStatusInterpreter = MedicationStatusInterpreterOnEvaluationDate(referenceDateProvider().date(), null)
-        return { HasPotentialUncontrolledTumorRelatedPain(interpreter) }
+        return { HasPotentialUncontrolledTumorRelatedPain(interpreter, icdModel) }
     }
 
     private fun hasLeptomeningealDiseaseCreator(): FunctionCreator {
-        return { HasLeptomeningealDisease() }
+        return { HasLeptomeningealDisease(icdModel) }
     }
 }
