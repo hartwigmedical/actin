@@ -8,33 +8,37 @@ import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.TestMedicationFactory
 import org.junit.Test
 
-private val PAIN_MEDICATION = AtcLevel("N02A", "Opioids")
+private val OPIOIDS_ATC_LEVEL = AtcLevel("N02A", "Opioids")
+private val PAIN_MEDICATION =
+    TestMedicationFactory.createMinimal().copy(atc = AtcTestFactory.atcClassification().copy(pharmacologicalSubGroup = OPIOIDS_ATC_LEVEL))
 
 class HasPotentialUncontrolledTumorRelatedPainTest {
 
-    val alwaysActiveFunction = HasPotentialUncontrolledTumorRelatedPain(MedicationTestFactory.alwaysActive(), setOf(PAIN_MEDICATION))
-    val alwaysPlannedFunction = HasPotentialUncontrolledTumorRelatedPain(MedicationTestFactory.alwaysPlanned(), setOf(PAIN_MEDICATION))
+    val alwaysActiveFunction = HasPotentialUncontrolledTumorRelatedPain(MedicationTestFactory.alwaysActive(), setOf(OPIOIDS_ATC_LEVEL))
+    val alwaysPlannedFunction = HasPotentialUncontrolledTumorRelatedPain(MedicationTestFactory.alwaysPlanned(), setOf(OPIOIDS_ATC_LEVEL))
 
     @Test
-    fun `Should pass if patient has complication indicating pain`() {
+    fun `Should evaluate to undetermined if patient has complication indicating pain`() {
         val painComplication = ComplicationTestFactory.complication(categories = setOf("pain category"))
-        assertEvaluation(EvaluationResult.PASS, alwaysActiveFunction.evaluate(ComplicationTestFactory.withComplication(painComplication)))
-    }
-
-    @Test
-    fun `Should pass if patient uses severe pain medication`() {
-        val painMedication = TestMedicationFactory.createMinimal()
-            .copy(atc = AtcTestFactory.atcClassification().copy(pharmacologicalSubGroup = PAIN_MEDICATION))
-        assertEvaluation(EvaluationResult.PASS, alwaysActiveFunction.evaluate(ComplicationTestFactory.withMedication(painMedication)))
-    }
-
-    @Test
-    fun `Should warn if patient has planned severe pain medication`() {
-        val plannedPainMedication = TestMedicationFactory.createMinimal()
-            .copy(atc = AtcTestFactory.atcClassification().copy(pharmacologicalSubGroup = PAIN_MEDICATION))
         assertEvaluation(
-            EvaluationResult.WARN,
-            alwaysPlannedFunction.evaluate(ComplicationTestFactory.withMedication(plannedPainMedication))
+            EvaluationResult.UNDETERMINED,
+            alwaysActiveFunction.evaluate(ComplicationTestFactory.withComplication(painComplication))
+        )
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if patient uses severe pain medication`() {
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            alwaysActiveFunction.evaluate(ComplicationTestFactory.withMedication(PAIN_MEDICATION))
+        )
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if patient has planned severe pain medication`() {
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            alwaysPlannedFunction.evaluate(ComplicationTestFactory.withMedication(PAIN_MEDICATION))
         )
     }
 

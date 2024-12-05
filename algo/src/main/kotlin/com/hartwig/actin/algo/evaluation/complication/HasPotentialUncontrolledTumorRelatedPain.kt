@@ -17,10 +17,10 @@ class HasPotentialUncontrolledTumorRelatedPain(private val selector: MedicationS
     override fun evaluate(record: PatientRecord): Evaluation {
         val painComplications = ComplicationFunctions.findComplicationNamesMatchingAnyCategory(record, listOf(SEVERE_PAIN_COMPLICATION))
         if (painComplications.isNotEmpty()) {
-            return EvaluationFactory.pass(
+            return EvaluationFactory.undetermined(
                 "Patient has complication related to pain: " + concatLowercaseWithAnd(painComplications) +
-                        ", potentially indicating uncontrolled tumor related pain",
-                "Present " + concatLowercaseWithAnd(painComplications)
+                        " - undetermined if uncontrolled",
+                "Present " + concatLowercaseWithAnd(painComplications) + " - undetermined if uncontrolled"
             )
         }
         val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
@@ -31,18 +31,18 @@ class HasPotentialUncontrolledTumorRelatedPain(private val selector: MedicationS
 
         return when {
             activePainMedications.isNotEmpty() -> {
-                EvaluationFactory.pass(
+                EvaluationFactory.undetermined(
                     "Patient receives pain medication: " + concatLowercaseWithAnd(activePainMedications) +
-                            ", potentially indicating uncontrolled tumor related pain",
-                    "Receives " + concatLowercaseWithAnd(activePainMedications) + " indicating pain "
+                            "- undetermined if uncontrolled tumor related pain present",
+                    "Receives " + concatLowercaseWithAnd(activePainMedications) + " - undetermined if uncontrolled tumor related pain present"
                 )
             }
 
             plannedPainMedications.isNotEmpty() -> {
-                EvaluationFactory.warn(
+                EvaluationFactory.undetermined(
                     "Patient plans to receive pain medication: " + concatLowercaseWithAnd(plannedPainMedications) +
-                            ", potentially indicating uncontrolled tumor related pain",
-                    "Plans to receive " + concatLowercaseWithAnd(plannedPainMedications) + " indicating pain"
+                            "- undetermined if uncontrolled tumor related pain present",
+                    "Plans to receive " + concatLowercaseWithAnd(plannedPainMedications) + "- undetermined if uncontrolled tumor related pain present"
                 )
             }
 
