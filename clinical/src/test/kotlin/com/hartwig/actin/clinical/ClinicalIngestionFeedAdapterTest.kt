@@ -6,6 +6,8 @@ import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.TestAtcFactory
+import com.hartwig.actin.clinical.curation.TestDrugInteractionsFactory
+import com.hartwig.actin.clinical.curation.TestQtProlongatingFactory
 import com.hartwig.actin.clinical.feed.emc.ClinicalFeedReader
 import com.hartwig.actin.clinical.feed.emc.EmcClinicalFeedIngestor
 import com.hartwig.actin.clinical.feed.emc.FEED_DIRECTORY
@@ -18,11 +20,11 @@ import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.doid.config.DoidManualConfig
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import com.hartwig.actin.util.json.GsonSerializer
+import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.tuple
 import org.junit.Before
 import org.junit.Test
-import java.io.File
 
 private const val PATIENT = "ACTN01029999"
 private val EXPECTED_CLINICAL_RECORD = "${resourceOnClasspath("clinical_record")}/$PATIENT.clinical.json"
@@ -62,6 +64,8 @@ class ClinicalIngestionFeedAdapterTest {
                 CURATION_DIRECTORY,
                 curationDatabase,
                 TestAtcFactory.createProperAtcModel(),
+                TestDrugInteractionsFactory.createProper(),
+                TestQtProlongatingFactory.createProper(),
                 testDoidModel,
                 TestTreatmentDatabaseFactory.createProper()
             ), curationDatabase

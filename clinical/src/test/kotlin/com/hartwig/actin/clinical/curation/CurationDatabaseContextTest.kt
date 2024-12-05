@@ -3,8 +3,6 @@ package com.hartwig.actin.clinical.curation
 import com.hartwig.actin.clinical.UnusedCurationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfigValidationError
-import com.hartwig.actin.clinical.curation.config.DrugInteractionConfig
-import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import io.mockk.Called
@@ -20,7 +18,7 @@ class CurationDatabaseContextTest {
 
     @Test
     fun `Should combine all databases validation errors`() {
-        val expectedUnusedConfig = IntRange(0, 18).map {
+        val expectedUnusedConfig = IntRange(0, 16).map {
             CurationConfigValidationError(
                 NOT_IMPORTANT,
                 NOT_IMPORTANT,
@@ -45,23 +43,19 @@ class CurationDatabaseContextTest {
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[13]),
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[14]),
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[15]),
-            curationDatabaseWithUnusedConfig(expectedUnusedConfig[16]),
-            curationDatabaseWithUnusedConfig(expectedUnusedConfig[17]),
             mockk(),
             mockk(),
             mockk(),
             mockk(),
             mockk(),
-            curationDatabaseWithUnusedConfig(expectedUnusedConfig[18])
+            curationDatabaseWithUnusedConfig(expectedUnusedConfig[16])
         )
         assertThat(context.validate()).containsExactlyElementsOf(expectedUnusedConfig)
     }
 
     @Test
-    fun `Should combine all unused configs in curation databases, except cyp, qt and blood transfusions`() {
+    fun `Should combine all unused configs in curation databases, except blood transfusions`() {
         val expectedUnusedConfig = IntRange(0, 20).map { UnusedCurationConfig(CurationCategory.TOXICITY.name, it.toString()) }
-        val cypInteractionCuration = mockk<CurationDatabase<DrugInteractionConfig>>()
-        val qtProlongingCuration = mockk<CurationDatabase<QTProlongatingConfig>>()
         val bloodTransfusionTranslation = mockk<TranslationDatabase<String>>()
         val context = CurationDatabaseContext(
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[0]),
@@ -80,8 +74,6 @@ class CurationDatabaseContextTest {
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[13]),
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[14]),
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[15]),
-            cypInteractionCuration,
-            qtProlongingCuration,
             translationDatabaseWithUnusedConfig(expectedUnusedConfig[16]),
             translationDatabaseWithUnusedConfig(expectedUnusedConfig[17]),
             translationDatabaseWithUnusedConfig(expectedUnusedConfig[18]),
@@ -90,8 +82,6 @@ class CurationDatabaseContextTest {
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[20])
         )
         assertThat(context.allUnusedConfig(listOf(CurationExtractionEvaluation()))).containsExactlyInAnyOrderElementsOf(expectedUnusedConfig)
-        verify { cypInteractionCuration wasNot Called }
-        verify { qtProlongingCuration wasNot Called }
         verify { bloodTransfusionTranslation wasNot Called }
     }
 

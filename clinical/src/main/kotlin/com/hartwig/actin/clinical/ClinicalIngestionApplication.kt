@@ -9,15 +9,15 @@ import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.util.json.GsonSerializer
+import java.nio.file.Files
+import java.nio.file.Paths
+import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.nio.file.Files
-import java.nio.file.Paths
-import kotlin.system.exitProcess
 
 class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) {
 
@@ -31,6 +31,11 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
 
         LOGGER.info("Creating ATC model from file {}", config.atcTsv)
         val atcModel = WhoAtcModel.createFromFiles(config.atcTsv, config.atcOverridesTsv)
+
+        LOGGER.info("Loading drug interactions database from file {}", config.drugInteractionsTsv)
+        val drugInteractionsDatabase = DrugInteractionsDatabase.create(config.drugInteractionsTsv)
+        LOGGER.info("Loading QT prolongating drugs database from file {}", config.qtProlongatingTsv)
+        val qtProlongatingDatabase = QtProlongatingDatabase.create(config.qtProlongatingTsv)
 
         LOGGER.info("Creating clinical curation database from directory {}", config.curationDirectory)
         val curationDoidValidator = CurationDoidValidator(DoidModelFactory.createFromDoidEntry(doidEntry))
@@ -55,12 +60,16 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
                 config.curationDirectory,
                 curationDatabaseContext,
                 atcModel,
+                drugInteractionsDatabase,
+                qtProlongatingDatabase,
                 doidModel,
                 treatmentDatabase
             ) else StandardDataIngestion.create(
             config.feedDirectory,
             curationDatabaseContext,
             atcModel,
+            drugInteractionsDatabase,
+            qtProlongatingDatabase,
             doidModel,
             treatmentDatabase
         )
