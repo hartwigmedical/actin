@@ -48,7 +48,7 @@ class EvidenceDatabaseTest {
         assertEvidenceCountMatchesExpected(database.evidenceForVariant(variant), 1)
 
         val gainLoss =
-            minimalCopyNumber().copy(canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN))
+            minimalCopyNumber().copy(canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS))
         assertThat(database.geneAlterationForCopyNumber(gainLoss)).isNotNull
         assertEvidenceCountMatchesExpected(database.evidenceForCopyNumber(gainLoss), 1)
 

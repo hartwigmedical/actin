@@ -19,19 +19,28 @@ class MolecularDriversSummarizer private constructor(
     fun keyAmplifiedGenes(): List<String> {
         return drivers.copyNumbers
             .asSequence()
-            .filter { it.canonicalImpact.type.isGain }
+            .filter { copyNumber -> copyNumber.canonicalImpact.type.isGain || copyNumber.otherImpacts.any { it.type.isGain } }
             .filter(::isKeyDriver)
-            .map { it.gene + if (it.canonicalImpact.type == CopyNumberType.PARTIAL_GAIN) " (partial)" else "" }
+            .map {
+                it.gene + if (it.canonicalImpact.type == CopyNumberType.PARTIAL_GAIN) " (partial)" else "" +
+                        if (it.canonicalImpact.type == CopyNumberType.NONE) " (non-canonical transcript)" else ""
+            }
             .distinct()
             .toList()
     }
 
     fun keyDeletedGenes(): List<String> {
-        return keyGenesForAlterations(drivers.copyNumbers.filter { it.canonicalImpact.type.isLoss })
+        return drivers.copyNumbers
+            .asSequence()
+            .filter { copyNumber -> copyNumber.canonicalImpact.type.isLoss || copyNumber.otherImpacts.any { it.type.isLoss } }
+            .filter(::isKeyDriver)
+            .map { it.gene + if (it.canonicalImpact.type == CopyNumberType.NONE) " (non-canonical transcript)" else "" }
+            .distinct()
+            .toList()
     }
 
     fun keyHomozygouslyDisruptedGenes(): List<String> {
-        return keyGenesForAlterations(drivers.homozygousDisruptions)
+        return drivers.homozygousDisruptions.filter(::isKeyDriver).map(GeneAlteration::gene).distinct()
     }
 
     fun keyFusionEvents(): List<String> {
@@ -59,10 +68,6 @@ class MolecularDriversSummarizer private constructor(
 
     private fun isKeyDriver(driver: Driver): Boolean {
         return driver.driverLikelihood == DriverLikelihood.HIGH && driver.isReportable
-    }
-
-    private fun <T> keyGenesForAlterations(geneAlterationStream: Iterable<T>): List<String> where T : GeneAlteration, T : Driver {
-        return geneAlterationStream.filter(::isKeyDriver).map(GeneAlteration::gene).distinct()
     }
 
     companion object {
