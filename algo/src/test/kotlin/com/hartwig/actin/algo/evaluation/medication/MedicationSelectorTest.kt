@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.medication
 
+import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.DrugInteraction
 import com.hartwig.actin.datamodel.clinical.Medication
+import com.hartwig.actin.datamodel.clinical.TestMedicationFactory
 import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -176,5 +178,35 @@ class MedicationSelectorTest {
         val filtered = MedicationTestFactory.alwaysInactive()
             .activeOrRecentlyStoppedWithCypInteraction(medications, "9A9", DrugInteraction.Type.INHIBITOR, minStopDate)
         assertThat(filtered.map(Medication::name)).containsExactly("CYP9A9 inhibitor recently stopped")
+    }
+
+    @Test
+    fun `Should extract active and planned medication for a category`() {
+        val referenceDate = LocalDate.of(2024, 2, 9)
+        val atcLevelToFind = AtcLevel("N02A", "Opioids")
+        val opioid = AtcTestFactory.atcClassification().copy(pharmacologicalSubGroup = atcLevelToFind)
+        val medications = listOf(
+            TestMedicationFactory.createMinimal()
+                .copy(name = "active opioid", startDate = referenceDate.minusMonths(3), atc = opioid),
+            TestMedicationFactory.createMinimal()
+                .copy(name = "planned opioid", startDate = referenceDate.plusMonths(1), atc = opioid),
+            TestMedicationFactory.createMinimal()
+                .copy(
+                    name = "stopped opioid",
+                    startDate = referenceDate.minusMonths(2),
+                    stopDate = referenceDate.minusMonths(1),
+                    atc = opioid
+                ),
+            TestMedicationFactory.createMinimal()
+                .copy(
+                    name = "not an opioid",
+                    startDate = referenceDate.plusMonths(1),
+                    atc = AtcTestFactory.atcClassification().copy(pharmacologicalSubGroup = AtcLevel("", "other category"))
+                )
+        )
+        val (activeMedications, plannedMedications) = MedicationTestFactory.activeFromDateAndPlanned(referenceDate)
+            .extractActiveAndPlannedWithCategory(medications, setOf(atcLevelToFind))
+        assertThat(activeMedications).containsExactly("active opioid")
+        assertThat(plannedMedications).containsExactly("planned opioid")
     }
 }

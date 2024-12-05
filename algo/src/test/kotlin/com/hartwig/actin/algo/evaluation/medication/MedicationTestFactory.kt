@@ -29,6 +29,28 @@ internal object MedicationTestFactory {
         return createConstantSelector(MedicationStatusInterpretation.PLANNED)
     }
 
+    fun activeFromDateAndPlanned(referenceDate: LocalDate): MedicationSelector {
+        return MedicationSelector(object : MedicationStatusInterpreter {
+            override fun interpret(medication: Medication): MedicationStatusInterpretation {
+                val startDate = medication.startDate
+                val stopDate = medication.stopDate
+                return when {
+                    startDate?.isBefore(referenceDate) == true && stopDate?.isAfter(referenceDate) ?: true -> {
+                        MedicationStatusInterpretation.ACTIVE
+                    }
+
+                    startDate?.isAfter(referenceDate) == true -> {
+                        MedicationStatusInterpretation.PLANNED
+                    }
+
+                    else -> {
+                        MedicationStatusInterpretation.UNKNOWN
+                    }
+                }
+            }
+        })
+    }
+
     fun withMedications(medications: List<Medication>): PatientRecord {
         return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = medications)
     }
