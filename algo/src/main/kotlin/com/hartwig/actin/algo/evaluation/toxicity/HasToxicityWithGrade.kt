@@ -29,7 +29,6 @@ class HasToxicityWithGrade(
             gradeMatch && matchesIcd
         }
 
-        val hasAtLeastOneMatchingQuestionnaireToxicity = matchingToxicities.any { it.source == ToxicitySource.QUESTIONNAIRE }
         val unresolvableToxicities = if (minGrade <= DEFAULT_QUESTIONNAIRE_GRADE) emptyList() else {
             otherToxicities.filter {
                 with(it) { grade == null && source == ToxicitySource.QUESTIONNAIRE }
@@ -37,7 +36,8 @@ class HasToxicityWithGrade(
         }
 
         return when {
-            matchingToxicities.isNotEmpty() && (hasAtLeastOneMatchingQuestionnaireToxicity || !warnIfToxicitiesNotFromQuestionnaire) -> {
+            matchingToxicities.isNotEmpty() &&
+                    (matchingToxicities.any { it.source == ToxicitySource.QUESTIONNAIRE } || !warnIfToxicitiesNotFromQuestionnaire) -> {
                 val toxicityString = formatToxicities(matchingToxicities)
                 EvaluationFactory.recoverablePass("Has toxicities grade >= $minGrade$toxicityString")
             }
