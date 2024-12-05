@@ -19,7 +19,7 @@ class EligibleExternalTrialsGenerator(
 ) : TableGenerator {
 
     override fun title() =
-        "${if (isFilteredTrialsTable) "Filtered" else ""} ${sources.joinToString()} trials potentially eligible based on molecular results which are potentially " +
+        "${if (isFilteredTrialsTable) "" else "Filtered"} ${sources.joinToString()} trials potentially eligible based on molecular results which are potentially " +
                 "recruiting ${homeCountry?.let { "locally in ${it.display()}" } ?: "internationally"} (${trials.size})"
 
     override fun contents(): Table {
