@@ -14,6 +14,7 @@ import com.hartwig.hmftools.datamodel.purple.PurpleDriver
 import com.hartwig.hmftools.datamodel.purple.PurpleDriverType
 import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
 import com.hartwig.hmftools.datamodel.purple.PurpleRecord
+import kotlin.math.roundToInt
 
 private val AMP_DRIVERS = setOf(PurpleDriverType.AMP, PurpleDriverType.PARTIAL_AMP)
 private val DEL_DRIVERS = setOf(PurpleDriverType.DEL)
@@ -24,7 +25,7 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
         val drivers = DriverExtractor.relevantPurpleDrivers(purple)
         return purple.allSomaticGeneCopyNumbers()
             .map { geneCopyNumber ->
-                Pair(geneCopyNumber, findCopyNumberDriver(drivers, geneCopyNumber.gene()))
+                Pair(geneCopyNumber, findCopyNumberDrivers(drivers, geneCopyNumber.gene()))
             }
             .filter { (geneCopyNumber, drivers) ->
                 val geneIncluded = geneFilter.include(geneCopyNumber.gene())
@@ -55,15 +56,15 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
                         canonicalImpact = TranscriptCopyNumberImpact(
                             canonicalGainLoss.transcript(),
                             determineType(canonicalGainLoss.interpretation()),
-                            Math.round(canonicalGainLoss.minCopies()).toInt(),
-                            Math.round(canonicalGainLoss.maxCopies()).toInt()
+                            canonicalGainLoss.minCopies().roundToInt(),
+                            canonicalGainLoss.maxCopies().roundToInt()
                         ),
                         otherImpacts = otherGainLosses.map { gainLoss ->
                             TranscriptCopyNumberImpact(
                                 gainLoss.transcript(),
                                 determineType(gainLoss.interpretation()),
-                                Math.round(gainLoss.minCopies()).toInt(),
-                                Math.round(gainLoss.maxCopies()).toInt()
+                                gainLoss.minCopies().roundToInt(),
+                                gainLoss.maxCopies().roundToInt()
                             )
                         }.toSet(),
                     )
@@ -76,20 +77,20 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
                         isAssociatedWithDrugResistance = null,
                         isReportable = false, // Question for mr. Duyvesteyn: Is this correct when CDKN2A has no canonical impact but does have a non-canonical impact?
                         event = event,
-                        driverLikelihood = null,
+                        driverLikelihood = null, // Same here
                         evidence = ClinicalEvidenceFactory.createNoEvidence(),
                         canonicalImpact = TranscriptCopyNumberImpact(
                             transcriptId = "",
                             type = CopyNumberType.NONE,
-                            minCopies = Math.round(geneCopyNumber.minCopyNumber()).toInt(),
-                            maxCopies = Math.round(geneCopyNumber.maxCopyNumber()).toInt()
+                            minCopies = geneCopyNumber.minCopyNumber().roundToInt(),
+                            maxCopies = geneCopyNumber.maxCopyNumber().roundToInt()
                         ),
                         otherImpacts = otherGainLosses.map { gainLoss ->
                             TranscriptCopyNumberImpact(
                                 gainLoss.transcript(),
                                 determineType(gainLoss.interpretation()),
-                                Math.round(gainLoss.minCopies()).toInt(),
-                                Math.round(gainLoss.maxCopies()).toInt()
+                                gainLoss.minCopies().roundToInt(),
+                                gainLoss.maxCopies().roundToInt()
                             )
                         }.toSet()
                     )
@@ -117,7 +118,7 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
         }
     }
 
-    private fun findCopyNumberDriver(drivers: Set<PurpleDriver>, geneToFind: String): List<PurpleDriver> {
+    private fun findCopyNumberDrivers(drivers: Set<PurpleDriver>, geneToFind: String): List<PurpleDriver> {
         return drivers.filter { driver ->
             driver.gene() == geneToFind && (DEL_DRIVERS.contains(driver.type()) || AMP_DRIVERS.contains(driver.type()))
         }

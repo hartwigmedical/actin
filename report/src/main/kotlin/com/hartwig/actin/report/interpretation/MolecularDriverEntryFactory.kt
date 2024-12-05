@@ -61,11 +61,11 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         val canonicalName = "${copyNumber.event}, ${copyNumber.canonicalImpact.minCopies} copies"
 
         val entries = mutableListOf(driverEntryForGeneAlteration(canonicalDriverType, canonicalName, copyNumber))
-        copyNumber.otherImpacts.forEach { impact ->
+        entries.addAll(copyNumber.otherImpacts.map { impact ->
             val otherDriverType = getDriverType(impact.type)
             val otherName = "${copyNumber.event} (alt), ${impact.minCopies} copies"
-            entries.add(driverEntryForGeneAlteration(otherDriverType, otherName, copyNumber))
-        }
+            driverEntryForGeneAlteration(otherDriverType, otherName, copyNumber)
+        })
         return entries
     }
 

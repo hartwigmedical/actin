@@ -18,15 +18,24 @@ class CopyNumberExtractorTest {
 
     @Test
     fun `Should extract copy numbers`() {
-        val driver1 = TestPurpleFactory.driverBuilder().gene("gene 1").type(PurpleDriverType.DEL).isCanonical(true).build()
+        val driverGene2NonCanonical = TestPurpleFactory.driverBuilder().gene("gene 2").type(PurpleDriverType.AMP).isCanonical(false).build()
+        val driverGene3Canonical = TestPurpleFactory.driverBuilder().gene("gene 3").type(PurpleDriverType.AMP).isCanonical(true).build()
+        val driverGene3NonCanonical = TestPurpleFactory.driverBuilder().gene("gene 3").type(PurpleDriverType.AMP).isCanonical(false).build()
+        val driverGene4Canonical = TestPurpleFactory.driverBuilder().gene("gene 4").type(PurpleDriverType.AMP).isCanonical(true).build()
 
-        val gainLoss1 = TestPurpleFactory.gainLossBuilder().gene("gene 1").minCopies(0.0).maxCopies(1.0)
+        val loss1Canonical = TestPurpleFactory.gainLossBuilder().gene("gene 1").minCopies(0.0).maxCopies(1.0).isCanonical(true)
             .interpretation(CopyNumberInterpretation.PARTIAL_LOSS).build()
-        val gainLoss2 = TestPurpleFactory.gainLossBuilder().gene("gene 2").minCopies(20.0).maxCopies(21.0)
+        val loss1NonCanonical = TestPurpleFactory.gainLossBuilder().gene("gene 1").minCopies(0.0).maxCopies(1.0).isCanonical(false)
+            .interpretation(CopyNumberInterpretation.PARTIAL_LOSS).build()
+        val gain2Canonical = TestPurpleFactory.gainLossBuilder().gene("gene 2").minCopies(20.0).maxCopies(21.0).isCanonical(true)
             .interpretation(CopyNumberInterpretation.FULL_GAIN).build()
-        val gainLoss3 = TestPurpleFactory.gainLossBuilder().gene("gene 3").minCopies(20.0).maxCopies(20.0)
+        val gain2NonCanonical = TestPurpleFactory.gainLossBuilder().gene("gene 2").minCopies(20.0).maxCopies(21.0).isCanonical(false)
             .interpretation(CopyNumberInterpretation.FULL_GAIN).build()
-        val gainLoss4 = TestPurpleFactory.gainLossBuilder().gene("gene 4").minCopies(19.6).maxCopies(20.4)
+        val gain3Canonical = TestPurpleFactory.gainLossBuilder().gene("gene 3").minCopies(20.0).maxCopies(20.0).isCanonical(true)
+            .interpretation(CopyNumberInterpretation.FULL_GAIN).build()
+        val gain3NonCanonical = TestPurpleFactory.gainLossBuilder().gene("gene 3").minCopies(20.0).maxCopies(20.0).isCanonical(false)
+            .interpretation(CopyNumberInterpretation.FULL_GAIN).build()
+        val gain4Canonical = TestPurpleFactory.gainLossBuilder().gene("gene 4").minCopies(19.6).maxCopies(20.4).isCanonical(true)
             .interpretation(CopyNumberInterpretation.FULL_GAIN).build()
 
         val geneCopyNumber1 =
@@ -44,26 +53,51 @@ class CopyNumberExtractorTest {
         val geneCopyNumber5 =
             TestPurpleFactory.geneCopyNumberBuilder().gene("gene 5").minCopyNumber(14.0).maxCopyNumber(15.0).minMinorAlleleCopyNumber(2.0)
                 .build()
+        val geneCopyNumber6 =
+            TestPurpleFactory.geneCopyNumberBuilder().gene("gene 6").minCopyNumber(14.0).maxCopyNumber(15.0).minMinorAlleleCopyNumber(2.0)
+                .build()
 
         val purple = ImmutablePurpleRecord.builder()
             .from(TestOrangeFactory.createMinimalTestOrangeRecord().purple())
-            .addSomaticDrivers(driver1)
-            .addAllSomaticGainsLosses(gainLoss1, gainLoss2, gainLoss3, gainLoss4)
-            .addAllSomaticGeneCopyNumbers(geneCopyNumber1, geneCopyNumber2, geneCopyNumber3, geneCopyNumber4, geneCopyNumber5)
+            .addSomaticDrivers(driverGene3Canonical, driverGene3NonCanonical, driverGene2NonCanonical, driverGene4Canonical)
+            .addAllSomaticGainsLosses(
+                loss1Canonical,
+                loss1NonCanonical,
+                gain2NonCanonical,
+                gain2Canonical,
+                gain3Canonical,
+                gain3NonCanonical,
+                gain4Canonical
+            )
+            .addAllSomaticGeneCopyNumbers(
+                geneCopyNumber1,
+                geneCopyNumber2,
+                geneCopyNumber3,
+                geneCopyNumber4,
+                geneCopyNumber5,
+                geneCopyNumber6
+            )
             .build()
 
         val geneFilter =
-            TestGeneFilterFactory.createValidForGenes(gainLoss1.gene(), gainLoss2.gene(), gainLoss4.gene(), geneCopyNumber5.gene())
+            TestGeneFilterFactory.createValidForGenes(
+                loss1Canonical.gene(),
+                gain2Canonical.gene(),
+                gain3Canonical.gene(),
+                gain4Canonical.gene(),
+                geneCopyNumber5.gene()
+            )
         val copyNumberExtractor = CopyNumberExtractor(geneFilter)
         val copyNumbers = copyNumberExtractor.extract(purple)
-        assertThat(copyNumbers).hasSize(4)
+        assertThat(copyNumbers).hasSize(5)
 
         val gene1 = findByGene(copyNumbers, "gene 1")
-        assertThat(gene1.isReportable).isTrue
-        assertThat(gene1.driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
-        assertThat(gene1.canonicalImpact.type).isEqualTo(CopyNumberType.LOSS)
-        assertThat(gene1.canonicalImpact.minCopies).isEqualTo(0)
+        assertThat(gene1.isReportable).isFalse
+        assertThat(gene1.driverLikelihood).isNull()
+        assertThat(gene1.canonicalImpact.type).isEqualTo(CopyNumberType.NONE)
+        assertThat(gene1.canonicalImpact.minCopies).isEqualTo(1)
         assertThat(gene1.canonicalImpact.maxCopies).isEqualTo(1)
+        assertThat(gene1.otherImpacts).isEmpty()
 
         val gene2 = findByGene(copyNumbers, "gene 2")
         assertThat(gene2.isReportable).isFalse
@@ -71,13 +105,27 @@ class CopyNumberExtractorTest {
         assertThat(gene2.canonicalImpact.type).isEqualTo(CopyNumberType.NONE)
         assertThat(gene2.canonicalImpact.minCopies).isEqualTo(4)
         assertThat(gene2.canonicalImpact.maxCopies).isEqualTo(5)
+        assertThat(gene2.otherImpacts.first().type).isEqualTo(CopyNumberType.FULL_GAIN)
+        assertThat(gene2.otherImpacts.first().minCopies).isEqualTo(20)
+        assertThat(gene2.otherImpacts.first().maxCopies).isEqualTo(21)
+
+        val gene3 = findByGene(copyNumbers, "gene 3")
+        assertThat(gene3.isReportable).isTrue
+        assertThat(gene3.driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
+        assertThat(gene3.canonicalImpact.type).isEqualTo(CopyNumberType.FULL_GAIN)
+        assertThat(gene3.canonicalImpact.minCopies).isEqualTo(20)
+        assertThat(gene3.canonicalImpact.maxCopies).isEqualTo(20)
+        assertThat(gene3.otherImpacts.first().type).isEqualTo(CopyNumberType.FULL_GAIN)
+        assertThat(gene3.otherImpacts.first().minCopies).isEqualTo(20)
+        assertThat(gene3.otherImpacts.first().maxCopies).isEqualTo(20)
 
         val gene4 = findByGene(copyNumbers, "gene 4")
-        assertThat(gene4.isReportable).isFalse
-        assertThat(gene4.driverLikelihood).isNull()
-        assertThat(gene4.canonicalImpact.type).isEqualTo(CopyNumberType.NONE)
-        assertThat(gene4.canonicalImpact.minCopies).isEqualTo(1)
-        assertThat(gene4.canonicalImpact.maxCopies).isEqualTo(2)
+        assertThat(gene4.isReportable).isTrue
+        assertThat(gene4.driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
+        assertThat(gene4.canonicalImpact.type).isEqualTo(CopyNumberType.FULL_GAIN)
+        assertThat(gene4.canonicalImpact.minCopies).isEqualTo(20)
+        assertThat(gene4.canonicalImpact.maxCopies).isEqualTo(20)
+        assertThat(gene4.otherImpacts).isEmpty()
 
         val gene5 = findByGene(copyNumbers, "gene 5")
         assertThat(gene5.isReportable).isFalse
@@ -85,6 +133,7 @@ class CopyNumberExtractorTest {
         assertThat(gene5.canonicalImpact.type).isEqualTo(CopyNumberType.NONE)
         assertThat(gene5.canonicalImpact.minCopies).isEqualTo(14)
         assertThat(gene5.canonicalImpact.maxCopies).isEqualTo(15)
+        assertThat(gene5.otherImpacts).isEmpty()
     }
 
     @Test(expected = IllegalStateException::class)
@@ -110,58 +159,6 @@ class CopyNumberExtractorTest {
         for (interpretation in CopyNumberInterpretation.values()) {
             assertThat(extractor.determineType(interpretation)).isNotNull()
         }
-    }
-
-    @Test
-    fun `Should favor canonical over non-canonical drivers`() {
-        val canonicalDriver = TestPurpleFactory.driverBuilder().gene("gene 1").type(PurpleDriverType.DEL).isCanonical(true).build()
-        val nonCanonicalDriver = TestPurpleFactory.driverBuilder().gene("gene 1").type(PurpleDriverType.DEL).isCanonical(false).build()
-
-        val gainLossGene1Canonical =
-            TestPurpleFactory.gainLossBuilder().gene("gene 1").interpretation(CopyNumberInterpretation.PARTIAL_LOSS).isCanonical(true)
-                .minCopies(4.0).build()
-        val gainLossGene1NotCanonical =
-            TestPurpleFactory.gainLossBuilder().gene("gene 1").interpretation(CopyNumberInterpretation.PARTIAL_LOSS).isCanonical(false)
-                .minCopies(5.0).build()
-        val gainLossGene2Canonical =
-            TestPurpleFactory.gainLossBuilder().gene("gene 2").interpretation(CopyNumberInterpretation.FULL_GAIN).isCanonical(true)
-                .minCopies(10.0).build()
-        val geneCopyNumber = TestPurpleFactory.geneCopyNumberBuilder().gene("gene 1").build()
-
-        val purple = ImmutablePurpleRecord.builder()
-            .from(TestOrangeFactory.createMinimalTestOrangeRecord().purple())
-            .addSomaticDrivers(canonicalDriver, nonCanonicalDriver)
-            .addAllSomaticGainsLosses(gainLossGene1NotCanonical, gainLossGene2Canonical, gainLossGene1Canonical)
-            .addAllSomaticGeneCopyNumbers(geneCopyNumber)
-            .build()
-
-        val copyNumbers = extractor.extract(purple)
-
-        assertThat(copyNumbers).hasSize(1)
-        assertThat(copyNumbers.first().canonicalImpact.minCopies).isEqualTo(4)
-    }
-
-    @Test
-    fun `Should fall-back to non-canonical if there is no canonical driver`() {
-        val gene = "gene 1"
-        val nonCanonicalDriver = TestPurpleFactory.driverBuilder().gene(gene).type(PurpleDriverType.AMP).isCanonical(false).build()
-
-        val nonCanonicalGain =
-            TestPurpleFactory.gainLossBuilder().gene(gene).interpretation(CopyNumberInterpretation.FULL_GAIN).isCanonical(false)
-                .minCopies(12.0).build()
-        val geneCopyNumber = TestPurpleFactory.geneCopyNumberBuilder().gene(gene).build()
-
-        val purple = ImmutablePurpleRecord.builder()
-            .from(TestOrangeFactory.createMinimalTestOrangeRecord().purple())
-            .addSomaticDrivers(nonCanonicalDriver)
-            .addAllSomaticGainsLosses(nonCanonicalGain)
-            .addAllSomaticGeneCopyNumbers(geneCopyNumber)
-            .build()
-
-        val copyNumbers = extractor.extract(purple)
-
-        assertThat(copyNumbers).hasSize(1)
-        assertThat(copyNumbers.first().otherImpacts.first().minCopies).isEqualTo(12)
     }
 
     private fun findByGene(copyNumbers: Iterable<CopyNumber>, geneToFind: String): CopyNumber {

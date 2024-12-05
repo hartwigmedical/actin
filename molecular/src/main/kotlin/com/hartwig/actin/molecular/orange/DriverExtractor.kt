@@ -54,7 +54,7 @@ internal class DriverExtractor private constructor(
     }
 
     internal fun reportableLostGenes(copyNumbers: Iterable<CopyNumber>): Set<String> {
-        return copyNumbers.filter { copyNumber -> copyNumber.isReportable && copyNumber.canonicalImpact.type.isLoss }
+        return copyNumbers.filter { copyNumber -> copyNumber.isReportable && (copyNumber.canonicalImpact.type.isLoss || copyNumber.otherImpacts.any { it.type.isLoss }) }
             .map(CopyNumber::gene)
             .toSet()
     }

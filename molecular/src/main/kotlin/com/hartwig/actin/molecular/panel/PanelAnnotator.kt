@@ -87,7 +87,7 @@ class PanelAnnotator(
         event = panelAmplificationExtraction.gene,
         driverLikelihood = DriverLikelihood.HIGH,
         evidence = ClinicalEvidenceFactory.createNoEvidence(),
-        canonicalImpact = TranscriptCopyNumberImpact( // Question for mr. Duyvesteyn: Is it also correct for CDKN2A to only look at canonical here (for panels)?
+        canonicalImpact = TranscriptCopyNumberImpact( // Question for mr. Duyvesteyn: Is it oke for CDKN2A to only look at canonical for panels? We do have the transcript, so we could check if it is the canonical transcript. But don't know if that too complex.
             transcriptId = panelAmplificationExtraction.transcript ?: "",
             type = CopyNumberType.FULL_GAIN,
             minCopies = MIN_COPY_NUMBER,

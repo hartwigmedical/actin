@@ -159,6 +159,21 @@ class GeneIsInactivatedTest {
     }
 
     @Test
+    fun `Should warn when loss is only on non-canonical transcript`() {
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(
+                MolecularTestFactory.withCopyNumber(
+                    matchingLoss.copy(
+                        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(),
+                        otherImpacts = setOf(TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS))
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
     fun `Should fail when TSG variant has no coding impact`() {
         assertResultForVariant(
             EvaluationResult.FAIL, matchingVariant.copy(
