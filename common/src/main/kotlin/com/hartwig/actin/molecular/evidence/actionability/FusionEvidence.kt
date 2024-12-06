@@ -58,23 +58,14 @@ class FusionEvidence(
     }
 
     companion object {
-        private val APPLICABLE_PROMISCUOUS_EVENTS = setOf(GeneEvent.FUSION, GeneEvent.ACTIVATION, GeneEvent.ANY_MUTATION)
+        private val PROMISCUOUS_FUSION_EVENTS = setOf(GeneEvent.FUSION, GeneEvent.ACTIVATION, GeneEvent.ANY_MUTATION)
 
         fun create(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial>): FusionEvidence {
-            val applicableFusionEvidences =
-                ActionableEventsExtraction.filterEfficacyEvidence(evidences, ActionableEventsExtraction.fusionFilter())
-            val applicableFusionTrials = ActionableEventsExtraction.filterTrials(trials, ActionableEventsExtraction.fusionFilter())
+            val applicableFusionEvidences = ActionableEventsExtraction.extractFusionEvidence(evidences)
+            val applicableFusionTrials = ActionableEventsExtraction.extractFusionTrials(trials)
 
-            val applicablePromiscuousEvidences =
-                ActionableEventsExtraction.filterEfficacyEvidence(
-                    evidences,
-                    ActionableEventsExtraction.geneFilter(APPLICABLE_PROMISCUOUS_EVENTS)
-                )
-            val applicablePromiscuousTrials =
-                ActionableEventsExtraction.filterTrials(
-                    trials,
-                    ActionableEventsExtraction.geneFilter(APPLICABLE_PROMISCUOUS_EVENTS)
-                )
+            val applicablePromiscuousEvidences = ActionableEventsExtraction.extractGeneEvidence(evidences, PROMISCUOUS_FUSION_EVENTS)
+            val applicablePromiscuousTrials = ActionableEventsExtraction.extractGeneTrials(trials, PROMISCUOUS_FUSION_EVENTS)
 
             return FusionEvidence(
                 applicableFusionEvidences,

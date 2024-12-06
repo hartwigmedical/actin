@@ -1,11 +1,5 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.codonFilter
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.exonFilter
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterEfficacyEvidence
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterTrials
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.geneFilter
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.hotspotFilter
 import com.hartwig.actin.molecular.evidence.matching.GeneMatching
 import com.hartwig.actin.molecular.evidence.matching.HotspotMatching
 import com.hartwig.actin.molecular.evidence.matching.RangeMatching
@@ -44,7 +38,7 @@ class VariantEvidence(
             hotspotTrials,
             variant,
             HotspotMatching::isMatch,
-            ActionableEventsExtraction::extractHotspot
+            ActionableEventsExtraction::extractHotspots
         )
     }
 
@@ -62,7 +56,7 @@ class VariantEvidence(
             rangeTrials,
             variant,
             RangeMatching::isMatch,
-            ActionableEventsExtraction::extractRange
+            ActionableEventsExtraction::extractRanges
         )
     }
 
@@ -88,14 +82,14 @@ class VariantEvidence(
         evidences: List<EfficacyEvidence>,
         variant: VariantMatchCriteria,
         isMatch: (T, VariantMatchCriteria) -> Boolean,
-        getEventFromEvidence: (EfficacyEvidence) -> T,
+        extractActionableEventFromEvidence: (EfficacyEvidence) -> T,
     ): List<EfficacyEvidence> {
         return if (!variant.isReportable) {
             emptyList()
         } else {
             evidences.filter {
                 isMatch.invoke(
-                    getEventFromEvidence.invoke(it),
+                    extractActionableEventFromEvidence.invoke(it),
                     variant
                 )
             }
@@ -106,42 +100,35 @@ class VariantEvidence(
         trials: List<ActionableTrial>,
         variant: VariantMatchCriteria,
         isMatch: (T, VariantMatchCriteria) -> Boolean,
-        getEventFromTrial: (ActionableTrial) -> T,
+        extractActionableEventsFromTrial: (ActionableTrial) -> Set<T>,
     ): List<ActionableTrial> {
         return if (!variant.isReportable) {
             emptyList()
         } else {
             trials.filter {
-                isMatch.invoke(
-                    getEventFromTrial.invoke(it),
-                    variant
-                )
+                extractActionableEventsFromTrial(it).any { actionableEvent -> isMatch(actionableEvent, variant) }
             }
         }
     }
 
     companion object {
-        private val APPLICABLE_GENE_EVENTS = setOf(GeneEvent.ACTIVATION, GeneEvent.INACTIVATION, GeneEvent.ANY_MUTATION)
+        private val VARIANT_GENE_EVENTS = setOf(GeneEvent.ACTIVATION, GeneEvent.INACTIVATION, GeneEvent.ANY_MUTATION)
 
         fun create(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial>): VariantEvidence {
-            val hotspotEvidences = filterEfficacyEvidence(evidences, hotspotFilter())
-            val hotspotTrials = filterTrials(trials, hotspotFilter())
+            val hotspotEvidences = ActionableEventsExtraction.extractHotspotEvidence(evidences)
+            val hotspotTrials = ActionableEventsExtraction.extractHotspotTrials(trials)
 
-            val codonEvidences = filterEfficacyEvidence(evidences, codonFilter())
-            val codonTrials = filterTrials(trials, codonFilter())
+            val codonEvidences = ActionableEventsExtraction.extractCodonEvidence(evidences)
+            val codonTrials = ActionableEventsExtraction.extractCodonTrials(trials)
 
-            val exonEvidences = filterEfficacyEvidence(evidences, exonFilter())
-            val exonTrials = filterTrials(trials, exonFilter())
+            val exonEvidences = ActionableEventsExtraction.extractExonEvidence(evidences)
+            val exonTrials = ActionableEventsExtraction.extractExonTrials(trials)
 
             val rangeEvidences = listOf(codonEvidences, exonEvidences).flatten()
             val rangeTrials = listOf(codonTrials, exonTrials).flatten()
 
-            val applicableGeneEvidences = filterEfficacyEvidence(evidences, geneFilter()).filter {
-                APPLICABLE_GENE_EVENTS.contains(ActionableEventsExtraction.extractGene(it).event())
-            }
-            val applicableGeneTrials = filterTrials(trials, geneFilter()).filter {
-                APPLICABLE_GENE_EVENTS.contains(ActionableEventsExtraction.extractGenes(it).event())
-            }
+            val applicableGeneEvidences = ActionableEventsExtraction.extractGeneEvidence(evidences, VARIANT_GENE_EVENTS)
+            val applicableGeneTrials = ActionableEventsExtraction.extractGeneTrials(trials, VARIANT_GENE_EVENTS)
 
             return VariantEvidence(
                 hotspotEvidences = hotspotEvidences,

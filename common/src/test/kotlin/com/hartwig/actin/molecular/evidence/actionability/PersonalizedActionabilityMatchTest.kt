@@ -9,18 +9,11 @@ class PersonalizedActionabilityMatchTest {
 
     @Test
     fun `Should extend actionable event with category event false when hotspot, fusion, HLA or characteristic`() {
+        assertThat(TestServeEvidenceFactory.createEvidenceForHotspot().molecularCriterium().hotspots().first().isCategoryEvent()).isFalse()
+        assertThat(TestServeEvidenceFactory.createEvidenceForFusion().molecularCriterium().fusions().first().isCategoryEvent()).isFalse()
+        assertThat(TestServeEvidenceFactory.createEvidenceForHLA().molecularCriterium().hla().first().isCategoryEvent()).isFalse()
         assertThat(
-            TestServeEvidenceFactory.createEvidenceForHotspot().molecularCriterium().hotspots().first().isCategoryEvent()
-        ).isFalse()
-        assertThat(
-            TestServeEvidenceFactory.createEvidenceForFusion().molecularCriterium().fusions().first().isCategoryEvent()
-        ).isFalse()
-        assertThat(
-            TestServeEvidenceFactory.createEvidenceForHLA().molecularCriterium().hla().first().isCategoryEvent()
-        ).isFalse()
-        assertThat(
-            TestServeEvidenceFactory.createEvidenceForCharacteristic().molecularCriterium().characteristics().first()
-                .isCategoryEvent()
+            TestServeEvidenceFactory.createEvidenceForCharacteristic().molecularCriterium().characteristics().first().isCategoryEvent()
         ).isFalse()
     }
 

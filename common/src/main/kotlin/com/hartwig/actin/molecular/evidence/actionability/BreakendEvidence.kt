@@ -1,9 +1,6 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterEfficacyEvidence
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterTrials
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.geneFilter
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import com.hartwig.serve.datamodel.trial.ActionableTrial
@@ -18,19 +15,18 @@ class BreakendEvidence(
             event.isReportable && ActionableEventsExtraction.extractGene(it).gene() == event.gene
         }
         val trials = applicableGeneTrials.filter {
-            event.isReportable && ActionableEventsExtraction.extractGenes(it).gene() == event.gene
+            event.isReportable && ActionableEventsExtraction.extractGenes(it).any { actionableGene -> actionableGene.gene() == event.gene }
         }
         return ActionabilityMatch(evidences, trials)
     }
 
     companion object {
+        private val BREAKEND_EVENTS = setOf(GeneEvent.ANY_MUTATION)
+
         fun create(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial>): BreakendEvidence {
-            val applicableEvidences = filterEfficacyEvidence(evidences, geneFilter()).filter {
-                ActionableEventsExtraction.extractGene(it).event() == GeneEvent.ANY_MUTATION
-            }
-            val applicableTrials = filterTrials(trials, geneFilter()).filter {
-                ActionableEventsExtraction.extractGenes(it).event() == GeneEvent.ANY_MUTATION
-            }
+            val applicableEvidences = ActionableEventsExtraction.extractGeneEvidence(evidences, BREAKEND_EVENTS)
+            val applicableTrials = ActionableEventsExtraction.extractGeneTrials(trials, BREAKEND_EVENTS)
+
             return BreakendEvidence(applicableEvidences, applicableTrials)
         }
     }

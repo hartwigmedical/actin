@@ -11,8 +11,7 @@ class SignatureEvidenceTest {
     fun `Should determine evidence for microsatellite instability`() {
         val characteristic1 = TestServeEvidenceFactory.createEvidenceForCharacteristic(TumorCharacteristicType.MICROSATELLITE_UNSTABLE)
         val characteristic2 = TestServeEvidenceFactory.createEvidenceForCharacteristic(TumorCharacteristicType.MICROSATELLITE_STABLE)
-        val signatureEvidence: SignatureEvidence =
-            SignatureEvidence.create(evidences = listOf(characteristic1, characteristic2), trials = emptyList())
+        val signatureEvidence = SignatureEvidence.create(evidences = listOf(characteristic1, characteristic2), trials = emptyList())
 
         val matches = signatureEvidence.findMicrosatelliteMatches(true)
         assertThat(matches.evidenceMatches.size).isEqualTo(1)
@@ -24,7 +23,7 @@ class SignatureEvidenceTest {
     fun `Should determine evidence for homologous repair deficiency`() {
         val characteristic1 =
             TestServeEvidenceFactory.createEvidenceForCharacteristic(TumorCharacteristicType.HOMOLOGOUS_RECOMBINATION_DEFICIENT)
-        val signatureEvidence: SignatureEvidence = SignatureEvidence.create(evidences = listOf(characteristic1), trials = emptyList())
+        val signatureEvidence = SignatureEvidence.create(evidences = listOf(characteristic1), trials = emptyList())
 
         val matches = signatureEvidence.findHomologousRepairMatches(true)
         assertThat(matches.evidenceMatches.size).isEqualTo(1)
@@ -36,8 +35,7 @@ class SignatureEvidenceTest {
     fun `Should determine evidence for high tumor mutational burden`() {
         val characteristic1 = TestServeEvidenceFactory.createEvidenceForCharacteristic(TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_BURDEN)
         val characteristic2 = TestServeEvidenceFactory.createEvidenceForCharacteristic(TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_BURDEN)
-        val signatureEvidence: SignatureEvidence =
-            SignatureEvidence.create(evidences = listOf(characteristic1, characteristic2), trials = emptyList())
+        val signatureEvidence = SignatureEvidence.create(evidences = listOf(characteristic1, characteristic2), trials = emptyList())
 
         val matches = signatureEvidence.findTumorBurdenMatches(true)
         assertThat(matches.evidenceMatches.size).isEqualTo(1)
@@ -49,8 +47,7 @@ class SignatureEvidenceTest {
     fun `Should determine evidence for high mutational load`() {
         val characteristic1 = TestServeEvidenceFactory.createEvidenceForCharacteristic(TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD)
         val characteristic2 = TestServeEvidenceFactory.createEvidenceForCharacteristic(TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_LOAD)
-        val signatureEvidence: SignatureEvidence =
-            SignatureEvidence.create(evidences = listOf(characteristic1, characteristic2), trials = emptyList())
+        val signatureEvidence = SignatureEvidence.create(evidences = listOf(characteristic1, characteristic2), trials = emptyList())
 
         val matches = signatureEvidence.findTumorLoadMatches(true)
         assertThat(matches.evidenceMatches.size).isEqualTo(1)

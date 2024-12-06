@@ -2,16 +2,11 @@ package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.orange.driver.Virus
 import com.hartwig.actin.datamodel.molecular.orange.driver.VirusType
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.characteristicsFilter
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractCharacteristic
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterEfficacyEvidence
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterTrials
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
-import com.hartwig.serve.datamodel.molecular.characteristic.ActionableCharacteristic
 import com.hartwig.serve.datamodel.molecular.characteristic.TumorCharacteristicType
 import com.hartwig.serve.datamodel.trial.ActionableTrial
 
-internal class VirusEvidence private constructor(
+class VirusEvidence(
     private val hpvEvidences: List<EfficacyEvidence>,
     private val hpvTrials: List<ActionableTrial>,
     private val ebvEvidences: List<EfficacyEvidence>,
@@ -37,11 +32,14 @@ internal class VirusEvidence private constructor(
     }
 
     companion object {
+        private val HPV_POSITIVE_TYPES = setOf(TumorCharacteristicType.HPV_POSITIVE)
+        private val EBV_POSITIVE_TYPES = setOf(TumorCharacteristicType.EBV_POSITIVE)
+
         fun create(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial>): VirusEvidence {
-            val applicableEvidences = filterEfficacyEvidence(evidences, characteristicsFilter())
-            val applicableTrials = filterTrials(trials, characteristicsFilter())
-            val (hpvCharacteristicsEvidence, ebvCharacteristicsEvidence) = extractHPVAndEBV(applicableEvidences, ::extractCharacteristic)
-            val (hpvCharacteristicsTrials, ebvCharacteristicsTrials) = extractHPVAndEBV(applicableTrials, ::extractCharacteristic)
+            val hpvCharacteristicsEvidence = ActionableEventsExtraction.extractCharacteristicEvidence(evidences, HPV_POSITIVE_TYPES)
+            val hpvCharacteristicsTrials = ActionableEventsExtraction.extractCharacteristicsTrials(trials, HPV_POSITIVE_TYPES)
+            val ebvCharacteristicsEvidence = ActionableEventsExtraction.extractCharacteristicEvidence(evidences, EBV_POSITIVE_TYPES)
+            val ebvCharacteristicsTrials = ActionableEventsExtraction.extractCharacteristicsTrials(trials, EBV_POSITIVE_TYPES)
 
             return VirusEvidence(
                 hpvCharacteristicsEvidence,
@@ -49,24 +47,6 @@ internal class VirusEvidence private constructor(
                 ebvCharacteristicsEvidence,
                 ebvCharacteristicsTrials
             )
-        }
-
-        private fun <T> extractHPVAndEBV(items: List<T>, getCharacteristic: (T) -> ActionableCharacteristic): Pair<List<T>, List<T>> {
-            return items.fold(Pair(emptyList(), emptyList())) { acc, actionableCharacteristic ->
-                when (getCharacteristic(actionableCharacteristic).type()) {
-                    TumorCharacteristicType.HPV_POSITIVE -> {
-                        Pair(acc.first + actionableCharacteristic, acc.second)
-                    }
-
-                    TumorCharacteristicType.EBV_POSITIVE -> {
-                        Pair(acc.first, acc.second + actionableCharacteristic)
-                    }
-
-                    else -> {
-                        acc
-                    }
-                }
-            }
         }
     }
 }

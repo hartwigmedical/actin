@@ -3,10 +3,6 @@ package com.hartwig.actin.molecular.evidence.actionability
 import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
 import com.hartwig.actin.molecular.evidence.TestServeTrialFactory
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractHotspot
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractRange
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.fusionFilter
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.geneFilter
 import com.hartwig.serve.datamodel.molecular.ImmutableMolecularCriterium
 import com.hartwig.serve.datamodel.molecular.MutationType
 import com.hartwig.serve.datamodel.molecular.characteristic.ImmutableActionableCharacteristic
@@ -22,7 +18,7 @@ import org.junit.Test
 private val MOLECULAR_CRITERIUM_1 = TestServeMolecularFactory.createHotspotCriterium()
 private val MOLECULAR_CRITERIUM_2 = TestServeMolecularFactory.createGeneCriterium()
 
-class ActionabilityMatchExtractionTest {
+class ActionableEventsExtractionTest {
 
     @Test
     fun `Can extract hotspot`() {
@@ -32,8 +28,9 @@ class ActionabilityMatchExtractionTest {
         val molecularCriterium = ImmutableMolecularCriterium.builder().addHotspots(actionableHotspot).build()
         val efficacyEvidence = TestServeEvidenceFactory.create(molecularCriterium = molecularCriterium)
         val actionableTrial = TestServeTrialFactory.create(molecularCriteria = setOf(molecularCriterium))
-        assertThat(extractHotspot(efficacyEvidence)).isEqualTo(actionableHotspot)
-        assertThat(extractHotspot(actionableTrial)).isEqualTo(actionableHotspot)
+
+        assertThat(ActionableEventsExtraction.extractHotspot(efficacyEvidence)).isEqualTo(actionableHotspot)
+        assertThat(ActionableEventsExtraction.extractHotspots(actionableTrial)).isEqualTo(setOf(actionableHotspot))
     }
 
     @Test
@@ -43,8 +40,9 @@ class ActionabilityMatchExtractionTest {
         val molecularCriterium = ImmutableMolecularCriterium.builder().addCodons(actionableRange).build()
         val efficacyEvidence = TestServeEvidenceFactory.create(molecularCriterium = molecularCriterium)
         val actionableTrial = TestServeTrialFactory.create(molecularCriteria = setOf(molecularCriterium))
-        assertThat(extractRange(efficacyEvidence)).isEqualTo(actionableRange)
-        assertThat(extractRange(actionableTrial)).isEqualTo(actionableRange)
+
+        assertThat(ActionableEventsExtraction.extractRange(efficacyEvidence)).isEqualTo(actionableRange)
+        assertThat(ActionableEventsExtraction.extractRanges(actionableTrial)).isEqualTo(setOf(actionableRange))
     }
 
     @Test
@@ -55,8 +53,9 @@ class ActionabilityMatchExtractionTest {
         val molecularCriterium = ImmutableMolecularCriterium.builder().addGenes(actionableGene).build()
         val efficacyEvidence = TestServeEvidenceFactory.create(molecularCriterium = molecularCriterium)
         val actionableTrial = TestServeTrialFactory.create(molecularCriteria = setOf(molecularCriterium))
+
         assertThat(ActionableEventsExtraction.extractGene(efficacyEvidence)).isEqualTo(actionableGene)
-        assertThat(ActionableEventsExtraction.extractGenes(actionableTrial)).isEqualTo(actionableGene)
+        assertThat(ActionableEventsExtraction.extractGenes(actionableTrial)).isEqualTo(setOf(actionableGene))
     }
 
     @Test
@@ -67,8 +66,9 @@ class ActionabilityMatchExtractionTest {
         val molecularCriterium = ImmutableMolecularCriterium.builder().addFusions(actionableFusion).build()
         val efficacyEvidence = TestServeEvidenceFactory.create(molecularCriterium = molecularCriterium)
         val actionableTrial = TestServeTrialFactory.create(molecularCriteria = setOf(molecularCriterium))
+
         assertThat(ActionableEventsExtraction.extractFusion(efficacyEvidence)).isEqualTo(actionableFusion)
-        assertThat(ActionableEventsExtraction.extractFusions(actionableTrial)).isEqualTo(actionableFusion)
+        assertThat(ActionableEventsExtraction.extractFusions(actionableTrial)).isEqualTo(setOf(actionableFusion))
     }
 
     @Test
@@ -81,7 +81,7 @@ class ActionabilityMatchExtractionTest {
         val actionableTrial = TestServeTrialFactory.create(molecularCriteria = setOf(molecularCriterium))
 
         assertThat(ActionableEventsExtraction.extractCharacteristic(efficacyEvidence)).isEqualTo(actionableCharacteristic)
-        assertThat(ActionableEventsExtraction.extractCharacteristic(actionableTrial)).isEqualTo(actionableCharacteristic)
+        assertThat(ActionableEventsExtraction.extractCharacteristics(actionableTrial)).isEqualTo(setOf(actionableCharacteristic))
     }
 
     @Test
@@ -90,9 +90,9 @@ class ActionabilityMatchExtractionTest {
         val efficacyEvidence2 = TestServeEvidenceFactory.createEvidenceForFusion()
         val efficacyEvidence3 = TestServeEvidenceFactory.createEvidenceForFusion()
 
-        val filteredEfficacyEvidence = ActionableEventsExtraction.filterEfficacyEvidence(
+        val filteredEfficacyEvidence = ActionableEventsExtraction.extractEfficacyEvidence(
             listOf(efficacyEvidence1, efficacyEvidence2, efficacyEvidence3),
-            fusionFilter()
+            ActionableEventsExtraction.fusionFilter()
         )
         assertThat(filteredEfficacyEvidence).containsExactly(efficacyEvidence2, efficacyEvidence3)
     }
@@ -103,7 +103,10 @@ class ActionabilityMatchExtractionTest {
         val actionableTrial2 = TestServeTrialFactory.create(molecularCriteria = setOf(MOLECULAR_CRITERIUM_2))
         val actionableTrial3 = TestServeTrialFactory.create(molecularCriteria = setOf(MOLECULAR_CRITERIUM_1, MOLECULAR_CRITERIUM_2))
         val filteredTrials =
-            ActionableEventsExtraction.filterTrials(listOf(actionableTrial1, actionableTrial2, actionableTrial3), geneFilter())
+            ActionableEventsExtraction.extractTrials(
+                listOf(actionableTrial1, actionableTrial2, actionableTrial3),
+                ActionableEventsExtraction.geneFilter()
+            )
 
         assertThat(filteredTrials).containsExactly(actionableTrial2, actionableTrial3)
     }

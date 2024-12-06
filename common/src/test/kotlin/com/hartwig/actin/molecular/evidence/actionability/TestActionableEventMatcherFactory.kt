@@ -1,7 +1,6 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
-import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.molecular.characteristic.TumorCharacteristicType
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 
@@ -11,7 +10,7 @@ object TestActionableEventMatcherFactory {
         val applicableDoids = setOf("parent", "child")
         val personalizedActionabilityFactory = PersonalizedActionabilityFactory(applicableDoids)
 
-        val evidences: List<EfficacyEvidence> = listOf(
+        val evidences = listOf(
             TestServeEvidenceFactory.createEvidenceForHotspot(),
             TestServeEvidenceFactory.createEvidenceForCodon(),
             TestServeEvidenceFactory.createEvidenceForExon(),
