@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.datamodel.trial.TrialPhase
+import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.medication.MedicationCategories
@@ -16,6 +17,7 @@ import com.hartwig.actin.trial.TrialIngestionResult
 import com.hartwig.actin.trial.TrialIngestionStatus
 import com.hartwig.actin.trial.config.InclusionCriteriaConfig
 import com.hartwig.actin.trial.config.InclusionCriteriaReferenceConfig
+import com.hartwig.actin.trial.config.TrialConfigDatabaseUtil
 import com.hartwig.actin.trial.config.TrialConfigModel
 import com.hartwig.actin.trial.config.TrialDefinitionConfig
 import com.hartwig.actin.trial.input.FunctionInputResolver
@@ -23,6 +25,8 @@ import com.hartwig.actin.trial.sort.CohortComparator
 import com.hartwig.actin.trial.sort.CriterionReferenceComparator
 import com.hartwig.actin.trial.sort.EligibilityComparator
 import com.hartwig.actin.trial.status.TrialStatusConfigInterpreter
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
 class TrialIngestion(
     private val trialConfigModel: TrialConfigModel,
@@ -56,16 +60,30 @@ class TrialIngestion(
     }
 
     private fun createTrials(): List<Trial> {
-        val trials = trialConfigModel.trials().map { trialConfig ->
-            val trialId = trialConfig.trialId
-            val referencesById = trialConfigModel.referencesForTrial(trialId)
-            Trial(
-                identification = toIdentification(trialConfig),
-                generalEligibility = toEligibility(trialConfigModel.generalInclusionCriteriaForTrial(trialId), referencesById),
-                cohorts = cohortsForTrial(trialId, referencesById)
-            )
+
+        val cohortsByTrial = trialConfigModel.cohorts().groupBy { it.trialId }
+        val trialsWithEvaluableOrNoCohorts = trialConfigModel.trials()
+            .filter { trial ->
+                val cohorts = cohortsByTrial[trial.trialId]
+                cohorts.isNullOrEmpty() || cohorts.any { it.evaluable }
+            }
+            .map { it.trialId }
+            .toSet()
+
+        return trialConfigModel.trials().mapNotNull { trialConfig ->
+            trialConfig.takeIf { it.trialId in trialsWithEvaluableOrNoCohorts }?.let { config ->
+                val trialId = config.trialId
+                val referencesById = trialConfigModel.referencesForTrial(trialId)
+                Trial(
+                    identification = toIdentification(config),
+                    generalEligibility = toEligibility(trialConfigModel.generalInclusionCriteriaForTrial(trialId), referencesById),
+                    cohorts = cohortsForTrial(trialId, referencesById)
+                )
+            } ?: run {
+                LOGGER.warn("Trial ${trialConfig.trialId} not created as it has no evaluable cohorts")
+                null
+            }
         }
-        return trials
     }
 
     private fun cohortsForTrial(trialId: String, referencesById: Map<String, InclusionCriteriaReferenceConfig>): List<Cohort> {
@@ -99,7 +117,9 @@ class TrialIngestion(
             acronym = trialConfig.acronym,
             title = trialConfig.title,
             nctId = trialConfig.nctId,
-            phase = trialConfig.phase?.let(TrialPhase::fromString)
+            phase = trialConfig.phase?.let(TrialPhase::fromString),
+            source = trialConfig.source?.let(TrialSource::valueOf),
+            locations = trialConfig.location?.let(TrialConfigDatabaseUtil::toTrialLocations)
         )
     }
 
@@ -115,6 +135,8 @@ class TrialIngestion(
     }
 
     companion object {
+
+        private val LOGGER: Logger = LogManager.getLogger(TrialIngestion::class.java)
 
         fun create(
             trialConfigDirectory: String,

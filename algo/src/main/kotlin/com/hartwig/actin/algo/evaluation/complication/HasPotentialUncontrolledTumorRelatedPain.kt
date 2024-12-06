@@ -5,13 +5,14 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.medication.MEDICATION_NOT_PROVIDED
 import com.hartwig.actin.algo.evaluation.othercondition.PriorOtherConditionFunctions
 import com.hartwig.actin.algo.icd.IcdConstants
-import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
-import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
+import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
+import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.icd.IcdModel
+import com.hartwig.actin.datamodel.clinical.AtcLevel
 
-class HasPotentialUncontrolledTumorRelatedPain(private val interpreter: MedicationStatusInterpreter, private val icdModel: IcdModel) :
+class HasPotentialUncontrolledTumorRelatedPain(private val selector: MedicationSelector, private val severePainMedication: Set<AtcLevel>, private val icdModel: IcdModel) :
     EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -21,9 +22,11 @@ class HasPotentialUncontrolledTumorRelatedPain(private val interpreter: Medicati
                         PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(record, listOf(it), icdModel).isNotEmpty()
             }
 
-        val activePainMedications = record.medications?.filter {
-            it.name.equals(SEVERE_PAIN_MEDICATION, ignoreCase = true) && interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE
-        }?.map { it.name } ?: return MEDICATION_NOT_PROVIDED
+        val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
+        val (activePainMedications, plannedPainMedications) = selector.extractActiveAndPlannedWithCategory(
+            medications,
+            severePainMedication
+        )
 
         return when {
             hasCancerRelatedPainComplicationOrHistory -> {
@@ -36,7 +39,17 @@ class HasPotentialUncontrolledTumorRelatedPain(private val interpreter: Medicati
 
             activePainMedications.isNotEmpty() -> {
                 EvaluationFactory.undetermined(
-                    "Receives pain medication - undetermined if uncontrolled tumor related pain present",
+                    "Patient receives pain medication: " + concatLowercaseWithAnd(activePainMedications) +
+                            " - undetermined if uncontrolled tumor related pain present",
+                    "Receives " + concatLowercaseWithAnd(activePainMedications) + " - undetermined if uncontrolled tumor related pain present"
+                )
+            }
+
+            plannedPainMedications.isNotEmpty() -> {
+                EvaluationFactory.undetermined(
+                    "Patient plans to receive pain medication: " + concatLowercaseWithAnd(plannedPainMedications) +
+                            " - undetermined if uncontrolled tumor related pain present",
+                    "Plans to receive " + concatLowercaseWithAnd(plannedPainMedications) + " - undetermined if uncontrolled tumor related pain present"
                 )
             }
 
@@ -47,9 +60,5 @@ class HasPotentialUncontrolledTumorRelatedPain(private val interpreter: Medicati
                 )
             }
         }
-    }
-
-    companion object {
-        const val SEVERE_PAIN_MEDICATION = "hydromorphone"
     }
 }

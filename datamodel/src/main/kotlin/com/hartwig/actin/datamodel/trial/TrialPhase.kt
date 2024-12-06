@@ -9,6 +9,8 @@ enum class TrialPhase(private val text: String, private val includePrefix: Boole
     PHASE_2("2"),
     PHASE_1_2("1/2"),
     PHASE_1("1"),
+    PHASE_1_OR_MORE("1, ≥2"),
+    PHASE_2_OR_MORE("≥2"),
     COMPASSIONATE_USE("Compassionate Use", includePrefix = false);
 
     override fun display(): String {
@@ -16,7 +18,7 @@ enum class TrialPhase(private val text: String, private val includePrefix: Boole
     }
 
     companion object {
-        private val phasesByName = values().associateBy { it.text }
+        private val phasesByName = entries.associateBy { it.text }
 
         fun fromString(input: String): TrialPhase? {
             return phasesByName[input]

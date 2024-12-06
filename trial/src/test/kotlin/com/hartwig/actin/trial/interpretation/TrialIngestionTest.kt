@@ -12,7 +12,11 @@ import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
+import com.hartwig.actin.trial.config.CohortDefinitionConfig
 import com.hartwig.actin.trial.config.TestTrialConfigDatabaseFactory
+import com.hartwig.actin.trial.config.TestTrialConfigDatabaseFactory.createTestCohortDefinitionConfigs
+import com.hartwig.actin.trial.config.TestTrialConfigDatabaseFactory.createTestTrialDefinitionConfigs
+import com.hartwig.actin.trial.config.TestTrialConfigDatabaseFactory.trialDefinitionConfig
 import com.hartwig.actin.trial.config.TrialConfigDatabaseValidator
 import com.hartwig.actin.trial.config.TrialConfigModel
 import com.hartwig.actin.trial.status.TestTrialStatusConfigInterpreterFactory
@@ -81,6 +85,36 @@ class TrialIngestionTest {
         val cohortC = findCohort(trial.cohorts, "C")
         assertThat(cohortC.metadata.description).isEqualTo("Cohort C")
         assertThat(cohortC.eligibility).isEmpty()
+    }
+
+
+    @Test
+    fun `Should ignore trials without evaluable cohorts`() {
+
+        val trialConfigDatabase = TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase().copy(
+            trialDefinitionConfigs = createTestTrialDefinitionConfigs() + listOf(trialDefinitionConfig("TEST-3")),
+            cohortDefinitionConfigs = createTestCohortDefinitionConfigs() + listOf(
+                CohortDefinitionConfig(
+                    trialId = "TEST-3",
+                    cohortId = "A",
+                    externalCohortIds = setOf("NA"),
+                    evaluable = false,
+                    open = true,
+                    slotsAvailable = true,
+                    ignore = false,
+                    description = "Cohort A"
+                )
+            )
+        )
+
+        val ingestion = TrialIngestion(
+            TrialConfigModel.createFromDatabase(trialConfigDatabase, TrialConfigDatabaseValidator(eligibilityFactory)),
+            TestTrialStatusConfigInterpreterFactory.createWithProperTestTrialStatusDatabase(),
+            eligibilityFactory
+        )
+        val ingestionResult = ingestion.ingestTrials()
+        assertThat(ingestionResult.trials).hasSize(2)
+        assertThat(ingestionResult.trials.map { it.identification.trialId }).containsExactly("TEST-1", "TEST-2")
     }
 
     @Test(expected = IllegalStateException::class)
