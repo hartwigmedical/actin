@@ -10,8 +10,6 @@ import com.hartwig.actin.datamodel.trial.EligibilityRule
 
 class ComplicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
-    private val icdModel = resources.icdModel
-
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
             EligibilityRule.HAS_ANY_COMPLICATION to hasAnyComplicationCreator(),
@@ -28,16 +26,16 @@ class ComplicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resou
     private fun hasSpecificComplicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val targetIcdTitles = functionInputResolver().createManyIcdTitlesInput(function)
-            HasSpecificComplication(icdModel, targetIcdTitles)
+            HasSpecificComplication(icdModel(), targetIcdTitles)
         }
     }
 
     private fun hasPotentialUncontrolledTumorRelatedPainCreator(): FunctionCreator {
         val interpreter: MedicationStatusInterpreter = MedicationStatusInterpreterOnEvaluationDate(referenceDateProvider().date(), null)
-        return { HasPotentialUncontrolledTumorRelatedPain(interpreter, icdModel) }
+        return { HasPotentialUncontrolledTumorRelatedPain(interpreter, icdModel()) }
     }
 
     private fun hasLeptomeningealDiseaseCreator(): FunctionCreator {
-        return { HasLeptomeningealDisease(icdModel) }
+        return { HasLeptomeningealDisease(icdModel()) }
     }
 }

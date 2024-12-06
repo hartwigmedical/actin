@@ -14,8 +14,8 @@ import org.junit.Test
 
 class HasPotentialUncontrolledTumorRelatedPainTest {
 
-    private val targetCode = IcdConstants.CHRONIC_CANCER_RELATED_PAIN_ICD
-    private val otherTargetCode = IcdConstants.ACUTE_PAIN_ICD
+    private val targetCode = IcdConstants.CHRONIC_CANCER_RELATED_PAIN_CODE
+    private val otherTargetCode = IcdConstants.ACUTE_PAIN_CODE
     private val targetNode = IcdNode(targetCode, emptyList(), "Cancer-related pain")
     private val childOfTargetNode = IcdNode("childCode", listOf(targetCode), "Child of cancer-related pain")
     private val icdModel = IcdModel.create(listOf(targetNode, childOfTargetNode))

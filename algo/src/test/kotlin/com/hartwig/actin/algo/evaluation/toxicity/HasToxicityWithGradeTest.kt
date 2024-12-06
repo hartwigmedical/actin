@@ -109,46 +109,6 @@ class HasToxicityWithGradeTest {
     }
 
     @Test
-    fun `Should evaluate only most recent toxicity among multiple with the same icd code`() {
-        val function = function()
-        val firstWarnToxicity = toxicity(
-            source = ToxicitySource.EHR, grade = 2, name = "toxicity 1", icdCode = "code", evaluatedDate = LocalDate.of(2020, 1, 1)
-        )
-        val secondFailToxicity = toxicity(
-            source = ToxicitySource.EHR, grade = 1, name = "toxicity 2", icdCode = "code", evaluatedDate = LocalDate.of(2021, 1, 1)
-        )
-        val thirdWarnToxicity = toxicity(
-            source = ToxicitySource.EHR, grade = 2, name = "toxicity 3", icdCode = "code", evaluatedDate = LocalDate.of(2022, 1, 1)
-        )
-
-        listOf(
-            listOf(firstWarnToxicity) to EvaluationResult.WARN,
-            listOf(firstWarnToxicity, secondFailToxicity) to EvaluationResult.FAIL,
-            listOf(firstWarnToxicity, secondFailToxicity, thirdWarnToxicity) to EvaluationResult.WARN
-        ).forEach { (toxicities, expectedEvaluation) ->
-            assertEvaluation(expectedEvaluation, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)))
-        }
-    }
-
-    @Test
-    fun `Should pass for questionnaire toxicities that are also complications`() {
-        val questionnaireToxicity = toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2)
-        assertEvaluation(
-            EvaluationResult.PASS,
-            function().evaluate(ToxicityTestFactory.withToxicityThatIsAlsoComplication(questionnaireToxicity))
-        )
-    }
-
-    @Test
-    fun `Should ignore EHR toxicities that are also complications`() {
-        val ehrToxicity = toxicity(source = ToxicitySource.EHR, grade = 2)
-        assertEvaluation(
-            EvaluationResult.FAIL,
-            function().evaluate(ToxicityTestFactory.withToxicityThatIsAlsoComplication(ehrToxicity, "icdCodeForBoth"))
-        )
-    }
-
-    @Test
     fun `Should return recoverable warning when questionnaire is not source`() {
         val toxicities = listOf(
             toxicity(

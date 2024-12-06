@@ -8,8 +8,6 @@ import com.hartwig.actin.datamodel.trial.EligibilityRule
 
 class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
-    private val icdModel = resources.icdModel
-
     //TODO(Add icd to intolerances - nb. check how to implement extension codes to specify intolerance)
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
@@ -91,7 +89,7 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
     private fun createHasToxicityWithGrade(
         minGrade: Int, targetIcdTitles: List<String>? = null, icdTitlesToIgnore: List<String> = emptyList()
     ) = HasToxicityWithGrade(
-        icdModel,
+        icdModel(),
         minGrade,
         targetIcdTitles,
         icdTitlesToIgnore,

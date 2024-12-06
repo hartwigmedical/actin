@@ -5,8 +5,8 @@ import com.hartwig.actin.algo.evaluation.util.Format.concat
 
 internal object PriorConditionMessages {
 
-    fun failSpecific(doidTerm: String?): String {
-        return "Patient has no other condition belonging to category $doidTerm"
+    fun failSpecific(icdTitle: String?): String {
+        return "Patient has no other condition belonging to category $icdTitle"
     }
 
     @JvmStatic
@@ -18,8 +18,8 @@ internal object PriorConditionMessages {
         return "History of ${Format.concatStringsWithAnd(matches)}"
     }
 
-    fun passSpecific(characteristic: Characteristic, matches: Iterable<String>, doidTerm: String?): String {
-        return String.format("Patient has history of %s %s, which is indicative of %s", characteristic.displayText, concat(matches), doidTerm)
+    fun passSpecific(characteristic: Characteristic, matches: Iterable<String>, icdTitle: String?): String {
+        return String.format("Patient has history of %s %s, which is indicative of %s", characteristic.displayText, concat(matches), icdTitle)
     }
 
     internal enum class Characteristic(val displayText: String) {

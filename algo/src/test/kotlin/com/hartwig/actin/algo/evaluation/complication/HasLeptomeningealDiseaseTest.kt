@@ -11,7 +11,7 @@ import org.junit.Test
 
 class HasLeptomeningealDiseaseTest {
 
-    private val targetCode = IcdConstants.LEPTOMENINGEAL_METASTASES_ICD
+    private val targetCode = IcdConstants.LEPTOMENINGEAL_METASTASES_CODE
     private val targetNode = IcdNode(targetCode, emptyList(), "Leptomeningeal metastasis")
     private val childOfTargetNode = IcdNode("childCode", listOf(targetCode), "Child leptomeningeal metastasis")
     private val icdModel = IcdModel.create(listOf(targetNode, childOfTargetNode))

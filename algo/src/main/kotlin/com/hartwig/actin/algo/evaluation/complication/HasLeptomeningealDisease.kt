@@ -12,7 +12,7 @@ import com.hartwig.actin.icd.IcdModel
 class HasLeptomeningealDisease(private val icdModel: IcdModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val icdCode = IcdConstants.LEPTOMENINGEAL_METASTASES_ICD
+        val icdCode = IcdConstants.LEPTOMENINGEAL_METASTASES_CODE
         val hasConfirmedLeptomeningealDisease =
             ComplicationFunctions.findComplicationsMatchingAnyIcdCode(record, listOf(icdCode), icdModel).isNotEmpty() ||
                 PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(record, listOf(icdCode), icdModel).isNotEmpty()

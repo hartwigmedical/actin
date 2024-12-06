@@ -124,6 +124,14 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
                 listOf("CAPECITABINE;OXALIPLATIN", "1", "5")
             }
 
+            FunctionInput.ONE_ICD_TITLE -> {
+                listOf(icdTitleToUse)
+            }
+
+            FunctionInput.MANY_ICD_TITLES -> {
+                listOf("$icdTitleToUse;$icdTitleToUse")
+            }
+
             FunctionInput.ONE_TUMOR_TYPE -> {
                 listOf(TumorTypeInput.SQUAMOUS_CELL_CARCINOMA.display())
             }
@@ -146,10 +154,6 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
 
             FunctionInput.MANY_STRINGS_ONE_INTEGER -> {
                 listOf("string1;string2", "1")
-            }
-
-            FunctionInput.MANY_ICD_TITLES -> {
-                listOf("$icdTitleToUse;$icdTitleToUse")
             }
 
             FunctionInput.ONE_INTEGER_MANY_DOID_TERMS -> {

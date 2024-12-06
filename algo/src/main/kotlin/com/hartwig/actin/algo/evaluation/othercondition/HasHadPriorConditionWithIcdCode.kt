@@ -7,21 +7,21 @@ import com.hartwig.actin.algo.evaluation.othercondition.PriorConditionMessages.C
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.icd.IcdModel
 
-class HasHadPriorConditionWithDoid(private val doidModel: DoidModel, private val doidToFind: String) : EvaluationFunction {
+class HasHadPriorConditionWithIcdCode(private val icdModel: IcdModel, private val targetIcdTitle: String) : EvaluationFunction {
     
     override fun evaluate(record: PatientRecord): Evaluation {
-        val doidTerm = doidModel.resolveTermForDoid(doidToFind)
+        val icdCode = icdModel.titleToCodeMap[targetIcdTitle]!!
         val conditions =
-            OtherConditionSelector.selectConditionsMatchingDoid(record.priorOtherConditions, doidToFind, doidModel)
+            OtherConditionSelector.selectConditionsMatchingIcdCode(record.priorOtherConditions, listOf(icdCode), icdModel)
         return if (conditions.isNotEmpty()) {
             pass(
-                PriorConditionMessages.passSpecific(Characteristic.CONDITION, conditions, doidTerm),
+                PriorConditionMessages.passSpecific(Characteristic.CONDITION, conditions, targetIcdTitle),
                 PriorConditionMessages.passGeneral(conditions)
             )
         } else fail(
-            PriorConditionMessages.failSpecific(doidTerm),
+            PriorConditionMessages.failSpecific(targetIcdTitle),
             PriorConditionMessages.failGeneral()
         )
     }

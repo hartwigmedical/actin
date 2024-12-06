@@ -4,7 +4,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.clinical.Complication
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.icd.IcdModel
@@ -22,10 +21,11 @@ class HasToxicityWithGrade(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val (matchingToxicities, otherToxicities) = selectRelevantToxicities(record).partition { toxicity ->
+        val (matchingToxicities, otherToxicities) =
+            ToxicityFunctions.selectRelevantToxicities(record, icdModel, referenceDate, icdTitlesToIgnore).partition { toxicity ->
             val grade = toxicity.grade ?: DEFAULT_QUESTIONNAIRE_GRADE.takeIf { toxicity.source == ToxicitySource.QUESTIONNAIRE }
             val gradeMatch = grade?.let { it >= minGrade } ?: false
-            val matchesIcd = hasIcdMatch(toxicity, targetIcdTitles, icdModel)
+            val matchesIcd = ToxicityFunctions.hasIcdMatch(toxicity, targetIcdTitles, icdModel)
             gradeMatch && matchesIcd
         }
 
@@ -62,30 +62,6 @@ class HasToxicityWithGrade(
                 "No toxicities found with grade $minGrade or higher", "Grade >=$minGrade toxicities not present"
             )
         }
-    }
-
-    private fun selectRelevantToxicities(record: PatientRecord): List<Toxicity> {
-        val complicationIcdCodes = record.complications?.map(Complication::icdCode)?.toSet() ?: emptySet()
-        val ignoredIcdCodes = icdTitlesToIgnore.mapNotNull(icdModel::resolveCodeForTitle).toSet()
-
-        return dropOutdatedEHRToxicities(record.toxicities)
-            .filter { it.endDate?.isAfter(referenceDate) != false }
-            .filter { it.source != ToxicitySource.EHR || it.icdCode !in complicationIcdCodes }
-            .filterNot { it.icdCode in ignoredIcdCodes }
-    }
-
-    private fun dropOutdatedEHRToxicities(toxicities: List<Toxicity>): List<Toxicity> {
-        val (ehrToxicities, otherToxicities) = toxicities.partition { it.source == ToxicitySource.EHR }
-        val mostRecentEhrToxicitiesByCode = ehrToxicities.groupBy(Toxicity::icdCode)
-            .map { (_, toxGroup) -> toxGroup.maxBy(Toxicity::evaluatedDate) }
-
-        return otherToxicities + mostRecentEhrToxicitiesByCode
-    }
-
-    private fun hasIcdMatch(toxicity: Toxicity, targetIcdTitles: List<String>?, icdModel: IcdModel): Boolean {
-        if (targetIcdTitles == null) return true
-        val targetIcdCodes = targetIcdTitles.mapNotNull { icdModel.resolveCodeForTitle(it) }
-        return targetIcdCodes.any { it in icdModel.returnCodeWithParents(toxicity.icdCode) }
     }
 
     private fun formatToxicities(toxicities: List<Toxicity>) = if (toxicities.isNotEmpty()) " (${toxicities.joinToString(", ")})" else ""

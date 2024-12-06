@@ -4,7 +4,7 @@ import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
-import com.hartwig.actin.algo.evaluation.composite.Or
+import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 
@@ -12,7 +12,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
 
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
-            EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_TERM_X to hasPriorConditionWithConfiguredDOIDTermCreator(),
+            EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_ICD_TITLE_X to hasPriorConditionWithConfiguredIcdTitleCreator(),
             EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_X_BY_NAME to hasPriorConditionWithConfiguredNameCreator(),
             EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE to hasPriorConditionWithDoidCreator(DoidConstants.AUTOIMMUNE_DISEASE_DOID),
             EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE to hasHistoryOfCardiacDiseaseCreator(),
@@ -71,10 +71,10 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
         )
     }
 
-    private fun hasPriorConditionWithConfiguredDOIDTermCreator(): FunctionCreator {
+    private fun hasPriorConditionWithConfiguredIcdTitleCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val doidTermToFind = functionInputResolver().createOneDoidTermInput(function)
-            HasHadPriorConditionWithDoid(doidModel(), doidModel().resolveDoidForTerm(doidTermToFind)!!)
+            val targetIcdTitle = functionInputResolver().createOneIcdTitleInput(function)
+            HasHadPriorConditionWithIcdCode(icdModel(), targetIcdTitle)
         }
     }
 
@@ -85,8 +85,8 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
         }
     }
 
-    private fun hasPriorConditionWithDoidCreator(doidToFind: String): FunctionCreator {
-        return { HasHadPriorConditionWithDoid(doidModel(), doidToFind) }
+    private fun hasPriorConditionWithDoidCreator(targetIcdTitle: String): FunctionCreator {
+        return { HasHadPriorConditionWithIcdCode(icdModel(), targetIcdTitle) }
     }
 
     private fun hasInheritedPredispositionToBleedingOrThrombosisCreator(): FunctionCreator {
@@ -145,16 +145,11 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
 
     private fun hasHistoryOfCardiacDiseaseCreator(): FunctionCreator {
         return {
-            Or(
-                listOf(
-                    HasHadPriorConditionWithDoidComplicationOrToxicity(
-                    doidModel(),
-                    DoidConstants.HEART_DISEASE_DOID,
-                    CARDIAC_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY,
-                    CARDIAC_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY
-                    ),
-                    HasHadPriorConditionWithDoid(doidModel(), DoidConstants.CORONARY_ARTERY_DISEASE_DOID)
-                )
+            HasHadPriorConditionComplicationOrToxicityWithIcdCode(
+                icdModel(),
+                IcdConstants.HEART_DISEASE_LIST,
+                "cardiac disease",
+                referenceDateProvider().date()
             )
         }
     }
@@ -165,11 +160,11 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
 
     private fun hasHistoryOfEyeDiseaseCreator(): FunctionCreator {
         return {
-            HasHadPriorConditionWithDoidComplicationOrToxicity(
-                doidModel(),
-                DoidConstants.EYE_DISEASE_DOID,
-                EYE_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY,
-                EYE_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY
+            HasHadPriorConditionComplicationOrToxicityWithIcdCode(
+                icdModel(),
+                listOf(IcdConstants.EYE_DISEASE_CHAPTER),
+                "eye disease",
+                referenceDateProvider().date()
             )
         }
     }
@@ -180,11 +175,11 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
 
     private fun hasHistoryOfStrokeCreator(): FunctionCreator {
         return {
-            HasHadPriorConditionWithDoidComplicationOrToxicity(
-                doidModel(),
-                DoidConstants.STROKE_DOID,
-                CEREBROVASCULAR_ACCIDENT_COMPLICATION_AND_TOXICITY_CATEGORY,
-                CEREBROVASCULAR_ACCIDENT_COMPLICATION_AND_TOXICITY_CATEGORY
+            HasHadPriorConditionComplicationOrToxicityWithIcdCode(
+                icdModel(),
+                IcdConstants.STROKE_LIST,
+                "cerebrovascular accident",
+                referenceDateProvider().date()
             )
         }
     }
@@ -243,8 +238,5 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
 
     companion object {
         private const val HYPOTENSION_NAME: String = "hypotension"
-        private const val CARDIAC_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY: String = "cardiac disease"
-        private const val EYE_DISEASE_COMPLICATION_AND_TOXICITY_CATEGORY: String = "eye disease"
-        private const val CEREBROVASCULAR_ACCIDENT_COMPLICATION_AND_TOXICITY_CATEGORY: String = "cerebrovascular accident"
     }
 }

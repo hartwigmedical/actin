@@ -60,12 +60,14 @@ internal object OtherConditionTestFactory {
         return Complication(name = name, categories = categories, icdCode = icdCode, year = null, month = null)
     }
 
-    fun toxicity(name: String, toxicitySource: ToxicitySource, grade: Int?): Toxicity {
+    fun toxicity(
+        name: String, toxicitySource: ToxicitySource, grade: Int?, icdCode: String = "code", date: LocalDate = LocalDate.of(2010, 1, 1)
+    ): Toxicity {
         return Toxicity(
             name = name,
             categories = emptySet(),
-            icdCode = "code",
-            evaluatedDate = LocalDate.of(2010, 1, 1),
+            icdCode = icdCode,
+            evaluatedDate = date,
             source = toxicitySource,
             grade = grade
         )

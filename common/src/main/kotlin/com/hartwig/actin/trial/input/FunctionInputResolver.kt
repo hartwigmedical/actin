@@ -195,6 +195,16 @@ class FunctionInputResolver(
                     return true
                 }
 
+                FunctionInput.ONE_ICD_TITLE -> {
+                    createOneIcdTitleInput(function)
+                    return true
+                }
+
+                FunctionInput.MANY_ICD_TITLES -> {
+                    createManyIcdTitlesInput(function)
+                    return true
+                }
+
                 FunctionInput.ONE_TUMOR_TYPE -> {
                     createOneTumorTypeInput(function)
                     return true
@@ -222,11 +232,6 @@ class FunctionInputResolver(
 
                 FunctionInput.MANY_STRINGS_ONE_INTEGER -> {
                     createManyStringsOneIntegerInput(function)
-                    return true
-                }
-
-                FunctionInput.MANY_ICD_TITLES -> {
-                    createManyIcdTitlesInput(function)
                     return true
                 }
 
@@ -516,6 +521,25 @@ class FunctionInputResolver(
         return treatmentDatabase.findDrugByName(drugName) ?: throw IllegalStateException("Drug not found in DB: $drugName")
     }
 
+    fun createOneIcdTitleInput(function: EligibilityFunction): String {
+        assertParamConfig(function, FunctionInput.ONE_ICD_TITLE, 1)
+        val input = parameterAsString(function, 0)
+        if (!icdModel.isValidIcdTitle(input)) {
+            throw IllegalStateException("ICD title(s) not valid: $input")
+        }
+        return input
+    }
+
+    fun createManyIcdTitlesInput(function: EligibilityFunction): List<String> {
+        assertParamConfig(function, FunctionInput.MANY_ICD_TITLES, 1)
+        val icdStringList = toStringList(function.parameters.first())
+        val invalidTitles = icdStringList.filter { !icdModel.isValidIcdTitle(it) }
+        if (invalidTitles.isNotEmpty()) {
+            throw IllegalStateException("ICD title(s) not valid: ${invalidTitles.joinToString(", ")}")
+        }
+        return icdStringList
+    }
+
     fun createOneTumorTypeInput(function: EligibilityFunction): TumorTypeInput {
         assertParamConfig(function, FunctionInput.ONE_TUMOR_TYPE, 1)
         return TumorTypeInput.fromString(parameterAsString(function, 0))
@@ -553,16 +577,6 @@ class FunctionInputResolver(
             strings = toStringList(function.parameters.first()),
             integer = parameterAsInt(function, 1)
         )
-    }
-
-    fun createManyIcdTitlesInput(function: EligibilityFunction): List<String> {
-        assertParamConfig(function, FunctionInput.MANY_ICD_TITLES, 1)
-        val icdStringList = toStringList(function.parameters.first())
-        val invalidTitles = icdStringList.filter { !icdModel.isValidIcdTitle(it) }
-        if (invalidTitles.isNotEmpty()) {
-            throw IllegalStateException("ICD title(s) not valid: ${invalidTitles.joinToString(", ")}")
-        }
-        return icdStringList
     }
 
     fun createOneIntegerManyDoidTermsInput(function: EligibilityFunction): OneIntegerManyDoidTerms {

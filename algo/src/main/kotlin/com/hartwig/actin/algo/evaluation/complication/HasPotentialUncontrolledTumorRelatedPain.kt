@@ -16,7 +16,7 @@ class HasPotentialUncontrolledTumorRelatedPain(private val interpreter: Medicati
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val (hasCancerRelatedPainComplicationOrHistory, hasAcutePainComplicationOrHistory) =
-            listOf(IcdConstants.CHRONIC_CANCER_RELATED_PAIN_ICD, IcdConstants.ACUTE_PAIN_ICD).map {
+            listOf(IcdConstants.CHRONIC_CANCER_RELATED_PAIN_CODE, IcdConstants.ACUTE_PAIN_CODE).map {
                 ComplicationFunctions.findComplicationsMatchingAnyIcdCode(record, listOf(it), icdModel).isNotEmpty() ||
                         PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(record, listOf(it), icdModel).isNotEmpty()
             }
