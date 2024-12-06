@@ -31,7 +31,7 @@ import com.hartwig.actin.trial.input.single.ManyIntents
 import com.hartwig.actin.trial.input.single.ManyIntentsOneInteger
 import com.hartwig.actin.trial.input.single.ManySpecificTreatmentsTwoIntegers
 import com.hartwig.actin.trial.input.single.OneCypOneInteger
-import com.hartwig.actin.trial.input.single.OneDoidTermOneInteger
+import com.hartwig.actin.trial.input.single.OneIcdTitleOneInteger
 import com.hartwig.actin.trial.input.single.OneDoubleOneGender
 import com.hartwig.actin.trial.input.single.OneGene
 import com.hartwig.actin.trial.input.single.OneGeneManyCodons
@@ -300,8 +300,8 @@ class FunctionInputResolver(
                     return true
                 }
 
-                FunctionInput.ONE_DOID_TERM_ONE_INTEGER -> {
-                    createOneDoidTermOneIntegerInput(function)
+                FunctionInput.ONE_ICD_TITLE_ONE_INTEGER -> {
+                    createOneIcdTitleOneIntegerInput(function)
                     return true
                 }
 
@@ -702,16 +702,16 @@ class FunctionInputResolver(
         return param
     }
 
-    fun createOneDoidTermOneIntegerInput(function: EligibilityFunction): OneDoidTermOneInteger {
-        assertParamConfig(function, FunctionInput.ONE_DOID_TERM_ONE_INTEGER, 2)
+    fun createOneIcdTitleOneIntegerInput(function: EligibilityFunction): OneIcdTitleOneInteger {
+        assertParamConfig(function, FunctionInput.ONE_ICD_TITLE_ONE_INTEGER, 2)
 
-        val doidString = parameterAsString(function, 0)
-        if (doidModel.resolveDoidForTerm(doidString) == null) {
-            throw IllegalStateException("Not a valid DOID term: $doidString")
+        val icdTitle = parameterAsString(function, 0)
+        if (!icdModel.isValidIcdTitle(icdTitle)) {
+            throw IllegalStateException("Not a valid ICD title: $icdTitle")
         }
 
-        return OneDoidTermOneInteger(
-            doidTerm = doidString,
+        return OneIcdTitleOneInteger(
+            icdTitle = icdTitle,
             integer = parameterAsInt(function, 1)
         )
     }

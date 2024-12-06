@@ -5,10 +5,10 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.icd.TestIcdFactory
 import org.junit.Test
 
-class HasHadPriorConditionWithIcdCodeTest {
+class HasHadPriorConditionWithIcdTest {
 
     private val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("conditionParent", "condition"))
-    private val function = HasHadPriorConditionWithIcdCode(icdModel, "conditionParentTitle")
+    private val function = HasHadPriorConditionWithIcd(icdModel, "conditionParentTitle")
 
     @Test
     fun `Should pass for prior condition with direct ICD code match`() {

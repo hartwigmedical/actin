@@ -208,8 +208,8 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
                 listOf(doidTermToUse)
             }
 
-            FunctionInput.ONE_DOID_TERM_ONE_INTEGER -> {
-                listOf(doidTermToUse, "1")
+            FunctionInput.ONE_ICD_TITLE_ONE_INTEGER -> {
+                listOf(icdTitleToUse, "1")
             }
 
             FunctionInput.MANY_DOID_TERMS -> {

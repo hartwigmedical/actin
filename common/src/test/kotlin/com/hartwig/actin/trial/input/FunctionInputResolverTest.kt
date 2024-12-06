@@ -33,6 +33,7 @@ import com.hartwig.actin.trial.input.single.OneGeneOneIntegerOneVariantType
 import com.hartwig.actin.trial.input.single.OneGeneTwoIntegers
 import com.hartwig.actin.trial.input.single.OneHaplotype
 import com.hartwig.actin.trial.input.single.OneHlaAllele
+import com.hartwig.actin.trial.input.single.OneIcdTitleOneInteger
 import com.hartwig.actin.trial.input.single.OneIntegerManyDoidTerms
 import com.hartwig.actin.trial.input.single.OneIntegerManyIcdTitles
 import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
@@ -390,6 +391,22 @@ class FunctionInputResolverTest {
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("title 1", "title 2")))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("title 1;invalid title")))!!).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with one icd title one integer input`() {
+        val resolver = TestFunctionInputResolverFactory.createResolverWithIcdNodes(
+            listOf(IcdNode("code 1", listOf("parent 1"), "title 1"), IcdNode("code 2", listOf("parent 2"), "title 2"))
+        )
+        val rule: EligibilityRule = firstOfType(FunctionInput.ONE_ICD_TITLE_ONE_INTEGER)
+        val valid: EligibilityFunction = create(rule, listOf("title 1", "1"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val expected = OneIcdTitleOneInteger("title 1", 1)
+        assertThat(resolver.createOneIcdTitleOneIntegerInput(valid)).isEqualTo(expected)
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("title 1", "title 2")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("title 1", "1", "2")))!!).isFalse
     }
 
     @Test

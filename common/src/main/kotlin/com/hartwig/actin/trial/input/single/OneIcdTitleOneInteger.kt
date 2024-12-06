@@ -1,6 +1,6 @@
 package com.hartwig.actin.trial.input.single
 
-data class OneDoidTermOneInteger(
-    val doidTerm: String,
+data class OneIcdTitleOneInteger(
+    val icdTitle: String,
     val integer: Int
 )

@@ -6,6 +6,6 @@ import com.hartwig.actin.icd.IcdModel
 object OtherConditionFunctionFactory {
 
     fun createPriorConditionWithIcdCodeFunction(icdModel: IcdModel, targetIcdTitle: String): EvaluationFunction {
-        return HasHadPriorConditionWithIcdCode(icdModel, targetIcdTitle)
+        return HasHadPriorConditionWithIcd(icdModel, targetIcdTitle)
     }
 }

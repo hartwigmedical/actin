@@ -10,11 +10,12 @@ import java.time.LocalDate
 class ToxicityFunctionsTest {
 
     private val referenceDate = LocalDate.of(2024, 12, 6)
+    private val ehrTox = OtherConditionTestFactory.toxicity(name = "tox", toxicitySource = ToxicitySource.EHR, icdCode = "code", grade = 2)
 
     @Test
     fun `Should not select toxicities with code matching the icd entries to ignore`() {
         val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("ignore", "keep"))
-        val keepTox = OtherConditionTestFactory.toxicity(name = "tox", toxicitySource = ToxicitySource.EHR, icdCode = "keepCode", grade = 2)
+        val keepTox = ehrTox.copy(icdCode = "keepCode")
         val record = ToxicityTestFactory.withToxicities(listOf(keepTox, keepTox.copy(icdCode = "ignoreCode")))
 
         assertThat(ToxicityFunctions.selectRelevantToxicities(record, icdModel, referenceDate, listOf("ignoreTitle"))).containsOnly(keepTox)
@@ -22,9 +23,7 @@ class ToxicityFunctionsTest {
 
     @Test
     fun `Should only select most recent EHR toxicities when multiple of same icd code are present`() {
-        val newTox = OtherConditionTestFactory.toxicity(
-            name = "tox", toxicitySource = ToxicitySource.EHR, icdCode = "code", grade = 2, date = LocalDate.of(2024, 12, 6)
-        )
+        val newTox = ehrTox.copy(evaluatedDate = LocalDate.of(2024, 12, 6))
         val record = ToxicityTestFactory.withToxicities(
             listOf(
                 newTox,
@@ -38,37 +37,36 @@ class ToxicityFunctionsTest {
 
     @Test
     fun `Should filter EHR toxicities when also present in complications`() {
+        val questionnaireTox = ehrTox.copy(source = ToxicitySource.QUESTIONNAIRE)
+        val (withEhrTox, withQuestionnaireTox) = listOf(ehrTox, questionnaireTox)
+            .map { ToxicityTestFactory.withToxicityThatIsAlsoComplication(it, "code") }
 
+        assertThat(ToxicityFunctions.selectRelevantToxicities(withEhrTox, TestIcdFactory.createTestModel(), referenceDate)).isEmpty()
+        assertThat(ToxicityFunctions.selectRelevantToxicities(withQuestionnaireTox, TestIcdFactory.createTestModel(), referenceDate))
+            .containsOnly(questionnaireTox)
     }
 
-//    @Test
-//    fun `Should pass for questionnaire toxicities that are also complications`() {
-//        val questionnaireToxicity = toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2)
-//        assertEvaluation(
-//            EvaluationResult.PASS,
-//            function().evaluate(ToxicityTestFactory.withToxicityThatIsAlsoComplication(questionnaireToxicity))
-//        )
-//    }
-//
-//    @Test
-//    fun `Should ignore EHR toxicities that are also complications`() {
-//        val ehrToxicity = toxicity(source = ToxicitySource.EHR, grade = 2)
-//        assertEvaluation(
-//            EvaluationResult.FAIL,
-//            function().evaluate(ToxicityTestFactory.withToxicityThatIsAlsoComplication(ehrToxicity, "icdCodeForBoth"))
-//        )
-//    }
-//
-//    private fun dropOutdatedEHRToxicities(toxicities: List<Toxicity>): List<Toxicity> {
-//        val (ehrToxicities, otherToxicities) = toxicities.partition { it.source == ToxicitySource.EHR }
-//        val mostRecentEhrToxicitiesByCode = ehrToxicities.groupBy(Toxicity::icdCode)
-//            .map { (_, toxGroup) -> toxGroup.maxBy(Toxicity::evaluatedDate) }
-//        return otherToxicities + mostRecentEhrToxicitiesByCode
-//    }
-//
-//    fun hasIcdMatch(toxicity: Toxicity, targetIcdTitles: List<String>?, icdModel: IcdModel): Boolean {
-//        if (targetIcdTitles == null) return true
-//        val targetIcdCodes = targetIcdTitles.mapNotNull { icdModel.resolveCodeForTitle(it) }
-//        return targetIcdCodes.any { it in icdModel.returnCodeWithParents(toxicity.icdCode) }
-//    }
+    @Test
+    fun `Should filter out toxicities with end date before reference date`() {
+        val record = ToxicityTestFactory.withToxicities(listOf(ehrTox.copy(endDate = referenceDate.minusYears(1))))
+        assertThat(ToxicityFunctions.selectRelevantToxicities(record, TestIcdFactory.createTestModel(), referenceDate)).isEmpty()
+    }
+
+    @Test
+    fun `Should return true when target icd titles are null`() {
+        assertThat(ToxicityFunctions.hasIcdMatch(ehrTox, null, TestIcdFactory.createTestModel())).isTrue()
+    }
+
+    @Test
+    fun `Should return true when tox icd code matches to target icd title`() {
+        val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("node", "nodeParent"))
+        assertThat(ToxicityFunctions.hasIcdMatch(ehrTox.copy(icdCode = "nodeCode"), listOf("nodeParentTitle"), icdModel)).isTrue()
+        assertThat(ToxicityFunctions.hasIcdMatch(ehrTox.copy(icdCode = "nodeCode"), listOf("nodeTitle"), icdModel)).isTrue()
+    }
+
+    @Test
+    fun `Should return false when tox icd code does not match target icd title`() {
+        val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("node", "nodeParent"))
+        assertThat(ToxicityFunctions.hasIcdMatch(ehrTox.copy(icdCode = "wrongCode"), listOf("nodeTitle"), icdModel)).isFalse()
+    }
 }

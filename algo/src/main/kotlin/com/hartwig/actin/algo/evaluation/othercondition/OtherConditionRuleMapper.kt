@@ -25,29 +25,34 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             EligibilityRule.HAS_HISTORY_OF_INTERSTITIAL_LUNG_DISEASE to hasPriorConditionWithDoidCreator(DoidConstants.INTERSTITIAL_LUNG_DISEASE_DOID),
             EligibilityRule.HAS_HISTORY_OF_LIVER_DISEASE to hasPriorConditionWithDoidCreator(DoidConstants.LIVER_DISEASE_DOID),
             EligibilityRule.HAS_HISTORY_OF_LUNG_DISEASE to hasPriorConditionWithDoidCreator(DoidConstants.LUNG_DISEASE_DOID),
-            EligibilityRule.HAS_POTENTIAL_RESPIRATORY_COMPROMISE to hasPriorConditionWithDoidsFromSetCreator(
-                DoidConstants.RESPIRATORY_COMPROMISE_DOID_SET, "Potential respiratory compromise"
+            EligibilityRule.HAS_POTENTIAL_RESPIRATORY_COMPROMISE to hasPriorConditionWithIcdCodesFromListCreator(
+                IcdConstants.RESPIRATORY_COMPROMISE_LIST, "potential respiratory compromise"
             ),
             EligibilityRule.HAS_HISTORY_OF_MYOCARDIAL_INFARCT to hasPriorConditionWithDoidCreator(DoidConstants.MYOCARDIAL_INFARCT_DOID),
-            EligibilityRule.HAS_HISTORY_OF_MYOCARDIAL_INFARCT_WITHIN_X_MONTHS to hasRecentPriorConditionWithDoidCreator(DoidConstants.MYOCARDIAL_INFARCT_DOID),
-            EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_TERM_X_WITHIN_Y_MONTHS to hasRecentPriorConditionWithConfiguredDoidTermCreator(),
+            EligibilityRule.HAS_HISTORY_OF_MYOCARDIAL_INFARCT_WITHIN_X_MONTHS to hasRecentPriorConditionWithIcdCodeFromListCreator(
+                listOf(IcdConstants.ACUTE_MYOCARDIAL_INFARCT_CODE), "myocardial infarct"
+            ),
+            EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_ICD_TITLE_X_WITHIN_Y_MONTHS to hasRecentPriorConditionWithConfiguredIcdCodeCreator(),
             EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_X_BY_NAME_WITHIN_Y_MONTHS to hasRecentPriorConditionWithConfiguredNameCreator(),
             EligibilityRule.HAS_HISTORY_OF_PNEUMONITIS to hasHistoryOfPneumonitisCreator(),
             EligibilityRule.HAS_HISTORY_OF_STROKE to hasHistoryOfStrokeCreator(),
-            EligibilityRule.HAS_HISTORY_OF_STROKE_WITHIN_X_MONTHS to hasRecentPriorConditionWithDoidCreator(DoidConstants.STROKE_DOID),
-            EligibilityRule.HAS_HISTORY_OF_THROMBOEMBOLIC_EVENT_WITHIN_X_MONTHS to hasRecentPriorConditionWithDoidsFromSetCreator(
-                DoidConstants.THROMBOEMBOLIC_EVENT_DOID_SET,
-                "Thrombo-embolic event"
+            EligibilityRule.HAS_HISTORY_OF_STROKE_WITHIN_X_MONTHS to hasRecentPriorConditionWithIcdCodeFromListCreator(
+                IcdConstants.STROKE_LIST,
+                "cerebrovascular accident"
             ),
-            EligibilityRule.HAS_HISTORY_OF_THROMBOEMBOLIC_EVENT to hasPriorConditionWithDoidsFromSetCreator(
-                DoidConstants.THROMBOEMBOLIC_EVENT_DOID_SET,
-                "Thrombo-embolic event"
+            EligibilityRule.HAS_HISTORY_OF_THROMBOEMBOLIC_EVENT_WITHIN_X_MONTHS to hasRecentPriorConditionWithIcdCodeFromListCreator(
+                IcdConstants.THROMBOEMBOLIC_EVENT_LIST,
+                "thrombo-embolic event"
             ),
-            EligibilityRule.HAS_HISTORY_OF_ARTERIAL_THROMBOEMBOLIC_EVENT to hasPriorConditionWithDoidsFromSetCreator(
-                setOf(DoidConstants.MYOCARDIAL_INFARCT_DOID, DoidConstants.STROKE_DOID), "Arterial thrombo-embolic event"
+            EligibilityRule.HAS_HISTORY_OF_THROMBOEMBOLIC_EVENT to hasPriorConditionWithIcdCodesFromListCreator(
+                IcdConstants.THROMBOEMBOLIC_EVENT_LIST,
+                "thrombo-embolic event"
             ),
-            EligibilityRule.HAS_HISTORY_OF_VENOUS_THROMBOEMBOLIC_EVENT to hasPriorConditionWithDoidsFromSetCreator(
-                setOf(DoidConstants.THROMBOSIS_DOID, DoidConstants.PULMONARY_EMBOLISM_DOID), "Venous thrombo-embolic event"
+            EligibilityRule.HAS_HISTORY_OF_ARTERIAL_THROMBOEMBOLIC_EVENT to hasPriorConditionWithIcdCodesFromListCreator(
+                IcdConstants.ARTERIAL_THROMBOEMBOLIC_EVENT_LIST, "Arterial thrombo-embolic event"
+            ),
+            EligibilityRule.HAS_HISTORY_OF_VENOUS_THROMBOEMBOLIC_EVENT to hasPriorConditionWithIcdCodesFromListCreator(
+                IcdConstants.VENOUS_THROMBOEMBOLIC_EVENT_LIST, "Venous thrombo-embolic event"
             ),
             EligibilityRule.HAS_HISTORY_OF_VASCULAR_DISEASE to hasPriorConditionWithDoidCreator(DoidConstants.VASCULAR_DISEASE_DOID),
             EligibilityRule.HAS_SEVERE_CONCOMITANT_CONDITION to hasSevereConcomitantIllnessCreator(),
@@ -74,7 +79,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
     private fun hasPriorConditionWithConfiguredIcdTitleCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val targetIcdTitle = functionInputResolver().createOneIcdTitleInput(function)
-            HasHadPriorConditionWithIcdCode(icdModel(), targetIcdTitle)
+            HasHadPriorConditionWithIcd(icdModel(), targetIcdTitle)
         }
     }
 
@@ -86,31 +91,32 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
     }
 
     private fun hasPriorConditionWithDoidCreator(targetIcdTitle: String): FunctionCreator {
-        return { HasHadPriorConditionWithIcdCode(icdModel(), targetIcdTitle) }
+        return { HasHadPriorConditionWithIcd(icdModel(), targetIcdTitle) }
     }
 
     private fun hasInheritedPredispositionToBleedingOrThrombosisCreator(): FunctionCreator {
-        return { HasInheritedPredispositionToBleedingOrThrombosis(doidModel()) }
+        return { HasInheritedPredispositionToBleedingOrThrombosis(icdModel()) }
     }
 
-    private fun hasRecentPriorConditionWithDoidCreator(doidToFind: String): FunctionCreator {
+    private fun hasRecentPriorConditionWithIcdCodeFromListCreator(
+        targetIcdCodes: List<String>,
+        diseaseDescription: String
+    ): FunctionCreator {
         return { function: EligibilityFunction ->
             val maxMonthsAgo = functionInputResolver().createOneIntegerInput(function)
             val minDate = referenceDateProvider().date().minusMonths(maxMonthsAgo.toLong())
-            HasHadPriorConditionWithDoidsFromSetRecently(
-                doidModel(), setOf(doidToFind), doidModel().resolveTermForDoid(doidToFind) ?: "DOID $doidToFind", minDate
-            )
+            HasHadPriorConditionWithIcdCodeFromListRecently(icdModel(), targetIcdCodes, diseaseDescription, minDate)
         }
     }
 
-    private fun hasRecentPriorConditionWithConfiguredDoidTermCreator(): FunctionCreator {
+    private fun hasRecentPriorConditionWithConfiguredIcdCodeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneDoidTermOneIntegerInput(function)
-            val doidTermToFind = input.doidTerm
+            val input = functionInputResolver().createOneIcdTitleOneIntegerInput(function)
+            val targetIcdCode = icdModel().titleToCodeMap[input.icdTitle]
             val maxMonthsAgo = input.integer
             val minDate = referenceDateProvider().date().minusMonths(maxMonthsAgo.toLong())
-            HasHadPriorConditionWithDoidsFromSetRecently(
-                doidModel(), setOf(doidModel().resolveDoidForTerm(doidTermToFind)!!), doidTermToFind, minDate
+            HasHadPriorConditionWithIcdCodeFromListRecently(
+                icdModel(), listOf(targetIcdCode!!), input.icdTitle, minDate
             )
         }
     }
@@ -125,17 +131,8 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
         }
     }
 
-    private fun hasPriorConditionWithDoidsFromSetCreator(doidsToFind: Set<String>, priorOtherConditionTerm: String): FunctionCreator {
-        return { function: EligibilityFunction ->
-            HasHadPriorConditionWithDoidsFromSet(doidModel(), doidsToFind, priorOtherConditionTerm)
-        }
-    }
-
-    private fun hasRecentPriorConditionWithDoidsFromSetCreator(doidsToFind: Set<String>, priorOtherConditionTerm: String): FunctionCreator {
-        return { function: EligibilityFunction ->
-            val maxMonthsAgo = functionInputResolver().createOneIntegerInput(function)
-            val minDate = referenceDateProvider().date().minusMonths(maxMonthsAgo.toLong())
-            HasHadPriorConditionWithDoidsFromSetRecently(doidModel(), doidsToFind, priorOtherConditionTerm, minDate)
+    private fun hasPriorConditionWithIcdCodesFromListCreator(targetIcdCodes: List<String>, priorOtherConditionTerm: String): FunctionCreator {
+        return { HasHadPriorConditionWithIcdCodeFromList(icdModel(), targetIcdCodes, priorOtherConditionTerm)
         }
     }
 

@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.icd.IcdModel
 
-class HasHadPriorConditionWithIcdCode(private val icdModel: IcdModel, private val targetIcdTitle: String) : EvaluationFunction {
+class HasHadPriorConditionWithIcd(private val icdModel: IcdModel, private val targetIcdTitle: String) : EvaluationFunction {
     
     override fun evaluate(record: PatientRecord): Evaluation {
         val icdCode = icdModel.titleToCodeMap[targetIcdTitle]!!
