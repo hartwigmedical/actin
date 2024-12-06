@@ -15,18 +15,18 @@ class VirusEvidence(
 
     override fun findMatches(event: Virus): ActionabilityMatch {
         return if (!event.isReportable) {
-            ActionabilityMatch(evidenceMatches = emptyList(), trialMatches = emptyList())
+            ActionabilityMatch(evidenceMatches = emptyList(), matchingCriteriaPerTrialMatch = emptyMap())
         } else when (event.type) {
             VirusType.HUMAN_PAPILLOMA_VIRUS -> {
-                ActionabilityMatch(evidenceMatches = hpvEvidences, trialMatches = hpvTrials)
+                ActionabilityMatch(evidenceMatches = hpvEvidences, matchingCriteriaPerTrialMatch = hpvTrials)
             }
 
             VirusType.EPSTEIN_BARR_VIRUS -> {
-                ActionabilityMatch(evidenceMatches = ebvEvidences, trialMatches = ebvTrials)
+                ActionabilityMatch(evidenceMatches = ebvEvidences, matchingCriteriaPerTrialMatch = ebvTrials)
             }
 
             else -> {
-                ActionabilityMatch(evidenceMatches = emptyList(), trialMatches = emptyList())
+                ActionabilityMatch(evidenceMatches = emptyList(), matchingCriteriaPerTrialMatch = emptyList())
             }
         }
     }

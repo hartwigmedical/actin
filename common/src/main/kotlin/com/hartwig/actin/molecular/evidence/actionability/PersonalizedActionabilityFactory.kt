@@ -10,12 +10,13 @@ class PersonalizedActionabilityFactory(private val expandedTumorDoids: Set<Strin
 
     fun create(match: ActionabilityMatch): ClinicalEvidence {
         val (onLabelEvidences, offLabelEvidences) = partitionEvidences(match.evidenceMatches)
-        val (onLabelTrials, _) = partitionTrials(match.trialMatches)
+        val (onLabelTrials, _) = partitionTrials(match.matchingCriteriaPerTrialMatch)
+
 
         return ClinicalEvidenceFactory.create(
             onLabelEvidences = onLabelEvidences,
             offLabelEvidences = offLabelEvidences,
-            onLabelTrials = onLabelTrials
+            matchingCriteriaAndIndicationsPerEligibleTrial = onLabelTrials
         )
     }
 

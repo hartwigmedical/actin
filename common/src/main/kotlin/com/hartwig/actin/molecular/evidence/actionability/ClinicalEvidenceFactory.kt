@@ -11,15 +11,9 @@ import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.datamodel.molecular.evidence.MolecularMatchDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractCharacteristic
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractCharacteristics
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractFusion
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractFusions
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractGene
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractGenes
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractRange
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractRanges
+import com.hartwig.serve.datamodel.common.Indication
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
+import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.trial.ActionableTrial
 import java.time.LocalDate
 import com.hartwig.serve.datamodel.trial.Hospital as ServeHospital
@@ -29,37 +23,27 @@ object ClinicalEvidenceFactory {
     fun create(
         onLabelEvidences: List<EfficacyEvidence>,
         offLabelEvidences: List<EfficacyEvidence>,
-        onLabelTrials: List<ActionableTrial>
+        matchingCriteriaAndIndicationsPerEligibleTrial: Map<ActionableTrial, Pair<Set<MolecularCriterium>, Set<Indication>>>
     ): ClinicalEvidence {
         val onLabelTreatmentEvidences = convertToTreatmentEvidences(true, onLabelEvidences)
         val offLabelTreatmentEvidences = convertToTreatmentEvidences(false, offLabelEvidences)
 
         return ClinicalEvidence(
             treatmentEvidence = onLabelTreatmentEvidences + offLabelTreatmentEvidences,
-            eligibleTrials = convertToExternalTrials(onLabelTrials)
+            eligibleTrials = convertToExternalTrials(matchingCriteriaAndIndicationsPerEligibleTrial)
         )
     }
 
     private fun convertToTreatmentEvidences(isOnLabel: Boolean, evidences: List<EfficacyEvidence>): Set<TreatmentEvidence> {
-        val filters = listOf(
-            ActionableEventsExtraction.geneFilter() to { evidence: EfficacyEvidence -> extractGene(evidence) },
-            ActionableEventsExtraction.codonFilter() to { evidence: EfficacyEvidence -> extractRange(evidence) },
-            ActionableEventsExtraction.hotspotFilter() to { evidence: EfficacyEvidence -> ActionableEventsExtraction.extractHotspot(evidence) },
-            ActionableEventsExtraction.exonFilter() to { evidence: EfficacyEvidence -> extractRange(evidence) },
-            ActionableEventsExtraction.fusionFilter() to { evidence: EfficacyEvidence -> extractFusion(evidence) },
-            ActionableEventsExtraction.characteristicsFilter() to { evidence: EfficacyEvidence -> extractCharacteristic(evidence) },
-        )
-
-        return filters.flatMap { (filter, extractor) ->
-            ActionableEventsExtraction.extractEfficacyEvidence(evidences, filter).map {
-                createTreatmentEvidence(
-                    isOnLabel,
-                    it,
-                    extractor(it).sourceDate(),
-                    extractor(it).sourceEvent(),
-                    extractor(it).isCategoryEvent()
-                )
-            }
+        return evidences.map { evidence ->
+            val actionableEvent = ActionableEventsExtraction.extractEvent(evidence.molecularCriterium())
+            createTreatmentEvidence(
+                isOnLabel,
+                evidence,
+                actionableEvent.sourceDate(),
+                actionableEvent.sourceEvent(),
+                actionableEvent.isCategoryEvent()
+            )
         }.toSet()
     }
 
@@ -91,23 +75,20 @@ object ClinicalEvidenceFactory {
         )
     }
 
-    private fun convertToExternalTrials(trials: List<ActionableTrial>): Set<ExternalTrial> {
-        return listOf(
-            ActionableEventsExtraction.geneFilter() to { trial: ActionableTrial -> extractGenes(trial) },
-            ActionableEventsExtraction.codonFilter() to { trial: ActionableTrial -> extractRanges(trial) },
-            ActionableEventsExtraction.hotspotFilter() to { trial: ActionableTrial -> ActionableEventsExtraction.extractHotspots(trial) },
-            ActionableEventsExtraction.exonFilter() to { trial: ActionableTrial -> extractRanges(trial) },
-            ActionableEventsExtraction.fusionFilter() to { trial: ActionableTrial -> extractFusions(trial) },
-            ActionableEventsExtraction.characteristicsFilter() to { trial: ActionableTrial -> extractCharacteristics(trial) },
-        ).flatMap { (filter, extractor) ->
-            ActionableEventsExtraction.extractTrials(trials, filter).map {
-                createExternalTrial(
-                    it,
-                    extractor(it).first().sourceDate(),
-                    extractor(it).first().sourceEvent(),
-                    extractor(it).first().isCategoryEvent()
-                )
-            }
+    private fun convertToExternalTrials(
+        matchingCriteriaAndIndicationsPerEligibleTrial: Map<ActionableTrial, Pair<Set<MolecularCriterium>, Set<Indication>>>
+    ): Set<ExternalTrial> {
+        // TODO Implement properly for N criteria and M indications.
+        return matchingCriteriaAndIndicationsPerEligibleTrial.keys.map { actionableTrial ->
+            val matchingCriteriaAndIndications = matchingCriteriaAndIndicationsPerEligibleTrial[actionableTrial]
+            val actionableEvent = ActionableEventsExtraction.extractEvent(matchingCriteriaAndIndications!!.first.first())
+
+            createExternalTrial(
+                actionableTrial,
+                actionableEvent.sourceDate(),
+                actionableEvent.sourceEvent(),
+                actionableEvent.isCategoryEvent()
+            )
         }.toSet()
     }
 

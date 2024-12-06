@@ -30,7 +30,7 @@ class ClinicalEvidenceFactoryTest {
             ClinicalEvidenceFactory.create(
                 onLabelEvidences = listOf(TestServeEvidenceFactory.create(treatment = onLabel.treatment)),
                 offLabelEvidences = emptyList(),
-                onLabelTrials = emptyList()
+                matchingCriteriaAndIndicationsPerEligibleTrial = emptyList()
             )
 
         assertThat(result.treatmentEvidence).containsExactly(onLabel)
@@ -52,7 +52,7 @@ class ClinicalEvidenceFactoryTest {
             ClinicalEvidenceFactory.create(
                 onLabelEvidences = emptyList(),
                 offLabelEvidences = listOf(TestServeEvidenceFactory.create(treatment = offLabel.treatment)),
-                onLabelTrials = emptyList()
+                matchingCriteriaAndIndicationsPerEligibleTrial = emptyList()
             )
 
         assertThat(result.treatmentEvidence).containsExactly(offLabel)
@@ -69,7 +69,7 @@ class ClinicalEvidenceFactoryTest {
             ClinicalEvidenceFactory.create(
                 onLabelEvidences = emptyList(),
                 offLabelEvidences = emptyList(),
-                onLabelTrials = listOf(
+                matchingCriteriaAndIndicationsPerEligibleTrial = listOf(
                     TestServeTrialFactory.create(
                         source = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
                         title = trial.title,

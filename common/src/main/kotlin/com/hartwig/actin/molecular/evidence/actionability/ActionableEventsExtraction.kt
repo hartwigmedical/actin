@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
+import com.hartwig.serve.datamodel.molecular.ActionableEvent
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.molecular.characteristic.ActionableCharacteristic
 import com.hartwig.serve.datamodel.molecular.characteristic.TumorCharacteristicType
@@ -72,6 +73,36 @@ object ActionableEventsExtraction {
         validTypes: Set<TumorCharacteristicType> = TumorCharacteristicType.values().toSet()
     ): List<ActionableTrial> {
         return extractTrials(trials, characteristicsFilter(validTypes))
+    }
+
+    fun extractEvent(molecularCriterium: MolecularCriterium): ActionableEvent {
+        return when {
+            hotspotFilter().test(molecularCriterium) -> {
+                molecularCriterium.hotspots().iterator().next()
+            }
+
+            codonFilter().test(molecularCriterium) -> {
+                molecularCriterium.codons().iterator().next()
+            }
+
+            exonFilter().test(molecularCriterium) -> {
+                molecularCriterium.exons().iterator().next()
+            }
+
+            geneFilter().test(molecularCriterium) -> {
+                molecularCriterium.genes().iterator().next()
+            }
+
+            fusionFilter().test(molecularCriterium) -> {
+                molecularCriterium.fusions().iterator().next()
+            }
+
+            characteristicsFilter().test(molecularCriterium) -> {
+                molecularCriterium.characteristics().iterator().next()
+            }
+
+            else -> throw IllegalStateException("Could not extract event for molecular criterium: $molecularCriterium")
+        }
     }
 
     fun extractHotspot(efficacyEvidence: EfficacyEvidence): ActionableHotspot {

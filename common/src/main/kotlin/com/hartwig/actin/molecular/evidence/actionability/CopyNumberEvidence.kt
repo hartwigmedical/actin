@@ -24,7 +24,7 @@ class CopyNumberEvidence(
             }
 
             else -> {
-                ActionabilityMatch(evidenceMatches = emptyList(), trialMatches = emptyList())
+                ActionabilityMatch(evidenceMatches = emptyList(), matchingCriteriaPerTrialMatch = emptyList())
             }
         }
     }
@@ -36,7 +36,7 @@ class CopyNumberEvidence(
     ): ActionabilityMatch {
         return ActionabilityMatch(
             evidenceMatches = applicableEvidences.filter { ActionableEventsExtraction.extractGene(it).gene() == copyNumber.gene },
-            trialMatches = applicableTrials.filter {
+            matchingCriteriaPerTrialMatch = applicableTrials.filter {
                 ActionableEventsExtraction.extractGenes(it).any { actionableGene -> actionableGene.gene() == copyNumber.gene }
             }
         )
