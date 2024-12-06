@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.medication
 
+import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.DrugInteraction
 import com.hartwig.actin.datamodel.clinical.Medication
@@ -204,8 +205,11 @@ class MedicationSelectorTest {
                     atc = AtcTestFactory.atcClassification().copy(pharmacologicalSubGroup = AtcLevel("", "other category"))
                 )
         )
-        val (activeMedications, plannedMedications) = MedicationTestFactory.createProperMedicationSelector(referenceDate)
-            .extractActiveAndPlannedWithCategory(medications, setOf(atcLevelToFind))
+        val medicationSelector = MedicationSelector(MedicationStatusInterpreterOnEvaluationDate(referenceDate, referenceDate))
+        val (activeMedications, plannedMedications) = medicationSelector.extractActiveAndPlannedWithCategory(
+            medications,
+            setOf(atcLevelToFind)
+        )
         assertThat(activeMedications).containsExactly("active opioid")
         assertThat(plannedMedications).containsExactly("planned opioid")
     }
