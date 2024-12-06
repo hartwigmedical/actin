@@ -4,7 +4,6 @@ import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.molecular.evidence.CancerType
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
-import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import java.time.LocalDate
@@ -22,10 +21,10 @@ data class ExternalTrialSummary(
 
 data class EventWithExternalTrial(val event: String, val trial: ExternalTrial)
 
-private fun countryNames(it: ExternalTrialSummary) = it.countries.map { c -> c.name }
+private fun countryNames(it: ExternalTrialSummary) = it.countries.map { c -> c.country }
 
-private fun hospitalsNamesForCountry(trial: ExternalTrialSummary, country: CountryName) =
-    trial.countries.firstOrNull { it.name == country }?.hospitalsPerCity?.flatMap { it.value }?.toSet()
+private fun hospitalsNamesForCountry(trial: ExternalTrialSummary, country: Country) =
+    trial.countries.firstOrNull { it.country == country }?.hospitalsPerCity?.flatMap { it.value }?.toSet()
         ?: throw IllegalArgumentException("Country not found")
 
 fun Set<ExternalTrialSummary>.filterInternalTrials(internalTrials: Set<TrialMatch>): Set<ExternalTrialSummary> {
@@ -77,13 +76,15 @@ object ExternalTrialSummarizer {
         }.groupBy { t -> t.trial.nctId }.map { e ->
             val countries = e.value.flatMap { ewe -> ewe.trial.countries }
             val trial = e.value.first().trial
-            ExternalTrialSummary(e.key,
+            ExternalTrialSummary(
+                e.key,
                 trial.title,
                 trial.url,
                 e.value.map { ewe -> ewe.event }.toSortedSet(),
-                e.value.map { ewe -> ewe.trial.sourceEvent }.toSortedSet(),
-                e.value.map { ewe -> ewe.trial.applicableCancerType }.toSortedSet(Comparator.comparing { c -> c.cancerType }),
-                countries.toSortedSet(Comparator.comparing { c -> c.name })
+                e.value.map { ewe -> ewe.trial.molecularMatches.first().sourceEvent }.toSortedSet(),
+                e.value.map { ewe -> ewe.trial.applicableCancerTypes.first() }
+                    .toSortedSet(Comparator.comparing { c -> c.matchedCancerType }),
+                countries.toSortedSet(Comparator.comparing { c -> c.country })
             )
         }
             .toSortedSet(compareBy<ExternalTrialSummary> { it.actinMolecularEvents.joinToString() }.thenBy { it.sourceMolecularEvents.joinToString() }

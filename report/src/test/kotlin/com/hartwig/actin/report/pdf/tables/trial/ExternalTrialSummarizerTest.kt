@@ -163,7 +163,7 @@ class ExternalTrialSummarizerTest {
         )
         assertThat(
             setOf(notFilteredHospital, filteredHospital)
-                .filterExclusivelyInChildrensHospitalsInReferenceCountry(1960, LocalDate.of(2021, 1, 1), CountryName.NETHERLANDS)
+                .filterExclusivelyInChildrensHospitalsInReferenceCountry(1960, LocalDate.of(2021, 1, 1), Country.NETHERLANDS)
         ).containsExactlyInAnyOrder(notFilteredHospital)
     }
 
@@ -177,7 +177,7 @@ class ExternalTrialSummarizerTest {
         val result = setOf(notFilteredHospital).filterExclusivelyInChildrensHospitalsInReferenceCountry(
             birthYear = 2000,
             referenceDate = LocalDate.of(2021, 1, 1),
-            countryOfReference = CountryName.NETHERLANDS
+            countryOfReference = Country.NETHERLANDS
         )
         assertThat(result).containsExactlyInAnyOrder(notFilteredHospital)
     }
@@ -229,12 +229,13 @@ class ExternalTrialSummarizerTest {
         assertThat(result).containsExactly(notFiltered)
     }
 
-    private fun countrySet(vararg countries: CountryDetails) = sortedSetOf(Comparator.comparing { it.name }, *countries)
+    private fun countrySet(vararg countries: CountryDetails) = sortedSetOf(Comparator.comparing { it.country }, *countries)
 
-    private fun createExternalTrialSummaryWithHospitals(vararg countryHospitals: Pair<CountryDetails, Map<String, Set<Hospital>>>): ExternalTrialSummary {
+    private fun createExternalTrialSummaryWithHospitals(vararg countryHospitals: Pair<CountryDetails, Map<String, Set<Hospital>>>):
+            ExternalTrialSummary {
         val countries = countryHospitals.map { (country, hospitals) ->
             country.copy(hospitalsPerCity = hospitals)
-        }.toSortedSet(Comparator.comparing { it.name })
+        }.toSortedSet(Comparator.comparing { it.country })
         return BASE_EXTERNAL_TRIAL_SUMMARY.copy(countries = countries)
     }
 
