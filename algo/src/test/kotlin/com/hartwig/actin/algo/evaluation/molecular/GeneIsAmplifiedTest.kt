@@ -181,6 +181,20 @@ class GeneIsAmplifiedTest {
         )
     }
 
+    @Test
+    fun `Should warn with full gain on non-canonical transcript and no gain on canonical transcript`() {
+        val function = GeneIsAmplified("gene A", 4)
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(
+                MolecularTestFactory.withPloidyAndCopyNumber(
+                    PLOIDY,
+                    passingAmpOnNonCanonicalTranscript
+                )
+            )
+        )
+    }
+
     private fun assertEvaluation(result: EvaluationResult, record: PatientRecord) {
         assertMolecularEvaluation(result, functionWithMinCopies.evaluate(record))
         assertMolecularEvaluation(result, functionWithNoMinCopies.evaluate(record))

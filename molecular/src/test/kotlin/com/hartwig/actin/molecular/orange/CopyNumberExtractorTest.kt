@@ -100,8 +100,8 @@ class CopyNumberExtractorTest {
         assertThat(gene1.otherImpacts).isEmpty()
 
         val gene2 = findByGene(copyNumbers, "gene 2")
-        assertThat(gene2.isReportable).isFalse
-        assertThat(gene2.driverLikelihood).isNull()
+        assertThat(gene2.isReportable).isTrue
+        assertThat(gene2.driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
         assertThat(gene2.canonicalImpact.type).isEqualTo(CopyNumberType.NONE)
         assertThat(gene2.canonicalImpact.minCopies).isEqualTo(4)
         assertThat(gene2.canonicalImpact.maxCopies).isEqualTo(5)

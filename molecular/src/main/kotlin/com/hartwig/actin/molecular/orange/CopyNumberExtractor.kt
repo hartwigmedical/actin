@@ -75,9 +75,9 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
                         geneRole = GeneRole.UNKNOWN,
                         proteinEffect = ProteinEffect.UNKNOWN,
                         isAssociatedWithDrugResistance = null,
-                        isReportable = false, // Question for mr. Duyvesteyn: Is this correct when CDKN2A has no canonical impact but does have a non-canonical impact?
+                        isReportable = otherGainLosses.isNotEmpty(), //TODO (CB) Question for mr. Duyvesteyn: Do you agree with this?
                         event = event,
-                        driverLikelihood = null, // Same here
+                        driverLikelihood = if (otherGainLosses.isNotEmpty()) DriverLikelihood.HIGH else null, //TODO (CB) Question for mr. Duyvesteyn: Do you agree with this?
                         evidence = ClinicalEvidenceFactory.createNoEvidence(),
                         canonicalImpact = TranscriptCopyNumberImpact(
                             transcriptId = "",
