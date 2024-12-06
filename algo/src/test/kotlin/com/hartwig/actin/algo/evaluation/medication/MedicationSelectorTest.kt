@@ -181,7 +181,7 @@ class MedicationSelectorTest {
     }
 
     @Test
-    fun `Should extract active and planned medication for a category`() {
+    fun `Should extract active and planned medication with category opioids`() {
         val referenceDate = LocalDate.of(2024, 2, 9)
         val atcLevelToFind = AtcLevel("N02A", "Opioids")
         val opioid = AtcTestFactory.atcClassification().copy(pharmacologicalSubGroup = atcLevelToFind)
@@ -204,7 +204,7 @@ class MedicationSelectorTest {
                     atc = AtcTestFactory.atcClassification().copy(pharmacologicalSubGroup = AtcLevel("", "other category"))
                 )
         )
-        val (activeMedications, plannedMedications) = MedicationTestFactory.activeFromDateAndPlanned(referenceDate)
+        val (activeMedications, plannedMedications) = MedicationTestFactory.createProperMedicationSelector(referenceDate)
             .extractActiveAndPlannedWithCategory(medications, setOf(atcLevelToFind))
         assertThat(activeMedications).containsExactly("active opioid")
         assertThat(plannedMedications).containsExactly("planned opioid")

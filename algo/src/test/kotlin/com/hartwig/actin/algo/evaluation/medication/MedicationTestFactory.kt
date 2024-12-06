@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
+import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.clinical.AtcClassification
@@ -29,24 +30,10 @@ internal object MedicationTestFactory {
         return createConstantSelector(MedicationStatusInterpretation.PLANNED)
     }
 
-    fun activeFromDateAndPlanned(referenceDate: LocalDate): MedicationSelector {
+    fun createProperMedicationSelector(referenceDate: LocalDate): MedicationSelector {
         return MedicationSelector(object : MedicationStatusInterpreter {
             override fun interpret(medication: Medication): MedicationStatusInterpretation {
-                val startDate = medication.startDate
-                val stopDate = medication.stopDate
-                return when {
-                    startDate?.isBefore(referenceDate) == true && stopDate?.isAfter(referenceDate) ?: true -> {
-                        MedicationStatusInterpretation.ACTIVE
-                    }
-
-                    startDate?.isAfter(referenceDate) == true -> {
-                        MedicationStatusInterpretation.PLANNED
-                    }
-
-                    else -> {
-                        MedicationStatusInterpretation.UNKNOWN
-                    }
-                }
+                return MedicationStatusInterpreterOnEvaluationDate(referenceDate, referenceDate).interpret(medication)
             }
         })
     }
