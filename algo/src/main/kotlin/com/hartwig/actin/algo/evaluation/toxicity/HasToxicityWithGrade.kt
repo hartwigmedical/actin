@@ -23,11 +23,17 @@ class HasToxicityWithGrade(
     override fun evaluate(record: PatientRecord): Evaluation {
         val (matchingToxicities, otherToxicities) =
             ToxicityFunctions.selectRelevantToxicities(record, icdModel, referenceDate, icdTitlesToIgnore).partition { toxicity ->
-            val grade = toxicity.grade ?: DEFAULT_QUESTIONNAIRE_GRADE.takeIf { toxicity.source == ToxicitySource.QUESTIONNAIRE }
-            val gradeMatch = grade?.let { it >= minGrade } ?: false
-            val matchesIcd = ToxicityFunctions.hasIcdMatch(toxicity, targetIcdTitles, icdModel)
-            gradeMatch && matchesIcd
-        }
+                val grade = toxicity.grade ?: DEFAULT_QUESTIONNAIRE_GRADE.takeIf { toxicity.source == ToxicitySource.QUESTIONNAIRE }
+                val gradeMatch = grade?.let { it >= minGrade } ?: false
+                val matchesIcd = targetIcdTitles?.let {
+                    ToxicityFunctions.hasIcdMatch(
+                        toxicity,
+                        targetIcdTitles.map { icdModel.resolveCodeForTitle(it)!! },
+                        icdModel
+                    )
+                } ?: true
+                gradeMatch && matchesIcd
+            }
 
         val unresolvableToxicities = if (minGrade <= DEFAULT_QUESTIONNAIRE_GRADE) emptyList() else {
             otherToxicities.filter {

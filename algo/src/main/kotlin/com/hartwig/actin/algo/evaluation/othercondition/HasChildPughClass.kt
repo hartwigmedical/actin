@@ -1,27 +1,30 @@
 package com.hartwig.actin.algo.evaluation.othercondition
 
-import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.icd.IcdModel
 
-class HasChildPughClass(private val doidModel: DoidModel) : EvaluationFunction {
+class HasChildPughClass(private val icdModel: IcdModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        for (condition in OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)) {
-            if (condition.doids.any { doidModel.doidWithParents(it).contains(DoidConstants.LIVER_CIRRHOSIS_DOID) }) {
-                return EvaluationFactory.undetermined(
-                    "Currently Child-Pugh class cannot be determined",
-                    "Undetermined Child-Pugh class"
-                )
-            }
+        val hasLiverCirrhosis = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions).any {
+            icdModel.returnCodeWithParents(it.icdCode).contains(IcdConstants.LIVER_CIRRHOSIS_CODE)
         }
-        return EvaluationFactory.notEvaluated(
-            "Child Pugh Score not relevant since liver cirrhosis not present in medical history",
-            "Child Pugh not relevant since liver cirrhosis not present"
-        )
+
+        return if (hasLiverCirrhosis) {
+            EvaluationFactory.undetermined(
+                "Currently Child-Pugh class cannot be determined",
+                "Undetermined Child-Pugh class"
+            )
+        } else {
+            EvaluationFactory.notEvaluated(
+                "Child Pugh Score not relevant since liver cirrhosis not present in medical history",
+                "Child Pugh not relevant since liver cirrhosis not present"
+            )
+        }
     }
 }

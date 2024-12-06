@@ -1,16 +1,16 @@
 package com.hartwig.actin.algo.evaluation.othercondition
 
-import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.intolerance
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.priorOtherCondition
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.withPriorOtherCondition
+import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.doid.TestDoidModelFactory
+import com.hartwig.actin.icd.TestIcdFactory
 import org.junit.Test
 
 class HasContraindicationToMRITest {
-    private val function = HasContraindicationToMRI(TestDoidModelFactory.createMinimalTestDoidModel())
+    private val function = HasContraindicationToMRI(TestIcdFactory.createTestModel())
 
 
     @Test
@@ -24,7 +24,7 @@ class HasContraindicationToMRITest {
             EvaluationResult.FAIL, function.evaluate(
                 OtherConditionTestFactory.withPriorOtherConditions(
                     listOf(
-                        priorOtherCondition(doids = setOf("wrong doid")),
+                        priorOtherCondition(icdCode = "wrong"),
                         priorOtherCondition(name = "not a contraindication")
                     )
                 )
@@ -33,10 +33,10 @@ class HasContraindicationToMRITest {
     }
 
     @Test
-    fun `Should pass with a condition with correct DOID`() {
+    fun `Should pass with a condition with correct ICD code`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(withPriorOtherCondition(priorOtherCondition(doids = setOf(DoidConstants.KIDNEY_DISEASE_DOID))))
+            function.evaluate(withPriorOtherCondition(priorOtherCondition(icdCode = IcdConstants.KIDNEY_FAILURE_BLOCK)))
         )
     }
 

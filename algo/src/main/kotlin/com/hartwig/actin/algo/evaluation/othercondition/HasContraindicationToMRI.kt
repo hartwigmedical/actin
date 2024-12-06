@@ -1,42 +1,49 @@
 package com.hartwig.actin.algo.evaluation.othercondition
 
-import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
+import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.icd.IcdModel
 
-class HasContraindicationToMRI(private val doidModel: DoidModel) : EvaluationFunction {
+class HasContraindicationToMRI(private val icdModel: IcdModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        for (condition in OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)) {
-            for (doid in condition.doids) {
-                if (doidModel.doidWithParents(doid).contains(DoidConstants.KIDNEY_DISEASE_DOID)) {
-                    return EvaluationFactory.pass(
-                        "Patient has a potential contraindication to MRI due to " + doidModel.resolveTermForDoid(doid),
-                        "Potential MRI contraindication: " + doidModel.resolveTermForDoid(doid)
-                    )
-                }
-            }
-            if (stringCaseInsensitivelyMatchesQueryCollection(condition.name, OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_MRI)) {
-                return EvaluationFactory.pass(
-                    "Patient has a potential contraindication to MRI due to condition " + condition.name,
-                    "Potential MRI contraindication: " + condition.name
+        val targetCodes = listOf(IcdConstants.KIDNEY_FAILURE_BLOCK, IcdConstants.PRESENCE_OF_DEVICE_IMPLANT_OR_GRAFT_BLOCK)
+        val relevantConditions = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
+        val conditionsMatchingCode = relevantConditions.flatMap {
+            PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(record, targetCodes, icdModel)
+        }.map { it.name }
+        val conditionsMatchingString = relevantConditions.filter {
+            stringCaseInsensitivelyMatchesQueryCollection(it.name, OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_MRI)
+        }
+        val intolerances =
+            record.intolerances.filter {
+                stringCaseInsensitivelyMatchesQueryCollection(
+                    it.name,
+                    INTOLERANCES_BEING_CONTRAINDICATIONS_TO_MRI
                 )
             }
+
+        val conditionString = Format.concatWithCommaAndAnd(conditionsMatchingCode)
+        val messageStart = "Potential MRI contraindication: "
+
+        return when {
+            conditionsMatchingCode.isNotEmpty() -> EvaluationFactory.recoverablePass(messageStart + conditionString)
+
+            conditionsMatchingString.isNotEmpty() -> EvaluationFactory.recoverablePass(
+                messageStart + Format.concatWithCommaAndAnd(
+                    conditionsMatchingString.map { it.name })
+            )
+
+            intolerances.isNotEmpty() -> EvaluationFactory.recoverablePass(messageStart + Format.concatWithCommaAndAnd(intolerances.map { it.name }))
+
+            else -> EvaluationFactory.fail("No potential contraindications to MRI identified", "No potential contraindications to MRI")
         }
-        for (intolerance in record.intolerances) {
-            if (stringCaseInsensitivelyMatchesQueryCollection(intolerance.name, INTOLERANCES_BEING_CONTRAINDICATIONS_TO_MRI)) {
-                return EvaluationFactory.pass(
-                    "Patient has a potential contraindication to MRI due to intolerance " + intolerance.name,
-                    "Potential MRI contraindication: " + intolerance.name
-                )
-            }
-        }
-        return EvaluationFactory.fail("No potential contraindications to MRI identified", "No potential contraindications to MRI")
     }
 
     companion object {

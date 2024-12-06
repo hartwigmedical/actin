@@ -8,7 +8,7 @@ import org.junit.Test
 class HasHadPriorConditionWithIcdTest {
 
     private val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("conditionParent", "condition"))
-    private val function = HasHadPriorConditionWithIcd(icdModel, "conditionParentTitle")
+    private val function = HasHadPriorConditionWithIcd(icdModel, "conditionParentCode")
 
     @Test
     fun `Should pass for prior condition with direct ICD code match`() {

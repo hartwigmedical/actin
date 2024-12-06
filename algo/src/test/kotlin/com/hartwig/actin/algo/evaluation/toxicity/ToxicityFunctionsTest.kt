@@ -53,15 +53,10 @@ class ToxicityFunctionsTest {
     }
 
     @Test
-    fun `Should return true when target icd titles are null`() {
-        assertThat(ToxicityFunctions.hasIcdMatch(ehrTox, null, TestIcdFactory.createTestModel())).isTrue()
-    }
-
-    @Test
-    fun `Should return true when tox icd code matches to target icd title`() {
+    fun `Should return true when tox icd code matches to target icd code`() {
         val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("node", "nodeParent"))
-        assertThat(ToxicityFunctions.hasIcdMatch(ehrTox.copy(icdCode = "nodeCode"), listOf("nodeParentTitle"), icdModel)).isTrue()
-        assertThat(ToxicityFunctions.hasIcdMatch(ehrTox.copy(icdCode = "nodeCode"), listOf("nodeTitle"), icdModel)).isTrue()
+        assertThat(ToxicityFunctions.hasIcdMatch(ehrTox.copy(icdCode = "nodeCode"), listOf("nodeParentCode"), icdModel)).isTrue()
+        assertThat(ToxicityFunctions.hasIcdMatch(ehrTox.copy(icdCode = "nodeCode"), listOf("nodeCode"), icdModel)).isTrue()
     }
 
     @Test

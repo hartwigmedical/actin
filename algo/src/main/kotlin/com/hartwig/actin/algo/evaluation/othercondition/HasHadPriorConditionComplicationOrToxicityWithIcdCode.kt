@@ -29,7 +29,7 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCode(
             ComplicationFunctions.findComplicationsMatchingAnyIcdCode(record, targetIcdCodes, icdModel).map { it.name }.toSet()
         val matchingToxicities = ToxicityFunctions.selectRelevantToxicities(record, icdModel, referenceDate, emptyList())
             .filter { toxicity -> (toxicity.grade ?: 0) >= 2 || (toxicity.source == ToxicitySource.QUESTIONNAIRE) }
-            .filter { ToxicityFunctions.hasIcdMatch(it, targetIcdTitles, icdModel) }.map { it.name }.toSet()
+            .filter { ToxicityFunctions.hasIcdMatch(it, targetIcdCodes, icdModel) }.map { it.name }.toSet()
 
         return if (matchingPriorConditions.isNotEmpty() || matchingComplications.isNotEmpty() || matchingToxicities.isNotEmpty()) {
             Evaluation(

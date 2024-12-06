@@ -1,71 +1,56 @@
 package com.hartwig.actin.algo.evaluation.othercondition
 
-import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.complication
-import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.toxicity
+import com.hartwig.actin.algo.icd.IcdConstants
+import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.clinical.Complication
-import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
-import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
-import com.hartwig.actin.doid.TestDoidModelFactory
+import com.hartwig.actin.icd.TestIcdFactory
 import org.junit.Test
 
 class HasPotentialAbsorptionDifficultiesTest {
-    val function = HasPotentialAbsorptionDifficulties(TestDoidModelFactory.createMinimalTestDoidModel())
+    private val function = HasPotentialAbsorptionDifficulties(TestIcdFactory.createTestModel())
+    private val correctIcd = IcdConstants.POSSIBLE_ABSORPTION_DIFFICULTIES_LIST.iterator().next()
+    private val wrongIcd = "wrongIcd"
+    private val correctCondition = OtherConditionTestFactory.priorOtherCondition(icdCode = correctIcd)
+    private val correctComplication = OtherConditionTestFactory.complication(icdCode = correctIcd)
+    private val correctToxicity = OtherConditionTestFactory.toxicity("", ToxicitySource.EHR, 2, correctIcd)
 
     @Test
-    fun canEvaluateOnPriorOtherConditions() {
-        // Test empty doid
-        val conditions: MutableList<PriorOtherCondition> = mutableListOf()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(conditions)))
-
-        // Add a condition with wrong doid
-        conditions.add(OtherConditionTestFactory.priorOtherCondition(doids = setOf("wrong doid")))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(conditions)))
-
-        // Add a condition with correct DOID
-        val absorptionDoid = DoidConstants.ABSORPTION_DIFFICULTIES_DOID_SET.iterator().next()
-        conditions.add(OtherConditionTestFactory.priorOtherCondition(doids = setOf(absorptionDoid)))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(conditions)))
+    fun `Should pass for icd-matching prior other condition`() {
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withPriorOtherCondition(correctCondition)))
     }
 
     @Test
-    fun canEvaluateOnComplications() {
-        // Test no complications
-        val complications: MutableList<Complication> = mutableListOf()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withComplications(complications)))
+    fun `Should pass for icd-matching complication`() {
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withComplications(listOf(correctComplication))))
+    }
 
-        // Add a random complication
-        complications.add(complication(name = "not a problem", categories = setOf("random complication")))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withComplications(complications)))
+    @Test
+    fun `Should pass for icd-matching toxicity`() {
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withToxicities(listOf(correctToxicity))))
+    }
 
-        // Add a real absorption one
-        complications.add(
-            complication(
-                name = "real complication", categories = setOf(HasPotentialAbsorptionDifficulties.GASTROINTESTINAL_DISORDER_CATEGORY)
+    @Test
+    fun `Should fail when no matching condition, complication or toxicity present`() {
+        listOf(
+            OtherConditionTestFactory.withToxicities(listOf(correctToxicity.copy(icdCode = wrongIcd))),
+            OtherConditionTestFactory.withComplications(listOf(correctComplication.copy(icdCode = wrongIcd))),
+            OtherConditionTestFactory.withPriorOtherCondition(correctCondition.copy(icdCode = wrongIcd))
+        )
+            .forEach {
+                assertEvaluation(EvaluationResult.FAIL, function.evaluate((it)))
+            }
+    }
+
+    @Test
+    fun `Should fail for empty history`() {
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(
+                TestPatientFactory.createMinimalTestWGSPatientRecord()
+                    .copy(priorOtherConditions = emptyList(), toxicities = emptyList(), complications = emptyList())
             )
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withComplications(complications)))
-    }
-
-    @Test
-    fun canEvaluateOnToxicities() {
-        // Test no toxicities
-        val toxicities: MutableList<Toxicity> = mutableListOf()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withToxicities(toxicities)))
-
-        // Add an irrelevant toxicity
-        toxicities.add(toxicity("Not a relevant one", ToxicitySource.QUESTIONNAIRE, null))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withToxicities(toxicities)))
-        val relevantToxicityName = HasPotentialAbsorptionDifficulties.TOXICITIES_CAUSING_ABSORPTION_DIFFICULTY.iterator().next()
-        // Add a toxicity with too low grade
-        toxicities.add(toxicity(relevantToxicityName, ToxicitySource.EHR, 1))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withToxicities(toxicities)))
-
-        // Add a valid toxicity
-        toxicities.add(toxicity(relevantToxicityName, ToxicitySource.EHR, 3))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withToxicities(toxicities)))
     }
 }

@@ -28,9 +28,7 @@ object ToxicityFunctions {
         return otherToxicities + mostRecentEhrToxicitiesByCode
     }
 
-    fun hasIcdMatch(toxicity: Toxicity, targetIcdTitles: List<String>?, icdModel: IcdModel): Boolean {
-        if (targetIcdTitles == null) return true
-        val targetIcdCodes = targetIcdTitles.mapNotNull { icdModel.resolveCodeForTitle(it) }
+    fun hasIcdMatch(toxicity: Toxicity, targetIcdCodes: List<String>, icdModel: IcdModel): Boolean {
         return targetIcdCodes.any { it in icdModel.returnCodeWithParents(toxicity.icdCode) }
     }
 }

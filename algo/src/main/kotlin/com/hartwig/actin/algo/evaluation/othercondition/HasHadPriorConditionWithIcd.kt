@@ -9,19 +9,18 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.icd.IcdModel
 
-class HasHadPriorConditionWithIcd(private val icdModel: IcdModel, private val targetIcdTitle: String) : EvaluationFunction {
+class HasHadPriorConditionWithIcd(private val icdModel: IcdModel, private val targetIcdCode: String) : EvaluationFunction {
     
     override fun evaluate(record: PatientRecord): Evaluation {
-        val icdCode = icdModel.titleToCodeMap[targetIcdTitle]!!
         val conditions =
-            OtherConditionSelector.selectConditionsMatchingIcdCode(record.priorOtherConditions, listOf(icdCode), icdModel)
+            OtherConditionSelector.selectConditionsMatchingIcdCode(record.priorOtherConditions, listOf(targetIcdCode), icdModel)
         return if (conditions.isNotEmpty()) {
             pass(
-                PriorConditionMessages.passSpecific(Characteristic.CONDITION, conditions, targetIcdTitle),
+                PriorConditionMessages.passSpecific(Characteristic.CONDITION, conditions, targetIcdCode),
                 PriorConditionMessages.passGeneral(conditions)
             )
         } else fail(
-            PriorConditionMessages.failSpecific(targetIcdTitle),
+            PriorConditionMessages.failSpecific(targetIcdCode),
             PriorConditionMessages.failGeneral()
         )
     }
