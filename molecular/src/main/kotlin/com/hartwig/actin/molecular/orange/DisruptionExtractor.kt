@@ -22,8 +22,9 @@ import com.hartwig.hmftools.datamodel.linx.LinxSvAnnotation
 internal class DisruptionExtractor(private val geneFilter: GeneFilter) {
 
     fun extractDisruptions(linx: LinxRecord, lostGenes: Set<String>, drivers: List<LinxDriver>): List<Disruption> {
+        val canonicalSvIds = linx.allSomaticBreakends().filter { it.isCanonical }.map { it.svId() }.toSet()
         return linx.allSomaticBreakends()
-            .filter { breakend -> breakend.isCanonical }
+            .filter { breakend -> breakend.isCanonical || !canonicalSvIds.contains(breakend.svId()) }
             .filter { breakend ->
                 val geneIncluded = geneFilter.include(breakend.gene())
                 if (!geneIncluded && breakend.reported()) {

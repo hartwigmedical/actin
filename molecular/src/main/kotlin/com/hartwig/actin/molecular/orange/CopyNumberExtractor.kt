@@ -24,6 +24,8 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
     fun extract(purple: PurpleRecord): List<CopyNumber> {
         val drivers = DriverExtractor.relevantPurpleDrivers(purple)
         return purple.allSomaticGeneCopyNumbers()
+            .asSequence()
+            .distinctBy { it.gene() } // TODO (CB): should not be necessary if all genes only have 1 geneCopyNumber
             .map { geneCopyNumber ->
                 Pair(geneCopyNumber, findCopyNumberDrivers(drivers, geneCopyNumber.gene()))
             }
@@ -69,15 +71,17 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
                         }.toSet(),
                     )
                 } else {
-                    val event = DriverEventFactory.geneCopyNumberEvent(geneCopyNumber)
+                    val event =
+                        if (otherGainLosses.isEmpty()) DriverEventFactory.geneCopyNumberEvent(geneCopyNumber) else otherGainLosses.first()
+                            .let { DriverEventFactory.gainLossEvent(otherGainLosses.first()) } //TODO (CB) Question for mr. Duyvesteyn: Ideally the event should also be transcript specific, but changing this in the datamodel will be quite a complex change I belive
                     CopyNumber(
                         gene = geneCopyNumber.gene(),
                         geneRole = GeneRole.UNKNOWN,
                         proteinEffect = ProteinEffect.UNKNOWN,
                         isAssociatedWithDrugResistance = null,
-                        isReportable = otherGainLosses.isNotEmpty(), //TODO (CB) Question for mr. Duyvesteyn: Do you agree with this?
+                        isReportable = otherGainLosses.isNotEmpty(), //TODO (CB) Question for mr. Duyvesteyn: Do you agree?
                         event = event,
-                        driverLikelihood = if (otherGainLosses.isNotEmpty()) DriverLikelihood.HIGH else null, //TODO (CB) Question for mr. Duyvesteyn: Do you agree with this?
+                        driverLikelihood = if (otherGainLosses.isNotEmpty()) DriverLikelihood.HIGH else null, //TODO (CB) Question for mr. Duyvesteyn: Do you agree?
                         evidence = ClinicalEvidenceFactory.createNoEvidence(),
                         canonicalImpact = TranscriptCopyNumberImpact(
                             transcriptId = "",
@@ -96,6 +100,7 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
                     )
                 }
             }.sortedWith(CopyNumberComparator())
+            .toList()
     }
 
     internal fun determineType(interpretation: CopyNumberInterpretation): CopyNumberType {
