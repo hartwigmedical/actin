@@ -33,7 +33,7 @@ class HasPotentialUncontrolledTumorRelatedPain(private val selector: MedicationS
             activePainMedications.isNotEmpty() -> {
                 EvaluationFactory.undetermined(
                     "Patient receives pain medication: " + concatLowercaseWithAnd(activePainMedications) +
-                            "- undetermined if uncontrolled tumor related pain present",
+                            " - undetermined if uncontrolled tumor related pain present",
                     "Receives " + concatLowercaseWithAnd(activePainMedications) + " - undetermined if uncontrolled tumor related pain present"
                 )
             }
@@ -41,8 +41,8 @@ class HasPotentialUncontrolledTumorRelatedPain(private val selector: MedicationS
             plannedPainMedications.isNotEmpty() -> {
                 EvaluationFactory.undetermined(
                     "Patient plans to receive pain medication: " + concatLowercaseWithAnd(plannedPainMedications) +
-                            "- undetermined if uncontrolled tumor related pain present",
-                    "Plans to receive " + concatLowercaseWithAnd(plannedPainMedications) + "- undetermined if uncontrolled tumor related pain present"
+                            " - undetermined if uncontrolled tumor related pain present",
+                    "Plans to receive " + concatLowercaseWithAnd(plannedPainMedications) + " - undetermined if uncontrolled tumor related pain present"
                 )
             }
 
