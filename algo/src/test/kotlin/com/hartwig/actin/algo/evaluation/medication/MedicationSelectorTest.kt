@@ -206,10 +206,8 @@ class MedicationSelectorTest {
                 )
         )
         val medicationSelector = MedicationSelector(MedicationStatusInterpreterOnEvaluationDate(referenceDate, referenceDate))
-        val (activeMedications, plannedMedications) = medicationSelector.extractActiveAndPlannedWithCategory(
-            medications,
-            setOf(atcLevelToFind)
-        )
+        val (activeMedications, plannedMedications) =
+            medicationSelector.extractActiveAndPlannedWithCategory(medications, setOf(atcLevelToFind))
         assertThat(activeMedications).containsExactly("active opioid")
         assertThat(plannedMedications).containsExactly("planned opioid")
     }
