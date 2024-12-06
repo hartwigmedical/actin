@@ -29,8 +29,6 @@ class CurationDatabaseReader {
         const val MEDICATION_NAME_TSV = "medication_name.tsv"
         const val MEDICATION_DOSAGE_TSV = "medication_dosage.tsv"
         const val INTOLERANCE_TSV = "intolerance.tsv"
-        const val DRUG_INTERACTIONS_TSV = "drug_interactions.tsv"
-        const val QT_PROLONGATING_TSV = "qt_prolongating.tsv"
         const val SURGERY_NAME_TSV = "surgery_name.tsv"
 
         fun <T : CurationConfig> read(

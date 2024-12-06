@@ -95,6 +95,8 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 report.config.includeIneligibleTrialsInSummary,
                 externalTrialsOnly = report.config.includeOnlyExternalTrialsInTrialMatching,
                 this,
+                nationalTrials.original - nationalTrials.filtered,
+                internationalTrials.original - internationalTrials.filtered,
                 include = report.config.includeTrialMatchingChapter
             ),
             TrialMatchingDetailsChapter(report, include = includeTrialMatchingDetailsChapter)

@@ -14,7 +14,7 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
             cohortDefinitionValidationErrors = validateCohorts(trialIds, database.cohortDefinitionConfigs),
             inclusionCriteriaValidationErrors = validateInclusionCriteria(
                 trialIds,
-                extractCohortIdsPerTrial(trialIds, database.cohortDefinitionConfigs),
+                extractCohortWithEvaluablePerTrial(trialIds, database.cohortDefinitionConfigs),
                 database.inclusionCriteriaConfigs,
                 database.inclusionCriteriaReferenceConfigs
             ),
@@ -25,9 +25,16 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
         )
     }
 
+    private fun anyCohortEvaluable(cohortIds: Set<String>, allCohorts: Map<String, Boolean>): Boolean = when {
+        cohortIds.isEmpty() -> allCohorts.values.any { it }
+        else -> cohortIds.any { cohortId ->
+            allCohorts[cohortId] ?: false
+        }
+    }
+
     private fun validateInclusionCriteria(
         trialIds: Set<String>,
-        cohortIdsPerTrial: Map<String, Set<String>>,
+        cohortsPerTrial: Map<String, Map<String, Boolean>>,
         inclusionCriteria: List<InclusionCriteriaConfig>,
         inclusionCriteriaReferenceConfigs: List<InclusionCriteriaReferenceConfig>
     ): Set<InclusionCriteriaValidationError> {
@@ -39,11 +46,18 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
             val criterionWithNonExistentTrial = if (!trialExists) setOf(criterion) else emptySet()
 
             val nonExistentCohorts: Set<Pair<InclusionCriteriaConfig, String>> = if (!trialExists) emptySet() else {
-                (criterion.appliesToCohorts - cohortIdsPerTrial[criterion.trialId]!!).map { Pair(criterion, it) }.toSet()
+                (criterion.appliesToCohorts - cohortsPerTrial[criterion.trialId]!!.keys).map { Pair(criterion, it) }
+                    .toSet()
             }
-            val invalidInclusionCriteria = if (eligibilityFactory.isValidInclusionCriterion(criterion.inclusionRule)) emptySet() else {
-                setOf(criterion)
-            }
+
+            val validateCriteria = criterionWithNonExistentTrial.isNotEmpty()
+                    || (nonExistentCohorts.size == criterion.appliesToCohorts.size && criterion.appliesToCohorts.isNotEmpty())
+                    || anyCohortEvaluable(criterion.appliesToCohorts, cohortsPerTrial[criterion.trialId]!!)
+
+            val invalidInclusionCriteria =
+                criterion.takeIf { validateCriteria && !eligibilityFactory.isValidInclusionCriterion(it.inclusionRule) }?.let { setOf(it) }
+                    ?: emptySet()
+
             Triple(criterionWithNonExistentTrial, nonExistentCohorts, invalidInclusionCriteria)
         }.reduce { (allTrials, allCohorts, allCriteria), (trial, cohorts, criteria) ->
             Triple(
@@ -71,8 +85,8 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
                 config = criterion, message = "Not a valid inclusion criterion for trial"
             )
         }
-        val trialsWithUndefinedReferenceIdErrors = trialIds.filter { it in referenceIdsPerTrial && it in criteriaPerTrial }
-            .flatMap { trialId ->
+        val trialsWithUndefinedReferenceIdErrors =
+            trialIds.filter { it in referenceIdsPerTrial && it in criteriaPerTrial }.flatMap { trialId ->
                 criteriaPerTrial[trialId]!!.flatMap(InclusionCriteriaConfig::referenceIds)
                     .filterNot { referenceIdsPerTrial[trialId]!!.contains(it) }.map { Triple(trialId, it, criteriaPerTrial[trialId]!!) }
             }.flatMap { (trialId, referenceId, configs) ->
@@ -92,15 +106,23 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
 
     private fun validateTrials(trialDefinitions: List<TrialDefinitionConfig>): Set<TrialDefinitionValidationError> {
         val duplicatedTrialIds = duplicatedConfigsByKey(trialDefinitions, TrialDefinitionConfig::trialId)
-            .map { TrialDefinitionValidationError(it.second, "Duplicated trial id of ${it.first}") }
+            .map {
+                TrialDefinitionValidationError(it.second, "Duplicated trial id of ${it.first}")
+            }
 
-        val duplicatedTrialFileIds = duplicatedConfigsByKey(trialDefinitions) { trialDef -> TrialJson.trialFileId(trialDef.trialId) }
-            .map { TrialDefinitionValidationError(it.second, "Duplicated trial file id of ${it.first}") }
+        val duplicatedTrialFileIds = duplicatedConfigsByKey(trialDefinitions) { trialDef -> TrialJson.trialFileId(trialDef.trialId) }.map {
+            TrialDefinitionValidationError(
+                it.second, "Duplicated trial file id of ${it.first}"
+            )
+        }
 
         val invalidPhases = trialDefinitions.filter { it.phase != null && TrialPhase.fromString(it.phase) == null }
             .map { TrialDefinitionValidationError(it, "Invalid phase: '${it.phase}'") }
 
-        return (duplicatedTrialIds + duplicatedTrialFileIds + invalidPhases).toSet()
+        val invalidLocations = trialDefinitions.filter { !TrialConfigDatabaseUtil.trialLocationInputIsValid(it.location) }
+            .map { TrialDefinitionValidationError(it, "Invalid Location: '${it.location}'") }
+
+        return (duplicatedTrialIds + duplicatedTrialFileIds + invalidPhases + invalidLocations).toSet()
     }
 
     private fun validateCohorts(
@@ -122,12 +144,14 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
             .entries.flatMap { (key, configs) -> configs.map { Pair(key, it) } }
     }
 
-    private fun extractCohortIdsPerTrial(trialIds: Set<String>, cohortDefinitions: List<CohortDefinitionConfig>): Map<String, Set<String>> {
-        val cohortIdsByTrial = cohortDefinitions.filter { it.trialId in trialIds }
-            .groupBy(CohortDefinitionConfig::trialId, CohortDefinitionConfig::cohortId)
-            .mapValues { it.value.toSet() }
-
-        return trialIds.associateWith { emptySet<String>() } + cohortIdsByTrial
+    private fun extractCohortWithEvaluablePerTrial(
+        trialIds: Set<String>, cohortDefinitions: List<CohortDefinitionConfig>
+    ): Map<String, Map<String, Boolean>> {
+        val cohortIdsByTrial = cohortDefinitions
+            .filter { it.trialId in trialIds }
+            .groupBy(CohortDefinitionConfig::trialId) { it.cohortId to it.evaluable }
+            .mapValues { it.value.toMap() }
+        return trialIds.associateWith { emptyMap<String, Boolean>() } + cohortIdsByTrial
     }
 
     private fun validateInclusionCriteriaReferences(
