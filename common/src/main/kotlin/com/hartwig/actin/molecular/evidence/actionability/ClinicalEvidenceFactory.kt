@@ -101,6 +101,12 @@ object ClinicalEvidenceFactory {
         return ExternalTrial(
             nctId = trial.nctId(),
             title = trial.acronym() ?: trial.title(),
+            countries = trial.countries().map {
+                CountryDetails(
+                    country = determineCountry(it.name()),
+                    hospitalsPerCity = it.hospitalsPerCity()
+                        .mapValues { entry -> entry.value.map { hospital -> convertHospital(hospital) }.toSet() })
+            }.toSet(),
             molecularMatches = setOf(
                 MolecularMatchDetails(sourceDate = sourceDate, sourceEvent = sourceEvent, isCategoryEvent = isCategoryEvent)
             ),
@@ -110,12 +116,6 @@ object ClinicalEvidenceFactory {
                     excludedCancerSubTypes = trial.indications().iterator().next().excludedSubTypes().map { it.name() }.toSet()
                 )
             ),
-            countries = trial.countries().map {
-                CountryDetails(
-                    country = determineCountry(it.name()),
-                    hospitalsPerCity = it.hospitalsPerCity()
-                        .mapValues { entry -> entry.value.map { hospital -> convertHospital(hospital) }.toSet() })
-            }.toSet(),
             url = extractNctUrl(trial)
         )
     }

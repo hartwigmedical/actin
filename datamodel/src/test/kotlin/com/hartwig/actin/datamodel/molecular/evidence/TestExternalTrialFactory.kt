@@ -20,6 +20,7 @@ object TestExternalTrialFactory {
         return ExternalTrial(
             nctId = nctId,
             title = title,
+            countries = countries,
             molecularMatches = setOf(
                 MolecularMatchDetails(
                     sourceDate = LocalDate.of(2021, 2, 3),
@@ -28,7 +29,6 @@ object TestExternalTrialFactory {
                 )
             ),
             applicableCancerTypes = setOf(CancerType(matchedCancerType = "", excludedCancerSubTypes = emptySet())),
-            countries = countries,
             url = url
         )
     }

@@ -8,14 +8,14 @@ class TreatmentEvidenceCategoriesTest {
     private val exhaustiveEvidence = TestClinicalEvidenceFactory.createExhaustive()
 
     @Test
-    fun `Should filter approved evidence, on-label and A level evidence`() {
+    fun `Should filter approved evidence for certain A level evidence`() {
         val approved = TreatmentEvidenceCategories.approved(exhaustiveEvidence.treatmentEvidence)
 
         assertThat(approved).containsExactly(TestTreatmentEvidenceFactory.approved())
     }
 
     @Test
-    fun `Should filter experimental for uncertain A level evidence and B level evidence`() {
+    fun `Should filter experimental for uncertain A level evidence and certain B level evidence`() {
         val experimental = TreatmentEvidenceCategories.experimental(exhaustiveEvidence.treatmentEvidence)
 
         assertThat(experimental).containsExactly(
