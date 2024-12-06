@@ -4,19 +4,18 @@ import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.serve.datamodel.common.Indication
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
+import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.trial.ActionableTrial
 
 class PersonalizedActionabilityFactory(private val expandedTumorDoids: Set<String>) {
 
     fun create(match: ActionabilityMatch): ClinicalEvidence {
         val (onLabelEvidences, offLabelEvidences) = partitionEvidences(match.evidenceMatches)
-        val (onLabelTrials, _) = partitionTrials(match.matchingCriteriaPerTrialMatch)
-
 
         return ClinicalEvidenceFactory.create(
             onLabelEvidences = onLabelEvidences,
             offLabelEvidences = offLabelEvidences,
-            matchingCriteriaAndIndicationsPerEligibleTrial = onLabelTrials
+            matchingCriteriaAndIndicationsPerEligibleTrial = determineOnLabelTrials(match.matchingCriteriaPerTrialMatch)
         )
     }
 
@@ -24,9 +23,11 @@ class PersonalizedActionabilityFactory(private val expandedTumorDoids: Set<Strin
         return evidence.partition { isOnLabel(it.indication()) }
     }
 
-    private fun partitionTrials(trials: List<ActionableTrial>): Pair<List<ActionableTrial>, List<ActionableTrial>> {
+    private fun determineOnLabelTrials(matchingCriteriaPerTrialMatch: Map<ActionableTrial, Set<MolecularCriterium>>):
+            Map<ActionableTrial, Pair<Set<MolecularCriterium>, Set<Indication>>> {
         // TODO (KD): Deal with N indications
-        return trials.partition { isOnLabel(it.indications().iterator().next()) }
+        return emptyMap()
+//        return trials.partition { isOnLabel(it.indications().iterator().next()) }
     }
 
     private fun isOnLabel(indication: Indication): Boolean {
