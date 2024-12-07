@@ -49,8 +49,9 @@ object ActionableEventsExtraction {
     fun extractGeneTrials(
         trials: List<ActionableTrial>,
         validGeneEvents: Set<GeneEvent> = GeneEvent.values().toSet()
-    ): List<ActionableTrial> {
-        return extractTrials(trials, geneFilter(validGeneEvents))
+    ): Pair<List<ActionableTrial>, Predicate<MolecularCriterium>> {
+        val predicate = geneFilter(validGeneEvents)
+        return Pair(extractTrials(trials, predicate), predicate)
     }
 
     fun extractFusionEvidence(evidences: List<EfficacyEvidence>): List<EfficacyEvidence> {
@@ -129,6 +130,10 @@ object ActionableEventsExtraction {
         val codons = extractFromTrial(actionableTrial, MolecularCriterium::codons)
         val exons = extractFromTrial(actionableTrial, MolecularCriterium::exons)
         return codons + exons
+    }
+
+    fun extractGene(molecularCriterium: MolecularCriterium): ActionableGene {
+        return molecularCriterium.genes().iterator().next()
     }
 
     fun extractGene(efficacyEvidence: EfficacyEvidence): ActionableGene {

@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFacto
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
+import com.hartwig.actin.molecular.evidence.TestServeFactory
 import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
 import com.hartwig.actin.molecular.evidence.TestServeTrialFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -30,7 +31,7 @@ class ClinicalEvidenceFactoryTest {
             ClinicalEvidenceFactory.create(
                 onLabelEvidences = listOf(TestServeEvidenceFactory.create(treatment = onLabel.treatment)),
                 offLabelEvidences = emptyList(),
-                matchingCriteriaAndIndicationsPerEligibleTrial = emptyList()
+                matchingCriteriaAndIndicationsPerEligibleTrial = emptyMap()
             )
 
         assertThat(result.treatmentEvidence).containsExactly(onLabel)
@@ -52,7 +53,7 @@ class ClinicalEvidenceFactoryTest {
             ClinicalEvidenceFactory.create(
                 onLabelEvidences = emptyList(),
                 offLabelEvidences = listOf(TestServeEvidenceFactory.create(treatment = offLabel.treatment)),
-                matchingCriteriaAndIndicationsPerEligibleTrial = emptyList()
+                matchingCriteriaAndIndicationsPerEligibleTrial = emptyMap()
             )
 
         assertThat(result.treatmentEvidence).containsExactly(offLabel)
@@ -69,12 +70,12 @@ class ClinicalEvidenceFactoryTest {
             ClinicalEvidenceFactory.create(
                 onLabelEvidences = emptyList(),
                 offLabelEvidences = emptyList(),
-                matchingCriteriaAndIndicationsPerEligibleTrial = listOf(
+                matchingCriteriaAndIndicationsPerEligibleTrial = mapOf(
                     TestServeTrialFactory.create(
                         source = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
                         title = trial.title,
                         molecularCriteria = setOf(molecularCriterium)
-                    )
+                    ) to Pair(setOf(molecularCriterium), setOf(TestServeFactory.createEmptyIndication()))
                 )
             )
 

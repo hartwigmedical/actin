@@ -78,44 +78,48 @@ object ClinicalEvidenceFactory {
     private fun convertToExternalTrials(
         matchingCriteriaAndIndicationsPerEligibleTrial: Map<ActionableTrial, Pair<Set<MolecularCriterium>, Set<Indication>>>
     ): Set<ExternalTrial> {
-        // TODO Implement properly for N criteria and M indications.
         return matchingCriteriaAndIndicationsPerEligibleTrial.keys.map { actionableTrial ->
-            val matchingCriteriaAndIndications = matchingCriteriaAndIndicationsPerEligibleTrial[actionableTrial]
-            val actionableEvent = ActionableEventsExtraction.extractEvent(matchingCriteriaAndIndications!!.first.first())
+            val matchingCriteria = matchingCriteriaAndIndicationsPerEligibleTrial[actionableTrial]!!.first
+            val matchingIndications = matchingCriteriaAndIndicationsPerEligibleTrial[actionableTrial]!!.second
 
-            createExternalTrial(
-                actionableTrial,
-                actionableEvent.sourceDate(),
-                actionableEvent.sourceEvent(),
-                actionableEvent.isCategoryEvent()
-            )
+            createExternalTrial(actionableTrial, matchingCriteria, matchingIndications)
         }.toSet()
     }
 
     private fun createExternalTrial(
         trial: ActionableTrial,
-        sourceDate: LocalDate,
-        sourceEvent: String,
-        isCategoryEvent: Boolean
+        matchingCriteria: Set<MolecularCriterium>,
+        matchingIndications: Set<Indication>
     ): ExternalTrial {
+        val countries = trial.countries().map {
+            CountryDetails(
+                country = determineCountry(it.name()),
+                hospitalsPerCity = it.hospitalsPerCity()
+                    .mapValues { entry -> entry.value.map { hospital -> convertHospital(hospital) }.toSet() })
+        }.toSet()
+
+        val molecularMatches = matchingCriteria.map {
+            val event = ActionableEventsExtraction.extractEvent(it)
+            MolecularMatchDetails(
+                sourceDate = event.sourceDate(),
+                sourceEvent = event.sourceEvent(),
+                isCategoryEvent = event.isCategoryEvent()
+            )
+        }.toSet()
+
+        val applicableCancerTypes = matchingIndications.map { indication ->
+            CancerType(
+                matchedCancerType = indication.applicableType().name(),
+                excludedCancerSubTypes = indication.excludedSubTypes().map { it.name() }.toSet()
+            )
+        }.toSet()
+
         return ExternalTrial(
             nctId = trial.nctId(),
             title = trial.acronym() ?: trial.title(),
-            countries = trial.countries().map {
-                CountryDetails(
-                    country = determineCountry(it.name()),
-                    hospitalsPerCity = it.hospitalsPerCity()
-                        .mapValues { entry -> entry.value.map { hospital -> convertHospital(hospital) }.toSet() })
-            }.toSet(),
-            molecularMatches = setOf(
-                MolecularMatchDetails(sourceDate = sourceDate, sourceEvent = sourceEvent, isCategoryEvent = isCategoryEvent)
-            ),
-            applicableCancerTypes = setOf(
-                CancerType(
-                    matchedCancerType = trial.indications().iterator().next().applicableType().name(),
-                    excludedCancerSubTypes = trial.indications().iterator().next().excludedSubTypes().map { it.name() }.toSet()
-                )
-            ),
+            countries = countries,
+            molecularMatches = molecularMatches,
+            applicableCancerTypes = applicableCancerTypes,
             url = extractNctUrl(trial)
         )
     }

@@ -24,7 +24,7 @@ class CopyNumberEvidence(
             }
 
             else -> {
-                ActionabilityMatch(evidenceMatches = emptyList(), matchingCriteriaPerTrialMatch = emptyList())
+                ActionabilityMatch(evidenceMatches = emptyList(), matchingCriteriaPerTrialMatch = emptyMap())
             }
         }
     }
