@@ -83,8 +83,8 @@ class DisruptionExtractorTest {
     @Test
     fun `Should only extract disruption on canonical transcripts if present on both canonical and non canonical transcript`() {
         val structuralVariant = structuralVariantBuilder().svId(1).clusterId(5).build()
-        val canonical = breakendBuilder().gene("gene 1").svId(1).isCanonical(true).build()
-        val nonCanonical = breakendBuilder().gene("gene 2").svId(1).isCanonical(false).build()
+        val canonical = breakendBuilder().reported(true).gene("gene 1").svId(1).isCanonical(true).build()
+        val nonCanonical = breakendBuilder().reported(true).gene("gene 2").svId(1).isCanonical(false).build()
 
         val linx = ImmutableLinxRecord.builder()
             .from(createMinimalTestOrangeRecord().linx())

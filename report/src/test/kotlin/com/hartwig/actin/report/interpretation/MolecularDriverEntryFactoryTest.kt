@@ -85,11 +85,11 @@ class MolecularDriverEntryFactoryTest {
     }
 
     private fun assertCopyNumberType(copyNumberType: CopyNumberType, expectedDriverType: String) {
-        val loss = TestMolecularFactory.createProperCopyNumber()
+        val copyNumber = TestMolecularFactory.createProperCopyNumber()
             .copy(canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(copyNumberType))
         val record = TestMolecularFactory.createProperTestMolecularRecord().copy(
             drivers = TestMolecularFactory.createProperTestDrivers()
-                .copy(variants = emptyList(), copyNumbers = listOf(loss))
+                .copy(variants = emptyList(), copyNumbers = listOf(copyNumber))
         )
         val result = createFactoryForMolecularRecord(record).create()
         assertThat(result[0].driverType).isEqualTo(expectedDriverType)

@@ -57,10 +57,13 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
     }
 
     private fun fromCopyNumber(copyNumber: CopyNumber): List<MolecularDriverEntry> {
-        val canonicalDriverType = getDriverType(copyNumber.canonicalImpact.type)
-        val canonicalName = "${copyNumber.event}, ${copyNumber.canonicalImpact.minCopies} copies"
+        val entries = mutableListOf<MolecularDriverEntry>()
+        if (copyNumber.canonicalImpact.type != CopyNumberType.NONE || molecularDriversInterpreter.copyNumberIsActionable(copyNumber)) {
+            val canonicalDriverType = getDriverType(copyNumber.canonicalImpact.type)
+            val canonicalName = "${copyNumber.event}, ${copyNumber.canonicalImpact.minCopies} copies"
+            entries.add(driverEntryForGeneAlteration(canonicalDriverType, canonicalName, copyNumber))
+        }
 
-        val entries = mutableListOf(driverEntryForGeneAlteration(canonicalDriverType, canonicalName, copyNumber))
         entries.addAll(copyNumber.otherImpacts.map { impact ->
             val otherDriverType = getDriverType(impact.type)
             val otherName = "${copyNumber.event} (alt), ${impact.minCopies} copies"

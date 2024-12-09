@@ -25,7 +25,7 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
         val drivers = DriverExtractor.relevantPurpleDrivers(purple)
         return purple.allSomaticGeneCopyNumbers()
             .asSequence()
-            .distinctBy { it.gene() } // TODO (CB): should not be necessary if all genes only have 1 geneCopyNumber
+            .distinctBy { it.gene() } // TODO (CB): should not be necessary if all genes only have 1 geneCopyNumber (when we have transcript field for PurpleGeneCopyNumber)
             .map { geneCopyNumber ->
                 Pair(geneCopyNumber, findCopyNumberDrivers(drivers, geneCopyNumber.gene()))
             }
