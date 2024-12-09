@@ -73,7 +73,7 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
                 } else {
                     val event =
                         if (otherGainLosses.isEmpty()) DriverEventFactory.geneCopyNumberEvent(geneCopyNumber) else otherGainLosses.first()
-                            .let { DriverEventFactory.gainLossEvent(otherGainLosses.first()) } //TODO (CB) Question for mr. Duyvesteyn: Ideally the event should also be transcript specific, but changing this in the datamodel will be quite a complex change I belive
+                            .let { DriverEventFactory.gainLossEvent(otherGainLosses.first()) } //TODO (CB) Question for mr. Duyvesteyn: Ideally the event should also be transcript specific, but changing this in the datamodel will be quite a complex change I believe
                     CopyNumber(
                         gene = geneCopyNumber.gene(),
                         geneRole = GeneRole.UNKNOWN,

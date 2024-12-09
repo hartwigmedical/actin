@@ -34,7 +34,7 @@ class MolecularDriversSummarizer private constructor(
             .asSequence()
             .filter { copyNumber -> copyNumber.canonicalImpact.type.isLoss || copyNumber.otherImpacts.any { it.type.isLoss } }
             .filter(::isKeyDriver)
-            .map { it.gene + if (it.canonicalImpact.type == CopyNumberType.NONE) " (non-canonical transcript)" else "" }
+            .map { it.gene + if (it.canonicalImpact.type == CopyNumberType.NONE) " (alt transcript)" else "" }
             .distinct()
             .toList()
     }
