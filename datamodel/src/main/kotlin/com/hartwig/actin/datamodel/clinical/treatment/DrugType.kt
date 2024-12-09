@@ -121,6 +121,8 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
     IMMUNE_AGONIST(TreatmentCategory.IMMUNOTHERAPY),
     IMMUNE_CHECKPOINT_INHIBITOR(TreatmentCategory.IMMUNOTHERAPY),
     IMMUNOMODULATOR(TreatmentCategory.IMMUNOTHERAPY),
+    JAK2_INHIBITOR(TreatmentCategory.IMMUNOTHERAPY, "JAK2 inhibitor"),
+    JAK2_TYROSINE_KINASE_INHIBITOR(TreatmentCategory.IMMUNOTHERAPY, "JAK2 TKI"),
     KIT_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "KIT inhibitor"),
     KIT_TYROSINE_KINASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "KIT TKI"),
     KRAS_G12C_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "KRAS G12C inhibitor"),
