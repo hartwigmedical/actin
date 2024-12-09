@@ -56,7 +56,8 @@ class StandardDataIngestionTest {
                     "5082" to CurationDoidValidator.DISEASE_DOID,
                     "11335" to CurationDoidValidator.DISEASE_DOID,
                     "0060500" to CurationDoidValidator.DISEASE_DOID,
-                    "0081062" to CurationDoidValidator.DISEASE_DOID
+                    "0081062" to CurationDoidValidator.DISEASE_DOID,
+                    "0040046" to CurationDoidValidator.DISEASE_DOID
                 ),
                 emptySet()
             )
@@ -163,15 +164,6 @@ class StandardDataIngestionTest {
                         message = "Could not find laboratory translation for lab value with code 'Hb' and name 'Hemoglobine'"
                     )
                 ),
-            ),
-            CurationResult(
-                categoryName = "Intolerance",
-                requirements = listOf(
-                    CurationRequirement(
-                        feedInput = "MORFINE",
-                        message = "Could not find intolerance config for input 'MORFINE'"
-                    ), CurationRequirement(feedInput = "Nikkel", message = "Could not find intolerance config for input 'Nikkel'")
-                )
             ),
             CurationResult(
                 categoryName = "Surgery Name",

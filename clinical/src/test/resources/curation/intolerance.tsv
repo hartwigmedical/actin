@@ -1,2 +1,4 @@
-input	name	doids	treatmentCategories
-Simvastatine	Simvastatine	0060500	Supportive treatment
+input	name	icd	doids	treatmentCategories
+Simvastatine	Simvastatine	node 1	0060500	Supportive treatment
+MORFINE	Morfine	node 2	0060500	Supportive treatment
+Nikkel	Nikkel	node 3	0040046	Supportive treatment

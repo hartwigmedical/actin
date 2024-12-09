@@ -145,7 +145,7 @@ data class CurationDatabaseContext(
             intoleranceCuration = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.INTOLERANCE_TSV,
-                IntoleranceConfigFactory(curationDoidValidator),
+                IntoleranceConfigFactory(curationDoidValidator, icdModel),
                 CurationCategory.INTOLERANCE
             ) { it.intoleranceEvaluatedInputs },
             secondPrimaryCuration = CurationDatabaseReader.read(

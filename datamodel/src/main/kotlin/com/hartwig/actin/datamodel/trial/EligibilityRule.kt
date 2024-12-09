@@ -441,7 +441,7 @@ enum class EligibilityRule(val input: FunctionInput?) {
 
     // Rules related to allergies/toxicities
     HAS_INTOLERANCE_TO_NAME_X(FunctionInput.ONE_STRING),
-    HAS_INTOLERANCE_BELONGING_TO_DOID_TERM_X(FunctionInput.ONE_DOID_TERM),
+    HAS_INTOLERANCE_WITH_ICD_TITLE_X(FunctionInput.ONE_ICD_TITLE),
     HAS_INTOLERANCE_TO_PLATINUM_COMPOUNDS(FunctionInput.NONE),
     HAS_INTOLERANCE_TO_TAXANE(FunctionInput.NONE),
     HAS_INTOLERANCE_RELATED_TO_STUDY_MEDICATION(FunctionInput.NONE),

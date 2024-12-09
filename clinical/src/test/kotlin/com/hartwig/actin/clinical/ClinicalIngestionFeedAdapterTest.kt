@@ -49,7 +49,8 @@ class ClinicalIngestionFeedAdapterTest {
                     "5082" to CurationDoidValidator.DISEASE_DOID,
                     "11335" to CurationDoidValidator.DISEASE_DOID,
                     "0060500" to CurationDoidValidator.DISEASE_DOID,
-                    "0081062" to CurationDoidValidator.DISEASE_DOID
+                    "0081062" to CurationDoidValidator.DISEASE_DOID,
+                    "0040046" to CurationDoidValidator.DISEASE_DOID
                 ),
                 emptySet()
             )
@@ -128,6 +129,8 @@ class ClinicalIngestionFeedAdapterTest {
             UnusedCurationConfig(categoryName = "Sequencing Test", input = "kras g12f"),
             UnusedCurationConfig(categoryName = "Surgery Name", input = "surgery1"),
             UnusedCurationConfig(categoryName = "Lesion Location", input = "and possibly lymph nodes"),
+            UnusedCurationConfig(categoryName = "Intolerance", input = "morfine"),
+            UnusedCurationConfig(categoryName = "Intolerance", input = "nikkel")
         )
 
         val gson = GsonSerializer.create()

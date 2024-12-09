@@ -264,26 +264,28 @@
   ],
   "intolerances": [
     {
-      "name": "MORFINE",
-      "doids": [],
+      "name": "Morfine",
+      "icdCode": "1A01.2",
+      "doids": ["0060500"],
       "category": "Medication",
       "subcategories": [],
       "type": null,
       "clinicalStatus": "Active",
       "verificationStatus": "Confirmed",
       "criticality": "Unknown",
-      "treatmentCategories": []
+      "treatmentCategories": ["SUPPORTIVE_TREATMENT"]
     },
     {
       "name": "Nikkel",
-      "doids": [],
+      "icdCode": "1A01.3",
+      "doids": ["0040046"],
       "category": "Other",
       "subcategories": [],
       "type": null,
       "clinicalStatus": "Active",
       "verificationStatus": "Confirmed",
       "criticality": "Unknown",
-      "treatmentCategories": []
+      "treatmentCategories": ["SUPPORTIVE_TREATMENT"]
     }
   ],
   "surgeries": [

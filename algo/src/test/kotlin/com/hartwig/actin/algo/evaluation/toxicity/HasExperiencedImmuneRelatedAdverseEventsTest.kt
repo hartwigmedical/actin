@@ -53,7 +53,8 @@ class HasExperiencedImmuneRelatedAdverseEventsTest {
         val intolerance = Intolerance(
             name = "Nivolumab induced pneumonitis",
             doids = setOf(DoidConstants.DRUG_ALLERGY_DOID),
-            treatmentCategories = setOf(TreatmentCategory.IMMUNOTHERAPY)
+            treatmentCategories = setOf(TreatmentCategory.IMMUNOTHERAPY),
+            icdCode = ""
         )
         val base = createMinimalTestWGSPatientRecord()
         val record = base.copy(intolerances = listOf(intolerance), oncologicalHistory = treatments)

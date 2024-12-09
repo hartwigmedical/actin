@@ -26,10 +26,11 @@ internal object ToxicityTestFactory {
         return base.copy(intolerances = intolerances)
     }
 
-    fun intolerance(name: String = "", category: String = "", clinicalStatus: String = "", doids: Set<String> = emptySet()): Intolerance {
+    fun intolerance(name: String = "", category: String = "", clinicalStatus: String = "", icdCode: String = ""): Intolerance {
         return Intolerance(
             name = name,
-            doids = doids,
+            icdCode = icdCode,
+            doids = emptySet(),
             category = category,
             subcategories = emptySet(),
             type = "",

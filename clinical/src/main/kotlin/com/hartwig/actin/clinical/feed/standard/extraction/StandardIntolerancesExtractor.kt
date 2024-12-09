@@ -19,6 +19,7 @@ class StandardIntolerancesExtractor(
         val intolerancesFromAllergies = ehrPatientRecord.allergies.map {
             Intolerance(
                 name = it.name,
+                icdCode = "",
                 category = it.category,
                 clinicalStatus = it.clinicalStatus,
                 verificationStatus = it.verificationStatus,
@@ -33,6 +34,7 @@ class StandardIntolerancesExtractor(
                 val curatedIntolerance = curationResponse.config()?.let { config ->
                     it.copy(
                         name = config.name,
+                        icdCode = config.icd,
                         doids = config.doids,
                         subcategories = subcategoriesFromAtc(config),
                         treatmentCategories = config.treatmentCategories
@@ -47,6 +49,7 @@ class StandardIntolerancesExtractor(
                 ExtractionResult(curationResponse.configs.map { config ->
                     Intolerance(
                         name = config.name,
+                        icdCode = config.icd,
                         doids = config.doids,
                         subcategories = subcategoriesFromAtc(config),
                         treatmentCategories = config.treatmentCategories

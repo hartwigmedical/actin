@@ -21,6 +21,7 @@ private const val VERIFICATION_STATUS = "verificationStatus"
 private const val SEVERITY = "severity"
 private const val CURATED = "curated"
 private const val DOID = "doid"
+private const val ICD = "icd"
 private const val SUBCATEGORY = "subcategory"
 
 private val EHR_PATIENT_RECORD = EhrTestData.createEhrPatientRecord().copy(
@@ -55,6 +56,7 @@ class StandardIntolerancesExtractorTest {
                 clinicalStatus = CLINICAL_STATUS,
                 verificationStatus = VERIFICATION_STATUS,
                 criticality = SEVERITY,
+                icdCode = "",
                 doids = emptySet(),
                 subcategories = emptySet(),
                 treatmentCategories = emptySet()
@@ -69,6 +71,7 @@ class StandardIntolerancesExtractorTest {
             IntoleranceConfig(
                 input = NAME,
                 name = CURATED,
+                icd = ICD,
                 doids = setOf(DOID),
                 treatmentCategories = setOf(TreatmentCategory.CHEMOTHERAPY)
             )
@@ -77,6 +80,7 @@ class StandardIntolerancesExtractorTest {
         assertThat(results.extracted).containsExactly(
             Intolerance(
                 name = CURATED,
+                icdCode = ICD,
                 category = CATEGORY,
                 clinicalStatus = CLINICAL_STATUS,
                 verificationStatus = VERIFICATION_STATUS,
@@ -98,12 +102,14 @@ class StandardIntolerancesExtractorTest {
             IntoleranceConfig(
                 input = NAME,
                 name = CURATED,
+                icd = ICD,
                 doids = setOf(DOID),
                 treatmentCategories = setOf(TreatmentCategory.CHEMOTHERAPY)
             ),
             IntoleranceConfig(
                 input = NAME,
                 name = anotherCurated,
+                icd = ICD,
                 doids = emptySet(),
                 treatmentCategories = emptySet()
             )
@@ -120,12 +126,14 @@ class StandardIntolerancesExtractorTest {
         assertThat(results.extracted).containsExactly(
             Intolerance(
                 name = CURATED,
+                icdCode = ICD,
                 doids = setOf(DOID),
                 subcategories = setOf(SUBCATEGORY),
                 treatmentCategories = setOf(TreatmentCategory.CHEMOTHERAPY)
             ),
             Intolerance(
                 name = anotherCurated,
+                icdCode = ICD,
                 doids = emptySet(),
                 subcategories = emptySet(),
                 treatmentCategories = emptySet()

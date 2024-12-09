@@ -21,6 +21,8 @@ private const val INTOLERANCE_MEDICATION_INPUT = "Paracetamol"
 
 private const val CURATED_MEDICATION_INTOLERANCE = "Paracetamol"
 
+private const val ICD = "ICD"
+
 private const val DOID = "1"
 
 private const val ATC = "N02BE01"
@@ -38,6 +40,7 @@ class IntoleranceExtractorTest {
                 input = INTOLERANCE_INPUT,
                 ignore = false,
                 name = CURATED_INTOLERANCE,
+                icd = ICD,
                 doids = setOf(DOID),
                 treatmentCategories = emptySet()
             ),
@@ -45,6 +48,7 @@ class IntoleranceExtractorTest {
                 input = INTOLERANCE_MEDICATION_INPUT,
                 ignore = false,
                 name = CURATED_MEDICATION_INTOLERANCE,
+                icd = ICD,
                 doids = setOf(DOID),
                 treatmentCategories = emptySet()
             )
@@ -57,6 +61,7 @@ class IntoleranceExtractorTest {
         val (curated, evaluation) = extractor.extract(PATIENT_ID, inputs.map { entry.copy(codeText = it) })
         assertThat(curated).hasSize(2)
         assertThat(curated[0].name).isEqualTo(CURATED_INTOLERANCE)
+        assertThat(curated[0].icdCode).isEqualTo(ICD)
         assertThat(curated[0].doids).contains(DOID)
 
         assertThat(curated[1].name).isEqualTo(CANNOT_CURATE)

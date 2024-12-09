@@ -470,6 +470,7 @@ object TestClinicalFactory {
         return listOf(
             Intolerance(
                 name = "Wasps",
+                icdCode = "icdCode",
                 category = "Environment",
                 type = "Allergy",
                 clinicalStatus = "Active",

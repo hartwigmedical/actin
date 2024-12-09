@@ -5,21 +5,21 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.icd.IcdModel
 
-class HasSpecificInfection(private val doidModel: DoidModel, private val doidToFind: String) : EvaluationFunction {
+class HasSpecificInfection(
+    private val icdModel: IcdModel, private val icdCodes: List<String>, private val term: String
+) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val doidTerm = doidModel.resolveTermForDoid(doidToFind)
-        val hasSpecificInfection = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
-            .flatMap { it.doids }
-            .flatMap { doidModel.doidWithParents(it) }
-            .contains(doidToFind)
 
-        return if (hasSpecificInfection) {
-            EvaluationFactory.pass("Patient has infection with $doidTerm", "Present $doidTerm infection")
-        } else {
-            EvaluationFactory.fail("Patient has no known infection with $doidTerm", "Specific infection(s) not present")
+        val matchingConditions = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
+            .flatMap { OtherConditionSelector.selectConditionsMatchingIcdCode(record.priorOtherConditions, icdCodes, icdModel) }
+
+        return when {
+            matchingConditions.isNotEmpty() -> EvaluationFactory.pass("Prior $term infection in history")
+
+            else -> EvaluationFactory.fail("No prior $term infection")
         }
     }
 }

@@ -8,11 +8,10 @@ import com.hartwig.actin.datamodel.trial.EligibilityRule
 
 class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
-    //TODO(Add icd to intolerances - nb. check how to implement extension codes to specify intolerance)
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
             EligibilityRule.HAS_INTOLERANCE_TO_NAME_X to hasIntoleranceWithSpecificNameCreator(),
-            EligibilityRule.HAS_INTOLERANCE_BELONGING_TO_DOID_TERM_X to hasIntoleranceWithSpecificDoidTermCreator(),
+            EligibilityRule.HAS_INTOLERANCE_WITH_ICD_TITLE_X to hasIntoleranceWithSpecificIcdTitleCreator(),
             EligibilityRule.HAS_INTOLERANCE_TO_PLATINUM_COMPOUNDS to hasIntoleranceToPlatinumCompoundsCreator(),
             EligibilityRule.HAS_INTOLERANCE_TO_TAXANE to hasIntoleranceToTaxaneCreator(),
             EligibilityRule.HAS_INTOLERANCE_RELATED_TO_STUDY_MEDICATION to hasIntoleranceRelatedToStudyMedicationCreator(),
@@ -33,10 +32,9 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
         }
     }
 
-    private fun hasIntoleranceWithSpecificDoidTermCreator(): FunctionCreator {
+    private fun hasIntoleranceWithSpecificIcdTitleCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val doidTermToFind = functionInputResolver().createOneDoidTermInput(function)
-            HasIntoleranceWithSpecificDoid(doidModel(), doidModel().resolveDoidForTerm(doidTermToFind)!!)
+            HasIntoleranceWithSpecificIcdTitle(icdModel(), functionInputResolver().createOneIcdTitleInput(function))
         }
     }
 
@@ -49,7 +47,7 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
     }
 
     private fun hasIntoleranceRelatedToStudyMedicationCreator(): FunctionCreator {
-        return { HasIntoleranceRelatedToStudyMedication() }
+        return { HasIntoleranceRelatedToStudyMedication(icdModel()) }
     }
 
     private fun hasIntoleranceToPD1OrPDL1InhibitorsCreator(): FunctionCreator {

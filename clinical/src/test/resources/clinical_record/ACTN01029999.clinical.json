@@ -260,6 +260,7 @@
   "intolerances": [
     {
       "name": "Simvastatine",
+      "icdCode": "1A01.1",
       "doids": [
         "0060500"
       ],

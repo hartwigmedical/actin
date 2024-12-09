@@ -13,7 +13,7 @@ internal object InfectionTestFactory {
         return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(priorOtherConditions = conditions)
     }
 
-    fun priorOtherCondition(name: String = "", doids: Set<String> = emptySet()): PriorOtherCondition {
-        return PriorOtherCondition(name = name, category = "", icdCode = "", isContraindicationForTherapy = true, doids = doids)
+    fun priorOtherCondition(name: String = "", icdCode: String): PriorOtherCondition {
+        return PriorOtherCondition(name = name, category = "", icdCode = icdCode, isContraindicationForTherapy = true, doids = emptySet())
     }
 }

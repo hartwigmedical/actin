@@ -42,9 +42,10 @@ internal object OtherConditionTestFactory {
         )
     }
 
-    fun intolerance(name: String = ""): Intolerance {
+    fun intolerance(name: String = "", icdCode: String = ""): Intolerance {
         return Intolerance(
             name = name,
+            icdCode = icdCode,
             doids = emptySet(),
             category = "",
             subcategories = emptySet(),
