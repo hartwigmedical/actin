@@ -3,6 +3,11 @@ package com.hartwig.actin.algo.evaluation.cardiacfunction
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
+import com.hartwig.actin.algo.evaluation.composite.Or
+import com.hartwig.actin.algo.evaluation.othercondition.HasHadPriorConditionComplicationOrToxicityWithIcdCode
+import com.hartwig.actin.algo.evaluation.othercondition.HasSpecificFamilyHistory
+import com.hartwig.actin.algo.evaluation.othercondition.UndeterminedFamilyConditions
+import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 
@@ -27,7 +32,19 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
     }
 
     private fun hasPotentialSignificantHeartDiseaseCreator(): FunctionCreator {
-        return { HasPotentialSignificantHeartDisease(doidModel()) }
+        return {
+            Or(
+                listOf(
+                    HasECGAberration(),
+                    HasHadPriorConditionComplicationOrToxicityWithIcdCode(
+                        icdModel(),
+                        IcdConstants.HEART_DISEASE_LIST,
+                        "potential significant heart disease",
+                        referenceDateProvider().date()
+                    )
+                )
+            )
+        }
     }
 
     private fun hasECGAberrationCreator(): FunctionCreator {
@@ -73,7 +90,7 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
     }
 
     private fun hasLongQTSyndromeCreator(): FunctionCreator {
-        return { HasLongQTSyndrome(doidModel()) }
+        return { HasLongQTSyndrome(icdModel()) }
     }
 
     private fun hasNormalCardiacFunctionByMUGAOrTTECreator(): FunctionCreator {
@@ -81,10 +98,28 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
     }
 
     private fun hasFamilyHistoryOfIdiopathicSuddenDeathCreator(): FunctionCreator {
-        return { HasFamilyHistoryOfIdiopathicSuddenDeath() }
+        return {
+            HasSpecificFamilyHistory(
+                icdModel(),
+                "idiopathic sudden death",
+                undeterminedFamilyConditions = UndeterminedFamilyConditions(
+                    "cardiovascular disease",
+                    listOf(IcdConstants.FAMILY_HISTORY_OF_CARDIOVASCULAR_DISEASE_CODE)
+                )
+            )
+        }
     }
 
     private fun hasFamilyHistoryOfLongQTSyndromeCreator(): FunctionCreator {
-        return { HasFamilyHistoryOfLongQTSyndrome() }
+        return {
+            HasSpecificFamilyHistory(
+                icdModel(),
+                "long QT syndrome",
+                undeterminedFamilyConditions = UndeterminedFamilyConditions(
+                    "cardiovascular disease",
+                    listOf(IcdConstants.FAMILY_HISTORY_OF_CARDIOVASCULAR_DISEASE_CODE)
+                )
+            )
+        }
     }
 }
