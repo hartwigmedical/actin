@@ -4,9 +4,11 @@ import com.hartwig.actin.clinical.sort.PriorOtherConditionDescendingDateComparat
 import com.hartwig.actin.clinical.sort.PriorSecondPrimaryDiagnosedDateComparator
 import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparator
 import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary
 import com.hartwig.actin.datamodel.clinical.TumorStatus
+import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.report.datamodel.Report
@@ -66,17 +68,23 @@ class PatientClinicalHistoryGenerator(
     }
 
     private fun relevantSystemicPreTreatmentHistoryTable(record: PatientRecord): Table {
-        return treatmentHistoryTable(record.oncologicalHistory, true)
+        return treatmentHistoryTable(record.oncologicalHistory, record.medications ?: emptyList(), true)
     }
 
     private fun relevantNonSystemicPreTreatmentHistoryTable(record: PatientRecord): Table {
-        return treatmentHistoryTable(record.oncologicalHistory, false)
+        return treatmentHistoryTable(record.oncologicalHistory, record.medications ?: emptyList(), false)
     }
 
-    private fun treatmentHistoryTable(treatmentHistory: List<TreatmentHistoryEntry>, requireSystemic: Boolean): Table {
+    private fun treatmentHistoryTable(
+        treatmentHistory: List<TreatmentHistoryEntry>,
+        medications: List<Medication>,
+        requireSystemic: Boolean
+    ): Table {
         val dateWidth = valueWidth / 5
         val treatmentWidth = valueWidth - dateWidth
         val table: Table = createDoubleColumnTable(dateWidth, treatmentWidth)
+
+        val medicationsToAdd = medications.filter { it.drug?.let { _ -> !hasMatchingTreatmentHistoryEntry(treatmentHistory, it) } ?: false }
 
         treatmentHistory.filter { treatmentHistoryEntryIsSystemic(it) == requireSystemic }
             .sortedWith(TreatmentHistoryAscendingDateComparator())
@@ -89,7 +97,22 @@ class PatientClinicalHistoryGenerator(
                 listOf(extractDateRangeString(historyEntries.first()), key.first + if (details.isNotEmpty()) " ($details)" else "")
                     .forEach { table.addCell(createSingleTableEntry(it)) }
             }
+
+        medicationsToAdd.forEach {
+            table.addCell(
+                createSingleTableEntry(
+                    extractDateRangeStringMedication(it) + (it.drug?.name ?: "Unknown drug")
+                )
+            )
+        }
+
         return table
+    }
+
+    private fun hasMatchingTreatmentHistoryEntry(treatmentHistoryEntries: List<TreatmentHistoryEntry>, medication: Medication): Boolean {
+        return treatmentHistoryEntries.any { entry ->
+            entry.treatments.any { treatment -> treatment is DrugTreatment && treatment.drugs.contains(medication.drug) && entry.startMonth == medication.startDate?.monthValue && entry.startYear == medication.startDate?.year }
+        }
     }
 
     private fun treatmentHistoryEntryIsSystemic(treatmentHistoryEntry: TreatmentHistoryEntry): Boolean {
@@ -123,6 +146,18 @@ class PatientClinicalHistoryGenerator(
             }
         }
         return table
+    }
+
+    private fun extractDateRangeStringMedication(medication: Medication): String {
+        val startString = toDateString(medication.startDate?.year, medication.startDate?.monthValue)
+        val stopString = toDateString(medication.stopDate?.year, medication.stopDate?.monthValue)
+
+        return when {
+            startString != null && stopString != null -> if (startString != stopString) "$startString-$stopString" else startString
+            startString != null -> startString
+            stopString != null -> "?-$stopString"
+            else -> DATE_UNKNOWN
+        }
     }
 
     private fun extractDateRangeString(treatmentHistoryEntry: TreatmentHistoryEntry): String {
