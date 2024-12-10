@@ -148,7 +148,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
         assertRow(
             getWrappedTable(result),
             0,
-            "EML4 - ALK fusion\n(Tier I)",
+            "EML4::ALK fusion\n(Tier I)",
             "Known fusion\nGain of function",
             HIGH,
             DETECTED,
