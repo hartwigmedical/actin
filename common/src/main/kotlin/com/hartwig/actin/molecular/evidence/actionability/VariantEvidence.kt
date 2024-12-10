@@ -86,21 +86,17 @@ class VariantEvidence(
         private val VARIANT_GENE_EVENTS = setOf(GeneEvent.ACTIVATION, GeneEvent.INACTIVATION, GeneEvent.ANY_MUTATION)
 
         fun create(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial>): VariantEvidence {
-            val hotspotEvidences = ActionableEventsExtraction.extractHotspotEvidence(evidences)
-            val (hotspotTrials, hotspotPredicate) = ActionableEventsExtraction.extractHotspotTrials(trials)
-            val hotspotTrialMatcher = ActionableTrialMatcher(hotspotTrials, hotspotPredicate)
+            val hotspotEvidences = EfficacyEvidenceExtractor.extractHotspotEvidence(evidences)
+            val hotspotTrialMatcher = ActionableTrialMatcherFactory.createHotspotTrialMatcher(trials)
 
-            val codonEvidences = ActionableEventsExtraction.extractCodonEvidence(evidences)
-            val (codonTrials, codonPredicate) = ActionableEventsExtraction.extractCodonTrials(trials)
-            val codonTrialMatcher = ActionableTrialMatcher(codonTrials, codonPredicate)
+            val codonEvidences = EfficacyEvidenceExtractor.extractCodonEvidence(evidences)
+            val codonTrialMatcher = ActionableTrialMatcherFactory.createCodonTrialMatcher(trials)
 
-            val exonEvidences = ActionableEventsExtraction.extractExonEvidence(evidences)
-            val (exonTrials, exonPredicate) = ActionableEventsExtraction.extractExonTrials(trials)
-            val exonTrialMatcher = ActionableTrialMatcher(exonTrials, exonPredicate)
+            val exonEvidences = EfficacyEvidenceExtractor.extractExonEvidence(evidences)
+            val exonTrialMatcher = ActionableTrialMatcherFactory.createExonTrialMatcher(trials)
 
-            val applicableGeneEvidences = ActionableEventsExtraction.extractGeneEvidence(evidences, VARIANT_GENE_EVENTS)
-            val (applicableGeneTrials, genePredicate) = ActionableEventsExtraction.extractGeneTrials(trials, VARIANT_GENE_EVENTS)
-            val applicableGeneTrialMatcher = ActionableTrialMatcher(applicableGeneTrials, genePredicate)
+            val applicableGeneEvidences = EfficacyEvidenceExtractor.extractGeneEvidence(evidences, VARIANT_GENE_EVENTS)
+            val applicableGeneTrialMatcher = ActionableTrialMatcherFactory.createGeneTrialMatcher(trials, VARIANT_GENE_EVENTS)
 
             return VariantEvidence(
                 hotspotEvidences = hotspotEvidences,

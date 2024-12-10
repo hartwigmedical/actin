@@ -36,13 +36,11 @@ class VirusEvidence(
         private val EBV_POSITIVE_TYPES = setOf(TumorCharacteristicType.EBV_POSITIVE)
 
         fun create(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial>): VirusEvidence {
-            val hpvEvidences = ActionableEventsExtraction.extractCharacteristicEvidence(evidences, HPV_POSITIVE_TYPES)
-            val (hpvTrials, hpvPredicate) = ActionableEventsExtraction.extractCharacteristicsTrials(trials, HPV_POSITIVE_TYPES)
-            val hpvTrialMatcher = ActionableTrialMatcher(hpvTrials, hpvPredicate)
+            val hpvEvidences = EfficacyEvidenceExtractor.extractCharacteristicEvidence(evidences, HPV_POSITIVE_TYPES)
+            val hpvTrialMatcher = ActionableTrialMatcherFactory.createCharacteristicsTrialMatcher(trials, HPV_POSITIVE_TYPES)
 
-            val ebvEvidences = ActionableEventsExtraction.extractCharacteristicEvidence(evidences, EBV_POSITIVE_TYPES)
-            val (ebvTrials, ebvPredicate) = ActionableEventsExtraction.extractCharacteristicsTrials(trials, EBV_POSITIVE_TYPES)
-            val ebvTrialMatcher = ActionableTrialMatcher(ebvTrials, ebvPredicate)
+            val ebvEvidences = EfficacyEvidenceExtractor.extractCharacteristicEvidence(evidences, EBV_POSITIVE_TYPES)
+            val ebvTrialMatcher = ActionableTrialMatcherFactory.createCharacteristicsTrialMatcher(trials, EBV_POSITIVE_TYPES)
 
             return VirusEvidence(
                 hpvEvidences,

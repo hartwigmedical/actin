@@ -25,9 +25,8 @@ class HomozygousDisruptionEvidence(
         private val HOMOZYGOUS_DISRUPTION_EVENTS = setOf(GeneEvent.DELETION, GeneEvent.INACTIVATION, GeneEvent.ANY_MUTATION)
 
         fun create(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial>): HomozygousDisruptionEvidence {
-            val applicableEvidences = ActionableEventsExtraction.extractGeneEvidence(evidences, HOMOZYGOUS_DISRUPTION_EVENTS)
-            val (applicableTrials, molecularPredicate) = ActionableEventsExtraction.extractGeneTrials(trials, HOMOZYGOUS_DISRUPTION_EVENTS)
-            val applicableTrialMatcher = ActionableTrialMatcher(applicableTrials, molecularPredicate)
+            val applicableEvidences = EfficacyEvidenceExtractor.extractGeneEvidence(evidences, HOMOZYGOUS_DISRUPTION_EVENTS)
+            val applicableTrialMatcher = ActionableTrialMatcherFactory.createGeneTrialMatcher(trials, HOMOZYGOUS_DISRUPTION_EVENTS)
 
             return HomozygousDisruptionEvidence(applicableEvidences, applicableTrialMatcher)
         }

@@ -50,17 +50,11 @@ class CopyNumberEvidence(
         private val LOSS_EVENTS = setOf(GeneEvent.DELETION)
 
         fun create(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial>): CopyNumberEvidence {
-            val applicableAmplificationEvidences = ActionableEventsExtraction.extractGeneEvidence(evidences, AMPLIFICATION_EVENTS)
-            val applicableLossEvidences = ActionableEventsExtraction.extractGeneEvidence(evidences, LOSS_EVENTS)
+            val applicableAmplificationEvidences = EfficacyEvidenceExtractor.extractGeneEvidence(evidences, AMPLIFICATION_EVENTS)
+            val amplificationTrialMatcher = ActionableTrialMatcherFactory.createGeneTrialMatcher(trials, AMPLIFICATION_EVENTS)
 
-            val (applicableAmplificationTrials, amplificationMolecularPredicate) = ActionableEventsExtraction.extractGeneTrials(
-                trials,
-                AMPLIFICATION_EVENTS
-            )
-            val amplificationTrialMatcher = ActionableTrialMatcher(applicableAmplificationTrials, amplificationMolecularPredicate)
-
-            val (applicableLossTrials, lossMolecularPredicate) = ActionableEventsExtraction.extractGeneTrials(trials, LOSS_EVENTS)
-            val lossTrialMatcher = ActionableTrialMatcher(applicableLossTrials, lossMolecularPredicate)
+            val applicableLossEvidences = EfficacyEvidenceExtractor.extractGeneEvidence(evidences, LOSS_EVENTS)
+            val lossTrialMatcher = ActionableTrialMatcherFactory.createGeneTrialMatcher(trials, LOSS_EVENTS)
 
 
             return CopyNumberEvidence(

@@ -52,12 +52,9 @@ class SignatureEvidence(
 
         fun create(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial>): SignatureEvidence {
             val characteristicsEvidences =
-                ActionableEventsExtraction.extractCharacteristicEvidence(evidences, SIGNATURE_CHARACTERISTICS_TYPES)
-            val (characteristicsTrials, characteristicsPredicate) = ActionableEventsExtraction.extractCharacteristicsTrials(
-                trials,
-                SIGNATURE_CHARACTERISTICS_TYPES
-            )
-            val characteristicsTrialMatcher = ActionableTrialMatcher(characteristicsTrials, characteristicsPredicate)
+                EfficacyEvidenceExtractor.extractCharacteristicEvidence(evidences, SIGNATURE_CHARACTERISTICS_TYPES)
+            val characteristicsTrialMatcher =
+                ActionableTrialMatcherFactory.createCharacteristicsTrialMatcher(trials, SIGNATURE_CHARACTERISTICS_TYPES)
 
             return SignatureEvidence(characteristicsEvidences, characteristicsTrialMatcher)
         }

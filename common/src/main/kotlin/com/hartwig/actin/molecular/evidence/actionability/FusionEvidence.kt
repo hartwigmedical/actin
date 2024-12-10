@@ -61,16 +61,11 @@ class FusionEvidence(
         private val PROMISCUOUS_FUSION_EVENTS = setOf(GeneEvent.FUSION, GeneEvent.ACTIVATION, GeneEvent.ANY_MUTATION)
 
         fun create(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial>): FusionEvidence {
-            val applicableFusionEvidences = ActionableEventsExtraction.extractFusionEvidence(evidences)
-            val (applicableFusionTrials, fusionPredicate) = ActionableEventsExtraction.extractFusionTrials(trials)
-            val fusionTrialMatcher = ActionableTrialMatcher(applicableFusionTrials, fusionPredicate)
+            val applicableFusionEvidences = EfficacyEvidenceExtractor.extractFusionEvidence(evidences)
+            val fusionTrialMatcher = ActionableTrialMatcherFactory.createFusionTrialMatcher(trials)
 
-            val applicablePromiscuousEvidences = ActionableEventsExtraction.extractGeneEvidence(evidences, PROMISCUOUS_FUSION_EVENTS)
-            val (applicablePromiscuousTrials, promiscuousPredicate) = ActionableEventsExtraction.extractGeneTrials(
-                trials,
-                PROMISCUOUS_FUSION_EVENTS
-            )
-            val promiscuousTrialMatcher = ActionableTrialMatcher(applicablePromiscuousTrials, promiscuousPredicate)
+            val applicablePromiscuousEvidences = EfficacyEvidenceExtractor.extractGeneEvidence(evidences, PROMISCUOUS_FUSION_EVENTS)
+            val promiscuousTrialMatcher = ActionableTrialMatcherFactory.createGeneTrialMatcher(trials, PROMISCUOUS_FUSION_EVENTS)
 
             return FusionEvidence(
                 applicableFusionEvidences,

@@ -26,9 +26,8 @@ class BreakendEvidence(
         private val BREAKEND_EVENTS = setOf(GeneEvent.ANY_MUTATION)
 
         fun create(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial>): BreakendEvidence {
-            val applicableEvidences = ActionableEventsExtraction.extractGeneEvidence(evidences, BREAKEND_EVENTS)
-            val (applicableTrials, molecularPredicate) = ActionableEventsExtraction.extractGeneTrials(trials, BREAKEND_EVENTS)
-            val actionableTrialMatcher = ActionableTrialMatcher(applicableTrials, molecularPredicate)
+            val applicableEvidences = EfficacyEvidenceExtractor.extractGeneEvidence(evidences, BREAKEND_EVENTS)
+            val actionableTrialMatcher = ActionableTrialMatcherFactory.createGeneTrialMatcher(trials, BREAKEND_EVENTS)
 
             return BreakendEvidence(applicableEvidences, actionableTrialMatcher)
         }
