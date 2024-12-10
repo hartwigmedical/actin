@@ -99,7 +99,9 @@ class PatientClinicalHistoryGenerator(
 
         val medicationsToAdd = medications.filter { it.drug?.let { _ -> !hasMatchingTreatmentHistoryEntry(treatmentHistory, it) } ?: false }
         medicationsToAdd.groupBy { it.drug }.forEach { (drug, medications) ->
-            listOf(extractDateRangeStringMedication(medications), (drug?.name ?: "Unknown drug"))
+            listOf(
+                extractDateRangeStringMedication(medications),
+                (drug?.name?.lowercase()?.replaceFirstChar { it.uppercase() } ?: "Unknown drug"))
                 .forEach { entry ->
                     table.addCell(createSingleTableEntry(entry))
                 }
