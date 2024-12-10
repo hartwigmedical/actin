@@ -9,7 +9,6 @@ import com.hartwig.serve.datamodel.molecular.gene.ActionableGene
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import com.hartwig.serve.datamodel.molecular.hotspot.ActionableHotspot
 import com.hartwig.serve.datamodel.molecular.range.ActionableRange
-import com.hartwig.serve.datamodel.trial.ActionableTrial
 import java.util.function.Predicate
 
 object ActionableEventsExtraction {
@@ -67,12 +66,6 @@ object ActionableEventsExtraction {
 
     fun extractCharacteristic(molecularCriterium: MolecularCriterium): ActionableCharacteristic {
         return molecularCriterium.characteristics().iterator().next()
-    }
-
-    fun extractTrials(trials: List<ActionableTrial>, predicate: Predicate<MolecularCriterium>): List<ActionableTrial> {
-        return trials.filter { trial ->
-            trial.anyMolecularCriteria().any { criterium -> predicate.test(criterium) }
-        }
     }
 
     fun hotspotFilter(): Predicate<MolecularCriterium> {

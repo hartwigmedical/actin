@@ -36,6 +36,12 @@ object ActionableTrialMatcherFactory {
     }
 
     private fun createTrialMatcher(trials: List<ActionableTrial>, predicate: Predicate<MolecularCriterium>): ActionableTrialMatcher {
-        return ActionableTrialMatcher(ActionableEventsExtraction.extractTrials(trials, predicate), predicate)
+        return ActionableTrialMatcher(extractTrials(trials, predicate), predicate)
+    }
+
+    private fun extractTrials(trials: List<ActionableTrial>, predicate: Predicate<MolecularCriterium>): List<ActionableTrial> {
+        return trials.filter { trial ->
+            trial.anyMolecularCriteria().any { criterium -> predicate.test(criterium) }
+        }
     }
 }
