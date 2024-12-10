@@ -1,43 +1,61 @@
 package com.hartwig.actin.algo.evaluation.complication
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
-import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
+import com.hartwig.actin.algo.evaluation.medication.AtcTestFactory
+import com.hartwig.actin.algo.evaluation.medication.MedicationTestFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.clinical.Complication
-import com.hartwig.actin.datamodel.clinical.Medication
+import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.TestMedicationFactory
 import org.junit.Test
 
+private val OPIOIDS_ATC_LEVEL = AtcLevel("N02A", "Opioids")
+private val PAIN_MEDICATION =
+    TestMedicationFactory.createMinimal().copy(atc = AtcTestFactory.atcClassification().copy(pharmacologicalSubGroup = OPIOIDS_ATC_LEVEL))
+
 class HasPotentialUncontrolledTumorRelatedPainTest {
 
+    val alwaysActiveFunction = HasPotentialUncontrolledTumorRelatedPain(MedicationTestFactory.alwaysActive(), setOf(OPIOIDS_ATC_LEVEL))
+    val alwaysPlannedFunction = HasPotentialUncontrolledTumorRelatedPain(MedicationTestFactory.alwaysPlanned(), setOf(OPIOIDS_ATC_LEVEL))
+
     @Test
-    fun `Should evaluate on complication`() {
-        val function = HasPotentialUncontrolledTumorRelatedPain(medicationStatusInterpreter)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withComplications(null)))
-        val wrong: Complication = ComplicationTestFactory.complication(categories = setOf("just a category"))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withComplication(wrong)))
-        val match: Complication = ComplicationTestFactory.complication(
-            categories = setOf("this is category: " + HasPotentialUncontrolledTumorRelatedPain.SEVERE_PAIN_COMPLICATION)
+    fun `Should evaluate to undetermined if patient has complication indicating pain`() {
+        val painComplication = ComplicationTestFactory.complication(categories = setOf("pain category"))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            alwaysActiveFunction.evaluate(ComplicationTestFactory.withComplication(painComplication))
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(ComplicationTestFactory.withComplication(match)))
     }
 
     @Test
-    fun `Should evaluate on medication`() {
-        val function = HasPotentialUncontrolledTumorRelatedPain(medicationStatusInterpreter)
-        val wrong: Medication = TestMedicationFactory.createMinimal().copy(name = "just some medication")
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withMedication(wrong)))
-        val match: Medication =
-            TestMedicationFactory.createMinimal().copy(name = HasPotentialUncontrolledTumorRelatedPain.SEVERE_PAIN_MEDICATION)
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(ComplicationTestFactory.withMedication(match)))
+    fun `Should evaluate to undetermined if patient uses severe pain medication`() {
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            alwaysActiveFunction.evaluate(ComplicationTestFactory.withMedication(PAIN_MEDICATION))
+        )
     }
 
-    companion object {
-        private val medicationStatusInterpreter = object : MedicationStatusInterpreter {
-            override fun interpret(medication: Medication): MedicationStatusInterpretation {
-                return MedicationStatusInterpretation.ACTIVE
-            }
-        }
+    @Test
+    fun `Should evaluate to undetermined if patient has planned severe pain medication`() {
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            alwaysPlannedFunction.evaluate(ComplicationTestFactory.withMedication(PAIN_MEDICATION))
+        )
+    }
+
+    @Test
+    fun `Should fail if patient has no complications`() {
+        assertEvaluation(EvaluationResult.FAIL, alwaysActiveFunction.evaluate(ComplicationTestFactory.withComplications(null)))
+    }
+
+    @Test
+    fun `Should fail if patient has other complication than pain`() {
+        val wrongComplication = ComplicationTestFactory.complication(categories = setOf("just a category"))
+        assertEvaluation(EvaluationResult.FAIL, alwaysActiveFunction.evaluate(ComplicationTestFactory.withComplication(wrongComplication)))
+    }
+
+    @Test
+    fun `Should fail if patient has no complications and uses no pain medication`() {
+        val noPainMedication = TestMedicationFactory.createMinimal().copy(name = "just some medication")
+        assertEvaluation(EvaluationResult.FAIL, alwaysActiveFunction.evaluate(ComplicationTestFactory.withMedication(noPainMedication)))
     }
 }

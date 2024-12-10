@@ -36,7 +36,7 @@ import com.hartwig.actin.report.pdf.tables.trial.EligibleExternalTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummarizer
 import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummary
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleActinTrialsGenerator
-import com.hartwig.actin.report.pdf.tables.trial.filterExclusivelyInChildrensHospitals
+import com.hartwig.actin.report.pdf.tables.trial.filterExclusivelyInChildrensHospitalsInReferenceCountry
 import com.hartwig.actin.report.pdf.tables.trial.filterInCountryOfReference
 import com.hartwig.actin.report.pdf.tables.trial.filterInternalTrials
 import com.hartwig.actin.report.pdf.tables.trial.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts
@@ -95,6 +95,8 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 report.config.includeIneligibleTrialsInSummary,
                 externalTrialsOnly = report.config.includeOnlyExternalTrialsInTrialMatching,
                 this,
+                nationalTrials.original - nationalTrials.filtered,
+                internationalTrials.original - internationalTrials.filtered,
                 include = report.config.includeTrialMatchingChapter
             ),
             TrialMatchingDetailsChapter(report, include = includeTrialMatchingDetailsChapter)
@@ -224,11 +226,18 @@ class ReportContentProvider(private val report: Report, private val enableExtend
 
         val externalEligibleTrialsFiltered = ExternalTrialSummarizer.summarize(externalEligibleTrials)
             .filterInternalTrials(report.treatmentMatch.trialMatches.toSet())
-            .filterExclusivelyInChildrensHospitals()
 
         val nationalTrials = externalEligibleTrialsFiltered.filterInCountryOfReference(report.config.countryOfReference)
         val nationalTrialsNotOverlappingHospital =
-            hideOverlappingTrials(nationalTrials, nationalTrials.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(evaluated))
+            hideOverlappingTrials(
+                nationalTrials,
+                nationalTrials.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(evaluated)
+                    .filterExclusivelyInChildrensHospitalsInReferenceCountry(
+                        patientRecord.patient.birthYear,
+                        report.treatmentMatch.referenceDate,
+                        report.config.countryOfReference
+                    )
+            )
 
         val internationalTrials = externalEligibleTrialsFiltered.filterNotInCountryOfReference(report.config.countryOfReference)
         val internationalTrialsNotOverlappingHospitalOrNational = hideOverlappingTrials(
