@@ -25,7 +25,7 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
         val drivers = DriverExtractor.relevantPurpleDrivers(purple)
         return purple.allSomaticGeneCopyNumbers()
             .asSequence()
-            .distinctBy { it.gene() } // TODO (CB): should not be necessary if all genes only have 1 geneCopyNumber (when we have transcript field for PurpleGeneCopyNumber)
+            .distinctBy { it.gene() } // TODO (CB): Should be changed when PurpleGeneCopyNumber has transcript / canonical fields
             .map { geneCopyNumber ->
                 Pair(geneCopyNumber, findCopyNumberDrivers(drivers, geneCopyNumber.gene()))
             }
@@ -73,15 +73,15 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
                 } else {
                     val event =
                         if (otherGainLosses.isEmpty()) DriverEventFactory.geneCopyNumberEvent(geneCopyNumber) else otherGainLosses.first()
-                            .let { DriverEventFactory.gainLossEvent(otherGainLosses.first()) } //TODO (CB) Question for mr. Duyvesteyn: Ideally the event should also be transcript specific, but changing this in the datamodel will be quite a complex change I believe
+                            .let { DriverEventFactory.gainLossEvent(otherGainLosses.first()) }
                     CopyNumber(
                         gene = geneCopyNumber.gene(),
                         geneRole = GeneRole.UNKNOWN,
                         proteinEffect = ProteinEffect.UNKNOWN,
                         isAssociatedWithDrugResistance = null,
-                        isReportable = otherGainLosses.isNotEmpty(), //TODO (CB) Question for mr. Duyvesteyn: Do you agree?
+                        isReportable = otherGainLosses.isNotEmpty(),
                         event = event,
-                        driverLikelihood = if (otherGainLosses.isNotEmpty()) DriverLikelihood.HIGH else null, //TODO (CB) Question for mr. Duyvesteyn: Do you agree?
+                        driverLikelihood = if (otherGainLosses.isNotEmpty()) DriverLikelihood.HIGH else null,
                         evidence = ClinicalEvidenceFactory.createNoEvidence(),
                         canonicalImpact = TranscriptCopyNumberImpact(
                             transcriptId = "",

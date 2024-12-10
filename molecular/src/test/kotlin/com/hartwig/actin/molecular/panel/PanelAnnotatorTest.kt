@@ -2,59 +2,27 @@ package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.PriorSequencingTest
 import com.hartwig.actin.datamodel.clinical.SequencedAmplification
-import com.hartwig.actin.datamodel.clinical.SequencedDeletedGene
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
-import com.hartwig.actin.datamodel.molecular.CodingEffect
-import com.hartwig.actin.datamodel.molecular.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.Fusion
-import com.hartwig.actin.datamodel.molecular.GeneRole
-import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.Variant
-import com.hartwig.actin.datamodel.molecular.VariantType
-import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
-import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
-import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.GENE
 import com.hartwig.actin.molecular.HGVS_CODING
 import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEvents
-import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
-import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import com.hartwig.serve.datamodel.molecular.common.GeneRole as ServeGeneRole
-import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
 
-private const val ALT = "T"
-private const val REF = "G"
 private const val OTHER_GENE = "other_gene"
-private const val CHROMOSOME = "1"
-private const val POSITION = 1
 private val EMPTY_MATCH = ActionabilityMatch(ActionableEvents(), ActionableEvents())
 private val ARCHER_VARIANT = SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING)
-private val VARIANT_MATCH_CRITERIA =
-    VariantMatchCriteria(
-        isReportable = true,
-        gene = GENE,
-        chromosome = CHROMOSOME,
-        ref = REF,
-        alt = ALT,
-        position = POSITION,
-        codingEffect = CodingEffect.MISSENSE,
-        type = VariantType.SNV
-    )
 private val ARCHER_FUSION = SequencedFusion(GENE, OTHER_GENE)
-
-private val HOTSPOT = TestServeKnownFactory.hotspotBuilder().build()
-    .withGeneRole(ServeGeneRole.ONCO)
-    .withProteinEffect(ServeProteinEffect.GAIN_OF_FUNCTION)
 
 private val ACTIONABILITY_MATCH = ActionabilityMatch(
     onLabelEvidence = ActionableEvents(listOf(TestServeActionabilityFactory.createEfficacyEvidenceWithGene()), emptyList()),
@@ -75,12 +43,16 @@ class PanelAnnotatorTest {
     private val panelFusionAnnotator = mockk<PanelFusionAnnotator> {
         every { annotate(any(), any()) } returns emptyList()
     }
+    private val copyNumberAnnotator = mockk<PanelCopyNumberAnnotator> {
+        every { annotate(any<Set<SequencedAmplification>>()) } returns emptyList()
+    }
 
     private val annotator =
         PanelAnnotator(
             evidenceDatabase,
             panelVariantAnnotator,
-            panelFusionAnnotator
+            panelFusionAnnotator,
+            copyNumberAnnotator
         )
 
     @Test
@@ -111,45 +83,9 @@ class PanelAnnotatorTest {
     }
 
     @Test
-    fun `Should infer copy numbers and ploidy and annotate with evidence`() {
-        every { evidenceDatabase.geneAlterationForVariant(VARIANT_MATCH_CRITERIA) } returns HOTSPOT
-
-        val unannotatedCopyNumberSlot = mutableListOf<CopyNumber>()
-        every { evidenceDatabase.geneAlterationForCopyNumber(capture(unannotatedCopyNumberSlot)) } returns HOTSPOT
-        every { evidenceDatabase.evidenceForCopyNumber(capture(unannotatedCopyNumberSlot)) } returns ACTIONABILITY_MATCH
-
+    fun `Should infer ploidy`() {
         val annotated = annotator.annotate(createTestPriorSequencingTest().copy(amplifications = setOf(SequencedAmplification(GENE))))
-        val annotatedVariant = annotated.drivers.copyNumbers.first()
-        assertCopyNumber(unannotatedCopyNumberSlot[0])
-        assertCopyNumber(unannotatedCopyNumberSlot[1])
-        assertCopyNumber(annotatedVariant)
         assertThat(annotated.characteristics.ploidy).isEqualTo(2.0)
-        assertThat(annotatedVariant.geneRole).isEqualTo(GeneRole.ONCO)
-        assertThat(annotatedVariant.proteinEffect).isEqualTo(ProteinEffect.GAIN_OF_FUNCTION)
-    }
-
-    @Test
-    fun `Should annotate gene deletion with evidence`() {
-        every { evidenceDatabase.geneAlterationForCopyNumber(any()) } returns HOTSPOT
-        every { evidenceDatabase.evidenceForCopyNumber(any()) } returns ACTIONABILITY_MATCH
-
-        val annotatedPanel = annotator.annotate(createTestPriorSequencingTest().copy(deletedGenes = setOf(SequencedDeletedGene(GENE))))
-        assertThat(annotatedPanel.drivers.copyNumbers).isEqualTo(
-            listOf(
-                CopyNumber(
-                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS),
-                    otherImpacts = emptySet(),
-                    isReportable = true,
-                    event = GENE,
-                    driverLikelihood = DriverLikelihood.HIGH,
-                    evidence = ClinicalEvidenceFactory.create(ACTIONABILITY_MATCH),
-                    gene = GENE,
-                    geneRole = GeneRole.ONCO,
-                    proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-                    isAssociatedWithDrugResistance = null,
-                )
-            )
-        )
     }
 
     @Test
@@ -181,14 +117,6 @@ class PanelAnnotatorTest {
 
         val panelWithoutMicrosatelliteStatus = annotator.annotate(createTestPriorSequencingTest().copy(isMicrosatelliteUnstable = null))
         assertThat(panelWithoutMicrosatelliteStatus.characteristics.microsatelliteEvidence).isNull()
-    }
-
-    private fun assertCopyNumber(annotatedVariant: CopyNumber) {
-        assertThat(annotatedVariant.canonicalImpact.minCopies).isEqualTo(6)
-        assertThat(annotatedVariant.canonicalImpact.maxCopies).isEqualTo(6)
-        assertThat(annotatedVariant.canonicalImpact.type).isEqualTo(CopyNumberType.FULL_GAIN)
-        assertThat(annotatedVariant.driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
-        assertThat(annotatedVariant.isReportable).isTrue()
     }
 
     private fun createTestPriorSequencingTest(): PriorSequencingTest {
