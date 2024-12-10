@@ -42,16 +42,13 @@ object ActionableEventsExtraction {
         return Pair(extractTrials(trials, predicate), predicate)
     }
 
-    fun extractGeneEvidence(
-        evidences: List<EfficacyEvidence>,
-        validGeneEvents: Set<GeneEvent> = GeneEvent.values().toSet()
-    ): List<EfficacyEvidence> {
+    fun extractGeneEvidence(evidences: List<EfficacyEvidence>, validGeneEvents: Set<GeneEvent>): List<EfficacyEvidence> {
         return extractEfficacyEvidence(evidences, geneFilter(validGeneEvents))
     }
 
     fun extractGeneTrials(
         trials: List<ActionableTrial>,
-        validGeneEvents: Set<GeneEvent> = GeneEvent.values().toSet()
+        validGeneEvents: Set<GeneEvent>
     ): Pair<List<ActionableTrial>, Predicate<MolecularCriterium>> {
         val predicate = geneFilter(validGeneEvents)
         return Pair(extractTrials(trials, predicate), predicate)
@@ -66,10 +63,7 @@ object ActionableEventsExtraction {
         return Pair(extractTrials(trials, predicate), predicate)
     }
 
-    fun extractCharacteristicEvidence(
-        evidences: List<EfficacyEvidence>,
-        validTypes: Set<TumorCharacteristicType> = TumorCharacteristicType.values().toSet()
-    ): List<EfficacyEvidence> {
+    fun extractCharacteristicEvidence(evidences: List<EfficacyEvidence>, validTypes: Set<TumorCharacteristicType>): List<EfficacyEvidence> {
         return extractEfficacyEvidence(evidences, characteristicsFilter(validTypes))
     }
 
@@ -82,6 +76,7 @@ object ActionableEventsExtraction {
     }
 
     fun extractEvent(molecularCriterium: MolecularCriterium): ActionableEvent {
+        // TODO (KD): The below assumes that every molecular criterium contains exactly 1 molecular event.
         return when {
             hotspotFilter().test(molecularCriterium) -> {
                 molecularCriterium.hotspots().iterator().next()
@@ -95,7 +90,7 @@ object ActionableEventsExtraction {
                 molecularCriterium.exons().iterator().next()
             }
 
-            geneFilter().test(molecularCriterium) -> {
+            geneFilter(GeneEvent.values().toSet()).test(molecularCriterium) -> {
                 molecularCriterium.genes().iterator().next()
             }
 
@@ -103,7 +98,7 @@ object ActionableEventsExtraction {
                 molecularCriterium.fusions().iterator().next()
             }
 
-            characteristicsFilter().test(molecularCriterium) -> {
+            characteristicsFilter(TumorCharacteristicType.values().toSet()).test(molecularCriterium) -> {
                 molecularCriterium.characteristics().iterator().next()
             }
 
@@ -115,10 +110,6 @@ object ActionableEventsExtraction {
         return molecularCriterium.hotspots().iterator().next()
     }
 
-    fun extractHotspots(actionableTrial: ActionableTrial): Set<ActionableHotspot> {
-        return extractFromTrial(actionableTrial, MolecularCriterium::hotspots)
-    }
-
     fun extractCodon(molecularCriterium: MolecularCriterium): ActionableRange {
         return molecularCriterium.codons().iterator().next()
     }
@@ -127,83 +118,52 @@ object ActionableEventsExtraction {
         return molecularCriterium.exons().iterator().next()
     }
 
-    fun extractRanges(actionableTrial: ActionableTrial): Set<ActionableRange> {
-        val codons = extractFromTrial(actionableTrial, MolecularCriterium::codons)
-        val exons = extractFromTrial(actionableTrial, MolecularCriterium::exons)
-        return codons + exons
-    }
-
     fun extractGene(molecularCriterium: MolecularCriterium): ActionableGene {
         return molecularCriterium.genes().iterator().next()
-    }
-
-    fun extractGene(efficacyEvidence: EfficacyEvidence): ActionableGene {
-        return efficacyEvidence.molecularCriterium().genes().iterator().next()
-    }
-
-    fun extractGenes(actionableTrial: ActionableTrial): Set<ActionableGene> {
-        return extractFromTrial(actionableTrial, MolecularCriterium::genes)
     }
 
     fun extractFusion(molecularCriterium: MolecularCriterium): ActionableFusion {
         return molecularCriterium.fusions().iterator().next()
     }
 
-    fun extractFusions(actionableTrial: ActionableTrial): Set<ActionableFusion> {
-        return extractFromTrial(actionableTrial, MolecularCriterium::fusions)
-    }
-
     fun extractCharacteristic(molecularCriterium: MolecularCriterium): ActionableCharacteristic {
         return molecularCriterium.characteristics().iterator().next()
     }
 
-    fun extractCharacteristics(actionableTrial: ActionableTrial): Set<ActionableCharacteristic> {
-        return extractFromTrial(actionableTrial, MolecularCriterium::characteristics)
-    }
-
-    fun extractEfficacyEvidence(
+    private fun extractEfficacyEvidence(
         evidences: List<EfficacyEvidence>,
-        molecularCriteriumPredicate: Predicate<MolecularCriterium>
+        predicate: Predicate<MolecularCriterium>
     ): List<EfficacyEvidence> {
-        return evidences.filter { evidence -> molecularCriteriumPredicate.test(evidence.molecularCriterium()) }
+        return evidences.filter { evidence -> predicate.test(evidence.molecularCriterium()) }
     }
 
-    fun extractTrials(
-        trials: List<ActionableTrial>,
-        molecularCriteriumPredicate: Predicate<MolecularCriterium>
-    ): List<ActionableTrial> {
+    private fun extractTrials(trials: List<ActionableTrial>, predicate: Predicate<MolecularCriterium>): List<ActionableTrial> {
         return trials.filter { trial ->
-            trial.anyMolecularCriteria().any { criterium -> molecularCriteriumPredicate.test(criterium) }
+            trial.anyMolecularCriteria().any { criterium -> predicate.test(criterium) }
         }
     }
 
-    private fun <T> extractFromTrial(actionableTrial: ActionableTrial, extractActionableEvents: (MolecularCriterium) -> Set<T>): Set<T> {
-        return actionableTrial.anyMolecularCriteria().flatMap { extractActionableEvents(it) }.toSet()
-    }
-
-    fun hotspotFilter(): Predicate<MolecularCriterium> {
+    private fun hotspotFilter(): Predicate<MolecularCriterium> {
         return Predicate { molecularCriterium -> molecularCriterium.hotspots().isNotEmpty() }
     }
 
-    fun codonFilter(): Predicate<MolecularCriterium> {
+    private fun codonFilter(): Predicate<MolecularCriterium> {
         return Predicate { molecularCriterium -> molecularCriterium.codons().isNotEmpty() }
     }
 
-    fun exonFilter(): Predicate<MolecularCriterium> {
+    private fun exonFilter(): Predicate<MolecularCriterium> {
         return Predicate { molecularCriterium -> molecularCriterium.exons().isNotEmpty() }
     }
 
-    fun geneFilter(validGeneEvents: Set<GeneEvent> = GeneEvent.values().toSet()): Predicate<MolecularCriterium> {
+    private fun geneFilter(validGeneEvents: Set<GeneEvent>): Predicate<MolecularCriterium> {
         return Predicate { molecularCriterium -> molecularCriterium.genes().any { validGeneEvents.contains(it.event()) } }
     }
 
-    fun fusionFilter(): Predicate<MolecularCriterium> {
+    private fun fusionFilter(): Predicate<MolecularCriterium> {
         return Predicate { molecularCriterium -> molecularCriterium.fusions().isNotEmpty() }
     }
 
-    fun characteristicsFilter(
-        validTypes: Set<TumorCharacteristicType> = TumorCharacteristicType.values().toSet()
-    ): Predicate<MolecularCriterium> {
+    private fun characteristicsFilter(validTypes: Set<TumorCharacteristicType>): Predicate<MolecularCriterium> {
         return Predicate { molecularCriterium -> molecularCriterium.characteristics().any { validTypes.contains(it.type()) } }
     }
 }

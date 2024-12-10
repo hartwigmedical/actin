@@ -19,7 +19,7 @@ class PersonalizedActionabilityFactoryTest {
         val evidence2 = create("other doid")
         val evidence3 = create("parent", "exclude")
 
-        val match = factory.create(ActionabilityMatch(listOf(evidence1, evidence2, evidence3), emptyList()))
+        val match = factory.create(ActionabilityMatch(listOf(evidence1, evidence2, evidence3), emptyMap()))
 
         assertThat(match.treatmentEvidence.filter { it.isOnLabel }.size).isEqualTo(1)
         assertThat(match.treatmentEvidence.filter { !it.isOnLabel }.size).isEqualTo(2)
@@ -34,7 +34,7 @@ class PersonalizedActionabilityFactoryTest {
         val evidence2 = create("doid 2")
         val evidence3 = create("doid 1", "exclude")
 
-        val match = factory.create(ActionabilityMatch(listOf(evidence1, evidence2, evidence3), emptyList()))
+        val match = factory.create(ActionabilityMatch(listOf(evidence1, evidence2, evidence3), emptyMap()))
 
         assertThat(match.treatmentEvidence.filter { it.isOnLabel }.size).isEqualTo(0)
         assertThat(match.treatmentEvidence.filter { !it.isOnLabel }.size).isEqualTo(3)

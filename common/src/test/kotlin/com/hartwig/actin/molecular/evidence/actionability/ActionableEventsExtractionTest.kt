@@ -1,8 +1,6 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
-import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
-import com.hartwig.actin.molecular.evidence.TestServeTrialFactory
 import com.hartwig.serve.datamodel.molecular.ImmutableMolecularCriterium
 import com.hartwig.serve.datamodel.molecular.MutationType
 import com.hartwig.serve.datamodel.molecular.characteristic.ImmutableActionableCharacteristic
@@ -26,23 +24,17 @@ class ActionableEventsExtractionTest {
             ImmutableActionableHotspot.builder().from(TestServeMolecularFactory.createActionableEvent()).gene("gene")
                 .chromosome("chromosome").position(0).ref("ref").alt("alt").build()
         val molecularCriterium = ImmutableMolecularCriterium.builder().addHotspots(actionableHotspot).build()
-        val efficacyEvidence = TestServeEvidenceFactory.create(molecularCriterium = molecularCriterium)
-        val actionableTrial = TestServeTrialFactory.create(molecularCriteria = setOf(molecularCriterium))
 
-        assertThat(ActionableEventsExtraction.extractHotspot(efficacyEvidence)).isEqualTo(actionableHotspot)
-        assertThat(ActionableEventsExtraction.extractHotspots(actionableTrial)).isEqualTo(setOf(actionableHotspot))
+        assertThat(ActionableEventsExtraction.extractHotspot(molecularCriterium)).isEqualTo(actionableHotspot)
     }
 
     @Test
-    fun `Can extract range`() {
-        val actionableRange = ImmutableActionableRange.builder().from(TestServeMolecularFactory.createActionableEvent()).gene("gene")
+    fun `Can extract codon`() {
+        val actionableCodon = ImmutableActionableRange.builder().from(TestServeMolecularFactory.createActionableEvent()).gene("gene")
             .chromosome("chromosome").start(0).end(1).applicableMutationType(MutationType.ANY).build()
-        val molecularCriterium = ImmutableMolecularCriterium.builder().addCodons(actionableRange).build()
-        val efficacyEvidence = TestServeEvidenceFactory.create(molecularCriterium = molecularCriterium)
-        val actionableTrial = TestServeTrialFactory.create(molecularCriteria = setOf(molecularCriterium))
+        val molecularCriterium = ImmutableMolecularCriterium.builder().addCodons(actionableCodon).build()
 
-        assertThat(ActionableEventsExtraction.extractRange(efficacyEvidence)).isEqualTo(actionableRange)
-        assertThat(ActionableEventsExtraction.extractRanges(actionableTrial)).isEqualTo(setOf(actionableRange))
+        assertThat(ActionableEventsExtraction.extractCodon(molecularCriterium)).isEqualTo(actionableCodon)
     }
 
     @Test
@@ -51,11 +43,8 @@ class ActionableEventsExtractionTest {
             ImmutableActionableGene.builder().from(TestServeMolecularFactory.createActionableEvent()).event(GeneEvent.FUSION)
                 .gene("gene").sourceEvent("sourceEvent").build()
         val molecularCriterium = ImmutableMolecularCriterium.builder().addGenes(actionableGene).build()
-        val efficacyEvidence = TestServeEvidenceFactory.create(molecularCriterium = molecularCriterium)
-        val actionableTrial = TestServeTrialFactory.create(molecularCriteria = setOf(molecularCriterium))
 
-        assertThat(ActionableEventsExtraction.extractGene(efficacyEvidence)).isEqualTo(actionableGene)
-        assertThat(ActionableEventsExtraction.extractGenes(actionableTrial)).isEqualTo(setOf(actionableGene))
+        assertThat(ActionableEventsExtraction.extractGene(molecularCriterium)).isEqualTo(actionableGene)
     }
 
     @Test
@@ -64,11 +53,8 @@ class ActionableEventsExtractionTest {
             ImmutableActionableFusion.builder().from(TestServeMolecularFactory.createActionableEvent()).geneUp("geneUp")
                 .geneDown("geneDown").minExonUp(0).maxExonUp(0).build()
         val molecularCriterium = ImmutableMolecularCriterium.builder().addFusions(actionableFusion).build()
-        val efficacyEvidence = TestServeEvidenceFactory.create(molecularCriterium = molecularCriterium)
-        val actionableTrial = TestServeTrialFactory.create(molecularCriteria = setOf(molecularCriterium))
 
-        assertThat(ActionableEventsExtraction.extractFusion(efficacyEvidence)).isEqualTo(actionableFusion)
-        assertThat(ActionableEventsExtraction.extractFusions(actionableTrial)).isEqualTo(setOf(actionableFusion))
+        assertThat(ActionableEventsExtraction.extractFusion(molecularCriterium)).isEqualTo(actionableFusion)
     }
 
     @Test
@@ -77,37 +63,7 @@ class ActionableEventsExtractionTest {
             ImmutableActionableCharacteristic.builder().from(TestServeMolecularFactory.createActionableEvent())
                 .type(TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_LOAD).build()
         val molecularCriterium = ImmutableMolecularCriterium.builder().addCharacteristics(actionableCharacteristic).build()
-        val efficacyEvidence = TestServeEvidenceFactory.create(molecularCriterium = molecularCriterium)
-        val actionableTrial = TestServeTrialFactory.create(molecularCriteria = setOf(molecularCriterium))
 
-        assertThat(ActionableEventsExtraction.extractCharacteristic(efficacyEvidence)).isEqualTo(actionableCharacteristic)
-        assertThat(ActionableEventsExtraction.extractCharacteristics(actionableTrial)).isEqualTo(setOf(actionableCharacteristic))
-    }
-
-    @Test
-    fun `Can filter efficacy evidences`() {
-        val efficacyEvidence1 = TestServeEvidenceFactory.createEvidenceForExon()
-        val efficacyEvidence2 = TestServeEvidenceFactory.createEvidenceForFusion()
-        val efficacyEvidence3 = TestServeEvidenceFactory.createEvidenceForFusion()
-
-        val filteredEfficacyEvidence = ActionableEventsExtraction.extractEfficacyEvidence(
-            listOf(efficacyEvidence1, efficacyEvidence2, efficacyEvidence3),
-            ActionableEventsExtraction.fusionFilter()
-        )
-        assertThat(filteredEfficacyEvidence).containsExactly(efficacyEvidence2, efficacyEvidence3)
-    }
-
-    @Test
-    fun `Can filter trials`() {
-        val actionableTrial1 = TestServeTrialFactory.create(molecularCriteria = setOf(MOLECULAR_CRITERIUM_1))
-        val actionableTrial2 = TestServeTrialFactory.create(molecularCriteria = setOf(MOLECULAR_CRITERIUM_2))
-        val actionableTrial3 = TestServeTrialFactory.create(molecularCriteria = setOf(MOLECULAR_CRITERIUM_1, MOLECULAR_CRITERIUM_2))
-        val filteredTrials =
-            ActionableEventsExtraction.extractTrials(
-                listOf(actionableTrial1, actionableTrial2, actionableTrial3),
-                ActionableEventsExtraction.geneFilter()
-            )
-
-        assertThat(filteredTrials).containsExactly(actionableTrial2, actionableTrial3)
+        assertThat(ActionableEventsExtraction.extractCharacteristic(molecularCriterium)).isEqualTo(actionableCharacteristic)
     }
 }

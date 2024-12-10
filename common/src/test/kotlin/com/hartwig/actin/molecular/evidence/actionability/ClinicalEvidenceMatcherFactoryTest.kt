@@ -84,13 +84,13 @@ class ClinicalEvidenceMatcherFactoryTest {
             molecularCriteria = setOf(TestServeMolecularFactory.createHLACriterium())
         )
 
+        /*
+        TODO (KD) Fix
         val actionable = ActionabilityMatch(
             emptyList(),
             listOf(hotspot1, hotspot2, hotspot3, hotspot4, hotspot5, codon1, exon1, gene1, characteristic1, fusion1, hla1)
         )
 
-        /*
-        TODO (KD) Fix
         val filteredOnSource = factory.filterForSources(actionable, factory.actionableEventSources)
         assertThat(filteredOnSource.trials.size).isEqualTo(10)
 
