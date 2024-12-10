@@ -35,7 +35,7 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
         name = OTHER_CONDITION_NAME,
         isContraindication = true
     )
-    private val conditionWithChildOfTargetCode = conditionWithTargetCode.copy(icdCode = childCode)
+    private val conditionWithChildOfTargetCode = conditionWithTargetCode.copy(icdMainCode = childCode)
 
     @Test
     fun `Should fail when no matching icd code in prior other conditions, complications or toxicities`() {

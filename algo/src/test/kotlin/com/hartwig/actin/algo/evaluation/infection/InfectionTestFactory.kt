@@ -14,6 +14,6 @@ internal object InfectionTestFactory {
     }
 
     fun priorOtherCondition(name: String = "", icdCode: String): PriorOtherCondition {
-        return PriorOtherCondition(name = name, category = "", icdCode = icdCode, isContraindicationForTherapy = true, doids = emptySet())
+        return PriorOtherCondition(name = name, category = "", icdMainCode = icdCode, isContraindicationForTherapy = true, doids = emptySet())
     }
 }

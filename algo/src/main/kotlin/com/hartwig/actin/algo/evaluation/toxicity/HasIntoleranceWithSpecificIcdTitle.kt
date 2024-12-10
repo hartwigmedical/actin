@@ -12,7 +12,7 @@ class HasIntoleranceWithSpecificIcdTitle(private val icdModel: IcdModel, private
         
     override fun evaluate(record: PatientRecord): Evaluation {
         val matchingAllergies = record.intolerances
-            .filter { IntoleranceFunctions.hasIcdMatch(it, icdModel.titleToCodeMap[targetIcdTitle]!!, icdModel) }
+            .filter { IntoleranceFunctions.hasIcdMatch(it, listOf(icdModel.titleToCodeMap[targetIcdTitle]!!), icdModel) }
             .map { it.name }
 
         return if (matchingAllergies.isNotEmpty()) {

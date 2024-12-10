@@ -17,7 +17,8 @@ class HasPotentialAbsorptionDifficulties(private val icdModel: IcdModel) : Evalu
     override fun evaluate(record: PatientRecord): Evaluation {
         val targetIcdCodes = IcdConstants.POSSIBLE_ABSORPTION_DIFFICULTIES_LIST
         val conditions = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions).flatMap {
-            PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(record, targetIcdCodes, icdModel) }.map { it.name }
+            PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(icdModel, record, targetIcdCodes).fullMatches }
+            .map { it.name }
 
         if (conditions.isNotEmpty()) {
             return EvaluationFactory.pass(

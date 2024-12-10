@@ -152,7 +152,10 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
     }
 
     private fun hasHistoryOfCongestiveHeartFailureWithNYHACreator(): FunctionCreator {
-        return { HasHistoryOfCongestiveHeartFailureWithNYHA() }
+        return { function: EligibilityFunction ->
+            val input = functionInputResolver().createOneNyhaClassInput(function)
+            HasHistoryOfCongestiveHeartFailureWithNYHA(input, icdModel())
+        }
     }
 
     private fun hasHistoryOfEyeDiseaseCreator(): FunctionCreator {

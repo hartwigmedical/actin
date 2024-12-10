@@ -15,7 +15,7 @@ class HasIntoleranceRelatedToStudyMedication(private val icdModel: IcdModel) : E
         val allergies = record.intolerances
             .filter {
                 it.clinicalStatus.equals(CLINICAL_STATUS_ACTIVE, ignoreCase = true)
-                        && IntoleranceFunctions.hasIcdMatch(it, IcdConstants.DRUG_ALLERGY_CODE, icdModel)
+                        && IntoleranceFunctions.hasIcdMatch(it, IcdConstants.DRUG_ALLERGY_LIST, icdModel)
             }
             .map { it.name }
             .toSet()

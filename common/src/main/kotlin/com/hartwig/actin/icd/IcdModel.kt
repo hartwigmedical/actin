@@ -8,16 +8,31 @@ data class IcdModel(
 ) {
 
     fun isValidIcdTitle(icdTitle: String): Boolean {
-        return titleToCodeMap.containsKey(icdTitle)
+        return if (hasExtension(icdTitle)) {
+            icdTitle.split('&').all { titleToCodeMap.containsKey(it) }
+        } else {
+            titleToCodeMap.containsKey(icdTitle)
+        }
     }
 
     fun resolveCodeForTitle(icdTitle: String): String? {
         return titleToCodeMap[icdTitle]
     }
 
-    fun returnCodeWithParents(code: String): List<String> = resolveParentCodes(code) + code
-    private fun resolveParentCodes(code: String): List<String> = codeToNode(code)?.parentTreeCodes ?: emptyList()
+    fun resolveCodesForTitle(icdTitle: String): IcdCodes? {
+        val split = icdTitle.split('&')
+        val mainCode = titleToCodeMap[split[0]] ?: return null
+        val extensionCode = split.getOrNull(1)?.let { titleToCodeMap[it] }
+        return IcdCodes(mainCode, extensionCode)
+    }
+
+    fun returnCodeWithParents(code: String?): List<String> {
+        return code?.let { (codeToNode(code)?.parentTreeCodes ?: emptyList()) + code } ?: emptyList ()
+    }
+
     private fun codeToNode(code: String): IcdNode? = codeToNodeMap[code]
+
+    private fun hasExtension(icd: String) = icd.contains('&')
 
     companion object {
         fun create(nodes: List<IcdNode>): IcdModel {
@@ -27,4 +42,6 @@ data class IcdModel(
         private fun createCodeToNodeMap(icdNodes: List<IcdNode>): Map<String, IcdNode> = icdNodes.associateBy { it.code }
         private fun createTitleToCodeMap(icdNodes: List<IcdNode>): Map<String, String> = icdNodes.associate { it.title to it.code }
     }
+
+    data class IcdCodes(val mainCode: String, val extensionCode: String?)
 }

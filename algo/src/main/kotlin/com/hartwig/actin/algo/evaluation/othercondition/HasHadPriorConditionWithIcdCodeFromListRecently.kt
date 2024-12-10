@@ -20,7 +20,7 @@ class HasHadPriorConditionWithIcdCodeFromListRecently(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val matchingConditionSummary = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
-            .flatMap { PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(record, targetIcdCodes, icdModel) }
+            .flatMap { PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(icdModel, record, targetIcdCodes).fullMatches }
             .groupBy {
                 val isAfter = DateComparison.isAfterDate(minDate, it.year, it.month)
                 when {
@@ -75,6 +75,6 @@ class HasHadPriorConditionWithIcdCodeFromListRecently(
     }
 
     private fun resolveIcdTitle(condition: PriorOtherCondition): String {
-        return icdModel.codeToNodeMap[condition.icdCode]!!.title
+        return icdModel.codeToNodeMap[condition.icdMainCode]!!.title
     }
 }

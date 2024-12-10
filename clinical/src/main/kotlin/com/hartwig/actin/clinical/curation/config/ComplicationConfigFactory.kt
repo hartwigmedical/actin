@@ -16,10 +16,10 @@ class ComplicationConfigFactory(private val icdModel: IcdModel) : CurationConfig
             fields,
             parts
         )
-        val (icdCode, icdValidationErrors) = validateIcd(CurationCategory.COMPLICATION, input, "icd", fields, parts, icdModel)
+        val (icdCodes, icdValidationErrors) = validateIcd(CurationCategory.COMPLICATION, input, "icd", fields, parts, icdModel)
         val (year, yearValidationErrors) = validateInteger(CurationCategory.COMPLICATION, input, "year", fields, parts)
         val (month, monthValidationErrors) = validateInteger(CurationCategory.COMPLICATION, input, "month", fields, parts)
-        val curated = toCuratedComplication(icdCode, fields, parts, year, month)
+        val curated = toCuratedComplication(icdCodes?.mainCode, fields, parts, year, month)
         return ValidatedCurationConfig(
             ComplicationConfig(
                 input = input,

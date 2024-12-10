@@ -7,7 +7,7 @@ import com.hartwig.actin.icd.IcdModel
 class ToxicityConfigFactory(private val  icdModel: IcdModel) : CurationConfigFactory<ToxicityConfig> {
     override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<ToxicityConfig> {
         val input = parts[fields["input"]!!]
-        val (icdCode, icdValidationErrors) =
+        val (icdCodes, icdValidationErrors) =
             validateIcd(CurationCategory.TOXICITY, input, "icd", fields, parts, icdModel)
         val (grade, gradeValidationError) = validateInteger(CurationCategory.TOXICITY, input, "grade", fields, parts)
         return ValidatedCurationConfig(
@@ -17,7 +17,7 @@ class ToxicityConfigFactory(private val  icdModel: IcdModel) : CurationConfigFac
                 name = parts[fields["name"]!!],
                 categories = CurationUtil.toCategories(parts[fields["categories"]!!]),
                 grade = grade,
-                icdCode = icdCode ?: ""
+                icdCode = icdCodes?.mainCode ?: ""
             ), gradeValidationError + icdValidationErrors
         )
     }

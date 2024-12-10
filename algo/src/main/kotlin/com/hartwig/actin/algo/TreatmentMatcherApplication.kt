@@ -54,7 +54,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
         LOGGER.info("Creating ICD-11 tree from file {}", config.icdTsv)
-        val icdNodes = IcdDeserializer.readFromFile(config.icdTsv).map { IcdNode.create(it) }
+        val icdNodes = IcdNode.create(IcdDeserializer.readFromFile(config.icdTsv))
         LOGGER.info(" Loaded {} nodes", icdNodes.size)
         val icdModel = IcdModel.create(icdNodes)
 

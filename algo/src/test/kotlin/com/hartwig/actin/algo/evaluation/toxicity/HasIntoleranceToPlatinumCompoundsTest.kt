@@ -1,39 +1,58 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.icd.TestIcdFactory
 import org.junit.Test
 
 class HasIntoleranceToPlatinumCompoundsTest {
 
+    private val function = HasIntoleranceToPlatinumCompounds(TestIcdFactory.createTestModel())
+
     @Test
     fun `Should fail when no known intolerances are present`() {
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL, HasIntoleranceToPlatinumCompounds().evaluate(ToxicityTestFactory.withIntolerances(emptyList()))
+            EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withIntolerances(emptyList()))
         )
     }
 
     @Test
-    fun `Should fail when intolerances are not of Taxane category`() {
-        val mismatch = ToxicityTestFactory.intolerance(name = "mismatch")
+    fun `Should fail when intolerances does not have name or ICD code match for taxane intolerance`() {
+        val mismatch = ToxicityTestFactory.intolerance(name = "mismatch", icdCode = IcdConstants.PNEUMOTHORAX_CODE)
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL, HasIntoleranceToPlatinumCompounds().evaluate(ToxicityTestFactory.withIntolerance(mismatch))
+            EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withIntolerance(mismatch))
         )
     }
 
     @Test
-    fun `Should pass with known Taxane intolerance present`() {
-        val match = ToxicityTestFactory.intolerance(name = HasIntoleranceToPlatinumCompounds.PLATINUM_COMPOUNDS.iterator().next())
+    fun `Should pass for intolerance matching on name and drug allergy ICD code`() {
+        val match = ToxicityTestFactory.intolerance(
+            name = HasIntoleranceToPlatinumCompounds.PLATINUM_COMPOUNDS.iterator().next(),
+            icdCode = IcdConstants.DRUG_ALLERGY_LIST.first()
+        )
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS, HasIntoleranceToPlatinumCompounds().evaluate(ToxicityTestFactory.withIntolerance(match))
+            EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withIntolerance(match))
+        )
+    }
+
+    @Test
+    fun `Should fail for intolerance matching on ICD code only`() {
+        val match = ToxicityTestFactory.intolerance(icdCode = IcdConstants.DRUG_ALLERGY_LIST.first())
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withIntolerance(match))
         )
     }
 
     @Test
     fun `Should pass when substring of intolerance name matches`() {
-        val match = ToxicityTestFactory.intolerance(name = "carboplatin chemotherapy allergy")
+        val match = ToxicityTestFactory.intolerance(
+            name = "carboplatin chemotherapy allergy",
+            icdCode = IcdConstants.DRUG_ALLERGY_LIST.first()
+        )
+
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS, HasIntoleranceToPlatinumCompounds().evaluate(ToxicityTestFactory.withIntolerance(match))
+            EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withIntolerance(match))
         )
     }
 }

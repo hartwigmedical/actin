@@ -107,7 +107,8 @@
         "5082",
         "11335"
       ],
-      "icdCode": "1A01.2",
+      "icdMainCode": "1A01.2",
+      "icdExtensionCode": "",
       "category": "Other",
       "isContraindicationForTherapy": true
     }

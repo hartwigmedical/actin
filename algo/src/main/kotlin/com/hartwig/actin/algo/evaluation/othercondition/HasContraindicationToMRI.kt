@@ -16,7 +16,7 @@ class HasContraindicationToMRI(private val icdModel: IcdModel) : EvaluationFunct
         val targetCodes = listOf(IcdConstants.KIDNEY_FAILURE_BLOCK, IcdConstants.PRESENCE_OF_DEVICE_IMPLANT_OR_GRAFT_BLOCK)
         val relevantConditions = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
         val conditionsMatchingCode = relevantConditions.flatMap {
-            PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(record, targetCodes, icdModel)
+            PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(icdModel, record, targetCodes).fullMatches
         }.map { it.name }
         val conditionsMatchingString = relevantConditions.filter {
             stringCaseInsensitivelyMatchesQueryCollection(it.name, OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_MRI)

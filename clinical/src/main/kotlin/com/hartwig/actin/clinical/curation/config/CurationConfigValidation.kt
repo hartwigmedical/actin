@@ -56,9 +56,9 @@ fun validateIcd(
     fields: Map<String, Int>,
     parts: Array<String>,
     icdModel: IcdModel,
-): Pair<String?, List<CurationConfigValidationError>> {
+): Pair<IcdModel.IcdCodes?, List<CurationConfigValidationError>> {
     val title = parts[fields["icd"]!!]
-    return icdModel.resolveCodeForTitle(title)?.let { code -> code to emptyList() } ?: Pair(
+    return icdModel.resolveCodesForTitle(title)?.let { code -> code to emptyList() } ?: Pair(
         null, listOf(
             CurationConfigValidationError(
                 curationCategory.categoryName,

@@ -7,6 +7,7 @@ data class PriorOtherCondition(
     val month: Int? = null,
     val doids: Set<String> = emptySet(),
     val category: String,
-    val icdCode: String,
+    val icdMainCode: String,
+    val icdExtensionCode: String? = null,
     val isContraindicationForTherapy: Boolean
 )

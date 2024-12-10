@@ -12,7 +12,7 @@ class HasChildPughClass(private val icdModel: IcdModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val hasLiverCirrhosis = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions).any {
-            icdModel.returnCodeWithParents(it.icdCode).contains(IcdConstants.LIVER_CIRRHOSIS_CODE)
+            icdModel.returnCodeWithParents(it.icdMainCode).contains(IcdConstants.LIVER_CIRRHOSIS_CODE)
         }
 
         return if (hasLiverCirrhosis) {

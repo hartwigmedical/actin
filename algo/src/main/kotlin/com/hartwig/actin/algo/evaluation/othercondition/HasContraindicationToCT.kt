@@ -17,7 +17,7 @@ class HasContraindicationToCT(private val icdModel: IcdModel) : EvaluationFuncti
         val targetIcdCode = listOf(IcdConstants.KIDNEY_FAILURE_BLOCK)
         val relevantConditions = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
         val conditionsMatchingCode = relevantConditions.flatMap {
-            PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(record, targetIcdCode, icdModel)
+            PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(icdModel, record, targetIcdCode).fullMatches
         }.map { it.name }
         val conditionsMatchingString = relevantConditions.filter {
             stringCaseInsensitivelyMatchesQueryCollection(it.name, OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_CT)

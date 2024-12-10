@@ -15,7 +15,8 @@ class HasLeptomeningealDisease(private val icdModel: IcdModel) : EvaluationFunct
         val icdCode = IcdConstants.LEPTOMENINGEAL_METASTASES_CODE
         val hasConfirmedLeptomeningealDisease =
             ComplicationFunctions.findComplicationsMatchingAnyIcdCode(record, listOf(icdCode), icdModel).isNotEmpty() ||
-                PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(record, listOf(icdCode), icdModel).isNotEmpty()
+                    PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(icdModel, record, listOf(icdCode))
+                        .fullMatches.isNotEmpty()
 
         val tumorDetails = record.tumor
         val otherLesions = listOfNotNull(tumorDetails.otherLesions, tumorDetails.otherSuspectedLesions).flatten()

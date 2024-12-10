@@ -29,6 +29,7 @@ internal object OtherConditionTestFactory {
         doids: Set<String> = emptySet(),
         category: String = "",
         icdCode: String = "",
+        extensionCode: String? = null,
         isContraindication: Boolean = true
     ): PriorOtherCondition {
         return PriorOtherCondition(
@@ -37,7 +38,8 @@ internal object OtherConditionTestFactory {
             month = month,
             doids = doids,
             category = category,
-            icdCode = icdCode,
+            icdMainCode = icdCode,
+            icdExtensionCode = extensionCode,
             isContraindicationForTherapy = isContraindication,
         )
     }

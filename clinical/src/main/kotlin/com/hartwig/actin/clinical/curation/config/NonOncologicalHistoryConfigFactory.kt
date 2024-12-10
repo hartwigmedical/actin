@@ -55,7 +55,7 @@ class NonOncologicalHistoryConfigFactory(private val curationDoidValidator: Cura
                 fields,
                 parts
             ) { curationDoidValidator.isValidDiseaseDoidSet(it) }
-            val (icdCode, icdValidationErrors) = validateIcd(CurationCategory.NON_ONCOLOGICAL_HISTORY, input, "icd", fields, parts, icdModel)
+            val (icdCodes, icdValidationErrors) = validateIcd(CurationCategory.NON_ONCOLOGICAL_HISTORY, input, "icd", fields, parts, icdModel)
             val (isContraindicationForTherapy, isContraindicationForTherapyValidationErrors) = validateBoolean(
                 CurationCategory.NON_ONCOLOGICAL_HISTORY,
                 input,
@@ -72,7 +72,8 @@ class NonOncologicalHistoryConfigFactory(private val curationDoidValidator: Cura
                 month = month,
                 doids = doids ?: emptySet(),
                 category = parts[fields["category"]!!],
-                icdCode = icdCode ?: "",
+                icdMainCode = icdCodes?.mainCode ?: "",
+                icdExtensionCode = icdCodes?.extensionCode ?: "",
                 isContraindicationForTherapy = isContraindicationForTherapy ?: false
             ) to doidValidationErrors + icdValidationErrors + isContraindicationForTherapyValidationErrors + yearValidationErrors + monthValidationErrors
         } else {

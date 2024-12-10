@@ -13,7 +13,7 @@ class HasHadPriorConditionWithIcdCodeFromList(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val matchingConditions = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
-            .flatMap { PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(record, targetIcdCodes, icdModel) }
+            .flatMap { PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(icdModel, record, targetIcdCodes).fullMatches }
             .map { it.name }
 
         return if (matchingConditions.isNotEmpty()) {

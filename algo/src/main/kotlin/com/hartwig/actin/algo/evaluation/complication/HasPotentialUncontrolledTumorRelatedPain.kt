@@ -19,7 +19,8 @@ class HasPotentialUncontrolledTumorRelatedPain(private val selector: MedicationS
         val (hasCancerRelatedPainComplicationOrHistory, hasAcutePainComplicationOrHistory) =
             listOf(IcdConstants.CHRONIC_CANCER_RELATED_PAIN_CODE, IcdConstants.ACUTE_PAIN_CODE).map {
                 ComplicationFunctions.findComplicationsMatchingAnyIcdCode(record, listOf(it), icdModel).isNotEmpty() ||
-                        PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(record, listOf(it), icdModel).isNotEmpty()
+                        PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(icdModel, record, listOf(it))
+                            .fullMatches.isNotEmpty()
             }
 
         val medications = record.medications ?: return MEDICATION_NOT_PROVIDED

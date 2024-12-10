@@ -5,7 +5,7 @@ import com.hartwig.actin.icd.IcdModel
 
 object IntoleranceFunctions {
 
-    fun hasIcdMatch(intolerance: Intolerance, targetIcdCode: String, icdModel: IcdModel): Boolean {
-        return targetIcdCode in icdModel.returnCodeWithParents(intolerance.icdCode)
+    fun hasIcdMatch(intolerance: Intolerance, targetIcdCodes: List<String>, icdModel: IcdModel): Boolean {
+        return targetIcdCodes.any { it in icdModel.returnCodeWithParents(intolerance.icdCode) }
     }
 }

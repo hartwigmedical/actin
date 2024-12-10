@@ -24,6 +24,7 @@ enum class FunctionInput {
     MANY_DRUGS_TWO_INTEGERS,
     ONE_ICD_TITLE,
     MANY_ICD_TITLES,
+    ONE_NYHA_CLASS,
     ONE_TUMOR_TYPE,
     ONE_STRING,
     TWO_STRINGS,

@@ -5,7 +5,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.complication.ComplicationFunctions
 import com.hartwig.actin.algo.evaluation.othercondition.PriorConditionMessages.Characteristic
 import com.hartwig.actin.algo.evaluation.toxicity.ToxicityFunctions
-import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -24,7 +23,9 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCode(
         val targetIcdCodes = targetIcdTitles.map { icdModel.titleToCodeMap[it]!! }
 
         val matchingPriorConditions =
-            OtherConditionSelector.selectConditionsMatchingIcdCode(record.priorOtherConditions, targetIcdCodes, icdModel)
+            PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(icdModel, record, targetIcdCodes).fullMatches
+                .map { it.name }.toSet()
+
         val matchingComplications =
             ComplicationFunctions.findComplicationsMatchingAnyIcdCode(record, targetIcdCodes, icdModel).map { it.name }.toSet()
         val matchingToxicities = ToxicityFunctions.selectRelevantToxicities(record, icdModel, referenceDate, emptyList())

@@ -15,6 +15,7 @@ import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.datamodel.trial.FunctionInput
 import com.hartwig.actin.icd.datamodel.IcdNode
 import com.hartwig.actin.trial.input.TestFunctionInputResolverFactory.createTestResolver
+import com.hartwig.actin.trial.input.datamodel.NyhaClass
 import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 import com.hartwig.actin.trial.input.single.ManyDrugsOneInteger
@@ -407,6 +408,17 @@ class FunctionInputResolverTest {
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("title 1", "title 2")))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("title 1", "1", "2")))!!).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with one NYHA class type input`() {
+        val rule = firstOfType(FunctionInput.ONE_NYHA_CLASS)
+        val valid = create(rule, listOf("IV"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+        assertThat(resolver.createOneNyhaClassInput(valid)).isEqualTo(NyhaClass.IV)
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("I", "II")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("not a NYHA class")))!!).isFalse
     }
 
     @Test

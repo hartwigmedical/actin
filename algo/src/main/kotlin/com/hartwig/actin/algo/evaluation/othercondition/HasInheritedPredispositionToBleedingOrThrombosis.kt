@@ -13,8 +13,8 @@ class HasInheritedPredispositionToBleedingOrThrombosis(private val icdModel: Icd
     override fun evaluate(record: PatientRecord): Evaluation {
         val icdMatchingConditions = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
             .flatMap { PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(
-                record, listOf(IcdConstants.HEREDITARY_THROMBOPHILIA_CODE, IcdConstants.HEREDITARY_BLEEDING_DISORDER_BLOCK), icdModel
-            ) }
+                icdModel, record, listOf(IcdConstants.HEREDITARY_THROMBOPHILIA_CODE, IcdConstants.HEREDITARY_BLEEDING_DISORDER_BLOCK)
+            ).fullMatches }
 
         val hasMatchingName = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
             .any { it.name.lowercase().contains(NAME_INDICATING_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS.lowercase()) }

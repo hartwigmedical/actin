@@ -77,7 +77,7 @@ class LocalExampleTreatmentMatchApplication {
 
 
         LOGGER.info("Creating ICD-11 tree from file {}", icdTsv)
-        val icdNodes = IcdDeserializer.readFromFile(icdTsv).map { IcdNode.create(it) }
+        val icdNodes = IcdNode.create(IcdDeserializer.readFromFile(icdTsv))
         LOGGER.info(" Loaded {} nodes", icdNodes.size)
         val icdModel = IcdModel.create(icdNodes)
 

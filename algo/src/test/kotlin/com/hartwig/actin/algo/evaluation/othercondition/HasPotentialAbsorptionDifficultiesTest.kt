@@ -36,7 +36,7 @@ class HasPotentialAbsorptionDifficultiesTest {
         listOf(
             OtherConditionTestFactory.withToxicities(listOf(correctToxicity.copy(icdCode = wrongIcd))),
             OtherConditionTestFactory.withComplications(listOf(correctComplication.copy(icdCode = wrongIcd))),
-            OtherConditionTestFactory.withPriorOtherCondition(correctCondition.copy(icdCode = wrongIcd))
+            OtherConditionTestFactory.withPriorOtherCondition(correctCondition.copy(icdMainCode = wrongIcd))
         )
             .forEach {
                 assertEvaluation(EvaluationResult.FAIL, function.evaluate((it)))

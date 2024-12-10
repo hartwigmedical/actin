@@ -19,7 +19,8 @@ class OtherConditionSelectorTest {
             name = "",
             doids = emptySet(),
             category = "",
-            icdCode = "",
+            icdMainCode = "",
+            icdExtensionCode = null,
             isContraindicationForTherapy = isContraindicationForTherapy,
         )
     }

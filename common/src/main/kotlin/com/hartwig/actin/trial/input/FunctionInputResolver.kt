@@ -21,6 +21,7 @@ import com.hartwig.actin.medication.MedicationInputChecker
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.composite.CompositeInput
 import com.hartwig.actin.trial.input.composite.CompositeRules
+import com.hartwig.actin.trial.input.datamodel.NyhaClass
 import com.hartwig.actin.trial.input.datamodel.TreatmentCategoryInput
 import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
@@ -202,6 +203,11 @@ class FunctionInputResolver(
 
                 FunctionInput.MANY_ICD_TITLES -> {
                     createManyIcdTitlesInput(function)
+                    return true
+                }
+
+                FunctionInput.ONE_NYHA_CLASS -> {
+                    createOneNyhaClassInput(function)
                     return true
                 }
 
@@ -538,6 +544,11 @@ class FunctionInputResolver(
             throw IllegalStateException("ICD title(s) not valid: ${invalidTitles.joinToString(", ")}")
         }
         return icdStringList
+    }
+
+    fun createOneNyhaClassInput(function: EligibilityFunction): NyhaClass {
+        assertParamConfig(function, FunctionInput.ONE_NYHA_CLASS, 1)
+        return NyhaClass.valueOf(parameterAsString(function, 0))
     }
 
     fun createOneTumorTypeInput(function: EligibilityFunction): TumorTypeInput {

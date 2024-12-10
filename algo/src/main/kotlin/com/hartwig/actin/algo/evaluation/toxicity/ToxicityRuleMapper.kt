@@ -39,7 +39,7 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
     }
 
     private fun hasIntoleranceToPlatinumCompoundsCreator(): FunctionCreator {
-        return { HasIntoleranceToPlatinumCompounds() }
+        return { HasIntoleranceToPlatinumCompounds(icdModel()) }
     }
 
     private fun hasIntoleranceToTaxaneCreator(): FunctionCreator {

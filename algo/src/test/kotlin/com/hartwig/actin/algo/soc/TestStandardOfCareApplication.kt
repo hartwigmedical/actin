@@ -32,7 +32,7 @@ class TestStandardOfCareApplication {
         val doidModel: DoidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
         LOGGER.info("Creating ICD-11 tree from file {}", ICD_TSV_PATH)
-        val icdNodes = IcdDeserializer.readFromFile(ICD_TSV_PATH).map { IcdNode.create(it) }
+        val icdNodes = IcdNode.create(IcdDeserializer.readFromFile(ICD_TSV_PATH))
         LOGGER.info(" Loaded {} nodes", icdNodes.size)
         val icdModel = IcdModel.create(icdNodes)
 

@@ -10,6 +10,7 @@ import com.hartwig.actin.icd.datamodel.ClassKind
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvParser
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
+import com.hartwig.actin.icd.datamodel.IcdNode
 import com.hartwig.actin.icd.datamodel.SerializedIcdNode
 import java.io.File
 
@@ -29,30 +30,34 @@ object IcdDeserializer {
 
         val file = File(tsvPath)
         val nodes = reader.readValues<SerializedIcdNode>(file).readAll().toList()
-            .filterNot { it.chapterNo.any { char -> char.isLetter() } }
 
         nodes.forEach { if (!isValid(it)) throw IllegalArgumentException("Invalid ICD node: $it") }
         return nodes
     }
 
+    private fun isValid(rawNode: SerializedIcdNode) = rawNode.chapterNo != "0" && rawNode.depthInKind > 0
+
+    fun trimTitle(rawNode: SerializedIcdNode): String {
+        return rawNode.title.trimStart { it == '-' }
+    }
+
     fun resolveCode(rawNode: SerializedIcdNode): String {
         return when (rawNode.classKind) {
             ClassKind.CHAPTER -> rawNode.chapterNo
-            ClassKind.BLOCK -> rawNode.blockId!!
+            ClassKind.BLOCK -> if (determineChapterType(rawNode) != IcdChapterType.REGULAR) rawNode.linearizationUri else rawNode.blockId!!
             ClassKind.CATEGORY -> rawNode.code!!
         }
     }
 
-// TODO: Determine if this function is actually needed (i.e. if direct parent property is needed or only full tree)
-    fun resolveParentCode(rawNode: SerializedIcdNode): String? {
-        return when (rawNode.classKind) {
-            ClassKind.CHAPTER -> null
-            ClassKind.BLOCK -> if (rawNode.depthInKind == 1) rawNode.chapterNo else returnHighestGrouping(rawNode)
-            ClassKind.CATEGORY -> if (rawNode.depthInKind == 1) returnHighestGrouping(rawNode)!! else removeSubCode(rawNode)
+    fun determineChapterType(rawNode: SerializedIcdNode): IcdChapterType {
+        return when (rawNode.chapterNo) {
+            "V" -> IcdChapterType.FUNCTIONING_ASSESSMENT
+            "X" -> IcdChapterType.EXTENSION_CODES
+            else -> IcdChapterType.REGULAR
         }
     }
 
-    fun resolveFullParentTree(rawNode: SerializedIcdNode): List<String> {
+    fun resolveParentsForRegularChapter(rawNode: SerializedIcdNode): List<String> {
         val groupings = returnAllGroupings(rawNode)
         val chapterNo = listOf(rawNode.chapterNo)
 
@@ -63,21 +68,26 @@ object IcdDeserializer {
         }
     }
 
-    fun trimTitle(rawNode: SerializedIcdNode): String {
-        return rawNode.title.trimStart { it == '-' }
-    }
+    fun returnExtensionChapterNodeWithParents(serializedNodes: List<SerializedIcdNode>): List<IcdNode> {
+        return serializedNodes.fold(Pair(emptyList<IcdNode>(), emptyList<String>())) { (result, parents), node ->
+            val code = resolveCode(node)
+            val hyphenLevel = node.title.takeWhile { it == '-' }.length
+            val updatedParents = parents.take(hyphenLevel)
+            val currentParents = updatedParents + code
 
-    private fun isValid(rawNode: SerializedIcdNode) = rawNode.chapterNo != "0" && rawNode.depthInKind > 0
+            val icdNode = IcdNode(
+                code = code,
+                parentTreeCodes = updatedParents,
+                title = trimTitle(node)
+            )
+
+            Pair(result + icdNode, currentParents)
+        }.first
+    }
 
     private fun returnAllGroupings(rawNode: SerializedIcdNode): List<String> {
         with(rawNode) {
             return listOfNotNull(grouping1, grouping2, grouping3, grouping4, grouping5).filterNot { it.isBlank() }
-        }
-    }
-
-    private fun returnHighestGrouping(rawNode: SerializedIcdNode): String? {
-        with(rawNode) {
-            return sequenceOf(grouping5, grouping4, grouping3, grouping2, grouping1).firstOrNull { !it.isNullOrBlank() }
         }
     }
 
@@ -96,4 +106,10 @@ class ClassKindDeserializer : JsonDeserializer<ClassKind>() {
         val node = parser.readValueAsTree<JsonNode>()
         return ClassKind.valueOf(node.asText().uppercase())
     }
+}
+
+enum class IcdChapterType {
+    REGULAR,
+    FUNCTIONING_ASSESSMENT,
+    EXTENSION_CODES
 }

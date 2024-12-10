@@ -27,11 +27,8 @@ class HasSpecificFamilyHistory(
                 OtherConditionSelector
                     .selectClinicallyRelevant(record.priorOtherConditions)
                     .flatMap {
-                        OtherConditionSelector.selectConditionsMatchingIcdCode(
-                            record.priorOtherConditions,
-                            targetCodes,
-                            icdModel
-                        )
+                        PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(icdModel, record, targetCodes).fullMatches
+                            .map { it.name }
                     }
             }
 

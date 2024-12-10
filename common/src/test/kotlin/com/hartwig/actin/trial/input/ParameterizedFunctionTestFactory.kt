@@ -132,6 +132,10 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
                 listOf("$icdTitleToUse;$icdTitleToUse")
             }
 
+            FunctionInput.ONE_NYHA_CLASS -> {
+                listOf("I")
+            }
+
             FunctionInput.ONE_TUMOR_TYPE -> {
                 listOf(TumorTypeInput.SQUAMOUS_CELL_CARCINOMA.display())
             }

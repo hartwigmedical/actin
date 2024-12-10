@@ -31,7 +31,7 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
 
         LOGGER.info("Loading ICD nodes from {}", config.icdTsv)
-        val icdNodes = IcdDeserializer.readFromFile(config.icdTsv).map { IcdNode.create(it) }
+        val icdNodes = IcdNode.create(IcdDeserializer.readFromFile(config.icdTsv))
         LOGGER.info(" Loaded {} nodes", icdNodes.size)
 
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
