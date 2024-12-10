@@ -26,7 +26,7 @@ class PersonalizedActionabilityFactory(private val expandedTumorDoids: Set<Strin
     private fun determineOnLabelTrials(matchingCriteriaPerTrialMatch: Map<ActionableTrial, Set<MolecularCriterium>>):
             Map<ActionableTrial, Pair<Set<MolecularCriterium>, Set<Indication>>> {
         return matchingCriteriaPerTrialMatch.mapValues { (trial, criteria) ->
-            criteria to trial.indications().filter { isOnLabel(it) }.toSet()
+            criteria to trial.indications().filter(::isOnLabel).toSet()
         }
             .filter { (_, criteriaAndIndications) -> criteriaAndIndications.second.isNotEmpty() }
     }
