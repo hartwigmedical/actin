@@ -25,7 +25,7 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
         val drivers = DriverExtractor.relevantPurpleDrivers(purple)
         return purple.allSomaticGeneCopyNumbers()
             .asSequence()
-            .distinctBy { it.gene() } // TODO (CB): Should be changed when PurpleGeneCopyNumber has transcript / canonical fields
+            .distinctBy { it.gene() } // TODO (CB): Should be changed once PurpleGeneCopyNumber has transcript / isCanonical fields
             .map { geneCopyNumber ->
                 Pair(geneCopyNumber, findCopyNumberDrivers(drivers, geneCopyNumber.gene()))
             }
@@ -86,8 +86,10 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
                         canonicalImpact = TranscriptCopyNumberImpact(
                             transcriptId = "",
                             type = CopyNumberType.NONE,
-                            minCopies = geneCopyNumber.minCopyNumber().roundToInt(),
-                            maxCopies = geneCopyNumber.maxCopyNumber().roundToInt()
+                            minCopies = geneCopyNumber.minCopyNumber()
+                                .roundToInt(), // TODO (CB): Should be changed once PurpleGeneCopyNumber has transcript / isCanonical fields
+                            maxCopies = geneCopyNumber.maxCopyNumber()
+                                .roundToInt() // TODO (CB): Should be changed once PurpleGeneCopyNumber has transcript / isCanonical fields
                         ),
                         otherImpacts = otherGainLosses.map { gainLoss ->
                             TranscriptCopyNumberImpact(
