@@ -19,24 +19,27 @@ object ActionableEventsExtraction {
         return extractEfficacyEvidence(evidences, hotspotFilter())
     }
 
-    fun extractHotspotTrials(trials: List<ActionableTrial>): List<ActionableTrial> {
-        return extractTrials(trials, hotspotFilter())
+    fun extractHotspotTrials(trials: List<ActionableTrial>): Pair<List<ActionableTrial>, Predicate<MolecularCriterium>> {
+        val predicate = hotspotFilter()
+        return Pair(extractTrials(trials, predicate), predicate)
     }
 
     fun extractCodonEvidence(evidences: List<EfficacyEvidence>): List<EfficacyEvidence> {
         return extractEfficacyEvidence(evidences, codonFilter())
     }
 
-    fun extractCodonTrials(trials: List<ActionableTrial>): List<ActionableTrial> {
-        return extractTrials(trials, codonFilter())
+    fun extractCodonTrials(trials: List<ActionableTrial>): Pair<List<ActionableTrial>, Predicate<MolecularCriterium>> {
+        val predicate = codonFilter()
+        return Pair(extractTrials(trials, predicate), predicate)
     }
 
     fun extractExonEvidence(evidences: List<EfficacyEvidence>): List<EfficacyEvidence> {
         return extractEfficacyEvidence(evidences, exonFilter())
     }
 
-    fun extractExonTrials(trials: List<ActionableTrial>): List<ActionableTrial> {
-        return extractTrials(trials, exonFilter())
+    fun extractExonTrials(trials: List<ActionableTrial>): Pair<List<ActionableTrial>, Predicate<MolecularCriterium>> {
+        val predicate = exonFilter()
+        return Pair(extractTrials(trials, predicate), predicate)
     }
 
     fun extractGeneEvidence(
@@ -58,8 +61,9 @@ object ActionableEventsExtraction {
         return extractEfficacyEvidence(evidences, fusionFilter())
     }
 
-    fun extractFusionTrials(trials: List<ActionableTrial>): List<ActionableTrial> {
-        return extractTrials(trials, fusionFilter())
+    fun extractFusionTrials(trials: List<ActionableTrial>): Pair<List<ActionableTrial>, Predicate<MolecularCriterium>> {
+        val predicate = fusionFilter()
+        return Pair(extractTrials(trials, predicate), predicate)
     }
 
     fun extractCharacteristicEvidence(
@@ -72,8 +76,9 @@ object ActionableEventsExtraction {
     fun extractCharacteristicsTrials(
         trials: List<ActionableTrial>,
         validTypes: Set<TumorCharacteristicType> = TumorCharacteristicType.values().toSet()
-    ): List<ActionableTrial> {
-        return extractTrials(trials, characteristicsFilter(validTypes))
+    ): Pair<List<ActionableTrial>, Predicate<MolecularCriterium>> {
+        val predicate = characteristicsFilter(validTypes)
+        return Pair(extractTrials(trials, predicate), predicate)
     }
 
     fun extractEvent(molecularCriterium: MolecularCriterium): ActionableEvent {
@@ -106,24 +111,20 @@ object ActionableEventsExtraction {
         }
     }
 
-    fun extractHotspot(efficacyEvidence: EfficacyEvidence): ActionableHotspot {
-        return efficacyEvidence.molecularCriterium().hotspots().iterator().next()
+    fun extractHotspot(molecularCriterium: MolecularCriterium): ActionableHotspot {
+        return molecularCriterium.hotspots().iterator().next()
     }
 
     fun extractHotspots(actionableTrial: ActionableTrial): Set<ActionableHotspot> {
         return extractFromTrial(actionableTrial, MolecularCriterium::hotspots)
     }
 
-    fun extractRange(efficacyEvidence: EfficacyEvidence): ActionableRange {
-        return if (efficacyEvidence.molecularCriterium().codons().isNotEmpty()) {
-            efficacyEvidence.molecularCriterium().codons().iterator().next()
-        } else if (efficacyEvidence.molecularCriterium().exons().isNotEmpty()) {
-            efficacyEvidence.molecularCriterium().exons().iterator().next()
-        } else {
-            throw IllegalStateException(
-                "Neither codon nor range present in trial on actionable range: ${efficacyEvidence.molecularCriterium()}"
-            )
-        }
+    fun extractCodon(molecularCriterium: MolecularCriterium): ActionableRange {
+        return molecularCriterium.codons().iterator().next()
+    }
+
+    fun extractExon(molecularCriterium: MolecularCriterium): ActionableRange {
+        return molecularCriterium.exons().iterator().next()
     }
 
     fun extractRanges(actionableTrial: ActionableTrial): Set<ActionableRange> {
@@ -144,16 +145,16 @@ object ActionableEventsExtraction {
         return extractFromTrial(actionableTrial, MolecularCriterium::genes)
     }
 
-    fun extractFusion(efficacyEvidence: EfficacyEvidence): ActionableFusion {
-        return efficacyEvidence.molecularCriterium().fusions().iterator().next()
+    fun extractFusion(molecularCriterium: MolecularCriterium): ActionableFusion {
+        return molecularCriterium.fusions().iterator().next()
     }
 
     fun extractFusions(actionableTrial: ActionableTrial): Set<ActionableFusion> {
         return extractFromTrial(actionableTrial, MolecularCriterium::fusions)
     }
 
-    fun extractCharacteristic(efficacyEvidence: EfficacyEvidence): ActionableCharacteristic {
-        return efficacyEvidence.molecularCriterium().characteristics().iterator().next()
+    fun extractCharacteristic(molecularCriterium: MolecularCriterium): ActionableCharacteristic {
+        return molecularCriterium.characteristics().iterator().next()
     }
 
     fun extractCharacteristics(actionableTrial: ActionableTrial): Set<ActionableCharacteristic> {

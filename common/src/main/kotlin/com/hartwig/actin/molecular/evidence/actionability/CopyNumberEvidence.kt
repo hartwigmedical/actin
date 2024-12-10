@@ -3,24 +3,26 @@ package com.hartwig.actin.molecular.evidence.actionability
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
+import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import com.hartwig.serve.datamodel.trial.ActionableTrial
+import java.util.function.Predicate
 
 class CopyNumberEvidence(
     private val applicableAmplificationEvidences: List<EfficacyEvidence>,
-    private val applicableAmplificationTrials: List<ActionableTrial>,
+    private val amplificationTrialMatcher: ActionableTrialMatcher,
     private val applicableLossEvidences: List<EfficacyEvidence>,
-    private val applicableLossTrials: List<ActionableTrial>
+    private val lossTrialMatcher: ActionableTrialMatcher
 ) : ActionabilityMatcher<CopyNumber> {
 
     override fun findMatches(event: CopyNumber): ActionabilityMatch {
         return when (event.type) {
             CopyNumberType.FULL_GAIN, CopyNumberType.PARTIAL_GAIN -> {
-                findMatches(event, applicableAmplificationEvidences, applicableAmplificationTrials)
+                findMatches(event, applicableAmplificationEvidences, amplificationTrialMatcher)
             }
 
             CopyNumberType.LOSS -> {
-                findMatches(event, applicableLossEvidences, applicableLossTrials)
+                findMatches(event, applicableLossEvidences, lossTrialMatcher)
             }
 
             else -> {
@@ -32,13 +34,14 @@ class CopyNumberEvidence(
     private fun findMatches(
         copyNumber: CopyNumber,
         applicableEvidences: List<EfficacyEvidence>,
-        applicableTrials: List<ActionableTrial>
+        applicableTrialMatcher: ActionableTrialMatcher
     ): ActionabilityMatch {
+        val matchPredicate: Predicate<MolecularCriterium> =
+            Predicate { ActionableEventsExtraction.extractGene(it).gene() == copyNumber.gene }
+
         return ActionabilityMatch(
-            evidenceMatches = applicableEvidences.filter { ActionableEventsExtraction.extractGene(it).gene() == copyNumber.gene },
-            matchingCriteriaPerTrialMatch = applicableTrials.filter {
-                ActionableEventsExtraction.extractGenes(it).any { actionableGene -> actionableGene.gene() == copyNumber.gene }
-            }
+            evidenceMatches = applicableEvidences.filter { matchPredicate.test(it.molecularCriterium()) },
+            matchingCriteriaPerTrialMatch = applicableTrialMatcher.matchTrials(matchPredicate)
         )
     }
 
@@ -50,14 +53,21 @@ class CopyNumberEvidence(
             val applicableAmplificationEvidences = ActionableEventsExtraction.extractGeneEvidence(evidences, AMPLIFICATION_EVENTS)
             val applicableLossEvidences = ActionableEventsExtraction.extractGeneEvidence(evidences, LOSS_EVENTS)
 
-            val applicableAmplificationTrials = ActionableEventsExtraction.extractGeneTrials(trials, AMPLIFICATION_EVENTS)
-            val applicableLossTrials = ActionableEventsExtraction.extractGeneTrials(trials, LOSS_EVENTS)
+            val (applicableAmplificationTrials, amplificationMolecularPredicate) = ActionableEventsExtraction.extractGeneTrials(
+                trials,
+                AMPLIFICATION_EVENTS
+            )
+            val amplificationTrialMatcher = ActionableTrialMatcher(applicableAmplificationTrials, amplificationMolecularPredicate)
+
+            val (applicableLossTrials, lossMolecularPredicate) = ActionableEventsExtraction.extractGeneTrials(trials, LOSS_EVENTS)
+            val lossTrialMatcher = ActionableTrialMatcher(applicableLossTrials, lossMolecularPredicate)
+
 
             return CopyNumberEvidence(
                 applicableAmplificationEvidences,
-                applicableAmplificationTrials,
+                amplificationTrialMatcher,
                 applicableLossEvidences,
-                applicableLossTrials
+                lossTrialMatcher
             )
         }
     }

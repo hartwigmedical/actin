@@ -6,14 +6,14 @@ import java.util.function.Predicate
 
 class ActionableTrialMatcher(
     private val applicableTrials: List<ActionableTrial>,
-    private val molecularPredicate: Predicate<MolecularCriterium>
+    private val generalMolecularPredicate: Predicate<MolecularCriterium>
 ) {
 
-    fun matchTrials(matchPredicate: Predicate<MolecularCriterium>): Map<ActionableTrial, Set<MolecularCriterium>> {
+    fun matchTrials(specificMatchPredicate: Predicate<MolecularCriterium>): Map<ActionableTrial, Set<MolecularCriterium>> {
         return applicableTrials.map { trial ->
             val matchingCriteria = trial.anyMolecularCriteria()
-                .filter { molecularPredicate.test(it) }
-                .filter { matchPredicate.test(it) }
+                .filter { generalMolecularPredicate.test(it) }
+                .filter { specificMatchPredicate.test(it) }
             trial to matchingCriteria
         }
             .filter { it.second.isNotEmpty() }

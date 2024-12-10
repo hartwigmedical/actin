@@ -4,31 +4,31 @@ import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.FusionMatching
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
+import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.molecular.fusion.ActionableFusion
 import com.hartwig.serve.datamodel.molecular.gene.ActionableGene
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import com.hartwig.serve.datamodel.trial.ActionableTrial
+import java.util.function.Predicate
 
 class FusionEvidence(
     private val applicableFusionEvidences: List<EfficacyEvidence>,
-    private val applicableFusionTrials: List<ActionableTrial>,
+    private val fusionTrialMatcher: ActionableTrialMatcher,
     private val applicablePromiscuousEvidences: List<EfficacyEvidence>,
-    private val applicablePromiscuousTrials: List<ActionableTrial>,
+    private val promiscuousTrialMatcher: ActionableTrialMatcher
 ) : ActionabilityMatcher<FusionMatchCriteria> {
 
     override fun findMatches(event: FusionMatchCriteria): ActionabilityMatch {
-        val matchedFusionEvidence = applicableFusionEvidences.filter { isFusionMatch(ActionableEventsExtraction.extractFusion(it), event) }
-        val matchedPromiscuousEvidence =
-            applicablePromiscuousEvidences.filter { isPromiscuousMatch(ActionableEventsExtraction.extractGene(it), event) }
+        val fusionMatchPredicate: Predicate<MolecularCriterium> =
+            Predicate { isFusionMatch(ActionableEventsExtraction.extractFusion(it), event) }
+        val promiscuousMatchPredicate: Predicate<MolecularCriterium> =
+            Predicate { isPromiscuousMatch(ActionableEventsExtraction.extractGene(it), event) }
 
-        val matchedFusionTrials =
-            applicableFusionTrials.filter {
-                ActionableEventsExtraction.extractFusions(it).any { actionableFusion -> isFusionMatch(actionableFusion, event) }
-            }
-        val matchedPromiscuousTrials =
-            applicablePromiscuousTrials.filter {
-                ActionableEventsExtraction.extractGenes(it).any { actionableGene -> isPromiscuousMatch(actionableGene, event) }
-            }
+        val matchedFusionEvidence = applicableFusionEvidences.filter { fusionMatchPredicate.test(it.molecularCriterium()) }
+        val matchedPromiscuousEvidence = applicablePromiscuousEvidences.filter { promiscuousMatchPredicate.test(it.molecularCriterium()) }
+
+        val matchedFusionTrials = fusionTrialMatcher.matchTrials(fusionMatchPredicate)
+        val matchedPromiscuousTrials = promiscuousTrialMatcher.matchTrials(promiscuousMatchPredicate)
 
         return ActionabilityMatch(matchedFusionEvidence + matchedPromiscuousEvidence, matchedFusionTrials + matchedPromiscuousTrials)
     }
@@ -62,16 +62,21 @@ class FusionEvidence(
 
         fun create(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial>): FusionEvidence {
             val applicableFusionEvidences = ActionableEventsExtraction.extractFusionEvidence(evidences)
-            val applicableFusionTrials = ActionableEventsExtraction.extractFusionTrials(trials)
+            val (applicableFusionTrials, fusionPredicate) = ActionableEventsExtraction.extractFusionTrials(trials)
+            val fusionTrialMatcher = ActionableTrialMatcher(applicableFusionTrials, fusionPredicate)
 
             val applicablePromiscuousEvidences = ActionableEventsExtraction.extractGeneEvidence(evidences, PROMISCUOUS_FUSION_EVENTS)
-            val applicablePromiscuousTrials = ActionableEventsExtraction.extractGeneTrials(trials, PROMISCUOUS_FUSION_EVENTS)
+            val (applicablePromiscuousTrials, promiscuousPredicate) = ActionableEventsExtraction.extractGeneTrials(
+                trials,
+                PROMISCUOUS_FUSION_EVENTS
+            )
+            val promiscuousTrialMatcher = ActionableTrialMatcher(applicablePromiscuousTrials, promiscuousPredicate)
 
             return FusionEvidence(
                 applicableFusionEvidences,
-                applicableFusionTrials,
+                fusionTrialMatcher,
                 applicablePromiscuousEvidences,
-                applicablePromiscuousTrials,
+                promiscuousTrialMatcher,
             )
         }
     }

@@ -8,9 +8,9 @@ import com.hartwig.serve.datamodel.trial.ActionableTrial
 
 class VirusEvidence(
     private val hpvEvidences: List<EfficacyEvidence>,
-    private val hpvTrials: List<ActionableTrial>,
+    private val hpvTrialMatcher: ActionableTrialMatcher,
     private val ebvEvidences: List<EfficacyEvidence>,
-    private val ebvTrials: List<ActionableTrial>
+    private val ebvTrialMatcher: ActionableTrialMatcher
 ) : ActionabilityMatcher<Virus> {
 
     override fun findMatches(event: Virus): ActionabilityMatch {
@@ -18,15 +18,15 @@ class VirusEvidence(
             ActionabilityMatch(evidenceMatches = emptyList(), matchingCriteriaPerTrialMatch = emptyMap())
         } else when (event.type) {
             VirusType.HUMAN_PAPILLOMA_VIRUS -> {
-                ActionabilityMatch(evidenceMatches = hpvEvidences, matchingCriteriaPerTrialMatch = hpvTrials)
+                ActionabilityMatch(evidenceMatches = hpvEvidences, hpvTrialMatcher.matchTrials({ true }))
             }
 
             VirusType.EPSTEIN_BARR_VIRUS -> {
-                ActionabilityMatch(evidenceMatches = ebvEvidences, matchingCriteriaPerTrialMatch = ebvTrials)
+                ActionabilityMatch(evidenceMatches = ebvEvidences, ebvTrialMatcher.matchTrials({ true }))
             }
 
             else -> {
-                ActionabilityMatch(evidenceMatches = emptyList(), matchingCriteriaPerTrialMatch = emptyList())
+                ActionabilityMatch(evidenceMatches = emptyList(), matchingCriteriaPerTrialMatch = emptyMap())
             }
         }
     }
@@ -36,16 +36,19 @@ class VirusEvidence(
         private val EBV_POSITIVE_TYPES = setOf(TumorCharacteristicType.EBV_POSITIVE)
 
         fun create(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial>): VirusEvidence {
-            val hpvCharacteristicsEvidence = ActionableEventsExtraction.extractCharacteristicEvidence(evidences, HPV_POSITIVE_TYPES)
-            val hpvCharacteristicsTrials = ActionableEventsExtraction.extractCharacteristicsTrials(trials, HPV_POSITIVE_TYPES)
-            val ebvCharacteristicsEvidence = ActionableEventsExtraction.extractCharacteristicEvidence(evidences, EBV_POSITIVE_TYPES)
-            val ebvCharacteristicsTrials = ActionableEventsExtraction.extractCharacteristicsTrials(trials, EBV_POSITIVE_TYPES)
+            val hpvEvidences = ActionableEventsExtraction.extractCharacteristicEvidence(evidences, HPV_POSITIVE_TYPES)
+            val (hpvTrials, hpvPredicate) = ActionableEventsExtraction.extractCharacteristicsTrials(trials, HPV_POSITIVE_TYPES)
+            val hpvTrialMatcher = ActionableTrialMatcher(hpvTrials, hpvPredicate)
+
+            val ebvEvidences = ActionableEventsExtraction.extractCharacteristicEvidence(evidences, EBV_POSITIVE_TYPES)
+            val (ebvTrials, ebvPredicate) = ActionableEventsExtraction.extractCharacteristicsTrials(trials, EBV_POSITIVE_TYPES)
+            val ebvTrialMatcher = ActionableTrialMatcher(ebvTrials, ebvPredicate)
 
             return VirusEvidence(
-                hpvCharacteristicsEvidence,
-                hpvCharacteristicsTrials,
-                ebvCharacteristicsEvidence,
-                ebvCharacteristicsTrials
+                hpvEvidences,
+                hpvTrialMatcher,
+                ebvEvidences,
+                ebvTrialMatcher
             )
         }
     }
