@@ -23,6 +23,7 @@ import com.hartwig.actin.report.pdf.util.Tables.createSingleColWithWidth
 import com.itextpdf.layout.element.BlockElement
 import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Table
+import java.time.LocalDate
 
 private const val STOP_REASON_PROGRESSIVE_DISEASE = "PD"
 
@@ -72,7 +73,7 @@ class PatientClinicalHistoryGenerator(
     }
 
     private fun relevantNonSystemicPreTreatmentHistoryTable(record: PatientRecord): Table {
-        return treatmentHistoryTable(record.oncologicalHistory, record.medications ?: emptyList(), false)
+        return treatmentHistoryTable(record.oncologicalHistory, emptyList(), false)
     }
 
     private fun treatmentHistoryTable(
@@ -83,8 +84,6 @@ class PatientClinicalHistoryGenerator(
         val dateWidth = valueWidth / 5
         val treatmentWidth = valueWidth - dateWidth
         val table: Table = createDoubleColumnTable(dateWidth, treatmentWidth)
-
-        val medicationsToAdd = medications.filter { it.drug?.let { _ -> !hasMatchingTreatmentHistoryEntry(treatmentHistory, it) } ?: false }
 
         treatmentHistory.filter { treatmentHistoryEntryIsSystemic(it) == requireSystemic }
             .sortedWith(TreatmentHistoryAscendingDateComparator())
@@ -98,10 +97,11 @@ class PatientClinicalHistoryGenerator(
                     .forEach { table.addCell(createSingleTableEntry(it)) }
             }
 
-        medicationsToAdd.forEach {
+        val medicationsToAdd = medications.filter { it.drug?.let { _ -> !hasMatchingTreatmentHistoryEntry(treatmentHistory, it) } ?: false }
+        medicationsToAdd.groupBy { it.drug }.forEach { (drug, medications) ->
             table.addCell(
                 createSingleTableEntry(
-                    extractDateRangeStringMedication(it) + (it.drug?.name ?: "Unknown drug")
+                    extractDateRangeStringMedication(medications) + (drug?.name ?: "Unknown drug")
                 )
             )
         }
@@ -111,8 +111,24 @@ class PatientClinicalHistoryGenerator(
 
     private fun hasMatchingTreatmentHistoryEntry(treatmentHistoryEntries: List<TreatmentHistoryEntry>, medication: Medication): Boolean {
         return treatmentHistoryEntries.any { entry ->
-            entry.treatments.any { treatment -> treatment is DrugTreatment && treatment.drugs.contains(medication.drug) && entry.startMonth == medication.startDate?.monthValue && entry.startYear == medication.startDate?.year }
+            entry.treatments.any { treatment ->
+                treatment is DrugTreatment && treatment.drugs.contains(medication.drug) && matchesDate(
+                    medication,
+                    entry
+                )
+            }
         }
+    }
+
+    private fun matchesDate(medication: Medication, treatmentHistory: TreatmentHistoryEntry): Boolean {
+        if (medication.startDate?.year == treatmentHistory.startYear || medication.startDate?.year == treatmentHistory.treatmentHistoryDetails?.stopYear) {
+            val values =
+                medication.startDate?.let { (it.monthValue..(medication.stopDate?.monthValue ?: it.monthValue)).toList() } ?: emptyList()
+            if (treatmentHistory.startMonth in values || treatmentHistory.treatmentHistoryDetails?.stopMonth in values) {
+                return true
+            }
+        }
+        return false
     }
 
     private fun treatmentHistoryEntryIsSystemic(treatmentHistoryEntry: TreatmentHistoryEntry): Boolean {
@@ -148,22 +164,23 @@ class PatientClinicalHistoryGenerator(
         return table
     }
 
-    private fun extractDateRangeStringMedication(medication: Medication): String {
-        val startString = toDateString(medication.startDate?.year, medication.startDate?.monthValue)
-        val stopString = toDateString(medication.stopDate?.year, medication.stopDate?.monthValue)
+    private fun extractDateRangeStringMedication(medications: List<Medication>): String {
+        val oldestStartDate = medications.minByOrNull { it.startDate ?: LocalDate.MAX }?.startDate
+        val newestStopDate = medications.maxByOrNull { it.stopDate ?: LocalDate.MIN }?.stopDate
+        val startString = toDateString(oldestStartDate?.year, oldestStartDate?.monthValue)
+        val stopString = toDateString(newestStopDate?.year, newestStopDate?.monthValue)
 
-        return when {
-            startString != null && stopString != null -> if (startString != stopString) "$startString-$stopString" else startString
-            startString != null -> startString
-            stopString != null -> "?-$stopString"
-            else -> DATE_UNKNOWN
-        }
+        return createDateString(startString, stopString)
     }
 
     private fun extractDateRangeString(treatmentHistoryEntry: TreatmentHistoryEntry): String {
         val startString = toDateString(treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
         val stopString = treatmentHistoryEntry.treatmentHistoryDetails?.let { toDateString(it.stopYear, it.stopMonth) }
 
+        return createDateString(startString, stopString)
+    }
+
+    private fun createDateString(startString: String?, stopString: String?): String {
         return when {
             startString != null && stopString != null -> if (startString != stopString) "$startString-$stopString" else startString
             startString != null -> startString
