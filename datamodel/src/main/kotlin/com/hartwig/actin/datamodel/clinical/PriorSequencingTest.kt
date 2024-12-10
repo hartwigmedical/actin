@@ -40,7 +40,7 @@ data class SequencedFusion(
         return when {
             geneUp != null && geneDown == null -> "$geneUp fusion"
             geneUp == null && geneDown != null -> "$geneDown fusion"
-            geneUp != null && geneDown != null -> "$geneUp-$geneDown fusion"
+            geneUp != null && geneDown != null -> "$geneUp::$geneDown fusion"
             else -> throw IllegalStateException("Both genes in fusion are null")
         }
     }

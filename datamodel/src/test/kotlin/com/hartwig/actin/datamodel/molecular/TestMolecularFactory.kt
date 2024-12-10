@@ -23,7 +23,6 @@ import com.hartwig.actin.datamodel.molecular.orange.pharmaco.Haplotype
 import com.hartwig.actin.datamodel.molecular.orange.pharmaco.HaplotypeFunction
 import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoEntry
 import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoGene
-import com.hartwig.serve.datamodel.trial.ImmutableHospital
 import java.time.LocalDate
 
 object TestMolecularFactory {
@@ -212,7 +211,7 @@ object TestMolecularFactory {
 
     fun createProperFusion() = Fusion(
         isReportable = true,
-        event = "EML4 - ALK fusion",
+        event = "EML4::ALK fusion",
         driverLikelihood = DriverLikelihood.HIGH,
         evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
         geneStart = "EML4",
@@ -330,7 +329,7 @@ object TestMolecularFactory {
             ),
             fusions = proper.fusions + Fusion(
                 isReportable = false,
-                event = "EML4 - ALK fusion",
+                event = "EML4::ALK fusion",
                 driverLikelihood = DriverLikelihood.HIGH,
                 evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
                 geneStart = "EML4",
