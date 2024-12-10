@@ -4,7 +4,7 @@ import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
 import com.hartwig.serve.datamodel.molecular.characteristic.TumorCharacteristicType
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 
-object TestActionableEventMatcherFactory {
+object TestClinicalEvidenceMatcherFactory {
 
     fun createProper(): ClinicalEvidenceMatcher {
         val applicableDoids = setOf("parent", "child")

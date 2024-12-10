@@ -13,8 +13,7 @@ class HomozygousDisruptionEvidence(
 ) : ActionabilityMatcher<HomozygousDisruption> {
 
     override fun findMatches(event: HomozygousDisruption): ActionabilityMatch {
-        val matchPredicate: Predicate<MolecularCriterium> =
-            Predicate { event.isReportable && ActionableEventsExtraction.extractGene(it).gene() == event.gene }
+        val matchPredicate: Predicate<MolecularCriterium> = Predicate { ActionableEventsExtraction.extractGene(it).gene() == event.gene }
 
         val evidences = applicableEvidences.filter { matchPredicate.test(it.molecularCriterium()) }
         val trials = applicableTrialMatcher.matchTrials(matchPredicate)
