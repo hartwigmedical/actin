@@ -6,9 +6,12 @@ import com.hartwig.actin.clinical.DrugInteractionsDatabase
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.QtProlongatingDatabase
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
+import com.hartwig.actin.clinical.feed.emc.extraction.MedicationExtractor
 import com.hartwig.actin.clinical.feed.standard.ProvidedPatientRecord
 import com.hartwig.actin.datamodel.clinical.Dosage
 import com.hartwig.actin.datamodel.clinical.Medication
+import com.hartwig.actin.medication.MedicationCategories
+import org.apache.logging.log4j.LogManager
 
 class StandardMedicationExtractor(
     private val atcModel: AtcModel,
@@ -28,6 +31,13 @@ class StandardMedicationExtractor(
                 ""
             ) else null
             val atcNameOrInput = atcClassification?.chemicalSubstance?.name ?: it.name
+            val atcCode = it.atcCode
+            val isAntiCancerMedication =
+                MedicationCategories.ANTI_CANCER_ATC_CODES.any { antiCancerCode -> atcCode?.startsWith(antiCancerCode) == true } && atcCode?.startsWith(
+                    "L01XD"
+                ) != true
+            val drug = treatmentDatabase.findDrugByAtcName(atcNameOrInput)
+            if (isAntiCancerMedication && drug == null) LOGGER.warn("Anti cancer medication $atcNameOrInput with ATC code $atcCode found which is not present in drug.json")
             Medication(
                 name = atcNameOrInput,
                 administrationRoute = it.administrationRoute,
@@ -45,8 +55,12 @@ class StandardMedicationExtractor(
                 transporterInteractions = drugInteractionsDatabase.annotateWithTransporterInteractions(atcNameOrInput),
                 isTrialMedication = it.isTrial,
                 isSelfCare = it.isSelfCare,
-                drug = treatmentDatabase.findDrugByAtcName(atcNameOrInput)
+                drug = drug
             )
         }, CurationExtractionEvaluation())
+    }
+
+    companion object {
+        private val LOGGER = LogManager.getLogger(MedicationExtractor::class.java)
     }
 }

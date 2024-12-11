@@ -725,12 +725,14 @@ class FunctionInputResolver(
     fun createOneMedicationCategoryInput(function: EligibilityFunction): OneMedicationCategory {
         assertParamConfig(function, FunctionInput.ONE_MEDICATION_CATEGORY, 1)
         val categoryName = parameterAsString(function, 0)
+        warnIfAtcCategoryNotMapped(categoryName)
         return OneMedicationCategory(categoryName, medicationCategories.resolve(categoryName))
     }
 
     fun createOneMedicationCategoryOneIntegerInput(function: EligibilityFunction): Pair<OneMedicationCategory, Int> {
         assertParamConfig(function, FunctionInput.ONE_MEDICATION_CATEGORY_ONE_INTEGER, 2)
         val categoryName = parameterAsString(function, 0)
+        warnIfAtcCategoryNotMapped(categoryName)
         return Pair(OneMedicationCategory(categoryName, medicationCategories.resolve(categoryName)), parameterAsInt(function, 1))
     }
 
@@ -748,7 +750,16 @@ class FunctionInputResolver(
         )
     }
 
+    private fun warnIfAtcCategoryNotMapped(category: String) {
+        if (MedicationCategories.ANTI_CANCER_ATC_CODES.any { category.startsWith(it) } && !(MedicationCategories.MEDICATION_CATEGORIES_TO_TREATMENT_CATEGORY.containsKey(
+                category
+            ) && MedicationCategories.MEDICATION_CATEGORIES_TO_DRUG_TYPES.containsKey(category))) {
+            LOGGER.warn("No treatment category or drug type mapping for ATC code $category")
+        }
+    }
+
     private fun toMedicationCategoryMap(category: String): Pair<String, Set<AtcLevel>> {
+        warnIfAtcCategoryNotMapped(category)
         return medicationCategories.resolveCategoryName(category) to medicationCategories.resolve(category)
     }
 

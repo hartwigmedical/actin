@@ -97,16 +97,14 @@ class PatientClinicalHistoryGenerator(
         }
             .groupBy { it.drug }
             .mapNotNull { (drug, medications) ->
-                drug?.let {
                     val (start, stop) = extractStartAndStopRange(medications)
-                    val name = it.name.lowercase().replaceFirstChar { char -> char.uppercase() }
+                    val name = drug?.name?.lowercase()?.replaceFirstChar { char -> char.uppercase() } ?: "Unknown"
                     TreatmentHistoryEntry(
                         startYear = start?.year,
                         startMonth = start?.monthValue,
-                        treatments = setOf(DrugTreatment(name = name, drugs = setOf(it))),
+                        treatments = setOf(DrugTreatment(name = name, drugs = setOfNotNull(drug))),
                         treatmentHistoryDetails = TreatmentHistoryDetails(stopYear = stop?.year, stopMonth = stop?.monthValue)
                     )
-                }
             }
 
         (treatmentHistory + medicationsToAdd).filter { treatmentHistoryEntryIsSystemic(it) == requireSystemic }

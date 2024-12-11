@@ -21,6 +21,7 @@ import com.hartwig.actin.clinical.feed.emc.medication.MedicationEntry
 import com.hartwig.actin.datamodel.clinical.Dosage
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.MedicationStatus
+import com.hartwig.actin.medication.MedicationCategories
 import org.apache.logging.log4j.LogManager
 
 class MedicationExtractor(
@@ -43,13 +44,18 @@ class MedicationExtractor(
                 val administrationRouteCuration = translateAdministrationRoute(patientId, entry.dosageInstructionRouteDisplay)
                 val dosage = curateDosage(administrationRouteCuration.extracted, entry, patientId)
 
-                val atc = atcModel.resolveByCode(entry.code5ATCCode, entry.code5ATCDisplay)
-                val isSelfCare = entry.code5ATCDisplay.isEmpty() && entry.code5ATCCode.isEmpty()
+                val atcCode = entry.code5ATCCode
+                val atc = atcModel.resolveByCode(atcCode, entry.code5ATCDisplay)
+                val isSelfCare = entry.code5ATCDisplay.isEmpty() && atcCode.isEmpty()
                 val isTrialMedication =
-                    entry.code5ATCDisplay.isEmpty() && entry.code5ATCCode.isNotEmpty() && entry.code5ATCCode[0].lowercaseChar() !in 'a'..'z'
+                    entry.code5ATCDisplay.isEmpty() && atcCode.isNotEmpty() && atcCode[0].lowercaseChar() !in 'a'..'z'
                 if (atc == null && !isSelfCare && !isTrialMedication) {
                     LOGGER.warn("Medication $name has no ATC code and is not self-care or a trial")
                 }
+                val isAntiCancerMedication =
+                    MedicationCategories.ANTI_CANCER_ATC_CODES.any { atcCode.startsWith(it) } && !atcCode.startsWith("L01XD")
+                val drug = treatmentDatabase.findDrugByAtcName(entry.code5ATCDisplay)
+                if (isAntiCancerMedication && drug == null) LOGGER.warn("Anti cancer medication $name with ATC code $atcCode found which is not present in drug.json")
 
                 val medication = Medication(
                     dosage = dosage.extracted,
@@ -64,7 +70,7 @@ class MedicationExtractor(
                     atc = atc,
                     isSelfCare = isSelfCare,
                     isTrialMedication = isTrialMedication,
-                    drug = treatmentDatabase.findDrugByAtcName(entry.code5ATCDisplay)
+                    drug = drug
                 )
 
                 val evaluation = listOf(nameCuration, administrationRouteCuration, dosage)
