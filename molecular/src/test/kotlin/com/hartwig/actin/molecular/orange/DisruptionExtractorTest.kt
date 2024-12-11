@@ -63,7 +63,7 @@ class DisruptionExtractorTest {
     }
 
     @Test
-    fun `Should extract disruptions on canonical transcripts if not present on canonical transcript`() {
+    fun `Should extract disruptions on non-canonical transcripts if not present on canonical transcript`() {
         val structuralVariant = structuralVariantBuilder().svId(2).clusterId(5).build()
         val nonCanonical = breakendBuilder().gene("gene 2").svId(2).isCanonical(false).build()
 
