@@ -12,6 +12,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.efficacy.EfficacyEntry
 import com.hartwig.actin.datamodel.trial.Trial
+import java.time.LocalDate
 
 class TreatmentMatcher(
     private val trialMatcher: TrialMatcher,
@@ -20,7 +21,8 @@ class TreatmentMatcher(
     private val referenceDateProvider: ReferenceDateProvider,
     private val evaluatedTreatmentAnnotator: EvaluatedTreatmentAnnotator,
     private val trialSource: String?,
-    private val personalizationDataPath: String? = null
+    private val personalizationDataPath: String? = null,
+    private val maxMolecularTestAge: LocalDate?
 ) {
 
     fun evaluateAndAnnotateMatchesForPatient(patient: PatientRecord): TreatmentMatch {
@@ -45,7 +47,8 @@ class TreatmentMatcher(
             trialMatches = trialMatches,
             standardOfCareMatches = standardOfCareMatches,
             trialSource = trialSource,
-            personalizedDataAnalysis = personalizedDataAnalysis
+            personalizedDataAnalysis = personalizedDataAnalysis,
+            maxMolecularTestAge = maxMolecularTestAge
         )
     }
 
@@ -54,7 +57,8 @@ class TreatmentMatcher(
             resources: RuleMappingResources,
             trials: List<Trial>,
             efficacyEvidence: List<EfficacyEntry>,
-            resistanceEvidenceMatcher: ResistanceEvidenceMatcher
+            resistanceEvidenceMatcher: ResistanceEvidenceMatcher,
+            maxMolecularTestAge: LocalDate?
         ): TreatmentMatcher {
             return TreatmentMatcher(
                 TrialMatcher.create(resources),
@@ -63,7 +67,8 @@ class TreatmentMatcher(
                 resources.referenceDateProvider,
                 EvaluatedTreatmentAnnotator.create(efficacyEvidence, resistanceEvidenceMatcher),
                 resources.algoConfiguration.trialSource,
-                resources.personalizationDataPath
+                resources.personalizationDataPath,
+                maxMolecularTestAge
             )
         }
     }

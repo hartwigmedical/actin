@@ -63,6 +63,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val configuration = EnvironmentConfiguration.create(config.overridesYaml).algo
         LOGGER.info(" Loaded algo config: $configuration")
 
+        val maxMolecularTestAge = configuration.maxMolecularTestAgeInDays?.let { referenceDateProvider.date().minus(Period.ofDays(it)) }
         val resources = RuleMappingResources(
             referenceDateProvider,
             doidModel,
@@ -71,7 +72,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
             treatmentDatabase,
             config.personalizationDataPath,
             configuration,
-            configuration.maxMolecularTestAgeInDays?.let { referenceDateProvider.date().minus(Period.ofDays(it)) }
+            maxMolecularTestAge
         )
         val evidenceEntries = EfficacyEntryFactory(treatmentDatabase).extractEfficacyEvidenceFromCkbFile(config.extendedEfficacyJson)
 
@@ -80,7 +81,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val evidences = loadEvidence(patient.molecularHistory.latestOrangeMolecularRecord()?.refGenomeVersion ?: RefGenomeVersion.V37)
         val resistanceEvidenceMatcher =
             ResistanceEvidenceMatcher.create(doidModel, tumorDoids, evidences, treatmentDatabase, patient.molecularHistory)
-        val match = TreatmentMatcher.create(resources, trials, evidenceEntries, resistanceEvidenceMatcher)
+        val match = TreatmentMatcher.create(resources, trials, evidenceEntries, resistanceEvidenceMatcher, maxMolecularTestAge)
             .evaluateAndAnnotateMatchesForPatient(patient)
 
         TreatmentMatchPrinter.printMatch(match)

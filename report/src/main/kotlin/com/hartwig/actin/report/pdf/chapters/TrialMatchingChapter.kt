@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.chapters
 
+import com.hartwig.actin.datamodel.molecular.NO_EVIDENCE_SOURCE
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
@@ -8,6 +9,8 @@ import com.hartwig.actin.report.pdf.chapters.ChapterContentFunctions.addGenerato
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.trial.ActinTrialGeneratorFunctions.partitionBaseOnLocation
 import com.hartwig.actin.report.pdf.tables.trial.EligibleActinTrialsGenerator
+import com.hartwig.actin.report.pdf.tables.trial.EligibleExternalTrialsGenerator
+import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummary
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.geom.PageSize
@@ -19,6 +22,8 @@ class TrialMatchingChapter(
     private val includeIneligibleTrialsInSummary: Boolean,
     private val externalTrialsOnly: Boolean,
     private val reportContentProvider: ReportContentProvider,
+    private val filteredNationalTrials: Set<ExternalTrialSummary>,
+    private val filteredInternationalTrials: Set<ExternalTrialSummary>,
     override val include: Boolean
 ) : ReportChapter {
 
@@ -116,17 +121,39 @@ class TrialMatchingChapter(
             contentWidth()
         )
 
+        val allEvidenceSources =
+            report.patientRecord.molecularHistory.molecularTests.map { it.evidenceSource }.filter { it != NO_EVIDENCE_SOURCE }.toSet()
+
         return listOfNotNull(
             ownEligibleActinTrialsClosedCohortsGenerator.takeIf { !externalTrialsOnly },
             ownIneligibleActinTrialsGenerator.takeIf { !(includeIneligibleTrialsInSummary || externalTrialsOnly) },
             ownIneligibleActinTrialsClosedCohortsGenerator.takeIf { !((includeIneligibleTrialsInSummary || externalTrialsOnly) || enableExtendedMode) },
             ownIneligibleActinTrialsNonEvaluableAndIgnoredCohortsGenerator.takeIf { !(includeIneligibleTrialsInSummary || externalTrialsOnly) },
 
-
             otherEligibleActinTrialsClosedCohortsGenerators.takeIf { !externalTrialsOnly },
             otherIneligibleActinTrialsGenerators.takeIf { !(includeIneligibleTrialsInSummary || externalTrialsOnly) },
             otherIneligibleActinTrialsClosedCohortsGenerators.takeIf { !((includeIneligibleTrialsInSummary || externalTrialsOnly) || enableExtendedMode) },
             otherIneligibleActinTrialsNonEvaluableAndIgnoredCohortsGenerator.takeIf { !(includeIneligibleTrialsInSummary || externalTrialsOnly) },
+
+            filteredNationalTrials.takeIf { it.isNotEmpty() }?.let {
+                EligibleExternalTrialsGenerator(
+                    allEvidenceSources,
+                    it,
+                    contentWidth(),
+                    it.size,
+                    report.config.countryOfReference,
+                    false
+                )
+            },
+            filteredInternationalTrials.takeIf { it.isNotEmpty() }?.let {
+                EligibleExternalTrialsGenerator(
+                    allEvidenceSources,
+                    it,
+                    contentWidth(),
+                    it.size,
+                    isFilteredTrialsTable = false
+                )
+            },
 
             localTrialGenerator.takeIf { externalTrialsOnly },
             nonLocalTrialGenerator.takeIf { externalTrialsOnly }
