@@ -138,7 +138,7 @@ class PatientClinicalHistoryGenerator(
         if (medication.startDate?.year == treatmentHistory.startYear || medication.startDate?.year == treatmentHistory.treatmentHistoryDetails?.stopYear) {
             val values =
                 medication.startDate?.let { (it.monthValue..(medication.stopDate?.monthValue ?: it.monthValue)).toList() } ?: emptyList()
-            if (treatmentHistory.startMonth in values || treatmentHistory.treatmentHistoryDetails?.stopMonth in values) {
+            if (treatmentHistory.startMonth in values || treatmentHistory.startMonth == null || treatmentHistory.treatmentHistoryDetails?.stopMonth in values) {
                 return true
             }
         }
