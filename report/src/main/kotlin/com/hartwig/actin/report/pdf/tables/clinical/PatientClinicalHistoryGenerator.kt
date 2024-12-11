@@ -10,6 +10,7 @@ import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary
 import com.hartwig.actin.datamodel.clinical.TumorStatus
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.pdf.tables.TableGenerator
@@ -85,7 +86,19 @@ class PatientClinicalHistoryGenerator(
         val treatmentWidth = valueWidth - dateWidth
         val table: Table = createDoubleColumnTable(dateWidth, treatmentWidth)
 
-        treatmentHistory.filter { treatmentHistoryEntryIsSystemic(it) == requireSystemic }
+        val medicationsToAdd = medications.filter { it.drug?.let { _ -> !hasMatchingTreatmentHistoryEntry(treatmentHistory, it) } ?: false }
+            .groupBy { it.drug }.map { (drug, medications) ->
+                val (start, stop) = extractStartAndStopRange(medications)
+                val name = drug?.name?.lowercase()?.replaceFirstChar { it.uppercase() } ?: "Unknown drug"
+                TreatmentHistoryEntry(
+                    startYear = start?.year,
+                    startMonth = start?.monthValue,
+                    treatments = setOf(DrugTreatment(name = name, drugs = setOf(drug!!))),
+                    treatmentHistoryDetails = TreatmentHistoryDetails(stopYear = stop?.year, stopMonth = stop?.monthValue)
+                )
+            }
+
+        (treatmentHistory + medicationsToAdd).filter { treatmentHistoryEntryIsSystemic(it) == requireSystemic }
             .sortedWith(TreatmentHistoryAscendingDateComparator())
             .groupBy { Triple(extractTreatmentString(it), it.startMonth, it.startYear) }
             .forEach { (key, historyEntries) ->
@@ -96,16 +109,6 @@ class PatientClinicalHistoryGenerator(
                 listOf(extractDateRangeString(historyEntries.first()), key.first + if (details.isNotEmpty()) " ($details)" else "")
                     .forEach { table.addCell(createSingleTableEntry(it)) }
             }
-
-        val medicationsToAdd = medications.filter { it.drug?.let { _ -> !hasMatchingTreatmentHistoryEntry(treatmentHistory, it) } ?: false }
-        medicationsToAdd.groupBy { it.drug }.forEach { (drug, medications) ->
-            listOf(
-                extractDateRangeStringMedication(medications),
-                (drug?.name?.lowercase()?.replaceFirstChar { it.uppercase() } ?: "Unknown drug"))
-                .forEach { entry ->
-                    table.addCell(createSingleTableEntry(entry))
-                }
-        }
 
         return table
     }
@@ -165,23 +168,17 @@ class PatientClinicalHistoryGenerator(
         return table
     }
 
-    private fun extractDateRangeStringMedication(medications: List<Medication>): String {
+    private fun extractStartAndStopRange(medications: List<Medication>): Pair<LocalDate?, LocalDate?> {
         val oldestStartDate = medications.minByOrNull { it.startDate ?: LocalDate.MAX }?.startDate
         val newestStopDate = medications.maxByOrNull { it.stopDate ?: LocalDate.MIN }?.stopDate
-        val startString = toDateString(oldestStartDate?.year, oldestStartDate?.monthValue)
-        val stopString = toDateString(newestStopDate?.year, newestStopDate?.monthValue)
 
-        return createDateString(startString, stopString)
+        return Pair(oldestStartDate, newestStopDate)
     }
 
     private fun extractDateRangeString(treatmentHistoryEntry: TreatmentHistoryEntry): String {
         val startString = toDateString(treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
         val stopString = treatmentHistoryEntry.treatmentHistoryDetails?.let { toDateString(it.stopYear, it.stopMonth) }
 
-        return createDateString(startString, stopString)
-    }
-
-    private fun createDateString(startString: String?, stopString: String?): String {
         return when {
             startString != null && stopString != null -> if (startString != stopString) "$startString-$stopString" else startString
             startString != null -> startString
