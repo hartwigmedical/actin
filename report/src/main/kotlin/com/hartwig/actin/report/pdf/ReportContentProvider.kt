@@ -139,13 +139,13 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         val (ownSourceCohorts, otherSourceCohorts) = partitionBaseOnLocation(cohorts, source)
 
         val (ownOpenCohortsWithSlotsGenerator, evaluated) = EligibleActinTrialsGenerator.forOpenCohorts(
-            ownSourceCohorts, source?.description, contentWidth, slotsAvailable = true
+            ownSourceCohorts, report.treatmentMatch.trialSource, contentWidth, slotsAvailable = true
         )
         val (ownOpenCohortsWithoutSlotsGenerator, _) = EligibleActinTrialsGenerator.forOpenCohorts(
-            ownSourceCohorts, source?.description, contentWidth, slotsAvailable = false
+            ownSourceCohorts, report.treatmentMatch.trialSource, contentWidth, slotsAvailable = false
         )
         val ownCohortsWithMissingGenesGenerator =
-            EligibleActinTrialsGenerator.forOpenCohortsWithMissingGenes(ownSourceCohorts, source?.description, contentWidth)
+            EligibleActinTrialsGenerator.forOpenCohortsWithMissingGenes(ownSourceCohorts, report.treatmentMatch.trialSource, contentWidth)
 
         val (otherCohortsGenerator, otherEvaluated) = otherSourceCohorts.groupBy { it.source }
             .map { (source, cohortsPerSource) ->
