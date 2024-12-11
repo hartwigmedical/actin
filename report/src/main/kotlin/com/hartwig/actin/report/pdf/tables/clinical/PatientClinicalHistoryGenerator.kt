@@ -5,6 +5,7 @@ import com.hartwig.actin.clinical.sort.PriorSecondPrimaryDiagnosedDateComparator
 import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparator
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.clinical.Medication
+import com.hartwig.actin.datamodel.clinical.MedicationStatus
 import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary
 import com.hartwig.actin.datamodel.clinical.TumorStatus
@@ -93,7 +94,7 @@ class PatientClinicalHistoryGenerator(
                     treatmentHistory,
                     it
                 )
-            } ?: false && it.drug?.category in TreatmentCategory.SYSTEMIC_CANCER_TREATMENT_CATEGORIES
+            } ?: false && it.drug?.category in TreatmentCategory.SYSTEMIC_CANCER_TREATMENT_CATEGORIES && (it.status == null || it.status == MedicationStatus.ACTIVE)
         }
             .groupBy { it.drug }
             .mapNotNull { (drug, medications) ->

@@ -6,7 +6,6 @@ import com.hartwig.actin.clinical.DrugInteractionsDatabase
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.QtProlongatingDatabase
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.clinical.feed.emc.extraction.MedicationExtractor
 import com.hartwig.actin.clinical.feed.standard.ProvidedPatientRecord
 import com.hartwig.actin.datamodel.clinical.Dosage
 import com.hartwig.actin.datamodel.clinical.Medication
@@ -37,7 +36,7 @@ class StandardMedicationExtractor(
                     "L01XD"
                 ) != true
             val drug = treatmentDatabase.findDrugByAtcName(atcNameOrInput)
-            if (isAntiCancerMedication && drug == null) LOGGER.warn("Anti cancer medication $atcNameOrInput with ATC code $atcCode found which is not present in drug.json")
+            if (isAntiCancerMedication && drug == null) LOGGER.warn("Anti cancer medication $atcNameOrInput with ATC code $atcCode found which is not present in drug.json. Please add to drug.json")
             Medication(
                 name = atcNameOrInput,
                 administrationRoute = it.administrationRoute,
@@ -61,6 +60,6 @@ class StandardMedicationExtractor(
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger(MedicationExtractor::class.java)
+        private val LOGGER = LogManager.getLogger(StandardMedicationExtractor::class.java)
     }
 }

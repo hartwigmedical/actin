@@ -46,16 +46,16 @@ class MedicationExtractor(
 
                 val atcCode = entry.code5ATCCode
                 val atc = atcModel.resolveByCode(atcCode, entry.code5ATCDisplay)
+                val drug = treatmentDatabase.findDrugByAtcName(entry.code5ATCDisplay)
                 val isSelfCare = entry.code5ATCDisplay.isEmpty() && atcCode.isEmpty()
                 val isTrialMedication =
                     entry.code5ATCDisplay.isEmpty() && atcCode.isNotEmpty() && atcCode[0].lowercaseChar() !in 'a'..'z'
+                val isAntiCancerMedication =
+                    MedicationCategories.ANTI_CANCER_ATC_CODES.any { atcCode.startsWith(it) } && !atcCode.startsWith("L01XD")
                 if (atc == null && !isSelfCare && !isTrialMedication) {
                     LOGGER.warn("Medication $name has no ATC code and is not self-care or a trial")
                 }
-                val isAntiCancerMedication =
-                    MedicationCategories.ANTI_CANCER_ATC_CODES.any { atcCode.startsWith(it) } && !atcCode.startsWith("L01XD")
-                val drug = treatmentDatabase.findDrugByAtcName(entry.code5ATCDisplay)
-                if (isAntiCancerMedication && drug == null) LOGGER.warn("Anti cancer medication $name with ATC code $atcCode found which is not present in drug.json")
+                if (isAntiCancerMedication && drug == null) LOGGER.warn("Anti cancer medication $name with ATC code $atcCode found which is not present in drug.json. Please add to drug.json.")
 
                 val medication = Medication(
                     dosage = dosage.extracted,
