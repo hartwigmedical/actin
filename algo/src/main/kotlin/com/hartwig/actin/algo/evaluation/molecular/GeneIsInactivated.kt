@@ -24,7 +24,6 @@ class GeneIsInactivated(private val gene: String, maxTestAge: LocalDate? = null)
         val inactivationEventsOnNonCanonicalTranscript: MutableSet<String> = mutableSetOf()
         val evidenceSource = test.evidenceSource
 
-        test.drivers
         sequenceOf(
             test.drivers.homozygousDisruptions.asSequence(),
             test.drivers.copyNumbers.asSequence().filter { it.otherImpacts.any { impact -> impact.type == CopyNumberType.LOSS } }
