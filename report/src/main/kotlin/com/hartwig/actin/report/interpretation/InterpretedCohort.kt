@@ -1,11 +1,15 @@
 package com.hartwig.actin.report.interpretation
 
+import com.hartwig.actin.datamodel.trial.TrialLocation
 import com.hartwig.actin.datamodel.trial.TrialPhase
+import com.hartwig.actin.datamodel.trial.TrialSource
 
 data class InterpretedCohort(
     val trialId: String,
     val acronym: String,
     val phase: TrialPhase? = null,
+    val source: TrialSource? = null,
+    val locations: List<TrialLocation>? = emptyList(),
     val name: String?,
     val isOpen: Boolean,
     val hasSlotsAvailable: Boolean,

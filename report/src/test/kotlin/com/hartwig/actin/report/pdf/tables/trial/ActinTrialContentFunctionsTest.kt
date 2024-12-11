@@ -1,5 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
+import com.hartwig.actin.datamodel.trial.TrialLocation
+import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -26,7 +28,9 @@ class ActinTrialContentFunctionsTest {
             hasSlotsAvailable = true,
             isPotentiallyEligible = true,
             warnings = setOf("warning1", "warning2"),
-            fails = emptySet()
+            fails = emptySet(),
+            source = TrialSource.LKO,
+            locations = listOf(TrialLocation(1, "Erasmus"), TrialLocation(2, "NKI"))
         )
 
     @Test
@@ -73,6 +77,22 @@ class ActinTrialContentFunctionsTest {
                 ContentDefinition(listOf("Applies to all cohorts below", "", "failure1"), false),
                 ContentDefinition(listOf("cohort1", "MSI", ""), true),
                 ContentDefinition(listOf("cohort2", "None", "failure2"), false)
+            )
+        )
+    }
+
+    @Test
+    fun `Should group common failures for multiple cohorts in trial showing location`() {
+        val cohorts = listOf(
+            cohort1.copy(warnings = emptySet(), fails = setOf("failure1")),
+            cohort2.copy(warnings = emptySet(), fails = setOf("failure1", "failure2"))
+        )
+
+        assertThat(ActinTrialContentFunctions.contentForTrialCohortList(cohorts, InterpretedCohort::fails, true, true)).isEqualTo(
+            listOf(
+                ContentDefinition(listOf("Applies to all cohorts below", "", "", "failure1"), false),
+                ContentDefinition(listOf("cohort1", "MSI", "", ""), true),
+                ContentDefinition(listOf("cohort2", "None", "Erasmus\nNKI", "failure2"), false)
             )
         )
     }

@@ -27,7 +27,7 @@ object TestTreatmentMatchFactory {
         return TreatmentMatch(
             patientId = TestPatientFactory.TEST_PATIENT,
             sampleId = TestPatientFactory.TEST_SAMPLE,
-            trialSource = "Test hospital",
+            trialSource = "NKI-Avl",
             referenceDate = LocalDate.of(2021, 8, 2),
             referenceDateIsLive = true,
             trialMatches = emptyList()
@@ -52,8 +52,8 @@ object TestTreatmentMatchFactory {
                     title = "Example test trial 1",
                     nctId = "NCT00000010",
                     phase = TrialPhase.PHASE_1,
-                    source = TrialSource.LKO,
-                    locations = listOf(TrialLocation(1, "Erasmus MC"))
+                    source = TrialSource.NKI,
+                    locations = listOf(TrialLocation(2, "Antoni van Leeuwenhoek"))
                 ),
                 isPotentiallyEligible = true,
                 evaluations = createTestGeneralEvaluationsTrial1(),
