@@ -25,7 +25,6 @@ class GeneIsInactivated(private val gene: String, maxTestAge: LocalDate? = null)
         val evidenceSource = test.evidenceSource
 
         sequenceOf(
-            test.drivers.homozygousDisruptions.asSequence(),
             test.drivers.copyNumbers.asSequence().filter { it.otherImpacts.any { impact -> impact.type == CopyNumberType.LOSS } }
         ).flatten()
             .filter { it.gene == gene }

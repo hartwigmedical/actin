@@ -25,8 +25,8 @@ class PanelCopyNumberAnnotator(private val evidenceDatabase: EvidenceDatabase, p
     fun <T> annotate(copyNumber: Set<T>): List<CopyNumber> {
         return copyNumber.map { element ->
             when (element) {
-                is SequencedAmplification -> inferredCopyNumber(element)
-                is SequencedDeletedGene -> inferredCopyNumber(element)
+                is SequencedAmplification -> convertSequencedAmplifiedGene(element)
+                is SequencedDeletedGene -> convertSequencedDeletedGene(element)
                 else -> throw IllegalArgumentException("Unsupported type: $element")
             }
         }.map(::annotatedInferredCopyNumber)
@@ -44,11 +44,11 @@ class PanelCopyNumberAnnotator(private val evidenceDatabase: EvidenceDatabase, p
         )
     }
 
-    private fun inferredCopyNumber(sequencedAmplifiedGene: SequencedAmplification): CopyNumber {
-        val canonicalTranscript = canonicalTranscriptForGene(sequencedAmplifiedGene.gene)
+    private fun convertSequencedAmplifiedGene(sequencedAmplifiedGene: SequencedAmplification): CopyNumber {
+        val canonicalTranscript = canonicalTranscriptIdForGene(sequencedAmplifiedGene.gene)
         val isCanonicalTranscript = canonicalTranscript == sequencedAmplifiedGene.transcript || sequencedAmplifiedGene.transcript == null
         val transcriptId = sequencedAmplifiedGene.transcript ?: run {
-            logger.warn("No transcript provided for panel skipped exons in gene ${sequencedAmplifiedGene.gene}, using canonical transcript")
+            logger.warn("No transcript provided for panel amplification in gene ${sequencedAmplifiedGene.gene}, using canonical transcript")
             canonicalTranscript
         }
         val canonicalImpact = TranscriptCopyNumberImpact(
@@ -72,7 +72,7 @@ class PanelCopyNumberAnnotator(private val evidenceDatabase: EvidenceDatabase, p
             proteinEffect = ProteinEffect.UNKNOWN,
             isAssociatedWithDrugResistance = null,
             isReportable = true,
-            event = sequencedAmplifiedGene.gene,
+            event = "${sequencedAmplifiedGene.gene} amp",
             driverLikelihood = DriverLikelihood.HIGH,
             evidence = ClinicalEvidenceFactory.createNoEvidence(),
             canonicalImpact = canonicalImpact,
@@ -80,11 +80,11 @@ class PanelCopyNumberAnnotator(private val evidenceDatabase: EvidenceDatabase, p
         )
     }
 
-    private fun inferredCopyNumber(sequencedDeletedGene: SequencedDeletedGene): CopyNumber {
-        val canonicalTranscript = canonicalTranscriptForGene(sequencedDeletedGene.gene)
+    private fun convertSequencedDeletedGene(sequencedDeletedGene: SequencedDeletedGene): CopyNumber {
+        val canonicalTranscript = canonicalTranscriptIdForGene(sequencedDeletedGene.gene)
         val isCanonicalTranscript = canonicalTranscript == sequencedDeletedGene.transcript || sequencedDeletedGene.transcript == null
         val transcriptId = sequencedDeletedGene.transcript ?: run {
-            logger.warn("No transcript provided for panel skipped exons in gene ${sequencedDeletedGene.gene}, using canonical transcript")
+            logger.warn("No transcript provided for panel deletion in gene ${sequencedDeletedGene.gene}, using canonical transcript")
             canonicalTranscript
         }
         val canonicalImpact = TranscriptCopyNumberImpact(
@@ -108,7 +108,7 @@ class PanelCopyNumberAnnotator(private val evidenceDatabase: EvidenceDatabase, p
             proteinEffect = ProteinEffect.UNKNOWN,
             isAssociatedWithDrugResistance = null,
             isReportable = true,
-            event = sequencedDeletedGene.gene,
+            event = "${sequencedDeletedGene.gene} del",
             driverLikelihood = DriverLikelihood.HIGH,
             evidence = ClinicalEvidenceFactory.createNoEvidence(),
             canonicalImpact = canonicalImpact,
@@ -116,11 +116,10 @@ class PanelCopyNumberAnnotator(private val evidenceDatabase: EvidenceDatabase, p
         )
     }
 
-    private fun canonicalTranscriptForGene(gene: String): String {
+    private fun canonicalTranscriptIdForGene(gene: String): String {
         val geneData = ensembleDataCache.findGeneDataByName(gene)
             ?: throw IllegalArgumentException("No gene data found for gene $gene")
-        val transcript = ensembleDataCache.findCanonicalTranscript(geneData.geneId())?.transcriptName()
+        return ensembleDataCache.findCanonicalTranscript(geneData.geneId())?.transcriptName()
             ?: throw IllegalStateException("No canonical transcript found for gene $gene")
-        return transcript
     }
 }

@@ -43,7 +43,7 @@ class PanelAnnotatorTest {
     private val panelFusionAnnotator = mockk<PanelFusionAnnotator> {
         every { annotate(any(), any()) } returns emptyList()
     }
-    private val copyNumberAnnotator = mockk<PanelCopyNumberAnnotator> {
+    private val panelCopyNumberAnnotator = mockk<PanelCopyNumberAnnotator> {
         every { annotate(any<Set<SequencedAmplification>>()) } returns emptyList()
     }
 
@@ -52,7 +52,7 @@ class PanelAnnotatorTest {
             evidenceDatabase,
             panelVariantAnnotator,
             panelFusionAnnotator,
-            copyNumberAnnotator
+            panelCopyNumberAnnotator
         )
 
     @Test
@@ -84,7 +84,7 @@ class PanelAnnotatorTest {
 
     @Test
     fun `Should infer ploidy`() {
-        val annotated = annotator.annotate(createTestPriorSequencingTest().copy(amplifications = setOf(SequencedAmplification(GENE))))
+        val annotated = annotator.annotate(createTestPriorSequencingTest())
         assertThat(annotated.characteristics.ploidy).isEqualTo(2.0)
     }
 

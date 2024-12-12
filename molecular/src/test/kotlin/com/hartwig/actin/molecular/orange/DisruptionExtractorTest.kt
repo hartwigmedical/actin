@@ -64,16 +64,18 @@ class DisruptionExtractorTest {
 
     @Test
     fun `Should extract disruptions on non-canonical transcripts if not present on canonical transcript`() {
-        val structuralVariant = structuralVariantBuilder().svId(2).clusterId(5).build()
-        val nonCanonical = breakendBuilder().gene("gene 2").svId(2).isCanonical(false).build()
+        val structuralVariant1 = structuralVariantBuilder().svId(1).clusterId(5).build()
+        val structuralVariant2 = structuralVariantBuilder().svId(2).clusterId(3).build()
+        val nonCanonical = breakendBuilder().gene("gene 2").svId(1).isCanonical(false).reported(true).build()
+        val canonical = breakendBuilder().gene("gene 1").svId(2).isCanonical(true).type(LinxBreakendType.DEL).reported(true).build()
 
         val linx = ImmutableLinxRecord.builder()
             .from(createMinimalTestOrangeRecord().linx())
-            .addAllSomaticStructuralVariants(structuralVariant)
-            .addAllSomaticBreakends(nonCanonical)
+            .addAllSomaticStructuralVariants(structuralVariant1, structuralVariant2)
+            .addAllSomaticBreakends(nonCanonical, canonical)
             .build()
 
-        val disruptions = extractor.extractDisruptions(linx, emptySet(), listOf())
+        val disruptions = extractor.extractDisruptions(linx, setOf("gene 1"), listOf())
         assertThat(disruptions).hasSize(1)
 
         val disruption = disruptions.first()

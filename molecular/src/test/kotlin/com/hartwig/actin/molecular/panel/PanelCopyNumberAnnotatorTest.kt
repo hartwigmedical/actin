@@ -18,17 +18,18 @@ import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.ensemblcache.TranscriptData
+import com.hartwig.serve.datamodel.molecular.common.GeneRole as ServeGeneRole
+import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
 import io.mockk.every
 import io.mockk.mockk
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val CANONICAL_TRANSCRIPT = "canonical_transcript"
 private const val NON_CANONICAL_TRANSCRIPT = "non_canonical_transcript"
 private val EMPTY_MATCH = ActionabilityMatch(ActionableEvents(), ActionableEvents())
-private val HOTSPOT = TestServeKnownFactory.hotspotBuilder().build()
-    .withGeneRole(com.hartwig.serve.datamodel.molecular.common.GeneRole.ONCO)
-    .withProteinEffect(com.hartwig.serve.datamodel.molecular.common.ProteinEffect.GAIN_OF_FUNCTION)
+private val AMPLIFICATION = TestServeKnownFactory.copyNumberBuilder().build().withGeneRole(ServeGeneRole.ONCO)
+    .withProteinEffect(ServeProteinEffect.GAIN_OF_FUNCTION)
 
 private val ACTIONABILITY_MATCH = ActionabilityMatch(
     onLabelEvidence = ActionableEvents(listOf(TestServeActionabilityFactory.createEfficacyEvidenceWithGene()), emptyList()),
@@ -101,21 +102,21 @@ class PanelCopyNumberAnnotatorTest {
     }
 
     private fun setupEvidenceForCopyNumber() {
-        every { evidenceDatabase.geneAlterationForCopyNumber(any()) } returns HOTSPOT
+        every { evidenceDatabase.geneAlterationForCopyNumber(any()) } returns AMPLIFICATION
         every { evidenceDatabase.evidenceForCopyNumber(any()) } returns ACTIONABILITY_MATCH
     }
 
     private fun setupEnsemblDataCacheForCopyNumber() {
-        every { ensembleDataCache.findCanonicalTranscript("geneId") } returns mockk<TranscriptData> {
-            every { transcriptName() } returns CANONICAL_TRANSCRIPT
-        }
         every { ensembleDataCache.findGeneDataByName(GENE) } returns mockk {
             every { geneId() } returns "geneId"
+        }
+        every { ensembleDataCache.findCanonicalTranscript("geneId") } returns mockk<TranscriptData> {
+            every { transcriptName() } returns CANONICAL_TRANSCRIPT
         }
     }
 
     private fun check(panel: List<CopyNumber>, canonicalImpact: TranscriptCopyNumberImpact, otherImpacts: Set<TranscriptCopyNumberImpact>) {
-        Assertions.assertThat(panel).isEqualTo(
+        assertThat(panel).isEqualTo(
             listOf(
                 CopyNumber(
                     canonicalImpact = canonicalImpact,

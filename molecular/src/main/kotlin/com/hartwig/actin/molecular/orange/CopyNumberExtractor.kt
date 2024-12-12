@@ -73,7 +73,7 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
                 } else {
                     val event =
                         if (otherGainLosses.isEmpty()) DriverEventFactory.geneCopyNumberEvent(geneCopyNumber) else otherGainLosses.first()
-                            .let { DriverEventFactory.gainLossEvent(otherGainLosses.first()) }
+                            .let { DriverEventFactory.gainLossEvent(it) }
                     CopyNumber(
                         gene = geneCopyNumber.gene(),
                         geneRole = GeneRole.UNKNOWN,
