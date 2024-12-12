@@ -26,33 +26,37 @@ class HasIntoleranceToPlatinumCompoundsTest {
     }
 
     @Test
-    fun `Should pass for intolerance matching on name and drug allergy ICD code`() {
-        val match = ToxicityTestFactory.intolerance(
-            name = HasIntoleranceToPlatinumCompounds.PLATINUM_COMPOUNDS.iterator().next(),
-            icdMainCode = IcdConstants.DRUG_ALLERGY_SET.first()
-        )
+    fun `Should pass for intolerance matching on name only`() {
+        val match = ToxicityTestFactory.intolerance(name = HasIntoleranceToPlatinumCompounds.PLATINUM_COMPOUNDS.iterator().next())
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withIntolerance(match))
         )
     }
 
     @Test
-    fun `Should fail for intolerance matching on ICD code only`() {
-        val match = ToxicityTestFactory.intolerance(icdMainCode = IcdConstants.DRUG_ALLERGY_SET.first())
+    fun `Should pass for intolerance matching on ICD code only`() {
+        val match = ToxicityTestFactory.intolerance(
+            icdMainCode = IcdConstants.DRUG_ALLERGY_SET.first(), icdExtensionCode = IcdConstants.PLATINUM_COMPOUND_CODE
+        )
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withIntolerance(match))
+            EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withIntolerance(match))
         )
     }
 
     @Test
     fun `Should pass when substring of intolerance name matches`() {
-        val match = ToxicityTestFactory.intolerance(
-            name = "carboplatin chemotherapy allergy",
-            icdMainCode = IcdConstants.DRUG_ALLERGY_SET.first()
-        )
+        val match = ToxicityTestFactory.intolerance(name = "carboplatin chemotherapy allergy")
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withIntolerance(match))
+        )
+    }
+
+    @Test
+    fun `Should evaluate to undetermined when intolerance matches on drug allergy ICD code but has no ICD code extension`() {
+        val intolerance = ToxicityTestFactory.intolerance(icdMainCode = IcdConstants.DRUG_ALLERGY_SET.first(), icdExtensionCode = null)
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED, function.evaluate(ToxicityTestFactory.withIntolerance(intolerance))
         )
     }
 }
