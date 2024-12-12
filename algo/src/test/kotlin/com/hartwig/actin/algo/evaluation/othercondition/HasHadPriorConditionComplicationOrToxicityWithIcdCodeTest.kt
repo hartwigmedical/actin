@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.icd.TestIcdFactory
@@ -23,19 +24,19 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
     private val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("child", "otherTarget", "childParent"))
     private val referenceDate = LocalDate.of(2024, 12, 6)
     private val function = HasHadPriorConditionComplicationOrToxicityWithIcdCode(
-        icdModel, listOf(targetTitle), diseaseDescription, referenceDate
+        icdModel, setOf(targetTitle), diseaseDescription, referenceDate
     )
     private val minimalPatient = TestPatientFactory.createMinimalTestWGSPatientRecord()
 
-    private val complicationWithTargetCode = OtherConditionTestFactory.complication(icdCode = parentCode, name = COMPLICATION_NAME)
-    private val complicationWithChildOfTargetCode = complicationWithTargetCode.copy(icdCode = childCode)
+    private val complicationWithTargetCode = OtherConditionTestFactory.complication(icdMainCode = parentCode, name = COMPLICATION_NAME)
+    private val complicationWithChildOfTargetCode = complicationWithTargetCode.copy(icdCode = IcdCode(childCode))
 
     private val conditionWithTargetCode = OtherConditionTestFactory.priorOtherCondition(
-        icdCode = parentCode,
+        icdMainCode = parentCode,
         name = OTHER_CONDITION_NAME,
         isContraindication = true
     )
-    private val conditionWithChildOfTargetCode = conditionWithTargetCode.copy(icdMainCode = childCode)
+    private val conditionWithChildOfTargetCode = conditionWithTargetCode.copy(icdCode = IcdCode(childCode))
 
     @Test
     fun `Should fail when no matching icd code in prior other conditions, complications or toxicities`() {
@@ -72,7 +73,7 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
     fun `Should pass when icd code or parent code of toxicity from questionnaire matches code of target title`() {
         listOf(childCode, parentCode).forEach {
             assertPassEvaluationWithMessages(
-                function.evaluate(OtherConditionTestFactory.withToxicities(listOf(toxicity(ToxicitySource.QUESTIONNAIRE, it, 1)))),
+                function.evaluate(OtherConditionTestFactory.withToxicities(listOf(toxicity(ToxicitySource.QUESTIONNAIRE, IcdCode(it), 1)))),
                 "toxicity",
                 "Patient has history of toxicity(ies) toxicity, which is indicative of $diseaseDescription"
             )
@@ -83,7 +84,7 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
     fun `Should pass when icd code or parent code of toxicity from EHR with at least grade 2 matches code of target title`() {
         listOf(childCode, parentCode).forEach {
             assertPassEvaluationWithMessages(
-                function.evaluate(OtherConditionTestFactory.withToxicities(listOf(toxicity(ToxicitySource.EHR, it, 2)))),
+                function.evaluate(OtherConditionTestFactory.withToxicities(listOf(toxicity(ToxicitySource.EHR, IcdCode(it), 2)))),
                 "toxicity",
                 "Patient has history of toxicity(ies) toxicity, which is indicative of $diseaseDescription"
             )
@@ -97,7 +98,7 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
                 EvaluationResult.FAIL,
                 function.evaluate(
                     OtherConditionTestFactory.withToxicities(
-                        listOf(toxicity(ToxicitySource.EHR, it, 1))
+                        listOf(toxicity(ToxicitySource.EHR, IcdCode(it), 1))
                     )
                 )
             )
@@ -109,7 +110,7 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
         assertPassEvaluationWithMessages(
             function.evaluate(
                 minimalPatient.copy(
-                    toxicities = listOf(toxicity(ToxicitySource.QUESTIONNAIRE, childCode, 2)),
+                    toxicities = listOf(toxicity(ToxicitySource.QUESTIONNAIRE, IcdCode(childCode), 2)),
                     complications = listOf(complicationWithTargetCode),
                     priorOtherConditions = listOf(conditionWithTargetCode)
                 )
@@ -121,7 +122,7 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
         )
     }
 
-    private fun toxicity(toxicitySource: ToxicitySource, icdCode: String, grade: Int?): Toxicity {
+    private fun toxicity(toxicitySource: ToxicitySource, icdCode: IcdCode, grade: Int?): Toxicity {
         return Toxicity(
             icdCode = icdCode,
             name = TOXICITY_NAME,

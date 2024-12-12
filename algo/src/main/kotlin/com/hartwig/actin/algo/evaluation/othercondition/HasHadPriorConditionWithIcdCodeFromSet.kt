@@ -5,10 +5,11 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
 
-class HasHadPriorConditionWithIcdCodeFromList(
-    private val icdModel: IcdModel, private val targetIcdCodes: List<String>, private val priorOtherConditionTerm: String
+class HasHadPriorConditionWithIcdCodeFromSet(
+    private val icdModel: IcdModel, private val targetIcdCodes: Set<IcdCode>, private val priorOtherConditionTerm: String
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {

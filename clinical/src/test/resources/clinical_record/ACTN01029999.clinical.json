@@ -166,9 +166,11 @@
       "doids": [
         "0081062"
       ],
-      "icdMainCode": "1A01.3",
-      "icdExtensionCode": "",
       "category": "",
+      "icdCode": {
+        "mainCode": "1A01.3",
+        "extensionCode": null
+      },
       "isContraindicationForTherapy": false
     }
   ],
@@ -219,7 +221,10 @@
     {
       "name": "Nausea",
       "categories": [],
-      "icdCode": "",
+      "icdCode": {
+        "mainCode": "",
+        "extensionCode": null
+      },
       "evaluatedDate": {
         "year": 2021,
         "month": 6,
@@ -232,7 +237,10 @@
     {
       "name": "Pain",
       "categories": [],
-      "icdCode": "",
+      "icdCode": {
+        "mainCode": "",
+        "extensionCode": null
+      },
       "evaluatedDate": {
         "year": 2021,
         "month": 8,
@@ -247,7 +255,10 @@
       "categories": [
         "Gastrointestinal"
       ],
-      "icdCode": "1A01.3",
+      "icdCode": {
+        "mainCode": "1A01.3",
+        "extensionCode": null
+      },
       "evaluatedDate": {
         "year": 2021,
         "month": 8,
@@ -261,7 +272,10 @@
   "intolerances": [
     {
       "name": "Simvastatine",
-      "icdCode": "1A01.1",
+      "icdCode": {
+        "mainCode": "1A01.1",
+        "extensionCode": null
+      },
       "doids": [
         "0060500"
       ],

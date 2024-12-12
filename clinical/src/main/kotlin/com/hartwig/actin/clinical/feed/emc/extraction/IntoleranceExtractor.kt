@@ -10,6 +10,7 @@ import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.emc.intolerance.IntoleranceEntry
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
 
 class IntoleranceExtractor(private val intoleranceCuration: CurationDatabase<IntoleranceConfig>, private val atcModel: AtcModel) {
@@ -18,7 +19,7 @@ class IntoleranceExtractor(private val intoleranceCuration: CurationDatabase<Int
         return intoleranceEntries.map { entry: IntoleranceEntry ->
             Intolerance(
                 name = CurationUtil.capitalizeFirstLetterOnly(entry.codeText),
-                icdCode = "",
+                icdCode = IcdCode("", null),
                 category = CurationUtil.capitalizeFirstLetterOnly(entry.category),
                 type = CurationUtil.capitalizeFirstLetterOnly(entry.isSideEffect),
                 clinicalStatus = CurationUtil.capitalizeFirstLetterOnly(entry.clinicalStatus),

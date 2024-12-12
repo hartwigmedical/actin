@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 import com.hartwig.actin.datamodel.clinical.Complication
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
@@ -28,8 +29,8 @@ internal object OtherConditionTestFactory {
         month: Int? = null,
         doids: Set<String> = emptySet(),
         category: String = "",
-        icdCode: String = "",
-        extensionCode: String? = null,
+        icdMainCode: String = "",
+        icdExtensionCode: String? = null,
         isContraindication: Boolean = true
     ): PriorOtherCondition {
         return PriorOtherCondition(
@@ -38,16 +39,15 @@ internal object OtherConditionTestFactory {
             month = month,
             doids = doids,
             category = category,
-            icdMainCode = icdCode,
-            icdExtensionCode = extensionCode,
+            icdCode = IcdCode(icdMainCode, icdExtensionCode),
             isContraindicationForTherapy = isContraindication,
         )
     }
 
-    fun intolerance(name: String = "", icdCode: String = ""): Intolerance {
+    fun intolerance(name: String = "", icdMainCode: String = ""): Intolerance {
         return Intolerance(
             name = name,
-            icdCode = icdCode,
+            icdCode = IcdCode(icdMainCode, null),
             doids = emptySet(),
             category = "",
             subcategories = emptySet(),
@@ -59,17 +59,17 @@ internal object OtherConditionTestFactory {
         )
     }
 
-    fun complication(name: String = "", categories: Set<String> = emptySet(), icdCode: String = ""): Complication {
-        return Complication(name = name, categories = categories, icdCode = icdCode, year = null, month = null)
+    fun complication(name: String = "", categories: Set<String> = emptySet(), icdMainCode: String = "", icdExtensionCode: String? = null): Complication {
+        return Complication(name = name, categories = categories, icdCode = IcdCode(icdMainCode, icdExtensionCode), year = null, month = null)
     }
 
     fun toxicity(
-        name: String, toxicitySource: ToxicitySource, grade: Int?, icdCode: String = "code", date: LocalDate = LocalDate.of(2010, 1, 1)
+        name: String, toxicitySource: ToxicitySource, grade: Int?, icdMainCode: String = "code", icdExtensionCode: String? = null, date: LocalDate = LocalDate.of(2010, 1, 1)
     ): Toxicity {
         return Toxicity(
             name = name,
             categories = emptySet(),
-            icdCode = icdCode,
+            icdCode = IcdCode(icdMainCode, icdExtensionCode),
             evaluatedDate = date,
             source = toxicitySource,
             grade = grade

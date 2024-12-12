@@ -11,6 +11,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.datamodel.clinical.AtcLevel
+import com.hartwig.actin.datamodel.clinical.IcdCode
 
 class HasPotentialUncontrolledTumorRelatedPain(private val selector: MedicationSelector, private val severePainMedication: Set<AtcLevel>, private val icdModel: IcdModel) :
     EvaluationFunction {
@@ -18,8 +19,8 @@ class HasPotentialUncontrolledTumorRelatedPain(private val selector: MedicationS
     override fun evaluate(record: PatientRecord): Evaluation {
         val (hasCancerRelatedPainComplicationOrHistory, hasAcutePainComplicationOrHistory) =
             listOf(IcdConstants.CHRONIC_CANCER_RELATED_PAIN_CODE, IcdConstants.ACUTE_PAIN_CODE).map {
-                ComplicationFunctions.findComplicationsMatchingAnyIcdCode(record, listOf(it), icdModel).isNotEmpty() ||
-                        PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(icdModel, record, listOf(it))
+                ComplicationFunctions.findComplicationsMatchingAnyIcdCode(icdModel, record, setOf(IcdCode(it))).fullMatches.isNotEmpty() ||
+                        PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(icdModel, record, setOf(IcdCode(it)))
                             .fullMatches.isNotEmpty()
             }
 

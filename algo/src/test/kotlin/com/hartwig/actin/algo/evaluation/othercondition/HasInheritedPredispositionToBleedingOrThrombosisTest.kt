@@ -21,7 +21,7 @@ class HasInheritedPredispositionToBleedingOrThrombosisTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 OtherConditionTestFactory.withPriorOtherConditions(
-                    listOf(OtherConditionTestFactory.priorOtherCondition(icdCode = "wrong"))
+                    listOf(OtherConditionTestFactory.priorOtherCondition(icdMainCode = "wrong"))
                 )
             )
         )
@@ -33,7 +33,7 @@ class HasInheritedPredispositionToBleedingOrThrombosisTest {
             EvaluationResult.PASS,
             function.evaluate(
                 OtherConditionTestFactory.withPriorOtherCondition(
-                    OtherConditionTestFactory.priorOtherCondition(icdCode = IcdConstants.HEREDITARY_THROMBOPHILIA_CODE)
+                    OtherConditionTestFactory.priorOtherCondition(icdMainCode = IcdConstants.HEREDITARY_THROMBOPHILIA_CODE)
                 )
             )
         )

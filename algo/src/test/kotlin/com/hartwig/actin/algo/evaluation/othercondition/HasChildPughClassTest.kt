@@ -14,8 +14,8 @@ class HasChildPughClassTest {
     @Test
     fun `Should not evaluate when liver cirrhosis not present`() {
         val conditions = listOf(
-            priorOtherCondition(icdCode = IcdConstants.HYPOMAGNESEMIA_CODE),
-            priorOtherCondition(icdCode = IcdConstants.PNEUMOTHORAX_CODE)
+            priorOtherCondition(icdMainCode = IcdConstants.HYPOMAGNESEMIA_CODE),
+            priorOtherCondition(icdMainCode = IcdConstants.PNEUMOTHORAX_CODE)
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(withPriorOtherConditions(conditions)))
     }
@@ -23,8 +23,8 @@ class HasChildPughClassTest {
     @Test
     fun `Should evaluate undetermined when liver cirrhosis present`() {
         val conditions = listOf(
-            priorOtherCondition(icdCode = IcdConstants.LUNG_INFECTIONS_BLOCK),
-            priorOtherCondition(icdCode = IcdConstants.LIVER_CIRRHOSIS_CODE)
+            priorOtherCondition(icdMainCode = IcdConstants.LUNG_INFECTIONS_BLOCK),
+            priorOtherCondition(icdMainCode = IcdConstants.LIVER_CIRRHOSIS_CODE)
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withPriorOtherConditions(conditions)))
     }

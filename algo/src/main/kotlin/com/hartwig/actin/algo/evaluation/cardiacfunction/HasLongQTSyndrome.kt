@@ -7,6 +7,7 @@ import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
 
 class HasLongQTSyndrome(private val icdModel: IcdModel) : EvaluationFunction {
@@ -16,7 +17,7 @@ class HasLongQTSyndrome(private val icdModel: IcdModel) : EvaluationFunction {
             PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(
                 icdModel,
                 record,
-                listOf(IcdConstants.LONG_QT_SYNDROME_CODE)
+                setOf(IcdCode(IcdConstants.LONG_QT_SYNDROME_CODE))
             ).fullMatches
         }
 

@@ -1,5 +1,6 @@
 package com.hartwig.actin.icd
 
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.datamodel.IcdNode
 
 data class IcdModel(
@@ -15,19 +16,24 @@ data class IcdModel(
         }
     }
 
-    fun resolveCodeForTitle(icdTitle: String): String? {
-        return titleToCodeMap[icdTitle]
-    }
-
-    fun resolveCodesForTitle(icdTitle: String): IcdCodes? {
+    fun resolveCodeForTitle(icdTitle: String): IcdCode? {
         val split = icdTitle.split('&')
         val mainCode = titleToCodeMap[split[0]] ?: return null
-        val extensionCode = split.getOrNull(1)?.let { titleToCodeMap[it] }
-        return IcdCodes(mainCode, extensionCode)
+        val extensionCode = when {
+            split.size != 2 || split[1].trim().isEmpty() -> null
+            else -> titleToCodeMap[split[1]] ?: return null
+        }
+        return IcdCode(mainCode, extensionCode)
     }
 
     fun returnCodeWithParents(code: String?): List<String> {
         return code?.let { (codeToNode(code)?.parentTreeCodes ?: emptyList()) + code } ?: emptyList ()
+    }
+
+    fun resolveTitleForCode(icdCode: IcdCode): String {
+        val mainTitle = codeToNode(icdCode.mainCode)?.title ?: return ""
+        val extensionTitle = icdCode.extensionCode?.let { codeToNode(it)?.title }
+        return extensionTitle?.let { "$mainTitle & $it" } ?: mainTitle
     }
 
     private fun codeToNode(code: String): IcdNode? = codeToNodeMap[code]
@@ -42,6 +48,4 @@ data class IcdModel(
         private fun createCodeToNodeMap(icdNodes: List<IcdNode>): Map<String, IcdNode> = icdNodes.associateBy { it.code }
         private fun createTitleToCodeMap(icdNodes: List<IcdNode>): Map<String, String> = icdNodes.associate { it.title to it.code }
     }
-
-    data class IcdCodes(val mainCode: String, val extensionCode: String?)
 }

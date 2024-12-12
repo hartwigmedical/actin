@@ -6,6 +6,7 @@ import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
 import com.hartwig.actin.clinical.feed.standard.EhrTestData
 import com.hartwig.actin.clinical.feed.standard.ProvidedAllergy
 import com.hartwig.actin.clinical.feed.standard.ProvidedPriorOtherCondition
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import io.mockk.every
@@ -56,7 +57,7 @@ class StandardIntolerancesExtractorTest {
                 clinicalStatus = CLINICAL_STATUS,
                 verificationStatus = VERIFICATION_STATUS,
                 criticality = SEVERITY,
-                icdCode = "",
+                icdCode = IcdCode("", null),
                 doids = emptySet(),
                 subcategories = emptySet(),
                 treatmentCategories = emptySet()
@@ -71,7 +72,7 @@ class StandardIntolerancesExtractorTest {
             IntoleranceConfig(
                 input = NAME,
                 name = CURATED,
-                icd = ICD,
+                icd = IcdCode(ICD, null),
                 doids = setOf(DOID),
                 treatmentCategories = setOf(TreatmentCategory.CHEMOTHERAPY)
             )
@@ -80,7 +81,7 @@ class StandardIntolerancesExtractorTest {
         assertThat(results.extracted).containsExactly(
             Intolerance(
                 name = CURATED,
-                icdCode = ICD,
+                icdCode = IcdCode(ICD, null),
                 category = CATEGORY,
                 clinicalStatus = CLINICAL_STATUS,
                 verificationStatus = VERIFICATION_STATUS,
@@ -102,14 +103,14 @@ class StandardIntolerancesExtractorTest {
             IntoleranceConfig(
                 input = NAME,
                 name = CURATED,
-                icd = ICD,
+                icd = IcdCode(ICD, null),
                 doids = setOf(DOID),
                 treatmentCategories = setOf(TreatmentCategory.CHEMOTHERAPY)
             ),
             IntoleranceConfig(
                 input = NAME,
                 name = anotherCurated,
-                icd = ICD,
+                icd = IcdCode(ICD, null),
                 doids = emptySet(),
                 treatmentCategories = emptySet()
             )
@@ -126,14 +127,14 @@ class StandardIntolerancesExtractorTest {
         assertThat(results.extracted).containsExactly(
             Intolerance(
                 name = CURATED,
-                icdCode = ICD,
+                icdCode = IcdCode(ICD, null),
                 doids = setOf(DOID),
                 subcategories = setOf(SUBCATEGORY),
                 treatmentCategories = setOf(TreatmentCategory.CHEMOTHERAPY)
             ),
             Intolerance(
                 name = anotherCurated,
-                icdCode = ICD,
+                icdCode = IcdCode(ICD, null),
                 doids = emptySet(),
                 subcategories = emptySet(),
                 treatmentCategories = emptySet()

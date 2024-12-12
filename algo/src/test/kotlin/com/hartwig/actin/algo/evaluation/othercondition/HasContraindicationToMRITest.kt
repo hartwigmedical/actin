@@ -24,7 +24,7 @@ class HasContraindicationToMRITest {
             EvaluationResult.FAIL, function.evaluate(
                 OtherConditionTestFactory.withPriorOtherConditions(
                     listOf(
-                        priorOtherCondition(icdCode = "wrong"),
+                        priorOtherCondition(icdMainCode = "wrong"),
                         priorOtherCondition(name = "not a contraindication")
                     )
                 )
@@ -36,7 +36,7 @@ class HasContraindicationToMRITest {
     fun `Should pass with a condition with correct ICD code`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(withPriorOtherCondition(priorOtherCondition(icdCode = IcdConstants.KIDNEY_FAILURE_BLOCK)))
+            function.evaluate(withPriorOtherCondition(priorOtherCondition(icdMainCode = IcdConstants.KIDNEY_FAILURE_BLOCK)))
         )
     }
 

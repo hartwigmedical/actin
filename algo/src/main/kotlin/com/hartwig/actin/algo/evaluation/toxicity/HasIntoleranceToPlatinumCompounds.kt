@@ -8,6 +8,7 @@ import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensit
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.icd.IcdModel
 
@@ -16,9 +17,15 @@ class HasIntoleranceToPlatinumCompounds(private val icdModel: IcdModel) : Evalua
     override fun evaluate(record: PatientRecord): Evaluation {
         //TODO(Change && to || when able to read out platinum extensioncode)
         val platinumAllergies = record.intolerances
-            .filter {
-                stringCaseInsensitivelyMatchesQueryCollection(it.name, PLATINUM_COMPOUNDS) &&
-                        IntoleranceFunctions.hasIcdMatch(it, IcdConstants.DRUG_ALLERGY_LIST, icdModel)
+            .filter { intolerance ->
+                stringCaseInsensitivelyMatchesQueryCollection(
+                    intolerance.name,
+                    PLATINUM_COMPOUNDS
+                ) && IntoleranceFunctions.findIntoleranceMatchingAnyIcdCode(
+                    icdModel,
+                    record,
+                    IcdConstants.DRUG_ALLERGY_SET.map { IcdCode(it) }.toSet()
+                ).fullMatches.contains(intolerance)
             }
             .map(Intolerance::name)
             .toSet()

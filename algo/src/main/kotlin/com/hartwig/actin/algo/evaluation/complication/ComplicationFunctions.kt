@@ -1,11 +1,14 @@
 package com.hartwig.actin.algo.evaluation.complication
 
+import com.hartwig.actin.algo.evaluation.IcdCodeMatcher
+import com.hartwig.actin.algo.evaluation.IcdMatches
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.clinical.Complication
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
 
-object ComplicationFunctions {
+object ComplicationFunctions: IcdCodeMatcher {
 
     fun findComplicationNamesMatchingAnyCategory(record: PatientRecord, categorySearchTerms: List<String>): Set<String> {
         return record.complications
@@ -13,8 +16,12 @@ object ComplicationFunctions {
             ?.map { it.name }?.toSet() ?: emptySet()
     }
 
-    fun findComplicationsMatchingAnyIcdCode(record: PatientRecord, icdCodes: List<String>, icdModel: IcdModel): List<Complication> {
-        return record.complications?.filter { icdModel.returnCodeWithParents(it.icdCode).any { code -> code in icdCodes } } ?: emptyList()
+    fun findComplicationsMatchingAnyIcdCode(
+        icdModel: IcdModel,
+        record: PatientRecord,
+        targetIcdCodes: Set<IcdCode>
+    ): IcdMatches<Complication> {
+        return findInstancesMatchingAnyIcdCode(icdModel, record.complications, targetIcdCodes)
     }
 
     fun findComplicationCategoriesMatchingAnyCategory(record: PatientRecord, categorySearchTerms: List<String>): Set<String> {

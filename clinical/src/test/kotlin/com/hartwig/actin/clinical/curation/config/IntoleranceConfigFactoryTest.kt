@@ -4,6 +4,7 @@ import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabaseReader
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.TestCurationFactory
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.icd.IcdModel
 import io.mockk.every
@@ -18,7 +19,7 @@ class IntoleranceConfigFactoryTest {
 
     private val icdModel = mockk<IcdModel>()
     private val icdTitle = "icdTitle"
-    private val icdCodes = IcdModel.IcdCodes("main", null)
+    private val icdCodes = IcdCode("main", null)
 
     private val curationDoidValidator = mockk<CurationDoidValidator>()
     private val victim = IntoleranceConfigFactory(curationDoidValidator, icdModel)
@@ -26,7 +27,7 @@ class IntoleranceConfigFactoryTest {
     @Test
     fun `Should return IntoleranceConfig from valid inputs`() {
         every { icdModel.isValidIcdTitle(icdTitle) } returns true
-        every { icdModel.resolveCodesForTitle(icdTitle) } returns icdCodes
+        every { icdModel.resolveCodeForTitle(icdTitle) } returns icdCodes
 
         every {
             curationDoidValidator.isValidDiseaseDoidSet(
@@ -39,14 +40,15 @@ class IntoleranceConfigFactoryTest {
         assertThat(config.config.ignore).isFalse()
         assertThat(config.config.name).isEqualTo("name")
         assertThat(config.config.doids).containsExactly(DOID)
-        assertThat(config.config.icd).isEqualTo(icdCodes.mainCode)
+        assertThat(config.config.icd.mainCode).isEqualTo(icdCodes.mainCode)
+        assertThat(config.config.icd.extensionCode).isEqualTo(icdCodes.extensionCode)
         assertThat(config.config.treatmentCategories).isEqualTo(setOf(TreatmentCategory.IMMUNOTHERAPY))
     }
 
     @Test
     fun `Should return an empty set for the treatmentCategories property if curation input is an empty string`() {
         every { icdModel.isValidIcdTitle(icdTitle) } returns true
-        every { icdModel.resolveCodesForTitle(icdTitle) } returns icdCodes
+        every { icdModel.resolveCodeForTitle(icdTitle) } returns icdCodes
 
         every {
             curationDoidValidator.isValidDiseaseDoidSet(
@@ -61,7 +63,7 @@ class IntoleranceConfigFactoryTest {
     @Test
     fun `Should return validation error when doids are invalid`() {
         every { icdModel.isValidIcdTitle(icdTitle) } returns true
-        every { icdModel.resolveCodesForTitle(icdTitle) } returns icdCodes
+        every { icdModel.resolveCodeForTitle(icdTitle) } returns icdCodes
 
         val doidValidator: CurationDoidValidator = curationDoidValidator
         every {
@@ -84,7 +86,7 @@ class IntoleranceConfigFactoryTest {
 
     @Test
     fun `Should return validation error when icd title cannot be resolved to any code`() {
-        every { icdModel.resolveCodesForTitle(icdTitle) } returns null
+        every { icdModel.resolveCodeForTitle(icdTitle) } returns null
         every { curationDoidValidator.isValidDiseaseDoidSet(setOf(DOID)) } returns true
         val config = victim.create(fields, arrayOf("input", "name", icdTitle, DOID, ""))
         assertThat(config.errors).containsExactly(

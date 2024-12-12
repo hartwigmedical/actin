@@ -1,63 +1,21 @@
 package com.hartwig.actin.icd.serialization
 
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.JsonDeserializer
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.module.SimpleModule
 import com.hartwig.actin.icd.datamodel.ClassKind
-import com.fasterxml.jackson.dataformat.csv.CsvMapper
-import com.fasterxml.jackson.dataformat.csv.CsvParser
-import com.fasterxml.jackson.dataformat.csv.CsvSchema
 import com.hartwig.actin.icd.datamodel.IcdNode
 import com.hartwig.actin.icd.datamodel.SerializedIcdNode
-import java.io.File
 
 object IcdDeserializer {
 
-    fun readFromFile(tsvPath: String): List<SerializedIcdNode> {
-        val reader = CsvMapper().apply {
-            enable(CsvParser.Feature.FAIL_ON_MISSING_HEADER_COLUMNS)
-            enable(CsvParser.Feature.EMPTY_STRING_AS_NULL)
-            enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
-            registerModule(
-                SimpleModule().apply {
-                    addDeserializer(ClassKind::class.java, ClassKindDeserializer())
-                }
-            )
-        }.readerFor(SerializedIcdNode::class.java).with(CsvSchema.emptySchema().withHeader().withColumnSeparator('\t'))
+    fun create(rawNodes: List<SerializedIcdNode>): List<IcdNode> {
+        val (extensionCodeNodes, otherNodes) = rawNodes.map { it.copy(code = resolveCode(it)) }
+            .partition { determineChapterType(it) == IcdChapterType.EXTENSION_CODES }
+        val regularNodes = otherNodes.map { IcdNode(it.code!!, resolveParentsForRegularChapter(it), trimTitle(it)) }
+        val extensionNodesWithParents = returnExtensionChapterNodeWithParents(extensionCodeNodes)
 
-        val file = File(tsvPath)
-        val nodes = reader.readValues<SerializedIcdNode>(file).readAll().toList()
-
-        nodes.forEach { if (!isValid(it)) throw IllegalArgumentException("Invalid ICD node: $it") }
-        return nodes
+        return regularNodes + extensionNodesWithParents
     }
 
-    private fun isValid(rawNode: SerializedIcdNode) = rawNode.chapterNo != "0" && rawNode.depthInKind > 0
-
-    fun trimTitle(rawNode: SerializedIcdNode): String {
-        return rawNode.title.trimStart { it == '-' }
-    }
-
-    fun resolveCode(rawNode: SerializedIcdNode): String {
-        return when (rawNode.classKind) {
-            ClassKind.CHAPTER -> rawNode.chapterNo
-            ClassKind.BLOCK -> if (determineChapterType(rawNode) != IcdChapterType.REGULAR) rawNode.linearizationUri else rawNode.blockId!!
-            ClassKind.CATEGORY -> rawNode.code!!
-        }
-    }
-
-    fun determineChapterType(rawNode: SerializedIcdNode): IcdChapterType {
-        return when (rawNode.chapterNo) {
-            "V" -> IcdChapterType.FUNCTIONING_ASSESSMENT
-            "X" -> IcdChapterType.EXTENSION_CODES
-            else -> IcdChapterType.REGULAR
-        }
-    }
-
-    fun resolveParentsForRegularChapter(rawNode: SerializedIcdNode): List<String> {
+    private fun resolveParentsForRegularChapter(rawNode: SerializedIcdNode): List<String> {
         val groupings = returnAllGroupings(rawNode)
         val chapterNo = listOf(rawNode.chapterNo)
 
@@ -68,7 +26,7 @@ object IcdDeserializer {
         }
     }
 
-    fun returnExtensionChapterNodeWithParents(serializedNodes: List<SerializedIcdNode>): List<IcdNode> {
+    private fun returnExtensionChapterNodeWithParents(serializedNodes: List<SerializedIcdNode>): List<IcdNode> {
         return serializedNodes.fold(Pair(emptyList<IcdNode>(), emptyList<String>())) { (result, parents), node ->
             val code = resolveCode(node)
             val hyphenLevel = node.title.takeWhile { it == '-' }.length
@@ -83,6 +41,26 @@ object IcdDeserializer {
 
             Pair(result + icdNode, currentParents)
         }.first
+    }
+
+    private fun trimTitle(rawNode: SerializedIcdNode): String {
+        return rawNode.title.trimStart { it == '-' }
+    }
+
+    private fun resolveCode(rawNode: SerializedIcdNode): String {
+        return when (rawNode.classKind) {
+            ClassKind.CHAPTER -> rawNode.chapterNo
+            ClassKind.BLOCK -> if (determineChapterType(rawNode) != IcdChapterType.REGULAR) rawNode.linearizationUri else rawNode.blockId!!
+            ClassKind.CATEGORY -> rawNode.code!!
+        }
+    }
+
+    private fun determineChapterType(rawNode: SerializedIcdNode): IcdChapterType {
+        return when (rawNode.chapterNo) {
+            "V" -> IcdChapterType.FUNCTIONING_ASSESSMENT
+            "X" -> IcdChapterType.EXTENSION_CODES
+            else -> IcdChapterType.REGULAR
+        }
     }
 
     private fun returnAllGroupings(rawNode: SerializedIcdNode): List<String> {
@@ -101,14 +79,7 @@ object IcdDeserializer {
     }
 }
 
-class ClassKindDeserializer : JsonDeserializer<ClassKind>() {
-    override fun deserialize(parser: JsonParser, context: DeserializationContext): ClassKind {
-        val node = parser.readValueAsTree<JsonNode>()
-        return ClassKind.valueOf(node.asText().uppercase())
-    }
-}
-
-enum class IcdChapterType {
+private enum class IcdChapterType {
     REGULAR,
     FUNCTIONING_ASSESSMENT,
     EXTENSION_CODES

@@ -54,9 +54,8 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
         return { HasIntoleranceForPD1OrPDL1Inhibitors(doidModel()) }
     }
 
-    //TODO("Add icd-11 for non oncological history and check history for anaphylaxis code")
     private fun hasHistoryAnaphylaxisCreator(): FunctionCreator {
-        return { HasHistoryOfAnaphylaxis() }
+        return { HasHistoryOfAnaphylaxis(icdModel()) }
     }
 
     private fun hasExperiencedImmuneRelatedAdverseEventsCreator(): FunctionCreator {

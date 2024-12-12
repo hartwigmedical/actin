@@ -4,6 +4,7 @@ import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -26,8 +27,7 @@ class PriorOtherConditionsExtractorTest {
                 priorOtherCondition = PriorOtherCondition(
                     name = PRIOR_CONDITION_INTERPRETATION,
                     category = "category",
-                    icdMainCode = "icd",
-                    icdExtensionCode = "extension",
+                    icdCode = IcdCode("icd"),
                     isContraindicationForTherapy = false
                 )
             )

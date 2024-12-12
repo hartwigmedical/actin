@@ -7,6 +7,7 @@ import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.feed.emc.digitalfile.DigitalFileEntry
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -24,6 +25,8 @@ private const val TOXICITY_CATEGORY = "Toxicity category"
 
 private const val TOXICITY_ICD_CODE = "Toxicity icd code"
 
+private const val TOXICITY_EXTENSION_CODE = "Toxicity extension"
+
 private const val TOXICITY_TRANSLATED = "Toxicity translated"
 
 class ToxicityExtractorTest {
@@ -35,7 +38,7 @@ class ToxicityExtractorTest {
                 name = TOXICITY_NAME,
                 categories = setOf(TOXICITY_CATEGORY),
                 grade = 3,
-                icdCode = TOXICITY_ICD_CODE
+                icdCode = IcdCode(TOXICITY_ICD_CODE, TOXICITY_EXTENSION_CODE)
             )
         ),
         TranslationDatabase(
@@ -54,7 +57,8 @@ class ToxicityExtractorTest {
         val toxicity = toxicities[0]
         assertThat(toxicity.name).isEqualTo(TOXICITY_NAME)
         assertThat(toxicity.categories).containsExactly(TOXICITY_CATEGORY)
-        assertThat(toxicity.icdCode).isEqualTo(TOXICITY_ICD_CODE)
+        assertThat(toxicity.icdCode.mainCode).isEqualTo(TOXICITY_ICD_CODE)
+        assertThat(toxicity.icdCode.extensionCode).isEqualTo(TOXICITY_EXTENSION_CODE)
         assertThat(toxicity.evaluatedDate).isEqualTo(date)
         assertThat(toxicity.source).isEqualTo(ToxicitySource.QUESTIONNAIRE)
         assertThat(toxicity.grade).isEqualTo(Integer.valueOf(3))

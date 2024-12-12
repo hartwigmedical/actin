@@ -20,19 +20,19 @@ class HasIntoleranceWithSpecificIcdTitleTest {
 
     @Test
     fun `Should fail for intolerance with non-matching ICD code`() {
-        val intolerance = ToxicityTestFactory.intolerance(icdCode = "wrong")
+        val intolerance = ToxicityTestFactory.intolerance(icdMainCode = "wrong")
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withIntolerance(intolerance)))
     }
 
     @Test
     fun `Should pass for intolerance with directly matching ICD code`() {
-        val intolerance = ToxicityTestFactory.intolerance(icdCode = targetIcdCode)
+        val intolerance = ToxicityTestFactory.intolerance(icdMainCode = targetIcdCode.mainCode)
         assertEvaluation(EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withIntolerance(intolerance)))
     }
 
     @Test
     fun `Should pass for intolerance with ICD code child of target title`() {
-        val intolerance = ToxicityTestFactory.intolerance(icdCode = childCode)
+        val intolerance = ToxicityTestFactory.intolerance(icdMainCode = childCode.mainCode)
         assertEvaluation(EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withIntolerance(intolerance)))
     }
 }

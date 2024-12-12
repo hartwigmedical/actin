@@ -8,12 +8,13 @@ import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
 
 class HasContraindicationToMRI(private val icdModel: IcdModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val targetCodes = listOf(IcdConstants.KIDNEY_FAILURE_BLOCK, IcdConstants.PRESENCE_OF_DEVICE_IMPLANT_OR_GRAFT_BLOCK)
+        val targetCodes = setOf(IcdCode(IcdConstants.KIDNEY_FAILURE_BLOCK), IcdCode(IcdConstants.PRESENCE_OF_DEVICE_IMPLANT_OR_GRAFT_BLOCK))
         val relevantConditions = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
         val conditionsMatchingCode = relevantConditions.flatMap {
             PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(icdModel, record, targetCodes).fullMatches

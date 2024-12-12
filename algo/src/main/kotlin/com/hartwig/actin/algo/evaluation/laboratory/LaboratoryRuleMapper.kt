@@ -15,6 +15,7 @@ import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.LabUnit
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
@@ -253,7 +254,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         return {
             val potassiumBelowLLN: EvaluationFunction = Not(createLabEvaluator(LabMeasurement.POTASSIUM, HasSufficientLabValueLLN(1.0)))
             val hasHadPriorHypokalemia =
-                OtherConditionFunctionFactory.createPriorConditionWithIcdCodeFunction(icdModel(), IcdConstants.HYPOKALEMIA_CODE)
+                OtherConditionFunctionFactory.createPriorConditionWithIcdCodeFunction(icdModel(), IcdCode(IcdConstants.HYPOKALEMIA_CODE))
             Or(listOf(potassiumBelowLLN, hasHadPriorHypokalemia))
         }
     }
@@ -263,7 +264,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             val magnesiumBelowLLN: EvaluationFunction = Not(createLabEvaluator(LabMeasurement.MAGNESIUM, HasSufficientLabValueLLN(1.0)))
             val hasHadPriorHypomagnesemia = OtherConditionFunctionFactory.createPriorConditionWithIcdCodeFunction(
                 icdModel(),
-                IcdConstants.HYPOMAGNESEMIA_CODE
+                IcdCode(IcdConstants.HYPOMAGNESEMIA_CODE)
             )
             Or(listOf(magnesiumBelowLLN, hasHadPriorHypomagnesemia))
         }
@@ -274,7 +275,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             val calciumBelowLLN: EvaluationFunction = Not(createLabEvaluator(LabMeasurement.CALCIUM, HasSufficientLabValueLLN(1.0)))
             val hasHadPriorHypocalcemia = OtherConditionFunctionFactory.createPriorConditionWithIcdCodeFunction(
                 icdModel(),
-                IcdConstants.CALCIUM_DEFICIENCY_CODE
+                IcdCode(IcdConstants.CALCIUM_DEFICIENCY_CODE)
             )
             Or(listOf(calciumBelowLLN, hasHadPriorHypocalcemia))
         }

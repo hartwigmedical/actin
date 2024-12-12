@@ -1,5 +1,6 @@
 package com.hartwig.actin.icd
 
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -19,8 +20,8 @@ class IcdModelTest {
 
     @Test
     fun `Should successfully resolve codes for extended and non-extended titles`() {
-        assertThat(icdModel.resolveCodesForTitle("validTitle&extensionTitle")).isEqualTo(IcdModel.IcdCodes("validCode", "extensionCode"))
-        assertThat(icdModel.resolveCodesForTitle("validTitle")).isEqualTo(IcdModel.IcdCodes("validCode", null))
+        assertThat(icdModel.resolveCodeForTitle("validTitle&extensionTitle")).isEqualTo(IcdCode("validCode", "extensionCode"))
+        assertThat(icdModel.resolveCodeForTitle("validTitle")).isEqualTo(IcdCode("validCode", null))
     }
 
     @Test
@@ -30,5 +31,11 @@ class IcdModelTest {
             "extensionParentCode",
             "extensionCode"
         )
+    }
+
+    @Test
+    fun `Should correctly resolve titles for main and extension codes`() {
+        assertThat(icdModel.resolveTitleForCode(IcdCode("validCode", "extensionCode"))).isEqualTo("validTitle & extensionTitle")
+        assertThat(icdModel.resolveTitleForCode(IcdCode("validCode", null))).isEqualTo("validTitle")
     }
 }

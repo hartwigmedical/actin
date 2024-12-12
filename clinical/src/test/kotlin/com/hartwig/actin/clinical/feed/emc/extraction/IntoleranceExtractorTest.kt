@@ -6,6 +6,7 @@ import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
 import com.hartwig.actin.clinical.feed.emc.intolerance.IntoleranceEntry
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -40,7 +41,7 @@ class IntoleranceExtractorTest {
                 input = INTOLERANCE_INPUT,
                 ignore = false,
                 name = CURATED_INTOLERANCE,
-                icd = ICD,
+                icd = IcdCode(ICD, null),
                 doids = setOf(DOID),
                 treatmentCategories = emptySet()
             ),
@@ -48,7 +49,7 @@ class IntoleranceExtractorTest {
                 input = INTOLERANCE_MEDICATION_INPUT,
                 ignore = false,
                 name = CURATED_MEDICATION_INTOLERANCE,
-                icd = ICD,
+                icd = IcdCode(ICD, null),
                 doids = setOf(DOID),
                 treatmentCategories = emptySet()
             )
@@ -61,7 +62,8 @@ class IntoleranceExtractorTest {
         val (curated, evaluation) = extractor.extract(PATIENT_ID, inputs.map { entry.copy(codeText = it) })
         assertThat(curated).hasSize(2)
         assertThat(curated[0].name).isEqualTo(CURATED_INTOLERANCE)
-        assertThat(curated[0].icdCode).isEqualTo(ICD)
+        assertThat(curated[0].icdCode.mainCode).isEqualTo(ICD)
+        assertThat(curated[0].icdCode.extensionCode).isNull()
         assertThat(curated[0].doids).contains(DOID)
 
         assertThat(curated[1].name).isEqualTo(CANNOT_CURATE)

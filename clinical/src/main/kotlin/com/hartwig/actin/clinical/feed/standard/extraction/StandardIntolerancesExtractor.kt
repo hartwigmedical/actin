@@ -8,6 +8,7 @@ import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.standard.ProvidedPatientRecord
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
 
 class StandardIntolerancesExtractor(
@@ -19,7 +20,7 @@ class StandardIntolerancesExtractor(
         val intolerancesFromAllergies = ehrPatientRecord.allergies.map {
             Intolerance(
                 name = it.name,
-                icdCode = "",
+                icdCode = IcdCode("", null),
                 category = it.category,
                 clinicalStatus = it.clinicalStatus,
                 verificationStatus = it.verificationStatus,

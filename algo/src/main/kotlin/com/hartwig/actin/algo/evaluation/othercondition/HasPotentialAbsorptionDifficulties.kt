@@ -9,13 +9,14 @@ import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.icd.IcdModel
 
 class HasPotentialAbsorptionDifficulties(private val icdModel: IcdModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val targetIcdCodes = IcdConstants.POSSIBLE_ABSORPTION_DIFFICULTIES_LIST
+        val targetIcdCodes = IcdConstants.POSSIBLE_ABSORPTION_DIFFICULTIES_SET.map { IcdCode(it) }.toSet()
         val conditions = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions).flatMap {
             PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(icdModel, record, targetIcdCodes).fullMatches }
             .map { it.name }
@@ -27,7 +28,8 @@ class HasPotentialAbsorptionDifficulties(private val icdModel: IcdModel) : Evalu
             )
         }
 
-        val complications = ComplicationFunctions.findComplicationsMatchingAnyIcdCode(record, targetIcdCodes, icdModel).map { it.name }
+        val complications = ComplicationFunctions.findComplicationsMatchingAnyIcdCode(icdModel, record, targetIcdCodes).fullMatches
+            .map { it.name }
         if (complications.isNotEmpty()) {
             return EvaluationFactory.pass(
                 "Patient has potential absorption difficulties due to " + concat(complications),
@@ -37,7 +39,7 @@ class HasPotentialAbsorptionDifficulties(private val icdModel: IcdModel) : Evalu
 
         val toxicities = record.toxicities
             .filter { it.source == ToxicitySource.QUESTIONNAIRE || (it.grade ?: 0) >= 2 }
-            .filter { ToxicityFunctions.hasIcdMatch(it, targetIcdCodes , icdModel) }
+            .filter { ToxicityFunctions.findToxicityMatchingAnyIcdCode(icdModel, record, targetIcdCodes).fullMatches.contains(it) }
             .map { it.name }
 
         return if (toxicities.isNotEmpty()) {

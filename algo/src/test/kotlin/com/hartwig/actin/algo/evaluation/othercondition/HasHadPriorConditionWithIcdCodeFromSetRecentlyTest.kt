@@ -3,18 +3,19 @@ package com.hartwig.actin.algo.evaluation.othercondition
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.icd.datamodel.IcdNode
 import org.junit.Test
 import java.time.LocalDate
 
-class HasHadPriorConditionWithIcdCodeFromListRecentlyTest {
+class HasHadPriorConditionWithIcdCodeFromSetRecentlyTest {
 
     private val minDate: LocalDate = LocalDate.of(2021, 8, 2)
-    private val targetIcdCodes = IcdConstants.STROKE_LIST
-    private val icdModel = IcdModel.create(targetIcdCodes.map { IcdNode(it, emptyList(), it + "node") })
+    private val targetIcdCodes = IcdConstants.STROKE_SET.map { IcdCode(it) }.toSet()
+    private val icdModel = IcdModel.create(targetIcdCodes.map { IcdNode(it.mainCode, emptyList(), it.mainCode + "node") })
     private val function =
-        HasHadPriorConditionWithIcdCodeFromListRecently(icdModel, targetIcdCodes, "stroke", minDate)
+        HasHadPriorConditionWithIcdCodeFromSetRecently(icdModel, targetIcdCodes, "stroke", minDate)
 
     @Test
     fun `Should warn if condition in history with correct ICD code and within first 2 months of specified time-frame`() {
@@ -23,7 +24,7 @@ class HasHadPriorConditionWithIcdCodeFromListRecentlyTest {
             function.evaluate(
                 OtherConditionTestFactory.withPriorOtherCondition(
                     OtherConditionTestFactory.priorOtherCondition(
-                       icdCode = targetIcdCodes.first(), year = minDate.plusMonths(1).year, month = minDate.plusMonths(1).monthValue
+                       icdMainCode = targetIcdCodes.first().mainCode, year = minDate.plusMonths(1).year, month = minDate.plusMonths(1).monthValue
                     )
                 )
             )
@@ -37,7 +38,7 @@ class HasHadPriorConditionWithIcdCodeFromListRecentlyTest {
             function.evaluate(
                 OtherConditionTestFactory.withPriorOtherCondition(
                     OtherConditionTestFactory.priorOtherCondition(
-                        icdCode = targetIcdCodes.first(), year = minDate.plusYears(1).year, month = 1
+                        icdMainCode = targetIcdCodes.first().mainCode, year = minDate.plusYears(1).year, month = 1
                     )
                 )
             )
@@ -49,10 +50,10 @@ class HasHadPriorConditionWithIcdCodeFromListRecentlyTest {
         val conditions = OtherConditionTestFactory.withPriorOtherConditions(
             listOf(
                 OtherConditionTestFactory.priorOtherCondition(
-                    icdCode = targetIcdCodes.first(), year = minDate.plusYears(1).year, month = 1
+                    icdMainCode = targetIcdCodes.first().mainCode, year = minDate.plusYears(1).year, month = 1
                 ),
                 OtherConditionTestFactory.priorOtherCondition(
-                    icdCode = targetIcdCodes.first(), year = minDate.plusMonths(1).year, month = minDate.plusMonths(1).monthValue
+                    icdMainCode = targetIcdCodes.first().mainCode, year = minDate.plusMonths(1).year, month = minDate.plusMonths(1).monthValue
                 )
             )
         )
@@ -66,7 +67,7 @@ class HasHadPriorConditionWithIcdCodeFromListRecentlyTest {
             function.evaluate(
                 OtherConditionTestFactory.withPriorOtherCondition(
                     OtherConditionTestFactory.priorOtherCondition(
-                        icdCode = targetIcdCodes.first(), year = null
+                        icdMainCode = targetIcdCodes.first().mainCode, year = null
                     )
                 )
             )
@@ -80,7 +81,7 @@ class HasHadPriorConditionWithIcdCodeFromListRecentlyTest {
             function.evaluate(
                 OtherConditionTestFactory.withPriorOtherCondition(
                     OtherConditionTestFactory.priorOtherCondition(
-                        icdCode = IcdConstants.HYPOMAGNESEMIA_CODE, year = 2023
+                        icdMainCode = IcdConstants.HYPOMAGNESEMIA_CODE, year = 2023
                     )
                 )
             )
@@ -104,7 +105,7 @@ class HasHadPriorConditionWithIcdCodeFromListRecentlyTest {
             function.evaluate(
                 OtherConditionTestFactory.withPriorOtherCondition(
                     OtherConditionTestFactory.priorOtherCondition(
-                        icdCode = targetIcdCodes.first(), year = minDate.minusYears(1).year, month = 1
+                        icdMainCode = targetIcdCodes.first().mainCode, year = minDate.minusYears(1).year, month = 1
                     )
                 )
             )

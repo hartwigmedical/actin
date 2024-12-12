@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.toxicity
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.clinical.Complication
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.Toxicity
 
@@ -14,8 +15,8 @@ internal object ToxicityTestFactory {
     }
 
     fun withToxicityThatIsAlsoComplication(toxicity: Toxicity, icdCode: String = ""): PatientRecord {
-        val complication = Complication(name = toxicity.name, categories = emptySet(), icdCode = icdCode, year = null, month = null)
-        return base.copy(toxicities = listOf(toxicity.copy(icdCode = icdCode)), complications = listOf(complication))
+        val complication = Complication(name = toxicity.name, categories = emptySet(), icdCode = IcdCode(icdCode), year = null, month = null)
+        return base.copy(toxicities = listOf(toxicity.copy(icdCode = IcdCode(icdCode))), complications = listOf(complication))
     }
 
     fun withIntolerance(intolerance: Intolerance): PatientRecord {
@@ -26,10 +27,10 @@ internal object ToxicityTestFactory {
         return base.copy(intolerances = intolerances)
     }
 
-    fun intolerance(name: String = "", category: String = "", clinicalStatus: String = "", icdCode: String = ""): Intolerance {
+    fun intolerance(name: String = "", category: String = "", clinicalStatus: String = "", icdMainCode: String = ""): Intolerance {
         return Intolerance(
             name = name,
-            icdCode = icdCode,
+            icdCode = IcdCode(icdMainCode, null),
             doids = emptySet(),
             category = category,
             subcategories = emptySet(),

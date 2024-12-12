@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.curation.config
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.datamodel.clinical.Complication
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
 
 class ComplicationConfigFactory(private val icdModel: IcdModel) : CurationConfigFactory<ComplicationConfig> {
@@ -16,10 +17,10 @@ class ComplicationConfigFactory(private val icdModel: IcdModel) : CurationConfig
             fields,
             parts
         )
-        val (icdCodes, icdValidationErrors) = validateIcd(CurationCategory.COMPLICATION, input, "icd", fields, parts, icdModel)
+        val (icdCode, icdValidationErrors) = validateIcd(CurationCategory.COMPLICATION, input, "icd", fields, parts, icdModel)
         val (year, yearValidationErrors) = validateInteger(CurationCategory.COMPLICATION, input, "year", fields, parts)
         val (month, monthValidationErrors) = validateInteger(CurationCategory.COMPLICATION, input, "month", fields, parts)
-        val curated = toCuratedComplication(icdCodes?.mainCode, fields, parts, year, month)
+        val curated = toCuratedComplication(icdCode, fields, parts, year, month)
         return ValidatedCurationConfig(
             ComplicationConfig(
                 input = input,
@@ -30,11 +31,11 @@ class ComplicationConfigFactory(private val icdModel: IcdModel) : CurationConfig
         )
     }
 
-    private fun toCuratedComplication(icdCode: String?, fields: Map<String, Int>, parts: Array<String>, year: Int?, month: Int?) =
+    private fun toCuratedComplication(icdCode: IcdCode?, fields: Map<String, Int>, parts: Array<String>, year: Int?, month: Int?) =
         Complication(
             name = parts[fields["name"]!!],
             categories = CurationUtil.toCategories(parts[fields["categories"]!!]),
-            icdCode = icdCode ?: "",
+            icdCode = icdCode ?: IcdCode("", null),
             year = year,
             month = month
         )

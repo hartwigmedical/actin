@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.curation.config
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.CurationUtil
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 import com.hartwig.actin.icd.IcdModel
 
@@ -55,7 +56,7 @@ class NonOncologicalHistoryConfigFactory(private val curationDoidValidator: Cura
                 fields,
                 parts
             ) { curationDoidValidator.isValidDiseaseDoidSet(it) }
-            val (icdCodes, icdValidationErrors) = validateIcd(CurationCategory.NON_ONCOLOGICAL_HISTORY, input, "icd", fields, parts, icdModel)
+            val (icdCode, icdValidationErrors) = validateIcd(CurationCategory.NON_ONCOLOGICAL_HISTORY, input, "icd", fields, parts, icdModel)
             val (isContraindicationForTherapy, isContraindicationForTherapyValidationErrors) = validateBoolean(
                 CurationCategory.NON_ONCOLOGICAL_HISTORY,
                 input,
@@ -72,8 +73,7 @@ class NonOncologicalHistoryConfigFactory(private val curationDoidValidator: Cura
                 month = month,
                 doids = doids ?: emptySet(),
                 category = parts[fields["category"]!!],
-                icdMainCode = icdCodes?.mainCode ?: "",
-                icdExtensionCode = icdCodes?.extensionCode ?: "",
+                icdCode = icdCode ?: IcdCode("", null),
                 isContraindicationForTherapy = isContraindicationForTherapy ?: false
             ) to doidValidationErrors + icdValidationErrors + isContraindicationForTherapyValidationErrors + yearValidationErrors + monthValidationErrors
         } else {

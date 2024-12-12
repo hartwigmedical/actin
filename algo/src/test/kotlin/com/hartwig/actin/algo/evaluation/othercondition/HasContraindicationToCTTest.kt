@@ -27,7 +27,7 @@ class HasContraindicationToCTTest {
             EvaluationResult.FAIL, function.evaluate(
                 withPriorOtherConditions(
                     listOf(
-                        priorOtherCondition(icdCode = "wrong code"),
+                        priorOtherCondition(icdMainCode = "wrong code"),
                         priorOtherCondition(name = "not a contraindication")
                     )
                 )
@@ -39,7 +39,7 @@ class HasContraindicationToCTTest {
     fun `Should pass with a condition with correct ICD code`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(withPriorOtherCondition(priorOtherCondition(icdCode = correctCode)))
+            function.evaluate(withPriorOtherCondition(priorOtherCondition(icdMainCode = correctCode)))
         )
     }
 
@@ -79,13 +79,13 @@ class HasContraindicationToCTTest {
 
     @Test
     fun `Should fail with complication with wrong code`() {
-        val complications = listOf(complication(icdCode = "wrong"))
+        val complications = listOf(complication(icdMainCode = "wrong"))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withComplications(complications)))
     }
 
     @Test
     fun `Should pass with complication with correct code`() {
-        val complications = listOf(complication(icdCode = correctCode))
+        val complications = listOf(complication(icdMainCode = correctCode))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withComplications(complications)))
     }
 }

@@ -8,6 +8,7 @@ import com.hartwig.actin.algo.evaluation.othercondition.HasHadPriorConditionComp
 import com.hartwig.actin.algo.evaluation.othercondition.HasSpecificFamilyHistory
 import com.hartwig.actin.algo.evaluation.othercondition.UndeterminedFamilyConditions
 import com.hartwig.actin.algo.icd.IcdConstants
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 
@@ -38,7 +39,7 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
                     HasECGAberration(),
                     HasHadPriorConditionComplicationOrToxicityWithIcdCode(
                         icdModel(),
-                        IcdConstants.HEART_DISEASE_LIST,
+                        IcdConstants.HEART_DISEASE_SET,
                         "potential significant heart disease",
                         referenceDateProvider().date()
                     )
@@ -104,7 +105,7 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
                 "idiopathic sudden death",
                 undeterminedFamilyConditions = UndeterminedFamilyConditions(
                     "cardiovascular disease",
-                    listOf(IcdConstants.FAMILY_HISTORY_OF_CARDIOVASCULAR_DISEASE_CODE)
+                    setOf(IcdCode(IcdConstants.FAMILY_HISTORY_OF_CARDIOVASCULAR_DISEASE_CODE))
                 )
             )
         }
@@ -117,7 +118,7 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
                 "long QT syndrome",
                 undeterminedFamilyConditions = UndeterminedFamilyConditions(
                     "cardiovascular disease",
-                    listOf(IcdConstants.FAMILY_HISTORY_OF_CARDIOVASCULAR_DISEASE_CODE)
+                    setOf(IcdCode(IcdConstants.FAMILY_HISTORY_OF_CARDIOVASCULAR_DISEASE_CODE))
                 )
             )
         }

@@ -8,26 +8,34 @@ import com.hartwig.actin.algo.icd.IcdConstants.FAMILY_HISTORY_OF_UNSPECIFIED_HEA
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
 
 class HasSpecificFamilyHistory(
     private val icdModel: IcdModel,
     private val conditionDescription: String,
-    private val passFamilyConditions: PassFamilyConditions = PassFamilyConditions("", emptyList()),
-    private val undeterminedFamilyConditions: UndeterminedFamilyConditions = UndeterminedFamilyConditions("", emptyList())
+    private val passFamilyConditions: PassFamilyConditions = PassFamilyConditions("", emptySet()),
+    private val undeterminedFamilyConditions: UndeterminedFamilyConditions = UndeterminedFamilyConditions("", emptySet())
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val (passFamilyConditions, unspecifiedFamilyHistory, undeterminedFamilyHistoryConditions) =
-            listOf(
+            setOf(
                 passFamilyConditions.icdCodes,
-                listOf(FAMILY_HISTORY_OF_UNSPECIFIED_HEALTH_PROBLEMS_CODE, FAMILY_HISTORY_OF_OTHER_SPECIFIED_HEALTH_PROBLEMS_CODE),
+                setOf(
+                    IcdCode(FAMILY_HISTORY_OF_UNSPECIFIED_HEALTH_PROBLEMS_CODE),
+                    IcdCode(FAMILY_HISTORY_OF_OTHER_SPECIFIED_HEALTH_PROBLEMS_CODE)
+                ),
                 undeterminedFamilyConditions.icdCodes
             ).map { targetCodes ->
                 OtherConditionSelector
                     .selectClinicallyRelevant(record.priorOtherConditions)
                     .flatMap {
-                        PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(icdModel, record, targetCodes).fullMatches
+                        PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(
+                            icdModel,
+                            record,
+                            targetCodes
+                        ).fullMatches
                             .map { it.name }
                     }
             }
@@ -54,5 +62,5 @@ class HasSpecificFamilyHistory(
     }
 }
 
-data class UndeterminedFamilyConditions(val description: String, val icdCodes: List<String>)
-data class PassFamilyConditions(val description: String, val icdCodes: List<String>)
+data class UndeterminedFamilyConditions(val description: String, val icdCodes: Set<IcdCode>)
+data class PassFamilyConditions(val description: String, val icdCodes: Set<IcdCode>)

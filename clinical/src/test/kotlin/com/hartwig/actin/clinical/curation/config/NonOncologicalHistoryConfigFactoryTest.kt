@@ -14,8 +14,10 @@ class NonOncologicalHistoryConfigFactoryTest {
     private val fields: Map<String, Int> =
         TestCurationFactory.curationHeaders(CurationDatabaseReader.NON_ONCOLOGICAL_HISTORY_TSV)
     private val icdModel = TestIcdFactory.createTestModel()
-    private val icdCode = icdModel.codeToNodeMap.keys.first()
-    private val icdTitle = icdModel.codeToNodeMap[icdCode]!!.title
+    private val icdMainCode = icdModel.codeToNodeMap.keys.first()
+    private val icdExtensionCode = icdModel.codeToNodeMap.keys.last()
+    private val icdTitle = icdModel.codeToNodeMap[icdMainCode]!!.title
+    private val icdExtension = icdModel.codeToNodeMap[icdExtensionCode]!!.title
 
     @Test
     fun `Should return NonOncologicalHistoryConfig with no prior other condition from valid inputs is lvef`() {
@@ -37,13 +39,15 @@ class NonOncologicalHistoryConfigFactoryTest {
         val doidValidator = setupDoidValidator()
         val config = NonOncologicalHistoryConfigFactory(doidValidator, icdModel).create(
             fields,
-            arrayOf("input", "name", "2023", "12", "123", "category", icdTitle, "0", "", "1")
+            arrayOf("input", "name", "2023", "12", "123", "category", "$icdTitle&$icdExtension", "0", "", "1")
         )
         assertThat(config.errors).isEmpty()
         assertThat(config.config.input).isEqualTo("input")
         assertThat(config.config.ignore).isEqualTo(false)
         assertThat(config.config.lvef).isNull()
         val priorOtherCondition = config.config.priorOtherCondition!!
+        assertThat(priorOtherCondition.icdCode.mainCode).isEqualTo(icdMainCode)
+        assertThat(priorOtherCondition.icdCode.extensionCode).isEqualTo(icdExtensionCode)
         assertThat(priorOtherCondition.doids).containsExactly("123")
         assertThat(priorOtherCondition.name).isEqualTo("name")
         assertThat(priorOtherCondition.year).isEqualTo(2023)
@@ -131,13 +135,12 @@ class NonOncologicalHistoryConfigFactoryTest {
     }
 
     @Test
-    fun `Should return validation error when impossible to solve icd code for title`() {
+    fun `Should return validation error when impossible to solve ICD code for title`() {
         val doidValidator = setupDoidValidator()
         val config = NonOncologicalHistoryConfigFactory(doidValidator, icdModel).create(
             fields,
             arrayOf("input", "name", "2023", "12", "123", "category", "unknown title", "0", "", "1")
         )
-        println(config)
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
                 CurationCategory.NON_ONCOLOGICAL_HISTORY.categoryName,
@@ -146,6 +149,25 @@ class NonOncologicalHistoryConfigFactoryTest {
                 "unknown title",
                 "string",
                 "ICD title \"unknown title\" is not known - check for existence in resource"
+            )
+        )
+    }
+
+    @Test
+    fun `Should return validation error when impossible to solve ICD code for extension of title`() {
+        val doidValidator = setupDoidValidator()
+        val config = NonOncologicalHistoryConfigFactory(doidValidator, icdModel).create(
+            fields,
+            arrayOf("input", "name", "2023", "12", "123", "category", "$icdTitle&unknownExtension", "0", "", "1")
+        )
+        assertThat(config.errors).containsExactly(
+            CurationConfigValidationError(
+                CurationCategory.NON_ONCOLOGICAL_HISTORY.categoryName,
+                "input",
+                "icd",
+                "$icdTitle&unknownExtension",
+                "string",
+                "ICD title \"$icdTitle&unknownExtension\" is not known - check for existence in resource"
             )
         )
     }

@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.icd.datamodel.IcdNode
 import org.assertj.core.api.Assertions.assertThat
@@ -20,9 +21,9 @@ class HasLeptomeningealDiseaseTest {
     @Test
     fun `Should pass when record contains complication or non oncological history entry with direct or parent match on target icd code`() {
         val (complicationWithDirectMatch, complicationWithParentMatch) =
-            listOf(targetNode.code, childOfTargetNode.code).map { ComplicationTestFactory.complication(icdCode = it) }
+            listOf(targetNode.code, childOfTargetNode.code).map { ComplicationTestFactory.complication(icdCode = IcdCode(it)) }
         val (historyWithDirectMatch, historyWithParentMatch) =
-            listOf(targetNode.code, childOfTargetNode.code).map { OtherConditionTestFactory.priorOtherCondition(icdCode = it) }
+            listOf(targetNode.code, childOfTargetNode.code).map { OtherConditionTestFactory.priorOtherCondition(icdMainCode = it) }
 
         listOf(
             ComplicationTestFactory.withComplication(complicationWithDirectMatch),
@@ -41,7 +42,7 @@ class HasLeptomeningealDiseaseTest {
 
     @Test
     fun `Should fail when complications do not match leptomeningeal disease icd code`() {
-        val different = ComplicationTestFactory.complication(icdCode = "other")
+        val different = ComplicationTestFactory.complication(icdCode = IcdCode("other"))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withComplication(different)))
     }
 

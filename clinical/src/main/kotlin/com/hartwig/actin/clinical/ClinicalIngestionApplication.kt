@@ -9,7 +9,7 @@ import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.icd.IcdModel
-import com.hartwig.actin.icd.datamodel.IcdNode
+import com.hartwig.actin.icd.serialization.CsvReader
 import com.hartwig.actin.icd.serialization.IcdDeserializer
 import com.hartwig.actin.util.json.GsonSerializer
 import java.nio.file.Files
@@ -31,7 +31,7 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
 
         LOGGER.info("Loading ICD nodes from {}", config.icdTsv)
-        val icdNodes = IcdNode.create(IcdDeserializer.readFromFile(config.icdTsv))
+        val icdNodes = IcdDeserializer.create(CsvReader.readFromFile(config.icdTsv))
         LOGGER.info(" Loaded {} nodes", icdNodes.size)
 
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)

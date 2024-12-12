@@ -14,23 +14,24 @@ import java.time.LocalDate
 
 class HasHadPriorConditionComplicationOrToxicityWithIcdCode(
     private val icdModel: IcdModel,
-    private val targetIcdTitles: List<String>,
+    private val targetIcdTitles: Set<String>,
     private val diseaseDescription: String,
     private val referenceDate: LocalDate
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val targetIcdCodes = targetIcdTitles.map { icdModel.titleToCodeMap[it]!! }
+        val targetIcdCodes = targetIcdTitles.mapNotNull { icdModel.resolveCodeForTitle(it) }.toSet()
 
         val matchingPriorConditions =
             PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(icdModel, record, targetIcdCodes).fullMatches
                 .map { it.name }.toSet()
 
         val matchingComplications =
-            ComplicationFunctions.findComplicationsMatchingAnyIcdCode(record, targetIcdCodes, icdModel).map { it.name }.toSet()
+            ComplicationFunctions.findComplicationsMatchingAnyIcdCode(icdModel, record, targetIcdCodes).fullMatches.map { it.name }.toSet()
         val matchingToxicities = ToxicityFunctions.selectRelevantToxicities(record, icdModel, referenceDate, emptyList())
             .filter { toxicity -> (toxicity.grade ?: 0) >= 2 || (toxicity.source == ToxicitySource.QUESTIONNAIRE) }
-            .filter { ToxicityFunctions.hasIcdMatch(it, targetIcdCodes, icdModel) }.map { it.name }.toSet()
+            .filter { ToxicityFunctions.findToxicityMatchingAnyIcdCode(icdModel, record, targetIcdCodes).fullMatches.contains(it) }
+            .map { it.name }.toSet()
 
         return if (matchingPriorConditions.isNotEmpty() || matchingComplications.isNotEmpty() || matchingToxicities.isNotEmpty()) {
             Evaluation(

@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.icd.TestIcdFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -10,13 +11,13 @@ import java.time.LocalDate
 class ToxicityFunctionsTest {
 
     private val referenceDate = LocalDate.of(2024, 12, 6)
-    private val ehrTox = OtherConditionTestFactory.toxicity(name = "tox", toxicitySource = ToxicitySource.EHR, icdCode = "code", grade = 2)
+    private val ehrTox = OtherConditionTestFactory.toxicity(name = "tox", toxicitySource = ToxicitySource.EHR, icdMainCode = "code", grade = 2)
 
     @Test
     fun `Should not select toxicities with code matching the icd entries to ignore`() {
         val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("ignore", "keep"))
-        val keepTox = ehrTox.copy(icdCode = "keepCode")
-        val record = ToxicityTestFactory.withToxicities(listOf(keepTox, keepTox.copy(icdCode = "ignoreCode")))
+        val keepTox = ehrTox.copy(icdCode = IcdCode("keepCode"))
+        val record = ToxicityTestFactory.withToxicities(listOf(keepTox, keepTox.copy(icdCode = IcdCode("ignoreCode"))))
 
         assertThat(ToxicityFunctions.selectRelevantToxicities(record, icdModel, referenceDate, listOf("ignoreTitle"))).containsOnly(keepTox)
     }
@@ -53,15 +54,24 @@ class ToxicityFunctionsTest {
     }
 
     @Test
-    fun `Should return true when tox icd code matches to target icd code`() {
-        val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("node", "nodeParent"))
-        assertThat(ToxicityFunctions.hasIcdMatch(ehrTox.copy(icdCode = "nodeCode"), listOf("nodeParentCode"), icdModel)).isTrue()
-        assertThat(ToxicityFunctions.hasIcdMatch(ehrTox.copy(icdCode = "nodeCode"), listOf("nodeCode"), icdModel)).isTrue()
-    }
+    fun `Should correctly select toxicity with icd code matching to target icd code`() {
+        val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("node", "nodeParent", "extension", "extensionParent"))
+        val targetCode = setOf(IcdCode("nodeParentCode", "extensionParentCode"))
+        val fullMatch = ehrTox.copy(icdCode = IcdCode("nodeCode", "extensionCode"))
+        val mainMatchAndUnknownExtension = ehrTox.copy(icdCode = IcdCode("nodeCode", null))
+        val nonMatch = ehrTox.copy(icdCode = IcdCode("wrongCode"))
 
-    @Test
-    fun `Should return false when tox icd code does not match target icd title`() {
-        val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("node", "nodeParent"))
-        assertThat(ToxicityFunctions.hasIcdMatch(ehrTox.copy(icdCode = "wrongCode"), listOf("nodeTitle"), icdModel)).isFalse()
+        val record = ToxicityTestFactory.withToxicities(listOf(fullMatch, mainMatchAndUnknownExtension, nonMatch))
+        val evaluation = ToxicityFunctions.findToxicityMatchingAnyIcdCode(icdModel, record, targetCode)
+        assertThat(evaluation.fullMatches).containsOnly(fullMatch)
+        assertThat(evaluation.mainCodeMatchesWithUnknownExtension).containsOnly(mainMatchAndUnknownExtension)
+
+        assertThat(
+            ToxicityFunctions.findToxicityMatchingAnyIcdCode(
+                icdModel,
+                record,
+                setOf(IcdCode("nodeCode", null))
+            ).fullMatches.containsAll(listOf(fullMatch, mainMatchAndUnknownExtension))
+        ).isTrue()
     }
 }

@@ -5,6 +5,7 @@ import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig
 import com.hartwig.actin.datamodel.clinical.Complication
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -16,7 +17,7 @@ class ComplicationsExtractorTest {
         ComplicationConfig(
             input = "term",
             ignore = false,
-            curated = Complication(name = "Curated", categories = emptySet(), icdCode = "code", year = null, month = null),
+            curated = Complication(name = "Curated", categories = emptySet(), icdCode = IcdCode("code"), year = null, month = null),
             impliesUnknownComplicationState = false
         ),
         ComplicationConfig(

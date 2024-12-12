@@ -4,12 +4,13 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 import com.hartwig.actin.datamodel.clinical.Complication
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Medication
 
 internal object ComplicationTestFactory {
     private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
     
-    fun complication(name: String = "", categories: Set<String> = emptySet(), icdCode: String = ""): Complication {
+    fun complication(name: String = "", categories: Set<String> = emptySet(), icdCode: IcdCode = IcdCode("")): Complication {
         return Complication(name = name, categories = categories, icdCode = icdCode, year = null, month = null)
     }
 

@@ -6,14 +6,17 @@ import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
 
 class HasChildPughClass(private val icdModel: IcdModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val hasLiverCirrhosis = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions).any {
-            icdModel.returnCodeWithParents(it.icdMainCode).contains(IcdConstants.LIVER_CIRRHOSIS_CODE)
-        }
+        val hasLiverCirrhosis = OtherConditionSelector.selectClinicallyRelevant(PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(
+            icdModel,
+            record,
+            setOf(IcdCode(IcdConstants.LIVER_CIRRHOSIS_CODE))
+        ).fullMatches).isNotEmpty()
 
         return if (hasLiverCirrhosis) {
             EvaluationFactory.undetermined(

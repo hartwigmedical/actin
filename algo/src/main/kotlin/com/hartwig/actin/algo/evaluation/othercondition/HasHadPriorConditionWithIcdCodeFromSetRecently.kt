@@ -7,13 +7,14 @@ import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 import com.hartwig.actin.icd.IcdModel
 import java.time.LocalDate
 
-class HasHadPriorConditionWithIcdCodeFromListRecently(
+class HasHadPriorConditionWithIcdCodeFromSetRecently(
     private val icdModel: IcdModel,
-    private val targetIcdCodes: List<String>,
+    private val targetIcdCodes: Set<IcdCode>,
     private val diseaseDescription: String,
     private val minDate: LocalDate
 ) : EvaluationFunction {
@@ -75,6 +76,6 @@ class HasHadPriorConditionWithIcdCodeFromListRecently(
     }
 
     private fun resolveIcdTitle(condition: PriorOtherCondition): String {
-        return icdModel.codeToNodeMap[condition.icdMainCode]!!.title
+        return icdModel.resolveTitleForCode(condition.icdCode)
     }
 }

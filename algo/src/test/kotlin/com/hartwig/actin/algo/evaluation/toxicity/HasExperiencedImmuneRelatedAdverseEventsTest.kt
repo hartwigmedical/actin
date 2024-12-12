@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory.createMinimalTestWGSPatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
@@ -54,7 +55,7 @@ class HasExperiencedImmuneRelatedAdverseEventsTest {
             name = "Nivolumab induced pneumonitis",
             doids = setOf(DoidConstants.DRUG_ALLERGY_DOID),
             treatmentCategories = setOf(TreatmentCategory.IMMUNOTHERAPY),
-            icdCode = ""
+            icdCode = IcdCode("", null)
         )
         val base = createMinimalTestWGSPatientRecord()
         val record = base.copy(intolerances = listOf(intolerance), oncologicalHistory = treatments)

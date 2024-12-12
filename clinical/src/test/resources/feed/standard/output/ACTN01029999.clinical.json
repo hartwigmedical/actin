@@ -107,8 +107,10 @@
         "5082",
         "11335"
       ],
-      "icdMainCode": "1A01.2",
-      "icdExtensionCode": "",
+      "icdCode": {
+        "mainCode": "1A01.2",
+        "extensionCode": null
+      },
       "category": "Other",
       "isContraindicationForTherapy": true
     }
@@ -160,7 +162,10 @@
     {
       "name": "Other",
       "categories": [],
-      "icdCode": "1A01.1",
+      "icdCode": {
+        "mainCode": "1A01.1",
+        "extensionCode": null
+      },
       "year": 2020,
       "month": 1
     }
@@ -248,7 +253,10 @@
       "categories": [
         "Neuro"
       ],
-      "icdCode": "1A01.2",
+      "icdCode": {
+        "mainCode": "1A01.2",
+        "extensionCode": null
+      },
       "evaluatedDate": {
         "year": 2020,
         "month": 1,
@@ -266,7 +274,10 @@
   "intolerances": [
     {
       "name": "Morfine",
-      "icdCode": "1A01.2",
+      "icdCode": {
+        "mainCode": "1A01.2",
+        "extensionCode": null
+      },
       "doids": ["0060500"],
       "category": "Medication",
       "subcategories": [],
@@ -278,7 +289,10 @@
     },
     {
       "name": "Nikkel",
-      "icdCode": "1A01.3",
+      "icdCode": {
+        "mainCode": "1A01.3",
+        "extensionCode": null
+      },
       "doids": ["0040046"],
       "category": "Other",
       "subcategories": [],

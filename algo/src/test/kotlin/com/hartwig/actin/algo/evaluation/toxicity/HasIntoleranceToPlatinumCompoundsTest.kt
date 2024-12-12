@@ -19,7 +19,7 @@ class HasIntoleranceToPlatinumCompoundsTest {
 
     @Test
     fun `Should fail when intolerances does not have name or ICD code match for taxane intolerance`() {
-        val mismatch = ToxicityTestFactory.intolerance(name = "mismatch", icdCode = IcdConstants.PNEUMOTHORAX_CODE)
+        val mismatch = ToxicityTestFactory.intolerance(name = "mismatch", icdMainCode = IcdConstants.PNEUMOTHORAX_CODE)
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withIntolerance(mismatch))
         )
@@ -29,7 +29,7 @@ class HasIntoleranceToPlatinumCompoundsTest {
     fun `Should pass for intolerance matching on name and drug allergy ICD code`() {
         val match = ToxicityTestFactory.intolerance(
             name = HasIntoleranceToPlatinumCompounds.PLATINUM_COMPOUNDS.iterator().next(),
-            icdCode = IcdConstants.DRUG_ALLERGY_LIST.first()
+            icdMainCode = IcdConstants.DRUG_ALLERGY_SET.first()
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withIntolerance(match))
@@ -38,7 +38,7 @@ class HasIntoleranceToPlatinumCompoundsTest {
 
     @Test
     fun `Should fail for intolerance matching on ICD code only`() {
-        val match = ToxicityTestFactory.intolerance(icdCode = IcdConstants.DRUG_ALLERGY_LIST.first())
+        val match = ToxicityTestFactory.intolerance(icdMainCode = IcdConstants.DRUG_ALLERGY_SET.first())
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withIntolerance(match))
         )
@@ -48,7 +48,7 @@ class HasIntoleranceToPlatinumCompoundsTest {
     fun `Should pass when substring of intolerance name matches`() {
         val match = ToxicityTestFactory.intolerance(
             name = "carboplatin chemotherapy allergy",
-            icdCode = IcdConstants.DRUG_ALLERGY_LIST.first()
+            icdMainCode = IcdConstants.DRUG_ALLERGY_SET.first()
         )
 
         EvaluationAssert.assertEvaluation(

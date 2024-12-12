@@ -17,7 +17,7 @@ class HasLongQTSyndromeTest {
 
     @Test
     fun `Should fail with other condition`() {
-        val condition = OtherConditionTestFactory.priorOtherCondition(icdCode = IcdConstants.PNEUMOTHORAX_CODE)
+        val condition = OtherConditionTestFactory.priorOtherCondition(icdMainCode = IcdConstants.PNEUMOTHORAX_CODE)
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(OtherConditionTestFactory.withPriorOtherCondition(condition))
@@ -26,7 +26,7 @@ class HasLongQTSyndromeTest {
 
     @Test
     fun `Should pass with matching condition`() {
-        val condition = OtherConditionTestFactory.priorOtherCondition(icdCode = IcdConstants.LONG_QT_SYNDROME_CODE)
+        val condition = OtherConditionTestFactory.priorOtherCondition(icdMainCode = IcdConstants.LONG_QT_SYNDROME_CODE)
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(OtherConditionTestFactory.withPriorOtherCondition(condition))

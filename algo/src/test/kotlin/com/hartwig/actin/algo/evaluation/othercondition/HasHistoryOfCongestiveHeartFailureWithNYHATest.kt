@@ -18,8 +18,8 @@ class HasHistoryOfCongestiveHeartFailureWithNYHATest {
                 EvaluationResult.PASS, function.evaluate(
                     OtherConditionTestFactory.withPriorOtherCondition(
                         OtherConditionTestFactory.priorOtherCondition(
-                            icdCode = IcdConstants.CONGESTIVE_HEART_FAILURE_CODE,
-                            extensionCode = it
+                            icdMainCode = IcdConstants.CONGESTIVE_HEART_FAILURE_CODE,
+                            icdExtensionCode = it
                         )
                     )
                 )
@@ -33,8 +33,8 @@ class HasHistoryOfCongestiveHeartFailureWithNYHATest {
             EvaluationResult.UNDETERMINED, function.evaluate(
                 OtherConditionTestFactory.withPriorOtherCondition(
                     OtherConditionTestFactory.priorOtherCondition(
-                        icdCode = IcdConstants.CONGESTIVE_HEART_FAILURE_CODE,
-                        extensionCode = null
+                        icdMainCode = IcdConstants.CONGESTIVE_HEART_FAILURE_CODE,
+                        icdExtensionCode = null
                     )
                 )
             )
@@ -47,8 +47,8 @@ class HasHistoryOfCongestiveHeartFailureWithNYHATest {
             EvaluationResult.FAIL, function.evaluate(
                 OtherConditionTestFactory.withPriorOtherCondition(
                     OtherConditionTestFactory.priorOtherCondition(
-                        icdCode = IcdConstants.CONGESTIVE_HEART_FAILURE_CODE,
-                        extensionCode = IcdConstants.NYHA_CLASS_2_CODE
+                        icdMainCode = IcdConstants.CONGESTIVE_HEART_FAILURE_CODE,
+                        icdExtensionCode = IcdConstants.NYHA_CLASS_2_CODE
                     )
                 )
             )
@@ -61,8 +61,8 @@ class HasHistoryOfCongestiveHeartFailureWithNYHATest {
             EvaluationResult.FAIL, function.evaluate(
                 OtherConditionTestFactory.withPriorOtherCondition(
                     OtherConditionTestFactory.priorOtherCondition(
-                        icdCode = IcdConstants.PNEUMOTHORAX_CODE,
-                        extensionCode = IcdConstants.NYHA_CLASS_4_CODE
+                        icdMainCode = IcdConstants.PNEUMOTHORAX_CODE,
+                        icdExtensionCode = IcdConstants.NYHA_CLASS_4_CODE
                     )
                 )
             )

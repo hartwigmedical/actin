@@ -6,8 +6,7 @@ object TestPriorOtherConditionFactory {
         return PriorOtherCondition(
             name = "",
             category = "",
-            icdMainCode = "",
-            icdExtensionCode = null,
+            icdCode = IcdCode("", null),
             isContraindicationForTherapy = false
         )
     }
@@ -16,8 +15,7 @@ object TestPriorOtherConditionFactory {
         return PriorOtherCondition(
             name = name,
             category = "",
-            icdMainCode = icdCode,
-            icdExtensionCode = icdExtensionCode,
+            icdCode = IcdCode(icdCode, icdExtensionCode),
             isContraindicationForTherapy = false,
             year = year,
             month = month

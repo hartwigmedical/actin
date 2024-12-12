@@ -9,7 +9,7 @@ import org.junit.Test
 class HasIntoleranceRelatedToStudyMedicationTest {
 
     private val function = HasIntoleranceRelatedToStudyMedication(TestIcdFactory.createTestModel())
-    private val matchingIcdCodes = IcdConstants.DRUG_ALLERGY_LIST
+    private val matchingIcdCodes = IcdConstants.DRUG_ALLERGY_SET
 
     @Test
     fun `Should fail when no intolerances in history`() {
@@ -18,14 +18,14 @@ class HasIntoleranceRelatedToStudyMedicationTest {
 
     @Test
     fun `Should fail when intolerance has wrong ICD code`() {
-        val intolerance = ToxicityTestFactory.intolerance(icdCode = "wrong")
+        val intolerance = ToxicityTestFactory.intolerance(icdMainCode = "wrong")
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withIntolerance(intolerance)))
     }
 
     @Test
     fun `Should evaluate to undetermined when intolerance has matching ICD code`() {
         val intolerance = ToxicityTestFactory.intolerance(
-            icdCode = matchingIcdCodes.first(),
+            icdMainCode = matchingIcdCodes.first(),
             clinicalStatus = HasIntoleranceRelatedToStudyMedication.CLINICAL_STATUS_ACTIVE
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(ToxicityTestFactory.withIntolerance(intolerance)))

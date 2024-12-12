@@ -7,15 +7,16 @@ import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
 
 class HasLeptomeningealDisease(private val icdModel: IcdModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val icdCode = IcdConstants.LEPTOMENINGEAL_METASTASES_CODE
+        val icdCode = IcdCode(IcdConstants.LEPTOMENINGEAL_METASTASES_CODE)
         val hasConfirmedLeptomeningealDisease =
-            ComplicationFunctions.findComplicationsMatchingAnyIcdCode(record, listOf(icdCode), icdModel).isNotEmpty() ||
-                    PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(icdModel, record, listOf(icdCode))
+            ComplicationFunctions.findComplicationsMatchingAnyIcdCode(icdModel, record, setOf(icdCode)).fullMatches.isNotEmpty() ||
+                    PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(icdModel, record, setOf(icdCode))
                         .fullMatches.isNotEmpty()
 
         val tumorDetails = record.tumor

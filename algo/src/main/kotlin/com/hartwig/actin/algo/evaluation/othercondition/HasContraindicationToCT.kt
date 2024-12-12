@@ -9,12 +9,13 @@ import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
 
 class HasContraindicationToCT(private val icdModel: IcdModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val targetIcdCode = listOf(IcdConstants.KIDNEY_FAILURE_BLOCK)
+        val targetIcdCode = setOf(IcdCode(IcdConstants.KIDNEY_FAILURE_BLOCK))
         val relevantConditions = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
         val conditionsMatchingCode = relevantConditions.flatMap {
             PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(icdModel, record, targetIcdCode).fullMatches
@@ -29,7 +30,9 @@ class HasContraindicationToCT(private val icdModel: IcdModel) : EvaluationFuncti
                     INTOLERANCES_BEING_CONTRAINDICATIONS_TO_CT
                 )
             }
-        val complications = ComplicationFunctions.findComplicationsMatchingAnyIcdCode(record, targetIcdCode, icdModel).map { it.name }
+
+        val complications =
+            ComplicationFunctions.findComplicationsMatchingAnyIcdCode(icdModel, record, targetIcdCode).fullMatches.map { it.name }
 
         val conditionString = Format.concatWithCommaAndAnd(conditionsMatchingCode)
         val messageStart = "Potential CT contraindication: "

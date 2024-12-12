@@ -25,13 +25,13 @@ class HasToxicityWithGrade(
             ToxicityFunctions.selectRelevantToxicities(record, icdModel, referenceDate, icdTitlesToIgnore).partition { toxicity ->
                 val grade = toxicity.grade ?: DEFAULT_QUESTIONNAIRE_GRADE.takeIf { toxicity.source == ToxicitySource.QUESTIONNAIRE }
                 val gradeMatch = grade?.let { it >= minGrade } ?: false
-                val matchesIcd = targetIcdTitles?.let {
-                    ToxicityFunctions.hasIcdMatch(
-                        toxicity,
-                        targetIcdTitles.map { icdModel.resolveCodeForTitle(it)!! },
-                        icdModel
-                    )
-                } ?: true
+                val targetCodes = targetIcdTitles?.mapNotNull { icdModel.resolveCodeForTitle(it) }?.toSet()
+                val matchesIcd = targetIcdTitles == null || ToxicityFunctions.findToxicityMatchingAnyIcdCode(
+                    icdModel,
+                    record,
+                    targetCodes ?: emptySet()
+                ).fullMatches.contains(toxicity)
+
                 gradeMatch && matchesIcd
             }
 

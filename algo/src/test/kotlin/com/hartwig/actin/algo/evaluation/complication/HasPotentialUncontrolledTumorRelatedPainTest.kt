@@ -7,6 +7,7 @@ import com.hartwig.actin.algo.evaluation.medication.AtcTestFactory
 import com.hartwig.actin.algo.evaluation.medication.MedicationTestFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.AtcLevel
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.TestMedicationFactory
 import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.icd.datamodel.IcdNode
@@ -47,13 +48,13 @@ class HasPotentialUncontrolledTumorRelatedPainTest {
     @Test
     fun `Should evaluate to undetermined on complication or non oncological history entry with direct or parent match on target icd code`() {
         val (complicationWithDirectMatch, complicationWithParentMatch) =
-            listOf(targetNode.code, childOfTargetNode.code).map { ComplicationTestFactory.complication(icdCode = it) }
+            listOf(targetNode.code, childOfTargetNode.code).map { ComplicationTestFactory.complication(icdCode = IcdCode(it)) }
         val (historyWithDirectMatch, historyWithParentMatch) =
-            listOf(targetNode.code, childOfTargetNode.code).map { OtherConditionTestFactory.priorOtherCondition(icdCode = it) }
+            listOf(targetNode.code, childOfTargetNode.code).map { OtherConditionTestFactory.priorOtherCondition(icdMainCode = it) }
 
         listOf(
             listOf(complicationWithDirectMatch, complicationWithParentMatch).map { ComplicationTestFactory.withComplication(it) },
-            listOf(historyWithDirectMatch, historyWithParentMatch, OtherConditionTestFactory.priorOtherCondition(icdCode = otherTargetCode))
+            listOf(historyWithDirectMatch, historyWithParentMatch, OtherConditionTestFactory.priorOtherCondition(icdMainCode = otherTargetCode))
                 .map { OtherConditionTestFactory.withPriorOtherCondition(it) }
         ).flatten().forEach { assertEvaluation(EvaluationResult.UNDETERMINED, alwaysActiveFunction.evaluate(it)) }
     }

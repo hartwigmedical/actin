@@ -12,6 +12,7 @@ import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluati
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.feed.emc.digitalfile.DigitalFileEntry
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 
@@ -41,7 +42,7 @@ class ToxicityExtractor(
                 Toxicity(
                     name = toxicityEntry.itemText,
                     categories = emptySet(),
-                    icdCode = "",
+                    icdCode = IcdCode("", null),
                     evaluatedDate = toxicityEntry.authored,
                     source = ToxicitySource.EHR,
                     grade = grade,

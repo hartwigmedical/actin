@@ -4,7 +4,7 @@ package com.hartwig.actin.datamodel.clinical
 data class Complication(
     val name: String,
     val categories: Set<String>,
-    val icdCode: String,
+    override val icdCode: IcdCode,
     val year: Int?,
     val month: Int?
-)
+): IcdCodeHolder

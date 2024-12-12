@@ -281,8 +281,7 @@ object TestClinicalFactory {
                 name = "pancreatitis",
                 doids = setOf("4989"),
                 category = "Pancreas disease",
-                icdMainCode = "DC31",
-                icdExtensionCode = null,
+                icdCode = IcdCode("DC31", null),
                 isContraindicationForTherapy = true,
                 year = null,
                 month = null
@@ -291,8 +290,7 @@ object TestClinicalFactory {
                 name = "Coronary artery bypass graft (CABG)",
                 doids = setOf("3393"),
                 category = "Heart disease",
-                icdMainCode = "QB50.1",
-                icdExtensionCode = null,
+                icdCode = IcdCode("QB50.1",  null),
                 isContraindicationForTherapy = true,
                 year = 2023,
                 month = 10
@@ -351,7 +349,7 @@ object TestClinicalFactory {
     }
 
     private fun createTestComplications(): List<Complication> {
-        return listOf(Complication(name = "Ascites", categories = setOf("Ascites"), icdCode = "1A01", year = null, month = null))
+        return listOf(Complication(name = "Ascites", categories = setOf("Ascites"), icdCode = IcdCode("1A01", null), year = null, month = null))
     }
 
     private fun createTestLabValues(): List<LabValue> {
@@ -452,7 +450,7 @@ object TestClinicalFactory {
             Toxicity(
                 name = "Nausea",
                 categories = setOf("Nausea"),
-                icdCode = "A01",
+                icdCode = IcdCode("A01"),
                 evaluatedDate = FIXED_DATE.minusDays(DAYS_SINCE_TOXICITIES.toLong()),
                 source = ToxicitySource.EHR,
                 grade = 1
@@ -460,7 +458,7 @@ object TestClinicalFactory {
             Toxicity(
                 name = "Fatigue",
                 categories = setOf("Fatigue"),
-                icdCode = "A02",
+                icdCode = IcdCode("A02"),
                 evaluatedDate = FIXED_DATE.minusDays(DAYS_SINCE_TOXICITIES.toLong()),
                 source = ToxicitySource.QUESTIONNAIRE,
                 grade = 2
@@ -472,7 +470,7 @@ object TestClinicalFactory {
         return listOf(
             Intolerance(
                 name = "Wasps",
-                icdCode = "icdCode",
+                icdCode = IcdCode("icdCode", null),
                 category = "Environment",
                 type = "Allergy",
                 clinicalStatus = "Active",

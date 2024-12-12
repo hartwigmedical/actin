@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.infection
 
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 
 internal object InfectionTestFactory {
@@ -13,7 +14,7 @@ internal object InfectionTestFactory {
         return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(priorOtherConditions = conditions)
     }
 
-    fun priorOtherCondition(name: String = "", icdCode: String): PriorOtherCondition {
-        return PriorOtherCondition(name = name, category = "", icdMainCode = icdCode, isContraindicationForTherapy = true, doids = emptySet())
+    fun priorOtherCondition(name: String = "", icdCode: IcdCode): PriorOtherCondition {
+        return PriorOtherCondition(name = name, category = "", icdCode = icdCode, isContraindicationForTherapy = true, doids = emptySet())
     }
 }

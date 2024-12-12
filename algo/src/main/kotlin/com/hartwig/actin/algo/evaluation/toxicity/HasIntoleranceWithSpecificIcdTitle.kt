@@ -11,9 +11,9 @@ import com.hartwig.actin.icd.IcdModel
 class HasIntoleranceWithSpecificIcdTitle(private val icdModel: IcdModel, private val targetIcdTitle: String) : EvaluationFunction {
         
     override fun evaluate(record: PatientRecord): Evaluation {
-        val matchingAllergies = record.intolerances
-            .filter { IntoleranceFunctions.hasIcdMatch(it, listOf(icdModel.titleToCodeMap[targetIcdTitle]!!), icdModel) }
-            .map { it.name }
+        val targetCode = icdModel.resolveCodeForTitle(targetIcdTitle)!!
+        val matchingAllergies = IntoleranceFunctions.findIntoleranceMatchingAnyIcdCode(icdModel, record, setOf(targetCode))
+            .fullMatches.map { it.name }
 
         return if (matchingAllergies.isNotEmpty()) {
             EvaluationFactory.pass("Has allergy ${concat(matchingAllergies)} belonging to $targetIcdTitle")

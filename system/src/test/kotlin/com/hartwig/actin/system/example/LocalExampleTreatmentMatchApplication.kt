@@ -16,7 +16,7 @@ import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.config.DoidManualConfig
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.icd.IcdModel
-import com.hartwig.actin.icd.datamodel.IcdNode
+import com.hartwig.actin.icd.serialization.CsvReader
 import com.hartwig.actin.icd.serialization.IcdDeserializer
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
@@ -77,7 +77,7 @@ class LocalExampleTreatmentMatchApplication {
 
 
         LOGGER.info("Creating ICD-11 tree from file {}", icdTsv)
-        val icdNodes = IcdNode.create(IcdDeserializer.readFromFile(icdTsv))
+        val icdNodes = IcdDeserializer.create(CsvReader.readFromFile(icdTsv))
         LOGGER.info(" Loaded {} nodes", icdNodes.size)
         val icdModel = IcdModel.create(icdNodes)
 

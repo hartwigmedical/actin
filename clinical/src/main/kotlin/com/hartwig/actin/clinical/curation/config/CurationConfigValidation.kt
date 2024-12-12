@@ -2,6 +2,7 @@ package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationUtil
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
 
 data class CurationConfigValidationError(
@@ -56,9 +57,9 @@ fun validateIcd(
     fields: Map<String, Int>,
     parts: Array<String>,
     icdModel: IcdModel,
-): Pair<IcdModel.IcdCodes?, List<CurationConfigValidationError>> {
+): Pair<IcdCode?, List<CurationConfigValidationError>> {
     val title = parts[fields["icd"]!!]
-    return icdModel.resolveCodesForTitle(title)?.let { code -> code to emptyList() } ?: Pair(
+    return icdModel.resolveCodeForTitle(title)?.let { code -> code to emptyList() } ?: Pair(
         null, listOf(
             CurationConfigValidationError(
                 curationCategory.categoryName,

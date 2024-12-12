@@ -6,10 +6,11 @@ import com.hartwig.actin.algo.evaluation.othercondition.PriorOtherConditionFunct
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
 
 class HasSpecificInfection(
-    private val icdModel: IcdModel, private val icdCodes: List<String>, private val term: String
+    private val icdModel: IcdModel, private val icdCodes: Set<IcdCode>, private val term: String
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {

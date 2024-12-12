@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.icd.IcdModel
@@ -69,11 +70,11 @@ class HasToxicityWithGradeTest {
         val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("ignore", "keep"))
         val function = function(icdModel, ignoreFilters = listOf("ignoreTitle"))
         val toxicities = listOf(
-            toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "ignore me", icdCode = "ignoreCode"),
+            toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "ignore me", icdMainCode = "ignoreCode"),
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)))
 
-        val matchingToxicity = toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "keep me", icdCode = "keepCode")
+        val matchingToxicity = toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "keep me", icdMainCode = "keepCode")
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(ToxicityTestFactory.withToxicities(toxicities + matchingToxicity))
@@ -85,11 +86,11 @@ class HasToxicityWithGradeTest {
         val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("target", "nonTarget"))
         val function = function(icdModel, targetIcdTitles = listOf("targetTitle"))
         val toxicities = listOf(
-            toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "not a target", icdCode = "nonTargetCode"),
+            toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "not a target", icdMainCode = "nonTargetCode"),
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)))
 
-        val matchingToxicity = toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "targetTox", icdCode = "targetCode")
+        val matchingToxicity = toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "targetTox", icdMainCode = "targetCode")
         assertEvaluation(EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withToxicities(toxicities + matchingToxicity)))
     }
 
@@ -103,7 +104,7 @@ class HasToxicityWithGradeTest {
         )
         val function = function(icdModel, targetIcdTitles = listOf("parentTitle"))
         val toxicities = listOf(
-            toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "target tox", icdCode = "targetCode"),
+            toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "target tox", icdMainCode = "targetCode"),
         )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)))
     }
@@ -158,9 +159,9 @@ class HasToxicityWithGradeTest {
         source: ToxicitySource,
         grade: Int? = null,
         name: String = "name",
-        icdCode: String = icdModel.titleToCodeMap.keys.first(),
+        icdMainCode: String = icdModel.titleToCodeMap.keys.first(),
         endDate: LocalDate? = null,
         evaluatedDate: LocalDate? = null
     ) =
-        Toxicity(name, emptySet(), icdCode, evaluatedDate ?: referenceDate.minusMonths(1), source, grade, endDate)
+        Toxicity(name, emptySet(), IcdCode(icdMainCode), evaluatedDate ?: referenceDate.minusMonths(1), source, grade, endDate)
 }
