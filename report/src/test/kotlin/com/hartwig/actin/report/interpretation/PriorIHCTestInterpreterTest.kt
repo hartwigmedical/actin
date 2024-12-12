@@ -56,8 +56,6 @@ class PriorIHCTestInterpreterTest {
         )
     }
 
-
-
     private fun ihcMolecularTest(protein: String, scoreText: String? = null, scoreValue: Double? = null, scoreValueUnit: String? = null) =
         PriorIHCTest(
             item = protein,
