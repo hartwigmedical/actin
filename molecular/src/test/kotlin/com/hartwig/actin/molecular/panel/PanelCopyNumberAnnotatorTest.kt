@@ -56,7 +56,7 @@ class PanelCopyNumberAnnotatorTest {
         val canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN)
             .copy(transcriptId = CANONICAL_TRANSCRIPT, minCopies = 6, maxCopies = 6)
         val otherImpacts = emptySet<TranscriptCopyNumberImpact>()
-        check(annotatedPanel, canonicalImpact, otherImpacts)
+        check(annotatedPanel, canonicalImpact, otherImpacts, "amp")
     }
 
     @Test
@@ -71,7 +71,7 @@ class PanelCopyNumberAnnotatorTest {
             TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN)
                 .copy(transcriptId = NON_CANONICAL_TRANSCRIPT, minCopies = 6, maxCopies = 6)
         )
-        check(annotatedPanel, canonicalImpact, otherImpacts)
+        check(annotatedPanel, canonicalImpact, otherImpacts, "amp")
     }
 
     @Test
@@ -83,7 +83,7 @@ class PanelCopyNumberAnnotatorTest {
         val canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS)
             .copy(transcriptId = CANONICAL_TRANSCRIPT)
         val otherImpacts = emptySet<TranscriptCopyNumberImpact>()
-        check(annotatedPanel, canonicalImpact, otherImpacts)
+        check(annotatedPanel, canonicalImpact, otherImpacts, "del")
     }
 
     @Test
@@ -98,7 +98,7 @@ class PanelCopyNumberAnnotatorTest {
             TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS)
                 .copy(transcriptId = NON_CANONICAL_TRANSCRIPT)
         )
-        check(annotatedPanel, canonicalImpact, otherImpacts)
+        check(annotatedPanel, canonicalImpact, otherImpacts, "del")
     }
 
     private fun setupEvidenceForCopyNumber() {
@@ -115,14 +115,19 @@ class PanelCopyNumberAnnotatorTest {
         }
     }
 
-    private fun check(panel: List<CopyNumber>, canonicalImpact: TranscriptCopyNumberImpact, otherImpacts: Set<TranscriptCopyNumberImpact>) {
+    private fun check(
+        panel: List<CopyNumber>,
+        canonicalImpact: TranscriptCopyNumberImpact,
+        otherImpacts: Set<TranscriptCopyNumberImpact>,
+        type: String
+    ) {
         assertThat(panel).isEqualTo(
             listOf(
                 CopyNumber(
                     canonicalImpact = canonicalImpact,
                     otherImpacts = otherImpacts,
                     isReportable = true,
-                    event = GENE,
+                    event = "$GENE $type",
                     driverLikelihood = DriverLikelihood.HIGH,
                     evidence = ClinicalEvidenceFactory.create(ACTIONABILITY_MATCH),
                     gene = GENE,
