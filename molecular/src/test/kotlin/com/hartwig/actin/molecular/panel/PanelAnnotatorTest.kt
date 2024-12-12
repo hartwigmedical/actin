@@ -7,28 +7,32 @@ import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
 import com.hartwig.actin.datamodel.molecular.Fusion
 import com.hartwig.actin.datamodel.molecular.Variant
-import com.hartwig.actin.molecular.GENE
-import com.hartwig.actin.molecular.HGVS_CODING
-import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
-import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
-import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEvents
-import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
+import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
+import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
+import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val OTHER_GENE = "other_gene"
-private val EMPTY_MATCH = ActionabilityMatch(ActionableEvents(), ActionableEvents())
+private val EMPTY_MATCH = TestClinicalEvidenceFactory.createEmpty()
 private val ARCHER_VARIANT = SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING)
 private val ARCHER_FUSION = SequencedFusion(GENE, OTHER_GENE)
 
-private val ACTIONABILITY_MATCH = ActionabilityMatch(
-    onLabelEvidence = ActionableEvents(listOf(TestServeActionabilityFactory.createEfficacyEvidenceWithGene()), emptyList()),
-    offLabelEvidence = ActionableEvents()
+private val ON_LABEL_MATCH = TestClinicalEvidenceFactory.withEvidence(
+    TestTreatmentEvidenceFactory.create(
+        treatment = "treatment",
+        evidenceLevel = EvidenceLevel.A,
+        evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
+        evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
+        isOnLabel = true,
+        isCategoryEvent = true
+    )
 )
-
 private val ARCHER_SKIPPED_EXON = SequencedSkippedExons(GENE, 2, 3)
 
 class PanelAnnotatorTest {
