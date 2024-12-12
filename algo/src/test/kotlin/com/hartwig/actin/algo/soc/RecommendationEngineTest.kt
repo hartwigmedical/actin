@@ -21,7 +21,7 @@ import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
-import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptImpactFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.doid.TestDoidModelFactory
 import io.mockk.every
@@ -458,7 +458,7 @@ class RecommendationEngineTest {
             drivers = MINIMAL_MOLECULAR_RECORD.drivers.copy(
                 variants = listOf(
                     TestVariantFactory.createMinimal().copy(
-                        canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(hgvsProteinImpact = "p.D594A"),
+                        canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(hgvsProteinImpact = "p.D594A"),
                         isReportable = true
                     )
                 )

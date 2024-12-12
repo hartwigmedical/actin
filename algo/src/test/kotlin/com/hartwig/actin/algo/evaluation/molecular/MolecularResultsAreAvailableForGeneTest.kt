@@ -7,7 +7,7 @@ import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.TestPanelRecordFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
-import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import org.junit.Test
 
 class MolecularResultsAreAvailableForGeneTest {
@@ -17,14 +17,14 @@ class MolecularResultsAreAvailableForGeneTest {
         gene = "gene 1",
         isReportable = false,
         proteinEffect = ProteinEffect.UNKNOWN,
-        type = CopyNumberType.NONE
+        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact()
     )
 
     private val geneCopyNumber2 = TestCopyNumberFactory.createMinimal().copy(
         gene = "gene 2",
         isReportable = false,
         proteinEffect = ProteinEffect.UNKNOWN,
-        type = CopyNumberType.NONE
+        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact()
     )
 
     @Test

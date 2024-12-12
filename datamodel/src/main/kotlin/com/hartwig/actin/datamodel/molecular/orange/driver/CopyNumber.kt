@@ -9,10 +9,8 @@ import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.sort.driver.CopyNumberComparator
 
 data class CopyNumber(
-    // TODO (KD): Change datamodel to 1) canonicalImpact (type, minCopies, maxCopies) 2) otherImpacts (type, minCopies, maxCopies)
-    val type: CopyNumberType,
-    val minCopies: Int,
-    val maxCopies: Int,
+    val canonicalImpact: TranscriptCopyNumberImpact,
+    val otherImpacts: Set<TranscriptCopyNumberImpact>,
     override val isReportable: Boolean,
     override val event: String,
     override val driverLikelihood: DriverLikelihood?,

@@ -5,7 +5,7 @@ import com.hartwig.actin.datamodel.molecular.CodingEffect
 import com.hartwig.actin.datamodel.molecular.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.GeneRole
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
-import com.hartwig.actin.datamodel.molecular.TranscriptImpact
+import com.hartwig.actin.datamodel.molecular.TranscriptVariantImpact
 import com.hartwig.actin.datamodel.molecular.VariantType
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceDirection
@@ -238,7 +238,7 @@ class PanelVariantAnnotatorTest {
         )
 
         val transcriptImpact = annotator.otherImpacts(complexPaveAnnotation, TRANSCRIPT_ANNOTATION)
-        assertThat(transcriptImpact).isEqualTo(emptySet<TranscriptImpact>())
+        assertThat(transcriptImpact).isEqualTo(emptySet<TranscriptVariantImpact>())
     }
 
     @Test
@@ -262,7 +262,7 @@ class PanelVariantAnnotatorTest {
         val transcriptImpact = annotator.otherImpacts(complexPaveAnnotation, TRANSCRIPT_ANNOTATION)
         assertThat(transcriptImpact).isEqualTo(
             setOf(
-                TranscriptImpact(
+                TranscriptVariantImpact(
                     transcriptId = OTHER_TRANSCRIPT,
                     hgvsCodingImpact = HGVS_CODING,
                     hgvsProteinImpact = HGVS_PROTEIN_1LETTER,
