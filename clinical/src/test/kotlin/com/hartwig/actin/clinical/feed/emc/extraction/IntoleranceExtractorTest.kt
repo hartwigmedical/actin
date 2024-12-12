@@ -24,8 +24,6 @@ private const val CURATED_MEDICATION_INTOLERANCE = "Paracetamol"
 
 private const val ICD = "ICD"
 
-private const val DOID = "1"
-
 private const val ATC = "N02BE01"
 
 private const val CANNOT_CURATE = "Cannot curate"
@@ -42,7 +40,6 @@ class IntoleranceExtractorTest {
                 ignore = false,
                 name = CURATED_INTOLERANCE,
                 icd = IcdCode(ICD, null),
-                doids = setOf(DOID),
                 treatmentCategories = emptySet()
             ),
             IntoleranceConfig(
@@ -50,7 +47,6 @@ class IntoleranceExtractorTest {
                 ignore = false,
                 name = CURATED_MEDICATION_INTOLERANCE,
                 icd = IcdCode(ICD, null),
-                doids = setOf(DOID),
                 treatmentCategories = emptySet()
             )
         ), atcModel
@@ -64,7 +60,6 @@ class IntoleranceExtractorTest {
         assertThat(curated[0].name).isEqualTo(CURATED_INTOLERANCE)
         assertThat(curated[0].icdCode.mainCode).isEqualTo(ICD)
         assertThat(curated[0].icdCode.extensionCode).isNull()
-        assertThat(curated[0].doids).contains(DOID)
 
         assertThat(curated[1].name).isEqualTo(CANNOT_CURATE)
 

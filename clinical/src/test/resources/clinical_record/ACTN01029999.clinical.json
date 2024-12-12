@@ -276,9 +276,6 @@
         "mainCode": "1A01.1",
         "extensionCode": null
       },
-      "doids": [
-        "0060500"
-      ],
       "category": "Medication",
       "subcategories": [],
       "type": "Allergy",

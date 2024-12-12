@@ -424,7 +424,6 @@ internal class ClinicalDAO(private val context: DSLContext) {
                 Tables.INTOLERANCE,
                 Tables.INTOLERANCE.PATIENTID,
                 Tables.INTOLERANCE.NAME,
-                Tables.INTOLERANCE.DOIDS,
                 Tables.INTOLERANCE.CATEGORY,
                 Tables.INTOLERANCE.SUBCATEGORIES,
                 Tables.INTOLERANCE.TYPE,
@@ -435,7 +434,6 @@ internal class ClinicalDAO(private val context: DSLContext) {
                 .values(
                     patientId,
                     intolerance.name,
-                    DataUtil.concat(intolerance.doids),
                     intolerance.category,
                     DataUtil.concat(intolerance.subcategories),
                     intolerance.type,

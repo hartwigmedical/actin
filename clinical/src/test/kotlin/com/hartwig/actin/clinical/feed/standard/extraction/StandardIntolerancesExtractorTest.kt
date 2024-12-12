@@ -21,7 +21,6 @@ private const val CLINICAL_STATUS = "clinicalStatus"
 private const val VERIFICATION_STATUS = "verificationStatus"
 private const val SEVERITY = "severity"
 private const val CURATED = "curated"
-private const val DOID = "doid"
 private const val ICD = "icd"
 private const val SUBCATEGORY = "subcategory"
 
@@ -58,7 +57,6 @@ class StandardIntolerancesExtractorTest {
                 verificationStatus = VERIFICATION_STATUS,
                 criticality = SEVERITY,
                 icdCode = IcdCode("", null),
-                doids = emptySet(),
                 subcategories = emptySet(),
                 treatmentCategories = emptySet()
             )
@@ -73,7 +71,6 @@ class StandardIntolerancesExtractorTest {
                 input = NAME,
                 name = CURATED,
                 icd = IcdCode(ICD, null),
-                doids = setOf(DOID),
                 treatmentCategories = setOf(TreatmentCategory.CHEMOTHERAPY)
             )
         )
@@ -86,7 +83,6 @@ class StandardIntolerancesExtractorTest {
                 clinicalStatus = CLINICAL_STATUS,
                 verificationStatus = VERIFICATION_STATUS,
                 criticality = SEVERITY,
-                doids = setOf(DOID),
                 subcategories = setOf(SUBCATEGORY),
                 treatmentCategories = setOf(TreatmentCategory.CHEMOTHERAPY)
             )
@@ -104,14 +100,12 @@ class StandardIntolerancesExtractorTest {
                 input = NAME,
                 name = CURATED,
                 icd = IcdCode(ICD, null),
-                doids = setOf(DOID),
                 treatmentCategories = setOf(TreatmentCategory.CHEMOTHERAPY)
             ),
             IntoleranceConfig(
                 input = NAME,
                 name = anotherCurated,
                 icd = IcdCode(ICD, null),
-                doids = emptySet(),
                 treatmentCategories = emptySet()
             )
         )
@@ -128,14 +122,12 @@ class StandardIntolerancesExtractorTest {
             Intolerance(
                 name = CURATED,
                 icdCode = IcdCode(ICD, null),
-                doids = setOf(DOID),
                 subcategories = setOf(SUBCATEGORY),
                 treatmentCategories = setOf(TreatmentCategory.CHEMOTHERAPY)
             ),
             Intolerance(
                 name = anotherCurated,
                 icdCode = IcdCode(ICD, null),
-                doids = emptySet(),
                 subcategories = emptySet(),
                 treatmentCategories = emptySet()
             )

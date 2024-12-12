@@ -4,7 +4,6 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 
 data class Intolerance(
     val name: String,
-    val doids: Set<String>,
     override val icdCode: IcdCode,
     val category: String? = null,
     val subcategories: Set<String>? = null,

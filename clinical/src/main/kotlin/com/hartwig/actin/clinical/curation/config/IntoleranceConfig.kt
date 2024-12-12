@@ -8,6 +8,5 @@ data class IntoleranceConfig(
     override val ignore: Boolean = false,
     val name: String,
     val icd: IcdCode,
-    val doids: Set<String>,
     val treatmentCategories: Set<TreatmentCategory>
 ) : CurationConfig

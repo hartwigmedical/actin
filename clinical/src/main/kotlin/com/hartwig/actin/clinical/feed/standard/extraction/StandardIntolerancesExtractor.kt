@@ -25,7 +25,6 @@ class StandardIntolerancesExtractor(
                 clinicalStatus = it.clinicalStatus,
                 verificationStatus = it.verificationStatus,
                 criticality = it.severity,
-                doids = emptySet(),
                 subcategories = emptySet(),
                 treatmentCategories = emptySet()
             )
@@ -36,7 +35,6 @@ class StandardIntolerancesExtractor(
                     it.copy(
                         name = config.name,
                         icdCode = config.icd,
-                        doids = config.doids,
                         subcategories = subcategoriesFromAtc(config),
                         treatmentCategories = config.treatmentCategories
                     )
@@ -51,7 +49,6 @@ class StandardIntolerancesExtractor(
                     Intolerance(
                         name = config.name,
                         icdCode = config.icd,
-                        doids = config.doids,
                         subcategories = subcategoriesFromAtc(config),
                         treatmentCategories = config.treatmentCategories
                     )

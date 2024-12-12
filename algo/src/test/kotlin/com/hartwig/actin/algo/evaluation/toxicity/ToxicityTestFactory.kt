@@ -9,13 +9,14 @@ import com.hartwig.actin.datamodel.clinical.Toxicity
 
 internal object ToxicityTestFactory {
     val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
-    
+
     fun withToxicities(toxicities: List<Toxicity>): PatientRecord {
         return base.copy(toxicities = toxicities)
     }
 
     fun withToxicityThatIsAlsoComplication(toxicity: Toxicity, icdCode: String = ""): PatientRecord {
-        val complication = Complication(name = toxicity.name, categories = emptySet(), icdCode = IcdCode(icdCode), year = null, month = null)
+        val complication =
+            Complication(name = toxicity.name, categories = emptySet(), icdCode = IcdCode(icdCode), year = null, month = null)
         return base.copy(toxicities = listOf(toxicity.copy(icdCode = IcdCode(icdCode))), complications = listOf(complication))
     }
 
@@ -27,11 +28,16 @@ internal object ToxicityTestFactory {
         return base.copy(intolerances = intolerances)
     }
 
-    fun intolerance(name: String = "", category: String = "", clinicalStatus: String = "", icdMainCode: String = ""): Intolerance {
+    fun intolerance(
+        name: String = "",
+        category: String = "",
+        clinicalStatus: String = "",
+        icdMainCode: String = "",
+        icdExtensionCode: String? = null
+    ): Intolerance {
         return Intolerance(
             name = name,
-            icdCode = IcdCode(icdMainCode, null),
-            doids = emptySet(),
+            icdCode = IcdCode(icdMainCode, icdExtensionCode),
             category = category,
             subcategories = emptySet(),
             type = "",

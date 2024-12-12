@@ -476,7 +476,6 @@ object TestClinicalFactory {
                 clinicalStatus = "Active",
                 verificationStatus = "Confirmed",
                 criticality = "Unable-to-assess",
-                doids = emptySet(),
                 subcategories = emptySet(),
                 treatmentCategories = emptySet()
             )

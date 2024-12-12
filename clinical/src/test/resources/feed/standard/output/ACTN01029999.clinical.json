@@ -278,7 +278,6 @@
         "mainCode": "1A01.2",
         "extensionCode": null
       },
-      "doids": ["0060500"],
       "category": "Medication",
       "subcategories": [],
       "type": null,
@@ -293,7 +292,6 @@
         "mainCode": "1A01.3",
         "extensionCode": null
       },
-      "doids": ["0040046"],
       "category": "Other",
       "subcategories": [],
       "type": null,

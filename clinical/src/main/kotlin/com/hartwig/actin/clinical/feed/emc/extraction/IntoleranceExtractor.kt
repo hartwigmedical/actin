@@ -25,7 +25,6 @@ class IntoleranceExtractor(private val intoleranceCuration: CurationDatabase<Int
                 clinicalStatus = CurationUtil.capitalizeFirstLetterOnly(entry.clinicalStatus),
                 verificationStatus = CurationUtil.capitalizeFirstLetterOnly(entry.verificationStatus),
                 criticality = CurationUtil.capitalizeFirstLetterOnly(entry.criticality),
-                doids = emptySet(),
                 subcategories = emptySet(),
                 treatmentCategories = emptySet()
             )
@@ -41,7 +40,6 @@ class IntoleranceExtractor(private val intoleranceCuration: CurationDatabase<Int
                     it.copy(
                         name = config.name,
                         icdCode = config.icd,
-                        doids = config.doids,
                         subcategories = subcategories,
                         treatmentCategories = config.treatmentCategories
                     )

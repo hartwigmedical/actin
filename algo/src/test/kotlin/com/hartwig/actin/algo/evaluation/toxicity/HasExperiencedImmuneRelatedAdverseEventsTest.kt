@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
-import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory.createMinimalTestWGSPatientRecord
@@ -53,7 +52,6 @@ class HasExperiencedImmuneRelatedAdverseEventsTest {
         )
         val intolerance = Intolerance(
             name = "Nivolumab induced pneumonitis",
-            doids = setOf(DoidConstants.DRUG_ALLERGY_DOID),
             treatmentCategories = setOf(TreatmentCategory.IMMUNOTHERAPY),
             icdCode = IcdCode("", null)
         )
