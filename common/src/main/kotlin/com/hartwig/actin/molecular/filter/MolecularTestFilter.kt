@@ -14,7 +14,7 @@ class MolecularTestFilter(private val maxTestAge: LocalDate? = null, private val
             val mostRecentTestDate = sortedTests.first().date
             val mostRecentOncoAct = filteredTests.firstOrNull { it.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME }?.date
             val mostRecentOncoPanel = filteredTests.firstOrNull { it.experimentType == ExperimentType.HARTWIG_TARGETED }?.date
-            return filteredTests.filter {
+            val filter = filteredTests.filter {
                 it.date?.let { testDate ->
                     when {
                         it.experimentType == ExperimentType.PANEL && mostRecentOncoPanel != null && mostRecentOncoAct == null && it.drivers.fusions.isNotEmpty() -> testDate >= maxTestAge
@@ -24,6 +24,7 @@ class MolecularTestFilter(private val maxTestAge: LocalDate? = null, private val
                     }
                 } ?: true
             }
+            return filter
         }
         return filteredTests
     }
