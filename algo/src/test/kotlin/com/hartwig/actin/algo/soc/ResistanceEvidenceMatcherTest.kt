@@ -10,7 +10,8 @@ import com.hartwig.actin.datamodel.molecular.CodingEffect
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
-import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptImpactFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
@@ -80,13 +81,17 @@ class ResistanceEvidenceMatcherTest {
         val amplificationWithResistanceEvidence = TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.AMPLIFICATION, "BRAF")
         val hasAmplification = MolecularTestFactory.withCopyNumber(
             TestCopyNumberFactory.createMinimal().copy(
-                gene = "BRAF", type = CopyNumberType.FULL_GAIN, isReportable = true
+                gene = "BRAF",
+                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN),
+                isReportable = true
             )
         ).molecularHistory
 
         val hasLoss = MolecularTestFactory.withCopyNumber(
             TestCopyNumberFactory.createMinimal().copy(
-                gene = "BRAF", type = CopyNumberType.LOSS, isReportable = true
+                gene = "BRAF",
+                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS),
+                isReportable = true
             )
         ).molecularHistory
 
@@ -154,7 +159,7 @@ class ResistanceEvidenceMatcherTest {
                 chromosome = "X",
                 position = 6,
                 isReportable = true,
-                canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(codingEffect = CodingEffect.MISSENSE)
+                canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(codingEffect = CodingEffect.MISSENSE)
             )
         ).molecularHistory
 
@@ -164,7 +169,7 @@ class ResistanceEvidenceMatcherTest {
                 chromosome = "X",
                 position = 6,
                 isReportable = true,
-                canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(codingEffect = CodingEffect.MISSENSE)
+                canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(codingEffect = CodingEffect.MISSENSE)
             )
         ).molecularHistory
 

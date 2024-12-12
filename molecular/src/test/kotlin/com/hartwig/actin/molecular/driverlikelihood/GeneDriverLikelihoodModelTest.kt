@@ -5,7 +5,7 @@ import com.hartwig.actin.datamodel.molecular.GeneRole
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.Variant
 import com.hartwig.actin.datamodel.molecular.VariantType
-import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptImpactFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
@@ -239,7 +239,7 @@ class GeneDriverLikelihoodModelTest {
 
     private fun createVariant(variantType: VariantType, codingEffect: CodingEffect) = TestVariantFactory.createMinimal().copy(
         type = variantType,
-        canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(codingEffect = codingEffect)
+        canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(codingEffect = codingEffect)
     )
 
     private fun dndsMap(dndsDriverType: DndsDriverType) = mapOf(GENE to mapOf(dndsDriverType to ENTRY))

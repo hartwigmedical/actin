@@ -93,7 +93,7 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
         ProvidedMolecularTestResult::class.memberProperties.filter { it.name != "freeText" }.all { it.get(result) == null }
 
     private fun geneDeletions(allResults: Set<ProvidedMolecularTestResult>) =
-        allResults.mapNotNull { it.deletedGene?.let { gene -> SequencedDeletedGene(gene) } }.toSet()
+        allResults.mapNotNull { it.deletedGene?.let { gene -> SequencedDeletedGene(gene, it.transcript) } }.toSet()
 
     private fun tmb(results: Set<ProvidedMolecularTestResult>) =
         results.firstNotNullOfOrNull { result -> result.tmb }
@@ -114,7 +114,7 @@ class StandardPriorSequencingTestExtractor(val curation: CurationDatabase<Sequen
         }.toSet()
 
     private fun amplifications(results: Set<ProvidedMolecularTestResult>) =
-        results.mapNotNull { result -> result.amplifiedGene?.let { SequencedAmplification(it) } }.toSet()
+        results.mapNotNull { it.amplifiedGene?.let { gene -> SequencedAmplification(gene, it.transcript) } }.toSet()
 
     private fun fusions(results: Set<ProvidedMolecularTestResult>) =
         results.filter { result -> result.fusionGeneUp != null || result.fusionGeneDown != null }

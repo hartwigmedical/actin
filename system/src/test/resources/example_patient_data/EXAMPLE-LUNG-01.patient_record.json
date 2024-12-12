@@ -805,9 +805,13 @@
           ],
           "copyNumbers": [
             {
-              "type": "LOSS",
-              "minCopies": 0,
-              "maxCopies": 0,
+              "canonicalImpact": {
+                "transcriptId": "",
+                "type": "LOSS",
+                "minCopies": 0,
+                "maxCopies": 0
+              },
+              "otherImpacts": [],
               "isReportable": true,
               "event": "TP53 del",
               "driverLikelihood": "HIGH",

@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalDisrupt
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalHomozygousDisruption
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalVirus
 import com.hartwig.actin.datamodel.molecular.VariantType
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
@@ -48,7 +49,8 @@ class EvidenceDatabaseTest {
         assertThat(database.geneAlterationForVariant(variant)).isNotNull
         assertEvidenceCountMatchesExpected(database.evidenceForVariant(variant), 1)
 
-        val gainLoss = minimalCopyNumber().copy(type = CopyNumberType.LOSS)
+        val gainLoss =
+            minimalCopyNumber().copy(canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS))
         assertThat(database.geneAlterationForCopyNumber(gainLoss)).isNotNull
         assertEvidenceCountMatchesExpected(database.evidenceForCopyNumber(gainLoss), 1)
 

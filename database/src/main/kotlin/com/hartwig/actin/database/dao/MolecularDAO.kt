@@ -314,9 +314,10 @@ internal class MolecularDAO(private val context: DSLContext) {
                 Tables.COPYNUMBER.GENEROLE,
                 Tables.COPYNUMBER.PROTEINEFFECT,
                 Tables.COPYNUMBER.ISASSOCIATEDWITHDRUGRESISTANCE,
-                Tables.COPYNUMBER.TYPE,
-                Tables.COPYNUMBER.MINCOPIES,
-                Tables.COPYNUMBER.MAXCOPIES
+                Tables.COPYNUMBER.CANONICALTRANSCRIPTID,
+                Tables.COPYNUMBER.CANONICALTYPE,
+                Tables.COPYNUMBER.CANONICALMINCOPIES,
+                Tables.COPYNUMBER.CANONICALMAXCOPIES
             )
                 .values(
                     sampleId,
@@ -327,9 +328,10 @@ internal class MolecularDAO(private val context: DSLContext) {
                     copyNumber.geneRole.toString(),
                     copyNumber.proteinEffect.toString(),
                     copyNumber.isAssociatedWithDrugResistance,
-                    copyNumber.type.toString(),
-                    copyNumber.minCopies,
-                    copyNumber.maxCopies
+                    copyNumber.canonicalImpact.transcriptId,
+                    copyNumber.canonicalImpact.type.toString(),
+                    copyNumber.canonicalImpact.minCopies,
+                    copyNumber.canonicalImpact.maxCopies
                 )
                 .returning(Tables.COPYNUMBER.ID)
                 .fetchOne()!!

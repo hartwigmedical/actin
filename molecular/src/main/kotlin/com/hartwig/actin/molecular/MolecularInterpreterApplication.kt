@@ -22,6 +22,7 @@ import com.hartwig.actin.molecular.orange.OrangeExtractor
 import com.hartwig.actin.molecular.panel.IHCAnnotator
 import com.hartwig.actin.molecular.panel.IHCExtractor
 import com.hartwig.actin.molecular.panel.PanelAnnotator
+import com.hartwig.actin.molecular.panel.PanelCopyNumberAnnotator
 import com.hartwig.actin.molecular.panel.PanelFusionAnnotator
 import com.hartwig.actin.molecular.panel.PanelVariantAnnotator
 import com.hartwig.actin.molecular.paver.PaveRefGenomeVersion
@@ -151,12 +152,14 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
 
         val panelVariantAnnotator = PanelVariantAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite)
         val panelFusionAnnotator = PanelFusionAnnotator(evidenceDatabase, knownFusionCache, ensemblDataCache)
+        val panelCopyNumberAnnotator = PanelCopyNumberAnnotator(evidenceDatabase, ensemblDataCache)
 
         val sequencingMolecularTests = interpretPriorSequencingMolecularTests(
             clinical.priorSequencingTests,
             evidenceDatabase,
             panelVariantAnnotator,
-            panelFusionAnnotator
+            panelFusionAnnotator,
+            panelCopyNumberAnnotator
         )
 
         val ihcMolecularTests = interpretPriorIHCMolecularTests(
@@ -172,7 +175,8 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         priorSequencingTests: List<PriorSequencingTest>,
         evidenceDatabase: EvidenceDatabase,
         panelVariantAnnotator: PanelVariantAnnotator,
-        panelFusionAnnotator: PanelFusionAnnotator
+        panelFusionAnnotator: PanelFusionAnnotator,
+        panelCopyNumberAnnotator: PanelCopyNumberAnnotator
     ): List<MolecularTest> {
         return MolecularInterpreter(
             extractor = object : MolecularExtractor<PriorSequencingTest, PriorSequencingTest> {
@@ -183,7 +187,8 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             annotator = PanelAnnotator(
                 evidenceDatabase,
                 panelVariantAnnotator,
-                panelFusionAnnotator
+                panelFusionAnnotator,
+                panelCopyNumberAnnotator
             ),
         ).run(priorSequencingTests)
     }

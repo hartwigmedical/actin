@@ -56,7 +56,7 @@ object DriverEventFactory {
     }
 
     fun fusionEvent(fusion: LinxFusion): String {
-        return fusion.geneStart() + " - " + fusion.geneEnd() + " fusion"
+        return fusion.geneStart() + "::" + fusion.geneEnd() + " fusion"
     }
 
     fun virusEvent(virus: VirusInterpreterEntry): String {

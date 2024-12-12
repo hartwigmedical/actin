@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.molecular.CodingEffect
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalCopyNumber
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalDisruption
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalHomozygousDisruption
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.evidence.matching.FUSION_CRITERIA
 import com.hartwig.actin.molecular.evidence.matching.VARIANT_CRITERIA
@@ -79,7 +80,10 @@ class KnownEventResolverTest {
         val known: KnownEvents = ImmutableKnownEvents.builder().addCopyNumbers(knownAmp, knownDel).addGenes(knownGene1, knownGene2).build()
         val resolver = KnownEventResolver(known, known.genes())
 
-        val ampGene1 = minimalCopyNumber().copy(gene = "gene 1", type = CopyNumberType.FULL_GAIN)
+        val ampGene1 = minimalCopyNumber().copy(
+            gene = "gene 1",
+            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN)
+        )
         assertThat(resolver.resolveForCopyNumber(ampGene1)).isEqualTo(knownAmp)
 
         val ampGene2 = ampGene1.copy(gene = "gene 2")

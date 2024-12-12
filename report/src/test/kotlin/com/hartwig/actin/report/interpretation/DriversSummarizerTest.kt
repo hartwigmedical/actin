@@ -10,6 +10,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestDisruptionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestHomozygousDisruptionFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVirusFactory
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
@@ -195,7 +196,7 @@ class DriversSummarizerTest {
 
     private fun copyNumber(type: CopyNumberType, name: String, driverLikelihood: DriverLikelihood?, isReportable: Boolean): CopyNumber {
         return TestCopyNumberFactory.createMinimal().copy(
-            type = type,
+            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(type),
             gene = name,
             event = name,
             driverLikelihood = driverLikelihood,
