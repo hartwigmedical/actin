@@ -11,6 +11,7 @@ import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.CurationUtil.fullTrim
+import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig
 import com.hartwig.actin.clinical.curation.config.MedicationNameConfig
 import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
@@ -50,12 +51,18 @@ class MedicationExtractor(
                 val isSelfCare = entry.code5ATCDisplay.isEmpty() && atcCode.isEmpty()
                 val isTrialMedication =
                     entry.code5ATCDisplay.isEmpty() && atcCode.isNotEmpty() && atcCode[0].lowercaseChar() !in 'a'..'z'
-                val isAntiCancerMedication =
-                    MedicationCategories.ANTI_CANCER_ATC_CODES.any { atcCode.startsWith(it) } && !atcCode.startsWith("L01XD")
-                if (atc == null && !isSelfCare && !isTrialMedication) {
-                    LOGGER.warn("Medication $name has no ATC code and is not self-care or a trial")
-                }
-                if (isAntiCancerMedication && drug == null) LOGGER.warn("Anti cancer medication $name with ATC code $atcCode found which is not present in drug.json. Please add to drug.json.")
+                val isAntiCancerMedication = MedicationCategories.isAntiCancerMedication(atcCode)
+
+                val atcLookupEvaluation =
+                    listOfNotNull("Medication $name has no ATC code and is not self-care or a trial".takeIf { atc == null && !isSelfCare && !isTrialMedication },
+                        "Anti cancer medication $name with ATC code $atcCode found which is not present in drug database".takeIf { isAntiCancerMedication && drug == null }).map {
+                        CurationWarning(
+                            patientId,
+                            CurationCategory.MEDICATION_NAME,
+                            name,
+                            it
+                        )
+                    }.let { ExtractionResult(emptyList<Medication>(), CurationExtractionEvaluation(it.toSet())) }
 
                 val medication = Medication(
                     dosage = dosage.extracted,
@@ -73,7 +80,7 @@ class MedicationExtractor(
                     drug = drug
                 )
 
-                val evaluation = listOf(nameCuration, administrationRouteCuration, dosage)
+                val evaluation = listOf(nameCuration, administrationRouteCuration, dosage, atcLookupEvaluation)
                     .fold(CurationExtractionEvaluation()) { acc, result -> acc + result.evaluation }
                 ExtractionResult(listOf(medication), evaluation)
             }

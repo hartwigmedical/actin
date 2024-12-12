@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.pdf.tables.clinical.CellTestUtil.extractTextFromCell
 import com.itextpdf.layout.element.Table
@@ -43,12 +44,7 @@ class PatientClinicalHistoryGeneratorTest {
             )
         )
 
-        val patientClinicalHistoryGenerator = PatientClinicalHistoryGenerator(reportWithOtherConditions, true, KEY_WIDTH, VALUE_WIDTH)
-        val cells = patientClinicalHistoryGenerator.contentsAsList()
-
-        val otherHistoryCell =
-            cells.dropWhile { extractTextFromCell(it) != "Relevant non-oncological history" }.drop(1).first()
-        val otherHistoryTable = otherHistoryCell.children.first() as? Table ?: throw IllegalStateException("Expected Table as first child")
+        val otherHistoryTable = createTable(reportWithOtherConditions, "Relevant non-oncological history")
 
         assertThat(otherHistoryTable.numberOfRows).isEqualTo(6)
         assertThat(extractTextFromCell(otherHistoryTable.getCell(0, 0))).isEqualTo("8/2024")
@@ -89,15 +85,21 @@ class PatientClinicalHistoryGeneratorTest {
                 )
             )
         )
-        val patientClinicalHistoryGenerator =
-            PatientClinicalHistoryGenerator(reportWithOncologicalHistoryAndMedications, true, KEY_WIDTH, VALUE_WIDTH)
-        val cells = patientClinicalHistoryGenerator.contentsAsList()
-        val otherHistoryCell =
-            cells.dropWhile { extractTextFromCell(it) != "Relevant systemic treatment history" }.drop(1).first()
-        val otherHistoryTable = otherHistoryCell.children.first() as? Table ?: throw IllegalStateException("Expected Table as first child")
+
+        val otherHistoryTable = createTable(reportWithOncologicalHistoryAndMedications, "Relevant systemic treatment history")
 
         assertThat(otherHistoryTable.numberOfRows).isEqualTo(2)
         assertThat(extractTextFromCell(otherHistoryTable.getCell(0, 0))).isEqualTo("2022")
+        assertThat(extractTextFromCell(otherHistoryTable.getCell(0, 1))).isEqualTo("Chemotherapy")
         assertThat(extractTextFromCell(otherHistoryTable.getCell(1, 0))).isEqualTo("12/2023")
+        assertThat(extractTextFromCell(otherHistoryTable.getCell(1, 1))).isEqualTo("Pembrolizumab")
+    }
+
+    private fun createTable(report: Report, cellToFind: String): Table {
+        val patientClinicalHistoryGenerator = PatientClinicalHistoryGenerator(report, true, KEY_WIDTH, VALUE_WIDTH)
+        val cells = patientClinicalHistoryGenerator.contentsAsList()
+        val otherHistoryCell =
+            cells.dropWhile { extractTextFromCell(it) != cellToFind }.drop(1).first()
+        return otherHistoryCell.children.first() as? Table ?: throw IllegalStateException("Expected Table as first child")
     }
 }

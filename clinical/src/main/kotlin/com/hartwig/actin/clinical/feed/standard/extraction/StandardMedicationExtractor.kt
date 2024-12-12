@@ -31,12 +31,9 @@ class StandardMedicationExtractor(
             ) else null
             val atcNameOrInput = atcClassification?.chemicalSubstance?.name ?: it.name
             val atcCode = it.atcCode
-            val isAntiCancerMedication =
-                MedicationCategories.ANTI_CANCER_ATC_CODES.any { antiCancerCode -> atcCode?.startsWith(antiCancerCode) == true } && atcCode?.startsWith(
-                    "L01XD"
-                ) != true
+            val isAntiCancerMedication = MedicationCategories.isAntiCancerMedication(atcCode)
             val drug = treatmentDatabase.findDrugByAtcName(atcNameOrInput)
-            if (isAntiCancerMedication && drug == null) LOGGER.warn("Anti cancer medication $atcNameOrInput with ATC code $atcCode found which is not present in drug.json. Please add to drug.json")
+            if (isAntiCancerMedication && drug == null) LOGGER.warn("Anti cancer medication $atcNameOrInput with ATC code $atcCode found which is not present in drug database. Please add to drug database")
             Medication(
                 name = atcNameOrInput,
                 administrationRoute = it.administrationRoute,

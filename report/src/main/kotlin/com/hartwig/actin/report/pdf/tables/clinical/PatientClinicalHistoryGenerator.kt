@@ -5,14 +5,10 @@ import com.hartwig.actin.clinical.sort.PriorSecondPrimaryDiagnosedDateComparator
 import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparator
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.clinical.Medication
-import com.hartwig.actin.datamodel.clinical.MedicationStatus
 import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary
 import com.hartwig.actin.datamodel.clinical.TumorStatus
-import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
-import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
-import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.pdf.tables.TableGenerator
@@ -26,7 +22,6 @@ import com.hartwig.actin.report.pdf.util.Tables.createSingleColWithWidth
 import com.itextpdf.layout.element.BlockElement
 import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Table
-import java.time.LocalDate
 
 private const val STOP_REASON_PROGRESSIVE_DISEASE = "PD"
 
@@ -88,28 +83,10 @@ class PatientClinicalHistoryGenerator(
         val treatmentWidth = valueWidth - dateWidth
         val table: Table = createDoubleColumnTable(dateWidth, treatmentWidth)
 
-        val medicationsToAdd = medications.filter {
-            it.drug?.let { _ ->
-                !hasMatchingTreatmentHistoryEntry(
-                    treatmentHistory,
-                    it
-                )
-            } ?: false && it.drug?.category in TreatmentCategory.SYSTEMIC_CANCER_TREATMENT_CATEGORIES && (it.status == null || it.status == MedicationStatus.ACTIVE)
-        }
-            .groupBy { it.drug }
-            .mapNotNull { (drug, medications) ->
-                    val (start, stop) = extractStartAndStopRange(medications)
-                    val name = drug?.name?.lowercase()?.replaceFirstChar { char -> char.uppercase() } ?: "Unknown"
-                    TreatmentHistoryEntry(
-                        startYear = start?.year,
-                        startMonth = start?.monthValue,
-                        treatments = setOf(DrugTreatment(name = name, drugs = setOfNotNull(drug))),
-                        treatmentHistoryDetails = TreatmentHistoryDetails(stopYear = stop?.year, stopMonth = stop?.monthValue)
-                    )
-            }
+        val medicationsToAdd = MedicationToTreatmentConverter.convert(medications, treatmentHistory)
+        val systemicTreatmentHistory = treatmentHistory.filter { treatmentHistoryEntryIsSystemic(it) == requireSystemic }
 
-        (treatmentHistory + medicationsToAdd).filter { treatmentHistoryEntryIsSystemic(it) == requireSystemic }
-            .sortedWith(TreatmentHistoryAscendingDateComparator())
+        (systemicTreatmentHistory + medicationsToAdd).sortedWith(TreatmentHistoryAscendingDateComparator())
             .groupBy { Triple(extractTreatmentString(it), it.startMonth, it.startYear) }
             .forEach { (key, historyEntries) ->
                 val details =
@@ -121,28 +98,6 @@ class PatientClinicalHistoryGenerator(
             }
 
         return table
-    }
-
-    private fun hasMatchingTreatmentHistoryEntry(treatmentHistoryEntries: List<TreatmentHistoryEntry>, medication: Medication): Boolean {
-        return treatmentHistoryEntries.any { entry ->
-            entry.treatments.any { treatment ->
-                treatment is DrugTreatment && treatment.drugs.contains(medication.drug) && matchesDate(
-                    medication,
-                    entry
-                )
-            }
-        }
-    }
-
-    private fun matchesDate(medication: Medication, treatmentHistory: TreatmentHistoryEntry): Boolean {
-        if (medication.startDate?.year == treatmentHistory.startYear || medication.startDate?.year == treatmentHistory.treatmentHistoryDetails?.stopYear) {
-            val values =
-                medication.startDate?.let { (it.monthValue..(medication.stopDate?.monthValue ?: it.monthValue)).toList() } ?: emptyList()
-            if (treatmentHistory.startMonth in values || treatmentHistory.startMonth == null || treatmentHistory.treatmentHistoryDetails?.stopMonth in values) {
-                return true
-            }
-        }
-        return false
     }
 
     private fun treatmentHistoryEntryIsSystemic(treatmentHistoryEntry: TreatmentHistoryEntry): Boolean {
@@ -176,13 +131,6 @@ class PatientClinicalHistoryGenerator(
             }
         }
         return table
-    }
-
-    private fun extractStartAndStopRange(medications: List<Medication>): Pair<LocalDate?, LocalDate?> {
-        val oldestStartDate = medications.mapNotNull { it.startDate }.minOrNull()
-        val newestStopDate = medications.mapNotNull { it.stopDate }.maxOrNull()
-
-        return Pair(oldestStartDate, newestStopDate)
     }
 
     private fun extractDateRangeString(treatmentHistoryEntry: TreatmentHistoryEntry): String {
