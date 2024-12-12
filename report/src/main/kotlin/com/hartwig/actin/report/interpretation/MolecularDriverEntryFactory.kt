@@ -53,7 +53,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
 
     private fun formatCopyNumberString(copyNumber: Double): String {
         val boundedCopyNumber = copyNumber.coerceAtLeast(0.0)
-        return if (boundedCopyNumber < 1) Formats.singleDigitNumber(boundedCopyNumber) else Formats.noDigitNumber(boundedCopyNumber)
+        return if (boundedCopyNumber < 1) Formats.forcedSingleDigitNumber(boundedCopyNumber) else Formats.noDigitNumber(boundedCopyNumber)
     }
 
     private fun fromCopyNumber(copyNumber: CopyNumber): List<MolecularDriverEntry> {
