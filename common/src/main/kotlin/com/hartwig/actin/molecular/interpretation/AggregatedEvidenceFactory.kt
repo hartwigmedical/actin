@@ -62,8 +62,8 @@ object AggregatedEvidenceFactory {
     private fun hasEvidence(evidence: ClinicalEvidence?): Boolean {
         return if (evidence == null) false else {
             listOf(
-                evidence.eligibleTrials,
-                evidence.treatmentEvidence
+                evidence.treatmentEvidence,
+                evidence.eligibleTrials
             ).any(Set<Any>::isNotEmpty)
         }
     }
@@ -79,18 +79,17 @@ object AggregatedEvidenceFactory {
             AggregatedEvidence()
         } else {
             AggregatedEvidence(
-                externalEligibleTrialsPerEvent = evidenceMap(event, evidence.eligibleTrials),
-                treatmentEvidence = evidenceMap(event, evidence.treatmentEvidence),
+                treatmentEvidencePerEvent = mapByEvent(event, evidence.treatmentEvidence),
+                eligibleTrialsPerEvent = mapByEvent(event, evidence.eligibleTrials),
             )
         }
     }
 
     private fun mergeAggregatedEvidenceList(aggregatedEvidenceList: List<AggregatedEvidence>): AggregatedEvidence {
         return AggregatedEvidence(
-            externalEligibleTrialsPerEvent =
-            mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::externalEligibleTrialsPerEvent)),
-            treatmentEvidence =
-            mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::treatmentEvidence)),
+            treatmentEvidencePerEvent = mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::treatmentEvidencePerEvent)),
+            eligibleTrialsPerEvent =
+            mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::eligibleTrialsPerEvent)),
         )
     }
 
@@ -101,7 +100,7 @@ object AggregatedEvidenceFactory {
             .mapValues { it.value.flatten().toSet() }
     }
 
-    private fun <T> evidenceMap(event: String, evidenceSubSet: Set<T>): Map<String, Set<T>> {
-        return if (evidenceSubSet.isEmpty()) emptyMap() else mapOf(event to evidenceSubSet)
+    private fun <T> mapByEvent(event: String, subset: Set<T>): Map<String, Set<T>> {
+        return if (subset.isEmpty()) emptyMap() else mapOf(event to subset)
     }
 }

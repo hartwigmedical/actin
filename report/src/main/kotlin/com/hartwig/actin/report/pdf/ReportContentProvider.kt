@@ -37,11 +37,11 @@ import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummarizer
 import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummary
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.filterExclusivelyInChildrensHospitalsInReferenceCountry
-import com.hartwig.actin.report.pdf.tables.trial.filterInCountryOfReference
+import com.hartwig.actin.report.pdf.tables.trial.filterInCountry
 import com.hartwig.actin.report.pdf.tables.trial.filterInternalTrials
 import com.hartwig.actin.report.pdf.tables.trial.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts
 import com.hartwig.actin.report.pdf.tables.trial.filterMolecularCriteriaAlreadyPresentInTrials
-import com.hartwig.actin.report.pdf.tables.trial.filterNotInCountryOfReference
+import com.hartwig.actin.report.pdf.tables.trial.filterNotInCountry
 import org.apache.logging.log4j.LogManager
 
 class ReportContentProvider(private val report: Report, private val enableExtendedMode: Boolean = false) {
@@ -221,13 +221,13 @@ class ReportContentProvider(private val report: Report, private val enableExtend
     ): Pair<MolecularFilteredExternalTrials, MolecularFilteredExternalTrials> {
         val externalEligibleTrials =
             AggregatedEvidenceFactory.mergeMapsOfSets(patientRecord.molecularHistory.molecularTests.map {
-                AggregatedEvidenceFactory.create(it).externalEligibleTrialsPerEvent
+                AggregatedEvidenceFactory.create(it).eligibleTrialsPerEvent
             })
 
         val externalEligibleTrialsFiltered = ExternalTrialSummarizer.summarize(externalEligibleTrials)
             .filterInternalTrials(report.treatmentMatch.trialMatches.toSet())
 
-        val nationalTrials = externalEligibleTrialsFiltered.filterInCountryOfReference(report.config.countryOfReference)
+        val nationalTrials = externalEligibleTrialsFiltered.filterInCountry(report.config.countryOfReference)
         val nationalTrialsNotOverlappingHospital =
             hideOverlappingTrials(
                 nationalTrials,
@@ -239,7 +239,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                     )
             )
 
-        val internationalTrials = externalEligibleTrialsFiltered.filterNotInCountryOfReference(report.config.countryOfReference)
+        val internationalTrials = externalEligibleTrialsFiltered.filterNotInCountry(report.config.countryOfReference)
         val internationalTrialsNotOverlappingHospitalOrNational = hideOverlappingTrials(
             internationalTrials,
             internationalTrials.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(evaluated)

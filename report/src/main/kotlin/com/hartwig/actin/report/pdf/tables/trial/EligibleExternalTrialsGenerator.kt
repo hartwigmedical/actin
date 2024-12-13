@@ -45,7 +45,7 @@ class EligibleExternalTrialsGenerator(
             )
             table.addCell(Cells.createContent(trial.actinMolecularEvents.joinToString(",\n")))
             table.addCell(Cells.createContent(trial.sourceMolecularEvents.joinToString(",\n")))
-            table.addCell(Cells.createContent(trial.cancerTypes.joinToString(",\n") { it.matchedCancerType }))
+            table.addCell(Cells.createContent(trial.applicableCancerTypes.joinToString(",\n") { it.matchedCancerType }))
             table.addCell(
                 Cells.createContent(
                     homeCountry?.let {

@@ -12,11 +12,11 @@ import java.util.SortedSet
 data class ExternalTrialSummary(
     val nctId: String,
     val title: String,
-    val url: String,
+    val countries: SortedSet<CountryDetails>,
     val actinMolecularEvents: SortedSet<String>,
     val sourceMolecularEvents: SortedSet<String>,
-    val cancerTypes: SortedSet<CancerType>,
-    val countries: SortedSet<CountryDetails>
+    val applicableCancerTypes: SortedSet<CancerType>,
+    val url: String
 )
 
 data class EventWithExternalTrial(val event: String, val trial: ExternalTrial)
@@ -32,11 +32,11 @@ fun Set<ExternalTrialSummary>.filterInternalTrials(internalTrials: Set<TrialMatc
     return this.filter { it.nctId !in internalIds }.toSet()
 }
 
-fun Set<ExternalTrialSummary>.filterInCountryOfReference(country: Country): Set<ExternalTrialSummary> {
+fun Set<ExternalTrialSummary>.filterInCountry(country: Country): Set<ExternalTrialSummary> {
     return this.filter { country in countryNames(it).toSet() }.toSet()
 }
 
-fun Set<ExternalTrialSummary>.filterNotInCountryOfReference(country: Country): Set<ExternalTrialSummary> {
+fun Set<ExternalTrialSummary>.filterNotInCountry(country: Country): Set<ExternalTrialSummary> {
     return this.filter { country !in countryNames(it) }.toSet()
 }
 
@@ -72,22 +72,24 @@ object ExternalTrialSummarizer {
 
     fun summarize(externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>): Set<ExternalTrialSummary> {
         return externalTrialsPerEvent.flatMap {
-            it.value.map { t -> EventWithExternalTrial(it.key, t) }
-        }.groupBy { t -> t.trial.nctId }.map { e ->
-            val countries = e.value.flatMap { ewe -> ewe.trial.countries }
-            val trial = e.value.first().trial
+            it.value.map { trial -> EventWithExternalTrial(it.key, trial) }
+        }.groupBy { ewt -> ewt.trial.nctId }.map { entry ->
+            val countries = entry.value.flatMap { ewt -> ewt.trial.countries }
+            val trial = entry.value.first().trial
             ExternalTrialSummary(
-                e.key,
-                trial.title,
-                trial.url,
-                e.value.map { ewe -> ewe.event }.toSortedSet(),
-                e.value.map { ewe -> ewe.trial.molecularMatches.first().sourceEvent }.toSortedSet(),
-                e.value.map { ewe -> ewe.trial.applicableCancerTypes.first() }
-                    .toSortedSet(Comparator.comparing { c -> c.matchedCancerType }),
-                countries.toSortedSet(Comparator.comparing { c -> c.country })
+                nctId = entry.key,
+                title = trial.title,
+                countries = countries.toSortedSet(Comparator.comparing { c -> c.country }),
+                actinMolecularEvents = entry.value.map { ewt -> ewt.event }.toSortedSet(),
+                sourceMolecularEvents = entry.value.flatMap { ewt -> ewt.trial.molecularMatches.map { it.sourceEvent } }.toSortedSet(),
+                applicableCancerTypes = entry.value.flatMap { ewt -> ewt.trial.applicableCancerTypes }
+                    .toSortedSet(Comparator.comparing { cancerType -> cancerType.matchedCancerType }),
+                url = trial.url
             )
         }
-            .toSortedSet(compareBy<ExternalTrialSummary> { it.actinMolecularEvents.joinToString() }.thenBy { it.sourceMolecularEvents.joinToString() }
-                .thenBy { it.cancerTypes.joinToString { t -> t.matchedCancerType } }.thenBy { it.nctId })
+            .toSortedSet(compareBy<ExternalTrialSummary> { it.actinMolecularEvents.joinToString() }
+                .thenBy { it.sourceMolecularEvents.joinToString() }
+                .thenBy { it.applicableCancerTypes.joinToString { cancerType -> cancerType.matchedCancerType } }
+                .thenBy { it.nctId })
     }
 }
