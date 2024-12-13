@@ -9,7 +9,7 @@ class ActionableTrialMatcher(
     private val generalMolecularPredicate: Predicate<MolecularCriterium>
 ) {
 
-    fun matchTrials(specificMatchPredicate: Predicate<MolecularCriterium>): Map<ActionableTrial, Set<MolecularCriterium>> {
+    fun apply(specificMatchPredicate: Predicate<MolecularCriterium>): Map<ActionableTrial, Set<MolecularCriterium>> {
         return applicableTrials.map { trial ->
             val matchingCriteria = trial.anyMolecularCriteria()
                 .filter { generalMolecularPredicate.test(it) }

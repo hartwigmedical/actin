@@ -3,8 +3,12 @@ package com.hartwig.actin.molecular.evidence.actionability
 import com.hartwig.actin.datamodel.molecular.orange.driver.Virus
 import com.hartwig.actin.datamodel.molecular.orange.driver.VirusType
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
+import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.molecular.characteristic.TumorCharacteristicType
 import com.hartwig.serve.datamodel.trial.ActionableTrial
+import java.util.function.Predicate
+
+private val ALWAYS_VALID_PREDICATE: Predicate<MolecularCriterium> = Predicate { true }
 
 class VirusEvidence(
     private val hpvEvidences: List<EfficacyEvidence>,
@@ -18,11 +22,17 @@ class VirusEvidence(
             ActionabilityMatch(evidenceMatches = emptyList(), matchingCriteriaPerTrialMatch = emptyMap())
         } else when (event.type) {
             VirusType.HUMAN_PAPILLOMA_VIRUS -> {
-                ActionabilityMatch(evidenceMatches = hpvEvidences, hpvTrialMatcher.matchTrials({ true }))
+                ActionabilityMatch(
+                    evidenceMatches = hpvEvidences,
+                    matchingCriteriaPerTrialMatch = hpvTrialMatcher.apply(ALWAYS_VALID_PREDICATE)
+                )
             }
 
             VirusType.EPSTEIN_BARR_VIRUS -> {
-                ActionabilityMatch(evidenceMatches = ebvEvidences, ebvTrialMatcher.matchTrials({ true }))
+                ActionabilityMatch(
+                    evidenceMatches = ebvEvidences,
+                    matchingCriteriaPerTrialMatch = ebvTrialMatcher.apply(ALWAYS_VALID_PREDICATE)
+                )
             }
 
             else -> {

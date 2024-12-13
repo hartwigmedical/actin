@@ -14,10 +14,10 @@ class BreakendEvidence(
 
     override fun findMatches(event: Disruption): ActionabilityMatch {
         val matchPredicate: Predicate<MolecularCriterium> =
-            Predicate { event.isReportable && ActionableEventsExtraction.extractGene(it).gene() == event.gene }
+            Predicate { event.isReportable && ActionableEventExtraction.extractGene(it).gene() == event.gene }
 
         val evidences = applicableGeneEvidences.filter { matchPredicate.test(it.molecularCriterium()) }
-        val matchingCriteriaPerTrialMatch = applicableTrialMatcher.matchTrials(matchPredicate)
+        val matchingCriteriaPerTrialMatch = applicableTrialMatcher.apply(matchPredicate)
 
         return ActionabilityMatch(evidences, matchingCriteriaPerTrialMatch)
     }

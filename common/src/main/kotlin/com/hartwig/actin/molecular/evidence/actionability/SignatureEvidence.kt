@@ -27,18 +27,17 @@ class SignatureEvidence(
         return findMatches(hasHighTumorMutationalLoad, TumorCharacteristicType.HIGH_TUMOR_MUTATIONAL_LOAD)
     }
 
-    private fun findMatches(
-        hasCharacteristic: Boolean,
-        typeToFind: TumorCharacteristicType
-    ): ActionabilityMatch {
-        return if (!hasCharacteristic) ActionabilityMatch(emptyList(), emptyMap()) else {
+    private fun findMatches(hasCharacteristic: Boolean, characteristicToFind: TumorCharacteristicType): ActionabilityMatch {
+        return if (hasCharacteristic) {
             val matchPredicate: Predicate<MolecularCriterium> =
-                Predicate { ActionableEventsExtraction.extractCharacteristic(it).type() == typeToFind }
+                Predicate { ActionableEventExtraction.extractCharacteristic(it).type() == characteristicToFind }
 
             val evidenceMatches = signatureEvidences.filter { matchPredicate.test(it.molecularCriterium()) }
-            val trialMatches = signatureTrialMatcher.matchTrials(matchPredicate)
+            val trialMatches = signatureTrialMatcher.apply(matchPredicate)
 
             ActionabilityMatch(evidenceMatches, trialMatches)
+        } else {
+            ActionabilityMatch(emptyList(), emptyMap())
         }
     }
 

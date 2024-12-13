@@ -11,7 +11,7 @@ import com.hartwig.serve.datamodel.molecular.hotspot.ActionableHotspot
 import com.hartwig.serve.datamodel.molecular.range.ActionableRange
 import java.util.function.Predicate
 
-object ActionableEventsExtraction {
+object ActionableEventExtraction {
 
     fun extractEvent(molecularCriterium: MolecularCriterium): ActionableEvent {
         // TODO (KD): The below assumes that every molecular criterium contains exactly 1 molecular event.

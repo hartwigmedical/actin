@@ -12,24 +12,26 @@ import com.hartwig.serve.datamodel.trial.ActionableTrial
 import java.util.function.Predicate
 
 class FusionEvidence(
-    private val applicableFusionEvidences: List<EfficacyEvidence>,
+    private val fusionEvidences: List<EfficacyEvidence>,
     private val fusionTrialMatcher: ActionableTrialMatcher,
-    private val applicablePromiscuousEvidences: List<EfficacyEvidence>,
+    private val promiscuousEvidences: List<EfficacyEvidence>,
     private val promiscuousTrialMatcher: ActionableTrialMatcher
 ) : ActionabilityMatcher<FusionMatchCriteria> {
 
     override fun findMatches(event: FusionMatchCriteria): ActionabilityMatch {
         val fusionMatchPredicate: Predicate<MolecularCriterium> =
-            Predicate { isFusionMatch(ActionableEventsExtraction.extractFusion(it), event) }
+            Predicate { isFusionMatch(ActionableEventExtraction.extractFusion(it), event) }
+
+        val matchedFusionEvidence = fusionEvidences.filter { fusionMatchPredicate.test(it.molecularCriterium()) }
+        val matchedFusionTrials = fusionTrialMatcher.apply(fusionMatchPredicate)
+
         val promiscuousMatchPredicate: Predicate<MolecularCriterium> =
-            Predicate { isPromiscuousMatch(ActionableEventsExtraction.extractGene(it), event) }
+            Predicate { isPromiscuousMatch(ActionableEventExtraction.extractGene(it), event) }
 
-        val matchedFusionEvidence = applicableFusionEvidences.filter { fusionMatchPredicate.test(it.molecularCriterium()) }
-        val matchedPromiscuousEvidence = applicablePromiscuousEvidences.filter { promiscuousMatchPredicate.test(it.molecularCriterium()) }
+        val matchedPromiscuousEvidence = promiscuousEvidences.filter { promiscuousMatchPredicate.test(it.molecularCriterium()) }
+        val matchedPromiscuousTrials = promiscuousTrialMatcher.apply(promiscuousMatchPredicate)
 
-        val matchedFusionTrials = fusionTrialMatcher.matchTrials(fusionMatchPredicate)
-        val matchedPromiscuousTrials = promiscuousTrialMatcher.matchTrials(promiscuousMatchPredicate)
-
+        // TODO merge map of sets, or verify that current code works.
         return ActionabilityMatch(matchedFusionEvidence + matchedPromiscuousEvidence, matchedFusionTrials + matchedPromiscuousTrials)
     }
 
@@ -61,16 +63,16 @@ class FusionEvidence(
         private val PROMISCUOUS_FUSION_EVENTS = setOf(GeneEvent.FUSION, GeneEvent.ACTIVATION, GeneEvent.ANY_MUTATION)
 
         fun create(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial>): FusionEvidence {
-            val applicableFusionEvidences = EfficacyEvidenceExtractor.extractFusionEvidence(evidences)
+            val fusionEvidences = EfficacyEvidenceExtractor.extractFusionEvidence(evidences)
             val fusionTrialMatcher = ActionableTrialMatcherFactory.createFusionTrialMatcher(trials)
 
-            val applicablePromiscuousEvidences = EfficacyEvidenceExtractor.extractGeneEvidence(evidences, PROMISCUOUS_FUSION_EVENTS)
+            val promiscuousEvidences = EfficacyEvidenceExtractor.extractGeneEvidence(evidences, PROMISCUOUS_FUSION_EVENTS)
             val promiscuousTrialMatcher = ActionableTrialMatcherFactory.createGeneTrialMatcher(trials, PROMISCUOUS_FUSION_EVENTS)
 
             return FusionEvidence(
-                applicableFusionEvidences,
+                fusionEvidences,
                 fusionTrialMatcher,
-                applicablePromiscuousEvidences,
+                promiscuousEvidences,
                 promiscuousTrialMatcher,
             )
         }

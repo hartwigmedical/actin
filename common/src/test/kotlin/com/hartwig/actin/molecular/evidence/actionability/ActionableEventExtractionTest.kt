@@ -16,7 +16,7 @@ import org.junit.Test
 private val MOLECULAR_CRITERIUM_1 = TestServeMolecularFactory.createHotspotCriterium()
 private val MOLECULAR_CRITERIUM_2 = TestServeMolecularFactory.createGeneCriterium()
 
-class ActionableEventsExtractionTest {
+class ActionableEventExtractionTest {
 
     @Test
     fun `Can extract hotspot`() {
@@ -25,7 +25,7 @@ class ActionableEventsExtractionTest {
                 .chromosome("chromosome").position(0).ref("ref").alt("alt").build()
         val molecularCriterium = ImmutableMolecularCriterium.builder().addHotspots(actionableHotspot).build()
 
-        assertThat(ActionableEventsExtraction.extractHotspot(molecularCriterium)).isEqualTo(actionableHotspot)
+        assertThat(ActionableEventExtraction.extractHotspot(molecularCriterium)).isEqualTo(actionableHotspot)
     }
 
     @Test
@@ -34,7 +34,7 @@ class ActionableEventsExtractionTest {
             .chromosome("chromosome").start(0).end(1).applicableMutationType(MutationType.ANY).build()
         val molecularCriterium = ImmutableMolecularCriterium.builder().addCodons(actionableCodon).build()
 
-        assertThat(ActionableEventsExtraction.extractCodon(molecularCriterium)).isEqualTo(actionableCodon)
+        assertThat(ActionableEventExtraction.extractCodon(molecularCriterium)).isEqualTo(actionableCodon)
     }
 
     @Test
@@ -44,7 +44,7 @@ class ActionableEventsExtractionTest {
                 .gene("gene").sourceEvent("sourceEvent").build()
         val molecularCriterium = ImmutableMolecularCriterium.builder().addGenes(actionableGene).build()
 
-        assertThat(ActionableEventsExtraction.extractGene(molecularCriterium)).isEqualTo(actionableGene)
+        assertThat(ActionableEventExtraction.extractGene(molecularCriterium)).isEqualTo(actionableGene)
     }
 
     @Test
@@ -54,7 +54,7 @@ class ActionableEventsExtractionTest {
                 .geneDown("geneDown").minExonUp(0).maxExonUp(0).build()
         val molecularCriterium = ImmutableMolecularCriterium.builder().addFusions(actionableFusion).build()
 
-        assertThat(ActionableEventsExtraction.extractFusion(molecularCriterium)).isEqualTo(actionableFusion)
+        assertThat(ActionableEventExtraction.extractFusion(molecularCriterium)).isEqualTo(actionableFusion)
     }
 
     @Test
@@ -64,6 +64,6 @@ class ActionableEventsExtractionTest {
                 .type(TumorCharacteristicType.LOW_TUMOR_MUTATIONAL_LOAD).build()
         val molecularCriterium = ImmutableMolecularCriterium.builder().addCharacteristics(actionableCharacteristic).build()
 
-        assertThat(ActionableEventsExtraction.extractCharacteristic(molecularCriterium)).isEqualTo(actionableCharacteristic)
+        assertThat(ActionableEventExtraction.extractCharacteristic(molecularCriterium)).isEqualTo(actionableCharacteristic)
     }
 }

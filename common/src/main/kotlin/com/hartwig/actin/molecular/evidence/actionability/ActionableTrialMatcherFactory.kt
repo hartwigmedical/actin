@@ -9,30 +9,30 @@ import java.util.function.Predicate
 object ActionableTrialMatcherFactory {
 
     fun createHotspotTrialMatcher(trials: List<ActionableTrial>): ActionableTrialMatcher {
-        return createTrialMatcher(trials, ActionableEventsExtraction.hotspotFilter())
+        return createTrialMatcher(trials, ActionableEventExtraction.hotspotFilter())
     }
 
     fun createCodonTrialMatcher(trials: List<ActionableTrial>): ActionableTrialMatcher {
-        return createTrialMatcher(trials, ActionableEventsExtraction.codonFilter())
+        return createTrialMatcher(trials, ActionableEventExtraction.codonFilter())
     }
 
     fun createExonTrialMatcher(trials: List<ActionableTrial>): ActionableTrialMatcher {
-        return createTrialMatcher(trials, ActionableEventsExtraction.codonFilter())
+        return createTrialMatcher(trials, ActionableEventExtraction.codonFilter())
     }
 
     fun createGeneTrialMatcher(trials: List<ActionableTrial>, validGeneEvents: Set<GeneEvent>): ActionableTrialMatcher {
-        return createTrialMatcher(trials, ActionableEventsExtraction.geneFilter(validGeneEvents))
+        return createTrialMatcher(trials, ActionableEventExtraction.geneFilter(validGeneEvents))
     }
 
     fun createFusionTrialMatcher(trials: List<ActionableTrial>): ActionableTrialMatcher {
-        return createTrialMatcher(trials, ActionableEventsExtraction.fusionFilter())
+        return createTrialMatcher(trials, ActionableEventExtraction.fusionFilter())
     }
 
     fun createCharacteristicsTrialMatcher(
         trials: List<ActionableTrial>,
         validCharacteristicTypes: Set<TumorCharacteristicType>
     ): ActionableTrialMatcher {
-        return createTrialMatcher(trials, ActionableEventsExtraction.characteristicsFilter(validCharacteristicTypes))
+        return createTrialMatcher(trials, ActionableEventExtraction.characteristicsFilter(validCharacteristicTypes))
     }
 
     private fun createTrialMatcher(trials: List<ActionableTrial>, predicate: Predicate<MolecularCriterium>): ActionableTrialMatcher {

@@ -25,8 +25,8 @@ object ClinicalEvidenceFactory {
         offLabelEvidences: List<EfficacyEvidence>,
         matchingCriteriaAndIndicationsPerEligibleTrial: Map<ActionableTrial, Pair<Set<MolecularCriterium>, Set<Indication>>>
     ): ClinicalEvidence {
-        val onLabelTreatmentEvidences = convertToTreatmentEvidences(true, onLabelEvidences)
-        val offLabelTreatmentEvidences = convertToTreatmentEvidences(false, offLabelEvidences)
+        val onLabelTreatmentEvidences = convertToTreatmentEvidences(isOnLabel = true, evidences = onLabelEvidences)
+        val offLabelTreatmentEvidences = convertToTreatmentEvidences(isOnLabel = false, evidences = offLabelEvidences)
 
         return ClinicalEvidence(
             treatmentEvidence = onLabelTreatmentEvidences + offLabelTreatmentEvidences,
@@ -36,7 +36,7 @@ object ClinicalEvidenceFactory {
 
     private fun convertToTreatmentEvidences(isOnLabel: Boolean, evidences: List<EfficacyEvidence>): Set<TreatmentEvidence> {
         return evidences.map { evidence ->
-            val actionableEvent = ActionableEventsExtraction.extractEvent(evidence.molecularCriterium())
+            val actionableEvent = ActionableEventExtraction.extractEvent(evidence.molecularCriterium())
             createTreatmentEvidence(
                 isOnLabel,
                 evidence,
@@ -78,12 +78,12 @@ object ClinicalEvidenceFactory {
     private fun convertToExternalTrials(
         matchingCriteriaAndIndicationsPerEligibleTrial: Map<ActionableTrial, Pair<Set<MolecularCriterium>, Set<Indication>>>
     ): Set<ExternalTrial> {
-        val externalTrials = matchingCriteriaAndIndicationsPerEligibleTrial.keys.map { actionableTrial ->
-            val matchingCriteria = matchingCriteriaAndIndicationsPerEligibleTrial[actionableTrial]!!.first
-            val matchingIndications = matchingCriteriaAndIndicationsPerEligibleTrial[actionableTrial]!!.second
+        val externalTrials = matchingCriteriaAndIndicationsPerEligibleTrial.mapValues { (actionableTrial, matchingCriteriaAndIndications) ->
+            val matchingCriteria = matchingCriteriaAndIndications.first
+            val matchingIndications = matchingCriteriaAndIndications.second
 
             createExternalTrial(actionableTrial, matchingCriteria, matchingIndications)
-        }.toSet()
+        }.values.toSet()
 
         return aggregateTrialsByNctId(externalTrials)
     }
@@ -134,7 +134,7 @@ object ClinicalEvidenceFactory {
         }.toSet()
 
         val molecularMatches = matchingCriteria.map {
-            val event = ActionableEventsExtraction.extractEvent(it)
+            val event = ActionableEventExtraction.extractEvent(it)
             MolecularMatchDetails(
                 sourceDate = event.sourceDate(),
                 sourceEvent = event.sourceEvent(),
@@ -149,35 +149,33 @@ object ClinicalEvidenceFactory {
             )
         }.toSet()
 
+        val url = trial.urls().find { it.length > 11 && it.takeLast(11).substring(0, 3) == "NCT" }
+            ?: throw IllegalStateException("Found no URL ending with a NCT id: " + trial.urls().joinToString(", "))
+
         return ExternalTrial(
             nctId = trial.nctId(),
             title = trial.acronym() ?: trial.title(),
             countries = countries,
             molecularMatches = molecularMatches,
             applicableCancerTypes = applicableCancerTypes,
-            url = extractNctUrl(trial)
+            url = url
         )
     }
 
-    private fun convertHospital(hospital: ServeHospital): Hospital {
+    private fun convertHospital(serveHospital: ServeHospital): Hospital {
         return Hospital(
-            name = hospital.name(),
-            isChildrensHospital = hospital.isChildrensHospital()
+            name = serveHospital.name(),
+            isChildrensHospital = serveHospital.isChildrensHospital()
         )
     }
 
-    private fun determineCountry(countryName: String): Country {
-        return when (countryName) {
+    private fun determineCountry(serveCountry: String): Country {
+        return when (serveCountry) {
             "Netherlands" -> Country.NETHERLANDS
             "Belgium" -> Country.BELGIUM
             "Germany" -> Country.GERMANY
             "United States" -> Country.USA
             else -> Country.OTHER
         }
-    }
-
-    private fun extractNctUrl(trial: ActionableTrial): String {
-        return trial.urls().find { it.length > 11 && it.takeLast(11).substring(0, 3) == "NCT" }
-            ?: throw IllegalStateException("Found no URL ending with a NCT id: " + trial.urls().joinToString(", "))
     }
 }

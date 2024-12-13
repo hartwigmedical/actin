@@ -24,41 +24,42 @@ class VariantEvidence(
     override fun findMatches(event: VariantMatchCriteria): ActionabilityMatch {
         val evidenceMatches =
             hotspotEvidenceMatches(event) + codonEvidenceMatches(event) + exonEvidenceMatches(event) + geneEvidenceMatches(event)
+        // TODO Merge.
         val trialMatches = hotspotTrialMatches(event) + codonTrialMatches(event) + exonTrialMatches(event) + geneTrialMatches(event)
 
         return ActionabilityMatch(evidenceMatches, trialMatches)
     }
 
     private fun hotspotEvidenceMatches(variant: VariantMatchCriteria): List<EfficacyEvidence> {
-        return selectMatchingEvidences(hotspotEvidences, variant, HotspotMatching::isMatch, ActionableEventsExtraction::extractHotspot)
+        return selectMatchingEvidences(hotspotEvidences, variant, HotspotMatching::isMatch, ActionableEventExtraction::extractHotspot)
     }
 
     private fun hotspotTrialMatches(variant: VariantMatchCriteria): Map<ActionableTrial, Set<MolecularCriterium>> {
-        return selectMatchingTrials(hotspotTrialMatcher, variant, HotspotMatching::isMatch, ActionableEventsExtraction::extractHotspot)
+        return selectMatchingTrials(hotspotTrialMatcher, variant, HotspotMatching::isMatch, ActionableEventExtraction::extractHotspot)
     }
 
     private fun codonEvidenceMatches(variant: VariantMatchCriteria): List<EfficacyEvidence> {
-        return selectMatchingEvidences(codonEvidences, variant, RangeMatching::isMatch, ActionableEventsExtraction::extractCodon)
+        return selectMatchingEvidences(codonEvidences, variant, RangeMatching::isMatch, ActionableEventExtraction::extractCodon)
     }
 
     private fun codonTrialMatches(variant: VariantMatchCriteria): Map<ActionableTrial, Set<MolecularCriterium>> {
-        return selectMatchingTrials(codonTrialMatcher, variant, RangeMatching::isMatch, ActionableEventsExtraction::extractCodon)
+        return selectMatchingTrials(codonTrialMatcher, variant, RangeMatching::isMatch, ActionableEventExtraction::extractCodon)
     }
 
     private fun exonEvidenceMatches(variant: VariantMatchCriteria): List<EfficacyEvidence> {
-        return selectMatchingEvidences(exonEvidences, variant, RangeMatching::isMatch, ActionableEventsExtraction::extractExon)
+        return selectMatchingEvidences(exonEvidences, variant, RangeMatching::isMatch, ActionableEventExtraction::extractExon)
     }
 
     private fun exonTrialMatches(variant: VariantMatchCriteria): Map<ActionableTrial, Set<MolecularCriterium>> {
-        return selectMatchingTrials(exonTrialMatcher, variant, RangeMatching::isMatch, ActionableEventsExtraction::extractExon)
+        return selectMatchingTrials(exonTrialMatcher, variant, RangeMatching::isMatch, ActionableEventExtraction::extractExon)
     }
 
     private fun geneEvidenceMatches(variant: VariantMatchCriteria): List<EfficacyEvidence> {
-        return selectMatchingEvidences(applicableGeneEvidences, variant, GeneMatching::isMatch, ActionableEventsExtraction::extractGene)
+        return selectMatchingEvidences(applicableGeneEvidences, variant, GeneMatching::isMatch, ActionableEventExtraction::extractGene)
     }
 
     private fun geneTrialMatches(variant: VariantMatchCriteria): Map<ActionableTrial, Set<MolecularCriterium>> {
-        return selectMatchingTrials(applicableGeneTrialMatcher, variant, GeneMatching::isMatch, ActionableEventsExtraction::extractGene)
+        return selectMatchingTrials(applicableGeneTrialMatcher, variant, GeneMatching::isMatch, ActionableEventExtraction::extractGene)
     }
 
     private fun <T> selectMatchingEvidences(
@@ -79,7 +80,7 @@ class VariantEvidence(
         val matchPredicate: Predicate<MolecularCriterium> =
             Predicate { variant.isReportable && isMatch(extractActionableEvent.invoke(it), variant) }
 
-        return trialMatcher.matchTrials(matchPredicate)
+        return trialMatcher.apply(matchPredicate)
     }
 
     companion object {
