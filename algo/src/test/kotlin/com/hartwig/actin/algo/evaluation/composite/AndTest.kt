@@ -108,6 +108,15 @@ class AndTest {
         assertThat(result.undeterminedGeneralMessages).contains("undetermined general 2")
     }
 
+    @Test
+    fun `Should only retain unrecoverable fail message if evaluation result is FAIL`() {
+        val function1: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, recoverable = true, index = 1)
+        val function2: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, recoverable = false, index = 2)
+        val result: Evaluation = And(listOf(function1, function2)).evaluate(TEST_PATIENT)
+        assertThat(result.failSpecificMessages).containsExactly("fail specific 2")
+        assertThat(result.failGeneralMessages).containsExactly("fail general 2")
+    }
+
     @Test(expected = IllegalStateException::class)
     fun `Should crash on no functions to evaluate`() {
         And(emptyList()).evaluate(TEST_PATIENT)
