@@ -1,6 +1,5 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
-import com.hartwig.actin.datamodel.trial.TrialLocation
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.interpretation.InterpretedCohortTestFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -20,7 +19,7 @@ class ActinTrialGeneratorFunctionsTest {
     )
     private val cohort2 = cohort1.copy("trial2", name = "Cohort B", source = TrialSource.NKI)
     private val cohort3 =
-        cohort1.copy("trial3", name = "Cohort C", source = TrialSource.LKO, locations = listOf(TrialLocation(1, "Erasmus")))
+        cohort1.copy("trial3", name = "Cohort C", source = TrialSource.LKO, locations = listOf("Erasmus"))
 
     @Test
     fun `Should return correct table title based on source`() {
@@ -31,32 +30,39 @@ class ActinTrialGeneratorFunctionsTest {
 
     @Test
     fun `Should return all cohorts in the own list when source is null`() {
-        val (own, others) = ActinTrialGeneratorFunctions.partitionBaseOnLocation(listOf(cohort1, cohort2, cohort3), null)
+        val (own, others) = ActinTrialGeneratorFunctions.partitionByLocation(listOf(cohort1, cohort2, cohort3), null)
         assertThat(own).size().isEqualTo(3)
         assertThat(others).isEmpty()
     }
 
     @Test
     fun `Should return all cohorts in the own list when source is EMC`() {
-        val (own, others) = ActinTrialGeneratorFunctions.partitionBaseOnLocation(listOf(cohort1, cohort2, cohort3), TrialSource.EMC)
+        val (own, others) = ActinTrialGeneratorFunctions.partitionByLocation(listOf(cohort1, cohort2, cohort3), TrialSource.EMC)
         assertThat(own).size().isEqualTo(3)
         assertThat(others).isEmpty()
     }
 
     @Test
-    fun `Should return all cohorts in the own list when source there are no other sources `() {
-        val (own, others) = ActinTrialGeneratorFunctions.partitionBaseOnLocation(
+    fun `Should return all cohorts in the primary list when there are no other sources`() {
+        val (primary, others) = ActinTrialGeneratorFunctions.partitionByLocation(
             listOf(cohort1, cohort2, cohort3.copy(source = null)),
             TrialSource.NKI
         )
-        assertThat(own).size().isEqualTo(3)
+        assertThat(primary).size().isEqualTo(3)
         assertThat(others).isEmpty()
     }
 
     @Test
-    fun `Should return all cohorts in the own list when source is NKI`() {
-        val (own, others) = ActinTrialGeneratorFunctions.partitionBaseOnLocation(listOf(cohort1, cohort2, cohort3), TrialSource.NKI)
-        assertThat(own).size().isEqualTo(2)
+    fun `Should return all cohorts in the primary list when source is EMC`() {
+        val (primary, others) = ActinTrialGeneratorFunctions.partitionByLocation(listOf(cohort1, cohort2, cohort3), TrialSource.EMC)
+        assertThat(primary).size().isEqualTo(3)
+        assertThat(others).isEmpty()
+    }
+
+    @Test
+    fun `Should return cohorts in both lists when there are other sources`() {
+        val (primary, others) = ActinTrialGeneratorFunctions.partitionByLocation(listOf(cohort1, cohort2, cohort3), TrialSource.NKI)
+        assertThat(primary).size().isEqualTo(2)
         assertThat(others).size().isEqualTo(1)
     }
 }

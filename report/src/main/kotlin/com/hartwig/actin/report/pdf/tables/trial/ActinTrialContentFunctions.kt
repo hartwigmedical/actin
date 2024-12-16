@@ -10,8 +10,8 @@ object ActinTrialContentFunctions {
     fun contentForTrialCohortList(
         cohorts: List<InterpretedCohort>,
         feedbackFunction: (InterpretedCohort) -> Set<String>,
-        includeFeedback: Boolean = true,
-        includeLocation: Boolean = false
+        includeLocation: Boolean = false,
+        includeFeedback: Boolean = true
     ): List<ContentDefinition> {
         val commonFeedback = if (includeFeedback) findCommonMembersInCohorts(cohorts, feedbackFunction) else emptySet()
         val commonEvents = findCommonMembersInCohorts(cohorts, InterpretedCohort::molecularEvents)
@@ -36,7 +36,7 @@ object ActinTrialContentFunctions {
                 listOfNotNull(
                     cohort.name ?: "",
                     concat(cohort.molecularEvents - commonEvents, commonEvents.isEmpty() && !allEventsEmpty),
-                    if (includeLocation) cohort.locations?.joinToString("\n") { it.name } ?: "" else null,
+                    if (includeLocation) cohort.locations?.joinToString("\n") ?: "" else null,
                     if (includeFeedback) concat(feedbackFunction(cohort) - commonFeedback, commonFeedback.isEmpty()) else null
                 ),
                 !cohort.isOpen || !cohort.hasSlotsAvailable

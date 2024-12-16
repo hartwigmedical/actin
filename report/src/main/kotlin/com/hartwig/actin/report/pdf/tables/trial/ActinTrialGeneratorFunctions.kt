@@ -26,9 +26,12 @@ object ActinTrialGeneratorFunctions {
     ) {
         sortedCohortGroups(cohorts).forEach { cohortList: List<InterpretedCohort> ->
             val trialSubTable = Tables.createFixedWidthCols(*tableWidths)
-            ActinTrialContentFunctions.contentForTrialCohortList(cohortList, feedbackFunction, includeFeedback, includeLocation)
-                .forEach { addContentListToTable(it.textEntries, it.deEmphasizeContent, trialSubTable, paddingDistance) }
-
+            ActinTrialContentFunctions.contentForTrialCohortList(
+                cohorts = cohortList,
+                feedbackFunction = feedbackFunction,
+                includeLocation = includeLocation,
+                includeFeedback = includeFeedback
+            ).forEach { addContentListToTable(it.textEntries, it.deEmphasizeContent, trialSubTable, paddingDistance) }
             insertTrialRow(cohortList, table, trialSubTable)
         }
     }
@@ -37,7 +40,7 @@ object ActinTrialGeneratorFunctions {
         return source?.let { "$it trials" } ?: "Trials"
     }
 
-    fun partitionBaseOnLocation(cohorts: List<InterpretedCohort>, source: TrialSource?) =
+    fun partitionByLocation(cohorts: List<InterpretedCohort>, source: TrialSource?) =
         cohorts.partition { source != TrialSource.NKI || it.source == source || it.source == null }
 
     private fun sortedCohortGroups(cohorts: List<InterpretedCohort>): List<List<InterpretedCohort>> {

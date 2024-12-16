@@ -1,6 +1,5 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
-import com.hartwig.actin.datamodel.trial.TrialLocation
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import org.assertj.core.api.Assertions.assertThat
@@ -30,7 +29,7 @@ class ActinTrialContentFunctionsTest {
             warnings = setOf("warning1", "warning2"),
             fails = emptySet(),
             source = TrialSource.LKO,
-            locations = listOf(TrialLocation(1, "Erasmus"), TrialLocation(2, "NKI"))
+            locations = listOf("Erasmus", "NKI")
         )
 
     @Test

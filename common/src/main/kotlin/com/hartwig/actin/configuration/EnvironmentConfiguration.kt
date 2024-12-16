@@ -60,6 +60,7 @@ const val OVERRIDE_YAML_ARGUMENT = "override_yaml"
 const val OVERRIDE_YAML_DESCRIPTION = "Optional file specifying configuration overrides"
 
 data class EnvironmentConfiguration(
+    val requestingHospital: String? = null,
     val algo: AlgoConfiguration = AlgoConfiguration(),
     val trial: TrialConfiguration = TrialConfiguration(),
     val report: ReportConfiguration = ReportConfiguration()

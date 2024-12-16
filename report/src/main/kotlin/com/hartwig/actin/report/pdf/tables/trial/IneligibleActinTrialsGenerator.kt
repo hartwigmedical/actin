@@ -143,7 +143,8 @@ class IneligibleActinTrialsGenerator(
                 cohortWidth,
                 molecularWidth,
                 hospitalsWidth.takeIf { includeLocation },
-                remainingWidth.takeIf { includeIneligibilityReason }).toFloatArray()
+                remainingWidth.takeIf { includeIneligibilityReason }
+            ).toFloatArray()
         }
     }
 }

@@ -50,11 +50,11 @@ class TreatmentMatchJsonTest {
             ),
             personalizedDataAnalysis = null
         )
-        val expectedJson = ("{\"patientId\":\"ACTN01029999\",\"sampleId\":\"ACTN01029999T\",\"trialSource\":\"NKI-Avl\","
+        val expectedJson = ("{\"patientId\":\"ACTN01029999\",\"sampleId\":\"ACTN01029999T\","
                 + "\"referenceDate\":{\"year\":2021,\"month\":8,\"day\":2},\"referenceDateIsLive\":true,\"trialMatches\":["
                 + "{\"identification\":{\"trialId\":\"Test Trial 1\",\"open\":true,\"acronym\":\"TEST-1\","
                 + "\"title\":\"Example test trial 1\",\"nctId\":\"NCT00000010\",\"phase\":\"PHASE_1\",\"source\":\"NKI\""
-                + ",\"locations\":[{\"id\":2,\"name\":\"Antoni van Leeuwenhoek\"}]},\"isPotentiallyEligible\":true,\"evaluations\":[["
+                + ",\"locations\":[\"Antoni van Leeuwenhoek\"]},\"isPotentiallyEligible\":true,\"evaluations\":[["
                 + "{\"references\":[{\"id\":\"I-01\",\"text\":\"Patient must be an adult\"}],"
                 + "\"function\":{\"rule\":\"IS_AT_LEAST_X_YEARS_OLD\",\"parameters\":[]}},"
                 + "{\"result\":\"PASS\",\"recoverable\":false,\"inclusionMolecularEvents\":[],\"exclusionMolecularEvents\":[],"

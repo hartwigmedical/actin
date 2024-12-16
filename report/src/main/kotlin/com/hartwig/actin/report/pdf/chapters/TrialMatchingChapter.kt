@@ -3,11 +3,12 @@ package com.hartwig.actin.report.pdf.chapters
 import com.hartwig.actin.datamodel.molecular.NO_EVIDENCE_SOURCE
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.datamodel.Report
+import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 import com.hartwig.actin.report.pdf.ReportContentProvider
 import com.hartwig.actin.report.pdf.chapters.ChapterContentFunctions.addGenerators
 import com.hartwig.actin.report.pdf.tables.TableGenerator
-import com.hartwig.actin.report.pdf.tables.trial.ActinTrialGeneratorFunctions.partitionBaseOnLocation
+import com.hartwig.actin.report.pdf.tables.trial.ActinTrialGeneratorFunctions.partitionByLocation
 import com.hartwig.actin.report.pdf.tables.trial.EligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleExternalTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummary
@@ -46,123 +47,95 @@ class TrialMatchingChapter(
         document.add(table)
     }
 
-    fun createGenerators(): List<TableGenerator> {
-        val (ignoredCohorts, nonIgnoredCohorts) = InterpretedCohortFactory.createEvaluableCohorts(
-            report.treatmentMatch,
-            report.config.filterOnSOCExhaustionAndTumorType
+    private fun createActinTrialGenerators(
+        cohorts: List<InterpretedCohort>, nonEvaluableCohorts: List<InterpretedCohort>, source: String?
+    ): List<TableGenerator?> {
+        val (ignoredCohorts, nonIgnoredCohorts) = cohorts.partition { it.ignore }
+        return listOf(
+            EligibleActinTrialsGenerator.forClosedCohorts(
+                nonIgnoredCohorts, source, contentWidth(), includeLocation = false
+            ),
+            IneligibleActinTrialsGenerator.forOpenCohorts(
+                nonIgnoredCohorts, source, contentWidth(), enableExtendedMode
+            ),
+            IneligibleActinTrialsGenerator.forClosedCohorts(
+                nonIgnoredCohorts, source, contentWidth()
+            ),
+            IneligibleActinTrialsGenerator.forNonEvaluableAndIgnoredCohorts(
+                ignoredCohorts, nonEvaluableCohorts, source, contentWidth()
+            )
         )
-            .partition { it.ignore }
+    }
 
-        val source = TrialSource.fromDescription(report.treatmentMatch.trialSource)
-        val (ownIgnoredCohorts, otherIgnoredCohorts) = partitionBaseOnLocation(ignoredCohorts, source)
-        val (ownNonIgnoredCohorts, otherNonIgnoredCohorts) = partitionBaseOnLocation(nonIgnoredCohorts, source)
+    fun createGenerators(): List<TableGenerator> {
+
+        val evaluableCohorts = InterpretedCohortFactory.createEvaluableCohorts(
+            report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType
+        )
+        val source = TrialSource.fromDescription(report.requestingHospital)
+        val (primaryEvaluableCohorts, otherEvaluableCohorts) = partitionByLocation(evaluableCohorts, source)
 
         val nonEvaluableCohorts = InterpretedCohortFactory.createNonEvaluableCohorts(report.treatmentMatch)
-        val (ownNonEvaluableCohorts, otherNonEvaluableCohorts) = partitionBaseOnLocation(nonEvaluableCohorts, source)
+        val (primaryNonEvaluableCohorts, otherNonEvaluableCohorts) = partitionByLocation(nonEvaluableCohorts, source)
 
-        val ownEligibleActinTrialsClosedCohortsGenerator = EligibleActinTrialsGenerator.forClosedCohorts(
-            ownNonIgnoredCohorts,
-            report.treatmentMatch.trialSource,
-            contentWidth(),
-            includeLocation = false
-        )
-        val ownIneligibleActinTrialsGenerator = IneligibleActinTrialsGenerator.forOpenCohorts(
-            ownNonIgnoredCohorts, report.treatmentMatch.trialSource, contentWidth(), enableExtendedMode
-        )
-        val ownIneligibleActinTrialsClosedCohortsGenerator = IneligibleActinTrialsGenerator.forClosedCohorts(
-            ownNonIgnoredCohorts, report.treatmentMatch.trialSource, contentWidth()
-        )
-        val ownIneligibleActinTrialsNonEvaluableAndIgnoredCohortsGenerator =
-            IneligibleActinTrialsGenerator.forNonEvaluableAndIgnoredCohorts(
-                ownIgnoredCohorts, ownNonEvaluableCohorts, report.treatmentMatch.trialSource, contentWidth()
-            )
+        val (eligibleActinTrialsClosedCohortsGenerator,
+            ineligibleActinTrialsGenerator,
+            ineligibleActinTrialsClosedCohortsGenerator,
+            ineligibleActinTrialsNonEvaluableAndIgnoredCohortsGenerator) =
+            createActinTrialGenerators(primaryEvaluableCohorts, primaryNonEvaluableCohorts, report.requestingHospital)
 
-        val (otherEligibleActinTrialsClosedCohortsGenerators, otherIneligibleActinTrialsGenerators, otherIneligibleActinTrialsClosedCohortsGenerators) =
-            otherNonIgnoredCohorts.groupBy { it.source }
-                .map { (source, cohortsPerSource) ->
-                    Triple(
-                        EligibleActinTrialsGenerator.forClosedCohorts(
-                            cohortsPerSource,
-                            source?.description,
-                            contentWidth(),
-                            true
-                        ).takeIf { it.getCohortSize() > 0 },
-                        IneligibleActinTrialsGenerator.forOpenCohorts(
-                            cohortsPerSource, source?.description, contentWidth(), enableExtendedMode, true
-                        ).takeIf { it.getCohortSize() > 0 },
-                        IneligibleActinTrialsGenerator.forClosedCohorts(
-                            cohortsPerSource, source?.description, contentWidth(), true
-                        ).takeIf { it.getCohortSize() > 0 }
+        val (otherEligibleActinTrialsClosedCohortsGenerators,
+            otherIneligibleActinTrialsGenerators,
+            otherIneligibleActinTrialsClosedCohortsGenerators,
+            otherIneligibleActinTrialsNonEvaluableAndIgnoredCohortsGenerator) =
+            otherEvaluableCohorts.takeIf { it.isNotEmpty() }
+                ?.groupBy { it.source }
+                ?.map { (source, cohortsPerSource) ->
+                    createActinTrialGenerators(
+                        cohortsPerSource, otherNonEvaluableCohorts.filter { it.source == source }, source?.description
                     )
-                }.takeIf { it.isNotEmpty() }?.let { generators ->
-                    Triple(
-                        generators.mapNotNull { it.first },
-                        generators.mapNotNull { it.second },
-                        generators.mapNotNull { it.third }
+                }?.fold(
+                    listOf(
+                        emptyList<TableGenerator?>(),
+                        emptyList<TableGenerator?>(),
+                        emptyList<TableGenerator?>(),
+                        emptyList<TableGenerator?>()
                     )
-                } ?: Triple(null, null, null)
+                ) { acc, result -> acc.zip(result) { a, b -> a + b } }
+                ?: listOf(null, null, null, null)
 
-
-        val otherIneligibleActinTrialsNonEvaluableAndIgnoredCohortsGenerator =
-            otherNonEvaluableCohorts.groupBy { it.source }.map { (source, cohortsPerSource) ->
-                IneligibleActinTrialsGenerator.forNonEvaluableAndIgnoredCohorts(
-                    otherIgnoredCohorts, cohortsPerSource, source?.description, contentWidth(), true
-                )
-            }
-
-        val (_, evaluated) =
-            EligibleActinTrialsGenerator.forOpenCohorts(
-                nonIgnoredCohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = true
-            )
-
+        val (_, eligible) = EligibleActinTrialsGenerator.forOpenCohorts(
+            evaluableCohorts.partition { it.ignore }.second, report.requestingHospital, contentWidth(), slotsAvailable = true
+        )
         val (localTrialGenerator, nonLocalTrialGenerator) = reportContentProvider.provideExternalTrialsTables(
-            report.patientRecord,
-            evaluated,
-            contentWidth()
+            report.patientRecord, eligible, contentWidth()
         )
-
         val allEvidenceSources =
             report.patientRecord.molecularHistory.molecularTests.map { it.evidenceSource }.filter { it != NO_EVIDENCE_SOURCE }.toSet()
 
         return listOfNotNull(
-            ownEligibleActinTrialsClosedCohortsGenerator.takeIf { !externalTrialsOnly },
-            ownIneligibleActinTrialsGenerator.takeIf { !(includeIneligibleTrialsInSummary || externalTrialsOnly) },
-            ownIneligibleActinTrialsClosedCohortsGenerator.takeIf { !((includeIneligibleTrialsInSummary || externalTrialsOnly) || enableExtendedMode) },
-            ownIneligibleActinTrialsNonEvaluableAndIgnoredCohortsGenerator.takeIf { !(includeIneligibleTrialsInSummary || externalTrialsOnly) },
-
+            eligibleActinTrialsClosedCohortsGenerator.takeIf { !externalTrialsOnly },
+            ineligibleActinTrialsGenerator.takeIf { !(includeIneligibleTrialsInSummary || externalTrialsOnly) },
+            ineligibleActinTrialsClosedCohortsGenerator.takeIf { !((includeIneligibleTrialsInSummary || externalTrialsOnly) || enableExtendedMode) },
+            ineligibleActinTrialsNonEvaluableAndIgnoredCohortsGenerator.takeIf { !(includeIneligibleTrialsInSummary || externalTrialsOnly) },
+        ) + listOfNotNull(
             otherEligibleActinTrialsClosedCohortsGenerators.takeIf { !externalTrialsOnly },
             otherIneligibleActinTrialsGenerators.takeIf { !(includeIneligibleTrialsInSummary || externalTrialsOnly) },
             otherIneligibleActinTrialsClosedCohortsGenerators.takeIf { !((includeIneligibleTrialsInSummary || externalTrialsOnly) || enableExtendedMode) },
             otherIneligibleActinTrialsNonEvaluableAndIgnoredCohortsGenerator.takeIf { !(includeIneligibleTrialsInSummary || externalTrialsOnly) },
-
+        ).flatten().filterNotNull() + listOfNotNull(
             filteredNationalTrials.takeIf { it.isNotEmpty() }?.let {
                 EligibleExternalTrialsGenerator(
-                    allEvidenceSources,
-                    it,
-                    contentWidth(),
-                    it.size,
-                    report.config.countryOfReference,
-                    false
+                    allEvidenceSources, it, contentWidth(), it.size, report.config.countryOfReference, false
                 )
             },
             filteredInternationalTrials.takeIf { it.isNotEmpty() }?.let {
                 EligibleExternalTrialsGenerator(
-                    allEvidenceSources,
-                    it,
-                    contentWidth(),
-                    it.size,
-                    isFilteredTrialsTable = false
+                    allEvidenceSources, it, contentWidth(), it.size, isFilteredTrialsTable = false
                 )
             },
-
             localTrialGenerator.takeIf { externalTrialsOnly },
             nonLocalTrialGenerator.takeIf { externalTrialsOnly }
-        ).flatMap {
-            when (it) {
-                is List<*> -> it.filterIsInstance<TableGenerator>()
-                is TableGenerator -> listOf(it)
-                else -> emptyList()
-            }
-        }
+        )
     }
 }

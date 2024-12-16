@@ -16,7 +16,6 @@ import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.datamodel.trial.TrialIdentification
-import com.hartwig.actin.datamodel.trial.TrialLocation
 import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
 import java.time.LocalDate
@@ -27,7 +26,6 @@ object TestTreatmentMatchFactory {
         return TreatmentMatch(
             patientId = TestPatientFactory.TEST_PATIENT,
             sampleId = TestPatientFactory.TEST_SAMPLE,
-            trialSource = "NKI-Avl",
             referenceDate = LocalDate.of(2021, 8, 2),
             referenceDateIsLive = true,
             trialMatches = emptyList()
@@ -53,7 +51,7 @@ object TestTreatmentMatchFactory {
                     nctId = "NCT00000010",
                     phase = TrialPhase.PHASE_1,
                     source = TrialSource.NKI,
-                    locations = listOf(TrialLocation(2, "Antoni van Leeuwenhoek"))
+                    locations = listOf("Antoni van Leeuwenhoek")
                 ),
                 isPotentiallyEligible = true,
                 evaluations = createTestGeneralEvaluationsTrial1(),

@@ -6,7 +6,6 @@ import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
 import com.hartwig.actin.datamodel.clinical.TestClinicalFactory
 import com.hartwig.actin.datamodel.trial.TrialIdentification
-import com.hartwig.actin.datamodel.trial.TrialLocation
 import com.hartwig.actin.datamodel.trial.TrialSource
 import java.time.LocalDate
 
@@ -18,7 +17,8 @@ object TestReportFactory {
             patientRecord = TestPatientFactory.createMinimalTestWGSPatientRecord(),
             treatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch(),
             config = ReportConfiguration(),
-            reportDate = LocalDate.now()
+            reportDate = LocalDate.now(),
+            requestingHospital = "NKI-Avl"
         )
     }
 
@@ -53,7 +53,7 @@ object TestReportFactory {
             identification = matches[1].identification.copy(
                 trialId = "LKO2",
                 source = TrialSource.LKO,
-                locations = listOf(TrialLocation(3, "Erasmus MC"), TrialLocation(2, "Antoni van Leeuwenhoek"))
+                locations = listOf("Erasmus MC", "Antoni van Leeuwenhoek")
             )
         )
         val trialMatch3 = trialMatch1.copy(
@@ -64,7 +64,7 @@ object TestReportFactory {
                 title = "Example test trial 3",
                 nctId = "NCT00000003",
                 source = TrialSource.LKO,
-                locations = listOf(TrialLocation(4, "Radboud UMC"), TrialLocation(7, "UMC Groningen"))
+                locations = listOf("Radboud UMC", "UMC Groningen")
             )
         )
         val trialMatch4 = trialMatch1.copy(
@@ -75,7 +75,7 @@ object TestReportFactory {
                 title = "Example test trial 4",
                 nctId = "NCT00000003",
                 source = TrialSource.LKO,
-                locations = listOf(TrialLocation(6, "LUMC")),
+                locations = listOf("LUMC"),
             )
         )
         val trialMatch5 = trialMatch1.copy(
@@ -86,7 +86,7 @@ object TestReportFactory {
                 title = "Example test trial 5",
                 nctId = "NCT00000005",
                 source = TrialSource.LKO,
-                locations = listOf(TrialLocation(6, "LUMC")),
+                locations = listOf("LUMC"),
             ),
             isPotentiallyEligible = false,
             cohorts = trialMatch1.cohorts.map { it.copy(isPotentiallyEligible = false) }

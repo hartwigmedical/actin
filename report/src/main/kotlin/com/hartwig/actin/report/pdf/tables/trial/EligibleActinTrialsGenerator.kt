@@ -29,12 +29,9 @@ class EligibleActinTrialsGenerator(
     override fun contents(): Table {
 
         val table = Tables.createFixedWidthCols(
-            trialColWidth,
-            cohortColWidth + molecularEventColWidth + (hospitalsColWidth.takeIf { includeLocation } ?: 0f) + checksColWidth)
-
-        val widths = listOfNotNull(
-            cohortColWidth, molecularEventColWidth, hospitalsColWidth.takeIf { includeLocation }, checksColWidth
-        ).toFloatArray()
+            trialColWidth, cohortColWidth + molecularEventColWidth + (hospitalsColWidth ?: 0f) + checksColWidth
+        )
+        val widths = listOfNotNull(cohortColWidth, molecularEventColWidth, hospitalsColWidth, checksColWidth).toFloatArray()
 
         if (cohorts.isNotEmpty()) {
             table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader("Trial")))
@@ -43,7 +40,6 @@ class EligibleActinTrialsGenerator(
                 .map(Cells::createHeader).forEach(headerSubTable::addHeaderCell)
             table.addHeaderCell(Cells.createContentNoBorder(headerSubTable))
         }
-
         addTrialsToTable(
             cohorts = cohorts,
             table = table,
@@ -51,11 +47,9 @@ class EligibleActinTrialsGenerator(
             feedbackFunction = InterpretedCohort::warnings,
             includeLocation = includeLocation
         )
-
         if (footNote != null) {
             table.addCell(Cells.createSpanningSubNote(footNote, table))
         }
-
         return makeWrapping(table)
     }
 
@@ -72,16 +66,13 @@ class EligibleActinTrialsGenerator(
             }
             val recruitingAndEligibleTrials = recruitingAndEligibleCohorts.map(InterpretedCohort::trialId).distinct()
             val slotsText = if (!slotsAvailable) " but currently have no slots available" else ""
-            val cohortFromTrialsText = when {
-                recruitingAndEligibleCohorts.isNotEmpty() -> "(${
-                    formatCountWithLabel(
-                        recruitingAndEligibleCohorts.size,
-                        "cohort"
-                    )
-                } " + "from ${formatCountWithLabel(recruitingAndEligibleTrials.size, "trial")})"
-
-                else -> "(0)"
+            val cohortFromTrialsText = if (recruitingAndEligibleCohorts.isNotEmpty()) {
+                "(${formatCountWithLabel(recruitingAndEligibleCohorts.size, "cohort")} " +
+                        "from ${formatCountWithLabel(recruitingAndEligibleTrials.size, "trial")})"
+            } else {
+                "(0)"
             }
+
             val title = "${createTableTitleStart(source)} that are open and potentially eligible$slotsText $cohortFromTrialsText"
 
             return create(recruitingAndEligibleCohorts, title, width, null, includeLocation) to recruitingAndEligibleCohorts
