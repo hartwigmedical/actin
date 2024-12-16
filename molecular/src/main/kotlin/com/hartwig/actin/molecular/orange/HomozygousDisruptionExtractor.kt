@@ -33,7 +33,9 @@ internal class HomozygousDisruptionExtractor(private val geneFilter: GeneFilter)
                 driverLikelihood = DriverLikelihood.HIGH,
                 evidence = ClinicalEvidenceFactory.createNoEvidence(),
             )
-        }.sortedWith(HomozygousDisruptionComparator())
+        }
+            .distinctBy { it.gene }
+            .sortedWith(HomozygousDisruptionComparator())
     }
 
     private fun relevantHomozygousDisruptions(linx: LinxRecord): Set<com.hartwig.hmftools.datamodel.linx.LinxHomozygousDisruption> {
