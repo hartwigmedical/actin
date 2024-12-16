@@ -54,7 +54,7 @@ object TestServeEvidenceFactory {
     }
 
     fun createEvidenceForHLA(): EfficacyEvidence {
-        return create(molecularCriterium = TestServeMolecularFactory.createHLACriterium())
+        return create(molecularCriterium = TestServeMolecularFactory.createHlaCriterium())
     }
 
     fun create(

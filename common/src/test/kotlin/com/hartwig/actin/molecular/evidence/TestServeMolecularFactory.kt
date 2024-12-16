@@ -114,10 +114,13 @@ object TestServeMolecularFactory {
         return ImmutableMolecularCriterium.builder().addCharacteristics(actionableCharacteristic).build()
     }
 
-    fun createHLACriterium(baseActionableEvent: ActionableEvent = createActionableEvent()): MolecularCriterium {
-        val actionableHLA = ImmutableActionableHLA.builder().from(baseActionableEvent).hlaAllele("").build()
+    fun createHlaCriterium(
+        baseActionableEvent: ActionableEvent = createActionableEvent(),
+        hlaAllele: String = ""
+    ): MolecularCriterium {
+        val actionableHla = ImmutableActionableHLA.builder().from(baseActionableEvent).hlaAllele(hlaAllele).build()
 
-        return ImmutableMolecularCriterium.builder().addHla(actionableHLA).build()
+        return ImmutableMolecularCriterium.builder().addHla(actionableHla).build()
     }
 
     fun createCombinedCriterium(): MolecularCriterium {
@@ -128,7 +131,7 @@ object TestServeMolecularFactory {
             .from(createGeneCriterium())
             .from(createFusionCriterium())
             .from(createCharacteristicCriterium())
-            .from(createHLACriterium())
+            .from(createHlaCriterium())
             .build()
     }
 

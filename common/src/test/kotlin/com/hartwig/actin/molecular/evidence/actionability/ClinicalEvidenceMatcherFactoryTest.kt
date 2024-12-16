@@ -85,7 +85,7 @@ class ClinicalEvidenceMatcherFactoryTest {
         val hla1 = TestServeTrialFactory.create(
             source = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
             title = "external",
-            anyMolecularCriteria = setOf(TestServeMolecularFactory.createHLACriterium())
+            anyMolecularCriteria = setOf(TestServeMolecularFactory.createHlaCriterium())
         )
 
         /*

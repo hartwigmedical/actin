@@ -8,6 +8,7 @@ import com.hartwig.serve.datamodel.molecular.fusion.ActionableFusion
 import com.hartwig.serve.datamodel.molecular.gene.ActionableGene
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import com.hartwig.serve.datamodel.molecular.hotspot.ActionableHotspot
+import com.hartwig.serve.datamodel.molecular.immuno.ActionableHLA
 import com.hartwig.serve.datamodel.molecular.range.ActionableRange
 import java.util.function.Predicate
 
@@ -17,27 +18,31 @@ object ActionableEventExtraction {
         // TODO (KD): The below assumes that every molecular criterium contains exactly 1 molecular event.
         return when {
             hotspotFilter().test(molecularCriterium) -> {
-                molecularCriterium.hotspots().iterator().next()
+                extractHotspot(molecularCriterium)
             }
 
             codonFilter().test(molecularCriterium) -> {
-                molecularCriterium.codons().iterator().next()
+                extractCodon(molecularCriterium)
             }
 
             exonFilter().test(molecularCriterium) -> {
-                molecularCriterium.exons().iterator().next()
+                extractExon(molecularCriterium)
             }
 
             geneFilter(GeneEvent.values().toSet()).test(molecularCriterium) -> {
-                molecularCriterium.genes().iterator().next()
+                extractGene(molecularCriterium)
             }
 
             fusionFilter().test(molecularCriterium) -> {
-                molecularCriterium.fusions().iterator().next()
+                extractFusion(molecularCriterium)
             }
 
             characteristicsFilter(TumorCharacteristicType.values().toSet()).test(molecularCriterium) -> {
-                molecularCriterium.characteristics().iterator().next()
+                extractCharacteristic(molecularCriterium)
+            }
+
+            hlaFilter().test(molecularCriterium) -> {
+                extractHla(molecularCriterium)
             }
 
             else -> throw IllegalStateException("Could not extract event for molecular criterium: $molecularCriterium")
@@ -68,6 +73,10 @@ object ActionableEventExtraction {
         return molecularCriterium.characteristics().iterator().next()
     }
 
+    private fun extractHla(molecularCriterium: MolecularCriterium): ActionableHLA {
+        return molecularCriterium.hla().iterator().next()
+    }
+
     fun hotspotFilter(): Predicate<MolecularCriterium> {
         return Predicate { molecularCriterium -> molecularCriterium.hotspots().isNotEmpty() }
     }
@@ -90,5 +99,9 @@ object ActionableEventExtraction {
 
     fun characteristicsFilter(validTypes: Set<TumorCharacteristicType>): Predicate<MolecularCriterium> {
         return Predicate { molecularCriterium -> molecularCriterium.characteristics().any { validTypes.contains(it.type()) } }
+    }
+
+    private fun hlaFilter(): Predicate<MolecularCriterium> {
+        return Predicate { molecularCriterium -> molecularCriterium.hla().isNotEmpty() }
     }
 }
