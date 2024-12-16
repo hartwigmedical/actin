@@ -19,7 +19,7 @@ class NotTest {
         assertEvaluation(EvaluationResult.WARN, Not(TestEvaluationFunctionFactory.warn()).evaluate(TEST_PATIENT))
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            Not(TestEvaluationFunctionFactory.unrecoverableUndetermined()).evaluate(TEST_PATIENT)
+            Not(TestEvaluationFunctionFactory.undetermined()).evaluate(TEST_PATIENT)
         )
         assertEvaluation(EvaluationResult.NOT_EVALUATED, Not(TestEvaluationFunctionFactory.notEvaluated()).evaluate(TEST_PATIENT))
     }

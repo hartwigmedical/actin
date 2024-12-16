@@ -19,12 +19,8 @@ object TestEvaluationFunctionFactory {
         return fixedEvaluation(EvaluationResult.FAIL)
     }
 
-    fun unrecoverableUndetermined(): EvaluationFunction {
+    fun undetermined(): EvaluationFunction {
         return fixedEvaluation(EvaluationResult.UNDETERMINED)
-    }
-
-    fun recoverableUndetermined(): EvaluationFunction {
-        return fixedEvaluation(EvaluationResult.UNDETERMINED, recoverable = true)
     }
 
     fun notEvaluated(): EvaluationFunction {
