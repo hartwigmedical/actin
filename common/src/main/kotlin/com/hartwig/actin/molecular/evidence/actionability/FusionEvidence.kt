@@ -31,8 +31,10 @@ class FusionEvidence(
         val matchedPromiscuousEvidence = promiscuousEvidences.filter { promiscuousMatchPredicate.test(it.molecularCriterium()) }
         val matchedPromiscuousTrials = promiscuousTrialMatcher.apply(promiscuousMatchPredicate)
 
-        // TODO merge map of sets, or verify that current code works.
-        return ActionabilityMatch(matchedFusionEvidence + matchedPromiscuousEvidence, matchedFusionTrials + matchedPromiscuousTrials)
+        return ActionabilityMatchFactory.create(
+            evidenceMatchLists = listOf(matchedFusionEvidence, matchedPromiscuousEvidence),
+            matchingCriteriaPerTrialMatchLists = listOf(matchedFusionTrials + matchedPromiscuousTrials)
+        )
     }
 
     private fun isFusionMatch(actionable: ActionableFusion, fusion: FusionMatchCriteria): Boolean {

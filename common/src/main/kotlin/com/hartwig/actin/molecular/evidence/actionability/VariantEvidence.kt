@@ -22,12 +22,30 @@ class VariantEvidence(
 ) : ActionabilityMatcher<VariantMatchCriteria> {
 
     override fun findMatches(event: VariantMatchCriteria): ActionabilityMatch {
-        val evidenceMatches =
-            hotspotEvidenceMatches(event) + codonEvidenceMatches(event) + exonEvidenceMatches(event) + geneEvidenceMatches(event)
-        // TODO Merge.
-        val trialMatches = hotspotTrialMatches(event) + codonTrialMatches(event) + exonTrialMatches(event) + geneTrialMatches(event)
+        val hotspotEvidenceMatches = hotspotEvidenceMatches(event)
+        val codonEvidenceMatches = codonEvidenceMatches(event)
+        val exonEvidenceMatches = exonEvidenceMatches(event)
+        val geneEvidenceMatches = geneEvidenceMatches(event)
 
-        return ActionabilityMatch(evidenceMatches, trialMatches)
+        val hotspotMatchingCriteriaPerTrialMatch = hotspotTrialMatches(event)
+        val codonMatchingCriteriaPerTrialMatch = codonTrialMatches(event)
+        val exonMatchingCriteriaPerTrialMatch = exonTrialMatches(event)
+        val geneMatchingCriteriaPerTrialMatch = geneTrialMatches(event)
+
+        return ActionabilityMatchFactory.create(
+            evidenceMatchLists = listOf(
+                hotspotEvidenceMatches,
+                codonEvidenceMatches,
+                exonEvidenceMatches,
+                geneEvidenceMatches
+            ),
+            matchingCriteriaPerTrialMatchLists = listOf(
+                hotspotMatchingCriteriaPerTrialMatch,
+                codonMatchingCriteriaPerTrialMatch,
+                exonMatchingCriteriaPerTrialMatch,
+                geneMatchingCriteriaPerTrialMatch
+            )
+        )
     }
 
     private fun hotspotEvidenceMatches(variant: VariantMatchCriteria): List<EfficacyEvidence> {

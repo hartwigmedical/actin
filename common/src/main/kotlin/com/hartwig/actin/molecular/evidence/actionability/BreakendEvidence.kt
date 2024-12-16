@@ -16,10 +16,10 @@ class BreakendEvidence(
         val matchPredicate: Predicate<MolecularCriterium> =
             Predicate { event.isReportable && ActionableEventExtraction.extractGene(it).gene() == event.gene }
 
-        val evidences = applicableGeneEvidences.filter { matchPredicate.test(it.molecularCriterium()) }
+        val evidenceMatches = applicableGeneEvidences.filter { matchPredicate.test(it.molecularCriterium()) }
         val matchingCriteriaPerTrialMatch = applicableTrialMatcher.apply(matchPredicate)
 
-        return ActionabilityMatch(evidences, matchingCriteriaPerTrialMatch)
+        return ActionabilityMatch(evidenceMatches = evidenceMatches, matchingCriteriaPerTrialMatch = matchingCriteriaPerTrialMatch)
     }
 
     companion object {

@@ -33,11 +33,11 @@ class SignatureEvidence(
                 Predicate { ActionableEventExtraction.extractCharacteristic(it).type() == characteristicToFind }
 
             val evidenceMatches = signatureEvidences.filter { matchPredicate.test(it.molecularCriterium()) }
-            val trialMatches = signatureTrialMatcher.apply(matchPredicate)
+            val matchingCriteriaPerTrialMatch = signatureTrialMatcher.apply(matchPredicate)
 
-            ActionabilityMatch(evidenceMatches, trialMatches)
+            ActionabilityMatch(evidenceMatches = evidenceMatches, matchingCriteriaPerTrialMatch = matchingCriteriaPerTrialMatch)
         } else {
-            ActionabilityMatch(emptyList(), emptyMap())
+            ActionabilityMatch(evidenceMatches = emptyList(), matchingCriteriaPerTrialMatch = emptyMap())
         }
     }
 

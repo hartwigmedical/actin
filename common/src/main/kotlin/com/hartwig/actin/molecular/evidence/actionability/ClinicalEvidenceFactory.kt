@@ -78,14 +78,12 @@ object ClinicalEvidenceFactory {
     private fun convertToExternalTrials(
         matchingCriteriaAndIndicationsPerEligibleTrial: Map<ActionableTrial, Pair<Set<MolecularCriterium>, Set<Indication>>>
     ): Set<ExternalTrial> {
-        val externalTrials = matchingCriteriaAndIndicationsPerEligibleTrial.mapValues { (actionableTrial, matchingCriteriaAndIndications) ->
+        return matchingCriteriaAndIndicationsPerEligibleTrial.mapValues { (actionableTrial, matchingCriteriaAndIndications) ->
             val matchingCriteria = matchingCriteriaAndIndications.first
             val matchingIndications = matchingCriteriaAndIndications.second
 
             createExternalTrial(actionableTrial, matchingCriteria, matchingIndications)
-        }.values.toList()
-
-        return aggregateTrialsByNctId(externalTrials)
+        }.values.toSet()
     }
 
     private fun createExternalTrial(
@@ -126,39 +124,6 @@ object ClinicalEvidenceFactory {
             molecularMatches = molecularMatches,
             applicableCancerTypes = applicableCancerTypes,
             url = url
-        )
-    }
-
-    private fun aggregateTrialsByNctId(externalTrials: Collection<ExternalTrial>): Set<ExternalTrial> {
-        return externalTrials.map { it.nctId }.distinct().map { nctId -> aggregateByNctId(nctId, externalTrials) }.toSet()
-    }
-
-    private fun aggregateByNctId(nctIdToFind: String, trials: Collection<ExternalTrial>): ExternalTrial {
-        val trialsWithNctId = trials.filter { it.nctId == nctIdToFind }
-
-        val title = trialsWithNctId.map { it.title }.distinct()
-        val countries = trialsWithNctId.map { it.countries }.distinct()
-        val url = trialsWithNctId.map { it.url }.distinct()
-
-        if (title.size != 1) {
-            throw IllegalStateException("Trials should not contain multiple titles for the same NCT ID: $trialsWithNctId")
-        }
-
-        if (countries.size != 1) {
-            throw IllegalStateException("Trials should not contain multiple countries for the same NCT ID: $trialsWithNctId")
-        }
-
-        if (url.size != 1) {
-            throw IllegalStateException("Trials should not contain multiple URLs for the same NCT ID: $trialsWithNctId")
-        }
-
-        return ExternalTrial(
-            nctId = nctIdToFind,
-            title = title.first(),
-            countries = countries.first(),
-            molecularMatches = trialsWithNctId.flatMap { it.molecularMatches }.toSet(),
-            applicableCancerTypes = trialsWithNctId.flatMap { it.applicableCancerTypes }.toSet(),
-            url = url.first()
         )
     }
 
