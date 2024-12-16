@@ -30,7 +30,7 @@ class HomozygousDisruptionExtractorTest {
     }
 
     @Test
-    fun `Should extract only 1 homozygous disruption if both canonical and non-canonical disruption for same gene`() {
+    fun `Should extract only 1 homozygous disruption if both canonical and non-canonical disruption are present`() {
         val linxHomDisruptionCanonical = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").isCanonical(true).build()
         val linxHomDisruptionNonCanonical = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").isCanonical(false).build()
         val linx = ImmutableLinxRecord.builder()
