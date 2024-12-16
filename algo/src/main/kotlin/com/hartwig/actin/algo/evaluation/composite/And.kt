@@ -22,9 +22,7 @@ class And(private val functions: List<EvaluationFunction>) : EvaluationFunction 
             }
 
         return if (evaluationResult == EvaluationResult.FAIL && !recoverable) {
-            val unrecoverableFails =
-                functions.map { it.evaluate(record) }.distinct().filter { !it.recoverable && it.result == EvaluationResult.FAIL }
-            val result = unrecoverableFails.fold(Evaluation(EvaluationResult.FAIL, false), Evaluation::addMessagesAndEvents)
+            val result = unrecoverableEvaluations.fold(Evaluation(EvaluationResult.FAIL, false), Evaluation::addMessagesAndEvents)
             result.copy(
                 inclusionMolecularEvents = result.inclusionMolecularEvents + additionalEvaluations.flatMap { it.inclusionMolecularEvents },
                 exclusionMolecularEvents = result.exclusionMolecularEvents + additionalEvaluations.flatMap { it.exclusionMolecularEvents })

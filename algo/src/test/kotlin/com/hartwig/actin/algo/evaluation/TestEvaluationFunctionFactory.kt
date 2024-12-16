@@ -27,10 +27,10 @@ object TestEvaluationFunctionFactory {
         return fixedEvaluation(EvaluationResult.NOT_EVALUATED)
     }
 
-    private fun fixedEvaluation(output: EvaluationResult, recoverable: Boolean = false): EvaluationFunction {
+    private fun fixedEvaluation(output: EvaluationResult): EvaluationFunction {
         return object : EvaluationFunction {
             override fun evaluate(record: PatientRecord): Evaluation {
-                return EvaluationTestFactory.withResult(output, recoverable)
+                return EvaluationTestFactory.withResult(output)
             }
         }
     }
