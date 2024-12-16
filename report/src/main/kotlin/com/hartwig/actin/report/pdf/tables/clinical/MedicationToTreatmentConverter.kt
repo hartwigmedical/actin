@@ -14,10 +14,11 @@ object MedicationToTreatmentConverter {
     fun convert(medications: List<Medication>, treatmentHistory: List<TreatmentHistoryEntry>): List<TreatmentHistoryEntry> {
         val treatmentsByDrug = createTreatmentHistoryEntryPerDrugMap(treatmentHistory)
         return medications.filter { medication ->
-            val hasMatchingTreatmentHistoryEntry = treatmentsByDrug[medication.drug]?.any { matchesDate(medication, it) } == true
             val isSystemicCancerTreatment = medication.drug?.category in TreatmentCategory.SYSTEMIC_CANCER_TREATMENT_CATEGORIES
+            val hasNoMatchingTreatmentHistoryEntry =
+                medication.drug?.let(treatmentsByDrug::get)?.none { matchesDate(medication, it) } ?: true
             val mayBeActive = medication.status == null || medication.status == MedicationStatus.ACTIVE
-            (medication.drug?.let { _ -> !hasMatchingTreatmentHistoryEntry } ?: false) && isSystemicCancerTreatment && mayBeActive
+            isSystemicCancerTreatment && hasNoMatchingTreatmentHistoryEntry && mayBeActive
         }
             .groupBy { it.drug }
             .mapNotNull { (drug, medications) ->
@@ -42,14 +43,20 @@ object MedicationToTreatmentConverter {
     }
 
     private fun matchesDate(medication: Medication, treatmentHistory: TreatmentHistoryEntry): Boolean {
-        if (medication.startDate?.year == treatmentHistory.startYear || medication.startDate?.year == treatmentHistory.treatmentHistoryDetails?.stopYear) {
-            val values =
-                medication.startDate?.let { (it.monthValue..(medication.stopDate?.monthValue ?: it.monthValue)).toList() } ?: emptyList()
-            if (treatmentHistory.startMonth in values || treatmentHistory.startMonth == null || treatmentHistory.treatmentHistoryDetails?.stopMonth in values) {
-                return true
-            }
+        val medicationStart = medication.startDate
+        val medicationStop = medication.stopDate
+        val treatmentStart = treatmentHistory.startYear?.let { LocalDate.of(it, treatmentHistory.startMonth ?: 1, 1) }
+        val treatmentStop = treatmentHistory.treatmentHistoryDetails?.stopYear?.let {
+            LocalDate.of(
+                it,
+                treatmentHistory.treatmentHistoryDetails?.stopMonth ?: 12,
+                31
+            )
         }
-        return false
+
+        return (medicationStart?.isAfter(treatmentStart) == true && medicationStop?.isBefore(treatmentStop) == true) || (medicationStart?.isAfter(
+            treatmentStart
+        ) == true && medicationStart.isBefore(treatmentStop)) || treatmentStart == null || medicationStart?.isAfter(treatmentStart) == true
     }
 
     private fun extractStartAndStopRange(medications: List<Medication>): Pair<LocalDate?, LocalDate?> {

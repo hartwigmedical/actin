@@ -5,6 +5,8 @@ import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.DrugInteractionsDatabase
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.QtProlongatingDatabase
+import com.hartwig.actin.clinical.curation.CurationCategory
+import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.standard.ProvidedPatientRecord
 import com.hartwig.actin.datamodel.clinical.Dosage
@@ -20,21 +22,31 @@ class StandardMedicationExtractor(
 ) : StandardDataExtractor<List<Medication>?> {
 
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<Medication>?> {
-        return ExtractionResult(ehrPatientRecord.medications?.map {
-            val atcClassification = if (!it.isTrial && !it.isSelfCare) atcModel.resolveByCode(
-                it.atcCode
-                    ?: throw IllegalStateException(
+        return ehrPatientRecord.medications?.map {
+            val atcClassification = if (!it.isTrial && !it.isSelfCare) {
+                if (it.atcCode == null) {
+                    logger.error(
                         "Patient '${ehrPatientRecord.patientDetails.hashedId}' had medication '${it.name}' with null atc code, " +
                                 "but is not a trial or self care"
-                    ),
-                ""
-            ) else null
+                    )
+                }
+                it.atcCode?.let { atcCode -> atcModel.resolveByCode(atcCode, "") }
+            } else null
             val atcNameOrInput = atcClassification?.chemicalSubstance?.name ?: it.name
             val atcCode = it.atcCode
             val isAntiCancerMedication = MedicationCategories.isAntiCancerMedication(atcCode)
             val drug = treatmentDatabase.findDrugByAtcName(atcNameOrInput)
-            if (isAntiCancerMedication && drug == null) LOGGER.warn("Anti cancer medication $atcNameOrInput with ATC code $atcCode found which is not present in drug database. Please add to drug database")
-            Medication(
+
+            val atcWarning = if (isAntiCancerMedication && drug == null) {
+                CurationWarning(
+                    ehrPatientRecord.patientDetails.hashedId,
+                    CurationCategory.MEDICATION_NAME,
+                    atcNameOrInput,
+                    "Anti cancer medication $atcNameOrInput with ATC code $atcCode found which is not present in drug database. Please add the missing drug to drug database"
+                )
+            } else null
+
+            val medication = Medication(
                 name = atcNameOrInput,
                 administrationRoute = it.administrationRoute,
                 dosage = Dosage(
@@ -53,10 +65,13 @@ class StandardMedicationExtractor(
                 isSelfCare = it.isSelfCare,
                 drug = drug
             )
-        }, CurationExtractionEvaluation())
+            ExtractionResult(listOf(medication), CurationExtractionEvaluation(setOfNotNull(atcWarning)))
+        }?.fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, result ->
+            ExtractionResult((acc.extracted ?: emptyList()) + result.extracted, acc.evaluation + result.evaluation)
+        } ?: ExtractionResult(null, CurationExtractionEvaluation())
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger(StandardMedicationExtractor::class.java)
+        private val logger = LogManager.getLogger(StandardMedicationExtractor::class.java)
     }
 }

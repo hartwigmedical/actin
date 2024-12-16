@@ -20,13 +20,13 @@ class MedicationToTreatmentConverterTest {
         createTreatmentHistoryEntry("Chemotherapy", TreatmentCategory.CHEMOTHERAPY, DrugType.ALKYLATING_AGENT, 2022, 2022),
         createTreatmentHistoryEntry("Bevacizumab", TreatmentCategory.TARGETED_THERAPY, DrugType.VEGF_ANTIBODY, 2022, 2022),
         createTreatmentHistoryEntry("Doxorubicin", TreatmentCategory.CHEMOTHERAPY, DrugType.ANTHRACYCLINE, 2021, 2022),
-        createTreatmentHistoryEntry("Oxaliplatin", TreatmentCategory.CHEMOTHERAPY, DrugType.PLATINUM_COMPOUND, 2021, 2022)
+        createTreatmentHistoryEntry("Oxaliplatin", TreatmentCategory.CHEMOTHERAPY, DrugType.PLATINUM_COMPOUND, 2021, 2022, 11)
     )
 
     private val medications = listOf(
         createMedication("Pembrolizumab", TreatmentCategory.IMMUNOTHERAPY, DrugType.PD_1_PD_L1_ANTIBODY, LocalDate.of(2023, 11, 1)),
         createMedication("Pembrolizumab", TreatmentCategory.IMMUNOTHERAPY, DrugType.PD_1_PD_L1_ANTIBODY, LocalDate.of(2023, 12, 1)),
-        createMedication("Bevacizumab", TreatmentCategory.TARGETED_THERAPY, DrugType.VEGF_ANTIBODY, LocalDate.of(2022, 1, 1)),
+        createMedication("Bevacizumab", TreatmentCategory.TARGETED_THERAPY, DrugType.VEGF_ANTIBODY, LocalDate.of(2022, 2, 1)),
         createMedication("Doxorubicin", TreatmentCategory.CHEMOTHERAPY, DrugType.ANTHRACYCLINE, LocalDate.of(2022, 1, 1)),
         createMedication("Oxaliplatin", TreatmentCategory.CHEMOTHERAPY, DrugType.PLATINUM_COMPOUND, LocalDate.of(2021, 12, 1))
     )
@@ -54,29 +54,26 @@ class MedicationToTreatmentConverterTest {
         startMonth: Int? = null
     ): TreatmentHistoryEntry {
         return TreatmentTestFactory.treatmentHistoryEntry(
-            setOf(
-                TreatmentTestFactory.drugTreatment(
-                    name,
-                    category,
-                    setOf(drugType)
-                )
-            ), startYear = startYear, startMonth = startMonth, stopYear = stopYear
+            setOf(TreatmentTestFactory.drugTreatment(name, category, setOf(drugType))),
+            startYear = startYear,
+            startMonth = startMonth,
+            stopYear = stopYear
         )
     }
 
     private fun createMedication(name: String, category: TreatmentCategory, drugType: DrugType, date: LocalDate): Medication {
         return TestMedicationFactory.createMinimal().copy(
-            drug = Drug(
-                name = name,
-                category = category,
-                drugTypes = setOf(drugType)
-            ), name = name, atc = AtcClassification(
+            drug = Drug(name = name, category = category, drugTypes = setOf(drugType)),
+            name = name,
+            atc = AtcClassification(
                 anatomicalMainGroup = AtcLevel(name = "", code = ""),
                 chemicalSubGroup = AtcLevel(name = "", code = ""),
                 chemicalSubstance = AtcLevel(name = "", code = ""),
                 pharmacologicalSubGroup = AtcLevel(name = "", code = ""),
                 therapeuticSubGroup = AtcLevel(name = "", code = "")
-            ), startDate = date, stopDate = date
+            ),
+            startDate = date,
+            stopDate = date
         )
     }
 

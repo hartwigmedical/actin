@@ -44,7 +44,7 @@ class PatientClinicalHistoryGeneratorTest {
             )
         )
 
-        val otherHistoryTable = createTable(reportWithOtherConditions, "Relevant non-oncological history")
+        val otherHistoryTable = generateHistoryAndReturnTableWithText(reportWithOtherConditions, "Relevant non-oncological history")
 
         assertThat(otherHistoryTable.numberOfRows).isEqualTo(6)
         assertThat(extractTextFromCell(otherHistoryTable.getCell(0, 0))).isEqualTo("8/2024")
@@ -86,7 +86,8 @@ class PatientClinicalHistoryGeneratorTest {
             )
         )
 
-        val otherHistoryTable = createTable(reportWithOncologicalHistoryAndMedications, "Relevant systemic treatment history")
+        val otherHistoryTable =
+            generateHistoryAndReturnTableWithText(reportWithOncologicalHistoryAndMedications, "Relevant systemic treatment history")
 
         assertThat(otherHistoryTable.numberOfRows).isEqualTo(2)
         assertThat(extractTextFromCell(otherHistoryTable.getCell(0, 0))).isEqualTo("2022")
@@ -95,7 +96,7 @@ class PatientClinicalHistoryGeneratorTest {
         assertThat(extractTextFromCell(otherHistoryTable.getCell(1, 1))).isEqualTo("Pembrolizumab")
     }
 
-    private fun createTable(report: Report, cellToFind: String): Table {
+    private fun generateHistoryAndReturnTableWithText(report: Report, cellToFind: String): Table {
         val patientClinicalHistoryGenerator = PatientClinicalHistoryGenerator(report, true, KEY_WIDTH, VALUE_WIDTH)
         val cells = patientClinicalHistoryGenerator.contentsAsList()
         val otherHistoryCell =
