@@ -45,19 +45,30 @@ class MedicationToTreatmentConverterTest {
         )
     }
 
+    @Test
+    fun `Should return true if medication administered on stop date of treatment history entry`() {
+        val medication =
+            createMedication("Pembrolizumab", TreatmentCategory.IMMUNOTHERAPY, DrugType.PD_1_PD_L1_ANTIBODY, LocalDate.of(2023, 5, 31))
+        val treatmentHistory =
+            createTreatmentHistoryEntry("Pembrolizumab", TreatmentCategory.IMMUNOTHERAPY, DrugType.PD_1_PD_L1_ANTIBODY, 2023, 2023, 2, 5)
+        assertThat(MedicationToTreatmentConverter.matchesDate(medication, treatmentHistory)).isTrue()
+    }
+
     private fun createTreatmentHistoryEntry(
         name: String,
         category: TreatmentCategory,
         drugType: DrugType,
         startYear: Int,
         stopYear: Int,
-        startMonth: Int? = null
+        startMonth: Int? = null,
+        stopMonth: Int? = null
     ): TreatmentHistoryEntry {
         return TreatmentTestFactory.treatmentHistoryEntry(
             setOf(TreatmentTestFactory.drugTreatment(name, category, setOf(drugType))),
             startYear = startYear,
             startMonth = startMonth,
-            stopYear = stopYear
+            stopYear = stopYear,
+            stopMonth = stopMonth
         )
     }
 

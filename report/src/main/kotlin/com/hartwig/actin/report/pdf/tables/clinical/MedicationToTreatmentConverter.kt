@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import java.time.LocalDate
+import java.time.YearMonth
 
 object MedicationToTreatmentConverter {
 
@@ -42,12 +43,12 @@ object MedicationToTreatmentConverter {
             .groupBy({ it.first }, { it.second })
     }
 
-    private fun matchesDate(medication: Medication, treatmentHistory: TreatmentHistoryEntry): Boolean {
+    fun matchesDate(medication: Medication, treatmentHistory: TreatmentHistoryEntry): Boolean {
         val medicationStart = medication.startDate?.plusDays(1)
         val medicationStop = medication.stopDate?.minusDays(1)
         val treatmentStart = treatmentHistory.startYear?.let { LocalDate.of(it, treatmentHistory.startMonth ?: 1, 1) }
         val treatmentStop = treatmentHistory.treatmentHistoryDetails?.stopYear?.let {
-            LocalDate.of(it, treatmentHistory.treatmentHistoryDetails?.stopMonth ?: 12, 31)
+            YearMonth.of(it, treatmentHistory.treatmentHistoryDetails?.stopMonth ?: 12).atEndOfMonth()
         }
 
         return (medicationStart?.isAfter(treatmentStart) == true && (treatmentStop == null ||
