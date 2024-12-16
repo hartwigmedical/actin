@@ -1,13 +1,9 @@
 package com.hartwig.actin.molecular.evidence
 
-import com.hartwig.actin.datamodel.molecular.CodingEffect
-import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalCopyNumber
-import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalDisruption
-import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalHomozygousDisruption
-import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalVirus
-import com.hartwig.actin.datamodel.molecular.VariantType
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
+import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.orange.driver.VirusType
@@ -18,66 +14,89 @@ import org.junit.Test
 
 class EvidenceDatabaseTest {
 
+    private val database = TestEvidenceDatabaseFactory.createProperDatabase()
+
     @Test
     fun `Should match evidence for signatures`() {
-        val database = TestEvidenceDatabaseFactory.createProperDatabase()
-
-        assertEvidenceCountMatchesExpected(database.evidenceForMicrosatelliteStatus(false), 0)
-        assertEvidenceCountMatchesExpected(database.evidenceForMicrosatelliteStatus(true), 1)
-        assertEvidenceCountMatchesExpected(database.evidenceForHomologousRepairStatus(false), 0)
-        assertEvidenceCountMatchesExpected(database.evidenceForHomologousRepairStatus(true), 1)
-        assertEvidenceCountMatchesExpected(database.evidenceForTumorMutationalBurdenStatus(false), 0)
-        assertEvidenceCountMatchesExpected(database.evidenceForTumorMutationalBurdenStatus(true), 1)
-        assertEvidenceCountMatchesExpected(database.evidenceForTumorMutationalLoadStatus(false), 0)
-        assertEvidenceCountMatchesExpected(database.evidenceForTumorMutationalLoadStatus(true), 1)
+        assertEvidence(database.evidenceForMicrosatelliteStatus(false), expectedTreatmentMatches = 0, expectedTrialMatches = 0)
+        assertEvidence(database.evidenceForMicrosatelliteStatus(true), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
+        assertEvidence(database.evidenceForHomologousRepairStatus(false), expectedTreatmentMatches = 0, expectedTrialMatches = 0)
+        assertEvidence(database.evidenceForHomologousRepairStatus(true), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
+        assertEvidence(database.evidenceForTumorMutationalBurdenStatus(false), expectedTreatmentMatches = 0, expectedTrialMatches = 0)
+        assertEvidence(database.evidenceForTumorMutationalBurdenStatus(true), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
+        assertEvidence(database.evidenceForTumorMutationalLoadStatus(false), expectedTreatmentMatches = 0, expectedTrialMatches = 0)
+        assertEvidence(database.evidenceForTumorMutationalLoadStatus(true), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
     }
 
     @Test
-    fun `Should match evidence for drivers`() {
-        val database = TestEvidenceDatabaseFactory.createProperDatabase()
-        // Assume default objects match with default SERVE objects
-        val variant = VariantMatchCriteria(
-            chromosome = "",
-            position = 0,
-            ref = "",
-            alt = "",
-            isReportable = true,
-            type = VariantType.SNV,
-            gene = "",
-            codingEffect = CodingEffect.NONE,
+    fun `Should match evidence for variants`() {
+        val variant = VariantMatchCriteria(isReportable = true, gene = "", chromosome = "", position = 0, ref = "", alt = "")
+        assertThat(database.geneAlterationForVariant(variant)).isNotNull()
+        assertEvidence(database.evidenceForVariant(variant), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
+    }
+
+    @Test
+    fun `Should match evidence for gains and losses`() {
+        val loss = createWithCopyNumberType(CopyNumberType.LOSS)
+        assertThat(database.geneAlterationForCopyNumber(loss)).isNotNull()
+        assertEvidence(database.evidenceForCopyNumber(loss), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
+
+        val gain = createWithCopyNumberType(CopyNumberType.FULL_GAIN)
+        assertThat(database.geneAlterationForCopyNumber(gain)).isNotNull()
+        assertEvidence(database.evidenceForCopyNumber(gain), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
+    }
+
+    @Test
+    fun `Should match evidence for disruption`() {
+        val disruption = TestMolecularFactory.minimalDisruption().copy(isReportable = true)
+        assertThat(database.geneAlterationForBreakend(disruption)).isNotNull()
+        assertEvidence(database.evidenceForBreakend(disruption), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
+    }
+
+    @Test
+    fun `Should match evidence for homozygous disruption`() {
+        val homozygousDisruption = TestMolecularFactory.minimalHomozygousDisruption()
+        assertThat(database.geneAlterationForHomozygousDisruption(homozygousDisruption)).isNotNull()
+        assertEvidence(
+            database.evidenceForHomozygousDisruption(homozygousDisruption),
+            expectedTreatmentMatches = 2,
+            expectedTrialMatches = 2
         )
-        assertThat(database.geneAlterationForVariant(variant)).isNotNull
-        assertEvidenceCountMatchesExpected(database.evidenceForVariant(variant), 1)
+    }
 
-        val gainLoss =
-            minimalCopyNumber().copy(canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS))
-        assertThat(database.geneAlterationForCopyNumber(gainLoss)).isNotNull
-        assertEvidenceCountMatchesExpected(database.evidenceForCopyNumber(gainLoss), 1)
-
-        val homozygousDisruption = minimalHomozygousDisruption()
-        assertThat(database.geneAlterationForHomozygousDisruption(homozygousDisruption)).isNotNull
-        assertEvidenceCountMatchesExpected(database.evidenceForHomozygousDisruption(homozygousDisruption), 2)
-
-        val disruption = minimalDisruption().copy(isReportable = true)
-        assertThat(database.geneAlterationForBreakend(disruption)).isNotNull
-        assertEvidenceCountMatchesExpected(database.evidenceForBreakend(disruption), 1)
-
+    @Test
+    fun `Should match evidence for fusion`() {
         val fusion = FusionMatchCriteria(
+            isReportable = true,
             geneStart = "",
             fusedExonUp = 0,
             geneEnd = "",
             fusedExonDown = 0,
             driverType = FusionDriverType.NONE,
-            isReportable = true,
         )
-        assertThat(database.lookupKnownFusion(fusion)).isNotNull
-        assertThat(database.evidenceForFusion(fusion).treatmentEvidence.size).isEqualTo(2)
-
-        val virus = minimalVirus().copy(isReportable = true, type = VirusType.HUMAN_PAPILLOMA_VIRUS)
-        assertThat(database.evidenceForVirus(virus).treatmentEvidence.size).isEqualTo(1)
+        assertThat(database.lookupKnownFusion(fusion)).isNotNull()
+        assertEvidence(database.evidenceForFusion(fusion), expectedTreatmentMatches = 2, expectedTrialMatches = 2)
     }
 
-    private fun assertEvidenceCountMatchesExpected(match: ClinicalEvidence, expectedCount: Int) {
-        assertThat(match.treatmentEvidence.size).isEqualTo(expectedCount)
+    @Test
+    fun `Should match evidence for viruses`() {
+        val hpv = TestMolecularFactory.minimalVirus().copy(isReportable = true, type = VirusType.HUMAN_PAPILLOMA_VIRUS)
+        assertEvidence(database.evidenceForVirus(hpv), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
+
+        val ebv = TestMolecularFactory.minimalVirus().copy(isReportable = true, type = VirusType.EPSTEIN_BARR_VIRUS)
+        assertEvidence(database.evidenceForVirus(ebv), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
     }
+
+    private fun assertEvidence(evidence: ClinicalEvidence, expectedTreatmentMatches: Int, expectedTrialMatches: Int = 0) {
+        assertThat(evidence.treatmentEvidence.size).isEqualTo(expectedTreatmentMatches)
+        assertThat(evidence.eligibleTrials.size).isEqualTo(expectedTrialMatches)
+    }
+
+    private fun createWithCopyNumberType(type: CopyNumberType): CopyNumber {
+        return TestMolecularFactory.minimalCopyNumber().copy(
+            isReportable = true,
+            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(type)
+        )
+    }
+
 }

@@ -53,7 +53,7 @@ object TestServeEvidenceFactory {
         return create(molecularCriterium = TestServeMolecularFactory.createCharacteristicCriterium(type = type))
     }
 
-    fun createEvidenceForHLA(): EfficacyEvidence {
+    fun createEvidenceForHla(): EfficacyEvidence {
         return create(molecularCriterium = TestServeMolecularFactory.createHlaCriterium())
     }
 

@@ -17,7 +17,7 @@ object ActionableTrialMatcherFactory {
     }
 
     fun createExonTrialMatcher(trials: List<ActionableTrial>): ActionableTrialMatcher {
-        return createTrialMatcher(trials, ActionableEventExtraction.codonFilter())
+        return createTrialMatcher(trials, ActionableEventExtraction.exonFilter())
     }
 
     fun createGeneTrialMatcher(trials: List<ActionableTrial>, validGeneEvents: Set<GeneEvent>): ActionableTrialMatcher {
