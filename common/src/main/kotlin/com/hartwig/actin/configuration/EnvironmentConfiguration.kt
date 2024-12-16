@@ -22,7 +22,6 @@ enum class MolecularSummaryType {
 }
 
 data class AlgoConfiguration(
-    val trialSource: String? = null,
     val warnIfToxicitiesNotFromQuestionnaire: Boolean = true,
     val maxMolecularTestAgeInDays: Int? = null
 )

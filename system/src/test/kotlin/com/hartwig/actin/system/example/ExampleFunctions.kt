@@ -15,7 +15,6 @@ private const val EXAMPLE_NAME_ = "<example_name>"
 object ExampleFunctions {
 
     private const val REQUESTING_HOSPITAL = "Example"
-    private const val TRIAL_SOURCE = "Example"
 
     private const val EXAMPLE_TREATMENT_MATCH_DIRECTORY = "example_treatment_match"
     private const val EXAMPLE_TRIAL_DATABASE_DIRECTORY = "example_trial_database"
@@ -54,7 +53,7 @@ object ExampleFunctions {
         val base = EnvironmentConfiguration.create(null)
         return base.copy(
             requestingHospital = REQUESTING_HOSPITAL,
-            algo = AlgoConfiguration(trialSource = TRIAL_SOURCE),
+            algo = AlgoConfiguration(),
             report = ReportConfiguration(
                 includeApprovedTreatmentsInSummary = false,
                 includeMolecularDetailsChapter = false,
@@ -68,7 +67,7 @@ object ExampleFunctions {
         val base = EnvironmentConfiguration.create(null)
         return base.copy(
             requestingHospital = REQUESTING_HOSPITAL,
-            algo = AlgoConfiguration(trialSource = TRIAL_SOURCE),
+            algo = AlgoConfiguration(),
             report = ReportConfiguration(
                 includeOverviewWithClinicalHistorySummary = true,
                 includeMolecularDetailsChapter = true,
