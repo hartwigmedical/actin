@@ -343,14 +343,12 @@ internal class ClinicalDAO(private val context: DSLContext) {
                         Tables.COMPLICATION,
                         Tables.COMPLICATION.PATIENTID,
                         Tables.COMPLICATION.NAME,
-                        Tables.COMPLICATION.CATEGORIES,
                         Tables.COMPLICATION.YEAR,
                         Tables.COMPLICATION.MONTH
                     )
                         .values(
                             patientId,
                             complication.name,
-                            DataUtil.concat(complication.categories),
                             complication.year,
                             complication.month
                         )

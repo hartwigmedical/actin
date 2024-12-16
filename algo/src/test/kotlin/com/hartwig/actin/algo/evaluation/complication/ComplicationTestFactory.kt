@@ -10,8 +10,8 @@ import com.hartwig.actin.datamodel.clinical.Medication
 internal object ComplicationTestFactory {
     private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
     
-    fun complication(name: String = "", categories: Set<String> = emptySet(), icdCode: IcdCode = IcdCode("")): Complication {
-        return Complication(name = name, categories = categories, icdCode = icdCode, year = null, month = null)
+    fun complication(name: String = "", icdCode: IcdCode = IcdCode("")): Complication {
+        return Complication(name = name, icdCode = icdCode, year = null, month = null)
     }
 
     fun yesInputComplication(): Complication {

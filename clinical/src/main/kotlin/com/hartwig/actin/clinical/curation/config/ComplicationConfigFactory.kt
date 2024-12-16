@@ -34,7 +34,6 @@ class ComplicationConfigFactory(private val icdModel: IcdModel) : CurationConfig
     private fun toCuratedComplication(icdCode: IcdCode?, fields: Map<String, Int>, parts: Array<String>, year: Int?, month: Int?) =
         Complication(
             name = parts[fields["name"]!!],
-            categories = CurationUtil.toCategories(parts[fields["categories"]!!]),
             icdCode = icdCode ?: IcdCode("", null),
             year = year,
             month = month

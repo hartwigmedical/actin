@@ -160,7 +160,6 @@
   "complications": [
     {
       "name": "Other",
-      "categories": [],
       "icdCode": {
         "mainCode": "1A01.1",
         "extensionCode": null

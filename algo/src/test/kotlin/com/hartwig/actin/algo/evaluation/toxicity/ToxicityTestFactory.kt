@@ -16,7 +16,7 @@ internal object ToxicityTestFactory {
 
     fun withToxicityThatIsAlsoComplication(toxicity: Toxicity, icdCode: String = ""): PatientRecord {
         val complication =
-            Complication(name = toxicity.name, categories = emptySet(), icdCode = IcdCode(icdCode), year = null, month = null)
+            Complication(name = toxicity.name, icdCode = IcdCode(icdCode), year = null, month = null)
         return base.copy(toxicities = listOf(toxicity.copy(icdCode = IcdCode(icdCode))), complications = listOf(complication))
     }
 

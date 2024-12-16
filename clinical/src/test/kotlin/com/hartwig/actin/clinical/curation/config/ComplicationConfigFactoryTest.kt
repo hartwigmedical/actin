@@ -18,14 +18,12 @@ class ComplicationConfigFactoryTest {
     @Test
     fun `Should return complication config from valid data`() {
         val configFactory = ComplicationConfigFactory(icdModel)
-        val data = arrayOf("input", "1", "name", "categories", "$icdMainTitle&$icdExtensionTitle", "2023", "12")
+        val data = arrayOf("input", "1", "name", "$icdMainTitle&$icdExtensionTitle", "2023", "12")
         val config = configFactory.create(fields, data)
-        println(config.config.curated)
 
         val errors = config.errors
         val configObj = config.config
-        val curated = configObj.curated
-        val curatedCategories = curated!!.categories
+        val curated = configObj.curated!!
         val curatedIcd = curated.icdCode
 
         assertThat(errors).isEmpty()
@@ -35,7 +33,6 @@ class ComplicationConfigFactoryTest {
         assertThat(configObj.impliesUnknownComplicationState).isTrue
 
         assertThat(curated.name).isEqualTo("name")
-        assertThat(curatedCategories).containsExactly("categories")
         assertThat(curatedIcd.mainCode).isEqualTo(icdMainCode)
         assertThat(curatedIcd.extensionCode).isEqualTo(icdExtensionCode)
         assertThat(curated.year).isEqualTo(2023)
@@ -46,7 +43,7 @@ class ComplicationConfigFactoryTest {
     fun `Should return validation error when year is not a number`() {
         assertThat(
             ComplicationConfigFactory(icdModel).create(
-                fields, arrayOf("input", "1", "name", "categories", icdExtensionTitle, "year", "12")
+                fields, arrayOf("input", "1", "name", icdExtensionTitle, "year", "12")
             ).errors
         ).containsExactly(
             CurationConfigValidationError("Complication", "input", "year", "year", "integer")
@@ -57,7 +54,7 @@ class ComplicationConfigFactoryTest {
     fun `Should return validation error when month is not a number`() {
         assertThat(
             ComplicationConfigFactory(icdModel).create(
-                fields, arrayOf("input", "1", "name", "categories", icdExtensionTitle, "2023", "month")
+                fields, arrayOf("input", "1", "name", icdExtensionTitle, "2023", "month")
             ).errors
         ).containsExactly(
             CurationConfigValidationError("Complication", "input", "month", "month", "integer")
@@ -68,7 +65,7 @@ class ComplicationConfigFactoryTest {
     fun `Should return validation error when impliesUnknownComplicationState is not boolean`() {
         assertThat(
             ComplicationConfigFactory(icdModel).create(
-                fields, arrayOf("input", "A", "name", "categories", icdExtensionTitle, "2023", "12")
+                fields, arrayOf("input", "A", "name", icdExtensionTitle, "2023", "12")
             ).errors
         ).containsExactly(
             CurationConfigValidationError("Complication", "input", "impliesUnknownComplicationState", "A", "boolean")
@@ -79,7 +76,7 @@ class ComplicationConfigFactoryTest {
     fun `Should return validation error when impossible to solve icd code for title`() {
         assertThat(
             ComplicationConfigFactory(icdModel).create(
-                fields, arrayOf("input", "1", "name", "categories", "unknown title", "2023", "12")
+                fields, arrayOf("input", "1", "name", "unknown title", "2023", "12")
             ).errors
         ).containsExactly(
             CurationConfigValidationError(
