@@ -397,7 +397,6 @@ internal class ClinicalDAO(private val context: DSLContext) {
                 Tables.TOXICITY,
                 Tables.TOXICITY.PATIENTID,
                 Tables.TOXICITY.NAME,
-                Tables.TOXICITY.CATEGORIES,
                 Tables.TOXICITY.EVALUATEDDATE,
                 Tables.TOXICITY.SOURCE,
                 Tables.TOXICITY.GRADE
@@ -405,7 +404,6 @@ internal class ClinicalDAO(private val context: DSLContext) {
                 .values(
                     patientId,
                     toxicity.name,
-                    DataUtil.concat(toxicity.categories),
                     toxicity.evaluatedDate,
                     toxicity.source.display(),
                     toxicity.grade

@@ -216,7 +216,6 @@
   "toxicities": [
     {
       "name": "Nausea",
-      "categories": [],
       "icdCode": {
         "mainCode": "",
         "extensionCode": null
@@ -232,7 +231,6 @@
     },
     {
       "name": "Pain",
-      "categories": [],
       "icdCode": {
         "mainCode": "",
         "extensionCode": null
@@ -248,9 +246,6 @@
     },
     {
       "name": "Nausea",
-      "categories": [
-        "Gastrointestinal"
-      ],
       "icdCode": {
         "mainCode": "1A01.3",
         "extensionCode": null

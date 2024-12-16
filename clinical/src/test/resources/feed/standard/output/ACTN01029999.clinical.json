@@ -100,7 +100,7 @@
   "priorSecondPrimaries": [],
   "priorOtherConditions": [
     {
-      "name": "Pain",
+      "name": "pain",
       "year": 2020,
       "month": 1,
       "doids": [
@@ -111,7 +111,6 @@
         "mainCode": "1A01.2",
         "extensionCode": null
       },
-      "category": "Other",
       "isContraindicationForTherapy": true
     }
   ],
@@ -250,9 +249,6 @@
   "toxicities": [
     {
       "name": "Dysphagia",
-      "categories": [
-        "Neuro"
-      ],
       "icdCode": {
         "mainCode": "1A01.2",
         "extensionCode": null

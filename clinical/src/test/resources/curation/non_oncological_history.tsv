@@ -1,4 +1,4 @@
-input	name	year	month	category	icd	isLVEF	lvefValue	isContraindicationForTherapy
-sarcoidose	sarcoidosis	2019	7	Autoimmune disease	node 1			0
-pijn bij maligne neoplasma van longen	Pain			Other	node 2			1
-diabetes	diabetes				node 3			0
+input	name	year	month	icd	isLVEF	lvefValue	isContraindicationForTherapy
+sarcoidose	sarcoidosis	2019	7	node 1			0
+pijn bij maligne neoplasma van longen	pain			node 2			1
+diabetes	diabetes			node 3			0

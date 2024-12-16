@@ -41,7 +41,6 @@ class ToxicityExtractor(
             extractGrade(toxicityEntry)?.let { grade ->
                 Toxicity(
                     name = toxicityEntry.itemText,
-                    categories = emptySet(),
                     icdCode = IcdCode("", null),
                     evaluatedDate = toxicityEntry.authored,
                     source = ToxicitySource.EHR,
@@ -78,7 +77,6 @@ class ToxicityExtractor(
             val toxicities = curationResponse.configs.filterNot(CurationConfig::ignore).map { config ->
                 Toxicity(
                     name = config.name,
-                    categories = config.categories,
                     icdCode = config.icdCode,
                     evaluatedDate = questionnaire.date,
                     source = ToxicitySource.QUESTIONNAIRE,

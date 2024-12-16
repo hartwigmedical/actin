@@ -63,7 +63,6 @@ internal object OtherConditionTestFactory {
     ): Toxicity {
         return Toxicity(
             name = name,
-            categories = emptySet(),
             icdCode = IcdCode(icdMainCode, icdExtensionCode),
             evaluatedDate = date,
             source = toxicitySource,

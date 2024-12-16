@@ -128,8 +128,7 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
             name = TOXICITY_NAME,
             evaluatedDate = referenceDate,
             source = toxicitySource,
-            grade = grade,
-            categories = emptySet()
+            grade = grade
         )
     }
 

@@ -92,5 +92,5 @@ class PatientCurrentDetailsGeneratorTest {
     }
 
     private fun toxicity(name: String, endDate: LocalDate?, grade: Int?) =
-        Toxicity(name, emptySet(), IcdCode("icdCode"), referenceDate.minusMonths(1), ToxicitySource.EHR, grade, endDate)
+        Toxicity(name, IcdCode("icdCode"), referenceDate.minusMonths(1), ToxicitySource.EHR, grade, endDate)
 }

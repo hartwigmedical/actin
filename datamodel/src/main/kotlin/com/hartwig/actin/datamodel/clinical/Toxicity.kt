@@ -4,7 +4,6 @@ import java.time.LocalDate
 
 data class Toxicity(
     val name: String,
-    val categories: Set<String>,
     override val icdCode: IcdCode,
     val evaluatedDate: LocalDate,
     val source: ToxicitySource,

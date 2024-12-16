@@ -21,8 +21,6 @@ private const val TOXICITY_INPUT = "Toxicity input"
 
 private const val TOXICITY_NAME = "Toxicity name"
 
-private const val TOXICITY_CATEGORY = "Toxicity category"
-
 private const val TOXICITY_ICD_CODE = "Toxicity icd code"
 
 private const val TOXICITY_EXTENSION_CODE = "Toxicity extension"
@@ -36,7 +34,6 @@ class ToxicityExtractorTest {
                 input = TOXICITY_INPUT,
                 ignore = false,
                 name = TOXICITY_NAME,
-                categories = setOf(TOXICITY_CATEGORY),
                 grade = 3,
                 icdCode = IcdCode(TOXICITY_ICD_CODE, TOXICITY_EXTENSION_CODE)
             )
@@ -56,7 +53,6 @@ class ToxicityExtractorTest {
         assertThat(toxicities).hasSize(1)
         val toxicity = toxicities[0]
         assertThat(toxicity.name).isEqualTo(TOXICITY_NAME)
-        assertThat(toxicity.categories).containsExactly(TOXICITY_CATEGORY)
         assertThat(toxicity.icdCode.mainCode).isEqualTo(TOXICITY_ICD_CODE)
         assertThat(toxicity.icdCode.extensionCode).isEqualTo(TOXICITY_EXTENSION_CODE)
         assertThat(toxicity.evaluatedDate).isEqualTo(date)

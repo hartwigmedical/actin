@@ -445,7 +445,6 @@ object TestClinicalFactory {
         return listOf(
             Toxicity(
                 name = "Nausea",
-                categories = setOf("Nausea"),
                 icdCode = IcdCode("A01"),
                 evaluatedDate = FIXED_DATE.minusDays(DAYS_SINCE_TOXICITIES.toLong()),
                 source = ToxicitySource.EHR,
@@ -453,7 +452,6 @@ object TestClinicalFactory {
             ),
             Toxicity(
                 name = "Fatigue",
-                categories = setOf("Fatigue"),
                 icdCode = IcdCode("A02"),
                 evaluatedDate = FIXED_DATE.minusDays(DAYS_SINCE_TOXICITIES.toLong()),
                 source = ToxicitySource.QUESTIONNAIRE,
