@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.molecular.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
+import com.hartwig.actin.util.MapFunctions
 import org.apache.logging.log4j.LogManager
 
 object AggregatedEvidenceFactory {
@@ -87,17 +88,13 @@ object AggregatedEvidenceFactory {
 
     private fun mergeAggregatedEvidenceList(aggregatedEvidenceList: List<AggregatedEvidence>): AggregatedEvidence {
         return AggregatedEvidence(
-            treatmentEvidencePerEvent = mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::treatmentEvidencePerEvent)),
-            eligibleTrialsPerEvent =
-            mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::eligibleTrialsPerEvent)),
+            treatmentEvidencePerEvent = MapFunctions.mergeMapsOfSets(
+                mapsOfSets = aggregatedEvidenceList.map(AggregatedEvidence::treatmentEvidencePerEvent)
+            ),
+            eligibleTrialsPerEvent = MapFunctions.mergeMapsOfSets(
+                mapsOfSets = aggregatedEvidenceList.map(AggregatedEvidence::eligibleTrialsPerEvent)
+            ),
         )
-    }
-
-    fun <T> mergeMapsOfSets(mapsOfSets: List<Map<String, Set<T>>>): Map<String, Set<T>> {
-        return mapsOfSets
-            .flatMap { it.entries }
-            .groupBy({ it.key }, { it.value })
-            .mapValues { it.value.flatten().toSet() }
     }
 
     private fun <T> mapByEvent(event: String, subset: Set<T>): Map<String, Set<T>> {

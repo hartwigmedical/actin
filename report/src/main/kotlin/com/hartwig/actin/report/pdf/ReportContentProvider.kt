@@ -42,6 +42,7 @@ import com.hartwig.actin.report.pdf.tables.trial.filterInternalTrials
 import com.hartwig.actin.report.pdf.tables.trial.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts
 import com.hartwig.actin.report.pdf.tables.trial.filterMolecularCriteriaAlreadyPresentInTrials
 import com.hartwig.actin.report.pdf.tables.trial.filterNotInCountry
+import com.hartwig.actin.util.MapFunctions
 import org.apache.logging.log4j.LogManager
 
 class ReportContentProvider(private val report: Report, private val enableExtendedMode: Boolean = false) {
@@ -220,7 +221,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         evaluated: List<InterpretedCohort>
     ): Pair<MolecularFilteredExternalTrials, MolecularFilteredExternalTrials> {
         val externalEligibleTrials =
-            AggregatedEvidenceFactory.mergeMapsOfSets(patientRecord.molecularHistory.molecularTests.map {
+            MapFunctions.mergeMapsOfSets(patientRecord.molecularHistory.molecularTests.map {
                 AggregatedEvidenceFactory.create(it).eligibleTrialsPerEvent
             })
 
