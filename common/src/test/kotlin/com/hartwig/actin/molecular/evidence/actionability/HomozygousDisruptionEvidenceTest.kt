@@ -10,9 +10,9 @@ class HomozygousDisruptionEvidenceTest {
 
     @Test
     fun `Should determine homozygous disruption evidence`() {
-        val gene1 = TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.DELETION, "gene 1")
-        val gene2 = TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.INACTIVATION, "gene 2")
-        val gene3 = TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.AMPLIFICATION, "gene 3")
+        val gene1 = TestServeEvidenceFactory.createEvidenceForGene(gene = "gene 1", geneEvent = GeneEvent.DELETION)
+        val gene2 = TestServeEvidenceFactory.createEvidenceForGene(gene = "gene 2", geneEvent = GeneEvent.INACTIVATION)
+        val gene3 = TestServeEvidenceFactory.createEvidenceForGene(gene = "gene 3", geneEvent = GeneEvent.AMPLIFICATION)
         val homozygousDisruptionEvidence =
             HomozygousDisruptionEvidence.create(evidences = listOf(gene1, gene2, gene3), trials = emptyList())
 

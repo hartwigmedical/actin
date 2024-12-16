@@ -15,9 +15,9 @@ class FusionEvidenceTest {
 
     @Test
     fun `Should determine promiscuous fusion evidence`() {
-        val evidenceForGene1 = TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.FUSION, "gene 1")
-        val evidenceForGene2 = TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.ANY_MUTATION, "gene 2")
-        val evidenceForGene3 = TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.INACTIVATION, "gene 1")
+        val evidenceForGene1 = TestServeEvidenceFactory.createEvidenceForGene(gene = "gene 1", geneEvent = GeneEvent.FUSION)
+        val evidenceForGene2 = TestServeEvidenceFactory.createEvidenceForGene(gene = "gene 2", geneEvent = GeneEvent.ANY_MUTATION)
+        val evidenceForGene3 = TestServeEvidenceFactory.createEvidenceForGene(gene = "gene 1", geneEvent = GeneEvent.INACTIVATION)
         val fusionEvidence =
             FusionEvidence.create(evidences = listOf(evidenceForGene1, evidenceForGene2, evidenceForGene3), trials = emptyList())
 
@@ -41,7 +41,14 @@ class FusionEvidenceTest {
     @Test
     fun `Should determine evidence for known fusions`() {
         val actionableFusionEvidence =
-            TestServeEvidenceFactory.create(molecularCriterium = TestServeMolecularFactory.createFusionCriterium("up", "down", 4, 6))
+            TestServeEvidenceFactory.create(
+                molecularCriterium = TestServeMolecularFactory.createFusionCriterium(
+                    geneUp = "up",
+                    geneDown = "down",
+                    minExonUp = 4,
+                    maxExonUp = 6
+                )
+            )
         val fusionEvidence = FusionEvidence.create(evidences = listOf(actionableFusionEvidence), trials = emptyList())
 
         val match = createFusionCriteria(isReportable = true, geneStart = "up", geneEnd = "down", fusedExonUp = 5)

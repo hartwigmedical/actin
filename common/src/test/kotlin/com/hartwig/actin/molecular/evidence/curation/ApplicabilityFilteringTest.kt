@@ -47,7 +47,8 @@ class ApplicabilityFilteringTest {
         ).isFalse()
         assertThat(
             ApplicabilityFiltering.isApplicable(
-                TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.ANY_MUTATION, "other").molecularCriterium().genes()
+                TestServeEvidenceFactory.createEvidenceForGene(gene = "other", geneEvent = GeneEvent.ANY_MUTATION).molecularCriterium()
+                    .genes()
                     .first()
             )
         ).isTrue()
@@ -55,22 +56,28 @@ class ApplicabilityFilteringTest {
         val nonApplicableAmp = TestApplicabilityFilteringUtil.nonApplicableAmplification()
         assertThat(
             ApplicabilityFiltering.isApplicable(
-                TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.ANY_MUTATION, nonApplicableAmp).molecularCriterium()
-                    .genes().first()
+                TestServeEvidenceFactory.createEvidenceForGene(gene = nonApplicableAmp, geneEvent = GeneEvent.ANY_MUTATION)
+                    .molecularCriterium()
+                    .genes()
+                    .first()
             )
         ).isTrue()
 
         assertThat(
             ApplicabilityFiltering.isApplicable(
-                TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.AMPLIFICATION, "other gene").molecularCriterium()
-                    .genes().first()
+                TestServeEvidenceFactory.createEvidenceForGene(gene = "other gene", geneEvent = GeneEvent.AMPLIFICATION)
+                    .molecularCriterium()
+                    .genes()
+                    .first()
             )
         ).isTrue()
 
         assertThat(
             ApplicabilityFiltering.isApplicable(
-                TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.AMPLIFICATION, nonApplicableAmp).molecularCriterium()
-                    .genes().first()
+                TestServeEvidenceFactory.createEvidenceForGene(gene = nonApplicableAmp, geneEvent = GeneEvent.AMPLIFICATION)
+                    .molecularCriterium()
+                    .genes()
+                    .first()
             )
         ).isFalse()
     }

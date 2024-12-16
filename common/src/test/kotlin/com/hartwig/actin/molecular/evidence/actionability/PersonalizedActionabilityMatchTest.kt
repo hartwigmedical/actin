@@ -27,11 +27,11 @@ class PersonalizedActionabilityMatchTest {
     @Test
     fun `Should extend actionable event with category event false when gene in included list of events, true otherwise`() {
         assertThat(
-            TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.AMPLIFICATION).molecularCriterium().genes().first()
+            TestServeEvidenceFactory.createEvidenceForGene(geneEvent = GeneEvent.AMPLIFICATION).molecularCriterium().genes().first()
                 .isCategoryEvent()
         ).isFalse()
         assertThat(
-            TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.ANY_MUTATION).molecularCriterium().genes().first()
+            TestServeEvidenceFactory.createEvidenceForGene(geneEvent = GeneEvent.ANY_MUTATION).molecularCriterium().genes().first()
                 .isCategoryEvent()
         ).isTrue()
     }

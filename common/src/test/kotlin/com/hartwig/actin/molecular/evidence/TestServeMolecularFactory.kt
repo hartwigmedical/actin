@@ -17,13 +17,14 @@ import java.time.LocalDate
 object TestServeMolecularFactory {
 
     fun createHotspotCriterium(
+        baseActionableEvent: ActionableEvent = createActionableEvent(),
         gene: String = "",
         chromosome: String = "",
         position: Int = 0,
         ref: String = "",
         alt: String = ""
     ): MolecularCriterium {
-        val actionableHotspot = ImmutableActionableHotspot.builder().from(createActionableEvent())
+        val actionableHotspot = ImmutableActionableHotspot.builder().from(baseActionableEvent)
             .gene(gene)
             .chromosome(chromosome)
             .position(position)
@@ -35,13 +36,14 @@ object TestServeMolecularFactory {
     }
 
     fun createCodonCriterium(
+        baseActionableEvent: ActionableEvent = createActionableEvent(),
         gene: String = "",
         chromosome: String = "",
         start: Int = 0,
         end: Int = 0,
         applicableMutationType: MutationType = MutationType.ANY
     ): MolecularCriterium {
-        val actionableCodon = ImmutableActionableRange.builder().from(createActionableEvent())
+        val actionableCodon = ImmutableActionableRange.builder().from(baseActionableEvent)
             .gene(gene)
             .chromosome(chromosome)
             .start(start)
@@ -53,13 +55,14 @@ object TestServeMolecularFactory {
     }
 
     fun createExonCriterium(
+        baseActionableEvent: ActionableEvent = createActionableEvent(),
         gene: String = "",
         chromosome: String = "",
         start: Int = 0,
         end: Int = 0,
         applicableMutationType: MutationType = MutationType.ANY
     ): MolecularCriterium {
-        val actionableExon = ImmutableActionableRange.builder().from(createActionableEvent())
+        val actionableExon = ImmutableActionableRange.builder().from(baseActionableEvent)
             .gene(gene)
             .chromosome(chromosome)
             .start(start)
@@ -71,11 +74,12 @@ object TestServeMolecularFactory {
     }
 
     fun createGeneCriterium(
+        baseActionableEvent: ActionableEvent = createActionableEvent(),
         gene: String = "",
         geneEvent: GeneEvent = GeneEvent.ANY_MUTATION,
         sourceEvent: String = ""
     ): MolecularCriterium {
-        val actionableGene = ImmutableActionableGene.builder().from(createActionableEvent())
+        val actionableGene = ImmutableActionableGene.builder().from(baseActionableEvent)
             .sourceEvent(sourceEvent)
             .event(geneEvent)
             .gene(gene)
@@ -85,12 +89,13 @@ object TestServeMolecularFactory {
     }
 
     fun createFusionCriterium(
+        baseActionableEvent: ActionableEvent = createActionableEvent(),
         geneUp: String = "",
         geneDown: String = "",
         minExonUp: Int? = null,
         maxExonUp: Int? = null
     ): MolecularCriterium {
-        val actionableFusion = ImmutableActionableFusion.builder().from(createActionableEvent())
+        val actionableFusion = ImmutableActionableFusion.builder().from(baseActionableEvent)
             .geneUp(geneUp)
             .geneDown(geneDown)
             .minExonUp(minExonUp)
@@ -100,14 +105,17 @@ object TestServeMolecularFactory {
         return ImmutableMolecularCriterium.builder().addFusions(actionableFusion).build()
     }
 
-    fun createCharacteristicCriterium(type: TumorCharacteristicType = TumorCharacteristicType.MICROSATELLITE_STABLE): MolecularCriterium {
-        val actionableCharacteristic = ImmutableActionableCharacteristic.builder().from(createActionableEvent()).type(type).build()
+    fun createCharacteristicCriterium(
+        baseActionableEvent: ActionableEvent = createActionableEvent(),
+        type: TumorCharacteristicType = TumorCharacteristicType.MICROSATELLITE_STABLE
+    ): MolecularCriterium {
+        val actionableCharacteristic = ImmutableActionableCharacteristic.builder().from(baseActionableEvent).type(type).build()
 
         return ImmutableMolecularCriterium.builder().addCharacteristics(actionableCharacteristic).build()
     }
 
-    fun createHLACriterium(): MolecularCriterium {
-        val actionableHLA = ImmutableActionableHLA.builder().from(createActionableEvent()).hlaAllele("").build()
+    fun createHLACriterium(baseActionableEvent: ActionableEvent = createActionableEvent()): MolecularCriterium {
+        val actionableHLA = ImmutableActionableHLA.builder().from(baseActionableEvent).hlaAllele("").build()
 
         return ImmutableMolecularCriterium.builder().addHla(actionableHLA).build()
     }
@@ -124,18 +132,22 @@ object TestServeMolecularFactory {
             .build()
     }
 
-    fun createActionableEvent(): ActionableEvent {
+    fun createActionableEvent(
+        sourceDate: LocalDate = LocalDate.of(2021, 2, 3),
+        sourceEvent: String = "",
+        sourceUrls: Set<String> = emptySet()
+    ): ActionableEvent {
         return object : ActionableEvent {
             override fun sourceDate(): LocalDate {
-                return LocalDate.of(2021, 2, 3)
+                return sourceDate
             }
 
             override fun sourceEvent(): String {
-                return ""
+                return sourceEvent
             }
 
             override fun sourceUrls(): Set<String> {
-                return setOf("https://url")
+                return sourceUrls
             }
         }
     }

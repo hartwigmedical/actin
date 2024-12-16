@@ -12,9 +12,9 @@ class CopyNumberEvidenceTest {
 
     @Test
     fun `Should determine copy number evidence`() {
-        val gene1 = TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.AMPLIFICATION, "gene 1")
-        val gene2 = TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.DELETION, "gene 2")
-        val gene3 = TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.INACTIVATION, "gene 1")
+        val gene1 = TestServeEvidenceFactory.createEvidenceForGene(gene = "gene 1", geneEvent = GeneEvent.AMPLIFICATION)
+        val gene2 = TestServeEvidenceFactory.createEvidenceForGene(gene = "gene 2", geneEvent = GeneEvent.DELETION)
+        val gene3 = TestServeEvidenceFactory.createEvidenceForGene(gene = "gene 1", geneEvent = GeneEvent.INACTIVATION)
         val copyNumberEvidence = CopyNumberEvidence.create(evidences = listOf(gene1, gene2, gene3), trials = emptyList())
 
         val ampGene1 = minimalCopyNumber().copy(

@@ -21,7 +21,7 @@ class ServeVerifierTest {
     @Test
     fun `Should pass on single profile evidence and trial`() {
         val evidence = TestServeEvidenceFactory.create(molecularCriterium = SINGLE_PROFILE_1)
-        val trial = TestServeTrialFactory.create(molecularCriteria = setOf(SINGLE_PROFILE_1, SINGLE_PROFILE_2))
+        val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(SINGLE_PROFILE_1, SINGLE_PROFILE_2))
 
         val database = toServeDatabase(evidence, trial)
         assertThatCode { ServeVerifier.verifyNoCombinedMolecularProfiles(database) }.doesNotThrowAnyException()
@@ -30,7 +30,7 @@ class ServeVerifierTest {
     @Test
     fun `Should throw exception on trial with at least one combined profile`() {
         val evidence = TestServeEvidenceFactory.create(molecularCriterium = SINGLE_PROFILE_1)
-        val trial = TestServeTrialFactory.create(molecularCriteria = setOf(SINGLE_PROFILE_1, COMBINED_PROFILE))
+        val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(SINGLE_PROFILE_1, COMBINED_PROFILE))
 
         val database = toServeDatabase(evidence, trial)
 
@@ -40,7 +40,7 @@ class ServeVerifierTest {
     @Test
     fun `Should throw exception on evidence based on a combined profile`() {
         val evidence = TestServeEvidenceFactory.create(molecularCriterium = COMBINED_PROFILE)
-        val trial = TestServeTrialFactory.create(molecularCriteria = setOf(SINGLE_PROFILE_1, SINGLE_PROFILE_2))
+        val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(SINGLE_PROFILE_1, SINGLE_PROFILE_2))
 
         val database = toServeDatabase(evidence, trial)
 

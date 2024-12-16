@@ -66,9 +66,9 @@ class VariantEvidenceTest {
 
     @Test
     fun `Should determine evidence for genes`() {
-        val gene1 = TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.ANY_MUTATION, "gene 1")
-        val gene2 = TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.ACTIVATION, "gene 2")
-        val gene3 = TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.AMPLIFICATION, "gene 2")
+        val gene1 = TestServeEvidenceFactory.createEvidenceForGene(gene = "gene 1", geneEvent = GeneEvent.ANY_MUTATION)
+        val gene2 = TestServeEvidenceFactory.createEvidenceForGene(gene = "gene 2", geneEvent = GeneEvent.ACTIVATION)
+        val gene3 = TestServeEvidenceFactory.createEvidenceForGene(gene = "gene 2", geneEvent = GeneEvent.AMPLIFICATION)
 
         val variantEvidence = VariantEvidence.create(evidences = listOf(gene1, gene2, gene3), trials = emptyList())
 

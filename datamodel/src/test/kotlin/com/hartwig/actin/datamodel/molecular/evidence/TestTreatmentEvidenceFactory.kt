@@ -88,14 +88,18 @@ object TestTreatmentEvidenceFactory {
     fun create(
         treatment: String,
         isOnLabel: Boolean,
+        sourceDate: LocalDate = LocalDate.of(2021, 2, 3),
+        sourceEvent: String = "",
         isCategoryEvent: Boolean = false,
+        matchedCancerType: String = "",
+        excludedCancerSubTypes: Set<String> = emptySet(),
         evidenceLevel: EvidenceLevel,
         evidenceLevelDetails: EvidenceLevelDetails,
         evidenceDirection: EvidenceDirection
     ) = TreatmentEvidence(
         treatment = treatment,
-        molecularMatch = MolecularMatchDetails(sourceDate = LocalDate.of(2021, 2, 3), sourceEvent = "", isCategoryEvent = isCategoryEvent),
-        applicableCancerType = CancerType(matchedCancerType = "", excludedCancerSubTypes = emptySet()),
+        molecularMatch = MolecularMatchDetails(sourceDate = sourceDate, sourceEvent = sourceEvent, isCategoryEvent = isCategoryEvent),
+        applicableCancerType = CancerType(matchedCancerType, excludedCancerSubTypes = excludedCancerSubTypes),
         isOnLabel = isOnLabel,
         evidenceLevel = evidenceLevel,
         evidenceLevelDetails = evidenceLevelDetails,

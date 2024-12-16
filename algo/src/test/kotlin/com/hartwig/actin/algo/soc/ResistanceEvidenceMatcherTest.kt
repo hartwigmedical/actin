@@ -28,7 +28,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private val INDICATION = TestServeFactory.createIndicationWithDoid("1520")
-private val MOLECULAR_CRITERIUM = TestServeMolecularFactory.createGeneCriterium("BRAF", GeneEvent.AMPLIFICATION, "BRAF amp")
+private val MOLECULAR_CRITERIUM =
+    TestServeMolecularFactory.createGeneCriterium(gene = "BRAF", geneEvent = GeneEvent.AMPLIFICATION, sourceEvent = "BRAF amp")
 private val EFFICACY_EVIDENCE = TestServeEvidenceFactory.create(
     source = ActionabilityConstants.EVIDENCE_SOURCE,
     treatment = "pembrolizumab",
@@ -78,7 +79,8 @@ class ResistanceEvidenceMatcherTest {
 
     @Test
     fun `Should find actionable gene in molecular history`() {
-        val amplificationWithResistanceEvidence = TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.AMPLIFICATION, "BRAF")
+        val amplificationWithResistanceEvidence =
+            TestServeEvidenceFactory.createEvidenceForGene(gene = "BRAF", geneEvent = GeneEvent.AMPLIFICATION)
         val hasAmplification = MolecularTestFactory.withCopyNumber(
             TestCopyNumberFactory.createMinimal().copy(
                 gene = "BRAF",
@@ -124,7 +126,7 @@ class ResistanceEvidenceMatcherTest {
 
     @Test
     fun `Should find actionable fusion in molecular history`() {
-        val fusionWithResistanceEvidence = TestServeEvidenceFactory.createEvidenceForGene(GeneEvent.FUSION, "gene 1")
+        val fusionWithResistanceEvidence = TestServeEvidenceFactory.createEvidenceForGene(gene = "gene 1", geneEvent = GeneEvent.FUSION)
         val hasFusion = MolecularTestFactory.withFusion(
             TestFusionFactory.createMinimal()
                 .copy(geneStart = "gene 1", driverType = FusionDriverType.PROMISCUOUS_5, isReportable = true)

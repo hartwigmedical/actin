@@ -22,19 +22,27 @@ object TestServeEvidenceFactory {
         ref: String = "",
         alt: String = ""
     ): EfficacyEvidence {
-        return create(molecularCriterium = TestServeMolecularFactory.createHotspotCriterium(gene, chromosome, position, ref, alt))
+        return create(
+            molecularCriterium = TestServeMolecularFactory.createHotspotCriterium(
+                gene = gene,
+                chromosome = chromosome,
+                position = position,
+                ref = ref,
+                alt = alt
+            )
+        )
     }
 
     fun createEvidenceForCodon(gene: String = ""): EfficacyEvidence {
-        return create(molecularCriterium = TestServeMolecularFactory.createCodonCriterium(gene))
+        return create(molecularCriterium = TestServeMolecularFactory.createCodonCriterium(gene = gene))
     }
 
     fun createEvidenceForExon(): EfficacyEvidence {
         return create(molecularCriterium = TestServeMolecularFactory.createExonCriterium())
     }
 
-    fun createEvidenceForGene(geneEvent: GeneEvent = GeneEvent.ANY_MUTATION, gene: String = ""): EfficacyEvidence {
-        return create(molecularCriterium = TestServeMolecularFactory.createGeneCriterium(gene, geneEvent))
+    fun createEvidenceForGene(gene: String = "", geneEvent: GeneEvent = GeneEvent.ANY_MUTATION): EfficacyEvidence {
+        return create(molecularCriterium = TestServeMolecularFactory.createGeneCriterium(gene = gene, geneEvent = geneEvent))
     }
 
     fun createEvidenceForFusion(): EfficacyEvidence {
@@ -42,7 +50,7 @@ object TestServeEvidenceFactory {
     }
 
     fun createEvidenceForCharacteristic(type: TumorCharacteristicType = TumorCharacteristicType.MICROSATELLITE_STABLE): EfficacyEvidence {
-        return create(molecularCriterium = TestServeMolecularFactory.createCharacteristicCriterium(type))
+        return create(molecularCriterium = TestServeMolecularFactory.createCharacteristicCriterium(type = type))
     }
 
     fun createEvidenceForHLA(): EfficacyEvidence {
@@ -55,6 +63,7 @@ object TestServeEvidenceFactory {
         indication: Indication = TestServeFactory.createEmptyIndication(),
         molecularCriterium: MolecularCriterium = TestServeMolecularFactory.createHotspotCriterium(),
         evidenceLevel: EvidenceLevel = EvidenceLevel.D,
+        evidenceLevelDetails: EvidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
         evidenceDirection: EvidenceDirection = EvidenceDirection.NO_BENEFIT
     ): EfficacyEvidence {
         return ImmutableEfficacyEvidence.builder()
@@ -64,7 +73,7 @@ object TestServeEvidenceFactory {
             .molecularCriterium(molecularCriterium)
             .efficacyDescription("efficacy description")
             .evidenceLevel(evidenceLevel)
-            .evidenceLevelDetails(EvidenceLevelDetails.GUIDELINE)
+            .evidenceLevelDetails(evidenceLevelDetails)
             .evidenceDirection(evidenceDirection)
             .evidenceYear(2021)
             .urls(emptySet())
