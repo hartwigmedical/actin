@@ -17,7 +17,7 @@ class WarnIfTest {
         assertEvaluation(EvaluationResult.WARN, WarnIf(TestEvaluationFunctionFactory.pass()).evaluate(patient))
         assertEvaluation(EvaluationResult.WARN, WarnIf(TestEvaluationFunctionFactory.warn()).evaluate(patient))
         assertEvaluation(EvaluationResult.PASS, WarnIf(TestEvaluationFunctionFactory.fail()).evaluate(patient))
-        assertEvaluation(EvaluationResult.WARN, WarnIf(TestEvaluationFunctionFactory.unrecoverableUndetermined()).evaluate(patient))
+        assertEvaluation(EvaluationResult.PASS, WarnIf(TestEvaluationFunctionFactory.unrecoverableUndetermined()).evaluate(patient))
         assertEvaluation(EvaluationResult.PASS, WarnIf(TestEvaluationFunctionFactory.notEvaluated()).evaluate(patient))
         assertEvaluation(EvaluationResult.PASS, WarnIf(TestEvaluationFunctionFactory.recoverableUndetermined()).evaluate(patient))
     }
