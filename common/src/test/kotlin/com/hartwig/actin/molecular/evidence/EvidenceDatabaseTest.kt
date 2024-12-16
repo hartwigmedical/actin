@@ -17,18 +17,6 @@ class EvidenceDatabaseTest {
     private val database = TestEvidenceDatabaseFactory.createProperDatabase()
 
     @Test
-    fun `Should match evidence for signatures`() {
-        assertEvidence(database.evidenceForMicrosatelliteStatus(false), expectedTreatmentMatches = 0, expectedTrialMatches = 0)
-        assertEvidence(database.evidenceForMicrosatelliteStatus(true), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
-        assertEvidence(database.evidenceForHomologousRepairStatus(false), expectedTreatmentMatches = 0, expectedTrialMatches = 0)
-        assertEvidence(database.evidenceForHomologousRepairStatus(true), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
-        assertEvidence(database.evidenceForTumorMutationalBurdenStatus(false), expectedTreatmentMatches = 0, expectedTrialMatches = 0)
-        assertEvidence(database.evidenceForTumorMutationalBurdenStatus(true), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
-        assertEvidence(database.evidenceForTumorMutationalLoadStatus(false), expectedTreatmentMatches = 0, expectedTrialMatches = 0)
-        assertEvidence(database.evidenceForTumorMutationalLoadStatus(true), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
-    }
-
-    @Test
     fun `Should match evidence for variants`() {
         val variant = VariantMatchCriteria(isReportable = true, gene = "", chromosome = "", position = 0, ref = "", alt = "")
         assertThat(database.geneAlterationForVariant(variant)).isNotNull()
@@ -85,6 +73,18 @@ class EvidenceDatabaseTest {
 
         val ebv = TestMolecularFactory.minimalVirus().copy(isReportable = true, type = VirusType.EPSTEIN_BARR_VIRUS)
         assertEvidence(database.evidenceForVirus(ebv), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
+    }
+
+    @Test
+    fun `Should match evidence for signatures`() {
+        assertEvidence(database.evidenceForMicrosatelliteStatus(false), expectedTreatmentMatches = 0, expectedTrialMatches = 0)
+        assertEvidence(database.evidenceForMicrosatelliteStatus(true), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
+        assertEvidence(database.evidenceForHomologousRepairStatus(false), expectedTreatmentMatches = 0, expectedTrialMatches = 0)
+        assertEvidence(database.evidenceForHomologousRepairStatus(true), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
+        assertEvidence(database.evidenceForTumorMutationalBurdenStatus(false), expectedTreatmentMatches = 0, expectedTrialMatches = 0)
+        assertEvidence(database.evidenceForTumorMutationalBurdenStatus(true), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
+        assertEvidence(database.evidenceForTumorMutationalLoadStatus(false), expectedTreatmentMatches = 0, expectedTrialMatches = 0)
+        assertEvidence(database.evidenceForTumorMutationalLoadStatus(true), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
     }
 
     private fun assertEvidence(evidence: ClinicalEvidence, expectedTreatmentMatches: Int, expectedTrialMatches: Int = 0) {
