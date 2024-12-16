@@ -20,8 +20,8 @@ data class Evaluation(
         return Evaluation(
             result = result,
             recoverable = recoverable,
-            inclusionMolecularEvents = if (other.result == EvaluationResult.PASS) inclusionMolecularEvents + other.inclusionMolecularEvents else inclusionMolecularEvents,
-            exclusionMolecularEvents = if (other.result == EvaluationResult.PASS) exclusionMolecularEvents + other.exclusionMolecularEvents else exclusionMolecularEvents,
+            inclusionMolecularEvents = inclusionMolecularEvents + other.inclusionMolecularEvents,
+            exclusionMolecularEvents = exclusionMolecularEvents + other.exclusionMolecularEvents,
             passSpecificMessages = passSpecificMessages + other.passSpecificMessages,
             passGeneralMessages = passGeneralMessages + other.passGeneralMessages,
             warnSpecificMessages = warnSpecificMessages + other.warnSpecificMessages,

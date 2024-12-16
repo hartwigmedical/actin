@@ -28,8 +28,8 @@ class WarnIf(private val function: EvaluationFunction) : EvaluationFunction {
                     recoverable = false,
                     inclusionMolecularEvents = emptySet(),
                     exclusionMolecularEvents = emptySet(),
-                    warnSpecificMessages = evaluation.undeterminedSpecificMessages + evaluation.passSpecificMessages,
-                    warnGeneralMessages = evaluation.undeterminedGeneralMessages + evaluation.passGeneralMessages,
+                    warnSpecificMessages = evaluation.undeterminedSpecificMessages,
+                    warnGeneralMessages = evaluation.undeterminedGeneralMessages,
                     isMissingGenesForSufficientEvaluation = evaluation.isMissingGenesForSufficientEvaluation
                 )
             }
