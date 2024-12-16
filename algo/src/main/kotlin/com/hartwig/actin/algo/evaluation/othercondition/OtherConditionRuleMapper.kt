@@ -186,14 +186,14 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
     }
 
     private fun hasHadOrganTransplantCreator(): FunctionCreator {
-        return { HasHadOrganTransplant(null) }
+        return { HasHadOrganTransplant(icdModel(), null) }
     }
 
     private fun hasHadOrganTransplantWithinYearsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val maxYearsAgo = functionInputResolver().createOneIntegerInput(function)
             val minYear = referenceDateProvider().year() - maxYearsAgo
-            HasHadOrganTransplant(minYear)
+            HasHadOrganTransplant(icdModel(), minYear)
         }
     }
 

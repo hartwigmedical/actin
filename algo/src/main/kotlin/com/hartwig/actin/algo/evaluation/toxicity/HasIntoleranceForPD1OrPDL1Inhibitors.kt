@@ -1,18 +1,20 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
-import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.fail
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.pass
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.warn
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.othercondition.PriorOtherConditionFunctions
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
+import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.datamodel.clinical.IcdCode
+import com.hartwig.actin.icd.IcdModel
 
-class HasIntoleranceForPD1OrPDL1Inhibitors(private val doidModel: DoidModel) : EvaluationFunction {
+class HasIntoleranceForPD1OrPDL1Inhibitors(private val icdModel: IcdModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val intolerances = record.intolerances.map { it.name }
@@ -25,14 +27,17 @@ class HasIntoleranceForPD1OrPDL1Inhibitors(private val doidModel: DoidModel) : E
                 "Patient has PD-1/PD-L1 intolerance(s): " + concat(intolerances)
             )
         } else {
-            val autoImmuneDiseaseTerms =
-                OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions).flatMap { it.doids }
-                    .filter { doidModel.doidWithParents(it).contains(DoidConstants.AUTOIMMUNE_DISEASE_DOID) }
-                    .map { doidModel.resolveTermForDoid(it) }.toSet()
+            val autoImmuneHistory = OtherConditionSelector.selectClinicallyRelevant(
+                PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(
+                    icdModel,
+                    record,
+                    IcdConstants.AUTOIMMUNE_DISEASE_SET.map { IcdCode(it) }.toSet()
+                ).fullMatches
+            ).map { it.name }
 
-            if (autoImmuneDiseaseTerms.isNotEmpty()) {
+            if (autoImmuneHistory.isNotEmpty()) {
                 warn(
-                    "Patient has autoimmune disease condition(s) " + concat(autoImmuneDiseaseTerms.filterNotNull())
+                    "Patient has autoimmune disease condition(s) " + concat(autoImmuneHistory)
                             + " which may indicate intolerance for immunotherapy",
                     "Patient may have PD-1/PD-L1 intolerance due to autoimmune disease"
                 )

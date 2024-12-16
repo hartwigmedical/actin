@@ -27,8 +27,6 @@ internal object OtherConditionTestFactory {
         name: String = "",
         year: Int? = null,
         month: Int? = null,
-        doids: Set<String> = emptySet(),
-        category: String = "",
         icdMainCode: String = "",
         icdExtensionCode: String? = null,
         isContraindication: Boolean = true
@@ -37,8 +35,6 @@ internal object OtherConditionTestFactory {
             name = name,
             year = year,
             month = month,
-            doids = doids,
-            category = category,
             icdCode = IcdCode(icdMainCode, icdExtensionCode),
             isContraindicationForTherapy = isContraindication,
         )

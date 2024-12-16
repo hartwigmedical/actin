@@ -133,7 +133,7 @@ data class CurationDatabaseContext(
             nonOncologicalHistoryCuration = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.NON_ONCOLOGICAL_HISTORY_TSV,
-                NonOncologicalHistoryConfigFactory(curationDoidValidator, icdModel),
+                NonOncologicalHistoryConfigFactory(icdModel),
                 CurationCategory.NON_ONCOLOGICAL_HISTORY
             ) { it.nonOncologicalHistoryEvaluatedInputs },
             complicationCuration = CurationDatabaseReader.read(

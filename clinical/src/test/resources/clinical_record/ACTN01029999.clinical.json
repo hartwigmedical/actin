@@ -163,10 +163,6 @@
       "name": "diabetes",
       "year": null,
       "month": null,
-      "doids": [
-        "0081062"
-      ],
-      "category": "",
       "icdCode": {
         "mainCode": "1A01.3",
         "extensionCode": null

@@ -18,7 +18,6 @@ private const val PRIOR_CONDITION_NAME = "prior_condition"
 
 private val PRIOR_OTHER_CONDITION = PriorOtherCondition(
     name = PRIOR_CONDITION_NAME,
-    category = "category",
     icdCode = IcdCode("icdCode"),
     isContraindicationForTherapy = true
 )

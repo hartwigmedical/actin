@@ -51,7 +51,7 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
     }
 
     private fun hasIntoleranceToPD1OrPDL1InhibitorsCreator(): FunctionCreator {
-        return { HasIntoleranceForPD1OrPDL1Inhibitors(doidModel()) }
+        return { HasIntoleranceForPD1OrPDL1Inhibitors(icdModel()) }
     }
 
     private fun hasHistoryAnaphylaxisCreator(): FunctionCreator {

@@ -291,8 +291,6 @@ internal class ClinicalDAO(private val context: DSLContext) {
                 Tables.PRIOROTHERCONDITION.NAME,
                 Tables.PRIOROTHERCONDITION.YEAR,
                 Tables.PRIOROTHERCONDITION.MONTH,
-                Tables.PRIOROTHERCONDITION.DOIDS,
-                Tables.PRIOROTHERCONDITION.CATEGORY,
                 Tables.PRIOROTHERCONDITION.ISCONTRAINDICATIONFORTHERAPY
             )
                 .values(
@@ -300,8 +298,6 @@ internal class ClinicalDAO(private val context: DSLContext) {
                     priorOtherCondition.name,
                     priorOtherCondition.year,
                     priorOtherCondition.month,
-                    DataUtil.concat(priorOtherCondition.doids),
-                    priorOtherCondition.category,
                     priorOtherCondition.isContraindicationForTherapy
                 )
                 .execute()

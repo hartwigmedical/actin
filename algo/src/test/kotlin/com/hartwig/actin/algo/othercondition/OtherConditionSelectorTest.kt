@@ -18,8 +18,6 @@ class OtherConditionSelectorTest {
     private fun create(isContraindicationForTherapy: Boolean): PriorOtherCondition {
         return PriorOtherCondition(
             name = "",
-            doids = emptySet(),
-            category = "",
             icdCode = IcdCode("", null),
             isContraindicationForTherapy = isContraindicationForTherapy,
         )

@@ -1,13 +1,12 @@
 package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.clinical.curation.CurationCategory
-import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 import com.hartwig.actin.icd.IcdModel
 
-class NonOncologicalHistoryConfigFactory(private val curationDoidValidator: CurationDoidValidator, private val icdModel: IcdModel) :
+class NonOncologicalHistoryConfigFactory(private val icdModel: IcdModel) :
     CurationConfigFactory<NonOncologicalHistoryConfig> {
     override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<NonOncologicalHistoryConfig> {
         val input = parts[fields["input"]!!]
@@ -49,13 +48,6 @@ class NonOncologicalHistoryConfigFactory(private val curationDoidValidator: Cura
         parts: Array<String>
     ): Pair<PriorOtherCondition?, List<CurationConfigValidationError>> {
         return if (!ignore && !isLVEF(fields, parts)) {
-            val (doids, doidValidationErrors) = validateDoids(
-                CurationCategory.NON_ONCOLOGICAL_HISTORY,
-                input,
-                "doids",
-                fields,
-                parts
-            ) { curationDoidValidator.isValidDiseaseDoidSet(it) }
             val (icdCode, icdValidationErrors) = validateIcd(CurationCategory.NON_ONCOLOGICAL_HISTORY, input, "icd", fields, parts, icdModel)
             val (isContraindicationForTherapy, isContraindicationForTherapyValidationErrors) = validateBoolean(
                 CurationCategory.NON_ONCOLOGICAL_HISTORY,
@@ -71,11 +63,9 @@ class NonOncologicalHistoryConfigFactory(private val curationDoidValidator: Cura
                 name = parts[fields["name"]!!],
                 year = year,
                 month = month,
-                doids = doids ?: emptySet(),
-                category = parts[fields["category"]!!],
                 icdCode = icdCode ?: IcdCode("", null),
                 isContraindicationForTherapy = isContraindicationForTherapy ?: false
-            ) to doidValidationErrors + icdValidationErrors + isContraindicationForTherapyValidationErrors + yearValidationErrors + monthValidationErrors
+            ) to icdValidationErrors + isContraindicationForTherapyValidationErrors + yearValidationErrors + monthValidationErrors
         } else {
             null to emptyList()
         }

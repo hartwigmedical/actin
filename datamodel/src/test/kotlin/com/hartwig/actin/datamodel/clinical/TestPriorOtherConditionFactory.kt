@@ -5,7 +5,6 @@ object TestPriorOtherConditionFactory {
     fun createMinimal(): PriorOtherCondition {
         return PriorOtherCondition(
             name = "",
-            category = "",
             icdCode = IcdCode("", null),
             isContraindicationForTherapy = false
         )
@@ -14,7 +13,6 @@ object TestPriorOtherConditionFactory {
     fun create(name: String, year: Int?, month: Int?, icdCode: String = "", icdExtensionCode: String? = null): PriorOtherCondition {
         return PriorOtherCondition(
             name = name,
-            category = "",
             icdCode = IcdCode(icdCode, icdExtensionCode),
             isContraindicationForTherapy = false,
             year = year,
