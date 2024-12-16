@@ -9,8 +9,8 @@ class WarnIf(private val function: EvaluationFunction) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val evaluation: Evaluation = function.evaluate(record)
-        return when {
-            evaluation.result == EvaluationResult.PASS -> {
+        return when (evaluation.result) {
+            EvaluationResult.PASS -> {
                 Evaluation(
                     result = EvaluationResult.WARN,
                     recoverable = evaluation.recoverable,
@@ -22,19 +22,7 @@ class WarnIf(private val function: EvaluationFunction) : EvaluationFunction {
                 )
             }
 
-            evaluation.result == EvaluationResult.UNDETERMINED && !evaluation.recoverable -> {
-                Evaluation(
-                    result = EvaluationResult.WARN,
-                    recoverable = false,
-                    inclusionMolecularEvents = emptySet(),
-                    exclusionMolecularEvents = emptySet(),
-                    warnSpecificMessages = evaluation.undeterminedSpecificMessages,
-                    warnGeneralMessages = evaluation.undeterminedGeneralMessages,
-                    isMissingGenesForSufficientEvaluation = evaluation.isMissingGenesForSufficientEvaluation
-                )
-            }
-
-            evaluation.result == EvaluationResult.WARN -> {
+            EvaluationResult.WARN -> {
                 evaluation.copy(
                     inclusionMolecularEvents = emptySet(),
                     exclusionMolecularEvents = emptySet(),
