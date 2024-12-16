@@ -9,44 +9,38 @@ class WarnIf(private val function: EvaluationFunction) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val evaluation: Evaluation = function.evaluate(record)
-        return when (evaluation.result) {
-            EvaluationResult.PASS -> {
-                Evaluation(
-                    result = EvaluationResult.WARN,
-                    recoverable = evaluation.recoverable,
-                    inclusionMolecularEvents = emptySet(),
-                    exclusionMolecularEvents = emptySet(),
-                    warnSpecificMessages = evaluation.passSpecificMessages,
-                    warnGeneralMessages = evaluation.passGeneralMessages,
-                    isMissingGenesForSufficientEvaluation = evaluation.isMissingGenesForSufficientEvaluation
-                )
-            }
-
-            EvaluationResult.WARN -> {
-                evaluation.copy(
-                    inclusionMolecularEvents = emptySet(),
-                    exclusionMolecularEvents = emptySet(),
-                    isMissingGenesForSufficientEvaluation = evaluation.isMissingGenesForSufficientEvaluation
-                )
-            }
-
-            else -> {
-                Evaluation(
-                    result = EvaluationResult.PASS,
-                    recoverable = evaluation.recoverable,
-                    inclusionMolecularEvents = emptySet(),
-                    exclusionMolecularEvents = emptySet(),
-                    passSpecificMessages = (
-                            evaluation.passSpecificMessages + evaluation.warnSpecificMessages + evaluation.undeterminedSpecificMessages
-                                    + evaluation.failSpecificMessages
-                            ),
-                    passGeneralMessages = (
-                            evaluation.passGeneralMessages + evaluation.warnGeneralMessages + evaluation.undeterminedGeneralMessages
-                                    + evaluation.failGeneralMessages
-                            ),
-                    isMissingGenesForSufficientEvaluation = evaluation.isMissingGenesForSufficientEvaluation
-                )
-            }
+        if (evaluation.result == EvaluationResult.PASS) {
+            return Evaluation(
+                result = EvaluationResult.WARN,
+                recoverable = evaluation.recoverable,
+                inclusionMolecularEvents = emptySet(),
+                exclusionMolecularEvents = emptySet(),
+                warnSpecificMessages = evaluation.passSpecificMessages,
+                warnGeneralMessages = evaluation.passGeneralMessages,
+                isMissingGenesForSufficientEvaluation = evaluation.isMissingGenesForSufficientEvaluation
+            )
+        } else if (evaluation.result == EvaluationResult.WARN) {
+            return evaluation.copy(
+                inclusionMolecularEvents = emptySet(),
+                exclusionMolecularEvents = emptySet(),
+                isMissingGenesForSufficientEvaluation = evaluation.isMissingGenesForSufficientEvaluation
+            )
         }
+
+        return Evaluation(
+            result = EvaluationResult.PASS,
+            recoverable = evaluation.recoverable,
+            inclusionMolecularEvents = emptySet(),
+            exclusionMolecularEvents = emptySet(),
+            passSpecificMessages = (
+                    evaluation.passSpecificMessages + evaluation.warnSpecificMessages + evaluation.undeterminedSpecificMessages
+                            + evaluation.failSpecificMessages
+                    ),
+            passGeneralMessages = (
+                    evaluation.passGeneralMessages + evaluation.warnGeneralMessages + evaluation.undeterminedGeneralMessages
+                            + evaluation.failGeneralMessages
+                    ),
+            isMissingGenesForSufficientEvaluation = evaluation.isMissingGenesForSufficientEvaluation
+        )
     }
 }
