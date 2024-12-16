@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.molecular.GeneRole
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.Variant
-import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptImpactFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -108,7 +108,7 @@ class GeneHasActivatingMutationTest {
                 gene = GENE,
                 isReportable = false,
                 isHotspot = false,
-                canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(codingEffect = CodingEffect.MISSENSE)
+                canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(codingEffect = CodingEffect.MISSENSE)
             )
         )
     }
@@ -277,7 +277,8 @@ class GeneHasActivatingMutationTest {
             extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.8)
         )
 
-        private fun impactWithCodon(affectedCodon: Int) = TestTranscriptImpactFactory.createMinimal().copy(affectedCodon = affectedCodon)
+        private fun impactWithCodon(affectedCodon: Int) =
+            TestTranscriptVariantImpactFactory.createMinimal().copy(affectedCodon = affectedCodon)
 
     }
 }

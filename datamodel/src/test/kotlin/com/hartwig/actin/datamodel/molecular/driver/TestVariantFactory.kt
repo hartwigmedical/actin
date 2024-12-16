@@ -16,7 +16,7 @@ object TestVariantFactory {
             ref = "",
             alt = "",
             type = VariantType.SNV,
-            canonicalImpact = TestTranscriptImpactFactory.createMinimal(),
+            canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal(),
             otherImpacts = emptySet(),
             isHotspot = false,
             isReportable = false,

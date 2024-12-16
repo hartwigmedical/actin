@@ -16,7 +16,7 @@ class CopyNumberEvidence(
 ) : EvidenceMatcher<CopyNumber> {
 
     override fun findMatches(event: CopyNumber): ActionableEvents {
-        return when (event.type) {
+        return when (event.canonicalImpact.type) {
             CopyNumberType.FULL_GAIN, CopyNumberType.PARTIAL_GAIN -> {
                 findMatches(event, actionableAmplifications)
             }

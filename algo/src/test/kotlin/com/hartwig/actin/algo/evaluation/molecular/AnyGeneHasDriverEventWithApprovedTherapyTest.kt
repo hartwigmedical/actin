@@ -7,7 +7,7 @@ import com.hartwig.actin.algo.evaluation.RuleMappingResourcesTestFactory
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TumorDetails
-import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptImpactFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.doid.TestDoidModelFactory.createMinimalTestDoidModel
 import org.junit.Test
@@ -16,12 +16,12 @@ private const val CORRECT_GENE = "BRAF"
 private const val CORRECT_PROTEIN_IMPACT = "V600E"
 private val CORRECT_VARIANT = TestVariantFactory.createMinimal().copy(
     gene = CORRECT_GENE,
-    canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(hgvsProteinImpact = CORRECT_PROTEIN_IMPACT),
+    canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(hgvsProteinImpact = CORRECT_PROTEIN_IMPACT),
     isReportable = true
 )
 private val INCORRECT_VARIANT = TestVariantFactory.createMinimal().copy(
     gene = "INCORRECT",
-    canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(hgvsProteinImpact = "INCORRECT"),
+    canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(hgvsProteinImpact = "INCORRECT"),
     isReportable = true
 )
 

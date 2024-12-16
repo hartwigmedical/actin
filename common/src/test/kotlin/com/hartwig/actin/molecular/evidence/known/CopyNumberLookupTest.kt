@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular.evidence.known
 
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalCopyNumber
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.minimalHomozygousDisruption
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import com.hartwig.serve.datamodel.molecular.gene.KnownCopyNumber
@@ -16,16 +17,28 @@ class CopyNumberLookupTest {
         val del: KnownCopyNumber = TestServeKnownFactory.copyNumberBuilder().gene("gene 2").event(GeneEvent.DELETION).build()
         val knownCopyNumbers = listOf(amp, del)
 
-        val ampOnGene1 = minimalCopyNumber().copy(gene = "gene 1", type = CopyNumberType.FULL_GAIN)
+        val ampOnGene1 = minimalCopyNumber().copy(
+            gene = "gene 1",
+            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN)
+        )
         assertThat(CopyNumberLookup.findForCopyNumber(knownCopyNumbers, ampOnGene1)).isEqualTo(amp)
 
-        val ampOnGene2 = minimalCopyNumber().copy(gene = "gene 2", type = CopyNumberType.FULL_GAIN)
+        val ampOnGene2 = minimalCopyNumber().copy(
+            gene = "gene 2",
+            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN)
+        )
         assertThat(CopyNumberLookup.findForCopyNumber(knownCopyNumbers, ampOnGene2)).isNull()
 
-        val delOnGene1 = minimalCopyNumber().copy(gene = "gene 1", type = CopyNumberType.LOSS)
+        val delOnGene1 = minimalCopyNumber().copy(
+            gene = "gene 1",
+            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS)
+        )
         assertThat(CopyNumberLookup.findForCopyNumber(knownCopyNumbers, delOnGene1)).isNull()
 
-        val delOnGene2 = minimalCopyNumber().copy(gene = "gene 2", type = CopyNumberType.LOSS)
+        val delOnGene2 = minimalCopyNumber().copy(
+            gene = "gene 2",
+            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS)
+        )
         assertThat(CopyNumberLookup.findForCopyNumber(knownCopyNumbers, delOnGene2)).isEqualTo(del)
     }
 

@@ -52,7 +52,7 @@ data class HomologousRepairDeficiencyGeneSummary(
                 .mapValues { it.value.toSet() }
 
             val hrdGenesWithDeletionOrPartialLoss = drivers.copyNumbers
-                .filter { it.type == CopyNumberType.LOSS && it.gene in MolecularConstants.HRD_GENES }
+                .filter { it.canonicalImpact.type == CopyNumberType.LOSS && it.gene in MolecularConstants.HRD_GENES }
                 .map(GeneAlteration::gene)
                 .toSet()
             val hrdGenesWithHomozygousDisruption = drivers.homozygousDisruptions.filter { it.gene in MolecularConstants.HRD_GENES }

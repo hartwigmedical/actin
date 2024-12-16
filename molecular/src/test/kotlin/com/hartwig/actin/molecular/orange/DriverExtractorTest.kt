@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular.orange
 
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVirusFactory
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
@@ -39,9 +40,21 @@ class DriverExtractorTest {
     @Test
     fun `Should determine reportable lost genes`() {
         val copyNumbers = listOf(
-            TestCopyNumberFactory.createMinimal().copy(gene = "gene 1", type = CopyNumberType.LOSS, isReportable = true),
-            TestCopyNumberFactory.createMinimal().copy(gene = "gene 2", type = CopyNumberType.FULL_GAIN, isReportable = true),
-            TestCopyNumberFactory.createMinimal().copy(gene = "gene 3", type = CopyNumberType.LOSS, isReportable = false)
+            TestCopyNumberFactory.createMinimal().copy(
+                gene = "gene 1",
+                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS),
+                isReportable = true
+            ),
+            TestCopyNumberFactory.createMinimal().copy(
+                gene = "gene 2",
+                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN),
+                isReportable = true
+            ),
+            TestCopyNumberFactory.createMinimal().copy(
+                gene = "gene 3",
+                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS),
+                isReportable = false
+            )
         )
         val lostGenes = extractor.reportableLostGenes(copyNumbers)
         assertThat(lostGenes).hasSize(1)

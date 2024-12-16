@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.clinical.PriorIHCTest
 import com.hartwig.actin.datamodel.molecular.GeneRole
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -78,9 +79,7 @@ class HasPositiveHER2ExpressionByIHCTest {
             gene = "ERBB2",
             geneRole = GeneRole.ONCO,
             proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-            type = CopyNumberType.FULL_GAIN,
-            minCopies = 20,
-            maxCopies = 20
+            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN, 20, 20)
         )
         val evaluation = function.evaluate(
             MolecularTestFactory.withCopyNumberAndPriorIHCTests(erbb2Amp, listOf(ihcTest(scoreValue = 2.0, scoreValueUnit = "+", impliesPotentialIndeterminateStatus = true)))

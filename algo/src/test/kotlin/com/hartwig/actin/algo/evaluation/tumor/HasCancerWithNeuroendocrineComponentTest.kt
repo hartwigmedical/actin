@@ -10,6 +10,7 @@ import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestHomozygousDisruptionFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.Test
@@ -63,7 +64,11 @@ class HasCancerWithNeuroendocrineComponentTest {
                     baseMolecular.copy(
                         drivers = baseMolecular.drivers.copy(
                             copyNumbers = listOf(
-                                TestCopyNumberFactory.createMinimal().copy(type = CopyNumberType.LOSS, isReportable = true, gene = "TP53")
+                                TestCopyNumberFactory.createMinimal().copy(
+                                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS),
+                                    isReportable = true,
+                                    gene = "TP53"
+                                )
                             ),
                             homozygousDisruptions = listOf(
                                 TestHomozygousDisruptionFactory.createMinimal().copy(isReportable = true, gene = "RB1")
