@@ -248,21 +248,21 @@ class ClinicalEvidenceFactoryTest {
         val invalidUrlTrial = TestServeTrialFactory.create(nctId = "NCT00000001", urls = setOf("this is not a valid url"))
 
         assertThatIllegalStateException().isThrownBy {
-            (ClinicalEvidenceFactory.create(
+            ClinicalEvidenceFactory.create(
                 onLabelEvidences = emptyList(),
                 offLabelEvidences = emptyList(),
                 matchingCriteriaAndIndicationsPerEligibleTrial = createTestMatchingCriteriaAndIndicationMap(invalidUrlTrial)
-            ))
+            )
         }
 
         val emptyUrlTrial = TestServeTrialFactory.create(nctId = "NCT00000001", urls = emptySet())
 
         assertThatIllegalStateException().isThrownBy {
-            (ClinicalEvidenceFactory.create(
+            ClinicalEvidenceFactory.create(
                 onLabelEvidences = emptyList(),
                 offLabelEvidences = emptyList(),
                 matchingCriteriaAndIndicationsPerEligibleTrial = createTestMatchingCriteriaAndIndicationMap(emptyUrlTrial)
-            ))
+            )
         }
     }
 
