@@ -21,6 +21,7 @@ object Formats {
     private val DECIMAL_FORMAT_SYMBOLS = DecimalFormatSymbols.getInstance(Locale.ENGLISH)
     private val TWO_DIGIT_FORMAT = DecimalFormat("#.##", DECIMAL_FORMAT_SYMBOLS)
     private val SINGLE_DIGIT_FORMAT = DecimalFormat("#.#", DECIMAL_FORMAT_SYMBOLS)
+    private val FORCED_SINGLE_DIGIT_FORMAT = DecimalFormat("#0.0", DECIMAL_FORMAT_SYMBOLS)
     private val NO_DIGIT_FORMAT = DecimalFormat("#", DECIMAL_FORMAT_SYMBOLS)
     private val PERCENTAGE_FORMAT = DecimalFormat("#'%'", DECIMAL_FORMAT_SYMBOLS)
     private val SINGLE_DIGIT_PERCENTAGE_FORMAT = DecimalFormat("#.#'%'", DECIMAL_FORMAT_SYMBOLS)
@@ -31,6 +32,10 @@ object Formats {
 
     fun singleDigitNumber(number: Number): String {
         return SINGLE_DIGIT_FORMAT.format(number)
+    }
+
+    fun forcedSingleDigitNumber(number: Number): String {
+        return FORCED_SINGLE_DIGIT_FORMAT.format(number)
     }
 
     fun noDigitNumber(number: Double): String {

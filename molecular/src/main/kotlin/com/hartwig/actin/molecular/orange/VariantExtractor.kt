@@ -4,7 +4,7 @@ import com.hartwig.actin.datamodel.molecular.CodingEffect
 import com.hartwig.actin.datamodel.molecular.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.GeneRole
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
-import com.hartwig.actin.datamodel.molecular.TranscriptImpact
+import com.hartwig.actin.datamodel.molecular.TranscriptVariantImpact
 import com.hartwig.actin.datamodel.molecular.Variant
 import com.hartwig.actin.datamodel.molecular.VariantEffect
 import com.hartwig.actin.datamodel.molecular.VariantType
@@ -130,14 +130,14 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
         }.maxByOrNull(PurpleDriver::driverLikelihood)
     }
 
-    private fun extractCanonicalImpact(variant: PurpleVariant): TranscriptImpact {
+    private fun extractCanonicalImpact(variant: PurpleVariant): TranscriptVariantImpact {
         if (!isEnsemblTranscript(variant.canonicalImpact())) {
             logger.warn("Canonical impact defined on non-ensembl transcript for variant '{}'", variant)
         }
         return toTranscriptImpact(variant.canonicalImpact())
     }
 
-    private fun extractOtherImpacts(variant: PurpleVariant): Set<TranscriptImpact> {
+    private fun extractOtherImpacts(variant: PurpleVariant): Set<TranscriptVariantImpact> {
         return variant.otherImpacts()
             .filter { purpleTranscriptImpact: PurpleTranscriptImpact -> isEnsemblTranscript(purpleTranscriptImpact) }
             .map { purpleTranscriptImpact: PurpleTranscriptImpact -> toTranscriptImpact(purpleTranscriptImpact) }
@@ -148,8 +148,8 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
         return purpleTranscriptImpact.transcript().startsWith(ENSEMBL_TRANSCRIPT_IDENTIFIER)
     }
 
-    private fun toTranscriptImpact(purpleTranscriptImpact: PurpleTranscriptImpact): TranscriptImpact {
-        return TranscriptImpact(
+    private fun toTranscriptImpact(purpleTranscriptImpact: PurpleTranscriptImpact): TranscriptVariantImpact {
+        return TranscriptVariantImpact(
             transcriptId = purpleTranscriptImpact.transcript(),
             hgvsCodingImpact = purpleTranscriptImpact.hgvsCodingImpact(),
             hgvsProteinImpact = AminoAcid.forceSingleLetterAminoAcids(purpleTranscriptImpact.hgvsProteinImpact()),

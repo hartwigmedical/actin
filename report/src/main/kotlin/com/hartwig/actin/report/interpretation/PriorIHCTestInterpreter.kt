@@ -32,7 +32,7 @@ class PriorIHCTestInterpreter {
     private fun formatValueBasedPriorTest(valueTest: PriorIHCTest): String {
         return valueTest.scoreValue?.let {
             return listOfNotNull(
-                "Score", valueTest.measure, valueTest.scoreValuePrefix, Formats.twoDigitNumber(it) + valueTest.scoreValueUnit
+                "Score", valueTest.measure, valueTest.scoreValuePrefix, Formats.twoDigitNumber(it) + valueTest.scoreValueUnit.orEmpty()
             ).joinToString(" ")
         } ?: ""
     }

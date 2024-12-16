@@ -11,7 +11,7 @@ internal object CopyNumberLookup {
     fun findForCopyNumber(knownCopyNumbers: Iterable<KnownCopyNumber>, copyNumber: CopyNumber): KnownCopyNumber? {
         for (knownCopyNumber in knownCopyNumbers) {
             val geneMatches = knownCopyNumber.gene() == copyNumber.gene
-            val interpretationMatches = interpretationMatchesEvent(copyNumber.type, knownCopyNumber.event())
+            val interpretationMatches = interpretationMatchesEvent(copyNumber.canonicalImpact.type, knownCopyNumber.event())
             if (geneMatches && interpretationMatches) {
                 return knownCopyNumber
             }

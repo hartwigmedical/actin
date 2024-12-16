@@ -7,20 +7,27 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.GeneRole
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import org.junit.Test
 
 private const val PLOIDY = 3.0
 
 class GeneIsAmplifiedTest {
-    private val passingAmp = TestCopyNumberFactory.createMinimal().copy(
+    private val passingAmpOnCanonicalTranscript = TestCopyNumberFactory.createMinimal().copy(
         gene = "gene A",
         geneRole = GeneRole.ONCO,
         proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
         isReportable = true,
-        type = CopyNumberType.FULL_GAIN,
-        minCopies = 40,
-        maxCopies = 40
+        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN, 40, 40)
+    )
+    private val passingAmpOnNonCanonicalTranscript = TestCopyNumberFactory.createMinimal().copy(
+        gene = "gene A",
+        geneRole = GeneRole.ONCO,
+        proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+        isReportable = true,
+        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(),
+        otherImpacts = setOf(TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN, 40, 40))
     )
     private val functionWithMinCopies = GeneIsAmplified("gene A", 5)
     private val functionWithNoMinCopies = GeneIsAmplified("gene A", null)
@@ -29,21 +36,22 @@ class GeneIsAmplifiedTest {
     fun `Should return undetermined when molecular record is empty`() {
         assertEvaluation(EvaluationResult.UNDETERMINED, TestPatientFactory.createEmptyMolecularTestPatientRecord())
     }
-    
+
     @Test
     fun `Should fail with minimal WGS record`() {
         assertEvaluation(EvaluationResult.FAIL, TestPatientFactory.createMinimalTestWGSPatientRecord())
     }
-    
+
     @Test
     fun `Should fail with null ploidy`() {
-        assertEvaluation(EvaluationResult.FAIL, MolecularTestFactory.withPloidyAndCopyNumber(null, passingAmp))
+        assertEvaluation(EvaluationResult.FAIL, MolecularTestFactory.withPloidyAndCopyNumber(null, passingAmpOnCanonicalTranscript))
     }
 
     @Test
     fun `Should warn with non-oncogene`() {
         assertEvaluation(
-            EvaluationResult.WARN, MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(geneRole = GeneRole.TSG))
+            EvaluationResult.WARN,
+            MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmpOnCanonicalTranscript.copy(geneRole = GeneRole.TSG))
         )
     }
 
@@ -51,7 +59,10 @@ class GeneIsAmplifiedTest {
     fun `Should warn with loss of function effect`() {
         assertEvaluation(
             EvaluationResult.WARN,
-            MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION))
+            MolecularTestFactory.withPloidyAndCopyNumber(
+                PLOIDY,
+                passingAmpOnCanonicalTranscript.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION)
+            )
         )
     }
 
@@ -59,7 +70,10 @@ class GeneIsAmplifiedTest {
     fun `Should warn with loss of function predicted effect`() {
         assertEvaluation(
             EvaluationResult.WARN,
-            MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION_PREDICTED))
+            MolecularTestFactory.withPloidyAndCopyNumber(
+                PLOIDY,
+                passingAmpOnCanonicalTranscript.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION_PREDICTED)
+            )
         )
     }
 
@@ -67,7 +81,12 @@ class GeneIsAmplifiedTest {
     fun `Should warn with unreportable amplification when no min copies requested`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            functionWithNoMinCopies.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(isReportable = false)))
+            functionWithNoMinCopies.evaluate(
+                MolecularTestFactory.withPloidyAndCopyNumber(
+                    PLOIDY,
+                    passingAmpOnCanonicalTranscript.copy(isReportable = false)
+                )
+            )
         )
     }
 
@@ -75,33 +94,70 @@ class GeneIsAmplifiedTest {
     fun `Should pass with unreportable amplification when min copies requested and satisfied`() {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
-            functionWithMinCopies.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(isReportable = false)))
+            functionWithMinCopies.evaluate(
+                MolecularTestFactory.withPloidyAndCopyNumber(
+                    PLOIDY,
+                    passingAmpOnCanonicalTranscript.copy(isReportable = false)
+                )
+            )
         )
     }
 
     @Test
     fun `Should pass with reportable full gain of function`() {
-        assertEvaluation(EvaluationResult.PASS, MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp))
+        assertEvaluation(EvaluationResult.PASS, MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmpOnCanonicalTranscript))
     }
 
     @Test
     fun `Should fail when requested min copy number is not satisfied`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            functionWithMinCopies.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(minCopies = 3)))
+            functionWithMinCopies.evaluate(
+                MolecularTestFactory.withPloidyAndCopyNumber(
+                    PLOIDY,
+                    passingAmpOnCanonicalTranscript.copy(
+                        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                            CopyNumberType.FULL_GAIN,
+                            3,
+                            40
+                        )
+                    )
+                )
+            )
         )
     }
 
     @Test
     fun `Should warn with reportable partial amplification`() {
-        assertEvaluation(EvaluationResult.WARN, MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(minCopies = 6)))
+        assertEvaluation(
+            EvaluationResult.WARN,
+            MolecularTestFactory.withPloidyAndCopyNumber(
+                PLOIDY,
+                passingAmpOnCanonicalTranscript.copy(
+                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                        CopyNumberType.FULL_GAIN,
+                        6,
+                        40
+                    )
+                )
+            )
+        )
     }
 
     @Test
     fun `Should fail with copy numbers below amplification threshold`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(minCopies = 4, maxCopies = 4))
+            MolecularTestFactory.withPloidyAndCopyNumber(
+                PLOIDY,
+                passingAmpOnCanonicalTranscript.copy(
+                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                        CopyNumberType.FULL_GAIN,
+                        4,
+                        4
+                    )
+                )
+            )
         )
     }
 
@@ -110,7 +166,32 @@ class GeneIsAmplifiedTest {
         val function = GeneIsAmplified("gene A", 4)
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(minCopies = 4, maxCopies = 4)))
+            function.evaluate(
+                MolecularTestFactory.withPloidyAndCopyNumber(
+                    PLOIDY,
+                    passingAmpOnCanonicalTranscript.copy(
+                        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
+                            CopyNumberType.FULL_GAIN,
+                            4,
+                            4
+                        )
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should warn with full gain on non-canonical transcript and no gain on canonical transcript`() {
+        val function = GeneIsAmplified("gene A", 4)
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(
+                MolecularTestFactory.withPloidyAndCopyNumber(
+                    PLOIDY,
+                    passingAmpOnNonCanonicalTranscript
+                )
+            )
         )
     }
 
