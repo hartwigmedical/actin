@@ -98,5 +98,4 @@ class EvidenceDatabaseTest {
             canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(type)
         )
     }
-
 }
