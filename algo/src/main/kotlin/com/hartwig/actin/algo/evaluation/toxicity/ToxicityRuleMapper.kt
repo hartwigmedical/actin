@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.toxicity
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
+import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 
@@ -12,8 +13,16 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
         return mapOf(
             EligibilityRule.HAS_INTOLERANCE_TO_NAME_X to hasIntoleranceWithSpecificNameCreator(),
             EligibilityRule.HAS_INTOLERANCE_WITH_ICD_TITLE_X to hasIntoleranceWithSpecificIcdTitleCreator(),
-            EligibilityRule.HAS_INTOLERANCE_TO_PLATINUM_COMPOUNDS to hasIntoleranceToPlatinumCompoundsCreator(),
-            EligibilityRule.HAS_INTOLERANCE_TO_TAXANE to hasIntoleranceToTaxaneCreator(),
+            EligibilityRule.HAS_INTOLERANCE_TO_PLATINUM_COMPOUNDS to hasDrugIntoleranceWithSpecificIcdExtensionCodeOrNameCreator(
+                IcdConstants.PLATINUM_COMPOUND_CODE,
+                PLATINUM_COMPOUNDS_SET,
+                "platinum compounds"
+            ),
+            EligibilityRule.HAS_INTOLERANCE_TO_TAXANE to hasDrugIntoleranceWithSpecificIcdExtensionCodeOrNameCreator(
+                IcdConstants.TAXANE_CODE,
+                TAXANE_SET,
+                "taxanes"
+            ),
             EligibilityRule.HAS_INTOLERANCE_RELATED_TO_STUDY_MEDICATION to hasIntoleranceRelatedToStudyMedicationCreator(),
             EligibilityRule.HAS_INTOLERANCE_FOR_PD_1_OR_PD_L1_INHIBITORS to hasIntoleranceToPD1OrPDL1InhibitorsCreator(),
             EligibilityRule.HAS_HISTORY_OF_ANAPHYLAXIS to hasHistoryAnaphylaxisCreator(),
@@ -38,12 +47,10 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
         }
     }
 
-    private fun hasIntoleranceToPlatinumCompoundsCreator(): FunctionCreator {
-        return { HasIntoleranceToPlatinumCompounds(icdModel()) }
-    }
-
-    private fun hasIntoleranceToTaxaneCreator(): FunctionCreator {
-        return { HasIntoleranceToTaxanes() }
+    private fun hasDrugIntoleranceWithSpecificIcdExtensionCodeOrNameCreator(
+        extensionCode: String, names: Set<String>, description: String
+    ): FunctionCreator {
+        return { HasDrugIntoleranceWithAnyIcdCodeOrName(icdModel(), extensionCode, names, description) }
     }
 
     private fun hasIntoleranceRelatedToStudyMedicationCreator(): FunctionCreator {
@@ -93,4 +100,19 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
         resources.algoConfiguration.warnIfToxicitiesNotFromQuestionnaire,
         referenceDateProvider().date()
     )
+
+    private val PLATINUM_COMPOUNDS_SET =
+        setOf(
+            "oxaliplatin",
+            "eloxatin",
+            "carboplatin",
+            "paraplatin",
+            "cisplatin",
+            "platinol",
+            "imifolatin",
+            "nedaplatin",
+            "NC-6004"
+        )
+
+    private val TAXANE_SET = setOf("paclitaxel", "docetaxel", "cabazitaxel", "nab-paclitaxel", "Abraxane", "Jevtana", "Tesetaxel")
 }

@@ -6,9 +6,16 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.icd.TestIcdFactory
 import org.junit.Test
 
-class HasIntoleranceToPlatinumCompoundsTest {
+private val PLATINUM_DRUG_SET = setOf("carboplatin", "cisplatin", "oxaliplatin")
 
-    private val function = HasIntoleranceToPlatinumCompounds(TestIcdFactory.createTestModel())
+class HasDrugIntoleranceWithAnyIcdCodeOrNameTest {
+
+    private val function = HasDrugIntoleranceWithAnyIcdCodeOrName(
+        TestIcdFactory.createTestModel(),
+        IcdConstants.PLATINUM_COMPOUND_CODE,
+        PLATINUM_DRUG_SET,
+        "platinum compounds"
+    )
 
     @Test
     fun `Should fail when no known intolerances are present`() {
@@ -27,7 +34,7 @@ class HasIntoleranceToPlatinumCompoundsTest {
 
     @Test
     fun `Should pass for intolerance matching on name only`() {
-        val match = ToxicityTestFactory.intolerance(name = HasIntoleranceToPlatinumCompounds.PLATINUM_COMPOUNDS.iterator().next())
+        val match = ToxicityTestFactory.intolerance(name = PLATINUM_DRUG_SET.iterator().next())
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withIntolerance(match))
         )
@@ -45,7 +52,7 @@ class HasIntoleranceToPlatinumCompoundsTest {
 
     @Test
     fun `Should pass when substring of intolerance name matches`() {
-        val match = ToxicityTestFactory.intolerance(name = "carboplatin chemotherapy allergy")
+        val match = ToxicityTestFactory.intolerance(name = "${PLATINUM_DRUG_SET.iterator().next()} chemotherapy allergy")
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withIntolerance(match))
