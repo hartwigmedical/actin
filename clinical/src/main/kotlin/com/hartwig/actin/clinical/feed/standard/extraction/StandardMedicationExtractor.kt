@@ -42,7 +42,8 @@ class StandardMedicationExtractor(
                     ehrPatientRecord.patientDetails.hashedId,
                     CurationCategory.MEDICATION_NAME,
                     atcNameOrInput,
-                    "Anti cancer medication $atcNameOrInput with ATC code $atcCode found which is not present in drug database. Please add the missing drug to drug database"
+                    "Anti cancer medication $atcNameOrInput with ATC code $atcCode found which is not present in drug database. " +
+                            "Please add the missing drug to drug database"
                 )
             } else null
 

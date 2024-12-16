@@ -68,7 +68,8 @@ class MedicationExtractor(
                                     patientId,
                                     CurationCategory.MEDICATION_NAME,
                                     name,
-                                    "Anti cancer medication $name with ATC code $atcCode found which is not present in drug database. Please add the missing drug to drug database"
+                                    "Anti cancer medication $name with ATC code $atcCode found which is not present in drug database. " +
+                                            "Please add the missing drug to drug database"
                                 )
                             )
                         )
