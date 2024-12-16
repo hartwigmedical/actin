@@ -9,10 +9,10 @@ import com.hartwig.actin.datamodel.molecular.Drivers
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
-import com.hartwig.actin.datamodel.molecular.TranscriptImpact
+import com.hartwig.actin.datamodel.molecular.TranscriptVariantImpact
 import com.hartwig.actin.datamodel.molecular.VariantType
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
-import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptImpactFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -230,11 +230,11 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
         evaluateFunctions(EvaluationResult.FAIL, record)
     }
 
-    private fun proteinImpact(hgvsProteinImpact: String): TranscriptImpact {
-        return TestTranscriptImpactFactory.createMinimal().copy(hgvsProteinImpact = hgvsProteinImpact)
+    private fun proteinImpact(hgvsProteinImpact: String): TranscriptVariantImpact {
+        return TestTranscriptVariantImpactFactory.createMinimal().copy(hgvsProteinImpact = hgvsProteinImpact)
     }
 
-    private fun impactWithExon(affectedExon: Int) = TestTranscriptImpactFactory.createMinimal().copy(affectedExon = affectedExon)
+    private fun impactWithExon(affectedExon: Int) = TestTranscriptVariantImpactFactory.createMinimal().copy(affectedExon = affectedExon)
 
     private fun evaluateFunctions(expected: EvaluationResult, record: PatientRecord) {
         assertThat(functionIncludingAllGenes.evaluate(record).result).isEqualTo(expected)

@@ -5,12 +5,12 @@
     "birthYear": 1980,
     "registrationDate": {
       "year": 2024,
-      "month": 10,
-      "day": 1
+      "month": 9,
+      "day": 10
     },
     "questionnaireDate": {
       "year": 2024,
-      "month": 10,
+      "month": 9,
       "day": 1
     },
     "hasHartwigSequencing": false
@@ -54,8 +54,10 @@
     "ecg": {
       "hasSigAberrationLatestECG": false,
       "aberrationDescription": "",
-      "qtcfValue": 430,
-      "qtcfUnit": "ms"
+      "qtcfMeasure": {
+        "value": 430.0,
+        "unit": "ms"
+      }
     },
     "lvef": 0.5,
     "hasComplications": true
@@ -158,10 +160,10 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 9
+        "day": 1
       },
       "code": "ALAT",
-      "name": "Alanine aminotransferase",
+      "name": "ALAT",
       "comparator": "",
       "value": 44.0,
       "unit": "UNITS_PER_LITER",
@@ -173,10 +175,10 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 9
+        "day": 1
       },
       "code": "ASAT",
-      "name": "Aspartate aminotransferase",
+      "name": "ASAT",
       "comparator": "",
       "value": 32.0,
       "unit": "UNITS_PER_LITER",
@@ -188,9 +190,9 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 9
+        "day": 1
       },
-      "code": "TOTAL_BILIRUBIN",
+      "code": "TBIL",
       "name": "total bilirubin",
       "comparator": "",
       "value": 8.0,
@@ -203,9 +205,9 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 9
+        "day": 1
       },
-      "code": "ALKALINE_PHOSPHATASE",
+      "code": "ALP",
       "name": "alkaline phosphatase",
       "comparator": "",
       "value": 500.0,
@@ -218,7 +220,7 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 9
+        "day": 1
       },
       "code": "Hb",
       "name": "hemoglobin",
@@ -233,9 +235,24 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 9
+        "day": 1
       },
-      "code": "THROMBOCYTES_ABS",
+      "code": "LEUKO-ABS",
+      "name": "absolute leukocyte count",
+      "comparator": "",
+      "value": 5.0,
+      "unit": "BILLIONS_PER_LITER",
+      "refLimitLow": 4.0,
+      "refLimitUp": 10.0,
+      "isOutsideRef": false
+    },
+    {
+      "date": {
+        "year": 2024,
+        "month": 9,
+        "day": 1
+      },
+      "code": "THROMBO-ABS",
       "name": "absolute thrombocyte count",
       "comparator": "",
       "value": 250.0,
@@ -248,15 +265,105 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 9
+        "day": 1
       },
-      "code": "LYMPHOCYTES_ABS_EDA",
+      "code": "LYMPHO-ABS",
       "name": "absolute lymphocyte count eDA",
       "comparator": "",
       "value": 3.0,
       "unit": "BILLIONS_PER_LITER",
       "refLimitLow": 0.5,
       "refLimitUp": 5.0,
+      "isOutsideRef": false
+    },
+    {
+      "date": {
+        "year": 2024,
+        "month": 9,
+        "day": 1
+      },
+      "code": "NEUTRO-ABS",
+      "name": "absolute neutrophil count eDA",
+      "comparator": "",
+      "value": 3.0,
+      "unit": "BILLIONS_PER_LITER",
+      "refLimitLow": 2.5,
+      "refLimitUp": 5.0,
+      "isOutsideRef": false
+    },
+    {
+      "date": {
+        "year": 2024,
+        "month": 9,
+        "day": 1
+      },
+      "code": "CREA",
+      "name": "creatinine",
+      "comparator": "",
+      "value": 45.0,
+      "unit": "MICROMOLES_PER_LITER",
+      "refLimitLow": 40.0,
+      "refLimitUp": 66.0,
+      "isOutsideRef": false
+    },
+    {
+      "date": {
+        "year": 2024,
+        "month": 9,
+        "day": 1
+      },
+      "code": "ALP",
+      "name": "alkaline phosphatase",
+      "comparator": "",
+      "value": 60.0,
+      "unit": "UNITS_PER_LITER",
+      "refLimitLow": 35.0,
+      "refLimitUp": 105.0,
+      "isOutsideRef": false
+    },
+    {
+      "date": {
+        "year": 2024,
+        "month": 9,
+        "day": 1
+      },
+      "code": "APTT",
+      "name": "APTT",
+      "comparator": "",
+      "value": 30.0,
+      "unit": "SECONDS",
+      "refLimitLow": 25.0,
+      "refLimitUp": 35.0,
+      "isOutsideRef": false
+    },
+    {
+      "date": {
+        "year": 2024,
+        "month": 9,
+        "day": 1
+      },
+      "code": "POCT_INR",
+      "name": "POCT INR",
+      "comparator": "",
+      "value": 1.0,
+      "unit": "INR",
+      "refLimitLow": 0.8,
+      "refLimitUp": 1.2,
+      "isOutsideRef": false
+    },
+    {
+      "date": {
+        "year": 2024,
+        "month": 9,
+        "day": 1
+      },
+      "code": "PT",
+      "name": "PT",
+      "comparator": "",
+      "value": 12.0,
+      "unit": "SECONDS",
+      "refLimitLow": 10.0,
+      "refLimitUp": 14.0,
       "isOutsideRef": false
     }
   ],
@@ -265,7 +372,7 @@
   "surgeries": [],
   "bodyWeights": [
     {
-      "date": "2024-09-09T08:00:00",
+      "date": "2024-09-01T08:00:00",
       "value": 55.0,
       "unit": "KILOGRAMS",
       "valid": true
@@ -287,19 +394,19 @@
   ],
   "vitalFunctions": [
     {
-      "date": "2024-09-09T08:00:00",
+      "date": "2024-09-09T00:00:00",
       "category": "NON_INVASIVE_BLOOD_PRESSURE",
-      "subCategory": "SYSTOLIC_BLOOD_PRESSURE",
+      "subcategory": "systolic blood pressure",
       "value": 130.0,
-      "unit": "MILLIMETERS_OF_MERCURY",
+      "unit": "mmHg",
       "valid": true
     },
     {
-      "date": "2024-09-09T08:00:00",
+      "date": "2024-09-09T00:00:00",
       "category": "NON_INVASIVE_BLOOD_PRESSURE",
-      "subCategory": "DIASTOLIC_BLOOD_PRESSURE",
+      "subcategory": "diastolic blood pressure",
       "value": 85.0,
-      "unit": "MILLIMETERS_OF_MERCURY",
+      "unit": "mmHg",
       "valid": true
     }
   ],

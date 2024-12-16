@@ -59,16 +59,10 @@ object WGSSummaryGeneratorFunctions {
                 .flatMap { (key, value) -> listOf(Cells.createKey(key), Cells.createValue(value)) }
             if (filteredContents.isNotEmpty() || hasTmbData) {
                 filteredContents.forEach(table::addCell)
-            } else {
-                table.addCell(
-                    Cells.createSpanningContent(
-                        "No mutations found",
-                        table
-                    )
-                )
             }
-            val (actionableEventsWithUnknownDriver, actionableEventsWithLowOrMediumDriver) = summarizer.actionableEventsThatAreNotKeyDrivers()
-                .partition { it.driverLikelihood == null }
+
+            val (actionableEventsWithUnknownDriver, actionableEventsWithLowOrMediumDriver) =
+                summarizer.actionableEventsThatAreNotKeyDrivers().partition { it.driverLikelihood == null }
 
             if (actionableEventsWithLowOrMediumDriver.isNotEmpty() || !isShort) {
                 table.addCell(Cells.createKey("Trial-relevant events, considered medium/low driver:"))
@@ -77,6 +71,12 @@ object WGSSummaryGeneratorFunctions {
             if (actionableEventsWithUnknownDriver.isNotEmpty()) {
                 table.addCell(Cells.createKey("Trial-relevant events, not considered a tumor driver:"))
                 table.addCell(potentiallyActionableEventsCell(actionableEventsWithUnknownDriver))
+            }
+
+            if (filteredContents.isEmpty() && !hasTmbData &&
+                actionableEventsWithLowOrMediumDriver.isEmpty() && actionableEventsWithUnknownDriver.isEmpty()
+            ) {
+                table.addCell(Cells.createSpanningContent("No mutations found", table))
             }
         } else {
             table.addCell(
@@ -89,13 +89,13 @@ object WGSSummaryGeneratorFunctions {
         return table
     }
 
-    private fun createTmbCells(
+    fun createTmbCells(
         molecular: MolecularTest,
         isShort: Boolean,
         table: Table
     ): Boolean {
         val tmbStatus = tumorMutationalLoadAndTumorMutationalBurdenStatus(molecular)
-        if (!isShort || tmbStatus != "${Formats.VALUE_UNKNOWN} / ${Formats.VALUE_UNKNOWN}") {
+        if (!isShort || tmbStatus != "TML ${Formats.VALUE_UNKNOWN} / TMB ${Formats.VALUE_UNKNOWN}") {
             table.addCell(Cells.createKey("Tumor mutational load / burden"))
             table.addCell(
                 tumorMutationalLoadAndTumorMutationalBurdenStatusCell(
@@ -158,7 +158,7 @@ object WGSSummaryGeneratorFunctions {
                 DriverLikelihood.HIGH -> ""
                 null -> {
                     if (driver is CopyNumber) {
-                        " (${driver.minCopies} copies - no amplification or deletion)"
+                        " (${driver.canonicalImpact.minCopies} copies - no amplification or deletion)"
                     } else " (dubious quality)"
                 }
             }

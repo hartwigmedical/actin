@@ -23,11 +23,11 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <serve.version>7.0.0</serve.version>
-        <actin-personalization.version>0.4.0</actin-personalization.version>
+        <serve.version>7.2.0</serve.version>
+        <actin-personalization.version>0.24.0</actin-personalization.version>
         <orange-datamodel.version>2.6.0</orange-datamodel.version>
-        <actin-transvar.version>0.4.1-beta.1</actin-transvar.version>
-        <actin-pave-lite.version>0.4.0</actin-pave-lite.version>
+        <actin-transvar.version>0.6.0</actin-transvar.version>
+        <actin-pave-lite.version>0.6.0</actin-pave-lite.version>
         <pave.version>1.6</pave.version>
 
         <!-- KD: Even though all code is in kotlin, the jooq code generator generates java code that needs to be compiled -->

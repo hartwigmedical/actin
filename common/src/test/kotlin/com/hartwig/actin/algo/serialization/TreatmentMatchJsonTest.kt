@@ -53,7 +53,8 @@ class TreatmentMatchJsonTest {
         val expectedJson = ("{\"patientId\":\"ACTN01029999\",\"sampleId\":\"ACTN01029999T\",\"trialSource\":\"Test hospital\","
                 + "\"referenceDate\":{\"year\":2021,\"month\":8,\"day\":2},\"referenceDateIsLive\":true,\"trialMatches\":["
                 + "{\"identification\":{\"trialId\":\"Test Trial 1\",\"open\":true,\"acronym\":\"TEST-1\","
-                + "\"title\":\"Example test trial 1\",\"nctId\":\"NCT00000010\",\"phase\":\"PHASE_1\"},\"isPotentiallyEligible\":true,\"evaluations\":[["
+                + "\"title\":\"Example test trial 1\",\"nctId\":\"NCT00000010\",\"phase\":\"PHASE_1\",\"source\":\"LKO\""
+                + ",\"locations\":[{\"id\":1,\"name\":\"Erasmus MC\"}]},\"isPotentiallyEligible\":true,\"evaluations\":[["
                 + "{\"references\":[{\"id\":\"I-01\",\"text\":\"Patient must be an adult\"}],"
                 + "\"function\":{\"rule\":\"IS_AT_LEAST_X_YEARS_OLD\",\"parameters\":[]}},"
                 + "{\"result\":\"PASS\",\"recoverable\":false,\"inclusionMolecularEvents\":[],\"exclusionMolecularEvents\":[],"
@@ -88,6 +89,7 @@ class TreatmentMatchJsonTest {
                 + "\"upperLimit\":18.8},\"pValue\":\"0.0002\"}]}]}],\"priorTherapies\":\"5-FU\",\"patientsPerRace\":null,"
                 + "\"patientsPerRegion\":null}],\"url\":\"http://www.ncbi.nlm.nih.gov/pubmed/12345678\"}]}],"
                 + "\"generalPfs\":{\"value\":136.5,\"numPatients\":98,\"min\":74,\"max\":281,\"iqr\":46.0},"
+                + "\"generalOs\":{\"value\":215.0,\"numPatients\":90,\"min\":121,\"max\":470,\"iqr\":110.1},"
                 + "\"resistanceEvidence\":[{\"event\":\"BRAF amp\",\"isTested\":null,\"isFound\":false,\"resistanceLevel\":\"A\",\"evidenceUrls\":[\"website\"],\"treatmentName\":\"Pembrolizumab\"}]}],"
                 + "\"personalizedDataAnalysis\":null,\"maxMolecularTestAge\":null}")
         assertThat(toJson(match)).isEqualTo(expectedJson)

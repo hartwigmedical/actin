@@ -3,7 +3,9 @@ package com.hartwig.actin.clinical.feed.emc
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.ClinicalIngestionFeedAdapter
+import com.hartwig.actin.clinical.DrugInteractionsDatabase
 import com.hartwig.actin.clinical.PatientIngestionResult
+import com.hartwig.actin.clinical.QtProlongatingDatabase
 import com.hartwig.actin.clinical.correction.QuestionnaireCorrection
 import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
@@ -203,6 +205,8 @@ class EmcClinicalFeedIngestor(
             curationDirectory: String,
             curationDatabaseContext: CurationDatabaseContext,
             atcModel: AtcModel,
+            drugInteractionsDatabase: DrugInteractionsDatabase,
+            qtProlongatingDatabase: QtProlongatingDatabase,
             doidModel: DoidModel,
             treatmentDatabase: TreatmentDatabase
         ) = EmcClinicalFeedIngestor(
@@ -224,7 +228,13 @@ class EmcClinicalFeedIngestor(
             labValueExtractor = LabValueExtractor.create(curationDatabaseContext),
             toxicityExtractor = ToxicityExtractor.create(curationDatabaseContext),
             intoleranceExtractor = IntoleranceExtractor.create(curationDatabaseContext, atcModel),
-            medicationExtractor = MedicationExtractor.create(curationDatabaseContext, atcModel, treatmentDatabase),
+            medicationExtractor = MedicationExtractor.create(
+                curationDatabaseContext,
+                atcModel,
+                drugInteractionsDatabase,
+                qtProlongatingDatabase,
+                treatmentDatabase
+            ),
             bloodTransfusionsExtractor = BloodTransfusionsExtractor.create(curationDatabaseContext),
             surgeryExtractor = SurgeryExtractor.create(curationDatabaseContext)
         )

@@ -10,6 +10,7 @@ import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.medication.MedicationCategories
 
 class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
+
     private val selector: MedicationSelector =
         MedicationSelector(MedicationStatusInterpreterOnEvaluationDate(referenceDateProvider().date(), null))
     private val categories: MedicationCategories = MedicationCategories.create(atcTree())
@@ -27,13 +28,10 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_ANY_CYP to getsAnyCypInhibitingOrInducingMedication(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_CYP_X to getsCYPXInhibitingOrInducingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_CYP_X to getsCYPSubstrateMedicationCreator(),
-            EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_PGP to getsPGPInhibitingMedicationCreator(),
-            EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_PGP to getsPGPSubstrateMedicationCreator(),
-            EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_BCRP to getsBCRPInhibitingMedicationCreator(),
-            EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_BCRP to getsBCRPSubstrateMedicationCreator(),
-            EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OATP1B1 to getsOATP1B1InhibitingMedicationCreator(),
-            EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_OATP1B1 to getsOATP1B1SubstrateMedicationCreator(),
-            EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_OATP1B3 to getsOATP1B3SubstrateMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_TRANSPORTER_X to getsTransporterInhibitingMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_TRANSPORTER_X to getsTransporterSubstrateMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OR_INHIBITING_ANY_NON_EVALUABLE_TRANSPORTER_X to
+                    getsAnyNonEvaluableTransporterSubstrateOrInhibitingMedicationCreator(),
             EligibilityRule.HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING to getsStableDosingAnticoagulantMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_HERBAL_MEDICATION to getsHerbalMedicationCreator(),
         )
@@ -72,7 +70,7 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     private fun getsCYPXInducingMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val termToFind = functionInputResolver().createOneCypInput(function)
-            CurrentlyGetsCypXInducingMedication(selector, termToFind.cyp)
+            CurrentlyGetsCypXInducingMedication(selector, MedicationUtil.extractCypString(termToFind))
         }
     }
 
@@ -80,14 +78,14 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneCypOneIntegerInput(function)
             val maxStopDate = referenceDateProvider().date().minusWeeks(input.integer.toLong())
-            HasRecentlyReceivedCypXInducingMedication(selector, input.cyp, maxStopDate)
+            HasRecentlyReceivedCypXInducingMedication(selector, MedicationUtil.extractCypString(input.cyp), maxStopDate)
         }
     }
 
     private fun getsCYPXInhibitingMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val termToFind = functionInputResolver().createOneCypInput(function)
-            CurrentlyGetsCypXInhibitingMedication(selector, termToFind.cyp)
+            CurrentlyGetsCypXInhibitingMedication(selector, MedicationUtil.extractCypString(termToFind))
         }
     }
 
@@ -98,43 +96,36 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     private fun getsCYPXInhibitingOrInducingMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val termToFind = functionInputResolver().createOneCypInput(function)
-            CurrentlyGetsCypXInhibitingOrInducingMedication(selector, termToFind.cyp)
+            CurrentlyGetsCypXInhibitingOrInducingMedication(selector, MedicationUtil.extractCypString(termToFind))
         }
     }
 
     private fun getsCYPSubstrateMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val termToFind = functionInputResolver().createOneCypInput(function)
-            CurrentlyGetsCypXSubstrateMedication(selector, termToFind.cyp)
+            CurrentlyGetsCypXSubstrateMedication(selector, MedicationUtil.extractCypString(termToFind))
         }
     }
 
-    private fun getsPGPInhibitingMedicationCreator(): FunctionCreator {
-        return { CurrentlyGetsTransporterInteractingMedication(selector, "PGP", DrugInteraction.Type.INHIBITOR) }
+    private fun getsTransporterInhibitingMedicationCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val termToFind = functionInputResolver().createOneTransporterInput(function).toString()
+            CurrentlyGetsTransporterInteractingMedication(selector, termToFind, DrugInteraction.Type.INHIBITOR)
+        }
     }
 
-    private fun getsPGPSubstrateMedicationCreator(): FunctionCreator {
-        return { CurrentlyGetsTransporterInteractingMedication(selector, "PGP", DrugInteraction.Type.SUBSTRATE) }
+    private fun getsTransporterSubstrateMedicationCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val termToFind = functionInputResolver().createOneTransporterInput(function).toString()
+            CurrentlyGetsTransporterInteractingMedication(selector, termToFind, DrugInteraction.Type.SUBSTRATE)
+        }
     }
 
-    private fun getsBCRPInhibitingMedicationCreator(): FunctionCreator {
-        return { CurrentlyGetsTransporterInteractingMedication(selector, "BCRP", DrugInteraction.Type.INHIBITOR) }
-    }
-
-    private fun getsBCRPSubstrateMedicationCreator(): FunctionCreator {
-        return { CurrentlyGetsTransporterInteractingMedication(selector, "BCRP", DrugInteraction.Type.SUBSTRATE) }
-    }
-
-    private fun getsOATP1B1InhibitingMedicationCreator(): FunctionCreator {
-        return { CurrentlyGetsTransporterInteractingMedication(selector, "OATP1B1", DrugInteraction.Type.INHIBITOR) }
-    }
-
-    private fun getsOATP1B1SubstrateMedicationCreator(): FunctionCreator {
-        return { CurrentlyGetsTransporterInteractingMedication(selector, "OATP1B1", DrugInteraction.Type.SUBSTRATE) }
-    }
-
-    private fun getsOATP1B3SubstrateMedicationCreator(): FunctionCreator {
-        return { CurrentlyGetsTransporterInteractingMedication(selector, "OATP1B3", DrugInteraction.Type.SUBSTRATE) }
+    private fun getsAnyNonEvaluableTransporterSubstrateOrInhibitingMedicationCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val types = functionInputResolver().createManyStringsInput(function)
+            CurrentlyGetsAnyNonEvaluableTransporterSubstrateOrInhibitingMedication(selector, types)
+        }
     }
 
     private fun getsStableDosingAnticoagulantMedicationCreator(): FunctionCreator {
@@ -149,10 +140,5 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun getsHerbalMedicationCreator(): FunctionCreator {
         return { CurrentlyGetsHerbalMedication(selector) }
-    }
-
-    companion object {
-        // Undetermined Cyp
-        val UNDETERMINED_CYP = setOf("2J2")
     }
 }

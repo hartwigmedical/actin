@@ -6,7 +6,7 @@ import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.VariantEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestDisruptionFactory
-import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptImpactFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.orange.driver.CodingContext
 import com.hartwig.actin.datamodel.molecular.orange.driver.RegionType
@@ -54,7 +54,7 @@ class GeneHasUTR3LossTest {
                 gene = TARGET_GENE,
                 isReportable = isReportable,
                 isHotspot = isHotspot,
-                canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(effects = setOf(VariantEffect.THREE_PRIME_UTR))
+                canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(effects = setOf(VariantEffect.THREE_PRIME_UTR))
             )
         )
     }

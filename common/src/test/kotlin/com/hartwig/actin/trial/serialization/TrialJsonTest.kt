@@ -30,8 +30,18 @@ class TrialJsonTest {
     @Test
     fun `Should read JSON records from directory`() {
         val trials = readFromDir(trialDirectory)
-        assertThat(trials).hasSize(1)
-        assertTrial(trials[0])
+        assertThat(trials).hasSize(2)
+        val testTrial = trials.find { it.identification.trialId == "test trial" }
+        val testTrial2 = trials.find { it.identification.trialId == "test trial 2" }
+        assertThat(testTrial).isNotNull
+        assertThat(testTrial2).isNotNull
+        assertTrial(testTrial!!)
+        assertThat(testTrial2!!.identification.trialId).isEqualTo("test trial 2")
+        assertThat(testTrial2.identification.acronym).isEqualTo("TEST-TRIAL2")
+        assertThat(testTrial2.identification.title).isEqualTo("This is a trial to test ACTIN")
+        assertThat(testTrial2.identification.phase).isNull()
+        assertThat(testTrial2.identification.source).isNull()
+        assertThat(testTrial2.identification.locations).isNull()
     }
 
     @Test(expected = IllegalArgumentException::class)

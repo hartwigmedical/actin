@@ -31,6 +31,7 @@ internal object QuestionnaireCuration {
                 "(yes/no)" to null,
                 "ye" to true,
                 "yes related to prostatecarcinoma" to true,
+                "yes (cervix)" to true,
                 "yes bone lesion l1 l2 with epidural extension" to true,
                 "yes manubrium sterni" to true,
                 "yes vertebra l2" to true,

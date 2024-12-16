@@ -1,9 +1,9 @@
 package com.hartwig.actin.datamodel.molecular.sort.driver
 
 import com.hartwig.actin.datamodel.molecular.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.TranscriptImpact
+import com.hartwig.actin.datamodel.molecular.TranscriptVariantImpact
 import com.hartwig.actin.datamodel.molecular.Variant
-import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptImpactFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -30,7 +30,7 @@ class VariantComparatorTest {
         driverLikelihood: DriverLikelihood, gene: String, hgvsProteinImpact: String,
         hgvsCodingImpact: String
     ): Variant {
-        val canonicalImpact: TranscriptImpact = TestTranscriptImpactFactory.createMinimal().copy(
+        val canonicalImpact: TranscriptVariantImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(
             hgvsProteinImpact = hgvsProteinImpact,
             hgvsCodingImpact = hgvsCodingImpact
         )

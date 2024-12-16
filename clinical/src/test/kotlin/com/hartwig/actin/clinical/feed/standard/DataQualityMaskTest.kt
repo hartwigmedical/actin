@@ -18,20 +18,38 @@ class DataQualityMaskTest {
     }
 
     @Test
-    fun `Should remove all NOT FOUND strings from molecular history`() {
+    fun `Should add always tested genes for archer and ngs panels`() {
         val ehrPatientRecord =
             EHR_PATIENT_RECORD.copy(
                 molecularTests = listOf(
                     ProvidedMolecularTest(
-                        test = "test",
+                        test = "Archer FusionPlex",
                         date = LocalDate.now(),
-                        results = setOf(ProvidedMolecularTestResult(hgvsProteinImpact = "NOT FOUND", hgvsCodingImpact = "NOT FOUND"))
+                        testedGenes = setOf("additional_gene"),
+                        results = emptySet()
+                    ),
+                    ProvidedMolecularTest(
+                        test = "NGS panel",
+                        date = LocalDate.now(),
+                        testedGenes = setOf("additional_gene"),
+                        results = emptySet()
                     )
                 )
             )
         val result = DataQualityMask().apply(ehrPatientRecord)
-        val testResult = result.molecularTests[0].results.iterator().next()
-        assertThat(testResult.hgvsCodingImpact).isNull()
-        assertThat(testResult.hgvsProteinImpact).isNull()
+        val archerTest = result.molecularTests[0]
+        val ngsTest = result.molecularTests[1]
+        assertThat(archerTest.testedGenes).containsExactly(
+            "ALK",
+            "ROS1",
+            "RET",
+            "MET",
+            "NTRK1",
+            "NTRK2",
+            "NTRK3",
+            "NRG1",
+            "additional_gene"
+        )
+        assertThat(ngsTest.testedGenes).containsExactly("EGFR", "BRAF", "KRAS", "additional_gene")
     }
 }

@@ -87,7 +87,7 @@ class MolecularClinicalEvidenceFunctionsTest {
                     )
                 )
             )
-        ).containsExactly("TMB high" to CLINICAL_EVIDENCE)
+        ).containsExactly("TMB High" to CLINICAL_EVIDENCE)
 
         assertThat(
             MolecularClinicalEvidenceFunctions.molecularEvidenceByEvent(
@@ -103,7 +103,7 @@ class MolecularClinicalEvidenceFunctionsTest {
                     )
                 )
             )
-        ).containsExactly("TML high" to CLINICAL_EVIDENCE)
+        ).containsExactly("TML High" to CLINICAL_EVIDENCE)
     }
 
     @Test
@@ -129,7 +129,7 @@ class MolecularClinicalEvidenceFunctionsTest {
                     )
                 )
             )
-        ).containsExactly("TMB high" to CLINICAL_EVIDENCE)
+        ).containsExactly("TMB High" to CLINICAL_EVIDENCE)
     }
 
     private fun molecularHistory(molecularRecord: MolecularRecord) = MolecularHistory(

@@ -46,7 +46,8 @@ class LocalExampleTreatmentMatchApplication {
                 resources = resources,
                 trials = trials,
                 efficacyEvidence = emptyList(),
-                resistanceEvidenceMatcher = createEmptyResistanceEvidenceMatcher()
+                resistanceEvidenceMatcher = createEmptyResistanceEvidenceMatcher(),
+                maxMolecularTestAge = null
             )
             .evaluateAndAnnotateMatchesForPatient(patient)
 

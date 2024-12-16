@@ -1,6 +1,7 @@
 package com.hartwig.actin.datamodel.molecular
 
 import com.hartwig.actin.datamodel.TestPatientFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.CountryName
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
@@ -23,7 +24,6 @@ import com.hartwig.actin.datamodel.molecular.orange.pharmaco.Haplotype
 import com.hartwig.actin.datamodel.molecular.orange.pharmaco.HaplotypeFunction
 import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoEntry
 import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoGene
-import com.hartwig.serve.datamodel.trial.ImmutableHospital
 import java.time.LocalDate
 
 object TestMolecularFactory {
@@ -169,9 +169,8 @@ object TestMolecularFactory {
         gene = "PTEN",
         geneRole = GeneRole.TSG,
         proteinEffect = ProteinEffect.LOSS_OF_FUNCTION,
-        type = CopyNumberType.LOSS,
-        minCopies = 0,
-        maxCopies = 0,
+        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS),
+        otherImpacts = emptySet(),
         isAssociatedWithDrugResistance = null
     )
 
@@ -181,7 +180,7 @@ object TestMolecularFactory {
         ref = "T",
         alt = "A",
         type = VariantType.SNV,
-        canonicalImpact = TranscriptImpact(
+        canonicalImpact = TranscriptVariantImpact(
             transcriptId = "ENST00000288602",
             hgvsCodingImpact = "c.1799T>A",
             hgvsProteinImpact = "p.V600E",
@@ -212,7 +211,7 @@ object TestMolecularFactory {
 
     fun createProperFusion() = Fusion(
         isReportable = true,
-        event = "EML4 - ALK fusion",
+        event = "EML4::ALK fusion",
         driverLikelihood = DriverLikelihood.HIGH,
         evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
         geneStart = "EML4",
@@ -274,18 +273,19 @@ object TestMolecularFactory {
                             countries = setOf(
                                 TestClinicalEvidenceFactory.createCountry(
                                     CountryName.BELGIUM,
-                                    mapOf("Leuven" to setOf(Hospital("hospital", null))
+                                    mapOf(
+                                        "Leuven" to setOf(Hospital("hospital", null))
+                                    )
                                 )
-                            )),
+                            ),
                             url = "https://clinicaltrials.gov/study/NCT00000011",
                             nctId = "NCT00000011",
                         )
                     )
                 ),
                 gene = "MYC",
-                type = CopyNumberType.FULL_GAIN,
-                minCopies = 38,
-                maxCopies = 38,
+                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN, 38, 38),
+                otherImpacts = emptySet(),
                 geneRole = GeneRole.UNKNOWN,
                 proteinEffect = ProteinEffect.UNKNOWN,
                 isAssociatedWithDrugResistance = null
@@ -295,9 +295,8 @@ object TestMolecularFactory {
                 driverLikelihood = null,
                 evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
                 gene = "MET",
-                type = CopyNumberType.NONE,
-                minCopies = 6,
-                maxCopies = 6,
+                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(minCopies = 6, maxCopies = 6),
+                otherImpacts = emptySet(),
                 geneRole = GeneRole.UNKNOWN,
                 proteinEffect = ProteinEffect.UNKNOWN,
                 isAssociatedWithDrugResistance = null
@@ -330,7 +329,7 @@ object TestMolecularFactory {
             ),
             fusions = proper.fusions + Fusion(
                 isReportable = false,
-                event = "EML4 - ALK fusion",
+                event = "EML4::ALK fusion",
                 driverLikelihood = DriverLikelihood.HIGH,
                 evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
                 geneStart = "EML4",
@@ -377,9 +376,8 @@ object TestMolecularFactory {
 
     fun minimalCopyNumber(): CopyNumber {
         return CopyNumber(
-            type = CopyNumberType.NONE,
-            minCopies = 0,
-            maxCopies = 0,
+            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(),
+            otherImpacts = emptySet(),
             isReportable = false,
             isAssociatedWithDrugResistance = false,
             event = "",
