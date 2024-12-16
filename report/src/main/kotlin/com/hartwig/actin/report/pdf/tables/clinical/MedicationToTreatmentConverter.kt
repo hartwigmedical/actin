@@ -50,8 +50,11 @@ object MedicationToTreatmentConverter {
             LocalDate.of(it, treatmentHistory.treatmentHistoryDetails?.stopMonth ?: 12, 31)
         }
 
-        return (medicationStart?.isAfter(treatmentStart) == true && (medicationStop?.isBefore(treatmentStop) == true ||
-                medicationStart.isBefore(treatmentStop))) || treatmentStart == null
+        return (medicationStart?.isAfter(treatmentStart) == true && (treatmentStop?.let {
+            medicationStop?.isBefore(it) == true || medicationStart.isBefore(
+                it
+            )
+        } == true)) || treatmentStart == null
     }
 
     private fun extractStartAndStopRange(medications: List<Medication>): Pair<LocalDate?, LocalDate?> {

@@ -24,7 +24,7 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
     }
 
     companion object {
-        val ANTI_CANCER_ATC_CODES = setOf("L01", "L02", "L04", "H01CC", "H01CA", "G03XA")
+        val ANTI_CANCER_ATC_CODES = setOf("L01", "L02", "H01CC", "H01CA", "G03XA")
 
         val MEDICATION_CATEGORIES_TO_TREATMENT_CATEGORY = mapOf(
             "Chemotherapy" to setOf(TreatmentCategory.CHEMOTHERAPY),
