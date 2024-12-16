@@ -43,8 +43,7 @@ internal object ToxicityTestFactory {
             type = "",
             clinicalStatus = clinicalStatus,
             verificationStatus = "",
-            criticality = "",
-            treatmentCategories = emptySet()
+            criticality = ""
         )
     }
 }

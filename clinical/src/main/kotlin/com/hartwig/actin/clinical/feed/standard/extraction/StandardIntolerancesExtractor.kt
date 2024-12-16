@@ -25,8 +25,7 @@ class StandardIntolerancesExtractor(
                 clinicalStatus = it.clinicalStatus,
                 verificationStatus = it.verificationStatus,
                 criticality = it.severity,
-                subcategories = emptySet(),
-                treatmentCategories = emptySet()
+                subcategories = emptySet()
             )
         }
             .map {
@@ -35,8 +34,7 @@ class StandardIntolerancesExtractor(
                     it.copy(
                         name = config.name,
                         icdCode = config.icd,
-                        subcategories = subcategoriesFromAtc(config),
-                        treatmentCategories = config.treatmentCategories
+                        subcategories = subcategoriesFromAtc(config)
                     )
                 } ?: it
                 ExtractionResult(listOf(curatedIntolerance), curationResponse.extractionEvaluation)
@@ -49,8 +47,7 @@ class StandardIntolerancesExtractor(
                     Intolerance(
                         name = config.name,
                         icdCode = config.icd,
-                        subcategories = subcategoriesFromAtc(config),
-                        treatmentCategories = config.treatmentCategories
+                        subcategories = subcategoriesFromAtc(config)
                     )
                 }, CurationExtractionEvaluation())
             } else {

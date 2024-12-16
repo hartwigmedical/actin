@@ -272,10 +272,7 @@
       "type": "Allergy",
       "clinicalStatus": "Active",
       "verificationStatus": "Confirmed",
-      "criticality": "Low",
-      "treatmentCategories": [
-        "SUPPORTIVE_TREATMENT"
-      ]
+      "criticality": "Low"
     }
   ],
   "surgeries": [

@@ -1,4 +1,4 @@
-input	name	icd	treatmentCategories
-Simvastatine	Simvastatine	node 1	Supportive treatment
-MORFINE	Morfine	node 2	Supportive treatment
-Nikkel	Nikkel	node 3	Supportive treatment
+input	name	icd
+Simvastatine	Simvastatine	node 1
+MORFINE	Morfine	node 2
+Nikkel	Nikkel	node 3

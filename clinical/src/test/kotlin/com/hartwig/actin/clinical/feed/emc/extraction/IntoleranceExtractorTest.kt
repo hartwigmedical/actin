@@ -39,15 +39,13 @@ class IntoleranceExtractorTest {
                 input = INTOLERANCE_INPUT,
                 ignore = false,
                 name = CURATED_INTOLERANCE,
-                icd = IcdCode(ICD, null),
-                treatmentCategories = emptySet()
+                icd = IcdCode(ICD, null)
             ),
             IntoleranceConfig(
                 input = INTOLERANCE_MEDICATION_INPUT,
                 ignore = false,
                 name = CURATED_MEDICATION_INTOLERANCE,
-                icd = IcdCode(ICD, null),
-                treatmentCategories = emptySet()
+                icd = IcdCode(ICD, null)
             )
         ), atcModel
     )

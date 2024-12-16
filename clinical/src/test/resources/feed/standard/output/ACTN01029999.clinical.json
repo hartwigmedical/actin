@@ -278,8 +278,7 @@
       "type": null,
       "clinicalStatus": "Active",
       "verificationStatus": "Confirmed",
-      "criticality": "Unknown",
-      "treatmentCategories": ["SUPPORTIVE_TREATMENT"]
+      "criticality": "Unknown"
     },
     {
       "name": "Nikkel",
@@ -292,8 +291,7 @@
       "type": null,
       "clinicalStatus": "Active",
       "verificationStatus": "Confirmed",
-      "criticality": "Unknown",
-      "treatmentCategories": ["SUPPORTIVE_TREATMENT"]
+      "criticality": "Unknown"
     }
   ],
   "surgeries": [

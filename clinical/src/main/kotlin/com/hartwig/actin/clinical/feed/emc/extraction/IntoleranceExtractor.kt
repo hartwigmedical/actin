@@ -25,8 +25,7 @@ class IntoleranceExtractor(private val intoleranceCuration: CurationDatabase<Int
                 clinicalStatus = CurationUtil.capitalizeFirstLetterOnly(entry.clinicalStatus),
                 verificationStatus = CurationUtil.capitalizeFirstLetterOnly(entry.verificationStatus),
                 criticality = CurationUtil.capitalizeFirstLetterOnly(entry.criticality),
-                subcategories = emptySet(),
-                treatmentCategories = emptySet()
+                subcategories = emptySet()
             )
         }
             .map {
@@ -40,8 +39,7 @@ class IntoleranceExtractor(private val intoleranceCuration: CurationDatabase<Int
                     it.copy(
                         name = config.name,
                         icdCode = config.icd,
-                        subcategories = subcategories,
-                        treatmentCategories = config.treatmentCategories
+                        subcategories = subcategories
                     )
                 } ?: it
                 ExtractionResult(listOf(curatedIntolerance), curationResponse.extractionEvaluation)

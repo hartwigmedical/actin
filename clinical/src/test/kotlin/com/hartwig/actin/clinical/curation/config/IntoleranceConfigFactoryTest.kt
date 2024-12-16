@@ -32,7 +32,6 @@ class IntoleranceConfigFactoryTest {
         assertThat(config.config.name).isEqualTo("name")
         assertThat(config.config.icd.mainCode).isEqualTo(icdCodes.mainCode)
         assertThat(config.config.icd.extensionCode).isEqualTo(icdCodes.extensionCode)
-        assertThat(config.config.treatmentCategories).isEqualTo(setOf(TreatmentCategory.IMMUNOTHERAPY))
     }
 
     @Test
@@ -42,7 +41,6 @@ class IntoleranceConfigFactoryTest {
 
         val config = victim.create(fields, arrayOf("input", "name", icdTitle, ""))
         assertThat(config.errors).isEmpty()
-        assertThat(config.config.treatmentCategories).isEqualTo(emptySet<TreatmentCategory>())
     }
 
     @Test

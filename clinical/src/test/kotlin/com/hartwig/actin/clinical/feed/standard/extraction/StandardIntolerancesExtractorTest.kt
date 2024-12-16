@@ -8,7 +8,6 @@ import com.hartwig.actin.clinical.feed.standard.ProvidedAllergy
 import com.hartwig.actin.clinical.feed.standard.ProvidedPriorOtherCondition
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
-import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -57,8 +56,7 @@ class StandardIntolerancesExtractorTest {
                 verificationStatus = VERIFICATION_STATUS,
                 criticality = SEVERITY,
                 icdCode = IcdCode("", null),
-                subcategories = emptySet(),
-                treatmentCategories = emptySet()
+                subcategories = emptySet()
             )
         )
     }
@@ -70,8 +68,7 @@ class StandardIntolerancesExtractorTest {
             IntoleranceConfig(
                 input = NAME,
                 name = CURATED,
-                icd = IcdCode(ICD, null),
-                treatmentCategories = setOf(TreatmentCategory.CHEMOTHERAPY)
+                icd = IcdCode(ICD, null)
             )
         )
         val results = extractor.extract(EHR_PATIENT_RECORD)
@@ -83,8 +80,7 @@ class StandardIntolerancesExtractorTest {
                 clinicalStatus = CLINICAL_STATUS,
                 verificationStatus = VERIFICATION_STATUS,
                 criticality = SEVERITY,
-                subcategories = setOf(SUBCATEGORY),
-                treatmentCategories = setOf(TreatmentCategory.CHEMOTHERAPY)
+                subcategories = setOf(SUBCATEGORY)
             )
         )
         assertThat(results.evaluation.warnings).isEmpty()
@@ -99,14 +95,12 @@ class StandardIntolerancesExtractorTest {
             IntoleranceConfig(
                 input = NAME,
                 name = CURATED,
-                icd = IcdCode(ICD, null),
-                treatmentCategories = setOf(TreatmentCategory.CHEMOTHERAPY)
+                icd = IcdCode(ICD, null)
             ),
             IntoleranceConfig(
                 input = NAME,
                 name = anotherCurated,
-                icd = IcdCode(ICD, null),
-                treatmentCategories = emptySet()
+                icd = IcdCode(ICD, null)
             )
         )
         val results = extractor.extract(
@@ -122,14 +116,12 @@ class StandardIntolerancesExtractorTest {
             Intolerance(
                 name = CURATED,
                 icdCode = IcdCode(ICD, null),
-                subcategories = setOf(SUBCATEGORY),
-                treatmentCategories = setOf(TreatmentCategory.CHEMOTHERAPY)
+                subcategories = setOf(SUBCATEGORY)
             ),
             Intolerance(
                 name = anotherCurated,
                 icdCode = IcdCode(ICD, null),
-                subcategories = emptySet(),
-                treatmentCategories = emptySet()
+                subcategories = emptySet()
             )
         )
         assertThat(results.evaluation.warnings).isEmpty()

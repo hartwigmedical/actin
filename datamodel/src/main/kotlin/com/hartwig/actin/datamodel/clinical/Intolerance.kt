@@ -1,7 +1,5 @@
 package com.hartwig.actin.datamodel.clinical
 
-import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
-
 data class Intolerance(
     val name: String,
     override val icdCode: IcdCode,
@@ -10,6 +8,5 @@ data class Intolerance(
     val type: String? = null,
     val clinicalStatus: String? = null,
     val verificationStatus: String? = null,
-    val criticality: String? = null,
-    val treatmentCategories: Set<TreatmentCategory>? = null
+    val criticality: String? = null
 ): IcdCodeHolder

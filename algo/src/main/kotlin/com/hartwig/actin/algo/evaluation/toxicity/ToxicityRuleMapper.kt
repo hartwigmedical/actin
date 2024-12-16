@@ -66,7 +66,7 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
     }
 
     private fun hasExperiencedImmuneRelatedAdverseEventsCreator(): FunctionCreator {
-        return { HasExperiencedImmuneRelatedAdverseEvents() }
+        return { HasExperiencedImmuneRelatedAdverseEvents(icdModel()) }
     }
 
     private fun hasToxicityWithGradeCreator(): FunctionCreator {
