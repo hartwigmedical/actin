@@ -16,11 +16,11 @@ class EligibleActinTrialsGenerator(
     private val trialColWidth: Float,
     private val cohortColWidth: Float,
     private val molecularEventColWidth: Float,
-    private val hospitalsColWidth: Float?,
+    private val locationColWidth: Float?,
     private val checksColWidth: Float
 ) : TableGenerator {
 
-    private val includeLocation = hospitalsColWidth != null
+    private val includeLocation = locationColWidth != null
 
     override fun title(): String {
         return title
@@ -29,9 +29,9 @@ class EligibleActinTrialsGenerator(
     override fun contents(): Table {
 
         val table = Tables.createFixedWidthCols(
-            trialColWidth, cohortColWidth + molecularEventColWidth + (hospitalsColWidth ?: 0f) + checksColWidth
+            trialColWidth, cohortColWidth + molecularEventColWidth + (locationColWidth ?: 0f) + checksColWidth
         )
-        val widths = listOfNotNull(cohortColWidth, molecularEventColWidth, hospitalsColWidth, checksColWidth).toFloatArray()
+        val widths = listOfNotNull(cohortColWidth, molecularEventColWidth, locationColWidth, checksColWidth).toFloatArray()
 
         if (cohorts.isNotEmpty()) {
             table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader("Trial")))
@@ -124,8 +124,8 @@ class EligibleActinTrialsGenerator(
             val trialColWidth = width / 9
             val cohortColWidth = width / 4
             val molecularColWidth = width / 7
-            val hospitalColWidth = if (includeLocation) width / 7 else 0f
-            val checksColWidth = width - (trialColWidth + cohortColWidth + molecularColWidth + hospitalColWidth)
+            val locationColWidth = if (includeLocation) width / 7 else 0f
+            val checksColWidth = width - (trialColWidth + cohortColWidth + molecularColWidth + locationColWidth)
             return EligibleActinTrialsGenerator(
                 cohorts,
                 title,
@@ -133,7 +133,7 @@ class EligibleActinTrialsGenerator(
                 trialColWidth,
                 cohortColWidth,
                 molecularColWidth,
-                hospitalColWidth.takeIf { includeLocation },
+                locationColWidth.takeIf { includeLocation },
                 checksColWidth
             )
         }
