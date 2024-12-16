@@ -43,18 +43,15 @@ object MedicationToTreatmentConverter {
     }
 
     private fun matchesDate(medication: Medication, treatmentHistory: TreatmentHistoryEntry): Boolean {
-        val medicationStart = medication.startDate
-        val medicationStop = medication.stopDate
+        val medicationStart = medication.startDate?.plusDays(1)
+        val medicationStop = medication.stopDate?.minusDays(1)
         val treatmentStart = treatmentHistory.startYear?.let { LocalDate.of(it, treatmentHistory.startMonth ?: 1, 1) }
         val treatmentStop = treatmentHistory.treatmentHistoryDetails?.stopYear?.let {
             LocalDate.of(it, treatmentHistory.treatmentHistoryDetails?.stopMonth ?: 12, 31)
         }
 
-        return (medicationStart?.isAfter(treatmentStart) == true && (treatmentStop?.let {
-            medicationStop?.isBefore(it) == true || medicationStart.isBefore(
-                it
-            )
-        } == true)) || treatmentStart == null
+        return (medicationStart?.isAfter(treatmentStart) == true && (treatmentStop == null ||
+                medicationStop?.isBefore(treatmentStop) == true || medicationStart.isBefore(treatmentStop))) || treatmentStart == null
     }
 
     private fun extractStartAndStopRange(medications: List<Medication>): Pair<LocalDate?, LocalDate?> {
