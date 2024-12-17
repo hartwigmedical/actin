@@ -167,13 +167,14 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         }
 
         val otherCohortGenerators = listOfNotNull(
-            otherOpenCohortsWithSlotsGenerators.takeIf {
-                report.config.includeTrialMatchingInSummary
-            }, otherOpenCohortsWithoutSlotsGenerators.takeIf { gens ->
+            otherOpenCohortsWithSlotsGenerators.takeIf { report.config.includeTrialMatchingInSummary },
+            otherOpenCohortsWithoutSlotsGenerators.takeIf { gens ->
                 report.config.includeTrialMatchingInSummary && (gens.sumOf { it.getCohortSize() } > 0 || report.config.includeEligibleButNoSlotsTableIfEmpty)
-            }, otherOpenCohortsWithMissingGenesGenerators.takeIf {
+            },
+            otherOpenCohortsWithMissingGenesGenerators.takeIf {
                 report.config.includeTrialMatchingInSummary
-            }).flatten().filterNotNull().filter { it.getCohortSize() > 0 }
+            }
+        ).flatten().filterNotNull().filter { it.getCohortSize() > 0 }
 
         val (localTrialGenerator, nonLocalTrialGenerator) = provideExternalTrialsTables(
             report.patientRecord, evaluated + otherEvaluated.flatten(), contentWidth
