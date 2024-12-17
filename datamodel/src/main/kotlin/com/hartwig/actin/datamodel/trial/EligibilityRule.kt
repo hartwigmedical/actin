@@ -246,6 +246,7 @@ enum class EligibilityRule(val input: FunctionInput?) {
     HAS_CODELETION_OF_CHROMOSOME_ARMS_X_AND_Y(FunctionInput.TWO_STRINGS),
 
     // Rules related to recent laboratory measurements
+    HAS_ADEQUATE_ORGAN_FUNCTION(FunctionInput.NONE),
     HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X(FunctionInput.ONE_DOUBLE),
     HAS_LEUKOCYTES_ABS_LLN_OF_AT_LEAST_X(FunctionInput.ONE_DOUBLE),
     HAS_POTENTIAL_LEUKOCYTOSIS(FunctionInput.NONE),

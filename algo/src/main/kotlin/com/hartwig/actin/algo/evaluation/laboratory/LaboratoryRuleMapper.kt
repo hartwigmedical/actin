@@ -24,6 +24,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
+            EligibilityRule.HAS_ADEQUATE_ORGAN_FUNCTION to hasAdequateOrganFunctionCreator(),
             EligibilityRule.HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.LEUKOCYTES_ABS),
             EligibilityRule.HAS_LEUKOCYTES_ABS_LLN_OF_AT_LEAST_X to hasSufficientLabValueLLNCreator(LabMeasurement.LEUKOCYTES_ABS),
             EligibilityRule.HAS_LYMPHOCYTES_ABS_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.LYMPHOCYTES_ABS),
@@ -135,6 +136,10 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             ),
             EligibilityRule.HAS_ANTI_HLA_ANTIBODIES_AGAINST_PDC_LINE to undeterminedLabValueCreator("HLA-antibodies against PDC line")
         )
+    }
+
+    private fun hasAdequateOrganFunctionCreator(): FunctionCreator {
+        return { HasAdequateOrganFunction(minValidLabDate(), doidModel()) }
     }
 
     private fun hasLimitedPTTCreator(): FunctionCreator {
