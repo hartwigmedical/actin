@@ -23,19 +23,20 @@ object ToxicityFunctions {
             .filterNot { ignoredIcdMainCodes.contains(it.icdCode.mainCode) }
     }
 
-    private fun dropOutdatedEHRToxicities(toxicities: List<Toxicity>): List<Toxicity> {
-        val (ehrToxicities, otherToxicities) = toxicities.partition { it.source == ToxicitySource.EHR }
-        val mostRecentEhrToxicitiesByCode = ehrToxicities.groupBy(Toxicity::icdCode)
-            .map { (_, toxGroup) -> toxGroup.maxBy(Toxicity::evaluatedDate) }
-        return otherToxicities + mostRecentEhrToxicitiesByCode
-    }
-
-    fun findToxicityMatchingAnyIcdCode(icdModel: IcdModel, record: PatientRecord, targetIcdCodes: Set<IcdCode>): IcdMatches<Toxicity> {
-        val matches = IcdModel.findInstancesMatchingAnyIcdCode(icdModel, record.toxicities, targetIcdCodes)
+    fun findToxicitiesMatchingAnyIcdCode(
+        icdModel: IcdModel, toxicities: List<Toxicity>, targetIcdCodes: Set<IcdCode>): IcdMatches<Toxicity> {
+        val matches = IcdModel.findInstancesMatchingAnyIcdCode(icdModel, toxicities, targetIcdCodes)
 
         return IcdMatches(
             fullMatches = matches.fullMatches.filterIsInstance<Toxicity>(),
             mainCodeMatchesWithUnknownExtension = matches.mainCodeMatchesWithUnknownExtension.filterIsInstance<Toxicity>()
         )
+    }
+
+    private fun dropOutdatedEHRToxicities(toxicities: List<Toxicity>): List<Toxicity> {
+        val (ehrToxicities, otherToxicities) = toxicities.partition { it.source == ToxicitySource.EHR }
+        val mostRecentEhrToxicitiesByCode = ehrToxicities.groupBy(Toxicity::icdCode)
+            .map { (_, toxGroup) -> toxGroup.maxBy(Toxicity::evaluatedDate) }
+        return otherToxicities + mostRecentEhrToxicitiesByCode
     }
 }

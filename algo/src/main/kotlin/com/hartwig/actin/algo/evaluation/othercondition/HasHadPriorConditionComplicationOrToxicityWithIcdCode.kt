@@ -34,9 +34,11 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCode(
             targetIcdCodes
         ).fullMatches.map(Complication::display).toSet()
 
-        val matchingToxicities = ToxicityFunctions.selectRelevantToxicities(record, icdModel, referenceDate, emptyList())
+        val relevantToxicities = ToxicityFunctions.selectRelevantToxicities(record, icdModel, referenceDate, emptyList())
+        val hasIcdMatch = ToxicityFunctions.findToxicitiesMatchingAnyIcdCode(icdModel, relevantToxicities, targetIcdCodes)
+        val matchingToxicities = relevantToxicities
             .filter { toxicity -> (toxicity.grade ?: 0) >= 2 || (toxicity.source == ToxicitySource.QUESTIONNAIRE) }
-            .filter { ToxicityFunctions.findToxicityMatchingAnyIcdCode(icdModel, record, targetIcdCodes).fullMatches.contains(it) }
+            .filter { hasIcdMatch.fullMatches.contains(it) }
             .map { it.name }.toSet()
 
         return if (matchingPriorConditions.isNotEmpty() || matchingComplications.isNotEmpty() || matchingToxicities.isNotEmpty()) {

@@ -62,14 +62,14 @@ class ToxicityFunctionsTest {
         val nonMatch = ehrTox.copy(icdCode = IcdCode("wrongCode"))
 
         val record = ToxicityTestFactory.withToxicities(listOf(fullMatch, mainMatchAndUnknownExtension, nonMatch))
-        val evaluation = ToxicityFunctions.findToxicityMatchingAnyIcdCode(icdModel, record, targetCode)
+        val evaluation = ToxicityFunctions.findToxicitiesMatchingAnyIcdCode(icdModel, record.toxicities, targetCode)
         assertThat(evaluation.fullMatches).containsOnly(fullMatch)
         assertThat(evaluation.mainCodeMatchesWithUnknownExtension).containsOnly(mainMatchAndUnknownExtension)
 
         assertThat(
-            ToxicityFunctions.findToxicityMatchingAnyIcdCode(
+            ToxicityFunctions.findToxicitiesMatchingAnyIcdCode(
                 icdModel,
-                record,
+                record.toxicities,
                 setOf(IcdCode("nodeCode", null))
             ).fullMatches.containsAll(listOf(fullMatch, mainMatchAndUnknownExtension))
         ).isTrue()

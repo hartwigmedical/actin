@@ -9,7 +9,6 @@ import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IcdCode
-import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.icd.IcdModel
 
 class HasPotentialAbsorptionDifficulties(private val icdModel: IcdModel) : EvaluationFunction {
@@ -35,14 +34,12 @@ class HasPotentialAbsorptionDifficulties(private val icdModel: IcdModel) : Evalu
             )
         }
 
-        val toxicities = record.toxicities
-            .filter { it.source == ToxicitySource.QUESTIONNAIRE || (it.grade ?: 0) >= 2 }
-            .filter { ToxicityFunctions.findToxicityMatchingAnyIcdCode(icdModel, record, targetIcdCodes).fullMatches.contains(it) }
+        val matchingToxicities = ToxicityFunctions.findToxicitiesMatchingAnyIcdCode(icdModel, record.toxicities, targetIcdCodes).fullMatches
 
-        return if (toxicities.isNotEmpty()) {
+        return if (matchingToxicities.isNotEmpty()) {
             EvaluationFactory.pass(
-                "Patient has potential absorption difficulties due to " + Format.concatItemsWithAnd(toxicities),
-                "Potential absorption difficulties: " + Format.concatItemsWithAnd(toxicities)
+                "Patient has potential absorption difficulties due to " + Format.concatItemsWithAnd(matchingToxicities),
+                "Potential absorption difficulties: " + Format.concatItemsWithAnd(matchingToxicities)
             )
         } else
             EvaluationFactory.fail(
