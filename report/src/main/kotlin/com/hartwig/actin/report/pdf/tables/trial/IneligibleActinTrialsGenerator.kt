@@ -69,10 +69,10 @@ class IneligibleActinTrialsGenerator(
             source: String?,
             width: Float,
             enableExtendedMode: Boolean,
-            includeLocationColumn: Boolean = false
+            includeLocation: Boolean = false
         ): IneligibleActinTrialsGenerator {
             val ineligibleCohorts = cohorts.filter { !it.isPotentiallyEligible && (it.isOpen || enableExtendedMode) }
-            val (trialColWidth, subTableWidths) = getColumnWidths(width, true, includeLocationColumn)
+            val (trialColWidth, subTableWidths) = getColumnWidths(width, true, includeLocation)
             val title =
                 "${createTableTitleStart(source)} and cohorts that are ${if (enableExtendedMode) "" else "open but "}considered ineligible (${ineligibleCohorts.size})"
             enableExtendedMode.let { "open but " }
@@ -83,15 +83,15 @@ class IneligibleActinTrialsGenerator(
                 subTableWidths,
                 true,
                 paddingDistance = NORMAL_PADDING_DISTANCE,
-                includeLocationColumn
+                includeLocation
             )
         }
 
         fun forClosedCohorts(
-            cohorts: List<InterpretedCohort>, source: String?, width: Float, includeLocationColumn: Boolean = false
+            cohorts: List<InterpretedCohort>, source: String?, width: Float, includeLocation: Boolean = false
         ): IneligibleActinTrialsGenerator {
             val unavailableAndEligible = cohorts.filter { trial: InterpretedCohort -> !trial.isPotentiallyEligible && !trial.isOpen }
-            val (trialColWidth, subTableWidths) = getColumnWidths(width, false, includeLocationColumn)
+            val (trialColWidth, subTableWidths) = getColumnWidths(width, false, includeLocation)
             val title =
                 "${createTableTitleStart(source)} and cohorts that are closed and considered ineligible (${unavailableAndEligible.size})"
             return IneligibleActinTrialsGenerator(
@@ -101,7 +101,7 @@ class IneligibleActinTrialsGenerator(
                 subTableWidths,
                 false,
                 paddingDistance = SMALL_PADDING_DISTANCE,
-                includeLocationColumn
+                includeLocation
             )
         }
 
@@ -110,10 +110,10 @@ class IneligibleActinTrialsGenerator(
             nonEvaluableCohorts: List<InterpretedCohort>,
             source: String?,
             width: Float,
-            includeLocationColumn: Boolean = false
+            includeLocation: Boolean = false
         ): IneligibleActinTrialsGenerator {
             val nonEvaluableAndIgnoredCohorts = ignoredCohorts + nonEvaluableCohorts
-            val (trialColWidth, subTableWidths) = getColumnWidths(width, false, includeLocationColumn)
+            val (trialColWidth, subTableWidths) = getColumnWidths(width, false, includeLocation)
             val title =
                 "${createTableTitleStart(source)} and cohorts that are not evaluable or ignored (${nonEvaluableAndIgnoredCohorts.size})"
             return IneligibleActinTrialsGenerator(
@@ -123,7 +123,7 @@ class IneligibleActinTrialsGenerator(
                 subTableWidths,
                 false,
                 paddingDistance = SMALL_PADDING_DISTANCE,
-                includeLocationColumn
+                includeLocation
             )
         }
 

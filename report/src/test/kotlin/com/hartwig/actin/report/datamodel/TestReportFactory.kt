@@ -49,13 +49,7 @@ object TestReportFactory {
 
         val matches = TestTreatmentMatchFactory.createProperTreatmentMatch().trialMatches
         val trialMatch1 = matches[0]
-        val trialMatch2 = matches[1].copy(
-            identification = matches[1].identification.copy(
-                trialId = "LKO2",
-                source = TrialSource.LKO,
-                locations = listOf("Erasmus MC", "Antoni van Leeuwenhoek")
-            )
-        )
+        val trialMatch2 = matches[1]
         val trialMatch3 = trialMatch1.copy(
             identification = TrialIdentification(
                 trialId = "LKO3",
@@ -94,7 +88,7 @@ object TestReportFactory {
 
         return createExhaustiveTestReport().copy(
             treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch()
-                .copy(trialMatches = listOf(matches[0], trialMatch2, trialMatch3, trialMatch4, trialMatch5))
+                .copy(trialMatches = listOf(trialMatch1, trialMatch2, trialMatch3, trialMatch4, trialMatch5))
         )
     }
 }
