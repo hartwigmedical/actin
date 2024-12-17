@@ -16,9 +16,8 @@ class HasContraindicationToMRI(private val icdModel: IcdModel) : EvaluationFunct
     override fun evaluate(record: PatientRecord): Evaluation {
         val targetCodes = setOf(IcdCode(IcdConstants.KIDNEY_FAILURE_BLOCK), IcdCode(IcdConstants.PRESENCE_OF_DEVICE_IMPLANT_OR_GRAFT_BLOCK))
         val relevantConditions = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
-        val conditionsMatchingCode = relevantConditions.flatMap {
-            PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(icdModel, record, targetCodes).fullMatches
-        }.map { it.name }
+        val conditionsMatchingCode =
+            PriorOtherConditionFunctions.findRelevantPriorConditionsMatchingAnyIcdCode(icdModel, record, targetCodes).fullMatches
         val conditionsMatchingString = relevantConditions.filter {
             stringCaseInsensitivelyMatchesQueryCollection(it.name, OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_MRI)
         }
@@ -30,18 +29,17 @@ class HasContraindicationToMRI(private val icdModel: IcdModel) : EvaluationFunct
                 )
             }
 
-        val conditionString = Format.concatWithCommaAndAnd(conditionsMatchingCode)
+        val conditionString = Format.concatItemsWithAnd(conditionsMatchingCode)
         val messageStart = "Potential MRI contraindication: "
 
         return when {
             conditionsMatchingCode.isNotEmpty() -> EvaluationFactory.recoverablePass(messageStart + conditionString)
 
-            conditionsMatchingString.isNotEmpty() -> EvaluationFactory.recoverablePass(
-                messageStart + Format.concatWithCommaAndAnd(
-                    conditionsMatchingString.map { it.name })
-            )
+            conditionsMatchingString.isNotEmpty() -> {
+                EvaluationFactory.recoverablePass(messageStart + Format.concatItemsWithAnd(conditionsMatchingString))
+            }
 
-            intolerances.isNotEmpty() -> EvaluationFactory.recoverablePass(messageStart + Format.concatWithCommaAndAnd(intolerances.map { it.name }))
+            intolerances.isNotEmpty() -> EvaluationFactory.recoverablePass(messageStart + Format.concatItemsWithAnd(intolerances))
 
             else -> EvaluationFactory.fail("No potential contraindications to MRI identified", "No potential contraindications to MRI")
         }

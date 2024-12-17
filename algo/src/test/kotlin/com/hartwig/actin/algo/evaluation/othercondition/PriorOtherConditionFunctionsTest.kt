@@ -17,6 +17,16 @@ class PriorOtherConditionFunctionsTest {
     private val childOfCorrectExtensionCode = "targetExtensionCode"
 
     @Test
+    fun `Should filter out non-relevant conditions`() {
+        val condition = OtherConditionTestFactory.priorOtherCondition(
+            icdMainCode = correctMainCode,
+            icdExtensionCode = correctExtensionCode,
+            isContraindication = false
+        )
+        evaluateSelection(OtherConditionTestFactory.withPriorOtherCondition(condition), emptyList(), emptyList())
+    }
+
+    @Test
     fun `Should filter out condition not matching to requested main code`() {
         val condition = OtherConditionTestFactory.priorOtherCondition(icdMainCode = "wrongMainCode")
         evaluateSelection(OtherConditionTestFactory.withPriorOtherCondition(condition), emptyList(), emptyList())
@@ -24,7 +34,8 @@ class PriorOtherConditionFunctionsTest {
 
     @Test
     fun `Should filter out condition not matching to requested extension code when extension code match is requested`() {
-        val condition = OtherConditionTestFactory.priorOtherCondition(icdMainCode = correctMainCode, icdExtensionCode = "wrongExtensionCode")
+        val condition =
+            OtherConditionTestFactory.priorOtherCondition(icdMainCode = correctMainCode, icdExtensionCode = "wrongExtensionCode")
         evaluateSelection(OtherConditionTestFactory.withPriorOtherCondition(condition), emptyList(), emptyList())
     }
 
@@ -44,7 +55,10 @@ class PriorOtherConditionFunctionsTest {
     @Test
     fun `Should match on correct child codes`() {
         val condition =
-            OtherConditionTestFactory.priorOtherCondition(icdMainCode = childOfCorrectMainCode, icdExtensionCode = childOfCorrectExtensionCode)
+            OtherConditionTestFactory.priorOtherCondition(
+                icdMainCode = childOfCorrectMainCode,
+                icdExtensionCode = childOfCorrectExtensionCode
+            )
         evaluateSelection(OtherConditionTestFactory.withPriorOtherCondition(condition), listOf(condition), emptyList())
     }
 
@@ -55,7 +69,7 @@ class PriorOtherConditionFunctionsTest {
         checkExtension: Boolean = true
     ) {
         val extension = if (checkExtension) correctExtensionCode else null
-        val result = PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(
+        val result = PriorOtherConditionFunctions.findRelevantPriorConditionsMatchingAnyIcdCode(
             icdModel,
             record,
             setOf(IcdCode(correctMainCode, extension)),

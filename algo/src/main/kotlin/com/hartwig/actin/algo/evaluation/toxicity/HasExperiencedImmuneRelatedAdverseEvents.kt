@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.Intolerance.IntoleranceFunctions
+import com.hartwig.actin.algo.evaluation.intolerance.IntoleranceFunctions
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -23,12 +23,7 @@ class HasExperiencedImmuneRelatedAdverseEvents(private val icdModel: IcdModel) :
             icdModel,
             record,
             IcdConstants.DRUG_ALLERGY_SET.flatMap { icdCode ->
-                IcdConstants.IMMUNOTHERAPY_DRUG_SET.map { extension ->
-                    IcdCode(
-                        icdCode,
-                        extension
-                    )
-                }
+                IcdConstants.IMMUNOTHERAPY_DRUG_SET.map { extension -> IcdCode(icdCode, extension) }
             }.toSet()
         )
 

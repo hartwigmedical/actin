@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.Intolerance.IntoleranceFunctions
+import com.hartwig.actin.algo.evaluation.intolerance.IntoleranceFunctions
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.PatientRecord
@@ -22,12 +22,11 @@ class HasIntoleranceRelatedToStudyMedication(private val icdModel: IcdModel) : E
                     IcdConstants.DRUG_ALLERGY_SET.map { IcdCode(it) }.toSet()
                 ).fullMatches.contains(intolerance)
             }
-            .map { it.name }
             .toSet()
 
         return if (allergies.isNotEmpty()) {
             EvaluationFactory.undetermined(
-                "Has medication-related allergies: ${Format.concatWithCommaAndAnd(allergies)} - undetermined if allergy to study medication."
+                "Has medication-related allergies: ${Format.concatItemsWithAnd(allergies)} - undetermined if allergy to study medication."
             )
         } else EvaluationFactory.fail("Has no intolerances to study medication")
     }

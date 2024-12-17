@@ -16,11 +16,9 @@ class HasContraindicationToCT(private val icdModel: IcdModel) : EvaluationFuncti
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val targetIcdCode = setOf(IcdCode(IcdConstants.KIDNEY_FAILURE_BLOCK))
-        val relevantConditions = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
-        val conditionsMatchingCode = relevantConditions.flatMap {
-            PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(icdModel, record, targetIcdCode).fullMatches
-        }.map { it.name }
-        val conditionsMatchingString = relevantConditions.filter {
+        val conditionsMatchingCode =
+            PriorOtherConditionFunctions.findRelevantPriorConditionsMatchingAnyIcdCode(icdModel, record, targetIcdCode).fullMatches
+        val conditionsMatchingString = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions).filter {
             stringCaseInsensitivelyMatchesQueryCollection(it.name, OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_CT)
         }
         val intolerances =
@@ -32,22 +30,21 @@ class HasContraindicationToCT(private val icdModel: IcdModel) : EvaluationFuncti
             }
 
         val complications =
-            ComplicationFunctions.findComplicationsMatchingAnyIcdCode(icdModel, record, targetIcdCode).fullMatches.map { it.name }
+            ComplicationFunctions.findComplicationsMatchingAnyIcdCode(icdModel, record, targetIcdCode).fullMatches
 
-        val conditionString = Format.concatWithCommaAndAnd(conditionsMatchingCode)
+        val conditionString = Format.concatItemsWithAnd(conditionsMatchingCode)
         val messageStart = "Potential CT contraindication: "
 
         return when {
             conditionsMatchingCode.isNotEmpty() -> EvaluationFactory.recoverablePass(messageStart + conditionString)
 
-            conditionsMatchingString.isNotEmpty() -> EvaluationFactory.recoverablePass(
-                messageStart + Format.concatWithCommaAndAnd(
-                    conditionsMatchingString.map { it.name })
-            )
+            conditionsMatchingString.isNotEmpty() -> {
+                EvaluationFactory.recoverablePass(messageStart + Format.concatItemsWithAnd(conditionsMatchingString))
+            }
 
-            intolerances.isNotEmpty() -> EvaluationFactory.recoverablePass(messageStart + Format.concatWithCommaAndAnd(intolerances.map { it.name }))
+            intolerances.isNotEmpty() -> EvaluationFactory.recoverablePass(messageStart + Format.concatItemsWithAnd(intolerances))
 
-            complications.isNotEmpty() -> EvaluationFactory.recoverablePass(messageStart + Format.concatWithCommaAndAnd(complications))
+            complications.isNotEmpty() -> EvaluationFactory.recoverablePass(messageStart + Format.concatItemsWithAnd(complications))
 
             else -> EvaluationFactory.fail("No potential contraindications to CT identified", "No potential contraindications to CT")
         }

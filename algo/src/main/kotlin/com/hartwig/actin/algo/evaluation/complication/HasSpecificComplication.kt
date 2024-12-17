@@ -16,9 +16,9 @@ class HasSpecificComplication(private val icdModel: IcdModel, private val target
             "Undetermined complication status"
         )
 
-        val targetCodes = targetIcdTitles.mapNotNull { icdModel.resolveCodeForTitle(it) }.toSet()
+        val targetCodes = targetIcdTitles.map { icdModel.resolveCodeForTitle(it)!! }.toSet()
         val matchingComplications =
-            ComplicationFunctions.findComplicationsMatchingAnyIcdCode(icdModel, record, targetCodes).fullMatches.map { it.name }
+            ComplicationFunctions.findComplicationsMatchingAnyIcdCode(icdModel, record, targetCodes).fullMatches
 
         val icdTitleText = if (targetIcdTitles.size > 1) {
             "belonging to type ${Format.concatLowercaseWithCommaAndOr(targetIcdTitles)}"
@@ -26,8 +26,8 @@ class HasSpecificComplication(private val icdModel: IcdModel, private val target
 
         return when {
             matchingComplications.isNotEmpty() -> EvaluationFactory.pass(
-                "Patient has complication(s) " + Format.concatWithCommaAndAnd(matchingComplications),
-                "Present " + Format.concatWithCommaAndAnd(matchingComplications)
+                "Patient has complication(s) " + Format.concatItemsWithAnd(matchingComplications),
+                "Present " + Format.concatItemsWithAnd(matchingComplications)
             )
 
             hasComplicationsWithoutNames(record) -> EvaluationFactory.undetermined(

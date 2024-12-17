@@ -8,6 +8,8 @@ import com.hartwig.actin.algo.evaluation.toxicity.ToxicityFunctions
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.Complication
+import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.icd.IcdModel
 import java.time.LocalDate
@@ -23,11 +25,15 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCode(
         val targetIcdCodes = targetIcdTitles.mapNotNull { icdModel.resolveCodeForTitle(it) }.toSet()
 
         val matchingPriorConditions =
-            PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(icdModel, record, targetIcdCodes).fullMatches
-                .map { it.name }.toSet()
+            PriorOtherConditionFunctions.findRelevantPriorConditionsMatchingAnyIcdCode(icdModel, record, targetIcdCodes).fullMatches
+                .map(PriorOtherCondition::display).toSet()
 
-        val matchingComplications =
-            ComplicationFunctions.findComplicationsMatchingAnyIcdCode(icdModel, record, targetIcdCodes).fullMatches.map { it.name }.toSet()
+        val matchingComplications = ComplicationFunctions.findComplicationsMatchingAnyIcdCode(
+            icdModel,
+            record,
+            targetIcdCodes
+        ).fullMatches.map(Complication::display).toSet()
+
         val matchingToxicities = ToxicityFunctions.selectRelevantToxicities(record, icdModel, referenceDate, emptyList())
             .filter { toxicity -> (toxicity.grade ?: 0) >= 2 || (toxicity.source == ToxicitySource.QUESTIONNAIRE) }
             .filter { ToxicityFunctions.findToxicityMatchingAnyIcdCode(icdModel, record, targetIcdCodes).fullMatches.contains(it) }

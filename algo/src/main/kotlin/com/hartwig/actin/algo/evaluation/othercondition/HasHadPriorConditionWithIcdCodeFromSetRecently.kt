@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.othercondition
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.DateComparison
-import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -20,20 +19,20 @@ class HasHadPriorConditionWithIcdCodeFromSetRecently(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val matchingConditionSummary = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
-            .flatMap { PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(icdModel, record, targetIcdCodes).fullMatches }
-            .groupBy {
-                val isAfter = DateComparison.isAfterDate(minDate, it.year, it.month)
-                when {
-                    isAfter == true && DateComparison.isBeforeDate(minDate.plusMonths(2), it.year, it.month) == true -> {
-                        EvaluationResult.WARN
-                    }
+        val matchingConditionSummary =
+            PriorOtherConditionFunctions.findRelevantPriorConditionsMatchingAnyIcdCode(icdModel, record, targetIcdCodes).fullMatches
+                .groupBy {
+                    val isAfter = DateComparison.isAfterDate(minDate, it.year, it.month)
+                    when {
+                        isAfter == true && DateComparison.isBeforeDate(minDate.plusMonths(2), it.year, it.month) == true -> {
+                            EvaluationResult.WARN
+                        }
 
-                    isAfter == true -> EvaluationResult.PASS
-                    isAfter == null -> EvaluationResult.UNDETERMINED
-                    else -> EvaluationResult.FAIL
+                        isAfter == true -> EvaluationResult.PASS
+                        isAfter == null -> EvaluationResult.UNDETERMINED
+                        else -> EvaluationResult.FAIL
+                    }
                 }
-            }
 
         return when {
             matchingConditionSummary.containsKey(EvaluationResult.PASS) -> {

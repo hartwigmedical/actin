@@ -1,5 +1,6 @@
 package com.hartwig.actin.datamodel.clinical
 
+import com.hartwig.actin.datamodel.Displayable
 import java.time.LocalDate
 
 data class Toxicity(
@@ -9,4 +10,9 @@ data class Toxicity(
     val source: ToxicitySource,
     val grade: Int?,
     val endDate: LocalDate? = null
-): IcdCodeHolder
+): IcdCodeHolder, Displayable {
+
+    override fun display(): String {
+        return name
+    }
+}

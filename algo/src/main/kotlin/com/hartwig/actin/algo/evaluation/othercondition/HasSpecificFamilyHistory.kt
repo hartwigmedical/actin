@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.icd.IcdConstants.FAMILY_HISTORY_OF_OTHER_SPECIFIED_HEALTH_PROBLEMS_CODE
 import com.hartwig.actin.algo.icd.IcdConstants.FAMILY_HISTORY_OF_UNSPECIFIED_HEALTH_PROBLEMS_CODE
-import com.hartwig.actin.algo.othercondition.OtherConditionSelector
+import com.hartwig.actin.datamodel.Displayable
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IcdCode
@@ -28,16 +28,11 @@ class HasSpecificFamilyHistory(
                 ),
                 undeterminedFamilyConditions.icdCodes
             ).map { targetCodes ->
-                OtherConditionSelector
-                    .selectClinicallyRelevant(record.priorOtherConditions)
-                    .flatMap {
-                        PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(
-                            icdModel,
-                            record,
-                            targetCodes
-                        ).fullMatches
-                            .map { it.name }
-                    }
+                PriorOtherConditionFunctions.findRelevantPriorConditionsMatchingAnyIcdCode(
+                    icdModel,
+                    record,
+                    targetCodes
+                ).fullMatches
             }
 
         return when {
@@ -55,9 +50,9 @@ class HasSpecificFamilyHistory(
         }
     }
 
-    private fun createUndetermined(diseaseType: String, conditions: List<String>): Evaluation {
+    private fun createUndetermined(diseaseType: String, conditions: List<Displayable>): Evaluation {
         return EvaluationFactory.undetermined(
-            "Has family history of $diseaseType (${Format.concatWithCommaAndAnd(conditions)}) - undetermined if $conditionDescription"
+            "Has family history of $diseaseType (${Format.concatItemsWithAnd(conditions)}) - undetermined if $conditionDescription"
         )
     }
 }

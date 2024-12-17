@@ -18,11 +18,13 @@ class HasPotentialUncontrolledTumorRelatedPain(private val selector: MedicationS
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val (hasCancerRelatedPainComplicationOrHistory, hasAcutePainComplicationOrHistory) =
-            listOf(IcdConstants.CHRONIC_CANCER_RELATED_PAIN_CODE, IcdConstants.ACUTE_PAIN_CODE).map {
-                ComplicationFunctions.findComplicationsMatchingAnyIcdCode(icdModel, record, setOf(IcdCode(it))).fullMatches.isNotEmpty() ||
-                        PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(icdModel, record, setOf(IcdCode(it)))
-                            .fullMatches.isNotEmpty()
-            }
+            listOf(IcdConstants.CHRONIC_CANCER_RELATED_PAIN_CODE, IcdConstants.ACUTE_PAIN_CODE).map { code ->
+            val icd = setOf(IcdCode(code))
+            listOf(
+                ComplicationFunctions.findComplicationsMatchingAnyIcdCode(icdModel, record, icd).fullMatches,
+                PriorOtherConditionFunctions.findRelevantPriorConditionsMatchingAnyIcdCode(icdModel, record, icd).fullMatches
+            ).any { it.isNotEmpty() }
+        }
 
         val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
         val (activePainMedications, plannedPainMedications) = selector.extractActiveAndPlannedWithCategory(

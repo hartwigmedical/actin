@@ -2,12 +2,11 @@ package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.Intolerance.IntoleranceFunctions
+import com.hartwig.actin.algo.evaluation.intolerance.IntoleranceFunctions
 import com.hartwig.actin.algo.evaluation.othercondition.PriorOtherConditionFunctions
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.algo.icd.IcdConstants
-import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IcdCode
@@ -31,37 +30,35 @@ class HasIntoleranceForPD1OrPDL1Inhibitors(private val icdModel: IcdModel) : Eva
             record.intolerances.filter { stringCaseInsensitivelyMatchesQueryCollection(it.name, INTOLERANCE_TERMS) }.toSet()
 
         val matchingIntolerancesByMainCode = IntoleranceFunctions.findIntoleranceMatchingAnyIcdCode(icdModel, record, targetCodes)
-        val matchingIntolerances = (matchingIntolerancesByMainCode.fullMatches + matchingIntolerancesByName).map { it.name }.toSet()
-        val undeterminedDrugIntolerances = matchingIntolerancesByMainCode.mainCodeMatchesWithUnknownExtension.map { it.name }.toSet()
+        val matchingIntolerances = (matchingIntolerancesByMainCode.fullMatches + matchingIntolerancesByName).toSet()
+        val undeterminedDrugIntolerances = matchingIntolerancesByMainCode.mainCodeMatchesWithUnknownExtension.toSet()
 
-        val autoImmuneHistory = OtherConditionSelector.selectClinicallyRelevant(
-            PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(
-                icdModel,
-                record,
-                IcdConstants.AUTOIMMUNE_DISEASE_SET.map { IcdCode(it) }.toSet()
-            ).fullMatches
-        ).map { it.name }
+        val autoImmuneHistory = PriorOtherConditionFunctions.findRelevantPriorConditionsMatchingAnyIcdCode(
+            icdModel,
+            record,
+            IcdConstants.AUTOIMMUNE_DISEASE_SET.map { IcdCode(it) }.toSet()
+        ).fullMatches
 
         val undeterminedMessage = "intolerance in history - but undetermined if PD-1/PD-L1 intolerance"
 
         return when {
             matchingIntolerances.isNotEmpty() -> {
-                EvaluationFactory.pass("Has PD-1/PD-L1 intolerance(s): " + Format.concatWithCommaAndAnd(matchingIntolerances))
+                EvaluationFactory.pass("Has PD-1/PD-L1 intolerance(s): " + Format.concatItemsWithAnd(matchingIntolerances))
             }
 
             undeterminedDrugIntolerances.isNotEmpty() -> EvaluationFactory.undetermined("Drug $undeterminedMessage (drug type unknown)")
 
             monoClonalAntibodyIntolerances.isNotEmpty() -> {
                 EvaluationFactory.undetermined(
-                    "Monoclonal antibody $undeterminedMessage: " + Format.concatWithCommaAndAnd(
-                        monoClonalAntibodyIntolerances.map { it.name })
+                    "Monoclonal antibody $undeterminedMessage: " + Format.concatItemsWithAnd(
+                        monoClonalAntibodyIntolerances)
                 )
             }
 
             autoImmuneHistory.isNotEmpty() -> {
                 EvaluationFactory.warn(
                     "Patient may have a contra-indication for PD-1/PD-L1 inhibitors due to autoimmune disease " +
-                            "(${Format.concatWithCommaAndAnd(autoImmuneHistory)})"
+                            "(${Format.concatItemsWithAnd(autoImmuneHistory)})"
                 )
             }
 

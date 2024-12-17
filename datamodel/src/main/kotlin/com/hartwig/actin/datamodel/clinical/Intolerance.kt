@@ -1,5 +1,7 @@
 package com.hartwig.actin.datamodel.clinical
 
+import com.hartwig.actin.datamodel.Displayable
+
 data class Intolerance(
     val name: String,
     override val icdCode: IcdCode,
@@ -9,4 +11,9 @@ data class Intolerance(
     val clinicalStatus: String? = null,
     val verificationStatus: String? = null,
     val criticality: String? = null
-): IcdCodeHolder
+): IcdCodeHolder, Displayable {
+
+    override fun display(): String {
+        return name
+    }
+}

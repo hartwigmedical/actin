@@ -1,7 +1,6 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
-import com.hartwig.actin.algo.evaluation.IcdCodeMatcher
-import com.hartwig.actin.algo.evaluation.IcdMatches
+import com.hartwig.actin.icd.datamodel.IcdMatches
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.clinical.Complication
 import com.hartwig.actin.datamodel.clinical.IcdCode
@@ -10,7 +9,7 @@ import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.icd.IcdModel
 import java.time.LocalDate
 
-object ToxicityFunctions: IcdCodeMatcher {
+object ToxicityFunctions {
 
     fun selectRelevantToxicities(
         record: PatientRecord, icdModel: IcdModel, referenceDate: LocalDate, icdTitlesToIgnore: List<String> = emptyList()
@@ -31,12 +30,12 @@ object ToxicityFunctions: IcdCodeMatcher {
         return otherToxicities + mostRecentEhrToxicitiesByCode
     }
 
-    fun findToxicityMatchingAnyIcdCode(
-        icdModel: IcdModel,
-        record: PatientRecord,
-        targetIcdCodes: Set<IcdCode>
-    ): IcdMatches<Toxicity> {
+    fun findToxicityMatchingAnyIcdCode(icdModel: IcdModel, record: PatientRecord, targetIcdCodes: Set<IcdCode>): IcdMatches<Toxicity> {
+        val matches = IcdModel.findInstancesMatchingAnyIcdCode(icdModel, record.toxicities, targetIcdCodes)
 
-        return findInstancesMatchingAnyIcdCode(icdModel, record.toxicities, targetIcdCodes)
+        return IcdMatches(
+            fullMatches = matches.fullMatches.filterIsInstance<Toxicity>(),
+            mainCodeMatchesWithUnknownExtension = matches.mainCodeMatchesWithUnknownExtension.filterIsInstance<Toxicity>()
+        )
     }
 }

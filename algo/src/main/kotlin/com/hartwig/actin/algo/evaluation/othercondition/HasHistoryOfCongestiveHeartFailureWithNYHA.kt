@@ -22,7 +22,7 @@ class HasHistoryOfCongestiveHeartFailureWithNYHA(private val minimalClass: NyhaC
 
         val codes = allExtensionCodes.drop(minimalClass.ordinal).map { IcdCode(IcdConstants.CONGESTIVE_HEART_FAILURE_CODE, it) }.toSet()
 
-        val matches = PriorOtherConditionFunctions.findPriorOtherConditionsMatchingAnyIcdCode(icdModel, record, codes)
+        val matches = PriorOtherConditionFunctions.findRelevantPriorConditionsMatchingAnyIcdCode(icdModel, record, codes)
 
         return when {
             matches.fullMatches.isNotEmpty() -> {
