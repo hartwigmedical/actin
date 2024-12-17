@@ -2,9 +2,9 @@ package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.CountryName
+import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import org.assertj.core.api.Assertions.assertThat
-import com.hartwig.actin.datamodel.molecular.evidence.Hospital as Hospital
 import org.junit.Test
 
 private val BASE_EXTERNAL_TRIAL_SUMMARY = ExternalTrialSummary(

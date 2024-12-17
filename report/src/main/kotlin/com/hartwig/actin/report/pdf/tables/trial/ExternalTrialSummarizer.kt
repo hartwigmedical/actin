@@ -76,7 +76,8 @@ object ExternalTrialSummarizer {
         }.groupBy { t -> t.trial.nctId }.map { e ->
             val countries = e.value.flatMap { ewe -> ewe.trial.countries }
             val trial = e.value.first().trial
-            ExternalTrialSummary(e.key,
+            ExternalTrialSummary(
+                e.key,
                 trial.title,
                 trial.url,
                 e.value.map { ewe -> ewe.event }.toSortedSet(),

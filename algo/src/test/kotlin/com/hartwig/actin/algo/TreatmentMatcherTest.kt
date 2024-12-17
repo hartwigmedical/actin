@@ -24,14 +24,13 @@ import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import io.mockk.every
 import io.mockk.mockk
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 private val MAX_AGE = LocalDate.of(2023, 12, 10)
 
 class TreatmentMatcherTest {
-    private val trialSource = "trial source"
     private val patient = TestPatientFactory.createMinimalTestWGSPatientRecord()
     private val trials = listOf(TestTrialFactory.createMinimalTestTrial())
     private val trialMatches = TestTreatmentMatchFactory.createProperTreatmentMatch().trialMatches
@@ -57,7 +56,6 @@ class TreatmentMatcherTest {
         trials,
         CurrentDateProvider(),
         EvaluatedTreatmentAnnotator.create(evidenceEntries, resistanceEvidenceMatcher),
-        trialSource,
         null,
         MAX_AGE
     )
@@ -68,7 +66,6 @@ class TreatmentMatcherTest {
         referenceDateIsLive = true,
         trialMatches = trialMatches,
         standardOfCareMatches = null,
-        trialSource = trialSource,
         maxMolecularTestAge = MAX_AGE
     )
 
@@ -110,7 +107,6 @@ class TreatmentMatcherTest {
             trials,
             CurrentDateProvider(),
             EvaluatedTreatmentAnnotator.create(evidenceEntries, resistanceEvidenceMatcher),
-            trialSource,
             null,
             MAX_AGE
         )
