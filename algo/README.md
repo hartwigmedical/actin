@@ -111,6 +111,7 @@ The following rules are available:
 | IS_LEGALLY_INSTITUTIONALIZED             | > Won't be evaluated                         |                                                                                                                                                  |
 | IS_INVOLVED_IN_STUDY_PROCEDURES          | > Won't be evaluated                         |                                                                                                                                                  |
 | USES_TOBACCO_PRODUCTS                    | Resolves to `UNDETERMINED`                   |                                                                                                                                                  |
+| ADHERES_TO_BLOOD_DONATION_PRESCRIPTIONS  | > Won't be evaluated                         |                                                                                                                                                  |
 
 ##### Rules related to tumor and lesion localization
 

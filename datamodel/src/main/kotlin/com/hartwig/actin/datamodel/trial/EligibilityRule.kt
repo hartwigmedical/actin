@@ -23,6 +23,7 @@ enum class EligibilityRule(val input: FunctionInput?) {
     IS_LEGALLY_INSTITUTIONALIZED(FunctionInput.NONE),
     IS_INVOLVED_IN_STUDY_PROCEDURES(FunctionInput.NONE),
     USES_TOBACCO_PRODUCTS(FunctionInput.NONE),
+    ADHERES_TO_BLOOD_DONATION_PRESCRIPTIONS(FunctionInput.NONE),
 
     // Rules related to tumor and lesion localization
     HAS_SOLID_PRIMARY_TUMOR(FunctionInput.NONE),
