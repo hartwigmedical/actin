@@ -83,7 +83,7 @@ class TreatmentMatchJsonTest {
                         + "\"passGeneralMessages\":[\"Active CNS metastases\"],\"warnSpecificMessages\":[],\"warnGeneralMessages\":[],"
                         + "\"undeterminedSpecificMessages\":[],\"undeterminedGeneralMessages\":[],\"failSpecificMessages\":[],"
                         + "\"failGeneralMessages\":[],\"isMissingGenesForSufficientEvaluation\":false}],"
-                + "\"annotations\":["
+                    + "\"annotations\":["
                     + "{\"acronym\":\"Study of Pembrolizumab\",\"phase\":\"Phase III\","
                     + "\"treatments\":["
                         + "{\"name\":\"PEMBROLIZUMAB\",\"drugs\":["
