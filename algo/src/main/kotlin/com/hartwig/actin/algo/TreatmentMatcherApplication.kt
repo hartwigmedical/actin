@@ -11,7 +11,6 @@ import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter
 import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
-import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.medication.AtcTree
@@ -42,7 +41,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         PatientPrinter.printRecord(patient)
 
         LOGGER.info("Loading trials from {}", config.trialDatabaseDirectory)
-        val trials = TrialJson.readFromDir(config.trialDatabaseDirectory).filterNot { it.identification.source == TrialSource.LKO }
+        val trials = TrialJson.readFromDir(config.trialDatabaseDirectory)
         LOGGER.info(" Loaded {} trials", trials.size)
 
         LOGGER.info("Loading DOID tree from {}", config.doidJson)

@@ -2,7 +2,7 @@ package com.hartwig.actin.datamodel.trial
 
 enum class TrialSource(val description: String) {
     EMC("Erasmus MC"),
-    NKI("NKI-Avl"),
+    NKI("NKI-AvL"),
     LKO("Longkankeronderzoek");
 
     companion object {
