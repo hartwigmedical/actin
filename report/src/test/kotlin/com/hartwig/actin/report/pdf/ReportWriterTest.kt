@@ -9,7 +9,8 @@ class ReportWriterTest {
     private val reports = listOf(
         TestReportFactory.createMinimalTestReport(),
         TestReportFactory.createProperTestReport(),
-        TestReportFactory.createExhaustiveTestReport()
+        TestReportFactory.createExhaustiveTestReport(),
+        TestReportFactory.createExhaustiveTestReportWithOtherLocations()
     )
     private val memoryWriter = ReportWriterFactory.createInMemoryReportWriter()
 

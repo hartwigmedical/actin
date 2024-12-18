@@ -23,6 +23,8 @@ object InterpretedCohortFactory {
             val trialIsOpen = identification.open
             val phase = identification.phase
             val missingGenesForTrial = trialMatch.evaluations.values.any { it.isMissingGenesForSufficientEvaluation }
+            val source = identification.source
+            val locations = identification.locations
 
             if (trialMatch.cohorts.isEmpty()) {
                 listOf(
@@ -38,6 +40,8 @@ object InterpretedCohortFactory {
                         warnings = trialWarnings,
                         fails = trialFails,
                         phase = phase,
+                        source = source,
+                        locations = locations
                     )
                 )
             } else {
@@ -57,7 +61,9 @@ object InterpretedCohortFactory {
                         warnings = trialWarnings.union(extractWarnings(cohortMatch.evaluations)),
                         fails = trialFails.union(extractFails(cohortMatch.evaluations)),
                         phase = phase,
-                        ignore = cohortMatch.metadata.ignore
+                        ignore = cohortMatch.metadata.ignore,
+                        source = source,
+                        locations = locations
                     )
                 }
             }
@@ -75,7 +81,9 @@ object InterpretedCohortFactory {
                     isOpen = identification.open && cohortMetadata.open,
                     hasSlotsAvailable = cohortMetadata.slotsAvailable,
                     ignore = cohortMetadata.ignore,
-                    phase = identification.phase
+                    phase = identification.phase,
+                    source = identification.source,
+                    locations = identification.locations
                 )
             }
         }.sortedWith(InterpretedCohortComparator())
