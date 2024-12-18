@@ -18,7 +18,7 @@ object TestReportFactory {
             treatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch(),
             config = ReportConfiguration(),
             reportDate = LocalDate.now(),
-            requestingHospital = "NKI-Avl"
+            requestingHospital = "NKI-AvL"
         )
     }
 

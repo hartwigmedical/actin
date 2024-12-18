@@ -15,7 +15,7 @@ class ReportFactoryTest {
             fromInputs(
                 TestPatientFactory.createMinimalTestWGSPatientRecord(),
                 TestTreatmentMatchFactory.createMinimalTreatmentMatch(),
-                EnvironmentConfiguration(requestingHospital = "NKI-Avl")
+                EnvironmentConfiguration(requestingHospital = "NKI-AvL")
             )
         ).isNotNull
 
@@ -23,7 +23,7 @@ class ReportFactoryTest {
             fromInputs(
                 TestPatientFactory.createProperTestPatientRecord(),
                 TestTreatmentMatchFactory.createProperTreatmentMatch(),
-                EnvironmentConfiguration(requestingHospital = "NKI-Avl")
+                EnvironmentConfiguration(requestingHospital = "NKI-AvL")
             )
         ).isNotNull
     }
@@ -37,7 +37,7 @@ class ReportFactoryTest {
             fromInputs(
                 patient,
                 treatmentMatch,
-                EnvironmentConfiguration(requestingHospital = "NKI-Avl")
+                EnvironmentConfiguration(requestingHospital = "NKI-AvL")
             ).patientId
         ).isEqualTo("clinical")
     }
