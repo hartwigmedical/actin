@@ -126,7 +126,7 @@ class TreatmentMatchJsonTest {
                     ],
                 "personalizedDataAnalysis":null,
                 "maxMolecularTestAge":null}
-                """).replace("    ", "").replace("\n", "")
+                """).lineSequence().joinToString("") { it.trim() }
         //@formatter:on
 
         assertThat(toJson(match)).isEqualTo(expectedJson)
