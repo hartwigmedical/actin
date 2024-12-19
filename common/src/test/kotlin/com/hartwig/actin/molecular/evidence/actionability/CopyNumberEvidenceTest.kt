@@ -60,6 +60,15 @@ class CopyNumberEvidenceTest {
         assertThat(lossMatches.matchingCriteriaPerTrialMatch).isEmpty()
     }
 
+    @Test
+    fun `Should not match evidence and trials for no amp or loss`() {
+        val noAmpOrLoss = create("gene 1", CopyNumberType.NONE)
+
+        val matches = copyNumberEvidence.findMatches(noAmpOrLoss)
+        assertThat(matches.evidenceMatches).isEmpty()
+        assertThat(matches.matchingCriteriaPerTrialMatch).isEmpty()
+    }
+
     private fun create(gene: String, copyNumberType: CopyNumberType): CopyNumber {
         return TestMolecularFactory.minimalCopyNumber().copy(
             gene = gene,
