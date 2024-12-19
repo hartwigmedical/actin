@@ -84,8 +84,22 @@ object TestServeTrialFactory {
         )
     }
 
-    fun createTrialForFusion(): ActionableTrial {
-        return create(anyMolecularCriteria = setOf(TestServeMolecularFactory.createFusionCriterium()))
+    fun createTrialForFusion(
+        geneUp: String = "",
+        geneDown: String = "",
+        minExonUp: Int? = null,
+        maxExonUp: Int? = null
+    ): ActionableTrial {
+        return create(
+            anyMolecularCriteria = setOf(
+                TestServeMolecularFactory.createFusionCriterium(
+                    geneUp = geneUp,
+                    geneDown = geneDown,
+                    minExonUp = minExonUp,
+                    maxExonUp = maxExonUp
+                )
+            )
+        )
     }
 
 

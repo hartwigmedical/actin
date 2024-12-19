@@ -74,8 +74,20 @@ object TestServeEvidenceFactory {
         return create(molecularCriterium = TestServeMolecularFactory.createGeneCriterium(gene = gene, geneEvent = geneEvent))
     }
 
-    fun createEvidenceForFusion(): EfficacyEvidence {
-        return create(molecularCriterium = TestServeMolecularFactory.createFusionCriterium())
+    fun createEvidenceForFusion(
+        geneUp: String = "",
+        geneDown: String = "",
+        minExonUp: Int? = null,
+        maxExonUp: Int? = null
+    ): EfficacyEvidence {
+        return create(
+            molecularCriterium = TestServeMolecularFactory.createFusionCriterium(
+                geneUp = geneUp,
+                geneDown = geneDown,
+                minExonUp = minExonUp,
+                maxExonUp = maxExonUp
+            )
+        )
     }
 
     fun createEvidenceForCharacteristic(type: TumorCharacteristicType = TumorCharacteristicType.MICROSATELLITE_STABLE): EfficacyEvidence {

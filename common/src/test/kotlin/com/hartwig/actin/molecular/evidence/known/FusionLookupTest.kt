@@ -1,18 +1,25 @@
 package com.hartwig.actin.molecular.evidence.known
 
-import com.hartwig.actin.molecular.evidence.matching.FUSION_CRITERIA
-import com.hartwig.serve.datamodel.molecular.fusion.KnownFusion
+import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
+import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+
+private val FUSION_CRITERIA = FusionMatchCriteria(
+    isReportable = true,
+    geneStart = "up",
+    geneEnd = "down",
+    driverType = FusionDriverType.KNOWN_PAIR,
+)
 
 class FusionLookupTest {
 
     @Test
     fun `Should lookup fusions`() {
-        val fusion1: KnownFusion = TestServeKnownFactory.fusionBuilder().geneUp("up").geneDown("down").build()
-        val fusion2: KnownFusion = TestServeKnownFactory.fusionBuilder().geneUp("up").geneDown("down").minExonUp(3).maxExonUp(3).build()
-        val fusion3: KnownFusion = TestServeKnownFactory.fusionBuilder().geneUp("up").geneDown("down").minExonDown(4).maxExonDown(4).build()
-        val fusion4: KnownFusion = TestServeKnownFactory.fusionBuilder()
+        val fusion1 = TestServeKnownFactory.fusionBuilder().geneUp("up").geneDown("down").build()
+        val fusion2 = TestServeKnownFactory.fusionBuilder().geneUp("up").geneDown("down").minExonUp(3).maxExonUp(3).build()
+        val fusion3 = TestServeKnownFactory.fusionBuilder().geneUp("up").geneDown("down").minExonDown(4).maxExonDown(4).build()
+        val fusion4 = TestServeKnownFactory.fusionBuilder()
             .geneUp("up")
             .geneDown("down")
             .minExonUp(3)

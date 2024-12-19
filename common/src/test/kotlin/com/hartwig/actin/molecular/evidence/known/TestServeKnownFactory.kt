@@ -56,8 +56,7 @@ object TestServeKnownFactory {
     private fun createEmptyGeneAlteration(): GeneAlteration {
         return createGeneAlteration(GeneRole.UNKNOWN, ProteinEffect.UNKNOWN)
     }
-
-    @JvmOverloads
+    
     fun createGeneAlteration(
         geneRole: GeneRole,
         proteinEffect: ProteinEffect,

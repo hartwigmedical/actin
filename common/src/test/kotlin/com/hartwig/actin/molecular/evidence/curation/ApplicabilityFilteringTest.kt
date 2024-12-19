@@ -10,11 +10,13 @@ class ApplicabilityFilteringTest {
     @Test
     fun `Should filter hotspots on non-applicable gene`() {
         val nonApplicableGene = TestApplicabilityFilteringUtil.nonApplicableGene()
+
         assertThat(
             ApplicabilityFiltering.isApplicable(
                 TestServeEvidenceFactory.createEvidenceForHotspot(nonApplicableGene).molecularCriterium().hotspots().first()
             )
         ).isFalse()
+
         assertThat(
             ApplicabilityFiltering.isApplicable(
                 TestServeEvidenceFactory.createEvidenceForHotspot("other").molecularCriterium().hotspots().first()
@@ -25,11 +27,13 @@ class ApplicabilityFilteringTest {
     @Test
     fun `Should filter ranges on non-applicable gene`() {
         val nonApplicableGene = TestApplicabilityFilteringUtil.nonApplicableGene()
+
         assertThat(
             ApplicabilityFiltering.isApplicable(
                 TestServeEvidenceFactory.createEvidenceForCodon(nonApplicableGene).molecularCriterium().codons().first()
             )
         ).isFalse()
+
         assertThat(
             ApplicabilityFiltering.isApplicable(
                 TestServeEvidenceFactory.createEvidenceForCodon("other").molecularCriterium().codons().first()
@@ -40,11 +44,13 @@ class ApplicabilityFilteringTest {
     @Test
     fun `Should filter non-applicable genes`() {
         val nonApplicableGene = TestApplicabilityFilteringUtil.nonApplicableGene()
+
         assertThat(
             ApplicabilityFiltering.isApplicable(
                 TestServeEvidenceFactory.createEvidenceForGene(gene = nonApplicableGene).molecularCriterium().genes().first()
             )
         ).isFalse()
+
         assertThat(
             ApplicabilityFiltering.isApplicable(
                 TestServeEvidenceFactory.createEvidenceForGene(gene = "other", geneEvent = GeneEvent.ANY_MUTATION).molecularCriterium()

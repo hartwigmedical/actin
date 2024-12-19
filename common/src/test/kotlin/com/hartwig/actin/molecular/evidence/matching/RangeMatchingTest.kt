@@ -1,10 +1,22 @@
 package com.hartwig.actin.molecular.evidence.matching
 
 import com.hartwig.actin.datamodel.molecular.CodingEffect
+import com.hartwig.actin.datamodel.molecular.VariantType
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.serve.datamodel.molecular.MutationType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+
+private val VARIANT_CRITERIA = VariantMatchCriteria(
+    isReportable = true,
+    gene = "gene 1",
+    codingEffect = CodingEffect.MISSENSE,
+    type = VariantType.SNV,
+    chromosome = "12",
+    position = 13,
+    ref = "A",
+    alt = "T"
+)
 
 private val RANGE = TestServeKnownFactory.codonBuilder()
     .gene("gene 1")
