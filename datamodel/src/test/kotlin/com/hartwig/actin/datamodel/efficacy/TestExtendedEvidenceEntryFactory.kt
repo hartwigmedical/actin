@@ -78,7 +78,7 @@ object TestExtendedEvidenceEntryFactory {
 
     private fun createAnalysisGroup(): AnalysisGroup {
         return AnalysisGroup(
-            id = 1, name = "Analyis group", nPatients = 200, endPoints = listOf(
+            id = 1, name = "Analysis group", nPatients = 200, endPoints = listOf(
                 EndPoint(
                     id = 2,
                     name = "Median Progression-Free Survival",
