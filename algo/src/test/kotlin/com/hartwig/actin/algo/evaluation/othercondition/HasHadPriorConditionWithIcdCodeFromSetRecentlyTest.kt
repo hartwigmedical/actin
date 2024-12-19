@@ -75,6 +75,23 @@ class HasHadPriorConditionWithIcdCodeFromSetRecentlyTest {
     }
 
     @Test
+    fun `Should evaluate to undetermined if condition matches main ICD code but has unknown extension`() {
+        val function = HasHadPriorConditionWithIcdCodeFromSetRecently(
+            icdModel, setOf(IcdCode(IcdConstants.STROKE_NOS_CODE, "extensionCode")), "stroke", minDate
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(
+                OtherConditionTestFactory.withPriorOtherCondition(
+                    OtherConditionTestFactory.priorOtherCondition(
+                        icdMainCode = IcdConstants.STROKE_NOS_CODE, icdExtensionCode = null
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
     fun `Should fail if no conditions with correct ICD code in history`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,

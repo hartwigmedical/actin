@@ -2,9 +2,9 @@ package com.hartwig.actin.algo.evaluation.complication
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.othercondition.PriorOtherConditionFunctions
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.icd.IcdConstants
+import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IcdCode
@@ -13,11 +13,10 @@ import com.hartwig.actin.icd.IcdModel
 class HasLeptomeningealDisease(private val icdModel: IcdModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val icdCode = IcdCode(IcdConstants.LEPTOMENINGEAL_METASTASES_CODE)
-        val hasConfirmedLeptomeningealDisease =
-            ComplicationFunctions.findComplicationsMatchingAnyIcdCode(icdModel, record, setOf(icdCode)).fullMatches.isNotEmpty() ||
-                    PriorOtherConditionFunctions.findRelevantPriorConditionsMatchingAnyIcdCode(icdModel, record, setOf(icdCode))
-                        .fullMatches.isNotEmpty()
+        val hasConfirmedLeptomeningealDisease = icdModel.findInstancesMatchingAnyIcdCode(
+            OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions) + (record.complications ?: emptyList()),
+            setOf(IcdCode(IcdConstants.LEPTOMENINGEAL_METASTASES_CODE))
+        ).fullMatches.isNotEmpty()
 
         val tumorDetails = record.tumor
         val otherLesions = listOfNotNull(tumorDetails.otherLesions, tumorDetails.otherSuspectedLesions).flatten()

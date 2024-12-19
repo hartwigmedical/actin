@@ -21,7 +21,7 @@ private const val targetTitle = "childParentTitle"
 private const val diseaseDescription = "parent disease"
 
 class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
-    private val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("child", "otherTarget", "childParent"))
+    private val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("child", "otherTarget", "childParent", "extension"))
     private val referenceDate = LocalDate.of(2024, 12, 6)
     private val function = HasHadPriorConditionComplicationOrToxicityWithIcdCode(
         icdModel, setOf(targetTitle), diseaseDescription, referenceDate
@@ -89,6 +89,21 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
                 "Patient has history of toxicity(ies) toxicity, which is indicative of $diseaseDescription"
             )
         }
+    }
+
+    @Test
+    fun `Should evaluate to undetermined when ICD main code matches but extension code is unknown`() {
+        val function = HasHadPriorConditionComplicationOrToxicityWithIcdCode(
+            icdModel, setOf("$targetTitle&extensionTitle"), diseaseDescription, referenceDate
+        )
+
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED, function.evaluate(
+                OtherConditionTestFactory.withPriorOtherCondition(
+                    OtherConditionTestFactory.priorOtherCondition(icdMainCode = parentCode, icdExtensionCode = null)
+                )
+            )
+        )
     }
 
     @Test

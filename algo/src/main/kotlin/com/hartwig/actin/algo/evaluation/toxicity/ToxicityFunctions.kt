@@ -25,11 +25,11 @@ object ToxicityFunctions {
 
     fun findToxicitiesMatchingAnyIcdCode(
         icdModel: IcdModel, toxicities: List<Toxicity>, targetIcdCodes: Set<IcdCode>): IcdMatches<Toxicity> {
-        val matches = IcdModel.findInstancesMatchingAnyIcdCode(icdModel, toxicities, targetIcdCodes)
+        val matches = icdModel.findInstancesMatchingAnyIcdCode(toxicities, targetIcdCodes)
 
         return IcdMatches(
-            fullMatches = matches.fullMatches.filterIsInstance<Toxicity>(),
-            mainCodeMatchesWithUnknownExtension = matches.mainCodeMatchesWithUnknownExtension.filterIsInstance<Toxicity>()
+            fullMatches = matches.fullMatches,
+            mainCodeMatchesWithUnknownExtension = matches.mainCodeMatchesWithUnknownExtension
         )
     }
 

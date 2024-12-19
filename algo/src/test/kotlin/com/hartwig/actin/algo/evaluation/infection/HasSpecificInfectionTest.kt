@@ -27,6 +27,18 @@ class HasSpecificInfectionTest {
     }
 
     @Test
+    fun `Should evaluate to undetermined with infection matching main code but unknown extension code`() {
+        val function = HasSpecificInfection(
+            TestIcdFactory.createTestModel(),
+            setOf(IcdCode(IcdConstants.ACUTE_HEPATITIS_B_CODE, "extension")),
+            "hepatitis B virus"
+        )
+        val condition = InfectionTestFactory.priorOtherCondition(icdCode = IcdCode(IcdConstants.ACUTE_HEPATITIS_B_CODE, null))
+        val evaluation = function.evaluate(InfectionTestFactory.withPriorOtherCondition(condition))
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+    }
+
+    @Test
     fun `Should pass for prior condition with correct ICD code`() {
         val condition = InfectionTestFactory.priorOtherCondition(icdCode = targetCodes.first())
         val evaluation = function.evaluate(InfectionTestFactory.withPriorOtherCondition(condition))

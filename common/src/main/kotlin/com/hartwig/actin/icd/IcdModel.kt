@@ -5,7 +5,7 @@ import com.hartwig.actin.datamodel.clinical.IcdCodeHolder
 import com.hartwig.actin.icd.datamodel.IcdMatches
 import com.hartwig.actin.icd.datamodel.IcdNode
 
-data class IcdModel(
+class IcdModel(
     val codeToNodeMap: Map<String, IcdNode>,
     val titleToCodeMap: Map<String, String>
 ) {
@@ -38,8 +38,35 @@ data class IcdModel(
         return extensionTitle?.let { "$mainTitle & $it" } ?: mainTitle
     }
 
-    private fun codeToNode(code: String): IcdNode? = codeToNodeMap[code]
+    fun <T : IcdCodeHolder> findInstancesMatchingAnyIcdCode(instances: List<T>?, targetIcdCodes: Set<IcdCode>): IcdMatches<T> {
+        val (fullMatches, unknownExtensionMatches) = if (instances == null) {
+            Pair(emptyList<T>(), emptyList<T>())
+        } else {
+            targetIcdCodes.fold(Pair(emptyList(), emptyList())) { acc, targetCode ->
+                val (fullMatch, unknownMatch) = returnIcdMatches(targetCode, instances)
+                Pair(acc.first + fullMatch, acc.second + unknownMatch)
+            }
+        }
+        return IcdMatches(fullMatches, unknownExtensionMatches)
+    }
 
+    private fun <T : IcdCodeHolder> returnIcdMatches(targetCode: IcdCode, instances: List<T>): Pair<List<T>, List<T>> {
+        val mainMatches = instances.filter { instance ->
+            returnCodeWithParents(instance.icdCode.mainCode).any(targetCode.mainCode::equals)
+        }
+
+        return if (targetCode.extensionCode == null) {
+            Pair(mainMatches, emptyList())
+        } else {
+            mainMatches.filter {
+                it.icdCode.extensionCode?.let { code ->
+                    returnCodeWithParents(code).any(targetCode.extensionCode::equals)
+                } != false
+            }.partition { it.icdCode.extensionCode != null }
+        }
+    }
+
+    private fun codeToNode(code: String): IcdNode? = codeToNodeMap[code]
     private fun hasExtension(icd: String) = icd.contains('&')
 
     companion object {
@@ -49,42 +76,5 @@ data class IcdModel(
 
         private fun createCodeToNodeMap(icdNodes: List<IcdNode>): Map<String, IcdNode> = icdNodes.associateBy { it.code }
         private fun createTitleToCodeMap(icdNodes: List<IcdNode>): Map<String, String> = icdNodes.associate { it.title to it.code }
-
-        fun findInstancesMatchingAnyIcdCode(
-            icdModel: IcdModel,
-            instances: List<IcdCodeHolder>?,
-            targetIcdCodes: Set<IcdCode>
-        ): IcdMatches<IcdCodeHolder> {
-
-            val (fullMatches, unknownExtensionMatches) = if (instances == null) {
-                Pair(emptyList<IcdCodeHolder>(), emptyList<IcdCodeHolder>())
-            } else {
-                targetIcdCodes.fold(Pair(emptyList(), emptyList())) { acc, targetCode ->
-                    val (fullMatch, unknownMatch) = returnIcdMatches(icdModel, targetCode, instances)
-                    Pair(acc.first + fullMatch, acc.second + unknownMatch)
-                }
-            }
-            return IcdMatches(fullMatches, unknownExtensionMatches)
-        }
-
-        private fun returnIcdMatches(
-            icdModel: IcdModel,
-            targetCode: IcdCode,
-            instances: List<IcdCodeHolder>
-        ): Pair<List<IcdCodeHolder>, List<IcdCodeHolder>> {
-            val mainMatches = instances.filter { instance ->
-                icdModel.returnCodeWithParents(instance.icdCode.mainCode).any(targetCode.mainCode::equals)
-            }
-
-            return if (targetCode.extensionCode == null) {
-                Pair(mainMatches, emptyList())
-            } else {
-                mainMatches.filter {
-                    it.icdCode.extensionCode?.let { code ->
-                        icdModel.returnCodeWithParents(code).any(targetCode.extensionCode::equals)
-                    } != false
-                }.partition { it.icdCode.extensionCode != null }
-            }
-        }
     }
 }

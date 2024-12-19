@@ -13,11 +13,11 @@ object ComplicationFunctions {
         record: PatientRecord,
         targetIcdCodes: Set<IcdCode>
     ): IcdMatches<Complication> {
-        val matches = IcdModel.findInstancesMatchingAnyIcdCode(icdModel, record.complications, targetIcdCodes)
+        val matches = icdModel.findInstancesMatchingAnyIcdCode(record.complications, targetIcdCodes)
 
         return IcdMatches(
-            fullMatches = matches.fullMatches.filterIsInstance<Complication>(),
-            mainCodeMatchesWithUnknownExtension = matches.mainCodeMatchesWithUnknownExtension.filterIsInstance<Complication>()
+            fullMatches = matches.fullMatches,
+            mainCodeMatchesWithUnknownExtension = matches.mainCodeMatchesWithUnknownExtension
         )
     }
 

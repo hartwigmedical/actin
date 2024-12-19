@@ -8,7 +8,7 @@ import org.junit.Test
 
 class HasHadPriorConditionWithIcdTest {
 
-    private val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("conditionParent", "condition"))
+    private val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("conditionParent", "condition", "extension"))
     private val function = HasHadPriorConditionWithIcd(icdModel, IcdCode("conditionParentCode"))
 
     @Test
@@ -21,6 +21,13 @@ class HasHadPriorConditionWithIcdTest {
     fun `Should pass for prior condition with matching parent icd code`() {
         val conditions = listOf(OtherConditionTestFactory.priorOtherCondition(icdMainCode = "conditionCode"))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(conditions)))
+    }
+
+    @Test
+    fun `Should evaluate to undetermined for prior condition with unknown extension`() {
+        val function = HasHadPriorConditionWithIcd(icdModel, IcdCode("conditionParentCode", "extensionCode"))
+        val conditions = listOf(OtherConditionTestFactory.priorOtherCondition(icdMainCode = "conditionParentCode", icdExtensionCode = null))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(conditions)))
     }
 
     @Test

@@ -15,9 +15,14 @@ class HasContraindicationToMRI(private val icdModel: IcdModel) : EvaluationFunct
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val targetCodes = setOf(IcdCode(IcdConstants.KIDNEY_FAILURE_BLOCK), IcdCode(IcdConstants.PRESENCE_OF_DEVICE_IMPLANT_OR_GRAFT_BLOCK))
+
         val relevantConditions = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
-        val conditionsMatchingCode =
-            PriorOtherConditionFunctions.findRelevantPriorConditionsMatchingAnyIcdCode(icdModel, record, targetCodes).fullMatches
+
+        val matchingConditionsAndComplications = icdModel.findInstancesMatchingAnyIcdCode(
+            relevantConditions + (record.complications ?: emptyList()),
+            targetCodes
+        ).fullMatches
+
         val conditionsMatchingString = relevantConditions.filter {
             stringCaseInsensitivelyMatchesQueryCollection(it.name, OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_MRI)
         }
@@ -29,11 +34,11 @@ class HasContraindicationToMRI(private val icdModel: IcdModel) : EvaluationFunct
                 )
             }
 
-        val conditionString = Format.concatItemsWithAnd(conditionsMatchingCode)
+        val conditionString = Format.concatItemsWithAnd(matchingConditionsAndComplications)
         val messageStart = "Potential MRI contraindication: "
 
         return when {
-            conditionsMatchingCode.isNotEmpty() -> EvaluationFactory.recoverablePass(messageStart + conditionString)
+            matchingConditionsAndComplications.isNotEmpty() -> EvaluationFactory.recoverablePass(messageStart + conditionString)
 
             conditionsMatchingString.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass(messageStart + Format.concatItemsWithAnd(conditionsMatchingString))

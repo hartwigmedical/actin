@@ -9,12 +9,28 @@ import org.junit.Test
 
 class HasHadPriorConditionWithIcdCodeFromSetTest {
     private val targetIcdCodes = IcdConstants.RESPIRATORY_COMPROMISE_SET.map { IcdCode(it) }.toSet()
-    private val function = HasHadPriorConditionWithIcdCodeFromSet(TestIcdFactory.createTestModel(), targetIcdCodes, "respiratory compromise")
+    private val function =
+        HasHadPriorConditionWithIcdCodeFromSet(TestIcdFactory.createTestModel(), targetIcdCodes, "respiratory compromise")
 
     @Test
     fun `Should pass if condition with correct ICD code in history`() {
         val conditions = OtherConditionTestFactory.priorOtherCondition("pneumonitis", icdMainCode = IcdConstants.PNEUMONITIS_BLOCK)
         assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withPriorOtherCondition(conditions)))
+    }
+
+    @Test
+    fun `Should evaluate to undetermined for condition with unknown extension`() {
+        val function = HasHadPriorConditionWithIcdCodeFromSet(
+            TestIcdFactory.createTestModel(),
+            setOf(IcdCode(IcdConstants.PNEUMONITIS_BLOCK, "extensionCode")),
+            "respiratory compromise"
+        )
+        val conditions = OtherConditionTestFactory.priorOtherCondition(
+            "pneumonitis",
+            icdMainCode = IcdConstants.PNEUMONITIS_BLOCK,
+            icdExtensionCode = null
+        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(OtherConditionTestFactory.withPriorOtherCondition(conditions)))
     }
 
     @Test

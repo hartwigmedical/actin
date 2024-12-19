@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.infection
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.othercondition.PriorOtherConditionFunctions
+import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IcdCode
@@ -15,10 +15,13 @@ class HasSpecificInfection(
     override fun evaluate(record: PatientRecord): Evaluation {
 
         val matchingConditions =
-            PriorOtherConditionFunctions.findRelevantPriorConditionsMatchingAnyIcdCode(icdModel, record, icdCodes).fullMatches
+            icdModel.findInstancesMatchingAnyIcdCode(OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions), icdCodes)
 
         return when {
-            matchingConditions.isNotEmpty() -> EvaluationFactory.pass("Prior $term infection in history")
+            matchingConditions.fullMatches.isNotEmpty() -> EvaluationFactory.pass("Prior $term infection in history")
+            matchingConditions.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> {
+                EvaluationFactory.undetermined("Prior infection in history but undetermined if $term")
+            }
 
             else -> EvaluationFactory.fail("No prior $term infection")
         }

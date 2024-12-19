@@ -3,10 +3,10 @@ package com.hartwig.actin.algo.evaluation.toxicity
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.intolerance.IntoleranceFunctions
-import com.hartwig.actin.algo.evaluation.othercondition.PriorOtherConditionFunctions
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.algo.icd.IcdConstants
+import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IcdCode
@@ -33,9 +33,8 @@ class HasIntoleranceForPD1OrPDL1Inhibitors(private val icdModel: IcdModel) : Eva
         val matchingIntolerances = (matchingIntolerancesByMainCode.fullMatches + matchingIntolerancesByName).toSet()
         val undeterminedDrugIntolerances = matchingIntolerancesByMainCode.mainCodeMatchesWithUnknownExtension.toSet()
 
-        val autoImmuneHistory = PriorOtherConditionFunctions.findRelevantPriorConditionsMatchingAnyIcdCode(
-            icdModel,
-            record,
+        val autoImmuneHistory = icdModel.findInstancesMatchingAnyIcdCode(
+            OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions),
             IcdConstants.AUTOIMMUNE_DISEASE_SET.map { IcdCode(it) }.toSet()
         ).fullMatches
 

@@ -12,9 +12,8 @@ import com.hartwig.actin.icd.IcdModel
 class HasInheritedPredispositionToBleedingOrThrombosis(private val icdModel: IcdModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val icdMatchingConditions = PriorOtherConditionFunctions.findRelevantPriorConditionsMatchingAnyIcdCode(
-            icdModel,
-            record,
+        val icdMatchingConditions = icdModel.findInstancesMatchingAnyIcdCode(
+            OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions),
             setOf(IcdCode(IcdConstants.HEREDITARY_THROMBOPHILIA_CODE), IcdCode(IcdConstants.HEREDITARY_BLEEDING_DISORDER_BLOCK))
         ).fullMatches
 

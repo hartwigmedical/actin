@@ -1,15 +1,18 @@
 package com.hartwig.actin.algo.evaluation.othercondition
 
-import com.hartwig.actin.algo.evaluation.EvaluationFactory.fail
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.complication.ComplicationFunctions
 import com.hartwig.actin.algo.evaluation.othercondition.PriorConditionMessages.Characteristic
 import com.hartwig.actin.algo.evaluation.toxicity.ToxicityFunctions
+import com.hartwig.actin.algo.evaluation.util.Format
+import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.Complication
+import com.hartwig.actin.datamodel.clinical.IcdCodeHolder
 import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
+import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.icd.IcdModel
 import java.time.LocalDate
@@ -22,51 +25,43 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCode(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val targetIcdCodes = targetIcdTitles.mapNotNull { icdModel.resolveCodeForTitle(it) }.toSet()
-
-        val matchingPriorConditions =
-            PriorOtherConditionFunctions.findRelevantPriorConditionsMatchingAnyIcdCode(icdModel, record, targetIcdCodes).fullMatches
-                .map(PriorOtherCondition::display).toSet()
-
-        val matchingComplications = ComplicationFunctions.findComplicationsMatchingAnyIcdCode(
-            icdModel,
-            record,
-            targetIcdCodes
-        ).fullMatches.map(Complication::display).toSet()
-
+        val targetIcdCodes = targetIcdTitles.map { icdModel.resolveCodeForTitle(it)!! }.toSet()
+        val relevantConditions = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
         val relevantToxicities = ToxicityFunctions.selectRelevantToxicities(record, icdModel, referenceDate, emptyList())
-        val hasIcdMatch = ToxicityFunctions.findToxicitiesMatchingAnyIcdCode(icdModel, relevantToxicities, targetIcdCodes)
-        val matchingToxicities = relevantToxicities
             .filter { toxicity -> (toxicity.grade ?: 0) >= 2 || (toxicity.source == ToxicitySource.QUESTIONNAIRE) }
-            .filter { hasIcdMatch.fullMatches.contains(it) }
-            .map { it.name }.toSet()
+        val (fullMatches, undeterminedMatches) = icdModel.findInstancesMatchingAnyIcdCode(
+            relevantConditions + (record.complications ?: emptyList()) + relevantToxicities,
+            targetIcdCodes,
+        )
 
-        return if (matchingPriorConditions.isNotEmpty() || matchingComplications.isNotEmpty() || matchingToxicities.isNotEmpty()) {
-            Evaluation(
-                result = EvaluationResult.PASS,
-                recoverable = false,
-                passSpecificMessages = passSpecificMessages(
-                    diseaseDescription,
-                    matchingPriorConditions,
-                    matchingComplications,
-                    matchingToxicities
-                ),
-                passGeneralMessages = setOf(
-                    PriorConditionMessages.passGeneral(matchingPriorConditions + matchingComplications + matchingToxicities)
+        return when {
+            fullMatches.isNotEmpty() -> {
+                Evaluation(
+                    result = EvaluationResult.PASS,
+                    recoverable = false,
+                    passSpecificMessages = passSpecificMessages(diseaseDescription, fullMatches.toSet()),
+                    passGeneralMessages =
+                    setOf(PriorConditionMessages.passGeneral(fullMatches.map { it.display() }.toSet()))
                 )
+            }
+
+            undeterminedMatches.isNotEmpty() -> EvaluationFactory.undetermined(
+                "Has history of ${Format.concatStringsWithAnd(undeterminedMatches.map { it.display() })} " +
+                        "but undetermined if history of $diseaseDescription"
             )
-        } else fail(PriorConditionMessages.failSpecific(diseaseDescription), PriorConditionMessages.failGeneral())
+
+            else -> EvaluationFactory.fail(PriorConditionMessages.failSpecific(diseaseDescription), PriorConditionMessages.failGeneral())
+        }
     }
 
     companion object {
-        private fun passSpecificMessages(
-            targetIcdTitle: String, matchingConditions: Set<String>, matchingComplications: Set<String>, matchingToxicities: Set<String>
-        ): Set<String> {
+        private fun passSpecificMessages(targetIcdTitle: String, matches: Set<IcdCodeHolder>): Set<String> {
             return listOf(
-                matchingConditions to Characteristic.CONDITION,
-                matchingComplications to Characteristic.COMPLICATION,
-                matchingToxicities to Characteristic.TOXICITY
-            ).filter { it.first.isNotEmpty() }.map { PriorConditionMessages.passSpecific(it.second, it.first, targetIcdTitle) }.toSet()
+                matches.filterIsInstance<PriorOtherCondition>() to Characteristic.CONDITION,
+                matches.filterIsInstance<Complication>() to Characteristic.COMPLICATION,
+                matches.filterIsInstance<Toxicity>() to Characteristic.TOXICITY
+            ).filter { it.first.isNotEmpty() }
+                .map { PriorConditionMessages.passSpecific(it.second, it.first.map { c -> c.display() }, targetIcdTitle) }.toSet()
         }
     }
 }

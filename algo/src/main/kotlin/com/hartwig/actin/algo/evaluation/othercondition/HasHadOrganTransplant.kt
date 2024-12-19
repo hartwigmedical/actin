@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.othercondition
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.icd.IcdConstants
+import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IcdCode
@@ -11,12 +12,9 @@ import com.hartwig.actin.icd.IcdModel
 class HasHadOrganTransplant(private val icdModel: IcdModel, private val minYear: Int?) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
+        val relevant = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
         val matchingConditions =
-            PriorOtherConditionFunctions.findRelevantPriorConditionsMatchingAnyIcdCode(
-                icdModel,
-                record,
-                IcdConstants.TRANSPLANTATION_SET.map { IcdCode(it) }.toSet()
-            ).fullMatches
+            icdModel.findInstancesMatchingAnyIcdCode(relevant, IcdConstants.TRANSPLANTATION_SET.map { IcdCode(it) }.toSet()).fullMatches
 
         val grouped = matchingConditions.groupBy { condition -> minYear == null || condition.year?.let { it >= minYear } == true }
         val passesDateRequirement = grouped[true] ?: emptyList()

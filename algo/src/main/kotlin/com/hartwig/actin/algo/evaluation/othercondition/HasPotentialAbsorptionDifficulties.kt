@@ -6,6 +6,7 @@ import com.hartwig.actin.algo.evaluation.complication.ComplicationFunctions
 import com.hartwig.actin.algo.evaluation.toxicity.ToxicityFunctions
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.icd.IcdConstants
+import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IcdCode
@@ -15,8 +16,10 @@ class HasPotentialAbsorptionDifficulties(private val icdModel: IcdModel) : Evalu
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val targetIcdCodes = IcdConstants.POSSIBLE_ABSORPTION_DIFFICULTIES_SET.map { IcdCode(it) }.toSet()
-        val conditions =
-            PriorOtherConditionFunctions.findRelevantPriorConditionsMatchingAnyIcdCode(icdModel, record, targetIcdCodes).fullMatches
+        val conditions = icdModel.findInstancesMatchingAnyIcdCode(
+            OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions),
+            targetIcdCodes
+        ).fullMatches
 
         if (conditions.isNotEmpty()) {
             return EvaluationFactory.pass(

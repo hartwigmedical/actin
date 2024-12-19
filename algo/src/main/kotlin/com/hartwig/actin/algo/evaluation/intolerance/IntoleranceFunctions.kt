@@ -13,11 +13,11 @@ object IntoleranceFunctions {
         record: PatientRecord,
         targetIcdCodes: Set<IcdCode>
     ): IcdMatches<Intolerance> {
-        val matches = IcdModel.findInstancesMatchingAnyIcdCode(icdModel, record.intolerances, targetIcdCodes)
+        val matches = icdModel.findInstancesMatchingAnyIcdCode(record.intolerances, targetIcdCodes)
 
         return IcdMatches(
-            fullMatches = matches.fullMatches.filterIsInstance<Intolerance>(),
-            mainCodeMatchesWithUnknownExtension = matches.mainCodeMatchesWithUnknownExtension.filterIsInstance<Intolerance>()
+            fullMatches = matches.fullMatches,
+            mainCodeMatchesWithUnknownExtension = matches.mainCodeMatchesWithUnknownExtension
         )
     }
 }
