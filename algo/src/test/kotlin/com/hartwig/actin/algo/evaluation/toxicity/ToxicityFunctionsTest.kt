@@ -52,26 +52,4 @@ class ToxicityFunctionsTest {
         val record = ToxicityTestFactory.withToxicities(listOf(ehrTox.copy(endDate = referenceDate.minusYears(1))))
         assertThat(ToxicityFunctions.selectRelevantToxicities(record, TestIcdFactory.createTestModel(), referenceDate)).isEmpty()
     }
-
-    @Test
-    fun `Should correctly select toxicity with icd code matching to target icd code`() {
-        val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("node", "nodeParent", "extension", "extensionParent"))
-        val targetCode = setOf(IcdCode("nodeParentCode", "extensionParentCode"))
-        val fullMatch = ehrTox.copy(icdCode = IcdCode("nodeCode", "extensionCode"))
-        val mainMatchAndUnknownExtension = ehrTox.copy(icdCode = IcdCode("nodeCode", null))
-        val nonMatch = ehrTox.copy(icdCode = IcdCode("wrongCode"))
-
-        val record = ToxicityTestFactory.withToxicities(listOf(fullMatch, mainMatchAndUnknownExtension, nonMatch))
-        val evaluation = ToxicityFunctions.findToxicitiesMatchingAnyIcdCode(icdModel, record.toxicities, targetCode)
-        assertThat(evaluation.fullMatches).containsOnly(fullMatch)
-        assertThat(evaluation.mainCodeMatchesWithUnknownExtension).containsOnly(mainMatchAndUnknownExtension)
-
-        assertThat(
-            ToxicityFunctions.findToxicitiesMatchingAnyIcdCode(
-                icdModel,
-                record.toxicities,
-                setOf(IcdCode("nodeCode", null))
-            ).fullMatches.containsAll(listOf(fullMatch, mainMatchAndUnknownExtension))
-        ).isTrue()
-    }
 }

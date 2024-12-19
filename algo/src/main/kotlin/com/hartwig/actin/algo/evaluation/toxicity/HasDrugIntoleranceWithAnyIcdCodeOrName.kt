@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.intolerance.IntoleranceFunctions
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.algo.icd.IcdConstants
@@ -22,7 +21,7 @@ class HasDrugIntoleranceWithAnyIcdCodeOrName(
         val targetCodes = IcdConstants.DRUG_ALLERGY_SET.map { IcdCode(it, extensionCode) }.toSet()
         val platinumAllergiesByName =
             record.intolerances.filter { stringCaseInsensitivelyMatchesQueryCollection(it.name, names) }
-        val matchingAllergiesByMainCode = IntoleranceFunctions.findIntoleranceMatchingAnyIcdCode(icdModel, record, targetCodes)
+        val matchingAllergiesByMainCode = icdModel.findInstancesMatchingAnyIcdCode(record.intolerances, targetCodes)
         val matchingAllergies = (matchingAllergiesByMainCode.fullMatches + platinumAllergiesByName).toSet()
         val undeterminedDrugAllergies = matchingAllergiesByMainCode.mainCodeMatchesWithUnknownExtension.toSet()
 

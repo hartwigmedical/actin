@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.intolerance.IntoleranceFunctions
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.PatientRecord
@@ -16,9 +15,8 @@ class HasIntoleranceRelatedToStudyMedication(private val icdModel: IcdModel) : E
         val allergies = record.intolerances
             .filter { intolerance ->
                 intolerance.clinicalStatus.equals(CLINICAL_STATUS_ACTIVE, ignoreCase = true)
-                        && IntoleranceFunctions.findIntoleranceMatchingAnyIcdCode(
-                    icdModel,
-                    record,
+                        && icdModel.findInstancesMatchingAnyIcdCode(
+                    record.intolerances,
                     IcdConstants.DRUG_ALLERGY_SET.map { IcdCode(it) }.toSet()
                 ).fullMatches.contains(intolerance)
             }

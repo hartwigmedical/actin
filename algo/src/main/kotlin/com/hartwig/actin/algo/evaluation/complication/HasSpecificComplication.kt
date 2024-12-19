@@ -17,17 +17,21 @@ class HasSpecificComplication(private val icdModel: IcdModel, private val target
         )
 
         val targetCodes = targetIcdTitles.map { icdModel.resolveCodeForTitle(it)!! }.toSet()
-        val matchingComplications =
-            ComplicationFunctions.findComplicationsMatchingAnyIcdCode(icdModel, record, targetCodes).fullMatches
+        val (fullMatches, mainMatchesWithUnknownExtension) =
+            icdModel.findInstancesMatchingAnyIcdCode(record.complications, targetCodes)
 
         val icdTitleText = if (targetIcdTitles.size > 1) {
             "belonging to type ${Format.concatLowercaseWithCommaAndOr(targetIcdTitles)}"
         } else targetIcdTitles.takeIf { it.isNotEmpty() }?.first()
 
         return when {
-            matchingComplications.isNotEmpty() -> EvaluationFactory.pass(
-                "Patient has complication(s) " + Format.concatItemsWithAnd(matchingComplications),
-                "Present " + Format.concatItemsWithAnd(matchingComplications)
+            fullMatches.isNotEmpty() -> EvaluationFactory.pass(
+                "Patient has complication(s) " + Format.concatItemsWithAnd(fullMatches),
+                "Present " + Format.concatItemsWithAnd(fullMatches)
+            )
+
+            mainMatchesWithUnknownExtension.isNotEmpty() -> EvaluationFactory.undetermined(
+                "Has complication(s) ${Format.concatItemsWithAnd(mainMatchesWithUnknownExtension)} but undetermined if $icdTitleText"
             )
 
             hasComplicationsWithoutNames(record) -> EvaluationFactory.undetermined(

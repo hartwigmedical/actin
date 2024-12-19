@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.intolerance.IntoleranceFunctions
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.algo.icd.IcdConstants
@@ -20,18 +19,16 @@ class HasIntoleranceForPD1OrPDL1Inhibitors(private val icdModel: IcdModel) : Eva
             IcdConstants.PD_L1_PD_1_DRUG_SET.map { extension -> IcdCode(mainCode, extension) }
         }.toSet()
 
-        val monoClonalAntibodyIntolerances = IntoleranceFunctions.findIntoleranceMatchingAnyIcdCode(
-            icdModel,
-            record,
+        val monoClonalAntibodyIntolerances = icdModel.findInstancesMatchingAnyIcdCode(
+            record.intolerances,
             IcdConstants.DRUG_ALLERGY_SET.map { IcdCode(it, IcdConstants.MONOCLONAL_ANTIBODY_BLOCK) }.toSet()
         ).fullMatches
 
         val matchingIntolerancesByName =
             record.intolerances.filter { stringCaseInsensitivelyMatchesQueryCollection(it.name, INTOLERANCE_TERMS) }.toSet()
 
-        val matchingIntolerancesByMainCode = IntoleranceFunctions.findIntoleranceMatchingAnyIcdCode(icdModel, record, targetCodes)
-        val matchingIntolerances = (matchingIntolerancesByMainCode.fullMatches + matchingIntolerancesByName).toSet()
-        val undeterminedDrugIntolerances = matchingIntolerancesByMainCode.mainCodeMatchesWithUnknownExtension.toSet()
+        val (fullMatches, mainCodeMatchesWithUnknownExtension) = icdModel.findInstancesMatchingAnyIcdCode(record.intolerances, targetCodes)
+        val matchingIntolerances = (fullMatches + matchingIntolerancesByName).toSet()
 
         val autoImmuneHistory = icdModel.findInstancesMatchingAnyIcdCode(
             OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions),
@@ -45,7 +42,9 @@ class HasIntoleranceForPD1OrPDL1Inhibitors(private val icdModel: IcdModel) : Eva
                 EvaluationFactory.pass("Has PD-1/PD-L1 intolerance(s): " + Format.concatItemsWithAnd(matchingIntolerances))
             }
 
-            undeterminedDrugIntolerances.isNotEmpty() -> EvaluationFactory.undetermined("Drug $undeterminedMessage (drug type unknown)")
+            mainCodeMatchesWithUnknownExtension.isNotEmpty() -> {
+                EvaluationFactory.undetermined("Drug $undeterminedMessage (drug type unknown)")
+            }
 
             monoClonalAntibodyIntolerances.isNotEmpty() -> {
                 EvaluationFactory.undetermined(

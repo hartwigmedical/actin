@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.intolerance.IntoleranceFunctions
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -19,16 +18,12 @@ class HasExperiencedImmuneRelatedAdverseEvents(private val icdModel: IcdModel) :
         val stopReasonUnknown = immunotherapyTreatmentsByStopReason.keys == setOf(null)
         val hasHadImmunotherapyWithStopReasonToxicity = StopReason.TOXICITY in immunotherapyTreatmentsByStopReason
 
-        val intoleranceIcdCheck = IntoleranceFunctions.findIntoleranceMatchingAnyIcdCode(
-            icdModel,
-            record,
+        val (immunotherapyAllergies, undeterminedDrugAllergies) = icdModel.findInstancesMatchingAnyIcdCode(
+            record.intolerances,
             IcdConstants.DRUG_ALLERGY_SET.flatMap { icdCode ->
                 IcdConstants.IMMUNOTHERAPY_DRUG_SET.map { extension -> IcdCode(icdCode, extension) }
             }.toSet()
         )
-
-        val immunotherapyAllergies = intoleranceIcdCheck.fullMatches
-        val undeterminedDrugAllergies = intoleranceIcdCheck.mainCodeMatchesWithUnknownExtension
 
         val warnMessageStart =
             "Possible immunotherapy related adverse events in history"

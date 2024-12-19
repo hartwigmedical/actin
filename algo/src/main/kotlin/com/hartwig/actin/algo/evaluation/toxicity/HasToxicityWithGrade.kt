@@ -23,7 +23,7 @@ class HasToxicityWithGrade(
     override fun evaluate(record: PatientRecord): Evaluation {
         val relevantToxicities = ToxicityFunctions.selectRelevantToxicities(record, icdModel, referenceDate, icdTitlesToIgnore)
         val icdMatches = targetIcdTitles?.mapNotNull(icdModel::resolveCodeForTitle)?.toSet()?.let { targetCodes ->
-            ToxicityFunctions.findToxicitiesMatchingAnyIcdCode(icdModel, relevantToxicities, targetCodes).fullMatches.toSet()
+            icdModel.findInstancesMatchingAnyIcdCode(relevantToxicities, targetCodes).fullMatches.toSet()
         }
 
         val (matchingToxicities, otherToxicities) =

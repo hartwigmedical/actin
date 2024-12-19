@@ -1,9 +1,7 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
-import com.hartwig.actin.icd.datamodel.IcdMatches
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.clinical.Complication
-import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.icd.IcdModel
@@ -21,16 +19,6 @@ object ToxicityFunctions {
             .filter { it.endDate?.isAfter(referenceDate) != false }
             .filter { it.source != ToxicitySource.EHR || it.icdCode !in complicationIcdCodes }
             .filterNot { ignoredIcdMainCodes.contains(it.icdCode.mainCode) }
-    }
-
-    fun findToxicitiesMatchingAnyIcdCode(
-        icdModel: IcdModel, toxicities: List<Toxicity>, targetIcdCodes: Set<IcdCode>): IcdMatches<Toxicity> {
-        val matches = icdModel.findInstancesMatchingAnyIcdCode(toxicities, targetIcdCodes)
-
-        return IcdMatches(
-            fullMatches = matches.fullMatches,
-            mainCodeMatchesWithUnknownExtension = matches.mainCodeMatchesWithUnknownExtension
-        )
     }
 
     private fun dropOutdatedEHRToxicities(toxicities: List<Toxicity>): List<Toxicity> {

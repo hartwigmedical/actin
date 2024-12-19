@@ -25,6 +25,12 @@ class HasIntoleranceWithSpecificIcdTitleTest {
     }
 
     @Test
+    fun `Should evaluate to undetermined for intolerance with unknown extension`() {
+        val intolerance = ToxicityTestFactory.intolerance(icdMainCode = targetIcdCode.mainCode, icdExtensionCode = null)
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(ToxicityTestFactory.withIntolerance(intolerance)))
+    }
+
+    @Test
     fun `Should pass for intolerance with directly matching ICD code`() {
         val intolerance = ToxicityTestFactory.intolerance(icdMainCode = targetIcdCode.mainCode)
         assertEvaluation(EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withIntolerance(intolerance)))

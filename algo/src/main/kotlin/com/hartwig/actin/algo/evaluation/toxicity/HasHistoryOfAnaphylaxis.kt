@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.intolerance.IntoleranceFunctions
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
@@ -23,9 +22,9 @@ class HasHistoryOfAnaphylaxis(private val icdModel: IcdModel): EvaluationFunctio
             ).fullMatches
 
         val anaphylaxisIntoleranceEntries =
-            IntoleranceFunctions.findIntoleranceMatchingAnyIcdCode(icdModel, record, anaphylaxisCode).fullMatches
+            icdModel.findInstancesMatchingAnyIcdCode(record.intolerances, anaphylaxisCode).fullMatches
 
-        val conditionString = Format.concatItemsWithAnd((anaphylaxisIntoleranceEntries + anaphylaxisIntoleranceEntries))
+        val conditionString = Format.concatItemsWithAnd((anaphylaxisHistoryEntries + anaphylaxisIntoleranceEntries))
 
         return if (anaphylaxisIntoleranceEntries.isNotEmpty() || anaphylaxisHistoryEntries.isNotEmpty()) {
             EvaluationFactory.pass("Has history of anaphylaxis: $conditionString")
