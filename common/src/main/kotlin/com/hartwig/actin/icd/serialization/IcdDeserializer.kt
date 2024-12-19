@@ -6,7 +6,7 @@ import com.hartwig.actin.icd.datamodel.SerializedIcdNode
 
 object IcdDeserializer {
 
-    fun create(rawNodes: List<SerializedIcdNode>): List<IcdNode> {
+    fun deserialize(rawNodes: List<SerializedIcdNode>): List<IcdNode> {
         val (extensionCodeNodes, otherNodes) = rawNodes.map { it.copy(code = resolveCode(it)) }
             .partition { determineChapterType(it) == IcdChapterType.EXTENSION_CODES }
         val regularNodes = otherNodes.map { IcdNode(it.code!!, resolveParentsForRegularChapter(it), trimTitle(it)) }

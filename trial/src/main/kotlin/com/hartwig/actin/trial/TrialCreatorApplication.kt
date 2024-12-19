@@ -41,7 +41,7 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
         LOGGER.info("Creating ICD-11 tree from file {}", config.icdTsv)
-        val icdNodes = IcdDeserializer.create(CsvReader.readFromFile(config.icdTsv))
+        val icdNodes = IcdDeserializer.deserialize(CsvReader.readFromFile(config.icdTsv))
         LOGGER.info(" Loaded {} nodes", icdNodes.size)
         val icdModel = IcdModel.create(icdNodes)
 

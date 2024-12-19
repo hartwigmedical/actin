@@ -30,7 +30,7 @@ class HasSpecificComplicationTest {
     }
 
     @Test
-    fun `Should pass with correct message when icd code of complication matches the code of all of the target icd titles`() {
+    fun `Should pass with correct message when ICD code of complication matches the code of any of the target icd titles`() {
         val otherTarget = targetComplication.copy(name = "other", icdCodes = setOf(IcdCode("otherTargetCode")))
         val evaluation = function.evaluate(ComplicationTestFactory.withComplications(listOf(targetComplication, otherTarget)))
         assertEvaluation(EvaluationResult.PASS, evaluation)
@@ -38,7 +38,7 @@ class HasSpecificComplicationTest {
     }
 
     @Test
-    fun `Should fail when icd code of complication does not match the code of any of the target icd titles`() {
+    fun `Should fail when ICD code of complication does not match the code of any of the target icd titles`() {
         val wrong = targetComplication.copy(icdCodes = setOf(IcdCode("wrongCode")))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withComplications(listOf(wrong))))
     }

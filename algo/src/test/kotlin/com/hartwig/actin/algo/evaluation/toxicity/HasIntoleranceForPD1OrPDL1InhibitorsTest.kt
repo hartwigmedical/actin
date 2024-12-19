@@ -38,10 +38,18 @@ class HasIntoleranceForPD1OrPDL1InhibitorsTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined if intolerance matches on ICD main code but extension code unknown or 'monoclonal antibodies'`() {
+    fun `Should evaluate to undetermined if intolerance matches on ICD main code but extension code unknown`() {
         evaluateWithCodes(
             EvaluationResult.UNDETERMINED, listOf(
                 IcdCode(MATCHING_ICD_MAIN_CODE, null),
+            )
+        )
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if intolerance matches on ICD main code and extension code monoclonal antibodies`() {
+        evaluateWithCodes(
+            EvaluationResult.UNDETERMINED, listOf(
                 IcdCode(OTHER_MATCHING_ICD_MAIN_CODE, IcdConstants.MONOCLONAL_ANTIBODY_BLOCK)
             )
         )
@@ -75,7 +83,7 @@ class HasIntoleranceForPD1OrPDL1InhibitorsTest {
     }
 
     @Test
-    fun `Should fail for empty history`() {
+    fun `Should fail for empty intolerance list`() {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withIntolerances(emptyList())))
     }
 

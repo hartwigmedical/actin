@@ -11,43 +11,36 @@ class IcdModel(
 ) {
 
     fun isValidIcdTitle(icdTitle: String): Boolean {
-        return if (hasExtension(icdTitle)) {
-            icdTitle.split('&').all { titleToCodeMap.containsKey(it) }
-        } else {
-            titleToCodeMap.containsKey(icdTitle)
-        }
+        val titles = icdTitle.split('&')
+        return titles.size in 1..2 && titles.all(titleToCodeMap::containsKey)
     }
 
     fun resolveCodeForTitle(icdTitle: String): IcdCode? {
         val split = icdTitle.split('&')
-        val mainCode = titleToCodeMap[split[0]] ?: return null
-        val extensionCode = when {
-            split.size != 2 || split[1].trim().isEmpty() -> null
-            else -> titleToCodeMap[split[1]] ?: return null
+        return titleToCodeMap[split[0]]?.let { mainCode ->
+            split.takeIf { it.size == 2 }?.get(1)?.trim()?.ifEmpty { null }?.let { extensionTitle ->
+                titleToCodeMap[extensionTitle]?.let { IcdCode(mainCode, it) }
+            } ?: IcdCode(mainCode, null)
         }
-        return IcdCode(mainCode, extensionCode)
     }
 
     fun returnCodeWithParents(code: String?): List<String> {
-        return code?.let { (codeToNode(code)?.parentTreeCodes ?: emptyList()) + code } ?: emptyList()
+        return code?.let { (codeToNodeMap[code]?.parentTreeCodes ?: emptyList()) + code } ?: emptyList()
     }
 
     fun resolveTitleForCode(icdCode: IcdCode): String {
-        val mainTitle = codeToNode(icdCode.mainCode)?.title ?: return ""
-        val extensionTitle = icdCode.extensionCode?.let { codeToNode(it)?.title }
+        val mainTitle = codeToNodeMap[icdCode.mainCode]?.title ?: return ""
+        val extensionTitle = icdCode.extensionCode?.let { codeToNodeMap[it]?.title }
         return extensionTitle?.let { "$mainTitle & $it" } ?: mainTitle
     }
 
     fun <T : IcdCodeEntity> findInstancesMatchingAnyIcdCode(instances: List<T>?, targetIcdCodes: Set<IcdCode>): IcdMatches<T> {
-        val (fullMatches, unknownExtensionMatches) = if (instances == null) {
-            Pair(emptyList<T>(), emptyList<T>())
-        } else {
-            targetIcdCodes.fold(Pair(emptyList(), emptyList())) { acc, targetCode ->
+        return instances?.let {
+            targetIcdCodes.fold(IcdMatches(emptyList(), emptyList())) { acc, targetCode ->
                 val (fullMatch, unknownMatch) = returnIcdMatches(targetCode, instances)
-                Pair(acc.first + fullMatch, acc.second + unknownMatch)
+                IcdMatches(acc.fullMatches + fullMatch, acc.mainCodeMatchesWithUnknownExtension + unknownMatch)
             }
-        }
-        return IcdMatches(fullMatches, unknownExtensionMatches)
+        } ?: IcdMatches(emptyList(), emptyList())
     }
 
     private fun <T : IcdCodeEntity> returnIcdMatches(targetCode: IcdCode, instances: List<T>): Pair<List<T>, List<T>> {
@@ -69,9 +62,6 @@ class IcdModel(
             }.partition { it.icdCodes.none { it.extensionCode == null } }
         }
     }
-
-    private fun codeToNode(code: String): IcdNode? = codeToNodeMap[code]
-    private fun hasExtension(icd: String) = icd.contains('&')
 
     companion object {
         fun create(nodes: List<IcdNode>): IcdModel {

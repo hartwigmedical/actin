@@ -37,7 +37,7 @@ class IcdDeserializerTest {
             )
         }
 
-        val result = IcdDeserializer.create(listOf(chapter, blockDepthOne, blockDepthTwo, categoryDepthOne, categoryDepthTwo))
+        val result = IcdDeserializer.deserialize(listOf(chapter, blockDepthOne, blockDepthTwo, categoryDepthOne, categoryDepthTwo))
 
         assertThat(result).hasSize(5)
         assertThat(result[0].parentTreeCodes).isEmpty()
@@ -52,7 +52,7 @@ class IcdDeserializerTest {
         val extensionNodes =
             CsvReader.readFromFile(ResourceLocator.resourceOnClasspath("icd/example_icd.tsv")).filter { it.chapterNo == "X" }
 
-        val result = IcdDeserializer.create(extensionNodes)
+        val result = IcdDeserializer.deserialize(extensionNodes)
         assertThat(result).hasSize(8)
         assertThat(result[0].parentTreeCodes).isEmpty()
         assertThat(result[1].parentTreeCodes).containsExactly("X")
@@ -72,9 +72,9 @@ class IcdDeserializerTest {
             createRawNode(title = "---title"),
             createRawNode(title = "title")
         )
-        val result = IcdDeserializer.create(rawNodes)
+        val result = IcdDeserializer.deserialize(rawNodes)
         assertThat(result.all { it.title == "title" }).isTrue()
-        assertThat(IcdDeserializer.create(listOf(createRawNode(title = "title-"))).first().title).isEqualTo("title-")
+        assertThat(IcdDeserializer.deserialize(listOf(createRawNode(title = "title-"))).first().title).isEqualTo("title-")
     }
 
     private fun createRawNode(

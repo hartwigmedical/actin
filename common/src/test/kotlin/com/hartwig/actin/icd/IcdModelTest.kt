@@ -30,6 +30,7 @@ class IcdModelTest {
         assertThat(icdModel.isValidIcdTitle("targetMainTitle|targetExtensionTitle")).isFalse()
         assertThat(icdModel.isValidIcdTitle("invalidTitle")).isFalse()
         assertThat(icdModel.isValidIcdTitle("targetMainTitle&invalidTitle")).isFalse()
+        assertThat(icdModel.isValidIcdTitle("targetMainTitle&targetExtensionTitle&targetExtensionParentTitle")).isFalse()
     }
 
     @Test

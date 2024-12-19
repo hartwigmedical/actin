@@ -30,7 +30,9 @@ object CsvReader {
         val file = File(tsvPath)
         val nodes = reader.readValues<SerializedIcdNode>(file).readAll().toList()
 
-        nodes.forEach { if (!isValid(it)) throw IllegalArgumentException("Invalid ICD node: $it") }
+        nodes.filterNot(::isValid).takeIf { it.isNotEmpty() }?.let { invalidNodes ->
+            throw IllegalArgumentException("Invalid ICD node(s): ${invalidNodes.joinToString(", ")}")
+        }
         return nodes
     }
 

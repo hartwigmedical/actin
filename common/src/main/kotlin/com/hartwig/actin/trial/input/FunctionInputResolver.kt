@@ -474,6 +474,15 @@ class FunctionInputResolver(
         )
     }
 
+    private fun toIcdStringList(param: Any): List<String> {
+        val input = toStringList(param)
+        val invalidTitles = input.filter { !icdModel.isValidIcdTitle(it) }
+        if (invalidTitles.isNotEmpty()) {
+            throw IllegalStateException("ICD title(s) not valid: ${invalidTitles.joinToString(", ")}")
+        }
+        return input
+    }
+
     private fun toTreatments(input: Any): List<Treatment> {
         return toStringList(input).map(::toTreatment)
     }
@@ -538,12 +547,7 @@ class FunctionInputResolver(
 
     fun createManyIcdTitlesInput(function: EligibilityFunction): List<String> {
         assertParamConfig(function, FunctionInput.MANY_ICD_TITLES, 1)
-        val icdStringList = toStringList(function.parameters.first())
-        val invalidTitles = icdStringList.filter { !icdModel.isValidIcdTitle(it) }
-        if (invalidTitles.isNotEmpty()) {
-            throw IllegalStateException("ICD title(s) not valid: ${invalidTitles.joinToString(", ")}")
-        }
-        return icdStringList
+        return toIcdStringList(function.parameters.first())
     }
 
     fun createOneNyhaClassInput(function: EligibilityFunction): NyhaClass {

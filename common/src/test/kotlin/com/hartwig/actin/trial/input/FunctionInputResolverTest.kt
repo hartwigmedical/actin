@@ -364,7 +364,7 @@ class FunctionInputResolverTest {
     }
 
     @Test
-    fun `Should resolve functions with one icd title input`() {
+    fun `Should resolve functions with one ICD title input`() {
         val resolver = TestFunctionInputResolverFactory.createResolverWithIcdNodes(
             listOf(IcdNode("code 1", listOf("parent 1"), "title 1"), IcdNode("code 2", listOf("parent 2"), "title 2"))
         )
@@ -379,7 +379,7 @@ class FunctionInputResolverTest {
     }
 
     @Test
-    fun `Should resolve functions with many icd titles input`() {
+    fun `Should resolve functions with many ICD titles input`() {
         val resolver = TestFunctionInputResolverFactory.createResolverWithIcdNodes(
             listOf(
                 IcdNode("code 1", listOf("parent 1"), "title 1"),
@@ -399,7 +399,7 @@ class FunctionInputResolverTest {
     }
 
     @Test
-    fun `Should resolve functions with one icd title one integer input`() {
+    fun `Should resolve functions with one ICD title one integer input`() {
         val resolver = TestFunctionInputResolverFactory.createResolverWithIcdNodes(
             listOf(IcdNode("code 1", listOf("parent 1"), "title 1"), IcdNode("code 2", listOf("parent 2"), "title 2"))
         )
@@ -511,7 +511,7 @@ class FunctionInputResolverTest {
     }
 
     @Test
-    fun `Should resolve functions with one integer many icd titles input`() {
+    fun `Should resolve functions with one integer many ICD titles input`() {
         val resolver = TestFunctionInputResolverFactory.createResolverWithIcdNodes(
             listOf(IcdNode("code 1", listOf("parent 1"), "title 1"), IcdNode("code 2", listOf("parent 2"), "title 2"))
         )
