@@ -11,7 +11,7 @@ internal object ComplicationTestFactory {
     private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
     
     fun complication(name: String = "", icdCode: IcdCode = IcdCode("")): Complication {
-        return Complication(name = name, icdCode = icdCode, year = null, month = null)
+        return Complication(name = name, icdCodes = setOf(icdCode), year = null, month = null)
     }
 
     fun yesInputComplication(): Complication {

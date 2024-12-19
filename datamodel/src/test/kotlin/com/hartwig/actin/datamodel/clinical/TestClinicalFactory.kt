@@ -279,14 +279,14 @@ object TestClinicalFactory {
         return listOf(
             PriorOtherCondition(
                 name = "pancreatitis",
-                icdCode = IcdCode("DC31", null),
+                icdCodes = setOf(IcdCode("DC31", null)),
                 isContraindicationForTherapy = true,
                 year = null,
                 month = null
             ),
             PriorOtherCondition(
                 name = "Coronary artery bypass graft (CABG)",
-                icdCode = IcdCode("QB50.1",  null),
+                icdCodes = setOf(IcdCode("QB50.1",  null)),
                 isContraindicationForTherapy = true,
                 year = 2023,
                 month = 10
@@ -345,7 +345,7 @@ object TestClinicalFactory {
     }
 
     private fun createTestComplications(): List<Complication> {
-        return listOf(Complication(name = "Ascites", icdCode = IcdCode("1A01", null), year = null, month = null))
+        return listOf(Complication(name = "Ascites", icdCodes = setOf(IcdCode("1A01", null)), year = null, month = null))
     }
 
     private fun createTestLabValues(): List<LabValue> {
@@ -445,14 +445,14 @@ object TestClinicalFactory {
         return listOf(
             Toxicity(
                 name = "Nausea",
-                icdCode = IcdCode("A01"),
+                icdCodes = setOf(IcdCode("A01")),
                 evaluatedDate = FIXED_DATE.minusDays(DAYS_SINCE_TOXICITIES.toLong()),
                 source = ToxicitySource.EHR,
                 grade = 1
             ),
             Toxicity(
                 name = "Fatigue",
-                icdCode = IcdCode("A02"),
+                icdCodes = setOf(IcdCode("A02")),
                 evaluatedDate = FIXED_DATE.minusDays(DAYS_SINCE_TOXICITIES.toLong()),
                 source = ToxicitySource.QUESTIONNAIRE,
                 grade = 2
@@ -464,7 +464,7 @@ object TestClinicalFactory {
         return listOf(
             Intolerance(
                 name = "Wasps",
-                icdCode = IcdCode("icdCode", null),
+                icdCodes = setOf(IcdCode("icdCode", null)),
                 category = "Environment",
                 type = "Allergy",
                 clinicalStatus = "Active",

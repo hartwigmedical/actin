@@ -163,5 +163,5 @@ class HasToxicityWithGradeTest {
         endDate: LocalDate? = null,
         evaluatedDate: LocalDate? = null
     ) =
-        Toxicity(name, IcdCode(icdMainCode), evaluatedDate ?: referenceDate.minusMonths(1), source, grade, endDate)
+        Toxicity(name, setOf(IcdCode(icdMainCode)), evaluatedDate ?: referenceDate.minusMonths(1), source, grade, endDate)
 }

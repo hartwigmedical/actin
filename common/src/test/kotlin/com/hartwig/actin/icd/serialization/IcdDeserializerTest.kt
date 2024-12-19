@@ -64,6 +64,19 @@ class IcdDeserializerTest {
         assertThat(result[7].parentTreeCodes).containsExactly("X", "http://linearizationlink/X1")
     }
 
+    @Test
+    fun `Should remove leading hyphens from titles before adding to IcdNode object`() {
+        val rawNodes = listOf(
+            createRawNode(title = "  -title"),
+            createRawNode(title = "  -  -title"),
+            createRawNode(title = "---title"),
+            createRawNode(title = "title")
+        )
+        val result = IcdDeserializer.create(rawNodes)
+        assertThat(result.all { it.title == "title" }).isTrue()
+        assertThat(IcdDeserializer.create(listOf(createRawNode(title = "title-"))).first().title).isEqualTo("title-")
+    }
+
     private fun createRawNode(
         chapterNo: String = DEFAULT_CHAPTER_NO,
         blockId: String? = null,

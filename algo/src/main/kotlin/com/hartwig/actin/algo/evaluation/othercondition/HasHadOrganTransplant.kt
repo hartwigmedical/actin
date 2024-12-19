@@ -16,9 +16,11 @@ class HasHadOrganTransplant(private val icdModel: IcdModel, private val minYear:
         val matchingConditions =
             icdModel.findInstancesMatchingAnyIcdCode(relevant, IcdConstants.TRANSPLANTATION_SET.map { IcdCode(it) }.toSet()).fullMatches
 
-        val grouped = matchingConditions.groupBy { condition -> minYear == null || condition.year?.let { it >= minYear } == true }
+        val grouped = matchingConditions.groupBy { condition ->
+            if (minYear == null) true else condition.year?.let { it >= minYear }
+        }
         val passesDateRequirement = grouped[true] ?: emptyList()
-        val withUnknownDate = grouped[false]?.filter { it.year == null }
+        val withUnknownDate = grouped[null]
 
         return when {
             passesDateRequirement.isNotEmpty() -> {

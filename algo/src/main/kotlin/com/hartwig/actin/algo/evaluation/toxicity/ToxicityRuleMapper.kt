@@ -103,16 +103,14 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
 
     private val PLATINUM_COMPOUNDS_SET =
         setOf(
-            "oxaliplatin",
+            "satraplatin",
             "eloxatin",
-            "carboplatin",
             "paraplatin",
-            "cisplatin",
             "platinol",
             "imifolatin",
             "nedaplatin",
             "NC-6004"
         )
 
-    private val TAXANE_SET = setOf("paclitaxel", "docetaxel", "cabazitaxel", "nab-paclitaxel", "Abraxane", "Jevtana", "Tesetaxel")
+    private val TAXANE_SET = setOf("nab-paclitaxel", "Abraxane", "Jevtana", "Tesetaxel")
 }

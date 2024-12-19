@@ -12,18 +12,18 @@ object ToxicityFunctions {
     fun selectRelevantToxicities(
         record: PatientRecord, icdModel: IcdModel, referenceDate: LocalDate, icdTitlesToIgnore: List<String> = emptyList()
     ): List<Toxicity> {
-        val complicationIcdCodes = record.complications?.map(Complication::icdCode)?.toSet() ?: emptySet()
+        val complicationIcdCodes = record.complications?.map(Complication::icdCodes)?.toSet() ?: emptySet()
         val ignoredIcdMainCodes = icdTitlesToIgnore.mapNotNull(icdModel::resolveCodeForTitle).map { it.mainCode }.toSet()
 
         return dropOutdatedEHRToxicities(record.toxicities)
             .filter { it.endDate?.isAfter(referenceDate) != false }
-            .filter { it.source != ToxicitySource.EHR || it.icdCode !in complicationIcdCodes }
-            .filterNot { ignoredIcdMainCodes.contains(it.icdCode.mainCode) }
+            .filter { it.source != ToxicitySource.EHR || it.icdCodes !in complicationIcdCodes }
+            .filterNot { it.icdCodes.any{ code -> code.mainCode in ignoredIcdMainCodes } }
     }
 
     private fun dropOutdatedEHRToxicities(toxicities: List<Toxicity>): List<Toxicity> {
         val (ehrToxicities, otherToxicities) = toxicities.partition { it.source == ToxicitySource.EHR }
-        val mostRecentEhrToxicitiesByCode = ehrToxicities.groupBy(Toxicity::icdCode)
+        val mostRecentEhrToxicitiesByCode = ehrToxicities.groupBy(Toxicity::icdCodes)
             .map { (_, toxGroup) -> toxGroup.maxBy(Toxicity::evaluatedDate) }
         return otherToxicities + mostRecentEhrToxicitiesByCode
     }

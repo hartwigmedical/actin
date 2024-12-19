@@ -10,7 +10,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.Complication
-import com.hartwig.actin.datamodel.clinical.IcdCodeHolder
+import com.hartwig.actin.datamodel.clinical.IcdCodeEntity
 import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
@@ -55,7 +55,7 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCode(
     }
 
     companion object {
-        private fun passSpecificMessages(targetIcdTitle: String, matches: Set<IcdCodeHolder>): Set<String> {
+        private fun passSpecificMessages(targetIcdTitle: String, matches: Set<IcdCodeEntity>): Set<String> {
             return listOf(
                 matches.filterIsInstance<PriorOtherCondition>() to Characteristic.CONDITION,
                 matches.filterIsInstance<Complication>() to Characteristic.COMPLICATION,

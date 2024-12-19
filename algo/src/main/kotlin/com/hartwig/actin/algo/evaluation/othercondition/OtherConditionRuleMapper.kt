@@ -13,8 +13,11 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
             EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_ICD_TITLE_X to hasPriorConditionWithConfiguredIcdTitleCreator(),
-            EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_X_BY_NAME to hasPriorConditionWithConfiguredNameCreator(),
-            EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE to hasPriorConditionWithIcdCodesFromSetCreator(IcdConstants.AUTOIMMUNE_DISEASE_SET.map { IcdCode(it) }.toSet(), "autoimmune disease"),
+            EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE to hasPriorConditionWithIcdCodesFromSetCreator(IcdConstants.AUTOIMMUNE_DISEASE_SET.map {
+                IcdCode(
+                    it
+                )
+            }.toSet(), "autoimmune disease"),
             EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE to hasHistoryOfCardiacDiseaseCreator(),
             EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE to hasPriorConditionWithIcdCodeCreator(IcdCode(IcdConstants.CIRCULATORY_SYSTEM_DISEASE_CHAPTER)),
             EligibilityRule.HAS_HISTORY_OF_CONGESTIVE_HEART_FAILURE_WITH_AT_LEAST_NYHA_CLASS_X to hasHistoryOfCongestiveHeartFailureWithNYHACreator(),
@@ -24,7 +27,11 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             EligibilityRule.HAS_HISTORY_OF_IMMUNE_SYSTEM_DISEASE to hasPriorConditionWithIcdCodeCreator(IcdCode(IcdConstants.IMMUNE_SYSTEM_DISEASE_CHAPTER)),
             EligibilityRule.HAS_HISTORY_OF_INTERSTITIAL_LUNG_DISEASE to hasPriorConditionWithIcdCodeCreator(IcdCode(IcdConstants.LUNG_INTERSTITIAL_DISEASES_BLOCK)),
             EligibilityRule.HAS_HISTORY_OF_LIVER_DISEASE to hasPriorConditionWithIcdCodeCreator(IcdCode(IcdConstants.LIVER_DISEASE_BLOCK)),
-            EligibilityRule.HAS_HISTORY_OF_LUNG_DISEASE to hasPriorConditionWithIcdCodesFromSetCreator(IcdConstants.RESPIRATORY_COMPROMISE_SET.map { IcdCode(it) }.toSet(), "lung disease"),
+            EligibilityRule.HAS_HISTORY_OF_LUNG_DISEASE to hasPriorConditionWithIcdCodesFromSetCreator(IcdConstants.RESPIRATORY_COMPROMISE_SET.map {
+                IcdCode(
+                    it
+                )
+            }.toSet(), "lung disease"),
             EligibilityRule.HAS_POTENTIAL_RESPIRATORY_COMPROMISE to hasPriorConditionWithIcdCodesFromSetCreator(
                 IcdConstants.RESPIRATORY_COMPROMISE_SET.map { IcdCode(it) }.toSet(), "potential respiratory compromise"
             ),
@@ -33,12 +40,11 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
                 setOf(IcdCode(IcdConstants.ACUTE_MYOCARDIAL_INFARCT_CODE)), "myocardial infarct"
             ),
             EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_ICD_TITLE_X_WITHIN_Y_MONTHS to hasRecentPriorConditionWithConfiguredIcdCodeCreator(),
-            EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_X_BY_NAME_WITHIN_Y_MONTHS to hasRecentPriorConditionWithConfiguredNameCreator(),
             EligibilityRule.HAS_HISTORY_OF_PNEUMONITIS to hasPriorConditionWithIcdCodeCreator(IcdCode(IcdConstants.PNEUMONITIS_BLOCK)),
             EligibilityRule.HAS_HISTORY_OF_STROKE to hasHistoryOfStrokeCreator(),
             EligibilityRule.HAS_HISTORY_OF_STROKE_WITHIN_X_MONTHS to hasRecentPriorConditionWithIcdCodeFromSetCreator(
                 IcdConstants.STROKE_SET.map { IcdCode(it) }.toSet(),
-                "cerebrovascular accident"
+                "CVA"
             ),
             EligibilityRule.HAS_HISTORY_OF_THROMBOEMBOLIC_EVENT_WITHIN_X_MONTHS to hasRecentPriorConditionWithIcdCodeFromSetCreator(
                 IcdConstants.THROMBOEMBOLIC_EVENT_SET.map { IcdCode(it) }.toSet(),
@@ -54,13 +60,18 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             EligibilityRule.HAS_HISTORY_OF_VENOUS_THROMBOEMBOLIC_EVENT to hasPriorConditionWithIcdCodesFromSetCreator(
                 IcdConstants.VENOUS_THROMBOEMBOLIC_EVENT_SET.map { IcdCode(it) }.toSet(), "Venous thrombo-embolic event"
             ),
-            EligibilityRule.HAS_HISTORY_OF_VASCULAR_DISEASE to hasPriorConditionWithIcdCodesFromSetCreator(setOf(IcdCode(IcdConstants.ARTERY_DISEASE_BLOCK), IcdCode(IcdConstants.VEIN_DISEASE_BLOCK)), "vascular disease"),
+            EligibilityRule.HAS_HISTORY_OF_VASCULAR_DISEASE to hasPriorConditionWithIcdCodesFromSetCreator(
+                setOf(
+                    IcdCode(IcdConstants.ARTERY_DISEASE_BLOCK),
+                    IcdCode(IcdConstants.VEIN_DISEASE_BLOCK)
+                ), "vascular disease"
+            ),
             EligibilityRule.HAS_SEVERE_CONCOMITANT_CONDITION to hasSevereConcomitantIllnessCreator(),
             EligibilityRule.HAS_HAD_ORGAN_TRANSPLANT to hasHadOrganTransplantCreator(),
             EligibilityRule.HAS_HAD_ORGAN_TRANSPLANT_WITHIN_X_YEARS to hasHadOrganTransplantWithinYearsCreator(),
             EligibilityRule.HAS_GILBERT_DISEASE to hasPriorConditionWithIcdCodeCreator(IcdCode(IcdConstants.GILBERT_SYNDROME_CODE)),
             EligibilityRule.HAS_HYPERTENSION to hasPriorConditionWithIcdCodeCreator(IcdCode(IcdConstants.HYPERTENSIVE_DISEASES_BLOCK)),
-            EligibilityRule.HAS_HYPOTENSION to hasPriorConditionWithNameCreator(HYPOTENSION_NAME),
+            EligibilityRule.HAS_HYPOTENSION to hasPriorConditionWithIcdCodeCreator(IcdCode(IcdConstants.HYPOTENSION_BLOCK)),
             EligibilityRule.HAS_DIABETES to hasPriorConditionWithIcdCodeCreator(IcdCode(IcdConstants.DIABETES_MELLITUS_BLOCK)),
             EligibilityRule.HAS_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS to hasInheritedPredispositionToBleedingOrThrombosisCreator(),
             EligibilityRule.HAS_POTENTIAL_ABSORPTION_DIFFICULTIES to hasPotentialAbsorptionDifficultiesCreator(),
@@ -81,13 +92,6 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             val targetIcdTitle = functionInputResolver().createOneIcdTitleInput(function)
             val icdCode = icdModel().resolveCodeForTitle(targetIcdTitle)!!
             HasHadPriorConditionWithIcd(icdModel(), icdCode)
-        }
-    }
-
-    private fun hasPriorConditionWithConfiguredNameCreator(): FunctionCreator {
-        return { function: EligibilityFunction ->
-            val nameToFind = functionInputResolver().createOneStringInput(function)
-            HasHadPriorConditionWithName(nameToFind)
         }
     }
 
@@ -122,23 +126,13 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
         }
     }
 
-    private fun hasRecentPriorConditionWithConfiguredNameCreator(): FunctionCreator {
-        return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneStringOneIntegerInput(function)
-            val nameToFind = input.string
-            val maxMonthsAgo = input.integer
-            val minDate = referenceDateProvider().date().minusMonths(maxMonthsAgo.toLong())
-            HasHadPriorConditionWithNameRecently(nameToFind, minDate)
+    private fun hasPriorConditionWithIcdCodesFromSetCreator(
+        targetIcdCodes: Set<IcdCode>,
+        priorOtherConditionTerm: String
+    ): FunctionCreator {
+        return {
+            HasHadPriorConditionWithIcdCodeFromSet(icdModel(), targetIcdCodes, priorOtherConditionTerm)
         }
-    }
-
-    private fun hasPriorConditionWithIcdCodesFromSetCreator(targetIcdCodes: Set<IcdCode>, priorOtherConditionTerm: String): FunctionCreator {
-        return { HasHadPriorConditionWithIcdCodeFromSet(icdModel(), targetIcdCodes, priorOtherConditionTerm)
-        }
-    }
-
-    private fun hasPriorConditionWithNameCreator(nameToFind: String): FunctionCreator {
-        return { HasHadPriorConditionWithName(nameToFind) }
     }
 
     private fun hasHistoryOfCardiacDiseaseCreator(): FunctionCreator {
@@ -175,7 +169,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             HasHadPriorConditionComplicationOrToxicityWithIcdCode(
                 icdModel(),
                 IcdConstants.STROKE_SET,
-                "cerebrovascular accident",
+                "CVA",
                 referenceDateProvider().date()
             )
         }
@@ -231,9 +225,5 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
 
     private fun hasAdequateVenousAccesCreator(): FunctionCreator {
         return { HasAdequateVenousAccess() }
-    }
-
-    companion object {
-        private const val HYPOTENSION_NAME: String = "hypotension"
     }
 }

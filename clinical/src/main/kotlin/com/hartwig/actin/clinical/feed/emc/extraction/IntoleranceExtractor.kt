@@ -19,7 +19,7 @@ class IntoleranceExtractor(private val intoleranceCuration: CurationDatabase<Int
         return intoleranceEntries.map { entry: IntoleranceEntry ->
             Intolerance(
                 name = CurationUtil.capitalizeFirstLetterOnly(entry.codeText),
-                icdCode = IcdCode("", null),
+                icdCodes = setOf(IcdCode("", null)),
                 category = CurationUtil.capitalizeFirstLetterOnly(entry.category),
                 type = CurationUtil.capitalizeFirstLetterOnly(entry.isSideEffect),
                 clinicalStatus = CurationUtil.capitalizeFirstLetterOnly(entry.clinicalStatus),
@@ -38,7 +38,7 @@ class IntoleranceExtractor(private val intoleranceCuration: CurationDatabase<Int
                     } else emptySet()
                     it.copy(
                         name = config.name,
-                        icdCode = config.icd,
+                        icdCodes = config.icd,
                         subcategories = subcategories
                     )
                 } ?: it

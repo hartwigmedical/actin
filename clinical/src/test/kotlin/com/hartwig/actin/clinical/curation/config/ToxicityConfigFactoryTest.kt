@@ -14,27 +14,26 @@ class ToxicityConfigFactoryTest {
     private val fields: Map<String, Int> = TestCurationFactory.curationHeaders(CurationDatabaseReader.TOXICITY_TSV)
     private val icdModel = mockk<IcdModel>()
     private val icdTitle = "icdTitle"
-    private val icdCodes = IcdCode("main", null)
+    private val icdCode = IcdCode("main", null)
 
     @Test
     fun `Should return ToxicityConfig from valid inputs`() {
         every { icdModel.isValidIcdTitle(icdTitle) } returns true
-        every { icdModel.resolveCodeForTitle(icdTitle) } returns icdCodes
+        every { icdModel.resolveCodeForTitle(icdTitle) } returns icdCode
 
-        val config = ToxicityConfigFactory(icdModel).create(fields, arrayOf("input", "name", "3", icdTitle))
+        val config = ToxicityConfigFactory(icdModel).create(fields, arrayOf("input", "name", "3", "$icdTitle;$icdTitle"))
 
         assertThat(config.errors).isEmpty()
         assertThat(config.config.input).isEqualTo("input")
         assertThat(config.config.name).isEqualTo("name")
         assertThat(config.config.grade).isEqualTo(3)
-        assertThat(config.config.icdCode.mainCode).isEqualTo(icdCodes.mainCode)
-        assertThat(config.config.icdCode.extensionCode).isEqualTo(icdCodes.extensionCode)
+        assertThat(config.config.icdCodes).isEqualTo(setOf(icdCode))
     }
 
     @Test
     fun `Should return validation error when grade is not an integer`() {
         every { icdModel.isValidIcdTitle(icdTitle) } returns true
-        every { icdModel.resolveCodeForTitle(icdTitle) } returns icdCodes
+        every { icdModel.resolveCodeForTitle(icdTitle) } returns icdCode
 
         val config = ToxicityConfigFactory(icdModel).create(fields, arrayOf("input", "name", "abc", icdTitle))
         assertThat(config.errors).containsExactly(
@@ -57,9 +56,9 @@ class ToxicityConfigFactoryTest {
                 CurationCategory.TOXICITY.categoryName,
                 "input",
                 "icd",
-                "icdTitle",
-                "string",
-                "ICD title \"icdTitle\" is not known - check for existence in resource"
+                "[icdTitle]",
+                "icd",
+                "One or more of ICD title(s) \"icdTitle\" is not known - check for existence in ICD model"
             )
         )
     }

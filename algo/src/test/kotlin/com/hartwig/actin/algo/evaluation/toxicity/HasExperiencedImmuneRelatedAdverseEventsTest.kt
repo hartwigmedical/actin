@@ -21,7 +21,7 @@ private val IMMUNOTHERAPY_PD_ENTRY =
     IMMUNOTHERAPY_TOX_ENTRY.copy(treatmentHistoryDetails = TreatmentHistoryDetails(stopReason = StopReason.PROGRESSIVE_DISEASE))
 private val IMMUNO_INTOLERANCE = Intolerance(
     name = "Nivolumab induced pneumonitis",
-    icdCode = IcdCode(IcdConstants.DRUG_ALLERGY_CODE, IcdConstants.IMMUNOTHERAPY_DRUG_SET.first())
+    icdCodes = setOf(IcdCode(IcdConstants.DRUG_ALLERGY_CODE, IcdConstants.IMMUNOTHERAPY_DRUG_SET.first()))
 )
 
 class HasExperiencedImmuneRelatedAdverseEventsTest {
@@ -67,7 +67,7 @@ class HasExperiencedImmuneRelatedAdverseEventsTest {
     @Test
     fun `Should evaluate to undetermined for prior immunotherapy treatment and drug intolerance in history with unknown extension code`() {
         val record = createMinimalTestWGSPatientRecord().copy(
-            intolerances = listOf(IMMUNO_INTOLERANCE.copy(icdCode = IcdCode(IcdConstants.DRUG_ALLERGY_CODE, null))),
+            intolerances = listOf(IMMUNO_INTOLERANCE.copy(icdCodes = setOf(IcdCode(IcdConstants.DRUG_ALLERGY_CODE, null)))),
             oncologicalHistory = listOf(IMMUNOTHERAPY_PD_ENTRY)
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))

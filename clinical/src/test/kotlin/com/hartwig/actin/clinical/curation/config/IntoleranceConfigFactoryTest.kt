@@ -16,35 +16,34 @@ class IntoleranceConfigFactoryTest {
 
     private val icdModel = mockk<IcdModel>()
     private val icdTitle = "icdTitle"
-    private val icdCodes = IcdCode("main", null)
+    private val icdCode = IcdCode("main", null)
 
     private val victim = IntoleranceConfigFactory(icdModel)
 
     @Test
     fun `Should return IntoleranceConfig from valid inputs`() {
         every { icdModel.isValidIcdTitle(icdTitle) } returns true
-        every { icdModel.resolveCodeForTitle(icdTitle) } returns icdCodes
+        every { icdModel.resolveCodeForTitle(icdTitle) } returns icdCode
 
         val config = victim.create(fields, arrayOf("input", "name", icdTitle, TreatmentCategory.IMMUNOTHERAPY.display()))
         assertThat(config.errors).isEmpty()
         assertThat(config.config.input).isEqualTo("input")
         assertThat(config.config.ignore).isFalse()
         assertThat(config.config.name).isEqualTo("name")
-        assertThat(config.config.icd.mainCode).isEqualTo(icdCodes.mainCode)
-        assertThat(config.config.icd.extensionCode).isEqualTo(icdCodes.extensionCode)
+        assertThat(config.config.icd).isEqualTo(setOf(icdCode))
     }
 
     @Test
     fun `Should return an empty set for the treatmentCategories property if curation input is an empty string`() {
         every { icdModel.isValidIcdTitle(icdTitle) } returns true
-        every { icdModel.resolveCodeForTitle(icdTitle) } returns icdCodes
+        every { icdModel.resolveCodeForTitle(icdTitle) } returns icdCode
 
         val config = victim.create(fields, arrayOf("input", "name", icdTitle, ""))
         assertThat(config.errors).isEmpty()
     }
 
     @Test
-    fun `Should return validation error when icd title cannot be resolved to any code`() {
+    fun `Should return validation error when ICD title cannot be resolved to any code`() {
         every { icdModel.resolveCodeForTitle(icdTitle) } returns null
         val config = victim.create(fields, arrayOf("input", "name", icdTitle, ""))
         assertThat(config.errors).containsExactly(
@@ -52,9 +51,9 @@ class IntoleranceConfigFactoryTest {
                 CurationCategory.INTOLERANCE.categoryName,
                 "input",
                 "icd",
-                "icdTitle",
-                "string",
-                "ICD title \"icdTitle\" is not known - check for existence in resource"
+                "[icdTitle]",
+                "icd",
+                "One or more of ICD title(s) \"icdTitle\" is not known - check for existence in ICD model"
             )
         )
     }

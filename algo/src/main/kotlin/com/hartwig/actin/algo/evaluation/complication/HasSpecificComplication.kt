@@ -10,7 +10,6 @@ import com.hartwig.actin.icd.IcdModel
 class HasSpecificComplication(private val icdModel: IcdModel, private val targetIcdTitles: List<String>) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-
         record.complications ?: return EvaluationFactory.recoverableUndetermined(
             "Undetermined whether patient has cancer-related complications",
             "Undetermined complication status"

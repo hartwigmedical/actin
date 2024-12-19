@@ -57,20 +57,24 @@ fun validateIcd(
     fields: Map<String, Int>,
     parts: Array<String>,
     icdModel: IcdModel,
-): Pair<IcdCode?, List<CurationConfigValidationError>> {
-    val title = parts[fields["icd"]!!]
-    return icdModel.resolveCodeForTitle(title)?.let { code -> code to emptyList() } ?: Pair(
-        null, listOf(
+): Pair<Set<IcdCode>?, List<CurationConfigValidationError>> {
+    val titles = CurationUtil.toIcdTitles(parts[fields["icd"]!!])
+    val codes = titles.mapNotNull { title -> icdModel.resolveCodeForTitle(title) }.toSet()
+
+    return if (codes.size == titles.size) {
+        codes to emptyList()
+    } else {
+        null to listOf(
             CurationConfigValidationError(
                 curationCategory.categoryName,
                 input,
                 fieldName,
-                title,
-                "string",
-                "ICD title \"$title\" is not known - check for existence in resource"
+                titles.toString(),
+                "icd",
+                "One or more of ICD title(s) \"${titles.joinToString(", ")}\" is not known - check for existence in ICD model"
             )
         )
-    )
+    }
 }
 
 fun validateBoolean(

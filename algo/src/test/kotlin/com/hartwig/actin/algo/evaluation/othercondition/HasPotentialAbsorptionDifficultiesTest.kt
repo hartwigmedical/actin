@@ -35,9 +35,9 @@ class HasPotentialAbsorptionDifficultiesTest {
     @Test
     fun `Should fail when no matching condition, complication or toxicity present`() {
         listOf(
-            OtherConditionTestFactory.withToxicities(listOf(correctToxicity.copy(icdCode = IcdCode(wrongIcdMainCode)))),
-            OtherConditionTestFactory.withComplications(listOf(correctComplication.copy(icdCode = IcdCode(wrongIcdMainCode)))),
-            OtherConditionTestFactory.withPriorOtherCondition(correctCondition.copy(icdCode = IcdCode(wrongIcdMainCode)))
+            OtherConditionTestFactory.withToxicities(listOf(correctToxicity.copy(icdCodes = setOf(IcdCode(wrongIcdMainCode))))),
+            OtherConditionTestFactory.withComplications(listOf(correctComplication.copy(icdCodes = setOf(IcdCode(wrongIcdMainCode))))),
+            OtherConditionTestFactory.withPriorOtherCondition(correctCondition.copy(icdCodes = setOf(IcdCode(wrongIcdMainCode))))
         )
             .forEach {
                 assertEvaluation(EvaluationResult.FAIL, function.evaluate((it)))

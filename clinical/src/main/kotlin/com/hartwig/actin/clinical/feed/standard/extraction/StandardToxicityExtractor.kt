@@ -28,7 +28,7 @@ class StandardToxicityExtractor(
                 Toxicity(
                     name = it.name,
                     grade = toxicity.grade,
-                    icdCode = it.icdCode,
+                    icdCodes = it.icdCodes,
                     evaluatedDate = toxicity.evaluatedDate,
                     source = ToxicitySource.EHR,
                     endDate = toxicity.endDate

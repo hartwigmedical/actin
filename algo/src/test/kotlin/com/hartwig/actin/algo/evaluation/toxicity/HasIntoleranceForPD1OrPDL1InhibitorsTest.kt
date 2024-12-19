@@ -81,7 +81,7 @@ class HasIntoleranceForPD1OrPDL1InhibitorsTest {
 
     private fun patient(intolerances: List<Intolerance>, icdMainCode: String = "", isContraIndication: Boolean = true): PatientRecord {
         val priorCondition = TestPriorOtherConditionFactory.createMinimal()
-            .copy(icdCode = IcdCode(icdMainCode), isContraindicationForTherapy = isContraIndication)
+            .copy(icdCodes = setOf(IcdCode(icdMainCode)), isContraindicationForTherapy = isContraIndication)
         return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
             intolerances = intolerances,
             priorOtherConditions = listOf(priorCondition)

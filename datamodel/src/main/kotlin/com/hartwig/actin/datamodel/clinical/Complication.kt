@@ -4,10 +4,10 @@ import com.hartwig.actin.datamodel.Displayable
 
 data class Complication(
     val name: String,
-    override val icdCode: IcdCode,
+    override val icdCodes: Set<IcdCode>,
     val year: Int?,
     val month: Int?
-): IcdCodeHolder, Displayable {
+): IcdCodeEntity, Displayable {
 
     override fun display(): String {
         return name

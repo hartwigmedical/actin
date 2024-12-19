@@ -16,8 +16,8 @@ internal object ToxicityTestFactory {
 
     fun withToxicityThatIsAlsoComplication(toxicity: Toxicity, icdCode: String = ""): PatientRecord {
         val complication =
-            Complication(name = toxicity.name, icdCode = IcdCode(icdCode), year = null, month = null)
-        return base.copy(toxicities = listOf(toxicity.copy(icdCode = IcdCode(icdCode))), complications = listOf(complication))
+            Complication(name = toxicity.name, icdCodes = setOf(IcdCode(icdCode)), year = null, month = null)
+        return base.copy(toxicities = listOf(toxicity.copy(icdCodes = setOf(IcdCode(icdCode)))), complications = listOf(complication))
     }
 
     fun withIntolerance(intolerance: Intolerance): PatientRecord {
@@ -37,7 +37,7 @@ internal object ToxicityTestFactory {
     ): Intolerance {
         return Intolerance(
             name = name,
-            icdCode = IcdCode(icdMainCode, icdExtensionCode),
+            icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode)),
             category = category,
             subcategories = emptySet(),
             type = "",

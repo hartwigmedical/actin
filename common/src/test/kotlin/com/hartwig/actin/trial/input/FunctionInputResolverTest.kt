@@ -369,10 +369,10 @@ class FunctionInputResolverTest {
             listOf(IcdNode("code 1", listOf("parent 1"), "title 1"), IcdNode("code 2", listOf("parent 2"), "title 2"))
         )
         val rule: EligibilityRule = firstOfType(FunctionInput.ONE_ICD_TITLE)
-        val valid: EligibilityFunction = create(rule, listOf("title 1"))
+        val valid: EligibilityFunction = create(rule, listOf("title 1&title 2"))
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
 
-        val expected = "title 1"
+        val expected = "title 1&title 2"
         assertThat(resolver.createOneIcdTitleInput(valid)).isEqualTo(expected)
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("title 1", "title 2")))!!).isFalse
@@ -381,17 +381,21 @@ class FunctionInputResolverTest {
     @Test
     fun `Should resolve functions with many icd titles input`() {
         val resolver = TestFunctionInputResolverFactory.createResolverWithIcdNodes(
-            listOf(IcdNode("code 1", listOf("parent 1"), "title 1"), IcdNode("code 2", listOf("parent 2"), "title 2"))
+            listOf(
+                IcdNode("code 1", listOf("parent 1"), "title 1"),
+                IcdNode("code 2", listOf("parent 2"), "title 2"),
+                IcdNode("extension code", emptyList(), "extension title")
+            )
         )
         val rule: EligibilityRule = firstOfType(FunctionInput.MANY_ICD_TITLES)
-        val valid: EligibilityFunction = create(rule, listOf("title 1;title 2"))
+        val valid: EligibilityFunction = create(rule, listOf("title 1&extension title;title 2"))
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
 
-        val expected = listOf("title 1", "title 2")
+        val expected = listOf("title 1&extension title", "title 2")
         assertThat(resolver.createManyIcdTitlesInput(valid)).isEqualTo(expected)
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("title 1", "title 2")))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("title 1;invalid title")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("title 1&extension title;invalid title")))!!).isFalse
     }
 
     @Test

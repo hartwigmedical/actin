@@ -13,17 +13,23 @@ class HasSpecificInfection(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-
         val matchingConditions =
             icdModel.findInstancesMatchingAnyIcdCode(OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions), icdCodes)
+        val infectionStatus = record.clinicalStatus.infectionStatus
+        val hasMatchingInfection = infectionStatus?.takeIf { it.hasActiveInfection }?.description?.let { description ->
+            description.contains(term) || term.contains(description)
+        }
 
         return when {
-            matchingConditions.fullMatches.isNotEmpty() -> EvaluationFactory.pass("Prior $term infection in history")
-            matchingConditions.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> {
-                EvaluationFactory.undetermined("Prior infection in history but undetermined if $term")
+            matchingConditions.fullMatches.isNotEmpty() || hasMatchingInfection == true -> {
+                EvaluationFactory.pass("$term infection in history")
             }
 
-            else -> EvaluationFactory.fail("No prior $term infection")
+            hasMatchingInfection == null || matchingConditions.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> {
+                EvaluationFactory.undetermined("Infection in history but undetermined if $term")
+            }
+
+            else -> EvaluationFactory.fail("No $term infection")
         }
     }
 }

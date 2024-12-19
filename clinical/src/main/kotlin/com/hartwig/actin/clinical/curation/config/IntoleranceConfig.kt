@@ -6,5 +6,5 @@ data class IntoleranceConfig(
     override val input: String,
     override val ignore: Boolean = false,
     val name: String,
-    val icd: IcdCode,
+    val icd: Set<IcdCode>,
 ) : CurationConfig

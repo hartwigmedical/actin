@@ -4,14 +4,14 @@ import com.hartwig.actin.datamodel.Displayable
 
 data class Intolerance(
     val name: String,
-    override val icdCode: IcdCode,
+    override val icdCodes: Set<IcdCode>,
     val category: String? = null,
     val subcategories: Set<String>? = null,
     val type: String? = null,
     val clinicalStatus: String? = null,
     val verificationStatus: String? = null,
     val criticality: String? = null
-): IcdCodeHolder, Displayable {
+): IcdCodeEntity, Displayable {
 
     override fun display(): String {
         return name

@@ -5,12 +5,12 @@ import java.time.LocalDate
 
 data class Toxicity(
     val name: String,
-    override val icdCode: IcdCode,
+    override val icdCodes: Set<IcdCode>,
     val evaluatedDate: LocalDate,
     val source: ToxicitySource,
     val grade: Int?,
     val endDate: LocalDate? = null
-): IcdCodeHolder, Displayable {
+): IcdCodeEntity, Displayable {
 
     override fun display(): String {
         return name

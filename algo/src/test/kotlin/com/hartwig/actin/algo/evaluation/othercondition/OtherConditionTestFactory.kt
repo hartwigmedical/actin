@@ -35,7 +35,7 @@ internal object OtherConditionTestFactory {
             name = name,
             year = year,
             month = month,
-            icdCode = IcdCode(icdMainCode, icdExtensionCode),
+            icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode)),
             isContraindicationForTherapy = isContraindication,
         )
     }
@@ -43,7 +43,7 @@ internal object OtherConditionTestFactory {
     fun intolerance(name: String = "", icdMainCode: String = "", icdExtensionCode: String? = null): Intolerance {
         return Intolerance(
             name = name,
-            icdCode = IcdCode(icdMainCode, icdExtensionCode),
+            icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode)),
             category = "",
             subcategories = emptySet(),
             type = "",
@@ -54,7 +54,7 @@ internal object OtherConditionTestFactory {
     }
 
     fun complication(name: String = "", icdMainCode: String = "", icdExtensionCode: String? = null): Complication {
-        return Complication(name = name, icdCode = IcdCode(icdMainCode, icdExtensionCode), year = null, month = null)
+        return Complication(name = name, icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode)), year = null, month = null)
     }
 
     fun toxicity(
@@ -62,7 +62,7 @@ internal object OtherConditionTestFactory {
     ): Toxicity {
         return Toxicity(
             name = name,
-            icdCode = IcdCode(icdMainCode, icdExtensionCode),
+            icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode)),
             evaluatedDate = date,
             source = toxicitySource,
             grade = grade

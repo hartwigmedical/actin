@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.curation.config
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabaseReader
 import com.hartwig.actin.clinical.curation.TestCurationFactory
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.TestIcdFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -13,6 +14,7 @@ class NonOncologicalHistoryConfigFactoryTest {
     private val icdModel = TestIcdFactory.createTestModel()
     private val icdMainCode = icdModel.codeToNodeMap.keys.first()
     private val icdExtensionCode = icdModel.codeToNodeMap.keys.last()
+    private val icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode))
     private val icdTitle = icdModel.codeToNodeMap[icdMainCode]!!.title
     private val icdExtension = icdModel.codeToNodeMap[icdExtensionCode]!!.title
 
@@ -40,8 +42,7 @@ class NonOncologicalHistoryConfigFactoryTest {
         assertThat(config.config.ignore).isEqualTo(false)
         assertThat(config.config.lvef).isNull()
         val priorOtherCondition = config.config.priorOtherCondition!!
-        assertThat(priorOtherCondition.icdCode.mainCode).isEqualTo(icdMainCode)
-        assertThat(priorOtherCondition.icdCode.extensionCode).isEqualTo(icdExtensionCode)
+        assertThat(priorOtherCondition.icdCodes).isEqualTo(icdCodes)
         assertThat(priorOtherCondition.name).isEqualTo("name")
         assertThat(priorOtherCondition.year).isEqualTo(2023)
         assertThat(priorOtherCondition.month).isEqualTo(12)
@@ -116,9 +117,9 @@ class NonOncologicalHistoryConfigFactoryTest {
                 CurationCategory.NON_ONCOLOGICAL_HISTORY.categoryName,
                 "input",
                 "icd",
-                "unknown title",
-                "string",
-                "ICD title \"unknown title\" is not known - check for existence in resource"
+                "[unknown title]",
+                "icd",
+                "One or more of ICD title(s) \"unknown title\" is not known - check for existence in ICD model"
             )
         )
     }
@@ -134,9 +135,9 @@ class NonOncologicalHistoryConfigFactoryTest {
                 CurationCategory.NON_ONCOLOGICAL_HISTORY.categoryName,
                 "input",
                 "icd",
-                "$icdTitle&unknownExtension",
-                "string",
-                "ICD title \"$icdTitle&unknownExtension\" is not known - check for existence in resource"
+                "[$icdTitle&unknownExtension]",
+                "icd",
+                "One or more of ICD title(s) \"$icdTitle&unknownExtension\" is not known - check for existence in ICD model"
             )
         )
     }

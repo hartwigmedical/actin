@@ -16,14 +16,14 @@ class HasIntoleranceWithSpecificIcdTitle(private val icdModel: IcdModel, private
 
         return when {
             fullMatches.isNotEmpty() -> {
-                EvaluationFactory.pass("Has allergy ${Format.concatItemsWithAnd(fullMatches)} belonging to $targetIcdTitle")
+                EvaluationFactory.pass("Has intolerance ${Format.concatItemsWithAnd(fullMatches)} belonging to $targetIcdTitle")
             }
 
             mainMatchesWithUnknownExtension.isNotEmpty() -> {
-                EvaluationFactory.undetermined("Allergy in history - but undetermined if $targetIcdTitle allergy (drug type unknown)")
+                EvaluationFactory.undetermined("Intolerance in history - but undetermined if $targetIcdTitle intolerance (drug type unknown)")
             }
 
-            else -> EvaluationFactory.fail("No known allergy to $targetIcdTitle")
+            else -> EvaluationFactory.fail("No known intolerance to $targetIcdTitle")
         }
     }
 }

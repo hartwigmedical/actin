@@ -13,7 +13,6 @@ import com.hartwig.actin.icd.IcdModel
 class HasHistoryOfAnaphylaxis(private val icdModel: IcdModel): EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-
         val anaphylaxisCode = setOf(IcdCode(IcdConstants.ANAPHYLAXIS_CODE))
         val anaphylaxisHistoryEntries =
             icdModel.findInstancesMatchingAnyIcdCode(
@@ -24,12 +23,12 @@ class HasHistoryOfAnaphylaxis(private val icdModel: IcdModel): EvaluationFunctio
         val anaphylaxisIntoleranceEntries =
             icdModel.findInstancesMatchingAnyIcdCode(record.intolerances, anaphylaxisCode).fullMatches
 
-        val conditionString = Format.concatItemsWithAnd((anaphylaxisHistoryEntries + anaphylaxisIntoleranceEntries))
+        val conditionString = Format.concatItemsWithAnd(anaphylaxisHistoryEntries + anaphylaxisIntoleranceEntries)
 
         return if (anaphylaxisIntoleranceEntries.isNotEmpty() || anaphylaxisHistoryEntries.isNotEmpty()) {
             EvaluationFactory.pass("Has history of anaphylaxis: $conditionString")
         } else {
-            EvaluationFactory.fail("No history of anaphylaxis")
+            EvaluationFactory.fail("No known history of anaphylaxis")
         }
     }
 }

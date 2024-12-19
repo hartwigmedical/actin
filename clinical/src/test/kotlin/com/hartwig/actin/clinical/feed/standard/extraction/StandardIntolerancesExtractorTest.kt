@@ -55,7 +55,7 @@ class StandardIntolerancesExtractorTest {
                 clinicalStatus = CLINICAL_STATUS,
                 verificationStatus = VERIFICATION_STATUS,
                 criticality = SEVERITY,
-                icdCode = IcdCode("", null),
+                icdCodes = setOf(IcdCode("", null)),
                 subcategories = emptySet()
             )
         )
@@ -68,14 +68,14 @@ class StandardIntolerancesExtractorTest {
             IntoleranceConfig(
                 input = NAME,
                 name = CURATED,
-                icd = IcdCode(ICD, null)
+                icd = setOf(IcdCode(ICD, null))
             )
         )
         val results = extractor.extract(EHR_PATIENT_RECORD)
         assertThat(results.extracted).containsExactly(
             Intolerance(
                 name = CURATED,
-                icdCode = IcdCode(ICD, null),
+                icdCodes = setOf(IcdCode(ICD, null)),
                 category = CATEGORY,
                 clinicalStatus = CLINICAL_STATUS,
                 verificationStatus = VERIFICATION_STATUS,
@@ -95,12 +95,12 @@ class StandardIntolerancesExtractorTest {
             IntoleranceConfig(
                 input = NAME,
                 name = CURATED,
-                icd = IcdCode(ICD, null)
+                icd = setOf(IcdCode(ICD, null))
             ),
             IntoleranceConfig(
                 input = NAME,
                 name = anotherCurated,
-                icd = IcdCode(ICD, null)
+                icd = setOf(IcdCode(ICD, null))
             )
         )
         val results = extractor.extract(
@@ -115,12 +115,12 @@ class StandardIntolerancesExtractorTest {
         assertThat(results.extracted).containsExactly(
             Intolerance(
                 name = CURATED,
-                icdCode = IcdCode(ICD, null),
+                icdCodes = setOf(IcdCode(ICD, null)),
                 subcategories = setOf(SUBCATEGORY)
             ),
             Intolerance(
                 name = anotherCurated,
-                icdCode = IcdCode(ICD, null),
+                icdCodes = setOf(IcdCode(ICD, null)),
                 subcategories = emptySet()
             )
         )

@@ -93,6 +93,6 @@ class HasHadPriorConditionWithIcdCodeFromSetRecently(
     }
 
     private fun resolveIcdTitle(condition: PriorOtherCondition): String {
-        return icdModel.resolveTitleForCode(condition.icdCode)
+        return Format.concatWithCommaAndAnd(condition.icdCodes.map { icdModel.resolveTitleForCode(it) })
     }
 }

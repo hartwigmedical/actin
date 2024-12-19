@@ -2,6 +2,7 @@ package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.clinical.curation.CurationDatabaseReader
 import com.hartwig.actin.clinical.curation.TestCurationFactory
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.TestIcdFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -11,7 +12,8 @@ class ComplicationConfigFactoryTest {
     private val icdModel = TestIcdFactory.createTestModel()
     private val fields: Map<String, Int> = TestCurationFactory.curationHeaders(CurationDatabaseReader.COMPLICATION_TSV)
     private val icdMainCode = icdModel.codeToNodeMap.keys.first()
-    private val icdExtensionCode = icdModel.codeToNodeMap.keys.last()
+    private val icdExtensionCode= icdModel.codeToNodeMap.keys.last()
+    private val icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode))
     private val icdMainTitle = icdModel.codeToNodeMap[icdMainCode]!!.title
     private val icdExtensionTitle = icdModel.codeToNodeMap[icdExtensionCode]!!.title
 
@@ -24,7 +26,7 @@ class ComplicationConfigFactoryTest {
         val errors = config.errors
         val configObj = config.config
         val curated = configObj.curated!!
-        val curatedIcd = curated.icdCode
+        val curatedIcd = curated.icdCodes
 
         assertThat(errors).isEmpty()
 
@@ -33,8 +35,7 @@ class ComplicationConfigFactoryTest {
         assertThat(configObj.impliesUnknownComplicationState).isTrue
 
         assertThat(curated.name).isEqualTo("name")
-        assertThat(curatedIcd.mainCode).isEqualTo(icdMainCode)
-        assertThat(curatedIcd.extensionCode).isEqualTo(icdExtensionCode)
+        assertThat(curatedIcd).isEqualTo(icdCodes)
         assertThat(curated.year).isEqualTo(2023)
         assertThat(curated.month).isEqualTo(12)
     }
@@ -83,9 +84,9 @@ class ComplicationConfigFactoryTest {
                 "Complication",
                 "input",
                 "icd",
-                "unknown title",
-                "string",
-                "ICD title \"unknown title\" is not known - check for existence in resource"
+                "[unknown title]",
+                "icd",
+                "One or more of ICD title(s) \"unknown title\" is not known - check for existence in ICD model"
             )
         )
     }

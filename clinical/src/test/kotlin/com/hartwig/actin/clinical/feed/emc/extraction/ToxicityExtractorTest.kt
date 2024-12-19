@@ -35,7 +35,7 @@ class ToxicityExtractorTest {
                 ignore = false,
                 name = TOXICITY_NAME,
                 grade = 3,
-                icdCode = IcdCode(TOXICITY_ICD_CODE, TOXICITY_EXTENSION_CODE)
+                icdCodes = setOf(IcdCode(TOXICITY_ICD_CODE, TOXICITY_EXTENSION_CODE))
             )
         ),
         TranslationDatabase(
@@ -53,8 +53,8 @@ class ToxicityExtractorTest {
         assertThat(toxicities).hasSize(1)
         val toxicity = toxicities[0]
         assertThat(toxicity.name).isEqualTo(TOXICITY_NAME)
-        assertThat(toxicity.icdCode.mainCode).isEqualTo(TOXICITY_ICD_CODE)
-        assertThat(toxicity.icdCode.extensionCode).isEqualTo(TOXICITY_EXTENSION_CODE)
+        assertThat(toxicity.icdCodes.first().mainCode).isEqualTo(TOXICITY_ICD_CODE)
+        assertThat(toxicity.icdCodes.first().extensionCode).isEqualTo(TOXICITY_EXTENSION_CODE)
         assertThat(toxicity.evaluatedDate).isEqualTo(date)
         assertThat(toxicity.source).isEqualTo(ToxicitySource.QUESTIONNAIRE)
         assertThat(toxicity.grade).isEqualTo(Integer.valueOf(3))

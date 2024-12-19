@@ -29,14 +29,14 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
     private val minimalPatient = TestPatientFactory.createMinimalTestWGSPatientRecord()
 
     private val complicationWithTargetCode = OtherConditionTestFactory.complication(icdMainCode = parentCode, name = COMPLICATION_NAME)
-    private val complicationWithChildOfTargetCode = complicationWithTargetCode.copy(icdCode = IcdCode(childCode))
+    private val complicationWithChildOfTargetCode = complicationWithTargetCode.copy(icdCodes = setOf(IcdCode(childCode)))
 
     private val conditionWithTargetCode = OtherConditionTestFactory.priorOtherCondition(
         icdMainCode = parentCode,
         name = OTHER_CONDITION_NAME,
         isContraindication = true
     )
-    private val conditionWithChildOfTargetCode = conditionWithTargetCode.copy(icdCode = IcdCode(childCode))
+    private val conditionWithChildOfTargetCode = conditionWithTargetCode.copy(icdCodes = setOf(IcdCode(childCode)))
 
     @Test
     fun `Should fail when no matching icd code in prior other conditions, complications or toxicities`() {
@@ -139,7 +139,7 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
 
     private fun toxicity(toxicitySource: ToxicitySource, icdCode: IcdCode, grade: Int?): Toxicity {
         return Toxicity(
-            icdCode = icdCode,
+            icdCodes = setOf(icdCode),
             name = TOXICITY_NAME,
             evaluatedDate = referenceDate,
             source = toxicitySource,

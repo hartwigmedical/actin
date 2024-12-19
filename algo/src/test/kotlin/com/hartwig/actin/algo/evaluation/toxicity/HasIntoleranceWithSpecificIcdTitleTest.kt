@@ -7,10 +7,11 @@ import org.junit.Test
 
 class HasIntoleranceWithSpecificIcdTitleTest {
 
-    private val targetIcdTitle = "targetParentTitle"
-    private val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("target", "targetParent"))
+    private val targetIcdTitle = "targetParentTitle&targetExtensionParentTitle"
+    private val icdModel =
+        TestIcdFactory.createModelWithSpecificNodes(listOf("target", "targetParent", "targetExtension", "targetExtensionParent"))
     private val targetIcdCode = icdModel.resolveCodeForTitle(targetIcdTitle)!!
-    private val childCode = icdModel.resolveCodeForTitle("targetTitle")!!
+    private val childCode = icdModel.resolveCodeForTitle("targetTitle&targetExtensionTitle")!!
     private val function = HasIntoleranceWithSpecificIcdTitle(icdModel, targetIcdTitle)
 
     @Test
@@ -32,13 +33,13 @@ class HasIntoleranceWithSpecificIcdTitleTest {
 
     @Test
     fun `Should pass for intolerance with directly matching ICD code`() {
-        val intolerance = ToxicityTestFactory.intolerance(icdMainCode = targetIcdCode.mainCode)
+        val intolerance = ToxicityTestFactory.intolerance(icdMainCode = targetIcdCode.mainCode, icdExtensionCode = targetIcdCode.extensionCode)
         assertEvaluation(EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withIntolerance(intolerance)))
     }
 
     @Test
     fun `Should pass for intolerance with ICD code child of target title`() {
-        val intolerance = ToxicityTestFactory.intolerance(icdMainCode = childCode.mainCode)
+        val intolerance = ToxicityTestFactory.intolerance(icdMainCode = childCode.mainCode, icdExtensionCode = childCode.extensionCode)
         assertEvaluation(EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withIntolerance(intolerance)))
     }
 }

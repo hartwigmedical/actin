@@ -1,7 +1,7 @@
 package com.hartwig.actin.icd
 
 import com.hartwig.actin.datamodel.clinical.IcdCode
-import com.hartwig.actin.datamodel.clinical.IcdCodeHolder
+import com.hartwig.actin.datamodel.clinical.IcdCodeEntity
 import com.hartwig.actin.icd.datamodel.IcdMatches
 import com.hartwig.actin.icd.datamodel.IcdNode
 
@@ -38,7 +38,7 @@ class IcdModel(
         return extensionTitle?.let { "$mainTitle & $it" } ?: mainTitle
     }
 
-    fun <T : IcdCodeHolder> findInstancesMatchingAnyIcdCode(instances: List<T>?, targetIcdCodes: Set<IcdCode>): IcdMatches<T> {
+    fun <T : IcdCodeEntity> findInstancesMatchingAnyIcdCode(instances: List<T>?, targetIcdCodes: Set<IcdCode>): IcdMatches<T> {
         val (fullMatches, unknownExtensionMatches) = if (instances == null) {
             Pair(emptyList<T>(), emptyList<T>())
         } else {
@@ -50,19 +50,23 @@ class IcdModel(
         return IcdMatches(fullMatches, unknownExtensionMatches)
     }
 
-    private fun <T : IcdCodeHolder> returnIcdMatches(targetCode: IcdCode, instances: List<T>): Pair<List<T>, List<T>> {
+    private fun <T : IcdCodeEntity> returnIcdMatches(targetCode: IcdCode, instances: List<T>): Pair<List<T>, List<T>> {
         val mainMatches = instances.filter { instance ->
-            returnCodeWithParents(instance.icdCode.mainCode).any(targetCode.mainCode::equals)
+            instance.icdCodes.any {
+                returnCodeWithParents(it.mainCode).any(targetCode.mainCode::equals)
+            }
         }
 
         return if (targetCode.extensionCode == null) {
             Pair(mainMatches, emptyList())
         } else {
-            mainMatches.filter {
-                it.icdCode.extensionCode?.let { code ->
-                    returnCodeWithParents(code).any(targetCode.extensionCode::equals)
-                } != false
-            }.partition { it.icdCode.extensionCode != null }
+            mainMatches.filter { match ->
+                match.icdCodes.any {
+                    it.extensionCode?.let { code ->
+                        returnCodeWithParents(code).any(targetCode.extensionCode::equals)
+                    } != false
+                }
+            }.partition { it.icdCodes.none { it.extensionCode == null } }
         }
     }
 

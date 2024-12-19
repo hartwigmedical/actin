@@ -6,9 +6,9 @@ data class PriorOtherCondition(
     val name: String,
     val year: Int? = null,
     val month: Int? = null,
-    override val icdCode: IcdCode,
+    override val icdCodes: Set<IcdCode>,
     val isContraindicationForTherapy: Boolean
-): IcdCodeHolder, Displayable {
+): IcdCodeEntity, Displayable {
 
     override fun display(): String {
         return name

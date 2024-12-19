@@ -5,15 +5,15 @@ object TestPriorOtherConditionFactory {
     fun createMinimal(): PriorOtherCondition {
         return PriorOtherCondition(
             name = "",
-            icdCode = IcdCode("", null),
+            icdCodes = setOf(IcdCode("", null)),
             isContraindicationForTherapy = false
         )
     }
 
-    fun create(name: String, year: Int?, month: Int?, icdCode: String = "", icdExtensionCode: String? = null): PriorOtherCondition {
+    fun create(name: String, year: Int?, month: Int?, icdMainCode: String = "", icdExtensionCode: String? = null): PriorOtherCondition {
         return PriorOtherCondition(
             name = name,
-            icdCode = IcdCode(icdCode, icdExtensionCode),
+            icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode)),
             isContraindicationForTherapy = false,
             year = year,
             month = month

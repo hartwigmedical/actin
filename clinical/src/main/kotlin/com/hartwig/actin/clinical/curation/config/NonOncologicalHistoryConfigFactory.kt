@@ -2,7 +2,6 @@ package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationUtil
-import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 import com.hartwig.actin.icd.IcdModel
 
@@ -48,7 +47,7 @@ class NonOncologicalHistoryConfigFactory(private val icdModel: IcdModel) :
         parts: Array<String>
     ): Pair<PriorOtherCondition?, List<CurationConfigValidationError>> {
         return if (!ignore && !isLVEF(fields, parts)) {
-            val (icdCode, icdValidationErrors) = validateIcd(CurationCategory.NON_ONCOLOGICAL_HISTORY, input, "icd", fields, parts, icdModel)
+            val (icdCodes, icdValidationErrors) = validateIcd(CurationCategory.NON_ONCOLOGICAL_HISTORY, input, "icd", fields, parts, icdModel)
             val (isContraindicationForTherapy, isContraindicationForTherapyValidationErrors) = validateBoolean(
                 CurationCategory.NON_ONCOLOGICAL_HISTORY,
                 input,
@@ -63,7 +62,7 @@ class NonOncologicalHistoryConfigFactory(private val icdModel: IcdModel) :
                 name = parts[fields["name"]!!],
                 year = year,
                 month = month,
-                icdCode = icdCode ?: IcdCode("", null),
+                icdCodes = icdCodes ?: emptySet(),
                 isContraindicationForTherapy = isContraindicationForTherapy ?: false
             ) to icdValidationErrors + isContraindicationForTherapyValidationErrors + yearValidationErrors + monthValidationErrors
         } else {

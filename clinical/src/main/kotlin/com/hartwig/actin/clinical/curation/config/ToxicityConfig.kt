@@ -7,5 +7,5 @@ data class ToxicityConfig(
     override val ignore: Boolean,
     val name: String,
     val grade: Int?,
-    val icdCode: IcdCode
+    val icdCodes: Set<IcdCode>
 ) : CurationConfig

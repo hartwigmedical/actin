@@ -51,7 +51,7 @@ class HasContraindicationToMRI(private val icdModel: IcdModel) : EvaluationFunct
     }
 
     companion object {
-        val OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_MRI = listOf("implant", "claustrophobia")
+        val OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_MRI = listOf("claustrophobia")
         val INTOLERANCES_BEING_CONTRAINDICATIONS_TO_MRI = listOf("contrast agent")
     }
 }

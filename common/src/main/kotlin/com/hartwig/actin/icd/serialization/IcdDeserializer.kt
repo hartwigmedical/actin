@@ -44,7 +44,7 @@ object IcdDeserializer {
     }
 
     private fun trimTitle(rawNode: SerializedIcdNode): String {
-        return rawNode.title.trimStart { it == '-' }
+        return rawNode.title.trimStart { it == '-' || it.isWhitespace() }
     }
 
     private fun resolveCode(rawNode: SerializedIcdNode): String {

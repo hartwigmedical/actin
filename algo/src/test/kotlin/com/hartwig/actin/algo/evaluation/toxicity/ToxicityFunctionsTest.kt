@@ -16,8 +16,8 @@ class ToxicityFunctionsTest {
     @Test
     fun `Should not select toxicities with code matching the icd entries to ignore`() {
         val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("ignore", "keep"))
-        val keepTox = ehrTox.copy(icdCode = IcdCode("keepCode"))
-        val record = ToxicityTestFactory.withToxicities(listOf(keepTox, keepTox.copy(icdCode = IcdCode("ignoreCode"))))
+        val keepTox = ehrTox.copy(icdCodes = setOf(IcdCode("keepCode")))
+        val record = ToxicityTestFactory.withToxicities(listOf(keepTox, keepTox.copy(icdCodes = setOf(IcdCode("ignoreCode")))))
 
         assertThat(ToxicityFunctions.selectRelevantToxicities(record, icdModel, referenceDate, listOf("ignoreTitle"))).containsOnly(keepTox)
     }

@@ -39,13 +39,13 @@ class IntoleranceExtractorTest {
                 input = INTOLERANCE_INPUT,
                 ignore = false,
                 name = CURATED_INTOLERANCE,
-                icd = IcdCode(ICD, null)
+                icd = setOf(IcdCode(ICD, null))
             ),
             IntoleranceConfig(
                 input = INTOLERANCE_MEDICATION_INPUT,
                 ignore = false,
                 name = CURATED_MEDICATION_INTOLERANCE,
-                icd = IcdCode(ICD, null)
+                icd = setOf(IcdCode(ICD, null))
             )
         ), atcModel
     )
@@ -56,8 +56,8 @@ class IntoleranceExtractorTest {
         val (curated, evaluation) = extractor.extract(PATIENT_ID, inputs.map { entry.copy(codeText = it) })
         assertThat(curated).hasSize(2)
         assertThat(curated[0].name).isEqualTo(CURATED_INTOLERANCE)
-        assertThat(curated[0].icdCode.mainCode).isEqualTo(ICD)
-        assertThat(curated[0].icdCode.extensionCode).isNull()
+        assertThat(curated[0].icdCodes.first().mainCode).isEqualTo(ICD)
+        assertThat(curated[0].icdCodes.first().extensionCode).isNull()
 
         assertThat(curated[1].name).isEqualTo(CANNOT_CURATE)
 

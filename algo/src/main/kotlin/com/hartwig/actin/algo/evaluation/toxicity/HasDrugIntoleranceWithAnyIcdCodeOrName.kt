@@ -19,15 +19,15 @@ class HasDrugIntoleranceWithAnyIcdCodeOrName(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val targetCodes = IcdConstants.DRUG_ALLERGY_SET.map { IcdCode(it, extensionCode) }.toSet()
-        val platinumAllergiesByName =
+        val matchingAllergiesByName =
             record.intolerances.filter { stringCaseInsensitivelyMatchesQueryCollection(it.name, names) }
         val matchingAllergiesByMainCode = icdModel.findInstancesMatchingAnyIcdCode(record.intolerances, targetCodes)
-        val matchingAllergies = (matchingAllergiesByMainCode.fullMatches + platinumAllergiesByName).toSet()
+        val matchingAllergies = (matchingAllergiesByMainCode.fullMatches + matchingAllergiesByName).toSet()
         val undeterminedDrugAllergies = matchingAllergiesByMainCode.mainCodeMatchesWithUnknownExtension.toSet()
 
         return when {
             matchingAllergies.isNotEmpty() -> {
-                EvaluationFactory.pass("Patient has allergy to a $description: " + Format.concatItemsWithAnd(matchingAllergies))
+                EvaluationFactory.pass("Patient has allergy to $description: " + Format.concatItemsWithAnd(matchingAllergies))
             }
 
             undeterminedDrugAllergies.isNotEmpty() -> {
