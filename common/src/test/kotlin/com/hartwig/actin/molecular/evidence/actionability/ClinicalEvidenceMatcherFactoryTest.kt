@@ -1,113 +1,117 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
+import com.hartwig.actin.molecular.evidence.TestServeFactory
 import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
 import com.hartwig.actin.molecular.evidence.TestServeTrialFactory
-import com.hartwig.actin.molecular.evidence.curation.TestApplicabilityFilteringUtil
+import com.hartwig.actin.molecular.evidence.curation.ApplicabilityFiltering
 import com.hartwig.serve.datamodel.Knowledgebase
-import com.hartwig.serve.datamodel.trial.ActionableTrial
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+
+private const val MATCH_DOID = "match doid"
+private const val APPLICABLE_GENE = "applicable"
+
+private val VALID_EVIDENCE = TestServeEvidenceFactory.create(
+    source = ActionabilityConstants.EVIDENCE_SOURCE,
+    treatment = "treatment 1",
+    molecularCriterium = TestServeMolecularFactory.createGeneCriterium(gene = APPLICABLE_GENE)
+)
+
+private val VALID_TRIAL = TestServeTrialFactory.create(
+    source = ActionabilityConstants.EVIDENCE_SOURCE,
+    nctId = "NCT00000001",
+    indications = setOf(TestServeFactory.createIndicationWithDoid(MATCH_DOID)),
+    anyMolecularCriteria = setOf(TestServeMolecularFactory.createGeneCriterium(gene = APPLICABLE_GENE))
+)
+
+private val MATCHING_DISRUPTION = TestMolecularFactory.minimalDisruption().copy(isReportable = true, gene = APPLICABLE_GENE)
 
 class ClinicalEvidenceMatcherFactoryTest {
 
     val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
-    val factory = ClinicalEvidenceMatcherFactory(doidModel, emptySet())
+    val factory = ClinicalEvidenceMatcherFactory(doidModel, setOf(MATCH_DOID))
 
     @Test
-    fun `Should create actionable event matcher on empty inputs`() {
-        assertThat(factory.create(evidences = emptyList(), trials = emptyList())).isNotNull()
-        assertThat(
-            factory.create(
-                evidences = listOf(TestServeEvidenceFactory.createEvidenceForHotspot()),
-                trials = emptyList()
-            )
-        ).isNotNull()
+    fun `Should create clinical evidence matcher on empty inputs`() {
+        val matcher = factory.create(evidences = emptyList(), trials = emptyList())
+
+        assertThat(matcher).isNotNull()
     }
 
     @Test
-    fun `Should be able to filter external trials`() {
-        val hotspot1 = TestServeTrialFactory.create(
+    fun `Should remove evidence on non-evidence source`() {
+        val unknownSourceEvidence = TestServeEvidenceFactory.create(
             source = Knowledgebase.UNKNOWN,
-            title = "external",
-            anyMolecularCriteria = setOf(TestServeMolecularFactory.createHotspotCriterium(gene = "unknown gene"))
+            treatment = "treatment 2",
+            molecularCriterium = TestServeMolecularFactory.createGeneCriterium(gene = APPLICABLE_GENE)
         )
-        val hotspot2 = TestServeTrialFactory.create(
+
+        val matcher = factory.create(evidences = listOf(VALID_EVIDENCE, unknownSourceEvidence), trials = emptyList())
+
+        val matches = matcher.matchForDisruption(MATCHING_DISRUPTION)
+        assertThat(matches.treatmentEvidence).hasSize(1)
+    }
+
+    @Test
+    fun `Should remove evidence on non-applicable gene`() {
+        val nonApplicableEvidence = TestServeEvidenceFactory.create(
+            source = ActionabilityConstants.EVIDENCE_SOURCE,
+            treatment = "treatment 2",
+            molecularCriterium = TestServeMolecularFactory.createGeneCriterium(gene = ApplicabilityFiltering.NON_APPLICABLE_GENES.first())
+        )
+
+        val matcher = factory.create(evidences = listOf(VALID_EVIDENCE, nonApplicableEvidence), trials = emptyList())
+
+        val matches = matcher.matchForDisruption(MATCHING_DISRUPTION)
+        assertThat(matches.treatmentEvidence).hasSize(1)
+    }
+
+    @Test
+    fun `Should remove trials on non-trial source`() {
+        val unknownSourceTrial = TestServeTrialFactory.create(
+            source = Knowledgebase.UNKNOWN,
+            nctId = "NCT00000002",
+            indications = setOf(TestServeFactory.createIndicationWithDoid(MATCH_DOID)),
+            anyMolecularCriteria = setOf(TestServeMolecularFactory.createGeneCriterium(gene = APPLICABLE_GENE))
+        )
+
+        val matcher = factory.create(evidences = emptyList(), trials = listOf(VALID_TRIAL, unknownSourceTrial))
+
+        val matches = matcher.matchForDisruption(MATCHING_DISRUPTION)
+        assertThat(matches.eligibleTrials).hasSize(1)
+    }
+
+    @Test
+    fun `Should remove non-applicable molecular criteria from trials`() {
+        val applicableAndNonApplicableCriteriaTrial = TestServeTrialFactory.create(
             source = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
-            title = "external",
+            nctId = "NCT00000002",
+            indications = setOf(TestServeFactory.createIndicationWithDoid(MATCH_DOID)),
             anyMolecularCriteria = setOf(
-                TestServeMolecularFactory.createHotspotCriterium(
-                    gene = TestApplicabilityFilteringUtil.nonApplicableGene()
-                )
-            ),
-        )
-        val hotspot3 = TestServeTrialFactory.create(
-            source = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
-            title = "external",
-            anyMolecularCriteria = setOf(TestServeMolecularFactory.createHotspotCriterium(gene = "gene 1"))
-        )
-        val hotspot4 = TestServeTrialFactory.create(
-            source = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
-            title = "internal",
-            anyMolecularCriteria = setOf(TestServeMolecularFactory.createHotspotCriterium(gene = "gene 2"))
-        )
-        val hotspot5 = TestServeTrialFactory.create(
-            source = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
-            title = "external",
-            anyMolecularCriteria = setOf(TestServeMolecularFactory.createHotspotCriterium(gene = "gene 3"))
-        )
-        val codon1 = TestServeTrialFactory.create(
-            source = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
-            title = "external",
-            anyMolecularCriteria = setOf(TestServeMolecularFactory.createCodonCriterium())
-        )
-        val exon1 = TestServeTrialFactory.create(
-            source = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
-            title = "external",
-            anyMolecularCriteria = setOf(TestServeMolecularFactory.createExonCriterium())
-        )
-        val gene1 = TestServeTrialFactory.create(
-            source = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
-            title = "external",
-            anyMolecularCriteria = setOf(TestServeMolecularFactory.createGeneCriterium())
-        )
-        val characteristic1 = TestServeTrialFactory.create(
-            source = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
-            title = "external",
-            anyMolecularCriteria = setOf(TestServeMolecularFactory.createCharacteristicCriterium())
-        )
-        val fusion1 = TestServeTrialFactory.create(
-            source = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
-            title = "external",
-            anyMolecularCriteria = setOf(TestServeMolecularFactory.createFusionCriterium())
-        )
-        val hla1 = TestServeTrialFactory.create(
-            source = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
-            title = "external",
-            anyMolecularCriteria = setOf(TestServeMolecularFactory.createHlaCriterium())
+                TestServeMolecularFactory.createGeneCriterium(gene = APPLICABLE_GENE),
+                TestServeMolecularFactory.createGeneCriterium(gene = ApplicabilityFiltering.NON_APPLICABLE_GENES.first())
+            )
         )
 
-        /*
-        TODO (KD) Fix
-        val actionable = ActionabilityMatch(
-            emptyList(),
-            listOf(hotspot1, hotspot2, hotspot3, hotspot4, hotspot5, codon1, exon1, gene1, characteristic1, fusion1, hla1)
+        val nonApplicableCriteriaTrial = TestServeTrialFactory.create(
+            source = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE,
+            nctId = "NCT00000002",
+            indications = setOf(TestServeFactory.createIndicationWithDoid(MATCH_DOID)),
+            anyMolecularCriteria = setOf(
+                TestServeMolecularFactory.createGeneCriterium(gene = ApplicabilityFiltering.NON_APPLICABLE_GENES.first())
+            )
         )
 
-        val filteredOnSource = factory.filterForSources(actionable, factory.actionableEventSources)
-        assertThat(filteredOnSource.trials.size).isEqualTo(10)
+        val matcher = factory.create(
+            evidences = emptyList(),
+            trials = listOf(VALID_TRIAL, applicableAndNonApplicableCriteriaTrial, nonApplicableCriteriaTrial)
+        )
 
-        val filteredOnApplicability = factory.filterForApplicability(filteredOnSource)
-        assertThat(filteredOnApplicability.trials).hasSize(9)
-
-        assertThat(findByGene(filteredOnApplicability.trials, "gene 2")).isEqualTo("internal")
-        assertThat(findByGene(filteredOnApplicability.trials, "gene 3")).isEqualTo("external")
-         */
+        val matches = matcher.matchForDisruption(MATCHING_DISRUPTION)
+        assertThat(matches.eligibleTrials).hasSize(2)
     }
 
-    private fun findByGene(hotspots: List<ActionableTrial>, geneToFind: String): String {
-        return hotspots.firstOrNull { it.anyMolecularCriteria().iterator().next().hotspots().iterator().next().gene() == geneToFind }
-            ?.therapyNames()?.iterator()?.next() ?: ""
-    }
 }
