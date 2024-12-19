@@ -10,6 +10,7 @@ import com.hartwig.serve.datamodel.efficacy.EvidenceLevelDetails
 import com.hartwig.serve.datamodel.efficacy.ImmutableEfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.ImmutableTreatment
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
+import com.hartwig.serve.datamodel.molecular.MutationType
 import com.hartwig.serve.datamodel.molecular.characteristic.TumorCharacteristicType
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 
@@ -33,12 +34,40 @@ object TestServeEvidenceFactory {
         )
     }
 
-    fun createEvidenceForCodon(gene: String = ""): EfficacyEvidence {
-        return create(molecularCriterium = TestServeMolecularFactory.createCodonCriterium(gene = gene))
+    fun createEvidenceForCodon(
+        gene: String = "",
+        chromosome: String = "",
+        start: Int = 0,
+        end: Int = 0,
+        applicableMutationType: MutationType = MutationType.ANY
+    ): EfficacyEvidence {
+        return create(
+            molecularCriterium = TestServeMolecularFactory.createCodonCriterium(
+                gene = gene,
+                chromosome = chromosome,
+                start = start,
+                end = end,
+                applicableMutationType = applicableMutationType
+            )
+        )
     }
 
-    fun createEvidenceForExon(): EfficacyEvidence {
-        return create(molecularCriterium = TestServeMolecularFactory.createExonCriterium())
+    fun createEvidenceForExon(
+        gene: String = "",
+        chromosome: String = "",
+        start: Int = 0,
+        end: Int = 0,
+        applicableMutationType: MutationType = MutationType.ANY
+    ): EfficacyEvidence {
+        return create(
+            molecularCriterium = TestServeMolecularFactory.createExonCriterium(
+                gene = gene,
+                chromosome = chromosome,
+                start = start,
+                end = end,
+                applicableMutationType = applicableMutationType
+            )
+        )
     }
 
     fun createEvidenceForGene(gene: String = "", geneEvent: GeneEvent = GeneEvent.ANY_MUTATION): EfficacyEvidence {

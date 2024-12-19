@@ -15,7 +15,6 @@ import java.util.function.Predicate
 object ActionableEventExtraction {
 
     fun extractEvent(molecularCriterium: MolecularCriterium): ActionableEvent {
-        // TODO (KD): The below assumes that every molecular criterium contains exactly 1 molecular event.
         return when {
             hotspotFilter().test(molecularCriterium) -> {
                 extractHotspot(molecularCriterium)

@@ -24,7 +24,6 @@ object MutationTypeMatching {
             MutationType.ANY -> effect == CodingEffect.MISSENSE ||
                     effect == CodingEffect.NONSENSE_OR_FRAMESHIFT ||
                     effect == CodingEffect.SPLICE
-
             else -> {
                 LOGGER.warn("Unrecognized mutation type to match: '{}'", typeToMatch)
                 false
