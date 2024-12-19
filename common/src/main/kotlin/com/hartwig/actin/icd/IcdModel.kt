@@ -19,7 +19,7 @@ class IcdModel(
         val split = icdTitle.split('&')
         return titleToCodeMap[split[0]]?.let { mainCode ->
             split.takeIf { it.size == 2 }?.get(1)?.trim()?.ifEmpty { null }?.let { extensionTitle ->
-                titleToCodeMap[extensionTitle]?.let { IcdCode(mainCode, it) }
+                titleToCodeMap[extensionTitle]?.let { IcdCode(mainCode, it) } ?: return null
             } ?: IcdCode(mainCode, null)
         }
     }

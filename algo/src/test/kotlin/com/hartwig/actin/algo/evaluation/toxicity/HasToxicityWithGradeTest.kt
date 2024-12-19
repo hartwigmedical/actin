@@ -66,7 +66,7 @@ class HasToxicityWithGradeTest {
     }
 
     @Test
-    fun `Should ignore toxicities that match icd code of icd titles in ignore list`() {
+    fun `Should ignore toxicities that match ICD code of icd titles in ignore list`() {
         val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("ignore", "keep"))
         val function = function(icdModel, ignoreFilters = listOf("ignoreTitle"))
         val toxicities = listOf(
@@ -82,7 +82,7 @@ class HasToxicityWithGradeTest {
     }
 
     @Test
-    fun `Should match selectively using icd codes of icd titles in target list`() {
+    fun `Should match selectively using ICD codes of icd titles in target list`() {
         val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("target", "nonTarget"))
         val function = function(icdModel, targetIcdTitles = listOf("targetTitle"))
         val toxicities = listOf(
@@ -95,7 +95,7 @@ class HasToxicityWithGradeTest {
     }
 
     @Test
-    fun `Should pass if icd entry in target list is parent of toxicity in patient record`() {
+    fun `Should pass if ICD entry in target list is parent of toxicity in patient record`() {
         val icdModel = IcdModel.create(
             listOf(
                 IcdNode("targetCode", listOf("parentCode"), "targetTitle"),

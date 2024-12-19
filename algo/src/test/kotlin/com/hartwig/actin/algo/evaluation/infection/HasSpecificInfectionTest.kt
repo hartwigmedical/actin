@@ -53,7 +53,7 @@ class HasSpecificInfectionTest {
         val condition = InfectionTestFactory.priorOtherCondition(icdCode = targetCodes.first())
         val evaluation = function.evaluate(InfectionTestFactory.withPriorOtherCondition(condition))
         assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passGeneralMessages).containsExactly("Prior hepatitis B virus infection in history")
+        assertThat(evaluation.passGeneralMessages).containsExactly("Hepatitis B virus infection in history")
     }
 
     @Test

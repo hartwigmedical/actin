@@ -16,13 +16,17 @@ class HasSpecificInfection(
         val matchingConditions =
             icdModel.findInstancesMatchingAnyIcdCode(OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions), icdCodes)
         val infectionStatus = record.clinicalStatus.infectionStatus
-        val hasMatchingInfection = infectionStatus?.takeIf { it.hasActiveInfection }?.description?.let { description ->
-            description.contains(term) || term.contains(description)
+        val hasMatchingInfection = if (infectionStatus?.hasActiveInfection == true) {
+            infectionStatus.description?.let { description ->
+                description.contains(term) || term.contains(description)
+            }
+        } else {
+            false
         }
 
         return when {
             matchingConditions.fullMatches.isNotEmpty() || hasMatchingInfection == true -> {
-                EvaluationFactory.pass("$term infection in history")
+                EvaluationFactory.pass("${term.replaceFirstChar(Char::uppercase)} infection in history")
             }
 
             hasMatchingInfection == null || matchingConditions.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> {
