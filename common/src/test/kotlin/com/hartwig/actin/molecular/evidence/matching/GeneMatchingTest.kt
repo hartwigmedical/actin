@@ -9,7 +9,7 @@ import org.junit.Test
 
 private const val MATCHING_GENE = "gene 1"
 
-private val MATCHING_CRITERIA = VARIANT_CRITERIA.copy(gene = MATCHING_GENE, codingEffect = MISSENSE)
+private val MATCHING_CRITERIA = VariantMatchCriteria(isReportable = true, gene = MATCHING_GENE, codingEffect = MISSENSE)
 private val ANNOTATION = object : GeneAnnotation {
     override fun gene(): String {
         return MATCHING_GENE

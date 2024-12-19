@@ -6,34 +6,40 @@ import com.hartwig.actin.datamodel.molecular.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.GeneRole
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
+import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
+import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.orange.driver.TranscriptCopyNumberImpact
-import com.hartwig.actin.molecular.GENE
-import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
-import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
-import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEvents
+import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
-import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.ensemblcache.TranscriptData
-import com.hartwig.serve.datamodel.molecular.common.GeneRole as ServeGeneRole
-import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import com.hartwig.serve.datamodel.molecular.common.GeneRole as ServeGeneRole
+import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
 
 private const val CANONICAL_TRANSCRIPT = "canonical_transcript"
 private const val NON_CANONICAL_TRANSCRIPT = "non_canonical_transcript"
-private val EMPTY_MATCH = ActionabilityMatch(ActionableEvents(), ActionableEvents())
+private val EMPTY_MATCH = TestClinicalEvidenceFactory.createEmpty()
 private val AMPLIFICATION = TestServeKnownFactory.copyNumberBuilder().build().withGeneRole(ServeGeneRole.ONCO)
     .withProteinEffect(ServeProteinEffect.GAIN_OF_FUNCTION)
 
-private val ACTIONABILITY_MATCH = ActionabilityMatch(
-    onLabelEvidence = ActionableEvents(listOf(TestServeActionabilityFactory.createEfficacyEvidenceWithGene()), emptyList()),
-    offLabelEvidence = ActionableEvents()
+private val ACTIONABILITY_MATCH = TestClinicalEvidenceFactory.withEvidence(
+    TestTreatmentEvidenceFactory.create(
+        treatment = "treatment",
+        evidenceLevel = EvidenceLevel.A,
+        evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
+        evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
+        isOnLabel = true,
+        isCategoryEvent = true
+    )
 )
 
 class PanelCopyNumberAnnotatorTest {
@@ -129,7 +135,7 @@ class PanelCopyNumberAnnotatorTest {
                     isReportable = true,
                     event = "$GENE $type",
                     driverLikelihood = DriverLikelihood.HIGH,
-                    evidence = ClinicalEvidenceFactory.create(ACTIONABILITY_MATCH),
+                    evidence = ACTIONABILITY_MATCH,
                     gene = GENE,
                     geneRole = GeneRole.ONCO,
                     proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,

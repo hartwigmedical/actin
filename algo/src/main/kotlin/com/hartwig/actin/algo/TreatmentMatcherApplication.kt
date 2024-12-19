@@ -19,7 +19,6 @@ import com.hartwig.actin.molecular.evidence.ServeLoader
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.serialization.TrialJson
-import com.hartwig.serve.datamodel.RefGenome
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.serialization.ServeJson
 import org.apache.commons.cli.DefaultParser
@@ -89,24 +88,13 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         LOGGER.info("Done!")
     }
 
-    private fun loadEvidence(orangeRefGenomeVersion: RefGenomeVersion): List<EfficacyEvidence> {
-        val serveRefGenomeVersion = toServeRefGenomeVersion(orangeRefGenomeVersion)
+    private fun loadEvidence(refGenomeVersion: RefGenomeVersion): List<EfficacyEvidence> {
         val jsonFilePath = ServeJson.jsonFilePath(config.serveDirectory)
-        LOGGER.info("Loading SERVE from {}", jsonFilePath)
-        val (_, actionableEvents) = ServeLoader.loadServe(jsonFilePath, serveRefGenomeVersion)
-        return actionableEvents.evidences
-    }
+        LOGGER.info("Loading SERVE database from {}", jsonFilePath)
+        val serveRecord = ServeLoader.loadServeRecord(jsonFilePath, refGenomeVersion)
+        LOGGER.info(" Loaded {} evidences", serveRecord.evidences().size)
 
-    private fun toServeRefGenomeVersion(refGenomeVersion: RefGenomeVersion): RefGenome {
-        return when (refGenomeVersion) {
-            RefGenomeVersion.V37 -> {
-                RefGenome.V37
-            }
-
-            RefGenomeVersion.V38 -> {
-                RefGenome.V38
-            }
-        }
+        return serveRecord.evidences()
     }
 
     companion object {

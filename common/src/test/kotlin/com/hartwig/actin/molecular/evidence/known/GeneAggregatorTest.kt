@@ -6,7 +6,7 @@ import com.hartwig.serve.datamodel.molecular.gene.KnownGene
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-private const val GENE: String = "gene"
+private const val GENE = "gene"
 
 class GeneAggregatorTest {
 

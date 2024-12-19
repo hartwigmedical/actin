@@ -8,9 +8,9 @@ import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.orange.driver.TranscriptCopyNumberImpact
-import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
-import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
+import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
+import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import org.apache.logging.log4j.LogManager
 
@@ -33,7 +33,7 @@ class PanelCopyNumberAnnotator(private val evidenceDatabase: EvidenceDatabase, p
     }
 
     private fun annotatedInferredCopyNumber(copyNumber: CopyNumber): CopyNumber {
-        val evidence = ClinicalEvidenceFactory.create(evidenceDatabase.evidenceForCopyNumber(copyNumber))
+        val evidence = evidenceDatabase.evidenceForCopyNumber(copyNumber)
         val geneAlteration =
             GeneAlterationFactory.convertAlteration(copyNumber.gene, evidenceDatabase.geneAlterationForCopyNumber(copyNumber))
         return copyNumber.copy(
@@ -74,7 +74,7 @@ class PanelCopyNumberAnnotator(private val evidenceDatabase: EvidenceDatabase, p
             isReportable = true,
             event = "${sequencedAmplifiedGene.gene} amp",
             driverLikelihood = DriverLikelihood.HIGH,
-            evidence = ClinicalEvidenceFactory.createNoEvidence(),
+            evidence = ExtractionUtil.noEvidence(),
             canonicalImpact = canonicalImpact,
             otherImpacts = otherImpacts
         )
@@ -110,7 +110,7 @@ class PanelCopyNumberAnnotator(private val evidenceDatabase: EvidenceDatabase, p
             isReportable = true,
             event = "${sequencedDeletedGene.gene} del",
             driverLikelihood = DriverLikelihood.HIGH,
-            evidence = ClinicalEvidenceFactory.createNoEvidence(),
+            evidence = ExtractionUtil.noEvidence(),
             canonicalImpact = canonicalImpact,
             otherImpacts = otherImpacts
         )

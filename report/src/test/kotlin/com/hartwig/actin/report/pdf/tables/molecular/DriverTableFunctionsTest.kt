@@ -11,7 +11,7 @@ private val BASE_EXTERNAL_TRIAL_SUMMARY = ExternalTrialSummary(
     url = "url",
     actinMolecularEvents = sortedSetOf(),
     sourceMolecularEvents = sortedSetOf(),
-    cancerTypes = sortedSetOf(),
+    applicableCancerTypes = sortedSetOf(),
     countries = sortedSetOf()
 )
 

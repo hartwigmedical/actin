@@ -22,6 +22,7 @@ data class MolecularRecord(
     override val characteristics: MolecularCharacteristics,
     override val evidenceSource: String,
 ) : MolecularTest {
+
     override fun testsGene(gene: String) =
         if (experimentType == ExperimentType.HARTWIG_TARGETED) drivers.copyNumbers.any { gene == it.gene } else true
 

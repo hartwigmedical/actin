@@ -35,7 +35,7 @@ class KnownEventResolver(private val knownEvents: KnownEvents, private val aggre
             ?: GeneLookup.find(aggregatedKnownGenes, homozygousDisruption.gene)
     }
 
-    fun resolveForBreakend(disruption: Disruption): GeneAlteration? {
+    fun resolveForDisruption(disruption: Disruption): GeneAlteration? {
         return GeneLookup.find(aggregatedKnownGenes, disruption.gene)
     }
 

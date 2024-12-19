@@ -302,7 +302,7 @@ from `CKB_EVIDENCE` except for external trials which is populated by `CKB_TRIAL`
 2. Map the evidences to the ACTIN evidence datamodel (above).
 
 Evidence is considered on-label in case the applicable evidence tumor DOID is equal to or a parent of the patient's tumor doids, and none of
-the patient's tumor DOIDs (or parents thereof) is blacklisted by the evidence.
+the patient's tumor DOIDs (or parents thereof) is excluded by the evidence.
 
 Evidence from SERVE is collected per driver / characteristic as follows:
 

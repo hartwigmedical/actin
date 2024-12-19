@@ -121,8 +121,8 @@ class TreatmentMatchJsonTest {
                     "generalPfs":{"value":136.5,"numPatients":98,"min":74,"max":281,"iqr":46.0},
                     "generalOs":{"value":215.0,"numPatients":90,"min":121,"max":470,"iqr":110.1},
                     "resistanceEvidence":[
-                        {"event":"BRAF amp","isTested":null,"isFound":false,"resistanceLevel":"A",
-                        "evidenceUrls":["website"],"treatmentName":"Pembrolizumab"}]}
+                        {"event":"BRAF amp","treatmentName":"Pembrolizumab","resistanceLevel":"A",
+                        "isTested":null,"isFound":false,"evidenceUrls":["website"]}]}
                     ],
                 "personalizedDataAnalysis":null,
                 "maxMolecularTestAge":null}

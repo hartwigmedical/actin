@@ -1,9 +1,8 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.datamodel.molecular.evidence.Country
-import com.hartwig.actin.datamodel.molecular.evidence.CountryName
+import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
-import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -13,7 +12,7 @@ private val BASE_EXTERNAL_TRIAL_SUMMARY = ExternalTrialSummary(
     url = "url",
     actinMolecularEvents = sortedSetOf(),
     sourceMolecularEvents = sortedSetOf(),
-    cancerTypes = sortedSetOf(),
+    applicableCancerTypes = sortedSetOf(),
     countries = sortedSetOf()
 )
 
@@ -21,17 +20,17 @@ class EligibleExternalTrialGeneratorFunctionsTest {
 
     private val externalTrialNetherlandsGermany = BASE_EXTERNAL_TRIAL_SUMMARY.copy(
         countries = countrySet(
-            TestClinicalEvidenceFactory.createCountry(
-                CountryName.NETHERLANDS,
+            CountryDetails(
+                Country.NETHERLANDS,
                 mapOf("Amsterdam" to setOf(Hospital("AMC", false)), "Leiden" to setOf(Hospital("LUMC", false)))
             ),
-            TestClinicalEvidenceFactory.createCountry(CountryName.GERMANY, mapOf("Berlin" to emptySet()))
+            CountryDetails(Country.GERMANY, mapOf("Berlin" to emptySet()))
         )
     )
     private val externalTrialBelgium = BASE_EXTERNAL_TRIAL_SUMMARY.copy(
         countries = countrySet(
-            TestClinicalEvidenceFactory.createCountry(
-                CountryName.BELGIUM,
+            CountryDetails(
+                Country.BELGIUM,
                 mapOf(
                     "Brussels" to setOf(Hospital("Brussels hospital", null)),
                     "Liege" to emptySet(),
@@ -48,8 +47,8 @@ class EligibleExternalTrialGeneratorFunctionsTest {
     )
     private val externalTrialNetherlands = BASE_EXTERNAL_TRIAL_SUMMARY.copy(
         countries = countrySet(
-            TestClinicalEvidenceFactory.createCountry(
-                CountryName.NETHERLANDS,
+            CountryDetails(
+                Country.NETHERLANDS,
                 mapOf(
                     "Nijmegen" to setOf(Hospital("Radboud UMC", false), Hospital("CWZ", false)),
                     "Leiden" to setOf(Hospital("LUMC", false)),
@@ -70,15 +69,15 @@ class EligibleExternalTrialGeneratorFunctionsTest {
     fun `Should return hospitals and cities in home country`() {
         val hospitalsAndCitiesExternalTrialNetherlands = EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(
             externalTrialNetherlands,
-            CountryName.NETHERLANDS
+            Country.NETHERLANDS
         )
         val hospitalsAndCitiesExternalTrialNetherlandsGermany = EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(
             externalTrialNetherlandsGermany,
-            CountryName.NETHERLANDS
+            Country.NETHERLANDS
         )
         val hospitalsAndCitiesExternalTrialBelgium = EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(
             externalTrialBelgium,
-            CountryName.BELGIUM
+            Country.BELGIUM
         )
         assertThat(hospitalsAndCitiesExternalTrialNetherlands.first).isEqualTo("Many, please check link")
         assertThat(hospitalsAndCitiesExternalTrialNetherlands.second).isEqualTo("Nijmegen, Leiden, Amsterdam, Groningen")
@@ -90,15 +89,18 @@ class EligibleExternalTrialGeneratorFunctionsTest {
 
     @Test(expected = IllegalStateException::class)
     fun `Should throw illegal state exception if home country not found in external trial`() {
-        EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(externalTrialNetherlands, CountryName.BELGIUM)
+        EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(externalTrialNetherlands, Country.BELGIUM)
     }
 
     @Test
     fun `Should return country names and cities`() {
-        assertThat(EligibleExternalTrialGeneratorFunctions.countryNamesWithCities(externalTrialNetherlandsGermany)).isEqualTo("Netherlands (Amsterdam, Leiden), Germany (Berlin)")
-        assertThat(EligibleExternalTrialGeneratorFunctions.countryNamesWithCities(externalTrialBelgium)).isEqualTo("Belgium (Many, please check link)")
-        assertThat(EligibleExternalTrialGeneratorFunctions.countryNamesWithCities(externalTrialNetherlands)).isEqualTo("Netherlands (Nijmegen, Leiden, Amsterdam, Groningen)")
+        assertThat(EligibleExternalTrialGeneratorFunctions.countryNamesWithCities(externalTrialNetherlandsGermany))
+            .isEqualTo("Netherlands (Amsterdam, Leiden), Germany (Berlin)")
+        assertThat(EligibleExternalTrialGeneratorFunctions.countryNamesWithCities(externalTrialBelgium))
+            .isEqualTo("Belgium (Many, please check link)")
+        assertThat(EligibleExternalTrialGeneratorFunctions.countryNamesWithCities(externalTrialNetherlands))
+            .isEqualTo("Netherlands (Nijmegen, Leiden, Amsterdam, Groningen)")
     }
 
-    private fun countrySet(vararg countries: Country) = sortedSetOf(Comparator.comparing { it.name }, *countries)
+    private fun countrySet(vararg countries: CountryDetails) = sortedSetOf(Comparator.comparing { it.country }, *countries)
 }

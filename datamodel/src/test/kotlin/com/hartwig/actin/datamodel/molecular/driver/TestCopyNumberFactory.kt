@@ -3,7 +3,7 @@ package com.hartwig.actin.datamodel.molecular.driver
 import com.hartwig.actin.datamodel.molecular.GeneRole
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact
-import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 
 object TestCopyNumberFactory {
@@ -13,7 +13,7 @@ object TestCopyNumberFactory {
             isReportable = false,
             event = "",
             driverLikelihood = null,
-            evidence = ClinicalEvidence(),
+            evidence = TestClinicalEvidenceFactory.createEmpty(),
             isAssociatedWithDrugResistance = null,
             gene = "",
             geneRole = GeneRole.UNKNOWN,

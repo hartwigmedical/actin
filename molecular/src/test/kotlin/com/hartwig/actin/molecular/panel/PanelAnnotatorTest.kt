@@ -7,28 +7,32 @@ import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
 import com.hartwig.actin.datamodel.molecular.Fusion
 import com.hartwig.actin.datamodel.molecular.Variant
-import com.hartwig.actin.molecular.GENE
-import com.hartwig.actin.molecular.HGVS_CODING
-import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
-import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
-import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEvents
-import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
+import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
+import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFactory
+import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val OTHER_GENE = "other_gene"
-private val EMPTY_MATCH = ActionabilityMatch(ActionableEvents(), ActionableEvents())
+private val EMPTY_MATCH = TestClinicalEvidenceFactory.createEmpty()
 private val ARCHER_VARIANT = SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING)
 private val ARCHER_FUSION = SequencedFusion(GENE, OTHER_GENE)
 
-private val ACTIONABILITY_MATCH = ActionabilityMatch(
-    onLabelEvidence = ActionableEvents(listOf(TestServeActionabilityFactory.createEfficacyEvidenceWithGene()), emptyList()),
-    offLabelEvidence = ActionableEvents()
+private val ON_LABEL_MATCH = TestClinicalEvidenceFactory.withEvidence(
+    TestTreatmentEvidenceFactory.create(
+        treatment = "treatment",
+        evidenceLevel = EvidenceLevel.A,
+        evidenceLevelDetails = EvidenceLevelDetails.GUIDELINE,
+        evidenceDirection = TestEvidenceDirectionFactory.certainPositiveResponse(),
+        isOnLabel = true,
+        isCategoryEvent = true
+    )
 )
-
 private val ARCHER_SKIPPED_EXON = SequencedSkippedExons(GENE, 2, 3)
 
 class PanelAnnotatorTest {
@@ -90,15 +94,14 @@ class PanelAnnotatorTest {
 
     @Test
     fun `Should annotate tumor mutational burden with evidence`() {
-        every { evidenceDatabase.evidenceForTumorMutationalBurdenStatus(true) } returns ACTIONABILITY_MATCH
+        every { evidenceDatabase.evidenceForTumorMutationalBurdenStatus(true) } returns ON_LABEL_MATCH
         every { evidenceDatabase.evidenceForTumorMutationalBurdenStatus(false) } returns EMPTY_MATCH
 
         val panelWithHighTmb = annotator.annotate(createTestPriorSequencingTest().copy(tumorMutationalBurden = 200.0))
-        assertThat(panelWithHighTmb.characteristics.tumorMutationalBurdenEvidence)
-            .isEqualTo(ClinicalEvidenceFactory.create(ACTIONABILITY_MATCH))
+        assertThat(panelWithHighTmb.characteristics.tumorMutationalBurdenEvidence).isEqualTo(ON_LABEL_MATCH)
 
         val panelWithLowTmb = annotator.annotate(createTestPriorSequencingTest().copy(tumorMutationalBurden = 2.0))
-        assertThat(panelWithLowTmb.characteristics.tumorMutationalBurdenEvidence).isEqualTo(ClinicalEvidenceFactory.create(EMPTY_MATCH))
+        assertThat(panelWithLowTmb.characteristics.tumorMutationalBurdenEvidence).isEqualTo(EMPTY_MATCH)
 
         val panelWithoutTmb = annotator.annotate(createTestPriorSequencingTest().copy(tumorMutationalBurden = null))
         assertThat(panelWithoutTmb.characteristics.tumorMutationalBurdenEvidence).isNull()
@@ -106,14 +109,14 @@ class PanelAnnotatorTest {
 
     @Test
     fun `Should annotate microsatellite status with evidence`() {
-        every { evidenceDatabase.evidenceForMicrosatelliteStatus(true) } returns ACTIONABILITY_MATCH
+        every { evidenceDatabase.evidenceForMicrosatelliteStatus(true) } returns ON_LABEL_MATCH
         every { evidenceDatabase.evidenceForMicrosatelliteStatus(false) } returns EMPTY_MATCH
 
         val panelWithMSI = annotator.annotate(createTestPriorSequencingTest().copy(isMicrosatelliteUnstable = true))
-        assertThat(panelWithMSI.characteristics.microsatelliteEvidence).isEqualTo(ClinicalEvidenceFactory.create(ACTIONABILITY_MATCH))
+        assertThat(panelWithMSI.characteristics.microsatelliteEvidence).isEqualTo(ON_LABEL_MATCH)
 
         val panelWithMSS = annotator.annotate(createTestPriorSequencingTest().copy(isMicrosatelliteUnstable = false))
-        assertThat(panelWithMSS.characteristics.microsatelliteEvidence).isEqualTo(ClinicalEvidenceFactory.create(EMPTY_MATCH))
+        assertThat(panelWithMSS.characteristics.microsatelliteEvidence).isEqualTo(EMPTY_MATCH)
 
         val panelWithoutMicrosatelliteStatus = annotator.annotate(createTestPriorSequencingTest().copy(isMicrosatelliteUnstable = null))
         assertThat(panelWithoutMicrosatelliteStatus.characteristics.microsatelliteEvidence).isNull()
