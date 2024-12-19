@@ -42,10 +42,6 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
                 LabMeasurement.HEMOGLOBIN,
                 LabUnit.MILLIMOLES_PER_LITER
             ),
-            EligibilityRule.HAS_CD4_POSITIVE_CELLS_PER_MICROLITER_OF_AT_LEAST_X to hasSufficientLabValueCreator(
-                LabMeasurement.CD4_POSITIVE_CELLS,
-                LabUnit.CELLS_PER_MICROLITER
-            ),
             EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.INTERNATIONAL_NORMALIZED_RATIO),
             EligibilityRule.HAS_PT_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.PROTHROMBIN_TIME),
             EligibilityRule.HAS_PT_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinInstitutionalNormalLimitCreator(LabMeasurement.PROTHROMBIN_TIME),
@@ -137,7 +133,11 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.HAS_TSH_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinInstitutionalNormalLimitCreator(
                 LabMeasurement.THYROID_STIMULATING_HORMONE
             ),
-            EligibilityRule.HAS_ANTI_HLA_ANTIBODIES_AGAINST_PDC_LINE to undeterminedLabValueCreator("HLA-antibodies against PDC line")
+            EligibilityRule.HAS_ANTI_HLA_ANTIBODIES_AGAINST_PDC_LINE to undeterminedLabValueCreator("HLA-antibodies against PDC line"),
+            EligibilityRule.HAS_CD4_POSITIVE_CELLS_PER_MICROLITER_OF_AT_LEAST_X to hasSufficientLabValueCreator(
+                LabMeasurement.CD4_POSITIVE_CELLS,
+                LabUnit.CELLS_PER_MICROLITER
+            )
         )
     }
 
