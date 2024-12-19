@@ -188,7 +188,7 @@ class ClinicalEvidenceFactoryTest {
     }
 
     @Test
-    fun `Should create multiple external trials for multiple SERVE actinable trial`() {
+    fun `Should create multiple external trials for multiple SERVE actionable trial`() {
         val expectedSourceDate = LocalDate.of(2024, 1, 1)
         val event1 = TestServeMolecularFactory.createActionableEvent(sourceDate = expectedSourceDate, sourceEvent = "event 1")
         val event2 = TestServeMolecularFactory.createActionableEvent(sourceDate = expectedSourceDate, sourceEvent = "event 2")
