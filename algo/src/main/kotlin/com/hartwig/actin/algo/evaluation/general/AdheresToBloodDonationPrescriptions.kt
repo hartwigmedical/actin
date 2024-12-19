@@ -9,7 +9,7 @@ class AdheresToBloodDonationPrescriptions: EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return EvaluationFactory.notEvaluated(
-            "Assumed that patient adheres to blood donation prescriptions - rule not evaluated"
+            "Assumed that patient adheres to blood donation prescriptions"
         )
     }
 }
