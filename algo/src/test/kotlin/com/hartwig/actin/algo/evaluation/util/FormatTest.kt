@@ -35,6 +35,13 @@ class FormatTest {
     }
 
     @Test
+    fun shouldLowerCaseStringsAndJoinWithAndUnlessNumeric() {
+        assertEquals("x and y", Format.concatLowercaseUnlessNumericWithAnd(setOf("X", "y")))
+        assertEquals("x", Format.concatLowercaseUnlessNumericWithAnd(setOf("X")))
+        assertEquals("x and X1", Format.concatLowercaseUnlessNumericWithAnd(setOf("X1", "X")))
+    }
+
+    @Test
     fun shouldLowercaseStringsAndJoinWithCommaAndOr() {
         assertEquals("", Format.concatLowercaseWithCommaAndOr(emptySet()))
         assertEquals("x", Format.concatLowercaseWithCommaAndOr(setOf("X")))
