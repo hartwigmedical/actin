@@ -9,7 +9,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private val FUSION_EVIDENCE_FOR_GENE = TestServeEvidenceFactory.createEvidenceForGene(gene = "gene 1", geneEvent = GeneEvent.FUSION)
-private val DELETION_EVIDENCE_FOR_GENE = TestServeEvidenceFactory.createEvidenceForGene(gene = "gene 1", geneEvent = GeneEvent.DELETION)
+private val DEL_EVIDENCE_FOR_GENE = TestServeEvidenceFactory.createEvidenceForGene(gene = "gene 1", geneEvent = GeneEvent.DELETION)
 private val ANY_EVIDENCE_FOR_GENE = TestServeEvidenceFactory.createEvidenceForGene(gene = "gene 1", geneEvent = GeneEvent.ANY_MUTATION)
 private val SPECIFIC_FUSION_EVIDENCE =
     TestServeEvidenceFactory.createEvidenceForFusion(geneUp = "gene 1", geneDown = "gene 2", minExonUp = 4, maxExonUp = 6)
@@ -17,7 +17,7 @@ private val OTHER_FUSION_EVIDENCE = TestServeEvidenceFactory.createEvidenceForFu
 private val OTHER_EVIDENCE = TestServeEvidenceFactory.createEvidenceForHla()
 
 private val FUSION_TRIAL_FOR_GENE = TestServeTrialFactory.createTrialForGene(gene = "gene 1", geneEvent = GeneEvent.FUSION)
-private val DELETION_TRIAL_FOR_GENE = TestServeTrialFactory.createTrialForGene(gene = "gene 1", geneEvent = GeneEvent.DELETION)
+private val DEL_TRIAL_FOR_GENE = TestServeTrialFactory.createTrialForGene(gene = "gene 1", geneEvent = GeneEvent.DELETION)
 private val ANY_TRIAL_FOR_GENE = TestServeTrialFactory.createTrialForGene(gene = "gene 1", geneEvent = GeneEvent.ANY_MUTATION)
 private val SPECIFIC_FUSION_TRIAL =
     TestServeTrialFactory.createTrialForFusion(geneUp = "gene 1", geneDown = "gene 2", minExonUp = 4, maxExonUp = 6)
@@ -29,7 +29,7 @@ class FusionEvidenceTest {
     private val fusionEvidence = FusionEvidence.create(
         evidences = listOf(
             FUSION_EVIDENCE_FOR_GENE,
-            DELETION_EVIDENCE_FOR_GENE,
+            DEL_EVIDENCE_FOR_GENE,
             ANY_EVIDENCE_FOR_GENE,
             SPECIFIC_FUSION_EVIDENCE,
             OTHER_FUSION_EVIDENCE,
@@ -37,7 +37,7 @@ class FusionEvidenceTest {
         ),
         trials = listOf(
             FUSION_TRIAL_FOR_GENE,
-            DELETION_TRIAL_FOR_GENE,
+            DEL_TRIAL_FOR_GENE,
             ANY_TRIAL_FOR_GENE,
             SPECIFIC_FUSION_TRIAL,
             OTHER_FUSION_TRIAL,
