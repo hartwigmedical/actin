@@ -8,10 +8,10 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.doid.DoidModel
-import com.hartwig.actin.molecular.evidence.actionability.BreakendEvidence
 import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceMatcher
 import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceMatcherFactory
 import com.hartwig.actin.molecular.evidence.actionability.CopyNumberEvidence
+import com.hartwig.actin.molecular.evidence.actionability.DisruptionEvidence
 import com.hartwig.actin.molecular.evidence.actionability.FusionEvidence
 import com.hartwig.actin.molecular.evidence.actionability.HomozygousDisruptionEvidence
 import com.hartwig.actin.molecular.evidence.actionability.VariantEvidence
@@ -48,7 +48,7 @@ class ResistanceEvidenceMatcher(
 
         val variantEvidence = VariantEvidence.create(evidences = listOf(evidence), trials = emptyList())
         val copyNumberEvidence = CopyNumberEvidence.create(evidences = listOf(evidence), trials = emptyList())
-        val disruptionEvidence = BreakendEvidence.create(evidences = listOf(evidence), trials = emptyList())
+        val disruptionEvidence = DisruptionEvidence.create(evidences = listOf(evidence), trials = emptyList())
         val homDisEvidence = HomozygousDisruptionEvidence.create(evidences = listOf(evidence), trials = emptyList())
         val fusionEvidence = FusionEvidence.create(evidences = listOf(evidence), trials = emptyList())
 

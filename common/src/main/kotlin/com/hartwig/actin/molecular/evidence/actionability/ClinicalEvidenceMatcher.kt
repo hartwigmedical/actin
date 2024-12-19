@@ -12,7 +12,7 @@ class ClinicalEvidenceMatcher(
     private val personalizedActionabilityFactory: PersonalizedActionabilityFactory,
     private val variantEvidence: VariantEvidence,
     private val copyNumberEvidence: CopyNumberEvidence,
-    private val breakendEvidence: BreakendEvidence,
+    private val disruptionEvidence: DisruptionEvidence,
     private val homozygousDisruptionEvidence: HomozygousDisruptionEvidence,
     private val fusionEvidence: FusionEvidence,
     private val virusEvidence: VirusEvidence,
@@ -47,8 +47,8 @@ class ClinicalEvidenceMatcher(
         return personalizedActionabilityFactory.create(homozygousDisruptionEvidence.findMatches(homozygousDisruption))
     }
 
-    fun matchForBreakend(disruption: Disruption): ClinicalEvidence {
-        return personalizedActionabilityFactory.create(breakendEvidence.findMatches(disruption))
+    fun matchForDisruption(disruption: Disruption): ClinicalEvidence {
+        return personalizedActionabilityFactory.create(disruptionEvidence.findMatches(disruption))
     }
 
     fun matchForFusion(fusion: FusionMatchCriteria): ClinicalEvidence {

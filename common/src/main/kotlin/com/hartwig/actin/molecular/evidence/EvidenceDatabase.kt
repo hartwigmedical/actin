@@ -57,12 +57,12 @@ class EvidenceDatabase(
         return clinicalEvidenceMatcher.matchForHomozygousDisruption(homozygousDisruption)
     }
 
-    fun geneAlterationForBreakend(disruption: Disruption): GeneAlteration? {
-        return knownEventResolver.resolveForBreakend(disruption)
+    fun geneAlterationForDisruption(disruption: Disruption): GeneAlteration? {
+        return knownEventResolver.resolveForDisruption(disruption)
     }
 
-    fun evidenceForBreakend(disruption: Disruption): ClinicalEvidence {
-        return clinicalEvidenceMatcher.matchForBreakend(disruption)
+    fun evidenceForDisruption(disruption: Disruption): ClinicalEvidence {
+        return clinicalEvidenceMatcher.matchForDisruption(disruption)
     }
 
     fun lookupKnownFusion(fusion: FusionMatchCriteria): KnownFusion? {

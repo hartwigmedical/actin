@@ -97,13 +97,13 @@ class KnownEventResolverTest {
         assertThat(resolver.resolveForHomozygousDisruption(homDisruptionGene3)).isNull()
 
         val disruptionGene1 = minimalDisruption().copy(gene = "gene 1")
-        assertThat(resolver.resolveForBreakend(disruptionGene1)).isNotNull
+        assertThat(resolver.resolveForDisruption(disruptionGene1)).isNotNull
 
         val disruptionGene2 = disruptionGene1.copy(gene = "gene 2")
-        assertThat(resolver.resolveForBreakend(disruptionGene2)).isNotNull
+        assertThat(resolver.resolveForDisruption(disruptionGene2)).isNotNull
 
         val disruptionGene3 = disruptionGene1.copy(gene = "gene 3")
-        assertThat(resolver.resolveForBreakend(disruptionGene3)).isNull()
+        assertThat(resolver.resolveForDisruption(disruptionGene3)).isNull()
     }
 
     @Test

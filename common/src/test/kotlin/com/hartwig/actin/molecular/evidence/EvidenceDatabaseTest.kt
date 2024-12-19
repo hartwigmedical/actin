@@ -37,8 +37,8 @@ class EvidenceDatabaseTest {
     @Test
     fun `Should match evidence for disruption`() {
         val disruption = TestMolecularFactory.minimalDisruption().copy(isReportable = true)
-        assertThat(database.geneAlterationForBreakend(disruption)).isNotNull()
-        assertEvidence(database.evidenceForBreakend(disruption), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
+        assertThat(database.geneAlterationForDisruption(disruption)).isNotNull()
+        assertEvidence(database.evidenceForDisruption(disruption), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
     }
 
     @Test

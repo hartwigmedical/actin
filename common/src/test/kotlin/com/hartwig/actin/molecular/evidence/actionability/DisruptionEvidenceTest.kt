@@ -18,9 +18,9 @@ private val AMP_TRIAL_FOR_GENE = TestServeTrialFactory.createTrialForGene(gene =
 private val INACT_TRIAL_FOR_GENE = TestServeTrialFactory.createTrialForGene(gene = "gene 1", geneEvent = GeneEvent.INACTIVATION)
 private val OTHER_TRIAL = TestServeTrialFactory.createTrialForHotspot()
 
-class BreakendEvidenceTest {
+class DisruptionEvidenceTest {
 
-    private val breakendEvidence = BreakendEvidence.create(
+    private val disruptionEvidence = DisruptionEvidence.create(
         evidences = listOf(ANY_EVIDENCE_FOR_GENE, AMP_EVIDENCE_FOR_GENE, INACT_EVIDENCE_FOR_GENE, OTHER_EVIDENCE),
         trials = listOf(ANY_TRIAL_FOR_GENE, AMP_TRIAL_FOR_GENE, INACT_TRIAL_FOR_GENE, OTHER_TRIAL)
     )
@@ -29,7 +29,7 @@ class BreakendEvidenceTest {
     fun `Should determine evidence and trials for matching disruption`() {
         val disruption = create(gene = "gene 1", isReportable = true)
 
-        val matches = breakendEvidence.findMatches(disruption)
+        val matches = disruptionEvidence.findMatches(disruption)
         assertThat(matches.evidenceMatches).containsExactly(ANY_EVIDENCE_FOR_GENE)
         assertThat(matches.matchingCriteriaPerTrialMatch).isEqualTo(mapOf(ANY_TRIAL_FOR_GENE to ANY_TRIAL_FOR_GENE.anyMolecularCriteria()))
     }
@@ -38,7 +38,7 @@ class BreakendEvidenceTest {
     fun `Should not match evidence to trials to unreportable disruption`() {
         val disruption = create(gene = "gene 1", isReportable = false)
 
-        val matches = breakendEvidence.findMatches(disruption)
+        val matches = disruptionEvidence.findMatches(disruption)
         assertThat(matches.evidenceMatches).isEmpty()
         assertThat(matches.matchingCriteriaPerTrialMatch).isEmpty()
     }
@@ -47,7 +47,7 @@ class BreakendEvidenceTest {
     fun `Should not match evidence to trials to disruption on other gene`() {
         val disruption = create(gene = "other gene", isReportable = true)
 
-        val matches = breakendEvidence.findMatches(disruption)
+        val matches = disruptionEvidence.findMatches(disruption)
         assertThat(matches.evidenceMatches).isEmpty()
         assertThat(matches.matchingCriteriaPerTrialMatch).isEmpty()
     }

@@ -46,7 +46,7 @@ class ClinicalEvidenceMatcherFactory(
     ): ClinicalEvidenceMatcher {
         val variantEvidence = VariantEvidence.create(evidences, trials)
         val copyNumberEvidence = CopyNumberEvidence.create(evidences, trials)
-        val breakendEvidence = BreakendEvidence.create(evidences, trials)
+        val disruptionEvidence = DisruptionEvidence.create(evidences, trials)
         val homozygousDisruptionEvidence = HomozygousDisruptionEvidence.create(evidences, trials)
         val fusionEvidence = FusionEvidence.create(evidences, trials)
         val virusEvidence = VirusEvidence.create(evidences, trials)
@@ -56,7 +56,7 @@ class ClinicalEvidenceMatcherFactory(
             personalizedActionabilityFactory = personalizedActionabilityFactory,
             variantEvidence = variantEvidence,
             copyNumberEvidence = copyNumberEvidence,
-            breakendEvidence = breakendEvidence,
+            disruptionEvidence = disruptionEvidence,
             homozygousDisruptionEvidence = homozygousDisruptionEvidence,
             fusionEvidence = fusionEvidence,
             virusEvidence = virusEvidence,

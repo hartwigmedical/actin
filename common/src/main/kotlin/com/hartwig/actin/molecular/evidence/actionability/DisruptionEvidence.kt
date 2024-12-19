@@ -7,7 +7,7 @@ import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import com.hartwig.serve.datamodel.trial.ActionableTrial
 import java.util.function.Predicate
 
-class BreakendEvidence(
+class DisruptionEvidence(
     private val applicableGeneEvidences: List<EfficacyEvidence>,
     private val applicableTrialMatcher: ActionableTrialMatcher
 ) : ActionabilityMatcher<Disruption> {
@@ -23,13 +23,13 @@ class BreakendEvidence(
     }
 
     companion object {
-        private val BREAKEND_EVENTS = setOf(GeneEvent.ANY_MUTATION)
+        private val DISRUPTION_EVENTS = setOf(GeneEvent.ANY_MUTATION)
 
-        fun create(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial>): BreakendEvidence {
-            val applicableEvidences = EfficacyEvidenceExtractor.extractGeneEvidence(evidences, BREAKEND_EVENTS)
-            val actionableTrialMatcher = ActionableTrialMatcherFactory.createGeneTrialMatcher(trials, BREAKEND_EVENTS)
+        fun create(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial>): DisruptionEvidence {
+            val applicableEvidences = EfficacyEvidenceExtractor.extractGeneEvidence(evidences, DISRUPTION_EVENTS)
+            val actionableTrialMatcher = ActionableTrialMatcherFactory.createGeneTrialMatcher(trials, DISRUPTION_EVENTS)
 
-            return BreakendEvidence(applicableEvidences, actionableTrialMatcher)
+            return DisruptionEvidence(applicableEvidences, actionableTrialMatcher)
         }
     }
 }

@@ -70,7 +70,7 @@ object TestClinicalEvidenceMatcherFactory {
             personalizedActionabilityFactory = personalizedActionabilityFactory,
             variantEvidence = VariantEvidence.create(evidences, trials),
             copyNumberEvidence = CopyNumberEvidence.create(evidences, trials),
-            breakendEvidence = BreakendEvidence.create(evidences, trials),
+            disruptionEvidence = DisruptionEvidence.create(evidences, trials),
             homozygousDisruptionEvidence = HomozygousDisruptionEvidence.create(evidences, trials),
             fusionEvidence = FusionEvidence.create(evidences, trials),
             virusEvidence = VirusEvidence.create(evidences, trials),
