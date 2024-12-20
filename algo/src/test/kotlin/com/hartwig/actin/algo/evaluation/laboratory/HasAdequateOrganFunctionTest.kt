@@ -31,9 +31,9 @@ class HasAdequateOrganFunctionTest {
     )
 
     @Test
-    fun `Should fail for empty record`() {
+    fun `Should evaluate to undetermined for no lab values and no prior conditions`() {
         assertEvaluation(
-            EvaluationResult.FAIL,
+            EvaluationResult.UNDETERMINED,
             function.evaluate(
                 TestPatientFactory.createMinimalTestWGSPatientRecord().copy(labValues = emptyList(), priorOtherConditions = emptyList())
             )
@@ -41,13 +41,24 @@ class HasAdequateOrganFunctionTest {
     }
 
     @Test
-    fun `Should fail when lab values within normal range and no cardiovascular disease present`() {
+    fun `Should evaluate to undetermined when one of the evaluated lab values is missing`() {
+        val record = LabTestFactory.withLabValues(
+            upperLimitLabMeasurementList.map { createLabValue(it, withinLimits = true, evaluateAgainstLLN = false) } +
+                    lowerLimitLabMeasurementList
+                        .drop(1)
+                        .map { createLabValue(it, withinLimits = true, evaluateAgainstLLN = true) }
+        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
+    }
+
+    @Test
+    fun `Should pass when lab values within normal range and no cardiovascular disease present`() {
         val condition = OtherConditionTestFactory.priorOtherCondition(doids = setOf(DoidConstants.STOMACH_DISEASE_DOID))
         val record = LabTestFactory.withLabValues(
             upperLimitLabMeasurementList.map { createLabValue(it, withinLimits = true, evaluateAgainstLLN = false) } +
                     lowerLimitLabMeasurementList.map { createLabValue(it, withinLimits = true, evaluateAgainstLLN = true) }
         ).copy(priorOtherConditions = listOf(condition))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
     }
 
     @Test
@@ -61,7 +72,9 @@ class HasAdequateOrganFunctionTest {
     @Test
     fun `Should warn when ASAT, ALAT, total bilirubin, or LD is above ULN`() {
         upperLimitLabMeasurementList.forEach {
-            val record = LabTestFactory.withLabValues(listOf(createLabValue(it, withinLimits = false, evaluateAgainstLLN = false)))
+            val record = LabTestFactory.withLabValues(
+                listOf(createLabValue(it, withinLimits = false, evaluateAgainstLLN = false))
+            )
             assertEvaluation(EvaluationResult.WARN, function.evaluate(record))
         }
     }
@@ -87,7 +100,7 @@ private fun createLabValue(
     val value = when {
         withinLimits -> 10.0
         evaluateAgainstLLN -> 1.0
-        else -> 25.0
+        else -> 100.0
     }
     return LabTestFactory.create(measurement, value, VALID_DATE, refLimitLow = 5.0, refLimitUp = 20.0)
 }

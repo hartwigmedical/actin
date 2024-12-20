@@ -16,39 +16,43 @@ import java.time.LocalDate
 class HasAdequateOrganFunction(private val minValidDate: LocalDate, private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-
         val interpretation = LabInterpreter.interpret(record.labValues)
 
-        val valuesUnderLowerLimit = sequenceOf(
+        val llnEvaluation = sequenceOf(
             LabMeasurement.HEMOGLOBIN,
             LabMeasurement.THROMBOCYTES_ABS,
             LabMeasurement.NEUTROPHILS_ABS,
             LabMeasurement.EGFR_MDRD,
             LabMeasurement.EGFR_CKD_EPI
-        )
-            .filter {
-                evaluateVersusULN(
-                    isMaxUln = false,
-                    interpretation.mostRecentValue(it),
-                    it
-                ) == LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN
-            }
-            .toSet()
+        ).map {
+            it to evaluateVersusLimit(
+                isMaxUln = false,
+                interpretation.mostRecentValue(it),
+                it
+            )
+        }.toSet()
 
-        val valuesAboveUpperLimit = sequenceOf(
+        val ulnEvaluation = sequenceOf(
             LabMeasurement.ASPARTATE_AMINOTRANSFERASE,
             LabMeasurement.ALANINE_AMINOTRANSFERASE,
             LabMeasurement.TOTAL_BILIRUBIN,
             LabMeasurement.LACTATE_DEHYDROGENASE
-        )
-            .filter {
-                evaluateVersusULN(
-                    isMaxUln = true,
-                    interpretation.mostRecentValue(it),
-                    it
-                ) == LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN
-            }
-            .toSet()
+        ).map {
+            it to evaluateVersusLimit(
+                isMaxUln = true,
+                interpretation.mostRecentValue(it),
+                it
+            )
+        }.toSet()
+
+        val (valuesUnderLowerLimit, valuesAboveUpperLimit) = listOf(
+            llnEvaluation,
+            ulnEvaluation
+        ).map { it.filter { e -> e.second == LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN } }
+
+        val undeterminedLabValues = (ulnEvaluation + llnEvaluation)
+            .filter { it.second == LabEvaluation.LabEvaluationResult.CANNOT_BE_DETERMINED }
+            .map { it.first }
 
         val cardiovascularHistory = OtherConditionSelector.selectConditionsMatchingDoid(
             record.priorOtherConditions,
@@ -61,13 +65,13 @@ class HasAdequateOrganFunction(private val minValidDate: LocalDate, private val 
         return when {
             valuesUnderLowerLimit.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "$messageStart (${Format.concatWithCommaAndAnd(valuesUnderLowerLimit.map { it.display() })} below LLN)"
+                    "$messageStart (${Format.concatWithCommaAndAnd(valuesUnderLowerLimit.map { it.first.display })} below LLN)"
                 )
             }
 
             valuesAboveUpperLimit.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "$messageStart (${Format.concatWithCommaAndAnd(valuesAboveUpperLimit.map { it.display() })} above ULN)"
+                    "$messageStart (${Format.concatWithCommaAndAnd(valuesAboveUpperLimit.map { it.first.display() })} above ULN)"
                 )
             }
 
@@ -77,19 +81,28 @@ class HasAdequateOrganFunction(private val minValidDate: LocalDate, private val 
                 )
             }
 
+            undeterminedLabValues.isNotEmpty() -> {
+                EvaluationFactory.recoverableUndetermined(
+                    "Undetermined if adequate organ function " +
+                            "(lab value(s) (${Format.concatItemsWithAnd(undeterminedLabValues)}) undetermined)"
+                )
+            }
+
             else -> {
-                EvaluationFactory.recoverableFail("No indication of inadequate organ function")
+                EvaluationFactory.recoverablePass("No indication of inadequate organ function")
             }
         }
     }
 
-    private fun evaluateVersusULN(
+    private fun evaluateVersusLimit(
         isMaxUln: Boolean,
         mostRecent: LabValue?,
         measurement: LabMeasurement
     ): LabEvaluation.LabEvaluationResult {
         return if (LabEvaluation.isValid(mostRecent, measurement, minValidDate) && mostRecent != null) {
-            if (isMaxUln) LabEvaluation.evaluateVersusMaxULN(mostRecent, 1.0) else LabEvaluation.evaluateVersusMinLLN(mostRecent, 1.0)
+            val limit =
+                if (measurement in listOf(LabMeasurement.ASPARTATE_AMINOTRANSFERASE, LabMeasurement.ALANINE_AMINOTRANSFERASE)) 3.0 else 1.0
+            if (isMaxUln) LabEvaluation.evaluateVersusMaxULN(mostRecent, limit) else LabEvaluation.evaluateVersusMinLLN(mostRecent, limit)
         } else LabEvaluation.LabEvaluationResult.CANNOT_BE_DETERMINED
     }
 }
