@@ -1,4 +1,4 @@
-package com.hartwig.actin.trial.interpretation
+package com.hartwig.actin.trial
 
 import com.hartwig.actin.trial.input.TestFunctionInputResolverFactory
 

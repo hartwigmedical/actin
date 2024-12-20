@@ -1,4 +1,4 @@
-package com.hartwig.actin.trial2
+package com.hartwig.actin.trial
 
 import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
