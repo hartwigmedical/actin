@@ -5,6 +5,12 @@ import com.hartwig.actin.datamodel.clinical.IcdCodeEntity
 import com.hartwig.actin.icd.datamodel.IcdMatches
 import com.hartwig.actin.icd.datamodel.IcdNode
 
+private enum class IcdMatchCategory {
+    FULL_MATCH,
+    MATCH_WITH_UNKNOWN_EXTENSION,
+    NO_MATCH
+}
+
 class IcdModel(
     val codeToNodeMap: Map<String, IcdNode>,
     val titleToCodeMap: Map<String, String>
@@ -54,12 +60,6 @@ class IcdModel(
             instancesByCategory[IcdMatchCategory.FULL_MATCH] ?: emptyList(),
             instancesByCategory[IcdMatchCategory.MATCH_WITH_UNKNOWN_EXTENSION] ?: emptyList()
         )
-    }
-
-    private enum class IcdMatchCategory {
-        FULL_MATCH,
-        MATCH_WITH_UNKNOWN_EXTENSION,
-        NO_MATCH
     }
 
     private fun allCodesForEntity(entity: IcdCodeEntity): Set<IcdCode> {
