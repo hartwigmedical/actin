@@ -67,7 +67,7 @@ class DriverEventFactoryTest {
     fun `Should generate events for fusions`() {
         assertThat(
             DriverEventFactory.fusionEvent(TestLinxFactory.fusionBuilder().geneStart("EML4").geneEnd("ALK").build())
-        ).isEqualTo("EML4 - ALK fusion")
+        ).isEqualTo("EML4::ALK fusion")
     }
 
     @Test

@@ -8,7 +8,10 @@ data class ContentDefinition(val textEntries: List<String>, val deEmphasizeConte
 object ActinTrialContentFunctions {
 
     fun contentForTrialCohortList(
-        cohorts: List<InterpretedCohort>, feedbackFunction: (InterpretedCohort) -> Set<String>, includeFeedback: Boolean = true
+        cohorts: List<InterpretedCohort>,
+        feedbackFunction: (InterpretedCohort) -> Set<String>,
+        includeLocation: Boolean = false,
+        includeFeedback: Boolean = true
     ): List<ContentDefinition> {
         val commonFeedback = if (includeFeedback) findCommonMembersInCohorts(cohorts, feedbackFunction) else emptySet()
         val commonEvents = findCommonMembersInCohorts(cohorts, InterpretedCohort::molecularEvents)
@@ -21,6 +24,7 @@ object ActinTrialContentFunctions {
                     listOfNotNull(
                         "Applies to all cohorts below",
                         concat(commonEvents, allEventsEmpty && includeFeedback),
+                        "".takeIf { includeLocation },
                         concat(commonFeedback).takeIf { includeFeedback }
                     ),
                     deEmphasizeContent
@@ -32,6 +36,7 @@ object ActinTrialContentFunctions {
                 listOfNotNull(
                     cohort.name ?: "",
                     concat(cohort.molecularEvents - commonEvents, commonEvents.isEmpty() && !allEventsEmpty),
+                    if (includeLocation) cohort.locations?.joinToString("\n") ?: "" else null,
                     if (includeFeedback) concat(feedbackFunction(cohort) - commonFeedback, commonFeedback.isEmpty()) else null
                 ),
                 !cohort.isOpen || !cohort.hasSlotsAvailable

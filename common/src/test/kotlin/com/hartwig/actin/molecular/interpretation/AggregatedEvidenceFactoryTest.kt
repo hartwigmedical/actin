@@ -19,20 +19,20 @@ class AggregatedEvidenceFactoryTest {
 
     @Test
     fun `Should find no evidence on minimal record`() {
-        assertThat(AggregatedEvidenceFactory.create(TestMolecularFactory.createMinimalTestMolecularRecord()).treatmentEvidence).isEmpty()
+        assertThat(AggregatedEvidenceFactory.create(TestMolecularFactory.createMinimalTestMolecularRecord()).treatmentEvidencePerEvent).isEmpty()
     }
 
     @Test
     fun `Should find no evidence on no evidence`() {
         val characteristics = TestMolecularFactory.createMinimalTestMolecularRecord().characteristics.copy(
             isMicrosatelliteUnstable = true,
-            microsatelliteEvidence = TestClinicalEvidenceFactory.createEmptyClinicalEvidence(),
+            microsatelliteEvidence = TestClinicalEvidenceFactory.createEmpty(),
             isHomologousRepairDeficient = true,
-            homologousRepairEvidence = TestClinicalEvidenceFactory.createEmptyClinicalEvidence(),
+            homologousRepairEvidence = TestClinicalEvidenceFactory.createEmpty(),
             hasHighTumorMutationalBurden = null,
             hasHighTumorMutationalLoad = null
         )
-        assertThat(AggregatedEvidenceFactory.create(withCharacteristics(characteristics)).treatmentEvidence).isEmpty()
+        assertThat(AggregatedEvidenceFactory.create(withCharacteristics(characteristics)).treatmentEvidencePerEvent).isEmpty()
     }
 
     @Test
@@ -40,7 +40,7 @@ class AggregatedEvidenceFactoryTest {
         assertThat(
             AggregatedEvidenceFactory.create(
                 TestMolecularFactory.createMinimalTestMolecularRecord().copy(hasSufficientQuality = false)
-            ).externalEligibleTrialsPerEvent
+            ).eligibleTrialsPerEvent
         ).isEmpty()
     }
 
@@ -48,32 +48,32 @@ class AggregatedEvidenceFactoryTest {
     fun `Should aggregate characteristics`() {
         val characteristics = TestMolecularFactory.createMinimalTestMolecularRecord().characteristics.copy(
             isMicrosatelliteUnstable = true,
-            microsatelliteEvidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
+            microsatelliteEvidence = TestClinicalEvidenceFactory.createExhaustive(),
             isHomologousRepairDeficient = true,
-            homologousRepairEvidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
+            homologousRepairEvidence = TestClinicalEvidenceFactory.createExhaustive(),
             hasHighTumorMutationalBurden = true,
-            tumorMutationalBurdenEvidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
+            tumorMutationalBurdenEvidence = TestClinicalEvidenceFactory.createExhaustive(),
             hasHighTumorMutationalLoad = true,
-            tumorMutationalLoadEvidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence()
+            tumorMutationalLoadEvidence = TestClinicalEvidenceFactory.createExhaustive()
         )
         val evidence = AggregatedEvidenceFactory.create(withCharacteristics(characteristics))
 
-        assertThat(evidence.treatmentEvidence).hasSize(4)
+        assertThat(evidence.treatmentEvidencePerEvent).hasSize(4)
     }
 
     @Test
     fun `Should skip evidence on missing characteristics`() {
         val characteristics = TestMolecularFactory.createMinimalTestMolecularRecord().characteristics.copy(
             isMicrosatelliteUnstable = null,
-            microsatelliteEvidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
+            microsatelliteEvidence = TestClinicalEvidenceFactory.createExhaustive(),
             isHomologousRepairDeficient = null,
-            homologousRepairEvidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
+            homologousRepairEvidence = TestClinicalEvidenceFactory.createExhaustive(),
             hasHighTumorMutationalBurden = null,
-            tumorMutationalBurdenEvidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
+            tumorMutationalBurdenEvidence = TestClinicalEvidenceFactory.createExhaustive(),
             hasHighTumorMutationalLoad = null,
-            tumorMutationalLoadEvidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence()
+            tumorMutationalLoadEvidence = TestClinicalEvidenceFactory.createExhaustive()
         )
-        assertThat(AggregatedEvidenceFactory.create(withCharacteristics(characteristics)).treatmentEvidence).isEmpty()
+        assertThat(AggregatedEvidenceFactory.create(withCharacteristics(characteristics)).treatmentEvidencePerEvent).isEmpty()
     }
 
     @Test
@@ -81,37 +81,37 @@ class AggregatedEvidenceFactoryTest {
         val drivers = TestMolecularFactory.createMinimalTestMolecularRecord().drivers.copy(
             variants = listOf(
                 TestVariantFactory.createMinimal().copy(
-                    event = "variant", evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence()
+                    event = "variant", evidence = TestClinicalEvidenceFactory.createExhaustive()
                 )
             ),
             copyNumbers = listOf(
                 TestCopyNumberFactory.createMinimal().copy(
-                    event = "amplification", evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence()
+                    event = "amplification", evidence = TestClinicalEvidenceFactory.createExhaustive()
                 )
             ),
             homozygousDisruptions = listOf(
                 TestHomozygousDisruptionFactory.createMinimal().copy(
-                    event = "hom disruption", evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence()
+                    event = "hom disruption", evidence = TestClinicalEvidenceFactory.createExhaustive()
                 )
             ),
             disruptions = listOf(
                 TestDisruptionFactory.createMinimal().copy(
-                    event = "disruption", evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence()
+                    event = "disruption", evidence = TestClinicalEvidenceFactory.createExhaustive()
                 )
             ),
             fusions = listOf(
                 TestFusionFactory.createMinimal().copy(
-                    event = "fusion", evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence()
+                    event = "fusion", evidence = TestClinicalEvidenceFactory.createExhaustive()
                 )
             ),
             viruses = listOf(
                 TestVirusFactory.createMinimal().copy(
-                    event = "virus", evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence()
+                    event = "virus", evidence = TestClinicalEvidenceFactory.createExhaustive()
                 )
             ),
         )
         val evidence = AggregatedEvidenceFactory.create(withDrivers(drivers))
-        assertThat(evidence.treatmentEvidence).hasSize(6)
+        assertThat(evidence.treatmentEvidencePerEvent).hasSize(6)
     }
 
     @Test
@@ -119,13 +119,13 @@ class AggregatedEvidenceFactoryTest {
         val variant = TestVariantFactory.createMinimal().copy(
             driverLikelihood = DriverLikelihood.HIGH,
             event = "variant",
-            evidence = TestClinicalEvidenceFactory.createExhaustiveClinicalEvidence(),
+            evidence = TestClinicalEvidenceFactory.createExhaustive(),
         )
         val drivers = TestMolecularFactory.createMinimalTestMolecularRecord().drivers.copy(
             variants = listOf(variant, variant.copy(driverLikelihood = DriverLikelihood.MEDIUM))
         )
         val evidence = AggregatedEvidenceFactory.create(withDrivers(drivers))
-        assertThat(evidence.treatmentEvidence).hasSize(1)
+        assertThat(evidence.treatmentEvidencePerEvent).hasSize(1)
     }
 
     private fun withCharacteristics(characteristics: MolecularCharacteristics): MolecularRecord {

@@ -55,7 +55,7 @@ steps:
       - 'Build and push the molecular image with tag'
 
   - name: 'gcr.io/cloud-builders/gcloud'
-    args: [ 'pubsub', 'topics', 'publish', 'actin-upgrade.pending', '--project', 'actin-build', '--message', '{ "tag": "$TAG_NAME", "repository": "actin"}' ]
+    args: [ 'pubsub', 'topics', 'publish', 'actin-upgrade.pending', '--project', 'actin-build', '--message', '{ "tag": "$TAG_NAME", "repository": "actin", "is_version_property": "true"}' ]
 
 options:
   machineType: 'E2_HIGHCPU_8'

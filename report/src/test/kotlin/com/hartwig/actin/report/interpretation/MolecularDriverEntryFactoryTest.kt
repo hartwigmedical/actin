@@ -3,9 +3,11 @@ package com.hartwig.actin.report.interpretation
 import com.hartwig.actin.datamodel.molecular.Drivers
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVirusFactory
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
+import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.report.interpretation.InterpretedCohortTestFactory.interpretedCohort
 import org.assertj.core.api.Assertions.assertThat
@@ -23,21 +25,21 @@ class MolecularDriverEntryFactoryTest {
 
     @Test
     fun `Should include non-actionable reportable drivers`() {
-        val record = createTestMolecularRecordWithDriverEvidence(TestClinicalEvidenceFactory.createEmptyClinicalEvidence(), true)
+        val record = createTestMolecularRecordWithDriverEvidence(TestClinicalEvidenceFactory.createEmpty(), true)
         val factory = createFactoryForMolecularRecord(record)
         assertThat(factory.create()).hasSize(1)
     }
 
     @Test
     fun `Should skip non actionable not reportable drivers`() {
-        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.createEmptyClinicalEvidence())
+        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.createEmpty())
         val factory = createFactoryForMolecularRecord(record)
         assertThat(factory.create()).hasSize(0)
     }
 
     @Test
     fun `Should include non-reportable drivers with actin trial matches`() {
-        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.createEmptyClinicalEvidence())
+        val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.createEmpty())
         val driverToFind = record.drivers.viruses.iterator().next().event
         assertThat(createFactoryWithCohortsForEvent(record, driverToFind).create()).hasSize(1)
     }
@@ -53,11 +55,10 @@ class MolecularDriverEntryFactoryTest {
     @Test
     fun `Should include non-reportable drivers with external trial matches`() {
         val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(
-            TestClinicalEvidenceFactory.withExternalEligibleTrial(
-                TestClinicalEvidenceFactory.createTestExternalTrial()
-            )
+            TestClinicalEvidenceFactory.withEligibleTrial(TestExternalTrialFactory.createTestTrial())
         )
         val factory = createFactoryForMolecularRecord(record)
+
         assertThat(factory.create()).hasSize(1)
     }
 
@@ -84,10 +85,11 @@ class MolecularDriverEntryFactoryTest {
     }
 
     private fun assertCopyNumberType(copyNumberType: CopyNumberType, expectedDriverType: String) {
-        val loss = TestMolecularFactory.createProperCopyNumber().copy(type = copyNumberType)
+        val copyNumber = TestMolecularFactory.createProperCopyNumber()
+            .copy(canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(copyNumberType))
         val record = TestMolecularFactory.createProperTestMolecularRecord().copy(
             drivers = TestMolecularFactory.createProperTestDrivers()
-                .copy(variants = emptyList(), copyNumbers = listOf(loss))
+                .copy(variants = emptyList(), copyNumbers = listOf(copyNumber))
         )
         val result = createFactoryForMolecularRecord(record).create()
         assertThat(result[0].driverType).isEqualTo(expectedDriverType)

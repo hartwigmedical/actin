@@ -42,6 +42,20 @@ class PriorIHCTestInterpreterTest {
         )
     }
 
+    @Test
+    fun `Should correctly handle score based IHC test without unit`() {
+        val result = interpreter.interpret(
+            BASE_PATIENT_RECORD.copy(
+                priorIHCTests = listOf(ihcMolecularTest("HER2", scoreValue = 90.0, scoreValueUnit = null))
+            )
+        )
+        assertThat(result).containsExactly(
+            PriorMolecularTestInterpretation(
+                "IHC", listOf(PriorMolecularTestResultInterpretation("HER2", "Score 90", 1))
+            )
+        )
+    }
+
     private fun ihcMolecularTest(protein: String, scoreText: String? = null, scoreValue: Double? = null, scoreValueUnit: String? = null) =
         PriorIHCTest(
             item = protein,

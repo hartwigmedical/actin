@@ -10,10 +10,12 @@ import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestDisruptionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestHomozygousDisruptionFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVirusFactory
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
+import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
@@ -107,9 +109,9 @@ class DriversSummarizerTest {
 
     @Test
     fun `Should return actionable events that are not key drivers`() {
-        val externalEvidence =
-            TestClinicalEvidenceFactory.withExternalEligibleTrial(TestClinicalEvidenceFactory.createTestExternalTrial())
+        val externalEvidence = TestClinicalEvidenceFactory.withEligibleTrial(TestExternalTrialFactory.createTestTrial())
         val approvedTreatment = TestClinicalEvidenceFactory.withApprovedTreatment("approved")
+
         val cohorts = listOf(
             interpretedCohort(
                 isPotentiallyEligible = true,
@@ -127,6 +129,7 @@ class DriversSummarizerTest {
                 )
             )
         )
+
         val variants = listOf(
             variant("key variant", DriverLikelihood.HIGH, true, externalEvidence),
             variant("expected non-reportable variant", DriverLikelihood.HIGH, false, approvedTreatment),
@@ -171,6 +174,7 @@ class DriversSummarizerTest {
 
         val summarizer = MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(drivers, cohorts)
         val otherActionableEvents = summarizer.actionableEventsThatAreNotKeyDrivers().map(Driver::event).distinct().toSet()
+
         assertThat(otherActionableEvents).hasSize(12)
         assertThat(otherActionableEvents).allSatisfy { it.startsWith("expected") }
     }
@@ -179,7 +183,7 @@ class DriversSummarizerTest {
         name: String,
         driverLikelihood: DriverLikelihood,
         isReportable: Boolean,
-        evidence: ClinicalEvidence = TestClinicalEvidenceFactory.createEmptyClinicalEvidence()
+        evidence: ClinicalEvidence = TestClinicalEvidenceFactory.createEmpty()
     ): Variant {
         return TestVariantFactory.createMinimal().copy(
             gene = name,
@@ -192,7 +196,7 @@ class DriversSummarizerTest {
 
     private fun copyNumber(type: CopyNumberType, name: String, driverLikelihood: DriverLikelihood?, isReportable: Boolean): CopyNumber {
         return TestCopyNumberFactory.createMinimal().copy(
-            type = type,
+            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(type),
             gene = name,
             event = name,
             driverLikelihood = driverLikelihood,
@@ -202,7 +206,7 @@ class DriversSummarizerTest {
 
     private fun homozygousDisruption(
         name: String, driverLikelihood: DriverLikelihood?, isReportable: Boolean,
-        evidence: ClinicalEvidence = TestClinicalEvidenceFactory.createEmptyClinicalEvidence()
+        evidence: ClinicalEvidence = TestClinicalEvidenceFactory.createEmpty()
     ): HomozygousDisruption {
         return TestHomozygousDisruptionFactory.createMinimal().copy(
             gene = name,
@@ -215,7 +219,7 @@ class DriversSummarizerTest {
 
     private fun disruption(
         name: String, driverLikelihood: DriverLikelihood, isReportable: Boolean,
-        evidence: ClinicalEvidence = TestClinicalEvidenceFactory.createEmptyClinicalEvidence()
+        evidence: ClinicalEvidence = TestClinicalEvidenceFactory.createEmpty()
     ): Disruption {
         return TestDisruptionFactory.createMinimal().copy(
             gene = name,
@@ -230,7 +234,7 @@ class DriversSummarizerTest {
         event: String,
         driverLikelihood: DriverLikelihood,
         isReportable: Boolean,
-        evidence: ClinicalEvidence = TestClinicalEvidenceFactory.createEmptyClinicalEvidence()
+        evidence: ClinicalEvidence = TestClinicalEvidenceFactory.createEmpty()
     ): Fusion {
         return TestFusionFactory.createMinimal().copy(
             event = event,

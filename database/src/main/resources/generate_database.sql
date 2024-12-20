@@ -396,9 +396,10 @@ CREATE TABLE `copyNumber`
     `geneRole` varchar(50) NOT NULL,
     `proteinEffect` varchar(50) NOT NULL,
     `isAssociatedWithDrugResistance` BOOLEAN,
-    `type` varchar(50) NOT NULL,
-    `minCopies` int NOT NULL,
-    `maxCopies` int NOT NULL,
+    `canonicalTranscriptId` varchar(50) NOT NULL,
+    `canonicalType` varchar(50) NOT NULL,
+    `canonicalMinCopies` int NOT NULL,
+    `canonicalMaxCopies` int NOT NULL,
     PRIMARY KEY (`id`)
 );
 

@@ -1,15 +1,15 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
+import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
-import com.hartwig.serve.datamodel.efficacy.EvidenceLevelDetails
 
 object TreatmentEvidenceFunctions {
 
     data class TreatmentEvidenceContent(val treatment: String, val cancerTypesWithDate: String, val isResistant: Boolean)
 
     fun filterTreatmentEvidence(treatmentEvidenceSet: Set<TreatmentEvidence>, isOnLabel: Boolean?): Set<TreatmentEvidence> {
-        val (onLabelEvidence, offLabelEvidence) = treatmentEvidenceSet.partition { it.onLabel }
+        val (onLabelEvidence, offLabelEvidence) = treatmentEvidenceSet.partition { it.isOnLabel }
         val onLabelHighestEvidenceLevels = getHighestEvidenceLevelPerTreatment(onLabelEvidence)
 
         val evidence = when (isOnLabel) {
@@ -39,7 +39,7 @@ object TreatmentEvidenceFunctions {
     }
 
     fun onlyIncludeBenefitAndResistanceEvidence(evidenceSet: Set<TreatmentEvidence>): Set<TreatmentEvidence> {
-        return evidenceSet.filter { it.direction.hasBenefit || it.direction.isResistant }.toSet()
+        return evidenceSet.filter { it.evidenceDirection.hasBenefit || it.evidenceDirection.isResistant }.toSet()
     }
 
     fun filterLevelDWhenAorBExists(evidenceSet: Set<TreatmentEvidence>): Set<TreatmentEvidence> {
@@ -61,7 +61,7 @@ object TreatmentEvidenceFunctions {
     }
 
     fun groupBySourceEvent(treatmentEvidenceSet: Set<TreatmentEvidence>) =
-        treatmentEvidenceSet.groupBy { it.sourceEvent }
+        treatmentEvidenceSet.groupBy { it.molecularMatch.sourceEvent }
 
     fun filterPreClinicalEvidence(treatmentEvidenceSet: Set<TreatmentEvidence>): Set<TreatmentEvidence> {
         return treatmentEvidenceSet.filter { it.evidenceLevel != EvidenceLevel.D || !isPreclinical(it) }.toSet()
@@ -74,8 +74,8 @@ object TreatmentEvidenceFunctions {
     fun prioritizeNonCategoryEvidence(treatmentEvidenceSet: Set<TreatmentEvidence>): Set<TreatmentEvidence> {
         return groupBySourceEvent(treatmentEvidenceSet).flatMap { (_, evidencesInEvent) ->
             groupByTreatmentAndCancerType(evidencesInEvent).mapNotNull { (_, evidences) ->
-                val highestCategoryEvidence = evidences.filter { it.isCategoryEvent }.minByOrNull { it.evidenceLevel }
-                val highestNonCategoryEvidence = evidences.filter { !it.isCategoryEvent }.minByOrNull { it.evidenceLevel }
+                val highestCategoryEvidence = evidences.filter { it.molecularMatch.isCategoryEvent }.minByOrNull { it.evidenceLevel }
+                val highestNonCategoryEvidence = evidences.filter { !it.molecularMatch.isCategoryEvent }.minByOrNull { it.evidenceLevel }
 
                 highestNonCategoryEvidence ?: highestCategoryEvidence
             }
@@ -86,25 +86,27 @@ object TreatmentEvidenceFunctions {
         treatmentEvidence.groupBy { it.treatment }
 
     fun groupByTreatmentAndCancerType(treatmentEvidence: List<TreatmentEvidence>) =
-        treatmentEvidence.groupBy { Pair(it.treatment, it.applicableCancerType.cancerType) }
+        treatmentEvidence.groupBy { Pair(it.treatment, it.applicableCancerType.matchedCancerType) }
 
     fun generateEvidenceCellContents(evidenceList: List<TreatmentEvidence>): List<TreatmentEvidenceContent> {
         return groupByTreatment(evidenceList).map { (treatment, evidences) ->
             val cancerTypesWithYears = evidences
-                .groupBy { it.applicableCancerType.cancerType }
+                .groupBy { it.applicableCancerType.matchedCancerType }
                 .map { (cancerType, evidenceGroup) ->
                     val years = evidenceGroup.map { it.evidenceYear }.distinct().sorted()
                     "$cancerType (${years.joinToString(", ")})"
                 }
                 .joinToString(", ")
-            val isResistant = evidences.any { it.direction.isResistant }
+            val isResistant = evidences.any { it.evidenceDirection.isResistant }
             TreatmentEvidenceContent(treatment, cancerTypesWithYears, isResistant)
         }
     }
 
     fun sortTreatmentEvidence(evidence: List<TreatmentEvidence>): Set<TreatmentEvidence> {
         return evidence
-            .sortedWith(compareBy<TreatmentEvidence> { it.evidenceLevel }.thenBy { it.isCategoryEvent }.thenByDescending { it.onLabel })
+            .sortedWith(compareBy<TreatmentEvidence> { it.evidenceLevel }
+                .thenBy { it.molecularMatch.isCategoryEvent }
+                .thenByDescending { it.isOnLabel })
             .toSet()
     }
 }

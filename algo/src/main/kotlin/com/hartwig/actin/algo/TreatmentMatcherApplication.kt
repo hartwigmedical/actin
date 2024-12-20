@@ -11,7 +11,6 @@ import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter
 import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
-import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.icd.IcdModel
@@ -23,17 +22,16 @@ import com.hartwig.actin.molecular.evidence.ServeLoader
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.serialization.TrialJson
-import com.hartwig.serve.datamodel.RefGenome
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.serialization.ServeJson
-import java.time.Period
-import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.time.Period
+import kotlin.system.exitProcess
 
 class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
 
@@ -45,7 +43,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         PatientPrinter.printRecord(patient)
 
         LOGGER.info("Loading trials from {}", config.trialDatabaseDirectory)
-        val trials = TrialJson.readFromDir(config.trialDatabaseDirectory).filterNot { it.identification.source == TrialSource.LKO }
+        val trials = TrialJson.readFromDir(config.trialDatabaseDirectory)
         LOGGER.info(" Loaded {} trials", trials.size)
 
         LOGGER.info("Loading DOID tree from {}", config.doidJson)
@@ -72,6 +70,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val configuration = EnvironmentConfiguration.create(config.overridesYaml).algo
         LOGGER.info(" Loaded algo config: $configuration")
 
+        val maxMolecularTestAge = configuration.maxMolecularTestAgeInDays?.let { referenceDateProvider.date().minus(Period.ofDays(it)) }
         val resources = RuleMappingResources(
             referenceDateProvider,
             doidModel,
@@ -81,7 +80,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
             treatmentDatabase,
             config.personalizationDataPath,
             configuration,
-            configuration.maxMolecularTestAgeInDays?.let { referenceDateProvider.date().minus(Period.ofDays(it)) }
+            maxMolecularTestAge
         )
         val evidenceEntries = EfficacyEntryFactory(treatmentDatabase).extractEfficacyEvidenceFromCkbFile(config.extendedEfficacyJson)
 
@@ -90,7 +89,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val evidences = loadEvidence(patient.molecularHistory.latestOrangeMolecularRecord()?.refGenomeVersion ?: RefGenomeVersion.V37)
         val resistanceEvidenceMatcher =
             ResistanceEvidenceMatcher.create(doidModel, tumorDoids, evidences, treatmentDatabase, patient.molecularHistory)
-        val match = TreatmentMatcher.create(resources, trials, evidenceEntries, resistanceEvidenceMatcher)
+        val match = TreatmentMatcher.create(resources, trials, evidenceEntries, resistanceEvidenceMatcher, maxMolecularTestAge)
             .evaluateAndAnnotateMatchesForPatient(patient)
 
         TreatmentMatchPrinter.printMatch(match)
@@ -98,24 +97,13 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         LOGGER.info("Done!")
     }
 
-    private fun loadEvidence(orangeRefGenomeVersion: RefGenomeVersion): List<EfficacyEvidence> {
-        val serveRefGenomeVersion = toServeRefGenomeVersion(orangeRefGenomeVersion)
+    private fun loadEvidence(refGenomeVersion: RefGenomeVersion): List<EfficacyEvidence> {
         val jsonFilePath = ServeJson.jsonFilePath(config.serveDirectory)
-        LOGGER.info("Loading SERVE from {}", jsonFilePath)
-        val (_, actionableEvents) = ServeLoader.loadServe(jsonFilePath, serveRefGenomeVersion)
-        return actionableEvents.evidences
-    }
+        LOGGER.info("Loading SERVE database from {}", jsonFilePath)
+        val serveRecord = ServeLoader.loadServeRecord(jsonFilePath, refGenomeVersion)
+        LOGGER.info(" Loaded {} evidences", serveRecord.evidences().size)
 
-    private fun toServeRefGenomeVersion(refGenomeVersion: RefGenomeVersion): RefGenome {
-        return when (refGenomeVersion) {
-            RefGenomeVersion.V37 -> {
-                RefGenome.V37
-            }
-
-            RefGenomeVersion.V38 -> {
-                RefGenome.V38
-            }
-        }
+        return serveRecord.evidences()
     }
 
     companion object {

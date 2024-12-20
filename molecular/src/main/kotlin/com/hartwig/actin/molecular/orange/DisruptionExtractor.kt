@@ -8,8 +8,8 @@ import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.orange.driver.DisruptionType
 import com.hartwig.actin.datamodel.molecular.orange.driver.RegionType
 import com.hartwig.actin.datamodel.molecular.sort.driver.DisruptionComparator
-import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.filter.GeneFilter
+import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.hmftools.datamodel.gene.TranscriptCodingType
 import com.hartwig.hmftools.datamodel.gene.TranscriptRegionType
 import com.hartwig.hmftools.datamodel.linx.LinxBreakend
@@ -22,8 +22,9 @@ import com.hartwig.hmftools.datamodel.linx.LinxSvAnnotation
 internal class DisruptionExtractor(private val geneFilter: GeneFilter) {
 
     fun extractDisruptions(linx: LinxRecord, lostGenes: Set<String>, drivers: List<LinxDriver>): List<Disruption> {
+        val canonicalSvIds = linx.allSomaticBreakends().filter { it.isCanonical && it.reported() }.map { it.svId() }.toSet()
         return linx.allSomaticBreakends()
-            .filter { breakend -> breakend.isCanonical }
+            .filter { breakend -> breakend.isCanonical || !canonicalSvIds.contains(breakend.svId()) }
             .filter { breakend ->
                 val geneIncluded = geneFilter.include(breakend.gene())
                 if (!geneIncluded && breakend.reported()) {
@@ -42,7 +43,7 @@ internal class DisruptionExtractor(private val geneFilter: GeneFilter) {
                     isReportable = breakend.reported(),
                     event = DriverEventFactory.disruptionEvent(breakend),
                     driverLikelihood = DriverLikelihood.LOW,
-                    evidence = ClinicalEvidenceFactory.createNoEvidence(),
+                    evidence = ExtractionUtil.noEvidence(),
                     type = determineDisruptionType(breakend.type()),
                     junctionCopyNumber = ExtractionUtil.keep3Digits(breakend.junctionCopyNumber()),
                     undisruptedCopyNumber = ExtractionUtil.keep3Digits(correctUndisruptedCopyNumber(breakend, drivers)),

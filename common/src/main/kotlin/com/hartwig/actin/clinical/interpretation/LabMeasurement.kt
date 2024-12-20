@@ -16,6 +16,7 @@ enum class LabMeasurement(val code: String, val display: String, val defaultUnit
     CARBOHYDRATE_ANTIGEN_15_3("C153", "CA 15-3", LabUnit.KILOUNITS_PER_LITER),
     CALCIUM("Ca", "calcium", LabUnit.MILLIMOLES_PER_LITER),
     CARCINOEMBRYONIC_ANTIGEN("CEA", "CEA", LabUnit.MICROGRAMS_PER_LITER),
+    CD4_POSITIVE_CELLS("CD4-PERC", "CD4+ cells", LabUnit.CELLS_PER_MICROLITER),
     CORRECTED_CALCIUM("Ca_C", "corrected calcium", LabUnit.MILLIMOLES_PER_LITER),
     CORTISOL("COR", "cortisol", LabUnit.NANOMOLES_PER_LITER),
     CREATININE("CREA", "creatinine", LabUnit.MICROMOLES_PER_LITER),

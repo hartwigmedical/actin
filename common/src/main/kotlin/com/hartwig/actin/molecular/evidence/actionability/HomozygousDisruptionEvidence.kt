@@ -1,35 +1,34 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.orange.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterEfficacyEvidence
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterTrials
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.geneFilter
-import com.hartwig.actin.molecular.evidence.matching.EvidenceMatcher
+import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
+import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
+import com.hartwig.serve.datamodel.trial.ActionableTrial
+import java.util.function.Predicate
 
-class HomozygousDisruptionEvidence(private val actionableGenes: ActionableEvents) : EvidenceMatcher<HomozygousDisruption> {
+class HomozygousDisruptionEvidence(
+    private val applicableEvidences: List<EfficacyEvidence>,
+    private val applicableTrialMatcher: ActionableTrialMatcher
+) : ActionabilityMatcher<HomozygousDisruption> {
 
-    override fun findMatches(event: HomozygousDisruption): ActionableEvents {
-        val evidences = actionableGenes.evidences.filter {
-            ActionableEventsExtraction.extractGene(it).gene() == event.gene
-        }
-        val trials = actionableGenes.trials.filter {
-            ActionableEventsExtraction.extractGene(it).gene() == event.gene
-        }
-        return ActionableEvents(evidences, trials)
+    override fun findMatches(event: HomozygousDisruption): ActionabilityMatch {
+        val matchPredicate: Predicate<MolecularCriterium> = Predicate { ActionableEventExtraction.extractGene(it).gene() == event.gene }
+
+        val evidenceMatches = applicableEvidences.filter { matchPredicate.test(it.molecularCriterium()) }
+        val matchingCriteriaPerTrialMatch = applicableTrialMatcher.apply(matchPredicate)
+
+        return ActionabilityMatch(evidenceMatches = evidenceMatches, matchingCriteriaPerTrialMatch = matchingCriteriaPerTrialMatch)
     }
 
     companion object {
-        private val APPLICABLE_GENE_EVENTS = setOf(GeneEvent.DELETION, GeneEvent.INACTIVATION, GeneEvent.ANY_MUTATION)
+        private val HOMOZYGOUS_DISRUPTION_EVENTS = setOf(GeneEvent.DELETION, GeneEvent.INACTIVATION, GeneEvent.ANY_MUTATION)
 
-        fun create(actionableEvents: ActionableEvents): HomozygousDisruptionEvidence {
-            val evidences = filterEfficacyEvidence(actionableEvents.evidences, geneFilter()).filter {
-                APPLICABLE_GENE_EVENTS.contains(ActionableEventsExtraction.extractGene(it).event())
-            }
-            val trials = filterTrials(actionableEvents.trials, geneFilter()).filter {
-                APPLICABLE_GENE_EVENTS.contains(ActionableEventsExtraction.extractGene(it).event())
-            }
-            return HomozygousDisruptionEvidence(ActionableEvents(evidences, trials))
+        fun create(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial>): HomozygousDisruptionEvidence {
+            val applicableEvidences = EfficacyEvidenceExtractor.extractGeneEvidence(evidences, HOMOZYGOUS_DISRUPTION_EVENTS)
+            val applicableTrialMatcher = ActionableTrialMatcherFactory.createGeneTrialMatcher(trials, HOMOZYGOUS_DISRUPTION_EVENTS)
+
+            return HomozygousDisruptionEvidence(applicableEvidences, applicableTrialMatcher)
         }
     }
 }

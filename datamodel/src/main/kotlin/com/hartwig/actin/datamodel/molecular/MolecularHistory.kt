@@ -5,6 +5,7 @@ import java.time.LocalDate
 data class MolecularHistory(
     val molecularTests: List<MolecularTest>
 ) {
+
     fun allOrangeMolecularRecords(): List<MolecularRecord> {
         return molecularTests.filterIsInstance<MolecularRecord>()
     }

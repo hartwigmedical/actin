@@ -2,68 +2,66 @@ package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.extractGene
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterEfficacyEvidence
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterTrials
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.geneFilter
-import com.hartwig.actin.molecular.evidence.matching.EvidenceMatcher
-import com.hartwig.serve.datamodel.molecular.gene.ActionableGene
+import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
+import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
+import com.hartwig.serve.datamodel.trial.ActionableTrial
+import java.util.function.Predicate
 
 class CopyNumberEvidence(
-    private val actionableAmplifications: ActionableEvents,
-    private val actionableLosses: ActionableEvents
-) : EvidenceMatcher<CopyNumber> {
+    private val amplificationEvidences: List<EfficacyEvidence>,
+    private val amplificationTrialMatcher: ActionableTrialMatcher,
+    private val lossEvidences: List<EfficacyEvidence>,
+    private val lossTrialMatcher: ActionableTrialMatcher
+) : ActionabilityMatcher<CopyNumber> {
 
-    override fun findMatches(event: CopyNumber): ActionableEvents {
-        return when (event.type) {
+    override fun findMatches(event: CopyNumber): ActionabilityMatch {
+        return when (event.canonicalImpact.type) {
             CopyNumberType.FULL_GAIN, CopyNumberType.PARTIAL_GAIN -> {
-                findMatches(event, actionableAmplifications)
+                findMatches(event, amplificationEvidences, amplificationTrialMatcher)
             }
 
             CopyNumberType.LOSS -> {
-                findMatches(event, actionableLosses)
+                findMatches(event, lossEvidences, lossTrialMatcher)
             }
 
             else -> {
-                ActionableEvents()
+                ActionabilityMatch(evidenceMatches = emptyList(), matchingCriteriaPerTrialMatch = emptyMap())
             }
         }
     }
 
+    private fun findMatches(
+        copyNumber: CopyNumber,
+        applicableEvidences: List<EfficacyEvidence>,
+        applicableTrialMatcher: ActionableTrialMatcher
+    ): ActionabilityMatch {
+        val matchPredicate: Predicate<MolecularCriterium> =
+            Predicate { ActionableEventExtraction.extractGene(it).gene() == copyNumber.gene }
+
+        return ActionabilityMatch(
+            evidenceMatches = applicableEvidences.filter { matchPredicate.test(it.molecularCriterium()) },
+            matchingCriteriaPerTrialMatch = applicableTrialMatcher.apply(matchPredicate)
+        )
+    }
+
     companion object {
-        fun create(actionableEvents: ActionableEvents): CopyNumberEvidence {
-            val evidences = filterEfficacyEvidence(actionableEvents.evidences, geneFilter())
-            val trials = filterTrials(actionableEvents.trials, geneFilter())
-            val (actionableAmplificationsEvidence, actionableLossesEvidence) = extractActionableAmplificationsAndLosses(
-                evidences,
-                ::extractGene
-            )
-            val (actionableAmplificationsTrials, actionableLossesTrials) = extractActionableAmplificationsAndLosses(trials, ::extractGene)
+        private val AMPLIFICATION_EVENTS = setOf(GeneEvent.AMPLIFICATION)
+        private val LOSS_EVENTS = setOf(GeneEvent.DELETION)
+
+        fun create(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial>): CopyNumberEvidence {
+            val amplificationEvidences = EfficacyEvidenceExtractor.extractGeneEvidence(evidences, AMPLIFICATION_EVENTS)
+            val amplificationTrialMatcher = ActionableTrialMatcherFactory.createGeneTrialMatcher(trials, AMPLIFICATION_EVENTS)
+
+            val lossEvidences = EfficacyEvidenceExtractor.extractGeneEvidence(evidences, LOSS_EVENTS)
+            val lossTrialMatcher = ActionableTrialMatcherFactory.createGeneTrialMatcher(trials, LOSS_EVENTS)
+
             return CopyNumberEvidence(
-                ActionableEvents(actionableAmplificationsEvidence, actionableAmplificationsTrials),
-                ActionableEvents(actionableLossesEvidence, actionableLossesTrials)
+                amplificationEvidences,
+                amplificationTrialMatcher,
+                lossEvidences,
+                lossTrialMatcher
             )
-        }
-
-        private fun <T> extractActionableAmplificationsAndLosses(items: List<T>, getGene: (T) -> ActionableGene): Pair<List<T>, List<T>> {
-            return items.fold(Pair(emptyList(), emptyList())) { acc, actionableGene ->
-                when (getGene(actionableGene).event()) {
-                    GeneEvent.AMPLIFICATION -> Pair(acc.first + actionableGene, acc.second)
-                    GeneEvent.DELETION -> Pair(acc.first, acc.second + actionableGene)
-                    else -> acc
-                }
-            }
-        }
-
-        private fun findMatches(copyNumber: CopyNumber, actionableEvents: ActionableEvents): ActionableEvents {
-            return ActionableEvents(
-                actionableEvents.evidences.filter {
-                    extractGene(it).gene() == copyNumber.gene
-                },
-                actionableEvents.trials.filter {
-                    extractGene(it).gene() == copyNumber.gene
-                })
         }
     }
 }

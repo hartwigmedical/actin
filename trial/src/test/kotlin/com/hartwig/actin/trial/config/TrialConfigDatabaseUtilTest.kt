@@ -1,6 +1,5 @@
 package com.hartwig.actin.trial.config
 
-import com.hartwig.actin.datamodel.trial.TrialLocation
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
@@ -64,7 +63,7 @@ class TrialConfigDatabaseUtilTest {
         val locations = TrialConfigDatabaseUtil.toTrialLocations("1:Erasmus MC")
         assertThat(locations).isNotEmpty
         assertThat(locations.size).isEqualTo(1)
-        assertThat(locations).containsExactly(TrialLocation(1, "Erasmus MC"))
+        assertThat(locations).containsExactly("Erasmus MC")
     }
 
     @Test
@@ -72,7 +71,7 @@ class TrialConfigDatabaseUtilTest {
         val locations = TrialConfigDatabaseUtil.toTrialLocations("8:MUMC+")
         assertThat(locations).isNotEmpty
         assertThat(locations.size).isEqualTo(1)
-        assertThat(locations).containsExactly(TrialLocation(8, "MUMC+"))
+        assertThat(locations).containsExactly("MUMC+")
     }
 
     @Test
@@ -80,7 +79,7 @@ class TrialConfigDatabaseUtilTest {
         val locations = TrialConfigDatabaseUtil.toTrialLocations("1:Erasmus MC,2:Antoni van Leeuwenhoek")
         assertThat(locations).isNotEmpty
         assertThat(locations.size).isEqualTo(2)
-        assertThat(locations).containsExactly(TrialLocation(1, "Erasmus MC"), TrialLocation(2, "Antoni van Leeuwenhoek"))
+        assertThat(locations).containsExactly("Erasmus MC", "Antoni van Leeuwenhoek")
     }
 
     @Test

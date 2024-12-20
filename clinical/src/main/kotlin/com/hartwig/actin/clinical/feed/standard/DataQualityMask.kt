@@ -9,35 +9,24 @@ private fun ProvidedPatientRecord.scrubModifications() =
 private fun ProvidedPatientRecord.scrubMedications() =
     this.copy(medications = null)
 
-private fun ProvidedPatientRecord.scrubMolecularTests() =
-    this.copy(molecularTests = this.molecularTests.map {
-        it.copy(results = it.results.map { r ->
-            r.copy(
-                hgvsCodingImpact = checkImpact(r, ProvidedMolecularTestResult::hgvsCodingImpact),
-                hgvsProteinImpact = checkImpact(r, ProvidedMolecularTestResult::hgvsProteinImpact)
-            )
-        }.toSet())
-    })
-
 private fun ProvidedPatientRecord.addAlwaysTestedGenes() =
     this.copy(molecularTests = this.molecularTests.map {
         it.copy(testedGenes = knownGenes(it))
     })
 
-fun knownGenes(test: ProvidedMolecularTest): Set<String>? = when {
-    test.test.lowercase().contains("archer") -> ARCHER_ALWAYS_TESTED_GENES + (test.testedGenes ?: emptySet())
-    test.test.lowercase().contains("avl") -> GENERIC_PANEL_ALWAYS_TESTED_GENES + (test.testedGenes ?: emptySet())
-    else -> test.testedGenes
-}
+fun knownGenes(test: ProvidedMolecularTest): Set<String>? {
+    val testNameLowerCase = test.test.lowercase()
+    return when {
+        testNameLowerCase.contains("archer") -> ARCHER_ALWAYS_TESTED_GENES + (test.testedGenes ?: emptySet())
+        testNameLowerCase.contains("avl") || testNameLowerCase.contains("next generation sequencing") || testNameLowerCase
+            .contains("ngs") -> GENERIC_PANEL_ALWAYS_TESTED_GENES + (test.testedGenes ?: emptySet())
 
-private fun checkImpact(r: ProvidedMolecularTestResult, accessor: (ProvidedMolecularTestResult) -> String?): String? {
-    if (accessor.invoke(r) == "NOT FOUND")
-        return null
-    return accessor.invoke(r)
+        else -> test.testedGenes
+    }
 }
 
 class DataQualityMask {
     fun apply(ehrPatientRecord: ProvidedPatientRecord): ProvidedPatientRecord {
-        return ehrPatientRecord.scrubMedications().scrubModifications().scrubMolecularTests().addAlwaysTestedGenes()
+        return ehrPatientRecord.scrubMedications().scrubModifications().addAlwaysTestedGenes()
     }
 } 

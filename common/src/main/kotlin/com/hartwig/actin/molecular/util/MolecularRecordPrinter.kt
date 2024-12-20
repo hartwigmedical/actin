@@ -26,7 +26,7 @@ class MolecularRecordPrinter(private val printer: DatamodelPrinter) {
         printer.print(" Tumor mutational load: " + formatInteger(record.characteristics.tumorMutationalLoad))
         val evidence = create(record)
         printer.print(" Events with evidence for approved treatment: " + keys(evidence.approvedTreatmentsPerEvent()))
-        printer.print(" Events associated with external trials: " + keys(evidence.externalEligibleTrialsPerEvent))
+        printer.print(" Events associated with external trials: " + keys(evidence.eligibleTrialsPerEvent))
         printer.print(
             " Events with evidence for on-label experimental treatment: " + keys(evidence.onLabelExperimentalTreatmentPerEvent())
         )
