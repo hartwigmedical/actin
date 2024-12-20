@@ -12,9 +12,8 @@ class And(private val functions: List<EvaluationFunction>) : EvaluationFunction 
         val evaluationResult = evaluationsByResult.keys.minOrNull()
             ?: throw IllegalStateException("Could not determine AND result for functions: $functions")
 
-        val (recoverableEvaluations, unrecoverableEvaluations) = evaluationsByResult[evaluationResult]!!.partition(Evaluation::recoverable)
+        val (_, unrecoverableEvaluations) = evaluationsByResult[evaluationResult]!!.partition(Evaluation::recoverable)
         val recoverable = unrecoverableEvaluations.isEmpty()
-        val evaluations = if (recoverable) recoverableEvaluations else unrecoverableEvaluations
         val additionalEvaluations = listOf(EvaluationResult.PASS, EvaluationResult.WARN)
             .flatMap { result ->
                 evaluationsByResult[result]?.filter { it.exclusionMolecularEvents.isNotEmpty() || it.inclusionMolecularEvents.isNotEmpty() }
@@ -27,7 +26,8 @@ class And(private val functions: List<EvaluationFunction>) : EvaluationFunction 
                 inclusionMolecularEvents = result.inclusionMolecularEvents + additionalEvaluations.flatMap { it.inclusionMolecularEvents },
                 exclusionMolecularEvents = result.exclusionMolecularEvents + additionalEvaluations.flatMap { it.exclusionMolecularEvents })
         } else {
-            (evaluations + additionalEvaluations).fold(Evaluation(evaluationResult, recoverable), Evaluation::addMessagesAndEvents)
+            evaluationsByResult.map { it.value }.flatten().fold(Evaluation(evaluationResult, recoverable), Evaluation::addMessagesAndEvents)
+                .copy(result = evaluationResult)
         }
     }
 }
