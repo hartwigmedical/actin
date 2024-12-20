@@ -6,14 +6,8 @@
     "title": "This is a trial to test ACTIN",
     "source": "EMC",
     "locations": [
-      {
-        "id": 1,
-        "name": "Amsterdam UMC"
-      },
-      {
-        "id": 2,
-        "name": "Antoni van Leeuwenhoek"
-      }
+      "Amsterdam UMC",
+      "Antoni van Leeuwenhoek"
     ]
   },
   "generalEligibility": [

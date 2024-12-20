@@ -7,8 +7,8 @@ import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.orange.driver.TranscriptCopyNumberImpact
 import com.hartwig.actin.datamodel.molecular.sort.driver.CopyNumberComparator
-import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.filter.GeneFilter
+import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
 import com.hartwig.hmftools.datamodel.purple.PurpleDriver
 import com.hartwig.hmftools.datamodel.purple.PurpleDriverType
@@ -54,7 +54,7 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
                         isReportable = true,
                         event = event,
                         driverLikelihood = DriverLikelihood.HIGH,
-                        evidence = ClinicalEvidenceFactory.createNoEvidence(),
+                        evidence = ExtractionUtil.noEvidence(),
                         canonicalImpact = TranscriptCopyNumberImpact(
                             canonicalGainLoss.transcript(),
                             determineType(canonicalGainLoss.interpretation()),
@@ -82,7 +82,7 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
                         isReportable = otherGainLosses.isNotEmpty(),
                         event = event,
                         driverLikelihood = if (otherGainLosses.isNotEmpty()) DriverLikelihood.HIGH else null,
-                        evidence = ClinicalEvidenceFactory.createNoEvidence(),
+                        evidence = ExtractionUtil.noEvidence(),
                         canonicalImpact = TranscriptCopyNumberImpact(
                             transcriptId = "",
                             type = CopyNumberType.NONE,

@@ -30,6 +30,10 @@ object Format {
         return concatStrings(strings.map(String::lowercase), SEPARATOR_AND)
     }
 
+    fun concatLowercaseUnlessNumericWithAnd(strings: Iterable<String>): String {
+        return concatStrings(strings.map { if (it.any(Char::isDigit)) it else it.lowercase() }, SEPARATOR_AND)
+    }
+
     fun concatStringsWithAnd(strings: Iterable<String>): String {
         return concatStrings(strings, SEPARATOR_AND)
     }

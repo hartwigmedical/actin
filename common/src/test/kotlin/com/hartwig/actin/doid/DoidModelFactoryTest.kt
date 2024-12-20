@@ -9,7 +9,7 @@ import org.junit.Test
 class DoidModelFactoryTest {
 
     @Test
-    fun `Should generate child-to-parents map from doid entry, excluding containment or blacklisted edges`() {
+    fun `Should generate child-to-parents map from doid entry, excluding containment or excluded edges`() {
         assertThat(createDoidModel().childToParentsMap).isEqualTo(
             mapOf(
                 "200" to listOf("300"),

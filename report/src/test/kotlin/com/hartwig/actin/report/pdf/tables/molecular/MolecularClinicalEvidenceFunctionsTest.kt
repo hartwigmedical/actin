@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactor
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-private val CLINICAL_EVIDENCE = TestClinicalEvidenceFactory.createEmptyClinicalEvidence()
+private val CLINICAL_EVIDENCE = TestClinicalEvidenceFactory.createEmpty()
 private val BASE_MOLECULAR_TEST = TestMolecularFactory.createMinimalTestMolecularRecord()
 
 class MolecularClinicalEvidenceFunctionsTest {

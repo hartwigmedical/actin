@@ -6,9 +6,10 @@ import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.PanelRecord
 import com.hartwig.actin.molecular.MolecularAnnotator
-import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
+import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
-import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
+import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
+import com.hartwig.actin.molecular.util.ExtractionUtil
 
 private const val TMB_HIGH_CUTOFF = 10.0
 private const val PLOIDY = 2.0
@@ -41,12 +42,12 @@ class PanelAnnotator(
             characteristics = MolecularCharacteristics(
                 isMicrosatelliteUnstable = input.isMicrosatelliteUnstable,
                 microsatelliteEvidence = input.isMicrosatelliteUnstable?.let {
-                    ClinicalEvidenceFactory.create(evidenceDatabase.evidenceForMicrosatelliteStatus(it))
+                    evidenceDatabase.evidenceForMicrosatelliteStatus(it)
                 },
                 tumorMutationalBurden = input.tumorMutationalBurden,
                 hasHighTumorMutationalBurden = hasHighTumorMutationalBurden,
                 tumorMutationalBurdenEvidence = hasHighTumorMutationalBurden?.let {
-                    ClinicalEvidenceFactory.create(evidenceDatabase.evidenceForTumorMutationalBurdenStatus(it))
+                    evidenceDatabase.evidenceForTumorMutationalBurdenStatus(it)
                 },
                 ploidy = PLOIDY
             ),

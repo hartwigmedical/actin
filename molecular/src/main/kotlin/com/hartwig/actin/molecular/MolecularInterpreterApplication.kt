@@ -8,15 +8,16 @@ import com.hartwig.actin.datamodel.clinical.PriorIHCTest
 import com.hartwig.actin.datamodel.clinical.PriorSequencingTest
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
+import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.EvidenceDatabaseFactory
 import com.hartwig.actin.molecular.evidence.ServeLoader
-import com.hartwig.actin.molecular.evidence.matching.EvidenceDatabase
-import com.hartwig.actin.molecular.evidence.orange.MolecularRecordAnnotator
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
+import com.hartwig.actin.molecular.orange.MolecularRecordAnnotator
 import com.hartwig.actin.molecular.orange.OrangeExtractor
 import com.hartwig.actin.molecular.panel.IHCAnnotator
 import com.hartwig.actin.molecular.panel.IHCExtractor
@@ -33,8 +34,8 @@ import com.hartwig.actin.tools.transvar.TransvarVariantAnnotatorFactory
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
 import com.hartwig.hmftools.datamodel.OrangeJson
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
-import com.hartwig.serve.datamodel.RefGenome
-import com.hartwig.serve.datamodel.molecular.KnownEvents
+import com.hartwig.serve.datamodel.ServeDatabase
+import com.hartwig.serve.datamodel.ServeRecord
 import com.hartwig.serve.datamodel.serialization.ServeJson
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
@@ -43,6 +44,10 @@ import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import kotlin.system.exitProcess
+import com.hartwig.actin.tools.ensemblcache.RefGenome as EnsemblRefGenome
+import com.hartwig.serve.datamodel.RefGenome as ServeRefGenome
+
+private val CLINICAL_TESTS_REF_GENOME_VERSION = RefGenomeVersion.V37
 
 class MolecularInterpreterApplication(private val config: MolecularInterpreterConfig) {
 
@@ -63,8 +68,13 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val doidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
 
-        val orangeMolecularTests = interpretOrangeRecord(config, doidEntry, tumorDoids)
-        val clinicalMolecularTests = interpretClinicalMolecularTests(config, clinical, doidEntry, tumorDoids)
+        val serveJsonFilePath = ServeJson.jsonFilePath(config.serveDirectory)
+        LOGGER.info("Loading SERVE database from {}", serveJsonFilePath)
+        val serveDatabase = ServeLoader.loadServeDatabase(serveJsonFilePath)
+        LOGGER.info(" Loaded evidence and known events from SERVE version {}", serveDatabase.version())
+
+        val orangeMolecularTests = interpretOrangeRecord(config, serveDatabase, doidEntry, tumorDoids)
+        val clinicalMolecularTests = interpretClinicalMolecularTests(config, clinical, serveDatabase, doidEntry, tumorDoids)
 
         val history = MolecularHistory(orangeMolecularTests + clinicalMolecularTests)
         MolecularHistoryPrinter.printRecord(history)
@@ -77,6 +87,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
 
     private fun interpretOrangeRecord(
         config: MolecularInterpreterConfig,
+        serveDatabase: ServeDatabase,
         doidEntry: DoidEntry,
         tumorDoids: Set<String>
     ): List<MolecularTest> {
@@ -84,11 +95,11 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             LOGGER.info("Reading ORANGE json from {}", config.orangeJson)
             val orange = OrangeJson.getInstance().read(config.orangeJson)
 
-            LOGGER.info("Loading evidence database for ORANGE")
-            val (knownEvents, evidenceDatabase) = loadEvidence(orange.refGenomeVersion(), doidEntry, tumorDoids)
+            val serveRecord = selectForRefGenomeVersion(serveDatabase, fromOrangeRefGenomeVersion(orange.refGenomeVersion()))
+            val evidenceDatabase = EvidenceDatabaseFactory.create(serveRecord, doidEntry, tumorDoids)
 
             LOGGER.info("Interpreting ORANGE record")
-            val geneFilter = GeneFilterFactory.createFromKnownGenes(knownEvents.genes())
+            val geneFilter = GeneFilterFactory.createFromKnownGenes(serveRecord.knownEvents().genes())
             val orangeRecordMolecularRecordMolecularInterpreter =
                 MolecularInterpreter(OrangeExtractor(geneFilter), MolecularRecordAnnotator(evidenceDatabase))
 
@@ -101,14 +112,20 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
     private fun interpretClinicalMolecularTests(
         config: MolecularInterpreterConfig,
         clinical: ClinicalRecord,
+        serveDatabase: ServeDatabase,
         doidEntry: DoidEntry,
         tumorDoids: Set<String>
     ): List<MolecularTest> {
-        LOGGER.info("Loading evidence database for clinical molecular tests")
-        val (_, evidenceDatabase) = loadEvidence(OrangeRefGenomeVersion.V37, doidEntry, tumorDoids)
+        LOGGER.info(
+            "Creating evidence database for clinical molecular tests "
+                    + "assuming ref genome version \"$CLINICAL_TESTS_REF_GENOME_VERSION\""
+        )
+        val serveRecord = selectForRefGenomeVersion(serveDatabase, CLINICAL_TESTS_REF_GENOME_VERSION)
+        val evidenceDatabase = EvidenceDatabaseFactory.create(serveRecord, doidEntry, tumorDoids)
 
+        val ensemblRefGenomeVersion = toEnsemblRefGenomeVersion(CLINICAL_TESTS_REF_GENOME_VERSION)
         LOGGER.info("Loading ensemble cache from ${config.ensemblCachePath}")
-        val ensemblDataCache = EnsemblDataLoader.load(config.ensemblCachePath, com.hartwig.actin.tools.ensemblcache.RefGenome.V37)
+        val ensemblDataCache = EnsemblDataLoader.load(config.ensemblCachePath, ensemblRefGenomeVersion)
 
         LOGGER.info(
             "Loading dnds database for driver likelihood annotation from " +
@@ -122,16 +139,14 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             throw IllegalArgumentException("Failed to load known fusions from ${config.knownFusionsPath}")
         }
 
-        LOGGER.info("Interpreting {} prior sequencing tests without orange results", clinical.priorSequencingTests.size)
+        LOGGER.info("Interpreting {} prior sequencing tests", clinical.priorSequencingTests.size)
         val geneDriverLikelihoodModel = GeneDriverLikelihoodModel(dndsDatabase)
         val variantAnnotator = TransvarVariantAnnotatorFactory.withRefGenome(
-            com.hartwig.actin.tools.ensemblcache.RefGenome.V37,
-            config.referenceGenomeFastaPath,
-            ensemblDataCache
+            ensemblRefGenomeVersion, config.referenceGenomeFastaPath, ensemblDataCache
         )
+        val paveRefGenomeVersion = toPaveRefGenomeVersion(CLINICAL_TESTS_REF_GENOME_VERSION)
         val paver = Paver(
-            config.ensemblCachePath, config.referenceGenomeFastaPath, PaveRefGenomeVersion.V37,
-            config.driverGenePanelPath, config.tempDir
+            config.ensemblCachePath, config.referenceGenomeFastaPath, paveRefGenomeVersion, config.driverGenePanelPath, config.tempDir
         )
         val paveLite = PaveLite(ensemblDataCache, false)
 
@@ -188,32 +203,59 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         ).run(priorIHCTests)
     }
 
-    private fun loadEvidence(
-        orangeRefGenomeVersion: OrangeRefGenomeVersion,
-        doidEntry: DoidEntry,
-        tumorDoids: Set<String>
-    ): Pair<KnownEvents, EvidenceDatabase> {
-        val serveRefGenomeVersion = toServeRefGenomeVersion(orangeRefGenomeVersion)
-        val filePath = ServeJson.jsonFilePath(config.serveDirectory)
-
-        LOGGER.info("Loading SERVE from {}", filePath)
-        val (knownEvents, actionableEvents) = ServeLoader.loadServe(filePath, serveRefGenomeVersion)
-        val evidenceDatabase = EvidenceDatabaseFactory.create(knownEvents, actionableEvents, doidEntry, tumorDoids)
-
-        return Pair(knownEvents, evidenceDatabase)
+    private fun selectForRefGenomeVersion(serveDatabase: ServeDatabase, refGenomeVersion: RefGenomeVersion): ServeRecord {
+        return serveDatabase.records()[toServeRefGenomeVersion(refGenomeVersion)]
+            ?: throw IllegalStateException("No serve record for ref genome version $refGenomeVersion")
     }
 
-    private fun toServeRefGenomeVersion(refGenomeVersion: OrangeRefGenomeVersion): RefGenome {
-        return when (refGenomeVersion) {
+    private fun fromOrangeRefGenomeVersion(orangeRefGenomeVersion: OrangeRefGenomeVersion): RefGenomeVersion {
+        return when (orangeRefGenomeVersion) {
             OrangeRefGenomeVersion.V37 -> {
-                RefGenome.V37
+                RefGenomeVersion.V37
             }
 
             OrangeRefGenomeVersion.V38 -> {
-                RefGenome.V38
+                RefGenomeVersion.V38
             }
         }
     }
+
+    private fun toServeRefGenomeVersion(refGenomeVersion: RefGenomeVersion): ServeRefGenome {
+        return when (refGenomeVersion) {
+            RefGenomeVersion.V37 -> {
+                ServeRefGenome.V37
+            }
+
+            RefGenomeVersion.V38 -> {
+                ServeRefGenome.V38
+            }
+        }
+    }
+
+    private fun toEnsemblRefGenomeVersion(refGenomeVersion: RefGenomeVersion): EnsemblRefGenome {
+        return when (refGenomeVersion) {
+            RefGenomeVersion.V37 -> {
+                EnsemblRefGenome.V37
+            }
+
+            RefGenomeVersion.V38 -> {
+                EnsemblRefGenome.V38
+            }
+        }
+    }
+
+    private fun toPaveRefGenomeVersion(refGenomeVersion: RefGenomeVersion): PaveRefGenomeVersion {
+        return when (refGenomeVersion) {
+            RefGenomeVersion.V37 -> {
+                PaveRefGenomeVersion.V37
+            }
+
+            RefGenomeVersion.V38 -> {
+                PaveRefGenomeVersion.V38
+            }
+        }
+    }
+
 
     companion object {
         const val APPLICATION: String = "ACTIN Molecular Interpreter"

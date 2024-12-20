@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.molecular.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
+import com.hartwig.actin.util.MapFunctions
 import org.apache.logging.log4j.LogManager
 
 object AggregatedEvidenceFactory {
@@ -62,8 +63,8 @@ object AggregatedEvidenceFactory {
     private fun hasEvidence(evidence: ClinicalEvidence?): Boolean {
         return if (evidence == null) false else {
             listOf(
-                evidence.externalEligibleTrials,
-                evidence.treatmentEvidence
+                evidence.treatmentEvidence,
+                evidence.eligibleTrials
             ).any(Set<Any>::isNotEmpty)
         }
     }
@@ -79,29 +80,24 @@ object AggregatedEvidenceFactory {
             AggregatedEvidence()
         } else {
             AggregatedEvidence(
-                externalEligibleTrialsPerEvent = evidenceMap(event, evidence.externalEligibleTrials),
-                treatmentEvidence = evidenceMap(event, evidence.treatmentEvidence),
+                treatmentEvidencePerEvent = mapByEvent(event, evidence.treatmentEvidence),
+                eligibleTrialsPerEvent = mapByEvent(event, evidence.eligibleTrials),
             )
         }
     }
 
     private fun mergeAggregatedEvidenceList(aggregatedEvidenceList: List<AggregatedEvidence>): AggregatedEvidence {
         return AggregatedEvidence(
-            externalEligibleTrialsPerEvent =
-            mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::externalEligibleTrialsPerEvent)),
-            treatmentEvidence =
-            mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::treatmentEvidence)),
+            treatmentEvidencePerEvent = MapFunctions.mergeMapsOfSets(
+                mapsOfSets = aggregatedEvidenceList.map(AggregatedEvidence::treatmentEvidencePerEvent)
+            ),
+            eligibleTrialsPerEvent = MapFunctions.mergeMapsOfSets(
+                mapsOfSets = aggregatedEvidenceList.map(AggregatedEvidence::eligibleTrialsPerEvent)
+            ),
         )
     }
 
-    fun <T> mergeMapsOfSets(mapsOfSets: List<Map<String, Set<T>>>): Map<String, Set<T>> {
-        return mapsOfSets
-            .flatMap { it.entries }
-            .groupBy({ it.key }, { it.value })
-            .mapValues { it.value.flatten().toSet() }
-    }
-
-    private fun <T> evidenceMap(event: String, evidenceSubSet: Set<T>): Map<String, Set<T>> {
-        return if (evidenceSubSet.isEmpty()) emptyMap() else mapOf(event to evidenceSubSet)
+    private fun <T> mapByEvent(event: String, subset: Set<T>): Map<String, Set<T>> {
+        return if (subset.isEmpty()) emptyMap() else mapOf(event to subset)
     }
 }

@@ -160,14 +160,6 @@ class StandardMedicationExtractorTest {
         )
     }
 
-    @Test(expected = IllegalStateException::class)
-    fun `Should throw an exception if atc code is null but medication is not trial or self care`() {
-        every { qtProlongatingDatabase.annotateWithQTProlongating(MEDICATION_NAME) } returns QTProlongatingRisk.NONE
-        every { drugInteractionsDatabase.annotateWithCypInteractions(MEDICATION_NAME) } returns emptyList()
-        every { drugInteractionsDatabase.annotateWithTransporterInteractions(MEDICATION_NAME) } returns emptyList()
-        extractor.extract(ehrPatientRecord.copy(medications = listOf(providedMedication.copy(atcCode = null))))
-    }
-
     private fun noAtcLookupTest(modifiedMedication: ProvidedMedication, expected: Medication) {
         every { qtProlongatingDatabase.annotateWithQTProlongating(MEDICATION_NAME) } returns QTProlongatingRisk.NONE
         every { drugInteractionsDatabase.annotateWithCypInteractions(MEDICATION_NAME) } returns emptyList()

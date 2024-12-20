@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.hartwig.actin.datamodel.molecular.evidence.CountryName
+import com.hartwig.actin.datamodel.molecular.evidence.Country
 import org.apache.logging.log4j.LogManager
 import java.io.File
 import java.time.LocalDate
@@ -22,7 +22,6 @@ enum class MolecularSummaryType {
 }
 
 data class AlgoConfiguration(
-    val trialSource: String? = null,
     val warnIfToxicitiesNotFromQuestionnaire: Boolean = true,
     val maxMolecularTestAgeInDays: Int? = null
 )
@@ -52,7 +51,7 @@ data class ReportConfiguration(
     val includeLongitudinalMolecularChapter: Boolean = false,
     val includeMolecularEvidenceChapter: Boolean = false,
     val includeRawPathologyReport: Boolean = false,
-    val countryOfReference: CountryName = CountryName.NETHERLANDS,
+    val countryOfReference: Country = Country.NETHERLANDS,
     val reportDate: LocalDate? = null
 )
 
@@ -60,6 +59,7 @@ const val OVERRIDE_YAML_ARGUMENT = "override_yaml"
 const val OVERRIDE_YAML_DESCRIPTION = "Optional file specifying configuration overrides"
 
 data class EnvironmentConfiguration(
+    val requestingHospital: String? = null,
     val algo: AlgoConfiguration = AlgoConfiguration(),
     val trial: TrialConfiguration = TrialConfiguration(),
     val report: ReportConfiguration = ReportConfiguration()
@@ -105,7 +105,7 @@ data class EnvironmentConfiguration(
                         includeExternalTrialsInSummary = false,
                         includeLongitudinalMolecularChapter = true,
                         includeMolecularEvidenceChapter = true,
-                        countryOfReference = CountryName.US
+                        countryOfReference = Country.USA
                     )
                 )
 

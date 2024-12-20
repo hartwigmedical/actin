@@ -1,7 +1,5 @@
 package com.hartwig.actin.trial.config
 
-import com.hartwig.actin.datamodel.trial.TrialLocation
-
 object TrialConfigDatabaseUtil {
 
     private const val COMMA_SEPARATOR = ","
@@ -31,7 +29,7 @@ object TrialConfigDatabaseUtil {
 
     fun trialLocationInputIsValid(input: String?): Boolean = input.isNullOrEmpty() || TRIAL_LOCATION_REG_EXP.matches(input)
 
-    fun toTrialLocations(input: String?): List<TrialLocation> {
+    fun toTrialLocations(input: String?): List<String> {
 
         if (!trialLocationInputIsValid(input)) {
             throw IllegalArgumentException("Invalid location $input")
@@ -39,7 +37,7 @@ object TrialConfigDatabaseUtil {
 
         return input.takeIf { !it.isNullOrEmpty() }?.let {
             it.split(COMMA_SEPARATOR)
-                .map { loc -> loc.split(TRIAL_LOCATION_SEPARATOR).let { (id, name) -> TrialLocation(id.toInt(), name) } }
+                .map { loc -> loc.split(TRIAL_LOCATION_SEPARATOR).let { (_, name) -> name } }
         } ?: emptyList()
     }
 

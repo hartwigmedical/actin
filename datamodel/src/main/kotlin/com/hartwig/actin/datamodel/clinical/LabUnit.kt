@@ -22,6 +22,7 @@ enum class LabUnit(private val display: String) : Displayable {
     MILLIMOLES_PER_LITER("mmol/L"),
     MILLIMOLES_PER_MOLE("mmol/mol"),
     CELLS_PER_CUBIC_MILLIMETER("cells/mm3"),
+    CELLS_PER_MICROLITER("cells/µL"),
     MILLIONS_PER_LITER("10^6/L"),
     MILLIONS_PER_MILLILITER("10^6/mL"),
     BILLIONS_PER_LITER("10^9/L"),
