@@ -7,13 +7,13 @@ import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.Variant
 import com.hartwig.actin.datamodel.molecular.VariantEffect
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
-import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidenceCategories.approved
-import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidenceCategories.experimental
-import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidenceCategories.knownResistant
-import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidenceCategories.preclinical
-import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidenceCategories.suspectResistant
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
+import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.approved
+import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.experimental
+import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.knownResistant
+import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.preclinical
+import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.suspectResistant
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.orange.driver.HomozygousDisruption
@@ -599,7 +599,7 @@ internal class MolecularDAO(private val context: DSLContext) {
 
     private fun <T : Record?> writeEvidence(inserter: EvidenceInserter<T>, topicId: Int, evidence: ClinicalEvidence) {
         writeTreatments(inserter, topicId, treatments(approved(evidence.treatmentEvidence)), "Approved")
-        writeTrials(inserter, topicId, evidence.externalEligibleTrials)
+        writeTrials(inserter, topicId, evidence.eligibleTrials)
         writeTreatments(inserter, topicId, treatments(experimental(evidence.treatmentEvidence, true)), "On-label experimental")
         writeTreatments(inserter, topicId, treatments(experimental(evidence.treatmentEvidence, false)), "Off-label experimental")
         writeTreatments(inserter, topicId, treatments(preclinical(evidence.treatmentEvidence)), "Pre-clinical")

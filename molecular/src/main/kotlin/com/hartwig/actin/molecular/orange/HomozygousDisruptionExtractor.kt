@@ -5,8 +5,8 @@ import com.hartwig.actin.datamodel.molecular.GeneRole
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.orange.driver.HomozygousDisruption
 import com.hartwig.actin.datamodel.molecular.sort.driver.HomozygousDisruptionComparator
-import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
 import com.hartwig.actin.molecular.filter.GeneFilter
+import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.hmftools.datamodel.linx.LinxRecord
 
 internal class HomozygousDisruptionExtractor(private val geneFilter: GeneFilter) {
@@ -31,9 +31,11 @@ internal class HomozygousDisruptionExtractor(private val geneFilter: GeneFilter)
                 isReportable = true,
                 event = DriverEventFactory.homozygousDisruptionEvent(homozygousDisruption),
                 driverLikelihood = DriverLikelihood.HIGH,
-                evidence = ClinicalEvidenceFactory.createNoEvidence(),
+                evidence = ExtractionUtil.noEvidence(),
             )
-        }.sortedWith(HomozygousDisruptionComparator())
+        }
+            .distinctBy { it.gene }
+            .sortedWith(HomozygousDisruptionComparator())
     }
 
     private fun relevantHomozygousDisruptions(linx: LinxRecord): Set<com.hartwig.hmftools.datamodel.linx.LinxHomozygousDisruption> {

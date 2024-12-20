@@ -50,11 +50,12 @@ class MolecularEfficacyDescriptionGenerator(val molecularHistory: MolecularHisto
         val evidenceLevelAndDateCell = Cells.createContentNoBorder(
             Paragraph("Level ${evidence.evidenceLevel.name} (${evidence.evidenceYear})").setFontSize(6f)
         )
-        val cancerTypeCell = Cells.createContentNoBorder(Paragraph(evidence.applicableCancerType.cancerType).setBold().setFontSize(6f))
+        val cancerTypeCell =
+            Cells.createContentNoBorder(Paragraph(evidence.applicableCancerType.matchedCancerType).setBold().setFontSize(6f))
 
         val descriptionCell = Paragraph(evidence.efficacyDescription).setFontSize(6.5f)
 
-        if (evidence.direction.isResistant) {
+        if (evidence.evidenceDirection.isResistant) {
             descriptionCell.setFontColor(PALETTE_RED)
         }
 

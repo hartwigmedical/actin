@@ -1,116 +1,139 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.CodingEffect
-import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
-import com.hartwig.actin.molecular.evidence.matching.VARIANT_CRITERIA
-import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
+import com.hartwig.actin.datamodel.molecular.VariantType
+import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
+import com.hartwig.actin.molecular.evidence.TestServeTrialFactory
+import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.serve.datamodel.molecular.MutationType
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
+private val EVIDENCE_FOR_HOTSPOT =
+    TestServeEvidenceFactory.createEvidenceForHotspot(gene = "gene 1", chromosome = "1", position = 5, ref = "A", alt = "T")
+private val EVIDENCE_FOR_CODON = TestServeEvidenceFactory.createEvidenceForCodon(
+    gene = "gene 1",
+    chromosome = "1",
+    start = 4,
+    end = 6,
+    applicableMutationType = MutationType.MISSENSE
+)
+private val EVIDENCE_FOR_EXON = TestServeEvidenceFactory.createEvidenceForExon(
+    gene = "gene 1",
+    chromosome = "1",
+    start = 1,
+    end = 10,
+    applicableMutationType = MutationType.MISSENSE
+)
+private val ACT_EVIDENCE_FOR_GENE = TestServeEvidenceFactory.createEvidenceForGene(gene = "gene 1", geneEvent = GeneEvent.ACTIVATION)
+private val ANY_EVIDENCE_FOR_GENE = TestServeEvidenceFactory.createEvidenceForGene(gene = "gene 1", geneEvent = GeneEvent.ANY_MUTATION)
+private val AMP_EVIDENCE_FOR_GENE = TestServeEvidenceFactory.createEvidenceForGene(gene = "gene 1", geneEvent = GeneEvent.AMPLIFICATION)
+private val OTHER_EVIDENCE = TestServeEvidenceFactory.createEvidenceForHla()
+
+private val TRIAL_FOR_HOTSPOT =
+    TestServeTrialFactory.createTrialForHotspot(gene = "gene 1", chromosome = "1", position = 5, ref = "A", alt = "T")
+private val TRIAL_FOR_CODON = TestServeTrialFactory.createTrialForCodon(
+    gene = "gene 1",
+    chromosome = "1",
+    start = 4,
+    end = 6,
+    applicableMutationType = MutationType.MISSENSE
+)
+private val TRIAL_FOR_EXON = TestServeTrialFactory.createTrialForExon(
+    gene = "gene 1",
+    chromosome = "1",
+    start = 1,
+    end = 10,
+    applicableMutationType = MutationType.MISSENSE
+)
+private val ACT_TRIAL_FOR_GENE = TestServeTrialFactory.createTrialForGene(gene = "gene 1", geneEvent = GeneEvent.ACTIVATION)
+private val ANY_TRIAL_FOR_GENE = TestServeTrialFactory.createTrialForGene(gene = "gene 1", geneEvent = GeneEvent.ANY_MUTATION)
+private val AMP_TRIAL_FOR_GENE = TestServeTrialFactory.createTrialForGene(gene = "gene 1", geneEvent = GeneEvent.AMPLIFICATION)
+private val OTHER_TRIAL = TestServeTrialFactory.createTrialForHla()
+
 class VariantEvidenceTest {
 
-    private val actionableExon: EfficacyEvidence = TestServeActionabilityFactory.createEfficacyEvidence(
-        TestServeActionabilityFactory.createExon(
-            "gene 1",
-            "X",
-            4,
-            8,
-            MutationType.ANY
+    private val variantEvidence = VariantEvidence.create(
+        evidences = listOf(
+            EVIDENCE_FOR_HOTSPOT,
+            EVIDENCE_FOR_CODON,
+            EVIDENCE_FOR_EXON,
+            ACT_EVIDENCE_FOR_GENE,
+            ANY_EVIDENCE_FOR_GENE,
+            AMP_EVIDENCE_FOR_GENE,
+            OTHER_EVIDENCE
+        ),
+        trials = listOf(
+            TRIAL_FOR_HOTSPOT,
+            TRIAL_FOR_CODON,
+            TRIAL_FOR_EXON,
+            ACT_TRIAL_FOR_GENE,
+            ANY_TRIAL_FOR_GENE,
+            AMP_TRIAL_FOR_GENE,
+            OTHER_TRIAL
         )
     )
-    private val actionableCodon: EfficacyEvidence = TestServeActionabilityFactory.createEfficacyEvidence(
-        TestServeActionabilityFactory.createCodon(
-            "gene 1",
-            "X",
-            4,
-            8,
-            MutationType.ANY
-        )
+
+    private val matchingVariant = VariantMatchCriteria(
+        isReportable = true,
+        gene = "gene 1",
+        codingEffect = CodingEffect.MISSENSE,
+        type = VariantType.SNV,
+        chromosome = "1",
+        position = 5,
+        ref = "A",
+        alt = "T"
     )
 
     @Test
-    fun `Should determine evidence for hotpots`() {
-        val hotspot1: EfficacyEvidence = TestServeActionabilityFactory.createEfficacyEvidenceWithHotspot("gene 1", "X", 2, "A", "G")
-        val hotspot2: EfficacyEvidence = TestServeActionabilityFactory.createEfficacyEvidenceWithHotspot("gene 2", "X", 2, "A", "G")
-        val hotspot3: EfficacyEvidence = TestServeActionabilityFactory.createEfficacyEvidenceWithHotspot("gene 1", "X", 2, "A", "C")
-        val actionable = ActionableEvents(listOf(hotspot1, hotspot2, hotspot3), emptyList())
-        val variantEvidence: VariantEvidence = VariantEvidence.create(actionable)
+    fun `Should determine evidence and trials for exact matching hotpot`() {
+        val matches = variantEvidence.findMatches(matchingVariant)
+        assertThat(matches.evidenceMatches).containsExactlyInAnyOrder(
+            EVIDENCE_FOR_HOTSPOT,
+            EVIDENCE_FOR_CODON,
+            EVIDENCE_FOR_EXON,
+            ACT_EVIDENCE_FOR_GENE,
+            ANY_EVIDENCE_FOR_GENE
+        )
 
-        val variantGene1 = VARIANT_CRITERIA.copy(gene = "gene 1", chromosome = "X", position = 2, ref = "A", alt = "G", isReportable = true)
-        val matchesVariant1 = variantEvidence.findMatches(variantGene1)
-        assertThat(matchesVariant1.evidences.size).isEqualTo(1)
-        assertThat(matchesVariant1.evidences).contains(hotspot1)
-
-        val variantGene2 = VARIANT_CRITERIA.copy(gene = "gene 2", chromosome = "X", position = 2, ref = "A", alt = "G", isReportable = true)
-        val matchesVariant2 = variantEvidence.findMatches(variantGene2)
-        assertThat(matchesVariant2.evidences.size).isEqualTo(1)
-        assertThat(matchesVariant2.evidences).contains(hotspot2)
-
-        val otherVariantGene1 =
-            VARIANT_CRITERIA.copy(gene = "gene 1", chromosome = "X", position = 2, ref = "A", alt = "T", isReportable = true)
-        assertThat(variantEvidence.findMatches(otherVariantGene1).evidences).isEmpty()
+        assertThat(matches.matchingCriteriaPerTrialMatch).isEqualTo(
+            mapOf(
+                TRIAL_FOR_HOTSPOT to TRIAL_FOR_HOTSPOT.anyMolecularCriteria(),
+                TRIAL_FOR_CODON to TRIAL_FOR_CODON.anyMolecularCriteria(),
+                TRIAL_FOR_EXON to TRIAL_FOR_EXON.anyMolecularCriteria(),
+                ACT_TRIAL_FOR_GENE to ACT_TRIAL_FOR_GENE.anyMolecularCriteria(),
+                ANY_TRIAL_FOR_GENE to ANY_TRIAL_FOR_GENE.anyMolecularCriteria()
+            )
+        )
     }
 
     @Test
-    fun `Should determine evidence for codons`() {
-        assertEvidenceDeterminedForRange(ActionableEvents(listOf(actionableCodon), emptyList()), actionableCodon)
+    fun `Should skip codon and exon evidence on non-matching type`() {
+        val nonMatchingType = matchingVariant.copy(codingEffect = CodingEffect.NONSENSE_OR_FRAMESHIFT)
+
+        val matches = variantEvidence.findMatches(nonMatchingType)
+        assertThat(matches.evidenceMatches).containsExactlyInAnyOrder(
+            EVIDENCE_FOR_HOTSPOT,
+            ACT_EVIDENCE_FOR_GENE,
+            ANY_EVIDENCE_FOR_GENE
+        )
+
+        assertThat(matches.matchingCriteriaPerTrialMatch).isEqualTo(
+            mapOf(
+                TRIAL_FOR_HOTSPOT to TRIAL_FOR_HOTSPOT.anyMolecularCriteria(),
+                ACT_TRIAL_FOR_GENE to ACT_TRIAL_FOR_GENE.anyMolecularCriteria(),
+                ANY_TRIAL_FOR_GENE to ANY_TRIAL_FOR_GENE.anyMolecularCriteria()
+            )
+        )
     }
 
     @Test
-    fun `Should determine evidence for exons`() {
-        assertEvidenceDeterminedForRange(ActionableEvents(listOf(actionableExon), emptyList()), actionableExon)
-    }
+    fun `Should find no evidence for non-reportable variants`() {
+        val nonReportable = matchingVariant.copy(isReportable = false)
 
-    @Test
-    fun `Should determine evidence for genes`() {
-        val gene1: EfficacyEvidence = TestServeActionabilityFactory.createEfficacyEvidenceWithGene(GeneEvent.ANY_MUTATION, "gene 1")
-        val gene2: EfficacyEvidence = TestServeActionabilityFactory.createEfficacyEvidenceWithGene(GeneEvent.ACTIVATION, "gene 2")
-        val gene3: EfficacyEvidence = TestServeActionabilityFactory.createEfficacyEvidenceWithGene(GeneEvent.AMPLIFICATION, "gene 2")
-        val actionable = ActionableEvents(listOf(gene1, gene2, gene3), emptyList())
-        val variantEvidence: VariantEvidence = VariantEvidence.create(actionable)
-
-        val variantGene1 = VARIANT_CRITERIA.copy(
-            gene = "gene 1",
-            codingEffect = CodingEffect.MISSENSE,
-            isReportable = true
-        )
-        val matchesVariant1 = variantEvidence.findMatches(variantGene1)
-        assertThat(matchesVariant1.evidences.size).isEqualTo(1)
-        assertThat(matchesVariant1.evidences).contains(gene1)
-
-        val variantGene2 = VARIANT_CRITERIA.copy(
-            gene = "gene 2",
-            codingEffect = CodingEffect.MISSENSE,
-            isReportable = true
-        )
-        val matchesVariant2 = variantEvidence.findMatches(variantGene2)
-        assertThat(matchesVariant2.evidences.size).isEqualTo(1)
-        assertThat(matchesVariant2.evidences).contains(gene2)
-    }
-
-    private fun assertEvidenceDeterminedForRange(actionable: ActionableEvents, actionableRange: EfficacyEvidence) {
-        val variantEvidence: VariantEvidence = VariantEvidence.create(actionable)
-
-        val variantGene1 = VARIANT_CRITERIA.copy(
-            gene = "gene 1",
-            chromosome = "X",
-            position = 6,
-            isReportable = true,
-            codingEffect = CodingEffect.MISSENSE
-        )
-        val matchesVariant1 = variantEvidence.findMatches(variantGene1)
-        assertThat(matchesVariant1.evidences.size).isEqualTo(1)
-        assertThat(matchesVariant1.evidences).contains(actionableRange)
-
-        val otherVariantGene1 = VARIANT_CRITERIA.copy(
-            gene = "gene 1",
-            chromosome = "X",
-            position = 2,
-            isReportable = true,
-            codingEffect = CodingEffect.MISSENSE
-        )
-        assertThat(variantEvidence.findMatches(otherVariantGene1).evidences).isEmpty()
+        val matches = variantEvidence.findMatches(nonReportable)
+        assertThat(matches.evidenceMatches).isEmpty()
+        assertThat(matches.matchingCriteriaPerTrialMatch).isEmpty()
     }
 }

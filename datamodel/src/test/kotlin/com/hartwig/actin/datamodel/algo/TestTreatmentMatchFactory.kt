@@ -16,7 +16,6 @@ import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.datamodel.trial.TrialIdentification
-import com.hartwig.actin.datamodel.trial.TrialLocation
 import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
 import java.time.LocalDate
@@ -27,7 +26,6 @@ object TestTreatmentMatchFactory {
         return TreatmentMatch(
             patientId = TestPatientFactory.TEST_PATIENT,
             sampleId = TestPatientFactory.TEST_SAMPLE,
-            trialSource = "Test hospital",
             referenceDate = LocalDate.of(2021, 8, 2),
             referenceDateIsLive = true,
             trialMatches = emptyList()
@@ -52,8 +50,8 @@ object TestTreatmentMatchFactory {
                     title = "Example test trial 1",
                     nctId = "NCT00000010",
                     phase = TrialPhase.PHASE_1,
-                    source = TrialSource.LKO,
-                    locations = listOf(TrialLocation(1, "Erasmus MC"))
+                    source = TrialSource.NKI,
+                    locations = listOf("Antoni van Leeuwenhoek")
                 ),
                 isPotentiallyEligible = true,
                 evaluations = createTestGeneralEvaluationsTrial1(),
@@ -98,11 +96,11 @@ object TestTreatmentMatchFactory {
                 resistanceEvidence = listOf(
                     ResistanceEvidence(
                         event = "BRAF amp",
+                        treatmentName = "Pembrolizumab",
+                        resistanceLevel = "A",
                         isTested = null,
                         isFound = false,
-                        resistanceLevel = "A",
-                        evidenceUrls = setOf("website"),
-                        treatmentName = "Pembrolizumab"
+                        evidenceUrls = setOf("website")
                     )
                 )
             )

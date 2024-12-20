@@ -1,60 +1,109 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
-import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType.PROMISCUOUS_3
-import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType.PROMISCUOUS_5
-import com.hartwig.actin.molecular.evidence.TestServeActionabilityFactory
-import com.hartwig.actin.molecular.evidence.matching.FUSION_CRITERIA
-import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
+import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
+import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
+import com.hartwig.actin.molecular.evidence.TestServeTrialFactory
+import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
+private val FUSION_EVIDENCE_FOR_GENE = TestServeEvidenceFactory.createEvidenceForGene(gene = "gene 1", geneEvent = GeneEvent.FUSION)
+private val DEL_EVIDENCE_FOR_GENE = TestServeEvidenceFactory.createEvidenceForGene(gene = "gene 1", geneEvent = GeneEvent.DELETION)
+private val ANY_EVIDENCE_FOR_GENE = TestServeEvidenceFactory.createEvidenceForGene(gene = "gene 1", geneEvent = GeneEvent.ANY_MUTATION)
+private val SPECIFIC_FUSION_EVIDENCE =
+    TestServeEvidenceFactory.createEvidenceForFusion(geneUp = "gene 1", geneDown = "gene 2", minExonUp = 4, maxExonUp = 6)
+private val OTHER_FUSION_EVIDENCE = TestServeEvidenceFactory.createEvidenceForFusion(geneUp = "other gene 1", geneDown = "other gene 2")
+private val OTHER_EVIDENCE = TestServeEvidenceFactory.createEvidenceForHla()
+
+private val FUSION_TRIAL_FOR_GENE = TestServeTrialFactory.createTrialForGene(gene = "gene 1", geneEvent = GeneEvent.FUSION)
+private val DEL_TRIAL_FOR_GENE = TestServeTrialFactory.createTrialForGene(gene = "gene 1", geneEvent = GeneEvent.DELETION)
+private val ANY_TRIAL_FOR_GENE = TestServeTrialFactory.createTrialForGene(gene = "gene 1", geneEvent = GeneEvent.ANY_MUTATION)
+private val SPECIFIC_FUSION_TRIAL =
+    TestServeTrialFactory.createTrialForFusion(geneUp = "gene 1", geneDown = "gene 2", minExonUp = 4, maxExonUp = 6)
+private val OTHER_FUSION_TRIAL = TestServeTrialFactory.createTrialForFusion(geneUp = "other gene 1", geneDown = "other gene 2")
+private val OTHER_TRIAL = TestServeTrialFactory.createTrialForHla()
+
 class FusionEvidenceTest {
 
+    private val fusionEvidence = FusionEvidence.create(
+        evidences = listOf(
+            FUSION_EVIDENCE_FOR_GENE,
+            DEL_EVIDENCE_FOR_GENE,
+            ANY_EVIDENCE_FOR_GENE,
+            SPECIFIC_FUSION_EVIDENCE,
+            OTHER_FUSION_EVIDENCE,
+            OTHER_EVIDENCE
+        ),
+        trials = listOf(
+            FUSION_TRIAL_FOR_GENE,
+            DEL_TRIAL_FOR_GENE,
+            ANY_TRIAL_FOR_GENE,
+            SPECIFIC_FUSION_TRIAL,
+            OTHER_FUSION_TRIAL,
+            OTHER_TRIAL
+        )
+    )
+
+    private val matchingFusion = FusionMatchCriteria(
+        isReportable = true,
+        geneStart = "gene 1",
+        geneEnd = "gene 2",
+        fusedExonUp = 5,
+        fusedExonDown = 8,
+        driverType = FusionDriverType.KNOWN_PAIR
+    )
+
     @Test
-    fun `Should determine promiscuous fusion evidence`() {
-        val gene1: EfficacyEvidence = TestServeActionabilityFactory.createEfficacyEvidenceWithGene(GeneEvent.FUSION, "gene 1")
-        val gene2: EfficacyEvidence = TestServeActionabilityFactory.createEfficacyEvidenceWithGene(GeneEvent.ANY_MUTATION, "gene 2")
-        val gene3: EfficacyEvidence = TestServeActionabilityFactory.createEfficacyEvidenceWithGene(GeneEvent.INACTIVATION, "gene 1")
-        val actionableEvents = ActionableEvents(listOf(gene1, gene2, gene3), emptyList())
-        val fusionEvidence: FusionEvidence = FusionEvidence.create(actionableEvents)
+    fun `Should determine evidence and trials for exact fusion match`() {
+        val matches = fusionEvidence.findMatches(matchingFusion)
+        assertThat(matches.evidenceMatches).containsExactlyInAnyOrder(
+            FUSION_EVIDENCE_FOR_GENE,
+            ANY_EVIDENCE_FOR_GENE,
+            SPECIFIC_FUSION_EVIDENCE
+        )
 
-        val reportedFusionGene1 = FUSION_CRITERIA.copy(geneStart = "gene 1", driverType = PROMISCUOUS_5, isReportable = true)
-        val evidenceMatchGene1 = fusionEvidence.findMatches(reportedFusionGene1)
-        assertThat(evidenceMatchGene1.evidences.size).isEqualTo(1)
-        assertThat(evidenceMatchGene1.evidences).contains(gene1)
-
-        val unreportedFusionGene1 = reportedFusionGene1.copy(isReportable = false)
-        assertThat(fusionEvidence.findMatches(unreportedFusionGene1).evidences).isEmpty()
-
-        val wrongTypeFusionGene1 = reportedFusionGene1.copy(driverType = PROMISCUOUS_3)
-        assertThat(fusionEvidence.findMatches(wrongTypeFusionGene1).evidences).isEmpty()
-
-        val reportedFusionGene2 = FUSION_CRITERIA.copy(geneEnd = "gene 2", driverType = PROMISCUOUS_3, isReportable = true)
-        val evidenceMatchGene2 = fusionEvidence.findMatches(reportedFusionGene2)
-        assertThat(evidenceMatchGene2.evidences.size).isEqualTo(1)
-        assertThat(evidenceMatchGene2.evidences).contains(gene2)
+        assertThat(matches.matchingCriteriaPerTrialMatch).isEqualTo(
+            mapOf(
+                FUSION_TRIAL_FOR_GENE to FUSION_TRIAL_FOR_GENE.anyMolecularCriteria(),
+                ANY_TRIAL_FOR_GENE to ANY_TRIAL_FOR_GENE.anyMolecularCriteria(),
+                SPECIFIC_FUSION_TRIAL to SPECIFIC_FUSION_TRIAL.anyMolecularCriteria()
+            )
+        )
     }
 
     @Test
-    fun `Should determine evidence for known fusions`() {
-        val actionableFusion: EfficacyEvidence =
-            TestServeActionabilityFactory.createEfficacyEvidence(TestServeActionabilityFactory.createFusion("up", "down", 4, 6))
-        val actionableEvents = ActionableEvents(listOf(actionableFusion), emptyList())
-        val fusionEvidence: FusionEvidence = FusionEvidence.create(actionableEvents)
+    fun `Should find no evidence or trial for unreportable fusion`() {
+        val nonReportable = matchingFusion.copy(isReportable = false)
 
-        val match = FUSION_CRITERIA.copy(geneStart = "up", geneEnd = "down", fusedExonUp = 5, isReportable = true)
-        val evidences = fusionEvidence.findMatches(match)
-        assertThat(evidences.evidences.size).isEqualTo(1)
-        assertThat(evidences.evidences).contains(actionableFusion)
+        val matches = fusionEvidence.findMatches(nonReportable)
+        assertThat(matches.evidenceMatches).isEmpty()
+        assertThat(matches.matchingCriteriaPerTrialMatch).isEmpty()
+    }
 
-        val notReported = match.copy(isReportable = false)
-        assertThat(fusionEvidence.findMatches(notReported).evidences).isEmpty()
+    @Test
+    fun `Should find evidence and trials for relevant promiscuous fusions`() {
+        val otherGeneIsPromiscuous =
+            matchingFusion.copy(geneStart = "other gene", geneEnd = "gene 1", driverType = FusionDriverType.PROMISCUOUS_5)
 
-        val wrongExon = match.copy(fusedExonUp = 8)
-        assertThat(fusionEvidence.findMatches(wrongExon).evidences).isEmpty()
+        val otherMatches = fusionEvidence.findMatches(otherGeneIsPromiscuous)
+        assertThat(otherMatches.evidenceMatches).isEmpty()
+        assertThat(otherMatches.matchingCriteriaPerTrialMatch).isEmpty()
 
-        val wrongGene = match.copy(geneStart = "down", geneEnd = "up")
-        assertThat(fusionEvidence.findMatches(wrongGene).evidences).isEmpty()
+        val correctGeneIsPromiscuous =
+            matchingFusion.copy(geneStart = "other gene", geneEnd = "gene 1", driverType = FusionDriverType.PROMISCUOUS_3)
+
+        val correctMatches = fusionEvidence.findMatches(correctGeneIsPromiscuous)
+        assertThat(correctMatches.evidenceMatches).containsExactlyInAnyOrder(
+            FUSION_EVIDENCE_FOR_GENE,
+            ANY_EVIDENCE_FOR_GENE
+        )
+
+        assertThat(correctMatches.matchingCriteriaPerTrialMatch).isEqualTo(
+            mapOf(
+                FUSION_TRIAL_FOR_GENE to FUSION_TRIAL_FOR_GENE.anyMolecularCriteria(),
+                ANY_TRIAL_FOR_GENE to ANY_TRIAL_FOR_GENE.anyMolecularCriteria()
+            )
+        )
     }
 }

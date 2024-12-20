@@ -4,7 +4,7 @@ import com.hartwig.actin.datamodel.molecular.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.orange.driver.Virus
 import com.hartwig.actin.datamodel.molecular.orange.driver.VirusType
 import com.hartwig.actin.datamodel.molecular.sort.driver.VirusComparator
-import com.hartwig.actin.molecular.evidence.ClinicalEvidenceFactory
+import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.hmftools.datamodel.virus.VirusBreakendQCStatus
 import com.hartwig.hmftools.datamodel.virus.VirusInterpretation
 import com.hartwig.hmftools.datamodel.virus.VirusInterpreterData
@@ -20,7 +20,7 @@ internal class VirusExtractor() {
                 isReportable = virus.reported(),
                 event = DriverEventFactory.virusEvent(virus),
                 driverLikelihood = determineDriverLikelihood(virus.driverLikelihood()),
-                evidence = ClinicalEvidenceFactory.createNoEvidence(),
+                evidence = ExtractionUtil.noEvidence(),
                 name = virus.name(),
                 isReliable = virus.qcStatus() == QC_PASS_STATUS,
                 type = determineType(virus.interpretation()),

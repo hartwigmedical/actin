@@ -15,7 +15,6 @@ import com.hartwig.actin.trial.status.TrialStatusConfigInterpreter
 import com.hartwig.actin.trial.status.TrialStatusDatabaseReader
 import com.hartwig.actin.trial.status.ctc.CTCTrialStatusEntryReader
 import com.hartwig.actin.trial.status.nki.NKITrialStatusEntryReader
-import com.hartwig.serve.datamodel.RefGenome
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.ParseException
@@ -37,10 +36,10 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
-        LOGGER.info("Loading known genes from serve db {}", config.serveDbJson)
-        val (knownEvents, _) = ServeLoader.loadServe(config.serveDbJson, RefGenome.V37)
-        val knownGenes = knownEvents.genes()
+        LOGGER.info("Loading SERVE known genes from {}", config.serveDbJson)
+        val knownGenes = ServeLoader.loadServe37Record(config.serveDbJson).knownEvents().genes()
         LOGGER.info(" Loaded {} known genes", knownGenes.size)
+
         val geneFilter = GeneFilterFactory.createFromKnownGenes(knownGenes)
 
         val configInterpreter = configInterpreter(EnvironmentConfiguration.create(config.overridesYaml).trial)
