@@ -44,8 +44,6 @@ internal object OtherConditionTestFactory {
         return Intolerance(
             name = name,
             icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode)),
-            category = "",
-            subcategories = emptySet(),
             type = "",
             clinicalStatus = "",
             verificationStatus = "",

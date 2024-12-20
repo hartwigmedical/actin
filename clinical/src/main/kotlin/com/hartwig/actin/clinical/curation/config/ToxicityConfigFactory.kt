@@ -16,7 +16,7 @@ class ToxicityConfigFactory(private val  icdModel: IcdModel) : CurationConfigFac
                 ignore = CurationUtil.isIgnoreString(parts[fields["name"]!!]),
                 name = parts[fields["name"]!!],
                 grade = grade,
-                icdCodes = icdCodes ?: emptySet()
+                icdCodes = icdCodes
             ), gradeValidationError + icdValidationErrors
         )
     }

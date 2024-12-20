@@ -39,7 +39,7 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
     private val conditionWithChildOfTargetCode = conditionWithTargetCode.copy(icdCodes = setOf(IcdCode(childCode)))
 
     @Test
-    fun `Should fail when no matching icd code in prior other conditions, complications or toxicities`() {
+    fun `Should fail when no matching ICD code in prior other conditions, complications or toxicities`() {
         val evaluation = function.evaluate(minimalPatient)
         assertEvaluation(EvaluationResult.FAIL, evaluation)
         assertThat(evaluation.failSpecificMessages)
@@ -48,45 +48,45 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
     }
 
     @Test
-    fun `Should pass when icd code or parent code of other condition matches code of target title`() {
+    fun `Should pass when ICD code or parent code of other condition matches code of target title`() {
         listOf(conditionWithTargetCode, conditionWithChildOfTargetCode).forEach {
             assertPassEvaluationWithMessages(
                 function.evaluate(OtherConditionTestFactory.withPriorOtherCondition(it)),
                 "other condition",
-                "Patient has history of condition(s) other condition, which is indicative of $diseaseDescription"
+                "History of other condition"
             )
         }
     }
 
     @Test
-    fun `Should pass when icd code or parent code of complication matches code of target title`() {
+    fun `Should pass when ICD code or parent code of complication matches code of target title`() {
         listOf(complicationWithChildOfTargetCode, complicationWithTargetCode).forEach {
             assertPassEvaluationWithMessages(
                 function.evaluate(OtherConditionTestFactory.withComplications(listOf(it))),
                 "complication",
-                "Patient has history of complication(s) complication, which is indicative of $diseaseDescription"
+                "History of complication"
             )
         }
     }
 
     @Test
-    fun `Should pass when icd code or parent code of toxicity from questionnaire matches code of target title`() {
+    fun `Should pass when ICD code or parent code of toxicity from questionnaire matches code of target title`() {
         listOf(childCode, parentCode).forEach {
             assertPassEvaluationWithMessages(
                 function.evaluate(OtherConditionTestFactory.withToxicities(listOf(toxicity(ToxicitySource.QUESTIONNAIRE, IcdCode(it), 1)))),
                 "toxicity",
-                "Patient has history of toxicity(ies) toxicity, which is indicative of $diseaseDescription"
+                "History of toxicity"
             )
         }
     }
 
     @Test
-    fun `Should pass when icd code or parent code of toxicity from EHR with at least grade 2 matches code of target title`() {
+    fun `Should pass when ICD code or parent code of toxicity from EHR with at least grade 2 matches code of target title`() {
         listOf(childCode, parentCode).forEach {
             assertPassEvaluationWithMessages(
                 function.evaluate(OtherConditionTestFactory.withToxicities(listOf(toxicity(ToxicitySource.EHR, IcdCode(it), 2)))),
                 "toxicity",
-                "Patient has history of toxicity(ies) toxicity, which is indicative of $diseaseDescription"
+                "History of toxicity"
             )
         }
     }
@@ -107,7 +107,7 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
     }
 
     @Test
-    fun `Should fail when icd code or parent code of toxicity from EHR with grade less than 2 matches code of target title`() {
+    fun `Should fail when ICD code or parent code of toxicity from EHR with grade less than 2 matches code of target title`() {
         listOf(childCode, parentCode).forEach {
             assertEvaluation(
                 EvaluationResult.FAIL,
@@ -121,19 +121,19 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
     }
 
     @Test
-    fun `Should include multiple messages`() {
+    fun `Should combine multiple conditions, toxicities and complications into one message`() {
+        val toxicity = toxicity(ToxicitySource.QUESTIONNAIRE, IcdCode(childCode), 2)
+        val otherTox = toxicity.copy(name = "pneumonitis")
         assertPassEvaluationWithMessages(
             function.evaluate(
                 minimalPatient.copy(
-                    toxicities = listOf(toxicity(ToxicitySource.QUESTIONNAIRE, IcdCode(childCode), 2)),
+                    toxicities = listOf(toxicity, otherTox),
                     complications = listOf(complicationWithTargetCode),
                     priorOtherConditions = listOf(conditionWithTargetCode)
                 )
             ),
-            "complication and other condition and toxicity",
-            "Patient has history of toxicity(ies) toxicity, which is indicative of $diseaseDescription",
-            "Patient has history of complication(s) complication, which is indicative of $diseaseDescription",
-            "Patient has history of condition(s) other condition, which is indicative of $diseaseDescription"
+            "complication and other condition and pneumonitis and toxicity",
+            "History of complication and other condition and pneumonitis and toxicity"
         )
     }
 

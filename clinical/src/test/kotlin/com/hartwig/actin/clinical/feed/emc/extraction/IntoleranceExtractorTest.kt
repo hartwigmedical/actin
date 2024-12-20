@@ -1,13 +1,11 @@
 package com.hartwig.actin.clinical.feed.emc.extraction
 
-import com.hartwig.actin.clinical.WhoAtcModel
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
 import com.hartwig.actin.clinical.feed.emc.intolerance.IntoleranceEntry
 import com.hartwig.actin.datamodel.clinical.IcdCode
-import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
@@ -24,15 +22,9 @@ private const val CURATED_MEDICATION_INTOLERANCE = "Paracetamol"
 
 private const val ICD = "ICD"
 
-private const val ATC = "N02BE01"
-
 private const val CANNOT_CURATE = "Cannot curate"
 
 class IntoleranceExtractorTest {
-    private val atcModel = WhoAtcModel.createFromFiles(
-        resourceOnClasspath("atc_config/atc_tree.tsv"),
-        resourceOnClasspath("atc_config/atc_overrides.tsv")
-    )
     private val extractor = IntoleranceExtractor(
         TestCurationFactory.curationDatabase(
             IntoleranceConfig(
@@ -47,7 +39,7 @@ class IntoleranceExtractorTest {
                 name = CURATED_MEDICATION_INTOLERANCE,
                 icd = setOf(IcdCode(ICD, null))
             )
-        ), atcModel
+        )
     )
 
     @Test
@@ -69,18 +61,6 @@ class IntoleranceExtractorTest {
         assertThat(evaluation.intoleranceEvaluatedInputs).isEqualTo(inputs.map(String::lowercase).toSet())
 
     }
-
-    @Test
-    fun `Should extract curated medication intolerance`() {
-        val (curated, _) = extractor.extract(
-            PATIENT_ID,
-            listOf(entry.copy(codeText = INTOLERANCE_MEDICATION_INPUT, category = "medication"))
-        )
-        assertThat(curated).hasSize(1)
-        assertThat(curated[0].name).isEqualTo(CURATED_MEDICATION_INTOLERANCE)
-        assertThat(curated[0].subcategories).isEqualTo(setOf(ATC))
-    }
-
     companion object {
         val entry = IntoleranceEntry(
             subject = PATIENT_ID,

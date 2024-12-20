@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical.feed.standard.extraction
 
-import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
@@ -12,7 +11,6 @@ import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
 
 class StandardIntolerancesExtractor(
-    private val atcModel: AtcModel,
     private val intoleranceCuration: CurationDatabase<IntoleranceConfig>
 ) :
     StandardDataExtractor<List<Intolerance>> {
@@ -21,11 +19,9 @@ class StandardIntolerancesExtractor(
             Intolerance(
                 name = it.name,
                 icdCodes = setOf(IcdCode("", null)),
-                category = it.category,
                 clinicalStatus = it.clinicalStatus,
                 verificationStatus = it.verificationStatus,
                 criticality = it.severity,
-                subcategories = emptySet()
             )
         }
             .map {
@@ -33,8 +29,7 @@ class StandardIntolerancesExtractor(
                 val curatedIntolerance = curationResponse.config()?.let { config ->
                     it.copy(
                         name = config.name,
-                        icdCodes = config.icd,
-                        subcategories = subcategoriesFromAtc(config)
+                        icdCodes = config.icd
                     )
                 } ?: it
                 ExtractionResult(listOf(curatedIntolerance), curationResponse.extractionEvaluation)
@@ -46,8 +41,7 @@ class StandardIntolerancesExtractor(
                 ExtractionResult(curationResponse.configs.map { config ->
                     Intolerance(
                         name = config.name,
-                        icdCodes = config.icd,
-                        subcategories = subcategoriesFromAtc(config)
+                        icdCodes = config.icd
                     )
                 }, CurationExtractionEvaluation())
             } else {
@@ -65,8 +59,6 @@ class StandardIntolerancesExtractor(
         }
 
     }
-
-    private fun subcategoriesFromAtc(config: IntoleranceConfig) = atcModel.resolveByName(config.name.lowercase())
 
     private fun curateIntolerance(
         ehrPatientRecord: ProvidedPatientRecord,

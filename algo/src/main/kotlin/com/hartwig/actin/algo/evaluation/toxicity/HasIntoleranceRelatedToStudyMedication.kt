@@ -18,7 +18,7 @@ class HasIntoleranceRelatedToStudyMedication(private val icdModel: IcdModel) : E
                         && icdModel.findInstancesMatchingAnyIcdCode(
                     record.intolerances,
                     IcdConstants.DRUG_ALLERGY_SET.map { IcdCode(it) }.toSet()
-                ).fullMatches.contains(intolerance)
+                        ).fullMatches.contains(intolerance)
             }
             .toSet()
 

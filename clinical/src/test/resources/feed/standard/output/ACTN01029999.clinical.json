@@ -281,8 +281,6 @@
 		  "extensionCode": null
 		}
 	  ],
-	  "category": "Medication",
-	  "subcategories": [],
 	  "type": null,
 	  "clinicalStatus": "Active",
 	  "verificationStatus": "Confirmed",
@@ -297,8 +295,6 @@
 		}
 	  ],
 	  "category": "Other",
-	  "subcategories": [],
-	  "type": null,
 	  "clinicalStatus": "Active",
 	  "verificationStatus": "Confirmed",
 	  "criticality": "Unknown"

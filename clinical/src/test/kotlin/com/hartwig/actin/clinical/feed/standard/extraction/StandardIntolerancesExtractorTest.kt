@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical.feed.standard.extraction
 
-import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
 import com.hartwig.actin.clinical.feed.standard.EhrTestData
@@ -21,7 +20,6 @@ private const val VERIFICATION_STATUS = "verificationStatus"
 private const val SEVERITY = "severity"
 private const val CURATED = "curated"
 private const val ICD = "icd"
-private const val SUBCATEGORY = "subcategory"
 
 private val EHR_PATIENT_RECORD = EhrTestData.createEhrPatientRecord().copy(
     allergies = listOf(
@@ -39,11 +37,10 @@ private val EHR_PATIENT_RECORD = EhrTestData.createEhrPatientRecord().copy(
 
 class StandardIntolerancesExtractorTest {
 
-    private val atcModel = mockk<AtcModel>()
     private val intoleranceCuration = mockk<CurationDatabase<IntoleranceConfig>> {
         every { find(any()) } returns emptySet()
     }
-    private val extractor = StandardIntolerancesExtractor(atcModel, intoleranceCuration)
+    private val extractor = StandardIntolerancesExtractor(intoleranceCuration)
 
     @Test
     fun `Should extract intolerances from allergies when no curation present`() {
@@ -51,19 +48,16 @@ class StandardIntolerancesExtractorTest {
         assertThat(results.extracted).containsExactly(
             Intolerance(
                 name = NAME,
-                category = CATEGORY,
                 clinicalStatus = CLINICAL_STATUS,
                 verificationStatus = VERIFICATION_STATUS,
                 criticality = SEVERITY,
                 icdCodes = setOf(IcdCode("", null)),
-                subcategories = emptySet()
             )
         )
     }
 
     @Test
     fun `Should extract intolerances from allergies and augment with curation when present`() {
-        every { atcModel.resolveByName(CURATED) } returns setOf(SUBCATEGORY)
         every { intoleranceCuration.find(NAME) } returns setOf(
             IntoleranceConfig(
                 input = NAME,
@@ -76,11 +70,9 @@ class StandardIntolerancesExtractorTest {
             Intolerance(
                 name = CURATED,
                 icdCodes = setOf(IcdCode(ICD, null)),
-                category = CATEGORY,
                 clinicalStatus = CLINICAL_STATUS,
                 verificationStatus = VERIFICATION_STATUS,
                 criticality = SEVERITY,
-                subcategories = setOf(SUBCATEGORY)
             )
         )
         assertThat(results.evaluation.warnings).isEmpty()
@@ -89,8 +81,6 @@ class StandardIntolerancesExtractorTest {
     @Test
     fun `Should extract intolerances from prior other conditions, supporting multiple configs per input, but ignore any curation warnings`() {
         val anotherCurated = "another curated"
-        every { atcModel.resolveByName(CURATED) } returns setOf(SUBCATEGORY)
-        every { atcModel.resolveByName(anotherCurated) } returns emptySet()
         every { intoleranceCuration.find(NAME) } returns setOf(
             IntoleranceConfig(
                 input = NAME,
@@ -116,12 +106,10 @@ class StandardIntolerancesExtractorTest {
             Intolerance(
                 name = CURATED,
                 icdCodes = setOf(IcdCode(ICD, null)),
-                subcategories = setOf(SUBCATEGORY)
             ),
             Intolerance(
                 name = anotherCurated,
                 icdCodes = setOf(IcdCode(ICD, null)),
-                subcategories = emptySet()
             )
         )
         assertThat(results.evaluation.warnings).isEmpty()

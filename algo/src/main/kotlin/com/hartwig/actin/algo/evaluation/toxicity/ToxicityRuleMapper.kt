@@ -13,16 +13,16 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
         return mapOf(
             EligibilityRule.HAS_INTOLERANCE_TO_NAME_X to hasIntoleranceWithSpecificNameCreator(),
             EligibilityRule.HAS_INTOLERANCE_WITH_ICD_TITLE_X to hasIntoleranceWithSpecificIcdTitleCreator(),
-            EligibilityRule.HAS_INTOLERANCE_TO_PLATINUM_COMPOUNDS to hasDrugIntoleranceWithSpecificIcdExtensionCodeOrNameCreator(
-                IcdConstants.PLATINUM_COMPOUND_CODE,
-                PLATINUM_COMPOUNDS_SET,
-                "platinum compounds"
-            ),
-            EligibilityRule.HAS_INTOLERANCE_TO_TAXANE to hasDrugIntoleranceWithSpecificIcdExtensionCodeOrNameCreator(
-                IcdConstants.TAXANE_CODE,
-                TAXANE_SET,
-                "taxanes"
-            ),
+            EligibilityRule.HAS_INTOLERANCE_TO_PLATINUM_COMPOUNDS to {
+                HasDrugIntoleranceWithAnyIcdCodeOrName(
+                    icdModel(),
+                    IcdConstants.PLATINUM_COMPOUND_CODE,
+                    PLATINUM_COMPOUNDS_SET,
+                    "platinum compounds"
+                )
+            },
+            EligibilityRule.HAS_INTOLERANCE_TO_TAXANE to
+                    { HasDrugIntoleranceWithAnyIcdCodeOrName(icdModel(), IcdConstants.TAXANE_CODE, TAXANE_SET, "taxanes") },
             EligibilityRule.HAS_INTOLERANCE_RELATED_TO_STUDY_MEDICATION to hasIntoleranceRelatedToStudyMedicationCreator(),
             EligibilityRule.HAS_INTOLERANCE_FOR_PD_1_OR_PD_L1_INHIBITORS to hasIntoleranceToPD1OrPDL1InhibitorsCreator(),
             EligibilityRule.HAS_HISTORY_OF_ANAPHYLAXIS to hasHistoryAnaphylaxisCreator(),
@@ -45,12 +45,6 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
         return { function: EligibilityFunction ->
             HasIntoleranceWithSpecificIcdTitle(icdModel(), functionInputResolver().createOneIcdTitleInput(function))
         }
-    }
-
-    private fun hasDrugIntoleranceWithSpecificIcdExtensionCodeOrNameCreator(
-        extensionCode: String, names: Set<String>, description: String
-    ): FunctionCreator {
-        return { HasDrugIntoleranceWithAnyIcdCodeOrName(icdModel(), extensionCode, names, description) }
     }
 
     private fun hasIntoleranceRelatedToStudyMedicationCreator(): FunctionCreator {

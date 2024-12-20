@@ -30,7 +30,6 @@ internal object ToxicityTestFactory {
 
     fun intolerance(
         name: String = "",
-        category: String = "",
         clinicalStatus: String = "",
         icdMainCode: String = "",
         icdExtensionCode: String? = null
@@ -38,8 +37,6 @@ internal object ToxicityTestFactory {
         return Intolerance(
             name = name,
             icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode)),
-            category = category,
-            subcategories = emptySet(),
             type = "",
             clinicalStatus = clinicalStatus,
             verificationStatus = "",

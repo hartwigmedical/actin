@@ -465,12 +465,10 @@ object TestClinicalFactory {
             Intolerance(
                 name = "Wasps",
                 icdCodes = setOf(IcdCode("icdCode", null)),
-                category = "Environment",
                 type = "Allergy",
                 clinicalStatus = "Active",
                 verificationStatus = "Confirmed",
                 criticality = "Unable-to-assess",
-                subcategories = emptySet(),
             )
         )
     }

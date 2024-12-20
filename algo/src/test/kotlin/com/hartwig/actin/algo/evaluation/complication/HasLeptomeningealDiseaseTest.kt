@@ -20,12 +20,16 @@ class HasLeptomeningealDiseaseTest {
 
     @Test
     fun `Should pass when record contains complication or non oncological history entry with direct or parent match on target icd code`() {
-        listOf(targetNode.code, childOfTargetNode.code).map { ComplicationTestFactory.complication(icdCode = IcdCode(it)) }
-            .map(ComplicationTestFactory::withComplication) + listOf(
-            targetNode.code,
-            childOfTargetNode.code
-        ).map { OtherConditionTestFactory.priorOtherCondition(icdMainCode = it) }.map(OtherConditionTestFactory::withPriorOtherCondition)
-            .forEach { assertEvaluation(EvaluationResult.PASS, function.evaluate(it)) }
+        listOf(targetNode.code, childOfTargetNode.code).flatMap { code ->
+            listOf(
+                ComplicationTestFactory.withComplication(
+                    ComplicationTestFactory.complication(icdCode = IcdCode(code))
+                ),
+                OtherConditionTestFactory.withPriorOtherCondition(
+                    OtherConditionTestFactory.priorOtherCondition(icdMainCode = code)
+                )
+            )
+        }.forEach { assertEvaluation(EvaluationResult.PASS, function.evaluate(it)) }
     }
 
     @Test

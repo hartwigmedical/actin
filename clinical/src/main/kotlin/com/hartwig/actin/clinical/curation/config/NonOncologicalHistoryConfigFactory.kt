@@ -62,7 +62,7 @@ class NonOncologicalHistoryConfigFactory(private val icdModel: IcdModel) :
                 name = parts[fields["name"]!!],
                 year = year,
                 month = month,
-                icdCodes = icdCodes ?: emptySet(),
+                icdCodes = icdCodes,
                 isContraindicationForTherapy = isContraindicationForTherapy ?: false
             ) to icdValidationErrors + isContraindicationForTherapyValidationErrors + yearValidationErrors + monthValidationErrors
         } else {

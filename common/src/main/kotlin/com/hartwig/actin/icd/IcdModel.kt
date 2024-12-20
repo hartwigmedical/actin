@@ -24,7 +24,7 @@ class IcdModel(
         }
     }
 
-    fun returnCodeWithParents(code: String?): List<String> {
+    fun codeWithAllParents(code: String?): List<String> {
         return code?.let { (codeToNodeMap[code]?.parentTreeCodes ?: emptyList()) + code } ?: emptyList()
     }
 
@@ -34,19 +34,17 @@ class IcdModel(
         return extensionTitle?.let { "$mainTitle & $it" } ?: mainTitle
     }
 
-    fun <T : IcdCodeEntity> findInstancesMatchingAnyIcdCode(instances: List<T>?, targetIcdCodes: Set<IcdCode>): IcdMatches<T> {
-        return instances?.let {
-            targetIcdCodes.fold(IcdMatches(emptyList(), emptyList())) { acc, targetCode ->
-                val (fullMatch, unknownMatch) = returnIcdMatches(targetCode, instances)
-                IcdMatches(acc.fullMatches + fullMatch, acc.mainCodeMatchesWithUnknownExtension + unknownMatch)
-            }
-        } ?: IcdMatches(emptyList(), emptyList())
+    fun <T : IcdCodeEntity> findInstancesMatchingAnyIcdCode(instances: List<T>, targetIcdCodes: Set<IcdCode>): IcdMatches<T> {
+        return targetIcdCodes.fold(IcdMatches(emptyList(), emptyList())) { acc, targetCode ->
+            val (fullMatch, unknownMatch) = returnIcdMatches(targetCode, instances)
+            IcdMatches(acc.fullMatches + fullMatch, acc.mainCodeMatchesWithUnknownExtension + unknownMatch)
+        }
     }
 
     private fun <T : IcdCodeEntity> returnIcdMatches(targetCode: IcdCode, instances: List<T>): Pair<List<T>, List<T>> {
         val mainMatches = instances.filter { instance ->
             instance.icdCodes.any {
-                returnCodeWithParents(it.mainCode).any(targetCode.mainCode::equals)
+                codeWithAllParents(it.mainCode).any(targetCode.mainCode::equals)
             }
         }
 
@@ -56,10 +54,10 @@ class IcdModel(
             mainMatches.filter { match ->
                 match.icdCodes.any {
                     it.extensionCode?.let { code ->
-                        returnCodeWithParents(code).any(targetCode.extensionCode::equals)
+                        codeWithAllParents(code).any(targetCode.extensionCode::equals)
                     } != false
                 }
-            }.partition { it.icdCodes.none { it.extensionCode == null } }
+            }.partition { it.icdCodes.none { code -> code.extensionCode == null } }
         }
     }
 

@@ -277,8 +277,6 @@
 		  "extensionCode": null
 		}
 	  ],
-	  "category": "Medication",
-	  "subcategories": [],
 	  "type": "Allergy",
 	  "clinicalStatus": "Active",
 	  "verificationStatus": "Confirmed",

@@ -21,14 +21,14 @@ class HasHadPriorConditionWithIcdCodeFromSetRecently(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val (fullMatches, undeterminedMatches) = icdModel.findInstancesMatchingAnyIcdCode(
+        val icdMatches = icdModel.findInstancesMatchingAnyIcdCode(
             OtherConditionSelector.selectClinicallyRelevant(
                 record.priorOtherConditions
             ), targetIcdCodes
         )
-        val fullMatchSummary = evaluateConditionsByDate(fullMatches)
+        val fullMatchSummary = evaluateConditionsByDate(icdMatches.fullMatches)
         val mainMatchesWithUnknownExtension =
-            evaluateConditionsByDate(undeterminedMatches).filterNot { it.key == EvaluationResult.FAIL }.values.flatten()
+            evaluateConditionsByDate(icdMatches.mainCodeMatchesWithUnknownExtension).filterNot { it.key == EvaluationResult.FAIL }.values.flatten()
 
         return when {
             fullMatchSummary.containsKey(EvaluationResult.PASS) -> {

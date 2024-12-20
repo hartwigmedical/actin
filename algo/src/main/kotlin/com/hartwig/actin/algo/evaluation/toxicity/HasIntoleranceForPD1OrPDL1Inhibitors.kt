@@ -27,8 +27,8 @@ class HasIntoleranceForPD1OrPDL1Inhibitors(private val icdModel: IcdModel) : Eva
         val matchingIntolerancesByName =
             record.intolerances.filter { stringCaseInsensitivelyMatchesQueryCollection(it.name, INTOLERANCE_TERMS) }.toSet()
 
-        val (fullMatches, mainCodeMatchesWithUnknownExtension) = icdModel.findInstancesMatchingAnyIcdCode(record.intolerances, targetCodes)
-        val matchingIntolerances = (fullMatches + matchingIntolerancesByName).toSet()
+        val icdMatches = icdModel.findInstancesMatchingAnyIcdCode(record.intolerances, targetCodes)
+        val matchingIntolerances = (icdMatches.fullMatches + matchingIntolerancesByName).toSet()
 
         val autoImmuneHistory = icdModel.findInstancesMatchingAnyIcdCode(
             OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions),
@@ -42,7 +42,7 @@ class HasIntoleranceForPD1OrPDL1Inhibitors(private val icdModel: IcdModel) : Eva
                 EvaluationFactory.pass("Has PD-1/PD-L1 intolerance(s): " + Format.concatItemsWithAnd(matchingIntolerances))
             }
 
-            mainCodeMatchesWithUnknownExtension.isNotEmpty() -> {
+            icdMatches.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> {
                 EvaluationFactory.undetermined("Drug $undeterminedMessage (drug type unknown)")
             }
 

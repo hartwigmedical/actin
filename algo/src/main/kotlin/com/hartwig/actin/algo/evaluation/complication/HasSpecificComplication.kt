@@ -6,6 +6,7 @@ import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.icd.IcdModel
+import com.hartwig.actin.icd.datamodel.IcdMatches
 
 class HasSpecificComplication(private val icdModel: IcdModel, private val targetIcdTitles: List<String>) : EvaluationFunction {
 
@@ -16,21 +17,22 @@ class HasSpecificComplication(private val icdModel: IcdModel, private val target
         )
 
         val targetCodes = targetIcdTitles.map { icdModel.resolveCodeForTitle(it)!! }.toSet()
-        val (fullMatches, mainMatchesWithUnknownExtension) =
-            icdModel.findInstancesMatchingAnyIcdCode(record.complications, targetCodes)
+        val icdMatches =
+            record.complications?.let { icdModel.findInstancesMatchingAnyIcdCode(it, targetCodes) } ?: IcdMatches(emptyList(), emptyList())
 
         val icdTitleText = if (targetIcdTitles.size > 1) {
             "belonging to type ${Format.concatLowercaseWithCommaAndOr(targetIcdTitles)}"
         } else targetIcdTitles.takeIf { it.isNotEmpty() }?.first()
 
         return when {
-            fullMatches.isNotEmpty() -> EvaluationFactory.pass(
-                "Patient has complication(s) " + Format.concatItemsWithAnd(fullMatches),
-                "Present " + Format.concatItemsWithAnd(fullMatches)
+            icdMatches.fullMatches.isNotEmpty() -> EvaluationFactory.pass(
+                "Patient has complication(s) " + Format.concatItemsWithAnd(icdMatches.fullMatches),
+                "Present " + Format.concatItemsWithAnd(icdMatches.fullMatches)
             )
 
-            mainMatchesWithUnknownExtension.isNotEmpty() -> EvaluationFactory.undetermined(
-                "Has complication(s) ${Format.concatItemsWithAnd(mainMatchesWithUnknownExtension)} but undetermined if $icdTitleText"
+            icdMatches.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> EvaluationFactory.undetermined(
+                "Has complication(s) ${Format.concatItemsWithAnd(icdMatches.mainCodeMatchesWithUnknownExtension)} " +
+                        "but undetermined if $icdTitleText"
             )
 
             hasComplicationsWithoutNames(record) -> EvaluationFactory.undetermined(

@@ -254,7 +254,11 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         return {
             val potassiumBelowLLN: EvaluationFunction = Not(createLabEvaluator(LabMeasurement.POTASSIUM, HasSufficientLabValueLLN(1.0)))
             val hasHadPriorHypokalemia =
-                OtherConditionFunctionFactory.createPriorConditionWithIcdCodeFunction(icdModel(), IcdCode(IcdConstants.HYPOKALEMIA_CODE))
+                OtherConditionFunctionFactory.createPriorConditionWithIcdCodeFunction(
+                    icdModel(),
+                    setOf(IcdCode(IcdConstants.HYPOKALEMIA_CODE)),
+                    "potential hypokalemia"
+                )
             Or(listOf(potassiumBelowLLN, hasHadPriorHypokalemia))
         }
     }
@@ -264,7 +268,8 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             val magnesiumBelowLLN: EvaluationFunction = Not(createLabEvaluator(LabMeasurement.MAGNESIUM, HasSufficientLabValueLLN(1.0)))
             val hasHadPriorHypomagnesemia = OtherConditionFunctionFactory.createPriorConditionWithIcdCodeFunction(
                 icdModel(),
-                IcdCode(IcdConstants.HYPOMAGNESEMIA_CODE)
+                setOf(IcdCode(IcdConstants.HYPOMAGNESEMIA_CODE)),
+                "potential hypomagnesemia"
             )
             Or(listOf(magnesiumBelowLLN, hasHadPriorHypomagnesemia))
         }
@@ -275,7 +280,8 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             val calciumBelowLLN: EvaluationFunction = Not(createLabEvaluator(LabMeasurement.CALCIUM, HasSufficientLabValueLLN(1.0)))
             val hasHadPriorHypocalcemia = OtherConditionFunctionFactory.createPriorConditionWithIcdCodeFunction(
                 icdModel(),
-                IcdCode(IcdConstants.CALCIUM_DEFICIENCY_CODE)
+                setOf(IcdCode(IcdConstants.CALCIUM_DEFICIENCY_CODE)),
+                "potential hypocalcemia"
             )
             Or(listOf(calciumBelowLLN, hasHadPriorHypocalcemia))
         }

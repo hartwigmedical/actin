@@ -84,9 +84,9 @@ class ComplicationConfigFactoryTest {
                 "Complication",
                 "input",
                 "icd",
-                "[unknown title]",
+                "unknown title",
                 "icd",
-                "One or more of ICD title(s) \"unknown title\" is not known - check for existence in ICD model"
+                "ICD title \"unknown title\" is not known - check for existence in ICD model"
             )
         )
     }

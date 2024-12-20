@@ -171,10 +171,7 @@ class StandardDataIngestion(
                 treatmentDatabase
             ),
             StandardSurgeryExtractor(curationDatabaseContext.surgeryNameCuration),
-            StandardIntolerancesExtractor(
-                atcModel,
-                curationDatabaseContext.intoleranceCuration
-            ),
+            StandardIntolerancesExtractor(curationDatabaseContext.intoleranceCuration),
             StandardVitalFunctionsExtractor(),
             StandardBloodTransfusionExtractor(),
             StandardLabValuesExtractor(curationDatabaseContext.laboratoryTranslation),

@@ -42,8 +42,8 @@ class IcdModelTest {
 
     @Test
     fun `Should successfully resolve code with parents`() {
-        assertThat(icdModel.returnCodeWithParents("targetMainCode")).containsExactly("targetMainParentCode", "targetMainCode")
-        assertThat(icdModel.returnCodeWithParents("targetExtensionCode")).containsExactly(
+        assertThat(icdModel.codeWithAllParents("targetMainCode")).containsExactly("targetMainParentCode", "targetMainCode")
+        assertThat(icdModel.codeWithAllParents("targetExtensionCode")).containsExactly(
             "targetExtensionParentCode",
             "targetExtensionCode"
         )
@@ -68,8 +68,8 @@ class IcdModelTest {
 
     @Test
     fun `Should add all conditions matching main code to full matches when extension code is not requested`() {
-        val (randomExtension, noExtension) = listOf("random", null).map { createIcdEntityList(setOf(IcdCode(correctMainCode, it))) }
-        listOf(randomExtension, noExtension).forEach { evaluateCodeMatching(it, it, emptyList(), checkExtension = false) }
+        listOf("random", null).map { createIcdEntityList(setOf(IcdCode(correctMainCode, it))) }
+            .forEach { evaluateCodeMatching(it, it, emptyList(), checkExtension = false) }
     }
 
     @Test

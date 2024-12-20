@@ -13,14 +13,14 @@ class HasHadPriorConditionWithIcdCodeFromSet(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val (fullMatches, undeterminedMatches) = icdModel.findInstancesMatchingAnyIcdCode(
+        val icdMatches = icdModel.findInstancesMatchingAnyIcdCode(
             OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions),
             targetIcdCodes
         )
 
         return when {
-            fullMatches.isNotEmpty() -> {
-                val display = fullMatches.map { it.display() }.toSet()
+            icdMatches.fullMatches.isNotEmpty() -> {
+                val display = icdMatches.fullMatches.map { it.display() }.toSet()
                 EvaluationFactory.pass(
                     PriorConditionMessages.passSpecific(
                         PriorConditionMessages.Characteristic.CONDITION,
@@ -30,12 +30,15 @@ class HasHadPriorConditionWithIcdCodeFromSet(
                     PriorConditionMessages.passGeneral(display)
                 )
             }
-            undeterminedMatches.isNotEmpty() -> {
-                EvaluationFactory.undetermined(
-                    "Has history of ${undeterminedMatches.map { it.display() }} but undetermined if history of $priorOtherConditionTerm"
-                )
 
-            } else -> {
+            icdMatches.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> {
+                EvaluationFactory.undetermined(
+                    "Has history of ${icdMatches.mainCodeMatchesWithUnknownExtension.map { it.display() }} " +
+                            "but undetermined if history of $priorOtherConditionTerm"
+                )
+            }
+
+            else -> {
                 EvaluationFactory.fail(
                     PriorConditionMessages.failSpecific(priorOtherConditionTerm),
                     PriorConditionMessages.failGeneral()

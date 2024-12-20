@@ -51,9 +51,9 @@ class IntoleranceConfigFactoryTest {
                 CurationCategory.INTOLERANCE.categoryName,
                 "input",
                 "icd",
-                "[icdTitle]",
+                "icdTitle",
                 "icd",
-                "One or more of ICD title(s) \"icdTitle\" is not known - check for existence in ICD model"
+                "ICD title \"icdTitle\" is not known - check for existence in ICD model"
             )
         )
     }

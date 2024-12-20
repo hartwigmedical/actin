@@ -11,15 +11,14 @@ class HasIntoleranceWithSpecificIcdTitle(private val icdModel: IcdModel, private
         
     override fun evaluate(record: PatientRecord): Evaluation {
         val targetCode = icdModel.resolveCodeForTitle(targetIcdTitle)!!
-        val (fullMatches, mainMatchesWithUnknownExtension) =
-            icdModel.findInstancesMatchingAnyIcdCode(record.intolerances, setOf(targetCode))
+        val icdMatches = icdModel.findInstancesMatchingAnyIcdCode(record.intolerances, setOf(targetCode))
 
         return when {
-            fullMatches.isNotEmpty() -> {
-                EvaluationFactory.pass("Has intolerance ${Format.concatItemsWithAnd(fullMatches)} belonging to $targetIcdTitle")
+            icdMatches.fullMatches.isNotEmpty() -> {
+                EvaluationFactory.pass("Has intolerance ${Format.concatItemsWithAnd(icdMatches.fullMatches)} belonging to $targetIcdTitle")
             }
 
-            mainMatchesWithUnknownExtension.isNotEmpty() -> {
+            icdMatches.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> {
                 EvaluationFactory.undetermined("Intolerance in history - but undetermined if $targetIcdTitle intolerance (drug type unknown)")
             }
 

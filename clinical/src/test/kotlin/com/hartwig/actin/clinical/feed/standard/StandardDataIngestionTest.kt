@@ -83,10 +83,7 @@ class StandardDataIngestionTest {
             priorOtherConditionsExtractor = StandardPriorOtherConditionsExtractor(
                 curationDatabase.nonOncologicalHistoryCuration
             ),
-            intolerancesExtractor = StandardIntolerancesExtractor(
-                TestAtcFactory.createProperAtcModel(),
-                curationDatabase.intoleranceCuration
-            ),
+            intolerancesExtractor = StandardIntolerancesExtractor(curationDatabase.intoleranceCuration),
             complicationExtractor = StandardComplicationExtractor(curationDatabase.complicationCuration),
             treatmentHistoryExtractor = StandardOncologicalHistoryExtractor(
                 curationDatabase.treatmentHistoryEntryCuration

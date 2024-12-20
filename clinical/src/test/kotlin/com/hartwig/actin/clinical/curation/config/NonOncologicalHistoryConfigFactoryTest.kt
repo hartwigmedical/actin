@@ -117,9 +117,9 @@ class NonOncologicalHistoryConfigFactoryTest {
                 CurationCategory.NON_ONCOLOGICAL_HISTORY.categoryName,
                 "input",
                 "icd",
-                "[unknown title]",
+                "unknown title",
                 "icd",
-                "One or more of ICD title(s) \"unknown title\" is not known - check for existence in ICD model"
+                "ICD title \"unknown title\" is not known - check for existence in ICD model"
             )
         )
     }
@@ -135,9 +135,9 @@ class NonOncologicalHistoryConfigFactoryTest {
                 CurationCategory.NON_ONCOLOGICAL_HISTORY.categoryName,
                 "input",
                 "icd",
-                "[$icdTitle&unknownExtension]",
+                "$icdTitle&unknownExtension",
                 "icd",
-                "One or more of ICD title(s) \"$icdTitle&unknownExtension\" is not known - check for existence in ICD model"
+                "ICD title \"$icdTitle&unknownExtension\" is not known - check for existence in ICD model"
             )
         )
     }
