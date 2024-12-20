@@ -241,6 +241,11 @@ class FunctionInputResolver(
                     return true
                 }
 
+                FunctionInput.ONE_INTEGER_ONE_STRING -> {
+                    createOneIntegerOneStringInput(function)
+                    return true
+                }
+
                 FunctionInput.ONE_INTEGER_MANY_DOID_TERMS -> {
                     createOneIntegerManyDoidTermsInput(function)
                     return true
@@ -591,6 +596,14 @@ class FunctionInputResolver(
         return OneIntegerManyStrings(
             strings = toStringList(function.parameters.first()),
             integer = parameterAsInt(function, 1)
+        )
+    }
+
+    fun createOneIntegerOneStringInput(function: EligibilityFunction): OneIntegerOneString {
+        assertParamConfig(function, FunctionInput.ONE_INTEGER_ONE_STRING, 2)
+        return OneIntegerOneString(
+            integer = parameterAsInt(function, 0),
+            string = parameterAsString(function, 1)
         )
     }
 
