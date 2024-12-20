@@ -6,10 +6,10 @@ http://foundationlink/1237	http://linearizationlink/7321	1A01		Test category	cat
 http://foundationlink/12371	http://linearizationlink/17321	1A01.1		Test subcategory - specific	category	2	False	1	browser	True		Block1-A	Block1-B
 http://foundationlink/12372	http://linearizationlink/27321	1A01.Z		Test subcategory - other	category	2	True	1	browser	True		Block1-A	Block1-B
 http://foundationlink/X0	http://linearizationlink/X0			Extension chapter X	chapter	1	False	X	browser	False
-http://foundationlink/X1	http://linearizationlink/X1			-Extension block X1	block	1	False	X	browser	False
-http://foundationlink/X11	http://linearizationlink/X11			--Extension block X1.1	block	2	False	X	browser	False
-http://foundationlink/X111	http://linearizationlink/X111	X00		---Extension category X1	category	1	False	X	browser	False
-http://foundationlink/X1111	http://linearizationlink/X1111	X00.1		----Extension category X1.1	category	2	False	X	browser	True
-http://foundationlink/X2	http://linearizationlink/X2	X01		---Extension category X2	category	1	False	X	browser	False
-http://foundationlink/X21	http://linearizationlink/X21	X01.1		----Extension category X2.1	category	2	False	X	browser	True
-http://foundationlink/X3	http://linearizationlink/X3			--Extension block X3	block	1	False	X	browser	False
+http://foundationlink/X1	http://linearizationlink/X1			- Extension block X1	block	1	False	X	browser	False
+http://foundationlink/X11	http://linearizationlink/X11			- - Extension block X1.1	block	2	False	X	browser	False
+http://foundationlink/X111	http://linearizationlink/X111	X00		- - - Extension category X1	category	1	False	X	browser	False
+http://foundationlink/X1111	http://linearizationlink/X1111	X00.1		- - - - Extension category X1.1	category	2	False	X	browser	True
+http://foundationlink/X2	http://linearizationlink/X2	X01		- - - Extension category X2	category	1	False	X	browser	False
+http://foundationlink/X21	http://linearizationlink/X21	X01.1		- - - - Extension category X2.1	category	2	False	X	browser	True
+http://foundationlink/X3	http://linearizationlink/X3			- - Extension block X3	block	1	False	X	browser	False

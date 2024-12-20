@@ -35,30 +35,40 @@ class IcdModel(
     }
 
     fun <T : IcdCodeEntity> findInstancesMatchingAnyIcdCode(instances: List<T>, targetIcdCodes: Set<IcdCode>): IcdMatches<T> {
-        return targetIcdCodes.fold(IcdMatches(emptyList(), emptyList())) { acc, targetCode ->
-            val (fullMatch, unknownMatch) = returnIcdMatches(targetCode, instances)
-            IcdMatches(acc.fullMatches + fullMatch, acc.mainCodeMatchesWithUnknownExtension + unknownMatch)
-        }
-    }
+        val targetMainCodesWithExtensions = targetIcdCodes.mapNotNull { code -> code.extensionCode?.let { code.mainCode } }.toSet()
+        val instancesByCategory = instances.groupBy { instance ->
+            val allCodes = allCodesForEntity(instance)
+            val allMainCodesWithUnknownExtensions = instance.icdCodes.filter { it.extensionCode == null }
+                .flatMap { codeWithAllParents(it.mainCode) }
+                .toSet()
+            when {
+                targetIcdCodes.any(allCodes::contains) -> IcdMatchCategory.FULL_MATCH
+                targetMainCodesWithExtensions.any(allMainCodesWithUnknownExtensions::contains) -> {
+                    IcdMatchCategory.MATCH_WITH_UNKNOWN_EXTENSION
+                }
 
-    private fun <T : IcdCodeEntity> returnIcdMatches(targetCode: IcdCode, instances: List<T>): Pair<List<T>, List<T>> {
-        val mainMatches = instances.filter { instance ->
-            instance.icdCodes.any {
-                codeWithAllParents(it.mainCode).any(targetCode.mainCode::equals)
+                else -> IcdMatchCategory.NO_MATCH
             }
         }
+        return IcdMatches(
+            instancesByCategory[IcdMatchCategory.FULL_MATCH] ?: emptyList(),
+            instancesByCategory[IcdMatchCategory.MATCH_WITH_UNKNOWN_EXTENSION] ?: emptyList()
+        )
+    }
 
-        return if (targetCode.extensionCode == null) {
-            Pair(mainMatches, emptyList())
-        } else {
-            mainMatches.filter { match ->
-                match.icdCodes.any {
-                    it.extensionCode?.let { code ->
-                        codeWithAllParents(code).any(targetCode.extensionCode::equals)
-                    } != false
-                }
-            }.partition { it.icdCodes.none { code -> code.extensionCode == null } }
-        }
+    private enum class IcdMatchCategory {
+        FULL_MATCH,
+        MATCH_WITH_UNKNOWN_EXTENSION,
+        NO_MATCH
+    }
+
+    private fun allCodesForEntity(entity: IcdCodeEntity): Set<IcdCode> {
+        return entity.icdCodes.flatMap { code ->
+            val extensionCodes = code.extensionCode?.let { codeWithAllParents(it) + null } ?: listOf(null)
+            codeWithAllParents(code.mainCode).flatMap { mainCode ->
+                extensionCodes.map { IcdCode(mainCode, it) }
+            }
+        }.toSet()
     }
 
     companion object {

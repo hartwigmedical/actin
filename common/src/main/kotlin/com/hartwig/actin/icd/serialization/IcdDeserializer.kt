@@ -29,7 +29,8 @@ object IcdDeserializer {
     private fun returnExtensionChapterNodeWithParents(serializedNodes: List<SerializedIcdNode>): List<IcdNode> {
         return serializedNodes.fold(Pair(emptyList<IcdNode>(), emptyList<String>())) { (result, parents), node ->
             val code = resolveCode(node)
-            val hyphenLevel = node.title.takeWhile { it == '-' }.length
+            val normalizedTitle = node.title.trim().replace(" -", "-").replace("- ", "-")
+            val hyphenLevel = normalizedTitle.takeWhile { it == '-' }.length
             val updatedParents = parents.take(hyphenLevel)
             val currentParents = updatedParents + code
 
