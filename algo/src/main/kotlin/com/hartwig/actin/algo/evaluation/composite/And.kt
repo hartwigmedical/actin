@@ -26,8 +26,8 @@ class And(private val functions: List<EvaluationFunction>) : EvaluationFunction 
                 inclusionMolecularEvents = result.inclusionMolecularEvents + additionalEvaluations.flatMap { it.inclusionMolecularEvents },
                 exclusionMolecularEvents = result.exclusionMolecularEvents + additionalEvaluations.flatMap { it.exclusionMolecularEvents })
         } else {
-            evaluationsByResult.values.flatten()
-                .filterNot { it.recoverable && it.result == EvaluationResult.UNDETERMINED && !recoverable }
+            evaluationsByResult.map { it.value }.flatten()
+                .filterNot { if (!(evaluationResult == EvaluationResult.UNDETERMINED && recoverable)) it.recoverable && it.result == EvaluationResult.UNDETERMINED else false }
                 .fold(Evaluation(evaluationResult, recoverable), Evaluation::addMessagesAndEvents)
                 .copy(result = evaluationResult)
         }
