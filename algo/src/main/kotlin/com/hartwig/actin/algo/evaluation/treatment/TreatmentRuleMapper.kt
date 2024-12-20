@@ -33,7 +33,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                 )
             },
             EligibilityRule.IS_ELIGIBLE_FOR_LOCAL_TREATMENT_OF_METASTASES to isEligibleForLocalTreatmentOfMetastasesCreator(),
-            EligibilityRule.IS_ELIGIBLE_FOR_SPECIFIC_SURGERY_X to isEligibleForSpecificSurgeryCreator(),
+            EligibilityRule.IS_ELIGIBLE_FOR_SURGERY_TYPE_X to isEligibleForSpecificSurgeryCreator(),
             EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_OF_CATEGORY_X_AND_ANY_TYPE_Y to isEligibleForTreatmentOfCategoryAndTypeCreator(),
             EligibilityRule.MEETS_SPECIFIC_CRITERIA_FOR_RESECTION to { MeetsSpecificCriteriaForResection() },
             EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS to hasExhaustedSOCTreatmentsCreator(),
@@ -95,7 +95,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_RADIOLOGICAL_PROGRESSIVE_DISEASE_FOLLOWING_AT_LEAST_X_TREATMENT_LINES to hasRadiologicalProgressionFollowingSomeTreatmentLinesCreator(),
             EligibilityRule.HAS_RADIOLOGICAL_PROGRESSIVE_DISEASE_AFTER_LATEST_TREATMENT_LINE to
                     { HasRadiologicalProgressionFollowingLatestTreatmentLine() },
-            EligibilityRule.HAS_RECEIVED_DEFINITIVE_LOCOREGIONAL_THERAPY_WITH_CURATIVE_INTENT to { HasReceivedDefinitiveLocoregionalTherapyWithCurativeIntent() },
+            EligibilityRule.HAS_HAD_DEFINITIVE_LOCOREGIONAL_THERAPY_WITH_CURATIVE_INTENT to { HasReceivedDefinitiveLocoregionalTherapyWithCurativeIntent() },
             EligibilityRule.HAS_HAD_COMPLETE_RESECTION to { HasHadCompleteResection() },
             EligibilityRule.HAS_HAD_PARTIAL_RESECTION to { HasHadPartialResection() },
             EligibilityRule.HAS_HAD_RESECTION_WITHIN_X_WEEKS to hasHadResectionWithinWeeksCreator(),

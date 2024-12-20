@@ -9,7 +9,7 @@ class HasReceivedDefinitiveLocoregionalTherapyWithCurativeIntent: EvaluationFunc
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return EvaluationFactory.recoverableUndetermined(
-            "Undetermined if has received definitive locoregional therapy with curative intent"
+            "Undetermined if patient has received definitive locoregional therapy with curative intent"
         )
     }
 }
