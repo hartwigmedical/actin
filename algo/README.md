@@ -477,15 +477,16 @@ _Urine measurements_
 
 _Other_
 
-| Rule                                                          | When does a patient pass evaluation?                         | Note |
-|---------------------------------------------------------------|--------------------------------------------------------------|------|
-| HAS_GLUCOSE_FASTING_PLASMA_MMOL_PER_L_OF_AT_MOST_X            | (T.B.D.) Currently resolves to `UNDETERMINED`                |      |
-| HAS_THYROXINE_WITHIN_INSTITUTIONAL_NORMAL_LIMITS              | Free T4 (FT4) LLN<X<ULN (isOutsideRef=0)                     |      |
-| HAS_FREE_TRIIODOTHYRONINE_WITHIN_INSTITUTIONAL_NORMAL_LIMITS  | Free T3 (FT3) LLN<X<ULN (isOutsideRef=0)                     |      |
-| HAS_BOUND_TRIIODOTHYRONINE_WITHIN_INSTITUTIONAL_NORMAL_LIMITS | Bound T3 (T3) LLN<X<ULN (isOutsideRef=0)                     |      |
-| HAS_TSH_WITHIN_INSTITUTIONAL_NORMAL_LIMITS                    | Thyroid Stimulating Hormone (TSH) LLN<X<ULN (isOutsideRef=0) |      |
-| HAS_ANTI_HLA_ANTIBODIES_AGAINST_PDC_LINE                      | Resolves to `UNDETERMINED`                                   |      |
-| HAS_CD4_POSITIVE_CELLS_PER_MICROLITER_OF_AT_LEAST_X           | CD4 positive cells (CD4-PERC) in cells per microliter => X   |      |
+| Rule                                                          | When does a patient pass evaluation?                                                                                                                                   | Note |
+|---------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------|
+| HAS_ADEQUATE_ORGAN_FUNCTION                                   | `WARN` if (1) Hemoglobin, Neutrophils, Thrombocytes, or eGFR under LLN, (2) ASAT or ALAT >3*ULN, Bilirubin, or LD above ULN, or (3) cardiovascular disease in history. |
+| HAS_GLUCOSE_FASTING_PLASMA_MMOL_PER_L_OF_AT_MOST_X            | (T.B.D.) Currently resolves to `UNDETERMINED`                                                                                                                          |      |
+| HAS_THYROXINE_WITHIN_INSTITUTIONAL_NORMAL_LIMITS              | Free T4 (FT4) LLN<X<ULN (isOutsideRef=0)                                                                                                                               |      |
+| HAS_FREE_TRIIODOTHYRONINE_WITHIN_INSTITUTIONAL_NORMAL_LIMITS  | Free T3 (FT3) LLN<X<ULN (isOutsideRef=0)                                                                                                                               |      |
+| HAS_BOUND_TRIIODOTHYRONINE_WITHIN_INSTITUTIONAL_NORMAL_LIMITS | Bound T3 (T3) LLN<X<ULN (isOutsideRef=0)                                                                                                                               |      |
+| HAS_TSH_WITHIN_INSTITUTIONAL_NORMAL_LIMITS                    | Thyroid Stimulating Hormone (TSH) LLN<X<ULN (isOutsideRef=0)                                                                                                           |      |
+| HAS_ANTI_HLA_ANTIBODIES_AGAINST_PDC_LINE                      | Resolves to `UNDETERMINED`                                                                                                                                             |      |
+| HAS_CD4_POSITIVE_CELLS_PER_MICROLITER_OF_AT_LEAST_X           | CD4 positive cells (CD4-PERC) in cells per microliter => X                                                                                                             |      |
 
 ULN = Upper Limit of Normal, LLN = Lower Limit of Normal; implemented as refLimitUp and refLimitLow, respectively.
 
