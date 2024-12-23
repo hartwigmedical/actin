@@ -9,10 +9,10 @@ class And(private val functions: List<EvaluationFunction>) : EvaluationFunction 
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val evaluationsByResult = functions.map { it.evaluate(record) }.distinct().groupBy(Evaluation::result)
-        val evaluationResult = evaluationsByResult.keys.minOrNull()
+        val worstResult = evaluationsByResult.keys.minOrNull()
             ?: throw IllegalStateException("Could not determine AND result for functions: $functions")
 
-        val (_, unrecoverableEvaluations) = evaluationsByResult[evaluationResult]!!.partition(Evaluation::recoverable)
+        val unrecoverableEvaluations = evaluationsByResult[worstResult]!!.filterNot(Evaluation::recoverable)
         val recoverable = unrecoverableEvaluations.isEmpty()
         val additionalEvaluations = listOf(EvaluationResult.PASS, EvaluationResult.WARN)
             .flatMap { result ->
@@ -20,16 +20,25 @@ class And(private val functions: List<EvaluationFunction>) : EvaluationFunction 
                     ?: emptyList()
             }
 
-        return if (evaluationResult == EvaluationResult.FAIL && !recoverable) {
-            val result = unrecoverableEvaluations.fold(Evaluation(EvaluationResult.FAIL, false), Evaluation::addMessagesAndEvents)
-            result.copy(
-                inclusionMolecularEvents = result.inclusionMolecularEvents + additionalEvaluations.flatMap { it.inclusionMolecularEvents },
-                exclusionMolecularEvents = result.exclusionMolecularEvents + additionalEvaluations.flatMap { it.exclusionMolecularEvents })
-        } else {
-            evaluationsByResult.map { it.value }.flatten()
-                .filterNot { if (!(evaluationResult == EvaluationResult.UNDETERMINED && recoverable)) it.recoverable && it.result == EvaluationResult.UNDETERMINED else false }
-                .fold(Evaluation(evaluationResult, recoverable), Evaluation::addMessagesAndEvents)
-                .copy(result = evaluationResult)
+        return when {
+            worstResult == EvaluationResult.FAIL && !recoverable -> {
+                val result = unrecoverableEvaluations.fold(Evaluation(EvaluationResult.FAIL, false), Evaluation::addMessagesAndEvents)
+                result.copy(
+                    inclusionMolecularEvents = result.inclusionMolecularEvents + additionalEvaluations.flatMap { it.inclusionMolecularEvents },
+                    exclusionMolecularEvents = result.exclusionMolecularEvents + additionalEvaluations.flatMap { it.exclusionMolecularEvents }
+                )
+            }
+
+            worstResult == EvaluationResult.UNDETERMINED && recoverable -> {
+                evaluationsByResult.flatMap { it.value }
+                    .fold(Evaluation(EvaluationResult.UNDETERMINED, true), Evaluation::addMessagesAndEvents)
+            }
+
+            else -> {
+                evaluationsByResult.flatMap { it.value }
+                    .filterNot { it.recoverable && it.result == EvaluationResult.UNDETERMINED }
+                    .fold(Evaluation(worstResult, recoverable), Evaluation::addMessagesAndEvents)
+            }
         }
     }
 }

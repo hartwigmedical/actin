@@ -61,10 +61,10 @@ object EvaluationAssert {
         }
     }
 
-    fun assertCombinedEvaluation(expected: EvaluationResult, actual: Evaluation, eval1: EvaluationResult, eval2: EvaluationResult) {
+    fun assertCombinedEvaluation(expected: EvaluationResult, actual: Evaluation, combinedEvaluations: Set<EvaluationResult>) {
         assertThat(actual.result).isEqualTo(expected)
         when {
-            eval1 == EvaluationResult.FAIL || eval2 == EvaluationResult.FAIL -> {
+            EvaluationResult.FAIL in combinedEvaluations && EvaluationResult.FAIL in combinedEvaluations -> {
                 assertThat(actual.passSpecificMessages).isEmpty()
                 assertThat(actual.passGeneralMessages).isEmpty()
                 assertThat(actual.warnSpecificMessages).isEmpty()
@@ -75,7 +75,7 @@ object EvaluationAssert {
                 assertThat(actual.failGeneralMessages).isNotEmpty()
             }
 
-            (eval1 == EvaluationResult.PASS && eval2 == EvaluationResult.WARN) || (eval2 == EvaluationResult.PASS && eval1 == EvaluationResult.WARN) -> {
+            EvaluationResult.PASS in combinedEvaluations && EvaluationResult.WARN in combinedEvaluations -> {
                 assertThat(actual.passSpecificMessages).isNotEmpty()
                 assertThat(actual.passGeneralMessages).isNotEmpty()
                 assertThat(actual.undeterminedSpecificMessages).isEmpty()
@@ -86,7 +86,7 @@ object EvaluationAssert {
                 assertThat(actual.failGeneralMessages).isEmpty()
             }
 
-            (eval1 == EvaluationResult.PASS && eval2 == EvaluationResult.UNDETERMINED) || (eval2 == EvaluationResult.PASS && eval1 == EvaluationResult.UNDETERMINED) -> {
+            EvaluationResult.PASS in combinedEvaluations && EvaluationResult.UNDETERMINED in combinedEvaluations -> {
                 assertThat(actual.passSpecificMessages).isNotEmpty()
                 assertThat(actual.passGeneralMessages).isNotEmpty()
                 assertThat(actual.undeterminedSpecificMessages).isNotEmpty()
@@ -97,7 +97,7 @@ object EvaluationAssert {
                 assertThat(actual.failGeneralMessages).isEmpty()
             }
 
-            (eval1 == EvaluationResult.WARN && eval2 == EvaluationResult.UNDETERMINED) || (eval2 == EvaluationResult.WARN && eval1 == EvaluationResult.UNDETERMINED) -> {
+            EvaluationResult.WARN in combinedEvaluations && EvaluationResult.UNDETERMINED in combinedEvaluations -> {
                 assertThat(actual.passSpecificMessages).isEmpty()
                 assertThat(actual.passGeneralMessages).isEmpty()
                 assertThat(actual.warnSpecificMessages).isNotEmpty()

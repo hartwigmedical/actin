@@ -9,19 +9,19 @@ class Or(private val functions: List<EvaluationFunction>) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val evaluationsByResult = functions.map { it.evaluate(record) }.distinct().groupBy(Evaluation::result)
-        val evaluationResult = evaluationsByResult.keys.maxOrNull()
+        val bestResult = evaluationsByResult.keys.maxOrNull()
             ?: throw IllegalStateException("Could not determine OR result for functions: $functions")
 
-        val additionalEvaluations = if (evaluationResult == EvaluationResult.PASS) {
+        val additionalEvaluations = if (bestResult == EvaluationResult.PASS) {
             evaluationsByResult[EvaluationResult.WARN]?.filter { it.exclusionMolecularEvents.isNotEmpty() || it.inclusionMolecularEvents.isNotEmpty() }
                 ?: emptyList()
         } else emptyList()
-        val evaluations = evaluationsByResult[evaluationResult]!! + additionalEvaluations
+        val evaluations = evaluationsByResult[bestResult]!! + additionalEvaluations
         val filteredEvaluations =
-            if (evaluationResult == EvaluationResult.FAIL && evaluations.any { it.recoverable }) evaluations.filter { it.recoverable } else evaluations
+            if (bestResult == EvaluationResult.FAIL && evaluations.any { it.recoverable }) evaluations.filter { it.recoverable } else evaluations
 
         return filteredEvaluations.fold(
-            Evaluation(evaluationResult, filteredEvaluations.any(Evaluation::recoverable)),
+            Evaluation(bestResult, filteredEvaluations.any(Evaluation::recoverable)),
             Evaluation::addMessagesAndEvents
         )
     }
