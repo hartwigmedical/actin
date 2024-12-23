@@ -2,12 +2,14 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.molecular.IHCTestClassificationFunctions.classifyIhcTest
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMaxValue
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMinValue
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.PriorIHCTest
 import com.hartwig.actin.doid.DoidModel
 
 object PDL1EvaluationFunctions {
@@ -19,20 +21,19 @@ object PDL1EvaluationFunctions {
         val isLungCancer = doidModel?.let { DoidEvaluationFunctions.isOfDoidType(it, record.tumor.doids, DoidConstants.LUNG_CANCER_DOID) }
         val pdl1TestsWithRequestedMeasurement = PriorIHCTestFunctions.allPDL1Tests(priorMolecularTests, measure, isLungCancer)
 
+        val measureMessage = measure?.let { " measured by $it" } ?: ""
+        val comparatorMessage = if (evaluateMaxPDL1) "below maximum of" else "above minimum of"
+
         val testEvaluations = pdl1TestsWithRequestedMeasurement.mapNotNull { ihcTest ->
             ihcTest.scoreValue?.let { scoreValue ->
                 val roundedScore = Math.round(scoreValue).toDouble()
                 if (evaluateMaxPDL1) {
                     evaluateVersusMaxValue(roundedScore, ihcTest.scoreValuePrefix, pdl1Reference)
-                }
-                else {
+                } else {
                     evaluateVersusMinValue(roundedScore, ihcTest.scoreValuePrefix, pdl1Reference)
                 }
-            }
+            } ?: evaluateTestWithNegativeOrPositiveScore(ihcTest, pdl1Reference, evaluateMaxPDL1, measureMessage, comparatorMessage)
         }.toSet()
-
-        val measureMessage = measure?.let { " measured by $it" } ?: ""
-        val comparatorMessage = if (evaluateMaxPDL1) "below maximum of" else "above minimum of"
 
         return when {
             EvaluationResult.PASS in testEvaluations && EvaluationResult.FAIL in testEvaluations -> {
@@ -40,12 +41,14 @@ object PDL1EvaluationFunctions {
                     "Undetermined if PD-L1 expression $comparatorMessage $pdl1Reference - conflicting PD-L1 results"
                 )
             }
+
             EvaluationResult.PASS in testEvaluations -> {
                 EvaluationFactory.pass(
                     "PD-L1 expression$measureMessage $comparatorMessage $pdl1Reference",
                     "PD-L1 expression $comparatorMessage $pdl1Reference"
                 )
             }
+
             EvaluationResult.FAIL in testEvaluations -> {
                 val messageEnding = (if (evaluateMaxPDL1) "exceeds " else "below ") + pdl1Reference
                 EvaluationFactory.fail(
@@ -53,6 +56,7 @@ object PDL1EvaluationFunctions {
                     "PD-L1 expression $messageEnding"
                 )
             }
+
             EvaluationResult.UNDETERMINED in testEvaluations -> {
                 val testMessage = pdl1TestsWithRequestedMeasurement
                     .joinToString(", ") { "${it.scoreValuePrefix} ${it.scoreValue}" }
@@ -60,22 +64,65 @@ object PDL1EvaluationFunctions {
                     "Undetermined if PD-L1 expression ($testMessage) $comparatorMessage $pdl1Reference"
                 )
             }
+
             pdl1TestsWithRequestedMeasurement.isNotEmpty() && pdl1TestsWithRequestedMeasurement.any { test -> test.scoreValue == null } -> {
                 EvaluationFactory.recoverableFail(
                     "No PD-L1 IHC test found with score value - only neg/pos status available",
                     "No score value available for PD-L1 IHC test"
                 )
             }
+
             PriorIHCTestFunctions.allPDL1Tests(priorMolecularTests).isNotEmpty() -> {
                 EvaluationFactory.recoverableFail(
                     "No PD-L1 IHC test found with measurement type $measure", "PD-L1 tests not in correct unit ($measure)"
                 )
             }
+
             else -> {
                 EvaluationFactory.undetermined(
                     "PD-L1 expression (IHC) not tested", "PD-L1 expression (IHC) not tested", missingGenesForEvaluation = true
                 )
             }
         }
+    }
+
+    private fun evaluateTestWithNegativeOrPositiveScore(
+        ihcTest: PriorIHCTest,
+        pdl1Reference: Double,
+        evaluateMaxPDL1: Boolean,
+        measureMessage: String,
+        comparatorMessage: String
+    ): Evaluation? {
+        val result = classifyIhcTest(ihcTest)
+        if (evaluateMaxPDL1) {
+            when {
+                result == IHCTestClassificationFunctions.TestResult.NEGATIVE && pdl1Reference > 1 -> {
+                    return EvaluationFactory.pass(
+                        "PD-L1 expression$measureMessage $comparatorMessage $pdl1Reference",
+                        "PD-L1 expression $comparatorMessage $pdl1Reference"
+                    )
+                }
+
+                result == IHCTestClassificationFunctions.TestResult.NEGATIVE -> {
+                    return EvaluationFactory.undetermined(
+                        "Undetermined if PD-L1 expression 'negative' $measureMessage is considered $comparatorMessage $pdl1Reference",
+                        "Undetermined if PD-L1 expression 'negative' is considered $comparatorMessage $pdl1Reference"
+                    )
+                }
+            }
+        } else {
+            when {
+                result == IHCTestClassificationFunctions.TestResult.POSITIVE && pdl1Reference > 10 -> return EvaluationFactory.pass(
+                    "PD-L1 expression$measureMessage $comparatorMessage $pdl1Reference",
+                    "PD-L1 expression $comparatorMessage $pdl1Reference"
+                )
+
+                result == IHCTestClassificationFunctions.TestResult.POSITIVE -> return EvaluationFactory.undetermined(
+                    "Undetermined if PD-L1 expression 'positive' $measureMessage is considered $comparatorMessage $pdl1Reference",
+                    "Undetermined if PD-L1 expression 'positive' is considered $comparatorMessage $pdl1Reference"
+                )
+            }
+        }
+        return null
     }
 }
