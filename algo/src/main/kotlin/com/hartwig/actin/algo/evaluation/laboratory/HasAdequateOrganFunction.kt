@@ -84,7 +84,7 @@ class HasAdequateOrganFunction(private val minValidDate: LocalDate, private val 
             undeterminedLabValues.isNotEmpty() -> {
                 EvaluationFactory.recoverableUndetermined(
                     "Undetermined if adequate organ function " +
-                            "(lab value(s) (${Format.concatItemsWithAnd(undeterminedLabValues)}) undetermined)"
+                            "(lab value(s) (${Format.concatWithCommaAndAnd(undeterminedLabValues.map { it.display })}) undetermined)"
                 )
             }
 
@@ -101,7 +101,7 @@ class HasAdequateOrganFunction(private val minValidDate: LocalDate, private val 
     ): LabEvaluation.LabEvaluationResult {
         return if (LabEvaluation.isValid(mostRecent, measurement, minValidDate) && mostRecent != null) {
             val limit =
-                if (measurement in listOf(LabMeasurement.ASPARTATE_AMINOTRANSFERASE, LabMeasurement.ALANINE_AMINOTRANSFERASE)) 3.0 else 1.0
+                if (measurement in listOf(LabMeasurement.ASPARTATE_AMINOTRANSFERASE, LabMeasurement.ALANINE_AMINOTRANSFERASE)) 2.0 else 1.0
             if (isMaxUln) LabEvaluation.evaluateVersusMaxULN(mostRecent, limit) else LabEvaluation.evaluateVersusMinLLN(mostRecent, limit)
         } else LabEvaluation.LabEvaluationResult.CANNOT_BE_DETERMINED
     }
