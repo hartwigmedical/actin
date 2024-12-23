@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.composite
 
-import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertCombinedEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.TestEvaluationFunctionFactory
@@ -16,109 +15,29 @@ class AndTest {
     @Test
     fun `Should combine evaluations`() {
         assertEvaluation(EvaluationResult.NOT_EVALUATED, combineWithNotEvaluated(TestEvaluationFunctionFactory.notEvaluated()))
-        assertCombinedEvaluation(
-            EvaluationResult.PASS,
-            combineWithNotEvaluated(TestEvaluationFunctionFactory.pass()),
-            setOf(EvaluationResult.NOT_EVALUATED, EvaluationResult.PASS)
-        )
-        assertCombinedEvaluation(
-            EvaluationResult.UNDETERMINED,
-            combineWithNotEvaluated(TestEvaluationFunctionFactory.undetermined()),
-            setOf(EvaluationResult.NOT_EVALUATED, EvaluationResult.UNDETERMINED)
-        )
-        assertCombinedEvaluation(
-            EvaluationResult.WARN,
-            combineWithNotEvaluated(TestEvaluationFunctionFactory.warn()),
-            setOf(EvaluationResult.NOT_EVALUATED, EvaluationResult.WARN)
-        )
-        assertCombinedEvaluation(
-            EvaluationResult.FAIL,
-            combineWithNotEvaluated(TestEvaluationFunctionFactory.fail()),
-            setOf(EvaluationResult.NOT_EVALUATED, EvaluationResult.FAIL)
-        )
-        assertCombinedEvaluation(
-            EvaluationResult.PASS,
-            combineWithPass(TestEvaluationFunctionFactory.notEvaluated()),
-            setOf(EvaluationResult.PASS, EvaluationResult.NOT_EVALUATED)
-        )
+        assertEvaluation(EvaluationResult.PASS, combineWithNotEvaluated(TestEvaluationFunctionFactory.pass()))
+        assertEvaluation(EvaluationResult.UNDETERMINED, combineWithNotEvaluated(TestEvaluationFunctionFactory.undetermined()))
+        assertEvaluation(EvaluationResult.WARN, combineWithNotEvaluated(TestEvaluationFunctionFactory.warn()))
+        assertEvaluation(EvaluationResult.FAIL, combineWithNotEvaluated(TestEvaluationFunctionFactory.fail()))
+        assertEvaluation(EvaluationResult.PASS, combineWithPass(TestEvaluationFunctionFactory.notEvaluated()))
         assertEvaluation(EvaluationResult.PASS, combineWithPass(TestEvaluationFunctionFactory.pass()))
-        assertCombinedEvaluation(
-            EvaluationResult.UNDETERMINED,
-            combineWithPass(TestEvaluationFunctionFactory.undetermined()),
-            setOf(EvaluationResult.PASS, EvaluationResult.UNDETERMINED)
-        )
-        assertCombinedEvaluation(
-            EvaluationResult.WARN,
-            combineWithPass(TestEvaluationFunctionFactory.warn()),
-            setOf(EvaluationResult.PASS, EvaluationResult.WARN)
-        )
-        assertCombinedEvaluation(
-            EvaluationResult.FAIL,
-            combineWithPass(TestEvaluationFunctionFactory.fail()),
-            setOf(EvaluationResult.PASS, EvaluationResult.FAIL)
-        )
-        assertCombinedEvaluation(
-            EvaluationResult.UNDETERMINED,
-            combineWithUndetermined(TestEvaluationFunctionFactory.notEvaluated()),
-            setOf(EvaluationResult.UNDETERMINED, EvaluationResult.NOT_EVALUATED)
-        )
-        assertCombinedEvaluation(
-            EvaluationResult.UNDETERMINED,
-            combineWithUndetermined(TestEvaluationFunctionFactory.pass()),
-            setOf(EvaluationResult.UNDETERMINED, EvaluationResult.PASS)
-        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, combineWithPass(TestEvaluationFunctionFactory.undetermined()))
+        assertEvaluation(EvaluationResult.WARN, combineWithPass(TestEvaluationFunctionFactory.warn()))
+        assertEvaluation(EvaluationResult.FAIL, combineWithPass(TestEvaluationFunctionFactory.fail()))
+        assertEvaluation(EvaluationResult.UNDETERMINED, combineWithUndetermined(TestEvaluationFunctionFactory.notEvaluated()))
+        assertEvaluation(EvaluationResult.UNDETERMINED, combineWithUndetermined(TestEvaluationFunctionFactory.pass()))
         assertEvaluation(EvaluationResult.UNDETERMINED, combineWithUndetermined(TestEvaluationFunctionFactory.undetermined()))
-        assertCombinedEvaluation(
-            EvaluationResult.WARN,
-            combineWithUndetermined(TestEvaluationFunctionFactory.warn()),
-            setOf(EvaluationResult.UNDETERMINED, EvaluationResult.WARN)
-        )
-        assertCombinedEvaluation(
-            EvaluationResult.FAIL,
-            combineWithUndetermined(TestEvaluationFunctionFactory.fail()),
-            setOf(EvaluationResult.UNDETERMINED, EvaluationResult.FAIL)
-        )
-        assertCombinedEvaluation(
-            EvaluationResult.WARN,
-            combineWithWarn(TestEvaluationFunctionFactory.notEvaluated()),
-            setOf(EvaluationResult.WARN, EvaluationResult.NOT_EVALUATED)
-        )
-        assertCombinedEvaluation(
-            EvaluationResult.WARN,
-            combineWithWarn(TestEvaluationFunctionFactory.pass()),
-            setOf(EvaluationResult.WARN, EvaluationResult.PASS)
-        )
-        assertCombinedEvaluation(
-            EvaluationResult.WARN,
-            combineWithWarn(TestEvaluationFunctionFactory.undetermined()),
-            setOf(EvaluationResult.WARN, EvaluationResult.UNDETERMINED)
-        )
+        assertEvaluation(EvaluationResult.WARN, combineWithUndetermined(TestEvaluationFunctionFactory.warn()))
+        assertEvaluation(EvaluationResult.FAIL, combineWithUndetermined(TestEvaluationFunctionFactory.fail()))
+        assertEvaluation(EvaluationResult.WARN, combineWithWarn(TestEvaluationFunctionFactory.notEvaluated()))
+        assertEvaluation(EvaluationResult.WARN, combineWithWarn(TestEvaluationFunctionFactory.pass()))
+        assertEvaluation(EvaluationResult.WARN, combineWithWarn(TestEvaluationFunctionFactory.undetermined()))
         assertEvaluation(EvaluationResult.WARN, combineWithWarn(TestEvaluationFunctionFactory.warn()))
-        assertCombinedEvaluation(
-            EvaluationResult.FAIL,
-            combineWithWarn(TestEvaluationFunctionFactory.fail()),
-            setOf(EvaluationResult.WARN, EvaluationResult.FAIL)
-        )
-        assertCombinedEvaluation(
-            EvaluationResult.FAIL,
-            combineWithFail(TestEvaluationFunctionFactory.notEvaluated()),
-            setOf(EvaluationResult.FAIL, EvaluationResult.NOT_EVALUATED)
-        )
-        assertCombinedEvaluation(
-            EvaluationResult.FAIL,
-            combineWithFail(TestEvaluationFunctionFactory.pass()),
-            setOf(EvaluationResult.FAIL, EvaluationResult.PASS)
-        )
-        assertCombinedEvaluation(
-            EvaluationResult.FAIL,
-            combineWithFail(TestEvaluationFunctionFactory.undetermined()),
-            setOf(EvaluationResult.FAIL, EvaluationResult.UNDETERMINED)
-        )
-        assertCombinedEvaluation(
-            EvaluationResult.FAIL,
-            combineWithFail(TestEvaluationFunctionFactory.warn()),
-            setOf(EvaluationResult.FAIL, EvaluationResult.WARN)
-        )
+        assertEvaluation(EvaluationResult.FAIL, combineWithWarn(TestEvaluationFunctionFactory.fail()))
+        assertEvaluation(EvaluationResult.FAIL, combineWithFail(TestEvaluationFunctionFactory.notEvaluated()))
+        assertEvaluation(EvaluationResult.FAIL, combineWithFail(TestEvaluationFunctionFactory.pass()))
+        assertEvaluation(EvaluationResult.FAIL, combineWithFail(TestEvaluationFunctionFactory.undetermined()))
+        assertEvaluation(EvaluationResult.FAIL, combineWithFail(TestEvaluationFunctionFactory.warn()))
         assertEvaluation(EvaluationResult.FAIL, combineWithFail(TestEvaluationFunctionFactory.fail()))
     }
 
@@ -185,8 +104,8 @@ class AndTest {
         val unrecoverable: EvaluationFunction = CompositeTestFactory.create(recoverable = false, index = 2)
         val result: Evaluation = And(listOf(recoverable, unrecoverable)).evaluate(TEST_PATIENT)
         assertThat(result.recoverable).isFalse
-        assertThat(result.undeterminedGeneralMessages).hasSize(2)
-        assertThat(result.undeterminedGeneralMessages).containsAll(listOf("undetermined general 2", "undetermined general 1"))
+        assertThat(result.undeterminedGeneralMessages).hasSize(1)
+        assertThat(result.undeterminedGeneralMessages).containsExactly("undetermined general 2")
     }
 
     @Test
