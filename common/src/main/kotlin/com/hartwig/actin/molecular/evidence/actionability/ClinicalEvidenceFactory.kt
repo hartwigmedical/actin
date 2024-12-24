@@ -139,6 +139,8 @@ object ClinicalEvidenceFactory {
             "Netherlands" -> Country.NETHERLANDS
             "Belgium" -> Country.BELGIUM
             "Germany" -> Country.GERMANY
+            "France" -> Country.FRANCE
+            "United Kingdom" -> Country.UK
             "United States" -> Country.USA
             else -> Country.OTHER
         }

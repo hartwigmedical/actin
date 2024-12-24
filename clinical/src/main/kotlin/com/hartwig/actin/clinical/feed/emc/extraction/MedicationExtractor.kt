@@ -54,7 +54,7 @@ class MedicationExtractor(
                 val isAntiCancerMedication = MedicationCategories.isAntiCancerMedication(atcCode)
 
                 if (atc == null && !isSelfCare && !isTrialMedication) {
-                    LOGGER.error(
+                    LOGGER.warn(
                         "Medication $name has no ATC code and is not self-care or a trial"
                     )
                 }
