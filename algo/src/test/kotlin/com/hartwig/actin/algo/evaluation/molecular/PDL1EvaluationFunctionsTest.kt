@@ -13,6 +13,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val MEASURE = "measure"
+private const val TPS = "TPS"
 private const val PDL1_REFERENCE = 2.0
 private val doidModel =
     TestDoidModelFactory.createWithOneParentChild(DoidConstants.LUNG_CANCER_DOID, DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
@@ -138,6 +139,27 @@ class PDL1EvaluationFunctionsTest {
     fun `Should fail when test value is below minimum value`() {
         val record = MolecularTestFactory.withIHCTests(pdl1Test.copy(scoreValue = PDL1_REFERENCE.minus(1.0)))
         assertEvaluation(EvaluationResult.FAIL, evaluatePDL1byIHC(record, MEASURE, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false))
+    }
+
+    @Test
+    fun `Should pass when TPS test result is negative and evaluating below 2`() {
+        val record =
+            MolecularTestFactory.withIHCTests(pdl1Test.copy(scoreText = "negative", measure = TPS))
+        assertEvaluation(EvaluationResult.PASS, evaluatePDL1byIHC(record, TPS, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true))
+    }
+
+    @Test
+    fun `Should fail when TPS test result is negative and evaluating below 0,9`() {
+        val record =
+            MolecularTestFactory.withIHCTests(pdl1Test.copy(scoreText = "negative", measure = TPS))
+        assertEvaluation(EvaluationResult.FAIL, evaluatePDL1byIHC(record, TPS, 0.9, doidModel, evaluateMaxPDL1 = true))
+    }
+
+    @Test
+    fun `Should pass when TPS test result is positive and evaluating above 2`() {
+        val record =
+            MolecularTestFactory.withIHCTests(pdl1Test.copy(scoreText = "positive", measure = TPS))
+        assertEvaluation(EvaluationResult.PASS, evaluatePDL1byIHC(record, TPS, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false))
     }
 
     private fun evaluateFunctions(

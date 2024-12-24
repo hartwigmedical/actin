@@ -32,7 +32,7 @@ object PDL1EvaluationFunctions {
                 } else {
                     evaluateVersusMinValue(roundedScore, ihcTest.scoreValuePrefix, pdl1Reference)
                 }
-            } ?: evaluateTestWithNegativeOrPositiveScore(ihcTest, pdl1Reference, evaluateMaxPDL1, measureMessage, comparatorMessage)
+            } ?: evaluateTestWithNegativeOrPositiveScore(ihcTest, pdl1Reference, evaluateMaxPDL1)
         }.toSet()
 
         return when {
@@ -90,37 +90,12 @@ object PDL1EvaluationFunctions {
         ihcTest: PriorIHCTest,
         pdl1Reference: Double,
         evaluateMaxPDL1: Boolean,
-        measureMessage: String,
-        comparatorMessage: String
-    ): Evaluation? {
-        val result = classifyIhcTest(ihcTest)
-        if (evaluateMaxPDL1) {
+    ): EvaluationResult? {
+        if (ihcTest.measure == "TPS") {
+            val result = classifyIhcTest(ihcTest)
             when {
-                result == IHCTestClassificationFunctions.TestResult.NEGATIVE && pdl1Reference > 1 -> {
-                    return EvaluationFactory.pass(
-                        "PD-L1 expression$measureMessage $comparatorMessage $pdl1Reference",
-                        "PD-L1 expression $comparatorMessage $pdl1Reference"
-                    )
-                }
-
-                result == IHCTestClassificationFunctions.TestResult.NEGATIVE -> {
-                    return EvaluationFactory.undetermined(
-                        "Undetermined if PD-L1 expression 'negative' $measureMessage is considered $comparatorMessage $pdl1Reference",
-                        "Undetermined if PD-L1 expression 'negative' is considered $comparatorMessage $pdl1Reference"
-                    )
-                }
-            }
-        } else {
-            when {
-                result == IHCTestClassificationFunctions.TestResult.POSITIVE && pdl1Reference > 10 -> return EvaluationFactory.pass(
-                    "PD-L1 expression$measureMessage $comparatorMessage $pdl1Reference",
-                    "PD-L1 expression $comparatorMessage $pdl1Reference"
-                )
-
-                result == IHCTestClassificationFunctions.TestResult.POSITIVE -> return EvaluationFactory.undetermined(
-                    "Undetermined if PD-L1 expression 'positive' $measureMessage is considered $comparatorMessage $pdl1Reference",
-                    "Undetermined if PD-L1 expression 'positive' is considered $comparatorMessage $pdl1Reference"
-                )
+                evaluateMaxPDL1 && result == IHCTestClassificationFunctions.TestResult.NEGATIVE && pdl1Reference >= 1 -> return EvaluationResult.PASS
+                !evaluateMaxPDL1 && result == IHCTestClassificationFunctions.TestResult.POSITIVE && pdl1Reference > 1 -> return EvaluationResult.PASS
             }
         }
         return null

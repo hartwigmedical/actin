@@ -20,7 +20,7 @@ object IHCTestClassificationFunctions {
     }
 
     fun classifyIhcTest(test: PriorIHCTest): TestResult {
-        return classifyTest(test, "%", 1, 10, 100)
+        return classifyTest(test, "%", 1, 1, 100)
     }
 
     private fun classifyTest(
