@@ -117,9 +117,9 @@ class OrTest {
 
     @Test
     fun `Should only retain recoverable fail message if evaluation result is FAIL`() {
-        val function1: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, recoverable = true, index = 1)
-        val function2: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, recoverable = false, index = 2)
-        val result: Evaluation = Or(listOf(function1, function2)).evaluate(TEST_PATIENT)
+        val function1 = CompositeTestFactory.create(EvaluationResult.FAIL, recoverable = true, index = 1)
+        val function2 = CompositeTestFactory.create(EvaluationResult.FAIL, recoverable = false, index = 2)
+        val result = Or(listOf(function1, function2)).evaluate(TEST_PATIENT)
         assertThat(result.failSpecificMessages).containsExactly("fail specific 1")
         assertThat(result.failGeneralMessages).containsExactly("fail general 1")
     }

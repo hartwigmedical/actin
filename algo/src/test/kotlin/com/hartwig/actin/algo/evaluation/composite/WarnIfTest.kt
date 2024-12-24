@@ -12,7 +12,7 @@ import org.junit.Test
 class WarnIfTest {
 
     @Test
-    fun `Should properly warn if`() {
+    fun `Should warn if underlying function evaluates to pass or warn`() {
         val patient: PatientRecord = TestPatientFactory.createProperTestPatientRecord()
         assertEvaluation(EvaluationResult.WARN, WarnIf(TestEvaluationFunctionFactory.pass()).evaluate(patient))
         assertEvaluation(EvaluationResult.WARN, WarnIf(TestEvaluationFunctionFactory.warn()).evaluate(patient))

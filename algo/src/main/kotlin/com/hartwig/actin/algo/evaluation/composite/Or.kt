@@ -17,12 +17,10 @@ class Or(private val functions: List<EvaluationFunction>) : EvaluationFunction {
                 ?: emptyList()
         } else emptyList()
         val evaluations = evaluationsByResult[bestResult]!! + additionalEvaluations
+        val recoverable = evaluations.any(Evaluation::recoverable)
         val filteredEvaluations =
-            if (bestResult == EvaluationResult.FAIL && evaluations.any { it.recoverable }) evaluations.filter { it.recoverable } else evaluations
+            if (bestResult == EvaluationResult.FAIL && recoverable) evaluations.filter { it.recoverable } else evaluations
 
-        return filteredEvaluations.fold(
-            Evaluation(bestResult, filteredEvaluations.any(Evaluation::recoverable)),
-            Evaluation::addMessagesAndEvents
-        )
+        return filteredEvaluations.fold(Evaluation(bestResult, recoverable), Evaluation::addMessagesAndEvents)
     }
 }
