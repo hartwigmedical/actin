@@ -7,6 +7,8 @@ enum class Country(private val display: String) : Displayable {
     BELGIUM("Belgium"),
     GERMANY("Germany"),
     USA("United States"),
+    UK("United Kingdom"),
+    FRANCE("France"),
     OTHER("Other");
 
     override fun display(): String {
