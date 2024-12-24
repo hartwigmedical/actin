@@ -74,7 +74,7 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
                 "eGFR (Cockcroft-Gault) evaluation ambiguous"
             )
 
-            result == EvaluationResult.PASS && weight == null -> EvaluationFactory.notEvaluated(
+            result == EvaluationResult.PASS && weight == null -> EvaluationFactory.recoverableUndetermined(
                 "Body weight unknown but eGFR (Cockcroft-Gault) based on creatinine level ($unit) most likely above min of $minCreatinineClearance",
                 "eGFR (CG) based on creatinine level ($unit) most likely above min of $minCreatinineClearance but weight unknown",
             )
