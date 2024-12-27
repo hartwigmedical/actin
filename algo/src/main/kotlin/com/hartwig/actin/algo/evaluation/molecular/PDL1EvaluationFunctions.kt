@@ -21,9 +21,6 @@ object PDL1EvaluationFunctions {
         val isLungCancer = doidModel?.let { DoidEvaluationFunctions.isOfDoidType(it, record.tumor.doids, DoidConstants.LUNG_CANCER_DOID) }
         val pdl1TestsWithRequestedMeasurement = PriorIHCTestFunctions.allPDL1Tests(priorMolecularTests, measure, isLungCancer)
 
-        val measureMessage = measure?.let { " measured by $it" } ?: ""
-        val comparatorMessage = if (evaluateMaxPDL1) "below maximum of" else "above minimum of"
-
         val testEvaluations = pdl1TestsWithRequestedMeasurement.mapNotNull { ihcTest ->
             ihcTest.scoreValue?.let { scoreValue ->
                 val roundedScore = Math.round(scoreValue).toDouble()
@@ -34,6 +31,9 @@ object PDL1EvaluationFunctions {
                 }
             } ?: evaluateTestWithNegativeOrPositiveScore(ihcTest, pdl1Reference, evaluateMaxPDL1)
         }.toSet()
+
+        val measureMessage = measure?.let { " measured by $it" } ?: ""
+        val comparatorMessage = if (evaluateMaxPDL1) "below maximum of" else "above minimum of"
 
         return when {
             EvaluationResult.PASS in testEvaluations && EvaluationResult.FAIL in testEvaluations -> {
