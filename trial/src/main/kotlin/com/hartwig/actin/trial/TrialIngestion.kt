@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.trial.TrialIdentification
 
 class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
 
-    fun ingest(config: List<TrialState>): List<Trial> {
+    fun ingest(config: List<TrialConfig>): List<Trial> {
         return config.map { trialState ->
             Trial(
                 identification = TrialIdentification(
@@ -30,8 +30,8 @@ class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
                             open = cohortState.open,
                             slotsAvailable = cohortState.slotsAvailable,
                             description = cohortState.description,
-                            evaluable = true,
-                            ignore = false
+                            evaluable = cohortState.evaluable,
+                            ignore = cohortState.ignore
                         ),
                         eligibility = cohortState.inclusionCriterion.map(::toEligibility)
                     )
@@ -40,7 +40,7 @@ class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
         }
     }
 
-    private fun toEligibility(inclusionCriterion: InclusionCriterion) =
+    private fun toEligibility(inclusionCriterion: InclusionCriterionConfig) =
         Eligibility(
             inclusionCriterion.referenceIds?.map { CriterionReference(it.id, it.text) }?.toSet() ?: emptySet(),
             eligibilityFactory.generateEligibilityFunction(inclusionCriterion.inclusionRule)

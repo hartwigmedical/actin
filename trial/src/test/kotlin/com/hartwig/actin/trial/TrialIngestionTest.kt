@@ -31,7 +31,7 @@ class TrialIngestionTest {
         val ingestion = TrialIngestion(TestEligibilityFactoryFactory.createTestEligibilityFactory())
         val result = ingestion.ingest(
             listOf(
-                TrialState(
+                TrialConfig(
                     trialId = TRIAL_ID,
                     source = TrialSource.NKI,
                     nctId = NCT_ID,
@@ -40,18 +40,20 @@ class TrialIngestionTest {
                     title = TITLE,
                     phase = TrialPhase.PHASE_1,
                     inclusionCriterion = listOf(
-                        InclusionCriterion(IS_MALE, listOf(InclusionCriterionReference(REFERENCE_ID, REFERENCE_TEXT)))
+                        InclusionCriterionConfig(IS_MALE, listOf(InclusionCriterionReferenceConfig(REFERENCE_ID, REFERENCE_TEXT)))
                     ),
                     cohorts = listOf(
-                        CohortState(
+                        CohortConfig(
                             cohortId = COHORT_ID,
                             open = true,
                             slotsAvailable = true,
                             description = DESCRIPTION,
+                            ignore = false,
+                            evaluable = true,
                             inclusionCriterion = listOf(
-                                InclusionCriterion(
+                                InclusionCriterionConfig(
                                     IS_MALE, listOf(
-                                        InclusionCriterionReference(
+                                        InclusionCriterionReferenceConfig(
                                             REFERENCE_ID,
                                             REFERENCE_TEXT
                                         )

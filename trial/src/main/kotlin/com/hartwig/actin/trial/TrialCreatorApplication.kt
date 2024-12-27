@@ -55,7 +55,7 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
 
         LOGGER.info("Creating trial database")
         val result =
-            trialIngestion.ingest(ObjectMapper().readValue(config.trialConfigJsonPath, object : TypeReference<List<TrialState>>() {}))
+            trialIngestion.ingest(ObjectMapper().readValue(config.trialConfigJsonPath, object : TypeReference<List<TrialConfig>>() {}))
 
         val outputDirectory = config.outputDirectory
         LOGGER.info("Writing {} trials to {}", result.size, outputDirectory)

@@ -18,7 +18,7 @@ enum class TrialPhase(private val text: String, private val includePrefix: Boole
     }
 
     companion object {
-        private val phasesByName = values().associateBy { it.text }
+        private val phasesByName = entries.associateBy { it.text }
 
         fun fromString(input: String): TrialPhase? {
             return phasesByName[input]
