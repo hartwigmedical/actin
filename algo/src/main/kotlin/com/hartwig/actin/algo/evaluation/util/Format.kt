@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.util
 
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
 import com.hartwig.actin.datamodel.Displayable
+import com.hartwig.actin.datamodel.clinical.LabUnit
 import com.hartwig.actin.util.ApplicationConfig
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
@@ -76,12 +77,18 @@ object Format {
     }
 
     fun labReference(factorValue: Double, factorUnit: String, refLimit: Double?): String {
-        val formattedRefLimit = refLimit?.let { String.format(Locale.ENGLISH, "%.1f", it) } ?: "NA"
-        return "$factorValue*${factorUnit} ($factorValue*$formattedRefLimit)"
+        val result = refLimit?.let { String.format(Locale.ENGLISH, "%.1f", factorValue * refLimit) } ?: "$factorValue*NA"
+        return "$factorValue*${factorUnit} ($result)"
     }
 
-    fun labValue(labMeasurement: LabMeasurement, value: Double): String {
-        return "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${String.format(Locale.ENGLISH, "%.1f", value)}"
+    fun labValue(labMeasurement: LabMeasurement, value: Double, unit: LabUnit): String {
+        return "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${
+            String.format(
+                Locale.ENGLISH,
+                "%.1f",
+                value
+            )
+        } ${unit.display()}"
     }
 
     private fun concatDisplayables(items: Iterable<Displayable>, separator: String) =
