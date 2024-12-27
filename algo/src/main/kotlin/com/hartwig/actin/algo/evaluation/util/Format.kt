@@ -82,13 +82,8 @@ object Format {
     }
 
     fun labValue(labMeasurement: LabMeasurement, value: Double, unit: LabUnit): String {
-        return "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${
-            String.format(
-                Locale.ENGLISH,
-                "%.1f",
-                value
-            )
-        } ${unit.display()}"
+        val formattedValue = String.format(Locale.ENGLISH, "%.1f", value)
+        return "${labMeasurement.display().replaceFirstChar { it.uppercase() }} $formattedValue ${unit.display()}"
     }
 
     private fun concatDisplayables(items: Iterable<Displayable>, separator: String) =
