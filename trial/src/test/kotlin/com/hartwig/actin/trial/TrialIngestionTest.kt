@@ -27,7 +27,7 @@ private const val LOCATION = "location"
 class TrialIngestionTest {
 
     @Test
-    fun `Should convert trial states into ACTIN internal model`() {
+    fun `Should map trial config to internal trial model and eligibility criteria`() {
         val ingestion = TrialIngestion(TestEligibilityFactoryFactory.createTestEligibilityFactory())
         val result = ingestion.ingest(
             listOf(
