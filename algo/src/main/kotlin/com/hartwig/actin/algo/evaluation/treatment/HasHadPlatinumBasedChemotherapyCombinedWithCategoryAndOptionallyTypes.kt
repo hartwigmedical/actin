@@ -16,11 +16,10 @@ class HasHadPlatinumBasedChemotherapyCombinedWithCategoryAndOptionallyTypes(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val relevantHistory = record.oncologicalHistory.filter { entry ->
-            val chemotherapyDrugs = TreatmentFunctions.createChemotherapyDrugList(entry)
-            chemotherapyDrugs.any { it.drugTypes.contains(DrugType.PLATINUM_COMPOUND) }
+            TreatmentFunctions.createChemotherapyDrugList(entry).any { it.drugTypes.contains(DrugType.PLATINUM_COMPOUND) }
         }
 
-        val hadSpecificCombination = relevantHistory.any {
+        val hadCombination = relevantHistory.any {
             it.allTreatments()
                 .any { treatment -> treatment.categories().contains(category) && treatment.types().containsAll(types ?: emptySet()) }
         }
@@ -31,7 +30,7 @@ class HasHadPlatinumBasedChemotherapyCombinedWithCategoryAndOptionallyTypes(
             "platinum chemotherapy combined with ${types?.let { concatItemsWithAnd(types) } ?: ""}${category.display()}"
 
         return when {
-            hadSpecificCombination -> {
+            hadCombination -> {
                 EvaluationFactory.pass("Patient has received $treatmentDesc", "Has received $treatmentDesc")
             }
 
