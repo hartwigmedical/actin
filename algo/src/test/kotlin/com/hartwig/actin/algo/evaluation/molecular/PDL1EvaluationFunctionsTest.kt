@@ -14,6 +14,7 @@ import org.junit.Test
 
 private const val MEASURE = "measure"
 private const val TPS = "TPS"
+private const val CPS = "CPS"
 private const val PDL1_REFERENCE = 2.0
 private val doidModel =
     TestDoidModelFactory.createWithOneParentChild(DoidConstants.LUNG_CANCER_DOID, DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
@@ -160,6 +161,20 @@ class PDL1EvaluationFunctionsTest {
         val record =
             MolecularTestFactory.withIHCTests(pdl1Test.copy(scoreText = "positive", measure = TPS))
         assertEvaluation(EvaluationResult.PASS, evaluatePDL1byIHC(record, TPS, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false))
+    }
+
+    @Test
+    fun `Should pass when CPS test result is positive and evaluating above 11`() {
+        val record =
+            MolecularTestFactory.withIHCTests(pdl1Test.copy(scoreText = "positive", measure = CPS))
+        assertEvaluation(EvaluationResult.PASS, evaluatePDL1byIHC(record, CPS, 11.0, doidModel, evaluateMaxPDL1 = false))
+    }
+
+    @Test
+    fun `Should fail when CPS test result is positive and evaluating above 2`() {
+        val record =
+            MolecularTestFactory.withIHCTests(pdl1Test.copy(scoreText = "positive", measure = CPS))
+        assertEvaluation(EvaluationResult.FAIL, evaluatePDL1byIHC(record, CPS, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false))
     }
 
     private fun evaluateFunctions(

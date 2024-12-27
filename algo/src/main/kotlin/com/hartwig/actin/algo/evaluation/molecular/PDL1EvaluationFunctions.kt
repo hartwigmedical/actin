@@ -91,13 +91,15 @@ object PDL1EvaluationFunctions {
         pdl1Reference: Double,
         evaluateMaxPDL1: Boolean,
     ): EvaluationResult? {
-        if (ihcTest.measure == "TPS") {
-            val result = classifyIhcTest(ihcTest)
-            when {
-                evaluateMaxPDL1 && result == IHCTestClassificationFunctions.TestResult.NEGATIVE && pdl1Reference >= 1 -> return EvaluationResult.PASS
-                !evaluateMaxPDL1 && result == IHCTestClassificationFunctions.TestResult.POSITIVE && pdl1Reference > 1 -> return EvaluationResult.PASS
-            }
+        val result = classifyIhcTest(ihcTest)
+        return when {
+            evaluateMaxPDL1 && result == IHCTestClassificationFunctions.TestResult.NEGATIVE && pdl1Reference >= 1 -> EvaluationResult.PASS
+            !evaluateMaxPDL1 && result == IHCTestClassificationFunctions.TestResult.POSITIVE && (
+                    (ihcTest.measure == "TPS" && pdl1Reference > 1) ||
+                            (ihcTest.measure == "CPS" && pdl1Reference > 10)
+                    ) -> EvaluationResult.PASS
+
+            else -> null
         }
-        return null
     }
 }
