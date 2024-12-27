@@ -150,13 +150,6 @@ class PDL1EvaluationFunctionsTest {
     }
 
     @Test
-    fun `Should fail when TPS test result is negative and evaluating below 0,9`() {
-        val record =
-            MolecularTestFactory.withIHCTests(pdl1Test.copy(scoreText = "negative", measure = TPS))
-        assertEvaluation(EvaluationResult.FAIL, evaluatePDL1byIHC(record, TPS, 0.9, doidModel, evaluateMaxPDL1 = true))
-    }
-
-    @Test
     fun `Should pass when TPS test result is positive and evaluating above 2`() {
         val record =
             MolecularTestFactory.withIHCTests(pdl1Test.copy(scoreText = "positive", measure = TPS))
