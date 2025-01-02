@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 
 class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypes(
     private val firstCategory: TreatmentCategory,
@@ -16,16 +17,8 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypes(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val containsFirstCategoryOfTypes = record.oncologicalHistory.filter {
-            it.allTreatments()
-                .any { treatment -> treatment.categories().contains(firstCategory) && treatment.types().containsAll(firstTypes) }
-        }
-
-        val containsSecondCategoryOfTypes = record.oncologicalHistory.filter {
-            it.allTreatments()
-                .any { treatment -> treatment.categories().contains(secondCategory) && treatment.types().containsAll(secondTypes) }
-        }
-
+        val containsFirstCategoryOfTypes = containsCategoryOfTypes(record, firstCategory, firstTypes)
+        val containsSecondCategoryOfTypes = containsCategoryOfTypes(record, secondCategory, secondTypes)
         val hadCombination = containsFirstCategoryOfTypes.intersect(containsSecondCategoryOfTypes.toSet()).isNotEmpty()
 
         val hadCombinationWithTrialWithUnknownType = containsFirstCategoryOfTypes.any {
@@ -54,6 +47,17 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypes(
             else -> {
                 EvaluationFactory.fail("Patient has not received $treatmentDesc", "Has not received $treatmentDesc")
             }
+        }
+    }
+
+    private fun containsCategoryOfTypes(
+        record: PatientRecord,
+        category: TreatmentCategory,
+        types: Set<TreatmentType>
+    ): List<TreatmentHistoryEntry> {
+        return record.oncologicalHistory.filter {
+            it.allTreatments()
+                .any { treatment -> treatment.categories().contains(category) && treatment.types().containsAll(types) }
         }
     }
 }
