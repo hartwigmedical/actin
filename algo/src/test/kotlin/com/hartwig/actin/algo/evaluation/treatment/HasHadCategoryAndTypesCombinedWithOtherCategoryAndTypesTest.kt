@@ -11,18 +11,18 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.junit.Test
 
-private val FIRST_CATEGORY = TreatmentCategory.TARGETED_THERAPY
-private val DIFFERENT_FIRST_CATEGORY = TreatmentCategory.IMMUNOTHERAPY
-private val FIRST_TYPES = setOf(DrugType.HER2_ANTIBODY, DrugType.HER3_ANTIBODY)
-private val DIFFERENT_FIRST_TYPES = setOf(DrugType.ANTI_B7H4)
-private val SECOND_CATEGORY = TreatmentCategory.CHEMOTHERAPY
-private val SECOND_TYPES = setOf(DrugType.PLATINUM_COMPOUND)
-private val PLATINUM = drugTreatment("other drug", SECOND_CATEGORY, SECOND_TYPES)
+private val CATEGORY_1 = TreatmentCategory.TARGETED_THERAPY
+private val DIFFERENT_CATEGORY_1 = TreatmentCategory.IMMUNOTHERAPY
+private val TYPES_1 = setOf(DrugType.HER2_ANTIBODY, DrugType.HER3_ANTIBODY)
+private val DIFFERENT_TYPES_1 = setOf(DrugType.ANTI_B7H4)
+private val CATEGORY_2 = TreatmentCategory.CHEMOTHERAPY
+private val TYPES_2 = setOf(DrugType.PLATINUM_COMPOUND)
+private val PLATINUM = drugTreatment("other drug", CATEGORY_2, TYPES_2)
 
 class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
 
     private val function =
-        HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypes(FIRST_CATEGORY, FIRST_TYPES, SECOND_CATEGORY, SECOND_TYPES)
+        HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypes(CATEGORY_1, TYPES_1, CATEGORY_2, TYPES_2)
 
     @Test
     fun `Should fail if treatment history contains no treatments`() {
@@ -34,7 +34,7 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
         val treatmentHistory =
             withTreatmentHistory(
                 listOf(
-                    treatmentHistoryEntry(setOf(drugTreatment("other drug", FIRST_CATEGORY, FIRST_TYPES))),
+                    treatmentHistoryEntry(setOf(drugTreatment("other drug", CATEGORY_1, TYPES_1))),
                     treatmentHistoryEntry(setOf(PLATINUM))
                 )
             )
@@ -46,7 +46,7 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(
                 PLATINUM,
-                drugTreatment("wrong name", DIFFERENT_FIRST_CATEGORY)
+                drugTreatment("wrong name", DIFFERENT_CATEGORY_1)
             )
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
@@ -55,7 +55,7 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
     @Test
     fun `Should fail if treatment history entry contains second category and types but combined with treatment with first category and different types than required`() {
         val treatmentHistoryEntry =
-            treatmentHistoryEntry(setOf(PLATINUM, drugTreatment("combined", FIRST_CATEGORY, DIFFERENT_FIRST_TYPES)))
+            treatmentHistoryEntry(setOf(PLATINUM, drugTreatment("combined", CATEGORY_1, DIFFERENT_TYPES_1)))
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
@@ -63,7 +63,7 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
     fun `Should fail if history contains treatments with correct categories and types but in different instance`() {
         val treatmentHistory = listOf(
             treatmentHistoryEntry(setOf(PLATINUM)),
-            treatmentHistoryEntry(setOf(drugTreatment("combined", FIRST_CATEGORY, DIFFERENT_FIRST_TYPES))),
+            treatmentHistoryEntry(setOf(drugTreatment("combined", CATEGORY_1, DIFFERENT_TYPES_1))),
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(treatmentHistory)))
     }
@@ -73,16 +73,16 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(
                 PLATINUM, drugTreatment(
-                    "combined", FIRST_CATEGORY,
-                    setOf(FIRST_TYPES.first(), DrugType.EGFR_ANTIBODY)
+                    "combined", CATEGORY_1,
+                    setOf(TYPES_1.first(), DrugType.EGFR_ANTIBODY)
                 )
             )
         )
         val function = HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypes(
-            SECOND_CATEGORY,
-            SECOND_TYPES,
-            FIRST_CATEGORY,
-            setOf(FIRST_TYPES.first())
+            CATEGORY_2,
+            TYPES_2,
+            CATEGORY_1,
+            setOf(TYPES_1.first())
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }

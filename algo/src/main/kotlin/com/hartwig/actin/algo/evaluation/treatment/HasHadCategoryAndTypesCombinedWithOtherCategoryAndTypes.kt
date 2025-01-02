@@ -10,27 +10,27 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 
 class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypes(
-    private val firstCategory: TreatmentCategory,
-    private val firstTypes: Set<TreatmentType>,
-    private val secondCategory: TreatmentCategory,
-    private val secondTypes: Set<TreatmentType>
+    private val category1: TreatmentCategory,
+    private val types1: Set<TreatmentType>,
+    private val category2: TreatmentCategory,
+    private val types2: Set<TreatmentType>
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val containsFirstCategoryOfTypes = containsCategoryOfTypes(record, firstCategory, firstTypes)
-        val containsSecondCategoryOfTypes = containsCategoryOfTypes(record, secondCategory, secondTypes)
-        val hadCombination = containsFirstCategoryOfTypes.intersect(containsSecondCategoryOfTypes.toSet()).isNotEmpty()
+        val containsCategory1OfTypes1 = containsCategoryOfTypes(record, category1, types1)
+        val containsCategory2OfTypes2 = containsCategoryOfTypes(record, category2, types2)
+        val hadCombination = containsCategory1OfTypes1.intersect(containsCategory2OfTypes2.toSet()).isNotEmpty()
 
-        val hadCombinationWithTrialWithUnknownType = containsFirstCategoryOfTypes.any {
+        val hadCombinationWithTrialWithUnknownType = containsCategory1OfTypes1.any {
             TrialFunctions.treatmentMayMatchAsTrial(
                 it,
-                secondCategory
+                category2
             )
-        } || containsSecondCategoryOfTypes.any { TrialFunctions.treatmentMayMatchAsTrial(it, firstCategory) }
+        } || containsCategory2OfTypes2.any { TrialFunctions.treatmentMayMatchAsTrial(it, category1) }
         val hadTrialWithUnspecifiedTreatment = record.oncologicalHistory.any { it.isTrial && it.allTreatments().isEmpty() }
 
         val treatmentDesc =
-            "${concatItemsWithAnd(firstTypes)} ${firstCategory.display()} combined with ${concatItemsWithAnd(secondTypes)} ${secondCategory.display()}"
+            "${concatItemsWithAnd(types1)} ${category1.display()} combined with ${concatItemsWithAnd(types2)} ${category2.display()}"
 
         return when {
             hadCombination -> {
