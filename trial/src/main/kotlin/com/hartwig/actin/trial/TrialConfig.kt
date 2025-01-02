@@ -3,7 +3,7 @@ package com.hartwig.actin.trial
 import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
 
-data class InclusionCriterionConfig(val inclusionRule: String, val referenceIds: List<InclusionCriterionReferenceConfig>?)
+data class InclusionCriterionConfig(val inclusionRule: String, val references: List<InclusionCriterionReferenceConfig>?)
 
 data class InclusionCriterionReferenceConfig(val id: String, val text: String)
 

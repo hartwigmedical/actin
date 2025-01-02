@@ -42,7 +42,7 @@ class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
 
     private fun toEligibility(inclusionCriterion: InclusionCriterionConfig) =
         Eligibility(
-            inclusionCriterion.referenceIds?.map { CriterionReference(it.id, it.text) }?.toSet() ?: emptySet(),
+            inclusionCriterion.references?.map { CriterionReference(it.id, it.text) }?.toSet() ?: emptySet(),
             eligibilityFactory.generateEligibilityFunction(inclusionCriterion.inclusionRule)
         )
 }
