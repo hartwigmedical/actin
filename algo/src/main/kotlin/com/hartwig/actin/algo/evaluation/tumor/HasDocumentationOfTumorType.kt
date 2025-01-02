@@ -10,7 +10,7 @@ class HasDocumentationOfTumorType(val type: String) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         return EvaluationFactory.notEvaluated(
             "Currently it is assumed that ${type.lowercase()} documentation of tumor type has been done or can be done",
-            "$type documentation assumed"
+            "$type documentation of tumor type assumed"
         )
     }
 }
