@@ -27,6 +27,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_SECONDARY_GLIOBLASTOMA to hasSecondaryGlioblastomaCreator(),
             EligibilityRule.HAS_CYTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE to hasCytologicalDocumentationOfTumorTypeCreator(),
             EligibilityRule.HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE to hasHistologicalDocumentationOfTumorTypeCreator(),
+            EligibilityRule.HAS_PATHOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE to hasPathologicalDocumentationOfTumorTypeCreator(),
             EligibilityRule.HAS_ANY_STAGE_X to hasAnyTumorStageCreator(),
             EligibilityRule.HAS_LOCALLY_ADVANCED_CANCER to hasLocallyAdvancedCancerCreator(),
             EligibilityRule.HAS_METASTATIC_CANCER to hasMetastaticCancerCreator(),
@@ -147,11 +148,15 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasCytologicalDocumentationOfTumorTypeCreator(): FunctionCreator {
-        return { HasCytologicalDocumentationOfTumorType() }
+        return { HasDocumentationOfTumorType("Cytological") }
     }
 
     private fun hasHistologicalDocumentationOfTumorTypeCreator(): FunctionCreator {
-        return { HasHistologicalDocumentationOfTumorType() }
+        return { HasDocumentationOfTumorType("Histological") }
+    }
+
+    private fun hasPathologicalDocumentationOfTumorTypeCreator(): FunctionCreator {
+        return { HasDocumentationOfTumorType("Pathological") }
     }
 
     private fun hasAnyTumorStageCreator(): FunctionCreator {
