@@ -5,29 +5,39 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithAnd
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 
-class HasHadPlatinumBasedChemotherapyCombinedWithCategoryAndOptionallyTypes(
-    private val category: TreatmentCategory,
-    private val types: Set<TreatmentType>?
+class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypes(
+    private val firstCategory: TreatmentCategory,
+    private val firstTypes: Set<TreatmentType>,
+    private val secondCategory: TreatmentCategory,
+    private val secondTypes: Set<TreatmentType>
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val relevantHistory = record.oncologicalHistory.filter { entry ->
-            TreatmentFunctions.createChemotherapyDrugList(entry).any { it.drugTypes.contains(DrugType.PLATINUM_COMPOUND) }
+        val containsFirstCategoryOfTypes = record.oncologicalHistory.filter {
+            it.allTreatments()
+                .any { treatment -> treatment.categories().contains(firstCategory) && treatment.types().containsAll(firstTypes) }
         }
 
-        val hadCombination = relevantHistory.any {
+        val containsSecondCategoryOfTypes = record.oncologicalHistory.filter {
             it.allTreatments()
-                .any { treatment -> treatment.categories().contains(category) && treatment.types().containsAll(types ?: emptySet()) }
+                .any { treatment -> treatment.categories().contains(secondCategory) && treatment.types().containsAll(secondTypes) }
         }
-        val hadCombinationWithTrialWithUnknownType = relevantHistory.any { TrialFunctions.treatmentMayMatchAsTrial(it, category) }
+
+        val hadCombination = containsFirstCategoryOfTypes.intersect(containsSecondCategoryOfTypes.toSet()).isNotEmpty()
+
+        val hadCombinationWithTrialWithUnknownType = containsFirstCategoryOfTypes.any {
+            TrialFunctions.treatmentMayMatchAsTrial(
+                it,
+                secondCategory
+            )
+        } || containsSecondCategoryOfTypes.any { TrialFunctions.treatmentMayMatchAsTrial(it, firstCategory) }
         val hadTrialWithUnspecifiedTreatment = record.oncologicalHistory.any { it.isTrial && it.allTreatments().isEmpty() }
 
         val treatmentDesc =
-            "platinum chemotherapy combined with ${types?.let { concatItemsWithAnd(types) } ?: ""}${category.display()}"
+            "${concatItemsWithAnd(firstTypes)} ${firstCategory.display()} combined with ${concatItemsWithAnd(secondTypes)} ${secondCategory.display()}"
 
         return when {
             hadCombination -> {

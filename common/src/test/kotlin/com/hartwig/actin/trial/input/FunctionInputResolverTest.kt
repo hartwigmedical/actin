@@ -200,6 +200,55 @@ class FunctionInputResolverTest {
     }
 
     @Test
+    fun `Should resolve functions with one treatment category many types and another treatment category many types input`() {
+        val rule = firstOfType(FunctionInput.TWO_TREATMENT_CATEGORIES_MANY_TYPES)
+        val category1 = TreatmentCategory.IMMUNOTHERAPY.display()
+        val category2 = TreatmentCategory.CHEMOTHERAPY.display()
+        val valid = create(
+            rule,
+            listOf(
+                category1,
+                "${DrugType.ANTI_PD_L1};${DrugType.ANTI_PD_1}",
+                category2,
+                "${DrugType.PLATINUM_COMPOUND};${DrugType.ANTIMETABOLITE}"
+            )
+        )
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val inputs = resolver.createTwoTreatmentCategoriesManyTypesInput(valid)
+        assertThat(inputs.category1).isEqualTo(TreatmentCategory.IMMUNOTHERAPY)
+        assertThat(inputs.types1).isEqualTo(setOf(DrugType.ANTI_PD_L1, DrugType.ANTI_PD_1))
+        assertThat(inputs.category2).isEqualTo(TreatmentCategory.CHEMOTHERAPY)
+        assertThat(inputs.types2).isEqualTo(setOf(DrugType.PLATINUM_COMPOUND, DrugType.ANTIMETABOLITE))
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(category1)))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(TreatmentCategory.TARGETED_THERAPY.display(), "test")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("not a treatment category", "test")))!!).isFalse
+        assertThat(
+            resolver.hasValidInputs(
+                create(
+                    rule,
+                    listOf(TreatmentCategory.CHEMOTHERAPY.display(), "${DrugType.PLATINUM_COMPOUND}")
+                )
+            )!!
+        ).isFalse
+        assertThat(
+            resolver.hasValidInputs(
+                create(
+                    rule,
+                    listOf(
+                        TreatmentCategory.CHEMOTHERAPY.display(),
+                        TreatmentCategory.IMMUNOTHERAPY.display(),
+                        "${DrugType.PLATINUM_COMPOUND}",
+                        "${DrugType.ANTIMETABOLITE}"
+                    )
+                )
+            )!!
+        ).isFalse
+    }
+
+    @Test
     fun `Should resolve functions with one treatment category many types one integer input`() {
         val rule = firstOfType(FunctionInput.ONE_TREATMENT_CATEGORY_MANY_TYPES_ONE_INTEGER)
         val category = TreatmentCategory.IMMUNOTHERAPY.display()

@@ -23,7 +23,7 @@ object TreatmentFunctions {
         }
     }
 
-    fun createChemotherapyDrugList(entry: TreatmentHistoryEntry): List<Drug> {
+    private fun createChemotherapyDrugList(entry: TreatmentHistoryEntry): List<Drug> {
         return entry.treatments.filterIsInstance<DrugTreatment>()
             .flatMap(DrugTreatment::drugs)
             .filter { it.category == TreatmentCategory.CHEMOTHERAPY }

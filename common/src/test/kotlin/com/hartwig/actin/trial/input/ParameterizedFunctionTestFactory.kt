@@ -65,6 +65,15 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
                 listOf(TreatmentCategory.IMMUNOTHERAPY.display(), DrugType.ANTI_PD_L1.toString() + ";" + DrugType.ANTI_PD_1)
             }
 
+            FunctionInput.TWO_TREATMENT_CATEGORIES_MANY_TYPES -> {
+                listOf(
+                    TreatmentCategory.IMMUNOTHERAPY.display(),
+                    DrugType.ANTI_PD_L1.toString() + ";" + DrugType.ANTI_PD_1,
+                    TreatmentCategory.CHEMOTHERAPY.display(),
+                    DrugType.PLATINUM_COMPOUND.toString() + ";" + DrugType.ANTIMETABOLITE
+                )
+            }
+
             FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE_ONE_INTEGER -> {
                 listOf(OtherTreatmentType.ALLOGENIC.display(), "1")
             }
