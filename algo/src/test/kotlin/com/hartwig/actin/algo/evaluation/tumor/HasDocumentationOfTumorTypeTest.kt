@@ -5,10 +5,10 @@ import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.Test
 
-class HasCytologicalDocumentationOfTumorTypeTest {
+class HasDocumentationOfTumorTypeTest {
     @Test
     fun canEvaluate() {
-        val function = HasCytologicalDocumentationOfTumorType()
+        val function = HasDocumentationOfTumorType("Cytological")
         assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
     }
 }
