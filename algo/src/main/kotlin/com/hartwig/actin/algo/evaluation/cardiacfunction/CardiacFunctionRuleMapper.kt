@@ -40,7 +40,7 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
                     HasECGAberration(),
                     HasHadPriorConditionComplicationOrToxicityWithIcdCode(
                         icdModel(),
-                        IcdConstants.HEART_DISEASE_SET,
+                        IcdConstants.HEART_DISEASE_SET.map { IcdCode(it) }.toSet(),
                         "potential significant heart disease",
                         referenceDateProvider().date()
                     )

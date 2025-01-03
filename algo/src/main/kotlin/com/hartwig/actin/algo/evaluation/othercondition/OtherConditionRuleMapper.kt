@@ -130,7 +130,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
         return {
             HasHadPriorConditionComplicationOrToxicityWithIcdCode(
                 icdModel(),
-                IcdConstants.HEART_DISEASE_SET,
+                IcdConstants.HEART_DISEASE_SET.map { IcdCode(it) }.toSet(),
                 "cardiac disease",
                 referenceDateProvider().date()
             )
@@ -148,7 +148,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
         return {
             HasHadPriorConditionComplicationOrToxicityWithIcdCode(
                 icdModel(),
-                setOf(IcdConstants.EYE_DISEASE_CHAPTER),
+                setOf(IcdConstants.EYE_DISEASE_CHAPTER).map { IcdCode(it) }.toSet(),
                 "eye disease",
                 referenceDateProvider().date()
             )
@@ -159,7 +159,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
         return {
             HasHadPriorConditionComplicationOrToxicityWithIcdCode(
                 icdModel(),
-                IcdConstants.STROKE_SET,
+                IcdConstants.STROKE_SET.map { IcdCode(it) }.toSet(),
                 "CVA",
                 referenceDateProvider().date()
             )
