@@ -105,7 +105,20 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
     @Test
     fun `Should evaluate to undetermined if treatment history contains second category and types combined with first category but types unknown`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(PLATINUM, drugTreatment("combined", CATEGORY_1, emptySet())))
-        val function = HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypes(CATEGORY_2, TYPES_2, CATEGORY_1, setOf(TYPES_1.first()))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
+        )
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if treatment history contains first category combined with second category but both types unknown`() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(
+            setOf(
+                drugTreatment("combined 1", CATEGORY_1, emptySet()),
+                drugTreatment("combined 2", CATEGORY_2, emptySet())
+            )
+        )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
