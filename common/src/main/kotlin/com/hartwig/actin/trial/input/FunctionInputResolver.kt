@@ -5,6 +5,7 @@ import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.Cyp
 import com.hartwig.actin.datamodel.clinical.Gender
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.ReceptorType
 import com.hartwig.actin.datamodel.clinical.Transporter
 import com.hartwig.actin.datamodel.clinical.TumorStage
@@ -481,11 +482,30 @@ class FunctionInputResolver(
 
     private fun toIcdStringList(param: Any): List<String> {
         val input = toStringList(param)
-        val invalidTitles = input.filter { !icdModel.isValidIcdTitle(it) }
-        if (invalidTitles.isNotEmpty()) {
-            throw IllegalStateException("ICD title(s) not valid: ${invalidTitles.joinToString(", ")}")
+        val (validTitles, invalidTitles) = input.partition { icdModel.isValidIcdTitle(it) }
+        val invalidEntries = invalidTitles.filter { !icdModel.isValidIcdCode(it) }
+
+        return when {
+            invalidEntries.isNotEmpty() -> throw IllegalStateException("ICD title(s) or code(s) not valid: ${invalidEntries.joinToString(", ")}")
+            invalidTitles.isNotEmpty() -> invalidTitles.map {
+                icdModel.resolveTitleForCode(it.split('&').let { c -> IcdCode(c[0], c.getOrNull(1)) }, displayWithSpaces = false)
+            } + validTitles
+
+            else -> input
         }
-        return input
+    }
+
+    private fun toIcdTitle(input: String): String {
+        return when {
+            icdModel.isValidIcdTitle(input) -> input
+            icdModel.isValidIcdCode(input) -> {
+                icdModel.resolveTitleForCode(
+                    input.split('&').let { IcdCode(it[0], it.getOrNull(1)) },
+                    displayWithSpaces = false
+                )
+            }
+            else -> throw IllegalStateException("ICD title(s) or code(s) not valid: $input")
+        }
     }
 
     private fun toTreatments(input: Any): List<Treatment> {
@@ -543,11 +563,7 @@ class FunctionInputResolver(
 
     fun createOneIcdTitleInput(function: EligibilityFunction): String {
         assertParamConfig(function, FunctionInput.ONE_ICD_TITLE, 1)
-        val input = parameterAsString(function, 0)
-        if (!icdModel.isValidIcdTitle(input)) {
-            throw IllegalStateException("ICD title(s) not valid: $input")
-        }
-        return input
+        return toIcdTitle(parameterAsString(function, 0))
     }
 
     fun createManyIcdTitlesInput(function: EligibilityFunction): List<String> {
@@ -622,11 +638,7 @@ class FunctionInputResolver(
 
     fun createOneIntegerManyIcdTitlesInput(function: EligibilityFunction): OneIntegerManyIcdTitles {
         assertParamConfig(function, FunctionInput.ONE_INTEGER_MANY_ICD_TITLES, 2)
-        val icdStringList = toStringList(function.parameters[1])
-        val invalidTitles = icdStringList.filter { !icdModel.isValidIcdTitle(it) }
-        if (invalidTitles.isNotEmpty()) {
-            throw IllegalStateException("ICD title(s) not valid: ${invalidTitles.joinToString(", ")}")
-        }
+        val icdStringList = toIcdStringList(function.parameters[1])
 
         return OneIntegerManyIcdTitles(
             integer = parameterAsInt(function, 0),
@@ -732,14 +744,8 @@ class FunctionInputResolver(
 
     fun createOneIcdTitleOneIntegerInput(function: EligibilityFunction): OneIcdTitleOneInteger {
         assertParamConfig(function, FunctionInput.ONE_ICD_TITLE_ONE_INTEGER, 2)
-
-        val icdTitle = parameterAsString(function, 0)
-        if (!icdModel.isValidIcdTitle(icdTitle)) {
-            throw IllegalStateException("Not a valid ICD title: $icdTitle")
-        }
-
         return OneIcdTitleOneInteger(
-            icdTitle = icdTitle,
+            icdTitle = toIcdTitle(parameterAsString(function, 0)),
             integer = parameterAsInt(function, 1)
         )
     }

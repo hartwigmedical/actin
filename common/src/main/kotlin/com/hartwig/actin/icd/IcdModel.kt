@@ -21,6 +21,11 @@ class IcdModel(
         return titles.size in 1..2 && titles.all(titleToCodeMap::containsKey)
     }
 
+    fun isValidIcdCode(icdCode: String): Boolean {
+        val codes = icdCode.split('&')
+        return codes.size in 1..2 && codes.all(titleToCodeMap::containsValue)
+    }
+
     fun resolveCodeForTitle(icdTitle: String): IcdCode? {
         val split = icdTitle.split('&')
         return titleToCodeMap[split[0]]?.let { mainCode ->
@@ -34,10 +39,11 @@ class IcdModel(
         return code?.let { (codeToNodeMap[code]?.parentTreeCodes ?: emptyList()) + code } ?: emptyList()
     }
 
-    fun resolveTitleForCode(icdCode: IcdCode): String {
+    fun resolveTitleForCode(icdCode: IcdCode, displayWithSpaces: Boolean = true): String {
         val mainTitle = codeToNodeMap[icdCode.mainCode]?.title ?: return ""
         val extensionTitle = icdCode.extensionCode?.let { codeToNodeMap[it]?.title }
-        return extensionTitle?.let { "$mainTitle & $it" } ?: mainTitle
+        val separator = if (displayWithSpaces) " & " else "&"
+        return extensionTitle?.let { "$mainTitle$separator$it" } ?: mainTitle
     }
 
     fun <T : IcdCodeEntity> findInstancesMatchingAnyIcdCode(instances: List<T>, targetIcdCodes: Set<IcdCode>): IcdMatches<T> {

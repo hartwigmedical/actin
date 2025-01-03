@@ -375,6 +375,8 @@ class FunctionInputResolverTest {
 
         val expected = "title 1&title 2"
         assertThat(resolver.createOneIcdTitleInput(valid)).isEqualTo(expected)
+        assertThat(resolver.createOneIcdTitleInput(create(rule, listOf("code 1&code 2")))).isEqualTo(expected)
+        assertThat(resolver.hasValidInputs(create(rule, listOf("code 1")))!!).isTrue
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("title 1", "title 2")))!!).isFalse
     }
@@ -394,6 +396,8 @@ class FunctionInputResolverTest {
 
         val expected = listOf("title 1&extension title", "title 2")
         assertThat(resolver.createManyIcdTitlesInput(valid)).isEqualTo(expected)
+        assertThat(resolver.createManyIcdTitlesInput(create(rule, listOf("code 1&extension code;code 2")))).isEqualTo(expected)
+        assertThat(resolver.hasValidInputs(create(rule, listOf("code 1&extension code;title 2")))!!).isTrue
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("title 1", "title 2")))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("title 1&extension title;invalid title")))!!).isFalse
@@ -410,6 +414,8 @@ class FunctionInputResolverTest {
 
         val expected = OneIcdTitleOneInteger("title 1", 1)
         assertThat(resolver.createOneIcdTitleOneIntegerInput(valid)).isEqualTo(expected)
+        assertThat(resolver.createOneIcdTitleOneIntegerInput(create(rule, listOf("code 1", "1")))).isEqualTo(expected)
+        assertThat(resolver.hasValidInputs(create(rule, listOf("code 2", "1")))!!).isTrue
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("title 1", "title 2")))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("title 1", "1", "2")))!!).isFalse
