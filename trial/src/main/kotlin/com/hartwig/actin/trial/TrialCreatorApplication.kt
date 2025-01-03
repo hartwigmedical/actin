@@ -1,6 +1,5 @@
 package com.hartwig.actin.trial
 
-import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -60,7 +59,6 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         val result =
             trialIngestion.ingest(ObjectMapper().apply {
                 disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-                configure(JsonParser.Feature.ALLOW_COMMENTS, true);
                 registerModule(KotlinModule.Builder().build())
             }.readValue(config.trialConfigJsonPath, object : TypeReference<List<TrialConfig>>() {}))
 
