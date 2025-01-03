@@ -47,7 +47,7 @@ data class TrialCreatorConfig(
             }
 
             return TrialCreatorConfig(
-                trialConfigJsonPath = ApplicationConfig.nonOptionalDir(cmd, TRIAL_CONFIG_JSON_PATH),
+                trialConfigJsonPath = ApplicationConfig.nonOptionalFile(cmd, TRIAL_CONFIG_JSON_PATH),
                 treatmentDirectory = ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DIRECTORY),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
                 atcTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_TSV),
