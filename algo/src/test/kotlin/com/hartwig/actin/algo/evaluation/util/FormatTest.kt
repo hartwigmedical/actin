@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.util
 
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
+import com.hartwig.actin.datamodel.clinical.LabUnit
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
@@ -32,6 +33,13 @@ class FormatTest {
         assertEquals("x and y", Format.concatLowercaseWithAnd(setOf("X", "Y")))
         assertEquals("x and y", Format.concatLowercaseWithAnd(setOf("x", "y")))
         assertEquals("x", Format.concatLowercaseWithAnd(setOf("X")))
+    }
+
+    @Test
+    fun shouldLowerCaseStringsAndJoinWithAndUnlessNumeric() {
+        assertEquals("x and y", Format.concatLowercaseUnlessNumericWithAnd(setOf("X", "y")))
+        assertEquals("x", Format.concatLowercaseUnlessNumericWithAnd(setOf("X")))
+        assertEquals("x and X1", Format.concatLowercaseUnlessNumericWithAnd(setOf("X1", "X")))
     }
 
     @Test
@@ -83,12 +91,13 @@ class FormatTest {
 
     @Test
     fun canFormatLabReferences() {
-        assertEquals("2.0*ULN (2.0*4.0)", Format.labReference(2.0, "ULN", 4.0))
+        assertEquals("2.0*ULN (8.0)", Format.labReference(2.0, "ULN", 4.0))
+        assertEquals("2.0*ULN (2.0*NA)", Format.labReference(2.0, "ULN", null))
     }
 
     @Test
     fun canFormatLabValues() {
-        assertEquals("Indirect bilirubin 4.0", Format.labValue(LabMeasurement.INDIRECT_BILIRUBIN, 4.0))
+        assertEquals("Indirect bilirubin 4.0 umol/L", Format.labValue(LabMeasurement.INDIRECT_BILIRUBIN, 4.0, LabUnit.MICROMOLES_PER_LITER))
     }
 
     @Test(expected = IllegalArgumentException::class)

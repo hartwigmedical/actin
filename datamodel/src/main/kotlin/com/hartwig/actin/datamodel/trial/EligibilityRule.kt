@@ -42,6 +42,7 @@ enum class EligibilityRule(val input: FunctionInput?) {
     HAS_SECONDARY_GLIOBLASTOMA(FunctionInput.NONE),
     HAS_CYTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE(FunctionInput.NONE),
     HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE(FunctionInput.NONE),
+    HAS_PATHOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE(FunctionInput.NONE),
     HAS_ANY_STAGE_X(FunctionInput.MANY_TUMOR_STAGES),
     HAS_LOCALLY_ADVANCED_CANCER(FunctionInput.NONE),
     HAS_METASTATIC_CANCER(FunctionInput.NONE),
@@ -251,6 +252,7 @@ enum class EligibilityRule(val input: FunctionInput?) {
     HAS_CODELETION_OF_CHROMOSOME_ARMS_X_AND_Y(FunctionInput.TWO_STRINGS),
 
     // Rules related to recent laboratory measurements
+    HAS_ADEQUATE_ORGAN_FUNCTION(FunctionInput.NONE),
     HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X(FunctionInput.ONE_DOUBLE),
     HAS_LEUKOCYTES_ABS_LLN_OF_AT_LEAST_X(FunctionInput.ONE_DOUBLE),
     HAS_POTENTIAL_LEUKOCYTOSIS(FunctionInput.NONE),
@@ -275,6 +277,7 @@ enum class EligibilityRule(val input: FunctionInput?) {
     HAS_ALP_ULN_OF_AT_LEAST_X(FunctionInput.ONE_DOUBLE),
     HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X(FunctionInput.ONE_DOUBLE),
     HAS_TOTAL_BILIRUBIN_UMOL_PER_L_OF_AT_MOST_X(FunctionInput.ONE_DOUBLE),
+    HAS_TOTAL_BILIRUBIN_MG_PER_DL_OF_AT_MOST_X(FunctionInput.ONE_DOUBLE),
     HAS_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_X(FunctionInput.ONE_DOUBLE),
     HAS_DIRECT_BILIRUBIN_PERCENTAGE_OF_TOTAL_OF_AT_MOST_X(FunctionInput.ONE_DOUBLE),
     HAS_INDIRECT_BILIRUBIN_ULN_OF_AT_MOST_X(FunctionInput.ONE_DOUBLE),
@@ -370,6 +373,7 @@ enum class EligibilityRule(val input: FunctionInput?) {
     HAS_CHILD_PUGH_CLASS_X_LIVER_SCORE(FunctionInput.ONE_STRING),
     HAS_POTENTIAL_CONTRAINDICATION_FOR_STEREOTACTIC_RADIOSURGERY(FunctionInput.NONE),
     HAS_ADEQUATE_VENOUS_ACCESS(FunctionInput.NONE),
+    MEETS_REQUIREMENTS_DURING_SIX_MINUTE_WALKING_TEST(FunctionInput.NONE),
 
     //Rules related to cardiac function
     HAS_POTENTIAL_SIGNIFICANT_HEART_DISEASE(FunctionInput.NONE),
@@ -385,6 +389,7 @@ enum class EligibilityRule(val input: FunctionInput?) {
     HAS_NORMAL_CARDIAC_FUNCTION_BY_MUGA_OR_TTE(FunctionInput.NONE),
     HAS_FAMILY_HISTORY_OF_IDIOPATHIC_SUDDEN_DEATH(FunctionInput.NONE),
     HAS_FAMILY_HISTORY_OF_LONG_QT_SYNDROME(FunctionInput.NONE),
+    MEETS_REQUIREMENTS_DURING_CARDIAC_STRESS_TEST(FunctionInput.NONE),
 
     // Rules related to infections
     HAS_ACTIVE_INFECTION(FunctionInput.NONE),

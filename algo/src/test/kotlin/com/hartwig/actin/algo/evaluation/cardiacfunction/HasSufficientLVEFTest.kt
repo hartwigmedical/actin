@@ -13,7 +13,7 @@ class HasSufficientLVEFTest {
     fun canEvaluate() {
         val function = HasSufficientLVEF(0.71)
 
-        assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(withLVEF(null)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withLVEF(null)))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(withLVEF(0.1)))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(withLVEF(0.71)))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(withLVEF(0.9)))

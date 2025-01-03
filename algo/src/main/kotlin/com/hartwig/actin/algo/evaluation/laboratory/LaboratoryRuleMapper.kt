@@ -25,6 +25,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
+            EligibilityRule.HAS_ADEQUATE_ORGAN_FUNCTION to hasAdequateOrganFunctionCreator(),
             EligibilityRule.HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.LEUKOCYTES_ABS),
             EligibilityRule.HAS_LEUKOCYTES_ABS_LLN_OF_AT_LEAST_X to hasSufficientLabValueLLNCreator(LabMeasurement.LEUKOCYTES_ABS),
             EligibilityRule.HAS_LYMPHOCYTES_ABS_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.LYMPHOCYTES_ABS),
@@ -61,6 +62,10 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.HAS_ALP_ULN_OF_AT_LEAST_X to hasSufficientLabValueULNCreator(LabMeasurement.ALKALINE_PHOSPHATASE),
             EligibilityRule.HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.TOTAL_BILIRUBIN),
             EligibilityRule.HAS_TOTAL_BILIRUBIN_UMOL_PER_L_OF_AT_MOST_X to hasLimitedLabValueCreator(LabMeasurement.TOTAL_BILIRUBIN),
+            EligibilityRule.HAS_TOTAL_BILIRUBIN_MG_PER_DL_OF_AT_MOST_X to hasLimitedLabValueCreator(
+                LabMeasurement.TOTAL_BILIRUBIN,
+                LabUnit.MILLIGRAMS_PER_DECILITER
+            ),
             EligibilityRule.HAS_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.DIRECT_BILIRUBIN),
             EligibilityRule.HAS_DIRECT_BILIRUBIN_PERCENTAGE_OF_TOTAL_OF_AT_MOST_X to hasLimitedBilirubinPercentageCreator(),
             EligibilityRule.HAS_INDIRECT_BILIRUBIN_ULN_OF_AT_MOST_X to hasLimitedIndirectBilirubinCreator(),
@@ -140,6 +145,10 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
                 LabUnit.CELLS_PER_MICROLITER
             )
         )
+    }
+
+    private fun hasAdequateOrganFunctionCreator(): FunctionCreator {
+        return { HasAdequateOrganFunction(minValidLabDate(), doidModel()) }
     }
 
     private fun hasLimitedPTTCreator(): FunctionCreator {

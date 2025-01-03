@@ -80,12 +80,14 @@ class AndTest {
         val function2: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, includeMolecular = true, index = 2)
         val function3: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.PASS, includeMolecular = true, index = 3)
         val result: Evaluation = And(listOf(function1, function2, function3)).evaluate(TEST_PATIENT)
-        assertThat(result.inclusionMolecularEvents).hasSize(2)
+        assertThat(result.inclusionMolecularEvents).hasSize(3)
         assertThat(result.inclusionMolecularEvents).contains("inclusion event 1")
         assertThat(result.inclusionMolecularEvents).contains("inclusion event 2")
-        assertThat(result.exclusionMolecularEvents).hasSize(2)
+        assertThat(result.inclusionMolecularEvents).contains("inclusion event 3")
+        assertThat(result.exclusionMolecularEvents).hasSize(3)
         assertThat(result.exclusionMolecularEvents).contains("exclusion event 1")
         assertThat(result.exclusionMolecularEvents).contains("exclusion event 2")
+        assertThat(result.exclusionMolecularEvents).contains("exclusion event 3")
     }
 
     @Test
@@ -103,7 +105,7 @@ class AndTest {
         val result: Evaluation = And(listOf(recoverable, unrecoverable)).evaluate(TEST_PATIENT)
         assertThat(result.recoverable).isFalse
         assertThat(result.undeterminedGeneralMessages).hasSize(1)
-        assertThat(result.undeterminedGeneralMessages).contains("undetermined general 2")
+        assertThat(result.undeterminedGeneralMessages).containsExactly("undetermined general 2")
     }
 
     @Test(expected = IllegalStateException::class)

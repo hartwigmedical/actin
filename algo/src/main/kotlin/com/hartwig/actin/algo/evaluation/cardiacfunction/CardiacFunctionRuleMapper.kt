@@ -29,6 +29,7 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
             EligibilityRule.HAS_NORMAL_CARDIAC_FUNCTION_BY_MUGA_OR_TTE to hasNormalCardiacFunctionByMUGAOrTTECreator(),
             EligibilityRule.HAS_FAMILY_HISTORY_OF_IDIOPATHIC_SUDDEN_DEATH to hasFamilyHistoryOfIdiopathicSuddenDeathCreator(),
             EligibilityRule.HAS_FAMILY_HISTORY_OF_LONG_QT_SYNDROME to hasFamilyHistoryOfLongQTSyndromeCreator(),
+            EligibilityRule.MEETS_REQUIREMENTS_DURING_CARDIAC_STRESS_TEST to { MeetsCardiacStressTestRequirements() },
         )
     }
 
