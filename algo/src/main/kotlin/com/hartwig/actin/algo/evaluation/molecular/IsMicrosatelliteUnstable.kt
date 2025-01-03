@@ -10,9 +10,10 @@ import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 import java.time.LocalDate
 
+//TODO (CB)!
 class IsMicrosatelliteUnstable(maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
 
-    override fun noMolecularRecordEvaluation() = EvaluationFactory.undetermined("Undetermined if tumor is MSI", "Undetermined MSI status")
+    override fun noMolecularRecordEvaluation() = EvaluationFactory.undetermined("Undetermined MSI status")
 
     override fun evaluate(molecular: MolecularRecord): Evaluation {
         val drivers = molecular.drivers
@@ -53,7 +54,7 @@ class IsMicrosatelliteUnstable(maxTestAge: LocalDate? = null) : MolecularEvaluat
                         "Unknown MSI status but drivers drivers with unknown allelic status in MSI genes"
                     )
                 } else {
-                    EvaluationFactory.fail("Unknown microsatellite instability (MSI) status", "Unknown MSI status")
+                    EvaluationFactory.fail("Unknown MSI status")
                 }
             }
 
@@ -84,7 +85,7 @@ class IsMicrosatelliteUnstable(maxTestAge: LocalDate? = null) : MolecularEvaluat
             }
 
             false -> {
-                EvaluationFactory.fail("Tumor is microsatellite stable (MSS)", "Tumor is MSS")
+                EvaluationFactory.fail("Tumor is MSS")
             }
         }
     }

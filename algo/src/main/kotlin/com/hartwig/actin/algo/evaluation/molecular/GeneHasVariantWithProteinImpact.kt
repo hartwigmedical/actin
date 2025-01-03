@@ -21,6 +21,8 @@ private enum class VariantClassification {
 
 private data class VariantAndProteinImpact(val variant: Variant, val proteinImpact: String)
 
+
+//TODO (CB)!
 class GeneHasVariantWithProteinImpact(
     private val gene: String,
     private val allowedProteinImpacts: Set<String>,
@@ -58,7 +60,6 @@ class GeneHasVariantWithProteinImpact(
             ?.let { canonicalReportableImpactMatches ->
                 val impactString = concat(canonicalReportableImpactMatches.map { it.proteinImpact })
                 EvaluationFactory.pass(
-                    "Variant(s) $impactString in gene $gene detected in canonical transcript",
                     "$impactString detected in $gene",
                     inclusionEvents = canonicalReportableImpactMatches.map { it.variant.event }.toSet()
                 )
@@ -68,9 +69,7 @@ class GeneHasVariantWithProteinImpact(
                 canonicalImpactClassifications[VariantClassification.CANONICAL_UNREPORTABLE],
                 reportableOtherProteinImpactMatches
             )
-            ?: EvaluationFactory.fail(
-                "None of ${concat(allowedProteinImpacts)} detected in gene $gene", "${concat(allowedProteinImpacts)} not detected in $gene"
-            )
+            ?: EvaluationFactory.fail("${concat(allowedProteinImpacts)} not detected in $gene")
     }
 
     private fun evaluatePotentialWarns(
@@ -80,19 +79,12 @@ class GeneHasVariantWithProteinImpact(
     ): Evaluation? {
         val subclonalWarning = eventsWithMessagesForVariantsAndImpacts(
             canonicalReportableSubclonalMatches,
-            { "Variant(s) $it in $gene detected in canonical transcript but subclonal likelihood of > " + percentage(1 - CLONAL_CUTOFF) },
-            { "Variant(s) $it in $gene but subclonal likelihood of > " + percentage(1 - CLONAL_CUTOFF) }
-        )
-        val unreportableWarning = eventsWithMessagesForVariantsAndImpacts(
-            canonicalUnreportableMatches,
-            { "Variant(s) $it in $gene detected in canonical transcript but are not reportable" },
-            { "$it found in $gene but not reportable" }
-        )
+            { "Variant(s) $it in $gene but subclonal likelihood of > " + percentage(1 - CLONAL_CUTOFF) })
+        val unreportableWarning =
+            eventsWithMessagesForVariantsAndImpacts(canonicalUnreportableMatches, { "$it found in $gene but not reportable" })
         val reportableOtherWarning = eventsWithMessagesForVariantsAndImpacts(
             reportableOtherProteinMatches,
-            { "Variant(s) $it in $gene detected but in non-canonical transcript" },
-            { "$it found in non-canonical transcript of gene $gene" }
-        )
+            { "$it found in non-canonical transcript of gene $gene" })
         return MolecularEventUtil.evaluatePotentialWarnsForEventGroups(
             listOfNotNull(subclonalWarning, unreportableWarning, reportableOtherWarning)
         )
@@ -100,11 +92,10 @@ class GeneHasVariantWithProteinImpact(
 
     private fun eventsWithMessagesForVariantsAndImpacts(
         variantsAndImpacts: Collection<VariantAndProteinImpact>?,
-        makeSpecificMessage: (String) -> String,
-        makeGeneralMessage: (String) -> String
+        makeMessage: (String) -> String
     ): EventsWithMessages? = variantsAndImpacts?.takeIf { it.isNotEmpty() }?.let { matches ->
         val listAsString = concat(matches.map { it.proteinImpact })
-        EventsWithMessages(matches.map { it.variant.event }, makeSpecificMessage(listAsString), makeGeneralMessage(listAsString))
+        EventsWithMessages(matches.map { it.variant.event }, makeMessage(listAsString))
     }
 
     private fun toProteinImpacts(impacts: Set<TranscriptImpact>): Set<String> {

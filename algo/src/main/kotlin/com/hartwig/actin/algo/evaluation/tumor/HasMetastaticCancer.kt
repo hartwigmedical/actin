@@ -19,27 +19,22 @@ class HasMetastaticCancer(private val doidModel: DoidModel) : EvaluationFunction
             DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, tumorDoids, STAGE_II_POTENTIALLY_METASTATIC_CANCERS)
         val isNotStageI = (record.tumor.stage != TumorStage.I) && (record.tumor.derivedStages?.contains(TumorStage.I) != true)
 
-        val undeterminedGeneralMessage = "Undetermined if $METASTATIC_CANCER"
-        val undeterminedSpecificMessage = "Could not be determined if tumor stage $stage is considered metastatic"
-
         return when {
             stageEvaluation.result == EvaluationResult.PASS -> {
-                EvaluationFactory.pass("Tumor stage $stage is considered metastatic", METASTATIC_CANCER)
+                EvaluationFactory.pass("Tumor stage $stage is considered metastatic")
             }
 
             (isNotStageI && potentiallyMetastaticAtStageII) || stageEvaluation.result == EvaluationResult.UNDETERMINED -> {
-                EvaluationFactory.undetermined(undeterminedSpecificMessage, undeterminedGeneralMessage)
+                EvaluationFactory.undetermined("Undetermined if stage $stage is considered metastatic")
             }
 
             else -> {
-                EvaluationFactory.fail("Tumor stage $stage is not considered metastatic", NOT_METASTATIC_CANCER)
+                EvaluationFactory.fail("Tumor stage $stage is not considered metastatic")
             }
         }
     }
 
     companion object {
         val STAGE_II_POTENTIALLY_METASTATIC_CANCERS = setOf(DoidConstants.BRAIN_CANCER_DOID, DoidConstants.HEAD_AND_NECK_CANCER_DOID)
-        private const val METASTATIC_CANCER: String = "Metastatic cancer"
-        private const val NOT_METASTATIC_CANCER: String = "No metastatic cancer"
     }
 }

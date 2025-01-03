@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.ECG
 import com.hartwig.actin.datamodel.clinical.ECGMeasure
 
+//TODO (CB)
 class ECGMeasureEvaluationFunction internal constructor(
     private val measureName: ECGMeasureName,
     private val threshold: Double,
@@ -49,18 +50,18 @@ class ECGMeasureEvaluationFunction internal constructor(
         return if (thresholdCriteria.comparator.compare(measure.value, threshold) >= 0) {
             EvaluationFactory.recoverablePass(
                 String.format(thresholdCriteria.passMessageTemplate, measureName, measure.value, measure.unit, threshold),
-                generalMessage(measureName.name)
+                message(measureName.name)
             )
         } else {
             EvaluationFactory.recoverableFail(
                 String.format(thresholdCriteria.failMessageTemplate, measureName, measure.value, measure.unit, threshold),
-                generalMessage(measureName.name)
+                message(measureName.name)
             )
         }
     }
 
     companion object {
-        private fun generalMessage(measureName: String): String {
+        private fun message(measureName: String): String {
             return String.format("%s requirements", measureName)
         }
     }

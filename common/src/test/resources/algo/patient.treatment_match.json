@@ -39,21 +39,13 @@
             ],
             "exclusionMolecularEvents": [
             ],
-            "passSpecificMessages": [
+            "passMessages": [
             ],
-            "passGeneralMessages": [
+            "warnMessages": [
             ],
-            "warnSpecificMessages": [
+            "undeterminedMessages": [
             ],
-            "warnGeneralMessages": [
-            ],
-            "undeterminedSpecificMessages": [
-            ],
-            "undeterminedGeneralMessages": [
-            ],
-            "failSpecificMessages": [
-            ],
-            "failGeneralMessages": [
+            "failMessages": [
             ]
           }
         ]
@@ -95,21 +87,13 @@
                 ],
                 "exclusionMolecularEvents": [
                 ],
-                "passSpecificMessages": [
+                "passMessages": [
                 ],
-                "passGeneralMessages": [
+                "warnMessages": [
                 ],
-                "warnSpecificMessages": [
+                "undeterminedMessages": [
                 ],
-                "warnGeneralMessages": [
-                ],
-                "undeterminedSpecificMessages": [
-                ],
-                "undeterminedGeneralMessages": [
-                ],
-                "failSpecificMessages": [
-                ],
-                "failGeneralMessages": [
+                "failMessages": [
                 ]
               }
             ]
@@ -187,10 +171,7 @@
         {
           "result": "FAIL",
           "recoverable": false,
-          "failSpecificMessages": [
-            "Patient is eligible for line 4 treatment"
-          ],
-          "failGeneralMessages": [
+          "failMessages": [
             "Patient is eligible for line 4 treatment"
           ]
         }

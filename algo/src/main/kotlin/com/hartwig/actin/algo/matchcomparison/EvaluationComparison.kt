@@ -65,8 +65,8 @@ object EvaluationComparison {
     }
 
     private fun extractMessageDifferences(old: Evaluation, new: Evaluation): List<String> {
-        val oldMessages = getGeneralMessagesForEvaluation(old)
-        val newMessages = getGeneralMessagesForEvaluation(new)
+        val oldMessages = getMessagesForEvaluation(old)
+        val newMessages = getMessagesForEvaluation(new)
         val removedMessages = oldMessages - newMessages
         val addedMessages = newMessages - oldMessages
         return if (removedMessages.map(String::lowercase) == addedMessages.map(String::lowercase)) {
@@ -76,13 +76,13 @@ object EvaluationComparison {
         }
     }
 
-    private fun getGeneralMessagesForEvaluation(evaluation: Evaluation): Set<String> {
+    private fun getMessagesForEvaluation(evaluation: Evaluation): Set<String> {
         return when (evaluation.result) {
-            EvaluationResult.PASS -> evaluation.passGeneralMessages
-            EvaluationResult.NOT_EVALUATED -> evaluation.passGeneralMessages
-            EvaluationResult.WARN -> evaluation.warnGeneralMessages
-            EvaluationResult.UNDETERMINED -> evaluation.undeterminedGeneralMessages
-            EvaluationResult.FAIL -> evaluation.failGeneralMessages
+            EvaluationResult.PASS -> evaluation.passMessages
+            EvaluationResult.NOT_EVALUATED -> evaluation.passMessages
+            EvaluationResult.WARN -> evaluation.warnMessages
+            EvaluationResult.UNDETERMINED -> evaluation.undeterminedMessages
+            EvaluationResult.FAIL -> evaluation.failMessages
             else -> emptySet()
         }
     }

@@ -70,8 +70,8 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
         val record = MolecularTestFactory.withVariant(BASE_VARIANT)
         val expectedMessages = setOf("$CORRECT_GENE activating mutation(s)")
         evaluateFunctions(EvaluationResult.PASS, record)
-        evaluateMessages(functionIncludingAllGenes.evaluate(record).passGeneralMessages, expectedMessages)
-        evaluateMessages(functionIncludingSpecificGene.evaluate(record).passGeneralMessages, expectedMessages)
+        evaluateMessages(functionIncludingAllGenes.evaluate(record).passMessages, expectedMessages)
+        evaluateMessages(functionIncludingSpecificGene.evaluate(record).passMessages, expectedMessages)
     }
 
     @Test
@@ -135,8 +135,8 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
             "$OTHER_CORRECT_PROTEIN_IMPACT detected in $OTHER_CORRECT_VARIANT_GENE"
         )
         evaluateFunctions(EvaluationResult.PASS, record)
-        evaluateMessages(functionIncludingAllGenes.evaluate(record).passGeneralMessages, expectedMessages)
-        evaluateMessages(functionIncludingSpecificGene.evaluate(record).passGeneralMessages, expectedMessages)
+        evaluateMessages(functionIncludingAllGenes.evaluate(record).passMessages, expectedMessages)
+        evaluateMessages(functionIncludingSpecificGene.evaluate(record).passMessages, expectedMessages)
     }
 
     @Test

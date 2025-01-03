@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 import java.time.LocalDate
 
+//TODO (CB)!
 class IsHomologousRepairDeficient(maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
@@ -100,7 +101,7 @@ class IsHomologousRepairDeficient(maxTestAge: LocalDate? = null) : MolecularEval
             }
 
             else -> {
-                EvaluationFactory.fail("No homologous repair deficiency (HRD) detected", "Tumor is not HRD")
+                EvaluationFactory.fail("Tumor is not HRD")
             }
         }
     }

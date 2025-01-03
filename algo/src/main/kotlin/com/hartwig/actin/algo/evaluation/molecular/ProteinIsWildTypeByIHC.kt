@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
+//TODO (CB)!
 class ProteinIsWildTypeByIHC(private val protein: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -15,10 +16,10 @@ class ProteinIsWildTypeByIHC(private val protein: String) : EvaluationFunction {
         }
 
         return if (hasOnlyWildTypeResults) {
-            EvaluationFactory.pass("Protein $protein is wild type according to IHC", "$protein is wild type by IHC")
+            EvaluationFactory.pass("$protein is wild type by IHC")
         } else {
             EvaluationFactory.undetermined(
-                "Could not determine if protein $protein is wild type according to IHC", "$protein wild type status unknown by IHC"
+                "$protein wild type status unknown by IHC"
             )
         }
     }

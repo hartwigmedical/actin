@@ -158,8 +158,7 @@ SELECT  referenceDate, referenceDateIsLive, patientId, trialMatch.code AS trialI
         IF(trialMatch.id IN (SELECT trialMatchId FROM cohortMatch),1,0) AS trialHasCohorts, trialMatch.isEligible AS isEligibleTrial,
         cohortMatch.code AS cohortId, cohortMatch.description AS cohortDescription, cohortMatch.open AS cohortOpen,
         cohortMatch.slotsAvailable AS cohortSlotsAvailable, cohortMatch.ignore AS cohortIgnore, cohortMatch.isEligible AS isEligibleCohort,
-        eligibility AS eligibilityRule, result, recoverable, passSpecificMessages, passGeneralMessages, warnSpecificMessages, warnGeneralMessages,
-        undeterminedSpecificMessages, undeterminedGeneralMessages, failSpecificMessages, failGeneralMessages,
+        eligibility AS eligibilityRule, result, recoverable, passMessages, warnMessages,undeterminedMessages, failMessages,
         inclusionMolecularEvents, exclusionMolecularEvents
     FROM evaluation
     INNER JOIN trialMatch ON trialMatch.id = evaluation.trialMatchId
@@ -170,9 +169,8 @@ SELECT  DISTINCT referenceDate, referenceDateIsLive, patientId, trialMatch.code 
         IF(trialMatch.id IN (SELECT trialMatchId FROM cohortMatch),1,0) AS trialHasCohorts, trialMatch.isEligible AS isEligibleTrial,
         cohortMatch.code AS cohortId, cohortMatch.description AS cohortDescription, cohortMatch.open AS cohortOpen,
         cohortMatch.slotsAvailable AS cohortSlotsAvailable, cohortMatch.ignore AS cohortIgnore, cohortMatch.isEligible AS isEligibleCohort,
-        NULL AS eligibilityRule, NULL AS result, NULL as recoverable, NULL AS passSpecificMessages, NULL AS passGeneralMessages,
-        NULL AS warnSpecificMessages, NULL AS warnGeneralMessages, NULL AS undeterminedSpecificMessages,
-        NULL AS undeterminedGeneralMessages, NULL AS failSpecificMessages, NULL AS failGeneralMessages,
+        NULL AS eligibilityRule, NULL AS result, NULL as recoverable, NULL AS passMessages, NULL AS warnMessages,
+        NULL AS undeterminedMessages, NULL AS failMessages,
         NULL AS inclusionMolecularEvents, NULL AS exclusionMolecularEvents
     FROM cohortMatch
     INNER JOIN trialMatch ON trialMatch.id = cohortMatch.trialMatchId

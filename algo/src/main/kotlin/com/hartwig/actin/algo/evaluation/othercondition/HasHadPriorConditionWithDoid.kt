@@ -9,8 +9,9 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.doid.DoidModel
 
+//TODO (CB)!
 class HasHadPriorConditionWithDoid(private val doidModel: DoidModel, private val doidToFind: String) : EvaluationFunction {
-    
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val doidTerm = doidModel.resolveTermForDoid(doidToFind)
         val conditions =
@@ -18,7 +19,7 @@ class HasHadPriorConditionWithDoid(private val doidModel: DoidModel, private val
         return if (conditions.isNotEmpty()) {
             pass(
                 PriorConditionMessages.passSpecific(Characteristic.CONDITION, conditions, doidTerm),
-                PriorConditionMessages.passGeneral(conditions)
+                PriorConditionMessages.pass(conditions)
             )
         } else fail(
             PriorConditionMessages.failSpecific(doidTerm),

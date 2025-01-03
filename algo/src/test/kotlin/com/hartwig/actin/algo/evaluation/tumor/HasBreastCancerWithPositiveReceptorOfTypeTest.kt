@@ -26,7 +26,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
             )
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedGeneralMessages).containsExactly("No tumor doids configured")
+        assertThat(evaluation.undeterminedMessages).containsExactly("No tumor doids configured")
     }
 
     @Test
@@ -50,7 +50,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
             )
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedGeneralMessages).containsExactly("$TARGET_RECEPTOR-status unknown")
+        assertThat(evaluation.undeterminedMessages).containsExactly("$TARGET_RECEPTOR-status unknown")
     }
 
     @Test
@@ -62,7 +62,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(
-            evaluation.undeterminedGeneralMessages
+            evaluation.undeterminedMessages
         ).containsExactly(
             "HER2-status undetermined (IHC data missing) but probably positive since ERBB2 amp present"
         )
@@ -78,7 +78,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(
-            evaluation.undeterminedGeneralMessages
+            evaluation.undeterminedMessages
         ).containsExactly(
             "Undetermined $TARGET_RECEPTOR-status - DOID and/or IHC data inconsistent"
         )
@@ -202,7 +202,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(
-            evaluation.undeterminedGeneralMessages
+            evaluation.undeterminedMessages
         ).containsExactly(
             "No HER2-positive breast cancer - HER2-FISH may be beneficial (score 2+)"
         )
@@ -218,7 +218,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         )
         assertEvaluation(EvaluationResult.WARN, evaluation)
         assertThat(
-            evaluation.warnGeneralMessages
+            evaluation.warnMessages
         ).containsExactly(
             "Has $TARGET_RECEPTOR-positive breast cancer but clinical relevance unknown since $TARGET_RECEPTOR-score under 10%"
         )

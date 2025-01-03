@@ -17,9 +17,9 @@ class HasSpecificInfection(private val doidModel: DoidModel, private val doidToF
             .contains(doidToFind)
 
         return if (hasSpecificInfection) {
-            EvaluationFactory.pass("Patient has infection with $doidTerm", "Present $doidTerm infection")
+            EvaluationFactory.pass("Has $doidTerm infection")
         } else {
-            EvaluationFactory.fail("Patient has no known infection with $doidTerm", "Specific infection(s) not present")
+            EvaluationFactory.fail("Has no known infection with $doidTerm")
         }
     }
 }

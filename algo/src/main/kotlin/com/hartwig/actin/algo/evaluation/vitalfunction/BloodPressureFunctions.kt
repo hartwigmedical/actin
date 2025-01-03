@@ -36,42 +36,38 @@ object BloodPressureFunctions {
 
         return when {
             comparison < 0 -> {
-                val specificMessage = "Patient has median $categoryDisplay (${median.roundToInt()} mmHg) below $referenceBloodPressure mmHg"
-                val generalMessage = "Median $categoryDisplay (${median.roundToInt()} mmHg) below $referenceBloodPressure mmHg"
+                val message = "Median $categoryDisplay (${median.roundToInt()} mmHg) below $referenceBloodPressure mmHg"
                 val marginOfErrorMsg = " but within margin of error"
                 if (referenceIsMinimum) {
                     val referenceWithMargin = referenceBloodPressure * VitalFunctionRuleMapper.VITAL_FUNCTION_NEGATIVE_MARGIN_OF_ERROR
                     if (median >= referenceWithMargin) {
-                        EvaluationFactory.recoverableUndetermined(specificMessage + marginOfErrorMsg, generalMessage + marginOfErrorMsg)
+                        EvaluationFactory.recoverableUndetermined(message + marginOfErrorMsg)
                     } else {
-                        EvaluationFactory.recoverableFail(specificMessage, generalMessage)
+                        EvaluationFactory.recoverableFail(message)
                     }
                 } else {
-                    EvaluationFactory.recoverablePass(specificMessage, generalMessage)
+                    EvaluationFactory.recoverablePass(message)
                 }
             }
 
             comparison == 0 -> {
-                val specificMessage = "Patient has median $categoryDisplay (${median.roundToInt()} mmHg) " +
-                        "equal to $referenceBloodPressure mmHg"
-                val generalMessage = "Median $categoryDisplay (${median.roundToInt()} mmHg) equal to $referenceBloodPressure mmHg"
+                val message = "Median $categoryDisplay (${median.roundToInt()} mmHg) equal to $referenceBloodPressure mmHg"
 
-                return EvaluationFactory.recoverablePass(specificMessage, generalMessage)
+                return EvaluationFactory.recoverablePass(message)
             }
 
             else -> {
-                val specificMessage = "Patient has median $categoryDisplay (${median.roundToInt()} mmHg) above $referenceBloodPressure mmHg"
-                val generalMessage = "Median $categoryDisplay (${median.roundToInt()} mmHg) above $referenceBloodPressure mmHg"
+                val message = "Median $categoryDisplay (${median.roundToInt()} mmHg) above $referenceBloodPressure mmHg"
                 val marginOfErrorMsg = " but within margin of error"
                 if (!referenceIsMinimum) {
                     val referenceWithMargin = referenceBloodPressure * VitalFunctionRuleMapper.VITAL_FUNCTION_POSITIVE_MARGIN_OF_ERROR
                     if (median <= referenceWithMargin) {
-                        EvaluationFactory.recoverableUndetermined(specificMessage + marginOfErrorMsg, generalMessage + marginOfErrorMsg)
+                        EvaluationFactory.recoverableUndetermined(message + marginOfErrorMsg)
                     } else {
-                        EvaluationFactory.recoverableFail(specificMessage, generalMessage)
+                        EvaluationFactory.recoverableFail(message)
                     }
                 } else {
-                    EvaluationFactory.recoverablePass(specificMessage, generalMessage)
+                    EvaluationFactory.recoverablePass(message)
                 }
             }
         }

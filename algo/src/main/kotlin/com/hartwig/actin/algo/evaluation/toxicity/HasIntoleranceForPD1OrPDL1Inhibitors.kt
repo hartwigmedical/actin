@@ -20,10 +20,7 @@ class HasIntoleranceForPD1OrPDL1Inhibitors(private val doidModel: DoidModel) : E
             .toSet()
 
         return if (intolerances.isNotEmpty()) {
-            pass(
-                "Patient has PD-1/PD-L1 intolerance(s) " + concat(intolerances),
-                "Patient has PD-1/PD-L1 intolerance(s): " + concat(intolerances)
-            )
+            pass("Patient has PD-1/PD-L1 intolerance(s): " + concat(intolerances))
         } else {
             val autoImmuneDiseaseTerms =
                 OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions).flatMap { it.doids }
@@ -31,15 +28,9 @@ class HasIntoleranceForPD1OrPDL1Inhibitors(private val doidModel: DoidModel) : E
                     .map { doidModel.resolveTermForDoid(it) }.toSet()
 
             if (autoImmuneDiseaseTerms.isNotEmpty()) {
-                warn(
-                    "Patient has autoimmune disease condition(s) " + concat(autoImmuneDiseaseTerms.filterNotNull())
-                            + " which may indicate intolerance for immunotherapy",
-                    "Patient may have PD-1/PD-L1 intolerance due to autoimmune disease"
-                )
+                warn("Patient may have PD-1/PD-L1 intolerance due to autoimmune disease (${concat(autoImmuneDiseaseTerms.filterNotNull())})")
             } else {
-                fail(
-                    "Patient does not have PD-1/PD-L1 intolerance", "Patient does not have PD-1/PD-L1 intolerance"
-                )
+                fail("Patient does not have PD-1/PD-L1 intolerance")
             }
         }
     }

@@ -88,8 +88,7 @@ object TestTreatmentMatchFactory {
                     Evaluation(
                         result = EvaluationResult.PASS,
                         recoverable = false,
-                        passSpecificMessages = setOf("Patient has active CNS metastases"),
-                        passGeneralMessages = setOf("Active CNS metastases")
+                        passMessages = setOf("Active CNS metastases")
                     )
                 ),
                 annotations = TestExtendedEvidenceEntryFactory.createProperTestExtendedEvidenceEntries(),
@@ -119,7 +118,7 @@ object TestTreatmentMatchFactory {
                         text = "Patient must be an adult"
                     )
                 )
-            ) to unrecoverable(EvaluationResult.PASS, "Patient is at least 18 years old", "Patient is adult", null),
+            ) to unrecoverable(EvaluationResult.PASS, "Patient is adult", null),
             Eligibility(
                 function = EligibilityFunction(
                     rule = EligibilityRule.NOT, parameters = listOf(
@@ -191,7 +190,7 @@ object TestTreatmentMatchFactory {
             Eligibility(
                 function = EligibilityFunction(rule = EligibilityRule.MSI_SIGNATURE, parameters = emptyList()),
                 references = setOf(CriterionReference(id = "I-01", text = "MSI")),
-            ) to unrecoverable(EvaluationResult.PASS, "Tumor is MSI", "MSI", "MSI")
+            ) to unrecoverable(EvaluationResult.PASS, "MSI", "MSI")
         )
     }
 
@@ -203,7 +202,7 @@ object TestTreatmentMatchFactory {
                     parameters = listOf(EligibilityFunction(rule = EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES)),
                 ),
                 references = setOf(CriterionReference(id = "E-01", text = "Active CNS metastases"))
-            ) to unrecoverable(EvaluationResult.FAIL, "Patient has active CNS metastases", "Active CNS metastases", null)
+            ) to unrecoverable(EvaluationResult.FAIL, "Active CNS metastases", null)
         )
     }
 
@@ -239,36 +238,37 @@ object TestTreatmentMatchFactory {
             Eligibility(
                 function = EligibilityFunction(rule = EligibilityRule.MSI_SIGNATURE, parameters = emptyList()),
                 references = setOf(CriterionReference(id = "I-01", text = "MSI")),
-            ) to unrecoverable(EvaluationResult.PASS, "Tumor is MSI", "MSI", "MSI")
+            ) to unrecoverable(EvaluationResult.PASS, "MSI", "MSI")
         )
     }
 
     private fun unrecoverable(
-        result: EvaluationResult, specificMessage: String,
-        generalMessage: String? = null, inclusionMolecularEvent: String? = null
+        result: EvaluationResult,
+        message: String? = null,
+        inclusionMolecularEvent: String? = null
     ): Evaluation {
         val base = Evaluation(result = result, recoverable = false, inclusionMolecularEvents = setOfNotNull(inclusionMolecularEvent))
         return when (result) {
             EvaluationResult.PASS -> {
-                base.copy(passSpecificMessages = setOf(specificMessage), passGeneralMessages = setOfNotNull(generalMessage))
+                base.copy(passMessages = setOfNotNull(message))
             }
 
             EvaluationResult.NOT_EVALUATED -> {
-                base.copy(passSpecificMessages = setOf(specificMessage), passGeneralMessages = setOfNotNull(generalMessage))
+                base.copy(passMessages = setOfNotNull(message))
             }
 
             EvaluationResult.WARN -> {
-                base.copy(warnSpecificMessages = setOf(specificMessage), warnGeneralMessages = setOfNotNull(generalMessage))
+                base.copy(warnMessages = setOfNotNull(message))
             }
 
             EvaluationResult.UNDETERMINED -> {
                 base.copy(
-                    undeterminedSpecificMessages = setOf(specificMessage), undeterminedGeneralMessages = setOfNotNull(generalMessage)
+                    undeterminedMessages = setOfNotNull(message)
                 )
             }
 
             EvaluationResult.FAIL -> {
-                base.copy(failSpecificMessages = setOf(specificMessage), failGeneralMessages = setOfNotNull(generalMessage))
+                base.copy(failMessages = setOfNotNull(message))
             }
         }
     }

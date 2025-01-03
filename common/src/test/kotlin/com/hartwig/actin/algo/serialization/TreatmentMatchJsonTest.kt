@@ -41,7 +41,7 @@ class TreatmentMatchJsonTest {
                         key to Evaluation(
                             result = EvaluationResult.PASS,
                             recoverable = false,
-                            passSpecificMessages = setOf("msg 2", "msg 1", "msg 3"),
+                            passMessages = setOf("msg 2", "msg 1", "msg 3"),
                         )
                     ),
                     cohorts = emptyList(),
@@ -58,17 +58,15 @@ class TreatmentMatchJsonTest {
                 + "{\"references\":[{\"id\":\"I-01\",\"text\":\"Patient must be an adult\"}],"
                 + "\"function\":{\"rule\":\"IS_AT_LEAST_X_YEARS_OLD\",\"parameters\":[]}},"
                 + "{\"result\":\"PASS\",\"recoverable\":false,\"inclusionMolecularEvents\":[],\"exclusionMolecularEvents\":[],"
-                + "\"passSpecificMessages\":[\"msg 1\",\"msg 2\",\"msg 3\"],\"passGeneralMessages\":[],"
-                + "\"warnSpecificMessages\":[],\"warnGeneralMessages\":[],\"undeterminedSpecificMessages\":[],\"undeterminedGeneralMessages\":[],"
-                + "\"failSpecificMessages\":[],\"failGeneralMessages\":[],\"isMissingGenesForSufficientEvaluation\":false}]],\"cohorts\":[],\"nonEvaluableCohorts\":[]}],"
+                + "\"passMessages\":[\"msg 1\",\"msg 2\",\"msg 3\"],"
+                + "\"warnMessages\":[],\"undeterminedMessages\":[],"
+                + "\"failMessages\":[],\"isMissingGenesForSufficientEvaluation\":false}]],\"cohorts\":[],\"nonEvaluableCohorts\":[]}],"
                 + "\"standardOfCareMatches\":[{\"treatmentCandidate\":{\"treatment\":{\"name\":\"Pembrolizumab\",\"isSystemic\":true,"
                 + "\"synonyms\":[],\"displayOverride\":null,\"categories\":[],\"types\":[],\"treatmentClass\":\"OTHER_TREATMENT\"},"
                 + "\"optional\":true,\"eligibilityFunctions\":[{\"rule\":\"HAS_KNOWN_ACTIVE_CNS_METASTASES\",\"parameters\":[]}],\"additionalCriteriaForRequirement\":[]},"
                 + "\"evaluations\":[{\"result\":\"PASS\",\"recoverable\":false,\"inclusionMolecularEvents\":[],"
-                + "\"exclusionMolecularEvents\":[],\"passSpecificMessages\":[\"Patient has active CNS metastases\"],"
-                + "\"passGeneralMessages\":[\"Active CNS metastases\"],\"warnSpecificMessages\":[],\"warnGeneralMessages\":[],"
-                + "\"undeterminedSpecificMessages\":[],\"undeterminedGeneralMessages\":[],\"failSpecificMessages\":[],"
-                + "\"failGeneralMessages\":[],\"isMissingGenesForSufficientEvaluation\":false}],\"annotations\":[{\"acronym\":\"Study of Pembrolizumab\",\"phase\":\"Phase III\","
+                + "\"exclusionMolecularEvents\":[],\"passMessages\":[\"Active CNS metastases\"],\"warnMessages\":[],\"undeterminedMessages\":[],"
+                + "\"failMessages\":[],\"isMissingGenesForSufficientEvaluation\":false}],\"annotations\":[{\"acronym\":\"Study of Pembrolizumab\",\"phase\":\"Phase III\","
                 + "\"treatments\":[{\"name\":\"PEMBROLIZUMAB\",\"drugs\":[{\"name\":\"PEMBROLIZUMAB\",\"drugTypes\":[\"TOPO1_INHIBITOR\"],"
                 + "\"category\":\"CHEMOTHERAPY\",\"displayOverride\":null}],\"synonyms\":[],\"displayOverride\":null,\"isSystemic\":true,"
                 + "\"maxCycles\":null,\"treatmentClass\":\"DRUG_TREATMENT\"}],\"therapeuticSetting\":\"ADJUVANT\",\"variantRequirements\":"

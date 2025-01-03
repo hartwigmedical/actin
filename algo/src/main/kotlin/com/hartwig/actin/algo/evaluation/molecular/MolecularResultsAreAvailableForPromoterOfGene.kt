@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.PriorIHCTest
 
+//TODO (CB)!
 class MolecularResultsAreAvailableForPromoterOfGene(private val gene: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -21,7 +22,7 @@ class MolecularResultsAreAvailableForPromoterOfGene(private val gene: String) : 
                 "$gene promoter tested before but indeterminate status"
             )
         }
-        return EvaluationFactory.recoverableFail("$gene has not been tested", "$gene not tested")
+        return EvaluationFactory.recoverableFail("$gene not tested")
     }
 
     companion object {

@@ -14,9 +14,9 @@ class HasKnownEBVInfection: EvaluationFunction {
             .find { stringCaseInsensitivelyMatchesQueryCollection(it.name, EBV_TERMS) }
 
         return if (matchingCondition != null) {
-            EvaluationFactory.pass("Patient has known EBV infection: " + matchingCondition.name, "Present EBV infection")
+            EvaluationFactory.pass("Present EBV infection: " + matchingCondition.name)
         } else {
-            EvaluationFactory.fail("Patient has no known EBV infection", "EBV infection(s) not present")
+            EvaluationFactory.fail("EBV infection(s) not present")
         }
     }
 

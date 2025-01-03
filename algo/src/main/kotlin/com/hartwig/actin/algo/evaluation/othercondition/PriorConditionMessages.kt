@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.othercondition
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 
+//TODO (CB)!
 internal object PriorConditionMessages {
 
     fun failSpecific(doidTerm: String?): String {
@@ -14,7 +15,7 @@ internal object PriorConditionMessages {
         return "No relevant non-oncological condition"
     }
 
-    fun passGeneral(matches: Iterable<String>): String {
+    fun pass(matches: Iterable<String>): String {
         return "History of ${Format.concatStringsWithAnd(matches)}"
     }
 

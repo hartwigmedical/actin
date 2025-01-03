@@ -27,10 +27,7 @@ class HasHadSomeTreatmentsWithCategoryOfTypes(
             }
 
             treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches + treatmentSummary.numPossibleTrialMatches >= minTreatmentLines -> {
-                EvaluationFactory.undetermined(
-                    "Can't determine whether patient has received at least $minTreatmentLines line(s) of $typesList ${category.display()}",
-                    "Undetermined if received at least $minTreatmentLines line(s) of $typesList ${category.display()}"
-                )
+                EvaluationFactory.undetermined("Undetermined if received at least $minTreatmentLines line(s) of $typesList ${category.display()}")
             }
 
             else -> {

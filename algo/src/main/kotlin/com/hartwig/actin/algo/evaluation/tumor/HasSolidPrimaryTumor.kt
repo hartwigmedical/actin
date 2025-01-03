@@ -14,7 +14,7 @@ class HasSolidPrimaryTumor(private val doidModel: DoidModel) : EvaluationFunctio
         val tumorDoids = record.tumor.doids
         if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
             return EvaluationFactory.undetermined(
-                "No tumor location/type configured for patient, unknown if solid primary tumor", "Undetermined solid primary tumor"
+                "Undetermined solid primary tumor (tumor location missing)"
             )
         }
         val result = DoidEvaluationFunctions.evaluateAllDoidsMatchWithFailAndWarns(
@@ -26,18 +26,15 @@ class HasSolidPrimaryTumor(private val doidModel: DoidModel) : EvaluationFunctio
         )
         return when (result) {
             EvaluationResult.FAIL -> {
-                EvaluationFactory.fail("Patient has non-solid primary tumor", "No solid primary tumor")
+                EvaluationFactory.fail("No solid primary tumor")
             }
 
             EvaluationResult.WARN -> {
-                EvaluationFactory.warn(
-                    "Unclear if tumor type of patient should be considered solid or non-solid",
-                    "Unclear if primary tumor is considered solid"
-                )
+                EvaluationFactory.warn("Unclear if primary tumor is considered solid")
             }
 
             EvaluationResult.PASS -> {
-                EvaluationFactory.pass("Patient has solid primary tumor", "Has solid primary tumor")
+                EvaluationFactory.pass("Has solid primary tumor")
             }
 
             else -> {

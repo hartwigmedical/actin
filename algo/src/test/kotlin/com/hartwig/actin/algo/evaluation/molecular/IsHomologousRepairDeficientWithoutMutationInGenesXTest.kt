@@ -138,7 +138,7 @@ class IsHomologousRepairDeficientWithoutMutationInGenesXTest {
             )
         )
         assertEvaluation(EvaluationResult.WARN, result)
-        assertThat(result.warnSpecificMessages).containsExactly("Homologous repair deficiency (HRD) status detected, without drivers in HR genes")
+        assertThat(result.warnMessages).containsExactly("Homologous repair deficiency (HRD) status detected, without drivers in HR genes")
     }
 
     @Test

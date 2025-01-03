@@ -16,9 +16,9 @@ class HasIntoleranceWithSpecificName(private val termToFind: String) : Evaluatio
             .toSet()
 
         return if (allergies.isNotEmpty()) {
-            EvaluationFactory.pass("Patient has allergy " + concat(allergies), "Present " + concat(allergies))
+            EvaluationFactory.pass("Has allergy " + concat(allergies))
         } else {
-            EvaluationFactory.fail("Patient has no allergies with name $termToFind", "No allergies with name $termToFind")
+            EvaluationFactory.fail("Has no allergies with name $termToFind")
         }
     }
 }

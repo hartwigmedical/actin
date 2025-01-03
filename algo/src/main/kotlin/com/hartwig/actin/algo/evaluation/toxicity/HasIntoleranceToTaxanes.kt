@@ -16,15 +16,9 @@ class HasIntoleranceToTaxanes : EvaluationFunction {
             .toSet()
 
         return if (taxaneAllergies.isNotEmpty()) {
-            EvaluationFactory.pass(
-                "Patient has allergy to a taxane: " + concat(taxaneAllergies),
-                "Taxane allergy: " + concat(taxaneAllergies)
-            )
+            EvaluationFactory.pass("Has taxane allergy: " + concat(taxaneAllergies))
         } else
-            EvaluationFactory.fail(
-                "Patient has no known allergy to taxanes",
-                "No known taxane allergy"
-            )
+            EvaluationFactory.fail("No known taxane allergy")
     }
 
     companion object {

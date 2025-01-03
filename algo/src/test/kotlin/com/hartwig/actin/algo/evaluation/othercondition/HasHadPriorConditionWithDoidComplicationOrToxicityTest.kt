@@ -48,26 +48,21 @@ class HasHadPriorConditionWithDoidComplicationOrToxicityTest {
         )
         val evaluation = function.evaluate(minimalPatient)
         assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failSpecificMessages)
-            .containsOnly("Patient has no other condition belonging to category unknown doid")
-        assertThat(evaluation.failGeneralMessages).containsOnly("No relevant non-oncological condition")
+        assertThat(evaluation.failMessages).containsOnly("No relevant non-oncological condition")
     }
 
     @Test
     fun `Should evaluate fail when no matching doid complication or toxicity`() {
         val evaluation = function.evaluate(minimalPatient)
         assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failSpecificMessages)
-            .containsOnly("Patient has no other condition belonging to category some disease")
-        assertThat(evaluation.failGeneralMessages).containsOnly("No relevant non-oncological condition")
+        assertThat(evaluation.failMessages).containsOnly("No relevant non-oncological condition")
     }
 
     @Test
     fun `Should evaluate pass when doid term matches category`() {
         assertPassEvaluationWithMessages(
             function.evaluate(OtherConditionTestFactory.withPriorOtherCondition(priorOtherCondition)),
-            "other condition",
-            "Patient has history of condition(s) other condition, which is indicative of some disease"
+            "other condition"
         )
     }
 
@@ -75,8 +70,7 @@ class HasHadPriorConditionWithDoidComplicationOrToxicityTest {
     fun `Should evaluate pass when complication matches category`() {
         assertPassEvaluationWithMessages(
             function.evaluate(OtherConditionTestFactory.withComplications(listOf(complication))),
-            "complication",
-            "Patient has history of complication(s) complication, which is indicative of some disease"
+            "complication"
         )
     }
 
@@ -84,8 +78,7 @@ class HasHadPriorConditionWithDoidComplicationOrToxicityTest {
     fun `Should evaluate pass when toxicity from questionnaire matches category`() {
         assertPassEvaluationWithMessages(
             function.evaluate(OtherConditionTestFactory.withToxicities(listOf(toxicity(ToxicitySource.QUESTIONNAIRE, 1)))),
-            "toxicity",
-            "Patient has history of toxicity(ies) toxicity, which is indicative of some disease"
+            "toxicity"
         )
     }
 
@@ -94,7 +87,6 @@ class HasHadPriorConditionWithDoidComplicationOrToxicityTest {
         assertPassEvaluationWithMessages(
             function.evaluate(OtherConditionTestFactory.withToxicities(listOf(toxicity(ToxicitySource.EHR, 2)))),
             "toxicity",
-            "Patient has history of toxicity(ies) toxicity, which is indicative of some disease"
         )
     }
 
@@ -102,9 +94,7 @@ class HasHadPriorConditionWithDoidComplicationOrToxicityTest {
     fun `Should evaluate fail when toxicity less than grade two and source not questionnaire`() {
         val evaluation = function.evaluate(OtherConditionTestFactory.withToxicities(listOf(toxicity(ToxicitySource.EHR, 1))))
         assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failSpecificMessages)
-            .containsOnly("Patient has no other condition belonging to category some disease")
-        assertThat(evaluation.failGeneralMessages).containsOnly("No relevant non-oncological condition")
+        assertThat(evaluation.failMessages).containsOnly("No relevant non-oncological condition")
     }
 
     @Test
@@ -117,10 +107,7 @@ class HasHadPriorConditionWithDoidComplicationOrToxicityTest {
                     priorOtherConditions = listOf(priorOtherCondition)
                 )
             ),
-            "complication and other condition and toxicity",
-            "Patient has history of toxicity(ies) toxicity, which is indicative of some disease",
-            "Patient has history of complication(s) complication, which is indicative of some disease",
-            "Patient has history of condition(s) other condition, which is indicative of some disease"
+            "complication and other condition and toxicity"
         )
     }
 
@@ -134,9 +121,8 @@ class HasHadPriorConditionWithDoidComplicationOrToxicityTest {
         )
     }
 
-    private fun assertPassEvaluationWithMessages(evaluation: Evaluation, matchedNames: String, vararg passSpecificMessages: String) {
+    private fun assertPassEvaluationWithMessages(evaluation: Evaluation, matchedNames: String) {
         assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passSpecificMessages).containsOnly(*passSpecificMessages)
-        assertThat(evaluation.passGeneralMessages).containsOnly("History of $matchedNames")
+        assertThat(evaluation.passMessages).containsOnly("History of $matchedNames")
     }
 }

@@ -44,7 +44,7 @@ class HasLeptomeningealDiseaseTest {
     fun `Should warn when suspected CNS lesion suggests leptomeningeal disease`() {
         val evaluation = function.evaluate(ComplicationTestFactory.withSuspectedCnsLesion("carcinomatous meningitis"))
         assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnSpecificMessages)
+        assertThat(evaluation.warnMessages)
             .containsExactly("Patient has suspected lesion indicating potential leptomeningeal disease: carcinomatous meningitis")
     }
 

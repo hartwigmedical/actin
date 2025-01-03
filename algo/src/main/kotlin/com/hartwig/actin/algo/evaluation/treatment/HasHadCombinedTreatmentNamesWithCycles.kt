@@ -9,6 +9,7 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 
+//TODO (CB)!
 class HasHadCombinedTreatmentNamesWithCycles(
     private val treatments: List<Treatment>,
     private val minCycles: Int,
@@ -26,8 +27,7 @@ class HasHadCombinedTreatmentNamesWithCycles(
                 Evaluation(
                     result = EvaluationResult.FAIL,
                     recoverable = false,
-                    failSpecificMessages = getMessagesForEvaluations(failEvaluations, Evaluation::failSpecificMessages),
-                    failGeneralMessages = getMessagesForEvaluations(failEvaluations, Evaluation::failGeneralMessages)
+                    failMessages = getMessagesForEvaluations(failEvaluations, Evaluation::failMessages)
                 )
             }
 
@@ -36,24 +36,18 @@ class HasHadCombinedTreatmentNamesWithCycles(
                 Evaluation(
                     result = EvaluationResult.UNDETERMINED,
                     recoverable = false,
-                    undeterminedSpecificMessages = getMessagesForEvaluations(
+                    undeterminedMessages = getMessagesForEvaluations(
                         undeterminedEvaluations,
-                        Evaluation::undeterminedSpecificMessages
-                    ),
-                    undeterminedGeneralMessages = getMessagesForEvaluations(
-                        undeterminedEvaluations,
-                        Evaluation::undeterminedGeneralMessages
+                        Evaluation::undeterminedMessages
                     )
                 )
             }
 
             evaluationsByResult.containsKey(EvaluationResult.PASS) && evaluationsByResult.size == 1 -> {
-                val passEvaluations = evaluationsByResult[EvaluationResult.PASS]!!
                 Evaluation(
                     result = EvaluationResult.PASS,
                     recoverable = false,
-                    passSpecificMessages = getMessagesForEvaluations(passEvaluations, Evaluation::passSpecificMessages),
-                    passGeneralMessages = setOf("Found matching treatments")
+                    passMessages = setOf("Found matching treatments")
                 )
             }
 
@@ -78,27 +72,18 @@ class HasHadCombinedTreatmentNamesWithCycles(
                 }
             }
         return if (matchingHistoryEntries.isEmpty()) {
-            EvaluationFactory.fail("No prior treatments found matching $treatmentName", GENERAL_FAIL_MESSAGE)
+            EvaluationFactory.fail(GENERAL_FAIL_MESSAGE)
         } else if (matchingHistoryEntries.containsKey(EvaluationResult.PASS)) {
             EvaluationFactory.pass(
-                "Found matching treatments: " + formatTreatmentList(matchingHistoryEntries[EvaluationResult.PASS]!!, true),
                 "Found matching treatments"
             )
         } else if (matchingHistoryEntries.containsKey(EvaluationResult.UNDETERMINED)) {
             EvaluationFactory.undetermined(
-                "Unknown cycles for matching prior treatments: " + formatTreatmentList(
-                    matchingHistoryEntries[EvaluationResult.UNDETERMINED]!!,
-                    false
-                ), "Unknown treatment cycles"
+                "Unknown treatment cycles"
             )
         } else {
             EvaluationFactory.fail(
-                String.format(
-                    "Matching prior treatments did not have between %d and %d cycles: %s",
-                    minCycles,
-                    maxCycles,
-                    formatTreatmentList(matchingHistoryEntries[EvaluationResult.FAIL]!!, true)
-                ), GENERAL_FAIL_MESSAGE
+                GENERAL_FAIL_MESSAGE
             )
         }
     }

@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.othercondition
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.fail
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.complication.ComplicationFunctions.findComplicationNamesMatchingAnyCategory
-import com.hartwig.actin.algo.evaluation.othercondition.PriorConditionMessages.Characteristic
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
@@ -12,6 +11,7 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.doid.DoidModel
 
+//TODO (CB)!
 class HasHadPriorConditionWithDoidComplicationOrToxicity(
     private val doidModel: DoidModel,
     private val doidToFind: String,
@@ -35,23 +35,10 @@ class HasHadPriorConditionWithDoidComplicationOrToxicity(
             Evaluation(
                 result = EvaluationResult.PASS,
                 recoverable = false,
-                passSpecificMessages = passSpecificMessages(doidTerm, matchingConditions, matchingComplications, matchingToxicities),
-                passGeneralMessages = setOf(
-                    PriorConditionMessages.passGeneral(matchingConditions + matchingComplications + matchingToxicities)
+                passMessages = setOf(
+                    PriorConditionMessages.pass(matchingConditions + matchingComplications + matchingToxicities)
                 )
             )
-        } else fail(PriorConditionMessages.failSpecific(doidTerm), PriorConditionMessages.failGeneral())
-    }
-
-    companion object {
-        private fun passSpecificMessages(
-            doidTerm: String, matchingConditions: Set<String>, matchingComplications: Set<String>, matchingToxicities: Set<String>
-        ): Set<String> {
-            return listOf(
-                matchingConditions to Characteristic.CONDITION,
-                matchingComplications to Characteristic.COMPLICATION,
-                matchingToxicities to Characteristic.TOXICITY
-            ).filter { it.first.isNotEmpty() }.map { PriorConditionMessages.passSpecific(it.second, it.first, doidTerm) }.toSet()
-        }
+        } else fail(PriorConditionMessages.failGeneral())
     }
 }

@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.fail
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.pass
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverableUndetermined
-import com.hartwig.actin.algo.evaluation.EvaluationFactory.undetermined
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.DateComparison.minWeeksBetweenDates
 import com.hartwig.actin.algo.evaluation.util.Format.concatItems
@@ -55,17 +54,11 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
         return when {
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_PD_AND_CYCLES_OR_WEEKS in treatmentEvaluations -> {
                 if (minCycles == null && minWeeks == null) {
-                    pass(hasTreatmentSpecificMessage(), hasTreatmentGeneralMessage())
+                    pass(hasTreatmentMessage())
                 } else if (minCycles != null) {
-                    pass(
-                        hasTreatmentSpecificMessage(" and at least $minCycles cycles"),
-                        hasTreatmentGeneralMessage(" and sufficient cycles")
-                    )
+                    pass(hasTreatmentMessage(" and at least $minCycles cycles"))
                 } else {
-                    pass(
-                        hasTreatmentSpecificMessage(" for at least $minWeeks weeks"),
-                        hasTreatmentGeneralMessage(" for sufficient weeks")
-                    )
+                    pass(hasTreatmentMessage(" for at least $minWeeks weeks"))
                 }
             }
 
@@ -79,46 +72,39 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS in treatmentEvaluations -> {
                 val messageEnd = "received ${treatment()} but uncertain if there has been PD"
-                recoverableUndetermined("Patient has $messageEnd", "Has $messageEnd")
+                recoverableUndetermined("Has $messageEnd")
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS_AND_UNCLEAR_CYCLES in treatmentEvaluations -> {
                 val messageEnd = "received ${treatment()} but uncertain if there has been PD & unknown nr of cycles"
-                recoverableUndetermined("Patient has $messageEnd", "Has $messageEnd")
+                recoverableUndetermined("Has $messageEnd")
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS_AND_UNCLEAR_WEEKS in treatmentEvaluations -> {
                 val messageEnd = "received ${treatment()} but uncertain if there has been PD & unclear nr of weeks"
-                recoverableUndetermined("Patient has $messageEnd", "Has $messageEnd")
+                recoverableUndetermined("Has $messageEnd")
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL in treatmentEvaluations -> {
-                undetermined(
-                    "Unclear whether patient has received " + treatment(),
-                    "Unclear if received " + category.display()
-                )
+                undetermined("Unclear if received " + category.display())
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT in treatmentEvaluations -> {
-                fail("Patient has received ${treatment()} but not with PD", "No PD after " + category.display())
+                fail("No PD after " + category.display())
             }
 
             else -> {
-                fail("No ${treatment()} treatment with PD", "No " + category.display())
+                fail("No ${treatment()} with PD")
             }
         }
     }
 
-    private fun hasTreatmentSpecificMessage(suffix: String = ""): String {
-        return "Patient has received ${treatment()} with PD$suffix"
-    }
-
-    private fun hasTreatmentGeneralMessage(suffix: String = ""): String {
+    private fun hasTreatmentMessage(suffix: String = ""): String {
         return "Patient has had ${treatment()} with PD$suffix"
     }
 
     private fun undetermined(suffix: String): Evaluation {
-        return undetermined(hasTreatmentSpecificMessage(suffix), hasTreatmentGeneralMessage(suffix))
+        return undetermined(hasTreatmentMessage(suffix))
     }
 
     private fun treatment(): String {

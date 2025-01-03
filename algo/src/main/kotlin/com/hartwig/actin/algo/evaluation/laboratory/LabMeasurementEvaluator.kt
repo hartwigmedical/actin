@@ -10,6 +10,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import java.time.LocalDate
 
+//TODO (CB)!
 class LabMeasurementEvaluator(
     private val measurement: LabMeasurement, private val function: LabEvaluationFunction,
     private val minValidDate: LocalDate, private val minPassDate: LocalDate
@@ -21,14 +22,14 @@ class LabMeasurementEvaluator(
         if (!LabEvaluation.isValid(mostRecent, measurement, minValidDate)) {
             return evaluateInvalidLabValue(measurement, mostRecent, minValidDate)
         }
-        
+
         val evaluation = function.evaluate(record, measurement, mostRecent!!)
 
         return if (evaluation.result == EvaluationResult.PASS && !mostRecent.date.isAfter(minPassDate)) {
             Evaluation(
                 result = EvaluationResult.WARN,
                 recoverable = true,
-                warnSpecificMessages = appendPastMinPassDate(evaluation.passSpecificMessages).toSet()
+                warnMessages = appendPastMinPassDate(evaluation.passMessages).toSet()
             )
         } else evaluation
     }

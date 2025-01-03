@@ -10,9 +10,9 @@ class WillParticipateInTrialInCountry(private val country: String) : EvaluationF
     override fun evaluate(record: PatientRecord): Evaluation {
         return when {
             country.lowercase().contains("netherlands") ->
-                EvaluationFactory.pass("Patient will be participating in $country", "Adequate country of participation")
+                EvaluationFactory.pass("Patient will be participating in $country")
 
-            else -> EvaluationFactory.fail("Patient will not be participating in $country", "Inadequate country of participation")
+            else -> EvaluationFactory.fail("Patient will not be participating in $country")
         }
     }
 }

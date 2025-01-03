@@ -22,25 +22,22 @@ class HasHadTargetedTherapyInterferingWithRasMekMapkPathway : EvaluationFunction
             directPathwayInhibitionTreatments.isNotEmpty() -> {
                 val treatmentDisplay = directPathwayInhibitionTreatments.joinToString(", ") { it.treatmentDisplay() }
                 val message = "targeted therapy $interferenceMessage ($treatmentDisplay)"
-                EvaluationFactory.pass("Patient has received $message", "Has had $message")
+                EvaluationFactory.pass("Has had $message")
             }
 
             indirectPathwayInhibitionTreatments.isNotEmpty() -> {
                 val treatmentDisplay = indirectPathwayInhibitionTreatments.joinToString(", ") { it.treatmentDisplay() }
                 val message = "targeted therapy ($treatmentDisplay) - indirectly $interferenceMessage"
-                EvaluationFactory.warn("Patient has received $message", "Has had $message")
+                EvaluationFactory.warn("Has had $message")
             }
 
             record.oncologicalHistory.any { TrialFunctions.treatmentMayMatchAsTrial(it, TreatmentCategory.TARGETED_THERAPY) } -> {
                 val message = "trial drug - $undeterminedInterferenceMessage"
-                EvaluationFactory.undetermined("Patient has received $message", "Has had $message")
+                EvaluationFactory.undetermined("Has had $message")
             }
 
             else -> {
-                EvaluationFactory.fail(
-                    "Patient did not receive targeted therapy $interferenceMessage",
-                    "Has not received targeted therapy $interferenceMessage"
-                )
+                EvaluationFactory.fail("Has not received targeted therapy $interferenceMessage")
             }
         }
     }

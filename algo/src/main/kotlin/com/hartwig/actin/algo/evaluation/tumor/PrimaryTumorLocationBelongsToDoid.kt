@@ -9,6 +9,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.doid.DoidModel
 
+//TODO (CB)!
 class PrimaryTumorLocationBelongsToDoid(
     private val doidModel: DoidModel,
     private val doidsToMatch: Set<String>,
@@ -30,10 +31,7 @@ class PrimaryTumorLocationBelongsToDoid(
             val undeterminedUnderMainCancerTypes = isUndeterminedUnderMainCancerType(tumorDoids, doidsToMatch)
 
             when {
-                !DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids) -> EvaluationFactory.undetermined(
-                    "Tumor type of patient is not configured",
-                    "Unknown tumor type"
-                )
+                !DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids) -> EvaluationFactory.undetermined("Unknown tumor type")
 
                 doidsTumorBelongsTo.isNotEmpty() && subLocationQuery != null -> {
                     val subLocation = record.tumor.primaryTumorSubLocation

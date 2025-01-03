@@ -19,42 +19,26 @@ object EvaluationAssert {
         assertThat(actual.result).isEqualTo(expected)
         when (actual.result) {
             EvaluationResult.PASS -> {
-                assertThat(actual.passSpecificMessages).isNotEmpty()
-                assertThat(actual.undeterminedSpecificMessages).isEmpty()
-                assertThat(actual.undeterminedGeneralMessages).isEmpty()
-                assertThat(actual.failSpecificMessages).isEmpty()
-                assertThat(actual.failGeneralMessages).isEmpty()
+                assertThat(actual.undeterminedMessages).isEmpty()
+                assertThat(actual.failMessages).isEmpty()
             }
 
             EvaluationResult.WARN -> {
-                assertThat(actual.passSpecificMessages).isEmpty()
-                assertThat(actual.passGeneralMessages).isEmpty()
-                assertThat(actual.warnSpecificMessages).isNotEmpty()
-                assertThat(actual.undeterminedSpecificMessages).isEmpty()
-                assertThat(actual.undeterminedGeneralMessages).isEmpty()
-                assertThat(actual.failSpecificMessages).isEmpty()
-                assertThat(actual.failGeneralMessages).isEmpty()
+                assertThat(actual.passMessages).isEmpty()
+                assertThat(actual.undeterminedMessages).isEmpty()
+                assertThat(actual.failMessages).isEmpty()
             }
 
             EvaluationResult.UNDETERMINED -> {
-                assertThat(actual.passSpecificMessages).isEmpty()
-                assertThat(actual.passSpecificMessages).isEmpty()
-                assertThat(actual.passGeneralMessages).isEmpty()
-                assertThat(actual.warnSpecificMessages).isEmpty()
-                assertThat(actual.warnGeneralMessages).isEmpty()
-                assertThat(actual.undeterminedSpecificMessages).isNotEmpty()
-                assertThat(actual.failSpecificMessages).isEmpty()
-                assertThat(actual.failGeneralMessages).isEmpty()
+                assertThat(actual.passMessages).isEmpty()
+                assertThat(actual.warnMessages).isEmpty()
+                assertThat(actual.failMessages).isEmpty()
             }
 
             EvaluationResult.FAIL -> {
-                assertThat(actual.passSpecificMessages).isEmpty()
-                assertThat(actual.passGeneralMessages).isEmpty()
-                assertThat(actual.warnSpecificMessages).isEmpty()
-                assertThat(actual.warnGeneralMessages).isEmpty()
-                assertThat(actual.undeterminedSpecificMessages).isEmpty()
-                assertThat(actual.undeterminedGeneralMessages).isEmpty()
-                assertThat(actual.failSpecificMessages).isNotEmpty()
+                assertThat(actual.passMessages).isEmpty()
+                assertThat(actual.warnMessages).isEmpty()
+                assertThat(actual.undeterminedMessages).isEmpty()
             }
 
             else -> {}

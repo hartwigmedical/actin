@@ -10,14 +10,8 @@ class CanProvideSampleForFurtherAnalysis : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return if (record.molecularHistory.latestOrangeMolecularRecord()?.experimentType != ExperimentType.HARTWIG_WHOLE_GENOME) {
-            EvaluationFactory.recoverableUndetermined(
-                "Can't determine whether patient can provide archival/fresh sample for FFPE analysis without WGS",
-                "Undetermined provision of sample for FFPE analysis"
-            )
+            EvaluationFactory.recoverableUndetermined("Undetermined if sample for FFPE analysis can be provided")
         } else
-            EvaluationFactory.pass(
-                "It is assumed that patient can provide archival/fresh sample for FFPE analysis (presence of WGS analysis)",
-                "Unknown if sample available for FFPE analysis"
-            )
+            EvaluationFactory.pass("WGS results present so assumed that sample for FFPE analysis can be provided")
     }
 }

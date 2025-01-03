@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
 
+//TODO (CB)!
 class HasCancerOfUnknownPrimary(private val doidModel: DoidModel, private val categoryOfCUP: TumorTypeInput) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -26,13 +27,9 @@ class HasCancerOfUnknownPrimary(private val doidModel: DoidModel, private val ca
         val hasOrganSystemCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.ORGAN_SYSTEM_CANCER_DOID)
         if (hasCorrectCUPCategory && !hasOrganSystemCancer) {
             return if (isCUP) {
-                EvaluationFactory.pass("Patient has cancer of unknown primary (CUP) of type " + categoryOfCUP.display(), "Has CUP")
+                EvaluationFactory.pass("Has CUP")
             } else {
-                EvaluationFactory.warn(
-                    "Patient has cancer of type " + categoryOfCUP.display() +
-                            ", but not explicitly configured as cancer of unknown primary (CUP), hence may not actually be a CUP?",
-                    "Tumor type " + categoryOfCUP.display() + " - uncertain if actually CUP"
-                )
+                EvaluationFactory.warn("Tumor type " + categoryOfCUP.display() + " - uncertain if actually CUP")
             }
         }
         return if (DoidEvaluationFunctions.isOfExactDoid(tumorDoids, DoidConstants.CANCER_DOID)) {
@@ -44,10 +41,10 @@ class HasCancerOfUnknownPrimary(private val doidModel: DoidModel, private val ca
             } else {
                 EvaluationFactory.undetermined(
                     "Tumor type is unknown, and cancer is not explicitly configured as cancer of unknown primary (CUP) - hence undetermined if actually CUP?",
-                    "Undetermined if CUP tumor type"
+                    "Undetermined if CUP"
                 )
             }
-        } else EvaluationFactory.fail("Patient has no cancer of unknown primary (CUP) of type " + categoryOfCUP.display(), "No CUP")
+        } else EvaluationFactory.fail("Has no CUP")
     }
 
     companion object {

@@ -61,7 +61,7 @@ class HasExhaustedSOCTreatmentsTest {
         val record = createHistoryWithNSCLCAndTreatment(treatment)
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failGeneralMessages).containsExactly("SOC not exhausted: at least platinum doublet remaining")
+        assertThat(evaluation.failMessages).containsExactly("SOC not exhausted: at least platinum doublet remaining")
     }
 
     @Test
@@ -70,7 +70,7 @@ class HasExhaustedSOCTreatmentsTest {
         val record = createHistoryWithNSCLCAndTreatment(null)
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failGeneralMessages).containsExactly("SOC not exhausted: at least platinum doublet remaining")
+        assertThat(evaluation.failMessages).containsExactly("SOC not exhausted: at least platinum doublet remaining")
     }
 
     @Test
@@ -102,7 +102,7 @@ class HasExhaustedSOCTreatmentsTest {
         every { recommendationEngine.patientHasExhaustedStandardOfCare(any()) } returns false
         every { recommendationEngine.determineRequiredTreatments(any()) } returns nonEmptyTreatmentList
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())))
-        assertThat(function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())).failGeneralMessages)
+        assertThat(function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())).failMessages)
             .containsExactly("Patient has not exhausted SOC (remaining options: pembrolizumab)")
     }
 

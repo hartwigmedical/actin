@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 
+//TODO (CB)!
 class HasSpecificMetastasesOnly(
     private val hasSpecificMetastases: (TumorDetails) -> Boolean?,
     private val hasSuspectedSpecificMetastases: (TumorDetails) -> Boolean?,
@@ -16,10 +17,7 @@ class HasSpecificMetastasesOnly(
     override fun evaluate(record: PatientRecord): Evaluation {
         with(record.tumor) {
             val hasSpecificMetastases = hasSpecificMetastases(this)
-                ?: return EvaluationFactory.undetermined(
-                    "Data regarding presence of $typeOfMetastases metastases is missing",
-                    "Missing $typeOfMetastases metastasis data"
-                )
+                ?: return EvaluationFactory.undetermined("Missing $typeOfMetastases metastasis data")
             val hasSuspectedSpecificMetastases = hasSuspectedSpecificMetastases(this) ?: false
 
             val otherMetastasesAccessors = confirmedCategoricalLesionList() - hasSpecificMetastases
@@ -31,47 +29,27 @@ class HasSpecificMetastasesOnly(
 
             return when {
                 hasSpecificMetastases && !hasAnyOtherLesion && otherLesions == null && otherMetastasesAccessors.any { it == null } -> {
-                    EvaluationFactory.warn(
-                        "Patient has $typeOfMetastases lesions but data regarding other lesion locations is missing " +
-                                "so unknown if patient has only $typeOfMetastases metastases",
-                        "Lesion location data is missing: unknown if $typeOfMetastases metastases only"
-                    )
+                    EvaluationFactory.warn("Lesion location data is missing: unknown if $typeOfMetastases metastases only")
                 }
 
                 hasSpecificMetastases && !hasAnyOtherLesion -> {
-                    val specificMessage = "Patient only has $typeOfMetastases metastases"
-
                     if (hasSuspectedOtherLesion) {
-                        EvaluationFactory.warn(
-                            "$specificMessage but suspected other lesion(s) present as well",
-                            "Uncertain $metastasisString - suspected other lesions present"
-                        )
+                        EvaluationFactory.warn("Uncertain $metastasisString - suspected other lesions present")
                     } else {
-                        EvaluationFactory.pass(specificMessage, metastasisString)
+                        EvaluationFactory.pass(metastasisString)
                     }
                 }
 
                 hasSuspectedSpecificMetastases && !hasAnyOtherLesion -> {
-                    val specificMessage = "Patient only has $typeOfMetastases metastases but lesion is suspected only"
-
                     if (hasSuspectedOtherLesion) {
-                        EvaluationFactory.warn(
-                            "$specificMessage and suspected other lesion(s) present as well",
-                            "Uncertain $metastasisString - lesion is suspected and other suspected lesion(s) present as well"
-                        )
+                        EvaluationFactory.warn("Uncertain $metastasisString - lesion is suspected and other suspected lesion(s) present as well")
                     } else {
-                        EvaluationFactory.warn(
-                            specificMessage,
-                            "Uncertain $metastasisString - lesion is suspected only"
-                        )
+                        EvaluationFactory.warn("Uncertain $metastasisString - lesion is suspected only")
                     }
                 }
 
                 else -> {
-                    EvaluationFactory.fail(
-                        "Patient does not have $typeOfMetastases metastases exclusively",
-                        "No $typeOfMetastases-only metastases"
-                    )
+                    EvaluationFactory.fail("No $typeOfMetastases-only metastases")
                 }
             }
         }

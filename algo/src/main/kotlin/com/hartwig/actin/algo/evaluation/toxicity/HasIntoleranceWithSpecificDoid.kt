@@ -16,15 +16,9 @@ class HasIntoleranceWithSpecificDoid(private val doidModel: DoidModel, private v
             .toSet()
 
         return if (allergies.isNotEmpty()) {
-            EvaluationFactory.pass(
-                "Patient has allergy " + concat(allergies) + " belonging to " + doidModel.resolveTermForDoid(doidToFind),
-                "Present allergy " + concat(allergies) + " belonging to " + doidModel.resolveTermForDoid(doidToFind)
-            )
+            EvaluationFactory.pass("Present allergy " + concat(allergies) + " belonging to " + doidModel.resolveTermForDoid(doidToFind))
         } else {
-            EvaluationFactory.fail(
-                "Patient has no allergies with doid" + doidModel.resolveTermForDoid(doidToFind),
-                "No allergies belonging to " + doidModel.resolveTermForDoid(doidToFind)
-            )
+            EvaluationFactory.fail("No allergies belonging to " + doidModel.resolveTermForDoid(doidToFind))
         }
     }
 }

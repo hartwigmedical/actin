@@ -51,10 +51,7 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecently(
             }
 
             treatmentAssessment.hasHadTrialAfterMinDate || activeOrRecentlyStoppedMedications?.any { it.isTrialMedication } == true -> {
-                EvaluationFactory.undetermined(
-                    "Patient has participated in a trial recently, inconclusive ${category.display()} treatment",
-                    "Inconclusive ${category.display()} treatment due to trial participation"
-                )
+                EvaluationFactory.undetermined("Inconclusive ${category.display()} treatment due to trial participation")
             }
 
             else -> {
