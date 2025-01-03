@@ -1,7 +1,10 @@
 package com.hartwig.actin.trial
 
+import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
@@ -55,7 +58,11 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
 
         LOGGER.info("Creating trial database")
         val result =
-            trialIngestion.ingest(ObjectMapper().readValue(config.trialConfigJsonPath, object : TypeReference<List<TrialConfig>>() {}))
+            trialIngestion.ingest(ObjectMapper().apply {
+                disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                configure(JsonParser.Feature.ALLOW_COMMENTS, true);
+                registerModule(KotlinModule.Builder().build())
+            }.readValue(config.trialConfigJsonPath, object : TypeReference<List<TrialConfig>>() {}))
 
         val outputDirectory = config.outputDirectory
         LOGGER.info("Writing {} trials to {}", result.size, outputDirectory)
