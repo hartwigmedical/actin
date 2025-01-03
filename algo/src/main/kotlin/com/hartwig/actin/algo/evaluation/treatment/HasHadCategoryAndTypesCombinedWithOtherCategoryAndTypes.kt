@@ -17,16 +17,9 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypes(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val containsCategory1OfTypes1 = containsCategoryOfTypes(record, category1, types1)
-        val containsCategory2OfTypes2 = containsCategoryOfTypes(record, category2, types2)
-        val hadCombination = containsCategory1OfTypes1.intersect(containsCategory2OfTypes2.toSet()).isNotEmpty()
-
-        val hadCombinationWithTrialWithUnknownType = containsCategory1OfTypes1.any {
-            TrialFunctions.treatmentMayMatchAsTrial(
-                it,
-                category2
-            )
-        } || containsCategory2OfTypes2.any { TrialFunctions.treatmentMayMatchAsTrial(it, category1) }
+        val hadCombination = hadCombination(record, false)
+        val hadCombinationWithUnknownType = hadCombination(record, true)
+        val hadCombinationWithTrialWithUnknownType = hadCombinationWithTrialWithUnknownType(record)
         val hadTrialWithUnspecifiedTreatment = record.oncologicalHistory.any { it.isTrial && it.allTreatments().isEmpty() }
 
         val treatmentDesc =
@@ -37,7 +30,7 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypes(
                 EvaluationFactory.pass("Patient has received $treatmentDesc", "Has received $treatmentDesc")
             }
 
-            hadCombinationWithTrialWithUnknownType || hadTrialWithUnspecifiedTreatment -> {
+            hadCombinationWithUnknownType || hadCombinationWithTrialWithUnknownType || hadTrialWithUnspecifiedTreatment -> {
                 EvaluationFactory.undetermined(
                     "Undetermined if patient may have received $treatmentDesc",
                     "Undetermined if received $treatmentDesc"
@@ -53,11 +46,32 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypes(
     private fun containsCategoryOfTypes(
         record: PatientRecord,
         category: TreatmentCategory,
-        types: Set<TreatmentType>
+        types: Set<TreatmentType>,
+        includeEmptyTypes: Boolean
     ): List<TreatmentHistoryEntry> {
         return record.oncologicalHistory.filter {
             it.allTreatments()
-                .any { treatment -> treatment.categories().contains(category) && treatment.types().containsAll(types) }
+                .any { treatment ->
+                    treatment.categories().contains(category) && (treatment.types()
+                        .containsAll(types) || (includeEmptyTypes && treatment.types().isEmpty()))
+                }
+        }
+    }
+
+    private fun hadCombination(
+        record: PatientRecord,
+        includeUnknownTypes: Boolean
+    ): Boolean {
+        val containsCategory1OfTypes1 = containsCategoryOfTypes(record, category1, types1, includeUnknownTypes)
+        val containsCategory2OfTypes2 = containsCategoryOfTypes(record, category2, types2, includeUnknownTypes)
+        return containsCategory1OfTypes1.intersect(containsCategory2OfTypes2.toSet()).isNotEmpty()
+    }
+
+    private fun hadCombinationWithTrialWithUnknownType(record: PatientRecord): Boolean {
+        return containsCategoryOfTypes(record, category1, types1, true).any {
+            TrialFunctions.treatmentMayMatchAsTrial(it, category2)
+        } || containsCategoryOfTypes(record, category2, types2, true).any {
+            TrialFunctions.treatmentMayMatchAsTrial(it, category1)
         }
     }
 }

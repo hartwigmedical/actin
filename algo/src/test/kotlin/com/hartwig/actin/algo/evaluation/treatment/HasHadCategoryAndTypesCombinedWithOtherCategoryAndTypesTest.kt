@@ -21,8 +21,7 @@ private val PLATINUM = drugTreatment("other drug", CATEGORY_2, TYPES_2)
 
 class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
 
-    private val function =
-        HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypes(CATEGORY_1, TYPES_1, CATEGORY_2, TYPES_2)
+    private val function = HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypes(CATEGORY_1, TYPES_1, CATEGORY_2, TYPES_2)
 
     @Test
     fun `Should fail if treatment history contains no treatments`() {
@@ -43,12 +42,7 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
 
     @Test
     fun `Should fail if treatment history contains second category and types but not combined with treatment with first category and types`() {
-        val treatmentHistoryEntry = treatmentHistoryEntry(
-            setOf(
-                PLATINUM,
-                drugTreatment("wrong name", DIFFERENT_CATEGORY_1)
-            )
-        )
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(PLATINUM, drugTreatment("wrong name", DIFFERENT_CATEGORY_1)))
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
@@ -90,10 +84,8 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
     @Test
     fun `Should evaluate to undetermined if treatment with second category and types in history combined with trial without treatments configured`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
-            setOf(
-                PLATINUM,
-                TreatmentTestFactory.treatment("empty trial treatment", isSystemic = true)
-            ), isTrial = true
+            setOf(PLATINUM, TreatmentTestFactory.treatment("empty trial treatment", isSystemic = true)),
+            isTrial = true
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
@@ -104,6 +96,16 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
     @Test
     fun `Should evaluate to undetermined if treatment history entry does not have any treatments specified`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(emptySet(), isTrial = true)
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
+        )
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if treatment history contains second category and types combined with first category but types unknown`() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(PLATINUM, drugTreatment("combined", CATEGORY_1, emptySet())))
+        val function = HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypes(CATEGORY_2, TYPES_2, CATEGORY_1, setOf(TYPES_1.first()))
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
