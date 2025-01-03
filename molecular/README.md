@@ -39,17 +39,19 @@ panel results and IHC tests. The history is modeled as a list of molecular tests
 ### Molecular test
 
 The molecular test is a common interface used to process results from ORANGE and other molecular testing. It is extended
-by the molecular record, panel record and IHC test.
+by the molecular record, panel.
 
 #### 1 molecular test interface
 
-| Field           | Example Value             | Details                                                                   |
-|-----------------|---------------------------|---------------------------------------------------------------------------|
-| type            | WGS                       | The type of molecular experiment done                                     | 
-| date            | 2022-01-14                | The date on which the molecular results were obtained                     |
-| drivers         | See drivers below         |                                                                           |
-| characteristics | See characteristics below |                                                                           |
-| evidenceSource  | CKB_EVIDENCE              | The name of the provider of the evidence. Currently always `CKB_EVIDENCE` |
+| Field                | Example Value             | Details                                                                                                        |
+|----------------------|---------------------------|----------------------------------------------------------------------------------------------------------------|
+| type                 | WGS                       | The type of molecular experiment done                                                                          | 
+| date                 | 2022-01-14                | The date on which the molecular results were obtained                                                          |
+| drivers              | See drivers below         |                                                                                                                |
+| characteristics      | See characteristics below |                                                                                                                |
+| evidenceSource       | CKB_EVIDENCE              | The name of the provider of the evidence. Currently always `CKB_EVIDENCE`                                      |
+| hasSufficientPurity  | True/False                | The tested sample had sufficient tumor purity to pass quality checks. Not currently available for panel tests. |
+| hasSufficientQuality | True/False                | The tested sample passed all quality control checks. Not currently available for panel tests.                  |
 
 #### 1 molecular characteristics
 
@@ -248,12 +250,9 @@ The interpretation of ORANGE to the ACTIN datamodel consists of two parts:
 
 ### Integration of non-ORANGE molecular results
 
-Molecular results which are not ORANGE are interpreted from the clinical data, using the prior molecular test list. These results are
+Molecular results which are not ORANGE are interpreted from the clinical data, using the prior sequencing tests model. These results are
 normalized and integrated into the molecular history, which can be processed by downstream rules without specific knowledge about what type
 of test was done. This integration process is documented in the diagram below.
-
-Note: IHC tests are not included below as they do not provide molecular events which can be annotated. They follow a similar path, but
-have no annotation step, and cannot be used in molecular rules requiring drivers.
 
 ![Integrating Molecular Data](integrating_molecular_data.png)
 
