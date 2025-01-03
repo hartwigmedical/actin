@@ -148,6 +148,12 @@ class PDL1EvaluationFunctionsTest {
     }
 
     @Test
+    fun `Should evaluate to undetermined when TPS test result is negative and evaluating equal or below 0,5`() {
+        val record = MolecularTestFactory.withIHCTests(pdl1Test.copy(scoreText = "negative", measure = TPS))
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluatePDL1byIHC(record, TPS, 0.5, doidModel, evaluateMaxPDL1 = true))
+    }
+
+    @Test
     fun `Should pass when TPS test result is negative and evaluating equal or below 10`() {
         val record = MolecularTestFactory.withIHCTests(pdl1Test.copy(scoreText = "negative", measure = TPS))
         assertEvaluation(EvaluationResult.PASS, evaluatePDL1byIHC(record, TPS, 10.0, doidModel, evaluateMaxPDL1 = true))
@@ -181,6 +187,12 @@ class PDL1EvaluationFunctionsTest {
     fun `Should fail when TPS test result is negative and evaluating equal or above 1`() {
         val record = MolecularTestFactory.withIHCTests(pdl1Test.copy(scoreText = "negative", measure = TPS))
         assertEvaluation(EvaluationResult.FAIL, evaluatePDL1byIHC(record, TPS, 1.0, doidModel, evaluateMaxPDL1 = false))
+    }
+
+    @Test
+    fun `Should evaluate to undetermined when TPS test result is negative and evaluating equal or above 0,5`() {
+        val record = MolecularTestFactory.withIHCTests(pdl1Test.copy(scoreText = "negative", measure = TPS))
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluatePDL1byIHC(record, TPS, 0.5, doidModel, evaluateMaxPDL1 = false))
     }
 
     @Test
