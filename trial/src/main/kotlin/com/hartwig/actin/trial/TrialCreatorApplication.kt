@@ -14,6 +14,7 @@ import com.hartwig.actin.molecular.filter.GeneFilterFactory
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.serialization.TrialJson
+import java.io.File
 import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
@@ -60,7 +61,7 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
             trialIngestion.ingest(ObjectMapper().apply {
                 disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
                 registerModule(KotlinModule.Builder().build())
-            }.readValue(config.trialConfigJsonPath, object : TypeReference<List<TrialConfig>>() {}))
+            }.readValue(File(config.trialConfigJsonPath), object : TypeReference<List<TrialConfig>>() {}))
 
         val outputDirectory = config.outputDirectory
         LOGGER.info("Writing {} trials to {}", result.size, outputDirectory)
