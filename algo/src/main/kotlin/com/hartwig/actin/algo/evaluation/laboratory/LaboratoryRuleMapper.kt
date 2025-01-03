@@ -148,7 +148,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     }
 
     private fun hasAdequateOrganFunctionCreator(): FunctionCreator {
-        return { HasAdequateOrganFunction(minValidLabDate(), doidModel()) }
+        return { HasAdequateOrganFunction(minValidLabDate(), icdModel()) }
     }
 
     private fun hasLimitedPTTCreator(): FunctionCreator {
