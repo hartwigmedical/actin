@@ -13,8 +13,8 @@ class HasHadPriorConditionWithName(private val nameToFind: String) : EvaluationF
             .any { it.name.lowercase().contains(nameToFind.lowercase()) }
 
         if (hasHadPriorConditionWithName) {
-            return EvaluationFactory.pass("Patient has history of $nameToFind", "History of $nameToFind")
+            return EvaluationFactory.pass("History of $nameToFind")
         }
-        return EvaluationFactory.fail("Patient has no history of $nameToFind", "No history of $nameToFind")
+        return EvaluationFactory.fail("No history of $nameToFind")
     }
 }

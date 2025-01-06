@@ -8,7 +8,6 @@ import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 import java.time.LocalDate
 
-//TODO (CB)!
 class IsHomologousRepairDeficient(maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
@@ -53,24 +52,18 @@ class IsHomologousRepairDeficient(maxTestAge: LocalDate? = null) : MolecularEval
             null -> {
                 if (hrdGenesWithBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.undetermined(
-                        "Unknown homologous repair deficiency (HRD) status, but biallelic drivers in HR genes: "
-                                + concat(hrdGenesWithBiallelicDriver) + " are detected; an HRD test may be recommended",
-                        "Unknown HRD status but biallelic drivers in HR genes"
+                        "Unknown HRD status but biallelic drivers in HR genes - an HRD test may be recommended"
                     )
                 } else if (hrdGenesWithNonBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.undetermined(
-                        "Unknown homologous repair deficiency (HRD) status, but non-biallelic drivers in HR genes: "
-                                + concat(hrdGenesWithNonBiallelicDriver) + " are detected; an HRD test may be recommended",
-                        "Unknown HRD status but non-biallelic drivers in HR genes"
+                        "Unknown HRD status but non-biallelic drivers in HR genes - an HRD test may be recommended"
                     )
                 } else if (hrdGenesWithUnknownAllelicDriver.isNotEmpty()) {
                     EvaluationFactory.undetermined(
-                        "Unknown homologous repair deficiency (HRD) status, but drivers with unknown allelic status in HR genes: "
-                                + concat(hrdGenesWithNonBiallelicDriver) + " are detected; an HRD test may be recommended",
-                        "Unknown HRD status but drivers unknown allelic status in HR genes"
+                        "Unknown HRD status but drivers with unknown allelic status in HR genes"
                     )
                 } else {
-                    EvaluationFactory.fail("Unknown homologous repair deficiency (HRD) status", "Unknown HRD status")
+                    EvaluationFactory.fail("Unknown HRD status")
                 }
             }
 
@@ -78,22 +71,16 @@ class IsHomologousRepairDeficient(maxTestAge: LocalDate? = null) : MolecularEval
                 val inclusionMolecularEvents = setOf(MolecularCharacteristicEvents.HOMOLOGOUS_REPAIR_DEFICIENT)
                 if (hrdGenesWithBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.pass(
-                        "Homologous repair deficiency (HRD) status detected, together with biallelic drivers in HR genes: "
-                                + concat(hrdGenesWithBiallelicDriver),
                         "Tumor is HRD and biallelic drivers in HR genes detected",
                         inclusionEvents = inclusionMolecularEvents
                     )
                 } else if (hrdGenesWithNonBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.warn(
-                        "Homologous repair deficiency (HRD) status detected, together with non-biallelic drivers in HR genes ("
-                                + concat(MolecularConstants.HRD_GENES) + ") were detected",
                         "Tumor is HRD (but with only non-biallelic drivers in HR genes)",
                         inclusionEvents = inclusionMolecularEvents
                     )
                 } else {
                     EvaluationFactory.warn(
-                        "Homologous repair deficiency (HRD) status detected, without drivers in HR genes ("
-                                + concat(MolecularConstants.HRD_GENES) + ") detected",
                         "Tumor is HRD (but without detected drivers in HR genes)",
                         inclusionEvents = inclusionMolecularEvents
                     )

@@ -59,29 +59,18 @@ class HasLimitedDerivedCreatinineClearance internal constructor(
 
         return when {
             result == EvaluationResult.FAIL && weight == null -> EvaluationFactory.recoverableUndetermined(
-                "Cockcroft-Gault may be above maximum but weight of patient is not known",
-                "Cockcroft-Gault may be above max but patient weight unknown"
+                "Cockcroft-Gault may be above max but body weight unknown"
             )
 
-            result == EvaluationResult.FAIL -> EvaluationFactory.recoverableFail(
-                "Cockcroft-Gault above maximum of $maxCreatinineClearance",
-                "Cockcroft-Gault above max of $maxCreatinineClearance",
-            )
+            result == EvaluationResult.FAIL -> EvaluationFactory.recoverableFail("Cockcroft-Gault above max of $maxCreatinineClearance")
 
-            result == EvaluationResult.UNDETERMINED -> EvaluationFactory.recoverableUndetermined(
-                "Cockcroft-Gault evaluation led to ambiguous results",
-                "Cockcroft-Gault evaluation ambiguous"
-            )
+            result == EvaluationResult.UNDETERMINED -> EvaluationFactory.recoverableUndetermined("Cockcroft-Gault evaluation undetermined")
 
             result == EvaluationResult.PASS && weight == null -> EvaluationFactory.notEvaluated(
-                "Body weight is unknown but Cockcroft-Gault is most likely below maximum of $maxCreatinineClearance",
-                "Cockcroft-Gault most likely below max of $maxCreatinineClearance but weight unknown",
+                "Cockcroft-Gault most likely below max of $maxCreatinineClearance but body weight unknown"
             )
 
-            result == EvaluationResult.PASS -> EvaluationFactory.recoverablePass(
-                "Cockcroft-Gault is below maximum of $maxCreatinineClearance",
-                "Cockcroft-Gault below max of $maxCreatinineClearance",
-            )
+            result == EvaluationResult.PASS -> EvaluationFactory.recoverablePass("Cockcroft-Gault below max of $maxCreatinineClearance")
 
             else -> Evaluation(result = result, recoverable = true)
         }
@@ -92,20 +81,15 @@ class HasLimitedDerivedCreatinineClearance internal constructor(
 
         return when (val result = CreatinineFunctions.interpretEGFREvaluations(evaluations)) {
             EvaluationResult.FAIL -> {
-                EvaluationFactory.recoverableFail(
-                    "$code exceeds maximum of $maxCreatinineClearance", "$code exceeds max of $maxCreatinineClearance"
-                )
+                EvaluationFactory.recoverableFail("$code exceeds max of $maxCreatinineClearance")
             }
+
             EvaluationResult.UNDETERMINED -> {
-                EvaluationFactory.recoverableUndetermined(
-                    "$code evaluation led to ambiguous results", "$code could not be determined"
-                )
+                EvaluationFactory.recoverableUndetermined("$code evaluation undetermined")
             }
 
             EvaluationResult.PASS -> {
-                EvaluationFactory.recoverablePass(
-                    "$code below maximum of $maxCreatinineClearance", "$code below max of $maxCreatinineClearance"
-                )
+                EvaluationFactory.recoverablePass("$code below max of $maxCreatinineClearance")
             }
 
             else -> {

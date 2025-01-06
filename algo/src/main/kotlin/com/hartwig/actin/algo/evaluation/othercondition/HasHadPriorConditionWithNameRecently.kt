@@ -10,6 +10,7 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 import java.time.LocalDate
 
+//TODO (CB)
 class HasHadPriorConditionWithNameRecently (
     private val conditionNameToFind: String,
     private val minDate: LocalDate
@@ -57,10 +58,7 @@ class HasHadPriorConditionWithNameRecently (
             }
 
             else -> {
-                EvaluationFactory.fail(
-                    "Patient has no recent history of $conditionNameToFind",
-                    "No recent history of $conditionNameToFind"
-                )
+                EvaluationFactory.fail("No recent history of $conditionNameToFind")
             }
         }
     }

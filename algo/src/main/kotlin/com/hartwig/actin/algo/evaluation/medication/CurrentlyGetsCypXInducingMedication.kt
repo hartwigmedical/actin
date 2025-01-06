@@ -22,28 +22,24 @@ class CurrentlyGetsCypXInducingMedication(private val selector: MedicationSelect
         return when {
             cypInducersReceived.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass(
-                    "Patient currently gets CYP$termToFind inducing medication: ${Format.concatLowercaseWithAnd(cypInducersReceived)}",
                     "CYP$termToFind inducing medication use: ${Format.concatLowercaseWithAnd(cypInducersReceived)}"
                 )
             }
 
             termToFind in MedicationConstants.UNDETERMINED_CYP_STRING -> {
                 EvaluationFactory.undetermined(
-                    "Undetermined if patient currently gets CYP$termToFind inducing medication",
-                    "Undetermined CYP$termToFind inducing medication use"
+                    "CYP$termToFind inducing medication use undetermined"
                 )
             }
 
             cypInducersPlanned.isNotEmpty() -> {
                 EvaluationFactory.recoverableWarn(
-                    "Patient plans to get CYP$termToFind inducing medication: ${Format.concatLowercaseWithAnd(cypInducersPlanned)}",
                     "Planned CYP$termToFind inducing medication use: ${Format.concatLowercaseWithAnd(cypInducersPlanned)}"
                 )
             }
 
             else -> {
                 EvaluationFactory.recoverableFail(
-                    "Patient currently does not get CYP$termToFind inducing medication ",
                     "No CYP$termToFind inducing medication use "
                 )
             }

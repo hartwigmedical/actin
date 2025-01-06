@@ -51,8 +51,7 @@ class GeneHasVariantInCodon(private val gene: String, private val codons: List<S
         return when {
             canonicalReportableVariantMatches.isNotEmpty() && reportableOtherVariantMatches.isEmpty() && canonicalReportableSubclonalVariantMatches.isEmpty() -> {
                 EvaluationFactory.pass(
-                    "Variant(s) in codon(s) detected in canonical transcript",
-                    "Variant(s) in codon(s) ${concat(canonicalCodonMatches)} in $gene",
+                    "Variant(s) in codon(s) ${concat(canonicalCodonMatches)} in $gene in canonical transcript",
                     inclusionEvents = canonicalReportableVariantMatches
                 )
             }
@@ -65,8 +64,7 @@ class GeneHasVariantInCodon(private val gene: String, private val codons: List<S
                     canonicalReportableSubclonalCodonMatches
                 )
                 EvaluationFactory.warn(
-                    "Valid variant(s) ${concat(canonicalReportableVariantMatches)} in codon(s) ${concat(canonicalCodonMatches)} detected in gene $gene detected in canonical transcript, together with " + specificExtension,
-                    "Valid variant(s) ${concat(canonicalReportableVariantMatches)} in codon(s) ${concat(canonicalCodonMatches)} detected in $gene, together with " + generalExtension,
+                    "Variant(s) ${concat(canonicalReportableVariantMatches)} in codon(s) ${concat(canonicalCodonMatches)} in $gene in canonical transcript together with " + specificExtension,
                     inclusionEvents = canonicalReportableVariantMatches + reportableOtherVariantMatches + canonicalReportableSubclonalVariantMatches,
                 )
             }
@@ -80,9 +78,7 @@ class GeneHasVariantInCodon(private val gene: String, private val codons: List<S
                     reportableOtherCodonMatches
                 )
 
-                potentialWarnEvaluation ?: EvaluationFactory.fail(
-                    "No variants in codon(s) ${concat(codons)} detected in gene $gene", "No variants in codon(s) ${concat(codons)} in $gene"
-                )
+                potentialWarnEvaluation ?: EvaluationFactory.fail("No variants in codon(s) ${concat(codons)} in $gene")
             }
         }
     }
@@ -96,19 +92,15 @@ class GeneHasVariantInCodon(private val gene: String, private val codons: List<S
             listOf(
                 EventsWithMessages(
                     canonicalReportableSubclonalVariantMatches,
-                    "Variant(s) in codon(s) ${concat(canonicalReportableSubclonalVariantMatches)} in $gene detected in canonical transcript"
-                            + " but subclonal likelihood of > ${percentage(1 - CLONAL_CUTOFF)}",
-                    "Variant(s) in codon(s) ${concat(canonicalReportableSubclonalVariantMatches)} in $gene but subclonal likelihood of > "
-                            + percentage(1 - CLONAL_CUTOFF)
+                    "Variant(s) in codon(s) ${concat(canonicalReportableSubclonalVariantMatches)} in $gene in canonical transcript"
+                            + " but subclonal likelihood of > ${percentage(1 - CLONAL_CUTOFF)}"
                 ),
                 EventsWithMessages(
                     canonicalUnreportableVariantMatches,
-                    "Variant(s) in codon(s) ${concat(canonicalCodonMatches)} in $gene detected in canonical transcript but not considered reportable",
-                    "Variant(s) in codon(s) ${concat(canonicalCodonMatches)} in $gene but not reportable"
+                    "Variant(s) in codon(s) ${concat(canonicalCodonMatches)} in $gene in canonical transcript but not considered reportable"
                 ),
                 EventsWithMessages(
                     reportableOtherVariantMatches,
-                    "Variant(s) in codon(s) ${concat(reportableOtherCodonMatches)} in $gene detected but in non-canonical transcript",
                     "Variant(s) in codon(s) ${concat(reportableOtherCodonMatches)} in $gene but in non-canonical transcript"
                 )
             )

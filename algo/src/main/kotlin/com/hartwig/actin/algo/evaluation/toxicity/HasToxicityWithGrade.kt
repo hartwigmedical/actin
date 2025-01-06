@@ -51,27 +51,18 @@ class HasToxicityWithGrade internal constructor(
             matchingToxicities.isNotEmpty() -> {
                 val toxicityString = formatToxicities(matchingToxicities)
                 return if (hasAtLeastOneMatchingQuestionnaireToxicity || !warnIfToxicitiesNotFromQuestionnaire) {
-                    EvaluationFactory.recoverablePass(
-                        "Patient has toxicities grade >= $minGrade$toxicityString",
-                        "Has toxicities grade >= $minGrade$toxicityString"
-                    )
+                    EvaluationFactory.recoverablePass("Has toxicities grade >= $minGrade$toxicityString")
                 } else {
-                    EvaluationFactory.recoverableWarn(
-                        "Patient has toxicities grade >= $minGrade$toxicityString - n.b. different EHR source than questionnaire",
-                        "Has toxicities grade >= $minGrade$toxicityString - n.b. different EHR source than questionnaire"
-                    )
+                    EvaluationFactory.recoverableWarn("Has toxicities grade >= $minGrade$toxicityString - n.b. different EHR source than questionnaire")
                 }
             }
+
             unresolvableToxicities.isNotEmpty() -> {
                 val toxicityString = formatToxicities(unresolvableToxicities)
-                return EvaluationFactory.undetermined(
-                    "Patient has toxicities grade >= $DEFAULT_QUESTIONNAIRE_GRADE$toxicityString but unknown if grade >= $minGrade",
-                    "Has toxicities grade >= $DEFAULT_QUESTIONNAIRE_GRADE$toxicityString but unknown if grade >= $minGrade"
-                )
+                return EvaluationFactory.undetermined("Has toxicities grade >= $DEFAULT_QUESTIONNAIRE_GRADE$toxicityString but unknown if grade >= $minGrade")
             }
-            else -> return EvaluationFactory.fail(
-                "No toxicities found with grade $minGrade or higher", "Grade >=$minGrade toxicities not present"
-            )
+
+            else -> return EvaluationFactory.fail("No toxicities found with grade $minGrade or higher")
         }
     }
 

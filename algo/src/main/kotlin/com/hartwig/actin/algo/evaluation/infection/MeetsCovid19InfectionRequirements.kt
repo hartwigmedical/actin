@@ -8,9 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class MeetsCovid19InfectionRequirements: EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.recoverableUndetermined(
-            "Currently COVID-19 infection status cannot be determined",
-            "COVID-19 infection status unknown"
-        )
+        return EvaluationFactory.recoverableUndetermined("COVID-19 infection status unknown")
     }
 }

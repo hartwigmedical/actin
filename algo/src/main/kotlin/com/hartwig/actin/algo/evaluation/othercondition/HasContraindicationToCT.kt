@@ -15,36 +15,24 @@ class HasContraindicationToCT(private val doidModel: DoidModel) : EvaluationFunc
         for (condition in OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)) {
             for (doid in condition.doids) {
                 if (doidModel.doidWithParents(doid).contains(DoidConstants.KIDNEY_DISEASE_DOID)) {
-                    return EvaluationFactory.pass(
-                        "Patient has a potential contraindication to CT due to " + doidModel.resolveTermForDoid(doid),
-                        "Potential CT contraindication: " + doidModel.resolveTermForDoid(doid)
-                    )
+                    return EvaluationFactory.pass("Potential CT contraindication: " + doidModel.resolveTermForDoid(doid))
                 }
             }
             if (stringCaseInsensitivelyMatchesQueryCollection(condition.name, OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_CT)) {
-                return EvaluationFactory.pass(
-                    "Patient has a potential contraindication to CT due to condition " + condition.name,
-                    "Potential CT contraindication: " + condition.name
-                )
+                return EvaluationFactory.pass("Potential CT contraindication due to condition: " + condition.name)
             }
         }
         for (intolerance in record.intolerances) {
             if (stringCaseInsensitivelyMatchesQueryCollection(intolerance.name, INTOLERANCES_BEING_CONTRAINDICATIONS_TO_CT)) {
-                return EvaluationFactory.pass(
-                    "Patient has a potential contraindication to CT due to intolerance " + intolerance.name,
-                    "Potential CT contraindication: " + intolerance.name
-                )
+                return EvaluationFactory.pass("Potential CT contraindication due to intolerance: " + intolerance.name)
             }
         }
         for (complication in record.complications ?: emptyList()) {
             if (stringCaseInsensitivelyMatchesQueryCollection(complication.name, COMPLICATIONS_BEING_CONTRAINDICATIONS_TO_CT)) {
-                return EvaluationFactory.pass(
-                    "Patient has a potential contraindication to CT due to complication " + complication.name,
-                    "Potential CT contraindication: " + complication.name
-                )
+                return EvaluationFactory.pass("Potential CT contraindication due to complication: " + complication.name)
             }
         }
-        return EvaluationFactory.fail("No potential contraindications to CT identified", "No potential contraindications to CT")
+        return EvaluationFactory.fail("No potential contraindications to CT")
     }
 
     companion object {

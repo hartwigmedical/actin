@@ -14,6 +14,7 @@ import com.hartwig.actin.datamodel.clinical.ReceptorType
 import com.hartwig.actin.doid.DoidModel
 import java.time.LocalDate
 
+//TODO (CB)
 class HasBreastCancerWithPositiveReceptorOfType(
     private val doidModel: DoidModel,
     private val receptorType: ReceptorType,
@@ -44,24 +45,16 @@ class HasBreastCancerWithPositiveReceptorOfType(
 
         return when {
             tumorDoids.isNullOrEmpty() -> {
-                EvaluationFactory.undetermined(
-                    "Undetermined if $receptorType positive breast cancer since no tumor doids configured", "No tumor doids configured"
-                )
+                EvaluationFactory.undetermined("Undetermined if $receptorType positive breast cancer (no tumor doids configured)")
             }
 
-            !isBreastCancer -> EvaluationFactory.fail("Patient does not have breast cancer", "No breast cancer")
+            !isBreastCancer -> EvaluationFactory.fail("No breast cancer")
 
             targetPriorMolecularTests.isEmpty() && specificArgumentsForStatusDeterminationMissing -> {
                 return if (targetHer2AndErbb2Amplified) {
-                    EvaluationFactory.undetermined(
-                        "${receptorType.display()}-status undetermined (IHC data missing) but probably positive since ERBB2 amp present",
-                        "${receptorType.display()}-status undetermined (IHC data missing) but probably positive since ERBB2 amp present"
-                    )
+                    EvaluationFactory.undetermined("${receptorType.display()}-status undetermined (IHC data missing) but probably positive since ERBB2 amp present")
                 } else {
-                    EvaluationFactory.undetermined(
-                        "${receptorType.display()}-status unknown - data missing",
-                        "${receptorType.display()}-status unknown"
-                    )
+                    EvaluationFactory.undetermined("${receptorType.display()}-status unknown (data missing)")
                 }
             }
 
@@ -73,10 +66,7 @@ class HasBreastCancerWithPositiveReceptorOfType(
             }
 
             targetReceptorIsPositive == true -> {
-                EvaluationFactory.pass(
-                    "Patient has ${receptorType.display()}-positive breast cancer",
-                    "Has ${receptorType.display()}-positive breast cancer"
-                )
+                EvaluationFactory.pass("Has ${receptorType.display()}-positive breast cancer")
             }
 
             targetReceptorIsPositive != true && targetHer2AndErbb2Amplified -> {
@@ -105,10 +95,7 @@ class HasBreastCancerWithPositiveReceptorOfType(
             }
 
             else -> {
-                EvaluationFactory.fail(
-                    "Patient does not have ${receptorType.display()}-positive breast cancer",
-                    "No ${receptorType.display()}-positive breast cancer"
-                )
+                EvaluationFactory.fail("No ${receptorType.display()}-positive breast cancer")
             }
         }
     }

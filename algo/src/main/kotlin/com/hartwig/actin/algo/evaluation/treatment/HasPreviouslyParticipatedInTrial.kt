@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
+//TODO (CB): only 1 message
 class HasPreviouslyParticipatedInTrial(private val acronym: String? = null) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -18,7 +19,7 @@ class HasPreviouslyParticipatedInTrial(private val acronym: String? = null) : Ev
             trialEntries.any { it.trialAcronym == null } -> {
                 EvaluationFactory.undetermined("Previous trial participation but unknown if trial$acronymString")
             }
-           
+
             else -> {
                 EvaluationFactory.fail("Has not participated in trial$acronymString")
             }

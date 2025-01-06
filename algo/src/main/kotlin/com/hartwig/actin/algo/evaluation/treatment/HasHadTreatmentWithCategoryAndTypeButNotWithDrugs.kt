@@ -44,17 +44,14 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugs(
 
         return when {
             treatmentSummary.hasSpecificMatch() -> {
-                EvaluationFactory.pass("Patient has $messageEnding", "Has $messageEnding")
+                EvaluationFactory.pass("Has $messageEnding")
             }
 
             treatmentSummary.hasPossibleTrialMatch() -> {
-                EvaluationFactory.undetermined(
-                    "Patient may have $messageEnding due to trial participation",
-                    "Undetermined if $messageEnding due to trial participation"
-                )
+                EvaluationFactory.undetermined("Undetermined if $messageEnding due to trial participation")
             }
 
-            else -> EvaluationFactory.fail("Patient has not $messageEnding", "Has not $messageEnding")
+            else -> EvaluationFactory.fail("Has not $messageEnding")
         }
     }
 }

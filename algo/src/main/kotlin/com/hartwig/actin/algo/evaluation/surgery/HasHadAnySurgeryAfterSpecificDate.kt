@@ -62,7 +62,7 @@ class HasHadAnySurgeryAfterSpecificDate(private val minDate: LocalDate, private 
             }
 
             else -> {
-                EvaluationFactory.fail("Patient has not received surgery after ${date(minDate)}")
+                EvaluationFactory.fail("Has not received surgery after ${date(minDate)}")
             }
         }
     }

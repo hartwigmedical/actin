@@ -21,8 +21,6 @@ private enum class VariantClassification {
 
 private data class VariantAndProteinImpact(val variant: Variant, val proteinImpact: String)
 
-
-//TODO (CB)!
 class GeneHasVariantWithProteinImpact(
     private val gene: String,
     private val allowedProteinImpacts: Set<String>,

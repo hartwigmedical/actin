@@ -10,9 +10,9 @@ class IsPregnant: EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return if (record.patient.gender == Gender.MALE) {
-            EvaluationFactory.fail("Patient is male, hence won't be pregnant", "No pregnancy")
+            EvaluationFactory.fail("No pregnancy (is male)")
         } else {
-            EvaluationFactory.notEvaluated("It is assumed that patient won't be pregnant", "Assumed not pregnant")
+            EvaluationFactory.notEvaluated("Currently assumed that patient is not pregnant")
         }
     }
 }

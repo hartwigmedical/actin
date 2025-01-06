@@ -12,24 +12,15 @@ class IsEligibleForLocalTreatmentOfMetastases(private val hasMetastaticCancer: H
     override fun evaluate(record: PatientRecord): Evaluation {
         return when (hasMetastaticCancer.evaluate(record).result) {
             EvaluationResult.FAIL -> {
-                EvaluationFactory.fail(
-                    "Patient has no metastatic cancer and is hence not eligible for local treatment of metastases",
-                    "No metastatic cancer and hence no eligibility for local treatment of metastases"
-                )
+                EvaluationFactory.fail("No metastatic cancer and hence no eligibility for local treatment of metastases")
             }
 
             EvaluationResult.PASS -> {
-                EvaluationFactory.undetermined(
-                    "Undetermined if metastases are eligible for local treatment of metastases",
-                    "Undetermined eligibility for local treatment of metastases"
-                )
+                EvaluationFactory.undetermined("Eligibility for local treatment of metastases undetermined")
             }
 
             else -> {
-                EvaluationFactory.undetermined(
-                    "Undetermined if patient has metastatic cancer and therefore undetermined if patient is eligible for local treatment of metastases",
-                    "Undetermined if metastatic cancer and therefore undetermined eligibility for local treatment of metastases"
-                )
+                EvaluationFactory.undetermined("Undetermined if metastatic cancer and therefore undetermined eligibility for local treatment of metastases")
             }
         }
     }

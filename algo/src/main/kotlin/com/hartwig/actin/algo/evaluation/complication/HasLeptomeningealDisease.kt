@@ -21,18 +21,14 @@ class HasLeptomeningealDisease : EvaluationFunction {
 
         return when {
             leptomeningealComplications.isNotEmpty() -> {
-                return EvaluationFactory.pass(
-                    "Patient has complication " + concat(leptomeningealComplications), "Present " + concat(leptomeningealComplications)
-                )
+                return EvaluationFactory.pass("Has complication " + concat(leptomeningealComplications))
             }
 
             hasConfirmedPotentialMeningealLesions -> createWarnEvaluation(suspected = false, otherLesions)
 
             hasSuspectedPotentialMeningealLesions -> createWarnEvaluation(suspected = true, otherLesions)
 
-            else -> EvaluationFactory.fail(
-                "Patient does not have leptomeningeal disease", "No leptomeningeal disease"
-            )
+            else -> EvaluationFactory.fail("No leptomeningeal disease")
         }
     }
 
@@ -48,10 +44,7 @@ class HasLeptomeningealDisease : EvaluationFunction {
 
         private fun createWarnEvaluation(suspected: Boolean, lesions: List<String>): Evaluation {
             val suspectedString = if (suspected) " suspected" else ""
-            return EvaluationFactory.warn(
-                "Patient has$suspectedString lesion indicating potential leptomeningeal disease: " + concat(lesions),
-                "Presence of$suspectedString lesions potentially indicating leptomeningeal disease"
-            )
+            return EvaluationFactory.warn("Presence of$suspectedString lesions potentially indicating leptomeningeal disease")
         }
     }
 }

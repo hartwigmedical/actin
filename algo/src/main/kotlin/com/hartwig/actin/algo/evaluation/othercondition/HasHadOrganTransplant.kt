@@ -23,23 +23,17 @@ class HasHadOrganTransplant(private val minYear: Int?) : EvaluationFunction {
                 }
                 if (isPass) {
                     return if (minYear != null) {
-                        EvaluationFactory.pass(
-                            "Patient has had an organ transplant at some point in or after $minYear",
-                            "Patient had organ transplant in or after $minYear"
-                        )
+                        EvaluationFactory.pass("Has had organ transplant in or after $minYear")
                     } else {
-                        EvaluationFactory.pass("Patient has had an organ transplant", "Has had organ transplant")
+                        EvaluationFactory.pass("Has had organ transplant")
                     }
                 }
             }
         }
         return if (hasOrganTransplantWithUnknownYear) {
-            EvaluationFactory.undetermined(
-                "Patient has had organ transplant but in unclear year",
-                "Date of previous organ transplant unknown"
-            )
+            EvaluationFactory.undetermined("Has had organ transplant but year unknown")
         } else
-            EvaluationFactory.fail("Patient has not had an organ transplant", "No organ transplant")
+            EvaluationFactory.fail("No history of organ transplant")
     }
 
     companion object {

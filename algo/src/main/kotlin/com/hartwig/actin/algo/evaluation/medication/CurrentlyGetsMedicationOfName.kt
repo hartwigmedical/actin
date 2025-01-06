@@ -15,24 +15,15 @@ class CurrentlyGetsMedicationOfName(private val selector: MedicationSelector, pr
 
         return when {
             hasActiveMedicationWithName -> {
-                EvaluationFactory.recoverablePass(
-                    "Patient currently gets medication with name " + concat(termsToFind),
-                    concat(termsToFind) + " medication use"
-                )
+                EvaluationFactory.recoverablePass(concat(termsToFind) + " medication use")
             }
 
             hasPlannedMedicationWithName -> {
-                EvaluationFactory.recoverableWarn(
-                    "Patient plans to get medication with name " + concat(termsToFind),
-                    "Planned " + concat(termsToFind) + " medication use"
-                )
+                EvaluationFactory.recoverableWarn("Planned " + concat(termsToFind) + " medication use")
             }
 
             else -> {
-                EvaluationFactory.recoverableFail(
-                    "Patient currently does not get medication with name " + concat(termsToFind),
-                    "No " + concat(termsToFind) + " medication use"
-                )
+                EvaluationFactory.recoverableFail("No " + concat(termsToFind) + " medication use")
             }
         }
     }

@@ -12,6 +12,7 @@ import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 import com.hartwig.actin.doid.DoidModel
 import java.time.LocalDate
 
+//TODO (CB)
 class HasHadPriorConditionWithDoidsFromSetRecently(
     private val doidModel: DoidModel,
     private val doidsToFind: Set<String>,

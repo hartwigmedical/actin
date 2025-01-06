@@ -12,24 +12,15 @@ class HasIrradiationAmenableLesion(private val hasMetastaticCancer: HasMetastati
     override fun evaluate(record: PatientRecord): Evaluation {
         return when (hasMetastaticCancer.evaluate(record).result) {
             EvaluationResult.FAIL -> {
-                EvaluationFactory.fail(
-                    "Patient has no metastatic cancer and hence no irradiation amenable lesion",
-                    "No metastatic cancer and hence no irradiation amenable lesion"
-                )
+                EvaluationFactory.fail("No metastatic cancer and hence no irradiation amenable lesion")
             }
 
             EvaluationResult.UNDETERMINED, EvaluationResult.WARN -> {
-                EvaluationFactory.undetermined(
-                    "Undetermined if patient has metastatic cancer and hence undetermined if patient has irradiation amenable lesion",
-                    "Undetermined metastatic cancer and therefore undetermined if irradiation amenable lesion"
-                )
+                EvaluationFactory.undetermined("Undetermined metastatic cancer and therefore undetermined if irradiation amenable lesion")
             }
 
             else -> {
-                EvaluationFactory.recoverableUndetermined(
-                    "Undetermined if patient has irradiation amenable lesion",
-                    "Undetermined if irradiation amenable lesion"
-                )
+                EvaluationFactory.recoverableUndetermined("Irradiation amenable lesion undetermined")
             }
         }
     }

@@ -18,42 +18,27 @@ class HasKnownHPVStatus : EvaluationFunction {
 
         return when {
             molecularRecords.any { it.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME && it.containsTumorCells } -> {
-                return EvaluationFactory.pass(
-                    "WGS has successfully been performed so molecular results are available for HPV",
-                    "WGS results available for HPV"
-                )
+                return EvaluationFactory.pass("HPV result available by WGS")
             }
 
             conclusivePriorTestsForHPV.isNotEmpty() -> {
-                EvaluationFactory.pass(
-                    "HPV has been tested in a prior molecular test",
-                    "HPV result available"
-                )
+                EvaluationFactory.pass("HPV result available")
             }
 
             molecularRecords.any { it.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME } -> {
-                EvaluationFactory.undetermined(
-                    "Undetermined HPV status due to low purity in WGS",
-                    "Undetermined HPV status due to low purity in WGS"
-                )
+                EvaluationFactory.undetermined("Undetermined HPV status due to low purity in WGS")
             }
 
             indeterminatePriorTestsForHPV.isNotEmpty() -> {
-                EvaluationFactory.undetermined(
-                    "HPV has been tested in a prior molecular test but with indeterminate status",
-                    "HPV tested before but indeterminate status"
-                )
+                EvaluationFactory.undetermined("HPV tested before but indeterminate status")
             }
 
             record.molecularHistory.allOrangeMolecularRecords().isEmpty() -> {
-                EvaluationFactory.undetermined(
-                    "HPV status not available (no molecular data)",
-                    "Undetermined HPV status (no molecular data)"
-                )
+                EvaluationFactory.undetermined("HPV status undetermined (no molecular data)")
             }
 
             else -> {
-                EvaluationFactory.fail("HPV has not been tested", "HPV not tested")
+                EvaluationFactory.fail("HPV not tested")
             }
         }
     }

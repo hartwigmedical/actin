@@ -28,17 +28,11 @@ class HasKnownSCLCTransformation(private val doidModel: DoidModel, private val m
 
         return when {
             !isNSCLC -> {
-                EvaluationFactory.fail(
-                    "Patient does not have lung cancer and therefore no SCLC transformation",
-                    "No lung cancer thus no SCLC transformation"
-                )
+                EvaluationFactory.fail("No lung cancer thus no SCLC transformation")
             }
 
             (hasSmallCellDetails && !hasNonSmallCellDetails) || hasMixedOrSmallCellDoid -> {
-                EvaluationFactory.undetermined(
-                    "Patient has NSCLC with mixed histology - undetermined if small cell transformation",
-                    "NSCLC with mixed histology - undetermined if small cell transformation",
-                )
+                EvaluationFactory.undetermined("NSCLC with mixed histology - undetermined if small cell transformation")
             }
 
             inactivatedGenes.isNotEmpty() || amplifiedGenes.isNotEmpty() -> {
@@ -49,13 +43,11 @@ class HasKnownSCLCTransformation(private val doidModel: DoidModel, private val m
                     .filterNot(String::isEmpty)
                     .joinToString(", ")
 
-                val message = "Undetermined small cell transformation ($eventMessage detected)"
-                EvaluationFactory.undetermined(message, message)
+                EvaluationFactory.undetermined("Undetermined small cell transformation ($eventMessage detected)")
             }
 
             else -> {
-                val failMessage = "No indication of small cell transformation in molecular or tumor doid data - assuming none"
-                EvaluationFactory.recoverableFail(failMessage, failMessage)
+                EvaluationFactory.recoverableFail("No indication of small cell transformation in molecular or tumor doid data - assuming none")
             }
         }
     }

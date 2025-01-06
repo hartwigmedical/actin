@@ -69,24 +69,17 @@ class GeneIsWildType(private val gene: String, maxTestAge: LocalDate? = null) : 
 
         return when {
             reportableEventsWithEffect.isNotEmpty() ->
-                EvaluationFactory.fail(
-                    "Gene $gene is not considered wild-type due to ${Format.concat(reportableEventsWithEffect)}",
-                    "$gene not wild-type"
-                )
+                EvaluationFactory.fail("$gene not wild-type")
 
             potentialWarnEvaluation != null -> potentialWarnEvaluation
 
             test.hasSufficientQualityButLowPurity() ->
                 EvaluationFactory.warn(
-                    "Gene $gene is considered wild-type although tumor purity is low",
                     "$gene is wild-type although tumor purity is low",
                     inclusionEvents = setOf("$gene wild-type")
                 )
 
-            else ->
-                EvaluationFactory.pass(
-                    "Gene $gene is considered wild-type", "$gene is wild-type", inclusionEvents = setOf("$gene wild-type")
-                )
+            else -> EvaluationFactory.pass("$gene is wild-type", inclusionEvents = setOf("$gene wild-type"))
         }
     }
 
@@ -99,15 +92,11 @@ class GeneIsWildType(private val gene: String, maxTestAge: LocalDate? = null) : 
             listOf(
                 EventsWithMessages(
                     reportableEventsWithNoEffect,
-                    "Reportable event(s) in $gene are detected: ${Format.concat(reportableEventsWithNoEffect)}, however these are annotated"
-                            + " with protein effect 'no effect' in $evidenceSource and thus may potentially be considered wild-type",
-                    "$gene potentially wild-type: event(s) are reportable but protein effect 'no effect' in $evidenceSource"
+                    "$gene potentially wild-type (reportable event(s) detected but protein effect 'no effect' in $evidenceSource)"
                 ),
                 EventsWithMessages(
                     reportableEventsWithEffectPotentiallyWildtype,
-                    "Reportable event(s) in $gene are detected: ${Format.concat(reportableEventsWithEffectPotentiallyWildtype)}"
-                            + " which may potentially be considered wild-type",
-                    "$gene potentially wild-type but event(s) are reportable and have a protein effect in $evidenceSource"
+                    "$gene potentially wild-type (reportable event(s) detected which have a protein effect in $evidenceSource)"
                 ),
             )
         )

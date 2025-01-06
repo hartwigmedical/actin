@@ -34,27 +34,16 @@ class HasExhaustedSOCTreatments(
 
             isNSCLC -> {
                 if (hasReceivedPlatinumBasedDoubletOrMore) {
-                    EvaluationFactory.pass(
-                        "SOC considered exhausted since platinum doublet in treatment history", "SOC considered exhausted"
-                    )
-                } else EvaluationFactory.fail(
-                    "Patient has not exhausted SOC (at least platinum doublet remaining)",
-                    "SOC not exhausted: at least platinum doublet remaining"
-                )
+                    EvaluationFactory.pass("SOC considered exhausted (platinum doublet in history)")
+                } else EvaluationFactory.fail("SOC not exhausted (at least platinum doublet remaining)")
             }
 
             record.oncologicalHistory.isEmpty() -> {
-                EvaluationFactory.undetermined(
-                    "Patient has not had any prior cancer treatments and therefore undetermined exhaustion of SOC",
-                    "Undetermined exhaustion of SOC"
-                )
+                EvaluationFactory.undetermined("Undetermined exhaustion of SOC (no prior cancer treatment)")
             }
 
             else -> {
-                EvaluationFactory.notEvaluated(
-                    "Assumed exhaustion of SOC since patient has had prior cancer treatment",
-                    "Assumed exhaustion of SOC"
-                )
+                EvaluationFactory.notEvaluated("Assumed exhaustion of SOC (had prior cancer treatment)")
             }
         }
     }

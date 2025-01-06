@@ -28,13 +28,11 @@ class HasBMIUpToLimit(private val maximumBMI: Int, private val minimumDate: Loca
 
         return when {
             bodyMassIndex != null && (bodyMassIndex <= maximumBMI) -> {
-                val message = "BMI (${bodyMassIndex.roundToInt()}) under limit of $maximumBMI"
-                EvaluationFactory.pass(message, message)
+                EvaluationFactory.pass("BMI (${bodyMassIndex.roundToInt()}) under limit of $maximumBMI")
             }
 
             bodyMassIndex != null && (bodyMassIndex > maximumBMI) -> {
-                val message = "BMI (${bodyMassIndex.roundToInt()}) above limit of $maximumBMI"
-                EvaluationFactory.fail(message, message)
+                EvaluationFactory.fail("BMI (${bodyMassIndex.roundToInt()}) above limit of $maximumBMI")
             }
 
             minimumRequiredHeight <= MIN_EXPECTED_HEIGHT_METRES -> {
@@ -42,7 +40,7 @@ class HasBMIUpToLimit(private val maximumBMI: Int, private val minimumDate: Loca
                     String.format(
                         ApplicationConfig.LOCALE, "Median weight %.1f kg will not exceed BMI limit of %d for height >= %.2f m",
                         median, maximumBMI, minimumRequiredHeight
-                    ), "BMI below limit"
+                    )
                 )
             }
 
@@ -52,7 +50,7 @@ class HasBMIUpToLimit(private val maximumBMI: Int, private val minimumDate: Loca
                         ApplicationConfig.LOCALE,
                         "Median weight %.1f kg will exceed BMI limit of %d for height < %.2f m", median, maximumBMI,
                         minimumRequiredHeight
-                    ), "BMI above limit"
+                    )
                 )
             }
 
@@ -62,7 +60,7 @@ class HasBMIUpToLimit(private val maximumBMI: Int, private val minimumDate: Loca
                         ApplicationConfig.LOCALE,
                         "Median weight %.1f kg will exceed BMI limit of %d for height < %.2f m", median, maximumBMI,
                         minimumRequiredHeight
-                    ), "Potentially BMI above limit"
+                    )
                 )
             }
         }

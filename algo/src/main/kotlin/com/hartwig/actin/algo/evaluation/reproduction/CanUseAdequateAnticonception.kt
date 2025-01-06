@@ -8,9 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class CanUseAdequateAnticonception: EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.notEvaluated(
-            "Assumed that patient will adhere to relevant anticonception prescriptions",
-            "Assumed adherence to anticonception prescriptions"
-        )
+        return EvaluationFactory.notEvaluated("Currently assumed that patient will adhere to anticonception prescriptions")
     }
 }

@@ -17,15 +17,9 @@ class HasIntoleranceToPlatinumCompounds : EvaluationFunction {
             .toSet()
 
         return if (platinumAllergies.isNotEmpty()) {
-            EvaluationFactory.pass(
-                "Patient has allergy to a platinum compounds: " + Format.concat(platinumAllergies),
-                "Platinum compounds allergy: " + Format.concat(platinumAllergies)
-            )
+            EvaluationFactory.pass("Platinum compounds allergy: " + Format.concat(platinumAllergies))
         } else
-            EvaluationFactory.fail(
-                "Patient has no known allergy to platinum compounds",
-                "No known platinum compounds allergy"
-            )
+            EvaluationFactory.fail("No known platinum compounds allergy")
     }
 
     companion object {

@@ -11,7 +11,6 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.doid.DoidModel
 
-//TODO (CB)!
 class HasHadPriorConditionWithDoidComplicationOrToxicity(
     private val doidModel: DoidModel,
     private val doidToFind: String,

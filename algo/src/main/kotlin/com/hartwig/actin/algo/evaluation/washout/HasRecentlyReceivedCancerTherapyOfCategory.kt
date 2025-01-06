@@ -67,8 +67,6 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
         return when {
             foundCategories.isNotEmpty() || treatmentAssessment.hasHadValidTreatment -> {
                 EvaluationFactory.pass(
-                    "Patient has recently received drug of category '${concatLowercaseWithAnd(foundCategories)}'$foundMedicationString" +
-                            " - pay attention to washout period",
                     "Recent '${concatLowercaseWithAnd(foundCategories)}' drug use$foundMedicationString" +
                             " - pay attention to washout period"
                 )
@@ -79,17 +77,11 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
             }
 
             treatmentAssessment.hasHadTrialAfterMinDate || foundTrialMedication -> {
-                EvaluationFactory.undetermined(
-                    "Patient has participated in a trial recently, inconclusive ${concatLowercaseWithAnd(categoryNames)} treatment",
-                    "Inconclusive ${concatLowercaseWithAnd(categoryNames)} treatment due to trial participation"
-                )
+                EvaluationFactory.undetermined("Undetermined ${concatLowercaseWithAnd(categoryNames)} treatment due to trial participation")
             }
 
             else -> {
-                EvaluationFactory.fail(
-                    "Patient has not received recent treatments of category '${concatLowercaseWithAnd(categoryNames)}'",
-                    "No recent '${concatLowercaseWithAnd(categoryNames)}' medication use"
-                )
+                EvaluationFactory.fail("No recent '${concatLowercaseWithAnd(categoryNames)}' drug use")
             }
         }
     }

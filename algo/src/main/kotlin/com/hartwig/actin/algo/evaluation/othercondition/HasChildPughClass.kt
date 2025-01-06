@@ -13,15 +13,9 @@ class HasChildPughClass(private val doidModel: DoidModel) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         for (condition in OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)) {
             if (condition.doids.any { doidModel.doidWithParents(it).contains(DoidConstants.LIVER_CIRRHOSIS_DOID) }) {
-                return EvaluationFactory.undetermined(
-                    "Currently Child-Pugh class cannot be determined",
-                    "Undetermined Child-Pugh class"
-                )
+                return EvaluationFactory.undetermined("Child-Pugh score undetermined")
             }
         }
-        return EvaluationFactory.notEvaluated(
-            "Child Pugh Score not relevant since liver cirrhosis not present in medical history",
-            "Child Pugh not relevant since liver cirrhosis not present"
-        )
+        return EvaluationFactory.notEvaluated("Child-Pugh score not relevant since liver cirrhosis not present")
     }
 }

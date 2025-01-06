@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.doid.DoidModel
 
-//TODO (CB)!
+//TODO (CB)
 class HasHadPriorConditionWithDoid(private val doidModel: DoidModel, private val doidToFind: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {

@@ -8,9 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class IsInvolvedInStudyProcedures : EvaluationFunction {
     
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.notEvaluated(
-            "Currently assumed that patient is not involved with the trial of interest",
-            "Assumed patient is not involved with trial of interest"
-        )
+        return EvaluationFactory.notEvaluated("Currently assumed that patient is not involved with the trial of interest")
     }
 }

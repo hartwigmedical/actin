@@ -15,28 +15,19 @@ class HasContraindicationToMRI(private val doidModel: DoidModel) : EvaluationFun
         for (condition in OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)) {
             for (doid in condition.doids) {
                 if (doidModel.doidWithParents(doid).contains(DoidConstants.KIDNEY_DISEASE_DOID)) {
-                    return EvaluationFactory.pass(
-                        "Patient has a potential contraindication to MRI due to " + doidModel.resolveTermForDoid(doid),
-                        "Potential MRI contraindication: " + doidModel.resolveTermForDoid(doid)
-                    )
+                    return EvaluationFactory.pass("Potential MRI contraindication: " + doidModel.resolveTermForDoid(doid))
                 }
             }
             if (stringCaseInsensitivelyMatchesQueryCollection(condition.name, OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_MRI)) {
-                return EvaluationFactory.pass(
-                    "Patient has a potential contraindication to MRI due to condition " + condition.name,
-                    "Potential MRI contraindication: " + condition.name
-                )
+                return EvaluationFactory.pass("Potential MRI contraindication due to condition: " + condition.name)
             }
         }
         for (intolerance in record.intolerances) {
             if (stringCaseInsensitivelyMatchesQueryCollection(intolerance.name, INTOLERANCES_BEING_CONTRAINDICATIONS_TO_MRI)) {
-                return EvaluationFactory.pass(
-                    "Patient has a potential contraindication to MRI due to intolerance " + intolerance.name,
-                    "Potential MRI contraindication: " + intolerance.name
-                )
+                return EvaluationFactory.pass("Potential MRI contraindication due to intolerance: " + intolerance.name)
             }
         }
-        return EvaluationFactory.fail("No potential contraindications to MRI identified", "No potential contraindications to MRI")
+        return EvaluationFactory.fail("No potential contraindications to MRI identified")
     }
 
     companion object {

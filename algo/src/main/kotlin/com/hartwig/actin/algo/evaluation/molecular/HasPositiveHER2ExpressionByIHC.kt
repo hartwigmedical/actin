@@ -29,29 +29,20 @@ class HasPositiveHER2ExpressionByIHC(private val maxTestAge: LocalDate? = null) 
             else -> null
         }
 
+        val undeterminedMessage = "No reliable IHC HER2 expression test available"
         return when {
             validIhcTests.isEmpty() && !(positiveArguments || negativeArguments) -> {
                 return when {
                     geneERBB2IsAmplified -> {
-                        EvaluationFactory.undetermined(
-                            "No (reliable) HER2 expression test by IHC available but probably positive since ERBB2 amp present",
-                            "HER2 expression not tested by IHC but probably positive since ERBB2 amp present"
-                        )
+                        EvaluationFactory.undetermined("$undeterminedMessage but probably positive since ERBB2 amp present")
                     }
 
                     indeterminateIhcTests.isNotEmpty() -> {
-                        EvaluationFactory.undetermined(
-                            "No reliable HER2 expression test by IHC available (indeterminate status)",
-                            "HER2 expression tested by IHC but indeterminate status"
-                        )
+                        EvaluationFactory.undetermined("$undeterminedMessage (indeterminate status)")
                     }
 
                     else -> {
-                        EvaluationFactory.undetermined(
-                            "No (reliable) HER2 expression test by IHC available",
-                            "HER2 expression not tested by IHC",
-                            missingGenesForEvaluation = true
-                        )
+                        EvaluationFactory.undetermined(undeterminedMessage, missingGenesForEvaluation = true)
                     }
                 }
             }
@@ -59,57 +50,33 @@ class HasPositiveHER2ExpressionByIHC(private val maxTestAge: LocalDate? = null) 
 
             her2ReceptorIsPositive != true && geneERBB2IsAmplified -> {
                 return if (her2ReceptorIsPositive == null) {
-                    EvaluationFactory.warn(
-                        "Patient does not have HER2 positive IHC but status is undetermined since ERBB2 amp present",
-                        "Non-positive HER2 IHC results inconsistent with ERBB2 amp"
-                    )
+                    EvaluationFactory.warn("Non-positive HER2 IHC results inconsistent with ERBB2 amp")
                 } else {
-                    EvaluationFactory.warn(
-                        "Patient has HER2 negative IHC but status is undetermined since ERBB2 amp present",
-                        "Negative HER2 IHC results inconsistent with ERBB2 amp"
-                    )
+                    EvaluationFactory.warn("Negative HER2 IHC results inconsistent with ERBB2 amp")
                 }
             }
 
             her2ReceptorIsPositive != false && TestResult.BORDERLINE in testResults -> {
-                EvaluationFactory.undetermined(
-                    "HER2 expression IHC was borderline - consider ordering additional tests",
-                    "HER2 expression by IHC was borderline - additional tests should be considered"
-                )
+                EvaluationFactory.undetermined("IHC HER2 expression was borderline - additional tests should be considered")
             }
 
             her2ReceptorIsPositive == null -> {
                 return if (!(positiveArguments || negativeArguments)) {
-                    EvaluationFactory.undetermined(
-                        "No (reliable) HER2 expression test by IHC available",
-                        "HER2 expression not deterministic by IHC"
-                    )
+                    EvaluationFactory.undetermined(undeterminedMessage)
                 } else {
-                    EvaluationFactory.warn(
-                        "Conflicting HER2 expression tests by IHC",
-                        "Conflicting HER2 expression tests by IHC"
-                    )
+                    EvaluationFactory.warn("Conflicting IHC HER2 expression tests")
                 }
             }
 
             her2ReceptorIsPositive == true -> {
-                EvaluationFactory.pass(
-                    "IHC HER2 expression determined positive",
-                    "Positive HER2 expression determined by IHC"
-                )
+                EvaluationFactory.pass("IHC HER2 expression determined positive")
             }
 
             her2ReceptorIsPositive == false -> {
-                EvaluationFactory.fail(
-                    "HER2 expression determined negative with IHC",
-                    "HER2 expression determined negative with IHC"
-                )
+                EvaluationFactory.fail("IHC HER2 expression determined negative")
             }
 
-            else -> EvaluationFactory.undetermined(
-                "Patient does not have positive HER2 expression determined by IHC",
-                "No positive IHC HER2 expression"
-            )
+            else -> EvaluationFactory.undetermined("No positive IHC HER2 expression")
         }
     }
 }

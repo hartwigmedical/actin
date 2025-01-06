@@ -10,14 +10,11 @@ class HasActiveSecondMalignancy: EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return if (record.priorSecondPrimaries.any { it.status == TumorStatus.ACTIVE }) {
-            EvaluationFactory.pass("Patient has second malignancy considered active", "Presence of second malignancy considered active")
+            EvaluationFactory.pass("Presence of active second malignancy considered active")
         } else if (record.priorSecondPrimaries.any { it.status == TumorStatus.EXPECTATIVE }) {
-            EvaluationFactory.warn(
-                "Patient has second malignancy considered expectative",
-                "Presence of second malignancy considered expectative"
-            )
+            EvaluationFactory.warn("Presence of second malignancy considered expectative")
         } else {
-            EvaluationFactory.fail("Patient has no active second malignancy", "No active second malignancy")
+            EvaluationFactory.fail("No active second malignancy")
         }
     }
 }

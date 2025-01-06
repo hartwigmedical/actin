@@ -6,6 +6,7 @@ import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
+//TODO (CB)
 class HasComplicationOfCategory(private val categoryToFind: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {

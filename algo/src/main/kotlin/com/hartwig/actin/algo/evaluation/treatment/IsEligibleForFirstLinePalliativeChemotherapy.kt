@@ -19,38 +19,23 @@ class IsEligibleForFirstLinePalliativeChemotherapy(private val hasMetastaticCanc
 
         return when {
             hasMetastaticCancerResult == EvaluationResult.FAIL -> {
-                EvaluationFactory.fail(
-                    "Patient has no metastatic cancer and is hence not eligible for first line palliative chemotherapy",
-                    "No metastatic cancer and hence no eligibility for first line palliative chemotherapy"
-                )
+                EvaluationFactory.fail("No metastatic cancer and hence no eligibility for first line palliative chemotherapy")
             }
 
             palliativeTreatments.any { treatment -> treatment.categories().contains(TreatmentCategory.CHEMOTHERAPY) } -> {
-                EvaluationFactory.fail(
-                    "Patient has already had palliative chemotherapy and is hence not eligible for first line palliative chemotherapy",
-                    "Patient already had palliative chemotherapy"
-                )
+                EvaluationFactory.fail("Had palliative chemotherapy and is hence not eligible for first line palliative chemotherapy")
             }
 
             palliativeTreatments.isNotEmpty() && hasMetastaticCancerResult == EvaluationResult.PASS -> {
-                EvaluationFactory.undetermined(
-                    "Patient has had palliative $categoriesList and hence may not be considered eligible for first line palliative chemotherapy",
-                    "Patient had palliative $categoriesList (hence may not be considered eligible for first line palliative chemotherapy)"
-                )
+                EvaluationFactory.undetermined("Had palliative $categoriesList (hence may not be considered eligible for first line palliative chemotherapy)")
             }
 
             hasMetastaticCancerResult == EvaluationResult.PASS -> {
-                EvaluationFactory.undetermined(
-                    "Undetermined if patient with metastatic disease is considered eligible for first line palliative chemotherapy",
-                    "Undetermined if considered eligible for first line palliative chemotherapy"
-                )
+                EvaluationFactory.undetermined("Undetermined if patient with metastatic disease is considered eligible for first line palliative chemotherapy")
             }
 
             else -> {
-                EvaluationFactory.undetermined(
-                    "Undetermined if patient has metastatic cancer and hence may not be eligible for first line palliative chemotherapy",
-                    "Undetermined if metastatic cancer (hence may not be eligible for first line palliative chemotherapy)"
-                )
+                EvaluationFactory.undetermined("Undetermined if metastatic cancer (hence may not be eligible for first line palliative chemotherapy)")
             }
         }
     }

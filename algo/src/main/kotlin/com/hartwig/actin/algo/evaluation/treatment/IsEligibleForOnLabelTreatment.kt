@@ -18,10 +18,7 @@ class IsEligibleForOnLabelTreatment(
 
         return when {
             tumorIsCUP(record.tumor) -> {
-                EvaluationFactory.undetermined(
-                    "Tumor type is CUP and eligibility for on-label treatment is therefore undetermined",
-                    "Tumor type CUP hence eligibility for on-label treatment undetermined"
-                )
+                EvaluationFactory.undetermined("Tumor type CUP hence eligibility for on-label treatment ${treatment.display()} undetermined")
             }
 
             recommendationEngine.standardOfCareCanBeEvaluatedForPatient(record) -> {
@@ -35,17 +32,11 @@ class IsEligibleForOnLabelTreatment(
             }
 
             record.oncologicalHistory.isEmpty() -> {
-                EvaluationFactory.undetermined(
-                    "Patient has not had any prior cancer treatments and therefore undetermined eligibility for on-label treatment",
-                    "Undetermined eligibility for on-label treatment"
-                )
+                EvaluationFactory.undetermined("Undetermined eligibility for on-label treatment ${treatment.display()} (no prior cancer treatment)")
             }
 
             else -> {
-                EvaluationFactory.notEvaluated(
-                    "Assumed no eligibility for on-label treatment since patient has had prior cancer treatment",
-                    "Assumed no eligibility for on-label treatment"
-                )
+                EvaluationFactory.notEvaluated("Assumed no eligibility for on-label treatment since patient has had prior cancer treatment")
             }
         }
     }

@@ -11,16 +11,10 @@ class HasOralMedicationDifficulties: EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         for (complication in record.complications ?: emptyList()) {
             if (stringCaseInsensitivelyMatchesQueryCollection(complication.name, COMPLICATIONS_CAUSING_SWALLOW_DIFFICULTIES)) {
-                return EvaluationFactory.pass(
-                    "Patient has potential oral medication difficulties due to " + complication.name,
-                    "Potential oral medication difficulties: " + complication.name
-                )
+                return EvaluationFactory.pass("Potential oral medication difficulties: " + complication.name)
             }
         }
-        return EvaluationFactory.fail(
-            "No potential reasons for difficulty with oral medication identified",
-            "No potential oral medication difficulties identified"
-        )
+        return EvaluationFactory.fail("No potential oral medication difficulties identified")
     }
 
     companion object {

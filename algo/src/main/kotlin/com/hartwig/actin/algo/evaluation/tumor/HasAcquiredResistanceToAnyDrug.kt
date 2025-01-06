@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 
+//TODO (CB)
 class HasAcquiredResistanceToAnyDrug(private val drugsToMatch: Set<Drug>) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -24,6 +25,7 @@ class HasAcquiredResistanceToAnyDrug(private val drugsToMatch: Set<Drug>) : Eval
                     "Has potential acquired resistance to ${Format.concatItemsWithAnd(treatmentEvaluation.matchingDrugsWithPD)}"
                 )
             }
+
             (treatmentEvaluation.possibleTrialMatch) -> {
                 EvaluationFactory.undetermined(
                     "Undetermined if patient has acquired resistance to ${Format.concatItemsWithOr(drugsToMatch)} since unknown if " +

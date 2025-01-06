@@ -17,65 +17,35 @@ class IsHomologousRepairDeficientWithoutMutationInGenesX(private val genesToFind
 
             return when {
                 isHRD == null && hrdGenesWithBiallelicDriver.isNotEmpty() && genesToFindWithMutation.isEmpty() -> {
-                    EvaluationFactory.undetermined(
-                        "Unknown homologous repair deficiency (HRD) status, but biallelic drivers in HR genes: ${
-                            concat(
-                                hrdGenesWithBiallelicDriver
-                            )
-                        } are detected; an HRD test may be recommended",
-                        "Unknown HRD status but biallelic drivers in HR genes"
-                    )
+                    EvaluationFactory.undetermined("Unknown HRD status but biallelic drivers in HR genes - an HRD test may be recommended")
                 }
 
                 isHRD == null && hrdGenesWithNonBiallelicDriver.isNotEmpty() && genesToFindWithMutation.isEmpty() -> {
-                    EvaluationFactory.undetermined(
-                        "Unknown homologous repair deficiency (HRD) status, but non-biallelic drivers in HR genes: ${
-                            concat(
-                                hrdGenesWithNonBiallelicDriver
-                            )
-                        } are detected; an HRD test may be recommended",
-                        "Unknown HRD status but non-biallelic drivers in HR genes"
-                    )
+                    EvaluationFactory.undetermined("Unknown HRD status but non-biallelic drivers in HR genes - an HRD test may be recommended")
                 }
 
                 isHRD == null -> {
-                    EvaluationFactory.fail("Unknown homologous repair deficiency (HRD) status", "Unknown HRD status")
+                    EvaluationFactory.fail("Unknown HRD status")
                 }
 
                 isHRD == false -> {
-                    EvaluationFactory.fail("No homologous repair deficiency (HRD) detected", "Tumor is not HRD")
+                    EvaluationFactory.fail("Tumor is not HRD")
                 }
 
                 genesToFindWithMutation.isNotEmpty() -> {
-                    EvaluationFactory.fail(
-                        "Homologous repair deficiency (HRD) detected with variant in ${concat(genesToFindWithMutation)}",
-                        "Tumor is HRD with variant in ${concat(genesToFindWithMutation)}"
-                    )
+                    EvaluationFactory.fail("Tumor is HRD with variant in ${concat(genesToFindWithMutation)}")
                 }
 
                 hrdGenesWithNonBiallelicDriver.isNotEmpty() && hrdGenesWithBiallelicDriver.isEmpty() -> {
-                    EvaluationFactory.warn(
-                        "Homologous repair deficiency (HRD) status detected, together with only non-biallelic drivers in HR genes (${
-                            concat(
-                                hrdGenesWithNonBiallelicDriver
-                            )
-                        })",
-                        "Tumor is HRD (but with only non-biallelic drivers in HR genes)",
-                    )
+                    EvaluationFactory.warn("Tumor is HRD (but with only non-biallelic drivers in HR genes)")
                 }
 
                 hrdGenesWithNonBiallelicDriver.isEmpty() && hrdGenesWithBiallelicDriver.isEmpty() -> {
-                    EvaluationFactory.warn(
-                        "Homologous repair deficiency (HRD) status detected, without drivers in HR genes",
-                        "Tumor is HRD (but without detected drivers in HR genes)",
-                    )
+                    EvaluationFactory.warn("Tumor is HRD (but without detected drivers in HR genes)")
                 }
 
                 else -> {
-                    EvaluationFactory.pass(
-                        "Homologous repair deficiency (HRD) detected, without variants in ${concat(genesToFind)}",
-                        "Tumor is HRD without any variants in ${concat(genesToFind)}",
-                    )
+                    EvaluationFactory.pass("Tumor is HRD without any variants in ${concat(genesToFind)}")
                 }
             }
         }

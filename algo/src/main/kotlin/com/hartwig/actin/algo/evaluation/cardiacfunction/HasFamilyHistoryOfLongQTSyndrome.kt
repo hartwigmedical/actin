@@ -8,9 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasFamilyHistoryOfLongQTSyndrome : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.recoverableUndetermined(
-            "Currently undetermined if patient has family history of long QT syndrome",
-            "Undetermined family history of long QT syndrome"
-        )
+        return EvaluationFactory.recoverableUndetermined("Family history of long QT syndrome undetermined")
     }
 }

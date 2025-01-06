@@ -8,9 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class GenesMeetSpecificMRNAExpressionRequirements : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined(
-            "Specific mRNA expression requirements currently cannot be evaluated",
-            "Undetermined specific mRNA expression requirements"
-        )
+        return EvaluationFactory.undetermined("Undetermined if patient meets specific mRNA expression requirements")
     }
 }

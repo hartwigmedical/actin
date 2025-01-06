@@ -17,21 +17,14 @@ class HasLimitedBilirubinPercentageOfTotal(private val maxPercentage: Double, pr
         val mostRecentTotal = interpretation.mostRecentValue(LabMeasurement.TOTAL_BILIRUBIN)
         if (mostRecentTotal == null || mostRecentTotal.date.isBefore(minValidDate)) {
             return EvaluationFactory.recoverableUndetermined(
-                "No recent measurement found for total bilirubin, hence bilirubin percentage of total bilirubin could not be determined",
-                "Bilirubin percentage of total bilirubin could not be determined"
+                "Bilirubin percentage of total bilirubin undetermined (no recent total bilirubin measurement)"
             )
         }
         val messageStart = labMeasurement.display().replaceFirstChar { it.uppercase() } + " as percentage of " + mostRecentTotal.code
         return if ((100 * (labValue.value / mostRecentTotal.value)).compareTo(maxPercentage) <= 0) {
-            EvaluationFactory.recoverablePass(
-                "$messageStart below maximum percentage of $maxPercentage%",
-                "$messageStart below max of $maxPercentage%"
-            )
+            EvaluationFactory.recoverablePass("$messageStart below max of $maxPercentage%")
         } else {
-            EvaluationFactory.recoverableFail(
-                "$messageStart exceeds maximum percentage of $maxPercentage%",
-                "$messageStart exceeds max of $maxPercentage%"
-            )
+            EvaluationFactory.recoverableFail("$messageStart exceeds max of $maxPercentage%")
         }
     }
 }

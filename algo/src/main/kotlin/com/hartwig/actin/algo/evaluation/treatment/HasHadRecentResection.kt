@@ -41,19 +41,19 @@ class HasHadRecentResection(private val minDate: LocalDate) : EvaluationFunction
 
         return when {
             hasHadResectionAfterMinDate -> {
-                EvaluationFactory.pass("Patient has had a recent resection", "Has had recent resection")
+                EvaluationFactory.pass("Has had recent resection")
             }
 
             hasHadResectionAfterMoreLenientMinDate -> {
-                EvaluationFactory.warn("Patient has had a reasonably recent resection", "Has had reasonably recent resection")
+                EvaluationFactory.warn("Has had reasonably recent resection")
             }
 
             mayHaveHadResectionAfterMinDate -> {
-                EvaluationFactory.undetermined("Patient may have had a recent resection", "Unknown if has had recent resection")
+                EvaluationFactory.undetermined("Recent resection undetermined")
             }
 
             else -> {
-                EvaluationFactory.fail("Patient has not had a recent resection", "Has not had recent resection")
+                EvaluationFactory.fail("Has not had recent resection")
             }
         }
     }

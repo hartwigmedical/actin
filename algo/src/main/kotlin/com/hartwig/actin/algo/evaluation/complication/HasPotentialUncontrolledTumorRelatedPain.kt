@@ -11,6 +11,7 @@ import com.hartwig.actin.datamodel.clinical.AtcLevel
 
 private const val SEVERE_PAIN_COMPLICATION = "pain"
 
+//TODO (CB)
 class HasPotentialUncontrolledTumorRelatedPain(private val selector: MedicationSelector, private val severePainMedication: Set<AtcLevel>) :
     EvaluationFunction {
 
@@ -47,10 +48,7 @@ class HasPotentialUncontrolledTumorRelatedPain(private val selector: MedicationS
             }
 
             else ->
-                EvaluationFactory.fail(
-                    "Patient does not have uncontrolled tumor related pain",
-                    "No potential uncontrolled tumor related pain"
-                )
+                EvaluationFactory.fail("No potential uncontrolled tumor related pain")
         }
     }
 }

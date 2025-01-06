@@ -6,7 +6,6 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 
-//TODO (CB)!
 class HasSpecificMetastasesOnly(
     private val hasSpecificMetastases: (TumorDetails) -> Boolean?,
     private val hasSuspectedSpecificMetastases: (TumorDetails) -> Boolean?,

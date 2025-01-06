@@ -9,6 +9,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TumorStage
 
+//TODO (CB)
 class HasTumorStage(private val stagesToMatch: Set<TumorStage>) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -44,9 +45,9 @@ class HasTumorStage(private val stagesToMatch: Set<TumorStage>) : EvaluationFunc
     private fun evaluateWithStage(stage: TumorStage, derived: Boolean): Evaluation {
         val stageString = stagesToMatch.joinToString(" or ") { it.display() }
         return if (stage in stagesToMatch || stage.category in stagesToMatch || (derived && evaluateCategoryMatchForDerivedStage(stage))) {
-            pass("Patient tumor stage is requested stage $stageString", "Adequate tumor stage")
+            pass("Tumor stage is requested stage $stageString")
         } else {
-            fail("Patient tumor stage is not requested stage $stageString", "Inadequate tumor stage")
+            fail("Tumor stage is not requested stage $stageString")
         }
     }
 

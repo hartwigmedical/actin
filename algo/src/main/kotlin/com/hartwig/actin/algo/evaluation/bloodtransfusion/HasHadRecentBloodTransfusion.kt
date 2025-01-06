@@ -13,15 +13,9 @@ class HasHadRecentBloodTransfusion internal constructor(private val product: Tra
         val productString = product.display().lowercase()
         for (transfusion in record.bloodTransfusions) {
             if (transfusion.product.equals(product.display(), ignoreCase = true) && minDate.isBefore(transfusion.date)) {
-                return EvaluationFactory.pass(
-                    "Patient has received recent blood transfusion of product $productString",
-                    "Has had recent blood transfusion $productString"
-                )
+                return EvaluationFactory.pass("Has had recent $productString blood transfusion")
             }
         }
-        return EvaluationFactory.fail(
-            "Patient has not received recent blood transfusion of product $productString",
-            "Has not had recent blood transfusion $productString"
-        )
+        return EvaluationFactory.fail("Has not had recent $productString blood transfusion")
     }
 }

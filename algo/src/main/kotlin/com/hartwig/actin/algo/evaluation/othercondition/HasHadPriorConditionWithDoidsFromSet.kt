@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.doid.DoidModel
 
-//TODO (CB)!
+//TODO (CB)
 class HasHadPriorConditionWithDoidsFromSet(
     private val doidModel: DoidModel, private val doidsToFind: Set<String>, private val priorOtherConditionTerm: String
 ) : EvaluationFunction {

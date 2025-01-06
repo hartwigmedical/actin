@@ -25,11 +25,6 @@ class CurrentlyGetsTransporterInteractingMedication(
         return when {
             transporterInteractingMedicationActive.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass(
-                    "Patient currently gets $termToFind $typeText medication: ${
-                        Format.concatLowercaseWithAnd(
-                            transporterInteractingMedicationActive
-                        )
-                    }",
                     "Active $termToFind $typeText medication use: ${
                         Format.concatLowercaseWithAnd(
                             transporterInteractingMedicationActive
@@ -40,11 +35,6 @@ class CurrentlyGetsTransporterInteractingMedication(
 
             transporterInteractingMedicationPlanned.isNotEmpty() -> {
                 EvaluationFactory.recoverableWarn(
-                    "Patient plans to get $termToFind $typeText medication: ${
-                        Format.concatLowercaseWithAnd(
-                            transporterInteractingMedicationPlanned
-                        )
-                    }",
                     "Planned $termToFind $typeText medication use: ${
                         Format.concatLowercaseWithAnd(
                             transporterInteractingMedicationPlanned
@@ -55,7 +45,6 @@ class CurrentlyGetsTransporterInteractingMedication(
 
             else -> {
                 EvaluationFactory.recoverableFail(
-                    "Patient currently does not get $termToFind $typeText medication",
                     "No current $termToFind $typeText medication use"
                 )
             }

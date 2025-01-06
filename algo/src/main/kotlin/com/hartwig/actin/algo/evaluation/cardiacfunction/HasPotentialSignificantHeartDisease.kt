@@ -15,23 +15,15 @@ class HasPotentialSignificantHeartDisease(private val doidModel: DoidModel) : Ev
     override fun evaluate(record: PatientRecord): Evaluation {
         val ecg = record.clinicalStatus.ecg
         if (ecg != null && ecg.hasSigAberrationLatestECG) {
-            return EvaluationFactory.pass(
-                "Patient has an abnormality on latest ECG and therefore potentially significant cardiac disease",
-                "Potentially significant cardiac disease (ECG abnormalities present)"
-            )
+            return EvaluationFactory.pass("Potentially significant cardiac disease (ECG abnormalities present)")
         }
         val heartConditions = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
             .filter { condition -> isPotentiallyHeartDisease(condition.name) || containsPotentialHeartDiseaseDoid(condition.doids) }
             .map { it.name }.toSet()
 
         return if (heartConditions.isNotEmpty()) {
-            EvaluationFactory.pass(
-                "Patient has " + concatStringsWithAnd(heartConditions) + " and therefore potentially significant cardiac disease",
-                "Potentially significant cardiac disease: history of " + concatStringsWithAnd(heartConditions)
-            )
-        } else EvaluationFactory.fail(
-            "Patient has no potential significant cardiac disease", "No potential significant cardiac disease"
-        )
+            EvaluationFactory.pass("Potentially significant cardiac disease (history of " + concatStringsWithAnd(heartConditions))
+        } else EvaluationFactory.fail("No potential significant cardiac disease")
     }
 
     private fun containsPotentialHeartDiseaseDoid(doids: Collection<String>): Boolean {

@@ -45,24 +45,15 @@ class HasRecentlyReceivedCancerTherapyWithDrug(
             medicationsFound.isNotEmpty() || matchingTreatments.any {
                 TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minDate, false)
             } -> {
-                EvaluationFactory.pass(
-                    "Patient has recently received treatment with medication " + concat(namesFound) + " - pay attention to washout period",
-                    "Has recently received treatment with medication " + concat(namesFound) + " - pay attention to washout period"
-                )
+                EvaluationFactory.pass("Has recently received treatment with medication " + concat(namesFound) + " - pay attention to washout period")
             }
 
             matchingTreatments.any { TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minDate, true) } -> {
-                EvaluationFactory.undetermined(
-                    "Treatment containing '${Format.concatItemsWithOr(drugsToFind)}' administered with unknown date",
-                    "Matching treatment with unknown date"
-                )
+                EvaluationFactory.undetermined("Treatment containing '${Format.concatItemsWithOr(drugsToFind)}' administered with unknown date")
             }
 
             else -> {
-                EvaluationFactory.fail(
-                    "Patient has not received recent treatments with name " + Format.concatItemsWithOr(drugsToFind),
-                    "Has not received recent treatments with name " + Format.concatItemsWithOr(drugsToFind)
-                )
+                EvaluationFactory.fail("Has not received recent treatments with name " + Format.concatItemsWithOr(drugsToFind))
             }
         }
     }

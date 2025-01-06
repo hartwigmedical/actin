@@ -6,7 +6,6 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.TumorStage
 
-//TODO (CB)!
 class HasUnresectableCancer : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {

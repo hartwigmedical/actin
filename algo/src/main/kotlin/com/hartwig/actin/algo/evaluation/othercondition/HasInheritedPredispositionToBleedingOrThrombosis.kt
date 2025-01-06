@@ -25,14 +25,13 @@ class HasInheritedPredispositionToBleedingOrThrombosis(private val doidModel: Do
 
         return if (matchingDoid != null) {
             val matchingDoidTerm = doidModel.resolveTermForDoid(matchingDoid) ?: "DOID $matchingDoid"
-            EvaluationFactory.pass("Patient has $baseMessage: $matchingDoidTerm", "History of $baseMessage: $matchingDoidTerm")
+            EvaluationFactory.pass("History of $baseMessage: $matchingDoidTerm")
         } else if (hasMatchingName) {
             EvaluationFactory.pass(
-                "Patient has $baseMessage: $NAME_INDICATING_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS",
                 "History of $baseMessage: $NAME_INDICATING_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS"
             )
         } else {
-            EvaluationFactory.fail("Patient has no $baseMessage", "No history of $baseMessage")
+            EvaluationFactory.fail("No history of $baseMessage")
         }
     }
 

@@ -13,9 +13,9 @@ class HasLongQTSyndrome(private val doidModel: DoidModel) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         for (condition in OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)) {
             if (condition.doids.any { doidModel.doidWithParents(it).contains(DoidConstants.LONG_QT_SYNDROME_DOID) }) {
-                return EvaluationFactory.pass("Patient has long QT syndrome", "Presence of long QT syndrome")
+                return EvaluationFactory.pass("Presence of long QT syndrome")
             }
         }
-        return EvaluationFactory.fail("Patient does not have long QT syndrome", "No presence of long QT syndrome")
+        return EvaluationFactory.fail("No presence of long QT syndrome")
     }
 }

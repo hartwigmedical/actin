@@ -8,9 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasPotentialContraIndicationForStereotacticRadiosurgery : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.recoverableUndetermined(
-            "Undetermined if patient has a potential contra-indication for stereotactic radiosurgery - assumed there is none",
-            "Undetermined contra-indication for stereotactic radiosurgery - assumed there is none"
-        )
+        return EvaluationFactory.recoverableUndetermined("Contra-indication for stereotactic radiosurgery undetermined - assumed there is none")
     }
 }

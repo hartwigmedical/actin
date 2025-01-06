@@ -22,33 +22,23 @@ class CurrentlyGetsCypXSubstrateMedication(private val selector: MedicationSelec
         return when {
             cypSubstratesReceived.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass(
-                    "Patient currently gets CYP$termToFind substrate medication: ${
-                        Format.concatLowercaseWithAnd(
-                            cypSubstratesReceived
-                        )
-                    }",
                     "CYP$termToFind substrate medication use: ${Format.concatLowercaseWithAnd(cypSubstratesReceived)}"
                 )
             }
 
             termToFind in MedicationConstants.UNDETERMINED_CYP_STRING -> {
-                EvaluationFactory.undetermined(
-                    "Undetermined if patient currently gets CYP$termToFind substrate medication",
-                    "Undetermined CYP$termToFind substrate medication use"
-                )
+                EvaluationFactory.undetermined("CYP$termToFind substrate medication use undetermined")
             }
 
             cypSubstratesPlanned.isNotEmpty() -> {
                 EvaluationFactory.recoverableWarn(
-                    "Patient plans to get CYP$termToFind substrate medication: ${Format.concatLowercaseWithAnd(cypSubstratesPlanned)}",
                     "Planned CYP$termToFind substrate medication use: ${Format.concatLowercaseWithAnd(cypSubstratesPlanned)}"
                 )
             }
 
             else -> {
                 EvaluationFactory.recoverableFail(
-                    "Patient currently does not get CYP$termToFind substrate medication ",
-                    "No CYP$termToFind substrate medication use "
+                    "No CYP$termToFind substrate medication use"
                 )
             }
         }

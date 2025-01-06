@@ -8,7 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 
-//TODO (CB)!
 class HasHadAnyCancerTreatment(private val categoryToIgnore: TreatmentCategory?, private val atcLevelsToFind: Set<AtcLevel>) :
     EvaluationFunction {
 
@@ -38,7 +37,7 @@ class HasHadAnyCancerTreatment(private val categoryToIgnore: TreatmentCategory?,
             }
 
             else -> {
-                EvaluationFactory.fail("Has not had any cancer treatment")
+                EvaluationFactory.fail("Did not receive any cancer treatment")
             }
         }
     }

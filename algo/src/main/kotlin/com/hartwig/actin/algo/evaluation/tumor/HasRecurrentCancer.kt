@@ -8,8 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasRecurrentCancer : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined(
-            "Currently cannot be determined if cancer is recurrent", "Undetermined recurrent cancer"
-        )
+        return EvaluationFactory.undetermined("Recurrent cancer undetermined")
     }
 }

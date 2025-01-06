@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 
+//TODO (CB): only 1 message
 class HasHadPDFollowingTreatmentWithAnyDrug(private val drugsToMatch: Set<Drug>) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {

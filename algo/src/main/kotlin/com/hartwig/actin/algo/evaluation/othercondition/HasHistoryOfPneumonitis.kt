@@ -16,24 +16,18 @@ class HasHistoryOfPneumonitis(private val doidModel: DoidModel) : EvaluationFunc
         for (condition in OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)) {
             for (doid in condition.doids) {
                 if (doidModel.doidWithParents(doid).contains(DoidConstants.PNEUMONITIS_DOID)) {
-                    return EvaluationFactory.pass(
-                        "Patient has pneumonitis: " + doidModel.resolveTermForDoid(doid),
-                        "History of pneumonitis"
-                    )
+                    return EvaluationFactory.pass("History of pneumonitis: " + doidModel.resolveTermForDoid(doid))
                 }
             }
         }
         for (toxicity in record.toxicities) {
             if (toxicity.source == ToxicitySource.QUESTIONNAIRE || (toxicity.grade ?: 0) >= 2) {
                 if (stringCaseInsensitivelyMatchesQueryCollection(toxicity.name, TOXICITIES_CAUSING_PNEUMONITIS)) {
-                    return EvaluationFactory.pass(
-                        "Patient has pneumonitis: " + toxicity.name,
-                        "History of pneumonitis"
-                    )
+                    return EvaluationFactory.pass("History of pneumonitis: " + toxicity.name)
                 }
             }
         }
-        return EvaluationFactory.fail("Patient has no pneumonitis", "No history of pneumonitis")
+        return EvaluationFactory.fail("No history of pneumonitis")
     }
 
     companion object {

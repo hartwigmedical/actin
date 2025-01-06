@@ -10,7 +10,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import java.time.LocalDate
 
-//TODO (CB)!
 class LabMeasurementEvaluator(
     private val measurement: LabMeasurement, private val function: LabEvaluationFunction,
     private val minValidDate: LocalDate, private val minPassDate: LocalDate

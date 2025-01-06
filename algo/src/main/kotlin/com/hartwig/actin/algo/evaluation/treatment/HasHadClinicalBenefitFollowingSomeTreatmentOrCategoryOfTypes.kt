@@ -12,7 +12,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
 
 class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypes(
     private val treatment: Treatment? = null, private val category: TreatmentCategory? = null, private val types: Set<TreatmentType>? = null
-    ) : EvaluationFunction {
+) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val history = record.oncologicalHistory
@@ -20,12 +20,15 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypes(
             treatment != null -> {
                 { it.name.equals(treatment.name, ignoreCase = true) }
             }
+
             category != null && types != null -> {
                 { it.categories().contains(category) && it.types().intersect(types).isNotEmpty() }
             }
+
             category != null -> {
                 { it.categories().contains(category) }
             }
+
             else -> {
                 throw IllegalStateException("Treatment or category must be provided")
             }
@@ -36,8 +39,9 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypes(
             .groupBy { it.treatmentHistoryDetails?.bestResponse }
 
         val treatmentsSimilarToTargetTreatment = treatment?.let {
-            history.filter { (it.matchesTypeFromSet(treatment.types()) != false) &&
-                    it.categories().intersect(treatment.categories()).isNotEmpty()
+            history.filter {
+                (it.matchesTypeFromSet(treatment.types()) != false) &&
+                        it.categories().intersect(treatment.categories()).isNotEmpty()
             }
         }
 
@@ -57,47 +61,36 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypes(
         val bestResponse = if (stableDisease) "best response: stable disease" else "best response: mixed"
         return when {
             targetTreatmentsToResponseMap.isEmpty() -> {
-                if (!treatmentsSimilarToTargetTreatment.isNullOrEmpty()){
+                if (!treatmentsSimilarToTargetTreatment.isNullOrEmpty()) {
                     val similarDrugMessage = "receive exact treatment but received similar drugs (${
                         treatmentsSimilarToTargetTreatment.joinToString(",") { it.treatmentDisplay() }
                     })"
                     if (treatmentsSimilarToTargetTreatment.none {
-                        ProgressiveDiseaseFunctions.treatmentResultedInPD(it) == true
-                    }) {
-                    EvaluationFactory.undetermined(
-                        "Undetermined clinical benefit from treatment$treatmentDisplay - patient did not $similarDrugMessage",
-                        "Undetermined clinical benefit from treatment$treatmentDisplay - did not $similarDrugMessage"
-                    ) } else {
-                        EvaluationFactory.fail(
-                            "Patient did not $similarDrugMessage with PD as best response",
-                            "Did not $similarDrugMessage with PD as best response"
-                        )
+                            ProgressiveDiseaseFunctions.treatmentResultedInPD(it) == true
+                        }) {
+                        EvaluationFactory.undetermined("Undetermined clinical benefit from treatment$treatmentDisplay - did not $similarDrugMessage")
+                    } else {
+                        EvaluationFactory.fail("Did not $similarDrugMessage with PD as best response")
                     }
                 } else {
-                    EvaluationFactory.fail(
-                        "Patient has not received treatment$treatmentDisplay",
-                        "Has not received treatment$treatmentDisplay"
-                    )
+                    EvaluationFactory.fail("Has not received treatment$treatmentDisplay")
                 }
             }
 
             treatmentWithResponse -> {
-                EvaluationFactory.pass("Patient has had$benefitMessage", "Has had$benefitMessage")
+                EvaluationFactory.pass("Has had$benefitMessage")
             }
 
             stableDisease || mixedResponse -> {
-                EvaluationFactory.warn(
-                    "Uncertain if patient has had$benefitMessage ($bestResponse)",
-                    "Uncertain$benefitMessage ($bestResponse)"
-                )
+                EvaluationFactory.warn("Uncertain$benefitMessage ($bestResponse)")
             }
 
             uncertainResponse -> {
-                EvaluationFactory.undetermined("Undetermined$benefitMessage", "Undetermined$benefitMessage")
+                EvaluationFactory.undetermined("Undetermined$benefitMessage")
             }
 
             else -> {
-                EvaluationFactory.fail("Patient does not have$benefitMessage", "No$benefitMessage")
+                EvaluationFactory.fail("No$benefitMessage")
             }
         }
     }

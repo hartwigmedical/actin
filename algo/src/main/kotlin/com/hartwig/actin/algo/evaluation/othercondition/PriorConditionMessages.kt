@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.othercondition
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 
-//TODO (CB)!
 internal object PriorConditionMessages {
 
     fun failSpecific(doidTerm: String?): String {

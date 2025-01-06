@@ -17,10 +17,7 @@ class HasRecentlyReceivedMedicationOfAtcLevel(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         if (minStopDate.isBefore(record.patient.registrationDate)) {
-            return EvaluationFactory.undetermined(
-                "Required stop date prior to registration date for recent medication usage evaluation of $categoryName",
-                "Recent $categoryName medication"
-            )
+            return EvaluationFactory.undetermined("Recent $categoryName medication use undetermined (required stop date prior to registration date)")
         }
 
         val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
@@ -32,15 +29,9 @@ class HasRecentlyReceivedMedicationOfAtcLevel(
         return if (activeOrRecentlyStopped.isNotEmpty()) {
             val foundMedicationString =
                 if (foundMedicationNames.isNotEmpty()) ": ${concatLowercaseWithAnd(foundMedicationNames)}" else ""
-            EvaluationFactory.recoverablePass(
-                "Patient recently received medication$foundMedicationString which belong(s) to category '$categoryName'",
-                "Recent $categoryName medication use$foundMedicationString"
-            )
+            EvaluationFactory.recoverablePass("Recent $categoryName medication use$foundMedicationString")
         } else {
-            EvaluationFactory.recoverableFail(
-                "Patient has not recently received medication of category '$categoryName'",
-                "No recent $categoryName medication use"
-            )
+            EvaluationFactory.recoverableFail("No recent $categoryName medication use")
         }
     }
 }

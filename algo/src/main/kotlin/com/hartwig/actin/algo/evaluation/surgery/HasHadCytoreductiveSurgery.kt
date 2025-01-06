@@ -27,17 +27,11 @@ class HasHadCytoreductiveSurgery : EvaluationFunction {
 
         return when {
             hasHadCytoreductiveSurgery -> {
-                EvaluationFactory.pass(
-                    "Patient has had cytoreductive surgery",
-                    "Has had cytoreductive surgery"
-                )
+                EvaluationFactory.pass("Has had cytoreductive surgery")
             }
 
             undeterminedSurgery -> {
-                EvaluationFactory.undetermined(
-                    "Undetermined if the surgery the patient received was cytoreductive",
-                    "Undetermined if surgery patient received was cytoreductive"
-                )
+                EvaluationFactory.undetermined("Undetermined if surgery patient received was cytoreductive")
             }
 
             hasHadDebulkingSurgery -> {
@@ -45,10 +39,7 @@ class HasHadCytoreductiveSurgery : EvaluationFunction {
             }
 
             else -> {
-                EvaluationFactory.fail(
-                    "Patient has not received cytoreductive surgery",
-                    "Has not received cytoreductive surgery"
-                )
+                EvaluationFactory.fail("Has not received cytoreductive surgery")
             }
 
         }

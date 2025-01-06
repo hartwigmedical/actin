@@ -9,7 +9,6 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.doid.DoidModel
 
-//TODO (CB)!
 class PrimaryTumorLocationBelongsToDoid(
     private val doidModel: DoidModel,
     private val doidsToMatch: Set<String>,
@@ -19,10 +18,7 @@ class PrimaryTumorLocationBelongsToDoid(
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.tumor.doids
         return if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
-            EvaluationFactory.undetermined(
-                "Tumor type of patient is not configured",
-                "Unknown tumor type"
-            )
+            EvaluationFactory.undetermined("Unknown tumor type")
         } else {
             val doidsTumorBelongsTo =
                 DoidEvaluationFunctions.createFullExpandedDoidTree(doidModel, tumorDoids).intersect(doidsToMatch.toSet())
@@ -44,31 +40,19 @@ class PrimaryTumorLocationBelongsToDoid(
                     }
                 }
 
-                doidsTumorBelongsTo.isNotEmpty() -> EvaluationFactory.pass(
-                    "Patient has tumor belonging to DOID term(s) $doidTermsTumorBelongsTo",
-                    "Has tumor belonging to DOID term(s) $doidTermsTumorBelongsTo"
-                )
+                doidsTumorBelongsTo.isNotEmpty() -> EvaluationFactory.pass("Has tumor belonging to DOID term(s) $doidTermsTumorBelongsTo")
 
                 potentialAdenoSquamousMatches.isNotEmpty() -> {
                     val potentialAdenoSquamousMatchesString = concatLowercaseWithCommaAndOr(doidsToTerms(potentialAdenoSquamousMatches))
-                    EvaluationFactory.warn(
-                        "Unclear whether tumor type of patient can be considered $potentialAdenoSquamousMatchesString, because patient has adenosquamous tumor type",
-                        "Unclear if tumor type is considered $potentialAdenoSquamousMatchesString"
-                    )
+                    EvaluationFactory.warn("Unclear if tumor type is considered $potentialAdenoSquamousMatchesString")
                 }
 
                 undeterminedUnderMainCancerTypes.isNotEmpty() -> {
                     val terms = concatLowercaseWithCommaAndOr(doidsToTerms(undeterminedUnderMainCancerTypes.toSet()))
-                    EvaluationFactory.undetermined(
-                        "Could not determine based on configured tumor type if patient may have $terms",
-                        "Undetermined if $terms"
-                    )
+                    EvaluationFactory.undetermined("Undetermined if $terms")
                 }
 
-                else -> EvaluationFactory.fail(
-                    "Patient has no ${concatLowercaseWithCommaAndOr(doidsToTerms(doidsToMatch))}",
-                    "No ${concatLowercaseWithCommaAndOr(doidsToTerms(doidsToMatch))}"
-                )
+                else -> EvaluationFactory.fail("No ${concatLowercaseWithCommaAndOr(doidsToTerms(doidsToMatch))}")
             }
         }
     }

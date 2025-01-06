@@ -60,29 +60,18 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
 
         return when {
             result == EvaluationResult.FAIL && weight == null -> EvaluationFactory.recoverableUndetermined(
-                "eGFR (Cockcroft-Gault) may be insufficient based on creatinine level ($unit) but weight of patient is not known",
-                "eGFR (CG) may be insufficient based on creatinine level ($unit) but patient weight unknown"
+                "eGFR (CG) may be insufficient based on creatinine level ($unit) but body weight unknown"
             )
 
-            result == EvaluationResult.FAIL -> EvaluationFactory.recoverableFail(
-                "eGFR (Cockcroft-Gault) below minimum of $minCreatinineClearance",
-                "eGFR (Cockcroft-Gault) below min of $minCreatinineClearance",
-            )
+            result == EvaluationResult.FAIL -> EvaluationFactory.recoverableFail("eGFR (Cockcroft-Gault) below min of $minCreatinineClearance")
 
-            result == EvaluationResult.UNDETERMINED -> EvaluationFactory.recoverableUndetermined(
-                "eGFR (Cockcroft-Gault) evaluation led to ambiguous results",
-                "eGFR (Cockcroft-Gault) evaluation ambiguous"
-            )
+            result == EvaluationResult.UNDETERMINED -> EvaluationFactory.recoverableUndetermined("eGFR (Cockcroft-Gault) evaluation undetermined")
 
             result == EvaluationResult.PASS && weight == null -> EvaluationFactory.notEvaluated(
-                "Body weight unknown but eGFR (Cockcroft-Gault) based on creatinine level ($unit) most likely above min of $minCreatinineClearance",
-                "eGFR (CG) based on creatinine level ($unit) most likely above min of $minCreatinineClearance but weight unknown",
+                "eGFR (CG) based on creatinine level ($unit) most likely above min of $minCreatinineClearance but body weight unknown",
             )
 
-            result == EvaluationResult.PASS -> EvaluationFactory.recoverablePass(
-                "eGFR (Cockcroft-Gault) above minimum of $minCreatinineClearance",
-                "eGFR (Cockcroft-Gault) above min of $minCreatinineClearance",
-            )
+            result == EvaluationResult.PASS -> EvaluationFactory.recoverablePass("eGFR (Cockcroft-Gault) above min of $minCreatinineClearance")
 
             else -> Evaluation(result = result, recoverable = true)
         }
@@ -93,19 +82,13 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
 
         return when (val result = CreatinineFunctions.interpretEGFREvaluations(evaluations)) {
             EvaluationResult.FAIL -> {
-                EvaluationFactory.recoverableFail(
-                    "eGFR ($code) below minimum of $minCreatinineClearance", "eGFR ($code) below min of $minCreatinineClearance"
-                )
+                EvaluationFactory.recoverableFail("eGFR ($code) below min of $minCreatinineClearance")
             }
             EvaluationResult.UNDETERMINED -> {
-                EvaluationFactory.recoverableUndetermined(
-                    "eGFR ($code) evaluation led to ambiguous results", "eGFR ($code) could not be determined"
-                )
+                EvaluationFactory.recoverableUndetermined("eGFR ($code) evaluation undetermined")
             }
             EvaluationResult.PASS -> {
-                EvaluationFactory.recoverablePass(
-                    "eGFR ($code) above minimum of $minCreatinineClearance", "eGFR ($code) above min of $minCreatinineClearance"
-                )
+                EvaluationFactory.recoverablePass("eGFR ($code) above min of $minCreatinineClearance")
             }
 
             else -> {

@@ -12,28 +12,19 @@ class HasWHOStatus(private val requiredWHO: Int) : EvaluationFunction {
         val who = record.clinicalStatus.who
         return when {
             who == null -> {
-                EvaluationFactory.recoverableUndetermined("WHO status is unknown", "WHO status unknown")
+                EvaluationFactory.recoverableUndetermined("WHO status unknown")
             }
 
             who == requiredWHO -> {
-                EvaluationFactory.pass(
-                    "Patient WHO status $who is requested WHO (WHO $requiredWHO)",
-                    "Adequate WHO status"
-                )
+                EvaluationFactory.pass("Has required WHO status $requiredWHO")
             }
 
             abs(who - requiredWHO) == 1 -> {
-                EvaluationFactory.recoverableFail(
-                    "Patient WHO status $who is close to requested WHO (WHO $requiredWHO)",
-                    "WHO status is $who but should be $requiredWHO"
-                )
+                EvaluationFactory.recoverableFail("WHO status is $who but should be $requiredWHO")
             }
 
             else -> {
-                EvaluationFactory.fail(
-                    "Patient WHO status $who is not requested WHO (WHO $requiredWHO)",
-                    "WHO status is $who but should be $requiredWHO"
-                )
+                EvaluationFactory.fail("WHO status is $who but should be $requiredWHO")
             }
         }
     }

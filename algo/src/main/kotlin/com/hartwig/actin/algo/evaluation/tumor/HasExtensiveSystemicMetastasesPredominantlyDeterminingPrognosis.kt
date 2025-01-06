@@ -12,24 +12,15 @@ class HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosis(private va
     override fun evaluate(record: PatientRecord): Evaluation {
         return when (hasMetastaticCancer.evaluate(record).result) {
             EvaluationResult.FAIL -> {
-                EvaluationFactory.fail(
-                    "Patient has no metastatic cancer (hence no extensive metastases) which could be the dominant factor determining prognosis in terms of life expectancy and performance status",
-                    "No metastatic cancer (hence no extensive metastases) which could be the dominant factor determining prognosis"
-                )
+                EvaluationFactory.fail("No metastatic cancer (hence no extensive metastases) which could be the dominant factor determining prognosis")
             }
 
             EvaluationResult.UNDETERMINED, EvaluationResult.WARN -> {
-                EvaluationFactory.undetermined(
-                    "Undetermined metastatic cancer and therefore undetermined if metastases could be the dominant factor determining prognosis in terms of life expectancy and performance status",
-                    "Undetermined metastatic cancer and therefore undetermined if metastases could be the dominant factor determining prognosis"
-                )
+                EvaluationFactory.undetermined("Undetermined metastatic cancer and therefore undetermined if metastases could be the dominant factor determining prognosis")
             }
 
             else -> {
-                EvaluationFactory.undetermined(
-                    "Undetermined if the metastases are the dominant factor determining prognosis in terms of life expectancy and performance status",
-                    "Undetermined if the metastases are the dominant factor determining prognosis"
-                )
+                EvaluationFactory.undetermined("Undetermined if the metastases are the dominant factor determining prognosis")
             }
         }
     }

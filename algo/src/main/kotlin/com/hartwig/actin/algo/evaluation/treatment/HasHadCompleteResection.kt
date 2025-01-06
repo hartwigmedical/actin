@@ -14,20 +14,17 @@ class HasHadCompleteResection : EvaluationFunction {
 
         return when {
             lowercaseTreatmentNames.contains(COMPLETE_RESECTION) -> {
-                EvaluationFactory.pass("Patient has had a complete resection", "Had had complete resection")
+                EvaluationFactory.pass("Had had complete resection")
             }
 
             lowercaseTreatmentNames.any { it.contains(RESECTION_KEYWORD) } || record.oncologicalHistory.any { entry ->
                 entry.treatments.any { it.categories().contains(TreatmentCategory.SURGERY) && it.name.isEmpty() }
             } -> {
-                EvaluationFactory.undetermined(
-                    "Could not be determined whether patient has had a complete resection",
-                    "Complete resection undetermined"
-                )
+                EvaluationFactory.undetermined("Complete resection undetermined")
             }
 
             else -> {
-                EvaluationFactory.fail("Patient has not had a complete resection", "Has not had complete resection")
+                EvaluationFactory.fail("Has not had complete resection")
             }
         }
     }

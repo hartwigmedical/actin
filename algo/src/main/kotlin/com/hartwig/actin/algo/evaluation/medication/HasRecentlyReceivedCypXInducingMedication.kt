@@ -23,26 +23,19 @@ class HasRecentlyReceivedCypXInducingMedication(
         return when {
             cypInducersReceived.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass(
-                    "Patient has recently received CYP$termToFind inducing medication: ${
-                        Format.concatLowercaseWithAnd(
-                            cypInducersReceived
-                        )
-                    }",
                     "Recent CYP$termToFind inducing medication use: ${Format.concatLowercaseWithAnd(cypInducersReceived)}"
                 )
             }
 
             termToFind in MedicationConstants.UNDETERMINED_CYP_STRING -> {
                 EvaluationFactory.undetermined(
-                    "Undetermined if patient has recently received CYP$termToFind inducing medication",
-                    "Undetermined CYP$termToFind inducing medication use"
+                    "CYP$termToFind inducing medication use undetermined"
                 )
             }
 
             else -> {
                 EvaluationFactory.recoverableFail(
-                    "Patient has not recently received CYP$termToFind inducing medication ",
-                    "No recent CYP$termToFind inducing medication use "
+                    "No recent CYP$termToFind inducing medication use"
                 )
             }
         }

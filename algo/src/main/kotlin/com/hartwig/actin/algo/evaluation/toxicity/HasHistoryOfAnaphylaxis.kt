@@ -9,12 +9,9 @@ class HasHistoryOfAnaphylaxis: EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return if (record.intolerances.isEmpty()) {
-            EvaluationFactory.fail("Patient has no known history of anaphylaxis", "No known history of anaphylaxis")
+            EvaluationFactory.fail("No known history of anaphylaxis")
         } else {
-            EvaluationFactory.undetermined(
-                "Allergies present but cannot be determined if patient has history of anaphylaxis",
-                "Allergies present but unknown if history of anaphylaxis"
-            )
+            EvaluationFactory.undetermined("Undetermined history of anaphylaxis (allergies present)")
         }
     }
 }

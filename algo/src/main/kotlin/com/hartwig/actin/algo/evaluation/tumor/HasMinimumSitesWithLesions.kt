@@ -32,45 +32,23 @@ class HasMinimumSitesWithLesions(private val minimumSitesWithLesions: Int) : Eva
 
             return when {
                 sitesWithKnownLesionsLowerBound >= minimumSitesWithLesions -> {
-                    EvaluationFactory.pass(
-                        "Patient has at least $sitesWithKnownLesionsLowerBound lesion sites which meets threshold of $minimumSitesWithLesions",
-                        "Sufficient lesion sites"
-                    )
+                    EvaluationFactory.pass("Has at least $minimumSitesWithLesions lesion sites")
                 }
 
                 sitesWithKnownAndSuspectedLesionsLowerBound >= minimumSitesWithLesions -> {
-                    EvaluationFactory.warn(
-                        "Patient has at least $sitesWithKnownAndSuspectedLesionsLowerBound lesion sites (when including " +
-                                "$distinctCategorizedSuspectedLesionLocations suspected lesions) which meets threshold of $minimumSitesWithLesions",
-                        "Sufficient lesions sites (when including suspected lesions)"
-                    )
+                    EvaluationFactory.warn("Has at least $minimumSitesWithLesions lesion sites (when including suspected lesions)")
                 }
 
                 sitesWithKnownLesionsUpperBound >= minimumSitesWithLesions -> {
-                    EvaluationFactory.undetermined(
-                        "Patient has between $sitesWithKnownLesionsLowerBound and $sitesWithKnownLesionsUpperBound confirmed lesion sites so" +
-                                " it is unclear if the threshold of $minimumSitesWithLesions is met.",
-                        "Undetermined if sufficient lesion sites (near threshold of $minimumSitesWithLesions)"
-                    )
+                    EvaluationFactory.undetermined("Undetermined if sufficient lesion sites (near threshold of $minimumSitesWithLesions)")
                 }
 
                 sitesWithKnownAndSuspectedLesionsUpperBound >= minimumSitesWithLesions -> {
-                    EvaluationFactory.undetermined(
-                        "Patient has between $sitesWithKnownLesionsLowerBound and $sitesWithKnownAndSuspectedLesionsUpperBound lesion sites " +
-                                "(including suspected lesions) so it is unclear if the threshold of $minimumSitesWithLesions is met",
-                        "Undetermined if sufficient lesion sites (near threshold of $minimumSitesWithLesions and including suspected lesions)"
-                    )
+                    EvaluationFactory.undetermined("Undetermined if sufficient lesion sites (near threshold of $minimumSitesWithLesions and including suspected lesions)")
                 }
 
                 else -> {
-                    EvaluationFactory.fail(
-                        String.format(
-                            "Patient has at most %d lesion sites, which is less than the threshold of %d",
-                            sitesWithKnownAndSuspectedLesionsUpperBound,
-                            minimumSitesWithLesions
-                        ),
-                        "Insufficient number of lesion sites"
-                    )
+                    EvaluationFactory.fail("Insufficient number of lesion sites (less than $minimumSitesWithLesions)")
                 }
             }
         }
