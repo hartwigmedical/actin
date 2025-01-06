@@ -14,7 +14,7 @@ class HasUnresectablePeritonealMetastases : EvaluationFunction {
 
         return when {
             certainPeritonealMetastasesEvaluation == null && suspectedPeritonealMetastasesEvaluation != true -> {
-                EvaluationFactory.undetermined("Missing metastases data")
+                EvaluationFactory.undetermined("Unresectable peritoneal metastases undetermined (metastases data missing)")
             }
 
             certainPeritonealMetastasesEvaluation == true || suspectedPeritonealMetastasesEvaluation == true -> {

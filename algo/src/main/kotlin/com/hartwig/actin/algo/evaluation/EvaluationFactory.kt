@@ -19,7 +19,11 @@ object EvaluationFactory {
     }
 
     fun fail(message: String, recoverable: Boolean = false): Evaluation {
-        return createFail(recoverable, setOf(message))
+        return Evaluation(
+            recoverable = recoverable,
+            result = EvaluationResult.FAIL,
+            failMessages = setOf(message)
+        )
     }
 
     fun recoverableFail(message: String): Evaluation {
@@ -31,7 +35,12 @@ object EvaluationFactory {
         recoverable: Boolean = false,
         missingGenesForEvaluation: Boolean = false
     ): Evaluation {
-        return createUndetermined(recoverable, setOf(message), missingGenesForEvaluation)
+        return Evaluation(
+            recoverable = recoverable,
+            result = EvaluationResult.UNDETERMINED,
+            undeterminedMessages = setOf(message),
+            isMissingGenesForSufficientEvaluation = missingGenesForEvaluation
+        )
     }
 
     fun recoverableUndetermined(message: String): Evaluation {
@@ -54,29 +63,11 @@ object EvaluationFactory {
     }
 
     fun notEvaluated(message: String): Evaluation {
-        return createNotEvaluated(setOf(message))
+        return Evaluation(
+            recoverable = false,
+            result = EvaluationResult.NOT_EVALUATED,
+            passMessages = setOf(message)
+        )
     }
-
-    private fun createFail(recoverable: Boolean, messages: Set<String>) = Evaluation(
-        recoverable = recoverable,
-        result = EvaluationResult.FAIL,
-        failMessages = messages
-    )
-
-    private fun createNotEvaluated(messages: Set<String>) = Evaluation(
-        recoverable = false,
-        result = EvaluationResult.NOT_EVALUATED,
-        passMessages = messages
-    )
-
-    private fun createUndetermined(
-        recoverable: Boolean,
-        messages: Set<String>,
-        isMissingGenesForEvaluation: Boolean = false
-    ) = Evaluation(
-        recoverable = recoverable,
-        result = EvaluationResult.UNDETERMINED,
-        undeterminedMessages = messages,
-        isMissingGenesForSufficientEvaluation = isMissingGenesForEvaluation
-    )
 }
+
