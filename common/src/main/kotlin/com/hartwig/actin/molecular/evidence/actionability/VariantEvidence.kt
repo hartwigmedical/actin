@@ -1,111 +1,132 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.codonFilter
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.exonFilter
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterEfficacyEvidence
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.filterTrials
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.geneFilter
-import com.hartwig.actin.molecular.evidence.actionability.ActionableEventsExtraction.hotspotFilter
-import com.hartwig.actin.molecular.evidence.matching.EvidenceMatcher
 import com.hartwig.actin.molecular.evidence.matching.GeneMatching
 import com.hartwig.actin.molecular.evidence.matching.HotspotMatching
 import com.hartwig.actin.molecular.evidence.matching.RangeMatching
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
+import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import com.hartwig.serve.datamodel.trial.ActionableTrial
+import java.util.function.Predicate
 
 class VariantEvidence(
-    private val actionableHotspots: ActionableEvents,
-    private val actionableRanges: ActionableEvents,
-    private val applicableActionableGenes: ActionableEvents
-) : EvidenceMatcher<VariantMatchCriteria> {
+    private val hotspotEvidences: List<EfficacyEvidence>,
+    private val hotspotTrialMatcher: ActionableTrialMatcher,
+    private val codonEvidences: List<EfficacyEvidence>,
+    private val codonTrialMatcher: ActionableTrialMatcher,
+    private val exonEvidences: List<EfficacyEvidence>,
+    private val exonTrialMatcher: ActionableTrialMatcher,
+    private val applicableGeneEvidences: List<EfficacyEvidence>,
+    private val applicableGeneTrialMatcher: ActionableTrialMatcher
+) : ActionabilityMatcher<VariantMatchCriteria> {
 
-    override fun findMatches(event: VariantMatchCriteria): ActionableEvents {
-        return hotspotMatches(event).let { (hotspotEvidences, hotspotTrials) ->
-            rangeMatches(event).let { (rangeEvidences, rangeTrials) ->
-                geneMatches(event).let { (geneEvidences, geneTrials) ->
-                    ActionableEvents((hotspotEvidences + rangeEvidences + geneEvidences), (hotspotTrials + rangeTrials + geneTrials))
-                }
-            }
-        }
-    }
+    override fun findMatches(event: VariantMatchCriteria): ActionabilityMatch {
+        val hotspotEvidenceMatches = hotspotEvidenceMatches(event)
+        val codonEvidenceMatches = codonEvidenceMatches(event)
+        val exonEvidenceMatches = exonEvidenceMatches(event)
+        val geneEvidenceMatches = geneEvidenceMatches(event)
 
-    private fun hotspotMatches(variant: VariantMatchCriteria): ActionableEvents {
-        return filterMatchingEvents(
-            actionableHotspots,
-            variant,
-            HotspotMatching::isMatch,
-            ActionableEventsExtraction::extractHotspot,
-            ActionableEventsExtraction::extractHotspot
+        val hotspotMatchingCriteriaPerTrialMatch = hotspotTrialMatches(event)
+        val codonMatchingCriteriaPerTrialMatch = codonTrialMatches(event)
+        val exonMatchingCriteriaPerTrialMatch = exonTrialMatches(event)
+        val geneMatchingCriteriaPerTrialMatch = geneTrialMatches(event)
+
+        return ActionabilityMatchFactory.create(
+            evidenceMatchLists = listOf(
+                hotspotEvidenceMatches,
+                codonEvidenceMatches,
+                exonEvidenceMatches,
+                geneEvidenceMatches
+            ),
+            matchingCriteriaPerTrialMatchLists = listOf(
+                hotspotMatchingCriteriaPerTrialMatch,
+                codonMatchingCriteriaPerTrialMatch,
+                exonMatchingCriteriaPerTrialMatch,
+                geneMatchingCriteriaPerTrialMatch
+            )
         )
     }
 
-    private fun rangeMatches(variant: VariantMatchCriteria): ActionableEvents {
-        return filterMatchingEvents(
-            actionableRanges,
-            variant,
-            RangeMatching::isMatch,
-            ActionableEventsExtraction::extractRange,
-            ActionableEventsExtraction::extractRange
-        )
+    private fun hotspotEvidenceMatches(variant: VariantMatchCriteria): List<EfficacyEvidence> {
+        return selectMatchingEvidences(hotspotEvidences, variant, HotspotMatching::isMatch, ActionableEventExtraction::extractHotspot)
     }
 
-    private fun geneMatches(variant: VariantMatchCriteria): ActionableEvents {
-        return filterMatchingEvents(
-            applicableActionableGenes,
-            variant,
-            GeneMatching::isMatch,
-            ActionableEventsExtraction::extractGene,
-            ActionableEventsExtraction::extractGene
-        )
+    private fun hotspotTrialMatches(variant: VariantMatchCriteria): Map<ActionableTrial, Set<MolecularCriterium>> {
+        return selectMatchingTrials(hotspotTrialMatcher, variant, HotspotMatching::isMatch, ActionableEventExtraction::extractHotspot)
     }
 
-    private fun <T> filterMatchingEvents(
-        events: ActionableEvents,
+    private fun codonEvidenceMatches(variant: VariantMatchCriteria): List<EfficacyEvidence> {
+        return selectMatchingEvidences(codonEvidences, variant, RangeMatching::isMatch, ActionableEventExtraction::extractCodon)
+    }
+
+    private fun codonTrialMatches(variant: VariantMatchCriteria): Map<ActionableTrial, Set<MolecularCriterium>> {
+        return selectMatchingTrials(codonTrialMatcher, variant, RangeMatching::isMatch, ActionableEventExtraction::extractCodon)
+    }
+
+    private fun exonEvidenceMatches(variant: VariantMatchCriteria): List<EfficacyEvidence> {
+        return selectMatchingEvidences(exonEvidences, variant, RangeMatching::isMatch, ActionableEventExtraction::extractExon)
+    }
+
+    private fun exonTrialMatches(variant: VariantMatchCriteria): Map<ActionableTrial, Set<MolecularCriterium>> {
+        return selectMatchingTrials(exonTrialMatcher, variant, RangeMatching::isMatch, ActionableEventExtraction::extractExon)
+    }
+
+    private fun geneEvidenceMatches(variant: VariantMatchCriteria): List<EfficacyEvidence> {
+        return selectMatchingEvidences(applicableGeneEvidences, variant, GeneMatching::isMatch, ActionableEventExtraction::extractGene)
+    }
+
+    private fun geneTrialMatches(variant: VariantMatchCriteria): Map<ActionableTrial, Set<MolecularCriterium>> {
+        return selectMatchingTrials(applicableGeneTrialMatcher, variant, GeneMatching::isMatch, ActionableEventExtraction::extractGene)
+    }
+
+    private fun <T> selectMatchingEvidences(
+        evidences: List<EfficacyEvidence>,
         variant: VariantMatchCriteria,
         isMatch: (T, VariantMatchCriteria) -> Boolean,
-        getEventFromEvidence: (EfficacyEvidence) -> T,
-        getEventFromTrial: (ActionableTrial) -> T
-    ): ActionableEvents {
-        return if (!variant.isReportable) ActionableEvents() else ActionableEvents(events.evidences.filter {
-            isMatch.invoke(
-                getEventFromEvidence.invoke(it),
-                variant
-            )
-        }, events.trials.filter { isMatch.invoke(getEventFromTrial.invoke(it), variant) })
+        extractActionableEvent: (MolecularCriterium) -> T,
+    ): List<EfficacyEvidence> {
+        return evidences.filter { variant.isReportable && isMatch.invoke(extractActionableEvent.invoke(it.molecularCriterium()), variant) }
+    }
+
+    private fun <T> selectMatchingTrials(
+        trialMatcher: ActionableTrialMatcher,
+        variant: VariantMatchCriteria,
+        isMatch: (T, VariantMatchCriteria) -> Boolean,
+        extractActionableEvent: (MolecularCriterium) -> T,
+    ): Map<ActionableTrial, Set<MolecularCriterium>> {
+        val matchPredicate: Predicate<MolecularCriterium> =
+            Predicate { variant.isReportable && isMatch(extractActionableEvent.invoke(it), variant) }
+
+        return trialMatcher.apply(matchPredicate)
     }
 
     companion object {
-        private val APPLICABLE_GENE_EVENTS = setOf(GeneEvent.ACTIVATION, GeneEvent.INACTIVATION, GeneEvent.ANY_MUTATION)
+        private val VARIANT_GENE_EVENTS = setOf(GeneEvent.ACTIVATION, GeneEvent.INACTIVATION, GeneEvent.ANY_MUTATION)
 
-        fun create(actionableEvents: ActionableEvents): VariantEvidence {
-            with(actionableEvents) {
-                val hotspotEvidences = filterEfficacyEvidence(evidences, hotspotFilter())
-                val hotspotTrials = filterTrials(trials, hotspotFilter())
+        fun create(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial>): VariantEvidence {
+            val hotspotEvidences = EfficacyEvidenceExtractor.extractHotspotEvidence(evidences)
+            val hotspotTrialMatcher = ActionableTrialMatcherFactory.createHotspotTrialMatcher(trials)
 
-                val codonEvidences = filterEfficacyEvidence(evidences, codonFilter())
-                val codonTrials = filterTrials(trials, codonFilter())
+            val codonEvidences = EfficacyEvidenceExtractor.extractCodonEvidence(evidences)
+            val codonTrialMatcher = ActionableTrialMatcherFactory.createCodonTrialMatcher(trials)
 
-                val exonEvidences = filterEfficacyEvidence(evidences, exonFilter())
-                val exonTrials = filterTrials(trials, exonFilter())
+            val exonEvidences = EfficacyEvidenceExtractor.extractExonEvidence(evidences)
+            val exonTrialMatcher = ActionableTrialMatcherFactory.createExonTrialMatcher(trials)
 
-                val rangeEvidences = listOf(codonEvidences, exonEvidences).flatten()
-                val rangeTrials = listOf(codonTrials, exonTrials).flatten()
+            val applicableGeneEvidences = EfficacyEvidenceExtractor.extractGeneEvidence(evidences, VARIANT_GENE_EVENTS)
+            val applicableGeneTrialMatcher = ActionableTrialMatcherFactory.createGeneTrialMatcher(trials, VARIANT_GENE_EVENTS)
 
-                val applicableActionableGeneEvidences = filterEfficacyEvidence(evidences, geneFilter()).filter {
-                    APPLICABLE_GENE_EVENTS.contains(ActionableEventsExtraction.extractGene(it).event())
-                }
-                val applicableActionableGeneTrials = filterTrials(trials, geneFilter()).filter {
-                    APPLICABLE_GENE_EVENTS.contains(ActionableEventsExtraction.extractGene(it).event())
-                }
-
-                return VariantEvidence(
-                    ActionableEvents(hotspotEvidences, hotspotTrials),
-                    ActionableEvents(rangeEvidences, rangeTrials),
-                    ActionableEvents(applicableActionableGeneEvidences, applicableActionableGeneTrials)
-                )
-            }
+            return VariantEvidence(
+                hotspotEvidences = hotspotEvidences,
+                hotspotTrialMatcher = hotspotTrialMatcher,
+                codonEvidences = codonEvidences,
+                codonTrialMatcher = codonTrialMatcher,
+                exonEvidences = exonEvidences,
+                exonTrialMatcher = exonTrialMatcher,
+                applicableGeneEvidences = applicableGeneEvidences,
+                applicableGeneTrialMatcher = applicableGeneTrialMatcher
+            )
         }
     }
 }

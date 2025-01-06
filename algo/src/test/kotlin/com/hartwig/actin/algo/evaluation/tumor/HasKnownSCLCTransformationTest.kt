@@ -9,6 +9,7 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.GeneRole
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -76,7 +77,7 @@ class HasKnownSCLCTransformationTest {
             isReportable = true,
             geneRole = GeneRole.TSG,
             proteinEffect = ProteinEffect.LOSS_OF_FUNCTION,
-            type = CopyNumberType.LOSS
+            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS)
         )
         val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
         val record = base.copy(

@@ -1,7 +1,6 @@
 {
   "patientId": "EXAMPLE-LUNG-01",
   "sampleId": "EXAMPLE-LUNG-01-T",
-  "trialSource": "Example",
   "referenceDate": {
     "year": 2024,
     "month": 11,

@@ -39,4 +39,11 @@ class MedicationCategoriesTest {
         val victim = MedicationCategories(emptyMap(), atcTree)
         assertThat(victim.resolveCategoryName(CALCIUM_HOMEOSTASIS)).isEqualTo("Calcium homeostasis")
     }
+
+    @Test
+    fun `Should identify anti-cancer medications`() {
+        assertThat(MedicationCategories.isAntiCancerMedication("L01FF02")).isTrue()
+        assertThat(MedicationCategories.isAntiCancerMedication("B06AA02")).isFalse()
+        assertThat(MedicationCategories.isAntiCancerMedication("L01XD01")).isFalse()
+    }
 }

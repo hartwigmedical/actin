@@ -10,7 +10,8 @@ internal object LabUnitConversionTable {
         LabMeasurement.ALBUMIN to createAlbuminConversionMap(),
         LabMeasurement.LYMPHOCYTES_ABS to createLymphocytesConversionMap(),
         LabMeasurement.HEMOGLOBIN to createHemoglobinConversionMap(),
-        LabMeasurement.CALCIUM to createCalciumConversionMap()
+        LabMeasurement.CALCIUM to createCalciumConversionMap(),
+        LabMeasurement.TOTAL_BILIRUBIN to createBilirubinConversionMap()
     )
 
     fun findConversionFactor(measurement: LabMeasurement, fromUnit: LabUnit, toUnit: LabUnit): Double? {
@@ -44,5 +45,9 @@ internal object LabUnitConversionTable {
 
     private fun createCalciumConversionMap(): Map<LabUnit, Map<LabUnit, Double>> {
         return createConversionMap(LabUnit.MILLIGRAMS_PER_DECILITER, LabUnit.MILLIMOLES_PER_LITER, 0.2495)
+    }
+
+    private fun createBilirubinConversionMap(): Map<LabUnit, Map<LabUnit, Double>> {
+        return createConversionMap(LabUnit.MICROMOLES_PER_LITER, LabUnit.MILLIGRAMS_PER_DECILITER, 0.0585)
     }
 }

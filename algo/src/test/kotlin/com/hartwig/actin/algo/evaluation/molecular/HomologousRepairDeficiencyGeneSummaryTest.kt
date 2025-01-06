@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.molecular.Variant
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestDisruptionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestHomozygousDisruptionFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import org.assertj.core.api.Assertions.assertThat
@@ -62,9 +63,18 @@ class HomologousRepairDeficiencyGeneSummaryTest {
                 )
             ),
             copyNumbers = listOf(
-                TestCopyNumberFactory.createMinimal().copy(gene = "BRCA2", type = CopyNumberType.LOSS),
-                TestCopyNumberFactory.createMinimal().copy(gene = "BRCA1", type = CopyNumberType.FULL_GAIN),
-                TestCopyNumberFactory.createMinimal().copy(gene = "Unmatched", type = CopyNumberType.LOSS)
+                TestCopyNumberFactory.createMinimal().copy(
+                    gene = "BRCA2",
+                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS)
+                ),
+                TestCopyNumberFactory.createMinimal().copy(
+                    gene = "BRCA1",
+                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN)
+                ),
+                TestCopyNumberFactory.createMinimal().copy(
+                    gene = "Unmatched",
+                    canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS)
+                )
             ),
             homozygousDisruptions = listOf(
                 TestHomozygousDisruptionFactory.createMinimal().copy(gene = "PALB2"),

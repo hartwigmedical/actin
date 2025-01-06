@@ -606,9 +606,13 @@
           ],
           "copyNumbers": [
             {
-              "type": "LOSS",
-              "minCopies": 0,
-              "maxCopies": 0,
+              "canonicalImpact": {
+                "transcriptId": "",
+                "type": "LOSS",
+                "minCopies": 0,
+                "maxCopies": 0
+              },
+              "otherImpacts": [],
               "isReportable": true,
               "event": "TP53 del",
               "driverLikelihood": "HIGH",
@@ -622,9 +626,13 @@
               "isAssociatedWithDrugResistance": null
             },
             {
-              "type": "LOSS",
-              "minCopies": 0,
-              "maxCopies": 0,
+              "canonicalImpact": {
+                "transcript": "",
+                "type": "LOSS",
+                "minCopies": 0,
+                "maxCopies": 0
+              },
+              "otherImpacts": null,
               "isReportable": true,
               "event": "KEAP1 del",
               "driverLikelihood": "HIGH",

@@ -430,12 +430,86 @@
               "event": "EGFR L858R",
               "driverLikelihood": "HIGH",
               "evidence": {
-                "externalEligibleTrials": [
+                "treatmentEvidence": [
                   {
+                    "treatment": "OSIMERTINIB",
+                    "molecularMatch": {
+                      "sourceDate": {
+                        "year": 2012,
+                        "month": 1,
+                        "day": 1
+                      },
+                      "sourceEvent": "EGFR L858R",
+                      "isCategoryEvent": false
+                    },
+                    "applicableCancerType": {
+                      "matchedCancerType": "Lung non-small cell carcinoma",
+                      "excludedCancerSubTypes": []
+                    },
+                    "isOnLabel": true,
+                    "evidenceLevel": "A",
+                    "evidenceLevelDetails": "GUIDELINE",
+                    "evidenceDirection": {
+                      "hasPositiveResponse": true,
+                      "hasBenefit": true,
+                      "isResistant": false,
+                      "isCertain": true
+                    },
+                    "evidenceYear": 2016,
+                    "efficacyDescription": "Osimertinib is effective in patients with EGFR L858R mutations"
+                  },
+                  {
+                    "treatment": "AFATINIB",
+                    "molecularMatch": {
+                      "sourceDate": {
+                        "year": 2012,
+                        "month": 1,
+                        "day": 1
+                      },
+                      "sourceEvent": "EGFR L858R",
+                      "isCategoryEvent": false
+                    },
+                    "applicableCancerType": {
+                      "matchedCancerType": "Lung non-small cell carcinoma",
+                      "excludedCancerSubTypes": []
+                    },
+                    "isOnLabel": true,
+                    "evidenceLevel": "A",
+                    "evidenceLevelDetails": "GUIDELINE",
+                    "evidenceDirection": {
+                      "hasPositiveResponse": true,
+                      "hasBenefit": true,
+                      "isResistant": false,
+                      "isCertain": true
+                    },
+                    "evidenceYear": 2013,
+                    "efficacyDescription": "Afatinib is effective in patients with EGFR L858R mutations"
+                  }
+                ],
+                "eligibleTrials": [
+                  {
+                    "nctId": "NCT00000006",
                     "title": "EGFR-L858R-TRIAL",
+                    "molecularMatches": [
+                      {
+                        "sourceDate": {
+                          "year": 2012,
+                          "month": 1,
+                          "day": 1
+                        },
+                        "sourceEvent": "EGFR L858R",
+                        "isCategoryEvent": false
+                      }
+                    ],
+                    "applicableCancerTypes": [
+                      {
+                        "matchedCancerType": "Lung non-small cell carcinoma",
+                        "excludedCancerSubTypes": []
+                      }
+                    ],
                     "countries": [
                       {
-                        "name": "NETHERLANDS",
+                        "country": "NETHERLANDS",
                         "hospitalsPerCity": {
                           "Tilburg": [
                             {
@@ -446,7 +520,7 @@
                         }
                       },
                       {
-                        "name": "GERMANY",
+                        "country": "GERMANY",
                         "hospitalsPerCity": {
                           "Stuttgart": [
                             {
@@ -456,21 +530,31 @@
                         }
                       }
                     ],
-                    "url": "https://hartwigmedicalfoundation.nl",
-                    "nctId": "NCT00000006",
-                    "isCategoryEvent": false,
-                    "sourceEvent": "EGFR L858R",
-                    "evidenceLevelDetails": "CLINICAL_STUDY",
-                    "applicableCancerType": {
-                      "cancerType": "Lung non-small cell carcinoma",
-                      "excludedCancerTypes": []
-                    }
+                    "url": "https://hartwigmedicalfoundation.nl"
                   },
                   {
+                    "nctId": "NCT00000007",
                     "title": "EGFR-BE",
+                    "molecularMatches": [
+                      {
+                        "sourceDate": {
+                          "year": 2012,
+                          "month": 1,
+                          "day": 1
+                        },
+                        "sourceEvent": "EGFR L858R",
+                        "isCategoryEvent": false
+                      }
+                    ],
+                    "applicableCancerTypes": [
+                      {
+                        "matchedCancerType": "Lung non-small cell carcinoma",
+                        "excludedCancerSubTypes": []
+                      }
+                    ],
                     "countries": [
                       {
-                        "name": "BELGIUM",
+                        "country": "BELGIUM",
                         "hospitalsPerCity": {
                           "Brussels": [
                             {
@@ -480,68 +564,7 @@
                         }
                       }
                     ],
-                    "url": "https://hartwigmedicalfoundation.nl",
-                    "nctId": "NCT00000007",
-                    "isCategoryEvent": false,
-                    "sourceEvent": "EGFR L858R",
-                    "evidenceLevelDetails": "CLINICAL_STUDY",
-                    "applicableCancerType": {
-                      "cancerType": "Lung non-small cell carcinoma",
-                      "excludedCancerTypes": [
-                      ]
-                    }
-                  }
-                ],
-                "treatmentEvidence": [
-                  {
-                    "treatment": "OSIMERTINIB",
-                    "evidenceLevel": "A",
-                    "onLabel": true,
-                    "direction": {
-                      "hasPositiveResponse": true,
-                      "hasBenefit": true,
-                      "isResistant": false,
-                      "isCertain": true
-                    },
-                    "entryDate": {
-                      "year": 2012,
-                      "month": 1,
-                      "day": 1
-                    },
-                    "efficacyDescription": "Osimertinib is effective in patients with EGFR L858R mutations",
-                    "evidenceYear": 2016,
-                    "isCategoryEvent": false,
-                    "sourceEvent": "EGFR L858R",
-                    "evidenceLevelDetails": "GUIDELINE",
-                    "applicableCancerType": {
-                      "cancerType": "Lung non-small cell carcinoma",
-                      "excludedCancerTypes": []
-                    }
-                  },
-                  {
-                    "treatment": "AFATINIB",
-                    "evidenceLevel": "A",
-                    "onLabel": true,
-                    "direction": {
-                      "hasPositiveResponse": true,
-                      "hasBenefit": true,
-                      "isResistant": false,
-                      "isCertain": true
-                    },
-                    "entryDate": {
-                      "year": 2012,
-                      "month": 1,
-                      "day": 1
-                    },
-                    "efficacyDescription": "Afatinib is effective in patients with EGFR L858R mutations",
-                    "evidenceYear": 2013,
-                    "isCategoryEvent": false,
-                    "sourceEvent": "EGFR L858R",
-                    "evidenceLevelDetails": "GUIDELINE",
-                    "applicableCancerType": {
-                      "cancerType": "Lung non-small cell carcinoma",
-                      "excludedCancerTypes": []
-                    }
+                    "url": "https://hartwigmedicalfoundation.nl"
                   }
                 ]
               },
@@ -582,12 +605,59 @@
               "event": "EGFR C797S",
               "driverLikelihood": "HIGH",
               "evidence": {
-                "externalEligibleTrials": [
+                "treatmentEvidence": [
                   {
+                    "treatment": "AFATINIB",
+                    "molecularMatch": {
+                      "sourceDate": {
+                        "year": 2012,
+                        "month": 1,
+                        "day": 1
+                      },
+                      "sourceEvent": "EGFR C797S",
+                      "isCategoryEvent": false
+                    },
+                    "applicableCancerType": {
+                      "matchedCancerType": "Lung non-small cell carcinoma",
+                      "excludedCancerSubTypes": []
+                    },
+                    "isOnLabel": true,
+                    "evidenceLevel": "D",
+                    "evidenceLevelDetails": "CASE_REPORTS_SERIES",
+                    "evidenceDirection": {
+                      "hasPositiveResponse": true,
+                      "hasBenefit": true,
+                      "isResistant": false,
+                      "isCertain": true
+                    },
+                    "evidenceYear": 2015,
+                    "efficacyDescription": "In a case-report, afatinib was effective against EGFR L858R/C797S positive lung cancer."
+                  }
+                ],
+                "eligibleTrials": [
+                  {
+                    "nctId": "NCT00000008",
                     "title": "EGFR-C797S-TRIAL",
+                    "molecularMatches": [
+                      {
+                        "sourceDate": {
+                          "year": 2012,
+                          "month": 1,
+                          "day": 1
+                        },
+                        "sourceEvent": "EGFR C797S",
+                        "isCategoryEvent": false
+                      }
+                    ],
+                    "applicableCancerTypes": [
+                      {
+                        "matchedCancerType": "Lung non-small cell carcinoma",
+                        "excludedCancerSubTypes": []
+                      }
+                    ],
                     "countries": [
                       {
-                        "name": "NETHERLANDS",
+                        "country": "NETHERLANDS",
                         "hospitalsPerCity": {
                           "Tilburg": [
                             {
@@ -598,7 +668,7 @@
                         }
                       },
                       {
-                        "name": "GERMANY",
+                        "country": "GERMANY",
                         "hospitalsPerCity": {
                           "Stuttgart": [
                             {
@@ -608,42 +678,7 @@
                         }
                       }
                     ],
-                    "url": "https://hartwigmedicalfoundation.nl",
-                    "nctId": "NCT00000008",
-                    "isCategoryEvent": false,
-                    "sourceEvent": "EGFR C797S",
-                    "evidenceLevelDetails": "CLINICAL_STUDY",
-                    "applicableCancerType": {
-                      "cancerType": "Lung non-small cell carcinoma",
-                      "excludedCancerTypes": []
-                    }
-                  }
-                ],
-                "treatmentEvidence": [
-                  {
-                    "treatment": "AFATINIB",
-                    "evidenceLevel": "D",
-                    "onLabel": true,
-                    "direction": {
-                      "hasPositiveResponse": true,
-                      "hasBenefit": true,
-                      "isResistant": false,
-                      "isCertain": true
-                    },
-                    "entryDate": {
-                      "year": 2012,
-                      "month": 1,
-                      "day": 1
-                    },
-                    "efficacyDescription": "In a case-report, afatinib was effective against EGFR L858R/C797S positive lung cancer.",
-                    "evidenceYear": 2015,
-                    "isCategoryEvent": false,
-                    "sourceEvent": "EGFR C797S",
-                    "evidenceLevelDetails": "CASE_REPORTS_SERIES",
-                    "applicableCancerType": {
-                      "cancerType": "Lung non-small cell carcinoma",
-                      "excludedCancerTypes": []
-                    }
+                    "url": "https://hartwigmedicalfoundation.nl"
                   }
                 ]
               },
@@ -684,8 +719,8 @@
               "event": "KRAS G12D",
               "driverLikelihood": "HIGH",
               "evidence": {
-                "externalEligibleTrials": [],
-                "treatmentEvidence": []
+                "treatmentEvidence": [],
+                "eligibleTrials": []
               },
               "gene": "KRAS",
               "geneRole": "ONCO",
@@ -724,12 +759,31 @@
               "event": "KRAS G12C",
               "driverLikelihood": "HIGH",
               "evidence": {
-                "externalEligibleTrials": [
+                "treatmentEvidence": [],
+                "eligibleTrials": [
                   {
+                    "nctId": "NCT00000009",
                     "title": "KRAS-G12C-TRIAL-DE",
+                    "molecularMatches": [
+                      {
+                        "sourceDate": {
+                          "year": 2012,
+                          "month": 1,
+                          "day": 1
+                        },
+                        "sourceEvent": "KRAS G12C",
+                        "isCategoryEvent": false
+                      }
+                    ],
+                    "applicableCancerTypes": [
+                      {
+                        "matchedCancerType": "Lung non-small cell carcinoma",
+                        "excludedCancerSubTypes": []
+                      }
+                    ],
                     "countries": [
                       {
-                        "name": "GERMANY",
+                        "country": "GERMANY",
                         "hospitalsPerCity": {
                           "Stuttgart": [
                             {
@@ -739,18 +793,9 @@
                         }
                       }
                     ],
-                    "url": "https://hartwigmedicalfoundation.nl",
-                    "nctId": "NCT00000009",
-                    "isCategoryEvent": false,
-                    "sourceEvent": "KRAS G12C",
-                    "evidenceLevelDetails": "CLINICAL_STUDY",
-                    "applicableCancerType": {
-                      "cancerType": "Lung non-small cell carcinoma",
-                      "excludedCancerTypes": []
-                    }
+                    "url": "https://hartwigmedicalfoundation.nl"
                   }
-                ],
-                "treatmentEvidence": []
+                ]
               },
               "gene": "KRAS",
               "geneRole": "ONCO",
@@ -760,15 +805,19 @@
           ],
           "copyNumbers": [
             {
-              "type": "LOSS",
-              "minCopies": 0,
-              "maxCopies": 0,
+              "canonicalImpact": {
+                "transcriptId": "",
+                "type": "LOSS",
+                "minCopies": 0,
+                "maxCopies": 0
+              },
+              "otherImpacts": [],
               "isReportable": true,
               "event": "TP53 del",
               "driverLikelihood": "HIGH",
               "evidence": {
-                "externalEligibleTrials": [],
-                "treatmentEvidence": []
+                "treatmentEvidence": [],
+                "eligibleTrials": []
               },
               "gene": "TP53",
               "geneRole": "TSG",
@@ -793,8 +842,8 @@
               "event": "MET_MET",
               "driverLikelihood": "HIGH",
               "evidence": {
-                "externalEligibleTrials": [],
-                "treatmentEvidence": []
+                "treatmentEvidence": [],
+                "eligibleTrials": []
               }
             }
           ],
@@ -823,26 +872,26 @@
           },
           "isMicrosatelliteUnstable": false,
           "microsatelliteEvidence": {
-            "externalEligibleTrials": [],
-            "treatmentEvidence": []
+            "treatmentEvidence": [],
+            "eligibleTrials": []
           },
           "homologousRepairScore": 0.0,
           "isHomologousRepairDeficient": false,
           "homologousRepairEvidence": {
-            "externalEligibleTrials": [],
-            "treatmentEvidence": []
+            "treatmentEvidence": [],
+            "eligibleTrials": []
           },
           "tumorMutationalBurden": 14.0,
           "hasHighTumorMutationalBurden": true,
           "tumorMutationalBurdenEvidence": {
-            "externalEligibleTrials": [],
-            "treatmentEvidence": []
+            "treatmentEvidence": [],
+            "eligibleTrials": []
           },
           "tumorMutationalLoad": 160,
           "hasHighTumorMutationalLoad": true,
           "tumorMutationalLoadEvidence": {
-            "externalEligibleTrials": [],
-            "treatmentEvidence": []
+            "treatmentEvidence": [],
+            "eligibleTrials": []
           }
         },
         "evidenceSource": "External"

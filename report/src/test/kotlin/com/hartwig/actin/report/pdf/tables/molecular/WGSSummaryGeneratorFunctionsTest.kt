@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.molecular.PredictedTumorOrigin
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.orange.characteristics.CupPrediction
 import com.hartwig.actin.report.pdf.tables.clinical.CellTestUtil
 import com.hartwig.actin.report.pdf.util.Tables
@@ -37,7 +38,11 @@ class WGSSummaryGeneratorFunctionsTest {
     @Test
     fun `Should return events concatenated and with warning string`() {
         val drivers = listOf(
-            TestCopyNumberFactory.createMinimal().copy(event = "event 1", driverLikelihood = null, minCopies = 4),
+            TestCopyNumberFactory.createMinimal().copy(
+                event = "event 1",
+                driverLikelihood = null,
+                canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(minCopies = 4)
+            ),
             TestFusionFactory.createMinimal().copy(event = "event 2", driverLikelihood = null),
             TestFusionFactory.createMinimal().copy(event = "event 3", driverLikelihood = DriverLikelihood.LOW),
             TestFusionFactory.createMinimal().copy(event = "event 4", driverLikelihood = DriverLikelihood.MEDIUM),

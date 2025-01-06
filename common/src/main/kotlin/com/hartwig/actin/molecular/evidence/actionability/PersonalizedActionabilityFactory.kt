@@ -1,47 +1,44 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
+import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.serve.datamodel.common.Indication
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
+import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.trial.ActionableTrial
 
-internal class PersonalizedActionabilityFactory internal constructor(
-    private val doidModel: DoidModel,
-    private val applicableDoids: Set<String>
-) {
+class PersonalizedActionabilityFactory(private val expandedTumorDoids: Set<String>) {
 
-    fun create(matches: ActionableEvents): ActionabilityMatch {
-        val expandedTumorDoids = expandDoids(doidModel, applicableDoids)
-        val (onLabelEvents, offLabelEvents) = partitionEvidences(matches.evidences, expandedTumorDoids)
-        val (onLabelEventsTrials, offLabelEventsTrials) = partitionTrials(matches.trials, expandedTumorDoids)
-        return ActionabilityMatch(
-            ActionableEvents(onLabelEvents, onLabelEventsTrials),
-            ActionableEvents(offLabelEvents, offLabelEventsTrials)
+    fun create(match: ActionabilityMatch): ClinicalEvidence {
+        val (onLabelEvidences, offLabelEvidences) = partitionEvidences(match.evidenceMatches)
+
+        return ClinicalEvidenceFactory.create(
+            onLabelEvidences = onLabelEvidences,
+            offLabelEvidences = offLabelEvidences,
+            matchingCriteriaAndIndicationsPerEligibleTrial = determineOnLabelTrials(match.matchingCriteriaPerTrialMatch)
         )
     }
 
-    private fun partitionEvidences(
-        evidences: List<EfficacyEvidence>,
-        expandedTumorDoids: Set<String>
-    ): Pair<List<EfficacyEvidence>, List<EfficacyEvidence>> {
-        return evidences.partition { isOnLabel(it.indication(), expandedTumorDoids) }
+    private fun partitionEvidences(evidence: List<EfficacyEvidence>): Pair<List<EfficacyEvidence>, List<EfficacyEvidence>> {
+        return evidence.partition { isOnLabel(it.indication()) }
     }
 
-    private fun partitionTrials(
-        trials: List<ActionableTrial>,
-        expandedTumorDoids: Set<String>
-    ): Pair<List<ActionableTrial>, List<ActionableTrial>> {
-        return trials.partition { isOnLabel(it.indications().iterator().next(), expandedTumorDoids) }
+    private fun determineOnLabelTrials(matchingCriteriaPerTrialMatch: Map<ActionableTrial, Set<MolecularCriterium>>):
+            Map<ActionableTrial, Pair<Set<MolecularCriterium>, Set<Indication>>> {
+        return matchingCriteriaPerTrialMatch.mapValues { (trial, criteria) ->
+            criteria to trial.indications().filter(::isOnLabel).toSet()
+        }
+            .filter { (_, criteriaAndIndications) -> criteriaAndIndications.second.isNotEmpty() }
     }
 
-    private fun isOnLabel(indication: Indication, expandedTumorDoids: Set<String>): Boolean {
+    private fun isOnLabel(indication: Indication): Boolean {
         return expandedTumorDoids.contains(indication.applicableType().doid()) &&
                 indication.excludedSubTypes().none { expandedTumorDoids.contains(it.doid()) }
     }
 
     companion object {
         fun create(doidModel: DoidModel, tumorDoids: Set<String>): PersonalizedActionabilityFactory {
-            return PersonalizedActionabilityFactory(doidModel, expandDoids(doidModel, tumorDoids))
+            return PersonalizedActionabilityFactory(expandDoids(doidModel, tumorDoids))
         }
 
         private fun expandDoids(doidModel: DoidModel, doids: Set<String>): Set<String> {

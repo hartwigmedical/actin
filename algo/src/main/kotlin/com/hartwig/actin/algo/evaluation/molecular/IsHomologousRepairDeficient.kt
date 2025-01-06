@@ -33,7 +33,7 @@ class IsHomologousRepairDeficient(maxTestAge: LocalDate? = null) : MolecularEval
                 }
             }
             for (copyNumber in test.drivers.copyNumbers) {
-                if (copyNumber.type == CopyNumberType.LOSS && copyNumber.gene == gene) {
+                if (copyNumber.canonicalImpact.type == CopyNumberType.LOSS && copyNumber.gene == gene) {
                     hrdGenesWithBiallelicDriver.add(gene)
                 }
             }

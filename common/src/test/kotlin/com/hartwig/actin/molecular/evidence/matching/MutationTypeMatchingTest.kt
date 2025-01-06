@@ -6,20 +6,31 @@ import com.hartwig.serve.datamodel.molecular.MutationType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
+private val VARIANT_CRITERIA = VariantMatchCriteria(
+    isReportable = true,
+    ref = "A",
+    alt = "T",
+    gene = "gene 1",
+    chromosome = "12",
+    position = 13,
+    codingEffect = CodingEffect.MISSENSE,
+    type = VariantType.SNV
+)
+
 class MutationTypeMatchingTest {
 
     @Test
     fun `Should not match for all mutation types when coding effect is none`() {
         val nonCoding = VARIANT_CRITERIA.copy(codingEffect = CodingEffect.NONE)
         val nothing = emptySet<MutationType>()
-        shouldMatch(nonCoding, nothing)
+        assertMatch(nonCoding, nothing)
     }
 
     @Test
     fun `Should match for nonsense or frameshift`() {
         val nonsenseOrFrameshift =
             VARIANT_CRITERIA.copy(codingEffect = CodingEffect.NONSENSE_OR_FRAMESHIFT)
-        shouldMatch(nonsenseOrFrameshift, setOf(MutationType.NONSENSE_OR_FRAMESHIFT, MutationType.ANY))
+        assertMatch(nonsenseOrFrameshift, setOf(MutationType.NONSENSE_OR_FRAMESHIFT, MutationType.ANY))
     }
 
     @Test
@@ -37,7 +48,7 @@ class MutationTypeMatchingTest {
             ref = "AAG",
             alt = "TTG"
         )
-        shouldMatch(inframe, setOf(MutationType.MISSENSE, MutationType.INFRAME, MutationType.ANY))
+        assertMatch(inframe, setOf(MutationType.MISSENSE, MutationType.INFRAME, MutationType.ANY))
     }
 
     @Test
@@ -48,7 +59,7 @@ class MutationTypeMatchingTest {
             ref = "ATGATG",
             alt = "TTT"
         )
-        shouldMatch(inframeDeletion, setOf(MutationType.MISSENSE, MutationType.INFRAME, MutationType.INFRAME_DELETION, MutationType.ANY))
+        assertMatch(inframeDeletion, setOf(MutationType.MISSENSE, MutationType.INFRAME, MutationType.INFRAME_DELETION, MutationType.ANY))
     }
 
     @Test
@@ -59,7 +70,7 @@ class MutationTypeMatchingTest {
             ref = "TTT",
             alt = "ATGATG"
         )
-        shouldMatch(inframeInsertion, setOf(MutationType.MISSENSE, MutationType.INFRAME, MutationType.INFRAME_INSERTION, MutationType.ANY))
+        assertMatch(inframeInsertion, setOf(MutationType.MISSENSE, MutationType.INFRAME, MutationType.INFRAME_INSERTION, MutationType.ANY))
     }
 
     @Test
@@ -68,10 +79,10 @@ class MutationTypeMatchingTest {
             codingEffect = CodingEffect.MISSENSE,
             type = VariantType.SNV
         )
-        shouldMatch(missense, setOf(MutationType.MISSENSE, MutationType.ANY))
+        assertMatch(missense, setOf(MutationType.MISSENSE, MutationType.ANY))
     }
 
-    private fun shouldMatch(nonsenseOrFrameshift: VariantMatchCriteria, matchingTypes: Set<MutationType>) {
+    private fun assertMatch(nonsenseOrFrameshift: VariantMatchCriteria, matchingTypes: Set<MutationType>) {
         matchingTypes.forEach {
             assertThat(MutationTypeMatching.matches(it, nonsenseOrFrameshift)).withFailMessage { "Expected $it to match" }.isTrue()
         }

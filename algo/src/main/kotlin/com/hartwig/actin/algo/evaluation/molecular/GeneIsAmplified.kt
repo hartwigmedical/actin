@@ -19,10 +19,7 @@ private enum class CopyNumberEvaluation {
     NON_AMP_WITH_SUFFICIENT_COPY_NUMBER;
 
     companion object {
-        fun fromCopyNumber(copyNumber: CopyNumber, ploidy: Double): CopyNumberEvaluation {
-            val relativeMinCopies = copyNumber.minCopies / ploidy
-            val relativeMaxCopies = copyNumber.maxCopies / ploidy
-
+        fun fromCopyNumber(copyNumber: CopyNumber, relativeMinCopies: Double, relativeMaxCopies: Double): CopyNumberEvaluation {
             return if (relativeMaxCopies >= PLOIDY_FACTOR) {
                 when {
                     copyNumber.geneRole == GeneRole.TSG -> {
@@ -62,10 +59,19 @@ class GeneIsAmplified(private val gene: String, private val requestedMinCopyNumb
         val ploidy = test.characteristics.ploidy ?: return EvaluationFactory.fail("Amplification for $gene undetermined (ploidy missing)")
 
         val evaluatedCopyNumbers: Map<CopyNumberEvaluation, Set<String>> = test.drivers.copyNumbers.filter { copyNumber ->
-            copyNumber.gene == gene && (requestedMinCopyNumber == null || copyNumber.minCopies >= requestedMinCopyNumber)
+            copyNumber.gene == gene && (requestedMinCopyNumber == null || copyNumber.canonicalImpact.minCopies >= requestedMinCopyNumber)
         }
-            .groupBy({ copyNumber -> CopyNumberEvaluation.fromCopyNumber(copyNumber, ploidy) }, valueTransform = CopyNumber::event)
+            .groupBy({ copyNumber ->
+                CopyNumberEvaluation.fromCopyNumber(
+                    copyNumber, copyNumber.canonicalImpact.minCopies / ploidy,
+                    copyNumber.canonicalImpact.maxCopies / ploidy
+                )
+            }, valueTransform = CopyNumber::event)
             .mapValues { (_, copyNumberEvents) -> copyNumberEvents.toSet() }
+
+        val eventsOnNonCanonical = test.drivers.copyNumbers.filter { copyNumber ->
+            copyNumber.gene == gene && (requestedMinCopyNumber != null && copyNumber.otherImpacts.any { it.minCopies >= requestedMinCopyNumber })
+        }.map { it.event }.toSet()
 
         val minCopyMessage = requestedMinCopyNumber?.let { " with >=$requestedMinCopyNumber copies" } ?: ""
         return evaluatedCopyNumbers[CopyNumberEvaluation.REPORTABLE_FULL_AMP]?.let { reportableFullAmps ->
@@ -77,13 +83,17 @@ class GeneIsAmplified(private val gene: String, private val requestedMinCopyNumb
                     inclusionEvents = ampsThatAreUnreportable
                 )
             }
-            ?: evaluatePotentialWarns(evaluatedCopyNumbers, test.evidenceSource)
+            ?: evaluatePotentialWarns(evaluatedCopyNumbers, eventsOnNonCanonical, test.evidenceSource)
             ?: EvaluationFactory.fail(
                 if (requestedMinCopyNumber == null) "No amplification of $gene$minCopyMessage" else "Insufficient copies of $gene"
             )
     }
 
-    private fun evaluatePotentialWarns(evaluatedCopyNumbers: Map<CopyNumberEvaluation, Set<String>>, evidenceSource: String): Evaluation? {
+    private fun evaluatePotentialWarns(
+        evaluatedCopyNumbers: Map<CopyNumberEvaluation, Set<String>>,
+        eventsOnNonCanonical: Set<String>,
+        evidenceSource: String
+    ): Evaluation? {
         val eventGroupsWithMessages = listOf(
             EventsWithMessages(evaluatedCopyNumbers[CopyNumberEvaluation.REPORTABLE_PARTIAL_AMP], "$gene partially amplified"),
             EventsWithMessages(
@@ -100,7 +110,11 @@ class GeneIsAmplified(private val gene: String, private val requestedMinCopyNumb
             ),
             EventsWithMessages(
                 requestedMinCopyNumber?.let { evaluatedCopyNumbers[CopyNumberEvaluation.NON_AMP_WITH_SUFFICIENT_COPY_NUMBER] },
-                "$gene does not meet cut-off for amplification but has sufficient copy number > $requestedMinCopyNumber",
+                "$gene does not meet cut-off for amplification but has sufficient copy number > $requestedMinCopyNumber"
+            ),
+            EventsWithMessages(
+                eventsOnNonCanonical,
+                "Gene $gene is (partially) amplified or has sufficient copies but only on non-canonical transcript"
             )
         )
 

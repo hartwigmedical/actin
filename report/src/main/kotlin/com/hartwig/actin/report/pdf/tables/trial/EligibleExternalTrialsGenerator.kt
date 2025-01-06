@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
-import com.hartwig.actin.datamodel.molecular.evidence.CountryName
+import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Styles
@@ -14,7 +14,7 @@ class EligibleExternalTrialsGenerator(
     private val trials: Set<ExternalTrialSummary>,
     private val width: Float,
     private val filteredCount: Int,
-    private val homeCountry: CountryName? = null,
+    private val homeCountry: Country? = null,
     private val isFilteredTrialsTable: Boolean = true
 ) : TableGenerator {
 
@@ -35,7 +35,7 @@ class EligibleExternalTrialsGenerator(
             "Events",
             "Source Events",
             "Cancer Types",
-            homeCountry?.let { if (it == CountryName.NETHERLANDS) "Hospitals" else "Cities" } ?: "Country (cities)"
+            homeCountry?.let { if (it == Country.NETHERLANDS) "Hospitals" else "Cities" } ?: "Country (cities)"
         ).forEach { table.addHeaderCell(Cells.createHeader(it)) }
 
         trials.forEach { trial ->
@@ -45,12 +45,12 @@ class EligibleExternalTrialsGenerator(
             )
             table.addCell(Cells.createContent(trial.actinMolecularEvents.joinToString(",\n")))
             table.addCell(Cells.createContent(trial.sourceMolecularEvents.joinToString(",\n")))
-            table.addCell(Cells.createContent(trial.cancerTypes.joinToString(",\n") { it.cancerType }))
+            table.addCell(Cells.createContent(trial.applicableCancerTypes.joinToString(",\n") { it.matchedCancerType }))
             table.addCell(
                 Cells.createContent(
                     homeCountry?.let {
                         val hospitalsToCities = EligibleExternalTrialGeneratorFunctions.hospitalsAndCitiesInCountry(trial, it)
-                        if (homeCountry == CountryName.NETHERLANDS) hospitalsToCities.first else hospitalsToCities.second
+                        if (homeCountry == Country.NETHERLANDS) hospitalsToCities.first else hospitalsToCities.second
                     } ?: EligibleExternalTrialGeneratorFunctions.countryNamesWithCities(trial)
                 )
             )

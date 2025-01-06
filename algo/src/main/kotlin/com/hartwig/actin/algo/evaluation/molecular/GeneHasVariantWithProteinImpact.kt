@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.percentage
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
-import com.hartwig.actin.datamodel.molecular.TranscriptImpact
+import com.hartwig.actin.datamodel.molecular.TranscriptVariantImpact
 import com.hartwig.actin.datamodel.molecular.Variant
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import java.time.LocalDate
@@ -96,7 +96,7 @@ class GeneHasVariantWithProteinImpact(
         EventsWithMessages(matches.map { it.variant.event }, makeMessage(listAsString))
     }
 
-    private fun toProteinImpacts(impacts: Set<TranscriptImpact>): Set<String> {
+    private fun toProteinImpacts(impacts: Set<TranscriptVariantImpact>): Set<String> {
         return impacts.map { toProteinImpact(it.hgvsProteinImpact) }.toSet()
     }
 

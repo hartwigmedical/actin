@@ -2,6 +2,9 @@ package com.hartwig.actin.datamodel.molecular
 
 import java.time.LocalDate
 
+// TODO (KD): Can be removed?
+const val NO_EVIDENCE_SOURCE = "none"
+
 interface MolecularTest {
     val experimentType: ExperimentType
     val testTypeDisplay: String?
@@ -22,5 +25,3 @@ interface MolecularTest {
         return hasSufficientQuality && !hasSufficientPurity
     }
 }
-
-const val NO_EVIDENCE_SOURCE = "none"

@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.molecular.Variant
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestDisruptionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestHomozygousDisruptionFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 import org.assertj.core.api.Assertions.assertThat
@@ -33,7 +34,11 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesXTest {
                 MolecularTestFactory.withHomologousRepairDeficiencyAndLoss(
                     true,
                     TestCopyNumberFactory.createMinimal()
-                        .copy(type = CopyNumberType.LOSS, gene = "BRCA1", driverLikelihood = DriverLikelihood.HIGH)
+                        .copy(
+                            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS),
+                            gene = "BRCA1",
+                            driverLikelihood = DriverLikelihood.HIGH
+                        )
                 )
             )
         )

@@ -12,7 +12,7 @@ import org.junit.Test
 class WarnIfTest {
 
     @Test
-    fun canWarnIf() {
+    fun `Should warn if underlying function evaluates to pass or warn`() {
         val patient: PatientRecord = TestPatientFactory.createProperTestPatientRecord()
         assertEvaluation(EvaluationResult.WARN, WarnIf(TestEvaluationFunctionFactory.pass()).evaluate(patient))
         assertEvaluation(EvaluationResult.WARN, WarnIf(TestEvaluationFunctionFactory.warn()).evaluate(patient))
@@ -22,7 +22,7 @@ class WarnIfTest {
     }
 
     @Test
-    fun canMoveMessagesToWarnOnPass() {
+    fun `Should move messages to warn on pass`() {
         val result: Evaluation =
             WarnIf(TestEvaluationFunctionFactory.pass()).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         assertThat(result.passMessages).isEmpty()

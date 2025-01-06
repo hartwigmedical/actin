@@ -1,12 +1,11 @@
 package com.hartwig.actin.molecular.evidence.known
 
 import com.hartwig.serve.datamodel.molecular.ImmutableKnownEvents
-import com.hartwig.serve.datamodel.molecular.KnownEvents
 
 object TestKnownEventResolverFactory {
 
     fun createProper(): KnownEventResolver {
-        val knownEvents: KnownEvents = ImmutableKnownEvents.builder()
+        val knownEvents = ImmutableKnownEvents.builder()
             .addHotspots(TestServeKnownFactory.hotspotBuilder().build())
             .addCodons(TestServeKnownFactory.codonBuilder().build())
             .addExons(TestServeKnownFactory.exonBuilder().build())

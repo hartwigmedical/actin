@@ -5,7 +5,7 @@ import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-val FUSION_CRITERIA = FusionMatchCriteria(
+private val FUSION_CRITERIA = FusionMatchCriteria(
     isReportable = true,
     geneStart = "up",
     geneEnd = "down",
@@ -39,6 +39,7 @@ class FusionMatchingTest {
     @Test
     fun `Should match on exact match to exon aware fusion`() {
         val exactMatch = FUSION_CRITERIA.copy(fusedExonUp = 4, fusedExonDown = 6)
+
         assertThat(FusionMatching.isGeneMatch(GENERIC_FUSION, exactMatch)).isTrue()
         assertThat(FusionMatching.isExonMatch(GENERIC_FUSION, exactMatch)).isTrue()
         assertThat(FusionMatching.explicitlyMatchesExonUp(GENERIC_FUSION, exactMatch)).isFalse()
@@ -52,6 +53,7 @@ class FusionMatchingTest {
     @Test
     fun `Should match on exon up match to exon aware fusion`() {
         val exonUpMatch = FUSION_CRITERIA.copy(fusedExonUp = 3, fusedExonDown = 8)
+
         assertThat(FusionMatching.isGeneMatch(GENERIC_FUSION, exonUpMatch)).isTrue()
         assertThat(FusionMatching.isExonMatch(GENERIC_FUSION, exonUpMatch)).isTrue()
         assertThat(FusionMatching.explicitlyMatchesExonUp(GENERIC_FUSION, exonUpMatch)).isFalse()
@@ -65,6 +67,7 @@ class FusionMatchingTest {
     @Test
     fun `Should match on exon down match to exon aware fusion`() {
         val exonDownMatch = FUSION_CRITERIA.copy(fusedExonUp = 2, fusedExonDown = 7)
+
         assertThat(FusionMatching.isGeneMatch(GENERIC_FUSION, exonDownMatch)).isTrue()
         assertThat(FusionMatching.isExonMatch(GENERIC_FUSION, exonDownMatch)).isTrue()
         assertThat(FusionMatching.explicitlyMatchesExonUp(GENERIC_FUSION, exonDownMatch)).isFalse()

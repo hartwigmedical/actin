@@ -19,7 +19,7 @@ class HasLimitedLabValue(
                 "Could not convert value for ${labMeasurement.display()} to ${targetUnit.display()}"
             )
 
-        val labValueString = "${labValue(labMeasurement, convertedValue)} ${targetUnit.display()}"
+        val labValueString = "${labValue(labMeasurement, convertedValue, labValue.unit)} ${targetUnit.display()}"
 
         return when (evaluateVersusMaxValueWithMargin(convertedValue, labValue.comparator, maxValue)) {
             LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN -> {

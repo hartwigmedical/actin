@@ -2,7 +2,7 @@ package com.hartwig.actin.datamodel.molecular.driver
 
 import com.hartwig.actin.datamodel.molecular.GeneRole
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
-import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
+import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.orange.driver.CodingContext
 import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.orange.driver.DisruptionType
@@ -16,7 +16,7 @@ object TestDisruptionFactory {
             isReportable = false,
             event = "",
             driverLikelihood = null,
-            evidence = ClinicalEvidence(),
+            evidence = TestClinicalEvidenceFactory.createEmpty(),
             gene = Strings.EMPTY,
             geneRole = GeneRole.UNKNOWN,
             proteinEffect = ProteinEffect.UNKNOWN,

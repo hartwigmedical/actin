@@ -68,6 +68,13 @@ class TreatmentDatabaseTest {
         assertThat<Drug>(treatmentDatabase().findDrugByAtcName("temoporfin")).isNull()
     }
 
+    @Test
+    fun `Should find drug by ATC code for drugs with AND in ATC name `() {
+        val pertuzumabAndTrastuzumab = treatmentDatabase().findDrugByAtcName("PERTUZUMAB AND TRASTUZUMAB")
+        assertThat<Drug>(pertuzumabAndTrastuzumab).isNotNull()
+        assertThat(pertuzumabAndTrastuzumab!!.name).isEqualTo("PERTUZUMAB_TRASTUZUMAB")
+    }
+
     private fun treatmentDatabase(): TreatmentDatabase {
         return TreatmentDatabaseFactory.createFromPath(resourceOnClasspath("clinical/treatment_db"))
     }

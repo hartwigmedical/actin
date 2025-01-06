@@ -11,7 +11,7 @@ import com.hartwig.actin.datamodel.clinical.LabValue
 class HasSufficientLabValueLLN(private val minLLNFactor: Double) : LabEvaluationFunction {
 
     override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
-        val labValueString = labValue(labMeasurement, labValue.value)
+        val labValueString = labValue(labMeasurement, labValue.value, labValue.unit)
         val referenceString = labReference(minLLNFactor, "LLN", labValue.refLimitLow)
 
         return when (LabEvaluation.evaluateVersusMinLLN(labValue, minLLNFactor)) {

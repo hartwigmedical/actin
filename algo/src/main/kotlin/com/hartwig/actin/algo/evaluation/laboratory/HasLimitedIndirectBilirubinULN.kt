@@ -21,7 +21,7 @@ class HasLimitedIndirectBilirubinULN(private val maxULNFactor: Double, private v
             return EvaluationFactory.recoverableUndetermined("Indirect bilirubin undetermined (no recent total bilirubin measurement)")
         }
 
-        val labValueString = labValue(LabMeasurement.INDIRECT_BILIRUBIN, mostRecentTotal!!.value - labValue.value)
+        val labValueString = labValue(LabMeasurement.INDIRECT_BILIRUBIN, mostRecentTotal!!.value - labValue.value, labValue.unit)
         val refLimit = labValue.refLimitUp?.let { mostRecentTotal.refLimitUp?.minus(it) }
         val referenceString = labReference(maxULNFactor, "ULN", refLimit)
 

@@ -46,6 +46,10 @@ class MolecularDriversInterpreter(
         return interpretedCohortsSummarizer.trialsForDriver(driver)
     }
 
+    fun copyNumberIsActionable(copyNumber: CopyNumber): Boolean {
+        return interpretedCohortsSummarizer.driverIsActionable(copyNumber)
+    }
+
     private fun <T : Driver> filterDrivers(drivers: Collection<T>): List<T> {
         return drivers.filter { it.isReportable || interpretedCohortsSummarizer.driverIsActionable(it) }
     }

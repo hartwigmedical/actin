@@ -3,11 +3,11 @@ package com.hartwig.actin.util.json
 import com.google.gson.reflect.TypeToken
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.molecular.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.TranscriptImpact
+import com.hartwig.actin.datamodel.molecular.TranscriptVariantImpact
 import com.hartwig.actin.datamodel.molecular.Variant
-import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptImpactFactory
+import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
-import com.hartwig.actin.datamodel.molecular.evidence.CountryName
+import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.orange.driver.ExtendedVariantDetails
 import com.hartwig.actin.datamodel.molecular.sort.driver.VariantComparator
 import org.assertj.core.api.Assertions.assertThat
@@ -32,9 +32,9 @@ class GsonSerializerTest {
 
     @Test
     fun `Should sort non-comparable sets by converting elements to string`() {
-        val set = setOf(3, "2", CountryName.NETHERLANDS, null)
+        val set = setOf(3, "2", Country.NETHERLANDS, null)
         val deserialized = gson.fromJson<List<String>>(gson.toJson(set), object : TypeToken<List<String>>() {}.type)
-        assertThat(deserialized).isEqualTo(listOf("2", "3", CountryName.NETHERLANDS.toString(), null))
+        assertThat(deserialized).isEqualTo(listOf("2", "3", Country.NETHERLANDS.toString(), null))
     }
 
     @Test
@@ -47,7 +47,7 @@ class GsonSerializerTest {
     private fun variant(
         driverLikelihood: DriverLikelihood, gene: String, hgvsProteinImpact: String, hgvsCodingImpact: String
     ): Variant {
-        val canonicalImpact: TranscriptImpact = TestTranscriptImpactFactory.createMinimal().copy(
+        val canonicalImpact: TranscriptVariantImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(
             hgvsProteinImpact = hgvsProteinImpact,
             hgvsCodingImpact = hgvsCodingImpact
         )

@@ -1,27 +1,22 @@
 package com.hartwig.actin.datamodel.molecular.sort.evidence
 
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
-import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.withApprovedTreatment
-import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.withExternalEligibleTrial
-import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.withOffLabelExperimentalTreatment
-import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.withOnLabelExperimentalTreatment
-import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.withOnLabelKnownResistantTreatment
-import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.withOnLabelPreClinicalTreatment
-import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory.withSuspectResistantTreatment
+import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class ClinicalEvidenceComparatorTest {
 
     @Test
-    fun `Should sort actionable evidences`() {
-        val evidence1 = withApprovedTreatment("treatment")
-        val evidence2 = withExternalEligibleTrial(TestClinicalEvidenceFactory.createTestExternalTrial())
-        val evidence3 = withOnLabelExperimentalTreatment("treatment")
-        val evidence4 = withOffLabelExperimentalTreatment("treatment")
-        val evidence5 = withOnLabelPreClinicalTreatment("treatment")
-        val evidence6 = withOnLabelKnownResistantTreatment("treatment")
-        val evidence7 = withSuspectResistantTreatment("treatment")
+    fun `Should sort clinical evidence`() {
+        val evidence1 = TestClinicalEvidenceFactory.withApprovedTreatment("treatment")
+        val evidence2 = TestClinicalEvidenceFactory.withEligibleTrial(TestExternalTrialFactory.createTestTrial())
+        val evidence3 = TestClinicalEvidenceFactory.withOnLabelExperimentalTreatment("treatment")
+        val evidence4 = TestClinicalEvidenceFactory.withOffLabelExperimentalTreatment("treatment")
+        val evidence5 = TestClinicalEvidenceFactory.withOnLabelPreClinicalTreatment("treatment")
+        val evidence6 = TestClinicalEvidenceFactory.withOnLabelKnownResistantTreatment("treatment")
+        val evidence7 = TestClinicalEvidenceFactory.withOnLabelSuspectResistantTreatment("treatment")
+
         val evidences =
             listOf(evidence5, evidence4, evidence1, evidence2, evidence6, evidence7, evidence3).sortedWith(ClinicalEvidenceComparator())
 
