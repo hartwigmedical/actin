@@ -74,7 +74,7 @@ class TestStandardOfCareApplication {
         private val TREATMENT_JSON_PATH = ACTIN_RESOURCE_PATH + File.separator + "treatment_db"
 
         private val ICD_TSV_PATH = listOf(
-            ACTIN_RESOURCE_PATH, "international_disease_classification", "SimpleTabulation-ICD-11-MMS-en.tsv"
+            ACTIN_RESOURCE_PATH, "icd", "SimpleTabulation-ICD-11-MMS-en.tsv"
         ).joinToString(File.separator)
 
         private val ATC_TREE_PATH = listOf(ACTIN_RESOURCE_PATH, "atc_config", "atc_tree.tsv").joinToString(File.separator)

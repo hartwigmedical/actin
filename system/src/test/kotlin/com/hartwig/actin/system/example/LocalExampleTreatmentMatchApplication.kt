@@ -66,7 +66,7 @@ class LocalExampleTreatmentMatchApplication {
 
         val doidJson = listOf(resourceDirectory, "disease_ontology", "doid.json").joinToString(File.separator)
         val icdTsv = listOf(
-            resourceDirectory, "international_disease_classification", "SimpleTabulation-ICD-11-MMS-en.tsv"
+            resourceDirectory, "icd", "SimpleTabulation-ICD-11-MMS-en.tsv"
         ).joinToString(File.separator)
         val atcTreeTsv = listOf(resourceDirectory, "atc_config", "atc_tree.tsv").joinToString(File.separator)
         val treatmentDatabaseDir = listOf(resourceDirectory, "treatment_db").joinToString(File.separator)
