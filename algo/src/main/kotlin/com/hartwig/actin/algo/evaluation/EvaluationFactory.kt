@@ -48,7 +48,9 @@ object EvaluationFactory {
     }
 
     fun warn(
-        message: String, recoverable: Boolean = false, inclusionEvents: Set<String> = emptySet()
+        message: String,
+        recoverable: Boolean = false,
+        inclusionEvents: Set<String> = emptySet()
     ): Evaluation {
         return Evaluation(
             recoverable = recoverable,

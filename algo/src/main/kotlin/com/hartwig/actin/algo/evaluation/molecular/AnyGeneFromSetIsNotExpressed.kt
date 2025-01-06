@@ -6,7 +6,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import java.time.LocalDate
 
-//TODO (CB): only 1 message
 class AnyGeneFromSetIsNotExpressed(maxTestAge: LocalDate? = null, private val genes: Set<String>) : MolecularEvaluationFunction(maxTestAge){
 
     override fun evaluate(molecular: MolecularRecord): Evaluation {

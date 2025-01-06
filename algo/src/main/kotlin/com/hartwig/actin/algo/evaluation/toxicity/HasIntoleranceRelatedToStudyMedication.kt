@@ -7,7 +7,6 @@ import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
-//TODO (CB): only 1 message
 class HasIntoleranceRelatedToStudyMedication : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -20,7 +19,7 @@ class HasIntoleranceRelatedToStudyMedication : EvaluationFunction {
         return if (allergies.isNotEmpty()) {
             EvaluationFactory.undetermined(
                 "Medication-related allergies: ${concat(allergies)}"
-                        + " - currently undetermined if this could be related to potential study medication"
+                        + " - undetermined if this could be related to potential study medication"
             )
         } else EvaluationFactory.fail("Patient has no known allergies with category 'medication'")
     }

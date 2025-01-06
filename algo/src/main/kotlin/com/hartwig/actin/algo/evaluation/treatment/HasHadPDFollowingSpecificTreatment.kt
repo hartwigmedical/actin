@@ -8,7 +8,6 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 
-//TODO (CB): only 1 message
 class HasHadPDFollowingSpecificTreatment(private val treatments: List<Treatment>) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
