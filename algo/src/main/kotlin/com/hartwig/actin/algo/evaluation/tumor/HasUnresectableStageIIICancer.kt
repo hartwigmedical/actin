@@ -10,7 +10,7 @@ class HasUnresectableStageIIICancer : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val stage =
-            record.tumor.stage ?: return EvaluationFactory.undetermined("Undetermined unresectable stage III cancer (tumor stage missing)")
+            record.tumor.stage ?: return EvaluationFactory.undetermined("Unresectable stage III cancer undetermined (tumor stage missing)")
 
         return if (isStageMatch(stage, TumorStage.III)) {
             EvaluationFactory.undetermined("Undetermined if stage III cancer is unresectable")

@@ -16,7 +16,7 @@ class HasIrradiationAmenableLesion(private val hasMetastaticCancer: HasMetastati
             }
 
             EvaluationResult.UNDETERMINED, EvaluationResult.WARN -> {
-                EvaluationFactory.undetermined("Undetermined metastatic cancer and therefore undetermined if irradiation amenable lesion")
+                EvaluationFactory.undetermined("Metastatic cancer undetermined and therefore undetermined if irradiation amenable lesion")
             }
 
             else -> {

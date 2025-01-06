@@ -17,7 +17,7 @@ class HasAnyLesion : EvaluationFunction {
 
         return when {
             tumorDetails.hasConfirmedLesions() -> {
-                EvaluationFactory.pass("Patient has at least one lesion")
+                EvaluationFactory.pass("Has at least one lesion")
             }
 
             tumorDetails.hasSuspectedLesions() -> {

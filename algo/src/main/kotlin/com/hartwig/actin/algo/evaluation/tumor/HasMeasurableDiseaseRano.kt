@@ -11,7 +11,7 @@ class HasMeasurableDiseaseRano(private val doidModel: DoidModel) : EvaluationFun
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val hasMeasurableDisease = record.tumor.hasMeasurableDisease
-            ?: return EvaluationFactory.recoverableUndetermined("Undetermined RECIST measurable disease (data missing)")
+            ?: return EvaluationFactory.recoverableUndetermined("Measurable disease by RANO undetermined (data missing)")
 
         return when {
             (hasMeasurableDisease && DoidEvaluationFunctions.isOfDoidType(
@@ -27,7 +27,7 @@ class HasMeasurableDiseaseRano(private val doidModel: DoidModel) : EvaluationFun
             }
 
             else -> {
-                EvaluationFactory.recoverableFail("No measurable disease")
+                EvaluationFactory.recoverableFail("Has no measurable disease")
             }
         }
     }

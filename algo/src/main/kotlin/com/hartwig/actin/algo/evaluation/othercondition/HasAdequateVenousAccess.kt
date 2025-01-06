@@ -8,6 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasAdequateVenousAccess : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.notEvaluated("Currently assumed that patient has adequate venous access")
+        return EvaluationFactory.notEvaluated("Assumed that patient has adequate venous access")
     }
 }

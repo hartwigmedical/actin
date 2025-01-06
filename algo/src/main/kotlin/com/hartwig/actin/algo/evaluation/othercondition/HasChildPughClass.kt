@@ -16,6 +16,6 @@ class HasChildPughClass(private val doidModel: DoidModel) : EvaluationFunction {
                 return EvaluationFactory.undetermined("Child-Pugh score undetermined")
             }
         }
-        return EvaluationFactory.notEvaluated("Child-Pugh score not relevant since liver cirrhosis not present")
+        return EvaluationFactory.notEvaluated("Assumed that Child-Pugh score is not relevant since liver cirrhosis not present")
     }
 }

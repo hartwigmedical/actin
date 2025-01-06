@@ -13,7 +13,7 @@ class HasCancerOfUnknownPrimary(private val doidModel: DoidModel, private val ca
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.tumor.doids
         if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
-            return EvaluationFactory.undetermined("Undetermined CUP (unknown tumor location/type)")
+            return EvaluationFactory.undetermined("Undetermined if patient has CUP (unknown tumor location/type)")
         }
         val tumorSubLocation = record.tumor.primaryTumorSubLocation
         val isCUP = tumorSubLocation != null && tumorSubLocation == CUP_PRIMARY_TUMOR_SUB_LOCATION

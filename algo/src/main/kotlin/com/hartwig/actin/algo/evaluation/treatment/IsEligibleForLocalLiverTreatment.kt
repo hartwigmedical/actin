@@ -29,7 +29,7 @@ class IsEligibleForLocalLiverTreatment(private val doidModel: DoidModel) : Evalu
             }
 
             else -> {
-                EvaluationFactory.undetermined("Undetermined liver lesions and therefore undetermined eligibility for local liver treatment")
+                EvaluationFactory.undetermined("Liver lesions undetermined and therefore undetermined eligibility for local liver treatment")
             }
         }
     }

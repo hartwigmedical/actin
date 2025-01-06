@@ -64,7 +64,7 @@ class HasHadPriorConditionWithNameRecently (
                             transform = PriorOtherCondition::name
                         )
                     } " +
-                            "(matched to condition name: $conditionNameToFind), but undetermined whether that is within specified time frame"
+                            "(matched to condition name: $conditionNameToFind) but undetermined whether that is within specified time frame"
                 )
             }
 

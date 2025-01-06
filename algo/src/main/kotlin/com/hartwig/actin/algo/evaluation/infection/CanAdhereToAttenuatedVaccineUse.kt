@@ -8,6 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class CanAdhereToAttenuatedVaccineUse: EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.notEvaluated("Currently assumed that patient can adhere to attenuated vaccine protocol")
+        return EvaluationFactory.notEvaluated("Assumed that patient can adhere to attenuated vaccine protocol")
     }
 }

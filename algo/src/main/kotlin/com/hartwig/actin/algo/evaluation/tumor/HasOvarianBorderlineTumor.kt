@@ -14,7 +14,7 @@ class HasOvarianBorderlineTumor(private val doidModel: DoidModel) : EvaluationFu
         if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids) || (record.tumor.primaryTumorType == null
                     && record.tumor.primaryTumorSubType == null)
         ) {
-            return EvaluationFactory.undetermined("Undetermined ovarian borderline tumor")
+            return EvaluationFactory.undetermined("Ovarian borderline tumor undetermined (tumor type missing)")
         }
         val isOvarianCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.OVARIAN_CANCER_DOID)
         val hasBorderlineType = TumorTypeEvaluationFunctions.hasTumorWithType(record.tumor, OVARIAN_BORDERLINE_TYPES)

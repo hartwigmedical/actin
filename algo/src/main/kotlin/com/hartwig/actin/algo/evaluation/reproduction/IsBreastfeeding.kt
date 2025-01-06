@@ -12,7 +12,7 @@ class IsBreastfeeding: EvaluationFunction {
         return if (record.patient.gender == Gender.MALE) {
             EvaluationFactory.fail("No breastfeeding (is male)")
         } else {
-            EvaluationFactory.notEvaluated("Currently assumed that patient is not breastfeeding")
+            EvaluationFactory.notEvaluated("Assumed that patient is not breastfeeding")
         }
     }
 }

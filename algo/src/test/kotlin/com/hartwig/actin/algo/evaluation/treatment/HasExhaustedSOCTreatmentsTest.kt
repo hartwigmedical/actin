@@ -61,7 +61,7 @@ class HasExhaustedSOCTreatmentsTest {
         val record = createHistoryWithNSCLCAndTreatment(treatment)
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessages).containsExactly("SOC not exhausted (at least platinum doublet remaining)")
+        assertThat(evaluation.failMessages).containsExactly("Has not exhausted SOC (at least platinum doublet remaining)")
     }
 
     @Test
@@ -70,7 +70,7 @@ class HasExhaustedSOCTreatmentsTest {
         val record = createHistoryWithNSCLCAndTreatment(null)
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessages).containsExactly("SOC not exhausted (at least platinum doublet remaining)")
+        assertThat(evaluation.failMessages).containsExactly("Has not exhausted SOC (at least platinum doublet remaining)")
     }
 
     @Test

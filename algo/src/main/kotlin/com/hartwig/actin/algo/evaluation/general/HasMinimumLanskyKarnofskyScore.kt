@@ -10,7 +10,7 @@ class HasMinimumLanskyKarnofskyScore internal constructor(private val performanc
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val who = record.clinicalStatus.who
-            ?: return EvaluationFactory.recoverableUndetermined("Undetermined ${performanceScore.display()} score (WHO missing)")
+            ?: return EvaluationFactory.recoverableUndetermined("${performanceScore.display()} score undetermined (WHO missing)")
         val passScore = toMinScoreForWHO(who)
         val undeterminedScore = toMaxScoreForWHO(who)
         val warnScore = toMaxScoreForWHO((who - 1).coerceAtLeast(0))

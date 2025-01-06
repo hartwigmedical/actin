@@ -12,7 +12,7 @@ class HasNonSquamousNSCLC(private val doidModel: DoidModel) : EvaluationFunction
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.tumor.doids
         if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
-            return EvaluationFactory.undetermined("Undetermined non-squamous NSCLC tumor type")
+            return EvaluationFactory.undetermined("Non-squamous NSCLC tumor type undetermined (tumor type missing)")
         }
 
         val expandedDoidSet = DoidEvaluationFunctions.createFullExpandedDoidTree(doidModel, tumorDoids)

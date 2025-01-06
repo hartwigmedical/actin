@@ -8,6 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasMRIVolumeAmenableLesion : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined("Undetermined MRI volume measurement amenability")
+        return EvaluationFactory.undetermined("MRI volume measurement amenability undetermined")
     }
 }

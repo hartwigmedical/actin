@@ -11,7 +11,7 @@ class HasHistoryOfAnaphylaxis: EvaluationFunction {
         return if (record.intolerances.isEmpty()) {
             EvaluationFactory.fail("No known history of anaphylaxis")
         } else {
-            EvaluationFactory.undetermined("Undetermined history of anaphylaxis (allergies present)")
+            EvaluationFactory.undetermined("History of anaphylaxis undetermined (allergies present)")
         }
     }
 }

@@ -26,7 +26,7 @@ class HasKnownHPVStatus : EvaluationFunction {
             }
 
             molecularRecords.any { it.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME } -> {
-                EvaluationFactory.undetermined("Undetermined HPV status due to low purity in WGS")
+                EvaluationFactory.undetermined("HPV status undetermined (low purity in WGS)")
             }
 
             indeterminatePriorTestsForHPV.isNotEmpty() -> {

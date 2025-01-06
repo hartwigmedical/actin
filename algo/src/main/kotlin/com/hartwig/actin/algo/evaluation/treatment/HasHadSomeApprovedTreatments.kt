@@ -11,6 +11,6 @@ class HasHadSomeApprovedTreatments(private val minApprovedTreatments: Int) : Eva
         return if (record.oncologicalHistory.isEmpty() && minApprovedTreatments > 0) {
             EvaluationFactory.fail("Has not had approved treatments")
         } else
-            EvaluationFactory.undetermined("Undetermined nr of received approved treatments")
+            EvaluationFactory.undetermined("Nr of received approved treatments undetermined")
     }
 }

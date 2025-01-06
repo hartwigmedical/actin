@@ -9,6 +9,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasVisceralMetastases : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined("Undetermined visceral metastases")
+        return EvaluationFactory.undetermined("Visceral metastases undetermined")
     }
 }

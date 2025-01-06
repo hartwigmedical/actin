@@ -8,6 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasReceivedLiveVaccineWithinMonths : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined("Undetermined live vaccine status")
+        return EvaluationFactory.undetermined("Live vaccine status undetermined")
     }
 }

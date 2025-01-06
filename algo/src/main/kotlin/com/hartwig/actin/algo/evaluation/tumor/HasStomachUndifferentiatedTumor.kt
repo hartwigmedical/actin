@@ -14,7 +14,7 @@ class HasStomachUndifferentiatedTumor(private val doidModel: DoidModel) : Evalua
         if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids) || (record.tumor.primaryTumorType == null
                     && record.tumor.primaryTumorSubType == null)
         ) {
-            return EvaluationFactory.undetermined("Undetermined undifferentiated stomach tumor")
+            return EvaluationFactory.undetermined("Undifferentiated stomach tumor undetermined (tumor type missing)")
         }
         val isStomachCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.STOMACH_CANCER_DOID)
         val isUndifferentiatedType =

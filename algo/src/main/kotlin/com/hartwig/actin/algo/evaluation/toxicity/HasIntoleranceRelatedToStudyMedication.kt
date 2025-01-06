@@ -19,8 +19,8 @@ class HasIntoleranceRelatedToStudyMedication : EvaluationFunction {
 
         return if (allergies.isNotEmpty()) {
             EvaluationFactory.undetermined(
-                "Patient has medication-related allergies: ${concat(allergies)}."
-                        + " Currently not determined if this could be related to potential study medication"
+                "Medication-related allergies: ${concat(allergies)}"
+                        + " - currently undetermined if this could be related to potential study medication"
             )
         } else EvaluationFactory.fail("Patient has no known allergies with category 'medication'")
     }

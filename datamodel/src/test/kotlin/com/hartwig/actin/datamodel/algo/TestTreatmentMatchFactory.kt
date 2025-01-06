@@ -138,7 +138,7 @@ object TestTreatmentMatchFactory {
                         text = "This rule has 2 conditions:\n 1. Patient has no active brain metastases.\n 2. Patient has exhausted SOC."
                     )
                 )
-            ) to unrecoverable(EvaluationResult.FAIL, "Patient has not exhausted SOC (remaining options capecitabine)")
+            ) to unrecoverable(EvaluationResult.FAIL, "Has not exhausted SOC (remaining options capecitabine)")
         )
     }
 

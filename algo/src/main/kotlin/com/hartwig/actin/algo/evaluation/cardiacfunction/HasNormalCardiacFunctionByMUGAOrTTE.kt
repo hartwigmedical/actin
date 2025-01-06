@@ -11,7 +11,7 @@ class HasNormalCardiacFunctionByMUGAOrTTE: EvaluationFunction {
         val lvef = record.clinicalStatus.lvef
 
         return if (lvef != null && lvef < 0.5) {
-            EvaluationFactory.warn("LVEF < 50%, uncertain if cardiac function by MUGA or TTE is considered normal")
+            EvaluationFactory.warn("Uncertain if cardiac function by MUGA or TTE is considered normal (LVEF < 50%)")
         } else {
             EvaluationFactory.recoverableUndetermined("Normal cardiac function by MUGA or TTE undetermined")
         }

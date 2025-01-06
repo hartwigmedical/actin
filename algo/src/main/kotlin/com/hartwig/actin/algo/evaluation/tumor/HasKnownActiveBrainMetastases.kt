@@ -18,8 +18,7 @@ class HasKnownActiveBrainMetastases : EvaluationFunction {
                 unknownIfActive && hasSuspectedBrainLesions == true -> undeterminedActivityEvaluation("Suspected brain")
 
                 unknownIfActive && hasBrainLesions == null -> {
-                    val message = "Unknown if active brain metastases present (data missing)"
-                    EvaluationFactory.undetermined(message)
+                    EvaluationFactory.undetermined("Undetermined if active brain metastases present (data missing)")
                 }
 
                 hasActiveBrainLesions == true -> EvaluationFactory.pass("Has active brain metastases")

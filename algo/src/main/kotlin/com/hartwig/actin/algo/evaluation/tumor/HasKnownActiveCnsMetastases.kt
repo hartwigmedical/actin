@@ -22,8 +22,7 @@ class HasKnownActiveCnsMetastases : EvaluationFunction {
                 }
 
                 unknownIfActive && (hasCnsLesions == null && hasBrainLesions == null) -> {
-                    val message = "Unknown if (active) CNS metastases present (data missing)"
-                    EvaluationFactory.undetermined(message)
+                    EvaluationFactory.undetermined("Undetermined if (active) CNS metastases present (data missing)")
                 }
 
                 hasActiveCnsLesions == true -> EvaluationFactory.pass("Active CNS metastases present")

@@ -13,7 +13,7 @@ class HasSolidPrimaryTumorIncludingLymphoma(private val doidModel: DoidModel) : 
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.tumor.doids
         if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
-            return EvaluationFactory.undetermined("Undetermined solid primary tumor (tumor location missing)")
+            return EvaluationFactory.undetermined("Solid primary tumor undetermined (tumor type missing)")
         }
         val result = DoidEvaluationFunctions.evaluateAllDoidsMatchWithFailAndWarns(
             doidModel,

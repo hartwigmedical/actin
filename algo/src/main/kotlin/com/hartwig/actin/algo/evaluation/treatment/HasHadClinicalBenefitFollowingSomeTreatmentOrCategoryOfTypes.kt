@@ -68,7 +68,7 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypes(
                     if (treatmentsSimilarToTargetTreatment.none {
                             ProgressiveDiseaseFunctions.treatmentResultedInPD(it) == true
                         }) {
-                        EvaluationFactory.undetermined("Undetermined clinical benefit from treatment$treatmentDisplay - did not $similarDrugMessage")
+                        EvaluationFactory.undetermined("Clinical benefit from treatment$treatmentDisplay undetermined - did not $similarDrugMessage")
                     } else {
                         EvaluationFactory.fail("Did not $similarDrugMessage with PD as best response")
                     }

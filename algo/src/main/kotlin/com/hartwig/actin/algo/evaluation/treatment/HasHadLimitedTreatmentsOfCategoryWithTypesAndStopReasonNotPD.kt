@@ -82,7 +82,7 @@ class HasHadLimitedTreatmentsOfCategoryWithTypesAndStopReasonNotPD(
     }
 
     private fun hasTreatmentMessage(suffix: String = ""): String {
-        return "Patient has had ${treatment()}$suffix without stop reason PD"
+        return "Has had ${treatment()}$suffix without stop reason PD"
     }
 
     private fun undetermined(suffix: String): Evaluation {

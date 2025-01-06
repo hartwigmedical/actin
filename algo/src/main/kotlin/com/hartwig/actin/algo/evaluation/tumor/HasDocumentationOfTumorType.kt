@@ -8,6 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasDocumentationOfTumorType(val type: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.notEvaluated("Currently assumed that ${type.lowercase()} documentation of tumor type has been done or can be done")
+        return EvaluationFactory.notEvaluated("Assumed that ${type.lowercase()} documentation of tumor type has been done or can be done")
     }
 }

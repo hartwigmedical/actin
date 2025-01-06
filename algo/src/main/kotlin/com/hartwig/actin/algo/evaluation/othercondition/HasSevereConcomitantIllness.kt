@@ -16,6 +16,6 @@ class HasSevereConcomitantIllness: EvaluationFunction {
         return if (whoStatus == 5) {
             EvaluationFactory.pass("Has severe concomitant illness (WHO 5)")
         } else
-            EvaluationFactory.notEvaluated("Currently assumed that severe concomitant illnesses are not to be present")
+            EvaluationFactory.notEvaluated("Assumed that severe concomitant illnesses are not to be present")
     }
 }

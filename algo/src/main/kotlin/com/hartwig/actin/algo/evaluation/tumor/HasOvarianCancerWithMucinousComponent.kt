@@ -12,7 +12,7 @@ class HasOvarianCancerWithMucinousComponent(private val doidModel: DoidModel) : 
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.tumor.doids
         if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
-            return EvaluationFactory.undetermined("Undetermined ovarian mucinous cancer")
+            return EvaluationFactory.undetermined("Ovarian mucinous cancer undetermined (tumor type missing)")
         }
         val isOvarianMucinousType = DoidEvaluationFunctions.isOfAtLeastOneDoidType(
             doidModel, tumorDoids, OVARIAN_MUCINOUS_DOIDS

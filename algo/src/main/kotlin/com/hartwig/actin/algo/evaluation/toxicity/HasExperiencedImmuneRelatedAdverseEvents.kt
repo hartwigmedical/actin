@@ -31,7 +31,7 @@ class HasExperiencedImmuneRelatedAdverseEvents : EvaluationFunction {
             }
 
             (immunotherapyTreatmentList.isNotEmpty() && stopReasonUnknown) -> {
-                EvaluationFactory.recoverableUndetermined("Undetermined prior immunotherapy related adverse events")
+                EvaluationFactory.recoverableUndetermined("Prior immunotherapy related adverse events undetermined")
             }
 
             else -> {

@@ -16,7 +16,7 @@ class HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosis(private va
             }
 
             EvaluationResult.UNDETERMINED, EvaluationResult.WARN -> {
-                EvaluationFactory.undetermined("Undetermined metastatic cancer and therefore undetermined if metastases could be the dominant factor determining prognosis")
+                EvaluationFactory.undetermined("Metastatic cancer undetermined and therefore undetermined if metastases could be the dominant factor determining prognosis")
             }
 
             else -> {

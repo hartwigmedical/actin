@@ -12,7 +12,7 @@ class HasSecondaryGlioblastoma(private val doidModel: DoidModel) : EvaluationFun
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.tumor.doids
         if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
-            return EvaluationFactory.undetermined("Undetermined secondary glioblastoma (tumor location unknown)")
+            return EvaluationFactory.undetermined("Secondary glioblastoma undetermined (tumor location unknown)")
         }
         for (tumorDoid in tumorDoids ?: emptySet()) {
             if (doidModel.doidWithParents(tumorDoid).contains(DoidConstants.GLIOBLASTOMA_DOID)) {

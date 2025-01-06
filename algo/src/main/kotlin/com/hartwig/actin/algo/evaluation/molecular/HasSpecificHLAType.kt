@@ -22,7 +22,7 @@ class HasSpecificHLAType(private val hlaAlleleToFind: String, maxTestAge: LocalD
         if (!test.hasSufficientQuality) {
             return when {
                 immunology.hlaAlleles.any { it.name == hlaAlleleToFind } -> {
-                    EvaluationFactory.undetermined("Has required HLA type $hlaAlleleToFind, however undetermined whether allele is present in tumor")
+                    EvaluationFactory.undetermined("Has required HLA type $hlaAlleleToFind however undetermined whether allele is present in tumor")
                 }
 
                 else -> {

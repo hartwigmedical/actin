@@ -10,7 +10,7 @@ class HasIncurableCancer : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val stage = record.tumor.stage
-            ?: return EvaluationFactory.undetermined("Undetermined incurable cancer (tumor stage details missing)")
+            ?: return EvaluationFactory.undetermined("Incurable cancer undetermined (tumor stage details missing)")
 
         return when {
             isStageMatch(stage, TumorStage.IV) -> {

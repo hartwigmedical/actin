@@ -43,7 +43,7 @@ class HasKnownSCLCTransformation(private val doidModel: DoidModel, private val m
                     .filterNot(String::isEmpty)
                     .joinToString(", ")
 
-                EvaluationFactory.undetermined("Undetermined small cell transformation ($eventMessage detected)")
+                EvaluationFactory.undetermined("Small cell transformation undetermined ($eventMessage detected)")
             }
 
             else -> {

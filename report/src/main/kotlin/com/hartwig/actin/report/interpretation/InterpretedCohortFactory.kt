@@ -115,7 +115,7 @@ object InterpretedCohortFactory {
     ) = if (!filterOnSOCExhaustionAndTumorType) matches else {
         matches.filter {
             val trialWarningsAndFails = extractWarnings(evaluations(it)) + extractFails(evaluations(it))
-            !trialWarningsAndFails.any { trialWarningOrFail -> trialWarningOrFail.contains("Patient has not exhausted SOC") }
+            !trialWarningsAndFails.any { trialWarningOrFail -> trialWarningOrFail.contains("Has not exhausted SOC") }
                     && "Tumor type" !in trialWarningsAndFails
         }
     }

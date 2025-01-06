@@ -11,7 +11,7 @@ class HasMeasurableDiseaseRecist(private val doidModel: DoidModel) : EvaluationF
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val hasMeasurableDisease = record.tumor.hasMeasurableDisease
-            ?: return EvaluationFactory.recoverableUndetermined("Undetermined RECIST measurable disease (data missing)")
+            ?: return EvaluationFactory.recoverableUndetermined("Measurable disease by RECIST undetermined (data missing)")
 
         return if (hasMeasurableDisease && DoidEvaluationFunctions.isOfAtLeastOneDoidType(
                 doidModel,

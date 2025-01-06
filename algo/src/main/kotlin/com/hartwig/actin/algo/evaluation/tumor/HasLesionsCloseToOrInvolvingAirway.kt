@@ -36,7 +36,7 @@ class HasLesionsCloseToOrInvolvingAirway(private val doidModel: DoidModel) : Eva
                 }
 
                 else -> {
-                    EvaluationFactory.undetermined("Undetermined lesions close to or involving airway")
+                    EvaluationFactory.undetermined("Lesions close to or involving airway undetermined")
                 }
             }
         }
