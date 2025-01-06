@@ -92,8 +92,8 @@ class AndTest {
         val unrecoverable: EvaluationFunction = CompositeTestFactory.create(recoverable = false, index = 2)
         val result: Evaluation = And(listOf(recoverable, unrecoverable)).evaluate(TEST_PATIENT)
         assertThat(result.recoverable).isFalse
-        assertThat(result.undeterminedGeneralMessages).hasSize(1)
-        assertThat(result.undeterminedGeneralMessages).containsExactly("undetermined 2")
+        assertThat(result.undeterminedMessages).hasSize(1)
+        assertThat(result.undeterminedMessages).containsExactly("undetermined 2")
     }
 
     @Test(expected = IllegalStateException::class)

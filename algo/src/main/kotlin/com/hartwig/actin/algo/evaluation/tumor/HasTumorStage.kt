@@ -9,7 +9,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TumorStage
 
-//TODO (CB)
 class HasTumorStage(private val stagesToMatch: Set<TumorStage>) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -21,22 +20,13 @@ class HasTumorStage(private val stagesToMatch: Set<TumorStage>) : EvaluationFunc
                 evaluateWithStage(derivedStages.iterator().next(), true)
             } else if (derivedStages?.map { evaluateWithStage(it, true) }?.all { it.result == EvaluationResult.PASS } == true) {
                 val derivedStageMessage = "passes with derived ${derivedStages.joinToString(" or ") { it.display() }} based on lesions"
-                pass(
-                    "No tumor stage details present but $derivedStageMessage",
-                    "Missing tumor stage details - $derivedStageMessage"
-                )
+                pass("Missing tumor stage details - $derivedStageMessage")
             } else if (derivedStages?.map { evaluateWithStage(it, true) }?.any { it.result == EvaluationResult.PASS } == true) {
                 val stageMessage = stagesToMatch.joinToString(" or ") { it.display() }
                 val derivedStageMessage = "derived ${derivedStages.joinToString(" or ") { it.display() }} based on lesions"
-                undetermined(
-                    "Unknown if tumor stage is $stageMessage (no tumor stage details provided) - $derivedStageMessage",
-                    "Unknown if tumor stage is $stageMessage (data missing) - $derivedStageMessage"
-                )
+                undetermined("Unknown if tumor stage is $stageMessage (data missing) - $derivedStageMessage")
             } else {
-                fail(
-                    "No tumor stage details present but based on lesions requested stage cannot be met",
-                    "Tumor stage unknown but requested stage not met based on lesions"
-                )
+                fail("Tumor stage unknown but requested stage not met based on lesions")
             }
         }
         return evaluateWithStage(stage, false)

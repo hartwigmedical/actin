@@ -12,7 +12,7 @@ import java.time.LocalDate
 
 class IsMicrosatelliteUnstable(maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
 
-    override fun noMolecularRecordEvaluation() = EvaluationFactory.undetermined("Undetermined MSI status")
+    override fun noMolecularRecordEvaluation() = EvaluationFactory.undetermined("MSI status undetermined")
 
     override fun evaluate(molecular: MolecularRecord): Evaluation {
         val drivers = molecular.drivers
@@ -61,7 +61,7 @@ class IsMicrosatelliteUnstable(maxTestAge: LocalDate? = null) : MolecularEvaluat
                     )
                 } else {
                     EvaluationFactory.warn(
-                        "Tumor is MSI (but without detected drivers in MSI genes)",
+                        "Tumor is MSI (but without drivers in MSI genes)",
                         inclusionEvents = inclusionMolecularEvents
                     )
                 }

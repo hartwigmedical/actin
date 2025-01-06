@@ -53,7 +53,7 @@ object PDL1EvaluationFunctions {
             }
 
             pdl1TestsWithRequestedMeasurement.isNotEmpty() && pdl1TestsWithRequestedMeasurement.any { test -> test.scoreValue == null } -> {
-                EvaluationFactory.recoverableFail("No PD-L1 IHC test found with score value - only neg/pos status available")
+                EvaluationFactory.recoverableFail("No score value available for PD-L1 IHC test")
             }
 
             PriorIHCTestFunctions.allPDL1Tests(priorMolecularTests).isNotEmpty() -> {

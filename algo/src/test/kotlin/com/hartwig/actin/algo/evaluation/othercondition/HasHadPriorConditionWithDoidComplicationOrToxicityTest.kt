@@ -48,21 +48,21 @@ class HasHadPriorConditionWithDoidComplicationOrToxicityTest {
         )
         val evaluation = function.evaluate(minimalPatient)
         assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessages).containsOnly("No relevant non-oncological condition")
+        assertThat(evaluation.failMessages).containsOnly("Has no other condition belonging to category unknown doid")
     }
 
     @Test
     fun `Should evaluate fail when no matching doid complication or toxicity`() {
         val evaluation = function.evaluate(minimalPatient)
         assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessages).containsOnly("No relevant non-oncological condition")
+        assertThat(evaluation.failMessages).containsOnly("Has no other condition belonging to category some disease")
     }
 
     @Test
     fun `Should evaluate pass when doid term matches category`() {
         assertPassEvaluationWithMessages(
             function.evaluate(OtherConditionTestFactory.withPriorOtherCondition(priorOtherCondition)),
-            "other condition"
+            message("condition(s)", "other condition")
         )
     }
 
@@ -70,7 +70,7 @@ class HasHadPriorConditionWithDoidComplicationOrToxicityTest {
     fun `Should evaluate pass when complication matches category`() {
         assertPassEvaluationWithMessages(
             function.evaluate(OtherConditionTestFactory.withComplications(listOf(complication))),
-            "complication"
+            message("complication(s)", "complication")
         )
     }
 
@@ -78,7 +78,7 @@ class HasHadPriorConditionWithDoidComplicationOrToxicityTest {
     fun `Should evaluate pass when toxicity from questionnaire matches category`() {
         assertPassEvaluationWithMessages(
             function.evaluate(OtherConditionTestFactory.withToxicities(listOf(toxicity(ToxicitySource.QUESTIONNAIRE, 1)))),
-            "toxicity"
+            message("toxicity(ies)", "toxicity")
         )
     }
 
@@ -86,7 +86,7 @@ class HasHadPriorConditionWithDoidComplicationOrToxicityTest {
     fun `Should evaluate pass when toxicity with at least grade two matches category`() {
         assertPassEvaluationWithMessages(
             function.evaluate(OtherConditionTestFactory.withToxicities(listOf(toxicity(ToxicitySource.EHR, 2)))),
-            "toxicity",
+            message("toxicity(ies)", "toxicity"),
         )
     }
 
@@ -94,7 +94,7 @@ class HasHadPriorConditionWithDoidComplicationOrToxicityTest {
     fun `Should evaluate fail when toxicity less than grade two and source not questionnaire`() {
         val evaluation = function.evaluate(OtherConditionTestFactory.withToxicities(listOf(toxicity(ToxicitySource.EHR, 1))))
         assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessages).containsOnly("No relevant non-oncological condition")
+        assertThat(evaluation.failMessages).containsOnly("Has no other condition belonging to category some disease")
     }
 
     @Test
@@ -107,7 +107,9 @@ class HasHadPriorConditionWithDoidComplicationOrToxicityTest {
                     priorOtherConditions = listOf(priorOtherCondition)
                 )
             ),
-            "complication and other condition and toxicity"
+            message("condition(s)", "other condition"),
+            message("complication(s)", "complication"),
+            message("toxicity(ies)", "toxicity")
         )
     }
 
@@ -121,8 +123,12 @@ class HasHadPriorConditionWithDoidComplicationOrToxicityTest {
         )
     }
 
-    private fun assertPassEvaluationWithMessages(evaluation: Evaluation, matchedNames: String) {
+    private fun message(type: String, matchedNames: String): String {
+        return "Has history of $type $matchedNames which is indicative of some disease"
+    }
+
+    private fun assertPassEvaluationWithMessages(evaluation: Evaluation, vararg passMessages: String) {
         assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passMessages).containsOnly("History of $matchedNames")
+        assertThat(evaluation.passMessages).containsOnly(*passMessages)
     }
 }

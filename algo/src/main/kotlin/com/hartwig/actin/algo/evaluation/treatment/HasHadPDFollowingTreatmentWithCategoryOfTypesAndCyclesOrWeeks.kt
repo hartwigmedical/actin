@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.fail
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.pass
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverableUndetermined
+import com.hartwig.actin.algo.evaluation.EvaluationFactory.undetermined
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.DateComparison.minWeeksBetweenDates
 import com.hartwig.actin.algo.evaluation.util.Format.concatItems
@@ -63,11 +64,11 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_PD_AND_UNCLEAR_CYCLES in treatmentEvaluations -> {
-                undetermined(" with PD but unknown nr of cycles")
+                undetermined(hasTreatmentMessage(" with PD but unknown nr of cycles"))
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_PD_AND_UNCLEAR_WEEKS in treatmentEvaluations -> {
-                undetermined(" with PD but unknown nr of weeks")
+                undetermined(hasTreatmentMessage(" with PD but unknown nr of weeks"))
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS in treatmentEvaluations -> {
@@ -86,7 +87,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL in treatmentEvaluations -> {
-                undetermined("Unclear if received " + category.display())
+                undetermined(hasTreatmentMessage("Unclear if received " + category.display()))
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT in treatmentEvaluations -> {
@@ -100,11 +101,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
     }
 
     private fun hasTreatmentMessage(suffix: String = ""): String {
-        return "Patient has had ${treatment()} with PD$suffix"
-    }
-
-    private fun undetermined(suffix: String): Evaluation {
-        return undetermined(hasTreatmentMessage(suffix))
+        return "Has had ${treatment()} with PD$suffix"
     }
 
     private fun treatment(): String {

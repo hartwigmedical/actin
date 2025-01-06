@@ -108,8 +108,7 @@ class OrTest {
         val function1 = CompositeTestFactory.create(EvaluationResult.FAIL, recoverable = true, index = 1)
         val function2 = CompositeTestFactory.create(EvaluationResult.FAIL, recoverable = false, index = 2)
         val result = Or(listOf(function1, function2)).evaluate(TEST_PATIENT)
-        assertThat(result.failSpecificMessages).containsExactly("fail specific 1")
-        assertThat(result.failGeneralMessages).containsExactly("fail general 1")
+        assertThat(result.failMessages).containsExactly("fail 1")
     }
 
     @Test(expected = IllegalStateException::class)

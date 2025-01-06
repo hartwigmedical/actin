@@ -172,8 +172,7 @@ class GeneIsInactivated(private val gene: String, maxTestAge: LocalDate? = null)
                 ),
                 EventsWithMessages(
                     inactivationEventsOnNonCanonicalTranscript,
-                    "Inactivation event(s) detected for $gene: ${concat(inactivationSubclonalVariants)} but only on non-canonical transcript",
-                    "Inactivation event(s) detected for $gene: ${concat(inactivationSubclonalVariants)} but only on non-canonical transcript"
+                    "Inactivation event(s) for $gene: ${concat(inactivationSubclonalVariants)} but only on non-canonical transcript"
                 ),
                 EventsWithMessages(
                     reportableNonDriverBiallelicVariantsOther,

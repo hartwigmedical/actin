@@ -134,7 +134,7 @@ class IsMicrosatelliteUnstableTest {
     fun `Should return undetermined and state that MSI status is unknown when molecular record not available`() {
         val evaluation = function.evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord())
         assertThat(evaluation.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        assertThat(evaluation.undeterminedMessages).containsExactly("Undetermined MSI status")
+        assertThat(evaluation.undeterminedMessages).containsExactly("MSI status undetermined")
     }
 
     @Test
@@ -146,7 +146,7 @@ class IsMicrosatelliteUnstableTest {
             )
         )
         assertThat(evaluation.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        assertThat(evaluation.undeterminedMessages).containsExactly("Unknown MSI status but drivers drivers with unknown allelic status in MSI genes")
+        assertThat(evaluation.undeterminedMessages).containsExactly("Unknown MSI status but drivers with unknown allelic status in MSI genes")
     }
 
     private fun msiVariant(isReportable: Boolean = false, isBiallelic: Boolean = false): Variant {

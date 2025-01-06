@@ -9,7 +9,7 @@ object TumorMetastasisEvaluator {
         val capitalizedType = metastasisType.replaceFirstChar { it.uppercase() }
         return when {
             hasMetastases == true -> {
-                EvaluationFactory.pass("Has $capitalizedType metastases")
+                EvaluationFactory.pass("Has ${metastasisType.lowercase()} metastases")
             }
 
             hasSuspectedMetastases == true -> {

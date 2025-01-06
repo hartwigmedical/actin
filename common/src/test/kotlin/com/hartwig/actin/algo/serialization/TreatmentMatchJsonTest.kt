@@ -68,9 +68,7 @@ class TreatmentMatchJsonTest {
                         [{"references":[{"id":"I-01","text":"Patient must be an adult"}],
                         "function":{"rule":"IS_AT_LEAST_X_YEARS_OLD","parameters":[]}},
                         {"result":"PASS","recoverable":false,"inclusionMolecularEvents":[],"exclusionMolecularEvents":[],
-                        "passMessages":["msg 1","msg 2","msg 3"],
-                        "warnMessages":[],
-                        "undeterminedMessages":[],,
+                        "passMessages":["msg 1","msg 2","msg 3"],"warnMessages":[],"undeterminedMessages":[],
                         "failMessages":[],"isMissingGenesForSufficientEvaluation":false}]],
                     "cohorts":[],
                     "nonEvaluableCohorts":[]
@@ -83,10 +81,8 @@ class TreatmentMatchJsonTest {
                         {"rule":"HAS_KNOWN_ACTIVE_CNS_METASTASES","parameters":[]}],"additionalCriteriaForRequirement":[]},
                     "evaluations":[
                         {"result":"PASS","recoverable":false,"inclusionMolecularEvents":[],
-                        "exclusionMolecularEvents":[],"passSpecificMessages":["Patient has active CNS metastases"],
-                        "passGeneralMessages":["Active CNS metastases"],"warnSpecificMessages":[],"warnGeneralMessages":[],
-                        "undeterminedSpecificMessages":[],"undeterminedGeneralMessages":[],"failSpecificMessages":[],
-                        "failGeneralMessages":[],"isMissingGenesForSufficientEvaluation":false}],
+                        "exclusionMolecularEvents":[],"passMessages":["Active CNS metastases"],"warnMessages":[],
+                        "undeterminedMessages":[],"failMessages":[],"isMissingGenesForSufficientEvaluation":false}],
                     "annotations":[
                         {"acronym":"Study of Pembrolizumab","phase":"Phase III",
                         "treatments":[

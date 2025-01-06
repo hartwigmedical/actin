@@ -64,7 +64,7 @@ class HasPositiveHER2ExpressionByIHC(private val maxTestAge: LocalDate? = null) 
                 return if (!(positiveArguments || negativeArguments)) {
                     EvaluationFactory.undetermined(undeterminedMessage)
                 } else {
-                    EvaluationFactory.warn("Conflicting IHC HER2 expression tests")
+                    EvaluationFactory.warn("Conflicting IHC HER2 expression test results")
                 }
             }
 

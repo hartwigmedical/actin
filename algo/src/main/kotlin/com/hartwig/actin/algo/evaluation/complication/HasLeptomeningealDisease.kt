@@ -44,7 +44,7 @@ class HasLeptomeningealDisease : EvaluationFunction {
 
         private fun createWarnEvaluation(suspected: Boolean, lesions: List<String>): Evaluation {
             val suspectedString = if (suspected) " suspected" else ""
-            return EvaluationFactory.warn("Presence of$suspectedString lesions potentially indicating leptomeningeal disease")
+            return EvaluationFactory.warn("Presence of$suspectedString lesions '${concat(lesions)}' indicating potential leptomeningeal disease")
         }
     }
 }

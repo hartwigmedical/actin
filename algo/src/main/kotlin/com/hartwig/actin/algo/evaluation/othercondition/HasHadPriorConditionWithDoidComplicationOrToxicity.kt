@@ -34,10 +34,20 @@ class HasHadPriorConditionWithDoidComplicationOrToxicity(
             Evaluation(
                 result = EvaluationResult.PASS,
                 recoverable = false,
-                passMessages = setOf(
-                    PriorConditionMessages.pass(matchingConditions + matchingComplications + matchingToxicities)
-                )
+                passMessages = passMessages(doidTerm, matchingConditions, matchingComplications, matchingToxicities)
             )
-        } else fail(PriorConditionMessages.failGeneral())
+        } else fail(PriorConditionMessages.fail(doidTerm))
+    }
+
+    companion object {
+        private fun passMessages(
+            doidTerm: String, matchingConditions: Set<String>, matchingComplications: Set<String>, matchingToxicities: Set<String>
+        ): Set<String> {
+            return listOf(
+                matchingConditions to PriorConditionMessages.Characteristic.CONDITION,
+                matchingComplications to PriorConditionMessages.Characteristic.COMPLICATION,
+                matchingToxicities to PriorConditionMessages.Characteristic.TOXICITY
+            ).filter { it.first.isNotEmpty() }.map { PriorConditionMessages.pass(it.second, it.first, doidTerm) }.toSet()
+        }
     }
 }

@@ -12,7 +12,6 @@ import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 import com.hartwig.actin.doid.DoidModel
 import java.time.LocalDate
 
-//TODO (CB)
 class HasHadPriorConditionWithDoidsFromSetRecently(
     private val doidModel: DoidModel,
     private val doidsToFind: Set<String>,
@@ -39,39 +38,33 @@ class HasHadPriorConditionWithDoidsFromSetRecently(
         return when {
             matchingConditionSummary.containsKey(EvaluationResult.PASS) -> {
                 EvaluationFactory.pass(
-                    "Patient has had DOIDs ${
+                    "Has had DOIDs ${
                         matchingConditionSummary[EvaluationResult.PASS]?.joinToString(", ")
                         { extractDoids(it) }
-                    } (belonging to $priorOtherConditionTerm) within specified time frame",
-                    "Recent $priorOtherConditionTerm"
+                    } (belonging to $priorOtherConditionTerm) within specified time frame"
                 )
             }
 
             matchingConditionSummary.containsKey(EvaluationResult.WARN) -> {
                 EvaluationFactory.warn(
-                    "Patient has had DOIDs ${
+                    "Has had DOIDs ${
                         matchingConditionSummary[EvaluationResult.WARN]?.joinToString(", ")
                         { extractDoids(it) }
-                    } (belonging to $priorOtherConditionTerm) near start of specified time frame",
-                    "Borderline recent $priorOtherConditionTerm"
+                    } (belonging to $priorOtherConditionTerm) near start of specified time frame"
                 )
             }
 
             matchingConditionSummary.containsKey(EvaluationResult.UNDETERMINED) -> {
                 EvaluationFactory.undetermined(
-                    "Patient has had DOIDs ${
+                    "Has had DOIDs ${
                         matchingConditionSummary[EvaluationResult.UNDETERMINED]?.joinToString(", ")
                         { extractDoids(it) }
-                    } (belonging to $priorOtherConditionTerm), but undetermined whether that is within specified time frame",
-                    "Recent $priorOtherConditionTerm"
+                    } (belonging to $priorOtherConditionTerm) but undetermined whether that is within specified time frame"
                 )
             }
 
             else -> {
-                EvaluationFactory.fail(
-                    "Patient has had no recent condition/DOIDs belonging to $priorOtherConditionTerm",
-                    "No recent $priorOtherConditionTerm"
-                )
+                EvaluationFactory.fail("No recent condition/DOIDs belonging to $priorOtherConditionTerm")
             }
         }
     }

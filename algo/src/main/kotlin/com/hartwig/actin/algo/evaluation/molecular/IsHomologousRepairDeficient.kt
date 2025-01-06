@@ -81,7 +81,7 @@ class IsHomologousRepairDeficient(maxTestAge: LocalDate? = null) : MolecularEval
                     )
                 } else {
                     EvaluationFactory.warn(
-                        "Tumor is HRD (but without detected drivers in HR genes)",
+                        "Tumor is HRD (but without drivers in HR genes)",
                         inclusionEvents = inclusionMolecularEvents
                     )
                 }

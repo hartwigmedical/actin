@@ -6,7 +6,6 @@ import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
-//TODO (CB)
 class HasAnyComplication: EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -14,17 +13,10 @@ class HasAnyComplication: EvaluationFunction {
             if (hasComplications) {
                 val complicationString =
                     concatLowercaseWithAnd(record.complications?.map { it.name.ifEmpty { "Unknown" } } ?: emptyList())
-                EvaluationFactory.pass(
-                    "Patient has at least one cancer-related complication: $complicationString",
-                    "Present complication(s): $complicationString"
-                )
+                EvaluationFactory.pass("Has at least one cancer-related complication: $complicationString")
             } else {
-                return EvaluationFactory.fail(
-                    "Patient has no cancer-related complications", "No cancer-related complications present"
-                )
+                return EvaluationFactory.fail("No cancer-related complications present")
             }
-        } ?: EvaluationFactory.undetermined(
-            "Undetermined whether patient has cancer-related complications", "Undetermined complication status"
-        )
+        } ?: EvaluationFactory.undetermined("Undetermined whether patient has cancer-related complications")
     }
 }

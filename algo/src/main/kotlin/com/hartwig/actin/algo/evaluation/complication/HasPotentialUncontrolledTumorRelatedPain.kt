@@ -11,7 +11,6 @@ import com.hartwig.actin.datamodel.clinical.AtcLevel
 
 private const val SEVERE_PAIN_COMPLICATION = "pain"
 
-//TODO (CB)
 class HasPotentialUncontrolledTumorRelatedPain(private val selector: MedicationSelector, private val severePainMedication: Set<AtcLevel>) :
     EvaluationFunction {
 
@@ -19,9 +18,7 @@ class HasPotentialUncontrolledTumorRelatedPain(private val selector: MedicationS
         val painComplications = ComplicationFunctions.findComplicationNamesMatchingAnyCategory(record, listOf(SEVERE_PAIN_COMPLICATION))
         if (painComplications.isNotEmpty()) {
             return EvaluationFactory.undetermined(
-                "Patient has complication related to pain: " + concatLowercaseWithAnd(painComplications) +
-                        " - undetermined if uncontrolled",
-                "Present " + concatLowercaseWithAnd(painComplications) + " - undetermined if uncontrolled"
+                "Undetermined if present pain complication is uncontrolled: " + concatLowercaseWithAnd(painComplications)
             )
         }
         val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
@@ -32,19 +29,11 @@ class HasPotentialUncontrolledTumorRelatedPain(private val selector: MedicationS
 
         return when {
             activePainMedications.isNotEmpty() -> {
-                EvaluationFactory.undetermined(
-                    "Patient receives pain medication: " + concatLowercaseWithAnd(activePainMedications) +
-                            " - undetermined if uncontrolled tumor related pain present",
-                    "Receives " + concatLowercaseWithAnd(activePainMedications) + " - undetermined if uncontrolled tumor related pain present"
-                )
+                EvaluationFactory.undetermined("Receives " + concatLowercaseWithAnd(activePainMedications) + " - undetermined if uncontrolled tumor related pain present")
             }
 
             plannedPainMedications.isNotEmpty() -> {
-                EvaluationFactory.undetermined(
-                    "Patient plans to receive pain medication: " + concatLowercaseWithAnd(plannedPainMedications) +
-                            " - undetermined if uncontrolled tumor related pain present",
-                    "Plans to receive " + concatLowercaseWithAnd(plannedPainMedications) + " - undetermined if uncontrolled tumor related pain present"
-                )
+                EvaluationFactory.undetermined("Plans to receive " + concatLowercaseWithAnd(plannedPainMedications) + " - undetermined if uncontrolled tumor related pain present")
             }
 
             else ->

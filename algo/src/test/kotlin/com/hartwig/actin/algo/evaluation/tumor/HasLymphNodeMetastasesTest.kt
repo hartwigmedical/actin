@@ -19,7 +19,7 @@ class HasLymphNodeMetastasesTest {
     fun `Should pass when has lymph node lesions is true`() {
         val pass = function.evaluate(TumorTestFactory.withLymphNodeLesions(true))
         assertEvaluation(EvaluationResult.PASS, pass)
-        assertThat(pass.passMessages).contains("Lymph node metastases")
+        assertThat(pass.passMessages).contains("Has lymph node metastases")
     }
 
     @Test
@@ -50,6 +50,6 @@ class HasLymphNodeMetastasesTest {
     fun `Should pass when has lymph node lesions is true and no suspected lymph node lesions`() {
         val pass = function.evaluate(TumorTestFactory.withLymphNodeLesions(true, false))
         assertEvaluation(EvaluationResult.PASS, pass)
-        assertThat(pass.passMessages).contains("Lymph node metastases")
+        assertThat(pass.passMessages).contains("Has lymph node metastases")
     }
 }

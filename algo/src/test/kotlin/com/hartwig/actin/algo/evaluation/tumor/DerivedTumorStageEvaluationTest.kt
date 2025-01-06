@@ -9,7 +9,6 @@ import com.hartwig.actin.datamodel.clinical.TumorStage
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-//TODO (CB)
 class DerivedTumorStageEvaluationTest {
 
     @Test

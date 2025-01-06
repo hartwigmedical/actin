@@ -14,7 +14,6 @@ import com.hartwig.actin.datamodel.clinical.ReceptorType
 import com.hartwig.actin.doid.DoidModel
 import java.time.LocalDate
 
-//TODO (CB)
 class HasBreastCancerWithPositiveReceptorOfType(
     private val doidModel: DoidModel,
     private val receptorType: ReceptorType,
@@ -59,10 +58,7 @@ class HasBreastCancerWithPositiveReceptorOfType(
             }
 
             targetReceptorIsPositive == null && !specificArgumentsForStatusDeterminationMissing -> {
-                EvaluationFactory.undetermined(
-                    "${receptorType.display()}-status undetermined since DOID and/or IHC data inconsistent",
-                    "Undetermined ${receptorType.display()}-status - DOID and/or IHC data inconsistent"
-                )
+                EvaluationFactory.undetermined("${receptorType.display()}-status undetermined - DOID and/or IHC data inconsistent")
             }
 
             targetReceptorIsPositive == true -> {
@@ -70,26 +66,19 @@ class HasBreastCancerWithPositiveReceptorOfType(
             }
 
             targetReceptorIsPositive != true && targetHer2AndErbb2Amplified -> {
-                EvaluationFactory.warn(
-                    "Patient does not have ${receptorType.display()}-positive breast cancer based on DOIDS and/or prior molecular tests " +
-                            "but status is undetermined since ERBB2 gene amp present",
-                    "Undetermined if ${receptorType.display()}-positive breast cancer since DOID/IHC data inconsistent with ERBB2 gene amp"
-                )
+                EvaluationFactory.warn("Undetermined if ${receptorType.display()}-positive breast cancer - DOID/IHC data inconsistent with ERBB2 gene amp")
             }
 
             targetReceptorIsPositive != false && TestResult.BORDERLINE in testSummary -> {
                 if (receptorType == ReceptorType.HER2) {
                     return EvaluationFactory.undetermined(
-                        "Patient does not have ${receptorType.display()}-positive breast cancer but ${receptorType.display()}-score is " +
-                                "2+ hence additional FISH may be useful",
-                        "No ${receptorType.display()}-positive breast cancer - ${receptorType.display()}-FISH may be beneficial (score 2+)"
+                        "No ${receptorType.display()}-positive breast cancer but ${receptorType.display()}-score is" +
+                                "2+ hence FISH may be useful"
                     )
                 } else {
                     return EvaluationFactory.warn(
-                        "Patient has ${receptorType.display()}-positive breast cancer but clinical relevance unknown " +
-                                "(${receptorType.display()}-score in range 1-10 percent)",
                         "Has ${receptorType.display()}-positive breast cancer but clinical relevance unknown " +
-                                "since ${receptorType.display()}-score under 10%"
+                                "(${receptorType.display()}-score under 10%)"
                     )
                 }
             }

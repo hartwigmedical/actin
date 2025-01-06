@@ -10,7 +10,6 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 import java.time.LocalDate
 
-//TODO (CB)
 class HasHadPriorConditionWithNameRecently (
     private val conditionNameToFind: String,
     private val minDate: LocalDate
@@ -35,25 +34,37 @@ class HasHadPriorConditionWithNameRecently (
         return when {
             matchingConditionSummary.containsKey(EvaluationResult.PASS) -> {
                 EvaluationFactory.pass(
-                    "Patient has history of ${matchingConditionSummary[EvaluationResult.PASS]?.joinToString(", ", transform = PriorOtherCondition::name)} " +
-                            "(matched to condition name: $conditionNameToFind) within specified time frame",
-                    "Recent history of $conditionNameToFind"
+                    "History of ${
+                        matchingConditionSummary[EvaluationResult.PASS]?.joinToString(
+                            ", ",
+                            transform = PriorOtherCondition::name
+                        )
+                    } " +
+                            "(matched to condition name: $conditionNameToFind) within specified time frame"
                 )
             }
 
             matchingConditionSummary.containsKey(EvaluationResult.WARN) -> {
                 EvaluationFactory.warn(
-                    "Patient has history of ${matchingConditionSummary[EvaluationResult.WARN]?.joinToString(", ", transform = PriorOtherCondition::name)} " +
-                            "(matched to condition name: $conditionNameToFind) near start of specified time frame",
-                    "Recent history of $conditionNameToFind"
+                    "History of ${
+                        matchingConditionSummary[EvaluationResult.WARN]?.joinToString(
+                            ", ",
+                            transform = PriorOtherCondition::name
+                        )
+                    } " +
+                            "(matched to condition name: $conditionNameToFind) near start of specified time frame"
                 )
             }
 
             matchingConditionSummary.containsKey(EvaluationResult.UNDETERMINED) -> {
                 EvaluationFactory.undetermined(
-                    "Patient has history of ${matchingConditionSummary[EvaluationResult.UNDETERMINED]?.joinToString(", ", transform = PriorOtherCondition::name)} " +
-                            "(matched to condition name: $conditionNameToFind), but undetermined whether that is within specified time frame",
-                    "History of $conditionNameToFind"
+                    "History of ${
+                        matchingConditionSummary[EvaluationResult.UNDETERMINED]?.joinToString(
+                            ", ",
+                            transform = PriorOtherCondition::name
+                        )
+                    } " +
+                            "(matched to condition name: $conditionNameToFind), but undetermined whether that is within specified time frame"
                 )
             }
 

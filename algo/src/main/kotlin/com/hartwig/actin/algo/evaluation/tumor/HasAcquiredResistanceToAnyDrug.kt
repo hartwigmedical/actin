@@ -8,7 +8,6 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 
-//TODO (CB)
 class HasAcquiredResistanceToAnyDrug(private val drugsToMatch: Set<Drug>) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -19,40 +18,29 @@ class HasAcquiredResistanceToAnyDrug(private val drugsToMatch: Set<Drug>) : Eval
 
         return when {
             treatmentEvaluation.matchingDrugsWithPD.isNotEmpty() -> {
-                EvaluationFactory.pass(
-                    "Patient has a tumor with potential acquired resistance to drugs " +
-                            Format.concatItemsWithAnd(treatmentEvaluation.matchingDrugsWithPD),
-                    "Has potential acquired resistance to ${Format.concatItemsWithAnd(treatmentEvaluation.matchingDrugsWithPD)}"
-                )
+                EvaluationFactory.pass("Has potential acquired resistance to ${Format.concatItemsWithAnd(treatmentEvaluation.matchingDrugsWithPD)}")
             }
 
             (treatmentEvaluation.possibleTrialMatch) -> {
                 EvaluationFactory.undetermined(
-                    "Undetermined if patient has acquired resistance to ${Format.concatItemsWithOr(drugsToMatch)} since unknown if " +
-                            "treatment received in trial included ${Format.concatItemsWithOr(drugsToMatch)}",
                     "Undetermined resistance to ${Format.concatItemsWithOr(drugsToMatch)} since unknown if treatment in trial included " +
                             Format.concatItemsWithOr(drugsToMatch)
                 )
             }
 
             (treatmentEvaluation.matchesWithUnclearPD || treatmentEvaluation.matchesWithToxicity) -> {
-                EvaluationFactory.undetermined(
-                    "Undetermined acquired resistance to ${Format.concatItemsWithOr(drugsToMatch)} $toxicityMessage",
-                    "Undetermined resistance to ${Format.concatItemsWithOr(drugsToMatch)} $toxicityMessage"
-                )
+                EvaluationFactory.undetermined("Undetermined acquired resistance to ${Format.concatItemsWithOr(drugsToMatch)} $toxicityMessage")
             }
 
             (treatmentEvaluation.matchingDrugs.isNotEmpty()) -> {
-                EvaluationFactory.fail("Has received drugs ${Format.concatItemsWithAnd(treatmentEvaluation.matchingDrugs)} but " +
-                        "no progressive disease")
+                EvaluationFactory.fail(
+                    "Has received drugs ${Format.concatItemsWithAnd(treatmentEvaluation.matchingDrugs)} but " +
+                            "no progressive disease"
+                )
             }
 
             else -> {
-                EvaluationFactory.fail(
-                    "Patient was not treated with ${Format.concatItemsWithOr(drugsToMatch)} hence does not have acquired resistance to " +
-                            Format.concatItemsWithOr(drugsToMatch),
-                    "No acquired resistance to ${Format.concatItemsWithOr(drugsToMatch)} since not in treatment history"
-                )
+                EvaluationFactory.fail("No acquired resistance to ${Format.concatItemsWithOr(drugsToMatch)} since drug not in treatment history")
             }
         }
     }

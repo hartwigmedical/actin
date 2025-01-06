@@ -129,7 +129,7 @@ object TestTreatmentMatchFactory {
                         text = "This rule has 2 conditions:\n 1. Patient has no active brain metastases\n 2. Patient has exhausted SOC"
                     )
                 )
-            ) to unrecoverable(EvaluationResult.PASS, "Patient has no known brain metastases", "No known brain metastases"),
+            ) to unrecoverable(EvaluationResult.PASS, "Patient has no known brain metastases"),
             Eligibility(
                 function = EligibilityFunction(rule = EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS, parameters = emptyList()),
                 references = setOf(
@@ -138,11 +138,7 @@ object TestTreatmentMatchFactory {
                         text = "This rule has 2 conditions:\n 1. Patient has no active brain metastases.\n 2. Patient has exhausted SOC."
                     )
                 )
-            ) to unrecoverable(
-                EvaluationResult.FAIL,
-                "Patient has not exhausted SOC (remaining options capecitabine)",
-                "Patient has not exhausted SOC (remaining options capecitabine)"
-            )
+            ) to unrecoverable(EvaluationResult.FAIL, "Patient has not exhausted SOC (remaining options capecitabine)")
         )
     }
 

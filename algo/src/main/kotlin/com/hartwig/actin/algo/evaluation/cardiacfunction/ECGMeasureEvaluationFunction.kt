@@ -7,7 +7,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.ECG
 import com.hartwig.actin.datamodel.clinical.ECGMeasure
 
-//TODO (CB)
 class ECGMeasureEvaluationFunction internal constructor(
     private val measureName: ECGMeasureName,
     private val threshold: Double,
@@ -21,48 +20,35 @@ class ECGMeasureEvaluationFunction internal constructor(
     ) {
         MAXIMUM(
             Comparator.comparingDouble { obj: Number -> obj.toDouble() }.reversed(),
-            "%s of %s %s does not exceed minimum threshold of %s",
-            "%s of %s %s is above or equal to minimum threshold of %s"
+            "%s of %s %s does not exceed min threshold of %s",
+            "%s of %s %s is above or equal to min threshold of %s"
         ),
         MINIMUM(
             Comparator.comparingDouble { obj: Number -> obj.toDouble() },
-            "%s of %s %s exceeds maximum threshold of %s",
-            "%s of %s %s is below or equal to maximum threshold of %s"
+            "%s of %s %s exceeds max threshold of %s",
+            "%s of %s %s is below or equal to max threshold of %s"
         )
     }
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return record.clinicalStatus.ecg?.let(extractingECGMeasure)
             ?.let { measure: ECGMeasure -> this.evaluate(measure) }
-            ?: EvaluationFactory.recoverableUndetermined(
-                String.format("No %s known", measureName), String.format("Undetermined %s", measureName)
-            )
+            ?: EvaluationFactory.recoverableUndetermined(String.format("No %s known", measureName))
     }
 
     private fun evaluate(measure: ECGMeasure): Evaluation {
         if (measure.unit != expectedUnit.symbol()) {
-            return EvaluationFactory.undetermined(
-                "${measureName.name} measure not in '${expectedUnit.symbol()}': ${measure.unit}",
-                "Unrecognized unit of $measureName evaluation"
-            )
+            return EvaluationFactory.undetermined("${measureName.name} measure in ${measure.unit} instead of required ${expectedUnit.symbol()}")
         }
 
         return if (thresholdCriteria.comparator.compare(measure.value, threshold) >= 0) {
             EvaluationFactory.recoverablePass(
-                String.format(thresholdCriteria.passMessageTemplate, measureName, measure.value, measure.unit, threshold),
-                message(measureName.name)
+                String.format(thresholdCriteria.passMessageTemplate, measureName, measure.value, measure.unit, threshold)
             )
         } else {
             EvaluationFactory.recoverableFail(
-                String.format(thresholdCriteria.failMessageTemplate, measureName, measure.value, measure.unit, threshold),
-                message(measureName.name)
+                String.format(thresholdCriteria.failMessageTemplate, measureName, measure.value, measure.unit, threshold)
             )
-        }
-    }
-
-    companion object {
-        private fun message(measureName: String): String {
-            return String.format("%s requirements", measureName)
         }
     }
 }

@@ -24,10 +24,10 @@ class HasExhaustedSOCTreatments(
                 val remainingNonOptionalTreatments = recommendationEngine.determineRequiredTreatments(record)
                     .joinToString(", ") { it.treatmentCandidate.treatment.name.lowercase() }
                 if (remainingNonOptionalTreatments.isEmpty()) {
-                    EvaluationFactory.pass("Patient has exhausted SOC")
+                    EvaluationFactory.pass("Has exhausted SOC")
                 } else {
                     EvaluationFactory.fail(
-                        "Patient has not exhausted SOC (remaining options: $remainingNonOptionalTreatments)"
+                        "Has not exhausted SOC (remaining options: $remainingNonOptionalTreatments)"
                     )
                 }
             }
