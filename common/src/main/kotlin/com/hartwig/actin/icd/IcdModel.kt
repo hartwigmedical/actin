@@ -36,7 +36,9 @@ class IcdModel(
     }
 
     fun resolveTitleForCodeString(code: String): String {
-        return resolveTitleForCode(code.split('&').let { IcdCode(it[0], it.getOrNull(1)) }, displayWithSpaces = false)
+        val split = code.split('&')
+        if (split.size !in 1..2 || !split.all(::isValidIcdCode)) throw IllegalStateException("Invalid ICD code: $code")
+        return resolveTitleForCode(split.let { IcdCode(it[0], it.getOrNull(1)) }, displayWithSpaces = false)
     }
 
     fun codeWithAllParents(code: String?): List<String> {
@@ -44,8 +46,9 @@ class IcdModel(
     }
 
     fun resolveTitleForCode(icdCode: IcdCode, displayWithSpaces: Boolean = true): String {
-        val mainTitle = codeToNodeMap[icdCode.mainCode]?.title ?: return ""
-        val extensionTitle = icdCode.extensionCode?.let { codeToNodeMap[it]?.title }
+        val mainTitle =
+            codeToNodeMap[icdCode.mainCode]?.title ?: throw IllegalStateException("ICD title unresolvable for code ${icdCode.mainCode}")
+        val extensionTitle = icdCode.extensionCode?.let { codeToNodeMap[it]!!.title }
         val separator = if (displayWithSpaces) " & " else "&"
         return listOfNotNull(mainTitle, extensionTitle).joinToString(separator)
     }

@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatIllegalStateException
 import org.junit.Test
 import java.time.LocalDate
 
@@ -79,6 +80,17 @@ class IcdModelTest {
     fun `Should correctly resolve title for code string input`() {
         assertThat(icdModel.resolveTitleForCodeString("targetMainCode&targetExtensionCode"))
             .isEqualTo("targetMainTitle&targetExtensionTitle")
+    }
+
+    @Test
+    fun `Should throw error when code string contains invalid code or more than two codes`() {
+        val tripleCode =  "targetMainCode&targetExtensionCode&targetExtensionCode"
+        assertThatIllegalStateException()
+            .isThrownBy { icdModel.resolveTitleForCodeString(tripleCode) }
+            .withMessage("Invalid ICD code: $tripleCode")
+
+        assertThatIllegalStateException().isThrownBy { icdModel.resolveTitleForCodeString("invalidCode") }
+            .withMessage("Invalid ICD code: invalidCode")
     }
 
     @Test

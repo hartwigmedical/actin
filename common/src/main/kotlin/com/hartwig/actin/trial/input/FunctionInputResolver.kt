@@ -494,7 +494,7 @@ class FunctionInputResolver(
     private fun toIcdTitle(input: String): String {
         return when {
             icdModel.isValidIcdTitle(input) -> input
-            icdModel.isValidIcdCode(input) ->  icdModel.resolveTitleForCodeString(input)
+            icdModel.isValidIcdCode(input) -> icdModel.resolveTitleForCodeString(input)
             else -> throw IllegalStateException("ICD title(s) or code(s) not valid: $input")
         }
     }
