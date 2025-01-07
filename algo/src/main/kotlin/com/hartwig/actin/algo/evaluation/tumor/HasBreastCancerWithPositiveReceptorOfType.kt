@@ -58,7 +58,7 @@ class HasBreastCancerWithPositiveReceptorOfType(
             }
 
             targetReceptorIsPositive == null && !specificArgumentsForStatusDeterminationMissing -> {
-                EvaluationFactory.undetermined("${receptorType.display()}-status undetermined - DOID and/or IHC data inconsistent")
+                EvaluationFactory.undetermined("${receptorType.display()}-status undetermined (DOID and/or IHC data inconsistent)")
             }
 
             targetReceptorIsPositive == true -> {
@@ -66,7 +66,7 @@ class HasBreastCancerWithPositiveReceptorOfType(
             }
 
             targetReceptorIsPositive != true && targetHer2AndErbb2Amplified -> {
-                EvaluationFactory.warn("Undetermined if ${receptorType.display()}-positive breast cancer - DOID/IHC data inconsistent with ERBB2 gene amp")
+                EvaluationFactory.warn("Undetermined if ${receptorType.display()}-positive breast cancer (DOID/IHC data inconsistent with ERBB2 gene amp)")
             }
 
             targetReceptorIsPositive != false && TestResult.BORDERLINE in testSummary -> {

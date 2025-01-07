@@ -21,7 +21,7 @@ object DifferenceExtractionUtil {
         val differences = listOf("added" to added, "removed" to removed)
             .filter { (_, differences) -> differences.isNotEmpty() }
             .map { (modification, differences) ->
-                "${differences.size} $description were $modification: ${Format.concat(differences.map(keyToString))}"
+                "${differences.size} $description were $modification: ${Format.concatWithCommaAndAnd(differences.map(keyToString))}"
             }
         differences.forEach(LOGGER::debug)
         return differences

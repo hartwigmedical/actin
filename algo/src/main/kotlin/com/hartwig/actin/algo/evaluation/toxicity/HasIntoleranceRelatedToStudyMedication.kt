@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.toxicity
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
@@ -18,7 +18,7 @@ class HasIntoleranceRelatedToStudyMedication : EvaluationFunction {
 
         return if (allergies.isNotEmpty()) {
             EvaluationFactory.undetermined(
-                "Medication-related allergies: ${concat(allergies)}"
+                "Medication-related allergies (${Format.concatLowercaseWithCommaAndAnd(allergies)})"
                         + " - undetermined if this could be related to potential study medication"
             )
         } else EvaluationFactory.fail("Patient has no known allergies with category 'medication'")

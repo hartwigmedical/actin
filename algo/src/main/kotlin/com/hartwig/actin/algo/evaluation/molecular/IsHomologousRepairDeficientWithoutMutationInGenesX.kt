@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import java.time.LocalDate
@@ -33,7 +33,7 @@ class IsHomologousRepairDeficientWithoutMutationInGenesX(private val genesToFind
                 }
 
                 genesToFindWithMutation.isNotEmpty() -> {
-                    EvaluationFactory.fail("Tumor is HRD with variant in ${concat(genesToFindWithMutation)}")
+                    EvaluationFactory.fail("Tumor is HRD with variant in ${Format.concatWithCommaAndAnd(genesToFindWithMutation)}")
                 }
 
                 hrdGenesWithNonBiallelicDriver.isNotEmpty() && hrdGenesWithBiallelicDriver.isEmpty() -> {
@@ -45,7 +45,7 @@ class IsHomologousRepairDeficientWithoutMutationInGenesX(private val genesToFind
                 }
 
                 else -> {
-                    EvaluationFactory.pass("Tumor is HRD without any variants in ${concat(genesToFind)}")
+                    EvaluationFactory.pass("Tumor is HRD without any variants in ${Format.concatWithCommaAndOr(genesToFind)}")
                 }
             }
         }

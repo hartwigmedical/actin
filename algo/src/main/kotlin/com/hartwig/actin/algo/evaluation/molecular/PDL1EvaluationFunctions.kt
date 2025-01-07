@@ -34,7 +34,7 @@ object PDL1EvaluationFunctions {
 
         return when {
             EvaluationResult.PASS in testEvaluations && EvaluationResult.FAIL in testEvaluations -> {
-                EvaluationFactory.undetermined("Undetermined if PD-L1 expression $comparatorMessage $pdl1Reference - conflicting PD-L1 results")
+                EvaluationFactory.undetermined("Undetermined if PD-L1 expression $comparatorMessage $pdl1Reference (conflicting PD-L1 results)")
             }
 
             EvaluationResult.PASS in testEvaluations -> {

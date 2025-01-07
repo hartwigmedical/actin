@@ -27,7 +27,7 @@ class HasHadTargetedTherapyInterferingWithRasMekMapkPathway : EvaluationFunction
 
             indirectPathwayInhibitionTreatments.isNotEmpty() -> {
                 val treatmentDisplay = indirectPathwayInhibitionTreatments.joinToString(", ") { it.treatmentDisplay() }
-                val message = "targeted therapy ($treatmentDisplay) - indirectly $interferenceMessage"
+                val message = "targeted therapy ($treatmentDisplay) indirectly $interferenceMessage"
                 EvaluationFactory.warn("Has had $message")
             }
 

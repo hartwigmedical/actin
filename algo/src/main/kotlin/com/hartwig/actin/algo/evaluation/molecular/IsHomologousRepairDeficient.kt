@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.algo.evaluation.util.Format.concatWithCommaAndAnd
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
@@ -52,15 +52,19 @@ class IsHomologousRepairDeficient(maxTestAge: LocalDate? = null) : MolecularEval
             null -> {
                 if (hrdGenesWithBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.undetermined(
-                        "Unknown HRD status but biallelic drivers in HR genes - an HRD test may be recommended"
+                        "Unknown HRD status but biallelic drivers in HR genes (${concatWithCommaAndAnd(hrdGenesWithBiallelicDriver)}) - an HRD test may be recommended"
                     )
                 } else if (hrdGenesWithNonBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.undetermined(
-                        "Unknown HRD status but non-biallelic drivers in HR genes - an HRD test may be recommended"
+                        "Unknown HRD status but non-biallelic drivers in HR genes (${concatWithCommaAndAnd(hrdGenesWithNonBiallelicDriver)})- an HRD test may be recommended"
                     )
                 } else if (hrdGenesWithUnknownAllelicDriver.isNotEmpty()) {
                     EvaluationFactory.undetermined(
-                        "Unknown HRD status but drivers with unknown allelic status in HR genes"
+                        "Unknown HRD status but drivers with unknown allelic status in HR genes (${
+                            concatWithCommaAndAnd(
+                                hrdGenesWithNonBiallelicDriver
+                            )
+                        })"
                     )
                 } else {
                     EvaluationFactory.fail("Unknown HRD status")
@@ -71,7 +75,7 @@ class IsHomologousRepairDeficient(maxTestAge: LocalDate? = null) : MolecularEval
                 val inclusionMolecularEvents = setOf(MolecularCharacteristicEvents.HOMOLOGOUS_REPAIR_DEFICIENT)
                 if (hrdGenesWithBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.pass(
-                        "Tumor is HRD and biallelic drivers in HR genes detected",
+                        "Tumor is HRD and biallelic drivers in HR genes detected (${concatWithCommaAndAnd(hrdGenesWithBiallelicDriver)})",
                         inclusionEvents = inclusionMolecularEvents
                     )
                 } else if (hrdGenesWithNonBiallelicDriver.isNotEmpty()) {

@@ -49,7 +49,7 @@ class HasHadTreatmentWithDrugFromSetAsMostRecent(private val drugsToMatch: Set<D
             }
 
             possibleTrialMatch(if (history.size == 1) history.first() else mostRecentTreatmentEntry) -> {
-                EvaluationFactory.undetermined("Undetermined if $drugsToMatchDisplay - exact drugs in recent trial unknown")
+                EvaluationFactory.undetermined("Undetermined if $drugsToMatchDisplay (exact drugs in recent trial unknown)")
             }
 
             history.flatMap { selectMatchingDrugsFromEntry(it, drugNamesToMatch) }.isNotEmpty() -> {

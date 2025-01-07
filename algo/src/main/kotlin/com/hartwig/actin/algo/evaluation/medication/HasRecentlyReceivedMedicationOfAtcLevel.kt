@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
+import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithCommaAndAnd
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.AtcLevel
@@ -28,8 +28,8 @@ class HasRecentlyReceivedMedicationOfAtcLevel(
 
         return if (activeOrRecentlyStopped.isNotEmpty()) {
             val foundMedicationString =
-                if (foundMedicationNames.isNotEmpty()) ": ${concatLowercaseWithAnd(foundMedicationNames)}" else ""
-            EvaluationFactory.recoverablePass("Recent $categoryName medication use$foundMedicationString")
+                if (foundMedicationNames.isNotEmpty()) concatLowercaseWithCommaAndAnd(foundMedicationNames) else ""
+            EvaluationFactory.recoverablePass("Recent $categoryName medication use ($foundMedicationString)")
         } else {
             EvaluationFactory.recoverableFail("No recent $categoryName medication use")
         }

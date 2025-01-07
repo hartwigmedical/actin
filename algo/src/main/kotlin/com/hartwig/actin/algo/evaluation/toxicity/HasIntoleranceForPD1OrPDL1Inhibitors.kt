@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory.fail
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.pass
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.warn
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithCommaAndAnd
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
@@ -20,7 +20,7 @@ class HasIntoleranceForPD1OrPDL1Inhibitors(private val doidModel: DoidModel) : E
             .toSet()
 
         return if (intolerances.isNotEmpty()) {
-            pass("Has PD-1/PD-L1 intolerance(s): " + concat(intolerances))
+            pass("Has PD-1/PD-L1 intolerance(s) (${concatLowercaseWithCommaAndAnd(intolerances)}")
         } else {
             val autoImmuneDiseaseTerms =
                 OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions).flatMap { it.doids }
@@ -28,7 +28,10 @@ class HasIntoleranceForPD1OrPDL1Inhibitors(private val doidModel: DoidModel) : E
                     .map { doidModel.resolveTermForDoid(it) }.toSet()
 
             if (autoImmuneDiseaseTerms.isNotEmpty()) {
-                warn("Possible PD-1/PD-L1 intolerance due to autoimmune disease (${concat(autoImmuneDiseaseTerms.filterNotNull())})")
+                warn(
+                    "Possible PD-1/PD-L1 intolerance due to autoimmune disease " +
+                            "(${concatLowercaseWithCommaAndAnd(autoImmuneDiseaseTerms.filterNotNull())})"
+                )
             } else {
                 fail("No PD-1/PD-L1 intolerance")
             }

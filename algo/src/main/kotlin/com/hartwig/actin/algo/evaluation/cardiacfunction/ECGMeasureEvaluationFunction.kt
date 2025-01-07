@@ -20,13 +20,13 @@ class ECGMeasureEvaluationFunction internal constructor(
     ) {
         MAXIMUM(
             Comparator.comparingDouble { obj: Number -> obj.toDouble() }.reversed(),
-            "%s of %s %s does not exceed min threshold of %s",
-            "%s of %s %s is above or equal to min threshold of %s"
+            "%s of %s %s is above or equal to max threshold of %s",
+            "%s of %s %s does not exceed max threshold of %s",
         ),
         MINIMUM(
             Comparator.comparingDouble { obj: Number -> obj.toDouble() },
-            "%s of %s %s exceeds max threshold of %s",
-            "%s of %s %s is below or equal to max threshold of %s"
+            "%s of %s %s is below or equal to min threshold of %s",
+            "%s of %s %s exceeds min threshold of %s",
         )
     }
 

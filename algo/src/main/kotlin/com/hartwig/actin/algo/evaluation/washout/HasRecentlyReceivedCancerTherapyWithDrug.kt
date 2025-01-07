@@ -5,7 +5,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentHistoryEntryFunctions
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentSinceDateFunctions
 import com.hartwig.actin.algo.evaluation.util.Format
-import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 import com.hartwig.actin.datamodel.PatientRecord
@@ -45,7 +44,10 @@ class HasRecentlyReceivedCancerTherapyWithDrug(
             medicationsFound.isNotEmpty() || matchingTreatments.any {
                 TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minDate, false)
             } -> {
-                EvaluationFactory.pass("Has recently received treatment with medication " + concat(namesFound) + " - pay attention to washout period")
+                EvaluationFactory.pass(
+                    "Has recently received treatment with medication " + Format.concatWithCommaAndAnd(namesFound)
+                            + " - pay attention to washout period"
+                )
             }
 
             matchingTreatments.any { TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minDate, true) } -> {

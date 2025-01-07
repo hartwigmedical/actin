@@ -70,7 +70,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
     @Test
     fun `Should pass for activating mutation in correct gene`() {
         val record = MolecularTestFactory.withVariant(BASE_VARIANT)
-        val expectedMessages = setOf("$CORRECT_GENE activating mutation(s): $CORRECT_EVENT")
+        val expectedMessages = setOf("$CORRECT_GENE activating mutation(s) $CORRECT_EVENT")
         evaluateFunctions(EvaluationResult.PASS, record)
         evaluateMessages(functionIncludingAllGenes.evaluate(record).passMessages, expectedMessages)
         evaluateMessages(functionIncludingSpecificGene.evaluate(record).passMessages, expectedMessages)

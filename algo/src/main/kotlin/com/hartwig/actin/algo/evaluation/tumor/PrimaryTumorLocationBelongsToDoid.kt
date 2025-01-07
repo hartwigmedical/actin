@@ -3,8 +3,8 @@ package com.hartwig.actin.algo.evaluation.tumor
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.isOfAtLeastOneDoidType
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithCommaAndOr
-import com.hartwig.actin.algo.evaluation.util.Format.concatStringsWithAnd
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.doid.DoidModel
@@ -22,7 +22,7 @@ class PrimaryTumorLocationBelongsToDoid(
         } else {
             val doidsTumorBelongsTo =
                 DoidEvaluationFunctions.createFullExpandedDoidTree(doidModel, tumorDoids).intersect(doidsToMatch.toSet())
-            val doidTermsTumorBelongsTo = concatStringsWithAnd(doidsToTerms(doidsTumorBelongsTo))
+            val doidTermsTumorBelongsTo = Format.concatWithCommaAndAnd(doidsToTerms(doidsTumorBelongsTo))
             val potentialAdenoSquamousMatches = isPotentialAdenoSquamousMatch(tumorDoids!!, doidsToMatch)
             val undeterminedUnderMainCancerTypes = isUndeterminedUnderMainCancerType(tumorDoids, doidsToMatch)
 

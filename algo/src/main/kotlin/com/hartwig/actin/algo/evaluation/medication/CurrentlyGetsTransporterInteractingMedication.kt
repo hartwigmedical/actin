@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.Format
+import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithCommaAndAnd
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.DrugInteraction
@@ -25,21 +25,13 @@ class CurrentlyGetsTransporterInteractingMedication(
         return when {
             transporterInteractingMedicationActive.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass(
-                    "Active $termToFind $typeText medication use: ${
-                        Format.concatLowercaseWithAnd(
-                            transporterInteractingMedicationActive
-                        )
-                    }"
+                    "Active $termToFind $typeText medication use(${concatLowercaseWithCommaAndAnd(transporterInteractingMedicationActive)})"
                 )
             }
 
             transporterInteractingMedicationPlanned.isNotEmpty() -> {
                 EvaluationFactory.recoverableWarn(
-                    "Planned $termToFind $typeText medication use: ${
-                        Format.concatLowercaseWithAnd(
-                            transporterInteractingMedicationPlanned
-                        )
-                    }"
+                    "Planned $termToFind $typeText medication use(${concatLowercaseWithCommaAndAnd(transporterInteractingMedicationPlanned)})"
                 )
             }
 

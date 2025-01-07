@@ -90,7 +90,7 @@ class HasHadLimitedTreatmentsOfCategoryWithTypesAndStopReasonNotPD(
     }
 
     private fun treatment(): String {
-        return "${Format.concatItems(types)} ${category.display()} treatment"
+        return "${Format.concatItemsWithAnd(types)} ${category.display()} treatment"
     }
 
     private enum class PDFollowingTreatmentEvaluation {

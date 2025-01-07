@@ -25,7 +25,7 @@ class HasCancerOfUnknownPrimary(private val doidModel: DoidModel, private val ca
             return if (isCUP) {
                 EvaluationFactory.pass("Has CUP")
             } else {
-                EvaluationFactory.warn("Tumor type " + categoryOfCUP.display() + " - uncertain if actually CUP")
+                EvaluationFactory.warn("Uncertain if tumor type " + categoryOfCUP.display() + "is actually CUP")
             }
         }
         return if (DoidEvaluationFunctions.isOfExactDoid(tumorDoids, DoidConstants.CANCER_DOID)) {

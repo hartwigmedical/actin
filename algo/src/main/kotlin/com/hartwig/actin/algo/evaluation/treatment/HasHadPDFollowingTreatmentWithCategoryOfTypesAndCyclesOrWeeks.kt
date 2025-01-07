@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverableUndetermin
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.undetermined
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.DateComparison.minWeeksBetweenDates
-import com.hartwig.actin.algo.evaluation.util.Format.concatItems
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
@@ -105,7 +105,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
     }
 
     private fun treatment(): String {
-        return "${concatItems(types)} ${category.display()} treatment"
+        return "${Format.concatItemsWithAnd(types)} ${category.display()} treatment"
     }
 
     private enum class PDFollowingTreatmentEvaluation {

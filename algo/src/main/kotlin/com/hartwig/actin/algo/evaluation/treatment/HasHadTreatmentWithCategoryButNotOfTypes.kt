@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.treatment.MedicationFunctions.createTreatmentHistoryEntriesFromMedications
-import com.hartwig.actin.algo.evaluation.util.Format.concatItems
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
@@ -23,7 +23,7 @@ class HasHadTreatmentWithCategoryButNotOfTypes(
             { historyEntry -> ignoreTypes.none { historyEntry.isOfType(it) == true } }
         )
 
-        val ignoreTypesList = concatItems(ignoreTypes)
+        val ignoreTypesList = Format.concatItemsWithAnd(ignoreTypes)
         return when {
             treatmentSummary.hasSpecificMatch() -> EvaluationFactory.pass(
                 "Has received ${category.display()} ignoring $ignoreTypesList"

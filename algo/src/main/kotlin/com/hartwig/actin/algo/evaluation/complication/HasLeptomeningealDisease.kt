@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.complication
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
@@ -21,7 +21,7 @@ class HasLeptomeningealDisease : EvaluationFunction {
 
         return when {
             leptomeningealComplications.isNotEmpty() -> {
-                return EvaluationFactory.pass("Has complication " + concat(leptomeningealComplications))
+                return EvaluationFactory.pass("Has complication(s) " + concatLowercaseWithAnd(leptomeningealComplications))
             }
 
             hasConfirmedPotentialMeningealLesions -> createWarnEvaluation(suspected = false, otherLesions)
@@ -44,7 +44,10 @@ class HasLeptomeningealDisease : EvaluationFunction {
 
         private fun createWarnEvaluation(suspected: Boolean, lesions: List<String>): Evaluation {
             val suspectedString = if (suspected) " suspected" else ""
-            return EvaluationFactory.warn("Presence of$suspectedString lesions '${concat(lesions)}' indicating potential leptomeningeal disease")
+            return EvaluationFactory.warn(
+                "Presence of$suspectedString lesions '${concatLowercaseWithAnd(lesions)}'" +
+                        " indicating potential leptomeningeal disease"
+            )
         }
     }
 }

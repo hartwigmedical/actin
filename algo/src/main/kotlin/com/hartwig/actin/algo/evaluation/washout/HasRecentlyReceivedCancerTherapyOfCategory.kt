@@ -62,7 +62,7 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
         val foundTrialMedication = activeMedications.any(Medication::isTrialMedication)
 
         val foundDrugNames = foundMedicationNames + treatmentAssessment.matchingDrugs
-        val foundMedicationString = if (foundDrugNames.isNotEmpty()) ": ${concatLowercaseUnlessNumericWithAnd(foundDrugNames)}" else ""
+        val foundMedicationString = if (foundDrugNames.isNotEmpty()) "(${concatLowercaseUnlessNumericWithAnd(foundDrugNames)})" else ""
         val foundCategories = foundMedicationCategories.toSet() + treatmentAssessment.matchingMedicationCategories
 
         return when {

@@ -3,8 +3,7 @@ package com.hartwig.actin.algo.evaluation.bloodtransfusion
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.medication.MEDICATION_NOT_PROVIDED
-import com.hartwig.actin.algo.evaluation.util.Format.concat
-import com.hartwig.actin.algo.evaluation.util.Format.date
+import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithCommaAndAnd
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.Medication
@@ -16,7 +15,6 @@ class RequiresRegularHematopoieticSupport(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val inBetweenRange = "between " + date(minDate) + " and " + date(maxDate)
         for (transfusion in record.bloodTransfusions) {
             if (transfusion.date.isAfter(minDate) && transfusion.date.isBefore(maxDate)) {
                 return EvaluationFactory.pass("Has received recent hematopoietic support")
@@ -29,7 +27,7 @@ class RequiresRegularHematopoieticSupport(
             .filter { it.atc?.chemicalSubGroup in resolvedCategories }
             .map { it.name }
         return if (filteredMedications.isNotEmpty()) {
-            EvaluationFactory.pass("Has received recent hematopoietic support (${concat(filteredMedications)})")
+            EvaluationFactory.pass("Has received recent hematopoietic support (${concatLowercaseWithCommaAndAnd(filteredMedications)})")
         } else
             EvaluationFactory.fail("Has not received recent hematopoietic support")
     }

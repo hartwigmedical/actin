@@ -42,9 +42,7 @@ class HasLimitedCumulativeAnthracyclineExposure(private val doidModel: DoidModel
             }
 
             else -> {
-                EvaluationFactory.pass(
-                    "Should not have been exposed to anthracycline chemotherapy - thus not exceeding maximum dose"
-                )
+                EvaluationFactory.pass("Should not have been exposed to anthracycline chemotherapy (thus not exceeding maximum dose)")
             }
         }
     }

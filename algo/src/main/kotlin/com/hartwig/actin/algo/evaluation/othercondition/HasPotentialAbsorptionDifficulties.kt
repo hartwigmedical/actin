@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.othercondition
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithCommaAndAnd
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
@@ -20,13 +20,13 @@ class HasPotentialAbsorptionDifficulties(private val doidModel: DoidModel) : Eva
             .map { doidModel.resolveTermForDoid(it) }
 
         if (conditions.isNotEmpty()) {
-            return EvaluationFactory.pass("Potential absorption difficulties: " + concat(conditions.filterNotNull()))
+            return EvaluationFactory.pass("Potential absorption difficulties (${concatLowercaseWithCommaAndAnd(conditions.filterNotNull())}")
         }
         val complications = record.complications?.filter { isOfCategory(it, GASTROINTESTINAL_DISORDER_CATEGORY) }
             ?.map { it.name } ?: emptyList()
 
         if (complications.isNotEmpty()) {
-            return EvaluationFactory.pass("Potential absorption difficulties: " + concat(complications))
+            return EvaluationFactory.pass("Potential absorption difficulties (${concatLowercaseWithCommaAndAnd(complications)}")
         }
         val toxicities = record.toxicities
             .filter { it.source == ToxicitySource.QUESTIONNAIRE || (it.grade ?: 0) >= 2 }
@@ -34,7 +34,7 @@ class HasPotentialAbsorptionDifficulties(private val doidModel: DoidModel) : Eva
             .filter { stringCaseInsensitivelyMatchesQueryCollection(it, TOXICITIES_CAUSING_ABSORPTION_DIFFICULTY) }
 
         return if (toxicities.isNotEmpty()) {
-            EvaluationFactory.pass("Potential absorption difficulties: " + concat(toxicities))
+            EvaluationFactory.pass("Potential absorption difficulties (${concatLowercaseWithCommaAndAnd(toxicities)})")
         } else
             EvaluationFactory.fail("No potential reasons for absorption problems identified")
     }

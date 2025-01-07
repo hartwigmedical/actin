@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.algo.evaluation.util.Format.concatWithCommaAndAnd
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.VariantEffect
@@ -36,7 +36,7 @@ class GeneHasUTR3Loss(private val gene: String, maxTestAge: LocalDate? = null) :
 
         if (hotspotsIn3UTR.isNotEmpty()) {
             return EvaluationFactory.pass(
-                "Present 3' UTR loss of $gene (hotspot mutations: ${concat(hotspotsIn3UTR)})",
+                "Present 3' UTR loss of $gene (hotspot mutations: ${concatWithCommaAndAnd(hotspotsIn3UTR)})",
                 inclusionEvents = hotspotsIn3UTR
             )
         }
@@ -52,15 +52,15 @@ class GeneHasUTR3Loss(private val gene: String, maxTestAge: LocalDate? = null) :
                 EventsWithMessages(
                     hotspotsIn3UTRUnreportable,
                     "Hotspot mutation(s) in 3' UTR region of $gene which may lead to 3' UTR loss: "
-                            + "${concat(hotspotsIn3UTRUnreportable)} but mutation is not considered reportable"
+                            + "${concatWithCommaAndAnd(hotspotsIn3UTRUnreportable)} but mutation is not considered reportable"
                 ),
                 EventsWithMessages(
                     vusIn3UTR,
-                    "VUS mutation(s) in 3' UTR region of $gene which may lead to 3' UTR loss: ${concat(vusIn3UTR)}"
+                    "VUS mutation(s) in 3' UTR region of $gene which may lead to 3' UTR loss: ${concatWithCommaAndAnd(vusIn3UTR)}"
                 ),
                 EventsWithMessages(
                     disruptionsIn3UTR,
-                    "Disruption(s) in 3' UTR region of $gene which may lead to 3' UTR loss: ${concat(disruptionsIn3UTR)}"
+                    "Disruption(s) in 3' UTR region of $gene which may lead to 3' UTR loss: ${concatWithCommaAndAnd(disruptionsIn3UTR)}"
                 )
             )
         )

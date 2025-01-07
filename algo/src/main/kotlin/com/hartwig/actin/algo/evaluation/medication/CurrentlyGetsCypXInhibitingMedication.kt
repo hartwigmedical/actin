@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.Format
+import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithCommaAndAnd
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.DrugInteraction
@@ -22,7 +22,7 @@ class CurrentlyGetsCypXInhibitingMedication(private val selector: MedicationSele
         return when {
             cypInhibitorsReceived.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass(
-                    "CYP$termToFind inhibiting medication use: ${Format.concatLowercaseWithAnd(cypInhibitorsReceived)}"
+                    "CYP$termToFind inhibiting medication use (${concatLowercaseWithCommaAndAnd(cypInhibitorsReceived)})"
                 )
             }
 
@@ -34,7 +34,7 @@ class CurrentlyGetsCypXInhibitingMedication(private val selector: MedicationSele
 
             cypInhibitorsPlanned.isNotEmpty() -> {
                 EvaluationFactory.recoverableWarn(
-                    "Planned CYP$termToFind inhibiting medication use: ${Format.concatLowercaseWithAnd(cypInhibitorsPlanned)}"
+                    "Planned CYP$termToFind inhibiting medication use (${concatLowercaseWithCommaAndAnd(cypInhibitorsPlanned)})"
                 )
             }
 

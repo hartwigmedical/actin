@@ -3,8 +3,8 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.treatment.MedicationFunctions.createTreatmentHistoryEntriesFromMedications
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithAnd
-import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithComma
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
@@ -36,7 +36,7 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugs(
         )
 
         val matchingTreatmentTypes = treatmentSummary.specificMatches.flatMap { it.treatments.flatMap(Treatment::types) }
-        val concatenatedMatchingTypes = concatItemsWithComma(matchingTreatmentTypes)
+        val concatenatedMatchingTypes = concatItemsWithAnd(matchingTreatmentTypes)
 
         val ignoreDrugsList = concatItemsWithAnd(ignoreDrugs)
         val typeMessage = if (types != null && concatenatedMatchingTypes.isNotEmpty()) " of types $concatenatedMatchingTypes" else ""

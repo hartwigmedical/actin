@@ -55,7 +55,7 @@ class HasHadTargetedTherapyInterferingWithRasMekMapkPathwayTest {
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry)))
         EvaluationAssert.assertEvaluation(EvaluationResult.WARN, evaluation)
         assertThat(evaluation.warnMessages).containsExactly(
-            "Has had targeted therapy (Test) - indirectly interfering with RAS/MEK/MAPK pathway"
+            "Has had targeted therapy (Test) indirectly interfering with RAS/MEK/MAPK pathway"
         )
     }
 

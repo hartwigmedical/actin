@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.cardiacfunction
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.Format.concatStringsWithAnd
+import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithCommaAndAnd
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
@@ -22,7 +22,10 @@ class HasPotentialSignificantHeartDisease(private val doidModel: DoidModel) : Ev
             .map { it.name }.toSet()
 
         return if (heartConditions.isNotEmpty()) {
-            EvaluationFactory.pass("Potentially significant cardiac disease (history of " + concatStringsWithAnd(heartConditions))
+            EvaluationFactory.pass(
+                "Potentially significant cardiac disease (history of " +
+                        "${concatLowercaseWithCommaAndAnd(heartConditions)})"
+            )
         } else EvaluationFactory.fail("No potential significant cardiac disease")
     }
 

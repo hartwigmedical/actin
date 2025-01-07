@@ -80,7 +80,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         assertThat(
             evaluation.undeterminedMessages
         ).containsExactly(
-            "$TARGET_RECEPTOR-status undetermined - DOID and/or IHC data inconsistent"
+            "$TARGET_RECEPTOR-status undetermined (DOID and/or IHC data inconsistent)"
         )
     }
 

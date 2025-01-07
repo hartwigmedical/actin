@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.util.Format
+import com.hartwig.actin.algo.evaluation.util.Format.concatWithCommaAndAnd
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.Fusion
 import com.hartwig.actin.datamodel.molecular.MolecularTest
@@ -79,8 +79,8 @@ class GeneHasVariantInExonRangeOfType(
 
             canonicalReportableVariantMatches.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "Variant(s) ${Format.concat(canonicalReportableVariantMatches)} $baseMessage in canonical transcript together with variant(s) in non-canonical transcript: ${
-                        Format.concat(
+                    "Variant(s) ${concatWithCommaAndAnd(canonicalReportableVariantMatches)} $baseMessage in canonical transcript together with variant(s) in non-canonical transcript: ${
+                        concatWithCommaAndAnd(
                             reportableOtherVariantMatches
                         )
                     }",
@@ -91,8 +91,8 @@ class GeneHasVariantInExonRangeOfType(
             reportableExonSkips.isNotEmpty() -> {
                 val reportableExonSkipEvents = reportableExonSkips.map { it.event }.toSet()
                 EvaluationFactory.warn(
-                    "Exon(s) skipped $baseMessage due to ${Format.concat(reportableExonSkipEvents)} together with variant(s) in non-canonical transcript: ${
-                        Format.concat(
+                    "Exon(s) skipped $baseMessage due to ${concatWithCommaAndAnd(reportableExonSkipEvents)} together with variant(s) in non-canonical transcript: ${
+                        concatWithCommaAndAnd(
                             reportableOtherVariantMatches
                         )
                     }",

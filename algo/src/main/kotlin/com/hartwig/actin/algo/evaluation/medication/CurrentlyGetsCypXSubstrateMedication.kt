@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.Format
+import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithCommaAndAnd
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.DrugInteraction
@@ -22,7 +22,7 @@ class CurrentlyGetsCypXSubstrateMedication(private val selector: MedicationSelec
         return when {
             cypSubstratesReceived.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass(
-                    "CYP$termToFind substrate medication use: ${Format.concatLowercaseWithAnd(cypSubstratesReceived)}"
+                    "CYP$termToFind substrate medication use (${concatLowercaseWithCommaAndAnd(cypSubstratesReceived)})"
                 )
             }
 
@@ -32,7 +32,7 @@ class CurrentlyGetsCypXSubstrateMedication(private val selector: MedicationSelec
 
             cypSubstratesPlanned.isNotEmpty() -> {
                 EvaluationFactory.recoverableWarn(
-                    "Planned CYP$termToFind substrate medication use: ${Format.concatLowercaseWithAnd(cypSubstratesPlanned)}"
+                    "Planned CYP$termToFind substrate medication use (${concatLowercaseWithCommaAndAnd(cypSubstratesPlanned)})"
                 )
             }
 

@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -51,18 +51,18 @@ class HasToxicityWithGrade internal constructor(
             matchingToxicities.isNotEmpty() -> {
                 val toxicityString = formatToxicities(matchingToxicities)
                 return if (hasAtLeastOneMatchingQuestionnaireToxicity || !warnIfToxicitiesNotFromQuestionnaire) {
-                    EvaluationFactory.recoverablePass("Has toxicities grade >= $minGrade$toxicityString")
+                    EvaluationFactory.recoverablePass("Has $nameFilter toxicity grade >= $minGrade$toxicityString")
                 } else {
-                    EvaluationFactory.recoverableWarn("Has toxicities grade >= $minGrade$toxicityString - n.b. different EHR source than questionnaire")
+                    EvaluationFactory.recoverableWarn("Has $nameFilter toxicity grade >= $minGrade$toxicityString - n.b. different EHR source than questionnaire")
                 }
             }
 
             unresolvableToxicities.isNotEmpty() -> {
                 val toxicityString = formatToxicities(unresolvableToxicities)
-                return EvaluationFactory.undetermined("Has toxicities grade >= $DEFAULT_QUESTIONNAIRE_GRADE$toxicityString but unknown if grade >= $minGrade")
+                return EvaluationFactory.undetermined("Has $nameFilter toxicity grade >= $DEFAULT_QUESTIONNAIRE_GRADE$toxicityString but unknown if grade >= $minGrade")
             }
 
-            else -> return EvaluationFactory.fail("No toxicities found with grade $minGrade or higher")
+            else -> return EvaluationFactory.fail("No $nameFilter toxicity found with grade $minGrade or higher")
         }
     }
 
@@ -83,7 +83,7 @@ class HasToxicityWithGrade internal constructor(
     }
 
     private fun formatToxicities(toxicityNames: Iterable<String>): String {
-        val toxicityListing = concat(toxicityNames.filter(String::isNotEmpty))
+        val toxicityListing = Format.concatLowercaseWithCommaAndAnd(toxicityNames.filter(String::isNotEmpty))
         return if (toxicityListing.isNotEmpty()) " ($toxicityListing)" else ""
     }
 }

@@ -12,20 +12,15 @@ import java.util.Locale
 
 object Format {
 
-    private const val SEPARATOR_SEMICOLON = "; "
     private const val SEPARATOR_AND = " and "
     private const val SEPARATOR_OR = " or "
     private const val SEPARATOR_COMMA = ", "
     private val DATE_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy")
     private val PERCENTAGE_FORMAT: DecimalFormat = DecimalFormat("#'%'", DecimalFormatSymbols.getInstance(ApplicationConfig.LOCALE))
 
-    fun concat(strings: Iterable<String>): String {
-        return concatStrings(strings, SEPARATOR_SEMICOLON)
-    }
+    fun concatWithCommaAndOr(strings: Iterable<String>) = concatWithCommaAndSeparator(strings, SEPARATOR_OR, toLowercase = false)
 
-    fun concatItems(items: Iterable<Displayable>): String {
-        return concatDisplayables(items, SEPARATOR_SEMICOLON)
-    }
+    fun concatWithCommaAndAnd(strings: Iterable<String>) = concatWithCommaAndSeparator(strings, SEPARATOR_AND, toLowercase = false)
 
     fun concatLowercaseWithAnd(strings: Iterable<String>): String {
         return concatStrings(strings.map(String::lowercase), SEPARATOR_AND)
@@ -35,21 +30,15 @@ object Format {
         return concatStrings(strings.map { if (it.any(Char::isDigit)) it else it.lowercase() }, SEPARATOR_AND)
     }
 
-    fun concatStringsWithAnd(strings: Iterable<String>): String {
-        return concatStrings(strings, SEPARATOR_AND)
-    }
-
     fun concatLowercaseWithCommaAndOr(strings: Iterable<String>) = concatWithCommaAndSeparator(strings, SEPARATOR_OR, toLowercase = true)
 
-    fun concatWithCommaAndAnd(strings: Iterable<String>) = concatWithCommaAndSeparator(strings, SEPARATOR_AND, toLowercase = false)
-
-    fun concatWithCommaAndOr(strings: Iterable<String>) = concatWithCommaAndSeparator(strings, SEPARATOR_OR, toLowercase = false)
+    fun concatLowercaseWithCommaAndAnd(strings: Iterable<String>) = concatWithCommaAndSeparator(strings, SEPARATOR_AND, toLowercase = true)
 
     private fun concatWithCommaAndSeparator(strings: Iterable<String>, separator: String, toLowercase: Boolean): String {
         val stringList = if (toLowercase) strings.distinct().map(String::lowercase) else strings.distinct()
         val sortedStringList = stringList.sortedWith(String.CASE_INSENSITIVE_ORDER)
         return if (sortedStringList.size < 2) {
-            concat(sortedStringList)
+            concatStrings(sortedStringList, SEPARATOR_COMMA)
         } else {
             listOf(sortedStringList.dropLast(1).joinToString(", "), sortedStringList.last()).joinToString(separator)
         }
@@ -61,10 +50,6 @@ object Format {
 
     fun concatItemsWithOr(items: Iterable<Displayable>): String {
         return concatDisplayables(items, SEPARATOR_OR)
-    }
-
-    fun concatItemsWithComma(items: Iterable<Displayable>): String {
-        return concatDisplayables(items, SEPARATOR_COMMA)
     }
 
     fun date(date: LocalDate): String {

@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.algo.evaluation.util.Format.concatWithCommaAndAnd
 import com.hartwig.actin.algo.evaluation.util.Format.percentage
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
@@ -56,7 +56,7 @@ class GeneHasVariantWithProteinImpact(
 
         return canonicalImpactClassifications[VariantClassification.CANONICAL_REPORTABLE]
             ?.let { canonicalReportableImpactMatches ->
-                val impactString = concat(canonicalReportableImpactMatches.map { it.proteinImpact })
+                val impactString = concatWithCommaAndAnd(canonicalReportableImpactMatches.map { it.proteinImpact })
                 EvaluationFactory.pass(
                     "$impactString detected in $gene",
                     inclusionEvents = canonicalReportableImpactMatches.map { it.variant.event }.toSet()
@@ -67,7 +67,7 @@ class GeneHasVariantWithProteinImpact(
                 canonicalImpactClassifications[VariantClassification.CANONICAL_UNREPORTABLE],
                 reportableOtherProteinImpactMatches
             )
-            ?: EvaluationFactory.fail("${concat(allowedProteinImpacts)} not detected in $gene")
+            ?: EvaluationFactory.fail("${concatWithCommaAndAnd(allowedProteinImpacts)} not detected in $gene")
     }
 
     private fun evaluatePotentialWarns(
@@ -92,7 +92,7 @@ class GeneHasVariantWithProteinImpact(
         variantsAndImpacts: Collection<VariantAndProteinImpact>?,
         makeMessage: (String) -> String
     ): EventsWithMessages? = variantsAndImpacts?.takeIf { it.isNotEmpty() }?.let { matches ->
-        val listAsString = concat(matches.map { it.proteinImpact })
+        val listAsString = concatWithCommaAndAnd(matches.map { it.proteinImpact })
         EventsWithMessages(matches.map { it.variant.event }, makeMessage(listAsString))
     }
 

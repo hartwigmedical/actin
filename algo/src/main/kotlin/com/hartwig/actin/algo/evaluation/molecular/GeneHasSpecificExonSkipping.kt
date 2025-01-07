@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.algo.evaluation.util.Format.concatWithCommaAndAnd
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.CodingEffect
 import com.hartwig.actin.datamodel.molecular.Fusion
@@ -22,25 +22,22 @@ class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSk
         return when {
             fusionSkippingEvents.isNotEmpty() && exonSplicingVariants.isEmpty() -> {
                 EvaluationFactory.pass(
-                    "Exon $exonToSkip skipping in $gene due to ${concat(fusionSkippingEvents)}",
+                    "Exon $exonToSkip skipping in $gene due to ${concatWithCommaAndAnd(fusionSkippingEvents)}",
                     inclusionEvents = fusionSkippingEvents
                 )
             }
 
             fusionSkippingEvents.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "Exon $exonToSkip skipped in gene $gene due to ${concat(fusionSkippingEvents)}, together with potentially exon skipping variant(s) ${
-                        concat(
-                            exonSplicingVariants
-                        )
-                    }",
+                    "Exon $exonToSkip skipped in gene $gene (${concatWithCommaAndAnd(fusionSkippingEvents)}) " +
+                            "together with potentially exon skipping variant(s) (${concatWithCommaAndAnd(exonSplicingVariants)}",
                     inclusionEvents = fusionSkippingEvents + exonSplicingVariants
                 )
             }
 
             exonSplicingVariants.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "Potential $gene exon $exonToSkip skipping due to splice variant (${concat(exonSplicingVariants)})",
+                    "Potential $gene exon $exonToSkip skipping due to splice variant ${concatWithCommaAndAnd(exonSplicingVariants)}",
                     inclusionEvents = exonSplicingVariants
                 )
             }
