@@ -9,11 +9,11 @@ class HasECGAberration internal constructor() : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val ecg = record.clinicalStatus.ecg
-            ?: return EvaluationFactory.fail("Assumed no ECG abnormalities (data missing)")
+            ?: return EvaluationFactory.fail("Assumed that there are no ECG abnormalities (ECG details missing)")
         return when {
             ecg.hasSigAberrationLatestECG && ecg.aberrationDescription != null -> {
                 EvaluationFactory.pass(
-                    "ECG abnormalities: ${ecg.aberrationDescription}"
+                    "ECG abnormalities present (${ecg.aberrationDescription})"
                 )
             }
 

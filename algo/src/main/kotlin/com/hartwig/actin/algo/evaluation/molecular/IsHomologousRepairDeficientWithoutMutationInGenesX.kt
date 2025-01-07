@@ -33,7 +33,7 @@ class IsHomologousRepairDeficientWithoutMutationInGenesX(private val genesToFind
                 }
 
                 genesToFindWithMutation.isNotEmpty() -> {
-                    EvaluationFactory.fail("Tumor is HRD with variant in ${Format.concatWithCommaAndAnd(genesToFindWithMutation)}")
+                    EvaluationFactory.fail("Tumor is HRD with variant in ${Format.concat(genesToFindWithMutation)}")
                 }
 
                 hrdGenesWithNonBiallelicDriver.isNotEmpty() && hrdGenesWithBiallelicDriver.isEmpty() -> {

@@ -5,7 +5,6 @@ import com.hartwig.actin.datamodel.clinical.LabUnit
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
-import junit.framework.TestCase.assertTrue
 import org.junit.Test
 import java.time.LocalDate
 
@@ -44,11 +43,11 @@ class FormatTest {
 
     @Test
     fun `Should join strings with comma and and`() {
-        assertEquals("", Format.concatWithCommaAndAnd(emptySet()))
-        assertEquals("X", Format.concatWithCommaAndAnd(setOf("X")))
-        assertEquals("X and Y", Format.concatWithCommaAndAnd(setOf("X", "Y")))
-        assertEquals("X, Y and z", Format.concatWithCommaAndAnd(setOf("X", "Y", "z")))
-        assertEquals("A, X, Y and z", Format.concatWithCommaAndAnd(setOf("X", "Y", "z", "A")))
+        assertEquals("", Format.concat(emptySet()))
+        assertEquals("X", Format.concat(setOf("X")))
+        assertEquals("X and Y", Format.concat(setOf("X", "Y")))
+        assertEquals("X, Y and z", Format.concat(setOf("X", "Y", "z")))
+        assertEquals("A, X, Y and z", Format.concat(setOf("X", "Y", "z", "A")))
     }
 
     @Test

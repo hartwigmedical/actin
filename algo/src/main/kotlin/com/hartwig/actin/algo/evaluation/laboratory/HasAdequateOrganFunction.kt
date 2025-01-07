@@ -65,13 +65,13 @@ class HasAdequateOrganFunction(private val minValidDate: LocalDate, private val 
         return when {
             valuesUnderLowerLimit.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "$messageStart (${Format.concatWithCommaAndAnd(valuesUnderLowerLimit.map { it.first.display })} below LLN)"
+                    "$messageStart (${Format.concat(valuesUnderLowerLimit.map { it.first.display })} below LLN)"
                 )
             }
 
             valuesAboveUpperLimit.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "$messageStart (${Format.concatWithCommaAndAnd(valuesAboveUpperLimit.map { it.first.display() })} above ULN)"
+                    "$messageStart (${Format.concat(valuesAboveUpperLimit.map { it.first.display() })} above ULN)"
                 )
             }
 
@@ -84,7 +84,7 @@ class HasAdequateOrganFunction(private val minValidDate: LocalDate, private val 
             undeterminedLabValues.isNotEmpty() -> {
                 EvaluationFactory.recoverableUndetermined(
                     "Undetermined if adequate organ function " +
-                            "(lab value(s) (${Format.concatWithCommaAndAnd(undeterminedLabValues.map { it.display })}) undetermined)"
+                            "(lab value(s) (${Format.concat(undeterminedLabValues.map { it.display })}) undetermined)"
                 )
             }
 

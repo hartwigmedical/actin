@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.util.Format.concatWithCommaAndAnd
+import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import java.time.LocalDate
@@ -60,11 +60,11 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesX(
                 }
 
                 genesToFindWithBiallelicHotspot.isNotEmpty() || genesToFindWithNonBiallelicHotspot.isNotEmpty() -> {
-                    EvaluationFactory.fail("Tumor is HRD with ${concatWithCommaAndAnd(genesToFindWithNonBiallelicHotspot + genesToFindWithBiallelicHotspot)} hotspot")
+                    EvaluationFactory.fail("Tumor is HRD with ${concat(genesToFindWithNonBiallelicHotspot + genesToFindWithBiallelicHotspot)} hotspot")
                 }
 
                 genesToFindWithDeletionOrPartialLoss.isNotEmpty() -> {
-                    EvaluationFactory.fail("Tumor is HRD with ${concatWithCommaAndAnd(genesToFindWithDeletionOrPartialLoss)} deletion or partial loss")
+                    EvaluationFactory.fail("Tumor is HRD with ${concat(genesToFindWithDeletionOrPartialLoss)} deletion or partial loss")
                 }
 
                 warnEvaluations.isNotEmpty() -> {
@@ -80,7 +80,7 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesX(
                 }
 
                 else -> {
-                    EvaluationFactory.pass("Tumor is HRD without any variants in ${concatWithCommaAndAnd(genesToFind)}")
+                    EvaluationFactory.pass("Tumor is HRD without any variants in ${concat(genesToFind)}")
                 }
             }
         }
@@ -92,11 +92,11 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesX(
 
     private fun addToWarnEvaluations(warnEvaluations: MutableSet<String>, driverType: String, foundGenes: Set<String>) {
         if (foundGenes.isNotEmpty()) {
-            warnEvaluations.add(driverType + " in " + concatWithCommaAndAnd(foundGenes))
+            warnEvaluations.add(driverType + " in " + concat(foundGenes))
         }
     }
 
     private fun warnEvaluation(driverTypeInFoundGenes: Set<String>): Evaluation {
-        return EvaluationFactory.warn("Tumor is HRD with ${concatWithCommaAndAnd(driverTypeInFoundGenes)} which could be pathogenic")
+        return EvaluationFactory.warn("Tumor is HRD with ${concat(driverTypeInFoundGenes)} which could be pathogenic")
     }
 }

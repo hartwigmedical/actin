@@ -8,6 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasFamilyHistoryOfIdiopathicSuddenDeath internal constructor() : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.recoverableUndetermined("Family history of idopathic sudden death undetermined")
+        return EvaluationFactory.recoverableUndetermined("Undetermined if patient has family history of idopathic sudden death")
     }
 }

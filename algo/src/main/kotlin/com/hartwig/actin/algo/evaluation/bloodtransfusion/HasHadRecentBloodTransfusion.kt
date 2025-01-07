@@ -6,16 +6,15 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import java.time.LocalDate
 
-class HasHadRecentBloodTransfusion internal constructor(private val product: TransfusionProduct, private val minDate: LocalDate) :
-    EvaluationFunction {
+class HasHadRecentBloodTransfusion(private val product: TransfusionProduct, private val minDate: LocalDate) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val productString = product.display().lowercase()
         for (transfusion in record.bloodTransfusions) {
             if (transfusion.product.equals(product.display(), ignoreCase = true) && minDate.isBefore(transfusion.date)) {
-                return EvaluationFactory.pass("Has had recent $productString blood transfusion")
+                return EvaluationFactory.pass("Has received recent $productString blood transfusion")
             }
         }
-        return EvaluationFactory.fail("Has not had recent $productString blood transfusion")
+        return EvaluationFactory.fail("Has not received recent $productString blood transfusion")
     }
 }

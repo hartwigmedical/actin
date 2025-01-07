@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.othercondition
 
-import com.hartwig.actin.algo.evaluation.util.Format.concatWithCommaAndAnd
+import com.hartwig.actin.algo.evaluation.util.Format.concat
 
 internal object PriorConditionMessages {
 
@@ -12,7 +12,7 @@ internal object PriorConditionMessages {
         return String.format(
             "Has history of %s %s which is indicative of %s",
             characteristic.displayText,
-            concatWithCommaAndAnd(matches),
+            concat(matches),
             doidTerm
         )
     }

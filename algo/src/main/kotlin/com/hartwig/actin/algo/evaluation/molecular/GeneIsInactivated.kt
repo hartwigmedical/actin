@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.util.Format.concatWithCommaAndAnd
+import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.percentage
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.CodingEffect
@@ -111,7 +111,7 @@ class GeneIsInactivated(private val gene: String, maxTestAge: LocalDate? = null)
 
         if (inactivationEventsThatQualify.isNotEmpty()) {
             return EvaluationFactory.pass(
-                "$gene inactivation (${concatWithCommaAndAnd(inactivationEventsThatQualify)})",
+                "$gene inactivation (${concat(inactivationEventsThatQualify)})",
                 inclusionEvents = inactivationEventsThatQualify
             )
         }
@@ -147,47 +147,47 @@ class GeneIsInactivated(private val gene: String, maxTestAge: LocalDate? = null)
             listOfNotNull(
                 EventsWithMessages(
                     inactivationEventsThatAreUnreportable,
-                    "Inactivation event(s) for $gene (${concatWithCommaAndAnd(inactivationEventsThatAreUnreportable)}) but event(s) not reportable"
+                    "Inactivation event(s) for $gene (${concat(inactivationEventsThatAreUnreportable)}) but event(s) not reportable"
                 ),
                 EventsWithMessages(
                     inactivationEventsNoTSG,
-                    "Inactivation event(s) for $gene (${concatWithCommaAndAnd(inactivationEventsNoTSG)})"
+                    "Inactivation event(s) for $gene (${concat(inactivationEventsNoTSG)})"
                             + " however gene is oncogene in $evidenceSource"
                 ),
                 EventsWithMessages(
                     inactivationEventsGainOfFunction,
-                    "Inactivation event(s) for $gene (${concatWithCommaAndAnd(inactivationEventsGainOfFunction)})"
+                    "Inactivation event(s) for $gene (${concat(inactivationEventsGainOfFunction)})"
                             + " but event(s) annotated with gain-of-function protein impact evidence in $evidenceSource"
                 ),
                 if (inactivationHighDriverNonBiallelicVariants.isNotEmpty() && eventsThatMayBeTransPhased.size <= 1) {
                     EventsWithMessages(
                         inactivationHighDriverNonBiallelicVariants,
-                        "Inactivation event(s) for $gene (${concatWithCommaAndAnd(inactivationHighDriverNonBiallelicVariants)}) but event(s) are not biallelic"
+                        "Inactivation event(s) for $gene (${concat(inactivationHighDriverNonBiallelicVariants)}) but event(s) are not biallelic"
                     )
                 } else null,
                 EventsWithMessages(
                     inactivationSubclonalVariants,
-                    "Inactivation event(s) for $gene (${concatWithCommaAndAnd(inactivationSubclonalVariants)}) but subclonal likelihood > "
+                    "Inactivation event(s) for $gene (${concat(inactivationSubclonalVariants)}) but subclonal likelihood > "
                             + percentage(1 - CLONAL_CUTOFF)
                 ),
                 EventsWithMessages(
                     inactivationEventsOnNonCanonicalTranscript,
-                    "Inactivation event(s) for $gene (${concatWithCommaAndAnd(inactivationSubclonalVariants)}) but only on non-canonical transcript"
+                    "Inactivation event(s) for $gene (${concat(inactivationSubclonalVariants)}) but only on non-canonical transcript"
                 ),
                 EventsWithMessages(
                     reportableNonDriverBiallelicVariantsOther,
-                    "Potential inactivation event(s) for $gene (${concatWithCommaAndAnd(reportableNonDriverBiallelicVariantsOther)})"
+                    "Potential inactivation event(s) for $gene (${concat(reportableNonDriverBiallelicVariantsOther)})"
                             + " but event(s) are not of high driver likelihood"
                 ),
                 EventsWithMessages(
                     reportableNonDriverNonBiallelicVariantsOther,
-                    "Potential inactivation event(s) for $gene (${concatWithCommaAndAnd(reportableNonDriverNonBiallelicVariantsOther)})"
+                    "Potential inactivation event(s) for $gene (${concat(reportableNonDriverNonBiallelicVariantsOther)})"
                             + " but event(s) are not biallelic and not of high driver likelihood"
                 ),
                 if (eventsThatMayBeTransPhased.size > 1) {
                     EventsWithMessages(
                         eventsThatMayBeTransPhased.toSet(),
-                        "Multiple events for $gene (${concatWithCommaAndAnd(eventsThatMayBeTransPhased)}) that potentially together inactivate the gene"
+                        "Multiple events for $gene (${concat(eventsThatMayBeTransPhased)}) that potentially together inactivate the gene"
                     )
                 } else null
             )

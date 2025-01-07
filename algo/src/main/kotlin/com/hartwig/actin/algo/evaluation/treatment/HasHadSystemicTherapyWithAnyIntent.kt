@@ -41,7 +41,7 @@ class HasHadSystemicTherapyWithAnyIntent(
 
             matchingTreatments[null]?.let(::anyTreatmentPotentiallySinceMinDate) == true -> {
                 EvaluationFactory.undetermined(
-                    "Has received systemic treatment (${Format.concatWithCommaAndAnd(systemicTreatments.map { it.treatmentName() })}) " +
+                    "Has received systemic treatment (${Format.concat(systemicTreatments.map { it.treatmentName() })}) " +
                             "but undetermined if intent is $intentsLowercase"
                 )
             }

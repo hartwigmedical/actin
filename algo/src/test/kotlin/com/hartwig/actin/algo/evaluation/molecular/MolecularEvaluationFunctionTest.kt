@@ -16,13 +16,13 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val OVERRIDE_MESSAGE = "Override message"
-private const val FAIL_GENERAL_MESSAGE = "Fail general message"
+private const val FAIL_MESSAGE = "Fail general message"
 private val MAX_AGE = LocalDate.of(2023, 9, 6)
 
 class MolecularEvaluationFunctionTest {
     private val function = object : MolecularEvaluationFunction(useInsufficientQualityRecords = false) {
         override fun evaluate(molecular: MolecularRecord): Evaluation {
-            return EvaluationFactory.fail(FAIL_GENERAL_MESSAGE)
+            return EvaluationFactory.fail(FAIL_MESSAGE)
         }
     }
 
@@ -36,7 +36,7 @@ class MolecularEvaluationFunctionTest {
 
     private val functionOnMolecularHistory = object : MolecularEvaluationFunction(useInsufficientQualityRecords = false) {
         override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
-            return EvaluationFactory.fail(FAIL_GENERAL_MESSAGE)
+            return EvaluationFactory.fail(FAIL_MESSAGE)
         }
     }
 
@@ -71,7 +71,7 @@ class MolecularEvaluationFunctionTest {
         val patient = TestPatientFactory.createMinimalTestWGSPatientRecord()
         val evaluation = function.evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessages).containsExactly(FAIL_GENERAL_MESSAGE)
+        assertThat(evaluation.failMessages).containsExactly(FAIL_MESSAGE)
     }
 
     @Test
@@ -91,7 +91,7 @@ class MolecularEvaluationFunctionTest {
         val patient = TestPatientFactory.createMinimalTestWGSPatientRecord()
         val evaluation = functionOnMolecularHistory.evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessages).containsExactly(FAIL_GENERAL_MESSAGE)
+        assertThat(evaluation.failMessages).containsExactly(FAIL_MESSAGE)
     }
 
     @Test
@@ -109,7 +109,7 @@ class MolecularEvaluationFunctionTest {
         val function = object : MolecularEvaluationFunction(MAX_AGE, false) {
             override fun evaluate(test: MolecularTest): Evaluation {
                 evaluatedTests.add(test)
-                return EvaluationFactory.fail(FAIL_GENERAL_MESSAGE)
+                return EvaluationFactory.fail(FAIL_MESSAGE)
             }
         }
         val newTest = MAX_AGE.plusDays(1)

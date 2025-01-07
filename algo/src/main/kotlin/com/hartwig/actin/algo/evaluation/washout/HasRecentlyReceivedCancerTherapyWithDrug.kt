@@ -45,7 +45,7 @@ class HasRecentlyReceivedCancerTherapyWithDrug(
                 TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minDate, false)
             } -> {
                 EvaluationFactory.pass(
-                    "Has recently received treatment with medication " + Format.concatWithCommaAndAnd(namesFound)
+                    "Has recently received treatment with medication " + Format.concat(namesFound)
                             + " - pay attention to washout period"
                 )
             }
