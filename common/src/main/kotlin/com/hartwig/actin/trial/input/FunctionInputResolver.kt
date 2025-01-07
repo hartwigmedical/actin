@@ -5,7 +5,6 @@ import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.Cyp
 import com.hartwig.actin.datamodel.clinical.Gender
-import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.ReceptorType
 import com.hartwig.actin.datamodel.clinical.Transporter
 import com.hartwig.actin.datamodel.clinical.TumorStage
@@ -487,10 +486,7 @@ class FunctionInputResolver(
 
         return when {
             invalidEntries.isNotEmpty() -> throw IllegalStateException("ICD title(s) or code(s) not valid: ${invalidEntries.joinToString(", ")}")
-            invalidTitles.isNotEmpty() -> invalidTitles.map {
-                icdModel.resolveTitleForCode(it.split('&').let { c -> IcdCode(c[0], c.getOrNull(1)) }, displayWithSpaces = false)
-            } + validTitles
-
+            invalidTitles.isNotEmpty() -> invalidTitles.map { icdModel.resolveTitleForCodeString(it) } + validTitles
             else -> input
         }
     }
@@ -498,12 +494,7 @@ class FunctionInputResolver(
     private fun toIcdTitle(input: String): String {
         return when {
             icdModel.isValidIcdTitle(input) -> input
-            icdModel.isValidIcdCode(input) -> {
-                icdModel.resolveTitleForCode(
-                    input.split('&').let { IcdCode(it[0], it.getOrNull(1)) },
-                    displayWithSpaces = false
-                )
-            }
+            icdModel.isValidIcdCode(input) ->  icdModel.resolveTitleForCodeString(input)
             else -> throw IllegalStateException("ICD title(s) or code(s) not valid: $input")
         }
     }

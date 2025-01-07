@@ -21,6 +21,25 @@ class IcdModelTest {
     private val correctExtensionCode = "targetExtensionParentCode"
     private val childOfCorrectExtensionCode = "targetExtensionCode"
 
+    @Test
+    fun `Should return true for valid ICD title`() {
+        assertThat(icdModel.isValidIcdTitle("targetMainTitle&targetExtensionTitle")).isTrue()
+    }
+
+    @Test
+    fun `Should return false for invalid ICD title`() {
+        assertThat(icdModel.isValidIcdTitle("invalidTitle")).isFalse()
+    }
+
+    @Test
+    fun `Should return true for valid ICD code`() {
+        assertThat(icdModel.isValidIcdCode("targetMainCode&targetExtensionCode")).isTrue()
+    }
+
+    @Test
+    fun `Should return false for invalid ICD code`() {
+        assertThat(icdModel.isValidIcdCode("invalidCode")).isFalse()
+    }
 
     @Test
     fun `Should handle title validation correctly for regular and extended titles`() {
@@ -54,6 +73,12 @@ class IcdModelTest {
         assertThat(icdModel.resolveTitleForCode(IcdCode("targetMainCode", "targetExtensionCode")))
             .isEqualTo("targetMainTitle & targetExtensionTitle")
         assertThat(icdModel.resolveTitleForCode(IcdCode("targetMainCode", null))).isEqualTo("targetMainTitle")
+    }
+
+    @Test
+    fun `Should correctly resolve title for code string input`() {
+        assertThat(icdModel.resolveTitleForCodeString("targetMainCode&targetExtensionCode"))
+            .isEqualTo("targetMainTitle&targetExtensionTitle")
     }
 
     @Test
