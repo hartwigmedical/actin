@@ -43,10 +43,18 @@ class HasTumorStage(private val stagesToMatch: Set<TumorStage>) : EvaluationFunc
 
     private fun evaluateWithStage(stage: TumorStage, derived: Boolean): Evaluation {
         val stageString = stagesToMatch.joinToString(" or ") { it.display() }
-        return if (stage in stagesToMatch || stage.category in stagesToMatch || (derived && evaluateCategoryMatchForDerivedStage(stage))) {
-            pass("Patient tumor stage is requested stage $stageString", "Adequate tumor stage")
-        } else {
-            fail("Patient tumor stage is not requested stage $stageString", "Inadequate tumor stage")
+        return when {
+            (stage in stagesToMatch || stage.category in stagesToMatch || (derived && evaluateCategoryMatchForDerivedStage(stage))) -> pass(
+                "Patient tumor stage is requested stage $stageString",
+                "Adequate tumor stage"
+            )
+
+            (stagesToMatch.any { it.category == stage }) -> undetermined(
+                "Undetermined if patient tumor stage $stage meets specific stage requirement(s) ($stageString)",
+                "Undetermined if patient tumor stage $stage meets stage requirement(s) ($stageString)"
+            )
+
+            else -> fail("Patient tumor stage is not requested stage $stageString", "Inadequate tumor stage")
         }
     }
 

@@ -26,6 +26,12 @@ class HasTumorStageTest {
     }
 
     @Test
+    fun `Should be undetermined when patient stage is of the same category as one of the requested stages, but not an exact match`() {
+        val patientRecord = TumorTestFactory.withTumorStage(TumorStage.III)
+        assertEvaluation(EvaluationResult.UNDETERMINED, HasTumorStage(setOf(TumorStage.IIIA, TumorStage.IIB)).evaluate(patientRecord))
+    }
+
+    @Test
     fun `Should follow non-derived evaluation when single derived tumor`() {
         assertDerivedEvaluation(EvaluationResult.PASS, TumorStage.III)
         assertDerivedEvaluation(EvaluationResult.PASS, TumorStage.IIIB)
@@ -75,9 +81,9 @@ class HasTumorStageTest {
     }
 
     @Test
-    fun `Should fail when stage is part of the same category, but not an exact match`() {
-        val patientRecord = TumorTestFactory.withTumorStageAndDerivedStages(TumorStage.III, emptySet())
-        assertEvaluation(EvaluationResult.FAIL, HasTumorStage(setOf(TumorStage.IIIB)).evaluate(patientRecord))
+    fun `Should be undetermined when derived stage include one that is part of the same category, but not an exact match`() {
+        val patientRecord = TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(TumorStage.III, TumorStage.II))
+        assertEvaluation(EvaluationResult.UNDETERMINED, HasTumorStage(setOf(TumorStage.IIIB)).evaluate(patientRecord))
     }
 
     private fun assertDerivedEvaluation(expectedResult: EvaluationResult, vararg derivedStages: TumorStage) {
