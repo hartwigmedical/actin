@@ -2,37 +2,49 @@ package com.hartwig.actin.algo.evaluation.complication
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.icd.IcdModel
+import com.hartwig.actin.icd.datamodel.IcdMatches
 
-class HasSpecificComplication(private val termToFind: String) : EvaluationFunction {
+class HasSpecificComplication(private val icdModel: IcdModel, private val targetIcdTitles: List<String>) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val complications = record.complications ?: return EvaluationFactory.recoverableUndetermined(
+        record.complications ?: return EvaluationFactory.recoverableUndetermined(
             "Undetermined whether patient has cancer-related complications",
             "Undetermined complication status"
         )
 
-        val matchingComplications = complications.map { it.name }
-            .filter { it.lowercase().contains(termToFind.lowercase()) }
+        val targetCodes = targetIcdTitles.map { icdModel.resolveCodeForTitle(it)!! }.toSet()
+        val icdMatches =
+            record.complications?.let { icdModel.findInstancesMatchingAnyIcdCode(it, targetCodes) } ?: IcdMatches(emptyList(), emptyList())
 
-        if (matchingComplications.isNotEmpty()) {
-            return EvaluationFactory.pass(
-                "Patient has complication " + concat(matchingComplications),
-                "Present " + concat(matchingComplications)
+        val icdTitleText = if (targetIcdTitles.size > 1) {
+            "belonging to type ${Format.concatLowercaseWithCommaAndOr(targetIcdTitles)}"
+        } else targetIcdTitles.takeIf { it.isNotEmpty() }?.first()
+
+        return when {
+            icdMatches.fullMatches.isNotEmpty() -> EvaluationFactory.pass(
+                "Patient has complication(s) " + Format.concatItemsWithAnd(icdMatches.fullMatches),
+                "Present " + Format.concatItemsWithAnd(icdMatches.fullMatches)
+            )
+
+            icdMatches.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> EvaluationFactory.undetermined(
+                "Has complication(s) ${Format.concatItemsWithAnd(icdMatches.mainCodeMatchesWithUnknownExtension)} " +
+                        "but undetermined if $icdTitleText"
+            )
+
+            hasComplicationsWithoutNames(record) -> EvaluationFactory.undetermined(
+                "Patient has complications but type of complications unknown. Undetermined if $icdTitleText",
+                "Complications present, unknown if $icdTitleText"
+            )
+
+            else -> EvaluationFactory.fail(
+                "Patient does not have complication $icdTitleText",
+                "Complication $icdTitleText not present"
             )
         }
-        return if (hasComplicationsWithoutNames(record)) {
-            EvaluationFactory.undetermined(
-                "Patient has complications but type of complications unknown. Undetermined if belonging to $termToFind",
-                "Complications present, unknown if belonging to $termToFind"
-            )
-        } else
-            EvaluationFactory.fail(
-                "Patient does not have complication $termToFind",
-                "Complication $termToFind not present"
-            )
     }
 
     companion object {

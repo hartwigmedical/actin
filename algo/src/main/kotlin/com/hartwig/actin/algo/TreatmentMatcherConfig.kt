@@ -15,6 +15,7 @@ data class TreatmentMatcherConfig(
     val trialDatabaseDirectory: String,
     val treatmentDirectory: String,
     val doidJson: String,
+    val icdTsv: String,
     val atcTsv: String,
     val extendedEfficacyJson: String,
     val personalizationDataPath: String?,
@@ -31,6 +32,7 @@ data class TreatmentMatcherConfig(
         private const val TRIAL_DATABASE_DIRECTORY = "trial_database_directory"
         private const val TREATMENT_DIRECTORY = "treatment_directory"
         private const val DOID_JSON = "doid_json"
+        private const val ICD_TSV = "icd_tsv"
         private const val ATC_TSV = "atc_tsv"
         private const val EXTENDED_EFFICACY_JSON = "extended_efficacy_json"
         private const val PERSONALIZATION_DATA_PATH = "personalization_data_path"
@@ -46,6 +48,7 @@ data class TreatmentMatcherConfig(
             options.addOption(TRIAL_DATABASE_DIRECTORY, true, "Directory containing all available trials")
             options.addOption(TREATMENT_DIRECTORY, true, "Path to treatment data directory")
             options.addOption(DOID_JSON, true, "Path to JSON file containing the full DOID tree.")
+            options.addOption(ICD_TSV, true, "Path to TSV file containing the full ICD-11 tree")
             options.addOption(ATC_TSV, true, "Path to TSV file container the full ATC tree")
             options.addOption(EXTENDED_EFFICACY_JSON, true, "Path to JSON file containing extended efficacy evidence")
             options.addOption(PERSONALIZATION_DATA_PATH, true, "Path to personalization data file")
@@ -82,6 +85,7 @@ data class TreatmentMatcherConfig(
                 trialDatabaseDirectory = ApplicationConfig.nonOptionalDir(cmd, TRIAL_DATABASE_DIRECTORY),
                 treatmentDirectory = ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DIRECTORY),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
+                icdTsv = ApplicationConfig.nonOptionalFile(cmd, ICD_TSV),
                 atcTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_TSV),
                 extendedEfficacyJson = ApplicationConfig.nonOptionalFile(cmd, EXTENDED_EFFICACY_JSON),
                 personalizationDataPath = ApplicationConfig.optionalFile(cmd, PERSONALIZATION_DATA_PATH),

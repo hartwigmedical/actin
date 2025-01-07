@@ -12,6 +12,9 @@ import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
+import com.hartwig.actin.icd.IcdModel
+import com.hartwig.actin.icd.serialization.CsvReader
+import com.hartwig.actin.icd.serialization.IcdDeserializer
 import com.hartwig.actin.medication.AtcTree
 import org.apache.logging.log4j.LogManager
 import java.io.File
@@ -28,10 +31,15 @@ class TestStandardOfCareApplication {
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
         val doidModel: DoidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
+        LOGGER.info("Creating ICD-11 tree from file {}", ICD_TSV_PATH)
+        val icdNodes = IcdDeserializer.deserialize(CsvReader.readFromFile(ICD_TSV_PATH))
+        LOGGER.info(" Loaded {} nodes", icdNodes.size)
+        val icdModel = IcdModel.create(icdNodes)
+
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(TREATMENT_JSON_PATH)
 
         val recommendationEngine = RecommendationEngineFactory(
-            RuleMappingResourcesTestFactory.create(doidModel, AtcTree.createFromFile(ATC_TREE_PATH), treatmentDatabase)
+            RuleMappingResourcesTestFactory.create(doidModel, icdModel, AtcTree.createFromFile(ATC_TREE_PATH), treatmentDatabase)
         ).create()
 
         val patient = patient(treatmentDatabase)
@@ -64,6 +72,10 @@ class TestStandardOfCareApplication {
         ).joinToString(File.separator)
 
         private val TREATMENT_JSON_PATH = ACTIN_RESOURCE_PATH + File.separator + "treatment_db"
+
+        private val ICD_TSV_PATH = listOf(
+            ACTIN_RESOURCE_PATH, "icd", "SimpleTabulation-ICD-11-MMS-en.tsv"
+        ).joinToString(File.separator)
 
         private val ATC_TREE_PATH = listOf(ACTIN_RESOURCE_PATH, "atc_config", "atc_tree.tsv").joinToString(File.separator)
 

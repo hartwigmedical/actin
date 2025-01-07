@@ -13,6 +13,9 @@ import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
+import com.hartwig.actin.icd.IcdModel
+import com.hartwig.actin.icd.serialization.CsvReader
+import com.hartwig.actin.icd.serialization.IcdDeserializer
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.evidence.ServeLoader
@@ -48,6 +51,11 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
+        LOGGER.info("Creating ICD-11 tree from file {}", config.icdTsv)
+        val icdNodes = IcdDeserializer.deserialize(CsvReader.readFromFile(config.icdTsv))
+        LOGGER.info(" Loaded {} nodes", icdNodes.size)
+        val icdModel = IcdModel.create(icdNodes)
+
         LOGGER.info("Creating ATC tree from file {}", config.atcTsv)
         val atcTree = AtcTree.createFromFile(config.atcTsv)
 
@@ -58,7 +66,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val molecularInputChecker = MolecularInputChecker.createAnyGeneValid()
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
         val functionInputResolver =
-            FunctionInputResolver(doidModel, molecularInputChecker, treatmentDatabase, MedicationCategories.create(atcTree))
+            FunctionInputResolver(doidModel, icdModel, molecularInputChecker, treatmentDatabase, MedicationCategories.create(atcTree))
         val configuration = EnvironmentConfiguration.create(config.overridesYaml).algo
         LOGGER.info(" Loaded algo config: $configuration")
 
@@ -66,6 +74,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val resources = RuleMappingResources(
             referenceDateProvider,
             doidModel,
+            icdModel,
             functionInputResolver,
             atcTree,
             treatmentDatabase,

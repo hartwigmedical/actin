@@ -6,6 +6,7 @@ import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.feed.standard.EhrTestData.createEhrPatientRecord
 import com.hartwig.actin.clinical.feed.standard.ProvidedPriorOtherCondition
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 import io.mockk.every
 import io.mockk.mockk
@@ -17,7 +18,7 @@ private const val PRIOR_CONDITION_NAME = "prior_condition"
 
 private val PRIOR_OTHER_CONDITION = PriorOtherCondition(
     name = PRIOR_CONDITION_NAME,
-    category = "category",
+    icdCodes = setOf(IcdCode("icdCode")),
     isContraindicationForTherapy = true
 )
 

@@ -14,8 +14,7 @@ class ComplicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resou
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
             EligibilityRule.HAS_ANY_COMPLICATION to hasAnyComplicationCreator(),
-            EligibilityRule.HAS_COMPLICATION_X to hasSpecificComplicationCreator(),
-            EligibilityRule.HAS_COMPLICATION_OF_CATEGORY_X to hasComplicationOfCategoryCreator(),
+            EligibilityRule.HAS_ANY_COMPLICATION_X to hasSpecificComplicationCreator(),
             EligibilityRule.HAS_POTENTIAL_UNCONTROLLED_TUMOR_RELATED_PAIN to hasPotentialUncontrolledTumorRelatedPainCreator(),
             EligibilityRule.HAS_LEPTOMENINGEAL_DISEASE to hasLeptomeningealDiseaseCreator(),
         )
@@ -27,25 +26,18 @@ class ComplicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resou
 
     private fun hasSpecificComplicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val termToFind = functionInputResolver().createOneStringInput(function)
-            HasSpecificComplication(termToFind)
-        }
-    }
-
-    private fun hasComplicationOfCategoryCreator(): FunctionCreator {
-        return { function: EligibilityFunction ->
-            val categoryToFind = functionInputResolver().createOneStringInput(function)
-            HasComplicationOfCategory(categoryToFind)
+            val targetIcdTitles = functionInputResolver().createManyIcdTitlesInput(function)
+            HasSpecificComplication(icdModel(), targetIcdTitles)
         }
     }
 
     private fun hasPotentialUncontrolledTumorRelatedPainCreator(): FunctionCreator {
         val medicationCategories = MedicationCategories.create(atcTree())
         val selector = MedicationSelector(MedicationStatusInterpreterOnEvaluationDate(referenceDateProvider().date(), null))
-        return { HasPotentialUncontrolledTumorRelatedPain(selector, medicationCategories.resolve("Opioids")) }
+        return { HasPotentialUncontrolledTumorRelatedPain(selector, medicationCategories.resolve("Opioids"), icdModel()) }
     }
 
     private fun hasLeptomeningealDiseaseCreator(): FunctionCreator {
-        return { HasLeptomeningealDisease() }
+        return { HasLeptomeningealDisease(icdModel()) }
     }
 }

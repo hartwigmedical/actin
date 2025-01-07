@@ -2,6 +2,7 @@ package com.hartwig.actin.report.pdf.tables.clinical
 
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.clinical.Gender
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.PatientDetails
 import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.SurgeryStatus
@@ -91,5 +92,5 @@ class PatientCurrentDetailsGeneratorTest {
     }
 
     private fun toxicity(name: String, endDate: LocalDate?, grade: Int?) =
-        Toxicity(name, emptySet(), referenceDate.minusMonths(1), ToxicitySource.EHR, grade, endDate)
+        Toxicity(name, setOf(IcdCode("icdCode")), referenceDate.minusMonths(1), ToxicitySource.EHR, grade, endDate)
 }

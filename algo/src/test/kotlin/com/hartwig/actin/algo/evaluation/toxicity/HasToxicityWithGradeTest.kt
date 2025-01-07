@@ -2,13 +2,18 @@ package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
+import com.hartwig.actin.icd.IcdModel
+import com.hartwig.actin.icd.TestIcdFactory
+import com.hartwig.actin.icd.datamodel.IcdNode
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
 private val referenceDate: LocalDate = LocalDate.of(2024, 10, 1)
+private val icdModel = TestIcdFactory.createTestModel()
 
 class HasToxicityWithGradeTest {
 
@@ -31,8 +36,9 @@ class HasToxicityWithGradeTest {
 
     @Test
     fun `Should pass for grade 2 questionnaire toxicity`() {
-        val toxicities = listOf(toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2))
-        assertEvaluation(EvaluationResult.PASS, function().evaluate(ToxicityTestFactory.withToxicities(toxicities)))
+        val toxicities = listOf(toxicity(name = "tox", source = ToxicitySource.QUESTIONNAIRE, grade = 2))
+        val evaluation = function().evaluate(ToxicityTestFactory.withToxicities(toxicities))
+        assertEvaluation(EvaluationResult.PASS, evaluation)
     }
 
     @Test
@@ -60,14 +66,15 @@ class HasToxicityWithGradeTest {
     }
 
     @Test
-    fun `Should ignore toxicities that match ignore filter`() {
-        val function = function(ignoreFilters = setOf("ignore"))
+    fun `Should ignore toxicities that match ICD code of icd titles in ignore list`() {
+        val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("ignore", "keep"))
+        val function = function(icdModel, ignoreFilters = listOf("ignoreTitle"))
         val toxicities = listOf(
-            toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "ignore me please")
+            toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "ignore me", icdMainCode = "ignoreCode"),
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)))
 
-        val matchingToxicity = toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "keep me please")
+        val matchingToxicity = toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "keep me", icdMainCode = "keepCode")
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(ToxicityTestFactory.withToxicities(toxicities + matchingToxicity))
@@ -75,58 +82,31 @@ class HasToxicityWithGradeTest {
     }
 
     @Test
-    fun `Should match selectively using name filter`() {
-        val function = function(nameFilter = "specific")
+    fun `Should match selectively using ICD codes of icd titles in target list`() {
+        val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("target", "nonTarget"))
+        val function = function(icdModel, targetIcdTitles = listOf("targetTitle"))
         val toxicities = listOf(
-            toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "something random")
+            toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "not a target", icdMainCode = "nonTargetCode"),
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)))
 
-        val matchingToxicity = toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "something specific")
-        assertEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(ToxicityTestFactory.withToxicities(toxicities + matchingToxicity))
-        )
+        val matchingToxicity = toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "targetTox", icdMainCode = "targetCode")
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withToxicities(toxicities + matchingToxicity)))
     }
 
     @Test
-    fun `Should evaluate only most recent toxicity with name`() {
-        val function = function()
-        val firstWarnToxicity = toxicity(
-            source = ToxicitySource.EHR, grade = 2, name = "toxicity 1", evaluatedDate = LocalDate.of(2020, 1, 1)
+    fun `Should pass if ICD entry in target list is parent of toxicity in patient record`() {
+        val icdModel = IcdModel.create(
+            listOf(
+                IcdNode("targetCode", listOf("parentCode"), "targetTitle"),
+                IcdNode("parentCode", emptyList(), "parentTitle")
+            )
         )
-        val secondFailToxicity = toxicity(
-            source = ToxicitySource.EHR, grade = 1, name = "toxicity 1", evaluatedDate = LocalDate.of(2021, 1, 1)
+        val function = function(icdModel, targetIcdTitles = listOf("parentTitle"))
+        val toxicities = listOf(
+            toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "target tox", icdMainCode = "targetCode"),
         )
-        val thirdWarnToxicity = toxicity(
-            source = ToxicitySource.EHR, grade = 2, name = "toxicity 1", evaluatedDate = LocalDate.of(2022, 1, 1)
-        )
-
-        listOf(
-            listOf(firstWarnToxicity) to EvaluationResult.WARN,
-            listOf(firstWarnToxicity, secondFailToxicity) to EvaluationResult.FAIL,
-            listOf(firstWarnToxicity, secondFailToxicity, thirdWarnToxicity) to EvaluationResult.WARN
-        ).forEach { (toxicities, expectedEvaluation) ->
-            assertEvaluation(expectedEvaluation, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)))
-        }
-    }
-
-    @Test
-    fun `Should pass for questionnaire toxicities that are also complications`() {
-        val questionnaireToxicity = toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2)
-        assertEvaluation(
-            EvaluationResult.PASS,
-            function().evaluate(ToxicityTestFactory.withToxicityThatIsAlsoComplication(questionnaireToxicity))
-        )
-    }
-
-    @Test
-    fun `Should ignore EHR toxicities that are also complications`() {
-        val ehrToxicity = toxicity(source = ToxicitySource.EHR, grade = 2)
-        assertEvaluation(
-            EvaluationResult.FAIL,
-            function().evaluate(ToxicityTestFactory.withToxicityThatIsAlsoComplication(ehrToxicity))
-        )
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)))
     }
 
     @Test
@@ -157,30 +137,31 @@ class HasToxicityWithGradeTest {
         val function = function()
         val toxicities = listOf(
             toxicity(
-                ToxicitySource.QUESTIONNAIRE, DEFAULT_QUESTIONNAIRE_GRADE, "toxicity 1", LocalDate.of(2022, 1, 2)
+                ToxicitySource.QUESTIONNAIRE, DEFAULT_QUESTIONNAIRE_GRADE, "toxicity 1", endDate = LocalDate.of(2022, 1, 2)
             )
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)))
     }
 
     private fun function(
+        icd: IcdModel = icdModel,
         minGrade: Int = DEFAULT_QUESTIONNAIRE_GRADE,
-        nameFilter: String? = null,
-        ignoreFilters: Set<String> = emptySet(),
+        targetIcdTitles: List<String>? = null,
+        ignoreFilters: List<String> = emptyList(),
         warnIfToxicitiesNotFromQuestionnaire: Boolean = true
     ): HasToxicityWithGrade {
         return HasToxicityWithGrade(
-            minGrade, nameFilter, ignoreFilters, warnIfToxicitiesNotFromQuestionnaire, referenceDate
+            icd, minGrade, targetIcdTitles, ignoreFilters, warnIfToxicitiesNotFromQuestionnaire, referenceDate
         )
     }
 
     fun toxicity(
         source: ToxicitySource,
         grade: Int? = null,
-        name: String = "",
+        name: String = "name",
+        icdMainCode: String = icdModel.titleToCodeMap.keys.first(),
         endDate: LocalDate? = null,
         evaluatedDate: LocalDate? = null
     ) =
-        Toxicity(name, emptySet(), evaluatedDate ?: referenceDate.minusMonths(1), source, grade, endDate)
-
+        Toxicity(name, setOf(IcdCode(icdMainCode)), evaluatedDate ?: referenceDate.minusMonths(1), source, grade, endDate)
 }
