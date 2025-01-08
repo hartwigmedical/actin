@@ -82,7 +82,7 @@ class HasTumorStageTest {
 
     @Test
     fun `Should display correct undetermined message with derived stages`() {
-        val patientRecord = TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(TumorStage.III, TumorStage.IV))
+        val patientRecord = TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(TumorStage.IV, TumorStage.III))
         assertThat(hasTumorStage.evaluate(patientRecord).undeterminedGeneralMessages).containsExactly(
             "Unknown if tumor stage is III (data missing) - derived III or IV based on lesions"
         )

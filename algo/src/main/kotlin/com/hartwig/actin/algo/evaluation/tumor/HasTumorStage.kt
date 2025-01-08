@@ -13,14 +13,16 @@ import com.hartwig.actin.datamodel.clinical.TumorStage
 class HasTumorStage(private val stagesToMatch: Set<TumorStage>) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        if (stagesToMatch.isEmpty()) throw IllegalStateException("No stages to match configured")
-        val stageMessage = Format.concatItemsWithOr(stagesToMatch.sorted())
+        if (stagesToMatch.isEmpty()) {
+            throw IllegalStateException("No stages to match configured")
+        }
+        val stageMessage = Format.concatItemsWithOr(stagesToMatch)
         val allStagesToMatch = stagesToMatch + additionalStagesToMatch(stagesToMatch)
         val stage = record.tumor.stage
 
         if (stage == null) {
             val derivedStages = record.tumor.derivedStages
-            val derivedStageMessage = "derived ${derivedStages?.sorted()?.let { Format.concatItemsWithOr(it) }} based on lesions"
+            val derivedStageMessage = "derived ${derivedStages?.let(Format::concatItemsWithOr)} based on lesions"
 
             return when {
                 derivedStages == null -> {
@@ -40,7 +42,8 @@ class HasTumorStage(private val stagesToMatch: Set<TumorStage>) : EvaluationFunc
                     )
                 }
 
-                derivedStages.map { evaluateWithStage(it, allStagesToMatch, stageMessage) }.any { it.result in listOf(EvaluationResult.PASS, EvaluationResult.UNDETERMINED) } -> {
+                derivedStages.map { evaluateWithStage(it, allStagesToMatch, stageMessage) }
+                    .any { it.result in listOf(EvaluationResult.PASS, EvaluationResult.UNDETERMINED) } -> {
                     undetermined(
                         "Unknown if tumor stage is $stageMessage (no tumor stage details provided) - $derivedStageMessage",
                         "Unknown if tumor stage is $stageMessage (data missing) - $derivedStageMessage"
