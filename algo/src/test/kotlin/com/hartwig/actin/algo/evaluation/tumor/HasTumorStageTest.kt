@@ -36,7 +36,17 @@ class HasTumorStageTest {
         val patientRecord = TumorTestFactory.withTumorStage(TumorStage.III)
         assertEvaluation(
             EvaluationResult.PASS,
-            HasTumorStage(setOf(TumorStage.IIIC, TumorStage.IIIB, TumorStage.IIIA, TumorStage.IIID)).evaluate(patientRecord)
+            HasTumorStage(
+                setOf(
+                    TumorStage.IIA,
+                    TumorStage.IIB,
+                    TumorStage.IIC,
+                    TumorStage.IIIC,
+                    TumorStage.IIIB,
+                    TumorStage.IIIA,
+                    TumorStage.IIID
+                )
+            ).evaluate(patientRecord)
         )
     }
 

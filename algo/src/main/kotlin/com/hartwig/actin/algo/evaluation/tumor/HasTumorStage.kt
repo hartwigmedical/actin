@@ -49,8 +49,8 @@ class HasTumorStage(private val stagesToMatch: Set<TumorStage>) : EvaluationFunc
         val stageString = stagesToMatch.joinToString(" or ") { it.display() }
         return when {
             (stage in stagesToMatch || stage.category in stagesToMatch) -> pass(
-                "Patient tumor stage is requested stage $stageString",
-                "Adequate tumor stage"
+                "Patient tumor stage $stage meets requested stage(s) $stageString",
+                "Patient tumor stage $stage meets requested stage(s) $stageString"
             )
 
             (stagesToMatch.any { it.category == stage }) -> undetermined(
@@ -58,17 +58,23 @@ class HasTumorStage(private val stagesToMatch: Set<TumorStage>) : EvaluationFunc
                 "Undetermined if patient tumor stage $stage meets stage requirement(s) ($stageString)"
             )
 
-            else -> fail("Patient tumor stage is not requested stage $stageString", "Inadequate tumor stage")
+            else -> fail(
+                "Patient tumor stage $stage does not meet requested stage(s) $stageString",
+                "Patient tumor stage $stage does not meet requested stage(s) $stageString"
+            )
         }
     }
 
     private fun adjustStagesToMatch(stagesToMatch: Set<TumorStage>): Set<TumorStage> {
-        return when (stagesToMatch.sorted()) {
-            TumorStage.entries.filter { it.category == TumorStage.I } -> stagesToMatch + TumorStage.I
-            TumorStage.entries.filter { it.category == TumorStage.II } -> stagesToMatch + TumorStage.II
-            TumorStage.entries.filter { it.category == TumorStage.III } -> stagesToMatch + TumorStage.III
-            TumorStage.entries.filter { it.category == TumorStage.IV } -> stagesToMatch + TumorStage.IV
-            else -> stagesToMatch
+        val stagesToCheck = listOf(TumorStage.I, TumorStage.II, TumorStage.III, TumorStage.IV)
+        val stagesToAdd = mutableSetOf<TumorStage>()
+
+        for (stage in stagesToCheck) {
+            if (stagesToMatch.filter { it.category == stage }.sorted() == TumorStage.entries.filter { it.category == stage }) {
+                stagesToAdd.add(stage)
+            }
         }
+
+        return stagesToMatch + stagesToAdd
     }
 }
