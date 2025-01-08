@@ -36,28 +36,25 @@ class HasHadPriorConditionWithIcdCodeFromSetRecently(
                     "Patient has had disease of ICD category ${
                         fullMatchSummary[EvaluationResult.PASS]?.joinToString(", ")
                         { resolveIcdTitle(it) }
-                    } (belonging to $diseaseDescription) within specified time frame",
-                    "Recent $diseaseDescription"
+                    } (belonging to $diseaseDescription) within specified time frame"
                 )
             }
 
             fullMatchSummary.containsKey(EvaluationResult.WARN) -> {
                 EvaluationFactory.warn(
-                    "Patient has had disease of ICD category ${
+                    "Has had disease of ICD category ${
                         fullMatchSummary[EvaluationResult.WARN]?.joinToString(", ")
                         { resolveIcdTitle(it) }
-                    } (belonging to $diseaseDescription) near start of specified time frame",
-                    "Borderline recent $diseaseDescription"
+                    } (belonging to $diseaseDescription) near start of specified time frame"
                 )
             }
 
             fullMatchSummary.containsKey(EvaluationResult.UNDETERMINED) -> {
                 EvaluationFactory.undetermined(
-                    "Patient has had disease of ICD category ${
+                    "Has had disease of ICD category ${
                         fullMatchSummary[EvaluationResult.UNDETERMINED]?.joinToString(", ")
                         { resolveIcdTitle(it) }
-                    } (belonging to $diseaseDescription), but undetermined whether that is within specified time frame",
-                    "Recent $diseaseDescription"
+                    } (belonging to $diseaseDescription), but undetermined whether that is within specified time frame"
                 )
             }
 
@@ -68,10 +65,7 @@ class HasHadPriorConditionWithIcdCodeFromSetRecently(
             }
 
             else -> {
-                EvaluationFactory.fail(
-                    "Patient has had no recent condition belonging to $diseaseDescription",
-                    "No recent $diseaseDescription"
-                )
+                EvaluationFactory.fail("No recent $diseaseDescription")
             }
         }
     }
@@ -93,6 +87,6 @@ class HasHadPriorConditionWithIcdCodeFromSetRecently(
     }
 
     private fun resolveIcdTitle(condition: PriorOtherCondition): String {
-        return Format.concatWithCommaAndAnd(condition.icdCodes.map { icdModel.resolveTitleForCode(it) })
+        return Format.concat(condition.icdCodes.map { icdModel.resolveTitleForCode(it) })
     }
 }

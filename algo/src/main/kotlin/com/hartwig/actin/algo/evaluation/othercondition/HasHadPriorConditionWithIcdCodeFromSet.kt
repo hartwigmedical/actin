@@ -22,12 +22,11 @@ class HasHadPriorConditionWithIcdCodeFromSet(
             icdMatches.fullMatches.isNotEmpty() -> {
                 val display = icdMatches.fullMatches.map { it.display() }.toSet()
                 EvaluationFactory.pass(
-                    PriorConditionMessages.passSpecific(
+                    PriorConditionMessages.pass(
                         PriorConditionMessages.Characteristic.CONDITION,
                         display,
                         priorOtherConditionTerm
-                    ),
-                    PriorConditionMessages.passGeneral(display)
+                    )
                 )
             }
 
@@ -40,8 +39,7 @@ class HasHadPriorConditionWithIcdCodeFromSet(
 
             else -> {
                 EvaluationFactory.fail(
-                    PriorConditionMessages.failSpecific(priorOtherConditionTerm),
-                    PriorConditionMessages.failGeneral()
+                    PriorConditionMessages.fail(priorOtherConditionTerm),
                 )
             }
         }

@@ -12,8 +12,7 @@ class HasSpecificComplication(private val icdModel: IcdModel, private val target
 
     override fun evaluate(record: PatientRecord): Evaluation {
         record.complications ?: return EvaluationFactory.recoverableUndetermined(
-            "Undetermined whether patient has cancer-related complications",
-            "Undetermined complication status"
+            "Undetermined whether patient has cancer-related complications"
         )
 
         val targetCodes = targetIcdTitles.map { icdModel.resolveCodeForTitle(it)!! }.toSet()
