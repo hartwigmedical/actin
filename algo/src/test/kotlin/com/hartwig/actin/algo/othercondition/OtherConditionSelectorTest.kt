@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.othercondition
 
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -17,8 +18,7 @@ class OtherConditionSelectorTest {
     private fun create(isContraindicationForTherapy: Boolean): PriorOtherCondition {
         return PriorOtherCondition(
             name = "",
-            doids = emptySet(),
-            category = "",
+            icdCodes = setOf(IcdCode("", null)),
             isContraindicationForTherapy = isContraindicationForTherapy,
         )
     }

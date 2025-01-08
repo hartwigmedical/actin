@@ -1,41 +1,50 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
-import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.TestPatientFactory.createMinimalTestWGSPatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
-import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
-import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
+import com.hartwig.actin.icd.TestIcdFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
+private val IMMUNOTHERAPY_TOX_ENTRY = TreatmentTestFactory.treatmentHistoryEntry(
+    treatments = setOf(TreatmentTestFactory.drugTreatment("immunoName", TreatmentCategory.IMMUNOTHERAPY)), stopReason = StopReason.TOXICITY
+)
+private val IMMUNOTHERAPY_PD_ENTRY =
+    IMMUNOTHERAPY_TOX_ENTRY.copy(treatmentHistoryDetails = TreatmentHistoryDetails(stopReason = StopReason.PROGRESSIVE_DISEASE))
+private val IMMUNO_INTOLERANCE = Intolerance(
+    name = "Nivolumab induced pneumonitis",
+    icdCodes = setOf(IcdCode(IcdConstants.DRUG_ALLERGY_CODE, IcdConstants.IMMUNOTHERAPY_DRUG_SET.first()))
+)
+
 class HasExperiencedImmuneRelatedAdverseEventsTest {
-    private val function = HasExperiencedImmuneRelatedAdverseEvents()
+    private val function = HasExperiencedImmuneRelatedAdverseEvents(TestIcdFactory.createTestModel())
 
     @Test
     fun `Should fail with no treatmentHistory`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())))
     }
 
     @Test
-    fun `Should fail with treatment with other category`() {
-        val treatments = listOf(treatmentHistoryEntry(TreatmentCategory.TARGETED_THERAPY))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(treatments)))
+    fun `Should fail with no immunotherapy in history`() {
+        val record = createMinimalTestWGSPatientRecord().copy(
+            intolerances = listOf(IMMUNO_INTOLERANCE),
+            oncologicalHistory = emptyList()
+        )
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
     }
 
     @Test
     fun `Should warn with prior immunotherapy treatment and stop reason toxicity`() {
-        val treatments = listOf(
-            TreatmentTestFactory.treatmentHistoryEntry(
-                treatments = setOf(treatment(TreatmentCategory.IMMUNOTHERAPY)), stopReason = StopReason.TOXICITY
-            )
-        )
-        val evaluation = function.evaluate(withTreatmentHistory(treatments))
+        val treatments = listOf(IMMUNOTHERAPY_TOX_ENTRY)
+        val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
         assertEvaluation(EvaluationResult.WARN, evaluation)
         assertThat(evaluation.warnMessages).containsExactly(
             "Patient may have experienced immunotherapy related adverse events (prior immunotherapy with stop reason toxicity)"
@@ -43,20 +52,11 @@ class HasExperiencedImmuneRelatedAdverseEventsTest {
     }
 
     @Test
-    fun `Should warn with prior immunotherapy treatment with immunotherapy intolerance`() {
-        val treatments = listOf(
-            TreatmentTestFactory.treatmentHistoryEntry(
-                treatments = setOf(TreatmentTestFactory.drugTreatment("Nivolumab", TreatmentCategory.IMMUNOTHERAPY)),
-                stopReason = StopReason.PROGRESSIVE_DISEASE
-            )
+    fun `Should warn for prior immunotherapy treatment and immunotherapy intolerance in history`() {
+        val record = createMinimalTestWGSPatientRecord().copy(
+            intolerances = listOf(IMMUNO_INTOLERANCE),
+            oncologicalHistory = listOf(IMMUNOTHERAPY_PD_ENTRY)
         )
-        val intolerance = Intolerance(
-            name = "Nivolumab induced pneumonitis",
-            doids = setOf(DoidConstants.DRUG_ALLERGY_DOID),
-            treatmentCategories = setOf(TreatmentCategory.IMMUNOTHERAPY)
-        )
-        val base = createMinimalTestWGSPatientRecord()
-        val record = base.copy(intolerances = listOf(intolerance), oncologicalHistory = treatments)
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.WARN, evaluation)
         assertThat(evaluation.warnMessages).containsExactly(
@@ -65,25 +65,17 @@ class HasExperiencedImmuneRelatedAdverseEventsTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined with prior immunotherapy treatment with unknown stop reason`() {
-        val treatments = listOf(
-            TreatmentTestFactory.treatmentHistoryEntry(
-                treatments = setOf(treatment(TreatmentCategory.IMMUNOTHERAPY)), stopReason = null
-            )
+    fun `Should evaluate to undetermined for prior immunotherapy treatment and drug intolerance in history with unknown extension code`() {
+        val record = createMinimalTestWGSPatientRecord().copy(
+            intolerances = listOf(IMMUNO_INTOLERANCE.copy(icdCodes = setOf(IcdCode(IcdConstants.DRUG_ALLERGY_CODE, null)))),
+            oncologicalHistory = listOf(IMMUNOTHERAPY_PD_ENTRY)
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistory(treatments)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
     }
 
-    private fun withTreatmentHistory(treatmentHistory: List<TreatmentHistoryEntry>): PatientRecord {
-        val base = createMinimalTestWGSPatientRecord()
-        return base.copy(oncologicalHistory = treatmentHistory)
-    }
-
-    private fun treatmentHistoryEntry(category: TreatmentCategory): TreatmentHistoryEntry {
-        return TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(treatment(category)))
-    }
-
-    private fun treatment(category: TreatmentCategory): Treatment {
-        return TreatmentTestFactory.drugTreatment("", category)
+    @Test
+    fun `Should evaluate to undetermined with prior immunotherapy treatment with unknown stop reason`() {
+        val treatment = IMMUNOTHERAPY_TOX_ENTRY.copy(treatmentHistoryDetails = TreatmentHistoryDetails(stopReason = null))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatment))))
     }
 }

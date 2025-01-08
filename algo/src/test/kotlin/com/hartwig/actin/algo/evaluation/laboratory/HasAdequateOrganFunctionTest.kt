@@ -1,13 +1,13 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
-import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory
+import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.LabValue
-import com.hartwig.actin.doid.TestDoidModelFactory
+import com.hartwig.actin.icd.TestIcdFactory
 import org.junit.Test
 import java.time.LocalDate
 
@@ -15,7 +15,7 @@ private val VALID_DATE = LocalDate.of(2024, 12, 1)
 
 class HasAdequateOrganFunctionTest {
 
-    private val function = HasAdequateOrganFunction(VALID_DATE, TestDoidModelFactory.createMinimalTestDoidModel())
+    private val function = HasAdequateOrganFunction(VALID_DATE, TestIcdFactory.createTestModel())
     private val upperLimitLabMeasurementList = listOf(
         LabMeasurement.LACTATE_DEHYDROGENASE,
         LabMeasurement.TOTAL_BILIRUBIN,
@@ -53,7 +53,7 @@ class HasAdequateOrganFunctionTest {
 
     @Test
     fun `Should pass when lab values within normal range and no cardiovascular disease present`() {
-        val condition = OtherConditionTestFactory.priorOtherCondition(doids = setOf(DoidConstants.STOMACH_DISEASE_DOID))
+        val condition = OtherConditionTestFactory.priorOtherCondition(icdMainCode = IcdConstants.PNEUMOTHORAX_CODE)
         val record = LabTestFactory.withLabValues(
             upperLimitLabMeasurementList.map { createLabValue(it, withinLimits = true, evaluateAgainstLLN = false) } +
                     lowerLimitLabMeasurementList.map { createLabValue(it, withinLimits = true, evaluateAgainstLLN = true) }
@@ -85,7 +85,7 @@ class HasAdequateOrganFunctionTest {
             EvaluationResult.WARN,
             function.evaluate(
                 OtherConditionTestFactory.withPriorOtherCondition(
-                    OtherConditionTestFactory.priorOtherCondition(doids = setOf(DoidConstants.CARDIOVASCULAR_DISEASE_DOID))
+                    OtherConditionTestFactory.priorOtherCondition(icdMainCode = IcdConstants.CIRCULATORY_SYSTEM_DISEASE_CHAPTER)
                 )
             )
         )

@@ -1,50 +1,29 @@
 package com.hartwig.actin.algo.evaluation.othercondition
 
-import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithCommaAndAnd
-import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
+import com.hartwig.actin.algo.evaluation.util.Format
+import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.clinical.Complication
-import com.hartwig.actin.datamodel.clinical.ToxicitySource
-import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.datamodel.clinical.IcdCode
+import com.hartwig.actin.icd.IcdModel
 
-class HasPotentialAbsorptionDifficulties(private val doidModel: DoidModel) : EvaluationFunction {
+class HasPotentialAbsorptionDifficulties(private val icdModel: IcdModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val conditions = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions).flatMap { it.doids }
-            .filter { doidModel.doidWithParents(it).any { doid -> doid in DoidConstants.ABSORPTION_DIFFICULTIES_DOID_SET } }
-            .map { doidModel.resolveTermForDoid(it) }
+        val targetIcdCodes = IcdConstants.POSSIBLE_ABSORPTION_DIFFICULTIES_SET.map { IcdCode(it) }.toSet()
+        val conditionsComplicationsAndToxicities = icdModel.findInstancesMatchingAnyIcdCode(
+            OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions) + (record.complications
+                ?: emptyList()) + record.toxicities,
+            targetIcdCodes
+        ).fullMatches
 
-        if (conditions.isNotEmpty()) {
-            return EvaluationFactory.pass("Potential absorption difficulties (${concatLowercaseWithCommaAndAnd(conditions.filterNotNull())}")
-        }
-        val complications = record.complications?.filter { isOfCategory(it, GASTROINTESTINAL_DISORDER_CATEGORY) }
-            ?.map { it.name } ?: emptyList()
-
-        if (complications.isNotEmpty()) {
-            return EvaluationFactory.pass("Potential absorption difficulties (${concatLowercaseWithCommaAndAnd(complications)}")
-        }
-        val toxicities = record.toxicities
-            .filter { it.source == ToxicitySource.QUESTIONNAIRE || (it.grade ?: 0) >= 2 }
-            .map { it.name }
-            .filter { stringCaseInsensitivelyMatchesQueryCollection(it, TOXICITIES_CAUSING_ABSORPTION_DIFFICULTY) }
-
-        return if (toxicities.isNotEmpty()) {
-            EvaluationFactory.pass("Potential absorption difficulties (${concatLowercaseWithCommaAndAnd(toxicities)})")
-        } else
-            EvaluationFactory.fail("No potential reasons for absorption problems identified")
-    }
-
-    companion object {
-        const val GASTROINTESTINAL_DISORDER_CATEGORY: String = "gastrointestinal disorder"
-        val TOXICITIES_CAUSING_ABSORPTION_DIFFICULTY = setOf("diarrhea", "nausea", "vomit")
-
-        private fun isOfCategory(complication: Complication, categoryToFind: String): Boolean {
-            return complication.categories.any { it.lowercase().contains(categoryToFind.lowercase()) }
+        return if (conditionsComplicationsAndToxicities.isNotEmpty()) {
+            EvaluationFactory.pass("Potential absorption difficulties (${Format.concatItemsWithAnd(conditionsComplicationsAndToxicities)}")
+        } else {
+            EvaluationFactory.fail("No potential absorption difficulties identified")
         }
     }
 }

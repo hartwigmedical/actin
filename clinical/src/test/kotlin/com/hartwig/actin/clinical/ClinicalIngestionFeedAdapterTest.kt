@@ -18,6 +18,7 @@ import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireVersion
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.doid.config.DoidManualConfig
+import com.hartwig.actin.icd.TestIcdFactory
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import com.hartwig.actin.util.json.GsonSerializer
 import java.io.File
@@ -48,14 +49,17 @@ class ClinicalIngestionFeedAdapterTest {
                     "5082" to CurationDoidValidator.DISEASE_DOID,
                     "11335" to CurationDoidValidator.DISEASE_DOID,
                     "0060500" to CurationDoidValidator.DISEASE_DOID,
-                    "0081062" to CurationDoidValidator.DISEASE_DOID
+                    "0081062" to CurationDoidValidator.DISEASE_DOID,
+                    "0040046" to CurationDoidValidator.DISEASE_DOID
                 ),
                 emptySet()
             )
         )
+
         curationDatabase = CurationDatabaseContext.create(
             CURATION_DIRECTORY,
             CurationDoidValidator(testDoidModel),
+            TestIcdFactory.createTestModel(),
             TestTreatmentDatabaseFactory.createProper()
         )
         adapter = ClinicalIngestionFeedAdapter(
@@ -124,7 +128,9 @@ class ClinicalIngestionFeedAdapterTest {
             UnusedCurationConfig(categoryName = "Dosage Unit Translation", input = "stuk"),
             UnusedCurationConfig(categoryName = "Sequencing Test", input = "kras g12f"),
             UnusedCurationConfig(categoryName = "Surgery Name", input = "surgery1"),
-            UnusedCurationConfig(categoryName = "Lesion Location", input = "and possibly lymph nodes")
+            UnusedCurationConfig(categoryName = "Lesion Location", input = "and possibly lymph nodes"),
+            UnusedCurationConfig(categoryName = "Intolerance", input = "morfine"),
+            UnusedCurationConfig(categoryName = "Intolerance", input = "nikkel")
         )
 
         val gson = GsonSerializer.create()

@@ -3,21 +3,26 @@ package com.hartwig.actin.algo.evaluation.othercondition
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.priorOtherCondition
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.withPriorOtherConditions
+import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.icd.TestIcdFactory
 import org.junit.Test
 
 class HasHadOrganTransplantTest {
-    private val function = HasHadOrganTransplant(null)
-    private val functionWithMinYear = HasHadOrganTransplant(2021)
+    private val function = HasHadOrganTransplant(TestIcdFactory.createTestModel(), null)
+    private val functionWithMinYear = HasHadOrganTransplant(TestIcdFactory.createTestModel(), 2021)
 
     @Test
     fun `Should fail with no prior conditions`() {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(withPriorOtherConditions(emptyList())))
     }
-    
+
     @Test
     fun `Should fail with no relevant prior condition`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withPriorOtherConditions(listOf(priorOtherCondition()))))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withPriorOtherConditions(listOf(priorOtherCondition(icdMainCode = IcdConstants.PNEUMOTHORAX_CODE))))
+        )
     }
 
     @Test
@@ -25,7 +30,7 @@ class HasHadOrganTransplantTest {
         assertEvaluation(
             EvaluationResult.PASS, function.evaluate(
                 withPriorOtherConditions(
-                    listOf(priorOtherCondition(category = HasHadOrganTransplant.ORGAN_TRANSPLANT_CATEGORY))
+                    listOf(priorOtherCondition(icdMainCode = IcdConstants.TRANSPLANTATION_SET.first()))
                 )
             )
         )
@@ -41,7 +46,7 @@ class HasHadOrganTransplantTest {
         assertEvaluation(
             EvaluationResult.FAIL, functionWithMinYear.evaluate(
                 withPriorOtherConditions(
-                    listOf(priorOtherCondition(category = HasHadOrganTransplant.ORGAN_TRANSPLANT_CATEGORY, year = 2020))
+                    listOf(priorOtherCondition(icdMainCode = IcdConstants.TRANSPLANTATION_SET.first(), year = 2020))
                 )
             )
         )
@@ -52,7 +57,7 @@ class HasHadOrganTransplantTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED, functionWithMinYear.evaluate(
                 withPriorOtherConditions(
-                    listOf(priorOtherCondition(category = HasHadOrganTransplant.ORGAN_TRANSPLANT_CATEGORY, year = null))
+                    listOf(priorOtherCondition(icdMainCode = IcdConstants.TRANSPLANTATION_SET.first(), year = null))
                 )
             )
         )
@@ -63,7 +68,7 @@ class HasHadOrganTransplantTest {
         assertEvaluation(
             EvaluationResult.PASS, functionWithMinYear.evaluate(
                 withPriorOtherConditions(
-                    listOf(priorOtherCondition(category = HasHadOrganTransplant.ORGAN_TRANSPLANT_CATEGORY, year = 2021))
+                    listOf(priorOtherCondition(icdMainCode = IcdConstants.TRANSPLANTATION_SET.first(), year = 2021))
                 )
             )
         )

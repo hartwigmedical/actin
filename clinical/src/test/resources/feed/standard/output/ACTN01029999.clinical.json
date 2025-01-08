@@ -1,356 +1,373 @@
 {
   "patientId": "9E9uYbFvpFDjJVCs9XjDGF1LmP8Po6Zb80pYnoBrWg0=",
   "patient": {
-    "gender": "FEMALE",
-    "birthYear": 5,
-    "registrationDate": {
-      "year": 2020,
-      "month": 1,
-      "day": 1
-    },
-    "questionnaireDate": null
+	"gender": "FEMALE",
+	"birthYear": 5,
+	"registrationDate": {
+	  "year": 2020,
+	  "month": 1,
+	  "day": 1
+	},
+	"questionnaireDate": null
   },
   "tumor": {
-    "primaryTumorLocation": "Lung",
-    "primaryTumorSubLocation": "",
-    "primaryTumorType": "Adenocarcinoma",
-    "primaryTumorSubType": "",
-    "primaryTumorExtraDetails": null,
-    "doids": [
-      "3908"
-    ],
-    "stage": "IV",
-    "hasMeasurableDisease": true,
-    "hasBrainLesions": true,
-    "brainLesionsCount": 2,
-    "hasActiveBrainLesions": true,
-    "hasCnsLesions": false,
-    "cnsLesionsCount": 0,
-    "hasActiveCnsLesions": false,
-    "hasBoneLesions": false,
-    "boneLesionsCount": 0,
-    "hasLiverLesions": false,
-    "liverLesionsCount": 0,
-    "hasLungLesions": false,
-    "lungLesionsCount": 0,
-    "hasLymphNodeLesions": false,
-    "lymphNodeLesionsCount": 0,
-    "otherLesions": [],
-    "otherSuspectedLesions": [],
-    "biopsyLocation": null
+	"primaryTumorLocation": "Lung",
+	"primaryTumorSubLocation": "",
+	"primaryTumorType": "Adenocarcinoma",
+	"primaryTumorSubType": "",
+	"primaryTumorExtraDetails": null,
+	"doids": [
+	  "3908"
+	],
+	"stage": "IV",
+	"hasMeasurableDisease": true,
+	"hasBrainLesions": true,
+	"brainLesionsCount": 2,
+	"hasActiveBrainLesions": true,
+	"hasCnsLesions": false,
+	"cnsLesionsCount": 0,
+	"hasActiveCnsLesions": false,
+	"hasBoneLesions": false,
+	"boneLesionsCount": 0,
+	"hasLiverLesions": false,
+	"liverLesionsCount": 0,
+	"hasLungLesions": false,
+	"lungLesionsCount": 0,
+	"hasLymphNodeLesions": false,
+	"lymphNodeLesionsCount": 0,
+	"otherLesions": [],
+	"otherSuspectedLesions": [],
+	"biopsyLocation": null
   },
   "clinicalStatus": {
-    "who": 1,
-    "infectionStatus": null,
-    "ecg": null,
-    "lvef": null,
-    "hasComplications": true
+	"who": 1,
+	"infectionStatus": null,
+	"ecg": null,
+	"lvef": null,
+	"hasComplications": true
   },
   "oncologicalHistory": [
-    {
-      "treatments": [
-        {
-          "name": "CAPECITABINE+OXALIPLATIN",
-          "drugs": [
-            {
-              "name": "CAPECITABINE",
-              "drugTypes": [
-                "ANTIMETABOLITE"
-              ],
-              "category": "CHEMOTHERAPY",
-              "displayOverride": null
-            },
-            {
-              "name": "OXALIPLATIN",
-              "drugTypes": [
-                "PLATINUM_COMPOUND"
-              ],
-              "category": "CHEMOTHERAPY",
-              "displayOverride": null
-            }
-          ],
-          "synonyms": [],
-          "displayOverride": null,
-          "isSystemic": true,
-          "maxCycles": null,
-          "treatmentClass": "DRUG_TREATMENT"
-        }
-      ],
-      "startYear": 2020,
-      "startMonth": 1,
-      "intents": null,
-      "isTrial": true,
-      "trialAcronym": null,
-      "treatmentHistoryDetails": {
-        "stopYear": 2020,
-        "stopMonth": 1,
-        "ongoingAsOf": null,
-        "cycles": 5,
-        "bestResponse": null,
-        "stopReason": null,
-        "stopReasonDetail": null,
-        "switchToTreatments": [],
-        "maintenanceTreatment": null,
-        "toxicities": null,
-        "bodyLocationCategories": null,
-        "bodyLocations": null
-      }
-    }
+	{
+	  "treatments": [
+		{
+		  "name": "CAPECITABINE+OXALIPLATIN",
+		  "drugs": [
+			{
+			  "name": "CAPECITABINE",
+			  "drugTypes": [
+				"ANTIMETABOLITE"
+			  ],
+			  "category": "CHEMOTHERAPY",
+			  "displayOverride": null
+			},
+			{
+			  "name": "OXALIPLATIN",
+			  "drugTypes": [
+				"PLATINUM_COMPOUND"
+			  ],
+			  "category": "CHEMOTHERAPY",
+			  "displayOverride": null
+			}
+		  ],
+		  "synonyms": [],
+		  "displayOverride": null,
+		  "isSystemic": true,
+		  "maxCycles": null,
+		  "treatmentClass": "DRUG_TREATMENT"
+		}
+	  ],
+	  "startYear": 2020,
+	  "startMonth": 1,
+	  "intents": null,
+	  "isTrial": true,
+	  "trialAcronym": null,
+	  "treatmentHistoryDetails": {
+		"stopYear": 2020,
+		"stopMonth": 1,
+		"ongoingAsOf": null,
+		"cycles": 5,
+		"bestResponse": null,
+		"stopReason": null,
+		"stopReasonDetail": null,
+		"switchToTreatments": [],
+		"maintenanceTreatment": null,
+		"toxicities": null,
+		"bodyLocationCategories": null,
+		"bodyLocations": null
+	  }
+	}
   ],
   "priorSecondPrimaries": [],
   "priorOtherConditions": [
-    {
-      "name": "Pain",
-      "year": 2020,
-      "month": 1,
-      "doids": [
-        "5082",
-        "11335"
-      ],
-      "category": "Other",
-      "isContraindicationForTherapy": true
-    }
+	{
+	  "name": "pain",
+	  "year": 2020,
+	  "month": 1,
+	  "doids": [
+		"5082",
+		"11335"
+	  ],
+	  "icdCodes": [
+		{
+		  "mainCode": "1A01.2",
+		  "extensionCode": null
+		}
+	  ],
+	  "isContraindicationForTherapy": true
+	}
   ],
   "priorIHCTests": [
-    {
-      "test": "IHC",
-      "item": "ERBB2",
-      "measure": null,
-      "measureDate": null,
-      "scoreText": null,
-      "scoreValuePrefix": null,
-      "scoreValue": 3.0,
-      "scoreValueUnit": "+",
-      "impliesPotentialIndeterminateStatus": false
-    }
+	{
+	  "test": "IHC",
+	  "item": "ERBB2",
+	  "measure": null,
+	  "measureDate": null,
+	  "scoreText": null,
+	  "scoreValuePrefix": null,
+	  "scoreValue": 3.0,
+	  "scoreValueUnit": "+",
+	  "impliesPotentialIndeterminateStatus": false
+	}
   ],
   "priorSequencingTests": [
-    {
-      "test": "Archer FP Lung Target",
-      "testedGenes": [
-        "ALK",
-        "ROS1",
-        "RET",
-        "MET",
-        "NTRK1",
-        "NTRK2",
-        "NTRK3",
-        "NRG1"
-      ],
-      "date": {
-        "year": 2024,
-        "month": 7,
-        "day": 15
-      },
-      "variants": [
-        {
-          "gene": "KRAS",
-          "hgvsCodingImpact": "c.34G>T"
-        }
-      ],
-      "fusions": [],
-      "amplifications": [],
-      "skippedExons": [],
-      "deletedGenes": []
-    }
+	{
+	  "test": "Archer FP Lung Target",
+	  "testedGenes": [
+		"ALK",
+		"ROS1",
+		"RET",
+		"MET",
+		"NTRK1",
+		"NTRK2",
+		"NTRK3",
+		"NRG1"
+	  ],
+	  "date": {
+		"year": 2024,
+		"month": 7,
+		"day": 15
+	  },
+	  "variants": [
+		{
+		  "gene": "KRAS",
+		  "hgvsCodingImpact": "c.34G>T"
+		}
+	  ],
+	  "fusions": [],
+	  "amplifications": [],
+	  "skippedExons": [],
+	  "deletedGenes": []
+	}
   ],
   "complications": [
-    {
-      "name": "Other",
-      "categories": [],
-      "year": 2020,
-      "month": 1
-    }
+	{
+	  "name": "Other",
+	  "icdCodes": [
+		{
+		  "mainCode": "1A01.1",
+		  "extensionCode": null
+		}
+	  ],
+	  "year": 2020,
+	  "month": 1
+	}
   ],
   "labValues": [
-    {
-      "date": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
-      "code": "dc_NeutrGran",
-      "name": "Neutrof. granulocyten",
-      "comparator": "",
-      "value": 3.7,
-      "unit": "BILLIONS_PER_LITER",
-      "refLimitLow": 3.5,
-      "refLimitUp": 3.5,
-      "isOutsideRef": null
-    },
-    {
-      "date": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
-      "code": "bg_O2Sgem",
-      "name": "O2-Saturatie gemeten",
-      "comparator": "",
-      "value": 88.0,
-      "unit": "PERCENTAGE",
-      "refLimitLow": 3.5,
-      "refLimitUp": 3.5,
-      "isOutsideRef": null
-    },
-    {
-      "date": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
-      "code": "Plt",
-      "name": "Trombocyten",
-      "comparator": "",
-      "value": 252.0,
-      "unit": "BILLIONS_PER_LITER",
-      "refLimitLow": 3.5,
-      "refLimitUp": 3.5,
-      "isOutsideRef": null
-    },
-    {
-      "date": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
-      "code": "dc_Lymfo",
-      "name": "Lymfocyten",
-      "comparator": "",
-      "value": 0.6,
-      "unit": "BILLIONS_PER_LITER",
-      "refLimitLow": 3.5,
-      "refLimitUp": 3.5,
-      "isOutsideRef": null
-    },
-    {
-      "date": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
-      "code": "Hb",
-      "name": "Hemoglobine",
-      "comparator": "",
-      "value": 7.7,
-      "unit": "MILLIMOLES_PER_LITER",
-      "refLimitLow": 3.5,
-      "refLimitUp": 3.5,
-      "isOutsideRef": null
-    }
+	{
+	  "date": {
+		"year": 2020,
+		"month": 1,
+		"day": 1
+	  },
+	  "code": "dc_NeutrGran",
+	  "name": "Neutrof. granulocyten",
+	  "comparator": "",
+	  "value": 3.7,
+	  "unit": "BILLIONS_PER_LITER",
+	  "refLimitLow": 3.5,
+	  "refLimitUp": 3.5,
+	  "isOutsideRef": null
+	},
+	{
+	  "date": {
+		"year": 2020,
+		"month": 1,
+		"day": 1
+	  },
+	  "code": "bg_O2Sgem",
+	  "name": "O2-Saturatie gemeten",
+	  "comparator": "",
+	  "value": 88.0,
+	  "unit": "PERCENTAGE",
+	  "refLimitLow": 3.5,
+	  "refLimitUp": 3.5,
+	  "isOutsideRef": null
+	},
+	{
+	  "date": {
+		"year": 2020,
+		"month": 1,
+		"day": 1
+	  },
+	  "code": "Plt",
+	  "name": "Trombocyten",
+	  "comparator": "",
+	  "value": 252.0,
+	  "unit": "BILLIONS_PER_LITER",
+	  "refLimitLow": 3.5,
+	  "refLimitUp": 3.5,
+	  "isOutsideRef": null
+	},
+	{
+	  "date": {
+		"year": 2020,
+		"month": 1,
+		"day": 1
+	  },
+	  "code": "dc_Lymfo",
+	  "name": "Lymfocyten",
+	  "comparator": "",
+	  "value": 0.6,
+	  "unit": "BILLIONS_PER_LITER",
+	  "refLimitLow": 3.5,
+	  "refLimitUp": 3.5,
+	  "isOutsideRef": null
+	},
+	{
+	  "date": {
+		"year": 2020,
+		"month": 1,
+		"day": 1
+	  },
+	  "code": "Hb",
+	  "name": "Hemoglobine",
+	  "comparator": "",
+	  "value": 7.7,
+	  "unit": "MILLIMOLES_PER_LITER",
+	  "refLimitLow": 3.5,
+	  "refLimitUp": 3.5,
+	  "isOutsideRef": null
+	}
   ],
   "toxicities": [
-    {
-      "name": "Dysphagia",
-      "categories": [
-        "Neuro"
-      ],
-      "evaluatedDate": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
-      "source": "EHR",
-      "grade": 5,
-      "endDate": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      }
-    }
+	{
+	  "name": "Dysphagia",
+	  "icdCodes": [
+		{
+		  "mainCode": "1A01.2",
+		  "extensionCode": null
+		}
+	  ],
+	  "evaluatedDate": {
+		"year": 2020,
+		"month": 1,
+		"day": 1
+	  },
+	  "source": "EHR",
+	  "grade": 5,
+	  "endDate": {
+		"year": 2020,
+		"month": 1,
+		"day": 1
+	  }
+	}
   ],
   "intolerances": [
-    {
-      "name": "MORFINE",
-      "doids": [],
-      "category": "Medication",
-      "subcategories": [],
-      "type": null,
-      "clinicalStatus": "Active",
-      "verificationStatus": "Confirmed",
-      "criticality": "Unknown",
-      "treatmentCategories": []
-    },
-    {
-      "name": "Nikkel",
-      "doids": [],
-      "category": "Other",
-      "subcategories": [],
-      "type": null,
-      "clinicalStatus": "Active",
-      "verificationStatus": "Confirmed",
-      "criticality": "Unknown",
-      "treatmentCategories": []
-    }
+	{
+	  "name": "Morfine",
+	  "icdCodes": [
+		{
+		  "mainCode": "1A01.2",
+		  "extensionCode": null
+		}
+	  ],
+	  "type": null,
+	  "clinicalStatus": "Active",
+	  "verificationStatus": "Confirmed",
+	  "criticality": "Unknown"
+	},
+	{
+	  "name": "Nikkel",
+	  "icdCodes": [
+		{
+		  "mainCode": "1A01.3",
+		  "extensionCode": null
+		}
+	  ],
+	  "category": "Other",
+	  "clinicalStatus": "Active",
+	  "verificationStatus": "Confirmed",
+	  "criticality": "Unknown"
+	}
   ],
   "surgeries": [
-    {
-      "name": "diagnostics stomach translated",
-      "endDate": {
-        "year": 2021,
-        "month": 1,
-        "day": 1
-      },
-      "status": "CANCELLED"
-    }
+	{
+	  "name": "diagnostics stomach translated",
+	  "endDate": {
+		"year": 2021,
+		"month": 1,
+		"day": 1
+	  },
+	  "status": "CANCELLED"
+	}
   ],
   "bodyWeights": [
-    {
-      "date": "2020-01-01T00:00:00",
-      "value": 3.5,
-      "unit": "Kilograms",
-      "valid": false
-    },
-    {
-      "date": "2020-02-01T00:00:00",
-      "value": 53,
-      "unit": "Kilograms",
-      "valid": true
-    }
+	{
+	  "date": "2020-01-01T00:00:00",
+	  "value": 3.5,
+	  "unit": "Kilograms",
+	  "valid": false
+	},
+	{
+	  "date": "2020-02-01T00:00:00",
+	  "value": 53,
+	  "unit": "Kilograms",
+	  "valid": true
+	}
   ],
   "bodyHeights": [
-    {
-      "date": "2020-01-01T00:00:00",
-      "value": 185.0,
-      "unit": "centimeters",
-      "valid": true
-    }
+	{
+	  "date": "2020-01-01T00:00:00",
+	  "value": 185.0,
+	  "unit": "centimeters",
+	  "valid": true
+	}
   ],
   "vitalFunctions": [
-    {
-      "date": "2020-01-01T00:00:00",
-      "category": "NON_INVASIVE_BLOOD_PRESSURE",
-      "subcategory": "systolic blood pressure",
-      "value": 3.5,
-      "unit": "mmHg",
-      "valid": true
-    },
-    {
-      "date": "2020-01-01T00:00:00",
-      "category": "NON_INVASIVE_BLOOD_PRESSURE",
-      "subcategory": "diastolic blood pressure",
-      "value": 3.5,
-      "unit": "mmHg",
-      "valid": true
-    },
-    {
-      "date": "2020-01-01T00:00:00",
-      "category": "HEART_RATE",
-      "subcategory": "NA",
-      "value": 3.5,
-      "unit": "Bpm",
-      "valid": true
-    }
+	{
+	  "date": "2020-01-01T00:00:00",
+	  "category": "NON_INVASIVE_BLOOD_PRESSURE",
+	  "subcategory": "systolic blood pressure",
+	  "value": 3.5,
+	  "unit": "mmHg",
+	  "valid": true
+	},
+	{
+	  "date": "2020-01-01T00:00:00",
+	  "category": "NON_INVASIVE_BLOOD_PRESSURE",
+	  "subcategory": "diastolic blood pressure",
+	  "value": 3.5,
+	  "unit": "mmHg",
+	  "valid": true
+	},
+	{
+	  "date": "2020-01-01T00:00:00",
+	  "category": "HEART_RATE",
+	  "subcategory": "NA",
+	  "value": 3.5,
+	  "unit": "Bpm",
+	  "valid": true
+	}
   ],
   "bloodTransfusions": [
-    {
-      "date": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
-      "product": "Erytrocytes Filtered"
-    }
+	{
+	  "date": {
+		"year": 2020,
+		"month": 1,
+		"day": 1
+	  },
+	  "product": "Erytrocytes Filtered"
+	}
   ],
   "medications": null
 }

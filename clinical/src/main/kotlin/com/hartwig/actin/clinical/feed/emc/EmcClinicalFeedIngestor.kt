@@ -227,7 +227,7 @@ class EmcClinicalFeedIngestor(
             priorMolecularTestsExtractor = PriorMolecularTestsExtractor.create(curationDatabaseContext),
             labValueExtractor = LabValueExtractor.create(curationDatabaseContext),
             toxicityExtractor = ToxicityExtractor.create(curationDatabaseContext),
-            intoleranceExtractor = IntoleranceExtractor.create(curationDatabaseContext, atcModel),
+            intoleranceExtractor = IntoleranceExtractor.create(curationDatabaseContext),
             medicationExtractor = MedicationExtractor.create(
                 curationDatabaseContext,
                 atcModel,

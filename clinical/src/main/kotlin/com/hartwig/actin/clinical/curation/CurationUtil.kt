@@ -30,6 +30,10 @@ object CurationUtil {
         return toSet(categoriesString)
     }
 
+    fun toIcdTitles(icdTitlesString: String): Set<String> {
+        return toSet(icdTitlesString)
+    }
+
     fun toSet(setString: String): Set<String> {
         return setString.split(DELIMITER).map { it.trim() }.filterNot { it.isEmpty() }.toSet()
     }

@@ -123,8 +123,7 @@ CREATE TABLE `priorOtherCondition`
     `name` varchar(500) NOT NULL,
     `year` int,
     `month` int,
-    `doids` varchar(50) NOT NULL,
-    `category` varchar(100) NOT NULL,
+    `icdCodes` varchar(50) NOT NULL,
     `isContraindicationForTherapy` BOOLEAN NOT NULL,
     PRIMARY KEY (`id`)
 );
@@ -150,7 +149,7 @@ CREATE TABLE `complication`
 (   `id` int NOT NULL AUTO_INCREMENT,
     `patientId` varchar(50) NOT NULL,
     `name` varchar(150) NOT NULL,
-    `categories` varchar(150) NOT NULL,
+    `icdCodes` varchar(50) NOT NULL,
     `year` int,
     `month` int,
     PRIMARY KEY (`id`)
@@ -177,7 +176,7 @@ CREATE TABLE `toxicity`
 (   `id` int NOT NULL AUTO_INCREMENT,
     `patientId` varchar(50) NOT NULL,
     `name` varchar(50) NOT NULL,
-    `categories` varchar(100) NOT NULL,
+    `icdCodes` varchar(50) NOT NULL,
     `evaluatedDate` DATE NOT NULL,
     `source` varchar(50) NOT NULL,
     `grade` int,
@@ -189,7 +188,7 @@ CREATE TABLE `intolerance`
 (   `id` int NOT NULL AUTO_INCREMENT,
     `patientId` varchar(50) NOT NULL,
     `name` varchar(100) NOT NULL,
-    `doids` varchar(50) NOT NULL,
+    `icdCodes` varchar(50) NOT NULL,
     `category` varchar(50) NOT NULL,
     `subcategories` varchar(100) NOT NULL,
     `type` varchar(50) NOT NULL,

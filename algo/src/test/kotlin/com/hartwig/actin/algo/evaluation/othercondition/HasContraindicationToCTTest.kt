@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.othercondition
 
-import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.complication
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.intolerance
@@ -8,12 +7,14 @@ import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactor
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.withIntolerances
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.withPriorOtherCondition
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.withPriorOtherConditions
+import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.doid.TestDoidModelFactory
+import com.hartwig.actin.icd.TestIcdFactory
 import org.junit.Test
 
 class HasContraindicationToCTTest {
-    private val function = HasContraindicationToCT(TestDoidModelFactory.createMinimalTestDoidModel())
+    private val function = HasContraindicationToCT(TestIcdFactory.createTestModel())
+    private val correctCode = IcdConstants.KIDNEY_FAILURE_BLOCK
 
     @Test
     fun `Should fail with no prior other condition`() {
@@ -26,7 +27,7 @@ class HasContraindicationToCTTest {
             EvaluationResult.FAIL, function.evaluate(
                 withPriorOtherConditions(
                     listOf(
-                        priorOtherCondition(doids = setOf("wrong doid")),
+                        priorOtherCondition(icdMainCode = "wrong code"),
                         priorOtherCondition(name = "not a contraindication")
                     )
                 )
@@ -35,10 +36,10 @@ class HasContraindicationToCTTest {
     }
 
     @Test
-    fun `Should pass with a condition with correct DOID`() {
+    fun `Should pass with a condition with correct ICD code`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(withPriorOtherCondition(priorOtherCondition(doids = setOf(DoidConstants.KIDNEY_DISEASE_DOID))))
+            function.evaluate(withPriorOtherCondition(priorOtherCondition(icdMainCode = correctCode)))
         )
     }
 
@@ -77,14 +78,14 @@ class HasContraindicationToCTTest {
     }
 
     @Test
-    fun `Should fail with no relevant complication`() {
-        val complications = listOf(complication("no relevant complication"))
+    fun `Should fail with complication with wrong code`() {
+        val complications = listOf(complication(icdMainCode = "wrong"))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withComplications(complications)))
     }
 
     @Test
-    fun `Should pass with relevant complication`() {
-        val complications = listOf(complication(HasContraindicationToCT.COMPLICATIONS_BEING_CONTRAINDICATIONS_TO_CT.first()))
+    fun `Should pass with complication with correct code`() {
+        val complications = listOf(complication(icdMainCode = correctCode))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withComplications(complications)))
     }
 }

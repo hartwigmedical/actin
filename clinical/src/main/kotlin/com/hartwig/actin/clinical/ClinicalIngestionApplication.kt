@@ -8,6 +8,9 @@ import com.hartwig.actin.clinical.feed.standard.StandardDataIngestion
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
+import com.hartwig.actin.icd.IcdModel
+import com.hartwig.actin.icd.serialization.CsvReader
+import com.hartwig.actin.icd.serialization.IcdDeserializer
 import com.hartwig.actin.util.json.GsonSerializer
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -27,6 +30,10 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
         val doidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
 
+        LOGGER.info("Loading ICD nodes from {}", config.icdTsv)
+        val icdNodes = IcdDeserializer.deserialize(CsvReader.readFromFile(config.icdTsv))
+        LOGGER.info(" Loaded {} nodes", icdNodes.size)
+
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
 
         LOGGER.info("Creating ATC model from file {}", config.atcTsv)
@@ -40,7 +47,8 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
         LOGGER.info("Creating clinical curation database from directory {}", config.curationDirectory)
         val curationDoidValidator = CurationDoidValidator(DoidModelFactory.createFromDoidEntry(doidEntry))
         val outputDirectory: String = config.outputDirectory
-        val curationDatabaseContext = CurationDatabaseContext.create(config.curationDirectory, curationDoidValidator, treatmentDatabase)
+        val curationDatabaseContext =
+            CurationDatabaseContext.create(config.curationDirectory, curationDoidValidator, IcdModel.create(icdNodes), treatmentDatabase)
         val validationErrors = curationDatabaseContext.validate()
         if (validationErrors.isNotEmpty()) {
             LOGGER.warn("Curation input had validation errors:")

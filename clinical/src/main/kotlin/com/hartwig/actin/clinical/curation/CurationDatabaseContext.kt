@@ -43,6 +43,7 @@ import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslationFact
 import com.hartwig.actin.clinical.curation.translation.ToxicityTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabaseReader
+import com.hartwig.actin.icd.IcdModel
 
 data class CurationDatabaseContext(
     val primaryTumorCuration: CurationDatabase<PrimaryTumorConfig>,
@@ -117,6 +118,7 @@ data class CurationDatabaseContext(
         fun create(
             curationDir: String,
             curationDoidValidator: CurationDoidValidator,
+            icdModel: IcdModel,
             treatmentDatabase: TreatmentDatabase
         ) = CurationDatabaseContext(
             ecgCuration = CurationDatabaseReader.read(
@@ -131,19 +133,19 @@ data class CurationDatabaseContext(
             nonOncologicalHistoryCuration = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.NON_ONCOLOGICAL_HISTORY_TSV,
-                NonOncologicalHistoryConfigFactory(curationDoidValidator),
+                NonOncologicalHistoryConfigFactory(icdModel),
                 CurationCategory.NON_ONCOLOGICAL_HISTORY
             ) { it.nonOncologicalHistoryEvaluatedInputs },
             complicationCuration = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.COMPLICATION_TSV,
-                ComplicationConfigFactory(),
+                ComplicationConfigFactory(icdModel),
                 CurationCategory.COMPLICATION
             ) { it.complicationEvaluatedInputs },
             intoleranceCuration = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.INTOLERANCE_TSV,
-                IntoleranceConfigFactory(curationDoidValidator),
+                IntoleranceConfigFactory(icdModel),
                 CurationCategory.INTOLERANCE
             ) { it.intoleranceEvaluatedInputs },
             secondPrimaryCuration = CurationDatabaseReader.read(
@@ -179,7 +181,7 @@ data class CurationDatabaseContext(
             toxicityCuration = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.TOXICITY_TSV,
-                ToxicityConfigFactory(),
+                ToxicityConfigFactory(icdModel),
                 CurationCategory.TOXICITY
             ) { it.toxicityEvaluatedInputs },
             lesionLocationCuration = CurationDatabaseReader.read(

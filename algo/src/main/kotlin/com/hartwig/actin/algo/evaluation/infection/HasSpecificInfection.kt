@@ -5,21 +5,35 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.datamodel.clinical.IcdCode
+import com.hartwig.actin.icd.IcdModel
 
-class HasSpecificInfection(private val doidModel: DoidModel, private val doidToFind: String) : EvaluationFunction {
+class HasSpecificInfection(
+    private val icdModel: IcdModel, private val icdCodes: Set<IcdCode>, private val term: String
+) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val doidTerm = doidModel.resolveTermForDoid(doidToFind)
-        val hasSpecificInfection = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
-            .flatMap { it.doids }
-            .flatMap { doidModel.doidWithParents(it) }
-            .contains(doidToFind)
-
-        return if (hasSpecificInfection) {
-            EvaluationFactory.pass("Has $doidTerm infection")
+        val matchingConditions =
+            icdModel.findInstancesMatchingAnyIcdCode(OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions), icdCodes)
+        val infectionStatus = record.clinicalStatus.infectionStatus
+        val hasMatchingInfection = if (infectionStatus?.hasActiveInfection == true) {
+            infectionStatus.description?.let { description ->
+                description.contains(term) || term.contains(description)
+            }
         } else {
-            EvaluationFactory.fail("Has no known infection with $doidTerm")
+            false
+        }
+
+        return when {
+            matchingConditions.fullMatches.isNotEmpty() || hasMatchingInfection == true -> {
+                EvaluationFactory.pass("${term.replaceFirstChar(Char::uppercase)} infection in history")
+            }
+
+            hasMatchingInfection == null || matchingConditions.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> {
+                EvaluationFactory.undetermined("Infection in history but undetermined if $term")
+            }
+
+            else -> EvaluationFactory.fail("No $term infection")
         }
     }
 }

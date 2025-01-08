@@ -1,37 +1,57 @@
 package com.hartwig.actin.algo.evaluation.othercondition
 
-import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
+import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.datamodel.clinical.IcdCode
+import com.hartwig.actin.icd.IcdModel
 
-class HasContraindicationToMRI(private val doidModel: DoidModel) : EvaluationFunction {
+class HasContraindicationToMRI(private val icdModel: IcdModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        for (condition in OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)) {
-            for (doid in condition.doids) {
-                if (doidModel.doidWithParents(doid).contains(DoidConstants.KIDNEY_DISEASE_DOID)) {
-                    return EvaluationFactory.pass("Potential MRI contraindication: " + doidModel.resolveTermForDoid(doid))
-                }
-            }
-            if (stringCaseInsensitivelyMatchesQueryCollection(condition.name, OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_MRI)) {
-                return EvaluationFactory.pass("Potential MRI contraindication due to condition: " + condition.name)
-            }
+        val targetCodes = setOf(IcdCode(IcdConstants.KIDNEY_FAILURE_BLOCK), IcdCode(IcdConstants.PRESENCE_OF_DEVICE_IMPLANT_OR_GRAFT_BLOCK))
+
+        val relevantConditions = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
+
+        val matchingConditionsAndComplications = icdModel.findInstancesMatchingAnyIcdCode(
+            relevantConditions + (record.complications ?: emptyList()),
+            targetCodes
+        ).fullMatches
+
+        val conditionsMatchingString = relevantConditions.filter {
+            stringCaseInsensitivelyMatchesQueryCollection(it.name, OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_MRI)
         }
-        for (intolerance in record.intolerances) {
-            if (stringCaseInsensitivelyMatchesQueryCollection(intolerance.name, INTOLERANCES_BEING_CONTRAINDICATIONS_TO_MRI)) {
-                return EvaluationFactory.pass("Potential MRI contraindication due to intolerance: " + intolerance.name)
+        val intolerances =
+            record.intolerances.filter {
+                stringCaseInsensitivelyMatchesQueryCollection(
+                    it.name,
+                    INTOLERANCES_BEING_CONTRAINDICATIONS_TO_MRI
+                )
             }
+
+        val conditionString = Format.concatItemsWithAnd(matchingConditionsAndComplications)
+        val messageStart = "Potential MRI contraindication: "
+
+        return when {
+            matchingConditionsAndComplications.isNotEmpty() -> EvaluationFactory.recoverablePass(messageStart + conditionString)
+
+            conditionsMatchingString.isNotEmpty() -> {
+                EvaluationFactory.recoverablePass(messageStart + Format.concatItemsWithAnd(conditionsMatchingString))
+            }
+
+            intolerances.isNotEmpty() -> EvaluationFactory.recoverablePass(messageStart + Format.concatItemsWithAnd(intolerances))
+
+            else -> EvaluationFactory.fail("No potential contraindications to MRI")
         }
-        return EvaluationFactory.fail("No potential contraindications to MRI identified")
     }
 
     companion object {
-        val OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_MRI = listOf("implant", "claustrophobia")
+        val OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_MRI = listOf("claustrophobia")
         val INTOLERANCES_BEING_CONTRAINDICATIONS_TO_MRI = listOf("contrast agent")
     }
 }

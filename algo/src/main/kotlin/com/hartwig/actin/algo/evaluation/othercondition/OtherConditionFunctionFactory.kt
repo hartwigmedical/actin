@@ -1,11 +1,16 @@
 package com.hartwig.actin.algo.evaluation.othercondition
 
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.datamodel.clinical.IcdCode
+import com.hartwig.actin.icd.IcdModel
 
 object OtherConditionFunctionFactory {
 
-    fun createPriorConditionWithDoidFunction(doidModel: DoidModel, doidToFind: String): EvaluationFunction {
-        return HasHadPriorConditionWithDoid(doidModel, doidToFind)
+    fun createPriorConditionWithIcdCodeFunction(
+        icdModel: IcdModel,
+        targetIcdCodes: Set<IcdCode>,
+        conditionTerm: String
+    ): EvaluationFunction {
+        return HasHadPriorConditionWithIcdCodeFromSet(icdModel, targetIcdCodes, conditionTerm)
     }
 }
