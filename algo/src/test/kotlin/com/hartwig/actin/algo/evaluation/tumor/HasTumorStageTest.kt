@@ -3,11 +3,19 @@ package com.hartwig.actin.algo.evaluation.tumor
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TumorStage
+import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class HasTumorStageTest {
     private val hasTumorStage = HasTumorStage(setOf(TumorStage.III))
+
+    @Test
+    fun `Should throw an exception when the set of stages to match is empty`() {
+        val patientRecord = TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(TumorStage.III, TumorStage.IIIB))
+        Assertions.assertThatIllegalStateException().isThrownBy { HasTumorStage(emptySet()).evaluate(patientRecord) }
+            .withMessage("No stages to match configured")
+    }
 
     @Test
     fun `Should evaluate normally when tumor stage exists`() {
