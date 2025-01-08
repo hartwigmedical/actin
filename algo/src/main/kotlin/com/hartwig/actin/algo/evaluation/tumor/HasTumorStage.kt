@@ -13,19 +13,23 @@ class HasTumorStage(private val stagesToMatch: Set<TumorStage>) : EvaluationFunc
 
     override fun evaluate(record: PatientRecord): Evaluation {
         if (stagesToMatch.isEmpty()) throw IllegalStateException("No stages to match configured")
+        val adjustedStagesToMatch = adjustStagesToMatch(stagesToMatch)
         val stage = record.tumor.stage
+
         if (stage == null) {
             val derivedStages = record.tumor.derivedStages
             return if (derivedStages?.size == 1) {
-                evaluateWithStage(derivedStages.iterator().next(), true)
-            } else if (derivedStages?.map { evaluateWithStage(it, true) }?.all { it.result == EvaluationResult.PASS } == true) {
+                evaluateWithStage(derivedStages.iterator().next(), adjustedStagesToMatch)
+            } else if (derivedStages?.map { evaluateWithStage(it, adjustedStagesToMatch) }
+                    ?.all { it.result == EvaluationResult.PASS } == true) {
                 val derivedStageMessage = "passes with derived ${derivedStages.joinToString(" or ") { it.display() }} based on lesions"
                 pass(
                     "No tumor stage details present but $derivedStageMessage",
                     "Missing tumor stage details - $derivedStageMessage"
                 )
-            } else if (derivedStages?.map { evaluateWithStage(it, true) }?.any { it.result == EvaluationResult.PASS } == true) {
-                val stageMessage = stagesToMatch.joinToString(" or ") { it.display() }
+            } else if (derivedStages?.map { evaluateWithStage(it, adjustedStagesToMatch) }
+                    ?.any { it.result in listOf(EvaluationResult.PASS, EvaluationResult.UNDETERMINED) } == true) {
+                val stageMessage = adjustedStagesToMatch.joinToString(" or ") { it.display() }
                 val derivedStageMessage = "derived ${derivedStages.joinToString(" or ") { it.display() }} based on lesions"
                 undetermined(
                     "Unknown if tumor stage is $stageMessage (no tumor stage details provided) - $derivedStageMessage",
@@ -38,13 +42,13 @@ class HasTumorStage(private val stagesToMatch: Set<TumorStage>) : EvaluationFunc
                 )
             }
         }
-        return evaluateWithStage(stage, false)
+        return evaluateWithStage(stage, adjustedStagesToMatch)
     }
 
-    private fun evaluateWithStage(stage: TumorStage, derived: Boolean): Evaluation {
+    private fun evaluateWithStage(stage: TumorStage, stagesToMatch: Set<TumorStage>): Evaluation {
         val stageString = stagesToMatch.joinToString(" or ") { it.display() }
         return when {
-            (stage in stagesToMatch || stage.category in stagesToMatch || (derived && evaluateCategoryMatchForDerivedStage(stage))) -> pass(
+            (stage in stagesToMatch || stage.category in stagesToMatch) -> pass(
                 "Patient tumor stage is requested stage $stageString",
                 "Adequate tumor stage"
             )
@@ -58,7 +62,13 @@ class HasTumorStage(private val stagesToMatch: Set<TumorStage>) : EvaluationFunc
         }
     }
 
-    private fun evaluateCategoryMatchForDerivedStage(derivedStage: TumorStage): Boolean {
-        return stagesToMatch.any { it.category == derivedStage }
+    private fun adjustStagesToMatch(stagesToMatch: Set<TumorStage>): Set<TumorStage> {
+        return when (stagesToMatch.sorted()) {
+            TumorStage.entries.filter { it.category == TumorStage.I } -> stagesToMatch + TumorStage.I
+            TumorStage.entries.filter { it.category == TumorStage.II } -> stagesToMatch + TumorStage.II
+            TumorStage.entries.filter { it.category == TumorStage.III } -> stagesToMatch + TumorStage.III
+            TumorStage.entries.filter { it.category == TumorStage.IV } -> stagesToMatch + TumorStage.IV
+            else -> stagesToMatch
+        }
     }
 }
