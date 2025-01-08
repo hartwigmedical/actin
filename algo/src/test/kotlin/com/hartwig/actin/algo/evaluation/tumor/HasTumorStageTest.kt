@@ -51,6 +51,24 @@ class HasTumorStageTest {
     }
 
     @Test
+    fun `Should use original stage requirements in message`() {
+        val patientRecord = TumorTestFactory.withTumorStage(TumorStage.III)
+        assertThat(
+            HasTumorStage(
+                setOf(
+                    TumorStage.IIA,
+                    TumorStage.IIB,
+                    TumorStage.IIC,
+                    TumorStage.IIIC,
+                    TumorStage.IIIB,
+                    TumorStage.IIIA,
+                    TumorStage.IIID
+                )
+            ).evaluate(patientRecord).passGeneralMessages
+        ).containsExactly("Patient tumor stage III meets requested stage(s) IIA or IIB or IIC or IIIA or IIIB or IIIC or IIID")
+    }
+
+    @Test
     fun `Should be undetermined when patient stage is of the same general category as some of the possible and requested category stages`() {
         val patientRecord = TumorTestFactory.withTumorStage(TumorStage.III)
         assertEvaluation(

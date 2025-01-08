@@ -13,54 +13,59 @@ class HasTumorStage(private val stagesToMatch: Set<TumorStage>) : EvaluationFunc
 
     override fun evaluate(record: PatientRecord): Evaluation {
         if (stagesToMatch.isEmpty()) throw IllegalStateException("No stages to match configured")
+        val stageMessage = stagesToMatch.sorted().joinToString(" or ") { it.display() }
         val adjustedStagesToMatch = adjustStagesToMatch(stagesToMatch)
         val stage = record.tumor.stage
 
         if (stage == null) {
             val derivedStages = record.tumor.derivedStages
-            return if (derivedStages?.size == 1) {
-                evaluateWithStage(derivedStages.iterator().next(), adjustedStagesToMatch)
-            } else if (derivedStages?.map { evaluateWithStage(it, adjustedStagesToMatch) }
-                    ?.all { it.result == EvaluationResult.PASS } == true) {
-                val derivedStageMessage = "passes with derived ${derivedStages.joinToString(" or ") { it.display() }} based on lesions"
-                pass(
-                    "No tumor stage details present but $derivedStageMessage",
-                    "Missing tumor stage details - $derivedStageMessage"
+            val derivedStageMessage = "derived ${derivedStages?.joinToString(" or ") { it.display() }} based on lesions"
+
+            return when {
+                (derivedStages?.size == 1) -> evaluateWithStage(derivedStages.iterator().next(), adjustedStagesToMatch, stageMessage)
+
+                (derivedStages?.map { evaluateWithStage(it, adjustedStagesToMatch, stageMessage) }
+                    ?.all { it.result == EvaluationResult.PASS } == true) -> pass(
+                    "No tumor stage details present but based on lesions requested stage $stageMessage met - $derivedStageMessage",
+                    "Tumor stage data missing but requested stage $stageMessage met - $derivedStageMessage"
                 )
-            } else if (derivedStages?.map { evaluateWithStage(it, adjustedStagesToMatch) }
-                    ?.any { it.result in listOf(EvaluationResult.PASS, EvaluationResult.UNDETERMINED) } == true) {
-                val stageMessage = adjustedStagesToMatch.joinToString(" or ") { it.display() }
-                val derivedStageMessage = "derived ${derivedStages.joinToString(" or ") { it.display() }} based on lesions"
-                undetermined(
-                    "Unknown if tumor stage is $stageMessage (no tumor stage details provided) - $derivedStageMessage",
-                    "Unknown if tumor stage is $stageMessage (data missing) - $derivedStageMessage"
-                )
-            } else {
-                fail(
-                    "No tumor stage details present but based on lesions requested stage cannot be met",
-                    "Tumor stage unknown but requested stage not met based on lesions"
-                )
+
+                (derivedStages?.map { evaluateWithStage(it, adjustedStagesToMatch, stageMessage) }
+                    ?.any { it.result in listOf(EvaluationResult.PASS, EvaluationResult.UNDETERMINED) } == true) ->
+                    undetermined(
+                        "Unknown if tumor stage is $stageMessage (no tumor stage details provided) - $derivedStageMessage",
+                        "Unknown if tumor stage is $stageMessage (data missing) - $derivedStageMessage"
+                    )
+
+                else ->
+                    fail(
+                        "No tumor stage details present but based on lesions requested stage $stageMessage not met - $derivedStageMessage",
+                        "Tumor stage data missing but requested stage $stageMessage not met - $derivedStageMessage"
+                    )
             }
         }
-        return evaluateWithStage(stage, adjustedStagesToMatch)
+        return evaluateWithStage(stage, adjustedStagesToMatch, stageMessage)
     }
 
-    private fun evaluateWithStage(stage: TumorStage, stagesToMatch: Set<TumorStage>): Evaluation {
-        val stageString = stagesToMatch.joinToString(" or ") { it.display() }
+    private fun evaluateWithStage(
+        stage: TumorStage,
+        stagesToMatch: Set<TumorStage>,
+        stageMessage: String
+    ): Evaluation {
         return when {
             (stage in stagesToMatch || stage.category in stagesToMatch) -> pass(
-                "Patient tumor stage $stage meets requested stage(s) $stageString",
-                "Patient tumor stage $stage meets requested stage(s) $stageString"
+                "Patient tumor stage $stage meets requested stage(s) $stageMessage",
+                "Patient tumor stage $stage meets requested stage(s) $stageMessage"
             )
 
             (stagesToMatch.any { it.category == stage }) -> undetermined(
-                "Undetermined if patient tumor stage $stage meets specific stage requirement(s) ($stageString)",
-                "Undetermined if patient tumor stage $stage meets stage requirement(s) ($stageString)"
+                "Undetermined if patient tumor stage $stage meets specific stage requirement(s) ($stageMessage)",
+                "Undetermined if patient tumor stage $stage meets stage requirement(s) ($stageMessage)"
             )
 
             else -> fail(
-                "Patient tumor stage $stage does not meet requested stage(s) $stageString",
-                "Patient tumor stage $stage does not meet requested stage(s) $stageString"
+                "Patient tumor stage $stage does not meet requested stage(s) $stageMessage",
+                "Patient tumor stage $stage does not meet requested stage(s) $stageMessage"
             )
         }
     }
