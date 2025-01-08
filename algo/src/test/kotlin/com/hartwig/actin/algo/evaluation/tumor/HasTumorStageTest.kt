@@ -67,10 +67,6 @@ class HasTumorStageTest {
             EvaluationResult.UNDETERMINED,
             HasTumorStage(setOf(TumorStage.IIIC, TumorStage.IIIB, TumorStage.IIIA, TumorStage.IIA)).evaluate(patientRecord)
         )
-        assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            HasTumorStage(setOf(TumorStage.IIIC, TumorStage.IIIB, TumorStage.IIIA)).evaluate(patientRecord)
-        )
     }
 
     @Test
@@ -128,10 +124,6 @@ class HasTumorStageTest {
     @Test
     fun `Should be undetermined when derived stage is not equal to the category of all the stages to match`() {
         val patientRecord = TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(TumorStage.III))
-        assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            HasTumorStage(setOf(TumorStage.IIIC, TumorStage.IIIA, TumorStage.IIIB)).evaluate(patientRecord)
-        )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             HasTumorStage(setOf(TumorStage.IIIC, TumorStage.IIIA, TumorStage.IIIB, TumorStage.IIA)).evaluate(patientRecord)

@@ -70,15 +70,9 @@ class HasTumorStage(private val stagesToMatch: Set<TumorStage>) : EvaluationFunc
     }
 
     private fun adjustStagesToMatch(stagesToMatch: Set<TumorStage>): Set<TumorStage> {
-        val stagesToCheck = listOf(TumorStage.I, TumorStage.II, TumorStage.III, TumorStage.IV)
-        val stagesToAdd = mutableSetOf<TumorStage>()
-
-        for (stage in stagesToCheck) {
-            if (stagesToMatch.filter { it.category == stage }.sorted() == TumorStage.entries.filter { it.category == stage }) {
-                stagesToAdd.add(stage)
-            }
-        }
-
-        return stagesToMatch + stagesToAdd
+        return TumorStage.entries.filter { stage ->
+            stage in listOf(TumorStage.I, TumorStage.II, TumorStage.III, TumorStage.IV) &&
+                    stagesToMatch.filter { it.category == stage }.sorted() == TumorStage.entries.filter { it.category == stage }
+        }.toSet() + stagesToMatch
     }
 }
