@@ -22,20 +22,24 @@ class HasTumorStage(private val stagesToMatch: Set<TumorStage>) : EvaluationFunc
             val derivedStageMessage = "derived ${derivedStages?.sorted()?.let { Format.concatItemsWithOr(it) }} based on lesions"
 
             return when {
-                derivedStages?.size == 1 -> {
+                derivedStages == null -> {
+                    undetermined(
+                        "Tumor stage data missing and not possible to derive if requested stage(s) $stageMessage met"
+                    )
+                }
+
+                derivedStages.size == 1 -> {
                     evaluateWithStage(derivedStages.iterator().next(), allStagesToMatch, stageMessage)
                 }
 
-                derivedStages?.map { evaluateWithStage(it, allStagesToMatch, stageMessage) }
-                    ?.all { it.result == EvaluationResult.PASS } == true -> {
+                derivedStages.map { evaluateWithStage(it, allStagesToMatch, stageMessage) }.all { it.result == EvaluationResult.PASS } -> {
                     pass(
                         "No tumor stage details present but based on lesions requested stage $stageMessage met - $derivedStageMessage",
                         "Tumor stage data missing but requested stage $stageMessage met - $derivedStageMessage"
                     )
                 }
 
-                derivedStages?.map { evaluateWithStage(it, allStagesToMatch, stageMessage) }
-                    ?.any { it.result in listOf(EvaluationResult.PASS, EvaluationResult.UNDETERMINED) } == true -> {
+                derivedStages.map { evaluateWithStage(it, allStagesToMatch, stageMessage) }.any { it.result in listOf(EvaluationResult.PASS, EvaluationResult.UNDETERMINED) } -> {
                     undetermined(
                         "Unknown if tumor stage is $stageMessage (no tumor stage details provided) - $derivedStageMessage",
                         "Unknown if tumor stage is $stageMessage (data missing) - $derivedStageMessage"

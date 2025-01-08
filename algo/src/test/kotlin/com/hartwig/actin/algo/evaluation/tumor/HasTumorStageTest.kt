@@ -11,10 +11,14 @@ class HasTumorStageTest {
 
     @Test
     fun `Should evaluate normally when tumor stage exists`() {
-        assertEvaluation(EvaluationResult.FAIL, hasTumorStage.evaluate(TumorTestFactory.withTumorStageAndDerivedStages(null)))
         assertEvaluation(EvaluationResult.PASS, hasTumorStage.evaluate(TumorTestFactory.withTumorStageAndDerivedStages(TumorStage.III)))
         assertEvaluation(EvaluationResult.PASS, hasTumorStage.evaluate(TumorTestFactory.withTumorStageAndDerivedStages(TumorStage.IIIB)))
         assertEvaluation(EvaluationResult.FAIL, hasTumorStage.evaluate(TumorTestFactory.withTumorStageAndDerivedStages(TumorStage.IV)))
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if patient stage and derived tumor stage are null`() {
+        assertEvaluation(EvaluationResult.UNDETERMINED, hasTumorStage.evaluate(TumorTestFactory.withTumorStageAndDerivedStages(null, null)))
     }
 
     @Test
