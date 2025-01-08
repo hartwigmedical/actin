@@ -12,7 +12,6 @@ import com.hartwig.actin.datamodel.clinical.TumorStage
 class HasTumorStage(private val stagesToMatch: Set<TumorStage>) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        if (stagesToMatch.isEmpty()) throw IllegalStateException("No stages to match configured")
         val stageMessage = stagesToMatch.sorted().joinToString(" or ") { it.display() }
         val adjustedStagesToMatch = adjustStagesToMatch(stagesToMatch)
         val stage = record.tumor.stage
