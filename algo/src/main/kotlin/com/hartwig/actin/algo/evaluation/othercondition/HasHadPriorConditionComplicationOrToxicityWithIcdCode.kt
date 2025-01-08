@@ -41,7 +41,7 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCode(
             }
 
             icdMatches.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> EvaluationFactory.undetermined(
-                "Has history of ${Format.concatItemsWithAnd(icdMatches.mainCodeMatchesWithUnknownExtension.map { it.display() })} " +
+                "Has history of ${Format.concat(icdMatches.mainCodeMatchesWithUnknownExtension.map { it.display() })} " +
                         "but undetermined if history of $diseaseDescription"
             )
 

@@ -21,13 +21,7 @@ class HasHadPriorConditionWithIcdCodeFromSet(
         return when {
             icdMatches.fullMatches.isNotEmpty() -> {
                 val display = icdMatches.fullMatches.map { it.display() }.toSet()
-                EvaluationFactory.pass(
-                    PriorConditionMessages.pass(
-                        PriorConditionMessages.Characteristic.CONDITION,
-                        display,
-                        priorOtherConditionTerm
-                    )
-                )
+                EvaluationFactory.pass(PriorConditionMessages.pass(display))
             }
 
             icdMatches.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> {

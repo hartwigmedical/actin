@@ -41,9 +41,8 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
     fun `Should fail when no matching ICD code in prior other conditions, complications or toxicities`() {
         val evaluation = function.evaluate(minimalPatient)
         assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failSpecificMessages)
-            .containsOnly("Patient has no other condition belonging to category $diseaseDescription")
-        assertThat(evaluation.failGeneralMessages).containsOnly("No relevant non-oncological condition")
+        assertThat(evaluation.failMessages)
+            .containsOnly("Has no other condition belonging to category $diseaseDescription")
     }
 
     @Test
@@ -51,7 +50,6 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
         listOf(conditionWithTargetCode, conditionWithChildOfTargetCode).forEach {
             assertPassEvaluationWithMessages(
                 function.evaluate(OtherConditionTestFactory.withPriorOtherCondition(it)),
-                "other condition",
                 "History of other condition"
             )
         }
@@ -62,7 +60,6 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
         listOf(complicationWithChildOfTargetCode, complicationWithTargetCode).forEach {
             assertPassEvaluationWithMessages(
                 function.evaluate(OtherConditionTestFactory.withComplications(listOf(it))),
-                "complication",
                 "History of complication"
             )
         }
@@ -73,7 +70,6 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
         listOf(childCode, parentCode).forEach {
             assertPassEvaluationWithMessages(
                 function.evaluate(OtherConditionTestFactory.withToxicities(listOf(toxicity(ToxicitySource.QUESTIONNAIRE, IcdCode(it), 1)))),
-                "toxicity",
                 "History of toxicity"
             )
         }
@@ -84,7 +80,6 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
         listOf(childCode, parentCode).forEach {
             assertPassEvaluationWithMessages(
                 function.evaluate(OtherConditionTestFactory.withToxicities(listOf(toxicity(ToxicitySource.EHR, IcdCode(it), 2)))),
-                "toxicity",
                 "History of toxicity"
             )
         }
@@ -131,8 +126,7 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
                     priorOtherConditions = listOf(conditionWithTargetCode)
                 )
             ),
-            "complication and other condition and pneumonitis and toxicity",
-            "History of complication and other condition and pneumonitis and toxicity"
+            "History of complication, other condition, pneumonitis and toxicity"
         )
     }
 
@@ -146,9 +140,8 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
         )
     }
 
-    private fun assertPassEvaluationWithMessages(evaluation: Evaluation, matchedNames: String, vararg passSpecificMessages: String) {
+    private fun assertPassEvaluationWithMessages(evaluation: Evaluation, vararg passMessages: String) {
         assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passSpecificMessages).containsOnly(*passSpecificMessages)
-        assertThat(evaluation.passGeneralMessages).containsOnly("History of $matchedNames")
+        assertThat(evaluation.passMessages).containsOnly(*passMessages)
     }
 }
