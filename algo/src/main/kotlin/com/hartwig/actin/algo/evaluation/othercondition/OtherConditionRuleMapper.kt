@@ -7,7 +7,6 @@ import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
-import com.hartwig.actin.datamodel.trial.FunctionInput
 
 class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
@@ -101,22 +100,22 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             ),
             EligibilityRule.HAS_HISTORY_OF_ULCER to {
                 HasHadPriorConditionComplicationOrToxicityWithIcdCode(
-                    icdModel(), setOf(IcdConstants.ULCER_SET), "ulcer", referenceDateProvider().date()
+                    icdModel(), IcdConstants.ULCER_SET.map { IcdCode(it) }.toSet(), "ulcer", referenceDateProvider().date()
                 )
             },
             EligibilityRule.HAS_HISTORY_OF_BLEEDING to {
                 HasHadPriorConditionComplicationOrToxicityWithIcdCode(
-                    icdModel(), setOf(IcdConstants.BLEEDING_SET), "bleeding", referenceDateProvider().date()
+                    icdModel(), IcdConstants.BLEEDING_SET.map { IcdCode(it) }.toSet(), "bleeding", referenceDateProvider().date()
                 )
             },
             EligibilityRule.HAS_HISTORY_OF_WOUND to {
                 HasHadPriorConditionComplicationOrToxicityWithIcdCode(
-                    icdModel(), setOf(IcdConstants.WOUND_SET), "wound", referenceDateProvider().date()
+                    icdModel(), IcdConstants.WOUND_SET.map { IcdCode(it) }.toSet(), "wound", referenceDateProvider().date()
                 )
             },
             EligibilityRule.HAS_HISTORY_OF_BONE_FRACTURE to {
                 HasHadPriorConditionComplicationOrToxicityWithIcdCode(
-                    icdModel(), setOf(IcdConstants.BONE_FRACTURE_SET), "bone fracture", referenceDateProvider().date()
+                    icdModel(), IcdConstants.BONE_FRACTURE_SET.map { IcdCode(it) }.toSet(), "bone fracture", referenceDateProvider().date()
                 )
             },
             EligibilityRule.HAS_SEVERE_CONCOMITANT_CONDITION to hasSevereConcomitantIllnessCreator(),
