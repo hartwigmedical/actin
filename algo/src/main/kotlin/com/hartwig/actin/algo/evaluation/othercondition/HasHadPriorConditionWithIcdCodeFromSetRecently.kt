@@ -33,7 +33,7 @@ class HasHadPriorConditionWithIcdCodeFromSetRecently(
         return when {
             fullMatchSummary.containsKey(EvaluationResult.PASS) -> {
                 EvaluationFactory.pass(
-                    "Patient has had disease of ICD category ${
+                    "Has had disease of ICD category ${
                         fullMatchSummary[EvaluationResult.PASS]?.joinToString(", ")
                         { resolveIcdTitle(it) }
                     } (belonging to $diseaseDescription) within specified time frame"
@@ -54,7 +54,7 @@ class HasHadPriorConditionWithIcdCodeFromSetRecently(
                     "Has had disease of ICD category ${
                         fullMatchSummary[EvaluationResult.UNDETERMINED]?.joinToString(", ")
                         { resolveIcdTitle(it) }
-                    } (belonging to $diseaseDescription), but undetermined whether that is within specified time frame"
+                    } (belonging to $diseaseDescription) but undetermined whether that is within specified time frame"
                 )
             }
 

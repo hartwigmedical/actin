@@ -14,7 +14,7 @@ class HasOralMedicationDifficulties: EvaluationFunction {
                 return EvaluationFactory.pass("Potential oral medication difficulties: " + complication.name)
             }
         }
-        return EvaluationFactory.fail("No potential oral medication difficulties identified")
+        return EvaluationFactory.fail("No potential oral medication difficulties")
     }
 
     companion object {

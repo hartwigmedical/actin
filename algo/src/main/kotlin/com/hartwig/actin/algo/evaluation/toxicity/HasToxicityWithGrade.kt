@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.Toxicity
@@ -40,6 +41,7 @@ class HasToxicityWithGrade(
             }
         }
 
+        val icdTitleText = targetIcdTitles?.let { "in ${Format.concatLowercaseWithCommaAndOr(it)}" } ?: ""
         return when {
             matchingToxicities.isNotEmpty() &&
                     (matchingToxicities.any { it.source == ToxicitySource.QUESTIONNAIRE } || !warnIfToxicitiesNotFromQuestionnaire) -> {
@@ -57,7 +59,7 @@ class HasToxicityWithGrade(
                 return EvaluationFactory.undetermined("Has toxicities grade >= $DEFAULT_QUESTIONNAIRE_GRADE$toxicityString but unknown if grade >= $minGrade")
             }
 
-            else -> return EvaluationFactory.fail("No toxicities found with grade $minGrade or higher")
+            else -> return EvaluationFactory.fail("No toxicities $icdTitleText found with grade $minGrade or higher")
         }
     }
 

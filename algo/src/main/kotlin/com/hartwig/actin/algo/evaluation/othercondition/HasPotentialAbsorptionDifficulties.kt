@@ -23,7 +23,7 @@ class HasPotentialAbsorptionDifficulties(private val icdModel: IcdModel) : Evalu
         return if (conditionsComplicationsAndToxicities.isNotEmpty()) {
             EvaluationFactory.pass("Potential absorption difficulties (${Format.concatItemsWithAnd(conditionsComplicationsAndToxicities)}")
         } else {
-            EvaluationFactory.fail("No potential absorption difficulties identified")
+            EvaluationFactory.fail("No potential absorption difficulties")
         }
     }
 }
