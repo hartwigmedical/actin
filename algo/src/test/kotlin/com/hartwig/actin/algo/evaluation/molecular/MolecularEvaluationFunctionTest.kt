@@ -16,7 +16,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val OVERRIDE_MESSAGE = "Override message"
-private const val FAIL_MESSAGE = "Fail general message"
+private const val FAIL_MESSAGE = "Fail message"
 private val MAX_AGE = LocalDate.of(2023, 9, 6)
 
 class MolecularEvaluationFunctionTest {

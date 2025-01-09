@@ -19,12 +19,15 @@ object EvaluationAssert {
         assertThat(actual.result).isEqualTo(expected)
         when (actual.result) {
             EvaluationResult.PASS -> {
+                assertThat(actual.passMessages).isNotEmpty()
+                assertThat(actual.warnMessages).isEmpty()
                 assertThat(actual.undeterminedMessages).isEmpty()
                 assertThat(actual.failMessages).isEmpty()
             }
 
             EvaluationResult.WARN -> {
                 assertThat(actual.passMessages).isEmpty()
+                assertThat(actual.warnMessages).isNotEmpty()
                 assertThat(actual.undeterminedMessages).isEmpty()
                 assertThat(actual.failMessages).isEmpty()
             }
@@ -32,6 +35,7 @@ object EvaluationAssert {
             EvaluationResult.UNDETERMINED -> {
                 assertThat(actual.passMessages).isEmpty()
                 assertThat(actual.warnMessages).isEmpty()
+                assertThat(actual.undeterminedMessages).isNotEmpty()
                 assertThat(actual.failMessages).isEmpty()
             }
 
@@ -39,6 +43,7 @@ object EvaluationAssert {
                 assertThat(actual.passMessages).isEmpty()
                 assertThat(actual.warnMessages).isEmpty()
                 assertThat(actual.undeterminedMessages).isEmpty()
+                assertThat(actual.failMessages).isNotEmpty()
             }
 
             else -> {}

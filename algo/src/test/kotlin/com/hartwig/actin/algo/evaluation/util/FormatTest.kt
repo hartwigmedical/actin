@@ -9,6 +9,7 @@ import org.junit.Test
 import java.time.LocalDate
 
 class FormatTest {
+
     @Test
     fun `Should lowercase strings and join with and`() {
         assertEquals("x and y", Format.concatLowercaseWithAnd(setOf("X", "Y")))

@@ -71,7 +71,7 @@ class HasHadCombinedTreatmentNamesWithCycles(
                 }
             }
         return if (matchingHistoryEntries.isEmpty()) {
-            EvaluationFactory.fail(GENERAL_FAIL_MESSAGE)
+            EvaluationFactory.fail(FAIL_MESSAGE)
         } else if (matchingHistoryEntries.containsKey(EvaluationResult.PASS)) {
             EvaluationFactory.pass(
                 "Found matching treatments"
@@ -81,14 +81,12 @@ class HasHadCombinedTreatmentNamesWithCycles(
                 "Unknown treatment cycles"
             )
         } else {
-            EvaluationFactory.fail(
-                GENERAL_FAIL_MESSAGE
-            )
+            EvaluationFactory.fail(FAIL_MESSAGE)
         }
     }
 
     companion object {
-        private const val GENERAL_FAIL_MESSAGE = "No treatments with cycles"
+        private const val FAIL_MESSAGE = "No treatments with cycles"
 
         private fun formatTreatmentList(treatmentHistoryEntries: List<TreatmentHistoryEntry>, includeCycles: Boolean): String {
             return treatmentHistoryEntries.joinToString(", ") { entry ->

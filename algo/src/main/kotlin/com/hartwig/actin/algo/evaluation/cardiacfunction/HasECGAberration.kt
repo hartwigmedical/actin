@@ -12,15 +12,11 @@ class HasECGAberration internal constructor() : EvaluationFunction {
             ?: return EvaluationFactory.fail("Assumed that there are no ECG abnormalities (ECG details missing)")
         return when {
             ecg.hasSigAberrationLatestECG && ecg.aberrationDescription != null -> {
-                EvaluationFactory.pass(
-                    "ECG abnormalities present (${ecg.aberrationDescription})"
-                )
+                EvaluationFactory.pass("ECG abnormalities present (${ecg.aberrationDescription})")
             }
 
             ecg.hasSigAberrationLatestECG -> {
-                EvaluationFactory.pass(
-                    "ECG abnormalities present (details unknown)"
-                )
+                EvaluationFactory.pass("ECG abnormalities present (details unknown)")
             }
 
             else ->

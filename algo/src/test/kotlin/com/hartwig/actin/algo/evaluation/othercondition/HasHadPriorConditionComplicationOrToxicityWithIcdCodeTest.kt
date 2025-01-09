@@ -50,7 +50,7 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
         listOf(conditionWithTargetCode, conditionWithChildOfTargetCode).forEach {
             assertPassEvaluationWithMessages(
                 function.evaluate(OtherConditionTestFactory.withPriorOtherCondition(it)),
-                "History of other condition"
+                "other condition"
             )
         }
     }
@@ -60,7 +60,7 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
         listOf(complicationWithChildOfTargetCode, complicationWithTargetCode).forEach {
             assertPassEvaluationWithMessages(
                 function.evaluate(OtherConditionTestFactory.withComplications(listOf(it))),
-                "History of complication"
+                "complication"
             )
         }
     }
@@ -70,7 +70,7 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
         listOf(childCode, parentCode).forEach {
             assertPassEvaluationWithMessages(
                 function.evaluate(OtherConditionTestFactory.withToxicities(listOf(toxicity(ToxicitySource.QUESTIONNAIRE, IcdCode(it), 1)))),
-                "History of toxicity"
+                "toxicity"
             )
         }
     }
@@ -80,7 +80,7 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
         listOf(childCode, parentCode).forEach {
             assertPassEvaluationWithMessages(
                 function.evaluate(OtherConditionTestFactory.withToxicities(listOf(toxicity(ToxicitySource.EHR, IcdCode(it), 2)))),
-                "History of toxicity"
+                "toxicity"
             )
         }
     }
@@ -126,7 +126,7 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
                     priorOtherConditions = listOf(conditionWithTargetCode)
                 )
             ),
-            "History of complication, other condition, pneumonitis and toxicity"
+            "complication, other condition, pneumonitis and toxicity"
         )
     }
 
@@ -140,8 +140,8 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
         )
     }
 
-    private fun assertPassEvaluationWithMessages(evaluation: Evaluation, vararg passMessages: String) {
+    private fun assertPassEvaluationWithMessages(evaluation: Evaluation, matchedNames: String) {
         assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passMessages).containsOnly(*passMessages)
+        assertThat(evaluation.passMessages).containsOnly("History of $matchedNames")
     }
 }

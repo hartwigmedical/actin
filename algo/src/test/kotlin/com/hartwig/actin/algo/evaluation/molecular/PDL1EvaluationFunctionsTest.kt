@@ -42,7 +42,7 @@ class PDL1EvaluationFunctionsTest {
     }
 
     @Test
-    fun `Should fail with specific message when molecular history only contains tests with other measure types `() {
+    fun `Should fail with message when molecular history only contains tests with other measure types `() {
         val record = MolecularTestFactory.withIHCTests(
             MolecularTestFactory.priorIHCTest(test = "IHC", item = "PD-L1", measure = "wrong"),
             MolecularTestFactory.priorIHCTest(test = "IHC", item = "PD-L1", measure = "other wrong")
@@ -60,7 +60,7 @@ class PDL1EvaluationFunctionsTest {
     }
 
     @Test
-    fun `Should fail with specific message when measure matches but score value is empty`() {
+    fun `Should fail with message when measure matches but score value is empty`() {
         val record = MolecularTestFactory.withIHCTests(pdl1Test.copy(scoreValue = null))
         evaluateFunctions(EvaluationResult.FAIL, record)
         assertMessage(record, "No score value available for PD-L1 IHC test")
