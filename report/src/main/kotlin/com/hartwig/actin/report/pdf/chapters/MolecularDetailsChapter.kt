@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
+import com.hartwig.actin.datamodel.molecular.PanelRecord
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
@@ -12,6 +13,7 @@ import com.hartwig.actin.report.pdf.tables.molecular.MolecularDriversGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.PathologyReportGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.PredictedTumorOriginGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.PriorIHCResultGenerator
+import com.hartwig.actin.report.pdf.tables.molecular.WGSSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummary
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
@@ -50,27 +52,45 @@ class MolecularDetailsChapter(
         val priorIHCResults = priorIHCResultGenerator.contents().setBorder(Border.NO_BORDER)
         document.add(priorIHCResults)
 
-        val table = Tables.createSingleColWithWidth(contentWidth())
-        table.addCell(Cells.createEmpty())
+        val cohorts =
+            InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
+
+        val orangeMolecularTable = Tables.createSingleColWithWidth(contentWidth())
+        orangeMolecularTable.addCell(Cells.createEmpty())
         report.patientRecord.molecularHistory.latestOrangeMolecularRecord()?.let { molecular ->
-            table.addCell(
+            orangeMolecularTable.addCell(
                 Cells.createTitle("${molecular.experimentType.display()} (${molecular.sampleId}, ${date(molecular.date)})")
             )
             if (molecular.hasSufficientQualityButLowPurity()) {
-                table.addCell(Cells.createContentNoBorder("Low tumor purity (${molecular.characteristics.purity?.let { Formats.percentage(it) } ?: "NA"}) indicating that potential (subclonal) DNA aberrations might not have been detected & predicted tumor origin results may be less reliable"))
+                orangeMolecularTable.addCell(Cells.createContentNoBorder("Low tumor purity (${molecular.characteristics.purity?.let { Formats.percentage(it) } ?: "NA"}) indicating that potential (subclonal) DNA aberrations might not have been detected & predicted tumor origin results may be less reliable"))
             }
-            val cohorts =
-                InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
 
             val generators =
                 listOf(MolecularCharacteristicsGenerator(molecular, contentWidth())) + tumorDetailsGenerators(molecular, cohorts, trials)
-            addGenerators(generators, table, addSubTitle = true)
+            addGenerators(generators, orangeMolecularTable, addSubTitle = true)
 
             if (!molecular.hasSufficientQuality) {
-                table.addCell(Cells.createContent("No successful OncoAct WGS and/or tumor NGS panel could be performed on the submitted biopsy (insufficient quality for reporting)"))
+                orangeMolecularTable.addCell(Cells.createContent("No successful OncoAct WGS and/or tumor NGS panel could be performed on the submitted biopsy (insufficient quality for reporting)"))
             }
-        } ?: table.addCell(Cells.createContent("No OncoAct WGS and/or tumor NGS panel performed"))
-        document.add(table)
+        } ?: orangeMolecularTable.addCell(Cells.createContent("No OncoAct WGS and/or Hartwig NGS panel performed"))
+        document.add(orangeMolecularTable)
+
+        val externalPanelResults = report.patientRecord.molecularHistory.molecularTests.filterIsInstance<PanelRecord>()
+        for (panel in externalPanelResults) {
+            WGSSummaryGenerator(
+                true,
+                report.patientRecord,
+                panel,
+                cohorts,
+                keyWidth,
+                contentWidth()
+            ).let { generator ->
+                val table = Tables.createSingleColWithWidth(contentWidth())
+                table.addCell(Cells.createTitle(generator.title()))
+                table.addCell(Cells.create(generator.contents()))
+                document.add(table)
+            }
+        }
     }
 
     private fun tumorDetailsGenerators(
