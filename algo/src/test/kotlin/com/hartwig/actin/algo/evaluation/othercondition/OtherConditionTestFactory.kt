@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.othercondition
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
+import com.hartwig.actin.datamodel.clinical.Comorbidity
 import com.hartwig.actin.datamodel.clinical.Complication
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
@@ -20,7 +21,7 @@ internal object OtherConditionTestFactory {
     }
 
     fun withPriorOtherConditions(conditions: List<PriorOtherCondition>): PatientRecord {
-        return base.copy(priorOtherConditions = conditions)
+        return withComorbidities(conditions)
     }
 
     fun priorOtherCondition(
@@ -52,7 +53,7 @@ internal object OtherConditionTestFactory {
     }
 
     fun complication(name: String = "", icdMainCode: String = "", icdExtensionCode: String? = null): Complication {
-        return Complication(name = name, icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode)), year = null, month = null)
+        return Complication(name = name, year = null, month = null, icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode)))
     }
 
     fun toxicity(
@@ -68,15 +69,19 @@ internal object OtherConditionTestFactory {
     }
 
     fun withComplications(complications: List<Complication>): PatientRecord {
-        return base.copy(complications = complications)
+        return withComorbidities(complications)
     }
 
     fun withToxicities(toxicities: List<Toxicity>): PatientRecord {
-        return base.copy(toxicities = toxicities)
+        return withComorbidities(toxicities)
     }
 
     fun withIntolerances(intolerances: List<Intolerance>): PatientRecord {
-        return base.copy(intolerances = intolerances)
+        return withComorbidities(intolerances)
+    }
+
+    private fun withComorbidities(comorbidities: List<Comorbidity>): PatientRecord {
+        return base.copy(comorbidities = comorbidities)
     }
 
     fun withMedications(medications: List<Medication>): PatientRecord {

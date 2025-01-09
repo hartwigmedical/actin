@@ -1,7 +1,7 @@
 package com.hartwig.actin.icd
 
 import com.hartwig.actin.datamodel.clinical.IcdCode
-import com.hartwig.actin.datamodel.clinical.IcdCodeEntity
+import com.hartwig.actin.datamodel.clinical.Comorbidity
 import com.hartwig.actin.icd.datamodel.IcdMatches
 import com.hartwig.actin.icd.datamodel.IcdNode
 
@@ -56,7 +56,7 @@ class IcdModel(
         return codeToNodeMap[code]?.title ?: throw IllegalStateException("ICD title unresolvable for code $code")
     }
 
-    fun <T : IcdCodeEntity> findInstancesMatchingAnyIcdCode(instances: List<T>, targetIcdCodes: Set<IcdCode>): IcdMatches<T> {
+    fun <T : Comorbidity> findInstancesMatchingAnyIcdCode(instances: List<T>, targetIcdCodes: Set<IcdCode>): IcdMatches<T> {
         val targetMainCodesWithExtensions = targetIcdCodes.mapNotNull { code -> code.extensionCode?.let { code.mainCode } }.toSet()
         val instancesByCategory = instances.groupBy { instance ->
             val allCodes = allCodesForEntity(instance)
@@ -78,7 +78,7 @@ class IcdModel(
         )
     }
 
-    private fun allCodesForEntity(entity: IcdCodeEntity): Set<IcdCode> {
+    private fun allCodesForEntity(entity: Comorbidity): Set<IcdCode> {
         return entity.icdCodes.flatMap { code ->
             val extensionCodes = code.extensionCode?.let { codeWithAllParents(it) + null } ?: listOf(null)
             codeWithAllParents(code.mainCode).flatMap { mainCode ->

@@ -26,7 +26,7 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCode(
             .filter { toxicity -> (toxicity.grade ?: 0) >= 2 || (toxicity.source == ToxicitySource.QUESTIONNAIRE) }
 
         val icdMatches = icdModel.findInstancesMatchingAnyIcdCode(
-            relevantConditions + (record.complications ?: emptyList()) + relevantToxicities,
+            relevantConditions + record.complications + relevantToxicities,
             targetIcdCodes
         )
 
@@ -42,7 +42,7 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCode(
             }
 
             icdMatches.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> EvaluationFactory.undetermined(
-                "Has history of ${Format.concatStringsWithAnd(icdMatches.mainCodeMatchesWithUnknownExtension.map { it.display() })} " +
+                "Has history of ${Format.concatItemsWithAnd(icdMatches.mainCodeMatchesWithUnknownExtension)} " +
                         "but undetermined if history of $diseaseDescription"
             )
 

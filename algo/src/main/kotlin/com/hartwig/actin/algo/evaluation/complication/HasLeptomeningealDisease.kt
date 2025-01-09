@@ -4,7 +4,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.icd.IcdConstants
-import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IcdCode
@@ -14,27 +13,28 @@ class HasLeptomeningealDisease(private val icdModel: IcdModel) : EvaluationFunct
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val hasConfirmedLeptomeningealDisease = icdModel.findInstancesMatchingAnyIcdCode(
-            OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions) + (record.complications ?: emptyList()),
-            setOf(IcdCode(IcdConstants.LEPTOMENINGEAL_METASTASES_CODE))
+            record.comorbidities, setOf(IcdCode(IcdConstants.LEPTOMENINGEAL_METASTASES_CODE))
         ).fullMatches.isNotEmpty()
 
         val tumorDetails = record.tumor
         val otherLesions = listOfNotNull(tumorDetails.otherLesions, tumorDetails.otherSuspectedLesions).flatten()
-        val (hasSuspectedPotentialMeningealLesions, hasConfirmedPotentialMeningealLesions) = listOf(
-            tumorDetails.hasSuspectedCnsLesions,
-            tumorDetails.hasConfirmedCnsLesions()
-        ).map { filterPotentiallyMeningealLesions(it, otherLesions).isNotEmpty() }
 
         return when {
-            hasConfirmedLeptomeningealDisease -> return EvaluationFactory.pass("Has leptomeningeal disease")
+            hasConfirmedLeptomeningealDisease -> {
+                EvaluationFactory.pass("Has leptomeningeal disease")
+            }
 
-            hasConfirmedPotentialMeningealLesions -> createWarnEvaluation(suspected = false, otherLesions)
+            filterPotentiallyMeningealLesions(tumorDetails.hasConfirmedCnsLesions(), otherLesions).isNotEmpty() -> {
+                createWarnEvaluation(suspected = false, otherLesions)
+            }
 
-            hasSuspectedPotentialMeningealLesions -> createWarnEvaluation(suspected = true, otherLesions)
+            filterPotentiallyMeningealLesions(tumorDetails.hasSuspectedCnsLesions, otherLesions).isNotEmpty() -> {
+                createWarnEvaluation(suspected = true, otherLesions)
+            }
 
-            else -> EvaluationFactory.fail(
-                "Patient does not have leptomeningeal disease", "No leptomeningeal disease"
-            )
+            else -> {
+                EvaluationFactory.fail("Patient does not have leptomeningeal disease", "No leptomeningeal disease")
+            }
         }
     }
 

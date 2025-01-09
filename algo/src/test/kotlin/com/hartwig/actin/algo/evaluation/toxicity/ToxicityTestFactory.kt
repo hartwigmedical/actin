@@ -11,13 +11,13 @@ internal object ToxicityTestFactory {
     val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
 
     fun withToxicities(toxicities: List<Toxicity>): PatientRecord {
-        return base.copy(toxicities = toxicities)
+        return base.copy(comorbidities = toxicities)
     }
 
     fun withToxicityThatIsAlsoComplication(toxicity: Toxicity, icdCode: String = ""): PatientRecord {
         val complication =
-            Complication(name = toxicity.name, icdCodes = setOf(IcdCode(icdCode)), year = null, month = null)
-        return base.copy(toxicities = listOf(toxicity.copy(icdCodes = setOf(IcdCode(icdCode)))), complications = listOf(complication))
+            Complication(name = toxicity.name, year = null, month = null, icdCodes = setOf(IcdCode(icdCode)))
+        return base.copy(comorbidities = listOf(toxicity.copy(icdCodes = setOf(IcdCode(icdCode)))) + complication)
     }
 
     fun withIntolerance(intolerance: Intolerance): PatientRecord {
@@ -25,7 +25,7 @@ internal object ToxicityTestFactory {
     }
 
     fun withIntolerances(intolerances: List<Intolerance>): PatientRecord {
-        return base.copy(intolerances = intolerances)
+        return base.copy(comorbidities = intolerances)
     }
 
     fun intolerance(

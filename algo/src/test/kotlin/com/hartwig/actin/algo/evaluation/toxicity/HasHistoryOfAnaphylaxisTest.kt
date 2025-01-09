@@ -21,12 +21,12 @@ class HasHistoryOfAnaphylaxisTest {
     private val testPatient = TestPatientFactory.createMinimalTestWGSPatientRecord()
 
     @Test
-    fun `Should pass for matching history entry`() {
+    fun `Should pass for matching condition entry`() {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
                 testPatient.copy(
-                    priorOtherConditions = listOf(
+                    comorbidities = listOf(
                         OtherConditionTestFactory.priorOtherCondition(icdMainCode = IcdConstants.ANAPHYLAXIS_CODE)
                     )
                 )
@@ -40,7 +40,7 @@ class HasHistoryOfAnaphylaxisTest {
             EvaluationResult.PASS,
             function.evaluate(
                 testPatient.copy(
-                    intolerances = listOf(
+                    comorbidities = listOf(
                         OtherConditionTestFactory.intolerance(icdMainCode = IcdConstants.DRUG_INDUCED_ANAPHYLAXIS_CODE)
                     )
                 )
@@ -51,7 +51,7 @@ class HasHistoryOfAnaphylaxisTest {
     @Test
     fun `Should fail for empty history and no intolerances`() {
         assertEvaluation(
-            EvaluationResult.FAIL, function.evaluate(testPatient.copy(intolerances = emptyList(), priorOtherConditions = emptyList()))
+            EvaluationResult.FAIL, function.evaluate(testPatient.copy(comorbidities = emptyList()))
         )
     }
 
@@ -61,8 +61,10 @@ class HasHistoryOfAnaphylaxisTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 testPatient.copy(
-                    intolerances = listOf(OtherConditionTestFactory.intolerance(icdMainCode = "wrong")),
-                    priorOtherConditions = listOf(OtherConditionTestFactory.priorOtherCondition(icdMainCode = "wrong"))
+                    comorbidities = listOf(
+                        OtherConditionTestFactory.intolerance(icdMainCode = "wrong"),
+                        OtherConditionTestFactory.priorOtherCondition(icdMainCode = "wrong")
+                    )
                 )
             )
         )

@@ -43,6 +43,7 @@ object TestClinicalFactory {
             clinicalStatus = ClinicalStatus(),
             oncologicalHistory = emptyList(),
             priorSecondPrimaries = emptyList(),
+            comorbidities = emptyList(),
             priorOtherConditions = emptyList(),
             priorIHCTests = emptyList(),
             priorSequencingTests = emptyList(),
@@ -65,12 +66,9 @@ object TestClinicalFactory {
             clinicalStatus = createTestClinicalStatus(),
             oncologicalHistory = createTreatmentHistory(),
             priorSecondPrimaries = createTestPriorSecondPrimaries(),
-            priorOtherConditions = createTestPriorOtherConditions(),
+            comorbidities = createTestPriorOtherConditions() + createTestComplications() + createTestToxicities() + createTestIntolerances(),
             priorIHCTests = createTestPriorMolecularTests(),
-            complications = createTestComplications(),
             labValues = createTestLabValues(),
-            toxicities = createTestToxicities(),
-            intolerances = createTestIntolerances(),
             surgeries = createTestSurgeries(),
             bodyWeights = createTestBodyWeights(),
             vitalFunctions = createTestVitalFunctions(),
@@ -345,7 +343,7 @@ object TestClinicalFactory {
     }
 
     private fun createTestComplications(): List<Complication> {
-        return listOf(Complication(name = "Ascites", icdCodes = setOf(IcdCode("1A01", null)), year = null, month = null))
+        return listOf(Complication(name = "Ascites", year = null, month = null, icdCodes = setOf(IcdCode("1A01", null))))
     }
 
     private fun createTestLabValues(): List<LabValue> {

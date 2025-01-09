@@ -10,7 +10,6 @@ object PatientRecordFactory {
 
     private val LOGGER: Logger = LogManager.getLogger(PatientRecordFactory::class.java)
 
-    @JvmStatic
     fun fromInputs(clinical: ClinicalRecord, molecularHistory: MolecularHistory?): PatientRecord {
         if (molecularHistory == null || molecularHistory.molecularTests.isEmpty()) {
             LOGGER.warn("No molecular data for patient '{}'", clinical.patientId)
@@ -22,11 +21,8 @@ object PatientRecordFactory {
             clinicalStatus = clinical.clinicalStatus,
             oncologicalHistory = clinical.oncologicalHistory,
             priorSecondPrimaries = clinical.priorSecondPrimaries,
-            priorOtherConditions = clinical.priorOtherConditions,
-            complications = clinical.complications,
+            comorbidities = clinical.comorbidities,
             labValues = clinical.labValues,
-            toxicities = clinical.toxicities,
-            intolerances = clinical.intolerances,
             surgeries = clinical.surgeries,
             bodyWeights = clinical.bodyWeights,
             bodyHeights = clinical.bodyHeights,
