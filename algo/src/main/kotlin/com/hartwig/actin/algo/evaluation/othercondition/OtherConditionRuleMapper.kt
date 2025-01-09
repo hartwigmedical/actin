@@ -69,7 +69,14 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             EligibilityRule.HAS_DIABETES to hasPriorConditionWithIcdCodesFromSetCreator(setOf(IcdCode(IcdConstants.DIABETES_MELLITUS_BLOCK)), "diabetes"),
             EligibilityRule.HAS_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS to hasInheritedPredispositionToBleedingOrThrombosisCreator(),
             EligibilityRule.HAS_POTENTIAL_ABSORPTION_DIFFICULTIES to hasPotentialAbsorptionDifficultiesCreator(),
-            EligibilityRule.HAS_POTENTIAL_ORAL_MEDICATION_DIFFICULTIES to hasOralMedicationDifficultiesCreator(),
+            EligibilityRule.HAS_POTENTIAL_ORAL_MEDICATION_DIFFICULTIES to {
+                HasHadPriorConditionComplicationOrToxicityWithIcdCode(
+                    icdModel(),
+                    listOf(IcdConstants.FUNCTIONAL_SWALLOWING_DISORDER_CODE, IcdConstants.DISORDERS_OF_ORAL_MUCOSA_CODE).map { IcdCode(it) }.toSet(),
+                    "potential oral medication difficulties",
+                    referenceDateProvider().date()
+                )
+            },
             EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_CT to hasContraindicationToCTCreator(),
             EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_MRI to hasContraindicationToMRICreator(),
             EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_PET_MRI to hasContraindicationToMRICreator(),
@@ -184,10 +191,6 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
 
     private fun hasPotentialAbsorptionDifficultiesCreator(): FunctionCreator {
         return { HasPotentialAbsorptionDifficulties(icdModel()) }
-    }
-
-    private fun hasOralMedicationDifficultiesCreator(): FunctionCreator {
-        return { HasOralMedicationDifficulties() }
     }
 
     private fun hasContraindicationToCTCreator(): FunctionCreator {
