@@ -11,6 +11,12 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.PriorIHCTest
 import com.hartwig.actin.doid.DoidModel
 
+private enum class TestResult {
+    POSITIVE,
+    NEGATIVE,
+    UNKNOWN
+}
+
 object PDL1EvaluationFunctions {
 
     fun evaluatePDL1byIHC(
@@ -35,7 +41,7 @@ object PDL1EvaluationFunctions {
         val comparatorMessage = if (evaluateMaxPDL1) "below maximum of" else "above minimum of"
 
         return when {
-            EvaluationResult.PASS in testEvaluations && EvaluationResult.FAIL in testEvaluations -> {
+            EvaluationResult.PASS in testEvaluations && (EvaluationResult.FAIL in testEvaluations || EvaluationResult.UNDETERMINED in testEvaluations) -> {
                 EvaluationFactory.undetermined(
                     "Undetermined if PD-L1 expression $comparatorMessage $pdl1Reference - conflicting PD-L1 results"
                 )
@@ -65,9 +71,9 @@ object PDL1EvaluationFunctions {
             }
 
             pdl1TestsWithRequestedMeasurement.isNotEmpty() && pdl1TestsWithRequestedMeasurement.any { test -> test.scoreValue == null } -> {
+                val status = pdl1TestsWithRequestedMeasurement.joinToString(", ") { it.scoreText ?: "unknown" }
                 EvaluationFactory.recoverableUndetermined(
-                    "No PD-L1 IHC test found with score value - only neg/pos status available",
-                    "No score value available for PD-L1 IHC test"
+                    "Unclear if IHC PD-L1 status available ($status) is considered $comparatorMessage $pdl1Reference"
                 )
             }
 
@@ -91,31 +97,32 @@ object PDL1EvaluationFunctions {
         evaluateMaxPDL1: Boolean,
     ): EvaluationResult? {
         val result = classifyIhcTest(ihcTest)
-        return when {
-            evaluateMaxPDL1 && result == IHCTestClassificationFunctions.TestResult.NEGATIVE &&
-                    ((ihcTest.measure == "TPS" && pdl1Reference >= 1) || (ihcTest.measure == "CPS" && pdl1Reference >= 10)) -> EvaluationResult.PASS
+        val cpsWithRefEqualAbove10 = ihcTest.measure == "CPS" && pdl1Reference >= 10
+        val tpsWithRefEqualAbove1 = ihcTest.measure == "TPS" && pdl1Reference >= 1
 
-            !evaluateMaxPDL1 && result == IHCTestClassificationFunctions.TestResult.POSITIVE && pdl1Reference == 1.0 &&
+        return when {
+            evaluateMaxPDL1 && result == TestResult.NEGATIVE && (tpsWithRefEqualAbove1 || cpsWithRefEqualAbove10) -> EvaluationResult.PASS
+
+            !evaluateMaxPDL1 && result == TestResult.POSITIVE && pdl1Reference == 1.0 &&
                     (ihcTest.measure == "TPS" || ihcTest.measure == "CPS") -> EvaluationResult.PASS
 
-            !evaluateMaxPDL1 && result == IHCTestClassificationFunctions.TestResult.NEGATIVE &&
-                    ((ihcTest.measure == "TPS" && pdl1Reference >= 1) || (ihcTest.measure == "CPS" && pdl1Reference >= 10)) -> EvaluationResult.FAIL
+            !evaluateMaxPDL1 && result == TestResult.NEGATIVE && (tpsWithRefEqualAbove1 || cpsWithRefEqualAbove10) -> EvaluationResult.FAIL
 
             else -> null
         }
     }
 
-    private fun classifyIhcTest(test: PriorIHCTest): IHCTestClassificationFunctions.TestResult {
+    private fun classifyIhcTest(test: PriorIHCTest): TestResult {
         return when {
             test.scoreText?.lowercase()?.contains("negative") == true -> {
-                IHCTestClassificationFunctions.TestResult.NEGATIVE
+                TestResult.NEGATIVE
             }
 
             test.scoreText?.lowercase()?.contains("positive") == true -> {
-                IHCTestClassificationFunctions.TestResult.POSITIVE
+                TestResult.POSITIVE
             }
 
-            else -> IHCTestClassificationFunctions.TestResult.UNKNOWN
+            else -> TestResult.UNKNOWN
         }
     }
 }
