@@ -70,7 +70,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
     @Test
     fun `Should pass for activating mutation in correct gene`() {
         val record = MolecularTestFactory.withVariant(BASE_VARIANT)
-        val expectedMessages = setOf("$CORRECT_GENE activating mutation(s) $CORRECT_EVENT")
+        val expectedMessages = setOf("$CORRECT_GENE activating mutation(s): $CORRECT_EVENT")
         evaluateFunctions(EvaluationResult.PASS, record)
         evaluateMessages(functionIncludingAllGenes.evaluate(record).passMessages, expectedMessages)
         evaluateMessages(functionIncludingSpecificGene.evaluate(record).passMessages, expectedMessages)
@@ -133,8 +133,8 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
             )
         )
         val expectedMessages = setOf(
-            "$CORRECT_PROTEIN_IMPACT detected in $CORRECT_VARIANT_GENE",
-            "$OTHER_CORRECT_PROTEIN_IMPACT detected in $OTHER_CORRECT_VARIANT_GENE"
+            "$CORRECT_PROTEIN_IMPACT in $CORRECT_VARIANT_GENE in canonical transcript",
+            "$OTHER_CORRECT_PROTEIN_IMPACT in $OTHER_CORRECT_VARIANT_GENE in canonical transcript"
         )
         evaluateFunctions(EvaluationResult.PASS, record)
         evaluateMessages(functionIncludingAllGenes.evaluate(record).passMessages, expectedMessages)

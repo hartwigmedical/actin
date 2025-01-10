@@ -63,7 +63,7 @@ class PDL1EvaluationFunctionsTest {
     fun `Should fail with message when measure matches but score value is empty`() {
         val record = MolecularTestFactory.withIHCTests(pdl1Test.copy(scoreValue = null))
         evaluateFunctions(EvaluationResult.FAIL, record)
-        assertMessage(record, "No score value available for PD-L1 IHC test")
+        assertMessage(record, "No score value available for PD-L1 IHC test (only neg/pos status)")
     }
 
     @Test

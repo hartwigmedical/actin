@@ -86,7 +86,7 @@ object TestTreatmentMatchFactory {
                     Evaluation(
                         result = EvaluationResult.PASS,
                         recoverable = false,
-                        passMessages = setOf("Active CNS metastases")
+                        passMessages = setOf("Has active CNS metastases")
                     )
                 ),
                 annotations = TestExtendedEvidenceEntryFactory.createProperTestExtendedEvidenceEntries(),
@@ -116,7 +116,7 @@ object TestTreatmentMatchFactory {
                         text = "Patient must be an adult"
                     )
                 )
-            ) to unrecoverable(EvaluationResult.PASS, "Patient is adult", null),
+            ) to unrecoverable(EvaluationResult.PASS, "Patient is at least 18 years old", null),
             Eligibility(
                 function = EligibilityFunction(
                     rule = EligibilityRule.NOT, parameters = listOf(
@@ -129,7 +129,7 @@ object TestTreatmentMatchFactory {
                         text = "This rule has 2 conditions:\n 1. Patient has no active brain metastases\n 2. Patient has exhausted SOC"
                     )
                 )
-            ) to unrecoverable(EvaluationResult.PASS, "Patient has no known brain metastases"),
+            ) to unrecoverable(EvaluationResult.PASS, "No known brain metastases present"),
             Eligibility(
                 function = EligibilityFunction(rule = EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS, parameters = emptyList()),
                 references = setOf(
@@ -196,7 +196,7 @@ object TestTreatmentMatchFactory {
                     parameters = listOf(EligibilityFunction(rule = EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES)),
                 ),
                 references = setOf(CriterionReference(id = "E-01", text = "Active CNS metastases"))
-            ) to unrecoverable(EvaluationResult.FAIL, "Active CNS metastases", null)
+            ) to unrecoverable(EvaluationResult.FAIL, "Has active CNS metastases", null)
         )
     }
 
@@ -205,11 +205,11 @@ object TestTreatmentMatchFactory {
             Eligibility(
                 function = EligibilityFunction(rule = EligibilityRule.HAS_MEASURABLE_DISEASE),
                 references = setOf(CriterionReference(id = "I-01", text = "Patient should have measurable disease")),
-            ) to unrecoverable(EvaluationResult.PASS, "Patient has measurable disease"),
+            ) to unrecoverable(EvaluationResult.PASS, "Has measurable disease"),
             Eligibility(
                 function = EligibilityFunction(rule = EligibilityRule.CAN_GIVE_ADEQUATE_INFORMED_CONSENT),
                 references = setOf(CriterionReference(id = "I-02", text = "Patient should be able to give adequate informed consent"))
-            ) to unrecoverable(EvaluationResult.NOT_EVALUATED, "It is assumed that patient can provide adequate informed consent")
+            ) to unrecoverable(EvaluationResult.NOT_EVALUATED, "Assumed that patient can give adequate informed consent")
         )
     }
 
@@ -232,7 +232,7 @@ object TestTreatmentMatchFactory {
             Eligibility(
                 function = EligibilityFunction(rule = EligibilityRule.MSI_SIGNATURE, parameters = emptyList()),
                 references = setOf(CriterionReference(id = "I-01", text = "MSI")),
-            ) to unrecoverable(EvaluationResult.PASS, "MSI", "MSI")
+            ) to unrecoverable(EvaluationResult.PASS, "Tumor is MSI with biallelic drivers in MMR genes", "MSI")
         )
     }
 

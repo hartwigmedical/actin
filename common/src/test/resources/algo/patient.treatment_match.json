@@ -40,6 +40,7 @@
             "exclusionMolecularEvents": [
             ],
             "passMessages": [
+              "Patient is at least 18 years old"
             ],
             "warnMessages": [
             ],
@@ -94,6 +95,7 @@
                 "undeterminedMessages": [
                 ],
                 "failMessages": [
+                  "No known active CNS metastases present"
                 ]
               }
             ]
@@ -172,7 +174,7 @@
           "result": "FAIL",
           "recoverable": false,
           "failMessages": [
-            "Patient is eligible for line 4 treatment"
+            "Patient determined to be eligible for line 4"
           ]
         }
       ]

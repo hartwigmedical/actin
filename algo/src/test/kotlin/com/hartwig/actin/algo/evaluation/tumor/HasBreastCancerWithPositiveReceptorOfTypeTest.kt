@@ -26,7 +26,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
             )
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessages).containsExactly("Undetermined if PR positive breast cancer (no tumor doids configured)")
+        assertThat(evaluation.undeterminedMessages).containsExactly("Undetermined if PR positive breast cancer (tumor doids missing)")
     }
 
     @Test

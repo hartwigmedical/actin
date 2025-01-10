@@ -40,7 +40,7 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Age above 18"
+              "Patient is at least 18 years old"
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -86,7 +86,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               "Has solid primary tumor",
-              "Metastatic cancer"
+              "Stage IV is considered metastatic"
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -124,7 +124,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [],
             "warnMessages": [
-              "SOC not exhausted: at least platinum doublet remaining"
+              "Has not exhausted SOC (at least platinum doublet remaining)"
             ],
             "undeterminedMessages": [],
             "failMessages": [],
@@ -156,7 +156,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [],
             "warnMessages": [
-              "History of Rheumatoid arthritis"
+              "Has history of Rheumatoid arthritis"
             ],
             "undeterminedMessages": [],
             "failMessages": [],
@@ -184,7 +184,9 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [],
-            "warnMessages": [],
+            "warnMessages": [
+              "Hemoglobin 8.2 mmol/L exceeds min of 6.0 mmol/L but measurement occurred before 16-Aug-2024"
+            ],
             "undeterminedMessages": [],
             "failMessages": [],
             "isMissingGenesForSufficientEvaluation": false
@@ -212,7 +214,9 @@
             "exclusionMolecularEvents": [],
             "passMessages": [],
             "warnMessages": [],
-            "undeterminedMessages": [],
+            "undeterminedMessages": [
+              "No measurement found for absolute neutrophil count"
+            ],
             "failMessages": [],
             "isMissingGenesForSufficientEvaluation": false
           }
@@ -307,7 +311,7 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Age above 18"
+              "Patient is at least 18 years old"
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -343,7 +347,7 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Metastatic cancer"
+              "Tumor stage IV is considered metastatic"
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -476,7 +480,7 @@
                 "inclusionMolecularEvents": [],
                 "exclusionMolecularEvents": [],
                 "passMessages": [
-                  "Has tumor belonging to DOID term(s) lung non-small cell carcinoma"
+                  "Tumor belongs to DOID term(s) lung non-small cell carcinoma"
                 ],
                 "warnMessages": [],
                 "undeterminedMessages": [],
@@ -563,7 +567,7 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Age above 18"
+              "Patient is at least 18 years old"
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -599,7 +603,7 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Metastatic cancer"
+              "Stage IV is considered metastatic"
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -651,7 +655,7 @@
             "warnMessages": [],
             "undeterminedMessages": [],
             "failMessages": [
-              "C797S detected in EGFR"
+              "C797S in EGFR in canonical transcript"
             ],
             "isMissingGenesForSufficientEvaluation": false
           }
@@ -734,7 +738,7 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Age above 18"
+              "Patient is at least 18 years old"
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -781,8 +785,8 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Has tumor belonging to DOID term(s) lung cancer",
-              "Metastatic cancer"
+              "Tumor belongs to DOID term(s) lung cancer",
+              "Stage IV is considered metastatic"
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -814,7 +818,7 @@
             ],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "C797S detected in EGFR"
+              "C797S in EGFR in canonical transcript"
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -900,7 +904,7 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Age above 18"
+              "Patient is at least 18 years old"
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -936,7 +940,7 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "Metastatic cancer"
+              "Stage IV is considered metastatic"
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -1027,7 +1031,8 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
             "passMessages": [
-              "No relevant non-oncological condition"
+              "Has no other condition belonging to category coronary artery disease",
+              "Has no other condition belonging to category heart disease"
             ],
             "warnMessages": [],
             "undeterminedMessages": [],
@@ -1098,7 +1103,7 @@
                 "inclusionMolecularEvents": [],
                 "exclusionMolecularEvents": [],
                 "passMessages": [
-                  "Has tumor belonging to DOID term(s) lung non-small cell carcinoma"
+                  "Tumor belongs to DOID term(s) lung non-small cell carcinoma"
                 ],
                 "warnMessages": [],
                 "undeterminedMessages": [],
@@ -1157,7 +1162,7 @@
                 "warnMessages": [],
                 "undeterminedMessages": [],
                 "failMessages": [
-                  "Has tumor belonging to DOID term(s) lung non-small cell carcinoma"
+                  "Tumor belongs to DOID term(s) lung non-small cell carcinoma"
                 ],
                 "isMissingGenesForSufficientEvaluation": false
               }

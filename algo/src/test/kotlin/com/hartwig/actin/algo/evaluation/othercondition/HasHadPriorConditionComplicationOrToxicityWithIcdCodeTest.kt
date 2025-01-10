@@ -142,6 +142,6 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
 
     private fun assertPassEvaluationWithMessages(evaluation: Evaluation, matchedNames: String) {
         assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passMessages).containsOnly("History of $matchedNames")
+        assertThat(evaluation.passMessages).containsOnly("Has history of $matchedNames")
     }
 }

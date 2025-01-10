@@ -81,7 +81,7 @@ class TreatmentMatchJsonTest {
                         {"rule":"HAS_KNOWN_ACTIVE_CNS_METASTASES","parameters":[]}],"additionalCriteriaForRequirement":[]},
                     "evaluations":[
                         {"result":"PASS","recoverable":false,"inclusionMolecularEvents":[],
-                        "exclusionMolecularEvents":[],"passMessages":["Active CNS metastases"],"warnMessages":[],
+                        "exclusionMolecularEvents":[],"passMessages":["Has active CNS metastases"],"warnMessages":[],
                         "undeterminedMessages":[],"failMessages":[],"isMissingGenesForSufficientEvaluation":false}],
                     "annotations":[
                         {"acronym":"Study of Pembrolizumab","phase":"Phase III",

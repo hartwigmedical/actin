@@ -34,6 +34,6 @@ class LabMeasurementEvaluator(
     }
 
     private fun appendPastMinPassDate(inputs: Set<String>): List<String> {
-        return inputs.map { "$it, but measurement occurred before ${date(minValidDate)}" }
+        return inputs.map { "$it but measurement occurred before ${date(minValidDate)}" }
     }
 }

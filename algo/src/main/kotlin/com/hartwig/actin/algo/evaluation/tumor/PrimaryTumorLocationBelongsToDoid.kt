@@ -41,7 +41,7 @@ class PrimaryTumorLocationBelongsToDoid(
                     }
                 }
 
-                doidsTumorBelongsTo.isNotEmpty() -> EvaluationFactory.pass("Tumor belongs to $doidTermsTumorBelongsTo")
+                doidsTumorBelongsTo.isNotEmpty() -> EvaluationFactory.pass("Tumor belongs to DOID term(s) $doidTermsTumorBelongsTo")
 
                 potentialAdenoSquamousMatches.isNotEmpty() -> {
                     val potentialAdenoSquamousMatchesString = concatLowercaseWithCommaAndOr(doidsToTerms(potentialAdenoSquamousMatches))
