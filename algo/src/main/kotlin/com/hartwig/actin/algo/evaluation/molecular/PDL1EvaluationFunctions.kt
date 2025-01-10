@@ -72,7 +72,7 @@ object PDL1EvaluationFunctions {
 
             pdl1TestsWithRequestedMeasurement.isNotEmpty() && pdl1TestsWithRequestedMeasurement.any { test -> test.scoreValue == null } -> {
                 val status = pdl1TestsWithRequestedMeasurement.joinToString(", ") { it.scoreText ?: "unknown" }
-                EvaluationFactory.recoverableUndetermined(
+                EvaluationFactory.undetermined(
                     "Unclear if IHC PD-L1 status available ($status) is considered $comparatorMessage $pdl1Reference"
                 )
             }
