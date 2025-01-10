@@ -55,8 +55,7 @@ class MolecularDetailsChapter(
         val cohorts =
             InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
 
-        val orangeMolecularTable = Tables.createSingleColWithWidth(contentWidth())
-        orangeMolecularTable.addCell(Cells.createEmpty())
+        val orangeMolecularTable = Tables.createSingleColWithWidth(contentWidth()).addCell(Cells.createEmpty())
         report.patientRecord.molecularHistory.latestOrangeMolecularRecord()?.let { molecular ->
             orangeMolecularTable.addCell(
                 Cells.createTitle("${molecular.experimentType.display()} (${molecular.sampleId}, ${date(molecular.date)})")
@@ -84,10 +83,10 @@ class MolecularDetailsChapter(
                 cohorts,
                 keyWidth,
                 contentWidth()
-            ).let { generator ->
+            ).apply {
                 val table = Tables.createSingleColWithWidth(contentWidth())
-                table.addCell(Cells.createTitle(generator.title()))
-                table.addCell(Cells.create(generator.contents()))
+                table.addCell(Cells.createTitle(title()))
+                table.addCell(Cells.create(contents()))
                 document.add(table)
             }
         }
