@@ -126,14 +126,13 @@ object TabularTreatmentMatchWriter {
 
     private fun evaluationMessageColumns(evaluation: Evaluation?): List<String> {
         return if (evaluation == null) {
-            List(8) { "" }
+            List(4) { "" }
         } else {
             listOf(
                 evaluation.passMessages,
                 evaluation.warnMessages,
                 evaluation.undeterminedMessages,
                 evaluation.failMessages
-
             ).map(::concat)
         }
     }
