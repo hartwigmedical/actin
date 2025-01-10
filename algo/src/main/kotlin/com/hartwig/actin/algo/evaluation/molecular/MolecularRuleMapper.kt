@@ -232,6 +232,13 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
+    private fun hasSpecificHLAGroupCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val hlaAlleleToFind = functionInputResolver().createOneHlaAlleleInput(function)
+            HasSpecificHLAType(hlaAlleleToFind.allele, matchOnHlaGroup = true)
+        }
+    }
+
     private fun hasSpecificHLATypeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val hlaAlleleToFind = functionInputResolver().createOneHlaAlleleInput(function)

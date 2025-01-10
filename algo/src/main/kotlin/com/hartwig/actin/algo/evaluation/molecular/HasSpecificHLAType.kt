@@ -6,7 +6,7 @@ import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import java.time.LocalDate
 
-class HasSpecificHLAType(private val hlaAlleleToFind: String, maxTestAge: LocalDate? = null) :
+class HasSpecificHLAType(private val hlaAlleleToFind: String, maxTestAge: LocalDate? = null, private val matchOnHlaGroup: Boolean = false) :
     MolecularEvaluationFunction(maxTestAge, true) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
@@ -19,9 +19,13 @@ class HasSpecificHLAType(private val hlaAlleleToFind: String, maxTestAge: LocalD
             return EvaluationFactory.recoverableUndetermined("HLA typing has not been performed reliably", "HLA typing unreliable")
         }
 
+        val hasMatch = if (matchOnHlaGroup) {
+            immunology.hlaAlleles.any { it.name.startsWith(hlaAlleleToFind) }
+        } else immunology.hlaAlleles.any { it.name == hlaAlleleToFind }
+
         if (!test.hasSufficientQuality) {
             return when {
-                immunology.hlaAlleles.any { it.name == hlaAlleleToFind } -> {
+                hasMatch -> {
                     EvaluationFactory.undetermined(
                         "Patient has HLA type $hlaAlleleToFind which is equal to required allele type $hlaAlleleToFind, however undetermined whether allele is present in tumor",
                         "Patient has required HLA type, however undetermined whether allele is present in tumor"
@@ -35,7 +39,7 @@ class HasSpecificHLAType(private val hlaAlleleToFind: String, maxTestAge: LocalD
         }
 
         val (matchingAllelesUnmodifiedInTumor, matchingAllelesModifiedInTumor) = immunology.hlaAlleles
-            .filter { it.name == hlaAlleleToFind }
+            .filter { hasMatch }
             .partition { hlaAllele ->
                 val alleleIsPresentInTumor = hlaAllele.tumorCopyNumber >= 0.5
                 val alleleHasSomaticMutations = hlaAllele.hasSomaticMutations

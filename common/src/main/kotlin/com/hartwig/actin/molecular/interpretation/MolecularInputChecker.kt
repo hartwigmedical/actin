@@ -23,6 +23,10 @@ class MolecularInputChecker(private val geneFilter: GeneFilter) {
             return asteriskIndex == 1 && semicolonIndex > asteriskIndex
         }
 
+        fun isHlaGroup(string: String): Boolean {
+            return Regex("[A-Z]+\\*(0[1-9]|[1-9][0-9])").matches(string)
+        }
+
         fun isHaplotype(string: String): Boolean {
             val asterixIndex = string.indexOf("*")
             val semicolonIndex = string.indexOf("_")
