@@ -40,7 +40,6 @@ import com.hartwig.actin.trial.input.single.OneIntegerManyDoidTerms
 import com.hartwig.actin.trial.input.single.OneIntegerManyIcdTitles
 import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
 import com.hartwig.actin.trial.input.single.OneIntegerOneBodyLocation
-import com.hartwig.actin.trial.input.single.OneIntegerOneString
 import com.hartwig.actin.trial.input.single.OneMedicationCategory
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyDrugs
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypesManyDrugs
@@ -561,17 +560,6 @@ class FunctionInputResolverTest {
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("1")))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("not an integer", BodyLocationCategory.LIVER)))!!).isFalse
-    }
-
-    @Test
-    fun `Should resolve functions with one integer one string input`() {
-        val rule = firstOfType(FunctionInput.ONE_INTEGER_ONE_STRING)
-        val valid = create(rule, listOf("2", "test"))
-        assertThat(resolver.hasValidInputs(valid)!!).isTrue
-        assertThat(resolver.createOneIntegerOneStringInput(valid)).isEqualTo(OneIntegerOneString(2, "test"))
-        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("1")))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("not an integer", "not an integer")))!!).isFalse
     }
 
     @Test

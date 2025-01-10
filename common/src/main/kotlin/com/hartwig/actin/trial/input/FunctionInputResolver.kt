@@ -254,11 +254,6 @@ class FunctionInputResolver(
                     return true
                 }
 
-                FunctionInput.ONE_INTEGER_ONE_STRING -> {
-                    createOneIntegerOneStringInput(function)
-                    return true
-                }
-
                 FunctionInput.ONE_INTEGER_MANY_DOID_TERMS -> {
                     createOneIntegerManyDoidTermsInput(function)
                     return true
@@ -634,14 +629,6 @@ class FunctionInputResolver(
         return OneIntegerOneBodyLocation(
             integer = parameterAsInt(function, 0),
             bodyLocation = BodyLocationCategory.valueOf(parameterAsString(function, 1).uppercase())
-        )
-    }
-
-    fun createOneIntegerOneStringInput(function: EligibilityFunction): OneIntegerOneString {
-        assertParamConfig(function, FunctionInput.ONE_INTEGER_ONE_STRING, 2)
-        return OneIntegerOneString(
-            integer = parameterAsInt(function, 0),
-            string = parameterAsString(function, 1)
         )
     }
 

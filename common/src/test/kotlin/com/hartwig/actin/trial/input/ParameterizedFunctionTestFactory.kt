@@ -171,11 +171,7 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
             }
 
             FunctionInput.ONE_INTEGER_ONE_BODY_LOCATION -> {
-                listOf("1", BodyLocationCategory.LIVER)
-            }
-
-            FunctionInput.ONE_INTEGER_ONE_STRING -> {
-                listOf("1", "string")
+                listOf("1", BodyLocationCategory.LIVER.toString())
             }
 
             FunctionInput.ONE_INTEGER_MANY_DOID_TERMS -> {
