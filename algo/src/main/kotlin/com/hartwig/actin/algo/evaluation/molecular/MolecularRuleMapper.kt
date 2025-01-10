@@ -56,6 +56,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.TML_OF_AT_LEAST_X to hasSufficientTumorMutationalLoadCreator(),
             EligibilityRule.TML_BETWEEN_X_AND_Y to hasCertainTumorMutationalLoadCreator(),
             EligibilityRule.HAS_HLA_TYPE_X to hasSpecificHLATypeCreator(),
+            EligibilityRule.HAS_HLA_GROUP_X to hasSpecificHLAGroupCreator(),
             EligibilityRule.HAS_UGT1A1_HAPLOTYPE_X to hasUGT1A1HaplotypeCreator(),
             EligibilityRule.HAS_HOMOZYGOUS_DPYD_DEFICIENCY to { HasHomozygousDPYDDeficiency(maxMolecularTestAge()) },
             EligibilityRule.HAS_HETEROZYGOUS_DPYD_DEFICIENCY to { HasHeterozygousDPYDDeficiency(maxMolecularTestAge()) },
@@ -234,8 +235,8 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasSpecificHLAGroupCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val hlaAlleleToFind = functionInputResolver().createOneHlaAlleleInput(function)
-            HasSpecificHLAType(hlaAlleleToFind.allele, matchOnHlaGroup = true)
+            val hlaGroupToFind = functionInputResolver().createOneHlaGroupInput(function)
+            HasSpecificHLAType(hlaGroupToFind.group, matchOnHlaGroup = true)
         }
     }
 
