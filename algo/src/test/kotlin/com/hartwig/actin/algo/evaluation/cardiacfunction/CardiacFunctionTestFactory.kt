@@ -35,7 +35,7 @@ internal object CardiacFunctionTestFactory {
 
     fun withPriorOtherCondition(priorOtherCondition: PriorOtherCondition): PatientRecord {
         return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-            priorOtherConditions = listOf(priorOtherCondition)
+            comorbidities = listOf(priorOtherCondition)
         )
     }
 

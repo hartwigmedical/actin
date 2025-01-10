@@ -70,8 +70,8 @@ class StandardDataIngestion(
     }
 
     override fun ingest(): List<Pair<PatientIngestionResult, CurationExtractionEvaluation>> {
-        return Files.list(Paths.get(directory)).filter { it.name.endsWith("json") }.map {
-            val ehrPatientRecord = dataQualityMask.apply(mapper.readValue(Files.readString(it), ProvidedPatientRecord::class.java))
+        return Files.list(Paths.get(directory)).filter { it.name.endsWith("json") }.map { file ->
+            val ehrPatientRecord = dataQualityMask.apply(mapper.readValue(Files.readString(file), ProvidedPatientRecord::class.java))
             val patientDetails = patientDetailsExtractor.extract(ehrPatientRecord)
             val tumorDetails = tumorDetailsExtractor.extract(ehrPatientRecord)
             val secondPrimaries = secondPrimaryExtractor.extract(ehrPatientRecord)
@@ -90,6 +90,7 @@ class StandardDataIngestion(
             val bodyHeights = bodyHeightExtractor.extract(ehrPatientRecord)
             val ihcTests = ihcTestExtractor.extract(ehrPatientRecord)
             val sequencingTests = sequencingTestExtractor.extract(ehrPatientRecord)
+            val comorbidities = listOf(priorOtherCondition, complications, toxicities, intolerances).flatMap { it.extracted }
 
             val patientEvaluation = listOf(
                 patientDetails,
@@ -122,14 +123,11 @@ class StandardDataIngestion(
                     tumor = tumorDetails.extracted,
                     clinicalStatus = clinicalStatus.extracted,
                     oncologicalHistory = treatmentHistory.extracted,
-                    priorOtherConditions = priorOtherCondition.extracted,
-                    complications = complications.extracted,
-                    toxicities = toxicities.extracted,
+                    comorbidities = comorbidities,
                     medications = medications.extracted,
                     labValues = labValues.extracted,
                     bloodTransfusions = bloodTransfusions.extracted,
                     vitalFunctions = vitalFunctions.extracted,
-                    intolerances = intolerances.extracted,
                     surgeries = surgeries.extracted,
                     bodyWeights = bodyWeights.extracted,
                     bodyHeights = bodyHeights.extracted,

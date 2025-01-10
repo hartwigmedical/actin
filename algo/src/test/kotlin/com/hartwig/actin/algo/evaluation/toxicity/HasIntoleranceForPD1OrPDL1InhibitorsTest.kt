@@ -61,20 +61,6 @@ class HasIntoleranceForPD1OrPDL1InhibitorsTest {
     }
 
     @Test
-    fun `Should fail when patient has matching condition but no contraindication for therapy`() {
-        assertEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(
-                patient(
-                    listOf(ToxicityTestFactory.intolerance(name = "other")),
-                    AUTOIMMUNE_ICD_MAIN_CODE,
-                    isContraIndication = false
-                )
-            )
-        )
-    }
-
-    @Test
     fun `Should fail when patient has no matching intolerance or autoimmune disease condition`() {
         assertEvaluation(
             EvaluationResult.FAIL,

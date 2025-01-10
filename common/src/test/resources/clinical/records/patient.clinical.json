@@ -109,7 +109,7 @@
       "status": "ACTIVE"
     }
   ],
-  "priorOtherConditions": [
+  "comorbidities": [
     {
       "name": "Liver cirrhosis",
       "year": null,
@@ -119,7 +119,69 @@
         "5082"
       ],
       "category": "Liver disease",
-      "isContraindicationForTherapy": false
+      "isContraindicationForTherapy": false,
+      "comorbidityClass": "PRIOR_OTHER_CONDITION"
+    },
+    {
+      "name": "Nausea",
+      "categories": [
+        "Other"
+      ],
+      "year": 2020,
+      "month": null,
+      "comorbidityClass": "COMPLICATION"
+    },
+    {
+      "name": "Neuropathy",
+      "categories": [
+        "Neuropathy"
+      ],
+      "evaluatedDate": {
+        "year": 2019,
+        "month": 4,
+        "day": 4
+      },
+      "source": "QUESTIONNAIRE",
+      "grade": 3,
+      "comorbidityClass": "TOXICITY"
+    },
+    {
+      "name": "Hand skin reaction",
+      "categories": [],
+      "evaluatedDate": {
+        "year": 2020,
+        "month": 3,
+        "day": 3
+      },
+      "source": "EHR",
+      "grade": 1,
+      "comorbidityClass": "TOXICITY"
+    },
+    {
+      "name": "Drug",
+      "doids": [
+        "123"
+      ],
+      "category": "medication",
+      "subcategories": [
+        "Drug category"
+      ],
+      "type": "allergy",
+      "clinicalStatus": "Active",
+      "verificationStatus": "Confirmed",
+      "criticality": "low",
+      "comorbidityClass": "INTOLERANCE"
+    },
+    {
+      "name": "Condition",
+      "doids": [],
+      "category": "environment",
+      "subcategories": [],
+      "type": "allergy",
+      "clinicalStatus": "Active",
+      "verificationStatus": "Confirmed",
+      "criticality": "unable-to-assess",
+      "comorbidityClass": "INTOLERANCE"
     }
   ],
   "priorMolecularTests": [
@@ -132,16 +194,6 @@
       "scoreValue": 3,
       "scoreValueUnit": "+",
       "impliesPotentialIndeterminateStatus": false
-    }
-  ],
-  "complications": [
-    {
-      "name": "Nausea",
-      "categories": [
-        "Other"
-      ],
-      "year": 2020,
-      "month": null
     }
   ],
   "labValues": [
@@ -174,58 +226,6 @@
       "refLimitLow": 4,
       "refLimitUp": 6.1,
       "isOutsideRef": true
-    }
-  ],
-  "toxicities": [
-    {
-      "name": "Neuropathy",
-      "categories": [
-        "Neuropathy"
-      ],
-      "evaluatedDate": {
-        "year": 2019,
-        "month": 4,
-        "day": 4
-      },
-      "source": "QUESTIONNAIRE",
-      "grade": 3
-    },
-    {
-      "name": "Hand skin reaction",
-      "categories": [],
-      "evaluatedDate": {
-        "year": 2020,
-        "month": 3,
-        "day": 3
-      },
-      "source": "EHR",
-      "grade": 1
-    }
-  ],
-  "intolerances": [
-    {
-      "name": "Drug",
-      "doids": [
-        "123"
-      ],
-      "category": "medication",
-      "subcategories": [
-        "Drug category"
-      ],
-      "type": "allergy",
-      "clinicalStatus": "Active",
-      "verificationStatus": "Confirmed",
-      "criticality": "low"
-    },
-    {
-      "name": "Condition",
-      "doids": [],
-      "category": "environment",
-      "subcategories": [],
-      "type": "allergy",
-      "clinicalStatus": "Active",
-      "verificationStatus": "Confirmed",
-      "criticality": "unable-to-assess"
     }
   ],
   "surgeries": [

@@ -83,20 +83,20 @@ class EmcClinicalFeedIngestor(
             val medicationExtraction = medicationExtractor.extract(patientId, feedRecord.medicationEntries)
             val surgeryExtraction = surgeryExtractor.extract(patientId, feedRecord.uniqueSurgeryEntries)
 
+            val comorbidities = listOf(complicationsExtraction, priorOtherConditionsExtraction, toxicityExtraction, intoleranceExtraction)
+                .flatMap { it.extracted ?: emptyList() }
+
             val record = ClinicalRecord(
                 patientId = patientId,
                 patient = extractPatientDetails(feedRecord.patientEntry, questionnaire),
                 tumor = tumorExtraction.extracted,
-                complications = complicationsExtraction.extracted,
+                comorbidities = comorbidities,
                 clinicalStatus = clinicalStatusExtraction.extracted,
                 oncologicalHistory = oncologicalHistoryExtraction.extracted,
                 priorSecondPrimaries = priorSecondPrimaryExtraction.extracted,
-                priorOtherConditions = priorOtherConditionsExtraction.extracted,
                 priorIHCTests = priorMolecularTestsExtraction.extracted,
                 priorSequencingTests = emptyList(),
                 labValues = labValuesExtraction.extracted,
-                toxicities = toxicityExtraction.extracted,
-                intolerances = intoleranceExtraction.extracted,
                 surgeries = surgeryExtraction.extracted,
                 bodyWeights = extractBodyWeights(feedRecord),
                 bodyHeights = emptyList(),

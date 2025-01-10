@@ -16,4 +16,6 @@ data class Toxicity(
 
     override val month: Int
         get() = evaluatedDate.monthValue
+
+    override val comorbidityClass = ComorbidityClass.TOXICITY
 }

@@ -9,4 +9,6 @@ data class Intolerance(
     val criticality: String? = null,
     override val year: Int? = null,
     override val month: Int? = null
-): Comorbidity
+): Comorbidity {
+    override val comorbidityClass = ComorbidityClass.INTOLERANCE
+}

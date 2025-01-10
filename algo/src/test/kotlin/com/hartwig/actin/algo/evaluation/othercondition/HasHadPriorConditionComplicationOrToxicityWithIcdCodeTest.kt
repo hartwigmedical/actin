@@ -126,9 +126,7 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
         assertPassEvaluationWithMessages(
             function.evaluate(
                 minimalPatient.copy(
-                    toxicities = listOf(toxicity, otherTox),
-                    complications = listOf(complicationWithTargetCode),
-                    priorOtherConditions = listOf(conditionWithTargetCode)
+                    comorbidities = listOf(toxicity, otherTox, complicationWithTargetCode, conditionWithTargetCode)
                 )
             ),
             "complication and other condition and pneumonitis and toxicity",

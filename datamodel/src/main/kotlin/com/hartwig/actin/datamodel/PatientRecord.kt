@@ -40,7 +40,7 @@ data class PatientRecord(
 ) {
 
     val priorOtherConditions: List<PriorOtherCondition>
-        get() = priorSecondPrimaries.filterIsInstance<PriorOtherCondition>()
+        get() = comorbidities.filterIsInstance<PriorOtherCondition>()
 
     val complications: List<Complication>
         get() = comorbidities.filterIsInstance<Complication>()

@@ -104,7 +104,7 @@
     }
   ],
   "priorSecondPrimaries": [],
-  "priorOtherConditions": [
+  "comorbidities": [
     {
       "name": "Rheumatoid arthritis",
       "year": 2022,
@@ -113,10 +113,10 @@
         "7148"
       ],
       "category": "Autoimmune disease",
-      "isContraindicationForTherapy": true
+      "isContraindicationForTherapy": true,
+      "comorbidityClass": "PRIOR_OTHER_CONDITION"
     }
   ],
-  "complications": [],
   "labValues": [
     {
       "date": {
@@ -209,8 +209,6 @@
       "isOutsideRef": false
     }
   ],
-  "toxicities": [],
-  "intolerances": [],
   "surgeries": [
     {
       "name": "Cholecystectomy",

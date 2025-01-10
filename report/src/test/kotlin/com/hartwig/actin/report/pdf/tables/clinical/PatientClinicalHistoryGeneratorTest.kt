@@ -33,7 +33,7 @@ class PatientClinicalHistoryGeneratorTest {
     fun `Should return content as list with sorted other prior conditions`() {
         val reportWithOtherConditions = report.copy(
             patientRecord = report.patientRecord.copy(
-                priorOtherConditions = listOf(
+                comorbidities = listOf(
                     TestPriorOtherConditionFactory.create("c1", null, null),
                     TestPriorOtherConditionFactory.create("c2", 2024, null),
                     TestPriorOtherConditionFactory.create("c3", 2024, 8),

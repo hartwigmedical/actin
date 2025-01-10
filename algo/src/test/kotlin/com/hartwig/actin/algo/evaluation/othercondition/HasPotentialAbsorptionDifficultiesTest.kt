@@ -46,12 +46,6 @@ class HasPotentialAbsorptionDifficultiesTest {
 
     @Test
     fun `Should fail for empty history`() {
-        assertEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(
-                TestPatientFactory.createMinimalTestWGSPatientRecord()
-                    .copy(priorOtherConditions = emptyList(), toxicities = emptyList(), complications = emptyList())
-            )
-        )
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
     }
 }

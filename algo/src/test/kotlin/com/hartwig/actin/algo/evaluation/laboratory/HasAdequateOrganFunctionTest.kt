@@ -31,11 +31,11 @@ class HasAdequateOrganFunctionTest {
     )
 
     @Test
-    fun `Should evaluate to undetermined for no lab values and no prior conditions`() {
+    fun `Should evaluate to undetermined for no lab values and no comorbidities`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                TestPatientFactory.createMinimalTestWGSPatientRecord().copy(labValues = emptyList(), priorOtherConditions = emptyList())
+                TestPatientFactory.createMinimalTestWGSPatientRecord().copy(labValues = emptyList(), comorbidities = emptyList())
             )
         )
     }
@@ -57,7 +57,7 @@ class HasAdequateOrganFunctionTest {
         val record = LabTestFactory.withLabValues(
             upperLimitLabMeasurementList.map { createLabValue(it, withinLimits = true, evaluateAgainstLLN = false) } +
                     lowerLimitLabMeasurementList.map { createLabValue(it, withinLimits = true, evaluateAgainstLLN = true) }
-        ).copy(priorOtherConditions = listOf(condition))
+        ).copy(comorbidities = listOf(condition))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
     }
 

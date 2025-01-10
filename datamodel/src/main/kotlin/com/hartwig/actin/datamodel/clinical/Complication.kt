@@ -5,4 +5,6 @@ data class Complication(
     override val year: Int? = null,
     override val month: Int? = null,
     override val icdCodes: Set<IcdCode>,
-): Comorbidity
+): Comorbidity {
+    override val comorbidityClass = ComorbidityClass.COMPLICATION
+}
