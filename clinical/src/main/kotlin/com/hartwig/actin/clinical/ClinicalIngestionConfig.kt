@@ -17,6 +17,7 @@ data class ClinicalIngestionConfig(
     val feedDirectory: String,
     val curationDirectory: String,
     val doidJson: String,
+    val icdTsv: String,
     val drugInteractionsTsv: String,
     val qtProlongatingTsv: String,
     val atcTsv: String,
@@ -32,6 +33,7 @@ data class ClinicalIngestionConfig(
         private const val FEED_DIRECTORY = "feed_directory"
         private const val CURATION_DIRECTORY = "curation_directory"
         private const val DOID_JSON = "doid_json"
+        private const val ICD_TSV = "icd_tsv"
         private const val DRUG_INTERACTIONS_TSV = "drug_interactions_tsv"
         private const val QT_PROLONGATING_TSV = "qt_prolongating_tsv"
         private const val ATC_TSV = "atc_tsv"
@@ -46,6 +48,7 @@ data class ClinicalIngestionConfig(
             options.addOption(FEED_DIRECTORY, true, "Directory containing the clinical feed data")
             options.addOption(CURATION_DIRECTORY, true, "Directory containing the clinical curation config data")
             options.addOption(DOID_JSON, true, "Path to JSON file containing the full DOID tree.")
+            options.addOption(ICD_TSV, true, "Path to TSV file containing the full ICD-11 tree")
             options.addOption(DRUG_INTERACTIONS_TSV, true, "Path to TSV file containing drug interactions")
             options.addOption(QT_PROLONGATING_TSV, true, "Path to TSV file containing QT prolongating drugs")
             options.addOption(ATC_TSV, true, "Path to TSV file containing the full ATC tree")
@@ -56,7 +59,7 @@ data class ClinicalIngestionConfig(
             options.addOption(
                 FEED_FORMAT,
                 true,
-                "The format of the feed. Accepted values [${FeedFormat.values().joinToString()}]. Default is ${FeedFormat.EMC_TSV.name}."
+                "The format of the feed. Accepted values [${FeedFormat.entries.joinToString()}]. Default is ${FeedFormat.EMC_TSV.name}."
             )
             return options
         }
@@ -70,6 +73,7 @@ data class ClinicalIngestionConfig(
                 feedDirectory = ApplicationConfig.nonOptionalDir(cmd, FEED_DIRECTORY),
                 curationDirectory = ApplicationConfig.nonOptionalDir(cmd, CURATION_DIRECTORY),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
+                icdTsv = ApplicationConfig.nonOptionalFile(cmd, ICD_TSV),
                 drugInteractionsTsv = ApplicationConfig.nonOptionalFile(cmd, DRUG_INTERACTIONS_TSV),
                 qtProlongatingTsv = ApplicationConfig.nonOptionalFile(cmd, QT_PROLONGATING_TSV),
                 atcTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_TSV),

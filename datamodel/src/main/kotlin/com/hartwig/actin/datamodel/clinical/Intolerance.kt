@@ -1,15 +1,17 @@
 package com.hartwig.actin.datamodel.clinical
 
-import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import com.hartwig.actin.datamodel.Displayable
 
 data class Intolerance(
     val name: String,
-    val doids: Set<String>,
-    val category: String? = null,
-    val subcategories: Set<String>? = null,
+    override val icdCodes: Set<IcdCode>,
     val type: String? = null,
     val clinicalStatus: String? = null,
     val verificationStatus: String? = null,
-    val criticality: String? = null,
-    val treatmentCategories: Set<TreatmentCategory>? = null
-)
+    val criticality: String? = null
+): IcdCodeEntity, Displayable {
+
+    override fun display(): String {
+        return name
+    }
+}

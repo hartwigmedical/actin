@@ -27,6 +27,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_SECONDARY_GLIOBLASTOMA to hasSecondaryGlioblastomaCreator(),
             EligibilityRule.HAS_CYTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE to hasCytologicalDocumentationOfTumorTypeCreator(),
             EligibilityRule.HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE to hasHistologicalDocumentationOfTumorTypeCreator(),
+            EligibilityRule.HAS_PATHOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE to hasPathologicalDocumentationOfTumorTypeCreator(),
             EligibilityRule.HAS_ANY_STAGE_X to hasAnyTumorStageCreator(),
             EligibilityRule.HAS_LOCALLY_ADVANCED_CANCER to hasLocallyAdvancedCancerCreator(),
             EligibilityRule.HAS_METASTATIC_CANCER to hasMetastaticCancerCreator(),
@@ -51,6 +52,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_VISCERAL_METASTASES to hasVisceralMetastasesCreator(),
             EligibilityRule.HAS_UNRESECTABLE_PERITONEAL_METASTASES to hasUnresectablePeritonealMetastasesCreator(),
             EligibilityRule.HAS_LESIONS_CLOSE_TO_OR_INVOLVING_AIRWAY to hasLesionsCloseToOrInvolvingAirwayCreator(),
+            EligibilityRule.HAS_LESION_COUNT_OF_AT_LEAST_X_IN_BODY_LOCATION_Y to hasMinimumLesionsInSpecificBodyLocationCreator(),
             EligibilityRule.HAS_EXTENSIVE_SYSTEMIC_METASTASES_PREDOMINANTLY_DETERMINING_PROGNOSIS to hasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosisCreator(),
             EligibilityRule.HAS_BIOPSY_AMENABLE_LESION to hasBiopsyAmenableLesionCreator(),
             EligibilityRule.HAS_IRRADIATION_AMENABLE_LESION to hasIrradiationAmenableLesionCreator(),
@@ -146,11 +148,15 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasCytologicalDocumentationOfTumorTypeCreator(): FunctionCreator {
-        return { HasCytologicalDocumentationOfTumorType() }
+        return { HasDocumentationOfTumorType("Cytological") }
     }
 
     private fun hasHistologicalDocumentationOfTumorTypeCreator(): FunctionCreator {
-        return { HasHistologicalDocumentationOfTumorType() }
+        return { HasDocumentationOfTumorType("Histological") }
+    }
+
+    private fun hasPathologicalDocumentationOfTumorTypeCreator(): FunctionCreator {
+        return { HasDocumentationOfTumorType("Pathological") }
     }
 
     private fun hasAnyTumorStageCreator(): FunctionCreator {
@@ -180,6 +186,13 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasLesionsCloseToOrInvolvingAirwayCreator(): FunctionCreator {
         return { HasLesionsCloseToOrInvolvingAirway(doidModel()) }
+    }
+
+    private fun hasMinimumLesionsInSpecificBodyLocationCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val input = functionInputResolver().createOneIntegerOneStringInput(function)
+            HasMinimumLesionsInSpecificBodyLocation(input.integer, input.string)
+        }
     }
 
     private fun hasUnresectableStageIIICancerCreator(): FunctionCreator {

@@ -4,6 +4,9 @@ import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.TestDoidModelFactory
+import com.hartwig.actin.icd.IcdModel
+import com.hartwig.actin.icd.TestIcdFactory
+import com.hartwig.actin.icd.datamodel.IcdNode
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
@@ -19,8 +22,13 @@ object TestFunctionInputResolverFactory {
     private val medicationCategories =
         MedicationCategories(emptyMap(), AtcTree(mapOf(ATC_CODE_1 to CATEGORY_1, ATC_CODE_2 to CATEGORY_2)))
 
-    fun createTestResolver(): FunctionInputResolver {
-        return createResolverWithDoidModel(TestDoidModelFactory.createMinimalTestDoidModel())
+    fun createTestResolver(
+        doidModel: DoidModel = TestDoidModelFactory.createMinimalTestDoidModel(),
+        icdModel: IcdModel = TestIcdFactory.createTestModel(),
+        molecularInputChecker: MolecularInputChecker = MolecularInputChecker.createAnyGeneValid(),
+        treatmentDatabase: TreatmentDatabase = TestTreatmentDatabaseFactory.createProper()
+    ): FunctionInputResolver {
+        return FunctionInputResolver(doidModel, icdModel, molecularInputChecker, treatmentDatabase, medicationCategories)
     }
 
     fun createResolverWithDoidAndTerm(doid: String, term: String): FunctionInputResolver {
@@ -31,20 +39,14 @@ object TestFunctionInputResolverFactory {
         return createResolverWithDoidModel(TestDoidModelFactory.createWithTwoDoidsAndTerms(doids, terms))
     }
 
-    fun createResolverWithOneValidGene(gene: String): FunctionInputResolver {
-        return FunctionInputResolver(
-            TestDoidModelFactory.createMinimalTestDoidModel(),
-            MolecularInputChecker(TestGeneFilterFactory.createValidForGenes(gene)),
-            TreatmentDatabase(emptyMap(), emptyMap()),
-            medicationCategories
-        )
-    }
+    fun createResolverWithIcdNodes(nodes: List<IcdNode>): FunctionInputResolver = createTestResolver(icdModel = IcdModel.create(nodes))
 
-    fun createResolverWithDoidModelAndTreatmentDatabase(doidModel: DoidModel, treatmentDatabase: TreatmentDatabase): FunctionInputResolver {
-        return FunctionInputResolver(doidModel, MolecularInputChecker.createAnyGeneValid(), treatmentDatabase, medicationCategories)
-    }
+    fun createResolverWithOneValidGene(gene: String): FunctionInputResolver =
+        createTestResolver(molecularInputChecker = MolecularInputChecker(TestGeneFilterFactory.createValidForGenes(gene)))
 
-    private fun createResolverWithDoidModel(doidModel: DoidModel): FunctionInputResolver {
-        return createResolverWithDoidModelAndTreatmentDatabase(doidModel, TestTreatmentDatabaseFactory.createProper())
-    }
+    fun createResolverWithDoidModelAndTreatmentDatabase(doidModel: DoidModel, treatmentDatabase: TreatmentDatabase): FunctionInputResolver =
+        createTestResolver(doidModel = doidModel, treatmentDatabase = treatmentDatabase)
+
+    private fun createResolverWithDoidModel(doidModel: DoidModel): FunctionInputResolver = createTestResolver(doidModel = doidModel)
+
 }

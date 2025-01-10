@@ -1,17 +1,13 @@
 package com.hartwig.actin.algo.evaluation.othercondition
 
-import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.doid.TestDoidModelFactory
+import com.hartwig.actin.icd.TestIcdFactory
 import org.junit.Test
 
-private const val MATCHING_DOID = DoidConstants.AUTOSOMAL_HEMOPHILIA_A_DOID
-
 class HasInheritedPredispositionToBleedingOrThrombosisTest {
-    private val function = HasInheritedPredispositionToBleedingOrThrombosis(
-        TestDoidModelFactory.createWithOneDoidAndTerm(MATCHING_DOID, "matching term")
-    )
+    private val function = HasInheritedPredispositionToBleedingOrThrombosis(TestIcdFactory.createTestModel())
 
     @Test
     fun `Should fail with no prior conditions`() {
@@ -25,7 +21,7 @@ class HasInheritedPredispositionToBleedingOrThrombosisTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 OtherConditionTestFactory.withPriorOtherConditions(
-                    listOf(OtherConditionTestFactory.priorOtherCondition(doids = setOf("wrong doid")))
+                    listOf(OtherConditionTestFactory.priorOtherCondition(icdMainCode = "wrong"))
                 )
             )
         )
@@ -37,7 +33,7 @@ class HasInheritedPredispositionToBleedingOrThrombosisTest {
             EvaluationResult.PASS,
             function.evaluate(
                 OtherConditionTestFactory.withPriorOtherCondition(
-                    OtherConditionTestFactory.priorOtherCondition(doids = setOf("other doid", MATCHING_DOID))
+                    OtherConditionTestFactory.priorOtherCondition(icdMainCode = IcdConstants.HEREDITARY_THROMBOPHILIA_CODE)
                 )
             )
         )

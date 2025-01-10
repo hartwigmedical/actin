@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.medication.MEDICATION_NOT_PROVIDED
 import com.hartwig.actin.algo.evaluation.treatment.TrialFunctions
 import com.hartwig.actin.algo.evaluation.util.DateComparison
+import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseUnlessNumericWithAnd
 import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
@@ -32,8 +33,8 @@ data class TreatmentAssessmentExtended(
             hasHadValidTreatment || other.hasHadValidTreatment,
             hasInconclusiveDate || other.hasInconclusiveDate,
             hasHadTrialAfterMinDate || other.hasHadTrialAfterMinDate,
-            matchingDrugs + other.matchingDrugs,
-            matchingMedicationCategories + other.matchingMedicationCategories
+            matchingMedicationCategories + other.matchingMedicationCategories,
+            matchingDrugs + other.matchingDrugs
         )
     }
 }
@@ -61,7 +62,7 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
         val foundTrialMedication = activeMedications.any(Medication::isTrialMedication)
 
         val foundDrugNames = foundMedicationNames + treatmentAssessment.matchingDrugs
-        val foundMedicationString = if (foundDrugNames.isNotEmpty()) ": ${concatLowercaseWithAnd(foundDrugNames)}" else ""
+        val foundMedicationString = if (foundDrugNames.isNotEmpty()) ": ${concatLowercaseUnlessNumericWithAnd(foundDrugNames)}" else ""
         val foundCategories = foundMedicationCategories.toSet() + treatmentAssessment.matchingMedicationCategories
 
         return when {

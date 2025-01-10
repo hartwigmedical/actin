@@ -79,8 +79,8 @@ class HasMetastaticCancerTest {
     }
 
     @Test
-    fun `Should fail when no (derived) tumor stage provided`() {
-        evaluateStage(null, EvaluationResult.FAIL)
+    fun `Should be undetermined when no (derived) tumor stage provided`() {
+        evaluateStage(null, EvaluationResult.UNDETERMINED)
     }
 
     private fun evaluateStage(stage: TumorStage?, expected: EvaluationResult) {

@@ -2,16 +2,17 @@ package com.hartwig.actin.report.pdf.tables.clinical
 
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.clinical.Gender
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.PatientDetails
 import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.SurgeryStatus
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.report.pdf.tables.clinical.CellTestUtil.extractTextFromCell
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.Test
 
 private const val KEY_WIDTH = 100f
 private const val VALUE_WIDTH = 200f
@@ -91,5 +92,5 @@ class PatientCurrentDetailsGeneratorTest {
     }
 
     private fun toxicity(name: String, endDate: LocalDate?, grade: Int?) =
-        Toxicity(name, emptySet(), referenceDate.minusMonths(1), ToxicitySource.EHR, grade, endDate)
+        Toxicity(name, setOf(IcdCode("icdCode")), referenceDate.minusMonths(1), ToxicitySource.EHR, grade, endDate)
 }

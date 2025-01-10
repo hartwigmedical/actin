@@ -7,6 +7,9 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
+import com.hartwig.actin.icd.IcdModel
+import com.hartwig.actin.icd.serialization.CsvReader
+import com.hartwig.actin.icd.serialization.IcdDeserializer
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.evidence.ServeLoader
@@ -32,6 +35,11 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
+        LOGGER.info("Creating ICD-11 tree from file {}", config.icdTsv)
+        val icdNodes = IcdDeserializer.deserialize(CsvReader.readFromFile(config.icdTsv))
+        LOGGER.info(" Loaded {} nodes", icdNodes.size)
+        val icdModel = IcdModel.create(icdNodes)
+
         LOGGER.info("Loading SERVE known genes from {}", config.serveDbJson)
         val knownGenes = ServeLoader.loadServe37Record(config.serveDbJson).knownEvents().genes()
         LOGGER.info(" Loaded {} known genes", knownGenes.size)
@@ -48,6 +56,7 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
                 EligibilityFactory(
                     FunctionInputResolver(
                         doidModel,
+                        icdModel,
                         MolecularInputChecker(geneFilter),
                         treatmentDatabase,
                         MedicationCategories.create(atcTree)

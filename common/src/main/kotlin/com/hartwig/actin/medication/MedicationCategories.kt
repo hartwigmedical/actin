@@ -24,7 +24,7 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
     }
 
     companion object {
-        private val ANTI_CANCER_ATC_CODES = setOf("L01", "L02", "L04", "H01CC", "H01CA", "G03XA")
+        val ANTI_CANCER_ATC_CODES = setOf("L01", "L02", "H01CC", "H01CA", "G03XA")
 
         val MEDICATION_CATEGORIES_TO_TREATMENT_CATEGORY = mapOf(
             "Chemotherapy" to setOf(TreatmentCategory.CHEMOTHERAPY),
@@ -49,7 +49,7 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
             "L01CD" to setOf(DrugType.TAXANE),
             "L02BB" to setOf(DrugType.ANTI_ANDROGEN),
             "L01A" to setOf(DrugType.ALKYLATING_AGENT),
-            "LO1XL" to setOf(DrugType.ANTI_CLDN6_CAR_T, DrugType.HER2_CAR_T),
+            "L01XL" to setOf(DrugType.ANTI_CLDN6_CAR_T, DrugType.HER2_CAR_T),
             "L01E" to setOf(DrugType.TYROSINE_KINASE_INHIBITOR),
             "Nitrosoureas" to setOf(DrugType.NITROSOUREAS)
         )
@@ -76,6 +76,7 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
                     "Immunotherapy" to convertToAtcLevel(setOf("L01FF", "L01FX04"), atcTree),
                     "Monoclonal antibodies and antibody drug conjugates" to convertToAtcLevel(setOf("L01F"), atcTree),
                     "Nitrosoureas" to convertToAtcLevel(setOf("L01AD"), atcTree),
+                    "Ophthalmic steroids" to convertToAtcLevel(setOf("S01BA", "S01BB", "S01CA", "S01CB"), atcTree),
                     "Opioids" to convertToAtcLevel(setOf("N02A"), atcTree),
                     "Other antianemic preparations" to convertToAtcLevel(setOf("B03X"), atcTree),
                     "PARP inhibitors" to convertToAtcLevel(setOf("L01XK"), atcTree),
@@ -93,6 +94,10 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
 
         private fun convertToAtcLevel(atcCodes: Set<String>, atcTree: AtcTree): Set<AtcLevel> {
             return atcCodes.map(atcTree::resolve).toSet()
+        }
+
+        fun isAntiCancerMedication(atcCode: String?): Boolean {
+            return ANTI_CANCER_ATC_CODES.any { antiCancerCode -> atcCode?.startsWith(antiCancerCode) == true } && atcCode?.startsWith("L01XD") != true
         }
     }
 }

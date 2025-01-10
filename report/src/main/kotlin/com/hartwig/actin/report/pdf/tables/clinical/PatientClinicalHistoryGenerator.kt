@@ -4,6 +4,7 @@ import com.hartwig.actin.clinical.sort.PriorOtherConditionDescendingDateComparat
 import com.hartwig.actin.clinical.sort.PriorSecondPrimaryDiagnosedDateComparator
 import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparator
 import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary
 import com.hartwig.actin.datamodel.clinical.TumorStatus
@@ -66,20 +67,26 @@ class PatientClinicalHistoryGenerator(
     }
 
     private fun relevantSystemicPreTreatmentHistoryTable(record: PatientRecord): Table {
-        return treatmentHistoryTable(record.oncologicalHistory, true)
+        return treatmentHistoryTable(record.oncologicalHistory, record.medications ?: emptyList(), true)
     }
 
     private fun relevantNonSystemicPreTreatmentHistoryTable(record: PatientRecord): Table {
-        return treatmentHistoryTable(record.oncologicalHistory, false)
+        return treatmentHistoryTable(record.oncologicalHistory, emptyList(), false)
     }
 
-    private fun treatmentHistoryTable(treatmentHistory: List<TreatmentHistoryEntry>, requireSystemic: Boolean): Table {
+    private fun treatmentHistoryTable(
+        treatmentHistory: List<TreatmentHistoryEntry>,
+        medications: List<Medication>,
+        requireSystemic: Boolean
+    ): Table {
         val dateWidth = valueWidth / 5
         val treatmentWidth = valueWidth - dateWidth
         val table: Table = createDoubleColumnTable(dateWidth, treatmentWidth)
 
-        treatmentHistory.filter { treatmentHistoryEntryIsSystemic(it) == requireSystemic }
-            .sortedWith(TreatmentHistoryAscendingDateComparator())
+        val medicationsToAdd = MedicationToTreatmentConverter.convert(medications, treatmentHistory)
+        val systemicTreatmentHistory = treatmentHistory.filter { treatmentHistoryEntryIsSystemic(it) == requireSystemic }
+
+        (systemicTreatmentHistory + medicationsToAdd).sortedWith(TreatmentHistoryAscendingDateComparator())
             .groupBy { Triple(extractTreatmentString(it), it.startMonth, it.startYear) }
             .forEach { (key, historyEntries) ->
                 val details =
@@ -89,6 +96,7 @@ class PatientClinicalHistoryGenerator(
                 listOf(extractDateRangeString(historyEntries.first()), key.first + if (details.isNotEmpty()) " ($details)" else "")
                     .forEach { table.addCell(createSingleTableEntry(it)) }
             }
+
         return table
     }
 

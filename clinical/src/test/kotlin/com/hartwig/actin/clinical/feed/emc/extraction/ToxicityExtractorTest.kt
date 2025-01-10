@@ -7,10 +7,11 @@ import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.feed.emc.digitalfile.DigitalFileEntry
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 private const val PATIENT_ID = "patient1"
 private const val CANNOT_CURATE = "cannot curate"
@@ -20,7 +21,9 @@ private const val TOXICITY_INPUT = "Toxicity input"
 
 private const val TOXICITY_NAME = "Toxicity name"
 
-private const val TOXICITY_CATEGORY = "Toxicity category"
+private const val TOXICITY_ICD_CODE = "Toxicity icd code"
+
+private const val TOXICITY_EXTENSION_CODE = "Toxicity extension"
 
 private const val TOXICITY_TRANSLATED = "Toxicity translated"
 
@@ -31,8 +34,8 @@ class ToxicityExtractorTest {
                 input = TOXICITY_INPUT,
                 ignore = false,
                 name = TOXICITY_NAME,
-                categories = setOf(TOXICITY_CATEGORY),
-                3
+                grade = 3,
+                icdCodes = setOf(IcdCode(TOXICITY_ICD_CODE, TOXICITY_EXTENSION_CODE))
             )
         ),
         TranslationDatabase(
@@ -50,7 +53,8 @@ class ToxicityExtractorTest {
         assertThat(toxicities).hasSize(1)
         val toxicity = toxicities[0]
         assertThat(toxicity.name).isEqualTo(TOXICITY_NAME)
-        assertThat(toxicity.categories).containsExactly(TOXICITY_CATEGORY)
+        assertThat(toxicity.icdCodes.first().mainCode).isEqualTo(TOXICITY_ICD_CODE)
+        assertThat(toxicity.icdCodes.first().extensionCode).isEqualTo(TOXICITY_EXTENSION_CODE)
         assertThat(toxicity.evaluatedDate).isEqualTo(date)
         assertThat(toxicity.source).isEqualTo(ToxicitySource.QUESTIONNAIRE)
         assertThat(toxicity.grade).isEqualTo(Integer.valueOf(3))

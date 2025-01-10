@@ -15,17 +15,20 @@ import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.config.DoidManualConfig
 import com.hartwig.actin.doid.serialization.DoidJson
+import com.hartwig.actin.icd.IcdModel
+import com.hartwig.actin.icd.serialization.CsvReader
+import com.hartwig.actin.icd.serialization.IcdDeserializer
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.serialization.TrialJson
-import org.apache.commons.cli.ParseException
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
 import java.io.File
 import java.time.Period
 import kotlin.system.exitProcess
+import org.apache.commons.cli.ParseException
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
 class LocalExampleTreatmentMatchApplication {
 
@@ -62,6 +65,9 @@ class LocalExampleTreatmentMatchApplication {
             listOf(System.getProperty("user.home"), "hmf", "repos", "actin-resources-private").joinToString(File.separator)
 
         val doidJson = listOf(resourceDirectory, "disease_ontology", "doid.json").joinToString(File.separator)
+        val icdTsv = listOf(
+            resourceDirectory, "icd", "SimpleTabulation-ICD-11-MMS-en.tsv"
+        ).joinToString(File.separator)
         val atcTreeTsv = listOf(resourceDirectory, "atc_config", "atc_tree.tsv").joinToString(File.separator)
         val treatmentDatabaseDir = listOf(resourceDirectory, "treatment_db").joinToString(File.separator)
 
@@ -69,6 +75,12 @@ class LocalExampleTreatmentMatchApplication {
         val doidEntry = DoidJson.readDoidOwlEntry(doidJson)
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
+
+
+        LOGGER.info("Creating ICD-11 tree from file {}", icdTsv)
+        val icdNodes = IcdDeserializer.deserialize(CsvReader.readFromFile(icdTsv))
+        LOGGER.info(" Loaded {} nodes", icdNodes.size)
+        val icdModel = IcdModel.create(icdNodes)
 
         LOGGER.info("Creating ATC tree from file {}", atcTreeTsv)
         val atcTree = AtcTree.createFromFile(atcTreeTsv)
@@ -78,6 +90,7 @@ class LocalExampleTreatmentMatchApplication {
         val functionInputResolver =
             FunctionInputResolver(
                 doidModel = doidModel,
+                icdModel = icdModel,
                 molecularInputChecker = MolecularInputChecker.createAnyGeneValid(),
                 treatmentDatabase = treatmentDatabase,
                 medicationCategories = MedicationCategories.create(atcTree)
@@ -88,6 +101,7 @@ class LocalExampleTreatmentMatchApplication {
         return RuleMappingResources(
             referenceDateProvider = referenceDateProvider,
             doidModel = doidModel,
+            icdModel = icdModel,
             functionInputResolver = functionInputResolver,
             atcTree = atcTree,
             treatmentDatabase = treatmentDatabase,

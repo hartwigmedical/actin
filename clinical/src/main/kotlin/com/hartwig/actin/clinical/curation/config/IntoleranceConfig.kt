@@ -1,11 +1,10 @@
 package com.hartwig.actin.clinical.curation.config
 
-import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import com.hartwig.actin.datamodel.clinical.IcdCode
 
 data class IntoleranceConfig(
     override val input: String,
     override val ignore: Boolean = false,
     val name: String,
-    val doids: Set<String>,
-    val treatmentCategories: Set<TreatmentCategory>
+    val icd: Set<IcdCode>,
 ) : CurationConfig

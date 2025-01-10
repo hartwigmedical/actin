@@ -15,11 +15,13 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.FunctionInput
 import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.medication.MedicationInputChecker
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.composite.CompositeInput
 import com.hartwig.actin.trial.input.composite.CompositeRules
+import com.hartwig.actin.trial.input.datamodel.NyhaClass
 import com.hartwig.actin.trial.input.datamodel.TreatmentCategoryInput
 import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
@@ -30,7 +32,6 @@ import com.hartwig.actin.trial.input.single.ManyIntents
 import com.hartwig.actin.trial.input.single.ManyIntentsOneInteger
 import com.hartwig.actin.trial.input.single.ManySpecificTreatmentsTwoIntegers
 import com.hartwig.actin.trial.input.single.OneCypOneInteger
-import com.hartwig.actin.trial.input.single.OneDoidTermOneInteger
 import com.hartwig.actin.trial.input.single.OneDoubleOneGender
 import com.hartwig.actin.trial.input.single.OneGene
 import com.hartwig.actin.trial.input.single.OneGeneManyCodons
@@ -40,7 +41,9 @@ import com.hartwig.actin.trial.input.single.OneGeneOneIntegerOneVariantType
 import com.hartwig.actin.trial.input.single.OneGeneTwoIntegers
 import com.hartwig.actin.trial.input.single.OneHaplotype
 import com.hartwig.actin.trial.input.single.OneHlaAllele
+import com.hartwig.actin.trial.input.single.OneIcdTitleOneInteger
 import com.hartwig.actin.trial.input.single.OneIntegerManyDoidTerms
+import com.hartwig.actin.trial.input.single.OneIntegerManyIcdTitles
 import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
 import com.hartwig.actin.trial.input.single.OneIntegerOneString
 import com.hartwig.actin.trial.input.single.OneMedicationCategory
@@ -55,12 +58,14 @@ import com.hartwig.actin.trial.input.single.OneTreatmentCategoryOrTypeOneInteger
 import com.hartwig.actin.trial.input.single.TwoDoubles
 import com.hartwig.actin.trial.input.single.TwoIntegers
 import com.hartwig.actin.trial.input.single.TwoStrings
+import com.hartwig.actin.trial.input.single.TwoTreatmentCategoriesManyTypes
+import java.util.Locale
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.util.Locale
 
 class FunctionInputResolver(
     private val doidModel: DoidModel,
+    val icdModel: IcdModel,
     private val molecularInputChecker: MolecularInputChecker,
     private val treatmentDatabase: TreatmentDatabase,
     private val medicationCategories: MedicationCategories
@@ -137,6 +142,11 @@ class FunctionInputResolver(
                     return true
                 }
 
+                FunctionInput.TWO_TREATMENT_CATEGORIES_MANY_TYPES -> {
+                    createTwoTreatmentCategoriesManyTypesInput(function)
+                    return true
+                }
+
                 FunctionInput.ONE_TREATMENT_CATEGORY_MANY_TYPES_ONE_INTEGER -> {
                     createOneTreatmentCategoryManyTypesOneIntegerInput(function)
                     return true
@@ -192,6 +202,21 @@ class FunctionInputResolver(
                     return true
                 }
 
+                FunctionInput.ONE_ICD_TITLE -> {
+                    createOneIcdTitleInput(function)
+                    return true
+                }
+
+                FunctionInput.MANY_ICD_TITLES -> {
+                    createManyIcdTitlesInput(function)
+                    return true
+                }
+
+                FunctionInput.ONE_NYHA_CLASS -> {
+                    createOneNyhaClassInput(function)
+                    return true
+                }
+
                 FunctionInput.ONE_TUMOR_TYPE -> {
                     createOneTumorTypeInput(function)
                     return true
@@ -227,13 +252,13 @@ class FunctionInputResolver(
                     return true
                 }
 
-                FunctionInput.ONE_INTEGER_MANY_STRINGS -> {
-                    createOneIntegerManyStringsInput(function)
+                FunctionInput.ONE_INTEGER_MANY_DOID_TERMS -> {
+                    createOneIntegerManyDoidTermsInput(function)
                     return true
                 }
 
-                FunctionInput.ONE_INTEGER_MANY_DOID_TERMS -> {
-                    createOneIntegerManyDoidTermsInput(function)
+                FunctionInput.ONE_INTEGER_MANY_ICD_TITLES -> {
+                    createOneIntegerManyIcdTitlesInput(function)
                     return true
                 }
 
@@ -292,8 +317,8 @@ class FunctionInputResolver(
                     return true
                 }
 
-                FunctionInput.ONE_DOID_TERM_ONE_INTEGER -> {
-                    createOneDoidTermOneIntegerInput(function)
+                FunctionInput.ONE_ICD_TITLE_ONE_INTEGER -> {
+                    createOneIcdTitleOneIntegerInput(function)
                     return true
                 }
 
@@ -408,6 +433,16 @@ class FunctionInputResolver(
         )
     }
 
+    fun createTwoTreatmentCategoriesManyTypesInput(function: EligibilityFunction): TwoTreatmentCategoriesManyTypes {
+        assertParamConfig(function, FunctionInput.TWO_TREATMENT_CATEGORIES_MANY_TYPES, 4)
+        return TwoTreatmentCategoriesManyTypes(
+            category1 = TreatmentCategoryResolver.fromString(parameterAsString(function, 0)),
+            types1 = toTreatmentTypeSet(function.parameters[1]),
+            category2 = TreatmentCategoryResolver.fromString(parameterAsString(function, 2)),
+            types2 = toTreatmentTypeSet(function.parameters[3]),
+        )
+    }
+
     fun createOneTreatmentCategoryManyTypesOneIntegerInput(
         function: EligibilityFunction
     ): OneTreatmentCategoryManyTypesOneInteger {
@@ -458,6 +493,26 @@ class FunctionInputResolver(
             category = TreatmentCategoryResolver.fromString(parameterAsString(function, 1)),
             types = toTreatmentTypeSet(function.parameters[2])
         )
+    }
+
+    private fun toIcdStringList(param: Any): List<String> {
+        val input = toStringList(param)
+        val (validTitles, invalidTitles) = input.partition { icdModel.isValidIcdTitle(it) }
+        val invalidEntries = invalidTitles.filter { !icdModel.isValidIcdCode(it) }
+
+        return when {
+            invalidEntries.isNotEmpty() -> throw IllegalStateException("ICD title(s) or code(s) not valid: ${invalidEntries.joinToString(", ")}")
+            invalidTitles.isNotEmpty() -> invalidTitles.map { icdModel.resolveTitleForCodeString(it) } + validTitles
+            else -> input
+        }
+    }
+
+    private fun toIcdTitle(input: String): String {
+        return when {
+            icdModel.isValidIcdTitle(input) -> input
+            icdModel.isValidIcdCode(input) -> icdModel.resolveTitleForCodeString(input)
+            else -> throw IllegalStateException("ICD title(s) or code(s) not valid: $input")
+        }
     }
 
     private fun toTreatments(input: Any): List<Treatment> {
@@ -513,6 +568,21 @@ class FunctionInputResolver(
         return treatmentDatabase.findDrugByName(drugName) ?: throw IllegalStateException("Drug not found in DB: $drugName")
     }
 
+    fun createOneIcdTitleInput(function: EligibilityFunction): String {
+        assertParamConfig(function, FunctionInput.ONE_ICD_TITLE, 1)
+        return toIcdTitle(parameterAsString(function, 0))
+    }
+
+    fun createManyIcdTitlesInput(function: EligibilityFunction): List<String> {
+        assertParamConfig(function, FunctionInput.MANY_ICD_TITLES, 1)
+        return toIcdStringList(function.parameters.first())
+    }
+
+    fun createOneNyhaClassInput(function: EligibilityFunction): NyhaClass {
+        assertParamConfig(function, FunctionInput.ONE_NYHA_CLASS, 1)
+        return NyhaClass.valueOf(parameterAsString(function, 0))
+    }
+
     fun createOneTumorTypeInput(function: EligibilityFunction): TumorTypeInput {
         assertParamConfig(function, FunctionInput.ONE_TUMOR_TYPE, 1)
         return TumorTypeInput.fromString(parameterAsString(function, 0))
@@ -560,14 +630,6 @@ class FunctionInputResolver(
         )
     }
 
-    fun createOneIntegerManyStringsInput(function: EligibilityFunction): OneIntegerManyStrings {
-        assertParamConfig(function, FunctionInput.ONE_INTEGER_MANY_STRINGS, 2)
-        return OneIntegerManyStrings(
-            integer = parameterAsInt(function, 0),
-            strings = toStringList(function.parameters[1])
-        )
-    }
-
     fun createOneIntegerManyDoidTermsInput(function: EligibilityFunction): OneIntegerManyDoidTerms {
         assertParamConfig(function, FunctionInput.ONE_INTEGER_MANY_DOID_TERMS, 2)
         val doidStringList = toStringList(function.parameters[1])
@@ -578,6 +640,16 @@ class FunctionInputResolver(
         return OneIntegerManyDoidTerms(
             integer = parameterAsInt(function, 0),
             doidTerms = doidStringList
+        )
+    }
+
+    fun createOneIntegerManyIcdTitlesInput(function: EligibilityFunction): OneIntegerManyIcdTitles {
+        assertParamConfig(function, FunctionInput.ONE_INTEGER_MANY_ICD_TITLES, 2)
+        val icdStringList = toIcdStringList(function.parameters[1])
+
+        return OneIntegerManyIcdTitles(
+            integer = parameterAsInt(function, 0),
+            icdTitles = icdStringList
         )
     }
 
@@ -677,16 +749,10 @@ class FunctionInputResolver(
         return param
     }
 
-    fun createOneDoidTermOneIntegerInput(function: EligibilityFunction): OneDoidTermOneInteger {
-        assertParamConfig(function, FunctionInput.ONE_DOID_TERM_ONE_INTEGER, 2)
-
-        val doidString = parameterAsString(function, 0)
-        if (doidModel.resolveDoidForTerm(doidString) == null) {
-            throw IllegalStateException("Not a valid DOID term: $doidString")
-        }
-
-        return OneDoidTermOneInteger(
-            doidTerm = doidString,
+    fun createOneIcdTitleOneIntegerInput(function: EligibilityFunction): OneIcdTitleOneInteger {
+        assertParamConfig(function, FunctionInput.ONE_ICD_TITLE_ONE_INTEGER, 2)
+        return OneIcdTitleOneInteger(
+            icdTitle = toIcdTitle(parameterAsString(function, 0)),
             integer = parameterAsInt(function, 1)
         )
     }
@@ -725,12 +791,14 @@ class FunctionInputResolver(
     fun createOneMedicationCategoryInput(function: EligibilityFunction): OneMedicationCategory {
         assertParamConfig(function, FunctionInput.ONE_MEDICATION_CATEGORY, 1)
         val categoryName = parameterAsString(function, 0)
+        throwExceptionIfAtcCategoryNotMapped(categoryName)
         return OneMedicationCategory(categoryName, medicationCategories.resolve(categoryName))
     }
 
     fun createOneMedicationCategoryOneIntegerInput(function: EligibilityFunction): Pair<OneMedicationCategory, Int> {
         assertParamConfig(function, FunctionInput.ONE_MEDICATION_CATEGORY_ONE_INTEGER, 2)
         val categoryName = parameterAsString(function, 0)
+        throwExceptionIfAtcCategoryNotMapped(categoryName)
         return Pair(OneMedicationCategory(categoryName, medicationCategories.resolve(categoryName)), parameterAsInt(function, 1))
     }
 
@@ -748,7 +816,16 @@ class FunctionInputResolver(
         )
     }
 
+    private fun throwExceptionIfAtcCategoryNotMapped(category: String) {
+        val hasMapping = MedicationCategories.MEDICATION_CATEGORIES_TO_TREATMENT_CATEGORY.containsKey(category)
+                || MedicationCategories.MEDICATION_CATEGORIES_TO_DRUG_TYPES.containsKey(category)
+        if (MedicationCategories.ANTI_CANCER_ATC_CODES.any { category.startsWith(it) } && !hasMapping) {
+            throw IllegalStateException("No treatment category or drug type mapping for ATC code $category")
+        }
+    }
+
     private fun toMedicationCategoryMap(category: String): Pair<String, Set<AtcLevel>> {
+        throwExceptionIfAtcCategoryNotMapped(category)
         return medicationCategories.resolveCategoryName(category) to medicationCategories.resolve(category)
     }
 

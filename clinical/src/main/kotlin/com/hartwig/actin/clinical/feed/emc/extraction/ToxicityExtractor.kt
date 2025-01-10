@@ -12,6 +12,7 @@ import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluati
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.feed.emc.digitalfile.DigitalFileEntry
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 
@@ -40,10 +41,10 @@ class ToxicityExtractor(
             extractGrade(toxicityEntry)?.let { grade ->
                 Toxicity(
                     name = toxicityEntry.itemText,
+                    icdCodes = setOf(IcdCode("", null)),
                     evaluatedDate = toxicityEntry.authored,
                     source = ToxicitySource.EHR,
                     grade = grade,
-                    categories = emptySet()
                 )
             }
         }
@@ -76,7 +77,7 @@ class ToxicityExtractor(
             val toxicities = curationResponse.configs.filterNot(CurationConfig::ignore).map { config ->
                 Toxicity(
                     name = config.name,
-                    categories = config.categories,
+                    icdCodes = config.icdCodes,
                     evaluatedDate = questionnaire.date,
                     source = ToxicitySource.QUESTIONNAIRE,
                     grade = config.grade

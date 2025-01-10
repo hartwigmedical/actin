@@ -33,7 +33,9 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                 )
             },
             EligibilityRule.IS_ELIGIBLE_FOR_LOCAL_TREATMENT_OF_METASTASES to isEligibleForLocalTreatmentOfMetastasesCreator(),
-            EligibilityRule.IS_ELIGIBLE_FOR_LUNG_SURGERY to { IsEligibleForLungSurgery() },
+            EligibilityRule.IS_ELIGIBLE_FOR_SURGERY_TYPE_X to isEligibleForSpecificSurgeryCreator(),
+            EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_OF_CATEGORY_X_AND_ANY_TYPE_Y to isEligibleForTreatmentOfCategoryAndTypeCreator(),
+            EligibilityRule.MEETS_SPECIFIC_CRITERIA_FOR_RESECTION to { MeetsSpecificCriteriaForResection() },
             EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS to hasExhaustedSOCTreatmentsCreator(),
             EligibilityRule.HAS_HAD_AT_LEAST_X_APPROVED_TREATMENT_LINES to hasHadSomeApprovedTreatmentCreator(),
             EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES to hasHadSomeSystemicTreatmentCreator(),
@@ -45,6 +47,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS to hasHadSpecificTreatmentWithinWeeksCreator(),
             EligibilityRule.HAS_HAD_FIRST_LINE_TREATMENT_NAME_X to hasHadFirstLineTreatmentNameCreator(),
             EligibilityRule.HAS_HAD_DRUG_X_COMBINED_WITH_CATEGORY_Y_TREATMENT_OF_TYPES_Z to hasHadSpecificDrugCombinedWithCategoryAndTypesCreator(),
+            EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_COMBINED_WITH_CATEGORY_Z_TREATMENT_OF_TYPES_A to hasHadCategoryAndTypesCombinedWithCategoryAndTypesCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X to hasHadTreatmentWithDrugsCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X_AS_MOST_RECENT_LINE to hasHadTreatmentWithAnyDrugAsMostRecentCreator(),
             EligibilityRule.HAS_HAD_COMBINED_TREATMENT_NAMES_X_WITHIN_Y_WEEKS to hasHadCombinedTreatmentNamesWithinWeeksCreator(),
@@ -93,6 +96,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_RADIOLOGICAL_PROGRESSIVE_DISEASE_FOLLOWING_AT_LEAST_X_TREATMENT_LINES to hasRadiologicalProgressionFollowingSomeTreatmentLinesCreator(),
             EligibilityRule.HAS_RADIOLOGICAL_PROGRESSIVE_DISEASE_AFTER_LATEST_TREATMENT_LINE to
                     { HasRadiologicalProgressionFollowingLatestTreatmentLine() },
+            EligibilityRule.HAS_HAD_DEFINITIVE_LOCOREGIONAL_THERAPY_WITH_CURATIVE_INTENT to { HasReceivedDefinitiveLocoregionalTherapyWithCurativeIntent() },
             EligibilityRule.HAS_HAD_COMPLETE_RESECTION to { HasHadCompleteResection() },
             EligibilityRule.HAS_HAD_PARTIAL_RESECTION to { HasHadPartialResection() },
             EligibilityRule.HAS_HAD_RESECTION_WITHIN_X_WEEKS to hasHadResectionWithinWeeksCreator(),
@@ -124,6 +128,20 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             val lines = functionInputResolver().createManyIntegersInput(function)
             IsEligibleForTreatmentLines(lines)
+        }
+    }
+
+    private fun isEligibleForSpecificSurgeryCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val input = functionInputResolver().createOneStringInput(function)
+            IsEligibleForSpecificSurgery(input)
+        }
+    }
+
+    private fun isEligibleForTreatmentOfCategoryAndTypeCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val input = functionInputResolver().createOneTreatmentCategoryManyTypesInput(function)
+            IsEligibleForTreatmentOfCategoryAndType(input.category, input.types)
         }
     }
 
@@ -197,6 +215,13 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneSpecificDrugOneTreatmentCategoryManyTypesInput(function)
             HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypes(input.drug, input.category, input.types)
+        }
+    }
+
+    private fun hasHadCategoryAndTypesCombinedWithCategoryAndTypesCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val input = functionInputResolver().createTwoTreatmentCategoriesManyTypesInput(function)
+            HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypes(input.category1, input.types1, input.category2, input.types2)
         }
     }
 

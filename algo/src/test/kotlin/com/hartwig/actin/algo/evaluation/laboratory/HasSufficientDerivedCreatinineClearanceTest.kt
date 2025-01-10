@@ -8,8 +8,8 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.BodyWeight
 import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.LabValue
-import org.junit.Test
 import java.time.LocalDateTime
+import org.junit.Test
 
 private const val BIRTH_YEAR = 1971
 private const val EXPECTED_UNIT = "kilogram"
@@ -96,7 +96,7 @@ class HasSufficientDerivedCreatinineClearanceTest {
 
         // CG 103
         val fallBack1 = create(Gender.MALE, listOf(creatinine), emptyList())
-        assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(fallBack1, LabMeasurement.CREATININE, creatinine))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(fallBack1, LabMeasurement.CREATININE, creatinine))
 
         // CG 67
         val fallBack2 = create(Gender.FEMALE, listOf(creatinine), emptyList())
