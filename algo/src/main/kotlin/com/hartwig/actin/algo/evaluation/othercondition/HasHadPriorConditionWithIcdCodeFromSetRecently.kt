@@ -4,7 +4,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.DateComparison
 import com.hartwig.actin.algo.evaluation.util.Format
-import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -21,14 +20,11 @@ class HasHadPriorConditionWithIcdCodeFromSetRecently(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val icdMatches = icdModel.findInstancesMatchingAnyIcdCode(
-            OtherConditionSelector.selectClinicallyRelevant(
-                record.priorOtherConditions
-            ), targetIcdCodes
-        )
+        val icdMatches = icdModel.findInstancesMatchingAnyIcdCode(record.priorOtherConditions, targetIcdCodes)
         val fullMatchSummary = evaluateConditionsByDate(icdMatches.fullMatches)
-        val mainMatchesWithUnknownExtension =
-            evaluateConditionsByDate(icdMatches.mainCodeMatchesWithUnknownExtension).filterNot { it.key == EvaluationResult.FAIL }.values.flatten()
+        val mainMatchesWithUnknownExtension = evaluateConditionsByDate(icdMatches.mainCodeMatchesWithUnknownExtension)
+            .filterNot { it.key == EvaluationResult.FAIL }
+            .values.flatten()
 
         return when {
             fullMatchSummary.containsKey(EvaluationResult.PASS) -> {

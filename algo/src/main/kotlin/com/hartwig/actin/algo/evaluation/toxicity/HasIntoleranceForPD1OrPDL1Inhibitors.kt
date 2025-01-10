@@ -5,7 +5,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.algo.icd.IcdConstants
-import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IcdCode
@@ -31,7 +30,7 @@ class HasIntoleranceForPD1OrPDL1Inhibitors(private val icdModel: IcdModel) : Eva
         ).fullMatches
 
         val autoImmuneHistory = icdModel.findInstancesMatchingAnyIcdCode(
-            OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions),
+            record.comorbidities,
             IcdConstants.AUTOIMMUNE_DISEASE_SET.map { IcdCode(it) }.toSet()
         ).fullMatches
 

@@ -4,7 +4,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.toxicity.ToxicityFunctions
 import com.hartwig.actin.algo.evaluation.util.Format
-import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -21,12 +20,11 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCode(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val relevantConditions = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
         val relevantToxicities = ToxicityFunctions.selectRelevantToxicities(record, icdModel, referenceDate, emptyList())
-            .filter { toxicity -> (toxicity.grade ?: 0) >= 2 || (toxicity.source == ToxicitySource.QUESTIONNAIRE) }
+            .filter { toxicity -> (toxicity.grade ?: 0) >= 2 || toxicity.source == ToxicitySource.QUESTIONNAIRE }
 
         val icdMatches = icdModel.findInstancesMatchingAnyIcdCode(
-            relevantConditions + record.complications + relevantToxicities,
+            record.priorOtherConditions + record.complications + relevantToxicities,
             targetIcdCodes
         )
 

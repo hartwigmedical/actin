@@ -4,7 +4,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.icd.IcdConstants
-import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.clinical.interpretation.LabInterpreter
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
 import com.hartwig.actin.datamodel.PatientRecord
@@ -56,8 +55,7 @@ class HasAdequateOrganFunction(private val minValidDate: LocalDate, private val 
             .map { it.first }
 
         val cardiovascularHistory = icdModel.findInstancesMatchingAnyIcdCode(
-            OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions),
-            setOf(IcdCode(IcdConstants.CIRCULATORY_SYSTEM_DISEASE_CHAPTER))
+            record.comorbidities, setOf(IcdCode(IcdConstants.CIRCULATORY_SYSTEM_DISEASE_CHAPTER))
         ).fullMatches
 
         val messageStart = "Possible inadequate organ function"
