@@ -25,7 +25,7 @@ class HasCancerWithNeuroendocrineComponent(private val doidModel: DoidModel, pri
         val hasNeuroendocrineDetails =
             TumorTypeEvaluationFunctions.hasTumorWithDetails(record.tumor, NEUROENDOCRINE_EXTRA_DETAILS)
         if (hasNeuroendocrineDoid || hasNeuroendocrineTerm || hasNeuroendocrineDetails) {
-            return EvaluationFactory.pass("Presence of neuroendocrine component")
+            return EvaluationFactory.pass("Has cancer with neuroendocrine component")
         }
         val hasSmallCellDoid = DoidEvaluationFunctions.isOfAtLeastOneDoidType(
             doidModel, tumorDoids,

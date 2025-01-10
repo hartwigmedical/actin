@@ -39,9 +39,7 @@ class CurrentlyGetsCypXInducingMedication(private val selector: MedicationSelect
             }
 
             else -> {
-                EvaluationFactory.recoverableFail(
-                    "No CYP$termToFind inducing medication use "
-                )
+                EvaluationFactory.recoverableFail("No CYP$termToFind inducing medication use")
             }
         }
     }

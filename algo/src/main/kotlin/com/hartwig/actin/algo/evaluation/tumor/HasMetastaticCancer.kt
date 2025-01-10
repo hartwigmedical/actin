@@ -21,7 +21,7 @@ class HasMetastaticCancer(private val doidModel: DoidModel) : EvaluationFunction
 
         return when {
             stageEvaluation.result == EvaluationResult.PASS -> {
-                EvaluationFactory.pass("Tumor stage $stage is considered metastatic")
+                EvaluationFactory.pass("Stage $stage is considered metastatic")
             }
 
             (isNotStageI && potentiallyMetastaticAtStageII) || stageEvaluation.result == EvaluationResult.UNDETERMINED -> {
@@ -29,7 +29,7 @@ class HasMetastaticCancer(private val doidModel: DoidModel) : EvaluationFunction
             }
 
             else -> {
-                EvaluationFactory.fail("Tumor stage $stage is not considered metastatic")
+                EvaluationFactory.fail("Stage $stage is not considered metastatic")
             }
         }
     }

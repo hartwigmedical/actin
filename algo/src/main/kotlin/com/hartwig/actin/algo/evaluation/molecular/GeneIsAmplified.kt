@@ -98,15 +98,15 @@ class GeneIsAmplified(private val gene: String, private val requestedMinCopyNumb
             EventsWithMessages(evaluatedCopyNumbers[CopyNumberEvaluation.REPORTABLE_PARTIAL_AMP], "$gene partially amplified"),
             EventsWithMessages(
                 evaluatedCopyNumbers[CopyNumberEvaluation.AMP_WITH_LOSS_OF_FUNCTION],
-                "$gene amplification but gene associated with loss-of-function protein impact in $evidenceSource"
+                "$gene is amplified but gene associated with loss-of-function protein impact in $evidenceSource"
             ),
             EventsWithMessages(
                 evaluatedCopyNumbers[CopyNumberEvaluation.AMP_ON_NON_ONCOGENE],
-                "$gene amplification but $gene known as TSG in $evidenceSource"
+                "$gene is amplified but gene known as TSG in $evidenceSource"
             ),
             EventsWithMessages(
                 evaluatedCopyNumbers[CopyNumberEvaluation.UNREPORTABLE_AMP],
-                "$gene amplification but not considered reportable"
+                "$gene is amplified but not considered reportable"
             ),
             EventsWithMessages(
                 requestedMinCopyNumber?.let { evaluatedCopyNumbers[CopyNumberEvaluation.NON_AMP_WITH_SUFFICIENT_COPY_NUMBER] },

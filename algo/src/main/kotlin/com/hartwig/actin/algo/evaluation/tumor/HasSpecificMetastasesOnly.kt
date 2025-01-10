@@ -28,7 +28,7 @@ class HasSpecificMetastasesOnly(
 
             return when {
                 hasSpecificMetastases && !hasAnyOtherLesion && otherLesions == null && otherMetastasesAccessors.any { it == null } -> {
-                    EvaluationFactory.warn("Lesion location data is missing: unknown if $typeOfMetastases metastases only")
+                    EvaluationFactory.warn("Unknown if $metastasisString (lesion location missing)")
                 }
 
                 hasSpecificMetastases && !hasAnyOtherLesion -> {
@@ -48,7 +48,7 @@ class HasSpecificMetastasesOnly(
                 }
 
                 else -> {
-                    EvaluationFactory.fail("No $typeOfMetastases-only metastases")
+                    EvaluationFactory.fail("No $metastasisString")
                 }
             }
         }

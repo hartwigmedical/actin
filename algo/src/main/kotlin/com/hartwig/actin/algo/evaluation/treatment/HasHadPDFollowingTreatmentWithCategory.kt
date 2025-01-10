@@ -24,7 +24,7 @@ class HasHadPDFollowingTreatmentWithCategory(private val category: TreatmentCate
         } else if (treatmentSummary.hasApproximateMatch()) {
             undetermined("Has had " + category.display() + " treatment but undetermined PD status")
         } else if (treatmentSummary.hasPossibleTrialMatch()) {
-            undetermined("Has had trial treatment of unclear treatment category")
+            undetermined("Undetermined if treatment received in previous trial included $category")
         } else {
             fail("Has not had " + category.display() + " treatment with PD")
         }

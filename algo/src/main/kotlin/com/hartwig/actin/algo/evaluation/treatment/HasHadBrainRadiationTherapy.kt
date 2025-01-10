@@ -26,7 +26,8 @@ class HasHadBrainRadiationTherapy : EvaluationFunction {
 
             (hasConfirmedBrainOrCNSMetastases || hasSuspectedBrainOrCNSMetastases) && anyRadiotherapy -> {
                 val suspectedMessage = if (!hasConfirmedBrainOrCNSMetastases) " suspected" else ""
-                EvaluationFactory.undetermined("Has$suspectedMessage brain and/or CNS metastases and received radiotherapy but undetermined if brain radiation therapy")
+                EvaluationFactory.undetermined("Has$suspectedMessage brain and/or CNS metastases and received radiotherapy " +
+                        "- undetermined if brain radiation therapy")
             }
 
             else -> EvaluationFactory.fail("Has not received prior brain radiation therapy")

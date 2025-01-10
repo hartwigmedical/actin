@@ -23,8 +23,7 @@ class HasAcquiredResistanceToAnyDrug(private val drugsToMatch: Set<Drug>) : Eval
 
             (treatmentEvaluation.possibleTrialMatch) -> {
                 EvaluationFactory.undetermined(
-                    "Undetermined resistance to ${Format.concatItemsWithOr(drugsToMatch)} since unknown if treatment in trial included " +
-                            Format.concatItemsWithOr(drugsToMatch)
+                    "Undetermined resistance to ${Format.concatItemsWithOr(drugsToMatch)} since unknown if drug was included in previous trial"
                 )
             }
 

@@ -38,8 +38,9 @@ class HasBMIUpToLimit(private val maximumBMI: Int, private val minimumDate: Loca
             minimumRequiredHeight <= MIN_EXPECTED_HEIGHT_METRES -> {
                 EvaluationFactory.pass(
                     String.format(
-                        ApplicationConfig.LOCALE, "Median weight %.1f kg will not exceed BMI limit of %d for height >= %.2f m",
-                        median, maximumBMI, minimumRequiredHeight
+                        ApplicationConfig.LOCALE,
+                        "Median weight %.1f kg will not exceed BMI limit of %d for height >= %.2f m", median, maximumBMI,
+                        minimumRequiredHeight
                     )
                 )
             }

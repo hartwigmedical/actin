@@ -21,18 +21,18 @@ class CurrentlyGetsAnyCypInhibitingOrInducingMedication(private val selector: Me
         return when {
             activeCypMedications.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass(
-                    "CYP inhibiting/inducing medication use (${concatLowercaseWithCommaAndAnd(activeCypMedications)})"
+                    "CYP inhibiting or inducing medication use (${concatLowercaseWithCommaAndAnd(activeCypMedications)})"
                 )
             }
 
             plannedCypMedications.isNotEmpty() -> {
                 EvaluationFactory.recoverableWarn(
-                    "Planned CYP inhibiting/inducing medication (${concatLowercaseWithCommaAndAnd(plannedCypMedications)})"
+                    "Planned CYP inhibiting or inducing medication (${concatLowercaseWithCommaAndAnd(plannedCypMedications)})"
                 )
             }
 
             else -> {
-                EvaluationFactory.recoverableFail("No CYP inhibiting/inducing medication use")
+                EvaluationFactory.recoverableFail("No CYP inhibiting or inducing medication use")
             }
         }
     }

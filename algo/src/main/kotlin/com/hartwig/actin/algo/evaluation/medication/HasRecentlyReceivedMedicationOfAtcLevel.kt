@@ -17,7 +17,9 @@ class HasRecentlyReceivedMedicationOfAtcLevel(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         if (minStopDate.isBefore(record.patient.registrationDate)) {
-            return EvaluationFactory.undetermined("Recent $categoryName medication use undetermined (required stop date prior to registration date)")
+            return EvaluationFactory.undetermined(
+                "Recent $categoryName medication use undetermined (required stop date prior to registration date)"
+            )
         }
 
         val medications = record.medications ?: return MEDICATION_NOT_PROVIDED

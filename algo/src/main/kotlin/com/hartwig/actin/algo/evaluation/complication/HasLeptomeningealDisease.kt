@@ -48,7 +48,7 @@ class HasLeptomeningealDisease(private val icdModel: IcdModel) : EvaluationFunct
         private fun createWarnEvaluation(suspected: Boolean, lesions: List<String>): Evaluation {
             val suspectedString = if (suspected) " suspected" else ""
             return EvaluationFactory.warn(
-                "Presence of$suspectedString lesions '${Format.concatLowercaseWithAnd(lesions)}'" +
+                "Has$suspectedString lesions '${Format.concatLowercaseWithAnd(lesions)}'" +
                         " potentially indicating leptomeningeal disease"
             )
         }

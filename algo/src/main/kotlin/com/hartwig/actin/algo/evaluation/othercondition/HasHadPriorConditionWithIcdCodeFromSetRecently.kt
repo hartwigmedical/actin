@@ -33,16 +33,16 @@ class HasHadPriorConditionWithIcdCodeFromSetRecently(
         return when {
             fullMatchSummary.containsKey(EvaluationResult.PASS) -> {
                 EvaluationFactory.pass(
-                    "Has had disease of ICD category ${
+                    "Recent ${
                         fullMatchSummary[EvaluationResult.PASS]?.joinToString(", ")
                         { resolveIcdTitle(it) }
-                    } (belonging to $diseaseDescription) within specified time frame"
+                    } (belonging to $diseaseDescription)"
                 )
             }
 
             fullMatchSummary.containsKey(EvaluationResult.WARN) -> {
                 EvaluationFactory.warn(
-                    "Has had disease of ICD category ${
+                    "History of ${
                         fullMatchSummary[EvaluationResult.WARN]?.joinToString(", ")
                         { resolveIcdTitle(it) }
                     } (belonging to $diseaseDescription) near start of specified time frame"
@@ -51,7 +51,7 @@ class HasHadPriorConditionWithIcdCodeFromSetRecently(
 
             fullMatchSummary.containsKey(EvaluationResult.UNDETERMINED) -> {
                 EvaluationFactory.undetermined(
-                    "Has had disease of ICD category ${
+                    "History of ${
                         fullMatchSummary[EvaluationResult.UNDETERMINED]?.joinToString(", ")
                         { resolveIcdTitle(it) }
                     } (belonging to $diseaseDescription) but undetermined whether that is within specified time frame"

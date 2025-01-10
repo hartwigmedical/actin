@@ -21,7 +21,7 @@ class GeneHasVariantInExonRangeOfType(
     override fun evaluate(test: MolecularTest): Evaluation {
         val exonRangeMessage = generateExonRangeMessage(minExon, maxExon)
         val variantTypeMessage = generateRequiredVariantTypeMessage(requiredVariantType)
-        val baseMessage = "in exon $exonRangeMessage in gene $gene$variantTypeMessage detected"
+        val baseMessage = "in exon $exonRangeMessage in $gene$variantTypeMessage"
         val allowedVariantTypes = determineAllowedVariantTypes(requiredVariantType)
 
         val (canonicalReportableVariantMatches, canonicalUnreportableVariantMatches, reportableOtherVariantMatches) =
@@ -79,11 +79,8 @@ class GeneHasVariantInExonRangeOfType(
 
             canonicalReportableVariantMatches.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "Variant(s) ${concat(canonicalReportableVariantMatches)} $baseMessage in canonical transcript together with variant(s) in non-canonical transcript: ${
-                        concat(
-                            reportableOtherVariantMatches
-                        )
-                    }",
+                    "Variant(s) ${concat(canonicalReportableVariantMatches)} $baseMessage in canonical transcript together with " +
+                            "variant(s) in non-canonical transcript: ${concat(reportableOtherVariantMatches)}",
                     inclusionEvents = canonicalReportableVariantMatches + reportableOtherVariantMatches
                 )
             }
@@ -91,11 +88,8 @@ class GeneHasVariantInExonRangeOfType(
             reportableExonSkips.isNotEmpty() -> {
                 val reportableExonSkipEvents = reportableExonSkips.map { it.event }.toSet()
                 EvaluationFactory.warn(
-                    "Exon(s) skipped $baseMessage due to ${concat(reportableExonSkipEvents)} together with variant(s) in non-canonical transcript: ${
-                        concat(
-                            reportableOtherVariantMatches
-                        )
-                    }",
+                    "Exon(s) skipped $baseMessage due to ${concat(reportableExonSkipEvents)} together with variant(s) in " +
+                            "non-canonical transcript: ${concat(reportableOtherVariantMatches)}",
                     inclusionEvents = reportableExonSkipEvents + reportableOtherVariantMatches
                 )
             }

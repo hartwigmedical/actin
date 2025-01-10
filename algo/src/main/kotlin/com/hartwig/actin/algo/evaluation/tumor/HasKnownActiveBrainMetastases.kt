@@ -23,7 +23,7 @@ class HasKnownActiveBrainMetastases : EvaluationFunction {
 
                 hasActiveBrainLesions == true -> EvaluationFactory.pass("Has active brain metastases")
 
-                else -> EvaluationFactory.fail("Has no known active brain metastases")
+                else -> EvaluationFactory.fail("No known active brain metastases present")
             }
         }
     }

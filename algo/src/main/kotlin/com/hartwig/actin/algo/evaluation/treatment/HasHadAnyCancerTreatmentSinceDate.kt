@@ -31,7 +31,7 @@ class HasHadAnyCancerTreatmentSinceDate(
             }
 
             effectiveTreatmentHistory.any { it.isTrial } || record.medications?.any { it.isTrialMedication } == true -> {
-                EvaluationFactory.undetermined("Inconclusive if patient had any prior cancer treatment due to trial participation")
+                EvaluationFactory.undetermined("Inconclusive if patient had any prior cancer treatment because participated in trial")
             }
 
             effectiveTreatmentHistory.any { treatmentSinceMinDate(it, minDate, true) } -> {

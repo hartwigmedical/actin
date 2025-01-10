@@ -33,11 +33,11 @@ class HasHadAnyCancerTreatment(private val categoryToIgnore: TreatmentCategory?,
             }
 
             hasHadTrial -> {
-                EvaluationFactory.undetermined("Inconclusive if patient had any prior cancer treatment due to trial participation")
+                EvaluationFactory.undetermined("Inconclusive if patient had any prior cancer treatment because participated in trial")
             }
 
             else -> {
-                EvaluationFactory.fail("Did not receive any cancer treatment")
+                EvaluationFactory.fail("Has not had any prior cancer treatment")
             }
         }
     }

@@ -29,7 +29,7 @@ class HasKnownCnsMetastases : EvaluationFunction {
                     EvaluationFactory.undetermined(message)
                 }
 
-                else -> EvaluationFactory.fail("Has no known CNS metastases")
+                else -> EvaluationFactory.fail("No known CNS metastases present")
             }
         }
     }

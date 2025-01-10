@@ -28,7 +28,7 @@ class CurrentlyGetsAnyCypInducingMedication(private val selector: MedicationSele
             }
 
             else -> {
-                EvaluationFactory.recoverableFail("No CYP inducing medication use ")
+                EvaluationFactory.recoverableFail("No CYP inducing medication use")
             }
         }
     }

@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.clinical.IcdCode
+import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 
 class InfectionRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
@@ -39,11 +40,17 @@ class InfectionRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     }
 
     private fun hasReceivedLiveVaccineWithinMonthsCreator(): FunctionCreator {
-        return { HasReceivedLiveVaccineWithinMonths() }
+        return { function: EligibilityFunction ->
+            val minMonths = functionInputResolver().createOneIntegerInput(function)
+            HasReceivedLiveVaccineWithinMonths(minMonths)
+        }
     }
 
     private fun hasReceivedNonLiveVaccineWithinWeeksCreator(): FunctionCreator {
-        return { HasReceivedNonLiveVaccineWithinWeeks() }
+        return { function: EligibilityFunction ->
+            val minWeeks = functionInputResolver().createOneIntegerInput(function)
+            HasReceivedNonLiveVaccineWithinWeeks(minWeeks)
+        }
     }
 
     private fun canAdhereToAttenuatedVaccineUseCreator(): FunctionCreator {

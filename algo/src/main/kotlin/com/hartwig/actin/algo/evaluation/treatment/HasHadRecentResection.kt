@@ -49,7 +49,7 @@ class HasHadRecentResection(private val minDate: LocalDate) : EvaluationFunction
             }
 
             mayHaveHadResectionAfterMinDate -> {
-                EvaluationFactory.undetermined("Recent resection undetermined")
+                EvaluationFactory.undetermined("May have had a recent resection")
             }
 
             else -> {

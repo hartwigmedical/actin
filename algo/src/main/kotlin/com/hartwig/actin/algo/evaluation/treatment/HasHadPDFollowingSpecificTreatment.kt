@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.treatment.ProgressiveDiseaseFunctions.treatmentResultedInPD
-import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithAnd
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -26,7 +25,7 @@ class HasHadPDFollowingSpecificTreatment(private val treatments: List<Treatment>
                 "Has received ${concatItemsWithAnd(treatmentEvaluation.matchingTreatments)} treatment but undetermined if PD"
             )
         } else if (treatmentEvaluation.matchingTreatments.isNotEmpty()) {
-            EvaluationFactory.fail("Has received ${concatItemsWithAnd(treatmentEvaluation.matchingTreatments)} treatment, but no PD")
+            EvaluationFactory.fail("Has received ${concatItemsWithAnd(treatmentEvaluation.matchingTreatments)} treatment but no PD")
         } else {
             EvaluationFactory.fail("Has not received ${concatItemsWithAnd(treatments)} treatment")
         }

@@ -24,7 +24,7 @@ class HasKnownBrainMetastases : EvaluationFunction {
                     EvaluationFactory.undetermined(message)
                 }
 
-                else -> EvaluationFactory.fail("Has no known brain metastases")
+                else -> EvaluationFactory.fail("No known brain metastases present")
             }
         }
     }

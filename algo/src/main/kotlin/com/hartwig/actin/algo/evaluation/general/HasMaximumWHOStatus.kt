@@ -4,7 +4,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import kotlin.math.max
 
 class HasMaximumWHOStatus(private val maximumWHO: Int) : EvaluationFunction {
 
@@ -13,13 +12,11 @@ class HasMaximumWHOStatus(private val maximumWHO: Int) : EvaluationFunction {
         return when {
             who == null -> EvaluationFactory.undetermined("WHO status unknown")
 
-            who <= maximumWHO -> EvaluationFactory.pass(
-                "Adequate WHO status"
-            )
+            who <= maximumWHO -> EvaluationFactory.pass("WHO $who is within requested max (WHO $maximumWHO)")
 
             who - maximumWHO == 1 -> EvaluationFactory.recoverableFail("WHO $who exceeds max WHO $maximumWHO")
 
-            else -> EvaluationFactory.fail("WHO status $who above requested $maximumWHO")
+            else -> EvaluationFactory.fail("WHO $who exceeds max WHO $maximumWHO")
         }
     }
 }

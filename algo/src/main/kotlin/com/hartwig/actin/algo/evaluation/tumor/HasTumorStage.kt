@@ -36,25 +36,16 @@ class HasTumorStage(private val stagesToMatch: Set<TumorStage>) : EvaluationFunc
                 }
 
                 derivedStages.map { evaluateWithStage(it, allStagesToMatch, stageMessage) }.all { it.result == EvaluationResult.PASS } -> {
-                    pass(
-                        "No tumor stage details present but based on lesions requested stage $stageMessage met - $derivedStageMessage",
-                        "Tumor stage data missing but requested stage $stageMessage met - $derivedStageMessage"
-                    )
+                    pass("Tumor stage data missing but requested stage $stageMessage met - $derivedStageMessage")
                 }
 
                 derivedStages.map { evaluateWithStage(it, allStagesToMatch, stageMessage) }
                     .any { it.result in listOf(EvaluationResult.PASS, EvaluationResult.UNDETERMINED) } -> {
-                    undetermined(
-                        "Unknown if tumor stage is $stageMessage (no tumor stage details provided) - $derivedStageMessage",
-                        "Unknown if tumor stage is $stageMessage (data missing) - $derivedStageMessage"
-                    )
+                    undetermined("Unknown if tumor stage is $stageMessage (data missing) - $derivedStageMessage")
                 }
 
                 else -> {
-                    fail(
-                        "No tumor stage details present but based on lesions requested stage $stageMessage not met - $derivedStageMessage",
-                        "Tumor stage data missing but requested stage $stageMessage not met - $derivedStageMessage"
-                    )
+                    fail("Tumor stage data missing but requested stage $stageMessage not met - $derivedStageMessage")
                 }
             }
         }
@@ -68,7 +59,7 @@ class HasTumorStage(private val stagesToMatch: Set<TumorStage>) : EvaluationFunc
     ): Evaluation {
         return when {
             stage in stagesToMatch || stage.category in stagesToMatch -> {
-                pass("Patient tumor stage $stage meets requested stage(s) $stageMessage")
+                pass("Tumor stage $stage meets requested stage(s) $stageMessage")
             }
 
             stagesToMatch.any { it.category == stage } -> {
@@ -76,7 +67,7 @@ class HasTumorStage(private val stagesToMatch: Set<TumorStage>) : EvaluationFunc
             }
 
             else -> {
-                fail("Patient tumor stage $stage does not meet requested stage(s) $stageMessage")
+                fail("Tumor stage $stage does not meet requested stage(s) $stageMessage")
             }
         }
     }

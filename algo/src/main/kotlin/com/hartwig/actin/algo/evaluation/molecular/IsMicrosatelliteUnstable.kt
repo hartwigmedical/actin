@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.molecular.MolecularConstants.MSI_GENES
-import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.GeneAlteration
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
@@ -35,12 +34,12 @@ class IsMicrosatelliteUnstable(maxTestAge: LocalDate? = null) : MolecularEvaluat
         return when (molecular.characteristics.isMicrosatelliteUnstable) {
             null -> {
                 if (msiGenesWithBiallelicDriver.isNotEmpty()) {
-                    EvaluationFactory.undetermined("Unknown MSI status but biallelic drivers in MSI genes")
+                    EvaluationFactory.undetermined("Unknown MSI status but biallelic drivers in MMR genes")
                 } else if (msiGenesWithNonBiallelicDriver.isNotEmpty()) {
-                    EvaluationFactory.undetermined("Unknown MSI status but non-biallelic drivers in MSI genes")
+                    EvaluationFactory.undetermined("Unknown MSI status but non-biallelic drivers in MMR genes")
                 } else if (msiGenesWithUnknownBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.undetermined(
-                        "Unknown MSI status but drivers with unknown allelic status in MSI genes"
+                        "Unknown MSI status but drivers with unknown allelic status in MMR genes"
                     )
                 } else {
                     EvaluationFactory.fail("Unknown MSI status")
@@ -51,17 +50,17 @@ class IsMicrosatelliteUnstable(maxTestAge: LocalDate? = null) : MolecularEvaluat
                 val inclusionMolecularEvents = setOf(MolecularCharacteristicEvents.MICROSATELLITE_UNSTABLE)
                 if (msiGenesWithBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.pass(
-                        "Tumor is MSI and biallelic drivers in MSI genes detected",
+                        "Tumor is MSI with biallelic drivers in MMR genes",
                         inclusionEvents = inclusionMolecularEvents
                     )
                 } else if (msiGenesWithNonBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.warn(
-                        "Tumor is MSI (but with only non-biallelic drivers in MSI genes)",
+                        "Tumor is MSI but with only non-biallelic drivers in MMR genes",
                         inclusionEvents = inclusionMolecularEvents
                     )
                 } else {
                     EvaluationFactory.warn(
-                        "Tumor is MSI (but without drivers in MSI genes)",
+                        "Tumor is MSI but without drivers in MMR genes",
                         inclusionEvents = inclusionMolecularEvents
                     )
                 }

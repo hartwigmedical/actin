@@ -47,7 +47,7 @@ class HasKnownSCLCTransformation(private val doidModel: DoidModel, private val m
             }
 
             else -> {
-                EvaluationFactory.recoverableFail("No indication of small cell transformation in molecular or tumor doid data - assuming none")
+                EvaluationFactory.recoverableFail("No indication of small cell transformation in molecular or tumor doid data")
             }
         }
     }

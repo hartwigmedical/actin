@@ -21,7 +21,9 @@ class HasHadSomeTreatmentsWithCategory(private val category: TreatmentCategory, 
             }
 
             treatmentSummary.numSpecificMatches() + treatmentSummary.numPossibleTrialMatches >= minTreatmentLines -> {
-                EvaluationFactory.undetermined("Undetermined if received at least $minTreatmentLines line(s) of ${category.display()} due to trial participation")
+                EvaluationFactory.undetermined(
+                    "Inconclusive if received at least $minTreatmentLines line(s) of ${category.display()} due to trial participation"
+                )
             }
 
             else -> {

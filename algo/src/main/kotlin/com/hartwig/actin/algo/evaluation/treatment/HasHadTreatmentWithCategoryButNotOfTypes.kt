@@ -30,7 +30,7 @@ class HasHadTreatmentWithCategoryButNotOfTypes(
             )
 
             treatmentSummary.hasPossibleTrialMatch() -> EvaluationFactory.undetermined(
-                "Undetermined if received ${category.display()} ignoring $ignoreTypesList due to trial participation"
+                "Undetermined if treatment received in previous trial included ${category.display()} ignoring $ignoreTypesList"
             )
 
             else -> EvaluationFactory.fail("Has not received ${category.display()} ignoring $ignoreTypesList")

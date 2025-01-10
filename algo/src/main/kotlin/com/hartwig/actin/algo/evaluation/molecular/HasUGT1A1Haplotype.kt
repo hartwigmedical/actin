@@ -17,7 +17,7 @@ class HasUGT1A1Haplotype(private val haplotypeToFind: String, maxTestAge: LocalD
         return if (hasUGT1A1Type(pharmaco, haplotypeToFind)) {
             EvaluationFactory.pass("Has required UGT1A1 type $haplotypeToFind", inclusionEvents = setOf(haplotypeToFind))
         } else {
-            EvaluationFactory.fail("Does not have required HLA type $haplotypeToFind")
+            EvaluationFactory.fail("Does not have required UGT1A1 type $haplotypeToFind")
         }
     }
 

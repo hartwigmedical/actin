@@ -44,7 +44,7 @@ class HasMinimumSitesWithLesions(private val minimumSitesWithLesions: Int) : Eva
                 }
 
                 sitesWithKnownAndSuspectedLesionsUpperBound >= minimumSitesWithLesions -> {
-                    EvaluationFactory.undetermined("Undetermined if sufficient lesion sites (near threshold of $minimumSitesWithLesions and including suspected lesions)")
+                    EvaluationFactory.undetermined("Undetermined if sufficient lesion sites (near threshold of $minimumSitesWithLesions when including suspected lesions)")
                 }
 
                 else -> {

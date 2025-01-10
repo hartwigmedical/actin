@@ -9,7 +9,7 @@ class HasHadSomeApprovedTreatments(private val minApprovedTreatments: Int) : Eva
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return if (record.oncologicalHistory.isEmpty() && minApprovedTreatments > 0) {
-            EvaluationFactory.fail("Has not had approved treatments")
+            EvaluationFactory.fail("Has not had approved treatments (no prior tumor treatment)")
         } else
             EvaluationFactory.undetermined("Nr of received approved treatments undetermined")
     }

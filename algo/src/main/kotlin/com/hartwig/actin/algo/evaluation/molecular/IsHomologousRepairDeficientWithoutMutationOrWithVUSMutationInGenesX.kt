@@ -44,11 +44,13 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesX(
 
             return when {
                 isHRD == null && hrdGenesWithBiallelicDriver.isNotEmpty() -> {
-                    EvaluationFactory.undetermined("Unknown HRD status but biallelic drivers in HR genes - an HRD test may be recommended")
+                    EvaluationFactory.undetermined("Unknown HRD status but biallelic drivers in HR genes " +
+                            "- an HRD test may be recommended")
                 }
 
                 isHRD == null && hrdGenesWithNonBiallelicDriver.isNotEmpty() -> {
-                    EvaluationFactory.undetermined("Unknown HRD status but non-biallelic drivers in HR genes - an HRD test may be recommended")
+                    EvaluationFactory.undetermined("Unknown HRD status but non-biallelic drivers in HR genes " +
+                            "- an HRD test may be recommended")
                 }
 
                 isHRD == null -> {
@@ -60,7 +62,8 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesX(
                 }
 
                 genesToFindWithBiallelicHotspot.isNotEmpty() || genesToFindWithNonBiallelicHotspot.isNotEmpty() -> {
-                    EvaluationFactory.fail("Tumor is HRD with ${concat(genesToFindWithNonBiallelicHotspot + genesToFindWithBiallelicHotspot)} hotspot")
+                    EvaluationFactory.fail("Tumor is HRD with " +
+                            "${concat(genesToFindWithNonBiallelicHotspot + genesToFindWithBiallelicHotspot)} hotspot")
                 }
 
                 genesToFindWithDeletionOrPartialLoss.isNotEmpty() -> {
@@ -72,11 +75,11 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesX(
                 }
 
                 hrdGenesWithNonBiallelicDriver.isNotEmpty() && hrdGenesWithBiallelicDriver.isEmpty() -> {
-                    EvaluationFactory.warn("Tumor is HRD (but with only non-biallelic drivers in HR genes)")
+                    EvaluationFactory.warn("Tumor is HRD but with only non-biallelic drivers in HR genes")
                 }
 
                 hrdGenesWithNonBiallelicDriver.isEmpty() && hrdGenesWithBiallelicDriver.isEmpty() -> {
-                    EvaluationFactory.warn("Tumor is HRD (but without drivers in HR genes)")
+                    EvaluationFactory.warn("Tumor is HRD but without drivers in HR genes")
                 }
 
                 else -> {

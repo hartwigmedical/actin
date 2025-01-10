@@ -12,7 +12,7 @@ class IsEligibleForLocalTreatmentOfMetastases(private val hasMetastaticCancer: H
     override fun evaluate(record: PatientRecord): Evaluation {
         return when (hasMetastaticCancer.evaluate(record).result) {
             EvaluationResult.FAIL -> {
-                EvaluationFactory.fail("No metastatic cancer and hence no eligibility for local treatment of metastases")
+                EvaluationFactory.fail("No metastatic cancer hence no eligibility for local treatment of metastases")
             }
 
             EvaluationResult.PASS -> {

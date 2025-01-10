@@ -9,6 +9,6 @@ internal object PriorConditionMessages {
     }
 
     fun pass(matches: Iterable<String>): String {
-        return "History of ${Format.concat(matches)}"
+        return "Has history of ${Format.concat(matches)}"
     }
 }

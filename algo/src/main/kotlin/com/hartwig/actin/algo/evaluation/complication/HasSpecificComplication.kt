@@ -24,16 +24,18 @@ class HasSpecificComplication(private val icdModel: IcdModel, private val target
         } else targetIcdTitles.takeIf { it.isNotEmpty() }?.first()
 
         return when {
-            icdMatches.fullMatches.isNotEmpty() -> EvaluationFactory.pass("Has complication(s) " + Format.concatItemsWithAnd(icdMatches.fullMatches))
+            icdMatches.fullMatches.isNotEmpty() -> EvaluationFactory.pass(
+                "Has complication(s) " + Format.concatItemsWithAnd(icdMatches.fullMatches)
+            )
 
             icdMatches.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> EvaluationFactory.undetermined(
                 "Has complication(s) ${Format.concatItemsWithAnd(icdMatches.mainCodeMatchesWithUnknownExtension)} " +
                         "but undetermined if $icdTitleText"
             )
 
-            hasComplicationsWithoutNames(record) -> EvaluationFactory.undetermined("Complications present but unknown if $icdTitleText")
+            hasComplicationsWithoutNames(record) -> EvaluationFactory.undetermined("Complication(s) present but unknown if $icdTitleText")
 
-            else -> EvaluationFactory.fail("Complication $icdTitleText not present")
+            else -> EvaluationFactory.fail("Complication(s) $icdTitleText not present")
         }
     }
 

@@ -61,10 +61,7 @@ class HasFusionInGene(private val gene: String, maxTestAge: LocalDate? = null) :
 
         return when {
             matchingFusions.isNotEmpty() && !anyWarns -> {
-                EvaluationFactory.pass(
-                    "Fusion(s) ${concat(matchingFusions)} detected in gene $gene",
-                    inclusionEvents = matchingFusions
-                )
+                EvaluationFactory.pass("Fusion(s) ${concat(matchingFusions)} in gene $gene", inclusionEvents = matchingFusions)
             }
 
             matchingFusions.isNotEmpty() -> {
@@ -76,7 +73,7 @@ class HasFusionInGene(private val gene: String, maxTestAge: LocalDate? = null) :
                 ).flatten())
 
                 EvaluationFactory.warn(
-                    "Fusion(s) ${concat(matchingFusions)} detected in $gene together with other fusion events(s): " + eventWarningDescriptions,
+                    "Fusion(s) ${concat(matchingFusions)} in $gene together with other fusion events(s): " + eventWarningDescriptions,
                     inclusionEvents = matchingFusions + fusionsWithNoEffect +
                             fusionsWithNoHighDriverLikelihoodWithGainOfFunction +
                             fusionsWithNoHighDriverLikelihoodOther +
@@ -109,20 +106,20 @@ class HasFusionInGene(private val gene: String, maxTestAge: LocalDate? = null) :
             listOf(
                 EventsWithMessages(
                     fusionsWithNoEffect,
-                    "Fusion(s) ${concat(fusionsWithNoEffect)} detected in $gene but annotated with having no protein effect evidence in $evidenceSource"
+                    "Fusion(s) ${concat(fusionsWithNoEffect)} in $gene but annotated with having no protein effect evidence in $evidenceSource"
                 ),
                 EventsWithMessages(
                     fusionsWithNoHighDriverLikelihoodWithGainOfFunction,
-                    "Fusion(s) ${concat(fusionsWithNoHighDriverLikelihoodWithGainOfFunction)} detected in $gene"
+                    "Fusion(s) ${concat(fusionsWithNoHighDriverLikelihoodWithGainOfFunction)} in $gene"
                             + " without high driver likelihood but annotated with having gain-of-function evidence in $evidenceSource"
                 ),
                 EventsWithMessages(
                     fusionsWithNoHighDriverLikelihoodOther,
-                    "Fusion(s) ${concat(fusionsWithNoHighDriverLikelihoodOther)} detected in $gene but not with high driver likelihood",
+                    "Fusion(s) ${concat(fusionsWithNoHighDriverLikelihoodOther)} in $gene but not with high driver likelihood",
                 ),
                 EventsWithMessages(
                     unreportableFusionsWithGainOfFunction,
-                    "Unreportable fusion(s) ${concat(unreportableFusionsWithGainOfFunction)} detected in $gene"
+                    "Unreportable fusion(s) ${concat(unreportableFusionsWithGainOfFunction)} in $gene"
                             + " however annotated with having gain-of-function evidence in $evidenceSource"
                 )
             )

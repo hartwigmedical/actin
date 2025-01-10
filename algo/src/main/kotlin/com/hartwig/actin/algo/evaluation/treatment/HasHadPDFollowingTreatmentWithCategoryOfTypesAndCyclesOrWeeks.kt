@@ -72,18 +72,15 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS in treatmentEvaluations -> {
-                val messageEnd = "received ${treatment()} but uncertain if there has been PD"
-                recoverableUndetermined("Has $messageEnd")
+                recoverableUndetermined("Has received ${treatment()} but uncertain if there has been PD")
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS_AND_UNCLEAR_CYCLES in treatmentEvaluations -> {
-                val messageEnd = "received ${treatment()} but uncertain if there has been PD & unknown nr of cycles"
-                recoverableUndetermined("Has $messageEnd")
+                recoverableUndetermined("Has received ${treatment()} but uncertain if there has been PD & unknown nr of cycles")
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS_AND_UNCLEAR_WEEKS in treatmentEvaluations -> {
-                val messageEnd = "received ${treatment()} but uncertain if there has been PD & unclear nr of weeks"
-                recoverableUndetermined("Has $messageEnd")
+                recoverableUndetermined("Has received ${treatment()} but uncertain if there has been PD & unclear nr of weeks")
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL in treatmentEvaluations -> {

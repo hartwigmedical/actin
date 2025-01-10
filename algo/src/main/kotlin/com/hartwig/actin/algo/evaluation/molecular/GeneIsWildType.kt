@@ -69,7 +69,7 @@ class GeneIsWildType(private val gene: String, maxTestAge: LocalDate? = null) : 
 
         return when {
             reportableEventsWithEffect.isNotEmpty() ->
-                EvaluationFactory.fail("$gene not wild-type")
+                EvaluationFactory.fail("$gene not wild-type due to ${Format.concat(reportableEventsWithEffect)}")
 
             potentialWarnEvaluation != null -> potentialWarnEvaluation
 
@@ -92,11 +92,13 @@ class GeneIsWildType(private val gene: String, maxTestAge: LocalDate? = null) : 
             listOf(
                 EventsWithMessages(
                     reportableEventsWithNoEffect,
-                    "$gene potentially wild-type (reportable event(s) detected but protein effect 'no effect' in $evidenceSource)"
+                    "Reportable event(s) ${Format.concat(reportableEventsWithNoEffect)} in $gene - however these are annotated"
+                            + " with protein effect 'no effect' in $evidenceSource and thus may potentially be considered wild-type"
                 ),
                 EventsWithMessages(
                     reportableEventsWithEffectPotentiallyWildtype,
-                    "$gene potentially wild-type (reportable event(s) detected which have a protein effect in $evidenceSource)"
+                    "Reportable event(s) ${Format.concat(reportableEventsWithEffectPotentiallyWildtype)} in $gene"
+                            + " which may potentially be considered wild-type"
                 ),
             )
         )

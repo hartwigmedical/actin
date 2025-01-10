@@ -13,7 +13,7 @@ class HasHistoryOfSecondMalignancyWithDoid(private val doidModel: DoidModel, pri
         val doidTerm = doidModel.resolveTermForDoid(doidToMatch)
         return if (record.priorSecondPrimaries.flatMap { it.doids }.flatMap { doidModel.doidWithParents(it) }
                 .contains(doidToMatch)) {
-            EvaluationFactory.pass("History of previous malignancy belonging to $doidTerm")
+            EvaluationFactory.pass("Has history of previous malignancy belonging to $doidTerm")
         } else {
             EvaluationFactory.fail("No history of previous malignancy belonging to $doidTerm")
         }

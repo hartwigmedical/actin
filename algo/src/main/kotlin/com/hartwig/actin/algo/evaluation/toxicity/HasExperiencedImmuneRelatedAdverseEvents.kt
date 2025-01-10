@@ -25,8 +25,7 @@ class HasExperiencedImmuneRelatedAdverseEvents(private val icdModel: IcdModel) :
             }.toSet()
         )
 
-        val warnMessageStart =
-            "Possible immunotherapy related adverse events in history"
+        val warnMessageStart = "Possible immunotherapy related adverse events in history"
 
         return when {
             immunotherapyTreatmentList.isNotEmpty() && immunotherapyAllergies.isNotEmpty() -> {

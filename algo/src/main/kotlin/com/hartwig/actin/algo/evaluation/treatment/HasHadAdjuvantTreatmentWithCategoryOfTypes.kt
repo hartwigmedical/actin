@@ -19,6 +19,7 @@ class HasHadAdjuvantTreatmentWithCategoryOfTypes(private val types: Set<Treatmen
             adjuvantTreatmentHistory, warnCategory, { historyEntry -> historyEntry.matchesTypeFromSet(types) }
         )
 
+        val categoryString = warnCategory.display()
         return when {
             treatmentSummary.hasSpecificMatch() -> {
                 val treatmentsString = Format.concatLowercaseWithCommaAndAnd(
@@ -28,12 +29,11 @@ class HasHadAdjuvantTreatmentWithCategoryOfTypes(private val types: Set<Treatmen
             }
 
             treatmentSummary.hasApproximateMatch() -> {
-                val categoryString = warnCategory.display()
                 EvaluationFactory.warn("Received adjuvant $categoryString but not of specific type)")
             }
 
             treatmentSummary.hasPossibleTrialMatch() -> {
-                EvaluationFactory.warn("Received adjuvant trial treatment")
+                EvaluationFactory.warn("Undetermined if treatment received in previous trial included adjuvant $categoryString")
             }
 
             else -> {

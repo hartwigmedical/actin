@@ -25,10 +25,10 @@ class HasKnownActiveCnsMetastases : EvaluationFunction {
                     EvaluationFactory.undetermined("Undetermined if (active) CNS metastases present (data missing)")
                 }
 
-                hasActiveCnsLesions == true -> EvaluationFactory.pass("Active CNS metastases present")
+                hasActiveCnsLesions == true -> EvaluationFactory.pass("Has active CNS metastases")
 
                 hasActiveBrainLesions == true -> {
-                    EvaluationFactory.pass("Active CNS (Brain) metastases present")
+                    EvaluationFactory.pass("Has active CNS (Brain) metastases")
                 }
 
                 else -> EvaluationFactory.fail("No known active CNS metastases present")

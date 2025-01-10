@@ -18,11 +18,11 @@ class HasKnownHPVStatus : EvaluationFunction {
 
         return when {
             molecularRecords.any { it.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME && it.containsTumorCells } -> {
-                return EvaluationFactory.pass("HPV result available by WGS")
+                return EvaluationFactory.pass("HPV status available by WGS")
             }
 
             conclusivePriorTestsForHPV.isNotEmpty() -> {
-                EvaluationFactory.pass("HPV result available")
+                EvaluationFactory.pass("HPV status available")
             }
 
             molecularRecords.any { it.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME } -> {

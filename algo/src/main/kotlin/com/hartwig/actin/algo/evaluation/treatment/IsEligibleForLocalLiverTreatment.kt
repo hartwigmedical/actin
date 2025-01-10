@@ -17,11 +17,11 @@ class IsEligibleForLocalLiverTreatment(private val doidModel: DoidModel) : Evalu
 
         return when {
             hasLiverCancer && hasLiverLesions != true -> {
-                EvaluationFactory.warn("Liver cancer (hence potential eligibility for local liver treatment)")
+                EvaluationFactory.warn("Liver cancer hence potential eligibility for local liver treatment")
             }
 
             hasLiverLesions == false -> {
-                EvaluationFactory.fail("No liver lesions (hence no eligibility for local liver treatment)")
+                EvaluationFactory.fail("No liver lesions hence no eligibility for local liver treatment")
             }
 
             hasLiverLesions == true -> {

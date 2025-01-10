@@ -36,11 +36,12 @@ class PrimaryTumorLocationBelongsToDoid(
                             EvaluationFactory.pass("Tumor belongs to $doidTermsTumorBelongsTo with sub-location $subLocation")
 
                         subLocation == null -> EvaluationFactory.warn("Tumor belongs to $doidTermsTumorBelongsTo with unknown sub-location")
-                        else -> EvaluationFactory.warn("Tumor belongs to $doidTermsTumorBelongsTo but sub-location $subLocation does not match '$subLocationQuery'")
+                        else -> EvaluationFactory.warn("Tumor belongs to $doidTermsTumorBelongsTo but sub-location $subLocation " +
+                                "does not match '$subLocationQuery'")
                     }
                 }
 
-                doidsTumorBelongsTo.isNotEmpty() -> EvaluationFactory.pass("Has tumor belonging to DOID term(s) $doidTermsTumorBelongsTo")
+                doidsTumorBelongsTo.isNotEmpty() -> EvaluationFactory.pass("Tumor belongs to $doidTermsTumorBelongsTo")
 
                 potentialAdenoSquamousMatches.isNotEmpty() -> {
                     val potentialAdenoSquamousMatchesString = concatLowercaseWithCommaAndOr(doidsToTerms(potentialAdenoSquamousMatches))

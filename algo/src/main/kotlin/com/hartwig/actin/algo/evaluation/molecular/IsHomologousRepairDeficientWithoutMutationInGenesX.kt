@@ -37,11 +37,11 @@ class IsHomologousRepairDeficientWithoutMutationInGenesX(private val genesToFind
                 }
 
                 hrdGenesWithNonBiallelicDriver.isNotEmpty() && hrdGenesWithBiallelicDriver.isEmpty() -> {
-                    EvaluationFactory.warn("Tumor is HRD (but with only non-biallelic drivers in HR genes)")
+                    EvaluationFactory.warn("Tumor is HRD but with only non-biallelic drivers in HR genes")
                 }
 
                 hrdGenesWithNonBiallelicDriver.isEmpty() && hrdGenesWithBiallelicDriver.isEmpty() -> {
-                    EvaluationFactory.warn("Tumor is HRD (but without drivers in HR genes)")
+                    EvaluationFactory.warn("Tumor is HRD but without drivers in HR genes")
                 }
 
                 else -> {

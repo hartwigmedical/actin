@@ -20,7 +20,7 @@ class HasChildPughClass(private val icdModel: IcdModel) : EvaluationFunction {
         return if (hasLiverCirrhosis) {
             EvaluationFactory.undetermined("Child-Pugh score undetermined")
         } else {
-            EvaluationFactory.notEvaluated("Assumed that Child-Pugh score is not relevant since liver cirrhosis not present")
+            EvaluationFactory.notEvaluated("Assumed that Child-Pugh score is not relevant since no history of liver cirrhosis")
         }
     }
 }

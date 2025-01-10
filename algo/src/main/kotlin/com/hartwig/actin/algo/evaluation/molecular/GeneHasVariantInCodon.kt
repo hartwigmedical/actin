@@ -120,16 +120,12 @@ class GeneHasVariantInCodon(private val gene: String, private val codons: List<S
         val message = listOfNotNull(
             if (reportableOtherVariantMatches.isNotEmpty()) {
                 "variant(s) ${concat(reportableOtherVariantMatches)} in codon(s) ${
-                    concat(
-                        reportableOtherCodonMatches
-                    )
+                    concat(reportableOtherCodonMatches)
                 } but in non-canonical transcript"
             } else null,
             if (canonicalReportableSubclonalVariantMatches.isNotEmpty()) {
                 "variant(s) ${concat(canonicalReportableSubclonalVariantMatches)} in codon(s) ${
-                    concat(
-                        canonicalReportableSubclonalCodonMatches
-                    )
+                    concat(canonicalReportableSubclonalCodonMatches)
                 } in canonical transcript" + " but subclonal likelihood of > ${percentage(1 - CLONAL_CUTOFF)}"
             } else null
         )

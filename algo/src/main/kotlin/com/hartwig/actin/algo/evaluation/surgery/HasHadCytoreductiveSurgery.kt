@@ -31,11 +31,11 @@ class HasHadCytoreductiveSurgery : EvaluationFunction {
             }
 
             undeterminedSurgery -> {
-                EvaluationFactory.undetermined("Undetermined if surgery patient received was cytoreductive")
+                EvaluationFactory.undetermined("Undetermined if performed surgery was cytoreductive")
             }
 
             hasHadDebulkingSurgery -> {
-                EvaluationFactory.undetermined("Undetermined if the performed debulking surgery meets the criteria of cytoreductive surgery")
+                EvaluationFactory.undetermined("Undetermined if performed debulking surgery meets the criteria of cytoreductive surgery")
             }
 
             else -> {

@@ -13,8 +13,7 @@ object TumorMetastasisEvaluator {
             }
 
             hasSuspectedMetastases == true -> {
-                val message = "$capitalizedType metastases present but only suspected lesions"
-                EvaluationFactory.warn(message)
+                EvaluationFactory.warn("$capitalizedType metastases present but only suspected lesions")
             }
 
             hasMetastases == null -> EvaluationFactory.undetermined("Missing $metastasisType metastasis data")

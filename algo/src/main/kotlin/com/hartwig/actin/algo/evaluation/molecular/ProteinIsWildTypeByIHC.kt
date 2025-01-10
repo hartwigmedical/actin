@@ -17,9 +17,7 @@ class ProteinIsWildTypeByIHC(private val protein: String) : EvaluationFunction {
         return if (hasOnlyWildTypeResults) {
             EvaluationFactory.pass("$protein is wild type by IHC")
         } else {
-            EvaluationFactory.undetermined(
-                "$protein wild type status unknown by IHC"
-            )
+            EvaluationFactory.undetermined("$protein wild type status by IHC unknown")
         }
     }
 

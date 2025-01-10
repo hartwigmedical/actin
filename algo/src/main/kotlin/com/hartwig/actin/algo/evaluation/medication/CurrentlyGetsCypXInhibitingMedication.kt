@@ -40,7 +40,7 @@ class CurrentlyGetsCypXInhibitingMedication(private val selector: MedicationSele
 
             else -> {
                 EvaluationFactory.recoverableFail(
-                    "No CYP$termToFind inhibiting medication use "
+                    "No CYP$termToFind inhibiting medication use"
                 )
             }
         }

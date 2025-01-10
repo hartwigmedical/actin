@@ -36,7 +36,7 @@ class GeneHasUTR3Loss(private val gene: String, maxTestAge: LocalDate? = null) :
 
         if (hotspotsIn3UTR.isNotEmpty()) {
             return EvaluationFactory.pass(
-                "Present 3' UTR loss of $gene (hotspot mutations: ${concat(hotspotsIn3UTR)})",
+                "3' UTR hotspot mutation(s) ${concat(hotspotsIn3UTR)} in " + gene + " should lead to 3' UTR loss",
                 inclusionEvents = hotspotsIn3UTR
             )
         }
@@ -51,16 +51,16 @@ class GeneHasUTR3Loss(private val gene: String, maxTestAge: LocalDate? = null) :
             listOf(
                 EventsWithMessages(
                     hotspotsIn3UTRUnreportable,
-                    "Hotspot mutation(s) in 3' UTR region of $gene which may lead to 3' UTR loss: "
-                            + "${concat(hotspotsIn3UTRUnreportable)} but mutation is not considered reportable"
+                    "Hotspot mutation(s) ${concat(hotspotsIn3UTRUnreportable)} in 3' UTR region of $gene which may lead to "
+                            + "3' UTR loss but mutation is not considered reportable"
                 ),
                 EventsWithMessages(
                     vusIn3UTR,
-                    "VUS mutation(s) in 3' UTR region of $gene which may lead to 3' UTR loss: ${concat(vusIn3UTR)}"
+                    "VUS mutation(s) ${concat(vusIn3UTR)} in 3' UTR region of $gene which may lead to 3' UTR loss"
                 ),
                 EventsWithMessages(
                     disruptionsIn3UTR,
-                    "Disruption(s) in 3' UTR region of $gene which may lead to 3' UTR loss: ${concat(disruptionsIn3UTR)}"
+                    "Disruption(s) ${concat(disruptionsIn3UTR)} in 3' UTR region of $gene which may lead to 3' UTR loss"
                 )
             )
         )

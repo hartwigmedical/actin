@@ -35,7 +35,7 @@ class HasIntoleranceForPD1OrPDL1Inhibitors(private val icdModel: IcdModel) : Eva
             IcdConstants.AUTOIMMUNE_DISEASE_SET.map { IcdCode(it) }.toSet()
         ).fullMatches
 
-        val undeterminedMessage = "intolerance in history - but undetermined if PD-1/PD-L1 intolerance"
+        val undeterminedMessage = "intolerance in history - undetermined if PD-1/PD-L1 intolerance"
 
         return when {
             matchingIntolerances.isNotEmpty() -> {

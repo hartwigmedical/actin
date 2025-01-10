@@ -44,14 +44,16 @@ class HasBreastCancerWithPositiveReceptorOfType(
 
         return when {
             tumorDoids.isNullOrEmpty() -> {
-                EvaluationFactory.undetermined("Undetermined if $receptorType positive breast cancer (no tumor doids configured)")
+                EvaluationFactory.undetermined("Undetermined if $receptorType positive breast cancer (tumor doids missing)")
             }
 
             !isBreastCancer -> EvaluationFactory.fail("No breast cancer")
 
             targetPriorMolecularTests.isEmpty() && specificArgumentsForStatusDeterminationMissing -> {
                 return if (targetHer2AndErbb2Amplified) {
-                    EvaluationFactory.undetermined("${receptorType.display()}-status undetermined (IHC data missing) but probably positive since ERBB2 amp present")
+                    EvaluationFactory.undetermined(
+                        "${receptorType.display()}-status undetermined (IHC data missing) but probably positive since ERBB2 amp present"
+                    )
                 } else {
                     EvaluationFactory.undetermined("${receptorType.display()}-status unknown (data missing)")
                 }
@@ -66,7 +68,9 @@ class HasBreastCancerWithPositiveReceptorOfType(
             }
 
             targetReceptorIsPositive != true && targetHer2AndErbb2Amplified -> {
-                EvaluationFactory.warn("Undetermined if ${receptorType.display()}-positive breast cancer (DOID/IHC data inconsistent with ERBB2 gene amp)")
+                EvaluationFactory.warn(
+                    "Undetermined if ${receptorType.display()}-positive breast cancer (DOID/IHC data inconsistent with ERBB2 gene amp)"
+                )
             }
 
             targetReceptorIsPositive != false && TestResult.BORDERLINE in testSummary -> {

@@ -51,7 +51,9 @@ class HasRecentlyReceivedCancerTherapyWithDrug(
             }
 
             matchingTreatments.any { TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minDate, true) } -> {
-                EvaluationFactory.undetermined("Treatment containing '${Format.concatItemsWithOr(drugsToFind)}' administered with unknown date")
+                EvaluationFactory.undetermined(
+                    "Treatment containing '${Format.concatItemsWithOr(drugsToFind)}' administered with unknown date"
+                )
             }
 
             else -> {

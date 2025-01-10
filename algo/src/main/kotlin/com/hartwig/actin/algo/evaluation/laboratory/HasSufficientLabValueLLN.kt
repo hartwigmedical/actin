@@ -28,7 +28,7 @@ class HasSufficientLabValueLLN(private val minLLNFactor: Double) : LabEvaluation
             }
 
             LabEvaluation.LabEvaluationResult.WITHIN_THRESHOLD -> {
-                EvaluationFactory.recoverablePass("$labValueString above min of $referenceString")
+                EvaluationFactory.recoverablePass("$labValueString exceeds min of $referenceString")
             }
         }
     }

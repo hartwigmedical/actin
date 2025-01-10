@@ -21,16 +21,16 @@ class CurrentlyGetsMedicationOfAtcLevel(
         return when {
             activeMedicationsWithAtcLevel.isNotEmpty() -> {
                 val foundMedicationString = concatLowercaseWithCommaAndAnd(activeMedicationsWithAtcLevel)
-                EvaluationFactory.recoverablePass("$categoryName medication use ($foundMedicationString)")
+                EvaluationFactory.recoverablePass("'$categoryName' medication use ($foundMedicationString)")
             }
 
             plannedMedicationsWithAtcLevel.isNotEmpty() -> {
                 val foundMedicationString = concatLowercaseWithCommaAndAnd(plannedMedicationsWithAtcLevel)
-                EvaluationFactory.recoverableWarn("Planned $categoryName medication use ($foundMedicationString)")
+                EvaluationFactory.recoverableWarn("Planned '$categoryName' medication use ($foundMedicationString)")
             }
 
             else -> {
-                EvaluationFactory.recoverableFail("No $categoryName medication use")
+                EvaluationFactory.recoverableFail("No '$categoryName' medication use")
             }
         }
     }

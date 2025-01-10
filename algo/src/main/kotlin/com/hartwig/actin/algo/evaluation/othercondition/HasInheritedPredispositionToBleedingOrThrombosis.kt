@@ -24,10 +24,10 @@ class HasInheritedPredispositionToBleedingOrThrombosis(private val icdModel: Icd
         val conditionString = icdMatchingConditions.joinToString(", ") { it.name }
 
         return if (icdMatchingConditions.isNotEmpty()) {
-            EvaluationFactory.pass("History of $baseMessage: $conditionString")
+            EvaluationFactory.pass("Has history of $baseMessage: $conditionString")
         } else if (hasMatchingName) {
             EvaluationFactory.pass(
-                "History of $baseMessage: $NAME_INDICATING_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS"
+                "Has history of $baseMessage: $NAME_INDICATING_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS"
             )
         } else {
             EvaluationFactory.fail("No history of $baseMessage")

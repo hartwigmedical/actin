@@ -34,7 +34,9 @@ object PDL1EvaluationFunctions {
 
         return when {
             EvaluationResult.PASS in testEvaluations && EvaluationResult.FAIL in testEvaluations -> {
-                EvaluationFactory.undetermined("Undetermined if PD-L1 expression $comparatorMessage $pdl1Reference (conflicting PD-L1 results)")
+                EvaluationFactory.undetermined(
+                    "Undetermined if PD-L1 expression $comparatorMessage $pdl1Reference (conflicting PD-L1 results)"
+                )
             }
 
             EvaluationResult.PASS in testEvaluations -> {
@@ -53,7 +55,7 @@ object PDL1EvaluationFunctions {
             }
 
             pdl1TestsWithRequestedMeasurement.isNotEmpty() && pdl1TestsWithRequestedMeasurement.any { test -> test.scoreValue == null } -> {
-                EvaluationFactory.recoverableFail("No score value available for PD-L1 IHC test")
+                EvaluationFactory.recoverableFail("No score value available for PD-L1 IHC test (only neg/pos status)")
             }
 
             PriorIHCTestFunctions.allPDL1Tests(priorMolecularTests).isNotEmpty() -> {

@@ -42,11 +42,9 @@ object BodyWeightFunctions {
         val comparisonWithoutMargin = median.compareTo(referenceBodyWeight)
 
         return when {
-
             (!referenceIsMinimum && comparisonWithoutMargin > 0 && comparisonWithMargin <= 0)
                     || (referenceIsMinimum && comparisonWithoutMargin < 0 && comparisonWithMargin >= 0) -> {
-                val message = "Median body weight ($median kg) below $referenceBodyWeight kg"
-                EvaluationFactory.recoverableUndetermined(message)
+                EvaluationFactory.recoverableUndetermined("Median body weight ($median kg) below $referenceBodyWeight kg")
             }
 
             comparisonWithoutMargin < 0 -> {
@@ -59,9 +57,7 @@ object BodyWeightFunctions {
             }
 
             comparisonWithoutMargin == 0 -> {
-                val message = "Median body weight ($median kg) equal to $referenceBodyWeight kg"
-
-                return EvaluationFactory.pass(message)
+                return EvaluationFactory.pass("Median body weight ($median kg) equal to $referenceBodyWeight kg")
             }
 
             else -> {

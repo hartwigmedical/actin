@@ -29,7 +29,7 @@ class HasHadSomeTreatmentsWithCategoryWithIntents(private val category: Treatmen
             }
 
             treatmentSummary.hasPossibleTrialMatch() -> {
-                EvaluationFactory.undetermined("Undetermined if received $intentsList ${category.display()} due to trial participation")
+                EvaluationFactory.undetermined("Undetermined if treatment received in previous trial included $intentsList ${category.display()}")
             }
 
             else -> {

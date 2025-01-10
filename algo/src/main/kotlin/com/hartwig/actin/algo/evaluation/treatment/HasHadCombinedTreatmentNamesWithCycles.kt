@@ -43,10 +43,11 @@ class HasHadCombinedTreatmentNamesWithCycles(
             }
 
             evaluationsByResult.containsKey(EvaluationResult.PASS) && evaluationsByResult.size == 1 -> {
+                val passEvaluations = evaluationsByResult[EvaluationResult.PASS]!!
                 Evaluation(
                     result = EvaluationResult.PASS,
                     recoverable = false,
-                    passMessages = setOf("Found matching treatments")
+                    passMessages = getMessagesForEvaluations(passEvaluations, Evaluation::passMessages)
                 )
             }
 
@@ -71,23 +72,32 @@ class HasHadCombinedTreatmentNamesWithCycles(
                 }
             }
         return if (matchingHistoryEntries.isEmpty()) {
-            EvaluationFactory.fail(FAIL_MESSAGE)
+            EvaluationFactory.fail("No prior treatments found matching $treatmentName and between $minCycles and $maxCycles cycles")
         } else if (matchingHistoryEntries.containsKey(EvaluationResult.PASS)) {
             EvaluationFactory.pass(
-                "Found matching treatments"
+                "Found matching treatments (${formatTreatmentList(matchingHistoryEntries[EvaluationResult.PASS]!!, true)}" +
+                        " and between $minCycles and $maxCycles cycles"
             )
         } else if (matchingHistoryEntries.containsKey(EvaluationResult.UNDETERMINED)) {
             EvaluationFactory.undetermined(
-                "Unknown treatment cycles"
+                "Unknown cycles for matching treatments: " + formatTreatmentList(
+                    matchingHistoryEntries[EvaluationResult.UNDETERMINED]!!,
+                    false
+                )
             )
         } else {
-            EvaluationFactory.fail(FAIL_MESSAGE)
+            EvaluationFactory.fail(
+                String.format(
+                    "Matching treatments did not have between %d and %d cycles: %s",
+                    minCycles,
+                    maxCycles,
+                    formatTreatmentList(matchingHistoryEntries[EvaluationResult.FAIL]!!, true)
+                )
+            )
         }
     }
 
     companion object {
-        private const val FAIL_MESSAGE = "No treatments with cycles"
-
         private fun formatTreatmentList(treatmentHistoryEntries: List<TreatmentHistoryEntry>, includeCycles: Boolean): String {
             return treatmentHistoryEntries.joinToString(", ") { entry ->
                 val cycleString = if (includeCycles) " (${entry.treatmentHistoryDetails?.cycles} cycles)" else ""

@@ -28,9 +28,9 @@ class HasHistoryOfSecondMalignancyWithinYears(private val minDate: LocalDate) : 
             }
         }
         return if (hasMatch) {
-            EvaluationFactory.pass("History of recent previous malignancy")
+            EvaluationFactory.pass("Has history of recent previous malignancy")
         } else if (hasPotentialMatch) {
-            EvaluationFactory.undetermined("History of previous malignancy but unclear whether it is recent enough")
+            EvaluationFactory.undetermined("Has history of previous malignancy but undetermined whether it is considered recent")
         } else {
             if (record.priorSecondPrimaries.isEmpty() || hasUsableData) {
                 EvaluationFactory.fail("No recent previous malignancy")

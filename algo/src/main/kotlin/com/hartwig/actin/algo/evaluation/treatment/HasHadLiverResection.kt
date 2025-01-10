@@ -28,7 +28,7 @@ class HasHadLiverResection : EvaluationFunction {
 
         return when {
             hadResectionToTargetLocation -> {
-                EvaluationFactory.pass("Had had liver resection")
+                EvaluationFactory.pass("Has had liver resection")
             }
 
             hadResectionToUnknownLocation || hadSurgeryWithUnknownNamePotentiallyToTargetLocation -> {

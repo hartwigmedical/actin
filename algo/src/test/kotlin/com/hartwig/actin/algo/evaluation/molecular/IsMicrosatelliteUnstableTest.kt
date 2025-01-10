@@ -146,7 +146,7 @@ class IsMicrosatelliteUnstableTest {
             )
         )
         assertThat(evaluation.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        assertThat(evaluation.undeterminedMessages).containsExactly("Unknown MSI status but drivers with unknown allelic status in MSI genes")
+        assertThat(evaluation.undeterminedMessages).containsExactly("Unknown MSI status but drivers with unknown allelic status in MMR genes")
     }
 
     private fun msiVariant(isReportable: Boolean = false, isBiallelic: Boolean = false): Variant {

@@ -27,14 +27,14 @@ class HasLimitedLabValue(
             }
 
             LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_BUT_WITHIN_MARGIN -> {
-                EvaluationFactory.recoverableUndetermined("$labValueString exceeds max of $maxValue ${targetUnit.display()} but within margin of error")
+                EvaluationFactory.recoverableUndetermined(
+                    "$labValueString exceeds max of $maxValue ${targetUnit.display()} but within margin of error"
+                )
             }
 
             LabEvaluation.LabEvaluationResult.CANNOT_BE_DETERMINED -> {
                 EvaluationFactory.recoverableUndetermined(
-                    "${
-                        labMeasurement.display().replaceFirstChar { it.uppercase() }
-                    } requirements undetermined"
+                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} requirements undetermined"
                 )
             }
 

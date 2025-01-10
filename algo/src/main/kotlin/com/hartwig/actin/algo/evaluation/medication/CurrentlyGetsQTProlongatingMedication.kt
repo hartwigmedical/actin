@@ -29,9 +29,7 @@ class CurrentlyGetsQTProlongatingMedication(private val selector: MedicationSele
             }
 
             else -> {
-                EvaluationFactory.recoverableFail(
-                    "No QT prolongating medication use"
-                )
+                EvaluationFactory.recoverableFail("No QT prolongating medication use")
             }
         }
     }

@@ -39,7 +39,7 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecent(
             }
 
             treatmentMatch.any { it.startYear == null } -> {
-                EvaluationFactory.undetermined("Has received$typeString ${category.display()} but undetermined if most recent (dates missing in treatment list)")
+                EvaluationFactory.undetermined("Has received$typeString ${category.display()} but undetermined if most recent (date unknown)")
             }
 
             treatmentMatch.isNotEmpty() -> {

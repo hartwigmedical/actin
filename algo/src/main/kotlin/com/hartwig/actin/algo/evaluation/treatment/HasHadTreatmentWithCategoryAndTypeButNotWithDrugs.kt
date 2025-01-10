@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.treatment.MedicationFunctions.createTreatmentHistoryEntriesFromMedications
-import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithAnd
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -48,7 +47,7 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugs(
             }
 
             treatmentSummary.hasPossibleTrialMatch() -> {
-                EvaluationFactory.undetermined("Undetermined if $messageEnding due to trial participation")
+                EvaluationFactory.undetermined("Undetermined if treatment received in previous trial included ${category.display()}$typeMessage ignoring $ignoreDrugsList")
             }
 
             else -> EvaluationFactory.fail("Has not $messageEnding")

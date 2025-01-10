@@ -34,11 +34,16 @@ class HasRestingHeartRateWithinBounds(
             }
 
             in minHeartRateWithMargin..maxHeartRateWithMargin -> {
-                EvaluationFactory.recoverableUndetermined("Median heart rate ($median bpm) outside range ($minMedianRestingHeartRate - $maxMedianRestingHeartRate) but within margin of error")
+                EvaluationFactory.recoverableUndetermined(
+                    "Median heart rate ($median bpm) outside range ($minMedianRestingHeartRate - $maxMedianRestingHeartRate) " +
+                            "but within margin of error"
+                )
             }
 
             else -> {
-                EvaluationFactory.recoverableFail("Median heart rate ($median bpm) outside range ($minMedianRestingHeartRate - $maxMedianRestingHeartRate)")
+                EvaluationFactory.recoverableFail(
+                    "Median heart rate ($median bpm) outside range ($minMedianRestingHeartRate - $maxMedianRestingHeartRate)"
+                )
             }
         }
     }

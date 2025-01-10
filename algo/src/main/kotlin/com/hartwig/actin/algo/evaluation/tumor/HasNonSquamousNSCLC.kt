@@ -33,7 +33,7 @@ class HasNonSquamousNSCLC(private val doidModel: DoidModel) : EvaluationFunction
             }
 
             isNonSmallNSCLC || isExactLungCarcinoma || isExactLungCancer -> {
-                EvaluationFactory.undetermined("Undetermined if non-squamous NSCLC tumor type")
+                EvaluationFactory.undetermined("Undetermined if non-squamous NSCLC")
             }
 
             else -> {
