@@ -190,8 +190,8 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasMinimumLesionsInSpecificBodyLocationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneIntegerOneStringInput(function)
-            HasMinimumLesionsInSpecificBodyLocation(input.integer, input.string)
+            val input = functionInputResolver().createOneIntegerOneBodyLocationInput(function)
+            HasMinimumLesionsInSpecificBodyLocation(input.integer, input.bodyLocation)
         }
     }
 
