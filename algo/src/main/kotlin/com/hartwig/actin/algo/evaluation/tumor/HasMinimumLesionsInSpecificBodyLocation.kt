@@ -19,7 +19,7 @@ class HasMinimumLesionsInSpecificBodyLocation(
                 BodyLocationCategory.LIVER -> hasSuspectedLiverLesions to lesionCount(hasLiverLesions, liverLesionsCount)
                 BodyLocationCategory.LUNG -> hasSuspectedLungLesions to lesionCount(hasLungLesions, lungLesionsCount)
                 BodyLocationCategory.LYMPH_NODE -> hasSuspectedLymphNodeLesions to lesionCount(hasLymphNodeLesions, lymphNodeLesionsCount)
-                else -> null to null
+                else -> evaluateOtherLesions(otherLesions, otherSuspectedLesions)
             }
         }
 
@@ -38,5 +38,10 @@ class HasMinimumLesionsInSpecificBodyLocation(
             false -> 0
             null -> null
         }
+    }
+
+    private fun evaluateOtherLesions(lesions: List<String>?, suspected: List<String>?): Pair<Boolean?, Int?> {
+        val count = lesions?.size ?: 0
+        return suspected?.isNotEmpty() to if (count >= minimumLesions) null else 0
     }
 }

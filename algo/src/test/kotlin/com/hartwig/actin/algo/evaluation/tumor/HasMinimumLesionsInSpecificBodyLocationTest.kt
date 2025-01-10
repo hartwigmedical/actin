@@ -10,6 +10,7 @@ private const val REQUESTED_LESIONS = 2
 class HasMinimumLesionsInSpecificBodyLocationTest {
 
     private val function = HasMinimumLesionsInSpecificBodyLocation(REQUESTED_LESIONS, BodyLocationCategory.LUNG)
+    private val bladderLesionFunction = HasMinimumLesionsInSpecificBodyLocation(2, BodyLocationCategory.BLADDER)
 
     @Test
     fun `Should pass for correct amount of lesions in requested body location`() {
@@ -44,6 +45,14 @@ class HasMinimumLesionsInSpecificBodyLocationTest {
     }
 
     @Test
+    fun `Should evaluate to undetermined when data on requested lesions is missing`() {
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TumorTestFactory.withLungLesions(hasLungLesions = null, hasSuspectedLungLesions = null))
+        )
+    }
+
+    @Test
     fun `Should evaluate to undetermined for suspected lesions in requested body location regardless the known lesion count`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
@@ -52,13 +61,18 @@ class HasMinimumLesionsInSpecificBodyLocationTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined if requested body location is of other type than bone, brain, cns, liver, lung or lymph node`() {
+    fun `Should fail for less than requested otherLesions when requested location is of other type than bone, brain, cns, liver, lung or lymph node`() {
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            bladderLesionFunction.evaluate(TumorTestFactory.withOtherLesions(listOf("one other lesion")))
+        )
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if requested body location is of other type than bone, brain, cns, liver, lung or lymph node and number of other lesions is sufficient`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            HasMinimumLesionsInSpecificBodyLocation(
-                1,
-                BodyLocationCategory.BLADDER
-            ).evaluate(TumorTestFactory.withOtherLesions(listOf("some lesion")))
+            bladderLesionFunction.evaluate(TumorTestFactory.withOtherLesions(listOf("one", "two")))
         )
     }
 }
