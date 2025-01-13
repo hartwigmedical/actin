@@ -18,9 +18,9 @@ class IsMicrosatelliteUnstableTest {
     private val function = IsMicrosatelliteUnstable()
 
     @Test
-    fun `Should fail with unknown MSI and no MSI alteration`() {
+    fun `Should evaluate to undetermined with unknown MSI and no MSI alteration`() {
         assertMolecularEvaluation(
-            EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(null, msiVariant()))
+            EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(null, msiVariant()))
         )
     }
 

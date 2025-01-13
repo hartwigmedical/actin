@@ -83,7 +83,7 @@ class HasPositiveHER2ExpressionByIHCTest {
             MolecularTestFactory.withCopyNumberAndPriorIHCTests(erbb2Amp, listOf(ihcTest(scoreValue = 2.0, scoreValueUnit = "+", impliesPotentialIndeterminateStatus = true)))
             )
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessages).containsExactly("No reliable IHC HER2 expression test available but probably positive since ERBB2 amp present")
+        assertThat(evaluation.undeterminedMessages).containsExactly("No reliable IHC HER2 expression test available but likely positive since ERBB2 amp present")
     }
 
     @Test
@@ -96,7 +96,7 @@ class HasPositiveHER2ExpressionByIHCTest {
                 )
             )
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessages).containsExactly("IHC HER2 expression was borderline - additional tests should be considered")
+        assertThat(evaluation.undeterminedMessages).containsExactly("Undetermined if IHC HER2 score value(s) '2.0' is considered positive")
     }
 
     @Test
