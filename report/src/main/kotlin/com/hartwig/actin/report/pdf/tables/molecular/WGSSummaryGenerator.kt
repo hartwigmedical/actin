@@ -9,7 +9,6 @@ import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.itextpdf.layout.element.Table
 
 class WGSSummaryGenerator(
-    private val isIncludedInTrialMatching: Boolean,
     private val isShort: Boolean,
     private val patientRecord: PatientRecord,
     private val molecular: MolecularTest,
@@ -23,7 +22,7 @@ class WGSSummaryGenerator(
     private val wgsMolecular = molecular as? MolecularRecord
 
     override fun title(): String {
-        return WGSSummaryGeneratorFunctions.createMolecularSummaryTitle(molecular, isIncludedInTrialMatching)
+        return WGSSummaryGeneratorFunctions.createMolecularSummaryTitle(molecular)
     }
 
     override fun contents(): Table {
