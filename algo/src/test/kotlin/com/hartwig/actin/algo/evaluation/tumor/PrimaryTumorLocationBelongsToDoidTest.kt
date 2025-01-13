@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
+import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.doid.DoidModel
@@ -47,6 +48,17 @@ class PrimaryTumorLocationBelongsToDoidTest {
         assertResultForDoid(EvaluationResult.PASS, function, stomachAdenocarcinoma)
         assertResultForDoids(EvaluationResult.PASS, function, setOf("something else", stomachAdenocarcinoma))
         assertResultForDoids(EvaluationResult.PASS, function, setOf(esophagusCancer, stomachAdenocarcinoma))
+    }
+
+    @Test
+    fun `Should evaluate undeterminate main cancer type in case of neuroendocrine`() {
+        val pancreaticCancer = "1"
+        val pancreaticAdeno = "2"
+        val childToParentMap: Map<String, String> = mapOf(pancreaticAdeno to pancreaticCancer)
+        val doidModel: DoidModel = TestDoidModelFactory.createWithMainCancerTypeAndChildToParentMap(pancreaticCancer, childToParentMap)
+        val function = PrimaryTumorLocationBelongsToDoid(doidModel, setOf(pancreaticAdeno), null)
+        assertResultForDoids(EvaluationResult.FAIL, function, setOf(pancreaticCancer, DoidConstants.NEUROENDOCRINE_CARCINOMA_DOID))
+        assertResultForDoid(EvaluationResult.UNDETERMINED, function, pancreaticCancer)
     }
 
     @Test
