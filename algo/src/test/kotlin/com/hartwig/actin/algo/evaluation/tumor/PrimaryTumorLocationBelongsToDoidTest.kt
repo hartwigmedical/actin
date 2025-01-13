@@ -51,13 +51,22 @@ class PrimaryTumorLocationBelongsToDoidTest {
     }
 
     @Test
-    fun `Should evaluate undeterminate main cancer type in case of neuroendocrine`() {
+    fun `Should evaluate undeterminate main cancer type in case of neuroendocrine tumor type`() {
         val pancreaticCancer = "1"
         val pancreaticAdeno = "2"
-        val childToParentMap: Map<String, String> = mapOf(pancreaticAdeno to pancreaticCancer)
-        val doidModel: DoidModel = TestDoidModelFactory.createWithMainCancerTypeAndChildToParentMap(pancreaticCancer, childToParentMap)
+        val pancreaticNeuroendocrine = "3"
+        val childToParentsMap: Map<String, List<String>> = mapOf(
+            pancreaticAdeno to listOf(pancreaticCancer),
+            pancreaticNeuroendocrine to listOf(DoidConstants.NEUROENDOCRINE_TUMOR_DOID, pancreaticCancer)
+        )
+        val doidModel: DoidModel = TestDoidModelFactory.createWithMainCancerTypeAndChildToParentsMap(pancreaticCancer, childToParentsMap)
         val function = PrimaryTumorLocationBelongsToDoid(doidModel, setOf(pancreaticAdeno), null)
-        assertResultForDoids(EvaluationResult.FAIL, function, setOf(pancreaticCancer, DoidConstants.NEUROENDOCRINE_CARCINOMA_DOID))
+        assertResultForDoids(EvaluationResult.FAIL, function, setOf(pancreaticCancer, DoidConstants.NEUROENDOCRINE_TUMOR_DOID))
+        assertResultForDoids(
+            EvaluationResult.UNDETERMINED,
+            PrimaryTumorLocationBelongsToDoid(doidModel, setOf(pancreaticNeuroendocrine), null),
+            setOf(pancreaticCancer, DoidConstants.NEUROENDOCRINE_TUMOR_DOID)
+        )
         assertResultForDoid(EvaluationResult.UNDETERMINED, function, pancreaticCancer)
     }
 
