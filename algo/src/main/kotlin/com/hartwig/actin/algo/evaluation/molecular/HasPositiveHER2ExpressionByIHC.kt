@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.molecular.IHCTestClassificationFunctions.TestResult
 import com.hartwig.actin.algo.evaluation.molecular.IHCTestClassificationFunctions.classifyHer2Test
 import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleEvaluator.geneIsAmplifiedForPatient
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.PriorIHCTest
@@ -34,7 +35,7 @@ class HasPositiveHER2ExpressionByIHC(private val maxTestAge: LocalDate? = null) 
             validIhcTests.isEmpty() && !(positiveArguments || negativeArguments) -> {
                 return when {
                     geneERBB2IsAmplified -> {
-                        EvaluationFactory.undetermined("$undeterminedMessage but probably positive since ERBB2 amp present")
+                        EvaluationFactory.undetermined("$undeterminedMessage but likely positive since ERBB2 amp present")
                     }
 
                     indeterminateIhcTests.isNotEmpty() -> {
@@ -57,12 +58,14 @@ class HasPositiveHER2ExpressionByIHC(private val maxTestAge: LocalDate? = null) 
             }
 
             her2ReceptorIsPositive != false && TestResult.BORDERLINE in testResults -> {
-                EvaluationFactory.undetermined("IHC HER2 expression was borderline - additional tests should be considered")
+                val results =
+                    Format.concat(validIhcTests.filter { classifyHer2Test(it) == TestResult.BORDERLINE }.map { "${it.scoreValue}" })
+                EvaluationFactory.undetermined("Undetermined if IHC HER2 score value(s) '$results' is considered positive")
             }
 
             her2ReceptorIsPositive == null -> {
                 return if (!(positiveArguments || negativeArguments)) {
-                    EvaluationFactory.undetermined(undeterminedMessage)
+                    EvaluationFactory.undetermined( "IHC HER2 expression not deterministic by IHC")
                 } else {
                     EvaluationFactory.warn("Conflicting IHC HER2 expression test results")
                 }

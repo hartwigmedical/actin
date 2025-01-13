@@ -22,7 +22,7 @@ class HasKnownHPVStatus : EvaluationFunction {
             }
 
             conclusivePriorTestsForHPV.isNotEmpty() -> {
-                EvaluationFactory.pass("HPV status available")
+                EvaluationFactory.pass("HPV status available by HPV test")
             }
 
             molecularRecords.any { it.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME } -> {
@@ -38,7 +38,7 @@ class HasKnownHPVStatus : EvaluationFunction {
             }
 
             else -> {
-                EvaluationFactory.fail("HPV not tested")
+                EvaluationFactory.recoverableFail("HPV not tested")
             }
         }
     }

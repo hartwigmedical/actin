@@ -20,7 +20,7 @@ class HasKnownBrainMetastases : EvaluationFunction {
                 }
 
                 hasBrainLesions == null -> {
-                    val message = "Undetermined if brain metastases present (data missing)"
+                    val message = "Undetermined if brain metastases present (brain lesions data missing)"
                     EvaluationFactory.undetermined(message)
                 }
 

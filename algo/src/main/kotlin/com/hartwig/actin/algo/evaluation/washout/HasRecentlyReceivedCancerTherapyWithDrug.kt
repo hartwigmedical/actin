@@ -44,9 +44,8 @@ class HasRecentlyReceivedCancerTherapyWithDrug(
             medicationsFound.isNotEmpty() || matchingTreatments.any {
                 TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minDate, false)
             } -> {
-                EvaluationFactory.pass(
-                    "Has recently received treatment with medication " + Format.concat(namesFound)
-                            + " - pay attention to washout period"
+                EvaluationFactory.pass("Has recently received treatment with medication ${Format.concat(namesFound)} " +
+                        "- pay attention to washout period"
                 )
             }
 

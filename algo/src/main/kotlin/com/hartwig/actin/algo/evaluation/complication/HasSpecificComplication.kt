@@ -11,17 +11,17 @@ import com.hartwig.actin.icd.datamodel.IcdMatches
 class HasSpecificComplication(private val icdModel: IcdModel, private val targetIcdTitles: List<String>) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
+        val icdTitleText = if (targetIcdTitles.size > 1) {
+            "belonging to type ${Format.concatLowercaseWithCommaAndOr(targetIcdTitles)}"
+        } else targetIcdTitles.takeIf { it.isNotEmpty() }?.first()
+
         record.complications ?: return EvaluationFactory.recoverableUndetermined(
-            "Undetermined whether patient has cancer-related complications"
+            "Undetermined presence of complication $icdTitleText (complication data missing)"
         )
 
         val targetCodes = targetIcdTitles.map { icdModel.resolveCodeForTitle(it)!! }.toSet()
         val icdMatches =
             record.complications?.let { icdModel.findInstancesMatchingAnyIcdCode(it, targetCodes) } ?: IcdMatches(emptyList(), emptyList())
-
-        val icdTitleText = if (targetIcdTitles.size > 1) {
-            "belonging to type ${Format.concatLowercaseWithCommaAndOr(targetIcdTitles)}"
-        } else targetIcdTitles.takeIf { it.isNotEmpty() }?.first()
 
         return when {
             icdMatches.fullMatches.isNotEmpty() -> EvaluationFactory.pass(

@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.percentage
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -82,7 +83,9 @@ class GeneHasVariantInCodon(private val gene: String, private val codons: List<S
                     reportableOtherCodonMatches
                 )
 
-                potentialWarnEvaluation ?: EvaluationFactory.fail("No variants in codon(s) ${concat(codons)} in $gene")
+                potentialWarnEvaluation ?: EvaluationFactory.fail(
+                    "No variants in codon(s) ${Format.concatWithCommaAndOr(codons)} in $gene"
+                )
             }
         }
     }

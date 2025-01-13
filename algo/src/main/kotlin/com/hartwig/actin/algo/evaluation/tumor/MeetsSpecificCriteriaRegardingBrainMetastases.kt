@@ -35,7 +35,8 @@ class MeetsSpecificCriteriaRegardingBrainMetastases : EvaluationFunction {
                 }
 
                 unknownBrainLesions -> {
-                    EvaluationFactory.undetermined("Undetermined if specific criteria regarding brain metastases are met (data missing)")
+                    EvaluationFactory.undetermined("Undetermined if specific criteria regarding brain metastases are met " +
+                            "(brain lesions data missing)")
                 }
 
                 else -> {

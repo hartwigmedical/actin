@@ -6,7 +6,6 @@ import com.hartwig.actin.algo.evaluation.medication.MEDICATION_NOT_PROVIDED
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
 import com.hartwig.actin.algo.evaluation.util.Format
-import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -49,20 +48,20 @@ class HasPotentialUncontrolledTumorRelatedPain(
 
             activePainMedications.isNotEmpty() -> {
                 EvaluationFactory.undetermined(
-                    "Possible uncontrolled tumor related pain present "
+                    "Possible uncontrolled tumor related pain "
                             + "(${Format.concatLowercaseWithCommaAndAnd(activePainMedications)} usage)"
                 )
             }
 
             plannedPainMedications.isNotEmpty() -> {
                 EvaluationFactory.undetermined(
-                    "Possible uncontrolled tumor related pain present "
+                    "Possible uncontrolled tumor related pain "
                             + "(planned ${Format.concatLowercaseWithCommaAndAnd(plannedPainMedications)} usage)"
                 )
             }
 
             else -> {
-                EvaluationFactory.fail("No potential uncontrolled tumor related pain")
+                EvaluationFactory.fail("No indication for uncontrolled tumor related pain")
             }
         }
     }

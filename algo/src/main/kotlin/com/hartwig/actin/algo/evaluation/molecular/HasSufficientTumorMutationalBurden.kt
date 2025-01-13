@@ -11,7 +11,7 @@ class HasSufficientTumorMutationalBurden(private val minTumorMutationalBurden: D
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val tumorMutationalBurden = test.characteristics.tumorMutationalBurden
-            ?: return EvaluationFactory.undetermined("TMB undetermined")
+            ?: return EvaluationFactory.undetermined("Undetermined if TMB is above $minTumorMutationalBurden (TMB data missing)")
 
         if (tumorMutationalBurden >= minTumorMutationalBurden) {
             return EvaluationFactory.pass(
@@ -22,9 +22,10 @@ class HasSufficientTumorMutationalBurden(private val minTumorMutationalBurden: D
         val tumorMutationalBurdenIsAlmostAllowed = minTumorMutationalBurden - tumorMutationalBurden <= 0.5
         return if (tumorMutationalBurdenIsAlmostAllowed && test.hasSufficientQualityButLowPurity()) {
             EvaluationFactory.warn(
-                "TMB $tumorMutationalBurden almost sufficient although purity is low",
+                "TMB $tumorMutationalBurden almost exceeds min TMB $minTumorMutationalBurden"
+                        + " while purity is low - perhaps a few mutations are missed",
                 inclusionEvents = setOf(MolecularCharacteristicEvents.ALMOST_SUFFICIENT_TUMOR_MUTATIONAL_BURDEN)
             )
-        } else EvaluationFactory.fail("TMB $tumorMutationalBurden is not sufficient")
+        } else EvaluationFactory.fail("TMB $tumorMutationalBurden is not above $minTumorMutationalBurden")
     }
 }

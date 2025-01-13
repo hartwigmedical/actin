@@ -11,7 +11,7 @@ class HasAnyLesion : EvaluationFunction {
         val tumorDetails = record.tumor
         with(tumorDetails) {
             if (confirmedCategoricalLesionList().all { it == null } && otherLesions == null && !hasSuspectedLesions()) {
-                return EvaluationFactory.undetermined("Undetermined if lesions are present (data missing)")
+                return EvaluationFactory.undetermined("Undetermined if lesions are present (lesions data missing)")
             }
         }
 

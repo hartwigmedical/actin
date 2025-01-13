@@ -69,7 +69,7 @@ class IsHomologousRepairDeficient(maxTestAge: LocalDate? = null) : MolecularEval
                         })"
                     )
                 } else {
-                    EvaluationFactory.fail("Unknown HRD status")
+                    EvaluationFactory.undetermined("Unknown HRD status")
                 }
             }
 

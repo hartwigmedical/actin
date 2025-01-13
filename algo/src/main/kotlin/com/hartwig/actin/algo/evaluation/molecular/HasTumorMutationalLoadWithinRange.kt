@@ -14,19 +14,25 @@ class HasTumorMutationalLoadWithinRange(
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val tumorMutationalLoad = test.characteristics.tumorMutationalLoad
-            ?: return EvaluationFactory.undetermined("TML undetermined")
+            ?: return EvaluationFactory.undetermined("Undetermined if TML is sufficient (TML data missing)")
 
         val meetsMinTumorLoad = tumorMutationalLoad >= minTumorMutationalLoad
         val meetsMaxTumorLoad = maxTumorMutationalLoad == null || tumorMutationalLoad <= maxTumorMutationalLoad
+        val message = if (maxTumorMutationalLoad == null) {
+            "above min TML $minTumorMutationalLoad"
+        } else {
+            "between $minTumorMutationalLoad and $maxTumorMutationalLoad"
+        }
+
         if (meetsMinTumorLoad && meetsMaxTumorLoad) {
             return if (maxTumorMutationalLoad == null) {
                 EvaluationFactory.pass(
-                    "TML is sufficient (above $minTumorMutationalLoad)",
+                    "TML is $message",
                     inclusionEvents = setOf(MolecularCharacteristicEvents.HIGH_TUMOR_MUTATIONAL_LOAD)
                 )
             } else {
                 EvaluationFactory.pass(
-                    "TML is sufficient (between $minTumorMutationalLoad - $maxTumorMutationalLoad)",
+                    "TML is $message",
                     inclusionEvents = setOf(MolecularCharacteristicEvents.ADEQUATE_TUMOR_MUTATIONAL_LOAD)
                 )
             }
@@ -34,9 +40,10 @@ class HasTumorMutationalLoadWithinRange(
         val tumorMutationalLoadIsAlmostAllowed = minTumorMutationalLoad - tumorMutationalLoad <= 5
         return if (tumorMutationalLoadIsAlmostAllowed && test.hasSufficientQualityButLowPurity()) {
             EvaluationFactory.warn(
-                "TML $tumorMutationalLoad almost sufficient although purity is low",
+                "TML $tumorMutationalLoad almost $message" +
+                        " while purity is low - perhaps a few mutations are missed",
                 inclusionEvents = setOf(MolecularCharacteristicEvents.ALMOST_SUFFICIENT_TUMOR_MUTATIONAL_LOAD)
             )
-        } else EvaluationFactory.fail("TML $tumorMutationalLoad is not sufficient")
+        } else EvaluationFactory.fail("TML $tumorMutationalLoad is not $message")
     }
 }

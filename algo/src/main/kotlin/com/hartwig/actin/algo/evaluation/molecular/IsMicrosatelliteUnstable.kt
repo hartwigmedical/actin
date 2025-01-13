@@ -42,7 +42,7 @@ class IsMicrosatelliteUnstable(maxTestAge: LocalDate? = null) : MolecularEvaluat
                         "Unknown MSI status but drivers with unknown allelic status in MMR genes"
                     )
                 } else {
-                    EvaluationFactory.fail("Unknown MSI status")
+                    EvaluationFactory.undetermined("Unknown MSI status")
                 }
             }
 

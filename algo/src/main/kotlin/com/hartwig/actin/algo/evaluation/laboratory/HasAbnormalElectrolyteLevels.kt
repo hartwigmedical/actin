@@ -25,7 +25,7 @@ class HasAbnormalElectrolyteLevels(private val minValidLabDate: LocalDate, priva
 
         return when {
             outsideRef.isNotEmpty() -> {
-                EvaluationFactory.pass("Electrolyte levels abnormal ($measurementString outside reference range)")
+                EvaluationFactory.pass("Abnormalities detected in electrolyte levels ($measurementString outside reference range)")
             }
 
             else -> {

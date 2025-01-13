@@ -8,6 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasPSMAPositivePETScan : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined("PSMA PET results undetermined")
+        return EvaluationFactory.undetermined("Undetermined if patient has positive PSMA PET scan")
     }
 }

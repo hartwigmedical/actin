@@ -16,7 +16,10 @@ class HasHeterozygousDPYDDeficiency(maxTestAge: LocalDate? = null) : MolecularEv
 
         return when {
             !isHomozygousDeficient(pharmaco) && !isProficient(pharmaco) -> {
-                EvaluationFactory.pass("Is heterozygous DPYD deficient", inclusionEvents = setOf("DPYD heterozygous deficient"))
+                EvaluationFactory.pass(
+                    "Heterozygous DPYD deficiency detected",
+                    inclusionEvents = setOf("DPYD heterozygous deficient")
+                )
             }
 
             else -> {

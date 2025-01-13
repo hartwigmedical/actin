@@ -12,7 +12,7 @@ class HasWHOStatus(private val requiredWHO: Int) : EvaluationFunction {
         val who = record.clinicalStatus.who
         return when {
             who == null -> {
-                EvaluationFactory.recoverableUndetermined("WHO status unknown")
+                EvaluationFactory.undetermined("Undetermined if WHO status is required WHO $requiredWHO (WHO data missing)")
             }
 
             who == requiredWHO -> {

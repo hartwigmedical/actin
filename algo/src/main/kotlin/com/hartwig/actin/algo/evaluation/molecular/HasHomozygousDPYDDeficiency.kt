@@ -15,7 +15,10 @@ class HasHomozygousDPYDDeficiency(maxTestAge: LocalDate? = null) : MolecularEval
 
         return when {
             isHomozygousDeficient(pharmaco) -> {
-                EvaluationFactory.pass("Is homozygous DPYD deficient", inclusionEvents = setOf("DPYD homozygous deficient"))
+                EvaluationFactory.pass(
+                    "Homozygous DPYD deficiency detected",
+                    inclusionEvents = setOf("DPYD homozygous deficient")
+                )
             }
 
             else -> {

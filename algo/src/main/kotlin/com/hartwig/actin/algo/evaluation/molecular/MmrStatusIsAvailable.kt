@@ -14,7 +14,7 @@ class MmrStatusIsAvailable(maxTestAge: LocalDate? = null) : MolecularEvaluationF
     override fun evaluate(molecular: MolecularRecord): Evaluation {
         return when (molecular.characteristics.isMicrosatelliteUnstable) {
             null -> {
-                EvaluationFactory.fail("Unknown MMR status")
+                EvaluationFactory.recoverableFail("Unknown MMR status")
             }
 
             true, false -> {
