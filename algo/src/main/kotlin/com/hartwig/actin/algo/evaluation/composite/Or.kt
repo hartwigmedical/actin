@@ -16,16 +16,11 @@ class Or(private val functions: List<EvaluationFunction>) : EvaluationFunction {
             evaluationsByResult[EvaluationResult.WARN]?.filter { it.exclusionMolecularEvents.isNotEmpty() || it.inclusionMolecularEvents.isNotEmpty() }
                 ?: emptyList()
         } else emptyList()
-        val evaluations = evaluationsByResult[bestResult]!!
+        val evaluations = evaluationsByResult[bestResult]!! + additionalEvaluations
         val recoverable = evaluations.any(Evaluation::recoverable)
         val filteredEvaluations =
             if (bestResult == EvaluationResult.FAIL && recoverable) evaluations.filter { it.recoverable } else evaluations
 
-        return filteredEvaluations.fold(Evaluation(bestResult, recoverable), Evaluation::addMessagesAndEvents).let { result ->
-            result.copy(
-                inclusionMolecularEvents = result.inclusionMolecularEvents + additionalEvaluations.flatMap { it.inclusionMolecularEvents },
-                exclusionMolecularEvents = result.exclusionMolecularEvents + additionalEvaluations.flatMap { it.exclusionMolecularEvents }
-            )
-        }
+        return filteredEvaluations.fold(Evaluation(bestResult, recoverable), Evaluation::addMessagesAndEvents)
     }
 }
