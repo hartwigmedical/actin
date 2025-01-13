@@ -21,11 +21,8 @@ import com.itextpdf.layout.element.Text
 
 object WGSSummaryGeneratorFunctions {
 
-    fun createMolecularSummaryTitle(molecular: MolecularTest, isIncludedInTrialMatching: Boolean = false): String {
-        val dateAddition = if (isIncludedInTrialMatching) date(molecular.date) else {
-            "${molecular.date} - Test not included in trial matching as test age exceeds cutoff."
-        }
-        return "${molecular.testTypeDisplay ?: molecular.experimentType.display()} ($dateAddition)"
+    fun createMolecularSummaryTitle(molecular: MolecularTest): String {
+        return "${molecular.testTypeDisplay ?: molecular.experimentType.display()} (${date(molecular.date)})"
     }
 
     fun createMolecularSummaryTable(
