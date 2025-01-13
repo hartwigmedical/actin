@@ -124,7 +124,6 @@ CREATE TABLE `priorOtherCondition`
     `year` int,
     `month` int,
     `icdCodes` varchar(50) NOT NULL,
-    `isContraindicationForTherapy` BOOLEAN NOT NULL,
     PRIMARY KEY (`id`)
 );
 

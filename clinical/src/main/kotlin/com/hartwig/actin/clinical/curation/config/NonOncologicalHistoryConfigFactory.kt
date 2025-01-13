@@ -48,13 +48,6 @@ class NonOncologicalHistoryConfigFactory(private val icdModel: IcdModel) :
     ): Pair<PriorOtherCondition?, List<CurationConfigValidationError>> {
         return if (!ignore && !isLVEF(fields, parts)) {
             val (icdCodes, icdValidationErrors) = validateIcd(CurationCategory.NON_ONCOLOGICAL_HISTORY, input, "icd", fields, parts, icdModel)
-            val (isContraindicationForTherapy, isContraindicationForTherapyValidationErrors) = validateBoolean(
-                CurationCategory.NON_ONCOLOGICAL_HISTORY,
-                input,
-                "isContraindicationForTherapy",
-                fields,
-                parts
-            )
             val (year, yearValidationErrors) = validateInteger(CurationCategory.NON_ONCOLOGICAL_HISTORY, input, "year", fields, parts)
             val (month, monthValidationErrors) = validateInteger(CurationCategory.NON_ONCOLOGICAL_HISTORY, input, "month", fields, parts)
 
@@ -62,9 +55,8 @@ class NonOncologicalHistoryConfigFactory(private val icdModel: IcdModel) :
                 name = parts[fields["name"]!!],
                 year = year,
                 month = month,
-                icdCodes = icdCodes,
-                isContraindicationForTherapy = isContraindicationForTherapy ?: false
-            ) to icdValidationErrors + isContraindicationForTherapyValidationErrors + yearValidationErrors + monthValidationErrors
+                icdCodes = icdCodes
+            ) to icdValidationErrors + yearValidationErrors + monthValidationErrors
         } else {
             null to emptyList()
         }

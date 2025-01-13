@@ -46,7 +46,6 @@ class NonOncologicalHistoryConfigFactoryTest {
         assertThat(priorOtherCondition.name).isEqualTo("name")
         assertThat(priorOtherCondition.year).isEqualTo(2023)
         assertThat(priorOtherCondition.month).isEqualTo(12)
-        assertThat(priorOtherCondition.isContraindicationForTherapy).isEqualTo(true)
     }
 
     @Test
@@ -85,23 +84,6 @@ class NonOncologicalHistoryConfigFactoryTest {
                 "lvefValue",
                 "invalid",
                 "double"
-            )
-        )
-    }
-
-    @Test
-    fun `Should return validation error when is isContraindicationForTherapy is not a boolean`() {
-        val config = NonOncologicalHistoryConfigFactory(icdModel).create(
-            fields,
-            arrayOf("input", "name", "2023", "12", icdTitle, "string", "1.0", "no")
-        )
-        assertThat(config.errors).containsExactly(
-            CurationConfigValidationError(
-                CurationCategory.NON_ONCOLOGICAL_HISTORY.categoryName,
-                "input",
-                "isContraindicationForTherapy",
-                "no",
-                "boolean"
             )
         )
     }

@@ -29,15 +29,13 @@ internal object OtherConditionTestFactory {
         year: Int? = null,
         month: Int? = null,
         icdMainCode: String = "",
-        icdExtensionCode: String? = null,
-        isContraindication: Boolean = true
+        icdExtensionCode: String? = null
     ): PriorOtherCondition {
         return PriorOtherCondition(
             name = name,
             year = year,
             month = month,
             icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode)),
-            isContraindicationForTherapy = isContraindication,
         )
     }
 

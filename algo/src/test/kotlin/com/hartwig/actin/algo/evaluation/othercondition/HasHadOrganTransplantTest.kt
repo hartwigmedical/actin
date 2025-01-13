@@ -46,7 +46,7 @@ class HasHadOrganTransplantTest {
         assertEvaluation(
             EvaluationResult.FAIL, functionWithMinYear.evaluate(
                 withPriorOtherConditions(
-                    listOf(priorOtherCondition(icdMainCode = IcdConstants.TRANSPLANTATION_SET.first(), year = 2020))
+                    listOf(priorOtherCondition(year = 2020, icdMainCode = IcdConstants.TRANSPLANTATION_SET.first()))
                 )
             )
         )
@@ -57,7 +57,7 @@ class HasHadOrganTransplantTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED, functionWithMinYear.evaluate(
                 withPriorOtherConditions(
-                    listOf(priorOtherCondition(icdMainCode = IcdConstants.TRANSPLANTATION_SET.first(), year = null))
+                    listOf(priorOtherCondition(year = null, icdMainCode = IcdConstants.TRANSPLANTATION_SET.first()))
                 )
             )
         )
@@ -68,7 +68,7 @@ class HasHadOrganTransplantTest {
         assertEvaluation(
             EvaluationResult.PASS, functionWithMinYear.evaluate(
                 withPriorOtherConditions(
-                    listOf(priorOtherCondition(icdMainCode = IcdConstants.TRANSPLANTATION_SET.first(), year = 2021))
+                    listOf(priorOtherCondition(year = 2021, icdMainCode = IcdConstants.TRANSPLANTATION_SET.first()))
                 )
             )
         )

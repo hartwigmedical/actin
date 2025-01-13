@@ -125,7 +125,7 @@
       "status": "INACTIVE"
     }
   ],
-  "priorOtherConditions": [
+  "comorbidities": [
     {
       "name": "Rheumatoid arthritis",
       "year": 2022,
@@ -134,7 +134,7 @@
         "7148"
       ],
       "category": "Autoimmune disease",
-      "isContraindicationForTherapy": true
+      "comorbidityClass": "PRIOR_OTHER_CONDITION"
     },
     {
       "name": "Bacterial pneumonia",
@@ -144,10 +144,24 @@
         "874"
       ],
       "category": "Lung disease",
-      "isContraindicationForTherapy": true
+      "comorbidityClass": "PRIOR_OTHER_CONDITION"
+    },
+    {
+      "name": "Nausea",
+      "categories": [
+        "Gastrointestinal"
+      ],
+      "evaluatedDate": {
+        "year": 2024,
+        "month": 9,
+        "day": 9
+      },
+      "source": "EHR",
+      "grade": 3,
+      "endDate": null,
+      "comorbidityClass": "TOXICITY"
     }
   ],
-  "complications": [],
   "labValues": [
     {
       "date": {
@@ -345,23 +359,6 @@
       "isOutsideRef": false
     }
   ],
-  "toxicities": [
-    {
-      "name": "Nausea",
-      "categories": [
-        "Gastrointestinal"
-      ],
-      "evaluatedDate": {
-        "year": 2024,
-        "month": 9,
-        "day": 9
-      },
-      "source": "EHR",
-      "grade": 3,
-      "endDate": null
-    }
-  ],
-  "intolerances": [],
   "surgeries": [
     {
       "name": "Cholecystectomy",

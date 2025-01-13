@@ -31,9 +31,8 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCodeTest {
     private val complicationWithChildOfTargetCode = complicationWithTargetCode.copy(icdCodes = setOf(IcdCode(childCode)))
 
     private val conditionWithTargetCode = OtherConditionTestFactory.priorOtherCondition(
-        icdMainCode = parentCode,
         name = OTHER_CONDITION_NAME,
-        isContraindication = true
+        icdMainCode = parentCode
     )
     private val conditionWithChildOfTargetCode = conditionWithTargetCode.copy(icdCodes = setOf(IcdCode(childCode)))
 

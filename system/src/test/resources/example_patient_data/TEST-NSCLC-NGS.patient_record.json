@@ -196,7 +196,7 @@
     }
   ],
   "priorSecondPrimaries": [],
-  "priorOtherConditions": [
+  "comorbidities": [
     {
       "name": "Acute myocardial infarction",
       "year": 2020,
@@ -205,7 +205,7 @@
         "9408"
       ],
       "category": "Heart disease",
-      "isContraindicationForTherapy": true
+      "comorbidityClass": "PRIOR_OTHER_CONDITION"
     },
     {
       "name": "Bipolar disorder",
@@ -215,10 +215,9 @@
         "3312"
       ],
       "category": "Psychiatric disease",
-      "isContraindicationForTherapy": true
+      "comorbidityClass": "PRIOR_OTHER_CONDITION"
     }
   ],
-  "complications": [],
   "labValues": [
     {
       "date": {
@@ -416,8 +415,6 @@
       "isOutsideRef": false
     }
   ],
-  "toxicities": [],
-  "intolerances": [],
   "surgeries": [],
   "bodyWeights": [
     {

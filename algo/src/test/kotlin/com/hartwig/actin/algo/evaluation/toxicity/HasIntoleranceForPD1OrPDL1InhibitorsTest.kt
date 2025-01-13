@@ -73,9 +73,9 @@ class HasIntoleranceForPD1OrPDL1InhibitorsTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withIntolerances(emptyList())))
     }
 
-    private fun patient(intolerances: List<Intolerance>, icdMainCode: String = "", isContraIndication: Boolean = true): PatientRecord {
+    private fun patient(intolerances: List<Intolerance>, icdMainCode: String = ""): PatientRecord {
         val priorCondition = TestPriorOtherConditionFactory.createMinimal()
-            .copy(icdCodes = setOf(IcdCode(icdMainCode)), isContraindicationForTherapy = isContraIndication)
+            .copy(icdCodes = setOf(IcdCode(icdMainCode)))
         return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
             comorbidities = intolerances + priorCondition
         )

@@ -273,17 +273,15 @@ object TestClinicalFactory {
         return listOf(
             PriorOtherCondition(
                 name = "pancreatitis",
-                icdCodes = setOf(IcdCode("DC31", null)),
-                isContraindicationForTherapy = true,
                 year = null,
-                month = null
+                month = null,
+                icdCodes = setOf(IcdCode("DC31", null))
             ),
             PriorOtherCondition(
                 name = "Coronary artery bypass graft (CABG)",
-                icdCodes = setOf(IcdCode("QB50.1",  null)),
-                isContraindicationForTherapy = true,
                 year = 2023,
-                month = 10
+                month = 10,
+                icdCodes = setOf(IcdCode("QB50.1",  null))
             )
         )
     }

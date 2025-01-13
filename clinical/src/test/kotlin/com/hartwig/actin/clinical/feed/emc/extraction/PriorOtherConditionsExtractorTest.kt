@@ -26,8 +26,7 @@ class PriorOtherConditionsExtractorTest {
                 lvef = null,
                 priorOtherCondition = PriorOtherCondition(
                     name = PRIOR_CONDITION_INTERPRETATION,
-                    icdCodes = setOf(IcdCode("icd")),
-                    isContraindicationForTherapy = false
+                    icdCodes = setOf(IcdCode("icd"))
                 )
             )
         )

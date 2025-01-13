@@ -41,7 +41,10 @@ class HasSpecificFamilyHistoryTest {
     @Test
     fun `Should evaluate to undetermined when 'undetermined condition' family history present`() {
         val condition =
-            OtherConditionTestFactory.priorOtherCondition(name = "acute myocard infarct", icdMainCode = undeterminedConditions.icdCodes.first().mainCode)
+            OtherConditionTestFactory.priorOtherCondition(
+                name = "acute myocard infarct",
+                icdMainCode = undeterminedConditions.icdCodes.first().mainCode
+            )
         val evaluation = function.evaluate(OtherConditionTestFactory.withPriorOtherCondition(condition))
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedGeneralMessages).containsExactly(

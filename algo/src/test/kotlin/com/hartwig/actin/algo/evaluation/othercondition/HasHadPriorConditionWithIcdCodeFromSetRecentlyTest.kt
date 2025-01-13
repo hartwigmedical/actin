@@ -24,7 +24,7 @@ class HasHadPriorConditionWithIcdCodeFromSetRecentlyTest {
             function.evaluate(
                 OtherConditionTestFactory.withPriorOtherCondition(
                     OtherConditionTestFactory.priorOtherCondition(
-                       icdMainCode = targetIcdCodes.first().mainCode, year = minDate.plusMonths(1).year, month = minDate.plusMonths(1).monthValue
+                        year = minDate.plusMonths(1).year, month = minDate.plusMonths(1).monthValue, icdMainCode = targetIcdCodes.first().mainCode
                     )
                 )
             )
@@ -38,7 +38,7 @@ class HasHadPriorConditionWithIcdCodeFromSetRecentlyTest {
             function.evaluate(
                 OtherConditionTestFactory.withPriorOtherCondition(
                     OtherConditionTestFactory.priorOtherCondition(
-                        icdMainCode = targetIcdCodes.first().mainCode, year = minDate.plusYears(1).year, month = 1
+                        year = minDate.plusYears(1).year, month = 1, icdMainCode = targetIcdCodes.first().mainCode
                     )
                 )
             )
@@ -50,10 +50,10 @@ class HasHadPriorConditionWithIcdCodeFromSetRecentlyTest {
         val conditions = OtherConditionTestFactory.withPriorOtherConditions(
             listOf(
                 OtherConditionTestFactory.priorOtherCondition(
-                    icdMainCode = targetIcdCodes.first().mainCode, year = minDate.plusYears(1).year, month = 1
+                    year = minDate.plusYears(1).year, month = 1, icdMainCode = targetIcdCodes.first().mainCode
                 ),
                 OtherConditionTestFactory.priorOtherCondition(
-                    icdMainCode = targetIcdCodes.first().mainCode, year = minDate.plusMonths(1).year, month = minDate.plusMonths(1).monthValue
+                    year = minDate.plusMonths(1).year, month = minDate.plusMonths(1).monthValue, icdMainCode = targetIcdCodes.first().mainCode
                 )
             )
         )
@@ -67,7 +67,7 @@ class HasHadPriorConditionWithIcdCodeFromSetRecentlyTest {
             function.evaluate(
                 OtherConditionTestFactory.withPriorOtherCondition(
                     OtherConditionTestFactory.priorOtherCondition(
-                        icdMainCode = targetIcdCodes.first().mainCode, year = null
+                        year = null, icdMainCode = targetIcdCodes.first().mainCode
                     )
                 )
             )
@@ -98,7 +98,7 @@ class HasHadPriorConditionWithIcdCodeFromSetRecentlyTest {
             function.evaluate(
                 OtherConditionTestFactory.withPriorOtherCondition(
                     OtherConditionTestFactory.priorOtherCondition(
-                        icdMainCode = IcdConstants.HYPOMAGNESEMIA_CODE, year = 2023
+                        year = 2023, icdMainCode = IcdConstants.HYPOMAGNESEMIA_CODE
                     )
                 )
             )
@@ -122,7 +122,7 @@ class HasHadPriorConditionWithIcdCodeFromSetRecentlyTest {
             function.evaluate(
                 OtherConditionTestFactory.withPriorOtherCondition(
                     OtherConditionTestFactory.priorOtherCondition(
-                        icdMainCode = targetIcdCodes.first().mainCode, year = minDate.minusYears(1).year, month = 1
+                        year = minDate.minusYears(1).year, month = 1, icdMainCode = targetIcdCodes.first().mainCode
                     )
                 )
             )
