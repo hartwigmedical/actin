@@ -17,13 +17,18 @@ import com.hartwig.actin.molecular.filter.GeneFilterFactory
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.serialization.TrialJson
+import com.hartwig.actin.util.Either
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+
+const val ERROR_JSON_FILE = "trial_ingestion_errors.json"
 
 class TrialCreatorApplication(private val config: TrialCreatorConfig) {
 
@@ -66,15 +71,27 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
 
 
         LOGGER.info("Creating trial database")
+        val objectMapper = ObjectMapper().apply {
+            disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            registerModule(KotlinModule.Builder().build())
+        }
         val result =
-            trialIngestion.ingest(ObjectMapper().apply {
-                disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-                registerModule(KotlinModule.Builder().build())
-            }.readValue(File(config.trialConfigJsonPath), object : TypeReference<List<TrialConfig>>() {}))
+            trialIngestion.ingest(objectMapper.readValue(File(config.trialConfigJsonPath), object : TypeReference<List<TrialConfig>>() {}))
 
         val outputDirectory = config.outputDirectory
-        LOGGER.info("Writing {} trials to {}", result.size, outputDirectory)
-        TrialJson.write(result, outputDirectory)
+        when (result) {
+            is Either.Right -> {
+                LOGGER.info("Writing {} trials to {}", result.right.size, outputDirectory)
+                TrialJson.write(result.right, outputDirectory)
+            }
+
+            is Either.Left -> {
+                Files.write(Path.of(outputDirectory).resolve(ERROR_JSON_FILE), objectMapper.writeValueAsBytes(result.left))
+                exitProcess(1)
+            }
+        }
+
+
 
         LOGGER.info("Done!")
     }
