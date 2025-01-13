@@ -34,6 +34,7 @@ import com.hartwig.actin.trial.input.single.OneGeneOneIntegerOneVariantType
 import com.hartwig.actin.trial.input.single.OneGeneTwoIntegers
 import com.hartwig.actin.trial.input.single.OneHaplotype
 import com.hartwig.actin.trial.input.single.OneHlaAllele
+import com.hartwig.actin.trial.input.single.OneHlaGroup
 import com.hartwig.actin.trial.input.single.OneIcdTitleOneInteger
 import com.hartwig.actin.trial.input.single.OneIntegerManyDoidTerms
 import com.hartwig.actin.trial.input.single.OneIntegerManyIcdTitles
@@ -619,6 +620,22 @@ class FunctionInputResolverTest {
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("not an HLA allele")))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("A*02:01", "A*02:02")))!!).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with one hla group input`() {
+        val rule: EligibilityRule = firstOfType(FunctionInput.ONE_HLA_GROUP)
+        val allele = "A*02"
+        val valid: EligibilityFunction = create(rule, listOf(allele))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val expected = OneHlaGroup(allele)
+        assertThat(resolver.createOneHlaGroupInput(valid)).isEqualTo(expected)
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("not an HLA allele group")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("A*02:01")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("A*02", "A*01")))!!).isFalse
     }
 
     @Test

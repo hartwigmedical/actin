@@ -42,6 +42,7 @@ import com.hartwig.actin.trial.input.single.OneGeneOneIntegerOneVariantType
 import com.hartwig.actin.trial.input.single.OneGeneTwoIntegers
 import com.hartwig.actin.trial.input.single.OneHaplotype
 import com.hartwig.actin.trial.input.single.OneHlaAllele
+import com.hartwig.actin.trial.input.single.OneHlaGroup
 import com.hartwig.actin.trial.input.single.OneIntegerManyDoidTerms
 import com.hartwig.actin.trial.input.single.OneIntegerManyIcdTitles
 import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
@@ -269,6 +270,11 @@ class FunctionInputResolver(
 
                 FunctionInput.ONE_HLA_ALLELE -> {
                     createOneHlaAlleleInput(function)
+                    return true
+                }
+
+                FunctionInput.ONE_HLA_GROUP -> {
+                    createOneHlaGroupInput(function)
                     return true
                 }
 
@@ -665,6 +671,15 @@ class FunctionInputResolver(
             throw IllegalArgumentException("Not a proper HLA allele: $allele")
         }
         return OneHlaAllele(allele)
+    }
+
+    fun createOneHlaGroupInput(function: EligibilityFunction): OneHlaGroup {
+        assertParamConfig(function, FunctionInput.ONE_HLA_GROUP, 1)
+        val group = function.parameters.first() as String
+        if (!MolecularInputChecker.isHlaGroup(group)) {
+            throw IllegalArgumentException("Not a proper HLA group: $group")
+        }
+        return OneHlaGroup(group)
     }
 
     fun createOneHaplotypeInput(function: EligibilityFunction): OneHaplotype {
