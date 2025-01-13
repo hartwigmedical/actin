@@ -24,7 +24,7 @@ class MolecularInputChecker(private val geneFilter: GeneFilter) {
         }
 
         fun isHlaGroup(string: String): Boolean {
-            return Regex("[A-Z]+\\*(0[1-9]|[1-9][0-9])").matches(string)
+            return Regex("[A-Z]+\\*\\d{2}").matches(string)
         }
 
         fun isHaplotype(string: String): Boolean {

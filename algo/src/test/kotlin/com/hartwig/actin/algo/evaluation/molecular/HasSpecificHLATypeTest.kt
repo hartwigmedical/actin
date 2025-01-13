@@ -28,6 +28,14 @@ class HasSpecificHLATypeTest {
     }
 
     @Test
+    fun `Should fail on HLA group match if matchOnHlaGroup is false`() {
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            functionWithSpecificMatch.evaluate(MolecularTestFactory.withHlaAllele(CORRECT_HLA.copy(name = "$CORRECT_HLA_GROUP:02")))
+        )
+    }
+
+    @Test
     fun `Should evaluate to undetermined if immunology results are unreliable`() {
         evaluateFunctions(EvaluationResult.UNDETERMINED, MolecularTestFactory.withUnreliableMolecularImmunology())
     }

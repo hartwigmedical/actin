@@ -37,8 +37,7 @@ object ActinTrialGeneratorFunctions {
     }
 
     fun createTableTitleStart(source: String?): String {
-        val prefix = if (source == TrialSource.LKO.toString()) "Interventional " else ""
-        return source?.let { "$prefix$it trials" } ?: "Trials"
+        return source?.let { "$it trials" } ?: "Trials"
     }
 
     fun partitionByLocation(cohorts: List<InterpretedCohort>, source: TrialSource?) =
