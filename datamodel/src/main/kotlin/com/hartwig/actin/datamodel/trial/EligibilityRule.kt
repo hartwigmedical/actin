@@ -218,6 +218,7 @@ enum class EligibilityRule(val input: FunctionInput?) {
     TML_OF_AT_LEAST_X(FunctionInput.ONE_INTEGER),
     TML_BETWEEN_X_AND_Y(FunctionInput.TWO_INTEGERS),
     HAS_HLA_TYPE_X(FunctionInput.ONE_HLA_ALLELE),
+    HAS_HLA_GROUP_X(FunctionInput.ONE_HLA_GROUP),
     HAS_UGT1A1_HAPLOTYPE_X(FunctionInput.ONE_HAPLOTYPE),
     HAS_HOMOZYGOUS_DPYD_DEFICIENCY(FunctionInput.NONE),
     HAS_HETEROZYGOUS_DPYD_DEFICIENCY(FunctionInput.NONE),

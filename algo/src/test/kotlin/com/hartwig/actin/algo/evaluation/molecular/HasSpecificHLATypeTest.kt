@@ -1,67 +1,73 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.orange.immunology.HlaAllele
 import org.junit.Test
 
-private val CORRECT_HLA = HlaAllele(name = "A*02:01", tumorCopyNumber = 1.0, hasSomaticMutations = false)
+private const val CORRECT_HLA_GROUP = "A*02"
+private val CORRECT_HLA = HlaAllele(name = "$CORRECT_HLA_GROUP:01", tumorCopyNumber = 1.0, hasSomaticMutations = false)
 
 class HasSpecificHLATypeTest {
 
-    private val function = HasSpecificHLAType(CORRECT_HLA.name)
+    private val functionWithSpecificMatch = HasSpecificHLAType(CORRECT_HLA.name)
+    private val functionWithGroupMatch = HasSpecificHLAType(CORRECT_HLA_GROUP, matchOnHlaGroup = true)
 
     @Test
     fun `Should pass if correct HLA allele present`() {
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withHlaAllele(CORRECT_HLA)))
+        evaluateFunctions(EvaluationResult.PASS, MolecularTestFactory.withHlaAllele(CORRECT_HLA))
+    }
+
+    @Test
+    fun `Should pass on HLA group match if matchOnHlaGroup is true`() {
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            functionWithGroupMatch.evaluate(MolecularTestFactory.withHlaAllele(CORRECT_HLA.copy(name = "$CORRECT_HLA_GROUP:02")))
+        )
+    }
+
+    @Test
+    fun `Should fail on HLA group match if matchOnHlaGroup is false`() {
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            functionWithSpecificMatch.evaluate(MolecularTestFactory.withHlaAllele(CORRECT_HLA.copy(name = "$CORRECT_HLA_GROUP:02")))
+        )
     }
 
     @Test
     fun `Should evaluate to undetermined if immunology results are unreliable`() {
-        assertMolecularEvaluation(
-            EvaluationResult.UNDETERMINED,
-            function.evaluate(MolecularTestFactory.withUnreliableMolecularImmunology())
-        )
+        evaluateFunctions(EvaluationResult.UNDETERMINED, MolecularTestFactory.withUnreliableMolecularImmunology())
     }
 
     @Test
     fun `Should evaluate to undetermined if no WGS results present`() {
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withIHCTests()))
+        evaluateFunctions(EvaluationResult.UNDETERMINED, MolecularTestFactory.withIHCTests())
     }
 
     @Test
     fun `Should evaluate to undetermined if correct HLA allele present but record does not have sufficient quality`() {
-        assertMolecularEvaluation(
-            EvaluationResult.UNDETERMINED,
-            function.evaluate(MolecularTestFactory.withHlaAlleleAndInsufficientQuality(CORRECT_HLA))
-        )
+        evaluateFunctions(EvaluationResult.UNDETERMINED, MolecularTestFactory.withHlaAlleleAndInsufficientQuality(CORRECT_HLA))
     }
 
     @Test
     fun `Should warn if correct HLA allele present but tumor copy number is less than 0,5`() {
-        assertMolecularEvaluation(
-            EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withHlaAllele(CORRECT_HLA.copy(tumorCopyNumber = 0.0)))
-        )
+        evaluateFunctions(EvaluationResult.WARN, MolecularTestFactory.withHlaAllele(CORRECT_HLA.copy(tumorCopyNumber = 0.0)))
     }
 
     @Test
     fun `Should warn if correct HLA allele present but also somatic mutations present`() {
-        assertMolecularEvaluation(
-            EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withHlaAllele(CORRECT_HLA.copy(hasSomaticMutations = true)))
-        )
+        evaluateFunctions(EvaluationResult.WARN, MolecularTestFactory.withHlaAllele(CORRECT_HLA.copy(hasSomaticMutations = true)))
     }
 
     @Test
     fun `Should fail if correct HLA allele not present`() {
-        assertMolecularEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withHlaAllele(CORRECT_HLA.copy(name = "other")))
-        )
-        assertMolecularEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withHlaAlleleAndInsufficientQuality(CORRECT_HLA.copy(name = "other")))
-        )
+        evaluateFunctions(EvaluationResult.FAIL, MolecularTestFactory.withHlaAllele(CORRECT_HLA.copy(name = "other")))
+        evaluateFunctions(EvaluationResult.FAIL, MolecularTestFactory.withHlaAlleleAndInsufficientQuality(CORRECT_HLA.copy(name = "other")))
+    }
+
+    private fun evaluateFunctions(expected: EvaluationResult, record: PatientRecord) {
+        assertMolecularEvaluation(expected, functionWithSpecificMatch.evaluate(record))
+        assertMolecularEvaluation(expected, functionWithGroupMatch.evaluate(record))
     }
 }

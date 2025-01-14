@@ -73,8 +73,13 @@ class PrimaryTumorLocationBelongsToDoid(
                 val tumorDoidTree = doidModel.doidWithParents(tumorDoid)
                 fullDoidToMatchTree.contains(tumorDoid) && !tumorDoidTree.contains(doidToMatch)
                         && tumorDoidTree.intersect(mainCancerTypesToMatch).isNotEmpty()
+                        && !hasNeuroendocrineDoidAndNoNeuroendocrineDoidToMatch(tumorDoids, fullDoidToMatchTree)
             }
         }
+    }
+
+    private fun hasNeuroendocrineDoidAndNoNeuroendocrineDoidToMatch(tumorDoids: Set<String>, fullDoidToMatchTree: Set<String>): Boolean {
+        return tumorDoids.intersect(NEUROENDOCRINE_DOIDS).isNotEmpty() && fullDoidToMatchTree.intersect(NEUROENDOCRINE_DOIDS).isEmpty()
     }
 
     private fun doidsToTerms(doids: Set<String>): Set<String> {

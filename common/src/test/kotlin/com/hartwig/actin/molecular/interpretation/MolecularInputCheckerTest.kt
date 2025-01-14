@@ -5,6 +5,7 @@ import com.hartwig.actin.molecular.filter.TestGeneFilterFactory.createValidForGe
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker.Companion.isCodon
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker.Companion.isHaplotype
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker.Companion.isHlaAllele
+import com.hartwig.actin.molecular.interpretation.MolecularInputChecker.Companion.isHlaGroup
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker.Companion.isProteinImpact
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -27,6 +28,14 @@ class MolecularInputCheckerTest {
         assertThat(isHlaAllele("HLA-A*02:01")).isFalse
         assertThat(isHlaAllele("A*02")).isFalse
         assertThat(isHlaAllele("A:01*02")).isFalse
+    }
+
+    @Test
+    fun `Should determine if string is HLA group`() {
+        assertThat(isHlaGroup("A*02")).isTrue
+        assertThat(isHlaGroup("HLA-A*02")).isFalse
+        assertThat(isHlaGroup("A*02:01")).isFalse
+        assertThat(isHlaGroup("A:01")).isFalse
     }
 
     @Test

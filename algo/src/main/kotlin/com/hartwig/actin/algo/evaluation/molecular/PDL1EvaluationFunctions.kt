@@ -8,7 +8,14 @@ import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMinV
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.PriorIHCTest
 import com.hartwig.actin.doid.DoidModel
+
+private enum class TestResult {
+    POSITIVE,
+    NEGATIVE,
+    UNKNOWN
+}
 
 object PDL1EvaluationFunctions {
 
@@ -27,13 +34,13 @@ object PDL1EvaluationFunctions {
                 } else {
                     evaluateVersusMinValue(roundedScore, ihcTest.scoreValuePrefix, pdl1Reference)
                 }
-            }
+            } ?: evaluateNegativeOrPositiveTestScore(ihcTest, pdl1Reference, evaluateMaxPDL1)
         }.toSet()
 
         val comparatorMessage = if (evaluateMaxPDL1) "below maximum of" else "above minimum of"
 
         return when {
-            EvaluationResult.PASS in testEvaluations && EvaluationResult.FAIL in testEvaluations -> {
+            EvaluationResult.PASS in testEvaluations && (EvaluationResult.FAIL in testEvaluations || EvaluationResult.UNDETERMINED in testEvaluations) -> {
                 EvaluationFactory.undetermined(
                     "Undetermined if PD-L1 expression $comparatorMessage $pdl1Reference (conflicting PD-L1 results)"
                 )
@@ -55,7 +62,10 @@ object PDL1EvaluationFunctions {
             }
 
             pdl1TestsWithRequestedMeasurement.isNotEmpty() && pdl1TestsWithRequestedMeasurement.any { test -> test.scoreValue == null } -> {
-                EvaluationFactory.recoverableFail("No score value available for PD-L1 IHC test (only neg/pos status)")
+                val status = pdl1TestsWithRequestedMeasurement.joinToString(", ") { it.scoreText ?: "unknown" }
+                EvaluationFactory.undetermined(
+                    "Unclear if IHC PD-L1 status available ($status) is considered $comparatorMessage $pdl1Reference"
+                )
             }
 
             PriorIHCTestFunctions.allPDL1Tests(priorMolecularTests).isNotEmpty() -> {
@@ -65,6 +75,41 @@ object PDL1EvaluationFunctions {
             else -> {
                 EvaluationFactory.undetermined("PD-L1 expression (IHC) not tested", missingGenesForEvaluation = true)
             }
+        }
+    }
+
+    private fun evaluateNegativeOrPositiveTestScore(
+        ihcTest: PriorIHCTest,
+        pdl1Reference: Double,
+        evaluateMaxPDL1: Boolean,
+    ): EvaluationResult? {
+        val result = classifyIhcTest(ihcTest)
+        val cpsWithRefEqualAbove10 = ihcTest.measure == "CPS" && pdl1Reference >= 10
+        val tpsWithRefEqualAbove1 = ihcTest.measure == "TPS" && pdl1Reference >= 1
+
+        return when {
+            evaluateMaxPDL1 && result == TestResult.NEGATIVE && (tpsWithRefEqualAbove1 || cpsWithRefEqualAbove10) -> EvaluationResult.PASS
+
+            !evaluateMaxPDL1 && result == TestResult.POSITIVE && pdl1Reference == 1.0 &&
+                    (ihcTest.measure == "TPS" || ihcTest.measure == "CPS") -> EvaluationResult.PASS
+
+            !evaluateMaxPDL1 && result == TestResult.NEGATIVE && (tpsWithRefEqualAbove1 || cpsWithRefEqualAbove10) -> EvaluationResult.FAIL
+
+            else -> null
+        }
+    }
+
+    private fun classifyIhcTest(test: PriorIHCTest): TestResult {
+        return when {
+            test.scoreText?.lowercase()?.contains("negative") == true -> {
+                TestResult.NEGATIVE
+            }
+
+            test.scoreText?.lowercase()?.contains("positive") == true -> {
+                TestResult.POSITIVE
+            }
+
+            else -> TestResult.UNKNOWN
         }
     }
 }
