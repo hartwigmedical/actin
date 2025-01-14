@@ -26,8 +26,7 @@ class HasHadCombinedTreatmentNamesWithCycles(
                 Evaluation(
                     result = EvaluationResult.FAIL,
                     recoverable = false,
-                    failSpecificMessages = getMessagesForEvaluations(failEvaluations, Evaluation::failSpecificMessages),
-                    failGeneralMessages = getMessagesForEvaluations(failEvaluations, Evaluation::failGeneralMessages)
+                    failMessages = getMessagesForEvaluations(failEvaluations, Evaluation::failMessages)
                 )
             }
 
@@ -36,13 +35,9 @@ class HasHadCombinedTreatmentNamesWithCycles(
                 Evaluation(
                     result = EvaluationResult.UNDETERMINED,
                     recoverable = false,
-                    undeterminedSpecificMessages = getMessagesForEvaluations(
+                    undeterminedMessages = getMessagesForEvaluations(
                         undeterminedEvaluations,
-                        Evaluation::undeterminedSpecificMessages
-                    ),
-                    undeterminedGeneralMessages = getMessagesForEvaluations(
-                        undeterminedEvaluations,
-                        Evaluation::undeterminedGeneralMessages
+                        Evaluation::undeterminedMessages
                     )
                 )
             }
@@ -52,8 +47,7 @@ class HasHadCombinedTreatmentNamesWithCycles(
                 Evaluation(
                     result = EvaluationResult.PASS,
                     recoverable = false,
-                    passSpecificMessages = getMessagesForEvaluations(passEvaluations, Evaluation::passSpecificMessages),
-                    passGeneralMessages = setOf("Found matching treatments")
+                    passMessages = getMessagesForEvaluations(passEvaluations, Evaluation::passMessages)
                 )
             }
 
@@ -78,34 +72,32 @@ class HasHadCombinedTreatmentNamesWithCycles(
                 }
             }
         return if (matchingHistoryEntries.isEmpty()) {
-            EvaluationFactory.fail("No prior treatments found matching $treatmentName", GENERAL_FAIL_MESSAGE)
+            EvaluationFactory.fail("No prior treatments found matching $treatmentName and between $minCycles and $maxCycles cycles")
         } else if (matchingHistoryEntries.containsKey(EvaluationResult.PASS)) {
             EvaluationFactory.pass(
-                "Found matching treatments: " + formatTreatmentList(matchingHistoryEntries[EvaluationResult.PASS]!!, true),
-                "Found matching treatments"
+                "Found matching treatments (${formatTreatmentList(matchingHistoryEntries[EvaluationResult.PASS]!!, true)}" +
+                        " and between $minCycles and $maxCycles cycles"
             )
         } else if (matchingHistoryEntries.containsKey(EvaluationResult.UNDETERMINED)) {
             EvaluationFactory.undetermined(
-                "Unknown cycles for matching prior treatments: " + formatTreatmentList(
+                "Unknown cycles for matching treatments: " + formatTreatmentList(
                     matchingHistoryEntries[EvaluationResult.UNDETERMINED]!!,
                     false
-                ), "Unknown treatment cycles"
+                )
             )
         } else {
             EvaluationFactory.fail(
                 String.format(
-                    "Matching prior treatments did not have between %d and %d cycles: %s",
+                    "Matching treatments did not have between %d and %d cycles: %s",
                     minCycles,
                     maxCycles,
                     formatTreatmentList(matchingHistoryEntries[EvaluationResult.FAIL]!!, true)
-                ), GENERAL_FAIL_MESSAGE
+                )
             )
         }
     }
 
     companion object {
-        private const val GENERAL_FAIL_MESSAGE = "No treatments with cycles"
-
         private fun formatTreatmentList(treatmentHistoryEntries: List<TreatmentHistoryEntry>, includeCycles: Boolean): String {
             return treatmentHistoryEntries.joinToString(", ") { entry ->
                 val cycleString = if (includeCycles) " (${entry.treatmentHistoryDetails?.cycles} cycles)" else ""

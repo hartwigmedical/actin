@@ -12,23 +12,13 @@ class HasSecondaryGlioblastoma(private val doidModel: DoidModel) : EvaluationFun
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.tumor.doids
         if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
-            return EvaluationFactory.undetermined(
-                "No tumor location/type configured for patient, unknown if patient has secondary glioblastoma",
-                "Undetermined secondary glioblastoma"
-            )
+            return EvaluationFactory.undetermined("Secondary glioblastoma undetermined (tumor location unknown)")
         }
         for (tumorDoid in tumorDoids ?: emptySet()) {
             if (doidModel.doidWithParents(tumorDoid).contains(DoidConstants.GLIOBLASTOMA_DOID)) {
-                return EvaluationFactory.warn(
-                    "Patient has " + doidModel.resolveTermForDoid(tumorDoid) + ", belonging to " +
-                            doidModel.resolveTermForDoid(DoidConstants.GLIOBLASTOMA_DOID) +
-                            ", unclear if this is considered secondary glioblastoma", "Unclear if considered secondary glioblastoma"
-                )
+                return EvaluationFactory.warn("Unclear if ${doidModel.resolveTermForDoid(tumorDoid)} is considered secondary glioblastoma")
             }
         }
-        return EvaluationFactory.fail(
-            "Patient has no (secondary) glioblastoma",
-            "No (secondary) glioblastoma"
-        )
+        return EvaluationFactory.fail("No (secondary) glioblastoma")
     }
 }

@@ -21,15 +21,9 @@ class HasPotentialAbsorptionDifficulties(private val icdModel: IcdModel) : Evalu
         ).fullMatches
 
         return if (conditionsComplicationsAndToxicities.isNotEmpty()) {
-            EvaluationFactory.pass(
-                "Patient has potential absorption difficulties due to " + Format.concatItemsWithAnd(conditionsComplicationsAndToxicities),
-                "Potential absorption difficulties: " + Format.concatItemsWithAnd(conditionsComplicationsAndToxicities)
-            )
+            EvaluationFactory.pass("Potential absorption difficulties (${Format.concatItemsWithAnd(conditionsComplicationsAndToxicities)}")
         } else {
-            EvaluationFactory.fail(
-                "No potential reasons for absorption problems identified",
-                "No potential absorption difficulties identified"
-            )
+            EvaluationFactory.fail("No potential absorption difficulties")
         }
     }
 }

@@ -35,7 +35,7 @@ class HasIntoleranceForPD1OrPDL1Inhibitors(private val icdModel: IcdModel) : Eva
             IcdConstants.AUTOIMMUNE_DISEASE_SET.map { IcdCode(it) }.toSet()
         ).fullMatches
 
-        val undeterminedMessage = "intolerance in history - but undetermined if PD-1/PD-L1 intolerance"
+        val undeterminedMessage = "intolerance in history - undetermined if PD-1/PD-L1 intolerance"
 
         return when {
             matchingIntolerances.isNotEmpty() -> {
@@ -55,12 +55,12 @@ class HasIntoleranceForPD1OrPDL1Inhibitors(private val icdModel: IcdModel) : Eva
 
             autoImmuneHistory.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "Patient may have a contra-indication for PD-1/PD-L1 inhibitors due to autoimmune disease " +
+                    "Possible PD-1/PD-L1 intolerance due to autoimmune disease " +
                             "(${Format.concatItemsWithAnd(autoImmuneHistory)})"
                 )
             }
 
-            else -> EvaluationFactory.fail("Patient does not have PD-1/PD-L1 intolerance")
+            else -> EvaluationFactory.fail("No PD-1/PD-L1 intolerance")
         }
     }
 

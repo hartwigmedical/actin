@@ -8,9 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class MeetsSixMinuteWalkingTestRequirements : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined(
-            "Currently undetermined if patient meets requirements for 6 minute walking test",
-            "Undetermined if patient meets 6 min walking test requirements"
-        )
+        return EvaluationFactory.undetermined("Undetermined if patient meets 6 min walking test requirements")
     }
 }

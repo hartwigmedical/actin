@@ -18,10 +18,7 @@ class IsEligibleForOnLabelTreatment(
 
         return when {
             tumorIsCUP(record.tumor) -> {
-                EvaluationFactory.undetermined(
-                    "Tumor type is CUP and eligibility for on-label treatment is therefore undetermined",
-                    "Tumor type CUP hence eligibility for on-label treatment undetermined"
-                )
+                EvaluationFactory.undetermined("Tumor type CUP hence eligibility for on-label treatment ${treatment.display()} undetermined")
             }
 
             recommendationEngine.standardOfCareCanBeEvaluatedForPatient(record) -> {
@@ -30,22 +27,16 @@ class IsEligibleForOnLabelTreatment(
                 ) {
                     EvaluationFactory.undetermined("Undetermined if patient is eligible for on-label treatment ${treatment.display()}")
                 } else {
-                    EvaluationFactory.fail("Patient is not eligible for on-label treatment ${treatment.display()}")
+                    EvaluationFactory.fail("Not eligible for on-label treatment ${treatment.display()}")
                 }
             }
 
             record.oncologicalHistory.isEmpty() -> {
-                EvaluationFactory.undetermined(
-                    "Patient has not had any prior cancer treatments and therefore undetermined eligibility for on-label treatment",
-                    "Undetermined eligibility for on-label treatment"
-                )
+                EvaluationFactory.undetermined("Eligibility for on-label treatment ${treatment.display()} undetermined (no prior cancer treatment)")
             }
 
             else -> {
-                EvaluationFactory.notEvaluated(
-                    "Assumed no eligibility for on-label treatment since patient has had prior cancer treatment",
-                    "Assumed no eligibility for on-label treatment"
-                )
+                EvaluationFactory.notEvaluated("Assumed that patient is not eligible for on-label treatment since patient has had prior cancer treatment")
             }
         }
     }

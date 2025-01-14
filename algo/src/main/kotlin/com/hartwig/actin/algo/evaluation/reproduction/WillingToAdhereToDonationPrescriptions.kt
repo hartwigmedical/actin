@@ -8,9 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class WillingToAdhereToDonationPrescriptions: EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.notEvaluated(
-            "Assumed that patient will adhere to relevant sperm/egg donation prescriptions",
-            "Assumed adherence to relevant sperm/egg donation prescriptions"
-        )
+        return EvaluationFactory.notEvaluated("Assumed that patient can adhere to relevant sperm/egg donation prescriptions")
     }
 }

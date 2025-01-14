@@ -45,8 +45,7 @@ class HasLimitedAsatAndAlatDependingOnLiverMetastases(
 
         return when {
             !checkValidity(mostRecentAsat, ASPARTATE_AMINOTRANSFERASE) && !checkValidity(mostRecentAlat, ALANINE_AMINOTRANSFERASE) -> {
-                val message = "ASAT and ALAT are not present or cannot be evaluated"
-                EvaluationFactory.recoverableUndetermined(message, message)
+                EvaluationFactory.recoverableUndetermined("ASAT and ALAT are not present or cannot be evaluated")
             }
 
             asatLimitEvaluation == EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN && alatLimitEvaluation == EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN -> {
@@ -76,43 +75,43 @@ class HasLimitedAsatAndAlatDependingOnLiverMetastases(
 
             asatLimitEvaluation == EXCEEDS_THRESHOLD_BUT_WITHIN_MARGIN && alatLimitEvaluation == EXCEEDS_THRESHOLD_BUT_WITHIN_MARGIN -> {
                 val message = "ASAT ($asatLabValueString) and ALAT ($alatLabValueString) exceed max fold of ULN but within margin of error"
-                EvaluationFactory.recoverableUndetermined(message, message)
+                EvaluationFactory.recoverableUndetermined(message)
             }
 
             asatLimitEvaluation == EXCEEDS_THRESHOLD_BUT_WITHIN_MARGIN -> {
                 val message = "$asatLabValueString exceeds maximum of $asatReferenceString but within margin of error"
-                EvaluationFactory.recoverableUndetermined(message, message)
+                EvaluationFactory.recoverableUndetermined(message)
             }
 
             alatLimitEvaluation == EXCEEDS_THRESHOLD_BUT_WITHIN_MARGIN -> {
                 val message = "$alatLabValueString exceeds maximum of $alatReferenceString but within margin of error"
-                EvaluationFactory.recoverableUndetermined(message, message)
+                EvaluationFactory.recoverableUndetermined(message)
             }
 
             asatLimitEvaluation == WITHIN_THRESHOLD && alatLimitEvaluation == WITHIN_THRESHOLD -> {
                 val message = "$asatLabValueString and $alatLabValueString below max of $asatReferenceString and $alatReferenceString"
-                EvaluationFactory.recoverablePass(message, message)
+                EvaluationFactory.recoverablePass(message)
             }
 
             asatLimitEvaluation == CANNOT_BE_DETERMINED && alatLimitEvaluation == CANNOT_BE_DETERMINED -> {
                 val message = "${createMeasurementString(ASPARTATE_AMINOTRANSFERASE)} " +
                         "and ${createMeasurementString(ALANINE_AMINOTRANSFERASE)} undetermined"
-                EvaluationFactory.recoverableUndetermined(message, message)
+                EvaluationFactory.recoverableUndetermined(message)
             }
 
             asatLimitEvaluation == CANNOT_BE_DETERMINED -> {
                 val message = "${createMeasurementString(ASPARTATE_AMINOTRANSFERASE)} undetermined"
-                EvaluationFactory.recoverableUndetermined(message, message)
+                EvaluationFactory.recoverableUndetermined(message)
             }
 
             alatLimitEvaluation == CANNOT_BE_DETERMINED -> {
                 val message = "${createMeasurementString(ALANINE_AMINOTRANSFERASE)} undetermined"
-                EvaluationFactory.recoverableUndetermined(message, message)
+                EvaluationFactory.recoverableUndetermined(message)
             }
 
             else -> {
                 val message = "Unable to determine if ASAT and ALAT within requested fold of ULN."
-                EvaluationFactory.undetermined(message, message)
+                EvaluationFactory.undetermined(message)
             }
         }
     }
@@ -150,9 +149,9 @@ class HasLimitedAsatAndAlatDependingOnLiverMetastases(
     private fun evaluateOutsideMargin(measurementsWithinLimit: Boolean, hasLiverMetastases: Boolean?, message: String): Evaluation {
         return if (measurementsWithinLimit && hasLiverMetastases == null) {
             val messageEnding = " if no liver metastases present (liver lesion data missing)"
-            EvaluationFactory.undetermined(message + messageEnding, message + messageEnding)
+            EvaluationFactory.undetermined(message + messageEnding)
         } else {
-            EvaluationFactory.recoverableFail(message, message)
+            EvaluationFactory.recoverableFail(message)
         }
     }
 }

@@ -10,15 +10,9 @@ class HasBiopsyAmenableLesion : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return if (record.molecularHistory.latestOrangeMolecularRecord()?.experimentType != ExperimentType.HARTWIG_WHOLE_GENOME) {
-            EvaluationFactory.recoverableUndetermined(
-                "Currently biopsy-amenability of lesions cannot be determined without WGS",
-                "Biopsy amenability unknown"
-            )
+            EvaluationFactory.recoverableUndetermined("Undetermined if biopsy amenable lesions present")
         } else {
-            EvaluationFactory.pass(
-                "It is assumed that patient will have biopsy-amenable lesions (presence of WGS analysis)",
-                "Biopsy amenability assumed"
-            )
+            EvaluationFactory.pass("Biopsy amenability assumed because of WGS analysis")
         }
     }
 }

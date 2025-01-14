@@ -39,7 +39,7 @@ class HasHadTargetedTherapyInterferingWithRasMekMapkPathwayTest {
             )
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry)))
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passGeneralMessages).containsExactly(
+        assertThat(evaluation.passMessages).containsExactly(
             "Has had targeted therapy interfering with RAS/MEK/MAPK pathway (Test)"
         )
     }
@@ -54,8 +54,8 @@ class HasHadTargetedTherapyInterferingWithRasMekMapkPathwayTest {
             )
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry)))
         EvaluationAssert.assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnGeneralMessages).containsExactly(
-            "Has had targeted therapy (Test) - indirectly interfering with RAS/MEK/MAPK pathway"
+        assertThat(evaluation.warnMessages).containsExactly(
+            "Has had targeted therapy (Test) indirectly interfering with RAS/MEK/MAPK pathway"
         )
     }
 
@@ -67,7 +67,7 @@ class HasHadTargetedTherapyInterferingWithRasMekMapkPathwayTest {
             )
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry)))
         EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedGeneralMessages).containsExactly(
+        assertThat(evaluation.undeterminedMessages).containsExactly(
             "Has had trial drug - undetermined interference with RAS/MEK/MAPK pathway"
         )
     }
@@ -80,7 +80,7 @@ class HasHadTargetedTherapyInterferingWithRasMekMapkPathwayTest {
             )
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry)))
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failGeneralMessages).containsExactly(
+        assertThat(evaluation.failMessages).containsExactly(
             "Has not received targeted therapy interfering with RAS/MEK/MAPK pathway"
         )
     }

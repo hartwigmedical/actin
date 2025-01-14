@@ -26,7 +26,7 @@ class HasHistoryOfAnaphylaxis(private val icdModel: IcdModel): EvaluationFunctio
         val conditionString = Format.concatItemsWithAnd(anaphylaxisHistoryEntries + anaphylaxisIntoleranceEntries)
 
         return if (anaphylaxisIntoleranceEntries.isNotEmpty() || anaphylaxisHistoryEntries.isNotEmpty()) {
-            EvaluationFactory.pass("Has history of anaphylaxis: $conditionString")
+            EvaluationFactory.pass("Has history of anaphylaxis ($conditionString)")
         } else {
             EvaluationFactory.fail("No known history of anaphylaxis")
         }

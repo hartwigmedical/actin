@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
 
-class HasChildPughClass(private val icdModel: IcdModel) : EvaluationFunction {
+class HasChildPughScore(private val icdModel: IcdModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val hasLiverCirrhosis = icdModel.findInstancesMatchingAnyIcdCode(
@@ -18,15 +18,9 @@ class HasChildPughClass(private val icdModel: IcdModel) : EvaluationFunction {
         ).fullMatches.isNotEmpty()
 
         return if (hasLiverCirrhosis) {
-            EvaluationFactory.undetermined(
-                "Currently Child-Pugh class cannot be determined",
-                "Undetermined Child-Pugh class"
-            )
+            EvaluationFactory.undetermined("Child-Pugh score undetermined")
         } else {
-            EvaluationFactory.notEvaluated(
-                "Child Pugh Score not relevant since liver cirrhosis not present in medical history",
-                "Child Pugh not relevant since liver cirrhosis not present"
-            )
+            EvaluationFactory.notEvaluated("Assumed that Child-Pugh score is not relevant since no history of liver cirrhosis")
         }
     }
 }

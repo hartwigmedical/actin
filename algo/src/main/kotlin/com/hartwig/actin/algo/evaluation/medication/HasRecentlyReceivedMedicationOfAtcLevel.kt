@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
+import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithCommaAndAnd
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.AtcLevel
@@ -18,8 +18,7 @@ class HasRecentlyReceivedMedicationOfAtcLevel(
     override fun evaluate(record: PatientRecord): Evaluation {
         if (minStopDate.isBefore(record.patient.registrationDate)) {
             return EvaluationFactory.undetermined(
-                "Required stop date prior to registration date for recent medication usage evaluation of $categoryName",
-                "Recent $categoryName medication"
+                "Recent $categoryName medication use undetermined (required stop date prior to registration date)"
             )
         }
 
@@ -31,16 +30,10 @@ class HasRecentlyReceivedMedicationOfAtcLevel(
 
         return if (activeOrRecentlyStopped.isNotEmpty()) {
             val foundMedicationString =
-                if (foundMedicationNames.isNotEmpty()) ": ${concatLowercaseWithAnd(foundMedicationNames)}" else ""
-            EvaluationFactory.recoverablePass(
-                "Patient recently received medication$foundMedicationString which belong(s) to category '$categoryName'",
-                "Recent $categoryName medication use$foundMedicationString"
-            )
+                if (foundMedicationNames.isNotEmpty()) concatLowercaseWithCommaAndAnd(foundMedicationNames) else ""
+            EvaluationFactory.recoverablePass("Recent $categoryName medication use ($foundMedicationString)")
         } else {
-            EvaluationFactory.recoverableFail(
-                "Patient has not recently received medication of category '$categoryName'",
-                "No recent $categoryName medication use"
-            )
+            EvaluationFactory.recoverableFail("No recent $categoryName medication use")
         }
     }
 }

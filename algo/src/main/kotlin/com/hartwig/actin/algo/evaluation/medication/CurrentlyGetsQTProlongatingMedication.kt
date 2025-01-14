@@ -18,23 +18,18 @@ class CurrentlyGetsQTProlongatingMedication(private val selector: MedicationSele
         return when {
             activeQtMedication.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass(
-                    "Patient currently gets QT prolongating medication (risk type): " + concatWithType(activeQtMedication),
                     "QT prolongating medication use (risk type): " + concatWithType(activeQtMedication)
                 )
             }
 
             plannedQtMedication.isNotEmpty() -> {
                 EvaluationFactory.recoverableWarn(
-                    "Patient plans to get QT prolongating medication (risk type): " + concatWithType(plannedQtMedication),
                     "Planned QT prolongating medication use (risk type): " + concatWithType(plannedQtMedication)
                 )
             }
 
             else -> {
-                EvaluationFactory.recoverableFail(
-                    "Patient currently does not get QT prolongating medication ",
-                    "No QT prolongating medication use "
-                )
+                EvaluationFactory.recoverableFail("No QT prolongating medication use")
             }
         }
     }

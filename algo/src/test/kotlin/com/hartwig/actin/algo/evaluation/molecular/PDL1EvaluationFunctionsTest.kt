@@ -44,7 +44,7 @@ class PDL1EvaluationFunctionsTest {
     }
 
     @Test
-    fun `Should fail with specific message when molecular history only contains tests with other measure types `() {
+    fun `Should fail with message when molecular history only contains tests with other measure types `() {
         val record = MolecularTestFactory.withIHCTests(
             MolecularTestFactory.priorIHCTest(test = "IHC", item = "PD-L1", measure = "wrong"),
             MolecularTestFactory.priorIHCTest(test = "IHC", item = "PD-L1", measure = "other wrong")
@@ -98,7 +98,7 @@ class PDL1EvaluationFunctionsTest {
             MolecularTestFactory.withIHCTests(pdl1Test.copy(scoreValue = 1.0, scoreValuePrefix = ValueComparison.LARGER_THAN))
         val evaluation = evaluatePDL1byIHC(record, MEASURE, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedGeneralMessages).containsExactly(
+        assertThat(evaluation.undeterminedMessages).containsExactly(
             "Undetermined if PD-L1 expression (> 1.0) below maximum of 2.0"
         )
     }
@@ -130,7 +130,7 @@ class PDL1EvaluationFunctionsTest {
         val record = MolecularTestFactory.withIHCTests(pdl1Test.copy(scoreValue = 3.0, scoreValuePrefix = ValueComparison.SMALLER_THAN))
         val evaluation = evaluatePDL1byIHC(record, MEASURE, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedGeneralMessages).containsExactly(
+        assertThat(evaluation.undeterminedMessages).containsExactly(
             "Undetermined if PD-L1 expression (< 3.0) above minimum of 2.0"
         )
     }
@@ -280,7 +280,7 @@ class PDL1EvaluationFunctionsTest {
             evaluatePDL1byIHC(record, MEASURE, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false)
         )
         evaluations.forEach {
-            assertThat(it.failGeneralMessages).containsExactly(message)
+            assertThat(it.failMessages).containsExactly(message)
         }
     }
 }

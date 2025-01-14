@@ -12,25 +12,19 @@ class ProteinIsLostByIHC(private val protein: String) : EvaluationFunction {
 
         return when {
             ihcTests.any { ihcTest -> ihcTest.scoreText?.lowercase() == "loss" } -> {
-                EvaluationFactory.pass("Protein $protein is lost according to IHC", "$protein is lost by IHC")
+                EvaluationFactory.pass("$protein is lost by IHC")
             }
 
             ihcTests.any { ihcTest -> ihcTest.scoreText?.lowercase() != "no loss" } -> {
-                EvaluationFactory.undetermined(
-                    "$protein IHC test(s) available but undetermined if $protein is lost", "Undetermined if $protein is lost by IHC"
-                )
+                EvaluationFactory.undetermined("$protein IHC test(s) available but undetermined if $protein is lost")
             }
 
             ihcTests.isNotEmpty() -> {
-                EvaluationFactory.fail("Protein $protein is not lost according to IHC", "$protein is not lost by IHC")
+                EvaluationFactory.fail("$protein is not lost by IHC")
             }
 
             else -> {
-                EvaluationFactory.undetermined(
-                    "No test result found; protein $protein has not been tested by IHC",
-                    "No $protein IHC test result",
-                    missingGenesForEvaluation = true
-                )
+                EvaluationFactory.undetermined("No $protein IHC test result", missingGenesForEvaluation = true)
             }
         }
     }

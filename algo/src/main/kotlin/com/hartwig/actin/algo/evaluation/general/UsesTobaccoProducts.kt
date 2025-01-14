@@ -8,9 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class UsesTobaccoProducts : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined(
-            "Undetermined if patient uses tobacco products",
-            "Undetermined if patient uses tobacco products"
-        )
+        return EvaluationFactory.undetermined("Undetermined if patient uses tobacco products")
     }
 }

@@ -26,12 +26,11 @@ object BodyWeightFunctions {
                 record.bodyWeights.none { weight -> EXPECTED_UNITS.any { it.equals(weight.unit, ignoreCase = true) } }
             ) {
                 EvaluationFactory.undetermined(
-                    "Body weights not measured in ${EXPECTED_UNITS.joinToString(" or ")}",
-                    "Invalid body weight unit"
+                    "Body weights not measured in ${EXPECTED_UNITS.joinToString(" or ")}"
                 )
             } else {
                 EvaluationFactory.recoverableUndetermined(
-                    "No (recent) body weights found", "No (recent) body weights found"
+                    "No (recent) body weights found"
                 )
             }
 
@@ -43,38 +42,30 @@ object BodyWeightFunctions {
         val comparisonWithoutMargin = median.compareTo(referenceBodyWeight)
 
         return when {
-
             (!referenceIsMinimum && comparisonWithoutMargin > 0 && comparisonWithMargin <= 0)
                     || (referenceIsMinimum && comparisonWithoutMargin < 0 && comparisonWithMargin >= 0) -> {
-                val specificMessage = "Patient median body weight ($median kg) is below $referenceBodyWeight kg"
-                val generalMessage = "Median body weight ($median kg) below $referenceBodyWeight kg"
-                EvaluationFactory.recoverableUndetermined(specificMessage, generalMessage)
+                EvaluationFactory.recoverableUndetermined("Median body weight ($median kg) below $referenceBodyWeight kg")
             }
 
             comparisonWithoutMargin < 0 -> {
-                val specificMessage = "Patient median body weight ($median kg) is below $referenceBodyWeight kg"
-                val generalMessage = "Median body weight ($median kg) below $referenceBodyWeight kg"
+                val message = "Median body weight ($median kg) below $referenceBodyWeight kg"
                 if (referenceIsMinimum) {
-                    EvaluationFactory.fail(specificMessage, generalMessage)
+                    EvaluationFactory.fail(message)
                 } else {
-                    EvaluationFactory.pass(specificMessage, generalMessage)
+                    EvaluationFactory.pass(message)
                 }
             }
 
             comparisonWithoutMargin == 0 -> {
-                val specificMessage = "Patient median body weight ($median kg) is equal to $referenceBodyWeight kg"
-                val generalMessage = "Median body weight ($median kg) equal to $referenceBodyWeight kg"
-
-                return EvaluationFactory.pass(specificMessage, generalMessage)
+                return EvaluationFactory.pass("Median body weight ($median kg) equal to $referenceBodyWeight kg")
             }
 
             else -> {
-                val specificMessage = "Patient median body weight ($median kg) is above $referenceBodyWeight kg"
-                val generalMessage = "Median body weight ($median kg) above $referenceBodyWeight kg"
+                val message = "Median body weight ($median kg) above $referenceBodyWeight kg"
                 if (referenceIsMinimum) {
-                    EvaluationFactory.pass(specificMessage, generalMessage)
+                    EvaluationFactory.pass(message)
                 } else {
-                    EvaluationFactory.fail(specificMessage, generalMessage)
+                    EvaluationFactory.fail(message)
                 }
             }
         }

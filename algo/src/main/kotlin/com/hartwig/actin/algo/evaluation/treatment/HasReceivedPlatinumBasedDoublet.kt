@@ -12,18 +12,15 @@ class HasReceivedPlatinumBasedDoublet : EvaluationFunction {
 
         return when {
             TreatmentFunctions.receivedPlatinumDoublet(record) -> {
-                EvaluationFactory.pass("Patient has $message", "Has $message ")
+                EvaluationFactory.pass("Has $message ")
             }
 
             TreatmentFunctions.receivedPlatinumTripletOrAbove(record) -> {
-                EvaluationFactory.warn(
-                    "Patient has received platinum chemotherapy combination but not in doublet (more than 2 drugs combined)",
-                    "Has received platinum chemotherapy combination but not in doublet (more than 2 drugs combined)"
-                )
+                EvaluationFactory.warn("Has received platinum chemotherapy combination but not in doublet (more than 2 drugs combined)")
             }
 
             else -> {
-                EvaluationFactory.fail("Patient has not $message", "Has not $message")
+                EvaluationFactory.fail("Has not $message")
             }
         }
     }

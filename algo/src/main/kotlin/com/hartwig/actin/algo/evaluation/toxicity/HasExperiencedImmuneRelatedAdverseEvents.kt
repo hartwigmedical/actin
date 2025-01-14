@@ -25,8 +25,7 @@ class HasExperiencedImmuneRelatedAdverseEvents(private val icdModel: IcdModel) :
             }.toSet()
         )
 
-        val warnMessageStart =
-            "Possible immunotherapy related adverse events in history"
+        val warnMessageStart = "Possible immunotherapy related adverse events in history"
 
         return when {
             immunotherapyTreatmentList.isNotEmpty() && immunotherapyAllergies.isNotEmpty() -> {
@@ -39,10 +38,7 @@ class HasExperiencedImmuneRelatedAdverseEvents(private val icdModel: IcdModel) :
             }
 
             (immunotherapyTreatmentList.isNotEmpty() && stopReasonUnknown) -> {
-                EvaluationFactory.recoverableUndetermined(
-                    "Undetermined prior immunotherapy related adverse events",
-                    "Undetermined prior immunotherapy related adverse events"
-                )
+                EvaluationFactory.recoverableUndetermined("Prior immunotherapy related adverse events undetermined")
             }
 
             immunotherapyTreatmentList.isNotEmpty() && undeterminedDrugAllergies.isNotEmpty() -> {
@@ -53,10 +49,7 @@ class HasExperiencedImmuneRelatedAdverseEvents(private val icdModel: IcdModel) :
             }
 
             else -> {
-                EvaluationFactory.fail(
-                    "Patient has not experienced immunotherapy related adverse events",
-                    "No experience of immunotherapy related adverse events"
-                )
+                EvaluationFactory.fail("No experience of immunotherapy related adverse events")
             }
         }
     }

@@ -29,17 +29,11 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypes(
             }
 
             treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches >= minTreatmentLines -> {
-                EvaluationFactory.undetermined(
-                    "Can't determine whether patient has $baseMessage",
-                    "Undetermined if $baseMessage"
-                )
+                EvaluationFactory.undetermined("Undetermined if $baseMessage")
             }
 
             treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches + treatmentSummary.numPossibleTrialMatches >= minTreatmentLines -> {
-                EvaluationFactory.undetermined(
-                    "Patient may have received at least $minTreatmentLines line(s) of ${category.display()} due to trial participation",
-                    "Trial medication in history - undetermined if received at least $minTreatmentLines line(s) of ${category.display()}"
-                )
+                EvaluationFactory.undetermined("Trial medication in history - undetermined if received at least $minTreatmentLines line(s) of ${category.display()}")
             }
 
             else -> {

@@ -31,18 +31,15 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypes(
 
         return when {
             hadSpecificCombination -> {
-                EvaluationFactory.pass("Patient has received $treatmentDesc", "Has received $treatmentDesc")
+                EvaluationFactory.pass("Has received $treatmentDesc")
             }
 
             hadCombinationWithTrialWithUnknownType || hadTrialWithUnspecifiedTreatment -> {
-                EvaluationFactory.undetermined(
-                    "Undetermined if patient may have received $treatmentDesc",
-                    "Undetermined if received $treatmentDesc"
-                )
+                EvaluationFactory.undetermined("Undetermined if received $treatmentDesc")
             }
 
             else -> {
-                EvaluationFactory.fail("Patient has not received $treatmentDesc", "Has not received $treatmentDesc")
+                EvaluationFactory.fail("Has not received $treatmentDesc")
             }
         }
     }

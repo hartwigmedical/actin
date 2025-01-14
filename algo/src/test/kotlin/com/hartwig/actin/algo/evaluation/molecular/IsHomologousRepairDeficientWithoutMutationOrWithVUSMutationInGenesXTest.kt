@@ -143,7 +143,7 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesXTest {
             )
         )
         assertEvaluation(EvaluationResult.WARN, result)
-        assertThat(result.warnSpecificMessages).containsExactly("Homologous repair deficiency (HRD) status detected, without drivers in HR genes")
+        assertThat(result.warnMessages).containsExactly("Tumor is HRD but without drivers in HR genes")
     }
 
     @Test
@@ -246,7 +246,7 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesXTest {
             )
         )
         assertEvaluation(EvaluationResult.WARN, result)
-        assertThat(result.warnSpecificMessages).containsExactly("Homologous repair deficiency (HRD) detected, together with non-homozygous disruption in BRCA1 and non-hotspot biallelic non-high driver(s) in BRCA1 which could be pathogenic")
+        assertThat(result.warnMessages).containsExactly("Tumor is HRD with non-homozygous disruption in BRCA1 and non-hotspot biallelic non-high driver(s) in BRCA1 which could be pathogenic")
     }
 
     private fun hrdVariant(

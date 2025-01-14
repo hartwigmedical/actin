@@ -18,7 +18,7 @@ class HasHadPDFollowingTreatmentWithAnyDrug(private val drugsToMatch: Set<Drug>)
                 "Has had PD after receiving drugs ${Format.concatItemsWithAnd(treatmentEvaluation.matchingDrugsWithPD)}"
             )
         } else if (treatmentEvaluation.possibleTrialMatch) {
-            EvaluationFactory.undetermined("Undetermined if treatment received in trial included ${Format.concatItemsWithOr(drugsToMatch)}")
+            EvaluationFactory.undetermined("Undetermined if treatment received in previous trial included ${Format.concatItemsWithOr(drugsToMatch)}")
         } else if (treatmentEvaluation.matchesWithUnclearPD) {
             EvaluationFactory.undetermined(
                 "Has received drugs ${Format.concatItemsWithAnd(treatmentEvaluation.matchingDrugs)} but undetermined if PD"

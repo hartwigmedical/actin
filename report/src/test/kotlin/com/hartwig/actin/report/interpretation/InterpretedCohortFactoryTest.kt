@@ -183,7 +183,7 @@ class InterpretedCohortFactoryTest {
             Eligibility(references = emptySet(), EligibilityFunction(eligibilityRule, parameters)) to Evaluation(
                 result = result,
                 recoverable = false,
-                failGeneralMessages = emptySet(),
+                failMessages = emptySet(),
                 inclusionMolecularEvents = emptySet(),
                 isMissingGenesForSufficientEvaluation = isMissingGenesForEvaluation
             )

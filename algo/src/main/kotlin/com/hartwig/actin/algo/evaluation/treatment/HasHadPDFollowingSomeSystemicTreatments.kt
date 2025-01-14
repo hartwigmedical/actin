@@ -33,14 +33,8 @@ class HasHadPDFollowingSomeSystemicTreatments(
                     EvaluationFactory.pass("Has received at least $minSystemicTreatments systemic treatments and PD is assumed")
             }
         } else if (maxSystemicCount >= minSystemicTreatments) {
-            return EvaluationFactory.undetermined(
-                "Undetermined if patient received at least $minSystemicTreatments systemic treatments",
-                "Undetermined if at least $minSystemicTreatments systemic treatments"
-            )
+            return EvaluationFactory.undetermined("Undetermined if received at least $minSystemicTreatments systemic treatments")
         }
-        return EvaluationFactory.fail(
-            "Patient did not receive at least $minSystemicTreatments systemic treatments",
-            "Nr of systemic treatments with PD is less than $minSystemicTreatments"
-        )
+        return EvaluationFactory.fail("Has not received at least $minSystemicTreatments systemic treatments with PD")
     }
 }

@@ -18,7 +18,7 @@ class IsHomologousRepairDeficientTest {
     @Test
     fun canEvaluate() {
         assertMolecularEvaluation(
-            EvaluationResult.FAIL,
+            EvaluationResult.UNDETERMINED,
             function.evaluate(
                 MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(null, hrdVariant())
             )

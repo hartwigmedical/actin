@@ -32,21 +32,20 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCode(
 
         return when {
             icdMatches.fullMatches.isNotEmpty() -> {
-                val messages = setOf(PriorConditionMessages.passGeneral(icdMatches.fullMatches.map { it.display() }))
+                val messages = setOf(PriorConditionMessages.pass(icdMatches.fullMatches.map { it.display() }))
                 Evaluation(
                     result = EvaluationResult.PASS,
                     recoverable = false,
-                    passSpecificMessages = messages,
-                    passGeneralMessages = messages
+                    passMessages = messages
                 )
             }
 
             icdMatches.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> EvaluationFactory.undetermined(
-                "Has history of ${Format.concatStringsWithAnd(icdMatches.mainCodeMatchesWithUnknownExtension.map { it.display() })} " +
+                "Has history of ${Format.concat(icdMatches.mainCodeMatchesWithUnknownExtension.map { it.display() })} " +
                         "but undetermined if history of $diseaseDescription"
             )
 
-            else -> EvaluationFactory.fail(PriorConditionMessages.failSpecific(diseaseDescription), PriorConditionMessages.failGeneral())
+            else -> EvaluationFactory.fail(PriorConditionMessages.fail(diseaseDescription))
         }
     }
 }

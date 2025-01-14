@@ -32,7 +32,7 @@ class HasHadOrganTransplant(private val icdModel: IcdModel, private val minYear:
                 EvaluationFactory.undetermined("Has had an organ transplant but unclear if after $minYear (date unknown)")
             }
 
-            else -> EvaluationFactory.fail("Has not had an organ transplant", "No organ transplant")
+            else -> EvaluationFactory.fail("No history of organ transplant")
         }
     }
 }

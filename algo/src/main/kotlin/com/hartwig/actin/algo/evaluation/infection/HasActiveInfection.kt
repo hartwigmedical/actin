@@ -24,25 +24,19 @@ class HasActiveInfection(private val atcTree: AtcTree, private val referenceDate
 
         return when {
             infection?.hasActiveInfection == true -> {
-                EvaluationFactory.pass(
-                    "Patient has active infection: " + description(infection),
-                    "Infection presence: " + description(infection)
-                )
+                EvaluationFactory.pass("Has active infection '${description(infection)}'")
             }
 
             currentlyUsesAntimicrobials -> {
-                EvaluationFactory.warn(
-                    "Patient uses antimicrobials which might indicate an active infection",
-                    "Possible active infection (antimicrobials usage)"
-                )
+                EvaluationFactory.warn("Possible active infection (antimicrobials usage)")
             }
 
             infection == null -> {
-                EvaluationFactory.recoverableUndetermined("Infection status data is missing", "Unknown infection status")
+                EvaluationFactory.recoverableUndetermined("Infection status data is missing")
             }
 
             else -> {
-                EvaluationFactory.fail("Patient has no active infection", "No infection present")
+                EvaluationFactory.fail("No active infection present")
             }
         }
     }

@@ -22,14 +22,12 @@ abstract class MolecularEvaluationFunction(maxTestAge: LocalDate? = null, useIns
         return if (recentMolecularTests.isEmpty()) {
             noMolecularRecordEvaluation() ?: EvaluationFactory.undetermined(
                 "No molecular results of sufficient quality",
-                "No molecular results of sufficient quality",
                 missingGenesForEvaluation = true
             )
         } else {
 
             if (genes().isNotEmpty() && genes().none { recentMolecularTests.any { t -> t.testsGene(it) } })
                 return EvaluationFactory.undetermined(
-                    "Gene(s) ${genes().joinToString { it }} not tested in molecular data",
                     "Gene(s) ${genes().joinToString { it }} not tested",
                     missingGenesForEvaluation = true
                 )
@@ -44,7 +42,6 @@ abstract class MolecularEvaluationFunction(maxTestAge: LocalDate? = null, useIns
                 ?: record.molecularHistory.latestOrangeMolecularRecord()?.let(::evaluate)
                 ?: noMolecularRecordEvaluation()
                 ?: EvaluationFactory.undetermined(
-                    "Insufficient molecular data",
                     "Insufficient molecular data",
                     missingGenesForEvaluation = true
                 )

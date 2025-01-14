@@ -14,7 +14,7 @@ class AnyGeneFromSetIsOverexpressedTest {
         val function = AnyGeneFromSetIsOverexpressed(LocalDate.of(2024, 11, 6), setOf("gene a", "gene b", "gene c"))
         val evaluation = function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedGeneralMessages)
+        assertThat(evaluation.undeterminedMessages)
             .contains("Overexpression of gene a, gene b and gene c in RNA undetermined")
     }
 }

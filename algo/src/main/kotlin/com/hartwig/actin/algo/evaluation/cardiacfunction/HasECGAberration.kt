@@ -9,27 +9,18 @@ class HasECGAberration internal constructor() : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val ecg = record.clinicalStatus.ecg
-            ?: return EvaluationFactory.fail(
-                "ECG details are missing - it is assumed there are no abnormalities",
-                "Assumed no ECG abnormalities"
-            )
+            ?: return EvaluationFactory.recoverableFail("Missing ECG details - assumed no ECG abnormalities")
         return when {
             ecg.hasSigAberrationLatestECG && ecg.aberrationDescription != null -> {
-                EvaluationFactory.pass(
-                    "Patient has known ECG abnormalities: ${ecg.aberrationDescription}",
-                    "ECG abnormalities: ${ecg.aberrationDescription}"
-                )
+                EvaluationFactory.pass("ECG abnormalities present (${ecg.aberrationDescription})")
             }
 
             ecg.hasSigAberrationLatestECG -> {
-                EvaluationFactory.pass(
-                    "Patient has ECG abnormalities (details unknown)",
-                    "ECG abnormalities present (details unknown)"
-                )
+                EvaluationFactory.pass("ECG abnormalities present (details unknown)")
             }
 
             else ->
-                EvaluationFactory.fail("Patient has no known ECG abnormalities", "No known ECG abnormalities")
+                EvaluationFactory.fail("No known ECG abnormalities")
         }
     }
 }

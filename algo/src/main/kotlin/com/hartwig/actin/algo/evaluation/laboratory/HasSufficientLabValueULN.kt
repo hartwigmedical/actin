@@ -16,28 +16,19 @@ class HasSufficientLabValueULN(private val minULNFactor: Double) : LabEvaluation
 
         return when (LabEvaluation.evaluateVersusMinULN(labValue, minULNFactor)) {
             LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN -> {
-                EvaluationFactory.recoverableFail(
-                    "$labValueString is below minimum of $referenceString", "$labValueString below min of $referenceString"
-                )
+                EvaluationFactory.recoverableFail("$labValueString below min of $referenceString")
             }
 
             LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_BUT_WITHIN_MARGIN -> {
-                EvaluationFactory.recoverableUndetermined(
-                    "$labValueString is below minimum of $referenceString", "$labValueString below min of $referenceString"
-                )
+                EvaluationFactory.recoverableUndetermined("$labValueString below min of $referenceString")
             }
 
             LabEvaluation.LabEvaluationResult.CANNOT_BE_DETERMINED -> {
-                EvaluationFactory.recoverableUndetermined(
-                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} could not be evaluated versus maximum ULN",
-                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} undetermined"
-                )
+                EvaluationFactory.recoverableUndetermined("${labMeasurement.display().replaceFirstChar { it.uppercase() }} undetermined")
             }
 
             LabEvaluation.LabEvaluationResult.WITHIN_THRESHOLD -> {
-                EvaluationFactory.recoverablePass(
-                    "$labValueString above minimum of $referenceString", "$labValueString above min of $referenceString"
-                )
+                EvaluationFactory.recoverablePass("$labValueString exceeds min of $referenceString")
             }
         }
     }

@@ -11,20 +11,20 @@ class HasKnownBrainMetastases : EvaluationFunction {
         with(record.tumor) {
             return when {
                 hasBrainLesions == true -> {
-                    EvaluationFactory.pass("Brain metastases are present", "Brain metastases")
+                    EvaluationFactory.pass("Has brain metastases")
                 }
 
                 hasSuspectedBrainLesions == true -> {
                     val message = "Brain metastases present but suspected lesions only"
-                    EvaluationFactory.warn(message, message)
+                    EvaluationFactory.warn(message)
                 }
 
                 hasBrainLesions == null -> {
-                    val message = "Undetermined if brain metastases present (data missing)"
-                    EvaluationFactory.undetermined(message, message)
+                    val message = "Undetermined if brain metastases present (brain lesions data missing)"
+                    EvaluationFactory.undetermined(message)
                 }
 
-                else -> EvaluationFactory.fail("No known brain metastases present", "No known brain metastases")
+                else -> EvaluationFactory.fail("No known brain metastases present")
             }
         }
     }

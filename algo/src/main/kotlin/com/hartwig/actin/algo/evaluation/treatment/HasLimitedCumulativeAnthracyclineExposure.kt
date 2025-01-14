@@ -24,30 +24,25 @@ class HasLimitedCumulativeAnthracyclineExposure(private val doidModel: DoidModel
 
         return when {
             anthracyclineSummary.hasSpecificMatch() -> {
-                EvaluationFactory.undetermined(
-                    "Patient has received anthracycline chemotherapy, exact dosage cannot be determined",
-                    "Undetermined dosage of anthracycline exposure"
-                )
+                EvaluationFactory.undetermined("Exact dosage of received anthracycline chemotherapy undetermined")
             }
 
             anthracyclineSummary.hasApproximateMatch() && hasSuspectPrimaryTumor -> {
                 EvaluationFactory.undetermined(
-                    "Patient has cancer type that is associated with potential anthracycline chemotherapy, "
-                            + "undetermined if anthracycline chemotherapy has been given", "Undetermined (dosage of) anthracycline exposure"
+                    "Cancer type is associated with potential anthracycline chemotherapy -  "
+                            + "undetermined if anthracycline chemotherapy has been given"
                 )
             }
 
             hasSuspectPriorTumorWithSuspectTreatmentHistory -> {
-                val message = "Undetermined if prior anthracycline exposure within permitted limit " +
-                        "(prior tumor in history associated with anthracycline chemotherapy)"
-                EvaluationFactory.undetermined(message, message)
+                EvaluationFactory.undetermined(
+                    "Undetermined if prior anthracycline exposure within permitted limit " +
+                            "(prior tumor in history associated with anthracycline chemotherapy)"
+                )
             }
 
             else -> {
-                EvaluationFactory.pass(
-                    "Patient should not have been exposed to anthracycline chemotherapy, thus not exceeding maximum dose",
-                    "Limited cumulative anthracycline exposure"
-                )
+                EvaluationFactory.pass("Should not have been exposed to anthracycline chemotherapy (thus not exceeding maximum dose)")
             }
         }
     }

@@ -72,13 +72,13 @@ class NsclcDriverGeneStatusesAreAvailableTest {
     }
 
     @Test
-    fun `Should fail with specific message if no WGS or targeted panel analysis in history and other panels only cover part of the target genes`() {
+    fun `Should fail with message if no WGS or targeted panel analysis in history and other panels only cover part of the target genes`() {
         val evaluation = function.evaluate(
             createNonWGSRecordWithOptionalPriorTests(
                 NSCLC_DRIVER_GENE_SET.drop(1).map { panelWithTestForGene(it) })
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failSpecificMessages).containsExactly(
+        assertThat(evaluation.failMessages).containsExactly(
             "NSCLC driver gene statuses not available (missing: ${NSCLC_DRIVER_GENE_SET.first()})"
         )
     }

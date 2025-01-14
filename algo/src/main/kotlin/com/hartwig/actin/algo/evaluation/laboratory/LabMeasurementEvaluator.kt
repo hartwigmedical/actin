@@ -21,19 +21,19 @@ class LabMeasurementEvaluator(
         if (!LabEvaluation.isValid(mostRecent, measurement, minValidDate)) {
             return evaluateInvalidLabValue(measurement, mostRecent, minValidDate)
         }
-        
+
         val evaluation = function.evaluate(record, measurement, mostRecent!!)
 
         return if (evaluation.result == EvaluationResult.PASS && !mostRecent.date.isAfter(minPassDate)) {
             Evaluation(
-                result = EvaluationResult.WARN,
+                result = EvaluationResult.PASS,
                 recoverable = true,
-                warnSpecificMessages = appendPastMinPassDate(evaluation.passSpecificMessages).toSet()
+                passMessages = appendPastMinPassDate(evaluation.passMessages).toSet()
             )
         } else evaluation
     }
 
     private fun appendPastMinPassDate(inputs: Set<String>): List<String> {
-        return inputs.map { "$it, but measurement occurred before ${date(minValidDate)}" }
+        return inputs.map { "$it but measurement occurred before ${date(minValidDate)}" }
     }
 }

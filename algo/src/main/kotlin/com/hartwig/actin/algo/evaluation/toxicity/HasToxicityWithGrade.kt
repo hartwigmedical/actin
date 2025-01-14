@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.Toxicity
@@ -40,6 +41,7 @@ class HasToxicityWithGrade(
             }
         }
 
+        val icdTitleText = targetIcdTitles?.let { "in ${Format.concatLowercaseWithCommaAndOr(it)}" } ?: ""
         return when {
             matchingToxicities.isNotEmpty() &&
                     (matchingToxicities.any { it.source == ToxicitySource.QUESTIONNAIRE } || !warnIfToxicitiesNotFromQuestionnaire) -> {
@@ -49,23 +51,15 @@ class HasToxicityWithGrade(
 
             matchingToxicities.isNotEmpty() -> {
                 val toxicityString = formatToxicities(matchingToxicities)
-                EvaluationFactory.recoverableWarn(
-                    "Patient has toxicities grade >= $minGrade$toxicityString - n.b. different EHR source than questionnaire",
-                    "Has toxicities grade >= $minGrade$toxicityString - n.b. different EHR source than questionnaire"
-                )
+                EvaluationFactory.recoverableWarn("Has toxicities grade >= $minGrade$toxicityString - n.b. different EHR source than questionnaire")
             }
 
             unresolvableToxicities.isNotEmpty() -> {
                 val toxicityString = formatToxicities(unresolvableToxicities)
-                return EvaluationFactory.undetermined(
-                    "Patient has toxicities grade >= $DEFAULT_QUESTIONNAIRE_GRADE$toxicityString but unknown if grade >= $minGrade",
-                    "Has toxicities grade >= $DEFAULT_QUESTIONNAIRE_GRADE$toxicityString but unknown if grade >= $minGrade"
-                )
+                return EvaluationFactory.undetermined("Has toxicities grade >= $DEFAULT_QUESTIONNAIRE_GRADE$toxicityString but unknown if grade >= $minGrade")
             }
 
-            else -> return EvaluationFactory.fail(
-                "No toxicities found with grade $minGrade or higher", "Grade >=$minGrade toxicities not present"
-            )
+            else -> return EvaluationFactory.fail("No toxicities $icdTitleText found with grade $minGrade or higher")
         }
     }
 

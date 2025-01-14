@@ -45,7 +45,7 @@ class HasContraindicationToCT(private val icdModel: IcdModel) : EvaluationFuncti
 
             intolerances.isNotEmpty() -> EvaluationFactory.recoverablePass(messageStart + Format.concatItemsWithAnd(intolerances))
 
-            else -> EvaluationFactory.fail("No potential contraindications to CT identified", "No potential contraindications to CT")
+            else -> EvaluationFactory.fail("No potential contraindications to CT")
         }
     }
 

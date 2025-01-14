@@ -18,10 +18,7 @@ class HasLimitedIndirectBilirubinULN(private val maxULNFactor: Double, private v
         check(labValue.code == LabMeasurement.DIRECT_BILIRUBIN.code) { "Indirect bilirubin must take direct bilirubin as input" }
         val mostRecentTotal = interpretation.mostRecentValue(LabMeasurement.TOTAL_BILIRUBIN)
         if (!LabEvaluation.isValid(mostRecentTotal, LabMeasurement.TOTAL_BILIRUBIN, minValidDate)) {
-            return EvaluationFactory.recoverableUndetermined(
-                "No recent measurement found for total bilirubin, hence indirect bilirubin could not be determined",
-                "Indirect bilirubin could not be determined"
-            )
+            return EvaluationFactory.recoverableUndetermined("Indirect bilirubin undetermined (no recent total bilirubin measurement)")
         }
 
         val labValueString = labValue(LabMeasurement.INDIRECT_BILIRUBIN, mostRecentTotal!!.value - labValue.value, labValue.unit)
@@ -30,26 +27,16 @@ class HasLimitedIndirectBilirubinULN(private val maxULNFactor: Double, private v
 
         return when (LabEvaluation.evaluateDifferenceVersusMaxULN(mostRecentTotal, labValue, maxULNFactor)) {
             LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN -> {
-                EvaluationFactory.recoverableFail(
-                    "$labValueString exceeds maximum of $referenceString", "$labValueString exceeds max of $referenceString"
-                )
+                EvaluationFactory.recoverableFail("$labValueString exceeds max of $referenceString")
             }
             LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_BUT_WITHIN_MARGIN -> {
-                EvaluationFactory.recoverableUndetermined(
-                    "$labValueString exceeds maximum of $referenceString but within margin of error",
-                    "$labValueString exceeds max of $referenceString but within margin of error"
-                )
+                EvaluationFactory.recoverableUndetermined("$labValueString exceeds max of $referenceString but within margin of error")
             }
             LabEvaluation.LabEvaluationResult.CANNOT_BE_DETERMINED -> {
-                EvaluationFactory.recoverableUndetermined(
-                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} could not be evaluated against maximum ULN",
-                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} undetermined"
-                )
+                EvaluationFactory.recoverableUndetermined("${labMeasurement.display().replaceFirstChar { it.uppercase() }} undetermined")
             }
             LabEvaluation.LabEvaluationResult.WITHIN_THRESHOLD -> {
-                EvaluationFactory.recoverablePass(
-                    "$labValueString below maximum of $referenceString", "$labValueString below max of $referenceString"
-                )
+                EvaluationFactory.recoverablePass("$labValueString below max of $referenceString")
             }
         }
     }

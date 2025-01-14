@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.util.Format
+import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.Fusion
 import com.hartwig.actin.datamodel.molecular.MolecularTest
@@ -21,7 +21,7 @@ class GeneHasVariantInExonRangeOfType(
     override fun evaluate(test: MolecularTest): Evaluation {
         val exonRangeMessage = generateExonRangeMessage(minExon, maxExon)
         val variantTypeMessage = generateRequiredVariantTypeMessage(requiredVariantType)
-        val baseMessage = "in exon $exonRangeMessage in gene $gene$variantTypeMessage detected"
+        val baseMessage = "in exon $exonRangeMessage in $gene$variantTypeMessage"
         val allowedVariantTypes = determineAllowedVariantTypes(requiredVariantType)
 
         val (canonicalReportableVariantMatches, canonicalUnreportableVariantMatches, reportableOtherVariantMatches) =
@@ -69,31 +69,18 @@ class GeneHasVariantInExonRangeOfType(
             canonicalReportableVariantMatches.isNotEmpty() && reportableOtherVariantMatches.isEmpty() -> {
                 EvaluationFactory.pass(
                     "Variant(s) $baseMessage in canonical transcript",
-                    "Variant(s) $baseMessage",
                     inclusionEvents = canonicalReportableVariantMatches
                 )
             }
 
             reportableExonSkips.isNotEmpty() && reportableOtherVariantMatches.isEmpty() -> {
-                EvaluationFactory.pass(
-                    "Exon(s) skipped $baseMessage",
-                    "Exons skipped $baseMessage",
-                    inclusionEvents = reportableExonSkips.map { it.event }.toSet()
-                )
+                EvaluationFactory.pass("Exon(s) skipped $baseMessage", inclusionEvents = reportableExonSkips.map { it.event }.toSet())
             }
 
             canonicalReportableVariantMatches.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "Variant(s) ${Format.concat(canonicalReportableVariantMatches)} $baseMessage in canonical transcript, together with variant(s) in non-canonical transcript: ${
-                        Format.concat(
-                            reportableOtherVariantMatches
-                        )
-                    }",
-                    "Variant(s) ${Format.concat(canonicalReportableVariantMatches)} $baseMessage, together with variant(s) in non-canonical transcript: ${
-                        Format.concat(
-                            reportableOtherVariantMatches
-                        )
-                    }",
+                    "Variant(s) ${concat(canonicalReportableVariantMatches)} $baseMessage in canonical transcript together with " +
+                            "variant(s) in non-canonical transcript: ${concat(reportableOtherVariantMatches)}",
                     inclusionEvents = canonicalReportableVariantMatches + reportableOtherVariantMatches
                 )
             }
@@ -101,16 +88,8 @@ class GeneHasVariantInExonRangeOfType(
             reportableExonSkips.isNotEmpty() -> {
                 val reportableExonSkipEvents = reportableExonSkips.map { it.event }.toSet()
                 EvaluationFactory.warn(
-                    "Exon(s) skipped $baseMessage due to ${Format.concat(reportableExonSkipEvents)}, together with variant(s) in non-canonical transcript: ${
-                        Format.concat(
-                            reportableOtherVariantMatches
-                        )
-                    }",
-                    "Exon(s) skipped $baseMessage due to ${Format.concat(reportableExonSkipEvents)}, together with variant(s) in non-canonical transcript: ${
-                        Format.concat(
-                            reportableOtherVariantMatches
-                        )
-                    }",
+                    "Exon(s) skipped $baseMessage due to ${concat(reportableExonSkipEvents)} together with variant(s) in " +
+                            "non-canonical transcript: ${concat(reportableOtherVariantMatches)}",
                     inclusionEvents = reportableExonSkipEvents + reportableOtherVariantMatches
                 )
             }
@@ -122,7 +101,7 @@ class GeneHasVariantInExonRangeOfType(
                     unreportableExonSkips.map { it.event }.toSet(),
                     baseMessage
                 )
-                    ?: EvaluationFactory.fail("No variant $baseMessage in canonical transcript", "No variant $baseMessage")
+                    ?: EvaluationFactory.fail("No variant $baseMessage in canonical transcript")
             }
         }
     }
@@ -142,19 +121,10 @@ class GeneHasVariantInExonRangeOfType(
             listOf(
                 EventsWithMessages(
                     canonicalUnreportableVariantMatches,
-                    "Variant(s) $baseMessage in canonical transcript but considered not reportable",
-                    "Variant(s) $baseMessage but not reportable"
+                    "Variant(s) $baseMessage in canonical transcript but considered not reportable"
                 ),
-                EventsWithMessages(
-                    reportableOtherVariantMatches,
-                    "Variant(s) $baseMessage but in non-canonical transcript",
-                    "Variant(s) $baseMessage but in non-canonical transcript"
-                ),
-                EventsWithMessages(
-                    unreportableFusions,
-                    "Exon skip(s) $baseMessage but not reportable",
-                    "Exon skip(s) $baseMessage but not reportable"
-                )
+                EventsWithMessages(reportableOtherVariantMatches, "Variant(s) $baseMessage but in non-canonical transcript"),
+                EventsWithMessages(unreportableFusions, "Exon skip(s) $baseMessage but not reportable")
             )
         )
     }

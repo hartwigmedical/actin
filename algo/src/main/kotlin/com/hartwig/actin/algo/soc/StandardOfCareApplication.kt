@@ -73,7 +73,7 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
         requiredTreatments.forEach {
             val allMessages = it.evaluations.flatMap { evaluation ->
                 with(evaluation) {
-                    passGeneralMessages + warnGeneralMessages + undeterminedGeneralMessages
+                    passMessages + warnMessages + undeterminedMessages
                 }
             }
             LOGGER.debug("${it.treatmentCandidate.treatment.display()}: ${allMessages.joinToString(", ")}")

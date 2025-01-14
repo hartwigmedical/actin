@@ -29,7 +29,7 @@ class EvaluationInterpreterTest {
                     rule = FIRST_CRITERION.id,
                     reference = FIRST_CRITERION.text,
                     entriesPerResult = mapOf(
-                        Pair(EvaluationResult.FAIL, EvaluationEntry("FAIL", setOf("fail specific 1", "fail specific 2"))),
+                        Pair(EvaluationResult.FAIL, EvaluationEntry("FAIL", setOf("fail 1", "fail 2"))),
                     )
                 )
             )
@@ -52,29 +52,29 @@ class EvaluationInterpreterTest {
                     rule = FIRST_CRITERION.id,
                     reference = FIRST_CRITERION.text,
                     entriesPerResult = mapOf(
-                        Pair(EvaluationResult.FAIL, EvaluationEntry("FAIL", setOf("fail specific 1", "fail specific 2"))),
+                        Pair(EvaluationResult.FAIL, EvaluationEntry("FAIL", setOf("fail 1", "fail 2"))),
                     )
                 ),
                 EvaluationInterpretation(
                     rule = SECOND_CRITERION.id,
                     reference = SECOND_CRITERION.text,
                     entriesPerResult = mapOf(
-                        Pair(EvaluationResult.WARN, EvaluationEntry("WARN", setOf("warn specific 1", "warn specific 2"))),
-                        Pair(EvaluationResult.UNDETERMINED, EvaluationEntry("UNDETERMINED", setOf("undetermined specific")))
+                        Pair(EvaluationResult.WARN, EvaluationEntry("WARN", setOf("warn 1", "warn 2"))),
+                        Pair(EvaluationResult.UNDETERMINED, EvaluationEntry("UNDETERMINED", setOf("undetermined")))
                     )
                 ),
                 EvaluationInterpretation(
                     rule = THIRD_CRITERION.id,
                     reference = THIRD_CRITERION.text,
                     entriesPerResult = mapOf(
-                        Pair(EvaluationResult.UNDETERMINED, EvaluationEntry("UNDETERMINED", setOf("undetermined specific")))
+                        Pair(EvaluationResult.UNDETERMINED, EvaluationEntry("UNDETERMINED", setOf("undetermined")))
                     )
                 ),
                 EvaluationInterpretation(
                     rule = FOURTH_CRITERION.id,
                     reference = FOURTH_CRITERION.text,
                     entriesPerResult = mapOf(
-                        Pair(EvaluationResult.PASS, EvaluationEntry("PASS", setOf("pass specific")))
+                        Pair(EvaluationResult.PASS, EvaluationEntry("PASS", setOf("pass")))
                     )
                 )
             )
@@ -86,10 +86,10 @@ class EvaluationInterpreterTest {
         val evaluations = mapOf(
             Pair(
                 FIRST_CRITERION, createBaseEvaluation(result = EvaluationResult.WARN).copy(
-                    failSpecificMessages = setOf(),
-                    warnSpecificMessages = setOf("warn+me+now"),
-                    undeterminedSpecificMessages = setOf(),
-                    passSpecificMessages = setOf(),
+                    failMessages = setOf(),
+                    warnMessages = setOf("warn+me+now"),
+                    undeterminedMessages = setOf(),
+                    passMessages = setOf(),
                 )
             ),
         )
@@ -123,10 +123,10 @@ class EvaluationInterpreterTest {
                     entriesPerResult = mapOf(
                         Pair(
                             EvaluationResult.FAIL,
-                            EvaluationEntry("FAIL (potentially recoverable)", setOf("fail specific 1", "fail specific 2"))
+                            EvaluationEntry("FAIL (potentially recoverable)", setOf("fail 1", "fail 2"))
                         ),
-                        Pair(EvaluationResult.WARN, EvaluationEntry("WARN", setOf("warn specific 1", "warn specific 2"))),
-                        Pair(EvaluationResult.UNDETERMINED, EvaluationEntry("UNDETERMINED", setOf("undetermined specific")))
+                        Pair(EvaluationResult.WARN, EvaluationEntry("WARN", setOf("warn 1", "warn 2"))),
+                        Pair(EvaluationResult.UNDETERMINED, EvaluationEntry("UNDETERMINED", setOf("undetermined")))
                     )
                 )
             )
@@ -137,10 +137,10 @@ class EvaluationInterpreterTest {
         return Evaluation(
             result = result,
             recoverable = false,
-            passSpecificMessages = setOf("pass specific"),
-            undeterminedSpecificMessages = setOf("undetermined specific"),
-            warnSpecificMessages = setOf("warn specific 1", "warn specific 2"),
-            failSpecificMessages = setOf("fail specific 1", "fail specific 2")
+            passMessages = setOf("pass"),
+            undeterminedMessages = setOf("undetermined"),
+            warnMessages = setOf("warn 1", "warn 2"),
+            failMessages = setOf("fail 1", "fail 2")
         )
     }
 }
