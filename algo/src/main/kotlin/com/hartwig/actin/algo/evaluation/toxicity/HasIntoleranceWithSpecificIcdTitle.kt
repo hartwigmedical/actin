@@ -19,7 +19,7 @@ class HasIntoleranceWithSpecificIcdTitle(private val icdModel: IcdModel, private
             }
 
             icdMatches.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> {
-                EvaluationFactory.undetermined("Intolerance in history - but undetermined if $targetIcdTitle intolerance (drug type unknown)")
+                EvaluationFactory.undetermined("Undetermined if intolerance in history is $targetIcdTitle intolerance (drug type unknown)")
             }
 
             else -> EvaluationFactory.fail("No known intolerance to $targetIcdTitle")

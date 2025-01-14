@@ -19,28 +19,16 @@ object TreatmentSinceDateFunctions {
 
         return when {
             matchingTreatments.any { treatmentSinceMinDate(it, minDate, false) } ->
-                EvaluationFactory.pass(
-                    "Treatment $predicateDescription administered since ${Format.date(minDate)}",
-                    "Matching treatment since date"
-                )
+                EvaluationFactory.pass("Treatment $predicateDescription administered since ${Format.date(minDate)}")
 
             matchingTreatments.any { treatmentSinceMinDate(it, minDate, true) } ->
-                EvaluationFactory.undetermined(
-                    "Treatment $predicateDescription administered with unknown date",
-                    "Matching treatment with unknown date"
-                )
+                EvaluationFactory.undetermined("Treatment $predicateDescription administered with unknown date")
 
             matchingTreatments.isNotEmpty() ->
-                EvaluationFactory.fail(
-                    "All treatments $predicateDescription administered before ${Format.date(minDate)}",
-                    "Matching treatment with earlier date"
-                )
+                EvaluationFactory.fail("All treatments $predicateDescription administered before ${Format.date(minDate)}")
 
             else ->
-                EvaluationFactory.fail(
-                    "No treatments $predicateDescription in prior tumor history",
-                    "No matching treatments found"
-                )
+                EvaluationFactory.fail("No treatments $predicateDescription in prior history")
         }
     }
 

@@ -15,15 +15,9 @@ class HasReceivedSystemicTherapyForBrainMetastases : EvaluationFunction {
 
         return if ((confirmedCnsOrBrainMetastases || suspectedCnsOrBrainMetastases) && hasHadSystemicTreatment) {
             val suspectedMessage = if (!confirmedCnsOrBrainMetastases) " (suspected)" else ""
-            EvaluationFactory.warn(
-                "Patient has possibly received systemic therapy for$suspectedMessage brain metastases",
-                "Has possibly received systemic therapy for$suspectedMessage brain metastases"
-            )
+            EvaluationFactory.warn("Has possibly received systemic therapy for$suspectedMessage brain metastases")
         } else {
-            EvaluationFactory.fail(
-                "Patient has not received systemic therapy for brain metastases",
-                "Has not received systemic therapy for brain metastases"
-            )
+            EvaluationFactory.fail("Has not received systemic therapy for brain metastases")
         }
     }
 }

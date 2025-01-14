@@ -38,32 +38,19 @@ class ProteinExpressionByIHCFunctions(
 
         return when {
             EvaluationResult.PASS in evaluationsVersusReference -> {
-                EvaluationFactory.pass(
-                    "Protein $protein has expression level of $comparisonText $referenceExpressionLevel by IHC",
-                    "Adequate $protein expression level by IHC"
-                )
+                EvaluationFactory.pass("$protein has expression of $comparisonText $referenceExpressionLevel by IHC")
             }
 
             EvaluationResult.UNDETERMINED in evaluationsVersusReference || hasPositiveOrNegativeResult -> {
-                EvaluationFactory.undetermined(
-                    "Unknown if protein $protein expression level is $comparisonText $referenceExpressionLevel by IHC",
-                    "Exact expression level of $protein by IHC unknown"
-                )
+                EvaluationFactory.undetermined("Undetermined if $protein expression is $comparisonText $referenceExpressionLevel by IHC")
             }
 
             ihcTests.isEmpty() -> {
-                EvaluationFactory.undetermined(
-                    "No test result found; protein $protein has not been tested by IHC",
-                    "No $protein IHC test result",
-                    missingGenesForEvaluation = true
-                )
+                EvaluationFactory.undetermined("No $protein IHC test result", missingGenesForEvaluation = true)
             }
 
             else -> {
-                EvaluationFactory.fail(
-                    "Protein $protein expression level by IHC not $comparisonText $referenceExpressionLevel",
-                    "Inadequate $protein expression level by IHC"
-                )
+                EvaluationFactory.fail("$protein expression not $comparisonText $referenceExpressionLevel by IHC")
             }
         }
     }

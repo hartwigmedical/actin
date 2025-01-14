@@ -10,25 +10,19 @@ class HasIncurableCancer : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val stage = record.tumor.stage
-            ?: return EvaluationFactory.undetermined(
-                "Tumor stage details are missing, if cancer is considered incurable cannot be determined",
-                "Undetermined incurable cancer"
-            )
+            ?: return EvaluationFactory.undetermined("Incurable cancer undetermined (tumor stage missing)")
 
         return when {
             isStageMatch(stage, TumorStage.IV) -> {
-                EvaluationFactory.pass("Stage IV cancer is considered incurable", "Incurable cancer")
+                EvaluationFactory.pass("Stage IV cancer is considered incurable")
             }
 
             isStageMatch(stage, TumorStage.III) -> {
-                EvaluationFactory.undetermined(
-                    "Could not be determined if stage $stage cancer is considered incurable",
-                    "Undetermined if cancer is incurable by stage $stage"
-                )
+                EvaluationFactory.undetermined("Undetermined if stage $stage is considered incurable")
             }
 
             else -> {
-                EvaluationFactory.fail("Stage $stage cancer is not considered incurable", "No incurable cancer")
+                EvaluationFactory.fail("Stage $stage cancer is not considered incurable")
             }
         }
     }

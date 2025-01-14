@@ -133,9 +133,9 @@ class SOCGeneratorFunctionsTest {
 
     private fun evaluation(evaluationResult: EvaluationResult, messages: Set<String>, recoverable: Boolean = false): Evaluation {
         return when (evaluationResult) {
-            EvaluationResult.PASS -> Evaluation(evaluationResult, recoverable, passGeneralMessages = messages)
-            EvaluationResult.WARN -> Evaluation(evaluationResult, recoverable, warnGeneralMessages = messages)
-            else -> Evaluation(evaluationResult, recoverable, undeterminedGeneralMessages = messages)
+            EvaluationResult.PASS -> Evaluation(evaluationResult, recoverable, passMessages = messages)
+            EvaluationResult.WARN -> Evaluation(evaluationResult, recoverable, warnMessages = messages)
+            else -> Evaluation(evaluationResult, recoverable, undeterminedMessages = messages)
         }
     }
 

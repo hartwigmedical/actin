@@ -9,14 +9,11 @@ class HasMeasurableDisease : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val hasMeasurableDisease = record.tumor.hasMeasurableDisease
-            ?: return EvaluationFactory.recoverableUndetermined(
-                "Data regarding measurable disease is missing, unknown if measurable",
-                "Undetermined measurable disease"
-            )
+            ?: return EvaluationFactory.recoverableUndetermined("Measurable disease undetermined (data missing)")
         return if (hasMeasurableDisease) {
-            EvaluationFactory.recoverablePass("Patient has measurable disease", "Has measurable disease")
+            EvaluationFactory.recoverablePass("Has measurable disease")
         } else {
-            EvaluationFactory.recoverableFail("Patient has no measurable disease", "No measurable disease")
+            EvaluationFactory.recoverableFail("No measurable disease")
         }
     }
 }

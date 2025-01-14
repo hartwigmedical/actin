@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Radiotherapy
@@ -16,7 +16,8 @@ class HasHadNonInternalRadiotherapy : EvaluationFunction {
         return if (matchingTreatments.isNotEmpty()) {
             EvaluationFactory.pass(
                 "Has received non-internal radiotherapy (" +
-                        concatLowercaseWithAnd(matchingTreatments.map(TreatmentHistoryEntryFunctions::fullTreatmentDisplay)) + ")"
+                        Format.concatLowercaseWithCommaAndAnd(matchingTreatments.map(TreatmentHistoryEntryFunctions::fullTreatmentDisplay))
+                        + ")"
             )
         } else {
             EvaluationFactory.fail("Has not received any non-internal radiotherapy")

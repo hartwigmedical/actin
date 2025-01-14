@@ -61,7 +61,7 @@ class HasBMIUpToLimitTest {
             )
         )
         assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passSpecificMessages).contains("Median weight 75.0 kg will not exceed BMI limit of 40 for height >= 1.37 m")
+        assertThat(evaluation.passMessages).contains("Median weight 75.0 kg will not exceed BMI limit of 40 for height >= 1.37 m")
     }
 
     @Test
@@ -88,7 +88,7 @@ class HasBMIUpToLimitTest {
             )
         )
         assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failSpecificMessages).contains("Median weight 175.0 kg will exceed BMI limit of 40 for height < 2.09 m")
+        assertThat(evaluation.failMessages).contains("Median weight 175.0 kg will exceed BMI limit of 40 for height < 2.09 m")
     }
 
     @Test
@@ -102,6 +102,6 @@ class HasBMIUpToLimitTest {
             )
         )
         assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnSpecificMessages).contains("Median weight 102.5 kg will exceed BMI limit of 40 for height < 1.60 m")
+        assertThat(evaluation.warnMessages).contains("Median weight 102.5 kg will exceed BMI limit of 40 for height < 1.60 m")
     }
 }

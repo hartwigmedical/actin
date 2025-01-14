@@ -27,38 +27,23 @@ class HasHadAnyCancerTreatmentSinceDate(
 
         return when {
             effectiveTreatmentHistory.any { treatmentSinceMinDate(it, minDate, false) } -> {
-                EvaluationFactory.pass(
-                    "Patient has had anti-cancer therapy within the last $monthsAgo months",
-                    "Received anti-cancer therapy within the last $monthsAgo months"
-                )
+                EvaluationFactory.pass("Received anti-cancer therapy within the last $monthsAgo months")
             }
 
             effectiveTreatmentHistory.any { it.isTrial } || record.medications?.any { it.isTrialMedication } == true -> {
-                EvaluationFactory.undetermined(
-                    "Patient has participated in a trial recently, inconclusive if patient has had any cancer treatment",
-                    "Inconclusive if patient had any prior cancer treatment due to trial participation"
-                )
+                EvaluationFactory.undetermined("Inconclusive if patient had any prior cancer treatment because participated in trial")
             }
 
             effectiveTreatmentHistory.any { treatmentSinceMinDate(it, minDate, true) } -> {
-                EvaluationFactory.undetermined(
-                    "Patient has had anti-cancer therapy but undetermined if in the last $monthsAgo months (date unknown)",
-                    "Received anti-cancer therapy but undetermined if in the last $monthsAgo months (date unknown)"
-                )
+                EvaluationFactory.undetermined("Received anti-cancer therapy but undetermined if in the last $monthsAgo months (date unknown)")
             }
 
             effectiveTreatmentHistory.isEmpty() -> {
-                EvaluationFactory.fail(
-                    "Patient has not received anti-cancer therapy within $monthsAgo months",
-                    "Has not received anti-cancer therapy within $monthsAgo months"
-                )
+                EvaluationFactory.fail("Has not received anti-cancer therapy within $monthsAgo months")
             }
 
             else -> {
-                EvaluationFactory.fail(
-                    "Patient has not had any prior cancer treatments",
-                    "Has not had any cancer treatment"
-                )
+                EvaluationFactory.fail("Has not had any prior cancer treatment")
             }
         }
     }

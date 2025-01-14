@@ -4,7 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.treatment.MedicationFunctions.createTreatmentHistoryEntriesFromMedications
 import com.hartwig.actin.algo.evaluation.util.DateComparison.isAfterDate
-import com.hartwig.actin.algo.evaluation.util.Format.concatItems
+import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithAnd
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 import com.hartwig.actin.datamodel.PatientRecord
@@ -37,7 +37,7 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
             )
         }.fold(TreatmentAssessment()) { acc, element -> acc.combineWith(element) }
 
-        val typesList = concatItems(types)
+        val typesList = concatItemsWithAnd(types)
 
         return when {
             treatmentAssessment.hasHadValidTreatment -> {
@@ -49,10 +49,7 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
             }
 
             treatmentAssessment.hasHadTrialAfterMinDate -> {
-                EvaluationFactory.undetermined(
-                    "Patient has participated in a trial recently, inconclusive ${category.display()} treatment",
-                    "Inconclusive ${category.display()} treatment due to trial participation"
-                )
+                EvaluationFactory.undetermined("Undetermined if treatment received in previous trial included ${category.display()}")
             }
 
             else -> {

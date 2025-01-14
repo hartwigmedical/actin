@@ -38,7 +38,7 @@ class HasLimitedPDL1ByIHCTest {
             )
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedGeneralMessages).containsExactly(
+        assertThat(evaluation.undeterminedMessages).containsExactly(
             "Undetermined if PD-L1 expression (> ${MAX_PDL1.minus(1.0)}) below maximum of 2.0"
         )
     }

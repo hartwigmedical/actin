@@ -17,14 +17,7 @@ class HasHadPriorConditionWithIcdCodeFromSet(
         return when {
             icdMatches.fullMatches.isNotEmpty() -> {
                 val display = icdMatches.fullMatches.map { it.display() }.toSet()
-                EvaluationFactory.pass(
-                    PriorConditionMessages.passSpecific(
-                        PriorConditionMessages.Characteristic.CONDITION,
-                        display,
-                        priorOtherConditionTerm
-                    ),
-                    PriorConditionMessages.passGeneral(display)
-                )
+                EvaluationFactory.pass(PriorConditionMessages.pass(display))
             }
 
             icdMatches.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> {
@@ -36,8 +29,7 @@ class HasHadPriorConditionWithIcdCodeFromSet(
 
             else -> {
                 EvaluationFactory.fail(
-                    PriorConditionMessages.failSpecific(priorOtherConditionTerm),
-                    PriorConditionMessages.failGeneral()
+                    PriorConditionMessages.fail(priorOtherConditionTerm),
                 )
             }
         }

@@ -33,7 +33,7 @@ class HasContraindicationToMRI(private val icdModel: IcdModel) : EvaluationFunct
                 EvaluationFactory.recoverablePass(messageStart + Format.concatItemsWithAnd(comorbiditiesMatchingString))
             }
 
-            else -> EvaluationFactory.fail("No potential contraindications to MRI identified", "No potential contraindications to MRI")
+            else -> EvaluationFactory.fail("No potential contraindications to MRI")
         }
     }
 

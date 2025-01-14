@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.complication
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -32,9 +32,7 @@ class HasLeptomeningealDisease(private val icdModel: IcdModel) : EvaluationFunct
                 createWarnEvaluation(suspected = true, otherLesions)
             }
 
-            else -> {
-                EvaluationFactory.fail("Patient does not have leptomeningeal disease", "No leptomeningeal disease")
-            }
+            else -> EvaluationFactory.fail("No leptomeningeal disease")
         }
     }
 
@@ -50,8 +48,8 @@ class HasLeptomeningealDisease(private val icdModel: IcdModel) : EvaluationFunct
         private fun createWarnEvaluation(suspected: Boolean, lesions: List<String>): Evaluation {
             val suspectedString = if (suspected) " suspected" else ""
             return EvaluationFactory.warn(
-                "Patient has$suspectedString lesion indicating potential leptomeningeal disease: " + concat(lesions),
-                "Presence of$suspectedString lesions potentially indicating leptomeningeal disease"
+                "Has$suspectedString lesions '${Format.concatLowercaseWithAnd(lesions)}'" +
+                        " potentially indicating leptomeningeal disease"
             )
         }
     }

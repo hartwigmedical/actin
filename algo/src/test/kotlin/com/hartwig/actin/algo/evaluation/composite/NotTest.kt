@@ -75,26 +75,18 @@ class NotTest {
 
     private fun assertMessagesAreFlipped(evaluation: Evaluation, negatedEvaluation: Evaluation) {
         assertThat(evaluation.recoverable).isEqualTo(negatedEvaluation.recoverable)
-        assertThat(negatedEvaluation.passSpecificMessages).isEqualTo(evaluation.failSpecificMessages)
-        assertThat(negatedEvaluation.passGeneralMessages).isEqualTo(evaluation.failGeneralMessages)
-        assertThat(negatedEvaluation.failSpecificMessages).isEqualTo(evaluation.passSpecificMessages)
-        assertThat(negatedEvaluation.failGeneralMessages).isEqualTo(evaluation.passGeneralMessages)
-        assertThat(negatedEvaluation.undeterminedSpecificMessages).isEqualTo(evaluation.undeterminedSpecificMessages)
-        assertThat(negatedEvaluation.undeterminedGeneralMessages).isEqualTo(evaluation.undeterminedGeneralMessages)
-        assertThat(negatedEvaluation.warnSpecificMessages).isEqualTo(evaluation.warnSpecificMessages)
-        assertThat(negatedEvaluation.warnGeneralMessages).isEqualTo(evaluation.warnGeneralMessages)
+        assertThat(negatedEvaluation.passMessages).isEqualTo(evaluation.failMessages)
+        assertThat(negatedEvaluation.failMessages).isEqualTo(evaluation.passMessages)
+        assertThat(negatedEvaluation.undeterminedMessages).isEqualTo(evaluation.undeterminedMessages)
+        assertThat(negatedEvaluation.warnMessages).isEqualTo(evaluation.warnMessages)
     }
 
     private fun assertMessagesAreRetained(evaluation: Evaluation, negatedEvaluation: Evaluation) {
         assertThat(evaluation.recoverable).isEqualTo(negatedEvaluation.recoverable)
-        assertThat(negatedEvaluation.passSpecificMessages).isEqualTo(evaluation.passSpecificMessages)
-        assertThat(negatedEvaluation.passGeneralMessages).isEqualTo(evaluation.passGeneralMessages)
-        assertThat(negatedEvaluation.failSpecificMessages).isEqualTo(evaluation.failSpecificMessages)
-        assertThat(negatedEvaluation.failGeneralMessages).isEqualTo(evaluation.failGeneralMessages)
-        assertThat(negatedEvaluation.undeterminedSpecificMessages).isEqualTo(evaluation.undeterminedSpecificMessages)
-        assertThat(negatedEvaluation.undeterminedGeneralMessages).isEqualTo(evaluation.undeterminedGeneralMessages)
-        assertThat(negatedEvaluation.warnSpecificMessages).isEqualTo(evaluation.warnSpecificMessages)
-        assertThat(negatedEvaluation.warnGeneralMessages).isEqualTo(evaluation.warnGeneralMessages)
+        assertThat(negatedEvaluation.passMessages).isEqualTo(evaluation.passMessages)
+        assertThat(negatedEvaluation.failMessages).isEqualTo(evaluation.failMessages)
+        assertThat(negatedEvaluation.undeterminedMessages).isEqualTo(evaluation.undeterminedMessages)
+        assertThat(negatedEvaluation.warnMessages).isEqualTo(evaluation.warnMessages)
     }
 
     private fun assertEventsAreFlipped(evaluation: Evaluation, negatedEvaluation: Evaluation) {

@@ -8,8 +8,8 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.icd.TestIcdFactory
 import org.junit.Test
 
-class HasChildPughClassTest {
-   private val function = HasChildPughClass(TestIcdFactory.createTestModel())
+class HasChildPughScoreTest {
+   private val function = HasChildPughScore(TestIcdFactory.createTestModel())
 
     @Test
     fun `Should not evaluate when liver cirrhosis not present`() {

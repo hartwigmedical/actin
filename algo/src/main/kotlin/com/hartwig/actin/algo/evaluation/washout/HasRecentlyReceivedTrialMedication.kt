@@ -16,10 +16,7 @@ class HasRecentlyReceivedTrialMedication(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         if (minStopDate.isBefore(record.patient.registrationDate)) {
-            return EvaluationFactory.undetermined(
-                "Required stop date prior to registration date for recent trial medication usage evaluation",
-                "Undetermined recent trial medication"
-            )
+            return EvaluationFactory.undetermined("Recent trial medication undetermined (required stop date prior to registration date)")
         }
 
         val hadRecentTrialTreatment =
@@ -37,24 +34,15 @@ class HasRecentlyReceivedTrialMedication(
 
         return when {
             hasActiveOrRecentlyStoppedTrialMedication || hadRecentTrialTreatment -> {
-                EvaluationFactory.pass(
-                    "Patient recently received trial medication - pay attention to washout period",
-                    "Recent trial medication - pay attention to washout period"
-                )
+                EvaluationFactory.pass("Recent trial medication - pay attention to washout period")
             }
 
             hadTrialTreatmentWithUnknownDate -> {
-                EvaluationFactory.undetermined(
-                    "Patient received trial medication but date unknown",
-                    "Trial medication with unknown date"
-                )
+                EvaluationFactory.undetermined("Received trial medication but date unknown")
             }
 
             else -> {
-                EvaluationFactory.fail(
-                    "Patient has not recently received trial medication",
-                    "No recent trial medication"
-                )
+                EvaluationFactory.fail("No recent trial medication")
             }
         }
     }

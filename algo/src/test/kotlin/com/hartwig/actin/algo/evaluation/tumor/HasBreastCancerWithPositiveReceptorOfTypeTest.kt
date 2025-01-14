@@ -26,7 +26,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
             )
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedGeneralMessages).containsExactly("No tumor doids configured")
+        assertThat(evaluation.undeterminedMessages).containsExactly("Undetermined if PR positive breast cancer (tumor doids missing)")
     }
 
     @Test
@@ -50,7 +50,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
             )
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedGeneralMessages).containsExactly("$TARGET_RECEPTOR-status unknown")
+        assertThat(evaluation.undeterminedMessages).containsExactly("$TARGET_RECEPTOR-status unknown (data missing)")
     }
 
     @Test
@@ -62,7 +62,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(
-            evaluation.undeterminedGeneralMessages
+            evaluation.undeterminedMessages
         ).containsExactly(
             "HER2-status undetermined (IHC data missing) but probably positive since ERBB2 amp present"
         )
@@ -78,9 +78,9 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(
-            evaluation.undeterminedGeneralMessages
+            evaluation.undeterminedMessages
         ).containsExactly(
-            "Undetermined $TARGET_RECEPTOR-status - DOID and/or IHC data inconsistent"
+            "$TARGET_RECEPTOR-status undetermined (DOID and/or IHC data inconsistent)"
         )
     }
 
@@ -202,9 +202,9 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(
-            evaluation.undeterminedGeneralMessages
+            evaluation.undeterminedMessages
         ).containsExactly(
-            "No HER2-positive breast cancer - HER2-FISH may be beneficial (score 2+)"
+            "No HER2-positive breast cancer but HER2-score is2+ hence FISH may be useful"
         )
     }
 
@@ -218,9 +218,9 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         )
         assertEvaluation(EvaluationResult.WARN, evaluation)
         assertThat(
-            evaluation.warnGeneralMessages
+            evaluation.warnMessages
         ).containsExactly(
-            "Has $TARGET_RECEPTOR-positive breast cancer but clinical relevance unknown since $TARGET_RECEPTOR-score under 10%"
+            "Has $TARGET_RECEPTOR-positive breast cancer but clinical relevance unknown ($TARGET_RECEPTOR-score under 10%)"
         )
     }
 

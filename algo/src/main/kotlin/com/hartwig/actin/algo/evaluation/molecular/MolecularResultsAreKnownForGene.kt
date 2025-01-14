@@ -8,42 +8,30 @@ import com.hartwig.actin.datamodel.clinical.PriorIHCTest
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 
-class MolecularResultsAreAvailableForGene(private val gene: String) : EvaluationFunction {
+class MolecularResultsAreKnownForGene(private val gene: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         if (record.molecularHistory.molecularTests.isEmpty()) {
-            return EvaluationFactory.undetermined("No molecular data", "No molecular data")
+            return EvaluationFactory.undetermined("No molecular data")
         }
 
         val orangeMolecular = record.molecularHistory.latestOrangeMolecularRecord()
         if (orangeMolecular != null && orangeMolecular.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME && orangeMolecular.containsTumorCells) {
-            return EvaluationFactory.pass(
-                "WGS has successfully been performed so molecular results are available for gene $gene",
-                "WGS results available for $gene"
-            )
+            return EvaluationFactory.pass("WGS results available for $gene")
         }
 
         if (orangeMolecular != null && orangeMolecular.experimentType == ExperimentType.HARTWIG_TARGETED && orangeMolecular.containsTumorCells) {
             val geneIsTested = orangeMolecular.drivers.copyNumbers
                 .any { it.gene == gene }
             return if (geneIsTested) {
-                EvaluationFactory.pass(
-                    "OncoAct tumor NGS panel has been successfully performed so molecular results are available for gene $gene",
-                    "OncoAct tumor NGS panel results available for $gene"
-                )
+                EvaluationFactory.pass("OncoAct tumor NGS panel results available for $gene")
             } else {
-                EvaluationFactory.warn(
-                    "OncoAct tumor NGS panel has been successfully performed but cannot verify that gene $gene was included",
-                    "Unsure if gene $gene results are available within performed OncoAct tumor NGS panel"
-                )
+                EvaluationFactory.warn("Unsure if gene $gene results are available within performed OncoAct tumor NGS panel")
             }
         }
 
         if (isGeneTestedInPanel(record.molecularHistory)) {
-            return EvaluationFactory.pass(
-                "Panel has been performed and molecular results are available for gene $gene",
-                "Panel results available for $gene"
-            )
+            return EvaluationFactory.pass("Panel results available for $gene")
         }
 
         val (indeterminatePriorIHCTestsForGene, conclusivePriorIHCTestsForGene) = record.priorIHCTests
@@ -52,35 +40,26 @@ class MolecularResultsAreAvailableForGene(private val gene: String) : Evaluation
 
         return when {
             conclusivePriorIHCTestsForGene.isNotEmpty() -> {
-                EvaluationFactory.pass(
-                    "$gene has been tested in a prior IHC test",
-                    "$gene tested before"
-                )
+                EvaluationFactory.pass("$gene tested before in IHC test")
             }
 
             orangeMolecular != null && orangeMolecular.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME -> {
                 EvaluationFactory.undetermined(
-                    "Patient has had WGS but biopsy contained no tumor cells",
-                    "WGS performed containing $gene, but sample purity was too low"
+                    "WGS performed containing $gene but biopsy contained insufficient tumor cells for analysis"
                 )
             }
 
             orangeMolecular != null && orangeMolecular.experimentType == ExperimentType.HARTWIG_TARGETED -> {
-                EvaluationFactory.undetermined(
-                    "Patient has had OncoAct tumor NGS panel but biopsy contained too little tumor cells",
-                    "OncoAct tumor NGS panel performed containing $gene, but sample purity was too low"
-                )
+                EvaluationFactory.undetermined("OncoAct tumor NGS panel performed containing $gene but biopsy contained " +
+                        "insufficient tumor cells for analysis")
             }
 
             indeterminatePriorIHCTestsForGene.isNotEmpty() -> {
-                EvaluationFactory.undetermined(
-                    "$gene has been tested in a prior IHC test but with indeterminate status",
-                    "$gene tested before but indeterminate status"
-                )
+                EvaluationFactory.undetermined("$gene tested before in IHC test but indeterminate status")
             }
 
             else -> {
-                EvaluationFactory.fail("$gene has not been tested", "$gene not tested")
+                EvaluationFactory.recoverableFail("$gene not tested", missingGenesForEvaluation = true)
             }
         }
     }

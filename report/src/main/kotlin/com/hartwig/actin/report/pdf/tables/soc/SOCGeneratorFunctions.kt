@@ -85,7 +85,7 @@ object SOCGeneratorFunctions {
                 val efficacyEvidenceCell = addRealWorldEfficacyToTable(treatment)
 
                 val warningMessages = treatment.evaluations.flatMap {
-                    it.undeterminedGeneralMessages + it.warnGeneralMessages + if (it.recoverable) it.failGeneralMessages else emptyList()
+                    it.undeterminedMessages + it.warnMessages + if (it.recoverable) it.failMessages else emptyList()
                 }
                 val warningsCell = Cells.createContent(
                     warningMessages.sorted().distinct().joinToString(Formats.COMMA_SEPARATOR)

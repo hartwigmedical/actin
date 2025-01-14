@@ -16,24 +16,15 @@ class HasHadLimitedTreatmentsWithCategory(
 
         return when {
             treatmentSummary.numSpecificMatches() + treatmentSummary.numPossibleTrialMatches <= maxTreatmentLines -> {
-                EvaluationFactory.pass(
-                    "Patient has received at most " + maxTreatmentLines + " lines of " + category.display() + " treatment",
-                    "Has received at most " + maxTreatmentLines + " lines of " + category.display()
-                )
+                EvaluationFactory.pass("Has received at most " + maxTreatmentLines + " lines of " + category.display())
             }
 
             treatmentSummary.numSpecificMatches() <= maxTreatmentLines -> {
-                EvaluationFactory.undetermined(
-                    "Patient may have received more than " + maxTreatmentLines + " lines of " + category.display() + " treatment",
-                    "Undetermined if received at most " + maxTreatmentLines + " lines of " + category.display()
-                )
+                EvaluationFactory.undetermined("Undetermined if received at most " + maxTreatmentLines + " lines of " + category.display())
             }
 
             else -> {
-                EvaluationFactory.fail(
-                    "Patient has received more than " + maxTreatmentLines + " lines of " + category.display(),
-                    "Has not received at most " + maxTreatmentLines + " lines of " + category.display()
-                )
+                EvaluationFactory.fail("Has not received at most " + maxTreatmentLines + " lines of " + category.display())
             }
         }
     }

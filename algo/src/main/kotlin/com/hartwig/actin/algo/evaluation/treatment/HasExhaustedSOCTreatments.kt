@@ -24,37 +24,26 @@ class HasExhaustedSOCTreatments(
                 val remainingNonOptionalTreatments = recommendationEngine.determineRequiredTreatments(record)
                     .joinToString(", ") { it.treatmentCandidate.treatment.name.lowercase() }
                 if (remainingNonOptionalTreatments.isEmpty()) {
-                    EvaluationFactory.pass("Patient has exhausted SOC")
+                    EvaluationFactory.pass("Has exhausted SOC")
                 } else {
                     EvaluationFactory.fail(
-                        "Patient has not exhausted SOC (remaining options: $remainingNonOptionalTreatments)"
+                        "Has not exhausted SOC (remaining options: $remainingNonOptionalTreatments)"
                     )
                 }
             }
 
             isNSCLC -> {
                 if (hasReceivedPlatinumBasedDoubletOrMore) {
-                    EvaluationFactory.pass(
-                        "SOC considered exhausted since platinum doublet in treatment history", "SOC considered exhausted"
-                    )
-                } else EvaluationFactory.fail(
-                    "Patient has not exhausted SOC (at least platinum doublet remaining)",
-                    "SOC not exhausted: at least platinum doublet remaining"
-                )
+                    EvaluationFactory.pass("SOC considered exhausted (platinum doublet in history)")
+                } else EvaluationFactory.fail("Has not exhausted SOC (at least platinum doublet remaining)")
             }
 
             record.oncologicalHistory.isEmpty() -> {
-                EvaluationFactory.undetermined(
-                    "Patient has not had any prior cancer treatments and therefore undetermined exhaustion of SOC",
-                    "Undetermined exhaustion of SOC"
-                )
+                EvaluationFactory.undetermined("Exhaustion of SOC undetermined (no prior cancer treatment)")
             }
 
             else -> {
-                EvaluationFactory.notEvaluated(
-                    "Assumed exhaustion of SOC since patient has had prior cancer treatment",
-                    "Assumed exhaustion of SOC"
-                )
+                EvaluationFactory.notEvaluated("Assumed that SOC is exhausted (had prior cancer treatment)")
             }
         }
     }

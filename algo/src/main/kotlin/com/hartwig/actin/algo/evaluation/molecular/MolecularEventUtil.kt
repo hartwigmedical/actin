@@ -3,25 +3,24 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 
-data class EventsWithMessages(val events: Collection<String>?, val specificMessage: String, val generalMessage: String)
+data class EventsWithMessages(val events: Collection<String>?, val message: String)
 
 object MolecularEventUtil {
 
     fun evaluatePotentialWarnsForEventGroups(eventsWithMessages: List<EventsWithMessages>): Evaluation? {
-        val (warnEvents, warnSpecificMessages, warnGeneralMessages) = eventsWithMessages
-            .filter { (events, _, _) -> !events.isNullOrEmpty() }
+        val (warnEvents, warnMessages) = eventsWithMessages
+            .filter { (events, _) -> !events.isNullOrEmpty() }
             .fold(
-                Triple(emptySet<String>(), emptySet<String>(), emptySet<String>())
-            ) { (allEvents, specificMessages, generalMessages), (events, specific, general) ->
-                Triple(allEvents + events!!, specificMessages + specific, generalMessages + general)
+                Pair(emptySet<String>(), emptySet<String>())
+            ) { (allEvents, allMessages), (events, messages) ->
+                Pair(allEvents + events!!, allMessages + messages)
             }
 
-        return if (warnEvents.isNotEmpty() && warnSpecificMessages.isNotEmpty() && warnGeneralMessages.isNotEmpty()) {
+        return if (warnEvents.isNotEmpty() && warnMessages.isNotEmpty()) {
             Evaluation(
                 result = EvaluationResult.WARN,
                 recoverable = false,
-                warnSpecificMessages = warnSpecificMessages,
-                warnGeneralMessages = warnGeneralMessages,
+                warnMessages = warnMessages,
                 inclusionMolecularEvents = warnEvents
             )
         } else null

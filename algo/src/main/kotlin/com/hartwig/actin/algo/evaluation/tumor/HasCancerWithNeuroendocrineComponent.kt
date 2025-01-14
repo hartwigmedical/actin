@@ -18,17 +18,14 @@ class HasCancerWithNeuroendocrineComponent(private val doidModel: DoidModel, pri
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.tumor.doids
         if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids) && record.tumor.primaryTumorExtraDetails == null) {
-            return EvaluationFactory.undetermined(
-                "Could not determine whether tumor of patient may have a neuroendocrine component",
-                "Undetermined neuroendocrine component"
-            )
+            return EvaluationFactory.undetermined("Neuroendocrine component undetermined (tumor type missing)")
         }
         val hasNeuroendocrineDoid = DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, tumorDoids, NEUROENDOCRINE_DOIDS)
         val hasNeuroendocrineTerm = DoidEvaluationFunctions.isOfAtLeastOneDoidTerm(doidModel, tumorDoids, NEUROENDOCRINE_TERMS)
         val hasNeuroendocrineDetails =
             TumorTypeEvaluationFunctions.hasTumorWithDetails(record.tumor, NEUROENDOCRINE_EXTRA_DETAILS)
         if (hasNeuroendocrineDoid || hasNeuroendocrineTerm || hasNeuroendocrineDetails) {
-            return EvaluationFactory.pass("Patient has cancer with neuroendocrine component", "Presence of neuroendocrine component")
+            return EvaluationFactory.pass("Has cancer with neuroendocrine component")
         }
         val hasSmallCellDoid = DoidEvaluationFunctions.isOfAtLeastOneDoidType(
             doidModel, tumorDoids,
@@ -39,23 +36,14 @@ class HasCancerWithNeuroendocrineComponent(private val doidModel: DoidModel, pri
             HasCancerWithSmallCellComponent.SMALL_CELL_EXTRA_DETAILS
         )
         if (hasSmallCellDoid || hasSmallCellDetails) {
-            return EvaluationFactory.undetermined(
-                "Patient has cancer with small cell component, " +
-                        "undetermined if neuroendocrine component could be present as well", "Undetermined neuroendocrine component"
-            )
+            return EvaluationFactory.undetermined("Neuroendocrine component undetermined (small cell component present)")
         }
         return if (hasNeuroendocrineMolecularProfile(record).first) {
             val message = "Neuroendocrine molecular profile " +
                     " (inactivated genes: ${hasNeuroendocrineMolecularProfile(record).second.joinToString(", ")})"
-            EvaluationFactory.undetermined(
-                "$message - undetermined if considered cancer with neuroendocrine component",
-                "$message - undetermined if considered cancer with neuroendocrine component"
-            )
+            EvaluationFactory.undetermined("$message - undetermined if considered cancer with neuroendocrine component")
         } else
-            EvaluationFactory.fail(
-                "Patient does not have cancer with neuroendocrine component",
-                "No neuroendocrine component"
-            )
+            EvaluationFactory.fail("No neuroendocrine component")
     }
 
     private fun hasNeuroendocrineMolecularProfile(record: PatientRecord): Pair<Boolean, List<String>> {

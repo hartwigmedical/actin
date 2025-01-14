@@ -16,10 +16,7 @@ class HasSpecificMetastasesOnly(
     override fun evaluate(record: PatientRecord): Evaluation {
         with(record.tumor) {
             val hasSpecificMetastases = hasSpecificMetastases(this)
-                ?: return EvaluationFactory.undetermined(
-                    "Data regarding presence of $typeOfMetastases metastases is missing",
-                    "Missing $typeOfMetastases metastasis data"
-                )
+                ?: return EvaluationFactory.undetermined("Missing $typeOfMetastases metastasis data")
             val hasSuspectedSpecificMetastases = hasSuspectedSpecificMetastases(this) ?: false
 
             val otherMetastasesAccessors = confirmedCategoricalLesionList() - hasSpecificMetastases
@@ -27,51 +24,31 @@ class HasSpecificMetastasesOnly(
             val hasAnyOtherLesion = otherMetastasesAccessors.any { it == true } || !otherLesions.isNullOrEmpty()
             val hasSuspectedOtherLesion = !otherSuspectedLesions.isNullOrEmpty() || suspectedOtherMetastasesAccessors.any { it == true }
 
-            val metastasisString = "${typeOfMetastases.replaceFirstChar { it.uppercase() }}-only metastases"
+            val metastasisString = "$typeOfMetastases-only metastases"
 
             return when {
                 hasSpecificMetastases && !hasAnyOtherLesion && otherLesions == null && otherMetastasesAccessors.any { it == null } -> {
-                    EvaluationFactory.warn(
-                        "Patient has $typeOfMetastases lesions but data regarding other lesion locations is missing " +
-                                "so unknown if patient has only $typeOfMetastases metastases",
-                        "Lesion location data is missing: unknown if $typeOfMetastases metastases only"
-                    )
+                    EvaluationFactory.warn("Unknown if $metastasisString (lesion location missing)")
                 }
 
                 hasSpecificMetastases && !hasAnyOtherLesion -> {
-                    val specificMessage = "Patient only has $typeOfMetastases metastases"
-
                     if (hasSuspectedOtherLesion) {
-                        EvaluationFactory.warn(
-                            "$specificMessage but suspected other lesion(s) present as well",
-                            "Uncertain $metastasisString - suspected other lesions present"
-                        )
+                        EvaluationFactory.warn("Uncertain $metastasisString - suspected other lesions present")
                     } else {
-                        EvaluationFactory.pass(specificMessage, metastasisString)
+                        EvaluationFactory.pass(metastasisString.replaceFirstChar { it.uppercase() })
                     }
                 }
 
                 hasSuspectedSpecificMetastases && !hasAnyOtherLesion -> {
-                    val specificMessage = "Patient only has $typeOfMetastases metastases but lesion is suspected only"
-
                     if (hasSuspectedOtherLesion) {
-                        EvaluationFactory.warn(
-                            "$specificMessage and suspected other lesion(s) present as well",
-                            "Uncertain $metastasisString - lesion is suspected and other suspected lesion(s) present as well"
-                        )
+                        EvaluationFactory.warn("Uncertain $metastasisString - lesion is suspected and other suspected lesion(s) present as well")
                     } else {
-                        EvaluationFactory.warn(
-                            specificMessage,
-                            "Uncertain $metastasisString - lesion is suspected only"
-                        )
+                        EvaluationFactory.warn("Uncertain $metastasisString - lesion is suspected only")
                     }
                 }
 
                 else -> {
-                    EvaluationFactory.fail(
-                        "Patient does not have $typeOfMetastases metastases exclusively",
-                        "No $typeOfMetastases-only metastases"
-                    )
+                    EvaluationFactory.fail("No $metastasisString")
                 }
             }
         }

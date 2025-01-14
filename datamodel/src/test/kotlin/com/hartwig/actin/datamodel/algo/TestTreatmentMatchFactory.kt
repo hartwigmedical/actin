@@ -86,8 +86,7 @@ object TestTreatmentMatchFactory {
                     Evaluation(
                         result = EvaluationResult.PASS,
                         recoverable = false,
-                        passSpecificMessages = setOf("Patient has active CNS metastases"),
-                        passGeneralMessages = setOf("Active CNS metastases")
+                        passMessages = setOf("Has active CNS metastases")
                     )
                 ),
                 annotations = TestExtendedEvidenceEntryFactory.createProperTestExtendedEvidenceEntries(),
@@ -117,7 +116,7 @@ object TestTreatmentMatchFactory {
                         text = "Patient must be an adult"
                     )
                 )
-            ) to unrecoverable(EvaluationResult.PASS, "Patient is at least 18 years old", "Patient is adult", null),
+            ) to unrecoverable(EvaluationResult.PASS, "Patient is at least 18 years old", null),
             Eligibility(
                 function = EligibilityFunction(
                     rule = EligibilityRule.NOT, parameters = listOf(
@@ -130,7 +129,7 @@ object TestTreatmentMatchFactory {
                         text = "This rule has 2 conditions:\n 1. Patient has no active brain metastases\n 2. Patient has exhausted SOC"
                     )
                 )
-            ) to unrecoverable(EvaluationResult.PASS, "Patient has no known brain metastases", "No known brain metastases"),
+            ) to unrecoverable(EvaluationResult.PASS, "No known brain metastases present"),
             Eligibility(
                 function = EligibilityFunction(rule = EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS, parameters = emptyList()),
                 references = setOf(
@@ -139,11 +138,7 @@ object TestTreatmentMatchFactory {
                         text = "This rule has 2 conditions:\n 1. Patient has no active brain metastases.\n 2. Patient has exhausted SOC."
                     )
                 )
-            ) to unrecoverable(
-                EvaluationResult.FAIL,
-                "Patient has not exhausted SOC (remaining options capecitabine)",
-                "Patient has not exhausted SOC (remaining options capecitabine)"
-            )
+            ) to unrecoverable(EvaluationResult.FAIL, "Has not exhausted SOC (remaining options capecitabine)")
         )
     }
 
@@ -189,7 +184,7 @@ object TestTreatmentMatchFactory {
             Eligibility(
                 function = EligibilityFunction(rule = EligibilityRule.MSI_SIGNATURE, parameters = emptyList()),
                 references = setOf(CriterionReference(id = "I-01", text = "MSI")),
-            ) to unrecoverable(EvaluationResult.PASS, "Tumor is MSI", "MSI", "MSI")
+            ) to unrecoverable(EvaluationResult.PASS, "MSI", "MSI")
         )
     }
 
@@ -201,7 +196,7 @@ object TestTreatmentMatchFactory {
                     parameters = listOf(EligibilityFunction(rule = EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES)),
                 ),
                 references = setOf(CriterionReference(id = "E-01", text = "Active CNS metastases"))
-            ) to unrecoverable(EvaluationResult.FAIL, "Patient has active CNS metastases", "Active CNS metastases", null)
+            ) to unrecoverable(EvaluationResult.FAIL, "Has active CNS metastases", null)
         )
     }
 
@@ -210,11 +205,11 @@ object TestTreatmentMatchFactory {
             Eligibility(
                 function = EligibilityFunction(rule = EligibilityRule.HAS_MEASURABLE_DISEASE),
                 references = setOf(CriterionReference(id = "I-01", text = "Patient should have measurable disease")),
-            ) to unrecoverable(EvaluationResult.PASS, "Patient has measurable disease"),
+            ) to unrecoverable(EvaluationResult.PASS, "Has measurable disease"),
             Eligibility(
                 function = EligibilityFunction(rule = EligibilityRule.CAN_GIVE_ADEQUATE_INFORMED_CONSENT),
                 references = setOf(CriterionReference(id = "I-02", text = "Patient should be able to give adequate informed consent"))
-            ) to unrecoverable(EvaluationResult.NOT_EVALUATED, "It is assumed that patient can provide adequate informed consent")
+            ) to unrecoverable(EvaluationResult.NOT_EVALUATED, "Assumed that patient can give adequate informed consent")
         )
     }
 
@@ -237,36 +232,37 @@ object TestTreatmentMatchFactory {
             Eligibility(
                 function = EligibilityFunction(rule = EligibilityRule.MSI_SIGNATURE, parameters = emptyList()),
                 references = setOf(CriterionReference(id = "I-01", text = "MSI")),
-            ) to unrecoverable(EvaluationResult.PASS, "Tumor is MSI", "MSI", "MSI")
+            ) to unrecoverable(EvaluationResult.PASS, "Tumor is MSI with biallelic drivers in MMR genes", "MSI")
         )
     }
 
     private fun unrecoverable(
-        result: EvaluationResult, specificMessage: String,
-        generalMessage: String? = null, inclusionMolecularEvent: String? = null
+        result: EvaluationResult,
+        message: String? = null,
+        inclusionMolecularEvent: String? = null
     ): Evaluation {
         val base = Evaluation(result = result, recoverable = false, inclusionMolecularEvents = setOfNotNull(inclusionMolecularEvent))
         return when (result) {
             EvaluationResult.PASS -> {
-                base.copy(passSpecificMessages = setOf(specificMessage), passGeneralMessages = setOfNotNull(generalMessage))
+                base.copy(passMessages = setOfNotNull(message))
             }
 
             EvaluationResult.NOT_EVALUATED -> {
-                base.copy(passSpecificMessages = setOf(specificMessage), passGeneralMessages = setOfNotNull(generalMessage))
+                base.copy(passMessages = setOfNotNull(message))
             }
 
             EvaluationResult.WARN -> {
-                base.copy(warnSpecificMessages = setOf(specificMessage), warnGeneralMessages = setOfNotNull(generalMessage))
+                base.copy(warnMessages = setOfNotNull(message))
             }
 
             EvaluationResult.UNDETERMINED -> {
                 base.copy(
-                    undeterminedSpecificMessages = setOf(specificMessage), undeterminedGeneralMessages = setOfNotNull(generalMessage)
+                    undeterminedMessages = setOfNotNull(message)
                 )
             }
 
             EvaluationResult.FAIL -> {
-                base.copy(failSpecificMessages = setOf(specificMessage), failGeneralMessages = setOfNotNull(generalMessage))
+                base.copy(failMessages = setOfNotNull(message))
             }
         }
     }

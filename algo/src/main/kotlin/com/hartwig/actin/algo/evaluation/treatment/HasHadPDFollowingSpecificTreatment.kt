@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.treatment.ProgressiveDiseaseFunctions.treatmentResultedInPD
-import com.hartwig.actin.algo.evaluation.util.Format
+import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithAnd
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
@@ -16,21 +16,18 @@ class HasHadPDFollowingSpecificTreatment(private val treatments: List<Treatment>
 
         return if (treatmentEvaluation.matchingTreatmentsWithPD.isNotEmpty()) {
             EvaluationFactory.pass(
-                "Has had PD after receiving ${Format.concatItems(treatmentEvaluation.matchingTreatmentsWithPD)} treatment"
+                "Has had PD after receiving ${concatItemsWithAnd(treatmentEvaluation.matchingTreatmentsWithPD)} treatment"
             )
         } else if (treatmentEvaluation.includesTrial) {
-            EvaluationFactory.undetermined("Undetermined if received ${Format.concatItems(treatments)} treatment in trial")
+            EvaluationFactory.undetermined("Undetermined if received ${concatItemsWithAnd(treatments)} treatment in trial")
         } else if (treatmentEvaluation.matchesWithUnclearPD) {
             EvaluationFactory.undetermined(
-                "Has received ${Format.concatItems(treatmentEvaluation.matchingTreatments)} treatment but undetermined if PD"
+                "Has received ${concatItemsWithAnd(treatmentEvaluation.matchingTreatments)} treatment but undetermined if PD"
             )
         } else if (treatmentEvaluation.matchingTreatments.isNotEmpty()) {
-            EvaluationFactory.fail("Has received ${Format.concatItems(treatmentEvaluation.matchingTreatments)} treatment, but no PD")
+            EvaluationFactory.fail("Has received ${concatItemsWithAnd(treatmentEvaluation.matchingTreatments)} treatment but no PD")
         } else {
-            EvaluationFactory.fail(
-                "Patient has not received ${Format.concatItems(treatments)} treatment",
-                "Has not received ${Format.concatItems(treatments)} treatment"
-            )
+            EvaluationFactory.fail("Has not received ${concatItemsWithAnd(treatments)} treatment")
         }
     }
 

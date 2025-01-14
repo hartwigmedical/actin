@@ -20,6 +20,7 @@ import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.createMinimalTestMolecularRecord
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
@@ -198,8 +199,9 @@ class RecommendationEngineTest {
         val firstLineChemotherapies = listOf(CAPOX)
         val antiEgfrTreatments = setOf(CETUXIMAB, PANITUMUMAB)
         antiEgfrTreatments.forEach { antiEgfrTreatment ->
-            assertThat(resultsForPatientWithHistory(firstLineChemotherapies + antiEgfrTreatment)
-                .filter { (it.treatment as DrugTreatment).drugs.any { drug -> drug.name.uppercase() in antiEgfrTreatments } }).isEmpty()
+            assertThat(
+                resultsForPatientWithHistory(firstLineChemotherapies + antiEgfrTreatment)
+                    .filter { (it.treatment as DrugTreatment).drugs.any { drug -> drug.name.uppercase() in antiEgfrTreatments } }).isEmpty()
         }
     }
 
@@ -363,7 +365,13 @@ class RecommendationEngineTest {
 
         val pastTreatmentNames = listOf(FOLFOX, IRINOTECAN, FLUOROURACIL, CAPECITABINE, CETUXIMAB, "TARGETED_THERAPY")
         val patientWithNtrkFusionAndSocExhaustion = patientWithNtrkFusion.copy(
-            oncologicalHistory = treatmentHistoryFromNames(pastTreatmentNames)
+            oncologicalHistory = treatmentHistoryFromNames(pastTreatmentNames),
+            molecularHistory = MolecularHistory(
+                listOf(
+                    patientWithNtrkFusion.molecularHistory.latestOrangeMolecularRecord()!!
+                        .copy(characteristics = MINIMAL_MOLECULAR_RECORD.characteristics)
+                )
+            )
         )
         assertThat(RECOMMENDATION_ENGINE.patientHasExhaustedStandardOfCare(patientWithNtrkFusionAndSocExhaustion)).isTrue
         assertThat(resultsForPatient(patientWithNtrkFusionAndSocExhaustion).map(TreatmentCandidate::treatment))
@@ -444,12 +452,13 @@ class RecommendationEngineTest {
             FOLFOX
         )
 
-        private val MINIMAL_PATIENT_RECORD = TestPatientFactory.createMinimalTestWGSPatientRecord()
-        private val MINIMAL_CRC_PATIENT_RECORD = MINIMAL_PATIENT_RECORD.copy(
-            tumor = TumorDetails(doids = setOf(DoidConstants.COLORECTAL_CANCER_DOID))
-        )
-
-        private val MINIMAL_MOLECULAR_RECORD = TestMolecularFactory.createMinimalTestMolecularRecord()
+        private val MINIMAL_MOLECULAR_RECORD = createMinimalTestMolecularRecord()
+            .copy(
+                characteristics = createMinimalTestMolecularRecord().characteristics.copy(
+                    isMicrosatelliteUnstable = false,
+                    isHomologousRepairDeficient = false
+                )
+            )
         private val MOLECULAR_RECORD_WITH_BRAF_V600E = TestMolecularFactory.createProperTestMolecularRecord()
         private val MSI_MOLECULAR_RECORD = MINIMAL_MOLECULAR_RECORD.copy(
             characteristics = MINIMAL_MOLECULAR_RECORD.characteristics.copy(isMicrosatelliteUnstable = true)
@@ -463,6 +472,11 @@ class RecommendationEngineTest {
                     )
                 )
             )
+        )
+        private val MINIMAL_PATIENT_RECORD = TestPatientFactory.createMinimalTestWGSPatientRecord()
+            .copy(molecularHistory = MolecularHistory(listOf(MINIMAL_MOLECULAR_RECORD)))
+        private val MINIMAL_CRC_PATIENT_RECORD = MINIMAL_PATIENT_RECORD.copy(
+            tumor = TumorDetails(doids = setOf(DoidConstants.COLORECTAL_CANCER_DOID))
         )
 
         private val RECENT_DATE = LocalDate.now().minusMonths(4)

@@ -39,21 +39,14 @@
             ],
             "exclusionMolecularEvents": [
             ],
-            "passSpecificMessages": [
+            "passMessages": [
+              "Patient is at least 18 years old"
             ],
-            "passGeneralMessages": [
+            "warnMessages": [
             ],
-            "warnSpecificMessages": [
+            "undeterminedMessages": [
             ],
-            "warnGeneralMessages": [
-            ],
-            "undeterminedSpecificMessages": [
-            ],
-            "undeterminedGeneralMessages": [
-            ],
-            "failSpecificMessages": [
-            ],
-            "failGeneralMessages": [
+            "failMessages": [
             ]
           }
         ]
@@ -95,21 +88,14 @@
                 ],
                 "exclusionMolecularEvents": [
                 ],
-                "passSpecificMessages": [
+                "passMessages": [
                 ],
-                "passGeneralMessages": [
+                "warnMessages": [
                 ],
-                "warnSpecificMessages": [
+                "undeterminedMessages": [
                 ],
-                "warnGeneralMessages": [
-                ],
-                "undeterminedSpecificMessages": [
-                ],
-                "undeterminedGeneralMessages": [
-                ],
-                "failSpecificMessages": [
-                ],
-                "failGeneralMessages": [
+                "failMessages": [
+                  "No known active CNS metastases present"
                 ]
               }
             ]
@@ -187,11 +173,8 @@
         {
           "result": "FAIL",
           "recoverable": false,
-          "failSpecificMessages": [
-            "Patient is eligible for line 4 treatment"
-          ],
-          "failGeneralMessages": [
-            "Patient is eligible for line 4 treatment"
+          "failMessages": [
+            "Patient determined to be eligible for line 4"
           ]
         }
       ]

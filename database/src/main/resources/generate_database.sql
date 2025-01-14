@@ -638,14 +638,10 @@ CREATE TABLE `evaluation`
     `recoverable` BOOLEAN NOT NULL,
     `inclusionMolecularEvents` varchar(300) NOT NULL,
     `exclusionMolecularEvents` varchar(300) NOT NULL,
-    `passSpecificMessages` varchar(1500) NOT NULL,
-    `passGeneralMessages` varchar(1000) NOT NULL,
-    `warnSpecificMessages` varchar(2000) NOT NULL,
-    `warnGeneralMessages` varchar(1000) NOT NULL,
-    `undeterminedSpecificMessages` varchar(1000) NOT NULL,
-    `undeterminedGeneralMessages` varchar(1000) NOT NULL,
-    `failSpecificMessages` varchar(2000) NOT NULL,
-    `failGeneralMessages` varchar(1000) NOT NULL,
+    `passMessages` varchar(1000) NOT NULL,
+    `warnMessages` varchar(1000) NOT NULL,
+    `undeterminedMessages` varchar(1000) NOT NULL,
+    `failMessages` varchar(1000) NOT NULL,
     PRIMARY KEY (`id`)
 );
 

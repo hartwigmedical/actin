@@ -45,35 +45,35 @@ object EvaluationInterpreter {
     private fun createEvaluationInterpretationMap(evaluation: Evaluation): Map<EvaluationResult, EvaluationEntry> {
         return when (evaluation.result) {
             EvaluationResult.PASS, EvaluationResult.NOT_EVALUATED -> {
-                mapOf(Pair(evaluation.result, generateEntry(evaluation, evaluation.passSpecificMessages)))
+                mapOf(Pair(evaluation.result, generateEntry(evaluation, evaluation.passMessages)))
             }
 
             EvaluationResult.WARN -> {
                 listOfNotNull(
-                    Pair(evaluation.result, generateEntry(evaluation, evaluation.warnSpecificMessages)),
-                    evaluation.undeterminedSpecificMessages.takeIf { it.isNotEmpty() }?.let {
+                    Pair(evaluation.result, generateEntry(evaluation, evaluation.warnMessages)),
+                    evaluation.undeterminedMessages.takeIf { it.isNotEmpty() }?.let {
                         Pair(
                             EvaluationResult.UNDETERMINED,
-                            generateEntry(EvaluationResult.UNDETERMINED, evaluation.undeterminedSpecificMessages)
+                            generateEntry(EvaluationResult.UNDETERMINED, evaluation.undeterminedMessages)
                         )
                     }
                 ).toMap()
             }
 
             EvaluationResult.UNDETERMINED -> {
-                mapOf(Pair(evaluation.result, generateEntry(evaluation, evaluation.undeterminedSpecificMessages)))
+                mapOf(Pair(evaluation.result, generateEntry(evaluation, evaluation.undeterminedMessages)))
             }
 
             EvaluationResult.FAIL -> {
                 listOfNotNull(
-                    Pair(evaluation.result, generateEntry(evaluation, evaluation.failSpecificMessages)),
-                    evaluation.warnSpecificMessages.takeIf { it.isNotEmpty() && evaluation.recoverable }?.let {
-                        Pair(EvaluationResult.WARN, generateEntry(EvaluationResult.WARN, evaluation.warnSpecificMessages))
+                    Pair(evaluation.result, generateEntry(evaluation, evaluation.failMessages)),
+                    evaluation.warnMessages.takeIf { it.isNotEmpty() && evaluation.recoverable }?.let {
+                        Pair(EvaluationResult.WARN, generateEntry(EvaluationResult.WARN, evaluation.warnMessages))
                     },
-                    evaluation.undeterminedSpecificMessages.takeIf { it.isNotEmpty() && evaluation.recoverable }?.let {
+                    evaluation.undeterminedMessages.takeIf { it.isNotEmpty() && evaluation.recoverable }?.let {
                         Pair(
                             EvaluationResult.UNDETERMINED,
-                            generateEntry(EvaluationResult.UNDETERMINED, evaluation.undeterminedSpecificMessages)
+                            generateEntry(EvaluationResult.UNDETERMINED, evaluation.undeterminedMessages)
                         )
                     }
                 ).toMap()

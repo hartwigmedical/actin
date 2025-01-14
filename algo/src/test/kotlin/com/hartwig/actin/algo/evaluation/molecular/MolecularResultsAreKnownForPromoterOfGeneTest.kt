@@ -5,11 +5,11 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.PriorIHCTest
 import org.junit.Test
 
-class MolecularResultsAreAvailableForPromoterOfGeneTest {
+class MolecularResultsAreKnownForPromoterOfGeneTest {
 
     @Test
     fun canEvaluate() {
-        val function = MolecularResultsAreAvailableForPromoterOfGene("gene 1")
+        val function = MolecularResultsAreKnownForPromoterOfGene("gene 1")
         assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withIHCTests(create("gene 1 promoter", false))))
         assertEvaluation(
             EvaluationResult.UNDETERMINED,

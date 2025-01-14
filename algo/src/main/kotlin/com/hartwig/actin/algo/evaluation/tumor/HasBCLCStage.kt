@@ -8,6 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasBCLCStage : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined("Currently BCLC stage cannot be determined", "Undetermined BCLC stage")
+        return EvaluationFactory.undetermined("BCLC stage undetermined")
     }
 }

@@ -9,21 +9,17 @@ object TumorMetastasisEvaluator {
         val capitalizedType = metastasisType.replaceFirstChar { it.uppercase() }
         return when {
             hasMetastases == true -> {
-                EvaluationFactory.pass("$capitalizedType metastases are present", "$capitalizedType metastases")
+                EvaluationFactory.pass("Has ${metastasisType.lowercase()} metastases")
             }
 
             hasSuspectedMetastases == true -> {
-                val message = "$capitalizedType metastases present but only suspected lesions"
-                EvaluationFactory.warn(message, message)
+                EvaluationFactory.warn("$capitalizedType metastases present but only suspected lesions")
             }
 
-            hasMetastases == null -> EvaluationFactory.undetermined(
-                "Data regarding presence of $metastasisType metastases is missing",
-                "Missing $metastasisType metastasis data"
-            )
+            hasMetastases == null -> EvaluationFactory.undetermined("Missing $metastasisType metastasis data")
 
             else -> {
-                EvaluationFactory.fail("No $metastasisType metastases present", "No $metastasisType metastases")
+                EvaluationFactory.fail("No $metastasisType metastases")
             }
         }
     }

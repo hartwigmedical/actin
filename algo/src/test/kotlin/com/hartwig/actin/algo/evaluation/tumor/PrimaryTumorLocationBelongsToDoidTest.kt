@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
+import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.doid.DoidModel
@@ -50,6 +51,33 @@ class PrimaryTumorLocationBelongsToDoidTest {
     }
 
     @Test
+    fun `Should fail when patient has neuroendocrine tumor doid and doid to match is not neuroendocrine`() {
+        val pancreaticCancer = "1"
+        val pancreaticAdeno = "2"
+        val pancreaticNeuroendocrine = "3"
+        val ovaryNeuroendocrine = "4"
+        val childToParentsMap: Map<String, List<String>> = mapOf(
+            pancreaticAdeno to listOf(pancreaticCancer),
+            pancreaticNeuroendocrine to listOf(DoidConstants.NEUROENDOCRINE_TUMOR_DOID, pancreaticCancer),
+            ovaryNeuroendocrine to listOf(DoidConstants.NEUROENDOCRINE_TUMOR_DOID)
+        )
+        val doidModel: DoidModel = TestDoidModelFactory.createWithMainCancerTypeAndChildToParentsMap(pancreaticCancer, childToParentsMap)
+        val function = PrimaryTumorLocationBelongsToDoid(doidModel, setOf(pancreaticAdeno), null)
+        assertResultForDoids(EvaluationResult.FAIL, function, setOf(pancreaticCancer, DoidConstants.NEUROENDOCRINE_TUMOR_DOID))
+        assertResultForDoids(
+            EvaluationResult.UNDETERMINED,
+            PrimaryTumorLocationBelongsToDoid(doidModel, setOf(pancreaticNeuroendocrine), null),
+            setOf(pancreaticCancer, DoidConstants.NEUROENDOCRINE_TUMOR_DOID)
+        )
+        assertResultForDoid(EvaluationResult.UNDETERMINED, function, pancreaticCancer)
+        assertResultForDoids(
+            EvaluationResult.FAIL,
+            PrimaryTumorLocationBelongsToDoid(doidModel, setOf(pancreaticAdeno, ovaryNeuroendocrine), null),
+            setOf(pancreaticCancer, DoidConstants.NEUROENDOCRINE_TUMOR_DOID)
+        )
+    }
+
+    @Test
     fun `Should resolve to adeno squamous type`() {
         val mapping = AdenoSquamousMapping(adenoSquamousDoid = "1", squamousDoid = "2", adenoDoid = "3")
         val config = TestDoidManualConfigFactory.createWithOneAdenoSquamousMapping(mapping)
@@ -86,8 +114,8 @@ class PrimaryTumorLocationBelongsToDoidTest {
     fun `Should show correct fail message`() {
         val function = PrimaryTumorLocationBelongsToDoid(simpleDoidModel, setOf(CHILD_DOID_1, CHILD_DOID_2), null)
         assertThat(
-            function.evaluate(TumorTestFactory.withDoids(setOf("50", "250"))).failSpecificMessages
-        ).contains("Patient has no child term 1 or child term 2")
+            function.evaluate(TumorTestFactory.withDoids(setOf("50", "250"))).failMessages
+        ).contains("No child term 1 or child term 2")
     }
 
     @Test
@@ -117,7 +145,7 @@ class PrimaryTumorLocationBelongsToDoidTest {
     fun `Should pass when sub location and doid match`() {
         val pass = subLocationFunction.evaluate(TumorTestFactory.withDoidAndSubLocation(CHILD_DOID_1, SUB_LOCATION))
         assertEvaluation(EvaluationResult.PASS, pass)
-        assertThat(pass.passSpecificMessages).contains("Tumor belongs to child term 1 with sub-location specific")
+        assertThat(pass.passMessages).contains("Tumor belongs to child term 1 with sub-location specific")
     }
 
     companion object {

@@ -19,38 +19,27 @@ class HasRecentlyReceivedRadiotherapy(
 
         return when {
             radiotherapyEvaluations.any { (rightTime, rightPlace) -> rightTime == true && rightPlace == true } -> {
-                EvaluationFactory.pass(
-                    "Patient has recently received radiotherapy$bodyLocationMessage - pay attention to washout period",
-                    "Has recently received radiotherapy$bodyLocationMessage"
-                )
+                EvaluationFactory.pass("Has recently received radiotherapy$bodyLocationMessage - pay attention to washout period")
             }
 
             radiotherapyEvaluations.any { (rightTime, rightPlace) -> rightTime == null && rightPlace == true } -> {
                 EvaluationFactory.undetermined(
-                    "Has received prior radiotherapy$bodyLocationMessage with unknown date - if recent: pay attention to washout period",
                     "Has received prior radiotherapy$bodyLocationMessage with unknown date - pay attention to washout period"
                 )
             }
 
             radiotherapyEvaluations.any { (rightTime, rightPlace) -> rightTime == true && rightPlace == null } -> {
-                EvaluationFactory.recoverableUndetermined(
-                    "Patient has received radiotherapy but undetermined if target location was $requestedLocation",
-                    "Undetermined recent $requestedLocation radiation therapy"
-                )
+                EvaluationFactory.recoverableUndetermined("Undetermined if received radiotherapy had target location $requestedLocation")
             }
 
             radiotherapyEvaluations.any { (rightTime, rightPlace) -> rightTime == null && rightPlace == null } -> {
                 EvaluationFactory.recoverableUndetermined(
-                    "Patient has received prior radiotherapy but undetermined if recent (date unknown) and if $bodyLocationMessage",
-                    "Has received prior radiotherapy but undetermined if recent (date unknown) and if $bodyLocationMessage"
+                    "Has received prior radiotherapy but undetermined if recent (date unknown) and if$bodyLocationMessage"
                 )
             }
 
             else -> {
-                EvaluationFactory.fail(
-                    "Patient has not recently received radiotherapy $bodyLocationMessage",
-                    "No recent radiotherapy $bodyLocationMessage"
-                )
+                EvaluationFactory.fail("No recent radiotherapy$bodyLocationMessage")
             }
         }
     }

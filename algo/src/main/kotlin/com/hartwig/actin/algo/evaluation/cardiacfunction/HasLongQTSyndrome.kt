@@ -16,8 +16,8 @@ class HasLongQTSyndrome(private val icdModel: IcdModel) : EvaluationFunction {
         ).fullMatches.isNotEmpty()
 
         return when {
-            hasLongQTSyndrome -> EvaluationFactory.pass("Patient has long QT syndrome", "Presence of long QT syndrome")
-            else -> EvaluationFactory.fail("Patient does not have long QT syndrome", "No presence of long QT syndrome")
+            hasLongQTSyndrome -> EvaluationFactory.pass("Presence of long QT syndrome")
+            else -> EvaluationFactory.fail("No presence of long QT syndrome")
         }
     }
 }

@@ -8,9 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class IsInDialysis: EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.notEvaluated(
-            "Currently assumed that patient won't be in dialysis",
-            "Assumed patient is not in dialysis"
-        )
+        return EvaluationFactory.notEvaluated("Assumed that patient is not in dialysis")
     }
 }

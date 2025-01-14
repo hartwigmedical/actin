@@ -2,7 +2,8 @@ package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithCommaAndOr
+import com.hartwig.actin.algo.evaluation.util.Format.concatWithCommaAndOr
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
@@ -15,24 +16,15 @@ class CurrentlyGetsMedicationOfName(private val selector: MedicationSelector, pr
 
         return when {
             hasActiveMedicationWithName -> {
-                EvaluationFactory.recoverablePass(
-                    "Patient currently gets medication with name " + concat(termsToFind),
-                    concat(termsToFind) + " medication use"
-                )
+                EvaluationFactory.recoverablePass(concatWithCommaAndOr(termsToFind) + " medication use")
             }
 
             hasPlannedMedicationWithName -> {
-                EvaluationFactory.recoverableWarn(
-                    "Patient plans to get medication with name " + concat(termsToFind),
-                    "Planned " + concat(termsToFind) + " medication use"
-                )
+                EvaluationFactory.recoverableWarn("Planned " + concatLowercaseWithCommaAndOr(termsToFind) + " medication use")
             }
 
             else -> {
-                EvaluationFactory.recoverableFail(
-                    "Patient currently does not get medication with name " + concat(termsToFind),
-                    "No " + concat(termsToFind) + " medication use"
-                )
+                EvaluationFactory.recoverableFail("No " + concatLowercaseWithCommaAndOr(termsToFind) + " medication use")
             }
         }
     }
