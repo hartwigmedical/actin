@@ -10,8 +10,8 @@ import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import org.junit.Test
 
-class MolecularResultsAreAvailableForGeneTest {
-    private val function = MolecularResultsAreAvailableForGene("gene 1")
+class MolecularResultsAreKnownForGeneTest {
+    private val function = MolecularResultsAreKnownForGene("gene 1")
 
     private val geneCopyNumber1 = TestCopyNumberFactory.createMinimal().copy(
         gene = "gene 1",
@@ -168,7 +168,7 @@ class MolecularResultsAreAvailableForGeneTest {
     fun `Should pass for gene that is marked as tested in panel molecular test`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            MolecularResultsAreAvailableForGene("ALK")
+            MolecularResultsAreKnownForGene("ALK")
                 .evaluate(
                     MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                         listOf(TestPanelRecordFactory.empty().copy(testedGenes = setOf("ALK")))
@@ -182,7 +182,7 @@ class MolecularResultsAreAvailableForGeneTest {
     fun `Should fail for gene that is not marked as tested in panel molecular test`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            MolecularResultsAreAvailableForGene("ALK")
+            MolecularResultsAreKnownForGene("ALK")
                 .evaluate(
                     MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                         listOf(TestPanelRecordFactory.empty().copy(testedGenes = setOf("EGFR")))

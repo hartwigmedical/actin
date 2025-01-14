@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.clinical.PriorIHCTest
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 
-class MolecularResultsAreAvailableForGene(private val gene: String) : EvaluationFunction {
+class MolecularResultsAreKnownForGene(private val gene: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         if (record.molecularHistory.molecularTests.isEmpty()) {
@@ -59,7 +59,7 @@ class MolecularResultsAreAvailableForGene(private val gene: String) : Evaluation
             }
 
             else -> {
-                EvaluationFactory.fail("$gene not tested")
+                EvaluationFactory.recoverableFail("$gene not tested")
             }
         }
     }

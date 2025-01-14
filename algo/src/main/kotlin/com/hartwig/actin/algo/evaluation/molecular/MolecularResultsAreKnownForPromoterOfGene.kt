@@ -6,7 +6,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.PriorIHCTest
 
-class MolecularResultsAreAvailableForPromoterOfGene(private val gene: String) : EvaluationFunction {
+class MolecularResultsAreKnownForPromoterOfGene(private val gene: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val (indeterminatePriorTests, validPriorTests) = record.priorIHCTests
@@ -18,7 +18,7 @@ class MolecularResultsAreAvailableForPromoterOfGene(private val gene: String) : 
         } else if (indeterminatePriorTests.isNotEmpty()) {
             return EvaluationFactory.undetermined("$gene promoter tested in prior molecular test but indeterminate status")
         }
-        return EvaluationFactory.recoverableFail("$gene not tested in prior molecular test")
+        return EvaluationFactory.recoverableFail("$gene not tested")
     }
 
     companion object {
