@@ -5,7 +5,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.algo.icd.IcdConstants
-import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IcdCode
@@ -16,37 +15,25 @@ class HasContraindicationToMRI(private val icdModel: IcdModel) : EvaluationFunct
     override fun evaluate(record: PatientRecord): Evaluation {
         val targetCodes = setOf(IcdCode(IcdConstants.KIDNEY_FAILURE_BLOCK), IcdCode(IcdConstants.PRESENCE_OF_DEVICE_IMPLANT_OR_GRAFT_BLOCK))
 
-        val relevantConditions = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
+        val matchingComorbidities = icdModel.findInstancesMatchingAnyIcdCode(record.comorbidities, targetCodes).fullMatches
 
-        val matchingConditionsAndComplications = icdModel.findInstancesMatchingAnyIcdCode(
-            relevantConditions + (record.complications ?: emptyList()),
-            targetCodes
-        ).fullMatches
-
-        val conditionsMatchingString = relevantConditions.filter {
-            stringCaseInsensitivelyMatchesQueryCollection(it.name, OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_MRI)
+        val comorbiditiesMatchingString = record.comorbidities.filter {
+            stringCaseInsensitivelyMatchesQueryCollection(
+                it.name, OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_MRI + INTOLERANCES_BEING_CONTRAINDICATIONS_TO_MRI
+            )
         }
-        val intolerances =
-            record.intolerances.filter {
-                stringCaseInsensitivelyMatchesQueryCollection(
-                    it.name,
-                    INTOLERANCES_BEING_CONTRAINDICATIONS_TO_MRI
-                )
-            }
 
-        val conditionString = Format.concatItemsWithAnd(matchingConditionsAndComplications)
+        val conditionString = Format.concatItemsWithAnd(matchingComorbidities)
         val messageStart = "Potential MRI contraindication: "
 
         return when {
-            matchingConditionsAndComplications.isNotEmpty() -> EvaluationFactory.recoverablePass(messageStart + conditionString)
+            matchingComorbidities.isNotEmpty() -> EvaluationFactory.recoverablePass(messageStart + conditionString)
 
-            conditionsMatchingString.isNotEmpty() -> {
-                EvaluationFactory.recoverablePass(messageStart + Format.concatItemsWithAnd(conditionsMatchingString))
+            comorbiditiesMatchingString.isNotEmpty() -> {
+                EvaluationFactory.recoverablePass(messageStart + Format.concatItemsWithAnd(comorbiditiesMatchingString))
             }
 
-            intolerances.isNotEmpty() -> EvaluationFactory.recoverablePass(messageStart + Format.concatItemsWithAnd(intolerances))
-
-            else -> EvaluationFactory.fail("No potential contraindications to MRI identified", "No potential contraindications to MRI")
+            else -> EvaluationFactory.fail("No potential contraindications to MRI")
         }
     }
 

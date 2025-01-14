@@ -50,12 +50,12 @@ class HasPotentialUncontrolledTumorRelatedPainTest {
         val (complicationWithDirectMatch, complicationWithParentMatch) =
             listOf(targetNode.code, childOfTargetNode.code).map { ComplicationTestFactory.complication(icdCode = IcdCode(it)) }
         val (historyWithDirectMatch, historyWithParentMatch) =
-            listOf(targetNode.code, childOfTargetNode.code).map { OtherConditionTestFactory.priorOtherCondition(icdMainCode = it) }
+            listOf(targetNode.code, childOfTargetNode.code).map { OtherConditionTestFactory.otherCondition(icdMainCode = it) }
 
         listOf(
             listOf(complicationWithDirectMatch, complicationWithParentMatch).map { ComplicationTestFactory.withComplication(it) },
-            listOf(historyWithDirectMatch, historyWithParentMatch, OtherConditionTestFactory.priorOtherCondition(icdMainCode = otherTargetCode))
-                .map { OtherConditionTestFactory.withPriorOtherCondition(it) }
+            listOf(historyWithDirectMatch, historyWithParentMatch, OtherConditionTestFactory.otherCondition(icdMainCode = otherTargetCode))
+                .map { OtherConditionTestFactory.withOtherCondition(it) }
         ).flatten().forEach { assertEvaluation(EvaluationResult.UNDETERMINED, alwaysActiveFunction.evaluate(it)) }
     }
 

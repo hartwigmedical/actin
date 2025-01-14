@@ -48,10 +48,7 @@ class HasHadLimitedTreatmentsOfCategoryWithTypesAndStopReasonNotPD(
         return when {
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITHOUT_PD_AND_WEEKS in treatmentEvaluations -> {
                 val suffix = if (maxWeeks != null) " for less than $maxWeeks weeks" else ""
-                EvaluationFactory.pass(
-                    hasTreatmentSpecificMessage(suffix),
-                    hasTreatmentGeneralMessage(suffix)
-                )
+                EvaluationFactory.pass(hasTreatmentMessage(suffix))
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITHOUT_PD_AND_UNCLEAR_WEEKS in treatmentEvaluations -> {
@@ -71,42 +68,29 @@ class HasHadLimitedTreatmentsOfCategoryWithTypesAndStopReasonNotPD(
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL in treatmentEvaluations -> {
-                EvaluationFactory.undetermined(
-                    "Unclear whether patient has received " + treatment(),
-                    "Unclear if received " + category.display()
-                )
+                EvaluationFactory.undetermined("Unclear if received " + category.display())
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT in treatmentEvaluations -> {
-                EvaluationFactory.fail(
-                    "Patient has received ${treatment()} but with stop reason PD",
-                    "Has received ${treatment()} with stop reason PD"
-                )
+                EvaluationFactory.fail("Has received ${treatment()} with stop reason PD")
             }
 
             else -> {
-                EvaluationFactory.fail("No ${treatment()} treatment with PD", "No " + category.display())
+                EvaluationFactory.fail("No ${treatment()} treatment with PD")
             }
         }
     }
 
-    private fun hasTreatmentSpecificMessage(suffix: String = ""): String {
-        return "Patient has received ${treatment()}$suffix without stop reason PD"
-    }
-
-    private fun hasTreatmentGeneralMessage(suffix: String = ""): String {
-        return "Patient has had ${treatment()}$suffix without stop reason PD"
+    private fun hasTreatmentMessage(suffix: String = ""): String {
+        return "Has had ${treatment()}$suffix without stop reason PD"
     }
 
     private fun undetermined(suffix: String): Evaluation {
-        return EvaluationFactory.undetermined(
-            "Patient has received ${treatment()} $suffix",
-            "Has received ${treatment()} $suffix",
-        )
+        return EvaluationFactory.undetermined("Has received ${treatment()} $suffix")
     }
 
     private fun treatment(): String {
-        return "${Format.concatItems(types)} ${category.display()} treatment"
+        return "${Format.concatItemsWithAnd(types)} ${category.display()} treatment"
     }
 
     private enum class PDFollowingTreatmentEvaluation {

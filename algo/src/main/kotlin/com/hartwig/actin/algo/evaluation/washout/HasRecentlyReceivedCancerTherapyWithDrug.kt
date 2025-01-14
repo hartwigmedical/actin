@@ -5,7 +5,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentHistoryEntryFunctions
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentSinceDateFunctions
 import com.hartwig.actin.algo.evaluation.util.Format
-import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 import com.hartwig.actin.datamodel.PatientRecord
@@ -45,24 +44,19 @@ class HasRecentlyReceivedCancerTherapyWithDrug(
             medicationsFound.isNotEmpty() || matchingTreatments.any {
                 TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minDate, false)
             } -> {
-                EvaluationFactory.pass(
-                    "Patient has recently received treatment with medication " + concat(namesFound) + " - pay attention to washout period",
-                    "Has recently received treatment with medication " + concat(namesFound) + " - pay attention to washout period"
+                EvaluationFactory.pass("Has recently received treatment with medication ${Format.concat(namesFound)} " +
+                        "- pay attention to washout period"
                 )
             }
 
             matchingTreatments.any { TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minDate, true) } -> {
                 EvaluationFactory.undetermined(
-                    "Treatment containing '${Format.concatItemsWithOr(drugsToFind)}' administered with unknown date",
-                    "Matching treatment with unknown date"
+                    "Treatment containing '${Format.concatItemsWithOr(drugsToFind)}' administered with unknown date"
                 )
             }
 
             else -> {
-                EvaluationFactory.fail(
-                    "Patient has not received recent treatments with name " + Format.concatItemsWithOr(drugsToFind),
-                    "Has not received recent treatments with name " + Format.concatItemsWithOr(drugsToFind)
-                )
+                EvaluationFactory.fail("Has not received recent treatments with name " + Format.concatItemsWithOr(drugsToFind))
             }
         }
     }

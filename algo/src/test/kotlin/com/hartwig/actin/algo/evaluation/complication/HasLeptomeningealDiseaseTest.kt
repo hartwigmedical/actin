@@ -25,8 +25,8 @@ class HasLeptomeningealDiseaseTest {
                 ComplicationTestFactory.withComplication(
                     ComplicationTestFactory.complication(icdCode = IcdCode(code))
                 ),
-                OtherConditionTestFactory.withPriorOtherCondition(
-                    OtherConditionTestFactory.priorOtherCondition(icdMainCode = code)
+                OtherConditionTestFactory.withOtherCondition(
+                    OtherConditionTestFactory.otherCondition(icdMainCode = code)
                 )
             )
         }.forEach { assertEvaluation(EvaluationResult.PASS, function.evaluate(it)) }
@@ -60,8 +60,8 @@ class HasLeptomeningealDiseaseTest {
     fun `Should warn when suspected CNS lesion suggests leptomeningeal disease`() {
         val evaluation = function.evaluate(ComplicationTestFactory.withSuspectedCnsLesion("carcinomatous meningitis"))
         assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnSpecificMessages)
-            .containsExactly("Patient has suspected lesion indicating potential leptomeningeal disease: carcinomatous meningitis")
+        assertThat(evaluation.warnMessages)
+            .containsExactly("Has suspected lesions 'carcinomatous meningitis' potentially indicating leptomeningeal disease")
     }
 
     @Test

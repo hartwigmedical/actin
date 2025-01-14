@@ -23,21 +23,19 @@ class HasExtracranialMetastases : EvaluationFunction {
 
         return when {
             hasNonCnsMetastases || biopsyLocation?.let { isExtraCranialLesion(it) } == true || uncategorizedLesions.any(::isExtraCranialLesion) -> {
-                EvaluationFactory.pass("Patient has extracranial metastases", "Extracranial metastases present")
+                EvaluationFactory.pass("Has extracranial metastases")
             }
 
             hasSuspectedNonCnsMetastases || uncategorizedSuspectedLesions.any(::isExtraCranialLesion) -> {
-                val message = "Has extracranial metastases but only suspected lesions"
-                EvaluationFactory.warn(message, message)
+                EvaluationFactory.warn("Has extracranial metastases but only suspected lesions")
             }
 
             uncategorizedLesions.isNotEmpty() || anyCategorizedLesionUnknown || biopsyLocation == null -> {
-                val message = "Undetermined if extracranial metastases present"
-                EvaluationFactory.undetermined(message, message)
+                EvaluationFactory.undetermined("Undetermined if extracranial metastases present")
             }
 
             else -> {
-                EvaluationFactory.fail("Patient does not have extracranial metastases", "No extracranial metastases")
+                EvaluationFactory.fail("No extracranial metastases present")
             }
         }
     }

@@ -16,14 +16,13 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val OVERRIDE_MESSAGE = "Override message"
-private const val FAIL_SPECIFIC_MESSAGE = "Fail specific message"
-private const val FAIL_GENERAL_MESSAGE = "Fail general message"
+private const val FAIL_MESSAGE = "Fail message"
 private val MAX_AGE = LocalDate.of(2023, 9, 6)
 
 class MolecularEvaluationFunctionTest {
     private val function = object : MolecularEvaluationFunction(useInsufficientQualityRecords = false) {
         override fun evaluate(molecular: MolecularRecord): Evaluation {
-            return EvaluationFactory.fail(FAIL_SPECIFIC_MESSAGE, FAIL_GENERAL_MESSAGE)
+            return EvaluationFactory.fail(FAIL_MESSAGE)
         }
     }
 
@@ -37,10 +36,7 @@ class MolecularEvaluationFunctionTest {
 
     private val functionOnMolecularHistory = object : MolecularEvaluationFunction(useInsufficientQualityRecords = false) {
         override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
-            return EvaluationFactory.fail(
-                FAIL_SPECIFIC_MESSAGE,
-                FAIL_GENERAL_MESSAGE
-            )
+            return EvaluationFactory.fail(FAIL_MESSAGE)
         }
     }
 
@@ -56,8 +52,7 @@ class MolecularEvaluationFunctionTest {
         val evaluation = function.evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        assertThat(evaluation.undeterminedSpecificMessages).containsExactly("No molecular results of sufficient quality")
-        assertThat(evaluation.undeterminedGeneralMessages).containsExactly("No molecular results of sufficient quality")
+        assertThat(evaluation.undeterminedMessages).containsExactly("No molecular results of sufficient quality")
     }
 
     @Test
@@ -65,8 +60,7 @@ class MolecularEvaluationFunctionTest {
         val patient = withPanelTest()
         val evaluation = function.evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedSpecificMessages).containsExactly("Insufficient molecular data")
-        assertThat(evaluation.undeterminedGeneralMessages).containsExactly("Insufficient molecular data")
+        assertThat(evaluation.undeterminedMessages).containsExactly("Insufficient molecular data")
     }
 
     private fun emptyArcher(testDate: LocalDate? = null) =
@@ -77,8 +71,7 @@ class MolecularEvaluationFunctionTest {
         val patient = TestPatientFactory.createMinimalTestWGSPatientRecord()
         val evaluation = function.evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failSpecificMessages).containsExactly(FAIL_SPECIFIC_MESSAGE)
-        assertThat(evaluation.failGeneralMessages).containsExactly(FAIL_GENERAL_MESSAGE)
+        assertThat(evaluation.failMessages).containsExactly(FAIL_MESSAGE)
     }
 
     @Test
@@ -98,8 +91,7 @@ class MolecularEvaluationFunctionTest {
         val patient = TestPatientFactory.createMinimalTestWGSPatientRecord()
         val evaluation = functionOnMolecularHistory.evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failSpecificMessages).containsExactly(FAIL_SPECIFIC_MESSAGE)
-        assertThat(evaluation.failGeneralMessages).containsExactly(FAIL_GENERAL_MESSAGE)
+        assertThat(evaluation.failMessages).containsExactly(FAIL_MESSAGE)
     }
 
     @Test
@@ -107,8 +99,7 @@ class MolecularEvaluationFunctionTest {
         val patient = withPanelTest()
         val evaluation = functionWithGenes.evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedGeneralMessages).containsExactly("Gene(s) GENE not tested")
-        assertThat(evaluation.undeterminedSpecificMessages).containsExactly("Gene(s) GENE not tested in molecular data")
+        assertThat(evaluation.undeterminedMessages).containsExactly("Gene(s) GENE not tested")
         assertThat(evaluation.isMissingGenesForSufficientEvaluation).isTrue()
     }
 
@@ -118,7 +109,7 @@ class MolecularEvaluationFunctionTest {
         val function = object : MolecularEvaluationFunction(MAX_AGE, false) {
             override fun evaluate(test: MolecularTest): Evaluation {
                 evaluatedTests.add(test)
-                return EvaluationFactory.fail(FAIL_SPECIFIC_MESSAGE, FAIL_GENERAL_MESSAGE)
+                return EvaluationFactory.fail(FAIL_MESSAGE)
             }
         }
         val newTest = MAX_AGE.plusDays(1)
@@ -135,7 +126,6 @@ class MolecularEvaluationFunctionTest {
     private fun assertOverrideEvaluation(patient: PatientRecord) {
         val evaluation = functionWithOverride.evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failSpecificMessages).containsExactly(OVERRIDE_MESSAGE)
-        assertThat(evaluation.failGeneralMessages).containsExactly(OVERRIDE_MESSAGE)
+        assertThat(evaluation.failMessages).containsExactly(OVERRIDE_MESSAGE)
     }
 }

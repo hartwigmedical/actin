@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.Format
+import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithCommaAndAnd
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.DrugInteraction
@@ -24,37 +24,25 @@ class CurrentlyGetsCypXInhibitingOrInducingMedication(
         return when {
             activeCypMedications.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass(
-                    "Patient currently gets CYP$termToFind inhibiting/inducing medication: ${
-                        Format.concatLowercaseWithAnd(
-                            activeCypMedications
-                        )
-                    }",
-                    "CYP$termToFind inhibiting/inducing medication use: ${Format.concatLowercaseWithAnd(activeCypMedications)}"
+                    "CYP$termToFind inhibiting or inducing medication use (${concatLowercaseWithCommaAndAnd(activeCypMedications)})"
                 )
             }
 
             plannedCypMedications.isNotEmpty() -> {
                 EvaluationFactory.recoverableWarn(
-                    "Patient plans to get CYP$termToFind inhibiting/inducing medication: ${
-                        Format.concatLowercaseWithAnd(
-                            plannedCypMedications
-                        )
-                    }",
-                    "Planned CYP$termToFind inhibiting/inducing medication use: ${Format.concatLowercaseWithAnd(plannedCypMedications)}"
+                    "Planned CYP$termToFind inhibiting or inducing medication use (${concatLowercaseWithCommaAndAnd(plannedCypMedications)})"
                 )
             }
 
             termToFind in MedicationConstants.UNDETERMINED_CYP_STRING -> {
                 EvaluationFactory.undetermined(
-                    "Undetermined if patient currently gets CYP$termToFind inhibiting/inducing medication",
-                    "Undetermined CYP$termToFind inhibiting/inducing medication use"
+                    "CYP$termToFind inhibiting or inducing medication use undetermined"
                 )
             }
 
             else -> {
                 EvaluationFactory.recoverableFail(
-                    "Patient currently does not get CYP$termToFind inhibiting/inducing medication ",
-                    "No CYP$termToFind inhibiting/inducing medication use "
+                    "No CYP$termToFind inhibiting or inducing medication use"
                 )
             }
         }

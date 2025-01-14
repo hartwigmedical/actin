@@ -332,8 +332,8 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             return {
                 object : EvaluationFunction {
                     override fun evaluate(record: PatientRecord): Evaluation {
-                        return EvaluationFactory.recoverableUndeterminedNoGeneral(
-                            "Lab measure '$measure' cannot be determined yet"
+                        return EvaluationFactory.recoverableUndetermined(
+                            "Lab measure '$measure' undetermined"
                         )
                     }
                 }

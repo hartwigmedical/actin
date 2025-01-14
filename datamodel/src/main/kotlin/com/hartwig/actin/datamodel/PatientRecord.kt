@@ -4,13 +4,14 @@ import com.hartwig.actin.datamodel.clinical.BloodTransfusion
 import com.hartwig.actin.datamodel.clinical.BodyHeight
 import com.hartwig.actin.datamodel.clinical.BodyWeight
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
+import com.hartwig.actin.datamodel.clinical.Comorbidity
 import com.hartwig.actin.datamodel.clinical.Complication
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.LabValue
 import com.hartwig.actin.datamodel.clinical.Medication
+import com.hartwig.actin.datamodel.clinical.OtherCondition
 import com.hartwig.actin.datamodel.clinical.PatientDetails
 import com.hartwig.actin.datamodel.clinical.PriorIHCTest
-import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary
 import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.Toxicity
@@ -26,11 +27,8 @@ data class PatientRecord(
     val clinicalStatus: ClinicalStatus,
     val oncologicalHistory: List<TreatmentHistoryEntry>,
     val priorSecondPrimaries: List<PriorSecondPrimary>,
-    val priorOtherConditions: List<PriorOtherCondition>,
-    val complications: List<Complication>?,
+    val comorbidities: List<Comorbidity>,
     val labValues: List<LabValue>,
-    val toxicities: List<Toxicity>,
-    val intolerances: List<Intolerance>,
     val surgeries: List<Surgery>,
     val bodyWeights: List<BodyWeight>,
     val bodyHeights: List<BodyHeight>,
@@ -39,4 +37,17 @@ data class PatientRecord(
     val medications: List<Medication>?,
     val priorIHCTests: List<PriorIHCTest>,
     val molecularHistory: MolecularHistory
-)
+) {
+
+    val otherConditions: List<OtherCondition>
+        get() = comorbidities.filterIsInstance<OtherCondition>()
+
+    val complications: List<Complication>
+        get() = comorbidities.filterIsInstance<Complication>()
+
+    val toxicities: List<Toxicity>
+        get() = comorbidities.filterIsInstance<Toxicity>()
+
+    val intolerances: List<Intolerance>
+        get() = comorbidities.filterIsInstance<Intolerance>()
+}

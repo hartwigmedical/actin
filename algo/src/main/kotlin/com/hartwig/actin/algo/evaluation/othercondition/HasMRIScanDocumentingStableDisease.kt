@@ -8,9 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasMRIScanDocumentingStableDisease: EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined(
-            "Currently presence of MRI scan documenting stable disease is undetermined",
-            "Undetermined presence of MRI scan documenting stable disease"
-        )
+        return EvaluationFactory.undetermined("Presence of MRI scan documenting stable disease undetermined")
     }
 }

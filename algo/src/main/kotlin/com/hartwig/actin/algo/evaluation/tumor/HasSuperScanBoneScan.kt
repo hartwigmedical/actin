@@ -8,9 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasSuperScanBoneScan : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined(
-            "Presence of superscan bone scan currently cannot be evaluated",
-            "Undetermined superscan bone scan"
-        )
+        return EvaluationFactory.undetermined("Presence of superscan bone scan undetermined")
     }
 }

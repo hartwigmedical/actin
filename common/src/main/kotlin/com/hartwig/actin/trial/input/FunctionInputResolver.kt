@@ -272,6 +272,11 @@ class FunctionInputResolver(
                     return true
                 }
 
+                FunctionInput.ONE_HLA_GROUP -> {
+                    createOneHlaGroupInput(function)
+                    return true
+                }
+
                 FunctionInput.ONE_HAPLOTYPE -> {
                     createOneHaplotypeInput(function)
                     return true
@@ -665,6 +670,15 @@ class FunctionInputResolver(
             throw IllegalArgumentException("Not a proper HLA allele: $allele")
         }
         return OneHlaAllele(allele)
+    }
+
+    fun createOneHlaGroupInput(function: EligibilityFunction): OneHlaGroup {
+        assertParamConfig(function, FunctionInput.ONE_HLA_GROUP, 1)
+        val group = function.parameters.first() as String
+        if (!MolecularInputChecker.isHlaGroup(group)) {
+            throw IllegalArgumentException("Not a proper HLA group: $group")
+        }
+        return OneHlaGroup(group)
     }
 
     fun createOneHaplotypeInput(function: EligibilityFunction): OneHaplotype {

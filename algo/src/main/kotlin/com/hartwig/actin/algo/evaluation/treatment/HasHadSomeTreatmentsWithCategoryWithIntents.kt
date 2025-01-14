@@ -21,31 +21,19 @@ class HasHadSomeTreatmentsWithCategoryWithIntents(private val category: Treatmen
         return when {
             treatmentSummary.hasSpecificMatch() -> {
                 val treatmentDisplay = treatmentSummary.specificMatches.joinToString(", ") { it.treatmentDisplay() }
-                EvaluationFactory.pass(
-                    "Patient has received $intentsList ${category.display()} ($treatmentDisplay)",
-                    "Has received $intentsList ${category.display()} ($treatmentDisplay)"
-                )
+                EvaluationFactory.pass("Has received $intentsList ${category.display()} ($treatmentDisplay)")
             }
 
             treatmentSummary.hasApproximateMatch() -> {
-                EvaluationFactory.undetermined(
-                    "Can't determine if intent of received ${category.display()} is $intentsList",
-                    "Undetermined if received ${category.display()} is $intentsList"
-                )
+                EvaluationFactory.undetermined("Undetermined if received ${category.display()} is $intentsList")
             }
 
             treatmentSummary.hasPossibleTrialMatch() -> {
-                EvaluationFactory.undetermined(
-                    "Patient may have received $intentsList ${category.display()} due to trial participation",
-                    "Undetermined if received $intentsList ${category.display()} due to trial participation"
-                )
+                EvaluationFactory.undetermined("Undetermined if treatment received in previous trial included $intentsList ${category.display()}")
             }
 
             else -> {
-                EvaluationFactory.fail(
-                    "Patient has not received $intentsList ${category.display()}",
-                    "Has not received $intentsList ${category.display()}"
-                )
+                EvaluationFactory.fail("Has not received $intentsList ${category.display()}")
             }
         }
     }

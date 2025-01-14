@@ -76,7 +76,7 @@ object TabularTreatmentMatchWriter {
 
     private fun extractUnrecoverableFails(evaluations: Map<Eligibility, Evaluation>): Set<String> {
         return evaluations.values.filter { it.result == EvaluationResult.FAIL && !it.recoverable }
-            .flatMap(Evaluation::failGeneralMessages)
+            .flatMap(Evaluation::failMessages)
             .toSet()
     }
 
@@ -126,18 +126,13 @@ object TabularTreatmentMatchWriter {
 
     private fun evaluationMessageColumns(evaluation: Evaluation?): List<String> {
         return if (evaluation == null) {
-            List(8) { "" }
+            List(4) { "" }
         } else {
             listOf(
-                evaluation.passSpecificMessages,
-                evaluation.passGeneralMessages,
-                evaluation.warnSpecificMessages,
-                evaluation.warnGeneralMessages,
-                evaluation.undeterminedSpecificMessages,
-                evaluation.undeterminedGeneralMessages,
-                evaluation.failSpecificMessages,
-                evaluation.failGeneralMessages
-
+                evaluation.passMessages,
+                evaluation.warnMessages,
+                evaluation.undeterminedMessages,
+                evaluation.failMessages
             ).map(::concat)
         }
     }
@@ -161,14 +156,10 @@ object TabularTreatmentMatchWriter {
                 "Eligibility rule",
                 "Eligibility result",
                 "Recoverable?",
-                "PASS specific messages",
-                "PASS general messages",
-                "WARN specific messages",
-                "WARN general messages",
-                "UNDETERMINED specific messages",
-                "UNDETERMINED general messages",
-                "FAIL specific messages",
-                "FAIL general messages"
+                "PASS messages",
+                "WARN messages",
+                "UNDETERMINED messages",
+                "FAIL messages"
             )
         )
     }

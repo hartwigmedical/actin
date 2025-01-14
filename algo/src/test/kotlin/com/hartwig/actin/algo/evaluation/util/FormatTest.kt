@@ -6,44 +6,26 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import java.time.LocalDate
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
-import junit.framework.TestCase.assertTrue
 import org.junit.Test
 
 class FormatTest {
-    @Test
-    fun shouldConcatStrings() {
-        assertTrue(Format.concat(emptySet()).isEmpty())
-        assertEquals("string", Format.concat(setOf("string")))
-        assertEquals("string1; string2", Format.concat(setOf("string1", "string2")))
-        assertEquals("string1", Format.concat(listOf("string1", "string1")))
-    }
 
     @Test
-    fun shouldSortIterablesBeforeConcat() {
-        assertEquals("string1; string2; string3", Format.concat(listOf("string2", "string3", "string1")))
-    }
-
-    @Test
-    fun shouldConcatDisplayableItemsWithCustomDisplaySeparatedBySemicolon() {
-        assertEquals("anti-PD-1; HPV-16 vaccine", Format.concatItems(listOf(DrugType.HPV16_VACCINE, DrugType.ANTI_PD_1)))
-    }
-
-    @Test
-    fun shouldLowercaseStringsAndJoinWithAnd() {
+    fun `Should lowercase strings and join with and`() {
         assertEquals("x and y", Format.concatLowercaseWithAnd(setOf("X", "Y")))
         assertEquals("x and y", Format.concatLowercaseWithAnd(setOf("x", "y")))
         assertEquals("x", Format.concatLowercaseWithAnd(setOf("X")))
     }
 
     @Test
-    fun shouldLowerCaseStringsAndJoinWithAndUnlessNumeric() {
+    fun `Should lowercase strings and join with and unless numeric`() {
         assertEquals("x and y", Format.concatLowercaseUnlessNumericWithAnd(setOf("X", "y")))
         assertEquals("x", Format.concatLowercaseUnlessNumericWithAnd(setOf("X")))
         assertEquals("x and X1", Format.concatLowercaseUnlessNumericWithAnd(setOf("X1", "X")))
     }
 
     @Test
-    fun shouldLowercaseStringsAndJoinWithCommaAndOr() {
+    fun `Should lowercase strings and join with comma and or`() {
         assertEquals("", Format.concatLowercaseWithCommaAndOr(emptySet()))
         assertEquals("x", Format.concatLowercaseWithCommaAndOr(setOf("X")))
         assertEquals("x or y", Format.concatLowercaseWithCommaAndOr(setOf("X", "Y")))
@@ -52,12 +34,21 @@ class FormatTest {
     }
 
     @Test
+    fun `Should lowercase strings and join with comma and and`() {
+        assertEquals("", Format.concatLowercaseWithCommaAndAnd(emptySet()))
+        assertEquals("x", Format.concatLowercaseWithCommaAndAnd(setOf("X")))
+        assertEquals("x and y", Format.concatLowercaseWithCommaAndAnd(setOf("X", "Y")))
+        assertEquals("x, y and z", Format.concatLowercaseWithCommaAndAnd(setOf("X", "Y", "Z")))
+        assertEquals("a, x, y and z", Format.concatLowercaseWithCommaAndAnd(setOf("X", "Y", "Z", "A")))
+    }
+
+    @Test
     fun `Should join strings with comma and and`() {
-        assertEquals("", Format.concatWithCommaAndAnd(emptySet()))
-        assertEquals("X", Format.concatWithCommaAndAnd(setOf("X")))
-        assertEquals("X and Y", Format.concatWithCommaAndAnd(setOf("X", "Y")))
-        assertEquals("X, Y and z", Format.concatWithCommaAndAnd(setOf("X", "Y", "z")))
-        assertEquals("A, X, Y and z", Format.concatWithCommaAndAnd(setOf("X", "Y", "z", "A")))
+        assertEquals("", Format.concat(emptySet()))
+        assertEquals("X", Format.concat(setOf("X")))
+        assertEquals("X and Y", Format.concat(setOf("X", "Y")))
+        assertEquals("X, Y and z", Format.concat(setOf("X", "Y", "z")))
+        assertEquals("A, X, Y and z", Format.concat(setOf("X", "Y", "z", "A")))
     }
 
     @Test
@@ -70,12 +61,12 @@ class FormatTest {
     }
 
     @Test
-    fun shouldConcatDisplayableItemsWithCustomDisplaySeparatedByAnd() {
+    fun `Should concat displayable items with custom display separated by and`() {
         assertEquals("anti-PD-1 and HPV-16 vaccine", Format.concatItemsWithAnd(listOf(DrugType.HPV16_VACCINE, DrugType.ANTI_PD_1)))
     }
 
     @Test
-    fun shouldConcatDisplayableItemsWithCustomDisplaySeparatedByOr() {
+    fun `Should concat displayable items with custom display separated by or`() {
         assertEquals("anti-PD-1 or HPV-16 vaccine", Format.concatItemsWithOr(listOf(DrugType.HPV16_VACCINE, DrugType.ANTI_PD_1)))
     }
 
@@ -98,6 +89,20 @@ class FormatTest {
     @Test
     fun canFormatLabValues() {
         assertEquals("Indirect bilirubin 4.0 umol/L", Format.labValue(LabMeasurement.INDIRECT_BILIRUBIN, 4.0, LabUnit.MICROMOLES_PER_LITER))
+    }
+
+    @Test
+    fun `Should join strings with and without gene prefix`() {
+        assertEquals("V600E and V600K", Format.concatVariants(setOf("BRAF V600E", "BRAF V600K"), "BRAF"))
+        assertEquals("x, y and z", Format.concatVariants(setOf("BRAF x", "BRAF y", "BRAF z"), "BRAF"))
+        assertEquals("x", Format.concatVariants(setOf("BRAF x"), "BRAF"))
+    }
+
+    @Test
+    fun `Should join strings with and without fusion suffix`() {
+        assertEquals("X::Y and Z::A", Format.concatFusions(setOf("X::Y fusion", "Z::A fusion")))
+        assertEquals("A::B, C::D and E::F", Format.concatFusions(setOf("A::B fusion", "C::D fusion", "E::F fusion")))
+        assertEquals("X::Y", Format.concatFusions(setOf("X::Y fusion")))
     }
 
     @Test(expected = IllegalArgumentException::class)

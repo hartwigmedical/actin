@@ -28,42 +28,30 @@ class HasHadSystemicTherapyWithAnyIntent(
 
         return when {
             minDate == null && matchingTreatments.containsKey(true) -> {
-                EvaluationFactory.pass("Patient has had $intentsLowercase systemic therapy", "Received $intentsLowercase systemic therapy")
+                EvaluationFactory.pass("Received $intentsLowercase systemic therapy")
             }
 
             minDate?.let { matchingTreatments[true]?.any { treatmentSinceMinDate(it, minDate, false) } } == true -> {
-                EvaluationFactory.pass(
-                    "Patient has had $intentsLowercase systemic therapy within the last $weeksAgo weeks",
-                    "Received $intentsLowercase systemic therapy within the last $weeksAgo weeks"
-                )
+                EvaluationFactory.pass("Received $intentsLowercase systemic therapy within the last $weeksAgo weeks")
             }
 
             minDate?.let { matchingTreatments[true]?.any { treatmentSinceMinDate(it, minDate, true) } } == true -> {
-                EvaluationFactory.undetermined(
-                    "Patient has had $intentsLowercase systemic therapy but date unknown",
-                    "Received $intentsLowercase systemic therapy but date unknown"
-                )
+                EvaluationFactory.undetermined("Received $intentsLowercase systemic therapy but date unknown")
             }
 
             matchingTreatments[null]?.let(::anyTreatmentPotentiallySinceMinDate) == true -> {
                 EvaluationFactory.undetermined(
-                    "Has received systemic treatment (${Format.concatWithCommaAndAnd(systemicTreatments.map { it.treatmentName() })}) " +
+                    "Has received systemic treatment (${Format.concat(systemicTreatments.map { it.treatmentName() })}) " +
                             "but undetermined if intent is $intentsLowercase"
                 )
             }
 
             !matchingTreatments.containsKey(true) -> {
-                EvaluationFactory.fail(
-                    "Patient has not had any $intentsLowercase systemic therapy in prior tumor history",
-                    "No $intentsLowercase systemic therapy in prior tumor history"
-                )
+                EvaluationFactory.fail("No $intentsLowercase systemic therapy in prior tumor history")
             }
 
             else ->
-                EvaluationFactory.fail(
-                    "All $intentsLowercase systemic therapy is administered more than $weeksAgo weeks ago",
-                    "No $intentsLowercase systemic therapy within $weeksAgo weeks"
-                )
+                EvaluationFactory.fail("All $intentsLowercase systemic therapy is administered more than $weeksAgo weeks ago")
         }
     }
 

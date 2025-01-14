@@ -12,19 +12,19 @@ import com.hartwig.actin.icd.IcdModel
 class HasIntoleranceRelatedToStudyMedication(private val icdModel: IcdModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
+        val drugIntolerances = icdModel.findInstancesMatchingAnyIcdCode(
+            record.intolerances, IcdConstants.DRUG_ALLERGY_SET.map { IcdCode(it) }.toSet()
+        ).fullMatches
+
         val allergies = record.intolerances
             .filter { intolerance ->
-                intolerance.clinicalStatus.equals(CLINICAL_STATUS_ACTIVE, ignoreCase = true)
-                        && icdModel.findInstancesMatchingAnyIcdCode(
-                    record.intolerances,
-                    IcdConstants.DRUG_ALLERGY_SET.map { IcdCode(it) }.toSet()
-                        ).fullMatches.contains(intolerance)
+                intolerance.clinicalStatus.equals(CLINICAL_STATUS_ACTIVE, ignoreCase = true) && drugIntolerances.contains(intolerance)
             }
             .toSet()
 
         return if (allergies.isNotEmpty()) {
             EvaluationFactory.undetermined(
-                "Has medication-related allergies: ${Format.concatItemsWithAnd(allergies)} - undetermined if allergy to study medication."
+                "Has medication-related allergies (${Format.concatItemsWithAnd(allergies)}) - undetermined if allergy to study medication"
             )
         } else EvaluationFactory.fail("Has no intolerances to study medication")
     }

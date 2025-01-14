@@ -3,10 +3,10 @@ package com.hartwig.actin.algo.evaluation.othercondition
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.complication
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.intolerance
-import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.priorOtherCondition
+import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.otherCondition
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.withIntolerances
-import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.withPriorOtherCondition
-import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.withPriorOtherConditions
+import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.withOtherCondition
+import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.withOtherConditions
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.icd.TestIcdFactory
@@ -17,18 +17,18 @@ class HasContraindicationToCTTest {
     private val correctCode = IcdConstants.KIDNEY_FAILURE_BLOCK
 
     @Test
-    fun `Should fail with no prior other condition`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withPriorOtherConditions(emptyList())))
+    fun `Should fail with no other condition`() {
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withOtherConditions(emptyList())))
     }
 
     @Test
-    fun `Should fail with no relevant prior other condition`() {
+    fun `Should fail with no relevant other condition`() {
         assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
-                withPriorOtherConditions(
+                withOtherConditions(
                     listOf(
-                        priorOtherCondition(icdMainCode = "wrong code"),
-                        priorOtherCondition(name = "not a contraindication")
+                        otherCondition(icdMainCode = "wrong code"),
+                        otherCondition(name = "not a contraindication")
                     )
                 )
             )
@@ -39,7 +39,7 @@ class HasContraindicationToCTTest {
     fun `Should pass with a condition with correct ICD code`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(withPriorOtherCondition(priorOtherCondition(icdMainCode = correctCode)))
+            function.evaluate(withOtherCondition(otherCondition(icdMainCode = correctCode)))
         )
     }
 
@@ -47,7 +47,7 @@ class HasContraindicationToCTTest {
     fun `Should pass with a condition with correct name`() {
         val contraindicationName = HasContraindicationToCT.OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_CT.first()
         assertEvaluation(
-            EvaluationResult.PASS, function.evaluate(withPriorOtherCondition(priorOtherCondition(name = contraindicationName)))
+            EvaluationResult.PASS, function.evaluate(withOtherCondition(otherCondition(name = contraindicationName)))
         )
     }
 

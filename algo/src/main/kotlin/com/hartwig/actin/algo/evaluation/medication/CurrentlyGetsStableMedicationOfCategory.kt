@@ -39,15 +39,9 @@ class CurrentlyGetsStableMedicationOfCategory(
         }
 
         return if (hasFoundOnePassingCategory) {
-            EvaluationFactory.recoverablePass(
-                "Patient gets stable dosing of medication with category " + concatLowercaseWithAnd(categoryNamesToFind),
-                "Stable dosing of " + concatLowercaseWithAnd(categoryNamesToFind)
-            )
+            EvaluationFactory.recoverablePass("Gets stable dosing of " + concatLowercaseWithAnd(categoryNamesToFind))
         } else {
-            EvaluationFactory.recoverableFail(
-                "Patient does not get stable dosing of medication with category " + concatLowercaseWithAnd(categoryNamesToFind),
-                "No stable dosing of " + concatLowercaseWithAnd(categoryNamesToFind)
-            )
+            EvaluationFactory.recoverableFail("No stable dosing of " + concatLowercaseWithAnd(categoryNamesToFind))
         }
     }
 }

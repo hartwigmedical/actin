@@ -8,9 +8,9 @@ import com.hartwig.actin.datamodel.clinical.ClinicalRecord
 import com.hartwig.actin.datamodel.clinical.TestClinicalFactory.createMinimalTestClinicalRecord
 import com.hartwig.actin.datamodel.clinical.TestClinicalFactory.createProperTestClinicalRecord
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
+import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.io.File
 
 class ClinicalRecordJsonTest {
 
@@ -48,8 +48,9 @@ class ClinicalRecordJsonTest {
     private fun assertClinicalRecord(record: ClinicalRecord) {
         assertThat(record.patientId).isEqualTo("ACTN01029999")
         assertThat(record.priorSecondPrimaries).hasSize(1)
-        assertThat(record.priorOtherConditions).hasSize(1)
-        assertThat(record.complications!!).hasSize(1)
+        assertThat(record.comorbidities).hasSize(6)
+        assertThat(record.otherConditions).hasSize(1)
+        assertThat(record.complications).hasSize(1)
         assertThat(record.labValues).hasSize(2)
         assertThat(record.toxicities).hasSize(2)
         assertThat(record.intolerances).hasSize(2)

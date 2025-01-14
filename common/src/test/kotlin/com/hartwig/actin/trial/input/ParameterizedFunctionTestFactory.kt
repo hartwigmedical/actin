@@ -189,6 +189,10 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
                 listOf("A*02:01")
             }
 
+            FunctionInput.ONE_HLA_GROUP -> {
+                listOf("A*02")
+            }
+
             FunctionInput.ONE_HAPLOTYPE -> {
                 listOf("*1_HOM")
             }

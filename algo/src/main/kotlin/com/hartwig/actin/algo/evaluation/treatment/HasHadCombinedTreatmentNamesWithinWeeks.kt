@@ -9,9 +9,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasHadCombinedTreatmentNamesWithinWeeks : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined(
-            "Combined treatment with specific nr of weeks currently cannot be determined",
-            "Undetermined combined treatment with specific nr of weeks"
-        )
+        return EvaluationFactory.undetermined("Combined treatment within specified time frame undetermined")
     }
 }

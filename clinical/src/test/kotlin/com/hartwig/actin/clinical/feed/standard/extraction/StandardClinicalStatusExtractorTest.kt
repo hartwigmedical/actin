@@ -4,7 +4,7 @@ import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.config.ECGConfig
 import com.hartwig.actin.clinical.feed.standard.EhrTestData
 import com.hartwig.actin.clinical.feed.standard.ProvidedComplication
-import com.hartwig.actin.clinical.feed.standard.ProvidedPriorOtherCondition
+import com.hartwig.actin.clinical.feed.standard.ProvidedOtherCondition
 import com.hartwig.actin.clinical.feed.standard.ProvidedWhoEvaluation
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 import com.hartwig.actin.datamodel.clinical.ECG
@@ -47,7 +47,7 @@ class StandardClinicalStatusExtractorTest {
     }
 
     @Test
-    fun `Should allow curation of ECG from prior other conditions`() {
+    fun `Should allow curation of ECG from other conditions`() {
         val conditionName = "condition"
         val ecgConfig = ECGConfig(
             conditionName,
@@ -65,7 +65,7 @@ class StandardClinicalStatusExtractorTest {
         )
         val clinicalStatus = extractor.extract(
             EhrTestData.createEhrPatientRecord()
-                .copy(priorOtherConditions = listOf(ProvidedPriorOtherCondition(conditionName, startDate = SOME_DATE, endDate = null)))
+                .copy(priorOtherConditions = listOf(ProvidedOtherCondition(conditionName, startDate = SOME_DATE, endDate = null)))
         )
         assertThat(clinicalStatus.extracted.ecg).isEqualTo(
             ECG(

@@ -9,9 +9,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasInjectionAmenableLesion : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined(
-            "Injection amenability of lesions currently cannot be determined",
-            "Injection amenability undetermined"
-        )
+        return EvaluationFactory.undetermined("Injection amenability of lesions undetermined")
     }
 }

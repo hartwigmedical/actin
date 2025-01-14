@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.algo.evaluation.util.Format.concatVariants
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.VariantEffect
@@ -36,16 +36,12 @@ class GeneHasUTR3Loss(private val gene: String, maxTestAge: LocalDate? = null) :
 
         if (hotspotsIn3UTR.isNotEmpty()) {
             return EvaluationFactory.pass(
-                "3' UTR hotspot mutation(s) in " + gene + " should lead to 3' UTR loss: " + concat(hotspotsIn3UTR),
-                "Present 3' UTR loss of $gene",
+                "3' UTR hotspot mutation(s) ${concatVariants(hotspotsIn3UTR, gene)} in " + gene + " should lead to 3' UTR loss",
                 inclusionEvents = hotspotsIn3UTR
             )
         }
         val potentialWarnEvaluation = evaluatePotentialWarns(hotspotsIn3UTRUnreportable, vusIn3UTR, disruptionsIn3UTR)
-        return potentialWarnEvaluation ?: EvaluationFactory.fail(
-            "No variants detected in 3' UTR region of $gene",
-            "No 3' UTR loss of $gene"
-        )
+        return potentialWarnEvaluation ?: EvaluationFactory.fail("No 3' UTR loss of $gene")
     }
 
     private fun evaluatePotentialWarns(
@@ -55,19 +51,16 @@ class GeneHasUTR3Loss(private val gene: String, maxTestAge: LocalDate? = null) :
             listOf(
                 EventsWithMessages(
                     hotspotsIn3UTRUnreportable,
-                    "Hotspot mutation(s) detected in 3' UTR region of $gene which may lead to 3' UTR loss: "
-                            + "${concat(hotspotsIn3UTRUnreportable)} but mutation is not considered reportable",
-                    "Hotspot mutation(s) in 3' UTR region of $gene may lead to 3' UTR loss but mutation is not reportable"
+                    "Hotspot mutation(s) ${concatVariants(hotspotsIn3UTRUnreportable, gene)} in 3' UTR region of $gene which may " +
+                            "lead to 3' UTR loss but mutation is not considered reportable"
                 ),
                 EventsWithMessages(
                     vusIn3UTR,
-                    "VUS mutation(s) detected in 3' UTR region of $gene which may lead to 3' UTR loss: ${concat(vusIn3UTR)}",
-                    "VUS mutation(s) in 3' UTR region of $gene may lead to 3' UTR loss"
+                    "VUS mutation(s) ${concatVariants(vusIn3UTR, gene)} in 3' UTR region of $gene which may lead to 3' UTR loss"
                 ),
                 EventsWithMessages(
                     disruptionsIn3UTR,
-                    "Disruption(s) detected in 3' UTR region of $gene which may lead to 3' UTR loss: ${concat(disruptionsIn3UTR)}",
-                    "Disruption(s) in 3' UTR region of $gene may lead to 3' UTR loss"
+                    "Disruption(s) ${concatVariants(disruptionsIn3UTR, gene)} in 3' UTR region of $gene which may lead to 3' UTR loss"
                 )
             )
         )

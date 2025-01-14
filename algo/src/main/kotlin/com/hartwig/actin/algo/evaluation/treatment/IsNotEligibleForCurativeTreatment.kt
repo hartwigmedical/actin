@@ -8,9 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class IsNotEligibleForCurativeTreatment : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.notEvaluated(
-            "Currently it is assumed patient is not eligible for curative treatment",
-            "Assumed not eligible for curative treatment"
-        )
+        return EvaluationFactory.notEvaluated("Assumed that patient is not eligible for curative treatment")
     }
 }

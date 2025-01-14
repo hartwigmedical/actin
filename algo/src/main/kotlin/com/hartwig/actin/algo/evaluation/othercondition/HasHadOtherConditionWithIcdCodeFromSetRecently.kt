@@ -4,16 +4,15 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.DateComparison
 import com.hartwig.actin.algo.evaluation.util.Format
-import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.IcdCode
-import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
+import com.hartwig.actin.datamodel.clinical.OtherCondition
 import com.hartwig.actin.icd.IcdModel
 import java.time.LocalDate
 
-class HasHadPriorConditionWithIcdCodeFromSetRecently(
+class HasHadOtherConditionWithIcdCodeFromSetRecently(
     private val icdModel: IcdModel,
     private val targetIcdCodes: Set<IcdCode>,
     private val diseaseDescription: String,
@@ -21,43 +20,37 @@ class HasHadPriorConditionWithIcdCodeFromSetRecently(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val icdMatches = icdModel.findInstancesMatchingAnyIcdCode(
-            OtherConditionSelector.selectClinicallyRelevant(
-                record.priorOtherConditions
-            ), targetIcdCodes
-        )
+        val icdMatches = icdModel.findInstancesMatchingAnyIcdCode(record.otherConditions, targetIcdCodes)
         val fullMatchSummary = evaluateConditionsByDate(icdMatches.fullMatches)
-        val mainMatchesWithUnknownExtension =
-            evaluateConditionsByDate(icdMatches.mainCodeMatchesWithUnknownExtension).filterNot { it.key == EvaluationResult.FAIL }.values.flatten()
+        val mainMatchesWithUnknownExtension = evaluateConditionsByDate(icdMatches.mainCodeMatchesWithUnknownExtension)
+            .filterNot { it.key == EvaluationResult.FAIL }
+            .values.flatten()
 
         return when {
             fullMatchSummary.containsKey(EvaluationResult.PASS) -> {
                 EvaluationFactory.pass(
-                    "Patient has had disease of ICD category ${
+                    "Recent ${
                         fullMatchSummary[EvaluationResult.PASS]?.joinToString(", ")
                         { resolveIcdTitle(it) }
-                    } (belonging to $diseaseDescription) within specified time frame",
-                    "Recent $diseaseDescription"
+                    } (belonging to $diseaseDescription)"
                 )
             }
 
             fullMatchSummary.containsKey(EvaluationResult.WARN) -> {
                 EvaluationFactory.warn(
-                    "Patient has had disease of ICD category ${
+                    "History of ${
                         fullMatchSummary[EvaluationResult.WARN]?.joinToString(", ")
                         { resolveIcdTitle(it) }
-                    } (belonging to $diseaseDescription) near start of specified time frame",
-                    "Borderline recent $diseaseDescription"
+                    } (belonging to $diseaseDescription) near start of specified time frame"
                 )
             }
 
             fullMatchSummary.containsKey(EvaluationResult.UNDETERMINED) -> {
                 EvaluationFactory.undetermined(
-                    "Patient has had disease of ICD category ${
+                    "History of ${
                         fullMatchSummary[EvaluationResult.UNDETERMINED]?.joinToString(", ")
                         { resolveIcdTitle(it) }
-                    } (belonging to $diseaseDescription), but undetermined whether that is within specified time frame",
-                    "Recent $diseaseDescription"
+                    } (belonging to $diseaseDescription) but undetermined whether that is within specified time frame"
                 )
             }
 
@@ -68,15 +61,12 @@ class HasHadPriorConditionWithIcdCodeFromSetRecently(
             }
 
             else -> {
-                EvaluationFactory.fail(
-                    "Patient has had no recent condition belonging to $diseaseDescription",
-                    "No recent $diseaseDescription"
-                )
+                EvaluationFactory.fail("No recent $diseaseDescription")
             }
         }
     }
 
-    private fun evaluateConditionsByDate(conditions: List<PriorOtherCondition>): Map<EvaluationResult, List<PriorOtherCondition>> {
+    private fun evaluateConditionsByDate(conditions: List<OtherCondition>): Map<EvaluationResult, List<OtherCondition>> {
         return conditions
             .groupBy {
                 val isAfter = DateComparison.isAfterDate(minDate, it.year, it.month)
@@ -92,7 +82,7 @@ class HasHadPriorConditionWithIcdCodeFromSetRecently(
             }
     }
 
-    private fun resolveIcdTitle(condition: PriorOtherCondition): String {
-        return Format.concatWithCommaAndAnd(condition.icdCodes.map { icdModel.resolveTitleForCode(it) })
+    private fun resolveIcdTitle(condition: OtherCondition): String {
+        return Format.concat(condition.icdCodes.map { icdModel.resolveTitleForCode(it) })
     }
 }

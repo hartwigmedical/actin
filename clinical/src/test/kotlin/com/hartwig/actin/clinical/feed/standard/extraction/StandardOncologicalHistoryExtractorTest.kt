@@ -8,7 +8,7 @@ import com.hartwig.actin.clinical.feed.standard.EhrTestData
 import com.hartwig.actin.clinical.feed.standard.EhrTestData.createEhrPatientRecord
 import com.hartwig.actin.clinical.feed.standard.HASHED_ID_IN_BASE64
 import com.hartwig.actin.clinical.feed.standard.MODIFICATION_NAME
-import com.hartwig.actin.clinical.feed.standard.ProvidedPriorOtherCondition
+import com.hartwig.actin.clinical.feed.standard.ProvidedOtherCondition
 import com.hartwig.actin.clinical.feed.standard.TREATMENT_NAME
 import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
@@ -40,7 +40,7 @@ private val PROVIDED_TREATMENT_HISTORY = EhrTestData.createEhrTreatmentHistory()
 private const val PRIOR_CONDITION = "prior_condition"
 private val PROVIDED_PRIOR_CONDITION_START = LocalDate.of(2022, 7, 1)
 private val PROVIDED_PRIOR_CONDITION_END = LocalDate.of(2022, 8, 1)
-private val PRIOR_OTHER_CONDITION = ProvidedPriorOtherCondition(
+private val PRIOR_OTHER_CONDITION = ProvidedOtherCondition(
     name = PRIOR_CONDITION,
     startDate = PROVIDED_PRIOR_CONDITION_START,
     endDate = PROVIDED_PRIOR_CONDITION_END,
@@ -198,7 +198,7 @@ class StandardOncologicalHistoryExtractorTest {
     }
 
     @Test
-    fun `Should merge treatments by taking the prior other condition when the same treatment and date exists in both the onco history curation and prior other condition curation`() {
+    fun `Should merge treatments by taking the other condition when the same treatment and date exists in both the onco history curation and prior other condition curation`() {
         val duplicatedCuration =
             CURATED_TREATMENT_HISTORY_ENTRY.copy(curated = CURATED_TREATMENT_HISTORY_ENTRY.curated?.copy(startYear = 2024, startMonth = 10))
         every { treatmentCurationDatabase.find(TREATMENT_NAME) } returns setOf(duplicatedCuration)

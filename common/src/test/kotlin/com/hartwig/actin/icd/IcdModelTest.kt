@@ -1,10 +1,10 @@
 package com.hartwig.actin.icd
 
+import com.hartwig.actin.datamodel.clinical.Comorbidity
 import com.hartwig.actin.datamodel.clinical.Complication
 import com.hartwig.actin.datamodel.clinical.IcdCode
-import com.hartwig.actin.datamodel.clinical.IcdCodeEntity
 import com.hartwig.actin.datamodel.clinical.Intolerance
-import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
+import com.hartwig.actin.datamodel.clinical.OtherCondition
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import java.time.LocalDate
@@ -122,9 +122,9 @@ class IcdModelTest {
     }
 
     private fun evaluateCodeMatching(
-        input: List<IcdCodeEntity>,
-        expectedFullMatches: List<IcdCodeEntity>,
-        expectedMainCodeMatchesWithUnknownExtension: List<IcdCodeEntity>,
+        input: List<Comorbidity>,
+        expectedFullMatches: List<Comorbidity>,
+        expectedMainCodeMatchesWithUnknownExtension: List<Comorbidity>,
         checkExtension: Boolean = true
     ) {
         val extension = if (checkExtension) correctExtensionCode else null
@@ -136,12 +136,12 @@ class IcdModelTest {
         assertThat(result.mainCodeMatchesWithUnknownExtension).isEqualTo(expectedMainCodeMatchesWithUnknownExtension)
     }
 
-    private fun createIcdEntityList(icdCodes: Set<IcdCode>): List<IcdCodeEntity> {
+    private fun createIcdEntityList(icdCodes: Set<IcdCode>): List<Comorbidity> {
         return listOf(
-            PriorOtherCondition("name", icdCodes = icdCodes, isContraindicationForTherapy = true),
+            OtherCondition("name", icdCodes = icdCodes),
             Toxicity("name", icdCodes, date, ToxicitySource.EHR, 3, date),
             Intolerance("name", icdCodes = icdCodes),
-            Complication("name", icdCodes = icdCodes, null, null)
+            Complication("name", null, null, icdCodes = icdCodes)
         )
     }
 }

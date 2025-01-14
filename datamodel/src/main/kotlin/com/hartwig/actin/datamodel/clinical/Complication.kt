@@ -1,15 +1,10 @@
 package com.hartwig.actin.datamodel.clinical
 
-import com.hartwig.actin.datamodel.Displayable
-
 data class Complication(
-    val name: String,
+    override val name: String,
+    override val year: Int? = null,
+    override val month: Int? = null,
     override val icdCodes: Set<IcdCode>,
-    val year: Int?,
-    val month: Int?
-): IcdCodeEntity, Displayable {
-
-    override fun display(): String {
-        return name
-    }
+): Comorbidity {
+    override val comorbidityClass = ComorbidityClass.COMPLICATION
 }

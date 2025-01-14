@@ -20,32 +20,23 @@ class HasLesionsCloseToOrInvolvingAirway(private val doidModel: DoidModel) : Eva
 
             return when {
                 isMajorAirwayCancer -> {
-                    EvaluationFactory.pass("Patient has lesions close to or involving airway", "Lesions close to or involving airway")
+                    EvaluationFactory.pass("Has lesions close to or involving airway")
                 }
 
                 hasLungLesions == true || isLungCancer || hasSuspectedLungLesions == true -> {
-                    val (specificMessage, generalMessage) = if (hasLungLesions != true && hasSuspectedLungLesions == true) {
-                        listOf(" suspected", "Suspected lung")
-                    } else listOf("", "Lung")
+                    val message = if (hasLungLesions != true && hasSuspectedLungLesions == true) {
+                        "Suspected lung"
+                    } else "Lung"
 
-                    EvaluationFactory.warn(
-                        "Patient has$specificMessage lung lesions which may be close to or involving airways",
-                        "$generalMessage lesions which may be close to or involving airway"
-                    )
+                    EvaluationFactory.warn("$message lesions which may be close to or involving airway")
                 }
 
                 noLesionsCloseToAirway -> {
-                    EvaluationFactory.fail(
-                        "Patient does not have lesions close to or involving airway",
-                        "Lesions not close to or involving airway"
-                    )
+                    EvaluationFactory.fail("No lesions close to or involving airway")
                 }
 
                 else -> {
-                    EvaluationFactory.undetermined(
-                        "Undetermined if patient has lesions close to or involving airway",
-                        "Undetermined lesions close to or involving airway"
-                    )
+                    EvaluationFactory.undetermined("Lesions close to or involving airway undetermined")
                 }
             }
         }

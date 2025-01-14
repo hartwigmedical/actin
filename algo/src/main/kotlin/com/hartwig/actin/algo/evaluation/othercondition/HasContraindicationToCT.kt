@@ -5,7 +5,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.algo.icd.IcdConstants
-import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IcdCode
@@ -15,37 +14,26 @@ class HasContraindicationToCT(private val icdModel: IcdModel) : EvaluationFuncti
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val targetIcdCode = setOf(IcdCode(IcdConstants.KIDNEY_FAILURE_BLOCK))
-        val relevantConditions = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
 
-        val matchingConditionsAndComplications = icdModel.findInstancesMatchingAnyIcdCode(
-            relevantConditions + (record.complications ?: emptyList()),
-            targetIcdCode
-        ).fullMatches
+        val matchingComorbidities = icdModel.findInstancesMatchingAnyIcdCode(record.comorbidities, targetIcdCode).fullMatches
 
-        val conditionsMatchingString = relevantConditions.filter {
-            stringCaseInsensitivelyMatchesQueryCollection(it.name, OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_CT)
+        val comorbiditiesMatchingString = record.comorbidities.filter {
+            stringCaseInsensitivelyMatchesQueryCollection(
+                it.name, OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_CT + INTOLERANCES_BEING_CONTRAINDICATIONS_TO_CT
+            )
         }
-        val intolerances =
-            record.intolerances.filter {
-                stringCaseInsensitivelyMatchesQueryCollection(
-                    it.name,
-                    INTOLERANCES_BEING_CONTRAINDICATIONS_TO_CT
-                )
-            }
 
-        val conditionString = Format.concatItemsWithAnd(matchingConditionsAndComplications)
+        val conditionString = Format.concatItemsWithAnd(matchingComorbidities)
         val messageStart = "Potential CT contraindication: "
 
         return when {
-            matchingConditionsAndComplications.isNotEmpty() -> EvaluationFactory.recoverablePass(messageStart + conditionString)
+            matchingComorbidities.isNotEmpty() -> EvaluationFactory.recoverablePass(messageStart + conditionString)
 
-            conditionsMatchingString.isNotEmpty() -> {
-                EvaluationFactory.recoverablePass(messageStart + Format.concatItemsWithAnd(conditionsMatchingString))
+            comorbiditiesMatchingString.isNotEmpty() -> {
+                EvaluationFactory.recoverablePass(messageStart + Format.concatItemsWithAnd(comorbiditiesMatchingString))
             }
 
-            intolerances.isNotEmpty() -> EvaluationFactory.recoverablePass(messageStart + Format.concatItemsWithAnd(intolerances))
-
-            else -> EvaluationFactory.fail("No potential contraindications to CT identified", "No potential contraindications to CT")
+            else -> EvaluationFactory.fail("No potential contraindications to CT")
         }
     }
 

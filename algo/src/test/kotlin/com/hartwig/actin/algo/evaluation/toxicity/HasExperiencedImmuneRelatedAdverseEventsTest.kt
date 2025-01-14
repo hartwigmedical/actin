@@ -35,7 +35,7 @@ class HasExperiencedImmuneRelatedAdverseEventsTest {
     @Test
     fun `Should fail with no immunotherapy in history`() {
         val record = createMinimalTestWGSPatientRecord().copy(
-            intolerances = listOf(IMMUNO_INTOLERANCE),
+            comorbidities = listOf(IMMUNO_INTOLERANCE),
             oncologicalHistory = emptyList()
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
@@ -46,7 +46,7 @@ class HasExperiencedImmuneRelatedAdverseEventsTest {
         val treatments = listOf(IMMUNOTHERAPY_TOX_ENTRY)
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
         assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnGeneralMessages).containsExactly(
+        assertThat(evaluation.warnMessages).containsExactly(
             "Possible immunotherapy related adverse events in history (prior immunotherapy with stop reason toxicity)"
         )
     }
@@ -54,12 +54,12 @@ class HasExperiencedImmuneRelatedAdverseEventsTest {
     @Test
     fun `Should warn for prior immunotherapy treatment and immunotherapy intolerance in history`() {
         val record = createMinimalTestWGSPatientRecord().copy(
-            intolerances = listOf(IMMUNO_INTOLERANCE),
+            comorbidities = listOf(IMMUNO_INTOLERANCE),
             oncologicalHistory = listOf(IMMUNOTHERAPY_PD_ENTRY)
         )
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnGeneralMessages).containsExactly(
+        assertThat(evaluation.warnMessages).containsExactly(
             "Possible immunotherapy related adverse events in history (Nivolumab induced pneumonitis)"
         )
     }
@@ -67,7 +67,7 @@ class HasExperiencedImmuneRelatedAdverseEventsTest {
     @Test
     fun `Should evaluate to undetermined for prior immunotherapy treatment and drug intolerance in history with unknown extension code`() {
         val record = createMinimalTestWGSPatientRecord().copy(
-            intolerances = listOf(IMMUNO_INTOLERANCE.copy(icdCodes = setOf(IcdCode(IcdConstants.DRUG_ALLERGY_CODE, null)))),
+            comorbidities = listOf(IMMUNO_INTOLERANCE.copy(icdCodes = setOf(IcdCode(IcdConstants.DRUG_ALLERGY_CODE, null)))),
             oncologicalHistory = listOf(IMMUNOTHERAPY_PD_ENTRY)
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))

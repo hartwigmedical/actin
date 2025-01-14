@@ -17,7 +17,7 @@ class ComplicationsExtractorTest {
         ComplicationConfig(
             input = "term",
             ignore = false,
-            curated = Complication(name = "Curated", icdCodes = setOf(IcdCode("code")), year = null, month = null),
+            curated = Complication(name = "Curated", year = null, month = null, icdCodes = setOf(IcdCode("code"))),
             impliesUnknownComplicationState = false
         ),
         ComplicationConfig(

@@ -4,9 +4,8 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.medication.MEDICATION_NOT_PROVIDED
 import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
-import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.icd.IcdConstants
-import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.AtcLevel
@@ -25,10 +24,7 @@ class HasPotentialUncontrolledTumorRelatedPain(
             IcdConstants.CHRONIC_CANCER_RELATED_PAIN_CODE,
             IcdConstants.ACUTE_PAIN_CODE
         ).map { code ->
-            icdModel.findInstancesMatchingAnyIcdCode(
-                OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions) + (record.complications ?: emptyList()),
-                setOf(IcdCode(code))
-            ).fullMatches.isNotEmpty()
+            icdModel.findInstancesMatchingAnyIcdCode(record.comorbidities, setOf(IcdCode(code))).fullMatches.isNotEmpty()
         }
 
         val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
@@ -48,25 +44,20 @@ class HasPotentialUncontrolledTumorRelatedPain(
 
             activePainMedications.isNotEmpty() -> {
                 EvaluationFactory.undetermined(
-                    "Patient receives pain medication: " + concatLowercaseWithAnd(activePainMedications) +
-                            " - undetermined if uncontrolled tumor related pain present",
-                    "Receives " + concatLowercaseWithAnd(activePainMedications) + " - undetermined if uncontrolled tumor related pain present"
+                    "Possible uncontrolled tumor related pain "
+                            + "(${Format.concatLowercaseWithCommaAndAnd(activePainMedications)} usage)"
                 )
             }
 
             plannedPainMedications.isNotEmpty() -> {
                 EvaluationFactory.undetermined(
-                    "Patient plans to receive pain medication: " + concatLowercaseWithAnd(plannedPainMedications) +
-                            " - undetermined if uncontrolled tumor related pain present",
-                    "Plans to receive " + concatLowercaseWithAnd(plannedPainMedications) + " - undetermined if uncontrolled tumor related pain present"
+                    "Possible uncontrolled tumor related pain "
+                            + "(planned ${Format.concatLowercaseWithCommaAndAnd(plannedPainMedications)} usage)"
                 )
             }
 
             else -> {
-                EvaluationFactory.fail(
-                    "Patient does not have uncontrolled tumor related pain",
-                    "No potential uncontrolled tumor related pain"
-                )
+                EvaluationFactory.fail("No indication for uncontrolled tumor related pain")
             }
         }
     }

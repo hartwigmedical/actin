@@ -5,7 +5,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.icd.IcdConstants.FAMILY_HISTORY_OF_OTHER_SPECIFIED_HEALTH_PROBLEMS_CODE
 import com.hartwig.actin.algo.icd.IcdConstants.FAMILY_HISTORY_OF_UNSPECIFIED_HEALTH_PROBLEMS_CODE
-import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.Displayable
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -29,10 +28,7 @@ class HasSpecificFamilyHistory(
                 ),
                 undeterminedFamilyConditions.icdCodes
             ).map { targetCodes ->
-                icdModel.findInstancesMatchingAnyIcdCode(
-                    OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions),
-                    targetCodes
-                ).fullMatches
+                icdModel.findInstancesMatchingAnyIcdCode(record.comorbidities, targetCodes).fullMatches
             }
 
         return when {

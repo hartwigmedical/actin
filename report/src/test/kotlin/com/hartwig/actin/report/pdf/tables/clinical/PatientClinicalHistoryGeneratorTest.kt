@@ -3,7 +3,7 @@ package com.hartwig.actin.report.pdf.tables.clinical
 import com.hartwig.actin.datamodel.clinical.AtcClassification
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.TestMedicationFactory
-import com.hartwig.actin.datamodel.clinical.TestPriorOtherConditionFactory
+import com.hartwig.actin.datamodel.clinical.TestOtherConditionFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
@@ -33,13 +33,13 @@ class PatientClinicalHistoryGeneratorTest {
     fun `Should return content as list with sorted other prior conditions`() {
         val reportWithOtherConditions = report.copy(
             patientRecord = report.patientRecord.copy(
-                priorOtherConditions = listOf(
-                    TestPriorOtherConditionFactory.create("c1", null, null),
-                    TestPriorOtherConditionFactory.create("c2", 2024, null),
-                    TestPriorOtherConditionFactory.create("c3", 2024, 8),
-                    TestPriorOtherConditionFactory.create("c4", 2024, 5),
-                    TestPriorOtherConditionFactory.create("c5", 2023, 9),
-                    TestPriorOtherConditionFactory.create("c6", null, 2)
+                comorbidities = listOf(
+                    TestOtherConditionFactory.create("c1", null, null),
+                    TestOtherConditionFactory.create("c2", 2024, null),
+                    TestOtherConditionFactory.create("c3", 2024, 8),
+                    TestOtherConditionFactory.create("c4", 2024, 5),
+                    TestOtherConditionFactory.create("c5", 2023, 9),
+                    TestOtherConditionFactory.create("c6", null, 2)
                 )
             )
         )

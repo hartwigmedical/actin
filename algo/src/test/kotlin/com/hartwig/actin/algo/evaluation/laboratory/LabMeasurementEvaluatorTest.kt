@@ -8,8 +8,8 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.EvaluationTestFactory
 import com.hartwig.actin.datamodel.clinical.LabValue
-import org.junit.Test
 import java.time.LocalDate
+import org.junit.Test
 
 class LabMeasurementEvaluatorTest {
    
@@ -33,11 +33,11 @@ class LabMeasurementEvaluatorTest {
     }
 
     @Test
-    fun `Should warn in case measurement is older than pass date`() {
+    fun `Should evaluate to recoverable pass in case measurement is older than pass date`() {
         val measurement = LabMeasurement.ALBUMIN
         val function = LabMeasurementEvaluator(measurement, passingLabEvaluationFunction, TEST_DATE.minusDays(20), TEST_DATE.plusDays(20))
         val warnDate: LabValue = LabTestFactory.create(measurement, date = TEST_DATE)
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(LabTestFactory.withLabValue(warnDate)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(LabTestFactory.withLabValue(warnDate)))
     }
 
     companion object {

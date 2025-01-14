@@ -21,26 +21,20 @@ class HasHadTargetedTherapyInterferingWithRasMekMapkPathway : EvaluationFunction
         return when {
             directPathwayInhibitionTreatments.isNotEmpty() -> {
                 val treatmentDisplay = directPathwayInhibitionTreatments.joinToString(", ") { it.treatmentDisplay() }
-                val message = "targeted therapy $interferenceMessage ($treatmentDisplay)"
-                EvaluationFactory.pass("Patient has received $message", "Has had $message")
+                EvaluationFactory.pass("Has had targeted therapy $interferenceMessage ($treatmentDisplay)")
             }
 
             indirectPathwayInhibitionTreatments.isNotEmpty() -> {
                 val treatmentDisplay = indirectPathwayInhibitionTreatments.joinToString(", ") { it.treatmentDisplay() }
-                val message = "targeted therapy ($treatmentDisplay) - indirectly $interferenceMessage"
-                EvaluationFactory.warn("Patient has received $message", "Has had $message")
+                EvaluationFactory.warn("Has had targeted therapy ($treatmentDisplay) indirectly $interferenceMessage")
             }
 
             record.oncologicalHistory.any { TrialFunctions.treatmentMayMatchAsTrial(it, TreatmentCategory.TARGETED_THERAPY) } -> {
-                val message = "trial drug - $undeterminedInterferenceMessage"
-                EvaluationFactory.undetermined("Patient has received $message", "Has had $message")
+                EvaluationFactory.undetermined("Has had trial drug - $undeterminedInterferenceMessage")
             }
 
             else -> {
-                EvaluationFactory.fail(
-                    "Patient did not receive targeted therapy $interferenceMessage",
-                    "Has not received targeted therapy $interferenceMessage"
-                )
+                EvaluationFactory.fail("Has not received targeted therapy $interferenceMessage")
             }
         }
     }

@@ -111,8 +111,7 @@ class GeneIsInactivated(private val gene: String, maxTestAge: LocalDate? = null)
 
         if (inactivationEventsThatQualify.isNotEmpty()) {
             return EvaluationFactory.pass(
-                "Inactivation event(s) detected for gene " + gene + ": " + concat(inactivationEventsThatQualify),
-                "$gene inactivation",
+                "$gene inactivation (${concat(inactivationEventsThatQualify)})",
                 inclusionEvents = inactivationEventsThatQualify
             )
         }
@@ -130,10 +129,7 @@ class GeneIsInactivated(private val gene: String, maxTestAge: LocalDate? = null)
             evidenceSource
         )
 
-        return potentialWarnEvaluation ?: EvaluationFactory.fail(
-            "No inactivation event(s) detected for gene $gene",
-            "No $gene inactivation"
-        )
+        return potentialWarnEvaluation ?: EvaluationFactory.fail("No $gene inactivation")
     }
 
     private fun evaluatePotentialWarns(
@@ -151,58 +147,47 @@ class GeneIsInactivated(private val gene: String, maxTestAge: LocalDate? = null)
             listOfNotNull(
                 EventsWithMessages(
                     inactivationEventsThatAreUnreportable,
-                    "Inactivation event(s) detected for gene $gene: ${concat(inactivationEventsThatAreUnreportable)}, but considered non-reportable",
-                    "Inactivation event(s) for $gene but event(s) not reportable"
+                    "Inactivation event(s) ${concat(inactivationEventsThatAreUnreportable)} for $gene but event(s) not reportable"
                 ),
                 EventsWithMessages(
                     inactivationEventsNoTSG,
-                    "Inactivation event(s) detected for gene $gene: ${concat(inactivationEventsNoTSG)}"
-                            + " but gene is annotated with gene role oncogene in $evidenceSource",
-                    "Inactivation event(s) for $gene but gene is oncogene in $evidenceSource"
+                    "Inactivation event(s) ${concat(inactivationEventsNoTSG)} for $gene"
+                            + " however gene is oncogene in $evidenceSource"
                 ),
                 EventsWithMessages(
                     inactivationEventsGainOfFunction,
-                    "Inactivation event(s) detected for $gene: ${concat(inactivationEventsGainOfFunction)}"
-                            + " but no events annotated as having gain-of-function impact in $evidenceSource",
-                    "Inactivation event(s) for $gene but event(s) annotated with gain-of-function protein impact evidence in $evidenceSource"
+                    "Inactivation event(s) ${concat(inactivationEventsGainOfFunction)} for $gene"
+                            + " however event(s) annotated with gain-of-function protein impact in $evidenceSource"
                 ),
                 if (inactivationHighDriverNonBiallelicVariants.isNotEmpty() && eventsThatMayBeTransPhased.size <= 1) {
                     EventsWithMessages(
                         inactivationHighDriverNonBiallelicVariants,
-                        "Inactivation event(s) detected for $gene: ${concat(inactivationHighDriverNonBiallelicVariants)} but event(s) are not biallelic",
-                        "Inactivation event(s) for $gene but event(s) are not biallelic"
+                        "Inactivation event(s) ${concat(inactivationHighDriverNonBiallelicVariants)} for $gene but event(s) are not biallelic"
                     )
                 } else null,
                 EventsWithMessages(
                     inactivationSubclonalVariants,
-                    "Inactivation event(s) detected for $gene: ${concat(inactivationSubclonalVariants)} but subclonal likelihood > "
-                            + percentage(1 - CLONAL_CUTOFF),
-                    "Inactivation event(s) detected for $gene: ${concat(inactivationSubclonalVariants)} but subclonal likelihood > "
+                    "Inactivation event(s) ${concat(inactivationSubclonalVariants)} for $gene but subclonal likelihood > "
                             + percentage(1 - CLONAL_CUTOFF)
                 ),
                 EventsWithMessages(
                     inactivationEventsOnNonCanonicalTranscript,
-                    "Inactivation event(s) detected for $gene: ${concat(inactivationSubclonalVariants)} but only on non-canonical transcript",
-                    "Inactivation event(s) detected for $gene: ${concat(inactivationSubclonalVariants)} but only on non-canonical transcript"
+                    "Inactivation event(s) ${concat(inactivationSubclonalVariants)} for $gene but only on non-canonical transcript"
                 ),
                 EventsWithMessages(
                     reportableNonDriverBiallelicVariantsOther,
-                    "Potential inactivation event(s) detected for $gene: ${concat(reportableNonDriverBiallelicVariantsOther)}"
-                            + " but event(s) are not of high driver likelihood",
-                    "Potential inactivation event(s) " + concat(reportableNonDriverBiallelicVariantsOther) + " but no high driver likelihood"
+                    "Potential inactivation event(s) ${concat(reportableNonDriverBiallelicVariantsOther)} for $gene"
+                            + " but event(s) are not of high driver likelihood"
                 ),
                 EventsWithMessages(
                     reportableNonDriverNonBiallelicVariantsOther,
-                    "Potential inactivation event(s) detected for $gene: ${concat(reportableNonDriverNonBiallelicVariantsOther)}"
-                            + " but event(s) are not biallelic and not of high driver likelihood",
-                    "Potential inactivation event(s) " + concat(reportableNonDriverNonBiallelicVariantsOther)
-                            + " but not biallelic and no high driver likelihood"
+                    "Potential inactivation event(s) ${concat(reportableNonDriverNonBiallelicVariantsOther)} for $gene"
+                            + " but event(s) are not biallelic and not of high driver likelihood"
                 ),
                 if (eventsThatMayBeTransPhased.size > 1) {
                     EventsWithMessages(
                         eventsThatMayBeTransPhased.toSet(),
-                        "Multiple events detected for $gene: ${concat(eventsThatMayBeTransPhased)} that potentially together inactivate the gene",
-                        "$gene potential inactivation if considering multiple events"
+                        "Multiple events for $gene (${concat(eventsThatMayBeTransPhased)}) that potentially together inactivate the gene"
                     )
                 } else null
             )

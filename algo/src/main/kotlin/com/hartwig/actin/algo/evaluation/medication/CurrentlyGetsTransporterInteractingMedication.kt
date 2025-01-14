@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.Format
+import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithCommaAndAnd
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.DrugInteraction
@@ -25,37 +25,18 @@ class CurrentlyGetsTransporterInteractingMedication(
         return when {
             transporterInteractingMedicationActive.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass(
-                    "Patient currently gets $termToFind $typeText medication: ${
-                        Format.concatLowercaseWithAnd(
-                            transporterInteractingMedicationActive
-                        )
-                    }",
-                    "Active $termToFind $typeText medication use: ${
-                        Format.concatLowercaseWithAnd(
-                            transporterInteractingMedicationActive
-                        )
-                    }"
+                    "Active $termToFind $typeText medication use (${concatLowercaseWithCommaAndAnd(transporterInteractingMedicationActive)})"
                 )
             }
 
             transporterInteractingMedicationPlanned.isNotEmpty() -> {
                 EvaluationFactory.recoverableWarn(
-                    "Patient plans to get $termToFind $typeText medication: ${
-                        Format.concatLowercaseWithAnd(
-                            transporterInteractingMedicationPlanned
-                        )
-                    }",
-                    "Planned $termToFind $typeText medication use: ${
-                        Format.concatLowercaseWithAnd(
-                            transporterInteractingMedicationPlanned
-                        )
-                    }"
+                    "Planned $termToFind $typeText medication use (${concatLowercaseWithCommaAndAnd(transporterInteractingMedicationPlanned)})"
                 )
             }
 
             else -> {
                 EvaluationFactory.recoverableFail(
-                    "Patient currently does not get $termToFind $typeText medication",
                     "No current $termToFind $typeText medication use"
                 )
             }

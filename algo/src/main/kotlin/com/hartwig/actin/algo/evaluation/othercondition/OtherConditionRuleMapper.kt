@@ -99,22 +99,22 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
                 ), "vascular disease"
             ),
             EligibilityRule.HAS_HISTORY_OF_ULCER to {
-                HasHadPriorConditionComplicationOrToxicityWithIcdCode(
+                HasHadOtherConditionComplicationOrToxicityWithIcdCode(
                     icdModel(), IcdConstants.ULCER_SET.map { IcdCode(it) }.toSet(), "ulcer", referenceDateProvider().date()
                 )
             },
             EligibilityRule.HAS_HISTORY_OF_BLEEDING to {
-                HasHadPriorConditionComplicationOrToxicityWithIcdCode(
+                HasHadOtherConditionComplicationOrToxicityWithIcdCode(
                     icdModel(), IcdConstants.BLEEDING_SET.map { IcdCode(it) }.toSet(), "bleeding", referenceDateProvider().date()
                 )
             },
             EligibilityRule.HAS_HISTORY_OF_WOUND to {
-                HasHadPriorConditionComplicationOrToxicityWithIcdCode(
+                HasHadOtherConditionComplicationOrToxicityWithIcdCode(
                     icdModel(), IcdConstants.WOUND_SET.map { IcdCode(it) }.toSet(), "wound", referenceDateProvider().date()
                 )
             },
             EligibilityRule.HAS_HISTORY_OF_BONE_FRACTURE to {
-                HasHadPriorConditionComplicationOrToxicityWithIcdCode(
+                HasHadOtherConditionComplicationOrToxicityWithIcdCode(
                     icdModel(), IcdConstants.BONE_FRACTURE_SET.map { IcdCode(it) }.toSet(), "bone fracture", referenceDateProvider().date()
                 )
             },
@@ -140,7 +140,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             EligibilityRule.HAS_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS to hasInheritedPredispositionToBleedingOrThrombosisCreator(),
             EligibilityRule.HAS_POTENTIAL_ABSORPTION_DIFFICULTIES to hasPotentialAbsorptionDifficultiesCreator(),
             EligibilityRule.HAS_POTENTIAL_ORAL_MEDICATION_DIFFICULTIES to {
-                HasHadPriorConditionComplicationOrToxicityWithIcdCode(
+                HasHadOtherConditionComplicationOrToxicityWithIcdCode(
                     icdModel(),
                     listOf(IcdConstants.FUNCTIONAL_SWALLOWING_DISORDER_CODE, IcdConstants.DISORDERS_OF_ORAL_MUCOSA_CODE).map { IcdCode(it) }.toSet(),
                     "potential oral medication difficulties",
@@ -152,7 +152,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_PET_MRI to hasContraindicationToMRICreator(),
             EligibilityRule.HAS_MRI_SCAN_DOCUMENTING_STABLE_DISEASE to hasMRIScanDocumentingStableDiseaseCreator(),
             EligibilityRule.IS_IN_DIALYSIS to isInDialysisCreator(),
-            EligibilityRule.HAS_CHILD_PUGH_CLASS_X_LIVER_SCORE to hasChildPughClassCreator(),
+            EligibilityRule.HAS_CHILD_PUGH_SCORE_X to hasChildPughScoreCreator(),
             EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_FOR_STEREOTACTIC_RADIOSURGERY to hasPotentialContraIndicationForStereotacticRadiosurgeryCreator(),
             EligibilityRule.HAS_ADEQUATE_VENOUS_ACCESS to hasAdequateVenousAccesCreator(),
             EligibilityRule.MEETS_REQUIREMENTS_DURING_SIX_MINUTE_WALKING_TEST to { MeetsSixMinuteWalkingTestRequirements() }
@@ -163,7 +163,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
         return { function: EligibilityFunction ->
             val targetIcdTitle = functionInputResolver().createOneIcdTitleInput(function)
             val icdCode = icdModel().resolveCodeForTitle(targetIcdTitle)!!
-            HasHadPriorConditionWithIcdCodeFromSet(icdModel(), setOf(icdCode), targetIcdTitle)
+            HasHadOtherConditionWithIcdCodeFromSet(icdModel(), setOf(icdCode), targetIcdTitle)
         }
     }
 
@@ -178,7 +178,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
         return { function: EligibilityFunction ->
             val maxMonthsAgo = functionInputResolver().createOneIntegerInput(function)
             val minDate = referenceDateProvider().date().minusMonths(maxMonthsAgo.toLong())
-            HasHadPriorConditionWithIcdCodeFromSetRecently(icdModel(), targetIcdCodes, diseaseDescription, minDate)
+            HasHadOtherConditionWithIcdCodeFromSetRecently(icdModel(), targetIcdCodes, diseaseDescription, minDate)
         }
     }
 
@@ -188,7 +188,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             val targetIcdCode = icdModel().resolveCodeForTitle(input.icdTitle)!!
             val maxMonthsAgo = input.integer
             val minDate = referenceDateProvider().date().minusMonths(maxMonthsAgo.toLong())
-            HasHadPriorConditionWithIcdCodeFromSetRecently(
+            HasHadOtherConditionWithIcdCodeFromSetRecently(
                 icdModel(), setOf(targetIcdCode), input.icdTitle, minDate
             )
         }
@@ -196,16 +196,16 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
 
     private fun hasPriorConditionWithIcdCodesFromSetCreator(
         targetIcdCodes: Set<IcdCode>,
-        priorOtherConditionTerm: String
+        otherConditionTerm: String
     ): FunctionCreator {
         return {
-            HasHadPriorConditionWithIcdCodeFromSet(icdModel(), targetIcdCodes, priorOtherConditionTerm)
+            HasHadOtherConditionWithIcdCodeFromSet(icdModel(), targetIcdCodes, otherConditionTerm)
         }
     }
 
     private fun hasHistoryOfCardiacDiseaseCreator(): FunctionCreator {
         return {
-            HasHadPriorConditionComplicationOrToxicityWithIcdCode(
+            HasHadOtherConditionComplicationOrToxicityWithIcdCode(
                 icdModel(),
                 IcdConstants.HEART_DISEASE_SET.map { IcdCode(it) }.toSet(),
                 "cardiac disease",
@@ -223,7 +223,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
 
     private fun hasHistoryOfEyeDiseaseCreator(): FunctionCreator {
         return {
-            HasHadPriorConditionComplicationOrToxicityWithIcdCode(
+            HasHadOtherConditionComplicationOrToxicityWithIcdCode(
                 icdModel(),
                 setOf(IcdConstants.EYE_DISEASE_CHAPTER).map { IcdCode(it) }.toSet(),
                 "eye disease",
@@ -234,7 +234,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
 
     private fun hasHistoryOfStrokeCreator(): FunctionCreator {
         return {
-            HasHadPriorConditionComplicationOrToxicityWithIcdCode(
+            HasHadOtherConditionComplicationOrToxicityWithIcdCode(
                 icdModel(),
                 IcdConstants.STROKE_SET.map { IcdCode(it) }.toSet(),
                 "CVA",
@@ -279,8 +279,8 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
         return { IsInDialysis() }
     }
 
-    private fun hasChildPughClassCreator(): FunctionCreator {
-        return { HasChildPughClass(icdModel()) }
+    private fun hasChildPughScoreCreator(): FunctionCreator {
+        return { HasChildPughScore(icdModel()) }
     }
 
     private fun hasPotentialContraIndicationForStereotacticRadiosurgeryCreator(): FunctionCreator {

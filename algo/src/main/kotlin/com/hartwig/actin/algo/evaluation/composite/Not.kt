@@ -28,10 +28,8 @@ class Not(private val function: EvaluationFunction) : EvaluationFunction {
             result = negatedResult,
             inclusionMolecularEvents = evaluation.exclusionMolecularEvents,
             exclusionMolecularEvents = evaluation.inclusionMolecularEvents,
-            passSpecificMessages = evaluation.failSpecificMessages,
-            passGeneralMessages = evaluation.failGeneralMessages,
-            failSpecificMessages = evaluation.passSpecificMessages,
-            failGeneralMessages = evaluation.passGeneralMessages,
+            passMessages = evaluation.failMessages,
+            failMessages = evaluation.passMessages,
         )
     }
 }

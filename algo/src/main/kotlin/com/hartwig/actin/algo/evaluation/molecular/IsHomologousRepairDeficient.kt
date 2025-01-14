@@ -52,24 +52,24 @@ class IsHomologousRepairDeficient(maxTestAge: LocalDate? = null) : MolecularEval
             null -> {
                 if (hrdGenesWithBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.undetermined(
-                        "Unknown homologous repair deficiency (HRD) status, but biallelic drivers in HR genes: "
-                                + concat(hrdGenesWithBiallelicDriver) + " are detected; an HRD test may be recommended",
-                        "Unknown HRD status but biallelic drivers in HR genes"
+                        "Unknown HRD status but biallelic drivers in HR genes (${concat(hrdGenesWithBiallelicDriver)})",
+                        missingGenesForEvaluation = true
                     )
                 } else if (hrdGenesWithNonBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.undetermined(
-                        "Unknown homologous repair deficiency (HRD) status, but non-biallelic drivers in HR genes: "
-                                + concat(hrdGenesWithNonBiallelicDriver) + " are detected; an HRD test may be recommended",
-                        "Unknown HRD status but non-biallelic drivers in HR genes"
+                        "Unknown HRD status but non-biallelic drivers in HR genes (${concat(hrdGenesWithNonBiallelicDriver)})",
+                        missingGenesForEvaluation = true
                     )
                 } else if (hrdGenesWithUnknownAllelicDriver.isNotEmpty()) {
                     EvaluationFactory.undetermined(
-                        "Unknown homologous repair deficiency (HRD) status, but drivers with unknown allelic status in HR genes: "
-                                + concat(hrdGenesWithNonBiallelicDriver) + " are detected; an HRD test may be recommended",
-                        "Unknown HRD status but drivers unknown allelic status in HR genes"
+                        "Unknown HRD status but drivers with unknown allelic status in HR genes (${
+                            concat(
+                                hrdGenesWithNonBiallelicDriver
+                            )
+                        })"
                     )
                 } else {
-                    EvaluationFactory.fail("Unknown homologous repair deficiency (HRD) status", "Unknown HRD status")
+                    EvaluationFactory.undetermined("Unknown HRD status")
                 }
             }
 
@@ -77,30 +77,24 @@ class IsHomologousRepairDeficient(maxTestAge: LocalDate? = null) : MolecularEval
                 val inclusionMolecularEvents = setOf(MolecularCharacteristicEvents.HOMOLOGOUS_REPAIR_DEFICIENT)
                 if (hrdGenesWithBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.pass(
-                        "Homologous repair deficiency (HRD) status detected, together with biallelic drivers in HR genes: "
-                                + concat(hrdGenesWithBiallelicDriver),
-                        "Tumor is HRD and biallelic drivers in HR genes detected",
+                        "Tumor is HRD with biallelic drivers in HR genes (${concat(hrdGenesWithBiallelicDriver)})",
                         inclusionEvents = inclusionMolecularEvents
                     )
                 } else if (hrdGenesWithNonBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.warn(
-                        "Homologous repair deficiency (HRD) status detected, together with non-biallelic drivers in HR genes ("
-                                + concat(MolecularConstants.HRD_GENES) + ") were detected",
-                        "Tumor is HRD (but with only non-biallelic drivers in HR genes)",
+                        "Tumor is HRD but with only non-biallelic drivers in HR genes",
                         inclusionEvents = inclusionMolecularEvents
                     )
                 } else {
                     EvaluationFactory.warn(
-                        "Homologous repair deficiency (HRD) status detected, without drivers in HR genes ("
-                                + concat(MolecularConstants.HRD_GENES) + ") detected",
-                        "Tumor is HRD (but without detected drivers in HR genes)",
+                        "Tumor is HRD but without drivers in HR genes",
                         inclusionEvents = inclusionMolecularEvents
                     )
                 }
             }
 
             else -> {
-                EvaluationFactory.fail("No homologous repair deficiency (HRD) detected", "Tumor is not HRD")
+                EvaluationFactory.fail("Tumor is not HRD")
             }
         }
     }

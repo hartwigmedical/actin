@@ -74,7 +74,7 @@ class PatientCurrentDetailsGeneratorTest {
     @Test
     fun `Should include toxicities with known sufficient grade that were unresolved as of reference date`() {
         val patientRecord = minimalPatientRecord.copy(
-            toxicities = listOf(
+            comorbidities = listOf(
                 toxicity("Toxicity 1", null, 3),
                 toxicity("Toxicity 2", referenceDate.plusMonths(1), 2),
                 toxicity("Toxicity 3", referenceDate.minusDays(5), 2),

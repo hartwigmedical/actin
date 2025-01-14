@@ -8,9 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class MeetsSpecificBiopsyRequirements : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.recoverableUndetermined(
-            "This evaluation requires specific requirements regarding biopsy that currently cannot be determined",
-            "Undetermined specific biopsy requirements"
-        )
+        return EvaluationFactory.recoverableUndetermined("Undetermined if patient meets specific biopsy requirements")
     }
 }

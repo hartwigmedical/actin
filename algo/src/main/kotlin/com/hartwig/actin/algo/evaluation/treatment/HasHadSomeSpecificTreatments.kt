@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.Format.concatItems
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
@@ -19,7 +19,7 @@ class HasHadSomeSpecificTreatments(private val treatments: List<Treatment>, priv
             record.oncologicalHistory.count { it.isTrial && it.treatments.isEmpty() }
         } else 0
 
-        val treatmentListing = concatItems(treatments)
+        val treatmentListing = Format.concatItemsWithAnd(treatments)
 
         return when {
             matchTreatments.size >= minTreatmentLines -> {

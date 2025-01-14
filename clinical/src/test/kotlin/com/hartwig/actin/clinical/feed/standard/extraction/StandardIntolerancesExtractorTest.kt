@@ -4,7 +4,7 @@ import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
 import com.hartwig.actin.clinical.feed.standard.EhrTestData
 import com.hartwig.actin.clinical.feed.standard.ProvidedAllergy
-import com.hartwig.actin.clinical.feed.standard.ProvidedPriorOtherCondition
+import com.hartwig.actin.clinical.feed.standard.ProvidedOtherCondition
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import io.mockk.every
@@ -79,7 +79,7 @@ class StandardIntolerancesExtractorTest {
     }
 
     @Test
-    fun `Should extract intolerances from prior other conditions, supporting multiple configs per input, but ignore any curation warnings`() {
+    fun `Should extract intolerances from other conditions, supporting multiple configs per input, but ignore any curation warnings`() {
         val anotherCurated = "another curated"
         every { intoleranceCuration.find(NAME) } returns setOf(
             IntoleranceConfig(
@@ -97,8 +97,8 @@ class StandardIntolerancesExtractorTest {
             EHR_PATIENT_RECORD.copy(
                 allergies = emptyList(),
                 priorOtherConditions = listOf(
-                    ProvidedPriorOtherCondition(name = NAME, startDate = LocalDate.of(2024, 4, 22)),
-                    ProvidedPriorOtherCondition(name = "not an intolerance", startDate = LocalDate.of(2024, 4, 22))
+                    ProvidedOtherCondition(name = NAME, startDate = LocalDate.of(2024, 4, 22)),
+                    ProvidedOtherCondition(name = "not an intolerance", startDate = LocalDate.of(2024, 4, 22))
                 )
             )
         )

@@ -19,9 +19,9 @@ import com.hartwig.actin.clinical.feed.standard.extraction.StandardIntolerancesE
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardLabValuesExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardMedicationExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardOncologicalHistoryExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardOtherConditionsExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPatientDetailsExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorIHCTestExtractor
-import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorOtherConditionsExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorPrimariesExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorSequencingTestExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSurgeryExtractor
@@ -80,7 +80,7 @@ class StandardDataIngestionTest {
             surgeryExtractor = StandardSurgeryExtractor(curationDatabase.surgeryNameCuration),
             toxicityExtractor = StandardToxicityExtractor(curationDatabase.toxicityCuration),
             vitalFunctionsExtractor = StandardVitalFunctionsExtractor(),
-            priorOtherConditionsExtractor = StandardPriorOtherConditionsExtractor(
+            otherConditionsExtractor = StandardOtherConditionsExtractor(
                 curationDatabase.nonOncologicalHistoryCuration
             ),
             intolerancesExtractor = StandardIntolerancesExtractor(curationDatabase.intoleranceCuration),

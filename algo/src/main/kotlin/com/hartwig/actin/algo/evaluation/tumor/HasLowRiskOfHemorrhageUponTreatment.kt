@@ -8,9 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasLowRiskOfHemorrhageUponTreatment : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined(
-            "Currently undetermined whether there is low risk of hemorrhage upon treatment",
-            "Hemorrhage risk upon treatment undetermined"
-        )
+        return EvaluationFactory.undetermined("Hemorrhage risk upon treatment undetermined")
     }
 }

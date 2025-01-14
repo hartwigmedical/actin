@@ -9,11 +9,11 @@ import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
-import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
+import com.hartwig.actin.datamodel.clinical.OtherCondition
 
-class PriorOtherConditionsExtractor(private val nonOncologicalCuration: CurationDatabase<NonOncologicalHistoryConfig>) {
+class OtherConditionsExtractor(private val nonOncologicalCuration: CurationDatabase<NonOncologicalHistoryConfig>) {
 
-    fun extract(patientId: String, questionnaire: Questionnaire?): ExtractionResult<List<PriorOtherCondition>> {
+    fun extract(patientId: String, questionnaire: Questionnaire?): ExtractionResult<List<OtherCondition>> {
         if (questionnaire?.nonOncologicalHistory == null) {
             return ExtractionResult(emptyList(), CurationExtractionEvaluation())
         }
@@ -30,13 +30,13 @@ class PriorOtherConditionsExtractor(private val nonOncologicalCuration: Curation
                 )
             }
             .fold(CurationResponse<NonOncologicalHistoryConfig>()) { acc, cur -> acc + cur }
-        val priorOtherConditions = curation.configs.filterNot { it.ignore }
-            .mapNotNull { it.priorOtherCondition }
-        return ExtractionResult(priorOtherConditions, curation.extractionEvaluation)
+        val otherConditions = curation.configs.filterNot { it.ignore }
+            .mapNotNull { it.otherCondition }
+        return ExtractionResult(otherConditions, curation.extractionEvaluation)
     }
 
     companion object {
         fun create(curationDatabaseContext: CurationDatabaseContext) =
-            PriorOtherConditionsExtractor(nonOncologicalCuration = curationDatabaseContext.nonOncologicalHistoryCuration)
+            OtherConditionsExtractor(nonOncologicalCuration = curationDatabaseContext.nonOncologicalHistoryCuration)
     }
 }
