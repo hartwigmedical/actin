@@ -4,16 +4,15 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.DateComparison
 import com.hartwig.actin.algo.evaluation.util.Format
-import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.IcdCode
-import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
+import com.hartwig.actin.datamodel.clinical.OtherCondition
 import com.hartwig.actin.icd.IcdModel
 import java.time.LocalDate
 
-class HasHadPriorConditionWithIcdCodeFromSetRecently(
+class HasHadOtherConditionWithIcdCodeFromSetRecently(
     private val icdModel: IcdModel,
     private val targetIcdCodes: Set<IcdCode>,
     private val diseaseDescription: String,
@@ -21,14 +20,11 @@ class HasHadPriorConditionWithIcdCodeFromSetRecently(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val icdMatches = icdModel.findInstancesMatchingAnyIcdCode(
-            OtherConditionSelector.selectClinicallyRelevant(
-                record.priorOtherConditions
-            ), targetIcdCodes
-        )
+        val icdMatches = icdModel.findInstancesMatchingAnyIcdCode(record.otherConditions, targetIcdCodes)
         val fullMatchSummary = evaluateConditionsByDate(icdMatches.fullMatches)
-        val mainMatchesWithUnknownExtension =
-            evaluateConditionsByDate(icdMatches.mainCodeMatchesWithUnknownExtension).filterNot { it.key == EvaluationResult.FAIL }.values.flatten()
+        val mainMatchesWithUnknownExtension = evaluateConditionsByDate(icdMatches.mainCodeMatchesWithUnknownExtension)
+            .filterNot { it.key == EvaluationResult.FAIL }
+            .values.flatten()
 
         return when {
             fullMatchSummary.containsKey(EvaluationResult.PASS) -> {
@@ -70,7 +66,7 @@ class HasHadPriorConditionWithIcdCodeFromSetRecently(
         }
     }
 
-    private fun evaluateConditionsByDate(conditions: List<PriorOtherCondition>): Map<EvaluationResult, List<PriorOtherCondition>> {
+    private fun evaluateConditionsByDate(conditions: List<OtherCondition>): Map<EvaluationResult, List<OtherCondition>> {
         return conditions
             .groupBy {
                 val isAfter = DateComparison.isAfterDate(minDate, it.year, it.month)
@@ -86,7 +82,7 @@ class HasHadPriorConditionWithIcdCodeFromSetRecently(
             }
     }
 
-    private fun resolveIcdTitle(condition: PriorOtherCondition): String {
+    private fun resolveIcdTitle(condition: OtherCondition): String {
         return Format.concat(condition.icdCodes.map { icdModel.resolveTitleForCode(it) })
     }
 }

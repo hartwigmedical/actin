@@ -25,8 +25,8 @@ class HasLeptomeningealDiseaseTest {
                 ComplicationTestFactory.withComplication(
                     ComplicationTestFactory.complication(icdCode = IcdCode(code))
                 ),
-                OtherConditionTestFactory.withPriorOtherCondition(
-                    OtherConditionTestFactory.priorOtherCondition(icdMainCode = code)
+                OtherConditionTestFactory.withOtherCondition(
+                    OtherConditionTestFactory.otherCondition(icdMainCode = code)
                 )
             )
         }.forEach { assertEvaluation(EvaluationResult.PASS, function.evaluate(it)) }

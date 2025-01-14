@@ -2,7 +2,9 @@ package com.hartwig.actin
 
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import com.hartwig.actin.clinical.serialization.ComorbidityAdapter
 import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.clinical.Comorbidity
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.util.Paths
@@ -55,6 +57,7 @@ object PatientRecordJson {
             .registerTypeAdapter(object : TypeToken<LocalDate?>() {}.type, GsonLocalDateAdapter())
             .registerTypeAdapter(LocalDateTime::class.java, GsonLocalDateTimeAdapter())
             .registerTypeAdapter(Treatment::class.java, TreatmentAdapter(gsonBuilder.create()))
+            .registerTypeAdapter(Comorbidity::class.java, ComorbidityAdapter())
             .registerTypeAdapter(MolecularHistory::class.java, MolecularHistoryAdapter(gsonBuilder.create()))
     }
 }

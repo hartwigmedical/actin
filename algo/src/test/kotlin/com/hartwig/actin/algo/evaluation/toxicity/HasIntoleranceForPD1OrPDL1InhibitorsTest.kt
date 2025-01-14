@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
-import com.hartwig.actin.datamodel.clinical.TestPriorOtherConditionFactory
+import com.hartwig.actin.datamodel.clinical.TestOtherConditionFactory
 import com.hartwig.actin.icd.TestIcdFactory
 import org.junit.Test
 
@@ -61,20 +61,6 @@ class HasIntoleranceForPD1OrPDL1InhibitorsTest {
     }
 
     @Test
-    fun `Should fail when patient has matching condition but no contraindication for therapy`() {
-        assertEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(
-                patient(
-                    listOf(ToxicityTestFactory.intolerance(name = "other")),
-                    AUTOIMMUNE_ICD_MAIN_CODE,
-                    isContraIndication = false
-                )
-            )
-        )
-    }
-
-    @Test
     fun `Should fail when patient has no matching intolerance or autoimmune disease condition`() {
         assertEvaluation(
             EvaluationResult.FAIL,
@@ -87,12 +73,11 @@ class HasIntoleranceForPD1OrPDL1InhibitorsTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withIntolerances(emptyList())))
     }
 
-    private fun patient(intolerances: List<Intolerance>, icdMainCode: String = "", isContraIndication: Boolean = true): PatientRecord {
-        val priorCondition = TestPriorOtherConditionFactory.createMinimal()
-            .copy(icdCodes = setOf(IcdCode(icdMainCode)), isContraindicationForTherapy = isContraIndication)
+    private fun patient(intolerances: List<Intolerance>, icdMainCode: String = ""): PatientRecord {
+        val priorCondition = TestOtherConditionFactory.createMinimal()
+            .copy(icdCodes = setOf(IcdCode(icdMainCode)))
         return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-            intolerances = intolerances,
-            priorOtherConditions = listOf(priorCondition)
+            comorbidities = intolerances + priorCondition
         )
     }
 

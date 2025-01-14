@@ -6,10 +6,10 @@ import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.config.IHCTestConfig
 import com.hartwig.actin.clinical.feed.standard.EhrTestData.createEhrPatientRecord
 import com.hartwig.actin.clinical.feed.standard.HASHED_ID_IN_BASE64
-import com.hartwig.actin.clinical.feed.standard.PRIOR_CONDITION_INPUT
+import com.hartwig.actin.clinical.feed.standard.OTHER_CONDITION_INPUT
 import com.hartwig.actin.clinical.feed.standard.ProvidedMolecularTest
 import com.hartwig.actin.clinical.feed.standard.ProvidedMolecularTestResult
-import com.hartwig.actin.clinical.feed.standard.ProvidedPriorOtherCondition
+import com.hartwig.actin.clinical.feed.standard.ProvidedOtherCondition
 import com.hartwig.actin.datamodel.clinical.PriorIHCTest
 import io.mockk.every
 import io.mockk.mockk
@@ -100,15 +100,15 @@ class StandardPriorIHCTestExtractorTest {
     }
 
     @Test
-    fun `Should curate molecular tests from prior other conditions, supporting multiple configs per input, but ignore any curation warnings`() {
+    fun `Should curate molecular tests from other conditions, supporting multiple configs per input, but ignore any curation warnings`() {
         val anotherMolecularTest = PRIOR_MOLECULAR_TEST.copy(item = "ERBB2")
-        every { molecularTestCuration.find(PRIOR_CONDITION_INPUT) } returns setOf(
+        every { molecularTestCuration.find(OTHER_CONDITION_INPUT) } returns setOf(
             IHCTestConfig(
-                input = PRIOR_CONDITION_INPUT,
+                input = OTHER_CONDITION_INPUT,
                 curated = PRIOR_MOLECULAR_TEST
             ),
             IHCTestConfig(
-                input = PRIOR_CONDITION_INPUT,
+                input = OTHER_CONDITION_INPUT,
                 curated = anotherMolecularTest
             )
         )
@@ -116,11 +116,11 @@ class StandardPriorIHCTestExtractorTest {
             extractor.extract(
                 EHR_PATIENT_RECORD.copy(
                     priorOtherConditions = listOf(
-                        ProvidedPriorOtherCondition(
-                            name = PRIOR_CONDITION_INPUT,
+                        ProvidedOtherCondition(
+                            name = OTHER_CONDITION_INPUT,
                             startDate = UNUSED_DATE
                         ),
-                        ProvidedPriorOtherCondition(
+                        ProvidedOtherCondition(
                             name = "another prior condition",
                             startDate = UNUSED_DATE
                         )

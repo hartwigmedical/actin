@@ -16,8 +16,8 @@ class HasHistoryOfCongestiveHeartFailureWithNYHATest {
         listOf(IcdConstants.NYHA_CLASS_3_CODE, IcdConstants.NYHA_CLASS_4_CODE).forEach {
             assertEvaluation(
                 EvaluationResult.PASS, function.evaluate(
-                    OtherConditionTestFactory.withPriorOtherCondition(
-                        OtherConditionTestFactory.priorOtherCondition(
+                    OtherConditionTestFactory.withOtherCondition(
+                        OtherConditionTestFactory.otherCondition(
                             icdMainCode = IcdConstants.CONGESTIVE_HEART_FAILURE_CODE,
                             icdExtensionCode = it
                         )
@@ -31,8 +31,8 @@ class HasHistoryOfCongestiveHeartFailureWithNYHATest {
     fun `Should evaluate to undetermined if congestive heart failure with unknown NYHA class in history`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(
-                OtherConditionTestFactory.withPriorOtherCondition(
-                    OtherConditionTestFactory.priorOtherCondition(
+                OtherConditionTestFactory.withOtherCondition(
+                    OtherConditionTestFactory.otherCondition(
                         icdMainCode = IcdConstants.CONGESTIVE_HEART_FAILURE_CODE,
                         icdExtensionCode = null
                     )
@@ -45,8 +45,8 @@ class HasHistoryOfCongestiveHeartFailureWithNYHATest {
     fun `Should fail for congestive heart failure with NYHA class lower than requested`() {
         assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
-                OtherConditionTestFactory.withPriorOtherCondition(
-                    OtherConditionTestFactory.priorOtherCondition(
+                OtherConditionTestFactory.withOtherCondition(
+                    OtherConditionTestFactory.otherCondition(
                         icdMainCode = IcdConstants.CONGESTIVE_HEART_FAILURE_CODE,
                         icdExtensionCode = IcdConstants.NYHA_CLASS_2_CODE
                     )
@@ -59,8 +59,8 @@ class HasHistoryOfCongestiveHeartFailureWithNYHATest {
     fun `Should fail for wrong condition`() {
         assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
-                OtherConditionTestFactory.withPriorOtherCondition(
-                    OtherConditionTestFactory.priorOtherCondition(
+                OtherConditionTestFactory.withOtherCondition(
+                    OtherConditionTestFactory.otherCondition(
                         icdMainCode = IcdConstants.PNEUMOTHORAX_CODE,
                         icdExtensionCode = IcdConstants.NYHA_CLASS_4_CODE
                     )
@@ -72,7 +72,7 @@ class HasHistoryOfCongestiveHeartFailureWithNYHATest {
     @Test
     fun `Should fail for empty history`() {
         assertEvaluation(
-            EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(emptyList()))
+            EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withOtherConditions(emptyList()))
         )
     }
 }

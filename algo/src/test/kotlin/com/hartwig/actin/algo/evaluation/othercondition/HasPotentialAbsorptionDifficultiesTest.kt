@@ -13,13 +13,13 @@ class HasPotentialAbsorptionDifficultiesTest {
     private val function = HasPotentialAbsorptionDifficulties(TestIcdFactory.createTestModel())
     private val correctIcd = IcdConstants.POSSIBLE_ABSORPTION_DIFFICULTIES_SET.iterator().next()
     private val wrongIcdMainCode = "wrong"
-    private val correctCondition = OtherConditionTestFactory.priorOtherCondition(icdMainCode = correctIcd)
+    private val correctCondition = OtherConditionTestFactory.otherCondition(icdMainCode = correctIcd)
     private val correctComplication = OtherConditionTestFactory.complication(icdMainCode = correctIcd)
     private val correctToxicity = OtherConditionTestFactory.toxicity("", ToxicitySource.EHR, 2, correctIcd)
 
     @Test
-    fun `Should pass for icd-matching prior other condition`() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withPriorOtherCondition(correctCondition)))
+    fun `Should pass for icd-matching other condition`() {
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withOtherCondition(correctCondition)))
     }
 
     @Test
@@ -37,7 +37,7 @@ class HasPotentialAbsorptionDifficultiesTest {
         listOf(
             OtherConditionTestFactory.withToxicities(listOf(correctToxicity.copy(icdCodes = setOf(IcdCode(wrongIcdMainCode))))),
             OtherConditionTestFactory.withComplications(listOf(correctComplication.copy(icdCodes = setOf(IcdCode(wrongIcdMainCode))))),
-            OtherConditionTestFactory.withPriorOtherCondition(correctCondition.copy(icdCodes = setOf(IcdCode(wrongIcdMainCode))))
+            OtherConditionTestFactory.withOtherCondition(correctCondition.copy(icdCodes = setOf(IcdCode(wrongIcdMainCode))))
         )
             .forEach {
                 assertEvaluation(EvaluationResult.FAIL, function.evaluate((it)))
@@ -46,12 +46,6 @@ class HasPotentialAbsorptionDifficultiesTest {
 
     @Test
     fun `Should fail for empty history`() {
-        assertEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(
-                TestPatientFactory.createMinimalTestWGSPatientRecord()
-                    .copy(priorOtherConditions = emptyList(), toxicities = emptyList(), complications = emptyList())
-            )
-        )
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
     }
 }

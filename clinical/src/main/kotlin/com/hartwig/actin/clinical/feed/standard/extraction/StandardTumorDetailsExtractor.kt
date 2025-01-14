@@ -24,7 +24,7 @@ class StandardTumorDetailsExtractor(
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<TumorDetails> {
         val input = "${ehrPatientRecord.tumorDetails.tumorLocation} | ${ehrPatientRecord.tumorDetails.tumorType}"
 
-        val curatedTumorResponseFromPriorOtherConditions = ehrPatientRecord.priorOtherConditions.map {
+        val curatedTumorResponseFromOtherConditions = ehrPatientRecord.priorOtherConditions.map {
             CurationResponse.createFromConfigs(
                 primaryTumorConfigCurationDatabase.find(it.name),
                 ehrPatientRecord.patientDetails.hashedId, CurationCategory.PRIMARY_TUMOR, input, "primary tumor"
@@ -39,7 +39,7 @@ class StandardTumorDetailsExtractor(
         val lesionCurationResponse = extractLesions(ehrPatientRecord)
         val curatedLesions = lesionCurationResponse.flatMap { it.configs }
         val tumorDetailsFromEhr = tumorDetails(ehrPatientRecord, curatedLesions)
-        val combinedTumorResponse = combinedTumorResponse(curatedTumorResponse, curatedTumorResponseFromPriorOtherConditions)
+        val combinedTumorResponse = combinedTumorResponse(curatedTumorResponse, curatedTumorResponseFromOtherConditions)
         return combinedTumorResponse.config()?.let {
             val curatedTumorDetails = tumorDetailsFromEhr.copy(
                 primaryTumorLocation = it.primaryTumorLocation,
@@ -58,8 +58,8 @@ class StandardTumorDetailsExtractor(
 
     private fun combinedTumorResponse(
         curatedTumorResponse: CurationResponse<PrimaryTumorConfig>,
-        curatedTumorResponseFromPriorOtherConditions: PrimaryTumorConfig?
-    ) = curatedTumorResponseFromPriorOtherConditions?.let { CurationResponse(setOf(it), CurationExtractionEvaluation()) }
+        curatedTumorResponseFromOtherConditions: PrimaryTumorConfig?
+    ) = curatedTumorResponseFromOtherConditions?.let { CurationResponse(setOf(it), CurationExtractionEvaluation()) }
         ?: curatedTumorResponse
 
     private fun tumorDetails(
@@ -119,9 +119,9 @@ class StandardTumorDetailsExtractor(
         val patientId = patientRecord.patientDetails.hashedId
         val lesionsFromLesionList = extractFromLesionList(patientRecord)
         val lesionsFromRadiologyReport = extractFromRadiologyReport(patientRecord.tumorDetails.lesionSite, patientId)
-        val lesionsFromPriorOtherConditions = extractFromSecondarySource(patientId, patientRecord.priorOtherConditions) { it.name }
+        val lesionsFromOtherConditions = extractFromSecondarySource(patientId, patientRecord.priorOtherConditions) { it.name }
         val lesionsFromTreatmentHistory = extractFromSecondarySource(patientId, patientRecord.treatmentHistory) { it.treatmentName }
-        return lesionsFromLesionList + lesionsFromRadiologyReport + lesionsFromPriorOtherConditions + lesionsFromTreatmentHistory
+        return lesionsFromLesionList + lesionsFromRadiologyReport + lesionsFromOtherConditions + lesionsFromTreatmentHistory
     }
 
     private fun extractFromLesionList(patientRecord: ProvidedPatientRecord): List<CurationResponse<LesionLocationConfig>> {

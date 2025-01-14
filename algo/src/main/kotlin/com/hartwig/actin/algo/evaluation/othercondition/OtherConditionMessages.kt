@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.othercondition
 
 import com.hartwig.actin.algo.evaluation.util.Format
 
-internal object PriorConditionMessages {
+internal object OtherConditionMessages {
 
     fun fail(icdTitle: String?): String {
         return "Has no other condition belonging to category $icdTitle"

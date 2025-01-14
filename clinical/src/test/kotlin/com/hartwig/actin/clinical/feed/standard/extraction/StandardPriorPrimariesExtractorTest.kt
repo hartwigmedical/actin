@@ -6,8 +6,8 @@ import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.standard.EhrTestData
-import com.hartwig.actin.clinical.feed.standard.PRIOR_CONDITION_INPUT
-import com.hartwig.actin.clinical.feed.standard.ProvidedPriorOtherCondition
+import com.hartwig.actin.clinical.feed.standard.OTHER_CONDITION_INPUT
+import com.hartwig.actin.clinical.feed.standard.ProvidedOtherCondition
 import com.hartwig.actin.clinical.feed.standard.ProvidedPriorPrimary
 import com.hartwig.actin.clinical.feed.standard.TREATMENT_HISTORY_INPUT
 import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary
@@ -48,7 +48,7 @@ private val EHR_PATIENT_RECORD = EhrTestData.createEhrPatientRecord().copy(
 
 private const val PRIOR_PRIMARY_INPUT = "$BRAIN_LOCATION | $TYPE"
 private val UNUSED_DATE = LocalDate.of(2023, 1, 1)
-private val EHR_PRIOR_OTHER_CONDITION = ProvidedPriorOtherCondition(name = PRIOR_CONDITION_INPUT, startDate = UNUSED_DATE)
+private val EHR_PRIOR_OTHER_CONDITION = ProvidedOtherCondition(name = OTHER_CONDITION_INPUT, startDate = UNUSED_DATE)
 
 private val SECOND_PRIMARY_CONFIG = SecondPrimaryConfig(
     ignore = false,
@@ -116,11 +116,11 @@ class StandardPriorPrimariesExtractorTest {
     }
 
     @Test
-    fun `Should curate and extract prior primaries from prior conditions, supporting multiple configs per input, ignoring warnings`() {
-        every { secondPrimaryConfigCurationDatabase.find(PRIOR_CONDITION_INPUT) } returns setOf(
-            SECOND_PRIMARY_CONFIG.copy(input = PRIOR_CONDITION_INPUT),
+    fun `Should curate and extract prior primaries from other conditions, supporting multiple configs per input, ignoring warnings`() {
+        every { secondPrimaryConfigCurationDatabase.find(OTHER_CONDITION_INPUT) } returns setOf(
+            SECOND_PRIMARY_CONFIG.copy(input = OTHER_CONDITION_INPUT),
             SECOND_PRIMARY_CONFIG.copy(
-                input = PRIOR_CONDITION_INPUT,
+                input = OTHER_CONDITION_INPUT,
                 curated = LUNG_PRIOR_SECOND_PRIMARY
             )
         )
@@ -134,7 +134,7 @@ class StandardPriorPrimariesExtractorTest {
             )
         )
         assertThat(result.extracted).containsExactly(BRAIN_PRIOR_SECOND_PRIMARY, LUNG_PRIOR_SECOND_PRIMARY)
-        assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation(secondPrimaryEvaluatedInputs = setOf(PRIOR_CONDITION_INPUT)))
+        assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation(secondPrimaryEvaluatedInputs = setOf(OTHER_CONDITION_INPUT)))
         assertThat(result.evaluation.warnings).isEmpty()
     }
 

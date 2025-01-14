@@ -133,7 +133,7 @@
     }
   ],
   "priorSecondPrimaries": [],
-  "priorOtherConditions": [
+  "comorbidities": [
     {
       "name": "Cerebrovascular accident",
       "year": 2019,
@@ -142,17 +142,16 @@
         "3526"
       ],
       "category": "Cerebrovascular disease",
-      "isContraindicationForTherapy": true
-    }
-  ],
-  "complications": [
+      "comorbidityClass": "OTHER_CONDITION"
+    },
     {
       "name": "Pleural effusion",
       "categories": [
         "Pleural effusion"
       ],
       "year": 2023,
-      "month": 1
+      "month": 1,
+      "comorbidityClass": "COMPLICATION"
     }
   ],
   "labValues": [
@@ -367,8 +366,6 @@
       "isOutsideRef": false
     }
   ],
-  "toxicities": [],
-  "intolerances": [],
   "surgeries": [],
   "bodyWeights": [
     {

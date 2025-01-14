@@ -4,7 +4,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.icd.IcdConstants
-import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IcdCode
@@ -14,19 +13,10 @@ class HasHistoryOfAnaphylaxis(private val icdModel: IcdModel): EvaluationFunctio
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val anaphylaxisCode = setOf(IcdCode(IcdConstants.ANAPHYLAXIS_CODE))
-        val anaphylaxisHistoryEntries =
-            icdModel.findInstancesMatchingAnyIcdCode(
-                OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions),
-                anaphylaxisCode
-            ).fullMatches
+        val anaphylaxisEntries = icdModel.findInstancesMatchingAnyIcdCode(record.comorbidities, anaphylaxisCode).fullMatches
 
-        val anaphylaxisIntoleranceEntries =
-            icdModel.findInstancesMatchingAnyIcdCode(record.intolerances, anaphylaxisCode).fullMatches
-
-        val conditionString = Format.concatItemsWithAnd(anaphylaxisHistoryEntries + anaphylaxisIntoleranceEntries)
-
-        return if (anaphylaxisIntoleranceEntries.isNotEmpty() || anaphylaxisHistoryEntries.isNotEmpty()) {
-            EvaluationFactory.pass("Has history of anaphylaxis ($conditionString)")
+        return if (anaphylaxisEntries.isNotEmpty()) {
+            EvaluationFactory.pass("Has history of anaphylaxis: ${Format.concatItemsWithAnd(anaphylaxisEntries)}")
         } else {
             EvaluationFactory.fail("No known history of anaphylaxis")
         }

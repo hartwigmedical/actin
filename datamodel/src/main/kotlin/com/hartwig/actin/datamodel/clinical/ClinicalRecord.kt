@@ -9,17 +9,27 @@ data class ClinicalRecord(
     val clinicalStatus: ClinicalStatus,
     val oncologicalHistory: List<TreatmentHistoryEntry>,
     val priorSecondPrimaries: List<PriorSecondPrimary>,
-    val priorOtherConditions: List<PriorOtherCondition>,
+    val comorbidities: List<Comorbidity>,
     val priorIHCTests: List<PriorIHCTest>,
     val priorSequencingTests: List<PriorSequencingTest>,
-    val complications: List<Complication>?,
     val labValues: List<LabValue>,
-    val toxicities: List<Toxicity>,
-    val intolerances: List<Intolerance>,
     val surgeries: List<Surgery>,
     val bodyWeights: List<BodyWeight>,
     val bodyHeights: List<BodyHeight>,
     val vitalFunctions: List<VitalFunction>,
     val bloodTransfusions: List<BloodTransfusion>,
     val medications: List<Medication>?,
-)
+) {
+
+    val otherConditions: List<OtherCondition>
+        get() = comorbidities.filterIsInstance<OtherCondition>()
+
+    val complications: List<Complication>
+        get() = comorbidities.filterIsInstance<Complication>()
+
+    val toxicities: List<Toxicity>
+        get() = comorbidities.filterIsInstance<Toxicity>()
+
+    val intolerances: List<Intolerance>
+        get() = comorbidities.filterIsInstance<Intolerance>()
+}

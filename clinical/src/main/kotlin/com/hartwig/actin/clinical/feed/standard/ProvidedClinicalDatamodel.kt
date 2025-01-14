@@ -28,7 +28,7 @@ data class ProvidedPatientRecord(
     val medications: List<ProvidedMedication>? = emptyList(),
     val molecularTests: List<ProvidedMolecularTest> = emptyList(),
     val patientDetails: ProvidedPatientDetail,
-    val priorOtherConditions: List<ProvidedPriorOtherCondition> = emptyList(),
+    val priorOtherConditions: List<ProvidedOtherCondition> = emptyList(),
     val surgeries: List<ProvidedSurgery> = emptyList(),
     val toxicities: List<ProvidedToxicity> = emptyList(),
     val treatmentHistory: List<ProvidedTreatmentHistory> = emptyList(),
@@ -189,7 +189,7 @@ data class ProvidedPriorPrimary(
 )
 
 @JacksonSerializable
-data class ProvidedPriorOtherCondition(
+data class ProvidedOtherCondition(
     @field:JsonDeserialize(using = RemoveNewlinesAndCarriageReturns::class)
     @Description("Name of condition (eg. Pancreatis)")
     val name: String,

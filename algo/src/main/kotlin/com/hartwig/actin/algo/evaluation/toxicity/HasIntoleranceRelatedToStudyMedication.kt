@@ -12,13 +12,13 @@ import com.hartwig.actin.icd.IcdModel
 class HasIntoleranceRelatedToStudyMedication(private val icdModel: IcdModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
+        val drugIntolerances = icdModel.findInstancesMatchingAnyIcdCode(
+            record.intolerances, IcdConstants.DRUG_ALLERGY_SET.map { IcdCode(it) }.toSet()
+        ).fullMatches
+
         val allergies = record.intolerances
             .filter { intolerance ->
-                intolerance.clinicalStatus.equals(CLINICAL_STATUS_ACTIVE, ignoreCase = true)
-                        && icdModel.findInstancesMatchingAnyIcdCode(
-                    record.intolerances,
-                    IcdConstants.DRUG_ALLERGY_SET.map { IcdCode(it) }.toSet()
-                        ).fullMatches.contains(intolerance)
+                intolerance.clinicalStatus.equals(CLINICAL_STATUS_ACTIVE, ignoreCase = true) && drugIntolerances.contains(intolerance)
             }
             .toSet()
 

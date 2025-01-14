@@ -18,22 +18,22 @@ class HasSpecificFamilyHistoryTest {
 
     @Test
     fun `Should fail when no prior conditions present`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions((emptyList()))))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withOtherConditions((emptyList()))))
     }
 
     @Test
     fun `Should fail when no conditions belonging to 'pass conditions', 'undetermined conditions', 'other specified', or unspecified family history present`() {
-        val condition = OtherConditionTestFactory.priorOtherCondition(icdMainCode = IcdConstants.HEART_FAILURE_BLOCK)
+        val condition = OtherConditionTestFactory.otherCondition(icdMainCode = IcdConstants.HEART_FAILURE_BLOCK)
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(OtherConditionTestFactory.withPriorOtherCondition(condition))
+            function.evaluate(OtherConditionTestFactory.withOtherCondition(condition))
         )
     }
 
     @Test
     fun `Should pass when 'pass condition' family history present`() {
-        val condition = OtherConditionTestFactory.priorOtherCondition(icdMainCode = passConditions.icdCodes.first().mainCode)
-        val evaluation = function.evaluate(OtherConditionTestFactory.withPriorOtherCondition(condition))
+        val condition = OtherConditionTestFactory.otherCondition(icdMainCode = passConditions.icdCodes.first().mainCode)
+        val evaluation = function.evaluate(OtherConditionTestFactory.withOtherCondition(condition))
         assertEvaluation(EvaluationResult.PASS, evaluation)
         assertThat(evaluation.passMessages).containsExactly("Has family history of idiopathic sudden death")
     }
@@ -41,8 +41,11 @@ class HasSpecificFamilyHistoryTest {
     @Test
     fun `Should evaluate to undetermined when 'undetermined condition' family history present`() {
         val condition =
-            OtherConditionTestFactory.priorOtherCondition(name = "acute myocard infarct", icdMainCode = undeterminedConditions.icdCodes.first().mainCode)
-        val evaluation = function.evaluate(OtherConditionTestFactory.withPriorOtherCondition(condition))
+            OtherConditionTestFactory.otherCondition(
+                name = "acute myocard infarct",
+                icdMainCode = undeterminedConditions.icdCodes.first().mainCode
+            )
+        val evaluation = function.evaluate(OtherConditionTestFactory.withOtherCondition(condition))
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessages).containsExactly(
             "Has family history of cardiovascular disease (acute myocard infarct) - undetermined if idiopathic sudden death"
@@ -58,7 +61,7 @@ class HasSpecificFamilyHistoryTest {
             assertEvaluation(
                 EvaluationResult.UNDETERMINED,
                 function.evaluate(
-                    OtherConditionTestFactory.withPriorOtherCondition(OtherConditionTestFactory.priorOtherCondition(icdMainCode = it))
+                    OtherConditionTestFactory.withOtherCondition(OtherConditionTestFactory.otherCondition(icdMainCode = it))
                 )
             )
         }

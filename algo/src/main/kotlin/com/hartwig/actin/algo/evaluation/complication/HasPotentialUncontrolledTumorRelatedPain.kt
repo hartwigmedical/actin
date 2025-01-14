@@ -6,7 +6,6 @@ import com.hartwig.actin.algo.evaluation.medication.MEDICATION_NOT_PROVIDED
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
 import com.hartwig.actin.algo.evaluation.util.Format
-import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.icd.IcdModel
@@ -25,10 +24,7 @@ class HasPotentialUncontrolledTumorRelatedPain(
             IcdConstants.CHRONIC_CANCER_RELATED_PAIN_CODE,
             IcdConstants.ACUTE_PAIN_CODE
         ).map { code ->
-            icdModel.findInstancesMatchingAnyIcdCode(
-                OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions) + (record.complications ?: emptyList()),
-                setOf(IcdCode(code))
-            ).fullMatches.isNotEmpty()
+            icdModel.findInstancesMatchingAnyIcdCode(record.comorbidities, setOf(IcdCode(code))).fullMatches.isNotEmpty()
         }
 
         val medications = record.medications ?: return MEDICATION_NOT_PROVIDED

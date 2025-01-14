@@ -3,11 +3,12 @@ package com.hartwig.actin.algo.evaluation.othercondition
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
+import com.hartwig.actin.datamodel.clinical.Comorbidity
 import com.hartwig.actin.datamodel.clinical.Complication
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.Medication
-import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
+import com.hartwig.actin.datamodel.clinical.OtherCondition
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import java.time.LocalDate
@@ -15,28 +16,26 @@ import java.time.LocalDate
 internal object OtherConditionTestFactory {
     private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
     
-    fun withPriorOtherCondition(condition: PriorOtherCondition): PatientRecord {
-        return withPriorOtherConditions(listOf(condition))
+    fun withOtherCondition(condition: OtherCondition): PatientRecord {
+        return withOtherConditions(listOf(condition))
     }
 
-    fun withPriorOtherConditions(conditions: List<PriorOtherCondition>): PatientRecord {
-        return base.copy(priorOtherConditions = conditions)
+    fun withOtherConditions(conditions: List<OtherCondition>): PatientRecord {
+        return withComorbidities(conditions)
     }
 
-    fun priorOtherCondition(
+    fun otherCondition(
         name: String = "",
         year: Int? = null,
         month: Int? = null,
         icdMainCode: String = "",
-        icdExtensionCode: String? = null,
-        isContraindication: Boolean = true
-    ): PriorOtherCondition {
-        return PriorOtherCondition(
+        icdExtensionCode: String? = null
+    ): OtherCondition {
+        return OtherCondition(
             name = name,
             year = year,
             month = month,
             icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode)),
-            isContraindicationForTherapy = isContraindication,
         )
     }
 
@@ -52,7 +51,7 @@ internal object OtherConditionTestFactory {
     }
 
     fun complication(name: String = "", icdMainCode: String = "", icdExtensionCode: String? = null): Complication {
-        return Complication(name = name, icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode)), year = null, month = null)
+        return Complication(name = name, year = null, month = null, icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode)))
     }
 
     fun toxicity(
@@ -68,15 +67,19 @@ internal object OtherConditionTestFactory {
     }
 
     fun withComplications(complications: List<Complication>): PatientRecord {
-        return base.copy(complications = complications)
+        return withComorbidities(complications)
     }
 
     fun withToxicities(toxicities: List<Toxicity>): PatientRecord {
-        return base.copy(toxicities = toxicities)
+        return withComorbidities(toxicities)
     }
 
     fun withIntolerances(intolerances: List<Intolerance>): PatientRecord {
-        return base.copy(intolerances = intolerances)
+        return withComorbidities(intolerances)
+    }
+
+    private fun withComorbidities(comorbidities: List<Comorbidity>): PatientRecord {
+        return base.copy(comorbidities = comorbidities)
     }
 
     fun withMedications(medications: List<Medication>): PatientRecord {

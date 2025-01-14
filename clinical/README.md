@@ -150,7 +150,7 @@ The details may include multiple treatment stages representing switches from the
 | treatmentHistory | Previous primary tumors: Treatment history |
 | status           | Previous primary tumors: Status            |
 
-#### N prior other conditions
+#### N other conditions
 
 | Field                        | Origin                      |
 |------------------------------|-----------------------------|

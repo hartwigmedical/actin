@@ -6,7 +6,6 @@ import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.icd.IcdModel
-import com.hartwig.actin.icd.datamodel.IcdMatches
 
 class HasSpecificComplication(private val icdModel: IcdModel, private val targetIcdTitles: List<String>) : EvaluationFunction {
 
@@ -15,13 +14,8 @@ class HasSpecificComplication(private val icdModel: IcdModel, private val target
             "belonging to type ${Format.concatLowercaseWithCommaAndOr(targetIcdTitles)}"
         } else targetIcdTitles.takeIf { it.isNotEmpty() }?.first()
 
-        record.complications ?: return EvaluationFactory.recoverableUndetermined(
-            "Undetermined presence of complication $icdTitleText (complication data missing)"
-        )
-
         val targetCodes = targetIcdTitles.map { icdModel.resolveCodeForTitle(it)!! }.toSet()
-        val icdMatches =
-            record.complications?.let { icdModel.findInstancesMatchingAnyIcdCode(it, targetCodes) } ?: IcdMatches(emptyList(), emptyList())
+        val icdMatches = icdModel.findInstancesMatchingAnyIcdCode(record.complications, targetCodes)
 
         return when {
             icdMatches.fullMatches.isNotEmpty() -> EvaluationFactory.pass(
@@ -35,6 +29,10 @@ class HasSpecificComplication(private val icdModel: IcdModel, private val target
 
             hasComplicationsWithoutNames(record) -> EvaluationFactory.undetermined("Complication(s) present but unknown if $icdTitleText")
 
+            record.clinicalStatus.hasComplications == null -> EvaluationFactory.undetermined(
+                "Undetermined presence of complication $icdTitleText (complication data missing)"
+            )
+
             else -> EvaluationFactory.fail("Complication(s) $icdTitleText not present")
         }
     }
@@ -42,7 +40,7 @@ class HasSpecificComplication(private val icdModel: IcdModel, private val target
     companion object {
         private fun hasComplicationsWithoutNames(record: PatientRecord): Boolean {
             return record.clinicalStatus.hasComplications == true
-                    && record.complications?.any { ComplicationFunctions.isYesInputComplication(it) } ?: false
+                    && record.complications.any { ComplicationFunctions.isYesInputComplication(it) }
         }
     }
 }

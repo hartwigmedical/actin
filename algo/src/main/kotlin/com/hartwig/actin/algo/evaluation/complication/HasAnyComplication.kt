@@ -12,7 +12,7 @@ class HasAnyComplication: EvaluationFunction {
         return record.clinicalStatus.hasComplications?.let { hasComplications: Boolean ->
             if (hasComplications) {
                 val complicationString =
-                    concatLowercaseWithAnd(record.complications?.map { it.name.ifEmpty { "Unknown" } } ?: emptyList())
+                    concatLowercaseWithAnd(record.complications.map { it.name.ifEmpty { "Unknown" } })
                 EvaluationFactory.pass("Has at least one cancer-related complication: $complicationString")
             } else {
                 return EvaluationFactory.fail("No cancer-related complications present")

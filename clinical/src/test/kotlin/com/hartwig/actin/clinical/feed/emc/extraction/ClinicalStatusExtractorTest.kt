@@ -45,7 +45,7 @@ class ClinicalStatusExtractorTest {
                 input = NON_ONCOLOGICAL_INPUT,
                 ignore = false,
                 lvef = CURATED_LVEF,
-                priorOtherCondition = null
+                otherCondition = null
             )
         )
     )

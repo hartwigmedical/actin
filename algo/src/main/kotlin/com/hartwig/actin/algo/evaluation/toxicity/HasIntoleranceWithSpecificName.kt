@@ -10,9 +10,7 @@ class HasIntoleranceWithSpecificName(private val termToFind: String) : Evaluatio
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val lowercaseTerm = termToFind.lowercase()
-        val allergies = record.intolerances
-            .filter { it.name.lowercase().contains(lowercaseTerm) }
-            .toSet()
+        val allergies = record.intolerances.filter { it.name.lowercase().contains(lowercaseTerm) }.toSet()
 
         return if (allergies.isNotEmpty()) {
             EvaluationFactory.pass("Has allergy " + Format.concatItemsWithAnd(allergies))
