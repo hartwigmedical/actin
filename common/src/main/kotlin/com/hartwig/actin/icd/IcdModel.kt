@@ -18,7 +18,9 @@ class IcdModel(
 
     fun isValidIcdTitle(icdTitle: String): Boolean {
         val titles = icdTitle.split('&')
-        return titles.size in 1..2 && titles.all(titleToCodeMap::containsKey)
+        return titles.size in 1..2 && titles.all { title ->
+            titleToCodeMap.keys.any { it.equals(title, ignoreCase = true) }
+        }
     }
 
     fun isValidIcdCode(icdCode: String): Boolean {
