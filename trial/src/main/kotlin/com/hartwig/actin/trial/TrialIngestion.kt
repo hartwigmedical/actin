@@ -13,7 +13,11 @@ import com.hartwig.actin.util.leftOrNull
 import com.hartwig.actin.util.partitionAndJoin
 import com.hartwig.actin.util.right
 
-data class UnmappableTrial(val trialId: String, val mappingErrors: List<EligibilityMappingError>, val unmappableCohorts: List<UnmappableCohort>)
+data class UnmappableTrial(
+    val trialId: String,
+    val mappingErrors: List<EligibilityMappingError>,
+    val unmappableCohorts: List<UnmappableCohort>
+)
 
 data class UnmappableCohort(val cohortId: String, val mappingErrors: List<EligibilityMappingError>)
 
@@ -29,7 +33,7 @@ class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
                 )
             }.partitionAndJoin()
             val (unmappableCohorts, mappedCohorts) = trialState.cohorts.map { cohortState ->
-                val (cohortMappingErrors, cohortCriteria) = trialState.inclusionCriterion.map {
+                val (cohortMappingErrors, cohortCriteria) = cohortState.inclusionCriterion.map {
                     toEligibility(
                         inclusionCriterion = it
                     )
