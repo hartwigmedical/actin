@@ -66,6 +66,12 @@ class IcdModelTest {
     }
 
     @Test
+    fun `Should ignore case in code to title resolution`() {
+        assertThat(icdModel.resolveCodeForTitle("TargetMainTitle&targetEXTENSIONTitle"))
+            .isEqualTo(IcdCode("targetMainCode", "targetExtensionCode"))
+    }
+
+    @Test
     fun `Should successfully resolve code with parents`() {
         assertThat(icdModel.codeWithAllParents("targetMainCode")).containsExactly("targetMainParentCode", "targetMainCode")
         assertThat(icdModel.codeWithAllParents("targetExtensionCode")).containsExactly(
