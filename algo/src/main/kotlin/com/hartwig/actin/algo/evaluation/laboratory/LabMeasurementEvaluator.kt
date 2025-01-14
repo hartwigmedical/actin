@@ -26,9 +26,9 @@ class LabMeasurementEvaluator(
 
         return if (evaluation.result == EvaluationResult.PASS && !mostRecent.date.isAfter(minPassDate)) {
             Evaluation(
-                result = EvaluationResult.WARN,
+                result = EvaluationResult.PASS,
                 recoverable = true,
-                warnMessages = appendPastMinPassDate(evaluation.passMessages).toSet()
+                passMessages = appendPastMinPassDate(evaluation.passMessages).toSet()
             )
         } else evaluation
     }

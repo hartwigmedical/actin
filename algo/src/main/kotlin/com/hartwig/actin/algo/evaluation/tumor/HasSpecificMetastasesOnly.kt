@@ -24,7 +24,7 @@ class HasSpecificMetastasesOnly(
             val hasAnyOtherLesion = otherMetastasesAccessors.any { it == true } || !otherLesions.isNullOrEmpty()
             val hasSuspectedOtherLesion = !otherSuspectedLesions.isNullOrEmpty() || suspectedOtherMetastasesAccessors.any { it == true }
 
-            val metastasisString = "${typeOfMetastases.replaceFirstChar { it.uppercase() }}-only metastases"
+            val metastasisString = "$typeOfMetastases-only metastases"
 
             return when {
                 hasSpecificMetastases && !hasAnyOtherLesion && otherLesions == null && otherMetastasesAccessors.any { it == null } -> {
@@ -35,7 +35,7 @@ class HasSpecificMetastasesOnly(
                     if (hasSuspectedOtherLesion) {
                         EvaluationFactory.warn("Uncertain $metastasisString - suspected other lesions present")
                     } else {
-                        EvaluationFactory.pass(metastasisString)
+                        EvaluationFactory.pass(metastasisString.replaceFirstChar { it.uppercase() })
                     }
                 }
 

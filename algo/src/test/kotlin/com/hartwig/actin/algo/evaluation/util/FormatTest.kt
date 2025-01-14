@@ -91,6 +91,20 @@ class FormatTest {
         assertEquals("Indirect bilirubin 4.0 umol/L", Format.labValue(LabMeasurement.INDIRECT_BILIRUBIN, 4.0, LabUnit.MICROMOLES_PER_LITER))
     }
 
+    @Test
+    fun `Should join strings with and without gene prefix`() {
+        assertEquals("V600E and V600K", Format.concatVariants(setOf("BRAF V600E", "BRAF V600K"), "BRAF"))
+        assertEquals("x, y and z", Format.concatVariants(setOf("BRAF x", "BRAF y", "BRAF z"), "BRAF"))
+        assertEquals("x", Format.concatVariants(setOf("BRAF x"), "BRAF"))
+    }
+
+    @Test
+    fun `Should join strings with and without fusion suffix`() {
+        assertEquals("X::Y and Z::A", Format.concatFusions(setOf("X::Y fusion", "Z::A fusion")))
+        assertEquals("A::B, C::D and E::F", Format.concatFusions(setOf("A::B fusion", "C::D fusion", "E::F fusion")))
+        assertEquals("X::Y", Format.concatFusions(setOf("X::Y fusion")))
+    }
+
     @Test(expected = IllegalArgumentException::class)
     fun crashOnIllegalPercentage() {
         Format.percentage(50.0)

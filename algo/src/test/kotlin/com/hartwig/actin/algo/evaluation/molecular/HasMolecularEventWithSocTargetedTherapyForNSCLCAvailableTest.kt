@@ -18,7 +18,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val CORRECT_GENE = "EGFR"
-private const val CORRECT_EVENT = "EGFR amp"
 private const val CORRECT_VARIANT_GENE = CORRECT_GENE
 private const val CORRECT_PROTEIN_IMPACT = "L858R"
 private const val OTHER_CORRECT_VARIANT_GENE = "BRAF"
@@ -33,7 +32,7 @@ private const val CORRECT_INSERTION_CODON = 20
 
 private val BASE_VARIANT = TestVariantFactory.createMinimal().copy(
     gene = CORRECT_GENE,
-    event = CORRECT_EVENT,
+    event = "$CORRECT_GENE $CORRECT_PROTEIN_IMPACT",
     isReportable = true,
     driverLikelihood = DriverLikelihood.HIGH,
     proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
@@ -70,7 +69,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
     @Test
     fun `Should pass for activating mutation in correct gene`() {
         val record = MolecularTestFactory.withVariant(BASE_VARIANT)
-        val expectedMessages = setOf("$CORRECT_GENE activating mutation(s): $CORRECT_EVENT")
+        val expectedMessages = setOf("$CORRECT_GENE activating mutation(s): $CORRECT_PROTEIN_IMPACT")
         evaluateFunctions(EvaluationResult.PASS, record)
         evaluateMessages(functionIncludingAllGenes.evaluate(record).passMessages, expectedMessages)
         evaluateMessages(functionIncludingSpecificGene.evaluate(record).passMessages, expectedMessages)

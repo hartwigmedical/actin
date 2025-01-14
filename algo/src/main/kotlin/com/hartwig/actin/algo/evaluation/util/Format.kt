@@ -71,6 +71,14 @@ object Format {
         return "${labMeasurement.display().replaceFirstChar { it.uppercase() }} $formattedValue ${unit.display()}"
     }
 
+    fun concatFusions(fusions: Set<String>): String {
+        return concat(fusions.map { it.removeSuffix(" fusion") })
+    }
+
+    fun concatVariants(variants: Set<String>, gene: String): String {
+        return concat(variants.map { it.removePrefix("$gene ") })
+    }
+
     private fun concatDisplayables(items: Iterable<Displayable>, separator: String) =
         concatStrings(items.map(Displayable::display), separator)
 

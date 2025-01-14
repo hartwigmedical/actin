@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.algo.evaluation.util.Format.concatVariants
 import com.hartwig.actin.algo.evaluation.util.Format.percentage
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
@@ -65,7 +66,7 @@ class GeneHasVariantInCodon(private val gene: String, private val codons: List<S
                     canonicalReportableSubclonalCodonMatches
                 )
                 EvaluationFactory.warn(
-                    "Variant(s) ${concat(canonicalReportableVariantMatches)} in codon(s) ${
+                    "Variant(s) ${concatVariants(canonicalReportableVariantMatches, gene)} in codon(s) ${
                         concat(
                             canonicalCodonMatches
                         )
@@ -99,8 +100,8 @@ class GeneHasVariantInCodon(private val gene: String, private val codons: List<S
             listOf(
                 EventsWithMessages(
                     canonicalReportableSubclonalVariantMatches,
-                    "Variant(s) in codon(s) ${concat(canonicalReportableSubclonalVariantMatches)} in $gene in canonical transcript"
-                            + " but subclonal likelihood of > ${percentage(1 - CLONAL_CUTOFF)}"
+                    "Variant(s) in codon(s) ${concatVariants(canonicalReportableSubclonalVariantMatches, gene)} in $gene in " +
+                            "canonical transcript but subclonal likelihood of > ${percentage(1 - CLONAL_CUTOFF)}"
                 ),
                 EventsWithMessages(
                     canonicalUnreportableVariantMatches,
@@ -122,12 +123,12 @@ class GeneHasVariantInCodon(private val gene: String, private val codons: List<S
     ): String {
         val message = listOfNotNull(
             if (reportableOtherVariantMatches.isNotEmpty()) {
-                "variant(s) ${concat(reportableOtherVariantMatches)} in codon(s) ${
+                "variant(s) ${concatVariants(reportableOtherVariantMatches, gene)} in codon(s) ${
                     concat(reportableOtherCodonMatches)
                 } but in non-canonical transcript"
             } else null,
             if (canonicalReportableSubclonalVariantMatches.isNotEmpty()) {
-                "variant(s) ${concat(canonicalReportableSubclonalVariantMatches)} in codon(s) ${
+                "variant(s) ${concatVariants(canonicalReportableSubclonalVariantMatches, gene)} in codon(s) ${
                     concat(canonicalReportableSubclonalCodonMatches)
                 } in canonical transcript" + " but subclonal likelihood of > ${percentage(1 - CLONAL_CUTOFF)}"
             } else null

@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.algo.evaluation.util.Format.concatVariants
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.VariantEffect
@@ -36,7 +36,7 @@ class GeneHasUTR3Loss(private val gene: String, maxTestAge: LocalDate? = null) :
 
         if (hotspotsIn3UTR.isNotEmpty()) {
             return EvaluationFactory.pass(
-                "3' UTR hotspot mutation(s) ${concat(hotspotsIn3UTR)} in " + gene + " should lead to 3' UTR loss",
+                "3' UTR hotspot mutation(s) ${concatVariants(hotspotsIn3UTR, gene)} in " + gene + " should lead to 3' UTR loss",
                 inclusionEvents = hotspotsIn3UTR
             )
         }
@@ -51,16 +51,16 @@ class GeneHasUTR3Loss(private val gene: String, maxTestAge: LocalDate? = null) :
             listOf(
                 EventsWithMessages(
                     hotspotsIn3UTRUnreportable,
-                    "Hotspot mutation(s) ${concat(hotspotsIn3UTRUnreportable)} in 3' UTR region of $gene which may lead to "
-                            + "3' UTR loss but mutation is not considered reportable"
+                    "Hotspot mutation(s) ${concatVariants(hotspotsIn3UTRUnreportable, gene)} in 3' UTR region of $gene which may " +
+                            "lead to 3' UTR loss but mutation is not considered reportable"
                 ),
                 EventsWithMessages(
                     vusIn3UTR,
-                    "VUS mutation(s) ${concat(vusIn3UTR)} in 3' UTR region of $gene which may lead to 3' UTR loss"
+                    "VUS mutation(s) ${concatVariants(vusIn3UTR, gene)} in 3' UTR region of $gene which may lead to 3' UTR loss"
                 ),
                 EventsWithMessages(
                     disruptionsIn3UTR,
-                    "Disruption(s) ${concat(disruptionsIn3UTR)} in 3' UTR region of $gene which may lead to 3' UTR loss"
+                    "Disruption(s) ${concatVariants(disruptionsIn3UTR, gene)} in 3' UTR region of $gene which may lead to 3' UTR loss"
                 )
             )
         )
