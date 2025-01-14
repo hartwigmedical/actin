@@ -12,7 +12,7 @@ import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.icd.IcdModel
 import java.time.LocalDate
 
-class HasHadPriorConditionComplicationOrToxicityWithIcdCode(
+class HasHadOtherConditionComplicationOrToxicityWithIcdCode(
     private val icdModel: IcdModel,
     private val targetIcdCodes: Set<IcdCode>,
     private val diseaseDescription: String,
@@ -24,13 +24,13 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCode(
             .filter { toxicity -> (toxicity.grade ?: 0) >= 2 || toxicity.source == ToxicitySource.QUESTIONNAIRE }
 
         val icdMatches = icdModel.findInstancesMatchingAnyIcdCode(
-            record.priorOtherConditions + record.complications + relevantToxicities,
+            record.otherConditions + record.complications + relevantToxicities,
             targetIcdCodes
         )
 
         return when {
             icdMatches.fullMatches.isNotEmpty() -> {
-                val messages = setOf(PriorConditionMessages.pass(icdMatches.fullMatches.map { it.display() }))
+                val messages = setOf(OtherConditionMessages.pass(icdMatches.fullMatches.map { it.display() }))
                 Evaluation(
                     result = EvaluationResult.PASS,
                     recoverable = false,
@@ -43,7 +43,7 @@ class HasHadPriorConditionComplicationOrToxicityWithIcdCode(
                         "but undetermined if history of $diseaseDescription"
             )
 
-            else -> EvaluationFactory.fail(PriorConditionMessages.fail(diseaseDescription))
+            else -> EvaluationFactory.fail(OtherConditionMessages.fail(diseaseDescription))
         }
     }
 }

@@ -29,7 +29,7 @@ class StandardComplicationExtractor(private val complicationCuration: CurationDa
                 ), curatedComplication.extractionEvaluation
             )
         }
-        val complicationsFromPriorOtherConditions = ehrPatientRecord.priorOtherConditions.map {
+        val complicationsFromOtherConditions = ehrPatientRecord.priorOtherConditions.map {
             CurationResponse.createFromConfigs(
                 complicationCuration.find(it.name),
                 ehrPatientRecord.patientDetails.hashedId,
@@ -38,7 +38,7 @@ class StandardComplicationExtractor(private val complicationCuration: CurationDa
                 "complication"
             )
         }.map { ExtractionResult(it.configs.mapNotNull { c -> c.curated }, CurationExtractionEvaluation()) }
-        return (complications + complicationsFromPriorOtherConditions).fold(
+        return (complications + complicationsFromOtherConditions).fold(
             ExtractionResult(
                 emptyList(),
                 CurationExtractionEvaluation()

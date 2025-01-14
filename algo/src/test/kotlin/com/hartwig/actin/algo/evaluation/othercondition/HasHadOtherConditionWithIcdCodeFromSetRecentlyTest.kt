@@ -9,21 +9,21 @@ import com.hartwig.actin.icd.datamodel.IcdNode
 import org.junit.Test
 import java.time.LocalDate
 
-class HasHadPriorConditionWithIcdCodeFromSetRecentlyTest {
+class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
 
     private val minDate: LocalDate = LocalDate.of(2021, 8, 2)
     private val targetIcdCodes = IcdConstants.STROKE_SET.map { IcdCode(it) }.toSet()
     private val icdModel = IcdModel.create(targetIcdCodes.map { IcdNode(it.mainCode, emptyList(), it.mainCode + "node") })
     private val function =
-        HasHadPriorConditionWithIcdCodeFromSetRecently(icdModel, targetIcdCodes, "stroke", minDate)
+        HasHadOtherConditionWithIcdCodeFromSetRecently(icdModel, targetIcdCodes, "stroke", minDate)
 
     @Test
     fun `Should warn if condition in history with correct ICD code and within first 2 months of specified time-frame`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                OtherConditionTestFactory.withPriorOtherCondition(
-                    OtherConditionTestFactory.priorOtherCondition(
+                OtherConditionTestFactory.withOtherCondition(
+                    OtherConditionTestFactory.otherCondition(
                         year = minDate.plusMonths(1).year, month = minDate.plusMonths(1).monthValue, icdMainCode = targetIcdCodes.first().mainCode
                     )
                 )
@@ -36,8 +36,8 @@ class HasHadPriorConditionWithIcdCodeFromSetRecentlyTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                OtherConditionTestFactory.withPriorOtherCondition(
-                    OtherConditionTestFactory.priorOtherCondition(
+                OtherConditionTestFactory.withOtherCondition(
+                    OtherConditionTestFactory.otherCondition(
                         year = minDate.plusYears(1).year, month = 1, icdMainCode = targetIcdCodes.first().mainCode
                     )
                 )
@@ -47,12 +47,12 @@ class HasHadPriorConditionWithIcdCodeFromSetRecentlyTest {
 
     @Test
     fun `Should pass if both pass and warn conditions are met - two conditions with correct ICD code in time-frame of which one in first 2 months`() {
-        val conditions = OtherConditionTestFactory.withPriorOtherConditions(
+        val conditions = OtherConditionTestFactory.withOtherConditions(
             listOf(
-                OtherConditionTestFactory.priorOtherCondition(
+                OtherConditionTestFactory.otherCondition(
                     year = minDate.plusYears(1).year, month = 1, icdMainCode = targetIcdCodes.first().mainCode
                 ),
-                OtherConditionTestFactory.priorOtherCondition(
+                OtherConditionTestFactory.otherCondition(
                     year = minDate.plusMonths(1).year, month = minDate.plusMonths(1).monthValue, icdMainCode = targetIcdCodes.first().mainCode
                 )
             )
@@ -65,8 +65,8 @@ class HasHadPriorConditionWithIcdCodeFromSetRecentlyTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                OtherConditionTestFactory.withPriorOtherCondition(
-                    OtherConditionTestFactory.priorOtherCondition(
+                OtherConditionTestFactory.withOtherCondition(
+                    OtherConditionTestFactory.otherCondition(
                         year = null, icdMainCode = targetIcdCodes.first().mainCode
                     )
                 )
@@ -76,14 +76,14 @@ class HasHadPriorConditionWithIcdCodeFromSetRecentlyTest {
 
     @Test
     fun `Should evaluate to undetermined if condition matches main ICD code but has unknown extension`() {
-        val function = HasHadPriorConditionWithIcdCodeFromSetRecently(
+        val function = HasHadOtherConditionWithIcdCodeFromSetRecently(
             icdModel, setOf(IcdCode(IcdConstants.STROKE_NOS_CODE, "extensionCode")), "stroke", minDate
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                OtherConditionTestFactory.withPriorOtherCondition(
-                    OtherConditionTestFactory.priorOtherCondition(
+                OtherConditionTestFactory.withOtherCondition(
+                    OtherConditionTestFactory.otherCondition(
                         icdMainCode = IcdConstants.STROKE_NOS_CODE, icdExtensionCode = null
                     )
                 )
@@ -96,8 +96,8 @@ class HasHadPriorConditionWithIcdCodeFromSetRecentlyTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                OtherConditionTestFactory.withPriorOtherCondition(
-                    OtherConditionTestFactory.priorOtherCondition(
+                OtherConditionTestFactory.withOtherCondition(
+                    OtherConditionTestFactory.otherCondition(
                         year = 2023, icdMainCode = IcdConstants.HYPOMAGNESEMIA_CODE
                     )
                 )
@@ -110,7 +110,7 @@ class HasHadPriorConditionWithIcdCodeFromSetRecentlyTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                OtherConditionTestFactory.withPriorOtherConditions(emptyList())
+                OtherConditionTestFactory.withOtherConditions(emptyList())
             )
         )
     }
@@ -120,8 +120,8 @@ class HasHadPriorConditionWithIcdCodeFromSetRecentlyTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                OtherConditionTestFactory.withPriorOtherCondition(
-                    OtherConditionTestFactory.priorOtherCondition(
+                OtherConditionTestFactory.withOtherCondition(
+                    OtherConditionTestFactory.otherCondition(
                         year = minDate.minusYears(1).year, month = 1, icdMainCode = targetIcdCodes.first().mainCode
                     )
                 )

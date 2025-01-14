@@ -53,7 +53,7 @@ class HasAdequateOrganFunctionTest {
 
     @Test
     fun `Should pass when lab values within normal range and no cardiovascular disease present`() {
-        val condition = OtherConditionTestFactory.priorOtherCondition(icdMainCode = IcdConstants.PNEUMOTHORAX_CODE)
+        val condition = OtherConditionTestFactory.otherCondition(icdMainCode = IcdConstants.PNEUMOTHORAX_CODE)
         val record = LabTestFactory.withLabValues(
             upperLimitLabMeasurementList.map { createLabValue(it, withinLimits = true, evaluateAgainstLLN = false) } +
                     lowerLimitLabMeasurementList.map { createLabValue(it, withinLimits = true, evaluateAgainstLLN = true) }
@@ -84,8 +84,8 @@ class HasAdequateOrganFunctionTest {
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                OtherConditionTestFactory.withPriorOtherCondition(
-                    OtherConditionTestFactory.priorOtherCondition(icdMainCode = IcdConstants.CIRCULATORY_SYSTEM_DISEASE_CHAPTER)
+                OtherConditionTestFactory.withOtherCondition(
+                    OtherConditionTestFactory.otherCondition(icdMainCode = IcdConstants.CIRCULATORY_SYSTEM_DISEASE_CHAPTER)
                 )
             )
         )

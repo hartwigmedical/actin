@@ -134,7 +134,7 @@
         "7148"
       ],
       "category": "Autoimmune disease",
-      "comorbidityClass": "PRIOR_OTHER_CONDITION"
+      "comorbidityClass": "OTHER_CONDITION"
     },
     {
       "name": "Bacterial pneumonia",
@@ -144,7 +144,7 @@
         "874"
       ],
       "category": "Lung disease",
-      "comorbidityClass": "PRIOR_OTHER_CONDITION"
+      "comorbidityClass": "OTHER_CONDITION"
     },
     {
       "name": "Nausea",

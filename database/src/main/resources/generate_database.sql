@@ -116,8 +116,8 @@ CREATE TABLE `priorSecondPrimary`
     PRIMARY KEY (`id`)
 );
 
-DROP TABLE IF EXISTS `priorOtherCondition`;
-CREATE TABLE `priorOtherCondition`
+DROP TABLE IF EXISTS `otherCondition`;
+CREATE TABLE `otherCondition`
 (   `id` int NOT NULL AUTO_INCREMENT,
     `patientId` varchar(50) NOT NULL,
     `name` varchar(500) NOT NULL,

@@ -27,7 +27,7 @@ class HasHistoryOfAnaphylaxisTest {
             function.evaluate(
                 testPatient.copy(
                     comorbidities = listOf(
-                        OtherConditionTestFactory.priorOtherCondition(icdMainCode = IcdConstants.ANAPHYLAXIS_CODE)
+                        OtherConditionTestFactory.otherCondition(icdMainCode = IcdConstants.ANAPHYLAXIS_CODE)
                     )
                 )
             )
@@ -63,7 +63,7 @@ class HasHistoryOfAnaphylaxisTest {
                 testPatient.copy(
                     comorbidities = listOf(
                         OtherConditionTestFactory.intolerance(icdMainCode = "wrong"),
-                        OtherConditionTestFactory.priorOtherCondition(icdMainCode = "wrong")
+                        OtherConditionTestFactory.otherCondition(icdMainCode = "wrong")
                     )
                 )
             )

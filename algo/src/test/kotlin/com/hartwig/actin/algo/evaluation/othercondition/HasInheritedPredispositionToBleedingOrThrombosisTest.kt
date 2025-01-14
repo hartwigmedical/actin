@@ -10,18 +10,18 @@ class HasInheritedPredispositionToBleedingOrThrombosisTest {
     private val function = HasInheritedPredispositionToBleedingOrThrombosis(TestIcdFactory.createTestModel())
 
     @Test
-    fun `Should fail with no prior conditions`() {
+    fun `Should fail with no conditions`() {
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(emptyList()))
+            EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withOtherConditions(emptyList()))
         )
     }
 
     @Test
-    fun `Should fail with no relevant prior other condition`() {
+    fun `Should fail with no relevant other condition`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
-                OtherConditionTestFactory.withPriorOtherConditions(
-                    listOf(OtherConditionTestFactory.priorOtherCondition(icdMainCode = "wrong"))
+                OtherConditionTestFactory.withOtherConditions(
+                    listOf(OtherConditionTestFactory.otherCondition(icdMainCode = "wrong"))
                 )
             )
         )
@@ -32,8 +32,8 @@ class HasInheritedPredispositionToBleedingOrThrombosisTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                OtherConditionTestFactory.withPriorOtherCondition(
-                    OtherConditionTestFactory.priorOtherCondition(icdMainCode = IcdConstants.HEREDITARY_THROMBOPHILIA_CODE)
+                OtherConditionTestFactory.withOtherCondition(
+                    OtherConditionTestFactory.otherCondition(icdMainCode = IcdConstants.HEREDITARY_THROMBOPHILIA_CODE)
                 )
             )
         )
@@ -42,12 +42,12 @@ class HasInheritedPredispositionToBleedingOrThrombosisTest {
     @Test
     fun `Should pass with at least one condition with certain name`() {
         val conditions = listOf(
-            OtherConditionTestFactory.priorOtherCondition(name = "other name"),
-            OtherConditionTestFactory.priorOtherCondition(name = "disease FACTOR V LEIDEN")
+            OtherConditionTestFactory.otherCondition(name = "other name"),
+            OtherConditionTestFactory.otherCondition(name = "disease FACTOR V LEIDEN")
         )
 
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(conditions))
+            EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withOtherConditions(conditions))
         )
     }
 }

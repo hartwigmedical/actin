@@ -2,7 +2,7 @@ package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationUtil
-import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
+import com.hartwig.actin.datamodel.clinical.OtherCondition
 import com.hartwig.actin.icd.IcdModel
 
 class NonOncologicalHistoryConfigFactory(private val icdModel: IcdModel) :
@@ -11,16 +11,14 @@ class NonOncologicalHistoryConfigFactory(private val icdModel: IcdModel) :
         val input = parts[fields["input"]!!]
         val ignore = CurationUtil.isIgnoreString(parts[fields["name"]!!])
         val (lvefValue, lvefValueValidationErrors) = validatedLvefValue(input, ignore, parts, fields)
-        val (priorOtherCondition, priorOtherConditionValidationErrors) = toCuratedPriorOtherCondition(ignore, fields, input, parts)
+        val (otherCondition, otherConditionValidationErrors) = toCuratedOtherCondition(ignore, fields, input, parts)
         return ValidatedCurationConfig(
             NonOncologicalHistoryConfig(
                 input = input,
                 ignore = ignore,
                 lvef = lvefValue,
-                priorOtherCondition = if (!ignore) {
-                    priorOtherCondition
-                } else null
-            ), priorOtherConditionValidationErrors + lvefValueValidationErrors
+                otherCondition = otherCondition.takeUnless { ignore }
+            ), otherConditionValidationErrors + lvefValueValidationErrors
         )
     }
 
@@ -40,18 +38,18 @@ class NonOncologicalHistoryConfigFactory(private val icdModel: IcdModel) :
     }
 
 
-    private fun toCuratedPriorOtherCondition(
+    private fun toCuratedOtherCondition(
         ignore: Boolean,
         fields: Map<String, Int>,
         input: String,
         parts: Array<String>
-    ): Pair<PriorOtherCondition?, List<CurationConfigValidationError>> {
+    ): Pair<OtherCondition?, List<CurationConfigValidationError>> {
         return if (!ignore && !isLVEF(fields, parts)) {
             val (icdCodes, icdValidationErrors) = validateIcd(CurationCategory.NON_ONCOLOGICAL_HISTORY, input, "icd", fields, parts, icdModel)
             val (year, yearValidationErrors) = validateInteger(CurationCategory.NON_ONCOLOGICAL_HISTORY, input, "year", fields, parts)
             val (month, monthValidationErrors) = validateInteger(CurationCategory.NON_ONCOLOGICAL_HISTORY, input, "month", fields, parts)
 
-            PriorOtherCondition(
+            OtherCondition(
                 name = parts[fields["name"]!!],
                 year = year,
                 month = month,

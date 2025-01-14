@@ -7,16 +7,16 @@ import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.standard.ProvidedPatientRecord
-import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
+import com.hartwig.actin.datamodel.clinical.OtherCondition
 
-class StandardPriorOtherConditionsExtractor(
-    private val priorOtherConditionsCuration: CurationDatabase<NonOncologicalHistoryConfig>
+class StandardOtherConditionsExtractor(
+    private val otherConditionsCuration: CurationDatabase<NonOncologicalHistoryConfig>
 ) :
-    StandardDataExtractor<List<PriorOtherCondition>> {
-    override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<PriorOtherCondition>> {
+    StandardDataExtractor<List<OtherCondition>> {
+    override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<OtherCondition>> {
         return ehrPatientRecord.priorOtherConditions.map {
-            val curatedPriorOtherCondition = CurationResponse.createFromConfigs(
-                priorOtherConditionsCuration.find(it.name),
+            val curatedOtherCondition = CurationResponse.createFromConfigs(
+                otherConditionsCuration.find(it.name),
                 ehrPatientRecord.patientDetails.hashedId,
                 CurationCategory.NON_ONCOLOGICAL_HISTORY,
                 it.name,
@@ -24,15 +24,15 @@ class StandardPriorOtherConditionsExtractor(
                 false
             )
             ExtractionResult(
-                curatedPriorOtherCondition.configs.mapNotNull { config ->
+                curatedOtherCondition.configs.mapNotNull { config ->
                     it.startDate?.let { sourceStartDate ->
-                        config.priorOtherCondition?.copy(
-                            year = curatedPriorOtherCondition.config()?.priorOtherCondition?.year ?: sourceStartDate.year,
-                            month = curatedPriorOtherCondition.config()?.priorOtherCondition?.month ?: sourceStartDate.monthValue
+                        config.otherCondition?.copy(
+                            year = curatedOtherCondition.config()?.otherCondition?.year ?: sourceStartDate.year,
+                            month = curatedOtherCondition.config()?.otherCondition?.month ?: sourceStartDate.monthValue
                         )
-                    } ?: config.priorOtherCondition
+                    } ?: config.otherCondition
                 },
-                curatedPriorOtherCondition.extractionEvaluation
+                curatedOtherCondition.extractionEvaluation
             )
         }.fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, extractionResult ->
             ExtractionResult(acc.extracted + extractionResult.extracted, acc.evaluation + extractionResult.evaluation)

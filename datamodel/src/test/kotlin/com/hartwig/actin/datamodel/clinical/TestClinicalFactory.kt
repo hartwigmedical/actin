@@ -62,7 +62,7 @@ object TestClinicalFactory {
             clinicalStatus = createTestClinicalStatus(),
             oncologicalHistory = createTreatmentHistory(),
             priorSecondPrimaries = createTestPriorSecondPrimaries(),
-            comorbidities = createTestPriorOtherConditions() + createTestComplications() + createTestToxicities() + createTestIntolerances(),
+            comorbidities = createTestOtherConditions() + createTestComplications() + createTestToxicities() + createTestIntolerances(),
             priorIHCTests = createTestPriorMolecularTests(),
             labValues = createTestLabValues(),
             surgeries = createTestSurgeries(),
@@ -269,15 +269,15 @@ object TestClinicalFactory {
         )
     }
 
-    private fun createTestPriorOtherConditions(): List<PriorOtherCondition> {
+    private fun createTestOtherConditions(): List<OtherCondition> {
         return listOf(
-            PriorOtherCondition(
+            OtherCondition(
                 name = "pancreatitis",
                 year = null,
                 month = null,
                 icdCodes = setOf(IcdCode("DC31", null))
             ),
-            PriorOtherCondition(
+            OtherCondition(
                 name = "Coronary artery bypass graft (CABG)",
                 year = 2023,
                 month = 10,

@@ -169,7 +169,7 @@
 		  "extensionCode": null
 		}
 	  ],
-	  "comorbidityClass": "PRIOR_OTHER_CONDITION"
+	  "comorbidityClass": "OTHER_CONDITION"
 	},
 	{
 		"name": "Nausea",

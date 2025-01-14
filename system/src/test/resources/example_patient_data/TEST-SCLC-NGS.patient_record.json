@@ -142,7 +142,7 @@
         "3526"
       ],
       "category": "Cerebrovascular disease",
-      "comorbidityClass": "PRIOR_OTHER_CONDITION"
+      "comorbidityClass": "OTHER_CONDITION"
     },
     {
       "name": "Pleural effusion",

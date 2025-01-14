@@ -19,7 +19,7 @@ class NonOncologicalHistoryConfigFactoryTest {
     private val icdExtension = icdModel.codeToNodeMap[icdExtensionCode]!!.title
 
     @Test
-    fun `Should return NonOncologicalHistoryConfig with no prior other condition from valid inputs is lvef`() {
+    fun `Should return NonOncologicalHistoryConfig with no other condition from valid inputs is lvef`() {
         val config = NonOncologicalHistoryConfigFactory(icdModel).create(
             fields,
             arrayOf("input", "name", "2023", "12", icdTitle, "1", "1.0", "")
@@ -28,11 +28,11 @@ class NonOncologicalHistoryConfigFactoryTest {
         assertThat(config.config.input).isEqualTo("input")
         assertThat(config.config.ignore).isEqualTo(false)
         assertThat(config.config.lvef).isEqualTo(1.0)
-        assertThat(config.config.priorOtherCondition).isNull()
+        assertThat(config.config.otherCondition).isNull()
     }
 
     @Test
-    fun `Should return NonOncologicalHistoryConfig with prior other condition from valid inputs is not lvef`() {
+    fun `Should return NonOncologicalHistoryConfig with other condition from valid inputs is not lvef`() {
         val config = NonOncologicalHistoryConfigFactory(icdModel).create(
             fields,
             arrayOf("input", "name", "2023", "12", "$icdTitle&$icdExtension", "0", "", "1")
@@ -41,11 +41,11 @@ class NonOncologicalHistoryConfigFactoryTest {
         assertThat(config.config.input).isEqualTo("input")
         assertThat(config.config.ignore).isEqualTo(false)
         assertThat(config.config.lvef).isNull()
-        val priorOtherCondition = config.config.priorOtherCondition!!
-        assertThat(priorOtherCondition.icdCodes).isEqualTo(icdCodes)
-        assertThat(priorOtherCondition.name).isEqualTo("name")
-        assertThat(priorOtherCondition.year).isEqualTo(2023)
-        assertThat(priorOtherCondition.month).isEqualTo(12)
+        val otherCondition = config.config.otherCondition!!
+        assertThat(otherCondition.icdCodes).isEqualTo(icdCodes)
+        assertThat(otherCondition.name).isEqualTo("name")
+        assertThat(otherCondition.year).isEqualTo(2023)
+        assertThat(otherCondition.month).isEqualTo(12)
     }
 
     @Test

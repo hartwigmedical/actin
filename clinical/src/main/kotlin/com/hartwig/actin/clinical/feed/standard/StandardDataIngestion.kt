@@ -24,7 +24,7 @@ import com.hartwig.actin.clinical.feed.standard.extraction.StandardMedicationExt
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardOncologicalHistoryExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPatientDetailsExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorIHCTestExtractor
-import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorOtherConditionsExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardOtherConditionsExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorPrimariesExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorSequencingTestExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSurgeryExtractor
@@ -50,7 +50,7 @@ class StandardDataIngestion(
     private val labValuesExtractor: StandardLabValuesExtractor,
     private val toxicityExtractor: StandardToxicityExtractor,
     private val complicationExtractor: StandardComplicationExtractor,
-    private val priorOtherConditionsExtractor: StandardPriorOtherConditionsExtractor,
+    private val otherConditionsExtractor: StandardOtherConditionsExtractor,
     private val treatmentHistoryExtractor: StandardOncologicalHistoryExtractor,
     private val clinicalStatusExtractor: StandardClinicalStatusExtractor,
     private val tumorDetailsExtractor: StandardTumorDetailsExtractor,
@@ -77,7 +77,7 @@ class StandardDataIngestion(
             val secondPrimaries = secondPrimaryExtractor.extract(ehrPatientRecord)
             val clinicalStatus = clinicalStatusExtractor.extract(ehrPatientRecord)
             val treatmentHistory = treatmentHistoryExtractor.extract(ehrPatientRecord)
-            val priorOtherCondition = priorOtherConditionsExtractor.extract(ehrPatientRecord)
+            val otherCondition = otherConditionsExtractor.extract(ehrPatientRecord)
             val complications = complicationExtractor.extract(ehrPatientRecord)
             val toxicities = toxicityExtractor.extract(ehrPatientRecord)
             val medications = medicationExtractor.extract(ehrPatientRecord)
@@ -90,14 +90,14 @@ class StandardDataIngestion(
             val bodyHeights = bodyHeightExtractor.extract(ehrPatientRecord)
             val ihcTests = ihcTestExtractor.extract(ehrPatientRecord)
             val sequencingTests = sequencingTestExtractor.extract(ehrPatientRecord)
-            val comorbidities = listOf(priorOtherCondition, complications, toxicities, intolerances).flatMap { it.extracted }
+            val comorbidities = listOf(otherCondition, complications, toxicities, intolerances).flatMap { it.extracted }
 
             val patientEvaluation = listOf(
                 patientDetails,
                 tumorDetails,
                 clinicalStatus,
                 treatmentHistory,
-                priorOtherCondition,
+                otherCondition,
                 complications,
                 toxicities,
                 medications,
@@ -175,7 +175,7 @@ class StandardDataIngestion(
             StandardLabValuesExtractor(curationDatabaseContext.laboratoryTranslation),
             StandardToxicityExtractor(curationDatabaseContext.toxicityCuration),
             StandardComplicationExtractor(curationDatabaseContext.complicationCuration),
-            StandardPriorOtherConditionsExtractor(
+            StandardOtherConditionsExtractor(
                 curationDatabaseContext.nonOncologicalHistoryCuration
             ),
             StandardOncologicalHistoryExtractor(

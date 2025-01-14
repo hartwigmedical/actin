@@ -5,7 +5,7 @@ import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 import com.hartwig.actin.datamodel.clinical.ECG
 import com.hartwig.actin.datamodel.clinical.ECGMeasure
-import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
+import com.hartwig.actin.datamodel.clinical.OtherCondition
 
 internal object CardiacFunctionTestFactory {
     fun createMinimal(): ECG {
@@ -33,9 +33,9 @@ internal object CardiacFunctionTestFactory {
         )
     }
 
-    fun withPriorOtherCondition(priorOtherCondition: PriorOtherCondition): PatientRecord {
+    fun withOtherCondition(otherCondition: OtherCondition): PatientRecord {
         return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-            comorbidities = listOf(priorOtherCondition)
+            comorbidities = listOf(otherCondition)
         )
     }
 

@@ -13,7 +13,7 @@ import com.hartwig.actin.datamodel.clinical.LabValue
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.PatientDetails
 import com.hartwig.actin.datamodel.clinical.PriorIHCTest
-import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
+import com.hartwig.actin.datamodel.clinical.OtherCondition
 import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary
 import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.Toxicity
@@ -34,7 +34,7 @@ internal class ClinicalDAO(private val context: DSLContext) {
         context.truncate(Tables.CLINICALSTATUS).execute()
         context.truncate(Tables.TREATMENTHISTORYENTRY).execute()
         context.truncate(Tables.PRIORSECONDPRIMARY).execute()
-        context.truncate(Tables.PRIOROTHERCONDITION).execute()
+        context.truncate(Tables.OTHERCONDITION).execute()
         context.truncate(Tables.PRIORIHCTEST).execute()
         context.truncate(Tables.COMPLICATION).execute()
         context.truncate(Tables.LABVALUE).execute()
@@ -55,7 +55,7 @@ internal class ClinicalDAO(private val context: DSLContext) {
         writeClinicalStatus(patientId, record.clinicalStatus)
         writeTreatmentHistoryEntries(patientId, record.oncologicalHistory)
         writePriorSecondPrimaries(patientId, record.priorSecondPrimaries)
-        writePriorOtherConditions(patientId, record.priorOtherConditions)
+        writeOtherConditions(patientId, record.otherConditions)
         writePriorMolecularTests(patientId, record.priorIHCTests)
         writeComplications(patientId, record.complications)
         writeLabValues(patientId, record.labValues)
@@ -283,22 +283,22 @@ internal class ClinicalDAO(private val context: DSLContext) {
         }
     }
 
-    private fun writePriorOtherConditions(patientId: String, priorOtherConditions: List<PriorOtherCondition>) {
-        for (priorOtherCondition in priorOtherConditions) {
+    private fun writeOtherConditions(patientId: String, otherConditions: List<OtherCondition>) {
+        for (otherCondition in otherConditions) {
             context.insertInto(
-                Tables.PRIOROTHERCONDITION,
-                Tables.PRIOROTHERCONDITION.PATIENTID,
-                Tables.PRIOROTHERCONDITION.NAME,
-                Tables.PRIOROTHERCONDITION.ICDCODES,
-                Tables.PRIOROTHERCONDITION.YEAR,
-                Tables.PRIOROTHERCONDITION.MONTH
+                Tables.OTHERCONDITION,
+                Tables.OTHERCONDITION.PATIENTID,
+                Tables.OTHERCONDITION.NAME,
+                Tables.OTHERCONDITION.ICDCODES,
+                Tables.OTHERCONDITION.YEAR,
+                Tables.OTHERCONDITION.MONTH
             )
                 .values(
                     patientId,
-                    priorOtherCondition.name,
-                    DataUtil.concatObjects(priorOtherCondition.icdCodes),
-                    priorOtherCondition.year,
-                    priorOtherCondition.month
+                    otherCondition.name,
+                    DataUtil.concatObjects(otherCondition.icdCodes),
+                    otherCondition.year,
+                    otherCondition.month
                 )
                 .execute()
         }

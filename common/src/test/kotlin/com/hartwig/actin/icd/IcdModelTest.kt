@@ -4,7 +4,7 @@ import com.hartwig.actin.datamodel.clinical.Complication
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Comorbidity
 import com.hartwig.actin.datamodel.clinical.Intolerance
-import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
+import com.hartwig.actin.datamodel.clinical.OtherCondition
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import org.assertj.core.api.Assertions.assertThat
@@ -138,7 +138,7 @@ class IcdModelTest {
 
     private fun createIcdEntityList(icdCodes: Set<IcdCode>): List<Comorbidity> {
         return listOf(
-            PriorOtherCondition("name", icdCodes = icdCodes),
+            OtherCondition("name", icdCodes = icdCodes),
             Toxicity("name", icdCodes, date, ToxicitySource.EHR, 3, date),
             Intolerance("name", icdCodes = icdCodes),
             Complication("name", null, null, icdCodes = icdCodes)

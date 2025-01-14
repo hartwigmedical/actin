@@ -17,7 +17,7 @@ class HasInheritedPredispositionToBleedingOrThrombosis(private val icdModel: Icd
         ).fullMatches
 
         val hasMatchingName = NAME_INDICATING_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS.lowercase().let { query ->
-            record.priorOtherConditions.any { it.name.lowercase().contains(query) }
+            record.otherConditions.any { it.name.lowercase().contains(query) }
         }
 
         val baseMessage = "(typically) inherited predisposition to bleeding or thrombosis"

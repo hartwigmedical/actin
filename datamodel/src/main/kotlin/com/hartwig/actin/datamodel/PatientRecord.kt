@@ -11,7 +11,7 @@ import com.hartwig.actin.datamodel.clinical.LabValue
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.PatientDetails
 import com.hartwig.actin.datamodel.clinical.PriorIHCTest
-import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
+import com.hartwig.actin.datamodel.clinical.OtherCondition
 import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary
 import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.Toxicity
@@ -39,8 +39,8 @@ data class PatientRecord(
     val molecularHistory: MolecularHistory
 ) {
 
-    val priorOtherConditions: List<PriorOtherCondition>
-        get() = comorbidities.filterIsInstance<PriorOtherCondition>()
+    val otherConditions: List<OtherCondition>
+        get() = comorbidities.filterIsInstance<OtherCondition>()
 
     val complications: List<Complication>
         get() = comorbidities.filterIsInstance<Complication>()

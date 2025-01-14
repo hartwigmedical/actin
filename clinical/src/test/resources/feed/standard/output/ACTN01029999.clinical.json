@@ -114,7 +114,7 @@
         }
       ],
       "isContraindicationForTherapy": true,
-      "comorbidityClass": "PRIOR_OTHER_CONDITION"
+      "comorbidityClass": "OTHER_CONDITION"
     },
     {
       "name": "Other",

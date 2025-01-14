@@ -205,7 +205,7 @@
         "9408"
       ],
       "category": "Heart disease",
-      "comorbidityClass": "PRIOR_OTHER_CONDITION"
+      "comorbidityClass": "OTHER_CONDITION"
     },
     {
       "name": "Bipolar disorder",
@@ -215,7 +215,7 @@
         "3312"
       ],
       "category": "Psychiatric disease",
-      "comorbidityClass": "PRIOR_OTHER_CONDITION"
+      "comorbidityClass": "OTHER_CONDITION"
     }
   ],
   "labValues": [

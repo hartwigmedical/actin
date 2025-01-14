@@ -1,16 +1,16 @@
 package com.hartwig.actin.datamodel.clinical
 
-object TestPriorOtherConditionFactory {
+object TestOtherConditionFactory {
 
-    fun createMinimal(): PriorOtherCondition {
-        return PriorOtherCondition(
+    fun createMinimal(): OtherCondition {
+        return OtherCondition(
             name = "",
             icdCodes = setOf(IcdCode("", null))
         )
     }
 
-    fun create(name: String, year: Int?, month: Int?, icdMainCode: String = "", icdExtensionCode: String? = null): PriorOtherCondition {
-        return PriorOtherCondition(
+    fun create(name: String, year: Int?, month: Int?, icdMainCode: String = "", icdExtensionCode: String? = null): OtherCondition {
+        return OtherCondition(
             name = name,
             year = year,
             month = month,

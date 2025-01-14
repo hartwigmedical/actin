@@ -7,9 +7,9 @@ import com.hartwig.actin.clinical.curation.config.LesionLocationConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
 import com.hartwig.actin.clinical.feed.standard.EhrTestData
-import com.hartwig.actin.clinical.feed.standard.PRIOR_CONDITION_INPUT
+import com.hartwig.actin.clinical.feed.standard.OTHER_CONDITION_INPUT
 import com.hartwig.actin.clinical.feed.standard.ProvidedLesion
-import com.hartwig.actin.clinical.feed.standard.ProvidedPriorOtherCondition
+import com.hartwig.actin.clinical.feed.standard.ProvidedOtherCondition
 import com.hartwig.actin.clinical.feed.standard.TREATMENT_HISTORY_INPUT
 import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 import com.hartwig.actin.datamodel.clinical.TumorDetails
@@ -87,13 +87,13 @@ private val TUMOR_CURATION_CONFIG = PrimaryTumorConfig(
 
 private val UNUSED_DATE = LocalDate.of(2024, 4, 10)
 
-private val EHR_PRIOR_OTHER_CONDITION = ProvidedPriorOtherCondition(
-    name = PRIOR_CONDITION_INPUT,
+private val EHR_PRIOR_OTHER_CONDITION = ProvidedOtherCondition(
+    name = OTHER_CONDITION_INPUT,
     startDate = UNUSED_DATE
 )
 
 private val BRAIN_LESION_LOCATION_CONFIG = LesionLocationConfig(
-    input = PRIOR_CONDITION_INPUT,
+    input = OTHER_CONDITION_INPUT,
     location = "brain",
     category = LesionLocationCategory.BRAIN
 )
@@ -116,7 +116,7 @@ private val DIAGNOSIS_DATE = LocalDate.of(2024, 8, 1)
 class StandardTumorDetailsExtractorTest {
 
     private val tumorCuration = mockk<CurationDatabase<PrimaryTumorConfig>> {
-        every { find(PRIOR_CONDITION_INPUT) } returns emptySet()
+        every { find(OTHER_CONDITION_INPUT) } returns emptySet()
     }
     private val lesionCuration = mockk<CurationDatabase<LesionLocationConfig>> {
         every { find(any()) } returns emptySet()
@@ -134,9 +134,9 @@ class StandardTumorDetailsExtractorTest {
     }
 
     @Test
-    fun `Should curate prior other conditions and extract tumor details, only drawing on curation for (sub)location, (sub)type and doids`() {
+    fun `Should curate other conditions and extract tumor details, only drawing on curation for (sub)location, (sub)type and doids`() {
         setupTumorCuration(TUMOR_INPUT, TUMOR_CURATION_CONFIG.copy(ignore = true))
-        setupTumorCuration(PRIOR_CONDITION_INPUT, TUMOR_CURATION_CONFIG)
+        setupTumorCuration(OTHER_CONDITION_INPUT, TUMOR_CURATION_CONFIG)
         val result = extractor.extract(EHR_PATIENT_RECORD.copy(priorOtherConditions = listOf(EHR_PRIOR_OTHER_CONDITION)))
         assertThat(result.extracted).isEqualTo(TUMOR_DETAILS)
     }
@@ -251,7 +251,7 @@ class StandardTumorDetailsExtractorTest {
     @Test
     fun `Should curate lesions from prior conditions, supporting multiple configs per input, but ignore any curation warnings`() {
         setupTumorCuration(TUMOR_INPUT, TUMOR_CURATION_CONFIG)
-        setupLesionCuration(PRIOR_CONDITION_INPUT, BRAIN_LESION_LOCATION_CONFIG, LUNG_LESION_LOCATION_CONFIG)
+        setupLesionCuration(OTHER_CONDITION_INPUT, BRAIN_LESION_LOCATION_CONFIG, LUNG_LESION_LOCATION_CONFIG)
         every { tumorCuration.find("another prior condition") } returns emptySet()
         val result =
             extractor.extract(
@@ -264,7 +264,7 @@ class StandardTumorDetailsExtractorTest {
             )
         assertThat(result.extracted).isEqualTo(BRAIN_AND_LUNG_LESION_TUMOR_DETAILS)
         assertThat(result.evaluation.warnings).isEmpty()
-        assertThat(result.evaluation.lesionLocationEvaluatedInputs).containsExactly(PRIOR_CONDITION_INPUT)
+        assertThat(result.evaluation.lesionLocationEvaluatedInputs).containsExactly(OTHER_CONDITION_INPUT)
     }
 
     @Test

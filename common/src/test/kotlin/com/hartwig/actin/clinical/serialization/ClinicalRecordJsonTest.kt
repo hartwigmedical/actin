@@ -49,7 +49,7 @@ class ClinicalRecordJsonTest {
         assertThat(record.patientId).isEqualTo("ACTN01029999")
         assertThat(record.priorSecondPrimaries).hasSize(1)
         assertThat(record.comorbidities).hasSize(6)
-        assertThat(record.priorOtherConditions).hasSize(1)
+        assertThat(record.otherConditions).hasSize(1)
         assertThat(record.complications).hasSize(1)
         assertThat(record.labValues).hasSize(2)
         assertThat(record.toxicities).hasSize(2)

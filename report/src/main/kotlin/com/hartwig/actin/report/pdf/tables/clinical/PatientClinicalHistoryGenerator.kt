@@ -1,11 +1,11 @@
 package com.hartwig.actin.report.pdf.tables.clinical
 
-import com.hartwig.actin.clinical.sort.PriorOtherConditionDescendingDateComparator
+import com.hartwig.actin.clinical.sort.OtherConditionDescendingDateComparator
 import com.hartwig.actin.clinical.sort.PriorSecondPrimaryDiagnosedDateComparator
 import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparator
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.clinical.Medication
-import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
+import com.hartwig.actin.datamodel.clinical.OtherCondition
 import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary
 import com.hartwig.actin.datamodel.clinical.TumorStatus
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
@@ -118,18 +118,18 @@ class PatientClinicalHistoryGenerator(
         val treatmentWidth = valueWidth - dateWidth
         val table: Table = createDoubleColumnTable(dateWidth, treatmentWidth)
 
-        val anyDateIsKnown = record.priorOtherConditions.any { toDateString(it.year, it.month) != null }
-        val sortedPriorOtherConditions = record.priorOtherConditions.sortedWith(PriorOtherConditionDescendingDateComparator())
+        val anyDateIsKnown = record.otherConditions.any { toDateString(it.year, it.month) != null }
 
-        sortedPriorOtherConditions.forEach { priorOtherCondition: PriorOtherCondition ->
-            val dateString = toDateString(priorOtherCondition.year, priorOtherCondition.month)
-            if (anyDateIsKnown) {
-                table.addCell(createSingleTableEntry(dateString ?: DATE_UNKNOWN))
-                table.addCell(createSingleTableEntry(toPriorOtherConditionString(priorOtherCondition)))
-            } else {
-                table.addCell(createSpanningTableEntry(toPriorOtherConditionString(priorOtherCondition), table))
+        record.otherConditions.sortedWith(OtherConditionDescendingDateComparator())
+            .forEach { otherCondition: OtherCondition ->
+                val dateString = toDateString(otherCondition.year, otherCondition.month)
+                if (anyDateIsKnown) {
+                    table.addCell(createSingleTableEntry(dateString ?: DATE_UNKNOWN))
+                    table.addCell(createSingleTableEntry(toOtherConditionString(otherCondition)))
+                } else {
+                    table.addCell(createSpanningTableEntry(toOtherConditionString(otherCondition), table))
+                }
             }
-        }
         return table
     }
 
@@ -222,8 +222,8 @@ class PatientClinicalHistoryGenerator(
         return "$tumorDetails ($dateAdditionDiagnosis$dateAdditionLastTreatment$status)"
     }
 
-    private fun toPriorOtherConditionString(priorOtherCondition: PriorOtherCondition): String {
-        return priorOtherCondition.name.replaceFirstChar(Char::uppercase)
+    private fun toOtherConditionString(otherCondition: OtherCondition): String {
+        return otherCondition.name.replaceFirstChar(Char::uppercase)
     }
 
     private fun toDateString(maybeYear: Int?, maybeMonth: Int?): String? {

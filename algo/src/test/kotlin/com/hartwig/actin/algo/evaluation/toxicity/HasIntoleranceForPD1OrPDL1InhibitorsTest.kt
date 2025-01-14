@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
-import com.hartwig.actin.datamodel.clinical.TestPriorOtherConditionFactory
+import com.hartwig.actin.datamodel.clinical.TestOtherConditionFactory
 import com.hartwig.actin.icd.TestIcdFactory
 import org.junit.Test
 
@@ -74,7 +74,7 @@ class HasIntoleranceForPD1OrPDL1InhibitorsTest {
     }
 
     private fun patient(intolerances: List<Intolerance>, icdMainCode: String = ""): PatientRecord {
-        val priorCondition = TestPriorOtherConditionFactory.createMinimal()
+        val priorCondition = TestOtherConditionFactory.createMinimal()
             .copy(icdCodes = setOf(IcdCode(icdMainCode)))
         return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
             comorbidities = intolerances + priorCondition

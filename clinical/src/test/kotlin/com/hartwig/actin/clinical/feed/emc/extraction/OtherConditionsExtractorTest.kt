@@ -5,7 +5,7 @@ import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.datamodel.clinical.IcdCode
-import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
+import com.hartwig.actin.datamodel.clinical.OtherCondition
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -15,17 +15,17 @@ private const val NON_ONCOLOGICAL_INPUT = "Non-oncological input"
 
 private const val CANNOT_CURATE = "cannot curate"
 
-private const val PRIOR_CONDITION_INTERPRETATION = "Prior condition interpretation"
+private const val OTHER_CONDITION_INTERPRETATION = "Prior condition interpretation"
 
-class PriorOtherConditionsExtractorTest {
-    private val extractor = PriorOtherConditionsExtractor(
+class OtherConditionsExtractorTest {
+    private val extractor = OtherConditionsExtractor(
         TestCurationFactory.curationDatabase(
             NonOncologicalHistoryConfig(
                 input = NON_ONCOLOGICAL_INPUT,
                 ignore = false,
                 lvef = null,
-                priorOtherCondition = PriorOtherCondition(
-                    name = PRIOR_CONDITION_INTERPRETATION,
+                otherCondition = OtherCondition(
+                    name = OTHER_CONDITION_INTERPRETATION,
                     icdCodes = setOf(IcdCode("icd"))
                 )
             )
@@ -33,13 +33,13 @@ class PriorOtherConditionsExtractorTest {
     )
 
     @Test
-    fun `Should curate prior other conditions`() {
+    fun `Should curate other conditions`() {
         val inputs = listOf(NON_ONCOLOGICAL_INPUT, CANNOT_CURATE)
         val questionnaire = TestCurationFactory.emptyQuestionnaire()
             .copy(nonOncologicalHistory = inputs)
-        val (priorOtherConditions, evaluation) = extractor.extract(PATIENT_ID, questionnaire)
-        assertThat(priorOtherConditions).hasSize(1)
-        assertThat(priorOtherConditions[0].name).isEqualTo(PRIOR_CONDITION_INTERPRETATION)
+        val (otherConditions, evaluation) = extractor.extract(PATIENT_ID, questionnaire)
+        assertThat(otherConditions).hasSize(1)
+        assertThat(otherConditions[0].name).isEqualTo(OTHER_CONDITION_INTERPRETATION)
 
         assertThat(evaluation.warnings).containsOnly(
             CurationWarning(

@@ -102,7 +102,7 @@ class ClinicalStatusExtractor(
     }
 
     private fun determineLVEF(nonOncologicalHistoryEntries: List<String>?): Double? {
-        // We do not raise warnings or propagate evaluated inputs here since we use the same configs for priorOtherConditions
+        // We do not raise warnings or propagate evaluated inputs here since we use the same configs for otherConditions
         return nonOncologicalHistoryEntries?.asSequence()
             ?.flatMap { nonOncologicalHistoryCuration.find(it) }
             ?.filterNot { it.ignore }

@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.clinical.Complication
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.Medication
-import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
+import com.hartwig.actin.datamodel.clinical.OtherCondition
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import java.time.LocalDate
@@ -16,22 +16,22 @@ import java.time.LocalDate
 internal object OtherConditionTestFactory {
     private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
     
-    fun withPriorOtherCondition(condition: PriorOtherCondition): PatientRecord {
-        return withPriorOtherConditions(listOf(condition))
+    fun withOtherCondition(condition: OtherCondition): PatientRecord {
+        return withOtherConditions(listOf(condition))
     }
 
-    fun withPriorOtherConditions(conditions: List<PriorOtherCondition>): PatientRecord {
+    fun withOtherConditions(conditions: List<OtherCondition>): PatientRecord {
         return withComorbidities(conditions)
     }
 
-    fun priorOtherCondition(
+    fun otherCondition(
         name: String = "",
         year: Int? = null,
         month: Int? = null,
         icdMainCode: String = "",
         icdExtensionCode: String? = null
-    ): PriorOtherCondition {
-        return PriorOtherCondition(
+    ): OtherCondition {
+        return OtherCondition(
             name = name,
             year = year,
             month = month,
