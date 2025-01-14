@@ -44,11 +44,14 @@ class MolecularResultsAreAvailableForGene(private val gene: String) : Evaluation
             }
 
             orangeMolecular != null && orangeMolecular.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME -> {
-                EvaluationFactory.undetermined("WGS performed containing $gene but purity was too low")
+                EvaluationFactory.undetermined(
+                    "WGS performed containing $gene but biopsy contained insufficient tumor cells for analysis"
+                )
             }
 
             orangeMolecular != null && orangeMolecular.experimentType == ExperimentType.HARTWIG_TARGETED -> {
-                EvaluationFactory.undetermined("OncoAct tumor NGS panel performed containing $gene but purity was too low")
+                EvaluationFactory.undetermined("OncoAct tumor NGS panel performed containing $gene but biopsy contained " +
+                        "insufficient tumor cells for analysis")
             }
 
             indeterminatePriorIHCTestsForGene.isNotEmpty() -> {

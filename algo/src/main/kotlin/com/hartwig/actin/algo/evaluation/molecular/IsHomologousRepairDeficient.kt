@@ -52,13 +52,13 @@ class IsHomologousRepairDeficient(maxTestAge: LocalDate? = null) : MolecularEval
             null -> {
                 if (hrdGenesWithBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.undetermined(
-                        "Unknown HRD status but biallelic drivers in HR genes (${concat(hrdGenesWithBiallelicDriver)}) " +
-                                "- an HRD test may be recommended"
+                        "Unknown HRD status but biallelic drivers in HR genes (${concat(hrdGenesWithBiallelicDriver)})",
+                        missingGenesForEvaluation = true
                     )
                 } else if (hrdGenesWithNonBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.undetermined(
-                        "Unknown HRD status but non-biallelic drivers in HR genes (${concat(hrdGenesWithNonBiallelicDriver)})" +
-                                "- an HRD test may be recommended"
+                        "Unknown HRD status but non-biallelic drivers in HR genes (${concat(hrdGenesWithNonBiallelicDriver)})",
+                        missingGenesForEvaluation = true
                     )
                 } else if (hrdGenesWithUnknownAllelicDriver.isNotEmpty()) {
                     EvaluationFactory.undetermined(

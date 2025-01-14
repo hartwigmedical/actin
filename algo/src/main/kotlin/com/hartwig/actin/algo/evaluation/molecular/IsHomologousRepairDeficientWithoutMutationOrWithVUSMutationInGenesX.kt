@@ -44,13 +44,17 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesX(
 
             return when {
                 isHRD == null && hrdGenesWithBiallelicDriver.isNotEmpty() -> {
-                    EvaluationFactory.undetermined("Unknown HRD status but biallelic drivers in HR genes " +
-                            "- an HRD test may be recommended")
+                    EvaluationFactory.undetermined(
+                        "Unknown HRD status but biallelic drivers in HR genes",
+                        missingGenesForEvaluation = true
+                    )
                 }
 
                 isHRD == null && hrdGenesWithNonBiallelicDriver.isNotEmpty() -> {
-                    EvaluationFactory.undetermined("Unknown HRD status but non-biallelic drivers in HR genes " +
-                            "- an HRD test may be recommended")
+                    EvaluationFactory.undetermined(
+                        "Unknown HRD status but non-biallelic drivers in HR genes",
+                        missingGenesForEvaluation = true
+                    )
                 }
 
                 isHRD == null -> {
@@ -62,8 +66,10 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesX(
                 }
 
                 genesToFindWithBiallelicHotspot.isNotEmpty() || genesToFindWithNonBiallelicHotspot.isNotEmpty() -> {
-                    EvaluationFactory.fail("Tumor is HRD with " +
-                            "${concat(genesToFindWithNonBiallelicHotspot + genesToFindWithBiallelicHotspot)} hotspot")
+                    EvaluationFactory.fail(
+                        "Tumor is HRD with " +
+                                "${concat(genesToFindWithNonBiallelicHotspot + genesToFindWithBiallelicHotspot)} hotspot"
+                    )
                 }
 
                 genesToFindWithDeletionOrPartialLoss.isNotEmpty() -> {
