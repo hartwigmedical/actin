@@ -11,6 +11,8 @@ class HasMinimumLesionsInSpecificBodyLocation(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
+        val messageEnding = "at least $minimumLesions lesions in $bodyLocation"
+
         val (suspected, count) = with(record.tumor) {
             when (bodyLocation) {
                 BodyLocationCategory.BONE -> hasSuspectedBoneLesions to lesionCount(hasBoneLesions, boneLesionsCount)
@@ -19,15 +21,13 @@ class HasMinimumLesionsInSpecificBodyLocation(
                 BodyLocationCategory.LIVER -> hasSuspectedLiverLesions to lesionCount(hasLiverLesions, liverLesionsCount)
                 BodyLocationCategory.LUNG -> hasSuspectedLungLesions to lesionCount(hasLungLesions, lungLesionsCount)
                 BodyLocationCategory.LYMPH_NODE -> hasSuspectedLymphNodeLesions to lesionCount(hasLymphNodeLesions, lymphNodeLesionsCount)
-                else -> evaluateOtherLesions(otherLesions, otherSuspectedLesions)
+                else -> return EvaluationFactory.undetermined("Undetermined if patient has $messageEnding")
             }
         }
 
-        val messageEnding = "at least $minimumLesions lesions in $bodyLocation"
-
         return when {
+            (count ?: 0) >= minimumLesions -> EvaluationFactory.pass("Has $messageEnding")
             count == null || suspected == true -> EvaluationFactory.undetermined("Undetermined if patient has $messageEnding")
-            count >= minimumLesions -> EvaluationFactory.pass("Has $messageEnding")
             else -> EvaluationFactory.fail("Does not have $messageEnding")
         }
     }
@@ -38,10 +38,5 @@ class HasMinimumLesionsInSpecificBodyLocation(
             false -> 0
             null -> null
         }
-    }
-
-    private fun evaluateOtherLesions(lesions: List<String>?, suspected: List<String>?): Pair<Boolean?, Int?> {
-        val count = lesions?.size ?: 0
-        return suspected?.isNotEmpty() to if (count >= minimumLesions) null else 0
     }
 }

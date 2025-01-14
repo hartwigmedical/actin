@@ -61,14 +61,6 @@ class HasMinimumLesionsInSpecificBodyLocationTest {
     }
 
     @Test
-    fun `Should fail for less than requested otherLesions when requested location is of other type than bone, brain, cns, liver, lung or lymph node`() {
-        assertEvaluation(
-            EvaluationResult.FAIL,
-            bladderLesionFunction.evaluate(TumorTestFactory.withOtherLesions(listOf("one other lesion")))
-        )
-    }
-
-    @Test
     fun `Should evaluate to undetermined if requested body location is of other type than bone, brain, cns, liver, lung or lymph node and number of other lesions is sufficient`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
