@@ -41,6 +41,7 @@ import com.hartwig.actin.trial.input.single.OneGeneOneIntegerOneVariantType
 import com.hartwig.actin.trial.input.single.OneGeneTwoIntegers
 import com.hartwig.actin.trial.input.single.OneHaplotype
 import com.hartwig.actin.trial.input.single.OneHlaAllele
+import com.hartwig.actin.trial.input.single.OneHlaGroup
 import com.hartwig.actin.trial.input.single.OneIcdTitleOneInteger
 import com.hartwig.actin.trial.input.single.OneIntegerManyDoidTerms
 import com.hartwig.actin.trial.input.single.OneIntegerManyIcdTitles
