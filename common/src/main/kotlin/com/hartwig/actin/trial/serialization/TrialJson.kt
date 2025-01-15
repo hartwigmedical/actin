@@ -6,18 +6,19 @@ import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.trial.sort.CriterionReferenceComparator
+import com.hartwig.actin.trial.sort.EligibilityComparator
 import com.hartwig.actin.util.Paths
 import com.hartwig.actin.util.json.CriterionReferenceDeserializer
 import com.hartwig.actin.util.json.CriterionReferenceDeserializer.Companion.toJsonReferenceText
 import com.hartwig.actin.util.json.EligibilityFunctionDeserializer
 import com.hartwig.actin.util.json.GsonSerializer
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
 import java.nio.file.Files
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
 object TrialJson {
 
@@ -52,7 +53,7 @@ object TrialJson {
             eligibility.copy(references = eligibility.references.map { reference ->
                 reference.copy(text = toJsonReferenceText(reference.text))
             }.toSortedSet(CriterionReferenceComparator()))
-        }
+        }.toSortedSet(EligibilityComparator()).toList()
     }
 
     fun readFromDir(directory: String): List<Trial> {

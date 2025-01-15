@@ -10,6 +10,7 @@ import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
+import com.hartwig.actin.trial.serialization.TrialJson
 import com.hartwig.actin.util.Either
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -19,6 +20,7 @@ private const val NCT_ID = "nctId"
 private const val ACRONYM = "acronym"
 private const val TITLE = "title"
 private const val IS_MALE = "IS_MALE"
+private const val IS_FEMALE = "IS_FEMALE"
 private const val COHORT_ID = "cohortId"
 private const val DESCRIPTION = "description"
 private const val REFERENCE_ID = "id"
@@ -26,6 +28,25 @@ private const val REFERENCE_TEXT = "text"
 private const val LOCATION = "location"
 
 class TrialIngestionTest {
+
+    @Test
+    fun `Reorder`() {
+        val new = TrialJson.readFromDir("/Users/pwolfe/Code/actin/new_trial")
+        TrialJson.write(new, "/Users/pwolfe/Code/actin/new_trial")
+    }
+
+    @Test
+    fun `Regress`() {
+        val old = TrialJson.readFromDir("/Users/pwolfe/Code/actin/old_trial").associateBy { it.identification.trialId }
+        val new = TrialJson.readFromDir("/Users/pwolfe/Code/actin/new_trial").associateBy { it.identification.trialId }
+        for (entry in old) {
+            val newTrial = new[entry.key]
+            if (newTrial != null) {
+                val oldTrial = entry.value
+                assertThat(newTrial.copy(identification = newTrial.identification.copy(locations = null))).isEqualTo(oldTrial)
+            }
+        }
+    }
 
     @Test
     fun `Should map trial config to internal trial model and eligibility criteria`() {
@@ -53,7 +74,7 @@ class TrialIngestionTest {
                             evaluable = true,
                             inclusionCriterion = listOf(
                                 InclusionCriterionConfig(
-                                    IS_MALE, listOf(
+                                    IS_FEMALE, listOf(
                                         InclusionCriterionReferenceConfig(
                                             REFERENCE_ID,
                                             REFERENCE_TEXT
@@ -98,7 +119,7 @@ class TrialIngestionTest {
                         eligibility = listOf(
                             Eligibility(
                                 setOf(CriterionReference(REFERENCE_ID, REFERENCE_TEXT)),
-                                EligibilityFunction(EligibilityRule.IS_MALE)
+                                EligibilityFunction(EligibilityRule.IS_FEMALE)
                             )
                         )
                     )
