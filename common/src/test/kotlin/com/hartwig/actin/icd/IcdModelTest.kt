@@ -28,6 +28,11 @@ class IcdModelTest {
     }
 
     @Test
+    fun `Should ignore case in title validation`() {
+        assertThat(icdModel.isValidIcdTitle("TargetMainTitle&targetEXTENSIONTitle")).isTrue()
+    }
+
+    @Test
     fun `Should return false for invalid ICD title`() {
         assertThat(icdModel.isValidIcdTitle("invalidTitle")).isFalse()
     }
@@ -58,6 +63,12 @@ class IcdModelTest {
         assertThat(icdModel.resolveCodeForTitle("targetMainTitle&targetExtensionTitle"))
             .isEqualTo(IcdCode("targetMainCode", "targetExtensionCode"))
         assertThat(icdModel.resolveCodeForTitle("targetMainTitle")).isEqualTo(IcdCode("targetMainCode", null))
+    }
+
+    @Test
+    fun `Should ignore case in code to title resolution`() {
+        assertThat(icdModel.resolveCodeForTitle("TargetMainTitle&targetEXTENSIONTitle"))
+            .isEqualTo(IcdCode("targetMainCode", "targetExtensionCode"))
     }
 
     @Test
