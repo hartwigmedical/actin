@@ -54,6 +54,31 @@ class HasExhaustedSOCTreatmentsTest {
     }
 
     @Test
+    fun `Should pass for patient with NSCLC and chemoradiation in treatment history`() {
+        every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(any()) } returns false
+        val chemoradiation =
+            TreatmentTestFactory.treatmentHistoryEntry(
+                listOf(
+                    DrugTreatment(
+                        name = "Unknown chemotherapy drug",
+                        drugs = setOf(
+                            Drug(name = "Chemo", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = emptySet()),
+                        )
+                    ),
+                    TreatmentTestFactory.treatment("radiotherapy", false, setOf(TreatmentCategory.RADIOTHERAPY), emptySet())
+                )
+            )
+
+        val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
+        val record = base.copy(
+            tumor = base.tumor.copy(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)),
+            oncologicalHistory = listOf(chemoradiation)
+        )
+
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
+    }
+
+    @Test
     fun `Should fail for patient with NSCLC with other treatment than platinum doublet chemotherapy in treatment history`() {
         every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(any()) } returns false
         val treatment =
