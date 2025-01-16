@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.molecular.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.Fusion
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.Variant
@@ -42,19 +43,23 @@ class GeneHasVariantInExonRangeOfType(
                             ?.let { variant.event })
                     }
                     Triple(
-                        reportableMatches.map(Variant::event).toSet(),
+                        reportableMatches,
                         unreportableMatches.map(Variant::event).toSet(),
                         otherImpactMatches
                     )
                 }.fold(
                     Triple(
-                        emptySet<String>(),
+                        emptySet<Variant>(),
                         emptySet<String>(),
                         emptySet<String>()
                     )
                 ) { (allReportable, allUnreportable, allOther), (reportable, unreportable, other) ->
                     Triple(allReportable + reportable, allUnreportable + unreportable, allOther + other)
                 }
+
+        val (highDriverVariants, nonHighDriverVariants) =
+            canonicalReportableVariantMatches.partition { it.driverLikelihood == DriverLikelihood.HIGH }
+        val highDriverEvents = highDriverVariants.map(Variant::event).toSet()
 
         val (reportableExonSkips, unreportableExonSkips) =
             if (requiredVariantType == VariantTypeInput.DELETE || requiredVariantType == null)
@@ -65,32 +70,34 @@ class GeneHasVariantInExonRangeOfType(
                     }.partition { it.isReportable }
             else emptyList<Fusion>() to emptyList()
 
+        val (highDriverExonSkips, nonHighDriverExonSkips) = reportableExonSkips.partition { it.driverLikelihood == DriverLikelihood.HIGH }
+        val highDriverExonSkipEvents = highDriverExonSkips.map { it.event }.toSet()
+
         return when {
-            canonicalReportableVariantMatches.isNotEmpty() && reportableOtherVariantMatches.isEmpty() -> {
+            highDriverEvents.isNotEmpty() && reportableOtherVariantMatches.isEmpty() -> {
                 EvaluationFactory.pass(
                     "Variant(s) $baseMessage in canonical transcript",
-                    inclusionEvents = canonicalReportableVariantMatches
+                    inclusionEvents = highDriverEvents
                 )
             }
 
-            reportableExonSkips.isNotEmpty() && reportableOtherVariantMatches.isEmpty() -> {
-                EvaluationFactory.pass("Exon(s) skipped $baseMessage", inclusionEvents = reportableExonSkips.map { it.event }.toSet())
+            highDriverExonSkipEvents.isNotEmpty() && reportableOtherVariantMatches.isEmpty() -> {
+                EvaluationFactory.pass("Exon(s) skipped $baseMessage", inclusionEvents = highDriverExonSkipEvents)
             }
 
-            canonicalReportableVariantMatches.isNotEmpty() -> {
+            highDriverEvents.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "Variant(s) ${concat(canonicalReportableVariantMatches)} $baseMessage in canonical transcript together with " +
+                    "Variant(s) ${concat(highDriverEvents)} $baseMessage in canonical transcript together with " +
                             "variant(s) in non-canonical transcript: ${concat(reportableOtherVariantMatches)}",
-                    inclusionEvents = canonicalReportableVariantMatches + reportableOtherVariantMatches
+                    inclusionEvents = highDriverEvents + reportableOtherVariantMatches
                 )
             }
 
-            reportableExonSkips.isNotEmpty() -> {
-                val reportableExonSkipEvents = reportableExonSkips.map { it.event }.toSet()
+            highDriverExonSkipEvents.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "Exon(s) skipped $baseMessage due to ${concat(reportableExonSkipEvents)} together with variant(s) in " +
+                    "Exon(s) skipped $baseMessage due to ${concat(highDriverExonSkipEvents)} together with variant(s) in " +
                             "non-canonical transcript: ${concat(reportableOtherVariantMatches)}",
-                    inclusionEvents = reportableExonSkipEvents + reportableOtherVariantMatches
+                    inclusionEvents = highDriverExonSkipEvents + reportableOtherVariantMatches
                 )
             }
 
@@ -99,6 +106,8 @@ class GeneHasVariantInExonRangeOfType(
                     canonicalUnreportableVariantMatches,
                     reportableOtherVariantMatches,
                     unreportableExonSkips.map { it.event }.toSet(),
+                    nonHighDriverVariants.map(Variant::event).toSet(),
+                    nonHighDriverExonSkips.map { it.event }.toSet(),
                     baseMessage
                 )
                     ?: EvaluationFactory.fail("No variant $baseMessage in canonical transcript")
@@ -115,6 +124,8 @@ class GeneHasVariantInExonRangeOfType(
         canonicalUnreportableVariantMatches: Set<String>,
         reportableOtherVariantMatches: Set<String>,
         unreportableFusions: Set<String>,
+        nonHighDriverVariants: Set<String>,
+        nonHighDriverExonSkips: Set<String>,
         baseMessage: String
     ): Evaluation? {
         return MolecularEventUtil.evaluatePotentialWarnsForEventGroups(
@@ -124,7 +135,9 @@ class GeneHasVariantInExonRangeOfType(
                     "Variant(s) $baseMessage in canonical transcript but considered not reportable"
                 ),
                 EventsWithMessages(reportableOtherVariantMatches, "Variant(s) $baseMessage but in non-canonical transcript"),
-                EventsWithMessages(unreportableFusions, "Exon skip(s) $baseMessage but not reportable")
+                EventsWithMessages(unreportableFusions, "Exon skip(s) $baseMessage but not reportable"),
+                EventsWithMessages(nonHighDriverVariants, "Variant(s) $baseMessage in canonical transcript but not high driver"),
+                EventsWithMessages(nonHighDriverExonSkips, "Exon skip(s) $baseMessage but not high driver")
             )
         )
     }
