@@ -7,4 +7,8 @@ data class OtherCondition(
     override val icdCodes: Set<IcdCode>,
 ): Comorbidity {
     override val comorbidityClass = ComorbidityClass.OTHER_CONDITION
+
+    override fun withDefaultYearAndMonth(defaultYear: Int, defaultMonth: Int): Comorbidity = if (year != null) this else {
+        copy(year = defaultYear, month = defaultMonth)
+    }
 }

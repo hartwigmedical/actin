@@ -1,10 +1,9 @@
 package com.hartwig.actin.clinical.feed.standard.extraction
 
 import com.hartwig.actin.clinical.curation.CurationDatabase
-import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
+import com.hartwig.actin.clinical.curation.config.ComorbidityConfig
 import com.hartwig.actin.clinical.feed.standard.EhrTestData
 import com.hartwig.actin.clinical.feed.standard.ProvidedAllergy
-import com.hartwig.actin.clinical.feed.standard.ProvidedOtherCondition
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import io.mockk.every
@@ -37,7 +36,7 @@ private val EHR_PATIENT_RECORD = EhrTestData.createEhrPatientRecord().copy(
 
 class StandardIntolerancesExtractorTest {
 
-    private val intoleranceCuration = mockk<CurationDatabase<IntoleranceConfig>> {
+    private val intoleranceCuration = mockk<CurationDatabase<ComorbidityConfig>> {
         every { find(any()) } returns emptySet()
     }
     private val extractor = StandardIntolerancesExtractor(intoleranceCuration)
@@ -59,10 +58,13 @@ class StandardIntolerancesExtractorTest {
     @Test
     fun `Should extract intolerances from allergies and augment with curation when present`() {
         every { intoleranceCuration.find(NAME) } returns setOf(
-            IntoleranceConfig(
+            ComorbidityConfig(
                 input = NAME,
-                name = CURATED,
-                icd = setOf(IcdCode(ICD, null))
+                ignore = false,
+                curated = Intolerance(
+                    name = CURATED,
+                    icdCodes = setOf(IcdCode(ICD, null))
+                )
             )
         )
         val results = extractor.extract(EHR_PATIENT_RECORD)
@@ -77,42 +79,4 @@ class StandardIntolerancesExtractorTest {
         )
         assertThat(results.evaluation.warnings).isEmpty()
     }
-
-    @Test
-    fun `Should extract intolerances from other conditions, supporting multiple configs per input, but ignore any curation warnings`() {
-        val anotherCurated = "another curated"
-        every { intoleranceCuration.find(NAME) } returns setOf(
-            IntoleranceConfig(
-                input = NAME,
-                name = CURATED,
-                icd = setOf(IcdCode(ICD, null))
-            ),
-            IntoleranceConfig(
-                input = NAME,
-                name = anotherCurated,
-                icd = setOf(IcdCode(ICD, null))
-            )
-        )
-        val results = extractor.extract(
-            EHR_PATIENT_RECORD.copy(
-                allergies = emptyList(),
-                priorOtherConditions = listOf(
-                    ProvidedOtherCondition(name = NAME, startDate = LocalDate.of(2024, 4, 22)),
-                    ProvidedOtherCondition(name = "not an intolerance", startDate = LocalDate.of(2024, 4, 22))
-                )
-            )
-        )
-        assertThat(results.extracted).containsExactly(
-            Intolerance(
-                name = CURATED,
-                icdCodes = setOf(IcdCode(ICD, null)),
-            ),
-            Intolerance(
-                name = anotherCurated,
-                icdCodes = setOf(IcdCode(ICD, null)),
-            )
-        )
-        assertThat(results.evaluation.warnings).isEmpty()
-    }
-
 }

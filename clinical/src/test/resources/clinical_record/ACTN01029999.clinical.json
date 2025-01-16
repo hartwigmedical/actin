@@ -62,7 +62,7 @@
 	  "jtcMeasure": null
 	},
 	"lvef": null,
-	"hasComplications": null
+	"hasComplications": true
   },
   "oncologicalHistory": [
 	{
@@ -170,6 +170,18 @@
 		}
 	  ],
 	  "comorbidityClass": "OTHER_CONDITION"
+	},
+	{
+		"name": "Vomit",
+        "year": 2024,
+        "month": 3,
+        "icdCodes": [
+			{
+				"mainCode": "1A01.2",
+				"extensionCode": null
+			}
+		],
+        "comorbidityClass": "COMPLICATION"
 	},
 	{
 		"name": "Nausea",

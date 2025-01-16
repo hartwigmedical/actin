@@ -5,19 +5,18 @@ import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.datamodel.clinical.OtherCondition
 import com.hartwig.actin.icd.IcdModel
 
-class NonOncologicalHistoryConfigFactory(private val icdModel: IcdModel) :
-    CurationConfigFactory<NonOncologicalHistoryConfig> {
-    override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<NonOncologicalHistoryConfig> {
+class OtherConditionConfigFactory(private val icdModel: IcdModel) : CurationConfigFactory<ComorbidityConfig> {
+    override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<ComorbidityConfig> {
         val input = parts[fields["input"]!!]
         val ignore = CurationUtil.isIgnoreString(parts[fields["name"]!!])
         val (lvefValue, lvefValueValidationErrors) = validatedLvefValue(input, ignore, parts, fields)
         val (otherCondition, otherConditionValidationErrors) = toCuratedOtherCondition(ignore, fields, input, parts)
         return ValidatedCurationConfig(
-            NonOncologicalHistoryConfig(
+            ComorbidityConfig(
                 input = input,
                 ignore = ignore,
                 lvef = lvefValue,
-                otherCondition = otherCondition.takeUnless { ignore }
+                curated = otherCondition.takeUnless { ignore }
             ), otherConditionValidationErrors + lvefValueValidationErrors
         )
     }
@@ -28,12 +27,10 @@ class NonOncologicalHistoryConfigFactory(private val icdModel: IcdModel) :
         parts: Array<String>,
         fields: Map<String, Int>
     ): Pair<Double?, List<CurationConfigValidationError>> {
-
-        if (ignore) return null to emptyList()
-
-        return when (isLVEF(fields, parts)) {
-            true -> validateDouble(CurationCategory.NON_ONCOLOGICAL_HISTORY, input, "lvefValue", fields, parts)
-            false -> null to emptyList()
+        return if (!ignore && isLVEF(fields, parts)) {
+            validateDouble(CurationCategory.NON_ONCOLOGICAL_HISTORY, input, "lvefValue", fields, parts)
+        } else {
+             null to emptyList()
         }
     }
 

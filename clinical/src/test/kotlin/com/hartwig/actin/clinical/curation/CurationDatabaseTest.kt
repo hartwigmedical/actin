@@ -48,7 +48,8 @@ class CurationDatabaseTest {
         val dir = File(CURATION_DIRECTORY)
         val sheetNames = dir.listFiles()!!.map { it.name }.toSet()
 
-        val catNames =  CurationCategory.values()
+        val catNames =  CurationCategory.entries
+            .filterNot { it == CurationCategory.COMORBIDITY }  // TODO: Combine all comorbidities on comorbidity curation sheet
             .map {it.categoryName.lowercase().replace(" ", "_")+".tsv"}
             .toSet()
 

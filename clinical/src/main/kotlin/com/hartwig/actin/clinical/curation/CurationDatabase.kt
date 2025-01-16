@@ -25,6 +25,26 @@ class CurationDatabase<T : CurationConfig>(
             }
     }
 
+    operator fun plus(other: CurationDatabase<T>): CurationDatabase<T> {
+        val conflictingKeyErrors = configs.keys.intersect(other.configs.keys)
+            .map {
+                CurationConfigValidationError(
+                    CurationCategory.COMORBIDITY.categoryName,
+                    it,
+                    "input",
+                    it,
+                    "string",
+                    "Conflicting key: $it"
+                )
+            }
+        return CurationDatabase(
+            configs + other.configs,
+            validationErrors + other.validationErrors + conflictingKeyErrors,
+            category,
+            evaluatedInputFunction
+        )
+    }
+
     companion object {
         fun <T : CurationConfig> create(
             category: CurationCategory,

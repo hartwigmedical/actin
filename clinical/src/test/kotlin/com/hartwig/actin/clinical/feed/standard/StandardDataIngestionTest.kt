@@ -14,14 +14,13 @@ import com.hartwig.actin.clinical.feed.standard.extraction.StandardBloodTransfus
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyHeightExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyWeightExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardClinicalStatusExtractor
-import com.hartwig.actin.clinical.feed.standard.extraction.StandardComplicationExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardIntolerancesExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardLabValuesExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardMedicationExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardOncologicalHistoryExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPatientDetailsExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorIHCTestExtractor
-import com.hartwig.actin.clinical.feed.standard.extraction.StandardOtherConditionsExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardComorbidityExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorPrimariesExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorSequencingTestExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSurgeryExtractor
@@ -78,29 +77,28 @@ class StandardDataIngestionTest {
                 treatmentDatabase = treatmentDatabase
             ),
             surgeryExtractor = StandardSurgeryExtractor(curationDatabase.surgeryNameCuration),
-            toxicityExtractor = StandardToxicityExtractor(curationDatabase.toxicityCuration),
+            intolerancesExtractor = StandardIntolerancesExtractor(curationDatabase.comorbidityCuration),
             vitalFunctionsExtractor = StandardVitalFunctionsExtractor(),
-            otherConditionsExtractor = StandardOtherConditionsExtractor(
-                curationDatabase.nonOncologicalHistoryCuration
+            bloodTransfusionExtractor = StandardBloodTransfusionExtractor(),
+            labValuesExtractor = StandardLabValuesExtractor(curationDatabase.laboratoryTranslation),
+            comorbidityExtractor = StandardComorbidityExtractor(
+                curationDatabase.comorbidityCuration
             ),
-            intolerancesExtractor = StandardIntolerancesExtractor(curationDatabase.intoleranceCuration),
-            complicationExtractor = StandardComplicationExtractor(curationDatabase.complicationCuration),
+            toxicityExtractor = StandardToxicityExtractor(curationDatabase.comorbidityCuration),
             treatmentHistoryExtractor = StandardOncologicalHistoryExtractor(
                 curationDatabase.treatmentHistoryEntryCuration
             ),
-            secondPrimaryExtractor = StandardPriorPrimariesExtractor(curationDatabase.secondPrimaryCuration),
+            clinicalStatusExtractor = StandardClinicalStatusExtractor(curationDatabase.ecgCuration),
 
-            patientDetailsExtractor = StandardPatientDetailsExtractor(),
             tumorDetailsExtractor = StandardTumorDetailsExtractor(
                 curationDatabase.primaryTumorCuration,
                 curationDatabase.lesionLocationCuration,
                 TumorStageDeriver.create(doidModel)
             ),
-            labValuesExtractor = StandardLabValuesExtractor(curationDatabase.laboratoryTranslation),
-            clinicalStatusExtractor = StandardClinicalStatusExtractor(curationDatabase.ecgCuration),
+            secondPrimaryExtractor = StandardPriorPrimariesExtractor(curationDatabase.secondPrimaryCuration),
+            patientDetailsExtractor = StandardPatientDetailsExtractor(),
             bodyWeightExtractor = StandardBodyWeightExtractor(),
             bodyHeightExtractor = StandardBodyHeightExtractor(),
-            bloodTransfusionExtractor = StandardBloodTransfusionExtractor(),
             ihcTestExtractor = StandardPriorIHCTestExtractor(curationDatabase.molecularTestIhcCuration),
             sequencingTestExtractor = StandardPriorSequencingTestExtractor(curationDatabase.sequencingTestCuration),
             dataQualityMask = DataQualityMask()

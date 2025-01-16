@@ -3,9 +3,10 @@ package com.hartwig.actin.clinical.feed.emc.extraction
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
-import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
+import com.hartwig.actin.clinical.curation.config.ComorbidityConfig
 import com.hartwig.actin.clinical.feed.emc.intolerance.IntoleranceEntry
 import com.hartwig.actin.datamodel.clinical.IcdCode
+import com.hartwig.actin.datamodel.clinical.Intolerance
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
@@ -27,17 +28,21 @@ private const val CANNOT_CURATE = "Cannot curate"
 class IntoleranceExtractorTest {
     private val extractor = IntoleranceExtractor(
         TestCurationFactory.curationDatabase(
-            IntoleranceConfig(
+            ComorbidityConfig(
                 input = INTOLERANCE_INPUT,
                 ignore = false,
-                name = CURATED_INTOLERANCE,
-                icd = setOf(IcdCode(ICD, null))
+                curated = Intolerance(
+                    name = CURATED_INTOLERANCE,
+                    icdCodes = setOf(IcdCode(ICD, null))
+                )
             ),
-            IntoleranceConfig(
+            ComorbidityConfig(
                 input = INTOLERANCE_MEDICATION_INPUT,
                 ignore = false,
-                name = CURATED_MEDICATION_INTOLERANCE,
-                icd = setOf(IcdCode(ICD, null))
+                curated = Intolerance(
+                    name = CURATED_MEDICATION_INTOLERANCE,
+                    icdCodes = setOf(IcdCode(ICD, null))
+                )
             )
         )
     )
@@ -58,7 +63,7 @@ class IntoleranceExtractorTest {
                 PATIENT_ID, CurationCategory.INTOLERANCE, CANNOT_CURATE, "Could not find intolerance config for input 'Cannot curate'"
             )
         )
-        assertThat(evaluation.intoleranceEvaluatedInputs).isEqualTo(inputs.map(String::lowercase).toSet())
+        assertThat(evaluation.comorbidityEvaluatedInputs).isEqualTo(inputs.map(String::lowercase).toSet())
 
     }
     companion object {

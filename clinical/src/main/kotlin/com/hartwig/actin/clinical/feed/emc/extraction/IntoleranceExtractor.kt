@@ -6,13 +6,13 @@ import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
-import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
+import com.hartwig.actin.clinical.curation.config.ComorbidityConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.emc.intolerance.IntoleranceEntry
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
 
-class IntoleranceExtractor(private val intoleranceCuration: CurationDatabase<IntoleranceConfig>) {
+class IntoleranceExtractor(private val comorbidityCuration: CurationDatabase<ComorbidityConfig>) {
 
     fun extract(patientId: String, intoleranceEntries: List<IntoleranceEntry>): ExtractionResult<List<Intolerance>> {
         return intoleranceEntries.map { entry: IntoleranceEntry ->
@@ -27,12 +27,12 @@ class IntoleranceExtractor(private val intoleranceCuration: CurationDatabase<Int
         }
             .map {
                 val curationResponse = CurationResponse.createFromConfigs(
-                    intoleranceCuration.find(it.name), patientId, CurationCategory.INTOLERANCE, it.name, "intolerance", true
+                    comorbidityCuration.find(it.name), patientId, CurationCategory.INTOLERANCE, it.name, "intolerance", true
                 )
-                val curatedIntolerance = curationResponse.config()?.let { config ->
+                val curatedIntolerance = curationResponse.config()?.curated?.let { curated ->
                     it.copy(
-                        name = config.name,
-                        icdCodes = config.icd,
+                        name = curated.name,
+                        icdCodes = curated.icdCodes,
                     )
                 } ?: it
                 ExtractionResult(listOf(curatedIntolerance), curationResponse.extractionEvaluation)
@@ -43,7 +43,6 @@ class IntoleranceExtractor(private val intoleranceCuration: CurationDatabase<Int
     }
 
     companion object {
-        fun create(curationDatabaseContext: CurationDatabaseContext) =
-            IntoleranceExtractor(curationDatabaseContext.intoleranceCuration)
+        fun create(curationDatabaseContext: CurationDatabaseContext) = IntoleranceExtractor(curationDatabaseContext.comorbidityCuration)
     }
 }

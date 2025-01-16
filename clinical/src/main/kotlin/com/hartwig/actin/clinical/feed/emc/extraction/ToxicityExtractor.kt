@@ -6,8 +6,9 @@ import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
+import com.hartwig.actin.clinical.curation.config.ComorbidityConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfig
-import com.hartwig.actin.clinical.curation.config.ToxicityConfig
+import com.hartwig.actin.clinical.curation.config.ToxicityCuration
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.feed.emc.digitalfile.DigitalFileEntry
@@ -15,9 +16,10 @@ import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
+import java.time.LocalDate
 
 class ToxicityExtractor(
-    private val toxicityCuration: CurationDatabase<ToxicityConfig>,
+    private val toxicityCuration: CurationDatabase<ComorbidityConfig>,
     private val toxicityTranslation: TranslationDatabase<String>
 ) {
 
@@ -26,14 +28,13 @@ class ToxicityExtractor(
     ): ExtractionResult<List<Toxicity>> {
         val feedToxicities = extractFeedToxicities(toxicityEntries, patientId)
 
-        if (questionnaire != null) {
-            val questionnaireToxicities = extractQuestionnaireToxicities(questionnaire, patientId)
-            return ExtractionResult(
+        return questionnaire?.unresolvedToxicities?.let { unresolvedToxicities ->
+            val questionnaireToxicities = extractQuestionnaireToxicities(unresolvedToxicities, patientId, questionnaire.date)
+            ExtractionResult(
                 feedToxicities.extracted + questionnaireToxicities.extracted,
                 feedToxicities.evaluation + questionnaireToxicities.evaluation
             )
-        }
-        return feedToxicities
+        } ?: feedToxicities
     }
 
     private fun extractFeedToxicities(toxicityEntries: List<DigitalFileEntry>, patientId: String): ExtractionResult<List<Toxicity>> {
@@ -41,7 +42,7 @@ class ToxicityExtractor(
             extractGrade(toxicityEntry)?.let { grade ->
                 Toxicity(
                     name = toxicityEntry.itemText,
-                    icdCodes = setOf(IcdCode("", null)),
+                    icdCodes = setOf(IcdCode("", null)),  // TODO: Curate ICD codes
                     evaluatedDate = toxicityEntry.authored,
                     source = ToxicitySource.EHR,
                     grade = grade,
@@ -68,27 +69,30 @@ class ToxicityExtractor(
             }
     }
 
-    private fun extractQuestionnaireToxicities(questionnaire: Questionnaire, patientId: String): ExtractionResult<List<Toxicity>> {
-        return questionnaire.unresolvedToxicities?.map { input ->
+    private fun extractQuestionnaireToxicities(
+        unresolvedToxicities: List<String>, patientId: String, questionnaireDate: LocalDate
+    ): ExtractionResult<List<Toxicity>> {
+        return unresolvedToxicities.map { input ->
             val trimmedInput = CurationUtil.fullTrim(input)
             val curationResponse = CurationResponse.createFromConfigs(
                 toxicityCuration.find(trimmedInput), patientId, CurationCategory.TOXICITY, trimmedInput, "toxicity"
             )
-            val toxicities = curationResponse.configs.filterNot(CurationConfig::ignore).map { config ->
-                Toxicity(
-                    name = config.name,
-                    icdCodes = config.icdCodes,
-                    evaluatedDate = questionnaire.date,
-                    source = ToxicitySource.QUESTIONNAIRE,
-                    grade = config.grade
-                )
+            val toxicities = curationResponse.configs.filterNot(CurationConfig::ignore).mapNotNull { config ->
+                config.curated?.let { curated ->
+                    Toxicity(
+                        name = curated.name,
+                        icdCodes = curated.icdCodes,
+                        evaluatedDate = questionnaireDate,
+                        source = ToxicitySource.QUESTIONNAIRE,
+                        grade = (curated as? ToxicityCuration)?.grade
+                    )
+                }
             }
             ExtractionResult(toxicities, curationResponse.extractionEvaluation)
         }
-            ?.fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { (toxicities, aggregatedEval), (toxicity, eval) ->
+            .fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { (toxicities, aggregatedEval), (toxicity, eval) ->
                 ExtractionResult(toxicities + toxicity, aggregatedEval + eval)
             }
-            ?: ExtractionResult(emptyList(), CurationExtractionEvaluation())
     }
 
     private fun extractGrade(entry: DigitalFileEntry): Int? {
@@ -101,7 +105,7 @@ class ToxicityExtractor(
 
     companion object {
         fun create(curationDatabaseContext: CurationDatabaseContext) = ToxicityExtractor(
-            toxicityCuration = curationDatabaseContext.toxicityCuration,
+            toxicityCuration = curationDatabaseContext.comorbidityCuration,
             toxicityTranslation = curationDatabaseContext.toxicityTranslation
         )
     }

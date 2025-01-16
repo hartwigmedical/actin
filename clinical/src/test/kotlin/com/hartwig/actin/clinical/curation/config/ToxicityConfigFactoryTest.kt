@@ -24,10 +24,12 @@ class ToxicityConfigFactoryTest {
         val config = ToxicityConfigFactory(icdModel).create(fields, arrayOf("input", "name", "3", "$icdTitle;$icdTitle"))
 
         assertThat(config.errors).isEmpty()
-        assertThat(config.config.input).isEqualTo("input")
-        assertThat(config.config.name).isEqualTo("name")
-        assertThat(config.config.grade).isEqualTo(3)
-        assertThat(config.config.icdCodes).isEqualTo(setOf(icdCode))
+        with(config.config) {
+            assertThat(input).isEqualTo("input")
+            assertThat(curated?.name).isEqualTo("name")
+            assertThat((curated as? ToxicityCuration)?.grade).isEqualTo(3)
+            assertThat(curated?.icdCodes).isEqualTo(setOf(icdCode))
+        }
     }
 
     @Test
@@ -37,13 +39,7 @@ class ToxicityConfigFactoryTest {
 
         val config = ToxicityConfigFactory(icdModel).create(fields, arrayOf("input", "name", "abc", icdTitle))
         assertThat(config.errors).containsExactly(
-            CurationConfigValidationError(
-                CurationCategory.TOXICITY.categoryName,
-                "input",
-                "grade",
-                "abc",
-                "integer"
-            )
+            CurationConfigValidationError(CurationCategory.TOXICITY.categoryName, "input", "grade", "abc", "integer")
         )
     }
 

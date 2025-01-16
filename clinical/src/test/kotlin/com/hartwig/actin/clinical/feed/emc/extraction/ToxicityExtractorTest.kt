@@ -3,7 +3,8 @@ package com.hartwig.actin.clinical.feed.emc.extraction
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
-import com.hartwig.actin.clinical.curation.config.ToxicityConfig
+import com.hartwig.actin.clinical.curation.config.ComorbidityConfig
+import com.hartwig.actin.clinical.curation.config.ToxicityCuration
 import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.feed.emc.digitalfile.DigitalFileEntry
@@ -30,12 +31,14 @@ private const val TOXICITY_TRANSLATED = "Toxicity translated"
 class ToxicityExtractorTest {
     private val extractor = ToxicityExtractor(
         TestCurationFactory.curationDatabase(
-            ToxicityConfig(
+            ComorbidityConfig(
                 input = TOXICITY_INPUT,
                 ignore = false,
-                name = TOXICITY_NAME,
-                grade = 3,
-                icdCodes = setOf(IcdCode(TOXICITY_ICD_CODE, TOXICITY_EXTENSION_CODE))
+                curated = ToxicityCuration(
+                    name = TOXICITY_NAME,
+                    grade = 3,
+                    icdCodes = setOf(IcdCode(TOXICITY_ICD_CODE, TOXICITY_EXTENSION_CODE))
+                )
             )
         ),
         TranslationDatabase(
@@ -64,7 +67,7 @@ class ToxicityExtractorTest {
                 PATIENT_ID, CurationCategory.TOXICITY, CANNOT_CURATE, "Could not find toxicity config for input '$CANNOT_CURATE'"
             )
         )
-        assertThat(evaluation.toxicityEvaluatedInputs).isEqualTo(inputs.map(String::lowercase).toSet())
+        assertThat(evaluation.comorbidityEvaluatedInputs).isEqualTo(inputs.map(String::lowercase).toSet())
 
         assertThat(extractor.extract(PATIENT_ID, emptyList(), questionnaire.copy(unresolvedToxicities = null)).extracted).isEmpty()
     }

@@ -4,34 +4,35 @@ import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationResponse
-import com.hartwig.actin.clinical.curation.config.ToxicityConfig
+import com.hartwig.actin.clinical.curation.config.ComorbidityConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.standard.ProvidedPatientRecord
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 
 class StandardToxicityExtractor(
-    private val toxicityCuration: CurationDatabase<ToxicityConfig>
+    private val comorbidityCuration: CurationDatabase<ComorbidityConfig>
 ) : StandardDataExtractor<List<Toxicity>> {
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<Toxicity>> {
 
         return ehrPatientRecord.toxicities.map { toxicity ->
             val curatedToxicity = CurationResponse.createFromConfigs(
-                toxicityCuration.find(toxicity.name),
+                comorbidityCuration.find(toxicity.name),
                 ehrPatientRecord.patientDetails.hashedId,
                 CurationCategory.TOXICITY,
                 toxicity.name,
                 "toxicity"
             )
 
-            ExtractionResult(listOfNotNull(curatedToxicity.config()?.let {
+            ExtractionResult(listOfNotNull(curatedToxicity.config()?.curated?.let { curated ->
+                val curatedToxicity = curated as? Toxicity
                 Toxicity(
-                    name = it.name,
-                    grade = toxicity.grade,
-                    icdCodes = it.icdCodes,
-                    evaluatedDate = toxicity.evaluatedDate,
+                    name = curated.name,
+                    grade = curatedToxicity?.grade ?: toxicity.grade,
+                    icdCodes = curated.icdCodes,
+                    evaluatedDate = curatedToxicity?.evaluatedDate ?: toxicity.evaluatedDate,
                     source = ToxicitySource.EHR,
-                    endDate = toxicity.endDate
+                    endDate = curatedToxicity?.endDate ?: toxicity.endDate
                 )
             }), curatedToxicity.extractionEvaluation)
         }.fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, extractionResult ->
