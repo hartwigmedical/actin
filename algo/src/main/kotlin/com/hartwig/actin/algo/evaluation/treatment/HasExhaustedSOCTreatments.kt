@@ -7,7 +7,7 @@ import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.createFul
 import com.hartwig.actin.algo.soc.RecommendationEngineFactory
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.doid.DoidModel
 
 class HasExhaustedSOCTreatments(
@@ -20,9 +20,7 @@ class HasExhaustedSOCTreatments(
         val hasReceivedPlatinumBasedDoubletOrMore =
             TreatmentFunctions.receivedPlatinumDoublet(record) || TreatmentFunctions.receivedPlatinumTripletOrAbove(record)
         val hasReceivedUndefinedChemoradiation = record.oncologicalHistory.any {
-            it.treatments.flatMap { treatment -> treatment.categories() }
-                .containsAll(listOf(TreatmentCategory.CHEMOTHERAPY, TreatmentCategory.RADIOTHERAPY)) &&
-                    !it.hasTypeConfigured()
+            it.treatments.map(Treatment::name).containsAll(listOf("CHEMOTHERAPY", "RADIOTHERAPY"))
         }
 
         return when {
