@@ -42,7 +42,7 @@ class ToxicityExtractor(
             extractGrade(toxicityEntry)?.let { grade ->
                 Toxicity(
                     name = toxicityEntry.itemText,
-                    icdCodes = setOf(IcdCode("", null)),  // TODO: Curate ICD codes
+                    icdCodes = setOf(IcdCode("", null)),
                     evaluatedDate = toxicityEntry.authored,
                     source = ToxicitySource.EHR,
                     grade = grade,
@@ -51,22 +51,47 @@ class ToxicityExtractor(
         }
             .map { rawToxicity ->
                 if (rawToxicity.name.isEmpty()) ExtractionResult(listOf(rawToxicity), CurationExtractionEvaluation()) else {
-                    val translationResponse = CurationResponse.createFromTranslation(
-                        toxicityTranslation.find(rawToxicity.name),
-                        patientId,
-                        CurationCategory.TOXICITY_TRANSLATION,
-                        rawToxicity.name,
-                        "toxicity"
-                    )
-                    ExtractionResult(
-                        listOf(translationResponse.config()?.translated?.let { rawToxicity.copy(name = it) } ?: rawToxicity),
-                        translationResponse.extractionEvaluation
-                    )
+                    curatedToxicity(rawToxicity, patientId) ?: translatedToxicity(rawToxicity, patientId)
                 }
             }
             .fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { (toxicities, aggregatedEval), (toxicity, eval) ->
                 ExtractionResult(toxicities + toxicity, aggregatedEval + eval)
             }
+    }
+
+    private fun curatedToxicity(rawToxicity: Toxicity, patientId: String): ExtractionResult<List<Toxicity>>? {
+        val input = rawToxicity.name
+        val curationResponse = CurationResponse.createFromConfigs(
+            toxicityCuration.find(input), patientId, CurationCategory.TOXICITY, input, "toxicity"
+        )
+        return curationResponse.config()?.curated?.let { curated ->
+            ExtractionResult(
+                listOf(
+                    rawToxicity.copy(
+                        name = curated.name,
+                        icdCodes = curated.icdCodes,
+                        grade = (curated as? ToxicityCuration)?.grade ?: rawToxicity.grade
+                    )
+                ),
+                curationResponse.extractionEvaluation
+            )
+        }
+    }
+
+    private fun translatedToxicity(rawToxicity: Toxicity, patientId: String): ExtractionResult<List<Toxicity>> {
+        val input = rawToxicity.name
+        return CurationResponse.createFromTranslation(
+            toxicityTranslation.find(input),
+            patientId,
+            CurationCategory.TOXICITY_TRANSLATION,
+            input,
+            "toxicity"
+        ).let { translationResponse ->
+            ExtractionResult(
+                listOf(translationResponse.config()?.translated?.let { rawToxicity.copy(name = it) } ?: rawToxicity),
+                translationResponse.extractionEvaluation
+            )
+        }
     }
 
     private fun extractQuestionnaireToxicities(

@@ -16,16 +16,11 @@ import java.time.LocalDate
 
 private const val PATIENT_ID = "patient1"
 private const val CANNOT_CURATE = "cannot curate"
-
-
 private const val TOXICITY_INPUT = "Toxicity input"
-
+private const val OTHER_TOXICITY_INPUT = "Other toxicity input"
 private const val TOXICITY_NAME = "Toxicity name"
-
 private const val TOXICITY_ICD_CODE = "Toxicity icd code"
-
 private const val TOXICITY_EXTENSION_CODE = "Toxicity extension"
-
 private const val TOXICITY_TRANSLATED = "Toxicity translated"
 
 class ToxicityExtractorTest {
@@ -42,7 +37,10 @@ class ToxicityExtractorTest {
             )
         ),
         TranslationDatabase(
-            mapOf(TOXICITY_INPUT to Translation(TOXICITY_INPUT, TOXICITY_TRANSLATED)),
+            mapOf(
+                TOXICITY_INPUT to Translation(TOXICITY_INPUT, TOXICITY_TRANSLATED),
+                OTHER_TOXICITY_INPUT to Translation(OTHER_TOXICITY_INPUT, TOXICITY_TRANSLATED)
+            ),
             CurationCategory.TOXICITY_TRANSLATION
         ) { emptySet() }
     )
@@ -73,18 +71,36 @@ class ToxicityExtractorTest {
     }
 
     @Test
-    fun `Should translate feed toxicities`() {
-        val inputs = setOf(TOXICITY_INPUT, CANNOT_CURATE).map { name ->
+    fun `Should preferentially curate feed toxicities`() {
+        assertToxicityExtraction(TOXICITY_INPUT, TOXICITY_NAME, 3, setOf(TOXICITY_INPUT.lowercase()), emptySet())
+    }
+
+    @Test
+    fun `Should fall back to translation for feed toxicities when curation does not exist`() {
+        assertToxicityExtraction(
+            OTHER_TOXICITY_INPUT, TOXICITY_TRANSLATED, 2, emptySet(), setOf(Translation(OTHER_TOXICITY_INPUT, TOXICITY_TRANSLATED))
+        )
+    }
+
+    private fun assertToxicityExtraction(
+        input: String,
+        expectedName: String,
+        expectedGrade: Int,
+        expectedCurationInputs: Set<String>,
+        expectedToxicityTranslationInputs: Set<Translation<String>>
+    ) {
+        val inputs = setOf(input, CANNOT_CURATE).map { name ->
             DigitalFileEntry(
                 subject = PATIENT_ID,
                 authored = LocalDate.of(2020, 11, 11),
                 itemText = name,
-                itemAnswerValueValueString = "3",
+                itemAnswerValueValueString = "2",
                 description = ""
             )
         }
         val (toxicities, evaluation) = extractor.extract(PATIENT_ID, inputs, null)
-        assertThat(toxicities).hasSize(2).anyMatch { it.name == TOXICITY_TRANSLATED }
+        assertThat(toxicities).hasSize(2)
+            .anyMatch { it.name == expectedName && it.grade == expectedGrade }
 
         assertThat(evaluation.warnings).containsOnly(
             CurationWarning(
@@ -94,6 +110,7 @@ class ToxicityExtractorTest {
                 "No translation found for toxicity: '$CANNOT_CURATE'"
             )
         )
-        assertThat(evaluation.toxicityTranslationEvaluatedInputs).isEqualTo(setOf(Translation(TOXICITY_INPUT, TOXICITY_TRANSLATED)))
+        assertThat(evaluation.comorbidityEvaluatedInputs).isEqualTo(expectedCurationInputs)
+        assertThat(evaluation.toxicityTranslationEvaluatedInputs).isEqualTo(expectedToxicityTranslationInputs)
     }
 }

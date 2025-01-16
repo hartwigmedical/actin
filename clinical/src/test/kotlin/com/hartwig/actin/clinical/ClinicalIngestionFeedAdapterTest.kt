@@ -130,7 +130,8 @@ class ClinicalIngestionFeedAdapterTest {
             UnusedCurationConfig(categoryName = "Surgery Name", input = "surgery1"),
             UnusedCurationConfig(categoryName = "Lesion Location", input = "and possibly lymph nodes"),
             UnusedCurationConfig(categoryName = "Comorbidity", input = "morfine"),
-            UnusedCurationConfig(categoryName = "Comorbidity", input = "nikkel")
+            UnusedCurationConfig(categoryName = "Comorbidity", input = "nikkel"),
+            UnusedCurationConfig(categoryName = "Toxicity Translation", input = "Nausea")
         )
 
         val gson = GsonSerializer.create()
