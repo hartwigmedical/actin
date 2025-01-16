@@ -26,17 +26,17 @@ class HasMinimumLesionsInSpecificBodyLocation(
         }
 
         return when {
-            (count ?: 0) >= minimumLesions -> EvaluationFactory.pass("Has $messageEnding")
-            count == null || suspected == true -> EvaluationFactory.undetermined("Undetermined if patient has $messageEnding")
+            count >= minimumLesions -> EvaluationFactory.pass("Has $messageEnding")
+            suspected == true -> EvaluationFactory.undetermined("Undetermined if patient has $messageEnding")
             else -> EvaluationFactory.fail("Does not have $messageEnding")
         }
     }
 
-    private fun lesionCount(hasLesions: Boolean?, count: Int?): Int? {
+    private fun lesionCount(hasLesions: Boolean?, count: Int?): Int {
         return when (hasLesions) {
-            true -> count
+            true -> count ?: 1
             false -> 0
-            null -> null
+            null -> count ?: 0
         }
     }
 }
