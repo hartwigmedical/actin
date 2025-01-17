@@ -82,7 +82,7 @@ class IsEligibleForOnLabelTreatmentTest {
     }
 
     @Test
-    fun `Should fail for non colorectal cancer patient with target treatment already administered in history`() {
+    fun `Should warn for non colorectal cancer patient with target treatment already administered in history`() {
         every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(any()) } returns false
         every { recommendationEngine.standardOfCareEvaluatedTreatments(any()) } returns emptyList()
         assertEvaluation(
