@@ -54,7 +54,42 @@ class HasExhaustedSOCTreatmentsTest {
     }
 
     @Test
-    fun `Should fail for patient with NSCLC with other treatment than platinum doublet chemotherapy in treatment history`() {
+    fun `Should pass for patient with NSCLC and history entry with treatment names CHEMOTHERAPY and RADIOTHERAPY`() {
+        every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(any()) } returns false
+        val chemoradiation =
+            TreatmentTestFactory.treatmentHistoryEntry(
+                listOf(
+                    DrugTreatment(
+                        name = "CHEMOTHERAPY",
+                        drugs = setOf(
+                            Drug(name = "Chemo", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = emptySet()),
+                        )
+                    ),
+                    TreatmentTestFactory.treatment("RADIOTHERAPY", false, setOf(TreatmentCategory.RADIOTHERAPY), emptySet())
+                )
+            )
+
+        val chemoradiationWithOther = chemoradiation.copy(
+            treatments = chemoradiation.treatments + TreatmentTestFactory.treatment(
+                "OTHER",
+                false,
+                setOf(TreatmentCategory.IMMUNOTHERAPY),
+                emptySet()
+            )
+        )
+
+        val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
+        listOf(chemoradiation, chemoradiationWithOther).forEach {
+            val record = base.copy(
+                tumor = base.tumor.copy(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)),
+                oncologicalHistory = listOf(it)
+            )
+            assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
+        }
+    }
+
+    @Test
+    fun `Should fail for patient with NSCLC with other treatment in treatment history`() {
         every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(any()) } returns false
         val treatment =
             TreatmentTestFactory.drugTreatment("Alectinib", TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.ALK_INHIBITOR))
