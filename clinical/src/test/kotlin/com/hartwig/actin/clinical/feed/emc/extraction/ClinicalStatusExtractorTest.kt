@@ -13,19 +13,12 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val PATIENT_ID = "patient1"
-
 private const val ECG_INPUT = "ECG input"
-
 private const val INFECTION_INPUT = "Infection input"
-
 private const val NON_ONCOLOGICAL_INPUT = "Non-oncological input"
-
 private const val CURATED_ECG = "Curated ECG"
-
 private const val CURATED_INFECTION = "Curated Infection"
-
 private const val CURATED_LVEF = 1.0
-
 private const val CANNOT_CURATE = "Cannot curate"
 
 class ClinicalStatusExtractorTest {

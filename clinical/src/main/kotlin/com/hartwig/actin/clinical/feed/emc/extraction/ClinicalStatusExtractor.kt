@@ -22,7 +22,7 @@ class ClinicalStatusExtractor(
     private val comorbidityCuration: CurationDatabase<ComorbidityConfig>
 ) {
 
-    fun extract(patientId: String, questionnaire: Questionnaire?, hasComplications: Boolean?): ExtractionResult<ClinicalStatus> {
+    fun extract(patientId: String, questionnaire: Questionnaire?, hasComplications: Boolean): ExtractionResult<ClinicalStatus> {
         if (questionnaire == null) {
             return ExtractionResult(ClinicalStatus(), CurationExtractionEvaluation())
         }
