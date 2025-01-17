@@ -5,7 +5,8 @@
     "acronym": "IEMOEN",
     "title": "Phase I first-in-human study to evaluate safety of IEMOEN, a new PD-L1 inhibitor in advanced solid tumors",
     "nctId": "NCT00000001",
-    "phase": "1"
+    "phase": "1",
+    "locations": []
   },
   "generalEligibility": [
     {

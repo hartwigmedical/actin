@@ -8,9 +8,9 @@ import com.hartwig.actin.datamodel.clinical.ClinicalRecord
 import com.hartwig.actin.datamodel.clinical.TestClinicalFactory.createMinimalTestClinicalRecord
 import com.hartwig.actin.datamodel.clinical.TestClinicalFactory.createProperTestClinicalRecord
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
+import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.io.File
 
 class ClinicalRecordJsonTest {
 

@@ -1,16 +1,16 @@
 package com.hartwig.actin.icd
 
+import com.hartwig.actin.datamodel.clinical.Comorbidity
 import com.hartwig.actin.datamodel.clinical.Complication
 import com.hartwig.actin.datamodel.clinical.IcdCode
-import com.hartwig.actin.datamodel.clinical.Comorbidity
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.OtherCondition
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatIllegalStateException
 import org.junit.Test
-import java.time.LocalDate
 
 class IcdModelTest {
 
@@ -25,6 +25,11 @@ class IcdModelTest {
     @Test
     fun `Should return true for valid ICD title`() {
         assertThat(icdModel.isValidIcdTitle("targetMainTitle&targetExtensionTitle")).isTrue()
+    }
+
+    @Test
+    fun `Should ignore case in title validation`() {
+        assertThat(icdModel.isValidIcdTitle("TargetMainTitle&targetEXTENSIONTitle")).isTrue()
     }
 
     @Test
@@ -58,6 +63,12 @@ class IcdModelTest {
         assertThat(icdModel.resolveCodeForTitle("targetMainTitle&targetExtensionTitle"))
             .isEqualTo(IcdCode("targetMainCode", "targetExtensionCode"))
         assertThat(icdModel.resolveCodeForTitle("targetMainTitle")).isEqualTo(IcdCode("targetMainCode", null))
+    }
+
+    @Test
+    fun `Should ignore case in code to title resolution`() {
+        assertThat(icdModel.resolveCodeForTitle("TargetMainTitle&targetEXTENSIONTitle"))
+            .isEqualTo(IcdCode("targetMainCode", "targetExtensionCode"))
     }
 
     @Test

@@ -8,8 +8,8 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.EvaluationTestFactory
 import com.hartwig.actin.datamodel.clinical.LabValue
-import org.junit.Test
 import java.time.LocalDate
+import org.junit.Test
 
 class LabMeasurementEvaluatorTest {
    

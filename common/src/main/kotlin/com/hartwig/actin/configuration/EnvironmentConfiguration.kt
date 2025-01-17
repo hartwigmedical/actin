@@ -5,9 +5,9 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.hartwig.actin.datamodel.molecular.evidence.Country
-import org.apache.logging.log4j.LogManager
 import java.io.File
 import java.time.LocalDate
+import org.apache.logging.log4j.LogManager
 
 enum class ConfigurationProfile {
     STANDARD,
@@ -24,10 +24,6 @@ enum class MolecularSummaryType {
 data class AlgoConfiguration(
     val warnIfToxicitiesNotFromQuestionnaire: Boolean = true,
     val maxMolecularTestAgeInDays: Int? = null
-)
-
-data class TrialConfiguration(
-    val ignoreAllNewTrialsInTrialStatusDatabase: Boolean = false,
 )
 
 data class ReportConfiguration(
@@ -61,7 +57,6 @@ const val OVERRIDE_YAML_DESCRIPTION = "Optional file specifying configuration ov
 data class EnvironmentConfiguration(
     val requestingHospital: String? = null,
     val algo: AlgoConfiguration = AlgoConfiguration(),
-    val trial: TrialConfiguration = TrialConfiguration(),
     val report: ReportConfiguration = ReportConfiguration()
 ) {
 

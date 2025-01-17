@@ -1,7 +1,7 @@
 package com.hartwig.actin.icd
 
-import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Comorbidity
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.datamodel.IcdMatches
 import com.hartwig.actin.icd.datamodel.IcdNode
 
@@ -18,7 +18,7 @@ class IcdModel(
 
     fun isValidIcdTitle(icdTitle: String): Boolean {
         val titles = icdTitle.split('&')
-        return titles.size in 1..2 && titles.all(titleToCodeMap::containsKey)
+        return titles.size in 1..2 && titles.map(String::lowercase).all(titleToCodeMap::containsKey)
     }
 
     fun isValidIcdCode(icdCode: String): Boolean {
@@ -27,7 +27,7 @@ class IcdModel(
     }
 
     fun resolveCodeForTitle(icdTitle: String): IcdCode? {
-        val split = icdTitle.split('&')
+        val split = icdTitle.lowercase().split('&')
         return titleToCodeMap[split[0]]?.let { mainCode ->
             split.takeIf { it.size == 2 }?.get(1)?.trim()?.ifEmpty { null }?.let { extensionTitle ->
                 titleToCodeMap[extensionTitle]?.let { IcdCode(mainCode, it) } ?: return null
@@ -93,6 +93,7 @@ class IcdModel(
         }
 
         private fun createCodeToNodeMap(icdNodes: List<IcdNode>): Map<String, IcdNode> = icdNodes.associateBy { it.code }
-        private fun createTitleToCodeMap(icdNodes: List<IcdNode>): Map<String, String> = icdNodes.associate { it.title to it.code }
+        private fun createTitleToCodeMap(icdNodes: List<IcdNode>): Map<String, String> =
+            icdNodes.associate { it.title.lowercase() to it.code }
     }
 }

@@ -12,9 +12,9 @@ import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.pdf.tables.clinical.CellTestUtil.extractTextFromCell
 import com.itextpdf.layout.element.Table
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 private const val KEY_WIDTH = 100f
 private const val VALUE_WIDTH = 200f

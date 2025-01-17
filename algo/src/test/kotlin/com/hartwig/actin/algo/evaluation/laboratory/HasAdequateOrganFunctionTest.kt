@@ -8,8 +8,8 @@ import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.LabValue
 import com.hartwig.actin.icd.TestIcdFactory
-import org.junit.Test
 import java.time.LocalDate
+import org.junit.Test
 
 private val VALID_DATE = LocalDate.of(2024, 12, 1)
 

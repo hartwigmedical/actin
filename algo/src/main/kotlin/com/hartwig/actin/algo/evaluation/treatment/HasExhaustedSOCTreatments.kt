@@ -7,6 +7,7 @@ import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.createFul
 import com.hartwig.actin.algo.soc.RecommendationEngineFactory
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.doid.DoidModel
 
 class HasExhaustedSOCTreatments(
@@ -18,6 +19,9 @@ class HasExhaustedSOCTreatments(
         val isNSCLC = LUNG_NON_SMALL_CELL_CARCINOMA_DOID in createFullExpandedDoidTree(doidModel, record.tumor.doids)
         val hasReceivedPlatinumBasedDoubletOrMore =
             TreatmentFunctions.receivedPlatinumDoublet(record) || TreatmentFunctions.receivedPlatinumTripletOrAbove(record)
+        val hasReceivedUndefinedChemoradiation = record.oncologicalHistory.any {
+            it.treatments.map(Treatment::name).containsAll(listOf("CHEMOTHERAPY", "RADIOTHERAPY"))
+        }
 
         return when {
             recommendationEngine.standardOfCareCanBeEvaluatedForPatient(record) -> {
@@ -33,9 +37,13 @@ class HasExhaustedSOCTreatments(
             }
 
             isNSCLC -> {
-                if (hasReceivedPlatinumBasedDoubletOrMore) {
-                    EvaluationFactory.pass("SOC considered exhausted (platinum doublet in history)")
-                } else EvaluationFactory.fail("Has not exhausted SOC (at least platinum doublet remaining)")
+                when {
+                    hasReceivedPlatinumBasedDoubletOrMore -> EvaluationFactory.pass("SOC considered exhausted (platinum doublet in history)")
+
+                    hasReceivedUndefinedChemoradiation -> EvaluationFactory.pass("SOC considered exhausted (chemoradiation in history)")
+
+                    else -> EvaluationFactory.fail("Has not exhausted SOC (at least platinum doublet remaining)")
+                }
             }
 
             record.oncologicalHistory.isEmpty() -> {

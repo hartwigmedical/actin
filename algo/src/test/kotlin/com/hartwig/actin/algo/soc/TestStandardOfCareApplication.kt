@@ -16,10 +16,10 @@ import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.icd.serialization.CsvReader
 import com.hartwig.actin.icd.serialization.IcdDeserializer
 import com.hartwig.actin.medication.AtcTree
-import org.apache.logging.log4j.LogManager
 import java.io.File
 import java.time.LocalDate
 import kotlin.system.exitProcess
+import org.apache.logging.log4j.LogManager
 
 class TestStandardOfCareApplication {
 

@@ -8,8 +8,8 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.BodyWeight
 import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.LabValue
-import org.junit.Test
 import java.time.LocalDateTime
+import org.junit.Test
 
 private const val BIRTH_YEAR = 1971
 private const val EXPECTED_UNIT = "kilogram"

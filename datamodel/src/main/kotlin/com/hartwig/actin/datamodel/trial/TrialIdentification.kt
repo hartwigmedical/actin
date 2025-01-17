@@ -8,5 +8,5 @@ data class TrialIdentification(
     val nctId: String? = null,
     val phase: TrialPhase? = null,
     val source: TrialSource? = null,
-    val locations: List<String>? = emptyList()
+    val locations: List<String> = emptyList()
 )
