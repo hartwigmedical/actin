@@ -30,36 +30,6 @@ private const val LOCATION = "location"
 class TrialIngestionTest {
 
     @Test
-    fun `Reorder`() {
-        val new = TrialJson.readFromDir("/Users/pwolfe/Code/actin/new_trial")
-        TrialJson.write(new, "/Users/pwolfe/Code/actin/new_trial")
-    }
-
-    @Test
-    fun `Regress`() {
-        val old = TrialJson.readFromDir("/Users/pwolfe/Code/actin/old_trial").associateBy { it.identification.trialId }
-        val new = TrialJson.readFromDir("/Users/pwolfe/Code/actin/new_trial").associateBy { it.identification.trialId }
-        for (entry in old) {
-            val newTrial = new[entry.key]
-            if (newTrial != null) {
-                val oldTrial = entry.value
-                if (newTrial.identification.trialId == "M22PDL") {
-                    assertThat(
-                        newTrial.copy(
-                            identification = newTrial.identification.copy(
-                                nctId = null,
-                                locations = emptyList()
-                            )
-                        )
-                    ).isEqualTo(
-                        oldTrial.copy(identification = oldTrial.identification.copy(nctId = null, locations = emptyList()))
-                    )
-                }
-            }
-        }
-    }
-
-    @Test
     fun `Should map trial config to internal trial model and eligibility criteria`() {
         val ingestion = TrialIngestion(TestEligibilityFactoryFactory.createTestEligibilityFactory())
         val result = ingestion.ingest(
