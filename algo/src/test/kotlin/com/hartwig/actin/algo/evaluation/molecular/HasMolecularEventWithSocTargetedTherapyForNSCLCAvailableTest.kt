@@ -188,7 +188,8 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
                 gene = CORRECT_DELETION_GENE, isReportable = true,
                 type = VariantType.DELETE,
                 canonicalImpact = impactWithExon(CORRECT_DELETION_CODON),
-                extendedVariantDetails = TestVariantFactory.createMinimalExtended()
+                extendedVariantDetails = TestVariantFactory.createMinimalExtended(),
+                driverLikelihood = DriverLikelihood.HIGH
             )
         )
         evaluateFunctions(EvaluationResult.PASS, record)
@@ -213,7 +214,8 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
                 gene = CORRECT_INSERTION_GENE, isReportable = true,
                 type = VariantType.INSERT,
                 canonicalImpact = impactWithExon(CORRECT_INSERTION_CODON),
-                extendedVariantDetails = TestVariantFactory.createMinimalExtended()
+                extendedVariantDetails = TestVariantFactory.createMinimalExtended(),
+                driverLikelihood = DriverLikelihood.HIGH
             )
         )
         evaluateFunctions(EvaluationResult.PASS, record)

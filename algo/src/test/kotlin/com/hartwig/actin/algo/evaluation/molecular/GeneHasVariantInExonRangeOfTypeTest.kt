@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.molecular.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.VariantType
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
@@ -88,6 +89,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
                     TestVariantFactory.createMinimal().copy(
                         gene = TARGET_GENE,
                         isReportable = true,
+                        driverLikelihood = DriverLikelihood.HIGH,
                         type = VariantType.INSERT,
                         canonicalImpact = impactWithExon(MATCHING_EXON),
                         extendedVariantDetails = TestVariantFactory.createMinimalExtended()
@@ -105,6 +107,24 @@ class GeneHasVariantInExonRangeOfTypeTest {
                 MolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
                         gene = TARGET_GENE, isReportable = false, type = VariantType.INSERT, canonicalImpact = impactWithExon(MATCHING_EXON)
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should warn with correct gene, correct exon, correct variant type, canonical, but not high driver`() {
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(
+                MolecularTestFactory.withVariant(
+                    TestVariantFactory.createMinimal().copy(
+                        gene = TARGET_GENE,
+                        isReportable = true,
+                        driverLikelihood = DriverLikelihood.MEDIUM,
+                        type = VariantType.INSERT,
+                        canonicalImpact = impactWithExon(MATCHING_EXON)
                     )
                 )
             )
@@ -153,6 +173,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
                     TestVariantFactory.createMinimal().copy(
                         gene = TARGET_GENE,
                         isReportable = true,
+                        driverLikelihood = DriverLikelihood.HIGH,
                         type = VariantType.INSERT,
                         canonicalImpact = impactWithExon(MATCHING_EXON),
                         extendedVariantDetails = TestVariantFactory.createMinimalExtended()
@@ -173,6 +194,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         geneStart = TARGET_GENE,
                         geneEnd = TARGET_GENE,
                         isReportable = true,
+                        driverLikelihood = DriverLikelihood.HIGH,
                         fusedExonUp = 2,
                         fusedExonDown = 3
                     )
@@ -201,8 +223,28 @@ class GeneHasVariantInExonRangeOfTypeTest {
     }
 
     @Test
+    fun `Should warn when exon skipping fusion is non-high driver`() {
+        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, 1, 4, VariantTypeInput.DELETE)
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(
+                MolecularTestFactory.withFusion(
+                    TestFusionFactory.createMinimal().copy(
+                        geneStart = TARGET_GENE,
+                        geneEnd = TARGET_GENE,
+                        isReportable = true,
+                        driverLikelihood = DriverLikelihood.MEDIUM,
+                        fusedExonUp = 2,
+                        fusedExonDown = 3
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
     fun `Should evaluate for all variant input types`() {
-        for (input in VariantTypeInput.values()) {
+        for (input in VariantTypeInput.entries) {
             val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, MATCHING_EXON, 2, input)
             assertThat(function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())).isNotNull()
         }
@@ -218,6 +260,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
                     TestVariantFactory.createMinimal().copy(
                         gene = TARGET_GENE,
                         isReportable = true,
+                        driverLikelihood = DriverLikelihood.HIGH,
                         canonicalImpact = impactWithExon(MATCHING_EXON),
                         extendedVariantDetails = TestVariantFactory.createMinimalExtended()
                     )
