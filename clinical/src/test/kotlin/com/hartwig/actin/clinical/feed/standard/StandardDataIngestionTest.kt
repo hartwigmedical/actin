@@ -14,7 +14,6 @@ import com.hartwig.actin.clinical.feed.standard.extraction.StandardBloodTransfus
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyHeightExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardBodyWeightExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardClinicalStatusExtractor
-import com.hartwig.actin.clinical.feed.standard.extraction.StandardIntolerancesExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardLabValuesExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardMedicationExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardOncologicalHistoryExtractor
@@ -24,7 +23,6 @@ import com.hartwig.actin.clinical.feed.standard.extraction.StandardComorbidityEx
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorPrimariesExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorSequencingTestExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSurgeryExtractor
-import com.hartwig.actin.clinical.feed.standard.extraction.StandardToxicityExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardTumorDetailsExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardVitalFunctionsExtractor
 import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
@@ -77,25 +75,23 @@ class StandardDataIngestionTest {
                 treatmentDatabase = treatmentDatabase
             ),
             surgeryExtractor = StandardSurgeryExtractor(curationDatabase.surgeryNameCuration),
-            intolerancesExtractor = StandardIntolerancesExtractor(curationDatabase.comorbidityCuration),
             vitalFunctionsExtractor = StandardVitalFunctionsExtractor(),
             bloodTransfusionExtractor = StandardBloodTransfusionExtractor(),
             labValuesExtractor = StandardLabValuesExtractor(curationDatabase.laboratoryTranslation),
             comorbidityExtractor = StandardComorbidityExtractor(
                 curationDatabase.comorbidityCuration
             ),
-            toxicityExtractor = StandardToxicityExtractor(curationDatabase.comorbidityCuration),
             treatmentHistoryExtractor = StandardOncologicalHistoryExtractor(
                 curationDatabase.treatmentHistoryEntryCuration
             ),
             clinicalStatusExtractor = StandardClinicalStatusExtractor(curationDatabase.ecgCuration),
-
             tumorDetailsExtractor = StandardTumorDetailsExtractor(
                 curationDatabase.primaryTumorCuration,
                 curationDatabase.lesionLocationCuration,
                 TumorStageDeriver.create(doidModel)
             ),
             secondPrimaryExtractor = StandardPriorPrimariesExtractor(curationDatabase.secondPrimaryCuration),
+
             patientDetailsExtractor = StandardPatientDetailsExtractor(),
             bodyWeightExtractor = StandardBodyWeightExtractor(),
             bodyHeightExtractor = StandardBodyHeightExtractor(),

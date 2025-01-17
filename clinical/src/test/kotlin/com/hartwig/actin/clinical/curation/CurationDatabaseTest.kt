@@ -19,11 +19,7 @@ class CurationDatabaseTest {
     @Test
     fun `Should return curation configs when key is found`() {
         val testConfig = InfectionConfig(INPUT, false, "")
-        val database = CurationDatabase(
-            mapOf(INPUT to setOf(testConfig)),
-            emptyList(),
-            CurationCategory.INFECTION
-        ) { emptySet() }
+        val database = CurationDatabase(mapOf(INPUT to setOf(testConfig)), emptyList(), CurationCategory.INFECTION) { emptySet() }
         assertThat(database.find(INPUT)).containsExactly(testConfig)
     }
 
@@ -31,9 +27,7 @@ class CurationDatabaseTest {
     fun `Should return all unused curation inputs`() {
         val testConfig = InfectionConfig(INPUT, false, "")
         val database = CurationDatabase(
-            mapOf(INPUT to setOf(testConfig)),
-            emptyList(),
-            CurationCategory.INFECTION
+            mapOf(INPUT to setOf(testConfig)), emptyList(), CurationCategory.INFECTION
         ) { it.ecgEvaluatedInputs }
         assertThat(database.reportUnusedConfig(emptyList())).containsExactly(
             UnusedCurationConfig(
@@ -50,7 +44,7 @@ class CurationDatabaseTest {
 
         val catNames =  CurationCategory.entries
             .filterNot { it == CurationCategory.COMORBIDITY }  // TODO: Combine all comorbidities on comorbidity curation sheet
-            .map {it.categoryName.lowercase().replace(" ", "_")+".tsv"}
+            .map {it.categoryName.lowercase().replace(" ", "_") + ".tsv"}
             .toSet()
 
         assertThat(sheetNames).containsExactlyInAnyOrderElementsOf(catNames)

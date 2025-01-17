@@ -5,6 +5,7 @@ import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.config.ComorbidityConfig
 import com.hartwig.actin.clinical.feed.standard.EhrTestData.createEhrPatientRecord
+import com.hartwig.actin.clinical.feed.standard.ProvidedAllergy
 import com.hartwig.actin.clinical.feed.standard.ProvidedComplication
 import com.hartwig.actin.clinical.feed.standard.ProvidedOtherCondition
 import com.hartwig.actin.datamodel.clinical.Complication
@@ -17,7 +18,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
-private const val OTHER_CONDITION_NAME = "prior_condition"
+private const val OTHER_CONDITION_NAME = "other_condition"
 
 private val OTHER_CONDITION = OtherCondition(
     name = OTHER_CONDITION_NAME,
@@ -77,7 +78,7 @@ class StandardComorbidityExtractorTest {
                 EHR_PATIENT_RECORD_WITH_OTHER_CONDITIONS.patientDetails.hashedId,
                 CurationCategory.NON_ONCOLOGICAL_HISTORY,
                 OTHER_CONDITION_NAME,
-                "Could not find non-oncological history config for input 'prior_condition'"
+                "Could not find non-oncological history config for input 'other_condition'"
             )
         )
     }
@@ -129,5 +130,49 @@ class StandardComorbidityExtractorTest {
         )
         assertThat(results.extracted).isEqualTo(listOf(curated, anotherCurated).map { it.withDefaultYearAndMonth(year, month) })
         assertThat(results.evaluation.warnings).isEmpty()
+    }
+
+    @Test
+    fun `Should extract intolerances from allergies when no curation present`() {
+        assertExtractedIntolerances(emptySet(), "allergy", "")
+    }
+
+    @Test
+    fun `Should extract intolerances from allergies and augment with curation when present`() {
+        val curated = "curated"
+        val icd = "icd"
+        val curation = ComorbidityConfig(input = "allergy", ignore = false, curated = Intolerance(curated, setOf(IcdCode(icd, null))))
+        assertExtractedIntolerances(setOf(curation), curated, icd)
+    }
+
+    private fun assertExtractedIntolerances(foundCuration: Set<ComorbidityConfig>, expectedName: String, expectedIcd: String) {
+        val name = "allergy"
+        val clinicalStatus = "clinicalStatus"
+        val verificationStatus = "verificationStatus"
+        val severity = "severity"
+        val patientRecord = createEhrPatientRecord().copy(
+            allergies = listOf(
+                ProvidedAllergy(
+                    name = name,
+                    category = "category",
+                    clinicalStatus = clinicalStatus,
+                    verificationStatus = verificationStatus,
+                    severity = severity,
+                    startDate = LocalDate.of(2024, 4, 22),
+                    endDate = LocalDate.of(2024, 4, 22)
+                )
+            )
+        )
+        every { comorbidityCuration.find(name) } returns foundCuration
+        val results = extractor.extract(patientRecord)
+        assertThat(results.extracted).containsExactly(
+            Intolerance(
+                name = expectedName,
+                icdCodes = setOf(IcdCode(expectedIcd, null)),
+                clinicalStatus = clinicalStatus,
+                verificationStatus = verificationStatus,
+                criticality = severity,
+            )
+        )
     }
 }
