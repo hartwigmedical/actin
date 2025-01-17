@@ -35,8 +35,12 @@ class IsEligibleForOnLabelTreatment(
                 EvaluationFactory.undetermined("Eligibility for on-label treatment ${treatment.display()} undetermined (no prior cancer treatment)")
             }
 
+            record.oncologicalHistory.any { it.treatments.contains(treatment) } -> {
+                EvaluationFactory.warn("Patient might be ineligible for on-label $treatment since this treatment was already administered")
+            }
+
             else -> {
-                EvaluationFactory.notEvaluated("Assumed that patient is not eligible for on-label treatment since patient has had prior cancer treatment")
+                EvaluationFactory.notEvaluated("Assumed that patient is eligible for on-label $treatment")
             }
         }
     }

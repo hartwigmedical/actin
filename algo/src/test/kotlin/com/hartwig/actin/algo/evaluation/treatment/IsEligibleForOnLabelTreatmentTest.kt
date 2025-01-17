@@ -21,11 +21,12 @@ import io.mockk.every
 import io.mockk.mockk
 import org.junit.Test
 
-class IsEligibleForOnLabelStatusTreatmentTest {
+class IsEligibleForOnLabelTreatmentTest {
 
     private val recommendationEngine = mockk<RecommendationEngine>()
     private val recommendationEngineFactory = mockk<RecommendationEngineFactory> { every { create() } returns recommendationEngine }
-    val function = IsEligibleForOnLabelTreatment(treatment("PEMBROLIZUMAB", true), recommendationEngineFactory)
+    private val targetTreatment = treatment("PEMBROLIZUMAB", true)
+    val function = IsEligibleForOnLabelTreatment(targetTreatment, recommendationEngineFactory)
     private val colorectalCancerPatient = TumorTestFactory.withDoidAndSubLocation(DoidConstants.COLORECTAL_CANCER_DOID, "left")
 
     @Test
@@ -77,6 +78,16 @@ class IsEligibleForOnLabelStatusTreatmentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistory(emptyList()))
+        )
+    }
+
+    @Test
+    fun `Should fail for non colorectal cancer patient with target treatment already administered in history`() {
+        every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(any()) } returns false
+        every { recommendationEngine.standardOfCareEvaluatedTreatments(any()) } returns emptyList()
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry(setOf(targetTreatment)))))
         )
     }
 
