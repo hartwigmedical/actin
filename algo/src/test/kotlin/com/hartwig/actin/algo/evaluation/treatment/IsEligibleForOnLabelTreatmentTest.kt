@@ -86,8 +86,9 @@ class IsEligibleForOnLabelTreatmentTest {
         every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(any()) } returns false
         every { recommendationEngine.standardOfCareEvaluatedTreatments(any()) } returns emptyList()
         assertEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry(setOf(targetTreatment)))))
+            EvaluationResult.WARN,
+            function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry(setOf(targetTreatment, treatment("other", true)))))
+            )
         )
     }
 
