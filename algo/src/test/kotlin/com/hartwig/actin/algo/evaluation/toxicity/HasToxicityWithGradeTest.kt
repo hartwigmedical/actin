@@ -8,9 +8,9 @@ import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.icd.TestIcdFactory
 import com.hartwig.actin.icd.datamodel.IcdNode
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 private val referenceDate: LocalDate = LocalDate.of(2024, 10, 1)
 private val icdModel = TestIcdFactory.createTestModel()

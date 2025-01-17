@@ -6,11 +6,11 @@ import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.PatientDetails
 import com.hartwig.actin.datamodel.clinical.TumorDetails
+import java.time.LocalDate
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.Options
 import org.apache.logging.log4j.LogManager
-import java.time.LocalDate
 
 class BuildClinicalFromDoidsOnly(private val command: CommandLine) {
 

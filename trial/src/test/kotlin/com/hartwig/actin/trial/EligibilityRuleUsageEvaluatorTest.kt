@@ -1,4 +1,4 @@
-package com.hartwig.actin.trial.interpretation
+package com.hartwig.actin.trial
 
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.datamodel.trial.TestTrialFactory

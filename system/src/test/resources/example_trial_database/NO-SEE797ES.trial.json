@@ -5,7 +5,8 @@
     "acronym": "NO-SEE797ES",
     "title": "Phase I trial for development of NO-SEE797ES, a specific inhibitor for EGFR with C797 mutations but not C797S in solid tumors",
     "nctId": "NCT00000003",
-    "phase": "1"
+    "phase": "1",
+    "locations": []
   },
   "generalEligibility": [
     {

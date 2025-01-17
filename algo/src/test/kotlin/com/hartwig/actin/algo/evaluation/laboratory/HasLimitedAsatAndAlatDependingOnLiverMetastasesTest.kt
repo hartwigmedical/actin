@@ -5,9 +5,9 @@ import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.LabValue
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 class HasLimitedAsatAndAlatDependingOnLiverMetastasesTest {
 

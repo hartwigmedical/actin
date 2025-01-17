@@ -4,9 +4,9 @@ import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactor
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.icd.TestIcdFactory
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 class ToxicityFunctionsTest {
 

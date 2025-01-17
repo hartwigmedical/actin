@@ -19,8 +19,8 @@ import com.hartwig.actin.clinical.feed.emc.extraction.IntoleranceExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.LabValueExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.MedicationExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.OncologicalHistoryExtractor
-import com.hartwig.actin.clinical.feed.emc.extraction.PriorMolecularTestsExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.OtherConditionsExtractor
+import com.hartwig.actin.clinical.feed.emc.extraction.PriorMolecularTestsExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.PriorSecondPrimaryExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.SurgeryExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.ToxicityExtractor

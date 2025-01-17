@@ -1,7 +1,7 @@
 package com.hartwig.actin.icd
 
-import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Comorbidity
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.datamodel.IcdMatches
 import com.hartwig.actin.icd.datamodel.IcdNode
 
