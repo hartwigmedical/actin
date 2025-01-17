@@ -46,12 +46,15 @@ class HasMinimumLesionsInSpecificBodyLocationTest {
     }
 
     @Test
-    fun `Should assume zero lesions when data on presence and count of requested lesion is missing`() {
+    fun `Should resolve to undetermined when data on presence and count of requested lesion is missing and requested minimum is more than zero`() {
         assertEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(TumorTestFactory.withLungLesions(hasLungLesions = null, hasSuspectedLungLesions = null))
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TumorTestFactory.withLungLesions(hasLungLesions = null, hasSuspectedLungLesions = null, count = null))
         )
+    }
 
+    @Test
+    fun `Should pass wehen data on presence and count of requested lesion is missing but requested minimum is zero`() {
         val functionRequestingZeroLesions = HasMinimumLesionsInSpecificBodyLocation(0, BodyLocationCategory.LUNG)
         assertEvaluation(
             EvaluationResult.PASS,

@@ -13,30 +13,32 @@ class HasMinimumLesionsInSpecificBodyLocation(
     override fun evaluate(record: PatientRecord): Evaluation {
         val messageEnding = "at least $minimumLesions lesions in $bodyLocation"
 
-        val (suspected, count) = with(record.tumor) {
+        val (hasLesions, hasSuspectedLesions, count) = with(record.tumor) {
             when (bodyLocation) {
-                BodyLocationCategory.BONE -> hasSuspectedBoneLesions to lesionCount(hasBoneLesions, boneLesionsCount)
-                BodyLocationCategory.BRAIN -> hasSuspectedBrainLesions to lesionCount(hasBrainLesions, brainLesionsCount)
-                BodyLocationCategory.CNS -> hasSuspectedCnsLesions to lesionCount(hasCnsLesions, cnsLesionsCount)
-                BodyLocationCategory.LIVER -> hasSuspectedLiverLesions to lesionCount(hasLiverLesions, liverLesionsCount)
-                BodyLocationCategory.LUNG -> hasSuspectedLungLesions to lesionCount(hasLungLesions, lungLesionsCount)
-                BodyLocationCategory.LYMPH_NODE -> hasSuspectedLymphNodeLesions to lesionCount(hasLymphNodeLesions, lymphNodeLesionsCount)
+                BodyLocationCategory.BONE -> Triple(hasBoneLesions, hasSuspectedBoneLesions, boneLesionsCount)
+                BodyLocationCategory.BRAIN -> Triple(hasBrainLesions, hasSuspectedBrainLesions, brainLesionsCount)
+                BodyLocationCategory.CNS -> Triple(hasCnsLesions, hasSuspectedCnsLesions, cnsLesionsCount)
+                BodyLocationCategory.LIVER -> Triple(hasLiverLesions, hasSuspectedLiverLesions, liverLesionsCount)
+                BodyLocationCategory.LUNG -> Triple(hasLungLesions, hasSuspectedLungLesions, lungLesionsCount)
+                BodyLocationCategory.LYMPH_NODE -> Triple(hasLymphNodeLesions, hasSuspectedLymphNodeLesions, lymphNodeLesionsCount)
                 else -> return EvaluationFactory.undetermined("Undetermined if patient has $messageEnding")
             }
         }
 
         return when {
-            count >= minimumLesions -> EvaluationFactory.pass("Has $messageEnding")
-            suspected == true -> EvaluationFactory.undetermined("Undetermined if patient has $messageEnding")
+            (count ?: minimumLesionCount(hasLesions)) >= minimumLesions -> EvaluationFactory.pass("Has $messageEnding")
+
+            hasSuspectedLesions == true || count == null -> EvaluationFactory.undetermined("Undetermined if patient has $messageEnding")
+
             else -> EvaluationFactory.fail("Does not have $messageEnding")
         }
     }
 
-    private fun lesionCount(hasLesions: Boolean?, count: Int?): Int {
+    private fun minimumLesionCount(hasLesions: Boolean?): Int {
         return when (hasLesions) {
-            true -> count ?: 1
+            true -> 1
             false -> 0
-            null -> count ?: 0
+            null -> 0
         }
     }
 }
