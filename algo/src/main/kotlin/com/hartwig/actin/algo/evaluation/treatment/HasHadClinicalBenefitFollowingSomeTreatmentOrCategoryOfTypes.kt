@@ -48,10 +48,9 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypes(
             }
         }
 
-        val treatmentsWithResponse = targetTreatmentsToResponseMap.filterKeys { it in BENEFIT_RESPONSE_SET }
-        val treatmentsWithStableDisease = targetTreatmentsToResponseMap.filterKeys { it == TreatmentResponse.STABLE_DISEASE }
-        val treatmentsWithMixedResponse = targetTreatmentsToResponseMap.filterKeys { it == TreatmentResponse.MIXED }
-        val treatmentsWithUncertainResponse = targetTreatmentsToResponseMap.filterKeys { it == null }
+        val (treatmentsWithResponse, treatmentsWithStableDisease, treatmentsWithMixedResponse, treatmentsWithUncertainResponse) =
+            listOf(BENEFIT_RESPONSE_SET, setOf(TreatmentResponse.STABLE_DISEASE), setOf(TreatmentResponse.MIXED), setOf(null))
+                .map { responseSet -> targetTreatmentsToResponseMap.filterKeys { it in responseSet } }
 
         val benefitMessage = " objective benefit from treatment"
         val similarDrugMessage = "receive exact treatment but received similar drugs " +
