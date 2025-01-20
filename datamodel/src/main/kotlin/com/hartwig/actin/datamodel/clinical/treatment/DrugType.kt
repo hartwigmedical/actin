@@ -14,6 +14,7 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
     ALKYLATING_AGENT(TreatmentCategory.CHEMOTHERAPY),
     ANTHRACYCLINE(TreatmentCategory.CHEMOTHERAPY),
     ANTI_ANDROGEN(TreatmentCategory.HORMONE_THERAPY, "anti-androgen"),
+    ANTI_B7H3(TreatmentCategory.IMMUNOTHERAPY, "anti-B7H3"),
     ANTI_B7H4(TreatmentCategory.IMMUNOTHERAPY, "anti-B7H4"),
     ANTI_CCR4(TreatmentCategory.IMMUNOTHERAPY, "anti-CCR4"),
     ANTI_CCR8(TreatmentCategory.IMMUNOTHERAPY, "anti-CCR8"),
