@@ -98,6 +98,10 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
                 )
             }
 
+            FunctionInput.MANY_SPECIFIC_TREATMENTS -> {
+                listOf("CAPECITABINE+OXALIPLATIN;CAPECITABINE+OXALIPLATIN")
+            }
+
             FunctionInput.MANY_SPECIFIC_TREATMENTS_TWO_INTEGERS -> {
                 listOf("CAPECITABINE+OXALIPLATIN;CAPECITABINE+OXALIPLATIN", "1", "2")
             }

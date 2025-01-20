@@ -302,6 +302,22 @@ class FunctionInputResolverTest {
     }
 
     @Test
+    fun `Should resolve functions with many specific treatments input`() {
+        val rule = firstOfType(FunctionInput.MANY_SPECIFIC_TREATMENTS)
+        val treatmentNames = listOf(TestTreatmentDatabaseFactory.CAPECITABINE_OXALIPLATIN, TestTreatmentDatabaseFactory.RADIOTHERAPY)
+        val valid = create(rule, listOf(treatmentNames.joinToString(";")))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
+        val expected = treatmentNames.map { treatmentDatabase.findTreatmentByName(it)!! }
+        assertThat(resolver.createManySpecificTreatmentsInput(valid)).isEqualTo(expected)
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("not a treatment")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(treatmentNames, "second parameter")))!!).isFalse
+    }
+
+    @Test
     fun `Should resolve functions with many specific treatment two integers input`() {
         val rule = firstOfType(FunctionInput.MANY_SPECIFIC_TREATMENTS_TWO_INTEGERS)
         val treatmentNames = listOf(TestTreatmentDatabaseFactory.CAPECITABINE_OXALIPLATIN, TestTreatmentDatabaseFactory.RADIOTHERAPY)
