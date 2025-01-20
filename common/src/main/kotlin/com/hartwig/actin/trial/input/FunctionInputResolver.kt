@@ -173,6 +173,11 @@ class FunctionInputResolver(
                     return true
                 }
 
+                FunctionInput.MANY_SPECIFIC_TREATMENTS -> {
+                    createManySpecificTreatmentsInput(function)
+                    return true
+                }
+
                 FunctionInput.MANY_SPECIFIC_TREATMENTS_TWO_INTEGERS -> {
                     createManySpecificTreatmentsTwoIntegerInput(function)
                     return true
@@ -479,6 +484,11 @@ class FunctionInputResolver(
             treatment = toTreatment(parameterAsString(function, 0)),
             integer = parameterAsInt(function, 1)
         )
+    }
+
+    fun createManySpecificTreatmentsInput(function: EligibilityFunction): List<Treatment> {
+        assertParamConfig(function, FunctionInput.MANY_SPECIFIC_TREATMENTS, 1)
+        return toTreatments(function.parameters.first())
     }
 
     fun createManySpecificTreatmentsTwoIntegerInput(function: EligibilityFunction): ManySpecificTreatmentsTwoIntegers {
