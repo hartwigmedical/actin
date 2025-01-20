@@ -23,11 +23,8 @@ class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypesTest {
     private val DRUG_WITH_SAME_CATEGORY_BUT_OTHER_TYPE =
         TreatmentTestFactory.drugTreatment("Paclitaxel", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.TAXANE))
     private val CORRECT_TREATMENT_WITH_OTHER_CATEGORY_COMBINATION = setOf(CORRECT_TREATMENT, Radiotherapy("Radiotherapy"))
-    private val TARGET_TREATMENT_WITH_SAME_CATEGORY_COMBINATION = setOf(
-        CORRECT_TREATMENT, TreatmentTestFactory.treatment(
-            "Other chemotherapy", true, setOf(TreatmentCategory.CHEMOTHERAPY)
-        )
-    )
+    private val TARGET_TREATMENT_WITH_SAME_CATEGORY_COMBINATION =
+        setOf(CORRECT_TREATMENT, TreatmentTestFactory.treatment("Other chemotherapy", true, setOf(TreatmentCategory.CHEMOTHERAPY)))
     private val WRONG_SPECIFIC_TREATMENT = TreatmentTestFactory.treatment("Radiotherapy", false, setOf(TreatmentCategory.RADIOTHERAPY))
     private val WRONG_CATEGORY_TREATMENT =
         TreatmentTestFactory.drugTreatment("wrong1", TreatmentCategory.SUPPORTIVE_TREATMENT, TARGET_TYPES)
