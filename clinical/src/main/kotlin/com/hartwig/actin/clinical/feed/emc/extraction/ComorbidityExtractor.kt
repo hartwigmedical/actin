@@ -120,10 +120,11 @@ class ComorbidityExtractor(
     }
 
     private fun translatedToxicity(rawToxicity: Toxicity, patientId: String): ExtractionResult<List<Toxicity>> {
-        val input = rawToxicity.name
-        return CurationResponse.createFromTranslation(
-            toxicityTranslation.find(input), patientId, CurationCategory.TOXICITY_TRANSLATION, input, "toxicity"
-        ).let { translationResponse ->
+        return rawToxicity.name.let { input ->
+            CurationResponse.createFromTranslation(
+                toxicityTranslation.find(input), patientId, CurationCategory.TOXICITY_TRANSLATION, input, "toxicity"
+            )
+        }.let { translationResponse ->
             ExtractionResult(
                 listOf(translationResponse.config()?.translated?.let { rawToxicity.copy(name = it) } ?: rawToxicity),
                 translationResponse.extractionEvaluation
@@ -131,10 +132,7 @@ class ComorbidityExtractor(
         }
     }
 
-    private fun extractGrade(entry: DigitalFileEntry): Int? {
-        val value: String = entry.itemAnswerValueValueString.ifEmpty {
-            return null
-        }
+    private fun extractGrade(entry: DigitalFileEntry): Int? = entry.itemAnswerValueValueString.takeUnless { it.isEmpty() }?.let { value ->
         val notApplicableIndex = value.indexOf(". Not applicable")
         return Integer.valueOf(if (notApplicableIndex > 0) value.substring(0, notApplicableIndex) else value)
     }
