@@ -8,7 +8,11 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.efficacy.AnalysisGroup
 import com.hartwig.actin.datamodel.efficacy.PatientPopulation
 import com.hartwig.actin.datamodel.personalization.Measurement
-import com.itextpdf.layout.element.*
+import com.itextpdf.layout.element.Cell
+import com.itextpdf.layout.element.IElement
+import com.itextpdf.layout.element.Paragraph
+import com.itextpdf.layout.element.Table
+import com.itextpdf.layout.element.Text
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -133,9 +137,9 @@ class SOCGeneratorFunctionsTest {
 
     private fun evaluation(evaluationResult: EvaluationResult, messages: Set<String>, recoverable: Boolean = false): Evaluation {
         return when (evaluationResult) {
-            EvaluationResult.PASS -> Evaluation(evaluationResult, recoverable, passGeneralMessages = messages)
-            EvaluationResult.WARN -> Evaluation(evaluationResult, recoverable, warnGeneralMessages = messages)
-            else -> Evaluation(evaluationResult, recoverable, undeterminedGeneralMessages = messages)
+            EvaluationResult.PASS -> Evaluation(evaluationResult, recoverable, passMessages = messages)
+            EvaluationResult.WARN -> Evaluation(evaluationResult, recoverable, warnMessages = messages)
+            else -> Evaluation(evaluationResult, recoverable, undeterminedMessages = messages)
         }
     }
 

@@ -10,9 +10,9 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 class MedicationToTreatmentConverterTest {
 

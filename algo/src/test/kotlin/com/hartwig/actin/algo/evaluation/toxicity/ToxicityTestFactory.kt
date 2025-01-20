@@ -3,19 +3,21 @@ package com.hartwig.actin.algo.evaluation.toxicity
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.clinical.Complication
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.Toxicity
 
 internal object ToxicityTestFactory {
     val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
-    
+
     fun withToxicities(toxicities: List<Toxicity>): PatientRecord {
-        return base.copy(toxicities = toxicities)
+        return base.copy(comorbidities = toxicities)
     }
 
-    fun withToxicityThatIsAlsoComplication(toxicity: Toxicity): PatientRecord {
-        val complication = Complication(name = toxicity.name, categories = emptySet(), year = null, month = null)
-        return base.copy(toxicities = listOf(toxicity), complications = listOf(complication))
+    fun withToxicityThatIsAlsoComplication(toxicity: Toxicity, icdCode: String = ""): PatientRecord {
+        val complication =
+            Complication(name = toxicity.name, year = null, month = null, icdCodes = setOf(IcdCode(icdCode)))
+        return base.copy(comorbidities = listOf(toxicity.copy(icdCodes = setOf(IcdCode(icdCode)))) + complication)
     }
 
     fun withIntolerance(intolerance: Intolerance): PatientRecord {
@@ -23,20 +25,22 @@ internal object ToxicityTestFactory {
     }
 
     fun withIntolerances(intolerances: List<Intolerance>): PatientRecord {
-        return base.copy(intolerances = intolerances)
+        return base.copy(comorbidities = intolerances)
     }
 
-    fun intolerance(name: String = "", category: String = "", clinicalStatus: String = "", doids: Set<String> = emptySet()): Intolerance {
+    fun intolerance(
+        name: String = "",
+        clinicalStatus: String = "",
+        icdMainCode: String = "",
+        icdExtensionCode: String? = null
+    ): Intolerance {
         return Intolerance(
             name = name,
-            doids = doids,
-            category = category,
-            subcategories = emptySet(),
+            icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode)),
             type = "",
             clinicalStatus = clinicalStatus,
             verificationStatus = "",
-            criticality = "",
-            treatmentCategories = emptySet()
+            criticality = ""
         )
     }
 }

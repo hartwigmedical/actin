@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.util
 
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
 import com.hartwig.actin.datamodel.Displayable
+import com.hartwig.actin.datamodel.clinical.LabUnit
 import com.hartwig.actin.util.ApplicationConfig
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
@@ -11,20 +12,15 @@ import java.util.Locale
 
 object Format {
 
-    private const val SEPARATOR_SEMICOLON = "; "
     private const val SEPARATOR_AND = " and "
     private const val SEPARATOR_OR = " or "
     private const val SEPARATOR_COMMA = ", "
     private val DATE_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy")
     private val PERCENTAGE_FORMAT: DecimalFormat = DecimalFormat("#'%'", DecimalFormatSymbols.getInstance(ApplicationConfig.LOCALE))
 
-    fun concat(strings: Iterable<String>): String {
-        return concatStrings(strings, SEPARATOR_SEMICOLON)
-    }
+    fun concat(strings: Iterable<String>) = concatWithCommaAndSeparator(strings, SEPARATOR_AND, toLowercase = false)
 
-    fun concatItems(items: Iterable<Displayable>): String {
-        return concatDisplayables(items, SEPARATOR_SEMICOLON)
-    }
+    fun concatWithCommaAndOr(strings: Iterable<String>) = concatWithCommaAndSeparator(strings, SEPARATOR_OR, toLowercase = false)
 
     fun concatLowercaseWithAnd(strings: Iterable<String>): String {
         return concatStrings(strings.map(String::lowercase), SEPARATOR_AND)
@@ -34,21 +30,15 @@ object Format {
         return concatStrings(strings.map { if (it.any(Char::isDigit)) it else it.lowercase() }, SEPARATOR_AND)
     }
 
-    fun concatStringsWithAnd(strings: Iterable<String>): String {
-        return concatStrings(strings, SEPARATOR_AND)
-    }
-
     fun concatLowercaseWithCommaAndOr(strings: Iterable<String>) = concatWithCommaAndSeparator(strings, SEPARATOR_OR, toLowercase = true)
 
-    fun concatWithCommaAndAnd(strings: Iterable<String>) = concatWithCommaAndSeparator(strings, SEPARATOR_AND, toLowercase = false)
-
-    fun concatWithCommaAndOr(strings: Iterable<String>) = concatWithCommaAndSeparator(strings, SEPARATOR_OR, toLowercase = false)
+    fun concatLowercaseWithCommaAndAnd(strings: Iterable<String>) = concatWithCommaAndSeparator(strings, SEPARATOR_AND, toLowercase = true)
 
     private fun concatWithCommaAndSeparator(strings: Iterable<String>, separator: String, toLowercase: Boolean): String {
         val stringList = if (toLowercase) strings.distinct().map(String::lowercase) else strings.distinct()
         val sortedStringList = stringList.sortedWith(String.CASE_INSENSITIVE_ORDER)
         return if (sortedStringList.size < 2) {
-            concat(sortedStringList)
+            concatStrings(sortedStringList, SEPARATOR_COMMA)
         } else {
             listOf(sortedStringList.dropLast(1).joinToString(", "), sortedStringList.last()).joinToString(separator)
         }
@@ -62,10 +52,6 @@ object Format {
         return concatDisplayables(items, SEPARATOR_OR)
     }
 
-    fun concatItemsWithComma(items: Iterable<Displayable>): String {
-        return concatDisplayables(items, SEPARATOR_COMMA)
-    }
-
     fun date(date: LocalDate): String {
         return DATE_FORMAT.format(date)
     }
@@ -76,12 +62,21 @@ object Format {
     }
 
     fun labReference(factorValue: Double, factorUnit: String, refLimit: Double?): String {
-        val formattedRefLimit = refLimit?.let { String.format(Locale.ENGLISH, "%.1f", it) } ?: "NA"
-        return "$factorValue*${factorUnit} ($factorValue*$formattedRefLimit)"
+        val result = refLimit?.let { String.format(Locale.ENGLISH, "%.1f", factorValue * refLimit) } ?: "$factorValue*NA"
+        return "$factorValue*${factorUnit} ($result)"
     }
 
-    fun labValue(labMeasurement: LabMeasurement, value: Double): String {
-        return "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${String.format(Locale.ENGLISH, "%.1f", value)}"
+    fun labValue(labMeasurement: LabMeasurement, value: Double, unit: LabUnit): String {
+        val formattedValue = String.format(Locale.ENGLISH, "%.1f", value)
+        return "${labMeasurement.display().replaceFirstChar { it.uppercase() }} $formattedValue ${unit.display()}"
+    }
+
+    fun concatFusions(fusions: Set<String>): String {
+        return concat(fusions.map { it.removeSuffix(" fusion") })
+    }
+
+    fun concatVariants(variants: Set<String>, gene: String): String {
+        return concat(variants.map { it.removePrefix("$gene ") })
     }
 
     private fun concatDisplayables(items: Iterable<Displayable>, separator: String) =

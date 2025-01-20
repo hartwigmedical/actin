@@ -5,8 +5,8 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.medication.MEDICATION_NOT_PROVIDED
 import com.hartwig.actin.algo.evaluation.treatment.TrialFunctions
 import com.hartwig.actin.algo.evaluation.util.DateComparison
-import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
 import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseUnlessNumericWithAnd
+import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 import com.hartwig.actin.datamodel.PatientRecord
@@ -62,35 +62,27 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
         val foundTrialMedication = activeMedications.any(Medication::isTrialMedication)
 
         val foundDrugNames = foundMedicationNames + treatmentAssessment.matchingDrugs
-        val foundMedicationString = if (foundDrugNames.isNotEmpty()) ": ${concatLowercaseUnlessNumericWithAnd(foundDrugNames)}" else ""
+        val foundMedicationString = if (foundDrugNames.isNotEmpty()) "(${concatLowercaseUnlessNumericWithAnd(foundDrugNames)})" else ""
         val foundCategories = foundMedicationCategories.toSet() + treatmentAssessment.matchingMedicationCategories
 
         return when {
             foundCategories.isNotEmpty() || treatmentAssessment.hasHadValidTreatment -> {
                 EvaluationFactory.pass(
-                    "Patient has recently received drug of category '${concatLowercaseWithAnd(foundCategories)}'$foundMedicationString" +
-                            " - pay attention to washout period",
-                    "Recent '${concatLowercaseWithAnd(foundCategories)}' drug use$foundMedicationString" +
+                    "Recent '${concatLowercaseWithAnd(foundCategories)}' drug use $foundMedicationString" +
                             " - pay attention to washout period"
                 )
             }
 
             treatmentAssessment.hasInconclusiveDate -> {
-                EvaluationFactory.undetermined("Has received ${concatLowercaseWithAnd(categoryNames)} treatment but inconclusive date")
+                EvaluationFactory.undetermined("Has received '${concatLowercaseWithAnd(categoryNames)}' treatment but inconclusive date")
             }
 
             treatmentAssessment.hasHadTrialAfterMinDate || foundTrialMedication -> {
-                EvaluationFactory.undetermined(
-                    "Patient has participated in a trial recently, inconclusive ${concatLowercaseWithAnd(categoryNames)} treatment",
-                    "Inconclusive ${concatLowercaseWithAnd(categoryNames)} treatment due to trial participation"
-                )
+                EvaluationFactory.undetermined("Undetermined if treatment received in previous trial included ${concatLowercaseWithAnd(categoryNames)}")
             }
 
             else -> {
-                EvaluationFactory.fail(
-                    "Patient has not received recent treatments of category '${concatLowercaseWithAnd(categoryNames)}'",
-                    "No recent '${concatLowercaseWithAnd(categoryNames)}' medication use"
-                )
+                EvaluationFactory.fail("No recent '${concatLowercaseWithAnd(categoryNames)}' drug use")
             }
         }
     }

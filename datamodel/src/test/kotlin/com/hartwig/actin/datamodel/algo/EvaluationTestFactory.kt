@@ -7,26 +7,23 @@ object EvaluationTestFactory {
 
         return when (result) {
             EvaluationResult.PASS -> {
-                base.copy(passSpecificMessages = setOf("pass specific"), passGeneralMessages = setOf("pass general"))
+                base.copy(passMessages = setOf("pass"))
             }
 
             EvaluationResult.NOT_EVALUATED -> {
-                base.copy(passSpecificMessages = setOf("not evaluated specific"), passGeneralMessages = setOf("not evaluated general"))
+                base.copy(passMessages = setOf("not evaluated"))
             }
 
             EvaluationResult.WARN -> {
-                base.copy(warnSpecificMessages = setOf("warn specific"), warnGeneralMessages = setOf("warn general"))
+                base.copy(warnMessages = setOf("warn"))
             }
 
             EvaluationResult.UNDETERMINED -> {
-                base.copy(
-                    undeterminedSpecificMessages = setOf("undetermined specific"),
-                    undeterminedGeneralMessages = setOf("undetermined general")
-                )
+                base.copy(undeterminedMessages = setOf("undetermined"))
             }
 
             EvaluationResult.FAIL -> {
-                base.copy(failSpecificMessages = setOf("fail specific"), failGeneralMessages = setOf("fail general"))
+                base.copy(failMessages = setOf("fail"))
             }
         }
     }

@@ -8,7 +8,7 @@ data class InterpretedCohort(
     val acronym: String,
     val phase: TrialPhase? = null,
     val source: TrialSource? = null,
-    val locations: List<String>? = emptyList(),
+    val locations: List<String> = emptyList(),
     val name: String?,
     val isOpen: Boolean,
     val hasSlotsAvailable: Boolean,

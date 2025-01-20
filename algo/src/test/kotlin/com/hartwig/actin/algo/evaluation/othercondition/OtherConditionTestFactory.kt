@@ -3,10 +3,12 @@ package com.hartwig.actin.algo.evaluation.othercondition
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
+import com.hartwig.actin.datamodel.clinical.Comorbidity
 import com.hartwig.actin.datamodel.clinical.Complication
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.Medication
-import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
+import com.hartwig.actin.datamodel.clinical.OtherCondition
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import java.time.LocalDate
@@ -14,70 +16,70 @@ import java.time.LocalDate
 internal object OtherConditionTestFactory {
     private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
     
-    fun withPriorOtherCondition(condition: PriorOtherCondition): PatientRecord {
-        return withPriorOtherConditions(listOf(condition))
+    fun withOtherCondition(condition: OtherCondition): PatientRecord {
+        return withOtherConditions(listOf(condition))
     }
 
-    fun withPriorOtherConditions(conditions: List<PriorOtherCondition>): PatientRecord {
-        return base.copy(priorOtherConditions = conditions)
+    fun withOtherConditions(conditions: List<OtherCondition>): PatientRecord {
+        return withComorbidities(conditions)
     }
 
-    fun priorOtherCondition(
+    fun otherCondition(
         name: String = "",
         year: Int? = null,
         month: Int? = null,
-        doids: Set<String> = emptySet(),
-        category: String = "",
-        isContraindication: Boolean = true
-    ): PriorOtherCondition {
-        return PriorOtherCondition(
+        icdMainCode: String = "",
+        icdExtensionCode: String? = null
+    ): OtherCondition {
+        return OtherCondition(
             name = name,
             year = year,
             month = month,
-            doids = doids,
-            category = category,
-            isContraindicationForTherapy = isContraindication,
+            icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode)),
         )
     }
 
-    fun intolerance(name: String = ""): Intolerance {
+    fun intolerance(name: String = "", icdMainCode: String = "", icdExtensionCode: String? = null): Intolerance {
         return Intolerance(
             name = name,
-            doids = emptySet(),
-            category = "",
-            subcategories = emptySet(),
+            icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode)),
             type = "",
             clinicalStatus = "",
             verificationStatus = "",
-            criticality = "",
-            treatmentCategories = emptySet()
+            criticality = ""
         )
     }
 
-    fun complication(name: String = "", categories: Set<String> = emptySet()): Complication {
-        return Complication(name = name, categories = categories, year = null, month = null)
+    fun complication(name: String = "", icdMainCode: String = "", icdExtensionCode: String? = null): Complication {
+        return Complication(name = name, year = null, month = null, icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode)))
     }
 
-    fun toxicity(name: String, toxicitySource: ToxicitySource, grade: Int?): Toxicity {
+    fun toxicity(
+        name: String, toxicitySource: ToxicitySource, grade: Int?, icdMainCode: String = "code", icdExtensionCode: String? = null, date: LocalDate = LocalDate.of(2010, 1, 1)
+    ): Toxicity {
         return Toxicity(
             name = name,
-            categories = emptySet(),
-            evaluatedDate = LocalDate.of(2010, 1, 1),
+            icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode)),
+            evaluatedDate = date,
             source = toxicitySource,
             grade = grade
         )
     }
 
     fun withComplications(complications: List<Complication>): PatientRecord {
-        return base.copy(complications = complications)
+        return withComorbidities(complications)
     }
 
     fun withToxicities(toxicities: List<Toxicity>): PatientRecord {
-        return base.copy(toxicities = toxicities)
+        return withComorbidities(toxicities)
     }
 
     fun withIntolerances(intolerances: List<Intolerance>): PatientRecord {
-        return base.copy(intolerances = intolerances)
+        return withComorbidities(intolerances)
+    }
+
+    private fun withComorbidities(comorbidities: List<Comorbidity>): PatientRecord {
+        return base.copy(comorbidities = comorbidities)
     }
 
     fun withMedications(medications: List<Medication>): PatientRecord {

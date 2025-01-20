@@ -15,7 +15,8 @@
         "acronym": "IEMOEN",
         "title": "Phase I first-in-human study to evaluate safety of IEMOEN, a new PD-L1 inhibitor in advanced solid tumors",
         "nctId": "NCT00000001",
-        "phase": null
+        "phase": null,
+        "locations": []
       },
       "isPotentiallyEligible": true,
       "evaluations": [
@@ -39,18 +40,12 @@
             "recoverable": false,
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
-            "passSpecificMessages": [
+            "passMessages": [
               "Patient is at least 18 years old"
             ],
-            "passGeneralMessages": [
-              "Age above 18"
-            ],
-            "warnSpecificMessages": [],
-            "warnGeneralMessages": [],
-            "undeterminedSpecificMessages": [],
-            "undeterminedGeneralMessages": [],
-            "failSpecificMessages": [],
-            "failGeneralMessages": [],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
             "isMissingGenesForSufficientEvaluation": false
           }
         ],
@@ -90,20 +85,13 @@
             "recoverable": false,
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
-            "passSpecificMessages": [
-              "Patient has solid primary tumor",
-              "Tumor stage IV is considered metastatic"
-            ],
-            "passGeneralMessages": [
+            "passMessages": [
               "Has solid primary tumor",
-              "Metastatic cancer"
+              "Stage IV is considered metastatic"
             ],
-            "warnSpecificMessages": [],
-            "warnGeneralMessages": [],
-            "undeterminedSpecificMessages": [],
-            "undeterminedGeneralMessages": [],
-            "failSpecificMessages": [],
-            "failGeneralMessages": [],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
             "isMissingGenesForSufficientEvaluation": false
           }
         ],
@@ -135,18 +123,12 @@
             "recoverable": false,
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
-            "passSpecificMessages": [],
-            "passGeneralMessages": [],
-            "warnSpecificMessages": [
-              "Patient has not exhausted SOC (at least platinum doublet remaining)"
+            "passMessages": [],
+            "warnMessages": [
+              "Has not exhausted SOC (at least platinum doublet remaining)"
             ],
-            "warnGeneralMessages": [
-              "SOC not exhausted: at least platinum doublet remaining"
-            ],
-            "undeterminedSpecificMessages": [],
-            "undeterminedGeneralMessages": [],
-            "failSpecificMessages": [],
-            "failGeneralMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
             "isMissingGenesForSufficientEvaluation": false
           }
         ],
@@ -173,18 +155,12 @@
             "recoverable": false,
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
-            "passSpecificMessages": [],
-            "passGeneralMessages": [],
-            "warnSpecificMessages": [
-              "Patient has history of condition(s) Rheumatoid arthritis, which is indicative of autoimmune disease"
+            "passMessages": [],
+            "warnMessages": [
+              "Has history of Rheumatoid arthritis"
             ],
-            "warnGeneralMessages": [
-              "History of Rheumatoid arthritis"
-            ],
-            "undeterminedSpecificMessages": [],
-            "undeterminedGeneralMessages": [],
-            "failSpecificMessages": [],
-            "failGeneralMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
             "isMissingGenesForSufficientEvaluation": false
           }
         ],
@@ -208,16 +184,12 @@
             "recoverable": true,
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
-            "passSpecificMessages": [],
-            "passGeneralMessages": [],
-            "warnSpecificMessages": [
-              "Hemoglobin 8.2 mmol/L exceeds minimum of 6.0 mmol/L, but measurement occurred before 16-Aug-2024"
+            "passMessages": [],
+            "warnMessages": [
+              "Hemoglobin 8.2 mmol/L exceeds min of 6.0 mmol/L but measurement occurred before 16-Aug-2024"
             ],
-            "warnGeneralMessages": [],
-            "undeterminedSpecificMessages": [],
-            "undeterminedGeneralMessages": [],
-            "failSpecificMessages": [],
-            "failGeneralMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
             "isMissingGenesForSufficientEvaluation": false
           }
         ],
@@ -241,16 +213,12 @@
             "recoverable": true,
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
-            "passSpecificMessages": [],
-            "passGeneralMessages": [],
-            "warnSpecificMessages": [],
-            "warnGeneralMessages": [],
-            "undeterminedSpecificMessages": [
+            "passMessages": [],
+            "warnMessages": [],
+            "undeterminedMessages": [
               "No measurement found for absolute neutrophil count"
             ],
-            "undeterminedGeneralMessages": [],
-            "failSpecificMessages": [],
-            "failGeneralMessages": [],
+            "failMessages": [],
             "isMissingGenesForSufficientEvaluation": false
           }
         ],
@@ -274,18 +242,12 @@
             "recoverable": false,
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
-            "passSpecificMessages": [
+            "passMessages": [
               "Has not participated in trial IEMOEN"
             ],
-            "passGeneralMessages": [
-              "Has not participated in trial IEMOEN"
-            ],
-            "warnSpecificMessages": [],
-            "warnGeneralMessages": [],
-            "undeterminedSpecificMessages": [],
-            "undeterminedGeneralMessages": [],
-            "failSpecificMessages": [],
-            "failGeneralMessages": [],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
             "isMissingGenesForSufficientEvaluation": false
           }
         ]
@@ -325,7 +287,8 @@
         "acronym": "KAYRAS",
         "title": "A phase 1/2 trial for first in-human usage of KAYRAS, a new specific KRAS G12D inhibitor in NSCLC and colorectal cancer",
         "nctId": "NCT00000002",
-        "phase": null
+        "phase": null,
+        "locations": []
       },
       "isPotentiallyEligible": true,
       "evaluations": [
@@ -349,18 +312,12 @@
             "recoverable": false,
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
-            "passSpecificMessages": [
+            "passMessages": [
               "Patient is at least 18 years old"
             ],
-            "passGeneralMessages": [
-              "Age above 18"
-            ],
-            "warnSpecificMessages": [],
-            "warnGeneralMessages": [],
-            "undeterminedSpecificMessages": [],
-            "undeterminedGeneralMessages": [],
-            "failSpecificMessages": [],
-            "failGeneralMessages": [],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
             "isMissingGenesForSufficientEvaluation": false
           }
         ],
@@ -391,18 +348,12 @@
             "recoverable": false,
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
-            "passSpecificMessages": [
+            "passMessages": [
               "Tumor stage IV is considered metastatic"
             ],
-            "passGeneralMessages": [
-              "Metastatic cancer"
-            ],
-            "warnSpecificMessages": [],
-            "warnGeneralMessages": [],
-            "undeterminedSpecificMessages": [],
-            "undeterminedGeneralMessages": [],
-            "failSpecificMessages": [],
-            "failGeneralMessages": [],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
             "isMissingGenesForSufficientEvaluation": false
           }
         ],
@@ -427,18 +378,12 @@
             "recoverable": true,
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
-            "passSpecificMessages": [],
-            "passGeneralMessages": [],
-            "warnSpecificMessages": [],
-            "warnGeneralMessages": [],
-            "undeterminedSpecificMessages": [
+            "passMessages": [],
+            "warnMessages": [],
+            "undeterminedMessages": [
               "ASAT and ALAT are not present or cannot be evaluated"
             ],
-            "undeterminedGeneralMessages": [
-              "ASAT and ALAT are not present or cannot be evaluated"
-            ],
-            "failSpecificMessages": [],
-            "failGeneralMessages": [],
+            "failMessages": [],
             "isMissingGenesForSufficientEvaluation": false
           }
         ],
@@ -465,18 +410,12 @@
               "KRAS G12D"
             ],
             "exclusionMolecularEvents": [],
-            "passSpecificMessages": [],
-            "passGeneralMessages": [],
-            "warnSpecificMessages": [
-              "Variant(s) KRAS G12D in KRAS detected in canonical transcript but subclonal likelihood of \u003e 50%"
-            ],
-            "warnGeneralMessages": [
+            "passMessages": [],
+            "warnMessages": [
               "Variant(s) KRAS G12D in KRAS but subclonal likelihood of \u003e 50%"
             ],
-            "undeterminedSpecificMessages": [],
-            "undeterminedGeneralMessages": [],
-            "failSpecificMessages": [],
-            "failGeneralMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
             "isMissingGenesForSufficientEvaluation": false
           }
         ],
@@ -500,18 +439,12 @@
             "recoverable": false,
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
-            "passSpecificMessages": [
+            "passMessages": [
               "Has not participated in trial KAYRAS"
             ],
-            "passGeneralMessages": [
-              "Has not participated in trial KAYRAS"
-            ],
-            "warnSpecificMessages": [],
-            "warnGeneralMessages": [],
-            "undeterminedSpecificMessages": [],
-            "undeterminedGeneralMessages": [],
-            "failSpecificMessages": [],
-            "failGeneralMessages": [],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
             "isMissingGenesForSufficientEvaluation": false
           }
         ]
@@ -548,18 +481,12 @@
                 "recoverable": false,
                 "inclusionMolecularEvents": [],
                 "exclusionMolecularEvents": [],
-                "passSpecificMessages": [
-                  "Patient has tumor belonging to DOID term(s) lung non-small cell carcinoma"
+                "passMessages": [
+                  "Tumor belongs to DOID term(s) lung non-small cell carcinoma"
                 ],
-                "passGeneralMessages": [
-                  "Has tumor belonging to DOID term(s) lung non-small cell carcinoma"
-                ],
-                "warnSpecificMessages": [],
-                "warnGeneralMessages": [],
-                "undeterminedSpecificMessages": [],
-                "undeterminedGeneralMessages": [],
-                "failSpecificMessages": [],
-                "failGeneralMessages": [],
+                "warnMessages": [],
+                "undeterminedMessages": [],
+                "failMessages": [],
                 "isMissingGenesForSufficientEvaluation": false
               }
             ]
@@ -596,16 +523,10 @@
                 "recoverable": false,
                 "inclusionMolecularEvents": [],
                 "exclusionMolecularEvents": [],
-                "passSpecificMessages": [],
-                "passGeneralMessages": [],
-                "warnSpecificMessages": [],
-                "warnGeneralMessages": [],
-                "undeterminedSpecificMessages": [],
-                "undeterminedGeneralMessages": [],
-                "failSpecificMessages": [
-                  "Patient has no colorectal cancer"
-                ],
-                "failGeneralMessages": [
+                "passMessages": [],
+                "warnMessages": [],
+                "undeterminedMessages": [],
+                "failMessages": [
                   "No colorectal cancer"
                 ],
                 "isMissingGenesForSufficientEvaluation": false
@@ -623,7 +544,8 @@
         "acronym": "NO-SEE797ES",
         "title": "Phase I trial for development of NO-SEE797ES, a specific inhibitor for EGFR with C797 mutations but not C797S in solid tumors",
         "nctId": "NCT00000003",
-        "phase": null
+        "phase": null,
+        "locations": []
       },
       "isPotentiallyEligible": false,
       "evaluations": [
@@ -647,18 +569,12 @@
             "recoverable": false,
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
-            "passSpecificMessages": [
+            "passMessages": [
               "Patient is at least 18 years old"
             ],
-            "passGeneralMessages": [
-              "Age above 18"
-            ],
-            "warnSpecificMessages": [],
-            "warnGeneralMessages": [],
-            "undeterminedSpecificMessages": [],
-            "undeterminedGeneralMessages": [],
-            "failSpecificMessages": [],
-            "failGeneralMessages": [],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
             "isMissingGenesForSufficientEvaluation": false
           }
         ],
@@ -689,18 +605,12 @@
             "recoverable": false,
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
-            "passSpecificMessages": [
-              "Tumor stage IV is considered metastatic"
+            "passMessages": [
+              "Stage IV is considered metastatic"
             ],
-            "passGeneralMessages": [
-              "Metastatic cancer"
-            ],
-            "warnSpecificMessages": [],
-            "warnGeneralMessages": [],
-            "undeterminedSpecificMessages": [],
-            "undeterminedGeneralMessages": [],
-            "failSpecificMessages": [],
-            "failGeneralMessages": [],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
             "isMissingGenesForSufficientEvaluation": false
           }
         ],
@@ -744,17 +654,11 @@
             "exclusionMolecularEvents": [
               "EGFR C797S"
             ],
-            "passSpecificMessages": [],
-            "passGeneralMessages": [],
-            "warnSpecificMessages": [],
-            "warnGeneralMessages": [],
-            "undeterminedSpecificMessages": [],
-            "undeterminedGeneralMessages": [],
-            "failSpecificMessages": [
-              "Variant(s) C797S in gene EGFR detected in canonical transcript"
-            ],
-            "failGeneralMessages": [
-              "C797S detected in EGFR"
+            "passMessages": [],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [
+              "C797S in EGFR in canonical transcript"
             ],
             "isMissingGenesForSufficientEvaluation": false
           }
@@ -779,18 +683,12 @@
             "recoverable": false,
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
-            "passSpecificMessages": [
+            "passMessages": [
               "Has not participated in trial NO-SEE797ES"
             ],
-            "passGeneralMessages": [
-              "Has not participated in trial NO-SEE797ES"
-            ],
-            "warnSpecificMessages": [],
-            "warnGeneralMessages": [],
-            "undeterminedSpecificMessages": [],
-            "undeterminedGeneralMessages": [],
-            "failSpecificMessages": [],
-            "failGeneralMessages": [],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
             "isMissingGenesForSufficientEvaluation": false
           }
         ]
@@ -818,7 +716,8 @@
         "acronym": "TEDR1",
         "title": "TEDR1 Trial: A phase II trial to evaluate efficacy of specific EGFR inhibitors in lung cancer",
         "nctId": "NCT00000004",
-        "phase": null
+        "phase": null,
+        "locations": []
       },
       "isPotentiallyEligible": true,
       "evaluations": [
@@ -842,18 +741,12 @@
             "recoverable": false,
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
-            "passSpecificMessages": [
+            "passMessages": [
               "Patient is at least 18 years old"
             ],
-            "passGeneralMessages": [
-              "Age above 18"
-            ],
-            "warnSpecificMessages": [],
-            "warnGeneralMessages": [],
-            "undeterminedSpecificMessages": [],
-            "undeterminedGeneralMessages": [],
-            "failSpecificMessages": [],
-            "failGeneralMessages": [],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
             "isMissingGenesForSufficientEvaluation": false
           }
         ],
@@ -895,20 +788,13 @@
             "recoverable": false,
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
-            "passSpecificMessages": [
-              "Patient has tumor belonging to DOID term(s) lung cancer",
-              "Tumor stage IV is considered metastatic"
+            "passMessages": [
+              "Tumor belongs to DOID term(s) lung cancer",
+              "Stage IV is considered metastatic"
             ],
-            "passGeneralMessages": [
-              "Has tumor belonging to DOID term(s) lung cancer",
-              "Metastatic cancer"
-            ],
-            "warnSpecificMessages": [],
-            "warnGeneralMessages": [],
-            "undeterminedSpecificMessages": [],
-            "undeterminedGeneralMessages": [],
-            "failSpecificMessages": [],
-            "failGeneralMessages": [],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
             "isMissingGenesForSufficientEvaluation": false
           }
         ],
@@ -935,18 +821,12 @@
               "EGFR C797S"
             ],
             "exclusionMolecularEvents": [],
-            "passSpecificMessages": [
-              "Variant(s) C797S in gene EGFR detected in canonical transcript"
+            "passMessages": [
+              "C797S in EGFR in canonical transcript"
             ],
-            "passGeneralMessages": [
-              "C797S detected in EGFR"
-            ],
-            "warnSpecificMessages": [],
-            "warnGeneralMessages": [],
-            "undeterminedSpecificMessages": [],
-            "undeterminedGeneralMessages": [],
-            "failSpecificMessages": [],
-            "failGeneralMessages": [],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
             "isMissingGenesForSufficientEvaluation": false
           }
         ],
@@ -970,18 +850,12 @@
             "recoverable": false,
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
-            "passSpecificMessages": [
+            "passMessages": [
               "Has not participated in trial TEDR1"
             ],
-            "passGeneralMessages": [
-              "Has not participated in trial TEDR1"
-            ],
-            "warnSpecificMessages": [],
-            "warnGeneralMessages": [],
-            "undeterminedSpecificMessages": [],
-            "undeterminedGeneralMessages": [],
-            "failSpecificMessages": [],
-            "failGeneralMessages": [],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
             "isMissingGenesForSufficientEvaluation": false
           }
         ]
@@ -1009,7 +883,8 @@
         "acronym": "PICKME3CA",
         "title": "A phase 1/2 trial of ABC123 +/- platinum doublet in PIK3CA-mutated solid cancer",
         "nctId": "NCT00000020",
-        "phase": null
+        "phase": null,
+        "locations": []
       },
       "isPotentiallyEligible": false,
       "evaluations": [
@@ -1033,18 +908,12 @@
             "recoverable": false,
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
-            "passSpecificMessages": [
+            "passMessages": [
               "Patient is at least 18 years old"
             ],
-            "passGeneralMessages": [
-              "Age above 18"
-            ],
-            "warnSpecificMessages": [],
-            "warnGeneralMessages": [],
-            "undeterminedSpecificMessages": [],
-            "undeterminedGeneralMessages": [],
-            "failSpecificMessages": [],
-            "failGeneralMessages": [],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
             "isMissingGenesForSufficientEvaluation": false
           }
         ],
@@ -1075,18 +944,12 @@
             "recoverable": false,
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
-            "passSpecificMessages": [
-              "Tumor stage IV is considered metastatic"
+            "passMessages": [
+              "Stage IV is considered metastatic"
             ],
-            "passGeneralMessages": [
-              "Metastatic cancer"
-            ],
-            "warnSpecificMessages": [],
-            "warnGeneralMessages": [],
-            "undeterminedSpecificMessages": [],
-            "undeterminedGeneralMessages": [],
-            "failSpecificMessages": [],
-            "failGeneralMessages": [],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
             "isMissingGenesForSufficientEvaluation": false
           }
         ],
@@ -1111,18 +974,12 @@
             "recoverable": true,
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
-            "passSpecificMessages": [],
-            "passGeneralMessages": [],
-            "warnSpecificMessages": [],
-            "warnGeneralMessages": [],
-            "undeterminedSpecificMessages": [
+            "passMessages": [],
+            "warnMessages": [],
+            "undeterminedMessages": [
               "ASAT and ALAT are not present or cannot be evaluated"
             ],
-            "undeterminedGeneralMessages": [
-              "ASAT and ALAT are not present or cannot be evaluated"
-            ],
-            "failSpecificMessages": [],
-            "failGeneralMessages": [],
+            "failMessages": [],
             "isMissingGenesForSufficientEvaluation": false
           }
         ],
@@ -1146,16 +1003,10 @@
             "recoverable": false,
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
-            "passSpecificMessages": [],
-            "passGeneralMessages": [],
-            "warnSpecificMessages": [],
-            "warnGeneralMessages": [],
-            "undeterminedSpecificMessages": [],
-            "undeterminedGeneralMessages": [],
-            "failSpecificMessages": [
-              "No activating mutation(s) detected in gene PIK3CA"
-            ],
-            "failGeneralMessages": [
+            "passMessages": [],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [
               "No PIK3CA activating mutation(s)"
             ],
             "isMissingGenesForSufficientEvaluation": false
@@ -1184,19 +1035,13 @@
             "recoverable": false,
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
-            "passSpecificMessages": [
-              "Patient has no other condition belonging to category coronary artery disease",
-              "Patient has no other condition belonging to category heart disease"
+            "passMessages": [
+              "Has no other condition belonging to category coronary artery disease",
+              "Has no other condition belonging to category heart disease"
             ],
-            "passGeneralMessages": [
-              "No relevant non-oncological condition"
-            ],
-            "warnSpecificMessages": [],
-            "warnGeneralMessages": [],
-            "undeterminedSpecificMessages": [],
-            "undeterminedGeneralMessages": [],
-            "failSpecificMessages": [],
-            "failGeneralMessages": [],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
             "isMissingGenesForSufficientEvaluation": false
           }
         ],
@@ -1220,18 +1065,12 @@
             "recoverable": false,
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [],
-            "passSpecificMessages": [
+            "passMessages": [
               "Has not participated in trial PICKME3CA"
             ],
-            "passGeneralMessages": [
-              "Has not participated in trial PICKME3CA"
-            ],
-            "warnSpecificMessages": [],
-            "warnGeneralMessages": [],
-            "undeterminedSpecificMessages": [],
-            "undeterminedGeneralMessages": [],
-            "failSpecificMessages": [],
-            "failGeneralMessages": [],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
             "isMissingGenesForSufficientEvaluation": false
           }
         ]
@@ -1268,18 +1107,12 @@
                 "recoverable": false,
                 "inclusionMolecularEvents": [],
                 "exclusionMolecularEvents": [],
-                "passSpecificMessages": [
-                  "Patient has tumor belonging to DOID term(s) lung non-small cell carcinoma"
+                "passMessages": [
+                  "Tumor belongs to DOID term(s) lung non-small cell carcinoma"
                 ],
-                "passGeneralMessages": [
-                  "Has tumor belonging to DOID term(s) lung non-small cell carcinoma"
-                ],
-                "warnSpecificMessages": [],
-                "warnGeneralMessages": [],
-                "undeterminedSpecificMessages": [],
-                "undeterminedGeneralMessages": [],
-                "failSpecificMessages": [],
-                "failGeneralMessages": [],
+                "warnMessages": [],
+                "undeterminedMessages": [],
+                "failMessages": [],
                 "isMissingGenesForSufficientEvaluation": false
               }
             ]
@@ -1330,17 +1163,11 @@
                 "recoverable": false,
                 "inclusionMolecularEvents": [],
                 "exclusionMolecularEvents": [],
-                "passSpecificMessages": [],
-                "passGeneralMessages": [],
-                "warnSpecificMessages": [],
-                "warnGeneralMessages": [],
-                "undeterminedSpecificMessages": [],
-                "undeterminedGeneralMessages": [],
-                "failSpecificMessages": [
-                  "Patient has tumor belonging to DOID term(s) lung non-small cell carcinoma"
-                ],
-                "failGeneralMessages": [
-                  "Has tumor belonging to DOID term(s) lung non-small cell carcinoma"
+                "passMessages": [],
+                "warnMessages": [],
+                "undeterminedMessages": [],
+                "failMessages": [
+                  "Tumor belongs to DOID term(s) lung non-small cell carcinoma"
                 ],
                 "isMissingGenesForSufficientEvaluation": false
               }

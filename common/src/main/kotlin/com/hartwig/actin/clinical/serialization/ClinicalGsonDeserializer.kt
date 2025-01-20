@@ -6,6 +6,7 @@ import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.JsonParseException
+import com.hartwig.actin.datamodel.clinical.Comorbidity
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
@@ -35,6 +36,7 @@ object ClinicalGsonDeserializer {
             .registerTypeAdapter(LocalDate::class.java, LocalDateAdapter())
             .registerTypeAdapter(LocalDateTime::class.java, GsonLocalDateTimeAdapter())
             .registerTypeAdapter(Treatment::class.java, TreatmentAdapter())
+            .registerTypeAdapter(Comorbidity::class.java, ComorbidityAdapter())
             .registerTypeAdapter(DrugType::class.java, StrictEnumDeserializer(DrugType::class.java))
             .registerTypeAdapter(OtherTreatmentType::class.java, StrictEnumDeserializer(OtherTreatmentType::class.java))
             .registerTypeAdapter(RadiotherapyType::class.java, StrictEnumDeserializer(RadiotherapyType::class.java))

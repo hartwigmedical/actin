@@ -39,37 +39,25 @@ class HasHadTreatmentWithDrugFromSetAsMostRecent(private val drugsToMatch: Set<D
         return when {
             matchingDrugsInMostRecentLine.isNotEmpty() -> {
                 val matchingDrugDisplay = Format.concatItemsWithAnd(matchingDrugsInMostRecentLine)
-                EvaluationFactory.pass(
-                    "Patient has received $matchingDrugDisplay as most recent treatment",
-                    "Has received $matchingDrugDisplay as most recent treatment"
-                )
+                EvaluationFactory.pass("Has received $matchingDrugDisplay as most recent treatment")
             }
 
             matchingDrugsInUnknownTreatmentLines.isNotEmpty() || matchingDrugsInMostRecentLineWithDate.isNotEmpty() -> {
                 val drugList = Format.concatItemsWithAnd(matchingDrugsInUnknownTreatmentLines + matchingDrugsInMostRecentLineWithDate)
                 val display = "Has received $drugList but undetermined if most recent"
-                EvaluationFactory.undetermined("$display (dates missing in treatment list)", display)
+                EvaluationFactory.undetermined("$display (date unknown)")
             }
 
             possibleTrialMatch(if (history.size == 1) history.first() else mostRecentTreatmentEntry) -> {
-                EvaluationFactory.undetermined(
-                    "Undetermined if patient has $drugsToMatchDisplay - exact drugs in recent trial unknown",
-                    "Undetermined if $drugsToMatchDisplay - exact drugs in recent trial unknown"
-                )
+                EvaluationFactory.undetermined("Undetermined if treatment received in previous trial included ${Format.concatItemsWithOr(drugsToMatch)}")
             }
 
             history.flatMap { selectMatchingDrugsFromEntry(it, drugNamesToMatch) }.isNotEmpty() -> {
-                EvaluationFactory.fail(
-                    "Patient has $drugsToMatchDisplay but not as the most recent treatment line",
-                    "Has $drugsToMatchDisplay but not as most recent line"
-                )
+                EvaluationFactory.fail("Has $drugsToMatchDisplay but not as most recent line")
             }
 
             else -> {
-                EvaluationFactory.fail(
-                    "Patient has not $drugsToMatchDisplay",
-                    "Has not $drugsToMatchDisplay"
-                )
+                EvaluationFactory.fail("Has not $drugsToMatchDisplay")
             }
         }
     }

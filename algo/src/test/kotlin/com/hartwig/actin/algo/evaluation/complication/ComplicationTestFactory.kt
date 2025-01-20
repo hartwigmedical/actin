@@ -4,13 +4,14 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 import com.hartwig.actin.datamodel.clinical.Complication
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Medication
 
 internal object ComplicationTestFactory {
     private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
     
-    fun complication(name: String = "", categories: Set<String> = emptySet()): Complication {
-        return Complication(name = name, categories = categories, year = null, month = null)
+    fun complication(name: String = "", icdCode: IcdCode = IcdCode("")): Complication {
+        return Complication(name = name, year = null, month = null, icdCodes = setOf(icdCode))
     }
 
     fun yesInputComplication(): Complication {
@@ -23,7 +24,7 @@ internal object ComplicationTestFactory {
 
     fun withComplications(complications: List<Complication>?): PatientRecord {
         return base.copy(
-            complications = complications,
+            comorbidities = complications ?: emptyList(),
             clinicalStatus = ClinicalStatus(hasComplications = complications?.isNotEmpty())
         )
     }

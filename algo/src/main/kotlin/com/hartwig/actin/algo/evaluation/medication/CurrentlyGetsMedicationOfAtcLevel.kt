@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
+import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithCommaAndAnd
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.AtcLevel
@@ -20,26 +20,17 @@ class CurrentlyGetsMedicationOfAtcLevel(
 
         return when {
             activeMedicationsWithAtcLevel.isNotEmpty() -> {
-                val foundMedicationString = concatLowercaseWithAnd(activeMedicationsWithAtcLevel)
-                EvaluationFactory.recoverablePass(
-                    "Patient currently gets medication: $foundMedicationString which belong(s) to category '$categoryName'",
-                    "$categoryName medication use: $foundMedicationString"
-                )
+                val foundMedicationString = concatLowercaseWithCommaAndAnd(activeMedicationsWithAtcLevel)
+                EvaluationFactory.recoverablePass("$categoryName medication use ($foundMedicationString)")
             }
 
             plannedMedicationsWithAtcLevel.isNotEmpty() -> {
-                val foundMedicationString = concatLowercaseWithAnd(plannedMedicationsWithAtcLevel)
-                EvaluationFactory.recoverableWarn(
-                    "Patient plans to get medication: $foundMedicationString which belong(s) to category '$categoryName'",
-                    "Planned $categoryName medication use: $foundMedicationString"
-                )
+                val foundMedicationString = concatLowercaseWithCommaAndAnd(plannedMedicationsWithAtcLevel)
+                EvaluationFactory.recoverableWarn("Planned $categoryName medication use ($foundMedicationString)")
             }
 
             else -> {
-                EvaluationFactory.recoverableFail(
-                    "Patient currently does not get medication of category '$categoryName'",
-                    "No $categoryName medication use"
-                )
+                EvaluationFactory.recoverableFail("No $categoryName medication use")
             }
         }
     }

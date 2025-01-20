@@ -37,10 +37,7 @@ class AnyGeneHasDriverEventWithApprovedTherapy(
             isColorectalCancer -> hasMolecularEventWithSocForCRC(record)
 
             else -> {
-                EvaluationFactory.undetermined(
-                    "Driver events in genes with approved therapy are currently not determined",
-                    "Undetermined if there are driver events with approved therapy"
-                )
+                EvaluationFactory.undetermined("Undetermined if there are driver events with approved therapy")
             }
         }
     }

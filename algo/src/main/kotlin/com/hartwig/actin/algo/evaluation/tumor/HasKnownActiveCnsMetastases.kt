@@ -10,34 +10,28 @@ class HasKnownActiveCnsMetastases : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         with(record.tumor) {
             val unknownIfActive = hasActiveCnsLesions == null && hasActiveBrainLesions == null
-            val undeterminedSpecificMessage =
-                "CNS metastases in history but data regarding active CNS metastases is missing - assuming inactive"
-            val undeterminedGeneralMessage = "CNS metastases present but unknown if active (data missing)"
+            val undeterminedMessage = "CNS metastases present but unknown if active (data missing)"
 
             return when {
                 unknownIfActive && (hasCnsLesions == true || hasBrainLesions == true) -> {
-                    EvaluationFactory.undetermined(undeterminedSpecificMessage, undeterminedGeneralMessage)
+                    EvaluationFactory.undetermined(undeterminedMessage)
                 }
 
                 unknownIfActive && (hasSuspectedCnsLesions == true || hasSuspectedBrainLesions == true) -> {
-                    EvaluationFactory.undetermined("Suspected $undeterminedSpecificMessage, Suspected $undeterminedGeneralMessage")
+                    EvaluationFactory.undetermined("Suspected $undeterminedMessage")
                 }
 
                 unknownIfActive && (hasCnsLesions == null && hasBrainLesions == null) -> {
-                    val message = "Unknown if (active) CNS metastases present (data missing)"
-                    EvaluationFactory.undetermined(message, message)
+                    EvaluationFactory.undetermined("Undetermined if (active) CNS metastases present (data missing)")
                 }
 
-                hasActiveCnsLesions == true -> EvaluationFactory.pass("Active CNS metastases are present", "Active CNS metastases")
+                hasActiveCnsLesions == true -> EvaluationFactory.pass("Has active CNS metastases")
 
                 hasActiveBrainLesions == true -> {
-                    EvaluationFactory.pass(
-                        "Active CNS (Brain) metastases are present",
-                        "Active CNS (Brain) metastases"
-                    )
+                    EvaluationFactory.pass("Has active CNS (Brain) metastases")
                 }
 
-                else -> EvaluationFactory.fail("No known active CNS metastases present", "No known active CNS metastases")
+                else -> EvaluationFactory.fail("No known active CNS metastases present")
             }
         }
     }

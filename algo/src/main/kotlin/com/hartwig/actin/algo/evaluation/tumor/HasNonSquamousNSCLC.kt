@@ -12,10 +12,7 @@ class HasNonSquamousNSCLC(private val doidModel: DoidModel) : EvaluationFunction
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.tumor.doids
         if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
-            return EvaluationFactory.undetermined(
-                "Could not determine whether patient non-squamous NSCLC tumor type",
-                "Undetermined non-squamous NSCLC tumor type"
-            )
+            return EvaluationFactory.undetermined("Non-squamous NSCLC tumor type undetermined (tumor type missing)")
         }
 
         val expandedDoidSet = DoidEvaluationFunctions.createFullExpandedDoidTree(doidModel, tumorDoids)
@@ -28,25 +25,19 @@ class HasNonSquamousNSCLC(private val doidModel: DoidModel) : EvaluationFunction
 
         return when {
             isSquamousNSCLC || isAdenoSquamousNSCLC -> {
-                EvaluationFactory.fail("Patient has no non-squamous non-small cell lung cancer", "No non-squamous NSCLC")
+                EvaluationFactory.fail("Has no non-squamous NSCLC")
             }
 
             isNonSquamousNSCLC -> {
-                EvaluationFactory.pass(
-                    "Patient has non-squamous non-small cell lung cancer",
-                    "Has non-squamous NSCLC"
-                )
+                EvaluationFactory.pass("Has non-squamous NSCLC")
             }
 
             isNonSmallNSCLC || isExactLungCarcinoma || isExactLungCancer -> {
-                EvaluationFactory.undetermined(
-                    "Undetermined if patient has non-squamous non-small cell lung cancer",
-                    "Undetermined if non-squamous NSCLC tumor type"
-                )
+                EvaluationFactory.undetermined("Undetermined if non-squamous NSCLC")
             }
 
             else -> {
-                EvaluationFactory.fail("Patient has no non-squamous non-small cell lung cancer", "No non-squamous NSCLC")
+                EvaluationFactory.fail("Has no non-squamous NSCLC")
             }
         }
 

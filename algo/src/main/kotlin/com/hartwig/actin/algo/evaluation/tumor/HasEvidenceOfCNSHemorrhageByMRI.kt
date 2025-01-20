@@ -8,9 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasEvidenceOfCNSHemorrhageByMRI : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined(
-            "Currently it not determined if there is evidence of CNS hemorrhage on MRI scan",
-            "Undetermined CNS hemorrhage by MRI"
-        )
+        return EvaluationFactory.undetermined("Evidence of CNS hemorrhage by MRI undetermined")
     }
 }

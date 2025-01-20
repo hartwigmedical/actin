@@ -11,20 +11,11 @@ class HasSevereConcomitantIllness: EvaluationFunction {
         val whoStatus = record.clinicalStatus.who
 
         if (whoStatus == 3 || whoStatus == 4) {
-            return EvaluationFactory.warn(
-                "Patient may have severe concomitant illnesses based on WHO status of $whoStatus",
-                "Potential severe concomitant illnesses due to WHO $whoStatus"
-            )
+            return EvaluationFactory.warn("Potential severe concomitant illnesses (WHO $whoStatus)")
         }
         return if (whoStatus == 5) {
-            EvaluationFactory.pass(
-                "WHO status of patient is WHO 5",
-                "Severe concomitant illnesses due to WHO 5"
-            )
+            EvaluationFactory.pass("Has severe concomitant illness (WHO 5)")
         } else
-            EvaluationFactory.notEvaluated(
-                "Severe concomitant illnesses are assumed not to be present",
-                "Assumed no severe concomitant illnesses"
-            )
+            EvaluationFactory.notEvaluated("Assumed that severe concomitant illnesses are not present")
     }
 }

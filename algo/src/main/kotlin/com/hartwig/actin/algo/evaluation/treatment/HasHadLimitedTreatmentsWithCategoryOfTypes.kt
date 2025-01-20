@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.Format.concatItems
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
@@ -18,7 +18,7 @@ class HasHadLimitedTreatmentsWithCategoryOfTypes(
             record.oncologicalHistory, category, { historyEntry -> historyEntry.matchesTypeFromSet(types) }
         )
 
-        val typesList = concatItems(types)
+        val typesList = Format.concatItemsWithAnd(types)
         return when {
             treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches + treatmentSummary.numPossibleTrialMatches <= maxTreatmentLines ->
                 EvaluationFactory.pass("Has received at most $maxTreatmentLines lines of $typesList ${category.display()}")

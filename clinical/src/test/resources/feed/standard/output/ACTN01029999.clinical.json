@@ -98,17 +98,89 @@
     }
   ],
   "priorSecondPrimaries": [],
-  "priorOtherConditions": [
+  "comorbidities": [
     {
-      "name": "Pain",
+      "name": "pain",
       "year": 2020,
       "month": 1,
       "doids": [
         "5082",
         "11335"
       ],
+      "icdCodes": [
+        {
+          "mainCode": "1A01.2",
+          "extensionCode": null
+        }
+      ],
+      "isContraindicationForTherapy": true,
+      "comorbidityClass": "OTHER_CONDITION"
+    },
+    {
+      "name": "Other",
+      "icdCodes": [
+        {
+          "mainCode": "1A01.1",
+          "extensionCode": null
+        }
+      ],
+      "year": 2020,
+      "month": 1,
+      "comorbidityClass": "COMPLICATION"
+    },
+    {
+      "name": "Dysphagia",
+      "icdCodes": [
+        {
+          "mainCode": "1A01.2",
+          "extensionCode": null
+        }
+      ],
+      "evaluatedDate": {
+        "year": 2020,
+        "month": 1,
+        "day": 1
+      },
+      "source": "EHR",
+      "grade": 5,
+      "endDate": {
+        "year": 2020,
+        "month": 1,
+        "day": 1
+      },
+      "comorbidityClass": "TOXICITY"
+    },
+    {
+      "name": "Morfine",
+      "icdCodes": [
+        {
+          "mainCode": "1A01.2",
+          "extensionCode": null
+        }
+      ],
+      "type": null,
+      "clinicalStatus": "Active",
+      "verificationStatus": "Confirmed",
+      "criticality": "Unknown",
+      "year": null,
+      "month": null,
+      "comorbidityClass": "INTOLERANCE"
+    },
+    {
+      "name": "Nikkel",
+      "icdCodes": [
+        {
+          "mainCode": "1A01.3",
+          "extensionCode": null
+        }
+      ],
       "category": "Other",
-      "isContraindicationForTherapy": true
+      "clinicalStatus": "Active",
+      "verificationStatus": "Confirmed",
+      "criticality": "Unknown",
+      "year": null,
+      "month": null,
+      "comorbidityClass": "INTOLERANCE"
     }
   ],
   "priorIHCTests": [
@@ -152,14 +224,6 @@
       "amplifications": [],
       "skippedExons": [],
       "deletedGenes": []
-    }
-  ],
-  "complications": [
-    {
-      "name": "Other",
-      "categories": [],
-      "year": 2020,
-      "month": 1
     }
   ],
   "labValues": [
@@ -237,50 +301,6 @@
       "refLimitLow": 3.5,
       "refLimitUp": 3.5,
       "isOutsideRef": null
-    }
-  ],
-  "toxicities": [
-    {
-      "name": "Dysphagia",
-      "categories": [
-        "Neuro"
-      ],
-      "evaluatedDate": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
-      "source": "EHR",
-      "grade": 5,
-      "endDate": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      }
-    }
-  ],
-  "intolerances": [
-    {
-      "name": "MORFINE",
-      "doids": [],
-      "category": "Medication",
-      "subcategories": [],
-      "type": null,
-      "clinicalStatus": "Active",
-      "verificationStatus": "Confirmed",
-      "criticality": "Unknown",
-      "treatmentCategories": []
-    },
-    {
-      "name": "Nikkel",
-      "doids": [],
-      "category": "Other",
-      "subcategories": [],
-      "type": null,
-      "clinicalStatus": "Active",
-      "verificationStatus": "Confirmed",
-      "criticality": "Unknown",
-      "treatmentCategories": []
     }
   ],
   "surgeries": [

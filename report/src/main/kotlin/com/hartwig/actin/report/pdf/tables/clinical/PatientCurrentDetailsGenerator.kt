@@ -97,15 +97,15 @@ class PatientCurrentDetailsGenerator(
     }
 
     private fun complications(record: PatientRecord): String {
-        val complications = record.complications
-        val hasComplications = record.clinicalStatus.hasComplications == true
-        if (complications == null) {
-            return if (hasComplications) "Yes (complication details unknown)" else "Unknown"
-        }
-        val complicationSummary = complications.joinToString(Formats.COMMA_SEPARATOR) { complication ->
+        val complicationSummary = record.complications.joinToString(Formats.COMMA_SEPARATOR) { complication ->
             complication.name + (toDateString(complication.year, complication.month)?.let { " ($it)" } ?: "")
         }
-        return Formats.valueOrDefault(complicationSummary, if (hasComplications) "Yes (complication details unknown)" else "None")
+        val defaultValue = when (record.clinicalStatus.hasComplications) {
+            true -> "Yes (complication details unknown)"
+            false -> "None"
+            else -> "Unknown"
+        }
+        return Formats.valueOrDefault(complicationSummary, defaultValue)
     }
 
     private fun toDateString(maybeYear: Int?, maybeMonth: Int?): String? {
@@ -116,9 +116,7 @@ class PatientCurrentDetailsGenerator(
 
     private fun allergies(intolerances: List<Intolerance>): String {
         val intoleranceSummary = intolerances.filter { !it.name.equals("none", ignoreCase = true) }
-            .joinToString(Formats.COMMA_SEPARATOR) {
-                it.name + if (it.category?.isNotEmpty() == true) " (${it.category})" else ""
-            }
+            .joinToString(Formats.COMMA_SEPARATOR) { it.name }
         return Formats.valueOrDefault(intoleranceSummary, "None")
     }
 

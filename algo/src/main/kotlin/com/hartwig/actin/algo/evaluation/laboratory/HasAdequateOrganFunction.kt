@@ -1,19 +1,19 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
-import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format
-import com.hartwig.actin.algo.othercondition.OtherConditionSelector
+import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.clinical.interpretation.LabInterpreter
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.LabValue
-import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.icd.IcdModel
 import java.time.LocalDate
 
-class HasAdequateOrganFunction(private val minValidDate: LocalDate, private val doidModel: DoidModel) : EvaluationFunction {
+class HasAdequateOrganFunction(private val minValidDate: LocalDate, private val icdModel: IcdModel,) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val interpretation = LabInterpreter.interpret(record.labValues)
@@ -54,24 +54,22 @@ class HasAdequateOrganFunction(private val minValidDate: LocalDate, private val 
             .filter { it.second == LabEvaluation.LabEvaluationResult.CANNOT_BE_DETERMINED }
             .map { it.first }
 
-        val cardiovascularHistory = OtherConditionSelector.selectConditionsMatchingDoid(
-            record.priorOtherConditions,
-            DoidConstants.CARDIOVASCULAR_DISEASE_DOID,
-            doidModel
-        )
+        val cardiovascularHistory = icdModel.findInstancesMatchingAnyIcdCode(
+            record.comorbidities, setOf(IcdCode(IcdConstants.CIRCULATORY_SYSTEM_DISEASE_CHAPTER))
+        ).fullMatches
 
         val messageStart = "Possible inadequate organ function"
 
         return when {
             valuesUnderLowerLimit.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "$messageStart (${Format.concatWithCommaAndAnd(valuesUnderLowerLimit.map { it.first.display })} below LLN)"
+                    "$messageStart (${Format.concat(valuesUnderLowerLimit.map { it.first.display })} below LLN)"
                 )
             }
 
             valuesAboveUpperLimit.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "$messageStart (${Format.concatWithCommaAndAnd(valuesAboveUpperLimit.map { it.first.display() })} above ULN)"
+                    "$messageStart (${Format.concat(valuesAboveUpperLimit.map { it.first.display() })} above ULN)"
                 )
             }
 
@@ -84,7 +82,7 @@ class HasAdequateOrganFunction(private val minValidDate: LocalDate, private val 
             undeterminedLabValues.isNotEmpty() -> {
                 EvaluationFactory.recoverableUndetermined(
                     "Undetermined if adequate organ function " +
-                            "(lab value(s) (${Format.concatWithCommaAndAnd(undeterminedLabValues.map { it.display })}) undetermined)"
+                            "(lab value(s) (${Format.concat(undeterminedLabValues.map { it.display })}) undetermined)"
                 )
             }
 

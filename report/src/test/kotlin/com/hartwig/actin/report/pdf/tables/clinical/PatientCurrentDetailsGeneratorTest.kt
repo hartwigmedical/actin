@@ -2,16 +2,17 @@ package com.hartwig.actin.report.pdf.tables.clinical
 
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.clinical.Gender
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.PatientDetails
 import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.SurgeryStatus
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.report.pdf.tables.clinical.CellTestUtil.extractTextFromCell
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.Test
 
 private const val KEY_WIDTH = 100f
 private const val VALUE_WIDTH = 200f
@@ -73,7 +74,7 @@ class PatientCurrentDetailsGeneratorTest {
     @Test
     fun `Should include toxicities with known sufficient grade that were unresolved as of reference date`() {
         val patientRecord = minimalPatientRecord.copy(
-            toxicities = listOf(
+            comorbidities = listOf(
                 toxicity("Toxicity 1", null, 3),
                 toxicity("Toxicity 2", referenceDate.plusMonths(1), 2),
                 toxicity("Toxicity 3", referenceDate.minusDays(5), 2),
@@ -91,5 +92,5 @@ class PatientCurrentDetailsGeneratorTest {
     }
 
     private fun toxicity(name: String, endDate: LocalDate?, grade: Int?) =
-        Toxicity(name, emptySet(), referenceDate.minusMonths(1), ToxicitySource.EHR, grade, endDate)
+        Toxicity(name, setOf(IcdCode("icdCode")), referenceDate.minusMonths(1), ToxicitySource.EHR, grade, endDate)
 }

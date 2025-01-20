@@ -18,7 +18,7 @@ class HasPreviouslyParticipatedInTrial(private val acronym: String? = null) : Ev
             trialEntries.any { it.trialAcronym == null } -> {
                 EvaluationFactory.undetermined("Previous trial participation but unknown if trial$acronymString")
             }
-           
+
             else -> {
                 EvaluationFactory.fail("Has not participated in trial$acronymString")
             }

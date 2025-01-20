@@ -133,7 +133,7 @@
     }
   ],
   "priorSecondPrimaries": [],
-  "priorOtherConditions": [
+  "comorbidities": [
     {
       "name": "Cerebrovascular accident",
       "year": 2019,
@@ -142,17 +142,16 @@
         "3526"
       ],
       "category": "Cerebrovascular disease",
-      "isContraindicationForTherapy": true
-    }
-  ],
-  "complications": [
+      "comorbidityClass": "OTHER_CONDITION"
+    },
     {
       "name": "Pleural effusion",
       "categories": [
         "Pleural effusion"
       ],
       "year": 2023,
-      "month": 1
+      "month": 1,
+      "comorbidityClass": "COMPLICATION"
     }
   ],
   "labValues": [
@@ -160,7 +159,7 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 1
+        "day": 10
       },
       "code": "ALAT",
       "name": "ALAT",
@@ -175,7 +174,7 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 1
+        "day": 10
       },
       "code": "ASAT",
       "name": "ASAT",
@@ -190,7 +189,7 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 1
+        "day": 10
       },
       "code": "TBIL",
       "name": "total bilirubin",
@@ -205,7 +204,7 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 1
+        "day": 10
       },
       "code": "ALP",
       "name": "alkaline phosphatase",
@@ -220,7 +219,7 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 1
+        "day": 10
       },
       "code": "Hb",
       "name": "hemoglobin",
@@ -235,7 +234,7 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 1
+        "day": 10
       },
       "code": "LEUKO-ABS",
       "name": "absolute leukocyte count",
@@ -250,7 +249,7 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 1
+        "day": 10
       },
       "code": "THROMBO-ABS",
       "name": "absolute thrombocyte count",
@@ -265,7 +264,7 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 1
+        "day": 10
       },
       "code": "LYMPHO-ABS",
       "name": "absolute lymphocyte count eDA",
@@ -280,7 +279,7 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 1
+        "day": 10
       },
       "code": "NEUTRO-ABS",
       "name": "absolute neutrophil count eDA",
@@ -295,7 +294,7 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 1
+        "day": 10
       },
       "code": "CREA",
       "name": "creatinine",
@@ -310,7 +309,7 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 1
+        "day": 10
       },
       "code": "ALP",
       "name": "alkaline phosphatase",
@@ -325,7 +324,7 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 1
+        "day": 10
       },
       "code": "APTT",
       "name": "APTT",
@@ -340,7 +339,7 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 1
+        "day": 10
       },
       "code": "POCT_INR",
       "name": "POCT INR",
@@ -355,7 +354,7 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 1
+        "day": 10
       },
       "code": "PT",
       "name": "PT",
@@ -367,8 +366,6 @@
       "isOutsideRef": false
     }
   ],
-  "toxicities": [],
-  "intolerances": [],
   "surgeries": [],
   "bodyWeights": [
     {
@@ -616,12 +613,12 @@
               "event": "TP53 R273H",
               "driverLikelihood": "HIGH",
               "evidence": {
-                "externalEligibleTrials": [
+                "eligibleTrials": [
                   {
                     "title": "TP53-TRIAL",
                     "countries": [
                       {
-                        "name": "NETHERLANDS",
+                        "country": "NETHERLANDS",
                         "hospitalsPerCity": {
                           "Tilburg": [
                             {
@@ -632,7 +629,7 @@
                         }
                       },
                       {
-                        "name": "GERMANY",
+                        "country": "GERMANY",
                         "hospitalsPerCity": {
                           "Stuttgart": [
                             {
@@ -644,15 +641,27 @@
                     ],
                     "url": "https://hartwigmedicalfoundation.nl",
                     "nctId": "NCT00000026",
-                    "isCategoryEvent": true,
-                    "sourceEvent": "TP53 mutations",
+                    "molecularMatches": [
+                      {
+                        "sourceDate": {
+                          "year": 2015,
+                          "month": 1,
+                          "day": 1
+                        },
+                        "sourceEvent": "TP53 mutations",
+                        "isCategoryEvent": true
+                      }
+                    ],
                     "evidenceLevelDetails": "CLINICAL_STUDY",
-                    "applicableCancerType": {
-                      "cancerType": "Lung cancer",
-                      "excludedCancerTypes": []
-                    }
+                    "applicableCancerTypes": [
+                      {
+                        "matchedCancerType": "Lung cancer",
+                        "excludedCancerSubTypes": []
+                      }
+                    ]
                   }
-                ]
+                ],
+                "treatmentEvidence": []
               },
               "gene": "TP53",
               "geneRole": "TSG",
@@ -685,12 +694,12 @@
               "event": "SMARCA4 T910M",
               "driverLikelihood": "HIGH",
               "evidence": {
-                "externalEligibleTrials": [
+                "eligibleTrials": [
                   {
                     "title": "SMARCA4-TRIAL",
                     "countries": [
                       {
-                        "name": "NETHERLANDS",
+                        "country": "NETHERLANDS",
                         "hospitalsPerCity": {
                           "Tilburg": [
                             {
@@ -701,11 +710,12 @@
                         }
                       },
                       {
-                        "name": "GERMANY",
+                        "country": "GERMANY",
                         "hospitalsPerCity": {
                           "Stuttgart": [
                             {
-                              "name": "Robert-Bosch-Krankenhaus - Klinik Schillerhoehe"
+                              "name": "Robert-Bosch-Krankenhaus - Klinik Schillerhoehe",
+                              "isChildrensHospital": false
                             }
                           ]
                         }
@@ -713,15 +723,27 @@
                     ],
                     "url": "https://hartwigmedicalfoundation.nl",
                     "nctId": "NCT00000036",
-                    "isCategoryEvent": true,
-                    "sourceEvent": "SMARCA4 mutations",
+                    "molecularMatches": [
+                      {
+                        "sourceDate": {
+                          "year": 2015,
+                          "month": 1,
+                          "day": 1
+                        },
+                        "sourceEvent": "SMARCA4 mutations",
+                        "isCategoryEvent": true
+                      }
+                    ],
                     "evidenceLevelDetails": "CLINICAL_STUDY",
-                    "applicableCancerType": {
-                      "cancerType": "Lung cancer",
-                      "excludedCancerTypes": []
-                    }
+                    "applicableCancerTypes": [
+                      {
+                        "matchedCancerType": "Lung cancer",
+                        "excludedCancerSubTypes": []
+                      }
+                    ]
                   }
-                ]
+                ],
+                "treatmentEvidence": []
               },
               "gene": "SMARCA4",
               "geneRole": "TSG",

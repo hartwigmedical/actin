@@ -1,8 +1,10 @@
 package com.hartwig.actin.datamodel.clinical
 
 data class Complication(
-    val name: String,
-    val categories: Set<String>,
-    val year: Int?,
-    val month: Int?
-)
+    override val name: String,
+    override val year: Int? = null,
+    override val month: Int? = null,
+    override val icdCodes: Set<IcdCode>,
+): Comorbidity {
+    override val comorbidityClass = ComorbidityClass.COMPLICATION
+}

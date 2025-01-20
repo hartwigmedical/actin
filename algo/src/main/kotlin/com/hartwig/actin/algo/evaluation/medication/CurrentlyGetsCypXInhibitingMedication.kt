@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.Format
+import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithCommaAndAnd
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.DrugInteraction
@@ -22,29 +22,25 @@ class CurrentlyGetsCypXInhibitingMedication(private val selector: MedicationSele
         return when {
             cypInhibitorsReceived.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass(
-                    "Patient currently gets CYP$termToFind inhibiting medication: ${Format.concatLowercaseWithAnd(cypInhibitorsReceived)}",
-                    "CYP$termToFind inhibiting medication use: ${Format.concatLowercaseWithAnd(cypInhibitorsReceived)}"
+                    "CYP$termToFind inhibiting medication use (${concatLowercaseWithCommaAndAnd(cypInhibitorsReceived)})"
                 )
             }
 
             termToFind in MedicationConstants.UNDETERMINED_CYP_STRING -> {
                 EvaluationFactory.undetermined(
-                    "Undetermined if patient currently gets CYP$termToFind inhibiting medication",
-                    "Undetermined CYP$termToFind inhibiting medication use"
+                    "CYP$termToFind inhibiting medication use undetermined"
                 )
             }
 
             cypInhibitorsPlanned.isNotEmpty() -> {
                 EvaluationFactory.recoverableWarn(
-                    "Patient plans to get CYP$termToFind inhibiting medication: ${Format.concatLowercaseWithAnd(cypInhibitorsPlanned)}",
-                    "Planned CYP$termToFind inhibiting medication use: ${Format.concatLowercaseWithAnd(cypInhibitorsPlanned)}"
+                    "Planned CYP$termToFind inhibiting medication use (${concatLowercaseWithCommaAndAnd(cypInhibitorsPlanned)})"
                 )
             }
 
             else -> {
                 EvaluationFactory.recoverableFail(
-                    "Patient currently does not get CYP$termToFind inhibiting medication ",
-                    "No CYP$termToFind inhibiting medication use "
+                    "No CYP$termToFind inhibiting medication use"
                 )
             }
         }

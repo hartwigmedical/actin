@@ -1,15 +1,14 @@
 package com.hartwig.actin.datamodel.clinical
 
-import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
-
 data class Intolerance(
-    val name: String,
-    val doids: Set<String>,
-    val category: String? = null,
-    val subcategories: Set<String>? = null,
+    override val name: String,
+    override val icdCodes: Set<IcdCode>,
     val type: String? = null,
     val clinicalStatus: String? = null,
     val verificationStatus: String? = null,
     val criticality: String? = null,
-    val treatmentCategories: Set<TreatmentCategory>? = null
-)
+    override val year: Int? = null,
+    override val month: Int? = null
+): Comorbidity {
+    override val comorbidityClass = ComorbidityClass.INTOLERANCE
+}

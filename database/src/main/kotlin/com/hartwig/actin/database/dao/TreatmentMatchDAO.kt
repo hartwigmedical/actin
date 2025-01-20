@@ -123,14 +123,10 @@ class TreatmentMatchDAO(private val context: DSLContext) {
                 Tables.EVALUATION.RECOVERABLE,
                 Tables.EVALUATION.INCLUSIONMOLECULAREVENTS,
                 Tables.EVALUATION.EXCLUSIONMOLECULAREVENTS,
-                Tables.EVALUATION.PASSSPECIFICMESSAGES,
-                Tables.EVALUATION.PASSGENERALMESSAGES,
-                Tables.EVALUATION.WARNSPECIFICMESSAGES,
-                Tables.EVALUATION.WARNGENERALMESSAGES,
-                Tables.EVALUATION.UNDETERMINEDSPECIFICMESSAGES,
-                Tables.EVALUATION.UNDETERMINEDGENERALMESSAGES,
-                Tables.EVALUATION.FAILSPECIFICMESSAGES,
-                Tables.EVALUATION.FAILGENERALMESSAGES
+                Tables.EVALUATION.PASSMESSAGES,
+                Tables.EVALUATION.WARNMESSAGES,
+                Tables.EVALUATION.UNDETERMINEDMESSAGES,
+                Tables.EVALUATION.FAILMESSAGES
             )
                 .values(
                     trialMatchId,
@@ -140,14 +136,10 @@ class TreatmentMatchDAO(private val context: DSLContext) {
                     evaluation.recoverable,
                     DataUtil.concat(evaluation.inclusionMolecularEvents),
                     DataUtil.concat(evaluation.exclusionMolecularEvents),
-                    DataUtil.concat(evaluation.passSpecificMessages),
-                    DataUtil.concat(evaluation.passGeneralMessages),
-                    DataUtil.concat(evaluation.warnSpecificMessages),
-                    DataUtil.concat(evaluation.warnGeneralMessages),
-                    DataUtil.concat(evaluation.undeterminedSpecificMessages),
-                    DataUtil.concat(evaluation.undeterminedGeneralMessages),
-                    DataUtil.concat(evaluation.failSpecificMessages),
-                    DataUtil.concat(evaluation.failGeneralMessages)
+                    DataUtil.concat(evaluation.passMessages),
+                    DataUtil.concat(evaluation.warnMessages),
+                    DataUtil.concat(evaluation.undeterminedMessages),
+                    DataUtil.concat(evaluation.failMessages)
                 )
                 .execute()
         }
@@ -248,14 +240,10 @@ class TreatmentMatchDAO(private val context: DSLContext) {
             sequenceOf(
                 Tables.EVALUATION.INCLUSIONMOLECULAREVENTS to evaluation.inclusionMolecularEvents,
                 Tables.EVALUATION.EXCLUSIONMOLECULAREVENTS to evaluation.exclusionMolecularEvents,
-                Tables.EVALUATION.PASSSPECIFICMESSAGES to evaluation.passSpecificMessages,
-                Tables.EVALUATION.PASSGENERALMESSAGES to evaluation.passGeneralMessages,
-                Tables.EVALUATION.WARNSPECIFICMESSAGES to evaluation.warnSpecificMessages,
-                Tables.EVALUATION.WARNGENERALMESSAGES to evaluation.warnGeneralMessages,
-                Tables.EVALUATION.UNDETERMINEDSPECIFICMESSAGES to evaluation.undeterminedSpecificMessages,
-                Tables.EVALUATION.UNDETERMINEDGENERALMESSAGES to evaluation.undeterminedGeneralMessages,
-                Tables.EVALUATION.FAILSPECIFICMESSAGES to evaluation.failSpecificMessages,
-                Tables.EVALUATION.FAILGENERALMESSAGES to evaluation.failGeneralMessages
+                Tables.EVALUATION.PASSMESSAGES to evaluation.passMessages,
+                Tables.EVALUATION.WARNMESSAGES to evaluation.warnMessages,
+                Tables.EVALUATION.UNDETERMINEDMESSAGES to evaluation.undeterminedMessages,
+                Tables.EVALUATION.FAILMESSAGES to evaluation.failMessages
             ).forEach { (column, collection) -> dbRecord.set(column, DataUtil.concat(collection)) }
 
             dbRecord

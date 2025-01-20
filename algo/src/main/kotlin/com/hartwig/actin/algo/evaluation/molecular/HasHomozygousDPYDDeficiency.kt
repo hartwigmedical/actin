@@ -11,15 +11,18 @@ class HasHomozygousDPYDDeficiency(maxTestAge: LocalDate? = null) : MolecularEval
 
     override fun evaluate(molecular: MolecularRecord): Evaluation {
         val pharmaco = molecular.pharmaco.firstOrNull { it.gene == PharmacoGene.DPYD }
-            ?: return EvaluationFactory.undetermined("DPYD haplotype is undetermined", "DPYD haplotype undetermined")
+            ?: return EvaluationFactory.undetermined("DPYD haplotype undetermined")
 
         return when {
             isHomozygousDeficient(pharmaco) -> {
-                EvaluationFactory.pass("Patient is homozygous DPYD deficient", inclusionEvents = setOf("DPYD homozygous deficient"))
+                EvaluationFactory.pass(
+                    "Homozygous DPYD deficiency detected",
+                    inclusionEvents = setOf("DPYD homozygous deficient")
+                )
             }
 
             else -> {
-                EvaluationFactory.fail("Patient is not homozygous DPYD deficient")
+                EvaluationFactory.fail("Is not homozygous DPYD deficient")
             }
         }
     }

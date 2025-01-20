@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.Format
+import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithCommaAndAnd
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.DrugInteraction
@@ -21,23 +21,18 @@ class CurrentlyGetsAnyCypInhibitingOrInducingMedication(private val selector: Me
         return when {
             activeCypMedications.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass(
-                    "Patient currently gets CYP inhibiting/inducing medication: ${Format.concatLowercaseWithAnd(activeCypMedications)}",
-                    "CYP inhibiting/inducing medication use: ${Format.concatLowercaseWithAnd(activeCypMedications)}"
+                    "CYP inhibiting or inducing medication use (${concatLowercaseWithCommaAndAnd(activeCypMedications)})"
                 )
             }
 
             plannedCypMedications.isNotEmpty() -> {
                 EvaluationFactory.recoverableWarn(
-                    "Patient plans to get CYP inhibiting/inducing medication: ${Format.concatLowercaseWithAnd(plannedCypMedications)}",
-                    "Planned CYP inhibiting/inducing medication: ${Format.concatLowercaseWithAnd(plannedCypMedications)}"
+                    "Planned CYP inhibiting or inducing medication (${concatLowercaseWithCommaAndAnd(plannedCypMedications)})"
                 )
             }
 
             else -> {
-                EvaluationFactory.recoverableFail(
-                    "Patient currently does not get CYP inhibiting/inducing medication ",
-                    "No CYP inhibiting/inducing medication use "
-                )
+                EvaluationFactory.recoverableFail("No CYP inhibiting or inducing medication use")
             }
         }
     }

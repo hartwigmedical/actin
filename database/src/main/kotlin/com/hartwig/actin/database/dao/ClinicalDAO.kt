@@ -11,9 +11,9 @@ import com.hartwig.actin.datamodel.clinical.ECG
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.LabValue
 import com.hartwig.actin.datamodel.clinical.Medication
+import com.hartwig.actin.datamodel.clinical.OtherCondition
 import com.hartwig.actin.datamodel.clinical.PatientDetails
 import com.hartwig.actin.datamodel.clinical.PriorIHCTest
-import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
 import com.hartwig.actin.datamodel.clinical.PriorSecondPrimary
 import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.Toxicity
@@ -34,7 +34,7 @@ internal class ClinicalDAO(private val context: DSLContext) {
         context.truncate(Tables.CLINICALSTATUS).execute()
         context.truncate(Tables.TREATMENTHISTORYENTRY).execute()
         context.truncate(Tables.PRIORSECONDPRIMARY).execute()
-        context.truncate(Tables.PRIOROTHERCONDITION).execute()
+        context.truncate(Tables.OTHERCONDITION).execute()
         context.truncate(Tables.PRIORIHCTEST).execute()
         context.truncate(Tables.COMPLICATION).execute()
         context.truncate(Tables.LABVALUE).execute()
@@ -55,7 +55,7 @@ internal class ClinicalDAO(private val context: DSLContext) {
         writeClinicalStatus(patientId, record.clinicalStatus)
         writeTreatmentHistoryEntries(patientId, record.oncologicalHistory)
         writePriorSecondPrimaries(patientId, record.priorSecondPrimaries)
-        writePriorOtherConditions(patientId, record.priorOtherConditions)
+        writeOtherConditions(patientId, record.otherConditions)
         writePriorMolecularTests(patientId, record.priorIHCTests)
         writeComplications(patientId, record.complications)
         writeLabValues(patientId, record.labValues)
@@ -283,26 +283,22 @@ internal class ClinicalDAO(private val context: DSLContext) {
         }
     }
 
-    private fun writePriorOtherConditions(patientId: String, priorOtherConditions: List<PriorOtherCondition>) {
-        for (priorOtherCondition in priorOtherConditions) {
+    private fun writeOtherConditions(patientId: String, otherConditions: List<OtherCondition>) {
+        for (otherCondition in otherConditions) {
             context.insertInto(
-                Tables.PRIOROTHERCONDITION,
-                Tables.PRIOROTHERCONDITION.PATIENTID,
-                Tables.PRIOROTHERCONDITION.NAME,
-                Tables.PRIOROTHERCONDITION.YEAR,
-                Tables.PRIOROTHERCONDITION.MONTH,
-                Tables.PRIOROTHERCONDITION.DOIDS,
-                Tables.PRIOROTHERCONDITION.CATEGORY,
-                Tables.PRIOROTHERCONDITION.ISCONTRAINDICATIONFORTHERAPY
+                Tables.OTHERCONDITION,
+                Tables.OTHERCONDITION.PATIENTID,
+                Tables.OTHERCONDITION.NAME,
+                Tables.OTHERCONDITION.ICDCODES,
+                Tables.OTHERCONDITION.YEAR,
+                Tables.OTHERCONDITION.MONTH
             )
                 .values(
                     patientId,
-                    priorOtherCondition.name,
-                    priorOtherCondition.year,
-                    priorOtherCondition.month,
-                    DataUtil.concat(priorOtherCondition.doids),
-                    priorOtherCondition.category,
-                    priorOtherCondition.isContraindicationForTherapy
+                    otherCondition.name,
+                    DataUtil.concatObjects(otherCondition.icdCodes),
+                    otherCondition.year,
+                    otherCondition.month
                 )
                 .execute()
         }
@@ -347,14 +343,14 @@ internal class ClinicalDAO(private val context: DSLContext) {
                         Tables.COMPLICATION,
                         Tables.COMPLICATION.PATIENTID,
                         Tables.COMPLICATION.NAME,
-                        Tables.COMPLICATION.CATEGORIES,
+                        Tables.COMPLICATION.ICDCODES,
                         Tables.COMPLICATION.YEAR,
                         Tables.COMPLICATION.MONTH
                     )
                         .values(
                             patientId,
                             complication.name,
-                            DataUtil.concat(complication.categories),
+                            DataUtil.concatObjects(complication.icdCodes),
                             complication.year,
                             complication.month
                         )
@@ -401,7 +397,7 @@ internal class ClinicalDAO(private val context: DSLContext) {
                 Tables.TOXICITY,
                 Tables.TOXICITY.PATIENTID,
                 Tables.TOXICITY.NAME,
-                Tables.TOXICITY.CATEGORIES,
+                Tables.TOXICITY.ICDCODES,
                 Tables.TOXICITY.EVALUATEDDATE,
                 Tables.TOXICITY.SOURCE,
                 Tables.TOXICITY.GRADE
@@ -409,7 +405,7 @@ internal class ClinicalDAO(private val context: DSLContext) {
                 .values(
                     patientId,
                     toxicity.name,
-                    DataUtil.concat(toxicity.categories),
+                    DataUtil.concatObjects(toxicity.icdCodes),
                     toxicity.evaluatedDate,
                     toxicity.source.display(),
                     toxicity.grade
@@ -424,9 +420,7 @@ internal class ClinicalDAO(private val context: DSLContext) {
                 Tables.INTOLERANCE,
                 Tables.INTOLERANCE.PATIENTID,
                 Tables.INTOLERANCE.NAME,
-                Tables.INTOLERANCE.DOIDS,
-                Tables.INTOLERANCE.CATEGORY,
-                Tables.INTOLERANCE.SUBCATEGORIES,
+                Tables.INTOLERANCE.ICDCODES,
                 Tables.INTOLERANCE.TYPE,
                 Tables.INTOLERANCE.CLINICALSTATUS,
                 Tables.INTOLERANCE.VERIFICATIONSTATUS,
@@ -435,9 +429,7 @@ internal class ClinicalDAO(private val context: DSLContext) {
                 .values(
                     patientId,
                     intolerance.name,
-                    DataUtil.concat(intolerance.doids),
-                    intolerance.category,
-                    DataUtil.concat(intolerance.subcategories),
+                    DataUtil.concatObjects(intolerance.icdCodes),
                     intolerance.type,
                     intolerance.clinicalStatus,
                     intolerance.verificationStatus,

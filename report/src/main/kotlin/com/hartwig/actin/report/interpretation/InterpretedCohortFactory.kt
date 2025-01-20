@@ -97,13 +97,13 @@ object InterpretedCohortFactory {
         return evaluationMap.values.flatMap { evaluation ->
             when {
                 evaluation.result == EvaluationResult.FAIL && evaluation.recoverable ->
-                    evaluation.failGeneralMessages
+                    evaluation.failMessages
 
                 evaluation.result == EvaluationResult.WARN ->
-                    evaluation.warnGeneralMessages
+                    evaluation.warnMessages
 
                 evaluation.result == EvaluationResult.UNDETERMINED && !evaluation.recoverable ->
-                    evaluation.undeterminedGeneralMessages
+                    evaluation.undeterminedMessages
 
                 else -> emptySet()
             }
@@ -115,14 +115,14 @@ object InterpretedCohortFactory {
     ) = if (!filterOnSOCExhaustionAndTumorType) matches else {
         matches.filter {
             val trialWarningsAndFails = extractWarnings(evaluations(it)) + extractFails(evaluations(it))
-            !trialWarningsAndFails.any { trialWarningOrFail -> trialWarningOrFail.contains("Patient has not exhausted SOC") }
+            !trialWarningsAndFails.any { trialWarningOrFail -> trialWarningOrFail.contains("Has not exhausted SOC") }
                     && "Tumor type" !in trialWarningsAndFails
         }
     }
 
     private fun extractFails(evaluations: Map<Eligibility, Evaluation>): Set<String> {
         return evaluations.values.filter { it.result == EvaluationResult.FAIL && !it.recoverable }
-            .flatMap(Evaluation::failGeneralMessages)
+            .flatMap(Evaluation::failMessages)
             .toSet()
     }
 }

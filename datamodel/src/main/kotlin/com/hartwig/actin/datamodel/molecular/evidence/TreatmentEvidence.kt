@@ -11,4 +11,4 @@ data class TreatmentEvidence(
     val evidenceYear: Int,
     val efficacyDescription: String
 )
-
+ 

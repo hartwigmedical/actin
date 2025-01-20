@@ -1,21 +1,21 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
-import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory
+import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.LabValue
-import com.hartwig.actin.doid.TestDoidModelFactory
-import org.junit.Test
+import com.hartwig.actin.icd.TestIcdFactory
 import java.time.LocalDate
+import org.junit.Test
 
 private val VALID_DATE = LocalDate.of(2024, 12, 1)
 
 class HasAdequateOrganFunctionTest {
 
-    private val function = HasAdequateOrganFunction(VALID_DATE, TestDoidModelFactory.createMinimalTestDoidModel())
+    private val function = HasAdequateOrganFunction(VALID_DATE, TestIcdFactory.createTestModel())
     private val upperLimitLabMeasurementList = listOf(
         LabMeasurement.LACTATE_DEHYDROGENASE,
         LabMeasurement.TOTAL_BILIRUBIN,
@@ -31,11 +31,11 @@ class HasAdequateOrganFunctionTest {
     )
 
     @Test
-    fun `Should evaluate to undetermined for no lab values and no prior conditions`() {
+    fun `Should evaluate to undetermined for no lab values and no comorbidities`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                TestPatientFactory.createMinimalTestWGSPatientRecord().copy(labValues = emptyList(), priorOtherConditions = emptyList())
+                TestPatientFactory.createMinimalTestWGSPatientRecord().copy(labValues = emptyList(), comorbidities = emptyList())
             )
         )
     }
@@ -53,11 +53,11 @@ class HasAdequateOrganFunctionTest {
 
     @Test
     fun `Should pass when lab values within normal range and no cardiovascular disease present`() {
-        val condition = OtherConditionTestFactory.priorOtherCondition(doids = setOf(DoidConstants.STOMACH_DISEASE_DOID))
+        val condition = OtherConditionTestFactory.otherCondition(icdMainCode = IcdConstants.PNEUMOTHORAX_CODE)
         val record = LabTestFactory.withLabValues(
             upperLimitLabMeasurementList.map { createLabValue(it, withinLimits = true, evaluateAgainstLLN = false) } +
                     lowerLimitLabMeasurementList.map { createLabValue(it, withinLimits = true, evaluateAgainstLLN = true) }
-        ).copy(priorOtherConditions = listOf(condition))
+        ).copy(comorbidities = listOf(condition))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
     }
 
@@ -84,8 +84,8 @@ class HasAdequateOrganFunctionTest {
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                OtherConditionTestFactory.withPriorOtherCondition(
-                    OtherConditionTestFactory.priorOtherCondition(doids = setOf(DoidConstants.CARDIOVASCULAR_DISEASE_DOID))
+                OtherConditionTestFactory.withOtherCondition(
+                    OtherConditionTestFactory.otherCondition(icdMainCode = IcdConstants.CIRCULATORY_SYSTEM_DISEASE_CHAPTER)
                 )
             )
         )

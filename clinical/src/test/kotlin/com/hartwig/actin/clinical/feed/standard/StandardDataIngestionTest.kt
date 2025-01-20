@@ -19,9 +19,9 @@ import com.hartwig.actin.clinical.feed.standard.extraction.StandardIntolerancesE
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardLabValuesExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardMedicationExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardOncologicalHistoryExtractor
+import com.hartwig.actin.clinical.feed.standard.extraction.StandardOtherConditionsExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPatientDetailsExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorIHCTestExtractor
-import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorOtherConditionsExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorPrimariesExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardPriorSequencingTestExtractor
 import com.hartwig.actin.clinical.feed.standard.extraction.StandardSurgeryExtractor
@@ -32,6 +32,7 @@ import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.doid.config.DoidManualConfig
+import com.hartwig.actin.icd.TestIcdFactory
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -55,7 +56,8 @@ class StandardDataIngestionTest {
                     "5082" to CurationDoidValidator.DISEASE_DOID,
                     "11335" to CurationDoidValidator.DISEASE_DOID,
                     "0060500" to CurationDoidValidator.DISEASE_DOID,
-                    "0081062" to CurationDoidValidator.DISEASE_DOID
+                    "0081062" to CurationDoidValidator.DISEASE_DOID,
+                    "0040046" to CurationDoidValidator.DISEASE_DOID
                 ),
                 emptySet()
             )
@@ -64,6 +66,7 @@ class StandardDataIngestionTest {
         val curationDatabase = CurationDatabaseContext.create(
             CURATION_DIRECTORY,
             CurationDoidValidator(doidModel),
+            TestIcdFactory.createTestModel(),
             TestTreatmentDatabaseFactory.createProper()
         )
         val feed = StandardDataIngestion(
@@ -77,13 +80,10 @@ class StandardDataIngestionTest {
             surgeryExtractor = StandardSurgeryExtractor(curationDatabase.surgeryNameCuration),
             toxicityExtractor = StandardToxicityExtractor(curationDatabase.toxicityCuration),
             vitalFunctionsExtractor = StandardVitalFunctionsExtractor(),
-            priorOtherConditionsExtractor = StandardPriorOtherConditionsExtractor(
+            otherConditionsExtractor = StandardOtherConditionsExtractor(
                 curationDatabase.nonOncologicalHistoryCuration
             ),
-            intolerancesExtractor = StandardIntolerancesExtractor(
-                TestAtcFactory.createProperAtcModel(),
-                curationDatabase.intoleranceCuration
-            ),
+            intolerancesExtractor = StandardIntolerancesExtractor(curationDatabase.intoleranceCuration),
             complicationExtractor = StandardComplicationExtractor(curationDatabase.complicationCuration),
             treatmentHistoryExtractor = StandardOncologicalHistoryExtractor(
                 curationDatabase.treatmentHistoryEntryCuration
@@ -161,15 +161,6 @@ class StandardDataIngestionTest {
                         message = "Could not find laboratory translation for lab value with code 'Hb' and name 'Hemoglobine'"
                     )
                 ),
-            ),
-            CurationResult(
-                categoryName = "Intolerance",
-                requirements = listOf(
-                    CurationRequirement(
-                        feedInput = "MORFINE",
-                        message = "Could not find intolerance config for input 'MORFINE'"
-                    ), CurationRequirement(feedInput = "Nikkel", message = "Could not find intolerance config for input 'Nikkel'")
-                )
             ),
             CurationResult(
                 categoryName = "Surgery Name",

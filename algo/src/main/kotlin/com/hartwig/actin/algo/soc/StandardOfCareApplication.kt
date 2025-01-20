@@ -10,17 +10,20 @@ import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
+import com.hartwig.actin.icd.IcdModel
+import com.hartwig.actin.icd.serialization.CsvReader
+import com.hartwig.actin.icd.serialization.IcdDeserializer
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.FunctionInputResolver
+import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import kotlin.system.exitProcess
 
 class StandardOfCareApplication(private val config: StandardOfCareConfig) {
 
@@ -36,6 +39,11 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
         val doidModel: DoidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
+        LOGGER.info("Creating ICD-11 tree from file {}", config.icdTsv)
+        val icdNodes = IcdDeserializer.deserialize(CsvReader.readFromFile(config.icdTsv))
+        LOGGER.info(" Loaded {} nodes", icdNodes.size)
+        val icdModel = IcdModel.create(icdNodes)
+
         LOGGER.info("Creating ATC tree from file {}", config.atcTsv)
         val atcTree = AtcTree.createFromFile(config.atcTsv)
 
@@ -43,7 +51,7 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
 
         val referenceDateProvider = ReferenceDateProviderFactory.create(patient, config.runHistorically)
         val functionInputResolver = FunctionInputResolver(
-            doidModel, MolecularInputChecker.createAnyGeneValid(), treatmentDatabase, MedicationCategories.create(atcTree)
+            doidModel, icdModel, MolecularInputChecker.createAnyGeneValid(), treatmentDatabase, MedicationCategories.create(atcTree)
         )
         val configuration = EnvironmentConfiguration.create(config.overridesYaml).algo
         LOGGER.info(" Loaded algo config: $configuration")
@@ -51,6 +59,7 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
         val resources = RuleMappingResources(
             referenceDateProvider,
             doidModel,
+            icdModel,
             functionInputResolver,
             atcTree,
             treatmentDatabase,
@@ -64,7 +73,7 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
         requiredTreatments.forEach {
             val allMessages = it.evaluations.flatMap { evaluation ->
                 with(evaluation) {
-                    passGeneralMessages + warnGeneralMessages + undeterminedGeneralMessages
+                    passMessages + warnMessages + undeterminedMessages
                 }
             }
             LOGGER.debug("${it.treatmentCandidate.treatment.display()}: ${allMessages.joinToString(", ")}")

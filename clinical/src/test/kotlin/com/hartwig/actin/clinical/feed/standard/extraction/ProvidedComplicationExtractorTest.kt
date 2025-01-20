@@ -5,15 +5,16 @@ import com.hartwig.actin.clinical.curation.config.ComplicationConfig
 import com.hartwig.actin.clinical.feed.standard.EhrTestData
 import com.hartwig.actin.clinical.feed.standard.ProvidedComplication
 import com.hartwig.actin.datamodel.clinical.Complication
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 private const val COMPLICATION_NAME = "complication"
 private val EHR_START_DATE = LocalDate.of(2023, 6, 15)
-private val CURATED_COMPLICATION = Complication(COMPLICATION_NAME, emptySet(), EHR_START_DATE.year, EHR_START_DATE.monthValue)
+private val CURATED_COMPLICATION = Complication(COMPLICATION_NAME, EHR_START_DATE.year, EHR_START_DATE.monthValue, setOf(IcdCode("code")))
 
 class ProvidedComplicationExtractorTest {
     private val curationDb = mockk<CurationDatabase<ComplicationConfig>> {

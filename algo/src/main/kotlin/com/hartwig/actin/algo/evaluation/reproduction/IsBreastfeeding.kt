@@ -10,9 +10,9 @@ class IsBreastfeeding: EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return if (record.patient.gender == Gender.MALE) {
-            EvaluationFactory.fail("Patient is male thus won't be breastfeeding", "No breastfeeding")
+            EvaluationFactory.fail("No breastfeeding (is male)")
         } else {
-            EvaluationFactory.notEvaluated("It is assumed that patient won't be breastfeeding", "Assumed no breastfeeding")
+            EvaluationFactory.notEvaluated("Assumed that patient is not breastfeeding")
         }
     }
 }

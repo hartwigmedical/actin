@@ -1,51 +1,40 @@
 package com.hartwig.actin.algo.evaluation.othercondition
 
-import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.othercondition.OtherConditionSelector
+import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.clinical.PriorOtherCondition
-import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.datamodel.clinical.IcdCode
+import com.hartwig.actin.icd.IcdModel
 
-class HasInheritedPredispositionToBleedingOrThrombosis(private val doidModel: DoidModel) : EvaluationFunction {
+class HasInheritedPredispositionToBleedingOrThrombosis(private val icdModel: IcdModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val matchingDoid = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
-            .flatMap(PriorOtherCondition::doids)
-            .find {
-                doidModel.doidWithParents(it).any(DOID_CONSTANTS_INDICATING_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS::contains)
-            }
+        val icdMatchingComorbidities = icdModel.findInstancesMatchingAnyIcdCode(
+            record.comorbidities,
+            setOf(IcdCode(IcdConstants.HEREDITARY_THROMBOPHILIA_CODE), IcdCode(IcdConstants.HEREDITARY_BLEEDING_DISORDER_BLOCK))
+        ).fullMatches
 
-        val hasMatchingName = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
-            .any { it.name.lowercase().contains(NAME_INDICATING_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS.lowercase()) }
+        val hasMatchingName = NAME_INDICATING_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS.lowercase().let { query ->
+            record.otherConditions.any { it.name.lowercase().contains(query) }
+        }
 
         val baseMessage = "(typically) inherited predisposition to bleeding or thrombosis"
+        val conditionString = icdMatchingComorbidities.joinToString(", ") { it.name }
 
-        return if (matchingDoid != null) {
-            val matchingDoidTerm = doidModel.resolveTermForDoid(matchingDoid) ?: "DOID $matchingDoid"
-            EvaluationFactory.pass("Patient has $baseMessage: $matchingDoidTerm", "History of $baseMessage: $matchingDoidTerm")
+        return if (icdMatchingComorbidities.isNotEmpty()) {
+            EvaluationFactory.pass("Has history of $baseMessage: $conditionString")
         } else if (hasMatchingName) {
             EvaluationFactory.pass(
-                "Patient has $baseMessage: $NAME_INDICATING_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS",
-                "History of $baseMessage: $NAME_INDICATING_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS"
+                "Has history of $baseMessage: $NAME_INDICATING_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS"
             )
         } else {
-            EvaluationFactory.fail("Patient has no $baseMessage", "No history of $baseMessage")
+            EvaluationFactory.fail("No history of $baseMessage")
         }
     }
 
     companion object {
-        val DOID_CONSTANTS_INDICATING_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS = setOf(
-            DoidConstants.AUTOSOMAL_HEMOPHILIA_A_DOID,
-            DoidConstants.HEMOPHILIA_B_DOID,
-            DoidConstants.VON_WILLEBRANDS_DISEASE_DOID,
-            DoidConstants.FACTOR_V_DEFICIENCY_DOID,
-            DoidConstants.PROTEIN_C_DEFICIENCY_DOID,
-            DoidConstants.PROTEIN_S_DEFICIENCY_DOID,
-            DoidConstants.ANTITHROMBIN_III_DEFICIENCY_DOID
-        )
         const val NAME_INDICATING_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS = "Factor V Leiden"
     }
 }

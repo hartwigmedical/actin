@@ -43,13 +43,10 @@ object TestClinicalFactory {
             clinicalStatus = ClinicalStatus(),
             oncologicalHistory = emptyList(),
             priorSecondPrimaries = emptyList(),
-            priorOtherConditions = emptyList(),
+            comorbidities = emptyList(),
             priorIHCTests = emptyList(),
             priorSequencingTests = emptyList(),
-            complications = null,
             labValues = emptyList(),
-            toxicities = emptyList(),
-            intolerances = emptyList(),
             surgeries = emptyList(),
             bodyWeights = emptyList(),
             bodyHeights = emptyList(),
@@ -65,12 +62,9 @@ object TestClinicalFactory {
             clinicalStatus = createTestClinicalStatus(),
             oncologicalHistory = createTreatmentHistory(),
             priorSecondPrimaries = createTestPriorSecondPrimaries(),
-            priorOtherConditions = createTestPriorOtherConditions(),
+            comorbidities = createTestOtherConditions() + createTestComplications() + createTestToxicities() + createTestIntolerances(),
             priorIHCTests = createTestPriorMolecularTests(),
-            complications = createTestComplications(),
             labValues = createTestLabValues(),
-            toxicities = createTestToxicities(),
-            intolerances = createTestIntolerances(),
             surgeries = createTestSurgeries(),
             bodyWeights = createTestBodyWeights(),
             vitalFunctions = createTestVitalFunctions(),
@@ -275,23 +269,19 @@ object TestClinicalFactory {
         )
     }
 
-    private fun createTestPriorOtherConditions(): List<PriorOtherCondition> {
+    private fun createTestOtherConditions(): List<OtherCondition> {
         return listOf(
-            PriorOtherCondition(
+            OtherCondition(
                 name = "pancreatitis",
-                doids = setOf("4989"),
-                category = "Pancreas disease",
-                isContraindicationForTherapy = true,
                 year = null,
-                month = null
+                month = null,
+                icdCodes = setOf(IcdCode("DC31", null))
             ),
-            PriorOtherCondition(
+            OtherCondition(
                 name = "Coronary artery bypass graft (CABG)",
-                doids = setOf("3393"),
-                category = "Heart disease",
-                isContraindicationForTherapy = true,
                 year = 2023,
-                month = 10
+                month = 10,
+                icdCodes = setOf(IcdCode("QB50.1",  null))
             )
         )
     }
@@ -347,7 +337,7 @@ object TestClinicalFactory {
     }
 
     private fun createTestComplications(): List<Complication> {
-        return listOf(Complication(name = "Ascites", categories = setOf("Ascites"), year = null, month = null))
+        return listOf(Complication(name = "Ascites", year = null, month = null, icdCodes = setOf(IcdCode("1A01", null))))
     }
 
     private fun createTestLabValues(): List<LabValue> {
@@ -447,14 +437,14 @@ object TestClinicalFactory {
         return listOf(
             Toxicity(
                 name = "Nausea",
-                categories = setOf("Nausea"),
+                icdCodes = setOf(IcdCode("A01")),
                 evaluatedDate = FIXED_DATE.minusDays(DAYS_SINCE_TOXICITIES.toLong()),
                 source = ToxicitySource.EHR,
                 grade = 1
             ),
             Toxicity(
                 name = "Fatigue",
-                categories = setOf("Fatigue"),
+                icdCodes = setOf(IcdCode("A02")),
                 evaluatedDate = FIXED_DATE.minusDays(DAYS_SINCE_TOXICITIES.toLong()),
                 source = ToxicitySource.QUESTIONNAIRE,
                 grade = 2
@@ -466,14 +456,11 @@ object TestClinicalFactory {
         return listOf(
             Intolerance(
                 name = "Wasps",
-                category = "Environment",
+                icdCodes = setOf(IcdCode("icdCode", null)),
                 type = "Allergy",
                 clinicalStatus = "Active",
                 verificationStatus = "Confirmed",
                 criticality = "Unable-to-assess",
-                doids = emptySet(),
-                subcategories = emptySet(),
-                treatmentCategories = emptySet()
             )
         )
     }

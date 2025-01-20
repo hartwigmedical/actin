@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
-import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.FunctionCreator
@@ -12,9 +11,11 @@ import com.hartwig.actin.algo.evaluation.composite.Not
 import com.hartwig.actin.algo.evaluation.composite.Or
 import com.hartwig.actin.algo.evaluation.othercondition.HasPotentialSymptomaticHypercalcemia
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionFunctionFactory
+import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.LabUnit
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
@@ -61,6 +62,10 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.HAS_ALP_ULN_OF_AT_LEAST_X to hasSufficientLabValueULNCreator(LabMeasurement.ALKALINE_PHOSPHATASE),
             EligibilityRule.HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.TOTAL_BILIRUBIN),
             EligibilityRule.HAS_TOTAL_BILIRUBIN_UMOL_PER_L_OF_AT_MOST_X to hasLimitedLabValueCreator(LabMeasurement.TOTAL_BILIRUBIN),
+            EligibilityRule.HAS_TOTAL_BILIRUBIN_MG_PER_DL_OF_AT_MOST_X to hasLimitedLabValueCreator(
+                LabMeasurement.TOTAL_BILIRUBIN,
+                LabUnit.MILLIGRAMS_PER_DECILITER
+            ),
             EligibilityRule.HAS_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.DIRECT_BILIRUBIN),
             EligibilityRule.HAS_DIRECT_BILIRUBIN_PERCENTAGE_OF_TOTAL_OF_AT_MOST_X to hasLimitedBilirubinPercentageCreator(),
             EligibilityRule.HAS_INDIRECT_BILIRUBIN_ULN_OF_AT_MOST_X to hasLimitedIndirectBilirubinCreator(),
@@ -143,7 +148,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     }
 
     private fun hasAdequateOrganFunctionCreator(): FunctionCreator {
-        return { HasAdequateOrganFunction(minValidLabDate(), doidModel()) }
+        return { HasAdequateOrganFunction(minValidLabDate(), icdModel()) }
     }
 
     private fun hasLimitedPTTCreator(): FunctionCreator {
@@ -262,7 +267,11 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         return {
             val potassiumBelowLLN: EvaluationFunction = Not(createLabEvaluator(LabMeasurement.POTASSIUM, HasSufficientLabValueLLN(1.0)))
             val hasHadPriorHypokalemia =
-                OtherConditionFunctionFactory.createPriorConditionWithDoidFunction(doidModel(), DoidConstants.HYPOKALEMIA_DOID)
+                OtherConditionFunctionFactory.createPriorConditionWithIcdCodeFunction(
+                    icdModel(),
+                    setOf(IcdCode(IcdConstants.HYPOKALEMIA_CODE)),
+                    "potential hypokalemia"
+                )
             Or(listOf(potassiumBelowLLN, hasHadPriorHypokalemia))
         }
     }
@@ -270,9 +279,10 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     private fun hasPotentialHypomagnesemiaCreator(): FunctionCreator {
         return {
             val magnesiumBelowLLN: EvaluationFunction = Not(createLabEvaluator(LabMeasurement.MAGNESIUM, HasSufficientLabValueLLN(1.0)))
-            val hasHadPriorHypomagnesemia = OtherConditionFunctionFactory.createPriorConditionWithDoidFunction(
-                doidModel(),
-                DoidConstants.PRIMARY_HYPOMAGNESEMIA_DOID
+            val hasHadPriorHypomagnesemia = OtherConditionFunctionFactory.createPriorConditionWithIcdCodeFunction(
+                icdModel(),
+                setOf(IcdCode(IcdConstants.HYPOMAGNESEMIA_CODE)),
+                "potential hypomagnesemia"
             )
             Or(listOf(magnesiumBelowLLN, hasHadPriorHypomagnesemia))
         }
@@ -281,9 +291,10 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     private fun hasPotentialHypocalcemiaCreator(): FunctionCreator {
         return {
             val calciumBelowLLN: EvaluationFunction = Not(createLabEvaluator(LabMeasurement.CALCIUM, HasSufficientLabValueLLN(1.0)))
-            val hasHadPriorHypocalcemia = OtherConditionFunctionFactory.createPriorConditionWithDoidFunction(
-                doidModel(),
-                DoidConstants.AUTOSOMAL_DOMINANT_HYPOCALCEMIA_DOID
+            val hasHadPriorHypocalcemia = OtherConditionFunctionFactory.createPriorConditionWithIcdCodeFunction(
+                icdModel(),
+                setOf(IcdCode(IcdConstants.CALCIUM_DEFICIENCY_CODE)),
+                "potential hypocalcemia"
             )
             Or(listOf(calciumBelowLLN, hasHadPriorHypocalcemia))
         }
@@ -321,8 +332,8 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             return {
                 object : EvaluationFunction {
                     override fun evaluate(record: PatientRecord): Evaluation {
-                        return EvaluationFactory.recoverableUndeterminedNoGeneral(
-                            "Lab measure '$measure' cannot be determined yet"
+                        return EvaluationFactory.recoverableUndetermined(
+                            "Lab measure '$measure' undetermined"
                         )
                     }
                 }

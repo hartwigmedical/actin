@@ -196,7 +196,7 @@
     }
   ],
   "priorSecondPrimaries": [],
-  "priorOtherConditions": [
+  "comorbidities": [
     {
       "name": "Acute myocardial infarction",
       "year": 2020,
@@ -205,7 +205,7 @@
         "9408"
       ],
       "category": "Heart disease",
-      "isContraindicationForTherapy": true
+      "comorbidityClass": "OTHER_CONDITION"
     },
     {
       "name": "Bipolar disorder",
@@ -215,16 +215,15 @@
         "3312"
       ],
       "category": "Psychiatric disease",
-      "isContraindicationForTherapy": true
+      "comorbidityClass": "OTHER_CONDITION"
     }
   ],
-  "complications": [],
   "labValues": [
     {
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 1
+        "day": 10
       },
       "code": "ALAT",
       "name": "ALAT",
@@ -239,7 +238,7 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 1
+        "day": 10
       },
       "code": "ASAT",
       "name": "ASAT",
@@ -254,7 +253,7 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 1
+        "day": 10
       },
       "code": "TBIL",
       "name": "total bilirubin",
@@ -269,7 +268,7 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 1
+        "day": 10
       },
       "code": "Hb",
       "name": "hemoglobin",
@@ -284,7 +283,7 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 1
+        "day": 10
       },
       "code": "THROMBO-ABS",
       "name": "absolute thrombocyte count",
@@ -299,7 +298,7 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 1
+        "day": 10
       },
       "code": "LYMPHO-ABS",
       "name": "absolute lymphocyte count eDA",
@@ -314,7 +313,7 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 1
+        "day": 10
       },
       "code": "LEUKO-ABS",
       "name": "absolute leukocyte count",
@@ -329,7 +328,7 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 1
+        "day": 10
       },
       "code": "NEUTRO-ABS",
       "name": "absolute neutrophil count eDA",
@@ -344,7 +343,7 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 1
+        "day": 10
       },
       "code": "CREA",
       "name": "creatinine",
@@ -359,7 +358,7 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 1
+        "day": 10
       },
       "code": "ALP",
       "name": "alkaline phosphatase",
@@ -374,7 +373,7 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 1
+        "day": 10
       },
       "code": "APTT",
       "name": "APTT",
@@ -389,7 +388,7 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 1
+        "day": 10
       },
       "code": "POCT_INR",
       "name": "POCT INR",
@@ -404,7 +403,7 @@
       "date": {
         "year": 2024,
         "month": 9,
-        "day": 1
+        "day": 10
       },
       "code": "PT",
       "name": "PT",
@@ -416,8 +415,6 @@
       "isOutsideRef": false
     }
   ],
-  "toxicities": [],
-  "intolerances": [],
   "surgeries": [],
   "bodyWeights": [
     {
@@ -560,12 +557,12 @@
               "event": "PIK3CA E545K",
               "driverLikelihood": "HIGH",
               "evidence": {
-                "externalEligibleTrials": [
+                "eligibleTrials": [
                   {
                     "title": "PIK3CA-TRIAL",
                     "countries": [
                       {
-                        "name": "NETHERLANDS",
+                        "country": "NETHERLANDS",
                         "hospitalsPerCity": {
                           "Tilburg": [
                             {
@@ -576,11 +573,12 @@
                         }
                       },
                       {
-                        "name": "GERMANY",
+                        "country": "GERMANY",
                         "hospitalsPerCity": {
                           "Stuttgart": [
                             {
-                              "name": "Robert-Bosch-Krankenhaus - Klinik Schillerhoehe"
+                              "name": "Robert-Bosch-Krankenhaus - Klinik Schillerhoehe",
+                              "isChildrensHospital": false
                             }
                           ]
                         }
@@ -588,15 +586,27 @@
                     ],
                     "url": "https://hartwigmedicalfoundation.nl",
                     "nctId": "NCT00000016",
-                    "isCategoryEvent": true,
-                    "sourceEvent": "PIK3CA activating mutations",
+                    "molecularMatches": [
+                      {
+                        "sourceDate": {
+                          "year": 2012,
+                          "month": 1,
+                          "day": 1
+                        },
+                        "sourceEvent": "PIK3CA activating mutations",
+                        "isCategoryEvent": true
+                      }
+                    ],
                     "evidenceLevelDetails": "CLINICAL_STUDY",
-                    "applicableCancerType": {
-                      "cancerType": "Lung cancer",
-                      "excludedCancerTypes": []
-                    }
+                    "applicableCancerTypes": [
+                        {
+                            "matchedCancerType": "Lung cancer",
+                            "excludedCancerSubTypes": []
+                        }
+                    ]
                   }
-                ]
+                ],
+                "treatmentEvidence": []
               },
               "gene": "PIK3CA",
               "geneRole": "ONCO",
@@ -617,7 +627,7 @@
               "event": "TP53 del",
               "driverLikelihood": "HIGH",
               "evidence": {
-                "externalEligibleTrials": [],
+                "eligibleTrials": [],
                 "treatmentEvidence": []
               },
               "gene": "TP53",
@@ -632,12 +642,12 @@
                 "minCopies": 0,
                 "maxCopies": 0
               },
-              "otherImpacts": null,
+              "otherImpacts": [],
               "isReportable": true,
               "event": "KEAP1 del",
               "driverLikelihood": "HIGH",
               "evidence": {
-                "externalEligibleTrials": [],
+                "eligibleTrials": [],
                 "treatmentEvidence": []
               },
               "gene": "KEAP1",

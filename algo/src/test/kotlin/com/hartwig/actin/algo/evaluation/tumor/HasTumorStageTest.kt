@@ -19,10 +19,41 @@ class HasTumorStageTest {
 
     @Test
     fun `Should evaluate normally when tumor stage exists`() {
-        assertEvaluation(EvaluationResult.FAIL, hasTumorStage.evaluate(TumorTestFactory.withTumorStageAndDerivedStages(null)))
         assertEvaluation(EvaluationResult.PASS, hasTumorStage.evaluate(TumorTestFactory.withTumorStageAndDerivedStages(TumorStage.III)))
         assertEvaluation(EvaluationResult.PASS, hasTumorStage.evaluate(TumorTestFactory.withTumorStageAndDerivedStages(TumorStage.IIIB)))
         assertEvaluation(EvaluationResult.FAIL, hasTumorStage.evaluate(TumorTestFactory.withTumorStageAndDerivedStages(TumorStage.IV)))
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if patient stage and derived tumor stage are null`() {
+        assertEvaluation(EvaluationResult.UNDETERMINED, hasTumorStage.evaluate(TumorTestFactory.withTumorStageAndDerivedStages(null, null)))
+    }
+
+    @Test
+    fun `Should pass when all stages in the category of the patient stage are included in the stages to match`() {
+        val patientRecord = TumorTestFactory.withTumorStage(TumorStage.III)
+        assertEvaluation(
+            EvaluationResult.PASS,
+            HasTumorStage(
+                setOf(
+                    TumorStage.IIA,
+                    TumorStage.IIB,
+                    TumorStage.IIIC,
+                    TumorStage.IIIB,
+                    TumorStage.IIIA,
+                    TumorStage.IIID
+                )
+            ).evaluate(patientRecord)
+        )
+    }
+
+    @Test
+    fun `Should be undetermined when category of the patient stage is the category of some stages to match, but not all stages of that category are requested`() {
+        val patientRecord = TumorTestFactory.withTumorStage(TumorStage.III)
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            HasTumorStage(setOf(TumorStage.IIIC, TumorStage.IIIB, TumorStage.IIIA, TumorStage.IIA)).evaluate(patientRecord)
+        )
     }
 
     @Test
@@ -51,33 +82,39 @@ class HasTumorStageTest {
 
     @Test
     fun `Should display correct undetermined message with derived stages`() {
-        val patientRecord = TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(TumorStage.III, TumorStage.IV))
-        assertThat(hasTumorStage.evaluate(patientRecord).undeterminedGeneralMessages).containsExactly(
+        val patientRecord = TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(TumorStage.IV, TumorStage.III))
+        assertThat(hasTumorStage.evaluate(patientRecord).undeterminedMessages).containsExactly(
             "Unknown if tumor stage is III (data missing) - derived III or IV based on lesions"
         )
     }
 
     @Test
-    fun `Should evaluate fail when multiple derived tumor stages where all fail`() {
+    fun `Should fail when multiple derived tumor stages where all fail`() {
         assertDerivedEvaluation(EvaluationResult.FAIL, TumorStage.I, TumorStage.II)
     }
 
     @Test
-    fun `Should pass when derived stage is equal to the category of the stage to match`() {
-        val patientRecord = TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(TumorStage.III))
-        assertEvaluation(EvaluationResult.PASS, HasTumorStage(setOf(TumorStage.IIIB)).evaluate(patientRecord))
-    }
-
-    @Test
-    fun `Should fail when derived stage is not equal to the category of the stage to match`() {
+    fun `Should fail when derived stage is not equal to stage or the category of the stage to match`() {
         val patientRecord = TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(TumorStage.III))
         assertEvaluation(EvaluationResult.FAIL, HasTumorStage(setOf(TumorStage.IIB)).evaluate(patientRecord))
     }
 
     @Test
-    fun `Should fail when stage is part of the same category, but not an exact match`() {
-        val patientRecord = TumorTestFactory.withTumorStageAndDerivedStages(TumorStage.III, emptySet())
-        assertEvaluation(EvaluationResult.FAIL, HasTumorStage(setOf(TumorStage.IIIB)).evaluate(patientRecord))
+    fun `Should pass when all stages in the category of the derived stage are included in the stages to match`() {
+        val patientRecord = TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(TumorStage.III))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            HasTumorStage(setOf(TumorStage.IIIA, TumorStage.IIIB, TumorStage.IIIC, TumorStage.IIID)).evaluate(patientRecord)
+        )
+    }
+
+    @Test
+    fun `Should be undetermined when category of the derived stage is the category of some stages to match but not all stages of that category are requested`() {
+        val patientRecord = TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(TumorStage.II, TumorStage.III))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            HasTumorStage(setOf(TumorStage.IIIC, TumorStage.IIIA, TumorStage.IIIB, TumorStage.IIA)).evaluate(patientRecord)
+        )
     }
 
     private fun assertDerivedEvaluation(expectedResult: EvaluationResult, vararg derivedStages: TumorStage) {

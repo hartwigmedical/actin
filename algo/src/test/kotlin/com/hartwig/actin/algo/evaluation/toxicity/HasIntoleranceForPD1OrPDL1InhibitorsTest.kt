@@ -1,38 +1,63 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
-import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory
+import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
-import com.hartwig.actin.datamodel.clinical.TestPriorOtherConditionFactory
-import com.hartwig.actin.doid.TestDoidModelFactory
+import com.hartwig.actin.datamodel.clinical.TestOtherConditionFactory
+import com.hartwig.actin.icd.TestIcdFactory
 import org.junit.Test
 
-private const val DOID_AUTOIMMUNE_DISEASE_OF_CARDIOVASCULAR_SYSTEM = "0060051"
+private val AUTOIMMUNE_ICD_MAIN_CODE = IcdConstants.AUTOIMMUNE_DISEASE_SET.first()
+private val MATCHING_ICD_MAIN_CODE = IcdConstants.DRUG_ALLERGY_SET.first()
+private val OTHER_MATCHING_ICD_MAIN_CODE = IcdConstants.DRUG_ALLERGY_SET.last()
 
 class HasIntoleranceForPD1OrPDL1InhibitorsTest {
-    private val function = HasIntoleranceForPD1OrPDL1Inhibitors(
-        TestDoidModelFactory.createWithOneParentChild(
-            DoidConstants.AUTOIMMUNE_DISEASE_DOID, DOID_AUTOIMMUNE_DISEASE_OF_CARDIOVASCULAR_SYSTEM
-        )
-    )
+    private val function = HasIntoleranceForPD1OrPDL1Inhibitors(TestIcdFactory.createTestModel())
 
     @Test
-    fun `Should pass when patient has intolerance matching list`() {
+    fun `Should pass when patient has intolerance matching name`() {
         HasIntoleranceForPD1OrPDL1Inhibitors.INTOLERANCE_TERMS.forEach { term: String ->
-            val record = patient(
-                listOf(ToxicityTestFactory.intolerance(name = "intolerance to " + term.uppercase())),
-                DOID_AUTOIMMUNE_DISEASE_OF_CARDIOVASCULAR_SYSTEM
-            )
+            val record = patient(listOf(ToxicityTestFactory.intolerance(name = "intolerance to " + term.uppercase())))
             assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
         }
     }
 
     @Test
-    fun `Should warn when patient has prior condition belonging to autoimmune disease doid`() {
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(patient(emptyList(), DOID_AUTOIMMUNE_DISEASE_OF_CARDIOVASCULAR_SYSTEM)))
+    fun `Should pass when patient has intolerance matching main and extension code`() {
+        evaluateWithCodes(
+            EvaluationResult.PASS, listOf(
+                IcdCode(MATCHING_ICD_MAIN_CODE, IcdConstants.PD_L1_PD_1_DRUG_SET.first()),
+                IcdCode(OTHER_MATCHING_ICD_MAIN_CODE, IcdConstants.PD_L1_PD_1_DRUG_SET.last())
+            )
+        )
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if intolerance matches on ICD main code but extension code unknown`() {
+        evaluateWithCodes(
+            EvaluationResult.UNDETERMINED, listOf(
+                IcdCode(MATCHING_ICD_MAIN_CODE, null),
+            )
+        )
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if intolerance matches on ICD main code and extension code monoclonal antibodies`() {
+        evaluateWithCodes(
+            EvaluationResult.UNDETERMINED, listOf(
+                IcdCode(OTHER_MATCHING_ICD_MAIN_CODE, IcdConstants.MONOCLONAL_ANTIBODY_BLOCK)
+            )
+        )
+    }
+
+    @Test
+    fun `Should warn when patient has prior condition belonging to autoimmune disease ICD code`() {
+        assertEvaluation(EvaluationResult.WARN, function.evaluate(patient(emptyList(), AUTOIMMUNE_ICD_MAIN_CODE)))
     }
 
     @Test
@@ -43,12 +68,24 @@ class HasIntoleranceForPD1OrPDL1InhibitorsTest {
         )
     }
 
-    private fun patient(intolerances: List<Intolerance>, priorConditionDoid: String): PatientRecord {
-        val priorCondition = TestPriorOtherConditionFactory.createMinimal()
-            .copy(doids = setOf(priorConditionDoid), isContraindicationForTherapy = true)
+    @Test
+    fun `Should fail for empty intolerance list`() {
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withIntolerances(emptyList())))
+    }
+
+    private fun patient(intolerances: List<Intolerance>, icdMainCode: String = ""): PatientRecord {
+        val priorCondition = TestOtherConditionFactory.createMinimal()
+            .copy(icdCodes = setOf(IcdCode(icdMainCode)))
         return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-            intolerances = intolerances,
-            priorOtherConditions = listOf(priorCondition)
+            comorbidities = intolerances + priorCondition
         )
+    }
+
+    private fun evaluateWithCodes(expected: EvaluationResult, codeList: List<IcdCode>) {
+        codeList.forEach { code: IcdCode ->
+            val record =
+                patient(listOf(ToxicityTestFactory.intolerance(icdMainCode = code.mainCode, icdExtensionCode = code.extensionCode)))
+            assertEvaluation(expected, function.evaluate(record))
+        }
     }
 }

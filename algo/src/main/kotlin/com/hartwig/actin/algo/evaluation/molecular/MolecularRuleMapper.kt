@@ -56,6 +56,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.TML_OF_AT_LEAST_X to hasSufficientTumorMutationalLoadCreator(),
             EligibilityRule.TML_BETWEEN_X_AND_Y to hasCertainTumorMutationalLoadCreator(),
             EligibilityRule.HAS_HLA_TYPE_X to hasSpecificHLATypeCreator(),
+            EligibilityRule.HAS_HLA_GROUP_X to hasSpecificHLAGroupCreator(),
             EligibilityRule.HAS_UGT1A1_HAPLOTYPE_X to hasUGT1A1HaplotypeCreator(),
             EligibilityRule.HAS_HOMOZYGOUS_DPYD_DEFICIENCY to { HasHomozygousDPYDDeficiency(maxMolecularTestAge()) },
             EligibilityRule.HAS_HETEROZYGOUS_DPYD_DEFICIENCY to { HasHeterozygousDPYDDeficiency(maxMolecularTestAge()) },
@@ -83,8 +84,8 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.PD_L1_STATUS_MUST_BE_AVAILABLE to { HasAvailablePDL1Status() },
             EligibilityRule.HAS_PSMA_POSITIVE_PET_SCAN to { HasPSMAPositivePETScan() },
             EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE to { MolecularResultsAreGenerallyAvailable() },
-            EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_GENE_X to molecularResultsAreAvailableForGeneCreator(),
-            EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_PROMOTER_OF_GENE_X to molecularResultsAreAvailableForPromoterOfGeneCreator(),
+            EligibilityRule.MOLECULAR_TEST_RESULT_IS_KNOWN_FOR_GENE_X to molecularResultsAreKnownForGeneCreator(),
+            EligibilityRule.MOLECULAR_TEST_RESULT_IS_KNOWN_FOR_PROMOTER_OF_GENE_X to molecularResultsAreKnownForPromoterOfGeneCreator(),
             EligibilityRule.MMR_STATUS_IS_AVAILABLE to { MmrStatusIsAvailable(maxMolecularTestAge()) },
             EligibilityRule.HAS_KNOWN_NSCLC_DRIVER_GENE_STATUSES to { NsclcDriverGeneStatusesAreAvailable() },
             EligibilityRule.HAS_EGFR_PACC_MUTATION to hasEgfrPaccMutationCreator(),
@@ -232,6 +233,13 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
+    private fun hasSpecificHLAGroupCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val hlaGroupToFind = functionInputResolver().createOneHlaGroupInput(function)
+            HasSpecificHLAType(hlaGroupToFind.group, matchOnHlaGroup = true)
+        }
+    }
+
     private fun hasSpecificHLATypeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val hlaAlleleToFind = functionInputResolver().createOneHlaAlleleInput(function)
@@ -331,15 +339,15 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
-    private fun molecularResultsAreAvailableForGeneCreator(): FunctionCreator {
+    private fun molecularResultsAreKnownForGeneCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            MolecularResultsAreAvailableForGene(functionInputResolver().createOneGeneInput(function).geneName)
+            MolecularResultsAreKnownForGene(functionInputResolver().createOneGeneInput(function).geneName)
         }
     }
 
-    private fun molecularResultsAreAvailableForPromoterOfGeneCreator(): FunctionCreator {
+    private fun molecularResultsAreKnownForPromoterOfGeneCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            MolecularResultsAreAvailableForPromoterOfGene(functionInputResolver().createOneGeneInput(function).geneName)
+            MolecularResultsAreKnownForPromoterOfGene(functionInputResolver().createOneGeneInput(function).geneName)
         }
     }
 

@@ -11,7 +11,7 @@ import com.hartwig.actin.trial.input.composite.CompositeInput
 import com.hartwig.actin.trial.input.composite.CompositeRules
 import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
 
-class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
+class ParameterizedFunctionTestFactory(private val doidTermToUse: String, private val icdTitleToUse: String) {
 
     private val arbitraryRule: EligibilityRule = firstNonComposite()
 
@@ -65,6 +65,15 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
                 listOf(TreatmentCategory.IMMUNOTHERAPY.display(), DrugType.ANTI_PD_L1.toString() + ";" + DrugType.ANTI_PD_1)
             }
 
+            FunctionInput.TWO_TREATMENT_CATEGORIES_MANY_TYPES -> {
+                listOf(
+                    TreatmentCategory.IMMUNOTHERAPY.display(),
+                    DrugType.ANTI_PD_L1.toString() + ";" + DrugType.ANTI_PD_1,
+                    TreatmentCategory.CHEMOTHERAPY.display(),
+                    DrugType.PLATINUM_COMPOUND.toString() + ";" + DrugType.ANTIMETABOLITE
+                )
+            }
+
             FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE_ONE_INTEGER -> {
                 listOf(OtherTreatmentType.ALLOGENIC.display(), "1")
             }
@@ -87,6 +96,10 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
                     TreatmentCategory.CHEMOTHERAPY.display(),
                     "${DrugType.ALKYLATING_AGENT};${DrugType.ANTIMETABOLITE}"
                 )
+            }
+
+            FunctionInput.MANY_SPECIFIC_TREATMENTS -> {
+                listOf("CAPECITABINE+OXALIPLATIN;CAPECITABINE+OXALIPLATIN")
             }
 
             FunctionInput.MANY_SPECIFIC_TREATMENTS_TWO_INTEGERS -> {
@@ -124,6 +137,18 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
                 listOf("CAPECITABINE;OXALIPLATIN", "1", "5")
             }
 
+            FunctionInput.ONE_ICD_TITLE -> {
+                listOf(icdTitleToUse)
+            }
+
+            FunctionInput.MANY_ICD_TITLES -> {
+                listOf("$icdTitleToUse;$icdTitleToUse")
+            }
+
+            FunctionInput.ONE_NYHA_CLASS -> {
+                listOf("I")
+            }
+
             FunctionInput.ONE_TUMOR_TYPE -> {
                 listOf(TumorTypeInput.SQUAMOUS_CELL_CARCINOMA.display())
             }
@@ -152,12 +177,12 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
                 listOf("1", "string")
             }
 
-            FunctionInput.ONE_INTEGER_MANY_STRINGS -> {
-                listOf("1", "string1;string2")
-            }
-
             FunctionInput.ONE_INTEGER_MANY_DOID_TERMS -> {
                 listOf("1", "$doidTermToUse;$doidTermToUse")
+            }
+
+            FunctionInput.ONE_INTEGER_MANY_ICD_TITLES -> {
+                listOf("1", "$icdTitleToUse;$icdTitleToUse")
             }
 
             FunctionInput.MANY_TUMOR_STAGES -> {
@@ -166,6 +191,10 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
 
             FunctionInput.ONE_HLA_ALLELE -> {
                 listOf("A*02:01")
+            }
+
+            FunctionInput.ONE_HLA_GROUP -> {
+                listOf("A*02")
             }
 
             FunctionInput.ONE_HAPLOTYPE -> {
@@ -204,8 +233,8 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
                 listOf(doidTermToUse)
             }
 
-            FunctionInput.ONE_DOID_TERM_ONE_INTEGER -> {
-                listOf(doidTermToUse, "1")
+            FunctionInput.ONE_ICD_TITLE_ONE_INTEGER -> {
+                listOf(icdTitleToUse, "1")
             }
 
             FunctionInput.MANY_DOID_TERMS -> {

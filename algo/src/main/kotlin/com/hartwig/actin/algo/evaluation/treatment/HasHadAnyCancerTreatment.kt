@@ -29,21 +29,15 @@ class HasHadAnyCancerTreatment(private val categoryToIgnore: TreatmentCategory?,
 
         return when {
             hasHadPriorCancerTreatment -> {
-                val categoryDisplay = categoryToIgnore?.let { " other than ${categoryToIgnore.display()} " } ?: ""
-                EvaluationFactory.pass(
-                    "Patient has had prior cancer treatment$categoryDisplay", "Has received prior cancer treatment(s)"
-                )
+                EvaluationFactory.pass("Has received prior cancer treatment(s)")
             }
 
             hasHadTrial -> {
-                EvaluationFactory.undetermined(
-                    "Patient has participated in a trial, inconclusive if patient has had any cancer treatment",
-                    "Inconclusive if patient had any prior cancer treatment due to trial participation"
-                )
+                EvaluationFactory.undetermined("Inconclusive if patient had any prior cancer treatment because participated in trial")
             }
 
             else -> {
-                EvaluationFactory.fail("Patient has not had any prior cancer treatments", "Has not had any cancer treatment")
+                EvaluationFactory.fail("Has not had any prior cancer treatment")
             }
         }
     }

@@ -1,31 +1,27 @@
 package com.hartwig.actin.algo.evaluation.othercondition
 
-import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.doid.TestDoidModelFactory
+import com.hartwig.actin.icd.TestIcdFactory
 import org.junit.Test
 
-private const val MATCHING_DOID = DoidConstants.AUTOSOMAL_HEMOPHILIA_A_DOID
-
 class HasInheritedPredispositionToBleedingOrThrombosisTest {
-    private val function = HasInheritedPredispositionToBleedingOrThrombosis(
-        TestDoidModelFactory.createWithOneDoidAndTerm(MATCHING_DOID, "matching term")
-    )
+    private val function = HasInheritedPredispositionToBleedingOrThrombosis(TestIcdFactory.createTestModel())
 
     @Test
-    fun `Should fail with no prior conditions`() {
+    fun `Should fail with no conditions`() {
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(emptyList()))
+            EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withOtherConditions(emptyList()))
         )
     }
 
     @Test
-    fun `Should fail with no relevant prior other condition`() {
+    fun `Should fail with no relevant other condition`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
-                OtherConditionTestFactory.withPriorOtherConditions(
-                    listOf(OtherConditionTestFactory.priorOtherCondition(doids = setOf("wrong doid")))
+                OtherConditionTestFactory.withOtherConditions(
+                    listOf(OtherConditionTestFactory.otherCondition(icdMainCode = "wrong"))
                 )
             )
         )
@@ -36,8 +32,8 @@ class HasInheritedPredispositionToBleedingOrThrombosisTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                OtherConditionTestFactory.withPriorOtherCondition(
-                    OtherConditionTestFactory.priorOtherCondition(doids = setOf("other doid", MATCHING_DOID))
+                OtherConditionTestFactory.withOtherCondition(
+                    OtherConditionTestFactory.otherCondition(icdMainCode = IcdConstants.HEREDITARY_THROMBOPHILIA_CODE)
                 )
             )
         )
@@ -46,12 +42,12 @@ class HasInheritedPredispositionToBleedingOrThrombosisTest {
     @Test
     fun `Should pass with at least one condition with certain name`() {
         val conditions = listOf(
-            OtherConditionTestFactory.priorOtherCondition(name = "other name"),
-            OtherConditionTestFactory.priorOtherCondition(name = "disease FACTOR V LEIDEN")
+            OtherConditionTestFactory.otherCondition(name = "other name"),
+            OtherConditionTestFactory.otherCondition(name = "disease FACTOR V LEIDEN")
         )
 
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(conditions))
+            EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withOtherConditions(conditions))
         )
     }
 }

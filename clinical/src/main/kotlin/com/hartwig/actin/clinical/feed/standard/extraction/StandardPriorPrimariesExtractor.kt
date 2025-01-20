@@ -14,9 +14,9 @@ class StandardPriorPrimariesExtractor(private val priorPrimaryCuration: Curation
     StandardDataExtractor<List<PriorSecondPrimary>> {
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<PriorSecondPrimary>> {
         val priorPrimaries = fromPriorPrimaries(ehrPatientRecord)
-        val priorPrimariesFromPriorOtherConditions = fromPriorOtherConditions(ehrPatientRecord)
+        val priorPrimariesFromOtherConditions = fromOtherConditions(ehrPatientRecord)
         val priorPrimariesFromTreatmentHistory = fromTreatmentHistory(ehrPatientRecord)
-        return (priorPrimaries + priorPrimariesFromPriorOtherConditions + priorPrimariesFromTreatmentHistory).fold(
+        return (priorPrimaries + priorPrimariesFromOtherConditions + priorPrimariesFromTreatmentHistory).fold(
             ExtractionResult(
                 emptyList(),
                 CurationExtractionEvaluation()
@@ -26,7 +26,7 @@ class StandardPriorPrimariesExtractor(private val priorPrimaryCuration: Curation
         }
     }
 
-    private fun fromPriorOtherConditions(ehrPatientRecord: ProvidedPatientRecord): List<ExtractionResult<List<PriorSecondPrimary>>> {
+    private fun fromOtherConditions(ehrPatientRecord: ProvidedPatientRecord): List<ExtractionResult<List<PriorSecondPrimary>>> {
         return extractFromSecondarySource(ehrPatientRecord, ehrPatientRecord.priorOtherConditions) { it.name }
     }
 

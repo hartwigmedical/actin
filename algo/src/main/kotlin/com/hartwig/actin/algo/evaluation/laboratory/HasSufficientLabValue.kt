@@ -18,35 +18,24 @@ class HasSufficientLabValue(
             ?: return EvaluationFactory.recoverableUndetermined(
                 "Could not convert value for ${labMeasurement.display()} to ${targetUnit.display()}"
             )
-        val labValueString = "${labValue(labMeasurement, convertedValue)} ${targetUnit.display()}"
+        val labValueString = "${labValue(labMeasurement, convertedValue, labValue.unit)} ${targetUnit.display()}"
         val refString = "$minValue ${targetUnit.display()}"
 
         return when (evaluateVersusMinValueWithMargin(convertedValue, labValue.comparator, minValue)) {
             LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN -> {
-                EvaluationFactory.recoverableFail(
-                    "$labValueString is below minimum of $refString", "$labValueString below min of $refString"
-                )
+                EvaluationFactory.recoverableFail("$labValueString below min of $refString")
             }
 
             LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_BUT_WITHIN_MARGIN -> {
-                EvaluationFactory.recoverableUndetermined(
-                    "$labValueString is below minimum of $refString but within margin of error",
-                    "$labValueString below min of $refString but within margin of error"
-                )
+                EvaluationFactory.recoverableUndetermined("$labValueString below min of $refString but within margin of error")
             }
 
             LabEvaluation.LabEvaluationResult.CANNOT_BE_DETERMINED -> {
-                EvaluationFactory.recoverableUndetermined(
-                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} sufficiency could not be evaluated",
-                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} undetermined"
-                )
+                EvaluationFactory.recoverableUndetermined("${labMeasurement.display().replaceFirstChar { it.uppercase() }} undetermined")
             }
 
             LabEvaluation.LabEvaluationResult.WITHIN_THRESHOLD -> {
-                EvaluationFactory.recoverablePass(
-                    "$labValueString exceeds minimum of $refString",
-                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${targetUnit.display()} exceeds min of $refString"
-                )
+                EvaluationFactory.recoverablePass("$labValueString exceeds min of $refString")
             }
         }
     }

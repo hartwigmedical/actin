@@ -18,21 +18,17 @@ class HasKnownActiveBrainMetastases : EvaluationFunction {
                 unknownIfActive && hasSuspectedBrainLesions == true -> undeterminedActivityEvaluation("Suspected brain")
 
                 unknownIfActive && hasBrainLesions == null -> {
-                    val message = "Unknown if active brain metastases present (data missing)"
-                    EvaluationFactory.undetermined(message, message)
+                    EvaluationFactory.undetermined("Undetermined if active brain metastases present (brain lesions data missing)")
                 }
 
-                hasActiveBrainLesions == true -> EvaluationFactory.pass("Active brain metastases are present", "Active brain metastases")
+                hasActiveBrainLesions == true -> EvaluationFactory.pass("Has active brain metastases")
 
-                else -> EvaluationFactory.fail("No known active brain metastases present", "No known active brain metastases")
+                else -> EvaluationFactory.fail("No known active brain metastases present")
             }
         }
     }
 
     private fun undeterminedActivityEvaluation(prefix: String): Evaluation {
-        return EvaluationFactory.undetermined(
-            "$prefix metastases in history but data regarding active brain metastases is missing - assuming inactive",
-            "$prefix metastases present but unknown if active (data missing)"
-        )
+        return EvaluationFactory.undetermined("$prefix metastases present but unknown if active (data missing)")
     }
 }

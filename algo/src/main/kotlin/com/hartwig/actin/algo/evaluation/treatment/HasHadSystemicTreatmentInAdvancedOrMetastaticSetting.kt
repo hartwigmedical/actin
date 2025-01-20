@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.Format.concatWithCommaAndAnd
+import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
@@ -67,7 +67,7 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val reference
             nonRecentNonCurativeTreatments.isNotEmpty() -> {
                 EvaluationFactory.undetermined(
                     createMessage(
-                        "Has had prior systemic treatment >6 months ago - undetermined if in advanced or metastatic setting",
+                        "Has had prior systemic treatment >6 months ago but undetermined if in advanced or metastatic setting",
                         nonRecentNonCurativeTreatments
                     )
                 )
@@ -78,6 +78,6 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val reference
     }
 
     private fun createMessage(string: String, treatments: List<TreatmentHistoryEntry>): String {
-        return "$string (${concatWithCommaAndAnd(treatments.map { it.treatmentDisplay() })})"
+        return "$string (${concat(treatments.map { it.treatmentDisplay() })})"
     }
 }

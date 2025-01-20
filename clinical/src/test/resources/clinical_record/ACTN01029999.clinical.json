@@ -1,353 +1,367 @@
 {
   "patientId": "ACTN01029999",
   "patient": {
-    "gender": "MALE",
-    "birthYear": 1953,
-    "registrationDate": {
-      "year": 2020,
-      "month": 7,
-      "day": 13
-    },
-    "questionnaireDate": {
-      "year": 2021,
-      "month": 8,
-      "day": 16
-    },
-    "hasHartwigSequencing": true
+	"gender": "MALE",
+	"birthYear": 1953,
+	"registrationDate": {
+	  "year": 2020,
+	  "month": 7,
+	  "day": 13
+	},
+	"questionnaireDate": {
+	  "year": 2021,
+	  "month": 8,
+	  "day": 16
+	},
+	"hasHartwigSequencing": true
   },
   "tumor": {
-    "primaryTumorLocation": "Ovary",
-    "primaryTumorSubLocation": "",
-    "primaryTumorType": "",
-    "primaryTumorSubType": "",
-    "primaryTumorExtraDetails": "",
-    "doids": [
-      "0050933"
-    ],
-    "stage": "IV",
-    "derivedStages": null,
-    "hasMeasurableDisease": true,
-    "hasBrainLesions": true,
-    "hasSuspectedBrainLesions": null,
-    "hasActiveBrainLesions": true,
-    "brainLesionsCount": null,
-    "hasCnsLesions": false,
-    "hasSuspectedCnsLesions": null,
-    "hasActiveCnsLesions": null,
-    "cnsLesionsCount": null,
-    "hasBoneLesions": null,
-    "hasSuspectedBoneLesions": null,
-    "boneLesionsCount": null,
-    "hasLiverLesions": false,
-    "hasSuspectedLiverLesions": null,
-    "liverLesionsCount": null,
-    "hasLungLesions": null,
-    "hasSuspectedLungLesions": null,
-    "lungLesionsCount": null,
-    "hasLymphNodeLesions": true,
-    "hasSuspectedLymphNodeLesions": null,
-    "lymphNodeLesionsCount": null,
-    "otherLesions": null,
-    "otherSuspectedLesions": null,
-    "biopsyLocation": "Lymph node",
-    "rawPathologyReport": null
+	"primaryTumorLocation": "Ovary",
+	"primaryTumorSubLocation": "",
+	"primaryTumorType": "",
+	"primaryTumorSubType": "",
+	"primaryTumorExtraDetails": "",
+	"doids": [
+	  "0050933"
+	],
+	"stage": "IV",
+	"derivedStages": null,
+	"hasMeasurableDisease": true,
+	"hasBrainLesions": true,
+	"hasSuspectedBrainLesions": null,
+	"hasActiveBrainLesions": true,
+	"brainLesionsCount": null,
+	"hasCnsLesions": false,
+	"hasSuspectedCnsLesions": null,
+	"hasActiveCnsLesions": null,
+	"cnsLesionsCount": null,
+	"hasBoneLesions": null,
+	"hasSuspectedBoneLesions": null,
+	"boneLesionsCount": null,
+	"hasLiverLesions": false,
+	"hasSuspectedLiverLesions": null,
+	"liverLesionsCount": null,
+	"hasLungLesions": null,
+	"hasSuspectedLungLesions": null,
+	"lungLesionsCount": null,
+	"hasLymphNodeLesions": true,
+	"hasSuspectedLymphNodeLesions": null,
+	"lymphNodeLesionsCount": null,
+	"otherLesions": null,
+	"otherSuspectedLesions": null,
+	"biopsyLocation": "Lymph node",
+	"rawPathologyReport": null
   },
   "clinicalStatus": {
-    "who": 0,
-    "infectionStatus": null,
-    "ecg": {
-      "hasSigAberrationLatestECG": true,
-      "aberrationDescription": "Sinus tachycardia",
-      "qtcfMeasure": null,
-      "jtcMeasure": null
-    },
-    "lvef": null,
-    "hasComplications": null
+	"who": 0,
+	"infectionStatus": null,
+	"ecg": {
+	  "hasSigAberrationLatestECG": true,
+	  "aberrationDescription": "Sinus tachycardia",
+	  "qtcfMeasure": null,
+	  "jtcMeasure": null
+	},
+	"lvef": null,
+	"hasComplications": null
   },
   "oncologicalHistory": [
-    {
-      "treatments": [
-        {
-          "name": "CISPLATIN",
-          "drugs": [
-            {
-              "name": "CISPLATIN",
-              "drugTypes": [
-                "ANTIMETABOLITE"
-              ],
-              "category": "CHEMOTHERAPY",
-              "displayOverride": null
-            }
-          ],
-          "synonyms": [],
-          "displayOverride": null,
-          "isSystemic": true,
-          "maxCycles": null,
-          "treatmentClass": "DRUG_TREATMENT"
-        }
-      ],
-      "startYear": null,
-      "startMonth": null,
-      "intents": null,
-      "isTrial": false,
-      "trialAcronym": null,
-      "treatmentHistoryDetails": {
-        "stopYear": null,
-        "stopMonth": null,
-        "ongoingAsOf": null,
-        "cycles": null,
-        "bestResponse": null,
-        "stopReason": null,
-        "stopReasonDetail": null,
-        "switchToTreatments": null,
-        "maintenanceTreatment": null,
-        "toxicities": null,
-        "bodyLocationCategories": null,
-        "bodyLocations": null
-      }
-    },
-    {
-      "treatments": [
-        {
-          "name": "ABLATION",
-          "isSystemic": false,
-          "synonyms": [],
-          "displayOverride": null,
-          "categories": [
-            "ABLATION"
-          ],
-          "types": [],
-          "treatmentClass": "OTHER_TREATMENT"
-        }
-      ],
-      "startYear": null,
-      "startMonth": null,
-      "intents": null,
-      "isTrial": false,
-      "trialAcronym": null,
-      "treatmentHistoryDetails": {
-        "stopYear": null,
-        "stopMonth": null,
-        "ongoingAsOf": null,
-        "cycles": null,
-        "bestResponse": null,
-        "stopReason": null,
-        "stopReasonDetail": null,
-        "switchToTreatments": null,
-        "maintenanceTreatment": null,
-        "toxicities": null,
-        "bodyLocationCategories": null,
-        "bodyLocations": null
-      }
-    }
+	{
+	  "treatments": [
+		{
+		  "name": "CISPLATIN",
+		  "drugs": [
+			{
+			  "name": "CISPLATIN",
+			  "drugTypes": [
+				"ANTIMETABOLITE"
+			  ],
+			  "category": "CHEMOTHERAPY",
+			  "displayOverride": null
+			}
+		  ],
+		  "synonyms": [],
+		  "displayOverride": null,
+		  "isSystemic": true,
+		  "maxCycles": null,
+		  "treatmentClass": "DRUG_TREATMENT"
+		}
+	  ],
+	  "startYear": null,
+	  "startMonth": null,
+	  "intents": null,
+	  "isTrial": false,
+	  "trialAcronym": null,
+	  "treatmentHistoryDetails": {
+		"stopYear": null,
+		"stopMonth": null,
+		"ongoingAsOf": null,
+		"cycles": null,
+		"bestResponse": null,
+		"stopReason": null,
+		"stopReasonDetail": null,
+		"switchToTreatments": null,
+		"maintenanceTreatment": null,
+		"toxicities": null,
+		"bodyLocationCategories": null,
+		"bodyLocations": null
+	  }
+	},
+	{
+	  "treatments": [
+		{
+		  "name": "ABLATION",
+		  "isSystemic": false,
+		  "synonyms": [],
+		  "displayOverride": null,
+		  "categories": [
+			"ABLATION"
+		  ],
+		  "types": [],
+		  "treatmentClass": "OTHER_TREATMENT"
+		}
+	  ],
+	  "startYear": null,
+	  "startMonth": null,
+	  "intents": null,
+	  "isTrial": false,
+	  "trialAcronym": null,
+	  "treatmentHistoryDetails": {
+		"stopYear": null,
+		"stopMonth": null,
+		"ongoingAsOf": null,
+		"cycles": null,
+		"bestResponse": null,
+		"stopReason": null,
+		"stopReasonDetail": null,
+		"switchToTreatments": null,
+		"maintenanceTreatment": null,
+		"toxicities": null,
+		"bodyLocationCategories": null,
+		"bodyLocations": null
+	  }
+	}
   ],
   "priorSecondPrimaries": [
-    {
-      "tumorLocation": "Prostate",
-      "tumorSubLocation": "",
-      "tumorType": "Carcinoma",
-      "tumorSubType": "",
-      "doids": [
-        "10286"
-      ],
-      "diagnosedYear": 2019,
-      "diagnosedMonth": null,
-      "treatmentHistory": "",
-      "lastTreatmentYear": 2019,
-      "lastTreatmentMonth": null,
-      "status": "ACTIVE"
-    }
+	{
+	  "tumorLocation": "Prostate",
+	  "tumorSubLocation": "",
+	  "tumorType": "Carcinoma",
+	  "tumorSubType": "",
+	  "doids": [
+		"10286"
+	  ],
+	  "diagnosedYear": 2019,
+	  "diagnosedMonth": null,
+	  "treatmentHistory": "",
+	  "lastTreatmentYear": 2019,
+	  "lastTreatmentMonth": null,
+	  "status": "ACTIVE"
+	}
   ],
-  "priorOtherConditions": [
-    {
-      "name": "diabetes",
-      "year": null,
-      "month": null,
-      "doids": [
-        "0081062"
-      ],
-      "category": "",
-      "isContraindicationForTherapy": false
-    }
+  "comorbidities": [
+	{
+	  "name": "diabetes",
+	  "year": null,
+	  "month": null,
+	  "icdCodes": [
+		{
+		  "mainCode": "1A01.3",
+		  "extensionCode": null
+		}
+	  ],
+	  "comorbidityClass": "OTHER_CONDITION"
+	},
+	{
+		"name": "Nausea",
+		"icdCodes": [
+			{
+				"mainCode": "",
+				"extensionCode": null
+			}
+		],
+		"evaluatedDate": {
+			"year": 2021,
+			"month": 6,
+			"day": 6
+		},
+		"source": "EHR",
+		"grade": 0,
+		"endDate": null,
+		"comorbidityClass": "TOXICITY"
+	},
+	{
+		"name": "Pain",
+		"icdCodes": [
+			{
+				"mainCode": "",
+				"extensionCode": null
+			}
+		],
+		"evaluatedDate": {
+			"year": 2021,
+			"month": 8,
+			"day": 8
+		},
+		"source": "EHR",
+		"grade": 0,
+		"endDate": null,
+		"comorbidityClass": "TOXICITY"
+	},
+	{
+		"name": "Nausea",
+		"icdCodes": [
+			{
+				"mainCode": "1A01.3",
+				"extensionCode": null
+			}
+		],
+		"evaluatedDate": {
+			"year": 2021,
+			"month": 8,
+			"day": 16
+		},
+		"source": "QUESTIONNAIRE",
+		"grade": 3,
+		"endDate": null,
+		"comorbidityClass": "TOXICITY"
+	},
+	{
+		"name": "Simvastatine",
+		"icdCodes": [
+			{
+				"mainCode": "1A01.1",
+				"extensionCode": null
+			}
+		],
+		"type": "Allergy",
+		"clinicalStatus": "Active",
+		"verificationStatus": "Confirmed",
+		"criticality": "Low",
+		"year": null,
+		"month": null,
+		"comorbidityClass": "INTOLERANCE"
+	}
   ],
   "priorIHCTests": [
-    {
-      "test": "IHC",
-      "item": "ERBB2",
-      "measure": null,
-      "measureDate": null,
-      "scoreText": null,
-      "scoreValuePrefix": null,
-      "scoreValue": 3.0,
-      "scoreValueUnit": "+",
-      "impliesPotentialIndeterminateStatus": false
-    },
-    {
-      "test": "IHC",
-      "item": "PD-L1",
-      "measure": null,
-      "measureDate": null,
-      "scoreText": "Positive",
-      "scoreValuePrefix": null,
-      "scoreValue": null,
-      "scoreValueUnit": null,
-      "impliesPotentialIndeterminateStatus": false
-    }
+	{
+	  "test": "IHC",
+	  "item": "ERBB2",
+	  "measure": null,
+	  "measureDate": null,
+	  "scoreText": null,
+	  "scoreValuePrefix": null,
+	  "scoreValue": 3.0,
+	  "scoreValueUnit": "+",
+	  "impliesPotentialIndeterminateStatus": false
+	},
+	{
+	  "test": "IHC",
+	  "item": "PD-L1",
+	  "measure": null,
+	  "measureDate": null,
+	  "scoreText": "Positive",
+	  "scoreValuePrefix": null,
+	  "scoreValue": null,
+	  "scoreValueUnit": null,
+	  "impliesPotentialIndeterminateStatus": false
+	}
   ],
   "priorSequencingTests": [],
-  "complications": null,
   "labValues": [
-    {
-      "date": {
-        "year": 2019,
-        "month": 6,
-        "day": 27
-      },
-      "code": "AC2",
-      "name": "Adrenocorticotropic hormone",
-      "comparator": "",
-      "value": 5.5,
-      "unit": "BILLIONS_PER_LITER",
-      "refLimitLow": 3.5,
-      "refLimitUp": 10.0,
-      "isOutsideRef": false
-    }
-  ],
-  "toxicities": [
-    {
-      "name": "Nausea",
-      "categories": [],
-      "evaluatedDate": {
-        "year": 2021,
-        "month": 6,
-        "day": 6
-      },
-      "source": "EHR",
-      "grade": 0,
-      "endDate": null
-    },
-    {
-      "name": "Pain",
-      "categories": [],
-      "evaluatedDate": {
-        "year": 2021,
-        "month": 8,
-        "day": 8
-      },
-      "source": "EHR",
-      "grade": 0,
-      "endDate": null
-    },
-    {
-      "name": "Nausea",
-      "categories": [
-        "Gastrointestinal"
-      ],
-      "evaluatedDate": {
-        "year": 2021,
-        "month": 8,
-        "day": 16
-      },
-      "source": "QUESTIONNAIRE",
-      "grade": 3,
-      "endDate": null
-    }
-  ],
-  "intolerances": [
-    {
-      "name": "Simvastatine",
-      "doids": [
-        "0060500"
-      ],
-      "category": "Medication",
-      "subcategories": [],
-      "type": "Allergy",
-      "clinicalStatus": "Active",
-      "verificationStatus": "Confirmed",
-      "criticality": "Low",
-      "treatmentCategories": [
-        "SUPPORTIVE_TREATMENT"
-      ]
-    }
+	{
+	  "date": {
+		"year": 2019,
+		"month": 6,
+		"day": 27
+	  },
+	  "code": "AC2",
+	  "name": "Adrenocorticotropic hormone",
+	  "comparator": "",
+	  "value": 5.5,
+	  "unit": "BILLIONS_PER_LITER",
+	  "refLimitLow": 3.5,
+	  "refLimitUp": 10.0,
+	  "isOutsideRef": false
+	}
   ],
   "surgeries": [
-    {
-      "name": "diagnostics stomach translated",
-      "endDate": {
-        "year": 2020,
-        "month": 8,
-        "day": 28
-      },
-      "status": "PLANNED"
-    }
+	{
+	  "name": "diagnostics stomach translated",
+	  "endDate": {
+		"year": 2020,
+		"month": 8,
+		"day": 28
+	  },
+	  "status": "PLANNED"
+	}
   ],
   "bodyWeights": [
-    {
-      "date": "2020-08-11T00:00:00",
-      "value": 61.1,
-      "unit": "kilogram",
-      "valid": true
-    },
-    {
-      "date": "2020-08-20T08:43:00",
-      "value": 58.9,
-      "unit": "kilogram",
-      "valid": true
-    }
+	{
+	  "date": "2020-08-11T00:00:00",
+	  "value": 61.1,
+	  "unit": "kilogram",
+	  "valid": true
+	},
+	{
+	  "date": "2020-08-20T08:43:00",
+	  "value": 58.9,
+	  "unit": "kilogram",
+	  "valid": true
+	}
   ],
   "bodyHeights": [],
   "vitalFunctions": [
-    {
-      "date": "2019-04-28T13:45:00",
-      "category": "NON_INVASIVE_BLOOD_PRESSURE",
-      "subcategory": "Systolic blood pressure",
-      "value": 108.0,
-      "unit": "mmHg",
-      "valid": true
-    }
+	{
+	  "date": "2019-04-28T13:45:00",
+	  "category": "NON_INVASIVE_BLOOD_PRESSURE",
+	  "subcategory": "Systolic blood pressure",
+	  "value": 108.0,
+	  "unit": "mmHg",
+	  "valid": true
+	}
   ],
   "bloodTransfusions": [
-    {
-      "date": {
-        "year": 2021,
-        "month": 12,
-        "day": 17
-      },
-      "product": "Thrombocyte concentrate"
-    }
+	{
+	  "date": {
+		"year": 2021,
+		"month": 12,
+		"day": 17
+	  },
+	  "product": "Thrombocyte concentrate"
+	}
   ],
   "medications": [
-    {
-      "name": "Pembrolizumab",
-      "status": null,
-      "administrationRoute": "Oral",
-      "dosage": {
-        "dosageMin": 200.0,
-        "dosageMax": 200.0,
-        "dosageUnit": "mg",
-        "frequency": 30.0,
-        "frequencyUnit": "min",
-        "periodBetweenValue": 0.0,
-        "periodBetweenUnit": "mo",
-        "ifNeeded": false
-      },
-      "startDate": {
-        "year": 2019,
-        "month": 6,
-        "day": 7
-      },
-      "stopDate": {
-        "year": 2019,
-        "month": 6,
-        "day": 7
-      },
-      "drug": null,
-      "cypInteractions": [],
-      "transporterInteractions": [],
-      "qtProlongatingRisk": "NONE",
-      "atc": null,
-      "isSelfCare": false,
-      "isTrialMedication": true
-    }
+	{
+	  "name": "Pembrolizumab",
+	  "status": null,
+	  "administrationRoute": "Oral",
+	  "dosage": {
+		"dosageMin": 200.0,
+		"dosageMax": 200.0,
+		"dosageUnit": "mg",
+		"frequency": 30.0,
+		"frequencyUnit": "min",
+		"periodBetweenValue": 0.0,
+		"periodBetweenUnit": "mo",
+		"ifNeeded": false
+	  },
+	  "startDate": {
+		"year": 2019,
+		"month": 6,
+		"day": 7
+	  },
+	  "stopDate": {
+		"year": 2019,
+		"month": 6,
+		"day": 7
+	  },
+	  "drug": null,
+	  "cypInteractions": [],
+	  "transporterInteractions": [],
+	  "qtProlongatingRisk": "NONE",
+	  "atc": null,
+	  "isSelfCare": false,
+	  "isTrialMedication": true
+	}
   ]
 }

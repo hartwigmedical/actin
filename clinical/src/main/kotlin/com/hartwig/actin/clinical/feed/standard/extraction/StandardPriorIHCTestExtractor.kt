@@ -16,11 +16,11 @@ class StandardPriorIHCTestExtractor(
 ) : StandardDataExtractor<List<PriorIHCTest>> {
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<PriorIHCTest>> {
         val extractedIHCTestsFromTumorDifferentiation = extractIHC(molecularTestCuration, ehrPatientRecord)
-        val extractedFromPriorOtherConditions = extractFromPriorOtherConditions(ehrPatientRecord)
+        val extractedFromOtherConditions = extractFromOtherConditions(ehrPatientRecord)
         val extractedFromTumorDifferentiation = extractFromTumorDifferentiation(ehrPatientRecord)
 
         val curatedMolecularTestExtraction =
-            (extractedIHCTestsFromTumorDifferentiation + extractedFromPriorOtherConditions + extractedFromTumorDifferentiation).fold(
+            (extractedIHCTestsFromTumorDifferentiation + extractedFromOtherConditions + extractedFromTumorDifferentiation).fold(
                 ExtractionResult(
                     emptyList<PriorIHCTest>(), CurationExtractionEvaluation()
                 )
@@ -66,7 +66,7 @@ class StandardPriorIHCTestExtractor(
                 )
             }?.toList() ?: emptyList()
 
-    private fun extractFromPriorOtherConditions(ehrPatientRecord: ProvidedPatientRecord) = ehrPatientRecord.priorOtherConditions.map {
+    private fun extractFromOtherConditions(ehrPatientRecord: ProvidedPatientRecord) = ehrPatientRecord.priorOtherConditions.map {
         curateFromSecondarySource(it.name, ehrPatientRecord)
     }.filter {
         it.configs.isNotEmpty()
