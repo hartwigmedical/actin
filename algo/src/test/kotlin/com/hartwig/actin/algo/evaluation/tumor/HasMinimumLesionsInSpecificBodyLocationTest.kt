@@ -54,7 +54,7 @@ class HasMinimumLesionsInSpecificBodyLocationTest {
     }
 
     @Test
-    fun `Should pass wehen data on presence and count of requested lesion is missing but requested minimum is zero`() {
+    fun `Should pass when data on presence and count of requested lesion is missing but requested minimum is zero`() {
         val functionRequestingZeroLesions = HasMinimumLesionsInSpecificBodyLocation(0, BodyLocationCategory.LUNG)
         assertEvaluation(
             EvaluationResult.PASS,
