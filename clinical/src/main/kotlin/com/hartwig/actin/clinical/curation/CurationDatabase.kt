@@ -32,12 +32,11 @@ class CurationDatabase<T : CurationConfig>(
         val (conflictingKeyErrors, combinedConfigs) = listOf(configs, other.configs).flatMap { it.entries }
             .groupBy({ it.key }, { it.value }).entries
             .map { (input, value) ->
-                value.filterNot { it.all(CurationConfig::ignore) }.let { notIgnored ->
-                    if (notIgnored.size == 1) Either.Right(input to value.first()) else {
-                        CurationConfigValidationError(
-                            CurationCategory.COMORBIDITY.categoryName, input, "input", input, "string", "Conflicting key: $input"
-                        ).left()
-                    }
+                val filtered = if (value.size == 1) value else value.filterNot { it.all(CurationConfig::ignore) }
+                if (filtered.size == 1) Either.Right(input to filtered.first()) else {
+                    CurationConfigValidationError(
+                        CurationCategory.COMORBIDITY.categoryName, input, "input", input, "string", "Conflicting key: $input"
+                    ).left()
                 }
             }
             .partitionAndJoin()

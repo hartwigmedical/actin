@@ -74,15 +74,26 @@ class CurationDatabaseTest {
     }
 
     private fun createAndCombineDatabases(duplicateEntryIgnored: Boolean): CurationDatabase<ComorbidityConfig> {
-        val database = CurationDatabase(mapOf(INPUT to setOf(testConfig)), listOf(error(1)), CurationCategory.COMORBIDITY) { emptySet() }
-        val other = CurationDatabase(
-            mapOf(INPUT to setOf(testConfig.copy(ignore = duplicateEntryIgnored)), INPUT2 to setOf(testConfig2)),
-            listOf(error(2)),
-            CurationCategory.COMORBIDITY
-        ) { emptySet() }
-
+        val database = curationDatabase(mapOf(INPUT to setOf(testConfig.copy(ignore = duplicateEntryIgnored))), 1)
+        val other = curationDatabase(mapOf(INPUT to setOf(testConfig), INPUT2 to setOf(testConfig2)), 2)
         return database + other
     }
+
+    @Test
+    fun `Should retain ignore entries with no conflicts when combining databases`() {
+        val ignoredConfig = testConfig.copy(ignore = true)
+        val database = curationDatabase(mapOf(INPUT to setOf(ignoredConfig)), 1)
+        val other = curationDatabase(mapOf(INPUT2 to setOf(testConfig2)), 2)
+
+        val combined = database + other
+        assertThat(combined.find(INPUT)).containsExactly(ignoredConfig)
+        assertThat(combined.find(INPUT2)).containsExactly(testConfig2)
+        assertThat(combined.validationErrors).containsExactly(error(1), error(2))
+    }
+
+    private fun CurationDatabaseTest.curationDatabase(
+        configs: Map<InputText, Set<ComorbidityConfig>>, errorId: Int
+    ): CurationDatabase<ComorbidityConfig> = CurationDatabase(configs, listOf(error(errorId)), CurationCategory.COMORBIDITY) { emptySet() }
 
     private fun error(value: Int): CurationConfigValidationError =
         CurationConfigValidationError(CurationCategory.COMORBIDITY.categoryName, value.toString(), "", "", "")
