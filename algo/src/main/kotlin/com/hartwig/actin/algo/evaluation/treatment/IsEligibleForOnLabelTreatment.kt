@@ -32,7 +32,7 @@ class IsEligibleForOnLabelTreatment(
                 }
             }
 
-            record.oncologicalHistory.flatMap { it.treatments }.any { it.name.equals(treatment.name, ignoreCase = true) } -> {
+            record.oncologicalHistory.flatMap { it.allTreatments() }.any { it.name.equals(treatment.name, ignoreCase = true) } -> {
                 EvaluationFactory.warn("Patient might be ineligible for on-label $treatmentDisplay since this treatment was already administered")
             }
 
