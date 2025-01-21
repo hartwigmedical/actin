@@ -13,7 +13,7 @@ class HasMinimumLesionsInSpecificBodyLocationTest {
     private val bladderLesionFunction = HasMinimumLesionsInSpecificBodyLocation(2, BodyLocationCategory.BLADDER)
 
     @Test
-    fun `Should pass for correct amount of lesions in requested body location`() {
+    fun `Should pass for correct number of lesions in requested body location`() {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TumorTestFactory.withLungLesions(hasLungLesions = true, count = REQUESTED_LESIONS))
@@ -30,7 +30,7 @@ class HasMinimumLesionsInSpecificBodyLocationTest {
     }
 
     @Test
-    fun `Should fail for too small amount of lesions in requested body location`() {
+    fun `Should fail for too small number of lesions in requested body location`() {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TumorTestFactory.withLungLesions(hasLungLesions = true, count = REQUESTED_LESIONS.minus(1)))
@@ -41,7 +41,7 @@ class HasMinimumLesionsInSpecificBodyLocationTest {
     fun `Should fail for no lesions in requested body location`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TumorTestFactory.withLungLesions(hasLungLesions = false))
+            function.evaluate(TumorTestFactory.withLungLesions(hasLungLesions = false, count = null))
         )
     }
 
