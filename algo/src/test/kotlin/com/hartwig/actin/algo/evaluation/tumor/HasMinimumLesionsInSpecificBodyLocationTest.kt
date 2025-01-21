@@ -66,7 +66,7 @@ class HasMinimumLesionsInSpecificBodyLocationTest {
     fun `Should evaluate to undetermined for suspected lesions in requested body location regardless the known lesion count`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TumorTestFactory.withLungLesions(hasLungLesions = false, hasSuspectedLungLesions = true, count = 1))
+            function.evaluate(TumorTestFactory.withLungLesions(hasLungLesions = null, hasSuspectedLungLesions = true, count = 1))
         )
     }
 
