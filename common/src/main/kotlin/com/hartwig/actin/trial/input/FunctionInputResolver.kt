@@ -3,6 +3,7 @@ package com.hartwig.actin.trial.input
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver
 import com.hartwig.actin.datamodel.clinical.AtcLevel
+import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.Cyp
 import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.ReceptorType
@@ -46,6 +47,7 @@ import com.hartwig.actin.trial.input.single.OneIcdTitleOneInteger
 import com.hartwig.actin.trial.input.single.OneIntegerManyDoidTerms
 import com.hartwig.actin.trial.input.single.OneIntegerManyIcdTitles
 import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
+import com.hartwig.actin.trial.input.single.OneIntegerOneBodyLocation
 import com.hartwig.actin.trial.input.single.OneIntegerOneString
 import com.hartwig.actin.trial.input.single.OneMedicationCategory
 import com.hartwig.actin.trial.input.single.OneSpecificDrugOneTreatmentCategoryManyTypes
@@ -253,8 +255,8 @@ class FunctionInputResolver(
                     return true
                 }
 
-                FunctionInput.ONE_INTEGER_ONE_STRING -> {
-                    createOneIntegerOneStringInput(function)
+                FunctionInput.ONE_INTEGER_ONE_BODY_LOCATION -> {
+                    createOneIntegerOneBodyLocationInput(function)
                     return true
                 }
 
@@ -638,11 +640,11 @@ class FunctionInputResolver(
         )
     }
 
-    fun createOneIntegerOneStringInput(function: EligibilityFunction): OneIntegerOneString {
-        assertParamConfig(function, FunctionInput.ONE_INTEGER_ONE_STRING, 2)
-        return OneIntegerOneString(
+    fun createOneIntegerOneBodyLocationInput(function: EligibilityFunction): OneIntegerOneBodyLocation {
+        assertParamConfig(function, FunctionInput.ONE_INTEGER_ONE_BODY_LOCATION, 2)
+        return OneIntegerOneBodyLocation(
             integer = parameterAsInt(function, 0),
-            string = parameterAsString(function, 1)
+            bodyLocation = BodyLocationCategory.valueOf(parameterAsString(function, 1).uppercase())
         )
     }
 

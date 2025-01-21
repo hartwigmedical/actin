@@ -2,6 +2,7 @@ package com.hartwig.actin.trial.input
 
 import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.datamodel.clinical.AtcLevel
+import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.Cyp
 import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.ReceptorType
@@ -39,7 +40,7 @@ import com.hartwig.actin.trial.input.single.OneIcdTitleOneInteger
 import com.hartwig.actin.trial.input.single.OneIntegerManyDoidTerms
 import com.hartwig.actin.trial.input.single.OneIntegerManyIcdTitles
 import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
-import com.hartwig.actin.trial.input.single.OneIntegerOneString
+import com.hartwig.actin.trial.input.single.OneIntegerOneBodyLocation
 import com.hartwig.actin.trial.input.single.OneMedicationCategory
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyDrugs
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypesManyDrugs
@@ -568,14 +569,14 @@ class FunctionInputResolverTest {
     }
 
     @Test
-    fun `Should resolve functions with one integer one string input`() {
-        val rule = firstOfType(FunctionInput.ONE_INTEGER_ONE_STRING)
-        val valid = create(rule, listOf("2", "test"))
+    fun `Should resolve functions with one integer one body location input`() {
+        val rule = firstOfType(FunctionInput.ONE_INTEGER_ONE_BODY_LOCATION)
+        val valid = create(rule, listOf("2", "liver"))
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
-        assertThat(resolver.createOneIntegerOneStringInput(valid)).isEqualTo(OneIntegerOneString(2, "test"))
+        assertThat(resolver.createOneIntegerOneBodyLocationInput(valid)).isEqualTo(OneIntegerOneBodyLocation(2, BodyLocationCategory.LIVER))
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("1")))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("not an integer", "not an integer")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("not an integer", BodyLocationCategory.LIVER)))!!).isFalse
     }
 
     @Test
