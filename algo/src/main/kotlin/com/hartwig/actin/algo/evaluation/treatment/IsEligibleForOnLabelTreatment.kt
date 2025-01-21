@@ -32,16 +32,12 @@ class IsEligibleForOnLabelTreatment(
                 }
             }
 
-            record.oncologicalHistory.isEmpty() -> {
-                EvaluationFactory.undetermined("Eligibility for on-label treatment $treatmentDisplay undetermined (no prior cancer treatment)")
-            }
-
             record.oncologicalHistory.flatMap { it.treatments }.any { it.name.equals(treatment.name, ignoreCase = true) } -> {
                 EvaluationFactory.warn("Patient might be ineligible for on-label $treatmentDisplay since this treatment was already administered")
             }
 
             else -> {
-                EvaluationFactory.warn("Assumed that patient is eligible for on-label $treatmentDisplay")
+                EvaluationFactory.undetermined("Undetermined if patient is eligible for on-label $treatmentDisplay")
             }
         }
     }

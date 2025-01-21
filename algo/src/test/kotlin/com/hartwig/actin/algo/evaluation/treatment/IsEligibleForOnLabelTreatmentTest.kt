@@ -72,16 +72,6 @@ class IsEligibleForOnLabelTreatmentTest {
     }
 
     @Test
-    fun `Should return undetermined for non colorectal cancer patient with empty treatment list`() {
-        every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(any()) } returns false
-        every { recommendationEngine.standardOfCareEvaluatedTreatments(any()) } returns emptyList()
-        assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            function.evaluate(withTreatmentHistory(emptyList()))
-        )
-    }
-
-    @Test
     fun `Should warn for non colorectal cancer patient with target treatment already administered in history`() {
         every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(any()) } returns false
         every { recommendationEngine.standardOfCareEvaluatedTreatments(any()) } returns emptyList()
@@ -93,12 +83,22 @@ class IsEligibleForOnLabelTreatmentTest {
     }
 
     @Test
-    fun `Should warn for non colorectal cancer patient with non empty treatment list and not containing the specific treatment`() {
+    fun `Should return undetermined for non colorectal cancer patient with empty treatment list`() {
+        every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(any()) } returns false
+        every { recommendationEngine.standardOfCareEvaluatedTreatments(any()) } returns emptyList()
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(withTreatmentHistory(emptyList()))
+        )
+    }
+
+    @Test
+    fun `Should return undetermined for non colorectal cancer patient with non empty treatment list but not containing the specific treatment`() {
         every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(any()) } returns false
         every { recommendationEngine.standardOfCareEvaluatedTreatments(any()) } returns emptyList()
         val treatments = listOf(treatmentHistoryEntry(setOf(treatment("test", true))))
         assertEvaluation(
-            EvaluationResult.WARN,
+            EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistory(treatments))
         )
     }
