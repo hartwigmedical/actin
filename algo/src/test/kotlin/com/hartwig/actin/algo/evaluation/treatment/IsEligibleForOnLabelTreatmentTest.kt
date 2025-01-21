@@ -93,12 +93,12 @@ class IsEligibleForOnLabelTreatmentTest {
     }
 
     @Test
-    fun `Should return not evaluated for non colorectal cancer patient with non empty treatment list`() {
+    fun `Should warn for non colorectal cancer patient with non empty treatment list and not containing the specific treatment`() {
         every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(any()) } returns false
         every { recommendationEngine.standardOfCareEvaluatedTreatments(any()) } returns emptyList()
         val treatments = listOf(treatmentHistoryEntry(setOf(treatment("test", true))))
         assertEvaluation(
-            EvaluationResult.NOT_EVALUATED,
+            EvaluationResult.WARN,
             function.evaluate(withTreatmentHistory(treatments))
         )
     }
