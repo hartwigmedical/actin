@@ -1,6 +1,8 @@
 package com.hartwig.actin.datamodel.clinical
 
-enum class BodyLocationCategory(val display: String) {
+import com.hartwig.actin.datamodel.Displayable
+
+enum class BodyLocationCategory(private val display: String): Displayable {
     BLADDER("bladder"),
     BONE("bone"),
     BRAIN("brain"),
@@ -21,5 +23,9 @@ enum class BodyLocationCategory(val display: String) {
     SPLEEN("spleen"),
     STOMACH("stomach"),
     THYROID_GLAND("thyroid gland");
+
+    override fun display(): String {
+        return display
+    }
 }
 
