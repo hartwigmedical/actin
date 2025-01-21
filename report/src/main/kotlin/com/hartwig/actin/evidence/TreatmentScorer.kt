@@ -4,10 +4,12 @@ import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 
 data class Score(
+    val variant: String,
     val scoringMatch: ScoringMatch,
     val evidenceLevelDetails: EvidenceLevelDetails,
     val factor: Int,
     val score: Int,
+    val evidenceDescription: String
 ) : Comparable<Score> {
 
     fun score() = factor * score
@@ -15,8 +17,6 @@ data class Score(
     override fun compareTo(other: Score): Int {
         return score().compareTo(other.score)
     }
-
-    override fun toString() = "Score [${score()}] from [$scoringMatch, $evidenceLevelDetails]"
 }
 
 class TreatmentScorer {
@@ -29,6 +29,13 @@ class TreatmentScorer {
         val direction = if (treatment.evidenceDirection.hasBenefit) 1 else -1
         val factor = (config.levels[scoringMatch] ?: 0) * direction
         val score = config.level.scoring[treatment.evidenceLevelDetails] ?: 0
-        return Score(scoringMatch = scoringMatch, evidenceLevelDetails = treatment.evidenceLevelDetails, factor = factor, score = score)
+        return Score(
+            scoringMatch = scoringMatch,
+            evidenceLevelDetails = treatment.evidenceLevelDetails,
+            factor = factor,
+            score = score,
+            variant = treatment.molecularMatch.sourceEvent,
+            evidenceDescription = treatment.efficacyDescription
+        )
     }
 }
