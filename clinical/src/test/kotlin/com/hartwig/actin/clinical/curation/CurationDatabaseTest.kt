@@ -1,37 +1,41 @@
 package com.hartwig.actin.clinical.curation
 
 import com.hartwig.actin.clinical.UnusedCurationConfig
+import com.hartwig.actin.clinical.curation.config.ComorbidityConfig
+import com.hartwig.actin.clinical.curation.config.CurationConfigValidationError
 import com.hartwig.actin.clinical.curation.config.InfectionConfig
+import com.hartwig.actin.datamodel.clinical.Intolerance
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.io.File
 
 private const val INPUT = "input"
+private const val INPUT2 = "input2"
 
 class CurationDatabaseTest {
+    private val testConfig = ComorbidityConfig(INPUT, false, curated = Intolerance("", emptySet()))
+    private val testConfig2 = testConfig.copy(input = INPUT2)
 
     @Test
     fun `Should return empty set when input is not found`() {
-        val database = CurationDatabase<InfectionConfig>(emptyMap(), emptyList(), CurationCategory.INFECTION) { emptySet() }
+        val database = CurationDatabase<InfectionConfig>(emptyMap(), emptyList(), CurationCategory.COMORBIDITY) { emptySet() }
         assertThat(database.find(INPUT)).isEmpty()
     }
 
     @Test
     fun `Should return curation configs when key is found`() {
-        val testConfig = InfectionConfig(INPUT, false, "")
-        val database = CurationDatabase(mapOf(INPUT to setOf(testConfig)), emptyList(), CurationCategory.INFECTION) { emptySet() }
+        val database = CurationDatabase(mapOf(INPUT to setOf(testConfig)), emptyList(), CurationCategory.COMORBIDITY) { emptySet() }
         assertThat(database.find(INPUT)).containsExactly(testConfig)
     }
 
     @Test
     fun `Should return all unused curation inputs`() {
-        val testConfig = InfectionConfig(INPUT, false, "")
         val database = CurationDatabase(
-            mapOf(INPUT to setOf(testConfig)), emptyList(), CurationCategory.INFECTION
+            mapOf(INPUT to setOf(testConfig)), emptyList(), CurationCategory.COMORBIDITY
         ) { it.ecgEvaluatedInputs }
         assertThat(database.reportUnusedConfig(emptyList())).containsExactly(
             UnusedCurationConfig(
-                CurationCategory.INFECTION.categoryName,
+                CurationCategory.COMORBIDITY.categoryName,
                 INPUT
             )
         )
@@ -49,4 +53,37 @@ class CurationDatabaseTest {
 
         assertThat(sheetNames).containsExactlyInAnyOrderElementsOf(catNames)
     }
+
+    @Test
+    fun `Should combine databases when conflicting keys are ignored`() {
+        val combined = createAndCombineDatabases(true)
+        assertThat(combined.find(INPUT)).containsExactly(testConfig)
+        assertThat(combined.find(INPUT2)).containsExactly(testConfig2)
+        assertThat(combined.validationErrors).containsExactly(error(1), error(2))
+    }
+
+    @Test
+    fun `Should produce validation errors when conflicting keys are not ignored`() {
+        val combined = createAndCombineDatabases(false)
+        assertThat(combined.find(INPUT)).isEmpty()
+        assertThat(combined.find(INPUT2)).containsExactly(testConfig2)
+        val expectedConflictError = CurationConfigValidationError(
+            CurationCategory.COMORBIDITY.categoryName, INPUT, "input", INPUT, "string", "Conflicting key: $INPUT"
+        )
+        assertThat(combined.validationErrors).containsExactly(error(1), error(2), expectedConflictError)
+    }
+
+    private fun createAndCombineDatabases(duplicateEntryIgnored: Boolean): CurationDatabase<ComorbidityConfig> {
+        val database = CurationDatabase(mapOf(INPUT to setOf(testConfig)), listOf(error(1)), CurationCategory.COMORBIDITY) { emptySet() }
+        val other = CurationDatabase(
+            mapOf(INPUT to setOf(testConfig.copy(ignore = duplicateEntryIgnored)), INPUT2 to setOf(testConfig2)),
+            listOf(error(2)),
+            CurationCategory.COMORBIDITY
+        ) { emptySet() }
+
+        return database + other
+    }
+
+    private fun error(value: Int): CurationConfigValidationError =
+        CurationConfigValidationError(CurationCategory.COMORBIDITY.categoryName, value.toString(), "", "", "")
 }
