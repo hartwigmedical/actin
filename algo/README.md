@@ -628,6 +628,7 @@ Gonadorelin ("H01CC", "H01CA", "G03XA" or "L02AE") <br>
 Immunostimulants ("L03") <br>
 Immunosuppressants ("L04") <br>
 Nitrosoureas ("L01AD") <br>
+NSAIDs ("M01A") <br>
 Ophthalmic steroids ("S01BA", "S01BB", "S01CA", "S01CB") <br>
 Opioids ("N02A") <br>
 Other antianemic preparations ("B03X") <br>
