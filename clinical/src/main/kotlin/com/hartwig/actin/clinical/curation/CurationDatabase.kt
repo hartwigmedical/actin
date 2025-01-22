@@ -27,19 +27,18 @@ class CurationDatabase<T : CurationConfig>(
 
     operator fun plus(other: CurationDatabase<T>): CurationDatabase<T> {
         val combinedConfigs = listOf(configs, other.configs).flatMap { it.entries }
-            .groupBy({ it.key }, { it.value }).entries
-            .map { (input, value) ->
-                val filtered = if (value.size == 1) value else value.filterNot { it.all(CurationConfig::ignore) }
-                val consolidated = when (filtered.size) {
+            .groupBy({ it.key }, { it.value })
+            .mapValues { (_, value) ->
+                val filtered = value.filterNot { it.all(CurationConfig::ignore) }
+                when (filtered.size) {
                     0 -> value.first()
                     1 -> filtered.first()
-                    else -> filtered.reduce { acc, set -> acc + set }
+                    else -> filtered.reduce(Set<T>::plus)
                 }
-                input to consolidated
             }
 
         return CurationDatabase(
-            combinedConfigs.toMap(),
+            combinedConfigs,
             validationErrors + other.validationErrors,
             category,
             evaluatedInputFunction
