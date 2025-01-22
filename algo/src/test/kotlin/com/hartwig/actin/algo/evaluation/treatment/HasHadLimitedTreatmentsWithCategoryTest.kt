@@ -7,85 +7,45 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import org.junit.Test
 
 class HasHadLimitedTreatmentsWithCategoryTest {
 
     @Test
     fun `Should pass (treatment optional) or fail (treatment required) in case patient had no treatments`() {
-        assertEvaluation(EvaluationResult.PASS, FUNCTION_TREATMENT_OPTIONAL.evaluate(withTreatmentHistory(emptyList())))
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION_TREATMENT_REQUIRED.evaluate(withTreatmentHistory(emptyList())))
+        evaluateFunctions(EvaluationResult.PASS, EvaluationResult.FAIL, emptyList())
     }
 
     @Test
     fun `Should pass (treatment optional) or fail (treatment required) if patient has had only treatment of wrong category`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)))
-        assertEvaluation(
-            EvaluationResult.PASS,
-            FUNCTION_TREATMENT_OPTIONAL.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
-        )
-        assertEvaluation(
-            EvaluationResult.FAIL,
-            FUNCTION_TREATMENT_REQUIRED.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
-        )
+        evaluateFunctions(EvaluationResult.PASS, EvaluationResult.FAIL, listOf(treatmentHistoryEntry))
     }
 
     @Test
     fun `Should pass (both functions) when treatments with correct category within limit`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY)))
-        assertEvaluation(EvaluationResult.PASS, FUNCTION_TREATMENT_OPTIONAL.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
-        assertEvaluation(EvaluationResult.PASS, FUNCTION_TREATMENT_REQUIRED.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
+        evaluateFunctions(EvaluationResult.PASS, EvaluationResult.PASS, listOf(treatmentHistoryEntry))
     }
-
 
     @Test
     fun `Should fail (both functions) when treatments with correct category exceed limit`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY)))
-        assertEvaluation(
-            EvaluationResult.FAIL,
-            FUNCTION_TREATMENT_OPTIONAL.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
-        )
-        assertEvaluation(
-            EvaluationResult.FAIL,
-            FUNCTION_TREATMENT_REQUIRED.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
-        )
+        evaluateFunctions(EvaluationResult.FAIL, EvaluationResult.FAIL, listOf(treatmentHistoryEntry, treatmentHistoryEntry))
     }
 
     @Test
     fun `Should return pass (treatment optional) or undetermined (treatment required) if there is a potentially matching trial option within the limit`() {
-        assertEvaluation(
-            EvaluationResult.PASS,
-            FUNCTION_TREATMENT_OPTIONAL.evaluate(withTreatmentHistory(listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY)))
-        )
-        assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            FUNCTION_TREATMENT_REQUIRED.evaluate(withTreatmentHistory(listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY)))
-        )
+        evaluateFunctions(EvaluationResult.PASS, EvaluationResult.UNDETERMINED, listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY))
     }
 
     @Test
     fun `Should return undetermined (both functions) when possibly matching trial options could exceed limit`() {
-        assertEvaluation(
+        evaluateFunctions(
             EvaluationResult.UNDETERMINED,
-            FUNCTION_TREATMENT_OPTIONAL.evaluate(
-                withTreatmentHistory(
-                    listOf(
-                        TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY,
-                        TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY
-                    )
-                )
-            )
-        )
-        assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            FUNCTION_TREATMENT_REQUIRED.evaluate(
-                withTreatmentHistory(
-                    listOf(
-                        TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY,
-                        TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY
-                    )
-                )
-            )
+            listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY, TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY)
         )
     }
 
@@ -115,11 +75,20 @@ class HasHadLimitedTreatmentsWithCategoryTest {
         )
     }
 
+    private fun evaluateFunctions(
+        expectedResultTreatmentOptional: EvaluationResult,
+        expectedResultTreatmentRequired: EvaluationResult,
+        treatmentList: List<TreatmentHistoryEntry>
+    ) {
+        assertEvaluation(expectedResultTreatmentOptional, FUNCTION_TREATMENT_OPTIONAL.evaluate(withTreatmentHistory(treatmentList)))
+        assertEvaluation(expectedResultTreatmentRequired, FUNCTION_TREATMENT_REQUIRED.evaluate(withTreatmentHistory(treatmentList)))
+    }
+
     companion object {
         private val MATCHING_CATEGORY = TreatmentCategory.TARGETED_THERAPY
         private val TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY =
             treatmentHistoryEntry(setOf(treatment("trial", true, emptySet())), isTrial = true)
-        private val FUNCTION_TREATMENT_REQUIRED = HasHadLimitedTreatmentsWithCategory(MATCHING_CATEGORY, 1, true)
         private val FUNCTION_TREATMENT_OPTIONAL = HasHadLimitedTreatmentsWithCategory(MATCHING_CATEGORY, 1, false)
+        private val FUNCTION_TREATMENT_REQUIRED = HasHadLimitedTreatmentsWithCategory(MATCHING_CATEGORY, 1, true)
     }
 }
