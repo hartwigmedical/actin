@@ -102,15 +102,15 @@ class MolecularTestPrinter(private val printer: DatamodelPrinter) {
     private fun toYesNoUnknown(bool: Boolean?): String {
         return when (bool) {
             null -> {
-                "Unknown"
+                "unknown"
             }
 
             true -> {
-                "Yes"
+                "yes"
             }
 
             else -> {
-                "No"
+                "no"
             }
         }
     }
