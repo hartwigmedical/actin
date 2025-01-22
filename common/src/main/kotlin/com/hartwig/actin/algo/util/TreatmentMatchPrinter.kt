@@ -17,9 +17,9 @@ class TreatmentMatchPrinter(private val printer: DatamodelPrinter) {
         printer.print("Patient: " + treatmentMatch.patientId)
 
         val matchSummary = TrialMatchSummarizer.summarize(treatmentMatch.trialMatches)
-        printer.print("Trials: " + matchSummary.trialCount)
+        printer.print("Number of trial evaluated: " + matchSummary.trialCount)
         printer.print("Eligible trials: " + trialString(matchSummary.eligibleTrialMap))
-        printer.print("Cohorts: " + matchSummary.cohortCount)
+        printer.print("Number of cohorts evaluated: " + matchSummary.cohortCount)
         printer.print("Eligible cohorts: " + cohortString(matchSummary.eligibleTrialMap))
         printer.print("Eligible and recruiting cohorts: " + recruitingCohortString(matchSummary.eligibleTrialMap))
 
