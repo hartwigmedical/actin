@@ -20,17 +20,17 @@ import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
-import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.createMinimalTestMolecularRecord
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory.createMinimalTestOrangeRecord
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.doid.TestDoidModelFactory
 import io.mockk.every
 import io.mockk.mockk
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.Test
+import java.time.LocalDate
 
 class RecommendationEngineTest {
 
@@ -452,14 +452,14 @@ class RecommendationEngineTest {
             FOLFOX
         )
 
-        private val MINIMAL_MOLECULAR_RECORD = createMinimalTestMolecularRecord()
+        private val MINIMAL_MOLECULAR_RECORD = createMinimalTestOrangeRecord()
             .copy(
-                characteristics = createMinimalTestMolecularRecord().characteristics.copy(
+                characteristics = createMinimalTestOrangeRecord().characteristics.copy(
                     isMicrosatelliteUnstable = false,
                     isHomologousRepairDeficient = false
                 )
             )
-        private val MOLECULAR_RECORD_WITH_BRAF_V600E = TestMolecularFactory.createProperTestMolecularRecord()
+        private val MOLECULAR_RECORD_WITH_BRAF_V600E = TestMolecularFactory.createProperTestOrangeRecord()
         private val MSI_MOLECULAR_RECORD = MINIMAL_MOLECULAR_RECORD.copy(
             characteristics = MINIMAL_MOLECULAR_RECORD.characteristics.copy(isMicrosatelliteUnstable = true)
         )

@@ -82,7 +82,7 @@ class DriversInterpreterTest {
     }
 
     private fun createTestMolecularRecordWithDriverEvidence(evidence: ClinicalEvidence, isReportable: Boolean): MolecularRecord {
-        return TestMolecularFactory.createMinimalTestMolecularRecord().copy(drivers = createDriversWithEvidence(evidence, isReportable))
+        return TestMolecularFactory.createMinimalTestOrangeRecord().copy(drivers = createDriversWithEvidence(evidence, isReportable))
     }
 
     private fun createDriversWithEvidence(evidence: ClinicalEvidence, isReportable: Boolean): Drivers {

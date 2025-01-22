@@ -17,7 +17,7 @@ import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
 
 internal object TumorTestFactory {
     private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
-    private val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
+    private val baseMolecular = TestMolecularFactory.createMinimalTestOrangeRecord()
 
     fun withDoids(vararg doids: String): PatientRecord {
         return withDoids(setOf(*doids))

@@ -3,19 +3,14 @@ package com.hartwig.actin.molecular.util
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import org.apache.logging.log4j.LogManager
 
-class MolecularHistoryPrinter() {
+object MolecularHistoryPrinter {
+
+    private val logger = LogManager.getLogger(MolecularHistoryPrinter::class.java)
 
     fun print(molecularHistory: MolecularHistory) {
-        // TODO (kz): print all records in history
-        LOGGER.info("Printing molecular history")
-        molecularHistory.latestOrangeMolecularRecord()?.let(MolecularRecordPrinter::printRecord)
-    }
+        logger.info("Printing molecular history")
 
-    companion object {
-        private val LOGGER = LogManager.getLogger(MolecularHistoryPrinter::class.java)
-
-        fun printRecord(molecularHistory: MolecularHistory) {
-            MolecularHistoryPrinter().print(molecularHistory)
-        }
+        molecularHistory.allOrangeMolecularRecords().map(MolecularTestPrinter.Companion::printOrangeRecord)
+        molecularHistory.allPanels().map(MolecularTestPrinter.Companion::printPanelRecord)
     }
 }
