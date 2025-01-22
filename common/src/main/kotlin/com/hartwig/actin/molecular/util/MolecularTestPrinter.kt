@@ -21,7 +21,7 @@ private val PERCENTAGE_FORMAT = DecimalFormat("#'%'", DecimalFormatSymbols.getIn
 class MolecularTestPrinter(private val printer: DatamodelPrinter) {
 
     fun printOrangeRecord(record: MolecularRecord) {
-        printer.print("Sample: " + record.sampleId)
+        printer.print("Test: ORANGE for sample: '" + record.sampleId + "'")
         printer.print(" Experiment type '" + record.experimentType.display() + "' on " + formatDate(record.date))
         printer.print(" Contains tumor cells: " + toYesNoUnknown(record.containsTumorCells))
         printer.print(" Has sufficient quality and purity: " + toYesNoUnknown(record.hasSufficientQualityAndPurity()))
