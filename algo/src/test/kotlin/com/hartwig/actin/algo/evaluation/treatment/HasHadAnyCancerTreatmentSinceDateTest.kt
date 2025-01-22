@@ -27,14 +27,12 @@ val IMMUNOTHERAPY_TREATMENT = TreatmentTestFactory.treatment(
 class HasHadAnyCancerTreatmentSinceDateTest {
 
     private val interpreter = WashoutTestFactory.activeFromDate(MIN_DATE)
-    private val function = HasHadAnyCancerTreatmentSinceDate(MIN_DATE, MONTHS_AGO, setOf(ATC_LEVELS), interpreter)
+    private val function = HasHadAnyCancerTreatmentSinceDate(MIN_DATE, MONTHS_AGO, setOf(ATC_LEVELS), interpreter, false)
     private val functionOnlySystemic = HasHadAnyCancerTreatmentSinceDate(MIN_DATE, MONTHS_AGO, setOf(ATC_LEVELS), interpreter, true)
 
     @Test
     fun `Should fail when oncological history is empty`() {
-        val priorCancerTreatment = TreatmentTestFactory.withTreatmentHistory(emptyList())
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(priorCancerTreatment))
-        evaluateFunctions(EvaluationResult.FAIL, priorCancerTreatment)
+        evaluateFunctions(EvaluationResult.FAIL, TreatmentTestFactory.withTreatmentHistory(emptyList()))
     }
 
     @Test

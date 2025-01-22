@@ -16,7 +16,7 @@ class HasHadAnyCancerTreatmentSinceDate(
     private val monthsAgo: Int,
     private val atcLevelsToFind: Set<AtcLevel>,
     private val interpreter: MedicationStatusInterpreter,
-    private val onlySystemicTreatments: Boolean = false
+    private val onlySystemicTreatments: Boolean
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -25,7 +25,7 @@ class HasHadAnyCancerTreatmentSinceDate(
                 ?.filter { (it.allLevels() intersect atcLevelsToFind).isNotEmpty() })
 
         val effectiveTreatmentHistory = (record.oncologicalHistory + antiCancerMedicationsWithoutTrialMedicationsAsTreatments)
-            .filter { entry -> entry.allTreatments().any { it.isSystemic } || !onlySystemicTreatments }
+            .filter { entry -> !onlySystemicTreatments || entry.allTreatments().any { it.isSystemic } }
         val systemicMessage = if (onlySystemicTreatments) " systemic" else ""
 
         return when {
