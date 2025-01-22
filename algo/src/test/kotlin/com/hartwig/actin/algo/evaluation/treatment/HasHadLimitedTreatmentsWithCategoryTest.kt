@@ -25,14 +25,12 @@ class HasHadLimitedTreatmentsWithCategoryTest {
 
     @Test
     fun `Should pass (both functions) when treatments with correct category within limit`() {
-        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY)))
-        evaluateFunctions(EvaluationResult.PASS, EvaluationResult.PASS, listOf(treatmentHistoryEntry))
+        evaluateFunctions(EvaluationResult.PASS, EvaluationResult.PASS, listOf(MATCHING_TREATMENT))
     }
 
     @Test
     fun `Should fail (both functions) when treatments with correct category exceed limit`() {
-        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY)))
-        evaluateFunctions(EvaluationResult.FAIL, EvaluationResult.FAIL, listOf(treatmentHistoryEntry, treatmentHistoryEntry))
+        evaluateFunctions(EvaluationResult.FAIL, EvaluationResult.FAIL, listOf(MATCHING_TREATMENT, MATCHING_TREATMENT))
     }
 
     @Test
@@ -86,6 +84,7 @@ class HasHadLimitedTreatmentsWithCategoryTest {
 
     companion object {
         private val MATCHING_CATEGORY = TreatmentCategory.TARGETED_THERAPY
+        private val MATCHING_TREATMENT = treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY)))
         private val TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY =
             treatmentHistoryEntry(setOf(treatment("trial", true, emptySet())), isTrial = true)
         private val FUNCTION_TREATMENT_OPTIONAL = HasHadLimitedTreatmentsWithCategory(MATCHING_CATEGORY, 1, false)
