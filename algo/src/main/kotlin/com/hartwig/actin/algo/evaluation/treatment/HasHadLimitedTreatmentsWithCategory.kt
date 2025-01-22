@@ -8,23 +8,25 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 
 class HasHadLimitedTreatmentsWithCategory(
     private val category: TreatmentCategory,
-    private val maxTreatmentLines: Int
+    private val maxTreatmentLines: Int,
+    private val treatmentIsRequired: Boolean
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(record.oncologicalHistory, category)
+        val messageEnding = "received at most " + maxTreatmentLines + " lines of " + category.display()
 
         return when {
-            treatmentSummary.numSpecificMatches() + treatmentSummary.numPossibleTrialMatches <= maxTreatmentLines -> {
-                EvaluationFactory.pass("Has received at most " + maxTreatmentLines + " lines of " + category.display())
+            treatmentSummary.numSpecificMatches() + treatmentSummary.numPossibleTrialMatches <= maxTreatmentLines && (!treatmentIsRequired || treatmentSummary.hasSpecificMatch()) -> {
+                EvaluationFactory.pass("Has $messageEnding")
             }
 
-            treatmentSummary.numSpecificMatches() <= maxTreatmentLines -> {
-                EvaluationFactory.undetermined("Undetermined if received at most " + maxTreatmentLines + " lines of " + category.display())
+            treatmentSummary.numSpecificMatches() <= maxTreatmentLines && (!treatmentIsRequired || treatmentSummary.hasSpecificMatch() || treatmentSummary.hasPossibleTrialMatch()) -> {
+                EvaluationFactory.undetermined("Undetermined if $messageEnding")
             }
 
             else -> {
-                EvaluationFactory.fail("Has not received at most " + maxTreatmentLines + " lines of " + category.display())
+                EvaluationFactory.fail("Has not $messageEnding")
             }
         }
     }
