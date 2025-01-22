@@ -80,6 +80,17 @@ class CurationDatabaseTest {
     }
 
     @Test
+    fun `Should retain single ignore entry with no conflicts when all conflicting entries are ignored`() {
+        val ignoredConfig = testConfig.copy(ignore = true)
+        val database = curationDatabase(mapOf(INPUT to setOf(ignoredConfig)), 1)
+        val other = curationDatabase(mapOf(INPUT to setOf(ignoredConfig)), 2)
+
+        val combined = database + other
+        assertThat(combined.find(INPUT)).containsExactly(ignoredConfig)
+        assertThat(combined.validationErrors).containsExactly(error(1), error(2))
+    }
+
+    @Test
     fun `Should retain ignore entries with no conflicts when combining databases`() {
         val ignoredConfig = testConfig.copy(ignore = true)
         val database = curationDatabase(mapOf(INPUT to setOf(ignoredConfig)), 1)
