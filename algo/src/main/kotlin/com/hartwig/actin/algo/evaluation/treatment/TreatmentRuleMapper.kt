@@ -43,6 +43,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT to hasHadAnyCancerTreatmentCreator(),
             EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT_IGNORING_CATEGORY_X to hasHadAnyCancerTreatmentIgnoringSomeCategoryCreator(),
             EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT_WITHIN_X_MONTHS to hasHadAnyCancerTreatmentWithinMonthsCreator(),
+            EligibilityRule.HAS_HAD_ANY_SYSTEMIC_CANCER_TREATMENT_WITHIN_X_MONTHS to hasHadAnySystemicCancerTreatmentWithinMonthsCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_NAME_X to hasHadSpecificTreatmentCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS to hasHadSpecificTreatmentWithinWeeksCreator(),
             EligibilityRule.HAS_HAD_FIRST_LINE_TREATMENT_NAME_X to hasHadFirstLineTreatmentNameCreator(),
@@ -186,6 +187,14 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val monthsAgo = functionInputResolver().createOneIntegerInput(function)
             val (interpreter, minDate) = createInterpreterForWashout(null, monthsAgo, referenceDate)
             HasHadAnyCancerTreatmentSinceDate(minDate, monthsAgo, antiCancerCategories, interpreter)
+        }
+    }
+
+    private fun hasHadAnySystemicCancerTreatmentWithinMonthsCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val monthsAgo = functionInputResolver().createOneIntegerInput(function)
+            val (interpreter, minDate) = createInterpreterForWashout(null, monthsAgo, referenceDate)
+            HasHadAnyCancerTreatmentSinceDate(minDate, monthsAgo, antiCancerCategories, interpreter, onlySystemicTreatments= true)
         }
     }
 
