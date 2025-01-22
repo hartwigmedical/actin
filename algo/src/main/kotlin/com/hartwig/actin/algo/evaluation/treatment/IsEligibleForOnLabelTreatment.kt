@@ -15,28 +15,29 @@ class IsEligibleForOnLabelTreatment(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val recommendationEngine = recommendationEngineFactory.create()
+        val treatmentDisplay = treatment.display()
 
         return when {
             tumorIsCUP(record.tumor) -> {
-                EvaluationFactory.undetermined("Tumor type CUP hence eligibility for on-label treatment ${treatment.display()} undetermined")
+                EvaluationFactory.undetermined("Tumor type CUP hence eligibility for on-label treatment $treatmentDisplay} undetermined")
             }
 
             recommendationEngine.standardOfCareCanBeEvaluatedForPatient(record) -> {
                 if (recommendationEngine.standardOfCareEvaluatedTreatments(record)
                         .any { it.treatmentCandidate.treatment.name.equals(treatment.name, ignoreCase = true) }
                 ) {
-                    EvaluationFactory.undetermined("Undetermined if patient is eligible for on-label treatment ${treatment.display()}")
+                    EvaluationFactory.undetermined("Undetermined if patient is eligible for on-label treatment $treatmentDisplay")
                 } else {
-                    EvaluationFactory.fail("Not eligible for on-label treatment ${treatment.display()}")
+                    EvaluationFactory.fail("Not eligible for on-label treatment $treatmentDisplay")
                 }
             }
 
-            record.oncologicalHistory.isEmpty() -> {
-                EvaluationFactory.undetermined("Eligibility for on-label treatment ${treatment.display()} undetermined (no prior cancer treatment)")
+            record.oncologicalHistory.flatMap { it.allTreatments() }.any { it.name.equals(treatment.name, ignoreCase = true) } -> {
+                EvaluationFactory.warn("Patient might be ineligible for on-label $treatmentDisplay since this treatment was already administered")
             }
 
             else -> {
-                EvaluationFactory.notEvaluated("Assumed that patient is not eligible for on-label treatment since patient has had prior cancer treatment")
+                EvaluationFactory.undetermined("Undetermined if patient is eligible for on-label $treatmentDisplay")
             }
         }
     }

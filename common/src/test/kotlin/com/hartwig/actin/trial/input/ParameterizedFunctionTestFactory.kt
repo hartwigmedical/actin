@@ -1,5 +1,6 @@
 package com.hartwig.actin.trial.input
 
+import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
@@ -173,8 +174,8 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
                 listOf("string1;string2", "1")
             }
 
-            FunctionInput.ONE_INTEGER_ONE_STRING -> {
-                listOf("1", "string")
+            FunctionInput.ONE_INTEGER_ONE_BODY_LOCATION -> {
+                listOf("1", BodyLocationCategory.LIVER.toString())
             }
 
             FunctionInput.ONE_INTEGER_MANY_DOID_TERMS -> {

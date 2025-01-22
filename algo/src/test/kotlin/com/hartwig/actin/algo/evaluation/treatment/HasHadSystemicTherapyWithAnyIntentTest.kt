@@ -181,7 +181,7 @@ class HasHadSystemicTherapyWithAnyIntentTest {
     @Test
     fun `Should be undetermined with treatment with missing intent, if intent is evaluated`() {
         val treatmentX = TreatmentTestFactory.treatmentHistoryEntry(
-            setOf(TreatmentTestFactory.treatment("treatment x", true)),
+            setOf(TreatmentTestFactory.treatment("TREATMENT X", true)),
             stopYear = recentDate.year,
             stopMonth = recentDate.monthValue,
             intents = null
@@ -197,7 +197,7 @@ class HasHadSystemicTherapyWithAnyIntentTest {
 
         listOf(evaluationWithDate, evaluationWithoutDate).forEach {
             assertThat(it.undeterminedMessages).containsExactly(
-                "Has received systemic treatment (treatment x and treatment y) but undetermined if intent is adjuvant or neoadjuvant"
+                "Has received systemic treatment (Treatment x and Treatment y) but undetermined if intent is adjuvant or neoadjuvant"
             )
         }
     }
