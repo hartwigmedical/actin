@@ -15,7 +15,8 @@ class HasHadAnyCancerTreatmentSinceDate(
     private val minDate: LocalDate,
     private val monthsAgo: Int,
     private val atcLevelsToFind: Set<AtcLevel>,
-    private val interpreter: MedicationStatusInterpreter
+    private val interpreter: MedicationStatusInterpreter,
+    private val onlySystemicTreatments: Boolean
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -23,27 +24,29 @@ class HasHadAnyCancerTreatmentSinceDate(
             createTreatmentHistoryEntriesFromMedications(record.medications?.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
                 ?.filter { (it.allLevels() intersect atcLevelsToFind).isNotEmpty() })
 
-        val effectiveTreatmentHistory = record.oncologicalHistory + antiCancerMedicationsWithoutTrialMedicationsAsTreatments
+        val effectiveTreatmentHistory = (record.oncologicalHistory + antiCancerMedicationsWithoutTrialMedicationsAsTreatments)
+            .filter { entry -> !onlySystemicTreatments || entry.allTreatments().any { it.isSystemic } }
+        val systemicMessage = if (onlySystemicTreatments) " systemic" else ""
 
         return when {
             effectiveTreatmentHistory.any { treatmentSinceMinDate(it, minDate, false) } -> {
-                EvaluationFactory.pass("Received anti-cancer therapy within the last $monthsAgo months")
+                EvaluationFactory.pass("Received$systemicMessage anti-cancer therapy within the last $monthsAgo months")
             }
 
             effectiveTreatmentHistory.any { it.isTrial } || record.medications?.any { it.isTrialMedication } == true -> {
-                EvaluationFactory.undetermined("Inconclusive if patient had any prior cancer treatment because participated in trial")
+                EvaluationFactory.undetermined("Inconclusive if patient had any prior$systemicMessage cancer treatment because participated in trial")
             }
 
             effectiveTreatmentHistory.any { treatmentSinceMinDate(it, minDate, true) } -> {
-                EvaluationFactory.undetermined("Received anti-cancer therapy but undetermined if in the last $monthsAgo months (date unknown)")
+                EvaluationFactory.undetermined("Received$systemicMessage anti-cancer therapy but undetermined if in the last $monthsAgo months (date unknown)")
             }
 
             effectiveTreatmentHistory.isEmpty() -> {
-                EvaluationFactory.fail("Has not received anti-cancer therapy within $monthsAgo months")
+                EvaluationFactory.fail("Has not received$systemicMessage anti-cancer therapy within $monthsAgo months")
             }
 
             else -> {
-                EvaluationFactory.fail("Has not had any prior cancer treatment")
+                EvaluationFactory.fail("Has not had any prior$systemicMessage cancer treatment")
             }
         }
     }
