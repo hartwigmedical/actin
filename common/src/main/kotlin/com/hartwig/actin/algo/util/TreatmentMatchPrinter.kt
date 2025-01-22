@@ -17,9 +17,9 @@ class TreatmentMatchPrinter(private val printer: DatamodelPrinter) {
         printer.print("Patient: " + treatmentMatch.patientId)
 
         val matchSummary = TrialMatchSummarizer.summarize(treatmentMatch.trialMatches)
-        printer.print("# trial evaluated: " + matchSummary.trialCount)
+        printer.print("# Trials evaluated: " + matchSummary.trialCount)
         printer.print(" Eligible trials: " + trialString(matchSummary.eligibleTrialMap))
-        printer.print("# cohorts evaluated: " + matchSummary.cohortCount)
+        printer.print("# Cohorts evaluated: " + matchSummary.cohortCount)
         printer.print(" Eligible cohorts: " + cohortString(matchSummary.eligibleTrialMap))
         printer.print(" Eligible and recruiting cohorts: " + recruitingCohortString(matchSummary.eligibleTrialMap))
 
@@ -30,9 +30,9 @@ class TreatmentMatchPrinter(private val printer: DatamodelPrinter) {
 
         printEvaluationSummary(allTrialEvaluations, "Trial rules")
 
-        printer.print("# standard-of-care treatments evaluated: ${treatmentMatch.standardOfCareMatches?.count() ?: 0}")
+        printer.print("# Standard-of-care treatments evaluated: ${treatmentMatch.standardOfCareMatches?.count() ?: 0}")
         if (treatmentMatch.standardOfCareMatches != null) {
-            printer.print(" # eligible SOC treatments: ${treatmentMatch.standardOfCareMatches!!.count(AnnotatedTreatmentMatch::eligible)}")
+            printer.print(" Eligible SOC treatments: ${treatmentMatch.standardOfCareMatches!!.count(AnnotatedTreatmentMatch::eligible)}")
 
             printEvaluationSummary(treatmentMatch.standardOfCareMatches!!.flatMap(AnnotatedTreatmentMatch::evaluations), "SOC rules")
         }
