@@ -21,7 +21,11 @@ class HasHadLimitedTreatmentsWithCategory(
                 EvaluationFactory.pass("Has $messageEnding")
             }
 
-            treatmentSummary.numSpecificMatches() <= maxTreatmentLines && (!treatmentIsRequired || treatmentSummary.hasSpecificMatch() || treatmentSummary.hasPossibleTrialMatch()) -> {
+            treatmentIsRequired && !treatmentSummary.hasSpecificMatch() && !treatmentSummary.hasPossibleTrialMatch() -> {
+                EvaluationFactory.fail("Has not received ${category.display()} treatment")
+            }
+
+            treatmentSummary.numSpecificMatches() <= maxTreatmentLines -> {
                 EvaluationFactory.undetermined("Undetermined if $messageEnding")
             }
 
