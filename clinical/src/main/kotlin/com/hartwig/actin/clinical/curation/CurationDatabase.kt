@@ -5,9 +5,6 @@ import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfigValidationError
 import com.hartwig.actin.clinical.curation.config.ValidatedCurationConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.util.left
-import com.hartwig.actin.util.partitionAndJoin
-import com.hartwig.actin.util.right
 
 typealias InputText = String
 
@@ -29,23 +26,21 @@ class CurationDatabase<T : CurationConfig>(
     }
 
     operator fun plus(other: CurationDatabase<T>): CurationDatabase<T> {
-        val (conflictingKeyErrors, combinedConfigs) = listOf(configs, other.configs).flatMap { it.entries }
+        val combinedConfigs = listOf(configs, other.configs).flatMap { it.entries }
             .groupBy({ it.key }, { it.value }).entries
             .map { (input, value) ->
                 val filtered = if (value.size == 1) value else value.filterNot { it.all(CurationConfig::ignore) }
-                if (filtered.size > 1) {
-                    CurationConfigValidationError(
-                        CurationCategory.COMORBIDITY.categoryName, input, "input", input, "string", "Conflicting key: $input"
-                    ).left()
-                } else {
-                    Pair(input, filtered.firstOrNull() ?: value.first()).right()
+                val consolidated = when (filtered.size) {
+                    0 -> value.first()
+                    1 -> filtered.first()
+                    else -> filtered.reduce { acc, set -> acc + set }
                 }
+                input to consolidated
             }
-            .partitionAndJoin()
 
         return CurationDatabase(
             combinedConfigs.toMap(),
-            validationErrors + other.validationErrors + conflictingKeyErrors,
+            validationErrors + other.validationErrors,
             category,
             evaluatedInputFunction
         )

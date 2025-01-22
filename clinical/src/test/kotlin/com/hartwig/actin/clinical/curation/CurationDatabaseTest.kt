@@ -56,27 +56,25 @@ class CurationDatabaseTest {
 
     @Test
     fun `Should combine databases when conflicting keys are ignored`() {
-        val combined = createAndCombineDatabases(true)
+        val database = curationDatabase(mapOf(INPUT to setOf(testConfig.copy(ignore = true))), 1)
+        val other = curationDatabase(mapOf(INPUT to setOf(testConfig), INPUT2 to setOf(testConfig2)), 2)
+        val combined = database + other
+
         assertThat(combined.find(INPUT)).containsExactly(testConfig)
         assertThat(combined.find(INPUT2)).containsExactly(testConfig2)
         assertThat(combined.validationErrors).containsExactly(error(1), error(2))
     }
 
     @Test
-    fun `Should produce validation errors when conflicting keys are not ignored`() {
-        val combined = createAndCombineDatabases(false)
-        assertThat(combined.find(INPUT)).isEmpty()
-        assertThat(combined.find(INPUT2)).containsExactly(testConfig2)
-        val expectedConflictError = CurationConfigValidationError(
-            CurationCategory.COMORBIDITY.categoryName, INPUT, "input", INPUT, "string", "Conflicting key: $INPUT"
-        )
-        assertThat(combined.validationErrors).containsExactly(error(1), error(2), expectedConflictError)
-    }
+    fun `Should combine curated value sets when conflicting keys are not ignored`() {
+        val conflicting = testConfig.copy(curated = Intolerance("conflicting", emptySet()))
+        val database = curationDatabase(mapOf(INPUT to setOf(testConfig)), 1)
+        val other = curationDatabase(mapOf(INPUT to setOf(conflicting), INPUT2 to setOf(testConfig2)), 2)
+        val combined = database + other
 
-    private fun createAndCombineDatabases(duplicateEntryIgnored: Boolean): CurationDatabase<ComorbidityConfig> {
-        val database = curationDatabase(mapOf(INPUT to setOf(testConfig.copy(ignore = duplicateEntryIgnored))), 1)
-        val other = curationDatabase(mapOf(INPUT to setOf(testConfig), INPUT2 to setOf(testConfig2)), 2)
-        return database + other
+        assertThat(combined.find(INPUT)).containsExactly(testConfig, conflicting)
+        assertThat(combined.find(INPUT2)).containsExactly(testConfig2)
+        assertThat(combined.validationErrors).containsExactly(error(1), error(2))
     }
 
     @Test
