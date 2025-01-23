@@ -15,8 +15,7 @@ data class MolecularHistory(
     }
 
     fun latestOrangeMolecularRecord(): MolecularRecord? {
-        return allOrangeMolecularRecords()
-            .maxByOrNull { it.date ?: LocalDate.MIN }
+        return allOrangeMolecularRecords().maxByOrNull { it.date ?: LocalDate.MIN }
     }
 
     companion object {

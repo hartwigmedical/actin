@@ -31,7 +31,7 @@ private const val VIRUS_INTEGRATIONS = 3
 
 class DriversSummarizerTest {
 
-    private val minimalDrivers = TestMolecularFactory.createMinimalTestMolecularRecord().drivers
+    private val minimalDrivers = TestMolecularFactory.createMinimalTestOrangeRecord().drivers
     
     @Test
     fun `Should return key variants`() {

@@ -53,13 +53,18 @@ data class ReporterConfig(
                 LOGGER.info("Extended reporting mode has been enabled")
             }
 
+            val configuredProfile = ApplicationConfig.optionalValue(cmd, PROFILE)
+            if (cmd.hasOption(PROFILE)) {
+                LOGGER.info("Profile has been configured as '$configuredProfile'")
+            }
+
             return ReporterConfig(
                 patientJson = ApplicationConfig.nonOptionalFile(cmd, PATIENT_JSON),
                 treatmentMatchJson = ApplicationConfig.nonOptionalFile(cmd, TREATMENT_MATCH_JSON),
                 overrideYaml = ApplicationConfig.optionalFile(cmd, OVERRIDE_YAML_ARGUMENT),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
                 enableExtendedMode = enableExtendedMode,
-                profile = ApplicationConfig.optionalValue(cmd, PROFILE)
+                profile = configuredProfile
             )
         }
     }

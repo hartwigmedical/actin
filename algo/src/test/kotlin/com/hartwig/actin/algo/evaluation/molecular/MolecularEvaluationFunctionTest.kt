@@ -10,10 +10,10 @@ import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
-import com.hartwig.actin.datamodel.molecular.TestPanelRecordFactory
-import java.time.LocalDate
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 private const val OVERRIDE_MESSAGE = "Override message"
 private const val FAIL_MESSAGE = "Fail message"
@@ -64,7 +64,7 @@ class MolecularEvaluationFunctionTest {
     }
 
     private fun emptyArcher(testDate: LocalDate? = null) =
-        TestPanelRecordFactory.empty().copy(experimentType = ExperimentType.PANEL, date = testDate)
+        TestMolecularFactory.createMinimalTestPanelRecord().copy(experimentType = ExperimentType.PANEL, date = testDate)
 
     @Test
     fun `Should execute rule when ORANGE molecular data`() {

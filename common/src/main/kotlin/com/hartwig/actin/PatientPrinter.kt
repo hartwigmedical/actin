@@ -15,7 +15,7 @@ class PatientPrinter(private val printer: DatamodelPrinter) {
         printer.print("Primary tumor type: " + tumorType(record.tumor))
         printer.print("WHO status: " + record.clinicalStatus.who)
 
-        MolecularHistoryPrinter.printRecord(record.molecularHistory)
+        MolecularHistoryPrinter.print(record.molecularHistory)
     }
 
     companion object {

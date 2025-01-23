@@ -32,7 +32,33 @@ object TestMolecularFactory {
     private val TODAY = LocalDate.now()
     private const val DAYS_SINCE_MOLECULAR_ANALYSIS = 5
 
-    fun createMinimalTestMolecularRecord(): MolecularRecord {
+    fun createMinimalTestMolecularHistory(): MolecularHistory {
+        return MolecularHistory(listOf(createMinimalTestOrangeRecord(), createMinimalTestPanelRecord()))
+    }
+
+    fun createProperTestMolecularHistory(): MolecularHistory {
+        return MolecularHistory(listOf(createProperTestOrangeRecord(), createProperTestPanelRecord()))
+    }
+
+    fun createExhaustiveTestMolecularHistory(): MolecularHistory {
+        return MolecularHistory(listOf(createExhaustiveTestOrangeRecord(), createExhaustiveTestPanelRecord()))
+    }
+
+    fun createMinimalTestPanelRecord(): PanelRecord {
+        return PanelRecord(
+            testedGenes = emptySet(),
+            experimentType = ExperimentType.PANEL,
+            testTypeDisplay = "minimal panel",
+            date = null,
+            drivers = Drivers(),
+            characteristics = MolecularCharacteristics(),
+            evidenceSource = "",
+            hasSufficientPurity = true,
+            hasSufficientQuality = true
+        )
+    }
+
+    fun createMinimalTestOrangeRecord(): MolecularRecord {
         return MolecularRecord(
             patientId = TestPatientFactory.TEST_PATIENT,
             sampleId = TestPatientFactory.TEST_SAMPLE,
@@ -44,43 +70,51 @@ object TestMolecularFactory {
             isContaminated = false,
             hasSufficientPurity = true,
             hasSufficientQuality = true,
-            characteristics = createMinimalTestCharacteristics(),
             drivers = Drivers(),
+            characteristics = createMinimalTestCharacteristics(),
             immunology = MolecularImmunology(isReliable = false, hlaAlleles = emptySet()),
             date = null,
             pharmaco = emptySet()
         )
     }
 
-    fun createProperTestMolecularRecord(): MolecularRecord {
-        return createMinimalTestMolecularRecord().copy(
+    fun createProperTestPanelRecord(): PanelRecord {
+        return createMinimalTestPanelRecord().copy(
+            testedGenes = setOf("BRAF", "PTEN"),
+            testTypeDisplay = "proper panel",
+            date = TODAY.minusDays(DAYS_SINCE_MOLECULAR_ANALYSIS.toLong()),
+            drivers = createProperTestDrivers(),
+            characteristics = createProperTestCharacteristics(),
+            evidenceSource = "kb",
+        )
+    }
+
+    fun createProperTestOrangeRecord(): MolecularRecord {
+        return createMinimalTestOrangeRecord().copy(
             date = TODAY.minusDays(DAYS_SINCE_MOLECULAR_ANALYSIS.toLong()),
             evidenceSource = "kb",
             externalTrialSource = "trial kb",
-            characteristics = createProperTestCharacteristics(),
             drivers = createProperTestDrivers(),
+            characteristics = createProperTestCharacteristics(),
             immunology = createProperTestImmunology(),
             pharmaco = createProperTestPharmaco()
         )
     }
 
-    fun createExhaustiveTestMolecularRecord(): MolecularRecord {
-        return createProperTestMolecularRecord().copy(
-            characteristics = createExhaustiveTestCharacteristics(),
-            drivers = createExhaustiveTestDrivers()
+    fun createExhaustiveTestPanelRecord(): PanelRecord {
+        return createProperTestPanelRecord().copy(
+            testedGenes = setOf("BRAF", "PTEN", "MYC", "MET", "EML4", "ALK"),
+            testTypeDisplay = "exhaustive panel",
+            drivers = createExhaustiveTestDrivers(),
+            characteristics = createExhaustiveTestCharacteristics()
         )
     }
 
-    fun createMinimalTestMolecularHistory(): MolecularHistory {
-        return MolecularHistory(listOf(createMinimalTestMolecularRecord()))
-    }
-
-    fun createProperTestMolecularHistory(): MolecularHistory {
-        return MolecularHistory(listOf(createProperTestMolecularRecord()))
-    }
-
-    fun createExhaustiveTestMolecularHistory(): MolecularHistory {
-        return MolecularHistory(listOf(createExhaustiveTestMolecularRecord(), TestPanelRecordFactory.empty()))
+    fun createExhaustiveTestOrangeRecord(): MolecularRecord {
+        return createProperTestOrangeRecord().copy(
+            drivers = createExhaustiveTestDrivers(),
+            characteristics = createExhaustiveTestCharacteristics()
+        )
     }
 
     private fun createMinimalTestCharacteristics(): MolecularCharacteristics {

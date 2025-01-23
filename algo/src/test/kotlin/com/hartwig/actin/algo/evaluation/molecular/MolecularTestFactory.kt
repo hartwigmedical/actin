@@ -23,7 +23,7 @@ import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoEntry
 internal object MolecularTestFactory {
 
     private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
-    private val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
+    private val baseMolecular = TestMolecularFactory.createMinimalTestOrangeRecord()
 
     fun priorIHCTest(
         test: String = "",

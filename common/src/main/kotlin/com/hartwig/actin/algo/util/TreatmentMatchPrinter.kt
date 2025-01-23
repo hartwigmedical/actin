@@ -17,22 +17,23 @@ class TreatmentMatchPrinter(private val printer: DatamodelPrinter) {
         printer.print("Patient: " + treatmentMatch.patientId)
 
         val matchSummary = TrialMatchSummarizer.summarize(treatmentMatch.trialMatches)
-        printer.print("Trials: " + matchSummary.trialCount)
-        printer.print("Eligible trials: " + trialString(matchSummary.eligibleTrialMap))
-        printer.print("Cohorts: " + matchSummary.cohortCount)
-        printer.print("Eligible cohorts: " + cohortString(matchSummary.eligibleTrialMap))
-        printer.print("Eligible and recruiting cohorts: " + recruitingCohortString(matchSummary.eligibleTrialMap))
+        printer.print("# Trials evaluated: " + matchSummary.trialCount)
+        printer.print(" Eligible trials: " + trialString(matchSummary.eligibleTrialMap))
+        printer.print("# Cohorts evaluated: " + matchSummary.cohortCount)
+        printer.print(" Eligible cohorts: " + cohortString(matchSummary.eligibleTrialMap))
+        printer.print(" Eligible and recruiting cohorts: " + recruitingCohortString(matchSummary.eligibleTrialMap))
 
         val allTrialEvaluations = treatmentMatch.trialMatches.flatMap { trialMatch ->
             trialMatch.cohorts.map(CohortMatch::evaluations) + trialMatch.evaluations
         }
             .flatMap(Map<Eligibility, Evaluation>::values)
 
-        printEvaluationSummary(allTrialEvaluations, "Rules")
+        printEvaluationSummary(allTrialEvaluations, "Trial rules")
 
-        printer.print("Standard-of-care treatments evaluated: ${treatmentMatch.standardOfCareMatches?.count() ?: 0}")
+        printer.print("# Standard-of-care treatments evaluated: ${treatmentMatch.standardOfCareMatches?.count() ?: 0}")
         if (treatmentMatch.standardOfCareMatches != null) {
-            printer.print("Eligible SOC treatments: ${treatmentMatch.standardOfCareMatches!!.count(AnnotatedTreatmentMatch::eligible)}")
+            printer.print(" Eligible SOC treatments: ${treatmentMatch.standardOfCareMatches!!.count(AnnotatedTreatmentMatch::eligible)}")
+
             printEvaluationSummary(treatmentMatch.standardOfCareMatches!!.flatMap(AnnotatedTreatmentMatch::evaluations), "SOC rules")
         }
     }

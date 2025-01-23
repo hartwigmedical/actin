@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
-import com.hartwig.actin.datamodel.molecular.TestPanelRecordFactory
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -83,8 +83,8 @@ class NsclcDriverGeneStatusesAreAvailableTest {
         )
     }
 
-    private fun panelWithTestForGene(it: String) = TestPanelRecordFactory.empty()
-        .copy(testedGenes = setOf(it))
+    private fun panelWithTestForGene(it: String) =
+        TestMolecularFactory.createMinimalTestPanelRecord().copy(testedGenes = setOf(it))
 
     private fun createNonWGSRecordWithOptionalPriorTests(priorTest: List<MolecularTest> = emptyList()): PatientRecord {
         val history = MolecularHistory(priorTest)

@@ -125,7 +125,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
         val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
             molecularHistory = MolecularHistory(
                 listOf(
-                    TestMolecularFactory.createMinimalTestMolecularRecord().copy(
+                    TestMolecularFactory.createMinimalTestOrangeRecord().copy(
                         drivers = Drivers(variants = variants)
                     )
                 )

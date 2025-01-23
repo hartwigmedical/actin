@@ -43,7 +43,7 @@ class MolecularCharacteristicsGeneratorTest {
         brca1Value: Double = 0.0,
         brca2Value: Double = 0.0
     ): MolecularTest {
-        val base = TestMolecularFactory.createMinimalTestMolecularRecord()
+        val base = TestMolecularFactory.createMinimalTestOrangeRecord()
         return base.copy(
             characteristics = base.characteristics.copy(
                 isHomologousRepairDeficient = isHrd,

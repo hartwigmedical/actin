@@ -10,7 +10,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private val CLINICAL_EVIDENCE = TestClinicalEvidenceFactory.createEmpty()
-private val BASE_MOLECULAR_TEST = TestMolecularFactory.createMinimalTestMolecularRecord()
+private val BASE_MOLECULAR_TEST = TestMolecularFactory.createMinimalTestOrangeRecord()
 
 class MolecularClinicalEvidenceFunctionsTest {
 

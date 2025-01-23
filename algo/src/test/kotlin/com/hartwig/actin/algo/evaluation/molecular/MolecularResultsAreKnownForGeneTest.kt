@@ -5,7 +5,7 @@ import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.ProteinEffect
-import com.hartwig.actin.datamodel.molecular.TestPanelRecordFactory
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import org.junit.Test
@@ -171,7 +171,7 @@ class MolecularResultsAreKnownForGeneTest {
             MolecularResultsAreKnownForGene("ALK")
                 .evaluate(
                     MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
-                        listOf(TestPanelRecordFactory.empty().copy(testedGenes = setOf("ALK")))
+                        listOf(TestMolecularFactory.createMinimalTestPanelRecord().copy(testedGenes = setOf("ALK")))
                     )
                 )
         )
@@ -185,7 +185,7 @@ class MolecularResultsAreKnownForGeneTest {
             MolecularResultsAreKnownForGene("ALK")
                 .evaluate(
                     MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
-                        listOf(TestPanelRecordFactory.empty().copy(testedGenes = setOf("EGFR")))
+                        listOf(TestMolecularFactory.createMinimalTestPanelRecord().copy(testedGenes = setOf("EGFR")))
                     )
                 )
         )
@@ -198,7 +198,7 @@ class MolecularResultsAreKnownForGeneTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
-                    listOf(TestPanelRecordFactory.empty())
+                    listOf(TestMolecularFactory.createMinimalTestPanelRecord())
                 )
             )
         )
