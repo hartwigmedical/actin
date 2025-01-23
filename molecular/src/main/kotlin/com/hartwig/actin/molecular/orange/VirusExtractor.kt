@@ -3,7 +3,6 @@ package com.hartwig.actin.molecular.orange
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.datamodel.molecular.driver.VirusType
-import com.hartwig.actin.datamodel.molecular.sort.driver.VirusComparator
 import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.hmftools.datamodel.virus.VirusBreakendQCStatus
 import com.hartwig.hmftools.datamodel.virus.VirusInterpretation
@@ -26,7 +25,7 @@ internal class VirusExtractor() {
                 type = determineType(virus.interpretation()),
                 integrations = virus.integrations()
             )
-        }.sortedWith(VirusComparator())
+        }.sorted()
     }
 
     internal fun determineDriverLikelihood(driverLikelihood: VirusLikelihoodType): DriverLikelihood? {

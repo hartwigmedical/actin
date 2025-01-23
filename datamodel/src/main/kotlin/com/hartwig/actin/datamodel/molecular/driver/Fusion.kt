@@ -1,7 +1,6 @@
 package com.hartwig.actin.datamodel.molecular.driver
 
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
-import com.hartwig.actin.datamodel.molecular.sort.driver.FusionComparator
 
 data class Fusion(
     val geneStart: String,
@@ -20,6 +19,11 @@ data class Fusion(
 ) : Driver, Comparable<Fusion> {
 
     override fun compareTo(other: Fusion): Int {
-        return FusionComparator().compare(this, other)
+        return Comparator.comparing<Fusion, Fusion>({ it }, DriverComparator())
+            .thenComparing(Fusion::geneStart)
+            .thenComparing(Fusion::geneEnd)
+            .thenComparing { fusion -> fusion.geneTranscriptStart.orEmpty() }
+            .thenComparing { fusion -> fusion.geneTranscriptEnd.orEmpty() }
+            .compare(this, other)
     }
 }

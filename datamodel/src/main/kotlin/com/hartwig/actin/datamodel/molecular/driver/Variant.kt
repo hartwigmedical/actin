@@ -1,7 +1,6 @@
 package com.hartwig.actin.datamodel.molecular.driver
 
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
-import com.hartwig.actin.datamodel.molecular.sort.driver.VariantComparator
 
 data class Variant(
     val chromosome: String,
@@ -25,7 +24,11 @@ data class Variant(
 ) : Driver, GeneAlteration, Comparable<Variant> {
 
     override fun compareTo(other: Variant): Int {
-        return VariantComparator().compare(this, other)
+        return Comparator.comparing<Variant, Variant>({ it }, DriverComparator())
+            .thenComparing({ it }, GeneAlterationComparator())
+            .thenComparing({ it.canonicalImpact.hgvsProteinImpact }, String::compareTo)
+            .thenComparing({ it.canonicalImpact.hgvsCodingImpact }, String::compareTo)
+            .compare(this, other)
     }
 }
 

@@ -1,12 +1,9 @@
-package com.hartwig.actin.datamodel.molecular.sort.driver
+package com.hartwig.actin.datamodel.molecular.driver
 
-import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.driver.Fusion
-import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class FusionComparatorTest {
+class FusionTest {
 
     @Test
     fun `Should sort fusions`() {
@@ -14,7 +11,8 @@ class FusionComparatorTest {
         val fusion2 = create(DriverLikelihood.LOW, "APC", "NTRK2")
         val fusion3 = create(DriverLikelihood.LOW, "APC", "NTRK3")
         val fusion4 = create(DriverLikelihood.LOW, "EML4", "ALK")
-        val fusions = listOf(fusion3, fusion2, fusion4, fusion1).sortedWith(FusionComparator())
+
+        val fusions = listOf(fusion3, fusion2, fusion4, fusion1).sorted()
 
         assertThat(fusions[0]).isEqualTo(fusion1)
         assertThat(fusions[1]).isEqualTo(fusion2)

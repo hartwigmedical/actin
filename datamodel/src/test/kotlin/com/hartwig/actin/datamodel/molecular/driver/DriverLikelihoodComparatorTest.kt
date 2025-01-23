@@ -1,6 +1,5 @@
-package com.hartwig.actin.datamodel.molecular.sort.driver
+package com.hartwig.actin.datamodel.molecular.driver
 
-import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -12,6 +11,7 @@ class DriverLikelihoodComparatorTest {
         val medium = DriverLikelihood.MEDIUM
         val low = DriverLikelihood.LOW
         val nothing: DriverLikelihood? = null
+
         val driverLikelihoods = listOf(medium, low, high, nothing).sortedWith(DriverLikelihoodComparator())
 
         assertThat(driverLikelihoods[0]).isEqualTo(high)

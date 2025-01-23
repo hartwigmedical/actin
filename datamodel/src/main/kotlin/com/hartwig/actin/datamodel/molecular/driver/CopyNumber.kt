@@ -1,8 +1,6 @@
 package com.hartwig.actin.datamodel.molecular.driver
 
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
-import com.hartwig.actin.datamodel.molecular.sort.driver.DriverComparator
-import com.hartwig.actin.datamodel.molecular.sort.driver.GeneAlterationComparator
 
 data class CopyNumber(
     val canonicalImpact: TranscriptCopyNumberImpact,

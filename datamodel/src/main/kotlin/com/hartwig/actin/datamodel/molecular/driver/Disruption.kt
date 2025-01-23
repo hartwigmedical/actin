@@ -1,7 +1,6 @@
 package com.hartwig.actin.datamodel.molecular.driver
 
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
-import com.hartwig.actin.datamodel.molecular.sort.driver.DisruptionComparator
 
 data class Disruption(
     val type: DisruptionType,
@@ -21,6 +20,11 @@ data class Disruption(
 ) : Driver, GeneAlteration, Comparable<Disruption> {
 
     override fun compareTo(other: Disruption): Int {
-        return DisruptionComparator().compare(this, other)
+        return Comparator.comparing<Disruption, Disruption>({ it }, DriverComparator())
+            .thenComparing({ it }, GeneAlterationComparator())
+            .thenComparing({ it.type.toString() }, String::compareTo)
+            .thenComparing(Disruption::junctionCopyNumber, reverseOrder())
+            .thenComparing(Disruption::undisruptedCopyNumber)
+            .compare(this, other)
     }
 }

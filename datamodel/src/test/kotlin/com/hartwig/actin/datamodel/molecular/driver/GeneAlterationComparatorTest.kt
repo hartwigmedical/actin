@@ -1,8 +1,5 @@
-package com.hartwig.actin.datamodel.molecular.sort.driver
+package com.hartwig.actin.datamodel.molecular.driver
 
-import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
-import com.hartwig.actin.datamodel.molecular.driver.GeneRole
-import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -14,6 +11,7 @@ class GeneAlterationComparatorTest {
         val alteration2 = create("gene A", GeneRole.TSG, ProteinEffect.GAIN_OF_FUNCTION)
         val alteration3 = create("gene A", GeneRole.TSG, ProteinEffect.NO_EFFECT)
         val alteration4 = create("gene B", GeneRole.ONCO, ProteinEffect.GAIN_OF_FUNCTION)
+
         val alterations = listOf(alteration2, alteration1, alteration4, alteration3).sortedWith(GeneAlterationComparator())
 
         assertThat(alterations[0]).isEqualTo(alteration1)

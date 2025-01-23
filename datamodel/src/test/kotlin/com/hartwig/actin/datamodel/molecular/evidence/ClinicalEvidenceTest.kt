@@ -1,11 +1,9 @@
-package com.hartwig.actin.datamodel.molecular.sort.evidence
+package com.hartwig.actin.datamodel.molecular.evidence
 
-import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
-import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class ClinicalEvidenceComparatorTest {
+class ClinicalEvidenceTest {
 
     @Test
     fun `Should sort clinical evidence`() {
@@ -17,8 +15,7 @@ class ClinicalEvidenceComparatorTest {
         val evidence6 = TestClinicalEvidenceFactory.withOnLabelKnownResistantTreatment("treatment")
         val evidence7 = TestClinicalEvidenceFactory.withOnLabelSuspectResistantTreatment("treatment")
 
-        val evidences =
-            listOf(evidence5, evidence4, evidence1, evidence2, evidence6, evidence7, evidence3).sortedWith(ClinicalEvidenceComparator())
+        val evidences = listOf(evidence5, evidence4, evidence1, evidence2, evidence6, evidence7, evidence3).sorted()
 
         assertThat(evidences[0]).isEqualTo(evidence1)
         assertThat(evidences[1]).isEqualTo(evidence2)

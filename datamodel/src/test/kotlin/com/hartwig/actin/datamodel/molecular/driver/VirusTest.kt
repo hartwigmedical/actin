@@ -1,13 +1,9 @@
-package com.hartwig.actin.datamodel.molecular.sort.driver
+package com.hartwig.actin.datamodel.molecular.driver
 
-import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.driver.TestVirusFactory
-import com.hartwig.actin.datamodel.molecular.driver.Virus
-import com.hartwig.actin.datamodel.molecular.driver.VirusType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class VirusComparatorTest {
+class VirusTest {
 
     @Test
     fun `Should sort viruses`() {
@@ -15,7 +11,8 @@ class VirusComparatorTest {
         val virus2 = create(DriverLikelihood.LOW, "Epstein 1", VirusType.EPSTEIN_BARR_VIRUS)
         val virus3 = create(DriverLikelihood.LOW, "Human 1", VirusType.HUMAN_PAPILLOMA_VIRUS)
         val virus4 = create(DriverLikelihood.LOW, "Human 2", VirusType.HUMAN_PAPILLOMA_VIRUS)
-        val viruses = listOf(virus2, virus4, virus1, virus3).sortedWith(VirusComparator())
+
+        val viruses = listOf(virus2, virus4, virus1, virus3).sorted()
 
         assertThat(viruses[0]).isEqualTo(virus1)
         assertThat(viruses[1]).isEqualTo(virus2)

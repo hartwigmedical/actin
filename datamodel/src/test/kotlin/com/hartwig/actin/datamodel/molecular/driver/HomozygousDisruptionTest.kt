@@ -1,20 +1,17 @@
-package com.hartwig.actin.datamodel.molecular.sort.driver
+package com.hartwig.actin.datamodel.molecular.driver
 
-import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.driver.TestHomozygousDisruptionFactory
-import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class HomozygousDisruptionComparatorTest {
+class HomozygousDisruptionTest {
 
     @Test
     fun `Should sort homozygous disruptions`() {
         val homozygousDisruption1 = create("APC", DriverLikelihood.HIGH)
         val homozygousDisruption2 = create("NF1", DriverLikelihood.HIGH)
         val homozygousDisruption3 = create("APC", DriverLikelihood.LOW)
-        val disruptions = listOf(homozygousDisruption2, homozygousDisruption1, homozygousDisruption3)
-            .sortedWith(HomozygousDisruptionComparator())
+
+        val disruptions = listOf(homozygousDisruption2, homozygousDisruption1, homozygousDisruption3).sorted()
 
         assertThat(disruptions[0]).isEqualTo(homozygousDisruption1)
         assertThat(disruptions[1]).isEqualTo(homozygousDisruption2)

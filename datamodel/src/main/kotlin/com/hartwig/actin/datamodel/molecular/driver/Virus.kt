@@ -1,7 +1,6 @@
 package com.hartwig.actin.datamodel.molecular.driver
 
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
-import com.hartwig.actin.datamodel.molecular.sort.driver.VirusComparator
 
 data class Virus(
     val name: String,
@@ -15,6 +14,9 @@ data class Virus(
 ) : Driver, Comparable<Virus> {
 
     override fun compareTo(other: Virus): Int {
-        return VirusComparator().compare(this, other)
+        return Comparator.comparing<Virus, Virus>({ it }, DriverComparator())
+            .thenComparing({ it.type.toString() }, String::compareTo)
+            .thenComparing(Virus::name)
+            .compare(this, other)
     }
 }

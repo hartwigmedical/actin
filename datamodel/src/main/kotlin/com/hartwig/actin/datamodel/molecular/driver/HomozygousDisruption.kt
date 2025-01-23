@@ -1,7 +1,6 @@
 package com.hartwig.actin.datamodel.molecular.driver
 
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
-import com.hartwig.actin.datamodel.molecular.sort.driver.HomozygousDisruptionComparator
 
 data class HomozygousDisruption(
     override val isReportable: Boolean,
@@ -15,6 +14,7 @@ data class HomozygousDisruption(
 ) : Driver, GeneAlteration, Comparable<HomozygousDisruption> {
 
     override fun compareTo(other: HomozygousDisruption): Int {
-        return HomozygousDisruptionComparator().compare(this, other)
+        return Comparator.comparing<HomozygousDisruption, HomozygousDisruption>({ it }, DriverComparator())
+            .thenComparing({ it }, GeneAlterationComparator()).compare(this, other)
     }
 }

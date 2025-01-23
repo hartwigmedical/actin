@@ -1,6 +1,4 @@
-package com.hartwig.actin.datamodel.molecular.sort.driver
-
-import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
+package com.hartwig.actin.datamodel.molecular.driver
 
 class DriverLikelihoodComparator : Comparator<DriverLikelihood?> {
 
