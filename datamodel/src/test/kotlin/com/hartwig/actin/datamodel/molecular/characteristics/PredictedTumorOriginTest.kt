@@ -1,6 +1,5 @@
 package com.hartwig.actin.datamodel.molecular.characteristics
 
-import com.hartwig.actin.datamodel.molecular.orange.characteristics.CupPrediction
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
 import org.junit.Test

@@ -1,6 +1,7 @@
 package com.hartwig.actin.datamodel.molecular
 
 import com.hartwig.actin.datamodel.TestPatientFactory
+import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.characteristics.PredictedTumorOrigin
 import com.hartwig.actin.datamodel.molecular.driver.CodingContext
@@ -32,7 +33,6 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactor
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
 import com.hartwig.actin.datamodel.molecular.immunology.MolecularImmunology
-import com.hartwig.actin.datamodel.molecular.orange.characteristics.CupPrediction
 import com.hartwig.actin.datamodel.molecular.pharmaco.Haplotype
 import com.hartwig.actin.datamodel.molecular.pharmaco.HaplotypeFunction
 import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoEntry

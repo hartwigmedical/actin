@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
+import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
 import com.hartwig.actin.datamodel.molecular.characteristics.PredictedTumorOrigin
-import com.hartwig.actin.datamodel.molecular.orange.characteristics.CupPrediction
 import com.hartwig.actin.report.pdf.util.Formats
 
 private const val LIKELIHOOD_CONFIDENCE_THRESHOLD = 0.8

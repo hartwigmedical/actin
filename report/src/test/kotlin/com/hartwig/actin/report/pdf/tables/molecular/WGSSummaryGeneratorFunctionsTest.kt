@@ -1,13 +1,13 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
+import com.hartwig.actin.datamodel.molecular.characteristics.PredictedTumorOrigin
 import com.hartwig.actin.datamodel.molecular.driver.Driver
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.characteristics.PredictedTumorOrigin
-import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
-import com.hartwig.actin.datamodel.molecular.orange.characteristics.CupPrediction
 import com.hartwig.actin.report.pdf.tables.clinical.CellTestUtil
 import com.hartwig.actin.report.pdf.util.Tables
 import org.assertj.core.api.Assertions.assertThat
