@@ -1,6 +1,6 @@
 package com.hartwig.actin.datamodel.molecular.sort.driver
 
-import com.hartwig.actin.datamodel.molecular.orange.driver.Virus
+import com.hartwig.actin.datamodel.molecular.driver.Virus
 
 class VirusComparator : Comparator<Virus> {
 

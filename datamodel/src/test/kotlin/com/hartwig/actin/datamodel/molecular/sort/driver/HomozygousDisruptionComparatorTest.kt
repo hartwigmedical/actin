@@ -1,8 +1,8 @@
 package com.hartwig.actin.datamodel.molecular.sort.driver
 
-import com.hartwig.actin.datamodel.molecular.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.TestHomozygousDisruptionFactory
-import com.hartwig.actin.datamodel.molecular.orange.driver.HomozygousDisruption
+import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

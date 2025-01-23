@@ -4,7 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
-import com.hartwig.actin.datamodel.molecular.orange.immunology.HlaAllele
+import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
 import java.time.LocalDate
 
 class HasSpecificHLAType(private val hlaAlleleToFind: String, maxTestAge: LocalDate? = null, private val matchOnHlaGroup: Boolean = false) :

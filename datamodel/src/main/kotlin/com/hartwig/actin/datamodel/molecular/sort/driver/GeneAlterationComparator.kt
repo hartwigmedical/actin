@@ -1,6 +1,6 @@
 package com.hartwig.actin.datamodel.molecular.sort.driver
 
-import com.hartwig.actin.datamodel.molecular.GeneAlteration
+import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
 
 class GeneAlterationComparator : Comparator<GeneAlteration> {
 

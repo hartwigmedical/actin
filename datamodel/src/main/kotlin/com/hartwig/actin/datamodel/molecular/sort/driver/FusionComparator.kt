@@ -1,6 +1,6 @@
 package com.hartwig.actin.datamodel.molecular.sort.driver
 
-import com.hartwig.actin.datamodel.molecular.Fusion
+import com.hartwig.actin.datamodel.molecular.driver.Fusion
 
 class FusionComparator : Comparator<Fusion> {
 

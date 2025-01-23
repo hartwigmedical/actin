@@ -1,6 +1,6 @@
 package com.hartwig.actin.datamodel.molecular.sort.driver
 
-import com.hartwig.actin.datamodel.molecular.Variant
+import com.hartwig.actin.datamodel.molecular.driver.Variant
 
 class VariantComparator : Comparator<Variant> {
 

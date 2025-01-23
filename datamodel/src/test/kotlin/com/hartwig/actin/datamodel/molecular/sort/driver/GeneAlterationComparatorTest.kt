@@ -1,8 +1,8 @@
 package com.hartwig.actin.datamodel.molecular.sort.driver
 
-import com.hartwig.actin.datamodel.molecular.GeneAlteration
-import com.hartwig.actin.datamodel.molecular.GeneRole
-import com.hartwig.actin.datamodel.molecular.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
+import com.hartwig.actin.datamodel.molecular.driver.GeneRole
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

@@ -1,6 +1,6 @@
 package com.hartwig.actin.datamodel.molecular.sort.driver
 
-import com.hartwig.actin.datamodel.molecular.Driver
+import com.hartwig.actin.datamodel.molecular.driver.Driver
 import com.hartwig.actin.datamodel.molecular.sort.evidence.ClinicalEvidenceComparator
 
 class DriverComparator : Comparator<Driver> {

@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.evidence.known
 
-import com.hartwig.actin.datamodel.molecular.orange.driver.FusionDriverType
+import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

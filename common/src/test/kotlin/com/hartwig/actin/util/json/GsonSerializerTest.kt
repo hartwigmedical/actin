@@ -2,13 +2,13 @@ package com.hartwig.actin.util.json
 
 import com.google.gson.reflect.TypeToken
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
-import com.hartwig.actin.datamodel.molecular.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.TranscriptVariantImpact
-import com.hartwig.actin.datamodel.molecular.Variant
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
+import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.evidence.Country
-import com.hartwig.actin.datamodel.molecular.orange.driver.ExtendedVariantDetails
+import com.hartwig.actin.datamodel.molecular.driver.ExtendedVariantDetails
 import com.hartwig.actin.datamodel.molecular.sort.driver.VariantComparator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

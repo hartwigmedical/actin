@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.molecular.orange.immunology.HlaAllele
+import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
 import org.junit.Test
 
 private const val CORRECT_HLA_GROUP = "A*02"

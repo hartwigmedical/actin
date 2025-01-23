@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.evidence.matching
 
-import com.hartwig.actin.datamodel.molecular.CodingEffect
-import com.hartwig.actin.datamodel.molecular.VariantType
+import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
+import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.serve.datamodel.molecular.MutationType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

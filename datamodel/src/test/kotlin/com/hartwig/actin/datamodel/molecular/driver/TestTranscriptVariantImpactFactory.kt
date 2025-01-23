@@ -1,6 +1,6 @@
 package com.hartwig.actin.datamodel.molecular.driver
 
-import com.hartwig.actin.datamodel.molecular.TranscriptVariantImpact
+import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
 
 object TestTranscriptVariantImpactFactory {
 

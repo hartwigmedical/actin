@@ -4,12 +4,12 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluat
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.molecular.VariantEffect
+import com.hartwig.actin.datamodel.molecular.driver.VariantEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestDisruptionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
-import com.hartwig.actin.datamodel.molecular.orange.driver.CodingContext
-import com.hartwig.actin.datamodel.molecular.orange.driver.RegionType
+import com.hartwig.actin.datamodel.molecular.driver.CodingContext
+import com.hartwig.actin.datamodel.molecular.driver.RegionType
 import org.junit.Test
 
 private const val TARGET_GENE = "gene A"
