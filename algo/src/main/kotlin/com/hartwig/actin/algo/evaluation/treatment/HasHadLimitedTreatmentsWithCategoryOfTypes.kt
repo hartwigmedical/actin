@@ -19,7 +19,8 @@ class HasHadLimitedTreatmentsWithCategoryOfTypes(
         val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
             record.oncologicalHistory, category, { historyEntry -> historyEntry.matchesTypeFromSet(types) }
         )
-        val messageEnding = "received at most $maxTreatmentLines lines of ${Format.concatItemsWithAnd(types)} ${category.display()}"
+        val concatenatedTypes = Format.concatItemsWithOr(types)
+        val messageEnding = "received at most $maxTreatmentLines lines of $concatenatedTypes ${category.display()}"
 
         return when {
             treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches + treatmentSummary.numPossibleTrialMatches <= maxTreatmentLines && (!treatmentIsRequired || treatmentSummary.hasSpecificMatch()) -> {
@@ -27,7 +28,7 @@ class HasHadLimitedTreatmentsWithCategoryOfTypes(
             }
 
             treatmentIsRequired && !treatmentSummary.hasSpecificMatch() && !treatmentSummary.hasApproximateMatch() && !treatmentSummary.hasPossibleTrialMatch() -> {
-                EvaluationFactory.fail("Has not received ${Format.concatItemsWithAnd(types)} ${category.display()} treatment")
+                EvaluationFactory.fail("Has not received $concatenatedTypes ${category.display()} treatment")
             }
 
             treatmentSummary.numSpecificMatches() <= maxTreatmentLines -> {
