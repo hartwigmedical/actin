@@ -3,7 +3,6 @@ package com.hartwig.actin.report.pdf
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
 import com.hartwig.actin.configuration.MolecularSummaryType
 import com.hartwig.actin.datamodel.PatientRecord
-import com.hartwig.actin.datamodel.molecular.NO_EVIDENCE_SOURCE
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.molecular.filter.MolecularTestFilter
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
@@ -186,8 +185,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             evaluated
         )
 
-        val allEvidenceSources =
-            patientRecord.molecularHistory.molecularTests.map { it.evidenceSource }.filter { it != NO_EVIDENCE_SOURCE }.toSet()
+        val allEvidenceSources = patientRecord.molecularHistory.molecularTests.map { it.evidenceSource }.toSet()
         return Pair(
             if (nationalTrialsNotOverlappingHospital.isNotEmpty()) {
                 EligibleExternalTrialsGenerator(
