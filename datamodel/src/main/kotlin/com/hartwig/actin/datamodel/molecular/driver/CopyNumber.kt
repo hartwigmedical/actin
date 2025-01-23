@@ -1,11 +1,8 @@
 package com.hartwig.actin.datamodel.molecular.driver
 
-import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
-import com.hartwig.actin.datamodel.molecular.driver.GeneRole
-import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
-import com.hartwig.actin.datamodel.molecular.sort.driver.CopyNumberComparator
+import com.hartwig.actin.datamodel.molecular.sort.driver.DriverComparator
+import com.hartwig.actin.datamodel.molecular.sort.driver.GeneAlterationComparator
 
 data class CopyNumber(
     val canonicalImpact: TranscriptCopyNumberImpact,
@@ -21,6 +18,8 @@ data class CopyNumber(
 ) : Driver, GeneAlteration, Comparable<CopyNumber> {
 
     override fun compareTo(other: CopyNumber): Int {
-        return CopyNumberComparator().compare(this, other)
+        return Comparator.comparing<CopyNumber, CopyNumber>({ it }, DriverComparator())
+            .thenComparing({ it }, GeneAlterationComparator())
+            .compare(this, other)
     }
 }
