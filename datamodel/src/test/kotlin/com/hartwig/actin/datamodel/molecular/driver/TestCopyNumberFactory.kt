@@ -1,10 +1,7 @@
 package com.hartwig.actin.datamodel.molecular.driver
 
-import com.hartwig.actin.datamodel.molecular.driver.GeneRole
-import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
-import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 
 object TestCopyNumberFactory {
 

@@ -1,6 +1,5 @@
 package com.hartwig.actin.datamodel.algo
 
-import com.hartwig.actin.datamodel.clinical.treatment.TreatmentClass
 import com.hartwig.actin.datamodel.efficacy.EfficacyEntry
 import com.hartwig.actin.datamodel.personalization.Measurement
 

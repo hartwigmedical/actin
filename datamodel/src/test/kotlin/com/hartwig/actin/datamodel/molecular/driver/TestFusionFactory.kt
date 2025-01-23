@@ -1,7 +1,5 @@
 package com.hartwig.actin.datamodel.molecular.driver
 
-import com.hartwig.actin.datamodel.molecular.driver.Fusion
-import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 
 object TestFusionFactory {

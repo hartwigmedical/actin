@@ -1,7 +1,5 @@
 package com.hartwig.actin.datamodel.molecular.pharmaco
 
-import com.hartwig.actin.datamodel.molecular.pharmaco.Haplotype
-import com.hartwig.actin.datamodel.molecular.pharmaco.HaplotypeFunction
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
