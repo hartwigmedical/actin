@@ -1,15 +1,14 @@
 package com.hartwig.actin.molecular.orange
 
-import com.hartwig.actin.datamodel.molecular.CodingEffect
-import com.hartwig.actin.datamodel.molecular.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.GeneRole
-import com.hartwig.actin.datamodel.molecular.ProteinEffect
-import com.hartwig.actin.datamodel.molecular.TranscriptVariantImpact
-import com.hartwig.actin.datamodel.molecular.Variant
-import com.hartwig.actin.datamodel.molecular.VariantEffect
-import com.hartwig.actin.datamodel.molecular.VariantType
-import com.hartwig.actin.datamodel.molecular.orange.driver.ExtendedVariantDetails
-import com.hartwig.actin.datamodel.molecular.sort.driver.VariantComparator
+import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
+import com.hartwig.actin.datamodel.molecular.driver.ExtendedVariantDetails
+import com.hartwig.actin.datamodel.molecular.driver.GeneRole
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
+import com.hartwig.actin.datamodel.molecular.driver.Variant
+import com.hartwig.actin.datamodel.molecular.driver.VariantEffect
+import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.hmftools.datamodel.purple.HotspotType
@@ -84,7 +83,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
                     proteinEffect = ProteinEffect.UNKNOWN,
                     isAssociatedWithDrugResistance = null,
                 )
-            }.sortedWith(VariantComparator())
+            }.sorted()
     }
 
     private fun relevantPurpleVariants(purple: PurpleRecord): Set<PurpleVariant> {

@@ -26,11 +26,11 @@ class DatabaseAccess private constructor(
         }
     }
 
-    fun writeMolecularRecord(record: MolecularRecord) {
+    fun writeMolecularRecord(patientId: String, record: MolecularRecord) {
         LOGGER.info(" Clearing molecular data for {}", record.sampleId)
         molecularDAO.clear(record)
         LOGGER.info(" Writing molecular data for {}", record.sampleId)
-        molecularDAO.writeMolecularRecord(record)
+        molecularDAO.writeMolecularRecord(patientId, record)
     }
 
     fun writeTrials(trials: List<Trial>) {
@@ -47,13 +47,6 @@ class DatabaseAccess private constructor(
         treatmentMatchDAO.clear(treatmentMatch)
         LOGGER.info(" Writing treatment match data for {}", treatmentMatch.patientId)
         treatmentMatchDAO.writeTreatmentMatch(treatmentMatch)
-    }
-
-    fun replaceTreatmentMatches(treatmentMatches: List<TreatmentMatch>) {
-        LOGGER.info(" Clearing all treatment match data")
-        treatmentMatchDAO.clearAllMatches()
-        LOGGER.info(" Writing treatment match data for {} patients", treatmentMatches.size)
-        treatmentMatchDAO.insertAllMatches(treatmentMatches)
     }
 
     companion object {

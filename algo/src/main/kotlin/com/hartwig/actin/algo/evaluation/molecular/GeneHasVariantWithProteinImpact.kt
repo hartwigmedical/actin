@@ -5,11 +5,11 @@ import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.percentage
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
-import com.hartwig.actin.datamodel.molecular.TranscriptVariantImpact
-import com.hartwig.actin.datamodel.molecular.Variant
+import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
+import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
-import java.time.LocalDate
 import org.apache.logging.log4j.LogManager
+import java.time.LocalDate
 
 private const val CLONAL_CUTOFF = 0.5
 

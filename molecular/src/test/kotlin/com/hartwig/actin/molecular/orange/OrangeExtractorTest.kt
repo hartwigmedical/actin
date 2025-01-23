@@ -33,7 +33,6 @@ class OrangeExtractorTest {
     @Test
     fun `Should interpret proper orange record`() {
         val record = interpreter.interpret(TestOrangeFactory.createProperTestOrangeRecord())
-        assertThat(record.patientId).isEqualTo(TestPatientFactory.TEST_PATIENT)
         assertThat(record.sampleId).isEqualTo(TestPatientFactory.TEST_SAMPLE)
         assertThat(record.experimentType).isEqualTo(ExperimentType.HARTWIG_WHOLE_GENOME)
         assertThat(record.refGenomeVersion).isEqualTo(RefGenomeVersion.V37)
@@ -58,17 +57,6 @@ class OrangeExtractorTest {
         assertThat(immunology.isReliable).isTrue
         assertThat(immunology.hlaAlleles).hasSize(1)
         assertThat(record.pharmaco).hasSize(1)
-    }
-
-    @Test
-    fun `Should be able to convert sample id to patient id`() {
-        assertThat(interpreter.toPatientId("ACTN01029999T")).isEqualTo("ACTN01029999")
-        assertThat(interpreter.toPatientId("ACTN01029999T2")).isEqualTo("ACTN01029999")
-    }
-
-    @Test(expected = IllegalArgumentException::class)
-    fun `Should throw exception on invalid sample id`() {
-        interpreter.toPatientId("no sample")
     }
 
     @Test

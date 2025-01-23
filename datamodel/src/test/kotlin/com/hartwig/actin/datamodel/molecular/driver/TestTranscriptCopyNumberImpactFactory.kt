@@ -1,8 +1,5 @@
 package com.hartwig.actin.datamodel.molecular.driver
 
-import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumberType
-import com.hartwig.actin.datamodel.molecular.orange.driver.TranscriptCopyNumberImpact
-
 object TestTranscriptCopyNumberImpactFactory {
 
     fun createTranscriptCopyNumberImpact(

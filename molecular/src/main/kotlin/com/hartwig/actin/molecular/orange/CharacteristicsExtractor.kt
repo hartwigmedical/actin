@@ -1,9 +1,9 @@
 package com.hartwig.actin.molecular.orange
 
-import com.hartwig.actin.datamodel.molecular.HrdType
-import com.hartwig.actin.datamodel.molecular.MolecularCharacteristics
-import com.hartwig.actin.datamodel.molecular.PredictedTumorOrigin
-import com.hartwig.actin.datamodel.molecular.orange.characteristics.CupPrediction
+import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
+import com.hartwig.actin.datamodel.molecular.characteristics.HrdType
+import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
+import com.hartwig.actin.datamodel.molecular.characteristics.PredictedTumorOrigin
 import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.hmftools.datamodel.chord.ChordStatus
 import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction

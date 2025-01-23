@@ -22,7 +22,7 @@ class MolecularLoaderApplication(private val config: MolecularLoaderConfig) {
             val access: DatabaseAccess = DatabaseAccess.fromCredentials(config.dbUser, config.dbPass, config.dbUrl)
 
             LOGGER.info("Writing molecular record for {}", molecularRecord.sampleId)
-            access.writeMolecularRecord(molecularRecord)
+            access.writeMolecularRecord(patientRecord.patientId, molecularRecord)
 
             LOGGER.info("Done!")
         } ?: LOGGER.warn("No WGS record found in molecular history for ${patientRecord.patientId}")

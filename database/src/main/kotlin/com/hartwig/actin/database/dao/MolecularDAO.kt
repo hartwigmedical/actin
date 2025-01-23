@@ -1,11 +1,15 @@
 package com.hartwig.actin.database.dao
 
 import com.hartwig.actin.database.Tables
-import com.hartwig.actin.datamodel.molecular.Driver
-import com.hartwig.actin.datamodel.molecular.Fusion
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
-import com.hartwig.actin.datamodel.molecular.Variant
-import com.hartwig.actin.datamodel.molecular.VariantEffect
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
+import com.hartwig.actin.datamodel.molecular.driver.Disruption
+import com.hartwig.actin.datamodel.molecular.driver.Driver
+import com.hartwig.actin.datamodel.molecular.driver.Fusion
+import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
+import com.hartwig.actin.datamodel.molecular.driver.Variant
+import com.hartwig.actin.datamodel.molecular.driver.VariantEffect
+import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
@@ -14,12 +18,8 @@ import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategorie
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.knownResistant
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.preclinical
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.suspectResistant
-import com.hartwig.actin.datamodel.molecular.orange.driver.CopyNumber
-import com.hartwig.actin.datamodel.molecular.orange.driver.Disruption
-import com.hartwig.actin.datamodel.molecular.orange.driver.HomozygousDisruption
-import com.hartwig.actin.datamodel.molecular.orange.driver.Virus
-import com.hartwig.actin.datamodel.molecular.orange.immunology.MolecularImmunology
-import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoEntry
+import com.hartwig.actin.datamodel.molecular.immunology.MolecularImmunology
+import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoEntry
 import org.jooq.DSLContext
 import org.jooq.Record
 
@@ -94,8 +94,8 @@ internal class MolecularDAO(private val context: DSLContext) {
         context.delete(Tables.MOLECULAR).where(Tables.MOLECULAR.SAMPLEID.eq(sampleId)).execute()
     }
 
-    fun writeMolecularRecord(record: MolecularRecord) {
-        writeMolecularDetails(record)
+    fun writeMolecularRecord(patientId: String, record: MolecularRecord) {
+        writeMolecularDetails(patientId, record)
         val sampleId = record.sampleId
         val drivers = record.drivers
         writeVariants(sampleId, drivers.variants)
@@ -108,8 +108,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         writePharmaco(sampleId, record.pharmaco)
     }
 
-    private fun writeMolecularDetails(record: MolecularRecord) {
-        val sampleId = record.sampleId
+    private fun writeMolecularDetails(patientId: String, record: MolecularRecord) {
         val predictedTumorOrigin = record.characteristics.predictedTumorOrigin
         val molecularId = context.insertInto(
             Tables.MOLECULAR,
@@ -135,8 +134,8 @@ internal class MolecularDAO(private val context: DSLContext) {
             Tables.MOLECULAR.HASHIGHTUMORMUTATIONALLOAD
         )
             .values(
-                record.patientId,
-                sampleId,
+                patientId,
+                record.sampleId,
                 record.experimentType.toString(),
                 record.refGenomeVersion.toString(),
                 record.date,

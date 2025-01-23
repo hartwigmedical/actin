@@ -1,9 +1,9 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.datamodel.molecular.orange.pharmaco.Haplotype
-import com.hartwig.actin.datamodel.molecular.orange.pharmaco.HaplotypeFunction
-import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoEntry
-import com.hartwig.actin.datamodel.molecular.orange.pharmaco.PharmacoGene
+import com.hartwig.actin.datamodel.molecular.pharmaco.Haplotype
+import com.hartwig.actin.datamodel.molecular.pharmaco.HaplotypeFunction
+import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoEntry
+import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoGene
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

@@ -1,6 +1,5 @@
 package com.hartwig.actin.report.pdf.chapters
 
-import com.hartwig.actin.datamodel.molecular.NO_EVIDENCE_SOURCE
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.InterpretedCohort
@@ -87,8 +86,7 @@ class TrialMatchingChapter(
         val (localTrialGenerator, nonLocalTrialGenerator) = reportContentProvider.provideExternalTrialsTables(
             report.patientRecord, eligible, contentWidth()
         )
-        val allEvidenceSources =
-            report.patientRecord.molecularHistory.molecularTests.map { it.evidenceSource }.filter { it != NO_EVIDENCE_SOURCE }.toSet()
+        val allEvidenceSources = report.patientRecord.molecularHistory.molecularTests.map { it.evidenceSource }.toSet()
 
         return primaryCohortGenerators + otherCohortGenerators +
                 listOfNotNull(

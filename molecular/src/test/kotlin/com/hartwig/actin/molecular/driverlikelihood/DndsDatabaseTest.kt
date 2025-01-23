@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.driverlikelihood
 
-import com.hartwig.actin.datamodel.molecular.GeneRole
+import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
