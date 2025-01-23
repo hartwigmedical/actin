@@ -102,7 +102,9 @@ class CurationDatabaseTest {
 
     private fun CurationDatabaseTest.curationDatabase(
         configs: Map<InputText, Set<ComorbidityConfig>>, errorId: Int
-    ): CurationDatabase<ComorbidityConfig> = CurationDatabase(configs, listOf(error(errorId)), CurationCategory.COMORBIDITY) { emptySet() }
+    ): CurationDatabase<ComorbidityConfig> {
+        return CurationDatabase(configs, listOf(error(errorId)), CurationCategory.COMORBIDITY) { emptySet() }
+    }
 
     private fun error(value: Int): CurationConfigValidationError =
         CurationConfigValidationError(CurationCategory.COMORBIDITY.categoryName, value.toString(), "", "", "")

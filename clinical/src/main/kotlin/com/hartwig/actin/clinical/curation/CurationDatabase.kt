@@ -30,11 +30,7 @@ class CurationDatabase<T : CurationConfig>(
             .groupBy({ it.key }, { it.value })
             .mapValues { (_, value) ->
                 val filtered = value.filterNot { it.all(CurationConfig::ignore) }
-                when (filtered.size) {
-                    0 -> value.first()
-                    1 -> filtered.first()
-                    else -> filtered.reduce(Set<T>::plus)
-                }
+                if (filtered.isEmpty()) value.first() else filtered.reduce(Set<T>::plus)
             }
 
         return CurationDatabase(
