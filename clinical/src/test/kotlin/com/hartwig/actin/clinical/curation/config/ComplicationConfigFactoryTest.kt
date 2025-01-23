@@ -32,7 +32,6 @@ class ComplicationConfigFactoryTest {
 
         assertThat(configObj.input).isEqualTo("input")
         assertThat(configObj.ignore).isEqualTo(false)
-        assertThat(configObj.impliesUnknownComplicationState).isTrue
 
         assertThat(curated.name).isEqualTo("name")
         assertThat(curatedIcd).isEqualTo(icdCodes)
@@ -59,17 +58,6 @@ class ComplicationConfigFactoryTest {
             ).errors
         ).containsExactly(
             CurationConfigValidationError("Complication", "input", "month", "month", "integer")
-        )
-    }
-
-    @Test
-    fun `Should return validation error when impliesUnknownComplicationState is not boolean`() {
-        assertThat(
-            ComplicationConfigFactory(icdModel).create(
-                fields, arrayOf("input", "A", "name", icdExtensionTitle, "2023", "12")
-            ).errors
-        ).containsExactly(
-            CurationConfigValidationError("Complication", "input", "impliesUnknownComplicationState", "A", "boolean")
         )
     }
 

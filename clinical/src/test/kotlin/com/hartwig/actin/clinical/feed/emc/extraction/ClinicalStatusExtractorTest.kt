@@ -3,9 +3,9 @@ package com.hartwig.actin.clinical.feed.emc.extraction
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
+import com.hartwig.actin.clinical.curation.config.ComorbidityConfig
 import com.hartwig.actin.clinical.curation.config.ECGConfig
 import com.hartwig.actin.clinical.curation.config.InfectionConfig
-import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 import com.hartwig.actin.datamodel.clinical.ECG
 import com.hartwig.actin.datamodel.clinical.InfectionStatus
@@ -13,19 +13,12 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val PATIENT_ID = "patient1"
-
 private const val ECG_INPUT = "ECG input"
-
 private const val INFECTION_INPUT = "Infection input"
-
 private const val NON_ONCOLOGICAL_INPUT = "Non-oncological input"
-
 private const val CURATED_ECG = "Curated ECG"
-
 private const val CURATED_INFECTION = "Curated Infection"
-
 private const val CURATED_LVEF = 1.0
-
 private const val CANNOT_CURATE = "Cannot curate"
 
 class ClinicalStatusExtractorTest {
@@ -41,12 +34,7 @@ class ClinicalStatusExtractorTest {
         ),
         TestCurationFactory.curationDatabase(InfectionConfig(input = INFECTION_INPUT, interpretation = CURATED_INFECTION)),
         TestCurationFactory.curationDatabase(
-            NonOncologicalHistoryConfig(
-                input = NON_ONCOLOGICAL_INPUT,
-                ignore = false,
-                lvef = CURATED_LVEF,
-                otherCondition = null
-            )
+            ComorbidityConfig(input = NON_ONCOLOGICAL_INPUT, ignore = false, lvef = CURATED_LVEF, curated = null)
         )
     )
 
@@ -57,7 +45,7 @@ class ClinicalStatusExtractorTest {
         assertThat(evaluation.warnings).isEmpty()
         assertThat(evaluation.ecgEvaluatedInputs).isEmpty()
         assertThat(evaluation.infectionEvaluatedInputs).isEmpty()
-        assertThat(evaluation.nonOncologicalHistoryEvaluatedInputs).isEmpty()
+        assertThat(evaluation.comorbidityEvaluatedInputs).isEmpty()
     }
 
     @Test
@@ -73,7 +61,7 @@ class ClinicalStatusExtractorTest {
         assertClinicalStatus(clinicalStatus)
         assertThat(evaluation.ecgEvaluatedInputs).containsOnly(ECG_INPUT.lowercase())
         assertThat(evaluation.infectionEvaluatedInputs).containsOnly(INFECTION_INPUT.lowercase())
-        assertThat(evaluation.nonOncologicalHistoryEvaluatedInputs).isEmpty()
+        assertThat(evaluation.comorbidityEvaluatedInputs).isEmpty()
         assertThat(evaluation.warnings).isEmpty()
     }
 

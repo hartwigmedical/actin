@@ -117,20 +117,21 @@ class ClinicalIngestionFeedAdapterTest {
             UnusedCurationConfig(categoryName = "Oncological History", input = "capecitabine and oxi"),
             UnusedCurationConfig(categoryName = "Primary Tumor", input = "long | metastase adenocarcinoom"),
             UnusedCurationConfig(categoryName = "Primary Tumor", input = "carcinoma | unknown"),
-            UnusedCurationConfig(categoryName = "Non Oncological History", input = "pijn bij maligne neoplasma van longen"),
-            UnusedCurationConfig(categoryName = "Non Oncological History", input = "sarcoidose"),
-            UnusedCurationConfig(categoryName = "Complication", input = "overige"),
+            UnusedCurationConfig(categoryName = "Comorbidity", input = "pijn bij maligne neoplasma van longen"),
+            UnusedCurationConfig(categoryName = "Comorbidity", input = "sarcoidose"),
+            UnusedCurationConfig(categoryName = "Comorbidity", input = "overige"),
             UnusedCurationConfig(categoryName = "Lesion Location", input = "brain"),
-            UnusedCurationConfig(categoryName = "Toxicity", input = "dysphagia"),
-            UnusedCurationConfig(categoryName = "Toxicity", input = "neuropathy gr3"),
+            UnusedCurationConfig(categoryName = "Comorbidity", input = "dysphagia"),
+            UnusedCurationConfig(categoryName = "Comorbidity", input = "neuropathy gr3"),
             UnusedCurationConfig(categoryName = "Molecular Test IHC", input = "immunohistochemie erbb2 3+"),
             UnusedCurationConfig(categoryName = "Molecular Test PDL1", input = "cps pd l1 > 20"),
             UnusedCurationConfig(categoryName = "Dosage Unit Translation", input = "stuk"),
             UnusedCurationConfig(categoryName = "Sequencing Test", input = "kras g12f"),
             UnusedCurationConfig(categoryName = "Surgery Name", input = "surgery1"),
             UnusedCurationConfig(categoryName = "Lesion Location", input = "and possibly lymph nodes"),
-            UnusedCurationConfig(categoryName = "Intolerance", input = "morfine"),
-            UnusedCurationConfig(categoryName = "Intolerance", input = "nikkel")
+            UnusedCurationConfig(categoryName = "Comorbidity", input = "morfine"),
+            UnusedCurationConfig(categoryName = "Comorbidity", input = "nikkel"),
+            UnusedCurationConfig(categoryName = "Toxicity Translation", input = "Nausea")
         )
 
         val gson = GsonSerializer.create()

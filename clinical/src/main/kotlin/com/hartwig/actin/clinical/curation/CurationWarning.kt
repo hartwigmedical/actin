@@ -6,6 +6,7 @@ enum class CurationCategory(val categoryName: String) {
     PRIMARY_TUMOR("Primary Tumor"),
     ADMINISTRATION_ROUTE_TRANSLATION("Administration Route Translation"),
     BLOOD_TRANSFUSION_TRANSLATION("Blood Transfusion Translation"),
+    COMORBIDITY("Comorbidity"),
     COMPLICATION("Complication"),
     DOSAGE_UNIT_TRANSLATION("Dosage Unit Translation"),
     ECG("ECG"),

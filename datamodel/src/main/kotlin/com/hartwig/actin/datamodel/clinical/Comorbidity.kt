@@ -12,4 +12,6 @@ interface Comorbidity : Displayable {
     override fun display(): String {
         return name
     }
+
+    fun withDefaultYearAndMonth(year: Int, month: Int): Comorbidity
 }

@@ -25,6 +25,22 @@ class CurationDatabase<T : CurationConfig>(
             }
     }
 
+    operator fun plus(other: CurationDatabase<T>): CurationDatabase<T> {
+        val combinedConfigs = listOf(configs, other.configs).flatMap { it.entries }
+            .groupBy({ it.key }, { it.value })
+            .mapValues { (_, value) ->
+                val filtered = value.filterNot { it.all(CurationConfig::ignore) }
+                if (filtered.isEmpty()) value.first() else filtered.reduce(Set<T>::plus)
+            }
+
+        return CurationDatabase(
+            combinedConfigs,
+            validationErrors + other.validationErrors,
+            category,
+            evaluatedInputFunction
+        )
+    }
+
     companion object {
         fun <T : CurationConfig> create(
             category: CurationCategory,

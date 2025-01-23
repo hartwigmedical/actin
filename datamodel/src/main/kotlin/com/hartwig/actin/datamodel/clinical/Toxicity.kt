@@ -10,12 +10,11 @@ data class Toxicity(
     val grade: Int?,
     val endDate: LocalDate? = null
 ): Comorbidity {
-
-    override val year: Int
+    override val comorbidityClass = ComorbidityClass.TOXICITY
+    override val year: Int?
         get() = evaluatedDate.year
-
-    override val month: Int
+    override val month: Int?
         get() = evaluatedDate.monthValue
 
-    override val comorbidityClass = ComorbidityClass.TOXICITY
+    override fun withDefaultYearAndMonth(year: Int, month: Int): Comorbidity = this
 }

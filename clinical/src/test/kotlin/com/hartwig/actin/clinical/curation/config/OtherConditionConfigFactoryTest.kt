@@ -8,7 +8,7 @@ import com.hartwig.actin.icd.TestIcdFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class NonOncologicalHistoryConfigFactoryTest {
+class OtherConditionConfigFactoryTest {
     private val fields: Map<String, Int> =
         TestCurationFactory.curationHeaders(CurationDatabaseReader.NON_ONCOLOGICAL_HISTORY_TSV)
     private val icdModel = TestIcdFactory.createTestModel()
@@ -20,7 +20,7 @@ class NonOncologicalHistoryConfigFactoryTest {
 
     @Test
     fun `Should return NonOncologicalHistoryConfig with no other condition from valid inputs is lvef`() {
-        val config = NonOncologicalHistoryConfigFactory(icdModel).create(
+        val config = OtherConditionConfigFactory(icdModel).create(
             fields,
             arrayOf("input", "name", "2023", "12", icdTitle, "1", "1.0", "")
         )
@@ -28,12 +28,12 @@ class NonOncologicalHistoryConfigFactoryTest {
         assertThat(config.config.input).isEqualTo("input")
         assertThat(config.config.ignore).isEqualTo(false)
         assertThat(config.config.lvef).isEqualTo(1.0)
-        assertThat(config.config.otherCondition).isNull()
+        assertThat(config.config.curated).isNull()
     }
 
     @Test
     fun `Should return NonOncologicalHistoryConfig with other condition from valid inputs is not lvef`() {
-        val config = NonOncologicalHistoryConfigFactory(icdModel).create(
+        val config = OtherConditionConfigFactory(icdModel).create(
             fields,
             arrayOf("input", "name", "2023", "12", "$icdTitle&$icdExtension", "0", "", "1")
         )
@@ -41,7 +41,7 @@ class NonOncologicalHistoryConfigFactoryTest {
         assertThat(config.config.input).isEqualTo("input")
         assertThat(config.config.ignore).isEqualTo(false)
         assertThat(config.config.lvef).isNull()
-        val otherCondition = config.config.otherCondition!!
+        val otherCondition = config.config.curated!!
         assertThat(otherCondition.icdCodes).isEqualTo(icdCodes)
         assertThat(otherCondition.name).isEqualTo("name")
         assertThat(otherCondition.year).isEqualTo(2023)
@@ -50,47 +50,30 @@ class NonOncologicalHistoryConfigFactoryTest {
 
     @Test
     fun `Should return validation error when year and month are not numbers`() {
-        val config = NonOncologicalHistoryConfigFactory(icdModel).create(
+        val config = OtherConditionConfigFactory(icdModel).create(
             fields,
             arrayOf("input", "name", "year", "month", icdTitle, "0", "", "1")
         )
         assertThat(config.errors).containsExactly(
-            CurationConfigValidationError(
-                CurationCategory.NON_ONCOLOGICAL_HISTORY.categoryName,
-                "input",
-                "year",
-                "year",
-                "integer"
-            ), CurationConfigValidationError(
-                CurationCategory.NON_ONCOLOGICAL_HISTORY.categoryName,
-                "input",
-                "month",
-                "month",
-                "integer"
-            )
+            CurationConfigValidationError(CurationCategory.NON_ONCOLOGICAL_HISTORY.categoryName, "input", "year", "year", "integer"),
+            CurationConfigValidationError(CurationCategory.NON_ONCOLOGICAL_HISTORY.categoryName, "input", "month", "month", "integer")
         )
     }
 
     @Test
     fun `Should return validation error when is lvef and lvef value is not a number`() {
-        val config = NonOncologicalHistoryConfigFactory(icdModel).create(
+        val config = OtherConditionConfigFactory(icdModel).create(
             fields,
             arrayOf("input", "name", "2023", "12", icdTitle, "1", "invalid", "1")
         )
         assertThat(config.errors).containsExactly(
-            CurationConfigValidationError(
-                CurationCategory.NON_ONCOLOGICAL_HISTORY.categoryName,
-                "input",
-                "lvefValue",
-                "invalid",
-                "double"
-            )
+            CurationConfigValidationError(CurationCategory.NON_ONCOLOGICAL_HISTORY.categoryName, "input", "lvefValue", "invalid", "double")
         )
     }
 
     @Test
     fun `Should return validation error when impossible to solve ICD code for title`() {
-        val config = NonOncologicalHistoryConfigFactory(icdModel).create(
+        val config = OtherConditionConfigFactory(icdModel).create(
             fields,
             arrayOf("input", "name", "2023", "12", "unknown title", "0", "", "1")
         )
@@ -108,7 +91,7 @@ class NonOncologicalHistoryConfigFactoryTest {
 
     @Test
     fun `Should return validation error when impossible to solve ICD code for extension of title`() {
-        val config = NonOncologicalHistoryConfigFactory(icdModel).create(
+        val config = OtherConditionConfigFactory(icdModel).create(
             fields,
             arrayOf("input", "name", "2023", "12", "$icdTitle&unknownExtension", "0", "", "1")
         )

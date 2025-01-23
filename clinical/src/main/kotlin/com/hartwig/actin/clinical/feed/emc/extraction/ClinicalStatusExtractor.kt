@@ -5,9 +5,10 @@ import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationResponse
+import com.hartwig.actin.clinical.curation.config.ComorbidityConfig
+import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.ECGConfig
 import com.hartwig.actin.clinical.curation.config.InfectionConfig
-import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
@@ -18,10 +19,10 @@ import com.hartwig.actin.datamodel.clinical.InfectionStatus
 class ClinicalStatusExtractor(
     private val ecgCuration: CurationDatabase<ECGConfig>,
     private val infectionCuration: CurationDatabase<InfectionConfig>,
-    private val nonOncologicalHistoryCuration: CurationDatabase<NonOncologicalHistoryConfig>
+    private val comorbidityCuration: CurationDatabase<ComorbidityConfig>
 ) {
 
-    fun extract(patientId: String, questionnaire: Questionnaire?, hasComplications: Boolean?): ExtractionResult<ClinicalStatus> {
+    fun extract(patientId: String, questionnaire: Questionnaire?, hasComplications: Boolean): ExtractionResult<ClinicalStatus> {
         if (questionnaire == null) {
             return ExtractionResult(ClinicalStatus(), CurationExtractionEvaluation())
         }
@@ -104,10 +105,9 @@ class ClinicalStatusExtractor(
     private fun determineLVEF(nonOncologicalHistoryEntries: List<String>?): Double? {
         // We do not raise warnings or propagate evaluated inputs here since we use the same configs for otherConditions
         return nonOncologicalHistoryEntries?.asSequence()
-            ?.flatMap { nonOncologicalHistoryCuration.find(it) }
-            ?.filterNot { it.ignore }
-            ?.map { it.lvef }
-            ?.find { it != null }
+            ?.flatMap(comorbidityCuration::find)
+            ?.filterNot(CurationConfig::ignore)
+            ?.firstNotNullOfOrNull { it.lvef }
     }
 
     companion object {
@@ -115,7 +115,7 @@ class ClinicalStatusExtractor(
             ClinicalStatusExtractor(
                 ecgCuration = curationDatabaseContext.ecgCuration,
                 infectionCuration = curationDatabaseContext.infectionCuration,
-                nonOncologicalHistoryCuration = curationDatabaseContext.nonOncologicalHistoryCuration
+                comorbidityCuration = curationDatabaseContext.comorbidityCuration
             )
     }
 }

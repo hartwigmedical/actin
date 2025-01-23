@@ -11,4 +11,8 @@ data class Intolerance(
     override val month: Int? = null
 ): Comorbidity {
     override val comorbidityClass = ComorbidityClass.INTOLERANCE
+
+    override fun withDefaultYearAndMonth(defaultYear: Int, defaultMonth: Int): Comorbidity = if (year != null) this else {
+        copy(year = defaultYear, month = defaultMonth)
+    }
 }
