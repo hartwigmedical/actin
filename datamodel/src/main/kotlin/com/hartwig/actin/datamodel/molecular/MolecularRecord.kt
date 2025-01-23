@@ -7,7 +7,6 @@ import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoEntry
 import java.time.LocalDate
 
 data class MolecularRecord(
-    val patientId: String,
     val sampleId: String,
     val refGenomeVersion: RefGenomeVersion,
     val externalTrialSource: String,
