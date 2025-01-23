@@ -53,7 +53,7 @@ class HasHadLimitedTreatmentsWithCategoryTest {
     fun `Should pass if there is a potentially matching trial option within the limit and treatment is optional`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            FUNCTION_TREATMENT_OPTIONAL.evaluate(withTreatmentHistory(listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY)))
+            FUNCTION_TREATMENT_OPTIONAL.evaluate(withTreatmentHistory(listOf(TRIAL_TREATMENT_UNKNOWN_CATEGORY)))
         )
     }
 
@@ -61,7 +61,7 @@ class HasHadLimitedTreatmentsWithCategoryTest {
     fun `Should be undetermined if there is a potentially matching trial option within the limit and treatment is required`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            FUNCTION_TREATMENT_REQUIRED.evaluate(withTreatmentHistory(listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY)))
+            FUNCTION_TREATMENT_REQUIRED.evaluate(withTreatmentHistory(listOf(TRIAL_TREATMENT_UNKNOWN_CATEGORY)))
         )
     }
 
@@ -72,8 +72,8 @@ class HasHadLimitedTreatmentsWithCategoryTest {
             FUNCTION_TREATMENT_OPTIONAL.evaluate(
                 withTreatmentHistory(
                     listOf(
-                        TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY,
-                        TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY
+                        TRIAL_TREATMENT_UNKNOWN_CATEGORY,
+                        TRIAL_TREATMENT_UNKNOWN_CATEGORY
                     )
                 )
             )
@@ -83,8 +83,8 @@ class HasHadLimitedTreatmentsWithCategoryTest {
             FUNCTION_TREATMENT_REQUIRED.evaluate(
                 withTreatmentHistory(
                     listOf(
-                        TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY,
-                        TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY
+                        TRIAL_TREATMENT_UNKNOWN_CATEGORY,
+                        TRIAL_TREATMENT_UNKNOWN_CATEGORY
                     )
                 )
             )
@@ -98,8 +98,8 @@ class HasHadLimitedTreatmentsWithCategoryTest {
             HasHadLimitedTreatmentsWithCategory(TreatmentCategory.TRANSPLANTATION, 1, false).evaluate(
                 withTreatmentHistory(
                     listOf(
-                        TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY,
-                        TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY
+                        TRIAL_TREATMENT_UNKNOWN_CATEGORY,
+                        TRIAL_TREATMENT_UNKNOWN_CATEGORY
                     )
                 )
             )
@@ -113,8 +113,8 @@ class HasHadLimitedTreatmentsWithCategoryTest {
             HasHadLimitedTreatmentsWithCategory(TreatmentCategory.TRANSPLANTATION, 1, true).evaluate(
                 withTreatmentHistory(
                     listOf(
-                        TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY,
-                        TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY
+                        TRIAL_TREATMENT_UNKNOWN_CATEGORY,
+                        TRIAL_TREATMENT_UNKNOWN_CATEGORY
                     )
                 )
             )
@@ -124,8 +124,7 @@ class HasHadLimitedTreatmentsWithCategoryTest {
     companion object {
         private val MATCHING_TREATMENT = treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.TARGETED_THERAPY)))
         private val NON_MATCHING_TREATMENT = treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)))
-        private val TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY =
-            treatmentHistoryEntry(setOf(treatment("trial", true, emptySet())), isTrial = true)
+        private val TRIAL_TREATMENT_UNKNOWN_CATEGORY = treatmentHistoryEntry(setOf(treatment("trial", true, emptySet())), isTrial = true)
         private val FUNCTION_TREATMENT_OPTIONAL = HasHadLimitedTreatmentsWithCategory(TreatmentCategory.TARGETED_THERAPY, 1, false)
         private val FUNCTION_TREATMENT_REQUIRED = HasHadLimitedTreatmentsWithCategory(TreatmentCategory.TARGETED_THERAPY, 1, true)
     }

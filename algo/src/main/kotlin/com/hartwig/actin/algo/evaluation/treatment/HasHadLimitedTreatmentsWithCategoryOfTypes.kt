@@ -9,25 +9,34 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 
 class HasHadLimitedTreatmentsWithCategoryOfTypes(
-    private val category: TreatmentCategory, private val types: Set<TreatmentType>,
-    private val maxTreatmentLines: Int
+    private val category: TreatmentCategory,
+    private val types: Set<TreatmentType>,
+    private val maxTreatmentLines: Int,
+    private val treatmentIsRequired: Boolean
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
             record.oncologicalHistory, category, { historyEntry -> historyEntry.matchesTypeFromSet(types) }
         )
+        val messageEnding = "received at most $maxTreatmentLines lines of ${Format.concatItemsWithAnd(types)} ${category.display()}"
 
-        val typesList = Format.concatItemsWithAnd(types)
         return when {
-            treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches + treatmentSummary.numPossibleTrialMatches <= maxTreatmentLines ->
-                EvaluationFactory.pass("Has received at most $maxTreatmentLines lines of $typesList ${category.display()}")
+            treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches + treatmentSummary.numPossibleTrialMatches <= maxTreatmentLines && (!treatmentIsRequired || treatmentSummary.hasSpecificMatch()) -> {
+                EvaluationFactory.pass("Has $messageEnding")
+            }
 
-            treatmentSummary.numSpecificMatches() <= maxTreatmentLines ->
-                EvaluationFactory.undetermined("Unclear if has received at most $maxTreatmentLines lines of $typesList ${category.display()}")
+            treatmentIsRequired && !treatmentSummary.hasSpecificMatch() && !treatmentSummary.hasApproximateMatch() && !treatmentSummary.hasPossibleTrialMatch() -> {
+                EvaluationFactory.fail("Has not received ${Format.concatItemsWithAnd(types)} ${category.display()} treatment")
+            }
 
-            else ->
-                EvaluationFactory.fail("Has exceeded $maxTreatmentLines lines of $typesList ${category.display()}")
+            treatmentSummary.numSpecificMatches() <= maxTreatmentLines -> {
+                EvaluationFactory.undetermined("Undetermined if $messageEnding")
+            }
+
+            else -> {
+                EvaluationFactory.fail("Has not $messageEnding")
+            }
         }
     }
 }

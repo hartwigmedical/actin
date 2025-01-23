@@ -14,7 +14,7 @@ class HasHadLimitedTreatmentsWithCategory(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(record.oncologicalHistory, category)
-        val messageEnding = "received at most " + maxTreatmentLines + " lines of " + category.display()
+        val messageEnding = "received at most $maxTreatmentLines lines of ${category.display()}"
 
         return when {
             treatmentSummary.numSpecificMatches() + treatmentSummary.numPossibleTrialMatches <= maxTreatmentLines && (!treatmentIsRequired || treatmentSummary.hasSpecificMatch()) -> {
