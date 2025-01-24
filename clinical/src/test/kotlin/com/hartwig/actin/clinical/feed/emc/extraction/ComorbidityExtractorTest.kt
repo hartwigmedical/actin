@@ -130,7 +130,15 @@ class ComorbidityExtractorTest {
 
     @Test
     fun `Should curate other conditions`() {
-        // TODO - handle yes inputs
+        assertOtherConditionExtraction(OTHER_CONDITION_INPUT, OTHER_CONDITION_INTERPRETATION, OTHER_CONDITION_ICD)
+    }
+
+    @Test
+    fun `Should extract yes-input other condition with empty name and ICD`() {
+        assertOtherConditionExtraction("Yes", "", "")
+    }
+
+    private fun assertOtherConditionExtraction(input: String, expectedName: String, expectedIcd: String) {
         val extractor = ComorbidityExtractor(
             TestCurationFactory.curationDatabase(
                 ComorbidityConfig(
@@ -145,13 +153,15 @@ class ComorbidityExtractorTest {
             ),
             toxicityTranslationDatabase
         )
-        val inputs = listOf(OTHER_CONDITION_INPUT, CANNOT_CURATE)
+        val inputs = listOf(input, CANNOT_CURATE)
         val questionnaire = TestCurationFactory.emptyQuestionnaire()
             .copy(nonOncologicalHistory = inputs)
         val (otherConditions, evaluation) = extractor.extract(PATIENT_ID, questionnaire, emptyList(), emptyList())
         assertThat(otherConditions).isNotNull
         assertThat(otherConditions).hasSize(1)
-        assertThat(otherConditions[0].name).isEqualTo(OTHER_CONDITION_INTERPRETATION)
+        val otherCondition = otherConditions[0] as OtherCondition
+        assertThat(otherCondition.name).isEqualTo(expectedName)
+        assertThat(otherCondition.icdCodes).containsExactly(IcdCode(expectedIcd))
 
         assertExpectedEvaluation(
             evaluation,
