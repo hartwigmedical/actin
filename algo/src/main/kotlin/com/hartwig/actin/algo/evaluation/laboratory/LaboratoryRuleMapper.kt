@@ -61,6 +61,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.HAS_ALP_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.ALKALINE_PHOSPHATASE),
             EligibilityRule.HAS_ALP_ULN_OF_AT_LEAST_X to hasSufficientLabValueULNCreator(LabMeasurement.ALKALINE_PHOSPHATASE),
             EligibilityRule.HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.TOTAL_BILIRUBIN),
+            EligibilityRule.HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X_OR_Y_IF_GILBERT_DISEASE to hasLimitedTotalBilirubinDependingOnGilbertDiseaseCreator(),
             EligibilityRule.HAS_TOTAL_BILIRUBIN_UMOL_PER_L_OF_AT_MOST_X to hasLimitedLabValueCreator(LabMeasurement.TOTAL_BILIRUBIN),
             EligibilityRule.HAS_TOTAL_BILIRUBIN_MG_PER_DL_OF_AT_MOST_X to hasLimitedLabValueCreator(
                 LabMeasurement.TOTAL_BILIRUBIN,
@@ -204,6 +205,14 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             HasLimitedAsatAndAlatDependingOnLiverMetastases(
                 maxULNWithoutLiverMetastases, maxULNWithLiverMetastases, minValidLabDate(), minPassLabDate()
             )
+        }
+    }
+
+    private fun hasLimitedTotalBilirubinDependingOnGilbertDiseaseCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val maxUlnWithoutGilbertDisease = functionInputResolver().createTwoDoublesInput(function).double1
+            val maxUlnWithGilbertDisease = functionInputResolver().createTwoDoublesInput(function).double2
+            HasLimitedBilirubinDependingOnGilbertDisease(maxUlnWithoutGilbertDisease, maxUlnWithGilbertDisease, minValidLabDate(), minPassLabDate(), icdModel())
         }
     }
 
