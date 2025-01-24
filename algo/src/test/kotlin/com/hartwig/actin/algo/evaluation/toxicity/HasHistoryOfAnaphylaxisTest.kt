@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory
+import com.hartwig.actin.algo.evaluation.othercondition.ComorbidityTestFactory
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -27,7 +27,7 @@ class HasHistoryOfAnaphylaxisTest {
             function.evaluate(
                 testPatient.copy(
                     comorbidities = listOf(
-                        OtherConditionTestFactory.otherCondition(icdMainCode = IcdConstants.ANAPHYLAXIS_CODE)
+                        ComorbidityTestFactory.otherCondition(icdMainCode = IcdConstants.ANAPHYLAXIS_CODE)
                     )
                 )
             )
@@ -41,7 +41,7 @@ class HasHistoryOfAnaphylaxisTest {
             function.evaluate(
                 testPatient.copy(
                     comorbidities = listOf(
-                        OtherConditionTestFactory.intolerance(icdMainCode = IcdConstants.DRUG_INDUCED_ANAPHYLAXIS_CODE)
+                        ComorbidityTestFactory.intolerance(icdMainCode = IcdConstants.DRUG_INDUCED_ANAPHYLAXIS_CODE)
                     )
                 )
             )
@@ -62,8 +62,8 @@ class HasHistoryOfAnaphylaxisTest {
             function.evaluate(
                 testPatient.copy(
                     comorbidities = listOf(
-                        OtherConditionTestFactory.intolerance(icdMainCode = "wrong"),
-                        OtherConditionTestFactory.otherCondition(icdMainCode = "wrong")
+                        ComorbidityTestFactory.intolerance(icdMainCode = "wrong"),
+                        ComorbidityTestFactory.otherCondition(icdMainCode = "wrong")
                     )
                 )
             )

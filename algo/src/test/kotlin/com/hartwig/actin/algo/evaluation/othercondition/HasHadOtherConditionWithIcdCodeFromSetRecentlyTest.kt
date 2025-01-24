@@ -22,8 +22,8 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                OtherConditionTestFactory.withOtherCondition(
-                    OtherConditionTestFactory.otherCondition(
+                ComorbidityTestFactory.withOtherCondition(
+                    ComorbidityTestFactory.otherCondition(
                         year = minDate.plusMonths(1).year, month = minDate.plusMonths(1).monthValue, icdMainCode = targetIcdCodes.first().mainCode
                     )
                 )
@@ -36,8 +36,8 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                OtherConditionTestFactory.withOtherCondition(
-                    OtherConditionTestFactory.otherCondition(
+                ComorbidityTestFactory.withOtherCondition(
+                    ComorbidityTestFactory.otherCondition(
                         year = minDate.plusYears(1).year, month = 1, icdMainCode = targetIcdCodes.first().mainCode
                     )
                 )
@@ -47,12 +47,12 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
 
     @Test
     fun `Should pass if both pass and warn conditions are met - two conditions with correct ICD code in time-frame of which one in first 2 months`() {
-        val conditions = OtherConditionTestFactory.withOtherConditions(
+        val conditions = ComorbidityTestFactory.withOtherConditions(
             listOf(
-                OtherConditionTestFactory.otherCondition(
+                ComorbidityTestFactory.otherCondition(
                     year = minDate.plusYears(1).year, month = 1, icdMainCode = targetIcdCodes.first().mainCode
                 ),
-                OtherConditionTestFactory.otherCondition(
+                ComorbidityTestFactory.otherCondition(
                     year = minDate.plusMonths(1).year, month = minDate.plusMonths(1).monthValue, icdMainCode = targetIcdCodes.first().mainCode
                 )
             )
@@ -65,8 +65,8 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                OtherConditionTestFactory.withOtherCondition(
-                    OtherConditionTestFactory.otherCondition(
+                ComorbidityTestFactory.withOtherCondition(
+                    ComorbidityTestFactory.otherCondition(
                         year = null, icdMainCode = targetIcdCodes.first().mainCode
                     )
                 )
@@ -82,8 +82,8 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                OtherConditionTestFactory.withOtherCondition(
-                    OtherConditionTestFactory.otherCondition(
+                ComorbidityTestFactory.withOtherCondition(
+                    ComorbidityTestFactory.otherCondition(
                         icdMainCode = IcdConstants.STROKE_NOS_CODE, icdExtensionCode = null
                     )
                 )
@@ -96,8 +96,8 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                OtherConditionTestFactory.withOtherCondition(
-                    OtherConditionTestFactory.otherCondition(
+                ComorbidityTestFactory.withOtherCondition(
+                    ComorbidityTestFactory.otherCondition(
                         year = 2023, icdMainCode = IcdConstants.HYPOMAGNESEMIA_CODE
                     )
                 )
@@ -110,7 +110,7 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                OtherConditionTestFactory.withOtherConditions(emptyList())
+                ComorbidityTestFactory.withOtherConditions(emptyList())
             )
         )
     }
@@ -120,8 +120,8 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                OtherConditionTestFactory.withOtherCondition(
-                    OtherConditionTestFactory.otherCondition(
+                ComorbidityTestFactory.withOtherCondition(
+                    ComorbidityTestFactory.otherCondition(
                         year = minDate.minusYears(1).year, month = 1, icdMainCode = targetIcdCodes.first().mainCode
                     )
                 )

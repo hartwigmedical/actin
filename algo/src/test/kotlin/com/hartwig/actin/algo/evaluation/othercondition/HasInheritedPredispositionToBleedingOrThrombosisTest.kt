@@ -12,7 +12,7 @@ class HasInheritedPredispositionToBleedingOrThrombosisTest {
     @Test
     fun `Should fail with no conditions`() {
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withOtherConditions(emptyList()))
+            EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withOtherConditions(emptyList()))
         )
     }
 
@@ -20,8 +20,8 @@ class HasInheritedPredispositionToBleedingOrThrombosisTest {
     fun `Should fail with no relevant other condition`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
-                OtherConditionTestFactory.withOtherConditions(
-                    listOf(OtherConditionTestFactory.otherCondition(icdMainCode = "wrong"))
+                ComorbidityTestFactory.withOtherConditions(
+                    listOf(ComorbidityTestFactory.otherCondition(icdMainCode = "wrong"))
                 )
             )
         )
@@ -32,8 +32,8 @@ class HasInheritedPredispositionToBleedingOrThrombosisTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                OtherConditionTestFactory.withOtherCondition(
-                    OtherConditionTestFactory.otherCondition(icdMainCode = IcdConstants.HEREDITARY_THROMBOPHILIA_CODE)
+                ComorbidityTestFactory.withOtherCondition(
+                    ComorbidityTestFactory.otherCondition(icdMainCode = IcdConstants.HEREDITARY_THROMBOPHILIA_CODE)
                 )
             )
         )
@@ -42,12 +42,12 @@ class HasInheritedPredispositionToBleedingOrThrombosisTest {
     @Test
     fun `Should pass with at least one condition with certain name`() {
         val conditions = listOf(
-            OtherConditionTestFactory.otherCondition(name = "other name"),
-            OtherConditionTestFactory.otherCondition(name = "disease FACTOR V LEIDEN")
+            ComorbidityTestFactory.otherCondition(name = "other name"),
+            ComorbidityTestFactory.otherCondition(name = "disease FACTOR V LEIDEN")
         )
 
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withOtherConditions(conditions))
+            EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withOtherConditions(conditions))
         )
     }
 }
