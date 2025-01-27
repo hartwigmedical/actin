@@ -39,6 +39,7 @@ class HasToxicityWithGradeTest {
         val toxicities = listOf(toxicity(name = "tox", source = ToxicitySource.QUESTIONNAIRE, grade = 2))
         val evaluation = function().evaluate(ToxicityTestFactory.withToxicities(toxicities))
         assertEvaluation(EvaluationResult.PASS, evaluation)
+        assertThat(evaluation.passMessages).containsExactly("Has toxicities grade >= 2 (tox)")
     }
 
     @Test
