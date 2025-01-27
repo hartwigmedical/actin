@@ -1,12 +1,12 @@
 package com.hartwig.actin.algo.evaluation.othercondition
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.complication
-import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.intolerance
-import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.otherCondition
-import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.withIntolerances
-import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.withOtherCondition
-import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.withOtherConditions
+import com.hartwig.actin.algo.evaluation.othercondition.ComorbidityTestFactory.complication
+import com.hartwig.actin.algo.evaluation.othercondition.ComorbidityTestFactory.intolerance
+import com.hartwig.actin.algo.evaluation.othercondition.ComorbidityTestFactory.otherCondition
+import com.hartwig.actin.algo.evaluation.othercondition.ComorbidityTestFactory.withIntolerances
+import com.hartwig.actin.algo.evaluation.othercondition.ComorbidityTestFactory.withOtherCondition
+import com.hartwig.actin.algo.evaluation.othercondition.ComorbidityTestFactory.withOtherConditions
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.icd.TestIcdFactory
@@ -69,23 +69,23 @@ class HasContraindicationToCTTest {
 
     @Test
     fun `Should fail with no medications`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withMedications(emptyList())))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withMedications(emptyList())))
     }
 
     @Test
     fun `Should fail without complications`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withComplications(emptyList())))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withComplications(emptyList())))
     }
 
     @Test
     fun `Should fail with complication with wrong code`() {
         val complications = listOf(complication(icdMainCode = "wrong"))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withComplications(complications)))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withComplications(complications)))
     }
 
     @Test
     fun `Should pass with complication with correct code`() {
         val complications = listOf(complication(icdMainCode = correctCode))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withComplications(complications)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withComplications(complications)))
     }
 }

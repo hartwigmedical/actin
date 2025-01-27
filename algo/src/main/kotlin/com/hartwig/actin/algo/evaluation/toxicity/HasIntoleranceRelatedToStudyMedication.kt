@@ -7,19 +7,15 @@ import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IcdCode
+import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.icd.IcdModel
 
 class HasIntoleranceRelatedToStudyMedication(private val icdModel: IcdModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val drugIntolerances = icdModel.findInstancesMatchingAnyIcdCode(
-            record.intolerances, IcdConstants.DRUG_ALLERGY_SET.map { IcdCode(it) }.toSet()
-        ).fullMatches
-
-        val allergies = record.intolerances
-            .filter { intolerance ->
-                intolerance.clinicalStatus.equals(CLINICAL_STATUS_ACTIVE, ignoreCase = true) && drugIntolerances.contains(intolerance)
-            }
+        val targetIcdCodes = IcdConstants.DRUG_ALLERGY_SET.map { IcdCode(it) }
+        val allergies = icdModel.findInstancesMatchingAnyIcdCode(record.comorbidities, targetIcdCodes).fullMatches
+            .filter { (it as? Intolerance)?.clinicalStatus?.equals(CLINICAL_STATUS_ACTIVE, ignoreCase = true) != false }
             .toSet()
 
         return if (allergies.isNotEmpty()) {

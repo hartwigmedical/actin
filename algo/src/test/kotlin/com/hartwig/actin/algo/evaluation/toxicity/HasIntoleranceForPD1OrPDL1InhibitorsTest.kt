@@ -1,14 +1,13 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory
+import com.hartwig.actin.algo.evaluation.othercondition.ComorbidityTestFactory
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
-import com.hartwig.actin.datamodel.clinical.TestOtherConditionFactory
+import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.icd.TestIcdFactory
 import org.junit.Test
 
@@ -22,37 +21,24 @@ class HasIntoleranceForPD1OrPDL1InhibitorsTest {
     @Test
     fun `Should pass when patient has intolerance matching name`() {
         HasIntoleranceForPD1OrPDL1Inhibitors.INTOLERANCE_TERMS.forEach { term: String ->
-            val record = patient(listOf(ToxicityTestFactory.intolerance(name = "intolerance to " + term.uppercase())))
+            val record = patient(listOf(ComorbidityTestFactory.intolerance(name = "intolerance to " + term.uppercase())))
             assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
         }
     }
 
     @Test
-    fun `Should pass when patient has intolerance matching main and extension code`() {
-        evaluateWithCodes(
-            EvaluationResult.PASS, listOf(
-                IcdCode(MATCHING_ICD_MAIN_CODE, IcdConstants.PD_L1_PD_1_DRUG_SET.first()),
-                IcdCode(OTHER_MATCHING_ICD_MAIN_CODE, IcdConstants.PD_L1_PD_1_DRUG_SET.last())
-            )
-        )
+    fun `Should pass when patient has any comorbidity matching main and extension code`() {
+        assertResultForIcdCodes(EvaluationResult.PASS, MATCHING_ICD_MAIN_CODE, IcdConstants.PD_L1_PD_1_DRUG_SET.first())
     }
 
     @Test
-    fun `Should evaluate to undetermined if intolerance matches on ICD main code but extension code unknown`() {
-        evaluateWithCodes(
-            EvaluationResult.UNDETERMINED, listOf(
-                IcdCode(MATCHING_ICD_MAIN_CODE, null),
-            )
-        )
+    fun `Should evaluate to undetermined if any comorbidity matches on ICD main code but extension code unknown`() {
+        assertResultForIcdCodes(EvaluationResult.UNDETERMINED, MATCHING_ICD_MAIN_CODE, null)
     }
 
     @Test
-    fun `Should evaluate to undetermined if intolerance matches on ICD main code and extension code monoclonal antibodies`() {
-        evaluateWithCodes(
-            EvaluationResult.UNDETERMINED, listOf(
-                IcdCode(OTHER_MATCHING_ICD_MAIN_CODE, IcdConstants.MONOCLONAL_ANTIBODY_BLOCK)
-            )
-        )
+    fun `Should evaluate to undetermined if any comorbidity matches on ICD main code and extension code monoclonal antibodies`() {
+        assertResultForIcdCodes(EvaluationResult.UNDETERMINED, OTHER_MATCHING_ICD_MAIN_CODE, IcdConstants.MONOCLONAL_ANTIBODY_BLOCK)
     }
 
     @Test
@@ -64,28 +50,29 @@ class HasIntoleranceForPD1OrPDL1InhibitorsTest {
     fun `Should fail when patient has no matching intolerance or autoimmune disease condition`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(patient(listOf(ToxicityTestFactory.intolerance(name = "other")), "123"))
+            function.evaluate(patient(listOf(ComorbidityTestFactory.intolerance(name = "other")), "123"))
         )
     }
 
     @Test
     fun `Should fail for empty intolerance list`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withIntolerances(emptyList())))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withIntolerances(emptyList())))
     }
 
     private fun patient(intolerances: List<Intolerance>, icdMainCode: String = ""): PatientRecord {
-        val priorCondition = TestOtherConditionFactory.createMinimal()
-            .copy(icdCodes = setOf(IcdCode(icdMainCode)))
         return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-            comorbidities = intolerances + priorCondition
+            comorbidities = intolerances + ComorbidityTestFactory.otherCondition(icdMainCode = icdMainCode)
         )
     }
 
-    private fun evaluateWithCodes(expected: EvaluationResult, codeList: List<IcdCode>) {
-        codeList.forEach { code: IcdCode ->
-            val record =
-                patient(listOf(ToxicityTestFactory.intolerance(icdMainCode = code.mainCode, icdExtensionCode = code.extensionCode)))
-            assertEvaluation(expected, function.evaluate(record))
+    private fun assertResultForIcdCodes(expectedResult: EvaluationResult, icdMainCode: String, icdExtensionCode: String?) {
+        listOf(
+            ComorbidityTestFactory.intolerance("unspecified", icdMainCode, icdExtensionCode),
+            ComorbidityTestFactory.toxicity("tox", ToxicitySource.EHR, 2, icdMainCode, icdExtensionCode),
+            ComorbidityTestFactory.otherCondition("condition", icdMainCode = icdMainCode, icdExtensionCode = icdExtensionCode),
+            ComorbidityTestFactory.complication("complication", icdMainCode = icdMainCode, icdExtensionCode = icdExtensionCode)
+        ).forEach { match ->
+            assertEvaluation(expectedResult, function.evaluate(ComorbidityTestFactory.withComorbidity(match)))
         }
     }
 }

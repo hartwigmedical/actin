@@ -56,7 +56,7 @@ class IcdModel(
         return codeToNodeMap[code]?.title ?: throw IllegalStateException("ICD title unresolvable for code $code")
     }
 
-    fun <T : Comorbidity> findInstancesMatchingAnyIcdCode(instances: List<T>, targetIcdCodes: Set<IcdCode>): IcdMatches<T> {
+    fun <T : Comorbidity> findInstancesMatchingAnyIcdCode(instances: List<T>, targetIcdCodes: Iterable<IcdCode>): IcdMatches<T> {
         val targetMainCodesWithExtensions = targetIcdCodes.mapNotNull { code -> code.extensionCode?.let { code.mainCode } }.toSet()
         val instancesByCategory = instances.groupBy { instance ->
             val allCodes = allCodesForEntity(instance)
