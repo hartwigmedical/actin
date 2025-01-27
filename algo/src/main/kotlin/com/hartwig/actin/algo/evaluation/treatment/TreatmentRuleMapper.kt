@@ -340,8 +340,8 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val input = functionInputResolver().createOneTreatmentCategoryOrTypeOneIntegerInput(function)
             val treatment = input.treatment
             treatment.mappedType?.let { mappedType ->
-                HasHadLimitedTreatmentsWithCategory(treatment.mappedCategory, setOf(mappedType), input.integer, treatmentIsRequired)
-            } ?: HasHadLimitedTreatmentsWithCategory(treatment.mappedCategory, null, input.integer, treatmentIsRequired)
+                HasHadLimitedTreatmentsWithCategoryOfTypes(treatment.mappedCategory, setOf(mappedType), input.integer, treatmentIsRequired)
+            } ?: HasHadLimitedTreatmentsWithCategoryOfTypes(treatment.mappedCategory, null, input.integer, treatmentIsRequired)
         }
     }
 
@@ -355,7 +355,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasHadLimitedTreatmentsOfCategoryWithTypesCreator(treatmentIsRequired: Boolean): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneTreatmentCategoryManyTypesOneIntegerInput(function)
-            HasHadLimitedTreatmentsWithCategory(input.category, input.types, input.integer, treatmentIsRequired)
+            HasHadLimitedTreatmentsWithCategoryOfTypes(input.category, input.types, input.integer, treatmentIsRequired)
         }
     }
 

@@ -11,7 +11,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import org.junit.Test
 
-class HasHadLimitedTreatmentsWithCategoryTest {
+class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
 
     @Test
     fun `Should pass in case patient had no treatments and treatment is optional`() {
@@ -135,7 +135,7 @@ class HasHadLimitedTreatmentsWithCategoryTest {
     fun `Should ignore trial matches and pass when looking for unlikely trial categories and treatment is optional`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            HasHadLimitedTreatmentsWithCategory(RARE_CATEGORY, null, 1, false).evaluate(
+            HasHadLimitedTreatmentsWithCategoryOfTypes(RARE_CATEGORY, null, 1, false).evaluate(
                 withTreatmentHistory(
                     listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES, TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES)
                 )
@@ -143,7 +143,7 @@ class HasHadLimitedTreatmentsWithCategoryTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            HasHadLimitedTreatmentsWithCategory(RARE_CATEGORY, MATCHING_TYPE_SET, 1, false).evaluate(
+            HasHadLimitedTreatmentsWithCategoryOfTypes(RARE_CATEGORY, MATCHING_TYPE_SET, 1, false).evaluate(
                 withTreatmentHistory(
                     listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES, TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES)
                 )
@@ -155,7 +155,7 @@ class HasHadLimitedTreatmentsWithCategoryTest {
     fun `Should ignore trial matches and fail when looking for unlikely trial categories and treatment is required`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            HasHadLimitedTreatmentsWithCategory(RARE_CATEGORY, null, 1, true).evaluate(
+            HasHadLimitedTreatmentsWithCategoryOfTypes(RARE_CATEGORY, null, 1, true).evaluate(
                 withTreatmentHistory(
                     listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES, TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES)
                 )
@@ -163,7 +163,7 @@ class HasHadLimitedTreatmentsWithCategoryTest {
         )
         assertEvaluation(
             EvaluationResult.FAIL,
-            HasHadLimitedTreatmentsWithCategory(RARE_CATEGORY, MATCHING_TYPE_SET, 1, true).evaluate(
+            HasHadLimitedTreatmentsWithCategoryOfTypes(RARE_CATEGORY, MATCHING_TYPE_SET, 1, true).evaluate(
                 withTreatmentHistory(
                     listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES, TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES)
                 )
@@ -198,11 +198,11 @@ class HasHadLimitedTreatmentsWithCategoryTest {
             treatmentHistoryEntry(setOf(treatment("trial", true, emptySet())), isTrial = true)
         private val RARE_CATEGORY = TreatmentCategory.TRANSPLANTATION
 
-        private val FUNCTION_TREATMENT_OPTIONAL = HasHadLimitedTreatmentsWithCategory(MATCHING_CATEGORY, null, MAX_TREATMENT_LINES, false)
+        private val FUNCTION_TREATMENT_OPTIONAL = HasHadLimitedTreatmentsWithCategoryOfTypes(MATCHING_CATEGORY, null, MAX_TREATMENT_LINES, false)
         private val FUNCTION_TREATMENT_OPTIONAL_WITH_TYPES =
-            HasHadLimitedTreatmentsWithCategory(MATCHING_CATEGORY, MATCHING_TYPE_SET, MAX_TREATMENT_LINES, false)
-        private val FUNCTION_TREATMENT_REQUIRED = HasHadLimitedTreatmentsWithCategory(MATCHING_CATEGORY, null, MAX_TREATMENT_LINES, true)
+            HasHadLimitedTreatmentsWithCategoryOfTypes(MATCHING_CATEGORY, MATCHING_TYPE_SET, MAX_TREATMENT_LINES, false)
+        private val FUNCTION_TREATMENT_REQUIRED = HasHadLimitedTreatmentsWithCategoryOfTypes(MATCHING_CATEGORY, null, MAX_TREATMENT_LINES, true)
         private val FUNCTION_TREATMENT_REQUIRED_WITH_TYPES =
-            HasHadLimitedTreatmentsWithCategory(MATCHING_CATEGORY, MATCHING_TYPE_SET, MAX_TREATMENT_LINES, true)
+            HasHadLimitedTreatmentsWithCategoryOfTypes(MATCHING_CATEGORY, MATCHING_TYPE_SET, MAX_TREATMENT_LINES, true)
     }
 }
