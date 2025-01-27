@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.complication
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory
+import com.hartwig.actin.algo.evaluation.othercondition.ComorbidityTestFactory
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.IcdCode
@@ -25,8 +25,8 @@ class HasLeptomeningealDiseaseTest {
                 ComplicationTestFactory.withComplication(
                     ComplicationTestFactory.complication(icdCode = IcdCode(code))
                 ),
-                OtherConditionTestFactory.withOtherCondition(
-                    OtherConditionTestFactory.otherCondition(icdMainCode = code)
+                ComorbidityTestFactory.withOtherCondition(
+                    ComorbidityTestFactory.otherCondition(icdMainCode = code)
                 )
             )
         }.forEach { assertEvaluation(EvaluationResult.PASS, function.evaluate(it)) }

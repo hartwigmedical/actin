@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.infection
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory
+import com.hartwig.actin.algo.evaluation.othercondition.ComorbidityTestFactory
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -18,15 +18,15 @@ class HasSpecificInfectionTest {
 
     @Test
     fun `Should fail with no prior conditions`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withOtherConditions(emptyList())))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withOtherConditions(emptyList())))
     }
 
     @Test
     fun `Should fail with prior conditions but wrong ICD code`() {
-        val condition = OtherConditionTestFactory.otherCondition(icdMainCode = IcdConstants.CYTOMEGALOVIRAL_DISEASE_CODE)
+        val condition = ComorbidityTestFactory.otherCondition(icdMainCode = IcdConstants.CYTOMEGALOVIRAL_DISEASE_CODE)
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(OtherConditionTestFactory.withOtherCondition(condition))
+            function.evaluate(ComorbidityTestFactory.withOtherCondition(condition))
         )
     }
 
@@ -37,8 +37,8 @@ class HasSpecificInfectionTest {
             setOf(IcdCode(IcdConstants.ACUTE_HEPATITIS_B_CODE, "extension")),
             "hepatitis B virus"
         )
-        val condition = OtherConditionTestFactory.otherCondition(icdMainCode = IcdConstants.ACUTE_HEPATITIS_B_CODE)
-        val evaluation = function.evaluate(OtherConditionTestFactory.withOtherCondition(condition))
+        val condition = ComorbidityTestFactory.otherCondition(icdMainCode = IcdConstants.ACUTE_HEPATITIS_B_CODE)
+        val evaluation = function.evaluate(ComorbidityTestFactory.withOtherCondition(condition))
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
     }
 
@@ -51,8 +51,8 @@ class HasSpecificInfectionTest {
 
     @Test
     fun `Should pass for prior condition with correct ICD code`() {
-        val condition = OtherConditionTestFactory.otherCondition(icdMainCode = targetCodes.first().mainCode)
-        val evaluation = function.evaluate(OtherConditionTestFactory.withOtherCondition(condition))
+        val condition = ComorbidityTestFactory.otherCondition(icdMainCode = targetCodes.first().mainCode)
+        val evaluation = function.evaluate(ComorbidityTestFactory.withOtherCondition(condition))
         assertEvaluation(EvaluationResult.PASS, evaluation)
         assertThat(evaluation.passMessages).containsExactly("Hepatitis B virus infection in history")
     }

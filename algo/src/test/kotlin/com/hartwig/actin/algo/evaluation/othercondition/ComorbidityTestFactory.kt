@@ -13,7 +13,7 @@ import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import java.time.LocalDate
 
-internal object OtherConditionTestFactory {
+internal object ComorbidityTestFactory {
     private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
     
     fun withOtherCondition(condition: OtherCondition): PatientRecord {
@@ -39,12 +39,12 @@ internal object OtherConditionTestFactory {
         )
     }
 
-    fun intolerance(name: String = "", icdMainCode: String = "", icdExtensionCode: String? = null): Intolerance {
+    fun intolerance(name: String = "", icdMainCode: String = "", icdExtensionCode: String? = null, clinicalStatus: String = ""): Intolerance {
         return Intolerance(
             name = name,
             icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode)),
             type = "",
-            clinicalStatus = "",
+            clinicalStatus = clinicalStatus,
             verificationStatus = "",
             criticality = ""
         )
@@ -66,6 +66,10 @@ internal object OtherConditionTestFactory {
         )
     }
 
+    fun withComorbidity(comorbidity: Comorbidity): PatientRecord {
+        return withComorbidities(listOf(comorbidity))
+    }
+
     fun withComplications(complications: List<Complication>): PatientRecord {
         return withComorbidities(complications)
     }
@@ -78,7 +82,7 @@ internal object OtherConditionTestFactory {
         return withComorbidities(intolerances)
     }
 
-    private fun withComorbidities(comorbidities: List<Comorbidity>): PatientRecord {
+    fun withComorbidities(comorbidities: List<Comorbidity>): PatientRecord {
         return base.copy(comorbidities = comorbidities)
     }
 

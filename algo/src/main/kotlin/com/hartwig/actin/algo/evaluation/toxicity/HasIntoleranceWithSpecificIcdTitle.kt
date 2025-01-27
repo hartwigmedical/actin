@@ -11,7 +11,7 @@ class HasIntoleranceWithSpecificIcdTitle(private val icdModel: IcdModel, private
         
     override fun evaluate(record: PatientRecord): Evaluation {
         val targetCode = icdModel.resolveCodeForTitle(targetIcdTitle)!!
-        val icdMatches = icdModel.findInstancesMatchingAnyIcdCode(record.intolerances, setOf(targetCode))
+        val icdMatches = icdModel.findInstancesMatchingAnyIcdCode(record.comorbidities, setOf(targetCode))
 
         return when {
             icdMatches.fullMatches.isNotEmpty() -> {

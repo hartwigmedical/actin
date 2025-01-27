@@ -27,10 +27,10 @@ class HasHadOtherConditionComplicationOrToxicityWithIcdCodeTest {
     )
     private val minimalPatient = TestPatientFactory.createMinimalTestWGSPatientRecord()
 
-    private val complicationWithTargetCode = OtherConditionTestFactory.complication(icdMainCode = parentCode, name = COMPLICATION_NAME)
+    private val complicationWithTargetCode = ComorbidityTestFactory.complication(icdMainCode = parentCode, name = COMPLICATION_NAME)
     private val complicationWithChildOfTargetCode = complicationWithTargetCode.copy(icdCodes = setOf(IcdCode(childCode)))
 
-    private val conditionWithTargetCode = OtherConditionTestFactory.otherCondition(
+    private val conditionWithTargetCode = ComorbidityTestFactory.otherCondition(
         name = OTHER_CONDITION_NAME,
         icdMainCode = parentCode
     )
@@ -48,7 +48,7 @@ class HasHadOtherConditionComplicationOrToxicityWithIcdCodeTest {
     fun `Should pass when ICD code or parent code of other condition matches code of target title`() {
         listOf(conditionWithTargetCode, conditionWithChildOfTargetCode).forEach {
             assertPassEvaluationWithMessages(
-                function.evaluate(OtherConditionTestFactory.withOtherCondition(it)),
+                function.evaluate(ComorbidityTestFactory.withOtherCondition(it)),
                 "other condition"
             )
         }
@@ -58,7 +58,7 @@ class HasHadOtherConditionComplicationOrToxicityWithIcdCodeTest {
     fun `Should pass when ICD code or parent code of complication matches code of target title`() {
         listOf(complicationWithChildOfTargetCode, complicationWithTargetCode).forEach {
             assertPassEvaluationWithMessages(
-                function.evaluate(OtherConditionTestFactory.withComplications(listOf(it))),
+                function.evaluate(ComorbidityTestFactory.withComplications(listOf(it))),
                 "complication"
             )
         }
@@ -68,7 +68,7 @@ class HasHadOtherConditionComplicationOrToxicityWithIcdCodeTest {
     fun `Should pass when ICD code or parent code of toxicity from questionnaire matches code of target title`() {
         listOf(childCode, parentCode).forEach {
             assertPassEvaluationWithMessages(
-                function.evaluate(OtherConditionTestFactory.withToxicities(listOf(toxicity(ToxicitySource.QUESTIONNAIRE, IcdCode(it), 1)))),
+                function.evaluate(ComorbidityTestFactory.withToxicities(listOf(toxicity(ToxicitySource.QUESTIONNAIRE, IcdCode(it), 1)))),
                 "toxicity"
             )
         }
@@ -78,7 +78,7 @@ class HasHadOtherConditionComplicationOrToxicityWithIcdCodeTest {
     fun `Should pass when ICD code or parent code of toxicity from EHR with at least grade 2 matches code of target title`() {
         listOf(childCode, parentCode).forEach {
             assertPassEvaluationWithMessages(
-                function.evaluate(OtherConditionTestFactory.withToxicities(listOf(toxicity(ToxicitySource.EHR, IcdCode(it), 2)))),
+                function.evaluate(ComorbidityTestFactory.withToxicities(listOf(toxicity(ToxicitySource.EHR, IcdCode(it), 2)))),
                 "toxicity"
             )
         }
@@ -92,8 +92,8 @@ class HasHadOtherConditionComplicationOrToxicityWithIcdCodeTest {
 
         assertEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(
-                OtherConditionTestFactory.withOtherCondition(
-                    OtherConditionTestFactory.otherCondition(icdMainCode = parentCode, icdExtensionCode = null)
+                ComorbidityTestFactory.withOtherCondition(
+                    ComorbidityTestFactory.otherCondition(icdMainCode = parentCode, icdExtensionCode = null)
                 )
             )
         )
@@ -105,7 +105,7 @@ class HasHadOtherConditionComplicationOrToxicityWithIcdCodeTest {
             assertEvaluation(
                 EvaluationResult.FAIL,
                 function.evaluate(
-                    OtherConditionTestFactory.withToxicities(
+                    ComorbidityTestFactory.withToxicities(
                         listOf(toxicity(ToxicitySource.EHR, IcdCode(it), 1))
                     )
                 )
