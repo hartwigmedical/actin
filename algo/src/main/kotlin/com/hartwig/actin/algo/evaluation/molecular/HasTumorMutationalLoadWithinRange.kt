@@ -16,7 +16,7 @@ class HasTumorMutationalLoadWithinRange(
         val tumorMutationalLoad = test.characteristics.tumorMutationalLoad
             ?: return EvaluationFactory.undetermined(
                 "Undetermined if TML is sufficient (no TML result)",
-                missingMolecularResultForEvaluation = true
+                isMissingMolecularResultForEvaluation = true
             )
 
         val meetsMinTumorLoad = tumorMutationalLoad >= minTumorMutationalLoad

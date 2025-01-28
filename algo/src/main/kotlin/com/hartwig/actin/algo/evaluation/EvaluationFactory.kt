@@ -18,29 +18,29 @@ object EvaluationFactory {
         return pass(message, true)
     }
 
-    fun fail(message: String, recoverable: Boolean = false, missingGenesForEvaluation: Boolean = false): Evaluation {
+    fun fail(message: String, recoverable: Boolean = false, isMissingMolecularResultForEvaluation: Boolean = false): Evaluation {
         return Evaluation(
             recoverable = recoverable,
             result = EvaluationResult.FAIL,
             failMessages = setOf(message),
-            isMissingGenesForSufficientEvaluation = missingGenesForEvaluation
+            isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation
         )
     }
 
-    fun recoverableFail(message: String, missingGenesForEvaluation: Boolean = false): Evaluation {
-        return fail(message, true, missingGenesForEvaluation)
+    fun recoverableFail(message: String, isMissingMolecularResultForEvaluation: Boolean = false): Evaluation {
+        return fail(message, true, isMissingMolecularResultForEvaluation)
     }
 
     fun undetermined(
         message: String,
         recoverable: Boolean = false,
-        missingMolecularResultForEvaluation: Boolean = false
+        isMissingMolecularResultForEvaluation: Boolean = false
     ): Evaluation {
         return Evaluation(
             recoverable = recoverable,
             result = EvaluationResult.UNDETERMINED,
             undeterminedMessages = setOf(message),
-            isMissingGenesForSufficientEvaluation = missingMolecularResultForEvaluation
+            isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation
         )
     }
 

@@ -36,21 +36,21 @@ class IsMicrosatelliteUnstable(maxTestAge: LocalDate? = null) : MolecularEvaluat
                 if (msiGenesWithBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.undetermined(
                         "No MSI test result  but biallelic drivers in MMR genes",
-                        missingMolecularResultForEvaluation = true
+                        isMissingMolecularResultForEvaluation = true
                     )
                 } else if (msiGenesWithNonBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.undetermined(
                         "No MSI test result  but non-biallelic drivers in MMR genes",
-                        missingMolecularResultForEvaluation = true
+                        isMissingMolecularResultForEvaluation = true
                     )
                 } else if (msiGenesWithUnknownBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.undetermined(
                         "No MSI test result but drivers with unknown allelic status in MMR genes",
-                        missingMolecularResultForEvaluation = true
+                        isMissingMolecularResultForEvaluation = true
                     )
                 } else {
                     EvaluationFactory.undetermined(
-                        "No MSI test result", missingMolecularResultForEvaluation = true
+                        "No MSI test result", isMissingMolecularResultForEvaluation = true
                     )
                 }
             }

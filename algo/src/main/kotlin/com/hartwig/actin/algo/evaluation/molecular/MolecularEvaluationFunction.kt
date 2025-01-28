@@ -22,14 +22,14 @@ abstract class MolecularEvaluationFunction(maxTestAge: LocalDate? = null, useIns
         return if (recentMolecularTests.isEmpty()) {
             noMolecularRecordEvaluation() ?: EvaluationFactory.undetermined(
                 "No molecular results of sufficient quality",
-                missingMolecularResultForEvaluation = true
+                isMissingMolecularResultForEvaluation = true
             )
         } else {
 
             if (genes().isNotEmpty() && genes().none { recentMolecularTests.any { t -> t.testsGene(it) } })
                 return EvaluationFactory.undetermined(
                     "Gene(s) ${genes().joinToString { it }} not tested",
-                    missingMolecularResultForEvaluation = true
+                    isMissingMolecularResultForEvaluation = true
                 )
 
             val testEvaluation =
@@ -43,7 +43,7 @@ abstract class MolecularEvaluationFunction(maxTestAge: LocalDate? = null, useIns
                 ?: noMolecularRecordEvaluation()
                 ?: EvaluationFactory.undetermined(
                     "Insufficient molecular data",
-                    missingMolecularResultForEvaluation = true
+                    isMissingMolecularResultForEvaluation = true
                 )
         }
     }

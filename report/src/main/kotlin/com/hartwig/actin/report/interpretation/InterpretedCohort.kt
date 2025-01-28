@@ -15,7 +15,7 @@ data class InterpretedCohort(
     val ignore: Boolean = false,
     val molecularEvents: Set<String> = emptySet(),
     val isPotentiallyEligible: Boolean = false,
-    val isMissingGenesForSufficientEvaluation: Boolean? = null,
+    val isMissingMolecularResultForEvaluation: Boolean? = null,
     val warnings: Set<String> = emptySet(),
     val fails: Set<String> = emptySet()
 )

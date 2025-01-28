@@ -73,7 +73,7 @@ object PDL1EvaluationFunctions {
             }
 
             else -> {
-                EvaluationFactory.undetermined("PD-L1 expression (IHC) not tested", missingMolecularResultForEvaluation = true)
+                EvaluationFactory.undetermined("PD-L1 expression (IHC) not tested", isMissingMolecularResultForEvaluation = true)
             }
         }
     }

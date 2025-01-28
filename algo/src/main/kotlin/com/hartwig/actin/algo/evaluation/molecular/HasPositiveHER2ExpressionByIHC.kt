@@ -43,7 +43,7 @@ class HasPositiveHER2ExpressionByIHC(private val maxTestAge: LocalDate? = null) 
                     }
 
                     else -> {
-                        EvaluationFactory.undetermined(undeterminedMessage, missingMolecularResultForEvaluation = true)
+                        EvaluationFactory.undetermined(undeterminedMessage, isMissingMolecularResultForEvaluation = true)
                     }
                 }
             }

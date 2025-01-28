@@ -13,7 +13,7 @@ class HasSufficientTumorMutationalBurden(private val minTumorMutationalBurden: D
         val tumorMutationalBurden = test.characteristics.tumorMutationalBurden
             ?: return EvaluationFactory.undetermined(
                 "Undetermined if TMB is above $minTumorMutationalBurden (no TMB result)",
-                missingMolecularResultForEvaluation = true
+                isMissingMolecularResultForEvaluation = true
             )
 
         if (tumorMutationalBurden >= minTumorMutationalBurden) {
