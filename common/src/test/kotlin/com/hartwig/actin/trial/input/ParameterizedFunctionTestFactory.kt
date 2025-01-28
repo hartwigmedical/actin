@@ -83,6 +83,10 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
                 listOf(TreatmentCategory.IMMUNOTHERAPY.display(), DrugType.ANTI_PD_L1.toString() + ";" + DrugType.ANTI_PD_1, "1")
             }
 
+            FunctionInput.ONE_TREATMENT_TYPE_ONE_INTEGER -> {
+                listOf(DrugType.ANTI_PD_L1.toString(), "1")
+            }
+
             FunctionInput.ONE_SPECIFIC_TREATMENT -> {
                 listOf("CAPECITABINE+OXALIPLATIN")
             }
@@ -123,6 +127,14 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
                 listOf(
                     TreatmentCategory.CHEMOTHERAPY.display(),
                     "${Intent.ADJUVANT};${Intent.PALLIATIVE}"
+                )
+            }
+
+            FunctionInput.ONE_TREATMENT_CATEGORY_MANY_INTENTS_ONE_INTEGER -> {
+                listOf(
+                    TreatmentCategory.CHEMOTHERAPY.display(),
+                    "${Intent.ADJUVANT};${Intent.PALLIATIVE}",
+                    "1"
                 )
             }
 

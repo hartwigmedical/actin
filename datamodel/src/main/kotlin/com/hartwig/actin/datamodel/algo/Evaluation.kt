@@ -9,7 +9,7 @@ data class Evaluation(
     val warnMessages: Set<String> = emptySet(),
     val undeterminedMessages: Set<String> = emptySet(),
     val failMessages: Set<String> = emptySet(),
-    val isMissingGenesForSufficientEvaluation: Boolean = false
+    val isMissingMolecularResultForEvaluation: Boolean = false
 ) {
 
     fun addMessagesAndEvents(other: Evaluation): Evaluation {
@@ -22,7 +22,7 @@ data class Evaluation(
             warnMessages = warnMessages + other.warnMessages,
             undeterminedMessages = undeterminedMessages + other.undeterminedMessages,
             failMessages = failMessages + other.failMessages,
-            isMissingGenesForSufficientEvaluation = isMissingGenesForSufficientEvaluation || other.isMissingGenesForSufficientEvaluation
+            isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation || other.isMissingMolecularResultForEvaluation
         )
     }
 }

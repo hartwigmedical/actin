@@ -215,6 +215,8 @@ object IcdConstants {
     const val FRACTURE_UNSPECIFIED_REGION_CODE = "ND56.2"
     const val FUNCTIONAL_SWALLOWING_DISORDER_CODE = "DD90.1"
     const val DISORDERS_OF_ORAL_MUCOSA_CODE = "DA01"
+    const val DEPENDANCE_ON_RENAL_DIALYSIS_CODE = "QB42"
+    const val DIALYSIS_CARE_CODE = "QB94"
 
     val DRUG_ALLERGY_SET = setOf(
         DRUG_ALLERGY_CODE,
@@ -440,6 +442,5 @@ object IcdConstants {
         LEG_FRACTURE_UNSPECIFIED_LEVEL_CODE,
         FRACTURE_UNSPECIFIED_REGION_CODE
     )
-
 }
 

@@ -67,10 +67,10 @@ class NotTest {
     }
 
     @Test
-    fun `Should retain isMissingGenesForSufficientEvaluation value`() {
-        val function: EvaluationFunction = CompositeTestFactory.create(isMissingGenes = true)
+    fun `Should retain isMissingMolecularResultForEvaluation value`() {
+        val function: EvaluationFunction = CompositeTestFactory.create(isMissingMolecularResultForEvaluation = true)
         val result: Evaluation = Not(function).evaluate(TEST_PATIENT)
-        assertThat(result.isMissingGenesForSufficientEvaluation).isTrue()
+        assertThat(result.isMissingMolecularResultForEvaluation).isTrue()
     }
 
     private fun assertMessagesAreFlipped(evaluation: Evaluation, negatedEvaluation: Evaluation) {

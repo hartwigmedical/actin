@@ -19,6 +19,8 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         return mapOf(
             EligibilityRule.CURRENTLY_GETS_NAME_X_MEDICATION to getsActiveMedicationWithConfiguredNameCreator(),
             EligibilityRule.CURRENTLY_GETS_CATEGORY_X_MEDICATION to getsActiveMedicationWithCategoryCreator(),
+            EligibilityRule.CURRENTLY_GETS_CHEMORADIOTHERAPY_OF_TYPE_X_CHEMOTHERAPY_AND_AT_LEAST_Y_CYCLES to
+                    getsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesCreator(),
             EligibilityRule.HAS_RECEIVED_CATEGORY_X_MEDICATION_WITHIN_Y_WEEKS to hasRecentlyReceivedMedicationOfAtcLevelCreator(),
             EligibilityRule.CURRENTLY_GETS_POTENTIALLY_QT_PROLONGATING_MEDICATION to getsQTProlongatingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INDUCING_ANY_CYP to getsAnyCYPInducingMedicationCreator(),
@@ -48,6 +50,13 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         return { function: EligibilityFunction ->
             val categoryInput = functionInputResolver().createOneMedicationCategoryInput(function)
             CurrentlyGetsMedicationOfAtcLevel(selector, categoryInput.categoryName, categoryInput.atcLevels)
+        }
+    }
+
+    private fun getsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val (chemotherapyType, minCycles) = functionInputResolver().createOneTreatmentTypeOneIntegerInput(function)
+            CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(selector, chemotherapyType, minCycles)
         }
     }
 

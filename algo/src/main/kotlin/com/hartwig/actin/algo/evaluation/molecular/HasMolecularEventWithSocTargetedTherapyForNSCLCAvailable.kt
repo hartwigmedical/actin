@@ -22,7 +22,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(
         return evaluation.copy(
             inclusionMolecularEvents = emptySet(),
             exclusionMolecularEvents = emptySet(),
-            isMissingGenesForSufficientEvaluation = evaluation.isMissingGenesForSufficientEvaluation
+            isMissingMolecularResultForEvaluation = evaluation.isMissingMolecularResultForEvaluation
         )
     }
 

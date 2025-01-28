@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.molecular.MolecularConstants.MSI_GENES
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
@@ -34,15 +35,28 @@ class IsMicrosatelliteUnstable(maxTestAge: LocalDate? = null) : MolecularEvaluat
         return when (molecular.characteristics.isMicrosatelliteUnstable) {
             null -> {
                 if (msiGenesWithBiallelicDriver.isNotEmpty()) {
-                    EvaluationFactory.undetermined("Unknown MSI status but biallelic drivers in MMR genes")
+                    EvaluationFactory.undetermined(
+                        "No MSI test result but biallelic driver event(s) in MMR gene(s) (${Format.concat(msiGenesWithBiallelicDriver)}) detected",
+                        isMissingMolecularResultForEvaluation = true
+                    )
                 } else if (msiGenesWithNonBiallelicDriver.isNotEmpty()) {
-                    EvaluationFactory.undetermined("Unknown MSI status but non-biallelic drivers in MMR genes")
+                    EvaluationFactory.undetermined(
+                        "No MSI test result but non-biallelic driver event(s) in MMR gene(s) (${Format.concat(msiGenesWithNonBiallelicDriver)}) detected",
+                        isMissingMolecularResultForEvaluation = true
+                    )
                 } else if (msiGenesWithUnknownBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.undetermined(
-                        "Unknown MSI status but drivers with unknown allelic status in MMR genes"
+                        "No MSI test result but driver event(s) in MMR gene(s) (${
+                            Format.concat(
+                                msiGenesWithUnknownBiallelicDriver
+                            )
+                        }) detected",
+                        isMissingMolecularResultForEvaluation = true
                     )
                 } else {
-                    EvaluationFactory.undetermined("Unknown MSI status")
+                    EvaluationFactory.undetermined(
+                        "No MSI test result", isMissingMolecularResultForEvaluation = true
+                    )
                 }
             }
 
@@ -50,24 +64,24 @@ class IsMicrosatelliteUnstable(maxTestAge: LocalDate? = null) : MolecularEvaluat
                 val inclusionMolecularEvents = setOf(MolecularCharacteristicEvents.MICROSATELLITE_UNSTABLE)
                 if (msiGenesWithBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.pass(
-                        "Tumor is MSI with biallelic drivers in MMR genes",
+                        "Tumor is MSI with biallelic driver event(s) in MMR gene(s) (${Format.concat(msiGenesWithBiallelicDriver)})",
                         inclusionEvents = inclusionMolecularEvents
                     )
                 } else if (msiGenesWithNonBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.warn(
-                        "Tumor is MSI but with only non-biallelic drivers in MMR genes",
+                        "Tumor is MSI but with only non-biallelic driver event(s) in MMR gene(s) (${Format.concat(msiGenesWithNonBiallelicDriver)})",
                         inclusionEvents = inclusionMolecularEvents
                     )
                 } else {
                     EvaluationFactory.warn(
-                        "Tumor is MSI but without drivers in MMR genes",
+                        "Tumor is MSI but without driver event(s) in MMR gene(s)",
                         inclusionEvents = inclusionMolecularEvents
                     )
                 }
             }
 
             false -> {
-                EvaluationFactory.fail("Tumor is MSS")
+                EvaluationFactory.fail("Tumor is not MSI")
             }
         }
     }
