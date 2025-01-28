@@ -13,17 +13,17 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
             EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_ICD_TITLE_X to hasPriorConditionWithConfiguredIcdTitleCreator(),
-            EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE to hasPriorConditionWithIcdCodesFromSetCreator(
+            EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE to hasOtherConditionWithIcdCodesFromSetCreator(
                 IcdConstants.AUTOIMMUNE_DISEASE_SET.map { IcdCode(it) }.toSet(),
                 "autoimmune disease"
             ),
             EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE to hasHistoryOfCardiacDiseaseCreator(),
-            EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE to hasPriorConditionWithIcdCodesFromSetCreator(
+            EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE to hasOtherConditionWithIcdCodesFromSetCreator(
                 setOf(IcdCode(IcdConstants.CIRCULATORY_SYSTEM_DISEASE_CHAPTER)),
                 "cardiovascular disease"
             ),
             EligibilityRule.HAS_HISTORY_OF_CONGESTIVE_HEART_FAILURE_WITH_AT_LEAST_NYHA_CLASS_X to hasHistoryOfCongestiveHeartFailureWithNYHACreator(),
-            EligibilityRule.HAS_HISTORY_OF_CENTRAL_NERVOUS_SYSTEM_DISEASE to hasPriorConditionWithIcdCodesFromSetCreator(
+            EligibilityRule.HAS_HISTORY_OF_CENTRAL_NERVOUS_SYSTEM_DISEASE to hasOtherConditionWithIcdCodesFromSetCreator(
                 setOf(
                     IcdCode(
                         IcdConstants.NERVOUS_SYSTEM_DISEASE_CHAPTER
@@ -31,37 +31,37 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
                 ), "CNS disease"
             ),
             EligibilityRule.HAS_HISTORY_OF_EYE_DISEASE to hasHistoryOfEyeDiseaseCreator(),
-            EligibilityRule.HAS_HISTORY_OF_GASTROINTESTINAL_DISEASE to hasPriorConditionWithIcdCodesFromSetCreator(
+            EligibilityRule.HAS_HISTORY_OF_GASTROINTESTINAL_DISEASE to hasOtherConditionWithIcdCodesFromSetCreator(
                 setOf(
                     IcdCode(
                         IcdConstants.DIGESTIVE_SYSTEM_DISEASE_CHAPTER
                     )
                 ), "gastrointestinal disease"
             ),
-            EligibilityRule.HAS_HISTORY_OF_IMMUNE_SYSTEM_DISEASE to hasPriorConditionWithIcdCodesFromSetCreator(
+            EligibilityRule.HAS_HISTORY_OF_IMMUNE_SYSTEM_DISEASE to hasOtherConditionWithIcdCodesFromSetCreator(
                 setOf(IcdCode(IcdConstants.IMMUNE_SYSTEM_DISEASE_CHAPTER)),
                 "immune system disease"
             ),
-            EligibilityRule.HAS_HISTORY_OF_INTERSTITIAL_LUNG_DISEASE to hasPriorConditionWithIcdCodesFromSetCreator(
+            EligibilityRule.HAS_HISTORY_OF_INTERSTITIAL_LUNG_DISEASE to hasOtherConditionWithIcdCodesFromSetCreator(
                 setOf(
                     IcdCode(
                         IcdConstants.LUNG_INTERSTITIAL_DISEASES_BLOCK
                     )
                 ), "interstitial lung disease"
             ),
-            EligibilityRule.HAS_HISTORY_OF_LIVER_DISEASE to hasPriorConditionWithIcdCodesFromSetCreator(
+            EligibilityRule.HAS_HISTORY_OF_LIVER_DISEASE to hasOtherConditionWithIcdCodesFromSetCreator(
                 setOf(IcdCode(IcdConstants.LIVER_DISEASE_BLOCK)),
                 "liver disease"
             ),
-            EligibilityRule.HAS_HISTORY_OF_LUNG_DISEASE to hasPriorConditionWithIcdCodesFromSetCreator(IcdConstants.RESPIRATORY_COMPROMISE_SET.map {
+            EligibilityRule.HAS_HISTORY_OF_LUNG_DISEASE to hasOtherConditionWithIcdCodesFromSetCreator(IcdConstants.RESPIRATORY_COMPROMISE_SET.map {
                 IcdCode(
                     it
                 )
             }.toSet(), "lung disease"),
-            EligibilityRule.HAS_POTENTIAL_RESPIRATORY_COMPROMISE to hasPriorConditionWithIcdCodesFromSetCreator(
+            EligibilityRule.HAS_POTENTIAL_RESPIRATORY_COMPROMISE to hasOtherConditionWithIcdCodesFromSetCreator(
                 IcdConstants.RESPIRATORY_COMPROMISE_SET.map { IcdCode(it) }.toSet(), "potential respiratory compromise"
             ),
-            EligibilityRule.HAS_HISTORY_OF_MYOCARDIAL_INFARCT to hasPriorConditionWithIcdCodesFromSetCreator(
+            EligibilityRule.HAS_HISTORY_OF_MYOCARDIAL_INFARCT to hasOtherConditionWithIcdCodesFromSetCreator(
                 setOf(IcdCode(IcdConstants.ACUTE_MYOCARDIAL_INFARCT_CODE)),
                 "myocardial infarct"
             ),
@@ -69,7 +69,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
                 setOf(IcdCode(IcdConstants.ACUTE_MYOCARDIAL_INFARCT_CODE)), "myocardial infarct"
             ),
             EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_ICD_TITLE_X_WITHIN_Y_MONTHS to hasRecentPriorConditionWithConfiguredIcdCodeCreator(),
-            EligibilityRule.HAS_HISTORY_OF_PNEUMONITIS to hasPriorConditionWithIcdCodesFromSetCreator(
+            EligibilityRule.HAS_HISTORY_OF_PNEUMONITIS to hasOtherConditionWithIcdCodesFromSetCreator(
                 setOf(IcdCode(IcdConstants.PNEUMONITIS_BLOCK)),
                 "pneumonitis"
             ),
@@ -82,17 +82,17 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
                 IcdConstants.THROMBOEMBOLIC_EVENT_SET.map { IcdCode(it) }.toSet(),
                 "thrombo-embolic event"
             ),
-            EligibilityRule.HAS_HISTORY_OF_THROMBOEMBOLIC_EVENT to hasPriorConditionWithIcdCodesFromSetCreator(
+            EligibilityRule.HAS_HISTORY_OF_THROMBOEMBOLIC_EVENT to hasOtherConditionWithIcdCodesFromSetCreator(
                 IcdConstants.THROMBOEMBOLIC_EVENT_SET.map { IcdCode(it) }.toSet(),
                 "thrombo-embolic event"
             ),
-            EligibilityRule.HAS_HISTORY_OF_ARTERIAL_THROMBOEMBOLIC_EVENT to hasPriorConditionWithIcdCodesFromSetCreator(
+            EligibilityRule.HAS_HISTORY_OF_ARTERIAL_THROMBOEMBOLIC_EVENT to hasOtherConditionWithIcdCodesFromSetCreator(
                 IcdConstants.ARTERIAL_THROMBOEMBOLIC_EVENT_SET.map { IcdCode(it) }.toSet(), "Arterial thrombo-embolic event"
             ),
-            EligibilityRule.HAS_HISTORY_OF_VENOUS_THROMBOEMBOLIC_EVENT to hasPriorConditionWithIcdCodesFromSetCreator(
+            EligibilityRule.HAS_HISTORY_OF_VENOUS_THROMBOEMBOLIC_EVENT to hasOtherConditionWithIcdCodesFromSetCreator(
                 IcdConstants.VENOUS_THROMBOEMBOLIC_EVENT_SET.map { IcdCode(it) }.toSet(), "Venous thrombo-embolic event"
             ),
-            EligibilityRule.HAS_HISTORY_OF_VASCULAR_DISEASE to hasPriorConditionWithIcdCodesFromSetCreator(
+            EligibilityRule.HAS_HISTORY_OF_VASCULAR_DISEASE to hasOtherConditionWithIcdCodesFromSetCreator(
                 setOf(
                     IcdCode(IcdConstants.ARTERY_DISEASE_BLOCK),
                     IcdCode(IcdConstants.VEIN_DISEASE_BLOCK)
@@ -121,19 +121,19 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             EligibilityRule.HAS_SEVERE_CONCOMITANT_CONDITION to hasSevereConcomitantIllnessCreator(),
             EligibilityRule.HAS_HAD_ORGAN_TRANSPLANT to hasHadOrganTransplantCreator(),
             EligibilityRule.HAS_HAD_ORGAN_TRANSPLANT_WITHIN_X_YEARS to hasHadOrganTransplantWithinYearsCreator(),
-            EligibilityRule.HAS_GILBERT_DISEASE to hasPriorConditionWithIcdCodesFromSetCreator(
+            EligibilityRule.HAS_GILBERT_DISEASE to hasOtherConditionWithIcdCodesFromSetCreator(
                 setOf(IcdCode(IcdConstants.GILBERT_SYNDROME_CODE)),
                 "Gilbert disease"
             ),
-            EligibilityRule.HAS_HYPERTENSION to hasPriorConditionWithIcdCodesFromSetCreator(
+            EligibilityRule.HAS_HYPERTENSION to hasOtherConditionWithIcdCodesFromSetCreator(
                 setOf(IcdCode(IcdConstants.HYPERTENSIVE_DISEASES_BLOCK)),
                 "hypertension"
             ),
-            EligibilityRule.HAS_HYPOTENSION to hasPriorConditionWithIcdCodesFromSetCreator(
+            EligibilityRule.HAS_HYPOTENSION to hasOtherConditionWithIcdCodesFromSetCreator(
                 setOf(IcdCode(IcdConstants.HYPOTENSION_BLOCK)),
                 "hypotension"
             ),
-            EligibilityRule.HAS_DIABETES to hasPriorConditionWithIcdCodesFromSetCreator(
+            EligibilityRule.HAS_DIABETES to hasOtherConditionWithIcdCodesFromSetCreator(
                 setOf(IcdCode(IcdConstants.DIABETES_MELLITUS_BLOCK)),
                 "diabetes"
             ),
@@ -152,7 +152,9 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_PET_MRI to hasContraindicationToMRICreator(),
             EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_FOR_PET_CT_SCAN to hasContraindicationToCTCreator(),
             EligibilityRule.HAS_MRI_SCAN_DOCUMENTING_STABLE_DISEASE to hasMRIScanDocumentingStableDiseaseCreator(),
-            EligibilityRule.IS_IN_DIALYSIS to isInDialysisCreator(),
+            EligibilityRule.IS_IN_DIALYSIS to hasOtherConditionWithIcdCodesFromSetCreator(
+                setOf(IcdCode(IcdConstants.DIALYSIS_CARE_CODE), IcdCode(IcdConstants.DEPENDANCE_ON_RENAL_DIALYSIS_CODE)), "renal dialysis"
+            ),
             EligibilityRule.HAS_CHILD_PUGH_SCORE_X to hasChildPughScoreCreator(),
             EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_FOR_STEREOTACTIC_RADIOSURGERY to hasPotentialContraIndicationForStereotacticRadiosurgeryCreator(),
             EligibilityRule.HAS_ADEQUATE_VENOUS_ACCESS to hasAdequateVenousAccesCreator(),
@@ -195,7 +197,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
         }
     }
 
-    private fun hasPriorConditionWithIcdCodesFromSetCreator(
+    private fun hasOtherConditionWithIcdCodesFromSetCreator(
         targetIcdCodes: Set<IcdCode>,
         otherConditionTerm: String
     ): FunctionCreator {
@@ -274,10 +276,6 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
 
     private fun hasMRIScanDocumentingStableDiseaseCreator(): FunctionCreator {
         return { HasMRIScanDocumentingStableDisease() }
-    }
-
-    private fun isInDialysisCreator(): FunctionCreator {
-        return { IsInDialysis() }
     }
 
     private fun hasChildPughScoreCreator(): FunctionCreator {
