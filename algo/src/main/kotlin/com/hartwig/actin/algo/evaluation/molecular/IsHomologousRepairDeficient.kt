@@ -52,17 +52,17 @@ class IsHomologousRepairDeficient(maxTestAge: LocalDate? = null) : MolecularEval
             null -> {
                 if (hrdGenesWithBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.undetermined(
-                        "Unknown HRD status but biallelic drivers in HR genes detected (${concat(hrdGenesWithBiallelicDriver)})",
+                        "Unknown HRD status but biallelic driver event(s) in HR gene(s) (${concat(hrdGenesWithBiallelicDriver)}) detected",
                         isMissingMolecularResultForEvaluation = true
                     )
                 } else if (hrdGenesWithNonBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.undetermined(
-                        "Unknown HRD status but non-biallelic drivers in HR genes detected (${concat(hrdGenesWithNonBiallelicDriver)})",
+                        "Unknown HRD status but non-biallelic driver event(s) in HR gene(s) (${concat(hrdGenesWithNonBiallelicDriver)}) detected",
                         isMissingMolecularResultForEvaluation = true
                     )
                 } else if (hrdGenesWithUnknownAllelicDriver.isNotEmpty()) {
                     EvaluationFactory.undetermined(
-                        "Unknown HRD status but drivers in HR genes detected (${concat(hrdGenesWithUnknownAllelicDriver)})",
+                        "Unknown HRD status but driver event(s) in HR gene(s) (${concat(hrdGenesWithUnknownAllelicDriver)}) detected",
                         isMissingMolecularResultForEvaluation = true
                     )
                 } else {
@@ -74,17 +74,17 @@ class IsHomologousRepairDeficient(maxTestAge: LocalDate? = null) : MolecularEval
                 val inclusionMolecularEvents = setOf(MolecularCharacteristicEvents.HOMOLOGOUS_REPAIR_DEFICIENT)
                 if (hrdGenesWithBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.pass(
-                        "Tumor is HRD with biallelic drivers in HR genes (${concat(hrdGenesWithBiallelicDriver)})",
+                        "Tumor is HRD with biallelic driver event(s) in HR gene(s) (${concat(hrdGenesWithBiallelicDriver)})",
                         inclusionEvents = inclusionMolecularEvents
                     )
                 } else if (hrdGenesWithNonBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.warn(
-                        "Tumor is HRD but with only non-biallelic drivers in HR genes",
+                        "Tumor is HRD but with only non-biallelic driver event(s) in HR gene(s) (${concat(hrdGenesWithNonBiallelicDriver)})",
                         inclusionEvents = inclusionMolecularEvents
                     )
                 } else {
                     EvaluationFactory.warn(
-                        "Tumor is HRD but without drivers in HR genes",
+                        "Tumor is HRD but without driver event(s) in HR gene(s)",
                         inclusionEvents = inclusionMolecularEvents
                     )
                 }
