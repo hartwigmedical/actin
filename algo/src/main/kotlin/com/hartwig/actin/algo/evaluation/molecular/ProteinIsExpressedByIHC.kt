@@ -23,7 +23,7 @@ class ProteinIsExpressedByIHC internal constructor(private val protein: String) 
             }
 
             else -> {
-                EvaluationFactory.undetermined("No $protein IHC test result", missingGenesForEvaluation = true)
+                EvaluationFactory.undetermined("No $protein IHC test result", isMissingMolecularResultForEvaluation = true)
             }
         }
     }

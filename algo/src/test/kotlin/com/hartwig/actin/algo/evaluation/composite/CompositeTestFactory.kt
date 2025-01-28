@@ -11,7 +11,7 @@ internal object CompositeTestFactory {
         result: EvaluationResult = EvaluationResult.PASS,
         recoverable: Boolean = false,
         includeMolecular: Boolean = false,
-        isMissingGenes: Boolean = false,
+        isMissingMolecularResultForEvaluation: Boolean = false,
         index: Int = 1
     ): EvaluationFunction {
         val evaluation = Evaluation(
@@ -23,7 +23,7 @@ internal object CompositeTestFactory {
             failMessages = setOf("fail $index"),
             inclusionMolecularEvents = if (includeMolecular) setOf("inclusion event $index") else emptySet(),
             exclusionMolecularEvents = if (includeMolecular) setOf("exclusion event $index") else emptySet(),
-            isMissingGenesForSufficientEvaluation = isMissingGenes
+            isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation
         )
         return evaluationFunction { evaluation }
     }

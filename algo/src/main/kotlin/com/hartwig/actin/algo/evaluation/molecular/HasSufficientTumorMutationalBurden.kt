@@ -11,7 +11,10 @@ class HasSufficientTumorMutationalBurden(private val minTumorMutationalBurden: D
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val tumorMutationalBurden = test.characteristics.tumorMutationalBurden
-            ?: return EvaluationFactory.undetermined("Undetermined if TMB is above $minTumorMutationalBurden (TMB data missing)")
+            ?: return EvaluationFactory.undetermined(
+                "Undetermined if TMB is above $minTumorMutationalBurden (no TMB result)",
+                isMissingMolecularResultForEvaluation = true
+            )
 
         if (tumorMutationalBurden >= minTumorMutationalBurden) {
             return EvaluationFactory.pass(

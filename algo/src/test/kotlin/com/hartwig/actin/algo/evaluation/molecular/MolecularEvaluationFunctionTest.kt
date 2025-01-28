@@ -100,7 +100,7 @@ class MolecularEvaluationFunctionTest {
         val evaluation = functionWithGenes.evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessages).containsExactly("Gene(s) GENE not tested")
-        assertThat(evaluation.isMissingGenesForSufficientEvaluation).isTrue()
+        assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue()
     }
 
     @Test

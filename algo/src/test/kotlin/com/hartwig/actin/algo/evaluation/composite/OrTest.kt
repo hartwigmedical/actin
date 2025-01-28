@@ -77,19 +77,19 @@ class OrTest {
     }
 
     @Test
-    fun `Should only take isMissingGenesForSufficientEvaluation property status from best evaluation`() {
-        val failFunctionWithoutMissingGenes: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, isMissingGenes = true, index = 1)
-        val undeterminedFunctionWithMissingGenes: EvaluationFunction =
-            CompositeTestFactory.create(EvaluationResult.UNDETERMINED, isMissingGenes = true, index = 2)
-        val passFunctionWithoutMissingGenes: EvaluationFunction =
-            CompositeTestFactory.create(EvaluationResult.PASS, isMissingGenes = false, index = 3)
+    fun `Should only take isMissingMolecularResultForEvaluation property status from best evaluation`() {
+        val failFunctionWithoutMissingMolecularResult: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, isMissingMolecularResultForEvaluation = true, index = 1)
+        val undeterminedFunctionWithMissingMolecularResult: EvaluationFunction =
+            CompositeTestFactory.create(EvaluationResult.UNDETERMINED, isMissingMolecularResultForEvaluation = true, index = 2)
+        val passFunctionWithoutMissingMolecularResult: EvaluationFunction =
+            CompositeTestFactory.create(EvaluationResult.PASS, isMissingMolecularResultForEvaluation = false, index = 3)
         val orWithPassFailAndUndetermined: Evaluation =
-            Or(listOf(failFunctionWithoutMissingGenes, undeterminedFunctionWithMissingGenes, passFunctionWithoutMissingGenes)).evaluate(TEST_PATIENT)
+            Or(listOf(failFunctionWithoutMissingMolecularResult, undeterminedFunctionWithMissingMolecularResult, passFunctionWithoutMissingMolecularResult)).evaluate(TEST_PATIENT)
         val orWithFailAndUndetermined: Evaluation =
-            Or(listOf(failFunctionWithoutMissingGenes, undeterminedFunctionWithMissingGenes)).evaluate(TEST_PATIENT)
+            Or(listOf(failFunctionWithoutMissingMolecularResult, undeterminedFunctionWithMissingMolecularResult)).evaluate(TEST_PATIENT)
 
-        assertThat(orWithPassFailAndUndetermined.isMissingGenesForSufficientEvaluation).isFalse()
-        assertThat(orWithFailAndUndetermined.isMissingGenesForSufficientEvaluation).isTrue()
+        assertThat(orWithPassFailAndUndetermined.isMissingMolecularResultForEvaluation).isFalse()
+        assertThat(orWithFailAndUndetermined.isMissingMolecularResultForEvaluation).isTrue()
     }
 
     @Test

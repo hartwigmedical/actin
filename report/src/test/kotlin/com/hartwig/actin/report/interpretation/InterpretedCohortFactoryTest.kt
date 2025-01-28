@@ -44,7 +44,7 @@ class InterpretedCohortFactoryTest {
         assertThat(trial1cohortA.molecularEvents).isNotEmpty
         assertThat(trial1cohortA.molecularEvents).containsExactly("MSI")
         assertThat(trial1cohortA.isPotentiallyEligible).isTrue
-        assertThat(trial1cohortA.isMissingGenesForSufficientEvaluation).isFalse()
+        assertThat(trial1cohortA.isMissingMolecularResultForEvaluation).isFalse()
         assertThat(trial1cohortA.isOpen).isTrue
         assertThat(trial1cohortA.hasSlotsAvailable).isFalse
         assertThat(trial1cohortA.ignore).isFalse
@@ -56,7 +56,7 @@ class InterpretedCohortFactoryTest {
         val trial1cohortB = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort B")
         assertThat(trial1cohortB.molecularEvents).isEmpty()
         assertThat(trial1cohortB.isPotentiallyEligible).isTrue
-        assertThat(trial1cohortB.isMissingGenesForSufficientEvaluation).isFalse()
+        assertThat(trial1cohortB.isMissingMolecularResultForEvaluation).isFalse()
         assertThat(trial1cohortB.isOpen).isTrue
         assertThat(trial1cohortB.hasSlotsAvailable).isTrue
         assertThat(trial1cohortB.ignore).isFalse
@@ -68,7 +68,7 @@ class InterpretedCohortFactoryTest {
         val trial1cohortC = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort C")
         assertThat(trial1cohortC.molecularEvents).isEmpty()
         assertThat(trial1cohortC.isPotentiallyEligible).isFalse
-        assertThat(trial1cohortC.isMissingGenesForSufficientEvaluation).isFalse()
+        assertThat(trial1cohortC.isMissingMolecularResultForEvaluation).isFalse()
         assertThat(trial1cohortC.isOpen).isFalse
         assertThat(trial1cohortC.hasSlotsAvailable).isFalse
         assertThat(trial1cohortC.ignore).isFalse
@@ -81,7 +81,7 @@ class InterpretedCohortFactoryTest {
         assertThat(trial2cohortA.molecularEvents).isNotEmpty
         assertThat(trial2cohortA.molecularEvents).containsExactly("MSI")
         assertThat(trial2cohortA.isPotentiallyEligible).isTrue
-        assertThat(trial2cohortA.isMissingGenesForSufficientEvaluation).isFalse()
+        assertThat(trial2cohortA.isMissingMolecularResultForEvaluation).isFalse()
         assertThat(trial2cohortA.isOpen).isTrue
         assertThat(trial2cohortA.hasSlotsAvailable).isFalse
         assertThat(trial2cohortA.ignore).isFalse
@@ -99,7 +99,7 @@ class InterpretedCohortFactoryTest {
         val trial2cohortB = findByAcronymAndCohort(nonEvaluableCohorts, "TEST-2", "Cohort B")
         assertThat(trial2cohortB.molecularEvents).isEmpty()
         assertThat(trial2cohortB.isPotentiallyEligible).isFalse
-        assertThat(trial2cohortB.isMissingGenesForSufficientEvaluation).isEqualTo(null)
+        assertThat(trial2cohortB.isMissingMolecularResultForEvaluation).isEqualTo(null)
         assertThat(trial2cohortB.isOpen).isTrue
         assertThat(trial2cohortB.hasSlotsAvailable).isTrue
         assertThat(trial2cohortB.ignore).isFalse
@@ -138,7 +138,7 @@ class InterpretedCohortFactoryTest {
     }
 
     @Test
-    fun `Should correctly handle isMissingGenesForSufficientEvaluation flag on cohort level`() {
+    fun `Should correctly handle isMissingMolecularResultForEvaluation flag on cohort level`() {
         val cohortAEvaluation = createEvaluation(RULE_1, listOf("EGFR", "ALK", "ROS1"), EvaluationResult.UNDETERMINED, true)
         val cohortBEvaluation = createEvaluation(RULE_2, emptyList(), EvaluationResult.PASS, false)
 
@@ -149,12 +149,12 @@ class InterpretedCohortFactoryTest {
         val evaluatedCohorts = createEvaluableCohorts(treatmentMatch, false)
         val cohortA = findByAcronymAndCohort(evaluatedCohorts, TRIAL_NAME, "Cohort A")
         val cohortB = findByAcronymAndCohort(evaluatedCohorts, TRIAL_NAME, "Cohort B")
-        assertThat(cohortA.isMissingGenesForSufficientEvaluation).isTrue()
-        assertThat(cohortB.isMissingGenesForSufficientEvaluation).isFalse()
+        assertThat(cohortA.isMissingMolecularResultForEvaluation).isTrue()
+        assertThat(cohortB.isMissingMolecularResultForEvaluation).isFalse()
     }
 
     @Test
-    fun `Should correctly set isMissingGenesForSufficientEvaluation to true for cohorts if true for a trial evaluation`() {
+    fun `Should correctly set isMissingMolecularResultForEvaluation to true for cohorts if true for a trial evaluation`() {
         val cohortAEvaluation = createEvaluation(RULE_1, listOf("EGFR"), EvaluationResult.PASS, false)
         val cohortBEvaluation = createEvaluation(RULE_2, emptyList(), EvaluationResult.PASS, false)
         val trialEvaluation = createEvaluation(RULE_1, listOf("ALK, ROS1"), EvaluationResult.UNDETERMINED, true)
@@ -166,8 +166,8 @@ class InterpretedCohortFactoryTest {
         val evaluatedCohorts = createEvaluableCohorts(treatmentMatch, false)
         val cohortA = findByAcronymAndCohort(evaluatedCohorts, TRIAL_NAME, "Cohort A")
         val cohortB = findByAcronymAndCohort(evaluatedCohorts, TRIAL_NAME, "Cohort B")
-        assertThat(cohortA.isMissingGenesForSufficientEvaluation).isTrue()
-        assertThat(cohortB.isMissingGenesForSufficientEvaluation).isTrue()
+        assertThat(cohortA.isMissingMolecularResultForEvaluation).isTrue()
+        assertThat(cohortB.isMissingMolecularResultForEvaluation).isTrue()
     }
 
     private fun findByAcronymAndCohort(
@@ -177,7 +177,7 @@ class InterpretedCohortFactoryTest {
     }
 
     private fun createEvaluation(
-        eligibilityRule: EligibilityRule, parameters: List<Any>, result: EvaluationResult, isMissingGenesForEvaluation: Boolean
+        eligibilityRule: EligibilityRule, parameters: List<Any>, result: EvaluationResult, isMissingMolecularResultForEvaluation: Boolean
     ): Map<Eligibility, Evaluation> {
         return mapOf(
             Eligibility(references = emptySet(), EligibilityFunction(eligibilityRule, parameters)) to Evaluation(
@@ -185,7 +185,7 @@ class InterpretedCohortFactoryTest {
                 recoverable = false,
                 failMessages = emptySet(),
                 inclusionMolecularEvents = emptySet(),
-                isMissingGenesForSufficientEvaluation = isMissingGenesForEvaluation
+                isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation
             )
         )
     }
