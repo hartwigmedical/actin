@@ -39,7 +39,7 @@ class StandardOfCareEvaluator(
     }
 
     fun summarizeAvailableTreatments(patientRecord: PatientRecord): String {
-        return EvaluatedTreatmentInterpreter(determineAvailableTreatments(patientRecord)).summarize()
+        return EvaluatedTreatmentInterpreter(standardOfCareEvaluatedTreatments(patientRecord).potentiallyEligibleTreatments()).summarize()
     }
 
     fun patientHasExhaustedStandardOfCare(patientRecord: PatientRecord): Boolean {
@@ -69,10 +69,6 @@ class StandardOfCareEvaluator(
     ): EvaluatedTreatment {
         val evaluations = eligibilityFunctions.map { evaluationFunctionFactory.create(it).evaluate(patientRecord) }
         return EvaluatedTreatment(treatmentCandidate, evaluations)
-    }
-
-    private fun determineAvailableTreatments(patientRecord: PatientRecord): List<EvaluatedTreatment> {
-        return standardOfCareEvaluatedTreatments(patientRecord).potentiallyEligibleTreatments()
     }
 
     private fun expandedTumorDoids(patientRecord: PatientRecord, doidModel: DoidModel): Set<String> {

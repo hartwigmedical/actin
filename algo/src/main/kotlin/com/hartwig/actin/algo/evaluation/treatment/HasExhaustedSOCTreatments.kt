@@ -33,8 +33,9 @@ class HasExhaustedSOCTreatments(
                         EvaluationFactory.pass("Has exhausted SOC")
                     }
                     treatmentEvaluation.isMissingMolecularResultForEvaluation() -> {
-                        EvaluationFactory.recoverableFail(
-                            "Has potentially not exhausted SOC ($remainingNonOptionalTreatments) but some molecular details are missing"
+                        EvaluationFactory.warn(
+                            "Has potentially not exhausted SOC ($remainingNonOptionalTreatments) " +
+                                    "but some corresponding molecular results are missing"
                         )
                     }
                     else -> {
