@@ -78,7 +78,7 @@ class EligibleActinTrialsGenerator(
             return create(recruitingAndEligibleCohorts, title, width, null, includeLocation) to recruitingAndEligibleCohorts
         }
 
-        fun forOpenCohortsWithMissingGenes(
+        fun forOpenCohortsWithMissingMolecularResultsForEvaluation(
             cohorts: List<InterpretedCohort>, source: String?, width: Float, includeLocation: Boolean = false
         ): EligibleActinTrialsGenerator? {
             val recruitingAndEligibleCohorts = cohorts.filter {
