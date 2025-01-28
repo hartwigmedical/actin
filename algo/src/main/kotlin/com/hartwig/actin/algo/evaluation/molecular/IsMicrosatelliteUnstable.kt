@@ -34,42 +34,31 @@ class IsMicrosatelliteUnstable(maxTestAge: LocalDate? = null) : MolecularEvaluat
 
         return when (molecular.characteristics.isMicrosatelliteUnstable) {
             null -> {
-                if (msiGenesWithBiallelicDriver.isNotEmpty()) {
-                    EvaluationFactory.undetermined(
-                        "No MSI test result but biallelic driver event(s) in MMR gene(s) (${Format.concat(msiGenesWithBiallelicDriver)}) detected",
-                        isMissingMolecularResultForEvaluation = true
-                    )
-                } else if (msiGenesWithNonBiallelicDriver.isNotEmpty()) {
-                    EvaluationFactory.undetermined(
-                        "No MSI test result but non-biallelic driver event(s) in MMR gene(s) (${Format.concat(msiGenesWithNonBiallelicDriver)}) detected",
-                        isMissingMolecularResultForEvaluation = true
-                    )
-                } else if (msiGenesWithUnknownBiallelicDriver.isNotEmpty()) {
-                    EvaluationFactory.undetermined(
-                        "No MSI test result but driver event(s) in MMR gene(s) (${
-                            Format.concat(
-                                msiGenesWithUnknownBiallelicDriver
-                            )
-                        }) detected",
-                        isMissingMolecularResultForEvaluation = true
-                    )
-                } else {
-                    EvaluationFactory.undetermined(
-                        "No MSI test result", isMissingMolecularResultForEvaluation = true
-                    )
+                val message = when {
+                    msiGenesWithBiallelicDriver.isNotEmpty() -> {
+                        " but biallelic driver event(s) in MMR gene(s) ($msiGenesWithBiallelicDriver) detected"
+                    }
+                    msiGenesWithNonBiallelicDriver.isNotEmpty() -> {
+                        " but non-biallelic driver event(s) in MMR gene(s) ($msiGenesWithNonBiallelicDriver) detected"
+                    }
+                    msiGenesWithUnknownBiallelicDriver.isNotEmpty() -> {
+                        " but driver event(s) in MMR gene(s) ($msiGenesWithUnknownBiallelicDriver) detected"
+                    }
+                    else -> ""
                 }
+                EvaluationFactory.undetermined("No MSI test result$message", isMissingMolecularResultForEvaluation = true)
             }
 
             true -> {
                 val inclusionMolecularEvents = setOf(MolecularCharacteristicEvents.MICROSATELLITE_UNSTABLE)
                 if (msiGenesWithBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.pass(
-                        "Tumor is MSI with biallelic driver event(s) in MMR gene(s) (${Format.concat(msiGenesWithBiallelicDriver)})",
+                        "Tumor is MSI with biallelic driver event(s) in MMR gene(s) ($msiGenesWithBiallelicDriver)",
                         inclusionEvents = inclusionMolecularEvents
                     )
                 } else if (msiGenesWithNonBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.warn(
-                        "Tumor is MSI but with only non-biallelic driver event(s) in MMR gene(s) (${Format.concat(msiGenesWithNonBiallelicDriver)})",
+                        "Tumor is MSI but with only non-biallelic driver event(s) in MMR gene(s) ($msiGenesWithNonBiallelicDriver)",
                         inclusionEvents = inclusionMolecularEvents
                     )
                 } else {
@@ -87,5 +76,5 @@ class IsMicrosatelliteUnstable(maxTestAge: LocalDate? = null) : MolecularEvaluat
     }
 
     private fun genesFrom(vararg geneAlterations: Iterable<GeneAlteration>) =
-        geneAlterations.asSequence().flatten().map(GeneAlteration::gene).toSet()
+        Format.concat(geneAlterations.asList().flatten().map(GeneAlteration::gene))
 }
