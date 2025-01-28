@@ -276,7 +276,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
     }
 
     private fun isInDialysisCreator(): FunctionCreator {
-        return { IsInDialysis() }
+        return { IsInDialysis(icdModel()) }
     }
 
     private fun hasChildPughScoreCreator(): FunctionCreator {
