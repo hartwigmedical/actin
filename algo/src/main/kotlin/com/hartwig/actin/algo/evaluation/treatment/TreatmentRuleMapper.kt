@@ -47,6 +47,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_TREATMENT_NAME_X to hasHadSpecificTreatmentCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS to hasHadSpecificTreatmentWithinWeeksCreator(),
             EligibilityRule.HAS_HAD_FIRST_LINE_TREATMENT_NAME_X to hasHadFirstLineTreatmentNameCreator(),
+            EligibilityRule.HAS_HAD_FIRST_LINE_TREATMENT_NAME_X_WITHOUT_PROGRESSION_AND_AT_LEAST_Y_CYCLES to hasHadFirstLineTreatmentNameWithoutPdAndWithCyclesCreator(),
             EligibilityRule.HAS_HAD_DRUG_X_COMBINED_WITH_CATEGORY_Y_TREATMENT_OF_TYPES_Z to hasHadSpecificDrugCombinedWithCategoryAndTypesCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_COMBINED_WITH_CATEGORY_Z_TREATMENT_OF_TYPES_A to hasHadCategoryAndTypesCombinedWithCategoryAndTypesCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X to hasHadTreatmentWithDrugsCreator(),
@@ -56,6 +57,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT to hasHadTreatmentWithCategoryCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y to hasHadTreatmentCategoryOfTypesCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_WITH_ANY_INTENT_Y to hasHadTreatmentCategoryWithAnyIntentCreator(),
+            EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_WITH_ANY_INTENT_Y_WITHIN_Z_MONTHS to hasHadTreatmentCategoryWithAnyIntentRecentlyCreator(),
             EligibilityRule.HAS_RECEIVED_PLATINUM_BASED_DOUBLET to { HasReceivedPlatinumBasedDoublet() },
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_ALL_TYPES_Y to hasHadTreatmentCategoryOfAllTypesCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_ALL_TYPES_Y_AND_AT_LEAST_Z_LINES to hasHadSomeTreatmentCategoryOfAllTypesCreator(),
@@ -107,6 +109,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT to { HasHadIntratumoralInjectionTreatment() },
             EligibilityRule.HAS_CUMULATIVE_ANTHRACYCLINE_EXPOSURE_OF_AT_MOST_X_MG_PER_M2_DOXORUBICIN_OR_EQUIVALENT to
                     { HasLimitedCumulativeAnthracyclineExposure(doidModel()) },
+            EligibilityRule.HAS_PATHOLOGICAL_COMPLETE_RESPONSE_AFTER_SURGERY to { HasPathologicalCompleteResponseAfterSurgery() },
             EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL to { HasPreviouslyParticipatedInTrial() },
             EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_X to hasPreviouslyParticipatedInSpecificTrialCreator(),
             EligibilityRule.IS_NOT_PARTICIPATING_IN_ANOTHER_TRIAL to { IsNotParticipatingInAnotherTrial() },
@@ -213,6 +216,13 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
+    private fun hasHadFirstLineTreatmentNameWithoutPdAndWithCyclesCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val input = functionInputResolver().createOneSpecificTreatmentOneIntegerInput(function)
+            HasHadFirstLineTreatmentNameWithoutPdAndWithCycles(input.treatment.name, input.integer)
+        }
+    }
+
     private fun hasHadSpecificDrugCombinedWithCategoryAndTypesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneSpecificDrugOneTreatmentCategoryManyTypesInput(function)
@@ -270,6 +280,14 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneTreatmentCategoryManyIntentsInput(function)
             HasHadSomeTreatmentsWithCategoryWithIntents(input.category, input.intents)
+        }
+    }
+
+    private fun hasHadTreatmentCategoryWithAnyIntentRecentlyCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val input = functionInputResolver().createOneTreatmentCategoryManyIntentsOneIntegerInput(function)
+            val (interpreter, minDate) = createInterpreterForWashout(input.integer, null, referenceDate)
+            HasHadSomeTreatmentsWithCategoryWithIntentsRecently(input.category, input.intents, minDate, interpreter)
         }
     }
 
