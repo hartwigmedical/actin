@@ -4,8 +4,8 @@ import com.hartwig.actin.algo.calendar.ReferenceDateProvider
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.soc.EvaluatedTreatmentAnnotator
 import com.hartwig.actin.algo.soc.PersonalizedDataInterpreter
-import com.hartwig.actin.algo.soc.RecommendationEngine
-import com.hartwig.actin.algo.soc.RecommendationEngineFactory
+import com.hartwig.actin.algo.soc.StandardOfCareEvaluator
+import com.hartwig.actin.algo.soc.StandardOfCareEvaluatorFactory
 import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.datamodel.PatientRecord
 
@@ -16,7 +16,7 @@ import java.time.LocalDate
 
 class TreatmentMatcher(
     private val trialMatcher: TrialMatcher,
-    private val recommendationEngine: RecommendationEngine,
+    private val standardOfCareEvaluator: StandardOfCareEvaluator,
     private val trials: List<Trial>,
     private val referenceDateProvider: ReferenceDateProvider,
     private val evaluatedTreatmentAnnotator: EvaluatedTreatmentAnnotator,
@@ -27,8 +27,8 @@ class TreatmentMatcher(
     fun evaluateAndAnnotateMatchesForPatient(patient: PatientRecord): TreatmentMatch {
         val trialMatches = trialMatcher.determineEligibility(patient, trials)
 
-        val (standardOfCareMatches, personalizedDataAnalysis) = if (recommendationEngine.standardOfCareCanBeEvaluatedForPatient(patient)) {
-            val evaluatedTreatments = recommendationEngine.standardOfCareEvaluatedTreatments(patient)
+        val (standardOfCareMatches, personalizedDataAnalysis) = if (standardOfCareEvaluator.standardOfCareCanBeEvaluatedForPatient(patient)) {
+            val evaluatedTreatments = standardOfCareEvaluator.standardOfCareEvaluatedTreatments(patient).evaluatedTreatments
             val personalizedDataAnalysis = personalizationDataPath?.let { PersonalizedDataInterpreter.create(it).interpret(patient) }
             Pair(
                 evaluatedTreatmentAnnotator.annotate(evaluatedTreatments, personalizedDataAnalysis?.treatmentAnalyses),
@@ -60,7 +60,7 @@ class TreatmentMatcher(
         ): TreatmentMatcher {
             return TreatmentMatcher(
                 TrialMatcher.create(resources),
-                RecommendationEngineFactory(resources).create(),
+                StandardOfCareEvaluatorFactory(resources).create(),
                 trials,
                 resources.referenceDateProvider,
                 EvaluatedTreatmentAnnotator.create(efficacyEvidence, resistanceEvidenceMatcher),

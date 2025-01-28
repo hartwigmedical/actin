@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.soc.RecommendationEngineFactory
+import com.hartwig.actin.algo.soc.StandardOfCareEvaluatorFactory
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.TumorDetails
@@ -10,11 +10,11 @@ import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 
 class IsEligibleForOnLabelTreatment(
     private val treatment: Treatment,
-    private val recommendationEngineFactory: RecommendationEngineFactory
+    private val standardOfCareEvaluatorFactory: StandardOfCareEvaluatorFactory
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val recommendationEngine = recommendationEngineFactory.create()
+        val standardOfCareEvaluator = standardOfCareEvaluatorFactory.create()
         val treatmentDisplay = treatment.display()
 
         return when {
@@ -22,10 +22,10 @@ class IsEligibleForOnLabelTreatment(
                 EvaluationFactory.undetermined("Tumor type CUP hence eligibility for on-label treatment $treatmentDisplay} undetermined")
             }
 
-            recommendationEngine.standardOfCareCanBeEvaluatedForPatient(record) -> {
-                if (recommendationEngine.standardOfCareEvaluatedTreatments(record)
-                        .any { it.treatmentCandidate.treatment.name.equals(treatment.name, ignoreCase = true) }
-                ) {
+            standardOfCareEvaluator.standardOfCareCanBeEvaluatedForPatient(record) -> {
+                val potentiallyEligibleTreatments =
+                    standardOfCareEvaluator.standardOfCareEvaluatedTreatments(record).potentiallyEligibleTreatments()
+                if (potentiallyEligibleTreatments.any { it.treatmentCandidate.treatment.name.equals(treatment.name, ignoreCase = true) }) {
                     EvaluationFactory.undetermined("Undetermined if patient is eligible for on-label treatment $treatmentDisplay")
                 } else {
                     EvaluationFactory.fail("Not eligible for on-label treatment $treatmentDisplay")
@@ -33,7 +33,9 @@ class IsEligibleForOnLabelTreatment(
             }
 
             record.oncologicalHistory.flatMap { it.allTreatments() }.any { it.name.equals(treatment.name, ignoreCase = true) } -> {
-                EvaluationFactory.warn("Patient might be ineligible for on-label $treatmentDisplay since this treatment was already administered")
+                EvaluationFactory.warn(
+                    "Patient might be ineligible for on-label $treatmentDisplay since this treatment was already administered"
+                )
             }
 
             else -> {

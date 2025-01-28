@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.evaluation.tumor.HasAcquiredResistanceToAnyDrug
 import com.hartwig.actin.algo.evaluation.tumor.HasMetastaticCancer
-import com.hartwig.actin.algo.soc.RecommendationEngineFactory
+import com.hartwig.actin.algo.soc.StandardOfCareEvaluatorFactory
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate.Companion.createInterpreterForWashout
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
@@ -121,7 +121,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun isEligibleForOnLabelTreatmentCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val treatmentName = functionInputResolver().createOneSpecificTreatmentInput(function)
-            IsEligibleForOnLabelTreatment(treatmentName, RecommendationEngineFactory(resources))
+            IsEligibleForOnLabelTreatment(treatmentName, StandardOfCareEvaluatorFactory(resources))
         }
     }
 
@@ -151,7 +151,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     }
 
     private fun hasExhaustedSOCTreatmentsCreator(): FunctionCreator {
-        return { HasExhaustedSOCTreatments(RecommendationEngineFactory(resources), doidModel()) }
+        return { HasExhaustedSOCTreatments(StandardOfCareEvaluatorFactory(resources), doidModel()) }
     }
 
     private fun hasHadSomeApprovedTreatmentCreator(): FunctionCreator {
