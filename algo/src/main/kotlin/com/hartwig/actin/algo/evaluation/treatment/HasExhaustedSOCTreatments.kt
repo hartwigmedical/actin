@@ -35,7 +35,8 @@ class HasExhaustedSOCTreatments(
                     treatmentEvaluation.isMissingMolecularResultForEvaluation() -> {
                         EvaluationFactory.warn(
                             "Has potentially not exhausted SOC ($remainingNonOptionalTreatments) " +
-                                    "but some corresponding molecular results are missing"
+                                    "but some corresponding molecular results are missing",
+                            isMissingMolecularResultForEvaluation = true
                         )
                     }
                     else -> {

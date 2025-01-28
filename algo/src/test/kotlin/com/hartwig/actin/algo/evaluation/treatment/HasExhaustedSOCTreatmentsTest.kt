@@ -162,6 +162,7 @@ class HasExhaustedSOCTreatmentsTest {
         assertEvaluation(EvaluationResult.WARN, evaluation)
         assertThat(evaluation.warnMessages)
             .containsExactly("Has potentially not exhausted SOC (pembrolizumab) but some corresponding molecular results are missing")
+        assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue
     }
 
     private fun createHistoryWithNSCLCAndTreatment(drugTreatment: Treatment?): PatientRecord {
