@@ -19,7 +19,7 @@ class IsEligibleForOnLabelTreatment(
 
         return when {
             tumorIsCUP(record.tumor) -> {
-                EvaluationFactory.undetermined("Tumor type CUP hence eligibility for on-label treatment $treatmentDisplay} undetermined")
+                EvaluationFactory.undetermined("Tumor type CUP hence eligibility for on-label treatment $treatmentDisplay undetermined")
             }
 
             recommendationEngine.standardOfCareCanBeEvaluatedForPatient(record) -> {
