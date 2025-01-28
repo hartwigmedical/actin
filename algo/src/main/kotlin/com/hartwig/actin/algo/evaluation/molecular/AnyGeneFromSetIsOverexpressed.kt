@@ -12,7 +12,7 @@ class AnyGeneFromSetIsOverexpressed(maxTestAge: LocalDate? = null, private val g
     override fun evaluate(molecular: MolecularRecord): Evaluation {
         return EvaluationFactory.undetermined(
             "Overexpression of ${concat(genes)} in RNA undetermined",
-            missingGenesForEvaluation = true
+            missingMolecularResultForEvaluation = true
         )
     }
 }

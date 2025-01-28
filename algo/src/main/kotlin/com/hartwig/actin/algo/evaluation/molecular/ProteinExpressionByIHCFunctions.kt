@@ -46,7 +46,7 @@ class ProteinExpressionByIHCFunctions(
             }
 
             ihcTests.isEmpty() -> {
-                EvaluationFactory.undetermined("No $protein IHC test result", missingGenesForEvaluation = true)
+                EvaluationFactory.undetermined("No $protein IHC test result", missingMolecularResultForEvaluation = true)
             }
 
             else -> {

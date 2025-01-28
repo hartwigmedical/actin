@@ -34,13 +34,13 @@ object EvaluationFactory {
     fun undetermined(
         message: String,
         recoverable: Boolean = false,
-        missingGenesForEvaluation: Boolean = false
+        missingMolecularResultForEvaluation: Boolean = false
     ): Evaluation {
         return Evaluation(
             recoverable = recoverable,
             result = EvaluationResult.UNDETERMINED,
             undeterminedMessages = setOf(message),
-            isMissingGenesForSufficientEvaluation = missingGenesForEvaluation
+            isMissingGenesForSufficientEvaluation = missingMolecularResultForEvaluation
         )
     }
 

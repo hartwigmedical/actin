@@ -34,11 +34,11 @@ class HasKnownHPVStatus : EvaluationFunction {
             }
 
             record.molecularHistory.allOrangeMolecularRecords().isEmpty() -> {
-                EvaluationFactory.undetermined("HPV status undetermined (no molecular data)")
+                EvaluationFactory.undetermined("No HPV status result (no molecular data)", missingMolecularResultForEvaluation = true)
             }
 
             else -> {
-                EvaluationFactory.recoverableFail("HPV not tested")
+                EvaluationFactory.recoverableFail("No HPV status result", missingGenesForEvaluation = true)
             }
         }
     }

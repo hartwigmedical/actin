@@ -19,19 +19,19 @@ class IsHomologousRepairDeficientWithoutMutationInGenesX(private val genesToFind
                 isHRD == null && hrdGenesWithBiallelicDriver.isNotEmpty() && genesToFindWithMutation.isEmpty() -> {
                     EvaluationFactory.undetermined(
                         "Unknown HRD status but biallelic drivers in HR genes",
-                        missingGenesForEvaluation = true
+                        missingMolecularResultForEvaluation = true
                     )
                 }
 
                 isHRD == null && hrdGenesWithNonBiallelicDriver.isNotEmpty() && genesToFindWithMutation.isEmpty() -> {
                     EvaluationFactory.undetermined(
                         "Unknown HRD status but non-biallelic drivers in HR genes",
-                        missingGenesForEvaluation = true
+                        missingMolecularResultForEvaluation = true
                     )
                 }
 
                 isHRD == null -> {
-                    EvaluationFactory.fail("Unknown HRD status")
+                    EvaluationFactory.fail("Unknown HRD status", missingGenesForEvaluation = true)
                 }
 
                 isHRD == false -> {
