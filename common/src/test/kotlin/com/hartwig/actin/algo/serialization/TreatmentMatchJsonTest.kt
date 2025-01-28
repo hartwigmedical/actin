@@ -69,7 +69,7 @@ class TreatmentMatchJsonTest {
                         "function":{"rule":"IS_AT_LEAST_X_YEARS_OLD","parameters":[]}},
                         {"result":"PASS","recoverable":false,"inclusionMolecularEvents":[],"exclusionMolecularEvents":[],
                         "passMessages":["msg 1","msg 2","msg 3"],"warnMessages":[],"undeterminedMessages":[],
-                        "failMessages":[],"isMissingGenesForSufficientEvaluation":false}]],
+                        "failMessages":[],"isMissingMolecularResultForEvaluation":false}]],
                     "cohorts":[],
                     "nonEvaluableCohorts":[]
                 }],
@@ -82,7 +82,7 @@ class TreatmentMatchJsonTest {
                     "evaluations":[
                         {"result":"PASS","recoverable":false,"inclusionMolecularEvents":[],
                         "exclusionMolecularEvents":[],"passMessages":["Has active CNS metastases"],"warnMessages":[],
-                        "undeterminedMessages":[],"failMessages":[],"isMissingGenesForSufficientEvaluation":false}],
+                        "undeterminedMessages":[],"failMessages":[],"isMissingMolecularResultForEvaluation":false}],
                     "annotations":[
                         {"acronym":"Study of Pembrolizumab","phase":"Phase III",
                         "treatments":[

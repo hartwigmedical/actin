@@ -264,14 +264,14 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         val (openCohortsWithoutSlotsGenerator, _) = EligibleActinTrialsGenerator.forOpenCohorts(
             cohorts, source, contentWidth, slotsAvailable = false, includeLocation = includeLocation
         )
-        val openCohortsWithMissingGenesGenerator =
-            EligibleActinTrialsGenerator.forOpenCohortsWithMissingGenes(cohorts, source, contentWidth)
+        val openCohortsWithMissingMolecularResultForEvaluationGenerator =
+            EligibleActinTrialsGenerator.forOpenCohortsWithMissingMolecularResultsForEvaluation(cohorts, source, contentWidth)
 
         val generators = listOfNotNull(openCohortsWithSlotsGenerator.takeIf {
             report.config.includeTrialMatchingInSummary
         }, openCohortsWithoutSlotsGenerator.takeIf {
             report.config.includeTrialMatchingInSummary && (it.getCohortSize() > 0 || report.config.includeEligibleButNoSlotsTableIfEmpty)
-        }, openCohortsWithMissingGenesGenerator.takeIf {
+        }, openCohortsWithMissingMolecularResultForEvaluationGenerator.takeIf {
             report.config.includeTrialMatchingInSummary
         })
         return generators to evaluated
