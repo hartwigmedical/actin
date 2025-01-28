@@ -150,6 +150,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_CT to hasContraindicationToCTCreator(),
             EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_MRI to hasContraindicationToMRICreator(),
             EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_PET_MRI to hasContraindicationToMRICreator(),
+            EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_FOR_PET_CT_SCAN to hasContraindicationToCTCreator(),
             EligibilityRule.HAS_MRI_SCAN_DOCUMENTING_STABLE_DISEASE to hasMRIScanDocumentingStableDiseaseCreator(),
             EligibilityRule.IS_IN_DIALYSIS to isInDialysisCreator(),
             EligibilityRule.HAS_CHILD_PUGH_SCORE_X to hasChildPughScoreCreator(),

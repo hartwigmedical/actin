@@ -288,6 +288,41 @@ class FunctionInputResolverTest {
     }
 
     @Test
+    fun `Should resolve functions with one treatment category, many intents, and one integer input`() {
+        val rule = firstOfType(FunctionInput.ONE_TREATMENT_CATEGORY_MANY_INTENTS_ONE_INTEGER)
+        val category = TreatmentCategory.IMMUNOTHERAPY.display()
+        val intents = "${Intent.ADJUVANT};${Intent.PALLIATIVE}"
+        val valid = create(rule, listOf(category, intents, "1"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val inputs = resolver.createOneTreatmentCategoryManyIntentsOneIntegerInput(valid)
+        assertThat(inputs.category).isEqualTo(TreatmentCategory.IMMUNOTHERAPY)
+        assertThat(inputs.intents).isEqualTo(setOf(Intent.ADJUVANT, Intent.PALLIATIVE))
+        assertThat(inputs.integer).isEqualTo(1)
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(TreatmentCategory.TARGETED_THERAPY.display(), "noIntent", "1")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("no category", intents, "1")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(category, intents, "noInteger")))!!).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with one treatment type, one integer input`() {
+        val rule = firstOfType(FunctionInput.ONE_TREATMENT_TYPE_ONE_INTEGER)
+        val treatmentType = DrugType.PLATINUM_COMPOUND.display()
+        val valid = create(rule, listOf(treatmentType, "1"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val inputs = resolver.createOneTreatmentTypeOneIntegerInput(valid)
+        assertThat(inputs.type).isEqualTo(DrugType.PLATINUM_COMPOUND)
+        assertThat(inputs.integer).isEqualTo(1)
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("not a treatment type", "1")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(treatmentType, "not an integer")))!!).isFalse
+    }
+
+    @Test
     fun `Should resolve functions with one specific treatment input`() {
         val rule = firstOfType(FunctionInput.ONE_SPECIFIC_TREATMENT)
         val treatmentName = TestTreatmentDatabaseFactory.CAPECITABINE_OXALIPLATIN
