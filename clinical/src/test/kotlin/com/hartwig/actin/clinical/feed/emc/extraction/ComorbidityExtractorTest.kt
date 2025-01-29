@@ -247,11 +247,11 @@ class ComorbidityExtractorTest {
 
     @Test
     fun `Should extract yes-input questionnaire toxicities with default ICD code`() {
-        assertExtractedQuestionnaireToxicity(listOf("YES", CANNOT_CURATE), "", IcdCode(HARMFUL_EFFECTS_OF_DRUGS_CODE), null)
+        assertExtractedQuestionnaireToxicity(listOf("YES", CANNOT_CURATE), null, IcdCode(HARMFUL_EFFECTS_OF_DRUGS_CODE), null)
     }
 
     private fun assertExtractedQuestionnaireToxicity(
-        inputs: List<String>, expectedName: String, expectedIcd: IcdCode, expectedGrade: Int?
+        inputs: List<String>, expectedName: String?, expectedIcd: IcdCode, expectedGrade: Int?
     ) {
         val date = LocalDate.of(2018, 5, 21)
         val questionnaire = TestCurationFactory.emptyQuestionnaire().copy(date = date, unresolvedToxicities = inputs)

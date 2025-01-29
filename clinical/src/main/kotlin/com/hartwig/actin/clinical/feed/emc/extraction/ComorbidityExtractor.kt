@@ -149,7 +149,7 @@ class ComorbidityExtractor(
         patientId: String, unresolvedToxicities: List<String>, questionnaireDate: LocalDate
     ): List<ExtractionResult<List<Toxicity>>> {
         val rawToxicity = Toxicity(
-            name = "",
+            name = null,
             icdCodes = setOf(IcdCode(HARMFUL_EFFECTS_OF_DRUGS_CODE)),
             evaluatedDate = questionnaireDate,
             source = ToxicitySource.QUESTIONNAIRE,
