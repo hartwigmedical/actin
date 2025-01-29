@@ -6,8 +6,9 @@ import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
 import com.hartwig.actin.algo.ckb.json.CkbExtendedEvidenceTestFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.soc.EvaluatedTreatmentAnnotator
-import com.hartwig.actin.algo.soc.RecommendationEngine
+import com.hartwig.actin.algo.soc.StandardOfCareEvaluator
 import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
+import com.hartwig.actin.algo.soc.StandardOfCareEvaluation
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluatedTreatment
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
@@ -41,7 +42,7 @@ class TreatmentMatcherTest {
     private val evidenceEntries =
         EfficacyEntryFactory(treatmentDatabase).convertCkbExtendedEvidence(CkbExtendedEvidenceTestFactory.createProperTestExtendedEvidenceDatabase())
     private val evidences: List<EfficacyEvidence> = emptyList()
-    private val recommendationEngine = mockk<RecommendationEngine>()
+    private val standardOfCareEvaluator = mockk<StandardOfCareEvaluator>()
     private val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
     private val resistanceEvidenceMatcher = ResistanceEvidenceMatcher.create(
         doidModel,
@@ -52,7 +53,7 @@ class TreatmentMatcherTest {
     )
     private val treatmentMatcher = TreatmentMatcher(
         trialMatcher,
-        recommendationEngine,
+        standardOfCareEvaluator,
         trials,
         CurrentDateProvider(),
         EvaluatedTreatmentAnnotator.create(evidenceEntries, resistanceEvidenceMatcher),
@@ -71,7 +72,7 @@ class TreatmentMatcherTest {
 
     @Test
     fun `Should produce match for patient when SOC evaluation unavailable and annotate with efficacy evidence`() {
-        every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(patient) } returns false
+        every { standardOfCareEvaluator.standardOfCareCanBeEvaluatedForPatient(patient) } returns false
         assertThat(treatmentMatcher.evaluateAndAnnotateMatchesForPatient(patient)).isEqualTo(expectedTreatmentMatch)
     }
 
@@ -83,8 +84,8 @@ class TreatmentMatcherTest {
         )
         val expectedSocTreatments = listOf(EvaluatedTreatment(treatmentCandidate, listOf(EvaluationFactory.pass("Has MSI"))))
 
-        every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(patient) } returns true
-        every { recommendationEngine.standardOfCareEvaluatedTreatments(patient) } returns expectedSocTreatments
+        every { standardOfCareEvaluator.standardOfCareCanBeEvaluatedForPatient(patient) } returns true
+        every { standardOfCareEvaluator.standardOfCareEvaluatedTreatments(patient) } returns StandardOfCareEvaluation(expectedSocTreatments)
 
         assertThat(treatmentMatcher.evaluateAndAnnotateMatchesForPatient(patient))
             .isEqualTo(
@@ -103,14 +104,14 @@ class TreatmentMatcherTest {
         }
         val treatmentMatcher = TreatmentMatcher(
             trialMatcher,
-            recommendationEngine,
+            standardOfCareEvaluator,
             trials,
             CurrentDateProvider(),
             EvaluatedTreatmentAnnotator.create(evidenceEntries, resistanceEvidenceMatcher),
             null,
             MAX_AGE
         )
-        every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(patientWithoutMolecular) } returns false
+        every { standardOfCareEvaluator.standardOfCareCanBeEvaluatedForPatient(patientWithoutMolecular) } returns false
         val expectedTreatmentMatchWithoutMolecular = expectedTreatmentMatch.copy(sampleId = "N/A")
 
         assertThat(treatmentMatcher.evaluateAndAnnotateMatchesForPatient(patientWithoutMolecular)).isEqualTo(
