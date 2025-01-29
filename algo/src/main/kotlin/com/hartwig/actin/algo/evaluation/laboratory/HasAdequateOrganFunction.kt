@@ -13,7 +13,7 @@ import com.hartwig.actin.datamodel.clinical.LabValue
 import com.hartwig.actin.icd.IcdModel
 import java.time.LocalDate
 
-class HasAdequateOrganFunction(private val minValidDate: LocalDate, private val icdModel: IcdModel,) : EvaluationFunction {
+class HasAdequateOrganFunction(private val minValidDate: LocalDate, private val icdModel: IcdModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val interpretation = LabInterpreter.interpret(record.labValues)
