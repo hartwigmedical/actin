@@ -1,8 +1,8 @@
 package com.hartwig.actin.algo.evaluation.othercondition
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
-import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.otherCondition
-import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.withOtherConditions
+import com.hartwig.actin.algo.evaluation.othercondition.ComorbidityTestFactory.otherCondition
+import com.hartwig.actin.algo.evaluation.othercondition.ComorbidityTestFactory.withOtherConditions
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.icd.TestIcdFactory

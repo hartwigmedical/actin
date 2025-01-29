@@ -11,7 +11,7 @@ class AnyGeneFromSetIsNotExpressed(maxTestAge: LocalDate? = null, private val ge
     override fun evaluate(molecular: MolecularRecord): Evaluation {
         return EvaluationFactory.undetermined(
             "Non-expression of ${concat(genes)} in RNA undetermined",
-            missingGenesForEvaluation = true
+            isMissingMolecularResultForEvaluation = true
         )
     }
 }

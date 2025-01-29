@@ -79,11 +79,11 @@ class AndTest {
     }
 
     @Test
-    fun `Should set isMissingGenesForSufficientEvaluation property to true if true for any evaluation`() {
-        val function1: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.UNDETERMINED, isMissingGenes = true, index = 1)
-        val function2: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.UNDETERMINED, isMissingGenes = false, index = 2)
+    fun `Should set isMissingMolecularResultForEvaluation property to true if true for any evaluation`() {
+        val function1: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.UNDETERMINED, isMissingMolecularResultForEvaluation = true, index = 1)
+        val function2: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.UNDETERMINED, isMissingMolecularResultForEvaluation = false, index = 2)
         val result: Evaluation = And(listOf(function1, function2)).evaluate(TEST_PATIENT)
-        assertThat(result.isMissingGenesForSufficientEvaluation).isTrue()
+        assertThat(result.isMissingMolecularResultForEvaluation).isTrue()
     }
 
     @Test

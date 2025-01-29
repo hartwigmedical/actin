@@ -22,7 +22,7 @@ object InterpretedCohortFactory {
             val acronym = identification.acronym
             val trialIsOpen = identification.open
             val phase = identification.phase
-            val missingGenesForTrial = trialMatch.evaluations.values.any { it.isMissingGenesForSufficientEvaluation }
+            val isMissingMolecularResultForEvaluation = trialMatch.evaluations.values.any { it.isMissingMolecularResultForEvaluation }
             val source = identification.source
             val locations = identification.locations
 
@@ -34,7 +34,7 @@ object InterpretedCohortFactory {
                         name = null,
                         molecularEvents = trialInclusionEvents,
                         isPotentiallyEligible = trialMatch.isPotentiallyEligible,
-                        isMissingGenesForSufficientEvaluation = missingGenesForTrial,
+                        isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation,
                         isOpen = trialIsOpen,
                         hasSlotsAvailable = trialIsOpen,
                         warnings = trialWarnings,
@@ -54,8 +54,8 @@ object InterpretedCohortFactory {
                         name = cohortMatch.metadata.description,
                         molecularEvents = trialInclusionEvents.union(extractInclusionEvents(cohortMatch.evaluations)),
                         isPotentiallyEligible = cohortMatch.isPotentiallyEligible,
-                        isMissingGenesForSufficientEvaluation = missingGenesForTrial ||
-                                cohortMatch.evaluations.values.any { it.isMissingGenesForSufficientEvaluation },
+                        isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation ||
+                                cohortMatch.evaluations.values.any { it.isMissingMolecularResultForEvaluation },
                         isOpen = trialIsOpen && cohortMatch.metadata.open,
                         hasSlotsAvailable = cohortMatch.metadata.slotsAvailable,
                         warnings = trialWarnings.union(extractWarnings(cohortMatch.evaluations)),

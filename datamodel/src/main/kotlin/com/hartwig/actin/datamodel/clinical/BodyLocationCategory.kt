@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.Displayable
 enum class BodyLocationCategory(private val display: String): Displayable {
     BLADDER("bladder"),
     BONE("bone"),
+    BONE_MARROW("bone marrow"),
     BRAIN("brain"),
     BREAST("breast"),
     CNS("CNS"),

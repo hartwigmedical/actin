@@ -27,6 +27,7 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
     ANTI_CEACAM5(TreatmentCategory.TARGETED_THERAPY, "anti-CEACAM5"),
     ANTI_CLDN6_CAR_T(TreatmentCategory.IMMUNOTHERAPY, "anti-CLDN6 CAR-T"),
     ANTI_CLDN18_2(TreatmentCategory.IMMUNOTHERAPY, "anti-CLDN18.2"),
+    ANTI_CTLA4(TreatmentCategory.IMMUNOTHERAPY, "anti-CTLA4"),
     ANTI_DLL3(TreatmentCategory.TARGETED_THERAPY, "anti-DLL3"),
     ANTI_ESTROGEN(TreatmentCategory.HORMONE_THERAPY, "anti-estrogen"),
     ANTI_KLK2(TreatmentCategory.TARGETED_THERAPY, "anti-KLK2"),
@@ -93,6 +94,10 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
     FGFR2_TYROSINE_KINASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "FGFR2 TKI"),
     FGFR3_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "FGFR3 inhibitor"),
     FGFR3_TYROSINE_KINASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "FGFR3 TKI"),
+    FGFR4_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "FGFR4 inhibitor"),
+    FGFR4_TYROSINE_KINASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "FGFR4 TKI"),
+    PAN_FGFR_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "pan-FGFR inhibitor"),
+    PAN_FGFR_TYROSINE_KINASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "pan-FGFR TKI"),
     FLT3_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "FLT3 inhibitor"),
     FLT3_TYROSINE_KINASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "FLT3 TKI"),
     FLT3L_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "FLT3L inhibitor"),
@@ -273,10 +278,14 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
             FGFR1_INHIBITOR,
             FGFR2_INHIBITOR,
             FGFR3_INHIBITOR,
+            FGFR4_INHIBITOR,
+            PAN_FGFR_INHIBITOR,
             FGFR_TYROSINE_KINASE_INHIBITOR,
             FGFR1_TYROSINE_KINASE_INHIBITOR,
             FGFR2_TYROSINE_KINASE_INHIBITOR,
-            FGFR3_TYROSINE_KINASE_INHIBITOR
+            FGFR3_TYROSINE_KINASE_INHIBITOR,
+            FGFR4_TYROSINE_KINASE_INHIBITOR,
+            PAN_FGFR_TYROSINE_KINASE_INHIBITOR
         )
     }
 }

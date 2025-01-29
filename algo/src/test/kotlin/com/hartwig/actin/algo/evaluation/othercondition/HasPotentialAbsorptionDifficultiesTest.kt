@@ -13,31 +13,31 @@ class HasPotentialAbsorptionDifficultiesTest {
     private val function = HasPotentialAbsorptionDifficulties(TestIcdFactory.createTestModel())
     private val correctIcd = IcdConstants.POSSIBLE_ABSORPTION_DIFFICULTIES_SET.iterator().next()
     private val wrongIcdMainCode = "wrong"
-    private val correctCondition = OtherConditionTestFactory.otherCondition(icdMainCode = correctIcd)
-    private val correctComplication = OtherConditionTestFactory.complication(icdMainCode = correctIcd)
-    private val correctToxicity = OtherConditionTestFactory.toxicity("", ToxicitySource.EHR, 2, correctIcd)
+    private val correctCondition = ComorbidityTestFactory.otherCondition(icdMainCode = correctIcd)
+    private val correctComplication = ComorbidityTestFactory.complication(icdMainCode = correctIcd)
+    private val correctToxicity = ComorbidityTestFactory.toxicity("", ToxicitySource.EHR, 2, correctIcd)
 
     @Test
     fun `Should pass for icd-matching other condition`() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withOtherCondition(correctCondition)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withOtherCondition(correctCondition)))
     }
 
     @Test
     fun `Should pass for icd-matching complication`() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withComplications(listOf(correctComplication))))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withComplications(listOf(correctComplication))))
     }
 
     @Test
     fun `Should pass for icd-matching toxicity`() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withToxicities(listOf(correctToxicity))))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withToxicities(listOf(correctToxicity))))
     }
 
     @Test
     fun `Should fail when no matching condition, complication or toxicity present`() {
         listOf(
-            OtherConditionTestFactory.withToxicities(listOf(correctToxicity.copy(icdCodes = setOf(IcdCode(wrongIcdMainCode))))),
-            OtherConditionTestFactory.withComplications(listOf(correctComplication.copy(icdCodes = setOf(IcdCode(wrongIcdMainCode))))),
-            OtherConditionTestFactory.withOtherCondition(correctCondition.copy(icdCodes = setOf(IcdCode(wrongIcdMainCode))))
+            ComorbidityTestFactory.withToxicities(listOf(correctToxicity.copy(icdCodes = setOf(IcdCode(wrongIcdMainCode))))),
+            ComorbidityTestFactory.withComplications(listOf(correctComplication.copy(icdCodes = setOf(IcdCode(wrongIcdMainCode))))),
+            ComorbidityTestFactory.withOtherCondition(correctCondition.copy(icdCodes = setOf(IcdCode(wrongIcdMainCode))))
         )
             .forEach {
                 assertEvaluation(EvaluationResult.FAIL, function.evaluate((it)))

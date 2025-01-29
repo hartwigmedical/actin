@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.molecular.MolecularConstants.MSI_GENES
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
@@ -33,45 +34,47 @@ class IsMicrosatelliteUnstable(maxTestAge: LocalDate? = null) : MolecularEvaluat
 
         return when (molecular.characteristics.isMicrosatelliteUnstable) {
             null -> {
-                if (msiGenesWithBiallelicDriver.isNotEmpty()) {
-                    EvaluationFactory.undetermined("Unknown MSI status but biallelic drivers in MMR genes")
-                } else if (msiGenesWithNonBiallelicDriver.isNotEmpty()) {
-                    EvaluationFactory.undetermined("Unknown MSI status but non-biallelic drivers in MMR genes")
-                } else if (msiGenesWithUnknownBiallelicDriver.isNotEmpty()) {
-                    EvaluationFactory.undetermined(
-                        "Unknown MSI status but drivers with unknown allelic status in MMR genes"
-                    )
-                } else {
-                    EvaluationFactory.undetermined("Unknown MSI status")
+                val message = when {
+                    msiGenesWithBiallelicDriver.isNotEmpty() -> {
+                        " but biallelic driver event(s) in MMR gene(s) ($msiGenesWithBiallelicDriver) detected"
+                    }
+                    msiGenesWithNonBiallelicDriver.isNotEmpty() -> {
+                        " but non-biallelic driver event(s) in MMR gene(s) ($msiGenesWithNonBiallelicDriver) detected"
+                    }
+                    msiGenesWithUnknownBiallelicDriver.isNotEmpty() -> {
+                        " but driver event(s) in MMR gene(s) ($msiGenesWithUnknownBiallelicDriver) detected"
+                    }
+                    else -> ""
                 }
+                EvaluationFactory.undetermined("No MSI test result$message", isMissingMolecularResultForEvaluation = true)
             }
 
             true -> {
                 val inclusionMolecularEvents = setOf(MolecularCharacteristicEvents.MICROSATELLITE_UNSTABLE)
                 if (msiGenesWithBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.pass(
-                        "Tumor is MSI with biallelic drivers in MMR genes",
+                        "Tumor is MSI with biallelic driver event(s) in MMR gene(s) ($msiGenesWithBiallelicDriver)",
                         inclusionEvents = inclusionMolecularEvents
                     )
                 } else if (msiGenesWithNonBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.warn(
-                        "Tumor is MSI but with only non-biallelic drivers in MMR genes",
+                        "Tumor is MSI but with only non-biallelic driver event(s) in MMR gene(s) ($msiGenesWithNonBiallelicDriver)",
                         inclusionEvents = inclusionMolecularEvents
                     )
                 } else {
                     EvaluationFactory.warn(
-                        "Tumor is MSI but without drivers in MMR genes",
+                        "Tumor is MSI but without driver event(s) in MMR gene(s)",
                         inclusionEvents = inclusionMolecularEvents
                     )
                 }
             }
 
             false -> {
-                EvaluationFactory.fail("Tumor is MSS")
+                EvaluationFactory.fail("Tumor is not MSI")
             }
         }
     }
 
     private fun genesFrom(vararg geneAlterations: Iterable<GeneAlteration>) =
-        geneAlterations.asSequence().flatten().map(GeneAlteration::gene).toSet()
+        Format.concat(geneAlterations.asList().flatten().map(GeneAlteration::gene))
 }

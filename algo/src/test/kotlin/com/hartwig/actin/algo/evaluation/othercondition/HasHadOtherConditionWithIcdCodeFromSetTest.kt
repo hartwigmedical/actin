@@ -14,8 +14,8 @@ class HasHadOtherConditionWithIcdCodeFromSetTest {
 
     @Test
     fun `Should pass if condition with correct ICD code in history`() {
-        val conditions = OtherConditionTestFactory.otherCondition("pneumonitis", icdMainCode = IcdConstants.PNEUMONITIS_BLOCK)
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withOtherCondition(conditions)))
+        val conditions = ComorbidityTestFactory.otherCondition("pneumonitis", icdMainCode = IcdConstants.PNEUMONITIS_BLOCK)
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withOtherCondition(conditions)))
     }
 
     @Test
@@ -25,22 +25,22 @@ class HasHadOtherConditionWithIcdCodeFromSetTest {
             setOf(IcdCode(IcdConstants.PNEUMONITIS_BLOCK, "extensionCode")),
             "respiratory compromise"
         )
-        val conditions = OtherConditionTestFactory.otherCondition(
+        val conditions = ComorbidityTestFactory.otherCondition(
             "pneumonitis",
             icdMainCode = IcdConstants.PNEUMONITIS_BLOCK,
             icdExtensionCode = null
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(OtherConditionTestFactory.withOtherCondition(conditions)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(ComorbidityTestFactory.withOtherCondition(conditions)))
     }
 
     @Test
     fun `Should fail if no conditions with correct ICD code in history`() {
-        val conditions = OtherConditionTestFactory.otherCondition("stroke", icdMainCode = IcdConstants.CEREBRAL_ISCHAEMIA_BLOCK)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withOtherCondition(conditions)))
+        val conditions = ComorbidityTestFactory.otherCondition("stroke", icdMainCode = IcdConstants.CEREBRAL_ISCHAEMIA_BLOCK)
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withOtherCondition(conditions)))
     }
 
     @Test
     fun `Should fail if no conditions present in history`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withOtherConditions(emptyList())))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withOtherConditions(emptyList())))
     }
 }

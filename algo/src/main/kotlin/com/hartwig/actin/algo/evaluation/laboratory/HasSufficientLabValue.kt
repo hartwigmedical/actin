@@ -18,7 +18,11 @@ class HasSufficientLabValue(
             ?: return EvaluationFactory.recoverableUndetermined(
                 "Could not convert value for ${labMeasurement.display()} to ${targetUnit.display()}"
             )
-        val labValueString = "${labValue(labMeasurement, convertedValue, labValue.unit)} ${targetUnit.display()}"
+        val labValueString = labValue(
+            labMeasurement,
+            convertedValue,
+            targetUnit
+        ) + (" (converted from: ${labValue.value} ${labValue.unit.display()})".takeIf { convertedValue != labValue.value } ?: "")
         val refString = "$minValue ${targetUnit.display()}"
 
         return when (evaluateVersusMinValueWithMargin(convertedValue, labValue.comparator, minValue)) {
