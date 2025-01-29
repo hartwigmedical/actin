@@ -9,8 +9,7 @@ import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
 import java.time.LocalDate
 
-class HasLimitedBilirubinDependingOnGilbertDisease(
-    private val labMeasureWithoutGilbertDisease: LabMeasurement,
+class HasLimitedTotalBilirubinULNOrLimitedOtherMeasureULNDependingOnGilbertDisease(
     private val maxULNWithoutGilbertDisease: Double,
     private val labMeasureWithGilbertDisease: LabMeasurement,
     private val maxULNWithGilbertDisease: Double,
@@ -27,7 +26,7 @@ class HasLimitedBilirubinDependingOnGilbertDisease(
         ) {
             labMeasureWithGilbertDisease to maxULNWithGilbertDisease
         } else {
-            labMeasureWithoutGilbertDisease to maxULNWithoutGilbertDisease
+            LabMeasurement.TOTAL_BILIRUBIN to maxULNWithoutGilbertDisease
         }
 
         return LabMeasurementEvaluator(applicableMeasure, HasLimitedLabValueULN(applicableULN), minValidLabDate, minPassLabDate).evaluate(

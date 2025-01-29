@@ -10,28 +10,25 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
-class HasLimitedBilirubinDependingOnGilbertDiseaseTest {
+class HasLimitedTotalBilirubinULNOrLimitedOtherMeasureULNDependingOnGilbertDiseaseTest {
 
-    private val TBIL = LabMeasurement.TOTAL_BILIRUBIN
-    private val DBIL = LabMeasurement.DIRECT_BILIRUBIN
     private val ulnLimitWithoutGilbertDisease = 3.0
     private val ulnLimitWithGilbertDisease = 5.0
     private val refDate = LocalDate.of(2024, 7, 4)
     private val minValidDate = refDate.minusDays(90)
     private val minPassDate = refDate.minusDays(30)
-    private val function = HasLimitedBilirubinDependingOnGilbertDisease(
-        TBIL,
+    private val function = HasLimitedTotalBilirubinULNOrLimitedOtherMeasureULNDependingOnGilbertDisease(
         ulnLimitWithoutGilbertDisease,
-        DBIL,
+        LabMeasurement.DIRECT_BILIRUBIN,
         ulnLimitWithGilbertDisease,
         minValidDate,
         minPassDate,
         TestIcdFactory.createTestModel()
     )
-    private val TBIL_1_ULN = LabTestFactory.create(TBIL, value = 100.0, refDate, refLimitUp = 100.0)
-    private val TBIL_4_ULN = LabTestFactory.create(TBIL, value = 400.0, refDate, refLimitUp = 100.0)
-    private val DBIL_1_ULN = LabTestFactory.create(DBIL, value = 100.0, refDate, refLimitUp = 100.0)
-    private val DBIL_6_ULN = LabTestFactory.create(DBIL, value = 600.0, refDate, refLimitUp = 100.0)
+    private val TBIL_1_ULN = LabTestFactory.create(LabMeasurement.TOTAL_BILIRUBIN, value = 100.0, refDate, refLimitUp = 100.0)
+    private val TBIL_4_ULN = LabTestFactory.create(LabMeasurement.TOTAL_BILIRUBIN, value = 400.0, refDate, refLimitUp = 100.0)
+    private val DBIL_1_ULN = LabTestFactory.create(LabMeasurement.DIRECT_BILIRUBIN, value = 100.0, refDate, refLimitUp = 100.0)
+    private val DBIL_6_ULN = LabTestFactory.create(LabMeasurement.DIRECT_BILIRUBIN, value = 600.0, refDate, refLimitUp = 100.0)
     private val recordWithGilbertDisease = ComorbidityTestFactory.withOtherCondition(
         ComorbidityTestFactory.otherCondition(
             name = "Gilbert",
