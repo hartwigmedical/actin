@@ -20,6 +20,7 @@ enum class BodyLocationCategory(private val display: String): Displayable {
     OMENTUM("omentum"),
     PANCREAS("pancreas"),
     PERITONEUM("peritoneum"),
+    PROSTATE("prostate"),
     REPRODUCTIVE_SYSTEM("reproductive system"),
     SPLEEN("spleen"),
     STOMACH("stomach"),
