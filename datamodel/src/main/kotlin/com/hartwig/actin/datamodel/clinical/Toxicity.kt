@@ -3,7 +3,7 @@ package com.hartwig.actin.datamodel.clinical
 import java.time.LocalDate
 
 data class Toxicity(
-    override val name: String,
+    override val name: String?,
     override val icdCodes: Set<IcdCode>,
     val evaluatedDate: LocalDate,
     val source: ToxicitySource,

@@ -57,11 +57,10 @@ class ComorbidityExtractor(
     private fun extractQuestionnaireComorbidities(
         patientId: String, rawInputs: List<String>, category: CurationCategory, configType: String
     ): List<ExtractionResult<List<Comorbidity>>> {
-        val emptyIcd = setOf(IcdCode(""))
         val default = if (category == CurationCategory.COMPLICATION) {
-            Complication("", icdCodes = emptyIcd)
+            Complication(null, icdCodes = emptySet())
         } else {
-            OtherCondition("", icdCodes = emptyIcd)
+            OtherCondition(null, icdCodes = emptySet())
         }
         return rawInputs.map {
             val curatedComorbidity = curate(CurationUtil.fullTrim(it), patientId, category, configType, default)
@@ -87,7 +86,7 @@ class ComorbidityExtractor(
                 )
             }
             val curationResponse =
-                curate(rawIntolerance.name, patientId, CurationCategory.INTOLERANCE, "intolerance", rawIntolerance.copy(name = ""), true)
+                curate(entry.codeText, patientId, CurationCategory.INTOLERANCE, "intolerance", rawIntolerance.copy(name = null), true)
 
             val curatedIntolerance = curationResponse.config()?.curated?.let { curated ->
                 rawIntolerance.copy(name = curated.name, icdCodes = curated.icdCodes)
@@ -99,22 +98,23 @@ class ComorbidityExtractor(
     private fun extractFeedToxicities(toxicityEntries: List<DigitalFileEntry>, patientId: String): List<ExtractionResult<List<Toxicity>>> {
         return toxicityEntries.mapNotNull { toxicityEntry ->
             extractGrade(toxicityEntry)?.let { grade ->
+                val input = toxicityEntry.itemText
                 val rawToxicity = Toxicity(
-                    name = toxicityEntry.itemText,
+                    name = input,
                     icdCodes = setOf(IcdCode(HARMFUL_EFFECTS_OF_DRUGS_CODE)),
                     evaluatedDate = toxicityEntry.authored,
                     source = ToxicitySource.EHR,
                     grade = grade,
                 )
-                if (rawToxicity.name.isEmpty()) ExtractionResult(listOf(rawToxicity), CurationExtractionEvaluation()) else {
-                    curatedToxicity(rawToxicity, patientId) ?: translatedToxicity(rawToxicity, patientId)
+                if (input.isEmpty()) ExtractionResult(listOf(rawToxicity), CurationExtractionEvaluation()) else {
+                    curatedToxicity(input, rawToxicity, patientId) ?: translatedToxicity(input, rawToxicity, patientId)
                 }
             }
         }
     }
 
-    private fun curatedToxicity(rawToxicity: Toxicity, patientId: String): ExtractionResult<List<Toxicity>>? {
-        val curationResponse = curate(rawToxicity.name, patientId, CurationCategory.TOXICITY, "toxicity", rawToxicity.copy(name = ""))
+    private fun curatedToxicity(input: String, rawToxicity: Toxicity, patientId: String): ExtractionResult<List<Toxicity>>? {
+        val curationResponse = curate(input, patientId, CurationCategory.TOXICITY, "toxicity", rawToxicity.copy(name = null))
         return curationResponse.config()?.curated?.let { curated ->
             ExtractionResult(
                 listOf(
@@ -129,12 +129,10 @@ class ComorbidityExtractor(
         }
     }
 
-    private fun translatedToxicity(rawToxicity: Toxicity, patientId: String): ExtractionResult<List<Toxicity>> {
-        return rawToxicity.name.let { input ->
-            CurationResponse.createFromTranslation(
-                toxicityTranslation.find(input), patientId, CurationCategory.TOXICITY_TRANSLATION, input, "toxicity"
-            )
-        }.let { translationResponse ->
+    private fun translatedToxicity(input: String, rawToxicity: Toxicity, patientId: String): ExtractionResult<List<Toxicity>> {
+        return CurationResponse.createFromTranslation(
+            toxicityTranslation.find(input), patientId, CurationCategory.TOXICITY_TRANSLATION, input, "toxicity"
+        ).let { translationResponse ->
             ExtractionResult(
                 listOf(translationResponse.config()?.translated?.let { rawToxicity.copy(name = it) } ?: rawToxicity),
                 translationResponse.extractionEvaluation

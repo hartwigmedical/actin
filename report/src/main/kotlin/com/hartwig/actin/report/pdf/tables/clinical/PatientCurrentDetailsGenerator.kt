@@ -87,7 +87,7 @@ class PatientCurrentDetailsGenerator(
     }
 
     private fun formatToxicities(filteredToxicities: List<Toxicity>) =
-        filteredToxicities.map { it.name + (it.grade?.let { grade -> " ($grade)" } ?: "") }.distinct()
+        filteredToxicities.map { (it.name ?: "Unknown") + (it.grade?.let { grade -> " ($grade)" } ?: "") }.distinct()
             .joinToString(Formats.COMMA_SEPARATOR)
 
     private fun filterUncuratedToxicities(toxicities: List<Toxicity>): List<Toxicity> {
@@ -97,7 +97,7 @@ class PatientCurrentDetailsGenerator(
     }
 
     private fun complications(record: PatientRecord): String {
-        val complicationSummary = record.complications.joinToString(Formats.COMMA_SEPARATOR) { complication ->
+        val complicationSummary = record.complications.filter { it.name != null }.joinToString(Formats.COMMA_SEPARATOR) { complication ->
             complication.name + (toDateString(complication.year, complication.month)?.let { " ($it)" } ?: "")
         }
         val defaultValue = when (record.clinicalStatus.hasComplications) {
@@ -116,7 +116,7 @@ class PatientCurrentDetailsGenerator(
 
     private fun allergies(intolerances: List<Intolerance>): String {
         val intoleranceSummary = intolerances.filter { !it.name.equals("none", ignoreCase = true) }
-            .joinToString(Formats.COMMA_SEPARATOR) { it.name }
+            .joinToString(Formats.COMMA_SEPARATOR) { it.display() }
         return Formats.valueOrDefault(intoleranceSummary, "None")
     }
 

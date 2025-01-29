@@ -56,7 +56,7 @@ class StandardComorbidityExtractor(
             ExtractionResult(listOfNotNull(curatedToxicity.config()?.curated?.let { curated ->
                 val curatedToxicity = curated as? ToxicityCuration
                 Toxicity(
-                    name = curated.name,
+                    name = curated.name ?: toxicity.name,
                     grade = curatedToxicity?.grade ?: toxicity.grade,
                     icdCodes = curated.icdCodes,
                     evaluatedDate = toxicity.evaluatedDate,

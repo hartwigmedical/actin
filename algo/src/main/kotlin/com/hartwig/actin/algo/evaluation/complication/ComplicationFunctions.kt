@@ -5,6 +5,6 @@ import com.hartwig.actin.datamodel.clinical.Complication
 object ComplicationFunctions {
 
     fun isYesInputComplication(complication: Complication): Boolean {
-        return complication.name.isEmpty()
+        return complication.name.isNullOrEmpty()
     }
 }

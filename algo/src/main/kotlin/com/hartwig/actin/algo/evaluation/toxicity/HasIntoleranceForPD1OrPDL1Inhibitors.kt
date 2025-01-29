@@ -19,8 +19,9 @@ class HasIntoleranceForPD1OrPDL1Inhibitors(private val icdModel: IcdModel) : Eva
 
         val icdMatches = icdModel.findInstancesMatchingAnyIcdCode(record.comorbidities, targetCodes)
 
-        val matchingIntolerancesByName =
-            record.intolerances.filter { stringCaseInsensitivelyMatchesQueryCollection(it.name, INTOLERANCE_TERMS) }.toSet()
+        val matchingIntolerancesByName = record.intolerances.filter { intolerance ->
+            intolerance.name?.let { stringCaseInsensitivelyMatchesQueryCollection(it, INTOLERANCE_TERMS) } == true
+        }
 
         val matchingIntolerances = (icdMatches.fullMatches + matchingIntolerancesByName).toSet()
 
