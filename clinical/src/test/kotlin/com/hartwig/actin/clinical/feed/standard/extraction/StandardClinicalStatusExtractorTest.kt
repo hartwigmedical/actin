@@ -7,8 +7,8 @@ import com.hartwig.actin.clinical.feed.standard.ProvidedComplication
 import com.hartwig.actin.clinical.feed.standard.ProvidedOtherCondition
 import com.hartwig.actin.clinical.feed.standard.ProvidedWhoEvaluation
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
-import com.hartwig.actin.datamodel.clinical.ECG
-import com.hartwig.actin.datamodel.clinical.ECGMeasure
+import com.hartwig.actin.datamodel.clinical.Ecg
+import com.hartwig.actin.datamodel.clinical.EcgMeasure
 import io.mockk.every
 import io.mockk.mockk
 import java.time.LocalDate
@@ -68,11 +68,11 @@ class StandardClinicalStatusExtractorTest {
                 .copy(priorOtherConditions = listOf(ProvidedOtherCondition(conditionName, startDate = SOME_DATE, endDate = null)))
         )
         assertThat(clinicalStatus.extracted.ecg).isEqualTo(
-            ECG(
+            Ecg(
                 hasSigAberrationLatestECG = true,
-                aberrationDescription = ecgConfig.interpretation,
-                qtcfMeasure = ECGMeasure(ecgConfig.qtcfValue, ecgConfig.qtcfUnit),
-                jtcMeasure = ECGMeasure(ecgConfig.jtcValue, ecgConfig.jtcUnit)
+                name = ecgConfig.interpretation,
+                qtcfMeasure = EcgMeasure(ecgConfig.qtcfValue, ecgConfig.qtcfUnit),
+                jtcMeasure = EcgMeasure(ecgConfig.jtcValue, ecgConfig.jtcUnit)
             )
         )
     }

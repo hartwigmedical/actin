@@ -12,7 +12,7 @@ class ECGConfigFactoryTest {
 
     @Test
     fun `Should return ECGConfig from valid inputs`() {
-        val config = ECGConfigFactory().create(fields, arrayOf("input", "interpretation", "1", "1", "ms", "0", "", ""))
+        val config = EcgConfigFactory().create(fields, arrayOf("input", "interpretation", "1", "1", "ms", "0", "", ""))
         assertThat(config.errors).isEmpty()
         assertThat(config.config.input).isEqualTo("input")
         assertThat(config.config.interpretation).isEqualTo("interpretation")
@@ -27,7 +27,7 @@ class ECGConfigFactoryTest {
     @Test
     fun `Should return validation error when qtcf is not a number`() {
         val config: ValidatedCurationConfig<ECGConfig> =
-            ECGConfigFactory().create(fields, arrayOf("input", "interpretation", "1", "invalid", "ms", "1", "1", "ms"))
+            EcgConfigFactory().create(fields, arrayOf("input", "interpretation", "1", "invalid", "ms", "1", "1", "ms"))
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
                 CurationCategory.ECG.categoryName,
@@ -42,7 +42,7 @@ class ECGConfigFactoryTest {
     @Test
     fun `Should return validation error when jtc is not a number`() {
         val config: ValidatedCurationConfig<ECGConfig> =
-            ECGConfigFactory().create(fields, arrayOf("input", "interpretation", "1", "1", "ms", "1", "invalid", "ms"))
+            EcgConfigFactory().create(fields, arrayOf("input", "interpretation", "1", "1", "ms", "1", "invalid", "ms"))
         assertThat(config.errors).containsExactly(CurationConfigValidationError(
             CurationCategory.ECG.categoryName,
             "input",

@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.cardiacfunction
 
 import com.hartwig.actin.algo.evaluation.cardiacfunction.ECGMeasureEvaluationFunction.ThresholdCriteria
-import com.hartwig.actin.datamodel.clinical.ECG
+import com.hartwig.actin.datamodel.clinical.Ecg
 
 object ECGMeasureEvaluationFunctions {
 
@@ -10,7 +10,7 @@ object ECGMeasureEvaluationFunctions {
             ECGMeasureName.QTCF,
             maxQTCF,
             ECGUnit.MILLISECONDS,
-            ECG::qtcfMeasure,
+            Ecg::qtcfMeasure,
             ThresholdCriteria.MAXIMUM
         )
     }
@@ -20,7 +20,7 @@ object ECGMeasureEvaluationFunctions {
             ECGMeasureName.QTCF,
             minQTCF,
             ECGUnit.MILLISECONDS,
-            ECG::qtcfMeasure,
+            Ecg::qtcfMeasure,
             ThresholdCriteria.MINIMUM
         )
     }
@@ -30,7 +30,7 @@ object ECGMeasureEvaluationFunctions {
             ECGMeasureName.JTC,
             minJTC,
             ECGUnit.MILLISECONDS,
-            ECG::jtcMeasure,
+            Ecg::jtcMeasure,
             ThresholdCriteria.MINIMUM
         )
     }

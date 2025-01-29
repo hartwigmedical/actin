@@ -2,7 +2,7 @@ package com.hartwig.actin.report.pdf.tables.clinical
 
 import com.hartwig.actin.clinical.sort.SurgeryDescendingDateComparator
 import com.hartwig.actin.datamodel.PatientRecord
-import com.hartwig.actin.datamodel.clinical.ECGMeasure
+import com.hartwig.actin.datamodel.clinical.EcgMeasure
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.Toxicity
@@ -39,7 +39,7 @@ class PatientCurrentDetailsGenerator(
         val ecg = record.clinicalStatus.ecg
         if (ecg != null && ecg.hasSigAberrationLatestECG) {
             table.addCell(Cells.createKey("Significant aberration on latest ECG"))
-            val aberration = ecg.aberrationDescription
+            val aberration = ecg.name
             val description = aberration ?: "Yes (ECG aberration details unknown)"
             table.addCell(Cells.createValue(description))
 
@@ -67,7 +67,7 @@ class PatientCurrentDetailsGenerator(
         return table
     }
 
-    private fun createMeasureCells(table: Table, key: String, measure: ECGMeasure) {
+    private fun createMeasureCells(table: Table, key: String, measure: EcgMeasure) {
         table.addCell(Cells.createKey(key))
         table.addCell(Cells.createValue(Formats.twoDigitNumber(measure.value!!.toDouble())).toString() + " " + measure.unit)
     }

@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.feed.emc.questionnaire
 
-import com.hartwig.actin.datamodel.clinical.ECG
+import com.hartwig.actin.datamodel.clinical.Ecg
 import com.hartwig.actin.datamodel.clinical.InfectionStatus
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import java.util.TreeMap
@@ -144,7 +144,7 @@ internal object QuestionnaireCuration {
         return buildFromDescription(subject, significantCurrentInfection, QuestionnaireCuration::buildInfectionStatus)
     }
 
-    fun toECG(subject: String, significantAberrationLatestECG: String?): ValidatedQuestionnaireCuration<ECG> {
+    fun toECG(subject: String, significantAberrationLatestECG: String?): ValidatedQuestionnaireCuration<Ecg> {
         return buildFromDescription(subject, significantAberrationLatestECG, QuestionnaireCuration::buildECG)
     }
 
@@ -155,11 +155,11 @@ internal object QuestionnaireCuration {
         return ValidatedQuestionnaireCuration(InfectionStatus(hasActiveInfection = hasActiveInfection, description = description))
     }
 
-    private fun buildECG(hasSignificantAberrationLatestECG: Boolean, description: String?): ValidatedQuestionnaireCuration<ECG> {
+    private fun buildECG(hasSignificantAberrationLatestECG: Boolean, description: String?): ValidatedQuestionnaireCuration<Ecg> {
         return ValidatedQuestionnaireCuration(
-            ECG(
+            Ecg(
                 hasSigAberrationLatestECG = hasSignificantAberrationLatestECG,
-                aberrationDescription = description,
+                name = description,
                 jtcMeasure = null,
                 qtcfMeasure = null
             )

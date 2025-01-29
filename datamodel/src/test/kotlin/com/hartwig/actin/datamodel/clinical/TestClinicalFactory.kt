@@ -114,7 +114,7 @@ object TestClinicalFactory {
         return ClinicalStatus(
             who = 1,
             infectionStatus = InfectionStatus(hasActiveInfection = false, description = null),
-            ecg = ECG(hasSigAberrationLatestECG = false, aberrationDescription = null, jtcMeasure = null, qtcfMeasure = null)
+            ecg = Ecg(hasSigAberrationLatestECG = false, name = null, jtcMeasure = null, qtcfMeasure = null)
         )
     }
 

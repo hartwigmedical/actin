@@ -4,7 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.cardiacfunction.CardiacFunctionTestFactory.withValueAndUnit
 import com.hartwig.actin.algo.evaluation.cardiacfunction.ECGMeasureEvaluationFunction.ThresholdCriteria
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.clinical.ECG
+import com.hartwig.actin.datamodel.clinical.Ecg
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -72,7 +72,7 @@ class ECGMeasureEvaluationFunctionTest {
             ECGMeasureName.QTCF,
             450.0,
             ECGUnit.MILLISECONDS,
-            ECG::qtcfMeasure,
+            Ecg::qtcfMeasure,
             thresholdCriteria
         )
     }

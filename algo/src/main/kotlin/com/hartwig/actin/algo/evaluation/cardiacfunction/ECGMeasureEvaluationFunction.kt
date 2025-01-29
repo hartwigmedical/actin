@@ -4,14 +4,14 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.clinical.ECG
-import com.hartwig.actin.datamodel.clinical.ECGMeasure
+import com.hartwig.actin.datamodel.clinical.Ecg
+import com.hartwig.actin.datamodel.clinical.EcgMeasure
 
 class ECGMeasureEvaluationFunction internal constructor(
     private val measureName: ECGMeasureName,
     private val threshold: Double,
     private val expectedUnit: ECGUnit,
-    private val extractingECGMeasure: (ECG) -> ECGMeasure?,
+    private val extractingEcgMeasure: (Ecg) -> EcgMeasure?,
     private val thresholdCriteria: ThresholdCriteria
 ) : EvaluationFunction {
 
@@ -31,12 +31,12 @@ class ECGMeasureEvaluationFunction internal constructor(
     }
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return record.clinicalStatus.ecg?.let(extractingECGMeasure)
-            ?.let { measure: ECGMeasure -> this.evaluate(measure) }
+        return record.clinicalStatus.ecg?.let(extractingEcgMeasure)
+            ?.let { measure: EcgMeasure -> this.evaluate(measure) }
             ?: EvaluationFactory.recoverableUndetermined(String.format("No %s known", measureName))
     }
 
-    private fun evaluate(measure: ECGMeasure): Evaluation {
+    private fun evaluate(measure: EcgMeasure): Evaluation {
         if (measure.unit != expectedUnit.symbol()) {
             return EvaluationFactory.undetermined("${measureName.name} measure in ${measure.unit} instead of required ${expectedUnit.symbol()}")
         }

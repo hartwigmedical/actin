@@ -8,8 +8,8 @@ import com.hartwig.actin.clinical.curation.config.ECGConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.standard.ProvidedPatientRecord
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
-import com.hartwig.actin.datamodel.clinical.ECG
-import com.hartwig.actin.datamodel.clinical.ECGMeasure
+import com.hartwig.actin.datamodel.clinical.Ecg
+import com.hartwig.actin.datamodel.clinical.EcgMeasure
 
 class StandardClinicalStatusExtractor(private val ecgCuration: CurationDatabase<ECGConfig>) : StandardDataExtractor<ClinicalStatus> {
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<ClinicalStatus> {
@@ -28,19 +28,19 @@ class StandardClinicalStatusExtractor(private val ecgCuration: CurationDatabase<
             who = mostRecentWho?.status,
             hasComplications = ehrPatientRecord.complications.isNotEmpty(),
             ecg = ecg?.let {
-                ECG(
+                Ecg(
                     jtcMeasure = maybeECGMeasure(it.jtcValue, it.jtcUnit),
                     qtcfMeasure = maybeECGMeasure(it.qtcfValue, it.qtcfUnit),
-                    aberrationDescription = it.interpretation,
+                    name = it.interpretation,
                     hasSigAberrationLatestECG = true
                 )
             })
         return ExtractionResult(clinicalStatus, CurationExtractionEvaluation())
     }
 
-    private fun maybeECGMeasure(value: Int?, unit: String?): ECGMeasure? {
+    private fun maybeECGMeasure(value: Int?, unit: String?): EcgMeasure? {
         return if (value == null || unit == null) {
             null
-        } else ECGMeasure(value = value, unit = unit)
+        } else EcgMeasure(value = value, unit = unit)
     }
 }

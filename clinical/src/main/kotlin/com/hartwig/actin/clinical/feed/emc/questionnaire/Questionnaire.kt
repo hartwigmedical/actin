@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.feed.emc.questionnaire
 
-import com.hartwig.actin.datamodel.clinical.ECG
+import com.hartwig.actin.datamodel.clinical.Ecg
 import com.hartwig.actin.datamodel.clinical.InfectionStatus
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import java.time.LocalDate
@@ -28,6 +28,6 @@ data class Questionnaire(
     val whoStatus: Int?,
     val unresolvedToxicities: List<String>?,
     val infectionStatus: InfectionStatus?,
-    val ecg: ECG?,
+    val ecg: Ecg?,
     val complications: List<String>?
 )

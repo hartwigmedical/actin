@@ -7,7 +7,7 @@ import com.hartwig.actin.datamodel.clinical.BodyWeight
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 import com.hartwig.actin.datamodel.clinical.Complication
-import com.hartwig.actin.datamodel.clinical.ECG
+import com.hartwig.actin.datamodel.clinical.Ecg
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.LabValue
 import com.hartwig.actin.datamodel.clinical.Medication
@@ -152,8 +152,8 @@ internal class ClinicalDAO(private val context: DSLContext) {
     private fun writeClinicalStatus(patientId: String, clinicalStatus: ClinicalStatus) {
         val infectionStatus = clinicalStatus.infectionStatus
         val ecg = Optional.ofNullable(clinicalStatus.ecg)
-        val qtcfMeasure = ecg.map(ECG::qtcfMeasure)
-        val jtcMeasure = ecg.map(ECG::jtcMeasure)
+        val qtcfMeasure = ecg.map(Ecg::qtcfMeasure)
+        val jtcMeasure = ecg.map(Ecg::jtcMeasure)
         context.insertInto(
             Tables.CLINICALSTATUS,
             Tables.CLINICALSTATUS.PATIENTID,
@@ -174,8 +174,8 @@ internal class ClinicalDAO(private val context: DSLContext) {
                 clinicalStatus.who,
                 infectionStatus?.hasActiveInfection,
                 infectionStatus?.description,
-                ecg.map(ECG::hasSigAberrationLatestECG).orElse(null),
-                ecg.map(ECG::aberrationDescription).orElse(null),
+                ecg.map(Ecg::hasSigAberrationLatestECG).orElse(null),
+                ecg.map(Ecg::name).orElse(null),
                 qtcfMeasure.map { it?.value }.orElse(null),
                 qtcfMeasure.map { it?.unit }.orElse(null),
                 jtcMeasure.map { it?.value }.orElse(null),

@@ -5,7 +5,7 @@ import com.hartwig.actin.clinical.UnusedCurationConfig
 import com.hartwig.actin.clinical.curation.config.ComorbidityConfig
 import com.hartwig.actin.clinical.curation.config.ComplicationConfigFactory
 import com.hartwig.actin.clinical.curation.config.ECGConfig
-import com.hartwig.actin.clinical.curation.config.ECGConfigFactory
+import com.hartwig.actin.clinical.curation.config.EcgConfigFactory
 import com.hartwig.actin.clinical.curation.config.IHCTestConfig
 import com.hartwig.actin.clinical.curation.config.IHCTestConfigFactory
 import com.hartwig.actin.clinical.curation.config.InfectionConfig
@@ -144,7 +144,7 @@ data class CurationDatabaseContext(
             ecgCuration = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.ECG_TSV,
-                ECGConfigFactory(),
+                EcgConfigFactory(),
                 CurationCategory.ECG
             ) { it.ecgEvaluatedInputs },
             infectionCuration = CurationDatabaseReader.read(

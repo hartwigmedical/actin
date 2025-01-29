@@ -7,7 +7,7 @@ import com.hartwig.actin.clinical.curation.config.ComorbidityConfig
 import com.hartwig.actin.clinical.curation.config.ECGConfig
 import com.hartwig.actin.clinical.curation.config.InfectionConfig
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
-import com.hartwig.actin.datamodel.clinical.ECG
+import com.hartwig.actin.datamodel.clinical.Ecg
 import com.hartwig.actin.datamodel.clinical.InfectionStatus
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -92,8 +92,8 @@ class ClinicalStatusExtractorTest {
         )
     }
 
-    private fun ecg(input: String) = ECG(
-        aberrationDescription = input, hasSigAberrationLatestECG = true, jtcMeasure = null, qtcfMeasure = null
+    private fun ecg(input: String) = Ecg(
+        name = input, hasSigAberrationLatestECG = true, jtcMeasure = null, qtcfMeasure = null
     )
 
     private fun infectionStatus(input: String) = InfectionStatus(description = input, hasActiveInfection = true)
@@ -103,7 +103,7 @@ class ClinicalStatusExtractorTest {
         assertThat(clinicalStatus.infectionStatus?.hasActiveInfection).isTrue
         assertThat(clinicalStatus.infectionStatus?.description).isEqualTo(CURATED_INFECTION)
         assertThat(clinicalStatus.ecg?.hasSigAberrationLatestECG).isTrue
-        assertThat(clinicalStatus.ecg?.aberrationDescription).isEqualTo(CURATED_ECG)
+        assertThat(clinicalStatus.ecg?.name).isEqualTo(CURATED_ECG)
         assertThat(clinicalStatus.lvef).isEqualTo(CURATED_LVEF)
         assertThat(clinicalStatus.hasComplications).isTrue
     }

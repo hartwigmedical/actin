@@ -12,8 +12,8 @@ import com.hartwig.actin.clinical.curation.config.InfectionConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
-import com.hartwig.actin.datamodel.clinical.ECG
-import com.hartwig.actin.datamodel.clinical.ECGMeasure
+import com.hartwig.actin.datamodel.clinical.Ecg
+import com.hartwig.actin.datamodel.clinical.EcgMeasure
 import com.hartwig.actin.datamodel.clinical.InfectionStatus
 
 class ClinicalStatusExtractor(
@@ -41,8 +41,8 @@ class ClinicalStatusExtractor(
         return ExtractionResult(clinicalStatus, ecgCuration.evaluation + infectionCuration.evaluation)
     }
 
-    private fun curateECG(patientId: String, rawECG: ECG?): ExtractionResult<ECG?> {
-        val curationResponse = rawECG?.aberrationDescription?.let {
+    private fun curateECG(patientId: String, rawECG: Ecg?): ExtractionResult<Ecg?> {
+        val curationResponse = rawECG?.name?.let {
             CurationResponse.createFromConfigs(
                 ecgCuration.find(it), patientId, CurationCategory.ECG, it, "ECG", true
             )
@@ -57,7 +57,7 @@ class ClinicalStatusExtractor(
                 if (config.ignore) null else {
                     return ExtractionResult(
                         rawECG.copy(
-                            aberrationDescription = config.interpretation.ifEmpty { null },
+                            name = config.interpretation.ifEmpty { null },
                             qtcfMeasure = maybeECGMeasure(config.qtcfValue, config.qtcfUnit),
                             jtcMeasure = maybeECGMeasure(config.jtcValue, config.jtcUnit)
                         ),
@@ -96,10 +96,10 @@ class ClinicalStatusExtractor(
         return ExtractionResult(infectionStatus, curationResponse?.extractionEvaluation ?: CurationExtractionEvaluation())
     }
 
-    private fun maybeECGMeasure(value: Int?, unit: String?): ECGMeasure? {
+    private fun maybeECGMeasure(value: Int?, unit: String?): EcgMeasure? {
         return if (value == null || unit == null) {
             null
-        } else ECGMeasure(value = value, unit = unit)
+        } else EcgMeasure(value = value, unit = unit)
     }
 
     private fun determineLVEF(nonOncologicalHistoryEntries: List<String>?): Double? {

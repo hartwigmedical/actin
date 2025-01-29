@@ -3,13 +3,13 @@ package com.hartwig.actin.algo.evaluation.cardiacfunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
-import com.hartwig.actin.datamodel.clinical.ECG
-import com.hartwig.actin.datamodel.clinical.ECGMeasure
+import com.hartwig.actin.datamodel.clinical.Ecg
+import com.hartwig.actin.datamodel.clinical.EcgMeasure
 import com.hartwig.actin.datamodel.clinical.OtherCondition
 
 internal object CardiacFunctionTestFactory {
-    fun createMinimal(): ECG {
-        return ECG(hasSigAberrationLatestECG = false, null, null, null)
+    fun createMinimal(): Ecg {
+        return Ecg(hasSigAberrationLatestECG = false, null, null, null)
     }
 
     fun withHasSignificantECGAberration(hasSignificantECGAberration: Boolean): PatientRecord {
@@ -17,7 +17,7 @@ internal object CardiacFunctionTestFactory {
     }
 
     fun withHasSignificantECGAberration(hasSignificantECGAberration: Boolean, description: String?): PatientRecord {
-        return withECG(createMinimal().copy(hasSigAberrationLatestECG = hasSignificantECGAberration, aberrationDescription = description))
+        return withECG(createMinimal().copy(hasSigAberrationLatestECG = hasSignificantECGAberration, name = description))
     }
 
     fun withLVEF(lvef: Double?): PatientRecord {
@@ -27,7 +27,7 @@ internal object CardiacFunctionTestFactory {
         )
     }
 
-    fun withECG(ecg: ECG?): PatientRecord {
+    fun withECG(ecg: Ecg?): PatientRecord {
         return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
             clinicalStatus = ClinicalStatus(ecg = ecg)
         )
@@ -40,6 +40,6 @@ internal object CardiacFunctionTestFactory {
     }
 
     fun withValueAndUnit(value: Int, unit: String = ECGUnit.MILLISECONDS.symbol()): PatientRecord {
-        return withECG(createMinimal().copy(qtcfMeasure = ECGMeasure(value = value, unit = unit)))
+        return withECG(createMinimal().copy(qtcfMeasure = EcgMeasure(value = value, unit = unit)))
     }
 }

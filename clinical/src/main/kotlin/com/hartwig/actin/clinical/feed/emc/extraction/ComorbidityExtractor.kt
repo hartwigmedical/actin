@@ -19,6 +19,7 @@ import com.hartwig.actin.clinical.feed.emc.intolerance.IntoleranceEntry
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
 import com.hartwig.actin.datamodel.clinical.Comorbidity
 import com.hartwig.actin.datamodel.clinical.Complication
+import com.hartwig.actin.datamodel.clinical.Ecg
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.OtherCondition
@@ -47,7 +48,8 @@ class ComorbidityExtractor(
             },
             extractFeedToxicities(toxicityEntries, patientId),
             questionnaire?.unresolvedToxicities?.let { extractQuestionnaireToxicities(patientId, it, questionnaire.date) },
-            extractIntolerances(patientId, intoleranceEntries)
+            extractIntolerances(patientId, intoleranceEntries),
+            questionnaire?.let { extractEcg(patientId, it.ecg) }
         ).flatten()
             .fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { (comorbidities, aggregatedEval), (comorbidity, eval) ->
                 ExtractionResult(comorbidities + comorbidity, aggregatedEval + eval)
@@ -166,6 +168,27 @@ class ComorbidityExtractor(
             ExtractionResult(toxicities, curationResponse.extractionEvaluation)
         }
     }
+
+    private fun extractEcg(patientId: String, rawEcg: Ecg): List<ExtractionResult<List<Ecg>>> {
+        val curationResponse = rawEcg.name?.let { curate(it, patientId, CurationCategory.ECG, "ECG", rawEcg, true) }
+        val ecg = if (curationResponse?.configs?.size == 0) rawEcg else {
+            curationResponse?.config()?.takeUnless { it.ignore }?.curated?.let { curated ->
+                rawEcg.copy(
+                    name = curated.name,
+                    icdCodes = curated.icdCodes,
+                    year = curated.year,
+                    month = curated.month,
+                    hasSigAberrationLatestECG = coalesce(curated, rawEcg, Ecg::hasSigAberrationLatestECG),
+                    qtcfMeasure = coalesce(curated, rawEcg, Ecg::qtcfMeasure),
+                    jtcMeasure = coalesce(curated, rawEcg, Ecg::jtcMeasure)
+                )
+            }
+        }
+        return listOf(ExtractionResult(listOfNotNull(ecg), curationResponse?.extractionEvaluation ?: CurationExtractionEvaluation()))
+    }
+
+    private fun <T, U> coalesce(curated: Comorbidity?, default: T, function: (T) -> U): U =
+        curated?.let { it as? T }?.let(function) ?: function(default)
 
     private fun curate(
         input: String,

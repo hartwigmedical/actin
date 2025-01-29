@@ -11,8 +11,8 @@ class HasECGAberration internal constructor() : EvaluationFunction {
         val ecg = record.clinicalStatus.ecg
             ?: return EvaluationFactory.recoverableFail("Missing ECG details - assumed no ECG abnormalities")
         return when {
-            ecg.hasSigAberrationLatestECG && ecg.aberrationDescription != null -> {
-                EvaluationFactory.pass("ECG abnormalities present (${ecg.aberrationDescription})")
+            ecg.hasSigAberrationLatestECG && ecg.name != null -> {
+                EvaluationFactory.pass("ECG abnormalities present (${ecg.name})")
             }
 
             ecg.hasSigAberrationLatestECG -> {

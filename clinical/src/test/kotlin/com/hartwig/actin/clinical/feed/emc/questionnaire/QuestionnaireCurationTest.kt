@@ -172,7 +172,7 @@ class QuestionnaireCurationTest {
     fun `Should return descrioption verbatim for when curation does not exist ECG`() {
         val infectionStatus = toECG(SUBJECT, "new ECG value")
         val curated = infectionStatus.curated!!
-        assertThat(curated.aberrationDescription).isEqualTo("new ECG value")
+        assertThat(curated.name).isEqualTo("new ECG value")
         assertThat(curated.hasSigAberrationLatestECG).isTrue
         assertThat(infectionStatus.errors).isEmpty()
     }
@@ -185,7 +185,7 @@ class QuestionnaireCurationTest {
 
         val curated = status.curated!!
         assertThat(curated.hasSigAberrationLatestECG).isTrue()
-        assertThat(curated.aberrationDescription).isEqualTo(description)
+        assertThat(curated.name).isEqualTo(description)
     }
 
     @Test
@@ -196,7 +196,7 @@ class QuestionnaireCurationTest {
 
         val curated = status.curated!!
         assertThat(curated.hasSigAberrationLatestECG).isFalse()
-        assertThat(curated.aberrationDescription).isEqualTo(description)
+        assertThat(curated.name).isEqualTo(description)
     }
 
     @Test
@@ -207,6 +207,6 @@ class QuestionnaireCurationTest {
 
         val curated = status.curated!!
         assertThat(curated.hasSigAberrationLatestECG).isTrue()
-        assertThat(curated.aberrationDescription).isEqualTo(description)
+        assertThat(curated.name).isEqualTo(description)
     }
 }
