@@ -23,7 +23,8 @@ enum class BodyLocationCategory(private val display: String): Displayable {
     REPRODUCTIVE_SYSTEM("reproductive system"),
     SPLEEN("spleen"),
     STOMACH("stomach"),
-    THYROID_GLAND("thyroid gland");
+    THYROID_GLAND("thyroid gland"),
+    VASCULAR("vascular");
 
     override fun display(): String {
         return display
