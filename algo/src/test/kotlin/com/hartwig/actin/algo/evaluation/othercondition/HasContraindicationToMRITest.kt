@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.othercondition.ComorbidityTestFactory.intolerance
 import com.hartwig.actin.algo.evaluation.othercondition.ComorbidityTestFactory.otherCondition
 import com.hartwig.actin.algo.evaluation.othercondition.ComorbidityTestFactory.withOtherCondition
+import com.hartwig.actin.algo.evaluation.othercondition.HasContraindicationToMRI.Companion.COMORBIDITIES_THAT_ARE_CONTRAINDICATIONS_TO_MRI
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.icd.TestIcdFactory
@@ -42,10 +43,9 @@ class HasContraindicationToMRITest {
 
     @Test
     fun `Should pass with a condition with correct name`() {
-        val contraindicationName = HasContraindicationToMRI.OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_MRI.first()
-        assertEvaluation(
-            EvaluationResult.PASS, function.evaluate(withOtherCondition(otherCondition(name = contraindicationName)))
-        )
+        COMORBIDITIES_THAT_ARE_CONTRAINDICATIONS_TO_MRI.forEach { contraindicationName ->
+            assertEvaluation(EvaluationResult.PASS, function.evaluate(withOtherCondition(otherCondition(name = contraindicationName))))
+        }
     }
 
 
@@ -62,7 +62,9 @@ class HasContraindicationToMRITest {
 
     @Test
     fun `Should pass with relevant intolerance`() {
-        val intolerances = listOf(intolerance(HasContraindicationToMRI.INTOLERANCES_BEING_CONTRAINDICATIONS_TO_MRI.first()))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withIntolerances(intolerances)))
+        COMORBIDITIES_THAT_ARE_CONTRAINDICATIONS_TO_MRI.forEach { contraindicationName ->
+            val record = ComorbidityTestFactory.withIntolerances(listOf(intolerance(contraindicationName)))
+            assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
+        }
     }
 }

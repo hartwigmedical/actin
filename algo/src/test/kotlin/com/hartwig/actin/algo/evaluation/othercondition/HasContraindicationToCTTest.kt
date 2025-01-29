@@ -44,11 +44,10 @@ class HasContraindicationToCTTest {
     }
 
     @Test
-    fun `Should pass with a condition with correct name`() {
-        val contraindicationName = HasContraindicationToCT.OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_CT.first()
-        assertEvaluation(
-            EvaluationResult.PASS, function.evaluate(withOtherCondition(otherCondition(name = contraindicationName)))
-        )
+    fun `Should pass with other condition that matches by name`() {
+        HasContraindicationToCT.COMORBIDITIES_THAT_ARE_CONTRAINDICATIONS_TO_CT.forEach { contraindicationName ->
+            assertEvaluation(EvaluationResult.PASS, function.evaluate(withOtherCondition(otherCondition(name = contraindicationName))))
+        }
     }
 
     @Test
@@ -62,9 +61,10 @@ class HasContraindicationToCTTest {
     }
 
     @Test
-    fun `Should pass with relevant intolerance`() {
-        val relevantAllergy = HasContraindicationToCT.INTOLERANCES_BEING_CONTRAINDICATIONS_TO_CT.first()
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withIntolerances(listOf(intolerance(relevantAllergy)))))
+    fun `Should pass with intolerance that matches by name`() {
+        HasContraindicationToCT.COMORBIDITIES_THAT_ARE_CONTRAINDICATIONS_TO_CT.forEach { contraindicationName ->
+            assertEvaluation(EvaluationResult.PASS, function.evaluate(withIntolerances(listOf(intolerance(contraindicationName)))))
+        }
     }
 
     @Test

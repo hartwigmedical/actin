@@ -17,10 +17,10 @@ class HasContraindicationToCT(private val icdModel: IcdModel) : EvaluationFuncti
 
         val matchingComorbidities = icdModel.findInstancesMatchingAnyIcdCode(record.comorbidities, targetIcdCode).fullMatches
 
-        val comorbiditiesMatchingString = record.comorbidities.filter {
-            stringCaseInsensitivelyMatchesQueryCollection(
-                it.name, OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_CT + INTOLERANCES_BEING_CONTRAINDICATIONS_TO_CT
-            )
+        val comorbiditiesMatchingString = record.comorbidities.filter { comorbidity ->
+            comorbidity.name?.let {
+                stringCaseInsensitivelyMatchesQueryCollection(it, COMORBIDITIES_THAT_ARE_CONTRAINDICATIONS_TO_CT)
+            } == true
         }
 
         val conditionString = Format.concatItemsWithAnd(matchingComorbidities)
@@ -38,7 +38,6 @@ class HasContraindicationToCT(private val icdModel: IcdModel) : EvaluationFuncti
     }
 
     companion object {
-        val OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_CT = setOf("claustrophobia")
-        val INTOLERANCES_BEING_CONTRAINDICATIONS_TO_CT = setOf("contrast agent")
+        val COMORBIDITIES_THAT_ARE_CONTRAINDICATIONS_TO_CT = setOf("claustrophobia", "contrast agent")
     }
 }

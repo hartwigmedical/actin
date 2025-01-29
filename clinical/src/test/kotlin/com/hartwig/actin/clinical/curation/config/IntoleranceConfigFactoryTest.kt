@@ -22,15 +22,24 @@ class IntoleranceConfigFactoryTest {
 
     @Test
     fun `Should return IntoleranceConfig from valid inputs`() {
+        assertConfigCreation("name", "name")
+    }
+
+    @Test
+    fun `Should return IntoleranceConfig with null name from valid inputs with empty curated name`() {
+        assertConfigCreation(" ", null)
+    }
+
+    private fun assertConfigCreation(curatedName: String, expectedName: String?) {
         every { icdModel.isValidIcdTitle(icdTitle) } returns true
         every { icdModel.resolveCodeForTitle(icdTitle) } returns icdCode
 
-        val config = factory.create(fields, arrayOf("input", "name", icdTitle, TreatmentCategory.IMMUNOTHERAPY.display()))
+        val config = factory.create(fields, arrayOf("input", curatedName, icdTitle, TreatmentCategory.IMMUNOTHERAPY.display()))
         assertThat(config.errors).isEmpty()
         with(config.config) {
             assertThat(input).isEqualTo("input")
             assertThat(ignore).isFalse()
-            assertThat(curated?.name).isEqualTo("name")
+            assertThat(curated?.name).isEqualTo(expectedName)
             assertThat(curated?.icdCodes).isEqualTo(setOf(icdCode))
         }
     }

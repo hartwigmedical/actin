@@ -338,7 +338,7 @@ internal class ClinicalDAO(private val context: DSLContext) {
     private fun writeComplications(patientId: String, complications: List<Complication>?) {
         if (complications != null) {
             for (complication in complications) {
-                if (complication.name.isNotEmpty()) {
+                if (complication.name?.isNotEmpty() == true) {
                     context.insertInto(
                         Tables.COMPLICATION,
                         Tables.COMPLICATION.PATIENTID,

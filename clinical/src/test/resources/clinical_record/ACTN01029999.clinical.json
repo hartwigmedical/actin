@@ -205,7 +205,7 @@
       "name": "Pain",
       "icdCodes": [
         {
-          "mainCode": "",
+          "mainCode": "NE60",
           "extensionCode": null
         }
       ],
