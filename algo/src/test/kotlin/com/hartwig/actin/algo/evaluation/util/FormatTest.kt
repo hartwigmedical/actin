@@ -81,9 +81,9 @@ class FormatTest {
     }
 
     @Test
-    fun canFormatLabReferences() {
-        assertEquals("2.0*ULN (8.0)", Format.labReference(2.0, "ULN", 4.0))
-        assertEquals("2.0*ULN (2.0*NA)", Format.labReference(2.0, "ULN", null))
+    fun canFormatLabReferencesULN() {
+        assertEquals("2.0*ULN (8.0 umol/L)", Format.labReferenceWithLimit(2.0, "ULN", 4.0, LabUnit.MICROMOLES_PER_LITER))
+        assertEquals("2.0*ULN (2.0*NA mg/dL)", Format.labReferenceWithLimit(2.0, "ULN", null, LabUnit.MILLIGRAMS_PER_DECILITER))
     }
 
     @Test
