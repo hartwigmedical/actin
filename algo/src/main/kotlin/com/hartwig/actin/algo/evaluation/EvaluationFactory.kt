@@ -51,13 +51,15 @@ object EvaluationFactory {
     fun warn(
         message: String,
         recoverable: Boolean = false,
-        inclusionEvents: Set<String> = emptySet()
+        inclusionEvents: Set<String> = emptySet(),
+        isMissingMolecularResultForEvaluation: Boolean = false
     ): Evaluation {
         return Evaluation(
             recoverable = recoverable,
             result = EvaluationResult.WARN,
             warnMessages = setOf(message),
-            inclusionMolecularEvents = inclusionEvents
+            inclusionMolecularEvents = inclusionEvents,
+            isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation
         )
     }
 

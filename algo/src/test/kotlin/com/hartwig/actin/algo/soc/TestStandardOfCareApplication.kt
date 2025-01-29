@@ -38,7 +38,7 @@ class TestStandardOfCareApplication {
 
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(TREATMENT_JSON_PATH)
 
-        val recommendationEngine = RecommendationEngineFactory(
+        val standardOfCareEvaluator = StandardOfCareEvaluatorFactory(
             RuleMappingResourcesTestFactory.create(doidModel, icdModel, AtcTree.createFromFile(ATC_TREE_PATH), treatmentDatabase)
         ).create()
 
@@ -46,8 +46,8 @@ class TestStandardOfCareApplication {
         LOGGER.info("Generating recommendations for patient record")
         PatientPrinter.printRecord(patient)
 
-        LOGGER.info(recommendationEngine.provideRecommendations(patient))
-        val patientHasExhaustedStandardOfCare = recommendationEngine.patientHasExhaustedStandardOfCare(patient)
+        LOGGER.info(standardOfCareEvaluator.summarizeAvailableTreatments(patient))
+        val patientHasExhaustedStandardOfCare = standardOfCareEvaluator.patientHasExhaustedStandardOfCare(patient)
         LOGGER.info("Standard of care has${if (patientHasExhaustedStandardOfCare) "" else " not"} been exhausted")
         return 0
     }

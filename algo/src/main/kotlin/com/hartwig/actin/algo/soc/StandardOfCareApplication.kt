@@ -66,10 +66,10 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
             config.personalizationDataPath,
             configuration
         )
-        val recommendationEngine = RecommendationEngineFactory(resources).create()
+        val standardOfCareEvaluator = StandardOfCareEvaluatorFactory(resources).create()
 
-        LOGGER.info(recommendationEngine.provideRecommendations(patient))
-        val requiredTreatments = recommendationEngine.determineRequiredTreatments(patient)
+        LOGGER.info(standardOfCareEvaluator.summarizeAvailableTreatments(patient))
+        val requiredTreatments = standardOfCareEvaluator.evaluateRequiredTreatments(patient).evaluatedTreatments
         requiredTreatments.forEach {
             val allMessages = it.evaluations.flatMap { evaluation ->
                 with(evaluation) {

@@ -4,8 +4,9 @@ import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory
-import com.hartwig.actin.algo.soc.RecommendationEngine
-import com.hartwig.actin.algo.soc.RecommendationEngineFactory
+import com.hartwig.actin.algo.soc.StandardOfCareEvaluation
+import com.hartwig.actin.algo.soc.StandardOfCareEvaluator
+import com.hartwig.actin.algo.soc.StandardOfCareEvaluatorFactory
 import com.hartwig.actin.datamodel.algo.EvaluatedTreatment
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.TreatmentCandidate
@@ -23,10 +24,10 @@ import org.junit.Test
 
 class IsEligibleForOnLabelTreatmentTest {
 
-    private val recommendationEngine = mockk<RecommendationEngine>()
-    private val recommendationEngineFactory = mockk<RecommendationEngineFactory> { every { create() } returns recommendationEngine }
+    private val standardOfCareEvaluator = mockk<StandardOfCareEvaluator>()
+    private val standardOfCareEvaluatorFactory = mockk<StandardOfCareEvaluatorFactory> { every { create() } returns standardOfCareEvaluator }
     private val targetTreatment = treatment("PEMBROLIZUMAB", true)
-    val function = IsEligibleForOnLabelTreatment(targetTreatment, recommendationEngineFactory)
+    val function = IsEligibleForOnLabelTreatment(targetTreatment, standardOfCareEvaluatorFactory)
     private val colorectalCancerPatient = TumorTestFactory.withDoidAndSubLocation(DoidConstants.COLORECTAL_CANCER_DOID, "left")
 
     @Test
@@ -37,32 +38,25 @@ class IsEligibleForOnLabelTreatmentTest {
         )
         val expectedSocTreatments = listOf(EvaluatedTreatment(treatmentCandidate, listOf(EvaluationFactory.pass("Has MSI"))))
 
-        every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(colorectalCancerPatient) } returns true
-        every { recommendationEngine.standardOfCareEvaluatedTreatments(colorectalCancerPatient) } returns expectedSocTreatments
-        assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            function.evaluate(
-                colorectalCancerPatient
-            )
-        )
+        every { standardOfCareEvaluator.standardOfCareCanBeEvaluatedForPatient(colorectalCancerPatient) } returns true
+        every {
+            standardOfCareEvaluator.standardOfCareEvaluatedTreatments(colorectalCancerPatient)
+        } returns StandardOfCareEvaluation(expectedSocTreatments)
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(colorectalCancerPatient))
     }
 
     @Test
     fun `Should fail for colorectal cancer patient ineligible for on label treatment pembrolizumab`() {
-        every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(colorectalCancerPatient) } returns true
-        every { recommendationEngine.standardOfCareEvaluatedTreatments(colorectalCancerPatient) } returns emptyList()
-        assertEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(
-                colorectalCancerPatient
-            )
-        )
+        every { standardOfCareEvaluator.standardOfCareCanBeEvaluatedForPatient(colorectalCancerPatient) } returns true
+        every {
+            standardOfCareEvaluator.standardOfCareEvaluatedTreatments(colorectalCancerPatient)
+        } returns StandardOfCareEvaluation(emptyList())
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(colorectalCancerPatient))
     }
 
     @Test
     fun `Should return undetermined for tumor type CUP`() {
-        every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(any()) } returns false
-        every { recommendationEngine.standardOfCareEvaluatedTreatments(any()) } returns emptyList()
+        standardOfCareCannotBeEvaluatedForPatient()
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
@@ -73,8 +67,7 @@ class IsEligibleForOnLabelTreatmentTest {
 
     @Test
     fun `Should warn for non colorectal cancer patient with target treatment already administered in history`() {
-        every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(any()) } returns false
-        every { recommendationEngine.standardOfCareEvaluatedTreatments(any()) } returns emptyList()
+        standardOfCareCannotBeEvaluatedForPatient()
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry(setOf(targetTreatment, treatment("other", true)))))
@@ -84,22 +77,19 @@ class IsEligibleForOnLabelTreatmentTest {
 
     @Test
     fun `Should return undetermined for non colorectal cancer patient with empty treatment list`() {
-        every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(any()) } returns false
-        every { recommendationEngine.standardOfCareEvaluatedTreatments(any()) } returns emptyList()
-        assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            function.evaluate(withTreatmentHistory(emptyList()))
-        )
+        standardOfCareCannotBeEvaluatedForPatient()
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistory(emptyList())))
     }
 
     @Test
     fun `Should return undetermined for non colorectal cancer patient with non empty treatment list but not containing the specific treatment`() {
-        every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(any()) } returns false
-        every { recommendationEngine.standardOfCareEvaluatedTreatments(any()) } returns emptyList()
+        standardOfCareCannotBeEvaluatedForPatient()
         val treatments = listOf(treatmentHistoryEntry(setOf(treatment("test", true))))
-        assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            function.evaluate(withTreatmentHistory(treatments))
-        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistory(treatments)))
+    }
+
+    private fun standardOfCareCannotBeEvaluatedForPatient() {
+        every { standardOfCareEvaluator.standardOfCareCanBeEvaluatedForPatient(any()) } returns false
+        every { standardOfCareEvaluator.standardOfCareEvaluatedTreatments(any()) } returns StandardOfCareEvaluation(emptyList())
     }
 }

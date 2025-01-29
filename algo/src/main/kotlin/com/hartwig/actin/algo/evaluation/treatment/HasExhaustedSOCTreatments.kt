@@ -4,18 +4,18 @@ import com.hartwig.actin.algo.doid.DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_D
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.createFullExpandedDoidTree
-import com.hartwig.actin.algo.soc.RecommendationEngineFactory
+import com.hartwig.actin.algo.soc.StandardOfCareEvaluatorFactory
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.doid.DoidModel
 
 class HasExhaustedSOCTreatments(
-    private val recommendationEngineFactory: RecommendationEngineFactory, private val doidModel: DoidModel
+    private val standardOfCareEvaluatorFactory: StandardOfCareEvaluatorFactory, private val doidModel: DoidModel
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val recommendationEngine = recommendationEngineFactory.create()
+        val standardOfCareEvaluator = standardOfCareEvaluatorFactory.create()
         val isNSCLC = LUNG_NON_SMALL_CELL_CARCINOMA_DOID in createFullExpandedDoidTree(doidModel, record.tumor.doids)
         val hasReceivedPlatinumBasedDoubletOrMore =
             TreatmentFunctions.receivedPlatinumDoublet(record) || TreatmentFunctions.receivedPlatinumTripletOrAbove(record)
@@ -24,15 +24,26 @@ class HasExhaustedSOCTreatments(
         }
 
         return when {
-            recommendationEngine.standardOfCareCanBeEvaluatedForPatient(record) -> {
-                val remainingNonOptionalTreatments = recommendationEngine.determineRequiredTreatments(record)
+            standardOfCareEvaluator.standardOfCareCanBeEvaluatedForPatient(record) -> {
+                val treatmentEvaluation = standardOfCareEvaluator.evaluateRequiredTreatments(record)
+                val remainingNonOptionalTreatments = treatmentEvaluation.potentiallyEligibleTreatments()
                     .joinToString(", ") { it.treatmentCandidate.treatment.name.lowercase() }
-                if (remainingNonOptionalTreatments.isEmpty()) {
-                    EvaluationFactory.pass("Has exhausted SOC")
-                } else {
-                    EvaluationFactory.fail(
-                        "Has not exhausted SOC (remaining options: $remainingNonOptionalTreatments)"
-                    )
+                when {
+                    remainingNonOptionalTreatments.isEmpty() -> {
+                        EvaluationFactory.pass("Has exhausted SOC")
+                    }
+                    treatmentEvaluation.isMissingMolecularResultForEvaluation() -> {
+                        EvaluationFactory.warn(
+                            "Has potentially not exhausted SOC ($remainingNonOptionalTreatments) " +
+                                    "but some corresponding molecular results are missing",
+                            isMissingMolecularResultForEvaluation = true
+                        )
+                    }
+                    else -> {
+                        EvaluationFactory.fail(
+                            "Has not exhausted SOC (remaining options: $remainingNonOptionalTreatments)"
+                        )
+                    }
                 }
             }
 
