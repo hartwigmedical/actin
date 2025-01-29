@@ -75,7 +75,7 @@ class HasAdequateOrganFunction(private val minValidDate: LocalDate, private val 
 
             cardiovascularHistory.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "$messageStart (cardiovascular disease present: ${cardiovascularHistory.joinToString(", ")})"
+                    "$messageStart (cardiovascular disease present: ${cardiovascularHistory.joinToString(", ") { it.display() }})"
                 )
             }
 
