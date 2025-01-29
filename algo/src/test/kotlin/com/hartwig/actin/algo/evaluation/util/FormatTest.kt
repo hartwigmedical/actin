@@ -106,7 +106,7 @@ class FormatTest {
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun crashOnIllegalPercentage() {
+    fun `Should crash with illegal fraction`() {
         Format.percentage(50.0)
     }
 }
