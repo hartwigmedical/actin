@@ -25,9 +25,9 @@ class HasLimitedBilirubinDependingOnGilbertDisease(
                 setOf(IcdCode(IcdConstants.GILBERT_SYNDROME_CODE))
             ).fullMatches.isNotEmpty()
         ) {
-            (labMeasureWithGilbertDisease to maxULNWithGilbertDisease)
+            labMeasureWithGilbertDisease to maxULNWithGilbertDisease
         } else {
-            (labMeasureWithoutGilbertDisease to maxULNWithoutGilbertDisease)
+            labMeasureWithoutGilbertDisease to maxULNWithoutGilbertDisease
         }
 
         return LabMeasurementEvaluator(applicableMeasure, HasLimitedLabValueULN(applicableULN), minValidLabDate, minPassLabDate).evaluate(

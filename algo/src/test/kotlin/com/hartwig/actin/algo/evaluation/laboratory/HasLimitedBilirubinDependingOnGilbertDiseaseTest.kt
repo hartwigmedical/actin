@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory
+import com.hartwig.actin.algo.evaluation.othercondition.ComorbidityTestFactory
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -32,13 +32,13 @@ class HasLimitedBilirubinDependingOnGilbertDiseaseTest {
     private val TBIL_4_ULN = LabTestFactory.create(TBIL, value = 400.0, refDate, refLimitUp = 100.0)
     private val DBIL_1_ULN = LabTestFactory.create(DBIL, value = 100.0, refDate, refLimitUp = 100.0)
     private val DBIL_6_ULN = LabTestFactory.create(DBIL, value = 600.0, refDate, refLimitUp = 100.0)
-    private val recordWithGilbertDisease = OtherConditionTestFactory.withOtherCondition(
-        OtherConditionTestFactory.otherCondition(
+    private val recordWithGilbertDisease = ComorbidityTestFactory.withOtherCondition(
+        ComorbidityTestFactory.otherCondition(
             name = "Gilbert",
             icdMainCode = IcdConstants.GILBERT_SYNDROME_CODE
         )
     )
-    private val recordWithoutGilbertDisease = OtherConditionTestFactory.withOtherConditions(emptyList())
+    private val recordWithoutGilbertDisease = ComorbidityTestFactory.withOtherConditions(emptyList())
 
     @Test
     fun `Should pass when evaluating requested and allowed measure`() {
