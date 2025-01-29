@@ -5,7 +5,7 @@ import com.hartwig.actin.datamodel.clinical.ComorbidityClass
 import com.hartwig.actin.datamodel.clinical.IcdCode
 
 data class ToxicityCuration(
-    override val name: String,
+    override val name: String?,
     override val icdCodes: Set<IcdCode>,
     val grade: Int?
 ) : Comorbidity {

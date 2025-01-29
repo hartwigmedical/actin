@@ -16,7 +16,7 @@ class IntoleranceConfigFactory(private val  icdModel: IcdModel) : CurationConfig
                 input = input,
                 ignore = false,
                 curated = Intolerance(
-                    name = parts[fields["name"]!!],
+                    name = parts[fields["name"]!!].trim().ifEmpty { null },
                     icdCodes = icdCodes
                 )
             ), icdValidationErrors

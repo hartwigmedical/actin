@@ -47,7 +47,7 @@ class OtherConditionConfigFactory(private val icdModel: IcdModel) : CurationConf
             val (month, monthValidationErrors) = validateInteger(CurationCategory.NON_ONCOLOGICAL_HISTORY, input, "month", fields, parts)
 
             OtherCondition(
-                name = parts[fields["name"]!!],
+                name = parts[fields["name"]!!].trim().ifEmpty { null },
                 year = year,
                 month = month,
                 icdCodes = icdCodes

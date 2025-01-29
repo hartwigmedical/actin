@@ -33,9 +33,18 @@ class OtherConditionConfigFactoryTest {
 
     @Test
     fun `Should return NonOncologicalHistoryConfig with other condition from valid inputs is not lvef`() {
+        assertConfigCreation("name", "name")
+    }
+
+    @Test
+    fun `Should return NonOncologicalHistoryConfig with other condition with null name from valid inputs with empty name curation`() {
+        assertConfigCreation(" ", null)
+    }
+
+    private fun assertConfigCreation(curatedName: String, expectedName: String?) {
         val config = OtherConditionConfigFactory(icdModel).create(
             fields,
-            arrayOf("input", "name", "2023", "12", "$icdTitle&$icdExtension", "0", "", "1")
+            arrayOf("input", curatedName, "2023", "12", "$icdTitle&$icdExtension", "0", "", "1")
         )
         assertThat(config.errors).isEmpty()
         assertThat(config.config.input).isEqualTo("input")
@@ -43,7 +52,7 @@ class OtherConditionConfigFactoryTest {
         assertThat(config.config.lvef).isNull()
         val otherCondition = config.config.curated!!
         assertThat(otherCondition.icdCodes).isEqualTo(icdCodes)
-        assertThat(otherCondition.name).isEqualTo("name")
+        assertThat(otherCondition.name).isEqualTo(expectedName)
         assertThat(otherCondition.year).isEqualTo(2023)
         assertThat(otherCondition.month).isEqualTo(12)
     }
