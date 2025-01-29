@@ -16,26 +16,21 @@ class HasHadLimitedTreatmentsWithCategoryOfTypes(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val treatmentSummary = if (types == null) {
-            TreatmentSummaryForCategory.createForTreatmentHistory(record.oncologicalHistory, category)
-        } else {
-            TreatmentSummaryForCategory.createForTreatmentHistory(
-                record.oncologicalHistory, category, { historyEntry -> historyEntry.matchesTypeFromSet(types) }
-            )
-        }
-        val treatmentString = if (types == null) {
-            category.display()
-        } else {
-            "${Format.concatItemsWithOr(types)} ${category.display()}"
-        }
+        val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
+            record.oncologicalHistory,
+            category,
+            types?.let { { historyEntry -> historyEntry.matchesTypeFromSet(types) } } ?: { true })
+        val treatmentString = (types?.let { "${Format.concatItemsWithOr(types)} " } ?: "") + category.display()
         val messageEnding = "received at most $maxTreatmentLines lines of $treatmentString"
 
         return when {
-            treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches + treatmentSummary.numPossibleTrialMatches <= maxTreatmentLines && (!treatmentIsRequired || treatmentSummary.hasSpecificMatch()) -> {
+            treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches + treatmentSummary.numPossibleTrialMatches <= maxTreatmentLines
+                    && (!treatmentIsRequired || treatmentSummary.hasSpecificMatch()) -> {
                 EvaluationFactory.pass("Has $messageEnding")
             }
 
-            treatmentIsRequired && !treatmentSummary.hasSpecificMatch() && !treatmentSummary.hasApproximateMatch() && !treatmentSummary.hasPossibleTrialMatch() -> {
+            treatmentIsRequired && !treatmentSummary.hasSpecificMatch() && !treatmentSummary.hasApproximateMatch()
+                    && !treatmentSummary.hasPossibleTrialMatch() -> {
                 EvaluationFactory.fail("Has not received $treatmentString treatment")
             }
 

@@ -11,7 +11,29 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import org.junit.Test
 
+private const val MAX_TREATMENT_LINES = 1
+private val MATCHING_CATEGORY = TreatmentCategory.TARGETED_THERAPY
+private val MATCHING_TYPE_SET = setOf(DrugType.HER2_ANTIBODY, DrugType.HER3_ANTIBODY)
+private val MATCHING_TREATMENT_WITH_TYPES =
+    treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY, types = MATCHING_TYPE_SET)))
+private val MATCHING_TREATMENT_WITH_ONE_TYPE =
+    treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY, types = setOf(MATCHING_TYPE_SET.first()))))
+private val NON_MATCHING_TREATMENT_CATEGORY_AND_TYPES =
+    treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY, types = setOf(DrugType.ANTI_TISSUE_FACTOR))))
+private val NON_MATCHING_TREATMENT_ONLY_WRONG_TYPE =
+    treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY, types = setOf(DrugType.ANTI_TISSUE_FACTOR))))
+private val NON_MATCHING_TREATMENT_ONLY_UNKNOWN_TYPE = treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY)))
+private val TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES =
+    treatmentHistoryEntry(setOf(treatment("trial", true, emptySet())), isTrial = true)
+private val RARE_CATEGORY = TreatmentCategory.TRANSPLANTATION
+
 class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
+    private val functionTreatmentOptional = HasHadLimitedTreatmentsWithCategoryOfTypes(MATCHING_CATEGORY, null, MAX_TREATMENT_LINES, false)
+    private val functionTreatmentOptionalWithTypes =
+        HasHadLimitedTreatmentsWithCategoryOfTypes(MATCHING_CATEGORY, MATCHING_TYPE_SET, MAX_TREATMENT_LINES, false)
+    private val functionTreatmentRequired = HasHadLimitedTreatmentsWithCategoryOfTypes(MATCHING_CATEGORY, null, MAX_TREATMENT_LINES, true)
+    private val functionTreatmentRequiredWithTypes =
+        HasHadLimitedTreatmentsWithCategoryOfTypes(MATCHING_CATEGORY, MATCHING_TYPE_SET, MAX_TREATMENT_LINES, true)
 
     @Test
     fun `Should pass in case patient had no treatments and treatment is optional`() {
@@ -49,7 +71,7 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
     fun `Should pass when treatments with correct category with wrong type within limit and treatment is optional and types required`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            FUNCTION_TREATMENT_OPTIONAL_WITH_TYPES.evaluate(withTreatmentHistory(listOf(NON_MATCHING_TREATMENT_ONLY_WRONG_TYPE)))
+            functionTreatmentOptionalWithTypes.evaluate(withTreatmentHistory(listOf(NON_MATCHING_TREATMENT_ONLY_WRONG_TYPE)))
         )
     }
 
@@ -57,7 +79,7 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
     fun `Should fail when treatments with correct category with wrong type within limit and treatment is required and types required`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            FUNCTION_TREATMENT_REQUIRED_WITH_TYPES.evaluate(withTreatmentHistory(listOf(NON_MATCHING_TREATMENT_ONLY_WRONG_TYPE)))
+            functionTreatmentRequiredWithTypes.evaluate(withTreatmentHistory(listOf(NON_MATCHING_TREATMENT_ONLY_WRONG_TYPE)))
         )
     }
 
@@ -65,7 +87,7 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
     fun `Should pass when treatments with correct category but missing type possibly within limit and treatment is optional and types required`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            FUNCTION_TREATMENT_OPTIONAL_WITH_TYPES.evaluate(withTreatmentHistory(listOf(NON_MATCHING_TREATMENT_ONLY_UNKNOWN_TYPE)))
+            functionTreatmentOptionalWithTypes.evaluate(withTreatmentHistory(listOf(NON_MATCHING_TREATMENT_ONLY_UNKNOWN_TYPE)))
         )
     }
 
@@ -73,7 +95,7 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
     fun `Should be undetermined when treatments with correct category but missing type possibly within limit and treatment is required and types required`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            FUNCTION_TREATMENT_REQUIRED_WITH_TYPES.evaluate(withTreatmentHistory(listOf(NON_MATCHING_TREATMENT_ONLY_UNKNOWN_TYPE)))
+            functionTreatmentRequiredWithTypes.evaluate(withTreatmentHistory(listOf(NON_MATCHING_TREATMENT_ONLY_UNKNOWN_TYPE)))
         )
     }
 
@@ -81,23 +103,17 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
     fun `Should be undetermined when treatments with correct category but missing type possibly exceeding limit whether treatment is optional or required and types required`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            FUNCTION_TREATMENT_OPTIONAL_WITH_TYPES.evaluate(
+            functionTreatmentOptionalWithTypes.evaluate(
                 withTreatmentHistory(
-                    listOf(
-                        NON_MATCHING_TREATMENT_ONLY_UNKNOWN_TYPE,
-                        NON_MATCHING_TREATMENT_ONLY_UNKNOWN_TYPE
-                    )
+                    listOf(NON_MATCHING_TREATMENT_ONLY_UNKNOWN_TYPE, NON_MATCHING_TREATMENT_ONLY_UNKNOWN_TYPE)
                 )
             )
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            FUNCTION_TREATMENT_REQUIRED_WITH_TYPES.evaluate(
+            functionTreatmentRequiredWithTypes.evaluate(
                 withTreatmentHistory(
-                    listOf(
-                        NON_MATCHING_TREATMENT_ONLY_UNKNOWN_TYPE,
-                        NON_MATCHING_TREATMENT_ONLY_UNKNOWN_TYPE
-                    )
+                    listOf(NON_MATCHING_TREATMENT_ONLY_UNKNOWN_TYPE, NON_MATCHING_TREATMENT_ONLY_UNKNOWN_TYPE)
                 )
             )
         )
@@ -172,37 +188,12 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
     }
 
     private fun evaluateOptionalFunctions(result: EvaluationResult, treatmentList: List<TreatmentHistoryEntry>) {
-        assertEvaluation(result, FUNCTION_TREATMENT_OPTIONAL.evaluate(withTreatmentHistory(treatmentList)))
-        assertEvaluation(result, FUNCTION_TREATMENT_OPTIONAL_WITH_TYPES.evaluate(withTreatmentHistory(treatmentList)))
+        assertEvaluation(result, functionTreatmentOptional.evaluate(withTreatmentHistory(treatmentList)))
+        assertEvaluation(result, functionTreatmentOptionalWithTypes.evaluate(withTreatmentHistory(treatmentList)))
     }
 
     private fun evaluateRequiredFunctions(result: EvaluationResult, treatmentList: List<TreatmentHistoryEntry>) {
-        assertEvaluation(result, FUNCTION_TREATMENT_REQUIRED.evaluate(withTreatmentHistory(treatmentList)))
-        assertEvaluation(result, FUNCTION_TREATMENT_REQUIRED_WITH_TYPES.evaluate(withTreatmentHistory(treatmentList)))
-    }
-
-    companion object {
-        private const val MAX_TREATMENT_LINES = 1
-        private val MATCHING_CATEGORY = TreatmentCategory.TARGETED_THERAPY
-        private val MATCHING_TYPE_SET = setOf(DrugType.HER2_ANTIBODY, DrugType.HER3_ANTIBODY)
-        private val MATCHING_TREATMENT_WITH_TYPES =
-            treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY, types = MATCHING_TYPE_SET)))
-        private val MATCHING_TREATMENT_WITH_ONE_TYPE =
-            treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY, types = setOf(MATCHING_TYPE_SET.first()))))
-        private val NON_MATCHING_TREATMENT_CATEGORY_AND_TYPES =
-            treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY, types = setOf(DrugType.ANTI_TISSUE_FACTOR))))
-        private val NON_MATCHING_TREATMENT_ONLY_WRONG_TYPE =
-            treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY, types = setOf(DrugType.ANTI_TISSUE_FACTOR))))
-        private val NON_MATCHING_TREATMENT_ONLY_UNKNOWN_TYPE = treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY)))
-        private val TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES =
-            treatmentHistoryEntry(setOf(treatment("trial", true, emptySet())), isTrial = true)
-        private val RARE_CATEGORY = TreatmentCategory.TRANSPLANTATION
-
-        private val FUNCTION_TREATMENT_OPTIONAL = HasHadLimitedTreatmentsWithCategoryOfTypes(MATCHING_CATEGORY, null, MAX_TREATMENT_LINES, false)
-        private val FUNCTION_TREATMENT_OPTIONAL_WITH_TYPES =
-            HasHadLimitedTreatmentsWithCategoryOfTypes(MATCHING_CATEGORY, MATCHING_TYPE_SET, MAX_TREATMENT_LINES, false)
-        private val FUNCTION_TREATMENT_REQUIRED = HasHadLimitedTreatmentsWithCategoryOfTypes(MATCHING_CATEGORY, null, MAX_TREATMENT_LINES, true)
-        private val FUNCTION_TREATMENT_REQUIRED_WITH_TYPES =
-            HasHadLimitedTreatmentsWithCategoryOfTypes(MATCHING_CATEGORY, MATCHING_TYPE_SET, MAX_TREATMENT_LINES, true)
+        assertEvaluation(result, functionTreatmentRequired.evaluate(withTreatmentHistory(treatmentList)))
+        assertEvaluation(result, functionTreatmentRequiredWithTypes.evaluate(withTreatmentHistory(treatmentList)))
     }
 }
