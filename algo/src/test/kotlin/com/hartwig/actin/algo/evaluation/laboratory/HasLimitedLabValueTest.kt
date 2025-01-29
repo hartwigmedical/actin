@@ -46,6 +46,7 @@ class HasLimitedLabValueTest {
         val actual = function.evaluate(record, measurement, LabTestFactory.create(measurement, 2.0))
         assertEvaluation(EvaluationResult.FAIL, actual)
         assertThat(actual.recoverable).isTrue()
+        assertThat(actual.failMessages).containsExactly("Absolute thrombocyte count 2.0 10^9/L exceeds max of 1.0 10^9/L")
     }
 
     @Test
@@ -58,7 +59,10 @@ class HasLimitedLabValueTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(record, measurement, targetUnit.copy(value = 2.0)))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(record, measurement, targetUnit.copy(value = 0.5)))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(record, measurement, offUnit.copy(value = 80.0)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record, measurement, offUnit.copy(value = 120.0)))
+
+        val evaluation = function.evaluate(record, measurement, offUnit.copy(value = 120.0))
+        assertEvaluation(EvaluationResult.FAIL, evaluation)
+        assertThat(evaluation.failMessages).containsExactly("Creatinine 1.4 mg/dL (converted from: 120.0 umol/L) exceeds max of 1.0 mg/dL")
 
         // Test that evaluation becomes undetermined if lab evaluation cannot convert.
         assertEvaluation(
