@@ -223,7 +223,7 @@ class PatientClinicalHistoryGenerator(
     }
 
     private fun toOtherConditionString(otherCondition: OtherCondition): String {
-        return otherCondition.name.replaceFirstChar(Char::uppercase)
+        return otherCondition.display().replaceFirstChar(Char::uppercase)
     }
 
     private fun toDateString(maybeYear: Int?, maybeMonth: Int?): String? {

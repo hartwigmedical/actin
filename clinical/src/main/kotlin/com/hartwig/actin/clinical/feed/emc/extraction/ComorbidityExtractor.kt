@@ -1,5 +1,7 @@
 package com.hartwig.actin.clinical.feed.emc.extraction
 
+import com.hartwig.actin.algo.icd.IcdConstants.ALLERGIC_OR_HYPERSENSITIVITY_CONDITIONS_OF_UNSPECIFIED_TYPE
+import com.hartwig.actin.algo.icd.IcdConstants.HARMFUL_EFFECTS_OF_DRUGS_CODE
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
@@ -16,8 +18,10 @@ import com.hartwig.actin.clinical.feed.emc.digitalfile.DigitalFileEntry
 import com.hartwig.actin.clinical.feed.emc.intolerance.IntoleranceEntry
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
 import com.hartwig.actin.datamodel.clinical.Comorbidity
+import com.hartwig.actin.datamodel.clinical.Complication
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
+import com.hartwig.actin.datamodel.clinical.OtherCondition
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import java.time.LocalDate
@@ -52,59 +56,65 @@ class ComorbidityExtractor(
 
     private fun extractQuestionnaireComorbidities(
         patientId: String, rawInputs: List<String>, category: CurationCategory, configType: String
-    ): List<ExtractionResult<List<Comorbidity>>> = rawInputs.map {
-        val curatedComorbidity = curate(CurationUtil.fullTrim(it), patientId, category, configType)
-        ExtractionResult(
-            extracted = curatedComorbidity.configs.mapNotNull(ComorbidityConfig::curated),
-            evaluation = curatedComorbidity.extractionEvaluation
-        )
+    ): List<ExtractionResult<List<Comorbidity>>> {
+        val default = if (category == CurationCategory.COMPLICATION) {
+            Complication(null, icdCodes = emptySet())
+        } else {
+            OtherCondition(null, icdCodes = emptySet())
+        }
+        return rawInputs.map {
+            val curatedComorbidity = curate(CurationUtil.fullTrim(it), patientId, category, configType, default)
+            ExtractionResult(
+                extracted = curatedComorbidity.configs.mapNotNull(ComorbidityConfig::curated),
+                evaluation = curatedComorbidity.extractionEvaluation
+            )
+        }
     }
 
     private fun extractIntolerances(
         patientId: String, intoleranceEntries: List<IntoleranceEntry>
     ): List<ExtractionResult<List<Intolerance>>> {
         return intoleranceEntries.map { entry: IntoleranceEntry ->
-            with(entry) {
+            val rawIntolerance = with(entry) {
                 Intolerance(
                     name = capitalizeFirstLetterOnly(codeText),
-                    icdCodes = setOf(IcdCode("", null)),
+                    icdCodes = setOf(IcdCode(ALLERGIC_OR_HYPERSENSITIVITY_CONDITIONS_OF_UNSPECIFIED_TYPE)),
                     type = capitalizeFirstLetterOnly(isSideEffect),
                     clinicalStatus = capitalizeFirstLetterOnly(clinicalStatus),
                     verificationStatus = capitalizeFirstLetterOnly(verificationStatus),
                     criticality = capitalizeFirstLetterOnly(criticality),
                 )
             }
+            val curationResponse =
+                curate(entry.codeText, patientId, CurationCategory.INTOLERANCE, "intolerance", rawIntolerance.copy(name = null), true)
+
+            val curatedIntolerance = curationResponse.config()?.curated?.let { curated ->
+                rawIntolerance.copy(name = curated.name, icdCodes = curated.icdCodes)
+            } ?: rawIntolerance
+            ExtractionResult(listOf(curatedIntolerance), curationResponse.extractionEvaluation)
         }
-            .map { rawIntolerance ->
-                val curationResponse = curate(rawIntolerance.name, patientId, CurationCategory.INTOLERANCE, "intolerance", true)
-                val curatedIntolerance = curationResponse.config()?.curated?.let { curated ->
-                    rawIntolerance.copy(name = curated.name, icdCodes = curated.icdCodes)
-                } ?: rawIntolerance
-                ExtractionResult(listOf(curatedIntolerance), curationResponse.extractionEvaluation)
-            }
     }
 
     private fun extractFeedToxicities(toxicityEntries: List<DigitalFileEntry>, patientId: String): List<ExtractionResult<List<Toxicity>>> {
         return toxicityEntries.mapNotNull { toxicityEntry ->
             extractGrade(toxicityEntry)?.let { grade ->
-                Toxicity(
-                    name = toxicityEntry.itemText,
-                    icdCodes = setOf(IcdCode("", null)),
+                val input = toxicityEntry.itemText
+                val rawToxicity = Toxicity(
+                    name = input,
+                    icdCodes = setOf(IcdCode(HARMFUL_EFFECTS_OF_DRUGS_CODE)),
                     evaluatedDate = toxicityEntry.authored,
                     source = ToxicitySource.EHR,
                     grade = grade,
                 )
-            }
-        }
-            .map { rawToxicity ->
-                if (rawToxicity.name.isEmpty()) ExtractionResult(listOf(rawToxicity), CurationExtractionEvaluation()) else {
-                    curatedToxicity(rawToxicity, patientId) ?: translatedToxicity(rawToxicity, patientId)
+                if (input.isEmpty()) ExtractionResult(listOf(rawToxicity), CurationExtractionEvaluation()) else {
+                    curatedToxicity(input, rawToxicity, patientId) ?: translatedToxicity(input, rawToxicity, patientId)
                 }
             }
+        }
     }
 
-    private fun curatedToxicity(rawToxicity: Toxicity, patientId: String): ExtractionResult<List<Toxicity>>? {
-        val curationResponse = curate(rawToxicity.name, patientId, CurationCategory.TOXICITY, "toxicity")
+    private fun curatedToxicity(input: String, rawToxicity: Toxicity, patientId: String): ExtractionResult<List<Toxicity>>? {
+        val curationResponse = curate(input, patientId, CurationCategory.TOXICITY, "toxicity", rawToxicity.copy(name = null))
         return curationResponse.config()?.curated?.let { curated ->
             ExtractionResult(
                 listOf(
@@ -119,12 +129,10 @@ class ComorbidityExtractor(
         }
     }
 
-    private fun translatedToxicity(rawToxicity: Toxicity, patientId: String): ExtractionResult<List<Toxicity>> {
-        return rawToxicity.name.let { input ->
-            CurationResponse.createFromTranslation(
-                toxicityTranslation.find(input), patientId, CurationCategory.TOXICITY_TRANSLATION, input, "toxicity"
-            )
-        }.let { translationResponse ->
+    private fun translatedToxicity(input: String, rawToxicity: Toxicity, patientId: String): ExtractionResult<List<Toxicity>> {
+        return CurationResponse.createFromTranslation(
+            toxicityTranslation.find(input), patientId, CurationCategory.TOXICITY_TRANSLATION, input, "toxicity"
+        ).let { translationResponse ->
             ExtractionResult(
                 listOf(translationResponse.config()?.translated?.let { rawToxicity.copy(name = it) } ?: rawToxicity),
                 translationResponse.extractionEvaluation
@@ -140,17 +148,19 @@ class ComorbidityExtractor(
     private fun extractQuestionnaireToxicities(
         patientId: String, unresolvedToxicities: List<String>, questionnaireDate: LocalDate
     ): List<ExtractionResult<List<Toxicity>>> {
+        val rawToxicity = Toxicity(
+            name = null,
+            icdCodes = setOf(IcdCode(HARMFUL_EFFECTS_OF_DRUGS_CODE)),
+            evaluatedDate = questionnaireDate,
+            source = ToxicitySource.QUESTIONNAIRE,
+            grade = null
+        )
         return unresolvedToxicities.map { input ->
-            val curationResponse = curate(CurationUtil.fullTrim(input), patientId, CurationCategory.TOXICITY, "toxicity")
+            val trimmed = CurationUtil.fullTrim(input)
+            val curationResponse = curate(trimmed, patientId, CurationCategory.TOXICITY, "toxicity", rawToxicity)
             val toxicities = curationResponse.configs.filterNot(CurationConfig::ignore).mapNotNull { config ->
                 config.curated?.let { curated ->
-                    Toxicity(
-                        name = curated.name,
-                        icdCodes = curated.icdCodes,
-                        evaluatedDate = questionnaireDate,
-                        source = ToxicitySource.QUESTIONNAIRE,
-                        grade = (curated as? ToxicityCuration)?.grade
-                    )
+                    rawToxicity.copy(name = curated.name, icdCodes = curated.icdCodes, grade = (curated as? ToxicityCuration)?.grade)
                 }
             }
             ExtractionResult(toxicities, curationResponse.extractionEvaluation)
@@ -158,9 +168,30 @@ class ComorbidityExtractor(
     }
 
     private fun curate(
-        input: String, patientId: String, category: CurationCategory, configType: String, requireUniqueness: Boolean = false
-    ): CurationResponse<ComorbidityConfig> =
-        CurationResponse.createFromConfigs(comorbidityCuration.find(input), patientId, category, input, configType, requireUniqueness)
+        input: String,
+        patientId: String,
+        category: CurationCategory,
+        configType: String,
+        defaultForYesInput: Comorbidity,
+        requireUniqueness: Boolean = false
+    ): CurationResponse<ComorbidityConfig> {
+        val trimmed = input.trim()
+        return if (trimmed.equals("yes", ignoreCase = true)) {
+            CurationResponse(
+                setOf(ComorbidityConfig(input, false, curated = defaultForYesInput)),
+                CurationExtractionEvaluation(comorbidityEvaluatedInputs = setOf(trimmed.lowercase()))
+            )
+        } else {
+            CurationResponse.createFromConfigs(
+                comorbidityCuration.find(trimmed),
+                patientId,
+                category,
+                input,
+                configType,
+                requireUniqueness
+            )
+        }
+    }
 
     companion object {
         fun create(curationDatabaseContext: CurationDatabaseContext) =

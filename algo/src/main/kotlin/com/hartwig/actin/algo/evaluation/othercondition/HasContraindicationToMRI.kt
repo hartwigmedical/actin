@@ -17,10 +17,10 @@ class HasContraindicationToMRI(private val icdModel: IcdModel) : EvaluationFunct
 
         val matchingComorbidities = icdModel.findInstancesMatchingAnyIcdCode(record.comorbidities, targetCodes).fullMatches
 
-        val comorbiditiesMatchingString = record.comorbidities.filter {
-            stringCaseInsensitivelyMatchesQueryCollection(
-                it.name, OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_MRI + INTOLERANCES_BEING_CONTRAINDICATIONS_TO_MRI
-            )
+        val comorbiditiesMatchingString = record.comorbidities.filter { comorbidity ->
+            comorbidity.name?.let {
+                stringCaseInsensitivelyMatchesQueryCollection(it, COMORBIDITIES_THAT_ARE_CONTRAINDICATIONS_TO_MRI)
+            } == true
         }
 
         val conditionString = Format.concatItemsWithAnd(matchingComorbidities)
@@ -38,7 +38,6 @@ class HasContraindicationToMRI(private val icdModel: IcdModel) : EvaluationFunct
     }
 
     companion object {
-        val OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_MRI = listOf("claustrophobia")
-        val INTOLERANCES_BEING_CONTRAINDICATIONS_TO_MRI = listOf("contrast agent")
+        val COMORBIDITIES_THAT_ARE_CONTRAINDICATIONS_TO_MRI = setOf("claustrophobia", "contrast agent")
     }
 }

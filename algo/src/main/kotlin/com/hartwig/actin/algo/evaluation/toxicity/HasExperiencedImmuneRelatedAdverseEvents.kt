@@ -19,7 +19,7 @@ class HasExperiencedImmuneRelatedAdverseEvents(private val icdModel: IcdModel) :
         val hasHadImmunotherapyWithStopReasonToxicity = StopReason.TOXICITY in immunotherapyTreatmentsByStopReason
 
         val (immunotherapyAllergies, undeterminedDrugAllergies) = icdModel.findInstancesMatchingAnyIcdCode(
-            record.intolerances,
+            record.comorbidities,
             IcdConstants.DRUG_ALLERGY_SET.flatMap { icdCode ->
                 IcdConstants.IMMUNOTHERAPY_DRUG_SET.map { extension -> IcdCode(icdCode, extension) }
             }.toSet()
@@ -29,7 +29,7 @@ class HasExperiencedImmuneRelatedAdverseEvents(private val icdModel: IcdModel) :
 
         return when {
             immunotherapyTreatmentList.isNotEmpty() && immunotherapyAllergies.isNotEmpty() -> {
-                val allergyString = immunotherapyAllergies.joinToString(", ", prefix = " (", postfix = ")") { it.name }
+                val allergyString = immunotherapyAllergies.joinToString(", ", prefix = " (", postfix = ")") { it.display() }
                 EvaluationFactory.warn(warnMessageStart + allergyString)
             }
 
@@ -42,7 +42,7 @@ class HasExperiencedImmuneRelatedAdverseEvents(private val icdModel: IcdModel) :
             }
 
             immunotherapyTreatmentList.isNotEmpty() && undeterminedDrugAllergies.isNotEmpty() -> {
-                val allergyString = undeterminedDrugAllergies.joinToString(", ", prefix = " (", postfix = ")") { it.name }
+                val allergyString = undeterminedDrugAllergies.joinToString(", ", prefix = " (", postfix = ")") { it.display() }
                 EvaluationFactory.recoverableUndetermined(
                     "Drug allergy$allergyString in history but undetermined if immunotherapy-related AE (drug type unknown)"
                 )
