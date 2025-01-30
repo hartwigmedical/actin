@@ -7,13 +7,13 @@ import org.junit.Test
 class HasECGAberrationTest {
     @Test
     fun canEvaluate() {
-        val function = HasECGAberration()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(CardiacFunctionTestFactory.withECG(null)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(CardiacFunctionTestFactory.withHasSignificantECGAberration(false)))
+        val function = HasEcgAberration()
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(CardiacFunctionTestFactory.withEcg(null)))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(CardiacFunctionTestFactory.withHasSignificantEcgAberration(false)))
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(CardiacFunctionTestFactory.withHasSignificantECGAberration(true, "with description"))
+            function.evaluate(CardiacFunctionTestFactory.withHasSignificantEcgAberration(true, "with description"))
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(CardiacFunctionTestFactory.withHasSignificantECGAberration(true, null)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(CardiacFunctionTestFactory.withHasSignificantEcgAberration(true, null)))
     }
 }

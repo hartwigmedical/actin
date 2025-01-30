@@ -9,6 +9,8 @@ import com.hartwig.actin.clinical.feed.standard.ProvidedAllergy
 import com.hartwig.actin.clinical.feed.standard.ProvidedComplication
 import com.hartwig.actin.clinical.feed.standard.ProvidedOtherCondition
 import com.hartwig.actin.datamodel.clinical.Complication
+import com.hartwig.actin.datamodel.clinical.Ecg
+import com.hartwig.actin.datamodel.clinical.EcgMeasure
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.OtherCondition
@@ -66,6 +68,26 @@ class StandardComorbidityExtractorTest {
             OTHER_CONDITION.withDefaultYearAndMonth(2024, 2),
             OTHER_CONDITION.copy(year = 2024, month = 2, name = anotherCondition)
         )
+    }
+
+
+    @Test
+    fun `Should extract ECG from other conditions`() {
+        val ecg = Ecg(
+            hasSigAberrationLatestEcg = true,
+            name = "ecg",
+            qtcfMeasure = EcgMeasure(1, "qUnit"),
+            jtcMeasure = EcgMeasure(2, "jUnit")
+        )
+        every { comorbidityCuration.find(OTHER_CONDITION_NAME) } returns setOf(
+            ComorbidityConfig(
+                input = OTHER_CONDITION_NAME,
+                ignore = false,
+                curated = ecg
+            )
+        )
+        val result = extractor.extract(EHR_PATIENT_RECORD_WITH_OTHER_CONDITIONS)
+        assertThat(result.extracted).containsExactly(ecg.withDefaultYearAndMonth(2024, 2))
     }
 
     @Test

@@ -6,7 +6,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.Gender
 
-class HasQTCFWithGender(
+class HasQtcfWithGender(
     private val threshold: Double,
     private val gender: Gender,
     private val evalFunction: (Double) -> EvaluationFunction

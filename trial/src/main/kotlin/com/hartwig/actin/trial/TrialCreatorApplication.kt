@@ -81,12 +81,12 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         val outputDirectory = config.outputDirectory
         when (result) {
             is Either.Right -> {
-                LOGGER.info("Writing {} trials to {}", result.right.size, outputDirectory)
-                TrialJson.write(result.right, outputDirectory)
+                LOGGER.info("Writing {} trials to {}", result.value.size, outputDirectory)
+                TrialJson.write(result.value, outputDirectory)
             }
 
             is Either.Left -> {
-                Files.write(Path.of(outputDirectory).resolve(ERROR_JSON_FILE), objectMapper.writeValueAsBytes(result.left))
+                Files.write(Path.of(outputDirectory).resolve(ERROR_JSON_FILE), objectMapper.writeValueAsBytes(result.value))
                 exitProcess(1)
             }
         }

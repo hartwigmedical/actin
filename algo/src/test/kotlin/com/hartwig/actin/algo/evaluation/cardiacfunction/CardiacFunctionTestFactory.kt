@@ -2,22 +2,17 @@ package com.hartwig.actin.algo.evaluation.cardiacfunction
 
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
-import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 import com.hartwig.actin.datamodel.clinical.Ecg
 import com.hartwig.actin.datamodel.clinical.EcgMeasure
 import com.hartwig.actin.datamodel.clinical.OtherCondition
 
 internal object CardiacFunctionTestFactory {
     fun createMinimal(): Ecg {
-        return Ecg(hasSigAberrationLatestECG = false, null, null, null)
+        return Ecg(hasSigAberrationLatestEcg = false, null, null, null)
     }
 
-    fun withHasSignificantECGAberration(hasSignificantECGAberration: Boolean): PatientRecord {
-        return withHasSignificantECGAberration(hasSignificantECGAberration, null)
-    }
-
-    fun withHasSignificantECGAberration(hasSignificantECGAberration: Boolean, description: String?): PatientRecord {
-        return withECG(createMinimal().copy(hasSigAberrationLatestECG = hasSignificantECGAberration, name = description))
+    fun withHasSignificantEcgAberration(hasSignificantECGAberration: Boolean, description: String? = null): PatientRecord {
+        return withEcg(createMinimal().copy(hasSigAberrationLatestEcg = hasSignificantECGAberration, name = description))
     }
 
     fun withLVEF(lvef: Double?): PatientRecord {
@@ -27,9 +22,9 @@ internal object CardiacFunctionTestFactory {
         )
     }
 
-    fun withECG(ecg: Ecg?): PatientRecord {
+    fun withEcg(ecg: Ecg?): PatientRecord {
         return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-            clinicalStatus = ClinicalStatus(ecg = ecg)
+            comorbidities = listOfNotNull(ecg)
         )
     }
 
@@ -39,7 +34,7 @@ internal object CardiacFunctionTestFactory {
         )
     }
 
-    fun withValueAndUnit(value: Int, unit: String = ECGUnit.MILLISECONDS.symbol()): PatientRecord {
-        return withECG(createMinimal().copy(qtcfMeasure = EcgMeasure(value = value, unit = unit)))
+    fun withValueAndUnit(value: Int, unit: String = EcgUnit.MILLISECONDS.symbol()): PatientRecord {
+        return withEcg(createMinimal().copy(qtcfMeasure = EcgMeasure(value = value, unit = unit)))
     }
 }

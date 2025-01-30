@@ -49,7 +49,7 @@ class ComorbidityExtractor(
             extractFeedToxicities(toxicityEntries, patientId),
             questionnaire?.unresolvedToxicities?.let { extractQuestionnaireToxicities(patientId, it, questionnaire.date) },
             extractIntolerances(patientId, intoleranceEntries),
-            questionnaire?.let { extractEcg(patientId, it.ecg) }
+            questionnaire?.ecg?.let { extractEcg(patientId, it) }
         ).flatten()
             .fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { (comorbidities, aggregatedEval), (comorbidity, eval) ->
                 ExtractionResult(comorbidities + comorbidity, aggregatedEval + eval)
@@ -178,7 +178,7 @@ class ComorbidityExtractor(
                     icdCodes = curated.icdCodes,
                     year = curated.year,
                     month = curated.month,
-                    hasSigAberrationLatestECG = coalesce(curated, rawEcg, Ecg::hasSigAberrationLatestECG),
+                    hasSigAberrationLatestEcg = coalesce(curated, rawEcg, Ecg::hasSigAberrationLatestEcg),
                     qtcfMeasure = coalesce(curated, rawEcg, Ecg::qtcfMeasure),
                     jtcMeasure = coalesce(curated, rawEcg, Ecg::jtcMeasure)
                 )

@@ -7,10 +7,10 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.Ecg
 import com.hartwig.actin.datamodel.clinical.EcgMeasure
 
-class ECGMeasureEvaluationFunction internal constructor(
-    private val measureName: ECGMeasureName,
+class EcgMeasureEvaluationFunction internal constructor(
+    private val measureName: EcgMeasureName,
     private val threshold: Double,
-    private val expectedUnit: ECGUnit,
+    private val expectedUnit: EcgUnit,
     private val extractingEcgMeasure: (Ecg) -> EcgMeasure?,
     private val thresholdCriteria: ThresholdCriteria
 ) : EvaluationFunction {
@@ -31,7 +31,7 @@ class ECGMeasureEvaluationFunction internal constructor(
     }
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return record.clinicalStatus.ecg?.let(extractingEcgMeasure)
+        return record.ecgs.firstOrNull()?.let(extractingEcgMeasure)
             ?.let { measure: EcgMeasure -> this.evaluate(measure) }
             ?: EvaluationFactory.recoverableUndetermined(String.format("No %s known", measureName))
     }

@@ -37,7 +37,7 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
         return {
             Or(
                 listOf(
-                    HasECGAberration(),
+                    HasEcgAberration(),
                     HasHadOtherConditionComplicationOrToxicityWithIcdCode(
                         icdModel(),
                         IcdConstants.HEART_DISEASE_SET.map { IcdCode(it) }.toSet(),
@@ -50,7 +50,7 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
     }
 
     private fun hasECGAberrationCreator(): FunctionCreator {
-        return { HasECGAberration() }
+        return { HasEcgAberration() }
     }
 
     private fun hasSufficientLVEFCreator(): FunctionCreator {
@@ -61,33 +61,33 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
 
     private fun hasLimitedQTCFCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            ECGMeasureEvaluationFunctions.hasLimitedQTCF(functionInputResolver().createOneDoubleInput(function))
+            EcgMeasureEvaluationFunctions.hasLimitedQtcf(functionInputResolver().createOneDoubleInput(function))
         }
     }
 
     private fun hasLimitedQTCFWithGenderCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val (maxQTCF, gender) = functionInputResolver().createOneDoubleOneGenderInput(function)
-            HasQTCFWithGender(maxQTCF, gender, ECGMeasureEvaluationFunctions::hasLimitedQTCF)
+            HasQtcfWithGender(maxQTCF, gender, EcgMeasureEvaluationFunctions::hasLimitedQtcf)
         }
     }
 
     private fun hasSufficientQTCFCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            ECGMeasureEvaluationFunctions.hasSufficientQTCF(functionInputResolver().createOneDoubleInput(function))
+            EcgMeasureEvaluationFunctions.hasSufficientQtcf(functionInputResolver().createOneDoubleInput(function))
         }
     }
 
     private fun hasSufficientQTCFWithGenderCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val (minQTCF, gender) = functionInputResolver().createOneDoubleOneGenderInput(function)
-            HasQTCFWithGender(minQTCF, gender, ECGMeasureEvaluationFunctions::hasSufficientQTCF)
+            HasQtcfWithGender(minQTCF, gender, EcgMeasureEvaluationFunctions::hasSufficientQtcf)
         }
     }
 
     private fun hasSufficientJTcCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            ECGMeasureEvaluationFunctions.hasSufficientJTc(functionInputResolver().createOneDoubleInput(function))
+            EcgMeasureEvaluationFunctions.hasSufficientJTc(functionInputResolver().createOneDoubleInput(function))
         }
     }
 

@@ -113,8 +113,7 @@ object TestClinicalFactory {
     private fun createTestClinicalStatus(): ClinicalStatus {
         return ClinicalStatus(
             who = 1,
-            infectionStatus = InfectionStatus(hasActiveInfection = false, description = null),
-            ecg = Ecg(hasSigAberrationLatestECG = false, name = null, jtcMeasure = null, qtcfMeasure = null)
+            infectionStatus = InfectionStatus(hasActiveInfection = false, description = null)
         )
     }
 

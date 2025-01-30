@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.cardiacfunction
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.cardiacfunction.CardiacFunctionTestFactory.withValueAndUnit
-import com.hartwig.actin.algo.evaluation.cardiacfunction.ECGMeasureEvaluationFunction.ThresholdCriteria
+import com.hartwig.actin.algo.evaluation.cardiacfunction.EcgMeasureEvaluationFunction.ThresholdCriteria
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.Ecg
 import org.assertj.core.api.Assertions.assertThat
@@ -12,7 +12,7 @@ class ECGMeasureEvaluationFunctionTest {
 
     @Test
     fun `Should evaluate to recoverable undetermined when no ECG present`() {
-        val evaluation = withThresholdCriteria(ThresholdCriteria.MAXIMUM).evaluate(CardiacFunctionTestFactory.withECG(null))
+        val evaluation = withThresholdCriteria(ThresholdCriteria.MAXIMUM).evaluate(CardiacFunctionTestFactory.withEcg(null))
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.recoverable).isTrue()
     }
@@ -67,11 +67,11 @@ class ECGMeasureEvaluationFunctionTest {
         assertThat(evaluation.failMessages).containsExactly("QTCF of 300 ms is below or equal to min threshold of 450.0")
     }
 
-    private fun withThresholdCriteria(thresholdCriteria: ThresholdCriteria): ECGMeasureEvaluationFunction {
-        return ECGMeasureEvaluationFunction(
-            ECGMeasureName.QTCF,
+    private fun withThresholdCriteria(thresholdCriteria: ThresholdCriteria): EcgMeasureEvaluationFunction {
+        return EcgMeasureEvaluationFunction(
+            EcgMeasureName.QTCF,
             450.0,
-            ECGUnit.MILLISECONDS,
+            EcgUnit.MILLISECONDS,
             Ecg::qtcfMeasure,
             thresholdCriteria
         )

@@ -4,7 +4,6 @@ import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.UnusedCurationConfig
 import com.hartwig.actin.clinical.curation.config.ComorbidityConfig
 import com.hartwig.actin.clinical.curation.config.ComplicationConfigFactory
-import com.hartwig.actin.clinical.curation.config.ECGConfig
 import com.hartwig.actin.clinical.curation.config.EcgConfigFactory
 import com.hartwig.actin.clinical.curation.config.IHCTestConfig
 import com.hartwig.actin.clinical.curation.config.IHCTestConfigFactory
@@ -48,7 +47,6 @@ data class CurationDatabaseContext(
     val secondPrimaryCuration: CurationDatabase<SecondPrimaryConfig>,
     val lesionLocationCuration: CurationDatabase<LesionLocationConfig>,
     val comorbidityCuration: CurationDatabase<ComorbidityConfig>,
-    val ecgCuration: CurationDatabase<ECGConfig>,
     val infectionCuration: CurationDatabase<InfectionConfig>,
     val periodBetweenUnitCuration: CurationDatabase<PeriodBetweenUnitConfig>,
     val molecularTestIhcCuration: CurationDatabase<IHCTestConfig>,
@@ -70,7 +68,6 @@ data class CurationDatabaseContext(
             secondPrimaryCuration,
             lesionLocationCuration,
             comorbidityCuration,
-            ecgCuration,
             infectionCuration,
             periodBetweenUnitCuration,
             molecularTestIhcCuration,
@@ -97,7 +94,6 @@ data class CurationDatabaseContext(
         secondPrimaryCuration.validationErrors,
         lesionLocationCuration.validationErrors,
         comorbidityCuration.validationErrors,
-        ecgCuration.validationErrors,
         infectionCuration.validationErrors,
         periodBetweenUnitCuration.validationErrors,
         molecularTestIhcCuration.validationErrors,
@@ -141,12 +137,6 @@ data class CurationDatabaseContext(
                 CurationCategory.LESION_LOCATION
             ) { it.lesionLocationEvaluatedInputs },
             comorbidityCuration = createComorbidityCurationDatabase(curationDir, icdModel),
-            ecgCuration = CurationDatabaseReader.read(
-                curationDir,
-                CurationDatabaseReader.ECG_TSV,
-                EcgConfigFactory(),
-                CurationCategory.ECG
-            ) { it.ecgEvaluatedInputs },
             infectionCuration = CurationDatabaseReader.read(
                 curationDir, CurationDatabaseReader.INFECTION_TSV, InfectionConfigFactory(), CurationCategory.INFECTION
             ) { it.infectionEvaluatedInputs },
@@ -253,7 +243,20 @@ data class CurationDatabaseContext(
                 CurationCategory.COMORBIDITY
             ) { it.comorbidityEvaluatedInputs }
 
-            return otherConditionDatabase + complicationCurationDatabase + intoleranceCurationDatabase + toxicityCurationDatabase
+            val ecgCurationDatabase = CurationDatabaseReader.read(
+                curationDir,
+                CurationDatabaseReader.ECG_TSV,
+                EcgConfigFactory(),
+                CurationCategory.ECG
+            ) { it.ecgEvaluatedInputs }
+
+            return listOf(
+                otherConditionDatabase,
+                complicationCurationDatabase,
+                intoleranceCurationDatabase,
+                toxicityCurationDatabase,
+                ecgCurationDatabase
+            ).reduce(CurationDatabase<ComorbidityConfig>::plus)
         }
     }
 }

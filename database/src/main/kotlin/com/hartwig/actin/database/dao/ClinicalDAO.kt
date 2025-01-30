@@ -52,7 +52,7 @@ internal class ClinicalDAO(private val context: DSLContext) {
         val patientId = record.patientId
         writePatientDetails(patientId, record.patient)
         writeTumorDetails(patientId, record.tumor)
-        writeClinicalStatus(patientId, record.clinicalStatus)
+        writeClinicalStatus(patientId, record.clinicalStatus, record.ecgs.firstOrNull())
         writeTreatmentHistoryEntries(patientId, record.oncologicalHistory)
         writePriorSecondPrimaries(patientId, record.priorSecondPrimaries)
         writeOtherConditions(patientId, record.otherConditions)
@@ -149,11 +149,10 @@ internal class ClinicalDAO(private val context: DSLContext) {
             .execute()
     }
 
-    private fun writeClinicalStatus(patientId: String, clinicalStatus: ClinicalStatus) {
+    private fun writeClinicalStatus(patientId: String, clinicalStatus: ClinicalStatus, ecg: Ecg?) {
         val infectionStatus = clinicalStatus.infectionStatus
-        val ecg = Optional.ofNullable(clinicalStatus.ecg)
-        val qtcfMeasure = ecg.map(Ecg::qtcfMeasure)
-        val jtcMeasure = ecg.map(Ecg::jtcMeasure)
+        val qtcfMeasure = ecg?.qtcfMeasure
+        val jtcMeasure = ecg?.jtcMeasure
         context.insertInto(
             Tables.CLINICALSTATUS,
             Tables.CLINICALSTATUS.PATIENTID,
@@ -174,12 +173,12 @@ internal class ClinicalDAO(private val context: DSLContext) {
                 clinicalStatus.who,
                 infectionStatus?.hasActiveInfection,
                 infectionStatus?.description,
-                ecg.map(Ecg::hasSigAberrationLatestECG).orElse(null),
-                ecg.map(Ecg::name).orElse(null),
-                qtcfMeasure.map { it?.value }.orElse(null),
-                qtcfMeasure.map { it?.unit }.orElse(null),
-                jtcMeasure.map { it?.value }.orElse(null),
-                jtcMeasure.map { it?.unit }.orElse(null),
+                ecg?.hasSigAberrationLatestEcg,
+                ecg?.name,
+                qtcfMeasure?.value,
+                qtcfMeasure?.unit,
+                jtcMeasure?.value,
+                jtcMeasure?.unit,
                 clinicalStatus.lvef,
                 clinicalStatus.hasComplications
             )

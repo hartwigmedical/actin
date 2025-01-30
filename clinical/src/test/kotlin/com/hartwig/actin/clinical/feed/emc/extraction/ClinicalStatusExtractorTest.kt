@@ -4,7 +4,6 @@ import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.config.ComorbidityConfig
-import com.hartwig.actin.clinical.curation.config.ECGConfig
 import com.hartwig.actin.clinical.curation.config.InfectionConfig
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 import com.hartwig.actin.datamodel.clinical.Ecg
@@ -23,18 +22,14 @@ private const val CANNOT_CURATE = "Cannot curate"
 
 class ClinicalStatusExtractorTest {
     private val extractor = ClinicalStatusExtractor(
-        TestCurationFactory.curationDatabase(
-            ECGConfig(
-                input = ECG_INPUT,
-                ignore = false,
-                interpretation = CURATED_ECG,
-                isQTCF = false,
-                isJTC = false
-            )
-        ),
         TestCurationFactory.curationDatabase(InfectionConfig(input = INFECTION_INPUT, interpretation = CURATED_INFECTION)),
         TestCurationFactory.curationDatabase(
-            ComorbidityConfig(input = NON_ONCOLOGICAL_INPUT, ignore = false, lvef = CURATED_LVEF, curated = null)
+            ComorbidityConfig(input = NON_ONCOLOGICAL_INPUT, ignore = false, lvef = CURATED_LVEF, curated = null),
+            ComorbidityConfig(
+                input = ECG_INPUT,
+                ignore = false,
+                curated = Ecg(name = CURATED_ECG, hasSigAberrationLatestEcg = true, qtcfMeasure = null, jtcMeasure = null)
+            )
         )
     )
 
@@ -93,7 +88,7 @@ class ClinicalStatusExtractorTest {
     }
 
     private fun ecg(input: String) = Ecg(
-        name = input, hasSigAberrationLatestECG = true, jtcMeasure = null, qtcfMeasure = null
+        name = input, hasSigAberrationLatestEcg = true, jtcMeasure = null, qtcfMeasure = null
     )
 
     private fun infectionStatus(input: String) = InfectionStatus(description = input, hasActiveInfection = true)
@@ -102,8 +97,6 @@ class ClinicalStatusExtractorTest {
         assertThat(clinicalStatus.who).isEqualTo(1)
         assertThat(clinicalStatus.infectionStatus?.hasActiveInfection).isTrue
         assertThat(clinicalStatus.infectionStatus?.description).isEqualTo(CURATED_INFECTION)
-        assertThat(clinicalStatus.ecg?.hasSigAberrationLatestECG).isTrue
-        assertThat(clinicalStatus.ecg?.name).isEqualTo(CURATED_ECG)
         assertThat(clinicalStatus.lvef).isEqualTo(CURATED_LVEF)
         assertThat(clinicalStatus.hasComplications).isTrue
     }

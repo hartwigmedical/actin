@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.cardiacfunction
 
-internal enum class ECGUnit(private val symbol: String) {
+internal enum class EcgUnit(private val symbol: String) {
     MILLISECONDS("ms");
 
     fun symbol(): String {
