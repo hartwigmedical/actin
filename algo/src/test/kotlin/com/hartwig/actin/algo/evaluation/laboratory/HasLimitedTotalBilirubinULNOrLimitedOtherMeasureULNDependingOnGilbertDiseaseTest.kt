@@ -26,9 +26,9 @@ class HasLimitedTotalBilirubinULNOrLimitedOtherMeasureULNDependingOnGilbertDisea
         TestIcdFactory.createTestModel()
     )
     private val TBIL_1_ULN = LabTestFactory.create(LabMeasurement.TOTAL_BILIRUBIN, value = 100.0, refDate, refLimitUp = 100.0)
-    private val TBIL_4_ULN = LabTestFactory.create(LabMeasurement.TOTAL_BILIRUBIN, value = 400.0, refDate, refLimitUp = 100.0)
+    private val TBIL_4_ULN = TBIL_1_ULN.copy(value = 400.0)
     private val DBIL_1_ULN = LabTestFactory.create(LabMeasurement.DIRECT_BILIRUBIN, value = 100.0, refDate, refLimitUp = 100.0)
-    private val DBIL_6_ULN = LabTestFactory.create(LabMeasurement.DIRECT_BILIRUBIN, value = 600.0, refDate, refLimitUp = 100.0)
+    private val DBIL_6_ULN = DBIL_1_ULN.copy(value = 600.0)
     private val recordWithGilbertDisease = ComorbidityTestFactory.withOtherCondition(
         ComorbidityTestFactory.otherCondition(
             name = "Gilbert",
