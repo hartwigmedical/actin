@@ -160,9 +160,9 @@ SELECT  referenceDate, referenceDateIsLive, patientId, trialMatch.code AS trialI
         cohortMatch.slotsAvailable AS cohortSlotsAvailable, cohortMatch.ignore AS cohortIgnore, cohortMatch.isEligible AS isEligibleCohort,
         eligibility AS eligibilityRule, result, recoverable, passMessages, warnMessages, undeterminedMessages, failMessages,
         inclusionMolecularEvents, exclusionMolecularEvents
-    FROM evaluation
-    INNER JOIN trialMatch ON trialMatch.id = evaluation.trialMatchId
+    FROM trialMatch
     INNER JOIN treatmentMatch ON treatmentMatch.id = trialMatch.treatmentMatchId
+    LEFT JOIN evaluation ON trialMatch.id = evaluation.trialMatchId
     LEFT JOIN cohortMatch ON trialMatch.id = cohortMatch.trialMatchId AND cohortMatch.Id = evaluation.cohortMatchId
 UNION
 SELECT  DISTINCT referenceDate, referenceDateIsLive, patientId, trialMatch.code AS trialId, trialMatch.acronym AS trialAcronym, trialMatch.open AS trialOpen,
