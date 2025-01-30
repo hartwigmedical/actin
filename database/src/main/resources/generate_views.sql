@@ -165,7 +165,7 @@ SELECT  referenceDate, referenceDateIsLive, patientId, trialMatch.code AS trialI
     LEFT JOIN evaluation ON trialMatch.id = evaluation.trialMatchId
     LEFT JOIN cohortMatch ON trialMatch.id = cohortMatch.trialMatchId AND cohortMatch.Id = evaluation.cohortMatchId
 UNION
-SELECT  DISTINCT referenceDate, referenceDateIsLive, patientId, trialMatch.code AS trialId, trialMatch.acronym AS trialAcronym, trialMatch.open AS trialOpen,
+SELECT  referenceDate, referenceDateIsLive, patientId, trialMatch.code AS trialId, trialMatch.acronym AS trialAcronym, trialMatch.open AS trialOpen,
         IF(trialMatch.id IN (SELECT trialMatchId FROM cohortMatch),1,0) AS trialHasCohorts, trialMatch.isEligible AS isEligibleTrial,
         cohortMatch.code AS cohortId, cohortMatch.description AS cohortDescription, cohortMatch.open AS cohortOpen,
         cohortMatch.slotsAvailable AS cohortSlotsAvailable, cohortMatch.ignore AS cohortIgnore, cohortMatch.isEligible AS isEligibleCohort,
