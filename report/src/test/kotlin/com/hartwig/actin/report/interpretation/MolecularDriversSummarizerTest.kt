@@ -19,6 +19,8 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.Disruption
+import com.hartwig.actin.datamodel.molecular.driver.ExtendedVariantDetails
+import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
 import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.datamodel.molecular.driver.VirusType
@@ -29,10 +31,10 @@ import org.junit.Test
 private const val EXPECTED_GENE = "found"
 private const val VIRUS_INTEGRATIONS = 3
 
-class DriversSummarizerTest {
+class MolecularDriversSummarizerTest {
 
     private val minimalDrivers = TestMolecularFactory.createMinimalTestOrangeRecord().drivers
-    
+
     @Test
     fun `Should return key variants`() {
         val variants = listOf(
@@ -133,8 +135,9 @@ class DriversSummarizerTest {
         val variants = listOf(
             variant("key variant", DriverLikelihood.HIGH, true, externalEvidence),
             variant("expected non-reportable variant", DriverLikelihood.HIGH, false, approvedTreatment),
-            variant("expected medium likelihood variant", DriverLikelihood.MEDIUM, true),
-            variant("no evidence", DriverLikelihood.MEDIUM, true)
+            variant("expected medium likelihood variant", DriverLikelihood.MEDIUM, true, geneRole = GeneRole.ONCO, biallelic = false),
+            variant("no evidence", DriverLikelihood.MEDIUM, true),
+            variant("mono-allelic variant in TSG", DriverLikelihood.LOW, true, geneRole = GeneRole.TSG, biallelic = false)
         )
         val copyNumbers = listOf(
             copyNumber(CopyNumberType.FULL_GAIN, "key gain", DriverLikelihood.HIGH, true),
@@ -145,12 +148,13 @@ class DriversSummarizerTest {
         val homozygousDisruptions = listOf(
             homozygousDisruption("key HD", DriverLikelihood.HIGH, true, approvedTreatment),
             homozygousDisruption("expected non-reportable HD", DriverLikelihood.HIGH, false, approvedTreatment),
-            homozygousDisruption("expected null likelihood HD", null, true, externalEvidence)
+            homozygousDisruption("expected null likelihood HD", null, true, externalEvidence),
         )
         val disruptions = listOf(
             disruption("expected key disruption", DriverLikelihood.HIGH, true),
-            disruption("expected non-reportable disruption", DriverLikelihood.LOW, false, approvedTreatment),
-            disruption("no evidence disruption", DriverLikelihood.MEDIUM, false)
+            disruption("expected non-reportable disruption", DriverLikelihood.LOW, false, approvedTreatment, GeneRole.ONCO),
+            disruption("no evidence disruption", DriverLikelihood.MEDIUM, false),
+            disruption("non-homozygous disruption in TSG", DriverLikelihood.MEDIUM, true, geneRole = GeneRole.TSG)
         )
         val fusions = listOf(
             fusion("key fusion", DriverLikelihood.HIGH, true, externalEvidence),
@@ -183,14 +187,18 @@ class DriversSummarizerTest {
         name: String,
         driverLikelihood: DriverLikelihood,
         isReportable: Boolean,
-        evidence: ClinicalEvidence = TestClinicalEvidenceFactory.createEmpty()
+        evidence: ClinicalEvidence = TestClinicalEvidenceFactory.createEmpty(),
+        geneRole: GeneRole = GeneRole.ONCO,
+        biallelic: Boolean = true
     ): Variant {
         return TestVariantFactory.createMinimal().copy(
             gene = name,
             event = name,
             driverLikelihood = driverLikelihood,
             isReportable = isReportable,
-            evidence = evidence
+            evidence = evidence,
+            geneRole = geneRole,
+            extendedVariantDetails = ExtendedVariantDetails(2.0, 2.0, biallelic, null, 1.0)
         )
     }
 
@@ -218,15 +226,19 @@ class DriversSummarizerTest {
     }
 
     private fun disruption(
-        name: String, driverLikelihood: DriverLikelihood, isReportable: Boolean,
-        evidence: ClinicalEvidence = TestClinicalEvidenceFactory.createEmpty()
+        name: String,
+        driverLikelihood: DriverLikelihood,
+        isReportable: Boolean,
+        evidence: ClinicalEvidence = TestClinicalEvidenceFactory.createEmpty(),
+        geneRole: GeneRole = GeneRole.ONCO
     ): Disruption {
         return TestDisruptionFactory.createMinimal().copy(
             gene = name,
             event = name,
             driverLikelihood = driverLikelihood,
             isReportable = isReportable,
-            evidence = evidence
+            evidence = evidence,
+            geneRole = geneRole
         )
     }
 

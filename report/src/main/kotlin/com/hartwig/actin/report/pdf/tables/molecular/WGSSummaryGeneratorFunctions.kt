@@ -60,14 +60,15 @@ object WGSSummaryGeneratorFunctions {
 
             val (actionableEventsWithUnknownDriver, actionableEventsWithLowOrMediumDriver) =
                 summarizer.actionableEventsThatAreNotKeyDrivers().partition { it.driverLikelihood == null }
+            val ploidy = molecular.characteristics.ploidy
 
             if (actionableEventsWithLowOrMediumDriver.isNotEmpty() || !isShort) {
                 table.addCell(Cells.createKey("Trial-relevant events, considered medium/low driver:"))
-                table.addCell(potentiallyActionableEventsCell(actionableEventsWithLowOrMediumDriver))
+                table.addCell(potentiallyActionableEventsCell(actionableEventsWithLowOrMediumDriver, ploidy))
             }
             if (actionableEventsWithUnknownDriver.isNotEmpty()) {
                 table.addCell(Cells.createKey("Trial-relevant events, not considered a tumor driver:"))
-                table.addCell(potentiallyActionableEventsCell(actionableEventsWithUnknownDriver))
+                table.addCell(potentiallyActionableEventsCell(actionableEventsWithUnknownDriver, ploidy))
             }
 
             if (filteredContents.isEmpty() && !hasTmbData &&
@@ -144,7 +145,7 @@ object WGSSummaryGeneratorFunctions {
         return Cells.create(paragraph)
     }
 
-    fun potentiallyActionableEventsCell(drivers: List<Driver>): Cell {
+    fun potentiallyActionableEventsCell(drivers: List<Driver>, ploidy: Double? = null): Cell {
         if (drivers.isEmpty()) return Cells.createValue(Formats.VALUE_NONE)
 
         val eventText = drivers.distinctBy(Driver::event).flatMap { driver ->
@@ -155,7 +156,8 @@ object WGSSummaryGeneratorFunctions {
                 DriverLikelihood.HIGH -> ""
                 null -> {
                     if (driver is CopyNumber) {
-                        " (${driver.canonicalImpact.minCopies} copies - no amplification or deletion)"
+                        val ploidyString = ploidy?.let { " - with tumor ploidy $it)" } ?: ")"
+                        " (${driver.canonicalImpact.minCopies} copies$ploidyString"
                     } else " (dubious quality)"
                 }
             }
