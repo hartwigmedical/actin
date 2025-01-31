@@ -1,23 +1,17 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
-import com.hartwig.actin.algo.doid.DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID
-import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.createFullExpandedDoidTree
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
-import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
-import com.hartwig.actin.doid.DoidModel
 
-class TreatmentHistoryAnalyzer(private val record: PatientRecord, doidModel: DoidModel) {
+class TreatmentHistoryAnalyzer(private val record: PatientRecord, private val chemotherapyDrugLists: List<List<Drug>>) {
 
-    val isNsclc = LUNG_NON_SMALL_CELL_CARCINOMA_DOID in createFullExpandedDoidTree(doidModel, record.tumor.doids)
+    fun receivedPlatinumDoublet() = hasSpecificPlatinumCombination { it == 2 }
 
-    fun receivedPlatinumDoublet() = hasSpecificPlatinumCombination(2, true)
-
-    fun receivedPlatinumTripletOrAbove() = hasSpecificPlatinumCombination(3, false)
+    fun receivedPlatinumTripletOrAbove() = hasSpecificPlatinumCombination { it >= 3 }
 
     fun receivedUndefinedChemoradiation(): Boolean {
         return record.oncologicalHistory.any {
@@ -25,17 +19,19 @@ class TreatmentHistoryAnalyzer(private val record: PatientRecord, doidModel: Doi
         }
     }
 
-    private fun createChemotherapyDrugList(entry: TreatmentHistoryEntry): List<Drug> {
-        return entry.treatments.filterIsInstance<DrugTreatment>()
-            .flatMap(DrugTreatment::drugs)
-            .filter { it.category == TreatmentCategory.CHEMOTHERAPY }
+    private fun hasSpecificPlatinumCombination(predicate: (Int) -> Boolean): Boolean {
+        return chemotherapyDrugLists.any { drugs ->
+            predicate.invoke(drugs.size) && drugs.any { it.drugTypes.contains(DrugType.PLATINUM_COMPOUND) }
+        }
     }
 
-    private fun hasSpecificPlatinumCombination(minSize: Int, exactly: Boolean): Boolean {
-        val comparator = if (exactly) { it: Int -> it == minSize } else { it: Int -> it >= minSize }
-        return record.oncologicalHistory.any { entry ->
-            val chemotherapyDrugs = createChemotherapyDrugList(entry)
-            comparator.invoke(chemotherapyDrugs.size) && chemotherapyDrugs.any { it.drugTypes.contains(DrugType.PLATINUM_COMPOUND) }
+    companion object {
+        fun create(record: PatientRecord): TreatmentHistoryAnalyzer {
+            val chemotherapyDrugLists = record.oncologicalHistory.map {
+                it.treatments.filterIsInstance<DrugTreatment>().flatMap(DrugTreatment::drugs)
+                    .filter { treatment -> treatment.category == TreatmentCategory.CHEMOTHERAPY }
+            }
+            return TreatmentHistoryAnalyzer(record, chemotherapyDrugLists)
         }
     }
 }

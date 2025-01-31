@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
+import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluatorFactory
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -13,7 +15,7 @@ class HasExhaustedSOCTreatments(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val standardOfCareEvaluator = standardOfCareEvaluatorFactory.create()
-        val treatmentHistoryAnalyzer = TreatmentHistoryAnalyzer(record, doidModel)
+        val treatmentHistoryAnalyzer = TreatmentHistoryAnalyzer.create(record)
 
         return when {
             standardOfCareEvaluator.standardOfCareCanBeEvaluatedForPatient(record) -> {
@@ -39,7 +41,7 @@ class HasExhaustedSOCTreatments(
                 }
             }
 
-            treatmentHistoryAnalyzer.isNsclc -> {
+            DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID) -> {
                 when {
                     treatmentHistoryAnalyzer.receivedPlatinumDoublet() || treatmentHistoryAnalyzer.receivedPlatinumTripletOrAbove() -> {
                         EvaluationFactory.pass("SOC considered exhausted (platinum doublet in history)")
