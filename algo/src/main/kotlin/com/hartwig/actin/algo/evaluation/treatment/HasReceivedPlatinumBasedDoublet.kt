@@ -14,23 +14,23 @@ class HasReceivedPlatinumBasedDoublet(private val doidModel: DoidModel) : Evalua
         val message = "received platinum based doublet chemotherapy"
         val treatmentHistoryAnalyzer = TreatmentHistoryAnalyzer.create(record)
 
-            return when {
-                treatmentHistoryAnalyzer.receivedPlatinumDoublet() -> {
-                    EvaluationFactory.pass("Has $message ")
-                }
-
-                DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID) &&
-                        treatmentHistoryAnalyzer.receivedUndefinedChemoradiation() -> {
-                    EvaluationFactory.pass("Has received chemoradiation - assumed platinum-based")
-                }
-
-                treatmentHistoryAnalyzer.receivedPlatinumTripletOrAbove() -> {
-                    EvaluationFactory.warn("Has received platinum chemotherapy combination but not in doublet (more than 2 drugs combined)")
-                }
-
-                else -> {
-                    EvaluationFactory.fail("Has not $message")
-                }
+        return when {
+            treatmentHistoryAnalyzer.receivedPlatinumDoublet() -> {
+                EvaluationFactory.pass("Has $message ")
             }
+
+            DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID) &&
+                    treatmentHistoryAnalyzer.receivedUndefinedChemoradiation() -> {
+                EvaluationFactory.pass("Has received chemoradiation - assumed platinum-based")
+            }
+
+            treatmentHistoryAnalyzer.receivedPlatinumTripletOrAbove() -> {
+                EvaluationFactory.warn("Has received platinum chemotherapy combination but not in doublet (more than 2 drugs combined)")
+            }
+
+            else -> {
+                EvaluationFactory.fail("Has not $message")
+            }
+        }
     }
 }
