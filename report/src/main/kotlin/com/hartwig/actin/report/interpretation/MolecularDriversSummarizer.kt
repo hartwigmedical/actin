@@ -6,7 +6,6 @@ import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
-import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 
 class MolecularDriversSummarizer private constructor(
     private val drivers: Drivers,
@@ -57,13 +56,13 @@ class MolecularDriversSummarizer private constructor(
 
     fun actionableEventsThatAreNotKeyDrivers(): List<Driver> {
         val nonDisruptionDrivers = listOf(
-            drivers.variants.filter { it.geneRole != GeneRole.TSG || it.extendedVariantDetails?.isBiallelic == true },
+            drivers.variants,
             drivers.copyNumbers,
             drivers.fusions,
             drivers.homozygousDisruptions,
             drivers.viruses
         ).flatten().filterNot(::isKeyDriver)
-        return (nonDisruptionDrivers + drivers.disruptions.filter { it.geneRole != GeneRole.TSG }.toList())
+        return (nonDisruptionDrivers + drivers.disruptions.toList())
             .filter(interpretedCohortsSummarizer::driverIsActionable)
     }
 
