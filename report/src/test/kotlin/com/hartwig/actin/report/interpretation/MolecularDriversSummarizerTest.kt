@@ -145,7 +145,7 @@ class MolecularDriversSummarizerTest {
         val homozygousDisruptions = listOf(
             homozygousDisruption("key HD", DriverLikelihood.HIGH, true, approvedTreatment),
             homozygousDisruption("expected non-reportable HD", DriverLikelihood.HIGH, false, approvedTreatment),
-            homozygousDisruption("expected null likelihood HD", null, true, externalEvidence),
+            homozygousDisruption("expected null likelihood HD", null, true, externalEvidence)
         )
         val disruptions = listOf(
             disruption("expected key disruption", DriverLikelihood.HIGH, true),
