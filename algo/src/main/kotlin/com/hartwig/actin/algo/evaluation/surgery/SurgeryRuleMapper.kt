@@ -14,7 +14,7 @@ class SurgeryRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
             EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_MONTHS to hasHadSurgeryInPastMonthsCreator(),
             EligibilityRule.HAS_PLANNED_SURGERY to hasPlannedSurgeryCreator(),
             EligibilityRule.HAS_HAD_CYTOREDUCTIVE_SURGERY to hasHadCytoreductiveSurgeryCreator(),
-            EligibilityRule.HAS_HAD_SURGERY_TO_ANY_BODY_LOCATION_X to hasHadSurgeryToSpecificBodyLocationCreator(),
+            EligibilityRule.HAS_HAD_ONCOLOGICAL_SURGERY_TO_ANY_BODY_LOCATION_X to hasHadOncologicalSurgeryInSpecificBodyLocationCreator(),
         )
     }
 
@@ -51,10 +51,10 @@ class SurgeryRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
         return { HasHadCytoreductiveSurgery() }
     }
 
-    private fun hasHadSurgeryToSpecificBodyLocationCreator(): FunctionCreator {
+    private fun hasHadOncologicalSurgeryInSpecificBodyLocationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val bodyLocations = functionInputResolver().createManyBodyLocationsInput(function)
-            HasHadSurgeryToSpecificBodyLocation(bodyLocations)
+            HasHadOncologicalSurgeryInSpecificBodyLocation(bodyLocations)
         }
     }
 }
