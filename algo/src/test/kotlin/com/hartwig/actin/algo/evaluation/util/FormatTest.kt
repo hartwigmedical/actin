@@ -71,24 +71,24 @@ class FormatTest {
     }
 
     @Test
-    fun canFormatDates() {
+    fun `Should format dates`() {
         assertNotNull(Format.date(LocalDate.of(2021, 8, 20)))
     }
 
     @Test
-    fun canFormatPercentages() {
+    fun `Should format percentages by rounding and adding percentage`() {
         assertEquals("50%", Format.percentage(0.500002))
     }
 
     @Test
-    fun canFormatLabReferences() {
-        assertEquals("2.0*ULN (8.0)", Format.labReference(2.0, "ULN", 4.0))
-        assertEquals("2.0*ULN (2.0*NA)", Format.labReference(2.0, "ULN", null))
+    fun `Should format lab references with ULN, possible reference and unit`() {
+        assertEquals("2.0*ULN (8.0 umol/L)", Format.labReferenceWithLimit(2.0, "ULN", 4.0, LabUnit.MICROMOLES_PER_LITER))
+        assertEquals("2.0*ULN (2.0*NA mg/dL)", Format.labReferenceWithLimit(2.0, "ULN", null, LabUnit.MILLIGRAMS_PER_DECILITER))
     }
 
     @Test
-    fun canFormatLabValues() {
-        assertEquals("Indirect bilirubin 4.0 umol/L", Format.labValue(LabMeasurement.INDIRECT_BILIRUBIN, 4.0, LabUnit.MICROMOLES_PER_LITER))
+    fun `Should format lab values with first letter capitalized measure display, formatted value and display unit`() {
+        assertEquals("Indirect bilirubin 4.0 umol/L", Format.labValue(LabMeasurement.INDIRECT_BILIRUBIN, 4.005, LabUnit.MICROMOLES_PER_LITER))
     }
 
     @Test
@@ -106,7 +106,7 @@ class FormatTest {
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun crashOnIllegalPercentage() {
+    fun `Should crash with illegal fraction`() {
         Format.percentage(50.0)
     }
 }
