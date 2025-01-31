@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
-import com.hartwig.actin.datamodel.molecular.driver.Disruption
+import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeTrialFactory
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
@@ -20,6 +20,8 @@ private val OTHER_TRIAL = TestServeTrialFactory.createTrialForHotspot()
 
 class DisruptionEvidenceTest {
 
+    private val matchingDisruption =
+        TestMolecularFactory.minimalDisruption().copy(gene = "gene 1", isReportable = true)
     private val disruptionEvidence = DisruptionEvidence.create(
         evidences = listOf(ANY_EVIDENCE_FOR_GENE, AMP_EVIDENCE_FOR_GENE, INACT_EVIDENCE_FOR_GENE, OTHER_EVIDENCE),
         trials = listOf(ANY_TRIAL_FOR_GENE, AMP_TRIAL_FOR_GENE, INACT_TRIAL_FOR_GENE, OTHER_TRIAL)
@@ -27,32 +29,29 @@ class DisruptionEvidenceTest {
 
     @Test
     fun `Should determine evidence and trials for matching disruption`() {
-        val disruption = create(gene = "gene 1", isReportable = true)
-
-        val matches = disruptionEvidence.findMatches(disruption)
+        val matches = disruptionEvidence.findMatches(matchingDisruption)
         assertThat(matches.evidenceMatches).containsExactly(ANY_EVIDENCE_FOR_GENE)
         assertThat(matches.matchingCriteriaPerTrialMatch).isEqualTo(mapOf(ANY_TRIAL_FOR_GENE to ANY_TRIAL_FOR_GENE.anyMolecularCriteria()))
     }
 
     @Test
-    fun `Should not match evidence to trials to unreportable disruption`() {
-        val disruption = create(gene = "gene 1", isReportable = false)
-
-        val matches = disruptionEvidence.findMatches(disruption)
+    fun `Should not match evidence and trials to disruption on other gene`() {
+        val matches = disruptionEvidence.findMatches(matchingDisruption.copy(gene = "other gene"))
         assertThat(matches.evidenceMatches).isEmpty()
         assertThat(matches.matchingCriteriaPerTrialMatch).isEmpty()
     }
 
     @Test
-    fun `Should not match evidence to trials to disruption on other gene`() {
-        val disruption = create(gene = "other gene", isReportable = true)
-
-        val matches = disruptionEvidence.findMatches(disruption)
+    fun `Should not match evidence and trials to unreportable disruption`() {
+        val matches = disruptionEvidence.findMatches(matchingDisruption.copy(isReportable = false))
         assertThat(matches.evidenceMatches).isEmpty()
         assertThat(matches.matchingCriteriaPerTrialMatch).isEmpty()
     }
 
-    private fun create(gene: String, isReportable: Boolean): Disruption {
-        return TestMolecularFactory.minimalDisruption().copy(gene = gene, isReportable = isReportable)
+    @Test
+    fun `Should not match evidence and trials to disruption if gene role is TSG`() {
+        val matches = disruptionEvidence.findMatches(matchingDisruption.copy(geneRole = GeneRole.TSG))
+        assertThat(matches.evidenceMatches).isEmpty()
+        assertThat(matches.matchingCriteriaPerTrialMatch).isEmpty()
     }
 }
