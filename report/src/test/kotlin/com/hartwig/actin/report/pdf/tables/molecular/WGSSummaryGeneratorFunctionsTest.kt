@@ -48,11 +48,11 @@ class WGSSummaryGeneratorFunctionsTest {
             TestFusionFactory.createMinimal().copy(event = "event 4", driverLikelihood = DriverLikelihood.MEDIUM),
             TestFusionFactory.createMinimal().copy(event = "event 5", driverLikelihood = DriverLikelihood.HIGH)
         )
-        val cell = WGSSummaryGeneratorFunctions.potentiallyActionableEventsCell(drivers)
+        val cell = WGSSummaryGeneratorFunctions.potentiallyActionableEventsCell(drivers, 2.5)
 
         assertThat(CellTestUtil.extractTextFromCell(cell))
             .isEqualTo(
-                "event 1 (4 copies - no amplification or deletion), event 2 (dubious quality), event 3 (low driver likelihood), " +
+                "event 1 (4 copies - with tumor ploidy 2.5), event 2 (dubious quality), event 3 (low driver likelihood), " +
                         "event 4 (medium driver likelihood), event 5"
             )
     }

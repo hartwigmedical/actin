@@ -61,6 +61,12 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.HAS_ALP_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.ALKALINE_PHOSPHATASE),
             EligibilityRule.HAS_ALP_ULN_OF_AT_LEAST_X to hasSufficientLabValueULNCreator(LabMeasurement.ALKALINE_PHOSPHATASE),
             EligibilityRule.HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.TOTAL_BILIRUBIN),
+            EligibilityRule.HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X_OR_Y_IF_GILBERT_DISEASE to hasLimitedTotalBilirubinULNOrLimitedOtherMeasureULNDependingOnGilbertDiseaseCreator(
+                LabMeasurement.TOTAL_BILIRUBIN
+            ),
+            EligibilityRule.HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X_OR_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_Y_IF_GILBERT_DISEASE to hasLimitedTotalBilirubinULNOrLimitedOtherMeasureULNDependingOnGilbertDiseaseCreator(
+                LabMeasurement.DIRECT_BILIRUBIN
+            ),
             EligibilityRule.HAS_TOTAL_BILIRUBIN_UMOL_PER_L_OF_AT_MOST_X to hasLimitedLabValueCreator(LabMeasurement.TOTAL_BILIRUBIN),
             EligibilityRule.HAS_TOTAL_BILIRUBIN_MG_PER_DL_OF_AT_MOST_X to hasLimitedLabValueCreator(
                 LabMeasurement.TOTAL_BILIRUBIN,
@@ -199,10 +205,25 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun hasLimitedAsatAndAlatDependingOnLiverMetastasesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val maxULNWithoutLiverMetastases = functionInputResolver().createTwoDoublesInput(function).double1
-            val maxULNWithLiverMetastases = functionInputResolver().createTwoDoublesInput(function).double2
+            val (maxULNWithoutLiverMetastases, maxULNWithLiverMetastases) = functionInputResolver().createTwoDoublesInput(function)
             HasLimitedAsatAndAlatDependingOnLiverMetastases(
                 maxULNWithoutLiverMetastases, maxULNWithLiverMetastases, minValidLabDate(), minPassLabDate()
+            )
+        }
+    }
+
+    private fun hasLimitedTotalBilirubinULNOrLimitedOtherMeasureULNDependingOnGilbertDiseaseCreator(
+        labMeasureWithGilbertDisease: LabMeasurement
+    ): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val (maxUlnWithoutGilbertDisease, maxUlnWithGilbertDisease) = functionInputResolver().createTwoDoublesInput(function)
+            HasLimitedTotalBilirubinULNOrLimitedOtherMeasureULNDependingOnGilbertDisease(
+                maxUlnWithoutGilbertDisease,
+                labMeasureWithGilbertDisease,
+                maxUlnWithGilbertDisease,
+                minValidLabDate(),
+                minPassLabDate(),
+                icdModel()
             )
         }
     }
