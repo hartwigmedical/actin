@@ -9,11 +9,10 @@ class HasECGAberrationTest {
     fun canEvaluate() {
         val function = HasEcgAberration()
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(CardiacFunctionTestFactory.withEcg(null)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(CardiacFunctionTestFactory.withHasSignificantEcgAberration(false)))
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(CardiacFunctionTestFactory.withHasSignificantEcgAberration(true, "with description"))
+            function.evaluate(CardiacFunctionTestFactory.withEcgDescription("with description"))
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(CardiacFunctionTestFactory.withHasSignificantEcgAberration(true, null)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(CardiacFunctionTestFactory.withEcgDescription(null)))
     }
 }

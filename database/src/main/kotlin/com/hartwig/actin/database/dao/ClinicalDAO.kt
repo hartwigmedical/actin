@@ -173,7 +173,7 @@ internal class ClinicalDAO(private val context: DSLContext) {
                 clinicalStatus.who,
                 infectionStatus?.hasActiveInfection,
                 infectionStatus?.description,
-                ecg?.hasSigAberrationLatestEcg,
+                ecg != null,
                 ecg?.name,
                 qtcfMeasure?.value,
                 qtcfMeasure?.unit,

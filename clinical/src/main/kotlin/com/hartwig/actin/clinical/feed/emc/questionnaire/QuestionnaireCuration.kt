@@ -100,14 +100,13 @@ internal object QuestionnaireCuration {
         return ValidatedQuestionnaireCuration(InfectionStatus(hasActiveInfection = hasActiveInfection, description = description))
     }
 
-    private fun buildEcg(hasSignificantAberrationLatestEcg: Boolean, description: String?): ValidatedQuestionnaireCuration<Ecg> {
+    private fun buildEcg(isPresent: Boolean, description: String?): ValidatedQuestionnaireCuration<Ecg> {
         return ValidatedQuestionnaireCuration(
             Ecg(
-                hasSigAberrationLatestEcg = hasSignificantAberrationLatestEcg,
                 name = description,
                 jtcMeasure = null,
                 qtcfMeasure = null
-            )
+            ).takeIf { isPresent }
         )
     }
 
@@ -115,10 +114,10 @@ internal object QuestionnaireCuration {
         description: String?,
         buildFunction: (Boolean, String?) -> ValidatedQuestionnaireCuration<T>
     ): ValidatedQuestionnaireCuration<T> {
-        val present = when (val parsed = BooleanValueParser.parseBoolean(description)) {
+        val isPresent = when (val parsed = BooleanValueParser.parseBoolean(description)) {
             is Either.Right -> parsed.value
             else -> true
         }
-        return present?.let { buildFunction(it, description) } ?: ValidatedQuestionnaireCuration(null)
+        return isPresent?.let { buildFunction(it, description) } ?: ValidatedQuestionnaireCuration(null)
     }
 }

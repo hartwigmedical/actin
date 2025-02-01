@@ -173,7 +173,6 @@ class QuestionnaireCurationTest {
         val infectionStatus = toEcg("new ECG value")
         val curated = infectionStatus.curated!!
         assertThat(curated.name).isEqualTo("new ECG value")
-        assertThat(curated.hasSigAberrationLatestEcg).isTrue
         assertThat(infectionStatus.errors).isEmpty()
     }
 
@@ -184,19 +183,14 @@ class QuestionnaireCurationTest {
         assertThat(status).isNotNull()
 
         val curated = status.curated!!
-        assertThat(curated.hasSigAberrationLatestEcg).isTrue()
         assertThat(curated.name).isEqualTo(description)
     }
 
     @Test
-    fun `Should extract negative ECG`() {
-        val description = "no"
-        val status = toEcg(description)
-        assertThat(status).isNotNull()
-
-        val curated = status.curated!!
-        assertThat(curated.hasSigAberrationLatestEcg).isFalse()
-        assertThat(curated.name).isEqualTo(description)
+    fun `Should extract negative ECG to null`() {
+        val (curated, errors) = toEcg("no")
+        assertThat(curated).isNull()
+        assertThat(errors).isEmpty()
     }
 
     @Test
@@ -206,7 +200,6 @@ class QuestionnaireCurationTest {
         assertThat(status).isNotNull()
 
         val curated = status.curated!!
-        assertThat(curated.hasSigAberrationLatestEcg).isTrue()
         assertThat(curated.name).isEqualTo(description)
     }
 }

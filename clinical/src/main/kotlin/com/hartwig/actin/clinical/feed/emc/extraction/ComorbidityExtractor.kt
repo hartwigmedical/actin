@@ -178,7 +178,6 @@ class ComorbidityExtractor(
                     icdCodes = curated.icdCodes,
                     year = curated.year,
                     month = curated.month,
-                    hasSigAberrationLatestEcg = coalesce(curated, rawEcg, Ecg::hasSigAberrationLatestEcg),
                     qtcfMeasure = coalesce(curated, rawEcg, Ecg::qtcfMeasure),
                     jtcMeasure = coalesce(curated, rawEcg, Ecg::jtcMeasure)
                 )

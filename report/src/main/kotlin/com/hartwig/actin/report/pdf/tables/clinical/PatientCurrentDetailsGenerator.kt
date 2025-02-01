@@ -36,7 +36,7 @@ class PatientCurrentDetailsGenerator(
             val description = infectionStatus.description
             table.addCell(Cells.createValue(description ?: "Yes (infection details unknown)"))
         }
-        record.ecgs.find { it.hasSigAberrationLatestEcg }?.let { ecg ->
+        record.ecgs.firstOrNull()?.let { ecg ->
             table.addCell(Cells.createKey("Significant aberration on latest ECG"))
             val aberration = ecg.name
             val description = aberration ?: "Yes (ECG aberration details unknown)"

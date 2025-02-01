@@ -8,11 +8,11 @@ import com.hartwig.actin.datamodel.clinical.OtherCondition
 
 internal object CardiacFunctionTestFactory {
     fun createMinimal(): Ecg {
-        return Ecg(hasSigAberrationLatestEcg = false, null, null, null)
+        return Ecg(null, null, null)
     }
 
-    fun withHasSignificantEcgAberration(hasSignificantECGAberration: Boolean, description: String? = null): PatientRecord {
-        return withEcg(createMinimal().copy(hasSigAberrationLatestEcg = hasSignificantECGAberration, name = description))
+    fun withEcgDescription(description: String? = null): PatientRecord {
+        return withEcg(createMinimal().copy(name = description))
     }
 
     fun withLVEF(lvef: Double?): PatientRecord {

@@ -74,7 +74,6 @@ class StandardComorbidityExtractorTest {
     @Test
     fun `Should extract ECG from other conditions`() {
         val ecg = Ecg(
-            hasSigAberrationLatestEcg = true,
             name = "ecg",
             qtcfMeasure = EcgMeasure(1, "qUnit"),
             jtcMeasure = EcgMeasure(2, "jUnit")

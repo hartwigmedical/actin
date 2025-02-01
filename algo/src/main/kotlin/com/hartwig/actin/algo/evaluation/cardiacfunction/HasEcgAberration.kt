@@ -11,7 +11,7 @@ class HasEcgAberration internal constructor() : EvaluationFunction {
         return if (record.ecgs.isEmpty()) {
             EvaluationFactory.recoverableFail("Missing ECG details - assumed no ECG abnormalities")
         } else {
-            record.ecgs.find { it.hasSigAberrationLatestEcg }?.let { ecg ->
+            record.ecgs.firstOrNull()?.let { ecg ->
                 EvaluationFactory.pass("ECG abnormalities present (${ecg.name ?: "details unknown"})")
             } ?: EvaluationFactory.fail("No known ECG abnormalities")
         }

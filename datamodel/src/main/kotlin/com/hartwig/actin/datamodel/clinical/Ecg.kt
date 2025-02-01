@@ -1,7 +1,6 @@
 package com.hartwig.actin.datamodel.clinical
 
 data class Ecg(
-    val hasSigAberrationLatestEcg: Boolean,
     override val name: String?,
     val qtcfMeasure: EcgMeasure?,
     val jtcMeasure: EcgMeasure?,

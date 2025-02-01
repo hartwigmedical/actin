@@ -28,7 +28,7 @@ class ClinicalStatusExtractorTest {
             ComorbidityConfig(
                 input = ECG_INPUT,
                 ignore = false,
-                curated = Ecg(name = CURATED_ECG, hasSigAberrationLatestEcg = true, qtcfMeasure = null, jtcMeasure = null)
+                curated = Ecg(name = CURATED_ECG, qtcfMeasure = null, jtcMeasure = null)
             )
         )
     )
@@ -88,7 +88,7 @@ class ClinicalStatusExtractorTest {
     }
 
     private fun ecg(input: String) = Ecg(
-        name = input, hasSigAberrationLatestEcg = true, jtcMeasure = null, qtcfMeasure = null
+        name = input, jtcMeasure = null, qtcfMeasure = null
     )
 
     private fun infectionStatus(input: String) = InfectionStatus(description = input, hasActiveInfection = true)

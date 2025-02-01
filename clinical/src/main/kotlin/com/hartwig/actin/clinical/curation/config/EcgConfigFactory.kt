@@ -27,8 +27,7 @@ class EcgConfigFactory : CurationConfigFactory<ComorbidityConfig> {
                     Ecg(
                         name = interpretation,
                         qtcfMeasure = EcgMeasure(qtcfValue, qtcfUnit).takeIf { isQtcf },
-                        jtcMeasure = EcgMeasure(jtcValue, jtcUnit).takeIf { isJtc },
-                        hasSigAberrationLatestEcg = it
+                        jtcMeasure = EcgMeasure(jtcValue, jtcUnit).takeIf { isJtc }
                     )
                 },
             ), qtcfValidationErrors + jtcValidationErrors
