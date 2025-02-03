@@ -5,19 +5,24 @@ import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentStage
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class TreatmentHistoryAnalyzerTest {
+class TreatmentHistoryAnalysisTest {
+
+    private val PLATINUM_DRUG =
+        Drug(name = "Carboplatin", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.PLATINUM_COMPOUND))
 
     private val platinumDoublet =
         DrugTreatment(
             name = "Carboplatin+Pemetrexed",
             drugs = setOf(
-                Drug(name = "Carboplatin", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.PLATINUM_COMPOUND)),
+                PLATINUM_DRUG,
                 Drug(name = "Pemetrexed", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.ANTIMETABOLITE))
             )
         )
+
     private val platinumTriplet =
         platinumDoublet.copy(
             name = platinumDoublet.name.plus("+Paclitaxel"),
@@ -41,7 +46,7 @@ class TreatmentHistoryAnalyzerTest {
 
     @Test
     fun `Should return false if treatment history is empty`() {
-        val base = TreatmentHistoryAnalyzer.create(TreatmentTestFactory.withTreatmentHistory(emptyList()))
+        val base = TreatmentHistoryAnalysis.create(TreatmentTestFactory.withTreatmentHistory(emptyList()))
         assertThat(base.receivedPlatinumDoublet()).isFalse()
         assertThat(base.receivedPlatinumTripletOrAbove()).isFalse()
     }
@@ -51,7 +56,41 @@ class TreatmentHistoryAnalyzerTest {
         val record = TreatmentTestFactory.withTreatmentHistory(
             listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(platinumDoublet)))
         )
-        assertThat(TreatmentHistoryAnalyzer.create(record).receivedPlatinumDoublet()).isTrue()
+        assertThat(TreatmentHistoryAnalysis.create(record).receivedPlatinumDoublet()).isTrue()
+    }
+
+    @Test
+    fun `Should count duplicate drug treatment within one treatment instance only once`() {
+        val record = TreatmentTestFactory.withTreatmentHistory(
+            listOf(
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    treatments = setOf(
+                        platinumDoublet.copy(drugs = platinumDoublet.drugs.plus(PLATINUM_DRUG))
+                    )
+                )
+            )
+        )
+        assertThat(TreatmentHistoryAnalysis.create(record).receivedPlatinumDoublet()).isTrue()
+    }
+
+    @Test
+    fun `Should include maintenance therapy in platinum doublet count`() {
+        val record = TreatmentTestFactory.treatmentHistoryEntry(
+            treatments = setOf(nonPlatinumDoublet),
+            maintenanceTreatment = TreatmentStage(platinumDoublet, null, null, null)
+        )
+        assertThat(TreatmentHistoryAnalysis.create(TreatmentTestFactory.withTreatmentHistoryEntry(record))
+            .receivedPlatinumDoublet()).isTrue()
+    }
+
+    @Test
+    fun `Should include switch to treatments in platinum doublet count`() {
+        val record = TreatmentTestFactory.treatmentHistoryEntry(
+            treatments = setOf(nonPlatinumDoublet),
+            switchToTreatments = listOf(TreatmentStage(platinumDoublet, null, null, null))
+        )
+        assertThat(TreatmentHistoryAnalysis.create(TreatmentTestFactory.withTreatmentHistoryEntry(record))
+            .receivedPlatinumDoublet()).isTrue()
     }
 
     @Test
@@ -62,7 +101,7 @@ class TreatmentHistoryAnalyzerTest {
                 TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(nonPlatinumDoublet))
             )
         )
-        assertThat(TreatmentHistoryAnalyzer.create(record).receivedPlatinumDoublet()).isFalse()
+        assertThat(TreatmentHistoryAnalysis.create(record).receivedPlatinumDoublet()).isFalse()
     }
 
     @Test
@@ -70,7 +109,7 @@ class TreatmentHistoryAnalyzerTest {
         val record = TreatmentTestFactory.withTreatmentHistory(
             listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(platinumTriplet)))
         )
-        assertThat(TreatmentHistoryAnalyzer.create(record).receivedPlatinumTripletOrAbove()).isTrue()
+        assertThat(TreatmentHistoryAnalysis.create(record).receivedPlatinumTripletOrAbove()).isTrue()
     }
 
     @Test
@@ -84,7 +123,7 @@ class TreatmentHistoryAnalyzerTest {
         val record = TreatmentTestFactory.withTreatmentHistory(
             listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(drugs)))
         )
-        assertThat(TreatmentHistoryAnalyzer.create(record).receivedPlatinumTripletOrAbove()).isTrue()
+        assertThat(TreatmentHistoryAnalysis.create(record).receivedPlatinumTripletOrAbove()).isTrue()
     }
 
     @Test
@@ -95,7 +134,7 @@ class TreatmentHistoryAnalyzerTest {
                 TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(nonPlatinumDoublet))
             )
         )
-        assertThat(TreatmentHistoryAnalyzer.create(record).receivedPlatinumTripletOrAbove()).isFalse()
+        assertThat(TreatmentHistoryAnalysis.create(record).receivedPlatinumTripletOrAbove()).isFalse()
     }
 
     @Test
@@ -104,7 +143,7 @@ class TreatmentHistoryAnalyzerTest {
         val record = TreatmentTestFactory.withTreatmentHistory(
             listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(undefinedChemo, radiotherapy)))
         )
-        assertThat(TreatmentHistoryAnalyzer.create(record).receivedUndefinedChemoradiation()).isTrue()
+        assertThat(TreatmentHistoryAnalysis.create(record).receivedUndefinedChemoradiation()).isTrue()
     }
 
     @Test
@@ -112,6 +151,6 @@ class TreatmentHistoryAnalyzerTest {
         val record = TreatmentTestFactory.withTreatmentHistory(
             listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(platinumDoublet, radiotherapy)))
         )
-        assertThat(TreatmentHistoryAnalyzer.create(record).receivedUndefinedChemoradiation()).isFalse()
+        assertThat(TreatmentHistoryAnalysis.create(record).receivedUndefinedChemoradiation()).isFalse()
     }
 }

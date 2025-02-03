@@ -12,19 +12,19 @@ class HasReceivedPlatinumBasedDoublet(private val doidModel: DoidModel) : Evalua
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val message = "received platinum based doublet chemotherapy"
-        val treatmentHistoryAnalyzer = TreatmentHistoryAnalyzer.create(record)
+        val treatmentHistoryAnalysis = TreatmentHistoryAnalysis.create(record)
 
         return when {
-            treatmentHistoryAnalyzer.receivedPlatinumDoublet() -> {
+            treatmentHistoryAnalysis.receivedPlatinumDoublet() -> {
                 EvaluationFactory.pass("Has $message ")
             }
 
             DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID) &&
-                    treatmentHistoryAnalyzer.receivedUndefinedChemoradiation() -> {
-                EvaluationFactory.pass("Has received chemoradiation - assumed platinum-based")
+                    treatmentHistoryAnalysis.receivedUndefinedChemoradiation() -> {
+                EvaluationFactory.pass("Has received chemoradiation for NSCLC - assumed platinum-based")
             }
 
-            treatmentHistoryAnalyzer.receivedPlatinumTripletOrAbove() -> {
+            treatmentHistoryAnalysis.receivedPlatinumTripletOrAbove() -> {
                 EvaluationFactory.warn("Has received platinum chemotherapy combination but not in doublet (more than 2 drugs combined)")
             }
 

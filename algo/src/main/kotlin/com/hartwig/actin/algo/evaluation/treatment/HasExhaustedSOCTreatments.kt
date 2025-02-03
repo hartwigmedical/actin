@@ -15,7 +15,6 @@ class HasExhaustedSOCTreatments(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val standardOfCareEvaluator = standardOfCareEvaluatorFactory.create()
-        val treatmentHistoryAnalyzer = TreatmentHistoryAnalyzer.create(record)
 
         return when {
             standardOfCareEvaluator.standardOfCareCanBeEvaluatedForPatient(record) -> {
@@ -42,12 +41,13 @@ class HasExhaustedSOCTreatments(
             }
 
             DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID) -> {
+                val treatmentHistoryAnalysis = TreatmentHistoryAnalysis.create(record)
                 when {
-                    treatmentHistoryAnalyzer.receivedPlatinumDoublet() || treatmentHistoryAnalyzer.receivedPlatinumTripletOrAbove() -> {
+                    treatmentHistoryAnalysis.receivedPlatinumDoublet() || treatmentHistoryAnalysis.receivedPlatinumTripletOrAbove() -> {
                         EvaluationFactory.pass("SOC considered exhausted (platinum doublet in history)")
                     }
 
-                    treatmentHistoryAnalyzer.receivedUndefinedChemoradiation() -> {
+                    treatmentHistoryAnalysis.receivedUndefinedChemoradiation() -> {
                         EvaluationFactory.pass("SOC considered exhausted (chemoradiation in history)")
                     }
 
