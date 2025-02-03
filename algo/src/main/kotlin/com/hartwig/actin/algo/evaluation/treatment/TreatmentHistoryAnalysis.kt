@@ -21,7 +21,7 @@ class TreatmentHistoryAnalysis(private val record: PatientRecord, private val pl
     companion object {
         fun create(record: PatientRecord): TreatmentHistoryAnalysis {
             val platinumCombinations = record.oncologicalHistory.asSequence()
-                .flatMap { it.allTreatments() }
+                .flatMap { it.allTreatments().toSet() }
                 .filterIsInstance<DrugTreatment>()
                 .map(DrugTreatment::drugs)
                 .filter { drugs -> drugs.any { it.drugTypes.contains(DrugType.PLATINUM_COMPOUND) } }
