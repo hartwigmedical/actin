@@ -1,10 +1,11 @@
-## ACTIN-Molecular
+# ACTIN-Molecular
 
 The scope of the ACTIN-Molecular interpreter application is as follows:
 
 1. Ingest all types of molecular tests (IHC, panel NGS, WGS, e.t.c.) and map to the ACTIN-molecular datamodel captured
    in a single molecular history
-2. Interpret standardized molecular tests by annotating molecular findings with literature-based knowledge and treatment-evidence
+2. Interpret these standardized molecular tests by annotating molecular findings with literature-based treatment-evidence and external
+   trials
 3. Produce a final patient record by merging the standardized and annotated molecular tests with all clinical data.
 
 The molecular interpreter application requires Java 11+ and can be run as follows:
@@ -17,7 +18,8 @@ java -cp actin.jar com.hartwig.actin.molecular.MolecularInterpreterApplicationKt
    -output_directory /path/to/where/patient_record_json_file_is_written
 ```
 
-In case a patient has received WGS and an ORANGE output is available, this can be provided via `orange_json`:
+In case a molecular test has been analysed by [OncoAnalyser](https://nf-co.re/oncoanalyser/) and an ORANGE output is available, this can be
+provided via `orange_json`:
 
 | Argument    | Example Value        | Details                                                                 | 
 |-------------|----------------------|-------------------------------------------------------------------------|
@@ -30,16 +32,17 @@ The following assumptions are made about the inputs:
 - The SERVE directory holds the output JSON of [SERVE](https://github.com/hartwigmedical/serve/tree/master/algo) and is used for annotation
   and interpretation of the genomic findings.
 
-The following parameters are mandatory and used for interpretation of other molecular tests that are provided via the clinical input:
+The following parameters are mandatory and used for interpretation of other molecular tests that are provided via the clinical input.
+Note that all of these resources are available as standard resources from Hartwig.
 
-| Argument                | Example Value                  | Details                                                                                           | 
-|-------------------------|--------------------------------|---------------------------------------------------------------------------------------------------|
-| ref_genome_fasta_file   | /path/to/ref_genome.fasta      | The path to the 37 ref genome fasta file (standard resource within Hartwig)                       |
-| driver_gene_panel       | /path/to/driver_gene_panel.tsv | The path to the 37 driver gene panel (standard resource within Hartwig)                           |
-| onco_dnds_database_path | /path/to/onco_dnds.tsv         | The path towards the 37 DnDs values for oncogenes (standard resource within Hartwig)              |
-| tsg_dnds_database_path  | /path/to/tsb_dnds.tsv          | The path towards the 37 DnDs values for tumor suppressor genes (standard resource within Hartwig) |
-| ensembl_data_dir        | /path/to/ensembl_data_dir      | The path towards the 37 ensembl data directory (standard resource within Hartwig)                 |
-| known_fusion_file       | /path/to/known_fusion_file     | The path towards the 37 known fusion file (standard resource within Hartwig)                      |
+| Argument                | Example Value                  | Details                                                         | 
+|-------------------------|--------------------------------|-----------------------------------------------------------------|
+| ref_genome_fasta_file   | /path/to/ref_genome.fasta      | The path to the v37 ref genome fasta file                       |
+| driver_gene_panel       | /path/to/driver_gene_panel.tsv | The path to the v37 driver gene panel                           |
+| onco_dnds_database_path | /path/to/onco_dnds.tsv         | The path towards the v37 DnDs values for oncogenes              |
+| tsg_dnds_database_path  | /path/to/tsg_dnds.tsv          | The path towards the v37 DnDs values for tumor suppressor genes |
+| ensembl_data_dir        | /path/to/ensembl_data_dir      | The path towards the v37 ensembl data directory                 |
+| known_fusion_file       | /path/to/known_fusion_file     | The path towards the v37 known fusion file                      |
 
 Note that currently all molecular tests provided by the clinical input have been analysed with respect to ref genome version V37 (GRCh37 or
 HG19).
@@ -47,17 +50,17 @@ HG19).
 # ACTIN Molecular Datamodel
 
 A single molecular history represents all molecular testing done for a patient. This includes WGS results, large targeted panels, archer,
-small panel results and IHC tests. The history is modeled as a list of molecular tests, each with a type and date.
+small panel results and IHC tests. The history is modeled as a list of molecular tests.
 
 ## Molecular test
 
 The molecular test is a common interface used to model any molecular result (e.g. from ORANGE or other molecular testing). It is extended
-by the molecular record and a panel record.
+by the molecular record and the panel record.
 
 | Field           | Example Value             | Details                                                                                              |
 |-----------------|---------------------------|------------------------------------------------------------------------------------------------------|
 | experimentType  | WGS                       | The type of molecular experiment done (`HARTWIG_WHOLE_GENOME`, `HARTWIG_TARGETED`, `PANEL` or `IHC`) | 
-| testTypeDisplay | "NGS Archer"              | The name of the test (optional, if not implicit from the `experimentType`)                           | 
+| testTypeDisplay | NGS Archer                | The name of the test (optional, if not implicit from the `experimentType`)                           | 
 | date            | 2024-01-14                | The date on which the molecular results were obtained (optional)                                     |
 | drivers         | See drivers below         |                                                                                                      |
 | characteristics | See characteristics below |                                                                                                      |
@@ -89,7 +92,7 @@ Note that all individual characteristics are expected to be null for tests that 
 
 ### N molecular drivers
 
-Every potential driver event has the following fields ('general driver fields'):
+Every (potential) driver event has the following fields:
 
 | Field            | Example Value      | Details                                                                                                                |
 |------------------|--------------------|------------------------------------------------------------------------------------------------------------------------|
@@ -109,7 +112,7 @@ Furthermore, every driver event affecting a single gene is assigned the followin
 
 #### N variants
 
-In addition to the (gene) driver fields, the following data is captured for all detected variants:
+In addition to the (gene) driver fields, the following data is captured for variants:
 
 | Field                  | Example Value | Details                                                                 |
 |------------------------|---------------|-------------------------------------------------------------------------|
@@ -154,7 +157,7 @@ In addition to the (gene) driver fields, the following data is captured per copy
 | Field           | Example Value | Details                                                                     |
 |-----------------|---------------|-----------------------------------------------------------------------------|
 | canonicalImpact | See below     | The impact of the copy number event on the canonical transcript of the gene |
-| otherImpacts    | See below     | The impacts of this copy number event on other transcripts of this gene     |
+| otherImpacts    | See below     | The impact of this copy number event on other transcripts of this gene      |
 
 | Field        | Example Value   | Details                                                                        |
 |--------------|-----------------|--------------------------------------------------------------------------------|
@@ -283,12 +286,12 @@ A single entry of treatment evidence has the following properties:
 
 Evidence direction has the following properties:
 
-| Field               | Example Value | Details                                                                                                    |
-|---------------------|---------------|------------------------------------------------------------------------------------------------------------|
-| hasPositiveResponse | true          | If true, the evidence implies that a tumor with this biomarker can expect a positive response on treatment | 
-| hasBenefit          | true          |                                                                                                            |
-| isResistant         | false         | If true, the evidence implies that a tumor with this biomarker resists the treatment                       |
-| isCertain           | false         | If true, the evidence direction is considered certain rather than predicted                                | 
+| Field               | Example Value | Details                                                                                                                                                                  |
+|---------------------|---------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| hasPositiveResponse | true          | If true, the evidence implies that a tumor with this biomarker can expect a positive response on treatment                                                               | 
+| hasBenefit          | true          | If true, the evidence at least indicates a tumor will respond to a treatment but does not necessarily imply a great response (e.g. `hasPositiveResponse` could be false) |
+| isResistant         | false         | If true, the evidence implies that a tumor with this biomarker resists the treatment                                                                                     |
+| isCertain           | false         | If true, the evidence direction is considered certain rather than predicted                                                                                              | 
 
 ### Eligible (external) trials
 
