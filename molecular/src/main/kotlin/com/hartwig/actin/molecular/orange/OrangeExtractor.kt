@@ -57,16 +57,16 @@ class OrangeExtractor(private val geneFilter: GeneFilter) : MolecularExtractor<O
         return containsTumorCells(record) && !isContaminated(record)
     }
 
+    fun hasSufficientPurity(record: OrangeRecord): Boolean {
+        return PurpleQCStatus.WARN_LOW_PURITY !in record.purple().fit().qc().status() && containsTumorCells(record)
+    }
+
     private fun containsTumorCells(record: OrangeRecord): Boolean {
         return PurpleQCStatus.FAIL_NO_TUMOR !in record.purple().fit().qc().status()
     }
 
     private fun isContaminated(record: OrangeRecord): Boolean {
         return PurpleQCStatus.FAIL_CONTAMINATION in record.purple().fit().qc().status()
-    }
-
-    fun hasSufficientPurity(record: OrangeRecord): Boolean {
-        return PurpleQCStatus.WARN_LOW_PURITY !in record.purple().fit().qc().status() && containsTumorCells(record)
     }
 
     private fun determineExperimentType(experimentType: OrangeExperimentType?): ExperimentType {
@@ -93,10 +93,16 @@ class OrangeExtractor(private val geneFilter: GeneFilter) : MolecularExtractor<O
         val message =
             ("must be null or empty because ACTIN only accepts ORANGE output that has been " +
                     "scrubbed of germline data. Please use the JSON output from the 'orange_no_germline' directory.")
+
+        val allGermlineVariants = orange.purple().allGermlineVariants()
+        check(allGermlineVariants.isNullOrEmpty()) { "allGermlineVariants $message" }
+
         val allGermlineStructuralVariants = orange.linx().allGermlineStructuralVariants()
         check(allGermlineStructuralVariants.isNullOrEmpty()) { "allGermlineStructuralVariants $message" }
+
         val allGermlineBreakends = orange.linx().allGermlineBreakends()
         check(allGermlineBreakends.isNullOrEmpty()) { "allGermlineBreakends $message" }
+
         val germlineHomozygousDisruptions = orange.linx().germlineHomozygousDisruptions()
         check(germlineHomozygousDisruptions.isNullOrEmpty()) { "germlineHomozygousDisruptions $message" }
     }
