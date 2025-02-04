@@ -248,7 +248,7 @@ data class CurationDatabaseContext(
                 CurationDatabaseReader.ECG_TSV,
                 EcgConfigFactory(),
                 CurationCategory.ECG
-            ) { it.ecgEvaluatedInputs }
+            ) { it.comorbidityEvaluatedInputs }
 
             return listOf(
                 otherConditionDatabase,
