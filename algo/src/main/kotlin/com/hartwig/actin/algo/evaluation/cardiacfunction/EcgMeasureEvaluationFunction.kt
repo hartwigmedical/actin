@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.cardiacfunction
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.Ecg
@@ -31,16 +32,32 @@ class EcgMeasureEvaluationFunction internal constructor(
     }
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return record.ecgs.firstOrNull()?.let(extractingEcgMeasure)
-            ?.let { measure: EcgMeasure -> this.evaluate(measure) }
-            ?: EvaluationFactory.recoverableUndetermined(String.format("No %s known", measureName))
+        val ecgMeasures = record.ecgs.mapNotNull { ecg -> extractingEcgMeasure(ecg)?.let { ecg to it } }
+        val filtered = ecgMeasures.filter { it.second.unit == expectedUnit.symbol() }
+
+        return when {
+            ecgMeasures.isEmpty() -> EvaluationFactory.recoverableUndetermined(String.format("No %s known", measureName))
+            filtered.isEmpty() -> {
+                val units = Format.concat(ecgMeasures.map { it.second.unit })
+                EvaluationFactory.recoverableUndetermined(
+                    "${measureName.name} measure in $units instead of required ${expectedUnit.symbol()}"
+                )
+            }
+            filtered.size == 1 || filtered.all { with(it.first) { year != null && month != null } } -> {
+                evaluate(filtered.maxBy { with(it.first) { "$year-$month" } }.second)
+            }
+            else -> {
+                val evaluations = filtered.map { evaluate(it.second) }
+                if (evaluations.map(Evaluation::result).toSet().size == 1) {
+                    evaluations.first()
+                } else {
+                    EvaluationFactory.undetermined("Conflicting evaluations for ${measureName.name} with unknown dates")
+                }
+            }
+        }
     }
 
     private fun evaluate(measure: EcgMeasure): Evaluation {
-        if (measure.unit != expectedUnit.symbol()) {
-            return EvaluationFactory.undetermined("${measureName.name} measure in ${measure.unit} instead of required ${expectedUnit.symbol()}")
-        }
-
         return if (thresholdCriteria.comparator.compare(measure.value, threshold) >= 0) {
             EvaluationFactory.recoverablePass(
                 String.format(thresholdCriteria.passMessageTemplate, measureName, measure.value, measure.unit, threshold)

@@ -15,18 +15,18 @@ internal object CardiacFunctionTestFactory {
         return withEcg(createMinimal().copy(name = description))
     }
 
-    fun withLVEF(lvef: Double?): PatientRecord {
+    fun withLvef(lvef: Double?): PatientRecord {
         val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
         return base.copy(
             clinicalStatus = base.clinicalStatus.copy(lvef = lvef)
         )
     }
 
-    fun withEcg(ecg: Ecg?): PatientRecord {
-        return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-            comorbidities = listOfNotNull(ecg)
-        )
+    fun withEcgs(ecgs: List<Ecg>): PatientRecord {
+        return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(comorbidities = ecgs)
     }
+
+    fun withEcg(ecg: Ecg?) = withEcgs(listOfNotNull(ecg))
 
     fun withOtherCondition(otherCondition: OtherCondition): PatientRecord {
         return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(

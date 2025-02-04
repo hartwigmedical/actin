@@ -96,7 +96,7 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
     }
 
     private fun hasNormalCardiacFunctionByMUGAOrTTECreator(): FunctionCreator {
-        return { HasNormalCardiacFunctionByMUGAOrTTE() }
+        return { HasNormalCardiacFunctionByMugaOrTte() }
     }
 
     private fun hasFamilyHistoryOfIdiopathicSuddenDeathCreator(): FunctionCreator {
