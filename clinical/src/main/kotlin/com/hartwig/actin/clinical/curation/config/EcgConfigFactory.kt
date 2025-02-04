@@ -10,9 +10,9 @@ class EcgConfigFactory : CurationConfigFactory<ComorbidityConfig> {
     override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<ComorbidityConfig> {
         val input = parts[fields["input"]!!]
         val isQtcf = parts[fields["isQTCF"]!!] == "1"
-        val (qtcfValue: Int?, qtcfUnit: String?, qtcfValidationErrors) = extractMeasurement(input, "qtcf", isQtcf, parts, fields)
+        val (qtcfMeasure, qtcfValidationErrors) = extractMeasurement(input, "qtcf", isQtcf, parts, fields)
         val isJtc = parts[fields["isJTC"]!!] == "1"
-        val (jtcValue: Int?, jtcUnit: String?, jtcValidationErrors) = extractMeasurement(input, "jtc", isJtc, parts, fields)
+        val (jtcMeasure, jtcValidationErrors) = extractMeasurement(input, "jtc", isJtc, parts, fields)
         val interpretation = parts[fields["interpretation"]!!].trim().ifEmpty { null }
         val hasSigAberrationLatestEcg = when (val parsed = BooleanValueParser.parseBoolean(interpretation)) {
             is Either.Right -> parsed.value
@@ -26,8 +26,8 @@ class EcgConfigFactory : CurationConfigFactory<ComorbidityConfig> {
                 curated = hasSigAberrationLatestEcg?.let {
                     Ecg(
                         name = interpretation,
-                        qtcfMeasure = EcgMeasure(qtcfValue, qtcfUnit).takeIf { isQtcf },
-                        jtcMeasure = EcgMeasure(jtcValue, jtcUnit).takeIf { isJtc }
+                        qtcfMeasure = qtcfMeasure,
+                        jtcMeasure = jtcMeasure
                     )
                 },
             ), qtcfValidationErrors + jtcValidationErrors
@@ -36,9 +36,9 @@ class EcgConfigFactory : CurationConfigFactory<ComorbidityConfig> {
 
     private fun extractMeasurement(
         input: String, measurementPrefix: String, isOfType: Boolean, parts: Array<String>, fields: Map<String, Int>
-    ): Triple<Int?, String?, List<CurationConfigValidationError>> = if (isOfType) {
+    ): Pair<EcgMeasure?, List<CurationConfigValidationError>> = if (isOfType) {
         val fieldName = "${measurementPrefix}Value"
-        val validatedInt = validateInteger(CurationCategory.ECG, input, fieldName, fields, parts)
-        Triple(validatedInt.first, validatedInt.first?.let { parts[fields["${measurementPrefix}Unit"]!!] }, validatedInt.second)
-    } else Triple(null, null, emptyList())
+        val (value, errors) = validateInteger(CurationCategory.ECG, input, fieldName, fields, parts)
+        Pair(value?.let { EcgMeasure(it, parts[fields["${measurementPrefix}Unit"]!!]) }, errors)
+    } else Pair(null, emptyList())
 }
