@@ -494,7 +494,7 @@ Notes:
 - Resistant treatments are retained only in case responsive evidence for the same treatment is present as well (either approved or
   experimental).
 
-## Test Data
+## Note on test Data
 
 A tiny reference genome and corresponding Ensembl data cache is provided. This reference fasta requires additional metadata files to
 be created, when updating this reference genome perform the following steps in the folder containing the fasta file:
