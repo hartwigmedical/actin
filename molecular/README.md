@@ -434,14 +434,14 @@ The ploidy is hard-coded set to 2.
 
 ## Interpretation of drivers and annotation with treatment evidence and external trials
 
-#### 1. Annotation of mutations and characteristics
+Every molecular test (regardless of ORANGE or non-ORANGE) is interpreted and annotated with treatment evidence and external trials.
 
-#### Additional gene annotation
+### Interpretation of drivers
 
-Every variant, copy number and disruption is annotated with `geneRole`, `proteinEffect` and `isAssociatedWithDrugResistance`. Furthermore,
-every fusion is annotated with `proteinEffect` and `isAssociatedWithDrugResistance`.
+Every variant, copy number and disruption is annotated with `geneRole`, `proteinEffect` and `isAssociatedWithDrugResistance` from the SERVE
+database. In addition, every fusion is annotated with `proteinEffect` and `isAssociatedWithDrugResistance`.
 
-The annotation algo tries to find the best matching entry from SERVE's mapping of the `CKB_EVIDENCE` database as follows:
+The annotation algo finds the best matching entry from SERVE's mapping of the `CKB` sourced database as follows:
 
 - For variants the algo searches in the following order:
   - Is there a hotspot match for the specific variant? If yes, use hotspot annotation.
@@ -461,12 +461,12 @@ The annotation algo tries to find the best matching entry from SERVE's mapping o
 
 Do note that gene matching only ever populates the `geneRole` field. Any gene-level annotation assumes that the `proteinEffect` is unknown.
 
-#### Evidence annotation
+### Evidence annotation
 
-Every (potential) molecular driver and characteristic is annotated with evidence from SERVE. In practice all evidence comes
-from `CKB_EVIDENCE` except for external trials which is populated by `CKB_TRIAL`. The evidence annotations occur in the following order:
+Every (potential)  driver and characteristic is annotated with evidence from SERVE. In practice all treatment evidence and external trials
+come from `CKB`. The evidence annotations occur in the following order:
 
-1. Collect all on-label and off-label applicable evidences that match with the driver / characteristic
+1. Collect all on-label and off-label applicable treatment evidences that match with the driver / characteristic
 2. Map the evidences to the ACTIN evidence datamodel (above).
 
 Evidence is considered on-label in case the applicable evidence tumor DOID is equal to or a parent of the patient's tumor doids, and none of
@@ -487,32 +487,12 @@ Evidence from SERVE is collected per driver / characteristic as follows:
 | fusion                         | In case the fusion is reported, the union of promiscuous matches (gene level events of type `FUSION`, `ACTIVATION` or `ANY_MUTATION`) with fusion matches (exact fusion with fused exons in the actionable exon range)                    | 
 | virus                          | For any reported virus, evidence is matched for `HPV_POSITIVE` and `EBV_POSITIVE`                                                                                                                                                         | 
 
-The evidences are then mapped to the ACTIN evidence model as follows:
-
-| Type of CKB evidence                      | Mapping in ACTIN evidence datamodel |
-|-------------------------------------------|-------------------------------------|
-| On-Label, certain responsive, A level     | Approved treatment                  | 
-| On-label, uncertain responsive, A-level   | On-label experimental treatment     | 
-| On-label, certain responsive, B-level     | On-label experimental treatment     |
-| On-label, uncertain responsive, B-level   | Pre-clinical treatment              |
-| On-label, responsive, C-level or D-level  | Pre-clinical treatment              |
-| Off-label, responsive, A-level            | Off-label experimental treatment    | 
-| Off-label, certain responsive, B-level    | Off-label experimental treatment    |
-| Off-label, uncertain responsive, B-level  | Pre-clinical treatment              |
-| Off-label, responsive, C-level or D-level | Pre-clinical treatment              |
-| Resistant, A-level                        | Known resistant treatment           |
-| Certain resistant, B-level                | Known resistant treatment           |
-| Uncertain resistant, B-level              | Suspect resistant treatment         |
-| Resistant, C-level or D-level             | Suspect resistant treatment         |
-
 Notes:
 
-- All responsive on-label evidence from `CKB_TRIAL` is mapped to external trials in ACTIN datamodel
 - Responsive treatments are cleaned according to their evidence level. The highest evidence levels for each treatment are kept (such that an
   approved treatment cannot also be a pre-clinical treatment)
 - Resistant treatments are retained only in case responsive evidence for the same treatment is present as well (either approved or
   experimental).
--
 
 ## Test Data
 
