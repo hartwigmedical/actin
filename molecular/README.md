@@ -12,7 +12,9 @@ The scope of the ACTIN-Molecular interpreter application is as follows:
 
 * [How to run ACTIN-molecular](#how-to-run-actin-molecular)
 * [ACTIN molecular datamodel](#actin-molecular-datamodel)
-*
+* [Mapping of ORANGE results to ACTIN molecular test](#mapping-of-orange-result-to-actin-molecular-test)
+* [Mapping of other molecular results to ACTIN molecular test](#mapping-of-other-molecular-results-to-actin-molecular-test)
+* [Interpretation of drivers and annotation of treatment evidence and external trials](#interpretation-of-drivers-and-annotation-of-treatment-evidence-and-external-trials)
 
 ## How to run ACTIN-Molecular
 
@@ -314,14 +316,78 @@ A single eligible external trial has the following properties:
 | applicableCancerTypes | Colorectal Cancer, Solid Tumor     | The set of all cancer types that are eligible for this trial and match with the patient's cancer type                                      |
 | url                   | https://url.com                    | A link to the trial website for potentially more information                                                                               |
 
-## Interpretation to ACTIN molecular datamodel
+## Mapping of ORANGE result to ACTIN molecular test
 
-### ORANGE
+Before an ACTIN molecular record is created, a number of checks are performed on the ORANGE output JSON:
 
-The interpretation of ORANGE to the ACTIN datamodel consists of two parts:
+- The ORANGE data is not allowed to contain any germline variants (including structural variants, breakends and homozygous disruptions).
+- Every CUPPA prediction should contain at least the SNV pairwise classifier, genomic position classifier and feature classifier.
+- The PURPLE QC states should contain at least one status.
 
-1. Generic annotating of all mutations and various characteristics in ORANGE with additional gene annotation and clinical evidence.
-2. Mapping all fields, annotated mutations and annotated characteristics to the ACTIN datamodel.
+The base molecular properties are extracted as follows:
+
+| Field                | Mapped from                                                                                   |
+|----------------------|-----------------------------------------------------------------------------------------------|
+| sampleId             | The ORANGE field `sampleId`                                                                   |
+| experimentType       | Trivially derived from ORANGE field `experimentType`                                          |
+| refGenomeVersion     | Trivially derived from ORANGE field `refGenomeVersion`                                        | 
+| date                 | The ORANGE field `samplingDate`                                                               |
+| evidenceSource       | Hard-coded to `CKB`                                                                           |
+| externalTrialSource  | Hard-coded to `CKB`                                                                           |
+| containsTumorCells   | TRUE in case `FAIL_NO_TUMOR` is missing from PURPLE QC states                                 |
+| isContaminated       | TRUE in case `FAIL_CONTAMINATED` is missing from the PURPLE QC states                         |
+| hasSufficientPurity  | TRUE in case both `WARN_LOW_PURITY` and `FAIL_NO_TUMOR` are missing from the PURPLE QC states |
+| hasSufficientQuality | Derived field, TRUE in case `containsTumorCells` is true and `isContaminated` is false        |
+
+The molecular characteristics are extracted as follows:
+
+| Field                        | Mapped from                                                                            |
+|------------------------------|----------------------------------------------------------------------------------------|
+| purity                       | The PURPLE fit field `purity`                                                          |
+| ploidy                       | The PURPLE fit field `ploidy`                                                          | 
+| predictedTumorOrigin         | All CUPPA cancer-type predictions along with the likelihood and individual classifiers |
+| isMicrosatelliteUnstable     | The interpretation of PURPLE `microsatelliteStabilityStatus`                           |
+| homologousRepairScore        | The CHORD field `hrdValue`                                                             |
+| isHomologousRepairDeficient  | The interpretation of CHORD `hrStatus`                                                 |
+| brca1Value                   | The CHORD field `brca1Value`                                                           |
+| brca22Value                  | The CHORD field `brca2Value`                                                           |
+| hrdType                      | Trivially derived from the CHORD field `hrdType`                                       |
+| tumorMutationalBurden        | The PURPLE characteristics field `tumorMutationalBurden`                               |
+| hasHighTumorMutationalBurden | The interpretation of PURPLE `tumorMutationalBurdenStatus`                             |
+| tumorMutationalLoad          | The PURPLE characteristics field `tumorMutationalLoad`                                 |
+| hasHighTumorMutationalLoad   | The interpretation of PURPLE `tumorMutationalLoadStatus`                               |
+
+The molecular drivers are extracted as follows:
+
+| Driver Type           | Algo             | Extracted from                                                                                                                       |
+|-----------------------|------------------|--------------------------------------------------------------------------------------------------------------------------------------|
+| variants              | PURPLE           | All somatic variants affecting a known gene and either reported or having an effect in the coding region of the canonical transcript |
+| copyNumbers           | PURPLE           | All somatic amplifications and losses affecting a known gene                                                                         |
+| homozygousDisruptions | LINX             | All somatic homozygous disruptions affecting a known gene                                                                            |
+| disruptions           | LINX             | All somatic gene disruptions affecting a known gene that is not also lost                                                            |
+| fusions               | LINX             | All fusions that have a known gene either as 5' or 3' partner                                                                        |
+| viruses               | VirusInterpreter | All viruses.                                                                                                                         |
+
+Notes:
+
+- Variants are dedup'ed prior to extraction. Every phased inframe indel for which another variant exists with the same HGVS protein impact
+  and higher variant copy number is removed prior to extraction.
+- Generally all floating point numbers are rounded to 3 digits when ingesting data into ACTIN:
+  - variants: `variantCopyNumber`, `totalCopyNumber`, `clonalLikelihood`
+  - disruptions: `junctionCopyNumber`, `undisruptedCopyNumber`
+-
+
+Other data:
+
+The HLA entries are extracted from LILAC as follows:
+
+- `isReliable` is set to true in case the LILAC QC value equals `PASS`
+- For each HLA allele, the field `hasSomaticVariants` is set to true in case any of `somaticMissense`, `somaticNonsenseOrFrameshift`
+  , `somaticSplice` or `somaticInframeIndel` is non-zero
+
+The pharmacogenomics entries are extracted from PEACH.
+
+## Mapping of other molecular results to ACTIN molecular test
 
 ### Integration of non-ORANGE molecular results
 
@@ -332,8 +398,6 @@ of test was done. This integration process is documented in the diagram below.
 Note: IHC tests are not included below as they do not provide molecular events which can be annotated. They follow a similar path, but
 have no annotation step, and cannot be used in molecular rules requiring drivers.
 
-![Integrating Molecular Data](integrating_molecular_data.png)
-
 The flow of data from provider to rule evaluation follows these steps:
 
 - An extractor transforms the data into a data model which more easily supports annotation.
@@ -342,6 +406,8 @@ The flow of data from provider to rule evaluation follows these steps:
 - The annotators produce either a PanelRecord or MolecularRecord. These both conform to the MolecularTest interface and are combined in a
   single list in the molecular history.
 - Molecular rules can then evaluate the molecular history.
+
+## Interpretation of drivers and annotation of treatment evidence and external trials
 
 #### 1. Annotation of mutations and characteristics
 
@@ -353,20 +419,20 @@ every fusion is annotated with `proteinEffect` and `isAssociatedWithDrugResistan
 The annotation algo tries to find the best matching entry from SERVE's mapping of the `CKB_EVIDENCE` database as follows:
 
 - For variants the algo searches in the following order:
-    - Is there a hotspot match for the specific variant? If yes, use hotspot annotation.
-    - Is there a codon match for the specific variant's mutation type? If yes, use codon annotation.
-    - Is there an exon match for the specific variant's mutation type? If yes, use exon annotation.
-    - Else, fall back to gene matching.
+  - Is there a hotspot match for the specific variant? If yes, use hotspot annotation.
+  - Is there a codon match for the specific variant's mutation type? If yes, use codon annotation.
+  - Is there an exon match for the specific variant's mutation type? If yes, use exon annotation.
+  - Else, fall back to gene matching.
 - For copy numbers the algo searches in the following order:
-    - Is there a copy number specific match? If yes, use copy number specific annotation.
-    - Else, fall back to gene matching.
+  - Is there a copy number specific match? If yes, use copy number specific annotation.
+  - Else, fall back to gene matching.
 - For homozygous disruptions:
-    - Is there copy number loss specific match? If yes, use copy number loss annotation.
-    - Else, fall back to gene matching.
+  - Is there copy number loss specific match? If yes, use copy number loss annotation.
+  - Else, fall back to gene matching.
 - For disruptions, a gene match is performed.
 - For fusions, the algo searches in the following order:
-    - Is there a known fusion with an exon range that matches the specific fusion? If yes, use fusion annotation.
-    - Else, fall back to known fusion match ignoring specific exon ranges.
+  - Is there a known fusion with an exon range that matches the specific fusion? If yes, use fusion annotation.
+  - Else, fall back to known fusion match ignoring specific exon ranges.
 
 Do note that gene matching only ever populates the `geneRole` field. Any gene-level annotation assumes that the `proteinEffect` is unknown.
 
@@ -421,66 +487,7 @@ Notes:
   approved treatment cannot also be a pre-clinical treatment)
 - Resistant treatments are retained only in case responsive evidence for the same treatment is present as well (either approved or
   experimental).
-
-#### 2. Mapping of all ORANGE fields to ACTIN molecular datamodel
-
-The ACTIN datamodel is created from the ORANGE data according to below.
-
-Molecular base data:
-
-| Field                | Mapping                                                               |
-|----------------------|-----------------------------------------------------------------------|
-| sampleId             | The ORANGE field `sampleId`                                           |
-| type                 | Extracted from ORANGE field `experimentType`                          |
-| refGenomeVersion     | Extracted from ORANGE field `refGenomeVersion`                        | 
-| date                 | The ORANGE field `samplingDate`                                       |
-| evidenceSource       | Hard-coded to `CKB_EVIDENCE`                                          |
-| externalTrialSource  | Hard-coded to `CKB_TRIAL`                                             |
-| containsTumorCells   | TRUE in case `FAIL_NO_TUMOR` is one of the purple QC states           |
-| isContaminated       | TRUE in case `FAIL_CONTAMINATED` is one of the purple QC states       |
-| hasSufficientPurity  | TRUE in case `WARN_LOW_PURITY` is *not* present in purple QC states   |
-| hasSufficientQuality | Derived field, TRUE in case containsTumorCells and not isContaminated |
-
-Molecular characteristics:
-
-| Field                        | Mapping                                                         |
-|------------------------------|-----------------------------------------------------------------|
-| purity                       | The PURPLE field `purity`                                       |
-| ploidy                       | The PURPLE field `ploidy`                                       | 
-| predictedTumorOrigin         | The CUPPA best cancer-type prediction along with the likelihood |
-| isMicrosatelliteUnstable     | The interpretation of PURPLE `microsatelliteStabilityStatus`    |
-| homologousRepairScore        | The CHORD field `hrdValue`                                      |
-| isHomologousRepairDeficient  | The interpretation of CHORD `hrStatus`                          |
-| tumorMutationalBurden        | The PURPLE field `tumorMutationalBurden`                        |
-| hasHighTumorMutationalBurden | The interpretation of PURPLE `tumorMutationalBurdenStatus`      |
-| tumorMutationalLoad          | The PURPLE field `tumorMutationalLoad`                          |
-| hasHighTumorMutationalLoad   | The interpretation of PURPLE `tumorMutationalLoadStatus`        |
-
-Driver events:
-
-| Driver Type           | Algo             | Details                                                                                                                            |
-|-----------------------|------------------|------------------------------------------------------------------------------------------------------------------------------------|
-| variants              | PURPLE           | Union of all somatic variants affecting a known gene and either reported or having a coding effect, and reported germline variants |
-| copyNumbers           | PURPLE           | All somatic amplifications and losses affecting a known gene                                                                       |
-| homozygousDisruptions | LINX             | All somatic homozygous disruptions affecting a known gene                                                                          |
-| disruptions           | LINX             | All somatic gene disruptions affecting a known gene that is not also lost                                                          |
-| fusions               | LINX             | All fusions that have a known gene either as 5' or 3' partner                                                                      |
-| viruses               | VirusInterpreter | All viruses.                                                                                                                       |
-
-Note that all floating point numbers are rounded to 3 digits when ingesting data into ACTIN:
-
-- variants: `variantCopyNumber`, `totalCopyNumber`, `clonalLikelihood`
-- disruptions: `junctionCopyNumber`, `undisruptedCopyNumber`
-
-Other data:
-
-The HLA entries are extracted from LILAC as follows:
-
-- `isReliable` is set to true in case the LILAC QC value equals `PASS`
-- For each HLA allele, the field `hasSomaticVariants` is set to true in case any of `somaticMissense`, `somaticNonsenseOrFrameshift`
-  , `somaticSplice` or `somaticInframeIndel` is non-zero
-
-The pharmacogenomics entries are extracted from PEACH.
+-
 
 ## Test Data
 
