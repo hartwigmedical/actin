@@ -13,7 +13,7 @@ class ECGConfigFactoryTest {
     private val fields: Map<String, Int> = TestCurationFactory.curationHeaders(CurationDatabaseReader.ECG_TSV)
 
     @Test
-    fun `Should return ECGConfig from valid inputs`() {
+    fun `Should return ECG config from valid inputs`() {
         val config = EcgConfigFactory().create(fields, arrayOf("input", "interpretation", "1", "1", "ms", "0", "", ""))
         assertThat(config.errors).isEmpty()
         assertThat(config.config.input).isEqualTo("input")
@@ -27,7 +27,7 @@ class ECGConfigFactoryTest {
     }
 
     @Test
-    fun `Should return validation error when qtcf is not a number`() {
+    fun `Should return validation error when QTCF is not a number`() {
         val config = EcgConfigFactory().create(fields, arrayOf("input", "interpretation", "1", "invalid", "ms", "1", "1", "ms"))
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
@@ -41,7 +41,7 @@ class ECGConfigFactoryTest {
     }
 
     @Test
-    fun `Should return validation error when jtc is not a number`() {
+    fun `Should return validation error when JTC is not a number`() {
         val config = EcgConfigFactory().create(fields, arrayOf("input", "interpretation", "1", "1", "ms", "1", "invalid", "ms"))
         assertThat(config.errors).containsExactly(CurationConfigValidationError(
             CurationCategory.ECG.categoryName,

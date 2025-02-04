@@ -35,17 +35,15 @@ class QuestionnaireCurationTest {
 
     @Test
     fun `Should curate options without taking into account the case`() {
-        var curated = toBoolean(SUBJECT, "SusPectEd")
-        assertThat(curated.curated).isNull()
-        assertThat(curated.errors).isEmpty()
+        assertExpectedExtraction("SusPectEd", null)
+        assertExpectedExtraction("yEs", true)
+        assertExpectedExtraction("botaantasting BIJ weke DELEN massa", false)
+    }
 
-        curated = toBoolean(SUBJECT, "yEs")
-        assertThat(curated.curated).isTrue()
-        assertThat(curated.errors).isEmpty()
-
-        curated = toBoolean(SUBJECT, "botaantasting BIJ weke DELEN massa")
-        assertThat(curated.curated).isFalse()
-        assertThat(curated.errors).isEmpty()
+    private fun assertExpectedExtraction(input: String, expected: Boolean?) {
+        val (curated, errors) = toBoolean(SUBJECT, input)
+        assertThat(curated).isEqualTo(expected)
+        assertThat(errors).isEmpty()
     }
 
     @Test
