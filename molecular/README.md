@@ -441,60 +441,54 @@ Every molecular test (regardless of ORANGE or non-ORANGE) is interpreted and ann
 Every variant, copy number and disruption is annotated with `geneRole`, `proteinEffect` and `isAssociatedWithDrugResistance` from the SERVE
 database. In addition, every fusion is annotated with `proteinEffect` and `isAssociatedWithDrugResistance`.
 
-The annotation algo finds the best matching entry from SERVE's mapping of the `CKB` sourced database as follows:
+The annotation finds the best matching entry from SERVE's known event database as follows:
 
-- For variants the algo searches in the following order:
+- For variants, the following order is followed:
   - Is there a hotspot match for the specific variant? If yes, use hotspot annotation.
   - Is there a codon match for the specific variant's mutation type? If yes, use codon annotation.
   - Is there an exon match for the specific variant's mutation type? If yes, use exon annotation.
   - Else, fall back to gene matching.
-- For copy numbers the algo searches in the following order:
+- For copy numbers:
   - Is there a copy number specific match? If yes, use copy number specific annotation.
   - Else, fall back to gene matching.
 - For homozygous disruptions:
   - Is there copy number loss specific match? If yes, use copy number loss annotation.
   - Else, fall back to gene matching.
 - For disruptions, a gene match is performed.
-- For fusions, the algo searches in the following order:
+- For fusions:
   - Is there a known fusion with an exon range that matches the specific fusion? If yes, use fusion annotation.
   - Else, fall back to known fusion match ignoring specific exon ranges.
 
 Do note that gene matching only ever populates the `geneRole` field. Any gene-level annotation assumes that the `proteinEffect` is unknown.
 
-### Evidence annotation
+### Molecular and cancer type matching
 
 Every (potential)  driver and characteristic is annotated with evidence from SERVE. In practice all treatment evidence and external trials
 come from `CKB`. The evidence annotations occur in the following order:
 
 1. Collect all on-label and off-label applicable treatment evidences that match with the driver / characteristic
-2. Map the evidences to the ACTIN evidence datamodel (above).
+2. Determine external trials for which the patient has at least one molecular match and filter for on-label trials.
+3. Map the evidences and trials to the ACTIN evidence datamodel (above).
 
-Evidence is considered on-label in case the applicable evidence tumor DOID is equal to or a parent of the patient's tumor doids, and none of
-the patient's tumor DOIDs (or parents thereof) is excluded by the evidence.
+Treatment evidence and trials is considered on-label in case the applicable evidence or at least one of the trial tumor DOIDs is equal to or
+a parent of the patient's tumor doids, and none of the patient's tumor DOIDs (or parents thereof) is excluded by the evidence.
 
-Evidence from SERVE is collected per driver / characteristic as follows:
+A molecular match is made between treatment evidence or trial and driver / characteristics as follows.
 
-| Driver / Characteristic        | Evidence collected                                                                                                                                                                                                                                        |
-|--------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| microsatellite status          | All signature evidence of type `MICROSATELLITE_UNSTABLE` in case tumor has MSI                                                                                                                                                                            |
-| homologous repair status       | All signature evidence of type `HOMOLOGOUS_REPAIR_DEFICIENT` in case tumor is HRD                                                                                                                                                                         |
-| tumor mutational burden status | All signature evidence of type `HIGH_TUMOR_MUTATIONAL_BURDEN` in case tumor has high TMB                                                                                                                                                                  |
-| tumor mutational load status   | All signature evidence of type `HIGH_TUMOR_MUTATIONAL_LOAD` in case tumor has high TML                                                                                                                                                                    |
-| variant                        | In case the variant has `HIGH` driver likelihood and is reported: the union of all evidence matching for exact hotspot, matching on range and mutation type, and matching on gene level for events of type `ACTIVATION`, `INACTIVATION` or `ANY_MUTATION` |
-| copy number                    | In case of an amplification, all gene level events of type `AMPLIFICATION`. In case of a loss, all gene level events of type `DELETION`                                                                                                                   |
-| homozygous disruption          | All gene level evidence of type `DELETION`, `INACTIVATION` or `ANY_MUTATION`                                                                                                                                                                              | 
-| disruption                     | All gene level evidence of type `ANY_MUTATION` in case the disruption is reported                                                                                                                                                                         | 
-| fusion                         | In case the fusion is reported, the union of promiscuous matches (gene level events of type `FUSION`, `ACTIVATION` or `ANY_MUTATION`) with fusion matches (exact fusion with fused exons in the actionable exon range)                                    | 
-| virus                          | For any reported virus, evidence is matched for `HPV_POSITIVE` and `EBV_POSITIVE`                                                                                                                                                                         | 
+| Driver / Characteristic        | Evidence collected                                                                                                                                                                                                                        |
+|--------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| microsatellite status          | All signature evidence of type `MICROSATELLITE_UNSTABLE` in case tumor has MSI                                                                                                                                                            |
+| homologous repair status       | All signature evidence of type `HOMOLOUG_RECOMBINATION_DEFICIENT` in case tumor is HRD                                                                                                                                                    |
+| tumor mutational burden status | All signature evidence of type `HIGH_TUMOR_MUTATIONAL_BURDEN` in case tumor has high TMB                                                                                                                                                  |
+| tumor mutational load status   | All signature evidence of type `HIGH_TUMOR_MUTATIONAL_LOAD` in case tumor has high TML                                                                                                                                                    |
+| variant                        | In case the variant has `HIGH` driver likelihood: the union of all evidence matching for exact hotspot, matching on range and mutation type, and matching on gene level for events of type `ACTIVATION`, `INACTIVATION` or `ANY_MUTATION` |
+| copy number                    | In case of a (partial) amplification, all gene level events of type `AMPLIFICATION`. In case of a loss, all gene level events of type `DELETION`                                                                                          |
+| homozygous disruption          | All gene level evidence of type `DELETION`, `INACTIVATION` or `ANY_MUTATION`                                                                                                                                                              | 
+| disruption                     | All gene level evidence of type `ANY_MUTATION` in case the disruption is reported                                                                                                                                                         | 
+| fusion                         | In case the fusion is reported, the union of promiscuous matches (gene level events of type `FUSION`, `ACTIVATION` or `ANY_MUTATION`) with fusion matches (exact fusion with fused exons in the actionable exon range)                    | 
+| virus                          | For any reported virus, evidence is matched for `HPV_POSITIVE` and `EBV_POSITIVE`                                                                                                                                                         | 
 
-Notes:
-
-- Responsive treatments are cleaned according to their evidence level. The highest evidence levels for each treatment are kept (such that an
-  approved treatment cannot also be a pre-clinical treatment)
-- Resistant treatments are retained only in case responsive evidence for the same treatment is present as well (either approved or
-  experimental).
-
-## Note on test data
+## Note on test Data
 
 A tiny reference genome and corresponding Ensembl data cache is provided. This reference fasta requires additional metadata files to
 be created, when updating this reference genome perform the following steps in the folder containing the fasta file:
