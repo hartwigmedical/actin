@@ -39,16 +39,17 @@ class AtcModelTest {
     }
 
     @Test
-    fun shouldReturnClassificationForFourLevelsAtcClassification() {
+    fun shouldReturnClassificationForThreeLevelsAtcClassification() {
         val victim = createAtcModel()
-        val result = victim.resolveByCode("N02BE", CHEMICAL)!!
+        val result = victim.resolveByCode("N02B", CHEMICAL)!!
+        assertThat(result.chemicalSubGroup).isNull()
         assertThat(result.chemicalSubstance).isNull()
     }
 
     @Test
-    fun shouldReturnNullForLessThanFourLevelsAtcClassification() {
+    fun shouldReturnNullForLessThanThreeLevelsAtcClassification() {
         val victim = createAtcModel()
-        val result = victim.resolveByCode("N02B", PHARMACOLOGICAL)
+        val result = victim.resolveByCode("N02", PHARMACOLOGICAL)
         assertThat(result).isNull()
     }
 
