@@ -4,7 +4,7 @@ data class AtcClassification(
     val anatomicalMainGroup: AtcLevel,
     val therapeuticSubGroup: AtcLevel,
     val pharmacologicalSubGroup: AtcLevel,
-    val chemicalSubGroup: AtcLevel,
+    val chemicalSubGroup: AtcLevel?,
     val chemicalSubstance: AtcLevel?
 ) {
     

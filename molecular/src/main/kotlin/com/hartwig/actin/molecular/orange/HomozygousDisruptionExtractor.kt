@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.util.ExtractionUtil
+import com.hartwig.hmftools.datamodel.linx.LinxHomozygousDisruption
 import com.hartwig.hmftools.datamodel.linx.LinxRecord
 
 internal class HomozygousDisruptionExtractor(private val geneFilter: GeneFilter) {
@@ -37,7 +38,7 @@ internal class HomozygousDisruptionExtractor(private val geneFilter: GeneFilter)
             .sorted()
     }
 
-    private fun relevantHomozygousDisruptions(linx: LinxRecord): Set<com.hartwig.hmftools.datamodel.linx.LinxHomozygousDisruption> {
+    private fun relevantHomozygousDisruptions(linx: LinxRecord): Set<LinxHomozygousDisruption> {
         return listOfNotNull(linx.somaticHomozygousDisruptions(), linx.germlineHomozygousDisruptions()).flatten().toSet()
     }
 }

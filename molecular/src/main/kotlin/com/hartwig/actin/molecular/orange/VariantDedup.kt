@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.orange
 
-import com.hartwig.hmftools.datamodel.purple.PurpleTranscriptImpact
 import com.hartwig.hmftools.datamodel.purple.PurpleVariant
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
 import org.apache.logging.log4j.LogManager
@@ -36,7 +35,7 @@ object VariantDedup {
         var uniqueHgvsCodingImpact: String? = null
         val variantImpactToMatch = variantToMatch.canonicalImpact()
         for (variant in variants) {
-            val variantImpact: PurpleTranscriptImpact = variant.canonicalImpact()
+            val variantImpact = variant.canonicalImpact()
             if (variantImpact.effects() == variantImpactToMatch.effects() && variant.gene() == variantToMatch.gene() &&
                 variantImpact.hgvsProteinImpact() == variantImpactToMatch.hgvsProteinImpact()
             ) {

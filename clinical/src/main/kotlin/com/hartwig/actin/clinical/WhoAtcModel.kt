@@ -12,29 +12,28 @@ interface AtcModel {
     fun resolveByName(name: String): Set<String>
 }
 
-private const val ATC_LENGTH_4_LEVELS = 5
+private const val ATC_LENGTH_3_LEVELS = 4
 
 class WhoAtcModel(private val atcMap: Map<String, String>, private val atcOverrides: Map<Pair<String, String>, String>) : AtcModel {
 
     override fun resolveByCode(rawAtcCode: String, rawAtcLevelName: String): AtcClassification? {
         return if (rawAtcCode.trim().isNotEmpty() && rawAtcCode[0].lowercaseChar() in 'a'..'z') {
-            return if (rawAtcCode.length >= ATC_LENGTH_4_LEVELS) {
+            return if (rawAtcCode.length >= ATC_LENGTH_3_LEVELS) {
                 val correctedRawAtcCode = atcOverrides[Pair(rawAtcCode, rawAtcLevelName)] ?: rawAtcCode
 
                 AtcClassification(
                     anatomicalMainGroup = atcLevel(correctedRawAtcCode.substring(0, 1)),
                     therapeuticSubGroup = atcLevel(correctedRawAtcCode.substring(0, 3)),
                     pharmacologicalSubGroup = atcLevel(correctedRawAtcCode.substring(0, 4)),
-                    chemicalSubGroup = atcLevel(correctedRawAtcCode.substring(0, 5)),
+                    chemicalSubGroup = maybeAtcLevel(
+                        correctedRawAtcCode.takeIf { it.length > ATC_LENGTH_3_LEVELS }?.substring(0, 5)
+                    ),
                     chemicalSubstance = maybeAtcLevel(
-                        if (correctedRawAtcCode.length > ATC_LENGTH_4_LEVELS) correctedRawAtcCode.substring(
-                            0,
-                            7
-                        ) else null
+                        correctedRawAtcCode.takeIf { it.length > ATC_LENGTH_3_LEVELS + 1 }?.substring(0, 7)
                     )
                 )
             } else {
-                LOGGER.warn("ATC code $rawAtcCode did not contain at least 4 levels of classification. Ignoring ATC code for this medication")
+                LOGGER.warn("ATC code $rawAtcCode did not contain at least 3 levels of classification. Ignoring ATC code for this medication")
                 null
             }
         } else {
