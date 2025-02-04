@@ -11,10 +11,10 @@ The scope of the ACTIN-Molecular interpreter application is as follows:
 ## Contents
 
 * [How to run ACTIN-molecular](#how-to-run-actin-molecular)
-* [ACTIN molecular datamodel](#actin-molecular-datamodel)
-* [Mapping of ORANGE results to ACTIN molecular test](#mapping-of-orange-result-to-actin-molecular-test)
+* [Description of the ACTIN molecular datamodel](#actin-molecular-datamodel)
+* [Mapping of ORANGE results to ACTIN molecular test](#mapping-of-an-orange-result-to-an-actin-molecular-test)
 * [Mapping of other molecular results to ACTIN molecular test](#mapping-of-other-molecular-results-to-actin-molecular-test)
-* [Interpretation of drivers and annotation of treatment evidence and external trials](#interpretation-of-drivers-and-annotation-of-treatment-evidence-and-external-trials)
+* [Interpretation of drivers and annotation with treatment evidence and external trials](#interpretation-of-drivers-and-annotation-with-treatment-evidence-and-external-trials)
 
 ## How to run ACTIN-Molecular
 
@@ -30,8 +30,8 @@ java -cp actin.jar com.hartwig.actin.molecular.MolecularInterpreterApplicationKt
 
 - The clinical JSON should be the output of [ACTIN Clinical](https://github.com/hartwigmedical/actin/tree/master/clinical).
 - The SERVE directory should hold the output JSON of [SERVE](https://github.com/hartwigmedical/serve/tree/master/algo) and is used for
-  annotation
-  and interpretation of the genomic findings.
+  annotation and interpretation of the genomic findings.
+- The DOID json is a standard resource within Hartwig.
 
 In case a molecular test has been analysed by [OncoAnalyser](https://nf-co.re/oncoanalyser/) and
 an [ORANGE](https://github.com/hartwigmedical/hmftools/tree/master/orange) output is available, this can be
@@ -53,8 +53,8 @@ input. Note that all of these resources are available as standard resources with
 | ensembl_data_dir        | /path/to/ensembl_data_dir      | The path towards the v37 ensembl data directory                 |
 | known_fusion_file       | /path/to/known_fusion_file     | The path towards the v37 known fusion file                      |
 
-Note that currently it is assumed that all molecular tests provided by the clinical input have been analysed with respect to ref genome
-version V37 (GRCh37 or HG19).
+Currently, it is assumed that all molecular tests provided by the clinical input have been analysed with respect to ref genome version V37 (
+GRCh37 or HG19).
 
 ## ACTIN molecular datamodel
 
@@ -316,9 +316,9 @@ A single eligible external trial has the following properties:
 | applicableCancerTypes | Colorectal Cancer, Solid Tumor     | The set of all cancer types that are eligible for this trial and match with the patient's cancer type                                      |
 | url                   | https://url.com                    | A link to the trial website for potentially more information                                                                               |
 
-## Mapping of ORANGE result to ACTIN molecular test
+## Mapping of an ORANGE result to an ACTIN molecular test
 
-Before an ACTIN molecular record is created, a number of checks are performed on the ORANGE output JSON:
+Before an ACTIN molecular test is created, a number of checks are performed on the ORANGE output data:
 
 - The ORANGE data is not allowed to contain any germline variants (including structural variants, breakends and homozygous disruptions).
 - Every CUPPA prediction should contain at least the SNV pairwise classifier, genomic position classifier and feature classifier.
@@ -362,22 +362,25 @@ The molecular drivers are extracted as follows:
 | Driver Type           | Algo             | Extracted from                                                                                                                       |
 |-----------------------|------------------|--------------------------------------------------------------------------------------------------------------------------------------|
 | variants              | PURPLE           | All somatic variants affecting a known gene and either reported or having an effect in the coding region of the canonical transcript |
-| copyNumbers           | PURPLE           | All somatic amplifications and losses affecting a known gene                                                                         |
+| copyNumbers           | PURPLE           | All somatic gene copy numbers affecting a known gene                                                                                 |
 | homozygousDisruptions | LINX             | All somatic homozygous disruptions affecting a known gene                                                                            |
-| disruptions           | LINX             | All somatic gene disruptions affecting a known gene that is not also lost                                                            |
+| disruptions           | LINX             | All somatic gene disruptions affecting a known gene. DEL disruptions on genes lost by copy number are filtered                       |
 | fusions               | LINX             | All fusions that have a known gene either as 5' or 3' partner                                                                        |
 | viruses               | VirusInterpreter | All viruses.                                                                                                                         |
 
-Notes:
+Notes on driver extraction:
 
 - Variants are dedup'ed prior to extraction. Every phased inframe indel for which another variant exists with the same HGVS protein impact
   and higher variant copy number is removed prior to extraction.
+- Currently, a single gene copy number is extracted per gene even though purple may produce multiple instances depending on non-canonical
+  transcript reporting status
+- Currently, it is assumed that homozygous disruptions are only determined by linx in case they are reported.
+- For DUP disruptions that affect genes that are homozygously disrupted, the junction copy number is subtracted from the undisrupted copy
+  number.
 - Generally all floating point numbers are rounded to 3 digits when ingesting data into ACTIN:
   - variants: `variantCopyNumber`, `totalCopyNumber`, `clonalLikelihood`
   - disruptions: `junctionCopyNumber`, `undisruptedCopyNumber`
--
-
-Other data:
+- The extraction will produce an exception if an event is reported on a gene that is not part of the list of known genes.
 
 The HLA entries are extracted from LILAC as follows:
 
@@ -407,7 +410,7 @@ The flow of data from provider to rule evaluation follows these steps:
   single list in the molecular history.
 - Molecular rules can then evaluate the molecular history.
 
-## Interpretation of drivers and annotation of treatment evidence and external trials
+## Interpretation of drivers and annotation with treatment evidence and external trials
 
 #### 1. Annotation of mutations and characteristics
 
