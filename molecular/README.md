@@ -13,7 +13,7 @@ The scope of the ACTIN-Molecular interpreter application is as follows:
 * [How to run ACTIN-molecular](#how-to-run-actin-molecular)
 * [Description of the ACTIN molecular datamodel](#actin-molecular-datamodel)
 * [Mapping of ORANGE results to ACTIN molecular test](#mapping-of-an-orange-result-to-an-actin-molecular-test)
-* [Mapping of other molecular results to ACTIN molecular test](#mapping-of-other-molecular-results-to-actin-molecular-test)
+* [Mapping of other molecular results to ACTIN molecular test](#mapping-of-other-molecular-results-to-an-actin-molecular-test)
 * [Interpretation of drivers and annotation with treatment evidence and external trials](#interpretation-of-drivers-and-annotation-with-treatment-evidence-and-external-trials)
 
 ## How to run ACTIN-Molecular
@@ -390,25 +390,47 @@ The HLA entries are extracted from LILAC as follows:
 
 The pharmacogenomics entries are extracted from PEACH.
 
-## Mapping of other molecular results to ACTIN molecular test
+## Mapping of other molecular results to an ACTIN molecular test
 
-### Integration of non-ORANGE molecular results
+Other (non-ORANGE) molecular results can be provided via the clinical data, using the prior sequencing test list. These results are
+standardized and integrated into the molecular history, which can be processed by downstream rules without specific knowledge about what
+type of test was done.
 
-Molecular results which are not ORANGE are interpreted from the clinical data, using the prior molecular test list. These results are
-normalized and integrated into the molecular history, which can be processed by downstream rules without specific knowledge about what type
-of test was done. This integration process is documented in the diagram below.
+The ingestion of other molecular results follows these steps.
 
-Note: IHC tests are not included below as they do not provide molecular events which can be annotated. They follow a similar path, but
-have no annotation step, and cannot be used in molecular rules requiring drivers.
+### Extraction of base properties of a molecular test
 
-The flow of data from provider to rule evaluation follows these steps:
+The base properties of a molecular test are extracted as follows
 
-- An extractor transforms the data into a data model which more easily supports annotation.
-- An annotator adds evidence (see [Evidence annotation](#evidence-annotation)). In the case of panel tests not extracted from ORANGE
-  results, we also add genomic position and driver likelihood.
-- The annotators produce either a PanelRecord or MolecularRecord. These both conform to the MolecularTest interface and are combined in a
-  single list in the molecular history.
-- Molecular rules can then evaluate the molecular history.
+| Field                | Mapped from                                   |
+|----------------------|-----------------------------------------------|
+| testedGenes          | The provided field `testedGenes` (if present) |
+| experimentType       | Hard-coded to `PANEL`                         |
+| testTypeDisplay      | The provided field `input`                    |                                                   
+| date                 | The provided field `date`                     |
+| evidenceSource       | Hard-coded to `CKB`                           |
+| hasSufficientPurity  | Hard-coded to TRUE                            |
+| hasSufficientQuality | Hard-coded to TRUE                            |
+
+### Extracting of drivers
+
+It is assumed that panels can only produce variants, copy numbers and fusions.
+
+Variants are extracted as follows:
+
+1. The genomic coordinates are resolved from either the protein impact or otherwise the coding impact
+2. The variants are annotated by [PAVE](https://github.com/hartwigmedical/hmftools/tree/master/pave)
+3. The variants are annotated by PAVE-lite (providing a number of annotations not currently provided by PAVE)
+4. A gene-based driver likelihood is calculated based on an approximation of
+   the [PURPLE Gene Driver Likelihood Model](https://github.com/hartwigmedical/hmftools/blob/master/purple/DriverCatalog.md#gene-driver-likelihood)
+
+For fusions, a fusion type and subsequent driver likelihood are determined based on the provided known fusion database.
+
+### Extraction of characteristics
+
+Currently, it is assumed that only `isMicrosatelliteUnstable` and `tumorMutationalBurden` can be provided via panel tests.
+
+The ploidy is hard-coded set to 2.
 
 ## Interpretation of drivers and annotation with treatment evidence and external trials
 

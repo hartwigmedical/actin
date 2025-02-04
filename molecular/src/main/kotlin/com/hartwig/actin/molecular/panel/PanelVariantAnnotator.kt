@@ -133,7 +133,6 @@ class PanelVariantAnnotator(
         }
     }
 
-
     private fun variantMatchCriteria(
         panelVariantExtraction: SequencedVariant,
         transvarVariant: com.hartwig.actin.tools.variant.Variant,
@@ -178,13 +177,11 @@ class PanelVariantAnnotator(
     )
 
     private fun impact(paveImpact: PaveImpact, transvarVariant: com.hartwig.actin.tools.variant.Variant): TranscriptVariantImpact {
-
         val paveLiteAnnotation = paveLite.run(
             paveImpact.gene,
             paveImpact.transcript,
             transvarVariant.position()
         ) ?: throw IllegalStateException("PaveLite did not return a response for $transvarVariant")
-
 
         return TranscriptVariantImpact(
             transcriptId = paveImpact.transcript,
