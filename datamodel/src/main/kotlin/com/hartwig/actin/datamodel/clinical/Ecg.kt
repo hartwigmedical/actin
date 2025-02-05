@@ -1,5 +1,7 @@
 package com.hartwig.actin.datamodel.clinical
 
+import java.time.LocalDate
+
 data class Ecg(
     override val name: String?,
     val qtcfMeasure: EcgMeasure?,
@@ -10,7 +12,7 @@ data class Ecg(
 ) : Comorbidity {
     override val comorbidityClass = ComorbidityClass.ECG
 
-    override fun withDefaultYearAndMonth(defaultYear: Int, defaultMonth: Int): Comorbidity = if (year != null) this else {
-        copy(year = defaultYear, month = defaultMonth)
+    override fun withDefaultDate(date: LocalDate): Comorbidity = if (year != null) this else {
+        copy(year = date.year, month = date.monthValue)
     }
 }

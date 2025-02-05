@@ -92,7 +92,7 @@ class ComorbidityExtractorTest {
 
     @Test
     fun `Should extract yes-input complication with empty name and ICD`() {
-        assertComplicationExtraction("Yes", null, null)
+        assertComplicationExtraction("JA", null, null)
     }
 
     private fun assertComplicationExtraction(input: String, expectedName: String?, expectedIcd: String?) {
@@ -131,7 +131,7 @@ class ComorbidityExtractorTest {
 
     @Test
     fun `Should extract yes-input other condition with empty name and ICD`() {
-        assertOtherConditionExtraction("Yes", null, null)
+        assertOtherConditionExtraction("ye", null, null)
     }
 
     private fun assertOtherConditionExtraction(input: String, expectedName: String?, expectedIcd: String?) {

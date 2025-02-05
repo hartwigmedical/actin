@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.curation.extraction
 
 import com.hartwig.actin.util.Either
+import com.hartwig.actin.util.getOrNull
 import com.hartwig.actin.util.left
 import com.hartwig.actin.util.right
 
@@ -14,10 +15,10 @@ object BooleanValueParser {
         "nee" to false,
         "neee" to false,
         "o" to false,
-        "n.v.t." to null,
-        "n.v.t" to null,
-        "nvt" to null,
-        "nvt." to null,
+        "n.v.t." to false,
+        "n.v.t" to false,
+        "nvt" to false,
+        "nvt." to false,
         "na" to null,
         "yes" to true,
         "tes" to true,
@@ -53,5 +54,9 @@ object BooleanValueParser {
     fun parseBoolean(input: String?): Either<String, Boolean?> {
         val key = input?.lowercase()
         return if (key.isNullOrEmpty() || OPTION_MAPPING.containsKey(key)) OPTION_MAPPING[key].right() else key.left()
+    }
+
+    fun isTrue(input: String?): Boolean {
+        return parseBoolean(input).getOrNull() == true
     }
 }

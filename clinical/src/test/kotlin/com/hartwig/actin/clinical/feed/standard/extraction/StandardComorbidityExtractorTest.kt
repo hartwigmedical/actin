@@ -24,53 +24,50 @@ import org.junit.Test
 import java.time.LocalDate
 
 private const val OTHER_CONDITION_NAME = "other_condition"
-
-private val OTHER_CONDITION = OtherCondition(
-    name = OTHER_CONDITION_NAME,
-    icdCodes = setOf(IcdCode("icdCode"))
-)
-
-private val EHR_OTHER_CONDITION = ProvidedOtherCondition(
-    name = OTHER_CONDITION_NAME,
-    startDate = LocalDate.of(2024, 2, 27),
-    endDate = LocalDate.of(2024, 2, 28)
-)
-
-private val EHR_PATIENT_RECORD_WITH_OTHER_CONDITIONS = createEhrPatientRecord().copy(
-    priorOtherConditions = listOf(
-        EHR_OTHER_CONDITION
-    )
-)
-
 private const val COMPLICATION_NAME = "complication"
-private val EHR_START_DATE = LocalDate.of(2023, 6, 15)
-private val CURATED_COMPLICATION = Complication(COMPLICATION_NAME, EHR_START_DATE.year, EHR_START_DATE.monthValue, setOf(IcdCode("code")))
 
 class StandardComorbidityExtractorTest {
 
     private val startDate = LocalDate.of(2024, 4, 22)
+
+    private val ehrPatientRecordWithOtherCondition = createEhrPatientRecord().copy(
+        priorOtherConditions = listOf(
+            ProvidedOtherCondition(
+                name = OTHER_CONDITION_NAME,
+                startDate = startDate,
+                endDate = startDate.plusDays(1)
+            )
+        )
+    )
+
+    private val curatedComplication = Complication(COMPLICATION_NAME, startDate.year, startDate.monthValue, setOf(IcdCode("code")))
     private val comorbidityCuration = mockk<CurationDatabase<ComorbidityConfig>>()
     private val extractor = StandardComorbidityExtractor(comorbidityCuration)
 
     @Test
     fun `Should extract other conditions and curate the condition`() {
+        val otherCondition = OtherCondition(
+            name = OTHER_CONDITION_NAME,
+            icdCodes = setOf(IcdCode("icdCode"))
+        )
+
         val anotherCondition = "another_condition"
         every { comorbidityCuration.find(OTHER_CONDITION_NAME) } returns setOf(
             ComorbidityConfig(
                 input = OTHER_CONDITION_NAME,
                 ignore = false,
-                curated = OTHER_CONDITION
+                curated = otherCondition
             ),
             ComorbidityConfig(
                 input = OTHER_CONDITION_NAME,
                 ignore = false,
-                curated = OTHER_CONDITION.copy(anotherCondition)
+                curated = otherCondition.copy(anotherCondition)
             )
         )
-        val result = extractor.extract(EHR_PATIENT_RECORD_WITH_OTHER_CONDITIONS)
+        val result = extractor.extract(ehrPatientRecordWithOtherCondition)
         assertThat(result.extracted).containsExactly(
-            OTHER_CONDITION.withDefaultDate(LocalDate.of(2024, 2, 1)),
-            OTHER_CONDITION.copy(year = 2024, month = 2, name = anotherCondition)
+            otherCondition.withDefaultDate(startDate),
+            otherCondition.copy(year = startDate.year, month = startDate.monthValue, name = anotherCondition)
         )
     }
 
@@ -89,18 +86,18 @@ class StandardComorbidityExtractorTest {
                 curated = ecg
             )
         )
-        val result = extractor.extract(EHR_PATIENT_RECORD_WITH_OTHER_CONDITIONS)
-        assertThat(result.extracted).containsExactly(ecg.withDefaultYearAndMonth(2024, 2))
+        val result = extractor.extract(ehrPatientRecordWithOtherCondition)
+        assertThat(result.extracted).containsExactly(ecg.withDefaultDate(startDate))
     }
 
     @Test
     fun `Should return curation warnings when no curation found`() {
         every { comorbidityCuration.find(OTHER_CONDITION_NAME) } returns emptySet()
-        val result = extractor.extract(EHR_PATIENT_RECORD_WITH_OTHER_CONDITIONS)
+        val result = extractor.extract(ehrPatientRecordWithOtherCondition)
         assertThat(result.extracted).isEmpty()
         assertThat(result.evaluation.warnings).containsExactly(
             CurationWarning(
-                EHR_PATIENT_RECORD_WITH_OTHER_CONDITIONS.patientDetails.hashedId,
+                ehrPatientRecordWithOtherCondition.patientDetails.hashedId,
                 CurationCategory.NON_ONCOLOGICAL_HISTORY,
                 OTHER_CONDITION_NAME,
                 "Could not find non-oncological history config for input 'other_condition'"
@@ -110,25 +107,25 @@ class StandardComorbidityExtractorTest {
 
     @Test
     fun `Should extract complication with end date`() {
-        assertExtractedComplication(ProvidedComplication(COMPLICATION_NAME, EHR_START_DATE, LocalDate.now()))
+        assertExtractedComplication(ProvidedComplication(COMPLICATION_NAME, startDate, LocalDate.now()))
     }
 
     @Test
     fun `Should extract complication without end date`() {
-        assertExtractedComplication(ProvidedComplication(COMPLICATION_NAME, EHR_START_DATE, null))
+        assertExtractedComplication(ProvidedComplication(COMPLICATION_NAME, startDate, null))
     }
 
     private fun assertExtractedComplication(providedComplication: ProvidedComplication) {
         every { comorbidityCuration.find(COMPLICATION_NAME) }.returns(
-            setOf(ComorbidityConfig("input", false, curated = CURATED_COMPLICATION))
+            setOf(ComorbidityConfig("input", false, curated = curatedComplication))
         )
         val ehrPatientRecord = createEhrPatientRecord().copy(complications = listOf(providedComplication))
         val result = extractor.extract(ehrPatientRecord)
         assertThat(result.extracted).hasSize(1)
         val extracted = result.extracted[0]
         assertThat(extracted.name).isEqualTo(COMPLICATION_NAME)
-        assertThat(extracted.year).isEqualTo(EHR_START_DATE.year)
-        assertThat(extracted.month).isEqualTo(EHR_START_DATE.monthValue)
+        assertThat(extracted.year).isEqualTo(startDate.year)
+        assertThat(extracted.month).isEqualTo(startDate.monthValue)
     }
 
     @Test

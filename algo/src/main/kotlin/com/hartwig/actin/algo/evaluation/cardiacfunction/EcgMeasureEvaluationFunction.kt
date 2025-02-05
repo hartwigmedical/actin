@@ -36,7 +36,7 @@ class EcgMeasureEvaluationFunction internal constructor(
         val filtered = ecgMeasures.filter { it.second.unit == expectedUnit.symbol() }
 
         return when {
-            ecgMeasures.isEmpty() -> EvaluationFactory.recoverableUndetermined(String.format("No %s known", measureName))
+            ecgMeasures.isEmpty() -> EvaluationFactory.recoverableUndetermined(String.format("No %s interval known", measureName))
             filtered.isEmpty() -> {
                 val units = Format.concat(ecgMeasures.map { it.second.unit })
                 EvaluationFactory.recoverableUndetermined(

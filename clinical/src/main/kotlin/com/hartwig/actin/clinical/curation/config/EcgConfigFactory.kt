@@ -14,22 +14,19 @@ class EcgConfigFactory : CurationConfigFactory<ComorbidityConfig> {
         val isJtc = parts[fields["isJTC"]!!] == "1"
         val (jtcMeasure, jtcValidationErrors) = extractMeasurement(input, "jtc", isJtc, parts, fields)
         val interpretation = parts[fields["interpretation"]!!].trim().ifEmpty { null }
-        val hasSigAberrationLatestEcg = when (val parsed = BooleanValueParser.parseBoolean(interpretation)) {
-            is Either.Right -> parsed.value
-            else -> true
+        val ignore = when (val parsed = BooleanValueParser.parseBoolean(input)) {
+            is Either.Right -> parsed.value != true
+            else -> interpretation == "NULL"
         }
-        val ignore = interpretation == "NULL" || hasSigAberrationLatestEcg == null
         return ValidatedCurationConfig(
             ComorbidityConfig(
                 input = input,
                 ignore = ignore,
-                curated = hasSigAberrationLatestEcg?.let {
-                    Ecg(
-                        name = interpretation,
-                        qtcfMeasure = qtcfMeasure,
-                        jtcMeasure = jtcMeasure
-                    )
-                },
+                curated = Ecg(
+                    name = interpretation,
+                    qtcfMeasure = qtcfMeasure,
+                    jtcMeasure = jtcMeasure
+                ).takeUnless { ignore }
             ), qtcfValidationErrors + jtcValidationErrors
         )
     }

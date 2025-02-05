@@ -12,6 +12,7 @@ import com.hartwig.actin.clinical.curation.CurationUtil.capitalizeFirstLetterOnl
 import com.hartwig.actin.clinical.curation.config.ComorbidityConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityCuration
+import com.hartwig.actin.clinical.curation.extraction.BooleanValueParser
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.feed.emc.digitalfile.DigitalFileEntry
@@ -204,7 +205,7 @@ class ComorbidityExtractor(
         requireUniqueness: Boolean = false
     ): CurationResponse<ComorbidityConfig> {
         val trimmed = input.trim()
-        return if (trimmed.equals("yes", ignoreCase = true)) {
+        return if (BooleanValueParser.isTrue(trimmed)) {
             CurationResponse(
                 setOf(ComorbidityConfig(input, false, curated = defaultForYesInput)),
                 CurationExtractionEvaluation(comorbidityEvaluatedInputs = setOf(trimmed.lowercase()))
