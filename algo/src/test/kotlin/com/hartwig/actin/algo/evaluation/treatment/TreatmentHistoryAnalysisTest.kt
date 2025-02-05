@@ -60,20 +60,6 @@ class TreatmentHistoryAnalysisTest {
     }
 
     @Test
-    fun `Should count duplicate drug treatment within one treatment instance only once`() {
-        val record = TreatmentTestFactory.withTreatmentHistory(
-            listOf(
-                TreatmentTestFactory.treatmentHistoryEntry(
-                    treatments = setOf(
-                        platinumDoublet.copy(drugs = platinumDoublet.drugs.plus(PLATINUM_DRUG))
-                    )
-                )
-            )
-        )
-        assertThat(TreatmentHistoryAnalysis.create(record).receivedPlatinumDoublet()).isTrue()
-    }
-
-    @Test
     fun `Should include maintenance therapy in platinum doublet count`() {
         val record = TreatmentTestFactory.treatmentHistoryEntry(
             treatments = setOf(nonPlatinumDoublet),

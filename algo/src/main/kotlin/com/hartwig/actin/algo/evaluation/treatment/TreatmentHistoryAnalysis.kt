@@ -21,11 +21,10 @@ class TreatmentHistoryAnalysis(private val record: PatientRecord, private val pl
     companion object {
         fun create(record: PatientRecord): TreatmentHistoryAnalysis {
             val platinumCombinations = record.oncologicalHistory.asSequence()
-                .flatMap { it.allTreatments().toSet() }
+                .flatMap { it.allTreatments() }
                 .filterIsInstance<DrugTreatment>()
-                .map(DrugTreatment::drugs)
-                .filter { drugs -> drugs.any { it.drugTypes.contains(DrugType.PLATINUM_COMPOUND) } }
-                .map { it.count { drug -> drug.category == TreatmentCategory.CHEMOTHERAPY } }
+                .filter { treatment -> treatment.drugs.any { it.drugTypes.contains(DrugType.PLATINUM_COMPOUND) } }
+                .map { it.drugs.count { drug -> drug.category == TreatmentCategory.CHEMOTHERAPY } }
                 .toSet()
             return TreatmentHistoryAnalysis(record, platinumCombinations)
         }
