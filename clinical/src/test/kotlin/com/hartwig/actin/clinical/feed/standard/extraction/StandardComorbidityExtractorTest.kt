@@ -139,12 +139,12 @@ class StandardComorbidityExtractorTest {
     fun `Should extract toxicities from other conditions`() {
         val name = "toxicity"
         val grade = 2
-        val icd = "icd"
         val input = "input"
+        val icdCodes = setOf(IcdCode("icd", null))
         val curation = ToxicityCuration(
             name = name,
             grade = grade,
-            icdCodes = setOf(IcdCode(icd, null))
+            icdCodes = icdCodes
         )
         val toxicityCuration = mockk<CurationDatabase<ComorbidityConfig>> {
             every { find(input) } returns setOf(ComorbidityConfig(input = name, ignore = false, curated = curation))
@@ -157,7 +157,7 @@ class StandardComorbidityExtractorTest {
             Toxicity(
                 name = name,
                 grade = grade,
-                icdCodes = setOf(IcdCode(icd, null)),
+                icdCodes = icdCodes,
                 evaluatedDate = startDate,
                 source = ToxicitySource.EHR,
                 endDate = null

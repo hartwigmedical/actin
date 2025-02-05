@@ -36,8 +36,6 @@ private const val INTOLERANCE_ICD = "ICD"
 private const val TOXICITY_INPUT = "Toxicity input"
 private const val OTHER_TOXICITY_INPUT = "Other toxicity input"
 private const val TOXICITY_NAME = "Toxicity name"
-private const val TOXICITY_ICD_CODE = "Toxicity icd code"
-private const val TOXICITY_EXTENSION_CODE = "Toxicity extension"
 private const val TOXICITY_TRANSLATED = "Toxicity translated"
 
 class ComorbidityExtractorTest {
@@ -47,12 +45,10 @@ class ComorbidityExtractorTest {
             ignore = false,
             curated = Complication(name = CURATED_COMPLICATION, year = null, month = null, icdCodes = setOf(IcdCode(COMPLICATION_ICD)))
         ),
-        ComorbidityConfig(
-            input = "none",
-            ignore = true,
-            curated = null
-        )
+        ComorbidityConfig(input = "none", ignore = true, curated = null)
     )
+
+    private val toxicityIcdCodes = setOf(IcdCode("Toxicity icd code", "Toxicity extension"))
 
     private val toxicityCurationDatabase = TestCurationFactory.curationDatabase(
         ComorbidityConfig(
@@ -61,7 +57,7 @@ class ComorbidityExtractorTest {
             curated = ToxicityCuration(
                 name = TOXICITY_NAME,
                 grade = 3,
-                icdCodes = setOf(IcdCode(TOXICITY_ICD_CODE, TOXICITY_EXTENSION_CODE))
+                icdCodes = toxicityIcdCodes
             )
         )
     )
@@ -180,7 +176,7 @@ class ComorbidityExtractorTest {
                     curated = ToxicityCuration(
                         name = TOXICITY_NAME,
                         grade = 3,
-                        icdCodes = setOf(IcdCode(TOXICITY_ICD_CODE, TOXICITY_EXTENSION_CODE))
+                        icdCodes = toxicityIcdCodes
                     )
                 )
             ),
@@ -194,7 +190,7 @@ class ComorbidityExtractorTest {
         assertThat(toxicity).isEqualTo(
             Toxicity(
                 name = TOXICITY_NAME,
-                icdCodes = setOf(IcdCode(TOXICITY_ICD_CODE, TOXICITY_EXTENSION_CODE)),
+                icdCodes = toxicityIcdCodes,
                 evaluatedDate = questionnaire.date,
                 source = ToxicitySource.QUESTIONNAIRE,
                 grade = 3
@@ -273,9 +269,7 @@ class ComorbidityExtractorTest {
 
     @Test
     fun `Should curate and translate questionnaire toxicities`() {
-        assertExtractedQuestionnaireToxicity(
-            listOf(TOXICITY_INPUT, CANNOT_CURATE), TOXICITY_NAME, IcdCode(TOXICITY_ICD_CODE, TOXICITY_EXTENSION_CODE), 3
-        )
+        assertExtractedQuestionnaireToxicity(listOf(TOXICITY_INPUT, CANNOT_CURATE), TOXICITY_NAME, toxicityIcdCodes, 3)
     }
 
     @Test
@@ -286,11 +280,11 @@ class ComorbidityExtractorTest {
 
     @Test
     fun `Should extract yes-input questionnaire toxicities with default ICD code`() {
-        assertExtractedQuestionnaireToxicity(listOf("YES", CANNOT_CURATE), null, IcdCode(HARMFUL_EFFECTS_OF_DRUGS_CODE), null)
+        assertExtractedQuestionnaireToxicity(listOf("YES", CANNOT_CURATE), null, setOf(IcdCode(HARMFUL_EFFECTS_OF_DRUGS_CODE)), null)
     }
 
     private fun assertExtractedQuestionnaireToxicity(
-        inputs: List<String>, expectedName: String?, expectedIcd: IcdCode, expectedGrade: Int?
+        inputs: List<String>, expectedName: String?, expectedIcds: Set<IcdCode>, expectedGrade: Int?
     ) {
         val date = LocalDate.of(2018, 5, 21)
         val questionnaire = TestCurationFactory.emptyQuestionnaire().copy(date = date, unresolvedToxicities = inputs)
@@ -299,7 +293,7 @@ class ComorbidityExtractorTest {
 
         val toxicity = toxicities.single() as Toxicity
         assertThat(toxicity.name).isEqualTo(expectedName)
-        assertThat(toxicity.icdCodes).containsExactly(expectedIcd)
+        assertThat(toxicity.icdCodes).isEqualTo(expectedIcds)
         assertThat(toxicity.evaluatedDate).isEqualTo(date)
         assertThat(toxicity.source).isEqualTo(ToxicitySource.QUESTIONNAIRE)
         assertThat(toxicity.grade).isEqualTo(expectedGrade)
@@ -311,14 +305,7 @@ class ComorbidityExtractorTest {
 
     @Test
     fun `Should preferentially curate feed toxicities`() {
-        assertFeedToxicityExtraction(
-            TOXICITY_INPUT,
-            TOXICITY_NAME,
-            3,
-            IcdCode(TOXICITY_ICD_CODE, TOXICITY_EXTENSION_CODE),
-            setOf(TOXICITY_INPUT.lowercase()),
-            emptySet()
-        )
+        assertFeedToxicityExtraction(TOXICITY_INPUT, TOXICITY_NAME, 3, toxicityIcdCodes, setOf(TOXICITY_INPUT.lowercase()), emptySet())
     }
 
     @Test
@@ -327,7 +314,7 @@ class ComorbidityExtractorTest {
             OTHER_TOXICITY_INPUT,
             TOXICITY_TRANSLATED,
             2,
-            IcdCode(HARMFUL_EFFECTS_OF_DRUGS_CODE),
+            setOf(IcdCode(HARMFUL_EFFECTS_OF_DRUGS_CODE)),
             emptySet(),
             setOf(Translation(OTHER_TOXICITY_INPUT, TOXICITY_TRANSLATED))
         )
@@ -335,14 +322,14 @@ class ComorbidityExtractorTest {
 
     @Test
     fun `Should curate yes-input feed toxicities with default ICD code`() {
-        assertFeedToxicityExtraction("YES", null, 2, IcdCode(HARMFUL_EFFECTS_OF_DRUGS_CODE), setOf("yes"), emptySet())
+        assertFeedToxicityExtraction("YES", null, 2, setOf(IcdCode(HARMFUL_EFFECTS_OF_DRUGS_CODE)), setOf("yes"), emptySet())
     }
 
     private fun assertFeedToxicityExtraction(
         input: String,
         expectedName: String?,
         expectedGrade: Int,
-        expectedIcdCode: IcdCode,
+        expectedIcdCodes: Set<IcdCode>,
         expectedCurationInputs: Set<String>,
         expectedToxicityTranslationInputs: Set<Translation<String>>
     ) {
@@ -360,7 +347,7 @@ class ComorbidityExtractorTest {
         assertThat(toxicities).hasSize(2)
         val expectedToxicity = toxicities.single { it.name == expectedName } as Toxicity
         assertThat(expectedToxicity.grade).isEqualTo(expectedGrade)
-        assertThat(expectedToxicity.icdCodes).containsExactly(expectedIcdCode)
+        assertThat(expectedToxicity.icdCodes).isEqualTo(expectedIcdCodes)
 
         assertExpectedEvaluation(
             evaluation,
