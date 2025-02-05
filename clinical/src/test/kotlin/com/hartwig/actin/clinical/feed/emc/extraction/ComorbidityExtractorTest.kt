@@ -171,6 +171,45 @@ class ComorbidityExtractorTest {
     }
 
     @Test
+    fun `Should extract toxicity for other condition curated to toxicity curation`() {
+        val extractor = ComorbidityExtractor(
+            TestCurationFactory.curationDatabase(
+                ComorbidityConfig(
+                    input = OTHER_CONDITION_INPUT,
+                    ignore = false,
+                    curated = ToxicityCuration(
+                        name = TOXICITY_NAME,
+                        grade = 3,
+                        icdCodes = setOf(IcdCode(TOXICITY_ICD_CODE, TOXICITY_EXTENSION_CODE))
+                    )
+                )
+            ),
+            toxicityTranslationDatabase
+        )
+        val inputs = listOf(OTHER_CONDITION_INPUT, CANNOT_CURATE)
+        val questionnaire = TestCurationFactory.emptyQuestionnaire().copy(nonOncologicalHistory = inputs)
+        val (toxicities, evaluation) = extractor.extract(PATIENT_ID, questionnaire, emptyList(), emptyList())
+        assertThat(toxicities).hasSize(1)
+        val toxicity = toxicities[0] as Toxicity
+        assertThat(toxicity).isEqualTo(
+            Toxicity(
+                name = TOXICITY_NAME,
+                icdCodes = setOf(IcdCode(TOXICITY_ICD_CODE, TOXICITY_EXTENSION_CODE)),
+                evaluatedDate = questionnaire.date,
+                source = ToxicitySource.QUESTIONNAIRE,
+                grade = 3
+            )
+        )
+
+        assertExpectedEvaluation(
+            evaluation,
+            CurationCategory.NON_ONCOLOGICAL_HISTORY,
+            "Could not find non-oncological history config for input '$CANNOT_CURATE'",
+            inputs.map(String::lowercase).toSet()
+        )
+    }
+
+    @Test
     fun `Should extract curated intolerances`() {
         assertIntoleranceExtraction(INTOLERANCE_INPUT, CURATED_INTOLERANCE, INTOLERANCE_ICD)
     }
