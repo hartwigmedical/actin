@@ -16,5 +16,5 @@ data class Toxicity(
     override val month: Int?
         get() = evaluatedDate.monthValue
 
-    override fun withDefaultYearAndMonth(year: Int, month: Int): Comorbidity = this
+    override fun withDefaultDate(date: LocalDate): Comorbidity = this
 }

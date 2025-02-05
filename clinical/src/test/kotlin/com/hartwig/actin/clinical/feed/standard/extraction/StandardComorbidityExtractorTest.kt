@@ -4,6 +4,7 @@ import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.config.ComorbidityConfig
+import com.hartwig.actin.clinical.curation.config.ToxicityCuration
 import com.hartwig.actin.clinical.feed.standard.EhrTestData.createEhrPatientRecord
 import com.hartwig.actin.clinical.feed.standard.ProvidedAllergy
 import com.hartwig.actin.clinical.feed.standard.ProvidedComplication
@@ -12,6 +13,8 @@ import com.hartwig.actin.datamodel.clinical.Complication
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.OtherCondition
+import com.hartwig.actin.datamodel.clinical.Toxicity
+import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -43,6 +46,7 @@ private val CURATED_COMPLICATION = Complication(COMPLICATION_NAME, EHR_START_DAT
 
 class StandardComorbidityExtractorTest {
 
+    private val startDate = LocalDate.of(2024, 4, 22)
     private val comorbidityCuration = mockk<CurationDatabase<ComorbidityConfig>>()
     private val extractor = StandardComorbidityExtractor(comorbidityCuration)
 
@@ -63,7 +67,7 @@ class StandardComorbidityExtractorTest {
         )
         val result = extractor.extract(EHR_PATIENT_RECORD_WITH_OTHER_CONDITIONS)
         assertThat(result.extracted).containsExactly(
-            OTHER_CONDITION.withDefaultYearAndMonth(2024, 2),
+            OTHER_CONDITION.withDefaultDate(LocalDate.of(2024, 2, 1)),
             OTHER_CONDITION.copy(year = 2024, month = 2, name = anotherCondition)
         )
     }
@@ -106,7 +110,6 @@ class StandardComorbidityExtractorTest {
         assertThat(extracted.month).isEqualTo(EHR_START_DATE.monthValue)
     }
 
-
     @Test
     fun `Should extract intolerances from other conditions, supporting multiple configs per input`() {
         val name = "allergy"
@@ -121,14 +124,45 @@ class StandardComorbidityExtractorTest {
         }
         val extractor = StandardComorbidityExtractor(intoleranceCuration)
 
-        val year = 2024
-        val month = 4
         val results = extractor.extract(
             createEhrPatientRecord().copy(
-                priorOtherConditions = listOf(ProvidedOtherCondition(name = name, startDate = LocalDate.of(year, month, 22)))
+                priorOtherConditions = listOf(ProvidedOtherCondition(name = name, startDate = startDate))
             )
         )
-        assertThat(results.extracted).isEqualTo(listOf(curated, anotherCurated).map { it.withDefaultYearAndMonth(year, month) })
+        assertThat(results.extracted).isEqualTo(
+            listOf(curated, anotherCurated).map { it.copy(year = startDate.year, month = startDate.monthValue) }
+        )
+        assertThat(results.evaluation.warnings).isEmpty()
+    }
+
+    @Test
+    fun `Should extract toxicities from other conditions`() {
+        val name = "toxicity"
+        val grade = 2
+        val input = "input"
+        val icdCodes = setOf(IcdCode("icd", null))
+        val curation = ToxicityCuration(
+            name = name,
+            grade = grade,
+            icdCodes = icdCodes
+        )
+        val toxicityCuration = mockk<CurationDatabase<ComorbidityConfig>> {
+            every { find(input) } returns setOf(ComorbidityConfig(input = name, ignore = false, curated = curation))
+        }
+        val extractor = StandardComorbidityExtractor(toxicityCuration)
+        val results = extractor.extract(
+            createEhrPatientRecord().copy(priorOtherConditions = listOf(ProvidedOtherCondition(name = input, startDate = startDate)))
+        )
+        assertThat(results.extracted).containsExactly(
+            Toxicity(
+                name = name,
+                grade = grade,
+                icdCodes = icdCodes,
+                evaluatedDate = startDate,
+                source = ToxicitySource.EHR,
+                endDate = null
+            )
+        )
         assertThat(results.evaluation.warnings).isEmpty()
     }
 
