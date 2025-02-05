@@ -1,5 +1,7 @@
 package com.hartwig.actin.datamodel.clinical
 
+import java.time.LocalDate
+
 data class OtherCondition(
     override val name: String?,
     override val year: Int? = null,
@@ -8,7 +10,7 @@ data class OtherCondition(
 ): Comorbidity {
     override val comorbidityClass = ComorbidityClass.OTHER_CONDITION
 
-    override fun withDefaultYearAndMonth(defaultYear: Int, defaultMonth: Int): Comorbidity = if (year != null) this else {
-        copy(year = defaultYear, month = defaultMonth)
+    override fun withDefaultDate(date: LocalDate): Comorbidity = if (year != null) this else {
+        copy(year = date.year, month = date.monthValue)
     }
 }

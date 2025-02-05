@@ -41,10 +41,12 @@ class ComorbidityExtractor(
     ): ExtractionResult<List<Comorbidity>> {
         return listOfNotNull(
             questionnaire?.nonOncologicalHistory?.let {
-                extractQuestionnaireComorbidities(patientId, it, CurationCategory.NON_ONCOLOGICAL_HISTORY, "non-oncological history")
+                extractQuestionnaireComorbidities(
+                    patientId, it, CurationCategory.NON_ONCOLOGICAL_HISTORY, "non-oncological history", questionnaire.date
+                )
             },
             questionnaire?.complications?.let {
-                extractQuestionnaireComorbidities(patientId, it, CurationCategory.COMPLICATION, "complication")
+                extractQuestionnaireComorbidities(patientId, it, CurationCategory.COMPLICATION, "complication", questionnaire.date)
             },
             extractFeedToxicities(toxicityEntries, patientId),
             questionnaire?.unresolvedToxicities?.let { extractQuestionnaireToxicities(patientId, it, questionnaire.date) },
@@ -57,7 +59,7 @@ class ComorbidityExtractor(
     }
 
     private fun extractQuestionnaireComorbidities(
-        patientId: String, rawInputs: List<String>, category: CurationCategory, configType: String
+        patientId: String, rawInputs: List<String>, category: CurationCategory, configType: String, questionnaireDate: LocalDate
     ): List<ExtractionResult<List<Comorbidity>>> {
         val default = if (category == CurationCategory.COMPLICATION) {
             Complication(null, icdCodes = emptySet())
@@ -67,7 +69,11 @@ class ComorbidityExtractor(
         return rawInputs.map {
             val curatedComorbidity = curate(CurationUtil.fullTrim(it), patientId, category, configType, default)
             ExtractionResult(
-                extracted = curatedComorbidity.configs.mapNotNull(ComorbidityConfig::curated),
+                extracted = curatedComorbidity.configs.mapNotNull(ComorbidityConfig::curated).map { curated ->
+                    if (curated is ToxicityCuration) {
+                        Toxicity(curated.name, curated.icdCodes, questionnaireDate, ToxicitySource.QUESTIONNAIRE, curated.grade)
+                    } else curated
+                },
                 evaluation = curatedComorbidity.extractionEvaluation
             )
         }

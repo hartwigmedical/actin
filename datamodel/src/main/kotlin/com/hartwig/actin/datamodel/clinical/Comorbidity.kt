@@ -1,6 +1,7 @@
 package com.hartwig.actin.datamodel.clinical
 
 import com.hartwig.actin.datamodel.Displayable
+import java.time.LocalDate
 
 interface Comorbidity : Displayable {
     val name: String?
@@ -13,5 +14,5 @@ interface Comorbidity : Displayable {
         return name ?: ""
     }
 
-    fun withDefaultYearAndMonth(year: Int, month: Int): Comorbidity
+    fun withDefaultDate(date: LocalDate): Comorbidity
 }
