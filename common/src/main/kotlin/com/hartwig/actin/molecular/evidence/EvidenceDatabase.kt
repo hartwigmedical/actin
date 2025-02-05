@@ -21,8 +21,8 @@ class EvidenceDatabase(
         return clinicalEvidenceMatcher.matchForMicrosatelliteStatus(isMicrosatelliteUnstable)
     }
 
-    fun evidenceForHomologousRepairStatus(isHomologousRepairDeficient: Boolean): ClinicalEvidence {
-        return clinicalEvidenceMatcher.matchForHomologousRepairStatus(isHomologousRepairDeficient)
+    fun evidenceForHomologousRecombinationStatus(isHomologousRecombinationDeficient: Boolean): ClinicalEvidence {
+        return clinicalEvidenceMatcher.matchForHomologousRecombinationStatus(isHomologousRecombinationDeficient)
     }
 
     fun evidenceForTumorMutationalBurdenStatus(hasHighTumorMutationalBurden: Boolean): ClinicalEvidence {

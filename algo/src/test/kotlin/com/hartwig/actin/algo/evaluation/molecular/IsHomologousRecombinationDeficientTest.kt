@@ -11,8 +11,8 @@ import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import org.junit.Test
 
-class IsHomologousRepairDeficientTest {
-    private val function = IsHomologousRepairDeficient()
+class IsHomologousRecombinationDeficientTest {
+    private val function = IsHomologousRecombinationDeficient()
     private val hrdGene = MolecularConstants.HRD_GENES.first()
 
     @Test
@@ -20,25 +20,25 @@ class IsHomologousRepairDeficientTest {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(null, hrdVariant())
+                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(null, hrdVariant())
             )
         )
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(null, hrdVariant(isReportable = true, isBiallelic = true))
+                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(null, hrdVariant(isReportable = true, isBiallelic = true))
             )
         )
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(null, hrdVariant(isReportable = true, isBiallelic = false))
+                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(null, hrdVariant(isReportable = true, isBiallelic = false))
             )
         )
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
+                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(
                     null,
                     TestVariantFactory.createMinimal().copy(isReportable = true, gene = hrdGene)
                 )
@@ -47,19 +47,19 @@ class IsHomologousRepairDeficientTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(true, hrdVariant(isReportable = true, isBiallelic = false))
+                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(true, hrdVariant(isReportable = true, isBiallelic = false))
             )
         )
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(true, hrdVariant(isReportable = true, isBiallelic = true))
+                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(true, hrdVariant(isReportable = true, isBiallelic = true))
             )
         )
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withHomologousRepairDeficiencyAndLoss(
+                MolecularTestFactory.withHomologousRecombinationDeficiencyAndLoss(
                     true,
                     TestCopyNumberFactory.createMinimal().copy(
                         canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.LOSS),
@@ -71,7 +71,7 @@ class IsHomologousRepairDeficientTest {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withHomologousRepairDeficiencyAndHomozygousDisruption(
+                MolecularTestFactory.withHomologousRecombinationDeficiencyAndHomozygousDisruption(
                     true, TestHomozygousDisruptionFactory.createMinimal().copy(gene = hrdGene)
                 )
             )
@@ -79,19 +79,19 @@ class IsHomologousRepairDeficientTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withHomologousRepairDeficiencyAndDisruption(
+                MolecularTestFactory.withHomologousRecombinationDeficiencyAndDisruption(
                     true, TestDisruptionFactory.createMinimal().copy(gene = hrdGene)
                 )
             )
         )
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(true, hrdVariant(isReportable = false)))
+            function.evaluate(MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(true, hrdVariant(isReportable = false)))
         )
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
+                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(
                     true,
                     TestVariantFactory.createMinimal().copy(
                         gene = "other gene",
@@ -103,7 +103,7 @@ class IsHomologousRepairDeficientTest {
         )
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(false, hrdVariant(isReportable = true)))
+            function.evaluate(MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(false, hrdVariant(isReportable = true)))
         )
     }
 

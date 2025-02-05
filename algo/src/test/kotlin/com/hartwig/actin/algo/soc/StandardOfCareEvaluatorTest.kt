@@ -86,7 +86,7 @@ class StandardOfCareEvaluatorTest {
     private val minimalMolecularRecord = createMinimalTestOrangeRecord().copy(
         characteristics = createMinimalTestOrangeRecord().characteristics.copy(
             isMicrosatelliteUnstable = false,
-            isHomologousRepairDeficient = false
+            isHomologousRecombinationDeficient = false
         )
     )
     private val molecularRecordWithBrafV600e = TestMolecularFactory.createProperTestOrangeRecord()

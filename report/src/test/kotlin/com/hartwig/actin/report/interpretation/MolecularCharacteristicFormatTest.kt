@@ -98,10 +98,10 @@ class MolecularCharacteristicFormatTest {
     @Test
     fun `Should format HR deficient and proficient optionally with HRD type`() {
         assertThat(
-            MolecularCharacteristicFormat.formatHomologousRepair(
+            MolecularCharacteristicFormat.formatHomologousRecombination(
                 MolecularCharacteristics(
-                    isHomologousRepairDeficient = true,
-                    homologousRepairScore = 1.0,
+                    isHomologousRecombinationDeficient = true,
+                    homologousRecombinationScore = 1.0,
                     hrdType = HrdType.BRCA1_TYPE,
                     brca1Value = 2.0
                 )
@@ -109,19 +109,19 @@ class MolecularCharacteristicFormatTest {
         ).isEqualTo("Deficient (1) - BRCA1-type (BRCA1 value: 2)")
 
         assertThat(
-            MolecularCharacteristicFormat.formatHomologousRepair(
+            MolecularCharacteristicFormat.formatHomologousRecombination(
                 MolecularCharacteristics(
-                    isHomologousRepairDeficient = false,
-                    homologousRepairScore = 1.0,
+                    isHomologousRecombinationDeficient = false,
+                    homologousRecombinationScore = 1.0,
                 )
             )
         ).isEqualTo("Proficient (1)")
 
         assertThat(
-            MolecularCharacteristicFormat.formatHomologousRepair(
+            MolecularCharacteristicFormat.formatHomologousRecombination(
                 MolecularCharacteristics(
-                    isHomologousRepairDeficient = true,
-                    homologousRepairScore = 1.0,
+                    isHomologousRecombinationDeficient = true,
+                    homologousRecombinationScore = 1.0,
                     hrdType = HrdType.BRCA2_TYPE,
                     brca2Value = 2.0
                 )

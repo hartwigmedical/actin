@@ -33,7 +33,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         for (molecularResult in molecularResults) {
             val molecularId = molecularResult.getValue(Tables.MOLECULAR.ID)
             context.delete(Tables.MICROSATELLITEEVIDENCE).where(Tables.MICROSATELLITEEVIDENCE.MOLECULARID.eq(molecularId)).execute()
-            context.delete(Tables.HOMOLOGOUSREPAIREVIDENCE).where(Tables.HOMOLOGOUSREPAIREVIDENCE.MOLECULARID.eq(molecularId)).execute()
+            context.delete(Tables.HOMOLOGOUSRECOMBINATIONEVIDENCE).where(Tables.HOMOLOGOUSRECOMBINATIONEVIDENCE.MOLECULARID.eq(molecularId)).execute()
             context.delete(Tables.TUMORMUTATIONALBURDENEVIDENCE).where(Tables.TUMORMUTATIONALBURDENEVIDENCE.MOLECULARID.eq(molecularId))
                 .execute()
             context.delete(Tables.TUMORMUTATIONALLOADEVIDENCE).where(Tables.TUMORMUTATIONALLOADEVIDENCE.MOLECULARID.eq(molecularId))
@@ -148,8 +148,8 @@ internal class MolecularDAO(private val context: DSLContext) {
                 predictedTumorOrigin?.cancerType(),
                 predictedTumorOrigin?.likelihood(),
                 record.characteristics.isMicrosatelliteUnstable,
-                record.characteristics.homologousRepairScore,
-                record.characteristics.isHomologousRepairDeficient,
+                record.characteristics.homologousRecombinationScore,
+                record.characteristics.isHomologousRecombinationDeficient,
                 record.characteristics.tumorMutationalBurden,
                 record.characteristics.hasHighTumorMutationalBurden,
                 record.characteristics.tumorMutationalLoad,
@@ -159,7 +159,7 @@ internal class MolecularDAO(private val context: DSLContext) {
             .fetchOne()!!
             .getValue(Tables.MOLECULAR.ID)
         writeMicrosatelliteEvidence(molecularId, record.characteristics.microsatelliteEvidence)
-        writeHomologousRepairEvidence(molecularId, record.characteristics.homologousRepairEvidence)
+        writeHomologousRecombinationEvidence(molecularId, record.characteristics.homologousRecombinationEvidence)
         writeTumorMutationalBurdenEvidence(molecularId, record.characteristics.tumorMutationalBurdenEvidence)
         writeTumorMutationalLoadEvidence(molecularId, record.characteristics.tumorMutationalLoadEvidence)
     }
@@ -180,16 +180,16 @@ internal class MolecularDAO(private val context: DSLContext) {
         inserter.execute()
     }
 
-    private fun writeHomologousRepairEvidence(molecularId: Int, evidence: ClinicalEvidence?) {
+    private fun writeHomologousRecombinationEvidence(molecularId: Int, evidence: ClinicalEvidence?) {
         if (evidence == null) {
             return
         }
         val inserter = EvidenceInserter(
             context.insertInto(
-                Tables.HOMOLOGOUSREPAIREVIDENCE,
-                Tables.HOMOLOGOUSREPAIREVIDENCE.MOLECULARID,
-                Tables.HOMOLOGOUSREPAIREVIDENCE.TREATMENT,
-                Tables.HOMOLOGOUSREPAIREVIDENCE.TYPE
+                Tables.HOMOLOGOUSRECOMBINATIONEVIDENCE,
+                Tables.HOMOLOGOUSRECOMBINATIONEVIDENCE.MOLECULARID,
+                Tables.HOMOLOGOUSRECOMBINATIONEVIDENCE.TREATMENT,
+                Tables.HOMOLOGOUSRECOMBINATIONEVIDENCE.TYPE
             )
         )
         writeEvidence(inserter, molecularId, evidence)

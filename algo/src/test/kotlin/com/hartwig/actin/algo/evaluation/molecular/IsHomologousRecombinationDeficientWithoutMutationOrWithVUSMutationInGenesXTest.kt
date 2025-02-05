@@ -14,15 +14,15 @@ import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class IsHomologousRepairDeficientWithoutMutationInGenesXTest {
+class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesXTest {
     private val genesToFind = setOf("BRCA1", "BRCA2")
-    private val function = IsHomologousRepairDeficientWithoutMutationInGenesX(genesToFind)
+    private val function = IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX(genesToFind)
 
     @Test
     fun `Should fail when HRD status unknown and no reportable drivers in HR genes`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(null, hrdVariant()))
+            function.evaluate(MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(null, hrdVariant()))
         )
     }
 
@@ -31,7 +31,7 @@ class IsHomologousRepairDeficientWithoutMutationInGenesXTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withHomologousRepairDeficiencyAndLoss(
+                MolecularTestFactory.withHomologousRecombinationDeficiencyAndLoss(
                     true,
                     TestCopyNumberFactory.createMinimal()
                         .copy(
@@ -49,7 +49,7 @@ class IsHomologousRepairDeficientWithoutMutationInGenesXTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
+                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(
                     true, hrdVariant(isReportable = true, isHotspot = true, driverLikelihood = DriverLikelihood.HIGH)
                 )
             )
@@ -60,7 +60,7 @@ class IsHomologousRepairDeficientWithoutMutationInGenesXTest {
     fun `Should fail when no HRD`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(false, hrdVariant()))
+            function.evaluate(MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(false, hrdVariant()))
         )
     }
 
@@ -69,7 +69,7 @@ class IsHomologousRepairDeficientWithoutMutationInGenesXTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(null, hrdVariant(gene = "RAD51C", isReportable = true))
+                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(null, hrdVariant(isReportable = true))
             )
         )
     }
@@ -78,16 +78,16 @@ class IsHomologousRepairDeficientWithoutMutationInGenesXTest {
     fun `Should warn when HRD and only a non reportable mutation in BRCA1`() {
         assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(true, hrdVariant()))
+            function.evaluate(MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(true, hrdVariant()))
         )
     }
 
     @Test
-    fun `Should fail when HRD and non-hotspot biallelic high driver in BRCA1`() {
+    fun `Should warn when HRD and non-hotspot biallelic high driver in BRCA1`() {
         assertEvaluation(
-            EvaluationResult.FAIL,
+            EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
+                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(
                     true,
                     hrdVariant(isReportable = true, isBiallelic = true, driverLikelihood = DriverLikelihood.HIGH)
                 )
@@ -96,11 +96,11 @@ class IsHomologousRepairDeficientWithoutMutationInGenesXTest {
     }
 
     @Test
-    fun `Should fail when HRD and non-hotspot biallelic low driver in BRCA1`() {
+    fun `Should warn when HRD and non-hotspot biallelic low driver in BRCA1`() {
         assertEvaluation(
-            EvaluationResult.FAIL,
+            EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
+                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(
                     true,
                     hrdVariant(isReportable = true, isBiallelic = true)
                 )
@@ -109,11 +109,11 @@ class IsHomologousRepairDeficientWithoutMutationInGenesXTest {
     }
 
     @Test
-    fun `Should fail when HRD and non-hotspot non-biallelic high driver in BRCA1`() {
+    fun `Should warn when HRD and non-hotspot non-biallelic high driver in BRCA1`() {
         assertEvaluation(
-            EvaluationResult.FAIL,
+            EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
+                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(
                     true,
                     hrdVariant(isReportable = true, driverLikelihood = DriverLikelihood.HIGH)
                 )
@@ -122,11 +122,11 @@ class IsHomologousRepairDeficientWithoutMutationInGenesXTest {
     }
 
     @Test
-    fun `Should fail when HRD and non-hotspot non-biallelic low driver in BRCA1`() {
+    fun `Should warn when HRD and non-hotspot non-biallelic low driver in BRCA1`() {
         assertEvaluation(
-            EvaluationResult.FAIL,
+            EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
+                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(
                     true,
                     hrdVariant(isReportable = true)
                 )
@@ -137,7 +137,7 @@ class IsHomologousRepairDeficientWithoutMutationInGenesXTest {
     @Test
     fun `Should ignore variants with allelic status is unknown in BRCA1`() {
         val result = function.evaluate(
-            MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
+            MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(
                 true,
                 TestVariantFactory.createMinimal().copy(gene = "BRCA1", isReportable = true, isHotspot = true)
             )
@@ -147,11 +147,11 @@ class IsHomologousRepairDeficientWithoutMutationInGenesXTest {
     }
 
     @Test
-    fun `Should fail when HRD and disruption of BRCA1`() {
+    fun `Should warn when HRD and disruption of BRCA1`() {
         assertEvaluation(
-            EvaluationResult.FAIL,
+            EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withHomologousRepairDeficiencyAndDisruption(
+                MolecularTestFactory.withHomologousRecombinationDeficiencyAndDisruption(
                     true,
                     TestDisruptionFactory.createMinimal()
                         .copy(gene = "BRCA1", driverLikelihood = DriverLikelihood.HIGH, isReportable = true)
@@ -165,7 +165,7 @@ class IsHomologousRepairDeficientWithoutMutationInGenesXTest {
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
+                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(
                     true, hrdVariant(gene = "RAD51C", true)
                 )
             )
@@ -173,11 +173,11 @@ class IsHomologousRepairDeficientWithoutMutationInGenesXTest {
     }
 
     @Test
-    fun `Should fail when HRD and only a non-homozygous disruption of BRCA1`() {
+    fun `Should warn when HRD and only a non-homozygous disruption of BRCA1`() {
         assertEvaluation(
-            EvaluationResult.FAIL,
+            EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withHomologousRepairDeficiencyAndDisruption(
+                MolecularTestFactory.withHomologousRecombinationDeficiencyAndDisruption(
                     true,
                     TestDisruptionFactory.createMinimal()
                         .copy(gene = "BRCA1", driverLikelihood = DriverLikelihood.HIGH, isReportable = true)
@@ -191,17 +191,17 @@ class IsHomologousRepairDeficientWithoutMutationInGenesXTest {
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(true, hrdVariant())
+                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(true, hrdVariant())
             )
         )
     }
 
     @Test
-    fun `Should fail when HRD and biallelic RAD51C hotspot and non-homozygous disruption of BRCA1`() {
+    fun `Should warn when HRD and biallelic RAD51C hotspot and non-homozygous disruption of BRCA1`() {
         assertEvaluation(
-            EvaluationResult.FAIL,
+            EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withHomologousRepairDeficiencyAndVariantAndDisruption(
+                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariantAndDisruption(
                     true,
                     TestDisruptionFactory.createMinimal()
                         .copy(gene = "BRCA1", driverLikelihood = DriverLikelihood.HIGH, isReportable = true),
@@ -212,11 +212,11 @@ class IsHomologousRepairDeficientWithoutMutationInGenesXTest {
     }
 
     @Test
-    fun `Should fail when HRD and homozygous disruption of BRCA1`() {
+    fun `Should warn when HRD and homozygous disruption of BRCA1`() {
         assertEvaluation(
-            EvaluationResult.FAIL,
+            EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withHomologousRepairDeficiencyAndHomozygousDisruption(
+                MolecularTestFactory.withHomologousRecombinationDeficiencyAndHomozygousDisruption(
                     true, TestHomozygousDisruptionFactory.createMinimal().copy(gene = "BRCA1")
                 )
             )
@@ -228,11 +228,25 @@ class IsHomologousRepairDeficientWithoutMutationInGenesXTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
+                MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariant(
                     true, hrdVariant("RAD51C", true, true, true, DriverLikelihood.HIGH)
                 )
             )
         )
+    }
+
+    @Test
+    fun `Should warn when HRD and biallelic non-hotspot BRCA1 and non-homozygous disruption of BRCA1`() {
+        val result = function.evaluate(
+            MolecularTestFactory.withHomologousRecombinationDeficiencyAndVariantAndDisruption(
+                true,
+                TestDisruptionFactory.createMinimal()
+                    .copy(gene = "BRCA1", driverLikelihood = DriverLikelihood.HIGH, isReportable = true),
+                hrdVariant("BRCA1", true, true, false)
+            )
+        )
+        assertEvaluation(EvaluationResult.WARN, result)
+        assertThat(result.warnMessages).containsExactly("Tumor is HRD with non-homozygous disruption in BRCA1 and non-hotspot biallelic non-high driver(s) in BRCA1 which could be pathogenic")
     }
 
     private fun hrdVariant(

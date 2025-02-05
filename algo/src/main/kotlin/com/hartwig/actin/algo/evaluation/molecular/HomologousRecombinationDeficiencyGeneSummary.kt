@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 
 private data class HRDDriverClassification(val isBiallelic: Boolean, val isHotspot: Boolean, val isHighDriver: Boolean)
 
-data class HomologousRepairDeficiencyGeneSummary(
+data class HomologousRecombinationDeficiencyGeneSummary(
     val hrdGenesWithNonBiallelicHotspot: Set<String>,
     val hrdGenesWithBiallelicHotspot: Set<String>,
     val hrdGenesWithNonBiallelicNonHotspotHighDriver: Set<String>,
@@ -36,7 +36,7 @@ data class HomologousRepairDeficiencyGeneSummary(
         private val NON_BIALLELIC_NON_HOTSPOT_NON_HIGH_DRIVER =
             HRDDriverClassification(isBiallelic = false, isHotspot = false, isHighDriver = false)
 
-        fun createForDrivers(drivers: Drivers): HomologousRepairDeficiencyGeneSummary {
+        fun createForDrivers(drivers: Drivers): HomologousRecombinationDeficiencyGeneSummary {
             val hrdVariantGroups = drivers.variants
                 .filter { it.gene in MolecularConstants.HRD_GENES && it.isReportable && it.extendedVariantDetails != null }
                 .groupBy(
@@ -63,7 +63,7 @@ data class HomologousRepairDeficiencyGeneSummary(
                 .map(GeneAlteration::gene)
                 .toSet()
 
-            return HomologousRepairDeficiencyGeneSummary(
+            return HomologousRecombinationDeficiencyGeneSummary(
                 hrdGenesWithNonBiallelicHotspot = hrdVariantGroups[NON_BIALLELIC_HOTSPOT] ?: emptySet(),
                 hrdGenesWithBiallelicHotspot = hrdVariantGroups[BIALLELIC_HOTSPOT] ?: emptySet(),
                 hrdGenesWithNonBiallelicNonHotspotHighDriver = hrdVariantGroups[NON_BIALLELIC_NON_HOTSPOT_HIGH_DRIVER] ?: emptySet(),

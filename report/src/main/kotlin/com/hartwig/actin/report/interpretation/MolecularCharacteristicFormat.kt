@@ -39,10 +39,10 @@ object MolecularCharacteristicFormat {
             ?: Formats.VALUE_UNKNOWN
     }
 
-    fun formatHomologousRepair(molecularCharacteristics: MolecularCharacteristics, includeTypeInterpretation: Boolean = true): String {
-        return molecularCharacteristics.isHomologousRepairDeficient?.let { isDeficient ->
+    fun formatHomologousRecombination(molecularCharacteristics: MolecularCharacteristics, includeTypeInterpretation: Boolean = true): String {
+        return molecularCharacteristics.isHomologousRecombinationDeficient?.let { isDeficient ->
             val statusInterpretation = if (isDeficient) "Deficient" else "Proficient"
-            val scoreInterpretation = molecularCharacteristics.homologousRepairScore?.let { "(${Formats.twoDigitNumber(it)})" }
+            val scoreInterpretation = molecularCharacteristics.homologousRecombinationScore?.let { "(${Formats.twoDigitNumber(it)})" }
 
             val typeInterpretation = molecularCharacteristics.hrdType?.let { type ->
                 when (type) {
