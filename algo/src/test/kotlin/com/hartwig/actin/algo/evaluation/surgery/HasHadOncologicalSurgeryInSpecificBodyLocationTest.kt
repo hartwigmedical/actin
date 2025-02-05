@@ -56,20 +56,15 @@ class HasHadOncologicalSurgeryInSpecificBodyLocationTest {
 
     @Test
     fun `Should fail for non-surgery entry with correct body location category`() {
-        val record = TreatmentTestFactory.withTreatmentHistoryEntry(
-            correctHistoryEntry.copy(
-                treatmentHistoryDetails = TreatmentHistoryDetails(bodyLocationCategories = setOf(BodyLocationCategory.LIVER))
-            )
-        )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
-    }
-
-    @Test
-    fun `Should fail for empty treatment history`() {
         val treatment = TreatmentTestFactory.treatmentHistoryEntry(
             treatments = setOf(TreatmentTestFactory.treatment("radiotherapy", false, setOf(TreatmentCategory.RADIOTHERAPY), emptySet())),
             bodyLocationCategory = setOf(MATCHING_CATEGORY)
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatment)))
+    }
+
+    @Test
+    fun `Should fail for empty treatment history`() {
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())))
     }
 }
