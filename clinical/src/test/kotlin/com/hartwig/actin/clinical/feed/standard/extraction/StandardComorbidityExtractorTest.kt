@@ -63,7 +63,7 @@ class StandardComorbidityExtractorTest {
         )
         val result = extractor.extract(EHR_PATIENT_RECORD_WITH_OTHER_CONDITIONS)
         assertThat(result.extracted).containsExactly(
-            OTHER_CONDITION.withDefaultYearAndMonth(2024, 2),
+            OTHER_CONDITION.withDefaultDate(LocalDate.of(2024, 2, 1)),
             OTHER_CONDITION.copy(year = 2024, month = 2, name = anotherCondition)
         )
     }
@@ -128,7 +128,7 @@ class StandardComorbidityExtractorTest {
                 priorOtherConditions = listOf(ProvidedOtherCondition(name = name, startDate = LocalDate.of(year, month, 22)))
             )
         )
-        assertThat(results.extracted).isEqualTo(listOf(curated, anotherCurated).map { it.withDefaultYearAndMonth(year, month) })
+        assertThat(results.extracted).isEqualTo(listOf(curated, anotherCurated).map { it.withDefaultDate(LocalDate.of(year, month, 1)) })
         assertThat(results.evaluation.warnings).isEmpty()
     }
 
