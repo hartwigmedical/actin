@@ -131,6 +131,7 @@ class ClinicalIngestionFeedAdapterTest {
             UnusedCurationConfig(categoryName = "Lesion Location", input = "and possibly lymph nodes"),
             UnusedCurationConfig(categoryName = "Comorbidity", input = "morfine"),
             UnusedCurationConfig(categoryName = "Comorbidity", input = "nikkel"),
+            UnusedCurationConfig(categoryName = "Comorbidity", input = "sinus tachycardia"),
             UnusedCurationConfig(categoryName = "Toxicity Translation", input = "Nausea")
         )
 

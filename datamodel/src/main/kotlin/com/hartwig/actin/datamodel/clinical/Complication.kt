@@ -4,9 +4,9 @@ import java.time.LocalDate
 
 data class Complication(
     override val name: String?,
+    override val icdCodes: Set<IcdCode>,
     override val year: Int? = null,
     override val month: Int? = null,
-    override val icdCodes: Set<IcdCode>,
 ): Comorbidity {
     override val comorbidityClass = ComorbidityClass.COMPLICATION
 

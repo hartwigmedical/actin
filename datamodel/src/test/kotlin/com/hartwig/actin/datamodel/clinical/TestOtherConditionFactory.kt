@@ -12,9 +12,9 @@ object TestOtherConditionFactory {
     fun create(name: String, year: Int?, month: Int?, icdMainCode: String = "", icdExtensionCode: String? = null): OtherCondition {
         return OtherCondition(
             name = name,
+            icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode)),
             year = year,
-            month = month,
-            icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode))
+            month = month
         )
     }
 }

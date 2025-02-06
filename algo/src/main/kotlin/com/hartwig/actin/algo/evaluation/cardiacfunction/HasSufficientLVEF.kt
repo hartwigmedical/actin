@@ -10,12 +10,10 @@ class HasSufficientLVEF(private val minLVEF: Double) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val lvef = record.clinicalStatus.lvef
 
-        return if (lvef == null) {
-            EvaluationFactory.recoverableUndetermined("LVEF unknown")
-        } else if (lvef.compareTo(minLVEF) >= 0) {
-            EvaluationFactory.pass("LVEF of $lvef exceeds $minLVEF")
-        } else {
-            EvaluationFactory.fail("LVEF of $lvef below $minLVEF")
+        return when {
+            lvef == null -> EvaluationFactory.recoverableUndetermined("LVEF unknown")
+            lvef >= minLVEF -> EvaluationFactory.pass("LVEF of $lvef exceeds $minLVEF")
+            else -> EvaluationFactory.fail("LVEF of $lvef below $minLVEF")
         }
     }
 }
