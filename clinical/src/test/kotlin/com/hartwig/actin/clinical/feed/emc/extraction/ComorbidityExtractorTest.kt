@@ -13,6 +13,8 @@ import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.feed.emc.digitalfile.DigitalFileEntry
 import com.hartwig.actin.clinical.feed.emc.intolerance.IntoleranceEntry
 import com.hartwig.actin.datamodel.clinical.Complication
+import com.hartwig.actin.datamodel.clinical.Ecg
+import com.hartwig.actin.datamodel.clinical.EcgMeasure
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.OtherCondition
@@ -356,6 +358,45 @@ class ComorbidityExtractorTest {
             expectedCurationInputs
         )
         assertThat(evaluation.toxicityTranslationEvaluatedInputs).isEqualTo(expectedToxicityTranslationInputs)
+    }
+
+    @Test
+    fun `Should extract ECG from questionnaire`() {
+        val date = LocalDate.of(2018, 5, 21)
+        val ecgInput = "ECG input"
+        val curatedEcg = "curated"
+        val jtcMeasure = EcgMeasure(1, "unit")
+        val icd = setOf(IcdCode("icd"))
+        val rawEcg = Ecg(ecgInput, null, jtcMeasure)
+        val questionnaire = TestCurationFactory.emptyQuestionnaire()
+            .copy(date = date, ecg = rawEcg, nonOncologicalHistory = listOf(CANNOT_CURATE))
+        val curationDatabase = TestCurationFactory.curationDatabase(
+            ComorbidityConfig(
+                input = ecgInput,
+                ignore = false,
+                curated = Ecg(name = curatedEcg, qtcfMeasure = null, jtcMeasure = jtcMeasure, icdCodes = icd)
+            )
+        )
+        val extractor = ComorbidityExtractor(curationDatabase, toxicityTranslationDatabase)
+        val (ecgs, evaluation) = extractor.extract(PATIENT_ID, questionnaire, emptyList(), emptyList())
+
+        val ecg = ecgs.single() as Ecg
+        assertThat(ecg.name).isEqualTo(curatedEcg)
+        assertThat(ecg.icdCodes).isEqualTo(icd)
+        assertExpectedEvaluation(
+            evaluation,
+            CurationCategory.NON_ONCOLOGICAL_HISTORY,
+            "Could not find non-oncological history config for input '$CANNOT_CURATE'",
+            setOf(ecgInput.lowercase(), CANNOT_CURATE)
+        )
+
+    }
+
+    @Test
+    fun `Should extract infections`() {
+
+//        assertThat(clinicalStatus.infectionStatus?.hasActiveInfection).isTrue
+//        assertThat(clinicalStatus.infectionStatus?.description).isEqualTo(CURATED_INFECTION)
     }
 
     private fun assertExpectedEvaluation(

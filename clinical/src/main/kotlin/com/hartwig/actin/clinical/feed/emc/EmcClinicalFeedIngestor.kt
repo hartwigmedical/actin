@@ -67,7 +67,7 @@ class EmcClinicalFeedIngestor(
             val comorbidityExtraction =
                 comorbidityExtractor.extract(patientId, questionnaire, feedRecord.toxicityEntries, feedRecord.intoleranceEntries)
             val clinicalStatusExtraction = clinicalStatusExtractor.extract(
-                patientId, questionnaire, comorbidityExtraction.extracted.any { it is Complication }
+                questionnaire, comorbidityExtraction.extracted.any { it is Complication }
             )
             val oncologicalHistoryExtraction = oncologicalHistoryExtractor.extract(patientId, questionnaire)
             val priorSecondPrimaryExtraction = priorSecondPrimaryExtractor.extract(patientId, questionnaire)

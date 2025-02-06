@@ -2,6 +2,7 @@ package com.hartwig.actin.clinical.feed.emc.extraction
 
 import com.hartwig.actin.algo.icd.IcdConstants.ALLERGIC_OR_HYPERSENSITIVITY_CONDITIONS_OF_UNSPECIFIED_TYPE
 import com.hartwig.actin.algo.icd.IcdConstants.HARMFUL_EFFECTS_OF_DRUGS_CODE
+import com.hartwig.actin.algo.icd.IcdConstants.UNSPECIFIED_INFECTION_CODE
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
@@ -22,6 +23,7 @@ import com.hartwig.actin.datamodel.clinical.Comorbidity
 import com.hartwig.actin.datamodel.clinical.Complication
 import com.hartwig.actin.datamodel.clinical.Ecg
 import com.hartwig.actin.datamodel.clinical.IcdCode
+import com.hartwig.actin.datamodel.clinical.InfectionStatus
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.OtherCondition
 import com.hartwig.actin.datamodel.clinical.Toxicity
@@ -52,7 +54,8 @@ class ComorbidityExtractor(
             extractFeedToxicities(toxicityEntries, patientId),
             questionnaire?.unresolvedToxicities?.let { extractQuestionnaireToxicities(patientId, it, questionnaire.date) },
             extractIntolerances(patientId, intoleranceEntries),
-            questionnaire?.ecg?.let { extractEcg(patientId, it) }
+            questionnaire?.ecg?.let { extractEcg(patientId, it) },
+            questionnaire?.infectionStatus?.let { extractInfection(patientId, it) }
         ).flatten()
             .fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { (comorbidities, aggregatedEval), (comorbidity, eval) ->
                 ExtractionResult(comorbidities + comorbidity, aggregatedEval + eval)
@@ -177,7 +180,7 @@ class ComorbidityExtractor(
     }
 
     private fun extractEcg(patientId: String, rawEcg: Ecg): List<ExtractionResult<List<Ecg>>> {
-        val curationResponse = rawEcg.name?.let { curate(it, patientId, CurationCategory.ECG, "ECG", rawEcg, true) }
+        val curationResponse = rawEcg.name?.let { curate(it, patientId, CurationCategory.ECG, "ECG", rawEcg.copy(name = null), true) }
         val ecg = if (curationResponse?.configs?.size == 0) rawEcg else {
             curationResponse?.config()?.takeUnless { it.ignore }?.curated?.let { curated ->
                 rawEcg.copy(
@@ -195,6 +198,23 @@ class ComorbidityExtractor(
 
     private fun <T, U> coalesce(curated: Comorbidity?, default: T, function: (T) -> U): U =
         curated?.let { it as? T }?.let(function) ?: function(default)
+
+    private fun extractInfection(patientId: String, rawInfectionStatus: InfectionStatus?): List<ExtractionResult<List<OtherCondition>>> {
+        val defaultInfection = OtherCondition(null, setOf(IcdCode(UNSPECIFIED_INFECTION_CODE)))
+        val curationResponse = rawInfectionStatus?.description?.let {
+            curate(it, patientId, CurationCategory.INFECTION, "infection", defaultInfection, true)
+        }
+        val infectionStatus = when (curationResponse?.configs?.size) {
+            0 -> defaultInfection
+            1 -> curationResponse.configs.first().takeUnless { it.ignore }?.curated?.let { curated ->
+                (curated as? OtherCondition) ?: OtherCondition(curated.name, curated.icdCodes, curated.year, curated.month)
+            }
+            else -> null
+        }
+        return listOf(
+            ExtractionResult(listOfNotNull(infectionStatus), curationResponse?.extractionEvaluation ?: CurationExtractionEvaluation())
+        )
+    }
 
     private fun curate(
         input: String,
