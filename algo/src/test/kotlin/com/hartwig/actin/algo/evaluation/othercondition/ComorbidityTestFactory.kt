@@ -33,9 +33,9 @@ internal object ComorbidityTestFactory {
     ): OtherCondition {
         return OtherCondition(
             name = name,
+            icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode)),
             year = year,
             month = month,
-            icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode)),
         )
     }
 
@@ -51,7 +51,7 @@ internal object ComorbidityTestFactory {
     }
 
     fun complication(name: String = "", icdMainCode: String = "", icdExtensionCode: String? = null): Complication {
-        return Complication(name = name, year = null, month = null, icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode)))
+        return Complication(name = name, icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode)))
     }
 
     fun toxicity(

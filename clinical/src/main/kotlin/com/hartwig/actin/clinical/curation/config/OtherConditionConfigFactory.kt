@@ -48,9 +48,9 @@ class OtherConditionConfigFactory(private val icdModel: IcdModel) : CurationConf
 
             OtherCondition(
                 name = parts[fields["name"]!!].trim().ifEmpty { null },
+                icdCodes = icdCodes,
                 year = year,
-                month = month,
-                icdCodes = icdCodes
+                month = month
             ) to icdValidationErrors + yearValidationErrors + monthValidationErrors
         } else {
             null to emptyList()

@@ -40,7 +40,7 @@ class StandardComorbidityExtractorTest {
         )
     )
 
-    private val curatedComplication = Complication(COMPLICATION_NAME, startDate.year, startDate.monthValue, setOf(IcdCode("code")))
+    private val curatedComplication = Complication(COMPLICATION_NAME, setOf(IcdCode("code")), startDate.year, startDate.monthValue)
     private val comorbidityCuration = mockk<CurationDatabase<ComorbidityConfig>>()
     private val extractor = StandardComorbidityExtractor(comorbidityCuration)
 

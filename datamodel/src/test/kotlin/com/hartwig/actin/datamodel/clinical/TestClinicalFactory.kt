@@ -272,15 +272,13 @@ object TestClinicalFactory {
         return listOf(
             OtherCondition(
                 name = "pancreatitis",
-                year = null,
-                month = null,
                 icdCodes = setOf(IcdCode("DC31", null))
             ),
             OtherCondition(
                 name = "Coronary artery bypass graft (CABG)",
+                icdCodes = setOf(IcdCode("QB50.1",  null)),
                 year = 2023,
-                month = 10,
-                icdCodes = setOf(IcdCode("QB50.1",  null))
+                month = 10
             )
         )
     }
@@ -336,7 +334,7 @@ object TestClinicalFactory {
     }
 
     private fun createTestComplications(): List<Complication> {
-        return listOf(Complication(name = "Ascites", year = null, month = null, icdCodes = setOf(IcdCode("1A01", null))))
+        return listOf(Complication(name = "Ascites", icdCodes = setOf(IcdCode("1A01", null))))
     }
 
     private fun createTestLabValues(): List<LabValue> {

@@ -152,7 +152,7 @@ class IcdModelTest {
             OtherCondition("name", icdCodes = icdCodes),
             Toxicity("name", icdCodes, date, ToxicitySource.EHR, 3, date),
             Intolerance("name", icdCodes = icdCodes),
-            Complication("name", null, null, icdCodes = icdCodes)
+            Complication("name", icdCodes = icdCodes)
         )
     }
 }

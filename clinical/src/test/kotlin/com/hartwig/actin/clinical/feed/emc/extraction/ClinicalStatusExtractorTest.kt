@@ -87,9 +87,7 @@ class ClinicalStatusExtractorTest {
         )
     }
 
-    private fun ecg(input: String) = Ecg(
-        name = input, jtcMeasure = null, qtcfMeasure = null
-    )
+    private fun ecg(input: String) = Ecg(name = input, jtcMeasure = null, qtcfMeasure = null)
 
     private fun infectionStatus(input: String) = InfectionStatus(description = input, hasActiveInfection = true)
 

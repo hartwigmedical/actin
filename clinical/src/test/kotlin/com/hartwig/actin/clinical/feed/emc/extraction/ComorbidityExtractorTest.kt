@@ -43,7 +43,7 @@ class ComorbidityExtractorTest {
         ComorbidityConfig(
             input = COMPLICATION_INPUT,
             ignore = false,
-            curated = Complication(name = CURATED_COMPLICATION, year = null, month = null, icdCodes = setOf(IcdCode(COMPLICATION_ICD)))
+            curated = Complication(name = CURATED_COMPLICATION, icdCodes = setOf(IcdCode(COMPLICATION_ICD)))
         ),
         ComorbidityConfig(input = "none", ignore = true, curated = null)
     )

@@ -10,7 +10,7 @@ class HasEcgAberration internal constructor() : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return if (record.ecgs.isEmpty()) {
-            EvaluationFactory.recoverableFail("Missing ECG details - assumed no ECG abnormalities")
+            EvaluationFactory.recoverableFail("No known ECG abnormalities")
         } else {
             val aberrations = Format.concat(record.ecgs.map { it.name ?: "details unknown" })
             EvaluationFactory.recoverablePass("ECG abnormalities present ($aberrations)")
