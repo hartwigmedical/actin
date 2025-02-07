@@ -389,7 +389,6 @@ class ComorbidityExtractorTest {
             "Could not find non-oncological history config for input '$CANNOT_CURATE'",
             setOf(ecgInput.lowercase(), CANNOT_CURATE)
         )
-
     }
 
     @Test

@@ -58,7 +58,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y to hasHadTreatmentCategoryOfTypesCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_WITH_ANY_INTENT_Y to hasHadTreatmentCategoryWithAnyIntentCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_WITH_ANY_INTENT_Y_WITHIN_Z_MONTHS to hasHadTreatmentCategoryWithAnyIntentRecentlyCreator(),
-            EligibilityRule.HAS_RECEIVED_PLATINUM_BASED_DOUBLET to { HasReceivedPlatinumBasedDoublet() },
+            EligibilityRule.HAS_RECEIVED_PLATINUM_BASED_DOUBLET to { HasReceivedPlatinumBasedDoublet(doidModel()) },
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_ALL_TYPES_Y to hasHadTreatmentCategoryOfAllTypesCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_ALL_TYPES_Y_AND_AT_LEAST_Z_LINES to hasHadSomeTreatmentCategoryOfAllTypesCreator(),
             EligibilityRule.HAS_HAD_FIRST_LINE_CATEGORY_X_TREATMENT_OF_TYPES_Y to { HasHadFirstLineTreatmentCategoryOfTypes() },
