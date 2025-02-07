@@ -11,7 +11,6 @@ import com.hartwig.actin.clinical.curation.config.InfectionConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
-import com.hartwig.actin.datamodel.clinical.Ecg
 import com.hartwig.actin.datamodel.clinical.InfectionStatus
 
 class ClinicalStatusExtractor(
@@ -23,7 +22,6 @@ class ClinicalStatusExtractor(
         if (questionnaire == null) {
             return ExtractionResult(ClinicalStatus(), CurationExtractionEvaluation())
         }
-        val ecgCuration = curateECG(patientId, questionnaire.ecg)
         val infectionCuration = curateInfection(patientId, questionnaire.infectionStatus)
 
         val clinicalStatus = ClinicalStatus(
@@ -34,30 +32,7 @@ class ClinicalStatusExtractor(
         )
 
 
-        return ExtractionResult(clinicalStatus, ecgCuration.evaluation + infectionCuration.evaluation)
-    }
-
-    private fun curateECG(patientId: String, rawECG: Ecg?): ExtractionResult<Ecg?> {
-        val curationResponse = rawECG?.name?.let {
-            CurationResponse.createFromConfigs(
-                comorbidityCuration.find(it), patientId, CurationCategory.ECG, it, "ECG", true
-            )
-        }
-        val ecg = when (curationResponse?.configs?.size) {
-            0 -> rawECG
-            1 -> {
-                curationResponse.config()?.takeUnless { it.ignore }?.curated?.let { curated ->
-                    val curatedEcg = curated as? Ecg
-                    rawECG.copy(
-                        name = curated.name?.ifEmpty { null },
-                        qtcfMeasure = curatedEcg?.qtcfMeasure,
-                        jtcMeasure = curatedEcg?.jtcMeasure
-                    )
-                }
-            }
-            else -> null
-        }
-        return ExtractionResult(ecg, curationResponse?.extractionEvaluation ?: CurationExtractionEvaluation())
+        return ExtractionResult(clinicalStatus, infectionCuration.evaluation)
     }
 
     private fun curateInfection(patientId: String, rawInfectionStatus: InfectionStatus?): ExtractionResult<InfectionStatus?> {
