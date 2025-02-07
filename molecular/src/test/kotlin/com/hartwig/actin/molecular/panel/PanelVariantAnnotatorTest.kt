@@ -51,14 +51,14 @@ private val ARCHER_VARIANT = SequencedVariant(gene = GENE, hgvsCodingImpact = HG
 
 private val VARIANT_MATCH_CRITERIA =
     VariantMatchCriteria(
-        isReportable = true,
         gene = GENE,
         chromosome = CHROMOSOME,
         ref = REF,
         alt = ALT,
         position = POSITION,
         codingEffect = CodingEffect.MISSENSE,
-        type = VariantType.SNV
+        type = VariantType.SNV,
+        isReportable = true,
     )
 
 private val EMPTY_MATCH = TestClinicalEvidenceFactory.createEmpty()

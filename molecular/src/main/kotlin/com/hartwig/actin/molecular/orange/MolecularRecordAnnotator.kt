@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.orange
 
-import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
@@ -64,12 +63,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
     }
 
     private fun annotateVariant(variant: Variant): Variant {
-        val evidence = if (variant.driverLikelihood == DriverLikelihood.HIGH) {
-            evidenceDatabase.evidenceForVariant(createVariantCriteria(variant))
-        } else {
-            ClinicalEvidence(treatmentEvidence = emptySet(), eligibleTrials = emptySet())
-        }
-
+        val evidence = evidenceDatabase.evidenceForVariant(createVariantCriteria(variant))
         val alteration = GeneAlterationFactory.convertAlteration(
             variant.gene, evidenceDatabase.geneAlterationForVariant(createVariantCriteria(variant))
         )

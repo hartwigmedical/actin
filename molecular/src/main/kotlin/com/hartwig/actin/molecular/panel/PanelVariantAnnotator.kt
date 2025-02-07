@@ -54,9 +54,9 @@ class PanelVariantAnnotator(
         val variantExtractions = indexVariantExtractionsToUniqueIds(variants)
         val transvarVariants = resolveVariants(variantExtractions)
         val paveAnnotations = annotateWithPave(transvarVariants)
-        val variantsWithEvidence = annotateWithEvidence(transvarVariants, paveAnnotations, variantExtractions)
-
-        return annotateWithDriverLikelihood(variantsWithEvidence)
+        val annotatedVariants = annotateWithMolecularAdditions(transvarVariants, paveAnnotations, variantExtractions)
+        val annotatedVariantsWithDriverLikelihood = annotateWithDriverLikelihood(annotatedVariants)
+        return annotatedVariantsWithDriverLikelihood.map { annotateWithEvidence(it) }
     }
 
     private fun indexVariantExtractionsToUniqueIds(variants: Collection<SequencedVariant>): Map<String, SequencedVariant> {
@@ -108,7 +108,7 @@ class PanelVariantAnnotator(
         return paveResponses
     }
 
-    private fun annotateWithEvidence(
+    private fun annotateWithMolecularAdditions(
         transvarVariants: Map<String, com.hartwig.actin.tools.variant.Variant>,
         paveAnnotations: Map<String, PaveResponse>,
         variantExtractions: Map<String, SequencedVariant>
@@ -116,15 +116,12 @@ class PanelVariantAnnotator(
         return transvarVariants.map { (id, transvarAnnotation) ->
             val paveResponse = paveAnnotations[id]!!
             val extraction = variantExtractions[id]!!
-
-            val criteria = variantMatchCriteria(extraction, transvarAnnotation, paveResponse)
-            val evidence = evidenceDatabase.evidenceForVariant(criteria)
+            val criteria = initialVariantMatchCriteria(extraction, transvarAnnotation, paveResponse)
             val serveGeneAlteration = evidenceDatabase.geneAlterationForVariant(criteria)
             val geneAlteration = GeneAlterationFactory.convertAlteration(extraction.gene, serveGeneAlteration)
 
-            createVariantWithEvidence(
+            createVariantWithMolecularAdditions(
                 extraction,
-                evidence,
                 geneAlteration,
                 serveGeneAlteration,
                 transvarAnnotation,
@@ -133,8 +130,7 @@ class PanelVariantAnnotator(
         }
     }
 
-
-    private fun variantMatchCriteria(
+    private fun initialVariantMatchCriteria(
         panelVariantExtraction: SequencedVariant,
         transvarVariant: com.hartwig.actin.tools.variant.Variant,
         paveResponse: PaveResponse
@@ -146,12 +142,26 @@ class PanelVariantAnnotator(
         alt = transvarVariant.alt(),
         position = transvarVariant.position(),
         type = variantType(transvarVariant),
-        codingEffect = codingEffect(paveResponse.impact.canonicalCodingEffect)
+        codingEffect = codingEffect(paveResponse.impact.canonicalCodingEffect),
+        driverLikelihood = null
     )
 
-    private fun createVariantWithEvidence(
+    private fun variantMatchCriteria(
+        variant: Variant
+    ) = VariantMatchCriteria(
+        isReportable = variant.isReportable,
+        gene = variant.gene,
+        chromosome = variant.chromosome,
+        ref = variant.ref,
+        alt = variant.alt,
+        position = variant.position,
+        type = variant.type,
+        codingEffect = variant.canonicalImpact.codingEffect,
+        driverLikelihood = variant.driverLikelihood
+    )
+
+    private fun createVariantWithMolecularAdditions(
         variant: SequencedVariant,
-        evidence: ClinicalEvidence,
         geneAlteration: GeneAlteration,
         serveGeneAlteration: ServeGeneAlteration?,
         transcriptAnnotation: com.hartwig.actin.tools.variant.Variant,
@@ -170,7 +180,7 @@ class PanelVariantAnnotator(
         event = "${variant.gene} ${impact(paveResponse)}",
 
         driverLikelihood = DriverLikelihood.LOW,
-        evidence = evidence,
+        evidence = ClinicalEvidence(emptySet(), emptySet()),
         gene = variant.gene,
         geneRole = geneAlteration.geneRole,
         proteinEffect = geneAlteration.proteinEffect,
@@ -268,6 +278,14 @@ class PanelVariantAnnotator(
                 )
             }
         }
+    }
+
+    private fun annotateWithEvidence(
+        variant: Variant
+    ): Variant {
+        val criteria = variantMatchCriteria(variant)
+        val evidence = evidenceDatabase.evidenceForVariant(criteria)
+        return variant.copy(evidence = evidence)
     }
 }
 
