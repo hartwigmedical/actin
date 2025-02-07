@@ -49,7 +49,7 @@ private const val HGVS_PROTEIN_3LETTER = "p.Met1Leu"
 private const val HGVS_PROTEIN_1LETTER = "p.M1L"
 private val ARCHER_VARIANT = SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING)
 
-private val VARIANT_MATCH_CRITERIA =
+private val INITIAL_VARIANT_MATCH_CRITERIA =
     VariantMatchCriteria(
         gene = GENE,
         chromosome = CHROMOSOME,
@@ -58,6 +58,7 @@ private val VARIANT_MATCH_CRITERIA =
         position = POSITION,
         codingEffect = CodingEffect.MISSENSE,
         type = VariantType.SNV,
+        driverLikelihood = null,
         isReportable = true,
     )
 
@@ -121,12 +122,10 @@ class PanelVariantAnnotatorTest {
     private val paveLite = mockk<PaveLite> {
         every { run(GENE, TRANSCRIPT, POSITION) } returns PAVE_LITE_ANNOTATION
     }
-
     private val paver = mockk<Paver> {
         every { run(any<List<PaveQuery>>()) } returns emptyList()
         every { run(listOf(PAVE_QUERY)) } returns listOf(PAVE_ANNOTATION)
     }
-
     private val annotator = PanelVariantAnnotator(evidenceDatabase, geneDriverLikelihoodModel, transvarAnnotator, paver, paveLite)
 
     @Test
@@ -137,7 +136,7 @@ class PanelVariantAnnotatorTest {
 
     @Test
     fun `Should annotate variants with evidence`() {
-        every { evidenceDatabase.evidenceForVariant(VARIANT_MATCH_CRITERIA) } returns ACTIONABILITY_MATCH
+        every { evidenceDatabase.evidenceForVariant(INITIAL_VARIANT_MATCH_CRITERIA) } returns ACTIONABILITY_MATCH
         val annotated = annotator.annotate(setOf(ARCHER_VARIANT))
 
         assertThat(annotated.first().evidence).isEqualTo(
@@ -394,6 +393,6 @@ class PanelVariantAnnotatorTest {
     )
 
     private fun setupGeneAlteration() {
-        every { evidenceDatabase.geneAlterationForVariant(VARIANT_MATCH_CRITERIA) } returns HOTSPOT
+        every { evidenceDatabase.geneAlterationForVariant(INITIAL_VARIANT_MATCH_CRITERIA) } returns HOTSPOT
     }
 }
