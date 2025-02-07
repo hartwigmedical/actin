@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.interpretation
 
 import com.hartwig.actin.clinical.interpretation.LabInterpretation.Companion.fromMeasurements
+import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate

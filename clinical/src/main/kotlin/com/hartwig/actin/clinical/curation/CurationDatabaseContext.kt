@@ -35,7 +35,6 @@ import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluati
 import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.DosageUnitTranslationFactory
-import com.hartwig.actin.clinical.curation.translation.LaboratoryIdentifiers
 import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.ToxicityTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
@@ -57,7 +56,7 @@ data class CurationDatabaseContext(
     val medicationNameCuration: CurationDatabase<MedicationNameConfig>,
     val medicationDosageCuration: CurationDatabase<MedicationDosageConfig>,
     val administrationRouteTranslation: TranslationDatabase<String>,
-    val laboratoryTranslation: TranslationDatabase<LaboratoryIdentifiers>,
+    val laboratoryTranslation: TranslationDatabase<String>,
     val toxicityTranslation: TranslationDatabase<String>,
     val bloodTransfusionTranslation: TranslationDatabase<String>,
     val dosageUnitTranslation: TranslationDatabase<String>,

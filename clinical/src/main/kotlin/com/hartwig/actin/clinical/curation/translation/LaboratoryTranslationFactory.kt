@@ -1,13 +1,10 @@
 package com.hartwig.actin.clinical.curation.translation
 
-class LaboratoryTranslationFactory : TranslationFactory<Translation<LaboratoryIdentifiers>> {
-    override fun create(fields: Map<String, Int>, parts: Array<String>): Translation<LaboratoryIdentifiers> {
+class LaboratoryTranslationFactory : TranslationFactory<Translation<String>> {
+    override fun create(fields: Map<String, Int>, parts: Array<String>): Translation<String> {
         return Translation(
-            LaboratoryIdentifiers(
-                code = parts[fields["code"]!!],
-                name = parts[fields["name"]!!]
-            ),
-            LaboratoryIdentifiers(code = parts[fields["translatedCode"]!!], name = parts[fields["translatedName"]!!])
+            input = parts[fields["input"]!!], // input = code | name
+           translated = parts[fields["translatedCode"]!!]
         )
     }
 }

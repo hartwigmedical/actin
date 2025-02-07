@@ -19,7 +19,7 @@ data class CurationExtractionEvaluation(
     val medicationNameEvaluatedInputs: Set<String> = emptySet(),
     val medicationDosageEvaluatedInputs: Set<String> = emptySet(),
     val administrationRouteEvaluatedInputs: Set<Translation<String>> = emptySet(),
-    val laboratoryEvaluatedInputs: Set<Translation<LaboratoryIdentifiers>> = emptySet(),
+    val laboratoryEvaluatedInputs: Set<Translation<String>> = emptySet(),
     val toxicityTranslationEvaluatedInputs: Set<Translation<String>> = emptySet(),
     val dosageUnitEvaluatedInputs: Set<Translation<String>> = emptySet(),
     val surgeryTranslationEvaluatedInputs: Set<String> = emptySet()
