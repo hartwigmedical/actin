@@ -177,7 +177,7 @@ class ComorbidityExtractor(
     }
 
     private fun extractEcg(patientId: String, rawEcg: Ecg): List<ExtractionResult<List<Ecg>>> {
-        val curationResponse = rawEcg.name?.let { curate(it, patientId, CurationCategory.ECG, "ECG", rawEcg, true) }
+        val curationResponse = rawEcg.name?.let { curate(it, patientId, CurationCategory.ECG, "ECG", rawEcg.copy(name = null), true) }
         val ecg = if (curationResponse?.configs?.size == 0) rawEcg else {
             curationResponse?.config()?.takeUnless { it.ignore }?.curated?.let { curated ->
                 rawEcg.copy(

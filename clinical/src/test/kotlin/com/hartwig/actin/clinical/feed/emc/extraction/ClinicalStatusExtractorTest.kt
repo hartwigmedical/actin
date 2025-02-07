@@ -6,16 +6,13 @@ import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.config.ComorbidityConfig
 import com.hartwig.actin.clinical.curation.config.InfectionConfig
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
-import com.hartwig.actin.datamodel.clinical.Ecg
 import com.hartwig.actin.datamodel.clinical.InfectionStatus
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val PATIENT_ID = "patient1"
-private const val ECG_INPUT = "ECG input"
 private const val INFECTION_INPUT = "Infection input"
 private const val NON_ONCOLOGICAL_INPUT = "Non-oncological input"
-private const val CURATED_ECG = "Curated ECG"
 private const val CURATED_INFECTION = "Curated Infection"
 private const val CURATED_LVEF = 1.0
 private const val CANNOT_CURATE = "Cannot curate"
@@ -25,11 +22,6 @@ class ClinicalStatusExtractorTest {
         TestCurationFactory.curationDatabase(InfectionConfig(input = INFECTION_INPUT, interpretation = CURATED_INFECTION)),
         TestCurationFactory.curationDatabase(
             ComorbidityConfig(input = NON_ONCOLOGICAL_INPUT, ignore = false, lvef = CURATED_LVEF, curated = null),
-            ComorbidityConfig(
-                input = ECG_INPUT,
-                ignore = false,
-                curated = Ecg(name = CURATED_ECG, qtcfMeasure = null, jtcMeasure = null)
-            )
         )
     )
 
@@ -38,7 +30,6 @@ class ClinicalStatusExtractorTest {
         val (clinicalStatus, evaluation) = extractor.extract(PATIENT_ID, null, true)
         assertThat(clinicalStatus).isEqualTo(ClinicalStatus())
         assertThat(evaluation.warnings).isEmpty()
-        assertThat(evaluation.ecgEvaluatedInputs).isEmpty()
         assertThat(evaluation.infectionEvaluatedInputs).isEmpty()
         assertThat(evaluation.comorbidityEvaluatedInputs).isEmpty()
     }
@@ -49,12 +40,10 @@ class ClinicalStatusExtractorTest {
             .copy(
                 whoStatus = 1,
                 infectionStatus = infectionStatus(INFECTION_INPUT),
-                ecg = ecg(ECG_INPUT),
                 nonOncologicalHistory = listOf(NON_ONCOLOGICAL_INPUT)
             )
         val (clinicalStatus, evaluation) = extractor.extract(PATIENT_ID, questionnaire, true)
         assertClinicalStatus(clinicalStatus)
-        assertThat(evaluation.ecgEvaluatedInputs).containsOnly(ECG_INPUT.lowercase())
         assertThat(evaluation.infectionEvaluatedInputs).containsOnly(INFECTION_INPUT.lowercase())
         assertThat(evaluation.comorbidityEvaluatedInputs).isEmpty()
         assertThat(evaluation.warnings).isEmpty()
@@ -66,18 +55,11 @@ class ClinicalStatusExtractorTest {
             .copy(
                 whoStatus = 1,
                 infectionStatus = infectionStatus(CANNOT_CURATE),
-                ecg = ecg(CANNOT_CURATE),
                 nonOncologicalHistory = listOf(NON_ONCOLOGICAL_INPUT)
             )
         val (clinicalStatus, evaluation) = extractor.extract(PATIENT_ID, questionnaire, true)
         assertThat(clinicalStatus).isNotNull
         assertThat(evaluation.warnings).containsExactly(
-            CurationWarning(
-                patientId = PATIENT_ID,
-                category = CurationCategory.ECG,
-                feedInput = CANNOT_CURATE,
-                message = "Could not find ECG config for input 'Cannot curate'"
-            ),
             CurationWarning(
                 patientId = PATIENT_ID,
                 category = CurationCategory.INFECTION,
@@ -86,8 +68,6 @@ class ClinicalStatusExtractorTest {
             )
         )
     }
-
-    private fun ecg(input: String) = Ecg(name = input, jtcMeasure = null, qtcfMeasure = null)
 
     private fun infectionStatus(input: String) = InfectionStatus(description = input, hasActiveInfection = true)
 
