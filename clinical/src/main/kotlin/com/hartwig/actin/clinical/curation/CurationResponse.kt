@@ -89,7 +89,7 @@ data class CurationResponse<T>(
                 CurationCategory.SECOND_PRIMARY -> CurationExtractionEvaluation(secondPrimaryEvaluatedInputs = evaluatedInputs)
                 CurationCategory.LESION_LOCATION -> CurationExtractionEvaluation(lesionLocationEvaluatedInputs = evaluatedInputs)
                 CurationCategory.NON_ONCOLOGICAL_HISTORY -> CurationExtractionEvaluation(comorbidityEvaluatedInputs = evaluatedInputs)
-                CurationCategory.ECG -> CurationExtractionEvaluation(ecgEvaluatedInputs = evaluatedInputs)
+                CurationCategory.ECG -> CurationExtractionEvaluation(comorbidityEvaluatedInputs = evaluatedInputs)
                 CurationCategory.INFECTION -> CurationExtractionEvaluation(infectionEvaluatedInputs = evaluatedInputs)
                 CurationCategory.PERIOD_BETWEEN_UNIT_INTERPRETATION -> CurationExtractionEvaluation(
                     periodBetweenUnitEvaluatedInputs = evaluatedInputs
