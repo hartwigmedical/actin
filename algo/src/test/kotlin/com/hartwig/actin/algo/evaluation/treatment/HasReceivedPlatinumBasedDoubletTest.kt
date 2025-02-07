@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
+import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentStage
@@ -9,9 +11,17 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.Radiotherapy
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.Test
 
 class HasReceivedPlatinumBasedDoubletTest {
+
+    private val function = HasReceivedPlatinumBasedDoublet(
+        TestDoidModelFactory.createWithOneParentChild(
+            DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID,
+            DoidConstants.LUNG_ADENOCARCINOMA_DOID
+        )
+    )
 
     private val platinumDoublet =
         DrugTreatment(
@@ -41,13 +51,22 @@ class HasReceivedPlatinumBasedDoubletTest {
     private val otherCategoryDrug =
         TreatmentTestFactory.drugTreatment("Nivolumab", TreatmentCategory.IMMUNOTHERAPY)
 
+    private val chemoradiationHistory = listOf(
+        TreatmentTestFactory.treatmentHistoryEntry(
+            treatments = setOf(
+                TreatmentTestFactory.treatment("CHEMOTHERAPY", false, setOf(TreatmentCategory.CHEMOTHERAPY), emptySet()),
+                TreatmentTestFactory.treatment("RADIOTHERAPY", false, setOf(TreatmentCategory.RADIOTHERAPY), emptySet())
+            )
+        )
+    )
+
     @Test
     fun `Should pass if treatment history contains platinum doublet`() {
         val history = listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(platinumDoublet)))
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            HasReceivedPlatinumBasedDoublet().evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
         )
     }
 
@@ -57,7 +76,7 @@ class HasReceivedPlatinumBasedDoubletTest {
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            HasReceivedPlatinumBasedDoublet().evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
         )
     }
 
@@ -72,7 +91,27 @@ class HasReceivedPlatinumBasedDoubletTest {
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            HasReceivedPlatinumBasedDoublet().evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+        )
+    }
+
+    @Test
+    fun `Should pass if treatment history contains chemoradiotherapy with undefined chemo drug when tumor type is NSCLC`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(
+                TumorTestFactory.withDoids(setOf(DoidConstants.LUNG_ADENOCARCINOMA_DOID)).copy(oncologicalHistory = chemoradiationHistory)
+            )
+        )
+    }
+
+    @Test
+    fun `Should fail if treatment history contains chemoradiotherapy with undefined chemo drug when tumor type is other than NSCLC`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(
+                TumorTestFactory.withDoids(setOf(DoidConstants.COLORECTAL_CANCER_DOID)).copy(oncologicalHistory = chemoradiationHistory)
+            )
         )
     }
 
@@ -82,7 +121,7 @@ class HasReceivedPlatinumBasedDoubletTest {
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
-            HasReceivedPlatinumBasedDoublet().evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
         )
     }
 
@@ -100,7 +139,7 @@ class HasReceivedPlatinumBasedDoubletTest {
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
-            HasReceivedPlatinumBasedDoublet().evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
         )
     }
 
@@ -112,7 +151,7 @@ class HasReceivedPlatinumBasedDoubletTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            HasReceivedPlatinumBasedDoublet().evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
         )
     }
 
@@ -126,7 +165,7 @@ class HasReceivedPlatinumBasedDoubletTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            HasReceivedPlatinumBasedDoublet().evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
         )
     }
 
@@ -136,7 +175,7 @@ class HasReceivedPlatinumBasedDoubletTest {
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            HasReceivedPlatinumBasedDoublet().evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
         )
     }
 
@@ -144,7 +183,7 @@ class HasReceivedPlatinumBasedDoubletTest {
     fun `Should fail if treatment history is empty`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            HasReceivedPlatinumBasedDoublet().evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList()))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList()))
         )
     }
 }
