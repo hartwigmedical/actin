@@ -1,28 +1,26 @@
 package com.hartwig.actin.clinical.feed.emc.extraction
 
-import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.config.ComorbidityConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfig
-import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
+import com.hartwig.actin.datamodel.clinical.OtherCondition
 
 class ClinicalStatusExtractor(
     private val comorbidityCuration: CurationDatabase<ComorbidityConfig>
 ) {
 
-    fun extract(questionnaire: Questionnaire?, hasComplications: Boolean): ExtractionResult<ClinicalStatus> {
-        val clinicalStatus = questionnaire?.let {
+    fun extract(questionnaire: Questionnaire?, curatedInfection: OtherCondition?, hasComplications: Boolean): ClinicalStatus {
+        return questionnaire?.let {
             ClinicalStatus(
                 who = questionnaire.whoStatus,
+                infectionStatus = questionnaire.infectionStatus?.copy(description = curatedInfection?.name),
                 lvef = determineLVEF(questionnaire.nonOncologicalHistory),
                 hasComplications = hasComplications
             )
         } ?: ClinicalStatus()
-
-        return ExtractionResult(clinicalStatus, CurationExtractionEvaluation())
     }
 
     private fun determineLVEF(nonOncologicalHistoryEntries: List<String>?): Double? {

@@ -53,7 +53,6 @@ class EmcClinicalFeedIngestor(
     private val medicationExtractor: MedicationExtractor,
     private val bloodTransfusionsExtractor: BloodTransfusionsExtractor,
     private val surgeryExtractor: SurgeryExtractor
-
 ) : ClinicalFeedIngestion {
 
     override fun ingest(): List<Pair<PatientIngestionResult, CurationExtractionEvaluation>> {
@@ -66,8 +65,9 @@ class EmcClinicalFeedIngestor(
             val tumorExtraction = tumorDetailsExtractor.extract(patientId, questionnaire)
             val comorbidityExtraction =
                 comorbidityExtractor.extract(patientId, questionnaire, feedRecord.toxicityEntries, feedRecord.intoleranceEntries)
-            val clinicalStatusExtraction = clinicalStatusExtractor.extract(
-                questionnaire, comorbidityExtraction.extracted.any { it is Complication }
+            val infectionExtraction = comorbidityExtractor.extractInfection(patientId, questionnaire?.infectionStatus)
+            val clinicalStatus = clinicalStatusExtractor.extract(
+                questionnaire, infectionExtraction.extracted, comorbidityExtraction.extracted.any { it is Complication }
             )
             val oncologicalHistoryExtraction = oncologicalHistoryExtractor.extract(patientId, questionnaire)
             val priorSecondPrimaryExtraction = priorSecondPrimaryExtractor.extract(patientId, questionnaire)
@@ -81,8 +81,8 @@ class EmcClinicalFeedIngestor(
                 patientId = patientId,
                 patient = extractPatientDetails(feedRecord.patientEntry, questionnaire),
                 tumor = tumorExtraction.extracted,
-                comorbidities = comorbidityExtraction.extracted,
-                clinicalStatus = clinicalStatusExtraction.extracted,
+                comorbidities = comorbidityExtraction.extracted + listOfNotNull(infectionExtraction.extracted),
+                clinicalStatus = clinicalStatus,
                 oncologicalHistory = oncologicalHistoryExtraction.extracted,
                 priorSecondPrimaries = priorSecondPrimaryExtraction.extracted,
                 priorIHCTests = priorMolecularTestsExtraction.extracted,
@@ -99,7 +99,7 @@ class EmcClinicalFeedIngestor(
             val patientEvaluation = listOf(
                 tumorExtraction,
                 comorbidityExtraction,
-                clinicalStatusExtraction,
+                infectionExtraction,
                 oncologicalHistoryExtraction,
                 priorSecondPrimaryExtraction,
                 priorMolecularTestsExtraction,
@@ -107,9 +107,7 @@ class EmcClinicalFeedIngestor(
                 bloodTransfusionsExtraction,
                 medicationExtraction,
                 surgeryExtraction
-            )
-                .map { it.evaluation }
-                .fold(CurationExtractionEvaluation()) { acc, evaluation -> acc + evaluation }
+            ).fold(CurationExtractionEvaluation()) { acc, current -> acc + current.evaluation }
 
             Pair(
                 PatientIngestionResult.create(
@@ -197,32 +195,31 @@ class EmcClinicalFeedIngestor(
             qtProlongatingDatabase: QtProlongatingDatabase,
             doidModel: DoidModel,
             treatmentDatabase: TreatmentDatabase
-        ) = EmcClinicalFeedIngestor(
-            feed = FeedModel(
-                ClinicalFeedReader.read(feedDirectory).copy(
-                    questionnaireEntries = QuestionnaireCorrection.correctQuestionnaires(
-                        ClinicalFeedReader.read(feedDirectory).questionnaireEntries,
-                        QuestionnaireRawEntryMapper.createFromCurationDirectory(curationDirectory)
-                    )
-                )
-            ),
-            tumorDetailsExtractor = TumorDetailsExtractor.create(curationDatabaseContext, TumorStageDeriver.create(doidModel)),
-            comorbidityExtractor = ComorbidityExtractor.create(curationDatabaseContext),
-            clinicalStatusExtractor = ClinicalStatusExtractor.create(curationDatabaseContext),
-            oncologicalHistoryExtractor = OncologicalHistoryExtractor.create(curationDatabaseContext),
-            priorSecondPrimaryExtractor = PriorSecondPrimaryExtractor.create(curationDatabaseContext),
-            priorMolecularTestsExtractor = PriorMolecularTestsExtractor.create(curationDatabaseContext),
-            labValueExtractor = LabValueExtractor.create(curationDatabaseContext),
-            medicationExtractor = MedicationExtractor.create(
-                curationDatabaseContext,
-                atcModel,
-                drugInteractionsDatabase,
-                qtProlongatingDatabase,
-                treatmentDatabase
-            ),
-            bloodTransfusionsExtractor = BloodTransfusionsExtractor.create(curationDatabaseContext),
-            surgeryExtractor = SurgeryExtractor.create(curationDatabaseContext)
-        )
+        ): EmcClinicalFeedIngestor {
+            val feed = ClinicalFeedReader.read(feedDirectory)
+            val correctedQuestionnaireEntries = QuestionnaireCorrection.correctQuestionnaires(
+                feed.questionnaireEntries, QuestionnaireRawEntryMapper.createFromCurationDirectory(curationDirectory)
+            )
+            return EmcClinicalFeedIngestor(
+                feed = FeedModel(feed.copy(questionnaireEntries = correctedQuestionnaireEntries)),
+                tumorDetailsExtractor = TumorDetailsExtractor.create(curationDatabaseContext, TumorStageDeriver.create(doidModel)),
+                comorbidityExtractor = ComorbidityExtractor.create(curationDatabaseContext),
+                clinicalStatusExtractor = ClinicalStatusExtractor.create(curationDatabaseContext),
+                oncologicalHistoryExtractor = OncologicalHistoryExtractor.create(curationDatabaseContext),
+                priorSecondPrimaryExtractor = PriorSecondPrimaryExtractor.create(curationDatabaseContext),
+                priorMolecularTestsExtractor = PriorMolecularTestsExtractor.create(curationDatabaseContext),
+                labValueExtractor = LabValueExtractor.create(curationDatabaseContext),
+                medicationExtractor = MedicationExtractor.create(
+                    curationDatabaseContext,
+                    atcModel,
+                    drugInteractionsDatabase,
+                    qtProlongatingDatabase,
+                    treatmentDatabase
+                ),
+                bloodTransfusionsExtractor = BloodTransfusionsExtractor.create(curationDatabaseContext),
+                surgeryExtractor = SurgeryExtractor.create(curationDatabaseContext)
+            )
+        }
 
         const val BODY_WEIGHT_MIN = 20.0
         const val BODY_WEIGHT_MAX = 300.0

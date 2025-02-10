@@ -16,6 +16,7 @@ import com.hartwig.actin.datamodel.clinical.Complication
 import com.hartwig.actin.datamodel.clinical.Ecg
 import com.hartwig.actin.datamodel.clinical.EcgMeasure
 import com.hartwig.actin.datamodel.clinical.IcdCode
+import com.hartwig.actin.datamodel.clinical.InfectionStatus
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.OtherCondition
 import com.hartwig.actin.datamodel.clinical.Toxicity
@@ -393,9 +394,21 @@ class ComorbidityExtractorTest {
 
     @Test
     fun `Should extract infections`() {
+        val icdCodes = setOf(IcdCode("icd"))
+        val extractor = ComorbidityExtractor(
+            TestCurationFactory.curationDatabase(
+                ComorbidityConfig(
+                    input = "Infection",
+                    ignore = false,
+                    curated = OtherCondition("Curated", icdCodes)
+                )
+            ),
+            toxicityTranslationDatabase
+        )
+        val (infection, evaluation) = extractor.extractInfection(PATIENT_ID, InfectionStatus(true, "Infection"))
 
-//        assertThat(clinicalStatus.infectionStatus?.hasActiveInfection).isTrue
-//        assertThat(clinicalStatus.infectionStatus?.description).isEqualTo(CURATED_INFECTION)
+        assertThat(infection).isEqualTo(OtherCondition("Curated", icdCodes))
+        assertThat(evaluation.warnings).isEmpty()
     }
 
     private fun assertExpectedEvaluation(

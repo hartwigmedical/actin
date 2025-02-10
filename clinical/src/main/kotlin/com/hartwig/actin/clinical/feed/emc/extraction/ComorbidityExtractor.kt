@@ -54,12 +54,26 @@ class ComorbidityExtractor(
             extractFeedToxicities(toxicityEntries, patientId),
             questionnaire?.unresolvedToxicities?.let { extractQuestionnaireToxicities(patientId, it, questionnaire.date) },
             extractIntolerances(patientId, intoleranceEntries),
-            questionnaire?.ecg?.let { extractEcg(patientId, it) },
-            questionnaire?.infectionStatus?.let { extractInfection(patientId, it) }
+            questionnaire?.ecg?.let { extractEcg(patientId, it) }
         ).flatten()
             .fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { (comorbidities, aggregatedEval), (comorbidity, eval) ->
                 ExtractionResult(comorbidities + comorbidity, aggregatedEval + eval)
             }
+    }
+
+    fun extractInfection(patientId: String, rawInfectionStatus: InfectionStatus?): ExtractionResult<OtherCondition?> {
+        val defaultInfection = OtherCondition(null, setOf(IcdCode(UNSPECIFIED_INFECTION_CODE)))
+        val curationResponse = rawInfectionStatus?.description?.let {
+            curate(it, patientId, CurationCategory.INFECTION, "infection", defaultInfection, true)
+        }
+        val infectionStatus = when (curationResponse?.configs?.size) {
+            0 -> defaultInfection
+            1 -> curationResponse.configs.first().takeUnless { it.ignore }?.curated?.let { curated ->
+                (curated as? OtherCondition) ?: OtherCondition(curated.name, curated.icdCodes, curated.year, curated.month)
+            }
+            else -> null
+        }
+        return ExtractionResult(infectionStatus, curationResponse?.extractionEvaluation ?: CurationExtractionEvaluation())
     }
 
     private fun extractQuestionnaireComorbidities(
@@ -198,23 +212,6 @@ class ComorbidityExtractor(
 
     private fun <T, U> coalesce(curated: Comorbidity?, default: T, function: (T) -> U): U =
         curated?.let { it as? T }?.let(function) ?: function(default)
-
-    private fun extractInfection(patientId: String, rawInfectionStatus: InfectionStatus?): List<ExtractionResult<List<OtherCondition>>> {
-        val defaultInfection = OtherCondition(null, setOf(IcdCode(UNSPECIFIED_INFECTION_CODE)))
-        val curationResponse = rawInfectionStatus?.description?.let {
-            curate(it, patientId, CurationCategory.INFECTION, "infection", defaultInfection, true)
-        }
-        val infectionStatus = when (curationResponse?.configs?.size) {
-            0 -> defaultInfection
-            1 -> curationResponse.configs.first().takeUnless { it.ignore }?.curated?.let { curated ->
-                (curated as? OtherCondition) ?: OtherCondition(curated.name, curated.icdCodes, curated.year, curated.month)
-            }
-            else -> null
-        }
-        return listOf(
-            ExtractionResult(listOfNotNull(infectionStatus), curationResponse?.extractionEvaluation ?: CurationExtractionEvaluation())
-        )
-    }
 
     private fun curate(
         input: String,
