@@ -106,13 +106,13 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
 
     private fun annotateDisruption(disruption: Disruption): Disruption {
         val alteration = GeneAlterationFactory.convertAlteration(disruption.gene, evidenceDatabase.geneAlterationForDisruption(disruption))
-        val disruptionWithGeneAlterations = disruption.copy(
+        val disruptionWithGeneAlteration = disruption.copy(
             geneRole = alteration.geneRole,
             proteinEffect = alteration.proteinEffect,
             isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance,
         )
-        val evidence = evidenceDatabase.evidenceForDisruption(disruptionWithGeneAlterations)
-        return disruptionWithGeneAlterations.copy(evidence = evidence)
+        val evidence = evidenceDatabase.evidenceForDisruption(disruptionWithGeneAlteration)
+        return disruptionWithGeneAlteration.copy(evidence = evidence)
     }
 
     private fun annotateFusion(fusion: Fusion): Fusion {
