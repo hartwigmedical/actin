@@ -22,5 +22,5 @@ object MatchingCriteriaFunctions {
         codingEffect = variant.canonicalImpact.codingEffect,
         driverLikelihood = variant.driverLikelihood,
         isReportable = variant.isReportable
-        )
+    )
 }
