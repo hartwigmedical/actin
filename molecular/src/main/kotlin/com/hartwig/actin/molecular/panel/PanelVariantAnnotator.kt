@@ -119,7 +119,7 @@ class PanelVariantAnnotator(
             val serveGeneAlteration = evidenceDatabase.geneAlterationForVariant(criteria)
             val geneAlteration = GeneAlterationFactory.convertAlteration(extraction.gene, serveGeneAlteration)
 
-            createVariantWithMolecularAdditions(
+            createVariant(
                 extraction,
                 geneAlteration,
                 serveGeneAlteration,
@@ -159,7 +159,7 @@ class PanelVariantAnnotator(
         isReportable = variant.isReportable
     )
 
-    private fun createVariantWithMolecularAdditions(
+    private fun createVariant(
         variant: SequencedVariant,
         geneAlteration: GeneAlteration,
         serveGeneAlteration: ServeGeneAlteration?,
