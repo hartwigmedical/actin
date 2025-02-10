@@ -20,11 +20,12 @@ class PriorIHCTestInterpreter {
     private fun interpret(test: PriorIHCTest) {
         val item = test.item ?: ""
         val type = test.test
+        val date = test.measureDate
         val scoreText = test.scoreText
         val scoreValue = test.scoreValue
         when {
-            scoreText != null -> interpretationBuilder.addInterpretation(type, scoreText, item, 0)
-            scoreValue != null -> interpretationBuilder.addInterpretation(type, item, formatValueBasedPriorTest(test), 1)
+            scoreText != null -> interpretationBuilder.addInterpretation(type, scoreText, item, date, 0)
+            scoreValue != null -> interpretationBuilder.addInterpretation(type, item, formatValueBasedPriorTest(test), date, 1)
             else -> logger.error("IHC test is neither text-based nor value-based: {}", test)
         }
     }

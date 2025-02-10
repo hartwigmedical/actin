@@ -13,6 +13,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 object TestClinicalFactory {
@@ -306,9 +307,20 @@ object TestClinicalFactory {
             PriorIHCTest(
                 item = "PD-L1",
                 measure = null,
+                measureDate = LocalDate.of(2024, 10, 1),
                 scoreText = null,
                 scoreValuePrefix = null,
                 scoreValue = 90.0,
+                scoreValueUnit = "%",
+                impliesPotentialIndeterminateStatus = false
+            ),
+            PriorIHCTest(
+                item = "PD-L1",
+                measure = null,
+                measureDate = LocalDate.of(2023, 10, 1),
+                scoreText = null,
+                scoreValuePrefix = null,
+                scoreValue = 80.0,
                 scoreValueUnit = "%",
                 impliesPotentialIndeterminateStatus = false
             ),

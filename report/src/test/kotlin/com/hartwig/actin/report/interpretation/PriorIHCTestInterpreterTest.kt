@@ -6,9 +6,11 @@ import com.hartwig.actin.datamodel.clinical.TestClinicalFactory
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 private val BASE_PATIENT_RECORD =
     PatientRecordFactory.fromInputs(TestClinicalFactory.createMinimalTestClinicalRecord(), MolecularHistory(emptyList()))
+private val DEFAULT_DATE = LocalDate.of(2025, 2, 10)
 
 class PriorIHCTestInterpreterTest {
 
@@ -23,7 +25,7 @@ class PriorIHCTestInterpreterTest {
         )
         assertThat(result).containsExactly(
             PriorMolecularTestInterpretation(
-                "IHC", listOf(PriorMolecularTestResultInterpretation("Positive", "HER2"))
+                "IHC", listOf(PriorMolecularTestResultInterpretation("Positive", "HER2", DEFAULT_DATE))
             )
         )
     }
@@ -37,7 +39,7 @@ class PriorIHCTestInterpreterTest {
         )
         assertThat(result).containsExactly(
             PriorMolecularTestInterpretation(
-                "IHC", listOf(PriorMolecularTestResultInterpretation("HER2", "Score 90%", 1))
+                "IHC", listOf(PriorMolecularTestResultInterpretation("HER2", "Score 90%", DEFAULT_DATE, 1))
             )
         )
     }
@@ -51,7 +53,7 @@ class PriorIHCTestInterpreterTest {
         )
         assertThat(result).containsExactly(
             PriorMolecularTestInterpretation(
-                "IHC", listOf(PriorMolecularTestResultInterpretation("HER2", "Score 90", 1))
+                "IHC", listOf(PriorMolecularTestResultInterpretation("HER2", "Score 90", DEFAULT_DATE, 1))
             )
         )
     }
