@@ -77,7 +77,6 @@ class VariantEvidenceTest {
     )
 
     private val matchingVariant = VariantMatchCriteria(
-        isReportable = true,
         gene = "gene 1",
         codingEffect = CodingEffect.MISSENSE,
         type = VariantType.SNV,
@@ -85,7 +84,8 @@ class VariantEvidenceTest {
         position = 5,
         ref = "A",
         alt = "T",
-        driverLikelihood = DriverLikelihood.HIGH
+        driverLikelihood = DriverLikelihood.HIGH,
+        isReportable = true
     )
 
     @Test

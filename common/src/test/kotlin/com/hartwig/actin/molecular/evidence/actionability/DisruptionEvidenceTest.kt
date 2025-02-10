@@ -21,7 +21,7 @@ private val OTHER_TRIAL = TestServeTrialFactory.createTrialForHotspot()
 class DisruptionEvidenceTest {
 
     private val matchingDisruption =
-        TestMolecularFactory.minimalDisruption().copy(gene = "gene 1", isReportable = true)
+        TestMolecularFactory.minimalDisruption().copy(gene = "gene 1", isReportable = true, geneRole = GeneRole.UNKNOWN)
     private val disruptionEvidence = DisruptionEvidence.create(
         evidences = listOf(ANY_EVIDENCE_FOR_GENE, AMP_EVIDENCE_FOR_GENE, INACT_EVIDENCE_FOR_GENE, OTHER_EVIDENCE),
         trials = listOf(ANY_TRIAL_FOR_GENE, AMP_TRIAL_FOR_GENE, INACT_TRIAL_FOR_GENE, OTHER_TRIAL)

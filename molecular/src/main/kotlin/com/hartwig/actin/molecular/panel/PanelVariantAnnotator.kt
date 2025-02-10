@@ -50,13 +50,12 @@ class PanelVariantAnnotator(
 
     private val logger = LogManager.getLogger(PanelVariantAnnotator::class.java)
 
-    fun annotate(variants: Set<SequencedVariant>): List<Variant> {
-        val variantExtractions = indexVariantExtractionsToUniqueIds(variants)
+    fun annotate(sequencedVariants: Set<SequencedVariant>): List<Variant> {
+        val variantExtractions = indexVariantExtractionsToUniqueIds(sequencedVariants)
         val transvarVariants = resolveVariants(variantExtractions)
         val paveAnnotations = annotateWithPave(transvarVariants)
-        val annotatedVariants = annotateWithMolecularAdditions(transvarVariants, paveAnnotations, variantExtractions)
-        val annotatedVariantsWithDriverLikelihood = annotateWithDriverLikelihood(annotatedVariants)
-        return annotatedVariantsWithDriverLikelihood.map { annotateWithEvidence(it) }
+        val variants = createVariants(transvarVariants, paveAnnotations, variantExtractions)
+        return annotateWithDriverLikelihood(variants).map { annotateWithEvidence(it) }
     }
 
     private fun indexVariantExtractionsToUniqueIds(variants: Collection<SequencedVariant>): Map<String, SequencedVariant> {
@@ -108,7 +107,7 @@ class PanelVariantAnnotator(
         return paveResponses
     }
 
-    private fun annotateWithMolecularAdditions(
+    private fun createVariants(
         transvarVariants: Map<String, com.hartwig.actin.tools.variant.Variant>,
         paveAnnotations: Map<String, PaveResponse>,
         variantExtractions: Map<String, SequencedVariant>
