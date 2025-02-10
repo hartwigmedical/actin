@@ -52,12 +52,12 @@ private val ARCHER_VARIANT = SequencedVariant(gene = GENE, hgvsCodingImpact = HG
 private val INITIAL_VARIANT_MATCH_CRITERIA =
     VariantMatchCriteria(
         gene = GENE,
-        chromosome = CHROMOSOME,
-        ref = REF,
-        alt = ALT,
-        position = POSITION,
         codingEffect = CodingEffect.MISSENSE,
         type = VariantType.SNV,
+        chromosome = CHROMOSOME,
+        position = POSITION,
+        ref = REF,
+        alt = ALT,
         driverLikelihood = null,
         isReportable = true,
     )

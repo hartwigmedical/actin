@@ -135,29 +135,29 @@ class PanelVariantAnnotator(
         transvarVariant: com.hartwig.actin.tools.variant.Variant,
         paveResponse: PaveResponse
     ) = VariantMatchCriteria(
-        isReportable = true,
         gene = panelVariantExtraction.gene,
+        codingEffect = codingEffect(paveResponse.impact.canonicalCodingEffect),
+        type = variantType(transvarVariant),
         chromosome = transvarVariant.chromosome(),
+        position = transvarVariant.position(),
         ref = transvarVariant.ref(),
         alt = transvarVariant.alt(),
-        position = transvarVariant.position(),
-        type = variantType(transvarVariant),
-        codingEffect = codingEffect(paveResponse.impact.canonicalCodingEffect),
-        driverLikelihood = null
+        driverLikelihood = null,
+        isReportable = true
     )
 
     private fun variantMatchCriteria(
         variant: Variant
     ) = VariantMatchCriteria(
-        isReportable = variant.isReportable,
         gene = variant.gene,
+        codingEffect = variant.canonicalImpact.codingEffect,
+        type = variant.type,
         chromosome = variant.chromosome,
+        position = variant.position,
         ref = variant.ref,
         alt = variant.alt,
-        position = variant.position,
-        type = variant.type,
-        codingEffect = variant.canonicalImpact.codingEffect,
-        driverLikelihood = variant.driverLikelihood
+        driverLikelihood = variant.driverLikelihood,
+        isReportable = variant.isReportable
     )
 
     private fun createVariantWithMolecularAdditions(

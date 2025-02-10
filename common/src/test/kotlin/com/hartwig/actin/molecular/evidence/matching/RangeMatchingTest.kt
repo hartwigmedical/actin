@@ -8,14 +8,14 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private val VARIANT_CRITERIA = VariantMatchCriteria(
-    isReportable = true,
     gene = "gene 1",
     codingEffect = CodingEffect.MISSENSE,
     type = VariantType.SNV,
     chromosome = "12",
     position = 13,
     ref = "A",
-    alt = "T"
+    alt = "T",
+    isReportable = true,
 )
 
 private val RANGE = TestServeKnownFactory.codonBuilder()

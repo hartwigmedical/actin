@@ -7,14 +7,14 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private val VARIANT_CRITERIA = VariantMatchCriteria(
-    isReportable = true,
-    ref = "A",
-    alt = "T",
     gene = "gene 1",
+    codingEffect = CodingEffect.MISSENSE,
+    type = VariantType.SNV,
     chromosome = "12",
     position = 13,
-    codingEffect = CodingEffect.MISSENSE,
-    type = VariantType.SNV
+    ref = "A",
+    alt = "T",
+    isReportable = true
 )
 
 class MutationTypeMatchingTest {
