@@ -3,7 +3,8 @@ package com.hartwig.actin.molecular.panel
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
+import com.hartwig.actin.datamodel.molecular.driver.GeneRole
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
@@ -55,7 +56,8 @@ class PanelVariantAnnotator(
         val transvarVariants = resolveVariants(variantExtractions)
         val paveAnnotations = annotateWithPave(transvarVariants)
         val variants = createVariants(transvarVariants, paveAnnotations, variantExtractions)
-        return annotateWithDriverLikelihood(variants).map { annotateWithEvidence(it) }
+        val annotatedServeVariants = variants.map { annotateWithServeData(it) }
+        return annotateWithDriverLikelihood(annotatedServeVariants).map { annotateWithEvidence(it) }
     }
 
     private fun indexVariantExtractionsToUniqueIds(variants: Collection<SequencedVariant>): Map<String, SequencedVariant> {
@@ -115,54 +117,17 @@ class PanelVariantAnnotator(
         return transvarVariants.map { (id, transvarAnnotation) ->
             val paveResponse = paveAnnotations[id]!!
             val extraction = variantExtractions[id]!!
-            val criteria = initialVariantMatchCriteria(extraction, transvarAnnotation, paveResponse)
-            val serveGeneAlteration = evidenceDatabase.geneAlterationForVariant(criteria)
-            val geneAlteration = GeneAlterationFactory.convertAlteration(extraction.gene, serveGeneAlteration)
 
             createVariant(
                 extraction,
-                geneAlteration,
-                serveGeneAlteration,
                 transvarAnnotation,
                 paveResponse
             )
         }
     }
 
-    private fun initialVariantMatchCriteria(
-        panelVariantExtraction: SequencedVariant,
-        transvarVariant: com.hartwig.actin.tools.variant.Variant,
-        paveResponse: PaveResponse
-    ) = VariantMatchCriteria(
-        gene = panelVariantExtraction.gene,
-        codingEffect = codingEffect(paveResponse.impact.canonicalCodingEffect),
-        type = variantType(transvarVariant),
-        chromosome = transvarVariant.chromosome(),
-        position = transvarVariant.position(),
-        ref = transvarVariant.ref(),
-        alt = transvarVariant.alt(),
-        driverLikelihood = null,
-        isReportable = true
-    )
-
-    private fun variantMatchCriteria(
-        variant: Variant
-    ) = VariantMatchCriteria(
-        gene = variant.gene,
-        codingEffect = variant.canonicalImpact.codingEffect,
-        type = variant.type,
-        chromosome = variant.chromosome,
-        position = variant.position,
-        ref = variant.ref,
-        alt = variant.alt,
-        driverLikelihood = variant.driverLikelihood,
-        isReportable = variant.isReportable
-    )
-
     private fun createVariant(
         variant: SequencedVariant,
-        geneAlteration: GeneAlteration,
-        serveGeneAlteration: ServeGeneAlteration?,
         transcriptAnnotation: com.hartwig.actin.tools.variant.Variant,
         paveResponse: PaveResponse
     ) = Variant(
@@ -174,17 +139,29 @@ class PanelVariantAnnotator(
         variantAlleleFrequency = variant.variantAlleleFrequency,
         canonicalImpact = impact(paveResponse.impact, transcriptAnnotation),
         otherImpacts = otherImpacts(paveResponse, transcriptAnnotation),
-        isHotspot = isHotspot(serveGeneAlteration),
+        isHotspot = false,
+
         isReportable = true,
         event = "${variant.gene} ${impact(paveResponse)}",
-
-        driverLikelihood = DriverLikelihood.LOW,
+        driverLikelihood = null,
         evidence = ClinicalEvidence(emptySet(), emptySet()),
         gene = variant.gene,
-        geneRole = geneAlteration.geneRole,
-        proteinEffect = geneAlteration.proteinEffect,
-        isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance
+        geneRole = GeneRole.UNKNOWN,
+        proteinEffect = ProteinEffect.UNKNOWN,
+        isAssociatedWithDrugResistance = null
     )
+
+    private fun annotateWithServeData(variant: Variant): Variant {
+        val criteria = variantMatchCriteria(variant)
+        val serveGeneAlteration = evidenceDatabase.geneAlterationForVariant(criteria)
+        val geneAlteration = GeneAlterationFactory.convertAlteration(variant.gene, serveGeneAlteration)
+        return variant.copy(
+            isHotspot = isHotspot(serveGeneAlteration),
+            geneRole = geneAlteration.geneRole,
+            proteinEffect = geneAlteration.proteinEffect,
+            isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance
+        )
+    }
 
     private fun impact(paveImpact: PaveImpact, transvarVariant: com.hartwig.actin.tools.variant.Variant): TranscriptVariantImpact {
 
@@ -284,6 +261,20 @@ class PanelVariantAnnotator(
         val evidence = evidenceDatabase.evidenceForVariant(criteria)
         return variant.copy(evidence = evidence)
     }
+
+    private fun variantMatchCriteria(
+        variant: Variant
+    ) = VariantMatchCriteria(
+        gene = variant.gene,
+        codingEffect = variant.canonicalImpact.codingEffect,
+        type = variant.type,
+        chromosome = variant.chromosome,
+        position = variant.position,
+        ref = variant.ref,
+        alt = variant.alt,
+        driverLikelihood = variant.driverLikelihood,
+        isReportable = variant.isReportable
+    )
 }
 
 fun impact(paveResponse: PaveResponse): String {
