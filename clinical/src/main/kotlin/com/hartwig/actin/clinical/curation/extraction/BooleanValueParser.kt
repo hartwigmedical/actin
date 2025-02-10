@@ -1,7 +1,6 @@
 package com.hartwig.actin.clinical.curation.extraction
 
 import com.hartwig.actin.util.Either
-import com.hartwig.actin.util.getOrNull
 import com.hartwig.actin.util.left
 import com.hartwig.actin.util.right
 
@@ -57,6 +56,10 @@ object BooleanValueParser {
     }
 
     fun isTrue(input: String?): Boolean {
-        return parseBoolean(input).getOrNull() == true
+        return parseBoolean(input) == Either.Right(true)
+    }
+
+    fun isUnknown(input: String?): Boolean {
+        return parseBoolean(input) == Either.Right(null)
     }
 }

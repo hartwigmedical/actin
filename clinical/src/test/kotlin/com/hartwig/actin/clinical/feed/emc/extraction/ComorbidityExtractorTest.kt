@@ -445,6 +445,30 @@ class ComorbidityExtractorTest {
         assertThat(evaluation.warnings).isEmpty()
     }
 
+    @Test
+    fun `Should extract clinical status with hasComplications == null when questionnaire indicates complications are unknown`() {
+        extractAndAssertComplicationStatus("unknown", null)
+    }
+
+    @Test
+    fun `Should extract clinical status with hasComplications == false when questionnaire indicates no complications`() {
+        extractAndAssertComplicationStatus("no", false)
+    }
+
+    @Test
+    fun `Should extract clinical status with hasComplications == false when questionnaire contains empty list of complications`() {
+        extractAndAssertComplicationStatus(null, false)
+    }
+
+    private fun extractAndAssertComplicationStatus(input: String?, expected: Boolean?) {
+        val configs = listOfNotNull(input?.let { ComorbidityConfig(input = it, ignore = true, curated = null) }).toTypedArray()
+        val extractor = ComorbidityExtractor(TestCurationFactory.curationDatabase(*configs), toxicityTranslationDatabase)
+        val questionnaire = TestCurationFactory.emptyQuestionnaire().copy(complications = listOfNotNull(input))
+        val (extraction, evaluation) = extractor.extract(PATIENT_ID, questionnaire, emptyList(), emptyList())
+        assertThat(extraction.second.hasComplications).isEqualTo(expected)
+        assertThat(evaluation.warnings).isEmpty()
+    }
+
     private fun assertExpectedEvaluation(
         evaluation: CurationExtractionEvaluation,
         category: CurationCategory,

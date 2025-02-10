@@ -62,7 +62,7 @@ class ComorbidityExtractor(
             }
 
         val clinicalStatus = extractClinicalStatus(
-            questionnaire, infectionExtraction.extracted.firstOrNull()
+            questionnaire, infectionExtraction.extracted.firstOrNull(), comorbidityExtraction.extracted.filterIsInstance<Complication>()
         )
 
         return ExtractionResult(comorbidityExtraction.extracted to clinicalStatus, comorbidityExtraction.evaluation)
@@ -222,18 +222,24 @@ class ComorbidityExtractor(
         return ExtractionResult(listOfNotNull(infectionStatus), curationResponse?.extractionEvaluation ?: CurationExtractionEvaluation())
     }
 
-    private fun extractClinicalStatus(questionnaire: Questionnaire?, curatedInfection: OtherCondition?): ClinicalStatus {
+    private fun extractClinicalStatus(
+        questionnaire: Questionnaire?, curatedInfection: OtherCondition?, curatedComplications: List<Complication>
+    ): ClinicalStatus {
         return questionnaire?.let {
             ClinicalStatus(
                 who = questionnaire.whoStatus,
                 infectionStatus = questionnaire.infectionStatus?.copy(description = curatedInfection?.name),
-                lvef = determineLVEF(questionnaire.nonOncologicalHistory),
-                hasComplications = questionnaire.complications?.isNotEmpty()
+                lvef = determineLvef(questionnaire.nonOncologicalHistory),
+                hasComplications = when {
+                    curatedComplications.isNotEmpty() -> true
+                    questionnaire.complications?.any(BooleanValueParser::isUnknown) != false -> null
+                    else -> false
+                }
             )
         } ?: ClinicalStatus()
     }
 
-    private fun determineLVEF(nonOncologicalHistoryEntries: List<String>?): Double? {
+    private fun determineLvef(nonOncologicalHistoryEntries: List<String>?): Double? {
         // We do not raise warnings or propagate evaluated inputs here since we use the same configs for otherConditions
         return nonOncologicalHistoryEntries?.asSequence()
             ?.flatMap(comorbidityCuration::find)
