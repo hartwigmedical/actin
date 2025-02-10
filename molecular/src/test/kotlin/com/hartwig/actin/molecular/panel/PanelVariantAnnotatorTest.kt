@@ -88,7 +88,7 @@ private val VARIANT_MATCH_CRITERIA =
         position = POSITION,
         ref = REF,
         alt = ALT,
-        driverLikelihood = null,
+        driverLikelihood = DriverLikelihood.HIGH,
         isReportable = true,
     )
 
@@ -134,24 +134,28 @@ private val PAVE_ANNOTATION = PaveResponse(
     transcriptImpact = emptyList()
 )
 
-private val HOTSPOT =
-    TestServeKnownFactory.hotspotBuilder().build().withGeneRole(ServeGeneRole.ONCO).withProteinEffect(ServeProteinEffect.GAIN_OF_FUNCTION)
-        .withAssociatedWithDrugResistance(true)
+private val HOTSPOT = TestServeKnownFactory.hotspotBuilder().build()
+    .withGeneRole(ServeGeneRole.ONCO)
+    .withProteinEffect(ServeProteinEffect.GAIN_OF_FUNCTION)
+    .withAssociatedWithDrugResistance(true)
 
 class PanelVariantAnnotatorTest {
 
     private val evidenceDatabase = mockk<EvidenceDatabase> {
-        every { evidenceForVariant(any()) } returns EMPTY_MATCH
         every { geneAlterationForVariant(any()) } returns null
+        every { geneAlterationForVariant(VARIANT_MATCH_CRITERIA.copy(driverLikelihood = null)) } returns HOTSPOT
+        every { evidenceForVariant(any()) } returns EMPTY_MATCH
+        every { evidenceForVariant(VARIANT_MATCH_CRITERIA) } returns ACTIONABILITY_MATCH
     }
     private val geneDriverLikelihoodModel = mockk<GeneDriverLikelihoodModel> {
         every { evaluate(any(), any(), any()) } returns null
+        every { evaluate(GENE, GeneRole.ONCO, listOf(VARIANT)) } returns 0.9
     }
     private val transvarAnnotator = mockk<VariantAnnotator> {
-        every { resolve(GENE, null, HGVS_CODING) } returns TRANSCRIPT_ANNOTATION
+        every { resolve(any(), null, HGVS_CODING) } returns TRANSCRIPT_ANNOTATION
     }
     private val paveLite = mockk<PaveLite> {
-        every { run(GENE, TRANSCRIPT, POSITION) } returns PAVE_LITE_ANNOTATION
+        every { run(any(), TRANSCRIPT, POSITION) } returns PAVE_LITE_ANNOTATION
     }
     private val paver = mockk<Paver> {
         every { run(any<List<PaveQuery>>()) } returns emptyList()
@@ -161,54 +165,46 @@ class PanelVariantAnnotatorTest {
 
     @Test
     fun `Should annotate variants with transcript, genetic variation and genomic position`() {
-        val annotated = annotator.annotate(setOf(ARCHER_VARIANT))
-        val annotatedVariant = annotated.first()
-        assertThat(annotatedVariant.variantAlleleFrequency).isNull()
-        assertThat(annotatedVariant.canonicalImpact.transcriptId).isEqualTo(TRANSCRIPT)
-        assertThat(annotatedVariant.canonicalImpact.hgvsCodingImpact).isEqualTo(HGVS_CODING)
-        assertThat(annotatedVariant.canonicalImpact.codingEffect).isEqualTo(CodingEffect.MISSENSE)
-        assertThat(annotatedVariant.canonicalImpact.hgvsProteinImpact).isEqualTo(HGVS_PROTEIN_1LETTER)
-        assertThat(annotatedVariant.canonicalImpact.isSpliceRegion).isFalse()
-        assertThat(annotatedVariant.otherImpacts).isEmpty()
-        assertThat(annotatedVariant.chromosome).isEqualTo(CHROMOSOME)
-        assertThat(annotatedVariant.position).isEqualTo(POSITION)
-        assertThat(annotatedVariant.ref).isEqualTo(REF)
-        assertThat(annotatedVariant.alt).isEqualTo(ALT)
-        assertThat(annotatedVariant.type).isEqualTo(VariantType.SNV)
+        val annotated = annotator.annotate(setOf(ARCHER_VARIANT)).first()
+        assertThat(annotated.variantAlleleFrequency).isNull()
+        assertThat(annotated.canonicalImpact.transcriptId).isEqualTo(TRANSCRIPT)
+        assertThat(annotated.canonicalImpact.hgvsCodingImpact).isEqualTo(HGVS_CODING)
+        assertThat(annotated.canonicalImpact.codingEffect).isEqualTo(CodingEffect.MISSENSE)
+        assertThat(annotated.canonicalImpact.hgvsProteinImpact).isEqualTo(HGVS_PROTEIN_1LETTER)
+        assertThat(annotated.canonicalImpact.isSpliceRegion).isFalse()
+        assertThat(annotated.otherImpacts).isEmpty()
+        assertThat(annotated.chromosome).isEqualTo(CHROMOSOME)
+        assertThat(annotated.position).isEqualTo(POSITION)
+        assertThat(annotated.ref).isEqualTo(REF)
+        assertThat(annotated.alt).isEqualTo(ALT)
+        assertThat(annotated.type).isEqualTo(VariantType.SNV)
     }
 
     @Test
-    fun `Should annotate variants with SERVE data`() {
-        setupGeneAlteration()
-        val annotated = annotator.annotate(setOf(ARCHER_VARIANT))
-        assertThat(annotated.first().isHotspot).isTrue()
-        assertThat(annotated.first().geneRole).isEqualTo(GeneRole.ONCO)
-        assertThat(annotated.first().proteinEffect).isEqualTo(ProteinEffect.GAIN_OF_FUNCTION)
-        assertThat(annotated.first().isAssociatedWithDrugResistance).isTrue()
+    fun `Should annotate variants with gene alteration data`() {
+        val annotated = annotator.annotate(setOf(ARCHER_VARIANT)).first()
+        assertThat(annotated.isHotspot).isTrue()
+        assertThat(annotated.geneRole).isEqualTo(GeneRole.ONCO)
+        assertThat(annotated.isAssociatedWithDrugResistance).isTrue()
     }
 
     @Test
     fun `Should annotate variants with driver likelihood`() {
-        setupGeneAlteration()
-        every { geneDriverLikelihoodModel.evaluate(GENE, GeneRole.ONCO, listOf(VARIANT)) } returns 0.9
-        val annotated = annotator.annotate(setOf(ARCHER_VARIANT))
-        assertThat(annotated.first().driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
+        val annotated = annotator.annotate(setOf(ARCHER_VARIANT)).first()
+        assertThat(annotated.driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
     }
 
     @Test
     fun `Should not annotate with evidence when no matches found`() {
-        setupGeneAlteration()
-        val annotated = annotator.annotate(setOf(ARCHER_VARIANT))
-        assertThat(annotated.first().evidence).isEqualTo(TestClinicalEvidenceFactory.createEmpty())
+        val annotated = annotator.annotate(setOf(ARCHER_VARIANT.copy(gene = "other gene"))).first()
+        assertThat(annotated.evidence).isEqualTo(TestClinicalEvidenceFactory.createEmpty())
     }
 
     @Test
     fun `Should annotate variants with evidence when matches found`() {
-        setupGeneAlteration()
-        every { evidenceDatabase.evidenceForVariant(VARIANT_MATCH_CRITERIA) } returns ACTIONABILITY_MATCH
-        val annotated = annotator.annotate(setOf(ARCHER_VARIANT))
+        val annotated = annotator.annotate(setOf(ARCHER_VARIANT)).first()
 
-        assertThat(annotated.first().evidence).isEqualTo(
+        assertThat(annotated.evidence).isEqualTo(
             ClinicalEvidence(
                 treatmentEvidence = setOf(
                     TestTreatmentEvidenceFactory.create(
@@ -233,9 +229,8 @@ class PanelVariantAnnotatorTest {
 
     @Test
     fun `Should annotate variants with affected exon and codon`() {
-        setupGeneAlteration()
-        every { paveLite.run(GENE, TRANSCRIPT, POSITION) } returns ImmutableVariantTranscriptImpact.builder().affectedExon(1)
-            .affectedCodon(2).build()
+        every { paveLite.run(GENE, TRANSCRIPT, POSITION) } returns
+                ImmutableVariantTranscriptImpact.builder().affectedExon(1).affectedCodon(2).build()
         val annotated = annotator.annotate(setOf(ARCHER_VARIANT))
         val annotatedVariant = annotated.first()
         assertThat(annotatedVariant.canonicalImpact.affectedExon).isEqualTo(1)
@@ -308,8 +303,8 @@ class PanelVariantAnnotatorTest {
     @Test
     fun `Should describe variant event using protein HGVS`() {
         val variants = setOf(SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING))
-        val annotated = annotator.annotate(variants)
-        assertThat(annotated.first().event).isEqualTo("$GENE ${HGVS_PROTEIN_1LETTER.removePrefix("p.")}")
+        val annotated = annotator.annotate(variants).first()
+        assertThat(annotated.event).isEqualTo("$GENE ${HGVS_PROTEIN_1LETTER.removePrefix("p.")}")
     }
 
     @Test
@@ -321,14 +316,14 @@ class PanelVariantAnnotatorTest {
         )
 
         val variants = setOf(SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING))
-        val annotated = annotator.annotate(variants)
-        assertThat(annotated.first().event).isEqualTo("$GENE $HGVS_CODING")
+        val annotated = annotator.annotate(variants).first()
+        assertThat(annotated.event).isEqualTo("$GENE $HGVS_CODING")
     }
 
     @Test
     fun `Should determine impact from PaveResponse`() {
         assertThat(
-            impact(
+            eventString(
                 PAVE_ANNOTATION.copy(
                     impact = minimalPaveImpact().copy(
                         canonicalCodingEffect = PaveCodingEffect.SPLICE,
@@ -340,7 +335,7 @@ class PanelVariantAnnotatorTest {
         ).isEqualTo("c.MUTATION splice")
 
         assertThat(
-            impact(
+            eventString(
                 PAVE_ANNOTATION.copy(
                     impact = minimalPaveImpact().copy(
                         canonicalCodingEffect = PaveCodingEffect.NONE,
@@ -352,7 +347,7 @@ class PanelVariantAnnotatorTest {
         ).isEqualTo("P_MUTATION")
 
         assertThat(
-            impact(
+            eventString(
                 PAVE_ANNOTATION.copy(
                     impact = minimalPaveImpact().copy(
                         canonicalEffect = "upstream_gene_variant",
@@ -365,7 +360,7 @@ class PanelVariantAnnotatorTest {
         ).isEqualTo("upstream")
 
         assertThat(
-            impact(
+            eventString(
                 PAVE_ANNOTATION.copy(
                     impact = minimalPaveImpact().copy(
                         canonicalEffect = "something&another_thing",
@@ -427,8 +422,4 @@ class PanelVariantAnnotatorTest {
         worstCodingEffect = PaveCodingEffect.NONE,
         genesAffected = 1
     )
-
-    private fun setupGeneAlteration() {
-        every { evidenceDatabase.geneAlterationForVariant(VARIANT_MATCH_CRITERIA) } returns HOTSPOT
-    }
 }
