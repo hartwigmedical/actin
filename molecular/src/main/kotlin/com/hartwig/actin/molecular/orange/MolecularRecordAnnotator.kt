@@ -1,17 +1,16 @@
 package com.hartwig.actin.molecular.orange
 
-import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
-import com.hartwig.actin.datamodel.molecular.driver.Drivers
-import com.hartwig.actin.datamodel.molecular.driver.Fusion
-import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.MolecularRecord
-import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
-import com.hartwig.actin.datamodel.molecular.driver.Variant
-import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
+import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.Disruption
+import com.hartwig.actin.datamodel.molecular.driver.Drivers
+import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
+import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
+import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.Virus
+import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.MatchingCriteriaFunctions.createFusionCriteria
@@ -23,7 +22,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
     override fun annotate(input: MolecularRecord): MolecularRecord {
         return input.copy(
             characteristics = annotateCharacteristics(input.characteristics),
-            drivers = annotateDrivers(input.drivers),
+            drivers = annotateDrivers(input.drivers)
         )
     }
 
@@ -64,12 +63,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
     }
 
     private fun annotateVariant(variant: Variant): Variant {
-        val evidence = if (variant.driverLikelihood == DriverLikelihood.HIGH) {
-            evidenceDatabase.evidenceForVariant(createVariantCriteria(variant))
-        } else {
-            ClinicalEvidence(treatmentEvidence = emptySet(), eligibleTrials = emptySet())
-        }
-
+        val evidence = evidenceDatabase.evidenceForVariant(createVariantCriteria(variant))
         val alteration = GeneAlterationFactory.convertAlteration(
             variant.gene, evidenceDatabase.geneAlterationForVariant(createVariantCriteria(variant))
         )

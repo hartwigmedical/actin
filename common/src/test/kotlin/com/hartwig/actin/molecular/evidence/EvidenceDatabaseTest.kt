@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpa
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
+import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.VirusType
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
@@ -18,7 +19,15 @@ class EvidenceDatabaseTest {
 
     @Test
     fun `Should match evidence for variants`() {
-        val variant = VariantMatchCriteria(isReportable = true, gene = "", chromosome = "", position = 0, ref = "", alt = "")
+        val variant = VariantMatchCriteria(
+            gene = "",
+            chromosome = "",
+            position = 0,
+            ref = "",
+            alt = "",
+            driverLikelihood = DriverLikelihood.HIGH,
+            isReportable = true
+        )
         assertThat(database.geneAlterationForVariant(variant)).isNotNull()
         assertEvidence(database.evidenceForVariant(variant), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
     }
