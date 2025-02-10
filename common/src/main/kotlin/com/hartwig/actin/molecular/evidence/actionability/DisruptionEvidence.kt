@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.datamodel.molecular.driver.Disruption
+import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
@@ -14,8 +15,9 @@ class DisruptionEvidence(
 
     override fun findMatches(event: Disruption): ActionabilityMatch {
         val matchPredicate: Predicate<MolecularCriterium> =
-            Predicate { event.isReportable && ActionableEventExtraction.extractGene(it).gene() == event.gene }
-
+            Predicate {
+                event.isReportable && ActionableEventExtraction.extractGene(it).gene() == event.gene && event.geneRole != GeneRole.TSG
+            }
         val evidenceMatches = applicableGeneEvidences.filter { matchPredicate.test(it.molecularCriterium()) }
         val matchingCriteriaPerTrialMatch = applicableTrialMatcher.apply(matchPredicate)
 

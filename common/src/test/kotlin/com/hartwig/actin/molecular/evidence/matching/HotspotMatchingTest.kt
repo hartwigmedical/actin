@@ -7,7 +7,7 @@ import org.junit.Test
 private val HOTSPOT = TestServeKnownFactory.hotspotBuilder().gene("gene 1").chromosome("12").position(10).ref("A").alt("T").build()
 
 private val MATCHING_CRITERIA =
-    VariantMatchCriteria(isReportable = true, gene = "gene 1", chromosome = "12", position = 10, ref = "A", alt = "T")
+    VariantMatchCriteria(gene = "gene 1", chromosome = "12", position = 10, ref = "A", alt = "T", isReportable = true)
 
 class HotspotMatchingTest {
 

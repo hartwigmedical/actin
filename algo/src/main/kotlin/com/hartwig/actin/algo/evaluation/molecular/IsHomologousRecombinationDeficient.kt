@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 import java.time.LocalDate
 
-class IsHomologousRepairDeficient(maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
+class IsHomologousRecombinationDeficient(maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val hrdGenesWithBiallelicDriver: MutableSet<String> = mutableSetOf()
@@ -48,7 +48,7 @@ class IsHomologousRepairDeficient(maxTestAge: LocalDate? = null) : MolecularEval
                 }
             }
         }
-        return when (test.characteristics.isHomologousRepairDeficient) {
+        return when (test.characteristics.isHomologousRecombinationDeficient) {
             null -> {
                 if (hrdGenesWithBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.undetermined(
@@ -71,7 +71,7 @@ class IsHomologousRepairDeficient(maxTestAge: LocalDate? = null) : MolecularEval
             }
 
             true -> {
-                val inclusionMolecularEvents = setOf(MolecularCharacteristicEvents.HOMOLOGOUS_REPAIR_DEFICIENT)
+                val inclusionMolecularEvents = setOf(MolecularCharacteristicEvents.HOMOLOGOUS_RECOMBINATION_DEFICIENT)
                 if (hrdGenesWithBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.pass(
                         "Tumor is HRD with biallelic driver event(s) in HR gene(s) (${concat(hrdGenesWithBiallelicDriver)})",

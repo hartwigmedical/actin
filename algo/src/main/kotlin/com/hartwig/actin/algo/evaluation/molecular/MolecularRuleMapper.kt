@@ -49,9 +49,9 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.WILDTYPE_OF_GENE_X to geneIsWildTypeCreator(),
             EligibilityRule.EXON_SKIPPING_GENE_X_EXON_Y to geneHasSpecificExonSkippingCreator(),
             EligibilityRule.MSI_SIGNATURE to { IsMicrosatelliteUnstable(maxMolecularTestAge()) },
-            EligibilityRule.HRD_SIGNATURE to { IsHomologousRepairDeficient(maxMolecularTestAge()) },
-            EligibilityRule.HRD_SIGNATURE_WITHOUT_MUTATION_OR_WITH_VUS_MUTATION_IN_GENES_X to isHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesXCreator(),
-            EligibilityRule.HRD_SIGNATURE_WITHOUT_MUTATION_IN_GENES_X to isHomologousRepairDeficientWithoutMutationInGenesXCreator(),
+            EligibilityRule.HRD_SIGNATURE to { IsHomologousRecombinationDeficient(maxMolecularTestAge()) },
+            EligibilityRule.HRD_SIGNATURE_WITHOUT_MUTATION_OR_WITH_VUS_MUTATION_IN_GENES_X to isHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesXCreator(),
+            EligibilityRule.HRD_SIGNATURE_WITHOUT_MUTATION_IN_GENES_X to isHomologousRecombinationDeficientWithoutMutationInGenesXCreator(),
             EligibilityRule.TMB_OF_AT_LEAST_X to hasSufficientTumorMutationalBurdenCreator(),
             EligibilityRule.TML_OF_AT_LEAST_X to hasSufficientTumorMutationalLoadCreator(),
             EligibilityRule.TML_BETWEEN_X_AND_Y to hasCertainTumorMutationalLoadCreator(),
@@ -362,17 +362,17 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
-    private fun isHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesXCreator(): FunctionCreator {
+    private fun isHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesXCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genesToFind = functionInputResolver().createManyGenesInput(function)
-            IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesX(genesToFind.geneNames, maxMolecularTestAge())
+            IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX(genesToFind.geneNames, maxMolecularTestAge())
         }
     }
 
-    private fun isHomologousRepairDeficientWithoutMutationInGenesXCreator(): FunctionCreator {
+    private fun isHomologousRecombinationDeficientWithoutMutationInGenesXCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genesToFind = functionInputResolver().createManyGenesInput(function)
-            IsHomologousRepairDeficientWithoutMutationInGenesX(genesToFind.geneNames, maxMolecularTestAge())
+            IsHomologousRecombinationDeficientWithoutMutationInGenesX(genesToFind.geneNames, maxMolecularTestAge())
         }
     }
 }

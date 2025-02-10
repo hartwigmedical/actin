@@ -29,10 +29,10 @@ object AggregatedEvidenceFactory {
                 "microsatellite stability"
             ),
             aggregatedEvidenceForCharacteristic(
-                characteristics.isHomologousRepairDeficient,
-                MolecularCharacteristicEvents.HOMOLOGOUS_REPAIR_DEFICIENT,
-                characteristics.homologousRepairEvidence,
-                "homologous repair deficiency"
+                characteristics.isHomologousRecombinationDeficient,
+                MolecularCharacteristicEvents.HOMOLOGOUS_RECOMBINATION_DEFICIENT,
+                characteristics.homologousRecombinationEvidence,
+                "homologous recombination deficiency"
             ),
             aggregatedEvidenceForCharacteristic(
                 characteristics.hasHighTumorMutationalBurden,

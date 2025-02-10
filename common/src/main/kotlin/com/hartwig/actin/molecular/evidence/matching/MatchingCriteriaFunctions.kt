@@ -20,6 +20,7 @@ object MatchingCriteriaFunctions {
         alt = variant.alt,
         type = variant.type,
         codingEffect = variant.canonicalImpact.codingEffect,
+        driverLikelihood = variant.driverLikelihood,
         isReportable = variant.isReportable
     )
 }
