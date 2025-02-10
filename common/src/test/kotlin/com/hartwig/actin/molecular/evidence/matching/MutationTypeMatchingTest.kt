@@ -28,8 +28,7 @@ class MutationTypeMatchingTest {
 
     @Test
     fun `Should match for nonsense or frameshift`() {
-        val nonsenseOrFrameshift =
-            VARIANT_CRITERIA.copy(codingEffect = CodingEffect.NONSENSE_OR_FRAMESHIFT)
+        val nonsenseOrFrameshift = VARIANT_CRITERIA.copy(codingEffect = CodingEffect.NONSENSE_OR_FRAMESHIFT)
         assertMatch(nonsenseOrFrameshift, setOf(MutationType.NONSENSE_OR_FRAMESHIFT, MutationType.ANY))
     }
 
