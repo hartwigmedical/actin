@@ -13,7 +13,6 @@ import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluati
 import com.hartwig.actin.clinical.feed.ClinicalFeedIngestion
 import com.hartwig.actin.clinical.feed.emc.bodyweight.BodyWeightEntry
 import com.hartwig.actin.clinical.feed.emc.extraction.BloodTransfusionsExtractor
-import com.hartwig.actin.clinical.feed.emc.extraction.ClinicalStatusExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.ComorbidityExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.LabValueExtractor
 import com.hartwig.actin.clinical.feed.emc.extraction.MedicationExtractor
@@ -31,7 +30,6 @@ import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionExtraction
 import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 import com.hartwig.actin.datamodel.clinical.BodyWeight
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
-import com.hartwig.actin.datamodel.clinical.Complication
 import com.hartwig.actin.datamodel.clinical.PatientDetails
 import com.hartwig.actin.datamodel.clinical.VitalFunction
 import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory.ARTERIAL_BLOOD_PRESSURE
@@ -45,7 +43,6 @@ class EmcClinicalFeedIngestor(
     private val feed: FeedModel,
     private val tumorDetailsExtractor: TumorDetailsExtractor,
     private val comorbidityExtractor: ComorbidityExtractor,
-    private val clinicalStatusExtractor: ClinicalStatusExtractor,
     private val oncologicalHistoryExtractor: OncologicalHistoryExtractor,
     private val priorSecondPrimaryExtractor: PriorSecondPrimaryExtractor,
     private val priorMolecularTestsExtractor: PriorMolecularTestsExtractor,
@@ -65,10 +62,7 @@ class EmcClinicalFeedIngestor(
             val tumorExtraction = tumorDetailsExtractor.extract(patientId, questionnaire)
             val comorbidityExtraction =
                 comorbidityExtractor.extract(patientId, questionnaire, feedRecord.toxicityEntries, feedRecord.intoleranceEntries)
-            val infectionExtraction = comorbidityExtractor.extractInfection(patientId, questionnaire?.infectionStatus)
-            val clinicalStatus = clinicalStatusExtractor.extract(
-                questionnaire, infectionExtraction.extracted, comorbidityExtraction.extracted.any { it is Complication }
-            )
+            val (comorbidities, clinicalStatus) = comorbidityExtraction.extracted
             val oncologicalHistoryExtraction = oncologicalHistoryExtractor.extract(patientId, questionnaire)
             val priorSecondPrimaryExtraction = priorSecondPrimaryExtractor.extract(patientId, questionnaire)
             val priorMolecularTestsExtraction = priorMolecularTestsExtractor.extract(patientId, questionnaire)
@@ -81,7 +75,7 @@ class EmcClinicalFeedIngestor(
                 patientId = patientId,
                 patient = extractPatientDetails(feedRecord.patientEntry, questionnaire),
                 tumor = tumorExtraction.extracted,
-                comorbidities = comorbidityExtraction.extracted + listOfNotNull(infectionExtraction.extracted),
+                comorbidities = comorbidities,
                 clinicalStatus = clinicalStatus,
                 oncologicalHistory = oncologicalHistoryExtraction.extracted,
                 priorSecondPrimaries = priorSecondPrimaryExtraction.extracted,
@@ -99,7 +93,6 @@ class EmcClinicalFeedIngestor(
             val patientEvaluation = listOf(
                 tumorExtraction,
                 comorbidityExtraction,
-                infectionExtraction,
                 oncologicalHistoryExtraction,
                 priorSecondPrimaryExtraction,
                 priorMolecularTestsExtraction,
@@ -204,7 +197,6 @@ class EmcClinicalFeedIngestor(
                 feed = FeedModel(feed.copy(questionnaireEntries = correctedQuestionnaireEntries)),
                 tumorDetailsExtractor = TumorDetailsExtractor.create(curationDatabaseContext, TumorStageDeriver.create(doidModel)),
                 comorbidityExtractor = ComorbidityExtractor.create(curationDatabaseContext),
-                clinicalStatusExtractor = ClinicalStatusExtractor.create(curationDatabaseContext),
                 oncologicalHistoryExtractor = OncologicalHistoryExtractor.create(curationDatabaseContext),
                 priorSecondPrimaryExtractor = PriorSecondPrimaryExtractor.create(curationDatabaseContext),
                 priorMolecularTestsExtractor = PriorMolecularTestsExtractor.create(curationDatabaseContext),

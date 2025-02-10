@@ -12,6 +12,7 @@ import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.feed.emc.digitalfile.DigitalFileEntry
 import com.hartwig.actin.clinical.feed.emc.intolerance.IntoleranceEntry
+import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 import com.hartwig.actin.datamodel.clinical.Complication
 import com.hartwig.actin.datamodel.clinical.Ecg
 import com.hartwig.actin.datamodel.clinical.EcgMeasure
@@ -40,6 +41,7 @@ private const val TOXICITY_INPUT = "Toxicity input"
 private const val OTHER_TOXICITY_INPUT = "Other toxicity input"
 private const val TOXICITY_NAME = "Toxicity name"
 private const val TOXICITY_TRANSLATED = "Toxicity translated"
+private const val CURATED_LVEF = 1.0
 
 class ComorbidityExtractorTest {
     private val complicationCurationDatabase = TestCurationFactory.curationDatabase(
@@ -81,9 +83,11 @@ class ComorbidityExtractorTest {
 
     private fun assertEmptyExtractionWithoutWarnings(input: List<String>?) {
         val extractor = ComorbidityExtractor(complicationCurationDatabase, toxicityTranslationDatabase)
-        val questionnaire = TestCurationFactory.emptyQuestionnaire().copy(complications = input)
-        val (comorbidities, evaluation) = extractor.extract(PATIENT_ID, questionnaire, emptyList(), emptyList())
+        val questionnaire = TestCurationFactory.emptyQuestionnaire().copy(nonOncologicalHistory = input)
+        val (extraction, evaluation) = extractor.extract(PATIENT_ID, questionnaire, emptyList(), emptyList())
+        val (comorbidities, clinicalStatus) = extraction
         assertThat(comorbidities).isEmpty()
+        assertThat(clinicalStatus).isEqualTo(ClinicalStatus())
         assertThat(evaluation.warnings).isEmpty()
         assertThat(evaluation.comorbidityEvaluatedInputs).isEmpty()
     }
@@ -102,9 +106,8 @@ class ComorbidityExtractorTest {
         val extractor = ComorbidityExtractor(complicationCurationDatabase, toxicityTranslationDatabase)
         val inputs = listOf(input, CANNOT_CURATE)
         val questionnaire = TestCurationFactory.emptyQuestionnaire().copy(complications = inputs)
-        val (complications, evaluation) = extractor.extract(PATIENT_ID, questionnaire, emptyList(), emptyList())
-        assertThat(complications).hasSize(1)
-        val complication = complications.single() as Complication
+        val (extraction, evaluation) = extractor.extract(PATIENT_ID, questionnaire, emptyList(), emptyList())
+        val complication = extraction.first.single() as Complication
         assertThat(complication.name).isEqualTo(expectedName)
         assertThat(complication.icdCodes).isEqualTo(setOfNotNull(expectedIcd?.let { IcdCode(it) }))
 
@@ -122,7 +125,7 @@ class ComorbidityExtractorTest {
         val inputs = listOf("none")
         val questionnaire = TestCurationFactory.emptyQuestionnaire().copy(complications = inputs)
         val (ignore, evaluation) = extractor.extract(PATIENT_ID, questionnaire, emptyList(), emptyList())
-        assertThat(ignore).isEmpty()
+        assertThat(ignore.first).isEmpty()
         assertThat(evaluation.warnings).isEmpty()
         assertThat(evaluation.comorbidityEvaluatedInputs).isEqualTo(inputs.map(String::lowercase).toSet())
     }
@@ -155,16 +158,15 @@ class ComorbidityExtractorTest {
         val inputs = listOf(input, CANNOT_CURATE)
         val questionnaire = TestCurationFactory.emptyQuestionnaire()
             .copy(nonOncologicalHistory = inputs)
-        val (otherConditions, evaluation) = extractor.extract(PATIENT_ID, questionnaire, emptyList(), emptyList())
-        assertThat(otherConditions).hasSize(1)
-        val otherCondition = otherConditions[0] as OtherCondition
+        val (extraction, evaluation) = extractor.extract(PATIENT_ID, questionnaire, emptyList(), emptyList())
+        val otherCondition = extraction.first.single() as OtherCondition
         assertThat(otherCondition.name).isEqualTo(expectedName)
         assertThat(otherCondition.icdCodes).isEqualTo(setOfNotNull(expectedIcd?.let { IcdCode(it) }))
 
         assertExpectedEvaluation(
             evaluation,
             CurationCategory.NON_ONCOLOGICAL_HISTORY,
-            "Could not find non-oncological history config for input '$CANNOT_CURATE'",
+            "Could not find non oncological history config for input '$CANNOT_CURATE'",
             inputs.map(String::lowercase).toSet()
         )
     }
@@ -187,9 +189,8 @@ class ComorbidityExtractorTest {
         )
         val inputs = listOf(OTHER_CONDITION_INPUT, CANNOT_CURATE)
         val questionnaire = TestCurationFactory.emptyQuestionnaire().copy(nonOncologicalHistory = inputs)
-        val (toxicities, evaluation) = extractor.extract(PATIENT_ID, questionnaire, emptyList(), emptyList())
-        assertThat(toxicities).hasSize(1)
-        val toxicity = toxicities[0] as Toxicity
+        val (extraction, evaluation) = extractor.extract(PATIENT_ID, questionnaire, emptyList(), emptyList())
+        val toxicity = extraction.first.single() as Toxicity
         assertThat(toxicity).isEqualTo(
             Toxicity(
                 name = TOXICITY_NAME,
@@ -203,7 +204,7 @@ class ComorbidityExtractorTest {
         assertExpectedEvaluation(
             evaluation,
             CurationCategory.NON_ONCOLOGICAL_HISTORY,
-            "Could not find non-oncological history config for input '$CANNOT_CURATE'",
+            "Could not find non oncological history config for input '$CANNOT_CURATE'",
             inputs.map(String::lowercase).toSet()
         )
     }
@@ -252,8 +253,9 @@ class ComorbidityExtractorTest {
         )
         val inputs = listOf(input, cannotCurate)
         val intoleranceEntries = inputs.map { entry.copy(codeText = it) }
-        val (intolerances, evaluation) =
+        val (extraction, evaluation) =
             extractor.extract(PATIENT_ID, TestCurationFactory.emptyQuestionnaire(), emptyList(), intoleranceEntries)
+        val intolerances = extraction.first
         assertThat(intolerances).hasSize(2)
         val curated = intolerances.first()
         assertThat(curated.name).isEqualTo(expectedName)
@@ -278,7 +280,9 @@ class ComorbidityExtractorTest {
     @Test
     fun `Should return empty list for null questionnaire toxicities`() {
         val extractor = ComorbidityExtractor(toxicityCurationDatabase, toxicityTranslationDatabase)
-        assertThat(extractor.extract(PATIENT_ID, TestCurationFactory.emptyQuestionnaire(), emptyList(), emptyList()).extracted).isEmpty()
+        assertThat(
+            extractor.extract(PATIENT_ID, TestCurationFactory.emptyQuestionnaire(), emptyList(), emptyList()).extracted.first
+        ).isEmpty()
     }
 
     @Test
@@ -292,9 +296,9 @@ class ComorbidityExtractorTest {
         val date = LocalDate.of(2018, 5, 21)
         val questionnaire = TestCurationFactory.emptyQuestionnaire().copy(date = date, unresolvedToxicities = inputs)
         val extractor = ComorbidityExtractor(toxicityCurationDatabase, toxicityTranslationDatabase)
-        val (toxicities, evaluation) = extractor.extract(PATIENT_ID, questionnaire, emptyList(), emptyList())
+        val (extraction, evaluation) = extractor.extract(PATIENT_ID, questionnaire, emptyList(), emptyList())
 
-        val toxicity = toxicities.single() as Toxicity
+        val toxicity = extraction.first.single() as Toxicity
         assertThat(toxicity.name).isEqualTo(expectedName)
         assertThat(toxicity.icdCodes).isEqualTo(expectedIcds)
         assertThat(toxicity.evaluatedDate).isEqualTo(date)
@@ -346,9 +350,9 @@ class ComorbidityExtractorTest {
             )
         }
         val extractor = ComorbidityExtractor(toxicityCurationDatabase, toxicityTranslationDatabase)
-        val (toxicities, evaluation) = extractor.extract(PATIENT_ID, null, inputs, emptyList())
-        assertThat(toxicities).hasSize(2)
-        val expectedToxicity = toxicities.single { it.name == expectedName } as Toxicity
+        val (extraction, evaluation) = extractor.extract(PATIENT_ID, null, inputs, emptyList())
+        assertThat(extraction.first).hasSize(2)
+        val expectedToxicity = extraction.first.single { it.name == expectedName } as Toxicity
         assertThat(expectedToxicity.grade).isEqualTo(expectedGrade)
         assertThat(expectedToxicity.icdCodes).isEqualTo(expectedIcdCodes)
 
@@ -379,35 +383,65 @@ class ComorbidityExtractorTest {
             )
         )
         val extractor = ComorbidityExtractor(curationDatabase, toxicityTranslationDatabase)
-        val (ecgs, evaluation) = extractor.extract(PATIENT_ID, questionnaire, emptyList(), emptyList())
+        val (extracted, evaluation) = extractor.extract(PATIENT_ID, questionnaire, emptyList(), emptyList())
 
-        val ecg = ecgs.single() as Ecg
+        val ecg = extracted.first.single() as Ecg
         assertThat(ecg.name).isEqualTo(curatedEcg)
         assertThat(ecg.icdCodes).isEqualTo(icd)
         assertExpectedEvaluation(
             evaluation,
             CurationCategory.NON_ONCOLOGICAL_HISTORY,
-            "Could not find non-oncological history config for input '$CANNOT_CURATE'",
+            "Could not find non oncological history config for input '$CANNOT_CURATE'",
             setOf(ecgInput.lowercase(), CANNOT_CURATE)
         )
     }
 
     @Test
-    fun `Should extract infections`() {
+    fun `Should extract infections as comorbidities and infection status`() {
         val icdCodes = setOf(IcdCode("icd"))
+        val curatedName = "Curated"
+        val infectionInput = "Infection"
         val extractor = ComorbidityExtractor(
             TestCurationFactory.curationDatabase(
                 ComorbidityConfig(
-                    input = "Infection",
+                    input = infectionInput,
                     ignore = false,
-                    curated = OtherCondition("Curated", icdCodes)
+                    curated = OtherCondition(curatedName, icdCodes)
                 )
             ),
             toxicityTranslationDatabase
         )
-        val (infection, evaluation) = extractor.extractInfection(PATIENT_ID, InfectionStatus(true, "Infection"))
+        val questionnaire = TestCurationFactory.emptyQuestionnaire().copy(infectionStatus = InfectionStatus(true, infectionInput))
+        val (extraction, evaluation) = extractor.extract(PATIENT_ID, questionnaire, emptyList(), emptyList())
 
-        assertThat(infection).isEqualTo(OtherCondition("Curated", icdCodes))
+        assertThat(extraction.first).containsExactly(OtherCondition(curatedName, icdCodes))
+        val expectedClinicalStatus = ClinicalStatus(infectionStatus = InfectionStatus(true, curatedName), hasComplications = null)
+        assertThat(extraction.second).isEqualTo(expectedClinicalStatus)
+        assertThat(evaluation.warnings).isEmpty()
+    }
+
+    @Test
+    fun `Should extract clinical status and curate lvef`() {
+        val extractor = ComorbidityExtractor(
+            TestCurationFactory.curationDatabase(
+                ComorbidityConfig(input = OTHER_CONDITION_INPUT, ignore = false, lvef = CURATED_LVEF, curated = null),
+                ComorbidityConfig(
+                    input = COMPLICATION_INPUT,
+                    ignore = false,
+                    curated = Complication(name = CURATED_COMPLICATION, icdCodes = setOf(IcdCode(COMPLICATION_ICD)))
+                )
+            ),
+            toxicityTranslationDatabase
+        )
+        val questionnaire = TestCurationFactory.emptyQuestionnaire()
+            .copy(whoStatus = 1, nonOncologicalHistory = listOf(OTHER_CONDITION_INPUT), complications = listOf(COMPLICATION_INPUT))
+        val (extraction, evaluation) = extractor.extract(PATIENT_ID, questionnaire, emptyList(), emptyList())
+        val (comorbidities, clinicalStatus) = extraction
+        assertThat(comorbidities).containsExactly(Complication(CURATED_COMPLICATION, setOf(IcdCode(COMPLICATION_ICD))))
+        assertThat(clinicalStatus.who).isEqualTo(1)
+        assertThat(clinicalStatus.lvef).isEqualTo(CURATED_LVEF)
+        assertThat(clinicalStatus.infectionStatus).isNull()
+        assertThat(clinicalStatus.hasComplications).isTrue
         assertThat(evaluation.warnings).isEmpty()
     }
 
