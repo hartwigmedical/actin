@@ -140,7 +140,7 @@ class VariantEvidenceTest {
     }
 
     @Test
-    fun `Should find no evidence for low driver variants`() {
+    fun `Should find no evidence for non high driver likelihood variants`() {
         val lowDriver = matchingVariant.copy(driverLikelihood = DriverLikelihood.LOW)
 
         val matches = variantEvidence.findMatches(lowDriver)
