@@ -6,13 +6,13 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import java.time.LocalDate
 
-class IsHomologousRepairDeficientWithoutMutationInGenesX(private val genesToFind: Set<String>, maxTestAge: LocalDate? = null) :
+class IsHomologousRecombinationDeficientWithoutMutationInGenesX(private val genesToFind: Set<String>, maxTestAge: LocalDate? = null) :
     MolecularEvaluationFunction(maxTestAge) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
-        val isHRD = test.characteristics.isHomologousRepairDeficient
+        val isHRD = test.characteristics.isHomologousRecombinationDeficient
 
-        with(HomologousRepairDeficiencyGeneSummary.createForDrivers(test.drivers)) {
+        with(HomologousRecombinationDeficiencyGeneSummary.createForDrivers(test.drivers)) {
             val genesToFindWithMutation = genesInGenesToFind(hrdGenesWithBiallelicDriver + hrdGenesWithNonBiallelicDriver)
 
             return when {

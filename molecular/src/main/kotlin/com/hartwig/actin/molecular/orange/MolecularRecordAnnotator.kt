@@ -33,8 +33,8 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
                 microsatelliteEvidence = createEvidenceForNullableMatch(
                     isMicrosatelliteUnstable, evidenceDatabase::evidenceForMicrosatelliteStatus
                 ),
-                homologousRepairEvidence = createEvidenceForNullableMatch(
-                    isHomologousRepairDeficient, evidenceDatabase::evidenceForHomologousRepairStatus
+                homologousRecombinationEvidence = createEvidenceForNullableMatch(
+                    isHomologousRecombinationDeficient, evidenceDatabase::evidenceForHomologousRecombinationStatus
                 ),
                 tumorMutationalBurdenEvidence = createEvidenceForNullableMatch(
                     hasHighTumorMutationalBurden, evidenceDatabase::evidenceForTumorMutationalBurdenStatus

@@ -122,8 +122,8 @@ SELECT * FROM (
 	SELECT molecular.sampleId, treatment, type, IF(isMicrosatelliteUnstable,"MSI","MSS") AS event, NULL AS driverLikelihood, NULL AS isReportableDriver
 	FROM microsatelliteEvidence INNER JOIN molecular ON microsatelliteEvidence.molecularId = molecular.id
 		UNION
-	SELECT molecular.sampleId, treatment, type, IF(isHomologousRepairDeficient,"HRD","HRP") AS event, NULL AS driverLikelihood, NULL AS isReportableDriver
-	FROM homologousRepairEvidence INNER JOIN molecular ON homologousRepairEvidence.molecularId = molecular.id
+	SELECT molecular.sampleId, treatment, type, IF(isHomologousRecombinationDeficient,"HRD","HRP") AS event, NULL AS driverLikelihood, NULL AS isReportableDriver
+	FROM homologousRecombinationEvidence INNER JOIN molecular ON homologousRecombinationEvidence.molecularId = molecular.id
 		UNION
 	SELECT molecular.sampleId, treatment, type, concat("TMB ", round(tumorMutationalBurden,1)) AS event, NULL AS driverLikelihood, NULL AS isReportableDriver
 	FROM tumorMutationalBurdenEvidence INNER JOIN molecular ON tumorMutationalBurdenEvidence.molecularId = molecular.id

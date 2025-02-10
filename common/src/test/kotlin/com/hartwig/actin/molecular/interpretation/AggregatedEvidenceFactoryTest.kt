@@ -27,8 +27,8 @@ class AggregatedEvidenceFactoryTest {
         val characteristics = TestMolecularFactory.createMinimalTestOrangeRecord().characteristics.copy(
             isMicrosatelliteUnstable = true,
             microsatelliteEvidence = TestClinicalEvidenceFactory.createEmpty(),
-            isHomologousRepairDeficient = true,
-            homologousRepairEvidence = TestClinicalEvidenceFactory.createEmpty(),
+            isHomologousRecombinationDeficient = true,
+            homologousRecombinationEvidence = TestClinicalEvidenceFactory.createEmpty(),
             hasHighTumorMutationalBurden = null,
             hasHighTumorMutationalLoad = null
         )
@@ -49,8 +49,8 @@ class AggregatedEvidenceFactoryTest {
         val characteristics = TestMolecularFactory.createMinimalTestOrangeRecord().characteristics.copy(
             isMicrosatelliteUnstable = true,
             microsatelliteEvidence = TestClinicalEvidenceFactory.createExhaustive(),
-            isHomologousRepairDeficient = true,
-            homologousRepairEvidence = TestClinicalEvidenceFactory.createExhaustive(),
+            isHomologousRecombinationDeficient = true,
+            homologousRecombinationEvidence = TestClinicalEvidenceFactory.createExhaustive(),
             hasHighTumorMutationalBurden = true,
             tumorMutationalBurdenEvidence = TestClinicalEvidenceFactory.createExhaustive(),
             hasHighTumorMutationalLoad = true,
@@ -66,8 +66,8 @@ class AggregatedEvidenceFactoryTest {
         val characteristics = TestMolecularFactory.createMinimalTestOrangeRecord().characteristics.copy(
             isMicrosatelliteUnstable = null,
             microsatelliteEvidence = TestClinicalEvidenceFactory.createExhaustive(),
-            isHomologousRepairDeficient = null,
-            homologousRepairEvidence = TestClinicalEvidenceFactory.createExhaustive(),
+            isHomologousRecombinationDeficient = null,
+            homologousRecombinationEvidence = TestClinicalEvidenceFactory.createExhaustive(),
             hasHighTumorMutationalBurden = null,
             tumorMutationalBurdenEvidence = TestClinicalEvidenceFactory.createExhaustive(),
             hasHighTumorMutationalLoad = null,
