@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
+import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
@@ -48,6 +49,35 @@ private const val POSITION = 1
 private const val HGVS_PROTEIN_3LETTER = "p.Met1Leu"
 private const val HGVS_PROTEIN_1LETTER = "p.M1L"
 private val ARCHER_VARIANT = SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING)
+
+private val VARIANT = Variant(
+    chromosome = CHROMOSOME,
+    position = POSITION,
+    ref = REF,
+    alt = ALT,
+    type = VariantType.SNV,
+    variantAlleleFrequency = null,
+    canonicalImpact = TranscriptVariantImpact(
+        transcriptId = TRANSCRIPT,
+        codingEffect = CodingEffect.MISSENSE,
+        hgvsCodingImpact = HGVS_CODING,
+        hgvsProteinImpact = HGVS_PROTEIN_1LETTER,
+        isSpliceRegion = false,
+        affectedExon = 1,
+        affectedCodon = 1,
+        effects = emptySet()
+    ),
+    otherImpacts = emptySet(),
+    isHotspot = true,
+    isReportable = true,
+    event = "$GENE M1L",
+    driverLikelihood = null,
+    evidence = ClinicalEvidence(emptySet(), emptySet()),
+    gene = GENE,
+    geneRole = GeneRole.ONCO,
+    proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+    isAssociatedWithDrugResistance = true
+)
 
 private val VARIANT_MATCH_CRITERIA =
     VariantMatchCriteria(
@@ -133,10 +163,13 @@ class PanelVariantAnnotatorTest {
     fun `Should annotate variants with transcript, genetic variation and genomic position`() {
         val annotated = annotator.annotate(setOf(ARCHER_VARIANT))
         val annotatedVariant = annotated.first()
+        assertThat(annotatedVariant.variantAlleleFrequency).isNull()
         assertThat(annotatedVariant.canonicalImpact.transcriptId).isEqualTo(TRANSCRIPT)
         assertThat(annotatedVariant.canonicalImpact.hgvsCodingImpact).isEqualTo(HGVS_CODING)
         assertThat(annotatedVariant.canonicalImpact.codingEffect).isEqualTo(CodingEffect.MISSENSE)
         assertThat(annotatedVariant.canonicalImpact.hgvsProteinImpact).isEqualTo(HGVS_PROTEIN_1LETTER)
+        assertThat(annotatedVariant.canonicalImpact.isSpliceRegion).isFalse()
+        assertThat(annotatedVariant.otherImpacts).isEmpty()
         assertThat(annotatedVariant.chromosome).isEqualTo(CHROMOSOME)
         assertThat(annotatedVariant.position).isEqualTo(POSITION)
         assertThat(annotatedVariant.ref).isEqualTo(REF)
@@ -157,7 +190,7 @@ class PanelVariantAnnotatorTest {
     @Test
     fun `Should annotate variants with driver likelihood`() {
         setupGeneAlteration()
-        every { geneDriverLikelihoodModel.evaluate(GENE, GeneRole.ONCO, any()) } returns 0.9
+        every { geneDriverLikelihoodModel.evaluate(GENE, GeneRole.ONCO, listOf(VARIANT)) } returns 0.9
         val annotated = annotator.annotate(setOf(ARCHER_VARIANT))
         assertThat(annotated.first().driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
     }
