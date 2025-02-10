@@ -18,7 +18,7 @@ internal class CharacteristicsExtractor {
             PredictedTumorOrigin(predictions = determineCupPredictions(it.predictions()))
         }
         val purple = record.purple()
-        val chordRecord = record.chord()
+        val chord = record.chord()
 
         return MolecularCharacteristics(
             purity = purple.fit().purity(),
@@ -26,12 +26,12 @@ internal class CharacteristicsExtractor {
             predictedTumorOrigin = predictedTumorOrigin,
             isMicrosatelliteUnstable = isMSI(purple.characteristics().microsatelliteStatus()),
             microsatelliteEvidence = ExtractionUtil.noEvidence(),
-            homologousRepairScore = chordRecord?.hrdValue(),
-            isHomologousRepairDeficient = chordRecord?.let { isHRD(it.hrStatus()) },
-            brca1Value = chordRecord?.brca1Value(),
-            brca2Value = chordRecord?.brca2Value(),
-            hrdType = chordRecord?.hrdType()?.let { HrdType.valueOf(it.uppercase()) },
-            homologousRepairEvidence = ExtractionUtil.noEvidence(),
+            homologousRecombinationScore = chord?.hrdValue(),
+            isHomologousRecombinationDeficient = chord?.let { isHRD(it.hrStatus()) },
+            brca1Value = chord?.brca1Value(),
+            brca2Value = chord?.brca2Value(),
+            hrdType = chord?.hrdType()?.let { HrdType.valueOf(it.uppercase()) },
+            homologousRecombinationEvidence = ExtractionUtil.noEvidence(),
             tumorMutationalBurden = purple.characteristics().tumorMutationalBurdenPerMb(),
             hasHighTumorMutationalBurden = hasHighStatus(purple.characteristics().tumorMutationalBurdenStatus()),
             tumorMutationalBurdenEvidence = ExtractionUtil.noEvidence(),

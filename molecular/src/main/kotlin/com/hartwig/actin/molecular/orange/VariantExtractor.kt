@@ -56,7 +56,6 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
                 val event = DriverEventFactory.variantEvent(variant)
                 val driver = findBestMutationDriver(drivers, variant.gene(), variant.canonicalImpact().transcript())
                 val driverLikelihood = determineDriverLikelihood(driver)
-                val evidence = ExtractionUtil.noEvidence()
                 Variant(
                     chromosome = variant.chromosome(),
                     position = variant.position(),
@@ -77,7 +76,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
                     isReportable = variant.reported(),
                     event = event,
                     driverLikelihood = driverLikelihood,
-                    evidence = evidence,
+                    evidence = ExtractionUtil.noEvidence(),
                     gene = variant.gene(),
                     geneRole = GeneRole.UNKNOWN,
                     proteinEffect = ProteinEffect.UNKNOWN,
@@ -90,7 +89,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
         return listOfNotNull(purple.allSomaticVariants(), purple.reportableGermlineVariants()).flatten().toSet()
     }
 
-    internal fun determineVariantType(variant: PurpleVariant): VariantType {
+    fun determineVariantType(variant: PurpleVariant): VariantType {
         return when (variant.type()) {
             PurpleVariantType.MNP -> {
                 VariantType.MNV
@@ -138,12 +137,12 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
 
     private fun extractOtherImpacts(variant: PurpleVariant): Set<TranscriptVariantImpact> {
         return variant.otherImpacts()
-            .filter { purpleTranscriptImpact: PurpleTranscriptImpact -> isEnsemblTranscript(purpleTranscriptImpact) }
-            .map { purpleTranscriptImpact: PurpleTranscriptImpact -> toTranscriptImpact(purpleTranscriptImpact) }
+            .filter { purpleTranscriptImpact -> isEnsemblTranscript(purpleTranscriptImpact) }
+            .map { purpleTranscriptImpact -> toTranscriptImpact(purpleTranscriptImpact) }
             .toSet()
     }
 
-    internal fun isEnsemblTranscript(purpleTranscriptImpact: PurpleTranscriptImpact): Boolean {
+    fun isEnsemblTranscript(purpleTranscriptImpact: PurpleTranscriptImpact): Boolean {
         return purpleTranscriptImpact.transcript().startsWith(ENSEMBL_TRANSCRIPT_IDENTIFIER)
     }
 
@@ -164,7 +163,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
         return effects.map { effect: PurpleVariantEffect -> determineVariantEffect(effect) }.toSet()
     }
 
-    internal fun determineVariantEffect(effect: PurpleVariantEffect): VariantEffect {
+    fun determineVariantEffect(effect: PurpleVariantEffect): VariantEffect {
         return when (effect) {
             PurpleVariantEffect.STOP_GAINED -> {
                 VariantEffect.STOP_GAINED
@@ -252,7 +251,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
         }
     }
 
-    internal fun determineCodingEffect(codingEffect: PurpleCodingEffect): CodingEffect? {
+    fun determineCodingEffect(codingEffect: PurpleCodingEffect): CodingEffect? {
         return when (codingEffect) {
             PurpleCodingEffect.NONSENSE_OR_FRAMESHIFT -> {
                 CodingEffect.NONSENSE_OR_FRAMESHIFT

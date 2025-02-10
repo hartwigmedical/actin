@@ -28,8 +28,8 @@ object MolecularClinicalEvidenceFunctions {
         val allHRD =
             extractCharacteristics(
                 molecularHistory,
-                { "HR ${MolecularCharacteristicFormat.formatHomologousRepair(it, false)}" },
-                { it.homologousRepairEvidence })
+                { "HR ${MolecularCharacteristicFormat.formatHomologousRecombination(it, false)}" },
+                { it.homologousRecombinationEvidence })
         return allMSI + allTMB + allTML + allHRD + allDrivers.map { it.event to it.evidence }
     }
 

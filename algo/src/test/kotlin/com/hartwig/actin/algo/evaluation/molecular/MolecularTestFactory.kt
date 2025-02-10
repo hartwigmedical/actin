@@ -192,50 +192,50 @@ internal object MolecularTestFactory {
         )
     }
 
-    fun withHomologousRepairDeficiencyAndVariant(
-        isHomologousRepairDeficient: Boolean?,
+    fun withHomologousRecombinationDeficiencyAndVariant(
+        isHomologousRecombinationDeficient: Boolean?,
         variant: Variant
     ): PatientRecord {
         return withCharacteristicsAndDriver(
-            baseMolecular.characteristics.copy(isHomologousRepairDeficient = isHomologousRepairDeficient), variant
+            baseMolecular.characteristics.copy(isHomologousRecombinationDeficient = isHomologousRecombinationDeficient), variant
         )
     }
 
-    fun withHomologousRepairDeficiencyAndLoss(
-        isHomologousRepairDeficient: Boolean?,
+    fun withHomologousRecombinationDeficiencyAndLoss(
+        isHomologousRecombinationDeficient: Boolean?,
         loss: CopyNumber
     ): PatientRecord {
         return withCharacteristicsAndDriver(
-            baseMolecular.characteristics.copy(isHomologousRepairDeficient = isHomologousRepairDeficient), loss
+            baseMolecular.characteristics.copy(isHomologousRecombinationDeficient = isHomologousRecombinationDeficient), loss
         )
     }
 
-    fun withHomologousRepairDeficiencyAndHomozygousDisruption(
-        isHomologousRepairDeficient: Boolean?,
+    fun withHomologousRecombinationDeficiencyAndHomozygousDisruption(
+        isHomologousRecombinationDeficient: Boolean?,
         homozygousDisruption: HomozygousDisruption
     ): PatientRecord {
         return withCharacteristicsAndDriver(
-            baseMolecular.characteristics.copy(isHomologousRepairDeficient = isHomologousRepairDeficient), homozygousDisruption
+            baseMolecular.characteristics.copy(isHomologousRecombinationDeficient = isHomologousRecombinationDeficient), homozygousDisruption
         )
     }
 
-    fun withHomologousRepairDeficiencyAndDisruption(
-        isHomologousRepairDeficient: Boolean?,
+    fun withHomologousRecombinationDeficiencyAndDisruption(
+        isHomologousRecombinationDeficient: Boolean?,
         disruption: Disruption
     ): PatientRecord {
         return withCharacteristicsAndDriver(
-            baseMolecular.characteristics.copy(isHomologousRepairDeficient = isHomologousRepairDeficient), disruption
+            baseMolecular.characteristics.copy(isHomologousRecombinationDeficient = isHomologousRecombinationDeficient), disruption
         )
     }
 
-    fun withHomologousRepairDeficiencyAndVariantAndDisruption(
-        isHomologousRepairDeficient: Boolean?,
+    fun withHomologousRecombinationDeficiencyAndVariantAndDisruption(
+        isHomologousRecombinationDeficient: Boolean?,
         disruption: Disruption,
         variant: Variant
     ): PatientRecord {
         return withMolecularRecord(
             baseMolecular.copy(
-                characteristics = baseMolecular.characteristics.copy(isHomologousRepairDeficient = isHomologousRepairDeficient),
+                characteristics = baseMolecular.characteristics.copy(isHomologousRecombinationDeficient = isHomologousRecombinationDeficient),
                 drivers = baseMolecular.drivers.copy(variants = listOf(variant), disruptions = listOf(disruption))
             )
         )

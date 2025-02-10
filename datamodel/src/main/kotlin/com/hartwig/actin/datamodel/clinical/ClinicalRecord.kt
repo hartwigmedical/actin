@@ -32,4 +32,7 @@ data class ClinicalRecord(
 
     val intolerances: List<Intolerance>
         get() = comorbidities.filterIsInstance<Intolerance>()
+
+    val ecgs: List<Ecg>
+        get() = comorbidities.filterIsInstance<Ecg>()
 }

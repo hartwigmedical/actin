@@ -10,7 +10,6 @@ import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
-import com.hartwig.actin.trial.serialization.TrialJson
 import com.hartwig.actin.util.Either
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -69,7 +68,7 @@ class TrialIngestionTest {
                 )
             )
         ) as Either.Right
-        assertThat(result.right).containsExactly(
+        assertThat(result.value).containsExactly(
             Trial(
                 identification = TrialIdentification(
                     trialId = TRIAL_ID,

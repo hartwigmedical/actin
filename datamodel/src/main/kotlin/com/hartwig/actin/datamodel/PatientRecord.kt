@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.clinical.BodyWeight
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 import com.hartwig.actin.datamodel.clinical.Comorbidity
 import com.hartwig.actin.datamodel.clinical.Complication
+import com.hartwig.actin.datamodel.clinical.Ecg
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.LabValue
 import com.hartwig.actin.datamodel.clinical.Medication
@@ -50,4 +51,7 @@ data class PatientRecord(
 
     val intolerances: List<Intolerance>
         get() = comorbidities.filterIsInstance<Intolerance>()
+
+    val ecgs: List<Ecg>
+        get() = comorbidities.filterIsInstance<Ecg>()
 }

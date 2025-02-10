@@ -12,7 +12,7 @@ import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class HomologousRepairDeficiencyGeneSummaryTest {
+class HomologousRecombinationDeficiencyGeneSummaryTest {
 
     @Test
     fun `Should correctly classify HRD drivers`() {
@@ -87,7 +87,7 @@ class HomologousRepairDeficiencyGeneSummaryTest {
             )
         )
 
-        val summary = HomologousRepairDeficiencyGeneSummary.createForDrivers(drivers)
+        val summary = HomologousRecombinationDeficiencyGeneSummary.createForDrivers(drivers)
         assertThat(summary.hrdGenesWithNonBiallelicHotspot).containsExactlyInAnyOrder("BRCA2")
         assertThat(summary.hrdGenesWithBiallelicHotspot).containsExactlyInAnyOrder("BRCA1")
         assertThat(summary.hrdGenesWithNonBiallelicNonHotspotHighDriver).containsExactlyInAnyOrder("BRCA1")

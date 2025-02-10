@@ -19,13 +19,13 @@ object QuestionnaireExtraction {
         val brainLesionData = lesionData(entry.subject, lines, mapping[QuestionnaireKey.HAS_BRAIN_LESIONS]!!)
         val cnsLesionData = lesionData(entry.subject, lines, mapping[QuestionnaireKey.HAS_CNS_LESIONS]!!)
         val hasMeasurableDisease =
-            QuestionnaireCuration.toOption(entry.subject, value(lines, mapping[QuestionnaireKey.HAS_MEASURABLE_DISEASE]))
-        val hasBoneLesions = QuestionnaireCuration.toOption(entry.subject, value(lines, mapping[QuestionnaireKey.HAS_BONE_LESIONS]))
-        val hasLiverLesions = QuestionnaireCuration.toOption(entry.subject, value(lines, mapping[QuestionnaireKey.HAS_LIVER_LESIONS]))
+            QuestionnaireCuration.toBoolean(entry.subject, value(lines, mapping[QuestionnaireKey.HAS_MEASURABLE_DISEASE]))
+        val hasBoneLesions = QuestionnaireCuration.toBoolean(entry.subject, value(lines, mapping[QuestionnaireKey.HAS_BONE_LESIONS]))
+        val hasLiverLesions = QuestionnaireCuration.toBoolean(entry.subject, value(lines, mapping[QuestionnaireKey.HAS_LIVER_LESIONS]))
         val whoStatus = QuestionnaireCuration.toWHO(entry.subject, value(lines, mapping[QuestionnaireKey.WHO_STATUS]))
         val infectionStatus =
-            QuestionnaireCuration.toInfectionStatus(entry.subject, value(lines, mapping[QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION]))
-        val ecg = QuestionnaireCuration.toECG(entry.subject, value(lines, mapping[QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG]))
+            QuestionnaireCuration.toInfectionStatus(value(lines, mapping[QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION]))
+        val ecg = QuestionnaireCuration.toEcg(value(lines, mapping[QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG]))
         val stage = QuestionnaireCuration.toStage(entry.subject, value(lines, mapping[QuestionnaireKey.STAGE]))
         return Questionnaire(
             date = entry.authored,

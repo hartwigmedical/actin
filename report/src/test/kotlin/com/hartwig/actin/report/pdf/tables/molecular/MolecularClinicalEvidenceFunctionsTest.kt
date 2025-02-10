@@ -60,9 +60,9 @@ class MolecularClinicalEvidenceFunctionsTest {
                     molecularTests = listOf(
                         BASE_MOLECULAR_TEST.copy(
                             characteristics = MolecularCharacteristics(
-                                isHomologousRepairDeficient = true,
-                                homologousRepairScore = 1.0,
-                                homologousRepairEvidence = CLINICAL_EVIDENCE
+                                isHomologousRecombinationDeficient = true,
+                                homologousRecombinationScore = 1.0,
+                                homologousRecombinationEvidence = CLINICAL_EVIDENCE
                             )
                         )
                     )

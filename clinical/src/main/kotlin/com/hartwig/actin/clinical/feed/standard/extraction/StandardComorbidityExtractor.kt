@@ -41,9 +41,7 @@ class StandardComorbidityExtractor(
         val curatedComorbidity = curate(comorbidity.name, patientId, category, configType)
         ExtractionResult(
             extracted = curatedComorbidity.configs.mapNotNull(ComorbidityConfig::curated).map { curated ->
-                comorbidity.startDate?.let { sourceStartDate ->
-                    curated.withDefaultYearAndMonth(sourceStartDate.year, sourceStartDate.monthValue)
-                } ?: curated
+                comorbidity.startDate?.let(curated::withDefaultDate) ?: curated
             },
             evaluation = curatedComorbidity.extractionEvaluation
         )

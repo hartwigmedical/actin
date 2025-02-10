@@ -23,8 +23,8 @@ class ClinicalEvidenceMatcher(
         return personalizedActionabilityFactory.create(signatureEvidence.findMicrosatelliteMatches(isMicrosatelliteUnstable))
     }
 
-    fun matchForHomologousRepairStatus(isHomologousRepairDeficient: Boolean): ClinicalEvidence {
-        return personalizedActionabilityFactory.create(signatureEvidence.findHomologousRepairMatches(isHomologousRepairDeficient))
+    fun matchForHomologousRecombinationStatus(isHomologousRecombinationDeficient: Boolean): ClinicalEvidence {
+        return personalizedActionabilityFactory.create(signatureEvidence.findHomologousRecombinationMatches(isHomologousRecombinationDeficient))
     }
 
     fun matchForHighTumorMutationalBurden(hasHighTumorMutationalBurden: Boolean): ClinicalEvidence {

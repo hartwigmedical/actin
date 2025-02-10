@@ -29,10 +29,10 @@ import org.junit.Test
 private const val EXPECTED_GENE = "found"
 private const val VIRUS_INTEGRATIONS = 3
 
-class DriversSummarizerTest {
+class MolecularDriversSummarizerTest {
 
     private val minimalDrivers = TestMolecularFactory.createMinimalTestOrangeRecord().drivers
-    
+
     @Test
     fun `Should return key variants`() {
         val variants = listOf(
@@ -218,7 +218,9 @@ class DriversSummarizerTest {
     }
 
     private fun disruption(
-        name: String, driverLikelihood: DriverLikelihood, isReportable: Boolean,
+        name: String,
+        driverLikelihood: DriverLikelihood,
+        isReportable: Boolean,
         evidence: ClinicalEvidence = TestClinicalEvidenceFactory.createEmpty()
     ): Disruption {
         return TestDisruptionFactory.createMinimal().copy(

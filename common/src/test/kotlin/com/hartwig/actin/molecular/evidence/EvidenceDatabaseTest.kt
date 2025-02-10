@@ -88,8 +88,8 @@ class EvidenceDatabaseTest {
     fun `Should match evidence for signatures`() {
         assertEvidence(database.evidenceForMicrosatelliteStatus(false), expectedTreatmentMatches = 0, expectedTrialMatches = 0)
         assertEvidence(database.evidenceForMicrosatelliteStatus(true), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
-        assertEvidence(database.evidenceForHomologousRepairStatus(false), expectedTreatmentMatches = 0, expectedTrialMatches = 0)
-        assertEvidence(database.evidenceForHomologousRepairStatus(true), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
+        assertEvidence(database.evidenceForHomologousRecombinationStatus(false), expectedTreatmentMatches = 0, expectedTrialMatches = 0)
+        assertEvidence(database.evidenceForHomologousRecombinationStatus(true), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
         assertEvidence(database.evidenceForTumorMutationalBurdenStatus(false), expectedTreatmentMatches = 0, expectedTrialMatches = 0)
         assertEvidence(database.evidenceForTumorMutationalBurdenStatus(true), expectedTreatmentMatches = 1, expectedTrialMatches = 1)
         assertEvidence(database.evidenceForTumorMutationalLoadStatus(false), expectedTreatmentMatches = 0, expectedTrialMatches = 0)

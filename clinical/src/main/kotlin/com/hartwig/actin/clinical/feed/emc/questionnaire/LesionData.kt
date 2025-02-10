@@ -22,7 +22,7 @@ internal class LesionData(private val present: Boolean?, private val active: Boo
         }
 
         private fun curateQuestionnaireOption(subject: String, input: String): ValidatedQuestionnaireCuration<Boolean> =
-            ValidatedQuestionnaireCuration(QuestionnaireCuration.toOption(subject, input).curated)
+            ValidatedQuestionnaireCuration(QuestionnaireCuration.toBoolean(subject, input).curated)
 
     }
 }

@@ -100,11 +100,11 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
     }
 
     fun createHRStatusString(): String {
-        return MolecularCharacteristicFormat.formatHomologousRepair(molecular.characteristics)
+        return MolecularCharacteristicFormat.formatHomologousRecombination(molecular.characteristics)
     }
 
     private fun createHRStatusCell(): Cell {
-        return createCellForCharacteristic(createHRStatusString(), molecular.characteristics.isHomologousRepairDeficient)
+        return createCellForCharacteristic(createHRStatusString(), molecular.characteristics.isHomologousRecombinationDeficient)
     }
 
     private fun createCellForCharacteristic(summaryString: String?, shouldHighlight: Boolean?): Cell {

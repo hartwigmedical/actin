@@ -12,6 +12,7 @@ import com.hartwig.actin.clinical.curation.CurationUtil.capitalizeFirstLetterOnl
 import com.hartwig.actin.clinical.curation.config.ComorbidityConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityCuration
+import com.hartwig.actin.clinical.curation.extraction.BooleanValueParser
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.feed.emc.digitalfile.DigitalFileEntry
@@ -19,6 +20,7 @@ import com.hartwig.actin.clinical.feed.emc.intolerance.IntoleranceEntry
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
 import com.hartwig.actin.datamodel.clinical.Comorbidity
 import com.hartwig.actin.datamodel.clinical.Complication
+import com.hartwig.actin.datamodel.clinical.Ecg
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.OtherCondition
@@ -40,14 +42,17 @@ class ComorbidityExtractor(
     ): ExtractionResult<List<Comorbidity>> {
         return listOfNotNull(
             questionnaire?.nonOncologicalHistory?.let {
-                extractQuestionnaireComorbidities(patientId, it, CurationCategory.NON_ONCOLOGICAL_HISTORY, "non-oncological history")
+                extractQuestionnaireComorbidities(
+                    patientId, it, CurationCategory.NON_ONCOLOGICAL_HISTORY, "non-oncological history", questionnaire.date
+                )
             },
             questionnaire?.complications?.let {
-                extractQuestionnaireComorbidities(patientId, it, CurationCategory.COMPLICATION, "complication")
+                extractQuestionnaireComorbidities(patientId, it, CurationCategory.COMPLICATION, "complication", questionnaire.date)
             },
             extractFeedToxicities(toxicityEntries, patientId),
             questionnaire?.unresolvedToxicities?.let { extractQuestionnaireToxicities(patientId, it, questionnaire.date) },
-            extractIntolerances(patientId, intoleranceEntries)
+            extractIntolerances(patientId, intoleranceEntries),
+            questionnaire?.ecg?.let { extractEcg(patientId, it) }
         ).flatten()
             .fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { (comorbidities, aggregatedEval), (comorbidity, eval) ->
                 ExtractionResult(comorbidities + comorbidity, aggregatedEval + eval)
@@ -55,7 +60,7 @@ class ComorbidityExtractor(
     }
 
     private fun extractQuestionnaireComorbidities(
-        patientId: String, rawInputs: List<String>, category: CurationCategory, configType: String
+        patientId: String, rawInputs: List<String>, category: CurationCategory, configType: String, questionnaireDate: LocalDate
     ): List<ExtractionResult<List<Comorbidity>>> {
         val default = if (category == CurationCategory.COMPLICATION) {
             Complication(null, icdCodes = emptySet())
@@ -65,7 +70,11 @@ class ComorbidityExtractor(
         return rawInputs.map {
             val curatedComorbidity = curate(CurationUtil.fullTrim(it), patientId, category, configType, default)
             ExtractionResult(
-                extracted = curatedComorbidity.configs.mapNotNull(ComorbidityConfig::curated),
+                extracted = curatedComorbidity.configs.mapNotNull(ComorbidityConfig::curated).map { curated ->
+                    if (curated is ToxicityCuration) {
+                        Toxicity(curated.name, curated.icdCodes, questionnaireDate, ToxicitySource.QUESTIONNAIRE, curated.grade)
+                    } else curated
+                },
                 evaluation = curatedComorbidity.extractionEvaluation
             )
         }
@@ -167,6 +176,26 @@ class ComorbidityExtractor(
         }
     }
 
+    private fun extractEcg(patientId: String, rawEcg: Ecg): List<ExtractionResult<List<Ecg>>> {
+        val curationResponse = rawEcg.name?.let { curate(it, patientId, CurationCategory.ECG, "ECG", rawEcg.copy(name = null), true) }
+        val ecg = if (curationResponse?.configs?.size == 0) rawEcg else {
+            curationResponse?.config()?.takeUnless { it.ignore }?.curated?.let { curated ->
+                rawEcg.copy(
+                    name = curated.name,
+                    icdCodes = curated.icdCodes,
+                    year = curated.year,
+                    month = curated.month,
+                    qtcfMeasure = coalesce(curated, rawEcg, Ecg::qtcfMeasure),
+                    jtcMeasure = coalesce(curated, rawEcg, Ecg::jtcMeasure)
+                )
+            }
+        }
+        return listOf(ExtractionResult(listOfNotNull(ecg), curationResponse?.extractionEvaluation ?: CurationExtractionEvaluation()))
+    }
+
+    private fun <T, U> coalesce(curated: Comorbidity?, default: T, function: (T) -> U): U =
+        curated?.let { it as? T }?.let(function) ?: function(default)
+
     private fun curate(
         input: String,
         patientId: String,
@@ -176,7 +205,7 @@ class ComorbidityExtractor(
         requireUniqueness: Boolean = false
     ): CurationResponse<ComorbidityConfig> {
         val trimmed = input.trim()
-        return if (trimmed.equals("yes", ignoreCase = true)) {
+        return if (BooleanValueParser.isTrue(trimmed)) {
             CurationResponse(
                 setOf(ComorbidityConfig(input, false, curated = defaultForYesInput)),
                 CurationExtractionEvaluation(comorbidityEvaluatedInputs = setOf(trimmed.lowercase()))
