@@ -104,9 +104,8 @@ class VariantEvidence(
         val matchPredicate: Predicate<MolecularCriterium> =
             Predicate {
                 variant.isReportable && variant.driverLikelihood == DriverLikelihood.HIGH && isMatch(
-                    extractActionableEvent.invoke(
-                        it
-                    ), variant
+                    extractActionableEvent.invoke(it),
+                    variant
                 )
             }
 
