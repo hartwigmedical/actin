@@ -49,7 +49,7 @@ private const val HGVS_PROTEIN_3LETTER = "p.Met1Leu"
 private const val HGVS_PROTEIN_1LETTER = "p.M1L"
 private val ARCHER_VARIANT = SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING)
 
-private val INITIAL_VARIANT_MATCH_CRITERIA =
+private val VARIANT_MATCH_CRITERIA =
     VariantMatchCriteria(
         gene = GENE,
         codingEffect = CodingEffect.MISSENSE,
@@ -106,6 +106,7 @@ private val PAVE_ANNOTATION = PaveResponse(
 
 private val HOTSPOT =
     TestServeKnownFactory.hotspotBuilder().build().withGeneRole(ServeGeneRole.ONCO).withProteinEffect(ServeProteinEffect.GAIN_OF_FUNCTION)
+        .withAssociatedWithDrugResistance(true)
 
 class PanelVariantAnnotatorTest {
 
@@ -129,14 +130,49 @@ class PanelVariantAnnotatorTest {
     private val annotator = PanelVariantAnnotator(evidenceDatabase, geneDriverLikelihoodModel, transvarAnnotator, paver, paveLite)
 
     @Test
-    fun `Should return empty annotation when no matches found`() {
+    fun `Should annotate variants with transcript, genetic variation and genomic position`() {
+        val annotated = annotator.annotate(setOf(ARCHER_VARIANT))
+        val annotatedVariant = annotated.first()
+        assertThat(annotatedVariant.canonicalImpact.transcriptId).isEqualTo(TRANSCRIPT)
+        assertThat(annotatedVariant.canonicalImpact.hgvsCodingImpact).isEqualTo(HGVS_CODING)
+        assertThat(annotatedVariant.canonicalImpact.codingEffect).isEqualTo(CodingEffect.MISSENSE)
+        assertThat(annotatedVariant.canonicalImpact.hgvsProteinImpact).isEqualTo(HGVS_PROTEIN_1LETTER)
+        assertThat(annotatedVariant.chromosome).isEqualTo(CHROMOSOME)
+        assertThat(annotatedVariant.position).isEqualTo(POSITION)
+        assertThat(annotatedVariant.ref).isEqualTo(REF)
+        assertThat(annotatedVariant.alt).isEqualTo(ALT)
+        assertThat(annotatedVariant.type).isEqualTo(VariantType.SNV)
+    }
+
+    @Test
+    fun `Should annotate variants with SERVE data`() {
+        setupGeneAlteration()
+        val annotated = annotator.annotate(setOf(ARCHER_VARIANT))
+        assertThat(annotated.first().isHotspot).isTrue()
+        assertThat(annotated.first().geneRole).isEqualTo(GeneRole.ONCO)
+        assertThat(annotated.first().proteinEffect).isEqualTo(ProteinEffect.GAIN_OF_FUNCTION)
+        assertThat(annotated.first().isAssociatedWithDrugResistance).isTrue()
+    }
+
+    @Test
+    fun `Should annotate variants with driver likelihood`() {
+        setupGeneAlteration()
+        every { geneDriverLikelihoodModel.evaluate(GENE, GeneRole.ONCO, any()) } returns 0.9
+        val annotated = annotator.annotate(setOf(ARCHER_VARIANT))
+        assertThat(annotated.first().driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
+    }
+
+    @Test
+    fun `Should not annotate with evidence when no matches found`() {
+        setupGeneAlteration()
         val annotated = annotator.annotate(setOf(ARCHER_VARIANT))
         assertThat(annotated.first().evidence).isEqualTo(TestClinicalEvidenceFactory.createEmpty())
     }
 
     @Test
-    fun `Should annotate variants with evidence`() {
-        every { evidenceDatabase.evidenceForVariant(INITIAL_VARIANT_MATCH_CRITERIA) } returns ACTIONABILITY_MATCH
+    fun `Should annotate variants with evidence when matches found`() {
+        setupGeneAlteration()
+        every { evidenceDatabase.evidenceForVariant(VARIANT_MATCH_CRITERIA) } returns ACTIONABILITY_MATCH
         val annotated = annotator.annotate(setOf(ARCHER_VARIANT))
 
         assertThat(annotated.first().evidence).isEqualTo(
@@ -154,39 +190,6 @@ class PanelVariantAnnotatorTest {
                 eligibleTrials = emptySet()
             )
         )
-    }
-
-    @Test
-    fun `Should annotate variants with gene alteration`() {
-        setupGeneAlteration()
-        val annotated = annotator.annotate(setOf(ARCHER_VARIANT))
-        assertThat(annotated.first().geneRole).isEqualTo(GeneRole.ONCO)
-        assertThat(annotated.first().proteinEffect).isEqualTo(ProteinEffect.GAIN_OF_FUNCTION)
-    }
-
-    @Test
-    fun `Should annotate variants with driver likelihood`() {
-        setupGeneAlteration()
-        every { geneDriverLikelihoodModel.evaluate(GENE, GeneRole.ONCO, any()) } returns 0.9
-        val annotated = annotator.annotate(setOf(ARCHER_VARIANT))
-        assertThat(annotated.first().driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
-    }
-
-    @Test
-    fun `Should annotate variants with transcript, genetic variation and genomic position`() {
-        setupGeneAlteration()
-        val annotated = annotator.annotate(setOf(ARCHER_VARIANT))
-        val annotatedVariant = annotated.first()
-        assertThat(annotatedVariant.canonicalImpact.transcriptId).isEqualTo(TRANSCRIPT)
-        assertThat(annotatedVariant.canonicalImpact.hgvsCodingImpact).isEqualTo(HGVS_CODING)
-        assertThat(annotatedVariant.canonicalImpact.codingEffect).isEqualTo(CodingEffect.MISSENSE)
-        assertThat(annotatedVariant.canonicalImpact.hgvsProteinImpact).isEqualTo(HGVS_PROTEIN_1LETTER)
-        assertThat(annotatedVariant.chromosome).isEqualTo(CHROMOSOME)
-        assertThat(annotatedVariant.position).isEqualTo(POSITION)
-        assertThat(annotatedVariant.ref).isEqualTo(REF)
-        assertThat(annotatedVariant.alt).isEqualTo(ALT)
-        assertThat(annotatedVariant.type).isEqualTo(VariantType.SNV)
-        assertThat(annotatedVariant.isHotspot).isTrue()
     }
 
     @Test
@@ -270,14 +273,14 @@ class PanelVariantAnnotatorTest {
     }
 
     @Test
-    fun `Should describe variant event using protein hgvs`() {
+    fun `Should describe variant event using protein HGVS`() {
         val variants = setOf(SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING))
         val annotated = annotator.annotate(variants)
         assertThat(annotated.first().event).isEqualTo("$GENE ${HGVS_PROTEIN_1LETTER.removePrefix("p.")}")
     }
 
     @Test
-    fun `Should describe variant using coding hgvs for event when no protein impact`() {
+    fun `Should describe variant using coding HGVS for event when no protein impact`() {
         every { paver.run(listOf(PAVE_QUERY)) } returns listOf(
             PAVE_ANNOTATION.copy(
                 impact = PAVE_ANNOTATION.impact.copy(hgvsProteinImpact = "p.?")
@@ -393,6 +396,6 @@ class PanelVariantAnnotatorTest {
     )
 
     private fun setupGeneAlteration() {
-        every { evidenceDatabase.geneAlterationForVariant(INITIAL_VARIANT_MATCH_CRITERIA) } returns HOTSPOT
+        every { evidenceDatabase.geneAlterationForVariant(VARIANT_MATCH_CRITERIA) } returns HOTSPOT
     }
 }
