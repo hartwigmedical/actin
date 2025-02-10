@@ -280,9 +280,7 @@ class PanelVariantAnnotator(
         }
     }
 
-    private fun annotateWithEvidence(
-        variant: Variant
-    ): Variant {
+    private fun annotateWithEvidence(variant: Variant): Variant {
         val criteria = variantMatchCriteria(variant)
         val evidence = evidenceDatabase.evidenceForVariant(criteria)
         return variant.copy(evidence = evidence)
