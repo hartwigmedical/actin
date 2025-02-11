@@ -14,10 +14,9 @@ class IhcTestFilterTest {
     fun `Should filter prior molecular tests for PDL1`() {
         val test1 = priorIHCTest(test = "Archer", item = "PD-L1")
         val test2 = priorIHCTest(test = "IHC", item = "PD-L1")
-        val test3 = priorIHCTest(test = "IHC", item = "PD-L1")
-        val test4 = priorIHCTest(test = "IHC", item = "BRAF")
-        val filtered = allPDL1Tests(listOf(test1, test2, test3, test4))
-        assertThat(filtered).containsExactlyElementsOf(listOf(test2, test3))
+        val test3 = priorIHCTest(test = "IHC", item = "BRAF")
+        val filtered = allPDL1Tests(listOf(test1, test2, test3))
+        assertThat(filtered).containsOnly(test2)
     }
 
     @Test
@@ -58,7 +57,7 @@ class IhcTestFilterTest {
     }
 
     @Test
-    fun `Should return all tests of most recent date except if tests are completely equal`() {
+    fun `Should return all tests of most recent date except if tests are completely identical`() {
         val test1 = priorIHCTest(test = "IHC", item = "protein 1", measureDate = LocalDate.of(2024, 2, 2))
         val test2 = test1.copy()
         val test3 = test1.copy(scoreValue = 2.0)
