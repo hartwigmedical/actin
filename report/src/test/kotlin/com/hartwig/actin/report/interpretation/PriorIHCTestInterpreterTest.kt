@@ -58,9 +58,24 @@ class PriorIHCTestInterpreterTest {
         )
     }
 
+    @Test
+    fun `Should correctly handle null date`() {
+        val result = interpreter.interpret(
+            BASE_PATIENT_RECORD.copy(
+                priorIHCTests = listOf(ihcMolecularTest("HER2", "Positive").copy(measureDate = null))
+            )
+        )
+        assertThat(result).containsExactly(
+            PriorMolecularTestInterpretation(
+                "IHC", listOf(PriorMolecularTestResultInterpretation("Positive", "HER2", null))
+            )
+        )
+    }
+
     private fun ihcMolecularTest(protein: String, scoreText: String? = null, scoreValue: Double? = null, scoreValueUnit: String? = null) =
         PriorIHCTest(
             item = protein,
+            measureDate = DEFAULT_DATE,
             scoreText = scoreText,
             test = "IHC",
             scoreValue = scoreValue,
