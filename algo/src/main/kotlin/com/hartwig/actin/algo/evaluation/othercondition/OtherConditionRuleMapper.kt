@@ -180,7 +180,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
     ): FunctionCreator {
         return { function: EligibilityFunction ->
             val maxMonthsAgo = functionInputResolver().createOneIntegerInput(function)
-            val minDate = referenceDateProvider().date().minusMonths(maxMonthsAgo.toLong())
+            val minDate = referenceDateProvider().date().minusMonths(maxMonthsAgo.toLong() - 1)
             HasHadOtherConditionWithIcdCodeFromSetRecently(icdModel(), targetIcdCodes, diseaseDescription, minDate)
         }
     }
@@ -190,7 +190,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             val input = functionInputResolver().createOneIcdTitleOneIntegerInput(function)
             val targetIcdCode = icdModel().resolveCodeForTitle(input.icdTitle)!!
             val maxMonthsAgo = input.integer
-            val minDate = referenceDateProvider().date().minusMonths(maxMonthsAgo.toLong())
+            val minDate = referenceDateProvider().date().minusMonths(maxMonthsAgo.toLong() - 1)
             HasHadOtherConditionWithIcdCodeFromSetRecently(
                 icdModel(), setOf(targetIcdCode), input.icdTitle, minDate
             )
