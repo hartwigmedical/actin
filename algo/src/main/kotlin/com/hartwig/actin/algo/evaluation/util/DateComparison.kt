@@ -21,6 +21,10 @@ object DateComparison {
         return isAfterDate(maxDate, year, month)?.not()
     }
 
+    fun isExactYearAndMonth(refDate: LocalDate, year: Int?, month: Int?): Boolean {
+        return year == refDate.year && month == refDate.monthValue
+    }
+
     fun minWeeksBetweenDates(startYear: Int?, startMonth: Int?, stopYear: Int?, stopMonth: Int?): Long? {
         return if (startYear != null && stopYear != null) {
             ChronoUnit.WEEKS.between(
