@@ -13,8 +13,7 @@ import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
-import com.hartwig.actin.molecular.evidence.matching.MatchingCriteriaFunctions.createFusionCriteria
-import com.hartwig.actin.molecular.evidence.matching.MatchingCriteriaFunctions.createVariantCriteria
+import com.hartwig.actin.molecular.evidence.matching.MatchingCriteriaFunctions
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 
 class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) : MolecularAnnotator<MolecularRecord, MolecularRecord> {
@@ -64,13 +63,13 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
 
     private fun annotateVariant(variant: Variant): Variant {
         val alteration =
-            GeneAlterationFactory.convertAlteration(variant.gene, evidenceDatabase.geneAlterationForVariant(createVariantCriteria(variant)))
+            GeneAlterationFactory.convertAlteration(variant.gene, evidenceDatabase.geneAlterationForVariant(MatchingCriteriaFunctions.createVariantCriteria(variant)))
         val variantWithGeneAlteration = variant.copy(
             geneRole = alteration.geneRole,
             proteinEffect = alteration.proteinEffect,
             isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance
         )
-        val evidence = evidenceDatabase.evidenceForVariant(createVariantCriteria(variantWithGeneAlteration))
+        val evidence = evidenceDatabase.evidenceForVariant(MatchingCriteriaFunctions.createVariantCriteria(variant))
         return variantWithGeneAlteration.copy(evidence = evidence)
     }
 
@@ -112,14 +111,14 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
     }
 
     private fun annotateFusion(fusion: Fusion): Fusion {
-        val knownFusion = evidenceDatabase.lookupKnownFusion(createFusionCriteria(fusion))
+        val knownFusion = evidenceDatabase.lookupKnownFusion(MatchingCriteriaFunctions.createFusionCriteria(fusion))
         val proteinEffect = if (knownFusion == null) ProteinEffect.UNKNOWN else {
             GeneAlterationFactory.convertProteinEffect(knownFusion.proteinEffect())
         }
         val isAssociatedWithDrugResistance = knownFusion?.associatedWithDrugResistance()
         val fusionWithGeneAlteration =
             fusion.copy(proteinEffect = proteinEffect, isAssociatedWithDrugResistance = isAssociatedWithDrugResistance)
-        val evidence = evidenceDatabase.evidenceForFusion(createFusionCriteria(fusion))
+        val evidence = evidenceDatabase.evidenceForFusion(MatchingCriteriaFunctions.createFusionCriteria(fusion))
         return fusionWithGeneAlteration.copy(evidence = evidence)
     }
 

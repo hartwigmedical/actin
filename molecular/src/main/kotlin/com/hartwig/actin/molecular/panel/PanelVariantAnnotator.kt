@@ -11,7 +11,7 @@ import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
-import com.hartwig.actin.molecular.evidence.matching.MatchingCriteriaFunctions.createVariantCriteria
+import com.hartwig.actin.molecular.evidence.matching.MatchingCriteriaFunctions
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 import com.hartwig.actin.molecular.orange.AminoAcid.forceSingleLetterAminoAcids
 import com.hartwig.actin.molecular.paver.PaveCodingEffect
@@ -233,7 +233,7 @@ class PanelVariantAnnotator(
     }
 
     private fun annotateWithGeneAlteration(variant: Variant): Variant {
-        val criteria = createVariantCriteria(variant)
+        val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
         val serveGeneAlteration = evidenceDatabase.geneAlterationForVariant(criteria)
         val geneAlteration = GeneAlterationFactory.convertAlteration(variant.gene, serveGeneAlteration)
 
@@ -261,7 +261,7 @@ class PanelVariantAnnotator(
     }
 
     private fun annotateWithEvidence(variant: Variant): Variant {
-        val criteria = createVariantCriteria(variant)
+        val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
         val evidence = evidenceDatabase.evidenceForVariant(criteria)
         return variant.copy(evidence = evidence)
     }
