@@ -14,14 +14,14 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntent: EvaluationFunction 
         if (treatmentHistory.isEmpty()) return EvaluationFactory.warn("Patient has no treatment history (we do not always receive the original surgery)")
 
         var patientHasHadLocoRegionalTherapy = false
-        var treatmentHistoryEntryHasCurativeIntent: Boolean? = false
+        var treatmentHistoryEntryCurativeIntentIsNull = false
 
         for(treatmentHistoryEntry in treatmentHistory){
             for(category in treatmentHistoryEntry.categories()){
                 if(category == TreatmentCategory.RADIOTHERAPY || category ==  TreatmentCategory.SURGERY){
                     patientHasHadLocoRegionalTherapy = true
                     val intents = treatmentHistoryEntry.intents
-                    if (intents.isNullOrEmpty()) treatmentHistoryEntryHasCurativeIntent = null
+                    if (intents.isNullOrEmpty()) treatmentHistoryEntryCurativeIntentIsNull = true
                     else {
                         for(intent in intents){
                             if (intent == Intent.CURATIVE) return EvaluationFactory.pass("Patient has received locoregional therapy with curative intent")
@@ -32,9 +32,9 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntent: EvaluationFunction 
         }
 
         return when{
-            patientHasHadLocoRegionalTherapy && treatmentHistoryEntryHasCurativeIntent == false-> EvaluationFactory.fail("Patient has received locoregional therapy without curative intent")
-            patientHasHadLocoRegionalTherapy && treatmentHistoryEntryHasCurativeIntent == null-> EvaluationFactory.undetermined("Patient has received locoregional therapy with unknown intent")
-            else -> EvaluationFactory.fail("Patient has not had locoregional surgery")
+            !patientHasHadLocoRegionalTherapy -> EvaluationFactory.fail("Patient has not had locoregional surgery")
+            treatmentHistoryEntryCurativeIntentIsNull-> EvaluationFactory.undetermined("Patient has received locoregional therapy with unknown intent")
+            else -> EvaluationFactory.fail("Patient has received locoregional therapy without curative intent")
         }
     }
 }
