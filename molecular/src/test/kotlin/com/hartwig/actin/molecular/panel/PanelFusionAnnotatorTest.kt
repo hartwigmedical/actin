@@ -33,19 +33,12 @@ private val SEQUENCED_FUSION = SequencedFusion(GENE_START, GENE_END)
 private val FULLY_SPECIFIED_SEQUENCED_FUSION =
     SequencedFusion(GENE_START, GENE_END, TRANSCRIPT_START, TRANSCRIPT_END, FUSED_EXON_UP, FUSED_EXON_DOWN)
 
-private val EXON_SKIP_FUSION_MATCHING_CRITERIA = FusionMatchCriteria(
-    isReportable = true,
-    geneStart = GENE,
-    geneEnd = GENE,
-    driverType = FusionDriverType.KNOWN_PAIR_DEL_DUP,
-    fusedExonUp = FUSED_EXON_UP,
-    fusedExonDown = FUSED_EXON_DOWN
-)
-
 private val FUSION_MATCH_CRITERIA = FusionMatchCriteria(
     isReportable = true,
     geneStart = GENE_START,
     geneEnd = GENE_END,
+    fusedExonUp = null,
+    fusedExonDown = null,
     driverType = FusionDriverType.KNOWN_PAIR
 )
 
@@ -53,9 +46,18 @@ private val FULLY_SPECIFIED_FUSION_MATCH_CRITERIA = FusionMatchCriteria(
     isReportable = true,
     geneStart = GENE_START,
     geneEnd = GENE_END,
-    driverType = FusionDriverType.KNOWN_PAIR,
     fusedExonUp = FUSED_EXON_UP,
-    fusedExonDown = FUSED_EXON_DOWN
+    fusedExonDown = FUSED_EXON_DOWN,
+    driverType = FusionDriverType.KNOWN_PAIR
+)
+
+private val EXON_SKIP_FUSION_MATCHING_CRITERIA = FusionMatchCriteria(
+    isReportable = true,
+    geneStart = GENE,
+    geneEnd = GENE,
+    fusedExonUp = FUSED_EXON_UP,
+    fusedExonDown = FUSED_EXON_DOWN,
+    driverType = FusionDriverType.KNOWN_PAIR_DEL_DUP
 )
 
 private val EMPTY_MATCH = TestClinicalEvidenceFactory.createEmpty()

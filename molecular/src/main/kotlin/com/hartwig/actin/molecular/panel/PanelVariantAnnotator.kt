@@ -11,7 +11,7 @@ import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
-import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
+import com.hartwig.actin.molecular.evidence.matching.MatchingCriteriaFunctions
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 import com.hartwig.actin.molecular.orange.AminoAcid.forceSingleLetterAminoAcids
 import com.hartwig.actin.molecular.paver.PaveCodingEffect
@@ -68,7 +68,7 @@ class PanelVariantAnnotator(
         val paveAnnotations = annotateWithPave(transvarVariants)
 
         val annotatedVariants =
-            createVariants(transvarVariants, paveAnnotations, variantExtractions).map { annotateWithGeneAlterationData(it) }
+            createVariants(transvarVariants, paveAnnotations, variantExtractions).map { annotateWithGeneAlteration(it) }
         return annotateWithDriverLikelihood(annotatedVariants).map { annotateWithEvidence(it) }
     }
 
@@ -232,8 +232,8 @@ class PanelVariantAnnotator(
         }
     }
 
-    private fun annotateWithGeneAlterationData(variant: Variant): Variant {
-        val criteria = variantMatchCriteria(variant)
+    private fun annotateWithGeneAlteration(variant: Variant): Variant {
+        val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
         val serveGeneAlteration = evidenceDatabase.geneAlterationForVariant(criteria)
         val geneAlteration = GeneAlterationFactory.convertAlteration(variant.gene, serveGeneAlteration)
 
@@ -261,20 +261,8 @@ class PanelVariantAnnotator(
     }
 
     private fun annotateWithEvidence(variant: Variant): Variant {
-        val criteria = variantMatchCriteria(variant)
+        val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
         val evidence = evidenceDatabase.evidenceForVariant(criteria)
         return variant.copy(evidence = evidence)
     }
-
-    private fun variantMatchCriteria(variant: Variant) = VariantMatchCriteria(
-        gene = variant.gene,
-        codingEffect = variant.canonicalImpact.codingEffect,
-        type = variant.type,
-        chromosome = variant.chromosome,
-        position = variant.position,
-        ref = variant.ref,
-        alt = variant.alt,
-        driverLikelihood = variant.driverLikelihood,
-        isReportable = variant.isReportable
-    )
 }

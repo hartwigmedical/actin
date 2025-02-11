@@ -9,17 +9,19 @@ object MatchingCriteriaFunctions {
         isReportable = fusion.isReportable,
         geneStart = fusion.geneStart,
         geneEnd = fusion.geneEnd,
+        fusedExonUp = fusion.fusedExonUp,
+        fusedExonDown = fusion.fusedExonDown,
         driverType = fusion.driverType
     )
 
     fun createVariantCriteria(variant: Variant) = VariantMatchCriteria(
         gene = variant.gene,
+        codingEffect = variant.canonicalImpact.codingEffect,
+        type = variant.type,
         chromosome = variant.chromosome,
         position = variant.position,
         ref = variant.ref,
         alt = variant.alt,
-        type = variant.type,
-        codingEffect = variant.canonicalImpact.codingEffect,
         driverLikelihood = variant.driverLikelihood,
         isReportable = variant.isReportable
     )
