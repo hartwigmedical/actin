@@ -63,7 +63,10 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
 
     private fun annotateVariant(variant: Variant): Variant {
         val alteration =
-            GeneAlterationFactory.convertAlteration(variant.gene, evidenceDatabase.geneAlterationForVariant(MatchingCriteriaFunctions.createVariantCriteria(variant)))
+            GeneAlterationFactory.convertAlteration(
+                variant.gene,
+                evidenceDatabase.geneAlterationForVariant(MatchingCriteriaFunctions.createVariantCriteria(variant))
+            )
         val variantWithGeneAlteration = variant.copy(
             geneRole = alteration.geneRole,
             proteinEffect = alteration.proteinEffect,
