@@ -16,7 +16,8 @@ class HasHadOtherConditionWithIcdCodeFromSetRecently(
     private val icdModel: IcdModel,
     private val targetIcdCodes: Set<IcdCode>,
     private val diseaseDescription: String,
-    private val minDate: LocalDate
+    private val minDate: LocalDate,
+    private val maxMonthsAgo: Int
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -33,15 +34,15 @@ class HasHadOtherConditionWithIcdCodeFromSetRecently(
 
             fullMatchSummary.containsKey(EvaluationResult.WARN) -> {
                 EvaluationFactory.warn(
-                    "History of $diseaseDescription${displayConditions(fullMatchSummary, EvaluationResult.WARN)}" +
-                            " near start of specified time frame"
+                    "History of $diseaseDescription within last $maxMonthsAgo months" +
+                            displayConditions(fullMatchSummary, EvaluationResult.WARN, true)
                 )
             }
 
             fullMatchSummary.containsKey(EvaluationResult.UNDETERMINED) -> {
                 EvaluationFactory.undetermined(
-                    "History of $diseaseDescription${displayConditions(fullMatchSummary, EvaluationResult.UNDETERMINED)}" +
-                            " but undetermined whether that is within specified time frame"
+                    "History of $diseaseDescription${displayConditions(fullMatchSummary, EvaluationResult.UNDETERMINED, true)}" +
+                            " but undetermined if less than $maxMonthsAgo months ago"
                 )
             }
 
@@ -62,10 +63,10 @@ class HasHadOtherConditionWithIcdCodeFromSetRecently(
             .groupBy {
                 val isAfter = DateComparison.isAfterDate(minDate, it.year, it.month)
                 when {
+                    DateComparison.isExactYearAndMonth(minDate, it.year, it.month) -> EvaluationResult.WARN
                     isAfter == true && DateComparison.isBeforeDate(minDate.plusMonths(2), it.year, it.month) == true -> {
                         EvaluationResult.WARN
                     }
-
                     isAfter == true -> EvaluationResult.PASS
                     isAfter == null -> EvaluationResult.UNDETERMINED
                     else -> EvaluationResult.FAIL
@@ -73,7 +74,17 @@ class HasHadOtherConditionWithIcdCodeFromSetRecently(
             }
     }
 
-    private fun displayConditions(fullMatchSummary: Map<EvaluationResult, List<OtherCondition>>, evaluation: EvaluationResult): String {
-        return fullMatchSummary[evaluation]?.let { conditions -> " (${conditions.joinToString(", ") { it.display() } })" } ?: ""
+    private fun displayConditions(
+        fullMatchSummary: Map<EvaluationResult, List<OtherCondition>>,
+        evaluation: EvaluationResult,
+        withDate: Boolean = false
+    ): String {
+        return fullMatchSummary[evaluation]
+            ?.joinToString(", ", prefix = " (", postfix = ")") { conditionWithOptionalDate(it, withDate) } ?: ""
+    }
+
+    private fun conditionWithOptionalDate(condition: OtherCondition, withDate: Boolean): String {
+        val dateString = if (withDate) " (${condition.year}-${condition.month})" else ""
+        return condition.display() + dateString
     }
 }
