@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
+import com.hartwig.actin.algo.evaluation.molecular.IhcTestFilter
 import com.hartwig.actin.datamodel.PatientRecord
-import com.hartwig.actin.datamodel.clinical.IHC_TEST_TYPE
 import com.hartwig.actin.datamodel.clinical.PriorIHCTest
 import com.hartwig.actin.report.pdf.util.Formats
 import org.apache.logging.log4j.LogManager
@@ -13,7 +13,7 @@ class PriorIHCTestInterpreter {
     private val interpretationBuilder = PriorMolecularTestInterpretationBuilder()
 
     fun interpret(record: PatientRecord): List<PriorMolecularTestInterpretation> {
-        record.priorIHCTests.filter { it.test == IHC_TEST_TYPE }.forEach(::interpret)
+        IhcTestFilter.mostRecentOrUnknownDateIhcTests(record.priorIHCTests).forEach(::interpret)
         return interpretationBuilder.build()
     }
 
