@@ -33,15 +33,15 @@ class PanelCopyNumberAnnotator(private val evidenceDatabase: EvidenceDatabase, p
     }
 
     private fun annotatedInferredCopyNumber(copyNumber: CopyNumber): CopyNumber {
-        val evidence = evidenceDatabase.evidenceForCopyNumber(copyNumber)
-        val geneAlteration =
+        val alteration =
             GeneAlterationFactory.convertAlteration(copyNumber.gene, evidenceDatabase.geneAlterationForCopyNumber(copyNumber))
-        return copyNumber.copy(
-            evidence = evidence,
-            geneRole = geneAlteration.geneRole,
-            proteinEffect = geneAlteration.proteinEffect,
-            isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance
+        val copyNumberWithGeneAlteration = copyNumber.copy(
+            geneRole = alteration.geneRole,
+            proteinEffect = alteration.proteinEffect,
+            isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance
         )
+        val evidence = evidenceDatabase.evidenceForCopyNumber(copyNumberWithGeneAlteration)
+        return copyNumberWithGeneAlteration.copy(evidence = evidence)
     }
 
     private fun convertSequencedAmplifiedGene(sequencedAmplifiedGene: SequencedAmplification): CopyNumber {

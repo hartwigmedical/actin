@@ -7,7 +7,7 @@ import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
-import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
+import com.hartwig.actin.molecular.evidence.matching.MatchingCriteriaFunctions.createFusionCriteria
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
@@ -119,27 +119,14 @@ class PanelFusionAnnotator(
     }
 
     private fun annotateFusion(fusion: Fusion): Fusion {
-        val fusionMatchCriteria = createFusionMatchCriteria(fusion)
-        val knownFusion = evidenceDatabase.lookupKnownFusion(fusionMatchCriteria)
-
+        val knownFusion = evidenceDatabase.lookupKnownFusion(createFusionCriteria(fusion))
         val proteinEffect = if (knownFusion == null) ProteinEffect.UNKNOWN else {
             GeneAlterationFactory.convertProteinEffect(knownFusion.proteinEffect())
         }
         val isAssociatedWithDrugResistance = knownFusion?.associatedWithDrugResistance()
-
-        return fusion.copy(
-            evidence = evidenceDatabase.evidenceForFusion(fusionMatchCriteria),
-            proteinEffect = proteinEffect,
-            isAssociatedWithDrugResistance = isAssociatedWithDrugResistance,
-        )
+        val fusionWithGeneAlteration =
+            fusion.copy(proteinEffect = proteinEffect, isAssociatedWithDrugResistance = isAssociatedWithDrugResistance)
+        val evidence = evidenceDatabase.evidenceForFusion(createFusionCriteria(fusion))
+        return fusionWithGeneAlteration.copy(evidence = evidence)
     }
-
-    private fun createFusionMatchCriteria(fusion: Fusion) = FusionMatchCriteria(
-        isReportable = fusion.isReportable,
-        geneStart = fusion.geneStart,
-        geneEnd = fusion.geneEnd,
-        driverType = fusion.driverType,
-        fusedExonUp = fusion.fusedExonUp,
-        fusedExonDown = fusion.fusedExonDown
-    )
 }
