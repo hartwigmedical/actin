@@ -126,7 +126,7 @@ class PanelFusionAnnotator(
         val isAssociatedWithDrugResistance = knownFusion?.associatedWithDrugResistance()
         val fusionWithGeneAlteration =
             fusion.copy(proteinEffect = proteinEffect, isAssociatedWithDrugResistance = isAssociatedWithDrugResistance)
-        val evidence = evidenceDatabase.evidenceForFusion(MatchingCriteriaFunctions.createFusionCriteria(fusion))
+        val evidence = evidenceDatabase.evidenceForFusion(MatchingCriteriaFunctions.createFusionCriteria(fusionWithGeneAlteration))
         return fusionWithGeneAlteration.copy(evidence = evidence)
     }
 }

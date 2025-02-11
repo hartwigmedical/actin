@@ -69,7 +69,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
             proteinEffect = alteration.proteinEffect,
             isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance
         )
-        val evidence = evidenceDatabase.evidenceForVariant(MatchingCriteriaFunctions.createVariantCriteria(variant))
+        val evidence = evidenceDatabase.evidenceForVariant(MatchingCriteriaFunctions.createVariantCriteria(variantWithGeneAlteration))
         return variantWithGeneAlteration.copy(evidence = evidence)
     }
 
@@ -118,7 +118,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
         val isAssociatedWithDrugResistance = knownFusion?.associatedWithDrugResistance()
         val fusionWithGeneAlteration =
             fusion.copy(proteinEffect = proteinEffect, isAssociatedWithDrugResistance = isAssociatedWithDrugResistance)
-        val evidence = evidenceDatabase.evidenceForFusion(MatchingCriteriaFunctions.createFusionCriteria(fusion))
+        val evidence = evidenceDatabase.evidenceForFusion(MatchingCriteriaFunctions.createFusionCriteria(fusionWithGeneAlteration))
         return fusionWithGeneAlteration.copy(evidence = evidence)
     }
 
