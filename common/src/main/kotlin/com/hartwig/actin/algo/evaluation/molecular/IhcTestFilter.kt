@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.datamodel.clinical.IHC_TEST_TYPE
 import com.hartwig.actin.datamodel.clinical.PriorIHCTest
 
-internal object PriorIHCTestFunctions {
+object IhcTestFilter {
 
     private const val PD_L1 = "PD-L1"
 
@@ -11,7 +11,7 @@ internal object PriorIHCTestFunctions {
     fun allPDL1Tests(
         priorMolecularTests: List<PriorIHCTest>, measureToFind: String? = null, isLungCancer: Boolean? = null
     ): List<PriorIHCTest> {
-        val allPDL1Tests = allIHCTests(priorMolecularTests).filter { test -> test.item == PD_L1 }
+        val allPDL1Tests = mostRecentOrUnknownDateIhcTests(priorMolecularTests).filter { test -> test.item == PD_L1 }
         return if (measureToFind == null || (measureToFind == "TPS" && isLungCancer == true && allPDL1Tests.all { it.measure == null })) {
             allPDL1Tests
         } else {
@@ -20,10 +20,16 @@ internal object PriorIHCTestFunctions {
     }
 
     fun allIHCTestsForProtein(priorMolecularTests: List<PriorIHCTest>, protein: String): List<PriorIHCTest> {
-        return allIHCTests(priorMolecularTests).filter { it.item == protein }
+        return mostRecentOrUnknownDateIhcTests(priorMolecularTests).filter { it.item == protein }
     }
 
-    private fun allIHCTests(priorMolecularTests: List<PriorIHCTest>): List<PriorIHCTest> {
-        return priorMolecularTests.filter { it.test == IHC_TEST_TYPE }
+    fun mostRecentOrUnknownDateIhcTests(priorMolecularTests: List<PriorIHCTest>): Set<PriorIHCTest> {
+        val (withDate, withoutDate) = priorMolecularTests.filter { it.test == IHC_TEST_TYPE }.partition { it.measureDate != null }
+        val mostRecentPerItem = withDate.groupBy { it.item }.flatMap { (_, tests) ->
+            val mostRecentDate = tests.maxOfOrNull { it.measureDate!! }
+            tests.filter { it.measureDate == mostRecentDate }
+        }.toSet()
+
+        return mostRecentPerItem + withoutDate.toSet()
     }
 }
