@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.icd.datamodel.IcdNode
+import org.assertj.core.api.Assertions.assertThat
 import java.time.LocalDate
 import org.junit.Test
 
@@ -24,7 +25,9 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
             function.evaluate(
                 ComorbidityTestFactory.withOtherCondition(
                     ComorbidityTestFactory.otherCondition(
-                        year = minDate.plusMonths(1).year, month = minDate.plusMonths(1).monthValue, icdMainCode = targetIcdCodes.first().mainCode
+                        year = minDate.plusMonths(1).year,
+                        month = minDate.plusMonths(1).monthValue,
+                        icdMainCode = targetIcdCodes.first().mainCode
                     )
                 )
             )
@@ -33,16 +36,18 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
 
     @Test
     fun `Should pass if condition in history with correct ICD code and within specified time-frame but not in first 2 months`() {
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(
-                ComorbidityTestFactory.withOtherCondition(
-                    ComorbidityTestFactory.otherCondition(
-                        year = minDate.plusYears(1).year, month = 1, icdMainCode = targetIcdCodes.first().mainCode
-                    )
+        val evaluation = function.evaluate(
+            ComorbidityTestFactory.withOtherCondition(
+                ComorbidityTestFactory.otherCondition(
+                    name = "cerebral bleeding",
+                    year = minDate.plusYears(1).year,
+                    month = 1,
+                    icdMainCode = targetIcdCodes.first().mainCode
                 )
             )
         )
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, evaluation)
+        assertThat(evaluation.passMessages).containsExactly("Recent stroke (cerebral bleeding)")
     }
 
     @Test
@@ -53,7 +58,9 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
                     year = minDate.plusYears(1).year, month = 1, icdMainCode = targetIcdCodes.first().mainCode
                 ),
                 ComorbidityTestFactory.otherCondition(
-                    year = minDate.plusMonths(1).year, month = minDate.plusMonths(1).monthValue, icdMainCode = targetIcdCodes.first().mainCode
+                    year = minDate.plusMonths(1).year,
+                    month = minDate.plusMonths(1).monthValue,
+                    icdMainCode = targetIcdCodes.first().mainCode
                 )
             )
         )

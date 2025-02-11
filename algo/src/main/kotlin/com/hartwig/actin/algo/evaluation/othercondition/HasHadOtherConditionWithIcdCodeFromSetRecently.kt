@@ -28,29 +28,20 @@ class HasHadOtherConditionWithIcdCodeFromSetRecently(
 
         return when {
             fullMatchSummary.containsKey(EvaluationResult.PASS) -> {
-                EvaluationFactory.pass(
-                    "Recent ${
-                        fullMatchSummary[EvaluationResult.PASS]?.joinToString(", ")
-                        { resolveIcdTitle(it) }
-                    } (belonging to $diseaseDescription)"
-                )
+                EvaluationFactory.pass("Recent $diseaseDescription${displayConditions(fullMatchSummary, EvaluationResult.PASS)}")
             }
 
             fullMatchSummary.containsKey(EvaluationResult.WARN) -> {
                 EvaluationFactory.warn(
-                    "History of ${
-                        fullMatchSummary[EvaluationResult.WARN]?.joinToString(", ")
-                        { resolveIcdTitle(it) }
-                    } (belonging to $diseaseDescription) near start of specified time frame"
+                    "History of $diseaseDescription${displayConditions(fullMatchSummary, EvaluationResult.WARN)}" +
+                            " near start of specified time frame"
                 )
             }
 
             fullMatchSummary.containsKey(EvaluationResult.UNDETERMINED) -> {
                 EvaluationFactory.undetermined(
-                    "History of ${
-                        fullMatchSummary[EvaluationResult.UNDETERMINED]?.joinToString(", ")
-                        { resolveIcdTitle(it) }
-                    } (belonging to $diseaseDescription) but undetermined whether that is within specified time frame"
+                    "History of $diseaseDescription${displayConditions(fullMatchSummary, EvaluationResult.UNDETERMINED)}" +
+                            " but undetermined whether that is within specified time frame"
                 )
             }
 
@@ -82,7 +73,7 @@ class HasHadOtherConditionWithIcdCodeFromSetRecently(
             }
     }
 
-    private fun resolveIcdTitle(condition: OtherCondition): String {
-        return Format.concat(condition.icdCodes.map { icdModel.resolveTitleForCode(it) })
+    private fun displayConditions(fullMatchSummary: Map<EvaluationResult, List<OtherCondition>>, evaluation: EvaluationResult): String {
+        return fullMatchSummary[evaluation]?.let { conditions -> " (${conditions.joinToString(", ") { it.display() } })" } ?: ""
     }
 }
