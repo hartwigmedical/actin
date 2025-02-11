@@ -6,9 +6,11 @@ import com.hartwig.actin.datamodel.clinical.TestClinicalFactory
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 private val BASE_PATIENT_RECORD =
     PatientRecordFactory.fromInputs(TestClinicalFactory.createMinimalTestClinicalRecord(), MolecularHistory(emptyList()))
+private val DEFAULT_DATE = LocalDate.of(2025, 2, 10)
 
 class PriorIHCTestInterpreterTest {
 
@@ -23,7 +25,7 @@ class PriorIHCTestInterpreterTest {
         )
         assertThat(result).containsExactly(
             PriorMolecularTestInterpretation(
-                "IHC", listOf(PriorMolecularTestResultInterpretation("Positive", "HER2"))
+                "IHC", listOf(PriorMolecularTestResultInterpretation("Positive", "HER2", DEFAULT_DATE))
             )
         )
     }
@@ -37,7 +39,7 @@ class PriorIHCTestInterpreterTest {
         )
         assertThat(result).containsExactly(
             PriorMolecularTestInterpretation(
-                "IHC", listOf(PriorMolecularTestResultInterpretation("HER2", "Score 90%", 1))
+                "IHC", listOf(PriorMolecularTestResultInterpretation("HER2", "Score 90%", DEFAULT_DATE, 1))
             )
         )
     }
@@ -51,7 +53,21 @@ class PriorIHCTestInterpreterTest {
         )
         assertThat(result).containsExactly(
             PriorMolecularTestInterpretation(
-                "IHC", listOf(PriorMolecularTestResultInterpretation("HER2", "Score 90", 1))
+                "IHC", listOf(PriorMolecularTestResultInterpretation("HER2", "Score 90", DEFAULT_DATE, 1))
+            )
+        )
+    }
+
+    @Test
+    fun `Should correctly handle null date`() {
+        val result = interpreter.interpret(
+            BASE_PATIENT_RECORD.copy(
+                priorIHCTests = listOf(ihcMolecularTest("HER2", "Positive").copy(measureDate = null))
+            )
+        )
+        assertThat(result).containsExactly(
+            PriorMolecularTestInterpretation(
+                "IHC", listOf(PriorMolecularTestResultInterpretation("Positive", "HER2", null))
             )
         )
     }
@@ -59,6 +75,7 @@ class PriorIHCTestInterpreterTest {
     private fun ihcMolecularTest(protein: String, scoreText: String? = null, scoreValue: Double? = null, scoreValueUnit: String? = null) =
         PriorIHCTest(
             item = protein,
+            measureDate = DEFAULT_DATE,
             scoreText = scoreText,
             test = "IHC",
             scoreValue = scoreValue,
