@@ -7,7 +7,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 
-class HasHadDefinitiveLocoregionalTherapyWithCurativeIntent: EvaluationFunction {
+class HasHadDefinitiveLocoregionalTherapyWithCurativeIntent : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentHistory = record.oncologicalHistory
@@ -15,38 +15,23 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntent: EvaluationFunction 
             return EvaluationFactory.warn("Patient has no treatment history (we do not always receive the original surgery)")
         }
 
-        var patientHasHadLocoRegionalTherapy = false
-        var treatmentHistoryEntryCurativeIntentIsNullOrEmpty = false
-
-        for(treatmentHistoryEntry in treatmentHistory){
-            for(category in treatmentHistoryEntry.categories()){
-                if(category == TreatmentCategory.RADIOTHERAPY || category ==  TreatmentCategory.SURGERY){
-                    patientHasHadLocoRegionalTherapy = true
-                    val intents = treatmentHistoryEntry.intents
-                    if (intents.isNullOrEmpty()){
-                        treatmentHistoryEntryCurativeIntentIsNullOrEmpty = true
-                    }
-                    else {
-                        for(intent in intents){
-                            if (intent == Intent.CURATIVE){
-                                return EvaluationFactory.pass("Patient has received locoregional therapy with curative intent")
-                            }
-                        }
-                    }
-                }
-            }
+        val locoregionalTherapyHistory = treatmentHistory.filter { entry ->
+            entry.categories().any { it == TreatmentCategory.RADIOTHERAPY || it == TreatmentCategory.SURGERY }
+        }
+        if (locoregionalTherapyHistory.isEmpty()) {
+            return EvaluationFactory.fail("Patient has not had locoregional surgery")
         }
 
-        return when{
-            !patientHasHadLocoRegionalTherapy -> {
-                EvaluationFactory.fail("Patient has not had locoregional surgery")
-            }
-            treatmentHistoryEntryCurativeIntentIsNullOrEmpty-> {
-                EvaluationFactory.undetermined("Patient has received locoregional therapy with unknown intent")
-            }
-            else -> {
-                EvaluationFactory.fail("Patient has received locoregional therapy without curative intent")
-            }
+        val locoregionalTherapyIntents = locoregionalTherapyHistory.flatMap { it.intents.orEmpty() }
+        if (Intent.CURATIVE in locoregionalTherapyIntents) {
+            return EvaluationFactory.pass("Patient has received locoregional therapy with curative intent")
         }
+
+        val locoregionalTherapyIntentsSets = locoregionalTherapyHistory.map { it.intents }
+        if (locoregionalTherapyIntentsSets.any{ it.isNullOrEmpty() }) {
+            return EvaluationFactory.undetermined("Patient has received locoregional therapy with unknown intent")
+        }
+
+        return EvaluationFactory.fail("Patient has received locoregional therapy without curative intent")
     }
 }
