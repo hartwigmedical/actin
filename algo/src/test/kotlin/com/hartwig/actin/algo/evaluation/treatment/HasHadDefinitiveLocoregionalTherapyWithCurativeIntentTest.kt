@@ -17,17 +17,10 @@ import org.junit.Test
 
 
 class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
-
-    @Test
-    fun `Should WARN when treatment history is empty`() {
-        assertEvaluation(
-            EvaluationResult.WARN,
-            HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList()))
-        )
-    }
-
     private val radiotherapy = TreatmentTestFactory.treatment("Radiotherapy", true, setOf(TreatmentCategory.RADIOTHERAPY))
     private val surgery = TreatmentTestFactory.treatment("Surgery", true, setOf(TreatmentCategory.SURGERY))
+    private val chemotherapy = TreatmentTestFactory.treatment("CHEMOTHERAPY", true, setOf(TreatmentCategory.CHEMOTHERAPY))
+
     private val patientRecordRadiotherapy = withTreatmentHistory(
         listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
@@ -44,20 +37,6 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
             )
         )
     )
-    @Test
-    fun `Should PASS when treatment contains a radiotherapy or surgery with curative intent`() {
-
-        assertEvaluation(
-            EvaluationResult.PASS,
-            HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(patientRecordRadiotherapy)
-        )
-        assertEvaluation(
-            EvaluationResult.PASS,
-            HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(patientRecordSurgery)
-        )
-    }
-
-    private val chemotherapy = TreatmentTestFactory.treatment("CHEMOTHERAPY", true, setOf(TreatmentCategory.CHEMOTHERAPY))
     private val patientRecordNonLocomotive = withTreatmentHistory(
         listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
@@ -66,43 +45,22 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
             )
         )
     )
-    @Test
-    fun `Should FAIL when treatment contains no locoregional therapy`() {
-        assertEvaluation(
-            EvaluationResult.FAIL,
-            HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(patientRecordNonLocomotive)
-        )
-    }
-
-
-    @Test
-    fun `Should FAIL when treatment contains radiotherapy or surgery without curative intent`() {
-        val patientRecordRadiotherapy = withTreatmentHistory(
-            listOf(
-                TreatmentTestFactory.treatmentHistoryEntry(
-                    setOf(radiotherapy),
-                    intents = setOf(Intent.ADJUVANT)
-                )
+    private val patientRecordRadiotherapyNotCurative = withTreatmentHistory(
+        listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(
+                setOf(radiotherapy),
+                intents = setOf(Intent.ADJUVANT)
             )
         )
-        val patientRecordSurgery = withTreatmentHistory(
-            listOf(
-                TreatmentTestFactory.treatmentHistoryEntry(
-                    setOf(surgery),
-                    intents = setOf(Intent.ADJUVANT)
-                )
+    )
+    private val patientRecordSurgerynotCurative = withTreatmentHistory(
+        listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(
+                setOf(surgery),
+                intents = setOf(Intent.ADJUVANT)
             )
         )
-        assertEvaluation(
-            EvaluationResult.FAIL,
-            HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(patientRecordRadiotherapy)
-        )
-        assertEvaluation(
-            EvaluationResult.FAIL,
-            HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(patientRecordSurgery)
-        )
-    }
-
+    )
     private val patientRecordRadiotherapyIntentNull = withTreatmentHistory(
         listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
@@ -119,6 +77,52 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
             )
         )
     )
+    @Test
+    fun `Should WARN when treatment history is empty`() {
+        assertEvaluation(
+            EvaluationResult.WARN,
+            HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList()))
+        )
+    }
+
+
+    @Test
+    fun `Should PASS when treatment contains a radiotherapy or surgery with curative intent`() {
+
+        assertEvaluation(
+            EvaluationResult.PASS,
+            HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(patientRecordRadiotherapy)
+        )
+        assertEvaluation(
+            EvaluationResult.PASS,
+            HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(patientRecordSurgery)
+        )
+    }
+
+
+    @Test
+    fun `Should FAIL when treatment contains no locoregional therapy`() {
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(patientRecordNonLocomotive)
+        )
+    }
+
+
+    @Test
+    fun `Should FAIL when treatment contains radiotherapy or surgery without curative intent`() {
+
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(patientRecordRadiotherapyNotCurative)
+        )
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(patientRecordSurgerynotCurative)
+        )
+    }
+
+
     @Test
     fun `Should be UNDETERMINED when treatment contains radiotherapy or surgery with NULL or empty list of intent`() {
         assertEvaluation(
