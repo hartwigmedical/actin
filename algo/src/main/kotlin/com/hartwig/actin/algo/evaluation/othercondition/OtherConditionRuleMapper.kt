@@ -65,20 +65,20 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
                 setOf(IcdCode(IcdConstants.ACUTE_MYOCARDIAL_INFARCT_CODE)),
                 "myocardial infarct"
             ),
-            EligibilityRule.HAS_HISTORY_OF_MYOCARDIAL_INFARCT_WITHIN_X_MONTHS to hasRecentPriorConditionWithIcdCodeFromSetCreator(
+            EligibilityRule.HAS_HISTORY_OF_MYOCARDIAL_INFARCT_WITHIN_X_MONTHS to hasRecentComorbidityWithIcdCodeFromSetCreator(
                 setOf(IcdCode(IcdConstants.ACUTE_MYOCARDIAL_INFARCT_CODE)), "myocardial infarct"
             ),
-            EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_ICD_TITLE_X_WITHIN_Y_MONTHS to hasRecentPriorConditionWithConfiguredIcdCodeCreator(),
+            EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_ICD_TITLE_X_WITHIN_Y_MONTHS to hasRecentComorbidityWithConfiguredIcdCodeCreator(),
             EligibilityRule.HAS_HISTORY_OF_PNEUMONITIS to hasOtherConditionWithIcdCodesFromSetCreator(
                 setOf(IcdCode(IcdConstants.PNEUMONITIS_BLOCK)),
                 "pneumonitis"
             ),
             EligibilityRule.HAS_HISTORY_OF_STROKE to hasHistoryOfStrokeCreator(),
-            EligibilityRule.HAS_HISTORY_OF_STROKE_WITHIN_X_MONTHS to hasRecentPriorConditionWithIcdCodeFromSetCreator(
+            EligibilityRule.HAS_HISTORY_OF_STROKE_WITHIN_X_MONTHS to hasRecentComorbidityWithIcdCodeFromSetCreator(
                 IcdConstants.STROKE_SET.map { IcdCode(it) }.toSet(),
                 "CVA"
             ),
-            EligibilityRule.HAS_HISTORY_OF_THROMBOEMBOLIC_EVENT_WITHIN_X_MONTHS to hasRecentPriorConditionWithIcdCodeFromSetCreator(
+            EligibilityRule.HAS_HISTORY_OF_THROMBOEMBOLIC_EVENT_WITHIN_X_MONTHS to hasRecentComorbidityWithIcdCodeFromSetCreator(
                 IcdConstants.THROMBOEMBOLIC_EVENT_SET.map { IcdCode(it) }.toSet(),
                 "thrombo-embolic event"
             ),
@@ -174,26 +174,21 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
         return { HasInheritedPredispositionToBleedingOrThrombosis(icdModel()) }
     }
 
-    private fun hasRecentPriorConditionWithIcdCodeFromSetCreator(
-        targetIcdCodes: Set<IcdCode>,
-        diseaseDescription: String
-    ): FunctionCreator {
+    private fun hasRecentComorbidityWithIcdCodeFromSetCreator(targetIcdCodes: Set<IcdCode>, diseaseDescription: String): FunctionCreator {
         return { function: EligibilityFunction ->
             val maxMonthsAgo = functionInputResolver().createOneIntegerInput(function)
             val minDate = referenceDateProvider().date().minusMonths(maxMonthsAgo.toLong() - 1)
-            HasHadOtherConditionWithIcdCodeFromSetRecently(icdModel(), targetIcdCodes, diseaseDescription, minDate)
+            HasHadOtherConditionWithIcdCodeFromSetRecently(icdModel(), targetIcdCodes, diseaseDescription, minDate, maxMonthsAgo)
         }
     }
 
-    private fun hasRecentPriorConditionWithConfiguredIcdCodeCreator(): FunctionCreator {
+    private fun hasRecentComorbidityWithConfiguredIcdCodeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneIcdTitleOneIntegerInput(function)
             val targetIcdCode = icdModel().resolveCodeForTitle(input.icdTitle)!!
             val maxMonthsAgo = input.integer
             val minDate = referenceDateProvider().date().minusMonths(maxMonthsAgo.toLong() - 1)
-            HasHadOtherConditionWithIcdCodeFromSetRecently(
-                icdModel(), setOf(targetIcdCode), input.icdTitle, minDate
-            )
+            HasHadOtherConditionWithIcdCodeFromSetRecently(icdModel(), setOf(targetIcdCode), input.icdTitle, minDate, maxMonthsAgo)
         }
     }
 

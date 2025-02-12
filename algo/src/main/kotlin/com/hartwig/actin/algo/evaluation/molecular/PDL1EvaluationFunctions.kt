@@ -24,7 +24,7 @@ object PDL1EvaluationFunctions {
     ): Evaluation {
         val priorMolecularTests = record.priorIHCTests
         val isLungCancer = doidModel?.let { DoidEvaluationFunctions.isOfDoidType(it, record.tumor.doids, DoidConstants.LUNG_CANCER_DOID) }
-        val pdl1TestsWithRequestedMeasurement = PriorIHCTestFunctions.allPDL1Tests(priorMolecularTests, measure, isLungCancer)
+        val pdl1TestsWithRequestedMeasurement = IhcTestFilter.allPDL1Tests(priorMolecularTests, measure, isLungCancer)
 
         val testEvaluations = pdl1TestsWithRequestedMeasurement.mapNotNull { ihcTest ->
             ihcTest.scoreValue?.let { scoreValue ->
@@ -68,7 +68,7 @@ object PDL1EvaluationFunctions {
                 )
             }
 
-            PriorIHCTestFunctions.allPDL1Tests(priorMolecularTests).isNotEmpty() -> {
+            IhcTestFilter.allPDL1Tests(priorMolecularTests).isNotEmpty() -> {
                 EvaluationFactory.recoverableFail("PD-L1 tests not in correct unit ($measure)")
             }
 
