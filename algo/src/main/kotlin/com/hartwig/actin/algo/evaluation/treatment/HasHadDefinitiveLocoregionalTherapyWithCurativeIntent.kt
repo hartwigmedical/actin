@@ -28,7 +28,7 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntent : EvaluationFunction
         }
 
         val locoregionalTherapyIntentsSets = locoregionalTherapyHistory.map { it.intents }
-        if (locoregionalTherapyIntentsSets.any{ it.isNullOrEmpty() }) {
+        if (locoregionalTherapyIntentsSets.any { it.isNullOrEmpty() }) {
             return EvaluationFactory.undetermined("Patient has received locoregional therapy with unknown intent")
         }
 

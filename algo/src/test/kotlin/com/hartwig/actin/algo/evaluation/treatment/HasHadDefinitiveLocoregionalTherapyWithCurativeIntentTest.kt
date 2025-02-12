@@ -1,19 +1,13 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.algo.evaluation.medication.AtcTestFactory
-import com.hartwig.actin.algo.evaluation.washout.WashoutTestFactory
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
-import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
-import org.junit.Assert.*
 import org.junit.Test
 
 class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
@@ -21,7 +15,7 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
     private val surgery = TreatmentTestFactory.treatment("Surgery", true, setOf(TreatmentCategory.SURGERY))
     private val chemotherapy = TreatmentTestFactory.treatment("CHEMOTHERAPY", true, setOf(TreatmentCategory.CHEMOTHERAPY))
 
-    private fun generatePatientRecord(treatment: Treatment, intents: Set<Intent>?):PatientRecord {
+    private fun generatePatientRecord(treatment: Treatment, intents: Set<Intent>?): PatientRecord {
         return withTreatmentHistory(
             listOf(
                 TreatmentTestFactory.treatmentHistoryEntry(
@@ -36,7 +30,7 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
     fun `Should WARN when treatment history is empty`() {
         assertEvaluation(
             EvaluationResult.WARN,
-            HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList()))
+            HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(withTreatmentHistory(emptyList()))
         )
     }
 
@@ -84,7 +78,7 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
     @Test
     fun `Should be UNDETERMINED when treatment contains radiotherapy or surgery with NULL or empty list of intent`() {
         val radiotherapyIntentNull = generatePatientRecord(radiotherapy, null)
-        val surgeryIntentEmpty = generatePatientRecord(radiotherapy, emptySet<Intent>())
+        val surgeryIntentEmpty = generatePatientRecord(radiotherapy, emptySet())
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(radiotherapyIntentNull)
@@ -96,7 +90,7 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
     }
 
     @Test
-    fun `Return PASS if there is are multiple locomotive treatments that are CURATIVE, non CURATIVE, and null`(){
+    fun `Return PASS if there is are multiple locomotive treatments that are CURATIVE, non CURATIVE, and null`() {
         val multiTreatmentTestCase = withTreatmentHistory(
             listOf(
                 TreatmentTestFactory.treatmentHistoryEntry(
@@ -120,7 +114,7 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
     }
 
     @Test
-    fun `Return UNDETERMINED if there is a null and non CURATIVE locoregional treatment`(){
+    fun `Return UNDETERMINED if there is a null and non CURATIVE locoregional treatment`() {
         val multiTreatmentTestCase = withTreatmentHistory(
             listOf(
                 TreatmentTestFactory.treatmentHistoryEntry(
