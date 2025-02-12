@@ -11,7 +11,9 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntent: EvaluationFunction 
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentHistory = record.oncologicalHistory
-        if (treatmentHistory.isEmpty()) return EvaluationFactory.warn("Patient has no treatment history (we do not always receive the original surgery)")
+        if (treatmentHistory.isEmpty()) {
+            return EvaluationFactory.warn("Patient has no treatment history (we do not always receive the original surgery)")
+        }
 
         var patientHasHadLocoRegionalTherapy = false
         var treatmentHistoryEntryCurativeIntentIsNullOrEmpty = false
@@ -21,10 +23,14 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntent: EvaluationFunction 
                 if(category == TreatmentCategory.RADIOTHERAPY || category ==  TreatmentCategory.SURGERY){
                     patientHasHadLocoRegionalTherapy = true
                     val intents = treatmentHistoryEntry.intents
-                    if (intents.isNullOrEmpty()) treatmentHistoryEntryCurativeIntentIsNullOrEmpty = true
+                    if (intents.isNullOrEmpty()){
+                        treatmentHistoryEntryCurativeIntentIsNullOrEmpty = true
+                    }
                     else {
                         for(intent in intents){
-                            if (intent == Intent.CURATIVE) return EvaluationFactory.pass("Patient has received locoregional therapy with curative intent")
+                            if (intent == Intent.CURATIVE){
+                                return EvaluationFactory.pass("Patient has received locoregional therapy with curative intent")
+                            }
                         }
                     }
                 }
@@ -32,9 +38,15 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntent: EvaluationFunction 
         }
 
         return when{
-            !patientHasHadLocoRegionalTherapy -> EvaluationFactory.fail("Patient has not had locoregional surgery")
-            treatmentHistoryEntryCurativeIntentIsNullOrEmpty-> EvaluationFactory.undetermined("Patient has received locoregional therapy with unknown intent")
-            else -> EvaluationFactory.fail("Patient has received locoregional therapy without curative intent")
+            !patientHasHadLocoRegionalTherapy -> {
+                EvaluationFactory.fail("Patient has not had locoregional surgery")
+            }
+            treatmentHistoryEntryCurativeIntentIsNullOrEmpty-> {
+                EvaluationFactory.undetermined("Patient has received locoregional therapy with unknown intent")
+            }
+            else -> {
+                EvaluationFactory.fail("Patient has received locoregional therapy without curative intent")
+            }
         }
     }
 }
