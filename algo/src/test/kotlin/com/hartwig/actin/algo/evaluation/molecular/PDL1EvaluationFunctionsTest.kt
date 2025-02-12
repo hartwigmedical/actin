@@ -160,6 +160,17 @@ class PDL1EvaluationFunctionsTest {
     }
 
     @Test
+    fun `Should pass when tumor type is lung cancer and PD-L1 test result of undefined type is negative and evaluating against max PDL1 of 10,0`() {
+        val record = MolecularTestFactory.withIHCTests(pdl1Test.copy(scoreText = "negative", measure = null))
+            .copy(tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_CANCER_DOID)))
+
+        assertEvaluation(
+            EvaluationResult.PASS,
+            evaluatePDL1byIHC(record, TPS, pdl1Reference = 10.0, doidModel = doidModel, evaluateMaxPDL1 = true)
+        )
+    }
+
+    @Test
     fun `Should evaluate to undetermined when TPS test result is positive and evaluating against max PDL1 of 10,0`() {
         val record = MolecularTestFactory.withIHCTests(pdl1Test.copy(scoreText = "positive", measure = TPS))
         assertEvaluation(
@@ -171,6 +182,17 @@ class PDL1EvaluationFunctionsTest {
     @Test
     fun `Should pass when TPS test result is positive and evaluating against min PDL1 of 1,0`() {
         val record = MolecularTestFactory.withIHCTests(pdl1Test.copy(scoreText = "positive", measure = TPS))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            evaluatePDL1byIHC(record, TPS, pdl1Reference = 1.0, doidModel = doidModel, evaluateMaxPDL1 = false)
+        )
+    }
+
+    @Test
+    fun `Should pass when tumor type is lung cancer and PD-L1 test result of undefined type is positive and evaluating against min PDL1 of 1,0`() {
+        val record = MolecularTestFactory.withIHCTests(pdl1Test.copy(scoreText = "positive", measure = null))
+            .copy(tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_CANCER_DOID)))
+
         assertEvaluation(
             EvaluationResult.PASS,
             evaluatePDL1byIHC(record, TPS, pdl1Reference = 1.0, doidModel = doidModel, evaluateMaxPDL1 = false)
@@ -198,7 +220,7 @@ class PDL1EvaluationFunctionsTest {
     @Test
     fun `Should fail when tumor type is lung cancer and PD-L1 test result of undefined type is negative and evaluating against min PD-L1 of 1,0`() {
         val record = MolecularTestFactory.withIHCTests(pdl1Test.copy(scoreText = "negative", measure = null))
-            .copy(tumor = TumorDetails(DoidConstants.LUNG_CANCER_DOID))
+            .copy(tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_CANCER_DOID)))
 
         assertEvaluation(
             EvaluationResult.FAIL,
