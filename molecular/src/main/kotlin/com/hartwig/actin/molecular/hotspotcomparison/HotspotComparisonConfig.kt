@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.core.config.Configurator
 
 data class HotspotComparisonConfig(
-        val orangeJson: String?,
+        val orangeJson: String,
         val serveDirectory: String,
         val outputDirectory: String
 ) {
@@ -24,8 +24,8 @@ data class HotspotComparisonConfig(
 
         fun createOptions(): Options {
             val options = Options()
-            options.addOption(ORANGE_JSON, true, "(Optional) path of the ORANGE json to be interpreted")
-            options.addOption(SERVE_DIRECTORY, true, "Path towards the SERVE directory containing known and actionable events")
+            options.addOption(ORANGE_JSON, true, "Path of the ORANGE json to be interpreted")
+            options.addOption(SERVE_DIRECTORY, true, "Path towards the SERVE directory containing known events")
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where hotspot comparison output will be written to")
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
             return options
@@ -37,7 +37,7 @@ data class HotspotComparisonConfig(
                 LOGGER.debug("Switched root level logging to DEBUG")
             }
             return HotspotComparisonConfig(
-                    orangeJson = ApplicationConfig.optionalFile(cmd, ORANGE_JSON),
+                    orangeJson = ApplicationConfig.nonOptionalFile(cmd, ORANGE_JSON),
                     serveDirectory = ApplicationConfig.nonOptionalDir(cmd, SERVE_DIRECTORY),
                     outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY)
             )

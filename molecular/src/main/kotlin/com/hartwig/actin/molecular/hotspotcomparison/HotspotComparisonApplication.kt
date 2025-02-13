@@ -3,13 +3,13 @@ package com.hartwig.actin.molecular.hotspotcomparison
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.molecular.evidence.ServeLoader
 import com.hartwig.actin.molecular.evidence.known.KnownEventResolverFactory
-import com.hartwig.actin.molecular.evidence.matching.MatchingCriteriaFunctions
-import com.hartwig.actin.molecular.filter.GeneFilterFactory
-import com.hartwig.actin.molecular.orange.DriverExtractor
+import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.actin.molecular.panel.isHotspot
 import com.hartwig.actin.util.Paths
 import com.hartwig.hmftools.datamodel.OrangeJson
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
+import com.hartwig.hmftools.datamodel.purple.HotspotType
+import com.hartwig.hmftools.datamodel.purple.PurpleVariant
 import com.hartwig.serve.datamodel.ServeDatabase
 import com.hartwig.serve.datamodel.ServeRecord
 import com.hartwig.serve.datamodel.serialization.ServeJson
@@ -34,53 +34,60 @@ class HotspotComparisonApplication(private val config: HotspotComparisonConfig) 
         val serveDatabase = ServeLoader.loadServeDatabase(serveJsonFilePath)
         LOGGER.info("Loaded evidence and known events from SERVE version {}", serveDatabase.version())
 
-        if (config.orangeJson != null) {
-            val orange = OrangeJson.getInstance().read(config.orangeJson)
-            val serveRecord = selectForRefGenomeVersion(serveDatabase, fromOrangeRefGenomeVersion(orange.refGenomeVersion()))
+        val orange = OrangeJson.getInstance().read(config.orangeJson)
+        val serveRecord = selectForRefGenomeVersion(serveDatabase, fromOrangeRefGenomeVersion(orange.refGenomeVersion()))
 
+        val hotspots = orange.purple().allSomaticVariants().mapNotNull { variant ->
+            val criteria = createVariantCriteria(variant)
             val knownEventResolver = KnownEventResolverFactory.create(serveRecord.knownEvents())
-            val geneFilter = GeneFilterFactory.createFromKnownGenes(serveRecord.knownEvents().genes())
-            val driverExtractor = DriverExtractor.create(geneFilter)
-            val hotspots = driverExtractor.extract(orange).variants.mapNotNull { variant ->
-                val criteria = MatchingCriteriaFunctions.createVariantCriteria(variant)
-                val serveGeneAlteration = knownEventResolver.resolveForVariant(criteria)
-                val isHotspotServe = isHotspot(serveGeneAlteration)
-                val isHotspotOrange = variant.isHotspot
-                if (isHotspotServe || isHotspotOrange) {
-                    AnnotatedHotspot(
-                        gene = variant.gene,
-                        chromosome = variant.chromosome,
-                        position = variant.position,
-                        ref = variant.ref,
-                        alt = variant.alt,
-                        type = variant.type,
-                        codingImpact = variant.canonicalImpact.hgvsCodingImpact,
-                        proteinImpact = variant.canonicalImpact.hgvsProteinImpact,
-                        isHotspotOrange = isHotspotOrange,
-                        isHotspotServe = isHotspotServe,
-                    )
-                } else {
-                    null
-                }
+            val serveGeneAlteration = knownEventResolver.resolveForVariant(criteria)
+            val isHotspotServe = isHotspot(serveGeneAlteration)
+            val isHotspotOrange = variant.hotspot() == HotspotType.HOTSPOT
+            if (isHotspotServe || isHotspotOrange) {
+                AnnotatedHotspot(
+                    gene = variant.gene(),
+                    chromosome = variant.chromosome(),
+                    position = variant.position(),
+                    ref = variant.ref(),
+                    alt = variant.alt(),
+                    codingImpact = variant.canonicalImpact().hgvsCodingImpact(),
+                    proteinImpact = variant.canonicalImpact().hgvsProteinImpact(),
+                    isHotspotOrange = isHotspotOrange,
+                    isHotspotServe = isHotspotServe,
+                )
+            } else {
+                null
             }
-
-            LOGGER.info("Hotspot comparison DONE!")
-            LOGGER.info(
-                "{} hotspot(s) according to ORANGE. {} hotspot(s) according to SERVE. {} hotspot(s) different",
-                hotspots.count { it.isHotspotOrange },
-                hotspots.count { it.isHotspotServe },
-                hotspots.count { !(it.isHotspotOrange && it.isHotspotServe) }
-            )
-            write(config.outputDirectory, orange.sampleId(), hotspots)
         }
+
+        LOGGER.info("Hotspot comparison DONE!")
+        LOGGER.info(
+            "{} hotspot(s) according to ORANGE. {} hotspot(s) according to SERVE. {} hotspot(s) different",
+            hotspots.count { it.isHotspotOrange },
+            hotspots.count { it.isHotspotServe },
+            hotspots.count { !(it.isHotspotOrange && it.isHotspotServe) }
+        )
+        write(config.outputDirectory, orange.sampleId(), hotspots)
     }
 
-    private fun write(directory: String, id: String, hotspots: List<AnnotatedHotspot>) {
+    private fun createVariantCriteria(variant: PurpleVariant) =
+        VariantMatchCriteria(
+            gene = variant.gene(),
+            chromosome = variant.chromosome(),
+            position = variant.position(),
+            ref = variant.ref(),
+            alt = variant.alt(),
+            type = null,
+            codingEffect = null,
+            isReportable = variant.reported()
+        )
+
+    private fun write(directory: String, sampleId: String, hotspots: List<AnnotatedHotspot>) {
         val path = Paths.forceTrailingFileSeparator(directory)
-        val file = "$path$id.hotspotComparison"
+        val file = "$path$sampleId.hotspotComparison"
         LOGGER.info("Writing hotspot comparison to {}", file)
         BufferedWriter(FileWriter(file)).use { writer ->
-            writer.write("gene\tchromosome\tposition\tref\talt\ttype\tcodingImpact\tproteinImpact\tisHotspotOrange\tisHotspotServe\n")
+            writer.write("gene\tchromosome\tposition\tref\talt\tcodingImpact\tproteinImpact\tisHotspotOrange\tisHotspotServe\n")
             hotspots.forEach { writer.write(toTabSeparatedString(it) + "\n") }
         }
     }
@@ -92,7 +99,6 @@ class HotspotComparisonApplication(private val config: HotspotComparisonConfig) 
             hotspot.position,
             hotspot.ref,
             hotspot.alt,
-            hotspot.type,
             hotspot.codingImpact,
             hotspot.proteinImpact,
             hotspot.isHotspotOrange,
