@@ -1,12 +1,32 @@
 package com.hartwig.actin.clinical.curation.config
 
-class InfectionConfigFactory : CurationConfigFactory<InfectionConfig> {
-    override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<InfectionConfig> {
+import com.hartwig.actin.clinical.curation.CurationCategory
+import com.hartwig.actin.clinical.curation.extraction.BooleanValueParser
+import com.hartwig.actin.datamodel.clinical.IcdCode
+import com.hartwig.actin.datamodel.clinical.OtherCondition
+import com.hartwig.actin.icd.IcdModel
+import com.hartwig.actin.util.Either
+
+class InfectionConfigFactory(private val icdModel: IcdModel) : CurationConfigFactory<ComorbidityConfig> {
+    override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<ComorbidityConfig> {
+        val interpretation = parts[fields["interpretation"]!!]
+        val ignore = when (val parsed = BooleanValueParser.parseBoolean(interpretation)) {
+            is Either.Right -> parsed.value != true
+            else -> interpretation == "NULL"
+        }
+        val input = parts[fields["input"]!!]
+        val (icdCodes, icdValidationErrors) = if ("icd" in fields) {
+            validateIcd(CurationCategory.NON_ONCOLOGICAL_HISTORY, input, "icd", fields, parts, icdModel)
+        } else {
+            emptySet<IcdCode>() to emptyList()
+        }
         return ValidatedCurationConfig(
-            InfectionConfig(
-                input = parts[fields["input"]!!],
-                interpretation = parts[fields["interpretation"]!!]
-            )
+            ComorbidityConfig(
+                input = input,
+                ignore = ignore,
+                curated = OtherCondition(name = interpretation, icdCodes = icdCodes).takeUnless { ignore }
+            ),
+            icdValidationErrors
         )
     }
 }

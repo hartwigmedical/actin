@@ -3,17 +3,17 @@ package com.hartwig.actin.clinical.feed.standard.extraction
 import com.hartwig.actin.clinical.feed.standard.EhrTestData
 import com.hartwig.actin.clinical.feed.standard.ProvidedMeasurement
 import com.hartwig.actin.clinical.feed.standard.ProvidedMeasurementCategory
-import com.hartwig.actin.datamodel.clinical.BodyHeight
-import org.assertj.core.api.Assertions
+import com.hartwig.actin.datamodel.clinical.BodyWeight
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import org.junit.Test
 import java.time.LocalDateTime
 
-private val CATEGORY = ProvidedMeasurementCategory.BODY_HEIGHT.name
+private val CATEGORY = ProvidedMeasurementCategory.BODY_WEIGHT.name
 private val DATE = LocalDateTime.of(2024, 4, 24, 0, 0, 0)
 private val SUB_CATEGORY = null
-private const val VALUE = 200.0
-private const val UNIT = "centimeters"
+private const val VALUE = 80.0
+private const val UNIT = "Kilograms"
 
 private val EHR_PATIENT_RECORD = EhrTestData.createEhrPatientRecord().copy(
     measurements = listOf(
@@ -27,15 +27,15 @@ private val EHR_PATIENT_RECORD = EhrTestData.createEhrPatientRecord().copy(
     )
 )
 
-class ProvidedBodyHeightExtractorTest {
+class StandardBodyWeightExtractorTest {
 
-    private val extractor = StandardBodyHeightExtractor()
+    private val extractor = StandardBodyWeightExtractor()
 
     @Test
-    fun `Should extract body height from EHR`() {
+    fun `Should extract body weight from EHR`() {
         val results = extractor.extract(EHR_PATIENT_RECORD)
         assertThat(results.extracted).containsExactly(
-            BodyHeight(
+            BodyWeight(
                 date = DATE,
                 value = VALUE,
                 unit = UNIT,
@@ -47,9 +47,9 @@ class ProvidedBodyHeightExtractorTest {
     @Test
     fun `Should throw IllegalArgumentException when the unit is not centimeters`() {
         val record = EHR_PATIENT_RECORD.copy(measurements = EHR_PATIENT_RECORD.measurements.map { it.copy(unit = "wrong") })
-        Assertions.assertThatIllegalArgumentException()
+        assertThatIllegalArgumentException()
             .isThrownBy { extractor.extract(record) }
-            .withMessage("Unit of body height is not centimeters")
+            .withMessage("Unit of body weight is not Kilograms")
     }
 
     @Test
@@ -57,7 +57,7 @@ class ProvidedBodyHeightExtractorTest {
         val record = EHR_PATIENT_RECORD.copy(measurements = EHR_PATIENT_RECORD.measurements.map { it.copy(value = 300.0) })
         val results = extractor.extract(record)
         assertThat(results.extracted).containsExactly(
-            BodyHeight(
+            BodyWeight(
                 date = DATE,
                 value = 300.0,
                 unit = UNIT,

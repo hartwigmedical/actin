@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.curation.extraction
 
 import com.hartwig.actin.clinical.curation.extraction.BooleanValueParser.isTrue
+import com.hartwig.actin.clinical.curation.extraction.BooleanValueParser.isUnknown
 import com.hartwig.actin.clinical.curation.extraction.BooleanValueParser.parseBoolean
 import com.hartwig.actin.util.Either.Left
 import com.hartwig.actin.util.Either.Right
@@ -35,6 +36,14 @@ class BooleanValueParserTest {
         assertThat(isTrue(TRUE_INPUT)).isTrue
         assertThat(isTrue(FALSE_INPUT)).isFalse
         assertThat(isTrue(UNEXPECTED_INPUT)).isFalse
+    }
+
+    @Test
+    fun `Should identify if text represents an unknown`() {
+        assertThat(isUnknown(UNCERTAIN_INPUT)).isTrue
+        assertThat(isUnknown(TRUE_INPUT)).isFalse
+        assertThat(isUnknown(FALSE_INPUT)).isFalse
+        assertThat(isUnknown(UNEXPECTED_INPUT)).isFalse
     }
 
     private fun assertExpectedExtraction(input: String, expected: Boolean?) {
