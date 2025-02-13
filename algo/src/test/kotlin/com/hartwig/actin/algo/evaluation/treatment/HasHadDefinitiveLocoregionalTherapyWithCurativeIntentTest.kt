@@ -38,7 +38,7 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
     @Test
     fun `Should PASS when treatment contains a radiotherapy or surgery with curative intent`() {
         val radiotherapyCurative = generatePatientRecord(radiotherapy, setOf(Intent.CURATIVE))
-        val surgeryCurative = generatePatientRecord(radiotherapy, setOf(Intent.CURATIVE))
+        val surgeryCurative = generatePatientRecord(surgery, setOf(Intent.CURATIVE))
         assertEvaluation(
             EvaluationResult.PASS,
             HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(radiotherapyCurative)
@@ -90,7 +90,7 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
     }
 
     @Test
-    fun `Return PASS if there is are multiple locomotive treatments that are CURATIVE, non CURATIVE, and null`() {
+    fun `Return PASS if there is are multiple locoregional treatments that are CURATIVE, non CURATIVE, and null`() {
         val multiTreatmentTestCase = withTreatmentHistory(
             listOf(
                 TreatmentTestFactory.treatmentHistoryEntry(
