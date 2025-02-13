@@ -79,10 +79,25 @@ class HotspotComparisonApplication(private val config: HotspotComparisonConfig) 
         val path = Paths.forceTrailingFileSeparator(directory)
         val file = "$path$id.hotspotComparison"
         LOGGER.info("Writing hotspot comparison to {}", file)
-        val writer = BufferedWriter(FileWriter(file))
-        writer.write("gene\tchromosome\tposition\tref\talt\ttype\tcodingImpact\tproteinImpact\tisHotspotOrange\tisHotspotServe\n")
-        hotspots.forEach { writer.write(it.toString() + "\n") }
-        writer.close()
+        BufferedWriter(FileWriter(file)).use { writer ->
+            writer.write("gene\tchromosome\tposition\tref\talt\ttype\tcodingImpact\tproteinImpact\tisHotspotOrange\tisHotspotServe\n")
+            hotspots.forEach { writer.write(toTabSeparatedString(it) + "\n") }
+        }
+    }
+
+    private fun toTabSeparatedString(hotspot: AnnotatedHotspot): String {
+        return listOf(
+            hotspot.gene,
+            hotspot.chromosome,
+            hotspot.position,
+            hotspot.ref,
+            hotspot.alt,
+            hotspot.type,
+            hotspot.codingImpact,
+            hotspot.proteinImpact,
+            hotspot.isHotspotOrange,
+            hotspot.isHotspotServe
+        ).joinToString("\t")
     }
 
     private fun selectForRefGenomeVersion(serveDatabase: ServeDatabase, refGenomeVersion: RefGenomeVersion): ServeRecord {
