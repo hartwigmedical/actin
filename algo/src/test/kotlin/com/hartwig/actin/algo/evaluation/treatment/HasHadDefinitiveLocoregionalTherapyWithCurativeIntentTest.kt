@@ -37,16 +37,13 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
 
     @Test
     fun `Should PASS when treatment contains a radiotherapy or surgery with curative intent`() {
-        val radiotherapyCurative = generatePatientRecord(radiotherapy, setOf(Intent.CURATIVE))
-        val surgeryCurative = generatePatientRecord(surgery, setOf(Intent.CURATIVE))
-        assertEvaluation(
-            EvaluationResult.PASS,
-            HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(radiotherapyCurative)
-        )
-        assertEvaluation(
-            EvaluationResult.PASS,
-            HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(surgeryCurative)
-        )
+        listOf(radiotherapy, surgery).forEach { treatment ->
+            val patientRecord = generatePatientRecord(treatment, setOf(Intent.CURATIVE))
+            assertEvaluation(
+                EvaluationResult.PASS,
+                HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(patientRecord)
+            )
+        }
     }
 
 
@@ -62,23 +59,20 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
 
     @Test
     fun `Should be UNDETERMINED when treatment contains radiotherapy or surgery without curative intent`() {
-        val radiotherapyNotCurative = generatePatientRecord(radiotherapy, setOf(Intent.ADJUVANT))
-        val surgeryNotCurative = generatePatientRecord(radiotherapy, setOf(Intent.ADJUVANT))
-        assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(radiotherapyNotCurative)
-        )
-        assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(surgeryNotCurative)
-        )
+        listOf(radiotherapy, surgery).forEach { treatment ->
+            val patientRecord = generatePatientRecord(treatment, setOf(Intent.ADJUVANT))
+            assertEvaluation(
+                EvaluationResult.UNDETERMINED,
+                HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(patientRecord)
+            )
+        }
     }
 
 
     @Test
     fun `Should be UNDETERMINED when treatment contains radiotherapy or surgery with NULL or empty list of intent`() {
         val radiotherapyIntentNull = generatePatientRecord(radiotherapy, null)
-        val surgeryIntentEmpty = generatePatientRecord(radiotherapy, emptySet())
+        val surgeryIntentEmpty = generatePatientRecord(surgery, emptySet())
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(radiotherapyIntentNull)
