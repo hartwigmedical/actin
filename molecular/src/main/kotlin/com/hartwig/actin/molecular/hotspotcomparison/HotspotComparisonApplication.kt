@@ -66,7 +66,7 @@ class HotspotComparisonApplication(private val config: HotspotComparisonConfig) 
 
             LOGGER.info("Hotspot comparison DONE!")
             LOGGER.info(
-                "{} hotspot(s) according to ORANGE. {} hotspot(s) according to CKB. {} hotspot(s) different",
+                "{} hotspot(s) according to ORANGE. {} hotspot(s) according to SERVE. {} hotspot(s) different",
                 hotspots.count { it.isHotspotOrange },
                 hotspots.count { it.isHotspotServe },
                 hotspots.count { !(it.isHotspotOrange && it.isHotspotServe) }
