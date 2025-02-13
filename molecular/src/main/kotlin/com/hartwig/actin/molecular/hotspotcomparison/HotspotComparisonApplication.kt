@@ -7,6 +7,7 @@ import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.actin.molecular.panel.isHotspot
 import com.hartwig.actin.util.Paths
 import com.hartwig.hmftools.datamodel.OrangeJson
+import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.hmftools.datamodel.purple.HotspotType
 import com.hartwig.hmftools.datamodel.purple.PurpleVariant
@@ -36,8 +37,20 @@ class HotspotComparisonApplication(private val config: HotspotComparisonConfig) 
 
         val orange = OrangeJson.getInstance().read(config.orangeJson)
         val serveRecord = selectForRefGenomeVersion(serveDatabase, fromOrangeRefGenomeVersion(orange.refGenomeVersion()))
+        val hotspots = annotateHotspots(orange, serveRecord)
 
-        val hotspots = orange.purple().allSomaticVariants().mapNotNull { variant ->
+        LOGGER.info("Hotspot comparison DONE!")
+        LOGGER.info(
+            "{} hotspot(s) according to ORANGE. {} hotspot(s) according to SERVE. {} hotspot(s) different",
+            hotspots.count { it.isHotspotOrange },
+            hotspots.count { it.isHotspotServe },
+            hotspots.count { !(it.isHotspotOrange && it.isHotspotServe) }
+        )
+        write(config.outputDirectory, orange.sampleId(), hotspots)
+    }
+
+    fun annotateHotspots(orange: OrangeRecord, serveRecord: ServeRecord): List<AnnotatedHotspot> {
+        return orange.purple().allSomaticVariants().mapNotNull { variant ->
             val criteria = createVariantCriteria(variant)
             val knownEventResolver = KnownEventResolverFactory.create(serveRecord.knownEvents())
             val serveGeneAlteration = knownEventResolver.resolveForVariant(criteria)
@@ -59,15 +72,6 @@ class HotspotComparisonApplication(private val config: HotspotComparisonConfig) 
                 null
             }
         }
-
-        LOGGER.info("Hotspot comparison DONE!")
-        LOGGER.info(
-            "{} hotspot(s) according to ORANGE. {} hotspot(s) according to SERVE. {} hotspot(s) different",
-            hotspots.count { it.isHotspotOrange },
-            hotspots.count { it.isHotspotServe },
-            hotspots.count { !(it.isHotspotOrange && it.isHotspotServe) }
-        )
-        write(config.outputDirectory, orange.sampleId(), hotspots)
     }
 
     private fun createVariantCriteria(variant: PurpleVariant) =
