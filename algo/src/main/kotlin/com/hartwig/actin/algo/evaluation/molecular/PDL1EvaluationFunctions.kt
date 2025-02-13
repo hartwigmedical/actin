@@ -34,7 +34,7 @@ object PDL1EvaluationFunctions {
                 } else {
                     evaluateVersusMinValue(roundedScore, ihcTest.scoreValuePrefix, pdl1Reference)
                 }
-            } ?: evaluateNegativeOrPositiveTestScore(ihcTest, pdl1Reference, evaluateMaxPDL1)
+            } ?: evaluateNegativeOrPositiveTestScore(ihcTest, pdl1Reference, evaluateMaxPDL1, isLungCancer)
         }.toSet()
 
         val comparatorMessage = if (evaluateMaxPDL1) "below maximum of" else "above minimum of"
@@ -82,16 +82,18 @@ object PDL1EvaluationFunctions {
         ihcTest: PriorIHCTest,
         pdl1Reference: Double,
         evaluateMaxPDL1: Boolean,
+        isLungCancer: Boolean?
     ): EvaluationResult? {
         val result = classifyIhcTest(ihcTest)
         val cpsWithRefEqualAbove10 = ihcTest.measure == "CPS" && pdl1Reference >= 10
-        val tpsWithRefEqualAbove1 = ihcTest.measure == "TPS" && pdl1Reference >= 1
+        val hasTPSTest = ihcTest.measure == "TPS" || isLungCancer == true
+        val tpsWithRefEqualAbove1 = hasTPSTest && pdl1Reference >= 1
 
         return when {
             evaluateMaxPDL1 && result == TestResult.NEGATIVE && (tpsWithRefEqualAbove1 || cpsWithRefEqualAbove10) -> EvaluationResult.PASS
 
             !evaluateMaxPDL1 && result == TestResult.POSITIVE && pdl1Reference == 1.0 &&
-                    (ihcTest.measure == "TPS" || ihcTest.measure == "CPS") -> EvaluationResult.PASS
+                    (hasTPSTest || ihcTest.measure == "CPS") -> EvaluationResult.PASS
 
             !evaluateMaxPDL1 && result == TestResult.NEGATIVE && (tpsWithRefEqualAbove1 || cpsWithRefEqualAbove10) -> EvaluationResult.FAIL
 
