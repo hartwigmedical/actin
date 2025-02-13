@@ -16,7 +16,7 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntent : EvaluationFunction
         val locoregionalTherapyIntents = locoregionalTherapyHistory.flatMap { it.intents.orEmpty() }
 
         return when (Intent.CURATIVE in locoregionalTherapyIntents) {
-            true -> EvaluationFactory.undetermined("Patient has received locoregional therapy with curative intent")
+            true -> EvaluationFactory.pass("Patient has received locoregional therapy with curative intent")
             else -> EvaluationFactory.undetermined("Undetermined if patient has had locoregional therapy with curative intent")
         }
 
