@@ -20,7 +20,7 @@ class HasLimitedBilirubinPercentageOfTotal(private val maxPercentage: Double, pr
                 "Bilirubin percentage of total bilirubin undetermined (no recent total bilirubin measurement)"
             )
         }
-        val messageStart = labMeasurement.display().replaceFirstChar { it.uppercase() } + " as percentage of " + mostRecentTotal.measurement.code
+        val messageStart = labMeasurement.display().replaceFirstChar { it.uppercase() } + " as percentage of " + mostRecentTotal.measurement.display
         return if ((100 * (labValue.value / mostRecentTotal.value)).compareTo(maxPercentage) <= 0) {
             EvaluationFactory.recoverablePass("$messageStart below max of $maxPercentage%")
         } else {
