@@ -26,7 +26,7 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
         )
     }
 
-    private fun test(patientRecord: PatientRecord): Evaluation {
+    private fun evaluate(patientRecord: PatientRecord): Evaluation {
         return HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(patientRecord)
     }
 
@@ -44,7 +44,7 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
             val patientRecord = generatePatientRecord(treatment, setOf(Intent.CURATIVE))
             assertEvaluation(
                 EvaluationResult.PASS,
-                test(patientRecord)
+                evaluate(patientRecord)
             )
         }
     }
@@ -54,7 +54,7 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
         val chemotherapyCurative = generatePatientRecord(chemotherapy, setOf(Intent.CURATIVE))
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            test(chemotherapyCurative)
+            evaluate(chemotherapyCurative)
         )
     }
 
@@ -65,15 +65,15 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
         val surgeryNonCurative = generatePatientRecord(surgery, setOf(Intent.ADJUVANT))
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            test(radiotherapyIntentNull)
+            evaluate(radiotherapyIntentNull)
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            test(surgeryNonCurative)
+            evaluate(surgeryNonCurative)
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            test(radiotherapyIntentListEmpty)
+            evaluate(radiotherapyIntentListEmpty)
         )
     }
 
@@ -97,7 +97,7 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            test(multiTreatmentTestCase)
+            evaluate(multiTreatmentTestCase)
         )
     }
 }
