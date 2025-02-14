@@ -72,7 +72,8 @@
               {
                 "pred": "hasExactSynonym",
                 "val": "Decubitus ulcer any site",
-                "xrefs": []
+                "xrefs": [],
+                "synonymType": "synonymType"
               },
               {
                 "pred": "hasExactSynonym",

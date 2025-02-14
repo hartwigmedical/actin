@@ -151,15 +151,18 @@ object DoidJson {
             logicalDefinitionAxiomsChecker.check(logicalDefinitionAxiom)
 
             val restrictionChecker: JsonDatamodelChecker = DatamodelCheckerFactory.restrictionChecker()
-            val restrictions = array(logicalDefinitionAxiom, "restrictions").filter(JsonElement::isJsonObject)
-                .map { restrictionElement ->
+
+            val restrictions = logicalDefinitionAxiom.takeIf { it.has("restrictions") }
+                ?.let { array(it, "restrictions") }
+                ?.filter(JsonElement::isJsonObject)
+                ?.map { restrictionElement ->
                     val restriction: JsonObject = restrictionElement.asJsonObject
                     restrictionChecker.check(restriction)
                     Restriction(
                         propertyId = string(restriction, "propertyId"),
                         fillerId = string(restriction, "fillerId")
                     )
-                }
+                } ?: emptyList()
 
             LogicalDefinitionAxioms(
                 definedClassId = string(logicalDefinitionAxiom, "definedClassId"),
@@ -233,7 +236,8 @@ object DoidJson {
             Synonym(
                 pred = string(synonym, "pred"),
                 `val` = string(synonym, "val"),
-                xrefs = stringList(synonym, "xrefs")
+                xrefs = stringList(synonym, "xrefs"),
+                synonymType = optionalString(synonym, "synonymType")
             )
         }
     }

@@ -61,7 +61,7 @@ class DoidJsonTest {
 
         assertThat(metadata.synonyms).containsExactly(
             Synonym(
-                "hasExactSynonym", "carcinoma in situ of respiratory tract (disorder)", emptyList()
+                "hasExactSynonym", "carcinoma in situ of respiratory tract (disorder)", emptyList(), null
             )
         )
 
@@ -98,11 +98,11 @@ class DoidJsonTest {
         )
 
         assertThat(metadata.synonyms).containsExactly(
-            Synonym("hasExactSynonym", "Decubitus ulcer any site", emptyList()),
-            Synonym("hasExactSynonym", "pressure ulcer", emptyList()),
-            Synonym("hasExactSynonym", "pressure sores", emptyList()),
-            Synonym("hasExactSynonym", "Decubitus (pressure) ulcer", emptyList()),
-            Synonym("hasRelatedSynonym", "bedsore", emptyList())
+            Synonym("hasExactSynonym", "Decubitus ulcer any site", emptyList(), "synonymType"),
+            Synonym("hasExactSynonym", "pressure ulcer", emptyList(), null),
+            Synonym("hasExactSynonym", "pressure sores", emptyList(), null),
+            Synonym("hasExactSynonym", "Decubitus (pressure) ulcer", emptyList(), null),
+            Synonym("hasRelatedSynonym", "bedsore", emptyList(), null)
         )
 
         assertThat(metadata.basicPropertyValues).containsExactly(
