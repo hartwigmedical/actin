@@ -2,49 +2,43 @@ package com.hartwig.actin.clinical.feed.standard.extraction
 
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
-import com.hartwig.actin.clinical.curation.CurationWarning
-import com.hartwig.actin.clinical.curation.translation.LaboratoryIdentifiers
-import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
+import com.hartwig.actin.clinical.curation.CurationDatabase
+import com.hartwig.actin.clinical.curation.CurationResponse
+import com.hartwig.actin.clinical.curation.config.LabMeasurementConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.feed.standard.ProvidedLabUnit
 import com.hartwig.actin.clinical.feed.standard.ProvidedLabValue
 import com.hartwig.actin.clinical.feed.standard.ProvidedPatientRecord
+import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabUnit
 import com.hartwig.actin.datamodel.clinical.LabValue
 
-class StandardLabValuesExtractor(private val labTranslation: TranslationDatabase<LaboratoryIdentifiers>) :
+class StandardLabValuesExtractor(private val labCuration: CurationDatabase<LabMeasurementConfig>) :
     StandardDataExtractor<List<LabValue>> {
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<LabValue>> {
-        return ehrPatientRecord.labValues.map {
-            val translation = labTranslation.find(LaboratoryIdentifiers(it.measureCode, it.measure))
-            val ehrLabValue = labValue(it)
-            if (translation == null) {
-                val warning = CurationWarning(
-                    patientId = ehrPatientRecord.patientDetails.hashedId,
-                    category = CurationCategory.LABORATORY_TRANSLATION,
-                    feedInput = "${it.measureCode} | ${it.measure}",
-                    message = "Could not find laboratory translation for lab value with code '${it.measureCode}' and name '${it.measure}'"
-                )
-                ExtractionResult(
-                    listOf(ehrLabValue), CurationExtractionEvaluation(warnings = setOf(warning))
-                )
-            } else {
-                val newLabValue = ehrLabValue.copy(name = translation.translated.name, code = translation.translated.code)
-                ExtractionResult(listOf(newLabValue), CurationExtractionEvaluation(laboratoryEvaluatedInputs = setOf(translation)))
+        return ehrPatientRecord.labValues.map { providedLabValue ->
+            val curationResponse = CurationResponse.createFromConfigs(
+                labCuration.find("${providedLabValue.measureCode} | ${providedLabValue.measure}"),
+                ehrPatientRecord.patientDetails.hashedId,
+                CurationCategory.LABORATORY,
+                "${providedLabValue.measureCode} | ${providedLabValue.measure}",
+                "laboratory"
+            )
+            val labValue = curationResponse.config()?.takeIf { !it.ignore }?.let {
+                labValue(providedLabValue, it.labMeasurement)
             }
+            ExtractionResult(listOfNotNull(labValue), curationResponse.extractionEvaluation)
+        }.fold(ExtractionResult(emptyList(), CurationExtractionEvaluation()))
+        { acc, result ->
+            ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
         }
-            .fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, result ->
-                ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
-            }
-
     }
 
-    private fun labValue(it: ProvidedLabValue) = LabValue(
+    private fun labValue(it: ProvidedLabValue, labMeasurement: LabMeasurement) = LabValue(
         date = it.evaluationTime.toLocalDate(),
-        name = it.measure,
+        measurement = labMeasurement,
         unit = labUnit(it),
         value = it.value,
-        code = it.measureCode,
         comparator = it.comparator ?: "",
         refLimitUp = it.refUpperBound,
         refLimitLow = it.refLowerBound

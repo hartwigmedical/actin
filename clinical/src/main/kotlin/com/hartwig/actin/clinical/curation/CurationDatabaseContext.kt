@@ -11,6 +11,8 @@ import com.hartwig.actin.clinical.curation.config.IHCTestConfigFactory
 import com.hartwig.actin.clinical.curation.config.InfectionConfig
 import com.hartwig.actin.clinical.curation.config.InfectionConfigFactory
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfigFactory
+import com.hartwig.actin.clinical.curation.config.LabMeasurementConfig
+import com.hartwig.actin.clinical.curation.config.LabMeasurementConfigFactory
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfigFactory
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig
@@ -35,7 +37,6 @@ import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluati
 import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.DosageUnitTranslationFactory
-import com.hartwig.actin.clinical.curation.translation.LaboratoryTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.ToxicityTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabaseReader
@@ -56,7 +57,7 @@ data class CurationDatabaseContext(
     val medicationNameCuration: CurationDatabase<MedicationNameConfig>,
     val medicationDosageCuration: CurationDatabase<MedicationDosageConfig>,
     val administrationRouteTranslation: TranslationDatabase<String>,
-    val laboratoryTranslation: TranslationDatabase<String>,
+    val laboratoryCuration: CurationDatabase<LabMeasurementConfig>,
     val toxicityTranslation: TranslationDatabase<String>,
     val bloodTransfusionTranslation: TranslationDatabase<String>,
     val dosageUnitTranslation: TranslationDatabase<String>,
@@ -77,11 +78,11 @@ data class CurationDatabaseContext(
             sequencingTestCuration,
             medicationNameCuration,
             medicationDosageCuration,
-            surgeryNameCuration
+            surgeryNameCuration,
+            laboratoryCuration
         ).flatMap { it.reportUnusedConfig(extractionEvaluations) }.toSet()
 
         val unusedTranslations = listOf(
-            laboratoryTranslation,
             administrationRouteTranslation,
             toxicityTranslation,
             dosageUnitTranslation
@@ -104,7 +105,8 @@ data class CurationDatabaseContext(
         sequencingTestCuration.validationErrors,
         medicationNameCuration.validationErrors,
         medicationDosageCuration.validationErrors,
-        surgeryNameCuration.validationErrors
+        surgeryNameCuration.validationErrors,
+        laboratoryCuration.validationErrors
     ).flatten().toSet()
 
 
@@ -191,11 +193,11 @@ data class CurationDatabaseContext(
                 AdministrationRouteTranslationFactory(),
                 CurationCategory.ADMINISTRATION_ROUTE_TRANSLATION
             ) { it.administrationRouteEvaluatedInputs },
-            laboratoryTranslation = TranslationDatabaseReader.read(
+            laboratoryCuration = CurationDatabaseReader.read(
                 curationDir,
-                TranslationDatabaseReader.LABORATORY_TRANSLATION_TSV,
-                LaboratoryTranslationFactory(),
-                CurationCategory.LABORATORY_TRANSLATION
+                CurationDatabaseReader.LABORATORY_TSV,
+                LabMeasurementConfigFactory(),
+                CurationCategory.LABORATORY
             ) { it.laboratoryEvaluatedInputs },
             toxicityTranslation = TranslationDatabaseReader.read(
                 curationDir,

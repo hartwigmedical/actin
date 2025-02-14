@@ -25,8 +25,7 @@ internal object LabTestFactory {
     ): LabValue {
         return LabValue(
             date = date,
-            name = "",
-            code = measurement?.code ?: "",
+            measurement = measurement ?: LabMeasurement.UNKNOWN,
             comparator = "",
             value = value,
             unit = measurement?.defaultUnit ?: LabUnit.NONE,

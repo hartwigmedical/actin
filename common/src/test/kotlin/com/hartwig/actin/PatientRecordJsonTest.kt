@@ -24,8 +24,7 @@ class PatientRecordJsonTest {
             labValues = listOf(
                 LabValue(
                     date = LocalDate.now(),
-                    code = LabMeasurement.ASPARTATE_AMINOTRANSFERASE.code,
-                    name = "Aspartate aminotransferase",
+                    measurement = LabMeasurement.ASPARTATE_AMINOTRANSFERASE,
                     comparator = "",
                     value = Double.NaN,
                     unit = LabMeasurement.ASPARTATE_AMINOTRANSFERASE.defaultUnit,

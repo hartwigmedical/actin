@@ -16,6 +16,7 @@ enum class LabUnit(private val display: String) : Displayable {
     KILOGRAMS_PER_LITER("kg/L"),
     MICROGRAMS_PER_GRAM("µg/g"),
     GRAMS("g"),
+    FEMTOMOLES("fmol"),
     PICOMOLES_PER_LITER("pmol/L"),
     NANOMOLES_PER_LITER("nmol/L"),
     MICROMOLES_PER_LITER("umol/L"),

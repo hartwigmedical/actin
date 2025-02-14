@@ -1,7 +1,6 @@
 package com.hartwig.actin.clinical.curation.extraction
 
 import com.hartwig.actin.clinical.curation.CurationWarning
-import com.hartwig.actin.clinical.curation.translation.LaboratoryIdentifiers
 import com.hartwig.actin.clinical.curation.translation.Translation
 
 data class CurationExtractionEvaluation(
@@ -19,7 +18,7 @@ data class CurationExtractionEvaluation(
     val medicationNameEvaluatedInputs: Set<String> = emptySet(),
     val medicationDosageEvaluatedInputs: Set<String> = emptySet(),
     val administrationRouteEvaluatedInputs: Set<Translation<String>> = emptySet(),
-    val laboratoryEvaluatedInputs: Set<Translation<String>> = emptySet(),
+    val laboratoryEvaluatedInputs: Set<String> = emptySet(),
     val toxicityTranslationEvaluatedInputs: Set<Translation<String>> = emptySet(),
     val dosageUnitEvaluatedInputs: Set<Translation<String>> = emptySet(),
     val surgeryTranslationEvaluatedInputs: Set<String> = emptySet()

@@ -10,7 +10,7 @@ import java.time.LocalDate
 
 internal object LabEvaluation {
 
-    val REF_LIMIT_UP_OVERRIDES = mapOf(LabMeasurement.INTERNATIONAL_NORMALIZED_RATIO.code to 1.1)
+    val REF_LIMIT_UP_OVERRIDES = mapOf(LabMeasurement.INTERNATIONAL_NORMALIZED_RATIO to 1.1)
 
     const val LAB_VALUE_NEGATIVE_MARGIN_OF_ERROR = 0.95
     const val LAB_VALUE_POSITIVE_MARGIN_OF_ERROR = 1.05
@@ -91,7 +91,7 @@ internal object LabEvaluation {
     }
 
     private fun retrieveRefLimitUp(labValue: LabValue): Double? {
-        return labValue.refLimitUp ?: REF_LIMIT_UP_OVERRIDES[labValue.code]
+        return labValue.refLimitUp ?: REF_LIMIT_UP_OVERRIDES[labValue.measurement]
     }
 
     private fun canBeDetermined(value: Double, comparator: String?, refValue: Double): Boolean {

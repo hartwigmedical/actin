@@ -1,0 +1,6 @@
+input	labMeasurement
+AC | ACTH	ADRENOCORTICOTROPIC_HORMONE
+Hb | Hemoglobine	Hemoglobin
+Plt | Trombocyten	THROMBOCYTES_ABS
+dc_Lymfo | Lymfocyten	LYMPHOCYTES_ABS
+bg_O2Sgem | O2-Saturatie gemeten	O2_SATURATION_BG

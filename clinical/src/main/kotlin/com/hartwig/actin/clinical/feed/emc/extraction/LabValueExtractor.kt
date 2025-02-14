@@ -2,42 +2,38 @@ package com.hartwig.actin.clinical.feed.emc.extraction
 
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
+import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
-import com.hartwig.actin.clinical.curation.CurationWarning
+import com.hartwig.actin.clinical.curation.CurationResponse
+import com.hartwig.actin.clinical.curation.config.LabMeasurementConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.feed.emc.FeedParseFunctions
 import com.hartwig.actin.clinical.feed.emc.lab.LabEntry
 import com.hartwig.actin.clinical.feed.emc.lab.LabUnitResolver
-import com.hartwig.actin.clinical.sort.LabValueDescendingDateComparator
-import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabValue
 import org.apache.logging.log4j.LogManager
 
-class LabValueExtractor(private val laboratoryTranslation: TranslationDatabase<String>) {
+class LabValueExtractor(private val laboratoryCuration: CurationDatabase<LabMeasurementConfig>) {
 
-    private val LOGGER = LogManager.getLogger(LabValueExtractor::class.java)
+    private val logger = LogManager.getLogger(LabValueExtractor::class.java)
 
-    fun extract(patientId: String, rawValues: List<LabEntry>): ExtractionResult<List<LabValue>> {
-        val extractedValues = rawValues.map { entry ->
-            val trimmedName = entry.codeDisplayOriginal.trim { it <= ' ' }
-            val translation = laboratoryTranslation.find("${entry.codeCodeOriginal} | ${entry.codeDisplayOriginal}")
-            val limits = extractLimits(entry.referenceRangeText)
+    fun extract(patientId: String, entries: List<LabEntry>): ExtractionResult<List<LabValue>> {
+        return entries.map { entry ->
             val value = entry.valueQuantityValue
+            val limits = extractLimits(entry.referenceRangeText)
             val isOutsideRef = if (limits.lower != null || limits.upper != null) {
                 limits.lower != null && value < limits.lower || limits.upper != null && value > limits.upper
             } else null
-            if (translation == null) {
-                val warning = CurationWarning(
-                    patientId = patientId,
-                    category = CurationCategory.LABORATORY_TRANSLATION,
-                    feedInput = "${entry.codeCodeOriginal} | $trimmedName",
-                    message = "Could not find laboratory translation for lab value with code '${entry.codeCodeOriginal}' and name '$trimmedName'"
-                )
-                ExtractionResult(emptyList(), CurationExtractionEvaluation(warnings = setOf(warning)))
-            } else {
-                val newLabValue = LabValue(
-                    measurement = LabMeasurement.PSA,
+            val curationResponse = CurationResponse.createFromConfigs(
+                laboratoryCuration.find("${entry.codeCodeOriginal} | ${entry.codeDisplayOriginal}"),
+                patientId,
+                CurationCategory.LABORATORY,
+                "${entry.codeCodeOriginal} | ${entry.codeDisplayOriginal}",
+                "laboratory"
+            )
+            val curatedLab = curationResponse.config()?.takeIf { !it.ignore }?.let {
+                LabValue(
+                    measurement = it.labMeasurement,
                     date = entry.effectiveDateTime,
                     comparator = entry.valueQuantityComparator,
                     value = value,
@@ -46,14 +42,12 @@ class LabValueExtractor(private val laboratoryTranslation: TranslationDatabase<S
                     refLimitUp = limits.upper,
                     isOutsideRef = isOutsideRef
                 )
-                ExtractionResult(listOf(newLabValue), CurationExtractionEvaluation(laboratoryEvaluatedInputs = setOf(translation)))
             }
+            ExtractionResult(listOfNotNull(curatedLab), curationResponse.extractionEvaluation)
         }
-            .fold(ExtractionResult(emptyList<LabValue>(), CurationExtractionEvaluation())) { acc, result ->
-                ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
+            .fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, extractionResult ->
+                ExtractionResult(acc.extracted + extractionResult.extracted, acc.evaluation + extractionResult.evaluation)
             }
-
-        return extractedValues.copy(extracted = extractedValues.extracted.sortedWith(LabValueDescendingDateComparator()))
     }
 
     private fun extractLimits(referenceRangeText: String): Limits {
@@ -79,7 +73,7 @@ class LabValueExtractor(private val laboratoryTranslation: TranslationDatabase<S
 
             else -> {
                 if (referenceRangeText.isNotEmpty()) {
-                    LOGGER.warn("Could not parse lab value referenceRangeText '{}'", referenceRangeText)
+                    logger.warn("Could not parse lab value referenceRangeText '{}'", referenceRangeText)
                 }
                 Limits(null, null)
             }
@@ -98,6 +92,6 @@ class LabValueExtractor(private val laboratoryTranslation: TranslationDatabase<S
 
     companion object {
         fun create(curationDatabaseContext: CurationDatabaseContext) =
-            LabValueExtractor(laboratoryTranslation = curationDatabaseContext.laboratoryTranslation)
+            LabValueExtractor(laboratoryCuration = curationDatabaseContext.laboratoryCuration)
     }
 }

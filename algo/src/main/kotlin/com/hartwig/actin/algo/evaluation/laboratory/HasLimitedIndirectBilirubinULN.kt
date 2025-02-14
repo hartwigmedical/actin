@@ -15,7 +15,7 @@ class HasLimitedIndirectBilirubinULN(private val maxULNFactor: Double, private v
 
     override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
         val interpretation = LabInterpreter.interpret(record.labValues)
-        check(labValue.code == LabMeasurement.DIRECT_BILIRUBIN.code) { "Indirect bilirubin must take direct bilirubin as input" }
+        check(labValue.measurement == LabMeasurement.DIRECT_BILIRUBIN) { "Indirect bilirubin must take direct bilirubin as input" }
         val mostRecentTotal = interpretation.mostRecentValue(LabMeasurement.TOTAL_BILIRUBIN)
         if (!LabEvaluation.isValid(mostRecentTotal, LabMeasurement.TOTAL_BILIRUBIN, minValidDate)) {
             return EvaluationFactory.recoverableUndetermined("Indirect bilirubin undetermined (no recent total bilirubin measurement)")

@@ -18,7 +18,7 @@ class CurationDatabaseContextTest {
 
     @Test
     fun `Should combine all databases validation errors`() {
-        val expectedUnusedConfig = IntRange(0, 13).map {
+        val expectedUnusedConfig = IntRange(0, 14).map {
             CurationConfigValidationError(NOT_IMPORTANT, NOT_IMPORTANT, NOT_IMPORTANT, it.toString(), NOT_IMPORTANT)
         }
         val context = CurationDatabaseContext(
@@ -36,11 +36,11 @@ class CurationDatabaseContextTest {
             medicationNameCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[11]),
             medicationDosageCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[12]),
             administrationRouteTranslation = mockk(),
-            laboratoryTranslation = mockk(),
             toxicityTranslation = mockk(),
             bloodTransfusionTranslation = mockk(),
             dosageUnitTranslation = mockk(),
-            surgeryNameCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[13])
+            surgeryNameCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[13]),
+            laboratoryCuration =  curationDatabaseWithUnusedConfig(expectedUnusedConfig[14])
         )
         assertThat(context.validate()).containsExactlyElementsOf(expectedUnusedConfig)
     }
@@ -64,7 +64,7 @@ class CurationDatabaseContextTest {
             medicationNameCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[11]),
             medicationDosageCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[12]),
             administrationRouteTranslation = translationDatabaseWithUnusedConfig(expectedUnusedConfig[13]),
-            laboratoryTranslation = translationDatabaseWithUnusedConfig(expectedUnusedConfig[14]),
+            laboratoryCuration = curationDatabaseWithUnusedConfig(expectedUnusedConfig[14]),
             toxicityTranslation = translationDatabaseWithUnusedConfig(expectedUnusedConfig[15]),
             bloodTransfusionTranslation = bloodTransfusionTranslation,
             dosageUnitTranslation = translationDatabaseWithUnusedConfig(expectedUnusedConfig[16]),

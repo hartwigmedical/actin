@@ -26,7 +26,7 @@ class LabMeasurementEvaluatorTest {
     fun `Should ignore old dates and invalid units`() {
         val measurement = LabMeasurement.ALBUMIN
         val function = LabMeasurementEvaluator(measurement, passingLabEvaluationFunction, TEST_DATE, TEST_DATE)
-        val wrongUnit: LabValue = LabTestFactory.create(value = 0.0, date = TEST_DATE).copy(code = measurement.code)
+        val wrongUnit: LabValue = LabTestFactory.create(value = 0.0, date = TEST_DATE).copy(measurement = measurement)
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(LabTestFactory.withLabValue(wrongUnit)))
         val oldDate: LabValue = LabTestFactory.create(measurement, date = TEST_DATE.minusDays(1))
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(LabTestFactory.withLabValue(oldDate)))

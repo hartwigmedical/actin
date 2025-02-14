@@ -23,14 +23,14 @@ class HasAbnormalElectrolyteLevelsTest {
 
     @Test
     fun `Should pass if one or multiple electrolyte lab values are above ULN`() {
-        labMeasurements.forEach { evaluateLabValues(EvaluationResult.PASS, codesOfMeasurementsAboveRef = setOf(it.code)) }
-        evaluateLabValues(EvaluationResult.PASS, codesOfMeasurementsAboveRef = labMeasurements.map { it.code }.toSet())
+        labMeasurements.forEach { evaluateLabValues(EvaluationResult.PASS, codesOfMeasurementsAboveRef = setOf(it)) }
+        evaluateLabValues(EvaluationResult.PASS, codesOfMeasurementsAboveRef = labMeasurements.map { it }.toSet())
     }
 
     @Test
     fun `Should pass if one or multiple electrolyte lab values are under LLN`() {
-        labMeasurements.forEach { evaluateLabValues(EvaluationResult.PASS, codesOfMeasurementsBelowRef = setOf(it.code)) }
-        evaluateLabValues(EvaluationResult.PASS, codesOfMeasurementsBelowRef = labMeasurements.map { it.code }.toSet())
+        labMeasurements.forEach { evaluateLabValues(EvaluationResult.PASS, codesOfMeasurementsBelowRef = setOf(it)) }
+        evaluateLabValues(EvaluationResult.PASS, codesOfMeasurementsBelowRef = labMeasurements.map { it}.toSet())
     }
 
     @Test
@@ -44,11 +44,11 @@ class HasAbnormalElectrolyteLevelsTest {
 
     private fun evaluateLabValues(
         expected: EvaluationResult,
-        codesOfMeasurementsAboveRef: Set<String> = emptySet(),
-        codesOfMeasurementsBelowRef: Set<String> = emptySet()
+        codesOfMeasurementsAboveRef: Set<LabMeasurement> = emptySet(),
+        codesOfMeasurementsBelowRef: Set<LabMeasurement> = emptySet()
     ) {
         val labValues = labValuesWithinRef.map { labValue ->
-            when (labValue.code) {
+            when (labValue.measurement) {
                 in codesOfMeasurementsAboveRef -> labValue.copy(value = 180.0, isOutsideRef = true)
                 in codesOfMeasurementsBelowRef -> labValue.copy(value = 5.0, isOutsideRef = true)
                 else -> labValue

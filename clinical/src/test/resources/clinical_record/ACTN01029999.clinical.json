@@ -286,8 +286,7 @@
         "month": 6,
         "day": 27
       },
-      "code": "AC2",
-      "name": "Adrenocorticotropic hormone",
+      "measurement": "ADRENOCORTICOTROPIC_HORMONE",
       "comparator": "",
       "value": 5.5,
       "unit": "BILLIONS_PER_LITER",
