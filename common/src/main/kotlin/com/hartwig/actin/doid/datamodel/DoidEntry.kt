@@ -5,8 +5,5 @@ data class DoidEntry(
     val nodes: List<Node>,
     val edges: List<Edge>,
     val metadata: GraphMetadata,
-    val logicalDefinitionAxioms: List<LogicalDefinitionAxioms>? = null,
-    val equivalentNodesSets: List<String>? = null,
-    val domainRangeAxioms: List<String>? = null,
-    val propertyChainAxioms: List<String>? = null
+    val logicalDefinitionAxioms: List<LogicalDefinitionAxioms>? = null
 )

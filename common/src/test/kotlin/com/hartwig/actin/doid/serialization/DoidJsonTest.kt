@@ -36,10 +36,7 @@ class DoidJsonTest {
         assertThat(entry.metadata.subsets).isEmpty()
         assertThat(entry.metadata.xrefs).isEmpty()
         assertThat(entry.metadata.basicPropertyValues).isEmpty()
-        assertThat(entry.equivalentNodesSets).isEmpty()
         assertThat(entry.logicalDefinitionAxioms).isEmpty()
-        assertThat(entry.domainRangeAxioms).isEmpty()
-        assertThat(entry.propertyChainAxioms).isEmpty()
     }
 
     private fun assertNodes(nodes: List<Node>) {

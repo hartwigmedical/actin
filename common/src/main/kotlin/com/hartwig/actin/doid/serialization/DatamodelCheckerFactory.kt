@@ -14,10 +14,7 @@ object DatamodelCheckerFactory {
             "edges",
             "id",
             "meta",
-            "equivalentNodesSets",
-            "logicalDefinitionAxioms",
-            "domainRangeAxioms",
-            "propertyChainAxioms"
+            "logicalDefinitionAxioms"
         )
         return allRequiredDatamodelChecker("Graphs", properties)
     }
@@ -32,12 +29,14 @@ object DatamodelCheckerFactory {
 
     fun graphMetadataChecker(): JsonDatamodelChecker {
         return JsonDatamodelChecker(
-            "GraphMetadata", mapOf("xrefs" to true, "basicPropertyValues" to true, "version" to false, "subsets" to true)
+            "GraphMetadata", mapOf("xrefs" to false, "basicPropertyValues" to true, "version" to false, "subsets" to false)
         )
     }
 
     fun logicalDefinitionAxiomChecker(): JsonDatamodelChecker {
-        return allRequiredDatamodelChecker("LogicalDefinitionAxiom", listOf("definedClassId", "genusIds", "restrictions"))
+        return JsonDatamodelChecker(
+            "LogicalDefinitionAxiom", mapOf("definedClassId" to true, "genusIds" to true, "restrictions" to false)
+        )
     }
 
     fun restrictionChecker(): JsonDatamodelChecker {
@@ -45,11 +44,15 @@ object DatamodelCheckerFactory {
     }
 
     fun synonymChecker(): JsonDatamodelChecker {
-        return allRequiredDatamodelChecker("Synonym", listOf("pred", "val", "xrefs"))
+        return JsonDatamodelChecker(
+            "Synonym", mapOf("pred" to true, "val" to true, "xrefs" to true, "synonymType" to false)
+        )
     }
 
     fun definitionChecker(): JsonDatamodelChecker {
-        return allRequiredDatamodelChecker("Definition", listOf("xrefs", "val"))
+        return JsonDatamodelChecker(
+            "Definition", mapOf("xrefs" to false, "val" to true)
+        )
     }
 
     fun basicPropertyValueChecker(): JsonDatamodelChecker {

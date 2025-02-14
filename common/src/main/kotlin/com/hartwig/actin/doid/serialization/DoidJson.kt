@@ -57,10 +57,7 @@ object DoidJson {
                     nodes = extractNodes(array(graph, "nodes")),
                     edges = extractEdges(array(graph, "edges")),
                     metadata = extractGraphMetadata(`object`(graph, "meta")),
-                    logicalDefinitionAxioms = extractLogicalDefinitionAxioms(array(graph, "logicalDefinitionAxioms")),
-                    equivalentNodesSets = optionalStringList(graph, "equivalentNodesSets"),
-                    domainRangeAxioms = optionalStringList(graph, "domainRangeAxioms"),
-                    propertyChainAxioms = optionalStringList(graph, "propertyChainAxioms")
+                    logicalDefinitionAxioms = extractLogicalDefinitionAxioms(array(graph, "logicalDefinitionAxioms"))
                 )
             }
         }
