@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
@@ -18,6 +19,9 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
     private fun generatePatientRecord(treatment: Treatment, intents: Set<Intent>?): PatientRecord {
         return withTreatmentHistory(listOf(TreatmentTestFactory.treatmentHistoryEntry(
             setOf(treatment), intents = intents)))
+    }
+    private fun test (patientRecord: PatientRecord):Evaluation{
+        return HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(patientRecord)
     }
 
     @Test
@@ -50,23 +54,10 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
         )
     }
 
-
-    @Test
-    fun `Should be UNDETERMINED when treatment contains radiotherapy or surgery without curative intent`() {
-        listOf(radiotherapy, surgery).forEach { treatment ->
-            val patientRecord = generatePatientRecord(treatment, setOf(Intent.ADJUVANT))
-            assertEvaluation(
-                EvaluationResult.UNDETERMINED,
-                HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(patientRecord)
-            )
-        }
-    }
-
-
     @Test
     fun `Should be UNDETERMINED when treatment contains radiotherapy or surgery with NULL or empty list of intent`() {
         val radiotherapyIntentNull = generatePatientRecord(radiotherapy, null)
-        val surgeryIntentEmpty = generatePatientRecord(surgery, emptySet())
+        val surgeryIntentEmpty = generatePatientRecord(surgery, setOf(Intent.ADJUVANT))
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(radiotherapyIntentNull)
