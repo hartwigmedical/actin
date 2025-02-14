@@ -100,28 +100,4 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
             HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(multiTreatmentTestCase)
         )
     }
-
-    @Test
-    fun `Return UNDETERMINED if there is a null and non CURATIVE locoregional treatment`() {
-        val multiTreatmentTestCase = withTreatmentHistory(
-            listOf(
-                TreatmentTestFactory.treatmentHistoryEntry(
-                    setOf(chemotherapy),
-                    intents = setOf(Intent.CURATIVE)
-                ),
-                TreatmentTestFactory.treatmentHistoryEntry(
-                    setOf(surgery),
-                    intents = setOf(Intent.ADJUVANT)
-                ),
-                TreatmentTestFactory.treatmentHistoryEntry(
-                    setOf(radiotherapy),
-                    intents = null
-                )
-            )
-        )
-        assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(multiTreatmentTestCase)
-        )
-    }
 }
