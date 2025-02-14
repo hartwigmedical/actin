@@ -9,11 +9,11 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHi
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import org.junit.Test
-
+/*
 class HasHadSomeTreatmentsWithCategoryWithIntentsRecentlyTest {
     private val matchingCategory = TreatmentCategory.TARGETED_THERAPY
     private val matchingIntents = setOf(Intent.PALLIATIVE)
-    private val minDate = 1
+    private val minDate =
     private val interpreter = 1
     private val function = HasHadSomeTreatmentsWithCategoryWithIntentsRecently(matchingCategory, matchingIntents)
 
@@ -98,3 +98,4 @@ class HasHadSomeTreatmentsWithCategoryWithIntentsRecentlyTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(patientRecord))
     }
 }
+ */

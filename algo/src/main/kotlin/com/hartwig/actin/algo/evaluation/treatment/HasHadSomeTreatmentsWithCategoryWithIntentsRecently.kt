@@ -18,6 +18,10 @@ class HasHadSomeTreatmentsWithCategoryWithIntentsRecently(
     private val interpreter: MedicationStatusInterpreter
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
+        return HasHadSomeTreatmentsWithCategoryWithIntents(category, intentsToFind, minDate).evaluate(record)
+    }
+}
+/*
         val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
             record.oncologicalHistory,
             category, {
@@ -44,9 +48,11 @@ class HasHadSomeTreatmentsWithCategoryWithIntentsRecently(
                 EvaluationFactory.fail("Has not received $intentsList ${category.display()}")
             }
         }
-    }
-}
-/*
+
+
+
+
+
 val evaluation = HasHadSomeTreatmentsWithCategoryWithIntents(category, intentsToFind).evaluate(record)
         return when (evaluation.equals(EvaluationResult.PASS) && true){
             true -> EvaluationFactory.pass(

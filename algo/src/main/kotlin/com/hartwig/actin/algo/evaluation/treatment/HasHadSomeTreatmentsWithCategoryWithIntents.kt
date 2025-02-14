@@ -7,13 +7,22 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
+import java.time.LocalDate
 
-class HasHadSomeTreatmentsWithCategoryWithIntents(private val category: TreatmentCategory, private val intentsToFind: Set<Intent>) :
+class HasHadSomeTreatmentsWithCategoryWithIntents(
+    private val category: TreatmentCategory,
+    private val intentsToFind: Set<Intent>,
+    private val minDate: LocalDate? = null) :
     EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
+        val oncologicalHistory = if(minDate === null){
+                record.oncologicalHistory
+            } else {
+                record.oncologicalHistory.filter {TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minDate, true) }
+            }
         val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
-            record.oncologicalHistory,
+            oncologicalHistory,
             category,
             { historyEntry -> historyEntry.intents?.intersect(intentsToFind)?.isNotEmpty() })
         val intentsList = Format.concatItemsWithOr(intentsToFind)
