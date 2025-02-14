@@ -5,5 +5,5 @@ data class DoidEntry(
     val nodes: List<Node>,
     val edges: List<Edge>,
     val metadata: GraphMetadata,
-    val logicalDefinitionAxioms: List<LogicalDefinitionAxioms>? = null
+    val logicalDefinitionAxioms: List<LogicalDefinitionAxioms>
 )

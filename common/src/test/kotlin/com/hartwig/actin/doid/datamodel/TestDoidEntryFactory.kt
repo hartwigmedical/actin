@@ -7,7 +7,8 @@ object TestDoidEntryFactory {
             id = "TEST-DOID",
             metadata = GraphMetadata(),
             nodes = emptyList(),
-            edges = emptyList()
+            edges = emptyList(),
+            logicalDefinitionAxioms = emptyList()
         )
     }
 }

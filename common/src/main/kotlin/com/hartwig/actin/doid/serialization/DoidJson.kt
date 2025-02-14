@@ -140,10 +140,7 @@ object DoidJson {
         }
     }
 
-    private fun extractLogicalDefinitionAxioms(logicalDefinitionAxiomArray: JsonArray?): List<LogicalDefinitionAxioms>? {
-        if (logicalDefinitionAxiomArray == null) {
-            return null
-        }
+    private fun extractLogicalDefinitionAxioms(logicalDefinitionAxiomArray: JsonArray): List<LogicalDefinitionAxioms> {
         val logicalDefinitionAxiomsChecker: JsonDatamodelChecker = DatamodelCheckerFactory.logicalDefinitionAxiomChecker()
 
         return logicalDefinitionAxiomArray.map { logicalDefinitionAxiomElement ->
@@ -162,7 +159,7 @@ object DoidJson {
                         propertyId = string(restriction, "propertyId"),
                         fillerId = string(restriction, "fillerId")
                     )
-                } ?: emptyList()
+                }
 
             LogicalDefinitionAxioms(
                 definedClassId = string(logicalDefinitionAxiom, "definedClassId"),
@@ -236,7 +233,7 @@ object DoidJson {
             Synonym(
                 pred = string(synonym, "pred"),
                 `val` = string(synonym, "val"),
-                xrefs = stringList(synonym, "xrefs"),
+                xrefs = optionalStringList(synonym, "xrefs"),
                 synonymType = optionalString(synonym, "synonymType")
             )
         }

@@ -45,14 +45,12 @@ object DatamodelCheckerFactory {
 
     fun synonymChecker(): JsonDatamodelChecker {
         return JsonDatamodelChecker(
-            "Synonym", mapOf("pred" to true, "val" to true, "xrefs" to true, "synonymType" to false)
+            "Synonym", mapOf("pred" to true, "val" to true, "xrefs" to false, "synonymType" to false)
         )
     }
 
     fun definitionChecker(): JsonDatamodelChecker {
-        return JsonDatamodelChecker(
-            "Definition", mapOf("xrefs" to false, "val" to true)
-        )
+        return allRequiredDatamodelChecker("Definition", listOf("xrefs", "val"))
     }
 
     fun basicPropertyValueChecker(): JsonDatamodelChecker {
