@@ -16,14 +16,8 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
     private val chemotherapy = TreatmentTestFactory.treatment("Chemotherapy", true, setOf(TreatmentCategory.CHEMOTHERAPY))
 
     private fun generatePatientRecord(treatment: Treatment, intents: Set<Intent>?): PatientRecord {
-        return withTreatmentHistory(
-            listOf(
-                TreatmentTestFactory.treatmentHistoryEntry(
-                    setOf(treatment),
-                    intents = intents
-                )
-            )
-        )
+        return withTreatmentHistory(listOf(TreatmentTestFactory.treatmentHistoryEntry(
+            setOf(treatment), intents = intents)))
     }
 
     @Test
