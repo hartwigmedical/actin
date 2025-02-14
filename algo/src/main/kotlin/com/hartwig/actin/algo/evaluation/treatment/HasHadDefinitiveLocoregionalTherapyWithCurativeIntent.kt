@@ -10,12 +10,11 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 class HasHadDefinitiveLocoregionalTherapyWithCurativeIntent : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val locoregionalTherapyHistory = record.oncologicalHistory.filter { entry ->
+        val locoregionalTherapyHasCurativeIntent:Boolean = record.oncologicalHistory.filter { entry ->
             entry.categories().any { it == TreatmentCategory.RADIOTHERAPY || it == TreatmentCategory.SURGERY }
-        }
-        val locoregionalTherapyIntents = locoregionalTherapyHistory.flatMap { it.intents.orEmpty() }
+        }.any { it.intents?.contains(Intent.CURATIVE) == true }
 
-        return when (Intent.CURATIVE in locoregionalTherapyIntents) {
+        return when (locoregionalTherapyHasCurativeIntent) {
             true -> EvaluationFactory.pass("Patient has received locoregional therapy with curative intent")
             else -> EvaluationFactory.undetermined("Undetermined if patient has had locoregional therapy with curative intent")
         }
