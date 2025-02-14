@@ -10,7 +10,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 class HasHadDefinitiveLocoregionalTherapyWithCurativeIntent : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val locoregionalTherapyHasCurativeIntent:Boolean = record.oncologicalHistory.filter { entry ->
+        val locoregionalTherapyHasCurativeIntent: Boolean = record.oncologicalHistory.filter { entry ->
             entry.categories().any { it == TreatmentCategory.RADIOTHERAPY || it == TreatmentCategory.SURGERY }
         }.any { it.intents?.contains(Intent.CURATIVE) == true }
 
