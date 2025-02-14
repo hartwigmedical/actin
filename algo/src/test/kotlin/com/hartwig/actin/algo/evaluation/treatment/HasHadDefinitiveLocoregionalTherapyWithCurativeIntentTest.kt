@@ -13,7 +13,7 @@ import org.junit.Test
 class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
     private val radiotherapy = TreatmentTestFactory.treatment("Radiotherapy", true, setOf(TreatmentCategory.RADIOTHERAPY))
     private val surgery = TreatmentTestFactory.treatment("Surgery", true, setOf(TreatmentCategory.SURGERY))
-    private val chemotherapy = TreatmentTestFactory.treatment("CHEMOTHERAPY", true, setOf(TreatmentCategory.CHEMOTHERAPY))
+    private val chemotherapy = TreatmentTestFactory.treatment("Chemotherapy", true, setOf(TreatmentCategory.CHEMOTHERAPY))
 
     private fun generatePatientRecord(treatment: Treatment, intents: Set<Intent>?): PatientRecord {
         return withTreatmentHistory(
