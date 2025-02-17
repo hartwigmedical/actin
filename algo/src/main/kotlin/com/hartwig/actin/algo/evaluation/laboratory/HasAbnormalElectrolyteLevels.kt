@@ -14,6 +14,7 @@ class HasAbnormalElectrolyteLevels(private val minValidLabDate: LocalDate, priva
     override fun evaluate(record: PatientRecord): Evaluation {
         val measurements = listOf(
             LabMeasurement.CALCIUM,
+            LabMeasurement.CHLORIDE,
             LabMeasurement.PHOSPHATE,
             LabMeasurement.SODIUM,
             LabMeasurement.MAGNESIUM,

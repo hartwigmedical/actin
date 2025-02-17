@@ -82,9 +82,9 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.HAS_CREATININE_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.CREATININE),
             EligibilityRule.HAS_EGFR_CKD_EPI_OF_AT_LEAST_X to hasSufficientCreatinineClearanceCreator(CreatinineClearanceMethod.EGFR_CKD_EPI),
             EligibilityRule.HAS_EGFR_MDRD_OF_AT_LEAST_X to hasSufficientCreatinineClearanceCreator(CreatinineClearanceMethod.EGFR_MDRD),
-            EligibilityRule.HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X to hasSufficientCreatinineClearanceCreator(CreatinineClearanceMethod.COCKCROFT_GAULT),
-            EligibilityRule.HAS_CREATININE_CLEARANCE_BETWEEN_X_AND_Y to hasCreatinineClearanceBetweenValuesCreator(CreatinineClearanceMethod.COCKCROFT_GAULT),
-            EligibilityRule.HAS_MEASURED_CREATININE_CLEARANCE_OF_AT_LEAST_X to hasSufficientMeasuredCreatinineClearanceCreator(),
+            EligibilityRule.HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X to hasSufficientCreatinineClearanceCreator(CreatinineClearanceMethod.COCKCROFT_GAULT),// Check
+            EligibilityRule.HAS_CREATININE_CLEARANCE_BETWEEN_X_AND_Y to hasCreatinineClearanceBetweenValuesCreator(CreatinineClearanceMethod.COCKCROFT_GAULT),// Check
+            EligibilityRule.HAS_MEASURED_CREATININE_CLEARANCE_OF_AT_LEAST_X to hasSufficientMeasuredCreatinineClearanceCreator(),//
             EligibilityRule.HAS_BNP_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.NT_PRO_BNP),
             EligibilityRule.HAS_TROPONIN_IT_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.TROPONIN_I_T),
             EligibilityRule.HAS_TRIGLYCERIDE_MMOL_PER_L_OF_AT_MOST_X to hasLimitedLabValueCreator(LabMeasurement.TRIGLYCERIDE),
@@ -95,7 +95,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
                 LabMeasurement.CALCIUM,
                 LabUnit.MILLIGRAMS_PER_DECILITER
             ),
-            EligibilityRule.HAS_IONIZED_CALCIUM_MMOL_PER_L_OF_AT_MOST_X to hasLimitedLabValueCreator(LabMeasurement.IONIZED_CALCIUM),
+            EligibilityRule.HAS_IONIZED_CALCIUM_MMOL_PER_L_OF_AT_MOST_X to hasLimitedLabValueCreator(LabMeasurement.IONIZED_CALCIUM), // Ask Simon (ook meteen electrolytes class vragen)
             EligibilityRule.HAS_CORRECTED_CALCIUM_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.CORRECTED_CALCIUM),
             EligibilityRule.HAS_CALCIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinInstitutionalNormalLimitCreator(
                 LabMeasurement.CALCIUM
@@ -121,7 +121,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.HAS_POTENTIAL_HYPOMAGNESEMIA to hasPotentialHypomagnesemiaCreator(),
             EligibilityRule.HAS_POTENTIAL_HYPOCALCEMIA to hasPotentialHypocalcemiaCreator(),
             EligibilityRule.HAS_POTENTIAL_SYMPTOMATIC_HYPERCALCEMIA to hasPotentialSymptomaticHypercalcemiaCreator(),
-            EligibilityRule.HAS_SERUM_TESTOSTERONE_NG_PER_DL_OF_AT_MOST_X to undeterminedLabValueCreator("serum testosterone"),
+            EligibilityRule.HAS_SERUM_TESTOSTERONE_NG_PER_DL_OF_AT_MOST_X to undeterminedLabValueCreator("serum testosterone"), // Can implemented worden
             EligibilityRule.HAS_CORTISOL_LLN_OF_AT_LEAST_X to hasSufficientLabValueLLNCreator(LabMeasurement.CORTISOL),
             EligibilityRule.HAS_AFP_ULN_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.ALPHA_FETOPROTEIN),
             EligibilityRule.HAS_CA125_ULN_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.CARBOHYDRATE_ANTIGEN_125),
@@ -129,18 +129,18 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.HAS_LDH_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.LACTATE_DEHYDROGENASE),
             EligibilityRule.HAS_PSA_UG_PER_L_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.PROSTATE_SPECIFIC_ANTIGEN),
             EligibilityRule.HAS_PSA_LLN_OF_AT_LEAST_X to hasSufficientLabValueLLNCreator(LabMeasurement.PROSTATE_SPECIFIC_ANTIGEN),
-            EligibilityRule.HAS_TOTAL_PROTEIN_IN_URINE_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.TOTAL_PROTEIN_URINE),
-            EligibilityRule.HAS_TOTAL_PROTEIN_IN_24H_URINE_OF_AT_LEAST_X to undeterminedLabValueCreator("protein in 24h urine"),
-            EligibilityRule.HAS_URINE_PROTEIN_TO_CREATININE_RATIO_MG_PER_MG_OF_AT_MOST_X to undeterminedLabValueCreator("urine protein to creatinine ratio"),
+            EligibilityRule.HAS_TOTAL_PROTEIN_IN_URINE_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.TOTAL_PROTEIN_URINE), // check TOTAL_PROTEIN
+            EligibilityRule.HAS_TOTAL_PROTEIN_IN_24H_URINE_OF_AT_LEAST_X to undeterminedLabValueCreator("protein in 24h urine"), // check
+            EligibilityRule.HAS_URINE_PROTEIN_TO_CREATININE_RATIO_MG_PER_MG_OF_AT_MOST_X to undeterminedLabValueCreator("urine protein to creatinine ratio"), // Check
             EligibilityRule.HAS_GLUCOSE_FASTING_PLASMA_MMOL_PER_L_OF_AT_MOST_X to undeterminedLabValueCreator("fasting plasma glucose"),
             EligibilityRule.HAS_THYROXINE_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinInstitutionalNormalLimitCreator(
-                LabMeasurement.FREE_T4
+                LabMeasurement.FREE_THYROXINE
             ),
             EligibilityRule.HAS_FREE_TRIIODOTHYRONINE_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinInstitutionalNormalLimitCreator(
-                LabMeasurement.FREE_T3
+                LabMeasurement.FREE_TRIIODOTHYRONINE
             ),
             EligibilityRule.HAS_BOUND_TRIIODOTHYRONINE_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinInstitutionalNormalLimitCreator(
-                LabMeasurement.BOUND_T3
+                LabMeasurement.BOUND_TRIIODOTHYRONINE
             ),
             EligibilityRule.HAS_TSH_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinInstitutionalNormalLimitCreator(
                 LabMeasurement.THYROID_STIMULATING_HORMONE
@@ -149,7 +149,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.HAS_CD4_POSITIVE_CELLS_PER_MICROLITER_OF_AT_LEAST_X to hasSufficientLabValueCreator(
                 LabMeasurement.CD4_POSITIVE_CELLS,
                 LabUnit.CELLS_PER_MICROLITER
-            )
+            ) // Check CD4?
         )
     }
 
@@ -238,7 +238,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     private fun hasLimitedIndirectBilirubinCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val maxValue = functionInputResolver().createOneDoubleInput(function)
-            createLabEvaluator(LabMeasurement.DIRECT_BILIRUBIN, HasLimitedIndirectBilirubinULN(maxValue, minValidLabDate()))
+            createLabEvaluator(LabMeasurement.INDIRECT_BILIRUBIN, HasLimitedIndirectBilirubinULN(maxValue, minValidLabDate()))
         }
     }
 
