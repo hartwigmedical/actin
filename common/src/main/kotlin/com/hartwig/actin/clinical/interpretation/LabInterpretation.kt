@@ -34,9 +34,11 @@ class LabInterpretation(private val measurements: Map<LabMeasurement, List<LabVa
     }
 
     companion object {
-        fun fromMeasurements(measurements: Map<LabMeasurement, List<LabValue>>): LabInterpretation {
+        fun interpret(labValues: List<LabValue>): LabInterpretation {
             return LabInterpretation(
-                measurements.mapValues { (_, values) -> values.sortedWith(LabValueDescendingDateComparator()) }.toSortedMap()
+                LabMeasurement.entries.associateWith { measurement ->
+                    labValues.filter { it.measurement == measurement }.sortedWith(LabValueDescendingDateComparator())
+                }.toSortedMap()
             )
         }
     }

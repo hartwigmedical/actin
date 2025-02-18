@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.Displayable
 enum class LabUnit(private val display: String) : Displayable {
     NANOGRAMS_PER_LITER("ng/L"),
     NANOGRAMS_PER_MILLILITER("ng/mL"),
+    NANOGRAMS_PER_DELICILTER("ng/dL"),
     MICROGRAMS_PER_LITER("ug/L"),
     MICROGRAMS_PER_MICROLITER("µg/µL"),
     MILLIGRAMS_PER_DECILITER("mg/dL"),

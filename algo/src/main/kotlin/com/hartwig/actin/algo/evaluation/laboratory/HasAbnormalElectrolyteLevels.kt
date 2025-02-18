@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.laboratory
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.isValid
-import com.hartwig.actin.clinical.interpretation.LabInterpreter
+import com.hartwig.actin.clinical.interpretation.LabInterpretation
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -15,6 +15,8 @@ class HasAbnormalElectrolyteLevels(private val minValidLabDate: LocalDate, priva
         val measurements = listOf(
             LabMeasurement.CALCIUM,
             LabMeasurement.CHLORIDE,
+            LabMeasurement.ACTUAL_BICARBONATE,
+            LabMeasurement.ACTUAL_BICARBONATE_BG,
             LabMeasurement.PHOSPHATE,
             LabMeasurement.SODIUM,
             LabMeasurement.MAGNESIUM,
@@ -36,7 +38,7 @@ class HasAbnormalElectrolyteLevels(private val minValidLabDate: LocalDate, priva
     }
 
     private fun returnOutsideRefMeasurements(record: PatientRecord, measurement: LabMeasurement): LabMeasurement? {
-        val mostRecent = LabInterpreter.interpret(record.labValues).mostRecentValue(measurement)
+        val mostRecent = LabInterpretation.interpret(record.labValues).mostRecentValue(measurement)
         val valid = isValid(mostRecent, measurement, minValidLabDate) && mostRecent?.date?.isAfter(minPassLabDate) == true
         return measurement.takeIf { valid && mostRecent!!.isOutsideRef == true }
     }

@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.interpretation
 
-import com.hartwig.actin.clinical.interpretation.LabInterpretation.Companion.fromMeasurements
+import com.hartwig.actin.clinical.interpretation.LabInterpretation.Companion.interpret
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -12,7 +12,7 @@ class LabInterpretationTest {
     
     @Test
     fun `Should return null or empty for queries on missing data`() {
-        val empty = fromMeasurements(emptyMap())
+        val empty = interpret(emptyList())
         assertThat(empty.mostRecentRelevantDate()).isNull()
         assertThat(empty.allDates()).isEmpty()
         assertThat(empty.mostRecentValue(LabMeasurement.ALANINE_AMINOTRANSFERASE)).isNull()
@@ -24,11 +24,10 @@ class LabInterpretationTest {
     @Test
     fun `Should interpret lab values`() {
         val minimalLabValue = LabInterpretationTestFactory.createMinimal()
-        val measurements = mapOf(
-            LabMeasurement.ALBUMIN to listOf(1, 5, 3, 2, 4, 4).map { minimalLabValue.copy(date = testDate.minusDays(it.toLong())) },
-            LabMeasurement.THROMBOCYTES_ABS to listOf(2, 3).map { minimalLabValue.copy(date = testDate.minusDays(it.toLong())) }
-        )
-        val interpretation = fromMeasurements(measurements)
+        val measurements =
+            listOf(1, 5, 3, 2, 4, 4).map { minimalLabValue.copy(date = testDate.minusDays(it.toLong()), measurement = LabMeasurement.ALBUMIN) } +
+            listOf(2, 3).map { minimalLabValue.copy(date = testDate.minusDays(it.toLong()), measurement = LabMeasurement.THROMBOCYTES_ABS) }
+        val interpretation = interpret(measurements)
         val mostRecent = interpretation.mostRecentRelevantDate()
         assertThat(mostRecent).isEqualTo(testDate.minusDays(1))
         val allDates = interpretation.allDates()

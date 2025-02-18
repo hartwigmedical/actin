@@ -9,7 +9,7 @@ import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.LabEvaluationR
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.evaluateInvalidLabValue
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.evaluateVersusMaxULN
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.isValid
-import com.hartwig.actin.clinical.interpretation.LabInterpreter
+import com.hartwig.actin.clinical.interpretation.LabInterpretation
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabMeasurement.ALANINE_AMINOTRANSFERASE
 import com.hartwig.actin.datamodel.clinical.LabMeasurement.ASPARTATE_AMINOTRANSFERASE
@@ -28,7 +28,7 @@ class HasLimitedAsatAndAlatDependingOnLiverMetastases(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val hasLiverMetastases = record.tumor.hasLiverLesions
-        val interpreter = LabInterpreter.interpret(record.labValues)
+        val interpreter = LabInterpretation.interpret(record.labValues)
         val mostRecentAsat = interpreter.mostRecentValue(ASPARTATE_AMINOTRANSFERASE)
         val mostRecentAlat = interpreter.mostRecentValue(ALANINE_AMINOTRANSFERASE)
 
