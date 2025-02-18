@@ -34,7 +34,7 @@ class BuildClinicalFromDoidsOnly(private val command: CommandLine) {
             patientId = patientId,
             patient = PatientDetails(
                 gender = Gender.FEMALE,
-                birthYear = LocalDate.now().year,
+                birthYear = 1900,
                 registrationDate = LocalDate.now(),
                 questionnaireDate = null,
                 hasHartwigSequencing = false
