@@ -4,9 +4,11 @@ import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.extraction.BooleanValueParser
 import com.hartwig.actin.datamodel.clinical.Ecg
 import com.hartwig.actin.datamodel.clinical.EcgMeasure
+import com.hartwig.actin.datamodel.clinical.IcdCode
+import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.util.Either
 
-class EcgConfigFactory : CurationConfigFactory<ComorbidityConfig> {
+class EcgConfigFactory(private val icdModel: IcdModel) : CurationConfigFactory<ComorbidityConfig> {
     override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<ComorbidityConfig> {
         val input = parts[fields["input"]!!]
         val isQtcf = parts[fields["isQTCF"]!!] == "1"
@@ -18,6 +20,11 @@ class EcgConfigFactory : CurationConfigFactory<ComorbidityConfig> {
             is Either.Right -> parsed.value != true
             else -> interpretation == "NULL"
         }
+        val (icdCodes, icdValidationErrors) = if ("icd" in fields) {
+            validateIcd(CurationCategory.NON_ONCOLOGICAL_HISTORY, input, "icd", fields, parts, icdModel)
+        } else {
+            emptySet<IcdCode>() to emptyList()
+        }
         return ValidatedCurationConfig(
             ComorbidityConfig(
                 input = input,
@@ -25,9 +32,10 @@ class EcgConfigFactory : CurationConfigFactory<ComorbidityConfig> {
                 curated = Ecg(
                     name = interpretation,
                     qtcfMeasure = qtcfMeasure,
-                    jtcMeasure = jtcMeasure
+                    jtcMeasure = jtcMeasure,
+                    icdCodes = icdCodes
                 ).takeUnless { ignore }
-            ), qtcfValidationErrors + jtcValidationErrors
+            ), qtcfValidationErrors + jtcValidationErrors + icdValidationErrors
         )
     }
 
