@@ -97,4 +97,24 @@ class HasHadSomeTreatmentsWithCategoryWithIntentsRecentlyTest {
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(patientRecord))
     }
+
+    @Test
+    fun `Should fail when date is too old`() {
+        val treatment = treatment("trial", isSystemic = true, categories = setOf(TreatmentCategory.TRANSPLANTATION))
+        val patientRecord = withTreatmentHistory(
+            listOf(
+                treatmentHistoryEntry(
+                    setOf(treatment),
+                    intents = matchingIntents,
+                    startYear = 1,
+                    startMonth = 1,
+                    stopYear = 2,
+                    stopMonth = 1
+                )
+            )
+        )
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(patientRecord))
+    }
+
+
 }
