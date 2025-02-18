@@ -33,8 +33,6 @@ class DoidJsonTest {
         assertThat(entry.id).isEqualTo(DoidJson.ID_TO_READ)
         assertNodes(entry.nodes)
         assertEdges(entry.edges)
-        assertThat(entry.metadata.subsets).isEmpty()
-        assertThat(entry.metadata.xrefs).isEmpty()
         assertThat(entry.metadata.basicPropertyValues).isEmpty()
         assertThat(entry.logicalDefinitionAxioms).isEmpty()
     }

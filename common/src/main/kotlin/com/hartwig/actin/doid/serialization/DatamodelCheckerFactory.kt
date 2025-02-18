@@ -9,14 +9,9 @@ object DatamodelCheckerFactory {
     }
 
     fun graphsChecker(): JsonDatamodelChecker {
-        val properties = listOf(
-            "nodes",
-            "edges",
-            "id",
-            "meta",
-            "logicalDefinitionAxioms"
+        return JsonDatamodelChecker(
+            "Graphs", mapOf("nodes" to true, "edges" to true, "id" to true, "meta" to true, "logicalDefinitionAxioms" to false)
         )
-        return allRequiredDatamodelChecker("Graphs", properties)
     }
 
     fun nodeChecker(): JsonDatamodelChecker {
@@ -29,7 +24,7 @@ object DatamodelCheckerFactory {
 
     fun graphMetadataChecker(): JsonDatamodelChecker {
         return JsonDatamodelChecker(
-            "GraphMetadata", mapOf("xrefs" to false, "basicPropertyValues" to true, "version" to false, "subsets" to false)
+            "GraphMetadata", mapOf("basicPropertyValues" to false, "version" to true)
         )
     }
 
