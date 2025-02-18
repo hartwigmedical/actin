@@ -17,7 +17,7 @@ class ECGConfigFactoryTest {
 
     @Test
     fun `Should return ECG config from valid inputs`() {
-        val config = EcgConfigFactory(TestIcdFactory.createTestModel()).create(fields, arrayOf("input", "interpretation"))
+        val config = EcgConfigFactory(TestIcdFactory.createTestModel()).create(fields, arrayOf(INPUT, "interpretation",  "0",  "",  "",  "0",  "", "", "node 1"))
         assertThat(config.errors).isEmpty()
         assertThat(config.config.input).isEqualTo(INPUT)
         assertThat(config.config.curated).isNotNull
