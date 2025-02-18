@@ -14,8 +14,7 @@ import java.time.LocalDate
 class HasHadSomeTreatmentsWithCategoryWithIntentsRecently(
     private val category: TreatmentCategory,
     private val intentsToFind: Set<Intent>,
-    private val minDate: LocalDate,
-    private val interpreter: MedicationStatusInterpreter
+    private val minDate: LocalDate
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         return HasHadSomeTreatmentsWithCategoryWithIntents(category, intentsToFind, minDate).evaluate(record)
