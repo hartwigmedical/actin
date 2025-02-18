@@ -1,2 +1,2 @@
-input	interpretation icd	isQTCF	isJTC	qtcfValue	qtcfUnit	jtcValue	jtcUnit
-Sinus Tachycardia	Sinus tachycardia						
+input	interpretation	icd	isQTCF	isJTC	qtcfValue	qtcfUnit	jtcValue	jtcUnit
+Sinus Tachycardia	Sinus tachycardia
