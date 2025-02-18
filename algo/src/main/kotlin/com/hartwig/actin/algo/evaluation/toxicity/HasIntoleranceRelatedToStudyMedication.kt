@@ -17,7 +17,7 @@ class HasIntoleranceRelatedToStudyMedication(private val icdModel: IcdModel) : E
         val targetIcdCodes = IcdConstants.DRUG_ALLERGY_SET.map { IcdCode(it) }
         val allergies = icdModel.findInstancesMatchingAnyIcdCode(record.comorbidities, targetIcdCodes).fullMatches
             .filter { (it as? Intolerance)?.clinicalStatus?.equals(CLINICAL_STATUS_ACTIVE, ignoreCase = true) != false }
-            .filter { it !is Toxicity || it.grade?.let { grade -> grade >= 2 } == true }
+            .filterNot { it is Toxicity && it.grade?.let { grade -> grade < 2 } ?: true }
             .toSet()
 
         return if (allergies.isNotEmpty()) {
