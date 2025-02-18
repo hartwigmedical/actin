@@ -9,13 +9,13 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHi
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import org.junit.Test
-/*
+import java.time.LocalDate
+
 class HasHadSomeTreatmentsWithCategoryWithIntentsRecentlyTest {
     private val matchingCategory = TreatmentCategory.TARGETED_THERAPY
     private val matchingIntents = setOf(Intent.PALLIATIVE)
-    private val minDate =
-    private val interpreter = 1
-    private val function = HasHadSomeTreatmentsWithCategoryWithIntentsRecently(matchingCategory, matchingIntents)
+    private val minDate = LocalDate.of(2022, 4, 1)
+    private val function = HasHadSomeTreatmentsWithCategoryWithIntentsRecently(matchingCategory, matchingIntents, minDate)
 
     @Test
     fun `Should fail for no treatments`() {
@@ -98,4 +98,3 @@ class HasHadSomeTreatmentsWithCategoryWithIntentsRecentlyTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(patientRecord))
     }
 }
- */

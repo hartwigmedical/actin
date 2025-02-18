@@ -288,7 +288,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneTreatmentCategoryManyIntentsOneIntegerInput(function)
             val (interpreter, minDate) = createInterpreterForWashout(input.integer, null, referenceDate)
-            HasHadSomeTreatmentsWithCategoryWithIntentsRecently(input.category, input.intents, minDate, interpreter)
+            HasHadSomeTreatmentsWithCategoryWithIntentsRecently(input.category, input.intents, minDate)
         }
     }
 
