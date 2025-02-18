@@ -11,7 +11,7 @@ class InfectionConfigFactoryTest {
 
     @Test
     fun `Should return InfectionConfig from valid inputs`() {
-        val (config, errors) = InfectionConfigFactory(TestIcdFactory.createTestModel()).create(fields, arrayOf("input", "interpretation"))
+        val (config, errors) = InfectionConfigFactory(TestIcdFactory.createTestModel()).create(fields, arrayOf("input", "interpretation", ))
         assertThat(errors).isEmpty()
         assertThat(config.input).isEqualTo("input")
         assertThat(config.ignore).isFalse()
