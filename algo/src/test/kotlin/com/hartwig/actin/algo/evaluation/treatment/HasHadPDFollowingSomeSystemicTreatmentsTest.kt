@@ -72,6 +72,30 @@ class HasHadPDFollowingSomeSystemicTreatmentsTest {
     }
 
     @Test
+    fun `Should evaluate to undetermined when history contains requested number of treatment lines but progressive disease in line with unknown date`() {
+        val treatments = listOf(
+            treatmentEntry("1", true, StopReason.PROGRESSIVE_DISEASE, stopYear = null, startYear = null),
+            treatmentEntry("2", true, StopReason.TOXICITY, stopYear = 2022, startYear = 2022),
+        )
+
+        FUNCTIONS.forEach {
+            assertEvaluation(EvaluationResult.UNDETERMINED, it.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+        }
+    }
+
+    @Test
+    fun `Should pass when history contains requested number of treatment lines and all with PD but one with unknown date`() {
+        val treatments = listOf(
+            treatmentEntry("1", true, StopReason.PROGRESSIVE_DISEASE, stopYear = null, startYear = null),
+            treatmentEntry("2", true, StopReason.PROGRESSIVE_DISEASE, stopYear = 2022, startYear = 2022),
+        )
+
+        FUNCTIONS.forEach {
+            assertEvaluation(EvaluationResult.PASS, it.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+        }
+    }
+
+    @Test
     fun `Should pass when history contains requested number of treatment lines, all with unknown dates and all with stop reason PD`() {
         val treatments =
             listOf("1,", "2").map { treatmentEntry(it, true, StopReason.PROGRESSIVE_DISEASE, stopYear = null, startYear = null) }

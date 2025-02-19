@@ -15,7 +15,9 @@ class HasHadPDFollowingSomeSystemicTreatments(
         val treatmentHistory = record.oncologicalHistory
         val minSystemicCount = SystemicTreatmentAnalyser.minSystemicTreatments(treatmentHistory)
         val maxSystemicCount = SystemicTreatmentAnalyser.maxSystemicTreatments(record.oncologicalHistory)
+        val systemicTreatments = treatmentHistory.filter(SystemicTreatmentAnalyser::treatmentHistoryEntryIsSystemic)
         val lastTreatment = SystemicTreatmentAnalyser.lastSystemicTreatment(treatmentHistory)
+        val undeterminedMessage = "Has had at least $minSystemicTreatments systemic treatments but undetermined if PD after last line"
 
         return when {
             maxSystemicCount < minSystemicTreatments -> {
@@ -26,8 +28,12 @@ class HasHadPDFollowingSomeSystemicTreatments(
                 EvaluationFactory.undetermined("Undetermined if received at least $minSystemicTreatments systemic treatments")
             }
 
-            treatmentHistory.all { it.startYear == null && ProgressiveDiseaseFunctions.treatmentResultedInPD(it) == true } -> {
+            systemicTreatments.all { ProgressiveDiseaseFunctions.treatmentResultedInPD(it) == true } -> {
                 EvaluationFactory.pass("Has received at least $minSystemicTreatments systemic treatments with PD")
+            }
+
+            systemicTreatments.any { it.treatmentHistoryDetails?.stopReason == StopReason.PROGRESSIVE_DISEASE && it.startYear == null } -> {
+                EvaluationFactory.undetermined(undeterminedMessage)
             }
 
             lastTreatment?.let { ProgressiveDiseaseFunctions.treatmentResultedInPD(it) } == true -> {
@@ -35,10 +41,8 @@ class HasHadPDFollowingSomeSystemicTreatments(
                 EvaluationFactory.pass("Last systemic treatment resulted in PD$radiologicalNote")
             }
 
-            lastTreatment?.treatmentHistoryDetails?.stopYear == null || lastTreatment.treatmentHistoryDetails?.stopReason == StopReason.TOXICITY -> {
-                EvaluationFactory.undetermined(
-                    "Has had at least $minSystemicTreatments systemic treatments but undetermined if PD after last line"
-                )
+            lastTreatment?.let { it.treatmentHistoryDetails?.stopReason == StopReason.TOXICITY || it.treatmentHistoryDetails?.stopYear == null } == true -> {
+                EvaluationFactory.undetermined(undeterminedMessage)
             }
 
             else -> {
