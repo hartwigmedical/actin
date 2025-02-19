@@ -72,6 +72,18 @@ class HasHadPDFollowingSomeSystemicTreatmentsTest {
     }
 
     @Test
+    fun `Should pass when history contains requested number of treatment lines, all with unknown dates but PD in at least one`() {
+        val treatments = listOf(
+            treatmentEntry("1", true, StopReason.PROGRESSIVE_DISEASE, stopYear = null, startYear = null),
+            treatmentEntry("2", true, null, stopYear = null, startYear = null),
+        )
+
+        FUNCTIONS.forEach {
+            assertEvaluation(EvaluationResult.PASS, it.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+        }
+    }
+
+    @Test
     fun `Should pass when history contains requested number of treatment lines with PD`() {
         val treatments = listOf("1", "2").map { treatmentEntry(it, true, StopReason.PROGRESSIVE_DISEASE) }
         FUNCTIONS.forEach {
@@ -79,17 +91,8 @@ class HasHadPDFollowingSomeSystemicTreatmentsTest {
         }
     }
 
-    @Test
-    fun `Should pass when history contains requested number of treatment lines with PD but last treatment line is non-PD`() {
-        val treatments = listOf("1", "2").map { treatmentEntry(it, true, StopReason.PROGRESSIVE_DISEASE, 2023) } +
-                treatmentEntry("3", true, StopReason.TOXICITY, 2024)
-        FUNCTIONS.forEach {
-            assertEvaluation(EvaluationResult.PASS, it.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
-        }
-    }
-
     private fun treatmentEntry(
-        name: String, systemic: Boolean, stopReason: StopReason? = null, stopYear: Int? = null, startYear: Int = 2020
+        name: String, systemic: Boolean, stopReason: StopReason? = null, stopYear: Int? = null, startYear: Int? = 2020
     ): TreatmentHistoryEntry {
         return TreatmentTestFactory.treatmentHistoryEntry(
             treatments = listOf(TreatmentTestFactory.treatment(name, systemic)),
