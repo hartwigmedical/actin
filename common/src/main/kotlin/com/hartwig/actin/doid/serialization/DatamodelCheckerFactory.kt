@@ -45,7 +45,9 @@ object DatamodelCheckerFactory {
     }
 
     fun definitionChecker(): JsonDatamodelChecker {
-        return allRequiredDatamodelChecker("Definition", listOf("xrefs", "val"))
+        return JsonDatamodelChecker(
+            "Definition", mapOf("xrefs" to false, "val" to true)
+        )
     }
 
     fun basicPropertyValueChecker(): JsonDatamodelChecker {

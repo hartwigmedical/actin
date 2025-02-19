@@ -239,7 +239,7 @@ object DoidJson {
         DatamodelCheckerFactory.definitionChecker().check(definition)
         return Definition(
             `val` = string(definition, "val"),
-            xrefs = stringList(definition, "xrefs")
+            xrefs = optionalStringList(definition, "xrefs")
         )
     }
 }
