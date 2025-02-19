@@ -26,6 +26,10 @@ class HasHadPDFollowingSomeSystemicTreatments(
                 EvaluationFactory.undetermined("Undetermined if received at least $minSystemicTreatments systemic treatments")
             }
 
+            treatmentHistory.all { it.startYear == null && ProgressiveDiseaseFunctions.treatmentResultedInPD(it) == true } -> {
+                EvaluationFactory.pass("Has received at least $minSystemicTreatments systemic treatments with PD")
+            }
+
             lastTreatment?.let { ProgressiveDiseaseFunctions.treatmentResultedInPD(it) } == true -> {
                 val radiologicalNote = if (mustBeRadiological) " (assumed PD is radiological)" else ""
                 EvaluationFactory.pass("Last systemic treatment resulted in PD$radiologicalNote")

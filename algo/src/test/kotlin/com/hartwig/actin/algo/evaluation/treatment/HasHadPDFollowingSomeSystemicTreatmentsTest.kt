@@ -72,11 +72,9 @@ class HasHadPDFollowingSomeSystemicTreatmentsTest {
     }
 
     @Test
-    fun `Should pass when history contains requested number of treatment lines, all with unknown dates but PD in at least one`() {
-        val treatments = listOf(
-            treatmentEntry("1", true, StopReason.PROGRESSIVE_DISEASE, stopYear = null, startYear = null),
-            treatmentEntry("2", true, null, stopYear = null, startYear = null),
-        )
+    fun `Should pass when history contains requested number of treatment lines, all with unknown dates and all with stop reason PD`() {
+        val treatments =
+            listOf("1,", "2").map { treatmentEntry(it, true, StopReason.PROGRESSIVE_DISEASE, stopYear = null, startYear = null) }
 
         FUNCTIONS.forEach {
             assertEvaluation(EvaluationResult.PASS, it.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
