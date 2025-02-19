@@ -31,7 +31,12 @@ object SystemicTreatmentAnalyser {
         }.sum()
     }
 
-    fun treatmentHistoryEntryIsSystemic(treatmentHistoryEntry: TreatmentHistoryEntry): Boolean {
+    fun lastSystemicTreatment(treatmentHistory: List<TreatmentHistoryEntry>): TreatmentHistoryEntry? {
+        return treatmentHistory.filter(::treatmentHistoryEntryIsSystemic)
+            .maxWithOrNull(TreatmentHistoryEntryStartDateComparator())
+    }
+
+    private fun treatmentHistoryEntryIsSystemic(treatmentHistoryEntry: TreatmentHistoryEntry): Boolean {
         return treatmentHistoryEntry.allTreatments().any(Treatment::isSystemic)
     }
 
