@@ -28,54 +28,43 @@ patient's registration date. If this flag is not set, the treatment matcher uses
 Every trial defined in the trial database is evaluated independently.
 
 All relevant inclusion and exclusion criteria are evaluated for this trial as well as every criterion for any specific cohort within this
-trial.
+trial, using a set of criterion algorithms.
 
-Every criterion evaluates to one of the following options:
+Every criterion algorithm evaluates to one of the following options:
 
-| Evaluation      | Description                                                                                                                              |
-|-----------------|------------------------------------------------------------------------------------------------------------------------------------------|
-| PASS            | The patient complies with the inclusion or exclusion criterion.                                                                          |
-| WARN            | The patient may or may not comply with inclusion or exclusion criterion. A manual evaluation is required.                                |
-| FAIL            | The patient does not comply with the inclusion or exclusion criterion.                                                                   |
-| UNDETERMINED    | The data that is required to evaluate the inclusion or exclusion criterion is unavailable.                                               |
-| NOT_EVALUATED   | The evaluation of the inclusion or exclusion criterion is skipped and can be assumed to be irrelevant for determining trial eligibility. |
+| Evaluation    | Description                                                                                                                              |
+|---------------|------------------------------------------------------------------------------------------------------------------------------------------|
+| PASS          | The patient complies with the inclusion or exclusion criterion.                                                                          |
+| WARN          | The patient may or may not comply with inclusion or exclusion criterion. A manual evaluation is required.                                |
+| FAIL          | The patient does not comply with the inclusion or exclusion criterion.                                                                   |
+| UNDETERMINED  | The data that is required to evaluate the inclusion or exclusion criterion is unavailable.                                               |
+| NOT_EVALUATED | The evaluation of the inclusion or exclusion criterion is skipped and can be assumed to be irrelevant for determining trial eligibility. |
 
 #### Recoverable status
 
 Each criterion algorithm is configured as 'recoverable' or 'unrecoverable', indicating whether the outcome of the criterion evaluation
-could potentially be recovered in case of a `FAIL`. For example, lab values may be insufficient at the moment of evaluation, leading
-to `FAIL`, but may be sufficient 2 weeks later
-when a new lab test has been done. Hence, lab rules can be 'recoverable', whereas a primary tumor location cannot change and primary tumor
-location rules are thus 'unrecoverable'. Recoverability can be significant for non-`FAIL` results as well, for example a nested `PASS`
-result that becomes a `FAIL` after negation with `NOT`.
-
-Rules evaluating lab values and vital function/body weight measurements are all evaluated to `RECOVERABLE UNDETERMINED` when data is
-missing.
-This is done to reduce the amount of (less important) warnings on the report, since `RECOVERABLE UNDETERMINED` warnings are not shown.
+could potentially be recovered. For example, lab values may be insufficient at the moment of evaluation, leading
+to `FAIL`, but may be sufficient 2 weeks later when a new lab test has been done. Hence, lab evaluations can be 'recoverable', whereas a
+primary tumor location cannot change and primary tumor location rules are thus 'unrecoverable'.
 
 #### Evaluation feedback
 
-Every criterion algorithm provides human-readable feedback ('messages') about its evaluation, so that a human can easily and quickly
-understand which evaluation has been done and why the outcome of the evaluation (`PASS`,`WARN`, `FAIL`, `UNDETERMINED` or `NOT_EVALUATED`)
-is as it is.
+Every criterion algorithm provides human-readable feedback ('message') with every evaluation outcome, so that a human can easily and quickly
+understand which evaluation has been done and why the outcome of the evaluation is as it is.
 
 #### Treatment eligibility
 
-Once all criteria are evaluated, the following algorithm determines whether a patient is potentially eligible for a trial:
+Once all criteria are evaluated, the following algorithm determines whether a patient is considered 'potentially eligible' for a trial:
 
 1. For every cohort within a trial, the patient is considered potentially eligible for that cohort in case none of the cohort-specific
    criteria evaluated to unrecoverable `FAIL`.
 2. A patient is eligible for a trial in case none of its overall criteria evaluated to unrecoverable `FAIL` and the
-   trial
-   either has no cohorts defined or has at least one cohort that is considered potentially eligible.
-
-Note that, following this logic, a patient is only considered potentially eligible for a cohort if both the cohort is considered eligible
-_and_ the trial that the cohort is part of is considered eligible.
+   trial either has no cohorts defined or has at least one cohort that is considered potentially eligible.
 
 #### Criterion algorithms
 
-Inclusion and exclusion criteria can be defined as a set of rules that are combined using composite functions, to determine overall
-eligibility.
+Inclusion and exclusion criteria can be defined as a set of rules that are combined using composite functions, to determine
+overall eligibility.
 
 The following composite functions are available:
 
@@ -88,10 +77,8 @@ The following composite functions are available:
 
 Some rules require 1 ("X") or more ("X" and "Y") additional configuration parameter(s) that can be set to match the requirements of each
 trial.
-Also, note that some inclusion and exclusion criteria can be mapped to rules that are currently explicitly set to PASS or explicitly
-won't be evaluated.
 
-The following rules are available:
+The following criterion algorithms ('rules') are available:
 
 ##### Rules related to general characteristics / statements
 
@@ -297,7 +284,7 @@ Trials could lead to `WARN` in case knowing the exact trial treatment is require
 |-----------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | HAS_ACTIVE_SECOND_MALIGNANCY                                          | Prior second primary > any entry with active=1                                                                                                           |                                                                                                                                                                                                  |
 | HAS_HISTORY_OF_SECOND_MALIGNANCY                                      | Prior second primary > any entry                                                                                                                         |                                                                                                                                                                                                  |
-| HAS_HISTORY_OF_SECOND_MALIGNANCY_IGNORING_DOID_TERMS_X                | Prior second primary > any entry excluding entries with DOID term belonging to any in X                                                                  | 
+| HAS_HISTORY_OF_SECOND_MALIGNANCY_IGNORING_DOID_TERMS_X                | Prior second primary > any entry excluding entries with DOID term belonging to any in X                                                                  |
 | HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_TERM_X             | Prior second primary > contains any entry with DOID belonging to DOID term X                                                                             |                                                                                                                                                                                                  |
 | HAS_HISTORY_OF_SECOND_MALIGNANCY_WITHIN_X_YEARS                       | Prior second primary > current year (+month) - lastTreatmentYear (+month) should be <= X                                                                 | In case lastTreatmentYear is empty, but diagnosedYear is not, use diagnosedYear - but set X to X+1 to be certain to collect all cases. In case no dates are provided, resolve to `UNDETERMINED`. |
 | HAS_HISTORY_OF_SECOND_MALIGNANCY_WITHIN_X_YEARS_IGNORING_DOID_TERMS_Y | Prior second primary > current year (+month) - lastTreatmentYear (+month) should be <= X for any prior with a DOID that does not belong to any term in Y | In case lastTreatmentYear is empty, but diagnosedYear is not, use diagnosedYear - but set X to X+1 to be certain to collect all cases. In case no dates are provided, resolve to `UNDETERMINED`. |
@@ -370,17 +357,17 @@ Trials could lead to `WARN` in case knowing the exact trial treatment is require
 
 _Blood components / blood cell components_
 
-| Rule                                                | When does a patient pass evaluation?                                                   | Note                                                                                                             |
-|-----------------------------------------------------|----------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------|
-| HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X                    | Leukocytes absolute (LEUKO-ABS) in 10^9/L => X                                         |                                                                                                                  |
-| HAS_LEUKOCYTES_ABS_LLN_OF_AT_LEAST_X                | Leukocytes absolute (LEUKO-ABS) in 10^9/L => X*LLN                                     |                                                                                                                  |
-| HAS_LYMPHOCYTES_ABS_OF_AT_LEAST_X                   | Lymphocytes absolute (LYMPHO-ABS-eDA/LYMPHO-ABS-eDM) in 10*9/L => X                    |                                                                                                                  |
-| HAS_LYMPHOCYTES_CELLS_PER_MM3_OF_AT_LEAST_X         | Lymphocytes in cells per mm3 => X                                                      | In case lymphocytes is measured in 10\*9/L, the value is converted using Lympho[cells/mm3]=Lympho[10\*9/L]/0.001 |
-| HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X                   | Neutrophil granulocytes absolute (NEUTRO-ABS/NEUTRO-ABS-eDA) in 10^9/L or 10\*9/L => X |                                                                                                                  |
-| HAS_THROMBOCYTES_ABS_OF_AT_LEAST_X                  | Thrombocytes absolute (THROMBO-ABS) in 10*9/L => X                                     |                                                                                                                  |
-| HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X               | Hemoglobin (Hb) in g/dL => X.                                                          | In case Hb is measured in mmol/L, the value is converted to g/dL using Hb[g/dL]=Hb[mmol/L]/0.6206                |
-| HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X             | Hemoglobin (Hb) in mmol/L => X.                                                        | In case Hb is measured in g/dL, the value is converted to mmol/L using Hb[mmol/L]=Hb[g/dL]*0.6206                |
-| HAS_POTENTIAL_LEUKOCYTOSIS                          | Leukocytes absolute (LEUKO-ABS) in 10^9/L => ULN                                       |                                                                                                                  |
+| Rule                                        | When does a patient pass evaluation?                                                   | Note                                                                                                             |
+|---------------------------------------------|----------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------|
+| HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X            | Leukocytes absolute (LEUKO-ABS) in 10^9/L => X                                         |                                                                                                                  |
+| HAS_LEUKOCYTES_ABS_LLN_OF_AT_LEAST_X        | Leukocytes absolute (LEUKO-ABS) in 10^9/L => X*LLN                                     |                                                                                                                  |
+| HAS_LYMPHOCYTES_ABS_OF_AT_LEAST_X           | Lymphocytes absolute (LYMPHO-ABS-eDA/LYMPHO-ABS-eDM) in 10*9/L => X                    |                                                                                                                  |
+| HAS_LYMPHOCYTES_CELLS_PER_MM3_OF_AT_LEAST_X | Lymphocytes in cells per mm3 => X                                                      | In case lymphocytes is measured in 10\*9/L, the value is converted using Lympho[cells/mm3]=Lympho[10\*9/L]/0.001 |
+| HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X           | Neutrophil granulocytes absolute (NEUTRO-ABS/NEUTRO-ABS-eDA) in 10^9/L or 10\*9/L => X |                                                                                                                  |
+| HAS_THROMBOCYTES_ABS_OF_AT_LEAST_X          | Thrombocytes absolute (THROMBO-ABS) in 10*9/L => X                                     |                                                                                                                  |
+| HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X       | Hemoglobin (Hb) in g/dL => X.                                                          | In case Hb is measured in mmol/L, the value is converted to g/dL using Hb[g/dL]=Hb[mmol/L]/0.6206                |
+| HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X     | Hemoglobin (Hb) in mmol/L => X.                                                        | In case Hb is measured in g/dL, the value is converted to mmol/L using Hb[mmol/L]=Hb[g/dL]*0.6206                |
+| HAS_POTENTIAL_LEUKOCYTOSIS                  | Leukocytes absolute (LEUKO-ABS) in 10^9/L => ULN                                       |                                                                                                                  |
 
 _Blood clotting factors_
 
@@ -725,7 +712,9 @@ Note that for all configured nr of weeks, 2 weeks are subtracted from the latest
 
 Note for all TOXICITY rules:
 
-- Toxicities are structured using the ICD-11 encoding system, which employs a hierarchical structure based on child-parent relationships. Rules should be defined using existing ICD-11 titles as input (without leading `-` symbols), ensuring consistency and alignment with the standard classification system.
+- Toxicities are structured using the ICD-11 encoding system, which employs a hierarchical structure based on child-parent relationships.
+  Rules should be defined using existing ICD-11 titles as input (without leading `-` symbols), ensuring consistency and alignment with the
+  standard classification system.
 - In case X = 0, 1 or 2, all names corresponding to 'source = Questionnaire' are included (also if 'grade' is unknown), since toxicities are
   only noted in questionnaire when grade => 2.
   In case X = 3 or 4, the evaluation resolves to `UNDETERMINED` if there are names for which grade is not specified.
@@ -802,7 +791,7 @@ more information, see https://disease-ontology.org/.
 
 #### International Classification of Diseases version 11 (ICD-11)
 
-For rules about other conditions, complications, intolerances and toxicities one or more ICD-11 codes may be implemented. 
+For rules about other conditions, complications, intolerances and toxicities one or more ICD-11 codes may be implemented.
 For more information, see https://icd.who.int/.
 To browse codes: https://icd.who.int/browse/2024-01/mms/en
 
