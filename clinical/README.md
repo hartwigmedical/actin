@@ -21,17 +21,22 @@ java -cp actin.jar com.hartwig.actin.clinical.ClinicalIngestionApplicationKt \
 
 ## ACTIN clinical model for providers
 
-Data providers can provide clinical data in JSON adhering to the [following format](src/main/resources/json_schema/provided_clinical_data.schema.json)
+Data providers can provide clinical data in JSON adhering to
+the [following format](src/main/resources/json_schema/provided_clinical_data.schema.json)
 
-
-## ACTIN clinical datamodel used internally 
+## ACTIN clinical datamodel used internally
 
 In ACTIN, the clinical feed as described above, is mapped onto the ACTIN clinical data model.
 
 ### Disease Ontology ID
 
-For mapping of primary tumor location and type, second primaries and other conditions in the ACTIN clinical datamodel,
-one or more Disease Ontology IDs (DOIDs) are assigned. For more information, see https://disease-ontology.org/.
+For primary tumor location and type, and second primaries in the ACTIN clinical datamodel, one or more Disease Ontology IDs (DOIDs) are
+assigned. For more information, see https://disease-ontology.org/.
+
+### International Classification of Diseases version 11 (ICD-11)
+
+For other conditions, complications, intolerances, toxicities and ECG data in the ACTIN clinical data model, one or more ICD-11 codes are
+assigned. For more information, see https://icd.who.int/. To browse codes: https://icd.who.int/browse/2024-01/mms/en
 
 ### Datamodel
 
@@ -157,7 +162,7 @@ The details may include multiple treatment stages representing switches from the
 | name                         | Other condition: name       |
 | year                         | Other condition: start date |
 | month                        | Other condition: start date |
-| doids                        | Added in curation           |
+| icd                          | Added in curation           |
 | category                     | Added in curation           |
 | isContraindicationForTherapy | Added in curation           |
 
@@ -176,12 +181,12 @@ The details may include multiple treatment stages representing switches from the
 
 #### N cancer related complications
 
-| Field      | Origin                   |
-|------------|--------------------------|
-| name       | Complication: name       |
-| categories | Added in curation        |
-| year       | Complication: start date |
-| month      | Complication: start date |
+| Field | Origin                   |
+|-------|--------------------------|
+| name  | Complication: name       |
+| icd   | Added in curation        |
+| year  | Complication: start date |
+| month | Complication: start date |
 
 #### N lab values
 
@@ -203,6 +208,7 @@ The details may include multiple treatment stages representing switches from the
 |---------------|-------------------|
 | name          | Toxicities: Name  |
 | evaluatedDate | Toxicities: Date  |
+| icd           | Added in curation |
 | grade         | Toxicities: Grade |
 | source        | If applicable     |
 
@@ -211,7 +217,7 @@ The details may include multiple treatment stages representing switches from the
 | Field              | Details           |
 |--------------------|-------------------|
 | name               | Allergies: Name   |
-| doids              | Added in curation |
+| icd                | Added in curation |
 | category           | Added in curation |
 | subcategories      | Added in curation |
 | type               | Allergies: Type   |
