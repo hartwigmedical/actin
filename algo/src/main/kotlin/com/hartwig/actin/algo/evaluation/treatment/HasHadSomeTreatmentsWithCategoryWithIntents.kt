@@ -12,15 +12,16 @@ import java.time.LocalDate
 class HasHadSomeTreatmentsWithCategoryWithIntents(
     private val category: TreatmentCategory,
     private val intentsToFind: Set<Intent>,
-    private val minDate: LocalDate? = null) :
+    private val minDate: LocalDate? = null
+) :
     EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val oncologicalHistory = if(minDate === null){
-                record.oncologicalHistory
-            } else {
-                record.oncologicalHistory.filter {TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minDate, true) }
-            }
+        val oncologicalHistory = if (minDate == null) {
+            record.oncologicalHistory
+        } else {
+            record.oncologicalHistory.filter { TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minDate, true) }
+        }
         val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
             oncologicalHistory,
             category,
