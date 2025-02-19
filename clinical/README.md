@@ -82,12 +82,7 @@ Note that "if applicable" in 'origin' indicates that the field is derived from a
 | who                        | Patient: WHO                   |
 | hasActiveInfection         | Other relevant patient history |
 | activeInfectionDescription | Other relevant patient history |
-| hasToxicitiesGrade2        | Toxicity details               |
-| hasSigAberrationLatestECG  | ECG details                    |
-| ecgAberrationDescription   | ECG details                    |
-| qtcfValue                  | ECG details                    |
-| qtcfUnit                   | ECG details                    |
-| lvef                       | ECG details                    |
+| lvef                       | Other relevant patient history |
 | hasComplications           | Complication details           |
 
 #### N treatment history entries in oncological history
@@ -155,7 +150,21 @@ The details may include multiple treatment stages representing switches from the
 | treatmentHistory | Previous primary tumors: Treatment history |
 | status           | Previous primary tumors: Status            |
 
-#### N other conditions
+#### N comorbidities
+
+Comorbidities are an aggregated collection of complications, intolerances, toxicities, ECGs, and other conditions. Each one contains at
+least the following fields:
+
+| Field                        | Origin                   |
+|------------------------------|--------------------------|
+| name                         | Provided or curated name |
+| year                         | Provided start date      |
+| month                        | Provided start date      |
+| icd                          | Added in curation        |
+
+They can also be considered individually:
+
+##### N other conditions
 
 | Field                        | Origin                      |
 |------------------------------|-----------------------------|
@@ -163,8 +172,49 @@ The details may include multiple treatment stages representing switches from the
 | year                         | Other condition: start date |
 | month                        | Other condition: start date |
 | icd                          | Added in curation           |
-| category                     | Added in curation           |
-| isContraindicationForTherapy | Added in curation           |
+
+##### N cancer related complications
+
+| Field | Origin                   |
+|-------|--------------------------|
+| name  | Complication: name       |
+| icd   | Added in curation        |
+| year  | Complication: start date |
+| month | Complication: start date |
+
+
+##### N toxicities
+
+| Field         | Origin            |
+|---------------|-------------------|
+| name          | Toxicities: Name  |
+| evaluatedDate | Toxicities: Date  |
+| icd           | Added in curation |
+| grade         | Toxicities: Grade |
+| source        | If applicable     |
+| endDate       | If provided       |
+
+##### N intolerances
+
+| Field              | Details           |
+|--------------------|-------------------|
+| name               | Allergies: Name   |
+| icd                | Added in curation |
+| type               | Allergies: Type   |
+| clinicalStatus     | If applicable     |
+| verificationStatus | If applicable     |
+| criticality        | If applicable     |
+
+##### N ECGs
+
+| Field     | Origin            |
+|-----------|-------------------|
+| name      | ECG details       |
+| qtcfValue | ECG details       |
+| qtcfUnit  | ECG details       |
+| jtcValue  | ECG details       |
+| jtcUnit   | ECG details       |
+| icd       | Added in curation |
 
 #### N prior (non-WGS) molecular tests
 
@@ -179,15 +229,6 @@ The details may include multiple treatment stages representing switches from the
 | scoreValueUnit                           | Molecular test: Result    |
 | impliesPotentialPriorIndeterminateStatus | Added in curation         |
 
-#### N cancer related complications
-
-| Field | Origin                   |
-|-------|--------------------------|
-| name  | Complication: name       |
-| icd   | Added in curation        |
-| year  | Complication: start date |
-| month | Complication: start date |
-
 #### N lab values
 
 | Field        | Origin                                |
@@ -201,29 +242,6 @@ The details may include multiple treatment stages representing switches from the
 | refLimitLow  | Lab values: Institutional lower limit |
 | refLimitUp   | Lab values: Institutional upper limit |
 | isOutsideRef | Added in curation                     |
-
-#### N toxicities
-
-| Field         | Origin            |
-|---------------|-------------------|
-| name          | Toxicities: Name  |
-| evaluatedDate | Toxicities: Date  |
-| icd           | Added in curation |
-| grade         | Toxicities: Grade |
-| source        | If applicable     |
-
-#### N intolerances
-
-| Field              | Details           |
-|--------------------|-------------------|
-| name               | Allergies: Name   |
-| icd                | Added in curation |
-| category           | Added in curation |
-| subcategories      | Added in curation |
-| type               | Allergies: Type   |
-| clinicalStatus     | If applicable     |
-| verificationStatus | If applicable     |
-| criticality        | If applicable     |
 
 #### N surgeries
 
