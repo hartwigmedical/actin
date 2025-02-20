@@ -99,7 +99,7 @@ class HasHadSomeTreatmentsWithCategoryWithIntentsTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(patientRecord))
     }
 
-    private val functionWithDate = HasHadSomeTreatmentsWithCategoryWithIntentsRecently(matchingCategory, matchingIntents, minDate)
+    private val functionWithDate = HasHadSomeTreatmentsWithCategoryWithIntents(matchingCategory, matchingIntents, minDate)
 
     @Test
     fun `Should fail when date is too old`() {
