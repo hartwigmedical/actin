@@ -33,8 +33,7 @@ class HasHadPDFollowingSomeSystemicTreatments(
                 EvaluationFactory.pass("Has received at least $minSystemicTreatments systemic treatments with PD")
             }
 
-            systemicTreatmentsWithoutStartDate.any { ProgressiveDiseaseFunctions.treatmentResultedInPD(it) != true } &&
-                    lastTreatment?.let { ProgressiveDiseaseFunctions.treatmentResultedInPD(it) } != false -> {
+            systemicTreatmentsWithoutStartDate.any { ProgressiveDiseaseFunctions.treatmentResultedInPD(it) == false } -> {
                 EvaluationFactory.undetermined(undeterminedMessage)
             }
 
