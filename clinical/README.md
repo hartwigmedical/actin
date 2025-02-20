@@ -85,7 +85,7 @@ Note that "if applicable" in 'origin' indicates that the field is derived from a
 | lvef                       | Other relevant patient history |
 | hasComplications           | Complication details           |
 
-#### N treatment history entries in oncological history
+#### 0+ treatment history entries in oncological history
 
 | Field                   | Origin                       |
 |-------------------------|------------------------------|
@@ -136,7 +136,7 @@ The details may include multiple treatment stages representing switches from the
 | startYear  | Added in curation        |
 | startMonth | Added in curation        |
 
-#### N prior second primaries
+#### 0+ prior second primaries
 
 | Field            | Origin                                     |
 |------------------|--------------------------------------------|
@@ -150,73 +150,64 @@ The details may include multiple treatment stages representing switches from the
 | treatmentHistory | Previous primary tumors: Treatment history |
 | status           | Previous primary tumors: Status            |
 
-#### N comorbidities
+#### 0+ comorbidities
 
-Comorbidities are an aggregated collection of complications, intolerances, toxicities, ECGs, and other conditions. Each one contains at
-least the following fields:
-
-| Field                        | Origin                   |
-|------------------------------|--------------------------|
-| name                         | Provided or curated name |
-| year                         | Provided start date      |
-| month                        | Provided start date      |
-| icd                          | Added in curation        |
-
+Comorbidities are diseases or medical conditions that coexist alongside the primary diagnosis.
+These consist of complications, intolerances, toxicities, ECGs, and other conditions.
+Each subtype has fields for name, year, month, and ICD codes to enable generic matching across all comorbidities.
 They can also be considered individually:
 
-##### N other conditions
+##### 0+ other conditions
 
-| Field                        | Origin                      |
-|------------------------------|-----------------------------|
-| name                         | Other condition: name       |
-| year                         | Other condition: start date |
-| month                        | Other condition: start date |
-| icd                          | Added in curation           |
+| Field    | Origin                      |
+|----------|-----------------------------|
+| name     | Other condition: name       |
+| year     | Other condition: start date |
+| month    | Other condition: start date |
+| icdCodes | Added in curation           |
 
-##### N cancer related complications
+##### 0+ cancer related complications
 
-| Field | Origin                   |
-|-------|--------------------------|
-| name  | Complication: name       |
-| icd   | Added in curation        |
-| year  | Complication: start date |
-| month | Complication: start date |
+| Field    | Origin                   |
+|----------|--------------------------|
+| name     | Complication: name       |
+| icdCodes | Added in curation        |
+| year     | Complication: start date |
+| month    | Complication: start date |
 
 
-##### N toxicities
+##### 0+ toxicities
 
 | Field         | Origin            |
 |---------------|-------------------|
 | name          | Toxicities: Name  |
 | evaluatedDate | Toxicities: Date  |
-| icd           | Added in curation |
+| icdCodes      | Added in curation |
 | grade         | Toxicities: Grade |
 | source        | If applicable     |
 | endDate       | If provided       |
 
-##### N intolerances
+##### 0+ intolerances
 
 | Field              | Details           |
 |--------------------|-------------------|
 | name               | Allergies: Name   |
-| icd                | Added in curation |
+| icdCodes           | Added in curation |
 | type               | Allergies: Type   |
 | clinicalStatus     | If applicable     |
 | verificationStatus | If applicable     |
 | criticality        | If applicable     |
 
-##### N ECGs
+##### 0+ ECGs
 
-| Field     | Origin            |
-|-----------|-------------------|
-| name      | ECG details       |
-| qtcfValue | ECG details       |
-| qtcfUnit  | ECG details       |
-| jtcValue  | ECG details       |
-| jtcUnit   | ECG details       |
-| icd       | Added in curation |
+| Field       | Origin            |
+|-------------|-------------------|
+| name        | ECG details       |
+| qtcfMeasure | ECG details       |
+| jtcMeasure  | ECG details       |
+| icdCodes    | Added in curation |
 
-#### N prior (non-WGS) molecular tests
+#### 0+ prior (non-WGS) molecular tests
 
 | Field                                    | Origin                    |
 |------------------------------------------|---------------------------|
@@ -229,7 +220,7 @@ They can also be considered individually:
 | scoreValueUnit                           | Molecular test: Result    |
 | impliesPotentialPriorIndeterminateStatus | Added in curation         |
 
-#### N lab values
+#### 0+ lab values
 
 | Field        | Origin                                |
 |--------------|---------------------------------------|
@@ -243,14 +234,14 @@ They can also be considered individually:
 | refLimitUp   | Lab values: Institutional upper limit |
 | isOutsideRef | Added in curation                     |
 
-#### N surgeries
+#### 0+ surgeries
 
 | Field   | Origin        |
 |---------|---------------|
 | endDate | If applicable |
 | status  | If applicable |
 
-#### N vital function measurements
+#### 0+ vital function measurements
 
 | Field       | Origin                |
 |-------------|-----------------------|
@@ -260,7 +251,7 @@ They can also be considered individually:
 | value       | Vital function: Value |
 | unit        | Vital function: Unit  |
 
-#### N body weight measurements
+#### 0+ body weight measurements
 
 | Field | Origin                                              |
 |-------|-----------------------------------------------------|
@@ -268,14 +259,14 @@ They can also be considered individually:
 | value | Vital function -> Body weight: Value of measurement |
 | unit  | Vital function -> Body weight: Unit of measurement  |
 
-#### N blood transfusions
+#### 0+ blood transfusions
 
 | Field   | Origin                     |
 |---------|----------------------------|
 | date    | Blood transfusion: Date    |
 | product | Blood transfusion: Product |
 
-#### N medications
+#### 0+ medications
 
 | Field                            | Example Value                                                                | Origin                                   |
 |----------------------------------|------------------------------------------------------------------------------|------------------------------------------|
