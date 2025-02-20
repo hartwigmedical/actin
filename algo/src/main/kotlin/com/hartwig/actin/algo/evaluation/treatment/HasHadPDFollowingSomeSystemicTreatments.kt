@@ -16,7 +16,8 @@ class HasHadPDFollowingSomeSystemicTreatments(
         val minSystemicCount = SystemicTreatmentAnalyser.minSystemicTreatments(treatmentHistory)
         val maxSystemicCount = SystemicTreatmentAnalyser.maxSystemicTreatments(record.oncologicalHistory)
         val systemicTreatments = treatmentHistory.filter(SystemicTreatmentAnalyser::treatmentHistoryEntryIsSystemic)
-        val lastTreatment = SystemicTreatmentAnalyser.lastSystemicTreatment(treatmentHistory)
+        val (systemicTreatmentsWithStartDate, systemicTreatmentsWithoutStartDate) = systemicTreatments.partition { it.startYear != null }
+        val lastTreatment = SystemicTreatmentAnalyser.lastSystemicTreatment(systemicTreatmentsWithStartDate)
         val undeterminedMessage = "Has had at least $minSystemicTreatments systemic treatments but undetermined if PD after last line"
 
         return when {
@@ -32,7 +33,8 @@ class HasHadPDFollowingSomeSystemicTreatments(
                 EvaluationFactory.pass("Has received at least $minSystemicTreatments systemic treatments with PD")
             }
 
-            systemicTreatments.any { it.treatmentHistoryDetails?.stopReason == StopReason.PROGRESSIVE_DISEASE && it.startYear == null } -> {
+            systemicTreatmentsWithoutStartDate.any { ProgressiveDiseaseFunctions.treatmentResultedInPD(it) != true } &&
+                    lastTreatment?.let { ProgressiveDiseaseFunctions.treatmentResultedInPD(it) } != false -> {
                 EvaluationFactory.undetermined(undeterminedMessage)
             }
 
