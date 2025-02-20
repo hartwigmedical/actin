@@ -19,7 +19,7 @@ class HasHadSomeTreatmentsWithCategoryWithIntents(
         val oncologicalHistory = if (minDate == null) {
             record.oncologicalHistory
         } else {
-            record.oncologicalHistory.filter { TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minDate, true) }
+            record.oncologicalHistory.filter { TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minDate, false) }
         }
         val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
             oncologicalHistory,
