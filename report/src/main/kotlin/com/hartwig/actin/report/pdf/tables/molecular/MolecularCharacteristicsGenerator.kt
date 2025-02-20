@@ -57,8 +57,11 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
         }
     }
 
-    private fun createPloidyCell(ploidy: Double?): Cell{
-        return Cells.createContentWarn("None")
+    private fun createPloidyCell(ploidy: Double?): Cell {
+        return when (ploidy) {
+            null -> Cells.createContentWarn(Formats.VALUE_UNKNOWN)
+            else -> Cells.createContent(Formats.singleDigitNumber(ploidy))
+        }
     }
 
     private fun createTMLStatusString(): String? {
