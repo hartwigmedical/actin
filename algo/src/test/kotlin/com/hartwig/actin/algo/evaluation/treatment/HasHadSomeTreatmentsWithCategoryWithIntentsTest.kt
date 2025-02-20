@@ -130,4 +130,17 @@ class HasHadSomeTreatmentsWithCategoryWithIntentsTest {
         )
         assertEvaluation(EvaluationResult.PASS, functionWithDate.evaluate(patientRecord))
     }
+    @Test
+    fun `Should fail when treatments with correct category and intent but unknown date`() {
+        val treatment = treatment("matching category and intent", isSystemic = true, categories = setOf(matchingCategory))
+        val patientRecord = withTreatmentHistory(
+            listOf(
+                treatmentHistoryEntry(
+                    setOf(treatment),
+                    intents = matchingIntents
+                )
+            )
+        )
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(patientRecord))
+    }
 }
