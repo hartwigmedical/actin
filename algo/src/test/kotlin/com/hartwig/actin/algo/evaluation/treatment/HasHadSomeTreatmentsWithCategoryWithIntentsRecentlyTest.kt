@@ -52,7 +52,8 @@ class HasHadSomeTreatmentsWithCategoryWithIntentsRecentlyTest {
             listOf(
                 treatmentHistoryEntry(
                     setOf(treatment),
-                    intents = matchingIntents
+                    intents = matchingIntents,
+                    startYear = minDate.year + 1
                 )
             )
         )
@@ -65,7 +66,8 @@ class HasHadSomeTreatmentsWithCategoryWithIntentsRecentlyTest {
         val patientRecord = withTreatmentHistory(
             listOf(
                 treatmentHistoryEntry(
-                    setOf(treatment), intents = null
+                    setOf(treatment), intents = null,
+                    startYear = minDate.year + 1
                 )
             )
         )
@@ -78,7 +80,8 @@ class HasHadSomeTreatmentsWithCategoryWithIntentsRecentlyTest {
         val patientRecord = withTreatmentHistory(
             listOf(
                 treatmentHistoryEntry(
-                    setOf(treatment), isTrial = true
+                    setOf(treatment), isTrial = true,
+                    startYear = minDate.year + 1
                 )
             )
         )
