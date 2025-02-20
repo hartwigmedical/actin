@@ -19,9 +19,9 @@ private fun createConfig(
     icd: String = "node 1",
     isJTC: String = "0",
     isQTCF: String = "0",
-    qtcfValue: String = "0",
+    qtcfValue: String = "",
     qtcfUnit: String = "ms",
-    jtcValue: String = "0",
+    jtcValue: String = "",
     jtcUnit: String = "ms"
 ): ValidatedCurationConfig<ComorbidityConfig>{
     return EcgConfigFactory(TestIcdFactory.createTestModel()).create(
