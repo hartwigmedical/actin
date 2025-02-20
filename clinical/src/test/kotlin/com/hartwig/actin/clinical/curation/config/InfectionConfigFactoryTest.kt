@@ -27,7 +27,7 @@ class InfectionConfigFactoryTest {
         val config = InfectionConfigFactory(TestIcdFactory.createTestModel()).create(fields, arrayOf("input", "interpretation", "invalid"))
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
-                "Non Oncological History",
+                "Infection",
                 "input",
                 "icd",
                 "invalid",

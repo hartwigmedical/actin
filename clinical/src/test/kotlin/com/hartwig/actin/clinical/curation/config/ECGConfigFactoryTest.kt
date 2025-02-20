@@ -110,7 +110,7 @@ class ECGConfigFactoryTest {
         val config = createConfig(icd = "invalid")
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
-                "Non Oncological History",
+                "ECG",
                 INPUT,
                 "icd",
                 "invalid",

@@ -21,7 +21,7 @@ class EcgConfigFactory(private val icdModel: IcdModel) : CurationConfigFactory<C
             else -> interpretation == "NULL"
         }
         val (icdCodes, icdValidationErrors) = if ("icd" in fields) {
-            validateIcd(CurationCategory.NON_ONCOLOGICAL_HISTORY, input, "icd", fields, parts, icdModel)
+            validateIcd(CurationCategory.ECG, input, "icd", fields, parts, icdModel)
         } else {
             emptySet<IcdCode>() to emptyList()
         }

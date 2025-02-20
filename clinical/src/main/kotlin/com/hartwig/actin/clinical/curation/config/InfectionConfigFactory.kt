@@ -14,7 +14,7 @@ class InfectionConfigFactory(private val icdModel: IcdModel) : CurationConfigFac
             else -> interpretation == "NULL"
         }
         val input = parts[fields["input"]!!]
-        val (icdCodes, icdValidationErrors) = validateIcd(CurationCategory.NON_ONCOLOGICAL_HISTORY, input, "icd", fields, parts, icdModel)
+        val (icdCodes, icdValidationErrors) = validateIcd(CurationCategory.INFECTION, input, "icd", fields, parts, icdModel)
         return ValidatedCurationConfig(
             ComorbidityConfig(
                 input = input,
