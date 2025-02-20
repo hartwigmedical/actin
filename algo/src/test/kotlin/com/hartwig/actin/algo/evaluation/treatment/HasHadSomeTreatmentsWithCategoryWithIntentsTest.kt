@@ -75,7 +75,7 @@ class HasHadSomeTreatmentsWithCategoryWithIntentsTest {
 
     @Test
     fun `Should return undetermined when trial treatments`() {
-        val treatment = treatment("trial", isSystemic = true, categories = setOf(matchingCategory))
+        val treatment = treatment("trial", isSystemic = true, categories = emptySet())
         val patientRecord = withTreatmentHistory(
             listOf(
                 treatmentHistoryEntry(
