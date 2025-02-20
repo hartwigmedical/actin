@@ -27,7 +27,7 @@ class HasHadSomeTreatmentsWithCategoryWithIntentsRecentlyTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)))
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
+            function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry)))
         )
     }
 
