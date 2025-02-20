@@ -5,6 +5,7 @@ import com.hartwig.actin.clinical.curation.CurationDatabaseReader
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.datamodel.clinical.Ecg
 import com.hartwig.actin.datamodel.clinical.EcgMeasure
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.TestIcdFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -14,6 +15,10 @@ private const val INPUT = "input"
 
 class ECGConfigFactoryTest {
     private val fields: Map<String, Int> = TestCurationFactory.curationHeaders(CurationDatabaseReader.ECG_TSV)
+    private val icdModel = TestIcdFactory.createTestModel()
+    private val icdMainCode = icdModel.codeToNodeMap.keys.first()
+    private val icdExtensionCode = null
+    private val icdCodesCheck = setOf(IcdCode(icdMainCode, icdExtensionCode))
 
     @Test
     fun `Should return ECG config from valid inputs`() {
@@ -26,6 +31,7 @@ class ECGConfigFactoryTest {
             assertThat(name).isEqualTo("interpretation")
             assertThat(qtcfMeasure).isEqualTo(EcgMeasure(1, "ms"))
             assertThat(jtcMeasure).isNull()
+            assertThat(icdCodes).isEqualTo(icdCodesCheck)
         }
     }
 
