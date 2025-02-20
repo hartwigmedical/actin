@@ -12,9 +12,23 @@ import org.junit.Test
 
 
 private const val INPUT = "input"
+private val fields: Map<String, Int> = TestCurationFactory.curationHeaders(CurationDatabaseReader.ECG_TSV)
+private fun createConfig(
+    input: String = INPUT,
+    interpretation: String = "interpretation",
+    icd: String = "node 1",
+    isJTC: String = "0",
+    isQTCF: String = "0",
+    qtcfValue: String = "0",
+    qtcfUnit: String = "ms",
+    jtcValue: String = "0",
+    jtcUnit: String = "ms"
+): ValidatedCurationConfig<ComorbidityConfig>{
+    return EcgConfigFactory(TestIcdFactory.createTestModel()).create(
+        fields, arrayOf(input, interpretation, icd, isQTCF, isJTC, qtcfValue, qtcfUnit, jtcValue, jtcUnit))
+}
 
 class ECGConfigFactoryTest {
-    private val fields: Map<String, Int> = TestCurationFactory.curationHeaders(CurationDatabaseReader.ECG_TSV)
     private val icdModel = TestIcdFactory.createTestModel()
     private val icdMainCode = icdModel.codeToNodeMap.keys.first()
     private val icdExtensionCode = null
@@ -22,10 +36,7 @@ class ECGConfigFactoryTest {
 
     @Test
     fun `Should return ECG config from valid inputs`() {
-        val config = EcgConfigFactory(TestIcdFactory.createTestModel()).create(
-            fields,
-            arrayOf(INPUT, "interpretation", "node 1", "1", "0", "1", "ms", "", "")
-        )
+        val config = createConfig(isQTCF = "1", qtcfValue = "1")
         assertThat(config.errors).isEmpty()
         assertThat(config.config.input).isEqualTo(INPUT)
         assertThat(config.config.curated).isNotNull
@@ -40,45 +51,35 @@ class ECGConfigFactoryTest {
 
     @Test
     fun `Should return ignore config when input evaluates to false`() {
-        val config = EcgConfigFactory(TestIcdFactory.createTestModel()).create(
-            fields,
-            arrayOf("nvt", "interpretation", "node 1", "1", "0", "1", "ms", "", "")
-        )
+        val config = createConfig(input = "nvt", isQTCF = "1", qtcfValue = "1")
         assertThat(config.errors).isEmpty()
         assertThat(config.config).isEqualTo(ComorbidityConfig("nvt", ignore = true, curated = null))
     }
 
     @Test
     fun `Should return ignore config when input evaluates to null`() {
-        val config = EcgConfigFactory(TestIcdFactory.createTestModel()).create(
-            fields,
-            arrayOf("possible", "interpretation", "node 1", "1", "0", "1", "ms", "", "")
-        )
+        val config = createConfig(input = "possible", isQTCF = "1", qtcfValue = "1")
         assertThat(config.errors).isEmpty()
         assertThat(config.config).isEqualTo(ComorbidityConfig("possible", ignore = true, curated = null))
     }
 
     @Test
     fun `Should return ignore config when interpretation is NULL`() {
-        val config =
-            EcgConfigFactory(TestIcdFactory.createTestModel()).create(fields, arrayOf(INPUT, "NULL", "node 1", "1", "0", "1", "ms", "", ""))
+        val config = createConfig(interpretation = "NULL", isQTCF = "1", qtcfValue = "1")
         assertThat(config.errors).isEmpty()
         assertThat(config.config).isEqualTo(ComorbidityConfig(INPUT, ignore = true, curated = null))
     }
 
     @Test
     fun `Should return empty config when input evaluates to true`() {
-        val config = EcgConfigFactory(TestIcdFactory.createTestModel()).create(fields, arrayOf("Ja", "", "", "0", "0", "", "", "", ""))
+        val config = createConfig(input = "Ja", interpretation = "", icd = "")
         assertThat(config.errors).isEmpty()
         assertThat(config.config).isEqualTo(ComorbidityConfig("Ja", ignore = false, curated = Ecg(null, null, null)))
     }
 
     @Test
     fun `Should return validation error when QTCF is not a number`() {
-        val config = EcgConfigFactory(TestIcdFactory.createTestModel()).create(
-            fields,
-            arrayOf(INPUT, "interpretation", "node 1", "1", "0", "invalid", "ms", "", "")
-        )
+        val config = createConfig(isQTCF = "1", qtcfValue = "invalid")
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
                 CurationCategory.ECG.categoryName,
@@ -92,10 +93,7 @@ class ECGConfigFactoryTest {
 
     @Test
     fun `Should return validation error when JTC is not a number`() {
-        val config = EcgConfigFactory(TestIcdFactory.createTestModel()).create(
-            fields,
-            arrayOf(INPUT, "interpretation", "node 1", "0", "1", "", "", "invalid", "ms")
-        )
+        val config = createConfig(isJTC = "1", jtcValue = "invalid")
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
                 CurationCategory.ECG.categoryName,
@@ -109,10 +107,7 @@ class ECGConfigFactoryTest {
 
     @Test
     fun `Should return validation error when ICD code is invalid`() {
-        val config = EcgConfigFactory(TestIcdFactory.createTestModel()).create(
-            fields,
-            arrayOf(INPUT, "interpretation", "invalid", "0", "0", "", "", "", "ms")
-        )
+        val config = createConfig(icd = "invalid")
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
                 "Non Oncological History",
