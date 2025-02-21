@@ -131,7 +131,7 @@ class HasHadSomeTreatmentsWithCategoryWithIntentsTest {
     }
 
     @Test
-    fun `Should fail when treatments with correct category and intent but unknown date`() {
+    fun `Should pass undetermined when treatments with correct category and intent but unknown date`() {
         val treatment = treatment("matching category and intent", isSystemic = true, categories = setOf(matchingCategory))
         val patientRecord = withTreatmentHistory(
             listOf(
@@ -141,6 +141,6 @@ class HasHadSomeTreatmentsWithCategoryWithIntentsTest {
                 )
             )
         )
-        assertEvaluation(EvaluationResult.FAIL, functionWithDate.evaluate(patientRecord))
+        assertEvaluation(EvaluationResult.UNDETERMINED, functionWithDate.evaluate(patientRecord))
     }
 }

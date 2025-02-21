@@ -19,8 +19,9 @@ class HasHadSomeTreatmentsWithCategoryWithIntents(
         val oncologicalHistory = if (minDate == null) {
             record.oncologicalHistory
         } else {
-            record.oncologicalHistory.filter { TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minDate, false) }
+            record.oncologicalHistory.filter { TreatmentSinceDateFunctions.treatmentSinceMinDate(it, minDate, true) }
         }
+
         val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
             oncologicalHistory,
             category,
@@ -29,9 +30,15 @@ class HasHadSomeTreatmentsWithCategoryWithIntents(
         val intentsList = Format.concatItemsWithOr(intentsToFind)
 
         return when {
-            treatmentSummary.hasSpecificMatch() -> {
+            treatmentSummary.hasSpecificMatch() &&
+                    (minDate == null || treatmentSummary.specificMatches.filter { it.startYear != null}.isNotEmpty()) -> {
                 val treatmentDisplay = treatmentSummary.specificMatches.joinToString(", ") { it.treatmentDisplay() }
                 EvaluationFactory.pass("Has received $intentsList ${category.display()} ($treatmentDisplay)")
+            }
+
+            treatmentSummary.hasSpecificMatch() -> {
+                val treatmentDisplay = treatmentSummary.specificMatches.joinToString(", ") { it.treatmentDisplay() }
+                EvaluationFactory.undetermined("Has received $intentsList ${category.display()} ($treatmentDisplay) with unknown date")
             }
 
             treatmentSummary.hasApproximateMatch() -> {
