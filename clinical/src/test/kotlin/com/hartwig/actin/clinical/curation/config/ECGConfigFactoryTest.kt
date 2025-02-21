@@ -16,13 +16,13 @@ private val fields: Map<String, Int> = TestCurationFactory.curationHeaders(Curat
 
 class ECGConfigFactoryTest {
     private val icdModel = TestIcdFactory.createTestModel()
-    private val icdMainCode = icdModel.codeToNodeMap.keys.first()
-    private val icdExtensionCode = null
-    private val icdCodesCheck = setOf(IcdCode(icdMainCode, icdExtensionCode))
 
     @Test
     fun `Should return ECG config from valid inputs`() {
-        val config = createConfig(isQTCF = "1", qtcfValue = "1", qtcfUnit = "ms")
+        val icdMainCode = icdModel.codeToNodeMap.keys.first()
+        val icdCodesCheck = setOf(IcdCode(icdMainCode, null))
+
+        val config = createConfig(interpretation = "interpretation", icd = "node 1", isQTCF = "1", qtcfValue = "1", qtcfUnit = "ms")
         assertThat(config.errors).isEmpty()
         assertThat(config.config.input).isEqualTo(INPUT)
         assertThat(config.config.curated).isNotNull
@@ -58,7 +58,7 @@ class ECGConfigFactoryTest {
 
     @Test
     fun `Should return empty config when input evaluates to true`() {
-        val config = createConfig(input = "Ja", interpretation = "", icd = "")
+        val config = createConfig(input = "Ja", icd = "")
         assertThat(config.errors).isEmpty()
         assertThat(config.config).isEqualTo(ComorbidityConfig("Ja", ignore = false, curated = Ecg(null, null, null)))
     }
@@ -108,8 +108,8 @@ class ECGConfigFactoryTest {
 
     private fun createConfig(
         input: String = INPUT,
-        interpretation: String = "interpretation",
-        icd: String = "node 1",
+        interpretation: String = "",
+        icd: String = "",
         isJTC: String = "0",
         isQTCF: String = "0",
         qtcfValue: String = "",
@@ -117,7 +117,7 @@ class ECGConfigFactoryTest {
         jtcValue: String = "",
         jtcUnit: String = ""
     ): ValidatedCurationConfig<ComorbidityConfig> {
-        return EcgConfigFactory(TestIcdFactory.createTestModel()).create(
+        return EcgConfigFactory(icdModel).create(
             fields, arrayOf(input, interpretation, icd, isQTCF, isJTC, qtcfValue, qtcfUnit, jtcValue, jtcUnit)
         )
     }
